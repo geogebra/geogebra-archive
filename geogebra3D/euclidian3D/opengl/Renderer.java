@@ -394,10 +394,6 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_TEXTURE_2D);
         gl.glDisable(GL.GL_ALPHA_TEST);       
 
-
-        
-        
-         
        
 
         

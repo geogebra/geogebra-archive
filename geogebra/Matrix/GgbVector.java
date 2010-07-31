@@ -260,7 +260,6 @@ public class GgbVector
 	 * Same result as this.dotproduct(this)
 	 * @return the scalar norm*/
 	public double squareNorm(){
-		
 		return this.dotproduct(this);
 	}
 	

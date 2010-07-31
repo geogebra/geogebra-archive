@@ -3,9 +3,8 @@ package geogebra3D.euclidian3D.opengl;
 import java.nio.FloatBuffer;
 
 import geogebra.Matrix.GgbVector;
-import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.arithmetic.Functional2Var;
-import geogebra3D.euclidian3D.SurfaceTree;
+import geogebra3D.kernel3D.GeoFunction2Var;
 
 /** Class for drawing surfaces.
  * @author matthieu
@@ -22,7 +21,7 @@ public class PlotterSurface {
 	/** 2-var function */
 	private Functional2Var functional2Var;
 	
-	private GeoFunctionNVar function;
+	private GeoFunction2Var function;
 	
 	/** domain for plotting */
 	private float uMin, uMax, vMin, vMax;
@@ -71,7 +70,7 @@ public class PlotterSurface {
 	 * start new surface
 	 * @param function 
 	 */
-	public void start(GeoFunctionNVar function){
+	public void start(GeoFunction2Var function){
 		index = manager.startNewList();
 		this.function = function;
 		uMinFade = 0; vMinFade = 0;
@@ -88,7 +87,7 @@ public class PlotterSurface {
 		manager.endList();
 		return index;
 	}
-	
+
 
 	////////////////////////////////////
 	// DRAWING METHODS

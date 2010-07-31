@@ -1,12 +1,12 @@
 package geogebra3D.euclidian3D.opengl;
 
 import java.nio.FloatBuffer;
-import geogebra.Matrix.GgbVector;
-import geogebra.kernel.GeoFunctionNVar;
-import geogebra3D.euclidian3D.EuclidianView3D;
+import java.util.Date;
 
-//TODO: there's something wrong with the culling. fix it.
-//TODO: use bucket queues for merges - make sure everything works.
+import geogebra.Matrix.GgbVector3D;
+import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.kernel3D.GeoFunction2Var;
+
 //TODO: replace periodic arrangement with null pointers
 //TODO: use simpler base mesh and implement expand()
 
@@ -15,7 +15,7 @@ import geogebra3D.euclidian3D.EuclidianView3D;
  * @author André Eriksson
  */
 public class SurfaceTree2 {
-	private GeoFunctionNVar function;
+	private GeoFunction2Var function;
 	@SuppressWarnings("unused")
 	private final EuclidianView3D view;
 	private double radSq;
@@ -25,17 +25,24 @@ public class SurfaceTree2 {
 	private SurfaceDiamond root;
 	
 	private DrawList drawList;
-
-	private double totalError;
-//	private final double errorgoal = 1.0;
-//	private final double minimumerror = 1.0;
+	
+	private final double errorConst = .04; //desired error per area unit
+	private final int triGoal = 10000;
+	private final int minTriCount = 4000;
 	/** base diamonds - level 0 */
 	private SurfaceDiamond[][] base0 = new SurfaceDiamond[4][4];
 	/** base diamonds - level -1 or lower */
 	private SurfaceDiamond[][] base1 = new SurfaceDiamond[4][4];
 	
-	private final int initialRefinement = 1000;
-	private final int stepRefinement = 30;
+	private final int initialRefinement = 30;
+	private final int stepRefinement = 1000;
+	
+	private double baseArea;
+	
+	/** the maximum level of refinement */
+	private static final int maxLevel = 20;
+	
+	private static final boolean printInfo=true;
 	
 
 	/**
@@ -46,15 +53,16 @@ public class SurfaceTree2 {
 	/**
 	 * @param function
 	 * @param view
+	 * @param radSq 
 	 */
-	public SurfaceTree2(GeoFunctionNVar function, EuclidianView3D view) {
+	public SurfaceTree2(GeoFunction2Var function, EuclidianView3D view, double radSq) {
 		this.function = function;
 		this.view = view;
+		this.radSq=radSq;
 		drawList = new DrawList();
 		initMesh(function.getMinParameter(0), function.getMaxParameter(0),
 				 function.getMinParameter(1), function.getMaxParameter(1));
-		totalError=base0[1][1].error;
-		splitQueue.add(base0[1][1]);
+		base0[1][1].addToSplitQueue();
 		optimizeSub(initialRefinement);
 	}
 
@@ -67,18 +75,19 @@ public class SurfaceTree2 {
 	 */
 	@SuppressWarnings("unused")
 	private void initSmallMesh(double xMin, double xMax, double yMin, double yMax) {
+		
 		//TODO: implement this function properly, have it replace initMesh()
-		SurfaceDiamond p1 = new SurfaceDiamond(function,xMin,yMin,-1);
-		SurfaceDiamond a0 = new SurfaceDiamond(function,xMin,yMax,-2);
-		SurfaceDiamond p0 = new SurfaceDiamond(function,xMax,yMax,-1);
-		SurfaceDiamond a1 = new SurfaceDiamond(function,xMax,yMin,-3);
+		SurfaceDiamond p1 = new SurfaceDiamond(function,xMin,yMin,-1, splitQueue, mergeQueue);
+		SurfaceDiamond a0 = new SurfaceDiamond(function,xMin,yMax,-2, splitQueue, mergeQueue);
+		SurfaceDiamond p0 = new SurfaceDiamond(function,xMax,yMax,-1, splitQueue, mergeQueue);
+		SurfaceDiamond a1 = new SurfaceDiamond(function,xMax,yMin,-3, splitQueue, mergeQueue);
 
-		p1.toggleSplit();p0.toggleSplit();a0.toggleSplit();a1.toggleSplit();
+		p1.setSplit(true);p0.setSplit(true);a0.setSplit(true);a1.setSplit(true);
 		
 		int index0 = 0;
 		int index1 = 1;
 		
-		root = new SurfaceDiamond(function,p0,index0,p1,index1,a0,a1, 0);
+		root = new SurfaceDiamond(function,p0,index0,p1,index1,a0,a1, 0, splitQueue, mergeQueue);
 		
 		p0.setChild(index0, root);
 		p1.setChild(index1, root);
@@ -88,13 +97,15 @@ public class SurfaceTree2 {
 	 * Bootstraps a fairly complex mesh. Sets base0 and base1.
 	 * @param xMin the minimum x coordinate
 	 * @param xMax the maximum x coordinate
-	 * @param yMin the minimum y coordinate
+	 * @param yMin the minimum y caoordinate
 	 * @param yMax the maximum y coordinate
 	 */
 	private void initMesh(double xMin, double xMax, double yMin, double yMax) {
 		int di, dj, ix, jx;
 		double x, y;
 		SurfaceDiamond dm;
+
+		baseArea=(xMax-xMin)*(yMax-yMin);
 		
 		double dx = (xMax-xMin);
 		double dy = (yMax-yMin);
@@ -103,14 +114,14 @@ public class SurfaceTree2 {
 			for(int j=0; j<4; j++) {
 				x=xMin+(i-0.5)*dx;
 				y=yMin+(j-0.5)*dy;
-	            base0[j][i]=new SurfaceDiamond(function,x,y,0);
+	            base0[j][i]=new SurfaceDiamond(function,x,y,0, splitQueue, mergeQueue);
 	            if(!(i==1 && j==1))
 	            	base0[j][i].isClipped=true;
 	            
 	            x=xMin+(i-1)*dx;
 				y=yMin+(j-1)*dy;
-	            base1[j][i]=dm=new SurfaceDiamond(function,x,y,((i^j)&1)!=0?-1:-2);
-	            dm.toggleSplit();
+	            base1[j][i]=dm=new SurfaceDiamond(function,x,y,((i^j)&1)!=0?-1:-2, splitQueue, mergeQueue);
+	            dm.setSplit(true);
 			}
 
 		for(int i=0; i < 4; i++)
@@ -136,15 +147,17 @@ public class SurfaceTree2 {
 	            dm.parents[0]=base1[j][(i+3)%4];
 	            dm.parents[1]=base1[j][(i+1)%4];
 	        }
+		base0[1][1].setBoundingRadius();
 	}
 	
 	private void updateCullingInfo() {
 	    SurfaceDiamond d = base0[1][1];
-	    d.updateCullInfo(radSq, drawList);
-	    for (int i=0;i<4;i++) { 
-	    	if (d.childCreated(i)) 
-	    		d.getChild(i).updateCullInfo(radSq, drawList);
-	    	}
+	    d.updateCullInfo2(radSq, drawList);
+	    
+    	if (d.childCreated(0)) d.getChild(0).updateCullInfo2(radSq, drawList);
+    	if (d.childCreated(1)) d.getChild(1).updateCullInfo2(radSq, drawList);
+    	if (d.childCreated(2)) d.getChild(2).updateCullInfo2(radSq, drawList);
+    	if (d.childCreated(3)) d.getChild(3).updateCullInfo2(radSq, drawList);
 	}
 	
 	/**
@@ -155,7 +168,7 @@ public class SurfaceTree2 {
 		
 	}
 
-	/** used in optimize() */
+	/** used in optimizeSub() */
 	private enum Side {MERGE,SPLIT,NONE};
 	
 	/**
@@ -166,55 +179,41 @@ public class SurfaceTree2 {
 	}
 	
 	private void optimizeSub(int maxCount) {
-//		int maxCount = 200;
-//		int count = 0;
-//		double overlap, overlap0;
-//		overlap=overlap0=splitQueue.peek().error-mergeQueue.peek().error;
-//		Side side = tooCoarse()?Side.SPLIT:Side.MERGE;
-//		while((side!=Side.NONE || overlap0>1) && count < maxCount) {
-//			if(side==Side.MERGE) {
-//				merge(mergeQueue.poll());
-//				if(tooCoarse())
-//					side=Side.NONE;
-//			} else {
-//				if(iqs>0) {
-//					split(splitQueue.poll());
-//					if(!tooCoarse())
-//						side=Side.MERGE;
-//				} else {
-//					side = Side.NONE;
-//				}
-//			}
-//			
-//			overlap=...;
-//			if (overlap<overlap0) 
-//				overlap0=overlap;
-//			count++;
-//		}
 		int count = 0;
 		
 		updateCullingInfo();
 		
+		long t1 = new Date().getTime();
+		
 		Side side = tooCoarse()?Side.SPLIT:Side.MERGE;
 		while(side!=Side.NONE && count < maxCount) {
 			if(side==Side.MERGE) {
-				merge(mergeQueue.peek());
+				merge(mergeQueue.pop());
 				if(tooCoarse())
 					side=Side.NONE;
 			} else {
-				split(splitQueue.peek());
+				split(splitQueue.pop());
 				if(!tooCoarse())
 					side=Side.NONE;
 			}
 			count++;
 		}
+		if(printInfo)
+			System.out.println(this.function+":\tupdate time: "+(new Date().getTime()-t1) + "ms\ttriangles: "+drawList.getCount()+"\terror: "+(float)drawList.getError());
 	}
 	
 	/**
 	 * @return true if the mesh should be refined, otherwise false
 	 */
 	private boolean tooCoarse(){
+		double minError=0.1;
+		if(drawList.getError()<minError*baseArea)
+			if(drawList.getCount()>triGoal)
+				return false;
+		if(drawList.getCount()<minTriCount)
+			return true;
 		if(!drawList.isFull())
+			if((drawList.getError()>errorConst*baseArea) || drawList.getCount()<minTriCount)
 				return true;
 		return false;
 	}
@@ -226,34 +225,36 @@ public class SurfaceTree2 {
 	private void split(SurfaceDiamond t){
 		
 		//dont split a diamond that has already been split
-		if(t.isSplit())
+		if(t.isSplit()){
 			return;
+		}
 		
 		SurfaceDiamond temp;
 		
-		t.toggleSplit();	//mark as split
+		t.removeFromSplitQueue();
+
+		t.addToMergeQueue();	//add to merge queue
+		
+		t.setSplit(true);		//mark as split
 		
 		//recursively split parents
-		if(!t.isBoundaryPoint)	
-			for(int i = 0; i < 2; i++){
-				temp=t.parents[i];
-				if(temp==null)
-					continue;
-				split(temp);
-				if(temp.inMergeQueue){
-					mergeQueue.remove(temp);
-				 	temp.inMergeQueue=false;
-				}
-			}
+		for(int i = 0; i < 2; i++){
+			temp=t.parents[i];
+			if(temp==null)
+				continue;
+			split(temp);
+			temp.removeFromMergeQueue();
+		}
 		
 		//get kids, insert into priority queue
 		for(int i=0;i<4;i++){
-			
 			temp = t.getChild(i);
 			if(!temp.isClipped){
-				temp.updateCullInfo(radSq, drawList);
 				
-				splitQueue.add(temp);
+				temp.updateCullInfo2(radSq, drawList);
+				
+				if(t.level<=maxLevel && !temp.isSplit())
+					temp.addToSplitQueue();
 				
 				//add child to drawing list
 				drawList.add(temp,(temp.parents[1]==t?1:0));
@@ -263,14 +264,6 @@ public class SurfaceTree2 {
 		//remove from drawing list
 		drawList.remove(t, 0);
 		drawList.remove(t, 1);
-
-		splitQueue.remove(t);  //remove from priority queue
-		 
-		mergeQueue.add(t);	//add to merge queue
-		
-		//update total error
-		totalError+= t.getChild(0).error+t.getChild(1).error+
-					 t.getChild(2).error+t.getChild(3).error-t.error;
 	}
 	
 	/**
@@ -278,33 +271,41 @@ public class SurfaceTree2 {
 	 * @param t the target diamond
 	 */
 	private void merge(SurfaceDiamond t){
+		
 		SurfaceDiamond temp;
 		
 		//if already merged, skip
 		if(!t.isSplit())
-			return;
+			return;		
+		t.setSplit(false);		//mark as not split
 		
-		//remove kids from split queue if their other parent isn't split
+		//handle kids
 		for(int i=0;i<4;i++) {
 			temp=t.getChild(i);
-			if(!temp.getOtherParent(t).isSplit())
-				splitQueue.remove(temp);
+			if(!temp.getOtherParent(t).isSplit()){
+				temp.removeFromSplitQueue(); //remove from split queue
+				if(temp.isSplit())
+					temp.addToMergeQueue();
+			}
 			
 			//remove children from draw list
 			drawList.remove(temp,(temp.parents[1]==t?1:0));
 		}
-		t.toggleSplit();	//mark as not split
-		splitQueue.add(t);	//add to split queue
-
-		//TODO: update parents as needed
+		t.removeFromMergeQueue();
 		
+	    for (int i=0;i<2;i++) {
+	        SurfaceDiamond p=t.parents[i];
+	        if(!p.childrenSplit()){
+	            p.updateCullInfo2(radSq, drawList);
+	            p.addToMergeQueue();
+	        }
+	    }
+
+		t.addToSplitQueue();	//add to split queue
+
 		//add parent triangles to draw list
 		drawList.add(t, 0);
 		drawList.add(t, 1);
-		
-		//update total error
-		totalError-= t.getChild(0).error+t.getChild(1).error+
-					 t.getChild(2).error+t.getChild(3).error-t.error;
 	}
 
 	/**
@@ -323,7 +324,7 @@ public class SurfaceTree2 {
 	public FloatBuffer getNormals() {
 		return drawList.getNormalBuffer();
 	}
-	
+	 
 	/**
 	 * @return the amount of triangles in the current mesh.
 	 */
@@ -332,7 +333,18 @@ public class SurfaceTree2 {
 	}
 }
 
-enum CullInfo { ALLIN, SOMEIN, OUT };
+/**
+ * An enum for describing the culling status of a diamond
+ * @author André Eriksson
+ */
+enum CullInfo {
+	/** the entire diamond is in the viewing sphere */
+	ALLIN, 
+	/** part of the diamond is in the viewing sphere */
+	SOMEIN, 
+	/** the entire diamond is outside the viewing sphere */
+	OUT;
+	};
 
 /**
  * An approximate priority queue using buckets and linked lists. 
@@ -340,47 +352,71 @@ enum CullInfo { ALLIN, SOMEIN, OUT };
  * @author André Eriksson
  */
 abstract class SurfaceBucketPQ{
+	/**	total amount of buckets */
 	protected final int BUCKETAMT = 1024;
+	/** array of front of buckets */
 	SurfaceDiamond[] buckets = new SurfaceDiamond[BUCKETAMT];
+	/** array of back of buckets */
+	SurfaceDiamond[] backs = new SurfaceDiamond[BUCKETAMT];
 	
+	/** amount of triangles in list */
+	int count = 0;
+	
+	/** the current highest bucket */
 	private int maxBucket = 0;
 	
+	/**
+	 * Assigns a bucket number to a value.
+	 * @param d any positive value
+	 * @return a number between 0 and BUCKETAMT
+	 */
 	abstract protected int clamp(double d);
 	
 	/** Adds an element to the queue.
 	 * @param d the element to be added.
+	 * @return false if the element is already in the queue. Otherwise true.
 	 */
-	public void add(SurfaceDiamond d) {
-		if(d.v.getX()==0.5 && d.v.getY()==1.0)
-			System.out.print("");
+	public boolean add(SurfaceDiamond d) {
 		
 		//ignore element if already in queue
 		if(d.bucketIndex!=-1)
-			return;
+			return false;
 		
-		int n = clamp(d.error);
+		int n = clamp(d.errors[0]+d.errors[1]);
+		
+		//put invisible diamonds in first bucket
+		if(d.cullInfo==CullInfo.OUT)
+			n=0;
 		
 		//update pointers
-		d.nextInQueue=buckets[n];
-		if(buckets[n]!=null)
-			buckets[n].prevInQueue=d;
-		buckets[n]=d;
+		d.prevInQueue=backs[n];
+		if(backs[n]!=null)
+			backs[n].nextInQueue=d;
+		backs[n]=d;
+		if(buckets[n]==null)
+			buckets[n]=d;
 		
 		//update max bucket index if needed
 		if(n>maxBucket)
 			maxBucket=n;
 		
 		d.bucketIndex=n;
+		
+		count++;
+		
+		return true;
 	}
 	
 	/** Removes an element from the queue. If the specified
 	 *  element is not part of the queue, nothing is done.
 	 * @param d the element to remove. 
+	 * @return false if the element is not in the queue. Otherwise true.
 	 */
-	public void remove(SurfaceDiamond d) {
+	public boolean remove(SurfaceDiamond d) {
+		
 		//ignore element if not in queue
 		if(d.bucketIndex==-1)
-			return;
+			return false;
 			
 		//update pointers of elements before/after in queue
 		if(d.nextInQueue!=null)
@@ -389,99 +425,153 @@ abstract class SurfaceBucketPQ{
 			d.prevInQueue.nextInQueue=d.nextInQueue;
 		
 		//update bucket list and max bucket index as needed
-		if(buckets[d.bucketIndex]==d){
+		if(buckets[d.bucketIndex]==d)
 			buckets[d.bucketIndex]=d.nextInQueue;
-			while(buckets[maxBucket]==null && maxBucket>=0)
-				maxBucket--;
-		}
+
+		if(backs[d.bucketIndex]==d)
+			backs[d.bucketIndex]=d.prevInQueue;
+		
+		while(maxBucket>0 && buckets[maxBucket]==null)
+			maxBucket--;
 		
 		d.nextInQueue=d.prevInQueue=null;
 		
 		d.bucketIndex=-1;
+
+		count--;
+		
+		return true;
+	}
+	
+	@SuppressWarnings("unused")
+	private void sanityCheck(){
+		boolean merge = this instanceof MergeQueue;
+		SurfaceDiamond temp;
+		
+		int counter = 0;
+		
+		for(int i=0;i<=maxBucket;i++){
+			temp=buckets[i];
+			if(temp==null)
+				return;
+			while(temp.nextInQueue!=null){
+				if(temp.nextInQueue.prevInQueue!=temp)
+					System.out.print("");
+				if(merge){
+					if(!temp.inMergeQueue)
+						System.out.print("");
+					if(temp.inSplitQueue)
+						System.out.print("");
+					if(!temp.isSplit())
+						System.out.print("");
+				} else {
+					if(!temp.inSplitQueue)
+						System.out.print("");
+					if(temp.inMergeQueue)
+						System.out.print("");
+					if(temp.isSplit())
+						System.out.print("");
+				}
+				if(temp.bucketIndex!=i)
+					System.out.print("");
+				counter++;
+				if(counter>count)
+					System.out.print("");
+				temp=temp.nextInQueue;
+			}
+		}
 	}
 	
 	/** 
 	 * @return the first element in the top bucket
 	 */
 	public SurfaceDiamond peek() {	return buckets[maxBucket]; }
-}
-
-/**
- * A priority queue for SurfaceDiamonds.
- * @author André Eriksson
- */
-abstract class SurfaceQueue {
-	//TODO: speed this up - at the moment add() is O(n)
-	protected SurfaceDiamond front;
-
-	/**
-	 * @return the diamond at the front of the queue.
+	
+	/** 
+	 * @return the first element in the top bucket
 	 */
-	public SurfaceDiamond peek() {
-		SurfaceDiamond d = front;
-//		while(d.cullInfo==CullInfo.OUT)
-//			d=d.nextInQueue;
+	public SurfaceDiamond pop() { 
+		SurfaceDiamond d = buckets[maxBucket];
+		remove(d);
 		return d;
 	}
-	
-	/**
-	 * Inserts a diamond into the queue.
-	 * @param d
-	 */
-	public void add(SurfaceDiamond d) {
-		if(front==null) {
-			front=d;
-			return;
-		}
-		SurfaceDiamond t = front;
-		while(compare(t,d)==true){
-			if(t==d)
-				return;
-			if(t.nextInQueue==null){
-				t.nextInQueue=d;
-				d.prevInQueue=t;
-				return;
-			}
-			t=t.nextInQueue;
-		}
-		d.nextInQueue=t;
-		d.prevInQueue=t.prevInQueue;
-		if(t.prevInQueue!=null)
-			t.prevInQueue.nextInQueue=d;
-		t.prevInQueue=d;
-		if(t==front)
-			front=d;
-	}
-	
-	abstract protected boolean compare(SurfaceDiamond a, SurfaceDiamond b);
-	
-	/**
-	 * Removes a diamond from the queue.
-	 * @param d
-	 */
-	public void remove(SurfaceDiamond d) {
-		SurfaceDiamond next = d.nextInQueue;
-		SurfaceDiamond prev = d.prevInQueue;
-		if(next!=null)
-			next.prevInQueue=prev;
-		if(prev!=null)
-			prev.nextInQueue=next;
-		if(front==d)
-			front=next;
-		d.nextInQueue=d.prevInQueue=null;
-	}
-	
-	public String toString() {
-		SurfaceDiamond t = front;
-		StringBuilder b = new StringBuilder("[ ");
-		while(t!=null) {
-			b.append("["+t.toString()+"] ");
-			t=t.nextInQueue;
-		}
-		b.append("]");
-		return b.toString();
-	}
 }
+
+///**
+// * A priority queue for SurfaceDiamonds.
+// * @author André Eriksson
+// */
+//abstract class SurfaceQueue {
+//	protected SurfaceDiamond front;
+//
+//	/**
+//	 * @return the diamond at the front of the queue.
+//	 */
+//	public SurfaceDiamond peek() {
+//		SurfaceDiamond d = front;
+////		while(d.cullInfo==CullInfo.OUT)
+////			d=d.nextInQueue;
+//		return d;
+//	}
+//	
+//	/**
+//	 * Inserts a diamond into the queue.
+//	 * @param d
+//	 */
+//	public void add(SurfaceDiamond d) {
+//		if(front==null) {
+//			front=d;
+//			return;
+//		}
+//		SurfaceDiamond t = front;
+//		while(compare(t,d)==true){
+//			if(t==d)
+//				return;
+//			if(t.nextInQueue==null){
+//				t.nextInQueue=d;
+//				d.prevInQueue=t;
+//				return;
+//			}
+//			t=t.nextInQueue;
+//		}
+//		d.nextInQueue=t;
+//		d.prevInQueue=t.prevInQueue;
+//		if(t.prevInQueue!=null)
+//			t.prevInQueue.nextInQueue=d;
+//		t.prevInQueue=d;
+//		if(t==front)
+//			front=d;
+//	}
+//	
+//	abstract protected boolean compare(SurfaceDiamond a, SurfaceDiamond b);
+//	
+//	/**
+//	 * Removes a diamond from the queue.
+//	 * @param d
+//	 */
+//	public void remove(SurfaceDiamond d) {
+//		SurfaceDiamond next = d.nextInQueue;
+//		SurfaceDiamond prev = d.prevInQueue;
+//		if(next!=null)
+//			next.prevInQueue=prev;
+//		if(prev!=null)
+//			prev.nextInQueue=next;
+//		if(front==d)
+//			front=next;
+//		d.nextInQueue=d.prevInQueue=null;
+//	}
+//	
+//	public String toString() {
+//		SurfaceDiamond t = front;
+//		StringBuilder b = new StringBuilder("[ ");
+//		while(t!=null) {
+//			b.append("["+t.toString()+"] ");
+//			t=t.nextInQueue;
+//		}
+//		b.append("]");
+//		return b.toString();
+//	}
+//}
 
 /**
  * A priority queue used for split operations. Sorts based on SurfaceDiamond.error.
@@ -491,8 +581,8 @@ class SplitQueue extends SurfaceBucketPQ {
 	
 	@Override
 	protected int clamp(double d){
-		int f = (int) (d*10000);
-		return f>BUCKETAMT-1?BUCKETAMT-1:f;
+		int f = (int) (Math.exp(d+1)*200)+2;
+		return f>BUCKETAMT-1||f<0?BUCKETAMT-1:f;
 	}
 	
 //	@Override
@@ -505,12 +595,16 @@ class SplitQueue extends SurfaceBucketPQ {
  * A priority queue used for merge operations. Sorts based on SurfaceDiamond.error.
  * @author André Eriksson
  */
-class MergeQueue extends SurfaceQueue {
+class MergeQueue extends SurfaceBucketPQ {
 
 	@Override
-	protected boolean compare(SurfaceDiamond a, SurfaceDiamond b) {
-		return a.error<=b.error;
+	protected int clamp(double d){
+		int f = (int) (Math.exp(1-d)*200);
+		int ret=f>BUCKETAMT-1?BUCKETAMT-1:f;
+		if(ret<0) ret=0;
+		return ret;
 	}
+
 }
 
 /**
@@ -519,9 +613,13 @@ class MergeQueue extends SurfaceQueue {
  */
 class DrawList {
 	/** the maximum amount of triangles to allocate */
-	private static final int maxCount = 40000;
+	private static final int maxCount = 200000;
+	
+	private static final int marigin = 1000;
 	/** the current amount of triangles */
 	private int count = 0;
+	
+	private double totalError = 0;
 	
 	/** A buffer containing data for all the triangles. Each triangle is stored
 	 *  as 9 consecutive floats (representing x/y/z values for three points).
@@ -538,8 +636,8 @@ class DrawList {
 	 * Empty constuctor. Allocates memory for triBuf.
 	 */
 	DrawList(){
-		triBuf=FloatBuffer.allocate(maxCount*9);
-		normalBuf = FloatBuffer.allocate(maxCount*9);
+		triBuf=FloatBuffer.allocate((maxCount+marigin)*9);
+		normalBuf = FloatBuffer.allocate((maxCount+marigin)*9);
 	}
 	
 	/** 
@@ -547,6 +645,11 @@ class DrawList {
 	 */
 	public int getCount() { return count; }
 
+	/**
+	 * @return the total error for all visible triangles
+	 */
+	public double getError() { return totalError; }
+	
 	/**
 	 * @return a reference to triBuf
 	 */
@@ -585,18 +688,15 @@ class DrawList {
 	}
 	
 	/**
-	 * Adds a triangle to the queue.
+	 * Adds a triangle to the list.
 	 * @param d The parent diamond of the triangle
 	 * @param j The index of the triangle within the diamond
 	 */
-	public void add(SurfaceDiamond d, int j) {		
+	public void add(SurfaceDiamond d, int j) {
+
 		//handle clipping
 		if(d.isClipped || d.parents[j].isClipped)
 			return;
-		
-		//handle culling
-		//if(d.cullInfo==CullInfo.OUT)
-		//	return;
 		
 		SurfaceTriangle t = new SurfaceTriangle(back);
 		if(front==null)
@@ -607,13 +707,24 @@ class DrawList {
 		
 		d.setTriangle(j,t);
 		
+		totalError+=d.errors[j];
+		
 		setFloats(d,j,9*count);
 		
 		t.setIndex(9*count);
-		
+
 		count++;
+		
+		if(d.cullInfo==CullInfo.OUT)
+			hide(d,j);
+
 	}
 	
+	/**
+	 * transfers nine consecutive floats from one place in the buffers to another
+	 * @param oldIndex the old index of the first float
+	 * @param newIndex the new index of the first float
+	 */
 	private void transferFloats(int oldIndex, int newIndex) {
 		float[] f = new float[9];
 		float[] g = new float[9];
@@ -632,6 +743,23 @@ class DrawList {
 		}
 	}
 	
+	@SuppressWarnings("unused")
+	private void sanityCheck(){
+		int i;
+		SurfaceTriangle o = front;
+		for(i = 0; o!=back; i++){
+			try{
+				if(!o.getNext().getPrev().equals(o))
+					System.out.println("invalid order");
+				o=o.getNext();
+			}catch(NullPointerException e){
+				System.out.println(e);
+			}
+		}
+		if(i!=(count-1<0?0:count-1))
+			System.out.println("invalid count");
+	}
+	
 	/**
 	 * Removes a triangle from the queue.
 	 * @param d The parent diamond of the triangle
@@ -641,42 +769,8 @@ class DrawList {
 		//handle clipping
 		if(d.isClipped || d.parents[j].isClipped)
 			return;
-			
-		SurfaceTriangle t = d.getTriangle(j);
 		
-		if(t==null)
-			return;
-		
-		//swap back for current position
-		int n = t.getIndex();
-		if(count==1){
-			count=0;
-			back=front=null;
-		} else {
-			SurfaceTriangle prevBack = back;
-			
-			//transfer prevBack's floats to new position
-			transferFloats(prevBack.getIndex(),n);
-			
-			if(prevBack.getPrev()!=t)
-				back=prevBack.getPrev();
-			
-			// update pointers
-			SurfaceTriangle next = t.getNext();
-			SurfaceTriangle prev = t.getPrev();
-			if(prev!=null)
-				prevBack.setPrev(t.getPrev());
-			else
-				prevBack.setPrev(null);
-			if(next!=null)
-				prevBack.setNext(t.getNext());
-			else
-				prevBack.setNext(null);
-			prevBack.setIndex(n);
-			if(front==t)
-				front=prevBack;
-			count--;
-		}
+		hide(d,j);
 		
 		//free triangle
 		d.freeTriangle(j);
@@ -692,6 +786,101 @@ class DrawList {
 		}
 		b.append("]");
 		return b.toString();
+	}
+
+	/**
+	 * removes a triangle from the list, but does not erase it
+	 * @param d the diamond
+	 * @param j the triangle index
+	 */
+	public void hide(SurfaceDiamond d, int j) {
+		
+		SurfaceTriangle t = d.getTriangle(j);
+		
+		if(t==null || t.getIndex()==-1)
+			return;
+		
+		//swap back for current position
+		int n = t.getIndex();
+		if(count==1){
+			back=front=null;
+		} else if(t==back) {
+			//update pointers
+			back=t.getPrev();
+			back.setNext(null);
+		} else if(t==back.getPrev()){
+			//transfer prevBack's floats to new position
+			transferFloats(back.getIndex(),n);
+			back.setIndex(n);
+			
+			SurfaceTriangle prev = t.getPrev();
+			//update pointers
+			back.setPrev(prev);
+			if(prev!=null)
+				prev.setNext(back);
+
+			if(front==t)
+				front=back;
+		} else {
+			//transfer prevBack's floats to new position
+			transferFloats(back.getIndex(),n);
+			back.setIndex(n);
+			
+			//update pointers
+			SurfaceTriangle prevBack = back;
+			
+			back=prevBack.getPrev();
+			back.setNext(null);
+			
+			SurfaceTriangle next = t.getNext();
+			SurfaceTriangle prev = t.getPrev();
+			
+			prevBack.setNext(next);
+			prevBack.setPrev(prev);
+			
+			if(prev!=null)
+				prev.setNext(prevBack);
+			next.setPrev(prevBack);
+			
+			if(front==t)
+				front=prevBack;
+		}
+		
+		totalError-=d.errors[j];
+		
+		t.setIndex(-1);
+		t.setNext(null);
+		t.setPrev(null);
+		
+		count--;
+	}
+
+	/**
+	 * shows a triangle that has been hidden
+	 * @param d the diamond
+	 * @param j the index of the triangle
+	 */
+	public void show(SurfaceDiamond d, int j) {
+		SurfaceTriangle t = d.getTriangle(j);
+		
+		if(t==null || t.getIndex()!=-1)
+			return;
+		
+		if(front==null)
+			front=t;		
+		if(back!=null){
+			back.setNext(t);
+			t.setPrev(back);
+		}
+		back=t;
+		
+		setFloats(d,j,9*count);
+		
+		t.setIndex(9*count);
+		
+		totalError+=d.errors[j];
+		
+		count++;
 	}
 }
 
@@ -748,13 +937,13 @@ class SurfaceTriangle{
  */
 class SurfaceDiamond {
 	/** vertex position */
-	GgbVector v;
+	GgbVector3D v;
 	/** vertex normal */
-	GgbVector normal;
+	GgbVector3D normal;
 	/** radius of sphere bound squared */
 	double boundingRadSq;
 	/** error measure */
-	double error;
+	double[] errors = new double[2];
 	/** diamond's parents (two of its corners) */
 	SurfaceDiamond[] parents = new SurfaceDiamond[2];
 	/** the other two corners */
@@ -766,23 +955,30 @@ class SurfaceDiamond {
 	/** level of resolution */
 	final int level;
 	/** a reference to the function used */
-	GeoFunctionNVar func;
+	GeoFunction2Var func;
 	/** flag indicating if the diamond has been split */
 	private boolean split = false;
 	/** flag indicating if the diamond is in the merge queue */
 	boolean inMergeQueue = false;
+	/** flag indicating if the diamond is in the split queue */
+	boolean inSplitQueue = false;
+	
+	private double infConst = 0.1;
+	
+	/** (approximately) the minimum distance from the origin to the diamond */
+	double minRadSq;
+	/** (approximately) the maximum distance from the origin to the diamond */
+	double maxRadSq;
+	
+	/** a reference to the merge queue */
+	MergeQueue mergeQueue;
+	/** a reference to the split queue */
+	SplitQueue splitQueue;
 	
 	/** x/y difference used when estimating normal */
 	private final double normalDelta = 1e-8;
 	
-	/** indicates whether or not the point is at the boundary of or outside
-	 *  the drawing area */
-	boolean isBoundaryPoint = false;
-	
-	/** indicates whether or not the point is outside the viewing area */
-	boolean isOutside = false;
-	
-	/** an flag used to discern triangles outside domain of defininition */
+	/** flag used to discern triangles outside domain of defininition */
 	boolean isClipped = false;
 	
 	/** culling info for the diamond */
@@ -803,9 +999,20 @@ class SurfaceDiamond {
 	public boolean isSplit(){return split;}
 	
 	/**
-	 * toggles the split flag for the diamond
+	 * @return true iff at least one child is split
 	 */
-	public void toggleSplit() { split = !split; }
+	public boolean childrenSplit() {
+		return (children[0]!=null?children[0].split:false)
+			|| (children[1]!=null?children[1].split:false)
+			|| (children[2]!=null?children[2].split:false)
+			|| (children[3]!=null?children[3].split:false);
+	}
+
+	/**
+	 * sets the split flag to the specified value
+	 * @param val 
+	 */
+	public void setSplit(boolean val) { split = val; }
 	
 	/**
 	 * @param j either 0 or 1.
@@ -830,12 +1037,17 @@ class SurfaceDiamond {
 	 * @param x
 	 * @param y
 	 * @param level
+	 * @param spQ 
+	 * @param merQ 
 	 */
-	SurfaceDiamond(GeoFunctionNVar func, double x, double y, int level) {
+	SurfaceDiamond(GeoFunction2Var func, double x, double y, int level, 
+					SplitQueue spQ, MergeQueue merQ) {
 		this.level = level;
 		this.func = func;
-		v = func.evaluatePoint(x, y);
+		v = func.evaluatePoint2(x, y);
 		estimateNormal(func);
+		splitQueue=spQ;
+		mergeQueue=merQ;
 	}
 
 	/**
@@ -847,10 +1059,14 @@ class SurfaceDiamond {
 	 * @param a0
 	 * @param a1
 	 * @param level
+	 * @param spQ 
+	 * @param merQ 
 	 */
-	SurfaceDiamond(GeoFunctionNVar func, SurfaceDiamond parent0, int index0,
+	SurfaceDiamond(GeoFunction2Var func, SurfaceDiamond parent0, int index0,
 			SurfaceDiamond parent1, int index1, SurfaceDiamond a0,
-			SurfaceDiamond a1, int level) {
+			SurfaceDiamond a1, int level, SplitQueue spQ, MergeQueue merQ) {
+		splitQueue=spQ;
+		mergeQueue=merQ;
 		this.level = level;
 		this.func = func;
 		parents[0] = parent0;
@@ -859,7 +1075,7 @@ class SurfaceDiamond {
 		indices[1] = index1;
 		a[0] = a0;
 		a[1] = a1;
-		this.v = func.evaluatePoint((a[0].v.getX() + a[1].v.getX()) * 0.5,
+		this.v = func.evaluatePoint2((a[0].v.getX() + a[1].v.getX()) * 0.5,
 				(a[0].v.getY() + a[1].v.getY()) * 0.5);
 		estimateNormal(func);
 		setBoundingRadius();
@@ -870,10 +1086,10 @@ class SurfaceDiamond {
 			isClipped=true;
 	}
 	
-	private void estimateNormal(GeoFunctionNVar func){
+	private void estimateNormal(GeoFunction2Var func){
 		double x = v.getX(); double y = v.getY();
-		GgbVector dx = func.evaluatePoint(x+normalDelta, y);
-		GgbVector dy = func.evaluatePoint(x, y+normalDelta);
+		GgbVector3D dx = func.evaluatePoint2(x+normalDelta, y);
+		GgbVector3D dy = func.evaluatePoint2(x, y+normalDelta);
 		normal = dx.sub(v).crossProduct(dy.sub(v)).normalized();
 	}
 
@@ -881,28 +1097,51 @@ class SurfaceDiamond {
 	 * Computes the error for the diamond.
 	 */
 	private void setError() {
-		error = pointLineDistance(v, a[0].v, a[1].v);
-	}
+		GgbVector3D v0 = a[1].v.sub(parents[0].v);
+		GgbVector3D v1 = a[0].v.sub(parents[0].v);
+		GgbVector3D v2 = a[0].v.sub(parents[1].v);
+		GgbVector3D v3 = a[1].v.sub(parents[1].v);
+		
+		GgbVector3D n0 = v0.crossProduct(v1);
+		GgbVector3D n1 = v2.crossProduct(v3);
 
-	/**
-	 * Computes the minimum distance from point p to a line defined by l1 and l2.
-	 * @param p
-	 * @param l1
-	 * @param l2
-	 * @return 
-	 */
-	private double pointLineDistance(GgbVector p, GgbVector l1, GgbVector l2) {
-		GgbVector d1 = l1.sub(p);
-		GgbVector d2 = l2.sub(p);
-		GgbVector d3 = l2.sub(l1);
-		return d1.crossProduct(d2).norm() / d3.norm();
+		double a0 = n0.norm(); //proportional to area
+		double a1 = n1.norm();
+
+		n0.normalize();
+		n1.normalize();
+		
+		GgbVector3D o0 = v.sub(parents[0].v);
+		GgbVector3D o1 = v.sub(parents[1].v);
+
+		double d0 = Math.abs(n0.dotproduct(o0));
+		double d1 = Math.abs(n1.dotproduct(o1));
+		
+		//vol is proportional to actual volume
+		double vol1 = d0*a0;
+		double vol2 = d1*a1;
+		
+		if(Double.isNaN(vol1)){
+			//use a different error measure for infinite points
+			//namely the base area times some constant
+			double ar = Math.abs((a[0].v.x-v.x)*(parents[0].v.y-v.y));
+			errors[0]=ar*ar*infConst;
+		}
+		else
+			errors[0]=vol1;
+		if(Double.isNaN(vol2)){
+			double ar = Math.abs((a[1].v.x-v.x)*(parents[1].v.y-v.y));
+			errors[1]=ar*ar*infConst;
+		}
+		else
+			errors[1]=vol2;
 	}
 
 	/**
 	 * Sets the (squared) bounding radius of the triangle based on
 	 * the distances from its midpoint to its corner vertices.
 	 */
-	private void setBoundingRadius() {
+	public void setBoundingRadius() {
 		boundingRadSq = a[0].v.sub(v).squareNorm();
 		double r = a[1].v.sub(v).squareNorm();
 		
@@ -919,6 +1158,15 @@ class SurfaceDiamond {
 			if (r > boundingRadSq)
 				boundingRadSq = r;	
 		}
+		
+		minRadSq=v.norm()-Math.sqrt(boundingRadSq);
+		maxRadSq=v.norm()+Math.sqrt(boundingRadSq);
+		if(minRadSq<0) minRadSq=0;
+		if(Double.isNaN(minRadSq))
+			minRadSq=0;
+		if(Double.isNaN(maxRadSq))
+			maxRadSq=Double.POSITIVE_INFINITY;
+		minRadSq*=minRadSq;
 	}
 
 	/**
@@ -966,9 +1214,11 @@ class SurfaceDiamond {
 			if (otherParent!=null && otherParent.parents[1] == parent)
 				ix |= 2;
 			if (i == 1 || i == 3)
-				children[i] = new SurfaceDiamond(func, otherParent, ix, this, i, a0, a1, level + 1);
+				children[i] = new SurfaceDiamond(func, otherParent, ix, this, i, a0, a1, level + 1,
+													splitQueue, mergeQueue);
 			else
-				children[i] = new SurfaceDiamond(func, this, i, otherParent, ix, a0, a1, level + 1);
+				children[i] = new SurfaceDiamond(func, this, i, otherParent, ix, a0, a1, level + 1,
+													splitQueue, mergeQueue);
 
 			if(otherParent!=null)
 				otherParent.children[ix] = children[i];
@@ -982,80 +1232,108 @@ class SurfaceDiamond {
 	 */
 	public boolean childCreated(int i) { return children[i]!=null; }
 	
+	
 	/**
-	 * Recursively updates the culling info.
-	 * @param radSq the squared radius of the viewing volume.
-	 * @param drawList a reference to the DrawList used.
+	 * @param radSq
+	 * @param drawList
 	 */
-	public void updateCullInfo(double radSq, DrawList drawList)
+	public void updateCullInfo2(double radSq, DrawList drawList)
 	{
 		//ignore clipped diamonds
 		if(isClipped)
 			return;
+		CullInfo parentCull = a[1].cullInfo;
+		CullInfo oldCull = cullInfo;
 		
-		CullInfo oldCullInfo = cullInfo;
-		
-		//update cull flags
-	    updateCullFlags(radSq, drawList);
-
-	    if (oldCullInfo==cullInfo && cullInfo!=CullInfo.SOMEIN) 
-	    	return;
+		if(parentCull==CullInfo.ALLIN||parentCull==CullInfo.OUT)
+			cullInfo=parentCull;
+		else {
+			if(maxRadSq<radSq)
+				cullInfo=CullInfo.ALLIN;
+			else if(minRadSq<radSq)
+				cullInfo=CullInfo.SOMEIN;
+			else
+				cullInfo=CullInfo.OUT;
+		}
 	    
-	    /* if diamond is split, recurse on four quadtree kids (if they exist) */
-	    if (split) {
+		
+		if(oldCull!=cullInfo || cullInfo==CullInfo.SOMEIN){
+		    if(cullInfo==CullInfo.OUT){
+		    	if(triangles[0]!=null && triangles[0].getIndex()!=-1)
+		    		drawList.hide(this, 0);
+		    	if(triangles[1]!=null && triangles[1].getIndex()!=-1)
+		    		drawList.hide(this, 1);
+		    } else if(cullInfo==CullInfo.ALLIN || cullInfo==CullInfo.SOMEIN){
+		    	if(triangles[0]!=null && triangles[0].getIndex()==-1)
+		    		drawList.show(this, 0);
+		    	if(triangles[1]!=null && triangles[1].getIndex()==-1)
+		    		drawList.show(this, 1);
+		    }
+		    //reinsert into priority queue
+		    if(oldCull==CullInfo.OUT && cullInfo!=CullInfo.OUT ||
+	    	   oldCull!=CullInfo.OUT && cullInfo==CullInfo.OUT){
+			    if(inMergeQueue){
+			    	mergeQueue.remove(this);
+			    	mergeQueue.add(this);
+			    } else if(inSplitQueue){
+			    	splitQueue.remove(this);
+			    	splitQueue.add(this);
+			    }
+		    }
+		}
+		
+		if (split) {
 	        for (int i=0;i<4;i+=2) {
 	        	if(childCreated(i)){
 	        		SurfaceDiamond c = children[i];
 	                if (c.parents[0]==this) {
 	                    if (c.childCreated(0)) 
-	                    	c.children[0].updateCullInfo(radSq, drawList);
+	                    	c.children[0].updateCullInfo2(radSq, drawList);
 	                    if (c.childCreated(1)) 
-	                    	c.children[1].updateCullInfo(radSq, drawList);
+	                    	c.children[1].updateCullInfo2(radSq, drawList);
 	                }else{
 	                    if (c.childCreated(2)) 
-	                    	c.children[2].updateCullInfo(radSq, drawList);
+	                    	c.children[2].updateCullInfo2(radSq, drawList);
 	                    if (c.childCreated(3)) 
-	                    	c.children[3].updateCullInfo(radSq, drawList);
+	                    	c.children[3].updateCullInfo2(radSq, drawList);
 	                }
 	        	}
 	        }
 	    }
 	}
 	
+	/** inserts the diamond into the split queue */
+	public void addToSplitQueue(){
+		if(!inSplitQueue){
+			splitQueue.add(this);
+			inSplitQueue=true;
+		}
+	}
 	
-	private void updateCullFlags(double radSq, DrawList drawList)
-	{
-	    // get quadtree parent's cull flag
-	    CullInfo parentCull=a[0].cullInfo;
-	    CullInfo oldCull=cullInfo;
-
-	    //update culling info if needed
-	    if (parentCull!=CullInfo.ALLIN && parentCull!=CullInfo.OUT) {
-	    	double sqn = v.squareNorm();
-	        if(sqn>radSq+boundingRadSq)
-	        	cullInfo=CullInfo.OUT;
-	        else if(sqn<radSq-boundingRadSq)
-	        	cullInfo=CullInfo.ALLIN;
-	        else
-	        	cullInfo=CullInfo.SOMEIN;
-	    }
-
-	    // if OUT state changes, update in/out listing on any draw tris
-	    if ((oldCull==CullInfo.OUT && cullInfo!=CullInfo.OUT) ||
-    		(oldCull!=CullInfo.OUT && cullInfo==CullInfo.OUT)) {
-	        for (int i=0;i<2;i++) {
-	            if (triangles[i]!=null) {
-	                if (cullInfo==CullInfo.OUT)
-	                	drawList.remove(this, i);
-	                else 
-	                	drawList.add(this, i);
-	            }
-	        }
-	    }
+	/** removes the diamond from the split queue */
+	public void removeFromSplitQueue(){
+		splitQueue.remove(this);
+		inSplitQueue=false;
+	}
+	
+	/** adds the diamond to the merge queue */
+	public void addToMergeQueue(){
+		if(!inMergeQueue){
+			mergeQueue.add(this);
+			inMergeQueue=true;
+		}
+	}
+	
+	/** removes the diamond from the merge queue */
+	public void removeFromMergeQueue(){
+		if(inMergeQueue){
+			mergeQueue.remove(this);
+			inMergeQueue=false;
+		}
 	}
 	
 	@Override
 	public String toString() {
-		return "[l="+level+", e="+error+" ("+v.getX()+","+v.getY()+")]";
+		return "[l="+level+", e=("+errors[0]+", "+ errors[1]+") ("+v.getX()+","+v.getY()+")]";
 	}
 };

@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.GgbVector3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoCurveCartesianND;
 import geogebra.kernel.GeoElement;
@@ -44,13 +45,7 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 		*/
 	}
 
-	
-	
-	
-	
 	public GgbVector evaluateCurve(double t){
-		
-		//return new GgbVector(new double[] {t,0,t*t});
 		GgbVector p = new GgbVector(3);
 		for (int i=0;i<3;i++)
 			p.set(i+1, fun[i].evaluate(t));
@@ -59,13 +54,21 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 	}
 	
 	public GgbVector evaluateTangent(double t){
-		
-		//return new GgbVector(new double[] {1,0,2*t}).normalized();
 		GgbVector v = new GgbVector(3);
 		for (int i=0;i<3;i++)
 			v.set(i+1, funD1[i].evaluate(t));
 		
 		return v.normalized();
+		
+	}
+	
+	public GgbVector3D evaluateCurve3D(double t){
+		return new GgbVector3D(fun[0].evaluate(t),fun[1].evaluate(t),fun[2].evaluate(t),1);
+	}
+	
+	public GgbVector3D evaluateTangent3D(double t){
+		return new GgbVector3D( funD1[0].evaluate(t),funD1[1].evaluate(t),
+								funD1[2].evaluate(t),1).normalize();
 		
 	}
 	

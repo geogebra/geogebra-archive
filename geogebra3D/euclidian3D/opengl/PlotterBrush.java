@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.GgbVector3D;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra3D.euclidian3D.CurveTree;
@@ -365,6 +366,34 @@ public class PlotterBrush {
 	 * @param tangent
 	 */
 	public void addPointToCurve(GgbVector position, GgbVector tangent){
+		if(firstCurvePoint){
+			end = new PlotterBrushSection(position, tangent, thickness);
+			firstCurvePoint=false;
+		}
+		else {
+			if(discontinuityPassed(position)) {
+				startDrawingCurve();				//start drawing a new segment
+				addPointToCurve(position,tangent);
+				return;
+			} else {
+				start = end;
+				end = new PlotterBrushSection(start,position,tangent,thickness);
+	
+				setTextureX(1);
+				join();
+			}
+		}
+		previousPosition = position;
+		previousTangent  = tangent;
+	}
+	
+	/** adds the point with the specified position and tangent to the curve currently being drawn.
+	 * @param position
+	 * @param tangent
+	 */
+	public void addPointToCurve3D(GgbVector3D p, GgbVector3D t){
+		GgbVector position = new GgbVector(p.x,p.y,p.z,0);
+		GgbVector tangent = new GgbVector(t.x,t.y,t.z,0);
 		if(firstCurvePoint){
 			end = new PlotterBrushSection(position, tangent, thickness);
 			firstCurvePoint=false;

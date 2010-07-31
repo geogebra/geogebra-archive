@@ -222,12 +222,8 @@ public abstract class Drawable3D extends DrawableND {
 	}
 	
 	
-
-	
-	
-	
-	
-	
+	protected void realtimeUpdate() {
+	}
 	
 	
 	///////////////////////////////////////////////////////////////////////////////
@@ -243,6 +239,8 @@ public abstract class Drawable3D extends DrawableND {
 		if (getGeoElement().isGeoPolygon())
 			Application.debug(getGeoElement()+"\n waitForUpdate="+waitForUpdate);
 			*/
+		
+		realtimeUpdate();
 
 		if (waitForUpdate){
 			updateForItSelf();
