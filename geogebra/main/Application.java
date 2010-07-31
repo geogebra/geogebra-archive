@@ -441,7 +441,8 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		// don't want to redirect System.out and System.err when running as Applet
 		// or eg from Eclipse
-		if (!isApplet && getCodeBase().toString().endsWith(".jar")) setUpLogging();
+		getCodeBase(); // initialize runningFromJar
+		if (!isApplet && runningFromJar) setUpLogging();
 		
 		// init codebase
 		initCodeBase();
@@ -2954,14 +2955,17 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 	private URL codebase;
 	private static boolean hasFullPermissions = false;
+	private static boolean runningFromJar = false;
 	
 	private void initCodeBase() {
 		try {
 			// application codebase
 			String path = GeoGebra.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
 			// remove "geogebra.jar" from end of codebase string
-			if (path.endsWith(JAR_FILES[0])) 
+			if (path.endsWith(JAR_FILES[0])) {
+				runningFromJar = true;
 				path = path.substring(0, path.length() -  JAR_FILES[0].length());
+			}
 			
 			// set codebase
 			codebase = new URL(path);	
