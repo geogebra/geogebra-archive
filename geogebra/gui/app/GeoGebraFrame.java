@@ -17,12 +17,12 @@
  */
 package geogebra.gui.app;
 
+import geogebra.CommandLineArguments;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
-import geogebra.main.DefaultApplication;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.util.Util;
 
@@ -237,7 +237,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	 * Main method to create inital GeoGebra window.
 	 * @param args: file name parameter
 	 */
-	public static synchronized void main(String[] args) {		
+	public static synchronized void main(CommandLineArguments args) {		
 		// check java version
 		double javaVersion = Util.getJavaVersion();
 		if (javaVersion < 1.42) {
@@ -261,19 +261,14 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 		} catch (Exception e) {
 			Application.debug(e+"");
-		}	
-		
+		}
 
-		// 2010-03-07, Ulven:
 		// Set GeoGebraPreferences mode (system properties or property file)
 		// before it is called for the first time
-		String path="";
-    	for (int i = 0 ; i < args.length ; i++) {								
-    		if(args[i].toLowerCase().startsWith("--settingsfile=")){
-    			path=args[i].substring(15);								
-    			GeoGebraPreferences.setPropertyFileName(path);
-    		}//if settingsFile given
-    	}//for
+		String settingsFile = args.getStringValue("settingsfile");
+		if(settingsFile.length() > 0) {
+			GeoGebraPreferences.setPropertyFileName(settingsFile);
+		}
     	
 		// load list of previously used files
 		GeoGebraPreferences.getPref().loadFileList();	
@@ -313,7 +308,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	 * @return the new window
 	 */
 	//public abstract GeoGebra buildGeoGebra();
-	public static synchronized GeoGebraFrame createNewWindow(String[] args){
+	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args){
 		return createNewWindow(args,null);
 	}
 	/**
@@ -322,13 +317,13 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	 * @param macro Macro to open (or null for file edit mode)
 	 * @return the new window
 	 */
-	public static synchronized GeoGebraFrame createNewWindow(String[] args,Macro macro) {				
+	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,Macro macro) {				
 		// set Application's size, position and font size
 		// TODO Add layout glass pane (F.S.)
 		GeoGebraFrame wnd = new GeoGebraFrame();
 		
 		//GeoGebra wnd = buildGeoGebra();
-		final DefaultApplication app = new DefaultApplication(args, wnd, true);		
+		final Application app = new Application(args, wnd, true);		
 		
 		if(macro!=null)app.openMacro(macro);
 		//app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));

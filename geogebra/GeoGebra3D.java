@@ -76,13 +76,13 @@ public class GeoGebra3D extends GeoGebraFrame
 		
 		// create first window and show it
 		
-		createNewWindow(args);
+		createNewWindow(new CommandLineArguments(args));
 	}	
 	
 	
 	
 
-	public static synchronized GeoGebraFrame createNewWindow(String[] args) {				
+	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args) {				
 		// set Application's size, position and font size
 		GeoGebra3D wnd = new GeoGebra3D();
 		

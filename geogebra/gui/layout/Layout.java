@@ -8,7 +8,6 @@ import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.io.layout.Perspective;
 import geogebra.main.Application;
-import geogebra.main.LayoutBridge;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -38,7 +37,7 @@ import javax.swing.SwingUtilities;
  * @author Florian Sonner
  * @version 2008-07-18
  */
-public class Layout implements LayoutBridge {	
+public class Layout {	
 	private boolean isInitialized = false;
 	
 	private Application app;
@@ -49,6 +48,11 @@ public class Layout implements LayoutBridge {
 	 * If the title bar should be displayed.
 	 */
 	private boolean titleBarVisible = true;
+	
+	/**
+	 * Ignore the perspectives stored in the document?
+	 */
+	private boolean ignoreDocument = false; 
 	
 	/**
 	 * An array with the default perspectives.
@@ -344,7 +348,7 @@ public class Layout implements LayoutBridge {
 		 */
 		if(asPreference && app != null) {
 			sb.append("\t<settings ignoreDocument=\"");
-			sb.append(app.isIgnoringDocumentPerspective());
+			sb.append(isIgnoringDocument());
 			sb.append("\" showTitleBar=\"");
 			sb.append(isTitleBarVisible());
 			sb.append("\" />\n");
@@ -371,6 +375,37 @@ public class Layout implements LayoutBridge {
 		
 		return false;
 	}
+	
+	/**
+	 * @param viewId
+	 * @return If just the view associated to viewId is visible
+	 */
+	public boolean isOnlyVisible(int viewId) {
+		DockPanel[] panels = dockManager.getPanels();
+		boolean foundView = false;
+		
+		for(int i = 0; i < panels.length; ++i) {
+			// check if the view is visible at all
+			if(panels[i].getViewId() == viewId) {
+				foundView = true;
+				
+				if(!panels[i].isVisible()) {
+					return false;
+				}
+			}
+			
+			// abort if any other view is visible
+			else {
+				if(panels[i].isVisible()) {
+					return false;
+				}
+			}
+		}
+		
+		// if we reach this point each other view is invisible, but
+		// if the view wasn't found at all we return false as well
+		return foundView;
+	}
 
 	/**
 	 * @param titleBarVisible
@@ -386,6 +421,14 @@ public class Layout implements LayoutBridge {
 	 */
 	public boolean isTitleBarVisible() {
 		return titleBarVisible;
+	}
+	
+	public boolean isIgnoringDocument() {
+		return ignoreDocument;
+	}
+	
+	public void setIgnoreDocument(boolean ignore) {
+		ignoreDocument = ignore;
 	}
 	
 	/**

@@ -3,6 +3,7 @@ package geogebra.main;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GuiManager;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -159,7 +160,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				if (!(event.getSource() instanceof JTable)) {			
 
 					// ENTER: set focus to input field
-					if (app.hasGuiManager() && app.getGuiManager().noMenusOpen())
+					if (app.hasFullGui() && app.getGuiManager().noMenusOpen())
 					if (app.showAlgebraInput() && 
 						!app.getGuiManager().getAlgebraInput().hasFocus()) 
 					{
@@ -192,7 +193,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				break;			
 				
 			case KeyEvent.VK_TAB:
-				if (event.isControlDown() && app.hasGuiManager()) {
+				if (event.isControlDown() && app.hasFullGui()) {
 					consumed = true;
 					GuiManager gui = app.getGuiManager();
 					
@@ -299,7 +300,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				
 				// ctrl-shift-s (toggle spreadsheet)
 			case KeyEvent.VK_S:
-				if (event.isShiftDown() && app.hasGuiManager()) {
+				if (event.isShiftDown() && app.hasFullGui()) {
 					app.getGuiManager().setShowSpreadsheetView(
 							!app.getGuiManager().showSpreadsheetView());
 					consumed = true;
@@ -399,13 +400,13 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				ev.setCoordSystemFromMouseMove(-(int)(height * base), 0, EuclidianController.MOVE_VIEW);
 				return true;
 			case KeyEvent.VK_DOWN:
-				if (app.hasGuiManager() && app.getGuiManager().noMenusOpen()) {
+				if (app.hasFullGui() && app.getGuiManager().noMenusOpen()) {
 					ev.rememberOrigins();
 					ev.setCoordSystemFromMouseMove(0, (int)(height / 100.0 * base), EuclidianController.MOVE_VIEW);
 					return true;
 				}
 			case KeyEvent.VK_UP:
-				if (app.hasGuiManager() && app.getGuiManager().noMenusOpen()) {
+				if (app.hasFullGui() && app.getGuiManager().noMenusOpen()) {
 					ev.rememberOrigins();
 					ev.setCoordSystemFromMouseMove(0, -(int)(height / 100.0 * base), EuclidianController.MOVE_VIEW);
 					return true;
@@ -524,7 +525,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_UP:
 				
 				// make sure arrow keys work in menus
-				if (app.hasGuiManager() && !app.getGuiManager().noMenusOpen()) return false;
+				if (app.hasFullGui() && !app.getGuiManager().noMenusOpen()) return false;
 				
 				changeVal = base;			
 				moved = handleArrowKeyMovement(geos, 0, changeVal, 0);
@@ -533,7 +534,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_DOWN:
 				
 				// make sure arrow keys work in menus
-				if (app.hasGuiManager() && !app.getGuiManager().noMenusOpen()) return false;
+				if (app.hasFullGui() && !app.getGuiManager().noMenusOpen()) return false;
 				
 				changeVal = -base;
 				moved = handleArrowKeyMovement(geos, 0, changeVal, 0);
@@ -542,7 +543,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_RIGHT:
 
 				// make sure arrow keys work in menus
-				if (app.hasGuiManager() && !app.getGuiManager().noMenusOpen()) return false;
+				if (app.hasFullGui() && !app.getGuiManager().noMenusOpen()) return false;
 
 				changeVal = base;
 				moved = handleArrowKeyMovement(geos, changeVal, 0, 0);
@@ -551,7 +552,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_LEFT:
 
 				// make sure arrow keys work in menus
-				if (app.hasGuiManager() && !app.getGuiManager().noMenusOpen()) return false;
+				if (app.hasFullGui() && !app.getGuiManager().noMenusOpen()) return false;
 
 				changeVal = -base;
 				moved = handleArrowKeyMovement(geos, changeVal, 0, 0);
@@ -580,7 +581,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		switch (keyCode) {
 			case KeyEvent.VK_F2:
 				// handle F2 key to start editing first selected element
-				if (app.hasGuiManager()) {
+				if (app.hasFullGui()) {
 					app.getGuiManager().startEditing(geos.get(0));
 					return true;
 				}			
@@ -682,7 +683,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * @param fkey numer
 	 */
 	public void handleFunctionKeyForAlgebraInput(int fkey, GeoElement geo) {
-		if (!app.hasGuiManager() || !app.showAlgebraInput()) 
+		if (!app.hasFullGui() || !app.showAlgebraInput()) 
 			return;		
 		JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
 				
@@ -779,7 +780,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		
 		// change application font size
 		app.setFontSize(fontSize);
-		if (app.hasGuiManager())
+		if (app.hasFullGui())
 			app.getGuiManager().updateSpreadsheetColumnWidths();
 		
 		// apply styles to to selected or all geos

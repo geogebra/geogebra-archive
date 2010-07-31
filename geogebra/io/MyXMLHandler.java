@@ -1341,7 +1341,7 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleGuiSettings(Application app, LinkedHashMap<String, String> attrs) {
 		try {
 			boolean ignoreDocument = !((String)attrs.get("ignoreDocument")).equals("false");
-			app.setIgnoreDocumentPerspective(ignoreDocument);
+			app.getGuiManager().getLayout().setIgnoreDocument(ignoreDocument);
 			
 			boolean showTitleBar = !((String)attrs.get("showTitleBar")).equals("false");
 			app.setViewTitleBarVisible(showTitleBar);

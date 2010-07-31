@@ -303,7 +303,7 @@ public class MyXMLio {
 
 		if (clearConstruction) {
 			// clear toolbar definition
-			if (app.hasGuiManager()) {
+			if (app.hasFullGui()) {
 				app.getGuiManager().setToolBarDefinition(null);
 			}
 
@@ -736,7 +736,7 @@ public class MyXMLio {
 		cons.getConstructionXML(sb);
 		
 		// save cas session
-		if (app.hasGuiManager() && app.getGuiManager().hasCasView()) {
+		if (app.hasFullGui() && app.getGuiManager().hasCasView()) {
 			app.getGuiManager().getCasView().getSessionXML(sb);
 		}
 
@@ -835,7 +835,7 @@ public class MyXMLio {
 		c.getConstructionXML(sb);
 
 		// save cas session
-		if (app.hasGuiManager() && app.getGuiManager().hasCasView()) {
+		if (app.hasFullGui() && app.getGuiManager().hasCasView()) {
 			app.getGuiManager().getCasView().getSessionXML(sb);
 		}
 		

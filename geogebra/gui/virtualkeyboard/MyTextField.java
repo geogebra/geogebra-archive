@@ -3,7 +3,7 @@ package geogebra.gui.virtualkeyboard;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.main.Application;
-import geogebra.main.GuiManager;
+import geogebra.gui.GuiManager;
 
 import java.awt.Color;
 import java.awt.Font;

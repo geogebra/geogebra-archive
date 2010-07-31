@@ -21,7 +21,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
-import geogebra.main.GuiManager;
+import geogebra.gui.GuiManager;
 import geogebra.util.DownloadManager;
 import geogebra.util.Util;
 

@@ -2,7 +2,6 @@ package geogebra;
 
 import geogebra.kernel.View;
 import geogebra.main.Application;
-import geogebra.main.DefaultApplication;
 import geogebra.plugin.GgbAPI;
 
 import java.awt.BorderLayout;
@@ -88,7 +87,7 @@ public class GeoGebraPanel extends JPanel {
 		}
 		
 		// create GeoGebra application
-		app = new DefaultApplication(args, this, false);
+		app = new Application(new CommandLineArguments(args), this, false);
 	}
 	
 	/**

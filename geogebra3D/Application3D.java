@@ -17,13 +17,13 @@ the Free Software Foundation.
  */
 package geogebra3D;
 
-import geogebra.gui.DefaultGuiManager;
+import geogebra.CommandLineArguments;
+import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.layout.Layout;
 import geogebra.kernel.GeoElement;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
-import geogebra.main.GuiManager;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -54,16 +54,16 @@ public abstract class Application3D extends Application{
 
 
 
-    public Application3D(String[] args, GeoGebraFrame frame, boolean undoActive) {
+    public Application3D(CommandLineArguments args, GeoGebraFrame frame, boolean undoActive) {
         this(args, frame, null, undoActive);
     }
 
-    public Application3D(String[] args, AppletImplementation applet, boolean undoActive) {
+    public Application3D(CommandLineArguments args, AppletImplementation applet, boolean undoActive) {
     	this(args, null, applet, undoActive);
     }
     
     
-    private Application3D(String[] args, GeoGebraFrame frame, AppletImplementation applet, boolean undoActive) { 
+    private Application3D(CommandLineArguments args, GeoGebraFrame frame, AppletImplementation applet, boolean undoActive) { 
     	
     	super(args, frame, applet, null, undoActive);
     	
@@ -122,7 +122,7 @@ public abstract class Application3D extends Application{
         						+EuclidianView3D.MODE_VIEW_IN_FRONT_OF
         						;
         
-        DefaultGuiManager dgm = (DefaultGuiManager) getGuiManager();
+        GuiManager dgm = (GuiManager) getGuiManager();
         dgm.setToolBarDefinition( myToolBar3D );
         //dgm.getLayout().getPerspective(0).setToolbarDefinition(myToolBar3D);
         

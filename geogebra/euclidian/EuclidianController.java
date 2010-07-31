@@ -1641,7 +1641,7 @@ Rectangle rect = view.getSelectionRectangle();
 		case EuclidianView.MODE_SELECTION_LISTENER:
 			GeoElementSelectionListener sel = app.getCurrentSelectionListener();
 			if (sel == null) return false;
-			if (app.hasGuiManager()) {
+			if (app.hasFullGui()) {
 				return !app.getGuiManager().isInputFieldSelectionListener();
 			}
 			else
@@ -2195,7 +2195,7 @@ Rectangle rect = view.getSelectionRectangle();
 		case EuclidianView.MODE_SELECTION_LISTENER:
 			// tell properties dialog
 			if (hits.size() > 0 &&
-					app.hasGuiManager() &&
+					app.hasFullGui() &&
 					app.getGuiManager().isPropertiesDialogSelectionListener()) 
 			{
 				GeoElement geo = (GeoElement) hits.get(0);
@@ -2237,7 +2237,7 @@ Rectangle rect = view.getSelectionRectangle();
 			app.setSelectedGeos(hits);
 
 			// if alt pressed, create list of objects as string and copy to input bar
-			if (hits != null && hits.size() > 0 && e != null && e.isAltDown() && app.hasGuiManager() && app.showAlgebraInput()) {
+			if (hits != null && hits.size() > 0 && e != null && e.isAltDown() && app.hasFullGui() && app.showAlgebraInput()) {
 
 				JTextComponent textComponent = app.getGuiManager().getAlgebraInputTextField();				
 
@@ -3437,7 +3437,7 @@ Rectangle rect = view.getSelectionRectangle();
 	 */
 	public void setProperties(GeoElement geo) {
 		
-		if (!app.hasGuiManager()) return;
+		if (!app.hasFullGui()) return;
 		if (!app.getGuiManager().miniPropertiesOpen()) return;
 		
 		if (geo instanceof PointProperties) {
@@ -6646,14 +6646,14 @@ Rectangle rect = view.getSelectionRectangle();
 	}
 	
 	private void openMiniPropertiesPanel() {
-		if (!app.hasGuiManager()) return;
+		if (!app.hasFullGui()) return;
 		if (app.isMiniPropertiesActive())
 			app.getGuiManager().toggleMiniProperties(true);
 
 	}
 
 	private void closeMiniPropertiesPanel() {
-		if (!app.hasGuiManager()) return;
+		if (!app.hasFullGui()) return;
 		app.getGuiManager().toggleMiniProperties(false);
 
 	}

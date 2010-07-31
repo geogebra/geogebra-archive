@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import geogebra.gui.DefaultGuiManager;
+import geogebra.gui.GuiManager;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
 
@@ -16,7 +16,7 @@ import geogebra3D.Application3D;
  * @author matthieu
  *
  */
-public class DefaultGuiManager3D extends DefaultGuiManager {
+public class DefaultGuiManager3D extends GuiManager {
 
 	
 	private AbstractAction showPlaneAction;

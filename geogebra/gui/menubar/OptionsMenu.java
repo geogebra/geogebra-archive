@@ -296,8 +296,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			cbIgnoreDocumentPerspective = new JCheckBoxMenuItem(
 					ignoreDocumentPerspectiveAction);
 			app.setEmptyIcon(cbIgnoreDocumentPerspective);
-			cbIgnoreDocumentPerspective.setSelected(app
-					.isIgnoringDocumentPerspective());
+			cbIgnoreDocumentPerspective.setSelected(layout.isIgnoringDocument());
 
 			submenu.add(cbShowViewTitlebar);
 			submenu.add(cbIgnoreDocumentPerspective);
@@ -423,8 +422,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.setIgnoreDocumentPerspective(!app
-						.isIgnoringDocumentPerspective());
+				layout.setIgnoreDocument(!layout.isIgnoringDocument());
 			}
 		};
 

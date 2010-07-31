@@ -1,5 +1,6 @@
 package geogebra.gui;
 
+import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
@@ -18,7 +19,6 @@ import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
-import geogebra.io.layout.Perspective;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -30,8 +30,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
-import geogebra.main.GuiManager;
-import geogebra.main.LayoutBridge;
 import geogebra.main.MyError;
 import geogebra.main.MyResourceBundle;
 import geogebra.util.Util;
@@ -39,7 +37,6 @@ import geogebra.util.Util;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
@@ -58,15 +55,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -94,7 +88,7 @@ import org.neuroph.contrib.jHRT.gui.HandwritingRecognitionTool;
  * This is done to be able to put class files of geogebra.gui.* packages into a
  * separate gui jar file.
  */
-public class DefaultGuiManager implements GuiManager {
+public class GuiManager {
 	
 	private static final int SPREADSHEET_INI_COLS = 26;
 	private static final int SPREADSHEET_INI_ROWS = 100;
@@ -125,41 +119,23 @@ public class DefaultGuiManager implements GuiManager {
     private Locale currentLocale;
     private boolean htmlLoaded;//added by Zbynek Konecny, 2010-05-28 (see #126)
     
-    private Layout layout;    
-    private boolean initialized = false;
+    private Layout layout;
 
 	// Actions
 	private AbstractAction showAxesAction, showGridAction, undoAction,
 			redoAction;	
 
-	public DefaultGuiManager(Application app) {
+	public GuiManager(Application app) {
 		this.app = app;
 		this.kernel = app.getKernel();
 		
 		// the layout component
 		layout = new Layout();
 		
-		// removed: we need the arrow keys to work in applets 
-		//if (!app.isApplet())
-		
 		initAlgebraController(); // needed for keyboard input in EuclidianView
 		
 		//Zbynek Konecny, 2010-05-28 (see #126)
-		htmlLoaded=false;
-	}
-	
-	public void initialize() {
-		if(initialized) return;
-		
-		initialized = true;
-		
-		layout.initialize(app);
-	}
-	
-	public void setPerspectives(ArrayList<Perspective> perspectives) {
-		layout.setPerspectives(perspectives);
-		
-		layout.setTitlebarVisible(app.isViewTitleBarVisible());
+		htmlLoaded = false;
 	}
 	
 	/**
@@ -198,15 +174,8 @@ public class DefaultGuiManager implements GuiManager {
 	    }
 	  
 	public synchronized CasManager getCasView() {
-		if (casView == null) {			
-			// this code wraps the creation of the cas view and is
-			// necessary to allow dynamic loading of this class
-			ActionListener al = new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					casView = new geogebra.cas.view.CASView(app);
-				}
-			};
-			al.actionPerformed(null);
+		if (casView == null) {
+			casView = new geogebra.cas.view.CASView(app);
 		}
 
 		return casView;
@@ -299,44 +268,7 @@ public class DefaultGuiManager implements GuiManager {
 	public void traceToSpreadsheet(GeoElement geo) {
 		if (spreadsheetView != null) 
 			spreadsheetView.getTraceManager().traceToSpreadsheet(geo);		
-	}
-
-	
-	// ************ Old Code *********************
-	/*
-	public int getHighestUsedSpreadsheetColumn() {
-		if (spreadsheetView != null) { 
-			return spreadsheetView.getHighestUsedColumn();
-		}
-		return -1;
-	}
-	
-	public int getSpreadsheetTraceRow(int column) {
-		if (spreadsheetView != null) { 
-			return spreadsheetView.getTraceRow(column);
-		}
-		return -1;
-	}
-	
-	public void startCollectingSpreadsheetTraces() {
-		if (spreadsheetView != null) 
-			spreadsheetView.startCollectingSpreadsheetTraces();
-	}
-
-	public void stopCollectingSpreadsheetTraces() {
-		if (spreadsheetView != null) 
-			spreadsheetView.stopCollectingSpreadsheetTraces();
-	}
-	
-	public void traceToSpreadsheet(GeoElement geo) {
-		if (spreadsheetView != null) 
-			spreadsheetView.traceToSpreadsheet(geo);		
-	}
-
-	*/	
-	//==========================================
-	//END G.Sturr	
-	
+	}	
 	
 	public void getSpreadsheetViewXML(StringBuilder sb) {
 		if (spreadsheetView != null)
@@ -501,7 +433,7 @@ public class DefaultGuiManager implements GuiManager {
 		}
 	}
 	
-	public LayoutBridge getLayout(){
+	public Layout getLayout(){
 		return layout;
 	}
 
@@ -1852,7 +1784,7 @@ public class DefaultGuiManager implements GuiManager {
 								try {
 									String[] args = { file.getCanonicalPath() };
 									GeoGebraFrame wnd = GeoGebraFrame
-											.createNewWindow(args);
+											.createNewWindow(new CommandLineArguments(args));
 									wnd.toFront();
 									wnd.requestFocus();
 								} catch (Exception e) {
@@ -2176,182 +2108,13 @@ public class DefaultGuiManager implements GuiManager {
 	}
 		
 	private void updateGUIafterLoadFile(boolean success, boolean isMacroFile) {
-		if(success && !isMacroFile && !app.isIgnoringDocumentPerspective()) {
-			setPerspectives(app.getTmpPerspectives());
+		if(success && !isMacroFile && !layout.isIgnoringDocument()) {
+			getLayout().setPerspectives(app.getTmpPerspectives());
 		}
 		
-//		// force JavaScript ggbOnInit(); to be called
+		// force JavaScript ggbOnInit(); to be called
 		if (!app.isApplet())
 			app.getScriptManager().ggbOnInit();
-			//app.getScriptManager().evalScript("ggbOnInit();", null);
-
-//
-//		if (isMacroFile) {
-//			app.updateToolBar();
-//			app.updateContentPane();
-//		} else {
-//			app.updateContentPane();
-//		}
-//		
-	/* Markus: removed this, because it always thinks that the screen is too small and it's very slow
-			// update GUI
-			if (app.getEuclidianView().hasPreferredSize()) {
-				
-				// Michael Borcherds 2008-04-27 BEGIN
-				// Scale drawing pad down if it doesn't fit on the screen
-	
-				// calculate titlebar height
-				// TODO is there a better way?
-				// getFrame().getHeight() -
-				// getFrame().getContentPane().getHeight(); doesn't seem to give
-				// the right answer
-				JFrame testFrame = new JFrame();
-				JFrame testFrame2 = new JFrame();
-
-				testFrame.setUndecorated(false);
-				testFrame.setVisible(true);
-				int height1 = testFrame.getHeight();
-				testFrame.setVisible(false);
-				testFrame2.setUndecorated(true);
-				testFrame2.setVisible(true);
-				int height2 = testFrame2.getHeight();
-				testFrame2.setVisible(false);
-
-				int titlebarHeight = height1 - height2 - 5;
-
-				double height = app.getEuclidianView().getPreferredSize().height;
-				double width = app.getEuclidianView().getPreferredSize().width;
-				
-				int furnitureWidth = app.getPreferredSize().width;
-				int furnitureHeight = app.getPreferredSize().height - titlebarHeight;
-
-				//GraphicsEnvironment env = GraphicsEnvironment
-				//		.getLocalGraphicsEnvironment();
-
-				//Rectangle screenSize = env.getMaximumWindowBounds(); 
-				Rectangle screenSize = app.getScreenSize();
-				// takes
-				// Windows
-				// toolbar
-				// (etc)
-				// into
-				// account
-
-				// fake smaller screen for testing
-				// screenSize.width=1024; screenSize.height=768;
-
-				// Application.debug(width);
-				// Application.debug(screenSize.width - furnitureWidth);
-				// Application.debug(screenSize.width );
-				// Application.debug(height);
-				// Application.debug(screenSize.height-furnitureHeight);
-				// Application.debug(screenSize.height);
-
-				if (width > screenSize.width - furnitureWidth
-						|| height > screenSize.height - furnitureHeight) {
-					
-					Application.debug("Screen too small, resizing to fit" +
-							"\nwidth = "+width+
-							"\nscreenSize.width = "+screenSize.width +
-							"\nfurnitureWidth = "+furnitureWidth +
-							"\nheight = "+height +
-							"\nscreenSize.height = "+screenSize.height +
-							"\nfurnitureHeight = "+furnitureHeight);
-
-					// close algebra and spreadsheet views
-					//app.setShowAlgebraView(false);
-					//app.setShowSpreadsheetView(false);
-
-					double xscale = app.getEuclidianView().getXscale();
-					double yscale = app.getEuclidianView().getYscale();
-					double xZero = app.getEuclidianView().getXZero();
-					double yZero = app.getEuclidianView().getYZero();
-					double scale_down = Math.max(width
-							/ (screenSize.width - furnitureWidth), height
-							/ (screenSize.height - furnitureHeight));
-					Application.debug(scale_down+"");
-					app.getEuclidianView().setCoordSystem(xZero / scale_down, yZero
-							/ scale_down, xscale / scale_down, yscale
-							/ scale_down, false);
-				}
-
-				// now check all absolute objects are still on screen
-				Construction cons = kernel.getConstruction();
-				TreeSet geoSet = cons.getGeoSetConstructionOrder();
-
-				int i = 0;
-				Iterator it = geoSet.iterator();
-				while (it.hasNext()) { // iterate through all objects
-					GeoElement geo = (GeoElement) it.next();
-
-					if (geo.isGeoText())
-						if (((GeoText) geo).isAbsoluteScreenLocActive()) {
-							GeoText geoText = (GeoText) geo;
-							boolean fixed = geoText.isFixed();
-
-							int x = geoText.getAbsoluteScreenLocX();
-							int y = geoText.getAbsoluteScreenLocY();
-
-							geoText.setFixed(false);
-							if (x > screenSize.width)
-								geoText.setAbsoluteScreenLoc(
-										x = screenSize.width - furnitureWidth
-												- 100, y);
-							if (y > screenSize.height)
-								geoText
-										.setAbsoluteScreenLoc(x,
-												y = screenSize.height
-														- furnitureHeight);
-							geoText.setFixed(fixed);
-						}
-					if (geo.isGeoNumeric())
-						if (((GeoNumeric) geo).isAbsoluteScreenLocActive()) {
-							GeoNumeric geoNum = (GeoNumeric) geo;
-							boolean fixed = geoNum.isSliderFixed();
-
-							int x = geoNum.getAbsoluteScreenLocX();
-							int y = geoNum.getAbsoluteScreenLocY();
-
-							int sliderWidth = 20, sliderHeight = 20;
-							if (geoNum.isSliderHorizontal())
-								sliderWidth = (int) geoNum.getSliderWidth(); // else
-							// sliderHeight
-							// =
-							// (
-							// int
-							// )
-							// geoNum
-							// .
-							// getSliderWidth
-							// (
-							// )
-							// ;
-							geoNum.setSliderFixed(false);
-
-							if (x + sliderWidth > screenSize.width)
-								geoNum.setAbsoluteScreenLoc(
-										x = screenSize.width - sliderWidth
-												- furnitureWidth, y);
-							if (y + sliderHeight > screenSize.height)
-								geoNum.setAbsoluteScreenLoc(x,
-										y = screenSize.height - sliderHeight
-												- furnitureHeight);
-							geoNum.setSliderFixed(fixed);
-						}
-
-					i++;
-				}
-
-				// Michael Borcherds 2007-04-27 END
-
-				// update GUI: size of euclidian view was set
-				app.updateContentPaneAndSize();
-			} else {
-				app.updateContentPane();
-			}
-			
-		}
-		*/
 	}
 
 	// Added for Intergeo File Format (Yves Kreis) -->
@@ -2378,43 +2141,7 @@ public class DefaultGuiManager implements GuiManager {
 				}
 			}
 		}
-//
-//		private String getFileName(String fileName) {
-//			try {
-//				FileChooserUI fcui = fileChooser.getUI();
-//				
-//				// for Windows, Linux (and Mac for Java 1.6+)
-//				if (fcui instanceof BasicFileChooserUI) {
-//					BasicFileChooserUI ui = (BasicFileChooserUI) fcui;
-//					return ui.getFileName();
-//				} 
-//				
-//				// for Mac (until Java 1.5)
-//				else if (fcui instanceof apple.laf.AquaFileChooserUI) {
-//					apple.laf.AquaFileChooserUI ui = (apple.laf.AquaFileChooserUI) fcui;
-//					return ui.getFileName();
-//				} 
-//				else if (fcui instanceof apple.laf.CUIAquaFileChooser) {
-//					apple.laf.CUIAquaFileChooser ui = (apple.laf.CUIAquaFileChooser) fcui;
-//					return ui.getFileName();
-//				} 
-//				else if (fileName == null) {
-//					Application.debug("Unknown UI in JFileChooser: " + fileChooser.getUI().getClass());
-//				}
-//			} catch (Throwable e) {
-//				// catch Mac exception when casting to apple.laf.CUIAquaFileChooser
-//				// in Java 1.6+
-//				e.printStackTrace();
-//			}
-//			
-//			
-//			return fileName;
-//		}
-	}
-
-	// <-- Added for Intergeo File Format (Yves Kreis)
-
-	
+	}	
 
 	protected boolean initActions() {	
 		if (showAxesAction != null) return false;
@@ -2446,9 +2173,6 @@ public class DefaultGuiManager implements GuiManager {
 			public void actionPerformed(ActionEvent e) {
 				// toggle grid
 				app.toggleGrid();
-				/*
-				app.getEuclidianView().showGrid(!app.getEuclidianView().getShowGrid());
-				*/
 				app.getEuclidianView().repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();

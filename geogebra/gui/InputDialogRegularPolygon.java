@@ -1,7 +1,7 @@
 package geogebra.gui;
 
 
-import geogebra.gui.DefaultGuiManager.NumberInputHandler;
+import geogebra.gui.GuiManager.NumberInputHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;

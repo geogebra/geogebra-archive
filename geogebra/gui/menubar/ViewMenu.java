@@ -1,7 +1,7 @@
 package geogebra.gui.menubar;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.DefaultGuiManager;
+import geogebra.gui.GuiManager;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.io.layout.Perspective;
@@ -576,7 +576,7 @@ class ViewMenu extends BaseMenu {
 	
 	@Override
 	public void update() {
-		DefaultGuiManager guiMananager = (DefaultGuiManager) app
+		GuiManager guiMananager = (GuiManager) app
 			.getGuiManager();
 
 		EuclidianView ev = app.getEuclidianView();

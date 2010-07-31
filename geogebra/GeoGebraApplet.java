@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra;
 
+import geogebra.main.AppletImplementation;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
@@ -159,7 +161,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		if (isAppletFullyLoaded()) return;
 
 		// create delegate object that implements our applet's methods
-		geogebra.main.DefaultApplet applImpl = new geogebra.main.DefaultApplet(this);
+		AppletImplementation applImpl = new AppletImplementation(this);
 
 		// initialize applet's user interface, this changes the content pane
 		applImpl.initGUI();		

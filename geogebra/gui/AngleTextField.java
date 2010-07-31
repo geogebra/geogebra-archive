@@ -2,7 +2,7 @@ package geogebra.gui;
 
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.main.Application;
-import geogebra.main.GuiManager;
+import geogebra.gui.GuiManager;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

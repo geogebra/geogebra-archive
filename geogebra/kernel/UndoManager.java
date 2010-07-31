@@ -56,7 +56,7 @@ public class UndoManager {
 	}
 
 	private void updateUndoActions() {
-		if (app.hasGuiManager())
+		if (app.hasFullGui())
 			app.getGuiManager().updateActions();		
 	}
 

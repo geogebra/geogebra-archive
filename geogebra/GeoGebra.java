@@ -44,13 +44,18 @@ public class GeoGebra extends Object {
 	// max possible heap space for applets in MB
 	public final static int MAX_HEAP_SPACE = 512;
 	
-    public static void main(String[] args) {  
-    	
+    public static void main(String[] cmdArgs) {  
+		CommandLineArguments args = new CommandLineArguments(cmdArgs);
+		
 		Frame splashFrame = null;
+		
     	boolean showSplash = true;
-    	for (int i = 0 ; i < args.length ; i++) {
-    		if (args[i].equals("--showSplash=false")) showSplash = false;
-    		else if (args[i].equals("--help")) showSplash = false;
+    	if(!args.getBooleanValue("showSplash", true)) {
+    		showSplash = false;
+    	}
+    	
+    	if(args.getStringValue("help").length() > 0) {
+    		showSplash = false;
     	}
     	
     	if (showSplash) {
@@ -78,7 +83,7 @@ public class GeoGebra extends Object {
 		  if (splashFrame != null) splashFrame.setVisible(false);
     }
     
-    private static void startGeoGebra(String [] args) {
+    private static void startGeoGebra(CommandLineArguments args) {
     	// create and open first GeoGebra window        	
     	geogebra.gui.app.GeoGebraFrame.main(args);
     }

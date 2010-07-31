@@ -611,7 +611,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 			if (getObjectColor().equals(ConstructionDefaults.colRegionPoint))
 				setObjColor(ConstructionDefaults.colPoint);
 			// move from Dependent to Independent in AlgebraView
-			if (app.hasGuiManager())
+			if (app.hasFullGui())
 				((AlgebraView)(app.getGuiManager().getAlgebraView())).rename((GeoElement)this);
 		}
 	

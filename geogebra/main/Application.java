@@ -17,11 +17,13 @@ the Free Software Foundation.
  */
 package geogebra.main;
 
+import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
 import geogebra.cas.jacomax.JacomaxAutoConfigurator;
 import geogebra.cas.jacomax.MaximaConfiguration;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GuiManager;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyXMLio;
@@ -110,7 +112,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-public abstract class Application implements KeyEventDispatcher {
+public class Application implements KeyEventDispatcher {
 	
 	// disabled parts
 	private static final boolean PRINT_DEBUG_MESSAGES = true;
@@ -283,24 +285,12 @@ public abstract class Application implements KeyEventDispatcher {
 
 	// private static Color COLOR_STATUS_BACKGROUND = new Color(240, 240, 240);
 	
+	private boolean hasGui = false;
 	
-	// IDs of the views - Florian Sonner 2008-10-21
 	public static final int VIEW_EUCLIDIAN = 1;
 	public static final int VIEW_ALGEBRA = 2;
 	public static final int VIEW_SPREADSHEET = 4;
 	public static final int VIEW_CAS = 8;
-	
-	/**
-	 * In case the application is using the layout class, the whole GUI stuff has to be loaded
-	 * in every case. Applets may set this value to false in order to use the light version
-	 * (just euclidian view) of the program.
-	 */
-	private boolean useLayout = true;
-	
-	/**
-	 * If the application should ignore the perspective stored in a loaded document.
-	 */
-	private boolean ignoreDocumentPerspective = false;
 	
 	/**
 	 * If the title bars of the views should be displayed in case the layout component is active.
@@ -312,18 +302,13 @@ public abstract class Application implements KeyEventDispatcher {
 	 */
 	private Dimension preferredSize = new Dimension();
 	
-	/**
-	 * A temporary vector with all perspectives which were included in the last loaded document.
-	 */
-	private ArrayList<Perspective> tmpPerspectives;
-	
 	public static final int DEFAULT_ICON_SIZE = 32;
 
 	private JFrame frame;
 	private AppletImplementation appletImpl;
 	private FontManager fontManager;
 	
-	protected GuiManager appGuiManager;
+	protected GuiManager guiManager;
 
 	private Component mainComp;
 	private boolean isApplet = false;
@@ -351,7 +336,7 @@ public abstract class Application implements KeyEventDispatcher {
 	// command dictionary
 	private LowerCaseDictionary commandDict;
 
-	private boolean INITING = false;
+	private boolean initing = false;
 	protected boolean showAlgebraView = true;	
 	private boolean showAuxiliaryObjects = false;
 	private boolean showAlgebraInput = true;
@@ -364,7 +349,6 @@ public abstract class Application implements KeyEventDispatcher {
 	private boolean[] showAxes = { true, true };
 	private boolean showGrid = false;
 	private boolean antialiasing = true;
-	private boolean showSpreadsheet = false;
 	private boolean printScaleString = false;
 	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
 
@@ -385,50 +369,40 @@ public abstract class Application implements KeyEventDispatcher {
 	protected JPanel centerPanel;
 
 	private ArrayList<GeoElement> selectedGeos = new ArrayList<GeoElement>();
+	
+	private ArrayList<Perspective> tmpPerspectives = new ArrayList<Perspective>();
 
 	private GgbAPI ggbapi = null;
 	private PluginManager pluginmanager = null;
 	private ScriptManager scriptManager = null;
 
-	public Application(String[] args, JFrame frame, boolean undoActive) {
+	public Application(CommandLineArguments args, JFrame frame, boolean undoActive) {
 		this(args, frame, null, null, undoActive);
 	}
 
-	public Application(String[] args, AppletImplementation appletImpl,
+	public Application(CommandLineArguments args, AppletImplementation appletImpl,
 			boolean undoActive) {
 		this(args, null, appletImpl, null, undoActive);
 	}
 
-	public Application(String[] args, Container comp, boolean undoActive) {
+	public Application(CommandLineArguments args, Container comp, boolean undoActive) {
 		this(args, null, null, comp, undoActive);
 	}
 
-	protected Application(String[] args, JFrame frame,
+	protected Application(CommandLineArguments args, JFrame frame,
 			AppletImplementation appletImpl, Container comp, boolean undoActive) {
-
-		/*
-		 * if (args != null) { for (int i=0; i < args.length; i++) {
-		 * Application.debug("argument " + i + ": " + args[i]);
-		 * JOptionPane.showConfirmDialog( null, "argument " + i + ": " +
-		 * args[i], "Arguments", JOptionPane.DEFAULT_OPTION,
-		 * JOptionPane.PLAIN_MESSAGE); } }
-		 */
-		
-		
-
-
-		// Michael Borcherds 2008-05-05
-		// added to help debug applets
+		// help debug applets
 		System.out.println("GeoGebra " + GeoGebra.VERSION_STRING + " " +  GeoGebra.BUILD_DATE
 				+ " Java " + System.getProperty("java.version"));
+
+		isApplet = appletImpl != null;
 		
 		if(frame != null || comp != null) {
 			preferredSize = new Dimension(800, 600); // TODO redo (F.S:)
 		} else {
 			preferredSize = appletImpl.getJApplet().getSize();
 		}
-
-		isApplet = appletImpl != null;
+		
 		JApplet applet = null;
 		if (frame != null) {
 			mainComp = frame;
@@ -440,13 +414,13 @@ public abstract class Application implements KeyEventDispatcher {
 			mainComp = comp;
 		}
 		
+		hasGui = !isApplet || appletImpl.needsGui();
+		
 		// don't want to redirect System.out and System.err when running as Applet
 		// or eg from Eclipse
 		getCodeBase(); // initialize runningFromJar
-		if (!isApplet && runningFromJar) setUpLogging();
 		
-		// init codebase
-		initCodeBase();
+		if (!isApplet && runningFromJar) setUpLogging();
 
 		// needed for JavaScript getCommandName(), getValueString() to work
 		// (security problem running non-locally)
@@ -459,18 +433,23 @@ public abstract class Application implements KeyEventDispatcher {
 
 		fontManager = new FontManager();
 		initImageManager(mainComp);
-		//imageManager = new ImageManager(mainComp);
 
 		// set locale
 		setLocale(mainComp.getLocale());
 				
 		// init kernel
 		initKernel();
-		//kernel = new Kernel(this); //ggb3D 2008-10-26 : in Application3D, changed for Kernel3D
 		kernel.setPrintDecimals(Kernel.STANDARD_PRINT_DECIMALS);
 	
 		// init xml io for construction loading
 		myXMLio = new MyXMLio(kernel, kernel.getConstruction());
+	
+		// load the gui manager if necessary
+		if(hasFullGui()) {
+			setWaitCursor();
+			guiManager = new geogebra.gui.GuiManager(Application.this);
+			setDefaultCursor();
+		}
 
 		// init euclidian view
 		initEuclidianViews();
@@ -481,36 +460,36 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 
 		// load file on startup and set fonts
-		// INITING: to avoid multiple calls of setLabels() and
+		// set flag to avoid multiple calls of setLabels() and
 		// updateContentPane()
-		INITING = true;
+		initing = true;
 		setFontSize(12);
-	
-		// use the layout in case at least one GUI element is displayed
-		useLayout = !isApplet;// || (isApplet && appletImpl.useGui());
-		if(useLayout) {
-			getGuiManager().initialize();
-		}	
-
-		if (!isApplet) {
+		
+		if(!isApplet) {
 			// init preferences
-			GeoGebraPreferences.getPref().initDefaultXML(this);
+			GeoGebraPreferences.getPref().initDefaultXML(this); 
+		}
+		
+		// initialize layout
+		if(hasFullGui()) {
+			getGuiManager().getLayout().initialize(this);
 		}
 		
 		// open file given by startup parameter
 		boolean fileLoaded = handleFileArg(args);
 
-		if (!isApplet) {
+		if (!isApplet) {			
 			// load XML preferences
 			currentPath = GeoGebraPreferences.getPref().getDefaultFilePath();
 			currentImagePath = GeoGebraPreferences.getPref()
 					.getDefaultImagePath();
+			
 			if (!fileLoaded)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
 		}
 		
-		if(useLayout && !fileLoaded) {			
-			getGuiManager().setPerspectives(tmpPerspectives);	
+		if(hasFullGui() && !fileLoaded) {			
+			getGuiManager().getLayout().setPerspectives(tmpPerspectives);	
 		}
 		
 		setUndoActive(undoActive);
@@ -518,7 +497,7 @@ public abstract class Application implements KeyEventDispatcher {
 		// applet/command line options like file loading on startup
 		handleOptionArgs(args); 
 		
-		INITING = false;
+		initing = false;
 
 		// for key listening
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
@@ -559,6 +538,13 @@ public abstract class Application implements KeyEventDispatcher {
 		imageManager = new ImageManager(component);
 	}
 	
+	/**
+	 * @return True if the whole GUI is available, false if
+	 * 		just the euclidian view is displayed.
+	 */
+	final public synchronized boolean hasFullGui() {
+		return hasGui;
+	}
 	
 	/**
 	 * Returns this application's GUI manager which is an instance of
@@ -570,34 +556,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 *         in applets.
 	 */
 	final public synchronized GuiManager getGuiManager() {
-		if (appGuiManager == null) {
-			setWaitCursor();
-
-			appGuiManager = createGuiManager();//new geogebra.gui.DefaultGuiManager(Application.this);
-			setDefaultCursor();
-			// // this code wraps the creation of the DefaultGuiManager and is
-			// // necessary to allow dynamic loading of this class
-			// ActionListener al = new ActionListener() {
-			// public void actionPerformed(ActionEvent e) {
-			// appGuiManager = new
-			// geogebra.gui.DefaultGuiManager(Application.this);
-			// }
-			// };
-			// al.actionPerformed(null);
-		}
-
-		return appGuiManager;
-	}
-	
-	public synchronized GuiManager createGuiManager() {
-		
-		return new geogebra.gui.DefaultGuiManager(Application.this);
-		
-	}
-	
-
-	final public boolean hasGuiManager() {
-		return appGuiManager != null;
+		return guiManager;
 	}
 
 	final public JApplet getJApplet() {
@@ -669,7 +628,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public boolean isIniting() {
-		return INITING;
+		return initing;
 	}
 	
 	public void fileNew() {
@@ -677,37 +636,17 @@ public abstract class Application implements KeyEventDispatcher {
 		clearConstruction();
 		
 		// clear input bar
-		if (hasGuiManager() && showAlgebraInput()) {
+		if (hasFullGui() && showAlgebraInput()) {
 			AlgebraInput ai = (AlgebraInput)(getGuiManager().getAlgebraInput());
 			ai.clear();
 		}
 		
 		// reset spreadsheet columns, reset trace columns
-		if (hasGuiManager()) {
+		if (hasFullGui()) {
 			getGuiManager().resetSpreadsheet();
 		}
 		
 		getEuclidianView().resetMaxLayerUsed();
-	}
-	
-	public boolean isUsingLayout() {
-		return useLayout;
-	}
-	
-	/**
-	 * @return If the perspective stored in loaded documents is ignored.
-	 */
-	public boolean isIgnoringDocumentPerspective() {
-		return ignoreDocumentPerspective;
-	}
-	
-	/**
-	 * Set if the perspective stored in loaded documents should be ignored.
-	 * 
-	 * @param ignoreDocumentPerspective
-	 */
-	public void setIgnoreDocumentPerspective(boolean ignoreDocumentPerspective) {
-		this.ignoreDocumentPerspective = ignoreDocumentPerspective;
 	}
 	
 	/**
@@ -753,7 +692,7 @@ public abstract class Application implements KeyEventDispatcher {
 	 * Updates the GUI of the framd and its size.
 	 */
 	public void updateContentPaneAndSize() {
-		if (INITING)
+		if (initing)
 			return;
 
 		updateContentPane(false);
@@ -764,7 +703,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	private void updateContentPane(boolean updateComponentTreeUI) {
-		if (INITING)
+		if (initing)
 			return;
 
 		Container cp;
@@ -917,7 +856,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (centerPanel == null) return;
 		
 		centerPanel.removeAll();
-		if(useLayout) {		
+		if(hasFullGui()) {
 			centerPanel.add(getGuiManager().getLayout().getRootComponent(), BorderLayout.CENTER);
 		} else {
 			centerPanel.add(getEuclidianView(), BorderLayout.CENTER);
@@ -945,76 +884,92 @@ public abstract class Application implements KeyEventDispatcher {
 	/**
 	 * Handles command line options (like -language).
 	 */
-	private void handleOptionArgs(String[] args) {
-		if (args != null) {
-			// handle all options (starting with --)
-			for (int i = 0; i < args.length; i++) {
-				if (args[i].startsWith("--")) {
-					// option found: get option's name and value
-					int equalsPos = args[i].indexOf('=');
-					String optionName = equalsPos <= 2 ? args[i].substring(2)
-							: args[i].substring(2, equalsPos);
-					String optionValue = equalsPos < 0
-							|| equalsPos == args[i].length() - 1 ? "" : args[i]
-							.substring(equalsPos + 1);
-					
-					Application.debug("option: "+optionName+"="+optionValue);
-					
-					if (optionName.equals("help")) {
-						// help message
-						System.out
-								.println("Usage: java -jar geogebra.jar [OPTION] [FILE]\n"
-										+ "Start GeoGebra with the specified OPTIONs and open the given FILE.\n"
-										+ "  --help\t\tprint this message\n"
-										+ "  --language=LANGUAGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n"
-										+ "  --showAlgebraInput=BOOLEAN\tshow/hide algebra input field\n"
-										+ "  --showAlgebraInputTop=BOOLEAN\tshow algebra input at top/bottom\n"
-										+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
-										+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
-										+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
-										+ "  --showSplash=BOOLEAN\tenable/disable the splash screen\n"
-										+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
-										+ "  --fontSize=NUMBER\tset default font size\n"
-										+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes\n"
-										+ "  --CAS=[MATHPIPER|MAXIMA]\tselect which CAS to use, default MathPiper\n"
-										+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
-										+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
-						System.exit(0);
-					} else if (optionName.equals("language")) {
-						setLocale(getLocale(optionValue));
-
-						// Application.debug("lanugage option: " + optionValue);
-						// Application.debug("locale: " + initLocale);
-					} else if (optionName.equals("showAlgebraInput")) {
-						setShowAlgebraInput(!optionValue.equals("false"));
-					} else if (optionName.equals("showAlgebraInputTop")) {
-						setShowInputTop(optionValue.equals("true")); // Florian Sonner 2008-10-26
-					} else if (optionName.equals("showAlgebraWindow")) {
-						getGuiManager().setShowAlgebraView(!optionValue.equals("false"));
-					} else if (optionName.equals("showSpreadsheet")) {
-						getGuiManager().setShowSpreadsheetView(!optionValue.equals("false"));
-					} else if (optionName.equals("showCAS")) {
-						getGuiManager().setShowCASView(!optionValue.equals("false"));
-					} else if (optionName.equals("CAS")) {
-						if (optionValue.toLowerCase(Locale.US).equals("maxima")) {
-							setDefaultCAS(CAS_MAXIMA);
-						}
-					} else if (optionName.equals("maximaPath")) {
-						setMaximaPath(optionValue);
-					} else if (optionName.equals("fontSize")) {
-						setFontSize(Integer.parseInt(optionValue));
-					} else if (optionName.equals("enableUndo")) {
-						setUndoActive(!optionValue.equals("false"));
-					} else if (optionName.equals("showAxes")) {
-						showAxes[0] = !optionValue.equals("false");
-						showAxes[1] = showAxes[0];
-					} else if (optionName.equals("showGrid")) {
-						showGrid = !optionValue.equals("false");
-					} else if (optionName.equals("antiAliasing")) {
-						antialiasing = !optionValue.equals("false");
-					}
-				}
+	private void handleOptionArgs(CommandLineArguments args) {
+		if(args.getStringValue("help").length() > 0) {
+			// help message
+			System.out
+					.println("Usage: java -jar geogebra.jar [OPTION] [FILE]\n"
+							+ "Start GeoGebra with the specified OPTIONs and open the given FILE.\n"
+							+ "  --help\t\tprint this message\n"
+							+ "  --language=LANGUAGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n"
+							+ "  --showAlgebraInput=BOOLEAN\tshow/hide algebra input field\n"
+							+ "  --showAlgebraInputTop=BOOLEAN\tshow algebra input at top/bottom\n"
+							+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
+							+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
+							+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
+							+ "  --showSplash=BOOLEAN\tenable/disable the splash screen\n"
+							+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
+							+ "  --fontSize=NUMBER\tset default font size\n"
+							+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes\n"
+							+ "  --CAS=[MATHPIPER|MAXIMA]\tselect which CAS to use, default MathPiper\n"
+							+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
+							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
+			System.exit(0);
+		}
+		
+		String language = args.getStringValue("language");
+		if(language.length() > 0) {
+			setLocale(getLocale(language));
+		}
+		
+		boolean showAlgebraInput = args.getBooleanValue("showAlgebraInput", true);
+		if(!showAlgebraInput) {
+			setShowAlgebraInput(false);
+		}
+		
+		boolean showAlgebraInputTop = args.getBooleanValue("showAlgebraInputTop", true);
+		if(!showAlgebraInputTop) {
+			setShowInputTop(false);
+		}
+		
+		if(args.containsArg("showAlgebraWindow")) {
+			boolean showAlgebraWindow = args.getBooleanValue("showAlgebraWindow", true);
+			getGuiManager().setShowAlgebraView(showAlgebraWindow);
+		}
+		
+		if(args.containsArg("showSpreadsheet")) {
+			boolean showSpreadsheet = args.getBooleanValue("showSpreadsheet", true);
+			getGuiManager().setShowSpreadsheetView(showSpreadsheet);
+		}
+		
+		if(args.containsArg("showCAS")) {
+			boolean showCAS = args.getBooleanValue("showCAS", true);
+			getGuiManager().setShowCASView(showCAS);
+		}
+		
+		String cas = args.getStringValue("CAS");
+		if (cas.toLowerCase(Locale.US).equals("maxima")) {
+			setDefaultCAS(CAS_MAXIMA);
+			
+			if(args.containsArg("maximaPath")) {
+				setMaximaPath(args.getStringValue("maximaPath"));
 			}
+		}
+		
+		String fontSize = args.getStringValue("fontSize");
+		if(fontSize.length() > 0) {
+			setFontSize(Integer.parseInt(fontSize));
+		}
+		
+		boolean enableUndo = args.getBooleanValue("enableUndo", true);
+		if(!enableUndo) {
+			setUndoActive(false);
+		}
+		
+		if(args.containsArg("showAxes")) {
+			boolean showAxes = args.getBooleanValue("showAxes", true);
+			this.showAxes[0] = showAxes;
+			this.showAxes[1] = showAxes;
+		}
+		
+		if(args.containsArg("showGrid")) {
+			boolean showGrid = args.getBooleanValue("showGrid", false);
+			this.showGrid = showGrid;
+		}
+		
+		boolean antiAliasing = args.getBooleanValue("antiAliasing", true);
+		if(!antiAliasing) {
+			this.antialiasing = false;
 		}
 	}
 	
@@ -1023,47 +978,37 @@ public abstract class Application implements KeyEventDispatcher {
 	 * 
 	 * @return true if a file was loaded successfully
 	 */
-	private boolean handleFileArg(String[] args) {
-
-		if (args == null || args.length < 1)
+	private boolean handleFileArg(CommandLineArguments args) {
+		if(!args.containsArg("file")) 
 			return false;
-
-		String fileArgument = null;
-		// the filename is the last command line argument
-		// and should not be an option, i.e. it does not start
-		// with "-" like -open, -print or -language
-		if (args[args.length - 1].charAt(0) == '-')
-			// option
-			return false;
-		else {
-			// take last argument as filename
-			fileArgument = args[args.length - 1];
-		}
+		
+		String fileArgument = args.getStringValue("file");
 
 		try {
 			boolean success;
 			String lowerCase = fileArgument.toLowerCase(Locale.US);
 			boolean isMacroFile = lowerCase.endsWith(FILE_EXT_GEOGEBRA_TOOL);
+			
 			if (lowerCase.startsWith("http") || lowerCase.startsWith("file")) {
 				//replace all whitespace characters by %20 in URL string
 				fileArgument = fileArgument.replaceAll("\\s", "%20");
 				URL url = new URL(fileArgument);
 				success = loadXML(url, isMacroFile);
 				
-				if(success && !isMacroFile && useLayout && !isIgnoringDocumentPerspective())
-					getGuiManager().setPerspectives(tmpPerspectives);
+				if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
+					getGuiManager().getLayout().setPerspectives(tmpPerspectives);
+				}
 				
 				updateContentPane(true);
 			} else if (lowerCase.startsWith("base64://")) {
 				
 				// substring to strip off base64://
 				byte [] zipFile = geogebra.util.Base64.decode(fileArgument.substring(9));
-				//byte [] zipFile = geogebra.util.Base64.decode("UEsDBBQACAAIACC1DzsAAAAAAAAAAAAAAAAWAAAAZ2VvZ2VicmFfdGh1bWJuYWlsLnBuZy1WCThU3RuXQkZZxxRCGJmEsiWyjiFm0FCYylK2RMU3xpKyG4x9yL5k7FsykkR4LGH4yKApalLZx84kyzf8L/3v89x7nvuec+7znve9v4WAtrh2EiQKYmNjO2lqgrACxl7gTjvODjxT5KV/sLHxFJsiDG4GjC/lmV8XMxXtYSnPXKiuj363cu9iVdrm884atTKT5mh33qopQSMiGpwiQIw5x+0UdkblB/+K0xku79AvZGfniM44VX7NrtQjbqF3axMSOuOkbtEiMCupow8rRkLprk30i3t6Hrf4Xu415zOUGLZ0++A+m51vfn5+yPCGtjYvfUp7u8GNGyPfv+dzMJyMCeabf8bHs+dsvby8xJBwc8bqqreHR980llpWseDkQFhiPkpXKiZBHz16tBaQm4uGuWw2ZdpKe2FWJtpOsRhOZHcYt+/Nn96ZuXcvuR9MORmAsWISEpzFOEOpBFqFssCRilfSZWjYpWjdB2WjJJmKiVStnJwcpjDFJUWzXi6jn5hKcWk0NOZlUcS14qegRM06k8ZO9gIreeMOcdHbT7TzgSuWmCyTEIkkGkvzzH/xkeYxhVDIs9A0ZBoBISrIF7p0XpKwmPvw4cOb8Qg/C9rnzxeMpa/KMcsUoJBQDsvek7BjoDB41YRwYU84IlWinz1JrPHnPxFhEhps+GQ2vL4U+jiYHRigjKIhlddivexhoa4Mp52xk9a4qOjo6O7ntRpRtPK4eai+VCPnwUpSomClfBUHsK3y/D/NdBQKpU8io3tLMcfHovkkT8gSjItOhAe3TSz6Kr/qsqmrMZImCprJvabGRAaqij4HxxlhUyhQn7lUP6S4VkqovC/GUzZQJXqz1vEDGMSxnEw0DMHe300lRurOP22UiYu8qsAmX+IE/ZaVl/d7+5m9vb2wzL19H21BeSNRgkKx80cKjWaTZZKoIzePazKDDicHsL2zq3GC1vmkDLgdViLLrPTw9eOsqxSZTSEG/vjwzLd58bTmC1NRzfCjdOG6B5vwczuek9mm7pmuWU2ZFuzgDo9w+KbqWSlnDTDn84AWh/7RDzjBAn67o0A1C/iBolJrh5D1Xhh9KTMhsIdOgKRYzuMHhGPsqaUS73ucRhyDhLd3Fq5wriC5Vm4XrX57FzNgs7Pxoumz00ewV9gn0/1n7qG6+IY9mhdYXPMnyiJg7LLk4mRw1kvWjnglfgByBJQQ3nHVvzRkV2ziE0+L5OXh8Ud4sxRdw4gg0aD9jfutbawPwazAM72qIFDWgO4if0u6mFeIVcBU+R9y24TRYO3CC9G0uj1sdbJDt4/CETBtRpb5a6Nsfl6AhGptvVK22ptBJRrMHsV+KYOUKCQxWX/2fVrWBHe2oqyDA/NSCMHwG5St4gbbfQ9SVWOG/dMMO5dB2riKJoKcx4wdJV1fL+EVN+1Bie8I0hQyVVUhhct923T64rD2QmQvKeG36bd7AzFc3mqCt0y0Q18YBt3OFZoeWahv1YITT3sWOgZL5cfzXlhBYeIExt8vS1gSUqwaIEJiXq16rr8VL1J9dGn/TSopons1EtBbl39p/leCsbWr4sTXtXluN3csVq3dXMzqQFlECj6Sbe9JQsgikU+u7mDSGHfuFG7k/tHg+zqA76AzsW5adl52qiIgSgMk5Gxd5nG8mpL2lxDHwxheSzGiwNv1YS3vu1J2kOcLMHQ3EEkxiVv+z+gOYYV446YV+flUpC2dccfaKcZxHjZfHx/awWT2tmm89u1VF0aXo3iHl6YlbXuCkA773I/CwqI/tbhor4U97Soy+q14XhlJm4rNo1kEGtWnAQCC39m2SsTWRlZTOB3XXSZ75tdlFOmWmaguP5uQmus1WcL4fwUHITJF3pra6Ld2qsogPd0ce7Pn8/W4a/fWt1ObprMJlr2Lvtf75y17JUXKYzrypq6PjVGAOAg26k9JTZB0yB19cH6F7NYNf7hcHqtD65v78bP94hy5coWMc1yf+s0tozjtrOBhvUgtj3WuTptD6/BlVoo4iygWOc586mLEEYtGFiD37yPkdnxZkw1zCD356TlE29KbkrdCwS7Mq9bGejLVe76LS6TEiD+jcT9C/C4vZHna6P/sIdJyVpIS63HPviVrZ0Xokyg2+4F0n54rfCa2cvm0bcV8kD+e89a6C8sVx5rOFHDTcHE0X3wp52kXxGMS3zxFWMxKd9gguwgRPW2CXqPic775yayNqSq2oDH5wNfO2+5nbzwruwjyH+mPhHsPWMGgu7uOXPtbu62WIehTYF3xVY38lczs3COfFfDwuoutW5nZpawcGgAwu9rr2dLnzpsK+Axvlpes2eppVd8Vuy0i9mzSZ1ju695qs4N8C0mKvaYiFG6o+GR96e3I7KCRm9svWZ107QcPc/fW+2M6BT5X7ZSmny2SNBPqTJH7cZtFWn0uWL3HAa58sLikdUCBChQXFao7GNbFcJRHZWdnCxIQ3Kj8uRx5q1fxwYWoPyCjjvTlpaUlHVeo8WDR/br4YEwWu6A1FMPisRvhxENaldvtSWHLAKmYqBlIiUKg2WoKBfyl3CDlgGhEavtV9HHuvwR9L6+If4N81tLoLzWZMSMQwsBUzadj+Kgde1J55G0rQ8POoSH+nM8CJzjl5OQm1648iPsgvVvcOT4+vrO7Ozsz4/7jyW+G9fjkWoD7dWmiu5eXnF4akjqof3aITm9pa5sYH/eIZYghndTBTXY1PKeUcnWebo6/8Rx1Bw7mzvemeGZmJjEx8YJtzZDyW6+Jhq9LqqqqeXl5OAwJfVpc3PfKmaqqKg2v78VRH6zSienQiIiIei4Y2JhEVdnJU6MmIS1VKpbaI7iqRSyrtHxmTvheHl1A9zeG7OsutT3bVuHwnuw++farufhXerP/+cqnf5Ytr6lfurQ6RUnt7jbGQiCQuSoT7AJNsWzkyfxwicrsMREW2Jypqg5yhfCGNNTeVYAULXMlD3Pho5AgLJL7ZIrCjVPVe/hmuEmiJ8a416AyHQoG3SpVKv1oAALD2Q9lD42Zhal1sLN7mIa3F7gywj+1hcJNhpxJuxW3kvDKQDviyUAg9IDyq0mR95kH9K8uW/TiBKwrRU4epS3xcWsrgPsVDpdiZm4O9HlsZnZ2Xi+n3EBGEHuGl+uvzjVZ/PTGMLZYeybQYQC2Z8YnN7Z71wJbvknJRO9N8YrP4LRM4bxBfP5zniVE72gO/ZKb8ZFXAa0bGBiY/fji1WluzWGTcvADaF0yIHQ6Ojqu0pqbuegAV2liVNfRueXlmtOABUguPtA5p7dfD2XvmtiJsQ9xpx5dy8lxzwGapF4aWfMCUHZpyisdGxGw/Jm+tUH0k2vyabDcN5jfi5zTRrkpHNajJbGqNnRfgbShtUJfUjf05HpXBUXNzDKgeVCmoLvfeKBPVtu3AWuqALmxhfK+rJ6VNK0uP63mW/Er3vof+2+P/wwPpyQXv3ypKJEE+BQIBFPHwPrjcaZzZ/H+1outoVBcIjgx411k2aCN0tiuS59k8jr5/ZBO4rpVI6JeqZrKk6esQl2AGw/Y14Mz+mV3P4SmWPXRhX9lDCWXSxssc2aei/LHB4zfSuUqBizL/82LbyK8ODbyEA5V3CBiohiAr0O3Iq+6l80HSLV1qonjOXZ8YCE6vUAxDUlwY6LKRgpFWL2nBuaulcQo0T3ffjXKWC6xQpz615UbhFfZIe87kOKDt585qBVJin067srsd3sNbPje8rQMViS5DLqXXcAf4W+iJvJ+8p+j0Gztx2yge0A27hLgX7Jq0Ergh8GYo2MIwUDWR0Dt6oeG4a9v+Fx/jYS33Vfxta/dydgTzM89uk3GPcfw47U1udDuZ8HZOlwVatTj2GQGjHidWdQMpxKC39lZ4AolgyIOaNkIV/ii8yd/3kHiFkxnLIkApNkKvUJNioIVCrEaGhqQ4UKsOUacBfMrnW6tRuXzP/B5widgo0KAgJJD2Q7T8355DoZI4iCc04F0Y5LdVbrZQVKWRut6nTNf2LGXsNuAbWczNbJA1MDvhv8PUEsHCBpd2OXDCwAA3QsAAFBLAwQUAAgACAAgtQ87AAAAAAAAAAAAAAAAFgAAAGdlb2dlYnJhX2phdmFzY3JpcHQuanNLK81LLsnMz1NIT0/yz/PMyyzR0FSorgUAUEsHCNY3vbkZAAAAFwAAAFBLAwQUAAgACAAgtQ87AAAAAAAAAAAAAAAADAAAAGdlb2dlYnJhLnhtbN1YX2/bNhB/Tj/FQQ97SmyRlGQZs1Mk2R4KrF2BZHvYGy0xNhdZVCXKsYt++N2RkiOnybagDbbEgCEdef9/d+TZs7fbdQEbVTfalPOAjcIAVJmZXJfLedDa65M0eHv6ZrZUZqkWtYRrU6+lnQdiJAJab/Xpm6PZrS5zcwu3OrereZCGqGWl9HKFjAkR49OjWYVGKpVZvVENSg5I0Pk8sOsqIFWVLGn/yL9BYTJpnW8B5Hqjc1XPg3DE4wBMrVVpu11GRlB83MvPNlrdekX05mwg00Y3elEotFe3KgBdXtdyjeS1LBqk78whb6M/406cTgLwAeJqGB7TF6M6jnxkBxb4EyyI3gInRfct8PhhC9HAQqfycRO9BfGQhcdiSJ/HwmzcIzKzxhQLWZ+GIKYQT+HLF2DAQgYxMKSAA4shQiKFY5iAmOBaBAJSmOICExBF+IxpN5o46QRihkwMNUYQC2AM93gEwEPgnN4ZcIEccQwxMk9IDydRkUCUICVSiNCZEHkEyuArWuQgGAiS4yjHIWGQhMickEo2AU6SLCI9UQgRg8jZwo0UREyMs3EfLMbdrLBJ5FY1fXEsa1f67t3lSJdVa4H4+uVsveewptojgNxY63c95Gv/oMWOZoVcqAI7+dLuCgWwkQVVqBN1jTtTbVboXMvyd4TGeYhgQt/HrvL7Po5EGjgXM2Pq/HLXWLWG7R+qNqiTxXRw7DwlPNVkkiooDt3WkHJq1OZSWYvONY9mhN7fNeemyPdhV0aX9kJWtq3dCYU9VJN/Z+WyUC5M17nZSmU3C7O9dLXJhNd1tauQ6uwvlhemMDXgccJjPE2W3XPhn46HHNtzhY4ndBydDlK632dT7jjcc+GfjgsR8K51gbI+Shb2ZnTjOo+yNoDewUct1pba/tITVmc3d5ES/4d2vUDkO7FDlew7qZyN79XK7EbVpSp8RZQIZGvaxpeYx8r5katMr5Ec1B46R2D9hg741Vwta6WGxeWS5fZCb7u3RaYadCmjwwfdtuRyALK1K4MQvNfZSqoCzk2NFVDnDd4Z0hIL1Xqh1nhfgHVV4Appn4+zYN+eZvEndtC9fA0iwv0HS8IVjyyqlaT7qUO2kDtVDyLpWvK9ydXBqiwxSy4mbKuKFBAOlVIeQdsVLlSo0NX9wCGXsga28+CEj0K8HnbYrCOswc/+PndMLlzqBm9WDFe/ynaXqX/I2fmryBkbpUmfsufP2cUryZlwKeOjKHr2lP30KlJ2wkYs7ZOWfJekZWa9lmUOpRvMPppitzRlcDdEyJDONZCMWhUkp+oDKSijPlut7dkqFGaeVXrWhWfN8BHhCe1tdxYfAMzb7iHx6g6vPrvCOwYn88bNyHZ4Ez8ZWxYLh27Musv4Dlz2FHAfL8FGLYnaOyL/m2ieWKqDckNZNh1+4om/GcRoGh58fAefsGQU8TC9P7H8TaDqU+l5Gj856HVV6EzbfXUV1A/vSotzhHIX9tfjwY1SFU1lv5ZXtSwb+nHpeQZjx7+EaPHCIGKjyeQAIX88IHKxPx/wbRpN4gFH8nLRyV4YOtRA/LBRuvMbh6wodQAlo3AyGXZZ/HLxyV8aPtg+0QE8vG+fNDmEzWGFphI+FODifw3WtqrRE5o6utxatbUYCm7Mgx8+tcb+eKUa+vkM52eXP0MS+UWn6BBqkgwO1XzzRPUNGDZW1vYjDTfQNZofJum0ewC4bkoaJmc8/BHo/svo/pw8/QtQSwcIOo+DSREFAADOFAAAUEsBAhQAFAAIAAgAILUPOxpd2OXDCwAA3QsAABYAAAAAAAAAAAAAAAAAAAAAAGdlb2dlYnJhX3RodW1ibmFpbC5wbmdQSwECFAAUAAgACAAgtQ871je9uRkAAAAXAAAAFgAAAAAAAAAAAAAAAAAHDAAAZ2VvZ2VicmFfamF2YXNjcmlwdC5qc1BLAQIUABQACAAIACC1Dzs6j4NJEQUAAM4UAAAMAAAAAAAAAAAAAAAAAGQMAABnZW9nZWJyYS54bWxQSwUGAAAAAAMAAwDCAAAArxEAAAAA");
-				//Application.debug(""+(char)zipFile[0]+ (char)zipFile[1] + (char)zipFile[2]);
 				success = loadXML(zipFile);
 				
-				if(success && !isMacroFile && useLayout && !isIgnoringDocumentPerspective())
-					getGuiManager().setPerspectives(tmpPerspectives);
+				if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
+					getGuiManager().getLayout().setPerspectives(tmpPerspectives);
+				}
 				
 				updateContentPane(true);
 			} else {
@@ -1407,7 +1352,7 @@ public abstract class Application implements KeyEventDispatcher {
 				|| currentLocale.toString().equals(locale.toString()))
 			return;
 
-		if (!INITING) {
+		if (!initing) {
 			setMoveMode();
 		}
 
@@ -2059,8 +2004,8 @@ public abstract class Application implements KeyEventDispatcher {
 		if (euclidianView != null )
 			euclidianView.setCursor(waitCursor);
 		
-		if (appGuiManager != null)
-			appGuiManager.allowGUIToRefresh();
+		if (guiManager != null)
+			guiManager.allowGUIToRefresh();
 	}
 
 	public void setDefaultCursor() {
@@ -2070,7 +2015,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void doAfterRedefine(GeoElement geo) {
-		if (appGuiManager != null)
+		if (guiManager != null)
 			getGuiManager().doAfterRedefine(geo);
 	}
 
@@ -2142,7 +2087,7 @@ public abstract class Application implements KeyEventDispatcher {
 		
 		resetFonts();
 
-		if (!INITING) {
+		if (!initing) {
 			if (appletImpl != null)
 				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 			if (frame != null)
@@ -2159,7 +2104,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (euclidianView != null)
 			euclidianView.updateFonts();
 
-		if (appGuiManager != null)
+		if (guiManager != null)
 			getGuiManager().updateFonts();
 
 	}
@@ -2169,10 +2114,10 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	private void setLabels() {
-		if (INITING)
+		if (initing)
 			return;
 
-		if (appGuiManager != null) {
+		if (guiManager != null) {
 			getGuiManager().setLabels();
 		}
 		
@@ -2292,7 +2237,14 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 		return icon;
 	}
-
+	
+	public boolean onlyGraphicsViewShowing() {
+		if(!hasFullGui()) {
+			return true;
+		}
+		
+		return getGuiManager().getLayout().isOnlyVisible(Application.VIEW_EUCLIDIAN);
+	}
 
 	public boolean showAlgebraInput() {
 		return showAlgebraInput;
@@ -2367,8 +2319,9 @@ public abstract class Application implements KeyEventDispatcher {
 	public void setShowAuxiliaryObjects(boolean flag) {
 		showAuxiliaryObjects = flag;
 
-		if (hasGuiManager())
+		if (hasFullGui())
 			getGuiManager().setShowAuxiliaryObjects(flag);
+		
 		updateMenubar();
 	}
 
@@ -2415,7 +2368,7 @@ public abstract class Application implements KeyEventDispatcher {
 			kernel.initUndoInfo();
 		}
 
-		if (appGuiManager != null)
+		if (guiManager != null)
 			getGuiManager().updateActions();
 
 		isSaved = true;
@@ -2487,7 +2440,7 @@ public abstract class Application implements KeyEventDispatcher {
 
 		getGuiManager().updateToolbar();
 
-		if (!INITING) {
+		if (!initing) {
 			if (appletImpl != null)
 				SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 			if (frame != null)
@@ -2498,7 +2451,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void updateMenubar() {
-		if (!showMenuBar || !hasGuiManager())
+		if (!showMenuBar || !hasFullGui())
 			return;
 
 		getGuiManager().updateMenubar();
@@ -2507,7 +2460,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	private void updateSelection() {
-		if (!showMenuBar || !hasGuiManager())
+		if (!showMenuBar || !hasFullGui())
 			return;
 
 		getGuiManager().updateMenubarSelection();
@@ -2525,7 +2478,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public void updateMenuWindow() {
-		if (!showMenuBar || !hasGuiManager())
+		if (!showMenuBar || !hasFullGui())
 			return;
 
 		getGuiManager().updateMenuWindow();
@@ -2537,7 +2490,7 @@ public abstract class Application implements KeyEventDispatcher {
 		// make sure all macro commands are in dictionary
 		fillCommandDict();
 
-		if (appGuiManager != null) {
+		if (guiManager != null) {
 			getGuiManager().updateAlgebraInput();
 		}
 	}
@@ -2621,7 +2574,7 @@ public abstract class Application implements KeyEventDispatcher {
 		if (mode != EuclidianView.MODE_SELECTION_LISTENER)
 			currentSelectionListener = null;
 
-		if (appGuiManager != null)
+		if (guiManager != null)
 			getGuiManager().setMode(mode);
 		else if (euclidianView != null)
 			euclidianView.setMode(mode);
@@ -2918,9 +2871,6 @@ public abstract class Application implements KeyEventDispatcher {
 		getEuclidianView().getXML(sb);
 
 		// save spreadsheetView settings
-		
-		// G.Sturr 2010-6-2: (showSpreadsheet flag is now dead)
-		//if (showSpreadsheet) {
 		if (getGuiManager().hasSpreadsheetView()){
 			getGuiManager().getSpreadsheetViewXML(sb);
 		}
@@ -2938,7 +2888,7 @@ public abstract class Application implements KeyEventDispatcher {
 	}
 
 	public String getConsProtocolXML() {
-		if (appGuiManager == null)
+		if (guiManager == null)
 			return "";
 
 		StringBuilder sb = new StringBuilder();
@@ -2960,6 +2910,7 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 		return codebase;
 	}
+	
 	private URL codebase;
 	private static boolean hasFullPermissions = false;
 	private static boolean runningFromJar = false;
@@ -2992,7 +2943,7 @@ public abstract class Application implements KeyEventDispatcher {
 		System.out.println("codebase: " + codebase);
 	}
 	
-	final public boolean webstart() {
+	final public boolean isWebstart() {
 		if (codebase == null) return false;
 		return codebase.toString().startsWith(GeoGebra.GEOGEBRA_WEBSITE+"webstart");
 	}
@@ -3259,7 +3210,7 @@ public abstract class Application implements KeyEventDispatcher {
 	private GlassPaneListener glassPaneListener;
 
 	public void startDispatchingEventsTo(JComponent comp) {
-		if (appGuiManager != null) {
+		if (guiManager != null) {
 			getGuiManager().closeOpenDialogs();
 		}
 
@@ -4241,21 +4192,6 @@ public abstract class Application implements KeyEventDispatcher {
 		}
 		
 		return false;
-	}//setDefaultCas()
-	
-
-	public boolean showAlgebraView() {
-		if (!hasGuiManager()) return false;
-		return getGuiManager().showAlgebraView();
-	}
-		
-	public boolean showSpreadsheetView() {
-		if (!hasGuiManager()) return false;
-		return getGuiManager().showSpreadsheetView();
-	}
-	
-	public boolean onlyGraphicsViewShowing() {
-		return !showSpreadsheetView() && !showAlgebraView();
 	}
 	
 	/*

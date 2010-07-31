@@ -600,7 +600,7 @@ public class Construction {
 		
 		if (didUpdate) {
 			Application app = kernel.getApplication();
-			if (app.hasGuiManager())
+			if (app.hasFullGui())
 				app.getGuiManager().updateConstructionProtocol();
 		}
 
