@@ -23,7 +23,6 @@ import geogebra.cas.jacomax.MaximaConfiguration;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AlgebraInput;
-import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.Perspective;
@@ -37,6 +36,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.ScriptManager;
+import geogebra.util.DownloadManager;
 import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
 import geogebra.util.Util;
@@ -71,8 +71,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -87,6 +90,11 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -430,6 +438,10 @@ public abstract class Application implements KeyEventDispatcher {
 		} else {
 			mainComp = comp;
 		}
+		
+		// don't want to redirect System.out and System.err when running as Applet
+		// or eg from Eclipse
+		if (!isApplet && getCodeBase().toString().endsWith(".jar")) setUpLogging();
 		
 		// init codebase
 		initCodeBase();
@@ -4246,6 +4258,79 @@ public abstract class Application implements KeyEventDispatcher {
 	    p.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, set);
 	    p.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, set);
 
+	}
+	
+	LogManager logManager;
+	//String logFile = DownloadManager.getTempDir()+"GeoGebraLog.txt";
+	//public String logFile = "c:\\GeoGebraLog.txt";
+	public StringBuilder logFile = null;
+	
+	/*
+	 * code from http://blogs.sun.com/nickstephen/entry/java_redirecting_system_out_and
+	 */
+	private void setUpLogging() {
+		
+	    // initialize logging to go to rolling log file
+        logManager = LogManager.getLogManager();
+        logManager.reset();
+        
+        logFile = new StringBuilder(30);
+        
+        logFile.append(DownloadManager.getTempDir());
+        logFile.append("GeoGebraLog_");
+        // randomize filename
+        for (int i = 0 ; i < 10 ; i++) logFile.append((char)('a'+Math.round(Math.random()*25)));
+        logFile.append(".txt");
+        
+        Application.debug(logFile.toString());
+    
+
+        // log file max size 10K, 1 file, append-on-open
+        Handler fileHandler;
+		try {
+			fileHandler = new FileHandler(logFile.toString(), 10000, 1, false);
+		} catch (Exception e) {
+			logFile = null;
+			return;
+			
+		} 
+        fileHandler.setFormatter(new SimpleFormatter());
+        Logger.getLogger("").addHandler(fileHandler);
+        
+        
+        
+
+        // preserve old stdout/stderr streams in case they might be useful      
+        //PrintStream stdout = System.out;                                        
+        //PrintStream stderr = System.err;                                        
+
+        // now rebind stdout/stderr to logger                                   
+        Logger logger;                                                          
+        LoggingOutputStream los;                                                
+
+        logger = Logger.getLogger("stdout");                                    
+        los = new LoggingOutputStream(logger, StdOutErrLevel.STDOUT);           
+        System.setOut(new PrintStream(los, true));                              
+
+        logger = Logger.getLogger("stderr");                                    
+        los= new LoggingOutputStream(logger, StdOutErrLevel.STDERR);            
+        System.setErr(new PrintStream(los, true)); 
+        // show stdout going to logger
+        //System.out.println("Hello world!");
+
+        // now log a message using a normal logger
+        //logger = Logger.getLogger("test");
+        //logger.info("This is a test log message");
+
+        // now show stderr stack trace going to logger
+        //try {
+        //    throw new RuntimeException("Test");
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
+
+        // and output on the original stdout
+        //stdout.println("Hello on old stdout");
 	}
 
 		
