@@ -10,14 +10,14 @@ import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.print.PageFormat;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
@@ -25,7 +25,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 
 public class GeoGebraMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1736020764918189176L;
@@ -232,6 +231,25 @@ public class GeoGebraMenuBar extends JMenuBar {
 				systemInfo.append(")\nJava: "+ System.getProperty("java.version") + ", " +(app.getHeapSize()/1024/1024)+"MB");
 				systemInfo.append("\nOS: ");
 				systemInfo.append(System.getProperty("os.name"));
+				systemInfo.append("\n\n");
+				
+				
+				// copy log file to systemInfo
+				if (app.logFile != null) {
+				    String NL = System.getProperty("line.separator");
+				    Scanner scanner = null;
+				    try {
+					  scanner = new Scanner(new File(app.logFile.toString()));
+				      while (scanner.hasNextLine()){
+				    	  systemInfo.append(scanner.nextLine() + NL);
+				      }
+				    } catch (FileNotFoundException e) {
+				    	
+				    }
+				    finally{
+				      if (scanner != null) scanner.close();
+				    }
+				}
 				
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
 					new StringSelection(systemInfo.toString()), null

@@ -1,6 +1,9 @@
 package geogebra.plugin;
 
 import geogebra.kernel.GeoElement;
+/*
+ * @author Michael Borcherds
+ */
 import geogebra.kernel.View;
 import geogebra.main.Application;
 
@@ -50,40 +53,32 @@ public class ScriptManager {
 				evalScript("ggbOnInit();", null);
 	}
 	
+
 	public void evalScript(String script, String arg) {
-		//Application.debug(script);
-        Context cx = Context.enter();
-            // Initialize the standard objects (Object, Function, etc.)
-            // This must be done before scripts can be executed. Returns
-            // a scope object that we use in later calls.
-            Scriptable scope = cx.initStandardObjects();
+			//Application.debug(script);
+	        Context cx = Context.enter();
+	            // Initialize the standard objects (Object, Function, etc.)
+	            // This must be done before scripts can be executed. Returns
+	            // a scope object that we use in later calls.
+	            Scriptable scope = cx.initStandardObjects();
 
-            // initialise the JavaScript variable applet so that we can call
-            // GgbApi functions, eg ggbApplet.evalCommand()
-            Object wrappedOut = Context.javaToJS(app.getGgbApi(), scope);
-            ScriptableObject.putProperty(scope, "ggbApplet", wrappedOut);
-            
-            if (arg != null) {
-                Object wrappedArg = Context.javaToJS(arg, scope);
-                ScriptableObject.putProperty(scope, "arg", wrappedArg);            	
-            }
+	            // initialise the JavaScript variable applet so that we can call
+	            // GgbApi functions, eg ggbApplet.evalCommand()
+	            GeoGebraGlobal.initStandardObjects(app, scope, arg, false);
 
-            // JavaScript to execute
-            //String s = "ggbApplet.evalCommand('F=(2,3)')";
-            
-            // Now evaluate the string we've colected.
-            Object result = cx.evaluateString(scope, script + app.getKernel().getLibraryJavaScript(), "<cmd>", 1, null);
+	            // JavaScript to execute
+	            //String s = "ggbApplet.evalCommand('F=(2,3)')";
+	            
+	            // Now evaluate the string we've colected.
+	            Object result = cx.evaluateString(scope, script + app.getKernel().getLibraryJavaScript(), "GeoGebra", 1, null);
 
-            // Convert the result to a string and print it.
-            //Application.debug("script result: "+(Context.toString(result)));
-        
-		
+	            // Convert the result to a string and print it.
+	            //Application.debug("script result: "+(Context.toString(result)));
+	        
+			
 	}
-	/*
-	 * Change listener implementation
-	 * Java to JavaScript
-	 */
-	
+
+
 
 	/*
 	 * Change listener implementation
