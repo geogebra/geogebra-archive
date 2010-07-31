@@ -95,6 +95,7 @@ import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import java.util.zip.ZipEntry;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -2772,6 +2773,12 @@ public abstract class Application implements KeyEventDispatcher {
 	public String getXML() {
 		return myXMLio.getFullXML();
 	}
+	
+	public String getMacroXML() {
+		ArrayList macros = kernel.getAllMacros();
+		return myXMLio.getFullMacroXML(macros);
+	}
+	
 
 	public void setXML(String xml, boolean clearAll) {
 		if (clearAll)

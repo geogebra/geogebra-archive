@@ -251,6 +251,13 @@ public class GeoGebraMenuBar extends JMenuBar {
 				    }
 				}
 				
+				// append ggb file (except images)
+				systemInfo.append(app.getXML());
+				systemInfo.append("\n\n");
+				systemInfo.append(app.getMacroXML());
+				systemInfo.append("\n\n");
+				app.getKernel().getLibraryJavaScript();
+				
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
 					new StringSelection(systemInfo.toString()), null
 				);
