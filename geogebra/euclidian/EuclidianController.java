@@ -502,8 +502,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 	protected void initShowMouseCoords() {
-		view.setShowMouseCoords(mode == EuclidianView.MODE_POINT);
-	}
+		view.setShowMouseCoords(mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_MOVE);	}
 
 	void clearSelections() {
 
