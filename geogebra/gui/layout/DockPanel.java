@@ -267,11 +267,8 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	public void updateTitleBar() {
 		// The view is in the main window
 		if(frame == null) {
-			DockSplitPane parent = getParentSplitPane();
-			boolean isLast = parent != null && parent.getOpposite(this) == null;
-			
-			closeButton.setVisible(!isLast);
-			windowButton.setVisible(!isLast);
+			closeButton.setVisible(true);
+			windowButton.setVisible(true);
 			titleLabel.setVisible(true);
 			unwindowButton.setVisible(false);
 			

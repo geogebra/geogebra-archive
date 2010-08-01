@@ -1823,8 +1823,15 @@ public class GuiManager {
 	}
 
 	public boolean loadFile(final File file, final boolean isMacroFile) {
+		// show file not found message
 		if (!file.exists()) {
-			// show file not found message
+			/*
+			 * First parameter can not be the main component of the
+			 * application, otherwise that component would be validated
+			 * too early if a missing file was loaded through 
+			 * the command line, which causes some nasty rendering
+			 * problems.
+			 */
 			JOptionPane.showConfirmDialog(null,
 					app.getError("FileNotFound") + ":\n" + file.getAbsolutePath(),
 					app.getError("Error"), JOptionPane.DEFAULT_OPTION,
