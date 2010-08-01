@@ -3,9 +3,10 @@ package geogebra3D.euclidian3D.opengl;
 import java.nio.FloatBuffer;
 import java.util.Date;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.Matrix.GgbVector3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
-import geogebra3D.kernel3D.GeoFunction2Var;
+import geogebra.kernel.GeoFunctionNVar;
 
 //TODO: replace periodic arrangement with null pointers
 //TODO: use simpler base mesh and implement expand()
@@ -15,7 +16,7 @@ import geogebra3D.kernel3D.GeoFunction2Var;
  * @author André Eriksson
  */
 public class SurfaceTree2 {
-	private GeoFunction2Var function;
+	private GeoFunctionNVar function;
 	@SuppressWarnings("unused")
 	private final EuclidianView3D view;
 	private double radSq;
@@ -55,7 +56,7 @@ public class SurfaceTree2 {
 	 * @param view
 	 * @param radSq 
 	 */
-	public SurfaceTree2(GeoFunction2Var function, EuclidianView3D view, double radSq) {
+	public SurfaceTree2(GeoFunctionNVar function, EuclidianView3D view, double radSq) {
 		this.function = function;
 		this.view = view;
 		this.radSq=radSq;
@@ -937,9 +938,9 @@ class SurfaceTriangle{
  */
 class SurfaceDiamond {
 	/** vertex position */
-	GgbVector3D v;
+	GgbVector v;
 	/** vertex normal */
-	GgbVector3D normal;
+	GgbVector normal;
 	/** radius of sphere bound squared */
 	double boundingRadSq;
 	/** error measure */
@@ -955,7 +956,7 @@ class SurfaceDiamond {
 	/** level of resolution */
 	final int level;
 	/** a reference to the function used */
-	GeoFunction2Var func;
+	GeoFunctionNVar func;
 	/** flag indicating if the diamond has been split */
 	private boolean split = false;
 	/** flag indicating if the diamond is in the merge queue */
@@ -1040,11 +1041,11 @@ class SurfaceDiamond {
 	 * @param spQ 
 	 * @param merQ 
 	 */
-	SurfaceDiamond(GeoFunction2Var func, double x, double y, int level, 
+	SurfaceDiamond(GeoFunctionNVar func, double x, double y, int level, 
 					SplitQueue spQ, MergeQueue merQ) {
 		this.level = level;
 		this.func = func;
-		v = func.evaluatePoint2(x, y);
+		v = func.evaluatePoint(x, y);
 		estimateNormal(func);
 		splitQueue=spQ;
 		mergeQueue=merQ;
@@ -1062,7 +1063,7 @@ class SurfaceDiamond {
 	 * @param spQ 
 	 * @param merQ 
 	 */
-	SurfaceDiamond(GeoFunction2Var func, SurfaceDiamond parent0, int index0,
+	SurfaceDiamond(GeoFunctionNVar func, SurfaceDiamond parent0, int index0,
 			SurfaceDiamond parent1, int index1, SurfaceDiamond a0,
 			SurfaceDiamond a1, int level, SplitQueue spQ, MergeQueue merQ) {
 		splitQueue=spQ;
@@ -1075,7 +1076,7 @@ class SurfaceDiamond {
 		indices[1] = index1;
 		a[0] = a0;
 		a[1] = a1;
-		this.v = func.evaluatePoint2((a[0].v.getX() + a[1].v.getX()) * 0.5,
+		this.v = func.evaluatePoint((a[0].v.getX() + a[1].v.getX()) * 0.5,
 				(a[0].v.getY() + a[1].v.getY()) * 0.5);
 		estimateNormal(func);
 		setBoundingRadius();
@@ -1086,10 +1087,10 @@ class SurfaceDiamond {
 			isClipped=true;
 	}
 	
-	private void estimateNormal(GeoFunction2Var func){
+	private void estimateNormal(GeoFunctionNVar func){
 		double x = v.getX(); double y = v.getY();
-		GgbVector3D dx = func.evaluatePoint2(x+normalDelta, y);
-		GgbVector3D dy = func.evaluatePoint2(x, y+normalDelta);
+		GgbVector dx = func.evaluatePoint(x+normalDelta, y);
+		GgbVector dy = func.evaluatePoint(x, y+normalDelta);
 		normal = dx.sub(v).crossProduct(dy.sub(v)).normalized();
 	}
 
@@ -1097,13 +1098,13 @@ class SurfaceDiamond {
 	 * Computes the error for the diamond.
 	 */
 	private void setError() {
-		GgbVector3D v0 = a[1].v.sub(parents[0].v);
-		GgbVector3D v1 = a[0].v.sub(parents[0].v);
-		GgbVector3D v2 = a[0].v.sub(parents[1].v);
-		GgbVector3D v3 = a[1].v.sub(parents[1].v);
+		GgbVector v0 = a[1].v.sub(parents[0].v);
+		GgbVector v1 = a[0].v.sub(parents[0].v);
+		GgbVector v2 = a[0].v.sub(parents[1].v);
+		GgbVector v3 = a[1].v.sub(parents[1].v);
 		
-		GgbVector3D n0 = v0.crossProduct(v1);
-		GgbVector3D n1 = v2.crossProduct(v3);
+		GgbVector n0 = v0.crossProduct(v1);
+		GgbVector n1 = v2.crossProduct(v3);
 
 		double a0 = n0.norm(); //proportional to area
 		double a1 = n1.norm();
@@ -1111,9 +1112,9 @@ class SurfaceDiamond {
 		n0.normalize();
 		n1.normalize();
 		
-		GgbVector3D o0 = v.sub(parents[0].v);
-		GgbVector3D o1 = v.sub(parents[1].v);
-
+		GgbVector o0 = v.sub(parents[0].v);
+		GgbVector o1 = v.sub(parents[1].v);
+		
 		double d0 = Math.abs(n0.dotproduct(o0));
 		double d1 = Math.abs(n1.dotproduct(o1));
 		
@@ -1124,13 +1125,13 @@ class SurfaceDiamond {
 		if(Double.isNaN(vol1)){
 			//use a different error measure for infinite points
 			//namely the base area times some constant
-			double ar = Math.abs((a[0].v.x-v.x)*(parents[0].v.y-v.y));
+			double ar = Math.abs((a[0].v.getX()-v.getX())*(parents[0].v.getY()-v.getY()));
 			errors[0]=ar*ar*infConst;
 		}
 		else
 			errors[0]=vol1;
 		if(Double.isNaN(vol2)){
-			double ar = Math.abs((a[1].v.x-v.x)*(parents[1].v.y-v.y));
+			double ar = Math.abs((a[1].v.getX()-v.getX())*(parents[1].v.getY()-v.getY()));
 			errors[1]=ar*ar*infConst;
 		}
 		else

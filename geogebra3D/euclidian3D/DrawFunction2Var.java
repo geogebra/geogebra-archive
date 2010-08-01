@@ -4,7 +4,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.SurfaceTree2;
-import geogebra3D.kernel3D.GeoFunction2Var;
+import geogebra.kernel.GeoFunctionNVar;
 
 /**
  * Class for drawing a 2-var function
@@ -24,7 +24,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	 * @param a_view3d
 	 * @param function
 	 */
-	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunction2Var function) {
+	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunctionNVar function) {
 		super(a_view3d, function);
 		updateRadius();
 		tree = new SurfaceTree2(function, a_view3d, savedRadius);
@@ -58,7 +58,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		tree.setRadius(savedRadius);
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
-		GeoFunction2Var geo = (GeoFunction2Var) getGeoElement();
+		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
 		surface.start(geo);
 		surface.setU((float) geo.getMinParameter(0), (float) geo.getMaxParameter(0));
 		surface.setNbU((int) ((geo.getMaxParameter(0)-geo.getMinParameter(0))*10));

@@ -2,11 +2,11 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
-import geogebra3D.kernel3D.GeoFunction2Var;
+import geogebra.kernel.GeoFunctionNVar;
 
 public class SurfaceTree {
 	private SurfaceTreeNode root1, root2;
-	private GeoFunction2Var function;
+	private GeoFunctionNVar function;
 	private double radSq;
 	
 	private final double normalDotThreshold = 0.95;
@@ -16,7 +16,7 @@ public class SurfaceTree {
 	private final int	 minLevels = 5; 
 	private final EuclidianView3D view;
 	
-	SurfaceTree(GeoFunction2Var function, EuclidianView3D view){
+	SurfaceTree(GeoFunctionNVar function, EuclidianView3D view){
 		this.function=function;
 		this.view=view;
 		GgbVector p1 = function.evaluatePoint(-1,-1);
@@ -242,7 +242,7 @@ class SurfaceTreeNode {
 	public SurfaceTreeNode getChild(int i){return children[i];}
 	public void setChild(int i, SurfaceTreeNode child){ children[i]=child; }
 	
-	public void subdivide(GeoFunction2Var func) {
+	public void subdivide(GeoFunctionNVar func) {
 		if(childrenDefined)
 			return;
 		

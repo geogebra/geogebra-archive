@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.Functional2Var;
-import geogebra3D.kernel3D.GeoFunction2Var;
+import geogebra.kernel.GeoFunctionNVar;
 
 /** Class for drawing surfaces.
  * @author matthieu
@@ -21,7 +21,7 @@ public class PlotterSurface {
 	/** 2-var function */
 	private Functional2Var functional2Var;
 	
-	private GeoFunction2Var function;
+	private GeoFunctionNVar function;
 	
 	/** domain for plotting */
 	private float uMin, uMax, vMin, vMax;
@@ -70,7 +70,7 @@ public class PlotterSurface {
 	 * start new surface
 	 * @param function 
 	 */
-	public void start(GeoFunction2Var function){
+	public void start(GeoFunctionNVar function){
 		index = manager.startNewList();
 		this.function = function;
 		uMinFade = 0; vMinFade = 0;
