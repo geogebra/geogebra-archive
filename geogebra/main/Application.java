@@ -436,7 +436,7 @@ public class Application implements KeyEventDispatcher {
 
 		// set locale
 		setLocale(mainComp.getLocale());
-				
+		
 		// init kernel
 		initKernel();
 		kernel.setPrintDecimals(Kernel.STANDARD_PRINT_DECIMALS);
@@ -447,7 +447,7 @@ public class Application implements KeyEventDispatcher {
 		// load the gui manager if necessary
 		if(hasFullGui()) {
 			setWaitCursor();
-			guiManager = new geogebra.gui.GuiManager(Application.this);
+			guiManager = new GuiManager(Application.this);
 			setDefaultCursor();
 		}
 
@@ -862,9 +862,6 @@ public class Application implements KeyEventDispatcher {
 			centerPanel.add(getEuclidianView(), BorderLayout.CENTER);
 		}
 		
-		//euclidianView.setStandardView(false);
-		euclidianView.setStandardCoordSystem();
-		
 		if (updateUI)
 			updateComponentTreeUI();
 	}
@@ -997,9 +994,9 @@ public class Application implements KeyEventDispatcher {
 				
 				if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
 					getGuiManager().getLayout().setPerspectives(tmpPerspectives);
+				} else {
+					updateContentPane(true);
 				}
-				
-				updateContentPane(true);
 			} else if (lowerCase.startsWith("base64://")) {
 				
 				// substring to strip off base64://
@@ -1008,16 +1005,16 @@ public class Application implements KeyEventDispatcher {
 				
 				if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
 					getGuiManager().getLayout().setPerspectives(tmpPerspectives);
+				} else {
+					updateContentPane(true);
 				}
-				
-				updateContentPane(true);
 			} else {
 				File f = new File(fileArgument);
 				f = f.getCanonicalFile();
-				getGuiManager().loadFile(f, isMacroFile);
+				success = getGuiManager().loadFile(f, isMacroFile);
 			}
 			
-			return true;
+			return success;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

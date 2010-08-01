@@ -1825,7 +1825,7 @@ public class GuiManager {
 	public boolean loadFile(final File file, final boolean isMacroFile) {
 		if (!file.exists()) {
 			// show file not found message
-			JOptionPane.showConfirmDialog(app.getMainComponent(),
+			JOptionPane.showConfirmDialog(null,
 					app.getError("FileNotFound") + ":\n" + file.getAbsolutePath(),
 					app.getError("Error"), JOptionPane.DEFAULT_OPTION,
 					JOptionPane.WARNING_MESSAGE);
@@ -1937,65 +1937,6 @@ public class GuiManager {
 		}
 		
 		return false;
-
-		
-/* old code, manual parsing. Not robust
-		
-	
-		StringBuilder sb = new StringBuilder();
-		String thisLine;
-
-		boolean started = false;
-
-		while ((thisLine = myInput.readLine()) != null)  {
-
-			// don't start reading until ggbBase64 tag
-			if (!started && thisLine.indexOf("ggbBase64") > -1) started = true;
-
-			if (started) {
-				sb.append(thisLine);
-
-				if (thisLine.indexOf("</applet>") > -1 || thisLine.indexOf("</APPLET>") > -1) break;
-			}
-
-
-
-		}
-
-		String fileArgument = sb.toString();
-
-		final String matchString = "name=\"ggbBase64\" value=\"";
-		final String matchString2 = "NAME=\"ggbBase64\" VALUE=\"";
-
-		int start = fileArgument.indexOf(matchString);
-		if (start == -1) start = fileArgument.indexOf(matchString2);
-		
-		// match "/> or " /> or "> etc
-		int end   = fileArgument.indexOf(">");
-		while (end > start && fileArgument.charAt(end) != '\"') end--;
-
-		// check for two <param> tags on the same line
-		if (start > end) {
-			fileArgument = fileArgument.substring(start);
-			start = 0;
-			end   = fileArgument.indexOf(">");
-			while (end > start && fileArgument.charAt(end) != '\"') end--;
-		}
-		
-		if (start < 0 || end < 0 || end <= start) {
-			//app.setDefaultCursor();
-			//app.showError(app.getError("LoadFileFailed") + ":\n" + source);
-			return false;
-		}
-
-		//Application.debug(fileArgument.substring(start, end));
-
-		// decode Base64
-		byte[] zipFile = geogebra.util.Base64.decode(fileArgument
-				.substring(matchString.length() + start, end));
-
-		// load file
-		return app.loadXML(zipFile);   */
 
 	}
     
