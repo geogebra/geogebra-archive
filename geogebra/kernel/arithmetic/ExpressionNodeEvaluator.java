@@ -560,6 +560,12 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                     GeoVec2D.mult(vec, ((NumberValue)lt).getDouble(), vec);
                     return vec;
                 }                        	  
+                // number * boolean
+                else if (rt.isBooleanValue()) { 
+                    num = ((NumberValue)lt).getNumber();                               
+                    MyDouble.mult(num, ((BooleanValue)rt).getDouble(), num);       
+                    return num;
+                }                        	  
                 // number * 3D vector
                 /*else if (rt.isVector3DValue()) { 
                     Geo3DVec vec3D = ((Vector3DValue)rt).get3DVec();
@@ -570,6 +576,12 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                     String [] str = { "IllegalMultiplication", lt.toString(), "*", rt.toString() };
                     throw new MyError(app, str);    
                 }
+            }
+           // boolean * number
+           else if (lt.isBooleanValue() && rt.isNumberValue()) {
+                num = ((NumberValue)rt).getNumber();                               
+                MyDouble.mult(num, ((BooleanValue)lt).getDouble(), num);       
+                return num;            	
             }
             /*
             // 3D vector * number

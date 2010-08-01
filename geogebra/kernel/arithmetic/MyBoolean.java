@@ -113,4 +113,12 @@ public class MyBoolean extends ValidExpression implements BooleanValue {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	/**
+	 * Returns 1 for true and 0 for false.
+	 */
+	public double getDouble() {		
+		return value ? 1 : 0;
+	}
+
 }

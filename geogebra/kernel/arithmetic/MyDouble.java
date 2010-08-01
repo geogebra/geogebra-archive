@@ -180,6 +180,12 @@ implements NumberValue {
     	c.set(a.val * b.val);
     }
     
+    /** c = a * b */
+    final public static void mult(MyDouble a, double b, MyDouble c) {
+        c.isAngle = a.isAngle;
+    	c.set(a.val * b);
+    }
+    
     /** c = a / b */
     final public static void div(MyDouble a, MyDouble b, MyDouble c) {   	
         c.isAngle = a.isAngle && !b.isAngle;

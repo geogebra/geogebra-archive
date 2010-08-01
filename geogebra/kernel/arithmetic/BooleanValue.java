@@ -20,6 +20,7 @@ package geogebra.kernel.arithmetic;
  */
 public interface BooleanValue extends ExpressionValue { 
     public MyBoolean getMyBoolean();
-    public boolean getBoolean();   
+    public boolean getBoolean();
+	public double getDouble();   
 }
 
