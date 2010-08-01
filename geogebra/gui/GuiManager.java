@@ -2058,6 +2058,7 @@ public class GuiManager {
 	private void updateGUIafterLoadFile(boolean success, boolean isMacroFile) {
 		if(success && !isMacroFile && !layout.isIgnoringDocument()) {
 			getLayout().setPerspectives(app.getTmpPerspectives());
+			SwingUtilities.updateComponentTreeUI(getLayout().getRootComponent());
 		}
 		
 		// force JavaScript ggbOnInit(); to be called

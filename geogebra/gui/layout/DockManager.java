@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * Class responsible to manage the whole docking area of the window.

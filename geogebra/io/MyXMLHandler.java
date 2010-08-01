@@ -1190,7 +1190,7 @@ public class MyXMLHandler implements DocHandler {
 	private void endGuiElement() {
 		// construct default xml data in case we're using an old version which didn't
 		// store the layout xml.
-		if(!(ggbFileFormat > 3.02)) {
+		if(ggbFileFormat < 3.3) {
 			DockPanelXml[] dpXml = new DockPanelXml[] {
 				new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, new Rectangle(400, 400), "1,3", 400),
 				new DockPanelXml(Application.VIEW_ALGEBRA, tmp_showAlgebra, false, new Rectangle(200, 400), "3", 400),
