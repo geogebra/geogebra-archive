@@ -4,6 +4,7 @@ import java.awt.geom.AffineTransform;
 
 import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoQuadric3D;
 
@@ -317,17 +318,19 @@ public abstract class GeoQuadricND extends GeoElement {
 	
 	
 	protected void buildSphereNDString(){
+		String squared = (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? "^{2}" : "\u00b2";
 				
 		for (int i=0; i<dimension; i++){
 			if (kernel.isZero(getMidpoint().get(i+1))) {
 				sbToValueString.append(VAR_STRING[i]);
-				sbToValueString.append("\u00b2");
+				sbToValueString.append(squared);
 			} else {
 				sbToValueString.append("(");
 				sbToValueString.append(VAR_STRING[i]);
 				sbToValueString.append(" ");
 				sbToValueString.append(kernel.formatSigned(-getMidpoint().get(i+1)));
-				sbToValueString.append(")\u00b2");
+				sbToValueString.append(")");
+				sbToValueString.append(squared);
 			}	
 			if (i<dimension-1)
 				sbToValueString.append(" + ");

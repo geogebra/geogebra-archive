@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
@@ -43,6 +44,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	public static final int EQUATION_SPECIFIC = 2;
 
 	private static String[] vars = { "x\u00b2", "x y", "y\u00b2", "x", "y" };
+	private static String[] varsLateX = { "x^{2}", "x y", "y^{2}", "x", "y" };
 	
 	// enable negative sign of first coefficient in implicit equations
 	private static boolean KEEP_LEADING_SIGN = false;
@@ -550,11 +552,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			sbToValueString.append(" = 0");
 			return sbToValueString;
 		}
-		
+		String squared = (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? "^{2}" : "\u00b2";
 		switch (toStringMode) {
 			case EQUATION_SPECIFIC :
 				if (!isSpecificPossible())
-					return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN, true);						
+					return kernel.buildImplicitEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, KEEP_LEADING_SIGN, true);						
 				
 				switch (type) {					
 					case CONIC_CIRCLE :		
@@ -594,21 +596,25 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 							}
 							
 							if (kernel.isZero(b.x)) {
-								sbToValueString.append("x\u00b2");
+								sbToValueString.append("x");
+								sbToValueString.append(squared);
 							} else {
 								sbToValueString.append("(x ");
 								sbToValueString.append(kernel.formatSigned(-b.x));
-								sbToValueString.append(")\u00b2");
+								sbToValueString.append(")");
+								sbToValueString.append(squared);
 							}
 							sbToValueString.append(" / ");
 							sbToValueString.append(kernel.format(coeff0 * coeff0));
 							sbToValueString.append(" + ");
 							if (kernel.isZero(b.y)) {
-								sbToValueString.append("y\u00b2");
+								sbToValueString.append("y");
+								sbToValueString.append(squared);
 							} else {
 								sbToValueString.append("(y ");
 								sbToValueString.append(kernel.formatSigned(-b.y));
-								sbToValueString.append(")\u00b2");
+								sbToValueString.append(")");
+								sbToValueString.append(squared);
 							}
 							sbToValueString.append(" / ");
 							sbToValueString.append(kernel.format(coeff1 * coeff1));
@@ -618,7 +624,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 						} else
 							return kernel.buildImplicitEquation(								
 								coeffs,
-								vars, 
+								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, 
 								KEEP_LEADING_SIGN, true);
 
 					case CONIC_HYPERBOLA :
@@ -641,26 +647,28 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 							
 							if (kernel.isZero(b1)) {		
 								sbToValueString.append(firstVar);
-								sbToValueString.append("\u00b2");
+								sbToValueString.append(squared);
 							} else {
 								sbToValueString.append('(');
 								sbToValueString.append(firstVar);
 								sbToValueString.append(' ');
 								sbToValueString.append(kernel.formatSigned(-b1));
-								sbToValueString.append(")\u00b2");
+								sbToValueString.append(")");
+								sbToValueString.append(squared);
 							}
 							sbToValueString.append(" / ");
 							sbToValueString.append(kernel.format(halfAxes[0] * halfAxes[0]));
 							sbToValueString.append(" - ");
 							if (kernel.isZero(b2)) {
 								sbToValueString.append(secondVar);
-								sbToValueString.append("\u00b2");								
+								sbToValueString.append(squared);
 							} else {
 								sbToValueString.append('(');
 								sbToValueString.append(secondVar);
 								sbToValueString.append(' ');
 								sbToValueString.append(kernel.formatSigned(-b2));
-								sbToValueString.append(")\u00b2");
+								sbToValueString.append(")");
+								sbToValueString.append(squared);
 							}
 							sbToValueString.append(" / ");
 							sbToValueString.append(kernel.format(halfAxes[1] * halfAxes[1]));
@@ -670,7 +678,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 						} else
 							return kernel.buildImplicitEquation(
 								coeffs,
-								vars,
+								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
 								KEEP_LEADING_SIGN,
 								true);
 
@@ -678,26 +686,28 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 						if (!kernel.isZero(coeffs[2]))
 							return kernel.buildExplicitConicEquation(
 								coeffs,
-								vars,
+								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
 								2,
 								KEEP_LEADING_SIGN);
 						else if (!kernel.isZero(coeffs[0]))
 							return kernel.buildExplicitConicEquation(
 								coeffs,
-								vars,
+								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
 								0,
 								KEEP_LEADING_SIGN);
 						else
 							return kernel.buildImplicitEquation(
 								coeffs,
-								vars,
+								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
 								KEEP_LEADING_SIGN,
 								true);
 
 					case CONIC_DOUBLE_LINE :
 						sbToValueString.append('(');
 						sbToValueString.append(lines[0].toStringLHS());
-						sbToValueString.append(")\u00b2 = 0");
+						sbToValueString.append(")");
+						sbToValueString.append(squared);
+						sbToValueString.append(" = 0");
 						return sbToValueString;
 
 					case CONIC_PARALLEL_LINES :
@@ -713,10 +723,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				
 			case EQUATION_EXPLICIT:
 				if (isExplicitPossible())
-					return kernel.buildExplicitConicEquation(coeffs, vars, 4, KEEP_LEADING_SIGN); 
+					return kernel.buildExplicitConicEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, 4, KEEP_LEADING_SIGN); 
 
 			default : //implicit
-				return kernel.buildImplicitEquation(coeffs, vars, KEEP_LEADING_SIGN, true);
+				return kernel.buildImplicitEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, KEEP_LEADING_SIGN, true);
 		}
 	}
 	
