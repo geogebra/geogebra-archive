@@ -65,9 +65,10 @@ public class AlgoFractionText extends AlgoElement {
 			} else {
 				sb.setLength(0);
 		    	sb.append("{\\frac{");
-		    	sb.append(kernel.format(frac[0]));
+		    	// checkDecimalFraction() needed for eg FractionText[20.0764]
+		    	sb.append(kernel.format(kernel.checkDecimalFraction(frac[0])));
 		    	sb.append("}{");
-		    	sb.append(kernel.format(frac[1]));
+		    	sb.append(kernel.format(kernel.checkDecimalFraction(frac[1])));
 		    	sb.append("}}");
 		    	
 		    	text.setTextString(sb.toString());
