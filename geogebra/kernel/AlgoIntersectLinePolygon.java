@@ -287,12 +287,12 @@ implements AlgoElementWithResizeableOutput{
     		
     }
     
-    protected int getNbOutput(){
+    protected int getOutputLength(){
     	return pointsList.size()+segmentsList.size();
     }
     
     public GeoElement[] getOutput(){
-    	GeoElement[] output = new GeoElement[getNbOutput()];
+    	GeoElement[] output = new GeoElement[getOutputLength()];
     	
     	
     	int i = 0;

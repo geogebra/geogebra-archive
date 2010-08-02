@@ -1390,7 +1390,7 @@ public class Construction {
 		// make sure all output objects of newGeoAlgo are labeled, otherwise
 		// we may end up with several objects that have the same label
 		if (newGeoAlgo != null) {
-			for (int i=0; i < newGeoAlgo.getNbOutput(); i++) {
+			for (int i=0; i < newGeoAlgo.getOutputLength(); i++) {
 				GeoElement geo = newGeoAlgo.getOutput(i);
 				if (geo != newGeo && geo.isDefined() && !geo.isLabelSet()) {
 					geo.setLabel(null); // get free label

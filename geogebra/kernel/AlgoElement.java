@@ -41,9 +41,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	// <-- Added for Intergeo File Format (Yves Kreis)
     
     protected GeoElement[] input;
-//    /** list of output
-//     * @deprecated (matthieu) use setNbOutput(), setOutput(), getNbOutput(), getOutput() instead
-//     */
+    /** list of output
+     * @deprecated (matthieu) use setOutputLength(), setOutput(), getOutputLength(), getOutput() instead
+     */
     protected GeoElement[] output;
     private GeoElement [] efficientInput;
     private GeoNumeric [] randomUnlabeledInput;
@@ -70,9 +70,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * @param i 
      * 
      */
-    protected void setNbOutput(int i){
-
-    	output = new GeoElement[i];
+    protected void setOutputLength(int n){
+    	output = new GeoElement[n];
     }
     
     
@@ -82,7 +81,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * @param geo 
      */
     protected void setOutput(int i, GeoElement geo){
-    	output[i]=geo;
+    	output[i] = geo;
     }
     
     /**
@@ -97,7 +96,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * 
      * @return number of outputs
      */
-    protected int getNbOutput(){
+    protected int getOutputLength(){
     	if (output==null)
     		return 0;
     	
@@ -192,7 +191,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	//startTime = System.currentTimeMillis(); 
         
         // update dependent objects 
-        for (int i = 0; i < getNbOutput(); i++) {           
+        for (int i = 0; i < getOutputLength(); i++) {           
                 getOutput(i).update();
         }           
         
@@ -214,7 +213,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		for (int i=0; i < size; i++) {
 			AlgoElement algo = (AlgoElement) algos.get(i);
 			algo.compute();
-			for (int j=0; j < algo.getNbOutput(); j++) {
+			for (int j=0; j < algo.getOutputLength(); j++) {
 				algo.getOutput(j).update();
 				geos.add(algo.getOutput(j));
 			}
@@ -320,7 +319,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	
     	
    	 // parent algorithm of output
-       for (int i = 0; i < getNbOutput(); i++) {
+       for (int i = 0; i < getOutputLength(); i++) {
     	   
     	   setOutputDependencies(getOutput(i));
     	   /*
@@ -401,7 +400,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         cons.removeFromAlgorithmList(this);
                         
         // delete dependent objects        
-        for (int i = 0; i < getNbOutput(); i++) {
+        for (int i = 0; i < getOutputLength(); i++) {
             getOutput(i).doRemove();
         }
                 
@@ -431,7 +430,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * algorithm except for keepGeo.
      */
     void removeOutputExcept(GeoElement keepGeo) {
-    	for (int i=0; i < getNbOutput(); i++) {
+    	for (int i=0; i < getOutputLength(); i++) {
             GeoElement geo = getOutput(i);
             if (geo != keepGeo) 
             	geo.doRemove();
@@ -442,7 +441,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * Tells all views to add all output GeoElements of this algorithm. 
      */
     final public void notifyAdd() {
-        for (int i = 0; i < getNbOutput(); ++i) {
+        for (int i = 0; i < getOutputLength(); ++i) {
             getOutput(i).notifyAdd();
         }
     }
@@ -451,7 +450,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * Tells all views to remove all output GeoElements of this algorithm. 
      */
     final public void notifyRemove() {
-        for (int i = 0; i < getNbOutput(); ++i) {
+        for (int i = 0; i < getOutputLength(); ++i) {
             getOutput(i).notifyRemove();
         }
     }
@@ -467,7 +466,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     final public boolean hasSingleOutputType() {
     	int type = getOutput(0).getGeoClassType();
     	
-    	 for (int i = 1; i < getNbOutput(); ++i) {
+    	 for (int i = 1; i < getOutputLength(); ++i) {
             if (getOutput(i).getGeoClassType() != type)
             	return false;
          }    	
@@ -487,7 +486,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	 * in the construction protocol	 
 	 */
 	final public boolean isConsProtocolBreakpoint() {
-		for (int i=0; i < getNbOutput(); i++) {
+		for (int i=0; i < getOutputLength(); i++) {
 			if (getOutput(i).isConsProtocolBreakpoint())
 				return true;
 		}
@@ -548,7 +547,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
          ArrayList algoList;
          int size, index;
          int min = cons.steps();                        
-         for (int k=0; k < getNbOutput(); ++k) {
+         for (int k=0; k < getOutputLength(); ++k) {
             algoList = getOutput(k).getAlgorithmList();
             size = algoList.size();                                  
             for (int i=0; i < size; ++i) {                          
@@ -631,7 +630,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     public String getNameDescription() {
         sb.setLength(0);
         if (getOutput(0).isLabelSet()) sb.append(getOutput(0).getNameDescription());
-        for (int i = 1; i < getNbOutput(); ++i) {
+        for (int i = 1; i < getOutputLength(); ++i) {
             if (getOutput(i).isLabelSet()) {
                 sb.append("\n");
                 sb.append(getOutput(i).getNameDescription());              
@@ -646,7 +645,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	 sb.setLength(0);
         
         if (getOutput(0).isLabelSet()) sb.append(getOutput(0).getAlgebraDescription());       
-        for (int i = 1; i < getNbOutput(); ++i) {
+        for (int i = 1; i < getOutputLength(); ++i) {
             if (getOutput(i).isLabelSet()) {
                 sb.append("\n");
                 sb.append(getOutput(i).getAlgebraDescription());               
@@ -764,7 +763,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	        if (includeOutputGeos){// && output != null) {	       
 		        // output               
 		        GeoElement geo;                   
-		        for (int i = 0; i < getNbOutput(); i++) {
+		        for (int i = 0; i < getOutputLength(); i++) {
 		            geo = getOutput(i);
 		            // save only GeoElements that have a valid label
 		            if (geo.isLabelSet()) {
@@ -801,7 +800,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	} else {// if (output != null){
     	        // output               
     	        GeoElement geo;                   
-    	        for (int i = 0; i < getNbOutput(); i++) {
+    	        for (int i = 0; i < getOutputLength(); i++) {
     	            geo = getOutput(i);
     	            // save only GeoElements that have a valid label
     	            if (geo.isLabelSet()) {
@@ -823,7 +822,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         sb.append("<expression");
         // add label
         String labelStr = "";
-        if (/*output != null &&*/ getNbOutput() == 1) {
+        if (/*output != null &&*/ getOutputLength() == 1) {
             if (getOutput(0).isLabelSet()) {
                 sb.append(" label=\"");
                 labelStr = Util.encodeXML(getOutput(0).getLabel());
@@ -838,7 +837,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         sb.append("\"");
 
         // make sure that a vector remains a vector and a point remains a point
-        if (getNbOutput()>0)//(output != null)
+        if (getOutputLength()>0)//(output != null)
         {
 	        if (getOutput(0).isGeoPoint()) {
 	            sb.append(" type=\"point\"");
@@ -888,9 +887,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         } 
         
         // add output information    
-        if (getNbOutput()>0) { //(output != null) {
+        if (getOutputLength()>0) { //(output != null) {
             sb.append("\t<output");
-            for (int i = 0; i < getNbOutput(); i++) {
+            for (int i = 0; i < getOutputLength(); i++) {
                 sb.append(" a");
                 sb.append(i);
                 // attribute name is output No. 
@@ -917,7 +916,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 
         // add output information    
         //if (output != null) {
-            for (int i = 0; i < getNbOutput(); i++) {
+            for (int i = 0; i < getOutputLength(); i++) {
             	type = getXMLtypeString(getOutput(i));
                 sb.append("\t\t\t<" + type + " out=\"true\">");
                 sb.append(Util.encodeXML(getOutput(i).getLabel()));
