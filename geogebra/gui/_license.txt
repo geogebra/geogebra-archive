@@ -98,6 +98,7 @@ SOFTWARE
   * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
   * JLaTeXMath, http://forge.scilab.org/index.php/p/jlatexmath/
   * Tango Icon Gallery, http://tango.freedesktop.org
+  * Maxima, http://maxima.sourceforge.net/
   
 ----------------------------------------------------------------------
 
