@@ -305,7 +305,7 @@ public class Application implements KeyEventDispatcher {
 	public static final int DEFAULT_ICON_SIZE = 32;
 
 	private JFrame frame;
-	private AppletImplementation appletImpl;
+	private static AppletImplementation appletImpl;
 	private FontManager fontManager;
 	
 	protected GuiManager guiManager;
@@ -2901,18 +2901,18 @@ public class Application implements KeyEventDispatcher {
 	/**
 	 * Returns the CodeBase URL.
 	 */
-	public URL getCodeBase() {
+	public static URL getCodeBase() {
 		if (codebase == null) {
 			initCodeBase();
 		}
 		return codebase;
 	}
 	
-	private URL codebase;
+	private static URL codebase;
 	private static boolean hasFullPermissions = false;
 	private static boolean runningFromJar = false;
 	
-	private void initCodeBase() {
+	private static void initCodeBase() {
 		try {
 			// application codebase
 			String path = GeoGebra.class.getProtectionDomain().getCodeSource().getLocation().toExternalForm();
@@ -4275,6 +4275,19 @@ public class Application implements KeyEventDispatcher {
 
         // and output on the original stdout
         //stdout.println("Hello on old stdout");
+	}
+
+	/*
+	 * return folder that the jars are running from
+	 * eg needed to find local Maxima install
+	 */
+	public static String getCodeBaseFolder() {
+		String codeBaseFolder = getCodeBase().toString();
+
+		if (!codeBaseFolder.startsWith("file:/")) return null;
+
+		// strip "file:/"
+		return codeBaseFolder.substring(6);
 	}
 
 		

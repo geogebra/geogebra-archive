@@ -6,6 +6,7 @@
 package geogebra.cas.jacomax;
 
 import geogebra.cas.jacomax.internal.DummyLogger;
+import geogebra.main.Application;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -39,14 +40,16 @@ public final class JacomaxAutoConfigurator {
     
     private static final String[] UNIX_EXECUTABLE_PATHS = {
         "/usr/bin/maxima",
-        "/usr/local/bin/maxima"
+        "/usr/local/bin/maxima",
+		Application.getCodeBaseFolder()
     };
     
     private static final String[] MAC_OS_X_EXECUTABLE_PATHS = {
         "/Applications/Maxima.app/Contents/Resources/bin/maxima",
         "/opt/local/bin/maxima",
         "/usr/bin/maxima",
-        "/usr/local/bin/maxima"
+        "/usr/local/bin/maxima",
+		Application.getCodeBaseFolder()
     };
     
     /**
@@ -113,12 +116,15 @@ public final class JacomaxAutoConfigurator {
     }
     
     private static File findWindowsProgramFiles() {
+    	
         String[] searchLocations = new String[] {
+        		Application.getCodeBaseFolder(),
                 System.getenv("ProgramFiles"),
                 System.getenv("ProgramFiles(x86)"),
                 System.getenv("ProgramW6432"),
                 "C:\\Program Files",
-                "C:\\Program Files (x86)"
+                "C:\\Program Files (x86)",
+                "C:"
         };
         File locationFile;
         for (String location : searchLocations) {
