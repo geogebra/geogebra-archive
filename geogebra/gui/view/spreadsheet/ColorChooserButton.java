@@ -37,9 +37,9 @@ import javax.swing.UIManager;
  */
 class ColorChooserButton extends JButton{
 
-	ColorChooserButton btn;
-	ColorChooserPopup myPopup;
-	Color selectedColor;
+	private ColorChooserButton btn;
+	private ColorChooserPopup myPopup;
+	private Color selectedColor; 
 	
 	
 	/** Button constructor */
@@ -62,6 +62,7 @@ class ColorChooserButton extends JButton{
 		public void mousePressed(MouseEvent e) {
 			Point locButton = btn.getLocation();
 			int h = e.getX() - locButton.x;
+			// trigger popup if the mouse is over the right side of the button
 			if(e.getX() >= 20 &&  e.getX() <=38){ 
 				myPopup.show(btn.getParent(), locButton.x,locButton.y + btn.getHeight());
 			}
@@ -76,7 +77,10 @@ class ColorChooserButton extends JButton{
 	}
 
 	public Color getSelectedColor(){
-		return selectedColor;
+		if(myPopup.isVisible()) 
+			return null;
+		else
+			return selectedColor;
 	}
 	
 	public void handlePopupEvent(){
