@@ -3,6 +3,7 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -286,7 +287,7 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	/**
-	 * Return parent SpreasheetView for this table
+	 * Return parent SpreadsheetView for this table
 	 */
 	public SpreadsheetView getView() {
 		return view;		
@@ -1139,13 +1140,23 @@ public class MyTable extends JTable implements FocusListener
 		
 		if (ob instanceof GeoElement) {
 			GeoElement geo = (GeoElement) ob;
+			
 			if (!geo.isGeoText() && 
 					editor.getEditorInitString(geo).length() > MAX_CELL_EDIT_STRING_LENGTH) {
 				app.getGuiManager().showRedefineDialog(geo, false);
 				return true;
 			}
+			
+				if (geo.isGeoText() && ((GeoText)geo).isLaTeX() ) {
+					app.getGuiManager().showRedefineDialog(geo, true);
+					return true;
+				}
+			
+			
+			
 		}
 		
+	
 		// STANDARD case: in cell editing
 		return super.editCellAt(row, col);
 	}
