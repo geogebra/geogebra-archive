@@ -882,6 +882,9 @@ public class Application implements KeyEventDispatcher {
 	 * Handles command line options (like -language).
 	 */
 	private void handleOptionArgs(CommandLineArguments args) {
+		
+		if (args == null) return;
+		
 		if(args.getStringValue("help").length() > 0) {
 			// help message
 			System.out
@@ -976,7 +979,7 @@ public class Application implements KeyEventDispatcher {
 	 * @return true if a file was loaded successfully
 	 */
 	private boolean handleFileArg(CommandLineArguments args) {
-		if(!args.containsArg("file")) 
+		if(args == null || !args.containsArg("file")) 
 			return false;
 		
 		String fileArgument = args.getStringValue("file");

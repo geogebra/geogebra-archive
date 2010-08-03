@@ -106,7 +106,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 				Component c = e.getComponent();
 				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
 
-				if (!app.runningInFrame && app.onlyGraphicsViewShowing())
+				if (app != null && !app.runningInFrame && app.onlyGraphicsViewShowing())
 				{
 					// use just horizontal scale factors
 					// under normal circumstances, these should be the same			
