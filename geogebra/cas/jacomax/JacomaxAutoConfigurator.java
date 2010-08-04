@@ -40,16 +40,14 @@ public final class JacomaxAutoConfigurator {
     
     private static final String[] UNIX_EXECUTABLE_PATHS = {
         "/usr/bin/maxima",
-        "/usr/local/bin/maxima",
-		Application.getCodeBaseFolder()
+        "/usr/local/bin/maxima"
     };
     
     private static final String[] MAC_OS_X_EXECUTABLE_PATHS = {
         "/Applications/Maxima.app/Contents/Resources/bin/maxima",
         "/opt/local/bin/maxima",
         "/usr/bin/maxima",
-        "/usr/local/bin/maxima",
-		Application.getCodeBaseFolder()
+        "/usr/local/bin/maxima"
     };
     
     /**
@@ -65,13 +63,21 @@ public final class JacomaxAutoConfigurator {
      */
     public static MaximaConfiguration guessMaximaConfiguration() {
         MaximaConfiguration result = new MaximaConfiguration();
-        
         String osName = System.getProperty("os.name");
-        if (osName!=null && osName.startsWith("Windows")) {
+        
+        File maximaFolder = null;
+        
+        // check codebase folder first, then check OS etc
+        String codebase = Application.getCodeBaseFolder();
+        if (codebase != null) maximaFolder = chooseBestWindowsMaximaFolder(new File(codebase));
+        if (maximaFolder!=null) {
+            logger.debug("Found Maxima with highest version number at {}", maximaFolder);
+            findWindowsMaximaExecutable(result, maximaFolder);
+        } else if (osName!=null && osName.startsWith("Windows")) {
             File programFilesFolder = findWindowsProgramFiles();
             if (programFilesFolder!=null) {
                 logger.debug("Looking in Windows Program Files Folder ({}) for Maxima installs", programFilesFolder);
-                File maximaFolder = chooseBestWindowsMaximaFolder(programFilesFolder);
+                maximaFolder = chooseBestWindowsMaximaFolder(programFilesFolder);
                 if (maximaFolder!=null) {
                     logger.debug("Found Maxima with highest version number at {}", maximaFolder);
                     findWindowsMaximaExecutable(result, maximaFolder);
@@ -118,7 +124,7 @@ public final class JacomaxAutoConfigurator {
     private static File findWindowsProgramFiles() {
     	
         String[] searchLocations = new String[] {
-        		Application.getCodeBaseFolder(),
+        		//Application.getCodeBaseFolder(),
                 System.getenv("ProgramFiles"),
                 System.getenv("ProgramFiles(x86)"),
                 System.getenv("ProgramW6432"),
