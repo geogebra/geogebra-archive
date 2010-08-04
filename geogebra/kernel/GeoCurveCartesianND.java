@@ -125,7 +125,7 @@ public abstract class GeoCurveCartesianND extends GeoElement{
 		if (isLabelSet()) {
 			sbToString.append(label);
 			sbToString.append('(');
-			sbToString.append(fun[0].getFunctionVariable().toString());
+			sbToString.append(fun[0].getFunctionVariables().toString());
 			sbToString.append(") = ");					
 		}		
 		sbToString.append(toValueString());

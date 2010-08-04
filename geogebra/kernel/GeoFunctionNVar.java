@@ -36,7 +36,7 @@ import java.util.Locale;
  * @author Markus Hohenwarter
  */
 public class GeoFunctionNVar extends GeoElement
-implements FunctionalNVar {
+implements FunctionalNVar, CasEvaluableFunction {
 
 	protected FunctionNVar fun;		
 	protected boolean isDefined = true;
@@ -142,51 +142,24 @@ implements FunctionalNVar {
 	}	
 	
 	/**
-	 * Set this function to the n-th partial derivative of f for var.
-	 * @param f
-	 * @param order
+	 * Sets this function by applying a GeoGebraCAS command to a function.
+	 * 
+	 * @param ggbCasCmd the GeoGebraCAS command needs to include % in all places
+	 * where the function f should be substituted, e.g. "Derivative(%,x)"
+	 * @param f the function that the CAS command is applied to
 	 */
-	public void setDerivative(GeoFunctionNVar f, String var, int n) {		
-		if (f.isDefined()) {
-			fun = f.fun.getDerivative(var, n);
+	public void setUsingCasCommand(String ggbCasCmd, CasEvaluableFunction f, boolean symbolic){
+		GeoFunctionNVar ff = (GeoFunctionNVar) f;
+		
+		if (ff.isDefined()) {
+			fun = ff.fun.evalCasCommand(ggbCasCmd, symbolic);
 			isDefined = fun != null;
 		} else {
 			isDefined = false;
 		}		
 	}
 	
-	/**
-	 * Set this function to the integral of f
-	 * @param f
-	 */
-//	public void setIntegral(GeoFunctionNVar f) {
-//		if (f.isDefined()) {
-//			fun = f.fun.getIntegral();	
-//		} else {
-//			isDefined = false;
-//		}	
-//	}
-	
-	/**
-	 * Set this function to the expanded version of f, e.g. 3*(x-2) is expanded to 3*x - 6.
-	 */
-//	public void setExpanded(GeoFunctionNVar f) {
-//		if (f.isDefined()) {
-//			fun = f.fun.getExpanded();	
-//		} else {
-//			isDefined = false;
-//		}	
-//	}
-	
-//	public GeoFunctionNVar getGeoDerivative(int order){	
-//		if (derivGeoFun == null) {
-//			derivGeoFun = new GeoFunctionNVar(cons);
-//		}
-//		
-//		derivGeoFun.setDerivative(this, order);
-//		return derivGeoFun;					
-//	}
-//	private GeoFunctionNVar derivGeoFun;
+
 	
 	public ExpressionValue evaluate() {
 		return this;
@@ -299,7 +272,9 @@ implements FunctionalNVar {
 
 	  }
 
-	
+	final public boolean isCasEvaluableFunction() {
+		return true;
+	}
 
 	public boolean isNumberValue() {
 		return false;		

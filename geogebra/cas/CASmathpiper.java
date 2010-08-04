@@ -3,6 +3,7 @@ package geogebra.cas;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.MyResourceBundle;
 
@@ -213,12 +214,12 @@ public class CASmathpiper extends CASgeneric {
 		if (assignment) {
 			StringBuilder sb = new StringBuilder();
 			
-			if (ve instanceof Function) {
+			if (ve instanceof FunctionNVar) {
 				// function, e.g. f(x) := 2*x
-				Function fun = (Function) ve;
+				FunctionNVar fun = (FunctionNVar) ve;
 				sb.append(veLabel);
 				sb.append("(" );
-				sb.append(fun.getFunctionVariable());
+				sb.append(fun.getVarString());
 				sb.append(") := ");
 				sb.append(MathPiperStr);
 				MathPiperStr = sb.toString();

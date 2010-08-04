@@ -34,11 +34,8 @@ import java.util.Locale;
  */
 public class GeoFunction extends GeoElement
 implements Path, Translateable, Traceable, Functional, GeoFunctionable,
-GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
+CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	protected Function fun;		
@@ -173,7 +170,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	 * @param f
 	 * @param order
 	 */
-	public void setDerivative(GeoDeriveable fd, int n) {
+	public void setDerivative(CasEvaluableFunction fd, int n) {
 		GeoFunction f = (GeoFunction) fd;
 		
 		if (f.isDefined()) {
@@ -185,28 +182,23 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 	}
 	
 	/**
-	 * Set this function to the integral of f
-	 * @param f
+	 * Sets this function by applying a GeoGebraCAS command to a function.
+	 * 
+	 * @param ggbCasCmd the GeoGebraCAS command needs to include % in all places
+	 * where the function f should be substituted, e.g. "Derivative(%,x)"
+	 * @param f the function that the CAS command is applied to
 	 */
-	public void setIntegral(GeoFunction f) {
-		if (f.isDefined()) {
-			fun = f.fun.getIntegral();	
-		} else {
-			isDefined = false;
-		}	
-	}
-	
-	/**
-	 * Set this function to the expanded version of f, e.g. 3*(x-2) is expanded to 3*x - 6.
-	 */
-	public void setExpanded(GeoFunction f) {
-		if (f.isDefined()) {
-			fun = f.fun.getExpanded();	
-		} else {
-			isDefined = false;
-		}	
-	}
+	public void setUsingCasCommand(String ggbCasCmd, CasEvaluableFunction f, boolean symbolic){
+		GeoFunction ff = (GeoFunction) f;
 		
+		if (ff.isDefined()) {
+			fun = (Function) ff.fun.evalCasCommand(ggbCasCmd, symbolic);
+			isDefined = fun != null;
+		} else {
+			isDefined = false;
+		}		
+	}	
+	
 	/**
 	 * Returns this function's value at position x.
 	 * @param x
@@ -529,6 +521,10 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		return false;
 	}
 
+	final public boolean isCasEvaluableFunction() {
+		return true;
+	}
+	
 	public boolean isNumberValue() {
 		return false;		
 	}
@@ -631,10 +627,6 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 
 	public GeoVec2D evaluateCurve(double t) {
 		return new GeoVec2D(kernel, t, evaluate(t));
-	}
-
-	public boolean isGeoDeriveable() {
-		return true;
 	}
 	
 	public String getVarString() {	
@@ -778,7 +770,7 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
         sb.append('(');
         sb.append(functionIn);
         sb.append(',');
-        sb.append(fun.getFunctionVariable());
+        sb.append(fun.getFunctionVariables());
         sb.append(',');
         sb.append(Double.toString(x));
         sb.append(')');
@@ -1057,6 +1049,6 @@ GeoDeriveable, ParametricCurve, LineProperties, RealRootFunction {
 		sb.append(fun.getFunctionVariable());
 		sb.append(")");
 		return sb.toString();
-	 }	
+	 }
 
 }

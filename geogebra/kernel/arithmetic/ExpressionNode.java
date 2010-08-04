@@ -28,9 +28,11 @@ import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 
 /**
@@ -41,9 +43,6 @@ import java.util.Set;
 public class ExpressionNode extends ValidExpression
 implements ExpressionValue, ExpressionNodeConstants {   
 	 
-    
-
-    
     public Application app;
     public Kernel kernel;
     public ExpressionValue left, right; 
@@ -488,21 +487,41 @@ implements ExpressionValue, ExpressionNodeConstants {
     /**
      * returns true if there is at least one Polynomial in the tree
      */
-    public boolean includesPolynomial() {               
+    public boolean includesPolynomial() { 
+    	return getPolynomialVars().size() > 0;
+    }
+    
+    /**
+     * Returns all polynomial variables (x, y, and/or z) in this tree
+     * as a list.
+     * @return list with all variables as Strings
+     */
+    public TreeSet<String> getPolynomialVars() {
+    	TreeSet<String> vars = new TreeSet<String>();
+    	getPolynomialVars(vars);
+    	return vars;
+    }
+    
+    /**
+     * Adds all polynomial variables (x, y, and/or z) in this tree
+     * to vars.
+     * @param vars the set to add all variables as Strings
+     */
+    private void getPolynomialVars(TreeSet<String> vars) { 
         if (left.isExpressionNode()) {             
-            if (((ExpressionNode)left).includesPolynomial()) return true;            
+            ((ExpressionNode)left).getPolynomialVars(vars);            
         }                                                               
-        else if (left.isPolynomialInstance())
-			return true;          
+        else if (left.isPolynomialInstance()) {
+			vars.add(left.toString());         
+        }
         
         if (right != null) {
             if (right.isExpressionNode()) {
-                if (((ExpressionNode)right).includesPolynomial()) return true;            
-            } else if (right.isPolynomialInstance())
-                return true;                    
-        }
-        
-        return false;        
+            	((ExpressionNode)right).getPolynomialVars(vars);           
+            } else if (right.isPolynomialInstance()) {
+            	vars.add(right.toString());           
+            }
+        }      
     }
     
     /**
@@ -540,30 +559,6 @@ implements ExpressionValue, ExpressionNodeConstants {
         return evalToVector;        
     }
     
-    /**
-    * Returns true if this tree contains only Polynomials that
-    * return true for isX()
-    */    
-   final public boolean isFunctionInX() {                
-        boolean isFunction = true;
-        if (left.isExpressionNode()) {             
-            isFunction = ((ExpressionNode)left).isFunctionInX();            
-        } else if (left.isPolynomialInstance()) {            
-            isFunction = ((Polynomial) left).isVar("x");
-        }      
-        if (!isFunction) return false;
-       
-       if (right != null) {
-        if (right.isExpressionNode()) {
-            isFunction =((ExpressionNode)right).isFunctionInX();            
-        }else if (right.isPolynomialInstance()) {            
-            isFunction = ((Polynomial) right).isVar("x");
-        }
-       }
-                 
-       return isFunction;
-   }
-   
    /**
     * Returns true if this tree includes a division by val
     */    
@@ -745,6 +740,23 @@ implements ExpressionValue, ExpressionNodeConstants {
             return left.contains(ev);
 		else
 			return left.contains(ev) || right.contains(ev);            
+    }
+    
+    /** 
+     * Returns true when the given object is found in this expression tree.
+     */
+    final public boolean containsObjectType(Class type) {
+    	if (type.isInstance(left) || type.isInstance(right))
+    		return true;
+    	
+    	if (left instanceof ExpressionNode && ((ExpressionNode) left).containsObjectType(type)) {
+    		return true;
+    	}
+     	if (right instanceof ExpressionNode && ((ExpressionNode) right).containsObjectType(type)) {
+    		return true;
+    	}
+    	
+        return false;       
     }
     
     /**

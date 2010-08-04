@@ -762,11 +762,23 @@ ExpressionNode cmdexpression():
     // expression 
     en = expressionnode()              
     {
-        if (!GeoGebraCASParsing && en.includesPolynomial()) {
-        	if (en.isFunctionInX()) 
-        		return new ExpressionNode(kernel, new Function(en));
-        	else
-	        	throw new MyError(app, "IncompleteEquation");
+        if (!GeoGebraCASParsing) {
+          	TreeSet<String> vars = en.getPolynomialVars();
+          	switch (vars.size()) {
+          		case 0: break;
+          		case 1: // single var function
+	        		return new ExpressionNode(kernel, new Function(en, new FunctionVariable(kernel, vars.first())));
+
+				default: // multivariate function
+					FunctionVariable [] funs = new FunctionVariable[vars.size()];    	
+					int i=0;
+			    	for (String var : vars) {
+			    		funs[i++] = new FunctionVariable(kernel, var);
+			    	}
+			    	return new ExpressionNode(kernel, new FunctionNVar(en, funs));
+			    	
+          	}
+        	//throw new MyError(app, "IncompleteEquation");
         }
         
         // since v3.0: commands have to take care of resolving the variables of 
@@ -830,8 +842,9 @@ FunctionNVar  functionNVar():
 }
 
 /**
- * function = 	f(var) = expressionnode 
- * 				f(var) = command
+ * function = 	f(var1, var2) = expressionnode 
+ *				f(var) := expressionnode 
+ *				f(var) = command
  */
 ExpressionNode functionExpressionnode():
 {
@@ -893,28 +906,51 @@ ExpressionNode functionExpressionnode():
 /**
  * CAS function = 	label(var) := expressionnode 
  */
-Function casFunction():
+FunctionNVar casFunction():          
 {
     ExpressionNode rhs;
     Token funName = null;
     Token varName = null;
+    ArrayList<String> localVars;
     Token var;
 }
 {          
 (
-	   // f(a) :=  a^2 + 3	
-	   funName = <FUNCTION_LABEL> // includes "(" at end
-	   		  ( varName =  <VARX> | varName =  <VARY> |
-	   		    varName =  <SPREADSHEET_LABEL> | varName = <LABEL> ) ")" 
-	   		<ASSIGNMENT> rhs = expressionnode()
-	    {	        	    	
-	   		FunctionVariable fVar = new FunctionVariable(kernel);
-	   		fVar.setVarString(varName.image);
-	   		
-	   		Function fun = new Function(rhs, fVar);
-	   		String funLabel = funName.image.substring(0,funName.image.length()-1);	
-	    	fun.setLabel(funLabel);
-	    	return fun;	       
+  		// single or multi-variable function definition
+	   // f(a) =  a^2 + 3
+	   // g(x,y) := x * y
+	   funName = <FUNCTION_LABEL> // includes "(" at end	   
+	   		// local variables
+	   		(( varName =  <VARX> | varName =  <VARY> | varName =  <SPREADSHEET_LABEL> | varName = <LABEL> )
+	   		  { localVars = new ArrayList<String>(); localVars.add(varName.image); } )
+			// optional second variable			
+			 (<COMMA> ( varName =  <VARX> | varName =  <VARY> | varName =  <SPREADSHEET_LABEL> | varName = <LABEL> )
+			 { localVars.add(varName.image); } )* 
+			// closing ) and assignment with expressionnode
+	   		 ")" ( <ASSIGNMENT> ) rhs = expressionnode()
+	    {
+		  	String funLabel = funName.image.substring(0,funName.image.length()-1);	 
+
+			// number of vars
+			int n = localVars.size();
+			
+			FunctionVariable[] funVar = new FunctionVariable[n];
+	    	for (int i=0;i<n; i++){
+	    		funVar[i] = new FunctionVariable(kernel);
+	    		funVar[i].setVarString(localVars.get(i));
+	    	}
+
+    	    switch (n) {
+    	      case 1: // single variable function					
+				Function fun = new Function(rhs, funVar[0]);
+				fun.setLabel(funLabel);
+				return fun;
+
+       		  default: // multi variable function
+       			FunctionNVar funn = new FunctionNVar(rhs, funVar);
+				funn.setLabel(funLabel);
+				return funn;
+    	    }
 	    }   
 )	 
 }     

@@ -25,8 +25,8 @@ public class AlgoLengthFunction2Points extends AlgoElement {
         length = new GeoNumeric(cons);
      
         //First derivative of function f
-        AlgoDerivative algo = new AlgoDerivative(cons, f, null);
-        this.f1 = (GeoFunction) algo.getDerivative();
+        AlgoCasDerivative algo = new AlgoCasDerivative(cons, f);
+        this.f1 = (GeoFunction) algo.getResult();
         
     	lengthFunction = new LengthFunction();
         

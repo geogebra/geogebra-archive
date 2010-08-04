@@ -25,6 +25,11 @@ public class FunctionVariable extends MyDouble {
 		super(kernel);
 	}
 	
+	public FunctionVariable(Kernel kernel, String varStr) {
+		super(kernel);
+		setVarString(varStr);
+	}
+	
 	/**
 	 * Returns true to avoid deep copies in an ExpressionNode tree.
 	 */

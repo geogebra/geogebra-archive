@@ -34,22 +34,8 @@ import java.util.List;
  * 
  * @author Markus Hohenwarter
  */
-public class Function extends ValidExpression 
-implements ExpressionValue, RealRootFunction, Functional {    	
-	
-    private ExpressionNode expression;
-    private FunctionVariable fVar;    
-    
-    // standard case: number function in x, see initFunction()
-    private boolean isBooleanFunction = false;
-    
-    // if the function is of type f(x) = c
-    private boolean isConstantFunction = false; 
-      
-    transient private Application app;
-    transient private Kernel kernel;    
-    
-	private StringBuilder sb = new StringBuilder(80);	
+public class Function extends FunctionNVar 
+implements ExpressionValue, RealRootFunction, Functional {
 
 	 /**
      * Creates new Function from expression where x is
@@ -57,43 +43,16 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Note: call initFunction() after this constructor.
      */ 
     public Function(ExpressionNode expression) {
-    	kernel = expression.getKernel();
-    	app = kernel.getApplication();        	
-        
-        this.expression = expression;       
+    	super(expression);     
     }
     
-    /**
-     * Creates new Function from expression where var is
-     * the variable.
-     * Note: call initFunction() after this constructor.
-     *
-    public Function(ExpressionNode expression, String var) {
-    	if (var.equals("y"))
-    		throw new MyError(app, "InvalidFunction");  
-    	
-    	kernel = expression.getKernel();
-    	app = kernel.getApplication();        	
-        
-        this.expression = expression;  
-        
-        // GeoGebra initally only supported functions in x,
-        // so we simulate this  
-        FunctionVariable fVar = new FunctionVariable(kernel);
-        fVar.setVarString(var);
-        expression.replaceSpecificVariable(var, fVar);
-    } */
     
     /**
      * Creates new Function from expression where the function
      * variable in expression is already known.
      */ 
     public Function(ExpressionNode exp, FunctionVariable fVar) {
-    	kernel = exp.getKernel();
-    	app = kernel.getApplication();               
-        
-        expression = exp;
-        this.fVar = fVar;
+    	super(exp, new FunctionVariable [] {fVar});
     }
     
     /**
@@ -101,15 +60,13 @@ implements ExpressionValue, RealRootFunction, Functional {
      * do this later.    
      */ 
     public Function(Kernel kernel) {
-        this.kernel = kernel;
-        app = kernel.getApplication();
-
+       super(kernel);
     }
     
     // copy constructor
     public Function(Function f, Kernel kernel) {   
-        expression = f.expression.getCopy(kernel);
-        fVar = f.fVar; // no deep copy of function variable             
+        super(f.expression.getCopy(kernel));
+        fVars = f.fVars; // no deep copy of function variable            
         isBooleanFunction = f.isBooleanFunction;
         isConstantFunction = f.isConstantFunction;
        
@@ -117,55 +74,16 @@ implements ExpressionValue, RealRootFunction, Functional {
         this.kernel = kernel;
     }
     
-    public boolean isFunctionVariable(String var) {
-    	if (fVar == null) 
-    		return false;
-    	else
-    		return fVar.toString().equals(var);
-    }
-       
-    
-    public Kernel getKernel() {
-    	return kernel;
-    }
-    
     public ExpressionValue deepCopy(Kernel kernel) {
         return new Function(this, kernel);        
-    }
-    
-    final public ExpressionNode getExpression() {
-        return expression;
-    }    
-    
-    public void resolveVariables() {
-       expression.resolveVariables();                
-    }
-    
-    /**
-     * Replaces geo and all its dependent geos in this function's
-     * expression by copies of their values.
-     */
-    public void replaceChildrenByValues(GeoElement geo) {     	
-    	if (expression != null) {
-    		expression.replaceChildrenByValues(geo);
-    	}
-    }
-    
-    /**
-     * Use this method only if you really know
-     * what you are doing.
-     */
-    public void setExpression(ExpressionNode exp) {
-        expression = exp;
-    }
+    }   
     
     /**
      * Use this methode only if you really know
      * what you are doing.
      */
     public void setExpression(ExpressionNode exp, FunctionVariable var) {
-        expression = exp;
-        fVar = var;
+        super.setExpression(exp, new FunctionVariable[] {var});
     }
     
     final public Function getFunction() {
@@ -173,11 +91,11 @@ implements ExpressionValue, RealRootFunction, Functional {
     }
     
     public FunctionVariable getFunctionVariable() {
-        return fVar;
+        return fVars[0];
     }
     
     final public String getVarString() {
-    	return fVar == null ? "x" : fVar.toString();
+    	return fVars == null ? "x" : fVars[0].toString();
     }
 
     /**
@@ -185,75 +103,12 @@ implements ExpressionValue, RealRootFunction, Functional {
      * May throw MyError (InvalidFunction).
      */
     public void initFunction() {              	
-        
-    	// replace function variables in tree
-        if (fVar == null) {
+        if (fVars == null) {
         	// try function variable x
-        	fVar = new FunctionVariable(kernel);   
+        	fVars = new FunctionVariable[] {new FunctionVariable(kernel)};   
         }
         
-    	// look for Variable and Polynomial objects with name of function variable and replace them
-    	int replacements = expression.replaceVariables(fVar.toString(), fVar);
-    	replacements += expression.replacePolynomials(fVar);
-    	isConstantFunction = replacements == 0;
-        
-        // replace variable names by objects
-        expression.resolveVariables();
-        
-        // the idea here was to allow something like: Derivative[f] + 3x
-        // but wrapping the GeoFunction objects as ExpressionNodes of type FUNCTION
-        // leads to Derivative[f](x) + 3x
-        // expression.wrapGeoFunctionsAsExpressionNode();
-
-        // replace all polynomials in expression (they are all equal to "1x" if we got this far)
-        // by an instance of MyDouble
-        
-        
-        //  simplify constant parts in expression
-        expression.simplifyConstantIntegers();
-
-        initType();
-    }               
-    
-    private void initType() {
-    	// check type of function
-        ExpressionValue ev = expression.evaluate();        
-        if (ev.isBooleanValue()) {
-        	isBooleanFunction = true;
-        }        
-        else if (ev.isNumberValue()) {
-        	isBooleanFunction = false;
-        } 
-        else {
-			throw new MyError(app, "InvalidFunction");  
-        }
-    }
-
-    /**
-     * Returns whether this function always evaluates to BooleanValue.
-     */
-    final public boolean isBooleanFunction() {
-    	return isBooleanFunction;
-    }
-    
-    /**
-     * Returns whether this function always evaluates to the same
-     * numerical value, i.e. it is of the form f(x) = c.
-     */
-    final public boolean isConstantFunction() {
-    	return isConstantFunction || !expression.contains(fVar);
-    }       
-    
-    public boolean isConstant() {
-        return false;
-    }
-
-    public boolean isLeaf() {
-        return true;
-    }
-
-    public ExpressionValue evaluate() {
-        return this;
+        super.initFunction();
     }
     
     /**
@@ -268,7 +123,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     	}
     	else {
     		// NumberValue
-    		fVar.set(x);
+    		fVars[0].set(x);
     		return ((NumberValue) expression.evaluate()).getDouble();
     	}     
     }
@@ -280,31 +135,10 @@ implements ExpressionValue, RealRootFunction, Functional {
      * @return f(x)
      */
     final public boolean evaluateBoolean(double x) {       
-        fVar.set(x);
+        fVars[0].set(x);
         return ((BooleanValue) expression.evaluate()).getBoolean();       
     }
     
-    public HashSet getVariables() {
-        return expression.getVariables();
-    }
-
-    public GeoElement[] getGeoElementVariables() {
-        return expression.getGeoElementVariables();
-    }
-    
-    public String toString() {
-        return expression.toString();
-    }
-
-    final public String toValueString() {
-        return expression.toValueString();
-    }
-    
-	final public String toLaTeXString(boolean symbolic) {
-		return expression.toLaTeXString(symbolic);		
-	}
-	
-	
     /**
      * translate this function by vector (vx, vy)
      */
@@ -314,7 +148,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 
         // translate x
         if (!kernel.isZero(vx)) {
-            if (isLeaf && left == fVar) { // special case: f(x) = x
+            if (isLeaf && left == fVars[0]) { // special case: f(x) = x
                 expression = shiftXnode(vx);            
              } else {
                 //  replace every x in tree by (x - vx)
@@ -325,7 +159,7 @@ implements ExpressionValue, RealRootFunction, Functional {
          
         // translate y
         if (!kernel.isZero(vy)) {                       
-            if (isLeaf && left != fVar) { // special case f(x) = constant               
+            if (isLeaf && left != fVars[0]) { // special case f(x) = constant               
                 MyDouble c = ((NumberValue) expression.getLeft()).getNumber();
                 c.set(c.getDouble() + vy);
                 expression.setLeft(c);
@@ -351,7 +185,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         ExpressionValue right = en.getRight();  
         
         // left tree
-        if (left == fVar) {         
+        if (left == fVars[0]) {         
             try { // is there a constant number to the right?
                 MyDouble num = (MyDouble) right;
                 double temp;
@@ -359,7 +193,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                     case ExpressionNode.PLUS :
                         temp = num.getDouble() - vx;                    
                         if (kernel.isZero(temp)) {                      
-                            expression = expression.replace(en, fVar);                          
+                            expression = expression.replace(en, fVars[0]);                          
                         } else if (temp < 0) {
                             en.setOperation(ExpressionNode.MINUS);
                             num.set(-temp);
@@ -371,7 +205,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                     case ExpressionNode.MINUS :
                         temp = num.getDouble() + vx;
                         if (kernel.isZero(temp)) {
-                            expression = expression.replace(en, fVar);                      
+                            expression = expression.replace(en, fVars[0]);                      
                         } else if (temp < 0) {
                             en.setOperation(ExpressionNode.PLUS);
                             num.set(-temp);
@@ -392,7 +226,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         }       
 
         // right tree
-        if (right == fVar) {
+        if (right == fVars[0]) {
             en.setRight(shiftXnode(vx));
         }
         else if (right instanceof ExpressionNode) {
@@ -406,13 +240,13 @@ implements ExpressionValue, RealRootFunction, Functional {
         if (vx > 0) {
             node =
                 new ExpressionNode(kernel,
-                    fVar,
+                		fVars[0],
                     ExpressionNode.MINUS,
                     new MyDouble(kernel,vx));
         } else {
             node =
                 new ExpressionNode(kernel,
-                    fVar,
+                		fVars[0],
                     ExpressionNode.PLUS,
                     new MyDouble(kernel,-vx));
         }
@@ -422,7 +256,7 @@ implements ExpressionValue, RealRootFunction, Functional {
     final public void translateY(double vy) {                                  
         try { // is there a constant number to the right
             MyDouble num = (MyDouble) expression.getRight();
-            if (num == fVar) { // right side might be the function variable
+            if (num == fVars[0]) { // right side might be the function variable
                 addNumber(vy);
                 return;
             }
@@ -617,7 +451,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                 	
               	  	// divide: x in denominator: no polynomial
                 	// power: x in exponent: no polynomial
-                	if (node.getRight().contains(fVar))
+                	if (node.getRight().contains(fVars[0]))
 						return false;
 
                     // power: 
@@ -752,14 +586,6 @@ implements ExpressionValue, RealRootFunction, Functional {
 /* ***************
  * CALULUS
  * ***************/
- 
-    // remember calculated derivatives and integral
-    // do calculus only if expression changed
-    private ExpressionNode diffParentExp, intParentExp, expandParentExp;
-    
-    //  stores derivatives as (order, result function) pairs
-    private HashMap<Integer, Function> derivativeMap;
-    private Function integralFun, expandedFun;
     
     /**
      * Returns n-th derivative of this function wrapped
@@ -780,147 +606,64 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Returns n-th derivative of this function
      */
     final public Function getDerivative(int n) {
-       if (n < 0) return null;
-       else if (n == 0) return this;   
-       
-       //  do calculus only if parent expression changed
-       if (diffParentExp != expression) {  
-           diffParentExp = expression; 
-           getDerivativeMap().clear();
-       } 
-       else if (derivativeMap != null) {
-           // do we have the desired result?
-           Object ob = getDerivativeMap().get(n);
-           if (ob != null) {            	
-           	return (Function) ob;
-           }
-       }
-       
-       // ok, we really have to do it...
-		Function result = derivative(n);
-		getDerivativeMap().put(n, result); // remember the hard work
-       return result;
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("Derivative(%,");
+    	sb.append(fVars[0]);
+    	sb.append(",");
+    	sb.append(n);
+    	sb.append(")");
+    	
+    	return (Function) evalCasCommand(sb.toString(), true);
     }
     
-    private HashMap<Integer, Function> getDerivativeMap() {
-   	 if (derivativeMap == null)
-			derivativeMap = new HashMap<Integer, Function>();
-   	 return derivativeMap;
-    }
-      
-    /**
-      * Returns integral of this function
-      */
-     final public Function getIntegral() {
-        //  do calculus only if parent expression changed
-        if (intParentExp != expression) {
-            intParentExp = expression;
-            integralFun = integral();
-        }
-        
-        return integralFun;
-     }
-     
-     /**
-      * Returns expanded version of this function.
-      * e.g. 3*(x-2) is expanded to 3*x - 6
-      */
-     final public Function getExpanded() {
-        //  do expand only if parent expression changed
-        if (expandParentExp != expression) {
-        	expandParentExp = expression;
-            expandedFun = expand();
-        }
-        
-        return expandedFun;
-     }
+    
+    
 
-    /**
-     * Calculates the derivative of this function
-     * @param order of derivative
-     * @return result as function
-     */
-    final private Function derivative(int order) {     	 
-		// use CAS to get derivative
-        // temporarily replace the variable by "x"
-        String oldVar = fVar.toString();
-        fVar.setVarString("x");
-                
-        // build expression string for CAS             
-		sb.setLength(0);
-        sb.append("Derivative(");
-        // function expression with multiply sign "*"   
-		sb.append(expression.getCASstring(kernel.getCurrentCAS(), true));		
-		if (order > 1) {
-	        sb.append(",x,");
-	        sb.append(order);
-		}
-        sb.append(") ");
-					
-        try {                   	            
-            // evaluate expression by CAS 
-            String result = kernel.evaluateGeoGebraCAS(sb.toString());  
-           
-            // fast fail for e.g. "Differentiate(x)Floor(x)"
-            if (result.startsWith("Differentiate(") || result.startsWith("'diff("))
-            	return null;
-            
-    		// look for "Deriv(x)f(x)" strings and
-    		// replace them with "f'(x)"
-    		String [] derivs = result.split("Deriv\\(x\\)");
-    		sb.setLength(0);
-    		sb.append(derivs[0]); // part before first "Deriv(x)"
-    		for (int i=1; i < derivs.length; i++) {
-    			// replace "(x)" by "'(x)"
-    			sb.append(derivs[i].replaceFirst("\\(x\\)", "'(x)"));
-    		}
-    		result = sb.toString();
-                		
-            // it doesn't matter what label we use here as it is never used            			
-    		sb.setLength(0);
-    		sb.append("f(x) = ");			
-            sb.append(result);
-    
-             // parse result
-             Function fun = kernel.getParser().parseFunction(sb.toString());
-             fun.initFunction();
-             fun.getFunctionVariable().setVarString(oldVar);                       
-             return fun;
-         } catch (Error err) {       
-             //err.printStackTrace();
-        	 return null;
-         } catch (Exception e) {
-        	 //e.printStackTrace();
-             return null;
-         } catch (Throwable e) {
-			 return null;
-		}     
-         finally {
-        	 fVar.setVarString(oldVar);
-         }
-     
-//        // build expression string for JASYMCA             
+//    final private Function derivative(int order) {     	 
+//		// use CAS to get derivative
+//        // temporarily replace the variable by "x"
+//        String oldVar = fVar.toString();
+//        fVar.setVarString("x");
+//                
+//        // build expression string for CAS             
 //		sb.setLength(0);
-//		for (int i=0; i < order; i++)
-//         	sb.append("diff("); 
-//        // function expression with multiply sign "*"                                  
-//		sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));		
-//		for (int i=0; i < order; i++)
-//         	sb.append(",x)"); 
-//          
+//        sb.append("Derivative(");
+//        // function expression with multiply sign "*"   
+//		sb.append(expression.getCASstring(kernel.getCurrentCAS(), true));		
+//		if (order > 1) {
+//	        sb.append(",x,");
+//	        sb.append(order);
+//		}
+//        sb.append(") ");
+//					
 //        try {                   	            
-//            // evaluate expression by JASYMCA          	        	        	
-//            String result = kernel.evaluateJASYMCA(sb.toString());       
+//            // evaluate expression by CAS 
+//            String result = kernel.evaluateGeoGebraCAS(sb.toString());  
+//           
+//            // fast fail for e.g. "Differentiate(x)Floor(x)"
+//            if (result.startsWith("Differentiate(") || result.startsWith("'diff("))
+//            	return null;
 //            
-//        	sb.setLength(0);
+//    		// look for "Deriv(x)f(x)" strings and
+//    		// replace them with "f'(x)"
+//    		String [] derivs = result.split("Deriv\\(x\\)");
+//    		sb.setLength(0);
+//    		sb.append(derivs[0]); // part before first "Deriv(x)"
+//    		for (int i=1; i < derivs.length; i++) {
+//    			// replace "(x)" by "'(x)"
+//    			sb.append(derivs[i].replaceFirst("\\(x\\)", "'(x)"));
+//    		}
+//    		result = sb.toString();
+//                		
 //            // it doesn't matter what label we use here as it is never used            			
-//			sb.append("f(x) = ");			
+//    		sb.setLength(0);
+//    		sb.append("f(x) = ");			
 //            sb.append(result);
 //    
 //             // parse result
 //             Function fun = kernel.getParser().parseFunction(sb.toString());
 //             fun.initFunction();
-//             fun.getFunctionVariable().setVarString(oldVar);                       
+//             fun.getFunctionVariables().setVarString(oldVar);                       
 //             return fun;
 //         } catch (Error err) {       
 //             //err.printStackTrace();
@@ -928,12 +671,14 @@ implements ExpressionValue, RealRootFunction, Functional {
 //         } catch (Exception e) {
 //        	 //e.printStackTrace();
 //             return null;
-//         }     
+//         } catch (Throwable e) {
+//			 return null;
+//		}     
 //         finally {
 //        	 fVar.setVarString(oldVar);
 //         }
-         
-    }	    
+//         
+//    }	    
     
     /**
      * Creates the difference expression (a - b) and stores the result in
@@ -947,11 +692,11 @@ implements ExpressionValue, RealRootFunction, Functional {
         
         // replace b.fVar in right by a.fVar to have only one function
         // variable in our function
-        right.replace(b.fVar, a.fVar);
+        right.replace(b.fVars[0], a.fVars[0]);
         
         ExpressionNode diffExp= new ExpressionNode(a.kernel, left, ExpressionNode.MINUS, right);
         c.setExpression(diffExp);
-        c.fVar = a.fVar;
+        c.fVars[0] = a.fVars[0];
     }
 
     /**
@@ -976,7 +721,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                                     new ExpressionNode(f.kernel, 
                                         new MyDouble(f.kernel, coeffX),
                                         ExpressionNode.MULTIPLY, 
-                                        f.fVar)
+                                        f.fVars[0])
                                     );      
         } else {
             temp = new ExpressionNode(f.kernel, 
@@ -985,7 +730,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                                     new ExpressionNode(f.kernel, 
                                         new MyDouble(f.kernel, -coeffX),
                                         ExpressionNode.MULTIPLY, 
-                                        f.fVar)
+                                        f.fVars[0])
                                     );
         }
         
@@ -1006,238 +751,9 @@ implements ExpressionValue, RealRootFunction, Functional {
         }
                 
         c.setExpression(temp);
-        c.fVar = f.fVar;
+        c.fVars[0] = f.fVars[0];
     }   
     
-    /**
-     * Calculates the integral of this function
-     * @return result as function
-     *
-    final private Function integralOLD() {
-    	
-    	// temporarily replace the variable by "x"
-        String oldVar = fVar.toString();
-        fVar.setVarString("x");
-    	
-        // build expression string for JASYMCA
-        sb.setLength(0);
-        sb.append("integrate(");
-        // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));
-        sb.append(",x)");
-
-        try {           
-            // evaluate expression by JSCL
-            String result = kernel.evaluateJASYMCA(sb.toString());       
-            
-            
-            // remove spurious string from output eg
-            //exp for JASYMCA: integrate((((x) + (0.02))/((((x) + (0.02))^(2)) + (1))) - (0.45),x)
-            //result: (1/2*log(x^2+0.04*x+1.0004)+(-0.45*x+1/2*i*pi))
-
-            String badString = "*i*pi";
-            int badStringIndex = result.indexOf(badString);
-            if (badStringIndex > -1) {
-            	result = result.substring(0,badStringIndex) + result.substring(badStringIndex + badString.length(),result.length());
-            	Application.debug("Removed spurious '*i*pi' to get: "+result);
-            }
-            
-            if (result == null)
-           	 return integralMathPiper();
-            
-            sb.setLength(0);
-            // it doesn't matter what label we use here as it is never used
-            sb.append("f(x)="); 
-            sb.append(result);
-    
-             // parse result
-             Function fun =  kernel.getParser().parseFunction(sb.toString());
-             fun.initFunction();
-             
-             if (fun == null)
-            	 return integralMathPiper();
-             
-             return fun;
-         } catch (Error err) {   
-        	 Application.debug(err+"");
-             return integralMathPiper();
-         } catch (Exception e) {
-        	 Application.debug(e+"");
-             return integralMathPiper();
-         }      
-         finally {
-        	 fVar.setVarString(oldVar);
-         }
-    } /*/
-    
-
-    
-    /**
-     * Calculates the integral of this function
-     * @return result as function
-     */
-    final private Function integral() {
-    	
-    	//Application.debug("Trying MathPiper");
-    	
-    	// temporarily replace the variable by "x"
-        String oldVar = fVar.toString();
-        fVar.setVarString("x");
-    	
-        // build expression string for MathPiper
-        sb.setLength(0);
-        
-        // Subst(a,1) workaround
-        // as sometimes returns ArcTan(x)/a in error        
-        //sb.append("Subst(a,1)AntiDeriv(x,");
-        // ... however it doesn't work if there's a GeoGebra variable 'a' in the expression
-        
-        sb.append("Integral[");
-        // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(kernel.getCurrentCAS(), true));
-        sb.append("]");
-
-        try {           
-            // evaluate expression by MathPiper
-        	Application.debug(sb.toString());
-            String result = kernel.evaluateGeoGebraCAS(sb.toString());     
-            
-            //Application.debug(sb.toString());
-            //Application.debug(result+"");
-            
-            // TODO remove when MathPiper is updated and Jasymca removed
-            // bug: MathPiper rerurns "0" from eg
-            // AntiDeriv(x,((1)/(Sqrt((2) * (3.14159)))) * ((2.72)^(((-1) * ((x)^(2)))/(2))))
-            //if (result.equals("0")) {
-            //	System.err.println("Function.integralMathPiper: MathPiper returned '0', returning null instead");
-            //	return null;
-            //}
-            
-            sb.setLength(0);
-            // it doesn't matter what label we use here as it is never used
-            sb.append("f(x)="); 
-            sb.append(result);
-    
-             // parse result
-             Function fun =  kernel.getParser().parseFunction(sb.toString());
-             fun.initFunction();
-             return fun;
-         } catch (Error err) {   
-        	 err.printStackTrace();
-        	 Application.debug(err+"");
-             return null;
-         } catch (Exception e) {
-        	 e.printStackTrace();
-        	 Application.debug(e+"");
-             return null;
-         } catch (Throwable e) {
-        	 e.printStackTrace();
-           	 Application.debug(e+"");
-             return null;
-		}      
-         finally {
-        	 fVar.setVarString(oldVar);
-         } 
-    }
-    
-            /*
-        // build expression string for JASYMCA
-        sb.setLength(0);
-        sb.append("integrate(");
-        // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(ExpressionNode.STRING_TYPE_JASYMCA, true));
-        sb.append(",x)");
-
-        try {           
-            // evaluate expression by JSCL
-            String result = kernel.evaluateJASYMCA(sb.toString());                           
-            
-            sb.setLength(0);
-            // it doesn't matter what label we use here as it is never used
-            sb.append("f(x)="); 
-            sb.append(result);
-    
-             // parse result
-             Function fun =  kernel.getParser().parseFunction(sb.toString());
-             fun.initFunction();
-             return fun;
-         } catch (Error err) {   
-             return null;
-         } catch (Exception e) {
-             return null;
-         }      
-         finally {
-        	 fVar.setVarString(oldVar);
-         }
-         
-    } */
-    
-    /**
-     * Calculates the expanded version of this function,
-     * e.g. 3*(x-2) is expanded to 3*x - 6.     
-     * @return result as function
-     */
-    final private Function expand() {    
-        // build expression string for CAS
-        sb.setLength(0);
-        sb.append("Expand(");
-        // function expression with multiply sign "*"
-        sb.append(expression.getCASstring(kernel.getCurrentCAS(),true));    
-        sb.append(")");
-
-        try {           
-            // evaluate expression by CAS
-            String result = kernel.evaluateGeoGebraCAS(sb.toString());                           
-            
-            sb.setLength(0);
-            // it doesn't matter what label we use here as it is never used
-            sb.append("f(x)="); 
-            sb.append(result);
-    
-             // parse result
-             Function fun =  kernel.getParser().parseFunction(sb.toString());
-             fun.initFunction();
-             return fun;
-         } catch (Error err) {   
-             return null;
-         } catch (Exception e) {
-             return null;
-         } catch (Throwable e) {
-        	 return null;
-		}         
-    }
-    
-    public boolean isNumberValue() {
-        return false;
-    }
-
-    public boolean isVectorValue() {
-        return false;
-    }
-    
-    public boolean isBooleanValue() {
-        return false;
-    }
-    
-    public boolean isListValue() {
-        return false;
-    }
-
-    public boolean isPolynomialInstance() {
-        return false;
-    }   
-    
-    public boolean isTextValue() {
-        return false;
-    }
-    
-    final public boolean isExpressionNode() {
-        return false;
-    }
-    
-    final public boolean contains(ExpressionValue ev) {
-        return ev == this;
-    }       
     
     /**
      * Tries to build a RealRootDerivFunction out of this
@@ -1284,20 +800,11 @@ implements ExpressionValue, RealRootFunction, Functional {
 		if (expression == null)
 			return false;
 		else
-			return expression.includesDivisionBy(fVar);
+			return expression.includesDivisionBy(fVars[0]);
 	}
 
 	public boolean isVector3DValue() {
 		return false;
 	}
 	
-	 public String getLabelForAssignment() {
-		 StringBuilder sb = new StringBuilder();
-			// function, e.g. f(x) := 2*x
-			sb.append(getLabel());
-			sb.append("(");
-			sb.append(getFunctionVariable());
-			sb.append(")");	
-			return sb.toString();
-	 }
 }

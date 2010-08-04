@@ -10,6 +10,7 @@ import geogebra.cas.jacomax.MaximaTimeoutException;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
@@ -30,39 +31,38 @@ public class CASmaxima extends CASgeneric {
 	}
 	
 	/**
-	 * Returns whether var is a defined variable in MathPiper.
+	 * Returns whether var is a defined variable in Maxima.
 	 */
 	public boolean isVariableBound(String var) {
-		// TODO: implement for Maxima
+		// check if var is assigned a value or defined as function in Maxima
+		StringBuilder sb = new StringBuilder();
 		
-//		StringBuilder exp = new StringBuilder("IsBound(");
-//		exp.append(var);
-//		exp.append(')');
-//		return "True".equals(evaluateMathPiper(exp.toString()));
-		return false;
+		// not sequal(string(u), "u") or not equal(errcatch(fundef(u)), []);
+		sb.append("not sequal(string(");
+		sb.append(var);
+		sb.append("), \"");
+		sb.append(var);
+		sb.append("\") or not equal(errcatch(fundef(");
+		sb.append(var);
+		sb.append(")), []);");
+		
+		return "true".equals(evaluateMaxima(sb.toString()));
 	}
 	
 	/**
-	 * Unbinds (deletes) var in MathPiper.
+	 * Unbinds (deletes) var in Maxima.
 	 * @param var
 	 * @param isFunction
 	 */
-	public void unbindVariable(String var) {
-		// TODO: implement for Maxima
+	public void unbindVariable(String var) {		
+		StringBuilder sb = new StringBuilder();
 		
-//		StringBuilder sb = new StringBuilder();
-//		
-//		// clear function variable, e.g. Retract("f", *)
-//		sb.append("[Retract(\"");
-//		sb.append(var);
-//		sb.append("\", *);");	
-//
-//		// clear variable, e.g. Unbind(f)
-//		sb.append("Unbind(");
-//		sb.append(var);
-//		sb.append(");]");
-//		
-//		evaluateMathPiper(sb.toString());
+		// kill variable var
+		sb.append("kill(");
+		sb.append(var);
+		sb.append(");");
+
+		evaluateMaxima(sb.toString());
 	}
 
 	/**
@@ -132,12 +132,12 @@ public class CASmaxima extends CASgeneric {
 		if (veLabel != null) {
 			StringBuilder sb = new StringBuilder();
 			
-			if (ve instanceof Function) {
+			if (ve instanceof FunctionNVar) {
 				// function, e.g. f(x) := 2*x
-				Function fun = (Function) ve;
+				FunctionNVar fun = (FunctionNVar) ve;
 				sb.append(veLabel);
 				sb.append("(" );
-				sb.append(fun.getFunctionVariable());
+				sb.append(fun.getVarString());
 				sb.append(") := ");
 				
 				// evaluate right hand side:

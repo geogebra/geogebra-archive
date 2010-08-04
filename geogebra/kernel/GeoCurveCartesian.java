@@ -29,7 +29,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * @author Markus Hohenwarter
  */
 public class GeoCurveCartesian extends GeoCurveCartesianND
-implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable,Traceable, GeoDeriveable, ParametricCurve, LineProperties {
+implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable,Traceable, CasEvaluableFunction, ParametricCurve, LineProperties {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -167,22 +167,25 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		}
 	}		
 	
+	
 	/**
-	 * Set this curve to the n-th derivative of curve c
+	 * Set this curve by applying CAS command to f.
 	 */
-	public void setDerivative(GeoDeriveable cd, int n) {
-		GeoCurveCartesian c = (GeoCurveCartesian) cd;
+	public void setUsingCasCommand(String ggbCasCmd, CasEvaluableFunction f, boolean symbolic) {
+		GeoCurveCartesian c = (GeoCurveCartesian) f;
 		
 		if (c.isDefined()) {			
-			funX = c.funX.getDerivative(n);
-			funY = c.funY.getDerivative(n);	
+			funX = (Function) c.funX.evalCasCommand(ggbCasCmd, symbolic);
+			funY = (Function) c.funY.evalCasCommand(ggbCasCmd, symbolic);
 			isDefined = !(funX == null || funY == null);
 			if (isDefined)
 				setInterval(c.startParam, c.endParam);			
 		} else {
 			isDefined = false;
 		}	
-	}		
+	}
+	
+	
 	// added by Loïc Le Coq 2009/08/12
 	/**
 	 * @return value string x-coord function
@@ -367,7 +370,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		if (isLabelSet()) {
 			sbToString.append(label);
 			sbToString.append('(');
-			sbToString.append(funX.getFunctionVariable().toString());
+			sbToString.append(funX.getFunctionVariables().toString());
 			sbToString.append(") = ");					
 		}		
 		sbToString.append(toValueString());
@@ -642,12 +645,12 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		return true;
 	}
 	
-	public boolean isGeoDeriveable() {
+	public boolean isCasEvaluableFunction() {
 		return true;
 	}
 
 	public String getVarString() {	
-		return funX.getFunctionVariable().toString();
+		return funX.getFunctionVariables().toString();
 	}
 	
 	final public boolean isFunctionInX() {		
@@ -666,8 +669,8 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 
 
 	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
 		return false;
 	}
+
 
 }

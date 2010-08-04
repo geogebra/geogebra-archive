@@ -65,7 +65,7 @@ public class CASparser {
 		String localVar = null;
 		if (isFunction) {
 			Construction cmdCons = kernel.getConstruction();  
-			localVar = ((Function) ev).getFunctionVariable().toString();
+			localVar = ((Function) ev).getFunctionVariables().toString();
 			GeoElement localVarGeo = new GeoDummyVariable(cmdCons, localVar);
 			cmdCons.addLocalVariable(localVar, localVarGeo);
 		}

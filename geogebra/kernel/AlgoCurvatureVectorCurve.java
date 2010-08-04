@@ -45,14 +45,14 @@ public class AlgoCurvatureVectorCurve extends AlgoElement {
 		}
 
 		// First derivative of curve f
-		AlgoDerivative algo = new AlgoDerivative(cons, f);
+		AlgoCasDerivative algo = new AlgoCasDerivative(cons, f);
 		cons.removeFromConstructionList(algo);
-		this.f1 = (GeoCurveCartesian) algo.getDerivative();
+		this.f1 = (GeoCurveCartesian) algo.getResult();
 
 		// Second derivative of curve f
-		algo = new AlgoDerivative(cons, f1);
+		algo = new AlgoCasDerivative(cons, f1);
 		cons.removeFromConstructionList(algo);
-		this.f2 = (GeoCurveCartesian) algo.getDerivative();
+		this.f2 = (GeoCurveCartesian) algo.getResult();
 
 		setInputOutput();
 		compute();

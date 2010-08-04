@@ -404,7 +404,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 */
 	public void add(GeoElement geo) {
 		try {
-			if (geo.isGeoFunction()) {
+			if (geo.isCasEvaluableFunction()) {
 				String funStr = geo.toGeoGebraCASString();
 				getCAS().evaluateGeoGebraCAS(funStr);
 			}
@@ -460,7 +460,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		if (geo.isLabelSet())
 			casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
 
-		if (!updateHandled && geo.isGeoFunction()) {
+		if (!updateHandled) {
 			add(geo);
 		}
 	}

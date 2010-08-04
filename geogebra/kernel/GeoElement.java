@@ -3798,7 +3798,7 @@ public abstract class GeoElement
 		return false;
 	}	
 	
-	public boolean isGeoDeriveable() {
+	public boolean isCasEvaluableFunction() {
 		return false;
 	}
 	

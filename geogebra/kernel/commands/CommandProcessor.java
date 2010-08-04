@@ -23,7 +23,7 @@ import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
-import geogebra.kernel.GeoDeriveable;
+import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
@@ -128,11 +128,13 @@ public abstract class CommandProcessor  {
 		cmdCons.addLocalVariable(localVarName, num); 
 
 		// initialize first value of local numeric variable from initPos
-		boolean oldval = cons.isSuppressLabelsActive();
-		cons.setSuppressLabelCreation(true);
-		NumberValue initValue = (NumberValue) resArg(c.getArgument(initPos))[0];
-		cons.setSuppressLabelCreation(oldval);
-		num.setValue(initValue.getDouble());
+		if (initPos != varPos) {
+			boolean oldval = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			NumberValue initValue = (NumberValue) resArg(c.getArgument(initPos))[0];
+			cons.setSuppressLabelCreation(oldval);
+			num.setValue(initValue.getDouble());
+		}
 
 		// set local variable as our varPos argument
 		c.setArgument(varPos, new ExpressionNode(c.getKernel(), num));
@@ -3129,11 +3131,11 @@ class CmdDerivative extends CommandProcessor {
 		switch (n) {
 		case 1 :           
 			arg = resArgs(c);
-			if (arg[0].isGeoDeriveable()) {
-				GeoDeriveable f = (GeoDeriveable) arg[0];
+			if (arg[0] instanceof CasEvaluableFunction) {
+				CasEvaluableFunction f = (CasEvaluableFunction) arg[0];
 				if (label == null)
 					label = getDerivLabel(f.toGeoElement(), 1);
-				GeoElement[] ret = { kernel.Derivative(label, f)};
+				GeoElement[] ret = { kernel.Derivative(label, f, null, null)};
 				return ret;
 			}                   
 			else
@@ -3143,13 +3145,13 @@ class CmdDerivative extends CommandProcessor {
 			// Derivative[ f(a,b), a ]
 			try {
 				arg = resArgsLocalNumVar(c, 1,1); 
-				if (arg[0] instanceof GeoFunctionNVar && arg[1].isGeoNumeric()) {			              	
+				if (arg[0] instanceof CasEvaluableFunction && arg[1].isGeoNumeric()) {			              	
 					GeoElement[] ret =
 					{
 							kernel.Derivative(
 									label,
-									(GeoFunctionNVar) arg[0], // function
-									(GeoNumeric) arg[1])}; // var
+									(CasEvaluableFunction) arg[0], // function
+									(GeoNumeric) arg[1], null)}; // var
 					return ret;
 				} 
 			} catch (Throwable t) {
@@ -3157,22 +3159,22 @@ class CmdDerivative extends CommandProcessor {
 			
 			arg = resArgs(c);
 			// Derivative[ f(x, y), x]
-			if (arg[0] instanceof GeoFunctionNVar && arg[1].isGeoFunction()) {
+			if (arg[0] instanceof CasEvaluableFunction && arg[1].isGeoFunction()) {
 				GeoNumeric var = new GeoNumeric(cons);
 				var.setLocalVariableLabel(arg[1].toString());
 				GeoElement[] ret =
 				{
 						kernel.Derivative(
 								label,
-								(GeoFunctionNVar) arg[0], // function
-								(GeoNumeric) var)}; // var
+								(CasEvaluableFunction) arg[0], // function
+								(GeoNumeric) var, null)}; // var
 				return ret;
 			}
 			// Derivative[ f(x), 2]
-			else if (arg[0].isGeoDeriveable() && arg[1] .isNumberValue()) {
+			else if (arg[0].isCasEvaluableFunction() && arg[1] .isNumberValue()) {
 				double order = ((NumberValue) arg[1]).getDouble();
 				if (order >= 0) {                    
-					GeoDeriveable f = (GeoDeriveable) arg[0];
+					CasEvaluableFunction f = (CasEvaluableFunction) arg[0];
 					if (label == null) {
 						int iorder = (int) Math.round(order);
 						label = getDerivLabel(f.toGeoElement(), iorder);
@@ -3182,7 +3184,7 @@ class CmdDerivative extends CommandProcessor {
 							kernel.Derivative(
 									label,
 									f,
-									(NumberValue) arg[1])};
+									null, (NumberValue) arg[1])};
 					return ret;
 				} else
 					throw argErr(app, "Derivative", arg[1]);
@@ -3257,18 +3259,35 @@ class CmdIntegral extends CommandProcessor {
 	final public    GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
-		GeoElement[] arg = resArgs(c);     
+		GeoElement[] arg;     
 
 		switch (n) {
 		case 1 :                
+			arg = resArgs(c);
 			if (ok[0] = (arg[0].isGeoFunctionable())) {
 				GeoElement[] ret =
-				{ kernel.Integral(c.getLabel(), ((GeoFunctionable) arg[0]).getGeoFunction())};
+				{ kernel.Integral(c.getLabel(), ((GeoFunctionable) arg[0]).getGeoFunction(), null)};
 				return ret;
 			} else
 				throw argErr(app, "Integral", arg[0]);
 
-		case 3 :          
+		case 2 :     
+			// Integral[ f(x,y), x]
+			arg = resArgsLocalNumVar(c, 1,1); 
+			if (arg[0] instanceof CasEvaluableFunction && arg[1].isGeoNumeric()) {			              	
+				GeoElement[] ret =
+				{
+						kernel.Integral(
+								c.getLabel(),
+								(CasEvaluableFunction) arg[0], // function
+								(GeoNumeric) arg[1])}; // var
+				return ret;
+			} 
+			else
+				throw argErr(app, "Integral", arg[0]);
+			
+		case 3 :  
+			arg = resArgs(c);
 			if ((ok[0] = (arg[0].isGeoFunctionable()))
 					&& (ok[1] = (arg[1] .isNumberValue()))
 					&& (ok[2] = (arg[2] .isNumberValue()))) {
@@ -3290,7 +3309,7 @@ class CmdIntegral extends CommandProcessor {
 			}
 
 		case 4 :
-
+			arg = resArgs(c);
 			if ((ok[0] = (arg[0] .isGeoFunctionable()))
 					&& (ok[1] = (arg[1] .isGeoFunctionable()))
 					&& (ok[2] = (arg[2] .isNumberValue()))
@@ -4822,9 +4841,9 @@ class CmdOsculatingCircle extends CommandProcessor {
 
 		 switch (n) {
 		 case 1 :             
-			 if ((arg[0].isGeoFunction())) {
+			 if ((arg[0].isCasEvaluableFunction())) {
 				 GeoElement[] ret =
-				 { kernel.Simplify(c.getLabel(), (GeoFunction) arg[0] )};
+				 { kernel.Simplify(c.getLabel(), (CasEvaluableFunction) arg[0] )};
 				 return ret;                
 			 } else if ((arg[0].isGeoText())) {
 				 GeoElement[] ret =
@@ -7121,13 +7140,11 @@ class CmdOsculatingCircle extends CommandProcessor {
 		     
 		     switch (n) {
 		         case 1 :             
-		             if ( (arg[0] .isGeoFunction())) {
-		                 GeoElement[] ret =
-		                     {
-		                          kernel.PartialFractions (
-		                             c.getLabel(), (GeoFunction)arg[0])};
-		                 return ret;                
-		             }                        
+		        	 if (arg[0] instanceof CasEvaluableFunction) {
+			                 GeoElement[] ret =
+			                 { kernel.PartialFractions(c.getLabel(), (CasEvaluableFunction) arg[0] )};
+			             return ret;                
+			         }                         
 		              else
 		            	 throw argErr(app, c.getName(), arg[0]);         
 					 

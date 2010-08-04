@@ -86,6 +86,11 @@ implements ExpressionValue {
     		if (geo.isLabelSet())
     			return ((GeoElement) ev).getLabel();
     	}     	    	
+    	else if (ev instanceof Function) {
+    		String str = ev.toString();
+    		if (str.length() == 1 && Character.isLetter(str.charAt(0)))
+    			return str;
+    	}
     	
     	return null;
     }

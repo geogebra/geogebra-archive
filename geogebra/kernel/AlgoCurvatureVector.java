@@ -38,14 +38,14 @@ public class AlgoCurvatureVector extends AlgoElement {
         } catch (CircularDefinitionException e) {}                         
         
         //First derivative of function f
-        AlgoDerivative algo = new AlgoDerivative(cons, f);
+        AlgoCasDerivative algo = new AlgoCasDerivative(cons, f);
         cons.removeFromConstructionList(algo);
-		this.f1 = (GeoFunction) algo.getDerivative();
+		this.f1 = (GeoFunction) algo.getResult();
 		
 		//Second derivative of function f
-		algo = new AlgoDerivative(cons, f1);
+		algo = new AlgoCasDerivative(cons, f1);
 		cons.removeFromConstructionList(algo);
-		this.f2 = (GeoFunction) algo.getDerivative();
+		this.f2 = (GeoFunction) algo.getResult();
         		
 		setInputOutput();
         compute();

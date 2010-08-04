@@ -5687,49 +5687,15 @@ public class Kernel {
 	}
 	
 	/**
-	 * first derivative of deriveable f
-	 */
-	final public GeoElement Derivative(
-		String label,
-		GeoDeriveable f) {
-		
-		AlgoDerivative algo = new AlgoDerivative(cons, label, f);
-		return algo.getDerivative();				
-	}	
-	
-	/**
-	 * n-th derivative of deriveable f
-	 */
-	final public GeoElement Derivative(
-		String label,
-		GeoDeriveable f,
-		NumberValue n) {
-		
-		AlgoDerivative algo = new AlgoDerivative(cons, label, f, n);
-		return algo.getDerivative();	
-	}
-	
-	/**
-	 * first derivative of multivariate function f
-	 */
-	final public GeoFunctionNVar Derivative(
-		String label,
-		GeoFunctionNVar f, GeoNumeric var) {
-		
-		AlgoDerivativePartial algo = new AlgoDerivativePartial(cons, label, f, var, null);
-		return algo.getDerivative();				
-	}	
-	
-	/**
 	 * n-th derivative of multivariate function f
 	 */
-	final public GeoFunctionNVar Derivative(
+	final public GeoElement Derivative(
 		String label,
-		GeoFunctionNVar f, GeoNumeric var,
+		CasEvaluableFunction f, GeoNumeric var,
 		NumberValue n) {
 		
-		AlgoDerivativePartial algo = new AlgoDerivativePartial(cons, label, f, var, n);
-		return algo.getDerivative();	
+		AlgoCasDerivative algo = new AlgoCasDerivative(cons, label, f, var, n);
+		return algo.getResult();	
 	}
 	
 	/**
@@ -5748,22 +5714,14 @@ public class Kernel {
 		AlgoPolynomialFromCoordinates algo = new AlgoPolynomialFromCoordinates(cons, label, list);
 		return algo.getPolynomial();			
 	}
-	
-	/**
-	 * Expand function expression
-	 * @author Michael Borcherds 2008-04-04
-	 */
-	final public GeoElement Expand(String label, GeoFunction func) {		
-		AlgoExpand algo = new AlgoExpand(cons, label, func);
+
+	final public GeoElement Expand(String label, CasEvaluableFunction func) {		
+		AlgoCasExpand algo = new AlgoCasExpand(cons, label, func);
 		return algo.getResult();			
 	}
 	
-	/**
-	 * Simplify function expression
-	 * @author Michael Borcherds 2008-04-04
-	 */
-	final public GeoElement Simplify(String label, GeoFunction func) {		
-		AlgoSimplify algo = new AlgoSimplify(cons, label, func);
+	final public GeoElement Simplify(String label, CasEvaluableFunction func) {		
+		AlgoCasSimplify algo = new AlgoCasSimplify(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -5782,12 +5740,8 @@ public class Kernel {
 		return algo.getPoint();
 	}
 
-	/**
-	 * Factor
-	 * Michael Borcherds 2008-04-04
-	 */
-	final public GeoFunction Factor(String label, GeoFunction func) {		
-		AlgoFactor algo = new AlgoFactor(cons, label, func);
+	final public GeoElement Factor(String label, CasEvaluableFunction func) {		
+		AlgoCasFactor algo = new AlgoCasFactor(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -5867,8 +5821,8 @@ public class Kernel {
 	 * Partial Fractions
 	 * Michael Borcherds 
 	 */
-	final public GeoFunction PartialFractions(String label, GeoFunction func) {		
-		AlgoPartialFractions algo = new AlgoPartialFractions(cons, label, func);
+	final public GeoElement PartialFractions(String label, CasEvaluableFunction func) {		
+		AlgoCasPartialFractions algo = new AlgoCasPartialFractions(cons, label, func);
 		return algo.getResult();			
 	}
 	
@@ -5906,10 +5860,9 @@ public class Kernel {
 	/**
 	 * Integral of function f
 	 */
-	final public GeoFunction Integral(String label, GeoFunction f) {
-		AlgoIntegral algo = new AlgoIntegral(cons, label, f);
-		GeoFunction g = algo.getIntegral();
-		return g;
+	final public GeoElement Integral(String label, CasEvaluableFunction f, GeoNumeric var) {
+		AlgoCasIntegral algo = new AlgoCasIntegral(cons, label, f, var);
+		return algo.getResult();
 	}
 	
 	/**

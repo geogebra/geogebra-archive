@@ -54,8 +54,8 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
         tangent.setStartPoint(T);
         
         // derivative of f
-        AlgoDerivative algoDeriv = new AlgoDerivative(cons, f);       
-        deriv = (GeoFunction) algoDeriv.getDerivative();
+        AlgoCasDerivative algoDeriv = new AlgoCasDerivative(cons, f);       
+        deriv = (GeoFunction) algoDeriv.getResult();
         cons.removeFromConstructionList(algoDeriv);
 
         setInputOutput(); // for AlgoElement                

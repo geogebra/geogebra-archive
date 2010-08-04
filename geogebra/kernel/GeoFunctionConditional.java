@@ -147,24 +147,13 @@ public class GeoFunctionConditional extends GeoFunction {
 	 * @param f
 	 * @param order
 	 */
-	public void setDerivative(GeoDeriveable f, int n) {		
+	public void setDerivative(CasEvaluableFunction f, int n) {		
 		GeoFunctionConditional fcond = (GeoFunctionConditional) f;
 		ifFun.setDerivative(fcond.ifFun, n);
 		if (elseFun != null)
 			elseFun.setDerivative(fcond.elseFun, n);					
 	}
 	
-	/**
-	 * Set this function to the integral of f
-	 * @param f
-	 * @param order
-	 */
-	public void setIntegral(GeoFunction f) {
-		GeoFunctionConditional fcond = (GeoFunctionConditional) f;		
-		ifFun.setIntegral(fcond.ifFun);
-		if (elseFun != null)
-			elseFun.setIntegral(fcond.elseFun);		
-	}
 				
 	/**
 	 * Returns this function's value at position x.

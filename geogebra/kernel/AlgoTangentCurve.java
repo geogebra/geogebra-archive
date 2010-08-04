@@ -36,8 +36,8 @@ public class AlgoTangentCurve extends AlgoElement {
         tangent.setStartPoint(T);
 
         //First derivative of curve f
-        AlgoDerivative algo = new AlgoDerivative(cons, f);
-		this.df = (GeoCurveCartesian) algo.getDerivative();
+        AlgoCasDerivative algo = new AlgoCasDerivative(cons, f);
+		this.df = (GeoCurveCartesian) algo.getResult();
 		
 		cons.removeFromConstructionList(algo);
         setInputOutput(); // for AlgoElement                

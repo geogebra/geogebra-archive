@@ -25,8 +25,8 @@ public class AlgoLengthCurve extends AlgoElement {
         length = new GeoNumeric(cons);
 
         //First derivative of curve f
-        AlgoDerivative algo = new AlgoDerivative(cons, c, null);
-        this.c1 = (GeoCurveCartesian) algo.getDerivative();
+        AlgoCasDerivative algo = new AlgoCasDerivative(cons, c);
+        this.c1 = (GeoCurveCartesian) algo.getResult();
 
         lengthCurve = new LengthCurve();		
 

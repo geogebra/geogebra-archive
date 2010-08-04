@@ -15,15 +15,10 @@ package geogebra.kernel;
 
 public class AlgoLineBisector extends AlgoElement {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	private GeoPoint A, B;  // input    
     private GeoLine  g;     // output   
     
     // temp
-    private double ax, ay, bx, by;
     private GeoPoint midPoint;
         
     /** Creates new AlgoLineBisector */
@@ -66,10 +61,10 @@ public class AlgoLineBisector extends AlgoElement {
     // line through P normal to v
     protected final void compute() { 
         // get inhomogenous coords
-        ax = A.inhomX;
-        ay = A.inhomY;
-        bx = B.inhomX;
-        by = B.inhomY;
+        double ax = A.inhomX;
+        double ay = A.inhomY;
+        double bx = B.inhomX;
+        double by = B.inhomY;
          
         // comput line
         g.x = ax - bx;

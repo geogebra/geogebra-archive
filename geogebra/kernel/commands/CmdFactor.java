@@ -1,5 +1,6 @@
 package geogebra.kernel.commands;
 
+import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
@@ -20,13 +21,11 @@ final public GeoElement[] process(Command c) throws MyError {
      
      switch (n) {
          case 1 :             
-             if (ok[0] = (arg[0] .isGeoFunction())) {
-                 GeoElement[] ret =
-                     {
-                          kernel.Factor (
-                             c.getLabel(), (GeoFunction)arg[0])};
-                 return ret;                
-             }                        
+        	 if (ok[0] = (arg[0] instanceof CasEvaluableFunction)) {
+	                 GeoElement[] ret =
+	                 { kernel.Factor(c.getLabel(), (CasEvaluableFunction) arg[0] )};
+	             return ret;                
+	         }                        
               else
             	 throw argErr(app, c.getName(), arg[0]);         
 			 

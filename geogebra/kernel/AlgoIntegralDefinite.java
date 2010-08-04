@@ -65,8 +65,8 @@ public class AlgoIntegralDefinite extends AlgoElement {
         // create helper algorithm for symbolic integral
         // don't use symbolic integral for conditional functions
         if (!f.isGeoFunctionConditional()) {
-	        AlgoIntegral algoInt = new AlgoIntegral(cons, f);
-	        symbIntegral = algoInt.getIntegral();
+	        AlgoCasIntegral algoInt = new AlgoCasIntegral(cons, f, null);
+	        symbIntegral = (GeoFunction) algoInt.getResult();
 	        cons.removeFromConstructionList(algoInt);     
         }
         

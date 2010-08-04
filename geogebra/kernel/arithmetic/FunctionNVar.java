@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
@@ -32,17 +33,17 @@ import java.util.HashSet;
 public class FunctionNVar extends ValidExpression 
 implements ExpressionValue, FunctionalNVar {    	
 	
-    private ExpressionNode expression;
-    private FunctionVariable[] fVars;    
+	protected ExpressionNode expression;
+    protected FunctionVariable[] fVars;    
     
     // standard case: number function, see initFunction()
-    private boolean isBooleanFunction = false;
+    protected boolean isBooleanFunction = false;
     
     // if the function is of type f(x) = c
-    private boolean isConstantFunction = false; 
+    protected boolean isConstantFunction = false; 
       
-    transient private Application app;
-    transient private Kernel kernel;    
+    protected Application app;
+    protected Kernel kernel;    
     
 	private StringBuilder sb = new StringBuilder(80);	
 
@@ -146,11 +147,11 @@ implements ExpressionValue, FunctionalNVar {
         fVars = vars;
     }
     
-    final public FunctionNVar getFunction() {
+    public FunctionNVar getFunction() {
         return this;
     }
     
-    public FunctionVariable[] getFunctionVariable() {
+    public FunctionVariable[] getFunctionVariables() {
         return fVars;
     }
     
@@ -166,7 +167,7 @@ implements ExpressionValue, FunctionalNVar {
     	return fVars.length;
     }
     
-    final public String getVarString() {
+    public String getVarString() {
     	StringBuilder sb = new StringBuilder();
     	for (int i=0; i < fVars.length-1; i++) {
     		sb.append(fVars[i].toString());
@@ -180,7 +181,7 @@ implements ExpressionValue, FunctionalNVar {
      * Call this function to resolve variables and init the function.
      * May throw MyError (InvalidFunction).
      */
-    public void initFunction() {
+    public void initFunction() {    	
     	// replace function variables in tree
     	for (int i=0; i < fVars.length; i++) {
     		FunctionVariable fVar = fVars[i];
@@ -312,147 +313,101 @@ implements ExpressionValue, FunctionalNVar {
 	final public String toLaTeXString(boolean symbolic) {
 		return expression.toLaTeXString(symbolic);		
 	}
-	
-	
-    
-    final private void addNumber(double n) {        
-        if (n > 0) {
-            expression =
-                new ExpressionNode(kernel, 
-                    expression,
-                    ExpressionNode.PLUS,
-                    new MyDouble(kernel,n));
-        } else {
-            expression =
-                new ExpressionNode(kernel,
-                    expression,
-                    ExpressionNode.MINUS,
-                    new MyDouble(kernel,-n));
-        }   
-    }
- 
-    
-    
-    /**
-     * Parses given String str and tries to evaluate it to an ExpressionNode.
-     * Returns null if something went wrong.
-     */
-    private ExpressionNode evaluateToExpressionNode(String str) {
-         try {
-            ExpressionNode en = kernel.getParser().parseExpression(str);
-            en.resolveVariables();
-            return en;
-         }
-         catch (Exception e) {
-            e.printStackTrace();
-             return null;
-         } 
-         catch (Error e) {
-            Application.debug("error in evaluateToExpressionNode: " + str);
-            e.printStackTrace();
-             return null;
-         }
-    }
     
 
-    /**
-     * Returns n-th derivative of this function for the given variable
-     */
-    final public FunctionNVar getDerivative(String var, int n) {
-       if (n < 0) return null;
-       else if (n == 0) return this; 
-       
-       String key = var + "#" + n;
-       
-       //  do calculus only if parent expression changed
-       if (diffParentExp != expression) {  
-           diffParentExp = expression; 
-           getDerivativeMap().clear();
-       } 
-       else if (derivativeMap != null) {
-           // do we have the desired result?
-    	   FunctionNVar ob = getDerivativeMap().get(key);
-           if (ob != null) {            	
-           		return ob;
-           }
-       }
-       
-       // ok, we really have to do it...
-		FunctionNVar result = derivative(var, n);
-		getDerivativeMap().put(key, result); // remember the hard work
-       return result;
-    }
-    private ExpressionNode diffParentExp;
-    
-    private HashMap<String, FunctionNVar> getDerivativeMap() {
-   	 if (derivativeMap == null)
-			derivativeMap = new HashMap<String, FunctionNVar>();
-   	 return derivativeMap;
-    }
-    private HashMap derivativeMap;
-    
-    
-    
-    /**
-     * Calculates the derivative of this function
-     * @param order of derivative
-     * @return result as function
-     */
-     private FunctionNVar derivative(String var, int order) {     	 
-		// use CAS to get derivative
-                
-        // build expression string for CAS             
-		sb.setLength(0);
-        sb.append("Derivative(");
-        // function expression with multiply sign "*"   
-		sb.append(expression.getCASstring(kernel.getCurrentCAS(), true));		
-		//if (order > 1) {
-	        sb.append(",");
-	        sb.append(var);
-	        sb.append(",");
-	        sb.append(order);
-		//}
-        sb.append(") ");
-		
-        try {                   	            
-            // evaluate expression by CAS 
-            String result = kernel.evaluateGeoGebraCAS(sb.toString());  
+	/* ***************
+	 * CAS Stuff
+	 * ***************/
+      
+	
+      /**
+       * Evaluates this function using the given CAS command. 
+       * Caching is used for symbolic CAS evaluations.
+       * 
+       * @param ggbCasCmd the GeoGebraCAS command needs to include % in all places
+       * where the function f should be substituted, e.g. "Derivative(%,x)"
+       * @param symbolic true for symbolic evaluation, false to use values of GeoElement variables
+       * @return resulting function
+       */
+      final public FunctionNVar evalCasCommand(String ggbCasCmd, boolean symbolic) {
+    	  // remember expression and its CAS string 
+    	  boolean useCaching = false;
+    	  if (casEvalExpression != expression) {	 
+    		  casEvalExpression = expression;
+    		  if (symbolic)
+    			  casEvalStringSymbolic = expression.getCASstring(kernel.getCurrentCAS(), true);
+    		  
+    		  // chaching should only be done if the expression doesn't contain other functions
+    		  // e.g. this is important for f(x) = x^2, g(x,y) = f(x) + y, Derivative(g(x,y), x)
+    		  // where we cannot cache the derivative fo g because f may have changed
+    		  useCaching = symbolic && !expression.containsObjectType(CasEvaluableFunction.class);
+    	  }
+    	  
+    	  // build command string for CAS
+    	  String expString = symbolic ? casEvalStringSymbolic : expression.getCASstring(kernel.getCurrentCAS(), false);
+    	  
+    	  // substitute % by expString in ggbCasCmd
+    	  String casString = ggbCasCmd.replaceAll("%", expString);
           
-            // it doesn't matter what label we use here as it is never used            			
-    		sb.setLength(0);
-    		sb.append("f(");
-    		sb.append(getVarString());
-    		sb.append(") = ");
-            sb.append(result);
-    
-             // parse result
-            FunctionNVar fun = kernel.getParser().parseFunctionNVar(sb.toString());
-            fun.initFunction();
-            return fun;
-         } 
-        catch (Error err) {       
-             err.printStackTrace();
-        	 return null;
-         } catch (Exception e) {
-        	 e.printStackTrace();
-             return null;
-         } catch (Throwable e) {
-			 return null;
-		}     
+    	  FunctionNVar resultFun = null;
+    	  if (useCaching) {
+    		  // check if result is in cache
+	          resultFun = getCasEvalMap().get(casString);
+	          if (resultFun != null) {
+	        	  //System.out.println("caching worked: " + casString + " -> " + resultFun);
+	        	  return resultFun;
+	          }
+    	  }
+          
+          // eval with CAS
+          try {                   	            
+              // evaluate expression by CAS 
+              String result = kernel.evaluateGeoGebraCAS(casString);  
+            
+              // parse CAS result back into GeoGebra        			
+              sb.setLength(0);
+              sb.append("f("); // this name is never used, just needed for parsing
+              sb.append(getVarString());
+              sb.append(") = ");
+              sb.append(result);
+      
+              // parse result
+	  		  if (getVarNumber() == 1) {
+	  			resultFun = kernel.getParser().parseFunction(sb.toString());
+	  		  } else {
+	  			resultFun = kernel.getParser().parseFunctionNVar(sb.toString()); 
+	  		  }
+	  		   
+	  		  resultFun.initFunction();
+           } 
+          catch (Error err) {       
+              err.printStackTrace();
+              resultFun = null;
+           } catch (Exception e) {
+          	 e.printStackTrace();
+          	resultFun = null;
+           } catch (Throwable e) {
+  			resultFun = null;
+  		} 
+           
+        // cache result
+        if (useCaching && resultFun != null)
+        	getCasEvalMap().put(casString, resultFun);
         
-         
-    }	    
-
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
+  	   //System.out.println("NO caching: " + casString + " -> " + resultFun);
+        
+        return resultFun;
+      }
+      private ExpressionNode casEvalExpression;
+      private String casEvalStringSymbolic;
+   
+      private static HashMap<String, FunctionNVar> getCasEvalMap() {
+	   	 if (casEvalMap == null) {
+	   		casEvalMap = new HashMap<String, FunctionNVar>();
+	   	 }
+	   	 return casEvalMap;
+	  }
+	  private static HashMap<String, FunctionNVar> casEvalMap;
     
     
     public boolean isNumberValue() {
