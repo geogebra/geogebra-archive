@@ -67,4 +67,17 @@ abstract class BaseMenu extends JMenu {
 		mi.setAccelerator(ks);
 	}
 	
+	/**
+	 * Set the shortcut for a menu item which requires SHIFT + ALT to be pressed as well. 
+	 * 
+	 * @param mi
+	 * @param acc
+	 */
+	protected void setMenuShortCutShiftAltAccelerator(JMenuItem mi, char acc) {
+		KeyStroke ks = KeyStroke.getKeyStroke(acc, Toolkit.getDefaultToolkit()
+				.getMenuShortcutKeyMask()
+				+ Event.SHIFT_MASK + Event.ALT_MASK);
+		mi.setAccelerator(ks);
+	}
+	
 }

@@ -47,6 +47,15 @@ class WindowMenu extends BaseMenu {
 		StringBuilder sb = new StringBuilder();
 		ButtonGroup bg = new ButtonGroup();
 		JRadioButtonMenuItem mi;
+		
+		int current = -1;
+		
+		for (int i = 0; i < size; i++) {
+			GeoGebraFrame ggb = (GeoGebraFrame) ggbInstances.get(i);
+			Application application = ggb.getApplication();
+			if (app == application) current = i;
+		}
+		
 		for (int i = 0; i < size; i++) {
 			GeoGebraFrame ggb = (GeoGebraFrame) ggbInstances.get(i);
 			Application application = ggb.getApplication();
@@ -64,6 +73,8 @@ class WindowMenu extends BaseMenu {
 				mi.setSelected(true);
 			ActionListener al = new RequestFocusListener(ggb);
 			mi.addActionListener(al);
+			if (i == ((current+1)%size) ) setMenuShortCutShiftAccelerator(mi, 'N');
+			else if (i == ((current-1+size)%size) ) setMenuShortCutShiftAltAccelerator(mi, 'N');
 			bg.add(mi);
 			add(mi);
 		}
