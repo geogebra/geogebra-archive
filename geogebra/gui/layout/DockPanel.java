@@ -5,6 +5,7 @@ import geogebra.io.layout.DockPanelXml;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -357,6 +358,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 			case Application.VIEW_ALGEBRA:
 				view = new JScrollPane(app.getGuiManager().getAlgebraView());
 				((JScrollPane)view).setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
+				view.setBackground(Color.white);
 				break;
 			case Application.VIEW_SPREADSHEET:
 				view = app.getGuiManager().getSpreadsheetView();

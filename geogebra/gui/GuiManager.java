@@ -44,7 +44,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -2059,6 +2058,10 @@ public class GuiManager {
 		if(success && !isMacroFile && !layout.isIgnoringDocument()) {
 			getLayout().setPerspectives(app.getTmpPerspectives());
 			SwingUtilities.updateComponentTreeUI(getLayout().getRootComponent());
+			
+			if(!app.isIniting()) {
+				updateFrameSize(); // checks internally if frame is available
+			}
 		}
 		
 		// force JavaScript ggbOnInit(); to be called

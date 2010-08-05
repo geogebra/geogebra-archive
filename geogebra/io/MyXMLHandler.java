@@ -183,6 +183,8 @@ public class MyXMLHandler implements DocHandler {
 	private int consStep;
 
 	private double ggbFileFormat;
+	
+	private boolean hasGuiElement = false;
 
 	/**
 	 * The storage container for all GUI related information of the current document.
@@ -237,6 +239,7 @@ public class MyXMLHandler implements DocHandler {
 
 		mode = MODE_INVALID;
 		constMode = MODE_CONSTRUCTION;
+		hasGuiElement = false;
 
 		initKernelVars();
 	}
@@ -415,7 +418,6 @@ public class MyXMLHandler implements DocHandler {
 		case MODE_GUI:
 			if (eName.equals("gui"))
 				mode = MODE_GEOGEBRA;
-				endGuiElement();
 			break;
 			
 		case MODE_GUI_PERSPECTIVES:
@@ -453,11 +455,17 @@ public class MyXMLHandler implements DocHandler {
 
 		case MODE_GEOGEBRA:
 			if (eName.equals("geogebra")) {
-				
 				// start animation if necessary
-				if (startAnimation)
+				if (startAnimation) {
 					kernel.getAnimatonManager().startAnimation();
-							}
+				}
+
+				// perform tasks to maintain backward compability
+				if(ggbFileFormat < 3.3 && hasGuiElement) {
+					createCompabilityLayout();
+				}
+			}
+			break;
 		}
 	}
 
@@ -513,6 +521,7 @@ public class MyXMLHandler implements DocHandler {
 		} 
 		else if (eName.equals("gui")) {
 			mode = MODE_GUI;
+			hasGuiElement = true;
 			
 			if(ggbFileFormat < 3.3)
 				tmp_perspective = new Perspective("tmp");
@@ -962,13 +971,6 @@ public class MyXMLHandler implements DocHandler {
 			// show this axis
 			if (strShowAxis != null) {
 				boolean showAxis = parseBoolean(strShowAxis);
-				/*
-				if (axis == 0) { // xaxis
-					ev.showAxes(showAxis, ev.getShowYaxis());
-				} else if (axis == 1) { // yaxis
-					ev.showAxes(ev.getShowXaxis(), showAxis);
-				}
-				*/
 				ev.setShowAxis(axis, showAxis, true);
 			}
 
@@ -1187,47 +1189,118 @@ public class MyXMLHandler implements DocHandler {
 	/**
 	 * Take care of backward compatibility for the dynamic layout component
 	 */
-	private void endGuiElement() {
+	private void createCompabilityLayout() {
+		int splitOrientation = tmp_spHorizontal ? JSplitPane.HORIZONTAL_SPLIT : JSplitPane.VERTICAL_SPLIT;
+		
+		String defEV, defSV, defAV;
+		
+		// we have to create the definitions for the single views manually to prevent nullpointers
+		if(splitOrientation == JSplitPane.HORIZONTAL_SPLIT) {
+			if(tmp_showSpreadsheet && tmp_showAlgebra) {
+				defEV = "1,3";
+				defSV = "1,1";
+				defAV = "3";
+			} else {
+				if(tmp_showSpreadsheet) {
+					defEV = "3";
+					defSV = "1";
+					defAV = "3,3"; // not used directly
+				} else {
+					defEV = "1";
+					defAV = "3";
+					defSV = "1,1"; // not used directly
+				}
+			}
+		} else {
+			if(tmp_showSpreadsheet && tmp_showAlgebra) {
+				defEV = "0";
+				defAV = "2,0";
+				defSV = "2,2";
+			} else {
+				if(tmp_showSpreadsheet) {
+					defEV = "0";
+					defSV = "2";
+					defAV = "0,0"; // not used directly
+				} else {
+					defEV = "2";
+					defAV = "0";
+					defSV = "2,2"; // not used directly
+				}
+			}
+		}
+		
 		// construct default xml data in case we're using an old version which didn't
 		// store the layout xml.
-		if(ggbFileFormat < 3.3) {
-			DockPanelXml[] dpXml = new DockPanelXml[] {
-				new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, new Rectangle(400, 400), "1,3", 400),
-				new DockPanelXml(Application.VIEW_ALGEBRA, tmp_showAlgebra, false, new Rectangle(200, 400), "3", 400),
-				new DockPanelXml(Application.VIEW_SPREADSHEET, tmp_showSpreadsheet, false, new Rectangle(400, 400), "1,1", 400)
-			};
-			tmp_perspective.setDockPanelInfo(dpXml);
-			
-			// if we just have one split pane we need to set a proper definition string for the euclidian view
-			if(!tmp_showSpreadsheet) {
-				dpXml[0].setEmbeddedDef("1");
-			}			
-			
-			DockSplitPaneXml[] spXml; 
-			
-			int splitOrientation = tmp_spHorizontal ? JSplitPane.HORIZONTAL_SPLIT : JSplitPane.VERTICAL_SPLIT;
-			
-			// use two split panes in case the spreadsheet is visible
-			// TODO take split pane size into consideration (F.S.)
+		DockPanelXml[] dpXml = new DockPanelXml[] {
+			new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, new Rectangle(400, 400), defEV, 400),
+			new DockPanelXml(Application.VIEW_ALGEBRA, tmp_showAlgebra, false, new Rectangle(200, 400), defAV, 400),
+			new DockPanelXml(Application.VIEW_SPREADSHEET, tmp_showSpreadsheet, false, new Rectangle(400, 400), defSV, 400)
+		};
+		tmp_perspective.setDockPanelInfo(dpXml);
+		
+		Dimension evSize = app.getEuclidianView().getPreferredSize();
+		
+		// calculate window dimensions
+		int width = evSize.width;
+		int height = evSize.height;
+	
+		if(splitOrientation == JSplitPane.HORIZONTAL_SPLIT) {
 			if(tmp_showSpreadsheet) {
-				spXml = new DockSplitPaneXml[] {
-					new DockSplitPaneXml("", 0.2, splitOrientation),
-					new DockSplitPaneXml("1", 0.5, splitOrientation)
-				}; 
-			} else {
-				spXml = new DockSplitPaneXml[] {
-					new DockSplitPaneXml("", 0.2, splitOrientation)
-				};
+				width += 5 + app.getGuiManager().getSpreadsheetView().getPreferredSize().width;
+			} 
+			
+			if(tmp_showAlgebra) {
+				width += 5 + tmp_sp2;
 			}
-			
-			tmp_perspective.setSplitPaneInfo(spXml);
-			
-			tmp_perspectives = new ArrayList();
-			tmp_perspectives.add(tmp_perspective);
-			app.setTmpPerspectives(tmp_perspectives);
-			
-			// TODO calculate window size in old versions (F.S.)
+		} else {
+			if(tmp_showSpreadsheet) {
+				height += 5 + app.getGuiManager().getSpreadsheetView().getPreferredSize().height;
+			} 
+			if(tmp_showAlgebra) {
+				height += 5 + tmp_sp2;
+			}
 		}
+		
+		DockSplitPaneXml[] spXml;
+		
+		// use two split panes in case all three views are visible
+		if(tmp_showSpreadsheet && tmp_showAlgebra) {
+			int total = (splitOrientation == JSplitPane.HORIZONTAL_SPLIT ? width : height);
+			float relative1 = (float)tmp_sp2 / total;
+			float relative2 = (float)tmp_sp1 / (total - tmp_sp2);
+			spXml = new DockSplitPaneXml[] {
+				new DockSplitPaneXml("", relative1, splitOrientation),
+				new DockSplitPaneXml((splitOrientation == JSplitPane.HORIZONTAL_SPLIT ? "1" : "2"), relative2, splitOrientation)
+			}; 
+		} else {
+			int total = (splitOrientation == JSplitPane.HORIZONTAL_SPLIT ? width : height);
+			float relative;
+			if(tmp_showSpreadsheet) {
+				relative = (float)tmp_sp1 / total;
+			} else {
+				relative = (float)tmp_sp2 / total;
+			}
+			spXml = new DockSplitPaneXml[] {
+				new DockSplitPaneXml("", relative, splitOrientation)
+			};
+		}
+
+		// additional space for toolbar and others, we add this here
+		// as it shouldn't influence the relative positions of the 
+		// split pane dividers above
+		width += 15;
+		height += 90;
+		
+		if(tmp_perspective.getShowInputPanel()) {
+			height += 50;
+		}
+		
+		tmp_perspective.setSplitPaneInfo(spXml);
+		
+		tmp_perspectives = new ArrayList();
+		tmp_perspectives.add(tmp_perspective);
+		app.setPreferredSize(new Dimension(width, height));
+		app.setTmpPerspectives(tmp_perspectives);
 	}
 
 	private boolean handleConsProtColumns(Application app, LinkedHashMap<String, String> attrs) {

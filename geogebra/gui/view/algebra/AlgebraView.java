@@ -29,6 +29,7 @@ import java.awt.Point;
 import java.util.EventObject;
 import java.util.HashMap;
 
+import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -76,7 +77,7 @@ public class AlgebraView extends JTree implements View {
 	public AlgebraView(AlgebraController algCtrl) {		
 		app = algCtrl.getApplication();
 		kernel = algCtrl.getKernel();
-		algCtrl.setView(this);					
+		algCtrl.setView(this);	
 
 		// tree's selection model	
 		/*

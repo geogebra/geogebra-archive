@@ -397,12 +397,6 @@ public class Application implements KeyEventDispatcher {
 
 		isApplet = appletImpl != null;
 		
-		if(frame != null || comp != null) {
-			preferredSize = new Dimension(800, 600); // TODO redo (F.S:)
-		} else {
-			preferredSize = appletImpl.getJApplet().getSize();
-		}
-		
 		JApplet applet = null;
 		if (frame != null) {
 			mainComp = frame;
@@ -426,9 +420,12 @@ public class Application implements KeyEventDispatcher {
 		// (security problem running non-locally)
 		if (isApplet) {
 			AlgoElement.initAlgo2CommandBundle(this);
+			preferredSize = appletImpl.getJApplet().getSize();
 			// needs command.properties in main.jar
 			// causes problems when not in English
 			// initCommandBundle();
+		} else {
+			preferredSize = new Dimension(800, 600);
 		}
 
 		fontManager = new FontManager();

@@ -160,77 +160,20 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	}
 	
 	public void updateSize() {
-		Dimension frameSize;
-		
-		// use euclidian view pref size to set frame size 	
-		EuclidianView ev = app.getEuclidianView();		
-		SpreadsheetView sv = null;
-		
-		if (app.getGuiManager().hasSpreadsheetView())
-			sv = (SpreadsheetView)app.getGuiManager().getSpreadsheetView();		
-
-		// no preferred size
-		if (ev.hasPreferredSize()) {
-			ev.setMinimumSize(new Dimension(50,50));
-			Dimension evPref = ev.getPreferredSize();						
-			ev.setPreferredSize(evPref);
-			
-			Dimension svPref = null;
-			if (sv != null) {
-				svPref = sv.getPreferredSize();						
-				sv.setPreferredSize(svPref);
-			}
-		
-			// pack frame and correct size to really get the preferred size for euclidian view
-// Michael Borcherds 2007-12-08 BEGIN pack() sometimes fails (only when run from Eclipse??)
-			try {
-			pack();
-			}
-			catch (Exception e)
-			{
-				// do nothing
-				Application.debug("updateSize: pack() failed");
-			}
-//			 Michael Borcherds 2007-12-08 END
-			frameSize = getSize();
-			Dimension evSize = ev.getSize();
-			Dimension svSize = null;
-			if (sv != null) 
-				svSize = sv.getSize();
-			
-			frameSize.width = frameSize.width + (evPref.width - evSize.width)+ (sv == null ? 0 : (svPref.width - svSize.width));
-			frameSize.height = frameSize.height + (evPref.height - evSize.height) + (sv == null ? 0 : (svPref.height - svSize.height));					
-		} else {
-			frameSize = new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);			
-		}
-
-		// TODO Redo (F.S.)		
-		frameSize = app.getPreferredSize();
+		// get frame size from layout manager
+		Dimension size = app.getPreferredSize();
 		
 		// check if frame fits on screen
-
-		// Michael Borcherds 2007-11-22 BEGIN
-		//GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		//Rectangle screenSize = env.getMaximumWindowBounds();
 		Rectangle screenSize = app.getScreenSize();
 
-		if (frameSize.width > screenSize.width || 
-				frameSize.height > screenSize.height) {
-			frameSize.width = screenSize.width;
-			frameSize.height = screenSize.height;
+		if (size.width > screenSize.width || 
+				size.height > screenSize.height) {
+			size.width = screenSize.width;
+			size.height = screenSize.height;
 			setLocation(0,0);
-		} 		
-		
-/*		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();		
-		screenSize.height -= 30; // task bar		
-		if (frameSize.width > screenSize.width || 
-				frameSize.height > screenSize.height) {
-			frameSize = screenSize;
-			setLocation(0,0);
-		} 		*/
-		// Michael Borcherds 2007-11-22 END
+		} 
 				
-		setSize(frameSize);
+		setSize(size);
 	}
 
 	/** 

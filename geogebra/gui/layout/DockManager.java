@@ -2,7 +2,6 @@ package geogebra.gui.layout;
 
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
-import geogebra.kernel.View;
 import geogebra.main.Application;
 
 import java.awt.Component;
@@ -11,7 +10,6 @@ import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 /**
  * Class responsible to manage the whole docking area of the window.
@@ -152,25 +150,8 @@ public class DockManager {
 				}
 			}
 			
-			int windowWidth = 0;
-			int windowHeight = 0;
-			
-			// the size of an applet
-			if(app.isApplet()) {
-				windowWidth = app.getPreferredSize().width;
-				windowHeight = app.getPreferredSize().height;
-			} else {
-				// TODO Bugfix
-				// TODO Buggy if new document is loaded (uses the old frame size instead of the preferred size of the new window)
-				// use preferred size if the frame was not packed yet
-				if(app.getFrame().getWidth() == 0) {
-					windowWidth = app.getPreferredSize().width;
-					windowHeight = app.getPreferredSize().height;
-				} else {
-					windowWidth = app.getFrame().getWidth();
-					windowHeight = app.getFrame().getHeight();
-				}
-			}
+			int windowWidth = app.getPreferredSize().width;
+			int windowHeight = app.getPreferredSize().height;
 			
 			// set the dividers of the split panes
 			for(int i = 0; i < spInfo.length; ++i) {
