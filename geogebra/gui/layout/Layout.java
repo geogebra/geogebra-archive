@@ -90,7 +90,6 @@ public class Layout {
 	 * Initialize the default perspectives
 	 */
 	private void initializeDefaultPerspectives() {
-		// TODO modify toolbar
 		defaultPerspectives = new Perspective[4];
 		
 		// algebra & graphics - default of GeoGebra < 3.2

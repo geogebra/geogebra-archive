@@ -1464,7 +1464,7 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleToolbar(Application app, LinkedHashMap<String, String> attrs) {
 		try {
-			tmp_perspective.setToolbarDefinition((String) attrs.get("str"));
+			tmp_perspective.setToolbarDefinition((String) attrs.get("items"));
 			return true;
 		} catch (Exception e) {
 			Application.debug(e.getMessage() + ": " + e.getCause());

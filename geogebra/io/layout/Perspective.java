@@ -240,9 +240,9 @@ public class Perspective {
 		}
 		sb.append("\t</views>\n");
 		
-		sb.append("\t<toolbar>");
+		sb.append("\t<toolbar items=\"");
 		sb.append(getToolbarDefinition());
-		sb.append("</toolbar>\n");
+		sb.append("\" />\n");
 		
 		sb.append("\t<show axes=\"");
 		sb.append(getShowAxes());
