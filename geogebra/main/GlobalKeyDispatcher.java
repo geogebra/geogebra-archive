@@ -280,6 +280,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				
 				/*
 				 * send next instance to front
+				 * (alt - last)
 				 */
 			case KeyEvent.VK_N:
 				if (event.isShiftDown()) {
@@ -292,7 +293,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 						Application application = ggb.getApplication();
 						
 						if (app == application) {
-							ggb = (GeoGebraFrame) ggbInstances.get((i+1)%size); // next instance
+							int n = event.isAltDown() ? ((i-1+size)%size) : ((i+1)%size);
+							ggb = (GeoGebraFrame) ggbInstances.get(n); // next/last instance
 							ggb.toFront();
 							ggb.requestFocus();
 							break; // break from if loop
