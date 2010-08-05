@@ -4,6 +4,8 @@ import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
+import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.menubar.RequestFocusListener;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -20,11 +22,13 @@ import java.awt.Component;
 import java.awt.KeyEventDispatcher;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
 
@@ -273,6 +277,35 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				app.setStandardView();
 				consumed = true;
 				break;
+				
+				/*
+				 * send next instance to front
+				 */
+			case KeyEvent.VK_N:
+				if (event.isShiftDown()) {
+					ArrayList<GeoGebraFrame> ggbInstances = GeoGebraFrame.getInstances();
+					int size = ggbInstances.size();
+					if (size == 1)
+						break;
+					for (int i = 0; i < size; i++) {
+						GeoGebraFrame ggb = (GeoGebraFrame) ggbInstances.get(i);
+						Application application = ggb.getApplication();
+						
+						if (app == application) {
+							ggb = (GeoGebraFrame) ggbInstances.get((i+1)%size); // next instance
+							ggb.toFront();
+							ggb.requestFocus();
+							break; // break from if loop
+
+						}
+					}
+					
+					consumed = true;
+					
+				}
+				break;
+				
+
 				
 			// needed for detached views and MacOS
 			// Cmd + Y: Redo
