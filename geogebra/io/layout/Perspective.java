@@ -244,11 +244,14 @@ public class Perspective {
 		sb.append(getToolbarDefinition());
 		sb.append("\" />\n");
 		
-		sb.append("\t<show axes=\"");
-		sb.append(getShowAxes());
-		sb.append("\" grid=\"");
-		sb.append(getShowGrid());
-		sb.append("\" />\n");
+		// skip axes & grid for document perspectives
+		if(!id.equals("tmp")) {
+			sb.append("\t<show axes=\"");
+			sb.append(getShowAxes());
+			sb.append("\" grid=\"");
+			sb.append(getShowGrid());
+			sb.append("\" />\n");
+		}
 		
 		sb.append("\t<input show=\"");
 		sb.append(getShowInputPanel());

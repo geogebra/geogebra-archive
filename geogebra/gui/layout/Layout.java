@@ -179,9 +179,12 @@ public class Layout {
 	 * @param perspective
 	 */
 	public void applyPerspective(Perspective perspective) {
-		EuclidianView ev = app.getEuclidianView();
-		ev.setShowAxes(perspective.getShowAxes(), false);
-		ev.showGrid(perspective.getShowGrid());
+		// ignore axes & grid settings for the document perspective
+		if(!perspective.getId().equals("tmp")) {
+			EuclidianView ev = app.getEuclidianView();
+			ev.setShowAxes(perspective.getShowAxes(), false);
+			ev.showGrid(perspective.getShowGrid());
+		}
 		
 		app.getGuiManager().setToolBarDefinition(perspective.getToolbarDefinition());
 
