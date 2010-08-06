@@ -57,8 +57,7 @@ final public class DrawConic extends Drawable implements Previewable {
     private static final int PLOT_POINTS = 32;
 	static final int MAX_PLOT_POINTS = 300;
     // maximum of pixels for a standard circle radius
-    // bigger circles are drawn via Arc2D
-    public static final double BIG_RADIUS = 600;   
+    // bigger circles are drawn via Arc2D 
     public static final double HUGE_RADIUS = 1E12;  
            
     private GeoConic conic;
@@ -325,6 +324,9 @@ final public class DrawConic extends Drawable implements Previewable {
         
         // if circle is very big, draw arc: this is very important
         // for graphical continuity
+        
+        // BIG RADIUS: larger than screen diagonal
+        int BIG_RADIUS = view.width + view.height; // > view's diagonal 
         if (radius < BIG_RADIUS && yradius < BIG_RADIUS) {              
             circle = ellipse;
             arcFiller = null;         
@@ -511,7 +513,9 @@ final public class DrawConic extends Drawable implements Previewable {
         // set ellipse
         ellipse.setFrameFromCenter(0, 0, halfAxes[0], halfAxes[1]); 
        
-		if (xradius < DrawConic.BIG_RADIUS && yradius < DrawConic.BIG_RADIUS) {
+        // BIG RADIUS: larger than screen diagonal
+        int BIG_RADIUS = view.width + view.height; // > view's diagonal 
+		if (xradius < BIG_RADIUS && yradius < BIG_RADIUS) {
 			shape = transform.createTransformedShape(ellipse); 
 		} else {
 			// clip big arc at screen

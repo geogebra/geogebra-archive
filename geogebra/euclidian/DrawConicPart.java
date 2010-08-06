@@ -169,7 +169,9 @@ implements Previewable {
 		transform.setTransform(view.coordTransform);
 		transform.concatenate(conicPart.getAffineTransform()); 
 		
-		if (xradius < DrawConic.BIG_RADIUS && yradius < DrawConic.BIG_RADIUS) {
+        // BIG RADIUS: larger than screen diagonal
+        int BIG_RADIUS = view.width + view.height; // > view's diagonal 
+		if (xradius < BIG_RADIUS && yradius < BIG_RADIUS) {
 			shape = transform.createTransformedShape(arc); 
 		} else {
 			// clip big arc at screen
