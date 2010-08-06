@@ -450,7 +450,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
 				P.x = intervalMax;
 		}
 		
-		P.y = fun.evaluate(P.x);
+		P.y = evaluate(P.x); // changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, x²]]
 		P.z = 1.0;
 		
 		// set path parameter for compatibility with
@@ -976,7 +976,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
 		    		
 		    		boolean isInRange = false;
 		    		try {
-		    			Application.debug(verticalAsymptotesArray[i]+"");
+		    			//Application.debug(verticalAsymptotesArray[i]+"");
 		    			if (verticalAsymptotesArray[i].trim().equals("")) isInRange = false; // was complex root
 		    			//isInRange = parentFunction.evaluateCondition(Double.parseDouble(verticalAsymptotesArray[i]));
 		    			else isInRange = parentFunction.evaluateCondition(kernel.getAlgebraProcessor().evaluateToNumeric(verticalAsymptotesArray[i], true).getDouble());
