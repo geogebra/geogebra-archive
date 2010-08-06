@@ -1933,9 +1933,12 @@ public abstract class GeoElement
 		else return false;		
 	}
 	
-	// Cong Liu	
+	/*
+	 * match A1, ABG1, A123
+	 * but not A0, A000, A0001 etc
+	 */
 	public static final Pattern spreadsheetPattern = 
-		Pattern.compile("\\$?([A-Z]+)\\$?([0-9]+)");
+		Pattern.compile("\\$?([A-Z]+)\\$?([1-9][0-9]*)");
 
 	private static StringBuilder sb = null;
 
