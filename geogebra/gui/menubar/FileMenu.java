@@ -35,6 +35,7 @@ class FileMenu extends BaseMenu {
 		loadAction,
 		loadURLAction,
 		exportWorksheet,
+		exportLMSAction,
 		exportGraphicAction,
 		exportPgfAction,
 		exportPSTricksAction,
@@ -96,6 +97,8 @@ class FileMenu extends BaseMenu {
 		JMenu submenu = new JMenu(app.getMenu("Export"));
 		submenu.setIcon(app.getEmptyIcon());
 		add(submenu);
+		mi = add(exportLMSAction);
+		setMenuShortCutShiftAccelerator(mi, 'M');
 		mi = submenu.add(exportWorksheet);
 		setMenuShortCutShiftAccelerator(mi, 'W');
 		
@@ -205,6 +208,15 @@ class FileMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().saveAs();
+			}
+		};
+
+		exportLMSAction = new AbstractAction(app.getMenu("ExportToLMS"), app
+				.getEmptyIcon()) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.exportToLMS();
 			}
 		};
 

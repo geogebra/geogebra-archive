@@ -3,6 +3,7 @@ package geogebra.main;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.menubar.RequestFocusListener;
@@ -22,12 +23,16 @@ import java.awt.Component;
 import java.awt.KeyEventDispatcher;
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
@@ -274,9 +279,32 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				break;
 				
 			case KeyEvent.VK_M:
-				app.setStandardView();
-				consumed = true;
+				if (!app.isApplet() && event.isShiftDown()) {
+					app.clearSelectedGeos();
+					WorksheetExportDialog d = new WorksheetExportDialog(app); 		
+
+					Toolkit toolkit = Toolkit.getDefaultToolkit();
+					Clipboard clipboard = toolkit.getSystemClipboard();
+					JPanel appCP = app.getCenterPanel();
+					int width, height;
+					if (appCP != null) {
+						width = appCP.getWidth();
+						height = appCP.getHeight();
+					} else {
+						width = WorksheetExportDialog.DEFAULT_APPLET_WIDTH;
+						height = WorksheetExportDialog.DEFAULT_APPLET_HEIGHT;
+					}		
+
+					clipboard.setContents(new StringSelection(d.getAppletTag(null, width, height, false)), null);
+					d.setVisible(false);
+					d.dispose();
+					consumed = true;
+				} else if (!app.isApplet() || app.isRightClickEnabled()) {
+					app.setStandardView();
+					consumed = true;					
+				}
 				break;
+
 				
 				/*
 				 * send next instance to front

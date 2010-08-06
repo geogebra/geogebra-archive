@@ -23,6 +23,7 @@ import geogebra.cas.jacomax.JacomaxAutoConfigurator;
 import geogebra.cas.jacomax.MaximaConfiguration;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.GuiManager;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.ImageSelection;
@@ -59,6 +60,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -4288,6 +4291,30 @@ public class Application implements KeyEventDispatcher {
 
 		// strip "file:/"
 		return codeBaseFolder.substring(6);
+	}
+
+	public void exportToLMS() {
+		clearSelectedGeos();
+		WorksheetExportDialog d = new WorksheetExportDialog(this); 		
+
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Clipboard clipboard = toolkit.getSystemClipboard();
+		JPanel appCP = getCenterPanel();
+		int width, height;
+		if (appCP != null) {
+			width = appCP.getWidth();
+			height = appCP.getHeight();
+		} else {
+			width = WorksheetExportDialog.DEFAULT_APPLET_WIDTH;
+			height = WorksheetExportDialog.DEFAULT_APPLET_HEIGHT;
+		}		
+
+		clipboard.setContents(new StringSelection(d.getAppletTag(null, width, height, false)), null);
+		d.setVisible(false);
+		d.dispose();
+		
+		showMessage(getMenu("ClipboardMessage"));
+		
 	}
 
 		
