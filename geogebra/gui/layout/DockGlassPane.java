@@ -73,7 +73,7 @@ public class DockGlassPane extends JPanel implements AWTEventListener {
 		
 		for(int i = 0; i < dockPanels.length; ++i) {
 			// we don't need to care about invisible or views in a different window for the drag'n'drop
-			if(!dockPanels[i].isVisible() || dockPanels[i].getInfo().isOpenInFrame())
+			if(!dockPanels[i].isVisible() || dockPanels[i].isOpenInFrame())
 				continue;
 			
 			tmpRect = dockPanels[i].getBounds();

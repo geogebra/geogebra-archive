@@ -876,7 +876,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         public boolean getInitShow() {
             // algebra column should only be shown at startup if algebraview is shown
             // in app
-            if (title.equals("Value") && !app.getGuiManager().showAlgebraView()) return false;
+            if (title.equals("Value") && !app.getGuiManager().showView(Application.VIEW_ALGEBRA)) return false;
             
             return initShow;
         }

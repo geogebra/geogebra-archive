@@ -6,6 +6,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.toolbar.MyToolbar;
@@ -63,6 +64,8 @@ import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -71,6 +74,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
@@ -137,6 +141,11 @@ public class GuiManager {
 		htmlLoaded = false;
 	}
 	
+	public void initialize() {
+		layout.initialize(app);
+		initLayoutPanels();
+	}
+	
 	/**
 	 * Make the title bar visible if the user is using an applet.
 	 * 
@@ -146,6 +155,71 @@ public class GuiManager {
 	public void updateLayout() {
 		layout.setTitlebarVisible(!app.isApplet());
 		layout.getDockManager().updateGlassPane();
+	}
+	
+	/**
+	 * Register panels for the layout manager.
+	 */
+	protected void initLayoutPanels() {
+		// register euclidian view
+		layout.registerPanel(
+			new DockPanel(Application.VIEW_EUCLIDIAN, "DrawingPad", 1) {
+				public ImageIcon getIcon() {
+					return app.getImageIcon("document-properties.png");
+				}
+				
+				protected JComponent getToolBar() {
+					return null;
+				}
+				
+				protected JComponent loadComponent() {
+					return app.getEuclidianView();
+				}
+			}
+		);
+		
+		// register algebra view
+		layout.registerPanel(
+			new DockPanel(Application.VIEW_ALGEBRA, "AlgebraWindow", 2, 'A') {
+				protected JComponent getToolBar() {
+					return null;
+				}
+				
+				protected JComponent loadComponent() {
+					JScrollPane scrollPane = new JScrollPane(getAlgebraView());
+					((JScrollPane)scrollPane).setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
+					scrollPane.setBackground(Color.white);
+					
+					return scrollPane;
+				}
+			}
+		);
+		
+		// register spreadsheet view 
+		layout.registerPanel(
+			new DockPanel(Application.VIEW_SPREADSHEET, "Spreadsheet", 3, 'S') {
+				protected JComponent getToolBar() {
+					return null;
+				}
+				
+				protected JComponent loadComponent() {
+					return getSpreadsheetView();
+				}
+			}
+		);
+		
+		// register CAS view 
+		layout.registerPanel(
+			new DockPanel(Application.VIEW_CAS, "CAS", 4) {				
+				protected JComponent getToolBar() {
+					return null;
+				}
+				
+				protected JComponent loadComponent() {
+					return getCasView().getCASViewComponent();
+				}
+			}
+		);
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {
@@ -450,54 +524,29 @@ public class GuiManager {
 		}
 	}
 	
-	private void setShowView(boolean flag, int viewId) {
+	public void setShowView(boolean flag, int viewId) {
 		if(flag) {
 			layout.getDockManager().show(viewId);
+			
+			if(viewId == Application.VIEW_SPREADSHEET) {
+				getSpreadsheetView().requestFocus();
+			}
 		} else {
 			layout.getDockManager().hide(viewId);
+			
+			if(viewId == Application.VIEW_SPREADSHEET) {
+				app.getEuclidianView().requestFocus();
+			}
 		}
 	}
 	
-	public void setShowEuclidianView(boolean flag) {
-		setShowView(flag, Application.VIEW_EUCLIDIAN);
-	}
-	
-	public void setShowAlgebraView(boolean flag) {
-		setShowView(flag, Application.VIEW_ALGEBRA);
-	}
-	
-	public void setShowSpreadsheetView(boolean flag) {
-		setShowView(flag, Application.VIEW_SPREADSHEET);
-		if (flag == true) getSpreadsheetView().requestFocus(); else app.getEuclidianView().requestFocus();
-	}
-	
-	public void setShowCASView(boolean flag) {
-		setShowView(flag, Application.VIEW_CAS);
-	}
-	
-	private boolean showView(int viewId) {
+	public boolean showView(int viewId) {
 		try { // TODO: null pointer when showToolbar=true
-		return layout.getDockManager().getPanel(viewId).getInfo().isVisible();
+		return layout.getDockManager().getPanel(viewId).isVisible();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
-	}
-	
-	public boolean showAlgebraView() {
-		return showView(Application.VIEW_ALGEBRA);
-	}
-	
-	public boolean showSpreadsheetView() {
-		return showView(Application.VIEW_SPREADSHEET);
-	}
-	
-	public boolean showEuclidianView() {
-		return showView(Application.VIEW_EUCLIDIAN);
-	}
-	
-	public boolean showCASView() {
-		return showView(Application.VIEW_CAS);
 	}
 	
 	public void setShowToolBarHelp(boolean flag) {

@@ -446,9 +446,7 @@ public class Application implements KeyEventDispatcher {
 	
 		// load the gui manager if necessary
 		if(hasFullGui()) {
-			setWaitCursor();
-			guiManager = new GuiManager(Application.this);
-			setDefaultCursor();
+			initGuiManager();
 		}
 
 		// init euclidian view
@@ -472,7 +470,7 @@ public class Application implements KeyEventDispatcher {
 		
 		// initialize layout
 		if(hasFullGui()) {
-			getGuiManager().getLayout().initialize(this);
+			getGuiManager().initialize();
 		}
 		
 		// open file given by startup parameter
@@ -544,6 +542,16 @@ public class Application implements KeyEventDispatcher {
 	 */
 	final public synchronized boolean hasFullGui() {
 		return hasGui;
+	}
+	
+	/**
+	 * Initialize the gui manager. Needs to be in a separate method to allow the 3D application
+	 * to load its own gui manager. 
+	 */
+	protected void initGuiManager() {
+		setWaitCursor();
+		guiManager = new GuiManager(Application.this);
+		setDefaultCursor();
 	}
 	
 	/**
@@ -924,17 +932,17 @@ public class Application implements KeyEventDispatcher {
 		
 		if(args.containsArg("showAlgebraWindow")) {
 			boolean showAlgebraWindow = args.getBooleanValue("showAlgebraWindow", true);
-			getGuiManager().setShowAlgebraView(showAlgebraWindow);
+			getGuiManager().setShowView(showAlgebraWindow, Application.VIEW_ALGEBRA);
 		}
 		
 		if(args.containsArg("showSpreadsheet")) {
 			boolean showSpreadsheet = args.getBooleanValue("showSpreadsheet", true);
-			getGuiManager().setShowSpreadsheetView(showSpreadsheet);
+			getGuiManager().setShowView(showSpreadsheet, Application.VIEW_SPREADSHEET);
 		}
 		
 		if(args.containsArg("showCAS")) {
 			boolean showCAS = args.getBooleanValue("showCAS", true);
-			getGuiManager().setShowCASView(showCAS);
+			getGuiManager().setShowView(showCAS, Application.VIEW_CAS);
 		}
 		
 		String cas = args.getStringValue("CAS");

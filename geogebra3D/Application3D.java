@@ -20,38 +20,32 @@ package geogebra3D;
 import geogebra.CommandLineArguments;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.layout.Layout;
-import geogebra.kernel.GeoElement;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.Kernel3D;
 import geogebra3D.util.ImageManager3D;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 
 
-public abstract class Application3D extends Application{
+public class Application3D extends Application{
 	
     private EuclidianView3D euclidianView3D;
     private EuclidianController3D euclidianController3D;      
     protected Kernel3D kernel3D;
-
+    
+    /**
+     * ID of the 3D euclidian view for the layout manager.
+     */
+    public static final int VIEW_EUCLIDIAN3D = 512;
 
 
     public Application3D(CommandLineArguments args, GeoGebraFrame frame, boolean undoActive) {
@@ -66,9 +60,6 @@ public abstract class Application3D extends Application{
     private Application3D(CommandLineArguments args, GeoGebraFrame frame, AppletImplementation applet, boolean undoActive) { 
     	
     	super(args, frame, applet, null, undoActive);
-    	
-    	Layout layout = (Layout)getGuiManager().getLayout();
-    	layout.getDockManager().addEuclidian3D(euclidianView3D);
     	
     	//euclidianView3D.initAxisAndPlane();
     	
@@ -254,8 +245,10 @@ public abstract class Application3D extends Application{
 	}
 	
     
-	public synchronized GuiManager createGuiManager() {
-		return new geogebra3D.gui.DefaultGuiManager3D(this);
+	protected void initGuiManager() {
+		setWaitCursor();
+		guiManager = new GuiManager3D(this);
+		setDefaultCursor();
 	}
     
 	///////////////////////////////////////

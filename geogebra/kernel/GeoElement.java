@@ -1197,7 +1197,7 @@ public abstract class GeoElement
 		switch (tooltipMode) {
 		default:
 		//case TOOLTIP_ALGEBRAVIEW_SHOWING:
-			if (!(app.hasFullGui() && app.getGuiManager().showAlgebraView())) {
+			if (!(app.hasFullGui() && app.getGuiManager().showView(Application.VIEW_ALGEBRA))) {
 				return false;
 			} else
 				return isAlgebraVisible(); // old behaviour
@@ -1216,7 +1216,7 @@ public abstract class GeoElement
 		switch (tooltipMode) {
 		default:
 		case TOOLTIP_ALGEBRAVIEW_SHOWING:
-			if (!(app.hasFullGui() && app.getGuiManager().showAlgebraView())) {
+			if (!(app.hasFullGui() && app.getGuiManager().showView(Application.VIEW_ALGEBRA))) {
 				return "";
 			}
 			// else fall through:

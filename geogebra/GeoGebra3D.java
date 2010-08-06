@@ -19,12 +19,10 @@ package geogebra;
 
 import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.main.Application;
 import geogebra.util.Util;
 import geogebra3D.Application3D;
-import geogebra3D.GeoGebraApplication3D;
 
 import java.awt.dnd.DropTarget;
 
@@ -88,13 +86,8 @@ public class GeoGebra3D extends GeoGebraFrame
 		
 		//GeoGebra wnd = buildGeoGebra();
 
-		Application3D app = new GeoGebraApplication3D(args, wnd, true); //ggb3D
-		
-		// TODO use internal layout instance (F.S.)
-		Layout layout = new Layout();
-		layout.initialize(app);
-		
-		app.getGuiManager().setMenubar(new GeoGebraMenuBar(app, layout));
+		Application3D app = new Application3D(args, wnd, true);		
+		app.getGuiManager().setMenubar(new GeoGebraMenuBar(app, app.getGuiManager().getLayout()));
 		app.getGuiManager().initMenubar();
 		
 		// init GUI
@@ -106,6 +99,9 @@ public class GeoGebra3D extends GeoGebraFrame
 		updateAllTitles();	
 		
 		wnd.setVisible(true);
+		
+		// TODO create a perspective which shows the 3D view by default 
+		app.getGuiManager().setShowView(true, Application3D.VIEW_EUCLIDIAN3D);
 		
 		
 		return wnd;

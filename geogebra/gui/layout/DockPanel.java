@@ -5,13 +5,11 @@ import geogebra.io.layout.DockPanelXml;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
-import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -22,13 +20,15 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Comparator;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 /**
  * Every object which should be dragged needs to be of type DockPanel.
@@ -40,11 +40,47 @@ import javax.swing.JScrollPane;
  * @author Florian Sonner
  * @version 2008-07-18
  */
-public class DockPanel extends JPanel implements ActionListener, WindowListener, MouseListener {
+public abstract class DockPanel extends JPanel implements ActionListener, WindowListener, MouseListener {
 	private static final long serialVersionUID = 1L;
 	
 	private DockManager dockManager;
 	private Application app;
+	
+	/**
+	 * The ID of this dock panel.
+	 */
+	private int id;
+	
+	/**
+	 * The title of this dock panel.
+	 */
+	private String title;
+	
+	/**
+	 * If this panel is visible.
+	 */
+	private boolean visible = false;
+	
+	/**
+	 * The dimensions of the external window of this panel.
+	 */
+	private Rectangle frameBounds = new Rectangle(50, 50, 500, 500);
+	
+	/**
+	 * If this panel should be opened in a frame the next time it's visible.
+	 */
+	private boolean openInFrame = true;
+	
+	/**
+	 * String which stores the position of the panel in the layout.
+	 */
+	private String embeddedDef = "1";
+	
+	/**
+	 * The size of the panel in the layout, may be either the width or height depending upon
+	 * embeddedDef. 
+	 */
+	private int embeddedSize = 150;
 	
 	/**
 	 * The panel at the top where the title and the close button
@@ -82,63 +118,75 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * an additional window.
 	 */
 	private JFrame frame = null;
-
-	/**
-	 * All information regarding the ID and the location of this
-	 * DockPanel which can be saved and loaded as XML.
-	 */
-	private DockPanelXml info;
-	
-	/**
-	 * The language-key of the title of this view which will be loaded
-	 * for the specific language by using Application.getPlain().
-	 */
-	private String viewTitle;
 	
 	/**
 	 * The component used for this view.
 	 */
-	private Component view;
+	private Component component;
 	
 	/**
-	 * Construct this dock manager. Add the title bar if we're not in the
-	 * "layout fixed" mode and if the user does not use an applet.
-	 * 
-	 * @param dockManager
-	 * @param info			A container which stores all information about this view.
+	 * The location of this panel in the view menu. If -1 this panel won't appear there at all.
 	 */
-	public DockPanel(DockManager dockManager, DockPanelXml info) {
-		this.dockManager = dockManager;
-		this.app = dockManager.getLayout().getApp();
-		this.info = info;
+	private int menuOrder;
+	
+	/**
+	 * Shortcut to show this panel, SHIFT is automatically used as modifier, \u0000 is the default value.
+	 */
+	private char menuShortcut;
+	
+	/**
+	 * Prepare dock panel. DockPanel::register() has to be called to make this panel fully functional!
+	 * No shortcut is assigned to the view in this construtor.
+	 * 
+	 * @param id 			The id of the panel
+	 * @param title			The title phrase of the view located in plain.properties
+	 * @param menuOrder		The location of this view in the view menu, -1 if the view should not appear at all
+	 */
+	public DockPanel(int id, String title, int menuOrder) {
+		this(id, title, menuOrder, '\u0000');
+	}
+	
+	/**
+	 * Prepare dock panel. DockPanel::register() has to be called to make this panel fully functional!
+	 * 
+	 * @param id 			The id of the panel
+	 * @param title			The title phrase of the view located in plain.properties
+	 * @param menuOrder		The location of this view in the view menu, -1 if the view should not appear at all
+	 * @param menuShortcut	The shortcut character which can be used to make this view visible
+	 */
+	public DockPanel(int id, String title, int menuOrder, char menuShortcut) {
+		this.id = id;
+		this.title = title;
+		this.menuOrder = menuOrder;
 		
 		setLayout(new BorderLayout());
-		
-		// Insert new view types here..
-		switch(info.getViewId()) {
-			case Application.VIEW_EUCLIDIAN:
-				viewTitle = "DrawingPad";
-				break;
-			case Application.VIEW_ALGEBRA:
-				viewTitle = "AlgebraWindow";
-				break;
-			case Application.VIEW_SPREADSHEET:
-				viewTitle = "Spreadsheet";
-				break;
-			case Application.VIEW_CAS:
-				viewTitle = "CAS";
-				break;
-			case DockManager.VIEW_EUCLIDIAN_3D:
-				viewTitle ="GraphicsView3D";
-				break;
-			default:
-				throw new IllegalArgumentException("view ID can not be identified (#"+info.getViewId()+")");
+	}
+	
+	/**
+	 * @return The icon of the menu item, if this method
+	 * 		was not overwritten it will return the empty icon or 
+	 * 		null for Win Vista / 7 to prevent the "checkbox bug" 
+	 */
+	public ImageIcon getIcon() { 
+		if(Application.WINDOWS_VISTA_OR_LATER) {
+			return null; 
+		} else {
+			return app.getEmptyIcon();
 		}
-		
-		if(info.isVisible()) {
-			loadView();
-			add(view, BorderLayout.CENTER);
-		}
+	}
+	
+	protected abstract JComponent getToolBar();
+	protected abstract JComponent loadComponent();
+	
+	/**
+	 * Bind this view to a dock manager. Also initializes the whole GUI as just
+	 * at this point the application is available.
+	 * 
+	 * @param dockManager
+	 */
+	public void register(DockManager dockManager) {
+		this.dockManager = dockManager;
+		this.app = dockManager.getLayout().getApp();
 		
 		// Construct title bar and all elements
 		titlePanel = new JPanel();
@@ -148,7 +196,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
 		titlePanel.setLayout(new BorderLayout());
 		
-		titleLabel = new JLabel(app.getPlain(viewTitle));
+		titleLabel = new JLabel(app.getPlain(title));
 		titleLabel.setFont(app.getPlainFont());
 		titlePanel.add(titleLabel, BorderLayout.WEST);
 
@@ -187,24 +235,10 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	}
 	
 	/**
-	 * @return If this DockPanel is in an extra frame / window.
-	 */
-	public boolean isInFrame() {
-		return frame != null;
-	}
-	
-	/**
-	 * @return If this DockPanel is visible.
-	 */
-	public boolean isVisible() {
-		return info.isVisible();
-	}
-	
-	/**
 	 * Create a frame for this DockPanel.
 	 */
 	public void createFrame() {
-		frame = new JFrame(app.getPlain(viewTitle));
+		frame = new JFrame(app.getPlain(title));
 		
 		// needs the higher res as used by Windows 7 for the Toolbar
 	   	frame.setIconImage(app.getInternalImage("geogebra32.gif"));  
@@ -212,11 +246,11 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	   	
 	   	frame.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent event) {
-            	info.setWindowRect(event.getComponent().getBounds());
+            	setFrameBounds(event.getComponent().getBounds());
             }
             
             public void componentMoved(ComponentEvent event) {
-            	info.setWindowRect(event.getComponent().getBounds());
+            	setFrameBounds(event.getComponent().getBounds());
             }
         });
 	   	
@@ -227,24 +261,24 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	   	Rectangle screenSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 	   	
 	   	// Use the previous dimension of this view
-	   	Rectangle windowRect = info.getWindowRect();
+	   	Rectangle windowBounds = getFrameBounds();
 	   	
 	   	// resize window if necessary
-	   	if(windowRect.width > screenSize.width)
-	   		windowRect.width = screenSize.width - 50;
-	   	if(windowRect.height > screenSize.height)
-	   		windowRect.height = windowRect.height - 50;
+	   	if(windowBounds.width > screenSize.width)
+	   		windowBounds.width = screenSize.width - 50;
+	   	if(windowBounds.height > screenSize.height)
+	   		windowBounds.height = windowBounds.height - 50;
 	   	
 	   	// center window if necessary
-	   	if(windowRect.x + windowRect.width > screenSize.width ||
-	   		windowRect.y + windowRect.height > screenSize.height) {
+	   	if(windowBounds.x + windowBounds.width > screenSize.width ||
+	   		windowBounds.y + windowBounds.height > screenSize.height) {
 	   		frame.setLocationRelativeTo(null);
 	   	} else {
-	   		frame.setLocation(windowRect.getLocation());
+	   		frame.setLocation(windowBounds.getLocation());
 	   	}
-	   	info.setOpenInFrame(true);
+	   	setOpenInFrame(true);
 	   	
-	   	frame.setSize(windowRect.getSize());
+	   	frame.setSize(windowBounds.getSize());
 	   	frame.setVisible(true);
 		
 	   	// make titlebar visible if necessary
@@ -294,9 +328,9 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 */
 	public void updatePanel() {
 		// load content if panel was hidden till now
-		if(view == null && info.isVisible()) {
-			loadView();
-			add(view, BorderLayout.CENTER);
+		if(component == null && isVisible()) {
+			component = loadComponent();
+			add(component, BorderLayout.CENTER);
 		}
 		
 		titlePanel.setVisible(dockManager.getLayout().isTitleBarVisible());
@@ -317,7 +351,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 		unwindowButton.setToolTipText(app.getPlain("ViewCloseExtraWindow"));
 		
 		if(frame == null) {
-			titleLabel.setText(app.getPlain(viewTitle));
+			titleLabel.setText(app.getPlain(title));
 		} else {
 			updateTitle();
 		}
@@ -328,10 +362,10 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * or if the title of the main window changed (e.g. because the file was saved
 	 * under a different name).
 	 */
-	public void updateTitle() {		
-		if(info.isOpenInFrame()) {
+	public void updateTitle() {
+		if(isOpenInFrame()) {
 			StringBuilder windowTitle = new StringBuilder();
-			windowTitle.append(app.getPlain(viewTitle));
+			windowTitle.append(app.getPlain(title));
 			
 	        if (app.getCurrentFile() != null) {
 	        	windowTitle.append(" - ");
@@ -349,31 +383,6 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 		}
 	}
 	
-	private void loadView()
-	{
-		switch(info.getViewId()) {
-			case Application.VIEW_EUCLIDIAN:
-				view = app.getEuclidianView();
-				break;
-			case Application.VIEW_ALGEBRA:
-				view = new JScrollPane(app.getGuiManager().getAlgebraView());
-				((JScrollPane)view).setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
-				view.setBackground(Color.white);
-				break;
-			case Application.VIEW_SPREADSHEET:
-				view = app.getGuiManager().getSpreadsheetView();
-				break;
-			case Application.VIEW_CAS:
-				view = app.getGuiManager().getCasView().getCASViewComponent();
-				break;
-			case DockManager.VIEW_EUCLIDIAN_3D:
-				view = dockManager.getEuclidian3D();
-				break;
-			default:
-				throw new IllegalArgumentException("view ID can not be identified (#"+info.getViewId()+")");
-		}
-	}
-	
 	/**
 	 * Close this panel.
 	 */
@@ -387,7 +396,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 */
 	private void windowPanel() {
 		dockManager.hide(this, false);
-		info.setVisible(true);
+		setVisible(true);
 		createFrame();
 	}
 	
@@ -399,7 +408,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 		dockManager.hide(this, false);
 		
 		// don't display this panel in a frame the next time
-		getInfo().setOpenInFrame(false);
+		setOpenInFrame(false);
 		
 		// show the panel in the main window
 		dockManager.show(this);
@@ -438,7 +447,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * @return The parent DockSplitPane or null.
 	 */
 	public DockSplitPane getParentSplitPane() {
-		if(info.isOpenInFrame())
+		if(isOpenInFrame())
 			return null;
 		
 		Container parent = getParent();
@@ -453,7 +462,7 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	 * Return the embedded def string for this DockPanel.
 	 * @return
 	 */
-	public String getEmbeddedDef() {
+	public String calculateEmbeddedDef() {
 		StringBuilder def = new StringBuilder();
 
 		Component current = this;
@@ -490,25 +499,90 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 		return def.reverse().toString();
 	}
 	
+	public DockPanelXml createInfo() {
+		return new DockPanelXml(id, visible, openInFrame, frameBounds, embeddedDef, embeddedSize);
+	}
+	
 	/**
-	 * @return The object which stores all information for this DockPanel.
+	 * @return If this DockPanel is in an extra frame / window.
 	 */
-	public DockPanelXml getInfo() {
-		return info;
+	public boolean isInFrame() {
+		return frame != null;
+	}
+	
+	public void setOpenInFrame(boolean openInFrame) {
+		this.openInFrame = openInFrame;
+	}
+	
+	public boolean isOpenInFrame() {
+		return openInFrame;
+	}
+	
+	public void setFrameBounds(Rectangle frameBounds) {
+		this.frameBounds = frameBounds;
+	}
+	
+	public Rectangle getFrameBounds() {
+		return this.frameBounds;
+	}
+
+	/**
+	 * @param embeddedDef the embeddedDef to set
+	 */
+	public void setEmbeddedDef(String embeddedDef) {
+		this.embeddedDef = embeddedDef;
+	}
+	
+	public String getEmbeddedDef() {
+		return embeddedDef;
+	}
+
+	/**
+	 * @param embeddedSize the embeddedSize to set
+	 */
+	public void setEmbeddedSize(int embeddedSize) {
+		this.embeddedSize = embeddedSize;
+	}
+
+	/**
+	 * @return the embeddedSize
+	 */
+	public int getEmbeddedSize() {
+		return embeddedSize;
+	}
+	
+	/**
+	 * @return If this DockPanel is visible.
+	 */
+	public boolean isVisible() {
+		return visible;
+	}
+	
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 	
 	/**
 	 * @return An unique ID for this DockPanel.
 	 */
 	public int getViewId() {
-		return info.getViewId();
+		return id;
 	}
 	
-	/**
-	 * @return The view 
-	 */
-	public Component getView() {
-		return view;
+	public String getViewTitle() {
+		return title;
+	}
+	
+	public int getMenuOrder() {
+		return menuOrder;
+	}
+	
+	public boolean hasMenuShortcut() {
+		return menuShortcut != '\u0000';
+	}
+	
+	public char getMenuShortcut() {
+		return menuShortcut;
 	}
 	
 	/**
@@ -517,13 +591,24 @@ public class DockPanel extends JPanel implements ActionListener, WindowListener,
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[DockPanel,id=");
-		sb.append(info.getViewId());
+		sb.append(getViewId());
 		sb.append(",visible=");
-		sb.append(info.isVisible());
+		sb.append(isVisible());
 		sb.append(",inframe=");
-		sb.append(info.isOpenInFrame());
+		sb.append(isOpenInFrame());
 		sb.append("]");
 		return sb.toString();
+	}
+	
+	/**
+	 * Helper class to compare dock panels for sorting in the menu. 
+	 * 
+	 * @author Florian Sonner
+	 */
+	public static class MenuOrderComparator implements Comparator<DockPanel>  {
+		public int compare(DockPanel a, DockPanel b) {
+			return a.getMenuOrder() - b.getMenuOrder();
+		}
 	}
 
 	public void windowClosed(WindowEvent e) { }

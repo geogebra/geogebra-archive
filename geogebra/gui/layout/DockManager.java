@@ -8,6 +8,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import javax.swing.JPanel;
 
@@ -17,14 +20,15 @@ import javax.swing.JPanel;
  * @author Florian Sonner
  * @version 2008-07-18
  */
-public class DockManager {	
+public class DockManager {
 	private Application app;
 	private Layout layout;
 	
 	private DockGlassPane glassPane;	
 	
 	private DockSplitPane rootPane;
-	private DockPanel[] dockPanels;
+	
+	private ArrayList<DockPanel> dockPanels;
 	
 	/**
 	 * @param app
@@ -34,10 +38,16 @@ public class DockManager {
 		this.layout = layout;
 		this.app = layout.getApp();
 		
+		dockPanels = new ArrayList<DockPanel>();
 		glassPane = new DockGlassPane(this);
 		
 		if(!app.isApplet())
 			app.setGlassPane(glassPane);
+	}
+	
+	public void registerPanel(DockPanel dockPanel) {
+		dockPanels.add(dockPanel);
+		dockPanel.register(this);
 	}
 	
 	/**
@@ -49,32 +59,30 @@ public class DockManager {
 	 * @see Layout::applyPerspective()
 	 */
 	public void applyPerspective(DockSplitPaneXml[] spInfo, DockPanelXml[] dpInfo) {		
-		if(dockPanels != null) {
+		if(dockPanels != null) {			
 			// hide existing external windows
-			for(int i = 0; i < dockPanels.length; ++i) {
-				if(dockPanels[i].getInfo().isOpenInFrame() && dockPanels[i].getInfo().isVisible()) {
-					hide(dockPanels[i]);
+			for(DockPanel panel : dockPanels) {
+				if(panel.isOpenInFrame() && panel.isVisible()) {
+					hide(panel);
 				}
 			}
 			
 			// copy dock panel info settings
 			for(int i = 0; i < dpInfo.length; ++i) {
-				DockPanelXml panelInfo = getPanel(dpInfo[i].getViewId()).getInfo();
-				panelInfo.setWindowRect(dpInfo[i].getWindowRect());
-				panelInfo.setEmbeddedDef(dpInfo[i].getEmbeddedDef());
-				panelInfo.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
-				panelInfo.setOpenInFrame(dpInfo[i].isOpenInFrame());
-				panelInfo.setVisible(dpInfo[i].isVisible());
+				DockPanel panel = getPanel(dpInfo[i].getViewId());
+				
+				if(panel == null) {
+					// TODO insert error panel
+				}
+				
+				panel.setFrameBounds(dpInfo[i].getFrameBounds());
+				panel.setEmbeddedDef(dpInfo[i].getEmbeddedDef());
+				panel.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
+				panel.setOpenInFrame(dpInfo[i].isOpenInFrame());
+				panel.setVisible(dpInfo[i].isVisible());
 			}
 			
 			updatePanels();
-		} else {
-			// create the dock panels
-			dockPanels = new DockPanel[dpInfo.length];
-			
-			for(int i = 0; i < dpInfo.length; ++i) {
-				dockPanels[i] = new DockPanel(this, (DockPanelXml)dpInfo[i].clone());
-			}
 		}
 		
 		if(spInfo.length > 0) {
@@ -121,7 +129,7 @@ public class DockManager {
 					continue;
 				
 				if(dpInfo[i].isOpenInFrame()) {
-					show(dockPanels[i]);
+					show(getPanel(dpInfo[i].getViewId()));
 					continue;
 				}
 				
@@ -173,8 +181,8 @@ public class DockManager {
 	 * Update the labels of all DockPanels.
 	 */
 	public void setLabels() {
-		for(int i = 0; i < dockPanels.length; ++i) {
-			dockPanels[i].updateLabels();
+		for(DockPanel panel : dockPanels) {
+			panel.updateLabels();
 		}
 	}
 	
@@ -192,8 +200,9 @@ public class DockManager {
 	 * document.
 	 */
 	public void updateTitles() {
-		for(int i = 0; i < dockPanels.length; ++i)
-			dockPanels[i].updateTitle();
+		for(DockPanel panel : dockPanels) {
+			panel.updateTitle();
+		}
 	}
 	
 	/**
@@ -203,9 +212,9 @@ public class DockManager {
 	 * 
 	 * @see setLabels
 	 */
-	public void updatePanels() {		
-		for(int i = 0; i < dockPanels.length; ++i) {
-			dockPanels[i].updatePanel();
+	public void updatePanels() {
+		for(DockPanel panel : dockPanels) {
+			panel.updatePanel();
 		}
 	}
 
@@ -220,10 +229,6 @@ public class DockManager {
 			if(rootPane.getOpposite(panel) == null) {
 				return;
 			}
-		}
-		
-		if(panel.getView() instanceof DockPanelView) {
-			((DockPanelView)panel.getView()).beginDrag();
 		}
 		
 		glassPane.activate(new DnDState(panel));
@@ -249,7 +254,7 @@ public class DockManager {
 		// Hide the source first
 		hide(source, false);
 		
-		source.getInfo().setVisible(true);
+		source.setVisible(true);
 		
 		// Add the source panel at the new position
 		DockSplitPane newSplitPane = new DockSplitPane();
@@ -360,10 +365,6 @@ public class DockManager {
 			new ComponentEvent(rootPane, ComponentEvent.COMPONENT_RESIZED)
 		);
 		
-		if(target.getView() instanceof DockPanelView) {
-			((DockPanelView)target.getView()).endDrag();
-		}
-		
 		Application.debug(getDebugTree(0, rootPane));
 	}
 	
@@ -412,16 +413,16 @@ public class DockManager {
 	 * @param panel 
 	 */
 	public void show(DockPanel panel) {
-		panel.getInfo().setVisible(true);
+		panel.setVisible(true);
 		
 		// TODO causes any problems?
 		app.getGuiManager().attachView(panel.getViewId());
 		
-		if(panel.getInfo().isOpenInFrame()) {
+		if(panel.isOpenInFrame()) {
 			panel.createFrame();
 		} else {
 			// Transform the definition into an array of integers
-			String[] def = panel.getInfo().getEmbeddedDef().split(",");
+			String[] def = panel.getEmbeddedDef().split(",");
 			int[] locations = new int[def.length];
 			
 			for(int i = 0; i < def.length; ++i) {
@@ -466,7 +467,7 @@ public class DockManager {
 				}
 			}
 	
-			int size = panel.getInfo().getEmbeddedSize();
+			int size = panel.getEmbeddedSize();
 			int lastPos = locations[locations.length - 1];
 			
 			DockSplitPane newSplitPane = new DockSplitPane();
@@ -563,30 +564,30 @@ public class DockManager {
 	 * @param isPermanent If this change is permanent.
 	 */
 	public void hide(DockPanel panel, boolean isPermanent) {
-		if(!panel.getInfo().isVisible())
+		if(!panel.isVisible())
 			throw new IllegalArgumentException("DockPane is not visible and can't be hidden.");
 		
-		panel.getInfo().setVisible(false);
+		panel.setVisible(false);
 		
 		if(isPermanent) {
 			app.getGuiManager().detachView(panel.getViewId());
 		}
 		
-		if(panel.getInfo().isOpenInFrame()) {
+		if(panel.isOpenInFrame()) {
 			panel.removeFrame();
-			panel.getInfo().setOpenInFrame(true); // open in frame the next time
+			panel.setOpenInFrame(true); // open in frame the next time
 		} else {
 			DockSplitPane parent = panel.getParentSplitPane();
 			
 			// Save settings
 			if(parent.getOrientation() == DockSplitPane.HORIZONTAL_SPLIT) {
-				panel.getInfo().setEmbeddedSize(panel.getWidth());
+				panel.setEmbeddedSize(panel.getWidth());
 			} else {
-				panel.getInfo().setEmbeddedSize(panel.getHeight());
+				panel.setEmbeddedSize(panel.getHeight());
 			}
 			
-			panel.getInfo().setEmbeddedDef(panel.getEmbeddedDef());
-			panel.getInfo().setOpenInFrame(false);
+			panel.setEmbeddedDef(panel.calculateEmbeddedDef());
+			panel.setOpenInFrame(false);
 			
 			if(parent == rootPane) {
 				if(parent.getOpposite(panel) instanceof DockSplitPane) {
@@ -639,31 +640,19 @@ public class DockManager {
 	public DockPanel getPanel(int viewId)
 		throws IllegalArgumentException
 	{
-		for(int i = 0; i < dockPanels.length; ++i) {
-			if(dockPanels[i].getViewId() == viewId)
-				return dockPanels[i];
+		DockPanel panel = null;
+		for(DockPanel dockPanel : dockPanels) {
+			if(dockPanel.getViewId() == viewId) {
+				panel = dockPanel;
+				break;
+			}
 		}
 		
-		// This view may have not been included in previous versions
-		if(viewId == Application.VIEW_CAS) {
-			// Expand the dock panels array and add the CAS view to the end
-			DockPanel[] dockPanelsTmp = new DockPanel[dockPanels.length + 1];
-			
-			// Copy old values
-			for(int i = 0; i < dockPanels.length; ++i) {
-				dockPanelsTmp[i] = dockPanels[i];
-			}
-			
-			// Add the CAS view
-			dockPanelsTmp[dockPanels.length] = new DockPanel(this, new DockPanelXml(Application.VIEW_CAS, false, false, new Rectangle(400, 400), "1", 300));
-			
-			dockPanels = dockPanelsTmp;
-			
-			// Return the CAS view
-			return dockPanelsTmp[dockPanelsTmp.length - 1];
+		if(panel != null) {
+			return panel;
+		} else {
+			throw new IllegalArgumentException("viewId not found");
 		}
-
-		throw new IllegalArgumentException("viewId not found");
 	}
 	
 	/**
@@ -671,7 +660,7 @@ public class DockManager {
 	 * @return
 	 */
 	public DockPanel[] getPanels() {
-		return dockPanels;
+		return (DockPanel[])dockPanels.toArray(new DockPanel[0]);
 	}
 	
 	/**
@@ -722,50 +711,5 @@ public class DockManager {
 		for(int i = 0; i < times; ++i)
 			strBuffer.append(str);
 		return strBuffer.toString();
-	}
-	
-	/**
-	 * This is a messy implementation for 3D-view support in the layout
-	 * manager. It has to be refactored, but in general this awkward
-	 * solution is required as no real connection to the
-	 * geogebra3d.* packages should be established.
-	 * 
-	 * @todo refactor
-	 */
-	
-	/**
-	 * The ID of the euclidian view 3D.
-	 */
-	public static final int VIEW_EUCLIDIAN_3D = 512;
-	
-	private JPanel euclidian3D;
-	
-	/**
-	 * @return The panel for the euclidian view 3D if one was added
-	 * 		by using addEuclidian3D
-	 */
-	public JPanel getEuclidian3D() {
-		return euclidian3D;
-	}
-	
-	/**
-	 * Add dock panel for GeoGebra 3D
-	 */
-	public void addEuclidian3D(JPanel euclidian3D) {
-		this.euclidian3D = euclidian3D;
-		DockPanel panel = new DockPanel(this, new DockPanelXml(DockManager.VIEW_EUCLIDIAN_3D, false, true, new Rectangle(10, 10, 400, 400), "", 200));		
-		panel.setMaximumSize(new Dimension(0,0));
-		panel.setMinimumSize(new Dimension(0,0));
-		
-		// add this new panel to the dock panel array by constructing a new
-		// array for the dock panels with space for an additional element
-		DockPanel[] panels = new DockPanel[dockPanels.length+1];
-		for(int i = 0; i < dockPanels.length; ++i) 
-			panels[i] = dockPanels[i];
-		panels[dockPanels.length] = panel;
-		
-		dockPanels = panels;
-		
-		show(panel);
 	}
 }

@@ -1,12 +1,15 @@
 package geogebra3D.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 
 import geogebra.gui.GuiManager;
+import geogebra.gui.layout.DockPanel;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
 
@@ -16,7 +19,7 @@ import geogebra3D.Application3D;
  * @author matthieu
  *
  */
-public class DefaultGuiManager3D extends GuiManager {
+public class GuiManager3D extends GuiManager {
 
 	
 	private AbstractAction showPlaneAction;
@@ -25,8 +28,29 @@ public class DefaultGuiManager3D extends GuiManager {
 	 * default constructor
 	 * @param app
 	 */
-	public DefaultGuiManager3D(Application app) {
+	public GuiManager3D(Application app) {
 		super(app);
+	}
+	
+	/**
+	 * Add 3D euclidian view to layout.
+	 */
+	protected void initLayoutPanels() {
+		super.initLayoutPanels();
+    	
+    	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, "GraphicsView3D", 4) {
+    		protected JComponent getToolBar() {
+				return null;
+			}
+			
+    		protected JComponent loadComponent() {
+				return ((Application3D)app).getEuclidianView3D();
+			}
+		};
+		panel3D.setMaximumSize(new Dimension(0,0));
+		panel3D.setMinimumSize(new Dimension(0,0));
+		
+    	getLayout().registerPanel(panel3D);
 	}
 	
 	

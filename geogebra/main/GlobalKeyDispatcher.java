@@ -364,8 +364,9 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				// ctrl-shift-s (toggle spreadsheet)
 			case KeyEvent.VK_S:
 				if (event.isShiftDown() && app.hasFullGui()) {
-					app.getGuiManager().setShowSpreadsheetView(
-							!app.getGuiManager().showSpreadsheetView());
+					app.getGuiManager().setShowView(
+							!app.getGuiManager().showView(Application.VIEW_SPREADSHEET),
+							Application.VIEW_SPREADSHEET);
 					consumed = true;
 				}
 				break;

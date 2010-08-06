@@ -30,7 +30,7 @@ public class ContextMenuGraphicsWindow3D extends ContextMenuGraphicsWindow {
 		super.addAxesAndGridCheckBoxes();
 
 		EuclidianView ev = app.getEuclidianView();
-		JCheckBoxMenuItem cbShowPlane = new JCheckBoxMenuItem(((DefaultGuiManager3D) app.getGuiManager()).getShowPlaneAction());
+		JCheckBoxMenuItem cbShowPlane = new JCheckBoxMenuItem(((GuiManager3D) app.getGuiManager()).getShowPlaneAction());
 		((Application3D) app).setShowPlaneSelected(cbShowPlane);
 		cbShowPlane.setBackground(getBackground());
 		add(cbShowPlane);

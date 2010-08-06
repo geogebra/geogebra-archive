@@ -15,7 +15,7 @@ public class DockPanelXml {
 	private int viewId;
 	private boolean isVisible;
 	private boolean openInFrame;
-	private Rectangle windowRect;
+	private Rectangle frameBounds;
 	private String embeddedDef;
 	private int embeddedSize;
 	
@@ -31,7 +31,7 @@ public class DockPanelXml {
 		this.viewId = viewId;
 		this.setVisible(isVisible);
 		this.setOpenInFrame(openInFrame);
-		this.setWindowRect(windowRect);
+		this.setFrameBounds(windowRect);
 		this.setEmbeddedDef(embeddedDef);
 		this.setEmbeddedSize(embeddedSize);
 	}
@@ -102,18 +102,18 @@ public class DockPanelXml {
 	}
 
 	/**
-	 * @param windowRect A rectangle with the size and position of the 
+	 * @param frameBounds A rectangle with the size and position of the 
 	 * 		frame.
 	 */
-	public void setWindowRect(Rectangle windowRect) {
-		this.windowRect = windowRect;
+	public void setFrameBounds(Rectangle frameBounds) {
+		this.frameBounds = frameBounds;
 	}
 
 	/**
-	 * @return the windowRect
+	 * @return the frameBounds
 	 */
-	public Rectangle getWindowRect() {
-		return windowRect;
+	public Rectangle getFrameBounds() {
+		return frameBounds;
 	}
 
 	/**
@@ -160,13 +160,13 @@ public class DockPanelXml {
 		sb.append("\" size=\"");
 		sb.append(getEmbeddedSize());
 		sb.append("\" window=\"");
-		sb.append(getWindowRect().x);
+		sb.append(getFrameBounds().x);
 		sb.append(",");
-		sb.append(getWindowRect().y);
+		sb.append(getFrameBounds().y);
 		sb.append(",");
-		sb.append(getWindowRect().width);
+		sb.append(getFrameBounds().width);
 		sb.append(",");
-		sb.append(getWindowRect().height);
+		sb.append(getFrameBounds().height);
 		sb.append("\" />\n");
 		return sb.toString();
 	}
@@ -176,6 +176,6 @@ public class DockPanelXml {
 	 * automatically otherwise.
 	 */
 	public Object clone() {
-		return new DockPanelXml(viewId, isVisible, openInFrame, windowRect, embeddedDef, embeddedSize);
+		return new DockPanelXml(viewId, isVisible, openInFrame, frameBounds, embeddedDef, embeddedSize);
 	}
 }

@@ -2,6 +2,7 @@ package geogebra.gui.menubar;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
+import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
 import geogebra.io.layout.Perspective;
@@ -9,6 +10,7 @@ import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -27,10 +29,6 @@ class ViewMenu extends BaseMenu {
 	private Layout layout;
 	
 	private AbstractAction 
-		showAlgebraViewAction,
-		showSpreadsheetAction,
-		showEuclidianViewAction,
-		showCASViewAction,
 		showAuxiliaryObjectsAction,
 		showAlgebraInputAction,
 		showKeyboardAction,
@@ -56,10 +54,6 @@ class ViewMenu extends BaseMenu {
 	private JCheckBoxMenuItem
 		cbShowAxes,
 		cbShowGrid,
-		cbShowAlgebraView,
-		cbShowSpreadsheetView, 				// Michael Borcherds 2008-01-14
-		cbShowEuclidianView, 				// Florian Sonner 2008-08-29
-		cbShowCASView,
 		cbShowInputTop, 					// Florian Sonner 2008-09-12
 		cbShowToolBar, 						// Florian Sonner 2009-01-10
 		cbShowToolBarTop, 					// Florian Sonner 2009-01-10
@@ -74,6 +68,9 @@ class ViewMenu extends BaseMenu {
 		cbShowHandwritingTimedAdd,
 		cbShowHandwritingTimedRecognise,
 		cbShowCmdList;
+	
+	private AbstractAction[] showViews;
+	private JCheckBoxMenuItem[] cbViews;
 	
 	private JMenu
 		menuConsProt, 
@@ -122,43 +119,8 @@ class ViewMenu extends BaseMenu {
 		add(cbShowAuxiliaryObjects);
 
 		addSeparator();
-
-		/*
-		 * add(new JCheckBoxMenuItem(app.getPlain("DrawingPad"),
-		 * app.getEmptyIcon())); add(new
-		 * JCheckBoxMenuItem(app.getPlain("AlgebraWindow"),
-		 * app.getEmptyIcon())); add(new
-		 * JCheckBoxMenuItem(app.getPlain("Spreadsheet"), app.getEmptyIcon()));
-		 * add(new JCheckBoxMenuItem(app.getPlain("CAS"),
-		 * app.getEmptyIcon())); addSeparator();
-		 */
-
-		cbShowEuclidianView = new JCheckBoxMenuItem(showEuclidianViewAction);
-		cbShowEuclidianView
-				.setIcon(app.getImageIcon("document-properties.png"));
-		cbShowEuclidianView
-				.setSelected(app.getGuiManager().showEuclidianView());
-		add(cbShowEuclidianView);
-
-		cbShowAlgebraView = new JCheckBoxMenuItem(showAlgebraViewAction);
-		app.setEmptyIcon(cbShowAlgebraView);
-		cbShowAlgebraView.setSelected(app.getGuiManager().showAlgebraView());
-		setMenuShortCutShiftAccelerator(cbShowAlgebraView, 'A');
-		add(cbShowAlgebraView);
-
-		// Michael Borcherds 2008-01-14
-		cbShowSpreadsheetView = new JCheckBoxMenuItem(showSpreadsheetAction);
-		app.setEmptyIcon(cbShowSpreadsheetView);
-		cbShowSpreadsheetView.setSelected(app.getGuiManager()
-				.showSpreadsheetView());
-		setMenuShortCutShiftAccelerator(cbShowSpreadsheetView, 'S');
-		add(cbShowSpreadsheetView);
 		
-		// Florian Sonner 2009-03-29
-		cbShowCASView = new JCheckBoxMenuItem(showCASViewAction);
-		app.setEmptyIcon(cbShowCASView);
-		cbShowCASView.setSelected(app.getGuiManager().showCASView());
-		add(cbShowCASView);
+		initViewItems();
 
 		addSeparator();
 		
@@ -261,45 +223,7 @@ class ViewMenu extends BaseMenu {
 	 */
 	private void initActions()
 	{
-		// Florian Sonner 2008-08-29
-		showEuclidianViewAction = new AbstractAction(app.getPlain("DrawingPad")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().setShowEuclidianView(
-						!app.getGuiManager().showEuclidianView());
-			}
-		};
-
-		showAlgebraViewAction = new AbstractAction(app
-				.getPlain("AlgebraWindow")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().setShowAlgebraView(
-						!app.getGuiManager().showAlgebraView());
-			}
-		};
-
-		// Michael Borcherds 2008-01-14
-		showSpreadsheetAction = new AbstractAction(app.getPlain("Spreadsheet")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().setShowSpreadsheetView(
-						!app.getGuiManager().showSpreadsheetView());
-			}
-		};
-		
-		// Florian Sonner 2009-03-29
-		showCASViewAction= new AbstractAction(app.getPlain("CAS")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().setShowCASView(
-						!app.getGuiManager().showCASView());
-			}
-		};
+		initViewActions();
 
 		showKeyboardAction = new AbstractAction(app.getPlain("ShowKeyboard")) {
 			private static final long serialVersionUID = 1L;
@@ -579,22 +503,15 @@ class ViewMenu extends BaseMenu {
 		GuiManager guiMananager = (GuiManager) app
 			.getGuiManager();
 
+		updateViews();
+		
 		EuclidianView ev = app.getEuclidianView();
 		cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
 		cbShowGrid.setSelected(ev.getShowGrid());
 		
-		cbShowEuclidianView
-				.setSelected(app.getGuiManager().showEuclidianView());
-		cbShowAlgebraView.setSelected(app.getGuiManager().showAlgebraView());
-		cbShowSpreadsheetView.setSelected(app.getGuiManager()
-				.showSpreadsheetView());
-		cbShowCASView.setSelected(app.getGuiManager().showCASView());
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		
-		boolean showAlgebraView = app.getGuiManager().showAlgebraView();
-		cbShowAlgebraView.setSelected(showAlgebraView);
-		
-		cbShowAuxiliaryObjects.setEnabled(showAlgebraView);
+		cbShowAuxiliaryObjects.setEnabled(app.getGuiManager().showView(Application.VIEW_ALGEBRA));
 		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
@@ -666,5 +583,115 @@ class ViewMenu extends BaseMenu {
 
 		menuPerspectives.add(managePerspectivesAction);
 		menuPerspectives.add(savePerspectiveAction);
+	}
+	
+	private void initViewActions() {
+		DockPanel[] dockPanels = layout.getDockManager().getPanels();
+		Arrays.sort(dockPanels, new DockPanel.MenuOrderComparator());
+		int viewsInMenu = 0;
+		
+		// count visible views first..
+		for(DockPanel panel : dockPanels) {
+			// skip panels with negative order by design
+			if(panel.getMenuOrder() < 0) {
+				continue;
+			}
+			++viewsInMenu;
+		}
+		
+		// construct array with menu items
+		showViews = new AbstractAction[viewsInMenu];
+		{
+			int i = 0;
+			AbstractAction action;
+			
+			for(DockPanel panel : dockPanels) {
+				// skip panels with negative order by design
+				if(panel.getMenuOrder() < 0) {
+					continue;
+				}
+				
+				final int viewId = panel.getViewId();
+				
+				action = new AbstractAction(app.getPlain(panel.getViewTitle())) {
+					public void actionPerformed(ActionEvent arg0) {
+						app.getGuiManager().setShowView(!app.getGuiManager().showView(viewId), viewId);
+					}
+				};
+				
+				showViews[i] = action;
+				++i;
+			}
+		}
+	}
+	
+	private void initViewItems() {
+		DockPanel[] dockPanels = layout.getDockManager().getPanels();
+		Arrays.sort(dockPanels, new DockPanel.MenuOrderComparator());
+		int viewsInMenu = 0;
+		
+		// count visible views first..
+		for(DockPanel panel : dockPanels) {
+			// skip panels with negative order by design
+			if(panel.getMenuOrder() < 0) {
+				continue;
+			}
+			++viewsInMenu;
+		}
+		
+		// construct array with menu items
+		cbViews = new JCheckBoxMenuItem[viewsInMenu];
+		{
+			int i = 0;
+			JCheckBoxMenuItem cb;
+			
+			for(DockPanel panel : dockPanels) {
+				// skip panels with negative order by design
+				if(panel.getMenuOrder() < 0) {
+					continue;
+				}
+				
+				cb = new JCheckBoxMenuItem(showViews[i]);
+				cb.setIcon(panel.getIcon());
+				
+				if(panel.hasMenuShortcut()) {
+					setMenuShortCutShiftAccelerator(cb, panel.getMenuShortcut());
+				}
+
+				add(cb);
+				cbViews[i] = cb;
+				++i;
+			}
+		}
+	}
+	
+	private void updateViews() {		
+		DockPanel[] dockPanels = layout.getDockManager().getPanels();
+		Arrays.sort(dockPanels, new DockPanel.MenuOrderComparator());
+		int viewsInMenu = 0;
+		
+		// count visible views first..
+		for(DockPanel panel : dockPanels) {
+			// skip panels with negative order by design
+			if(panel.getMenuOrder() < 0) {
+				continue;
+			}
+			++viewsInMenu;
+		}
+		
+		// update views
+		{
+			int i = 0;
+			
+			for(DockPanel panel : dockPanels) {
+				// skip panels with negative order by design
+				if(panel.getMenuOrder() < 0) {
+					continue;
+				}
+				
+				cbViews[i].setSelected(app.getGuiManager().showView(panel.getViewId()));
+				++i;
+			}
+		}
 	}
 }

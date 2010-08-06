@@ -85,7 +85,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			title = geo.getNameDescriptionHTML(false, true);
 		setTitle(title);        
 
-		if (app.getGuiManager().showAlgebraView()) {
+		if (app.getGuiManager().showView(Application.VIEW_ALGEBRA)) {
 			addPointItems();
 			addLineItems();
 			addVectorItems();
@@ -503,7 +503,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			// G.Sturr 2010-5-12 
 			// modified to use SpreadsheetTrace Dialog
 			
-			if (geo.isSpreadsheetTraceable() && app.getGuiManager().showSpreadsheetView()) {
+			if (geo.isSpreadsheetTraceable() && app.getGuiManager().showView(Application.VIEW_SPREADSHEET)) {
 				cbItem = new JCheckBoxMenuItem(app.getPlain("TraceToSpreadsheet"));
 				cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
 				cbItem.setSelected(geo.getSpreadsheetTrace());
@@ -557,7 +557,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 			// AUXILIARY OBJECT
 
-			if (app.getGuiManager().showAlgebraView() && app.showAuxiliaryObjects() && 
+			if (app.getGuiManager().showView(Application.VIEW_ALGEBRA) && app.showAuxiliaryObjects() && 
 					geo.isAlgebraShowable()) {
 
 				// show object

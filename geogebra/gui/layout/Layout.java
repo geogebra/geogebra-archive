@@ -87,6 +87,18 @@ public class Layout {
 	}
 	
 	/**
+	 * Add a new dock panel to the list of known panels.
+	 * 
+	 * Attention: This method has to be called as early as possible in the application
+	 * life cycle (e.g. before loading a file, before constructing the ViewMenu). 
+	 * 
+	 * @param dockPanel
+	 */
+	public void registerPanel(DockPanel dockPanel) {
+		dockManager.registerPanel(dockPanel);
+	}
+	
+	/**
 	 * Initialize the default perspectives
 	 */
 	private void initializeDefaultPerspectives() {
@@ -212,18 +224,16 @@ public class Layout {
 		for (int i = 0; i < panels.length; ++i) {
 			// just the width of the panels isn't updated every time the panel
 			// is updated, so we have to take care of this by ourself
-			if (!panels[i].getInfo().isOpenInFrame() && panels[i].getInfo().isVisible()) {
+			if (!panels[i].isOpenInFrame() && panels[i].isVisible()) {
 				DockSplitPane parent = panels[i].getParentSplitPane();
 				if (parent.getOrientation() == DockSplitPane.HORIZONTAL_SPLIT) {
-					panels[i].getInfo().setEmbeddedSize(panels[i].getWidth());
+					panels[i].setEmbeddedSize(panels[i].getWidth());
 				} else {
-					panels[i].getInfo().setEmbeddedSize(panels[i].getHeight());
+					panels[i].setEmbeddedSize(panels[i].getHeight());
 				}
+				panels[i].setEmbeddedDef(panels[i].calculateEmbeddedDef());
 			}
-
-			panels[i].getInfo().setEmbeddedDef(panels[i].getEmbeddedDef());
-
-			dockPanelInfo[i] = (DockPanelXml)panels[i].getInfo().clone();
+			dockPanelInfo[i] = (DockPanelXml)panels[i].createInfo();
 		}
 
 		// Sort the dock panels as the entries with the smallest amount of
@@ -361,7 +371,7 @@ public class Layout {
 		DockPanel[] panels = dockManager.getPanels();
 		
 		for(int i = 0; i < panels.length; ++i) {
-			if(panels[i].getInfo().isOpenInFrame()) {
+			if(panels[i].isOpenInFrame()) {
 				if(component == SwingUtilities.getRootPane(panels[i])) {
 					return true;
 				}
