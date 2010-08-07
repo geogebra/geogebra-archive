@@ -765,14 +765,14 @@ public class AlgebraProcessor {
 				// quadratic equation -> CONIC                                  
 				case 2 :
 					return processConic(equ);
-	
+	/* TODO remove GeoCubic completely (probably)
 				case 3 :
 				case 4 ://
 				case 5 ://
 				case 6 :// needed for eg x^3 y^3
 					if (equ.singleDegree() <= 3)
 						return processCubic(equ);
-					// else fall through to default:
+					// else fall through to default:*/
 	
 				default :
 					return processImplicitPoly(equ);
