@@ -2,6 +2,7 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -13,7 +14,15 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.regex.Matcher;
 
-
+/**
+ * 
+ * Utility class with methods for processing cell ranges (e.g inserting rows,
+ * creating lists of cells). Typical usage is via the instance of this class
+ * created by the constructor of MyTable.
+ * 
+ * @author G. Sturr
+ * 
+ */
 public class CellRangeProcessor {
 
 	private MyTable table;
@@ -26,6 +35,11 @@ public class CellRangeProcessor {
 		
 	}
 	
+	
+	
+	//===============================================
+	//            Validation
+	//===============================================
 	
 	public boolean isCreatePointListPossible(ArrayList<CellRange> rangeList) {
 
@@ -86,6 +100,18 @@ public class CellRangeProcessor {
 		return false;
 			
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	//====================================================
+	//           Create Lists from Cells
+	//====================================================
+	
 	
 	
 	public GeoElement createPointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
@@ -529,18 +555,17 @@ public class CellRangeProcessor {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
 
-	//=================================================================
-	//                   Insert Rows/Columns
-	//=================================================================
-
+	//===================================================
+	//              Insert Rows/Columns
+	//===================================================
+	
+	
+	//TODO: these methods are taken from the old code and need work
+	// They behave badly when cells have references to cells on the other
+	// side of a newly inserted row or column
+	
+	
 
 	public void InsertLeft(int column1, int column2){ 
 
@@ -608,7 +633,7 @@ public class CellRangeProcessor {
 	}
 
 	
-		
+	
 	public void InsertAbove(int row1, int row2){
 		int columns = table.getModel().getColumnCount();
 		int rows = table.getModel().getRowCount();
@@ -671,6 +696,46 @@ public class CellRangeProcessor {
 			app.storeUndoInfo();
 	}
 
+	
+	
+	
+	/**
+	 * Creates an operation table. 
+	 */
+	public void createOperationTable(CellRange cr, GeoFunctionNVar fcn ){
+		
+		int r1 = cr.getMinRow();
+		int c1 = cr.getMinColumn();
+		String text = "";
+		GeoElement[] geos;
+		fcn = (GeoFunctionNVar) RelativeCopy.getValue(table, r1,c1);
+		
+		for(int r = r1+1; r <= cr.getMaxRow(); ++r){
+			for(int c = c1+1; c <= cr.getMaxColumn(); ++c){
+				//System.out.println(GeoElement.getSpreadsheetCellName(c, r) + ": " + text);
+				
+				text = GeoElement.getSpreadsheetCellName(c, r) + "=" + fcn.getLabel() + "(";
+				text += GeoElement.getSpreadsheetCellName(c1, r);
+				text += ",";
+				text += GeoElement.getSpreadsheetCellName(c, r1);
+				text += ")";
+				
+				geos = table.kernel.getAlgebraProcessor()
+				.processAlgebraCommandNoExceptionHandling(text,false);
+
+				//geos[0].setLabel(GeoElement.getSpreadsheetCellName(c, r));
+				geos[0].setAuxiliaryObject(true);
+				
+				
+			}
+		}
+		
+	}
+	
+	
+	
+	//Experimental ---- merging ctrl-selected cells 
+	
 	private void consolidateRangeList(ArrayList<CellRange> rangeList){
 		
 		ArrayList<Point> columnList = new ArrayList<Point>();
