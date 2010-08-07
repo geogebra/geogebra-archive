@@ -75,6 +75,8 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	private JButton menuButton;
 	private JPopupMenu contextMenu;
 
+	private static final String URL_INIT_STRING = "http://www.geogebra.org/static/data/data.xml";
+	
 	
 	
 	/**
@@ -156,7 +158,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		this.add(treePane, BorderLayout.CENTER);
 		
 		// Load the local file system root as directory default
-		// TODO: add a default directory option to preferences
+		// TODO: add a default directory option to preferences/XML
 		String curDir = System.getProperty("user.dir"); 
 		String homeDir = System.getProperty("user.home"); 
 		this.setDirectory(new File(homeDir));
@@ -190,11 +192,15 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 			public void actionPerformed(ActionEvent e) {
 
 				try {
-				//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/Text.xml");
-				//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml");
+					
+					//TODO: 1) drop down history of URLs
+					//      2) store URL in XML 
+					
+					//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/Text.xml");
+					//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml");
 					
 					String initString = "http://";				
-					initString  = "http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml";
+					initString  = URL_INIT_STRING;
 					
 					InputDialog id = new InputDialogOpenDataFolderURL(app,view, initString);
 					id.setVisible(true);
