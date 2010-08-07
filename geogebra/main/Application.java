@@ -52,12 +52,15 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -76,8 +79,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -100,7 +101,6 @@ import java.util.logging.Handler;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import java.util.zip.ZipEntry;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -3915,11 +3915,36 @@ public class Application implements KeyEventDispatcher {
 			int[] pixels = new int[16 * 16];
 			Image image = Toolkit.getDefaultToolkit().createImage(
 			        new MemoryImageSource(16, 16, pixels, 0, 16));
+			
 			 transparentCursor =
 			        Toolkit.getDefaultToolkit().createCustomCursor
 			             (image, new Point(0, 0), "invisibleCursor");
 		}
 		return transparentCursor;
+	}
+	
+	Cursor eraserCursor = null;
+	
+	public Cursor getEraserCursor() {
+		
+		if (eraserCursor == null) {
+			
+			Image image = new BufferedImage(128,128, BufferedImage.TYPE_INT_ARGB);
+			
+			Graphics2D g = (Graphics2D) image.getGraphics();
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+			g.setColor(Color.BLACK);
+			g.setStroke(EuclidianView.getStroke(4,  EuclidianView.LINE_TYPE_FULL ));
+			
+			g.drawOval(48, 48, 80, 80);
+			
+			eraserCursor =
+			        Toolkit.getDefaultToolkit().createCustomCursor
+			             (image, new Point(32, 32), "eraserCursor");
+		}
+		return eraserCursor;
 	}
 	
 	private HashMap colors = null;

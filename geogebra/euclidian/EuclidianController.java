@@ -63,6 +63,7 @@ import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -713,16 +714,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	private void handleMousePressedForPenMode(MouseEvent e) {
 
-Rectangle rect = view.getSelectionRectangle();
+		Rectangle rect = view.getSelectionRectangle();
 
 
 		if (Application.isRightClick(e)) {
-			//if (ppm != null) ppm.setVisible(true);
-			app.getGuiManager().toggleMiniProperties(true);
-			return;
+			app.getEuclidianView().setCursor(app.getEraserCursor());
+			erasing = true;
+		} else {	
+			app.getEuclidianView().setCursor(app.getTransparentCursor());
+			erasing = false;
 		}
-		
-		app.getEuclidianView().setCursor(app.getTransparentCursor());
 		
 		EuclidianView ev = app.getEuclidianView();
 		//Graphics2D g2D = null;
@@ -821,10 +822,14 @@ Rectangle rect = view.getSelectionRectangle();
 
 		Point newPoint = new Point(e.getX() - penOffsetX, e.getY() - penOffsetY);
 		Graphics2D g2D = (Graphics2D) ev.getGraphics();
-		g2D.setColor(penColor);
-		
-		Shape circle = new Ellipse2D.Float(e.getX() - penSize, e.getY() - penSize, penSize*2, penSize*2);
-
+		Shape circle;
+		if (Application.isRightClick(e)) {
+			g2D.setColor(Color.white);
+			circle = new Ellipse2D.Float(e.getX() - eraserSize, e.getY() - eraserSize, eraserSize*2, eraserSize*2);		
+		} else {
+			g2D.setColor(penColor);
+			circle = new Ellipse2D.Float(e.getX() - penSize, e.getY() - penSize, penSize*2, penSize*2);
+		}
 		//g2D.drawOval(e.getX(), e.getY(), penSize, penSize);
 		g2D.fill(circle);
 
@@ -858,8 +863,13 @@ Rectangle rect = view.getSelectionRectangle();
 
 		Graphics2D g2d = (Graphics2D)penImage.getGraphics();
 
-		g2d.setStroke(EuclidianView.getStroke(2 * penSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
-		g2d.setColor(penColor);
+		if (erasing) {
+			g2d.setStroke(EuclidianView.getStroke(2 * eraserSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
+			g2d.setColor(Color.white);			
+		} else {
+			g2d.setStroke(EuclidianView.getStroke(2 * penSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
+			g2d.setColor(penColor);
+		}
 		g2d.draw(pb.gp);
 
 		penPoints.clear();
@@ -6607,7 +6617,10 @@ Rectangle rect = view.getSelectionRectangle();
 	}
 
 
-	int penSize = 3;
+	final private static int eraserSize = 12;
+	private boolean erasing = false;
+	private int penSize = 3;
+	
 	public void setSize(int size) {
 		penSize = size;
 		
