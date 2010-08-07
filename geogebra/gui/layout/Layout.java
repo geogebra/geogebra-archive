@@ -112,7 +112,7 @@ public class Layout {
 		spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
 		
 		String defToolbar = MyToolbar.getDefaultToolbarStringNoMacros();
-		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, false, true, true, true, false);
+		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, true, false, true, true, true, false);
 		
 		// basic geometry - just the euclidian view
 		dpInfo = new DockPanelXml[4];
@@ -121,10 +121,10 @@ public class Layout {
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
 		
-		defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", false, false, false, true, false);
+		defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", true, false, false, false, true, false);
 		
 		// geometry - like basic geometry but with more toolbar entries
-		defaultPerspectives[2] = new Perspective("Geometry", spInfo, dpInfo, "0 | 40 | 1", true, true, true, false, true);
+		defaultPerspectives[2] = new Perspective("Geometry", spInfo, dpInfo, "0 | 40 | 1", true, true, true, true, false, true);
 		
 		// table & graphics - just the euclidian view
 		spInfo = new DockSplitPaneXml[1];
@@ -136,7 +136,7 @@ public class Layout {
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, true, false, new Rectangle(100, 100, 600, 400), "3", 300);
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, false, false, new Rectangle(100, 100, 600, 400), "3,1", 300);
 		
-		defaultPerspectives[3] = new Perspective("TableAndGraphics", spInfo, dpInfo, "0 | 40 | 1", false, false, false, true, false);
+		defaultPerspectives[3] = new Perspective("TableAndGraphics", spInfo, dpInfo, "0 | 40 | 1", true, false, false, false, true, false);
 	}
 	
 	/**
@@ -184,7 +184,8 @@ public class Layout {
 		}
 		
 		app.getGuiManager().setToolBarDefinition(perspective.getToolbarDefinition());
-
+		app.setShowToolBar(perspective.getShowToolBar());
+		
 		app.setShowAlgebraInput(perspective.getShowInputPanel());
 		app.setShowInputTop(perspective.getShowInputPanelOnTop());
 		
@@ -250,6 +251,7 @@ public class Layout {
 		perspective.setDockPanelInfo(dockPanelInfo);
 
 		perspective.setToolbarDefinition(app.getGuiManager().getToolBarDefinition());
+		perspective.setShowToolBar(app.showToolBar());
 		perspective.setShowAxes(ev.getShowXaxis() && ev.getShowYaxis());
 		perspective.setShowGrid(ev.getShowGrid());
 		perspective.setShowInputPanel(app.showAlgebraInput());

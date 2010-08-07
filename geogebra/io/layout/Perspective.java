@@ -36,6 +36,11 @@ public class Perspective {
 	private String toolbarDefinition;
 	
 	/**
+	 * If the tool bar should be displayed.
+	 */
+	private boolean showToolBar;
+	
+	/**
 	 * If the grid should be displayed.
 	 */
 	private boolean showGrid;
@@ -68,17 +73,19 @@ public class Perspective {
 	 * @param splitPaneInfo
 	 * @param dockPanelInfo
 	 * @param toolbarDefinition
+	 * @param showToolBar
 	 * @param showGrid
 	 * @param showAxes
 	 * @param showInputPanel
 	 * @param showInputPanelCommands
 	 * @param showInputPanelOnTop
 	 */
-	public Perspective(String id, DockSplitPaneXml[] splitPaneInfo, DockPanelXml[] dockPanelInfo, String toolbarDefinition, boolean showGrid, boolean showAxes, boolean showInputPanel, boolean showInputPanelCommands, boolean showInputPanelOnTop) {
+	public Perspective(String id, DockSplitPaneXml[] splitPaneInfo, DockPanelXml[] dockPanelInfo, String toolbarDefinition, boolean showToolBar, boolean showGrid, boolean showAxes, boolean showInputPanel, boolean showInputPanelCommands, boolean showInputPanelOnTop) {
 		this.id = id;
 		this.splitPaneInfo = splitPaneInfo;
 		this.setDockPanelInfo(dockPanelInfo);
 		this.setToolbarDefinition(toolbarDefinition);
+		this.setShowToolBar(showToolBar);
 		this.showAxes = showAxes;
 		this.setShowGrid(showGrid);
 		this.showInputPanel = showInputPanel;
@@ -128,6 +135,20 @@ public class Perspective {
 	 */
 	public void setDockPanelInfo(DockPanelXml[] dockPanelInfo) {
 		this.dockPanelInfo = dockPanelInfo;
+	}
+	
+	/**
+	 * @param showToolBar
+	 */
+	public void setShowToolBar(boolean showToolBar) {
+		this.showToolBar = showToolBar;
+	}
+	
+	/**
+	 * @return If the tool bar is visible.
+	 */
+	public boolean getShowToolBar() {
+		return showToolBar;
 	}
 
 	/**
@@ -240,7 +261,9 @@ public class Perspective {
 		}
 		sb.append("\t</views>\n");
 		
-		sb.append("\t<toolbar items=\"");
+		sb.append("\t<toolbar show=\"");
+		sb.append(getShowToolBar());
+		sb.append("\" items=\"");
 		sb.append(getToolbarDefinition());
 		sb.append("\" />\n");
 		

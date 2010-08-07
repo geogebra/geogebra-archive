@@ -194,7 +194,7 @@ public class MyXMLHandler implements DocHandler {
 	/**
 	 * A vector with all perspectives we have read in this document.
 	 */
-	private ArrayList tmp_perspectives = new ArrayList();
+	private ArrayList<Perspective> tmp_perspectives = new ArrayList<Perspective>();
 	
 	/**
 	 * Array lists to store temporary panes and views of a perspective.
@@ -1297,7 +1297,7 @@ public class MyXMLHandler implements DocHandler {
 		
 		tmp_perspective.setSplitPaneInfo(spXml);
 		
-		tmp_perspectives = new ArrayList();
+		tmp_perspectives = new ArrayList<Perspective>();
 		tmp_perspectives.add(tmp_perspective);
 		app.setPreferredSize(new Dimension(width, height));
 		app.setTmpPerspectives(tmp_perspectives);
@@ -1413,6 +1413,7 @@ public class MyXMLHandler implements DocHandler {
 	 */
 	private boolean handleGuiSettings(Application app, LinkedHashMap<String, String> attrs) {
 		try {
+			// TODO this should be ignored for minimal applets
 			boolean ignoreDocument = !((String)attrs.get("ignoreDocument")).equals("false");
 			app.getGuiManager().getLayout().setIgnoreDocument(ignoreDocument);
 			
@@ -1464,6 +1465,14 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleToolbar(Application app, LinkedHashMap<String, String> attrs) {
 		try {
+			String showToolBar = (String)attrs.get("show");
+			
+			if(showToolBar == null) {
+				tmp_perspective.setShowToolBar(true);
+			} else {
+				tmp_perspective.setShowToolBar(showToolBar.equals("true"));
+			}
+			
 			tmp_perspective.setToolbarDefinition((String) attrs.get("items"));
 			return true;
 		} catch (Exception e) {

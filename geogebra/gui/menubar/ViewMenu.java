@@ -328,7 +328,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		// Florian Sonner 2008-09-12
 		showInputTopAction = new AbstractAction(app.getMenu("InputOnTop"), app
 				.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
@@ -339,7 +338,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		// Florian Sonner 2009-01-10
 		showToolBarAction = new AbstractAction(app.getMenu("Toolbar")) {
 			private static final long serialVersionUID = 1L;
 
@@ -349,7 +347,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		// Florian Sonner 2009-01-10
 		showToolBarTopAction = new AbstractAction(app.getMenu("ToolBarOnTop")) {
 			private static final long serialVersionUID = 1L;
 
@@ -359,7 +356,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		// Florian Sonner 2008-09-14
 		savePerspectiveAction = new AbstractAction(app
 				.getMenu("SaveCurrentPerspective"), app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
@@ -369,7 +365,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		// Florian Sonner 2008-09-14
 		managePerspectivesAction = new AbstractAction(app
 				.getMenu("ManagePerspectives"), app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
@@ -379,7 +374,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		// Florian Sonner 2008-09-13
 		changePerspectiveAction = new AbstractAction() {
 			public static final long serialVersionUID = 1L;
 
