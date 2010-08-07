@@ -17,6 +17,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
@@ -99,7 +100,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		//this.setVerticalAlignment(JLabel.CENTER);
 		cellPoint.setLocation(column, row);
 		setIcon(emptyIcon);
-		
+		this.setIconTextGap(0);
 		
 		bgColor = (Color) formatHandler.getCellFormat(cellPoint, 
 				CellFormat.FORMAT_BGCOLOR);	
@@ -252,13 +253,23 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			setHorizontalAlignment(this.CENTER);
 			setText("");
 			
+		/*		
+		}else if(geo.isGeoText()  && !((GeoText) geo).isLaTeX() ) {
+			
+			drawTextImageIcon(latexIcon, this.getText(), getFont(), ((GeoText) geo).isSerifFont(), geo
+					.getAlgebraColor(), bgColor, this.getPreferredSize() );
+			setIcon(latexIcon);
+			setText("");
+		*/
+			
+			
 		}else{
 
 			boolean isSerif = false;
 			if (geo.isDefined() && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
 				if ( !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
-						&& !geo.isGeoNumeric()) {
+						&& !geo.isGeoNumeric() && !geo.isGeoList()) {
 					try {
 						latexStr = geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
 						if(geo.isGeoText())
@@ -323,6 +334,51 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		latexIcon.setImage(image);
 		
 	}
+	
+	
+	
+	
+private void drawTextImageIcon(ImageIcon latexIcon, String text, Font font, boolean serif, Color fgColor, Color bgColor, Dimension d) {
+		
+		// Create image with dummy size, then draw into it to get the correct size
+		BufferedImage image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2image = image.createGraphics();
+		g2image.setBackground(bgColor);
+		g2image.setColor(fgColor);
+		g2image.setFont(font);
+		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		Point p = new Point();
+		p = Drawable.drawIndexedString(g2image, text, 0, image.getHeight()/2);
+Application.debug(""+ p.toString());
+		// Now use this size and draw again to get the final image
+		image = new BufferedImage(p.x + d.width, p.y + d.height, BufferedImage.TYPE_INT_ARGB);
+		g2image = image.createGraphics();
+		g2image.setBackground(bgColor);
+		g2image.setColor(fgColor);
+		g2image.setFont(font);
+		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		p = Drawable.drawIndexedString(g2image, text, 0, image.getHeight()/2);
+
+		latexIcon.setImage(image);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 	//======================================================

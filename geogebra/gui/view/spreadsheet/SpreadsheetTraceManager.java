@@ -803,7 +803,7 @@ public class SpreadsheetTraceManager {
 			((GeoList) cell).add(new GeoNumeric(cons, (Double)value));  
 		}
 		
-		cell.update();
+		cell.updateCascade();
 	}
 	
 	//    End List Tracing
