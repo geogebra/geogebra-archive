@@ -1324,6 +1324,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		sb.append(showToolBar  ? "true" : "false" );
 		sb.append("\"");
 		
+		sb.append(" allowSpecialEditor=\"");
+		sb.append(allowSpecialEditor  ? "true" : "false" );
+		sb.append("\"");
+		
 		sb.append("/>\n");
 		//---- end layout
 		
@@ -1629,9 +1633,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	public void setShowColumnHeader(boolean showColumnHeader) {
 		if (showColumnHeader) {
+			table.getTableHeader().setVisible(true);
 			spreadsheet.setColumnHeaderView(table.getTableHeader());
 		} else {
-			spreadsheet.setColumnHeader(null);
+			table.getTableHeader().setVisible(false);
+			spreadsheet.setColumnHeaderView(null);
 		}
 		this.showColumnHeader = showColumnHeader;
 	}
