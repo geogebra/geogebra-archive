@@ -370,7 +370,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		if (isLabelSet()) {
 			sbToString.append(label);
 			sbToString.append('(');
-			sbToString.append(funX.getFunctionVariables().toString());
+			sbToString.append(funX.getVarString());
 			sbToString.append(") = ");					
 		}		
 		sbToString.append(toValueString());
