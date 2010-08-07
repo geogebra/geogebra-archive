@@ -21,6 +21,7 @@ import geogebra.util.Util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 import java.util.TreeSet;
 
 /**
@@ -43,11 +44,16 @@ public class Macro {
 	private String [] macroInputLabels, macroOutputLabels;
 	private Class [] inputTypes;
 	
-	private LinkedList usingAlgos = new LinkedList();	
+	private LinkedList<AlgoElement> usingAlgos = new LinkedList<AlgoElement>();	
 		
 	/**
 	 * Creates a new macro 
-	 * using the given input and output GeoElements.		  
+	 * using the given input and output GeoElements.
+	 * @param kernel Kernel
+	 * @param cmdName Command name
+	 * @param input Array of input objects
+	 * @param output Array of output objects
+	 * @throws Exception if	macro initialization fails (unnecessary input,	independent output)  
 	 */
 	public Macro(Kernel kernel, String cmdName,  
 					GeoElement [] input, GeoElement [] output) 
@@ -59,6 +65,8 @@ public class Macro {
 	/**
 	 * Creates a new macro. Note: you need to call initMacro() when using
 	 * this constructor.
+	 * @param kernel Kernel
+	 * @param cmdName Command name
 	 */
 	public Macro(Kernel kernel, String cmdName) { 	
 		this.kernel = kernel;
@@ -67,17 +75,23 @@ public class Macro {
 	
 	/**
 	 * Returns all input geos from the macro construction.
+	 * @return all input geos from the macro construction.
 	 */
 	public GeoElement [] getMacroInput() {
 		return macroInput;
 	}
 	
+	/**
+	 * Returns kernel
+	 * @return kernel
+	 */
 	public Kernel getKernel(){
 		return kernel;
 	}
 	
 	/**
 	 * Returns all output geos from the macro construction.
+	 * @return Array of output elements
 	 */
 	public GeoElement [] getMacroOutput() {
 		return macroOutput;
@@ -85,6 +99,8 @@ public class Macro {
 	
 	/**
 	 * Returns whether geo is part of this macro's construction.
+	 * @param geo Geo to be found in construction
+	 * @return true iff geo is part of this macro's construction.
 	 */
 	final public boolean isInMacroConstruction(GeoElement geo) {
 		return geo.cons == macroCons;
@@ -92,11 +108,18 @@ public class Macro {
 	
 	/**
 	 * Returns the construction object of this macro.
+	 * @return construction object of this macro.
 	 */
 	public Construction getMacroConstruction() {
 		return macroCons;
 	}		
 
+	/**
+	 * Initiates macro
+	 * @param macroCons
+	 * @param inputLabels
+	 * @param outputLabels
+	 */
 	public void initMacro(Construction macroCons, String [] inputLabels, String [] outputLabels) {				
 		this.macroCons = macroCons;
 		//this.macroConsXML = macroCons.getConstructionXML();
@@ -125,12 +148,10 @@ public class Macro {
 		for (int i=0; i < macroInputLabels.length; i++) {    		
 			macroInput[i] = macroCons.lookupLabel(macroInputLabels[i]);  
 			macroInput[i].setFixed(false);						
-			//Application.debug("macroInput[" + i + "] = " + macroInput[i]);
     	}
 		
     	for (int i=0; i < macroOutputLabels.length; i++) {    		
     		macroOutput[i] = macroCons.lookupLabel(macroOutputLabels[i]);            		    		    		    	
-			//Application.debug("macroOutput[" + i + "] = " + macroOutput[i]);
     	}         		
 	}
 	
@@ -173,7 +194,7 @@ public class Macro {
 		// 6) create a new macro-construction from this XML representation
 		
 		// 1) create the set of all parents of this macro's output objects				
-		TreeSet outputParents = new TreeSet();		
+		TreeSet<GeoElement> outputParents = new TreeSet<GeoElement>();		
 		for (int i=0; i < output.length; i++) {
 			 output[i].addPredecessorsToSet(outputParents, false);
 			 
@@ -190,16 +211,16 @@ public class Macro {
 				 }
 			 }
 		}			
-		
 		// 2) and 3) get intersection of inputChildren and outputParents				
-		TreeSet macroConsOrigElements = new TreeSet(); 
-    	Iterator it = outputParents.iterator();    	
+		TreeSet<ConstructionElement> macroConsOrigElements = new TreeSet<ConstructionElement>();
+		TreeSet<Long> usedAlgoIds = new TreeSet<Long>();
+    	Iterator<GeoElement> it = outputParents.iterator();    	
     	while (it.hasNext()) {
-    		GeoElement outputParent = (GeoElement) it.next();
+    		GeoElement outputParent = it.next();
     		if (outputParent.isLabelSet()) {
     			for (int i=0; i < input.length; i++) {
     				 if (outputParent.isChildOf(input[i])) {
-    					 addDependentElement(outputParent, macroConsOrigElements);    					    			    	 
+    					 addDependentElement(outputParent, macroConsOrigElements,usedAlgoIds);    					    			    	 
     			    	 // add parent only once: get out of loop
     					 i = input.length; 
     				 }
@@ -247,7 +268,6 @@ public class Macro {
     		}
     		
     	}   
-    	
     	for (int i=0; i < output.length; i++) {
     		isOutputLabeled[i] = output[i].isLabelSet();
     		if (!isOutputLabeled[i]) {
@@ -257,7 +277,7 @@ public class Macro {
     		outputLabels[i] = output[i].label;
     		
     		// add output element and its algorithm to macroConsOrigElements 
-    		addDependentElement(output[i], macroConsOrigElements); 	    		
+    		addDependentElement(output[i], macroConsOrigElements,usedAlgoIds); 	    		
     	}    	    	
     	    	
 		// 5) create XML representation for macro-construction
@@ -282,14 +302,19 @@ public class Macro {
 	
 	/**
 	 * Adds the geo, its parent algorithm and all its siblings to the consElementSet
+	 * and its id to used AlgoIds
+	 * @param geo Element to be added (with parent and siblings)
+	 * @param consElementSet Set of geos & algos used in macro construction
+	 * @param usedAlgoIds Set of IDs of algorithms used in macro construction
 	 */	
-	public static void addDependentElement(GeoElement geo, TreeSet consElementSet) {		 
+	public static void addDependentElement(GeoElement geo, Set<ConstructionElement> consElementSet,Set<Long> usedAlgoIds) {		 
 		 AlgoElement algo = geo.getParentAlgorithm();
-		 
-	   	 if (algo.isInConstructionList()) {
+		 if (algo.isInConstructionList()) {
 	   		// STANDARD case
 	   		// add algorithm
-	   		consElementSet.add(algo);
+			Long algoID = new Long(algo.getID()); 
+	   		if(!usedAlgoIds.contains(algoID))consElementSet.add(algo);
+	   			usedAlgoIds.add(algoID);
 	   		
 	   		// add all output elements including geo
 	   		GeoElement [] algoOutput = algo.getOutput();
@@ -308,8 +333,10 @@ public class Macro {
 	 * Adds the geo, its parent algorithm and all input of the parent algorithm to the consElementSet.
 	 * This is used for e.g. a segment that is used as an input object of a macro. We also need to
 	 * have the segment's start and endpoint.
+	 * @param geo
+	 * @param consElementSet
 	 */	
-	public static void addSpecialInputElement(GeoElement geo, TreeSet consElementSet) {		 
+	public static void addSpecialInputElement(GeoElement geo, Set<ConstructionElement> consElementSet) {		 
 		 // add geo
 		 consElementSet.add(geo);
 		 
@@ -331,14 +358,13 @@ public class Macro {
 	
 	/**
 	 * Note: changes macroConsElements
-	 * @param input
+	 * @param kernel
 	 * @param macroConsElements
-	 * @return
+	 * @return XML string of macro construction
 	 */
-	 public static String buildMacroXML(Kernel kernel, TreeSet macroConsElements) {	
+	 public static String buildMacroXML(Kernel kernel, Set<ConstructionElement> macroConsElements) {	
 		// change kernel settings temporarily
 		int oldCoordStlye = kernel.getCoordStyle();
-		int oldDecimals = kernel.getPrintDecimals();
 		int oldPrintForm = kernel.getCASPrintForm();        
 	    kernel.setCoordStyle(Kernel.COORD_STYLE_DEFAULT);                 		
 	    kernel.setCASPrintForm(ExpressionNode.STRING_TYPE_GEOGEBRA_XML);
@@ -349,27 +375,22 @@ public class Macro {
     	macroConsXML.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT  + "\">\n");
     	macroConsXML.append("<construction author=\"\" title=\"\" date=\"\">\n");
     	     	    	      	
-    	Iterator it = macroConsElements.iterator();
+    	Iterator<ConstructionElement> it = macroConsElements.iterator();
     	while (it.hasNext()) {    		
-    		ConstructionElement ce = (ConstructionElement) it.next();    		    		
+    		ConstructionElement ce = it.next();    		    		
     		
     		if (ce.isGeoElement()) {
     			ce.getXML(macroConsXML);
     		}
     		else if (ce.isAlgoElement()) {
     			AlgoElement algo = (AlgoElement) ce;
-        		algo.getXML(macroConsXML, false);    			
+    			algo.getXML(macroConsXML, false);    			
     		}
     	}
     	
     	macroConsXML.append("</construction>\n");
     	macroConsXML.append("</geogebra>");
-    	   
-//    	Application.debug("*** Macro XML BEGIN ***");
-//    	Application.debug(macroConsXML);
-//    	System.out.flush();
-//    	Application.debug("*** Macro XML END ***"); 
-    	
+    	   	
     	 // restore old kernel settings
         kernel.setCoordStyle(oldCoordStlye);   
         kernel.setCASPrintForm(oldPrintForm);
@@ -409,11 +430,18 @@ public class Macro {
     	return mk.getConstruction();
     }	 	                 
 			
-	
+	/**
+	 * Add link to algo using this macro 
+	 * @param algoMacro
+	 */
 	public void registerAlgorithm(AlgoMacro algoMacro) {						
 		usingAlgos.add(algoMacro);			
 	}
 	
+	/**
+	 * Remove link to algo using this macro 
+	 * @param algoMacro
+	 */
 	public void unregisterAlgorithm(AlgoMacro algoMacro) {
 		usingAlgos.remove(algoMacro);			
 	}		
@@ -421,12 +449,15 @@ public class Macro {
 	/**
 	 * Returns whether this macro is being used by algorithms
 	 * in the current construction.
+	 * @return true iff this macro is being used by algorithms in the current construction
 	 */
 	final public boolean isUsed() {	
 		return usingAlgos.size() >  0;
 	}
 	
-	
+	/**
+	 * Removes links to all algos using this macro 
+	 */
 	final public void setUnused() {	
 		usingAlgos.clear();
 	}
@@ -435,11 +466,16 @@ public class Macro {
 	 * Returns the types of input objects of the default macro construction.
 	 * This can be used to check whether a given GeoElement array can be used
 	 * as input for this macro.
+	 * @return types of input objects
 	 */
 	final public Class [] getInputTypes() {	
 		return inputTypes;
 	}			
 	
+	/**
+	 * Returns the tool help 
+	 * @return tool help
+	 */
 	public String getToolHelp() {		
 		return toolHelp;				
 	}
@@ -447,6 +483,7 @@ public class Macro {
 	
 	/**
 	 * Returns a String showing all needed types of this macro.
+	 * @return string showing all needed types of this macro.
 	 */
 	public String getNeededTypesString() {
 		StringBuilder sb = new StringBuilder();			
@@ -458,6 +495,10 @@ public class Macro {
 		return sb.toString();				
 	}
 
+	/**
+	 * Sets tool help.
+	 * @param toolHelp Tool help. Either "","null" or null for empty.
+	 */
 	public void setToolHelp(String toolHelp) {
 		if (toolHelp == null || toolHelp.equals("null"))
 			this.toolHelp = "";
@@ -465,19 +506,35 @@ public class Macro {
 			this.toolHelp = toolHelp;
 	}
 
+	/**
+	 * Returns command name
+	 * @return Command name
+	 */
 	public String getCommandName() {
 		return cmdName;
 	}
 
+	/**
+	 * Sets commandd name
+	 * @param name Command name
+	 */
 	public void setCommandName(String name) {
 		if (name != null)
 			this.cmdName = name;
 	}
 
+	/**
+	 * Returns tool name
+	 * @return Tool name
+	 */
 	public String getToolName() {		
 		return toolName;
 	}
 	
+	/**
+	 * Returns toolname, if empty, returns command name.
+	 * @return Toolname, if empty, returns command name.
+	 */
 	public String getToolOrCommandName() {
 		if (!"".equals(toolName)) 
 			return toolName;
@@ -485,6 +542,10 @@ public class Macro {
 			return cmdName;			
 	}
 
+	/**
+	 * Sets tool name
+	 * @param name new tool name
+	 */
 	public void setToolName(String name) {
 		if (name == null || name.equals("null") || name.length() == 0)
 			this.toolName = cmdName;
@@ -492,6 +553,10 @@ public class Macro {
 			this.toolName = name;
 	}
 	
+	/**
+	 * Sets icon filename
+	 * @param name Icon filename, "" or null for empty
+	 */
 	public void setIconFileName(String name) {
 		if (name == null)
 			this.iconFileName = "";
@@ -499,6 +564,10 @@ public class Macro {
 			this.iconFileName = name;
 	}
 	
+	/**
+	 * Returns icon filename
+	 * @return icon filename
+	 */
 	public String getIconFileName() {
 		return iconFileName;
 	}
@@ -528,8 +597,9 @@ public class Macro {
 	
 	
 	/**
-	 * Returns XML representation of this macro for
-	 * saving in a ggb file.
+	 * Adds XML representation of this macro for
+	 * saving in a ggb file to given string builder.
+	 * @param sb StringBuilder for adding the macro representation
 	 */
     public void getXML(StringBuilder sb) {               
         sb.append("<macro cmdName=\"");
@@ -575,15 +645,27 @@ public class Macro {
         sb.append("</macro>\n");           
     }
 
+    /**
+	 * Returns whether this macro should be shown in toolbar
+	 * @return true iff this macro should be shown in toolbar
+	 */
 	public final boolean isShowInToolBar() {
 		return showInToolBar;
 	}
 
+	/**
+	 * Sets whether this macro should be shown in toolbar
+	 * @param showInToolBar true iff this macro should be shown in toolbar
+	 */
 	public final void setShowInToolBar(boolean showInToolBar) {
 		this.showInToolBar = showInToolBar;
 	}
 	
-	public ArrayList getUsedMacros() {
+	/**
+	 * Returns list of macros used by this one
+	 * @return list of macros used by this one
+	 */
+	public ArrayList<Macro> getUsedMacros() {
 		return macroCons.getUsedMacros();
 	}
 		  
