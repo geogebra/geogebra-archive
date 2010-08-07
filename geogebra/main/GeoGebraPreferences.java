@@ -343,6 +343,10 @@ public class GeoGebraPreferences {
     	}
     }
     
+    public String getXMLPreferences() {
+    	return ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT); 
+    }
+    
     /**
      * Loads XML preferences (empty construction with GUI and kernel settings) and sets application accordingly.
      * This method clears the current construction in the application.

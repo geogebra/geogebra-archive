@@ -4,6 +4,7 @@ import geogebra.GeoGebra;
 import geogebra.gui.layout.Layout;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;
 import java.awt.SystemColor;
@@ -255,8 +256,11 @@ public class GeoGebraMenuBar extends JMenuBar {
 				systemInfo.append(app.getXML());
 				systemInfo.append("\n\n");
 				systemInfo.append(app.getMacroXML());
-				systemInfo.append("\n\n");
+				systemInfo.append("\n\nLibraryJavaScript:\n");
 				app.getKernel().getLibraryJavaScript();
+				
+				systemInfo.append("\n\nPreferences:\n");
+				systemInfo.append(GeoGebraPreferences.getPref().getXMLPreferences());
 				
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
 					new StringSelection(systemInfo.toString()), null
