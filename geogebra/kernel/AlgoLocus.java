@@ -32,7 +32,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
 	//
 		
 	
-	// maximum time for the computation of one locus point in millis
+	/** maximum time for the computation of one locus point in millis **/
 	public static int MAX_TIME_FOR_ONE_STEP = 500;
 	
 	private static final long serialVersionUID = 1L;
@@ -64,7 +64,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     private MacroKernel macroKernel;
     //private AlgorithmSet macroConsAlgoSet;
 	// list with all original elements used for the macro construction
-    private TreeSet locusConsOrigElements, Qin; 
+    private TreeSet<ConstructionElement> locusConsOrigElements;
+    private TreeSet<GeoElement> Qin; 
     
     private long countUpdates =0;
     
@@ -117,6 +118,10 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	return null;
     }
     
+    /**
+     * Returns the dependent point
+     * @return dependent point Q
+     */
     public GeoPoint getQ() {
     	return locusPoint;
     }
@@ -126,14 +131,15 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	Qin = locusPoint.getAllPredecessors(); // all parents of Q
     	
     	// get intersection of all children of P and all parents of Q    	       	
-    	locusConsOrigElements = new TreeSet(); 
-    	Iterator it = Qin.iterator();
+    	locusConsOrigElements = new TreeSet<ConstructionElement>();
+    	TreeSet<Long> usedAlgoIds = new TreeSet<Long>();
+    	Iterator<GeoElement> it = Qin.iterator();
     	while (it.hasNext()) {
-    		GeoElement parent = (GeoElement) it.next();
+    		GeoElement parent = it.next();
     		    	        		
     		if (parent.isLabelSet() && parent.isChildOf(movingPoint)) {
     			// note: locusConsOrigElements will contain AlgoElement and GeoElement objects
-    			Macro.addDependentElement(parent, locusConsOrigElements);   
+    			Macro.addDependentElement(parent, locusConsOrigElements,usedAlgoIds);   
     		}
     	}    
     	
@@ -154,7 +160,7 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	locusConsOrigElements.add(movingPoint);
 
     	// add locus creating point and its algorithm to locusConsOrigElements 
-		Macro.addDependentElement(locusPoint, locusConsOrigElements); 	   	
+		Macro.addDependentElement(locusPoint, locusConsOrigElements,usedAlgoIds); 	   	
     	    	      
     	// create macro construction
     	buildLocusMacroConstruction(locusConsOrigElements);
@@ -169,14 +175,14 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// it is inefficient to have Q and P as input
     	// let's take all independent parents of Q
     	// and the path as input
-    	TreeSet inSet = new TreeSet();
+    	TreeSet<GeoElement> inSet = new TreeSet<GeoElement>();
     	inSet.add(path.toGeoElement());
     	
     	// we need all independent parents of Q PLUS
     	// all parents of Q that are points on a path    	
-    	Iterator it = Qin.iterator();
+    	Iterator<GeoElement> it = Qin.iterator();
     	while (it.hasNext()) {
-    		GeoElement geo = (GeoElement) it.next();
+    		GeoElement geo = it.next();
     		if (geo.isIndependent() || geo.isPointOnPath()) {
     			inSet.add(geo);    			
     		}
@@ -198,8 +204,8 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	standardInput[0] = locusPoint;
     	standardInput[1] = movingPoint;    	
     	
-        output = new GeoElement[1];
-        output[0] = locus;
+        setOutputLength(1);
+        setOutput(0,locus);
         
         // handle dependencies
         setEfficientDependencies(standardInput, efficientInput);           
@@ -209,12 +215,16 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
         return getCommandDescription();        
     }
 
+    /**
+     * Returns locus
+     * @return locus 
+     */
     GeoLocus getLocus() {
         return locus;
     }    
     
    
-    private void buildLocusMacroConstruction(TreeSet locusConsElements) {       	
+    private void buildLocusMacroConstruction(TreeSet<ConstructionElement> locusConsElements) {       	
     	// build macro construction
     	macroKernel = new MacroKernel(kernel); 
     	macroKernel.setGlobalVariableLookup(true);
@@ -222,9 +232,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     	// tell the macro construction about reserved names:
     	// these names will not be looked up in the parent
     	// construction
-    	Iterator it = locusConsElements.iterator();
+    	Iterator<ConstructionElement> it = locusConsElements.iterator();
     	while (it.hasNext()) {
-    		ConstructionElement ce = (ConstructionElement) it.next();
+    		ConstructionElement ce = it.next();
     		if (ce.isGeoElement()) {
     			GeoElement geo = (GeoElement) ce;
     			macroKernel.addReservedLabel(geo.getLabel()); 
@@ -274,9 +284,9 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
      *  to the current values of the main construction    
      */
     private void resetMacroConstruction() {       
-      	Iterator it = locusConsOrigElements.iterator();
+      	Iterator<ConstructionElement> it = locusConsOrigElements.iterator();
       	while (it.hasNext()) {
-      		ConstructionElement ce = (ConstructionElement) it.next();
+      		ConstructionElement ce = it.next();
       		if (ce.isGeoElement()) {
 	      		GeoElement geoOrig = (GeoElement) ce;  
 	      		// do not copy functions, their expressions already
