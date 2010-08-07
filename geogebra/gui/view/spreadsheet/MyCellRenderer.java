@@ -41,33 +41,31 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 	private Kernel kernel;
 	private SpreadsheetView view;
 	
-	private ImageIcon latexIcon, emptyIcon; //G.Sturr 2010-1-15
+	// LaTeX
+	private ImageIcon latexIcon, emptyIcon; 
 	private String latexStr = new String();
 	
-	
-	//G.Sturr 2010-4-4
-	// vars for cell format
+	// Cell formats
 	private CellFormat formatHandler;
 	private Point cellPoint;
 	private Integer alignment = -1;
 	private Integer traceBorder = -1;
 	
+	// Borders (not implemented yet)
 	private Border cellPadding = BorderFactory.createEmptyBorder(2, 5, 2, 5);
-	
 	private Border bTop = BorderFactory.createMatteBorder(1, 0, 0, 0, Color.RED);
 	private Border bLeft = BorderFactory.createMatteBorder(0, 1, 0, 0, Color.RED);
 	private Border bBottom = BorderFactory.createMatteBorder(0, 0, 1, 0, Color.RED);
 	private Border bRight = BorderFactory.createMatteBorder(0, 0, 0, 1, Color.RED);
 	private Border bAll = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.RED);
 
-	
+	// Rendering objects for lists, buttons and booleans
 	private JCheckBox checkBox;
 	private JButton button;
 	private JComboBox comboBox;
 	private DefaultComboBoxModel cbModel;
 	private Color bgColor;
 	
-	//END G.Sturr
 	
 	
 	public MyCellRenderer(Application app, SpreadsheetView view, CellFormat formatHandler) {
@@ -77,15 +75,17 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		this.formatHandler =  formatHandler;
 		this.view = view;
 		
-		//G.Sturr 2009-10-3:  add horizontal padding
+		//Add horizontal padding
 		setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
 		
-		//G.Sturr 2010-1-15
-		// The cell renderer is an extension of JLabel and thus supports an icon.
-		// Here the icon is used to display LaTeX.
+
+		// The cell renderer extends JLabel...its icon is used to display LaTeX.
 		latexIcon = new ImageIcon();
 		emptyIcon = new ImageIcon();
-		cellPoint = new Point();
+		
+		cellPoint = new Point(); // used for cell format calls
+		
+		// Rendering for booleans, buttons and lists
 		checkBox = new JCheckBox();
 		button = new JButton();
 		comboBox = new JComboBox();
@@ -94,14 +94,17 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		comboBox.setModel(cbModel);
 	}
 	
+	
+	
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) 
 	{	
-		//this.setVerticalAlignment(JLabel.CENTER);
+		
 		cellPoint.setLocation(column, row);
 		setIcon(emptyIcon);
-		this.setIconTextGap(0);
+		setIconTextGap(0);
 		
+		// set default background color (adjust later if geo exists)
 		bgColor = (Color) formatHandler.getCellFormat(cellPoint, 
 				CellFormat.FORMAT_BGCOLOR);	
 		if(bgColor == null) 
@@ -109,16 +112,23 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		setBackground(bgColor);
 		
 		
+		//TODO: Other formats should be set here ... before exit with null geo
+		
+		
+		// exit if no geo to display
 		if (value == null) {		
 			setText("");
 			return this;
 		}
 				
+		
 		// set cell content
 		GeoElement geo = (GeoElement)value;
 		
 		
+		//=======================================================
 		// use special rendering for buttons, booleans and lists
+		
 		if(view.allowSpecialEditor() && kernel.getAlgebraStyle()==Kernel.ALGEBRA_STYLE_VALUE){
 
 			if(geo.isGeoBoolean()){
@@ -156,8 +166,11 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			}
 		}
 
+		// end special rendering
+		//========================================================
 
 		
+		// Set text according to algebra style
 		String text = null;
 		if (geo.isIndependent()) {
 			text = geo.toValueString();
@@ -177,22 +190,14 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			}	
 		}
 
-		// make sure that we use a font that can display the cell content
+		
+		// Set font
 		setText(text);
 		//setFont(app.getFontCanDisplay(text, Font.BOLD));
 		setFont(app.getFontCanDisplay(text, Font.PLAIN));
 		
 		
-		// foreground and background color
-		
-		/*
-		setForeground(geo.getAlgebraColor());
-		if (isSelected || geo.doHighlighting()) {
-			setBackground(MyTable.SELECTED_BACKGROUND_COLOR);
-		}		
-		*/
-		
-		
+		// Set foreground and background color
 		if (geo.doHighlighting()) {
 			bgColor = MyTable.SELECTED_BACKGROUND_COLOR;
 		}
@@ -200,7 +205,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		setForeground(geo.getAlgebraColor());
 		
 		
-		// horizontal alignment
+		// Set horizontal alignment
 		alignment = (Integer) formatHandler.getCellFormat(cellPoint,
 				CellFormat.FORMAT_ALIGN);
 		if (alignment != null) {
@@ -212,7 +217,8 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		}	
 		
 	
-		// trace border
+		// Set border
+		// (not finished ... border cell formats need coding)
 		traceBorder = (Integer) formatHandler.getCellFormat(cellPoint,
 				CellFormat.FORMAT_TRACING);
 		
@@ -243,33 +249,24 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		
 		
 		
-		// G.STURR 2010-1-17
-		// set LaTeX icons
-		// use LaTeX for any geo other than geoNumeric or non-latex geoText
+		
+		// set icons for LaTeX and images
+		// TODO: LaTeX slows things down, need a better test for which geos 
+		// get LaTex and maybe a toggle switch 
 
 		if(geo.isGeoImage()){		
 			latexIcon.setImage(((GeoImage) geo).getImage());
 			setIcon(latexIcon);
 			setHorizontalAlignment(this.CENTER);
 			setText("");
-			
-		/*		
-		}else if(geo.isGeoText()  && !((GeoText) geo).isLaTeX() ) {
-			
-			drawTextImageIcon(latexIcon, this.getText(), getFont(), ((GeoText) geo).isSerifFont(), geo
-					.getAlgebraColor(), bgColor, this.getPreferredSize() );
-			setIcon(latexIcon);
-			setText("");
-		*/
-			
-			
+	
 		}else{
 
 			boolean isSerif = false;
 			if (geo.isDefined() && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
 				if ( !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
-						&& !geo.isGeoNumeric() && !geo.isGeoList()) {
+						&& !geo.isGeoNumeric() && !geo.isGeoList() ) {
 					try {
 						latexStr = geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
 						if(geo.isGeoText())
@@ -287,11 +284,9 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 			}
 
 		}
-		//END GSTURR
 		
 		
-		
-		
+
 		
 		return this;
 	}
@@ -334,48 +329,6 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		latexIcon.setImage(image);
 		
 	}
-	
-	
-	
-	
-private void drawTextImageIcon(ImageIcon latexIcon, String text, Font font, boolean serif, Color fgColor, Color bgColor, Dimension d) {
-		
-		// Create image with dummy size, then draw into it to get the correct size
-		BufferedImage image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2image = image.createGraphics();
-		g2image.setBackground(bgColor);
-		g2image.setColor(fgColor);
-		g2image.setFont(font);
-		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
-		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		
-		Point p = new Point();
-		p = Drawable.drawIndexedString(g2image, text, 0, image.getHeight()/2);
-Application.debug(""+ p.toString());
-		// Now use this size and draw again to get the final image
-		image = new BufferedImage(p.x + d.width, p.y + d.height, BufferedImage.TYPE_INT_ARGB);
-		g2image = image.createGraphics();
-		g2image.setBackground(bgColor);
-		g2image.setColor(fgColor);
-		g2image.setFont(font);
-		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
-		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
-		p = Drawable.drawIndexedString(g2image, text, 0, image.getHeight()/2);
-
-		latexIcon.setImage(image);
-		
-	}
-	
-	
-	
-	
-	
 	
 	
 	
