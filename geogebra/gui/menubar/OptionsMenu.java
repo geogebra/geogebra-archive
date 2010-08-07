@@ -396,7 +396,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	 */
 	private void initActions()
 	{
-		// Florian Sonner 2009-02-26
+		// display the options dialog
 		showOptionsAction = new AbstractAction(app
 				.getMenu("Options"), app.getEmptyIcon()) {
 			public static final long serialVersionUID = 1L;
@@ -406,7 +406,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			}
 		};
 		
-		// Florian Sonner 2008-10-22
+		// option to hide title bar of views
 		showViewTitlebarAction = new AbstractAction(app
 				.getMenu("ShowViewTitlebar")) {
 			public static final long serialVersionUID = 1L;
@@ -416,7 +416,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			}
 		};
 
-		// Florian Sonner 2008-09-14
+		// option to ignore the perspective stored in documents
 		ignoreDocumentPerspectiveAction = new AbstractAction(app
 				.getMenu("IgnoreDocumentPerspective")) {
 			private static final long serialVersionUID = 1L;

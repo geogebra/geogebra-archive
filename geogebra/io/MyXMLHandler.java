@@ -1417,7 +1417,7 @@ public class MyXMLHandler implements DocHandler {
 			app.getGuiManager().getLayout().setIgnoreDocument(ignoreDocument);
 			
 			boolean showTitleBar = !((String)attrs.get("showTitleBar")).equals("false");
-			app.setViewTitleBarVisible(showTitleBar);
+			app.getGuiManager().getLayout().setTitlebarVisible(showTitleBar);
 			
 			return true;
 		} catch(Exception e) {

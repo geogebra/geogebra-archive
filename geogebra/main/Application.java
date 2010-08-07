@@ -296,11 +296,6 @@ public class Application implements KeyEventDispatcher {
 	public static final int VIEW_CAS = 8;
 	
 	/**
-	 * If the title bars of the views should be displayed in case the layout component is active.
-	 */
-	private boolean showViewTitleBar = true;
-	
-	/**
 	 * The preferred size of this application. Used in case the frame size should be updated.
 	 */
 	private Dimension preferredSize = new Dimension();
@@ -463,14 +458,14 @@ public class Application implements KeyEventDispatcher {
 		initing = true;
 		setFontSize(12);
 		
-		if(!isApplet) {
-			// init preferences
-			GeoGebraPreferences.getPref().initDefaultXML(this); 
-		}
-		
 		// initialize layout
 		if(hasFullGui()) {
 			getGuiManager().initialize();
+		}
+		
+		if(!isApplet) {
+			// init preferences
+			GeoGebraPreferences.getPref().initDefaultXML(this); 
 		}
 		
 		// open file given by startup parameter
@@ -655,22 +650,6 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		getEuclidianView().resetMaxLayerUsed();
-	}
-	
-	/**
-	 * @return If the title bars of the views should be displayed.
-	 */
-	public boolean isViewTitleBarVisible() {
-		return !isApplet() && showViewTitleBar;
-	}
-	
-	/**
-	 * Set if the title bars of the views should be displayed.
-	 * 
-	 * @param showViewTitleBar
-	 */
-	public void setViewTitleBarVisible(boolean showViewTitleBar) {
-		this.showViewTitleBar = showViewTitleBar;
 	}
 
 	/**

@@ -81,9 +81,6 @@ public class Layout {
 		
 		this.app = app;
 		this.dockManager = new DockManager(this);
-		
-		// don't display the titlebar in an applet
-		titleBarVisible = !app.isApplet() && app.isViewTitleBarVisible();
 	}
 	
 	/**
@@ -354,7 +351,7 @@ public class Layout {
 		 * if a document is saved normally as they just depend on the
 		 * preferences of the user.
 		 */
-		if(asPreference && app != null) {
+		if(asPreference) {
 			sb.append("\t<settings ignoreDocument=\"");
 			sb.append(isIgnoringDocument());
 			sb.append("\" showTitleBar=\"");
@@ -420,7 +417,6 @@ public class Layout {
 	 */
 	public void setTitlebarVisible(boolean titleBarVisible) {
 		this.titleBarVisible = titleBarVisible;
-		
 		dockManager.updatePanels();
 	}
 
@@ -428,7 +424,7 @@ public class Layout {
 	 * @return The visibility of the title bar.
 	 */
 	public boolean isTitleBarVisible() {
-		return titleBarVisible;
+		return !app.isApplet() && titleBarVisible;
 	}
 	
 	public boolean isIgnoringDocument() {
