@@ -109,9 +109,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		MyRenderer renderer = new MyRenderer();
 		tree.setCellRenderer(renderer);	
 		tree.setFont(app.getPlainFont());	
-		tree.setBorder(BorderFactory.createCompoundBorder(BorderFactory
-				.createEtchedBorder(), BorderFactory.createEmptyBorder(5, 5, 5,
-						5)));			
+		tree.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));			
 		
 		//TODO is this needed?
 		tree.addMouseListener(new MouseAdapter() {

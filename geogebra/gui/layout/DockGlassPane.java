@@ -20,7 +20,6 @@ import javax.swing.SwingUtilities;
  * user enters the drag'n'drop mode.
  * 
  * @author Florian Sonner
- * @version 2008-07-18
  */
 public class DockGlassPane extends JPanel implements AWTEventListener {
 	private static final long serialVersionUID = 1L;

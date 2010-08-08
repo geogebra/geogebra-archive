@@ -4,7 +4,6 @@ package geogebra.gui.layout;
  * The state of the drag'n'drop procedure.
  * 
  * @author Florian Sonner
- * @version 2008-07-21
  */
 public class DnDState {
 	/**

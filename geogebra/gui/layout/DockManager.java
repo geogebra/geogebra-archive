@@ -18,7 +18,6 @@ import javax.swing.JPanel;
  * Class responsible to manage the whole docking area of the window.
  * 
  * @author Florian Sonner
- * @version 2008-07-18
  */
 public class DockManager {
 	private Application app;
@@ -78,6 +77,7 @@ public class DockManager {
 				panel.setFrameBounds(dpInfo[i].getFrameBounds());
 				panel.setEmbeddedDef(dpInfo[i].getEmbeddedDef());
 				panel.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
+				panel.setShowStyleBar(dpInfo[i].showStyleBar());
 				panel.setOpenInFrame(dpInfo[i].isOpenInFrame());
 				panel.setVisible(dpInfo[i].isVisible());
 			}
@@ -175,47 +175,6 @@ public class DockManager {
 		
 		// clean up as we can create a lot of mess here..
 		Runtime.getRuntime().gc();
-	}
-	
-	/**
-	 * Update the labels of all DockPanels.
-	 */
-	public void setLabels() {
-		for(DockPanel panel : dockPanels) {
-			panel.updateLabels();
-		}
-	}
-	
-	/**
-	 * Update the glass pane
-	 */
-	public void updateGlassPane() {
-		if(!app.isApplet() && glassPane.getParent() != null) {
-			app.setGlassPane(glassPane);
-		}
-	}
-	
-	/**
-	 * Update the titles of the frames as they contain the file name of the current
-	 * document.
-	 */
-	public void updateTitles() {
-		for(DockPanel panel : dockPanels) {
-			panel.updateTitle();
-		}
-	}
-	
-	/**
-	 * Update all DockPanels.
-	 * 
-	 * This is required if the user changed whether the title bar should be displayed or not.
-	 * 
-	 * @see setLabels
-	 */
-	public void updatePanels() {
-		for(DockPanel panel : dockPanels) {
-			panel.updatePanel();
-		}
 	}
 
 	/**
@@ -478,6 +437,13 @@ public class DockManager {
 				newSplitPane.setOrientation(DockSplitPane.HORIZONTAL_SPLIT);
 			}
 			
+			// the size (height / width depending upon lastPos) of the parent element,
+			// this value is necessary to prevent panels which completely hide
+			// their opposite element
+			// TODO implement this
+			int parentSize;
+			
+			// the component opposite to the current component
 			Component opposite;
 			
 			if(secondLastPos == -1) {
@@ -606,6 +572,70 @@ public class DockManager {
 			if(isPermanent) {
 				app.validateComponent();
 			}
+		}
+	}
+	
+	/**
+	 * Update the labels of all DockPanels.
+	 */
+	public void setLabels() {
+		for(DockPanel panel : dockPanels) {
+			panel.updateLabels();
+		}
+	}
+	
+	/**
+	 * Update the glass pane
+	 */
+	public void updateGlassPane() {
+		if(!app.isApplet() && glassPane.getParent() != null) {
+			app.setGlassPane(glassPane);
+		}
+	}
+	
+	/**
+	 * Update the titles of the frames as they contain the file name of the current
+	 * document.
+	 */
+	public void updateTitles() {
+		for(DockPanel panel : dockPanels) {
+			panel.updateTitle();
+		}
+	}
+	
+	/**
+	 * Update all DockPanels.
+	 * 
+	 * This is required if the user changed whether the title bar should be displayed or not.
+	 * 
+	 * @see setLabels
+	 */
+	public void updatePanels() {
+		for(DockPanel panel : dockPanels) {
+			panel.updatePanel();
+		}
+	}
+	
+	/**
+	 * Scale the split panes based upon the given X and Y scale. This is used to keep relative
+	 * dimensions of the split panes if the user is switching between applet and frame mode. 
+	 * 
+	 * @param scaleX
+	 * @param scaleY
+	 */
+	public void scale(float scaleX, float scaleY) {
+		scale(scaleX, scaleY, rootPane);
+	}
+	
+	private void scale(float scaleX, float scaleY, DockSplitPane splitPane) {
+		splitPane.setDividerLocation((int)(splitPane.getDividerLocation() * (splitPane.getOrientation() == DockSplitPane.VERTICAL_SPLIT ? scaleX : scaleY)));
+		
+		if(splitPane.getLeftComponent() != null && splitPane.getLeftComponent() instanceof DockSplitPane) {
+			scale(scaleX, scaleY, (DockSplitPane)splitPane.getLeftComponent());
+		}
+		
+		if(splitPane.getRightComponent() != null && splitPane.getRightComponent() instanceof DockSplitPane) {
+			scale(scaleX, scaleY, (DockSplitPane)splitPane.getRightComponent());
 		}
 	}
 	

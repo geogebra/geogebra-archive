@@ -34,11 +34,19 @@ import javax.swing.JPanel;
  * Every object which should be dragged needs to be of type DockPanel.
  * A DockPanel will wrap around the component with the real contents
  * (e.g. the EuclidianView) and will add a title bar if the user is not in
- * the "layout fixed" mode.
- * The user will be able to move the DockPanel by dragging the title bar.
+ * the "layout fixed" mode. The user can move the DockPanel by dragging the
+ * title bar.
+ * 
+ * To add a new dock panel one has to subclass DockPanel, implement the abstract
+ * method DockPanel::loadComponent() and maybe replace DockPanel::getIcon() 
+ * and DockPanel::getStyleBar().
+ * 
+ * One can add a panel using Layout::registerPanel(), the GuiManager also provides
+ * GuiManager()::initLayoutPanels() as an easy access point to add new panels. This
+ * is also important because it matters at which point of execution a panel is added,
+ * see Layout::registerPanel() for further information.  
  * 
  * @author Florian Sonner
- * @version 2008-07-18
  */
 public abstract class DockPanel extends JPanel implements ActionListener, WindowListener, MouseListener {
 	private static final long serialVersionUID = 1L;
@@ -70,6 +78,16 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * If this panel should be opened in a frame the next time it's visible.
 	 */
 	private boolean openInFrame = true;
+	
+	/**
+	 * If there is a style bar associated with this panel.
+	 */
+	private boolean hasStyleBar = false;
+	
+	/**
+	 * If the style bar is visible.
+	 */
+	private boolean showStyleBar = false;
 	
 	/**
 	 * String which stores the position of the panel in the layout.
@@ -114,6 +132,16 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	private JButton unwindowButton;
 	
 	/**
+	 * Button used to show / hide the style bar.
+	 */
+	private JButton toggleStyleBarButton;
+	
+	/**
+	 * Panel for the styling bar if one is available.
+	 */
+	private JPanel styleBarPanel;
+	
+	/**
 	 * The frame which holds this DockPanel if the DockPanel is opened in
 	 * an additional window.
 	 */
@@ -140,10 +168,11 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * 
 	 * @param id 			The id of the panel
 	 * @param title			The title phrase of the view located in plain.properties
+	 * @param hasStyleBar	If a style bar exists
 	 * @param menuOrder		The location of this view in the view menu, -1 if the view should not appear at all
 	 */
-	public DockPanel(int id, String title, int menuOrder) {
-		this(id, title, menuOrder, '\u0000');
+	public DockPanel(int id, String title, boolean hasStyleBar, int menuOrder) {
+		this(id, title, hasStyleBar, menuOrder, '\u0000');
 	}
 	
 	/**
@@ -151,13 +180,15 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * 
 	 * @param id 			The id of the panel
 	 * @param title			The title phrase of the view located in plain.properties
+	 * @param hasStyleBar	If a style bar exists
 	 * @param menuOrder		The location of this view in the view menu, -1 if the view should not appear at all
 	 * @param menuShortcut	The shortcut character which can be used to make this view visible
 	 */
-	public DockPanel(int id, String title, int menuOrder, char menuShortcut) {
+	public DockPanel(int id, String title, boolean hasStyleBar, int menuOrder, char menuShortcut) {
 		this.id = id;
 		this.title = title;
 		this.menuOrder = menuOrder;
+		this.hasStyleBar = hasStyleBar;
 		
 		setLayout(new BorderLayout());
 	}
@@ -175,7 +206,13 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		}
 	}
 	
-	protected abstract JComponent getToolBar();
+	/**
+	 * @return The style bar if one exists
+	 */
+	protected JComponent loadStyleBar() {
+		return null; 
+	}
+	
 	protected abstract JComponent loadComponent();
 	
 	/**
@@ -187,6 +224,9 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	public void register(DockManager dockManager) {
 		this.dockManager = dockManager;
 		this.app = dockManager.getLayout().getApp();
+		
+		// the meta panel holds both title and style bar panel
+		JPanel metaPanel = new JPanel(new BorderLayout());
 		
 		// Construct title bar and all elements
 		titlePanel = new JPanel();
@@ -203,6 +243,16 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		titlePanel.add(buttonPanel, BorderLayout.EAST);
+		
+		// Show / hide styling bar if one exists
+		if(hasStyleBar) {
+			toggleStyleBarButton = new JButton(app.getImageIcon("view-showtoolbar.png"));
+			toggleStyleBarButton.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
+			toggleStyleBarButton.addActionListener(this);
+			toggleStyleBarButton.setFocusPainted(false);
+			toggleStyleBarButton.setPreferredSize(new Dimension(16,16));
+			buttonPanel.add(toggleStyleBarButton);
+		}
 		
 		// Insert the view in the main window
 		unwindowButton = new JButton(app.getImageIcon("view-unwindow.png"));
@@ -227,11 +277,25 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		closeButton.setFocusPainted(false);
 		closeButton.setPreferredSize(new Dimension(16,16));
 		buttonPanel.add(closeButton);
+		
+		metaPanel.add(titlePanel);
+		
+		// Style bar panel
+		if(hasStyleBar) {
+			styleBarPanel = new JPanel(new BorderLayout());
+
+			styleBarPanel.setBorder(
+				BorderFactory.createCompoundBorder(
+					BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.controlShadow),
+					BorderFactory.createEmptyBorder(0, 2, 0, 2)));
+			
+			metaPanel.add(styleBarPanel, BorderLayout.SOUTH);
+		}
 
 	   	// make titlebar visible if necessary
 		updatePanel();
 		
-		add(titlePanel, BorderLayout.NORTH);
+		add(metaPanel, BorderLayout.NORTH);
 	}
 	
 	/**
@@ -299,7 +363,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * Update all elements in the title bar.
 	 */
-	public void updateTitleBar() {
+	public void updateTitleBar() {		
 		// The view is in the main window
 		if(frame == null) {
 			closeButton.setVisible(true);
@@ -331,6 +395,14 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		if(component == null && isVisible()) {
 			component = loadComponent();
 			add(component, BorderLayout.CENTER);
+			
+			if(hasStyleBar) {
+				styleBarPanel.add(loadStyleBar(), BorderLayout.CENTER);
+			}
+		}
+		
+		if(hasStyleBar && isVisible()) {
+			styleBarPanel.setVisible(showStyleBar);
 		}
 		
 		titlePanel.setVisible(dockManager.getLayout().isTitleBarVisible());
@@ -349,6 +421,10 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		closeButton.setToolTipText(app.getPlain("Close"));
 		windowButton.setToolTipText(app.getPlain("ViewOpenExtraWindow"));
 		unwindowButton.setToolTipText(app.getPlain("ViewCloseExtraWindow"));
+		
+		if(hasStyleBar) {
+			toggleStyleBarButton.setToolTipText(app.getPlain("ToggleStyleBar"));
+		}
 		
 		if(frame == null) {
 			titleLabel.setText(app.getPlain(title));
@@ -413,6 +489,19 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		// show the panel in the main window
 		dockManager.show(this);
 	}
+	
+	/**
+	 * Toggle the style bar.
+	 */
+	private void toggleStyleBar() {
+		if(showStyleBar) {
+			styleBarPanel.setVisible(false);
+			showStyleBar = false;
+		} else {
+			styleBarPanel.setVisible(true);
+			showStyleBar = true;
+		}
+	}
 
 	/**
 	 * One of the buttons were pressed.
@@ -424,6 +513,8 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			windowPanel();
 		} else if(e.getSource() == unwindowButton) {
 			unwindowPanel();
+		} else if(e.getSource() == toggleStyleBarButton) {
+			toggleStyleBar();
 		}
 	}
 
@@ -500,7 +591,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	}
 	
 	public DockPanelXml createInfo() {
-		return new DockPanelXml(id, visible, openInFrame, frameBounds, embeddedDef, embeddedSize);
+		return new DockPanelXml(id, visible, openInFrame, showStyleBar, frameBounds, embeddedDef, embeddedSize);
 	}
 	
 	/**
@@ -512,6 +603,10 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	
 	public void setOpenInFrame(boolean openInFrame) {
 		this.openInFrame = openInFrame;
+	}
+	
+	public void setShowStyleBar(boolean showStyleBar) {
+		this.showStyleBar = showStyleBar;
 	}
 	
 	public boolean isOpenInFrame() {

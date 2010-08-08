@@ -38,8 +38,8 @@ public class GuiManager3D extends GuiManager {
 	protected void initLayoutPanels() {
 		super.initLayoutPanels();
     	
-    	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, "GraphicsView3D", 4) {
-    		protected JComponent getToolBar() {
+    	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, "GraphicsView3D", false, 4) {
+    		protected JComponent loadStyleBar() {
 				return null;
 			}
 			

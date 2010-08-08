@@ -723,11 +723,11 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	protected void updateComponentTreeUI() {
-		if (appletImpl != null) {
-			SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
-		}
-		else if (frame != null) {
+		if (frame != null) {
 			SwingUtilities.updateComponentTreeUI(frame);
+		} 
+		else if (appletImpl != null) {
+			SwingUtilities.updateComponentTreeUI(appletImpl.getJApplet());
 		}
 		else if (mainComp != null) {
 			SwingUtilities.updateComponentTreeUI(mainComp);
@@ -843,6 +843,7 @@ public class Application implements KeyEventDispatcher {
 		if (centerPanel == null) return;
 		
 		centerPanel.removeAll();
+		
 		if(hasFullGui()) {
 			centerPanel.add(getGuiManager().getLayout().getRootComponent(), BorderLayout.CENTER);
 		} else {

@@ -397,16 +397,6 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		subMenu = new JMenu(app.getPlain("Show") + " ...");
 		subMenu.setIcon(app.getEmptyIcon());
 		add(subMenu);
-		
-		cbItem = new JCheckBoxMenuItem(app.getMenu("Toolbar"));
-		//cbItem.setIcon(app.getEmptyIcon());
-		cbItem.setSelected(view.getShowToolBar());
-		cbItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				view.setShowToolBar(!view.getShowToolBar());
-			}
-		});	 
-		subMenu.add(cbItem);
 
 		cbItem = new JCheckBoxMenuItem(app.getMenu("Browser"));
 		//cbItem.setIcon(app.getEmptyIcon());

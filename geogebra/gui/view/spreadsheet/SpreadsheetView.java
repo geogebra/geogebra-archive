@@ -109,7 +109,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean showVScrollBar = true;
 	private boolean showHScrollBar = true;
 	private boolean showBrowserPanel = false;
-	private boolean showToolBar = false;
 	private boolean isColumnSelect = false; //TODO: do we need forced column select?
 	private boolean allowSpecialEditor = false;
 	
@@ -166,6 +165,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		// put the table and the row header list into a scroll plane
 		// G.STURR 2010-2-12: scrollPane now named as spreadsheet
 		spreadsheet = new JScrollPane();
+		spreadsheet.setBorder(BorderFactory.createEmptyBorder());
 		spreadsheet.setRowHeaderView(rowHeader);
 		spreadsheet.setViewportView(table);
 		
@@ -190,21 +190,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		spreadsheet.setCorner(JScrollPane.LOWER_LEFT_CORNER, new Corner());
 		spreadsheet.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new Corner());
 		
-	
-		//G.STURR 2010-2-12			
-		// Add spreadsheet and browser panes to SpreadsheetView
-			
-		spreadsheetPanel = new JPanel(new BorderLayout());
-		spreadsheetPanel.add(getCellFormatToolBar(),BorderLayout.NORTH);
-		setShowToolBar(showToolBar);
-		spreadsheetPanel.add(spreadsheet,BorderLayout.CENTER);
 		
-		setRightComponent(spreadsheetPanel);	
+		// Add spreadsheet and browser panes to SpreadsheetView
+		setRightComponent(spreadsheet);	
 		setShowBrowserPanel(showBrowserPanel);  //adds browser Panel or null panel to left component
 		
 		
 		updateFonts();
-		attachView(); //G.Sturr 2010-1-18
+		attachView();
 	
 		//G.Sturr 2010-4-10: Add listener for row/column size change.
 		// Needed for auto-enlarging spreadsheet.
@@ -228,7 +221,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		setShowVScrollBar(true);
 		setShowHScrollBar(true);
 		setShowBrowserPanel(false);
-		setShowToolBar(false);
 		setAllowSpecialEditor(false);
 	}
 
@@ -1320,10 +1312,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		sb.append(showRowHeader  ? "true" : "false" );
 		sb.append("\"");
 		
-		sb.append(" showToolBar=\"");
-		sb.append(showToolBar  ? "true" : "false" );
-		sb.append("\"");
-		
 		sb.append(" allowSpecialEditor=\"");
 		sb.append(allowSpecialEditor  ? "true" : "false" );
 		sb.append("\"");
@@ -1686,21 +1674,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return showGrid;
 	}
 	
-	public void setShowToolBar(boolean showToolBar){
-		toolBar.setVisible(showToolBar);
-		spreadsheetPanel.validate();
-		this.showToolBar = showToolBar;
-	}
-	
-	public boolean getShowToolBar(){
-		return showToolBar;
-	}
-	
 	/**
 	 * 
 	 * get spreadsheet format toolbar 
 	 */
-	private CellFormatToolBar getCellFormatToolBar(){
+	public CellFormatToolBar getCellFormatToolBar(){
 		if(toolBar==null){
 			toolBar = new CellFormatToolBar(this);
 		}

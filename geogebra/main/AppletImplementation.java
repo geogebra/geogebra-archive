@@ -351,7 +351,9 @@ public class AppletImplementation implements AppletImplementationInterface {
 			|| showAlgebraInput
 			|| showToolBar
 			|| showMenuBar
-			|| enableRightClick;
+			|| enableRightClick
+			|| showFrame 
+			|| showOpenButton;
 	}
 
 	public void initGUI() {		
@@ -424,40 +426,6 @@ public class AppletImplementation implements AppletImplementationInterface {
 		}
 
 	}
-
-	//	/**
-	//	 * Initializes the user interface to only show the graphics view.
-	//	 */
-	//	public void initViewerGUI() {
-	//		// set application parameters
-	//		app.setUndoActive(false);			
-	//		app.setShowMenuBar(false);
-	//		app.setShowAlgebraInput(false);
-	//		app.setShowToolBar(false, false);	
-	//		app.setRightClickEnabled(false);
-	//		app.setErrorDialogsActive(errorDialogsActive);
-	//		app.setLabelDragsEnabled(enableLabelDrags);
-	//		app.setShiftDragZoomEnabled(enableShiftDragZoom);
-	//		app.setShowResetIcon(false);
-	//		app.setMaxIconSize(maxIconSize);
-	//						
-	//		
-	//		// build applet panel with graphics view
-	//		JPanel panel = new JPanel(new BorderLayout());
-	//		ev = app.getEuclidianView();
-	//		panel.add(ev, BorderLayout.CENTER);
-	//		// border around graphics panel
-	//		panel.setBorder(BorderFactory.createLineBorder(borderColor));		
-	//
-	//		// replace applet's content pane
-	//		Container cp = applet.getContentPane();
-	//		cp.setBackground(bgColor);
-	//		cp.removeAll();
-	//		cp.add(panel);
-	//		
-	//		// set move mode
-	//		app.setMoveMode();
-	//	}
 
 	protected JPanel createGeoGebraAppletPanel() {
 		JPanel appletPanel = new JPanel(new BorderLayout());
@@ -559,6 +527,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 		app.setUndoActive(true);
 		app.setShowToolBar(true, true);	
 		app.setRightClickEnabled(true);
+		
 		if (customToolBar != null && customToolBar.length() > 0)
 			app.getGuiManager().setToolBarDefinition(customToolBar);
 
@@ -596,10 +565,11 @@ public class AppletImplementation implements AppletImplementationInterface {
 		cp.removeAll();
 
 		app.setApplet(this);
-		initGUI();
 
 		if(app.hasFullGui())
 			app.getGuiManager().updateLayout();
+		
+		initGUI();
 
 		app.resetFonts();
 		app.refreshViews();

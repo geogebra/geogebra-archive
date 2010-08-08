@@ -64,7 +64,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	
 	private JCheckBox cbShowGrid, cbShowRowHeader, 
 	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, 
-	cbShowBrowser, cbShowToolBar, cbAllowSpecialEditor;
+	cbShowBrowser, cbAllowSpecialEditor;
 	
 	private JTextField dirField, urlField;
 	
@@ -136,11 +136,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         
         cbShowBrowser = new JCheckBox(app.getMenu("Show File Browser"));  
         cbShowBrowser.addActionListener(this);        
-        layoutOptions.add(cbShowBrowser); 
-        
-        cbShowToolBar = new JCheckBox(app.getMenu("Show Toolbar"));
-        cbShowToolBar.addActionListener(this);        
-        layoutOptions.add(cbShowToolBar);
+        layoutOptions.add(cbShowBrowser);
         
         cbAllowSpecialEditor = new JCheckBox(app.getMenu("Use Buttons and Checkboxes "));
         cbAllowSpecialEditor.addActionListener(this);        
@@ -275,10 +271,6 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbShowBrowser.removeActionListener(this);
         cbShowBrowser.setSelected(view.getShowBrowserPanel()); 
         cbShowBrowser.addActionListener(this);
-     
-        cbShowToolBar.removeActionListener(this);
-        cbShowToolBar.setSelected(view.getShowToolBar()); 
-        cbShowToolBar.addActionListener(this);
         
         cbAllowSpecialEditor.removeActionListener(this);
         cbAllowSpecialEditor.setSelected(view.allowSpecialEditor()); 
@@ -335,10 +327,6 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		
 		else if (source == cbShowBrowser) {
 			view.setShowBrowserPanel(cbShowBrowser.isSelected());
-		}
-		
-		else if (source == cbShowToolBar) {
-			view.setShowToolBar(cbShowToolBar.isSelected());
 		}
 		
 		else if (source == cbAllowSpecialEditor) {

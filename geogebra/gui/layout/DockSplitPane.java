@@ -17,7 +17,6 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  * Split pane which is used to separate two DockPanels. 
  * 
  * @author Florian Sonner
- * @version 2008-07-18
  */
 public class DockSplitPane extends JSplitPane {	
 	private static final long serialVersionUID = 1L;

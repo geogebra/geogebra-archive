@@ -9,12 +9,12 @@ import java.awt.Rectangle;
  * be stored for a DockPanel.
  * 
  * @author Florian Sonner
- * @version 2008-08-27
  */
 public class DockPanelXml {
 	private int viewId;
 	private boolean isVisible;
 	private boolean openInFrame;
+	private boolean showStyleBar;
 	private Rectangle frameBounds;
 	private String embeddedDef;
 	private int embeddedSize;
@@ -23,23 +23,26 @@ public class DockPanelXml {
 	 * @param viewId		The view ID.
 	 * @param isVisible		If this view is visible at the moment.
 	 * @param openInFrame 	If this view should be opened in a separate frame.
+	 * @param showStyleBar	If the style bar is visible
 	 * @param windowRect 	The rectangle which defines the location and size of the window for this view. 
 	 * @param embeddedDef	The definition string for the location of the view in the main window.
 	 * @param embeddedSize	The size of the view in the main window.
 	 */
-	public DockPanelXml(int viewId, boolean isVisible, boolean openInFrame, Rectangle windowRect, String embeddedDef, int embeddedSize) {
+	public DockPanelXml(int viewId, boolean isVisible, boolean openInFrame, boolean showStyleBar, Rectangle windowRect, String embeddedDef, int embeddedSize) {
 		this.viewId = viewId;
-		this.setVisible(isVisible);
-		this.setOpenInFrame(openInFrame);
-		this.setFrameBounds(windowRect);
-		this.setEmbeddedDef(embeddedDef);
-		this.setEmbeddedSize(embeddedSize);
+		this.isVisible = isVisible;
+		this.openInFrame = openInFrame;
+		this.showStyleBar = showStyleBar;
+		this.frameBounds = windowRect;
+		this.embeddedDef = embeddedDef;
+		this.embeddedSize = embeddedSize;
 	}
 	
 	/**
 	 * @param viewId		The view ID.
 	 * @param isVisible		If this view is visible at the moment.
 	 * @param inFrame 		If this view is in an separate window at the moment.
+	 * @param showStyleBar	If the style bar is visible
 	 * @param windowX		The x location of the window.
 	 * @param windowY		The y location of the window.
 	 * @param windowWidth	The width of the window.
@@ -47,21 +50,22 @@ public class DockPanelXml {
 	 * @param embeddedDef	The definition string for the location of the view in the main window.
 	 * @param embeddedSize	The size of the view in the main window.
 	 */
-	public DockPanelXml(int viewId, boolean isVisible, boolean inFrame, int windowX, int windowY, int windowWidth, int windowHeight, String embeddedDef, int embeddedSize) {
-		this(viewId, isVisible, inFrame, new Rectangle(windowX, windowY, windowWidth, windowHeight), embeddedDef, embeddedSize);
+	public DockPanelXml(int viewId, boolean isVisible, boolean inFrame, boolean showStyleBar, int windowX, int windowY, int windowWidth, int windowHeight, String embeddedDef, int embeddedSize) {
+		this(viewId, isVisible, inFrame, showStyleBar, new Rectangle(windowX, windowY, windowWidth, windowHeight), embeddedDef, embeddedSize);
 	}
 	
 	/**
 	 * @param viewId		The view ID.
 	 * @param isVisible		If this view is visible at the moment.
 	 * @param inFrame 		If this view is in an separate window at the moment.
+	 * @param showStyleBar	If the style bar is visible
 	 * @param windowLoc		The location of the window.
 	 * @param windowSize 	The size of the window.
 	 * @param embeddedDef	The definition string for the location of the view in the main window.
 	 * @param embeddedSize	The size of the view in the main window.
 	 */
-	public DockPanelXml(int viewId, boolean isVisible, boolean inFrame, Point windowLoc, Dimension windowSize, String embeddedDef, int embeddedSize) {
-		this(viewId, isVisible, inFrame, new Rectangle(windowLoc, windowSize), embeddedDef, embeddedSize);
+	public DockPanelXml(int viewId, boolean isVisible, boolean inFrame, boolean showStyleBar, Point windowLoc, Dimension windowSize, String embeddedDef, int embeddedSize) {
+		this(viewId, isVisible, inFrame, showStyleBar, new Rectangle(windowLoc, windowSize), embeddedDef, embeddedSize);
 	}
 
 	/**
@@ -72,25 +76,10 @@ public class DockPanelXml {
 	}
 
 	/**
-	 * @param Set if this view is visible at the moment.
-	 */
-	public void setVisible(boolean isVisible) {
-		this.isVisible = isVisible;
-	}
-
-	/**
 	 * @return If this view is visible at the moment.
 	 */
 	public boolean isVisible() {
 		return isVisible;
-	}
-
-	/**
-	 * @param inFrame Set if the DockPanel was shown in a frame the last time it
-	 * 		was visible.
-	 */
-	public void setOpenInFrame(boolean inFrame) {
-		this.openInFrame = inFrame;
 	}
 
 	/**
@@ -100,13 +89,12 @@ public class DockPanelXml {
 	public boolean isOpenInFrame() {
 		return openInFrame;
 	}
-
+	
 	/**
-	 * @param frameBounds A rectangle with the size and position of the 
-	 * 		frame.
+	 * @return If the style bar is visible
 	 */
-	public void setFrameBounds(Rectangle frameBounds) {
-		this.frameBounds = frameBounds;
+	public boolean showStyleBar() {
+		return showStyleBar;
 	}
 
 	/**
@@ -117,24 +105,10 @@ public class DockPanelXml {
 	}
 
 	/**
-	 * @param embeddedDef the embeddedDef to set
-	 */
-	public void setEmbeddedDef(String embeddedDef) {
-		this.embeddedDef = embeddedDef;
-	}
-
-	/**
 	 * @return the embeddedDef
 	 */
 	public String getEmbeddedDef() {
 		return embeddedDef;
-	}
-
-	/**
-	 * @param embeddedSize the embeddedSize to set
-	 */
-	public void setEmbeddedSize(int embeddedSize) {
-		this.embeddedSize = embeddedSize;
 	}
 
 	/**
@@ -155,6 +129,8 @@ public class DockPanelXml {
 		sb.append(isVisible());
 		sb.append("\" inframe=\"");
 		sb.append(isOpenInFrame());
+		sb.append("\" stylebar=\"");
+		sb.append(showStyleBar());
 		sb.append("\" location=\"");
 		sb.append(getEmbeddedDef());
 		sb.append("\" size=\"");
@@ -176,6 +152,6 @@ public class DockPanelXml {
 	 * automatically otherwise.
 	 */
 	public Object clone() {
-		return new DockPanelXml(viewId, isVisible, openInFrame, frameBounds, embeddedDef, embeddedSize);
+		return new DockPanelXml(viewId, isVisible, openInFrame, showStyleBar, frameBounds, embeddedDef, embeddedSize);
 	}
 }

@@ -5,7 +5,6 @@ package geogebra.io.layout;
  * perspective as not all information can be stored in the DockPanelInfo.
  * 
  * @author Florian Sonner
- * @version 2008-10-20
  */
 public class DockSplitPaneXml {
 	private String location;

@@ -860,8 +860,7 @@ public class MyXMLHandler implements DocHandler {
 			sv.setShowColumnHeader(parseBoolean((String) attrs.get("showColumnHeader")));	
 			sv.setShowRowHeader(parseBoolean((String) attrs.get("showRowHeader")));	
 			sv.setShowHScrollBar(parseBoolean((String) attrs.get("showHScrollBar")));	
-			sv.setShowVScrollBar(parseBoolean((String) attrs.get("showVScrollBar")));	
-			sv.setShowToolBar(parseBoolean((String) attrs.get("showToolBar")));	
+			sv.setShowVScrollBar(parseBoolean((String) attrs.get("showVScrollBar")));
 			sv.setAllowSpecialEditor(parseBoolean((String) attrs.get("allowSpecialEditor")));	
 			return true;
 			
@@ -1232,9 +1231,9 @@ public class MyXMLHandler implements DocHandler {
 		// construct default xml data in case we're using an old version which didn't
 		// store the layout xml.
 		DockPanelXml[] dpXml = new DockPanelXml[] {
-			new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, new Rectangle(400, 400), defEV, 400),
-			new DockPanelXml(Application.VIEW_ALGEBRA, tmp_showAlgebra, false, new Rectangle(200, 400), defAV, 400),
-			new DockPanelXml(Application.VIEW_SPREADSHEET, tmp_showSpreadsheet, false, new Rectangle(400, 400), defSV, 400)
+			new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, false, new Rectangle(400, 400), defEV, 200),
+			new DockPanelXml(Application.VIEW_ALGEBRA, tmp_showAlgebra, false, false, new Rectangle(200, 400), defAV, 200),
+			new DockPanelXml(Application.VIEW_SPREADSHEET, tmp_showSpreadsheet, false, false, new Rectangle(400, 400), defSV, 200)
 		};
 		tmp_perspective.setDockPanelInfo(dpXml);
 		
@@ -1661,7 +1660,7 @@ public class MyXMLHandler implements DocHandler {
 	
 	/**
 	 * Handle a view.
-	 * <view id=".." visible=".." inframe=".." window=".." location=".." size=".." />
+	 * <view id=".." visible=".." inframe=".." stylebar=".." window=".." location=".." size=".." />
 	 * 
 	 * @param attrs
 	 * @return
@@ -1671,6 +1670,9 @@ public class MyXMLHandler implements DocHandler {
 			int viewId = Integer.parseInt((String)attrs.get("id"));
 			boolean isVisible = !((String)attrs.get("visible")).equals("false");
 			boolean openInFrame = !((String)attrs.get("inframe")).equals("false");
+			
+			String showStyleBarStr = (String)attrs.get("stylebar");
+			boolean showStyleBar = (showStyleBarStr != null ? !showStyleBarStr.equals("false") : false);
 			
 			// the window rectangle is given in the format "x,y,width,height"
 			String[] window = ((String)attrs.get("window")).split(",");
@@ -1684,7 +1686,7 @@ public class MyXMLHandler implements DocHandler {
 			String embeddedDef = (String)attrs.get("location");
 			int embeddedSize = Integer.parseInt((String)attrs.get("size"));
 			
-			tmp_views.add(new DockPanelXml(viewId, isVisible, openInFrame, windowRect, embeddedDef, embeddedSize));
+			tmp_views.add(new DockPanelXml(viewId, isVisible, openInFrame, showStyleBar, windowRect, embeddedDef, embeddedSize));
 			
 			return true;
 		} catch(Exception e) {

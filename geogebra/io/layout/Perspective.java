@@ -12,7 +12,6 @@ package geogebra.io.layout;
  * perspective.
  * 
  * @author Florian Sonner
- * @version 2008-07-18
  */
 public class Perspective {
 	/**

@@ -37,6 +37,7 @@ import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -147,14 +148,43 @@ public class GuiManager {
 	}
 	
 	/**
-	 * Make the title bar visible if the user is using an applet.
-	 * 
-	 * Active the glass pane if the application is changing from applet to
-	 * frame mode.
+	 * Performs a couple of actions required if the user is switching between the frame and applet:
+	 *  - Make the title bar visible if the user is using an applet.
+	 *  - Active the glass pane if the application is changing from applet to
+	 *    frame mode.
 	 */
 	public void updateLayout() {
+		// show / hide title bar if necessary
+		// TODO we need to check the user preferences as well for frame mode
+		// 		as the application may have no title bars at all
 		layout.setTitlebarVisible(!app.isApplet());
+		
+		// update the glass pane (add it for frame, remove it for applet)
 		layout.getDockManager().updateGlassPane();
+		
+		// we now need to make sure that the relative dimensions of views
+		// are kept, therefore we update the dividers
+		Dimension oldCenterSize = app.getCenterPanel().getSize();
+		Dimension newCenterSize;
+		
+		// frame -> applet
+		if(app.isApplet()) {
+			newCenterSize = app.getApplet().getJApplet().getSize();
+		}
+		
+		// applet -> frame
+		else {
+			// TODO redo this, guessing dimensions is bad
+			if(app.getFrame().getPreferredSize().width <= 0) {
+				newCenterSize = new Dimension(700, 500);
+			} else {
+				newCenterSize = app.getFrame().getPreferredSize();
+				newCenterSize.width -= 10;
+				newCenterSize.height -= 100;
+			}
+		}
+		
+		layout.getDockManager().scale(newCenterSize.width / (float)oldCenterSize.width, newCenterSize.height / (float)oldCenterSize.height);
 	}
 	
 	/**
@@ -163,13 +193,14 @@ public class GuiManager {
 	protected void initLayoutPanels() {
 		// register euclidian view
 		layout.registerPanel(
-			new DockPanel(Application.VIEW_EUCLIDIAN, "DrawingPad", 1) {
+			new DockPanel(
+					Application.VIEW_EUCLIDIAN,	// view id 
+					"DrawingPad", 				// view title
+					false,						// style bar?
+					1							// menu order
+			) {
 				public ImageIcon getIcon() {
 					return app.getImageIcon("document-properties.png");
-				}
-				
-				protected JComponent getToolBar() {
-					return null;
 				}
 				
 				protected JComponent loadComponent() {
@@ -180,11 +211,13 @@ public class GuiManager {
 		
 		// register algebra view
 		layout.registerPanel(
-			new DockPanel(Application.VIEW_ALGEBRA, "AlgebraWindow", 2, 'A') {
-				protected JComponent getToolBar() {
-					return null;
-				}
-				
+			new DockPanel(
+					Application.VIEW_ALGEBRA,	// view id 
+					"AlgebraWindow", 			// view title phrase
+					false,						// style bar?
+					2, 							// menu order
+					'A'							// menu shortcut
+			) {				
 				protected JComponent loadComponent() {
 					JScrollPane scrollPane = new JScrollPane(getAlgebraView());
 					((JScrollPane)scrollPane).setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
@@ -197,9 +230,15 @@ public class GuiManager {
 		
 		// register spreadsheet view 
 		layout.registerPanel(
-			new DockPanel(Application.VIEW_SPREADSHEET, "Spreadsheet", 3, 'S') {
-				protected JComponent getToolBar() {
-					return null;
+			new DockPanel(
+					Application.VIEW_SPREADSHEET, 		// view id
+					"Spreadsheet", 						// view title phrase
+					true,								// style bar?
+					3, 									// menu order
+					'S'									// menu shortcut
+			) {
+				protected JComponent loadStyleBar() {
+					return ((SpreadsheetView)getSpreadsheetView()).getCellFormatToolBar();
 				}
 				
 				protected JComponent loadComponent() {
@@ -210,11 +249,12 @@ public class GuiManager {
 		
 		// register CAS view 
 		layout.registerPanel(
-			new DockPanel(Application.VIEW_CAS, "CAS", 4) {				
-				protected JComponent getToolBar() {
-					return null;
-				}
-				
+			new DockPanel(
+					Application.VIEW_CAS, 	// view id
+					"CAS", 					// view title phrase 
+					false,					// style bar?
+					4						// menu order
+			) {					
 				protected JComponent loadComponent() {
 					return getCasView().getCASViewComponent();
 				}
