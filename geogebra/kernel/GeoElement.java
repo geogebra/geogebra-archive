@@ -309,6 +309,7 @@ public abstract class GeoElement
 	private int tooltipMode = TOOLTIP_ALGEBRAVIEW_SHOWING;
 
 	protected String label; // should only be used directly in subclasses
+	private String realLabel; //for macro constructions, see setRealLabel() for details 
 	private String oldLabel; // see doRenameLabel
 	private String caption; // only used by GeoBoolean for check boxes at the moment	
 	boolean labelWanted = false, labelSet = false, localVarLabelSet = false;
@@ -4579,6 +4580,27 @@ public abstract class GeoElement
 	
 	public boolean isSelectionAllowed() {
 		return selectionAllowed;
+	}
+	
+	/**
+	 * In case this geo is part of macro construction, it
+	 * keeps its own label. To get correct output of Name[geo]
+	 * we need to keep the label of the real-world geo represented by this
+	 * formal geo. 
+	 * 
+	 * @param realLabel Label of the real geo represented by this one
+	 */
+	public void setRealLabel(String realLabel){
+		this.realLabel=realLabel;
+	}
+	
+	/**
+	 * Used for Name command. See {@link #setRealLabel(String)}
+	 * @return label of this geo, or label of a real geo in case this one is formal
+	 */
+	public String getRealLabel(){
+		if(realLabel==null || realLabel.equals(""))return label;
+		return realLabel;
 	}
 	
 	

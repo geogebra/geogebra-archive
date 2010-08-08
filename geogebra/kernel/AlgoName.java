@@ -29,7 +29,13 @@ public class AlgoName extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoElement geo;  // input
     private GeoText text;     // output              
-        
+    
+    /**
+     * Creates text containing name of the geo
+     * @param cons Construction
+     * @param label Label of the resulting text
+     * @param geo Element whose name shoul be used
+     */
     public AlgoName(Construction cons, String label, GeoElement geo) {
     	super(cons);
         this.geo = geo;  
@@ -52,15 +58,19 @@ public class AlgoName extends AlgoElement {
         input = new GeoElement[1];
         input[0] = geo;
         
-        output = new GeoElement[1];        
-        output[0] = text;        
+        setOutputLength(1);        
+        setOutput(0,text);        
         setDependencies(); // done by AlgoElement
     }    
     
+	/**
+	 * Returns the text element
+	 * @return text element containing the name
+	 */
     public GeoText getGeoText() { return text; }
     
     // calc the current value of the arithmetic tree
     protected final void compute() {    	
-    	text.setTextString(geo.getLabel());	    	
+    	text.setTextString(geo.getRealLabel());	    	
     }         
 }

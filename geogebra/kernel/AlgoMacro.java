@@ -141,7 +141,7 @@ implements EuclidianViewAlgo {
 		// set input objects of macro construction		
 		for (int i=0; i < macroInput.length; i++) {   
 			macroInput[i].set(input[i]);				
-					
+			macroInput[i].setRealLabel(input[i].label);		
 			//Application.debug("SET INPUT object: " + input[i] + " => " + macroInput[i]);
     	}		
 	}
