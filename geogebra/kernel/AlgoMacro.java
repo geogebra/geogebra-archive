@@ -14,7 +14,6 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.main.Application;
 
@@ -39,15 +38,19 @@ implements EuclidianViewAlgo {
 	private GeoElement [] macroInput, macroOutput;
 	
 	// maps macro geos to algo geos
-	private HashMap macroToAlgoMap;
+	private HashMap<GeoElement,GeoElement> macroToAlgoMap;
 	
 	// all keys of macroToAlgoMap that are not part of macroInput
-	private ArrayList macroOutputAndReferencedGeos;
-	private ArrayList algoOutputAndReferencedGeos; // for efficiency, see getMacroConstructionState()	
+	private ArrayList<GeoElement> macroOutputAndReferencedGeos;
+	private ArrayList<GeoElement> algoOutputAndReferencedGeos; // for efficiency, see getMacroConstructionState()	
         
     /**
      * Creates a new algorithm that applies a macro to the
      * given input objects.        
+     * @param cons
+     * @param labels
+     * @param macro
+     * @param input
      */
     public AlgoMacro(Construction cons, String [] labels, Macro macro, GeoElement [] input) {
     	super(cons);
@@ -75,7 +78,7 @@ implements EuclidianViewAlgo {
     		cons.registerEuclidianViewAlgo(this);
     	}
         
-        GeoElement.setLabels(labels, output);           
+        GeoElement.setLabels(labels, getOutput());           
     }         
     
     public void remove() {
@@ -109,8 +112,8 @@ implements EuclidianViewAlgo {
     	} catch (Exception e) {
     		Application.debug("AlgoMacro compute():\n");
     		e.printStackTrace();
-    		for (int i=0; i < output.length; i++) {
-    			output[i].setUndefined();
+    		for (int i=0; i < getOutputLength(); i++) {
+    			getOutput(i).setUndefined();
     		}
     	}
     }   
@@ -179,14 +182,14 @@ implements EuclidianViewAlgo {
 	 * Creates the output objects of this macro algorithm
 	 */
 	private void createOutputObjects() {		
-		output = new GeoElement[macroOutput.length];								 						
+		setOutputLength(macroOutput.length);								 						
 		
 		for (int i=0; i < macroOutput.length; i++) {  
 			// copy output object of macro and make the copy part of this construction
-			output[i] = macroOutput[i].copyInternal(cons);			
-			output[i].setUseVisualDefaults(false);
-			output[i].setVisualStyle(macroOutput[i]);	
-			output[i].setAlgoMacroOutput(true);
+			setOutput(i,macroOutput[i].copyInternal(cons));			
+			getOutput()[i].setUseVisualDefaults(false);
+			getOutput()[i].setVisualStyle(macroOutput[i]);	
+			getOutput()[i].setAlgoMacroOutput(true);
     	}
 	}
 	
@@ -198,9 +201,9 @@ implements EuclidianViewAlgo {
 	 * construction.
 	 */
 	private void initMap() {	
-		macroToAlgoMap = new HashMap();
-		macroOutputAndReferencedGeos = new ArrayList();
-		algoOutputAndReferencedGeos = new ArrayList();
+		macroToAlgoMap = new HashMap<GeoElement,GeoElement>();
+		macroOutputAndReferencedGeos = new ArrayList<GeoElement>();
+		algoOutputAndReferencedGeos = new ArrayList<GeoElement>();
 			
 		// INPUT initing	
 		// map macro input to algo input
@@ -211,13 +214,13 @@ implements EuclidianViewAlgo {
 		// OUTPUT initing	
 		// map macro output to algo output
 		for (int i=0; i < macroOutput.length; i++) {
-			map(macroOutput[i], output[i]);					
+			map(macroOutput[i], getOutput(i));					
     	}				
 		// SPECIAL REFERENCES of output
 		// make sure all algo-output objects reference objects in their own construction		
 		// note: we do this in an extra loop to make sure we don't create output objects twice	
 		for (int i=0; i < macroOutput.length; i++) { 
-			initSpecialReferences(macroOutput[i], output[i]);					
+			initSpecialReferences(macroOutput[i], getOutput(i));					
     	}																		
 	}
 	
@@ -340,13 +343,13 @@ implements EuclidianViewAlgo {
 	 * in its construction.
 	 */			
 	private void initConic(GeoConic macroConic, GeoConic conic) {
-		ArrayList macroPoints = macroConic.getPointsOnConic();
+		ArrayList<GeoPoint> macroPoints = macroConic.getPointsOnConic();
 		if (macroPoints == null) return;
 		
 		int size = macroPoints.size();
-		ArrayList points = new ArrayList(size);		
+		ArrayList<GeoPoint> points = new ArrayList<GeoPoint>(size);		
 		for (int i=0; i < size; i++) {
-			points.add(getAlgoGeo((GeoElement) macroPoints.get(i)));
+			points.add((GeoPoint)getAlgoGeo(macroPoints.get(i)));
 		}
 		conic.setPointsOnConic(points);					
 	}
@@ -401,6 +404,8 @@ implements EuclidianViewAlgo {
 	/**
 	 * Makes sure that all referenced GeoElements of geoList are
 	 * in its construction.
+	 * @param macroList GeoList of macro geos 
+	 * @param geoList GeoList of construction geos
 	 */			
 	final public void initList(GeoList macroList, GeoList geoList) {			
 		// make sure all referenced GeoElements are from the algo-construction
@@ -413,19 +418,11 @@ implements EuclidianViewAlgo {
 		}			
 	} 
 	
+		
 	/**
 	 * Makes sure that all referenced GeoElements of fun are
 	 * in this algorithm's construction.
-	 */			
-	final public void initFunction(Function fun) {								
-		// geoFun was created as a copy of macroFun, 
-		// make sure all referenced GeoElements are from the algo-construction
-		replaceReferencedMacroObjects(fun.getExpression());
-	} 
-	
-	/**
-	 * Makes sure that all referenced GeoElements of fun are
-	 * in this algorithm's construction.
+	 * @param fun
 	 */			
 	final public void initFunction(FunctionNVar fun) {								
 		// geoFun was created as a copy of macroFun, 

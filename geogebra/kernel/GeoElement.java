@@ -54,7 +54,7 @@ public abstract class GeoElement
 	extends ConstructionElement
 	implements ExpressionValue {
 	
-	// min decimals or significant figures to use in editing string
+	/** min decimals or significant figures to use in editing string */
 	public static final int MIN_EDITING_PRINT_PRECISION = 5;
 	
 	// maximum label offset distance
@@ -944,9 +944,9 @@ public abstract class GeoElement
 		
 		// line thickness and line type:	
 		// note: line thickness in Drawable is calculated as lineThickness / 2.0f
-		lineThickness = geo.lineThickness;
-		lineType = geo.lineType;	
-		decorationType = geo.decorationType;
+		setLineThickness(geo.lineThickness);
+		setLineType(geo.lineType);	
+		setDecorationType(geo.decorationType);
 				
 		// set whether it's an auxilliary object
 		setAuxiliaryObject(geo.isAuxiliaryObject());

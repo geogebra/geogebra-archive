@@ -988,9 +988,18 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	}
 	
 	
-	
-	
-	
+	/**
+	 * returns all class-specific xml tags for getXML
+	 * GeoGebra File Format
+	 */
+	protected void getXMLtags(StringBuilder sb) {
+		getLineStyleXML(sb);
+		getXMLvisualTags(sb);
+		getXMLanimationTags(sb);
+		getXMLfixedTag(sb);
+		getAuxiliaryXML(sb);
+		getBreakpointXML(sb);		
+	}
 	
 	
 	

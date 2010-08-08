@@ -990,7 +990,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     
 	/**
 	 * Makes sure that this algorithm will be updated after the given parentAlgorithm. 
-	 * @see getUpdateAfterAlgo()
+	 * @see #getUpdateAfterAlgo()
 	 */
 	final public void setUpdateAfterAlgo(AlgoElement updateAfterAlgo) {
 		this.updateAfterAlgo  = updateAfterAlgo;
@@ -1001,7 +1001,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	 * Returns the algorithm the should be updated right before this algorithm.
 	 * This is being used in AlgorithmSet to sort algorithms by updating order.
 	 * @return null when there is no special algorithm that needs to be updated first 
-	 * @see getUpdateAfterAlgo()
+	 * @see #getUpdateAfterAlgo()
 	 */
 	final public AlgoElement getUpdateAfterAlgo() {
 		return updateAfterAlgo;
