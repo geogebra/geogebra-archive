@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 
 /**
  * 
- * Creates a JPanel with an enclosed instance of EuclidianView and methods for 
+ * Creates a JPanel with an extended instance of EuclidianView and methods for 
  * creating geos in the panel.
  * 
  * @author gsturr 2010-6-30
@@ -53,7 +53,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	
 	// new EuclidianView instance 
-	private myEV ev;
+	private MyEuclidianView ev;
 	private EuclidianController ec;
 	
 	
@@ -73,7 +73,13 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		ec = new EuclidianController(kernel);
 		boolean[] showAxes = { true, true };
 		boolean showGrid = false;
-		ev = new myEV(ec, showAxes, showGrid);
+		ev = new MyEuclidianView(ec, showAxes, showGrid);
+		
+		ev.removeMouseListener(ec);
+		ev.removeMouseMotionListener(ec);
+		ev.removeMouseWheelListener(ec);
+		ev.setAxesCornerCoordsVisible(false);
+		
 		ev.setAntialiasing(true);
 		ev.updateFonts();
 		ev.setPreferredSize(new Dimension(300,200));
@@ -109,47 +115,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		this.isAutoRemoveGeos = isAutoRemoveGeos;
 	}
 	
-	
-	//=================================================
-	//      Euclidian View
-	//=================================================
-	
 
-	private class myEV extends EuclidianView {
-
-		public myEV(EuclidianController ec, boolean[] showAxes, boolean showGrid) {
-			super(ec, showAxes, showGrid);
-			this.removeMouseListener(ec);
-			this.removeMouseMotionListener(ec);
-			this.removeMouseWheelListener(ec);
-			this.setAxesCornerCoordsVisible(false);
-		}
-		
-		// restore the old coord system after a resize
-		// this will keep our plots centered and scaled to the new window 
-		
-		public void updateSize(){
-			
-			double xminTemp = getXmin();
-			double xmaxTemp = getXmax();
-			double yminTemp = getYmin();
-			double ymaxTemp = getYmax();				
-			super.updateSize();		
-			setRealWorldCoordSystem(xminTemp, xmaxTemp, yminTemp, ymaxTemp);
-		}	
-		
-		
-	}
-	
-	public EuclidianView getMyEuclidianView(){
-		return ev;
-	}
-	
-	public void attachView(){
-		ev.attachView();
-	}
-
-	
 	public void setEVParams(){
 		
 		ev.setShowAxis(EuclidianView.AXIS_Y, showYAxis, false);
@@ -176,11 +142,23 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		ev.repaint();
 	}
 	
+	
 	public void setCoordSystem(double xMin, double xMax, double yMin, double yMax){
 		xMinEV = xMin;
 		xMaxEV = xMax;
 		yMinEV = yMin;
 		yMaxEV = yMax;
+	}
+
+	
+	
+
+	public EuclidianView getMyEuclidianView(){
+		return ev;
+	}
+	
+	public void attachView(){
+		ev.attachView();
 	}
 
 	
