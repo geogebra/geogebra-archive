@@ -58,7 +58,7 @@ public abstract class GeoGebraExport implements ActionListener{
     protected Construction construction;
     protected EuclidianView euclidianView;
     protected ExportFrame frame;
-    protected HashMap CustomColor;
+    protected HashMap<Color,String> CustomColor;
     protected double xunit,yunit,xmin,xmax,ymin,ymax;
 	// The exported format: Latex, tex, ConTexT, Beamer
     protected int format=0;

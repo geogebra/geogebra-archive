@@ -95,7 +95,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	codeFilledObject=new StringBuilder();
 		codeBeginDoc=new StringBuilder();
 		codeBeginPic=new StringBuilder();
-		CustomColor=new HashMap();
+		CustomColor=new HashMap<Color,String>();
  		if (format==GeoGebraToPstricks.FORMAT_BEAMER){
  	    	codePreamble.append("\\documentclass[" +
  	    			frame.getFontSize()+"pt]{beamer}\n");
@@ -1029,17 +1029,16 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			endBeamer(code);
 		}
 	}
-/* We have to rewrite the function
- - Kill spaces
- - add character * when needed
- - rename several functions:
- 		log(x)  ---> ln(x)
- 		ceil(x) ---> ceiling(x)
- 		exp(x)  ---> 2.71828^(x)
-  
-**/
+
+	/**
+	 *  We have to rewrite the function
+	 *  - kill spaces
+	 *  - add character * when needed
+ 	 *  - rename several functions (done in #ExpressionNode.toString())
+ 	 *	- rename constants
+	 */
 	private String killSpace(String name){
-//		2  x +3 ----> 2*x+3
+	//	2  x +3 ----> 2*x+3
 		StringBuilder sb=new StringBuilder();
 		boolean operand=false;
 		boolean space=false;
@@ -1065,27 +1064,9 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			}
 		}
 		
-		/* moved these to ExpressionNode eg,
-		case STRING_TYPE_PSTRICKS:
-			sb.append("ceiling(");  
-			sb.append(leftStr);
-			sb.append(')');
-	    	break;
-
-		// rename functions log, ceil and exp
-		renameFunc(sb,"log(","ln(");
-		renameFunc(sb,"ceil(","ceiling(");
-		renameFunc(sb,"exp(","EXP(");
-		renameFunc(sb,"atan(","ATAN(");
-		renameFunc(sb,"cosh(","COSH(");
-		renameFunc(sb,"acosh(","ACOSH(");
-		renameFunc(sb,"asinh(","ASINH(");
-		renameFunc(sb,"atanh(","ATANH(");
-		renameFunc(sb,"sinh(","SINH(");
-		renameFunc(sb,"tanh(","TANH("); */
-		
 		// for exponential in new Geogbra version.
 		renameFunc(sb,Kernel.EULER_STRING,"2.718281828");
+		renameFunc(sb,"\\pi","PI");
 		return new String(sb);
 	}
 	private void renameFunc(StringBuilder sb,String nameFunc,String nameNew){

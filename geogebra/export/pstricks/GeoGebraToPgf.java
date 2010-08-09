@@ -46,6 +46,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
+/**
+ * Generates PGF/Tikz string representation of current view. 
+ * 
+ *
+ */
 public class GeoGebraToPgf extends GeoGebraExport {
 	private static final int FORMAT_LATEX=0;
 	private static final int FORMAT_PLAIN_TEX=1;
@@ -79,7 +84,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     	codePreamble=new StringBuilder();
     	codeFilledObject=new StringBuilder();
 		codeBeginDoc=new StringBuilder();
-		CustomColor=new HashMap();
+		CustomColor=new HashMap<Color,String>();
  		if (format==GeoGebraToPgf.FORMAT_LATEX){
  	    	codePreamble.append("\\documentclass[" +
  	    			frame.getFontSize()+"pt]{article}\n" +
@@ -1263,15 +1268,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		return new String(sb);
 	}
 	
-/* We have to rewrite the function
- - Kill spaces
- - add character * when needed
- - rename several functions:
- 		log(x)  ---> ln(x)
- 		ceil(x) ---> ceiling(x)
- 		exp(x)  ---> 2.71828^(x)
-  
-**/
+	/**
+	 *  We have to rewrite the function
+	 *  - kill spaces
+	 *  - add character * when needed
+ 	 *  - rename several functions (done in #ExpressionNode.toString())
+ 	 *	- rename constants
+	 */
 	private String killSpace(String name){
 //		2  x +3 ----> 2*x+3
 		StringBuilder sb=new StringBuilder();
@@ -1299,18 +1302,8 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			}
 		}
 		
-		/* moved these to ExpressionNode eg,
-		case STRING_TYPE_PSTRICKS:
-			sb.append("ceiling(");  
-			sb.append(leftStr);
-			sb.append(')');
-	    	break;
-
-		// rename functions log
-		renameFunc(sb,"log(","ln(");*/
-		
-		// for exponential in new Geogebra version.
 		renameFunc(sb,Kernel.EULER_STRING,"2.718281828");
+		renameFunc(sb,"\\pi","3.1415926535");
 		return new String(sb);
 	}
 	/**
