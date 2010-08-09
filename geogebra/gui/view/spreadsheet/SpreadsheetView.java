@@ -1371,6 +1371,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				, newHeight));
 		*/
 		
+		if(browserPanel != null)
+			browserPanel.updateFonts();
+		
 	}
 	
 	

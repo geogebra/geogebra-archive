@@ -1,12 +1,16 @@
 
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.gui.InputDialog;
+import geogebra.gui.InputHandler;
 import geogebra.gui.OptionsDialog;
+import geogebra.gui.RedefineInputHandler;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.main.Application;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,6 +30,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 	private static final long serialVersionUID = -7749575525048631798L;
 
 	final static Color bgColor = Color.white;
+	final static Color fgColor = Color.black;
 
 	protected MyTable table = null;
 	protected int row1 = -1;
@@ -42,9 +47,10 @@ public class SpreadsheetContextMenu extends JPopupMenu
 	private ArrayList<GeoElement> geos; 
 	private CellRangeProcessor cp;
 
-	
-	
-	
+
+
+
+
 	// for testing
 	private boolean isShiftDown = false;
 
@@ -64,7 +70,8 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		selectedCellRanges = table.selectedCellRanges;		
 		geos = app.getSelectedGeos();
 
-		
+		setBackground(bgColor);
+
 		this.isShiftDown = isShiftDown;
 		initMenu();
 	}
@@ -85,46 +92,46 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		// ===============================================
 
 
-			addSeparator();   
-			item = new JMenuItem(app.getMenu("Copy"), app.getImageIcon("edit-copy.png"));
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					table.copyPasteCut.copy(column1, row1, column2, row2, false);
-				}        	
-			});
-			add(item);
-			item.setEnabled(!isEmptySelection());
+		addSeparator();   
+		item = new JMenuItem(app.getMenu("Copy"), app.getImageIcon("edit-copy.png"));
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				table.copyPasteCut.copy(column1, row1, column2, row2, false);
+			}        	
+		});
+		addItem(item);
+		item.setEnabled(!isEmptySelection());
 
-			item = new JMenuItem(app.getMenu("Paste"),app.getImageIcon("edit-paste.png"));
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					boolean succ = table.copyPasteCut.paste(column1, row1, column2, row2);
-					if (succ) app.storeUndoInfo();
-					table.getView().getRowHeader().revalidate(); 		
-				}        	
-			});	 	
-			add(item);
+		item = new JMenuItem(app.getMenu("Paste"),app.getImageIcon("edit-paste.png"));
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean succ = table.copyPasteCut.paste(column1, row1, column2, row2);
+				if (succ) app.storeUndoInfo();
+				table.getView().getRowHeader().revalidate(); 		
+			}        	
+		});	 	
+		addItem(item);
 
-			item = new JMenuItem(app.getMenu("Cut"),app.getImageIcon("edit-cut.png"));
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					boolean succ = table.copyPasteCut.cut(column1, row1, column2, row2);
-					if (succ) app.storeUndoInfo();
-				}
-			});	 	
-			add(item);
-			item.setEnabled(!isEmptySelection());
+		item = new JMenuItem(app.getMenu("Cut"),app.getImageIcon("edit-cut.png"));
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean succ = table.copyPasteCut.cut(column1, row1, column2, row2);
+				if (succ) app.storeUndoInfo();
+			}
+		});	 	
+		addItem(item);
+		item.setEnabled(!isEmptySelection());
 
-			item = new JMenuItem(app.getMenu("Delete"), app.getImageIcon("delete_small.gif"));
-			item.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					boolean succ = table.copyPasteCut.delete(column1, row1, column2, row2);
-					if (succ) app.storeUndoInfo();
-				}
-			});	 	
-			add(item);
-			item.setEnabled(!allFixed());
-		
+		item = new JMenuItem(app.getMenu("Delete"), app.getImageIcon("delete_small.gif"));
+		item.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean succ = table.copyPasteCut.delete(column1, row1, column2, row2);
+				if (succ) app.storeUndoInfo();
+			}
+		});	 	
+		addItem(item);
+		item.setEnabled(!allFixed());
+
 
 		addSeparator();   
 
@@ -135,7 +142,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		if(selectionType == MyTable.COLUMN_SELECT || selectionType == MyTable.ROW_SELECT){
 			subMenu = new JMenu(app.getMenu("Insert") + " ...");
 			subMenu.setIcon(app.getEmptyIcon()); 	 	
-			add(subMenu);   	 	
+			addItem(subMenu);   	 	
 
 			if(selectionType == MyTable.COLUMN_SELECT){ 
 				item = new JMenuItem(app.getMenu("InsertLeft"));
@@ -144,7 +151,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 						cp.InsertLeft(column1, column2);
 					}
 				});	 	 	
-				subMenu.add(item);	 		
+				addSubItem(subMenu,item);	 		
 
 				item = new JMenuItem(app.getMenu("InsertRight"));
 				item.addActionListener(new ActionListener() {
@@ -152,7 +159,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 						cp.InsertRight(column1, column2);
 					}
 				});	 	  	 	
-				subMenu.add(item);
+				addSubItem(subMenu,item);	
 
 			}
 
@@ -163,7 +170,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 						cp.InsertAbove(row1, row2);
 					}
 				});	 	 	 	
-				subMenu.add(item);
+				addSubItem(subMenu,item);	
 
 
 				item = new JMenuItem(app.getMenu("InsertBelow"));
@@ -172,7 +179,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 						cp.InsertBelow(row1, row2);
 					}
 				});	 	 	 	
-				subMenu.add(item);
+				addSubItem(subMenu,item);	
 			}
 		}
 
@@ -191,7 +198,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 					view.showTraceDialog(null, selectedCellRanges.get(0));
 				}
 			});	  		 	
-			add(cbItem);
+			addItem(cbItem);
 		}
 
 
@@ -200,58 +207,84 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		// ===============================================
 
 		if(!isEmptySelection()){
-			
-		
-		subMenu = new JMenu(app.getMenu("Create") + " ...");
-		subMenu.setIcon(app.getEmptyIcon()); 	 	
-		add(subMenu);   	 	
-
-		item = new JMenuItem(app.getMenu("List"));
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cp.createList(selectedCellRanges, true, false);
-			}
-		});	 
-		subMenu.add(item);
-		
 
 
-		item = new JMenuItem(app.getMenu("ListOfPoints"));
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cp.createPointList(selectedCellRanges, true, true);
-			}
-		});	 
-		subMenu.add(item);
-		item.setEnabled((cp.isCreatePointListPossible(selectedCellRanges)));
+			subMenu = new JMenu(app.getMenu("Create") + " ...");
+			subMenu.setIcon(app.getEmptyIcon()); 	 	
+			addItem(subMenu);   	 	
 
-		
-		item = new JMenuItem(app.getCommand("Matrix"));
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cp.CreateMatrix(column1, column2, row1, row2);
-			}
-		});	 
-		subMenu.add(item);
-		item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
+			item = new JMenuItem(app.getMenu("List"));
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cp.createList(selectedCellRanges, true, false);
+				}
+			});	 
+			addSubItem(subMenu,item);	
 
 
-		item = new JMenuItem(app.getCommand("TableText"));
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				cp.CreateTableText(column1, column2, row1, row2);
-			}
-		});	 
-		subMenu.add(item);
-		item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
+
+			item = new JMenuItem(app.getMenu("ListOfPoints"));
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cp.createPointList(selectedCellRanges, true, true);
+				}
+			});	 
+			addSubItem(subMenu,item);	
+			item.setEnabled((cp.isCreatePointListPossible(selectedCellRanges)));
+
+
+			item = new JMenuItem(app.getCommand("Matrix"));
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cp.CreateMatrix(column1, column2, row1, row2);
+				}
+			});	 
+			addSubItem(subMenu,item);	
+			item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
+
+
+			item = new JMenuItem(app.getCommand("TableText"));
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					cp.CreateTableText(column1, column2, row1, row2);
+				}
+			});	 
+			addSubItem(subMenu,item);	
+			item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
+
+
+
+			item = new JMenuItem(app.getCommand("Burke Table"));
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+
+
+
+					//GeoElement geo = RelativeCopy.getValue(table, column1, row1);
+					//String str = geo.getRedefineString(false, true);
+					//InputHandler handler = new RedefineInputHandler(app, geo, str);
+
+					//InputDialog id = new InputDialog(app, geo.getNameDescription(), app.getPlain("Redefine"), "str", true, handler, geo);
+					//id.showSpecialCharacters(true);
+					//id.setVisible(true);
+
+
+
+					InputDialogOpTable dialog = new InputDialogOpTable(view,app,null);
+					dialog.setVisible(true);
+					//cp.createOperationTable(selectedCellRanges.get(0), null);
+				}
+			});	 
+			//addSubItem(subMenu,item);	
+			item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
+
 
 		}
 
-	
-		
-	
-		
-		
+
+
+
+
 
 		// ===============================================
 		//             Import Data	
@@ -265,8 +298,8 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				table.getView().loadSpreadsheetFromURL(dataFile);
 			}
 		});
-		add(item);
-		
+		addItem(item);
+
 		/*
 		if (app.selectedGeosSize() >= 0) {
 			addSeparator();
@@ -280,9 +313,9 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				}
 			});
 			add(item);
-			
-			
-			
+
+
+
 			subMenu = new JMenu(app.getPlain("Import Data") + "...");
 			subMenu.setIcon(app.getEmptyIcon());
 			add(subMenu);
@@ -316,9 +349,9 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				}
 			});	 
 			subMenu.add(item);
-		
 
-			
+
+
 			subMenu.addSeparator();
 			item = new JMenuItem(app.getMenu(app.getPlain("ProbCalc")),app.getEmptyIcon());
 			item.addActionListener(new ActionListener() {
@@ -328,52 +361,52 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				}
 			});	 
 			subMenu.add(item);
-			 
+
 
 		}
-		*/
+		 */
 
 
 		// ===============================================
 		//     Data analysis
 		// ===============================================
-		
+
 		if(!isEmptySelection())
 			this.addSeparator();
-		
+
 		if(!isEmptySelection()){   // && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
 			subMenu = new JMenu(app.getMenu("Data Analysis") + " ...");
 			subMenu.setIcon(app.getEmptyIcon()); 	 	
-			add(subMenu);   	 	
-						
+			addItem(subMenu);   	 	
+
 			item = new JMenuItem(app.getMenu(app.getPlain("One Variable")),app.getEmptyIcon());		
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					view.showStatDialog(StatDialog.MODE_ONEVAR);
 				}
 			});	 
-			subMenu.add(item);
+			addSubItem(subMenu,item);	
 			item.setEnabled((cp.isOneVarStatsPossible(selectedCellRanges)));
-			
+
 			item = new JMenuItem(app.getMenu(app.getPlain("Two Variable")),app.getEmptyIcon());		
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					view.showStatDialog(StatDialog.MODE_TWOVAR);
 				}
 			});	 
-			subMenu.add(item);
+			addSubItem(subMenu,item);	
 			item.setEnabled((cp.isCreatePointListPossible(selectedCellRanges)) );  //&& isShiftDown );
-			
-			
-		}
-		
-		
 
-		
+
+		}
+
+
+
+
 		// ===============================================
 		//     Probability Calculator
 		// ===============================================
-		
+
 		if( isShiftDown){
 			item = new JMenuItem(app.getMenu(app.getPlain("Probability Calculator")),app.getEmptyIcon());
 			item.addActionListener(new ActionListener() {
@@ -381,24 +414,24 @@ public class SpreadsheetContextMenu extends JPopupMenu
 					view.showProbabilityCalculator();
 				}
 			});	 
-			add(item);
+			addItem(item);	
 		}
-		
-		
 
-		
+
+
+
 
 		// ===============================================
 		//     Show Toolbars / Spreadsheet Options
 		// ===============================================
 
 		addSeparator();
-		
+
 		subMenu = new JMenu(app.getPlain("Show") + " ...");
 		subMenu.setIcon(app.getEmptyIcon());
-		add(subMenu);
+		addItem(subMenu);
 
-		cbItem = new JCheckBoxMenuItem(app.getMenu("Browser"));
+		cbItem = new JCheckBoxMenuItem(app.getMenu("File Browser"));
 		//cbItem.setIcon(app.getEmptyIcon());
 		cbItem.setSelected(view.getShowBrowserPanel());
 		cbItem.addActionListener(new ActionListener() {
@@ -406,16 +439,16 @@ public class SpreadsheetContextMenu extends JPopupMenu
 				view.setShowBrowserPanel(!view.getShowBrowserPanel());
 			}
 		});	 
-		subMenu.add(cbItem);
-		
-			
+		addSubItem(subMenu,cbItem);	
+
+
 		item = new JMenuItem(app.getMenu("Spreadsheet Options") + "...",app.getEmptyIcon());
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_SPREADSHEET);
 			}
 		});	 
-		add(item);
+		addItem(item);	
 
 
 
@@ -433,7 +466,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 					app.getGuiManager().showPropertiesDialog();	
 				}
 			});	 
-			add(item);
+			addItem(item);
 		}
 
 	}
@@ -463,7 +496,8 @@ public class SpreadsheetContextMenu extends JPopupMenu
 	private void setTitle(String str) {
 		JLabel title = new JLabel(str);
 		title.setFont(app.getBoldFont());                      
-		title.setBackground(bgColor);        
+		title.setBackground(bgColor); 
+		title.setForeground(fgColor);
 
 		title.setBorder(BorderFactory.createEmptyBorder(5, 10, 2, 5));      
 		add(title);
@@ -477,6 +511,16 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 	}
 
+
+	private void addItem(Component mi) {        
+		mi.setBackground(bgColor);
+		add(mi);
+	}
+
+	private void addSubItem(JMenu menu, Component mi) {        
+		mi.setBackground(bgColor);
+		menu.add(mi);
+	}
 
 	private boolean allFixed(){
 		boolean allFixed = true; 	
@@ -493,7 +537,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 	private boolean isEmptySelection(){
 		return (app.getSelectedGeos().isEmpty()) ;
 	}
-	
-	
+
+
 
 }
