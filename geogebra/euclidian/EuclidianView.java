@@ -1823,6 +1823,376 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected static int SCREEN_BORDER = 10;
 
+	
+	
+	
+	
+	
+	//=================================================================
+	// G.Sturr: 2010-8-9  Testing changes in drawAxes() 
+	// to allow variable crossing points and heights for axes
+	//=================================================================
+	
+	// new global vars to control axes (should be set from options menu)
+	private double xCross = 0.0;
+	private boolean positiveY = false;
+	
+	
+	final void drawAxes(Graphics2D g2) {
+		
+		//-------------------------------------------------
+		// add these local vars:
+		
+		// local xZero determines the x value at which the y-axis cross the x-axis
+		// (should refactor to less confusing name)
+		double xZero =  this.xZero + xCross * xscale;
+		
+		// height of yAxis: either line with full screen height 
+		// or an upward ray starting from the x-axis
+		int yAxisHeight = positiveY ? (int) yZero : height;		
+		
+		//--------------------------------------------------
+		
+		
+		
+		
+		// for axes ticks
+		double yZeroTick = yZero;
+		double xZeroTick = xZero;
+		double yBig = yZero + 4;
+		double xBig = xZero - 4;
+		double ySmall1 = yZero + 0;
+		double ySmall2 = yZero + 2;
+		double xSmall1 = xZero - 0;
+		double xSmall2 = xZero - 2;
+		int xoffset, yoffset;
+		boolean bold = axesLineType == AXES_LINE_TYPE_FULL_BOLD
+						|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
+		boolean drawArrows = axesLineType == AXES_LINE_TYPE_ARROW
+								|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
+
+		// AXES_TICK_STYLE_MAJOR_MINOR = 0;
+		// AXES_TICK_STYLE_MAJOR = 1;
+		// AXES_TICK_STYLE_NONE = 2;
+		boolean[] drawMajorTicks = { axesTickStyles[0] <= 1,
+				axesTickStyles[1] <= 1 };
+		boolean[] drawMinorTicks = { axesTickStyles[0] == 0,
+				axesTickStyles[1] == 0 };
+
+		FontRenderContext frc = g2.getFontRenderContext();
+		g2.setFont(fontAxes);
+		int fontsize = fontAxes.getSize();
+		int arrowSize = fontsize / 3;
+		g2.setPaint(axesColor);
+
+		if (bold) {
+			axesStroke = boldAxesStroke;
+			tickStroke = boldAxesStroke;
+			ySmall2++;
+			xSmall2--;
+			arrowSize += 1;
+		} else {
+			axesStroke = defAxesStroke;
+			tickStroke = defAxesStroke;
+		}
+
+		// turn antialiasing off
+//		Object antiAliasValue = g2
+//				.getRenderingHint(RenderingHints.KEY_ANTIALIASING);	
+//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//				RenderingHints.VALUE_ANTIALIAS_OFF);
+
+		// X - AXIS
+		if (showAxes[0] && ymin < 0 && ymax > 0) {
+			if (showGrid) {
+				yoffset = fontsize + 4;
+				xoffset = 10;
+			} else {
+				yoffset = fontsize + 4;
+				xoffset = 1;
+			}
+
+			// label of x axis
+			if (axesLabels[0] != null) {
+				TextLayout layout = new TextLayout(axesLabels[0], fontLine, frc);
+				g2.drawString(axesLabels[0], (int) (width - 10 - layout
+						.getAdvance()), (int) (yZero - 4));
+			}
+
+			// numbers
+			double rw = xmin - (xmin % axesNumberingDistances[0]);
+			
+			
+			// G.Sturr
+			//-------- need global xZero here -------
+			double pix = this.xZero + rw * xscale;    
+			// -------------------------------------
+			
+			
+			double axesStep = xscale * axesNumberingDistances[0]; // pixelstep
+			double smallTickPix;
+			double tickStep = axesStep / 2;
+			if (pix < SCREEN_BORDER) {
+				// big tick
+				if (drawMajorTicks[0]) {
+					g2.setStroke(tickStroke);					
+					tempLine.setLine(pix, yZeroTick, pix, yBig);
+					g2.draw(tempLine);
+				}
+				pix += axesStep;
+				rw += axesNumberingDistances[0];
+			}
+			int maxX = width - SCREEN_BORDER;
+			int prevTextEnd = -3;
+			for (; pix < width; rw += axesNumberingDistances[0], pix += axesStep) {
+				if (pix <= maxX) {
+					if (showAxesNumbers[0]) {
+						String strNum = kernel.formatPiE(rw,
+								axesNumberFormat[0]);
+						boolean zero = strNum.equals("0");
+
+						sb.setLength(0);
+						sb.append(strNum);
+						if (axesUnitLabels[0] != null && !piAxisUnit[0])
+							sb.append(axesUnitLabels[0]);
+
+						TextLayout layout = new TextLayout(sb.toString(),
+								fontAxes, frc);
+						int x, y = (int) (yZero + yoffset);
+						if (zero && showAxes[1]) {
+							x = (int) (pix + 6);
+						} else {
+							x = (int) (pix + xoffset - layout.getAdvance() / 2);
+						}
+												
+						// make sure we don't print one string on top of the other
+						if (x > prevTextEnd + 5) {
+							prevTextEnd = (int) (x + layout.getAdvance()); 
+							g2.drawString(sb.toString(), x, y);
+						}
+					}
+
+					// big tick
+					if (drawMajorTicks[0]) {
+						g2.setStroke(tickStroke);
+						tempLine.setLine(pix, yZeroTick, pix, yBig);
+						g2.draw(tempLine);
+					}
+				} else if (drawMajorTicks[0] && !drawArrows) {
+					// draw last tick if there is no arrow
+					tempLine.setLine(pix, yZeroTick, pix, yBig);
+					g2.draw(tempLine);
+				}
+
+				// small tick
+				smallTickPix = pix - tickStep;
+				if (drawMinorTicks[0]) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(smallTickPix, ySmall1, smallTickPix,
+							ySmall2);
+					g2.draw(tempLine);
+				}
+			}
+			// last small tick
+			smallTickPix = pix - tickStep;
+			if (drawMinorTicks[0] && (!drawArrows || smallTickPix <= maxX)) {
+				g2.setStroke(tickStroke);
+				tempLine.setLine(smallTickPix, ySmall1, smallTickPix, ySmall2);
+				g2.draw(tempLine);
+			}
+
+			// x-Axis
+			g2.setStroke(axesStroke);
+			tempLine.setLine(0, yZero, width, yZero);
+			g2.draw(tempLine);
+
+			if (drawArrows) {
+				// tur antialiasing on
+//				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+//						antiAliasValue);
+
+				// draw arrow for x-axis
+				tempLine.setLine(width - 1, yZero, width - 1 - arrowSize, yZero
+						- arrowSize);
+				g2.draw(tempLine);
+				tempLine.setLine(width - 1, yZero, width - 1 - arrowSize, yZero
+						+ arrowSize);
+				g2.draw(tempLine);
+
+				//g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				//		RenderingHints.VALUE_ANTIALIAS_OFF);
+			}
+		}
+
+		// Y-AXIS
+		
+		// ----------- axis may not cross at zero anymore
+		//if (showAxes[1] && xmin < 0 && xmax > 0) {
+		if (showAxes[1] && xmin < xCross && xmax > xCross) {
+			
+			if (showGrid) {
+				xoffset = -2 - fontsize / 4;
+				yoffset = -2;
+			} else {
+				xoffset = -4 - fontsize / 4;
+				yoffset = fontsize / 2 - 1;
+			}
+
+			// label of y axis
+			if (axesLabels[1] != null) {
+				TextLayout layout = new TextLayout(axesLabels[1], fontLine, frc);
+				g2.drawString(axesLabels[1], (int) (xZero + 5),
+						(int) (5 + layout.getAscent()));
+			}
+
+			// numbers
+			double rw = ymax - (ymax % axesNumberingDistances[1]);
+			double pix = yZero - rw * yscale;
+			double axesStep = yscale * axesNumberingDistances[1]; // pixelstep
+			double tickStep = axesStep / 2;
+
+			// first small tick
+			double smallTickPix = pix - tickStep;
+			if (drawMinorTicks[1]
+					&& (!drawArrows || smallTickPix > SCREEN_BORDER)) {
+				g2.setStroke(tickStroke);
+				tempLine.setLine(xSmall1, smallTickPix, xSmall2, smallTickPix);
+				g2.draw(tempLine);
+			}
+
+			// don't get too near to the top of the screen
+			if (pix < SCREEN_BORDER) {
+				if (drawMajorTicks[1] && !drawArrows) {
+					// draw tick if there is no arrow
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xBig, pix, xZeroTick, pix);
+					g2.draw(tempLine);
+				}
+				smallTickPix = pix + tickStep;
+				if (drawMinorTicks[1] && smallTickPix > SCREEN_BORDER) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xSmall1, smallTickPix, xSmall2,
+							smallTickPix);
+					g2.draw(tempLine);
+				}
+				pix += axesStep;
+				rw -= axesNumberingDistances[1];
+			}
+			
+			// draw all of the remaining ticks and labels
+			
+			
+			// G.Sturr
+			// -------------------------------------------
+			// added some adjustments here to handle drawing 
+			// y-axis ticks and labels on a positive ray
+			// ------------------------------------------
+			
+			//int maxY = height - SCREEN_BORDER;
+			int maxY = positiveY ? (int) yZero : height - SCREEN_BORDER;
+			
+			//for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {
+			
+			for (; pix <= yAxisHeight; rw -= axesNumberingDistances[1], pix += axesStep) {
+				if (pix <= maxY) {
+					if (showAxesNumbers[1]) {
+						String strNum = kernel.formatPiE(rw,
+								axesNumberFormat[1]);
+						boolean zero = strNum.equals("0");
+
+						sb.setLength(0);
+						sb.append(strNum);
+						if (axesUnitLabels[1] != null && !piAxisUnit[1])
+							sb.append(axesUnitLabels[1]);
+
+						TextLayout layout = new TextLayout(sb.toString(),
+								fontAxes, frc);
+						int x = (int) (xZero + xoffset - layout.getAdvance());
+						int y;
+						if (zero && showAxes[0]) {
+							y = (int) (yZero - 2);
+						} else {
+							y = (int) (pix + yoffset);
+						}
+						g2.drawString(sb.toString(), x, y);
+					}
+				}
+
+				// big tick
+				if (drawMajorTicks[1]) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xBig, pix, xZeroTick, pix);
+					g2.draw(tempLine);
+				}
+
+				smallTickPix = pix + tickStep;
+				if (drawMinorTicks[1]) {
+					g2.setStroke(tickStroke);
+					tempLine.setLine(xSmall1, smallTickPix, xSmall2,
+							smallTickPix);
+					g2.draw(tempLine);
+				}
+			}
+
+			// y-Axis
+			
+			//G.Sturr ---- use yAxisHeight instead of height so that 
+			// yAxis can be drawn as a ray
+			
+			//tempLine.setLine(xZero, 0, xZero, height);
+			tempLine.setLine(xZero, 0, xZero, yAxisHeight);
+			
+			
+			g2.draw(tempLine);
+
+			if (drawArrows && xmin < 0 && xmax > 0) {
+				// draw arrow for y-axis
+				tempLine.setLine(xZero, 0, xZero - arrowSize, arrowSize);
+				g2.draw(tempLine);
+				tempLine.setLine(xZero, 0, xZero + arrowSize, arrowSize);
+				g2.draw(tempLine);
+			}								
+		}
+		
+	
+		// if one of the axes is not visible, show upper left and lower right corner coords
+		if (showAxesCornerCoords) {
+			if (xmin > 0 || xmax < 0 || ymin > 0 || ymax < 0) {
+				// uper left corner								
+				sb.setLength(0);
+				sb.append('(');			
+				sb.append(kernel.formatPiE(xmin, axesNumberFormat[0]));
+				sb.append(Application.unicodeComma);
+				sb.append(" ");
+				sb.append(kernel.formatPiE(ymax, axesNumberFormat[1]));
+				sb.append(')');
+				
+				int textHeight = 2 + fontAxes.getSize();
+				g2.setFont(fontAxes);			
+				g2.drawString(sb.toString(), 5, textHeight);
+				
+				// lower right corner
+				sb.setLength(0);
+				sb.append('(');			
+				sb.append(kernel.formatPiE(xmax, axesNumberFormat[0]));
+				sb.append(Application.unicodeComma);
+				sb.append(" ");
+				sb.append(kernel.formatPiE(ymin, axesNumberFormat[1]));
+				sb.append(')');
+				
+				TextLayout layout = new TextLayout(sb.toString(), fontAxes, frc);	
+				layout.draw(g2, (int) (width - 5 - layout.getAdvance()), 
+										height - 5);					
+			}	
+		}
+	}
+	
+	
+	
+	
+	
+	
+/*
 	final void drawAxes(Graphics2D g2) {
 		// for axes ticks
 		double yZeroTick = yZero;
@@ -2122,6 +2492,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			}	
 		}
 	}
+	*/
+	
+	
+	
 	
 	public boolean isAxesCornerCoordsVisible() {
 		return showAxesCornerCoords;
