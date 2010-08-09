@@ -48,7 +48,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	
 	// parms
 	private int numDist = 4;
-	private int selectedDist = DIST_STUDENT;
+	private int selectedDist = DIST_NORMAL;
 	private String[] distLabels; 
 	private String[][] parmLabels;
 	private int numParms = 3;
@@ -209,6 +209,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		JPanel dp = new JPanel(new BorderLayout());
 		comboDistribution = new JComboBox(distLabels);
 		comboDistribution.setSelectedIndex(selectedDist);
+		comboDistribution.removeItemAt(DIST_BINOMIAL);
 		comboDistribution.addActionListener(new ActionListener() {       
 			public void actionPerformed(ActionEvent e)
 			{
