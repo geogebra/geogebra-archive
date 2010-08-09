@@ -223,7 +223,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 		systemInfoPanel.add(new JLabel(sb.toString()), BorderLayout.CENTER);
 		
 		// copy system information to clipboard
-		systemInfoPanel.add(new JButton(new AbstractAction(app.getPlain("CopyToClipboard")) {
+		systemInfoPanel.add(new JButton(new AbstractAction(app.getPlain("SystemInformation")) {
 			public void actionPerformed(ActionEvent arg0) {
 				StringBuilder systemInfo = new StringBuilder();
 				systemInfo.append(vsb);

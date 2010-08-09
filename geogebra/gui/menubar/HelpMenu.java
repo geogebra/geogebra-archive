@@ -19,7 +19,6 @@ class HelpMenu extends BaseMenu {
 		helpAction,
 		websiteAction,
 		forumAction,
-		wikiAction,
 		infoAction
 	;
 	
@@ -38,13 +37,11 @@ class HelpMenu extends BaseMenu {
 	private void initItems()
 	{
 		add(helpAction);
+		add(forumAction);
+		
 		addSeparator();
 
 		add(websiteAction);
-		add(forumAction);
-		add(wikiAction);
-
-		addSeparator();
 
 		add(infoAction);
 	}
@@ -67,16 +64,6 @@ class HelpMenu extends BaseMenu {
 				runner.start();
 			}
 		};
-		
-		websiteAction = new AbstractAction("www.geogebra.org", new ImageIcon(
-				app.getInternalImage("geogebra.gif"))) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.getGuiManager().showURLinBrowser(
-						GeoGebra.GEOGEBRA_WEBSITE);
-			}
-		};
 
 		forumAction = new AbstractAction("GeoGebra Forum", new ImageIcon(app
 				.getInternalImage("users.png"))) {
@@ -87,19 +74,14 @@ class HelpMenu extends BaseMenu {
 						.openURL(GeoGebra.GEOGEBRA_WEBSITE + "forum/");
 			}
 		};
-
-		wikiAction = new AbstractAction("GeoGebraWiki", new ImageIcon(app
-				.getInternalImage("wiki.png"))) {
+		
+		websiteAction = new AbstractAction("GeoGebra.org", new ImageIcon(
+				app.getInternalImage("geogebra.gif"))) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				String url = GeoGebra.GEOGEBRA_WEBSITE;
-				if (app.getLocale().getLanguage().equals("de"))
-					url += "de/wiki/";
-				else
-					url += "en/wiki/";
-
-				BrowserLauncher.openURL(url);
+				app.getGuiManager().showURLinBrowser(
+						GeoGebra.GEOGEBRA_WEBSITE);
 			}
 		};
 		

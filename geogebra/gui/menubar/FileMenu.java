@@ -80,25 +80,24 @@ class FileMenu extends BaseMenu {
 		mi = add(saveAction);
 		setMenuShortCutAccelerator(mi, 'S');
 		mi = add(saveAsAction);
-		// now assigned to spreadsheet: setMenuShortCutShiftAccelerator(mi,
-		// 'S');
 		addSeparator();
-		// submenu = new JMenu(app.getMenu("PrintPreview"));
-		// submenu.setIcon(app.getImageIcon("document-print-preview.png"));
-		// submenu.add(printEuclidianViewAction);
-		// // submenu.add(printProtocolAction);
-		// menu.add(submenu);
+		
 		mi = add(printEuclidianViewAction);
 		mi.setText(app.getMenu("PrintPreview"));
 		mi.setIcon(app.getImageIcon("document-print-preview.png"));
 		setMenuShortCutAccelerator(mi, 'P');
 
+		addSeparator();
+		
+		mi = add(exportLMSAction);
+		setMenuShortCutShiftAccelerator(mi, 'M');
+		
+		addSeparator();
+		
 		// export
 		JMenu submenu = new JMenu(app.getMenu("Export"));
 		submenu.setIcon(app.getEmptyIcon());
 		add(submenu);
-		mi = add(exportLMSAction);
-		setMenuShortCutShiftAccelerator(mi, 'M');
 		mi = submenu.add(exportWorksheet);
 		setMenuShortCutShiftAccelerator(mi, 'W');
 		
@@ -211,7 +210,7 @@ class FileMenu extends BaseMenu {
 			}
 		};
 
-		exportLMSAction = new AbstractAction(app.getMenu("ExportToLMS"), app
+		exportLMSAction = new AbstractAction(app.getMenu("Embed"), app
 				.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 

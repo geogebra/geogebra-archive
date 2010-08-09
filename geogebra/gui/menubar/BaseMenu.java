@@ -79,5 +79,4 @@ abstract class BaseMenu extends JMenu {
 				+ Event.SHIFT_MASK + Event.ALT_MASK);
 		mi.setAccelerator(ks);
 	}
-	
 }

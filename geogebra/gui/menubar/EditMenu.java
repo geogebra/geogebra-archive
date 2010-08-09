@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
+import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 
 /**
@@ -25,12 +26,28 @@ public class EditMenu extends BaseMenu {
 		invertAction,
 		showhideAction,
 		showhideLabelsAction,
-		drawingPadToClipboardAction,
 		propertiesAction,
 		selectAllAction,
 		selectAllAncestorsAction,
 		selectAllDescendantsAction,
 		selectCurrentLayerAction
+	;
+	
+	private JMenuItem
+		deleteItem,
+		invertItem,
+		showhideItem,
+		showhideLabelsItem,
+		propertiesItem,
+		selectAllItem,
+		selectAllAncestorsItem,
+		selectAllDescendantsItem,
+		selectCurrentLayerItem
+	;
+	
+	private JSeparator
+		selectionSeparator,
+		deleteSeparator
 	;
 	
 	public EditMenu(Application app) {
@@ -62,54 +79,51 @@ public class EditMenu extends BaseMenu {
 			addSeparator();
 		}
 
-		// Michael Borcherds 2008-03-03 added to Edit menu
-		mi = add(drawingPadToClipboardAction);
-		setMenuShortCutShiftAccelerator(mi, 'C');
+		mi = add(propertiesAction);
+		setMenuShortCutAccelerator(mi, 'E');
 
-		// mi = add(DataFromClipboardAction);
-		// setMenuShortCutAccelerator(mi, 'V');
+		addSeparator();
+
+		selectAllItem = add(selectAllAction);
+		setMenuShortCutAccelerator(selectAllItem, 'A');
+
+		selectCurrentLayerItem = add(selectCurrentLayerAction);
+		setMenuShortCutAccelerator(selectCurrentLayerItem, 'L');
+
+		selectAllDescendantsItem = add(selectAllDescendantsAction);
+		setMenuShortCutShiftAccelerator(selectAllDescendantsItem, 'Q');
+
+		selectAllAncestorsItem = add(selectAllAncestorsAction);
+		setMenuShortCutAccelerator(selectAllAncestorsItem, 'Q');
+
+		selectionSeparator = new JSeparator();
+		add(selectionSeparator);
+
+		invertItem = add(invertAction);
+		setMenuShortCutAccelerator(invertItem, 'I');
+
+		showhideItem = add(showhideAction);
+		setMenuShortCutAccelerator(showhideItem, 'G');
+
+		showhideLabelsItem = add(showhideLabelsAction);
+		setMenuShortCutShiftAccelerator(showhideLabelsItem, 'G');
+
 
 		if (app.letDelete()) {
-			mi = add(deleteAction);
+			deleteSeparator = new JSeparator();
+			add(deleteSeparator);
+			
+			deleteItem = add(deleteAction);
 
 			if (Application.MAC_OS) {
-				mi.setAccelerator(KeyStroke.getKeyStroke(
+				deleteItem.setAccelerator(KeyStroke.getKeyStroke(
 						KeyEvent.VK_BACK_SPACE, 0));
 			} else {
-				mi
+				deleteItem
 						.setAccelerator(KeyStroke.getKeyStroke(
 								KeyEvent.VK_DELETE, 0));
 			}
 		}
-		addSeparator();
-
-		mi = add(invertAction);
-		setMenuShortCutAccelerator(mi, 'I');
-
-		mi = add(showhideAction);
-		setMenuShortCutAccelerator(mi, 'G');
-
-		mi = add(showhideLabelsAction);
-		setMenuShortCutShiftAccelerator(mi, 'G');
-
-		addSeparator();
-
-		mi = add(selectAllAction);
-		setMenuShortCutAccelerator(mi, 'A');
-
-		mi = add(selectCurrentLayerAction);
-		setMenuShortCutAccelerator(mi, 'L');
-
-		mi = add(selectAllDescendantsAction);
-		setMenuShortCutShiftAccelerator(mi, 'Q');
-
-		mi = add(selectAllAncestorsAction);
-		setMenuShortCutAccelerator(mi, 'Q');
-
-		addSeparator();
-
-		mi = add(propertiesAction);
-		setMenuShortCutAccelerator(mi, 'E');
 	}
 	
 	/**
@@ -123,29 +137,6 @@ public class EditMenu extends BaseMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().showPropertiesDialog();
-			}
-		};
-
-		drawingPadToClipboardAction = new AbstractAction(app
-				.getMenu("DrawingPadToClipboard"), app
-				.getImageIcon("edit-copy.png")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.clearSelectedGeos();
-
-				Thread runner = new Thread() {
-					public void run() {
-						app.setWaitCursor();
-						// copy drawing pad to the system clipboard
-						Image img = app.getEuclidianView().getExportImage(1d);
-						ImageSelection imgSel = new ImageSelection(img);
-						Toolkit.getDefaultToolkit().getSystemClipboard()
-								.setContents(imgSel, null);
-						app.setDefaultCursor();
-					}
-				};
-				runner.start();
 			}
 		};
 
@@ -263,24 +254,35 @@ public class EditMenu extends BaseMenu {
 	 * Called if the user changes the selected items.
 	 */
 	public void updateSelection() {
-		// Michael Borcherds 2008-03-03 BEGIN
-		// boolean haveSelection = !app.getSelectedGeos().isEmpty();
-		// deleteAction.setEnabled(haveSelection);
 		int layer = getSelectedLayer();
-		deleteAction.setEnabled(layer != -1); // -1 means nothing selected, -2
-												// means different layers
-												// selected
-		showhideAction.setEnabled(layer != -1); 
-		showhideLabelsAction.setEnabled(layer != -1); 
-		selectCurrentLayerAction.setEnabled(getSelectedLayer() >= 0); // exactly
-																		// one
-																		// layer
-																		// selected
-		// Michael Borcherds 2008-03-03 END
+		
+		/* layer values:
+		 *  -1 means nothing selected
+		 *  -2 means different layers selected
+		 */
+		
+		deleteAction.setEnabled(layer != -1);
+		deleteItem.setVisible(layer != -1);
+		deleteSeparator.setVisible(layer != -1);
+		
+		showhideAction.setEnabled(layer != -1);
+		showhideItem.setVisible(layer != -1);
+		
+		showhideLabelsAction.setEnabled(layer != -1);
+		showhideLabelsItem.setVisible(layer != -1);
+		
+		// exactly one layer selected
+		selectCurrentLayerAction.setEnabled(getSelectedLayer() >= 0);
+		selectCurrentLayerItem.setVisible(getSelectedLayer() >= 0);
+		
 		boolean haveSelection = !app.getSelectedGeos().isEmpty();
 		invertAction.setEnabled(haveSelection);
+		invertItem.setVisible(haveSelection);
 		selectAllDescendantsAction.setEnabled(haveSelection);
+		selectAllDescendantsItem.setVisible(haveSelection);
 		selectAllAncestorsAction.setEnabled(haveSelection);
+		selectAllAncestorsItem.setVisible(haveSelection);
+		selectionSeparator.setVisible(haveSelection);
 
 		Kernel kernel = app.getKernel();
 		propertiesAction.setEnabled(!kernel.isEmpty());

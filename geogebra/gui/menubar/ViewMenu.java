@@ -29,7 +29,6 @@ class ViewMenu extends BaseMenu {
 	private Layout layout;
 	
 	private AbstractAction 
-		showAuxiliaryObjectsAction,
 		showAlgebraInputAction,
 		showKeyboardAction,
 		showHandwritingAction,
@@ -52,12 +51,9 @@ class ViewMenu extends BaseMenu {
 	;
 	
 	private JCheckBoxMenuItem
-		cbShowAxes,
-		cbShowGrid,
 		cbShowInputTop, 					// Florian Sonner 2008-09-12
 		cbShowToolBar, 						// Florian Sonner 2009-01-10
 		cbShowToolBarTop, 					// Florian Sonner 2009-01-10
-		cbShowAuxiliaryObjects,
 		cbShowConsProtNavigation,
 		cbShowConsProtNavigationPlay,
 		cbShowConsProtNavigationOpenProt,
@@ -74,6 +70,7 @@ class ViewMenu extends BaseMenu {
 	
 	private JMenu
 		menuConsProt, 
+		menuViews,
 		menuHandwriting,
 		menuInput,
 		menuToolBar, 
@@ -98,29 +95,20 @@ class ViewMenu extends BaseMenu {
 	{
 		JMenuItem mi;
 		
-		cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager()
-				.getShowAxesAction());
-		cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
-				&& app.getEuclidianView().getShowYaxis());
-		add(cbShowAxes);
-
-		cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager()
-				.getShowGridAction());
-		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
-		add(cbShowGrid);
-
-		cbShowAuxiliaryObjects = new JCheckBoxMenuItem(
-				showAuxiliaryObjectsAction);
-		app.setEmptyIcon(cbShowAuxiliaryObjects);
-		//cbShowAuxiliaryObjects.setIcon(app.getEmptyIcon());
-		cbShowAuxiliaryObjects
-				.setSelected(app.getGuiManager().getAlgebraView() == null
-						|| app.showAuxiliaryObjects());
-		add(cbShowAuxiliaryObjects);
-
-		addSeparator();
+		menuPerspectives = new JMenu(app.getMenu("Perspectives") + " ...");
+		menuPerspectives.setIcon(app.getImageIcon("perspective.gif"));
 		
+		if (!app.isApplet()) {
+			add(menuPerspectives);
+
+			updatePerspectives();
+
+			addSeparator();
+		}
+		
+		menuViews = new JMenu(app.getMenu("Views")+" ...");
 		initViewItems();
+		add(menuViews);
 
 		addSeparator();
 		
@@ -198,17 +186,6 @@ class ViewMenu extends BaseMenu {
 		add(menuConsProt);
 
 		addSeparator();
-
-		menuPerspectives = new JMenu(app.getMenu("Perspectives"));
-		menuPerspectives.setIcon(app.getImageIcon("perspective.gif"));
-		
-		if (!app.isApplet()) {
-			add(menuPerspectives);
-
-			updatePerspectives();
-
-			addSeparator();
-		}
 
 		mi = add(refreshAction);
 		setMenuShortCutAccelerator(mi, 'F');
@@ -390,16 +367,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showAuxiliaryObjectsAction = new AbstractAction(app
-				.getPlain("AuxiliaryObjects")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.setShowAuxiliaryObjects(!app.showAuxiliaryObjects());
-				app.setUnsaved();
-			}
-		};
-
 		showConsProtNavigationAction = new AbstractAction(app
 				.getPlain("ConstructionProtocolNavigation")) {
 			private static final long serialVersionUID = 1L;
@@ -498,15 +465,6 @@ class ViewMenu extends BaseMenu {
 			.getGuiManager();
 
 		updateViews();
-		
-		EuclidianView ev = app.getEuclidianView();
-		cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
-		cbShowGrid.setSelected(ev.getShowGrid());
-		
-		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
-		
-		cbShowAuxiliaryObjects.setEnabled(app.getGuiManager().showView(Application.VIEW_ALGEBRA));
-		cbShowAuxiliaryObjects.setSelected(app.showAuxiliaryObjects());
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowKeyboard.setSelected(Application.isVirtualKeyboardActive());
@@ -652,7 +610,7 @@ class ViewMenu extends BaseMenu {
 					setMenuShortCutShiftAccelerator(cb, panel.getMenuShortcut());
 				}
 
-				add(cb);
+				menuViews.add(cb);
 				cbViews[i] = cb;
 				++i;
 			}
