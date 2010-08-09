@@ -434,6 +434,13 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	}
 	
 	/**
+	 * Update fonts.
+	 */
+	public void updateFonts() {
+		titleLabel.setFont(app.getPlainFont());
+	}
+	
+	/**
 	 * Update the title of the frame. This is necessary if the language changed
 	 * or if the title of the main window changed (e.g. because the file was saved
 	 * under a different name).

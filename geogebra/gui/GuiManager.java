@@ -148,7 +148,7 @@ public class GuiManager {
 	}
 	
 	/**
-	 * Performs a couple of actions required if the user is switching between the frame and applet:
+	 * Performs a couple of actions required if the user is switching between frame and applet:
 	 *  - Make the title bar visible if the user is using an applet.
 	 *  - Active the glass pane if the application is changing from applet to
 	 *    frame mode.
@@ -581,12 +581,7 @@ public class GuiManager {
 	}
 	
 	public boolean showView(int viewId) {
-		try { // TODO: null pointer when showToolbar=true
 		return layout.getDockManager().getPanel(viewId).isVisible();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 	
 	public void setShowToolBarHelp(boolean flag) {
@@ -725,6 +720,9 @@ public class GuiManager {
 		
 		if (casView != null)
 			casView.updateFonts();
+		
+		if(layout.getDockManager() != null)
+			layout.getDockManager().updateFonts();
 			
 		SwingUtilities.updateComponentTreeUI(app.getMainComponent());			
 	}
@@ -769,7 +767,7 @@ public class GuiManager {
 		if (virtualKeyboard != null)
 			virtualKeyboard.setLabels();
 			
-		//layout.getDockManager().setLabels();			
+		layout.getDockManager().setLabels();			
 	}
 
 	public void initMenubar() {
@@ -2652,11 +2650,7 @@ public class GuiManager {
 		
 		public JFrame createFrame() {
 			GeoGebraFrame wnd = new GeoGebraFrame();
-			try {
-				//TODO: throws null pointer exception
-				wnd.setGlassPane(layout.getDockManager().getGlassPane());
-			} catch (Exception e) 
-			{ e.printStackTrace();}
+			wnd.setGlassPane(layout.getDockManager().getGlassPane());
 			wnd.setApplication(app);
 			
 			return wnd;

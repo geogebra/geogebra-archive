@@ -451,6 +451,10 @@ public class Layout {
 	}
 
 	public JComponent getRootComponent() {
+		if(dockManager == null) {
+			return null;
+		}
+		
 		return dockManager.getRoot();
 	}
 	

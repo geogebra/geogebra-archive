@@ -617,6 +617,15 @@ public class DockManager {
 	}
 	
 	/**
+	 * Update the fonts in all dock panels.
+	 */
+	public void updateFonts() {
+		for(DockPanel panel : dockPanels) {
+			panel.updateFonts();
+		}
+	}
+	
+	/**
 	 * Scale the split panes based upon the given X and Y scale. This is used to keep relative
 	 * dimensions of the split panes if the user is switching between applet and frame mode. 
 	 * 

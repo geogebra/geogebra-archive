@@ -270,8 +270,8 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 
 
-					InputDialogOpTable dialog = new InputDialogOpTable(view,app,null);
-					dialog.setVisible(true);
+					//InputDialogOpTable dialog = new InputDialogOpTable(view,app,null);
+					//dialog.setVisible(true);
 					//cp.createOperationTable(selectedCellRanges.get(0), null);
 				}
 			});	 
