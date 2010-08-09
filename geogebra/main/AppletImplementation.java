@@ -347,13 +347,14 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 *  elements (jar packages and classes) are not loaded.
 	 */
 	public boolean needsGui() {
-		return showOpenButton
+		return true;
+		/*return showOpenButton
 			|| showAlgebraInput
 			|| showToolBar
 			|| showMenuBar
 			|| enableRightClick
 			|| showFrame 
-			|| showOpenButton;
+			|| showOpenButton;*/
 	}
 
 	public void initGUI() {		
