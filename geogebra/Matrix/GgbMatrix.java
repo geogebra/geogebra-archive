@@ -20,9 +20,6 @@ import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 
-
-
-
 /**
  * Simple matrix description with basic linear algebra methods.
  * 

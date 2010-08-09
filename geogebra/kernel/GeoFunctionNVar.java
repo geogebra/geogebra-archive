@@ -425,16 +425,18 @@ implements FunctionalNVar, CasEvaluableFunction {
 	 * @param u 
 	 * @param v 
 	 * @return coords of the point (u,v,f(u,v)) */
-	 public GgbVector evaluatePoint(double u, double v){
+		 public GgbVector evaluatePoint(double u, double v){
 
-		 GgbVector p = new GgbVector(3);
-		 p.set(1, u);
-		 p.set(2, v);
-		 p.set(3, fun.evaluate(new double[] {u,v}));
+			 GgbVector p = new GgbVector(3);
+			 double val = fun.evaluate(new double[] {u,v});
+			 p.set(1, u);
+			 p.set(2, v);
+			 p.set(3, val);
+//			 p.set(3, Double.isNaN(val)?0:val);
 
-		 return p;
+			 return p;
 
-	 }
+		 }
 	 
 
 

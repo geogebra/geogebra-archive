@@ -227,11 +227,10 @@ public class CurveTree {
 //		GgbVector3D dp1 = p2.sub(p1);
 //		GgbVector3D dp2 = p3.sub(p2);
 //		
-//		double pCosAng = dp1.normalized().dotproduct(dp2.normalized());
-		
-		double x1 = p2.x-p1.x; double x2 = p3.x-p2.x;
-		double y1 = p2.y-p1.y; double y2 = p3.y-p2.y;
-		double z1 = p2.z-p1.z; double z2 = p3.z-p2.z;
+//		double pCosAng = dp1.normalized().dotproduct(dp2.normalized())
+		double x1 = p2.getX()-p1.getX(); double x2 = p3.getX()-p2.getX();
+		double y1 = p2.getY()-p1.getY(); double y2 = p3.getY()-p2.getY();
+		double z1 = p2.getZ()-p1.getZ(); double z2 = p3.getZ()-p2.getZ();
 		double pCosAng = (x1*x2+y1*y2+z1*z2)/Math.sqrt((x1*x1+y1*y1+z1*z1)*(x2*x2+y2*y2+z2*z2));
 		
 		if( pCosAng < pCosThreshold || Double.isNaN(pCosAng))

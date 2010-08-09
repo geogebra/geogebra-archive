@@ -388,12 +388,12 @@ public class PlotterBrush {
 	}
 	
 	/** adds the point with the specified position and tangent to the curve currently being drawn.
-	 * @param position
-	 * @param tangent
+	 * @param p the point's position vector
+	 * @param t the tangent at the point
 	 */
 	public void addPointToCurve3D(GgbVector3D p, GgbVector3D t){
-		GgbVector position = new GgbVector(p.x,p.y,p.z,0);
-		GgbVector tangent = new GgbVector(t.x,t.y,t.z,0);
+		GgbVector position = new GgbVector(p.getX(),p.getY(),p.getZ(),0);
+		GgbVector tangent = new GgbVector(t.getX(),t.getY(),t.getZ(),0);
 		if(firstCurvePoint){
 			end = new PlotterBrushSection(position, tangent, thickness);
 			firstCurvePoint=false;

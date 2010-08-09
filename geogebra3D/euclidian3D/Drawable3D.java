@@ -239,8 +239,6 @@ public abstract class Drawable3D extends DrawableND {
 		if (getGeoElement().isGeoPolygon())
 			Application.debug(getGeoElement()+"\n waitForUpdate="+waitForUpdate);
 			*/
-		
-		realtimeUpdate();
 
 		if (waitForUpdate){
 			updateForItSelf();
@@ -259,6 +257,7 @@ public abstract class Drawable3D extends DrawableND {
 			labelWaitForUpdate = false;
 		}
 		
+		realtimeUpdate();
 	}
 	
 	

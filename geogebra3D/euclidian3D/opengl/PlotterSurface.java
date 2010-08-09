@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.GeoFunctionNVar;
+import geogebra3D.euclidian3D.SurfaceMesh;
 
 /** Class for drawing surfaces.
  * @author matthieu
@@ -198,13 +199,7 @@ public class PlotterSurface {
 	/** 
 	 * draw part of the surface
 	 */
-	public void draw(SurfaceTree2 tree){
-		/*FloatBuffer d = tree.getFirstTriangle();
-		drawTriangle(d);
-		while(tree.hasMoreTriangles()){
-			d = tree.getNextTriangle();
-			drawTriangle(d);
-		}*/
+	public void draw(SurfaceMesh tree){
 		
 		FloatBuffer b1 = tree.getVertices();
 		FloatBuffer b2 = tree.getNormals();
@@ -215,11 +210,9 @@ public class PlotterSurface {
 		float vT = getTextureCoord(1, vNb, vMinFadeNb, vMaxFadeNb);	
 		manager.texture(uT, vT);
 		float[] f = new float[9]; float[] n = new float[9];
-		GgbVector no;
 		b1.rewind(); b2.rewind();
 		for(int i = 0; i < cnt; i++) {
 			b1.get(f);b2.get(n);
-			//no=calcNormal(f[0],f[1],f[2]);
 			manager.normal(n[0],n[1],n[2]);
 			manager.vertex(f[0],f[1],f[2]);
 			manager.normal(n[3],n[4],n[5]);
@@ -303,3 +296,5 @@ public class PlotterSurface {
 	
 
 }
+
+

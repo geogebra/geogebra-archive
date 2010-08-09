@@ -28,6 +28,10 @@ import geogebra.main.Application;
  */
 public class GgbVector
 	extends GgbMatrix{
+
+	private double norm, sqNorm;
+	private boolean calcNorm = true;
+	private boolean calcSqNorm = true;
 	
 	///////////////////////////////////////////////////:
 	//Constructors 
@@ -48,8 +52,21 @@ public class GgbVector
 		super(vals.length,1);
 		
 		for (int i=0;i<vals.length;i++)
-			set(i+1,vals[i]);
+			val[i]=vals[i];
 		
+	}
+	
+	/** creates a 3D vector with the specified values
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param w
+	 */
+	public GgbVector(double x, double y, double z){
+		super(4,1);
+		val[0]=x;
+		val[1]=y;
+		val[2]=z;
 	}
 	
 	/** creates a 3D vector/point with the specified values
@@ -60,10 +77,10 @@ public class GgbVector
 	 */
 	public GgbVector(double x, double y, double z, double w){
 		super(4,1);
-		set(1,x);
-		set(2,y);
-		set(3,z);
-		set(4,w);
+		val[0]=x;
+		val[1]=y;
+		val[2]=z;
+		val[3]=w;
 	}
 	
 	///////////////////////////////////////////////////:
@@ -73,7 +90,8 @@ public class GgbVector
 	 * @param val0 value 
 	 */
 	public void set(int i, double val0){
-		set(i,1,val0);
+		val[i-1]=val0;
+		calcNorm=calcSqNorm=true;
 	}
 
 	/** sets v to vals0 
@@ -82,68 +100,73 @@ public class GgbVector
 	public void set(double[] vals0){
 		//Application.debug("-------------vals0.length = "+vals0.length);
 		for (int i=0;i<vals0.length;i++)
-			set(i+1,vals0[i]);
+			val[i]=vals0[i];
 		
+		calcNorm=calcSqNorm=true;
 	}
 	
 	/** returns v(i)  
 	 * @param i number of the row
 	 * @return value*/
 	public double get(int i){
-		return get(i,1);
+		return 	val[i-1];
 		
 	}
 	
 	/** returns v "x-coord"  
 	 * @return x-coord*/	
 	public double getX(){
-		return get(1);
+		return val[0];
 	}
 	
 	/** returns v "y-coord"  
 	 * @return y-coord*/	
 	public double getY(){
-		return get(2);
+		return val[1];
 	}
 	
 	/** returns v "z-coord"  
 	 * @return z-coord*/	
 	public double getZ(){
-		return get(3);
+		return val[2];
 	}	
 	
 	/** returns v "w-coord"  
 	 * @return w-coord*/	
 	public double getW(){
-		return get(4);
+		return val[3];
 	}
 	
 	/** sets the "x-coord" 
 	 * @param val
 	 */
 	public void setX(double val){
-		set(1,val);
+		this.val[0]=val;
+		calcNorm=calcSqNorm=true;
 	}
 	
 	/** sets the "y-coord" 
 	 * @param val
 	 */
 	public void setY(double val){
-		set(2,val);
+		this.val[1]=val;
+		calcNorm=calcSqNorm=true;
 	}
 
 	/** sets the "z-coord" 
 	 * @param val
 	 */
 	public void setZ(double val){
-		set(3,val);
+		this.val[2]=val;
+		calcNorm=calcSqNorm=true;
 	}
 
 	/** sets the "w-coord" 
 	 * @param val
 	 */
 	public void setW(double val){
-		set(4,val);
+		this.val[3]=val;
+		calcNorm=calcSqNorm=true;
 	}
 
 	/** returns number of rows of the vector 
@@ -160,11 +183,9 @@ public class GgbVector
 	 */
 	public GgbVector copyVector(){ 
 		
-		GgbVector result = new GgbVector(getRows()); 
-
-		for(int i=1;i<=result.getRows();i++){
-			result.set(i,get(i));
-		}
+		GgbVector result = new GgbVector(rows);
+		for(int i=0;i<rows;i++)
+			result.val[i]=val[i];
 		
 		return result;
 				
@@ -176,12 +197,11 @@ public class GgbVector
 	 * @return vector with rows between start and end 
 	 */
 	public GgbVector subVector(int start, int end){ 
-		
-		GgbVector result = new GgbVector(end-start+1); 
+		int r = end-start+1;
+		GgbVector result = new GgbVector(r); 
 
-		for(int i=1;i<=result.getRows();i++){
-			result.set(i,get(start+i-1));
-		}
+		for(int i=0;i<r;i++)
+			result.val[i]=val[start+i-1];
 		
 		return result;
 				
@@ -192,15 +212,15 @@ public class GgbVector
 	 * @return vector composed of this without the row number row  
 	 */
 	public GgbVector subVector(int row){ 
-		
-		GgbVector result = new GgbVector(this.getRows()-1); 
+		int r = rows;
+		GgbVector result = new GgbVector(r-1); 
 
 		int shift = 0;
-		for(int i=1;i<=getRows();i++){
+		for(int i=0;i<r;i++){
 			if (i==row)
 				shift = 1;
 			else
-				result.set(i,get(i+shift));
+				result.val[i]=val[i+shift];
 		}
 		
 		return result;
@@ -216,12 +236,11 @@ public class GgbVector
 	 * @param v vector multiplied with
 	 * @return value of the dot product*/
 	public double dotproduct(GgbVector v){
-		
-		GgbMatrix v1 = this.transposeCopy();
-		GgbMatrix m = v1.mul(v);
-
-		return m.get(1,1);
-		
+		int len = getLength();
+		double res = 0;
+		for(int i=0;i<len; i++)
+			res+=val[i]*v.val[i];
+		return res;
 	}
 	
 	/** returns cross product this * v.
@@ -233,16 +252,15 @@ public class GgbVector
 	 */
 	public GgbVector crossProduct(GgbVector v){
 		
-		GgbVector ret = new GgbVector(3); 
+		GgbVector ret = new GgbVector(3);
 		
-		ret.set(1, this.get(2)*v.get(3)-this.get(3)*v.get(2));
-		ret.set(2, this.get(3)*v.get(1)-this.get(1)*v.get(3));
-		ret.set(3, this.get(1)*v.get(2)-this.get(2)*v.get(1));
+		ret.val[0] = val[1]*v.val[2]-val[2]*v.val[1];
+		ret.val[1] = val[2]*v.val[0]-val[0]*v.val[2];
+		ret.val[2] = val[0]*v.val[1]-val[1]*v.val[0];
 		
 		return ret;
 	}
-	
-	
+
 	
 	/** returns the scalar norm.
 	 * <p>
@@ -250,8 +268,11 @@ public class GgbVector
 	 * Same result as Math.sqrt(this.dotproduct(this))
 	 * @return the scalar norm*/
 	public double norm(){
-		
-		return Math.sqrt(this.dotproduct(this));
+		if(calcNorm){
+			norm=Math.sqrt(this.dotproduct(this));
+			calcNorm=false;
+		}
+		return norm;
 	}
 	
 	/** returns the square of the scalar norm.
@@ -260,7 +281,11 @@ public class GgbVector
 	 * Same result as this.dotproduct(this)
 	 * @return the scalar norm*/
 	public double squareNorm(){
-		return this.dotproduct(this);
+		if(calcSqNorm){
+			sqNorm=this.dotproduct(this);
+			calcSqNorm=false;
+		}
+		return sqNorm;
 	}
 	
 	/** returns this normalized 
@@ -269,24 +294,26 @@ public class GgbVector
 	public GgbVector normalized(){
 		
 		GgbVector ret = new GgbVector(getLength());
-		double norm = this.norm();
-		for (int i=1; i<=getLength(); i++){
-			ret.set(i,get(i)/norm);
-		}
+		double normInv = 1/this.norm();
+		int len = getLength();
+		for (int i=0; i<len; i++)
+			ret.val[i]=val[i]*normInv;
 		
 		return ret;
 	}
 	
 	
 	/** normalize this */
-	public void normalize(){
+	public GgbVector normalize(){
 		
-		double norm = this.norm();
-		for (int i=1; i<=getLength(); i++){
-			this.set(i,get(i)/norm);
-		}
+		double normInv = 1/this.norm();
+		int len = getLength();
+		for (int i=0; i<len; i++)
+			val[i]*=normInv;
+
+		norm=sqNorm=1.0;
 		
-	
+		return this;
 	}
 	
 	
@@ -457,13 +484,11 @@ public class GgbVector
 	public GgbVector sub(GgbVector v){
 		int i;
 		GgbVector result=new GgbVector(rows);
-		for (i=1;i<=rows;i++){
-			result.set(i,this.get(i)-v.get(i));
-		}
+		for (i=0;i<rows;i++)
+			result.val[i]=val[i]-v.val[i];
+
 		return result;
 	}
-	
-
 	
 	/** returns n-1 length vector, all coordinates divided by the n-th.
 	 * <p>
@@ -471,11 +496,13 @@ public class GgbVector
 	 * @return {x1/xn,x2/xn,...,x(n-1)/xn}
 	 */
 	public GgbVector getInhomCoords(){
-		GgbVector result=new GgbVector(getLength()-1);
-		int i;
-		for (i=1;i<getLength();i++){
-			result.set(i,get(i)/get(getLength()));
-		}
+		int r = rows;
+		GgbVector result=new GgbVector(r-1);
+
+		double wdiv = 1/val[r-1];
+		for (int i=0;i<r-1;i++)
+			result.val[i]=val[i]*wdiv;
+
 		return result;
 	}
 
@@ -484,22 +511,17 @@ public class GgbVector
 	 * If this={x1,x2,xn}, it returns {x1/xn,x2/xn,...,1}
 	 * @return {x1/xn,x2/xn,...,1}*/
 	public GgbVector getCoordsLast1(){
-		GgbVector result=new GgbVector(getLength());
-		int i;
-		double lastCoord = get(getLength());
-		if (lastCoord!=0.0)
-			for (i=1;i<=getLength();i++){
-				result.set(i,get(i)/lastCoord);
-			}
-		else
+		int len = getLength();
+		GgbVector result=new GgbVector(len);
+		double lastCoord = val[len-1];
+		if (lastCoord!=0.0){
+			double lastCoordInv=1/lastCoord;
+			for (int i=0;i<len;i++)
+				result.val[i]=val[i]*lastCoordInv;
+		} else
 			result.set(this);
 		return result;
 	}
-	
-	
-	
-	
-	
 	
 	/**
 	 * Return true if this==v for the precision given (ie each coordinates are not different more than precision).
@@ -508,13 +530,12 @@ public class GgbVector
 	 * @return true if the vectors are equal
 	 */
 	public boolean equalsForKernel(GgbVector v, double precision){
-		
-		for(int i=1;i<=getLength();i++)
-			if (!Kernel.isEqual(this.get(i), v.get(i), precision))
+		int len = getLength();
+		for(int i=0;i<len;i++)
+			if (!Kernel.isEqual(val[i], v.val[i], precision))
 				return false;
 		
 		return true;
-		
 	}
 	
 	/**
@@ -524,32 +545,31 @@ public class GgbVector
 	 * @return true if all coordinates are not different from val more than precision.
 	 */
 	public boolean equalsForKernel(double val, double precision){
-		
-		for(int i=1;i<=getLength();i++)
-			if (!Kernel.isEqual(this.get(i), val, precision))
+		int len = getLength();
+		for(int i=0;i<len;i++)
+			if (!Kernel.isEqual(this.val[i], val, precision))
 				return false;
 		
 		return true;
 		
 	}
 	
-	
-	public GgbVector[] completeOrthonormal(){
+	public GgbVector[] completeOrthonormal() {
 		GgbVector vn1 = new GgbVector(4);
 		GgbVector vn2 = new GgbVector(4);
-		
-		if (getX()!=0){
-			vn1.setX(-getY());
-			vn1.setY(getX());
+
+		if (val[0] != 0) {
+			vn1.val[0] = -val[1];
+			vn1.val[1] = val[0];
 			vn1.normalize();
-		}else{
-			vn1.setX(1);
+		} else {
+			vn1.val[0] = 1.0;
 		}
-		
+
 		vn2 = this.crossProduct(vn1);
 		vn2.normalize();
-		
-		return new GgbVector[] {vn1, vn2};
+
+		return new GgbVector[] { vn1, vn2 };
 	}
 
 	
@@ -559,14 +579,9 @@ public class GgbVector
 	public static synchronized void main(String[] args) {	
 		
 		GgbVector v1 = new GgbVector(2);
-		v1.set(1,3.0);
-		v1.set(2,4.0);
+		v1.val[0]=3.0;
+		v1.val[1]=4.0;
 		
 		Application.debug("v1.v1 = "+v1.dotproduct(v1));
-		
-		
 	}
-	
-	
-
 }

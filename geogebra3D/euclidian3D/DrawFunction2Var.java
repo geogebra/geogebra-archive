@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.opengl.SurfaceTree2;
+import geogebra3D.euclidian3D.SurfaceMesh;
 import geogebra.kernel.GeoFunctionNVar;
 
 /**
@@ -13,10 +13,20 @@ import geogebra.kernel.GeoFunctionNVar;
  */
 public class DrawFunction2Var extends Drawable3DSurfaces {
 	
-	private SurfaceTree2 tree;
+	private SurfaceMesh tree;
+	
+	private GeoFunctionNVar function;
 	
 	/** gl index of the geometry */
 	private int geometryIndex = -1;
+	
+	private boolean unlimitedRange=true;
+	
+	private double lastBaseRadius;
+	
+	private static final double unlimitedScaleFactor = 2.0;
+	
+	private double savedRadius;
 
 
 	/**
@@ -26,8 +36,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	 */
 	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunctionNVar function) {
 		super(a_view3d, function);
-		updateRadius();
-		tree = new SurfaceTree2(function, a_view3d, savedRadius);
+		this.function=function;
 	}
 	
 	public void drawGeometry(Renderer renderer) {
@@ -50,11 +59,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	@Override
 	protected void realtimeUpdate(){
-		
 		Renderer renderer = getView3D().getRenderer();
 		tree.optimize();
 		renderer.getGeometryManager().remove(geometryIndex);
-		updateRadius();
 		tree.setRadius(savedRadius);
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
@@ -80,14 +87,14 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		double z1 = temp.getFront();
 		double z2 = temp.getBack();
 		GgbVector [] v = new GgbVector[8];
-		v[0] = new GgbVector(x1,y1,z1,0);
-		v[1] = new GgbVector(x1,y2,z1,0);
-		v[2] = new GgbVector(x1,y1,z2,0);
-		v[3] = new GgbVector(x1,y2,z2,0);
-		v[4] = new GgbVector(x2,y1,z1,0);
-		v[5] = new GgbVector(x2,y2,z1,0);
-		v[6] = new GgbVector(x2,y1,z2,0);
-		v[7] = new GgbVector(x2,y2,z2,0);
+		v[0] = new GgbVector(x1,y1,z1);
+		v[1] = new GgbVector(x1,y2,z1);
+		v[2] = new GgbVector(x1,y1,z2);
+		v[3] = new GgbVector(x1,y2,z2);
+		v[4] = new GgbVector(x2,y1,z1);
+		v[5] = new GgbVector(x2,y2,z1);
+		v[6] = new GgbVector(x2,y1,z2);
+		v[7] = new GgbVector(x2,y2,z2);
 
 		savedRadius=0;
 		double norm;
@@ -100,31 +107,30 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		savedRadius*=0.65;
 	}
 	
-	private double savedRadius;
-	
 	protected void updateForItSelf(){
-		super.updateForItSelf();
-		
-		/*Renderer renderer = getView3D().getRenderer();
+		updateRadius();
+		if(unlimitedRange){
+			lastBaseRadius=savedRadius*unlimitedScaleFactor;
+			tree = new SurfaceMesh(function, lastBaseRadius, true);
+		} else
+			tree = new SurfaceMesh(function, savedRadius, false);
 
-		if(needRedraw()){
-			renderer.getGeometryManager().remove(geometryIndex);
-			tree.setRadius(savedRadius);
-			
-			PlotterSurface surface = renderer.getGeometryManager().getSurface();
-			GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
-			surface.start(geo);
-			surface.setU((float) geo.getMinParameter(0), (float) geo.getMaxParameter(0));
-			surface.setNbU((int) ((geo.getMaxParameter(0)-geo.getMinParameter(0))*10));
-			surface.setV((float) geo.getMinParameter(1), (float) geo.getMaxParameter(1));
-			surface.setNbV((int) ((geo.getMaxParameter(1)-geo.getMinParameter(1))*10));
-			surface.draw(tree);
-			geometryIndex=surface.end();
-		}*/
-		
+		super.updateForItSelf();
 	}
 	
 	protected void updateForView(){
+		updateRadius();
+		if(unlimitedRange && savedRadius>lastBaseRadius){
+			lastBaseRadius=savedRadius*unlimitedScaleFactor;
+			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
+								 new double [] {-lastBaseRadius,lastBaseRadius});
+			tree = new SurfaceMesh(function, lastBaseRadius, true);
+		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
+			lastBaseRadius=savedRadius/unlimitedScaleFactor;
+			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
+								 new double [] {-lastBaseRadius,lastBaseRadius});
+			tree = new SurfaceMesh(function, lastBaseRadius, true);
+		}
 	}
 
 	public int getPickOrder() {
