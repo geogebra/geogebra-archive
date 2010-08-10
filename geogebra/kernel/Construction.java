@@ -31,7 +31,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 
-import org.mathpiper.builtin.functions.core.IsDecimal;
 
 /**
  * A Construction consists of a construction list with objects of type

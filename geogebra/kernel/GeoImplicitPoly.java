@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.mathpiper.builtin.library.jas.JasPolynomial;
-
 import edu.jas.poly.GenPolynomial;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
