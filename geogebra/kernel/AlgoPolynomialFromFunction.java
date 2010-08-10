@@ -72,7 +72,7 @@ public class AlgoPolynomialFromFunction extends AlgoElement {
 			getExpression().getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, false);    		
 		
         // expand expression and get polynomial coefficients
-        String [] strCoeffs = kernel.getPolynomialCoeffs(function, "x");
+        String [] strCoeffs = kernel.getPolynomialCoeffs(function, f.getFunction().getFunctionVariable().toString());
         if (strCoeffs == null) {
         	 g.setDefined(false);
         	 return;

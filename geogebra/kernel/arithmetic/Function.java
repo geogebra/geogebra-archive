@@ -525,7 +525,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                 
         // get coefficients as strings
         String function = node.getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, symbolic);        
-        String [] strCoeffs = kernel.getPolynomialCoeffs(function, "x");
+        String [] strCoeffs = kernel.getPolynomialCoeffs(function, fVars[0].toString());
         if (strCoeffs == null)
 			// this is not a valid polynomial           
             return null;
