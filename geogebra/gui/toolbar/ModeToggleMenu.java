@@ -52,6 +52,8 @@ public class ModeToggleMenu extends JPanel {
 	private Application app;
 	int size;
 	
+	final static Color bgColor = Color.white;
+	
 	public ModeToggleMenu(Application app, ModeToggleButtonGroup bg) {
 		this.app = app;
 		this.bg = bg;
@@ -62,7 +64,8 @@ public class ModeToggleMenu extends JPanel {
 		tbutton.setAlignmentY(BOTTOM_ALIGNMENT);
 		add(tbutton);
 		
-		popMenu = new JPopupMenu();		
+		popMenu = new JPopupMenu();	
+		popMenu.setBackground(bgColor);
 		menuItemList = new ArrayList();
 		popupMenuItemListener = new MenuItemListener();
 		size = 0;
@@ -116,6 +119,7 @@ public class ModeToggleMenu extends JPanel {
 		// add menu item to popu menu
 		JMenuItem mi = new JMenuItem();		
 		mi.setFont(app.getPlainFont());
+		mi.setBackground(bgColor);
 		
 		// tool name as text
 		mi.setText(app.getToolName(mode));				
