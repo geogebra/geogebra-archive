@@ -228,9 +228,16 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		}
 	}
 	
-	
-	
-	
+
+
+	private double evaluateExpression(String expr){
+
+		NumberValue nv;
+		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);	
+
+		return nv.getDouble();
+	}
+
 	
 
 	
@@ -383,74 +390,25 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		String text = "";
 	
 		double buffer = .25*(xMaxData - xMinData);	
-		
-		
-		// create dotplot text
-		// note: the data list must be sorted low to high
-		int maxCount = 1;
-		text = "{";
-		if(dataList.size()>0){
-			text += "(" + ((GeoNumeric)dataList.get(0)).getDouble() + ", 1)";
-			int k = 1;
-			for (int i = 1; i < dataList.size(); ++i){
-				//System.out.println(((GeoNumeric)dataList.get(i)).getDouble()); 
-				if(((GeoNumeric)dataList.get(i-1)).getDouble() == ((GeoNumeric)dataList.get(i)).getDouble() ) 
-					++k;
-				else
-					k = 1;
-
-				text += ",(" + ((GeoNumeric)dataList.get(i)).getDouble() + "," + k + ")";
-				maxCount = maxCount < k ? k : maxCount;
-			}
+			
+		GeoElement tempGeo = null;
+		if(doCreate){
+			text = "DotPlot[" + label + "]";
+			tempGeo  = createGeoFromString(text);
+			tempGeo.setObjColor(StatDialog.DOTPLOT_COLOR);
+			tempGeo.setAlphaValue(0.25f);
 		}
-		text += "}";	
 		
 		
-/*
-		// create dotplot text
-		HashMap<Double,Integer> map = new HashMap<Double,Integer>();
-		
-		int maxCount = 1;
-		double d;
-		StringBuilder sb = new StringBuilder("{");
-		if(dataList.size()>0){
-			int k = 1;
-			for (int i = 1; i < dataList.size(); ++i){
-				d = ((GeoNumeric)dataList.get(i)).getDouble();
-				if( map.containsKey(d)){
-					map.put(d, map.get(d)+1);
-				}else{
-					map.put(d, 1);
-				}
-				sb.append( "(" + d + "," + map.get(d) + "),");
-				maxCount = maxCount < map.get(d) ? map.get(d) : maxCount;
-			}
-		}
-		sb.deleteCharAt(sb.length()-1);
-		sb.append("}");	
-		map.clear();	
-
-		//System.out.println(sb.toString());
-*/
-		 
-		 
 		// set view parameters		
 		xMinEV = xMinData - buffer;
 		xMaxEV = xMaxData + buffer;
 		yMinEV = -1.0;
-		yMaxEV = maxCount + 1;
+		yMaxEV = evaluateExpression("Max[y(" + tempGeo.getLabel() +  ")]") + 1;
 		showYAxis = false;
 		forceXAxisBuffer = true;
 		setEVParams();	
-		
-		// create geo
-		//if(doCreate){
-			plotGeo = createGeoFromString(text);
-	//	}
-			plotGeo.setObjColor(StatDialog.DOTPLOT_COLOR);
-			plotGeo.setAlphaValue(0.25f);
-	
-		
+			
 	}
 	
 	
