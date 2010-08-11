@@ -3583,6 +3583,30 @@ class CmdHistogram extends CommandProcessor {
 	}
 }
 
+
+
+
+
+/*
+ * DotPlot[ <List of Numeric> ]
+ * G.Sturr 2010-8-10
+ */
+class CmdDotPlot extends CmdOneListFunction {
+
+	public CmdDotPlot(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.DotPlot(a, b);
+	}
+
+}
+
+
+
+
 /*
  * LowerSum[ <GeoFunction>, <Number>, <Number>, <Number> ]
  */

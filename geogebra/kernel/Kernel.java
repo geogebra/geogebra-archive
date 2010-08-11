@@ -2718,6 +2718,18 @@ public class Kernel {
 		return sum;
 	}
 	
+	
+	/** 
+	 * DotPlot
+	 * G.Sturr 2010-8-10
+	 */
+	final public GeoList DotPlot(String label, GeoList list) {
+		AlgoDotPlot algo = new AlgoDotPlot(cons, label, list);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	
 	/** 
 	 * UpperSum of function f 
 	 */
