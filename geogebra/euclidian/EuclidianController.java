@@ -6645,7 +6645,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setColor(Color color) {
 		penColor = color;
 		
-		if (mode == EuclidianView.MODE_VISUAL_STYLE) {
+//		if (mode == EuclidianView.MODE_VISUAL_STYLE) {
 			ArrayList geos = app.getSelectedGeos();
 			
 			for (int i = 0 ; i < geos.size() ; i++) {
@@ -6653,7 +6653,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				geo.setObjColor(color);
 				geo.updateRepaint();
 			}
-		}
+	//	}
 
 	}
 	

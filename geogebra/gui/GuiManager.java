@@ -196,11 +196,15 @@ public class GuiManager {
 			new DockPanel(
 					Application.VIEW_EUCLIDIAN,	// view id 
 					"DrawingPad", 				// view title
-					false,						// style bar?
+					true,						// style bar?
 					1							// menu order
 			) {
 				public ImageIcon getIcon() {
 					return app.getImageIcon("document-properties.png");
+				}
+				
+				protected JComponent loadStyleBar() {
+					return app.getEuclidianView().getEuclidianStyleBar();
 				}
 				
 				protected JComponent loadComponent() {

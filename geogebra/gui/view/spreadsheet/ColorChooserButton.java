@@ -35,7 +35,7 @@ import javax.swing.UIManager;
  * @author G. Sturr 2010-7-10
  * 
  */
-class ColorChooserButton extends JButton{
+public class ColorChooserButton extends JButton{
 
 	private ColorChooserButton btn;
 	private ColorChooserPopup myPopup;
@@ -131,15 +131,18 @@ class ColorChooserButton extends JButton{
 		//g2.setColor(Color.DARK_GRAY);
 		//g2.drawLine(18, 0, 18, getHeight());
 
+		
+		
 		// right hand side: a downward triangle
 		// a click here triggers the popup
 		g2.setColor(Color.BLACK);
-		int x = 22;
-		int y = 8;
-		g2.drawLine(x, y, x+4, y);
-		g2.drawLine(x+1, y+1, x+3, y+1);
-		g2.drawLine(x+2, y+2, x+2, y+2);
-
+		int x = 23;
+		int y = 7;
+		g2.drawLine(x, y, x+6, y);
+		g2.drawLine(x+1, y+1, x+5, y+1);
+		g2.drawLine(x+2, y+2, x+4, y+2);
+		g2.drawLine(x+3, y+3, x+3, y+3);
+		
 		return new ImageIcon(image);	
 
 	}

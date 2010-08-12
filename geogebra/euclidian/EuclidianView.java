@@ -13,6 +13,7 @@
 package geogebra.euclidian;
 
 import geogebra.euclidian.DrawableList.DrawableIterator;
+import geogebra.gui.EuclidianStyleBar;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoIntegralDefinite;
@@ -447,6 +448,21 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public Application getApplication() {
 		return app;
 	}
+	
+	
+	/** 
+	 * Get styleBar 
+	 */
+	EuclidianStyleBar styleBar;
+	public EuclidianStyleBar getEuclidianStyleBar(){
+		if(styleBar==null){
+			styleBar = new EuclidianStyleBar(app);
+		}
+		
+		return styleBar;
+	}
+	
+	
 	
 	public void updateRightAngleStyle(Locale locale) {				
 		// change rightAngleStyle for German to
@@ -1834,8 +1850,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	//=================================================================
 	
 	// new global vars to control axes (should be set from options menu)
-	private double xCross = 0.0;
-	private boolean positiveY = false;
+	public double xCross = 0.0;
+	public boolean positiveY = false;
 	
 	
 	final void drawAxes(Graphics2D g2) {
