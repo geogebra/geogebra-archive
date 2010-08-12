@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.Drawable;
+import geogebra.gui.ColorChooserButton;
 import geogebra.main.Application;
 
 import java.awt.Color;

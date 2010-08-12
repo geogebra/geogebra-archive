@@ -1,7 +1,5 @@
-package geogebra.gui.view.spreadsheet;
+package geogebra.gui;
 
-
-import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,18 +10,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
 
 /**
  * Button with popup component for choosing colors. A mouse click on the left

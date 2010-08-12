@@ -13,7 +13,6 @@
 package geogebra.euclidian;
 
 import geogebra.euclidian.DrawableList.DrawableIterator;
-import geogebra.gui.EuclidianStyleBar;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoIntegralDefinite;

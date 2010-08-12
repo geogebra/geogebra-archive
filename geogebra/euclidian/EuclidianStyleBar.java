@@ -1,10 +1,7 @@
-package geogebra.gui;
+package geogebra.euclidian;
 
-import geogebra.euclidian.EuclidianController;
-import geogebra.euclidian.EuclidianView;
-import geogebra.euclidian.PropertiesPanelMiniListener;
+import geogebra.gui.ColorChooserButton;
 import geogebra.gui.view.spreadsheet.CellFormat;
-import geogebra.gui.view.spreadsheet.ColorChooserButton;
 import geogebra.main.Application;
 
 import java.awt.Color;
