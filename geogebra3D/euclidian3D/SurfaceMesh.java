@@ -6,9 +6,6 @@ import java.util.Date;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra3D.euclidian3D.TriList;
 
-//TODO: replace periodic arrangement with null pointers
-//TODO: use simpler base mesh and implement expand()
-
 /**
  * @author André Eriksson
  */
@@ -39,7 +36,9 @@ public class SurfaceMesh {
 	public static final double normalDelta = 1e-8;
 
 	//if true error, triangle count and update time is printed each update
-	private static final boolean printInfo = false;
+	private static final boolean printInfo = true;
+	
+	private boolean doUpdates = true;
 	
 	/**
 	 * An enum for describing the culling status of a diamond
@@ -60,6 +59,13 @@ public class SurfaceMesh {
 	public void setRadius(double r) {
 		radSq = r * r;
 	}
+	
+	/**
+	 * forces the mesh to resume updates if it has stopped
+	 */
+	public void turnOnUpdates(){
+		doUpdates=true;
+	}
 
 	/**
 	 * @param function
@@ -75,7 +81,7 @@ public class SurfaceMesh {
 			initMesh(-radSq, radSq, -radSq, radSq);
 		else
 			initMesh(function.getMinParameter(0), function.getMaxParameter(0),
-					function.getMinParameter(1), function.getMaxParameter(1));
+					 function.getMinParameter(1), function.getMaxParameter(1));
 		baseDiamond.addToSplitQueue();
 		optimizeSub(initialRefinement);
 	}
@@ -180,7 +186,8 @@ public class SurfaceMesh {
 	 * Performs a set number (stepRefinement) of splits/merges
 	 */
 	public void optimize() {
-		optimizeSub(stepRefinement);
+		if(doUpdates)
+			optimizeSub(stepRefinement);
 	}
 
 	private void optimizeSub(int maxCount) {
@@ -203,6 +210,10 @@ public class SurfaceMesh {
 			}
 			count++;
 		}
+		
+		if(count<maxCount)		//this only happens if the LoD
+			doUpdates=false;	//is at the desired level
+		
 		if (printInfo)
 			System.out.println(this.function + ":\tupdate time: "
 					+ (new Date().getTime() - t1) + "ms\ttriangles: "

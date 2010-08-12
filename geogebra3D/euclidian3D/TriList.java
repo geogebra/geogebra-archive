@@ -33,8 +33,8 @@ public class TriList {
 	 */
 	TriList(int capacity, int marigin){
 		this.capacity=capacity;
-		vertexBuf=FloatBuffer.allocate(capacity*9);
-		normalBuf = FloatBuffer.allocate(capacity*9);
+		vertexBuf=FloatBuffer.allocate((capacity+marigin)*9);
+		normalBuf = FloatBuffer.allocate((capacity+marigin)*9);
 	}
 	
 	/** 

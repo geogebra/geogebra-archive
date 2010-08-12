@@ -5,7 +5,6 @@ import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.SurfaceMesh;
 import geogebra.kernel.GeoFunctionNVar;
-import geogebra.main.Application;
 
 /**
  * Class for drawing a 2-var function
@@ -14,14 +13,14 @@ import geogebra.main.Application;
  */
 public class DrawFunction2Var extends Drawable3DSurfaces {
 	
-	private SurfaceMesh tree;
+	private SurfaceMesh mesh;
 	
 	private GeoFunctionNVar function;
 	
 	/** gl index of the geometry */
 	private int geometryIndex = -1;
 	
-	private boolean unlimitedRange;//=true;
+	private boolean unlimitedRange;
 	
 	private double lastBaseRadius;
 	
@@ -67,9 +66,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	@Override
 	protected void realtimeUpdate(){
 		Renderer renderer = getView3D().getRenderer();
-		tree.optimize();
+		mesh.optimize();
 		renderer.getGeometryManager().remove(geometryIndex);
-		tree.setRadius(savedRadius);
+		mesh.setRadius(savedRadius);
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
 		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
@@ -90,7 +89,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		surface.setV(vMin, vMax);
 		surface.setNbV((int) (vMax-vMin)*10);
 
-		surface.draw(tree);
+		surface.draw(mesh);
 		geometryIndex=surface.end();
 	}
 	
@@ -130,26 +129,28 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		updateRadius();
 		if(unlimitedRange){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
-			tree = new SurfaceMesh(function, lastBaseRadius, true);
+			mesh = new SurfaceMesh(function, lastBaseRadius, true);
 		} else
-			tree = new SurfaceMesh(function, savedRadius, false);
+			mesh = new SurfaceMesh(function, savedRadius, false);
 
 		super.updateForItSelf();
 	}
 	
 	protected void updateForView(){
+		double oldRadius = savedRadius;
 		updateRadius();
 		if(unlimitedRange && savedRadius>lastBaseRadius){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
-			tree = new SurfaceMesh(function, lastBaseRadius, true);
+			mesh = new SurfaceMesh(function, lastBaseRadius, true);
 		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
 			lastBaseRadius=savedRadius/unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
-			tree = new SurfaceMesh(function, lastBaseRadius, true);
-		}
+			mesh = new SurfaceMesh(function, lastBaseRadius, true);
+		} else if(oldRadius!=savedRadius)
+			mesh.turnOnUpdates();
 	}
 
 	public int getPickOrder() {
