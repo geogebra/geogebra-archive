@@ -5,6 +5,7 @@ import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.SurfaceMesh;
 import geogebra.kernel.GeoFunctionNVar;
+import geogebra.main.Application;
 
 /**
  * Class for drawing a 2-var function
@@ -20,7 +21,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	/** gl index of the geometry */
 	private int geometryIndex = -1;
 	
-	private boolean unlimitedRange=true;
+	private boolean unlimitedRange;//=true;
 	
 	private double lastBaseRadius;
 	
@@ -37,6 +38,12 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunctionNVar function) {
 		super(a_view3d, function);
 		this.function=function;
+
+		if (Double.isNaN(function.getMinParameter(0))){
+			unlimitedRange=true;
+		}else{
+			unlimitedRange=false;
+		}
 	}
 	
 	public void drawGeometry(Renderer renderer) {
@@ -67,10 +74,22 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
 		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
 		surface.start(geo);
-		surface.setU((float) geo.getMinParameter(0), (float) geo.getMaxParameter(0));
-		surface.setNbU((int) ((geo.getMaxParameter(0)-geo.getMinParameter(0))*10));
-		surface.setV((float) geo.getMinParameter(1), (float) geo.getMaxParameter(1));
-		surface.setNbV((int) ((geo.getMaxParameter(1)-geo.getMinParameter(1))*10));
+		
+		float uMin, uMax, vMin, vMax;
+		if (unlimitedRange){
+			uMin = -1; uMax = 1; vMin = -1; vMax = 1;
+		}else{
+			uMin = (float) geo.getMinParameter(0);
+			uMax = (float) geo.getMaxParameter(0);
+			vMin = (float) geo.getMinParameter(1);
+			vMax = (float) geo.getMaxParameter(1);
+		}
+		
+		surface.setU(uMin,uMax);
+		surface.setNbU((int) (uMax-uMin)*10);
+		surface.setV(vMin, vMax);
+		surface.setNbV((int) (vMax-vMin)*10);
+
 		surface.draw(tree);
 		geometryIndex=surface.end();
 	}

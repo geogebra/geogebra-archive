@@ -375,23 +375,33 @@ implements FunctionalNVar, CasEvaluableFunction {
 		// INTERVALS
 		/////////////////////////////////////////
 
-		public double getMinParameter(int index) {
-			
-			if (from==null) 
-				return -1; //TODO change for Double.NEGATIVE_INFINITY
-			
-			return from[index];
-			
-		}
-		
+	 /**
+	  * return Double.NaN if none has been set
+	  * @param index of parameter
+	  * @return min parameter
+	  */
+	 public double getMinParameter(int index) {
 
-		public double getMaxParameter(int index) {
-			
-			if (to==null)
-				return 1; //TODO change for Double.POSITIVE_INFINITY
-			
-			return to[index];
-		}
+		 if (from==null) 
+			 return Double.NaN;
+
+		 return from[index];
+
+	 }
+
+
+	 /**
+	  * return Double.NaN if none has been set
+	  * @param index of parameter
+	  * @return max parameter
+	  */
+	 public double getMaxParameter(int index) {
+
+		 if (to==null)
+			 return Double.NaN;
+
+		 return to[index];
+	 }
 
 		
 
