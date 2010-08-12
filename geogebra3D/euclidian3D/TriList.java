@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 import java.nio.FloatBuffer;
 
 /**
- * A list of triangles representing the current mesh.
+ * A list of triangles representing a triangle mesh.
  * @author André Eriksson
  */
 public class TriList {
@@ -14,8 +14,6 @@ public class TriList {
 	private int count = 0;
 	
 	private int marigin;
-	
-//	private double totalError = 0;
 	
 	/** A buffer containing data for all the triangles. Each triangle is stored
 	 *  as 9 consecutive floats (representing x/y/z values for three points).
@@ -43,11 +41,6 @@ public class TriList {
 	 * @return the current amount of triangles
 	 */
 	public int getCount() { return count; }
-
-//	/**
-//	 * @return the total error for all visible triangles
-//	 */
-//	public double getError() { return totalError; }
 	
 	/**
 	 * @return a reference to vertexBuf
@@ -175,6 +168,7 @@ public class TriList {
 	/**
 	 * removes a triangle from the list, but does not erase it
 	 * @param t any triangle in the list
+	 * @return false if the triangle is null or already hidden, otherwise true
 	 */
 	public boolean hide(TriListElem t) {
 		if(t==null || t.getIndex()==-1)
@@ -240,6 +234,7 @@ public class TriList {
 	/**
 	 * shows a triangle that has been hidden
 	 * @param t any hidden triangle in the list
+	 * @return false if the triangle is null or already visible, otherwise true
 	 */
 	public boolean show(TriListElem t) {
 		
@@ -265,7 +260,7 @@ public class TriList {
 }
 
 /**
- * A class representing a triangle in {@link DrawList}.
+ * A class representing a triangle in TriList
  * @author André Eriksson
  */
 class TriListElem{
@@ -282,14 +277,31 @@ class TriListElem{
         this.prev=prev;
 	}
 	
+	/** saves the specified vertices
+	 * @param vertices 
+	 * 			9 floats representing the three vertices of a triangle
+	 */
 	public void pushVertices(float[] vertices){ this.vertices=vertices; }
+	
+	/** saves the specified normals
+	 * @param normals 
+	 * 			9 floats representing the normals of the three 
+	 * 			vertices of a triangle
+	 */
 	public void pushNormals(float[] normals)  { this.normals =normals;  }
 	
+	/** removes and returns any saved vertices
+	 * @return the contents of vertices (supposed to be 9 floats)
+	 */
 	public float[] popVertices(){ 
 		float[] temp = vertices;
 		vertices = null;
 		return temp;
 	}
+
+	/** removes and returns any saved normals
+	 * @return the contents of normals (supposed to be 9 floats)
+	 */
 	public float[] popNormals(){ 
 		float[] temp = normals;
 		normals = null;

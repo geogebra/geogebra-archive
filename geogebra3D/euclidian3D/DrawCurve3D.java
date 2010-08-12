@@ -22,7 +22,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 	
 	private double savedRadius;
 	
-	public final double radiusMaxFactor = 1.1;
+	private final double radiusMaxFactor = 1.1;
 	private final double radiusMinFactor = 0.9;
 	
 	

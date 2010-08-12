@@ -104,7 +104,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 			if(norm>savedRadius)
 				savedRadius=norm;
 		}
-		savedRadius*=0.65;
+		savedRadius*=0.9;
 	}
 	
 	protected void updateForItSelf(){

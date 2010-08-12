@@ -18,33 +18,31 @@ public class SurfaceMesh {
 	private SplitQueue splitQueue = new SplitQueue();
 	private MergeQueue mergeQueue = new MergeQueue();
 
-	private SurfaceMeshDiamond root;
+	private SurfaceMeshDiamond baseDiamond;
 
 	private SurfTriList drawList;
 
 	private final double errorConst = .04; // desired error per area unit
 	private final int triGoal = 10000;
 	private final int minTriCount = 4000;
-	/** base diamonds - level 0 */
-	private SurfaceMeshDiamond[][] base0 = new SurfaceMeshDiamond[4][4];
-	/** base diamonds - level -1 or lower */
-	private SurfaceMeshDiamond[][] base1 = new SurfaceMeshDiamond[4][4];
 
 	private final int initialRefinement = 300;
 	private final int stepRefinement = 1000;
 
-	private double baseArea;
-	private final int maxTriangles = 200000;
+	private final int maxTriangles = 100000;
 	private final int triBufMarigin = 1000;
 
 	/** the maximum level of refinement */
 	private static final int maxLevel = 20;
+	
+	/** x/y difference used when estimating normals */
+	public static final double normalDelta = 1e-8;
 
-	private static final boolean printInfo = true;
+	//if true error, triangle count and update time is printed each update
+	private static final boolean printInfo = false;
 	
 	/**
 	 * An enum for describing the culling status of a diamond
-	 * 
 	 * @author André Eriksson
 	 */
 	public enum CullInfo {
@@ -57,8 +55,7 @@ public class SurfaceMesh {
 	};
 
 	/**
-	 * @param r
-	 *            the bounding radius of the viewing volume
+	 * @param r the bounding radius of the viewing volume
 	 */
 	public void setRadius(double r) {
 		radSq = r * r;
@@ -67,6 +64,7 @@ public class SurfaceMesh {
 	/**
 	 * @param function
 	 * @param radSq
+	 * @param unlimitedRange 
 	 */
 	public SurfaceMesh(GeoFunctionNVar function, double radSq,
 			boolean unlimitedRange) {
@@ -78,53 +76,12 @@ public class SurfaceMesh {
 		else
 			initMesh(function.getMinParameter(0), function.getMaxParameter(0),
 					function.getMinParameter(1), function.getMaxParameter(1));
-		base0[1][1].addToSplitQueue();
+		baseDiamond.addToSplitQueue();
 		optimizeSub(initialRefinement);
 	}
 
 	/**
-	 * Bootstraps a simple square mesh. Sets base0 and base1.
-	 * 
-	 * @param xMin
-	 *            the minimum x coordinate
-	 * @param xMax
-	 *            the maximum x coordinate
-	 * @param yMin
-	 *            the minimum y coordinate
-	 * @param yMax
-	 *            the maximum y coordinate
-	 */
-	@SuppressWarnings("unused")
-	private void initSmallMesh(double xMin, double xMax, double yMin,
-			double yMax) {
-
-		// TODO: implement this function properly, have it replace initMesh()
-		SurfaceMeshDiamond p1 = new SurfaceMeshDiamond(function, xMin, yMin, -1,
-				splitQueue, mergeQueue);
-		SurfaceMeshDiamond a0 = new SurfaceMeshDiamond(function, xMin, yMax, -2,
-				splitQueue, mergeQueue);
-		SurfaceMeshDiamond p0 = new SurfaceMeshDiamond(function, xMax, yMax, -1,
-				splitQueue, mergeQueue);
-		SurfaceMeshDiamond a1 = new SurfaceMeshDiamond(function, xMax, yMin, -3,
-				splitQueue, mergeQueue);
-
-		p1.setSplit(true);
-		p0.setSplit(true);
-		a0.setSplit(true);
-		a1.setSplit(true);
-
-		int index0 = 0;
-		int index1 = 1;
-
-		root = new SurfaceMeshDiamond(function, p0, index0, p1, index1, a0, a1, 0,
-				splitQueue, mergeQueue);
-
-		p0.setChild(index0, root);
-		p1.setChild(index1, root);
-	}
-
-	/**
-	 * Bootstraps a fairly complex mesh. Sets base0 and base1.
+	 * Bootstraps a fairly complex mesh.
 	 * 
 	 * @param xMin
 	 *            the minimum x coordinate
@@ -139,8 +96,11 @@ public class SurfaceMesh {
 		int di, ix, jx;
 		double x, y;
 		SurfaceMeshDiamond t;
-
-		baseArea = (xMax - xMin) * (yMax - yMin);
+		
+		// base diamonds at level 0
+		SurfaceMeshDiamond[][] base0 = new SurfaceMeshDiamond[4][4];
+		// base diamonds at lower levels
+		SurfaceMeshDiamond[][] base1 = new SurfaceMeshDiamond[4][4];
 
 		double dx = (xMax - xMin);
 		double dy = (yMax - yMin);
@@ -153,7 +113,7 @@ public class SurfaceMesh {
 						mergeQueue);
 				if (!(i == 1 && j == 1))
 					base0[j][i].isClipped = true;
-
+				
 				x = xMin + (i - 1) * dx;
 				y = yMin + (j - 1) * dy;
 				base1[j][i] = t = new SurfaceMeshDiamond(function, x, y,
@@ -173,10 +133,10 @@ public class SurfaceMesh {
 				t.parents[1] = base1[jx][ix];
 				ix = (2 * i >> 1) % 4;
 				jx = ((2 * j + 1 + di) >> 1) % 4;
-				t.a[0] = base1[jx][ix];
+				t.ancestors[0] = base1[jx][ix];
 				ix = ((2 * (i + 1)) >> 1) % 4;
 				jx = ((2 * j + 1 - di) >> 1) % 4;
-				t.a[1] = base1[jx][ix];
+				t.ancestors[1] = base1[jx][ix];
 				ix = (di < 0 ? 0 : 3);
 				t.parents[0].setChild(ix, t);
 				t.indices[0] = ix;
@@ -187,35 +147,28 @@ public class SurfaceMesh {
 		for (int i = 0; i < 4; i++)
 			for (int j = 0; j < 4; j++) {
 				t = base1[j][i];
-				t.a[1] = base1[(j + 3) % 4][i];
-				t.a[0] = base1[(j + 1) % 4][i];
+				t.ancestors[1] = base1[(j + 3) % 4][i];
+				t.ancestors[0] = base1[(j + 1) % 4][i];
 				t.parents[0] = base1[j][(i + 3) % 4];
 				t.parents[1] = base1[j][(i + 1) % 4];
 			}
-		base0[1][1].setBoundingRadius();
-		base0[1][1].setArea();
+		baseDiamond = base0[1][1];
+		baseDiamond.setBoundingRadii();
+		baseDiamond.setArea();
+		baseDiamond.setError();
 	}
 
 	private void updateCullingInfo() {
-		SurfaceMeshDiamond d = base0[1][1];
-		d.updateCullInfo(radSq, drawList);
+		baseDiamond.updateCullInfo(radSq, drawList);
 
-		if (d.childCreated(0))
-			d.getChild(0).updateCullInfo(radSq, drawList);
-		if (d.childCreated(1))
-			d.getChild(1).updateCullInfo(radSq, drawList);
-		if (d.childCreated(2))
-			d.getChild(2).updateCullInfo(radSq, drawList);
-		if (d.childCreated(3))
-			d.getChild(3).updateCullInfo(radSq, drawList);
-	}
-
-	/**
-	 * Expands the mesh to accomodate for a larger bounding sphere
-	 */
-	@SuppressWarnings("unused")
-	private void expand() {
-
+		if (baseDiamond.childCreated(0))
+			baseDiamond.getChild(0).updateCullInfo(radSq, drawList);
+		if (baseDiamond.childCreated(1))
+			baseDiamond.getChild(1).updateCullInfo(radSq, drawList);
+		if (baseDiamond.childCreated(2))
+			baseDiamond.getChild(2).updateCullInfo(radSq, drawList);
+		if (baseDiamond.childCreated(3))
+			baseDiamond.getChild(3).updateCullInfo(radSq, drawList);
 	}
 
 	/** used in optimizeSub() */
@@ -261,14 +214,13 @@ public class SurfaceMesh {
 	 * @return true if the mesh should be refined, otherwise false
 	 */
 	private boolean tooCoarse() {
-		double minError = 0.1;
-		if (drawList.getError() < minError * drawList.getArea())
+		if (drawList.getError() < errorConst * drawList.getArea())
 			if (drawList.getCount() > triGoal)
 				return false;
 		if (drawList.getCount() < minTriCount)
 			return true;
 		if (!drawList.isFull())
-			if ((drawList.getError() > errorConst * baseArea)
+			if ((drawList.getError() > errorConst * drawList.getArea())
 					|| drawList.getCount() < minTriCount)
 				return true;
 		return false;
@@ -408,6 +360,10 @@ class SurfTriList extends TriList {
 	private double totalError = 0;
 	private double totalArea = 0;
 
+	/**
+	 * @param capacity
+	 * @param marigin
+	 */
 	SurfTriList(int capacity, int marigin) {
 		super(capacity, marigin);
 	}
@@ -429,10 +385,8 @@ class SurfTriList extends TriList {
 	/**
 	 * Adds a triangle to the list.
 	 * 
-	 * @param d
-	 *            The parent diamond of the triangle
-	 * @param j
-	 *            The index of the triangle within the diamond
+	 * @param d The parent diamond of the triangle
+	 * @param j The index of the triangle within the diamond
 	 */
 	public void add(SurfaceMeshDiamond d, int j) {
 		// handle clipping
@@ -459,11 +413,11 @@ class SurfTriList extends TriList {
 		SurfaceMeshDiamond t[] = new SurfaceMeshDiamond[3];
 		t[1] = d.parents[j];
 		if (j != 0) {
-			t[0] = d.a[1];
-			t[2] = d.a[0];
+			t[0] = d.ancestors[1];
+			t[2] = d.ancestors[0];
 		} else {
-			t[0] = d.a[0];
-			t[2] = d.a[1];
+			t[0] = d.ancestors[0];
+			t[2] = d.ancestors[1];
 		}
 		for (int i = 0, c = 0; i < 3; i++, c += 3) {
 			v[c] = (float) t[i].v.getX();
