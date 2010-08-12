@@ -94,7 +94,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		}
 		
 		else if (source == btnBgColor) {
-			ec.setColor(btnBgColor.getSelectedColor());
+			if(btnBgColor.getSelectedColor() != null)
+				ec.setColor(btnBgColor.getSelectedColor());
 		}
 		
 	}
