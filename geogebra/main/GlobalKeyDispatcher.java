@@ -280,24 +280,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				
 			case KeyEvent.VK_M:
 				if (!app.isApplet() && event.isShiftDown()) {
-					app.clearSelectedGeos();
-					WorksheetExportDialog d = new WorksheetExportDialog(app); 		
-
-					Toolkit toolkit = Toolkit.getDefaultToolkit();
-					Clipboard clipboard = toolkit.getSystemClipboard();
-					JPanel appCP = app.getCenterPanel();
-					int width, height;
-					if (appCP != null) {
-						width = appCP.getWidth();
-						height = appCP.getHeight();
-					} else {
-						width = WorksheetExportDialog.DEFAULT_APPLET_WIDTH;
-						height = WorksheetExportDialog.DEFAULT_APPLET_HEIGHT;
-					}		
-
-					clipboard.setContents(new StringSelection(d.getAppletTag(null, width, height, false)), null);
-					d.setVisible(false);
-					d.dispose();
+					app.exportToLMS();
 					consumed = true;
 				} else if (!app.isApplet() || app.isRightClickEnabled()) {
 					app.setStandardView();
