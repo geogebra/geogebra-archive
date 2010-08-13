@@ -243,7 +243,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
 
 
-			item = new JMenuItem(app.getCommand("TableText"));
+			item = new JMenuItem(app.getMenu("Table"));
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					cp.CreateTableText(column1, column2, row1, row2);
@@ -254,7 +254,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 
 
-			item = new JMenuItem(app.getCommand("Burke Table"));
+			item = new JMenuItem(app.getMenu("OperationTable"));
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
@@ -272,7 +272,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 					//InputDialogOpTable dialog = new InputDialogOpTable(view,app,null);
 					//dialog.setVisible(true);
-					//cp.createOperationTable(selectedCellRanges.get(0), null);
+					cp.createOperationTable(selectedCellRanges.get(0), null);
 				}
 			});	 
 			//addSubItem(subMenu,item);	
