@@ -889,6 +889,7 @@ public class Application implements KeyEventDispatcher {
 							+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
 							+ "  --fontSize=NUMBER\tset default font size\n"
 							+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes\n"
+							+ "  --settingsFile=PATH|FILENAME\tLoad/save settings from/in a local file\n"
 							+ "  --CAS=[MATHPIPER|MAXIMA]\tselect which CAS to use, default MathPiper\n"
 							+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
 							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
