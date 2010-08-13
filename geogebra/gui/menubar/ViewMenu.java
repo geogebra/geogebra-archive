@@ -191,8 +191,9 @@ class ViewMenu extends BaseMenu {
 		setMenuShortCutAccelerator(mi, 'F');
 
 		mi = add(recomputeAllViews);
-		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0);
-		mi.setAccelerator(ks);
+		// F9 and Ctrl-R both work, but F9 doesn't on MacOS, so we must display Ctrl-R
+		setMenuShortCutAccelerator(mi, 'R');
+
 	}
 	
 	/**
