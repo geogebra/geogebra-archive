@@ -66,9 +66,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	@Override
 	protected void realtimeUpdate(){
 		Renderer renderer = getView3D().getRenderer();
-		mesh.optimize();
-		renderer.getGeometryManager().remove(geometryIndex);
 		mesh.setRadius(savedRadius);
+		renderer.getGeometryManager().remove(geometryIndex);
+		mesh.optimize();
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
 		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();

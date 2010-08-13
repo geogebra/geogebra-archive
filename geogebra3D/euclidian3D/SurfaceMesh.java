@@ -10,34 +10,58 @@ import geogebra3D.euclidian3D.TriList;
  * @author André Eriksson
  */
 public class SurfaceMesh {
-	private GeoFunctionNVar function;
-	private double radSq;
-	private SplitQueue splitQueue = new SplitQueue();
-	private MergeQueue mergeQueue = new MergeQueue();
+	
+	//DETAIL SETTINGS 
+	
+	/**used in setRadius() to set the desired error per (visible) area unit according to
+	 * error per area unit = errorC0 + errorC1*r */
+	private final double errorC0 = 0.005;
+	private final double errorC1 = 0.001;
 
-	private SurfaceMeshDiamond baseDiamond;
-
-	private SurfTriList drawList;
-
-	private final double errorConst = .04; // desired error per area unit
-	private final int triGoal = 10000;
-	private final int minTriCount = 4000;
-
-	private final int initialRefinement = 300;
-	private final int stepRefinement = 1000;
-
+	/** the minimum triangle count */
+	private final int minTriCount = 3000;
+	
+	/** the desired triangle count */
+	private final int triGoal = 40000;
+	
+	/** the maximum triangle count */
 	private final int maxTriangles = 100000;
-	private final int triBufMarigin = 1000;
+	
+	/** buffer space for extra triangles */
+	private final int triBufMarigin = 10000;
+
+	/** number of merges/splits per step */
+	private final int stepRefinement = 1000;
 
 	/** the maximum level of refinement */
 	private static final int maxLevel = 20;
 	
 	/** x/y difference used when estimating normals */
 	public static final double normalDelta = 1e-8;
+	
+	//PRIVATE VARIABLES
+	
+	/** a reference to the function being drawn */
+	private GeoFunctionNVar function;
+	
+	/** the squared radius of the viewing sphere */
+	private double radSq;
+	
+	/** references to the priority queues used for splits/merges */
+	private SplitQueue splitQueue = new SplitQueue();
+	private MergeQueue mergeQueue = new MergeQueue();
 
-	//if true error, triangle count and update time is printed each update
+	private SurfaceMeshDiamond baseDiamond;
+
+	private SurfTriList drawList;	
+
+	/**desired error per visible area unit */
+	private double desiredErrorPerAreaUnit;
+	
+	/** if true error, triangle count and update time is printed each update */
 	private static final boolean printInfo = true;
 	
+	/** if false, no updates of the mesh are done */
 	private boolean doUpdates = true;
 	
 	/**
@@ -58,6 +82,7 @@ public class SurfaceMesh {
 	 */
 	public void setRadius(double r) {
 		radSq = r * r;
+		desiredErrorPerAreaUnit = errorC0 + errorC1*r;
 	}
 	
 	/**
@@ -75,7 +100,7 @@ public class SurfaceMesh {
 	public SurfaceMesh(GeoFunctionNVar function, double radSq,
 			boolean unlimitedRange) {
 		this.function = function;
-		this.radSq = radSq;
+		setRadius(radSq);
 		drawList = new SurfTriList(maxTriangles, triBufMarigin);
 		if (unlimitedRange)
 			initMesh(-radSq, radSq, -radSq, radSq);
@@ -83,7 +108,7 @@ public class SurfaceMesh {
 			initMesh(function.getMinParameter(0), function.getMaxParameter(0),
 					 function.getMinParameter(1), function.getMaxParameter(1));
 		baseDiamond.addToSplitQueue();
-		optimizeSub(initialRefinement);
+		//optimizeSub(initialRefinement);
 	}
 
 	/**
@@ -225,15 +250,18 @@ public class SurfaceMesh {
 	 * @return true if the mesh should be refined, otherwise false
 	 */
 	private boolean tooCoarse() {
-		if (drawList.getError() < errorConst * drawList.getArea())
-			if (drawList.getCount() > triGoal)
-				return false;
-		if (drawList.getCount() < minTriCount)
+		double areaGoal = desiredErrorPerAreaUnit * drawList.getArea();
+		double error = drawList.getError();
+		int count = drawList.getCount();
+		if (count < minTriCount)
 			return true;
-		if (!drawList.isFull())
-			if ((drawList.getError() > errorConst * drawList.getArea())
-					|| drawList.getCount() < minTriCount)
-				return true;
+		if (drawList.isFull())
+			return false;
+		if (error < areaGoal)
+			if (count > triGoal)
+				return false;
+		if (error > areaGoal)
+			return true;
 		return false;
 	}
 

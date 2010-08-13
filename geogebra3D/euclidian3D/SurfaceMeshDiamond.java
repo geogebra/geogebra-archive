@@ -255,11 +255,11 @@ public class SurfaceMeshDiamond {
 		if (Double.isNaN(vol1) || Double.isInfinite(vol1))
 			// use a different error measure for infinite points
 			// namely the base area times some constant
-			errors[0] = area * area;
+			errors[0] = area * area *3.0;
 		else
 			errors[0] = vol1;
 		if (Double.isNaN(vol2) || Double.isInfinite(vol1))
-			errors[1] = area * area;
+			errors[1] = area * area *3.0;
 		else
 			errors[1] = vol2;
 
@@ -340,50 +340,88 @@ public class SurfaceMeshDiamond {
 			return parents[1];
 		return parents[0];
 	}
-
-	/**
-	 * Retrieves a child of the diamond. If the child doesn't exist, it is
-	 * created before being returned.
-	 * 
-	 * @param i
-	 *			index of child
-	 * @return reference to child
-	 */
+	
 	public SurfaceMeshDiamond getChild(int i) {
 		if (children[i] == null) {
 
-			SurfaceMeshDiamond parent;
-			// get other parent
+			SurfaceMeshDiamond parent = null;
 			SurfaceMeshDiamond otherParent = null;
-			if (i < 2) {
+
+			int index;
+			if(i<2){
 				parent = parents[0];
-				if (parent != null)
-					otherParent = parent.getChild((indices[0] + (i == 0 ? 1
-							: -1)) & 3);
+				if(i==0)
+					index = indices[0]+1;
+				else
+					index = indices[0]-1;
 			} else {
 				parent = parents[1];
-				if (parent != null)
-					otherParent = parent.getChild((indices[1] + (i == 2 ? 1
-							: -1)) & 3);
+				if(i==2)
+					index = indices[1]+1;
+				else
+					index = indices[1]-1;
 			}
-			SurfaceMeshDiamond a0 = parents[i >> 1];
-			SurfaceMeshDiamond a1 = ancestors[((i + 1) & 2) >> 1];
+			
+			if(parent!=null)
+				otherParent = parent.getChild(index&3);
+			
+			int parentIndex = i/2;
+			int ancestorIndex = i==1 || i==2 ? 1:0;
+			SurfaceMeshDiamond a0 = parents[parentIndex];
+			SurfaceMeshDiamond a1 = ancestors[ancestorIndex];
 
-			int ix = (i & 1) ^ 1;
+			int otherIndex = i==0 || i==2 ? 1 : 0;
 			if (otherParent != null && otherParent.parents[1] == parent)
-				ix |= 2;
+				otherIndex |= 2;
 			if (i == 1 || i == 3)
-				children[i] = new SurfaceMeshDiamond(func, otherParent, ix, this,
+				children[i] = new SurfaceMeshDiamond(func, otherParent, otherIndex, this,
 						i, a0, a1, level + 1, splitQueue, mergeQueue);
 			else
 				children[i] = new SurfaceMeshDiamond(func, this, i, otherParent,
-						ix, a0, a1, level + 1, splitQueue, mergeQueue);
+						otherIndex, a0, a1, level + 1, splitQueue, mergeQueue);
 
 			if (otherParent != null)
-				otherParent.children[ix] = children[i];
+				otherParent.setChild(otherIndex,children[i]);
 		}
 		return children[i];
 	}
+
+//	/**
+//	 * Retrieves a child of the diamond. If the child doesn't exist, it is
+//	 * created before being returned.
+//	 * 
+//	 * @param i
+//	 *			index of child
+//	 * @return reference to child
+//	 */
+//	public SurfaceMeshDiamond getChild(int i) {
+//		if (children[i] == null) {
+//			SurfaceMeshDiamond parent = null;
+//			SurfaceMeshDiamond otherParent = null;
+//			
+//			getOtherParents(i, parent, otherParent);
+//			int ancestorIndex = i==1 || i==2 ? 1:0;
+//			SurfaceMeshDiamond a0 = parents[i/2];
+//			SurfaceMeshDiamond a1 = ancestors[ancestorIndex];
+//			
+//			int ix = (i & 1) ^ 1;
+//			if (otherParent != null && otherParent.parents[1] == parent)
+//				ix |= 2;
+//			
+//			int otherIndex = ix;
+//			boolean isEven = i==0 || i==2;
+//			if (i == 1 || i == 3)
+//				children[i] = new SurfaceMeshDiamond(func, otherParent, otherIndex, this,
+//						i, a0, a1, level + 1, splitQueue, mergeQueue);
+//			else
+//				children[i] = new SurfaceMeshDiamond(func, this, i, otherParent,
+//						otherIndex, a0, a1, level + 1, splitQueue, mergeQueue);
+//
+//			if (otherParent != null)
+//				otherParent.setChild(otherIndex,children[i]);
+//		}
+//		return children[i];
+//	}
 
 	/**
 	 * Checks if a child has been created.
