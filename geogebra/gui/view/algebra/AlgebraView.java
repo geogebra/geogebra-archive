@@ -339,7 +339,7 @@ public class AlgebraView extends JTree implements View {
 	public void add(GeoElement geo) {	
 		cancelEditing();	
 				
-		if (geo.isLabelSet() && geo.isSetAlgebraVisible()) {			
+		if (geo.isLabelSet() && geo.showInAlgebraView() && geo.isSetAlgebraVisible()) {			
 			DefaultMutableTreeNode parent, node;
 			node = new DefaultMutableTreeNode(geo);
 			if (geo.isAuxiliaryObject()) {
