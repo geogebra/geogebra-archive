@@ -235,13 +235,17 @@ public class Macro {
     	boolean [] isOutputLabeled = new boolean[output.length];
     	String [] inputLabels = new String[input.length];
     	String [] outputLabels = new String[output.length];
-    	
+    	GeoPoint[] startPoints = new GeoPoint[input.length];
     	for (int i=0; i < input.length; i++) {
     		isInputLabeled[i] = input[i].isLabelSet();
     		if (!isInputLabeled[i]) {
     			input[i].label = input[i].getDefaultLabel();
     			input[i].labelSet = true;
-        	}    		        		    			    		        	    	
+        	}    		     
+    		if(input[i] instanceof GeoVector){
+    			startPoints[i]=((GeoVector)input[i]).getStartPoint();
+    			((GeoVector)input[i]).setStartPoint(null);
+    		}
     		inputLabels[i] = input[i].label;
     		    	
     		// add input element to macroConsOrigElements
@@ -286,13 +290,16 @@ public class Macro {
     	// if we used temp labels in step (4) remove them again
     	for (int i=0; i < input.length; i++) {    		
     		if (!isInputLabeled[i]) 
-    			input[i].labelSet = false;        	    		
+    			input[i].labelSet = false;
+    		if(input[i] instanceof GeoVector){
+    			((GeoVector)input[i]).setStartPoint(startPoints[i]);
+    		}
     	}    	    
     	for (int i=0; i < output.length; i++) {    		
     		if (!isOutputLabeled[i])		
     			output[i].labelSet = false;        
     	}    	    	    	    	    
-    	
+    	Application.debug(macroConsXML);
 		// 6) create a new macro-construction from this XML representation
     	Construction macroCons = createMacroConstruction(macroConsXML); 
     	    	

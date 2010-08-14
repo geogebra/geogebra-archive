@@ -135,12 +135,18 @@ implements EuclidianViewAlgo {
 
 	
 	/** 
-	 * Sets macro geos to the current state of algo geos.	 
+	 * Sets macro geos to the current state of algo geos.	
+	 * Start points of vectors should not be copied. 
 	 */
 	final void setMacroConstructionState() {									
 		// set input objects of macro construction		
-		for (int i=0; i < macroInput.length; i++) {   
-			macroInput[i].set(input[i]);				
+		for (int i=0; i < macroInput.length; i++) {     			
+			macroInput[i].set(input[i]);
+			try{
+				if(macroInput[i]instanceof GeoVector)((GeoVector)macroInput[i]).setStartPoint(null);
+			}catch(Exception e){
+				Application.debug("Exception while handling vector input: "+e);
+			}
 			macroInput[i].setRealLabel(input[i].label);		
 			//Application.debug("SET INPUT object: " + input[i] + " => " + macroInput[i]);
     	}		
