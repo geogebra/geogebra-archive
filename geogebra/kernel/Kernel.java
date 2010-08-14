@@ -4075,13 +4075,15 @@ public class Kernel {
 		sb.append('+');
 		sb.append(format(a.inner(d)));
 
+		// use internal command name
 		sb.append("UnitVector[Segment[");
 		sb.append(points[0].getLabel());
 		sb.append(',');
 		sb.append(points[1].getLabel());
 		sb.append("]]+");
 		sb.append(format(b.inner(d)));
-		sb.append("UnitPerpendicularVector[Segment[");
+		// use internal command name
+		sb.append("UnitOrthogonalVector[Segment[");
 		sb.append(points[0].getLabel());
 		sb.append(',');
 		sb.append(points[1].getLabel());
