@@ -200,9 +200,9 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         */
         
         String[] gridTypeLabel = new String[3];
-        gridTypeLabel[EuclidianView.GRID_CARTESIAN] = "Cartesian";
-        gridTypeLabel[EuclidianView.GRID_ISOMETRIC] = "Isometric";
-        gridTypeLabel[EuclidianView.GRID_POLAR] = "Polar";
+        gridTypeLabel[EuclidianView.GRID_CARTESIAN] = app.getMenu("Cartesian");
+        gridTypeLabel[EuclidianView.GRID_ISOMETRIC] = app.getMenu("Isometric");
+        gridTypeLabel[EuclidianView.GRID_POLAR] = app.getMenu("Polar");
         cbGridType = new JComboBox(gridTypeLabel);
         cbGridType.addActionListener(this);
         firstPanel.add(cbGridType);
