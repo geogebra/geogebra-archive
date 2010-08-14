@@ -3566,7 +3566,7 @@ public abstract class GeoElement
 
 	void getXMLanimationTags(StringBuilder sb) {
 		// animation step width
-		if (isChangeable()) {
+		if (isChangeable() && (this instanceof GeoNumeric)) {
 			sb.append("\t<animation");
 			sb.append(" step=\""+animationIncrement+"\"");
 			String animSpeed = animationSpeedObj == null ? "1" : animationSpeedObj.toGeoElement().getLabel();
