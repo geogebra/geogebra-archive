@@ -28,7 +28,7 @@ public GeoElement[] process(Command c) throws MyError {
     arg = resArgs(c);
     switch (n) {
 	    case 0 :
-	    	throw argErr(app,c.getName(),"");
+	    	throw argNumErr(app, c.getName(), n);
     	//G.Sturr 2010-3-14
 		case 1:
 		if (arg[0].isGeoList())
