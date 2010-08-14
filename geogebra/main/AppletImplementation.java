@@ -100,23 +100,24 @@ public class AppletImplementation implements AppletImplementationInterface {
 
 
 		// Allow rescaling eg ctrl+ ctrl- in Firefox
-		if (allowRescaling)	applet.addComponentListener(new java.awt.event.ComponentAdapter() {
+		applet.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent e)
 			{
-				Component c = e.getComponent();
-				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
-
-				if (app != null && !app.runningInFrame && app.onlyGraphicsViewShowing())
-				{
-					// use just horizontal scale factors
-					// under normal circumstances, these should be the same			
-					double zoomFactor = (double)c.getWidth() / (double)width;// (double)c.getHeight() / (double)height ;
-					app.getEuclidianView().zoomAroundCenter(zoomFactor);
-
+				if (allowRescaling)	{Component c = e.getComponent();
+					Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
+	
+					if (app != null && !app.runningInFrame && app.onlyGraphicsViewShowing())
+					{
+						// use just horizontal scale factors
+						// under normal circumstances, these should be the same			
+						double zoomFactor = (double)c.getWidth() / (double)width;// (double)c.getHeight() / (double)height ;
+						app.getEuclidianView().zoomAroundCenter(zoomFactor);
+	
+					}
+	
+					width = c.getWidth();
+					height = c.getHeight();
 				}
-
-				width = c.getWidth();
-				height = c.getHeight();
 
 			}
 		}); 
