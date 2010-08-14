@@ -522,7 +522,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			
 			
 			// check box for positive axis
-			cbPositiveAxis = new JCheckBox(app.getPlain("Positive Only"));
+			cbPositiveAxis = new JCheckBox(app.getPlain("PositiveOnly"));
 			cbPositiveAxis.addActionListener(this);
 			showAxisPanel.add(cbPositiveAxis);	
 			
@@ -563,7 +563,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			//G.Sturr: text field for axis crossing point
 			tfCross = new MyTextField(app.getGuiManager(),6);
 			tfCross.addActionListener(this);
-			thirdLine.add(new JLabel(app.getPlain("cross") + ":"));
+			thirdLine.add(new JLabel(app.getPlain("CrossAt") + ":"));
 			thirdLine.add(tfCross);
 			
 					
