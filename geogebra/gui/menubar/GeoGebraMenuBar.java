@@ -265,6 +265,8 @@ public class GeoGebraMenuBar extends JMenuBar {
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
 					new StringSelection(systemInfo.toString()), null
 				);
+				
+				app.showMessage(app.getPlain("SystemInformationMessage"));
 			}
 		}), BorderLayout.EAST);
 		
