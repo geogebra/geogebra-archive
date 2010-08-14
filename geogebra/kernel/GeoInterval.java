@@ -71,6 +71,9 @@ public class GeoInterval extends GeoFunction {
 	}
 	
 	public String toString(boolean symbolic) {		
+		
+		/* TODO put back in when parser understands 3 < x < 5 syntax
+		
 		if (!isDefined()) return app.getPlain("undefined");
 		
 		//return "3 < x < 5";//fun.toValueString();
@@ -178,7 +181,7 @@ public class GeoInterval extends GeoFunction {
 					//return kernel.format(leftBound) +leftInequality+" x "+rightInequality+kernel.format(rightBound);
 				}
 			}
-		}
+		} */
 		
 		// eg x<3 && x>10
 		//Application.debug("fall through");
