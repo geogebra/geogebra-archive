@@ -58,11 +58,16 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	private EuclidianView view;
 	private JButton btBackgroundColor, btAxesColor, btGridColor;
 	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbIsometric, cbGridManualTick;
-	private JComboBox cbAxesStyle, cbGridStyle;
+	private JComboBox cbAxesStyle, cbGridType;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
 	private NumberComboBox ncbGridTickX, ncbGridTickY;
-	private AxisPanel xAxisPanel, yAxisPanel; 
+	private AxisPanel xAxisPanel, yAxisPanel;
+	
+	//G.Sturr: drop down for grid styles
+	//TODO this replaces cbIsometric, so that should be removed
+	private JComboBox cbGridStyle;
+	
 	
 	/**
 	 * Creates a new dialog for the properties of the euclidian view.
@@ -187,9 +192,21 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         cbBoldGrid.addActionListener(this);
         firstPanel.add(cbBoldGrid, BorderLayout.NORTH); 
         
+        
+       /* 
         cbIsometric = new JCheckBox(app.getMenu("Isometric"));  
         cbIsometric.addActionListener(this);
         firstPanel.add(cbIsometric, BorderLayout.NORTH); 
+        */
+        
+        String[] gridTypeLabel = new String[3];
+        gridTypeLabel[EuclidianView.GRID_CARTESIAN] = "Cartesian";
+        gridTypeLabel[EuclidianView.GRID_ISOMETRIC] = "Isometric";
+        gridTypeLabel[EuclidianView.GRID_POLAR] = "Polar";
+        cbGridType = new JComboBox(gridTypeLabel);
+        cbGridType.addActionListener(this);
+        firstPanel.add(cbGridType);
+        
         
         firstPanel.add(Box.createRigidArea(new Dimension(10,0))); 
                
@@ -264,10 +281,17 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         cbBoldGrid.addActionListener(this);
         
 //      Michael Borcherds 2008-04-28
+        /*
         cbIsometric.removeActionListener(this);
         cbIsometric.setSelected(view.getGridType()==EuclidianView.GRID_ISOMETRIC); 
         cbIsometric.addActionListener(this);
+        */
         
+        
+        cbGridType.removeActionListener(this);
+        cbGridType.setSelectedIndex(view.getGridType());
+        cbGridType.addActionListener(this);
+      
         cbAxesStyle.removeActionListener(this);
         cbAxesStyle.setSelectedIndex(view.getAxesLineStyle());
         cbAxesStyle.addActionListener(this);
@@ -346,9 +370,19 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		else if (source == cbBoldGrid) {
 			view.setGridIsBold(cbBoldGrid.isSelected());	// Michael Borcherds 2008-04-11		
 		}
+		
+		/*
 		else if (source == cbIsometric) {
 			view.setGridType(cbIsometric.isSelected() ? EuclidianView.GRID_ISOMETRIC : EuclidianView.GRID_CARTESIAN);	// Michael Borcherds 2008-04-28		
 		}
+		*/
+		
+		else if (source == cbGridType) {
+			view.setGridType(cbGridType.getSelectedIndex());
+		}	
+		
+	
+		
 		else if (source == cbAxesStyle) {
 			view.setAxesLineStyle(cbAxesStyle.getSelectedIndex());
 		}
@@ -371,6 +405,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				 		view.getXscale(), view.getXscale() * xval/yval);			 
 			}
 		}		
+		
+		
 		
 		view.updateBackground();		
 		updateGUI();		
@@ -418,7 +454,11 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		
 		private JCheckBox cbShowAxis, cbAxisNumber, cbManualTicks;
 		private NumberComboBox ncbTickDist, ncbMin, ncbMax;		
-		private JComboBox cbTickStyle, cbAxisLabel, cbUnitLabel;				
+		private JComboBox cbTickStyle, cbAxisLabel, cbUnitLabel;
+		
+		//G.Sturr 2010-8-13
+		private JTextField tfCross;
+		private JCheckBox cbPositiveAxis;
 		
 		// axis: 0 = x, 1 = y
 		public AxisPanel(int axis) {
@@ -439,6 +479,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			ncbMax.addItemListener(this);			
 			ncbTickDist.addItemListener(this);
 			cbManualTicks.addActionListener(this);
+			
 			
 			cbAxisLabel = new JComboBox();
 			cbUnitLabel = new JComboBox();
@@ -479,11 +520,20 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			showAxisPanel.add(new JLabel(app.getPlain("AxisTicks") + ":"));			
 			showAxisPanel.add(cbTickStyle);	
 			
+			
+			// check box for positive axis
+			cbPositiveAxis = new JCheckBox(app.getPlain("Positive Only"));
+			cbPositiveAxis.addActionListener(this);
+			showAxisPanel.add(cbPositiveAxis);	
+			
+			
 			JPanel numberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));			
 			numberPanel.add(cbAxisNumber);
 			numberPanel.add(Box.createRigidArea(new Dimension(5,0)));	
 			numberPanel.add(cbManualTicks);			
 			numberPanel.add(ncbTickDist);		
+			
+			
 			
 			JPanel firstLine = new JPanel(new BorderLayout(5,0));
 			firstLine.add(showAxisPanel, BorderLayout.NORTH);
@@ -508,7 +558,15 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			thirdLine.add(ncbMin);
 			thirdLine.add(new JLabel(app.getPlain("max") + ":"));
 			thirdLine.add(ncbMax);
-						
+			
+			
+			//G.Sturr: text field for axis crossing point
+			tfCross = new MyTextField(app.getGuiManager(),6);
+			tfCross.addActionListener(this);
+			thirdLine.add(new JLabel(app.getPlain("cross") + ":"));
+			thirdLine.add(tfCross);
+			
+					
 			add(firstLine, BorderLayout.NORTH);
 			add(northPanel, BorderLayout.CENTER);	
 			add(thirdLine, BorderLayout.SOUTH);
@@ -561,6 +619,21 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				styles[axis] = type;
 				view.setAxesTickStyles(styles);
 			}	
+
+			else if (source == tfCross) {			
+				double cross = parseDouble(tfCross.getText());
+				if (axis == 0)
+					view.setXCross(cross);
+				else
+					view.setYCross(cross);
+			}		
+
+			else if (source == cbPositiveAxis) {			
+				if (axis == 0)
+					view.setPositiveXAxis(cbPositiveAxis.isSelected());
+				else
+					view.setPositiveYAxis(cbPositiveAxis.isSelected());
+			}		
 			
 			view.updateBackground();			
 			updateGUI();
@@ -649,6 +722,24 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	        cbShowAxis.removeActionListener(this);
 	        cbShowAxis.setSelected(axis == 0 ? view.getShowXaxis() : view.getShowYaxis());
 	        cbShowAxis.addActionListener(this);
+	        
+	        // G.Sturr:  update axis crossing points
+	        tfCross.removeActionListener(this);
+	        if(axis == 0)
+	        	tfCross.setText(""+ view.getXCross());
+	        else
+	        	tfCross.setText("" + view.getYCross());
+	        tfCross.addActionListener(this);
+	        
+	        
+	        cbPositiveAxis.removeActionListener(this);
+	        if(axis == 0)
+	        	cbPositiveAxis.setSelected(view.isPositiveXAxis());
+	        else
+	        	cbPositiveAxis.setSelected(view.isPositiveYAxis());
+	        cbPositiveAxis.addActionListener(this);
+	            
+	        
 		}
 
 		
