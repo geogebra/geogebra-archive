@@ -277,6 +277,7 @@ office@geogebra.org
 					org/mozilla/**,
 					org/freehep/**, 
 					edu/**,
+					org/apache/log4j/**, 
 				    tutor/**,
 					meta-inf/**"		
 		/>
@@ -306,6 +307,7 @@ office@geogebra.org
 			includes="geogebra/cas/**,
 					jasymca/**,	
 					edu/**,
+					org/apache/log4j/**,
 					org/mathpiper/**"
 			excludes="**/*.java" 
 		/>
