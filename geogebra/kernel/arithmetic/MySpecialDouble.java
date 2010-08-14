@@ -41,7 +41,7 @@ public class MySpecialDouble extends MyDouble {
 				// pi
 				case '\u03c0':	return "Pi";
 				// degree
-				case '\u00b0':	return "180/Pi";
+				case '\u00b0':	return "Pi/180";
 			} 	
 			
 			break;
