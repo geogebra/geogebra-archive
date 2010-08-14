@@ -27,6 +27,8 @@ public GeoElement[] process(Command c) throws MyError {
 
     arg = resArgs(c);
     switch (n) {
+	    case 0 :
+	    	throw argErr(app,c.getName(),"");
     	//G.Sturr 2010-3-14
 		case 1:
 		if (arg[0].isGeoList())
@@ -53,7 +55,6 @@ public GeoElement[] process(Command c) throws MyError {
 			// polygon for given points
 	        GeoPoint[] points = new GeoPoint[n];
 	        // check arguments
-	        if(points.length==0) throw argErr(app,c.getName(),"");	//Ulven 16.03.10: To get syntax dialogue
 	        for (int i = 0; i < n; i++) {
 	            if (!(arg[i].isGeoPoint()))
 					throw argErr(app, c.getName(), arg[i]);
