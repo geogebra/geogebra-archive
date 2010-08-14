@@ -907,6 +907,9 @@ public class Kernel {
 		case EuclidianView.MODE_POLYGON:
 			return "Polygon";
 
+		case EuclidianView.MODE_RIGID_POLYGON:
+			return "RigidPolygon";
+
 		case EuclidianView.MODE_PARALLEL:
 			return "Parallel";
 
@@ -4026,6 +4029,85 @@ public class Kernel {
 	final public GeoElement [] Polygon(String [] labels, GeoPoint [] P) {
 		AlgoPolygon algo = new AlgoPolygon(cons, labels, P);
 		return algo.getOutput();
+	}
+	
+	final public GeoElement [] RigidPolygon(String [] labels, GeoPoint [] points) {
+    	boolean oldMacroMode = cons.isSuppressLabelsActive();
+    	
+    	cons.setSuppressLabelCreation(true);	
+    	GeoConic circle = Circle("c", points[0], new MyDouble(this, points[0].distance(points[1])));
+		cons.setSuppressLabelCreation(oldMacroMode);
+		
+    	GeoPoint p = Point(null, (Path)circle, points[1].inhomX, points[1].inhomY, true);
+	try {
+		cons.replace(points[1], p);
+		points[1] = p;
+	} catch (Exception e) {
+		e.printStackTrace();
+		return null;
+	}
+	
+	StringBuilder sb = new StringBuilder();
+	
+	double xA = points[0].inhomX;
+	double yA = points[0].inhomY;
+	double xB = points[1].inhomX;
+	double yB = points[1].inhomY;
+	
+	GeoVec2D a = new GeoVec2D(this, xB - xA, yB - yA ); // vector AB
+	GeoVec2D b = new GeoVec2D(this, yA - yB, xB - xA ); // perpendicular to AB
+	
+	a.makeUnitVector();
+	b.makeUnitVector();
+
+	for (int i = 2; i < points.length ; i++) {
+
+		double xC = points[i].inhomX;
+		double yC = points[i].inhomY;
+		
+		GeoVec2D d = new GeoVec2D(this, xC - xA, yC - yA ); // vector AC
+		
+		setTemporaryPrintFigures(15);
+		// make string like this
+		// A+3.76UnitVector[Segment[A,B]]+-1.74UnitPerpendicularVector[Segment[A,B]]
+		sb.setLength(0);
+		sb.append(points[0].getLabel());
+		sb.append('+');
+		sb.append(format(a.inner(d)));
+
+		sb.append("UnitVector[Segment[");
+		sb.append(points[0].getLabel());
+		sb.append(',');
+		sb.append(points[1].getLabel());
+		sb.append("]]+");
+		sb.append(format(b.inner(d)));
+		sb.append("UnitPerpendicularVector[Segment[");
+		sb.append(points[0].getLabel());
+		sb.append(',');
+		sb.append(points[1].getLabel());
+		sb.append("]]");
+		
+		restorePrintAccuracy();
+					
+			
+		//Application.debug(sb.toString());
+
+		GeoPoint pp = (GeoPoint)getAlgebraProcessor().evaluateToPoint(sb.toString());
+		
+		try {
+			cons.replace(points[i], pp);
+			points[i] = pp;
+			points[i].setEuclidianVisible(false);
+			points[i].update();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+    }
+	//Application.debug(kernel.format(a.inner(d))+" UnitVector[Segment[A,B]] + "+kernel.format(b.inner(d))+" UnitPerpendicularVector[Segment[A,B]]");
+	
+	return Polygon(labels, points);
+	
 	}
 	
 	//G.Sturr 2010-3-14

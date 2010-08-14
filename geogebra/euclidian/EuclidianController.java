@@ -255,6 +255,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected boolean toggleModeChangedKernel = false;
 
 	boolean altDown=false;
+	
+	boolean polygonRigid = false;
 
 	private static String defaultRotateAngle = "45\u00b0"; // 45 degrees
 	
@@ -420,6 +422,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_POLYGON:
+		case EuclidianView.MODE_RIGID_POLYGON:
 			previewDrawable = view.createPreviewPolygon(selectedPoints);
 			break;
 
@@ -998,6 +1001,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_SEMICIRCLE:
 		case EuclidianView.MODE_CONIC_FIVE_POINTS:
 		case EuclidianView.MODE_POLYGON:
+		case EuclidianView.MODE_RIGID_POLYGON:
 		case EuclidianView.MODE_REGULAR_POLYGON:	
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
@@ -2521,6 +2525,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// new polygon through points
 		case EuclidianView.MODE_POLYGON:
+			polygonRigid = false;
+			changedKernel = polygon(hits);
+			break;
+
+			// new polygon through points
+		case EuclidianView.MODE_RIGID_POLYGON:
+			polygonRigid = true;
 			changedKernel = polygon(hits);
 			break;
 
@@ -3881,6 +3892,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		// points needed
+		if (polygonRigid && selPoints() > 0) { // only want free points withput children for rigid polys (apart from first)
+			GeoElement geo = chooseGeo(hits, false);
+			if (!geo.isGeoPoint() || !geo.isIndependent() || geo.hasChildren()) {
+				//addToSelectionList(selectedPoints, geo, GeoPolygon.POLYGON_MAX_POINTS);
+				return false;
+			}
+		}
 		addSelectedPoint(hits, GeoPolygon.POLYGON_MAX_POINTS, false);
 		return false;
 	}
@@ -3888,9 +3906,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// build polygon	
 	protected void polygon(){
-		kernel.Polygon(null, getSelectedPoints());
+		if (polygonRigid)
+			kernel.RigidPolygon(null, getSelectedPoints());
+		else
+			kernel.Polygon(null, getSelectedPoints());
 	}
-
 
 	// get two objects (lines or conics) and create intersection point
 	protected boolean intersect(Hits hits) {

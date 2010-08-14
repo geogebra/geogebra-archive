@@ -50,83 +50,10 @@ public GeoElement[] process(Command c) throws MyError {
 				else {
 	                points[i] = (GeoPoint) arg[i];
 	            }
-	        }
-
-        	boolean oldMacroMode = cons.isSuppressLabelsActive();
-        	
-        	cons.setSuppressLabelCreation(true);	
-        	GeoConic circle = kernel.Circle("c", points[0], new MyDouble(kernel, points[0].distance(points[1])));
-			cons.setSuppressLabelCreation(oldMacroMode);
-			
-        	GeoPoint p = kernel.Point(null, (Path)circle, points[1].inhomX, points[1].inhomY, true);
-		try {
-			cons.replace(points[1], p);
-			points[1] = p;
-		} catch (Exception e) {
-			throw argErr(app, c.getName(), arg[1]);
-		}
-		
-		StringBuilder sb = new StringBuilder();
-		
-		double xA = points[0].inhomX;
-		double yA = points[0].inhomY;
-		double xB = points[1].inhomX;
-		double yB = points[1].inhomY;
-		
-		GeoVec2D a = new GeoVec2D(kernel, xB - xA, yB - yA ); // vector AB
-		GeoVec2D b = new GeoVec2D(kernel, yA - yB, xB - xA ); // perpendicular to AB
-		
-		a.makeUnitVector();
-		b.makeUnitVector();
-
-		for (int i = 2; i < n; i++) {
-
-			double xC = points[i].inhomX;
-			double yC = points[i].inhomY;
-			
-			GeoVec2D d = new GeoVec2D(kernel, xC - xA, yC - yA ); // vector AC
-			
-			kernel.setTemporaryPrintFigures(15);
-			// make string like this
-			// A+3.76UnitVector[Segment[A,B]]+-1.74UnitPerpendicularVector[Segment[A,B]]
-			sb.setLength(0);
-			sb.append(points[0].getLabel());
-			sb.append('+');
-			sb.append(kernel.format(a.inner(d)));
-	
-			sb.append("UnitVector[Segment[");
-			sb.append(points[0].getLabel());
-			sb.append(',');
-			sb.append(points[1].getLabel());
-			sb.append("]]+");
-			sb.append(kernel.format(b.inner(d)));
-			sb.append("UnitPerpendicularVector[Segment[");
-			sb.append(points[0].getLabel());
-			sb.append(',');
-			sb.append(points[1].getLabel());
-			sb.append("]]");
-			
-			kernel.restorePrintAccuracy();
-						
-				
-			//Application.debug(sb.toString());
-	
-			GeoPoint pp = (GeoPoint)kernel.getAlgebraProcessor().evaluateToPoint(sb.toString());
-			
-			try {
-				cons.replace(points[i], pp);
-				points[i] = pp;
-				points[i].setEuclidianVisible(false);
-				points[i].update();
-			} catch (Exception e) {
-				throw argErr(app, c.getName(), arg[1]);
-			}
-        }
-		//Application.debug(kernel.format(a.inner(d))+" UnitVector[Segment[A,B]] + "+kernel.format(b.inner(d))+" UnitPerpendicularVector[Segment[A,B]]");
-		
+	        }		
 		
 	        // everything ok
-	        return kernel.Polygon(c.getLabels(), points);
+	        return kernel.RigidPolygon(c.getLabels(), points);
 		}	
 }
 }
