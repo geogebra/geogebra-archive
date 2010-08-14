@@ -97,7 +97,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private JScrollPane spreadsheet;
 	private FileBrowserPanel browserPanel;
 	private int defaultDividerLocation = 150;
-	private CellFormatToolBar toolBar;
+	private SpreadsheetStyleBar styleBar;
 	private JPanel spreadsheetPanel;
 	private JPanel restorePanel;
 	
@@ -1679,14 +1679,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	/**
 	 * 
-	 * get spreadsheet format toolbar 
+	 * get spreadsheet styleBar 
 	 */
-	public CellFormatToolBar getCellFormatToolBar(){
-		if(toolBar==null){
-			toolBar = new CellFormatToolBar(this);
+	public SpreadsheetStyleBar getSpreadsheetStyleBar(){
+		if(styleBar==null){
+			styleBar = new SpreadsheetStyleBar(this);
 		}
-		
-		return toolBar;
+		return styleBar;
 	}
 	
 	

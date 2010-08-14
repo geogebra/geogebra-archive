@@ -31,7 +31,7 @@ import javax.swing.Popup;
  * @author George Sturr 2010-4-3
  *
  */
-public class CellFormatToolBar extends JToolBar implements ActionListener{
+public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 	private SpreadsheetView view;
 	private Application app;
@@ -47,7 +47,7 @@ public class CellFormatToolBar extends JToolBar implements ActionListener{
 
 
 
-	public CellFormatToolBar(SpreadsheetView view){
+	public SpreadsheetStyleBar(SpreadsheetView view){
 
 		this.view = view;
 		this.app = view.getApplication();

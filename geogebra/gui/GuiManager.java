@@ -242,7 +242,7 @@ public class GuiManager {
 					'S'									// menu shortcut
 			) {
 				protected JComponent loadStyleBar() {
-					return ((SpreadsheetView)getSpreadsheetView()).getCellFormatToolBar();
+					return ((SpreadsheetView)getSpreadsheetView()).getSpreadsheetStyleBar();
 				}
 				
 				protected JComponent loadComponent() {
