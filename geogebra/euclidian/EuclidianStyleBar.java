@@ -1,6 +1,6 @@
 package geogebra.euclidian;
 
-import geogebra.gui.ColorChooserButton;
+import geogebra.gui.color.ColorChooserButton;
 import geogebra.gui.view.spreadsheet.CellFormat;
 import geogebra.main.Application;
 
@@ -72,7 +72,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		this.addSeparator();
 		
-		btnBgColor = new ColorChooserButton();
+		btnBgColor = new ColorChooserButton(ColorChooserButton.MODE_GENERIC);
 		btnBgColor.addActionListener(this);
 		add(btnBgColor);
 		

@@ -1,7 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.Drawable;
-import geogebra.gui.ColorChooserButton;
+import geogebra.gui.color.ColorChooserButton;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -72,7 +72,7 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 
 		this.addSeparator();
 		
-		btnBgColor = new ColorChooserButton();
+		btnBgColor = new ColorChooserButton(ColorChooserButton.MODE_SPREADSHEET);
 		btnBgColor.addActionListener(this);
 		add(btnBgColor);
 

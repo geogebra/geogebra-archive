@@ -2453,6 +2453,7 @@ public class Application implements KeyEventDispatcher {
 			return;
 
 		getGuiManager().updateMenubarSelection();
+		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
 			if (selectedGeos.size() > 0) {
 				
