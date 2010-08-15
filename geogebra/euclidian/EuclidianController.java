@@ -1225,7 +1225,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		doSingleHighlighting(movedGeoElement);	
 		 */	
 
-
 		// multiple geos selected
 		if (movedGeoElement != null && selGeos.size() > 1) {									
 			moveMode = MOVE_MULTIPLE_OBJECTS;
@@ -1254,6 +1253,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				if (movedGeoElement.isGeoLine() || 
 						movedGeoElement.isGeoPolygon() ||					 
 						movedGeoElement.isGeoConic() || 
+						movedGeoElement.isGeoImage() || 
 						movedGeoElement.isGeoVector()) 
 				{		
 					translateableGeos = movedGeoElement.getFreeInputPoints();
@@ -1472,6 +1472,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// image
 		else if (movedGeoElement.isGeoImage()) {
+			Application.debug("1");
 			moveMode = MOVE_IMAGE;
 			movedGeoImage = (GeoImage) movedGeoElement;
 			view.setShowMouseCoords(false);

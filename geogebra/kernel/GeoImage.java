@@ -19,6 +19,7 @@ import geogebra.util.Util;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class GeoImage extends GeoElement 
@@ -370,11 +371,11 @@ implements Locateable, AbsoluteScreenLocateable,
 	}
 	
 	/**
-	 * Returns wheter this image can be fixed.
-	 */	
+	 * Returns whether this image can be fixed.
+	 *
 	public boolean isFixable() {
 		return (hasAbsoluteScreenLocation || hasAbsoluteLocation) && isIndependent();
-	}
+	}*/
 	
 	public boolean isFillable() {
 		return true;
@@ -769,7 +770,34 @@ implements Locateable, AbsoluteScreenLocateable,
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public boolean hasMoveableInputPoints() {
+		
+		if (hasAbsoluteLocation()) return false;
+		
+		for (int i = 0 ; i < corners.length ; i++) {
+			if (corners[i] != null && !corners[i].isMoveable()) return false;
+		}
+		return true;
+	}
+	
+	ArrayList<GeoPoint> al = null;
 
+	/**
+	 * Returns all free parent points of this GeoElement.	 
+	 */
+	public ArrayList<GeoPoint> getFreeInputPoints() {		
+			if (hasAbsoluteLocation()) return null;
+			
+			if (al == null) al = new ArrayList<GeoPoint>();
+			else al.clear();
+			
+			for (int i = 0 ; i < corners.length ; i++) {
+				if (corners[i] != null) al.add(corners[i]);
+			}
+			
+			return al;
+	}
 
 
 }

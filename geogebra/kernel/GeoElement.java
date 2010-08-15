@@ -3960,13 +3960,18 @@ public abstract class GeoElement
 		moveObjectsUpdateList.clear();
 		moveObjectsUpdateList.ensureCapacity(size);
 		
+		/* Michael Borcherds
+		 * removed as it makes the mouse jump to the position of the point when dragging
+		 * eg Image with one corner, Rigid Polygon
+		 * and stops grid-lock working properly
 		// only use end position for a single point
 		Point2D.Double position = size == 1 ? endPosition : null;
+		*/
 		
 		for (int i=0; i < size; i++) {
 			GeoElement geo = (GeoElement) geos.get(i);
 			
-			moved = geo.moveObject(rwTransVec, position, moveObjectsUpdateList) || moved;		
+			moved = geo.moveObject(rwTransVec, null, moveObjectsUpdateList) || moved;		
 		}					
 							
 		// take all independent input objects and build a common updateSet
