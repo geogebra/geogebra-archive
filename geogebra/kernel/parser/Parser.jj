@@ -233,7 +233,7 @@ TOKEN : {
         | <DECIMAL_POINT> <INTEGER> 
         | <INTEGER> <DECIMAL_POINT>
         >
-  |     < EFLOAT: <FLOAT> "E" (<PLUS> | <MINUS>)? <INTEGER> >
+  |     < EFLOAT: <FLOAT> ( "E" | "e" ) (<PLUS> | <MINUS>)? <INTEGER> >
   |     < BFLOAT: <FLOAT> "b" (<MINUS>)? <INTEGER> >
   |     < PERCENTAGE: <FLOAT> "%" >
   |     < #INTEGER: ( <DIGIT> )+ >
