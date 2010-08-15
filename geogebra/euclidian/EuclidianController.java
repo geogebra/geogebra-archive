@@ -1972,7 +1972,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					}
 					else {
 						// no selected geos: choose geo and show popup menu
-						geo = chooseGeo(hits, true);
+						geo = chooseGeo(hits, false);
 						if (geo!=null)
 							app.getGuiManager().showPopupMenu(geo,(JPanel) view, mouseLoc);
 						else
@@ -6340,7 +6340,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return chooseGeo(hits.getHits(geoclass, tempArrayList), true);
 	}
 
-	protected GeoElement chooseGeo(ArrayList geos, boolean includeFixed) {
+	protected GeoElement chooseGeo(ArrayList<GeoElement> geos, boolean includeFixed) {
 		if (geos == null)
 			return null;
 
@@ -6463,11 +6463,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			 */
 
+			boolean allFixed = false;
 
 			// remove fixed objects (if there are some not fixed)
 			if (!includeFixed && geos.size() > 1) {
 
-				boolean allFixed = true;
+				allFixed = true;
 				for (int i = 0 ; i < geos.size() ; i++)
 					if (!((GeoElement)geos.get(i)).isFixed())
 						allFixed = false;
@@ -6500,7 +6501,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (segmentCount == 1 && (segmentCount + polygonCount == geos.size())) {
 				if (retSegment.getLayer() >= maxPolygonLayer) return retSegment;
 			}
-
+			
+			// don't want a popup in this case
+			// eg multiple fixed images from Pen Tool
+			if (!includeFixed && allFixed) return null; 
+			
 			// no points selected, multiple objects selected
 			// popup a menu to choose from
 			ToolTipManager ttm = ToolTipManager.sharedInstance();		
