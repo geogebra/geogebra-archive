@@ -19,7 +19,6 @@
 package geogebra.euclidian;
 
 import geogebra.Matrix.GgbVector;
-import geogebra.gui.PropertiesPanelMini;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
@@ -62,8 +61,8 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -86,11 +85,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Locale;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.text.JTextComponent;
 
@@ -870,7 +867,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (erasing) {
 			g2d.setStroke(EuclidianView.getStroke(2 * eraserSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
-			g2d.setColor(Color.white);			
+			g2d.setColor(new Color(0, 0, 0, 0)); // transparent	
+			g2d.setComposite(AlphaComposite.Src);
 		} else {
 			g2d.setStroke(EuclidianView.getStroke(2 * penSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
 			g2d.setColor(penColor);
