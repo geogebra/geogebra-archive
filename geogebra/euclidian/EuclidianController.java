@@ -3188,8 +3188,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			case EuclidianView.GRID_CARTESIAN:
 
 				// X = (x, y) ... next grid point
+				
 				double x = Kernel.roundToScale(xRW, view.getGridDistances(0));
 				double y = Kernel.roundToScale(yRW, view.getGridDistances(1));
+				
+				
+				
 				
 				// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
 				double a = Math.abs(x - xRW);
@@ -3204,7 +3208,39 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					yRW -= transformCoordsOffset[1];
 				}
 				break;
+		
+			
+		
+		case EuclidianView.GRID_POLAR:
+				
+			// r = get nearest grid circle radius
+			double r = GeoVec2D.length(xRW, yRW);
+			double r2 = Kernel.roundToScale(r, view.getGridDistances(0));
+			
+			// get angle
+			// TODO: round to nearest grid angle?
+			double angle = Math.atan2(yRW, xRW);
+			
+			// get grid point
+			double x1 = r2*Math.cos(angle);
+			double y1 = r2*Math.sin(angle);
+			
+			// if |X - XRW| < gridInterval * pointCapturingPercentage  then take the grid point
+			double a1 = Math.abs(x1 - xRW);
+			double b1 = Math.abs(y1 - yRW);
+
+			if (a1 < view.getGridDistances(0) * pointCapturingPercentage
+					&& b1 < view.getGridDistances(1) *  pointCapturingPercentage) {
+				xRW = x1 - transformCoordsOffset[0];
+				yRW = y1 - transformCoordsOffset[1];
+			} else {
+				xRW -= transformCoordsOffset[0];
+				yRW -= transformCoordsOffset[1];
 			}
+			break;
+		}
+			
+			
 
 		default:
 		}
