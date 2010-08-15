@@ -891,12 +891,20 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			geoImage.setFileName(fileName);
 			geoImage.setTooltipMode(GeoElement.TOOLTIP_OFF);
 			GeoPoint corner = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
-			corner.setEuclidianVisible(false);
-			corner.setAuxiliaryObject(true);
 			corner.update();
 			geoImage.setCorner(corner, 0);
 			geoImage.setLabel(null);
-			geoImage.setFixed(true);
+			if (penUsingOffsets) { // want to allow easy resizing
+				GeoPoint corner2 = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX + penImage.getWidth()),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
+				corner.setLabelVisible(false);
+				corner2.setLabelVisible(false);
+				corner2.update();
+				geoImage.setCorner(corner2, 1);
+			}
+			corner.setEuclidianVisible(penUsingOffsets);
+			corner.setAuxiliaryObject(!penUsingOffsets);
+			corner.update();
+			geoImage.setFixed(!penUsingOffsets);
 
 			GeoImage.updateInstances();
 
