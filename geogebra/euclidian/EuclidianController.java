@@ -3943,7 +3943,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// points needed
 		if (polygonRigid && selPoints() > 0) { // only want free points withput children for rigid polys (apart from first)
 			GeoElement geo = chooseGeo(hits, false);
-			if (!geo.isGeoPoint() || !geo.isIndependent() || geo.hasChildren()) {
+			if (geo == null || !geo.isGeoPoint() || !geo.isIndependent() || geo.hasChildren()) {
 				//addToSelectionList(selectedPoints, geo, GeoPolygon.POLYGON_MAX_POINTS);
 				return false;
 			}

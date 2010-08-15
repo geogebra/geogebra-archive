@@ -4035,7 +4035,7 @@ public class Kernel {
     	boolean oldMacroMode = cons.isSuppressLabelsActive();
     	
     	cons.setSuppressLabelCreation(true);	
-    	GeoConic circle = Circle("c", points[0], new MyDouble(this, points[0].distance(points[1])));
+    	GeoConic circle = Circle(null, points[0], new MyDouble(this, points[0].distance(points[1])));
 		cons.setSuppressLabelCreation(oldMacroMode);
 		
     	GeoPoint p = Point(null, (Path)circle, points[1].inhomX, points[1].inhomY, true);
@@ -4107,6 +4107,8 @@ public class Kernel {
 		}
     }
 	//Application.debug(kernel.format(a.inner(d))+" UnitVector[Segment[A,B]] + "+kernel.format(b.inner(d))+" UnitPerpendicularVector[Segment[A,B]]");
+	points[0].setEuclidianVisible(false);
+	points[0].update();
 	
 	return Polygon(labels, points);
 	
