@@ -3932,7 +3932,15 @@ public class Application implements KeyEventDispatcher {
 		
 		if (eraserCursor == null) {
 			
-			Image image = new BufferedImage(128,128, BufferedImage.TYPE_INT_ARGB);
+			Dimension dim = Toolkit.getDefaultToolkit().getBestCursorSize(48, 48);
+			
+			Application.debug("getBestCursorSize = "+dim.width+" "+dim.width);
+			
+			int size = Math.max(dim.width, dim.height);
+			
+			size = Math.max(48, size); // basically we want a size of 48
+			
+			Image image = new BufferedImage(size,size, BufferedImage.TYPE_INT_ARGB);
 			
 			Graphics2D g = (Graphics2D) image.getGraphics();
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
@@ -3941,11 +3949,11 @@ public class Application implements KeyEventDispatcher {
 			g.setColor(Color.BLACK);
 			g.setStroke(EuclidianView.getStroke(4,  EuclidianView.LINE_TYPE_FULL ));
 			
-			g.drawOval(48, 48, 80, 80);
+			g.drawOval(10 * size / 48, 10 * size / 48, 30 * size / 48, 30 * size / 48);
 			
 			eraserCursor =
 			        Toolkit.getDefaultToolkit().createCustomCursor
-			             (image, new Point(32, 32), "eraserCursor");
+			             (image, new Point(size / 2, size / 2), "eraserCursor");
 		}
 		return eraserCursor;
 	}
