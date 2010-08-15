@@ -82,7 +82,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	private GeoPoint singlePoint;
 	private GeoPoint [] startPoints;
 	//private boolean defined = true;
-	private ArrayList<GeoPointInterface> pointsOnConic;
+	private ArrayList<GeoPoint> pointsOnConic;
 	
 	private EquationSolver eqnSolver;
 	
@@ -185,7 +185,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * May return null.
 	 * @return list of points that this conic passes through.
 	 */
-	final ArrayList<GeoPointInterface> getPointsOnConic() {
+	final ArrayList<GeoPoint> getPointsOnConic() {
 		return pointsOnConic;
 	}
 	
@@ -194,7 +194,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * This method should only be used by AlgoMacro.
 	 * @param points list of points that this conic passes through
 	 */
-	final void setPointsOnConic(ArrayList<GeoPointInterface> points) {
+	final void setPointsOnConic(ArrayList<GeoPoint> points) {
 		pointsOnConic = points;
 	}
 	
@@ -203,8 +203,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 */
 	protected final void addPointOnConic(GeoPointInterface p) {
 		if (pointsOnConic == null)
-			pointsOnConic = new ArrayList<GeoPointInterface>();
-		pointsOnConic.add(p);				
+			pointsOnConic = new ArrayList<GeoPoint>();
+		pointsOnConic.add((GeoPoint)p);				
 	}
 	
 	/**
