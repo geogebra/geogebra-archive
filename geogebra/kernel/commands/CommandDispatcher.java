@@ -23,17 +23,24 @@ import geogebra.main.MyError;
 import java.util.HashMap;
 import java.util.Set;
 
-
+/**
+ * Runs commands and handles string to command processor conversion.
+ * 
+ */
 public class CommandDispatcher {
     
 	private Kernel kernel;
     private Construction cons;
     private Application app;
     
-    // stores (String name, CommandProcessor cmdProc) pairs   
-    protected HashMap cmdTable;
+    /** stores (String name, CommandProcessor cmdProc) pairs */   
+    protected HashMap<String,CommandProcessor> cmdTable;
     private MacroProcessor macroProc;
     
+    /**
+     * Creates new command dispatcher
+     * @param kernel Kernel of current application
+     */
     public CommandDispatcher(Kernel kernel) {             
     	this.kernel = kernel;
     	cons = kernel.getConstruction();  
@@ -43,8 +50,9 @@ public class CommandDispatcher {
     /**
      * Returns a set with all command names available
      * in the GeoGebra input field.
+     * @return Set of all command names
      */
-    public Set getPublicCommandSet() {
+    public Set<String> getPublicCommandSet() {
     	if (cmdTable == null) {
     		initCmdTable();
     	}  
@@ -53,7 +61,10 @@ public class CommandDispatcher {
     }
     
     /**
-     * @param labelOutput: specifies if output GeoElements of this command should get labels
+     * @param c Command to be executed
+     * @param labelOutput specifies if output GeoElements of this command should get labels
+     * @throws MyError in case command execution fails
+     * @return Geos created by the command
      */
     final public GeoElement[] processCommand(Command c, boolean labelOutput)
         throws MyError {
@@ -108,12 +119,15 @@ public class CommandDispatcher {
         
         return ret;
     }
-           
+    
+    /**
+     * Fills the string-command map
+     */
     protected void initCmdTable() {    	 
     	macroProc = new MacroProcessor(kernel);    	    	
     	
     	// external commands: visible to users    	    	
-    	cmdTable = new HashMap(500);
+    	cmdTable = new HashMap<String,CommandProcessor>(500);
     	cmdTable.put("UnitVector", new CmdUnitVector(kernel));	   
     	cmdTable.put("SecondAxis", new CmdSecondAxis(kernel));	   
     	cmdTable.put("CircleArc", new CmdCircleArc(kernel));	   
