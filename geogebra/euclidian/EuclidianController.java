@@ -369,6 +369,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		case EuclidianView.MODE_PEN:
 			
+			app.zoomAxesRatio(1);
+			
 			ArrayList selection = app.getSelectedGeos();
 			if (selection.size() == 1) {
 				GeoElement geo = (GeoElement)selection.get(0);
