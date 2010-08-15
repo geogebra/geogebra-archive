@@ -22,7 +22,6 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
@@ -76,14 +75,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	// (eigenvecX, eigenvecY) is not a unit vector
 	double eigenvecX, eigenvecY;
 
-	// translation vector (midpoint, vertex)    
+	/** translation vector (midpoint, vertex) */    
 	GeoVec2D b = new GeoVec2D(kernel);
 	//public double linearEccentricity, eccentricity, p;
 	GeoLine[] lines;
 	private GeoPoint singlePoint;
 	private GeoPoint [] startPoints;
 	//private boolean defined = true;
-	private ArrayList pointsOnConic;
+	private ArrayList<GeoPointInterface> pointsOnConic;
 	
 	private EquationSolver eqnSolver;
 	
@@ -184,16 +183,18 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	/**
 	 * Returns a list of points that this conic passes through.
 	 * May return null.
+	 * @return list of points that this conic passes through.
 	 */
-	final ArrayList getPointsOnConic() {
+	final ArrayList<GeoPointInterface> getPointsOnConic() {
 		return pointsOnConic;
 	}
 	
 	/**
 	 * Sets a list of points that this conic passes through.
 	 * This method should only be used by AlgoMacro.
+	 * @param points list of points that this conic passes through
 	 */
-	final void setPointsOnConic(ArrayList points) {
+	final void setPointsOnConic(ArrayList<GeoPointInterface> points) {
 		pointsOnConic = points;
 	}
 	
@@ -202,12 +203,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 */
 	protected final void addPointOnConic(GeoPointInterface p) {
 		if (pointsOnConic == null)
-			pointsOnConic = new ArrayList();
+			pointsOnConic = new ArrayList<GeoPointInterface>();
 		pointsOnConic.add(p);				
 	}
 	
 	/**
 	 * Removes a point from the list of points that this conic passes through.
+	 * @param p Point to be removed
 	 */
 	final void removePointOnConic(GeoPoint p) {
 		if (pointsOnConic != null)
@@ -351,7 +353,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 */
 	final public boolean isExplicitPossible() {
 		if (type == CONIC_LINE) return false;
-		return !kernel.isZero(matrix[5]) && kernel.isZero(matrix[3]) && kernel.isZero(matrix[1]);
+		return !Kernel.isZero(matrix[5]) && Kernel.isZero(matrix[3]) && Kernel.isZero(matrix[1]);
 	}
 
 
@@ -409,6 +411,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		return true;
 	}
 
+	
 	final public boolean isLineConic() {
 		switch (type) {
 			case CONIC_DOUBLE_LINE :
@@ -583,7 +586,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 						return sbToValueString;
 
 					case CONIC_ELLIPSE :					
-						if (kernel.isZero(coeffs[1])) { // xy coeff = 0
+						if (Kernel.isZero(coeffs[1])) { // xy coeff = 0
 							double coeff0, coeff1;
 							// we have to check the first eigenvector: it could be (1,0) or (0,1)
 							// if it is (0,1) we have to swap the coefficients of x^2 and y^2
@@ -595,7 +598,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 								coeff1 = halfAxes[0];
 							}
 							
-							if (kernel.isZero(b.x)) {
+							if (Kernel.isZero(b.x)) {
 								sbToValueString.append("x");
 								sbToValueString.append(squared);
 							} else {
@@ -628,7 +631,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 								KEEP_LEADING_SIGN, true);
 
 					case CONIC_HYPERBOLA :
-						if (kernel.isZero(coeffs[1])) { // xy coeff = 0	
+						if (Kernel.isZero(coeffs[1])) { // xy coeff = 0	
 							char firstVar, secondVar;
 							double b1, b2;
 							// we have to check the first eigenvector: it could be (1,0) or (0,1)
@@ -645,7 +648,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 								b2 = b.x;
 							}
 							
-							if (kernel.isZero(b1)) {		
+							if (Kernel.isZero(b1)) {		
 								sbToValueString.append(firstVar);
 								sbToValueString.append(squared);
 							} else {
@@ -659,7 +662,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 							sbToValueString.append(" / ");
 							sbToValueString.append(kernel.format(halfAxes[0] * halfAxes[0]));
 							sbToValueString.append(" - ");
-							if (kernel.isZero(b2)) {
+							if (Kernel.isZero(b2)) {
 								sbToValueString.append(secondVar);
 								sbToValueString.append(squared);
 							} else {
@@ -683,13 +686,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 								true);
 
 					case CONIC_PARABOLA :
-						if (!kernel.isZero(coeffs[2]))
+						if (!Kernel.isZero(coeffs[2]))
 							return kernel.buildExplicitConicEquation(
 								coeffs,
 								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
 								2,
 								KEEP_LEADING_SIGN);
-						else if (!kernel.isZero(coeffs[0]))
+						else if (!Kernel.isZero(coeffs[0]))
 							return kernel.buildExplicitConicEquation(
 								coeffs,
 								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
@@ -1140,7 +1143,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		classifyConic();
 		
 		// check if we got an ellipse or hyperbola
-		if (!(type == CONIC_HYPERBOLA || type == CONIC_ELLIPSE))
+		if (!(type == CONIC_HYPERBOLA || type == CONIC_ELLIPSE || type == CONIC_CIRCLE))
 		{
 			defined = false;
 		}
@@ -1337,9 +1340,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		matrix[5] *= r;
 	}	
 
-	/*
-	 * Michael Borcherds 2010-01-21
+	/**
 	 * Invert circle in circle
+	 * @version 2010-01-21
+	 * @author Michael Borcherds 
+	 * @param c Circle used as mirror
 	 */
 	    final public void mirror(GeoConic c) {
 	    	if (c.isCircle() && this.isCircle() )
