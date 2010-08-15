@@ -244,6 +244,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected Line2D.Double tempLine = new Line2D.Double();
 	protected Ellipse2D.Double circle = new Ellipse2D.Double(); //polar grid circles
+	
 
 	protected static RenderingHints defRenderingHints = new RenderingHints(null);
 	{
@@ -337,7 +338,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	final public static double DEFAULT_GRID_DIST_FACTOR = 1;
 	public static double automaticGridDistanceFactor = DEFAULT_GRID_DIST_FACTOR;
 
-	double[] gridDistances = { 2, 2 };
+	double[] gridDistances = { 2, 2, Math.PI/6 };
 
 	protected int gridLineStyle, axesLineType;
 	
@@ -2398,13 +2399,13 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			double d1 = GeoVec2D.length(xZero, yZero);  // upper left
 			double d2 = GeoVec2D.length(xZero, yZero-height); // lower left
 			double d3 = GeoVec2D.length(xZero-width, yZero); // upper right
-			double d4 = GeoVec2D.length(xZero-width, yZero-height); // lower left		
+			double d4 = GeoVec2D.length(xZero-width, yZero-height); // lower right		
 			double max = Math.max(Math.max(d1, d2), Math.max(d3, d4));
 			
 			
 			// draw the grid circles
-			// note: x tick intervals are used, it is assumed
-			//       that the x/y scaling ratio is 1:1
+			// note: x tick intervals are used for the radius intervals, 
+			//       it is assumed that the x/y scaling ratio is 1:1
 			double tickStepR = xscale * gridDistances[0];
 			double r = min - min  % tickStepR;
 			while (r <= max) {			
@@ -2414,23 +2415,28 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			
 			}
 			
-			// draw 30/60 radial lines
-			double x1, x2, y1, y2;
-			double m[] = { 1/Math.sqrt(3), Math.sqrt(3), -Math.sqrt(3),  -1/Math.sqrt(3) };
-			x1 = 0;
-			x2 = width;
-			for(int i=0; i < m.length; i++){
-				y1 = m[i]*(xZero - x1) + yZero;	 
-				y2 = m[i]*(xZero - x2) + yZero;
-				tempLine.setLine(x1, y1, x2, y2);
-				g2.draw(tempLine);
-			}
-
-			// draw vertical/horizontal axes
-			tempLine.setLine(xZero, 0, xZero, height);
-			g2.draw(tempLine);
+			// draw the radial grid lines
+			double angleStep = gridDistances[2];
+			double y1, y2, m;
+			
+			// horizontal axis
 			tempLine.setLine(0, yZero, width, yZero);
 			g2.draw(tempLine);
+				
+			// radial lines
+			for(double a = angleStep ; a < Math.PI ; a = a + angleStep){
+				
+				if(Math.abs(a - Math.PI/2) < 0.0001){
+					//vertical axis
+					tempLine.setLine(xZero, 0, xZero, height);
+				}else{
+					m = Math.tan(a);
+					y1 = m*(xZero) + yZero;	 
+					y2 = m*(xZero - width) + yZero;
+					tempLine.setLine(0, y1, width, y2);
+				}
+				g2.draw(tempLine);
+			}
 			
 			break;		
 			
@@ -4217,6 +4223,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		automaticGridDistance = flag;
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
+		if(flag)
+			gridDistances[2] = Math.PI/6;
 	}
 
 	public boolean isAutomaticGridDistance() {

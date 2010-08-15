@@ -949,6 +949,10 @@ public class MyXMLHandler implements DocHandler {
 			double[] dists = new double[2];
 			dists[0] = Double.parseDouble((String) attrs.get("distX"));
 			dists[1] = Double.parseDouble((String) attrs.get("distY"));
+			
+			//G.Sturr
+			//TODO: this is a temporary fix until Polar grid xml is done
+			dists[2] = Double.parseDouble((String) attrs.get("distY"));
 			ev.setGridDistances(dists);
 
 			return true;

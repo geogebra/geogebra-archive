@@ -68,6 +68,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	//TODO this replaces cbIsometric, so that should be removed
 	private JComboBox cbGridStyle;
 	
+	private JLabel gridLabel1, gridLabel2, gridLabel3;
+	private JComboBox cbGridTickAngle;
 	
 	/**
 	 * Creates a new dialog for the properties of the euclidian view.
@@ -222,20 +224,41 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         
         cbGridManualTick = new JCheckBox(app.getPlain("TickDistance") +  ":");        
         ncbGridTickX = new NumberComboBox(app); 
-		ncbGridTickY  = new NumberComboBox(app); 
+		ncbGridTickY  = new NumberComboBox(app);
+		
 		cbGridManualTick.addActionListener(this);
 		ncbGridTickX.addItemListener(this); 
 		ncbGridTickY.addItemListener(this);
 		
+		// angleStep intervals for polar grid lines
+		String PI_STRING = "\u03c0";
+		String [] angleOptions =  {
+				PI_STRING + "/12",
+				PI_STRING + "/6",
+				PI_STRING + "/4",
+				PI_STRING + "/3",
+				PI_STRING + "/2",	
+		};
+		
+		cbGridTickAngle = new JComboBox(angleOptions);
+		cbGridTickAngle.addItemListener(this);
+		
 		secondPanel.add(cbGridManualTick);
-		label = new JLabel("x:");
-		label.setLabelFor(ncbGridTickX);
-		secondPanel.add(label);
+		gridLabel1 = new JLabel("x:");
+		gridLabel1.setLabelFor(ncbGridTickX);
+		secondPanel.add(gridLabel1);
 		secondPanel.add(ncbGridTickX);
-		label = new JLabel("y:");
-		label.setLabelFor(ncbGridTickY);
-		secondPanel.add(label);
-		secondPanel.add(ncbGridTickY);		 
+		
+		gridLabel2 = new JLabel("y:");
+		gridLabel2.setLabelFor(ncbGridTickY);
+		secondPanel.add(gridLabel2);
+		secondPanel.add(ncbGridTickY);
+		
+		gridLabel3 = new JLabel("\u0398" + ":");  // Theta
+		gridLabel3.setLabelFor(cbGridTickAngle);
+		secondPanel.add(gridLabel3);
+		secondPanel.add(cbGridTickAngle);	
+		
 		
 		
 		
@@ -313,13 +336,39 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
                 
         ncbGridTickX.removeItemListener(this);
         ncbGridTickY.removeItemListener(this);
+        cbGridTickAngle.removeItemListener(this);
         double [] gridTicks = view.getGridDistances();
-        ncbGridTickX.setValue(gridTicks[0]);
-        ncbGridTickY.setValue(gridTicks[1]);
+            
+        if(view.getGridType() != EuclidianView.GRID_POLAR){
+        	
+        	ncbGridTickY.setVisible(true);
+        	gridLabel2.setVisible(true);
+        	cbGridTickAngle.setVisible(false);
+        	gridLabel3.setVisible(false);
+        	
+        	ncbGridTickX.setValue(gridTicks[0]);
+        	ncbGridTickY.setValue(gridTicks[1]);
+        	gridLabel1.setText("x:");
+      
+        }else{	
+        	ncbGridTickY.setVisible(false);
+        	gridLabel2.setVisible(false);
+        	cbGridTickAngle.setVisible(true);
+        	gridLabel3.setVisible(true);
+
+        	ncbGridTickX.setValue(gridTicks[0]);
+        	int val = (int) (view.getGridDistances(2)*12/Math.PI) - 1;
+        	if(val == 5) val = 4; //handle Pi/2 problem
+        	cbGridTickAngle.setSelectedIndex(val);
+        	gridLabel1.setText("r:");
+        }
+        
         ncbGridTickX.setEnabled(!autoGrid);
-        ncbGridTickY.setEnabled(!autoGrid);        
+        ncbGridTickY.setEnabled(!autoGrid);
+        cbGridTickAngle.setEnabled(!autoGrid);
         ncbGridTickX.addItemListener(this);
         ncbGridTickY.addItemListener(this);
+        cbGridTickAngle.addItemListener(this);
         
         tfAxesRatioX.removeActionListener(this);
         tfAxesRatioY.removeActionListener(this);
@@ -337,6 +386,9 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         
         xAxisPanel.updatePanel();
         yAxisPanel.updatePanel();
+        
+        
+        
 	}
 	
 	public void setLabels() {
@@ -406,8 +458,6 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			}
 		}		
 		
-		
-		
 		view.updateBackground();		
 		updateGUI();		
 	}
@@ -431,15 +481,27 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				view.setGridDistances(ticks);
 			}
 		}
+
 		else if (source == ncbGridTickY) {
 			double val = ncbGridTickY.getValue(); 
 			if (val > 0) { 
-				double [] ticks = view.getGridDistances();
+				double [] ticks = view.getGridDistances();				
 				ticks[1] = val;
 				view.setGridDistances(ticks);
 			}
 		}
 		
+		else if (source == cbGridTickAngle) {
+			double val = cbGridTickAngle.getSelectedIndex(); 
+			if (val >= 0) { 
+				double [] ticks = view.getGridDistances();
+				//val = 4 gives  5*PI/12, skip this and go to 6*Pi/2 = Pi/2
+				if(val == 4) val = 5;
+				ticks[2] = (val + 1)*Math.PI/12;
+				view.setGridDistances(ticks);
+			}
+		}
+
 		view.updateBackground();
 		updateGUI();		
 	}

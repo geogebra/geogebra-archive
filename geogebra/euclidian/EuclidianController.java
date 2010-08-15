@@ -3217,10 +3217,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			double r = GeoVec2D.length(xRW, yRW);
 			double r2 = Kernel.roundToScale(r, view.getGridDistances(0));
 			
-			// get angle
-			// TODO: round to nearest grid angle?
+			// get nearest radial gridline angle
 			double angle = Math.atan2(yRW, xRW);
-			
+			double angleOffset = angle % view.getGridDistances(2);
+			if(angleOffset < view.getGridDistances(2)/2)
+				angle = angle - angleOffset;
+			else
+				angle = angle - angleOffset + view.getGridDistances(2);
+
 			// get grid point
 			double x1 = r2*Math.cos(angle);
 			double y1 = r2*Math.sin(angle);
