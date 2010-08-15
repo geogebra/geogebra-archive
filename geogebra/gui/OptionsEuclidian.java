@@ -32,6 +32,7 @@ import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -43,6 +44,9 @@ import javax.swing.JTextField;
 /**
  * Panel with options for the euclidian view.
  * TODO: optimization: updateGUI() called too often (F.S.)
+ * 
+ * revised by G.Sturr 2010-8-15
+ * 
  */
 class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener, ItemListener {	
 	private static final long serialVersionUID = 1L;
@@ -50,26 +54,18 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	private static final String PI_STR = "\u03c0";
 	private static final String DEGREE_STR = "\u00b0";
 	
-	//private static final int TEXT_FIELD_COLS = 6;
-	//private static int PREF_FIELD_WIDTH = 100;	
-	
 	private Application app;
 	private Kernel kernel;
 	private EuclidianView view;
 	private JButton btBackgroundColor, btAxesColor, btGridColor;
-	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbIsometric, cbGridManualTick;
-	private JComboBox cbAxesStyle, cbGridType;
+	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick;
+	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
-	private NumberComboBox ncbGridTickX, ncbGridTickY;
+	private NumberComboBox ncbGridTickX, ncbGridTickY, ncbMinX, ncbMaxX, ncbMinY, ncbMaxY;	
 	private AxisPanel xAxisPanel, yAxisPanel;
-	
-	//G.Sturr: drop down for grid styles
-	//TODO this replaces cbIsometric, so that should be removed
-	private JComboBox cbGridStyle;
-	
 	private JLabel gridLabel1, gridLabel2, gridLabel3;
-	private JComboBox cbGridTickAngle;
+	
 	
 	/**
 	 * Creates a new dialog for the properties of the euclidian view.
@@ -92,8 +88,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	 * inits GUI with labels of current language	 
 	 */
 	private void initGUI() {
-		// CREATE OBJECTS		
-		// colors
+				
+		// create color buttons
 		btBackgroundColor = new JButton("\u2588");		
 		btAxesColor = new JButton("\u2588");		
 		btGridColor = new JButton("\u2588");
@@ -101,9 +97,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		btAxesColor.addActionListener(this);
 		btGridColor.addActionListener(this);			
 
-		// BUILD PANELS		
-		
-		// put it all together	
+	
 		removeAll();	
 		setLayout(new BorderLayout());
 		
@@ -111,31 +105,91 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		JTabbedPane tabbedPane = new JTabbedPane();
 		add(tabbedPane, BorderLayout.CENTER);	
 		
-		// background color
-		JPanel bgPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		JLabel label = new JLabel(app.getPlain("BackgroundColor") + ":");
-		bgPanel.add(label);
-		bgPanel.add(btBackgroundColor);
-		label.setLabelFor(btBackgroundColor);
-		add(bgPanel, BorderLayout.NORTH);
-			
-		// axes panel
-		JPanel axesPanel = new JPanel(new BorderLayout());
-		axesPanel.setBorder(BorderFactory.createEmptyBorder(5,5,2,5));		
-		tabbedPane.addTab(app.getMenu("Axes"), axesPanel);		
-		JPanel axesLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-		cbShowAxes = new JCheckBox(app.getMenu("Axes")); 						
-		axesLine.add(cbShowAxes);  
-		axesLine.add(Box.createRigidArea(new Dimension(10,0)));
+		 // add axes panels
+        xAxisPanel = new AxisPanel(0);
+        yAxisPanel = new AxisPanel(1);
         
-        // axes color
+        JPanel axesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        axesPanel.add(xAxisPanel);
+        axesPanel.add(Box.createRigidArea(new Dimension(16,0)));
+        axesPanel.add(yAxisPanel);
+        
+        tabbedPane.addTab(app.getMenu("Properties.Basic"), buildBasicPanel());
+        tabbedPane.addTab(app.getPlain("Axes"), axesPanel);
+        tabbedPane.addTab(app.getMenu("Grid"), buildGridPanel());	
+         
+	}
+	
+	
+	
+	private JPanel buildBasicPanel() {
+		
+		JLabel label;		
+			
+		//===================================
+		// create sub panels
+	
+		
+		//-------------------------------------
+		// window dimensions panel     
+        JPanel xDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
+        ncbMinX = new NumberComboBox(app);
+		ncbMaxX = new NumberComboBox(app);	
+		ncbMinX.addItemListener(this);
+		ncbMaxX.addItemListener(this);			  
+        xDimPanel.add(new JLabel("X " + app.getPlain("min") + ":"));
+        xDimPanel.add(ncbMinX);
+        xDimPanel.add(new JLabel("X " + app.getPlain("max") + ":"));
+        xDimPanel.add(ncbMaxX);
+               
+        JPanel yDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
+		ncbMinY = new NumberComboBox(app);
+		ncbMaxY = new NumberComboBox(app);		
+		ncbMinY.addItemListener(this);
+		ncbMaxY.addItemListener(this);	  
+        yDimPanel.add(new JLabel("Y " + app.getPlain("min") + ":"));
+        yDimPanel.add(ncbMinY);
+        yDimPanel.add(new JLabel("Y " + app.getPlain("max") + ":"));
+        yDimPanel.add(ncbMaxY);
+   
+        JPanel axesRatioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
+        tfAxesRatioX = new MyTextField(app.getGuiManager(),6);
+        tfAxesRatioY = new MyTextField(app.getGuiManager(),6);
+        tfAxesRatioX.addActionListener(this);
+        tfAxesRatioY.addActionListener(this);
+        tfAxesRatioX.addFocusListener(this);
+        tfAxesRatioY.addFocusListener(this);
+        axesRatioPanel.add(new JLabel(app.getPlain("xAxis") + " : " + app.getPlain("yAxis") + " = " ));
+        axesRatioPanel.add(tfAxesRatioX);
+        axesRatioPanel.add(new JLabel(" : "));
+        axesRatioPanel.add(tfAxesRatioY);
+      
+        JPanel dimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
+        dimPanel.setLayout(new BoxLayout(dimPanel, BoxLayout.Y_AXIS));
+        dimPanel.add(xDimPanel);
+        dimPanel.add(yDimPanel);
+        dimPanel.add(axesRatioPanel);
+        dimPanel.setBorder(BorderFactory.createTitledBorder("Dimensions"));
+
+		
+        //-------------------------------------
+		// axes options panel
+		JPanel axesOptionsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		axesOptionsPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Axes")));
+		
+		// show axes
+		cbShowAxes = new JCheckBox(app.getMenu(app.getPlain("Show") + " " + "Axes")); 						
+		axesOptionsPanel.add(cbShowAxes);  
+		axesOptionsPanel.add(Box.createRigidArea(new Dimension(10,0)));
+		
+        // color
         label = new JLabel(app.getPlain("Color") + ":");
         label.setLabelFor(btAxesColor);
-        axesLine.add(label);
-        axesLine.add(btAxesColor);
-        axesLine.add(Box.createRigidArea(new Dimension(10,0)));
+        axesOptionsPanel.add(label);
+        axesOptionsPanel.add(btAxesColor);
+        axesOptionsPanel.add(Box.createRigidArea(new Dimension(10,0)));
         
-        // axes style panel: line or arrow
+        // axes style
         cbAxesStyle = new JComboBox();
         label = new JLabel(app.getPlain("LineStyle") + ":");    
         label.setLabelFor(cbAxesStyle);
@@ -143,85 +197,80 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         cbAxesStyle.addItem("\u2192"); // arrow
         cbAxesStyle.addItem("\u2014" + " " + app.getPlain("Bold")); // bold line 
         cbAxesStyle.addItem("\u2192" + " " + app.getPlain("Bold")); // bold arrow
-        cbAxesStyle.setEditable(false);        
-        axesLine.add(label);   
-        axesLine.add(cbAxesStyle);   
-        axesPanel.add(axesLine, BorderLayout.NORTH);
+        cbAxesStyle.setEditable(false); 
+        axesOptionsPanel.add(label);   
+        axesOptionsPanel.add(cbAxesStyle);   
+       
         
         
-        JPanel axesRatioPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,5,5));
-    	tfAxesRatioX = new MyTextField(app.getGuiManager(),6);
-		tfAxesRatioY = new MyTextField(app.getGuiManager(),6);
-		tfAxesRatioX.addActionListener(this);
-		tfAxesRatioY.addActionListener(this);
-		tfAxesRatioX.addFocusListener(this);
-		tfAxesRatioY.addFocusListener(this);
-		axesRatioPanel.add(new JLabel(app.getPlain("xAxis") + " : " + app.getPlain("yAxis") + " = " ));
-		axesRatioPanel.add(tfAxesRatioX);
-		axesRatioPanel.add(new JLabel(" : "));
-		axesRatioPanel.add(tfAxesRatioY);
-		axesPanel.add(axesRatioPanel, BorderLayout.SOUTH);		
+       //-------------------------------------
+		// background color panel
+		JPanel bgPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		label = new JLabel(app.getPlain("BackgroundColor") + ":");
+		bgPanel.add(label);
+		bgPanel.add(btBackgroundColor);
+		label.setLabelFor(btBackgroundColor);
 		
-        // add axes panels
-        xAxisPanel = new AxisPanel(0);
-        yAxisPanel = new AxisPanel(1);
-        //JPanel xyPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        JTabbedPane xyPanel = new JTabbedPane();
-        xyPanel.addTab(app.getPlain("xAxis"), xAxisPanel);
-        xyPanel.addTab(app.getPlain("yAxis"), yAxisPanel);
-        //xyPanel.add(Box.createRigidArea(new Dimension(10,0)));
-        //xyPanel.add(yAxisPanel);        
-        axesPanel.add(xyPanel, BorderLayout.CENTER);
+    
+		
+		
+		//==========================================
+		// create basic panel and add all sub panels
+		
+		JPanel northPanel = new JPanel();
+		northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
+		northPanel.setBorder(BorderFactory.createEmptyBorder(5,5,2,5));
         
-        // add grid panel
-        tabbedPane.addTab(app.getMenu("Grid"), buildGridPanel());	
-        //centerPanel.add(buildGridPanel(), BorderLayout.SOUTH);
+        northPanel.add(dimPanel);
+        northPanel.add(Box.createRigidArea(new Dimension(0,16)));
+        northPanel.add(axesOptionsPanel);
+        northPanel.add(Box.createRigidArea(new Dimension(0,16)));
+        northPanel.add(bgPanel);
+
+        // use a BorderLayout to keep sub panels together
+        JPanel basicPanel = new JPanel(new BorderLayout());
+        basicPanel.add(northPanel, BorderLayout.NORTH);
+  	
+       return basicPanel;
+		
 	}
-		
+	
+	
+	
 	private JPanel buildGridPanel() {
-        //grid panel
-		JPanel gridPanel = new JPanel(new BorderLayout());
-		gridPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		
-		// first line: show grid             
-		JPanel firstPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));		 
-		gridPanel.add(firstPanel, BorderLayout.NORTH);
-        cbShowGrid = new JCheckBox(app.getMenu("Grid"));  
+		int hgap = 5;
+		int vgap = 5;	
+		
+		//==================================================
+		// create sub panels		
+		
+		//-------------------------------------
+		// show grid panel            
+		JPanel showGridPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));
+        cbShowGrid = new JCheckBox(app.getPlain("Show") + " " + app.getMenu("Grid"));  
         cbShowGrid.addActionListener(this);        
-        firstPanel.add(cbShowGrid, BorderLayout.NORTH); 
+        showGridPanel.add(cbShowGrid, BorderLayout.NORTH); 
+       
         
-        cbBoldGrid = new JCheckBox(app.getMenu("Bold"));  
-        cbBoldGrid.addActionListener(this);
-        firstPanel.add(cbBoldGrid, BorderLayout.NORTH); 
+        //-------------------------------------
+        // grid type panel
         
+        JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));    
+        typePanel.setBorder(BorderFactory.createTitledBorder((app.getPlain("GridType"))));
         
-       /* 
-        cbIsometric = new JCheckBox(app.getMenu("Isometric"));  
-        cbIsometric.addActionListener(this);
-        firstPanel.add(cbIsometric, BorderLayout.NORTH); 
-        */
-        
+        // type
         String[] gridTypeLabel = new String[3];
         gridTypeLabel[EuclidianView.GRID_CARTESIAN] = app.getMenu("Cartesian");
         gridTypeLabel[EuclidianView.GRID_ISOMETRIC] = app.getMenu("Isometric");
         gridTypeLabel[EuclidianView.GRID_POLAR] = app.getMenu("Polar");
         cbGridType = new JComboBox(gridTypeLabel);
-        cbGridType.addActionListener(this);
-        firstPanel.add(cbGridType);
-        
-        
-        firstPanel.add(Box.createRigidArea(new Dimension(10,0))); 
-               
-        // second line: color, line style combo
-        JLabel label = new JLabel(app.getPlain("Color") + ":");
-        label.setLabelFor(btGridColor);
-        firstPanel.add(label);
-        firstPanel.add(btGridColor);
-        firstPanel.add(Box.createRigidArea(new Dimension(10,0)));      
+        cbGridType.addActionListener(this);        
+		typePanel.add(cbGridType);
+   
 		
-        // second line: tick distances
-        JPanel secondPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));  
-        
+        // tick intervals
+        JPanel tickPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));        
         cbGridManualTick = new JCheckBox(app.getPlain("TickDistance") +  ":");        
         ncbGridTickX = new NumberComboBox(app); 
 		ncbGridTickY  = new NumberComboBox(app);
@@ -241,51 +290,78 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		};
 		
 		cbGridTickAngle = new JComboBox(angleOptions);
-		cbGridTickAngle.addItemListener(this);
+		cbGridTickAngle.addItemListener(this);		
+		tickPanel.add(cbGridManualTick);
 		
-		secondPanel.add(cbGridManualTick);
 		gridLabel1 = new JLabel("x:");
 		gridLabel1.setLabelFor(ncbGridTickX);
-		secondPanel.add(gridLabel1);
-		secondPanel.add(ncbGridTickX);
+		tickPanel.add(gridLabel1);
+		tickPanel.add(ncbGridTickX);
 		
 		gridLabel2 = new JLabel("y:");
 		gridLabel2.setLabelFor(ncbGridTickY);
-		secondPanel.add(gridLabel2);
-		secondPanel.add(ncbGridTickY);
+		tickPanel.add(gridLabel2);
+		tickPanel.add(ncbGridTickY);
 		
 		gridLabel3 = new JLabel("\u0398" + ":");  // Theta
 		gridLabel3.setLabelFor(cbGridTickAngle);
-		secondPanel.add(gridLabel3);
-		secondPanel.add(cbGridTickAngle);	
+		tickPanel.add(gridLabel3);
+		tickPanel.add(cbGridTickAngle);	
 		
+		typePanel.add(tickPanel);
+			
 		
+		//-------------------------------------
+		// style panel
+		JPanel stylePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));
+		stylePanel.setBorder(BorderFactory.createTitledBorder((app.getPlain("LineStyle"))));
 		
-		
-		// line style combobox (dashing)		
+		//line style
 		DashListRenderer renderer = new DashListRenderer();
 		renderer.setPreferredSize(
 			new Dimension(130, app.getFontSize() + 6));
 		cbGridStyle = new JComboBox(EuclidianView.getLineTypes());
 		cbGridStyle.setRenderer(renderer);
 		cbGridStyle.addActionListener(this);
-		label = new JLabel(app.getPlain("LineStyle") + ":");
-		label.setLabelFor(cbGridStyle);	
+		stylePanel.add(cbGridStyle);
+        
+        // color   
+        JLabel lblColor = new JLabel(app.getPlain("Color") + ":");
+        lblColor.setLabelFor(btGridColor);
+        cbBoldGrid = new JCheckBox(app.getMenu("Bold"));  
+        cbBoldGrid.addActionListener(this);
+        
+        // bold
+        stylePanel.add(cbBoldGrid); 
+        stylePanel.add(lblColor);     
+        stylePanel.add(btGridColor);
+        
+			
 		
-		JPanel thirdPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 1,1));  	     
-		thirdPanel.add(label);
-		thirdPanel.add(cbGridStyle);
+		//==================================================
+		// create grid panel and add all the sub panels
+		
+		JPanel northPanel = new JPanel();
+		northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));		
+		northPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
+			
+		northPanel.add(showGridPanel);
+		northPanel.add(Box.createRigidArea(new Dimension(0,16)));
+		northPanel.add(typePanel);	
+		northPanel.add(Box.createRigidArea(new Dimension(0,16)));
+		northPanel.add(stylePanel);
 
-		JPanel centerPanel = new JPanel(new BorderLayout());
-		centerPanel.add(secondPanel, BorderLayout.NORTH);
-		centerPanel.add(thirdPanel, BorderLayout.CENTER);
-		//centerPanel.add(fourthPanel, BorderLayout.AFTER_LAST_LINE);
-		gridPanel.add(centerPanel, BorderLayout.CENTER);		
+		JPanel gridPanel = new JPanel(new BorderLayout());
+		gridPanel.add(northPanel, BorderLayout.NORTH);
         
         return gridPanel;
 	}
 	
-	public void updateGUI() {				
+	
+	
+	
+	public void updateGUI() {
+		
 		btBackgroundColor.setForeground(view.getBackground());
 		btAxesColor.setForeground(view.getAxesColor());
 		btGridColor.setForeground(view.getGridColor());
@@ -303,12 +379,18 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         cbBoldGrid.setSelected(view.getGridIsBold()); 
         cbBoldGrid.addActionListener(this);
         
-//      Michael Borcherds 2008-04-28
-        /*
-        cbIsometric.removeActionListener(this);
-        cbIsometric.setSelected(view.getGridType()==EuclidianView.GRID_ISOMETRIC); 
-        cbIsometric.addActionListener(this);
-        */
+        ncbMinX.removeItemListener(this);
+	 	ncbMaxX.removeItemListener(this);
+        ncbMinY.removeItemListener(this);
+	 	ncbMaxY.removeItemListener(this);		 		
+	 		ncbMinX.setValue(view.getXmin());
+			ncbMaxX.setValue(view.getXmax());
+	 		ncbMinY.setValue(view.getYmin());
+			ncbMaxY.setValue(view.getYmax());
+	 	ncbMinX.addItemListener(this);
+	 	ncbMaxX.addItemListener(this);
+	 	ncbMinY.addItemListener(this);
+	 	ncbMaxY.addItemListener(this);
         
         
         cbGridType.removeActionListener(this);
@@ -423,17 +505,10 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			view.setGridIsBold(cbBoldGrid.isSelected());	// Michael Borcherds 2008-04-11		
 		}
 		
-		/*
-		else if (source == cbIsometric) {
-			view.setGridType(cbIsometric.isSelected() ? EuclidianView.GRID_ISOMETRIC : EuclidianView.GRID_CARTESIAN);	// Michael Borcherds 2008-04-28		
-		}
-		*/
-		
 		else if (source == cbGridType) {
 			view.setGridType(cbGridType.getSelectedIndex());
 		}	
 		
-	
 		
 		else if (source == cbAxesStyle) {
 			view.setAxesLineStyle(cbAxesStyle.getSelectedIndex());
@@ -469,6 +544,9 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			return kernel.getAlgebraProcessor().evaluateToDouble(text);	
 	}
 	
+	
+	
+	
 	public void itemStateChanged(ItemEvent e) {
 		Object source = e.getSource();
 		if (e.getStateChange() != ItemEvent.SELECTED) return;
@@ -502,9 +580,52 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			}
 		}
 
+		else if (source == ncbMinX) {
+			double min = ncbMinX.getValue();
+			double max =  view.getXmax();
+			if (min  + Kernel.MIN_PRECISION < max) {							
+				view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
+			}
+		}
+
+		else if (source == ncbMaxX) {
+			double min = view.getXmin();
+			double max = ncbMaxX.getValue();
+			if (min + Kernel.MIN_PRECISION < max) {	
+				view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
+			}
+		}
+
+		else if (source == ncbMinY) {
+			double min = ncbMinY.getValue();
+			double max =  view.getYmax();
+			if (min  + Kernel.MIN_PRECISION < max) {							
+				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
+			}
+		}
+
+		else if (source == ncbMaxY) {
+			double min = view.getYmin();
+			double max = ncbMaxY.getValue();
+			if (min + Kernel.MIN_PRECISION < max) {	
+				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
+			}
+		}
+
+		
 		view.updateBackground();
 		updateGUI();		
 	}
+	
+	
+	
+	
+	
+	
+	//=======================================================
+	//              AxisPanel Class
+	//=======================================================
+	
 	
 	private class AxisPanel extends JPanel implements ActionListener, ItemListener {		
 		/**
@@ -512,33 +633,31 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		 */
 		private static final long serialVersionUID = 1L;
 
-		private int axis;
-		
-		private JCheckBox cbShowAxis, cbAxisNumber, cbManualTicks;
-		private NumberComboBox ncbTickDist, ncbMin, ncbMax;		
+		private int axis;		
+		private JCheckBox cbShowAxis, cbAxisNumber, cbManualTicks, cbPositiveAxis;
+		private NumberComboBox ncbTickDist;	
 		private JComboBox cbTickStyle, cbAxisLabel, cbUnitLabel;
-		
-		//G.Sturr 2010-8-13
 		private JTextField tfCross;
-		private JCheckBox cbPositiveAxis;
+		
 		
 		// axis: 0 = x, 1 = y
 		public AxisPanel(int axis) {
+			
 			this.axis = axis;			
-						
-			setLayout(new BorderLayout());
+			
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			
 			String strAxis = (axis == 0) ? app.getPlain("xAxis") : app.getPlain("yAxis");
+			this.setBorder(BorderFactory.createTitledBorder(strAxis));		
+			
+			
 			cbShowAxis = new JCheckBox(app.getPlain("Show") + " " + strAxis);		
-			cbAxisNumber = new JCheckBox(app.getPlain("AxisNumbers"));			
-			ncbMin = new NumberComboBox(app);
-			ncbMax = new NumberComboBox(app);			
+			cbAxisNumber = new JCheckBox(app.getPlain("Show") + " " + app.getPlain("AxisNumbers"));					
 			ncbTickDist = new NumberComboBox(app);
 			cbManualTicks = new JCheckBox(app.getPlain("TickDistance") + ":");
 			
 			cbShowAxis.addActionListener(this);			
-			cbAxisNumber.addActionListener(this);					
-			ncbMin.addItemListener(this);
-			ncbMax.addItemListener(this);			
+			cbAxisNumber.addActionListener(this);						
 			ncbTickDist.addItemListener(this);
 			cbManualTicks.addActionListener(this);
 			
@@ -576,91 +695,77 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			cbUnitLabel.addActionListener(this);
 			cbTickStyle.addActionListener(this);
 			
+					
 			JPanel showAxisPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));			
 			showAxisPanel.add(cbShowAxis);
-			showAxisPanel.add(Box.createRigidArea(new Dimension(10,0)));	
-			showAxisPanel.add(new JLabel(app.getPlain("AxisTicks") + ":"));			
-			showAxisPanel.add(cbTickStyle);	
+			
+			
+			JPanel showTicksPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));	
+			showTicksPanel.add(new JLabel(app.getPlain("AxisTicks") + ":"));			
+			showTicksPanel.add(cbTickStyle);	
 			
 			
 			// check box for positive axis
+			JPanel showPosPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));	
 			cbPositiveAxis = new JCheckBox(app.getPlain("PositiveOnly"));
 			cbPositiveAxis.addActionListener(this);
-			showAxisPanel.add(cbPositiveAxis);	
+			showPosPanel.add(cbPositiveAxis);	
 			
 			
 			JPanel numberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));			
 			numberPanel.add(cbAxisNumber);
-			numberPanel.add(Box.createRigidArea(new Dimension(5,0)));	
-			numberPanel.add(cbManualTicks);			
-			numberPanel.add(ncbTickDist);		
 			
-			
-			
-			JPanel firstLine = new JPanel(new BorderLayout(5,0));
-			firstLine.add(showAxisPanel, BorderLayout.NORTH);
-			firstLine.add(numberPanel, BorderLayout.CENTER);
+			JPanel distancePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));		
+			distancePanel.add(cbManualTicks);			
+			distancePanel.add(ncbTickDist);		
 					
-			JPanel secondLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));	
-			secondLine.add(new JLabel(app.getPlain("AxisUnitLabel") + ":"));
-			secondLine.add(cbUnitLabel);
-			//Dimension dim = cbUnitLabel.getPreferredSize();
-			//dim.width = 50;
-			//cbUnitLabel.setPreferredSize(dim);
 			
-			JPanel secondLine2 = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));				
-			secondLine2.add(new JLabel(app.getPlain("AxisLabel") + ":"));
-			secondLine2.add(cbAxisLabel);
-			JPanel northPanel = new JPanel(new BorderLayout());
-			northPanel.add(secondLine, BorderLayout.NORTH);
-			northPanel.add(secondLine2, BorderLayout.CENTER);
-			
-			JPanel thirdLine = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));				
-			thirdLine.add(new JLabel(app.getPlain("min") + ":"));
-			thirdLine.add(ncbMin);
-			thirdLine.add(new JLabel(app.getPlain("max") + ":"));
-			thirdLine.add(ncbMax);
+			JPanel labelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));				
+			labelPanel.add(new JLabel(app.getPlain("AxisLabel") + ":"));
+			labelPanel.add(cbAxisLabel);
+			labelPanel.add(Box.createRigidArea(new Dimension(10,0)));
+			labelPanel.add(new JLabel(app.getPlain("AxisUnitLabel") + ":"));
+			labelPanel.add(cbUnitLabel);
 			
 			
-			//G.Sturr: text field for axis crossing point
+			JPanel crossPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));	
 			tfCross = new MyTextField(app.getGuiManager(),6);
 			tfCross.addActionListener(this);
-			thirdLine.add(new JLabel(app.getPlain("CrossAt") + ":"));
-			thirdLine.add(tfCross);
-			
-					
-			add(firstLine, BorderLayout.NORTH);
-			add(northPanel, BorderLayout.CENTER);	
-			add(thirdLine, BorderLayout.SOUTH);
+			crossPanel.add(new JLabel(app.getPlain("CrossAt") + ":"));
+			crossPanel.add(tfCross);
+						
+			// add all panels
+			add(showAxisPanel);
+			add(numberPanel);
+			add(showPosPanel);
+			add(distancePanel);
+			add(showTicksPanel);
+			add(labelPanel);
+			add(crossPanel);
+				
 			updatePanel();
 		}
+		
+		
 		
 		public void actionPerformed(ActionEvent e) {				
 			Object source = e.getSource();
 			
 			if (source == cbShowAxis) {
 				boolean showXaxis, showYaxis; 
-				
-				/*
-				if (axis == 0) {
-					showXaxis = cbShowAxis.isSelected();
-					showYaxis = view.getShowYaxis();
-				} else {					
-					showXaxis = view.getShowXaxis();
-					showYaxis = cbShowAxis.isSelected();
-				}				
-				view.showAxes(showXaxis, showYaxis);
-				*/
 				view.setShowAxis(axis, cbShowAxis.isSelected(), true);
 			} 
+			
 			else if (source == cbAxisNumber) {
 				boolean [] show = view.getShowAxesNumbers();
 				show[axis] = cbAxisNumber.isSelected();
 				view.setShowAxesNumbers(show); 
 			}
+			
 			else if (source == cbManualTicks) {
 				view.setAutomaticAxesNumberingDistance(!cbManualTicks.isSelected(), axis);				
-			}			
+			}
+			
 			else if (source == cbUnitLabel) {
 				Object ob = cbUnitLabel.getSelectedItem();
 				String text =  (ob == null) ? null : ob.toString().trim();
@@ -668,6 +773,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				labels[axis] = text;
 				view.setAxesUnitLabels(labels);
 			}
+			
 			else if (source == cbAxisLabel) {
 				Object ob = cbAxisLabel.getSelectedItem();
 				String text =  (ob == null) ? null : ob.toString().trim();
@@ -675,6 +781,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				labels[axis] = text;
 				view.setAxesLabels(labels);
 			}
+			
 			else if (source == cbTickStyle) {
 				int type = cbTickStyle.getSelectedIndex();
 				int [] styles = view.getAxesTickStyles();
@@ -701,6 +808,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			updateGUI();
 		}
 		
+		
 		public void itemStateChanged(ItemEvent e) {
 		
 			if (e.getStateChange() != ItemEvent.SELECTED)
@@ -711,32 +819,12 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				if (val > 0) 
 					view.setAxesNumberingDistance(val, axis);			
 			}			
-					
-			else if (source == ncbMin) {
-				double min = ncbMin.getValue();
-				double max = axis == 0 ? view.getXmax() : view.getYmax();
-				if (min  + Kernel.MIN_PRECISION < max) {				
-					if (axis == 0)
-						view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
-					else
-						view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max);
-				}
-			}
-			else if (source == ncbMax) {
-				double min = axis == 0 ? view.getXmin() : view.getYmin();
-				double max = ncbMax.getValue();
-				if (min + Kernel.MIN_PRECISION < max) {	
-					if (axis == 0)
-						view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
-					else
-						view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max);
-				}
-			}
-			
+						
 			view.updateBackground();			
 			updateGUI();
 		}
 				
+		
 		void updatePanel() {		
 			cbAxisNumber.removeActionListener(this);
 		 	cbAxisNumber.setSelected(view.getShowAxesNumbers()[axis]);
@@ -750,19 +838,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		 	ncbTickDist.setEnabled(cbManualTicks.isSelected());
 		 	
 		 	cbManualTicks.addActionListener(this);		 	
-		 	ncbTickDist.addItemListener(this);
-		 	
-		 	ncbMin.removeItemListener(this);
-		 	ncbMax.removeItemListener(this);
-		 	if (axis == 0) {		 		
-		 		ncbMin.setValue(view.getXmin());
-				ncbMax.setValue(view.getXmax());
-		 	} else {
-		 		ncbMin.setValue(view.getYmin());
-				ncbMax.setValue(view.getYmax());
-		 	}
-		 	ncbMin.addItemListener(this);
-		 	ncbMax.addItemListener(this);
+		 	ncbTickDist.addItemListener(this);	
 		 	
 		 	cbAxisLabel.removeActionListener(this);
 		 	cbAxisLabel.setSelectedItem(view.getAxesLabels()[axis]);
