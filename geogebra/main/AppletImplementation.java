@@ -103,23 +103,25 @@ public class AppletImplementation implements AppletImplementationInterface {
 		applet.addComponentListener(new java.awt.event.ComponentAdapter() {
 			public void componentResized(ComponentEvent e)
 			{
-				if (allowRescaling)	{Component c = e.getComponent();
-					Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
-	
-					if (app != null && !app.runningInFrame && app.onlyGraphicsViewShowing())
-					{
-						// use just horizontal scale factors
-						// under normal circumstances, these should be the same			
-						double zoomFactor = (double)c.getWidth() / (double)width;// (double)c.getHeight() / (double)height ;
-						app.getEuclidianView().zoomAroundCenter(zoomFactor);
-	
-					}
-	
-					width = c.getWidth();
-					height = c.getHeight();
+
+				Component c = e.getComponent();
+				Application.debug("Applet resized to: "+c.getWidth()+", "+c.getHeight());
+
+				if (allowRescaling && app != null && !app.runningInFrame && app.onlyGraphicsViewShowing())
+				{
+					// use just horizontal scale factors
+					// under normal circumstances, these should be the same			
+					double zoomFactor = (double)c.getWidth() / (double)width;// (double)c.getHeight() / (double)height ;
+					app.getEuclidianView().zoomAroundCenter(zoomFactor);
+
 				}
 
+				// these always need updating eg draw reset icon, play/pause icon
+				width = c.getWidth();
+				height = c.getHeight();
 			}
+
+
 		}); 
 
 		init();
