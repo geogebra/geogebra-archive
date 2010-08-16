@@ -33,8 +33,8 @@ public class CommandDispatcher {
     private Construction cons;
     private Application app;
     
-    /** stores (String name, CommandProcessor cmdProc) pairs */   
-    protected HashMap<String,CommandProcessor> cmdTable;
+    // stores (String name, CommandProcessor cmdProc) pairs   
+    protected HashMap<String,CommandProcessor> cmdTable, internalCmdTable;
     private MacroProcessor macroProc;
     
     /**
@@ -91,7 +91,10 @@ public class CommandDispatcher {
         // STANDARD CASE
         else {
         	// get CommandProcessor object for command name from command table
-        	cmdProc = (CommandProcessor) cmdTable.get(cmdName);            
+        	cmdProc = (CommandProcessor) cmdTable.get(cmdName);    
+        	
+        	if (cmdProc == null)
+        		cmdProc = (CommandProcessor) internalCmdTable.get(cmdName);
         }
                 
         GeoElement[] ret = null;
@@ -133,7 +136,7 @@ public class CommandDispatcher {
     	cmdTable.put("CircleArc", new CmdCircleArc(kernel));	   
     	cmdTable.put("Parameter", new CmdParameter(kernel));	   
     	cmdTable.put("TurningPoint", new CmdTurningPoint(kernel));	   
-    	cmdTable.put("Derivative", new CmdDerivative(kernel));	   
+    	cmdTable.put("Derivative", new CmdDerivative(kernel));	
     	cmdTable.put("Integral", new CmdIntegral(kernel));	   
     	cmdTable.put("LowerSum", new CmdLowerSum(kernel));	   
     	cmdTable.put("Root", new CmdRoot(kernel));	   
@@ -411,6 +414,11 @@ public class CommandDispatcher {
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   
     	
+    	
+    	// internal command table for commands that should not be visible to the user
+    	internalCmdTable = new HashMap();
+    	// support parsing diff() results back from Maxima
+    	internalCmdTable.put("diff", new CmdDerivative(kernel));
     }
 
 

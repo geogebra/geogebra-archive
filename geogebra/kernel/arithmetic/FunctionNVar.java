@@ -364,6 +364,12 @@ implements ExpressionValue, FunctionalNVar {
               // evaluate expression by CAS 
               String result = kernel.evaluateGeoGebraCAS(casString);  
             
+              if (ggbCasCmd.startsWith("Derivative")) {
+            	  // MathPiper may return Deriv(x) f(x,y) if it doesn't know f(x,y)
+            	  // this should be converted into Derivative[f(x,y), x]
+            	  result = handleDeriv(result);
+              }
+              
               // parse CAS result back into GeoGebra        			
               sb.setLength(0);
               sb.append("f("); // this name is never used, just needed for parsing
@@ -408,7 +414,49 @@ implements ExpressionValue, FunctionalNVar {
 	   	 return casEvalMap;
 	  }
 	  private static HashMap<String, FunctionNVar> casEvalMap;
-    
+	  
+	  
+	  /**
+	   * MathPiper may return something like Deriv(x) f(x). This method
+	   * converts such expressions into Derivative[f(x), x]
+	   * @param order
+	   * @return
+	   */
+     private String handleDeriv(String casResult) {    
+    	 if (casResult.indexOf("Deriv[") < 0) return casResult;
+    	 
+    	 StringBuilder sb = new StringBuilder();
+    	 try {
+			// look for "Deriv[x] f(x,y)" strings and
+			// replace them with "Derivative[f(x,y), x]"
+			String [] derivs = casResult.split("Deriv\\[");
+			sb.append(derivs[0]); // part before first "Deriv(x)"
+			for (int i=1; i < derivs.length; i++) {
+				// we now have something like "x) f(x, y) ..."
+				// get variable part "x" before first closing ) 
+				int pos1 = derivs[i].indexOf(']');
+				String var = derivs[i].substring(0, pos1);
+				
+				// get function part "f(x,y)" before second closing )
+				pos1 += 1;
+				int pos2 = derivs[i].indexOf(')', pos1) + 1;
+				String funPart = derivs[i].substring(pos1, pos2);
+				
+				sb.append("Derivative[");
+				sb.append(funPart);
+				sb.append(",");
+				sb.append(var);
+				sb.append("] ");
+				sb.append(derivs[i].substring(pos2));
+			}
+    	 }
+    	 catch (Exception e) {
+    		 // TODO : remove
+    		 e.printStackTrace();
+    		 return casResult;
+    	 }
+		return sb.toString();
+    }	    
     
     public boolean isNumberValue() {
         return false;

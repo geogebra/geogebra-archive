@@ -350,7 +350,8 @@ TOKEN: {
 |	< ARG_FUNC:  ( "arg(" | "Arg(" ) > 
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 
 |	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
-|	< RANDOM_FUNC:  "random()"  > 
+|	< RANDOM_FUNC:  "random()"  >
+|	< DERIV_MP:  "Deriv()"  >  // may be returned by MathPiper
 | 	< FUNCTION_LABEL: ( <SPREADSHEET_LABEL> | <LABEL> ) "(" >
 }
 
@@ -1210,6 +1211,7 @@ ExpressionValue powerdivterm():
 ExpressionValue enunary():        
 {
     ExpressionValue e;
+    Token c;
 }
 {
     <MINUS> e = enpower()
@@ -1572,6 +1574,7 @@ ExpressionValue myDouble():
 ExpressionNode numberFunction():
 {
     ExpressionNode en;
+    ExpressionValue ev;
     MyList myList;
     Token c;
 }
@@ -1723,7 +1726,8 @@ ExpressionNode numberFunction():
       	 GeoNumeric randNum = new GeoNumeric(cons);
          cons.addRandomGeo(randNum);
          randNum.setValue(Math.random());         
-      	 return new ExpressionNode(kernel, randNum, ExpressionNode.RANDOM, null); }               
+      	 return new ExpressionNode(kernel, randNum, ExpressionNode.RANDOM, null);
+      }
 |
 	(	  c = <FUNCTION_LABEL> en = expressionnode()
 		{   

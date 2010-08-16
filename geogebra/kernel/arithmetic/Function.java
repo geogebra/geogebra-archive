@@ -619,66 +619,6 @@ implements ExpressionValue, RealRootFunction, Functional {
     
     
 
-//    final private Function derivative(int order) {     	 
-//		// use CAS to get derivative
-//        // temporarily replace the variable by "x"
-//        String oldVar = fVar.toString();
-//        fVar.setVarString("x");
-//                
-//        // build expression string for CAS             
-//		sb.setLength(0);
-//        sb.append("Derivative(");
-//        // function expression with multiply sign "*"   
-//		sb.append(expression.getCASstring(kernel.getCurrentCAS(), true));		
-//		if (order > 1) {
-//	        sb.append(",x,");
-//	        sb.append(order);
-//		}
-//        sb.append(") ");
-//					
-//        try {                   	            
-//            // evaluate expression by CAS 
-//            String result = kernel.evaluateGeoGebraCAS(sb.toString());  
-//           
-//            // fast fail for e.g. "Differentiate(x)Floor(x)"
-//            if (result.startsWith("Differentiate(") || result.startsWith("'diff("))
-//            	return null;
-//            
-//    		// look for "Deriv(x)f(x)" strings and
-//    		// replace them with "f'(x)"
-//    		String [] derivs = result.split("Deriv\\(x\\)");
-//    		sb.setLength(0);
-//    		sb.append(derivs[0]); // part before first "Deriv(x)"
-//    		for (int i=1; i < derivs.length; i++) {
-//    			// replace "(x)" by "'(x)"
-//    			sb.append(derivs[i].replaceFirst("\\(x\\)", "'(x)"));
-//    		}
-//    		result = sb.toString();
-//                		
-//            // it doesn't matter what label we use here as it is never used            			
-//    		sb.setLength(0);
-//    		sb.append("f(x) = ");			
-//            sb.append(result);
-//    
-//             // parse result
-//             Function fun = kernel.getParser().parseFunction(sb.toString());
-//             fun.initFunction();
-//             fun.getFunctionVariables().setVarString(oldVar);                       
-//             return fun;
-//         } catch (Error err) {       
-//             //err.printStackTrace();
-//        	 return null;
-//         } catch (Exception e) {
-//        	 //e.printStackTrace();
-//             return null;
-//         } catch (Throwable e) {
-//			 return null;
-//		}     
-//         finally {
-//        	 fVar.setVarString(oldVar);
-//         }
-//         
-//    }	    
     
     /**
      * Creates the difference expression (a - b) and stores the result in
