@@ -1169,6 +1169,24 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			//app.updateStatusLabelAxesRatio();
 		}
 	}
+	
+	public int temporaryWidth = -1;
+	public int temporaryHeight = -1;
+	
+    public int getWidth() { return (temporaryWidth > 0 ) ? temporaryWidth : super.getWidth(); }
+
+    public int getHeight() { return (temporaryHeight > 0 ) ? temporaryHeight :  super.getHeight(); }
+
+    /*
+     * used for rescaling applets when the reset button is hit
+     * use setTemporarySize(-1, -1) to disable
+     */
+	public void setTemporarySize(int w, int h) {
+		width = w;
+		height = h;
+		updateSize();
+	}
+
 
 	public void updateSize() {
 		width = getWidth();
@@ -3755,6 +3773,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		setAnimatedRealWorldCoordSystem(x0RW2, x1RW2, y0RW2, y1RW2, 10, storeUndo);
 
 	}
+	
 	
 	public final void setStandardView(boolean storeUndo) {
 		final double xzero, yzero;

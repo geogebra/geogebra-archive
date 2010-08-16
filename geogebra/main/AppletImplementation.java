@@ -404,7 +404,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 		width = cp.getWidth();
 		height = cp.getHeight();
 
-		setInitialScaling();
+		if (originalWidth < 0) setInitialScaling();
 
 		cp.setBackground(bgColor);
 		cp.removeAll();
@@ -413,6 +413,8 @@ public class AppletImplementation implements AppletImplementationInterface {
 		// set move mode
 		app.setMoveMode();		
 	}
+	
+	private int originalWidth = -1, originalHeight = -1;
 
 	/*
 	 * rescales if the width is not what's expected
@@ -422,10 +424,15 @@ public class AppletImplementation implements AppletImplementationInterface {
 		if (allowRescaling) {			
 			if (!app.runningInFrame && app.onlyGraphicsViewShowing())
 			{
-				double zoomFactorX = (double)width / (double)app.getEuclidianView().getPreferredSize().getWidth();
-				double zoomFactorY = (double)height / (double)app.getEuclidianView().getPreferredSize().getHeight();
+				originalWidth = (int)ev.getPreferredSize().getWidth();
+				originalHeight = (int)ev.getPreferredSize().getHeight();
+				double zoomFactorX = (double)width / (double)originalWidth;
+				double zoomFactorY = (double)height / (double)originalHeight;
 				double zoomFactor = Math.min(zoomFactorX, zoomFactorY);
-				app.getEuclidianView().zoomAroundCenter(zoomFactor);
+				ev.zoomAroundCenter(zoomFactor);
+			} else {
+				originalWidth = width;
+				originalHeight = height;
 			}
 		}
 
@@ -752,7 +759,9 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 * Resets the initial construction (given in filename parameter) of this applet.	 
 	 */
 	public synchronized void reset() {	
-
+		
+		if (fileStr == null) return;
+		
 		if (fileStr.startsWith("base64://")) {
 			byte[] zipFile;
 			try {
@@ -785,6 +794,16 @@ public class AppletImplementation implements AppletImplementationInterface {
 
 			}
 		});
+		
+		if (allowRescaling) {
+			ev.setTemporarySize(originalHeight, originalWidth);
+			double zoomFactorX = (double)width / (double)originalWidth;
+			double zoomFactorY = (double)height / (double)originalHeight;
+			double zoomFactor = Math.min(zoomFactorX, zoomFactorY);
+			ev.zoomAroundCenter(zoomFactor);
+			ev.setTemporarySize(-1, -1);
+		}
+
 	}
 
 	/**
