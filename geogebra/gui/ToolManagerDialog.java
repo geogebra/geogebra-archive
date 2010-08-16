@@ -15,6 +15,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
@@ -105,21 +106,13 @@ public class ToolManagerDialog extends javax.swing.JDialog {
          null, options, options[1]);     
     	if (returnVal == 1 ) return;
     	
-/*		int returnVal =
-            JOptionPane.showConfirmDialog(
-                this,
-                app.getMenu("Tool.DeleteQuestion"),
-                app.getPlain("Question"),
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-        if (returnVal == JOptionPane.NO_OPTION ) 
-        	return;	       	    */    				
-		
+	
         boolean didDeletion = false;
 		boolean changeToolBar = false;
 		boolean foundUsedMacro = false;
 		String macroNames = "";
 		Kernel kernel = app.getKernel();
+		app.setSelectedGeos(new ArrayList<GeoElement>());
 		for (int i=0; i < sel.length; i++) {
 			Macro macro = (Macro) sel[i];				
 			if (!macro.isUsed()) {
@@ -131,6 +124,10 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 				didDeletion = true;
 			} else {
 				// don't delete, remember name
+				ArrayList<GeoElement>geos = macro.getDependentGeos();
+				Iterator<GeoElement>curr = geos.iterator();
+				while(curr.hasNext())
+					app.addSelectedGeo(curr.next());
 				foundUsedMacro = true;
 				macroNames += "\n" + macro.getToolOrCommandName() + ": " + macro.getNeededTypesString();
 			}					
@@ -147,7 +144,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		}
 		
 		if (foundUsedMacro)
-			app.showError(app.getError("Tool.DeleteUsed") + ": " + macroNames);										
+			app.showError(app.getError("Tool.DeleteUsed") + " " + macroNames);
 	}
 	
 	/**

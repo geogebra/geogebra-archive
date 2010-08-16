@@ -675,5 +675,19 @@ public class Macro {
 	public ArrayList<Macro> getUsedMacros() {
 		return macroCons.getUsedMacros();
 	}
-		  
+	
+	/**
+	 * Returns list of geos created using this macro
+	 * @return list of geos created using this macro
+	 */
+	public ArrayList<GeoElement> getDependentGeos(){
+		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
+		Iterator<AlgoElement> curr = usingAlgos.iterator();
+		while(curr.hasNext()){
+			AlgoElement algo=curr.next();
+			for(int i = 0; i < algo.getOutputLength(); i++)
+				geos.add(algo.getOutput(i));
+		}
+		return geos;
+	}
 }
