@@ -772,11 +772,10 @@ public class AppletImplementation implements AppletImplementationInterface {
 				return;
 			}
 			app.loadXML(zipFile);
-			return;
-		}
+		} else
 
 		// avoid security problems calling from JavaScript
-		AccessController.doPrivileged(new PrivilegedAction() {
+		AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			public Object run() {
 				// perform the security-sensitive operation here
 				app.setWaitCursor();
