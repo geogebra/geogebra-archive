@@ -112,10 +112,13 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         JPanel axesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         axesPanel.add(xAxisPanel);
         axesPanel.add(Box.createRigidArea(new Dimension(16,0)));
-        axesPanel.add(yAxisPanel);
+       // axesPanel.add(yAxisPanel);
         
         tabbedPane.addTab(app.getMenu("Properties.Basic"), buildBasicPanel());
-        tabbedPane.addTab(app.getPlain("Axes"), axesPanel);
+        tabbedPane.addTab(app.getPlain("xAxis") , xAxisPanel);
+        tabbedPane.addTab(app.getPlain("yAxis"), yAxisPanel);
+        
+        
         tabbedPane.addTab(app.getMenu("Grid"), buildGridPanel());	
          
 	}
@@ -328,14 +331,14 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         // color   
         JLabel lblColor = new JLabel(app.getPlain("Color") + ":");
         lblColor.setLabelFor(btGridColor);
+        // bold
         cbBoldGrid = new JCheckBox(app.getMenu("Bold"));  
         cbBoldGrid.addActionListener(this);
         
-        // bold
-        stylePanel.add(cbBoldGrid); 
+        
         stylePanel.add(lblColor);     
         stylePanel.add(btGridColor);
-        
+        stylePanel.add(cbBoldGrid); 
 			
 		
 		//==================================================
