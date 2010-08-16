@@ -9,44 +9,54 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
  * Tree representing a parametric curve
  */
 public class CurveTree {
+	
+	// LEVEL OF DETAIL PARAMETERS
+	
+	/**a threshold for judging when a singularity has been passed.
+	 * the cosine of the minimum angle for a singularity.
+	 * used in {@link PlotterBrush} */
+	public static final double discontinuityThreshold = -0.95;
+	
+	/** the difference in the paramater value used for tangent estimations
+	 *  used in {@link CurveTreeNode} */
+	public static final double deltaParam = 1e-8;
+	
+	/** amount of levels intially calculated*/
+	public static final int initialLevels = 8;
+	
+	/**minimum amount of levels that is drawn*/
+	public static final int forcedLevels = 6;
+	
+	/** threshold used for testing if two segments form a
+	 *  large enough angle. the cosine of the minimum angle allowed */
+	public static final double pCosThreshold = 0.995;
+	
+	/** threshold used for testing if the tangents of two consecutive pointss
+	 *  are close enough. the cosine of the maximum angle allowed */
+	public static final double tCosThreshold = 0.995;
+	
+	/** the minimum paramater distance allowed between two consecutive points */
+	public static final double minParamDist = 1e-5;
+	
+	/** a factor for determining the level of detail depending on the camera zoom */
+	public static final double distanceFactor = 10.0;
+	
+	// PRIVATE VARIABLES
+	
 	private CurveTreeNode root;
 	private CurveTreeNode start, end;
 	private GeoCurveCartesian3D curve;
 	private EuclidianView3D view;
 	private double radius =0;
 	
-	////////////////////////////////////
-	// LEVEL OF DETAIL PARAMETERS
-	////////////////////////////////////
-	
-	/**a threshold for judging when a singularity has been passed.
-	 * the cosine of the minimum angle for a singularity.
-	 * used in {@link PlotterBrush} */
-	public static final double discontinuityThreshold = -0.95;
-	/** the difference in the paramater value used for tangent estimations
-	 *  used in {@link CurveTreeNode} */
-	public static final double deltaParam = 1e-8;
-	/** amount of levels intially calculated*/
-	public static final int initialLevels = 8;
-	/**minimum amount of levels that is drawn*/
-	public static final int forcedLevels = 6;
-	/** threshold used for testing if two segments form a
-	 *  large enough angle. the cosine of the minimum angle allowed */
-	public static final double pCosThreshold = 0.995;
-	/** threshold used for testing if the tangents of two consecutive pointss
-	 *  are close enough. the cosine of the maximum angle allowed */
-	public static final double tCosThreshold = 0.995;
-	/** the minimum paramater distance allowed between two consecutive points */
-	public static final double minParamDist = 1e-5;
-	/** a factor for determining the level of detail depending on the camera zoom */
-	public static final double distanceFactor = 10.0;
-	
-	////////////////////////////////////
+	// FUNCTIONS
 	
 	/**
 	 * @return the curve object for the tree
 	 */
-	public GeoCurveCartesian3D getCurve() { return curve; }
+	public GeoCurveCartesian3D getCurve() { 
+		return curve; 
+	}
 	
 	/**
 	 * @param curve	the curve
@@ -72,17 +82,19 @@ public class CurveTree {
 	}
 	
 	/**
-	 * Sets the viewing volume radius
 	 * @param r
+	 * 			the radius of the viewing sphere
 	 */
 	public void setRadius(double r){
 		this.radius = r;
 	}
 	
 	/** Starts refining the tree
-	 * @param brush a reference to the calling brush
+	 * 
+	 * @param brush 
+	 * 				a reference to the calling brush
 	 */
-	public void beginRefine(PlotterBrush brush){
+	public void beginRefinement(PlotterBrush brush){
 		refine(brush,start,root,end,1);
 	}
 	
@@ -90,7 +102,9 @@ public class CurveTree {
 	/**
 	 * If the start point is well-defined and visible, it is drawn using
 	 * brush.addPointToCurve().
-	 * @param brush a reference to the calling brush
+	 * 
+	 * @param brush 
+	 * 				a reference to the calling brush
 	 */
 	public void drawStartPointIfVisible(PlotterBrush brush){
 		GgbVector3D pos = start.getPos();
@@ -102,7 +116,9 @@ public class CurveTree {
 	/**
 	 * If the end point is well-defined and visible, it is drawn using
 	 * brush.addPointToCurve().
-	 * @param brush a reference to the calling brush
+	 * 
+	 * @param brush 
+	 * 				a reference to the calling brush
 	 */
 	public void drawEndPointIfVisible(PlotterBrush brush){
 		GgbVector3D pos = end.getPos();
@@ -114,11 +130,17 @@ public class CurveTree {
 	/**
 	 * Function that recursively draws a curve segment depending on curvature,
 	 * zoom level, and tangent information. Draws using brush.addPointToCurve().
-	 * @param brush a reference to the calling brush
-	 * @param n1 the left point of the segment
-	 * @param n2 the center point of the segment
-	 * @param n3 the end point of the segment
-	 * @param level the current level of recursion
+	 * 
+	 * @param brush 
+	 * 				a reference to the calling brush
+	 * @param n1 
+	 * 				the left point of the segment
+	 * @param n2 
+	 * 				the center point of the segment
+	 * @param n3 
+	 * 				the end point of the segment
+	 * @param level
+	 * 				the current level of recursion
 	 */
 	public void refine(PlotterBrush brush, CurveTreeNode n1, CurveTreeNode n2, 
 						 CurveTreeNode n3, int level){
@@ -160,12 +182,17 @@ public class CurveTree {
 						refine(brush,n2,n2.getRightChild(),n3,level+1);
 		}
 	}
+	
 	/**
 	 * Function that recursively inserts points between min and max.
 	 * Only to be used in the constructor.
-	 * @param min minimum parameter value
-	 * @param max maximum parameter value
-	 * @param lev the depth to which should continue
+	 * 
+	 * @param min 
+	 * 				minimum parameter value
+	 * @param max 
+	 * 				maximum parameter value
+	 * @param lev 
+	 * 				the depth to which should continue
 	 */
 	private void addPoints(double min, double max, int lev) {
 		double t = (max+min)*0.5;
@@ -178,8 +205,11 @@ public class CurveTree {
 	
 	/**
 	 * Tests if a segment is partly or wholly within the viewing volume
-	 * @param n1 start of segment
-	 * @param n2 end of segment
+	 * 
+	 * @param n1 
+	 * 				start of segment
+	 * @param n2 
+	 * 				end of segment
 	 */
 	private boolean segmentVisible(GgbVector3D n1, GgbVector3D n2) {
 		if(n1.norm() < radius)
@@ -208,7 +238,9 @@ public class CurveTree {
 	/**
 	 * Tests if the given point is visible.
 	 * Currently just tests if the point is within the viewing radius.
+	 * 
 	 * @param pos
+	 * 				the point tested
 	 * @return
 	 */
 	private boolean pointVisible(GgbVector3D pos){
@@ -218,16 +250,16 @@ public class CurveTree {
 
 	
 	/** Tests if the segments defined by n1,n2,n3 are nearly in C1.
-	 * @param n1 "leftmost" node
-	 * @param n2 "middle" node
-	 * @param n3 "rightmost" node
+	 * 
+	 * @param n1 
+	 * 			the "leftmost" node
+	 * @param n2 
+	 * 			the "middle" node
+	 * @param n3 
+	 * 			the "rightmost" node
 	 * @return false if the values are nearly continuous, otherwise true
 	 */
 	private boolean angleTooSharp(GgbVector3D p1, GgbVector3D p2, GgbVector3D p3){
-//		GgbVector3D dp1 = p2.sub(p1);
-//		GgbVector3D dp2 = p3.sub(p2);
-//		
-//		double pCosAng = dp1.normalized().dotproduct(dp2.normalized())
 		double x1 = p2.getX()-p1.getX(); double x2 = p3.getX()-p2.getX();
 		double y1 = p2.getY()-p1.getY(); double y2 = p3.getY()-p2.getY();
 		double z1 = p2.getZ()-p1.getZ(); double z2 = p3.getZ()-p2.getZ();
@@ -241,8 +273,11 @@ public class CurveTree {
 	/**
 	 * Tests if a segment between two points should be refined based on how close to
 	 * continuous their tangents are.
+	 * 
 	 * @param n1
+	 * 			the first node of the segment
 	 * @param n2
+	 * 			the second node of the segment
 	 * @return true if the cosine of the angle between the tangents is < than tCosThreshold
 	 */
 	private boolean tangentTooDifferent(CurveTreeNode n1, CurveTreeNode n2) {
@@ -255,8 +290,11 @@ public class CurveTree {
 	/**
 	 * Tests if two nodes are far enough, both in their parameter values and their
 	 * spatial values, to be refined.
+	 * 
 	 * @param n1
+	 * 			the first node of the segment
 	 * @param n2
+	 * 			the second node of the segment
 	 * @return
 	 */
 	private boolean distanceLargeEnough(CurveTreeNode n1, CurveTreeNode n2){
@@ -275,19 +313,26 @@ public class CurveTree {
 		return false;
 	}
 	
-	/** inserts a node into the tree
-	 * @param pos 	node position
-	 * @param param node parameter value
+	/** 
+	 * inserts a node into the tree
+	 * 
+	 * @param pos 	
+	 * 				node position
+	 * @param param 
+	 * 				node parameter value
 	 */
 	private void insert(GgbVector3D pos, double param) {root.insert(pos,param);}
 }
 
 
-/**a node in CurveTree
+/**
+ * Class representing a node in CurveTree
+ * 
  * @author André Eriksson
  * @see CurveTree
  */
 class CurveTreeNode{
+
 	private GgbVector3D pos;
 	private GgbVector3D tangent;
 	private double param;
@@ -297,6 +342,31 @@ class CurveTreeNode{
 	
 	private CurveTreeNode[] children;
 	private GeoCurveCartesian3D curve;
+
+	/**
+	 * @param pos	
+	 * 				spatial position
+	 * @param param 
+	 * 				parameter value
+	 * @param diff  
+	 * 				the difference between the minimum and maximum parameter values
+	 * @param level	
+	 * 				the level of the tree
+	 * @param curve 
+	 * 				a reference to the curve
+	 * @param parent 
+	 */
+	CurveTreeNode(GgbVector3D pos, double param, double diff, int level, 
+					GeoCurveCartesian3D curve, CurveTreeNode parent){
+		this.pos = pos.copyVector();
+		this.param = param;
+		this.children = new CurveTreeNode[2];
+		this.level = level;
+		this.diff = diff;
+		this.curve=curve;
+		
+		approxTangent();
+	}
 	
 	/**
 	 * @return the spatial position of the node
@@ -316,26 +386,6 @@ class CurveTreeNode{
 	@Override
 	public String toString() {
 		return "CurveTreeNode [param=" + param + ", pos=" + pos + "]";
-	}
-	
-	/**
-	 * @param pos	spatial position
-	 * @param param parameter value
-	 * @param diff  the difference between the minimum and maximum parameter values
-	 * @param level	the level of the tree
-	 * @param curve a reference to the curve
-	 * @param parent 
-	 */
-	CurveTreeNode(GgbVector3D pos, double param, double diff, int level, 
-					GeoCurveCartesian3D curve, CurveTreeNode parent){
-		this.pos = pos.copyVector();
-		this.param = param;
-		this.children = new CurveTreeNode[2];
-		this.level = level;
-		this.diff = diff;
-		this.curve=curve;
-		
-		approxTangent();
 	}
 
 	/**
@@ -363,8 +413,10 @@ class CurveTreeNode{
 	}
 	
 	/** Recursive function that inserts a node into the tree
-	 * @param pos 	the node position
-	 * @param param the node parameter value
+	 * @param pos 	
+	 * 				the node position
+	 * @param param 
+	 * 				the node parameter value
 	 */
 	public void insert(GgbVector3D pos, double param){
 		int i = 0;
@@ -378,8 +430,9 @@ class CurveTreeNode{
 			children[i].insert(pos,param);
 	}
 	
-	/** Approximates the tangent by a simple forward difference quotient.
-	 * 	Should only be called in the constructor.
+	/** 
+	 * Approximates the tangent by a simple forward difference quotient.
+	 * Should only be called in the constructor.
 	 */
 	private void approxTangent(){
 		GgbVector3D d = curve.evaluateCurve3D(param+CurveTree.deltaParam);

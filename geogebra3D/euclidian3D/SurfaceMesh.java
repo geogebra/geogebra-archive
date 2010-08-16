@@ -14,12 +14,15 @@ public class SurfaceMesh {
 	//DETAIL SETTINGS 
 	
 	/**used in setRadius() to set the desired error per (visible) area unit according to
-	 * error per area unit = errorC0 + errorC1*r */
-	private final double errorC0 = 0.005;
-	private final double errorC1 = 0.001;
+	 * a second degree polynomial with erroCoeffs as coefficients*/
+	private final double[] errorCoeffs = {0.0015,0,0,0.00012};
+	
+	/** a proportionality constant used for setting the error of diamonds where one 
+	 * or more vertices are undefined */
+	public static final double undefErrorConst = 0.001;
 
 	/** the minimum triangle count */
-	private final int minTriCount = 3000;
+	private final int minTriCount = 5000;
 	
 	/** the desired triangle count */
 	private final int triGoal = 40000;
@@ -78,21 +81,6 @@ public class SurfaceMesh {
 	};
 
 	/**
-	 * @param r the bounding radius of the viewing volume
-	 */
-	public void setRadius(double r) {
-		radSq = r * r;
-		desiredErrorPerAreaUnit = errorC0 + errorC1*r;
-	}
-	
-	/**
-	 * forces the mesh to resume updates if it has stopped
-	 */
-	public void turnOnUpdates(){
-		doUpdates=true;
-	}
-
-	/**
 	 * @param function
 	 * @param radSq
 	 * @param unlimitedRange 
@@ -106,9 +94,23 @@ public class SurfaceMesh {
 			initMesh(-radSq, radSq, -radSq, radSq);
 		else
 			initMesh(function.getMinParameter(0), function.getMaxParameter(0),
-					 function.getMinParameter(1), function.getMaxParameter(1));
+					function.getMinParameter(1), function.getMaxParameter(1));
 		baseDiamond.addToSplitQueue();
-		//optimizeSub(initialRefinement);
+	}
+
+	/**
+	 * @param r the bounding radius of the viewing volume
+	 */
+	public void setRadius(double r) {
+		radSq = r * r;
+		desiredErrorPerAreaUnit = errorCoeffs[0] + errorCoeffs[1]*r + errorCoeffs[2]*radSq + Math.sqrt(r)*errorCoeffs[3];
+	}
+	
+	/**
+	 * forces the mesh to resume updates if it has stopped
+	 */
+	public void turnOnUpdates(){
+		doUpdates=true;
 	}
 
 	/**
@@ -243,7 +245,8 @@ public class SurfaceMesh {
 			System.out.println(this.function + ":\tupdate time: "
 					+ (new Date().getTime() - t1) + "ms\ttriangles: "
 					+ drawList.getCount() + "\terror: "
-					+ (float) drawList.getError());
+					+ (float) drawList.getError()+ "\tgoal:"
+					+ (float) (desiredErrorPerAreaUnit * drawList.getArea()));
 	}
 
 	/**
@@ -257,12 +260,9 @@ public class SurfaceMesh {
 			return true;
 		if (drawList.isFull())
 			return false;
-		if (error < areaGoal)
-			if (count > triGoal)
-				return false;
-		if (error > areaGoal)
-			return true;
-		return false;
+		if (error < areaGoal || count > triGoal)
+			return false;
+		return true;
 	}
 
 	/**
@@ -441,6 +441,9 @@ class SurfTriList extends TriList {
 		calcFloats(d, j, v, n);
 
 		TriListElem t = super.add(v, n);
+		
+		if(t==null)
+			return;
 	
 		d.setTriangle(j, t);
 
@@ -459,12 +462,12 @@ class SurfTriList extends TriList {
 			t[2] = d.ancestors[1];
 		}
 		for (int i = 0, c = 0; i < 3; i++, c += 3) {
-			v[c] = (float) t[i].v.getX();
-			v[c + 1] = (float) t[i].v.getY();
-			v[c + 2] = (float) t[i].v.getZ();
-			n[c] = (float) t[i].normal.getX();
-			n[c + 1] = (float) t[i].normal.getY();
-			n[c + 2] = (float) t[i].normal.getZ();
+			v[c] =	(float) t[i].v.getX();
+			v[c+1] =(float) t[i].v.getY();
+			v[c+2] =(float) t[i].v.getZ();
+			n[c] =	(float) t[i].normal.getX();
+			n[c+1] =(float) t[i].normal.getY();
+			n[c+2] =(float) t[i].normal.getZ();
 		}
 	}
 

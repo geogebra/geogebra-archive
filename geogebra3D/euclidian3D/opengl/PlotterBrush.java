@@ -442,7 +442,7 @@ public class PlotterBrush {
 		//draw the start point if visible and defined
 		tree.drawStartPointIfVisible(this);
 		
-		tree.beginRefine(this);
+		tree.beginRefinement(this);
 		
 		//draw the end point if visible and defined
 		tree.drawEndPointIfVisible(this);

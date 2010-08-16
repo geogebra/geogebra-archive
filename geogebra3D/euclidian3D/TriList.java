@@ -99,6 +99,9 @@ public class TriList {
 	 */
 	public TriListElem add(float[] vertices, float[] normals) {
 		
+		if(!inputValid(vertices, normals))
+			return null;
+			
 		TriListElem t = new TriListElem(back);
 		if(front==null)
 			front=t;		
@@ -113,6 +116,15 @@ public class TriList {
 		count++;
 		
 		return t;
+	}
+	
+	private boolean inputValid(float[] vertices, float[] normals){
+		for(int i = 0; i < 9; i++)
+			if(Double.isInfinite(vertices[i]) || Double.isNaN(vertices[i]) ||
+				Double.isInfinite(normals[i]) || Double.isNaN(normals[i]))
+				return false;
+		return true;
+				
 	}
 	
 	/**
