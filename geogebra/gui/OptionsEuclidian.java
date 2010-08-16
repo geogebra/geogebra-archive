@@ -109,6 +109,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         xAxisPanel = new AxisPanel(0);
         yAxisPanel = new AxisPanel(1);
         
+        
         JPanel axesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         axesPanel.add(xAxisPanel);
         axesPanel.add(Box.createRigidArea(new Dimension(16,0)));
@@ -630,7 +631,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	//=======================================================
 	
 	
-	private class AxisPanel extends JPanel implements ActionListener, ItemListener {		
+	private class AxisPanel extends JPanel implements ActionListener, ItemListener, FocusListener {		
 		/**
 		 * 
 		 */
@@ -647,7 +648,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		public AxisPanel(int axis) {
 			
 			this.axis = axis;			
-			
+				
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			
 			String strAxis = (axis == 0) ? app.getPlain("xAxis") : app.getPlain("yAxis");
@@ -749,11 +750,12 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			updatePanel();
 		}
 		
+		public void actionPerformed(ActionEvent e) {	
+			doActionPerformed(e.getSource());		
+		}
 		
-		
-		public void actionPerformed(ActionEvent e) {				
-			Object source = e.getSource();
-			
+		private void doActionPerformed(Object source) {	
+						
 			if (source == cbShowAxis) {
 				boolean showXaxis, showYaxis; 
 				view.setShowAxis(axis, cbShowAxis.isSelected(), true);
@@ -871,6 +873,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	        else
 	        	tfCross.setText("" + view.getYCross());
 	        tfCross.addActionListener(this);
+	        tfCross.addFocusListener(this);
 	        
 	        
 	        cbPositiveAxis.removeActionListener(this);
@@ -883,6 +886,15 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	        
 		}
 
+		public void focusGained(FocusEvent e) {	
+		}
+
+		public void focusLost(FocusEvent e) {
+			// (needed for textfields)
+			doActionPerformed(e.getSource());
+		}
+
+		
 		
 	}
 
@@ -890,7 +902,9 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	}
 
 	public void focusLost(FocusEvent e) {
+		
 		doActionPerformed(e.getSource());
+		
 	}
 
 
