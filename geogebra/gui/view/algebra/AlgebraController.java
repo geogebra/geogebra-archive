@@ -185,20 +185,26 @@ public class AlgebraController
 			
 			// get GeoElement at mouse location		
 			TreePath tp = view.getPathForLocation(e.getX(), e.getY());
-			GeoElement geo = AlgebraView.getGeoElementForPath(tp);	
-			if (geo == null) return;
+			GeoElement geo = AlgebraView.getGeoElementForPath(tp);
 			
-			if (!app.containsSelectedGeo(geo)) {
+			if (geo != null && !app.containsSelectedGeo(geo)) {
 				app.clearSelectedGeos();					
 			}
 														
 			// single selection: popup menu
 			if (app.selectedGeosSize() < 2) {				
-				app.getGuiManager().showPopupMenu(geo, view, e.getPoint());						
+				if(geo == null) {
+					AlgebraContextMenu contextMenu = new AlgebraContextMenu(app);
+					contextMenu.show(view, e.getPoint().x, e.getPoint().y);
+				} else {
+					app.getGuiManager().showPopupMenu(geo, view, e.getPoint());
+				}			
 			} 
 			// multiple selection: properties dialog
-			else {														
-				app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());	
+			else {
+				if(geo != null) {
+					app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
+				}
 			}	
 		}
 	}
