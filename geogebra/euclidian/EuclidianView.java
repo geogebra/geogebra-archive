@@ -2311,30 +2311,42 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		g2.setColor(gridColor);
 		g2.setStroke(gridStroke);
 
+		// vars for handling positive-only axes
+		double xCrossPix =  this.xZero + xCross * xscale;
+		double yCrossPix =  this.yZero - yCross * yscale;
+		int yAxisEnd = positiveYAxis ? (int) yCrossPix : height;		
+		int xAxisStart = positiveXAxis ? (int) xCrossPix : 0;
 		
 		switch (gridType) {
 		case GRID_CARTESIAN:
-		// vertical grid lines
-		double tickStep = xscale * gridDistances[0];
-		double start = xZero % tickStep;
-		double pix = start;		
-		for (int i=0; pix <= width; i++) {			
-			//int val = (int) Math.round(i);
-			//g2.drawLine(val, 0, val, height);
-			tempLine.setLine(pix, 0, pix, height);
-			g2.draw(tempLine);
-			pix = start + i * tickStep;
-		}
 
-		// horizontal grid lines
-		tickStep = yscale * gridDistances[1];
-		start = yZero % tickStep;
-		pix = start;
-		for (int j=0; pix <= height; j++) {
-			//int val = (int) Math.round(j);
+			// vertical grid lines
+			double tickStep = xscale * gridDistances[0];
+			double start = xZero % tickStep;
+			double pix = start;	
+
+			for (int i=0; pix <= width; i++) {	
+				if(!(positiveXAxis && pix < xCrossPix)){
+					//int val = (int) Math.round(i);
+					//g2.drawLine(val, 0, val, height);
+					tempLine.setLine(pix, 0, pix, yAxisEnd);
+					g2.draw(tempLine);
+				}
+				pix = start + i * tickStep;
+			}
+
+			// horizontal grid lines
+			tickStep = yscale * gridDistances[1];
+			start = yZero % tickStep;
+			pix = start;
+
+			for (int j=0; pix <= height; j++) {
+				//int val = (int) Math.round(j);
 			//g2.drawLine(0, val, width, val);
-			tempLine.setLine(0, pix, width, pix);
-			g2.draw(tempLine);
+			if(!(positiveYAxis && pix > yCrossPix)){
+				tempLine.setLine(xAxisStart, pix, width, pix);
+				g2.draw(tempLine);
+			}
 			pix = start + j * tickStep;			
 		}	
 		
@@ -2342,6 +2354,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		break;
 		
 		case GRID_ISOMETRIC:
+					
 			double tickStepX = xscale * gridDistances[0] * Math.sqrt(3.0);
 			double startX = xZero % (tickStepX);
 			double startX2 = xZero % (tickStepX/2);
@@ -2351,8 +2364,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			// vertical
 			pix = startX2;
 			for (int j=0; pix <= width; j++) {
-				tempLine.setLine(pix, 0, pix, height);
-				g2.draw(tempLine);
+				if(!(positiveXAxis && pix < xCrossPix)){
+					tempLine.setLine(pix, 0, pix, yAxisEnd);
+					g2.draw(tempLine);
+				}
 				pix = startX2 + j * tickStepX/2.0;			
 			}		
 			
