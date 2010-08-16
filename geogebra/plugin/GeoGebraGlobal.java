@@ -55,6 +55,14 @@ public class GeoGebraGlobal implements IdFunctionCall {
 			switch (methodId) {
 			case Id_alert: {
 				Object value = (args.length != 0) ? args[0] : Undefined.instance;
+				
+				if (!(value instanceof String)) {
+					int[] linep = new int[1];
+			        Context.getSourcePositionFromStack(linep); // line number of error
+			        app.showError(app.getPlain("ErrorInJavaScript")+"\n"+app.getPlain("SynataxAatLineB", "alert(String)", linep[0]+""));
+			        return "";
+				}
+
 				app.showMessage((String) value);
 				return "";
 			}

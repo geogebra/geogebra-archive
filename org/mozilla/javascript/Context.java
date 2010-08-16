@@ -2444,7 +2444,7 @@ public class Context
         return (Evaluator)Kit.newInstanceOrNull(interpreterClass);
     }
 
-    static String getSourcePositionFromStack(int[] linep)
+    public static String getSourcePositionFromStack(int[] linep)
     {
         Context cx = getCurrentContext();
         if (cx == null)

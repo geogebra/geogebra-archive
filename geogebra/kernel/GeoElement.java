@@ -4515,6 +4515,7 @@ public abstract class GeoElement
 			app.getScriptManager().evalScript(javaScript, arg);
 		}
 		} catch (Exception e) {
+			e.printStackTrace();
 			app.showError(app.getPlain("ErrorInJavaScript")+"\n"+e);
 
 		}

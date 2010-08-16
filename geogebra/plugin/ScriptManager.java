@@ -69,8 +69,8 @@ public class ScriptManager {
 	            // JavaScript to execute
 	            //String s = "ggbApplet.evalCommand('F=(2,3)')";
 	            
-	            // Now evaluate the string we've colected.
-	            Object result = cx.evaluateString(scope, script + app.getKernel().getLibraryJavaScript(), "GeoGebra", 1, null);
+	            // Now evaluate the string we've collected.
+	            Object result = cx.evaluateString(scope, script + app.getKernel().getLibraryJavaScript(), app.getPlain("ErrorAtLine"), 1, null);
 
 	            // Convert the result to a string and print it.
 	            //Application.debug("script result: "+(Context.toString(result)));
