@@ -64,6 +64,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.ActionEvent;
@@ -2335,7 +2336,13 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		int yAxisEnd = positiveYAxis ? (int) yCrossPix : height;		
 		int xAxisStart = positiveXAxis ? (int) xCrossPix : 0;
 		
+		// set the clipping region (if positive direction axes)
+		Shape oldClip = g2.getClip();
+		g2.setClip(xAxisStart, 0, width, yAxisEnd);
+		
+		
 		switch (gridType) {
+		
 		case GRID_CARTESIAN:
 
 			// vertical grid lines
@@ -2344,12 +2351,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			double pix = start;	
 
 			for (int i=0; pix <= width; i++) {	
-				if(!(positiveXAxis && pix < xCrossPix)){
-					//int val = (int) Math.round(i);
-					//g2.drawLine(val, 0, val, height);
-					tempLine.setLine(pix, 0, pix, yAxisEnd);
-					g2.draw(tempLine);
-				}
+				//int val = (int) Math.round(i);
+				//g2.drawLine(val, 0, val, height);
+				tempLine.setLine(pix, 0, pix, height);
+				g2.draw(tempLine);
+
 				pix = start + i * tickStep;
 			}
 
@@ -2360,16 +2366,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 			for (int j=0; pix <= height; j++) {
 				//int val = (int) Math.round(j);
-			//g2.drawLine(0, val, width, val);
-			if(!(positiveYAxis && pix > yCrossPix)){
-				tempLine.setLine(xAxisStart, pix, width, pix);
+				//g2.drawLine(0, val, width, val);
+				tempLine.setLine(0, pix, width, pix);
 				g2.draw(tempLine);
-			}
-			pix = start + j * tickStep;			
-		}	
-		
-		
+				
+				pix = start + j * tickStep;			
+			}	
+
 		break;
+		
 		
 		case GRID_ISOMETRIC:
 					
@@ -2382,13 +2387,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			// vertical
 			pix = startX2;
 			for (int j=0; pix <= width; j++) {
-				if(!(positiveXAxis && pix < xCrossPix)){
-					tempLine.setLine(pix, 0, pix, yAxisEnd);
-					g2.draw(tempLine);
-				}
+				tempLine.setLine(pix, 0, pix, height);
+				g2.draw(tempLine);
 				pix = startX2 + j * tickStepX/2.0;			
 			}		
-			
+
 			// extra lines needed because it's diagonal
 			int extra = (int)(height*xscale/yscale * Math.sqrt(3.0) / tickStepX)+3;
 			
@@ -2409,7 +2412,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				g2.draw(tempLine);
 				pix = startX + j * tickStepX;			
 			}						
-		
+			
 			break;
 			
 			
@@ -2472,8 +2475,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			}
 			
 			break;		
-			
 		}
+		
+		// reset the clipping region
+		g2.setClip(oldClip);
 	}
 
 	final protected void drawMouseCoords(Graphics2D g2) {
