@@ -1,6 +1,9 @@
 package geogebra.plugin;
 
 import geogebra.main.Application;
+import geogebra.main.MyError;
+
+import javax.swing.JOptionPane;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.IdFunctionCall;
@@ -32,6 +35,9 @@ public class GeoGebraGlobal implements IdFunctionCall {
 			case Id_alert:
 				name = "alert";
 				break;
+			case Id_prompt:
+				name = "prompt";
+				break;
 			default:
 				throw Kit.codeBug();
 			}
@@ -51,6 +57,19 @@ public class GeoGebraGlobal implements IdFunctionCall {
 				Object value = (args.length != 0) ? args[0] : Undefined.instance;
 				app.showMessage((String) value);
 				return "";
+			}
+			case Id_prompt: {
+				Object value0 = (args.length != 0) ? args[0] : "";
+				Object value1 = (args.length > 1) ? args[1] : "";
+				String s = (String)JOptionPane.showInputDialog(
+	                    app.getFrame(),
+	                    value0,
+	                    "GeoGebra",
+	                    JOptionPane.PLAIN_MESSAGE,
+	                    null,
+	                    null,
+	                    value1);
+				return s;
 			}
 			}
 		}
@@ -74,6 +93,7 @@ public class GeoGebraGlobal implements IdFunctionCall {
 	private static final Object FTAG = "Global";
 
 	private static final int 
-		Id_alert = 1, 
-		LAST_SCOPE_FUNCTION_ID = 1; 
+	Id_alert = 1, 
+	Id_prompt = 2, 
+		LAST_SCOPE_FUNCTION_ID = 2; 
 }
