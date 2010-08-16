@@ -2714,7 +2714,7 @@ public abstract class GeoElement
 	/**
 	 * Returns all children (of type GeoElement) that depend on this object.
 	 */
-	public TreeSet getAllChildren() {
+	public TreeSet<GeoElement> getAllChildren() {
 		TreeSet set = new TreeSet();
 		if (algoUpdateSet != null) {
 			Iterator it = algoUpdateSet.getIterator();
