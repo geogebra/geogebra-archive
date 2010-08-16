@@ -158,15 +158,14 @@ public class Macro {
 	private void initMacro(GeoElement [] input, GeoElement [] output)  throws Exception {
 		// check that every output object depends on an input object
 		// and that all input objects are really needed
-		boolean [] inputNeeded = new boolean[input.length];
+		
 		for (int i=0; i < output.length; i++) {
 			boolean dependsOnInput = false;
 			
 			for (int k=0; k < input.length; k++) {
 				boolean dependencyFound = output[i].isChildOf(input[k]);
 				if (dependencyFound) {
-					dependsOnInput = true; 
-					inputNeeded[k] = true;
+					dependsOnInput = true; 					
 				}
 			}
 			
@@ -175,14 +174,8 @@ public class Macro {
 						.getError("Tool.OutputNotDependent") +
 						": " + output[i].getNameDescription());
 			}
-		}	
-		for (int k=0; k < input.length; k++) {			
-			if (!inputNeeded[k]) {
-				throw new Exception(kernel.getApplication()
-						.getError("Tool.InputNotNeeded") +
-						": " + input[k].getNameDescription());
-			}
 		}
+		
 		
 		
 		// steps to create a macro

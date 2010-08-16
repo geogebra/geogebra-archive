@@ -169,18 +169,7 @@ implements EuclidianViewAlgo {
 //			System.out.println("  macroGeo kernel: " + macroGeo.kernel + ", printFigures: " + macroGeo.kernel.getPrintFigures());
 //			System.out.println("  algoGeo  kernel: " + algoGeo.kernel + ", printFigures: " + algoGeo.kernel.getPrintFigures());
 				
-		}
-		
-// old code:		
-//		int size = macroOutputAndReferencedGeos.size();
-//		for (int i=0; i < size; i++) {			
-//			GeoElement macroGeo = (GeoElement) macroOutputAndReferencedGeos.get(i);
-//			GeoElement algoGeo = (GeoElement) macroToAlgoMap.get(macroGeo);							
-//			algoGeo.set(macroGeo);	
-//			
-//			Application.debug("RESULT from macro: " + macroGeo + " => " + algoGeo);
-//	
-//		}
+		}		
 	}
 	
 	
@@ -194,7 +183,7 @@ implements EuclidianViewAlgo {
 			// copy output object of macro and make the copy part of this construction
 			setOutput(i,macroOutput[i].copyInternal(cons));			
 			getOutput()[i].setUseVisualDefaults(false);
-			getOutput()[i].setVisualStyle(macroOutput[i]);	
+			getOutput()[i].setAdvancedVisualStyle(macroOutput[i]);	
 			getOutput()[i].setAlgoMacroOutput(true);
     	}
 	}
