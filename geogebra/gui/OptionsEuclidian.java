@@ -711,7 +711,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			
 			// check box for positive axis
 			JPanel showPosPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 5));	
-			cbPositiveAxis = new JCheckBox(app.getPlain("PositiveOnly"));
+			cbPositiveAxis = new JCheckBox(app.getPlain("PositiveDirectionOnly"));
 			cbPositiveAxis.addActionListener(this);
 			showPosPanel.add(cbPositiveAxis);	
 			
