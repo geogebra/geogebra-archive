@@ -1,29 +1,16 @@
 package geogebra.gui.view.spreadsheet;
 
-import geogebra.euclidian.Drawable;
 import geogebra.gui.color.ColorChooserButton;
+import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JToolBar;
-import javax.swing.Popup;
 
 /**
  * JToolBar with buttons to format spreadsheet cells.
@@ -100,8 +87,22 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		}
 
 		else if (source == btnBgColor) {
+			
+			// set color in table (needed as geos can be renamed, deleted etc)
+			Color bgCol = btnBgColor.getSelectedColor();
 			formatHandler.setFormat(selectedCells,table.getSelectionType(),
-					CellFormat.FORMAT_BGCOLOR, btnBgColor.getSelectedColor());
+					CellFormat.FORMAT_BGCOLOR, bgCol);
+			
+			// set color for the actual geos
+			for (int i = 0 ; i < selectedCells.size() ; i++) {
+				CellRange cr = selectedCells.get(i);
+				ArrayList<GeoElement> ar = cr.toGeoList();
+				for (int j = 0 ; j < ar.size() ; j++) {
+					GeoElement geo = ar.get(i);
+					geo.setBackgroundColor(bgCol);
+					geo.updateRepaint();
+				}
+			}
 
 		}
 

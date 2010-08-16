@@ -2058,6 +2058,9 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("breakpoint")) {
 				ok = handleBreakpoint(attrs);
 				break;
+			} else if (eName.equals("bgColor")) {
+				ok = handleBgColor(attrs);
+				break;
 			}
 
 		case 'c':
@@ -2303,41 +2306,18 @@ public class MyXMLHandler implements DocHandler {
 		return true;
 	}
 	
+	private boolean handleBgColor(LinkedHashMap<String, String> attrs) {
+		Color col = handleColorAlphaAttrs(attrs);
+		if (col == null)
+			return false;
+		geo.setBackgroundColor(col);
+		geo.updateRepaint();
+
+		return true;
+	}
+	
 	/*
-	private boolean handleObjCoords(LinkedHashMap<String, String> attrs) {
-
-		// Dynamic coordinates
-		// Michael Borcherds 2008-11-30
-		String x = "";
-		String y = "";
-		x = (String) attrs.get("dynamicx");
-		y = (String) attrs.get("dynamicy");
-
-
-		if (x != null && y != null)
-			try {
-				if (!x.equals("") || !y.equals("")) {
-					if (x.equals(""))
-						x = "0";
-					if (y.equals(""))
-						y = "0";
-					
-					// geo.setColorFunction(kernel.getAlgebraProcessor().evaluateToList("{"+red
-					// + ","+green+","+blue+"}"));
-					// need to to this at end of construction (dependencies!)
-					dynamicCoordinatesList.add(new GeoExpPair(geo, "{" + x + ","
-							+ y +"}"));
-
-				}
-			} catch (Exception e) {
-				Application.debug("Error loading Dynamic Coordinates");
-			}
-
-			return true;
-	}*/
-
-	/*
-	 * expects r, g, b attributes to build a colo
+	 * expects r, g, b attributes to build a color
 	 */
 	private Color handleColorAttrs(LinkedHashMap<String, String> attrs) {
 		try {
@@ -2345,6 +2325,21 @@ public class MyXMLHandler implements DocHandler {
 			int green = Integer.parseInt((String) attrs.get("g"));
 			int blue = Integer.parseInt((String) attrs.get("b"));
 			return new Color(red, green, blue);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	/*
+	 * expects r, g, b, alpha attributes to build a color
+	 */
+	private Color handleColorAlphaAttrs(LinkedHashMap<String, String> attrs) {
+		try {
+			int red = Integer.parseInt((String) attrs.get("r"));
+			int green = Integer.parseInt((String) attrs.get("g"));
+			int blue = Integer.parseInt((String) attrs.get("b"));
+			int alpha = Integer.parseInt((String) attrs.get("alpha"));
+			return new Color(red, green, blue, alpha);
 		} catch (Exception e) {
 			return null;
 		}

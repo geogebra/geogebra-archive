@@ -323,6 +323,7 @@ public abstract class GeoElement
 	private int labelMode = LABEL_NAME;
 	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar	  
 	protected Color objColor = Color.black;
+	protected Color bgColor = null; // none by default
 	protected Color selColor = objColor;
 	protected Color labelColor = objColor; 
 	protected Color fillColor = objColor;
@@ -743,6 +744,14 @@ public abstract class GeoElement
 	public void setLabelColor(Color color) {
 		labelColor = color;
 	}
+	
+	public Color getBackgroundColor() {
+		return bgColor;
+	}
+		
+	public void setBackgroundColor(Color bgCol) {
+		bgColor = bgCol;
+	}
 		
 	// Michael Borcherds 2008-04-02
 	public Color getObjectColor() {
@@ -942,6 +951,7 @@ public abstract class GeoElement
 		labelColor = geo.labelColor;
 		fillColor = geo.fillColor;
 		alphaValue = geo.alphaValue;
+		bgColor = geo.bgColor;
 		
 		// line thickness and line type:	
 		// note: line thickness in Drawable is calculated as lineThickness / 2.0f
@@ -3453,7 +3463,7 @@ public abstract class GeoElement
 		// conditional visibility
 		sb.append(getShowObjectConditionXML());
 		
-//		if (isDrawable) removed - want to be able to color objects in AlgebraView
+//		if (isDrawable) removed - want to be able to color objects in AlgebraView, Spreadsheet
 		{		
 			sb.append("\t<objColor");
 			sb.append(" r=\"");
@@ -3468,7 +3478,7 @@ public abstract class GeoElement
 			sb.append(" alpha=\"");
 			sb.append(alphaValue);
 			sb.append("\"");
-			
+						
 			if (colFunction!=null)
 			{
 				sb.append(" dynamicr=\"");
@@ -3484,7 +3494,23 @@ public abstract class GeoElement
 			}	
 			sb.append("/>\n");
 		}
-		
+
+		if (bgColor != null) {
+			sb.append("\t<bgColor");
+			sb.append(" r=\"");
+			sb.append(bgColor.getRed());
+			sb.append("\"");
+			sb.append(" g=\"");
+			sb.append(bgColor.getGreen());
+			sb.append("\"");
+			sb.append(" b=\"");
+			sb.append(bgColor.getBlue());
+			sb.append("\"");
+			sb.append(" alpha=\"");
+			sb.append(bgColor.getAlpha());
+			sb.append("\"/>\n");				
+		}
+
 		// don't remove layer 0 information
 		// we always need it in case an earlier element has higher layer eg 1 
 		if (isDrawable) {

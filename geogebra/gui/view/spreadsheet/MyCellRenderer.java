@@ -125,6 +125,10 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		// set cell content
 		GeoElement geo = (GeoElement)value;
 		
+		if (geo.getBackgroundColor() != null) {
+			bgColor = geo.getBackgroundColor();
+		}
+		
 		
 		//=======================================================
 		// use special rendering for buttons, booleans and lists

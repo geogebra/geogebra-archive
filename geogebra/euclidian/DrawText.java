@@ -202,25 +202,38 @@ public final class DrawText extends Drawable {
 					-labelRectangle.height * view.invYscale);	
 		}
     }
-
+    
     final public void draw(Graphics2D g2) { 
         if (isVisible) {
+        	
+        	Color bg = geo.getBackgroundColor();
+        	
+        	if (bg != null) {
+        		// needed to calculate labelRectangle
+    			g2.setFont(textFont);    	
+    			drawMultilineText(g2);   
+    			
+				g2.setStroke(objStroke);
+				g2.setPaint(bg);
+				g2.fill(labelRectangle);       
+        	}
+        	
 			if (isLaTeX) {
         		g2.setPaint(geo.getObjectColor());				
     			g2.setFont(textFont);    			
-    			g2.setStroke(objStroke); // needeg eg for \sqrt
+    			g2.setStroke(objStroke); // needed eg for \sqrt
     			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground());       
         	} 
         	else {
         		g2.setPaint(geo.getObjectColor());				
-    			g2.setFont(textFont);    			
+    			g2.setFont(textFont);    	
     			drawMultilineText(g2);   
         	}   
 			  
 			// draw label rectangle
 			if (geo.doHighlighting()) {
 				g2.setStroke(objStroke);
-				g2.setPaint(Color.lightGray);		
+				g2.setPaint(Color.lightGray);
 				g2.draw(labelRectangle);         
 			}   							
         }
