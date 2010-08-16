@@ -685,8 +685,18 @@ public class Macro {
 		Iterator<AlgoElement> curr = usingAlgos.iterator();
 		while(curr.hasNext()){
 			AlgoElement algo=curr.next();
-			for(int i = 0; i < algo.getOutputLength(); i++)
+			
+			//seek for the first visible geo
+			GeoElement geo = algo.getOutput(0);
+			while(!geo.labelSet && geo.getAllChildren().size()>0){
+				geo=geo.getAllChildren().first();
+			}
+
+			//add that geo and its siblings
+			algo=geo.getParentAlgorithm();
+			for(int i = 0; i < algo.getOutputLength(); i++){
 				geos.add(algo.getOutput(i));
+			}
 		}
 		return geos;
 	}
