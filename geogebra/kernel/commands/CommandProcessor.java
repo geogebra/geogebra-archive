@@ -7086,7 +7086,43 @@ class CmdOsculatingCircle extends CommandProcessor {
 	     }
 	 }    
 	}
- 
+
+ class CmdSolveODE extends CommandProcessor {
+		
+		public CmdSolveODE (Kernel kernel) {
+			super(kernel);
+		}
+		
+	final public GeoElement[] process(Command c) throws MyError {
+	     int n = c.getArgumentNumber();
+	     boolean[] ok = new boolean[n];
+	     GeoElement[] arg;
+	     arg = resArgs(c);
+	     
+	     switch (n) {
+	         case 5 :             
+	             if (ok[0] = (arg[0] instanceof GeoFunctionNVar)
+	     	            && (ok[1] = (arg[1].isGeoElement()))		 
+	    	            && (ok[2] = (arg[2].isGeoElement()))		 
+	    	            && (ok[3] = (arg[3].isGeoElement()))		 
+	    	            && (ok[4] = (arg[4].isGeoElement()))		 
+	             ) {
+	                 GeoElement[] ret =
+	                     {
+	                          kernel.SolveODE (
+	                             c.getLabel(), (GeoFunctionNVar)arg[0], (GeoNumeric)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4])};
+	                 return ret;                
+	             }                        
+	              else
+	            	 throw argErr(app, c.getName(), arg[0]);         
+				 
+		     // more than one argument
+	         default :
+	            	 throw argNumErr(app, c.getName(), n);
+	     }
+	 }    
+	}
+
  class CmdCoefficients extends CommandProcessor {
 		
 		public CmdCoefficients (Kernel kernel) {

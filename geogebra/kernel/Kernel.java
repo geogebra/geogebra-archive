@@ -5989,6 +5989,11 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
+	final public GeoList SolveODE(String label, GeoFunctionNVar f, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {		
+		AlgoSolveODE algo = new AlgoSolveODE(cons, label, f, x, y, end, step);
+		return algo.getResult();			
+	}
+	
 	/**
 	 * Asymptotes
 	 * Michael Borcherds 

@@ -408,6 +408,7 @@ public class CommandDispatcher {
     	cmdTable.put("ApplyMatrix", new CmdApplyMatrix(kernel));
     	cmdTable.put("ComplexRoot", new CmdComplexRoot(kernel));	   
     	cmdTable.put("RigidPolygon", new CmdRigidPolygon(kernel));	   
+    	cmdTable.put("SolveODE", new CmdSolveODE(kernel));	   
 
      	                  	
     	
