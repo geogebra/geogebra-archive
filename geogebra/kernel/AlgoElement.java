@@ -177,7 +177,9 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 			if (outputList.size()<size){
 				outputList.ensureCapacity(size);
 				for (int i=outputList.size();i<size;i++){
-					outputList.add(fac.newElement());
+					T newGeo = fac.newElement();
+					outputList.add(newGeo);
+					setOutputDependencies(newGeo);
 				}
 				refreshOutput();
 			}else{
@@ -248,7 +250,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      *
      * @param <S>
      */
-    protected interface elementFactory<S>{
+    protected interface elementFactory<S extends GeoElement>{
     	
     	/**
     	 * this is called by the OutputHandler every Time a new Element is needed.
