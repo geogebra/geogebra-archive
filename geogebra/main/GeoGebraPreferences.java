@@ -61,7 +61,7 @@ public class GeoGebraPreferences {
 	
 	// print preview dialog
 	public static final String PRINT_ORIENTATION = "print_orientation";
-	public static final String PRINT_SHOW_SCALE = "print_show_scale";		
+	public static final String PRINT_SHOW_SCALE = "print_show_scale";
 	
 	
 	 // preferences node name for GeoGebra 	 

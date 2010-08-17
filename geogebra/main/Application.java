@@ -903,12 +903,12 @@ public class Application implements KeyEventDispatcher {
 		
 		boolean showAlgebraInput = args.getBooleanValue("showAlgebraInput", true);
 		if(!showAlgebraInput) {
-			setShowAlgebraInput(false);
+			setShowAlgebraInput(false, false);
 		}
 		
 		boolean showAlgebraInputTop = args.getBooleanValue("showAlgebraInputTop", true);
 		if(!showAlgebraInputTop) {
-			setShowInputTop(false);
+			setShowInputTop(false, false);
 		}
 		
 		if(args.containsArg("showAlgebraWindow")) {
@@ -2239,22 +2239,25 @@ public class Application implements KeyEventDispatcher {
 		return showAlgebraInput;
 	}
 
-	public void setShowAlgebraInput(boolean flag) {
+	public void setShowAlgebraInput(boolean flag, boolean update) {
 		showAlgebraInput = flag;
-		updateMenubar();
+		
+		if(update) {
+			updateMenubar();
+		}
 	}
 	
 	public boolean showInputTop() {
 		return showInputTop;
 	}
 	
-	public void setShowInputTop(boolean flag) {
+	public void setShowInputTop(boolean flag, boolean update) {
 		if(flag == showInputTop)
 			return;
 		
 		showInputTop = flag;
 		
-		if(!isIniting())
+		if(update && !isIniting())
 			updateContentPane();
 	}
 
@@ -2325,6 +2328,10 @@ public class Application implements KeyEventDispatcher {
 			updateContentPane();
 			updateMenubar();
 		}
+	}
+	
+	public void setShowToolBarNoUpdate(boolean toolbar) {
+		showToolBar = toolbar;
 	}
 
 	public void setShowToolBar(boolean toolbar, boolean help) {

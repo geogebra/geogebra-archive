@@ -139,7 +139,7 @@ public class GeoGebraPanel extends JPanel {
 	 * method to update the panel's structure.
 	 */
 	public synchronized void setShowAlgebraInput(boolean showInputBar) {
-		app.setShowAlgebraInput(showInputBar);	
+		app.setShowAlgebraInput(showInputBar, true);	
 	}
 	
 	/**

@@ -290,7 +290,7 @@ class ViewMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.setShowAlgebraInput(!app.showAlgebraInput());
+				app.setShowAlgebraInput(!app.showAlgebraInput(), true);
 				app.updateContentPane();
 			}
 		};
@@ -311,8 +311,7 @@ class ViewMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				app.setShowInputTop(!app.showInputTop());
-				app.updateContentPane();
+				app.setShowInputTop(!app.showInputTop(), true);
 			}
 		};
 

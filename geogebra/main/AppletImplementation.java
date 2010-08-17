@@ -446,7 +446,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 		app.setShowMenuBar(showMenuBar);
 		//app.setShowSpreadsheetView(showSpreadsheet);
 		//app.setShowAlgebraView(showAlgebraView);
-		app.setShowAlgebraInput(showAlgebraInput);
+		app.setShowAlgebraInput(showAlgebraInput, true);
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
 		app.setChooserPopupsEnabled(enableChooserPopups);
@@ -534,7 +534,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 
 		app.setFrame(wnd);		
 		app.setShowMenuBar(true);
-		app.setShowAlgebraInput(true);		
+		app.setShowAlgebraInput(true, false);		
 		app.setUndoActive(true);
 		app.setShowToolBar(true, true);	
 		app.setRightClickEnabled(true);

@@ -183,10 +183,10 @@ public class Layout {
 		}
 		
 		app.getGuiManager().setToolBarDefinition(perspective.getToolbarDefinition());
-		app.setShowToolBar(perspective.getShowToolBar());
 		
-		app.setShowAlgebraInput(perspective.getShowInputPanel());
-		app.setShowInputTop(perspective.getShowInputPanelOnTop());
+		app.setShowToolBarNoUpdate(perspective.getShowToolBar());
+		app.setShowAlgebraInput(perspective.getShowInputPanel(), false);
+		app.setShowInputTop(perspective.getShowInputPanelOnTop(), false);
 		
 		dockManager.applyPerspective(perspective.getSplitPaneInfo(), perspective.getDockPanelInfo());
 		// TODO: Apply other settings
@@ -194,7 +194,7 @@ public class Layout {
 		if(!app.isIniting()) {
 			app.updateToolBar();
 			app.updateMenubar();
-			app.updateCenterPanel(true);
+			app.updateContentPane();
 		}
 	}
 	
