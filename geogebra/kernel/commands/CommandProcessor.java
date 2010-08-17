@@ -199,18 +199,26 @@ public abstract class CommandProcessor  {
 	}
 
 	
-	
+	private StringBuilder sb;
 
 	protected final MyError argErr(Application app, String cmd, Object arg) {
 		String localName = app.getCommand(cmd);
-		StringBuilder sb = new StringBuilder();
-		sb.append(app.getCommand("Command") + " " + localName + ":\n");
-		sb.append(app.getError("IllegalArgument") + ": ");
+		if (sb == null) sb = new StringBuilder();
+		else sb.setLength(0);
+		sb.append(app.getCommand("Command"));
+		sb.append(' ');
+		sb.append(localName);
+		sb.append(":\n");
+		sb.append(app.getError("IllegalArgument"));
+		sb.append(": ");
 		if (arg instanceof GeoElement)
 			sb.append(((GeoElement) arg).getNameDescription());
 		else if (arg != null)
 			sb.append(arg.toString());
-		sb.append("\n\nSyntax:\n" + app.getCommandSyntax(cmd));
+		sb.append("\n\n");
+		sb.append(app.getPlain("Syntax"));
+		sb.append(":\n");
+		sb.append(app.getCommandSyntax(cmd));
 		return new MyError(app, sb.toString());
 	}
 
@@ -218,11 +226,19 @@ public abstract class CommandProcessor  {
 			Application app,
 			String cmd,
 			int argNumber) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(
-				app.getCommand("Command") + " " + app.getCommand(cmd) + ":\n");
-		sb.append(app.getError("IllegalArgumentNumber") + ": " + argNumber);
-		sb.append("\n\nSyntax:\n" + app.getCommandSyntax(cmd));
+		if (sb == null) sb = new StringBuilder();
+		else sb.setLength(0);
+		sb.append(app.getCommand("Command"));
+		sb.append(' ');
+		sb.append(app.getCommand(cmd));
+		sb.append(":\n");
+		sb.append(app.getError("IllegalArgumentNumber"));
+		sb.append(": ");
+		sb.append(argNumber);
+		sb.append("\n\n");
+		sb.append(app.getPlain("Syntax"));
+		sb.append(":\n");
+		sb.append(app.getCommandSyntax(cmd));
 		return new MyError(app, sb.toString(), cmd);
 	}
 
