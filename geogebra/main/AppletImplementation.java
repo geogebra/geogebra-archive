@@ -542,7 +542,9 @@ public class AppletImplementation implements AppletImplementationInterface {
 		if (customToolBar != null && customToolBar.length() > 0)
 			app.getGuiManager().setToolBarDefinition(customToolBar);
 
-		if(app.hasFullGui())
+		// just update layout if the layout was already visible
+		// (which isn't the case in button-only mode), see ticket #217
+		if(app.hasFullGui() && !showOpenButton)
 			app.getGuiManager().updateLayout();
 
 		app.updateContentPane();
