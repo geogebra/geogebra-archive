@@ -22,6 +22,8 @@ import geogebra.main.MyError;
  * Intersect[ <GeoLine>, <GeoConic> ]
  * Intersect[ <GeoConic>, <GeoLine> ] Intersect[ <GeoConic>, <GeoConic> ]
  * Intersect[ <GeoFunction>, <GeoFunction> ] Intersect[ <GeoFunction>, <GeoLine> ]
+ * Intersect[ <GeoImplicitPoly>, <GeoImplicitPoly> ] Intersect[ <GeoImplicitPoly>, <GeoLine> ]
+ * Intersect[ <GeoImplicitPoly>, <GeoFunction(Polynomial)> ]
  */
 public class CmdIntersect extends CommandProcessor {
 	
@@ -160,6 +162,26 @@ public  GeoElement[] process(Command c) throws MyError {
 					return kernel.IntersectImplicitpolyLine(
 	                    c.getLabels(), (GeoImplicitPoly) arg[1],
 	                    (GeoLine) arg[0] );
+            //implicitPoly - implicitPoly
+			else if (
+	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
+	                    && (ok[1] = (arg[1].isGeoImplicitPoly())))
+					return kernel.IntersectImplicitpolys(
+	                    c.getLabels(), (GeoImplicitPoly) arg[0],
+	                    (GeoImplicitPoly) arg[1] );
+            //implicitPoly-conic
+			else if (
+	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
+                    && (ok[1] = (arg[1].isGeoConic())))
+				return kernel.IntersectImplicitpolyConic(
+                    c.getLabels(), (GeoImplicitPoly) arg[0],
+                    (GeoConic) arg[1] );
+			else if (
+	                (ok[1] = (arg[1] .isGeoImplicitPoly()))
+                    && (ok[0] = (arg[0].isGeoConic())))
+				return kernel.IntersectImplicitpolyConic(
+                    c.getLabels(), (GeoImplicitPoly) arg[1],
+                    (GeoConic) arg[0] );
 			// intersection of two lists
 			else if (arg[0].isGeoList() && arg[1].isGeoList() ) {
 				GeoElement[] ret = { 
@@ -311,6 +333,29 @@ public  GeoElement[] process(Command c) throws MyError {
 				return new GeoElement[]{kernel.IntersectImplicitpolyLineSingle(
 	                    c.getLabel(), (GeoImplicitPoly) arg[1],
 	                    (GeoLine) arg[0] ,(NumberValue)arg[2])};
+          //implicitPoly - implicitPoly
+			else if (
+	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
+	                    && (ok[1] = (arg[1].isGeoImplicitPoly()))
+	                    && (ok[2]=arg[2].isNumberValue()))
+					return new GeoElement[]{kernel.IntersectImplicitpolysSingle(
+	                    c.getLabel(), (GeoImplicitPoly) arg[0],
+	                    (GeoImplicitPoly) arg[1], (NumberValue) arg[2] )};
+            //implicitPoly-conic
+			else if (
+	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
+                    && (ok[1] = (arg[1].isGeoConic()))
+                    && (ok[2]=arg[2].isNumberValue()))
+				return new GeoElement[]{kernel.IntersectImplicitpolyConicSingle(
+                    c.getLabel(), (GeoImplicitPoly) arg[0],
+                    (GeoConic) arg[1], (NumberValue) arg[2] )};
+			else if (
+	                (ok[1] = (arg[1] .isGeoImplicitPoly()))
+                    && (ok[0] = (arg[0].isGeoConic()))
+                    && (ok[2]=arg[2].isNumberValue()))
+				return new GeoElement[]{kernel.IntersectImplicitpolyConicSingle(
+                    c.getLabel(), (GeoImplicitPoly) arg[1],
+                    (GeoConic) arg[0], (NumberValue) arg[2] )};
             // Function - Function with startPoint
             else if (
                 (ok[0] = (arg[0] .isGeoFunctionable()))

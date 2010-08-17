@@ -19,6 +19,9 @@ package geogebra.kernel;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
+/**
+ * Algorithm to intersect Implicit polynomials with either lines or polynomials
+ */
 public class AlgoIntersectImplicitpolyParametric extends
 		AlgoSimpleRootsPolynomial {
 	

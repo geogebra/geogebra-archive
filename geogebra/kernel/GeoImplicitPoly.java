@@ -18,11 +18,22 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
+
+import edu.jas.arith.BigRational;
+import edu.jas.poly.ExpVector;
+import edu.jas.poly.ExpVectorLong;
 import edu.jas.poly.GenPolynomial;
+import edu.jas.poly.GenPolynomialRing;
+import edu.jas.poly.TermOrder;
+import edu.jas.structure.RingElem;
+import edu.jas.structure.RingFactory;
+import edu.jas.ufd.FactorAbstract;
+import edu.jas.ufd.FactorFactory;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -30,31 +41,41 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.main.Application;
 
+/**
+ * Represents implicit bivariat polynomial equations, with degree greater than 2.
+ */
 public class GeoImplicitPoly extends GeoElement implements Path{
 
 	private double[][] coeff;
+	private double[][] coeffSquarefree;
+	private int degX;
+	private int degY;
 	
+	private static GenPolynomialRing<BigRational> CoeffRing;
+
 	private String userInput; //TODO Stores the Polynomial in the exact way the user entered it
 	private boolean showUserInput;
 	
 	private boolean defined = true;
+	private boolean isConstant;
 	
+	private Thread factorThread;
+	
+	private GenPolynomial<BigRational> genPoly;
+
 	protected GeoImplicitPoly(Construction c) {
 		super(c);
 		userInput="";
 		showUserInput=false;
+		degX=-1;
+		degY=-1;
+		coeffSquarefree=null;
 	}
 	
 	protected GeoImplicitPoly(Construction c, String label,double[][] coeff){
 		this(c);
 		setLabel(label);
 		setCoeff(coeff);
-//		this.coeff=new double[coeff.length][];
-//		for (int i=0;i<coeff.length;i++){
-//			this.coeff[i]=new double[coeff[i].length];
-//			for (int j=0;j<coeff[i].length;j++)
-//				this.coeff[i][j]=coeff[i][j];
-//		}
 	}
 		
 	
@@ -66,6 +87,32 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 	
 	public GeoImplicitPoly(GeoImplicitPoly g){
 		this(g.cons,g.label,g.coeff);
+	}
+	
+	/* 
+	 *               ( A[0]  A[3]    A[4] )
+	 *      matrix = ( A[3]  A[1]    A[5] )
+	 *               ( A[4]  A[5]    A[2] )
+	 */
+	
+	/**
+	 * Construct GeoImplicitPoly from GeoConic
+	 * @param c
+	 */
+	public GeoImplicitPoly(GeoConic c){
+		this(c.cons);
+		coeff=new double[3][3];
+		coeff[0][0]=c.matrix[2];
+		coeff[1][1]=2*c.matrix[3];
+		coeff[2][2]=0;
+		coeff[1][0]=2*c.matrix[4];
+		coeff[0][1]=2*c.matrix[5];
+		coeff[2][0]=c.matrix[0];
+		coeff[0][2]=c.matrix[1];
+		coeff[2][1]=coeff[1][2]=0;
+		degX=2;
+		degY=2;
+		Application.debug("Conic -> "+this);
 	}
 	
 	public void setuserInput(String s){
@@ -163,11 +210,11 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 	}
 
 	@Override
-	public void set(GeoElement geo) {
+	public void set(GeoElement geo) {	
 		if (!(geo instanceof GeoImplicitPoly))
 			return;
 		setCoeff(((GeoImplicitPoly)geo).getCoeff());
-		this.defined=defined;
+		this.defined=geo.isDefined();
 	}
 
 	@Override
@@ -185,33 +232,16 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 		return true;
 	}
 
-	public String makePot(int p){
-		return "^"+p;
-	}
-	
-	public String toMathPipeString(){ 
-		StringBuilder sb=new StringBuilder();
-		if (coeff==null)
-			return "";
-		for (int i=0;i<coeff.length;i++){
-			for (int j=0;j<coeff[i].length;j++){
-				if (coeff[i][j]!=0){
-					sb.append((coeff[i][j]>0?"+":""));
-					sb.append(coeff[i][j]);
-					if (i>0){
-						sb.append("*x");
-						if (i>1)
-							sb.append(makePot(i));
-					}
-					if (j>0){
-						sb.append("*y");
-						if (j>1)
-							sb.append(makePot(j));
-					}
-				}
-			}
+	private void addPow(StringBuilder sb, int i){
+		if (i>1){
+			sb.append('^');
+			if (kernel.getCASPrintForm()==ExpressionNode.STRING_TYPE_LATEX){
+				sb.append('{');
+				sb.append(i);
+				sb.append('}');
+			}else
+				sb.append(i);
 		}
-		return sb.toString();
 	}
 	
 	@Override
@@ -227,11 +257,12 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 				if (i==0&&j==0){
 					if (first)
 						sb.append("0");
-//					if (kernel.casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
-//						sb.append(" == ");
-//					else
+//					Application.debug("pf="+kernel.getCASPrintForm());
+					if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MATH_PIPER) 
+						sb.append(" == ");
+					else
 						sb.append(" = ");
-					sb.append(-coeff[0][0]);
+					sb.append(kernel.format(-coeff[0][0]));
 				}else{
 					if (coeff[i][j]!=0){
 						if (!first)
@@ -240,7 +271,7 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 							if (coeff[i][j]==-1){
 								sb.append("-");
 							}else{
-								sb.append(coeff[i][j]);
+								sb.append(kernel.format(coeff[i][j]));
 							}
 							first=false;
 						}
@@ -251,10 +282,7 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 								first=false;
 							sb.append('x');
 						}
-						if (i>1){
-							sb.append('^');
-							sb.append(i);
-						}
+						addPow(sb,i);
 						if (j>0){
 							if (!first)
 								sb.append(' ');
@@ -262,10 +290,7 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 								first=false;
 							sb.append('y');
 						}
-						if (j>1){
-							sb.append('^');
-							sb.append(j);
-						}
+						addPow(sb,j);
 					}
 				}
 			}
@@ -287,13 +312,26 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 		return false;
 	}
 	
+	/**
+	 * @param c assigns given coefficient-array to be the coefficients of this Polynomial.
+	 */
 	public void setCoeff(double[][] c){
+		isConstant=true;
+		degX=-1;
+		degY=-1;
+		genPoly=null;
+		coeffSquarefree=null;
 		try {
+			degX=c.length-1;
 			coeff = new double[c.length][];
 			for (int i = 0; i < c.length; i++) {
 				coeff[i] = new double[c[i].length];
-				for (int j = 0; j < c[i].length; j++)
+				if (c[i].length>degY+1)
+					degY=c[i].length-1;
+				for (int j = 0; j < c[i].length; j++){
 					coeff[i][j]=c[i][j];
+					isConstant=isConstant&&(c[i][j]==0||(i==0&&j==0));	
+				}
 			}
 		} catch (Exception e) {
 			setUndefined();
@@ -301,17 +339,30 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 		}
 	}
 	
+	/**
+	 * @param ev assigns given coefficient-array to be the coefficients of this Polynomial.
+	 */
 	public void setCoeff(ExpressionValue[][] ev){
 		try {
+			isConstant=true;
+			degX=-1;
+			degY=-1;
+			genPoly=null;
 			coeff = new double[ev.length][];
+			degX=ev.length-1;
+			coeffSquarefree=null;
 			for (int i = 0; i < ev.length; i++) {
 				coeff[i] = new double[ev[i].length];
-				for (int j = 0; j < ev[i].length; j++)
+				if (ev[i].length>degY+1)
+					degY=ev[i].length-1;
+				for (int j = 0; j < ev[i].length; j++){
 					if (ev[i][j]==null)
 						coeff[i][j]=0;
 					else
 						coeff[i][j] = ((NumberValue) ev[i][j].evaluate())
 							.getDouble();
+					isConstant=isConstant&&(coeff[i][j]==0||(i==0&&j==0));
+				}
 			}
 			getFactors();
 		} catch (Exception e) {
@@ -320,14 +371,34 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 		}
 	}
 	
+	/**
+	 * @param squarefree if squarefree is true returns a squarefree representation of this polynomial
+	 * is such representation is available
+	 * @return coefficient array of this implicit polynomial equation
+	 */
+	public double[][] getCoeff(boolean squarefree){
+		if (squarefree&&coeffSquarefree!=null){
+			return coeffSquarefree;
+		}else
+			return coeff;
+	}
+	
+	/**
+	 * @return coefficient array of this implicit polynomial equation
+	 */
 	public double[][] getCoeff(){
 		return coeff;
 	}
 	
 	public double evalPolyAt(double x,double y){
+		return evalPolyAt(x,y,false);
+	}
+	
+	public double evalPolyAt(double x,double y,boolean squarefree){
 		double sum=0;
 		double zs=0;
 		//Evaluating Poly via the Horner-scheme
+		double[][] coeff=getCoeff(squarefree);
 		if (coeff!=null)
 			for (int i=coeff.length-1;i>=0;i--){
 				zs=0;
@@ -340,8 +411,13 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 	}
 	
 	public double evalDiffXPolyAt(double x,double y){
+		return evalDiffXPolyAt(x, y,false);
+	}
+	
+	public double evalDiffXPolyAt(double x,double y,boolean squarefree){
 		double sum=0;
 		double zs=0;
+		double[][] coeff=getCoeff(squarefree);
 		//Evaluating Poly via the Horner-scheme
 		if (coeff!=null)
 			for (int i=coeff.length-1;i>=1;i--){
@@ -355,8 +431,13 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 	}
 	
 	public double evalDiffYPolyAt(double x,double y){
+		return evalDiffYPolyAt(x, y,false);
+	}
+	
+	public double evalDiffYPolyAt(double x,double y,boolean squarefree){
 		double sum=0;
 		double zs=0;
+		double[][] coeff=getCoeff(squarefree);
 		//Evaluating Poly via the Horner-scheme
 		if (coeff!=null)
 			for (int i=coeff.length-1;i>=0;i--){
@@ -369,41 +450,128 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 		return sum;
 	}
 	
+	public boolean isConstant() {
+		return isConstant;
+	}
+	
+	public int getDegX() {
+		return degX;
+	}
+
+	public int getDegY() {
+		return degY;
+	}
+	
+	
+	
+		
+	/**
+	 * @return the coefficient ring used by toGenPolynomial()
+	 */
+	public static GenPolynomialRing<BigRational> getCoeffRing() {
+		if (CoeffRing==null){
+	    	String[] vars={"y","x"};
+			CoeffRing=new GenPolynomialRing<BigRational>(new BigRational(0),vars.length,new TermOrder(TermOrder.REVILEX),vars);
+		}
+		return CoeffRing;
+	}
+
+	/**
+	 * @return representation of this polynomial as GenPolynomial<BigRational>
+	 */
+	public synchronized GenPolynomial<BigRational> toGenPolynomial(){
+		if (genPoly==null){
+			GenPolynomial<BigRational> gp=new GenPolynomial<BigRational>(getCoeffRing());
+			for (int i=0;i<coeff.length;i++){
+				for (int j=0;j<coeff[i].length;j++){
+					if (coeff[i][j]!=0){
+						BigRational b=toRational(coeff[i][j]);
+						gp=gp.sum(b, new ExpVectorLong(new long[]{i,j}));
+						//Application.debug(coeff[i][j]+" = "+toRational(coeff[i][j]));
+					}
+				}
+			}
+			genPoly=gp;
+			return genPoly;
+		}
+		else
+			return genPoly;
+	}
+	
 	private void getFactors(){
-//		String functionIn = toMathPipeString();
-//		
-//		Application.debug("...");
-//		
-//		JasPolynomial jp=new JasPolynomial("Integer", "x,y", functionIn);
-////		Map<GenPolynomial,Long> fact=
-//		List<GenPolynomial>	fact=jp.getFactorizationEngine().factorsRadical(jp.getPolynomial());
-//		
-//		Application.debug(fact.size()+"");
-//		
-//		//for (Entry<GenPolynomial,Long> e:fact.entrySet()){
-//		for (GenPolynomial gp:fact){
-//			Application.debug("Factor: "+gp);
+		/*
+		Runnable r=new Runnable(){
+			public void run() {
+				toGenPolynomial();
+				FactorAbstract<BigRational> fEngine=FactorFactory.getImplementation(BigRational.ONE);
+//				SquarefreeAbstract<BigRational> sqEngine=SquarefreeFactory.getImplementation(BigRational.ONE);
+				Iterator<GenPolynomial<BigRational>> it=fEngine.factors(genPoly).keySet().iterator();
+				GenPolynomial<BigRational> res=it.next();
+				while(it.hasNext()){
+					res=res.multiply(it.next());
+				}
+				Application.debug("squarefree: "+res);
+				coeffSquarefree=getCoeff(res);
+			}
+		};
+		if (factorThread!=null&&factorThread.isAlive()){
+			factorThread.interrupt();
+		}
+		factorThread=new Thread(r);
+		factorThread.setPriority(Thread.MIN_PRIORITY);
+		factorThread.start();
+		*/
+//		toGenPolynomial();
+////		FactorAbstract<BigRational> fEngine=FactorFactory.getImplementation(BigRational.ONE);
+//		SquarefreeAbstract<BigRational> sqEngine=SquarefreeFactory.getImplementation(BigRational.ONE);
+//		Application.debug("start squarefree");
+//		Application.debug("squarefree: "+sqEngine.baseSquarefreePart(genPoly));
+	}
+	
+	public void setNearestPointOnCurve(GeoPointInterface PI){
+//		GeoLine g=new GeoLine(cons);
+//		PI.updateCoords2D();
+//		double x=PI.getX2D();
+//		double y=PI.getY2D();
+//		double dy=-evalDiffXPolyAt(x, y);
+//		double dx=evalDiffYPolyAt(x, y);
+//		double c=x*dx+y*dy;
+//		g.setCoords(dx, dy, -c);
+////		Application.debug("a = "+dx+"; b = "+dy+"; c="+-c);
+//		Application.debug("g = "+g);
+//		AlgoIntersect algo=new AlgoIntersectImplicitpolyParametric(cons, this,g);
+//		cons.removeFromConstructionList(algo);
+//		algo.compute();
+//		GeoPoint[] points=algo.getIntersectionPoints();
+//		Application.debug("points = "+Arrays.deepToString(points));
+//		double dist=Double.POSITIVE_INFINITY;
+//		int k=-1;
+//		for (int i=0;i<points.length;i++){
+//			if (dist>(points[i].x-x)*(points[i].x-x)+(points[i].y-y)*(points[i].y-y)){
+//				dist=(points[i].x-x)*(points[i].x-x)+(points[i].y-y)*(points[i].y-y);
+//				k=i;
+//			}
 //		}
-// 	    StringBuilder sb=new StringBuilder();
-//		sb.setLength(0);
-//	    sb.append("Factors((");
-//	    sb.append(functionIn);
-//	    sb.append("))");
-//		String functionOut = kernel.evaluateMathPiper(sb.toString());
-//		Application.debug(functionOut);
+//		if (k>=0){
+//			GeoPoint p=((GeoPoint) PI);
+//			p.x=points[k].x;
+//			p.y=points[k].y;
+//			p.z=points[k].z;
+//		}
 	}
 
 	public void pointChanged(GeoPointInterface PI) {
-		// TODO Auto-generated method stub
-		
+		Application.debug("point changed="+PI);
+		setNearestPointOnCurve(PI);
 	}
 
 	public void pathChanged(GeoPointInterface PI) {
-		// TODO Auto-generated method stub
-		
+		Application.debug("path changed="+PI);
+		setNearestPointOnCurve(PI);
 	}
 
 	public boolean isOnPath(GeoPointInterface PI, double eps) {
+		Application.debug("on path? "+PI+"; eps="+eps);
 		
 		return false;
 	}
@@ -427,5 +595,184 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
+	//static - adapter methods for use with JAS
+	
+	public static BigRational toRational(double d){
+		int s=(int)Math.signum(d);
+		d=Math.abs(d);
+		long p=(int)Math.floor(d);
+		long p1=1;
+		long q=1;
+		long q1=0;
+		double res=1/(d-p);
+		while(Math.abs(p/(double)q-d)>Kernel.STANDARD_PRECISION&&(q1==0||Math.abs(p1/(double)q1-d)>Math.abs(p/(double)q-d))){
+			long b=(int)Math.floor(res);
+			long t=p;
+			p=b*p+p1;
+			p1=t;
+			t=q;
+			q=b*q+q1;
+			q1=t;
+			res=1/(res-b);
+		}
+		return new BigRational(p*s,q);
+	}
+	
+	public static double toDouble(BigRational b) {
+		return b.numerator().doubleValue()/b.denominator().doubleValue();
+	}
+	
+	/**
+	 * 
+	 * @param G List of GenPolynomial
+	 * @param varN connected to p.ring.nvar; if varN[i] set, p univariat in x_i is fine with p in G
+	 * @return p univariat in x_i, with varN[i]==true converted to PolynomialFunction, else null
+	 * 			varN[i] remains true, all other set to false
+	 */
+	public static PolynomialFunction getUnivariatPoly(List<GenPolynomial<BigRational>> G,boolean[] varN){	
+		Iterator<GenPolynomial<BigRational>> it=G.iterator();
+    	while(it.hasNext()){
+    		PolynomialFunction pf=getUnivariatPoly(it.next(),varN);
+    		if (pf!=null)
+    			return pf;
+    	}
+    	for (int i=0;i<varN.length;i++){
+			varN[i]=false;
+		}
+    	return null;
+	}
+    
+	/**
+	 * 
+	 * @param p GenPolynomial
+	 * @param varN connected to p.ring.nvar; if varN[i] set, p univariat in x_i is fine
+	 * @return p univariat in x_i, with varN[i]==true converted to PolynomialFunction, else null<br>
+	 * 			varN[i] remains true, all other set to false
+	 */
+    public static PolynomialFunction getUnivariatPoly(GenPolynomial<BigRational> p,boolean[] varN){	
+		ExpVector e=p.degreeVector();
+		double[] coeff;
+		if (varN.length!=p.ring.nvar){
+			Application.debug("Length of varN doesn't match ring.nvar");
+			return null;
+		}
+		int k=-1;
+		for (int i=0;i<varN.length;i++){
+			if (e.getVal(i)!=0){
+				if (k>=0){
+//					Application.debug("not univariat: "+p);
+					return null;
+				}else{
+					k=i;
+				}
+			}
+		}
+		for (int i=0;i<varN.length&&k<0;i++) //if k<0 => constant => 'univariat' in every var, take first one allowed
+			if (varN[i])
+				k=i;
+		if (k<0){
+			return null;
+		}
+//		Application.debug("univar-poly = "+p);
+		if (!varN[k]){
+//			Application.debug("univariat in wrong var: "+p);
+			return null;
+		}
+		for (int i=0;i<varN.length;i++){
+			varN[i]=i==k;
+		}
+		ExpVector dir=ExpVector.create(varN.length, k, 1);
+		coeff=new double[(int) e.getVal(k)+1];
+		for (int i=coeff.length-1;i>=0;i--){
+			BigRational b=p.coefficient(e);
+			coeff[i]=b.numerator().doubleValue()/b.denominator().doubleValue();
+			e=e.subtract(dir);
+		}
+		return new PolynomialFunction(coeff);
+	}
+    
+    /**
+     * GenPolynomial polynomial derivative k variable.<br/>
+     * extended from PolyUtil
+     * @param <C> coefficient type.
+     * @param P GenPolynomial.
+     * @return deriviative(P).
+     */
+    public static <C extends RingElem<C>>
+           GenPolynomial<C> 
+           baseDeriviative( GenPolynomial<C> P, int k ) {
+        if ( P == null || P.isZERO() ) {
+            return P;
+        }
+        GenPolynomialRing<C> pfac = P.ring;
+        if ( pfac.nvar <= k ) { 
+           // baseContent not possible by return type
+           throw new RuntimeException(P.getClass().getName()
+                     + " k to big ");
+        }
+        RingFactory<C> rf = pfac.coFac;
+//        GenPolynomial<C> d = pfac.getZERO().clone();
+       // Map<ExpVector,C> dm = d.getMap();
+     //   SortedMap<ExpVector,C> dm = new SortedMap<ExpVector,C>();
+        GenPolynomial<C> d=new GenPolynomial<C>(pfac);
+        for ( Map.Entry<ExpVector,C> m : P.getMap().entrySet() ) {
+            ExpVector f = m.getKey();  
+            long fl = f.getVal(k);
+            if ( fl > 0 ) {
+               C cf = rf.fromInteger( fl );
+               C a = m.getValue(); 
+               C x = a.multiply(cf);
+               if ( x != null && !x.isZERO() ) {
+                  ExpVector e =f.subtract(ExpVector.create( f.length(), k, 1L) );  
+                  d=d.sum(x, e);
+               }
+            }
+        }
+        return d; 
+    }
+    
+    public static boolean isZero(GenPolynomial<BigRational> p,double eps){
+    	Iterator<BigRational> it=p.coefficientIterator();
+		while(it.hasNext()){
+			if (Math.abs(GeoImplicitPoly.toDouble(it.next()))>=eps)
+				return false;
+		}
+		return true;
+    }
+
+    public static GenPolynomial<BigRational> evalGenPolySimple(GenPolynomial<BigRational> p,BigRational a, int k){
+    	GenPolynomial<BigRational> ep=new GenPolynomial<BigRational>(p.ring);
+    	BigRational[] powers=new BigRational[(int)p.degreeVector().getVal(k)+1];
+    	powers[0]=BigRational.ONE;
+    	for (int i=1;i<powers.length;i++){
+    		powers[i]=powers[i-1].multiply(a);
+    	}
+    	for ( Map.Entry<ExpVector,BigRational> m : p.getMap().entrySet() ) {
+            ExpVector f = m.getKey();  
+            long fl = f.getVal(k);
+            ep=ep.sum(powers[(int)fl].multiply(m.getValue()), f.subtract(ExpVector.create(p.ring.nvar, k, fl)));
+        }
+    	return ep;
+    }
+    
+    public double[][] getCoeff(GenPolynomial<BigRational> p){
+    	ExpVector deg=p.degreeVector();
+    	int xVal=0;
+    	int yVal=1;
+    	double[][] c=new double[(int) deg.getVal(xVal)+1][(int) deg.getVal(yVal)+1];
+    	for (int i=0;i<c.length;i++){
+    		for (int j=0;j<c[i].length;j++){
+    			c[i][j]=0;
+    		}
+    	}
+    	Iterator<ExpVector> it=p.exponentIterator();
+    	while(it.hasNext()){
+    		ExpVector e=it.next();
+    		c[(int) e.getVal(xVal)][(int) e.getVal(yVal)]=toDouble(p.coefficient(e));
+    	}
+    	return c;
+    }
 
 }

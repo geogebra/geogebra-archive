@@ -29,6 +29,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
@@ -2039,7 +2040,8 @@ class CmdDiameter extends CommandProcessor {
 /*
  * Tangent[ <GeoPoint>, <GeoConic> ] Tangent[ <GeoLine>, <GeoConic> ] Tangent[
  * <NumberValue>, <GeoFunction> ] Tangent[ <GeoPoint>, <GeoFunction> ]
- *  Victor Franco 11-02-2007 (for curve's): Tangent[ <GeoPoint>, <GeoCurveCartesian> ]
+ *  Tangent[ <GeoPoint>, <GeoCurveCartesian> ] Tangent[<GeoPoint>,<GeoImplicitPoly>]
+ *  Tangent[ <GeoLine>, <GeoImplicitPoly>]
  */
 class CmdTangent extends CommandProcessor {
 
@@ -2107,7 +2109,24 @@ class CmdTangent extends CommandProcessor {
 				return ret;
 			}
 			//Victor Franco 11-02-2007: end for curve's
-
+			else if ( (ok[0] = (arg[0] .isGeoPoint()) )
+					&& (ok[1] = (arg[1] .isGeoImplicitPoly())) ){
+				GeoElement[] ret =
+						kernel.Tangent(
+								c.getLabels(),
+								(GeoPoint) arg[0],
+								(GeoImplicitPoly) arg[1]);
+				return ret;
+			}
+			else if ( (ok[0] = (arg[0] .isGeoLine()) )
+					&& (ok[1] = (arg[1] .isGeoImplicitPoly())) ){
+				GeoElement[] ret =
+						kernel.Tangent(
+								c.getLabels(),
+								(GeoLine) arg[0],
+								(GeoImplicitPoly) arg[1]);
+				return ret;
+			}
 			// syntax error
 			else {
 				if (!ok[0])

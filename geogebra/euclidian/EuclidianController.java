@@ -3995,7 +3995,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		addSelectedLine(hits, 2, true);
 		addSelectedConic(hits, 2, true);
 		addSelectedFunction(hits, 2, true);	
-		addSelectedImplicitpoly(hits, 1, true);
+		addSelectedImplicitpoly(hits, 2, true);
 
 		singlePointWanted = singlePointWanted && selGeos() == 2;
 
@@ -4094,8 +4094,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					kernel.IntersectImplicitpolyLineSingle(null, p, l, xRW, yRW);
 				}else
 					kernel.IntersectImplicitpolyLine(null, p, l);
+			}else if (selConics()==1){
+				GeoImplicitPoly p=getSelectedImplicitpoly()[0];
+				GeoConic c=getSelectedConics()[0];
+				if (singlePointWanted){
+					kernel.IntersectImplicitpolyConicSingle(null, p, c, xRW, yRW);
+				}else
+					kernel.IntersectImplicitpolyConic(null, p, c);
 			}else
 				return false;
+		}else if (selImplicitpoly()==2){
+			GeoImplicitPoly[] p=getSelectedImplicitpoly();
+			if (singlePointWanted){
+				kernel.IntersectImplicitpolysSingle(null, p[0], p[1], xRW, yRW);
+			}else
+				kernel.IntersectImplicitpolys(null, p[0], p[1]);
 		}
 		return false;
 	}
@@ -4931,7 +4944,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return false;
 	}
 
-	// get (point or line) and (conic or function or curve)
+	// get (point or line) and (conic or function or curve or implicitpoly)
 	final protected boolean tangents(Hits hits) {
 		if (hits.isEmpty())
 			return false;
@@ -4942,6 +4955,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			found = addSelectedFunction(hits, 1, false) != 0;
 		if (!found)
 			found = addSelectedCurve(hits, 1, false) != 0;		
+		if (!found)
+			found = addSelectedImplicitpoly(hits, 1, false) != 0;	
 
 		if (!found) {
 			if (selLines() == 0) {
@@ -4985,6 +5000,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				return true;
 			}
 		}
+		else if (selImplicitpoly() == 1) {
+			if (selPoints() == 1) {
+				GeoImplicitPoly implicitPoly = getSelectedImplicitpoly()[0];
+				GeoPoint[] points = getSelectedPoints();
+				// create new tangents
+				kernel.Tangent(null, points[0], implicitPoly);
+				return true;
+			} else if (selLines() == 1) {
+				GeoImplicitPoly implicitPoly = getSelectedImplicitpoly()[0];
+				GeoLine[] lines = getSelectedLines();
+				// create new line
+				kernel.Tangent(null, lines[0], implicitPoly);
+				return true;
+			}
+		} 
 		return false;
 	}
 

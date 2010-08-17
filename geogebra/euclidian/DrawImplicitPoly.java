@@ -22,14 +22,15 @@ import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Draw GeoImplicitPoly on euclidian view
+ */
 public class DrawImplicitPoly extends Drawable {
 	
 	private GeoImplicitPoly implicitPoly;
@@ -37,7 +38,7 @@ public class DrawImplicitPoly extends Drawable {
 	private boolean labelVisible;
 	
 	public DrawImplicitPoly(EuclidianView view,GeoImplicitPoly implicitPoly) {
-		Application.debug("DrawImplicitPoly");
+//		Application.debug("DrawImplicitPoly, new object");
 		this.view=view;
 		this.implicitPoly = implicitPoly;
 		this.geo=implicitPoly;
@@ -51,7 +52,6 @@ public class DrawImplicitPoly extends Drawable {
 		if (geo.doHighlighting()) {
             g2.setStroke(selStroke);
             g2.setColor(implicitPoly.getSelColor());
-            int c=0;
             for (GeneralPath g:gps){
             	Drawable.drawWithValueStrokePure(g, g2);
             }
@@ -97,6 +97,7 @@ public class DrawImplicitPoly extends Drawable {
 	@Override
 	public void setGeoElement(GeoElement geo) {
 		if (geo instanceof GeoImplicitPoly){
+//			Application.debug("setElement");
 			implicitPoly=(GeoImplicitPoly) geo;
 			this.geo=geo;
 		}
@@ -120,7 +121,8 @@ public class DrawImplicitPoly extends Drawable {
         }
 	}
 	
-	List<GeneralPath> gps;
+	private List<GeneralPath> gps;
+	private ArrayList<Double[]> singularitiesCollection;
 	
 	//Second Algorithm
 	final public static double EPS=Kernel.EPSILON;
@@ -155,6 +157,7 @@ public class DrawImplicitPoly extends Drawable {
 	private double scaleY;
 	private void updateGP(){
 		try{
+			singularitiesCollection=new ArrayList<Double[]>();
 		int gridWidth=(int)Math.ceil(view.getWidth()/GRIDSIZE);
 		int gridHeight=(int)Math.ceil(view.getHeight()/GRIDSIZE);
 		grid=new GridRect[gridWidth][gridHeight];
@@ -168,7 +171,7 @@ public class DrawImplicitPoly extends Drawable {
 		for (int w=0;w<gridWidth;w++){
 			double y=view.ymax;
 			for (int h=0;h<gridHeight;h++){
-				e=epsSignum(implicitPoly.evalPolyAt(x,y));
+				e=epsSignum(implicitPoly.evalPolyAt(x,y,true));
 				grid[w][h]=new GridRect(x,y,grw,grh);
 				grid[w][h].eval[0]=e;
 				if (w>0){
@@ -182,7 +185,7 @@ public class DrawImplicitPoly extends Drawable {
 					grid[w][h-1].eval[2]=e;
 				y-=grh;
 			}
-			e=epsSignum(implicitPoly.evalPolyAt(x,y));
+			e=epsSignum(implicitPoly.evalPolyAt(x,y,true));
 			grid[w][gridHeight-1].eval[2]=e;
 			if (w>0)
 				grid[w-1][gridHeight-1].eval[3]=e;
@@ -190,13 +193,13 @@ public class DrawImplicitPoly extends Drawable {
 		}
 		double y=view.ymax;
 		for (int h=0;h<gridHeight;h++){
-			e=epsSignum(implicitPoly.evalPolyAt(x,y));
+			e=epsSignum(implicitPoly.evalPolyAt(x,y,true));
 			grid[gridWidth-1][h].eval[1]=e;
 			if (h>0)
 				grid[gridWidth-1][h-1].eval[3]=e;
 			y-=grh;
 		}
-		grid[gridWidth-1][gridHeight-1].eval[3]=epsSignum(implicitPoly.evalPolyAt(x,y));
+		grid[gridWidth-1][gridHeight-1].eval[3]=epsSignum(implicitPoly.evalPolyAt(x,y,true));
 		for (int w=0;w<gridWidth;w++){
 			for (int h=0;h<gridHeight;h++){
 				remember[w][h]=false;
@@ -243,12 +246,15 @@ public class DrawImplicitPoly extends Drawable {
 			e.printStackTrace();
 		}
 	}
+
 	
-	private final static double MIN_GRAD=Kernel.MIN_PRECISION; 
+	private final static double MIN_GRAD=Kernel.STANDARD_PRECISION; 
 	private final static double MIN_STEP_SIZE=0.1; //Pixel on Screen
 	private final static double START_STEP_SIZE=0.5;
 	private final static double MAX_STEP_SIZE=1;
 	private final static double MIN_PATH_GAP=1;  
+	private final static double SING_RADIUS=1; 
+	private final static double NEAR_SING=1E-3;
 	
 	private double scaledNormSquared(double x,double y){
 		return x*x/scaleX/scaleX+y*y/scaleY/scaleY;
@@ -275,12 +281,17 @@ public class DrawImplicitPoly extends Drawable {
 		int startW=w;
 		int startH=h;
 		int stepCount=0;
+		boolean nearSing=false;
+		double lastGradX=Double.POSITIVE_INFINITY;
+		double lastGradY=Double.POSITIVE_INFINITY;
 		while(true){
 //			if (s>10000){
 //				Application.debug("Too much steps");
 //				return gp;
 //			}
 			s++;
+			boolean reachedSingularity=false;
+			boolean reachedEnd=false;
 			if (!Double.isNaN(lx)&&!Double.isNaN(ly)){
 				if ((scaledNormSquared(startX-sx, startY-sy)<MAX_STEP_SIZE*MAX_STEP_SIZE)
 					&& (scaledNormSquared(startX-sx,startY-sy)<scaledNormSquared(startX-lx,startY-ly))){
@@ -288,11 +299,11 @@ public class DrawImplicitPoly extends Drawable {
 					pathX=(float)view.toScreenCoordXd(x);
 					pathY=(float)view.toScreenCoordYd(y);
 					gp.lineTo(pathX,pathY);
+//					singularitiesCollection.add(new Double[]{x,y});
 //					Application.debug("reached start; s="+s+"; stepcount="+stepCount);
 					return gp;
 				}
 			}
-			boolean reachedEnd=false;
 			while (sx<grid[w][h].x){
 				if (w>0)
 					w--;
@@ -340,16 +351,48 @@ public class DrawImplicitPoly extends Drawable {
 			double gradX=0;
 			double gradY=0;
 			if (!reachedEnd){
-				gradX=implicitPoly.evalDiffXPolyAt(sx, sy);
-				gradY=implicitPoly.evalDiffYPolyAt(sx, sy);
-				if (Math.abs(gradX)<MIN_GRAD&&Math.abs(gradY)<MIN_GRAD){ //singularity
-//					Application.debug("Sing-a");
-					reachedEnd=true;
+				gradX=implicitPoly.evalDiffXPolyAt(sx, sy,true);
+				gradY=implicitPoly.evalDiffYPolyAt(sx, sy,true);
+				
+				/*
+				 * Dealing with singularities: tries to reach the singularity but stops there.
+				 * Assuming that the singularity is on or at least near the curve. (Since first
+				 * derivative is zero this can be assumed for 'nice' 2nd derivative)
+				 */
+				
+				if (nearSing||(Math.abs(gradX)<NEAR_SING&&Math.abs(gradY)<NEAR_SING)){
+					for (Double[] pair:singularitiesCollection){ //check if this singularity is already known
+						if ((scaledNormSquared(pair[0]-sx,pair[1]-sy)<SING_RADIUS*SING_RADIUS)){
+							sx=pair[0];
+							sy=pair[1];
+//							Application.debug("jump to Sing @["+sx+","+sy+"]");
+							reachedSingularity=true;
+							reachedEnd=true;
+							break;
+						}
+					}
+					if (!reachedEnd){
+						if (gradX*gradX+gradY*gradY>lastGradX*lastGradX+lastGradY*lastGradY){ //going away from the singularity, stop here
+//							Application.debug("Sing-c @["+sx+","+sy+"]");
+							singularitiesCollection.add(new Double[]{sx,sy});
+							reachedEnd=true;
+							reachedSingularity=true;
+						}else if (Math.abs(gradX)<MIN_GRAD&&Math.abs(gradY)<MIN_GRAD){ //singularity
+//							Application.debug("Sing-a @["+sx+","+sy+"]");
+							singularitiesCollection.add(new Double[]{sx,sy});
+							reachedEnd=true;
+							reachedSingularity=true;
+						}
+//						Application.debug("Near Sing dp = ["+gradX+","+gradY+"]; p = ["+sx+","+sy+"]");
+						lastGradX=gradX;
+						lastGradY=gradY;
+						nearSing=true;
+					}
 				}
 			}
 			double a=0,nX=0,nY=0;
 			if (!reachedEnd){
-				a=1/(Math.abs(gradX)+Math.abs(gradY)); //trying to increase numerical stability (don't know if necessary or helpful)
+				a=1/(Math.abs(gradX)+Math.abs(gradY)); //trying to increase numerical stability
 				gradX=a*gradX;
 				gradY=a*gradY;
 				a=Math.sqrt(gradX*gradX+gradY*gradY);
@@ -376,22 +419,23 @@ public class DrawImplicitPoly extends Drawable {
 			while(!reachedEnd){
 				sx=lx+nX*stepSize; //go in "best" direction
 				sy=ly+nY*stepSize;
-				int e=epsSignum(implicitPoly.evalPolyAt(sx,sy));
+				int e=epsSignum(implicitPoly.evalPolyAt(sx,sy,true));
 //				Application.debug("s: "+sx+"/"+sy+";l: "+lx+"/"+ly+"; e="+e);
 				if (e==0){
 					if (stepSize*2<=MAX_STEP_SIZE*Math.max(scaleX, scaleY))
 						stepSize*=2;
 					break;
 				}else{
-					gradX=implicitPoly.evalDiffXPolyAt(sx, sy);
-					gradY=implicitPoly.evalDiffYPolyAt(sx, sy);
+					gradX=implicitPoly.evalDiffXPolyAt(sx, sy,true);
+					gradY=implicitPoly.evalDiffYPolyAt(sx, sy,true);
 //					Application.debug("gradient in "+sx+"/"+sy+"="+gradX+"/"+gradY);
 					if (Math.abs(gradX)<MIN_GRAD&&Math.abs(gradY)<MIN_GRAD){ //singularity
 						stepSize/=2;
 						if (stepSize>MIN_STEP_SIZE*Math.max(scaleX, scaleY))
 							continue;
 						else{
-//							Application.debug("Sing-b");
+//							Application.debug("Sing-b @["+sx+","+sy+"]");
+							singularitiesCollection.add(new Double[]{sx,sy});
 							reachedEnd=true;
 							break;
 						}
@@ -403,7 +447,7 @@ public class DrawImplicitPoly extends Drawable {
 						gradX=-gradX;
 						gradY=-gradY;
 					}
-					int e1=epsSignum(implicitPoly.evalPolyAt(sx+gradX,sy+gradY));
+					int e1=epsSignum(implicitPoly.evalPolyAt(sx+gradX,sy+gradY,true));
 					if (e1==0){
 						sx=sx+gradX;
 						sy=sy+gradY;
@@ -426,20 +470,23 @@ public class DrawImplicitPoly extends Drawable {
 					}
 				}
 			}
-			if (!reachedEnd){
+			if (!reachedEnd||reachedSingularity){
 				float newPathX=(float)view.toScreenCoordXd(sx);
 				float newPathY=(float)view.toScreenCoordYd(sy);
-				if ((newPathX-pathX)*(newPathX-pathX)+(newPathY-pathY)*(newPathY-pathY)>MIN_PATH_GAP*MIN_PATH_GAP){
+				if (reachedSingularity||(newPathX-pathX)*(newPathX-pathX)+(newPathY-pathY)*(newPathY-pathY)>MIN_PATH_GAP*MIN_PATH_GAP){
 					gp.lineTo(newPathX, newPathY);
 					stepCount++;
 					pathX=newPathX;
 					pathY=newPathY;
 				}
-			}else{
+			}
+			if (reachedEnd){
 				if (!first){
 //					Application.debug("reached end in both dir; s="+s+"; stepcount="+stepCount);
 					return gp; //reached the end two times
 				}
+				lastGradX=Double.POSITIVE_INFINITY;
+				lastGradY=Double.POSITIVE_INFINITY;
 				pathX=(float)view.toScreenCoordXd(startX);
 				pathY=(float)view.toScreenCoordYd(startY);
 				gp.moveTo(pathX,pathY);
@@ -453,36 +500,9 @@ public class DrawImplicitPoly extends Drawable {
 				lastH=h;
 				first=false;//start again with other direction
 				reachedEnd=false;
+				reachedSingularity=false;
+				nearSing=false;
 			}
-		}
-	}
-
-	GeneralPath[] gpTest=new GeneralPath[3];
-	public void test(){
-		try{
-		gpTest[0]=new GeneralPath();
-		gpTest[1]=new GeneralPath();
-		gpTest[2]=new GeneralPath();
-		GeneralPath gp;
-		for (int w=0;w<grid.length;w++){
-			for (int h=0;h<grid[w].length;h++){
-				GridRect g=grid[w][h];
-				gp=gpTest[g.eval[0]+1];
-				gp.moveTo((float)view.toScreenCoordXd(g.x), (float)view.toScreenCoordYd(g.y-g.height/3));
-				gp.lineTo((float)view.toScreenCoordXd(g.x+g.width/3), (float)view.toScreenCoordYd(g.y));
-				gp=gpTest[g.eval[1]+1];
-				gp.moveTo((float)view.toScreenCoordXd(g.x+2*g.width/3), (float)view.toScreenCoordYd(g.y));
-				gp.lineTo((float)view.toScreenCoordXd(g.x+g.width), (float)view.toScreenCoordYd(g.y-g.height/3));
-				gp=gpTest[g.eval[3]+1];
-				gp.moveTo((float)view.toScreenCoordXd(g.x+g.width), (float)view.toScreenCoordYd(g.y-2*g.height/3));
-				gp.lineTo((float)view.toScreenCoordXd(g.x+2*g.width/3), (float)view.toScreenCoordYd(g.y-g.height));
-				gp=gpTest[g.eval[2]+1];
-				gp.moveTo((float)view.toScreenCoordXd(g.x+g.width/3), (float)view.toScreenCoordYd(g.y-g.height));
-				gp.lineTo((float)view.toScreenCoordXd(g.x), (float)view.toScreenCoordYd(g.y-2*g.height/3));
-			}
-		}
-		}catch(Exception e){
-			e.printStackTrace();
 		}
 	}
 	
@@ -495,8 +515,8 @@ public class DrawImplicitPoly extends Drawable {
 	 * @return a such that |f(x1+(x2-x1)*a,y1+(y2-y1)*a)|<eps
 	 */
 	public double bisec(double x1,double y1,double x2,double y2){
-		int e1=epsSignum(implicitPoly.evalPolyAt(x1,y1));
-		int e2=epsSignum(implicitPoly.evalPolyAt(x2,y2));
+		int e1=epsSignum(implicitPoly.evalPolyAt(x1,y1,true));
+		int e2=epsSignum(implicitPoly.evalPolyAt(x2,y2,true));
 		if (e1==0)
 			return 0.;
 		if (e2==0)
@@ -506,7 +526,7 @@ public class DrawImplicitPoly extends Drawable {
 		int e;
 		if (e1!=e2){
 			while(a2-a1>Double.MIN_VALUE){
-				e=epsSignum(implicitPoly.evalPolyAt(x1+(x2-x1)*(a2+a1)/2,y1+(y2-y1)*(a2+a1)/2));
+				e=epsSignum(implicitPoly.evalPolyAt(x1+(x2-x1)*(a2+a1)/2,y1+(y2-y1)*(a2+a1)/2,true));
 				if (e==0)
 					return (a2+a1)/2;
 				if (e==e1){

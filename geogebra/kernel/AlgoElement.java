@@ -22,6 +22,8 @@ import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -103,8 +105,157 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	return output.length;
     }
     
+    /**
+     * list of registered outputHandler of this AlgoElement
+     */
+    private List<OutputHandler<?>> outputHandler;
+    
+    /**
+     * One OutputHandler has been changed, we put together the new output.
+     */
+    private void refreshOutput(){
+    	Iterator<OutputHandler<?>> it=outputHandler.iterator();
+    	int n=0;
+    	while(it.hasNext()){
+    		n+=it.next().size();
+    	}
+    	output=new GeoElement[n];
+    	it=outputHandler.iterator();
+    	int i=0;
+    	while(it.hasNext()){
+    		OutputHandler<?> handler=it.next();
+    		for (int k=0;k<handler.size();k++)
+    			output[i++]=handler.getElement(k);
+    	}
+    }
     
     
+    /**
+     * OutputHandler can manage several different output types, each with increasing length.
+     * For each occurring type, you need one OutputHandler in the Subclass 
+     * (or OutputHandler<GeoElement> if the type doesn't matter).<br />
+     * Don't use this if you are accessing output directly, or use setOutput or setOutputLength, because
+     * the OutputHandler changes output on it's own and will 'overwrite' any direct changes.
+     * @param <T> extends GeoElement: type of the OutputHandler 
+     */
+    protected class OutputHandler<T extends GeoElement>{
+    	private elementFactory<T> fac;
+    	private ArrayList<T> outputList;
+    	private String[] labels;
+    	/**
+    	 * use Labels for this outputs
+    	 */
+    	public boolean setLabels;
+
+		/**
+		 * @param fac elementFactory to create new Elements of type T
+		 */
+		public OutputHandler(elementFactory<T> fac) {
+			this.fac = fac;
+			outputList=new ArrayList<T>();
+			if (outputHandler==null)
+				outputHandler=new ArrayList<OutputHandler<?>>();
+			outputHandler.add(this);
+		}
+		
+		/**
+		 * @param fac elementFactory to create new Elements of type T
+		 * @param labels array of labels to use for Outputelements.
+		 */
+		public OutputHandler(elementFactory<T> fac,String[] labels){
+			this(fac);
+			this.labels=labels;
+			if (labels!=null)
+				adjustOutputSize(labels.length);
+		}
+		
+		/**
+		 * @param size makes room in this OutputHandler for size Objects.<br />
+		 * if there are currently more objects than size, they become undefined.
+		 */
+		public void adjustOutputSize(int size){
+			if (outputList.size()<size){
+				outputList.ensureCapacity(size);
+				for (int i=outputList.size();i<size;i++){
+					outputList.add(fac.newElement());
+				}
+				refreshOutput();
+			}else{
+				for (int i=size;i<outputList.size();i++){
+					outputList.get(i).setUndefined();
+				}
+			}
+			if (setLabels){
+				updateLabels();
+			}
+		}
+		
+		/**
+		 * set setLabels to true
+		 * @param labels use this Strings as labels. If labels == null, default labels are used
+		 */
+		public void setLabels(String[] labels){
+			this.labels=labels;
+			setLabels=true;
+			if (labels != null)
+	            adjustOutputSize(labels.length);
+			else
+				updateLabels();
+		}
+		
+		/**
+		 * assigns Labels to unlabeled elements
+		 */
+		public void updateLabels(){
+			for (int i=0;i<outputList.size();i++){
+				if (!outputList.get(i).isLabelSet()){
+					if (labels!=null&&i<labels.length)
+						outputList.get(i).setLabel(labels[i]);
+					else
+						outputList.get(i).setLabel(null);
+				}
+			}
+		}
+		
+		/**
+		 * @param i
+		 * @return get the i<sup>th</sup> Element of this OutputHandler
+		 */
+		public T getElement(int i){
+			return outputList.get(i);
+		}
+		
+		/**
+		 * @param a type of the Output
+		 * @return content of this OutputHandler as array
+		 */
+		public T[] getOutput(T[] a){
+//			Application.debug("getOutput: "+Arrays.deepToString(outputList.toArray())+" length:"+outputList.toArray().length);
+			return (T[])outputList.toArray(a);
+		}
+		
+		/**
+		 * @return size of the content of this OutputHandler
+		 */
+		public int size(){
+			return outputList.size();
+		}
+    	
+    }
+    
+    /**
+     * 
+     *
+     * @param <S>
+     */
+    protected interface elementFactory<S>{
+    	
+    	/**
+    	 * this is called by the OutputHandler every Time a new Element is needed.
+    	 * @return a new Element of type S. (e.g. new GeoPoint(cons))
+    	 */
+    	public S newElement();
+    }
     
     
     

@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 
 import geogebra.main.Application;
@@ -26,18 +28,27 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
 public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 
-	private String[] labels;
-    private boolean initLabels=true;
+//	private String[] labels;
+//    private boolean initLabels=true;
 	protected boolean setLabels;
     protected EquationSolver eqnSolver;
     protected GeoElement[] geos;
-    protected GeoPoint[] points;
+   // protected GeoPoint[] points;
     private PolynomialFunction rootsPoly;
+    private OutputHandler<GeoPoint> points;
 	
 	public AlgoSimpleRootsPolynomial(Construction c) {
 		super(c);
-		points=new GeoPoint[0];
+		//points=new GeoPoint[0];
 		eqnSolver=cons.getEquationSolver();
+		points=new OutputHandler<GeoPoint>(new elementFactory<GeoPoint>() {
+					public GeoPoint newElement() {
+						GeoPoint p=new GeoPoint(cons);
+						p.setCoords(0, 0, 1);
+						p.setParentAlgorithm(AlgoSimpleRootsPolynomial.this);
+						return p;
+					}
+		});
 	}
 	
 	public AlgoSimpleRootsPolynomial(Construction c,String[] labels,boolean setLabels,GeoElement... geos) {
@@ -53,6 +64,9 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 		this(c,null,false,geos);
 	}
 	
+	/**
+	 * @param pf assigns a PolynomialFunction to this Algorithm which roots lead to one or more output Points
+	 */
 	public void setRootsPolynomial(PolynomialFunction pf){
 		this.rootsPoly=pf;
 		this.doCalc();
@@ -60,7 +74,7 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 
 	@Override
 	GeoPoint[] getIntersectionPoints() {
-		return points;
+		return points.getOutput(new GeoPoint[0]);
 	}
 
 	@Override
@@ -71,26 +85,30 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 	@Override
 	protected void setInputOutput() {
 		input=geos;
-		output=points;
+		//output=points;
 		setDependencies();
 	}
-
-	protected void doCalc() {
-		double roots[]=rootsPoly.getCoefficients();
+	
+	/**
+	 * @param roots array with the coefficients of the polynomial<br/>
+	 * the roots of the polynomial are assigned to the first n elements of <b>roots</b>
+	 * @return number of distinct roots
+	 */
+	public static int getRoots(double[] roots,EquationSolver eqnSolver){
 		int nrRealRoots=eqnSolver.polynomialRoots(roots);
-		StringBuilder sb=new StringBuilder();
-		for (int i=0;i<nrRealRoots;i++){
-			if (i>0)
-				sb.append(',');
-			sb.append(roots[i]);
-		}
-		Application.debug("roots->"+sb);
+//		StringBuilder sb=new StringBuilder();
+//		for (int i=0;i<nrRealRoots;i++){
+//			if (i>0)
+//				sb.append(',');
+//			sb.append(roots[i]);
+//		}
+//		Application.debug("roots->"+sb);
 		if (nrRealRoots>1){
 			int c=0;
 			Arrays.sort(roots,0,nrRealRoots);
 			double last=roots[0];
 			for (int i=1;i<nrRealRoots;i++){
-				Application.debug("diff = "+(roots[i]-last));
+//				Application.debug("diff = "+(roots[i]-last));
 				if (roots[i]-last<=Kernel.MIN_PRECISION){
 					c++;
 				}else{
@@ -101,72 +119,75 @@ public abstract class AlgoSimpleRootsPolynomial extends AlgoIntersect {
 			}
 			nrRealRoots-=c;
 		}
-		makePoints(roots,nrRealRoots);
+		return nrRealRoots;
 	}
 
+	protected void doCalc() {
+		double roots[]=rootsPoly.getCoefficients();
+		int nrRealRoots=getRoots(roots,eqnSolver);
+		makePoints(roots,nrRealRoots);
+	}
+	
+
 	private void makePoints(double[] roots, int nrRealRoots) {
-		adjustOutputSize(nrRealRoots);
+		List<Double[]> valPairs=new ArrayList<Double[]>();
 		for (int i=0;i<nrRealRoots;i++){
-			points[i].setCoords(getXValue(roots[i]), getYValue(roots[i]), 1);
+			for (int j=0;j<getNrPoints(roots[i]);j++)
+				valPairs.add(new Double[]{getXValue(roots[i],j),getYValue(roots[i],j)});
+			//points[i].setCoords(getXValue(roots[i]), getYValue(roots[i]), 1);
+		}
+		points.adjustOutputSize(valPairs.size());
+		for (int i=0;i<valPairs.size();i++){
+			points.getElement(i).setCoords(valPairs.get(i)[0], valPairs.get(i)[1], 1);
 		}
 		
 		 if (setLabels)
-	            updateLabels(nrRealRoots);
+	            points.updateLabels();
 	}
 	
-	 protected void updateLabels(int number) {  
-	    	if (initLabels) {
-	    		GeoElement.setLabels(labels, points);
-	    		initLabels = false;
-	    	} else {	    
-		        for (int i = 0; i < number; i++) {
-		            //  check labeling      
-		            if (!points[i].isLabelSet()) {
-		            	// use user specified label if we have one
-		            	String newLabel = (labels != null && i < labels.length) ? labels[i] : null;	            	
-		                points[i].setLabel(newLabel);	                
-		            }
-		        }
-	    	}
-	        
-	    }
+	 public void setLabels(String[] labels){
+		 points.setLabels(labels);
+		 update();
+	 }
 	 
-	 public void setLabels(String[] labels) {
-	        this.labels = labels;
-	        setLabels = true;
-
-	        // make sure that there are at least as many
-	        // points as labels
-	        if (labels != null)
-	            adjustOutputSize(labels.length);
-
-	        update();
-	    }
-
-	protected void adjustOutputSize(int size){
-		Application.debug("size: "+size);
-		if (points.length<size){
-			GeoPoint[] temp=new GeoPoint[size];
-			for (int i=0;i<points.length;i++)
-				temp[i]=points[i];
-			for (int i=points.length;i<size;i++){
-				temp[i]=new GeoPoint(cons);
-				temp[i].setCoords(0, 0, 1);
-				temp[i].setParentAlgorithm(this);
-			}
-			points=temp;
-			output=points;
-		}else{
-			for (int i=size;i<points.length;i++){
-				points[i].setUndefined();
-			}
-		}
+	/**
+	 * @param t root of PolynomialFunction
+	 * @return number of corresponding outputPoints 
+	 */
+	protected int getNrPoints(double t){
+		return 1;
 	}
 	
+	/**
+	 * @param t root of PolynomialFunction
+	 * @param idx
+	 * @return Y-value corresponding to t and idx.
+	 */
+	protected double getYValue(double t,int idx){
+		return getYValue(t);
+	}
+	
+	/**
+	 * @param t root of PolynomialFunction
+	 * @return the corresponding Y-value
+	 */
 	protected abstract double getYValue(double t);
 	
+	/**
+	 * @param t root of PolynomialFunction
+	 * @return the corresponding X-value
+	 */
 	protected double getXValue(double t){
 		return t;
+	}
+	
+	/**
+	 * @param t root of PolynomialFunction
+	 * @param idx
+	 * @return X-value corresponding to t and idx.
+	 */
+	protected double getXValue(double t,int idx){
+		return getXValue(t);
 	}
 
 	@Override
