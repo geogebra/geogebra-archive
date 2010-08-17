@@ -125,10 +125,6 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		// set cell content
 		GeoElement geo = (GeoElement)value;
 		
-		if (geo.getBackgroundColor() != null) {
-			bgColor = geo.getBackgroundColor();
-		}
-		
 		
 		//=======================================================
 		// use special rendering for buttons, booleans and lists
@@ -202,11 +198,18 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		
 		
 		// Set foreground and background color
+		
+		if (geo.getBackgroundColor() != null) {
+			bgColor = geo.getBackgroundColor();
+		}
+		
 		if (geo.doHighlighting()) {
 			bgColor = MyTable.SELECTED_BACKGROUND_COLOR;
 		}
 		setBackground(bgColor);
 		setForeground(geo.getAlgebraColor());
+		
+		
 		
 		
 		// Set horizontal alignment
