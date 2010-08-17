@@ -115,6 +115,24 @@ public class DrawImplicitPoly extends Drawable {
         	updateGP();
         }
         
+     // draw trace
+		if (implicitPoly.getTrace()) {
+			isTracing = true;
+			Graphics2D g2 = view.getBackgroundGraphics();
+			if (g2 != null){
+				g2.setPaint(geo.getObjectColor());	   
+				g2.setStroke(objStroke);
+				for (GeneralPath g:gps){
+	            	Drawable.drawWithValueStrokePure(g, g2);
+	            }	
+			}
+		} else {
+			if (isTracing) {
+				isTracing = false;
+				view.updateBackground();
+			}
+		}
+        
         if (labelVisible) {
         	labelDesc = geo.getLabelDescription();
 			addLabelOffset();

@@ -44,7 +44,7 @@ import geogebra.main.Application;
 /**
  * Represents implicit bivariat polynomial equations, with degree greater than 2.
  */
-public class GeoImplicitPoly extends GeoElement implements Path{
+public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 
 	private double[][] coeff;
 	private double[][] coeffSquarefree;
@@ -59,7 +59,9 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 	private boolean defined = true;
 	private boolean isConstant;
 	
-	private Thread factorThread;
+	private boolean trace; //for traceable interface
+	
+//	private Thread factorThread;
 	
 	private GenPolynomial<BigRational> genPoly;
 
@@ -595,6 +597,21 @@ public class GeoImplicitPoly extends GeoElement implements Path{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	//traceable
+	
+	public boolean isTraceable() {
+		return true;
+	}
+
+	public void setTrace(boolean trace) {
+		this.trace = trace;
+	}
+
+	public boolean getTrace() {
+		return trace;
+	}
+	
 	
 	
 	//static - adapter methods for use with JAS
