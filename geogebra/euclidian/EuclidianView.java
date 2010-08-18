@@ -36,6 +36,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
@@ -3221,6 +3222,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			d = new DrawPolygon(this, (GeoPolygon) geo);
 			break;
 
+		case GeoElement.GEO_CLASS_POLYLINE:
+			d = new DrawPolyLine(this, (GeoPolyLine) geo);
+			break;
+
 		case GeoElement.GEO_CLASS_ANGLE:
 			if (geo.isIndependent()) {
 				// independent number may be shown as slider
@@ -4526,7 +4531,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
-		return new DrawPolygon(this, selectedPoints);
+		return new DrawPolyLine(this, selectedPoints);
+	}	
+	
+	public Previewable createPreviewPolyLine(ArrayList selectedPoints){
+		return new DrawPolyLine(this, selectedPoints);
 	}	
 	
 	public void updatePreviewable(){

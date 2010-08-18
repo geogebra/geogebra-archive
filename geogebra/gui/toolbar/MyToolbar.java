@@ -546,6 +546,8 @@ public class MyToolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_REGULAR_POLYGON ); 
         sb.append(" ");
         sb.append(EuclidianView.MODE_RIGID_POLYGON ); 
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_POLYLINE ); 
        
         // circles, arcs
         sb.append(" | ");       

@@ -260,6 +260,14 @@ public interface EuclidianViewInterface {
 	public Previewable createPreviewPolygon(ArrayList selectedPoints);
 	
 
+	/**
+	 * create a previewable for polyline construction
+	 * @param selectedPoints points
+	 * @return the polygon previewable
+	 */		
+	public Previewable createPreviewPolyLine(ArrayList selectedPoints);
+	
+
 
 	public void updatePreviewable();
 	

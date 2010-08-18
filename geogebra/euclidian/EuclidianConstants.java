@@ -132,6 +132,8 @@ public interface EuclidianConstants {
 	
 	public static final int MODE_RIGID_POLYGON = 64;
 	
+	public static final int MODE_POLYLINE = 65;
+	
 	// ggb3D start
 	/** special mode that allows to create point inside a region (polygon, etc.) */
 	public static final int MODE_POINT_IN_REGION = 501;

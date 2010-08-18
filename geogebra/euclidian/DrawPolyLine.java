@@ -15,7 +15,7 @@ package geogebra.euclidian;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
@@ -27,17 +27,17 @@ import java.util.ArrayList;
  * @author  Markus Hohenwarter
  * @version 
  */
-public class DrawPolygon extends Drawable
+public class DrawPolyLine extends Drawable
 implements Previewable {
    
-    private GeoPolygon poly;            
-    boolean isVisible, labelVisible;
+    private GeoPolyLine poly;            
+    private boolean isVisible, labelVisible;
     
     private GeneralPathClipped gp;
     private double [] coords = new double[2];
-	private ArrayList points;              
+	private ArrayList<GeoPoint> points;              
       
-    public DrawPolygon(EuclidianView view, GeoPolygon poly) {
+    public DrawPolyLine(EuclidianView view, GeoPolyLine poly) {
 		this.view = view; 
 		this.poly = poly;		
 		geo = poly;
@@ -48,7 +48,7 @@ implements Previewable {
     /**
      * Creates a new DrawPolygon for preview.     
      */
-	DrawPolygon(EuclidianView view, ArrayList points) {
+	DrawPolyLine(EuclidianView view, ArrayList points) {
 		this.view = view; 
 		this.points = points;
 
@@ -56,7 +56,6 @@ implements Previewable {
 	} 
 
 	final public void update() {
-		Application.printStacktrace("");
         isVisible = geo.isEuclidianVisible();
         if (isVisible) { 
 			labelVisible = geo.isLabelVisible();       
@@ -64,7 +63,6 @@ implements Previewable {
 			
             // build general path for this polygon
 			addPointsToPath(poly.getPoints());
-			gp.closePath();
         	
         	 // polygon on screen?		
     		if (!gp.intersects(0,0, view.width, view.height)) {				
@@ -109,10 +107,11 @@ implements Previewable {
         
 	final public void draw(Graphics2D g2) {
         if (isVisible) {
-        	if (poly.alphaValue > 0.0f) {
-				g2.setPaint(poly.getFillColor());                       
-				g2.fill(gp);  				
-        	}        	        	
+
+			g2.setPaint(poly.getObjectColor());                       
+            g2.setStroke(objStroke);            
+			g2.draw(gp);  				
+   	        	
             	
             if (geo.doHighlighting()) {
                 g2.setPaint(poly.getSelColor());
@@ -120,15 +119,7 @@ implements Previewable {
                 g2.draw(gp);                
             }        
         	
-            // polygons (e.g. in GeoLists) that don't have labeled segments
-            // should also draw their border
-            else if (!poly.wasInitLabelsCalled() && poly.lineThickness > 0) {
-        		 g2.setPaint(poly.getObjectColor());
-                 g2.setStroke(objStroke);            
-                 g2.draw(gp);  
-        	}
-        	
-                                  
+                                 
             if (labelVisible) {
 				g2.setPaint(poly.getLabelColor());
 				g2.setFont(view.fontPoint);
@@ -158,9 +149,7 @@ implements Previewable {
     
 	final public void drawPreview(Graphics2D g2) {
     	if (isVisible) {
-			g2.setPaint(ConstructionDefaults.colPreviewFill);                       
-			g2.fill(gp);  			
-		  			            						
+       						
 			g2.setPaint(ConstructionDefaults.colPreview);             
 			g2.setStroke(objStroke);            
 			g2.draw(gp);

@@ -844,6 +844,8 @@ public class Kernel {
     				return new GeoPoint(cons);
     			else if (type.equals("polygon"))
     				return new GeoPolygon(cons, null);
+    			else if (type.equals("polyline"))
+    				return new GeoPolyLine(cons, null);
     			else // parabola, parallelLines, point //  bug in GeoGebra 2.6c
     				return new GeoConic(cons);
     			
@@ -906,6 +908,9 @@ public class Kernel {
 
 		case EuclidianView.MODE_POLYGON:
 			return "Polygon";
+
+		case EuclidianView.MODE_POLYLINE:
+			return "PolyLine";
 
 		case EuclidianView.MODE_RIGID_POLYGON:
 			return "RigidPolygon";
@@ -4031,6 +4036,35 @@ public class Kernel {
 		return algo.getOutput();
 	}
 	
+	//G.Sturr 2010-3-14
+	/** 
+	 * Polygon with vertices from geolist 
+	 * Only the polygon is labeled, segments are not labeled
+	 */
+	final public GeoElement [] Polygon(String [] labels, GeoList pointList) {
+		AlgoPolygon algo = new AlgoPolygon(cons, labels, pointList);
+		return algo.getOutput();
+	}
+	//END G.Sturr
+	
+	/** 
+	 * polygon P[0], ..., P[n-1]
+	 * The labels name the polygon itself and its segments
+	 */
+	final public GeoElement [] PolyLine(String [] labels, GeoPoint [] P) {
+		AlgoPolyLine algo = new AlgoPolyLine(cons, labels, P);
+		return algo.getOutput();
+	}
+	
+	/** 
+	 * Polygon with vertices from geolist 
+	 * Only the polygon is labeled, segments are not labeled
+	 */
+	final public GeoElement [] PolyLine(String [] labels, GeoList pointList) {
+		AlgoPolyLine algo = new AlgoPolyLine(cons, labels, pointList);
+		return algo.getOutput();
+	}
+	
 	final public GeoElement [] RigidPolygon(String [] labels, GeoPoint [] points) {
     	boolean oldMacroMode = cons.isSuppressLabelsActive();
     	
@@ -4114,16 +4148,6 @@ public class Kernel {
 	
 	}
 	
-	//G.Sturr 2010-3-14
-	/** 
-	 * Polygon with vertices from geolist 
-	 * Only the polygon is labeled, segments are not labeled
-	 */
-	final public GeoElement [] Polygon(String [] labels, GeoList pointList) {
-		AlgoPolygon algo = new AlgoPolygon(cons, labels, pointList);
-		return algo.getOutput();
-	}
-	//END G.Sturr
 	
 	
 	/** 

@@ -42,6 +42,7 @@ import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoSegmentInterface;
@@ -423,6 +424,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_POLYGON:
 		case EuclidianView.MODE_RIGID_POLYGON:
 			previewDrawable = view.createPreviewPolygon(selectedPoints);
+			break;
+
+		case EuclidianView.MODE_POLYLINE:
+			previewDrawable = view.createPreviewPolyLine(selectedPoints);
 			break;
 
 		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
@@ -1009,6 +1014,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_SEMICIRCLE:
 		case EuclidianView.MODE_CONIC_FIVE_POINTS:
 		case EuclidianView.MODE_POLYGON:
+		case EuclidianView.MODE_POLYLINE:
 		case EuclidianView.MODE_RIGID_POLYGON:
 		case EuclidianView.MODE_REGULAR_POLYGON:	
 			//hits = view.getHits(mouseLoc);
@@ -2532,6 +2538,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			changedKernel = ray(hits);
 			break;
 
+			
+		case EuclidianView.MODE_POLYLINE:
+			changedKernel = polyline(hits);
+			break;
+			
 			// new polygon through points
 		case EuclidianView.MODE_POLYGON:
 			polygonRigid = false;
@@ -3949,6 +3960,28 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 		}
 		addSelectedPoint(hits, GeoPolygon.POLYGON_MAX_POINTS, false);
+		return false;
+	}
+
+	//	get at least 3 points and create polygon with them
+	final protected boolean polyline(Hits hits) {
+		if (hits.isEmpty())
+			return false;
+
+		// if the first point is clicked again, we are finished
+		if (selPoints() > 2) {
+			// check if first point was clicked again
+			boolean finished = !selectionPreview
+			&& hits.contains(selectedPoints.get(0));
+			if (finished) {
+				// build polygon
+				kernel.PolyLine(null, getSelectedPoints());
+				return true;
+			}
+		}
+
+		// points needed
+		addSelectedPoint(hits, GeoPolyLine.POLYLINE_MAX_POINTS, false);
 		return false;
 	}
 

@@ -294,6 +294,7 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_CUBIC = 24;
 	public static final int GEO_CLASS_IMPLICIT_POLY = 25;
 	public static final int GEO_CLASS_FUNCTION_NVAR = 26;
+	public static final int GEO_CLASS_POLYLINE = 27;
 	
 	
 	public static final int LABEL_NAME = 0;
@@ -805,7 +806,9 @@ public abstract class GeoElement
 			typePriority = 40; break;
 		case  GEO_CLASS_POLYGON :
 			typePriority = 50; break;
-		case  GEO_CLASS_CUBIC :
+		case  GEO_CLASS_POLYLINE :
+			typePriority = 51; break;
+		case  GEO_CLASS_IMPLICIT_POLY :
 			typePriority = 60; break;
 		case  GEO_CLASS_CONIC:
 		case  GEO_CLASS_CONICPART:
@@ -833,6 +836,7 @@ public abstract class GeoElement
 		case  GEO_CLASS_TEXT:
 			typePriority = 150; break;
 		default: // shouldn't occur
+			Application.debug("missing case in getDrawingPriority()");
 			typePriority = 160;
 		}
 		
