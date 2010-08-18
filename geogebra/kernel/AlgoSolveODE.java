@@ -92,7 +92,7 @@ public class AlgoSolveODE extends AlgoElement {
 	        public void handleStep(StepInterpolator interpolator, boolean isLast) throws DerivativeException {
 	            double   t = interpolator.getCurrentTime();
 	            double[] y = interpolator.getInterpolatedState();
-	            System.out.println(t + " " + y[0]);
+	            //System.out.println(t + " " + y[0]);
 	            
 	            boolean oldState = cons.isSuppressLabelsActive();
 	            cons.setSuppressLabelCreation(true);
