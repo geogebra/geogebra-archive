@@ -353,7 +353,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 	}
 
 
-	public void setPoints(GeoPointInterface[] points2) {
+	public void setPoints(GeoPointInterface[] points) {
 		this.points = points;
 		
 	}

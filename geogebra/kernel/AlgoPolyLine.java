@@ -68,7 +68,6 @@ public class AlgoPolyLine extends AlgoElement {
         
         if (labels != null)
         	poly.setLabel(labels[0]);
-    	poly.setLabel("hhh");
         
     }   
     

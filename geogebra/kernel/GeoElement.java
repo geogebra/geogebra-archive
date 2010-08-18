@@ -2183,6 +2183,15 @@ public abstract class GeoElement
 				} while (!cons.isFreeLabel(str));
 				return str;
 			}		
+			else if (this instanceof GeoPolyLine) {
+				int counter = 0;
+				String str;
+				do {
+					counter++;
+					str = app.getPlain("Name.polyline") + kernel.internationalizeDigits(counter+"");;
+				} while (!cons.isFreeLabel(str));
+				return str;
+			}		
 			else if (isGeoText()) {
 				int counter = 0;
 				String str;
