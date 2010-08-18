@@ -122,27 +122,31 @@ import org.apache.commons.math.complex.Complex;
 
 public class Kernel {
 
-	// standard precision 
+	/** standard precision */ 
 	public final static double STANDARD_PRECISION = 1E-8;
 	
-	// minimum precision
+	/** minimum precision */
 	public final static double MIN_PRECISION = 1E-5;
 	private final static double INV_MIN_PRECISION = 1E5; 
 
-	// maximum reasonable precision
+	/** maximum reasonable precision */
 	public final static double MAX_PRECISION = 1E-12;
 	
-	// current working precision
+	/** current working precision */
 	public static double EPSILON = STANDARD_PRECISION;
 
-	// maximum precision of double numbers
+	/** maximum precision of double numbers */
 	public final static double MAX_DOUBLE_PRECISION = 1E-15;
+	/** reciprocal of maximum precision of double numbers */
 	public final static double INV_MAX_DOUBLE_PRECISION = 1E15;	
 	
 	 // style of point/vector coordinates
-    public static final int COORD_STYLE_DEFAULT = 0;		// A = (3, 2)  and 	B = (3; 90�)
-	public static final int COORD_STYLE_AUSTRIAN = 1;		// A(3|2)  	   and	B(3; 90�)
-	public static final int COORD_STYLE_FRENCH = 2;			// A: (3, 2)   and	B: (3; 90�)
+	/** A = (3, 2)  and 	B = (3; 90�)*/
+    public static final int COORD_STYLE_DEFAULT = 0;		
+    /** A(3|2)  	   and	B(3; 90�)*/
+	public static final int COORD_STYLE_AUSTRIAN = 1;		
+	/** A: (3, 2)   and	B: (3; 90�) */
+	public static final int COORD_STYLE_FRENCH = 2;			
 	private int coordStyle = 0;
 
 	// STATIC
@@ -150,8 +154,10 @@ public class Kernel {
 	final public static int ANGLE_DEGREE = 2;
 	final public static int COORD_CARTESIAN = 3;
 	final public static int COORD_POLAR = 4;	 
-	final public static int COORD_COMPLEX = 5;	 
+	final public static int COORD_COMPLEX = 5;
+	/** Unicode symbol for e */
 	final public static String EULER_STRING = "\u212f"; // "\u0435";
+	/** Unicode symbol for pi */
 	final public static String PI_STRING = "\u03c0";	
 	final public static double PI_2 = 2.0 * Math.PI;
 	final public static double PI_HALF =  Math.PI / 2.0;
@@ -183,9 +189,9 @@ public class Kernel {
 	private double ROUND_HALF_UP_FACTOR = ROUND_HALF_UP_FACTOR_DEFAULT;
 	
 	// used to store info when rounding is temporarily changed
-	private Stack useSignificantFiguresList;
-	private Stack noOfSignificantFiguresList;
-	private Stack noOfDecimalPlacesList;
+	private Stack<Boolean> useSignificantFiguresList;
+	private Stack<Integer> noOfSignificantFiguresList;
+	private Stack<Integer> noOfDecimalPlacesList;
 	
 	/* Significant figures
 	 * 
@@ -213,6 +219,7 @@ public class Kernel {
 	// had an angle as result. Now the result is a number.
 	// this flag is used to distinguish the different behaviour
 	// depending on the the age of saved construction files
+	/** if true, cyclometric functions return GeoAngle, if false, they return GeoNumeric**/
 	public boolean arcusFunctionCreatesAngle = false;
 	
 	private boolean translateCommandName = true;
@@ -308,6 +315,7 @@ public class Kernel {
 	/**
 	 * Returns this kernel's algebra processor that handles
 	 * all input and commands.
+	 * @return Algebra processor
 	 */	
 	public AlgebraProcessor getAlgebraProcessor() {
     	if (algProcessor == null)
@@ -325,6 +333,12 @@ public class Kernel {
 		return lookupLabel(label, false);
 	}
 	
+	/**
+	 * Finds element with given the label and possibly creates it
+	 * @param label Label of element we are looking for
+	 * @param autoCreate true iff new geo should be created if missing
+	 * @return GeoElement with given label
+	 */
 	final public GeoElement lookupLabel(String label, boolean autoCreate) {	
 		GeoElement geo = cons.lookupLabel(label, autoCreate);
 				
@@ -337,9 +351,12 @@ public class Kernel {
 		return geo;
 	}
 	
-	/*
+	/**
 	 * returns GeoElement at (row,col) in spreadsheet
-	 * may return null
+	 * may return nully 
+	 * @param col Spreadsheet column
+	 * @param row Spreadsheet row
+	 * @return Spreadsheet cell content (may be null)
 	 */
 	public GeoElement getGeoAt(int col, int row) {
 		return lookupLabel(GeoElement.getSpreadsheetCellName(col, row));
@@ -724,9 +741,9 @@ public class Kernel {
 	private void storeTemporaryRoundingInfoInList()
 	{
 		if (useSignificantFiguresList == null) {
-			useSignificantFiguresList = new Stack();
-			noOfSignificantFiguresList = new Stack();
-			noOfDecimalPlacesList = new Stack();
+			useSignificantFiguresList = new Stack<Boolean>();
+			noOfSignificantFiguresList = new Stack<Integer>();
+			noOfDecimalPlacesList = new Stack<Integer>();
 		}
 				
 		useSignificantFiguresList.push(new Boolean(useSignificantFigures));
@@ -734,13 +751,14 @@ public class Kernel {
 		noOfDecimalPlacesList.push(new Integer(nf.getMaximumFractionDigits()));	
 	}
 	
-	
+	/**
+	 *  gets previous values of print acuracy from stacks
+	 */
 	final public void restorePrintAccuracy()
 	{		
-		// get previous values from stacks
-		useSignificantFigures = ((Boolean)useSignificantFiguresList.pop()).booleanValue();		
-		int sigFigures = ((Integer)(noOfSignificantFiguresList.pop())).intValue();
-		int decDigits = ((Integer)(noOfDecimalPlacesList.pop())).intValue();
+		useSignificantFigures = useSignificantFiguresList.pop().booleanValue();		
+		int sigFigures = noOfSignificantFiguresList.pop().intValue();
+		int decDigits = noOfDecimalPlacesList.pop().intValue();
 		
 		if (useSignificantFigures)
 			setPrintFigures(sigFigures);

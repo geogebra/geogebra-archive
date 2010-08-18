@@ -615,19 +615,19 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
         double angExt = geo.getRawAngle();
         if (angExt > Math.PI*2) angExt -= Math.PI*2;
         
-        if (geo.angleStyle() == GeoAngle.ANGLE_ISCLOCKWISE) {
+        if (geo.getAngleStyle() == GeoAngle.ANGLE_ISCLOCKWISE) {
             angSt += angExt;
             angExt = 2.0*Math.PI-angExt;
         }
         
-        if (geo.angleStyle() == GeoAngle.ANGLE_ISNOTREFLEX) {
+        if (geo.getAngleStyle() == GeoAngle.ANGLE_ISNOTREFLEX) {
             if (angExt > Math.PI) {
                 angSt += angExt;
                 angExt = 2.0*Math.PI-angExt;
             }
         }
         
-        if (geo.angleStyle() == GeoAngle.ANGLE_ISREFLEX) {
+        if (geo.getAngleStyle() == GeoAngle.ANGLE_ISREFLEX) {
             if (angExt < Math.PI) {
                 angSt += angExt;
                 angExt = 2.0*Math.PI-angExt;

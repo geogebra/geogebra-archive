@@ -25,7 +25,6 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -49,7 +48,7 @@ public class DrawAngle extends Drawable {
 
 	private GeoVector vector;
 
-	boolean isVisible, labelVisible, show90degrees;
+	private boolean isVisible, labelVisible, show90degrees;
 
 	final private static int DRAW_MODE_POINTS = 0;
 
@@ -77,17 +76,21 @@ public class DrawAngle extends Drawable {
 	private Kernel kernel;
 	
 	// For decoration
-	// added by Loïc BEGIN
+	// added by Loï¿½c BEGIN
 	private Shape shapeArc1,shapeArc2;
 	private Arc2D.Double decoArc = new Arc2D.Double();
 	private Line2D.Double[] tick;
 	private double[] angleTick=new double[2];
-	// maximum angle distance between two ticks.
+	/** maximum angle distance between two ticks.*/
 	public static final double MAX_TICK_DISTANCE=Math.toRadians(15);
 	private GeneralPath square;
 	//END
 	
 
+	/**
+	 * @param view Euclidian view
+	 * @param angle Angle to be drawn
+	 */
 	public DrawAngle(EuclidianView view, GeoAngle angle) {
 		this.view = view;
 		kernel = view.getKernel();
@@ -263,7 +266,7 @@ public class DrawAngle extends Drawable {
 //			angSt = angSt - angExt;
 //		}
 
-		switch (angle.angleStyle()) {
+		switch (angle.getAngleStyle()) {
 			case GeoAngle.ANGLE_ISCLOCKWISE:
 				angSt+=angExt;
 				angExt=2.0*Math.PI-angExt;
@@ -290,7 +293,7 @@ public class DrawAngle extends Drawable {
 		double as = Math.toDegrees(angSt);
 		double ae = Math.toDegrees(angExt);
 		
-		int arcSize = Math.min((int)maxRadius, angle.arcSize);
+		int arcSize = Math.min((int)maxRadius, angle.getArcSize());
 		
 		double r = arcSize * view.invXscale;
 
@@ -370,7 +373,7 @@ public class DrawAngle extends Drawable {
 			double rdiff;
 			
 			// For Decoration
-			// Added By Loïc BEGIN
+			// Added By Loï¿½c BEGIN
 	    	switch(geo.decorationType){	
 		    	case GeoElement.DECORATION_ANGLE_TWO_ARCS:
 		    		rdiff = 4 + geo.lineThickness/2d;

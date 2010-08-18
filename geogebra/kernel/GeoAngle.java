@@ -32,7 +32,7 @@ public final class GeoAngle extends GeoNumeric {
 	private static final long serialVersionUID = 1L;
 
 	//public int arcSize = EuclidianView.DEFAULT_ANGLE_SIZE;
-	public int arcSize;
+	private int arcSize;
 
 	// allow angle > pi
 	// private boolean allowReflexAngle = true;
@@ -46,51 +46,42 @@ public final class GeoAngle extends GeoNumeric {
 
 	// Michael Borcherds 2007-10-20
 	private double rawValue;
-	
+	/** Default minimum value when displayed as slider*/
 	final public static double DEFAULT_SLIDER_MIN = 0;
+	/** Default maximum value when displayed as slider*/
 	final public static double DEFAULT_SLIDER_MAX = Kernel.PI_2;
 
-
-	final public static int ANGLE_ISANTICLOCKWISE = 0; // old
-														// allowReflexAngle=true
-
+	/** Measure angle anticlockwise*/
+	final public static int ANGLE_ISANTICLOCKWISE = 0; // old allowReflexAngle=true
+	/** Measure angle clockwise*/
 	final public static int ANGLE_ISCLOCKWISE = 1;
-
+	/** Force angle not to be reflex */
 	final public static int ANGLE_ISNOTREFLEX = 2; // old allowReflexAngle=false
-
+	/** Force angle to be reflex */
 	final public static int ANGLE_ISREFLEX = 3;
 
 	private int angleStyle = ANGLE_ISANTICLOCKWISE;
 
-	// added by Lo�c
+	/**
+	 * @author Lo�c
+	 * @return List of decoration types.
+	 */
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(GeoElement.DECORATION_NONE),
 				new Integer(GeoElement.DECORATION_ANGLE_TWO_ARCS),
 				new Integer(GeoElement.DECORATION_ANGLE_THREE_ARCS),
 				new Integer(GeoElement.DECORATION_ANGLE_ONE_TICK),
 				new Integer(GeoElement.DECORATION_ANGLE_TWO_TICKS),
-				new Integer(GeoElement.DECORATION_ANGLE_THREE_TICKS),
-				new Integer(GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE), // Michael
-																				// Borcherds
-																				// 2007
-																				// -
-																				// 11
-																				// -
-																				// 19
-				new Integer(GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE), // Michael
-																			// Borcherds
-																			// 2007
-																			// -
-																			// 11
-																			// -
-																			// 19
+				new Integer(GeoElement.DECORATION_ANGLE_THREE_TICKS),				
+				new Integer(GeoElement.DECORATION_ANGLE_ARROW_ANTICLOCKWISE), 
+				new Integer(GeoElement.DECORATION_ANGLE_ARROW_CLOCKWISE) 
 		};
 		return ret;
 	}
 
-	// end Loic
-
-	/** Creates new GeoAngle */
+	/** Creates new GeoAngle 
+	 * @param c Construction 
+	 */
 	public GeoAngle(Construction c) {
 		super(c);
 		setAlphaValue(ConstructionDefaults.DEFAULT_ANGLE_ALPHA);
@@ -99,6 +90,12 @@ public final class GeoAngle extends GeoNumeric {
 		animationIncrement = Math.PI / 180.0;
 	}
 
+	/**
+	 * Creates labeled angle of given size
+	 * @param c Construction
+	 * @param label Name for angle
+	 * @param x Size of the angle
+	 */
 	public GeoAngle(Construction c, String label, double x) {
 		this(c, x);
 		setLabel(label);
@@ -116,6 +113,11 @@ public final class GeoAngle extends GeoNumeric {
 		return GEO_CLASS_ANGLE;
 	}
 
+	/**
+	 * Creates new angle of given size
+	 * @param c Construction
+	 * @param x Size of the angle
+	 */
 	public GeoAngle(Construction c, double x) {
 		this(c);
 		setValue(x);
@@ -151,7 +153,7 @@ public final class GeoAngle extends GeoNumeric {
 	 * Sets the value of this angle. Every value is limited between 0 and 2pi.
 	 * Under some conditions a value > pi will be changed to (2pi - value).
 	 * 
-	 * @see setAngleStyle()
+	 * @see #setAngleStyle(int)
 	 */
 	void setValue(double val, boolean changeAnimationValue) {
 		double angVal = calcAngleValue(val);
@@ -218,8 +220,9 @@ public final class GeoAngle extends GeoNumeric {
 	/**
 	 * Depending upon angleStyle, some values > pi will be changed to (2pi -
 	 * value). raw_value contains the original value.
+	 * @param allowReflexAngle If true, angle is allowed to be> 180 degrees
 	 * 
-	 * @see setValue()
+	 * @see #setValue(double)
 	 */
 	final public void setAllowReflexAngle(boolean allowReflexAngle) {
 		switch (angleStyle) {
@@ -242,27 +245,25 @@ public final class GeoAngle extends GeoNumeric {
 			setAngleStyle(ANGLE_ISNOTREFLEX);
 	}
 
+	/**
+	 * Forces angle to be reflex or switches it to anticlockwise
+	 * @param forceReflexAngle
+	 */
 	final public void setForceReflexAngle(boolean forceReflexAngle) {
 
-		switch (angleStyle) {
-		case ANGLE_ISNOTREFLEX:
-			if (forceReflexAngle)
-				setAngleStyle(ANGLE_ISREFLEX);
-			break;
-		case ANGLE_ISREFLEX:
-			if (forceReflexAngle)
-				setAngleStyle(ANGLE_ISREFLEX);
-			else
-				setAngleStyle(ANGLE_ISANTICLOCKWISE);
-			break;
-		default: // ANGLE_ISANTICLOCKWISE
-			if (forceReflexAngle)
-				setAngleStyle(ANGLE_ISREFLEX);
-			break;
-
+		if(forceReflexAngle){
+			setAngleStyle(ANGLE_ISREFLEX);
 		}
+		else if(angleStyle == ANGLE_ISREFLEX){
+			setAngleStyle(ANGLE_ISANTICLOCKWISE);
+		}		
 	}
 
+	/**
+	 * Changes angle style and recomputes the value from raw.
+	 * See GeoAngle.ANGLE_*
+	 * @param angleStyle clockwise, anticlockwise, (force) reflex or (force) not reflex
+	 */
 	public void setAngleStyle(int angleStyle) {
 		if (angleStyle == this.angleStyle)
 			return;
@@ -292,34 +293,26 @@ public final class GeoAngle extends GeoNumeric {
 		else
 			algoParent.update();
 	}
-
+	/**
+	 * Returns angle style. See GeoAngle.ANGLE_*
+	 * 
+	 * @return Clockwise, counterclockwise reflex or not reflex
+	 */
 	public int getAngleStyle() {
 		return angleStyle;
 
 	}
 
-	/*
-	 * final public boolean allowReflexAngle() { // return allowReflexAngle;
-	 * return angleStyle==ANGLE_ISREFLEX; }
-	 */
-
 	/**
-	 * Returns true if the current value was limited to a value between 0 and pi
-	 * in setValue()
-	 * 
-	 * @see setAllowReflexAngle(), setValue()
+	 * Returns the raw value of angle
+	 * @return raw value of angle (irrespective of angle style)
 	 */
-	/*
-	 * final public boolean changedReflexAngle() { return changedReflexAngle; }
-	 */
-
 	final public double getRawAngle() {
 		return rawValue;
 	}
 
-	final public int angleStyle() {
-		return angleStyle;
-	}
+	
+	
 
 	// Michael Borcherds 2007-10-21 END	
 
@@ -334,10 +327,18 @@ public final class GeoAngle extends GeoNumeric {
 		return ret;
 	}
 
+	/** 
+	 * returns size of the arc in pixels
+	 * @return arc size in pixels
+	 */
 	public int getArcSize() {
 		return arcSize;
 	}
 
+	/** 
+	 * Change the size of the arc in pixels, 
+	 * @param i arc size, should be in <10,100>
+	 */
 	public void setArcSize(int i) {
 		arcSize = i;
 	}
@@ -413,10 +414,18 @@ public final class GeoAngle extends GeoNumeric {
 
 	// Michael Borcherds 2007-11-20
 
+	/**
+	 * Returns true if this angle shuld be drawn differently when right
+	 * @return true iff this angle shuld be drawn differently when right
+	 */
 	public boolean isEmphasizeRightAngle() {
 		return emphasizeRightAngle;
 	}
 
+	/**
+	 * Sets this angle shuld be drawn differently when right
+	 * @param emphasizeRightAngle true iff this angle shuld be drawn differently when right
+	 */
 	public void setEmphasizeRightAngle(boolean emphasizeRightAngle) {
 		this.emphasizeRightAngle = emphasizeRightAngle;
 	}

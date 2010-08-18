@@ -42,14 +42,15 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	private static final long serialVersionUID = 1L;
 	private static int DEFAULT_SLIDER_WIDTH_RW = 4;
 	private static int DEFAULT_SLIDER_WIDTH_PIXEL = 100;	
-	private static int DEFAULT_SLIDER_WIDTH_PIXEL_ANGLE = 72;	
+	private static int DEFAULT_SLIDER_WIDTH_PIXEL_ANGLE = 72;
+	/** Default maximum value when displayed as slider*/
 	public static double DEFAULT_SLIDER_MIN = -5;
+	/** Default minimum value when displayed as slider*/
 	public static double DEFAULT_SLIDER_MAX = 5;
+	/** Default increment when displayed as slider*/
 	public static double DEFAULT_SLIDER_INCREMENT = 0.1;
 	
-	double DEFAULT_SLIDER_MIN_ANGLE = 0;
-	double DEFAULT_SLIDER_MAX_ANGLE = 2*Math.PI;
-
+	/** value of the number or angle */
 	protected double value;	
 
 	private boolean isDrawable = false;
@@ -68,10 +69,13 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	private boolean sliderHorizontal = true;
 	private double animationValue = Double.NaN;	
 	
-	// for absolute screen location
+	/** absolute screen location, true by default */
 	boolean hasAbsoluteScreenLocation = true;	
 
-	/** Creates new GeoNumeric */
+	/** 
+	 * Creates new GeoNumeric
+	 * @param c Construction 
+	 */
 	public GeoNumeric(Construction c) {
 		super(c);
 		setEuclidianVisible(isGeoAngle());
@@ -91,11 +95,22 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
     	return GEO_CLASS_NUMERIC;
     }
 
-	public GeoNumeric(Construction c, String label, double x) {
+	/**
+	 * Creates new labeled number
+	 * @param c Cons
+	 * @param label Label for new number
+	 * @param x Number value
+	 */
+    public GeoNumeric(Construction c, String label, double x) {
 		this(c, x);
 		setLabel(label);
 	}
 
+    /**
+	 * Creates new number
+	 * @param c Cons
+	 * @param x Number value
+	 */
 	public GeoNumeric(Construction c, double x) {
 		this(c);
 
@@ -118,9 +133,13 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return isDrawable;
 	}
 
+	/**
+	 * Sets whether the number should be drawable (as slider or angle in case of GeoAngle)
+	 * If possible, makes the number also visible.
+	 * @param flag true iff this number should be drawable
+	 */
 	public void setDrawable(boolean flag) {
 		isDrawable = flag;
-		
 		if (isDrawable && kernel.isNotifyViewsActive() && kernel.isAllowVisibilitySideEffects() ) {
 			setEuclidianVisible(true);
 		}						
@@ -189,8 +208,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		int count = 0;
 		
 		// get all number and angle sliders		
-		TreeSet numbers = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_NUMERIC);
-		TreeSet angles = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_ANGLE);		
+		TreeSet<GeoElement> numbers = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_NUMERIC);
+		TreeSet<GeoElement> angles = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_ANGLE);		
 		if (numbers != null) {
 			if (angles != null)
 				numbers.addAll(angles);
@@ -199,9 +218,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		}
 		
 		if (numbers != null) {
-			Iterator it = numbers.iterator();
+			Iterator<GeoElement> it = numbers.iterator();
 			while (it.hasNext()) {
-				GeoNumeric num = (GeoNumeric) it.next();
+				GeoNumeric num =  (GeoNumeric) it.next();
 	    		if (num.isSlider()) count++;
 			}
 		}
@@ -236,6 +255,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return !Double.isNaN(value);
 	}
 
+	/**
+	 * Returns true iff defined and infinite
+	 * @return true iff defined and infinite
+	 */
 	final public boolean isFinite() {
 		return isDefined() && !isInfinite();
 	}
@@ -263,10 +286,19 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if (geo.isGeoNumeric()) return kernel.isEqual(value, ((GeoNumeric)geo).value); else return false;
 	}
 
+	/**
+	 * Sets value of the number
+	 * @param x number value
+	 */
 	final public void setValue(double x) {
 		setValue(x, true);
 	}
 	
+	/**
+	 * Sets value of the number
+	 * @param x number value
+	 * @param changeAnimationValue if true, value is changed also for animation
+	 */
 	void setValue(double x, boolean changeAnimationValue) {
 		if (intervalMinActive && x < intervalMin) {			
 			value = intervalMin;			
@@ -282,19 +314,29 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			animationValue = value;
 	}
 
+	/**
+	 * Returns value of the number
+	 * @return number value
+	 */
 	final public double getValue() {
 		return value;
 	}
 
-	// dummy implementation of mode
+	/** dummy implementation of mode 
+	 * @param mode dummy parameter 
+	 */
 	final public void setMode(int mode) {
 	}
 
+	/** dummy implementation of mode 
+	 * @return -1 (allways) 
+	 */
 	final public int getMode() {
 		return -1;
 	}
 
 	public String toString() {
+		if(sbToString == null)return null;
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = ");
@@ -327,8 +369,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return true;
 	}
 
-	final public HashSet getVariables() {
-		HashSet varset = new HashSet();
+	final public HashSet<GeoElement> getVariables() {
+		HashSet<GeoElement> varset = new HashSet<GeoElement>();
 		varset.add(this);
 		return varset;
 	}
@@ -386,6 +428,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		getBreakpointXML(sb);
 	}
 	
+	/**
+	 * Returns true iff slider is possible
+	 * @return true iff slider is possible
+	 */
 	protected boolean isSliderable() {
 		return isIndependent() && (intervalMinActive || intervalMaxActive);
 	}
@@ -395,6 +441,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return !isSetEuclidianVisible();
 	}
 	
+	/**
+	 * Adds the slider tag to the string builder
+	 * @param sb String builder to be written to
+	 */
 	void getXMLsliderTag(StringBuilder sb) {
 		if (!isSliderable())
 			return;
@@ -447,14 +497,16 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 
 	/**
-	 * @return
+	 * Returns size of the triangle when used for slop
+	 * @return size of the triangle when used for slope
 	 */
 	final public int getSlopeTriangleSize() {
 		return slopeTriangleSize;
 	}
 
 	/**
-	 * @param i
+	 * Set size of the triangle when used for slop
+	 * @param i Size of the slope triangle
 	 */
 	public void setSlopeTriangleSize(int i) {
 		slopeTriangleSize = i;
@@ -463,7 +515,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public boolean isTextValue() {
 		return false;
 	}
-	
+	/**
+	 * Changes maximal value for slider
+	 * @param max New maximum for slider
+	 */
 	public void setIntervalMax(double max) {	
 		if (Double.isNaN(max) || Double.isInfinite(max)) return;
 
@@ -477,6 +532,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		setValue(value);			
 	}
 	
+	/**
+	 * Changes minimal value for slider
+	 * @param min New minimum for slider
+	 */
 	public void setIntervalMin(double min) {
 		if (Double.isNaN(min) || Double.isInfinite(min))
 				return;
@@ -491,6 +550,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		setValue(value);			
 	}
 	
+	/**
+	 * Changes slider width in pixels
+	 * @param width slider width in pixels
+	 */
 	public final void setSliderWidth(double width) {
 		if (width > 0 && !Double.isInfinite(width))
 			sliderWidth = width;
@@ -498,7 +561,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	
 	/**
 	 * Sets the location of the slider for this number.
-	 * @param x, y: coords of the slider
+	 * @param x x-coord of the slider
+	 * @param y y-coord of the slider
 	 */
 	public final void setSliderLocation(double x, double y) {
 		if (sliderFixed) return;
@@ -506,54 +570,101 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		sliderY = y;			
 	}
 	
+	/**
+	 * Returns maximal value for slider
+	 * @return maximal value for slider
+	 */ 
 	public final double getIntervalMax() {
 		return intervalMax;
 	}
 
+	/**
+	 * Returns minimal value for slider
+	 * @return minimal value for slider
+	 */ 
 	public final double getIntervalMin() {
 		return intervalMin;
 	}
-
+	/**
+	 * Returns slider width in pixels
+	 * @return slider width in pixels
+	 */ 
 	public final double getSliderWidth() {
 		return sliderWidth;
 	}
-	
+	/**
+	 * Returns x-coord of the slider
+	 * @return x-coord of the slider
+	 */ 
 	public final double getSliderX() {
 		return sliderX;
 	}
-
+	/**
+	 * Returns y-coord of the slider
+	 * @return y-coord of the slider
+	 */ 
 	public final double getSliderY() {
 		return sliderY;
 	}
 	
 
+	/**
+	 * Returns true if slider max value wasn't disabled in Properties
+	 * @return true if slider max value wasn't disabled
+	 */
 	public final boolean isIntervalMaxActive() {
 		return intervalMaxActive;
 	}
+	/**
+	 * Returns true if slider min value wasn't disabled in Properties
+	 * @return true if slider min value wasn't disabled
+	 */
 	public final boolean isIntervalMinActive() {
 		return intervalMinActive;
 	}
+	/**
+	 * Disables slider max value
+	 */
 	public final void setIntervalMaxInactive() {
 		intervalMaxActive = false;
 		setEuclidianVisible(false);
 	}
+	/**
+	 * Disables slider min value
+	 */
 	public final void setIntervalMinInactive() {
 		intervalMinActive = false;
 		setEuclidianVisible(false);
 	}
 	
+	/**
+	 * Returns true iff slider is fixed in graphics view
+	 * @return true iff slider is fixed in graphics view
+	 */
 	public final boolean isSliderFixed() {
 		return sliderFixed;
 	}
 	
+	/**
+	 * Sets whether slider is fixed in graphics view
+	 * @param isSliderFixed true iff slider is fixed in graphics view
+	 */
 	public final void setSliderFixed(boolean isSliderFixed) {
 		sliderFixed = isSliderFixed;
 	}
 
+	/**
+	 * Returns whether slider shoud be horizontal or vertical
+	 * @return true iff should be horizontal
+	 */
 	public final boolean isSliderHorizontal() {
 		return sliderHorizontal;
 	}
 
+	/**
+	 * Sets whether slider shoud be horizontal or vertical
+	 * @param sliderHorizontal true iff should be horizontal
+	 */
 	public void setSliderHorizontal(boolean sliderHorizontal) {
 		this.sliderHorizontal = sliderHorizontal;
 	}
@@ -602,7 +713,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	
 	/**
 	 * Creates a GeoFunction of the form f(x) = thisNumber 
-	 * @return
+	 * @return constant function
 	 */	
 	public GeoFunction getGeoFunction() {
 		ExpressionNode en = new ExpressionNode(kernel, this);
@@ -653,7 +764,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		// -------- old code
 		
 		/*
-		// TODO: can we move this to Drawable? (problem: dependant GeoNumeric not drawn!)
+		// TO_DO: can we move this to Drawable? (problem: dependant GeoNumeric not drawn!)
 		EuclidianView view = kernel.getApplication().getEuclidianView();	
         // record to spreadsheet tool
     	if (this == view.getEuclidianController().recordObject
@@ -763,6 +874,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	/**
 	 * Returns a comparator for GeoNumeric objects.
 	 * If equal, doesn't return zero (otherwise TreeSet deletes duplicates)
+	 * @return 1 if first is greater (or same but sooner in construction), -1 otherwise 
 	 */
 	public static Comparator<GeoNumeric> getComparator() {
 		if (comparator == null) {
@@ -783,12 +895,20 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 	private static Comparator<GeoNumeric> comparator;
 
+	/**
+	 * Returns default minimum for slider
+	 * @return default minimum for slider
+	 */
 	public double getDefaultSliderMin() {
-		return isGeoAngle() ? DEFAULT_SLIDER_MIN_ANGLE : DEFAULT_SLIDER_MIN;
+		return isGeoAngle() ? GeoAngle.DEFAULT_SLIDER_MAX : DEFAULT_SLIDER_MIN;
 	}
 
+	/**
+	 * Returns default maximum for slider
+	 * @return default maximum for slider
+	 */
 	public double getDefaultSliderMax() {
-		return isGeoAngle() ? DEFAULT_SLIDER_MAX_ANGLE : DEFAULT_SLIDER_MAX;
+		return isGeoAngle() ? GeoAngle.DEFAULT_SLIDER_MAX : DEFAULT_SLIDER_MAX;
 	}
 	
 	//protected void setRandomNumber(boolean flag) {
