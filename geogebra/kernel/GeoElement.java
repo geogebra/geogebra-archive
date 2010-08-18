@@ -402,7 +402,7 @@ public abstract class GeoElement
 	
 	// public int geoID;    
 	//  static private int geoCounter = 0;
-	private AlgoElement algoParent = null; // Parent Algorithm
+	protected AlgoElement algoParent = null; // Parent Algorithm
 	private ArrayList algorithmList; 	// directly dependent algos
 	
 	//	set of all dependent algos sorted in topological order    
@@ -3990,18 +3990,18 @@ public abstract class GeoElement
 		moveObjectsUpdateList.clear();
 		moveObjectsUpdateList.ensureCapacity(size);
 		
-		/* Michael Borcherds
-		 * removed as it makes the mouse jump to the position of the point when dragging
-		 * eg Image with one corner, Rigid Polygon
-		 * and stops grid-lock working properly
 		// only use end position for a single point
 		Point2D.Double position = size == 1 ? endPosition : null;
-		*/
 		
 		for (int i=0; i < size; i++) {
 			GeoElement geo = (GeoElement) geos.get(i);
 			
-			moved = geo.moveObject(rwTransVec, null, moveObjectsUpdateList) || moved;		
+			/* Michael Borcherds
+			 * check for isGeoPoint() as it makes the mouse jump to the position of the point when dragging
+			 * eg Image with one corner, Rigid Polygon
+			 * and stops grid-lock working properly
+			 * but is needed for eg dragging (a + x(A), b + x(B)) */
+			moved = geo.moveObject(rwTransVec, geo.isGeoPoint() ? position : null, moveObjectsUpdateList) || moved;		
 		}					
 							
 		// take all independent input objects and build a common updateSet
@@ -4125,6 +4125,8 @@ public abstract class GeoElement
 					ArrayList changeableCoordNumbers = point.getCoordParentNumbers();					
 					GeoNumeric xvar = (GeoNumeric) changeableCoordNumbers.get(0);
 					GeoNumeric yvar = (GeoNumeric) changeableCoordNumbers.get(1);
+					
+					Application.debug(xvar+"");
 							
 					// polar coords (r; phi)
 					if (point.hasPolarParentNumbers()) {
@@ -4154,6 +4156,8 @@ public abstract class GeoElement
 					
 					// cartesian coords (xvar + constant, yvar + constant)
 					else {
+						Application.debug(point+" "+endPosition);
+						
 						xvar.setValue( xvar.getValue() - point.inhomX + endPosition.x);
 						yvar.setValue( yvar.getValue() - point.inhomY + endPosition.y);
 					}
