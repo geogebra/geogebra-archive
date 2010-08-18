@@ -1945,6 +1945,7 @@ public class GuiManager {
 	public boolean loadURL(String urlString) {
 		
 		boolean success = false;
+		boolean isMacroFile =  false;
 		app.setWaitCursor();
 		
 		// check first for ggb/ggt file
@@ -1952,7 +1953,8 @@ public class GuiManager {
 			
 			try {
 				URL url = new URL(urlString);
-				success = app.loadXML(url, urlString.endsWith(".ggt"));   
+				isMacroFile = urlString.endsWith(".ggt");
+				success = app.loadXML(url, isMacroFile);
 			} catch (IOException e) {
 				//success = false;
 			}
@@ -1990,6 +1992,8 @@ public class GuiManager {
 		if (!success) {
 			app.showError(app.getError("LoadFileFailed") + "\n" + urlString);
 		}
+		
+	    updateGUIafterLoadFile(success, isMacroFile);
 		
 		app.setDefaultCursor();
 		return success;
@@ -2140,6 +2144,7 @@ public class GuiManager {
 			return false;
 
 		}
+        updateGUIafterLoadFile(success, false);
 		app.setDefaultCursor();
 		return success;
 
