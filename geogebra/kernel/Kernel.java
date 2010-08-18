@@ -802,8 +802,6 @@ public class Kernel {
     				return new GeoConic(cons);   
     			else if (type.equals("conicpart"))    					
     				return new GeoConicPart(cons, 0);
-    			else if (type.equals("cubic"))    					
-    				return new GeoCubic(cons);
     			else if (type.equals("circle")) { // bug in GeoGebra 2.6c
     				return new GeoConic(cons);
     			}
@@ -1775,29 +1773,6 @@ public class Kernel {
 		return conic;
 	}
 
-	/** Implicit Cubic  */
-	final public GeoCubic Cubic(
-		String label,
-		double a,
-		double b,
-		double c,
-		double d,
-		double e,
-		double f,
-		double g,
-		double h,
-		double i,
-		double j,
-		double k,
-		double l,
-		double m,
-		double n,
-		double o,
-		double p) {
-		double[] coeffs = { a, b, c, d, e, f,g,h,i,j,k,l,m,n,o,p };
-		GeoCubic cubic = new GeoCubic(cons, label, coeffs);
-		return cubic;
-	}
 	
 	/** Implicit Polynomial  */
 	final public GeoImplicitPoly ImplicitPoly(String label,Polynomial poly) {
@@ -2031,14 +2006,6 @@ public class Kernel {
 		AlgoDependentConic algo = new AlgoDependentConic(cons, label, equ);
 		GeoConic conic = algo.getConic();
 		return conic;
-	}
-
-	/** Implicit cubic eg x^3+y^3=1
-	 */
-	final public GeoCubic DependentCubic(String label, Equation equ) {
-		AlgoDependentCubic algo = new AlgoDependentCubic(cons, label, equ);
-		GeoCubic cubic = algo.getCubic();
-		return cubic;
 	}
 	
 	final public GeoImplicitPoly  DependentImplicitPoly(String label, Equation equ) {
@@ -4708,20 +4675,6 @@ public class Kernel {
 		return points;
 	}
 
-	/** 
-	 * IntersectLineConic yields intersection points named label1, label2
-	 * of line g and conic c
-	 */
-	final public GeoPoint[] IntersectLineCubic(
-		String[] labels,
-		GeoLine g,
-		GeoCubic c) {
-		AlgoIntersectLineCubic algo = getIntersectionAlgorithm(g, c);
-		algo.setPrintedInXML(true);
-		GeoPoint[] points = algo.getIntersectionPoints();		
-		GeoElement.setLabels(labels, points);	
-		return points;
-	}
 
 	/** 
 	 * IntersectConics yields intersection points named label1, label2, label3, label4
@@ -5146,18 +5099,6 @@ public class Kernel {
 			
 	 	// we didn't find a matching algorithm, so create a new one
 		AlgoIntersectLineConic algo = new AlgoIntersectLineConic(cons, g, c);
-		algo.setPrintedInXML(false);
-		intersectionAlgos.add(algo); // remember this algorithm
-		return algo;
-	 }
-	 
-	 // intersect line and cubic
-	 AlgoIntersectLineCubic getIntersectionAlgorithm(GeoLine g, GeoCubic c) {
-		AlgoElement existingAlgo = findExistingIntersectionAlgorithm(g, c);
-		if (existingAlgo != null) return (AlgoIntersectLineCubic) existingAlgo;
-			
-	 	// we didn't find a matching algorithm, so create a new one
-		AlgoIntersectLineCubic algo = new AlgoIntersectLineCubic(cons, g, c);
 		algo.setPrintedInXML(false);
 		intersectionAlgos.add(algo); // remember this algorithm
 		return algo;

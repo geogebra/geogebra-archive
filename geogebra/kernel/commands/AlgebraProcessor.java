@@ -5,7 +5,6 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
-import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
@@ -27,7 +26,6 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.MyBoolean;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyStringBuffer;
@@ -765,14 +763,6 @@ public class AlgebraProcessor {
 				// quadratic equation -> CONIC                                  
 				case 2 :
 					return processConic(equ);
-	/* TODO remove GeoCubic completely (probably)
-				case 3 :
-				case 4 ://
-				case 5 ://
-				case 6 :// needed for eg x^3 y^3
-					if (equ.singleDegree() <= 3)
-						return processCubic(equ);
-					// else fall through to default:*/
 	
 				default :
 					return processImplicitPoly(equ);
@@ -876,38 +866,6 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
-	protected GeoElement[] processCubic(Equation equ) {
-		double a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0, i = 0, j = 0, k = 0 , l = 0, m = 0, n = 0, o = 0, p = 0;
-		GeoElement[] ret = new GeoElement[1];
-		GeoCubic cubic = null;
-		String label = equ.getLabel();
-		Polynomial lhs = equ.getNormalForm();
-		boolean isIndependent = lhs.isConstant();
-
-		if (isIndependent) {
-			a = lhs.getCoeffValue("xxxyyy");
-			b = lhs.getCoeffValue("xxyyy");
-			c = lhs.getCoeffValue("xyyy");
-			d = lhs.getCoeffValue("yyy");
-			e = lhs.getCoeffValue("xxxyy");
-			f = lhs.getCoeffValue("xxyy");
-			g = lhs.getCoeffValue("xyy");
-			h = lhs.getCoeffValue("yy");
-			i = lhs.getCoeffValue("xxxy");
-			j = lhs.getCoeffValue("xxy");
-			k = lhs.getCoeffValue("xy");
-			l = lhs.getCoeffValue("y");
-			m = lhs.getCoeffValue("xxx");
-			n = lhs.getCoeffValue("xx");
-			o = lhs.getCoeffValue("x");
-			p = lhs.getCoeffValue("");
-			cubic = kernel.Cubic(label, a, b, c, d, e, f,g,h,i,j,k,l,m,n,o,p);
-		} else
-			cubic = kernel.DependentCubic(label, equ);
-		ret[0] = cubic;
-		return ret;
-	}
-	
 	protected GeoElement[] processImplicitPoly(Equation equ){
 		GeoElement[] ret = new GeoElement[1];
 		String label = equ.getLabel();

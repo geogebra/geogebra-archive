@@ -1,7 +1,6 @@
 package geogebra.kernel.commands;
 
 import geogebra.kernel.GeoConic;
-import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
@@ -13,7 +12,6 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 
 
@@ -92,20 +90,6 @@ public  GeoElement[] process(Command c) throws MyError {
                     (GeoConic) arg[0]);
             // Line - Cubic
             else if (
-                (ok[0] = (arg[0] .isGeoLine()))
-                    && (ok[1] = (arg[1] .isGeoCubic())))
-				return kernel.IntersectLineCubic(
-                    c.getLabels(),
-                    (GeoLine) arg[0],
-                    (GeoCubic) arg[1]);
-			else if (
-                (ok[0] = (arg[0] .isGeoCubic()))
-                    && (ok[1] = (arg[1] .isGeoLine())))
-				return kernel.IntersectLineCubic(
-                    c.getLabels(),
-                    (GeoLine) arg[1],
-                    (GeoCubic) arg[0]);
-			else if (
                 (ok[0] = (arg[0] .isGeoConic()))
                     && (ok[1] = (arg[1] .isGeoConic())))
 				return kernel.IntersectConics(

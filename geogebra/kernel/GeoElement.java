@@ -291,10 +291,9 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_VECTOR = 21;
 	public static final int GEO_CLASS_CURVE_CARTESIAN = 22;
 	public static final int GEO_CLASS_CURVE_POLAR = 23;
-	public static final int GEO_CLASS_CUBIC = 24;
-	public static final int GEO_CLASS_IMPLICIT_POLY = 25;
-	public static final int GEO_CLASS_FUNCTION_NVAR = 26;
-	public static final int GEO_CLASS_POLYLINE = 27;
+	public static final int GEO_CLASS_IMPLICIT_POLY = 24;
+	public static final int GEO_CLASS_FUNCTION_NVAR = 25;
+	public static final int GEO_CLASS_POLYLINE = 26;
 	
 	
 	public static final int LABEL_NAME = 0;
@@ -1357,7 +1356,6 @@ public abstract class GeoElement
 		// allow only moving of certain object types
 		switch (getGeoClassType()) {		
 			case GEO_CLASS_CONIC:
-			case GEO_CLASS_CUBIC:
 			case GEO_CLASS_CONICPART:
 			case GEO_CLASS_IMAGE:
 			case GEO_CLASS_LINE:

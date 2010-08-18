@@ -25,7 +25,6 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
-import geogebra.kernel.GeoCubic;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -3288,10 +3287,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			d = new DrawConic(this, (GeoConic) geo);
 			break;
 
-		case GeoElement.GEO_CLASS_CUBIC:
-			d = new DrawCubic(this, (GeoCubic) geo);
-			break;
-			
 		case GeoElement.GEO_CLASS_IMPLICIT_POLY:
 			d = new DrawImplicitPoly(this, (GeoImplicitPoly) geo);
 			break;
