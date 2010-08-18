@@ -56,7 +56,6 @@ implements Previewable {
 	} 
 
 	final public void update() {
-		Application.printStacktrace("");
         isVisible = geo.isEuclidianVisible();
         if (isVisible) { 
 			labelVisible = geo.isLabelVisible();       

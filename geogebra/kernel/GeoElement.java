@@ -4125,8 +4125,6 @@ public abstract class GeoElement
 					ArrayList changeableCoordNumbers = point.getCoordParentNumbers();					
 					GeoNumeric xvar = (GeoNumeric) changeableCoordNumbers.get(0);
 					GeoNumeric yvar = (GeoNumeric) changeableCoordNumbers.get(1);
-					
-					Application.debug(xvar+"");
 							
 					// polar coords (r; phi)
 					if (point.hasPolarParentNumbers()) {
@@ -4156,7 +4154,6 @@ public abstract class GeoElement
 					
 					// cartesian coords (xvar + constant, yvar + constant)
 					else {
-						Application.debug(point+" "+endPosition);
 						
 						xvar.setValue( xvar.getValue() - point.inhomX + endPosition.x);
 						yvar.setValue( yvar.getValue() - point.inhomY + endPosition.y);
