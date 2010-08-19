@@ -56,7 +56,7 @@ public class AlgoSolveODE extends AlgoElement {
 	    }
 
 	    protected final void compute() {       
-	        if (!f0.isDefined() || kernel.isZero(step.getDouble())) {
+	        if (!f0.isDefined() || !x.isDefined() || !y.isDefined() || !step.isDefined() || !end.isDefined() || kernel.isZero(step.getDouble())) {
 	        	g.setUndefined();
 	        	return;
 	        }    
