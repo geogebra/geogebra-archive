@@ -5943,6 +5943,11 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
+	final public GeoElement SolveODE(String label, CasEvaluableFunction func) {		
+		AlgoCasSolveODE algo = new AlgoCasSolveODE(cons, label, func);
+		return algo.getResult();			
+	}
+	
 	/**
 	 * Simplify text, eg "+-x" to "-x"
 	 * @author Michael Borcherds 
