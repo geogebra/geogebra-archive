@@ -33,8 +33,10 @@ public class CommandDispatcher {
     private Construction cons;
     private Application app;
     
-    // stores (String name, CommandProcessor cmdProc) pairs   
-    protected HashMap<String,CommandProcessor> cmdTable, internalCmdTable;
+    /** stores public (String name, CommandProcessor cmdProc) pairs*/   
+    protected HashMap<String,CommandProcessor> cmdTable;
+    /** stores internal (String name, CommandProcessor cmdProc) pairs*/
+    protected HashMap<String,CommandProcessor>internalCmdTable;
     private MacroProcessor macroProc;
     
     /**
@@ -107,8 +109,11 @@ public class CommandDispatcher {
         } catch (Exception e) {        	  
             cons.setSuppressLabelCreation(oldMacroMode);        	  
             e.printStackTrace();
-            throw new MyError(app, app.getError("UnknownCommand") + " : " + 
+            if(cmdProc == null)
+            	throw new MyError(app, app.getError("UnknownCommand") + " : " + 
             		app.getCommand(c.getName()));
+            else 
+            	throw new MyError(app, app.getError("CAS.GeneralErrorMessage"));
         }
         
         // remember macro command used:
