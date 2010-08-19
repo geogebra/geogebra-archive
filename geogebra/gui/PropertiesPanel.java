@@ -150,6 +150,9 @@ public	class PropertiesPanel extends JPanel {
 		private AbsoluteScreenLocationPanel absScreenLocPanel;	
 		private ShowConditionPanel showConditionPanel;
 		private ColorFunctionPanel colorFunctionPanel;
+		
+		private GraphicsViewLocationPanel graphicsViewLocationPanel;
+		
 		//private CoordinateFunctionPanel coordinateFunctionPanel;
 		
 		private TabPanel basicTab;
@@ -192,6 +195,9 @@ public	class PropertiesPanel extends JPanel {
 				bgImagePanel = new BackgroundImagePanel();
 				showConditionPanel = new ShowConditionPanel(app, this); 
 				colorFunctionPanel = new ColorFunctionPanel(app, this);
+				
+				graphicsViewLocationPanel = new GraphicsViewLocationPanel(app, this);
+				
 				//coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
 				sliderPanel = new SliderPanel(app, this, false);
 			}
@@ -370,10 +376,18 @@ public	class PropertiesPanel extends JPanel {
 				
 				advancedTabList.add(showConditionPanel);	
 				advancedTabList.add(colorFunctionPanel);	
+				
 				//advancedTabList.add(coordinateFunctionPanel);	
 				advancedTabList.add(layerPanel); // Michael Borcherds 2008-02-26
 				
 				advancedTabList.add(tooltipPanel);
+				
+				
+				//=================================================
+				// add location panel 
+				// advancedTabList.add(graphicsViewLocationPanel);
+				//===================================================
+				
 				
 				advancedTab = new TabPanel(advancedTabList);
 				tabPanelList.add(advancedTab);
@@ -5276,6 +5290,140 @@ class ColorFunctionPanel
 			doActionPerformed();
 	}
 }
+
+
+
+/**
+ * panel to set graphics view location
+ * @author G.Sturr
+ */
+class GraphicsViewLocationPanel
+	extends JPanel
+	implements ActionListener, UpdateablePanel {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private Object[] geos; // currently selected geos
+	
+	private JCheckBox cbGraphicsView, cbGraphicsView2; 
+	
+	private Kernel kernel;
+	private Application app;
+	private EuclidianView ev, ev2;
+	private PropertiesPanel propPanel;
+
+	public GraphicsViewLocationPanel(Application app, PropertiesPanel propPanel) {
+		this.app = app;
+		kernel = app.getKernel();
+		this.propPanel = propPanel;
+
+		ev = app.getEuclidianView();
+		ev2 = (EuclidianView) app.getGuiManager().getEuclidianView2();
+				
+		cbGraphicsView = new JCheckBox();
+		cbGraphicsView2 = new JCheckBox();		
+		cbGraphicsView.addActionListener(this);
+		cbGraphicsView2.addActionListener(this);
+		
+		setLayout(new FlowLayout(FlowLayout.LEFT));
+		add(cbGraphicsView);
+		add(cbGraphicsView2);
+		
+		setLabels();
+	}
+	
+	public void setLabels() {
+		setBorder(
+			BorderFactory.createTitledBorder(
+				kernel.getApplication().getMenu("Location")
+			)
+		);
+		cbGraphicsView.setText("GraphicsView");
+		cbGraphicsView2.setText("GraphicsView2");
+		
+	}
+
+	public JPanel update(Object[] geos) {
+		this.geos = geos;
+		if (!checkGeos(geos))
+			return null;
+
+		cbGraphicsView.removeActionListener(this);
+		cbGraphicsView2.removeActionListener(this);
+
+		boolean isInEV = false;
+		boolean isInEV2 = false;
+
+		for (int i=0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];	
+			if (geo.isVisibleInView(ev)) 
+				isInEV = true;
+			if (geo.isVisibleInView(ev2)) 
+				isInEV2 = true;
+		}		
+
+		cbGraphicsView.setSelected(isInEV);		
+		cbGraphicsView2.setSelected(isInEV2);		
+		
+		cbGraphicsView.addActionListener(this);
+		cbGraphicsView2.addActionListener(this);
+
+		return this;
+	}
+
+	private boolean checkGeos(Object[] geos) {
+		for (int i=0; i < geos.length; i++) {
+			/*
+			GeoElement geo = (GeoElement) geos[i];	
+			if (!geo.isEuclidianShowable())
+				return false;
+				*/
+		}
+		
+		return true;
+	}
+
+	
+	public void actionPerformed(ActionEvent e) {
+		
+		if (e.getSource() == cbGraphicsView){
+			for (int i=0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				if(cbGraphicsView.isSelected()){
+					geo.addView(ev);
+					ev.add(geo);
+				}else{
+					geo.removeView(ev);
+					ev.remove(geo);
+				}
+			}
+		}
+		
+		if (e.getSource() == cbGraphicsView2){
+			for (int i=0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+				
+				if(cbGraphicsView2.isSelected()){
+					geo.addView(ev2);
+					ev2.add(geo);
+				}else{
+					geo.removeView(ev2);
+					ev2.remove(geo);
+				}
+			}
+		}
+				
+	}
+
+	
+}
+
+
+
+
+
+
+
 
 
 /**

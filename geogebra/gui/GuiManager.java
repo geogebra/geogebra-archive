@@ -2,6 +2,7 @@ package geogebra.gui;
 
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
+import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
@@ -264,6 +265,25 @@ public class GuiManager {
 				}
 			}
 		);
+		
+				
+	/*
+		// register EuclidianView2  
+		layout.registerPanel(
+			new DockPanel(
+					Application.VIEW_EUCLIDIAN2, 	// view id
+					"GraphicsView2", 				// view title phrase 
+					false,							// style bar?
+					5								// menu order
+			) {					
+				protected JComponent loadComponent() {
+					return getEuclidianView2();
+				}
+			}
+		);
+	
+		*/
+		
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {
@@ -419,6 +439,25 @@ public class GuiManager {
 		}
 
 	}
+	
+	
+	EuclidianView euclidianView2;
+	public JComponent getEuclidianView2() {
+    	if (euclidianView2 == null) {
+    		boolean [] showAxis = { true, true };
+    		boolean showGrid = false;
+    		euclidianView2 = new EuclidianView(new EuclidianController(kernel), showAxis, showGrid);
+    		euclidianView2.setAntialiasing(true);
+    		euclidianView2.updateFonts();
+    	}
+    	return euclidianView2;
+	}
+	
+	public boolean hasEuclidianView2() {
+		return euclidianView2 != null;
+	}
+	
+	
 	
 	/**
 	 * Attach a view which by using the view ID.
