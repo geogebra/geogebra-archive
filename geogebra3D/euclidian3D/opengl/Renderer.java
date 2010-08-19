@@ -377,7 +377,7 @@ public class Renderer implements GLEventListener {
         view3D.drawCursor(this);
         
          
-        drawWireFrame();
+        //drawWireFrame();
         
         
         //primitives.enableVBO(gl);
