@@ -5123,9 +5123,9 @@ class ColorFunctionPanel
 		nameLabelR = new JLabel();	
 		nameLabelR.setLabelFor(inputPanelR);
 		nameLabelG = new JLabel();	
-		nameLabelG.setLabelFor(inputPanelR);
+		nameLabelG.setLabelFor(inputPanelG);
 		nameLabelB = new JLabel();	
-		nameLabelB.setLabelFor(inputPanelR);
+		nameLabelB.setLabelFor(inputPanelB);
 		
 		btRemove = new JButton("\u2718");
 		btRemove.addActionListener(new ActionListener() {
