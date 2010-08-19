@@ -362,7 +362,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:string">
-			<xs:pattern value="angle|boolean|button|conic(part)?|function|image|implicitpoly|line(3d)?|list|locus|numeric|point(3d)?|polygon(3d)?|polyline|ray(3d)?|segment(3d)?|text(field)?|vector"/>
+			<xs:pattern value="angle|boolean|button|conic(part)?(3d)?|curvecartesian(3d)?|function(NVar)?|image|implicitpoly|line(3d)?|list|locus|numeric|point(3d)?|polygon(3d)?|polyline|quadric|ray(3d)?|segment(3d)?|text(field)?|vector"/>
 		</xs:restriction>
 	</xs:simpleType>
 	

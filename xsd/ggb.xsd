@@ -298,7 +298,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 				</xs:element>
 				
 				<xs:element ref="axis" minOccurs="3" maxOccurs="3"/>
-				<xs:element name="plane">
+				<xs:element name="plate">
+					<xs:complexType>
+						<xs:attribute name="show" type="xs:boolean"/>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="grid">
 					<xs:complexType>
 						<xs:attribute name="show" type="xs:boolean"/>
 					</xs:complexType>
