@@ -63,7 +63,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						<xs:attribute name="col5" type="xs:boolean"/>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="consProtocol" minOccurs="0"> 
+				<xs:element name="consProtocol" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="useColors" type="xs:boolean"/>
 						<xs:attribute name="showOnlyBreakpoints" type="xs:boolean"/>
@@ -83,7 +83,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 				<xs:element ref="splitDivider" minOccurs="0"/>
 				
 				<xs:element ref="toolbar" minOccurs="0"/>
-								
+				
 				<xs:element name="font" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="size" type="positiveInt" use="required"/>
@@ -134,6 +134,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		</xs:complexType>
 	</xs:element>
 	
+	<xs:complexType name="toolbar">
+		<xs:attribute name="show" type="xs:boolean"/>
+		<xs:attribute name="items" type="xs:string"/>
+	</xs:complexType>
 	
 	<xs:element name="perspective">
 		<xs:complexType>
@@ -152,8 +156,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="toolbar" type="xs:string"/>
-				<xs:element name="show">
+				<xs:element name="toolbar" type="toolbar"/>
+				<xs:element name="show" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="axes" type="xs:boolean"/>
 						<xs:attribute name="grid" type="xs:boolean"/>
@@ -186,6 +190,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			<xs:attribute name="id" type="positiveInt" use="required"/>
 			<xs:attribute name="visible" type="xs:boolean"/>
 			<xs:attribute name="inframe" type="xs:boolean"/>
+			<xs:attribute name="stylebar" type="xs:boolean"/>
 			<xs:attribute name="location" type="xs:string"/>
 			<xs:attribute name="size" type="nonNegInt"/>
 			<xs:attribute name="window" type="xs:string"/>
@@ -194,8 +199,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	
 	<xs:element name="size">
 		<xs:complexType>
-			<xs:attribute name="width" type="positiveInt" use="required"/>
-			<xs:attribute name="height" type="positiveInt" use="required"/>
+			<xs:attribute name="width" type="nonNegInt" use="required"/>
+			<xs:attribute name="height" type="nonNegInt" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	
@@ -209,6 +214,28 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						<xs:attribute name="width" type="positiveInt" use="required"/>
 					</xs:complexType>
 				</xs:element>
+				
+				<xs:element name="selection" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="hScroll" type="xs:integer"/>
+						<xs:attribute name="vScroll" type="xs:integer"/>
+						<xs:attribute name="column" type="xs:integer"/>
+						<xs:attribute name="row" type="xs:integer"/>
+					</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="layout" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="showGrid" type="xs:boolean"/>
+						<xs:attribute name="showHScrollBar" type="xs:boolean"/>
+						<xs:attribute name="showVScrollBar" type="xs:boolean"/>
+						<xs:attribute name="showBrowserPanel" type="xs:boolean"/>
+						<xs:attribute name="showColumnHeader" type="xs:boolean"/>
+						<xs:attribute name="showRowHeader" type="xs:boolean"/>
+						<xs:attribute name="allowSpecialEditor" type="xs:boolean"/>
+					</xs:complexType>
+				</xs:element>
+			
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -269,7 +296,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						<xs:attribute name="zAngle" type="xs:double"/>
 					</xs:complexType>
 				</xs:element>
-					
+				
 				<xs:element ref="axis" minOccurs="3" maxOccurs="3"/>
 				<xs:element name="plane">
 					<xs:complexType>
@@ -310,11 +337,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="coordStyle" type="intVal"/>
-				<xs:element name="startAnimation" type="boolVal"/> 
+				<xs:element name="startAnimation" type="boolVal" minOccurs="0"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-
+	
 	<xs:element name="casSession">
 		<xs:annotation>
 			<xs:documentation>

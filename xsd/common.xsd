@@ -52,43 +52,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	</xs:element>
 	
 	<xs:element name="element">
-	<xs:annotation>
-	<xs:documentation>
-	Subelements tooltipMode, javascript, ggbscript and linkedGeo only available with GeoGebra >= 4.0.
+		<xs:annotation>
+			<xs:documentation>
+	Subelements tooltipMode, javascript, ggbscript, sellectionAllowed and linkedGeo only available with GeoGebra >= 4.0.
 	</xs:documentation>
-	</xs:annotation>
+		</xs:annotation>
 		<xs:complexType>
 			<xs:all>
+				<xs:element name="absoluteScreenLocation" minOccurs="0" type="xyCoords"/>
+				
+				<xs:element name="allowReflexAngle" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="auxiliary" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="arcSize" type="intVal" minOccurs="0"/>
+				
 				<xs:element name="animation" type="animation" minOccurs="0"/>
 				
-				<xs:element name="lineStyle" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="thickness" type="lineThickness"/>
-						<xs:attribute name="type" type="lineTypes"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="eqnStyle" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="style" type="eqnStyles" use="required"/>
-						<xs:attribute name="parameter" type="xs:string"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="value" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="val" type="doubleOrBool" use="required"/>
-					</xs:complexType>
-				</xs:element>
-				
-				<xs:element name="slopeTriangleSize" type="intVal" minOccurs="0"/>
-				
-				<xs:element name="show" minOccurs="0">
-					<xs:complexType>
-						<xs:attribute name="object" type="xs:boolean"/>
-						<xs:attribute name="label" type="xs:boolean"/>
-					</xs:complexType>
-				</xs:element>
+				<xs:element name="caption" type="stringVal" minOccurs="0"/>
 				
 				<xs:element name="condition" minOccurs="0">
 					<xs:complexType>
@@ -102,63 +83,92 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 					</xs:complexType>
 				</xs:element>
 				
-				<xs:element name="objColor" type="rgbaColor"/>
-				
-				<xs:element name="layer" type="intVal" minOccurs="0"/>
-				 
-				<xs:element name="labelMode" type="intVal" minOccurs="0"/>
-				
-				<xs:element name="outlyingIntersections" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="keepTypeOnTransform" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="caption" type="stringVal" minOccurs="0"/>
-				
-				<xs:element name="absoluteScreenLocation" minOccurs="0" type="xyCoords"/>
-				
-				<xs:element name="labelOffset" minOccurs="0" type="xyCoords"/>
-				
-				<xs:element name="tooltipMode" minOccurs="0" type="tooltipModes"/>
-				
-				<xs:element name="linkedGeo" minOccurs="0">
-				<xs:complexType>
-							<xs:attribute name="exp" type="xs:string"/>
-							
-				</xs:complexType>
+				<xs:element name="coefficients" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="rep" type="representation"/>
+						<xs:attribute name="data" type="data"/>
+					</xs:complexType>
 				</xs:element>
-						
 				
-				<xs:element name="javascript" minOccurs="0" type="stringVal"/>
-				<xs:element name="ggbscript" minOccurs="0" type="stringVal"/>
+				<xs:element name="coords" type="coords" minOccurs="0"/>
+				
+				<xs:element name="coordStyle" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="style" type="coordStyles"/>
+					</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="decoration" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="type" type="decorTypes"/>
+					</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="eigenvectors" type="eigenvectors" minOccurs="0"/>
+				
+				<xs:element name="emphasizeRightAngle" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="eqnStyle" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="style" type="eqnStyles" use="required"/>
+						<xs:attribute name="parameter" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+				
 				<xs:element name="file" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="name" type="xs:string"/>
 					</xs:complexType>
 				</xs:element>
 				
-				<xs:element name="inBackground" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="eigenvectors" type="eigenvectors" minOccurs="0"/>
-				
-				<xs:element name="matrix" type="matrix" minOccurs="0" />
-				
-				<xs:element name="auxiliary" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="slider" type="slider" minOccurs="0"/>
-				
 				<xs:element name="fixed" type="boolVal" minOccurs="0"/>
 				
 				<xs:element name="font" minOccurs="0">
 					<xs:complexType>
 						<xs:attribute name="serif" type="xs:boolean"/>
-						<xs:attribute name="size" type="positiveInt"/>
+						<xs:attribute name="size" type="nonNegInt"/>
 						<xs:attribute name="style" type="nonNegInt"/>
 					</xs:complexType>
 				</xs:element>
 				
-				<xs:element name="coords" type="coords" minOccurs="0"/>
+				<xs:element name="forceReflexAngle" type="boolVal" minOccurs="0"/>
 				
-				<xs:element name="startPoint" type="expCoords" minOccurs="0"/>
+				<xs:element name="ggbscript" minOccurs="0" type="stringVal"/>
+				
+				<xs:element name="inBackground" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="javascript" minOccurs="0" type="stringVal"/>
+				
+				<xs:element name="keepTypeOnTransform" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="isLaTeX" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="lineStyle" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="thickness" type="lineThickness"/>
+						<xs:attribute name="type" type="lineTypes"/>
+					</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="labelMode" type="intVal" minOccurs="0"/>
+				
+				<xs:element name="labelOffset" minOccurs="0" type="xyCoords"/>
+				
+				<xs:element name="layer" type="intVal" minOccurs="0"/>
+				
+				<xs:element name="linkedGeo" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="exp" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+				
+				<xs:element name="matrix" type="matrix" minOccurs="0" />
+				
+				<xs:element name="objColor" type="rgbDynColor"/>
+				
+				<xs:element name="outlyingIntersections" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="pointSize" type="doubleVal" minOccurs="0"/>
 				
 				<xs:element name="pointStyle" minOccurs="0">
 					<xs:complexType>
@@ -166,32 +176,52 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 					</xs:complexType>
 				</xs:element>
 				
-				<xs:element name="pointSize" type="doubleVal" minOccurs="0"/>
-				<xs:element name="coordStyle" minOccurs="0">
+				<xs:element name="selectionAllowed" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="show" minOccurs="0">
 					<xs:complexType>
-						<xs:attribute name="style" type="coordStyles"/>
+						<xs:attribute name="object" type="xs:boolean"/>
+						<xs:attribute name="label" type="xs:boolean"/>
 					</xs:complexType>
 				</xs:element>
 				
-				<xs:element name="allowReflexAngle" type="boolVal" minOccurs="0"/>
+				<xs:element name="slider" type="slider" minOccurs="0"/>
 				
-				<xs:element name="forceReflexAngle" type="boolVal" minOccurs="0"/>
+				<xs:element name="slopeTriangleSize" type="intVal" minOccurs="0"/>
 				
-				<xs:element name="decoration" minOccurs="0">
-				<xs:complexType>
-				<xs:attribute name="type" type="decorTypes"/>
-				</xs:complexType>
+				<xs:element name="spreadsheetTrace" type="spreadsheetTrace" minOccurs="0"/>
+				
+				<xs:element name="startPoint" type="expCoords" minOccurs="0"/>
+				
+				<xs:element name="tooltipMode" minOccurs="0" type="tooltipModes"/>
+				
+				<xs:element name="trace" type="boolVal" minOccurs="0"/>
+				
+				<xs:element name="value" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="val" type="doubleOrBool" use="required"/>
+					</xs:complexType>
 				</xs:element>
-				
-				<xs:element name="emphasizeRightAngle" type="boolVal" minOccurs="0"/>
-				
-				<xs:element name="arcSize" type="intVal" minOccurs="0"/>
-			
 			</xs:all>
 			<xs:attribute name="type" type="elType"/>
 			<xs:attribute name="label" type="xs:string"/>
 		</xs:complexType>
 	</xs:element>
+	
+	<xs:complexType name="spreadsheetTrace">
+		<xs:attribute name="traceColumn1" type="xs:integer"/>
+		<xs:attribute name="traceColumn2" type="xs:integer"/>
+		<xs:attribute name="traceRow1" type="xs:integer"/>
+		<xs:attribute name="traceRow2" type="xs:integer"/>
+		<xs:attribute name="tracingRow" type="xs:integer"/>
+		<xs:attribute name="numRows" type="xs:integer"/>
+		<xs:attribute name="headerOffset" type="xs:integer"/>
+		<xs:attribute name="doColumnReset" type="xs:boolean"/>
+		<xs:attribute name="doRowLimit" type="xs:boolean"/>
+		<xs:attribute name="showLabel" type="xs:boolean"/>
+		<xs:attribute name="showTraceList" type="xs:boolean"/>
+		<xs:attribute name="doTraceGeoCopy" type="xs:boolean"/>
+	</xs:complexType>
 	
 	<xs:simpleType name="positiveInt">
 		<xs:restriction base="xs:integer">
@@ -212,7 +242,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<xs:complexType name="doubleVal">
 		<xs:attribute name="val" type="xs:double" use="required"/>
 	</xs:complexType>
-				
+	
 	
 	<xs:simpleType name="doubleOrBool">
 		<xs:union memberTypes="xs:double xs:boolean"/>
@@ -264,13 +294,16 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		<xs:attribute name="b" type="nonNegInt" use="required"/>
 	</xs:complexType>
 	
-	<xs:complexType name="rgbaColor">
+	<xs:complexType name="rgbDynColor">
 		<xs:attribute name="r" type="nonNegInt" use="required"/>
 		<xs:attribute name="g" type="nonNegInt" use="required"/>
 		<xs:attribute name="b" type="nonNegInt" use="required"/>
+		<xs:attribute name="dynamicr" type="xs:string"/>
+		<xs:attribute name="dynamicg" type="xs:string"/>
+		<xs:attribute name="dynamicb" type="xs:string"/>
 		<xs:attribute name="alpha" type="xs:double"/>
 	</xs:complexType>
-				
+	
 	
 	<xs:complexType name="ioType">
 		<xs:attribute name="a0" type="xs:string"/>
@@ -316,14 +349,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		<xs:attribute name="A5" type="xs:double" use="required"/>
 	</xs:complexType>
 	
-	<xs:simpleType name="elType">
-	<xs:annotation>
-	<xs:documentation>
-	Values "button" and "textfield" only available for GeoGebra >=4.0
-	</xs:documentation>
-	</xs:annotation>
+	<xs:simpleType name="data">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="angle|boolean|button|conic(part)?|function|image|line(3d)?|list|numeric|point(3d)?|polygon(3d)?|ray(3d)?|segment(3d)?|text(field)?|vector"/>
+			<xs:pattern value="\[(\[.*\],?)*\]"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="elType">
+		<xs:annotation>
+			<xs:documentation>
+	Values "button", "implicitpoly", "polyline" and "textfield" only available for GeoGebra >=4.0
+	</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="angle|boolean|button|conic(part)?|function|image|implicitpoly|line(3d)?|list|locus|numeric|point(3d)?|polygon(3d)?|polyline|ray(3d)?|segment(3d)?|text(field)?|vector"/>
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -336,6 +375,17 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 		<xs:restriction base="xs:int">
 			<xs:minInclusive value="0"/>
 			<xs:maxInclusive value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="representation">
+		<xs:annotation>
+			<xs:documentation>
+	Possible ways for representing coefficients, only 1 possibility in 4.0
+	</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="array"/>
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -426,12 +476,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<xs:simpleType name="gridTypes">
 		<xs:annotation>
 			<xs:documentation>
-	Meanings of values: 0=cartesian, 1=isometric
+	Meanings of values: 0=cartesian, 1=isometric, 2 polar
 	</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="xs:int">
 			<xs:minInclusive value="0"/>
-			<xs:maxInclusive value="1"/>
+			<xs:maxInclusive value="2"/>
 		</xs:restriction>
 	</xs:simpleType>
 	
@@ -467,8 +517,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			<xs:minInclusive value="0"/>
 			<xs:maxInclusive value="4"/>
 		</xs:restriction>
-		</xs:simpleType>
-		
+	</xs:simpleType>
+	
 	<xs:simpleType name="eqnStyles">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="implicit|explicit|specific|parametric"/>
