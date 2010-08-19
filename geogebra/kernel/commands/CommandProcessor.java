@@ -246,7 +246,13 @@ public abstract class CommandProcessor  {
 		String[] strs = { "ChangeDependent", geo.getLongDescription()};
 		return new MyError(app, strs);
 	}
-
+	
+	public static GeoElement getBadArg(boolean[] ok, GeoElement[] arg) {
+		for (int i = 0 ; i < ok.length ; i++) {
+			if (!ok[i]) return arg[i];
+		}
+		throw new Error("no bad arg");
+	}
 
 	/**
 	 * Creates a dependent list with all GeoElement objects from the given array.
@@ -7106,21 +7112,37 @@ class CmdOsculatingCircle extends CommandProcessor {
 				 { kernel.SolveODE(c.getLabel(), (CasEvaluableFunction) arg[0] )};
 				 return ret;    
 			 }
-	         case 5 :             
-	             if (ok[0] = (arg[0] instanceof GeoFunctionNVar)
-	     	            && (ok[1] = (arg[1].isGeoElement()))		 
-	    	            && (ok[2] = (arg[2].isGeoElement()))		 
-	    	            && (ok[3] = (arg[3].isGeoElement()))		 
-	    	            && (ok[4] = (arg[4].isGeoElement()))		 
-	             ) {
-	                 GeoElement[] ret =
-	                     {
-	                          kernel.SolveODE (
-	                             c.getLabel(), (GeoFunctionNVar)arg[0], (GeoNumeric)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4])};
-	                 return ret;                
-	             }                        
-	              else
-	            	 throw argErr(app, c.getName(), arg[0]);         
+         case 5 :             
+             if (ok[0] = (arg[0] instanceof GeoFunctionNVar)
+     	            && (ok[1] = (arg[1].isGeoNumeric()))		 
+    	            && (ok[2] = (arg[2].isGeoNumeric()))		 
+    	            && (ok[3] = (arg[3].isGeoNumeric()))		 
+    	            && (ok[4] = (arg[4].isGeoNumeric()))		 
+             ) {
+                 GeoElement[] ret =
+                     {
+                          kernel.SolveODE (
+                             c.getLabel(), (GeoFunctionNVar)arg[0], null, (GeoNumeric)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4])};
+                 return ret;                
+             }                        
+              else
+            	 throw argErr(app, c.getName(), getBadArg(ok, arg));         
+         case 6 :             
+             if (ok[0] = (arg[0] instanceof GeoFunctionNVar)          		 
+      	            && (ok[1] = (arg[1] instanceof GeoFunctionNVar))	 
+     	            && (ok[2] = (arg[2].isGeoNumeric()))		 
+    	            && (ok[3] = (arg[3].isGeoNumeric()))		 
+    	            && (ok[4] = (arg[4].isGeoNumeric()))		 
+    	            && (ok[5] = (arg[5].isGeoNumeric()))		 
+             ) {
+                 GeoElement[] ret =
+                     {
+                          kernel.SolveODE (
+                             c.getLabel(), (GeoFunctionNVar)arg[0], (GeoFunctionNVar)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4], (GeoNumeric)arg[5])};
+                 return ret;                
+             }                        
+              else
+            	 throw argErr(app, c.getName(), getBadArg(ok, arg));         
 				 
 		     // more than one argument
 	         default :
