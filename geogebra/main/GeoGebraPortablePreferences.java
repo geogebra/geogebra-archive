@@ -228,17 +228,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    	//If this is the last call to the pref system and is always done on exit
    	//this should be enough: (??)
    	storePreferences();
-   }//saveFileList()   
-  
-	/** Nothing to change: Inherited
-    * Inits factory default XML by taking the preferences XML of this
-    * virign application    		
-
-   public  void initDefaultXML(Application app) {    	    	
-   	if (XML_GGB_FACTORY_DEFAULT == null)
-   		XML_GGB_FACTORY_DEFAULT = app.getPreferencesXML();    
-   }
-	***/
+   }//saveFileList()  
    
    /**
     * Saves preferences by taking the application's current values. 
@@ -288,7 +278,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
        	    		
    		// load preferences xml
     	initDefaultXML(app);			//This might not have been called before!
-       	String xml = get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);        
+       	String xml = get(XML_USER_PREFERENCES, factoryDefaultXml);        
    		app.setXML(xml, true);	   
    	} catch (Exception e) {	    		
    		e.printStackTrace();
@@ -325,25 +315,6 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    public final void set(String key,String val){
 	  if(properties!=null){ properties.setProperty(key, val);} 
    }//set()
-
-   /****************** not needed
-    private static String addEscapes(String s){
-    
-       StringBuilder result = new StringBuilder();
-       char c;
-       for(int i=0;i<s.length();i++){
-           c=s.charAt(i);
-           if(c=='\\'){
-               result.append("\\\\");
-           }else if (c==':'){
-        	   result.append("\\:");
-           }else{
-               result.append(c);
-           }
-       }//for
-       return result.toString();
-   }//addEscapes(String)
-   ********************/
    
  // --- SNIP ---------------------------------------------------
    

@@ -15,6 +15,8 @@ package geogebra.main;
 
 
 
+import geogebra.GeoGebra;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,6 +42,8 @@ import java.util.prefs.Preferences;
 public class GeoGebraPreferences {		
 	
 	public static final String AUTHOR = "author";
+	
+	public static final String VERSION = "version";
 	
 	// worksheet export dialog
 	public static final String EXPORT_WS_RIGHT_CLICK = "export_ws_right_click";
@@ -73,17 +77,19 @@ public class GeoGebraPreferences {
 			  // thrown when running unsigned JAR
 			  ggbPrefs = null;
 		  }
-	 }	 
+	 }
 	  
 	 //Ulven: changed to make available to subclass GeoGebraPortablePreferences
-	 protected  String XML_GGB_FACTORY_DEFAULT; // see loadPreferences()
+	 protected  String factoryDefaultXml; // see loadPreferences()
+	 
      
     // special preference keys
-	protected  final String XML_USER_PREFERENCES = "xml_user_preferences";	
-	protected  final String TOOLS_FILE_GGT = "tools_file_ggt";	
-	protected  final String APP_LOCALE = "app_locale";	
-	protected  final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
-	protected  final String APP_FILE_ = "app_file_";		
+	protected final String XML_USER_PREFERENCES = "xml_user_preferences";
+	protected final String XML_FACTORY_DEFAULT = "xml_factory_default"; 
+	protected final String TOOLS_FILE_GGT = "tools_file_ggt";	
+	protected final String APP_LOCALE = "app_locale";	
+	protected final String APP_CURRENT_IMAGE_PATH = "app_current_image_path";
+	protected final String APP_FILE_ = "app_file_";		
 		
 	/* Ulven 06.03.10 */
 
@@ -212,12 +218,31 @@ public class GeoGebraPreferences {
     }    
    
 	/**
-     * Inits factory default XML by taking the preferences XML of this
-     * virign application    		
+     * Inits factory default XML if there are no old preferences or if the version number changed.
+     * The default XML is the preferences XML of this virgin application.
      */
-    public  void initDefaultXML(Application app) {    	    	
-    	if (XML_GGB_FACTORY_DEFAULT == null)
-    		XML_GGB_FACTORY_DEFAULT = app.getPreferencesXML();    
+    public void initDefaultXML(Application app) {
+    	// already initialized?
+    	if (factoryDefaultXml != null) {
+    		return;
+    	}
+    	
+    	// get the GeoGebra version with which the preferences were saved
+    	// (the version number is stored since version 3.9.41)
+    	String oldVersion = ggbPrefs.get(VERSION, null);
+    	
+    	// current factory defaults possibly available?
+    	if(oldVersion != null && oldVersion.equals(GeoGebra.VERSION_STRING)) {
+    		factoryDefaultXml  = ggbPrefs.get(XML_FACTORY_DEFAULT, null);
+    	}
+    	
+    	// if this is an old version or the factory defaults were not saved in the 
+    	// preferences for some reasons, create and store them now (plus: store version string)
+    	if(factoryDefaultXml == null) {
+	    	factoryDefaultXml = app.getPreferencesXML();
+	    	ggbPrefs.put(XML_FACTORY_DEFAULT, factoryDefaultXml);
+	    	ggbPrefs.put(VERSION, GeoGebra.VERSION_STRING);
+    	}
     }
     
     /**
@@ -344,7 +369,7 @@ public class GeoGebraPreferences {
     }
     
     public String getXMLPreferences() {
-    	return ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT); 
+    	return ggbPrefs.get(XML_USER_PREFERENCES, factoryDefaultXml); 
     }
     
     /**
@@ -362,7 +387,7 @@ public class GeoGebraPreferences {
         	app.loadMacroFileFromByteArray(ggtFile, true);
         	    		
     		// load preferences xml
-        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, XML_GGB_FACTORY_DEFAULT);        
+        	String xml = ggbPrefs.get(XML_USER_PREFERENCES, factoryDefaultXml);        
     		app.setXML(xml, true);	   
     		
         	//String xml = ggbPrefs.get(XML_USER_PREFERENCES, "");        	
