@@ -3405,15 +3405,19 @@ public class Application implements KeyEventDispatcher {
 	
 	
 	public static void debug(String s) {
-		doDebug(s, false, false);
+		doDebug(s, false, false, 0);
 	}
 	
-	public static void debug(String s, boolean showTime, boolean showMemory) {
-		doDebug(s, showTime, showMemory);
+	public static void debug(String s, int level) {
+		doDebug(s, false, false, level);
+	}
+	
+	public static void debug(String s, boolean showTime, boolean showMemory, int level) {
+		doDebug(s, showTime, showMemory, level);
 	}
 	
 	// Michael Borcherds 2008-06-22
-	private static void doDebug(String s, boolean showTime, boolean showMemory) {
+	private static void doDebug(String s, boolean showTime, boolean showMemory, int level) {
 		if (s == null) s = "<null>";
 		Throwable t = new Throwable();
 		StackTraceElement[] elements = t.getStackTrace();
@@ -3449,18 +3453,21 @@ public class Application implements KeyEventDispatcher {
 			sb.append(Runtime.getRuntime().freeMemory());
 		}
 			
+		PrintStream debug = System.out;
+		
+		if (level > 0) debug = System.err;
 
 		// multi line message
 		if (s.indexOf("\n") > -1) {
-			System.out.println(sb.toString());
-			System.out.println(s);
-			System.out.println("*** END Message.");
+			debug.println(sb.toString());
+			debug.println(s);
+			debug.println("*** END Message.");
 		}
 		// one line message
 		else {
-			System.out.println(sb.toString());
-			System.out.print("\t");
-			System.out.println(s);
+			debug.println(sb.toString());
+			debug.print("\t");
+			debug.println(s);
 		}
 	}
 
