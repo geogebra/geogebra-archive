@@ -34,7 +34,7 @@ public class DummyLogger {
 	}
 
 	public void trace(String string, String string2) {
-		if (trace) Application.debug(string);
+		if (trace) Application.debug(string+" "+string2);
 		
 	}
 
@@ -48,7 +48,7 @@ public class DummyLogger {
 	}
 
 	public void debug(String string, Integer valueOf) {
-		if (trace) Application.debug(string);
+		if (trace) Application.debug(string+" "+valueOf);
 		
 	}
 
@@ -73,7 +73,7 @@ public class DummyLogger {
 	}
 
 	public void debug(String string, String location) {
-		if (trace) Application.debug(string);
+		if (trace) Application.debug(string+" "+location);
 		
 	}
 
@@ -83,7 +83,7 @@ public class DummyLogger {
 	}
 
 	public void info(String string, String path) {
-		if (trace) Application.debug(string);
+		if (trace) Application.debug(string+" "+path);
 		
 	}
 
@@ -93,7 +93,7 @@ public class DummyLogger {
 	}
 
 	public void info(String string, String callInput, int callTimeout) {
-		if (trace) Application.debug(string);
+		if (trace) Application.debug(string+" "+callInput+" "+callTimeout);
 		
 	}
 
@@ -109,7 +109,7 @@ public class DummyLogger {
 
 	public void info(String string, List<String> maximaCommandArray,
 			String string2) {
-		if (trace) Application.debug(string);
+		if (trace) Application.debug(string+" "+string2);
 		
 	}
 
