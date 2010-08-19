@@ -191,7 +191,7 @@ public class CASmaxima extends CASgeneric {
 			while (exp.indexOf('}') > -1 ) exp = exp.replace('}', ']');
 			
 			final boolean debug = true;
-			if (debug) Application.debug("Expression for Maxima: "+exp);
+			if (debug) Application.debug("Expression for Maxima: "+exp, 1);
 			
 			// evaluate the MathPiper expression
 			//RawMaximaSession maxima = getMaxima();
@@ -220,6 +220,15 @@ public class CASmaxima extends CASgeneric {
 			// remove (%o1) at start
 			//result = result.replaceFirst("\\(%o\\d+\\)\\s*", "").trim();
 			
+			if (result.indexOf("%c") > -1) {
+				result = result.replaceAll("%c","const");
+				Application.debug("WARNING: replacing %c by const",1);
+			}
+			
+			if (result.indexOf("=") > -1) {
+				result = result.replaceAll("=","==");
+				Application.debug("WARNING: replacing = by ==",1);
+			}
 			
 			if (debug) {
 				for (int i = 0 ; i < results.length ; i++)
