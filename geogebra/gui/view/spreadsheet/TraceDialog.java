@@ -334,7 +334,7 @@ implements
 		optionsPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		optionsPanel.setMinimumSize(new Dimension(100, 30));
 					
-        cbShowLabel = new JCheckBox(app.getMenu("ShowLabel"));  
+        cbShowLabel = new JCheckBox(app.getPlain("ShowLabel"));  
         cbShowLabel.addActionListener(this);        
         optionsPanel.add(cbShowLabel);
              
