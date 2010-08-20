@@ -24,4 +24,5 @@ public interface View {
 	public void repaintView();
 	public void reset(); 
 	public void clearView();
+	public void setMode(int mode);
 }

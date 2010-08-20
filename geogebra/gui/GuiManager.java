@@ -266,22 +266,27 @@ public class GuiManager {
 			}
 		);
 		
-				
-	
 		// register EuclidianView2  
 		layout.registerPanel(
 			new DockPanel(
 					Application.VIEW_EUCLIDIAN2, 	// view id
 					"GraphicsView2", 				// view title phrase 
-					false,							// style bar?
+					true,							// style bar?
 					5								// menu order
-			) {					
+			) {
+				public ImageIcon getIcon() {
+					return app.getImageIcon("document-properties.png");
+				}
+				
+				protected JComponent loadStyleBar() {
+					return getEuclidianView2().getEuclidianStyleBar();
+				}
+				
 				protected JComponent loadComponent() {
 					return getEuclidianView2();
 				}
 			}
 		);
-	
 		
 		
 	}
@@ -442,7 +447,7 @@ public class GuiManager {
 	
 	
 	EuclidianView euclidianView2;
-	public JComponent getEuclidianView2() {
+	public EuclidianView getEuclidianView2() {
     	if (euclidianView2 == null) {
     		boolean [] showAxis = { true, true };
     		boolean showGrid = false;
@@ -2599,17 +2604,7 @@ public class GuiManager {
 	     		propDialog.setVisible(false);	
 	     	}
 	     	
-	     	// reset algebra view
-	        if (algebraView != null)
-	        	algebraView.reset();
-	        
-	        // tell EuclidianView
-	        app.getEuclidianView().setMode(mode);        
-	      
-	        
-	        // tell SpreadsheetView  (G.Sturr 2010-5-29)
-	        if (spreadsheetView != null)
-	        	spreadsheetView.toolBarModeChanged(mode);    
+	     	kernel.notifyModeChanged(mode);  
 	        
 	        // select toolbar button
 	        setToolbarMode(mode);	         

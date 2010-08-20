@@ -420,7 +420,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 
 	/** Respond to changes in Euclidean mode sent by GUI manager */
-	public void toolBarModeChanged(int mode){
+	public void setMode(int mode){
 		if(isTraceDialogVisible()){
 			traceDialog.toolbarModeChanged(mode);
 		}

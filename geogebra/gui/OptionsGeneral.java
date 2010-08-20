@@ -3,11 +3,22 @@ package geogebra.gui;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
 
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.plaf.basic.BasicCheckBoxUI;
 
 /**
  * General options.
@@ -30,6 +41,16 @@ public class OptionsGeneral extends JPanel {
 	private JTabbedPane tabbedPane;
 	
 	/**
+	 * Panel to manage application colors.
+	 */
+	private JPanel colorPanel;
+	
+	/**
+	 * Panel with color swatches.
+	 */
+	private JPanel swatchPanel;
+	
+	/**
 	 * Construct a panel for the general options which is divided using tabs.
 	 * 
 	 * @param app
@@ -45,15 +66,39 @@ public class OptionsGeneral extends JPanel {
 	 * Initialize the GUI.
 	 */
 	private void initGUI() {
+		initColorPanel();
+		
 		tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("", new JPanel());
 		tabbedPane.addTab("", new JPanel());
 		tabbedPane.addTab("", new JPanel());
+		tabbedPane.addTab("", colorPanel);
 		
 		setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
 		setLayout(new BorderLayout());
 		add(tabbedPane, BorderLayout.CENTER);
+	}
+	
+	/**
+	 * Init the panel to manage application colors.
+	 */
+	private void initColorPanel() {
+		colorPanel = new JPanel(new BorderLayout());
+		
+		JPanel swatchManagementPanel = new JPanel(new BorderLayout());
+		swatchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		swatchPanel.setBackground(Color.darkGray);
+		
+		updateSwatchPanel();
+		
+		swatchManagementPanel.add(swatchPanel, BorderLayout.CENTER);
+		
+		JPanel swatchButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		swatchButtonPanel.add(new JButton("Remove"));
+		swatchManagementPanel.add(swatchButtonPanel, BorderLayout.SOUTH);
+		
+		colorPanel.add(swatchManagementPanel, BorderLayout.CENTER);
 	}
 	
 	/**
@@ -64,17 +109,26 @@ public class OptionsGeneral extends JPanel {
 	}
 	
 	/**
+	 * Update the swatch panel.
+	 */
+	private void updateSwatchPanel() {
+		swatchPanel.removeAll();
+		
+		swatchPanel.add(new SwatchCheckBox(Color.white));
+		swatchPanel.add(new SwatchCheckBox(Color.red));
+		swatchPanel.add(new SwatchCheckBox(Color.black));
+		swatchPanel.add(new SwatchCheckBox(Color.green));
+	}
+	
+	/**
 	 * Update the labels of the current panel. Should be applied if the
 	 * language was changed. Will be called after initialization automatically.
 	 */
 	public void setLabels() {
 		tabbedPane.setTitleAt(0, app.getMenu("General"));
 		tabbedPane.setTitleAt(1, app.getPlain("Display"));
-		
-		//G.Sturr 2010-3-20: removed spreadsheet tab and renumbered
-		//tabbedPane.setTitleAt(2, app.getPlain("Spreadsheet"));
 		tabbedPane.setTitleAt(2, app.getMenu("Export"));
-		
+		tabbedPane.setTitleAt(3, app.getPlain("Color"));		
 	}
 	
 	/**
@@ -82,5 +136,60 @@ public class OptionsGeneral extends JPanel {
 	 */
 	public void apply() {
 		
+	}
+	
+	/**
+	 * Class for color swatch checkboxes.
+	 * 
+	 * @author Florian Sonner
+	 */
+	private class SwatchCheckBox extends JCheckBox
+	{
+		private Color color;
+		
+		public SwatchCheckBox(Color color) {
+			this.color = color;
+			
+			setUI(new SwatchCheckBoxUI());
+		}
+		
+		public Color getColor() {
+			return color;
+		}
+	}
+	
+	private class SwatchCheckBoxUI extends BasicCheckBoxUI
+	{
+		public void paint(Graphics g, JComponent c)
+		{
+			SwatchCheckBox b = (SwatchCheckBox)c;
+			
+			if(b.getModel().isSelected()) {
+				g.setColor(Color.white);
+			} else {
+				g.setColor(Color.black);
+			}
+			
+			g.drawLine(0, 0, 0, 15);
+			g.drawLine(0, 0, 15, 0);
+			
+			// filling
+			g.setColor(b.getColor());
+			g.fillRect(1, 1, 14, 14);
+			
+			if(b.getModel().isSelected()) {
+				g.setColor(Color.white);
+			} else {
+				g.setColor(Color.black);
+			}
+			
+			g.drawLine(0, 15, 15, 15);
+			g.drawLine(15, 0, 15, 15);
+		}
+		
+		@Override
+		public Dimension getPreferredSize(JComponent j) {
+			return new Dimension(16, 16);
+		}
 	}
 }

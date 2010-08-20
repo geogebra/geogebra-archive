@@ -1004,6 +1004,11 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	            setConstructionStep(kernel.getLastConstructionStep());	   	           
         	}                        
         }
+        
+        /**
+         * Don't react to changing mode.
+         */
+        public void setMode(int mode) {}
 
         public int getRowCount() {
             return rowList.size();

@@ -330,7 +330,7 @@ public	class PropertiesPanel extends JPanel {
 			ArrayList<JPanel> styleTabList = new ArrayList<JPanel>();
 			styleTabList.add(slopeTriangleSizePanel);
 			styleTabList.add(pointSizePanel);
-			styleTabList.add(pointStylePanel); // Florian Sonner 2008-07-17
+			styleTabList.add(pointStylePanel);
 			styleTabList.add(lineStylePanel);	
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);

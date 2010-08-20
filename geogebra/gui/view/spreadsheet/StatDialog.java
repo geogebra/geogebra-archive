@@ -718,6 +718,10 @@ implements ActionListener, View   {
 	public void reset() {
 		//removeGeos();
 	}
+	
+	public void setMode(int mode) {
+		// ignore..
+	}
 
 	public void update(GeoElement geo) {
 

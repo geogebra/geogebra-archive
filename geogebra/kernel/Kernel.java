@@ -1429,6 +1429,17 @@ public class Kernel {
 			viewCnt = 0;
 		}
 	}	
+	
+	/**
+	 * Notify the views that the mode changed.
+	 * 
+	 * @param mode
+	 */
+	final public void notifyModeChanged(int mode) {
+		for(int i = 0; i < viewCnt; ++i) {
+			views[i].setMode(mode);
+		}
+	}
 
 	final public void notifyAddAll(View view) {
 		int consStep = cons.getStep();

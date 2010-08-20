@@ -23,10 +23,13 @@ import geogebra.main.GeoElementSelectionListener;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
+import java.awt.ContainerOrderFocusTraversalPolicy;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.FocusTraversalPolicy;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -157,19 +160,21 @@ public class PropertiesDialog
 			public void actionPerformed(ActionEvent e) {
 				closeDialog();			
 			}
-		});			
+		});
+		
 		
 		// build button panel with some buttons on the left
 		// and some on the right
 		JPanel buttonPanel = new JPanel(new BorderLayout());
 		JPanel leftButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
 		buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
+		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
 		
 		// left buttons
 		if (app.letDelete())
 			leftButtonPanel.add(delButton);
+		
 		leftButtonPanel.add(defaultsButton);
 
 		// right buttons
@@ -807,6 +812,10 @@ public class PropertiesDialog
 
 		public void updateAuxiliaryObject(GeoElement geo) {
 			repaint();
+		}
+		
+		public void setMode(int mode) {
+			// don't react..
 		}
 
 		public void reset() {

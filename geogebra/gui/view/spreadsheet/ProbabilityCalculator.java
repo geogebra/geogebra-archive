@@ -744,6 +744,10 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	public void reset() {	
 	}
+	
+	public void setMode(int mode) {
+		// don't react..
+	}
 
 	public void update(GeoElement geo) {
 		double[] coords = new double[2];;

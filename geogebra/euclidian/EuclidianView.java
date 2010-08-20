@@ -461,7 +461,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	EuclidianStyleBar styleBar;
 	public EuclidianStyleBar getEuclidianStyleBar(){
 		if(styleBar==null){
-			styleBar = new EuclidianStyleBar(app);
+			styleBar = new EuclidianStyleBar(this);
 		}
 		
 		return styleBar;

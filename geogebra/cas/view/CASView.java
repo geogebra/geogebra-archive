@@ -472,6 +472,10 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	void removeFromIgnoreUpdates(String var) {
 		ignoreUpdateVars.remove(var);
 	}
+	
+	public void setMode(int mode) {
+		// playground for Markus :)
+	}
 
 	/**
 	 * Renames function definitions in the CAS

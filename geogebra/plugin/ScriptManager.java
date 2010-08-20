@@ -409,6 +409,10 @@ public class ScriptManager {
 					
 		public void reset() {							
 		}
+		
+		public void setMode(int mode) {
+			// don't react..
+		}
 				
     	public void repaintView() {
     		// no repaint should occur here: views that are

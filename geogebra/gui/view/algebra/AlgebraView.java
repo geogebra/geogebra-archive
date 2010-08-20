@@ -480,6 +480,13 @@ public class AlgebraView extends JTree implements View {
 		add(geo);
 	}
 	
+	/**
+	 * Reset the algebra view if the mode changed.
+	 */
+	public void setMode(int mode) {
+		reset();
+	}
+	
 	public void reset() {
 	  	cancelEditing();
 	  repaint();

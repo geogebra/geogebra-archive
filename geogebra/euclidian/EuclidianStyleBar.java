@@ -39,16 +39,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	JToggleButton btnShowGrid, btnShowAxes;
 	private ColorChooserButton btnBgColor;
 	
-	Application app;
 	EuclidianController ec;
 	EuclidianView ev;
 
 	
-	public EuclidianStyleBar(Application app) {
-	
-		this.app = app;
-		ev = app.getEuclidianView();
-		ec = app.getEuclidianView().getEuclidianController(); 
+	public EuclidianStyleBar(EuclidianView ev) {
+		this.ev = ev;
+		ec = ev.getEuclidianController(); 
 		
 		
 		setFloatable(false);
@@ -59,12 +56,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	private void initGUI() {
 	
-		btnShowAxes = new JToggleButton(app.getImageIcon("axes.gif"));
+		btnShowAxes = new JToggleButton(ev.getApplication().getImageIcon("axes.gif"));
 		btnShowAxes.addActionListener(this);
 		btnShowAxes.setSelected(ev.getShowXaxis());
 		add(btnShowAxes);
 		
-		btnShowGrid = new JToggleButton(app.getImageIcon("grid.gif"));
+		btnShowGrid = new JToggleButton(ev.getApplication().getImageIcon("grid.gif"));
 		btnShowGrid.addActionListener(this);
 		btnShowGrid.setSelected(ev.getShowGrid());
 		add(btnShowGrid);
