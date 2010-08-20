@@ -7122,11 +7122,11 @@ class CmdOsculatingCircle extends CommandProcessor {
 				 return ret;    
 			 }
          case 5 :             
-             if (ok[0] = (arg[0] instanceof GeoFunctionNVar)
-     	            && (ok[1] = (arg[1].isGeoNumeric()))		 
-    	            && (ok[2] = (arg[2].isGeoNumeric()))		 
-    	            && (ok[3] = (arg[3].isGeoNumeric()))		 
-    	            && (ok[4] = (arg[4].isGeoNumeric()))		 
+             if ((ok[0] = arg[0] instanceof GeoFunctionNVar)
+     	            && (ok[1] = arg[1].isGeoNumeric())		 
+    	            && (ok[2] = arg[2].isGeoNumeric())		 
+    	            && (ok[3] = arg[3].isGeoNumeric())		 
+    	            && (ok[4] = arg[4].isGeoNumeric())		 
              ) {
                  GeoElement[] ret =
                      {
@@ -7137,12 +7137,12 @@ class CmdOsculatingCircle extends CommandProcessor {
               else
             	 throw argErr(app, c.getName(), getBadArg(ok, arg));         
          case 6 :             
-             if (ok[0] = (arg[0] instanceof GeoFunctionNVar)          		 
-      	            && (ok[1] = (arg[1] instanceof GeoFunctionNVar))	 
-     	            && (ok[2] = (arg[2].isGeoNumeric()))		 
-    	            && (ok[3] = (arg[3].isGeoNumeric()))		 
-    	            && (ok[4] = (arg[4].isGeoNumeric()))		 
-    	            && (ok[5] = (arg[5].isGeoNumeric()))		 
+             if ((ok[0] = arg[0] instanceof GeoFunctionNVar)          		 
+      	            && (ok[1] = arg[1] instanceof GeoFunctionNVar)	 
+     	            && (ok[2] = arg[2].isGeoNumeric())		 
+    	            && (ok[3] = arg[3].isGeoNumeric())		 
+    	            && (ok[4] = arg[4].isGeoNumeric())		 
+    	            && (ok[5] = arg[5].isGeoNumeric())		 
              ) {
                  GeoElement[] ret =
                      {
@@ -7150,8 +7150,10 @@ class CmdOsculatingCircle extends CommandProcessor {
                              c.getLabel(), (GeoFunctionNVar)arg[0], (GeoFunctionNVar)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4], (GeoNumeric)arg[5])};
                  return ret;                
              }                        
-              else
-            	 throw argErr(app, c.getName(), getBadArg(ok, arg));         
+              else {
+            	  throw argErr(app, c.getName(), getBadArg(ok, arg));  
+              }
+            	        
 				 
 		     // more than one argument
 	         default :
