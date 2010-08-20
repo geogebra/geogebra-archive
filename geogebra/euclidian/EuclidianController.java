@@ -1571,9 +1571,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		//ggb3D - only for 3D view
 		if (Application.isRightClick(e)){
-			//Application.debug("hit(0) = "+view.getHits().get(0));
 			// if there's no hit, or if first hit is not moveable, do 3D view rotation
-			if ((!TEMPORARY_MODE) || view.getHits().size() == 0 || !((GeoElement) view.getHits().get(0)).isMoveable())				
+			if ((!TEMPORARY_MODE) || view.getHits().size() == 0 
+					|| !((GeoElement) view.getHits().get(0)).isMoveable()
+					|| ( !((GeoElement) view.getHits().get(0)).isGeoPoint() && ((GeoElement) view.getHits().get(0)).hasDrawable3D() )
+					)
 				if (processRightDragFor3D()){ //in 2D view, return false
 					if (TEMPORARY_MODE){
 						TEMPORARY_MODE = false;
