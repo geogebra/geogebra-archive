@@ -2140,6 +2140,15 @@ class CmdTangent extends CommandProcessor {
 								(GeoImplicitPoly) arg[1]);
 				return ret;
 			}
+			else if ( (ok[1] = (arg[1] .isGeoPoint()) )
+					&& (ok[0] = (arg[0] .isGeoImplicitPoly())) ){
+				GeoElement[] ret =
+						kernel.Tangent(
+								c.getLabels(),
+								(GeoPoint) arg[1],
+								(GeoImplicitPoly) arg[0]);
+				return ret;
+			}
 			else if ( (ok[0] = (arg[0] .isGeoLine()) )
 					&& (ok[1] = (arg[1] .isGeoImplicitPoly())) ){
 				GeoElement[] ret =
