@@ -26,7 +26,7 @@ public class AlgoUnicodeToLetter extends AlgoElement {
       this.a = a;
 
       text = new GeoText(cons); 
-		text.setIsCommand(true); // stop editing as text
+		text.setIsTextCommand(true); // stop editing as text
 		setInputOutput(); // for AlgoElement
       
       // compute angle

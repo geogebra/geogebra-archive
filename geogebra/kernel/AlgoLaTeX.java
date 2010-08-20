@@ -53,7 +53,7 @@ public class AlgoLaTeX extends AlgoElement {
 
        text = new GeoText(cons);
 
-		text.setIsCommand(true); // stop editing as text
+		text.setIsTextCommand(true); // stop editing as text
 		setInputOutput(); // for AlgoElement
         
         // compute value of dependent number

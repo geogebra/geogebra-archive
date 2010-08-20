@@ -33,7 +33,7 @@ public class AlgoFractionText extends AlgoElement {
         this.num = num;
                
         text = new GeoText(cons);
-		text.setIsCommand(true); // stop editing as text
+		text.setIsTextCommand(true); // stop editing as text
 		
         setInputOutput();
         compute();

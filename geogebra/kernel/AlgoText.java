@@ -58,7 +58,7 @@ public class AlgoText extends AlgoElement {
 		this.latex = latex;
 
 		text = new GeoText(cons);
-		text.setIsCommand(true); // stop editing as text
+		text.setIsTextCommand(true); // stop editing as text
 		
 		// set startpoint
 		if (startPoint != null) {

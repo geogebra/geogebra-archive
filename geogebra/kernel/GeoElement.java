@@ -4108,8 +4108,10 @@ public abstract class GeoElement
 					if (movedGeoText.hasAbsoluteLocation()) {
 						//	absolute location: change location
 						GeoPoint loc = (GeoPoint) movedGeoText.getStartPoint();
-						loc.translate(rwTransVec);
-						movedGeo = true;
+						if (loc != null) {
+							loc.translate(rwTransVec);
+							movedGeo = true;
+						}
 					}						
 				}
 			}		

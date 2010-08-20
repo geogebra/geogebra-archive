@@ -61,6 +61,13 @@ public class AlgoTake extends AlgoElement {
 
     protected final void compute() {
     	
+    	if (!m.isDefined() || !n.isDefined()) {
+    		// return empty list
+        	outputList.setDefined(true);
+        	outputList.clear();
+        	return;
+    	}
+    	
     	size = inputList.size();
     	int start=(int)m.getDouble();
     	double nVal = n.getDouble();

@@ -3532,6 +3532,36 @@ public class Kernel {
 	}
 	
 	/** 
+	 * First[string,n]
+	 * Michael Borcherds
+	 */
+	final public GeoText First(String label, GeoText list, GeoNumeric n) {
+		AlgoFirstString algo = new AlgoFirstString(cons, label, list, n);
+		GeoText list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * Last[string,n]
+	 * Michael Borcherds
+	 */
+	final public GeoText Last(String label, GeoText list, GeoNumeric n) {
+		AlgoLastString algo = new AlgoLastString(cons, label, list, n);
+		GeoText list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
+	 * First[string,n]
+	 * Michael Borcherds
+	 */
+	final public GeoText Take(String label, GeoText list, GeoNumeric m, GeoNumeric n) {
+		AlgoTakeString algo = new AlgoTakeString(cons, label, list, m, n);
+		GeoText list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Last[list,n]
 	 * Michael Borcherds
 	 */
