@@ -5318,8 +5318,6 @@ class GraphicsViewLocationPanel
 		this.propPanel = propPanel;
 
 		ev = app.getEuclidianView();
-		//if (app.getGuiManager().hasEuclidianView2())
-		//	ev2 = (EuclidianView) app.getGuiManager().getEuclidianView2();
 				
 		cbGraphicsView = new JCheckBox();
 		cbGraphicsView2 = new JCheckBox();		
