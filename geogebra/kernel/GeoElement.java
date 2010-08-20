@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GuiManager;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -30,7 +31,6 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
-import geogebra3D.kernel3D.GeoVector3D;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -4608,9 +4608,16 @@ public abstract class GeoElement
 	}
 	
 	public boolean isVisibleInView(Object view){
-		// if no views are set, add geo to drawingPad by default
+		// if no views are set, add geo to both  by default
 		if(viewSet.isEmpty()){
 			viewSet.add(app.getEuclidianView());
+			
+			GuiManager gui = app.getGuiManager();
+			if (gui != null) {
+				EuclidianView ev2 = (EuclidianView)app.getGuiManager().getEuclidianView2();
+				if (ev2 != null) viewSet.add(ev2);
+			}
+			
 		}
 		return viewSet.contains(view);
 	}
