@@ -2815,7 +2815,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		view.mouseEntered();
 	}
 
-	final public void mouseExited(MouseEvent e) {
+	public void mouseExited(MouseEvent e) {
 
 		if (textfieldHasFocus) return;
 

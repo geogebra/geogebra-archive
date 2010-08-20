@@ -13,6 +13,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoCoordSys2D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -1212,6 +1213,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 
+	}
+	
+	
+	
+	public void mouseExited(MouseEvent e) {
+
+		setHighlightedGeos(false);
+		
+		super.mouseExited(e);
 	}
 
 	//////////////////////////////////////
