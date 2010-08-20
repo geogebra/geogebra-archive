@@ -58,6 +58,8 @@ public interface GeoPointInterface {
 	
 	public GgbVector getInhomCoords();
 	
+	public void getInhomCoords(double[] coords);
+	
 	public double distance(GeoPointInterface P);
 	
 

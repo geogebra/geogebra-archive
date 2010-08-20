@@ -344,8 +344,8 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 	}
 
 
-	public GeoPoint[] getPoints() {
-		return (GeoPoint[]) points;
+	public GeoPointInterface[] getPoints() {
+		return points;
 	}
 
 	public void calcLength() {

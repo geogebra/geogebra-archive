@@ -293,6 +293,13 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     	return inhom.copyVector();
     }   
     
+    /** 
+     * Returns (x/w, y/w, z/w) GgbVector.
+     */
+    final public void getInhomCoords(double[] d) {
+    	Application.debug("TODO: getInhomCoords(double[] d)");
+    }   
+    
     
     final public double[] vectorTo(GeoPointInterface QI){
     	GeoPoint3D Q = (GeoPoint3D) QI;

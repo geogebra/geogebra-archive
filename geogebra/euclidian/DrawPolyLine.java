@@ -15,8 +15,8 @@ package geogebra.euclidian;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolyLine;
-import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -72,7 +72,7 @@ implements Previewable {
         }
     }
 	
-	private void addPointsToPath(GeoPoint[] points) {
+	private void addPointsToPath(GeoPointInterface[] points) {
 		if (gp == null)
 			gp = new GeneralPathClipped(view);
 		else
