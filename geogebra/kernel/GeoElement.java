@@ -3464,6 +3464,21 @@ public abstract class GeoElement
 			sb.append(" label=\"");
 			sb.append(labelVisible);
 			sb.append("\"");
+			
+			if (!isVisibleInView(app.getEuclidianView())) {
+				//Application.debug("visible in ev1");
+				sb.append(" ev1=\"false\"");
+			}
+
+			EuclidianView ev2 = (EuclidianView)app.getGuiManager().getEuclidianView2();
+			if (ev2 != null) {
+				if (!isVisibleInView(ev2)) {
+					//Application.debug("visible in ev2");
+					sb.append(" ev2=\"false\"");
+				}
+			
+			}
+			
 			sb.append("/>\n");
 		}
 		

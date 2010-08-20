@@ -2256,8 +2256,21 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			geo.setEuclidianVisible(parseBoolean((String) attrs.get("object")));
 			geo.setLabelVisible(parseBoolean((String) attrs.get("label")));
+			
+			// default true if tag not present
+			boolean ev1 = parseBooleanRev((String) attrs.get("ev1"));
+			boolean ev2 = parseBooleanRev((String) attrs.get("ev2"));
+			if (ev1)
+				geo.addView(app.getEuclidianView());
+			else
+				geo.removeView(app.getEuclidianView());
+			if (ev2)
+				geo.addView(app.getGuiManager().getEuclidianView2());
+			else
+				geo.removeView(app.getGuiManager().getEuclidianView2());
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -3692,5 +3705,8 @@ public class MyXMLHandler implements DocHandler {
 
 	protected boolean parseBoolean(String str) throws Exception {
 		return "true".equals(str);
+	}
+	protected boolean parseBooleanRev(String str) throws Exception {
+		return !"false".equals(str);
 	}
 }

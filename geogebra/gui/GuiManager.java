@@ -267,7 +267,7 @@ public class GuiManager {
 		);
 		
 				
-	/*
+	
 		// register EuclidianView2  
 		layout.registerPanel(
 			new DockPanel(
@@ -281,7 +281,7 @@ public class GuiManager {
 				}
 			}
 		);
-	*/
+	
 		
 		
 	}
