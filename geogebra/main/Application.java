@@ -64,7 +64,10 @@ import java.awt.Stroke;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -79,6 +82,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -4373,6 +4377,22 @@ public class Application implements KeyEventDispatcher {
 		
 		showMessage(getMenu("ClipboardMessage"));
 		
+	}
+
+	/*
+	 * gets a String from the clipboard
+	 * @return null if not possible
+	 */
+	public String getStringFromClipboard() {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Transferable contents = clipboard.getContents(null);
+		String str = null;
+		try {
+			str = (String)contents.getTransferData(DataFlavor.stringFlavor);
+		} catch (UnsupportedFlavorException e) {
+		} catch (IOException e) {
+		}		
+		return str;
 	}
 
 		

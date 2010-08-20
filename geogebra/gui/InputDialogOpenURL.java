@@ -4,7 +4,13 @@ package geogebra.gui;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 public class InputDialogOpenURL extends InputDialog{
 	
@@ -14,6 +20,13 @@ public class InputDialogOpenURL extends InputDialog{
 		this.app = app;	
 		
 		initString = "http://";
+		
+		
+		// check if there's a string starting http:// already on the clipboard
+		// (quite likely!!)
+		String clipboardString = app.getStringFromClipboard();
+		if (clipboardString != null && clipboardString.startsWith("http://"))
+			initString = clipboardString;
 
 		createGUI(app.getMenu("LoadURL"), app.getPlain("EnterURL"), false, DEFAULT_COLUMNS, 1, false, false, true, false, false, false);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
