@@ -2006,17 +2006,20 @@ public class GuiManager {
 			
 		} else
 		// special case: urlString is actually a base64 encoded ggb file
-		if (urlString.startsWith("UEs")) {
-			// decode Base64
-			byte[] zipFile;
-			try {
-				zipFile = geogebra.util.Base64.decode(urlString);
-				// load file
-				success = app.loadXML(zipFile);   
-			} catch (IOException e) {
-				//success = false;
-			}			
-		} else {	
+			if (urlString.startsWith("UEs")) {
+				// decode Base64
+				byte[] zipFile;
+				try {
+					zipFile = geogebra.util.Base64.decode(urlString);
+					// load file
+					success = app.loadXML(zipFile);   
+				} catch (IOException e) {
+					//success = false;
+				}			
+				// special case: urlString is actually a GeoGebra XML file
+			} else if (urlString.startsWith("<?xml ") && urlString.endsWith("</geogebra>")) {
+				success = app.loadXML(urlString);   		
+			} else {	
 			
 			try {
 				

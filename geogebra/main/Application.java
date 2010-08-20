@@ -2653,6 +2653,26 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
+	/*
+	 * loads an XML file as a String
+	 */
+	public boolean loadXML(String xml) {
+		try {
+			myXMLio.processXMLString(xml, true, false);
+			
+			kernel.initUndoInfo();
+			isSaved = true;
+			setCurrentFile(null);
+			// command list may have changed due to macros
+			updateCommandDictionary();
+			return true;
+		} catch (Exception err) {
+			setCurrentFile(null);
+			err.printStackTrace();
+			return false;
+		}
+	}
+
 	private boolean loadXML(InputStream is, boolean isMacroFile)
 			throws Exception {
 		try {
