@@ -88,6 +88,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		surface.setNbU((int) (uMax-uMin)*10);
 		surface.setV(vMin, vMax);
 		surface.setNbV((int) (vMax-vMin)*10);
+		
+		//TODO use fading texture
+		
 
 		surface.draw(mesh);
 		geometryIndex=surface.end();

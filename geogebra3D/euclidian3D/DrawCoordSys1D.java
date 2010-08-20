@@ -77,10 +77,6 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	
 	public void drawGeometry(Renderer renderer) {
-		//renderer.setThickness(getGeoElement().getLineThickness());
-		//renderer.drawSegment(drawMin,drawMax);
-		
-		//renderer.getTextures().setDashTexture(Textures.DASH_SIMPLE,1f);
 		renderer.getGeometryManager().draw(segmentIndex);
 	}
 	

@@ -2456,11 +2456,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param renderer
 	 */
 	public void drawTransp(Renderer renderer){
+		
+		
 		if (xOyPlane.isPlateVisible())
 			xOyPlaneDrawable.drawTransp(renderer);
-		else
-			if (decorationVisible)
-				pointDecorations.drawTransp(renderer);
+				
 	}
 	
 	
@@ -2468,11 +2468,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param renderer
 	 */
 	public void drawHiding(Renderer renderer){
+		
+		
 		if (xOyPlane.isPlateVisible())
 			xOyPlaneDrawable.drawHiding(renderer);
-		else
-			if (decorationVisible)
-				pointDecorations.drawHiding(renderer);
+				
+				
 		
 	}
 	

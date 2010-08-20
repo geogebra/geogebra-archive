@@ -69,22 +69,21 @@ public class Textures {
 
 
 		gl.glEnable(GL.GL_TEXTURE_2D);
-    	
+
 		texturesIndex = new int[TEXTURES_NUMBER];
-    	
-    	// dash textures
-    	
-    	gl.glGenTextures(DASH_NUMBER, texturesIndex, 0);
-        for(int i=0; i<DASH_NUMBER; i++)
-        	initDashTexture(texturesIndex[i],DASH_DESCRIPTION[i]);
-        
-        // fading textures
-        initFadingTexture(texturesIndex[DASH_NUMBER]);
-         
-        
-        
-        gl.glDisable(GL.GL_TEXTURE_2D);
-		
+		gl.glGenTextures(TEXTURES_NUMBER, texturesIndex, 0);
+
+		// dash textures
+		for(int i=0; i<DASH_NUMBER; i++)
+			initDashTexture(texturesIndex[i],DASH_DESCRIPTION[i]);
+
+		// fading textures
+		initFadingTexture(texturesIndex[FADING]);
+
+
+
+		gl.glDisable(GL.GL_TEXTURE_2D);
+
 	}
 	
 
@@ -191,29 +190,6 @@ public class Textures {
 		
 		int sizeX = 2,  sizeY = 2;
 		
-		
-		/*
-		int n = 3;
-		int sizeX = (int) Math.pow(2, n); int sizeY = sizeX;
-		boolean[] description = new boolean[sizeX*sizeY];
-		for (int i=0; i<sizeX-1; i++)
-			for (int j=0; i<sizeY-1; i++){
-				description[i+j*sizeX] = true;
-			}
-		*/
-		
-		/*
-		boolean[] description = {
-				true, true, true, false,
-				true, true, true, false,
-				true, true, true, false,
-				false,false,false,false
-		};
-		
-		int sizeX = 4,  sizeY = 4;		
-		*/
-
-
 		
 		byte[] bytes = new byte[sizeX*sizeY];
 

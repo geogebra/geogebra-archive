@@ -206,9 +206,13 @@ public class PlotterSurface {
 		int cnt = tree.getTriangleCount();
 		manager.startGeometry(Manager.TRIANGLES);
 		
+		/*TODO use fading texture
 		float uT = getTextureCoord(1, uNb, uMinFadeNb, uMaxFadeNb);
 		float vT = getTextureCoord(1, vNb, vMinFadeNb, vMaxFadeNb);	
 		manager.texture(uT, vT);
+		*/
+		manager.texture(0, 0);
+		
 		float[] f = new float[9]; float[] n = new float[9];
 		b1.rewind(); b2.rewind();
 		for(int i = 0; i < cnt; i++) {

@@ -233,7 +233,7 @@ public class Renderer implements GLEventListener {
 	
 	private void drawTransp(){
 		
-		gl.glEnable(GL.GL_TEXTURE_2D);
+		
 		getTextures().loadTexture(Textures.FADING);
 		
 		gl.glDisable(GL.GL_CULL_FACE);
@@ -241,8 +241,9 @@ public class Renderer implements GLEventListener {
 		//drawList3D.drawTranspClosed(this);
 
 		
+		//TODO fix it
+		gl.glDisable(GL.GL_TEXTURE_2D);
 		//TODO improve this !
-		
 		gl.glEnable(GL.GL_CULL_FACE);
 		gl.glCullFace(GL.GL_FRONT); drawable3DLists.drawTranspClosed(this);//draws inside parts  
 		gl.glCullFace(GL.GL_BACK); drawable3DLists.drawTranspClosed(this);//draws outside parts 
@@ -250,7 +251,7 @@ public class Renderer implements GLEventListener {
 		
 		
 		
-		gl.glDisable(GL.GL_TEXTURE_2D);
+		
 		
 		
 	}
@@ -390,8 +391,8 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_TEXTURE_2D);
         drawable3DLists.drawHiddenTextured(this);
         drawNotTransp();
-        gl.glEnable(GL.GL_CULL_FACE);
         gl.glDisable(GL.GL_TEXTURE_2D);
+        //gl.glDisable(GL.GL_TEXTURE_2D);
         gl.glDisable(GL.GL_ALPHA_TEST);       
 
        
@@ -403,12 +404,14 @@ public class Renderer implements GLEventListener {
         
         //drawing transparents parts
         gl.glDepthMask(false);
+        gl.glEnable(GL.GL_TEXTURE_2D);
         drawTransp();      
         gl.glDepthMask(true);
 
         
         
         //drawing labels
+        gl.glDisable(GL.GL_TEXTURE_2D);
         gl.glEnable(GL.GL_CULL_FACE);
         //gl.glCullFace(GL.GL_BACK);
         //gl.glEnable(GL.GL_ALPHA_TEST);  //avoid z-buffer writing for transparent parts     
@@ -434,17 +437,18 @@ public class Renderer implements GLEventListener {
 
         //re-drawing transparents parts for better transparent effect
         //TODO improve it !
+        gl.glEnable(GL.GL_TEXTURE_2D);
         gl.glDepthMask(false);
         gl.glEnable(GL.GL_BLEND);
-        drawTransp();             
+        drawTransp();
         gl.glDepthMask(true);
-
+        gl.glDisable(GL.GL_TEXTURE_2D);
         
         //drawing hiding parts
         gl.glColorMask(false,false,false,false); //no writing in color buffer		
         gl.glDisable(GL.GL_BLEND);
-        gl.glCullFace(GL.GL_BACK); //draws inside parts
         gl.glEnable(GL.GL_CULL_FACE);
+        gl.glCullFace(GL.GL_BACK); //draws inside parts
         drawable3DLists.drawClosedSurfacesForHiding(this); //closed surfaces front-faces
         gl.glColorMask(true,true,true,true);
         
@@ -453,11 +457,12 @@ public class Renderer implements GLEventListener {
         
         //re-drawing transparents parts for better transparent effect
         //TODO improve it !
+        gl.glEnable(GL.GL_TEXTURE_2D);
         gl.glDepthMask(false);
         gl.glEnable(GL.GL_BLEND);
-        drawTransp();           
+        drawTransp();
         gl.glDepthMask(true);
-
+        gl.glDisable(GL.GL_TEXTURE_2D);
         
 
        

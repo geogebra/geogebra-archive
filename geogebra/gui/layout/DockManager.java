@@ -150,7 +150,7 @@ public class DockManager {
 						currentParent = (DockSplitPane)currentParent.getRightComponent();
 					}
 				}
-				
+
 				if(directions[directions.length - 1].equals("0") || directions[directions.length - 1].equals("3")) {
 					currentParent.setLeftComponent(getPanel(dpInfo[i].getViewId()));
 				} else {

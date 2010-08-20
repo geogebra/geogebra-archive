@@ -69,24 +69,8 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 		
 	}
 	
-	
-	public void drawHiding(Renderer renderer) { 
-		
-		drawTransp(renderer);
-	}
 
 
-
-	/*
-	public void drawTransp(Renderer renderer) {
-		
-		renderer.setMatrix(planeMatrix);
-		renderer.initMatrix();
-		renderer.getGeometryManager().draw(planeIndex);
-		renderer.resetMatrix();
-	}
-
-	*/
 	
 	
 	public void drawHidden(Renderer renderer){
