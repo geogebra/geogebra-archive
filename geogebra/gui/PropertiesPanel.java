@@ -385,7 +385,7 @@ public	class PropertiesPanel extends JPanel {
 				
 				//=================================================
 				// add location panel 
-				// advancedTabList.add(graphicsViewLocationPanel);
+				 advancedTabList.add(graphicsViewLocationPanel);
 				//===================================================
 				
 				
@@ -5309,7 +5309,7 @@ class GraphicsViewLocationPanel
 	
 	private Kernel kernel;
 	private Application app;
-	private EuclidianView ev, ev2;
+	private EuclidianView ev;
 	private PropertiesPanel propPanel;
 
 	public GraphicsViewLocationPanel(Application app, PropertiesPanel propPanel) {
@@ -5318,7 +5318,8 @@ class GraphicsViewLocationPanel
 		this.propPanel = propPanel;
 
 		ev = app.getEuclidianView();
-		ev2 = (EuclidianView) app.getGuiManager().getEuclidianView2();
+		//if (app.getGuiManager().hasEuclidianView2())
+		//	ev2 = (EuclidianView) app.getGuiManager().getEuclidianView2();
 				
 		cbGraphicsView = new JCheckBox();
 		cbGraphicsView2 = new JCheckBox();		
@@ -5358,7 +5359,7 @@ class GraphicsViewLocationPanel
 			GeoElement geo = (GeoElement) geos[i];	
 			if (geo.isVisibleInView(ev)) 
 				isInEV = true;
-			if (geo.isVisibleInView(ev2)) 
+			if (geo.isVisibleInView(app.getGuiManager().getEuclidianView2())) 
 				isInEV2 = true;
 		}		
 
@@ -5372,13 +5373,18 @@ class GraphicsViewLocationPanel
 	}
 
 	private boolean checkGeos(Object[] geos) {
-		for (int i=0; i < geos.length; i++) {
-			/*
+		
+		if (!app.getGuiManager().hasEuclidianView2()) return false;
+		
+		/*
+		  for (int i=0; i < geos.length; i++) {
+		 
+			
 			GeoElement geo = (GeoElement) geos[i];	
 			if (!geo.isEuclidianShowable())
 				return false;
-				*/
-		}
+				
+		}*/
 		
 		return true;
 	}
@@ -5402,6 +5408,8 @@ class GraphicsViewLocationPanel
 		if (e.getSource() == cbGraphicsView2){
 			for (int i=0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
+				
+				EuclidianView ev2 = (EuclidianView)app.getGuiManager().getEuclidianView2();
 				
 				if(cbGraphicsView2.isSelected()){
 					geo.addView(ev2);
