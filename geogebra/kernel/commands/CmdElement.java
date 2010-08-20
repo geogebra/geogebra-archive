@@ -36,17 +36,7 @@ final public  GeoElement[] process(Command c) throws MyError {
                             (GeoList) arg[0],
                             (NumberValue) arg[1]) };
                return ret; 
-           } else
-               if ((ok[0] = arg[0].isGeoText())
-                     	 && (ok[1] = arg[1].isNumberValue()))
-                     {
-                  	GeoElement[] ret = {  kernel.Element(
-                                      c.getLabel(),
-                                      (GeoText) arg[0],
-                                      (NumberValue) arg[1]) };
-                         return ret; 
-                     }   
-
+           } 
                  
         // error
         else {          
