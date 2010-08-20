@@ -690,6 +690,7 @@ public class DockManager {
 		if(panel != null) {
 			return panel;
 		} else {
+	        app.setDefaultCursor();
 			throw new IllegalArgumentException("viewId not found");
 		}
 	}
