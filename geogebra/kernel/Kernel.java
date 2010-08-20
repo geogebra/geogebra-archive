@@ -6023,6 +6023,14 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
+	/*
+	 * second order ODEs
+	 */
+	final public GeoList SolveODE2(String label, GeoFunctionable f, GeoFunctionable g, GeoFunctionable h, GeoNumeric x, GeoNumeric y, GeoNumeric yDot, GeoNumeric end, GeoNumeric step) {		
+		AlgoSolveODE2 algo = new AlgoSolveODE2(cons, label, f, g, h, x, y, yDot, end, step);
+		return algo.getResult();			
+	}
+	
 	/**
 	 * Asymptotes
 	 * Michael Borcherds 

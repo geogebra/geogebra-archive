@@ -7154,6 +7154,26 @@ class CmdOsculatingCircle extends CommandProcessor {
             	  throw argErr(app, c.getName(), getBadArg(ok, arg));  
               }
             	        
+         case 8 : // second order ODE
+             if ((ok[0] = arg[0].isGeoFunctionable())          		 
+      	            && (ok[1] = arg[1].isGeoFunctionable())	 
+     	            && (ok[2] = arg[2].isGeoFunctionable())		 
+    	            && (ok[3] = arg[3].isGeoNumeric())		 
+    	            && (ok[4] = arg[4].isGeoNumeric())		 
+    	            && (ok[5] = arg[5].isGeoNumeric())		 
+    	            && (ok[6] = arg[6].isGeoNumeric())		 
+    	            && (ok[7] = arg[7].isGeoNumeric())		 
+             ) {
+                 GeoElement[] ret =
+                     {
+                          kernel.SolveODE2 (
+                             c.getLabel(), (GeoFunctionable)arg[0], (GeoFunctionable)arg[1], (GeoFunctionable)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4], (GeoNumeric)arg[5], (GeoNumeric)arg[6], (GeoNumeric)arg[7])};
+                 return ret;                
+             }                        
+              else {
+            	  throw argErr(app, c.getName(), getBadArg(ok, arg));  
+              }
+            	        
 				 
 		     // more than one argument
 	         default :
