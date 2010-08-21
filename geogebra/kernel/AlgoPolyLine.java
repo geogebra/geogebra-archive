@@ -18,9 +18,9 @@ import geogebra.Matrix.GgbCoordSys;
 
 
 /**
- * Creates a Polygon from a given list of points or point array.
+ * Creates a PolyLine from a given list of points or point array.
  * 
- * @author  Markus Hohenwarter
+ * @author  Michael Borcherds
  * @version 
  */
 public class AlgoPolyLine extends AlgoElement {
@@ -68,6 +68,8 @@ public class AlgoPolyLine extends AlgoElement {
         
         if (labels != null)
         	poly.setLabel(labels[0]);
+        else
+        	poly.setLabel(null);
         
     }   
     
