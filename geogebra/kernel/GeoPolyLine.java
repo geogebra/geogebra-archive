@@ -24,7 +24,7 @@ import java.util.HashSet;
  * 
  * @author Michael Borcherds, adapted from GeoPolygon
  */
-public class GeoPolyLine extends GeoElement implements NumberValue, LineProperties {
+public class GeoPolyLine extends GeoElement implements NumberValue, Path, LineProperties {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -216,7 +216,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 	
 	/*
 	 * Path interface implementation
-	 *
+	 */
 	
 	public boolean isPath() {
 		return true;
@@ -237,17 +237,22 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 	public boolean isClosedPath() {
 		return false;
 	}
+	
+
+	// dummy segment to use in calculations
+	GeoSegment seg = new GeoSegment(cons);
 
 	public boolean isOnPath(GeoPointInterface PI, double eps) {
-		
+
 		GeoPoint P = (GeoPoint) PI;
 		
 		if (P.getPath() == this)
 			return true;
 		
 		// check if P is on one of the segments
-		for (int i=0; i < segments.length; i++) {
-			if (segments[i].isOnPath(P, eps))
+		for (int i=0; i < points.length - 1; i++) {
+			setSegmentPoints((GeoPoint)points[i], (GeoPoint)points[i + 1]);
+			if (seg.isOnPath(P, eps))
 				return true;
 		}				
 		return false;
@@ -257,15 +262,16 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 		
 		GeoPoint P = (GeoPoint) PI;
 		
-		// parameter is between 0 and segment.length,
-		// i.e. floor(parameter) gives the segment index
+		// parameter is between 0 and points.length - 1,
+		// i.e. floor(parameter) gives the point index
 		
 		PathParameter pp = P.getPathParameter();
-		pp.t = pp.t % segments.length;
+		pp.t = pp.t % (points.length - 1);
 		if (pp.t < 0) 
-			pp.t += segments.length;
+			pp.t += (points.length - 1);
 		int index = (int) Math.floor(pp.t) ;		
-		GeoSegmentInterface seg = segments[index];
+		setSegmentPoints((GeoPoint)points[index], (GeoPoint)points[index + 1]);
+		
 		double segParameter = pp.t - index;
 		
 		// calc point for given parameter
@@ -285,12 +291,15 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 		
 		// find closest point on each segment
 		PathParameter pp = P.getPathParameter();
-		for (int i=0; i < segments.length; i++) {
+		for (int i=0; i < points.length - 1; i++) {
 			P.x = qx;
 			P.y = qy;
 			P.z = 1;
-			segments[i].pointChanged(P);
-			
+
+			setSegmentPoints((GeoPoint)points[i], (GeoPoint)points[i + 1]);
+	    	
+			seg.pointChanged(P);
+		
 			double x = P.x/P.z - qx; 
 			double y = P.y/P.z - qy;
 			double dist = x*x + y*y;			
@@ -308,7 +317,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 		P.y = resy;
 		P.z = resz;
 		pp.t = param;	
-	}	 */
+	}	 //*/
 	
 	
 	
@@ -322,6 +331,15 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 
 	
 	
+	private void setSegmentPoints(GeoPoint geoPoint, GeoPoint geoPoint2) {
+		seg.setStartPoint(geoPoint);
+		seg.setEndPoint(geoPoint2);
+    	GeoVec3D.lineThroughPoints(geoPoint, geoPoint2, seg);      	
+    	seg.calcLength();
+		
+	}
+
+
 	/**
 	 * returns all class-specific xml tags for getXML
 	 * GeoGebra File Format
@@ -350,6 +368,8 @@ public class GeoPolyLine extends GeoElement implements NumberValue, LineProperti
 
 	public void calcLength() {
 		Application.debug("TODO: calcLength()");
+		length = 3;
+		setDefined();
 	}
 
 
