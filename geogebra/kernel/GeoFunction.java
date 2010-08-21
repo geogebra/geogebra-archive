@@ -18,6 +18,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
+import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
@@ -33,7 +34,7 @@ import java.util.Locale;
  * @author Markus Hohenwarter
  */
 public class GeoFunction extends GeoElement
-implements Path, Translateable, Traceable, Functional, GeoFunctionable,
+implements Path, Translateable, Traceable, Functional, FunctionalNVar, GeoFunctionable,
 CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
 
 	private static final long serialVersionUID = 1L;
@@ -209,6 +210,15 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
 			return Double.NaN;
 		else
 			return fun.evaluate(x);
+	}
+	
+	/**
+	 * Returns this function's value at position x.
+	 * @param x
+	 * @return f(x)
+	 */
+	public double evaluate(double[] vals) {
+		return evaluate(vals[0]);
 	}
 	
 	public final double getIntervalMin() {
