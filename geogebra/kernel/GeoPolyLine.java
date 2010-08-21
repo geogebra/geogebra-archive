@@ -20,7 +20,7 @@ import geogebra.main.Application;
 import java.util.HashSet;
 
 /**
- * Polygon through given points
+ * PolyLine (open Polygon) through given points
  * 
  * @author Michael Borcherds, adapted from GeoPolygon
  */
@@ -167,7 +167,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
     }     
     
     final public double getLength() {
-        return 3.3333333333;
+        return length;
     }   
         
     final public double getDouble() {
@@ -191,7 +191,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
     final public ExpressionValue evaluate() { return this; }	
 
 	protected boolean showInEuclidianView() {
-		return true;//defined;
+		return defined;
 	}    
 	
 	public boolean isNumberValue() {
@@ -317,19 +317,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 		P.y = resy;
 		P.z = resz;
 		pp.t = param;	
-	}	 //*/
-	
-	
-	
-	
-
-
-	
-
-	
-
-
-	
+	}	 
 	
 	private void setSegmentPoints(GeoPoint geoPoint, GeoPoint geoPoint2) {
 		seg.setStartPoint(geoPoint);
@@ -367,8 +355,25 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 	}
 
 	public void calcLength() {
-		Application.debug("TODO: calcLength()");
-		length = 3;
+		
+		// last point not checked in loop
+		if (!((GeoPoint)points[points.length - 1]).isDefined()) {
+			setUndefined();
+			length = Double.NaN;
+			return;
+		}
+		
+		length = 0;
+		
+		for (int i=0; i < points.length - 1; i++) {
+			if (!((GeoPoint)points[i]).isDefined()) {
+				setUndefined();
+				length = Double.NaN;
+				return;
+			}
+			setSegmentPoints((GeoPoint)points[i], (GeoPoint)points[i + 1]);
+			length += seg.getLength();
+		}
 		setDefined();
 	}
 
