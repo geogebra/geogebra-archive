@@ -6019,7 +6019,7 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
-	final public GeoElement SolveODE(String label, FunctionalNVar f, FunctionalNVar g, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {		
+	final public GeoLocus SolveODE(String label, FunctionalNVar f, FunctionalNVar g, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {		
 		AlgoSolveODE algo = new AlgoSolveODE(cons, label, f, g, x, y, end, step);
 		return algo.getResult();			
 	}
@@ -6027,7 +6027,7 @@ public class Kernel {
 	/*
 	 * second order ODEs
 	 */
-	final public GeoList SolveODE2(String label, GeoFunctionable f, GeoFunctionable g, GeoFunctionable h, GeoNumeric x, GeoNumeric y, GeoNumeric yDot, GeoNumeric end, GeoNumeric step) {		
+	final public GeoLocus SolveODE2(String label, GeoFunctionable f, GeoFunctionable g, GeoFunctionable h, GeoNumeric x, GeoNumeric y, GeoNumeric yDot, GeoNumeric end, GeoNumeric step) {		
 		AlgoSolveODE2 algo = new AlgoSolveODE2(cons, label, f, g, h, x, y, yDot, end, step);
 		return algo.getResult();			
 	}

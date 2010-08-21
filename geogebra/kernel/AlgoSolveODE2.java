@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.FirstOrderIntegrator;
@@ -13,7 +15,9 @@ public class AlgoSolveODE2 extends AlgoElement {
 		private static final long serialVersionUID = 1L;
 		private GeoFunction b, c, f; // input
 		private GeoNumeric x, y, yDot, start, end, step; // input
-	    private GeoList g; // output        
+	    //private GeoList g; // output  
+		private GeoLocus locus; // output
+	    private ArrayList<MyPoint> al;
 	    
 	    public AlgoSolveODE2(Construction cons, String label, GeoFunctionable b, GeoFunctionable c, GeoFunctionable f, GeoNumeric x, GeoNumeric y, GeoNumeric yDot, GeoNumeric end, GeoNumeric step) {
 	    	super(cons);
@@ -26,10 +30,12 @@ public class AlgoSolveODE2 extends AlgoElement {
 	        this.end = end;            	
 	        this.step = step;            	
 	    	
-	        g = new GeoList(cons);                
+	        //g = new GeoList(cons);   
+	        locus = new GeoLocus(cons);
 	        setInputOutput(); // for AlgoElement        
 	        compute();
-	        g.setLabel(label);
+	        //g.setLabel(label);
+	        locus.setLabel(label);
 	    }
 	    
 	    public String getClassName() {
@@ -50,21 +56,23 @@ public class AlgoSolveODE2 extends AlgoElement {
 	        input[7] = step;
 
 	        output = new GeoElement[1];
-	        output[0] = g;
+	        output[0] = locus;
 	        setDependencies(); // done by AlgoElement
 	    }
 
-	    public GeoList getResult() {
-	        return g;
+	    public GeoLocus getResult() {
+	        return locus;
 	    }
 
 	    protected final void compute() {       
 	        if (!b.isDefined() || !c.isDefined() || !f.isDefined() || !x.isDefined() || !y.isDefined() || !yDot.isDefined() || !step.isDefined() || !end.isDefined() || kernel.isZero(step.getDouble())) {
-	        	g.setUndefined();
+	        	locus.setUndefined();
 	        	return;
 	        }    
 	        
-	        g.clear();
+	        //g.clear();
+	        if (al == null) al = new ArrayList<MyPoint>();
+	        else al.clear();
 	        
 	        FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(step.getDouble());
 	        FirstOrderDifferentialEquations ode;
@@ -74,7 +82,8 @@ public class AlgoSolveODE2 extends AlgoElement {
 	        
             boolean oldState = cons.isSuppressLabelsActive();
             cons.setSuppressLabelCreation(true);
-            g.add(new GeoPoint(cons, null, x.getDouble(), y.getDouble(), 1.0));
+            //g.add(new GeoPoint(cons, null, x.getDouble(), y.getDouble(), 1.0));
+            al.add(new MyPoint(x.getDouble(), y.getDouble(), false));
             cons.setSuppressLabelCreation(oldState);
 
 	        double[] yy2 = new double[] { y.getDouble(), yDot.getDouble() }; // initial state
@@ -88,8 +97,10 @@ public class AlgoSolveODE2 extends AlgoElement {
 				e.printStackTrace();
 			} 
 			
-			g.setDefined(true);	
-			System.gc();
+			locus.setPoints(al);
+			
+			locus.setDefined(true);	
+			//System.gc();
 			
 	    }
 	    
@@ -112,7 +123,8 @@ public class AlgoSolveODE2 extends AlgoElement {
 	            boolean oldState = cons.isSuppressLabelsActive();
 	            cons.setSuppressLabelCreation(true);
 	            
-	            g.add(new GeoPoint(cons, null, t, y[0], 1.0));
+	            //g.add(new GeoPoint(cons, null, t, y[0], 1.0));
+	            al.add(new MyPoint(t, y[0], true));
 	            	
 	            cons.setSuppressLabelCreation(oldState);
 	        }

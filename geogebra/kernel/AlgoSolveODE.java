@@ -60,7 +60,7 @@ public class AlgoSolveODE extends AlgoElement {
 	        setDependencies(); // done by AlgoElement
 	    }
 
-	    public GeoElement getResult() {
+	    public GeoLocus getResult() {
 	        //return g;
 	        return locus;
 	    }
@@ -73,7 +73,8 @@ public class AlgoSolveODE extends AlgoElement {
 	        }    
 	        
 	        //g.clear();
-	        al = new ArrayList<MyPoint>();
+	        if (al == null) al = new ArrayList<MyPoint>();
+	        else al.clear();
 	        
 	        //FirstOrderIntegrator integrator = new DormandPrince853Integrator(1.0e-8, 100.0, 1.0e-10, 1.0e-10);
 	        FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(step.getDouble());
