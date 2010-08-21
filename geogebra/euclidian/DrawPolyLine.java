@@ -160,7 +160,13 @@ implements Previewable {
 	}
     
 	final public boolean hit(int x,int y) {		
-       return gp != null && (gp.contains(x, y) || gp.intersects(x-3, y-3, 6, 6));        
+    	if (isVisible) {
+    		if (strokedShape == null) {
+    			strokedShape = objStroke.createStrokedShape(gp);
+    		}    		
+    		return strokedShape.intersects(x-3,y-3,6,6);
+    	} else
+    		return false;
     }
 	
     final public boolean isInside(Rectangle rect) {
