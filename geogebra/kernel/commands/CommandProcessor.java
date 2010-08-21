@@ -17,13 +17,13 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoApplyMatrix;
 import geogebra.kernel.AlgoCellRange;
+import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
-import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
@@ -47,6 +47,7 @@ import geogebra.kernel.Rotateable;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -56,7 +57,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 
 public abstract class CommandProcessor  {
@@ -7122,7 +7122,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 				 return ret;    
 			 }
          case 5 :             
-             if ((ok[0] = arg[0] instanceof GeoFunctionNVar)
+             if ((ok[0] = arg[0] instanceof FunctionalNVar)
      	            && (ok[1] = arg[1].isGeoNumeric())		 
     	            && (ok[2] = arg[2].isGeoNumeric())		 
     	            && (ok[3] = arg[3].isGeoNumeric())		 
@@ -7131,14 +7131,14 @@ class CmdOsculatingCircle extends CommandProcessor {
                  GeoElement[] ret =
                      {
                           kernel.SolveODE (
-                             c.getLabel(), (GeoFunctionNVar)arg[0], null, (GeoNumeric)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4])};
+                             c.getLabel(), (FunctionalNVar)arg[0], null, (GeoNumeric)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4])};
                  return ret;                
              }                        
               else
             	 throw argErr(app, c.getName(), getBadArg(ok, arg));         
          case 6 :             
-             if ((ok[0] = arg[0] instanceof GeoFunctionNVar)          		 
-      	            && (ok[1] = arg[1] instanceof GeoFunctionNVar)	 
+             if ((ok[0] = arg[0] instanceof FunctionalNVar)          		 
+      	            && (ok[1] = arg[1] instanceof FunctionalNVar)	 
      	            && (ok[2] = arg[2].isGeoNumeric())		 
     	            && (ok[3] = arg[3].isGeoNumeric())		 
     	            && (ok[4] = arg[4].isGeoNumeric())		 
@@ -7147,7 +7147,7 @@ class CmdOsculatingCircle extends CommandProcessor {
                  GeoElement[] ret =
                      {
                           kernel.SolveODE (
-                             c.getLabel(), (GeoFunctionNVar)arg[0], (GeoFunctionNVar)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4], (GeoNumeric)arg[5])};
+                             c.getLabel(), (FunctionalNVar)arg[0], (FunctionalNVar)arg[1], (GeoNumeric)arg[2], (GeoNumeric)arg[3], (GeoNumeric)arg[4], (GeoNumeric)arg[5])};
                  return ret;                
              }                        
               else {

@@ -214,10 +214,17 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
 	
 	/**
 	 * Returns this function's value at position x.
+	 * Special case: for f(y) = y returns f(val[1])
+	 * (needed for eg SolveODE[-x,y,etc] )
 	 * @param x
-	 * @return f(x)
+	 * @return f(val[0]) or f(val[1])
 	 */
 	public double evaluate(double[] vals) {
+		
+		if (vals.length > 1 && "y".equals(fun.getFunctionVariable().toString())) {
+			return evaluate(vals[1]);
+		}
+		
 		return evaluate(vals[0]);
 	}
 	

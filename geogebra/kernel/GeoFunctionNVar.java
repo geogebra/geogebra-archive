@@ -462,8 +462,6 @@ implements FunctionalNVar, CasEvaluableFunction {
 		public boolean isFillable() {
 			return hasDrawable3D();
 		}
-		
-	 
 	 
 /*
 		public GgbVector evaluateNormal(double u, double v){

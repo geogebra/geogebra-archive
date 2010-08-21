@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
@@ -6018,7 +6019,7 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
-	final public GeoList SolveODE(String label, GeoFunctionNVar f, GeoFunctionNVar g, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {		
+	final public GeoList SolveODE(String label, FunctionalNVar f, FunctionalNVar g, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {		
 		AlgoSolveODE algo = new AlgoSolveODE(cons, label, f, g, x, y, end, step);
 		return algo.getResult();			
 	}

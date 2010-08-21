@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.FunctionalNVar;
+
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.FirstOrderIntegrator;
@@ -11,11 +13,11 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
 public class AlgoSolveODE extends AlgoElement {
 
 		private static final long serialVersionUID = 1L;
-		private GeoFunctionNVar f0, f1; // input
+		private FunctionalNVar f0, f1; // input
 		private GeoNumeric x, y, start, end, step; // input
 	    private GeoList g; // output        
 	    
-	    public AlgoSolveODE(Construction cons, String label, GeoFunctionNVar f0, GeoFunctionNVar f1, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {
+	    public AlgoSolveODE(Construction cons, String label, FunctionalNVar f0, FunctionalNVar f1, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {
 	    	super(cons);
 	        this.f0 = f0;            	
 	        this.f1 = f1;            	
@@ -39,8 +41,8 @@ public class AlgoSolveODE extends AlgoElement {
 	        input = new GeoElement[f1 == null ? 5 : 6];
 	    	int i = 0;
 	    	
-	        input[i++] = f0;
-	        if (f1 != null) input[i++] = f1;
+	        input[i++] = (GeoElement)f0;
+	        if (f1 != null) input[i++] = (GeoElement)f1;
 	        input[i++] = x;
 	        input[i++] = y;
 	        input[i++] = end;
@@ -56,7 +58,7 @@ public class AlgoSolveODE extends AlgoElement {
 	    }
 
 	    protected final void compute() {       
-	        if (!f0.isDefined() || !x.isDefined() || !y.isDefined() || !step.isDefined() || !end.isDefined() || kernel.isZero(step.getDouble())) {
+	        if (!((GeoElement)f0).isDefined() || !x.isDefined() || !y.isDefined() || !step.isDefined() || !end.isDefined() || kernel.isZero(step.getDouble())) {
 	        	g.setUndefined();
 	        	return;
 	        }    
@@ -125,9 +127,9 @@ public class AlgoSolveODE extends AlgoElement {
 	    
 	    private static class ODE implements FirstOrderDifferentialEquations {
 
-	        GeoFunctionNVar f;
+	    	FunctionalNVar f;
 
-	        public ODE(GeoFunctionNVar f) {
+	        public ODE(FunctionalNVar f) {
 	            this.f = f;
 	        }
 
@@ -147,9 +149,9 @@ public class AlgoSolveODE extends AlgoElement {
 	    
 	    private static class ODE2 implements FirstOrderDifferentialEquations {
 
-	        GeoFunctionNVar y0, y1;
+	    	FunctionalNVar y0, y1;
 
-	        public ODE2(GeoFunctionNVar y, GeoFunctionNVar x) {
+	        public ODE2(FunctionalNVar y, FunctionalNVar x) {
 	            this.y0 = y;
 	            this.y1 = x;
 	        }
