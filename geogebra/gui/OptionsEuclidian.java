@@ -57,33 +57,44 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	private Application app;
 	private Kernel kernel;
 	private EuclidianView view;
+	
+	// GUI
 	private JButton btBackgroundColor, btAxesColor, btGridColor;
 	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick;
-	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle;
+	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle, cbView;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
 	private NumberComboBox ncbGridTickX, ncbGridTickY, ncbMinX, ncbMaxX, ncbMinY, ncbMaxY;	
 	private AxisPanel xAxisPanel, yAxisPanel;
 	private JLabel gridLabel1, gridLabel2, gridLabel3;
 	
+	private boolean isIniting;
+	
 	
 	/**
-	 * Creates a new dialog for the properties of the euclidian view.
+	 * Creates a new dialog for the properties of the Euclidian view.
 	 * @param app: parent frame
 	 */
 	public OptionsEuclidian(Application app, EuclidianView view) {
-		this.app = app;		
-		this.view = view;
-		kernel = app.getKernel();
 		
-		nfAxesRatio = NumberFormat.getInstance(Locale.ENGLISH);
-		nfAxesRatio.setMaximumFractionDigits(5);
-		nfAxesRatio.setGroupingUsed(false);
+		isIniting = true;
+		this.app = app;	
+		kernel = app.getKernel();
+		this.view = view;	
 		
 		// build GUI
-		initGUI();		
+		initGUI();
+		isIniting = false;
+	}
+	
+	
+	public void setView(EuclidianView view){
+		this.view = view;
+		if(!isIniting)
+			updateGUI();
 	}
 
+	
 	/**
 	 * inits GUI with labels of current language	 
 	 */
@@ -97,30 +108,46 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		btAxesColor.addActionListener(this);
 		btGridColor.addActionListener(this);			
 
-	
-		removeAll();	
-		setLayout(new BorderLayout());
+		// setup axes ratio field
+		nfAxesRatio = NumberFormat.getInstance(Locale.ENGLISH);
+		nfAxesRatio.setMaximumFractionDigits(5);
+		nfAxesRatio.setGroupingUsed(false);
 		
-		// tabbed pane for axes, grid
-		JTabbedPane tabbedPane = new JTabbedPane();
-		add(tabbedPane, BorderLayout.CENTER);	
 		
-		 // add axes panels
+		// create panels for the axes
         xAxisPanel = new AxisPanel(0);
         yAxisPanel = new AxisPanel(1);
+
+        // create panel with radio buttons to switch between Euclidian views
+        cbView = new JComboBox();
+        cbView.addItem("Graphics View"); 
+        cbView.addItem("Graphics View 2"); 
+        cbView.addActionListener(this);       
         
+        JPanel selectViewPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        selectViewPanel.add(cbView);
+     
         
+        // create tabbed pane for basic, axes, and grid options
+		JTabbedPane tabbedPane = new JTabbedPane();
+				
+        /* single panel for both axes --- too wide?
         JPanel axesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         axesPanel.add(xAxisPanel);
         axesPanel.add(Box.createRigidArea(new Dimension(16,0)));
-       // axesPanel.add(yAxisPanel);
-        
+      	*/
+       
         tabbedPane.addTab(app.getMenu("Properties.Basic"), buildBasicPanel());
         tabbedPane.addTab(app.getPlain("xAxis") , xAxisPanel);
-        tabbedPane.addTab(app.getPlain("yAxis"), yAxisPanel);
-        
-        
+        tabbedPane.addTab(app.getPlain("yAxis"), yAxisPanel);   
         tabbedPane.addTab(app.getMenu("Grid"), buildGridPanel());	
+        
+        
+        // put it all together
+		removeAll();	
+		setLayout(new BorderLayout());
+		add(selectViewPanel, BorderLayout.NORTH);	
+		add(tabbedPane, BorderLayout.CENTER);			
          
 	}
 	
@@ -132,7 +159,6 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			
 		//===================================
 		// create sub panels
-	
 		
 		//-------------------------------------
 		// window dimensions panel     
@@ -383,6 +409,14 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         cbBoldGrid.setSelected(view.getGridIsBold()); 
         cbBoldGrid.addActionListener(this);
         
+        cbView.removeActionListener(this);
+    	if(view == app.getEuclidianView())
+    		cbView.setSelectedItem("Graphics View");
+		else
+			cbView.setSelectedItem("Graphics View 2");
+    	cbView.addActionListener(this);
+        
+        
         ncbMinX.removeItemListener(this);
 	 	ncbMaxX.removeItemListener(this);
         ncbMinY.removeItemListener(this);
@@ -536,7 +570,18 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				 		view.getXscale(), view.getXscale() * xval/yval);			 
 			}
 		}		
-		
+
+		else if (source == cbView) {
+			String viewStr = (String) cbView.getSelectedItem();
+
+			if(viewStr == "Graphics View")
+				setView(app.getEuclidianView());
+			else
+				setView(app.getGuiManager().getEuclidianView2());
+		}
+
+
+
 		view.updateBackground();		
 		updateGUI();		
 	}
