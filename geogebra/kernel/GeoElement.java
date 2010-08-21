@@ -3465,23 +3465,27 @@ public abstract class GeoElement
 			sb.append(labelVisible);
 			sb.append("\"");
 			
-			int EVs = 0;
-			if (!isVisibleInView(app.getEuclidianView())) {
-				//Application.debug("visible in ev1");
-				EVs += 1; // bit 0
-			}
-
-			EuclidianView ev2 = (EuclidianView)app.getGuiManager().getEuclidianView2();
-			if (ev2 != null) {
-				if (!isVisibleInView(ev2)) {
-					EVs += 2; // bit 1				
-				}			
-			}
 			
-			if (EVs != 0) {
-				sb.append(" ev=\"");
-				sb.append(EVs);
-				sb.append("\"");
+			if (app.hasFullGui() && app.getGuiManager().hasEuclidianView2()) {
+
+				int EVs = 0;
+				if (!isVisibleInView(app.getEuclidianView())) {
+					//Application.debug("visible in ev1");
+					EVs += 1; // bit 0
+				}
+
+				EuclidianView ev2 = (EuclidianView)app.getGuiManager().getEuclidianView2();
+				if (ev2 != null) {
+					if (!isVisibleInView(ev2)) {
+						EVs += 2; // bit 1				
+					}			
+				}
+				
+				if (EVs != 0) {
+					sb.append(" ev=\"");
+					sb.append(EVs);
+					sb.append("\"");
+				}
 			}
 			
 			sb.append("/>\n");
