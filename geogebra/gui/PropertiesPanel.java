@@ -37,6 +37,7 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
+import geogebra.kernel.LineProperties;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.TextProperties;
@@ -4028,9 +4029,7 @@ public	class PropertiesPanel extends JPanel {
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
 				if (!(geo.isPath()
-					|| geo.isGeoPolygon()
-					|| (geo.isGeoLocus() && ((GeoList)geo).showLineProperties() )
-					|| geo.isGeoList()
+					|| (geo.isGeoList() && ((GeoList)geo).showLineProperties() )
 					|| (geo.isGeoNumeric()
 						&& ((GeoNumeric) geo).isDrawable()))) {
 					geosOK = false;
