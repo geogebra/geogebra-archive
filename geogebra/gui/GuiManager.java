@@ -114,7 +114,8 @@ public class GuiManager {
 	private AlgebraController algebraController;
 	private AlgebraView algebraView;
 	private CasManager casView;
-    private SpreadsheetView spreadsheetView;   
+    private SpreadsheetView spreadsheetView; 
+    private EuclidianView euclidianView2;
 
 	private GeoGebraFileChooser fileChooser;
 	private GeoGebraMenuBar menuBar;
@@ -124,7 +125,10 @@ public class GuiManager {
     private Locale currentLocale;
     private boolean htmlLoaded;//added by Zbynek Konecny, 2010-05-28 (see #126)
     
-    private Layout layout;
+    private EuclidianView focusedEuclidianView;
+    
+
+	private Layout layout;
 
 	// Actions
 	private AbstractAction showAxesAction, showGridAction, undoAction,
@@ -446,7 +450,6 @@ public class GuiManager {
 	}
 	
 	
-	EuclidianView euclidianView2;
 	public EuclidianView getEuclidianView2() {
     	if (euclidianView2 == null) {
     		boolean [] showAxis = { true, true };
@@ -461,6 +464,22 @@ public class GuiManager {
 	public boolean hasEuclidianView2() {
 		return euclidianView2 != null;
 	}
+	
+	
+	public EuclidianView getActiveEuclidianView() {
+		if(focusedEuclidianView == null)
+			focusedEuclidianView = app.getEuclidianView();
+		return focusedEuclidianView;
+	}
+
+	public void setActiveEuclidianView(EuclidianView activeEuclidianView) {
+		this.focusedEuclidianView = activeEuclidianView;
+	}
+
+	
+	
+	
+	
 	
 	
 	
@@ -871,7 +890,8 @@ public class GuiManager {
 	public void showDrawingPadPopup(Component invoker, Point p) {
 		// clear highlighting and selections in views		
 		app.getEuclidianView().resetMode();
-
+		
+		
 		// menu for drawing pane context menu
 		drawingPadpopupMenu = new ContextMenuGraphicsWindow(
 				app, p.x, p.y);
@@ -911,6 +931,7 @@ public class GuiManager {
 			Point screenPos = (invoker == null) ? new Point(0,0) : invoker.getLocationOnScreen();
 			screenPos.translate(p.x, p.y);
 	
+			
 			popupMenu = new ContextMenuGeoElement(app, geo,
 					screenPos);
 			popupMenu.show(invoker, p.x, p.y);

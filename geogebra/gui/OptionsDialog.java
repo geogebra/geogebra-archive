@@ -149,6 +149,9 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * @param index Index of the tab to hide, use the constants defined in this class for that
 	 */
 	public void showTab(int index) {
+		if(index == TAB_EUCLIDIAN){
+			euclidianPanel.setView(app.getGuiManager().getActiveEuclidianView());
+		}
 		tabbedPane.setSelectedIndex(index);
 	}
 

@@ -928,6 +928,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	public void mousePressed(MouseEvent e) {
 
+		// =============================================
+		// set this view to be the focused EV
+		// temporary code for testing (G.Sturr)		
+		app.getGuiManager().setActiveEuclidianView((EuclidianView) view);
+		// =============================================
+		
+		
 		if (mode == EuclidianView.MODE_PEN) {
 			handleMousePressedForPenMode(e);
 			return;
