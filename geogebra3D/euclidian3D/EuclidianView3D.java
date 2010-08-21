@@ -2686,4 +2686,37 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return null;
 	}
 
+	
+	
+	
+	public void setAxisCross(int axis, double cross) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setPositiveAxis(int axis, boolean isPositive) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public double[] getAxesCross() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setAxesCross(double[] axisCross) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean[] getPositiveAxes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setPositiveAxes(boolean[] positiveAxis) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

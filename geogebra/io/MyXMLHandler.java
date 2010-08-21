@@ -1019,6 +1019,24 @@ public class MyXMLHandler implements DocHandler {
 				//ev.getAxesTickStyles()[axis] = EuclidianView.AXES_TICK_STYLE_MAJOR_MINOR;
 				ev.setAxisTickStyle(axis, EuclidianView.AXES_TICK_STYLE_MAJOR_MINOR);
 			}
+			
+			
+			// axis crossing
+			String axisCross = (String) attrs.get("axisCross");
+			if (axisCross != null) {
+				double ac = Double.parseDouble(axisCross);
+				ev.setAxisCross(axis,ac);
+			}
+
+			// positive direction only
+			String posAxis = (String) attrs.get("positiveAxis");
+			if (posAxis != null) {
+				boolean isPositive = Boolean.parseBoolean(posAxis);
+				ev.setPositiveAxis(axis,isPositive);
+			}
+			
+				
+			
 			return true;
 		} catch (Exception e) {
 			//e.printStackTrace();

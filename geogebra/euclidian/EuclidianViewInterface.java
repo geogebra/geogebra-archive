@@ -184,6 +184,23 @@ public interface EuclidianViewInterface {
 	public void setAxisTickStyle(int axis, int tickStyle);
 	
 	
+	/** sets the axis crossing value
+	 * @param axis
+	 * @param cross
+	 */
+	public void setAxisCross(int axis, double cross);
+	
+	
+	/** sets if the axis is drawn in the positive direction only
+	 * @param axis
+	 * @param isPositive
+	 */
+	public void setPositiveAxis(int axis, boolean isPositive);
+	
+	
+	
+	
+	
 	/** Sets coord system from mouse move */
 	public void setCoordSystemFromMouseMove(int dx, int dy, int mode);
 	void setAnimatedCoordSystem(double ox, double oy, double newScale,int steps, boolean storeUndo);
@@ -212,6 +229,13 @@ public interface EuclidianViewInterface {
 	public void setAxesNumberingDistance(double tickDist, int axis);
 	public int[] getAxesTickStyles();
 	
+	public double[] getAxesCross() ;
+	public void setAxesCross(double[] axisCross); 
+	
+	public boolean[] getPositiveAxes(); 
+	public void setPositiveAxes(boolean[] positiveAxis); 
+
+
 	
 	/** remembers the origins values (xzero, ...) */
 	public void rememberOrigins();

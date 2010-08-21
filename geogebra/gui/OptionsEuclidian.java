@@ -840,18 +840,16 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			}	
 
 			else if (source == tfCross) {			
-				double cross = parseDouble(tfCross.getText());
-				if (axis == 0)
-					view.setXCross(cross);
-				else
-					view.setYCross(cross);
+				double cross = parseDouble(tfCross.getText());			
+					double[] ac = view.getAxesCross();
+					ac[axis] = cross;
+					view.setAxesCross(ac);
 			}		
 
-			else if (source == cbPositiveAxis) {			
-				if (axis == 0)
-					view.setPositiveXAxis(cbPositiveAxis.isSelected());
-				else
-					view.setPositiveYAxis(cbPositiveAxis.isSelected());
+			else if (source == cbPositiveAxis) {
+				boolean[] posAxis = view.getPositiveAxes();				
+				posAxis[axis] = cbPositiveAxis.isSelected();		
+				view.setPositiveAxes(posAxis);
 			}		
 			
 			view.updateBackground();			
@@ -912,20 +910,17 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	        cbShowAxis.addActionListener(this);
 	        
 	        // G.Sturr:  update axis crossing points
-	        tfCross.removeActionListener(this);
-	        if(axis == 0)
-	        	tfCross.setText(""+ view.getXCross());
-	        else
-	        	tfCross.setText("" + view.getYCross());
+	        tfCross.removeActionListener(this);       
+	        tfCross.setText(""+ view.getAxesCross()[axis]);
 	        tfCross.addActionListener(this);
 	        tfCross.addFocusListener(this);
 	        
 	        
 	        cbPositiveAxis.removeActionListener(this);
 	        if(axis == 0)
-	        	cbPositiveAxis.setSelected(view.isPositiveXAxis());
+	        	cbPositiveAxis.setSelected(view.getPositiveAxes()[0]);
 	        else
-	        	cbPositiveAxis.setSelected(view.isPositiveYAxis());
+	        	cbPositiveAxis.setSelected(view.getPositiveAxes()[1]);
 	        cbPositiveAxis.addActionListener(this);
 	            
 	        
