@@ -4630,6 +4630,8 @@ public abstract class GeoElement
 	public boolean isVisibleInView(Object view){
 		// if no views are set, add geo to both  by default
 		if(viewSet.isEmpty()){
+			viewSet.add(app.getGuiManager().getActiveEuclidianView());
+			/*
 			viewSet.add(app.getEuclidianView());
 			
 			GuiManager gui = app.getGuiManager();
@@ -4637,6 +4639,7 @@ public abstract class GeoElement
 				EuclidianView ev2 = (EuclidianView)app.getGuiManager().getEuclidianView2();
 				if (ev2 != null) viewSet.add(ev2);
 			}
+			*/
 			
 		}
 		return viewSet.contains(view);
