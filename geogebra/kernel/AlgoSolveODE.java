@@ -2,6 +2,8 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.FunctionalNVar;
 
+import java.util.ArrayList;
+
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.FirstOrderIntegrator;
@@ -15,7 +17,9 @@ public class AlgoSolveODE extends AlgoElement {
 		private static final long serialVersionUID = 1L;
 		private FunctionalNVar f0, f1; // input
 		private GeoNumeric x, y, start, end, step; // input
-	    private GeoList g; // output        
+	    //private GeoList g; // output        
+	    private GeoLocus locus; // output   
+	    private ArrayList<MyPoint> al;
 	    
 	    public AlgoSolveODE(Construction cons, String label, FunctionalNVar f0, FunctionalNVar f1, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {
 	    	super(cons);
@@ -26,10 +30,12 @@ public class AlgoSolveODE extends AlgoElement {
 	        this.end = end;            	
 	        this.step = step;            	
 	    	
-	        g = new GeoList(cons);                
+	        //g = new GeoList(cons);   
+	        locus = new GeoLocus(cons);
 	        setInputOutput(); // for AlgoElement        
 	        compute();
-	        g.setLabel(label);
+	        //g.setLabel(label);
+	        locus.setLabel(label);
 	    }
 	    
 	    public String getClassName() {
@@ -49,21 +55,25 @@ public class AlgoSolveODE extends AlgoElement {
 	        input[i++] = step;
 
 	        output = new GeoElement[1];
-	        output[0] = g;
+	        //output[0] = g;
+	        output[0] = locus;
 	        setDependencies(); // done by AlgoElement
 	    }
 
-	    public GeoList getResult() {
-	        return g;
+	    public GeoElement getResult() {
+	        //return g;
+	        return locus;
 	    }
 
 	    protected final void compute() {       
 	        if (!((GeoElement)f0).isDefined() || !x.isDefined() || !y.isDefined() || !step.isDefined() || !end.isDefined() || kernel.isZero(step.getDouble())) {
-	        	g.setUndefined();
+	        	//g.setUndefined();
+	        	locus.setUndefined();
 	        	return;
 	        }    
 	        
-	        g.clear();
+	        //g.clear();
+	        al = new ArrayList<MyPoint>();
 	        
 	        //FirstOrderIntegrator integrator = new DormandPrince853Integrator(1.0e-8, 100.0, 1.0e-10, 1.0e-10);
 	        FirstOrderIntegrator integrator = new ClassicalRungeKuttaIntegrator(step.getDouble());
@@ -74,7 +84,8 @@ public class AlgoSolveODE extends AlgoElement {
 	        
             boolean oldState = cons.isSuppressLabelsActive();
             cons.setSuppressLabelCreation(true);
-            g.add(new GeoPoint(cons, null, x.getDouble(), y.getDouble(), 1.0));
+            //g.add(new GeoPoint(cons, null, x.getDouble(), y.getDouble(), 1.0));
+            al.add(new MyPoint(x.getDouble(), y.getDouble(), false));
             cons.setSuppressLabelCreation(oldState);
 
 	        double[] yy = new double[] { y.getDouble() }; // initial state
@@ -92,7 +103,9 @@ public class AlgoSolveODE extends AlgoElement {
 				e.printStackTrace();
 			} // now y contains final state at time t=16.0
 			
-			g.setDefined(true);	
+			//g.setDefined(true);
+			locus.setPoints(al);
+			locus.setDefined(true);
 			
 	    }
 	    
@@ -115,10 +128,15 @@ public class AlgoSolveODE extends AlgoElement {
 	            boolean oldState = cons.isSuppressLabelsActive();
 	            cons.setSuppressLabelCreation(true);
 	            
-	            if (f1 == null)
-	            	g.add(new GeoPoint(cons, null, t, y[0], 1.0));
+	            if (f1 == null) {
+	            	//g.add(new GeoPoint(cons, null, t, y[0], 1.0));
+	            	al.add(new MyPoint(t, y[0], true));
+	            }
 	            else
-		            g.add(new GeoPoint(cons, null, y[0], y[1], 1.0));
+	            {
+		            //g.add(new GeoPoint(cons, null, y[0], y[1], 1.0));
+	            	al.add(new MyPoint(y[0], y[1], true));
+	            }
 	            	
 	            cons.setSuppressLabelCreation(oldState);
 	        }

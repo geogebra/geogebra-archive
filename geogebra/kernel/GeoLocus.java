@@ -26,11 +26,11 @@ public class GeoLocus extends GeoElement implements Path {
 	private boolean defined;		
 	
 	// coords of points on locus
-	private ArrayList myPointList;		
+	private ArrayList<MyPoint> myPointList;		
 	
 	public GeoLocus(Construction c) {
 		super(c);				
-		myPointList = new ArrayList(500);		
+		myPointList = new ArrayList<MyPoint>(500);		
 		setAlgebraVisible(false);
 	}  
 			
@@ -264,6 +264,11 @@ public class GeoLocus extends GeoElement implements Path {
 	 */
 	final public boolean isLabelValueShowable() {
 		return false;
+	}
+
+	public void setPoints(ArrayList<MyPoint> al) {
+		myPointList = al;
+		
 	}
 
 }

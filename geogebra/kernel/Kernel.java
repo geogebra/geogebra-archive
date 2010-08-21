@@ -6019,7 +6019,7 @@ public class Kernel {
 		return algo.getResult();			
 	}
 	
-	final public GeoList SolveODE(String label, FunctionalNVar f, FunctionalNVar g, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {		
+	final public GeoElement SolveODE(String label, FunctionalNVar f, FunctionalNVar g, GeoNumeric x, GeoNumeric y, GeoNumeric end, GeoNumeric step) {		
 		AlgoSolveODE algo = new AlgoSolveODE(cons, label, f, g, x, y, end, step);
 		return algo.getResult();			
 	}
