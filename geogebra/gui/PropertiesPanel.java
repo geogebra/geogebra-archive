@@ -5336,8 +5336,8 @@ class GraphicsViewLocationPanel
 				kernel.getApplication().getMenu("Location")
 			)
 		);
-		cbGraphicsView.setText("GraphicsView");
-		cbGraphicsView2.setText("GraphicsView2");
+		cbGraphicsView.setText(app.getPlain("DrawingPad"));
+		cbGraphicsView2.setText(app.getPlain("DrawingPad2"));
 		
 	}
 

@@ -274,7 +274,7 @@ public class GuiManager {
 		layout.registerPanel(
 			new DockPanel(
 					Application.VIEW_EUCLIDIAN2, 	// view id
-					"GraphicsView2", 				// view title phrase 
+					"DrawingPad2", 				// view title phrase 
 					true,							// style bar?
 					5								// menu order
 			) {
