@@ -1821,6 +1821,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		}
 
 		setAntialiasing(g);
+		
+		if(drawBorderAxes[0] || drawBorderAxes[1]){
+			Point labelOffset = getMaximumLabelSize(g);
+			if(drawBorderAxes[0])
+				axisCross[0] = ymin +  (labelOffset.y + 10)/yscale;
+			if(drawBorderAxes[1])
+				axisCross[1] = xmin + (labelOffset.x + 10)/xscale;
+		}
+		
 		if (showGrid)
 			drawGrid(g);
 		if (showAxes[0] || showAxes[1])
@@ -1875,7 +1884,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	// axis control vars 
 	private double[] axisCross = {0,0};
-	private boolean[] positiveAxis = {false, false};
+	private boolean[] positiveAxes = {false, false};
+	private boolean[] drawBorderAxes = {false,false};
+	
+	
 	
 	// getters and Setters for axis control vars
 
@@ -1894,19 +1906,33 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	
 	public boolean[] getPositiveAxes() {
-		return positiveAxis;
+		return positiveAxes;
 	}
 
 	public void setPositiveAxes(boolean[] positiveAxis) {
-		this.positiveAxis = positiveAxis;
+		this.positiveAxes = positiveAxis;
 	}
 
 	// for xml handler
 	public void setPositiveAxis(int axis, boolean isPositiveAxis) {
-		positiveAxis[axis] = isPositiveAxis;
+		positiveAxes[axis] = isPositiveAxis;
 	}
 	
+	
+	public boolean[] getDrawBorderAxes() {
+		return drawBorderAxes;
+	}
 
+	public void setDrawBorderAxes(boolean[] drawBorderAxes) {
+		this.drawBorderAxes = drawBorderAxes;
+	}
+	
+	// for xml handler
+	public void setDrawBorderAxis(int axis, boolean drawBorderAxis) {
+		drawBorderAxes[axis] = drawBorderAxis;
+	}
+	
+	
 
 	/**********************************************
 	 *  drawAxes
@@ -1914,18 +1940,18 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	final void drawAxes(Graphics2D g2) {
 		
 		// screen x: yAxis crosses the xAxis here
-		double xCrossPix =  this.xZero + axisCross[0] * xscale;
+		double xCrossPix =  this.xZero + axisCross[1] * xscale;
 		
 		// screen y: xAxis crosses the YAxis here
-		double yCrossPix =  this.yZero - axisCross[1] * yscale;
+		double yCrossPix =  this.yZero - axisCross[0] * yscale;
 		
 		
 		// yAxis end value (for drawing half-axis)
-		int yAxisEnd = positiveAxis[1] ? (int) yCrossPix : height;		
+		int yAxisEnd = positiveAxes[1] ? (int) yCrossPix : height;		
 		
 		
 		// xAxis start value (for drawing half-axis)
-		int xAxisStart = positiveAxis[0] ? (int) xCrossPix : 0;		
+		int xAxisStart = positiveAxes[0] ? (int) xCrossPix : 0;		
 		
 		
 		// for axes ticks
@@ -1978,7 +2004,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// ========================================
 		// X-AXIS
 		
-		if (showAxes[0] && ymin < axisCross[1] && ymax > axisCross[1]) {
+		if (showAxes[0] && ymin < axisCross[0] && ymax > axisCross[0]) {
 			if (showGrid) {
 				yoffset = fontsize + 4;
 				xoffset = 10;
@@ -2105,7 +2131,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// ========================================
 		// Y-AXIS
 		
-		if (showAxes[1] && xmin < axisCross[0] && xmax > axisCross[0]) {
+		if (showAxes[1] && xmin < axisCross[1] && xmax > axisCross[1]) {
 			
 			if (showGrid) {
 				xoffset = -2 - fontsize / 4;
@@ -2159,7 +2185,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			// draw all of the remaining ticks and labels
 	
 			//int maxY = height - SCREEN_BORDER;
-			int maxY = positiveAxis[1] ? (int) yCrossPix : height - SCREEN_BORDER;
+			int maxY = positiveAxes[1] ? (int) yCrossPix : height - SCREEN_BORDER;
 			
 			//for (; pix <= height; rw -= axesNumberingDistances[1], pix += axesStep) {			
 			for (; pix <= yAxisEnd; rw -= axesNumberingDistances[1], pix += axesStep) {
@@ -2255,15 +2281,19 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	
 	/**
-	 * Returns maximum number of pixels needed to draw the y labels.
+	 * Finds maximum pixel width and height needed to draw current x and y axis labels.
+	 * return[0] = max width, return[1] = max height
 	 */
-	public double getYLabelWidth (Graphics2D g2) {
+	public Point getMaximumLabelSize (Graphics2D g2) {
+		
+		Point max = new Point(0,0);
+		
 		g2.setFont(fontAxes);	
 		FontRenderContext frc = g2.getFontRenderContext();
 		
 		int fontsize = fontAxes.getSize();
-		int yAxisHeight = positiveAxis[1] ? (int) yZero : height;		
-		int maxY = positiveAxis[1] ? (int) yZero : height - SCREEN_BORDER;
+		int yAxisHeight = positiveAxes[1] ? (int) yZero : height;		
+		int maxY = positiveAxes[1] ? (int) yZero : height - SCREEN_BORDER;
 		int xoffset, yoffset;
 
 		if (showGrid) {
@@ -2278,7 +2308,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		double pix = yZero - rw * yscale;
 		double axesStep = yscale * axesNumberingDistances[1]; // pixelstep
 	
-		double maxLabelWidth = 0;
 		
 		for (; pix <= yAxisHeight; rw -= axesNumberingDistances[1], pix += axesStep) {
 			if (pix <= maxY) {
@@ -2295,14 +2324,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 					TextLayout layout = new TextLayout(sb.toString(),
 							fontAxes, frc);
 					//System.out.println(layout.getAdvance() + " : " + sb);
-					if(maxLabelWidth < layout.getAdvance())
-						maxLabelWidth = layout.getAdvance();
-					
-					
+					if(max.x < layout.getAdvance())
+						max.x = (int) layout.getAdvance();
 				}
 			}
 		}
-		return maxLabelWidth;
+		FontMetrics fm = g2.getFontMetrics();
+		max.y += fm.getAscent();
+		
+		return max;
 	}
 
 
@@ -2323,10 +2353,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		g2.setStroke(gridStroke);
 
 		// vars for handling positive-only axes
-		double xCrossPix =  this.xZero + axisCross[0] * xscale;
-		double yCrossPix =  this.yZero - axisCross[1] * yscale;
-		int yAxisEnd = positiveAxis[1] ? (int) yCrossPix : height;		
-		int xAxisStart = positiveAxis[1] ? (int) xCrossPix : 0;
+		double xCrossPix =  this.xZero + axisCross[1] * xscale;
+		double yCrossPix =  this.yZero - axisCross[0] * yscale;
+		int yAxisEnd = positiveAxes[1] ? (int) yCrossPix : height;		
+		int xAxisStart = positiveAxes[1] ? (int) xCrossPix : 0;
 		
 		// set the clipping region (if positive direction axes)
 		Shape oldClip = g2.getClip();
@@ -3579,7 +3609,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 			// positive direction only flags
 			sb.append("\" positiveAxis=\"");
-			sb.append(positiveAxis[i]);
+			sb.append(positiveAxes[i]);
 
 			sb.append("\"/>\n");
 		}

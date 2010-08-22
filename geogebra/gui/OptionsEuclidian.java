@@ -59,6 +59,11 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	private EuclidianView view;
 	
 	// GUI
+	private JTabbedPane tabbedPane;
+	private JLabel[] dimLabel;
+	private JLabel axesRatioLabel;
+	private JPanel dimPanel; 
+	
 	private JButton btBackgroundColor, btAxesColor, btGridColor;
 	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick;
 	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle, cbView;
@@ -118,10 +123,12 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         xAxisPanel = new AxisPanel(0);
         yAxisPanel = new AxisPanel(1);
 
-        // create panel with radio buttons to switch between Euclidian views
+        // create panel with comboBox to switch between Euclidian views
         cbView = new JComboBox();
-        cbView.addItem("Graphics View"); 
-        cbView.addItem("Graphics View 2"); 
+        cbView.addItem(""); //ev
+        cbView.addItem(""); //ev2
+        cbView = new JComboBox();
+        
         cbView.addActionListener(this);       
         
         JPanel selectViewPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -129,7 +136,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
      
         
         // create tabbed pane for basic, axes, and grid options
-		JTabbedPane tabbedPane = new JTabbedPane();
+		 tabbedPane = new JTabbedPane();
 				
         /* single panel for both axes --- too wide?
         JPanel axesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -137,10 +144,10 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         axesPanel.add(Box.createRigidArea(new Dimension(16,0)));
       	*/
        
-        tabbedPane.addTab(app.getMenu("Properties.Basic"), buildBasicPanel());
-        tabbedPane.addTab(app.getPlain("xAxis") , xAxisPanel);
-        tabbedPane.addTab(app.getPlain("yAxis"), yAxisPanel);   
-        tabbedPane.addTab(app.getMenu("Grid"), buildGridPanel());	
+        tabbedPane.addTab("", buildBasicPanel());
+        tabbedPane.addTab("" , xAxisPanel);
+        tabbedPane.addTab("", yAxisPanel);   
+        tabbedPane.addTab("", buildGridPanel());	
         
         
         // put it all together
@@ -166,22 +173,28 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         ncbMinX = new NumberComboBox(app);
 		ncbMaxX = new NumberComboBox(app);	
 		ncbMinX.addItemListener(this);
-		ncbMaxX.addItemListener(this);			  
-        xDimPanel.add(new JLabel("X " + app.getPlain("min") + ":"));
+		ncbMaxX.addItemListener(this);	
+		
+		dimLabel = new JLabel[4]; // "Xmin", "Xmax" etc.
+		for(int i=0;i<4;i++)
+			dimLabel[i] = new JLabel("");
+		
+        xDimPanel.add(dimLabel[0]);
         xDimPanel.add(ncbMinX);
-        xDimPanel.add(new JLabel("X " + app.getPlain("max") + ":"));
+        xDimPanel.add(dimLabel[1]);
         xDimPanel.add(ncbMaxX);
-               
+              
         JPanel yDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
 		ncbMinY = new NumberComboBox(app);
 		ncbMaxY = new NumberComboBox(app);		
 		ncbMinY.addItemListener(this);
 		ncbMaxY.addItemListener(this);	  
-        yDimPanel.add(new JLabel("Y " + app.getPlain("min") + ":"));
+        yDimPanel.add(dimLabel[2]);
         yDimPanel.add(ncbMinY);
-        yDimPanel.add(new JLabel("Y " + app.getPlain("max") + ":"));
+        yDimPanel.add(dimLabel[3]);
         yDimPanel.add(ncbMaxY);
    
+            
         JPanel axesRatioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
         tfAxesRatioX = new MyTextField(app.getGuiManager(),6);
         tfAxesRatioY = new MyTextField(app.getGuiManager(),6);
@@ -189,12 +202,13 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         tfAxesRatioY.addActionListener(this);
         tfAxesRatioX.addFocusListener(this);
         tfAxesRatioY.addFocusListener(this);
-        axesRatioPanel.add(new JLabel(app.getPlain("xAxis") + " : " + app.getPlain("yAxis") + " = " ));
+        axesRatioLabel = new JLabel("");
+        axesRatioPanel.add(axesRatioLabel);
         axesRatioPanel.add(tfAxesRatioX);
         axesRatioPanel.add(new JLabel(" : "));
         axesRatioPanel.add(tfAxesRatioY);
       
-        JPanel dimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
+        dimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
         dimPanel.setLayout(new BoxLayout(dimPanel, BoxLayout.Y_AXIS));
         dimPanel.add(xDimPanel);
         dimPanel.add(yDimPanel);
@@ -411,9 +425,9 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         
         cbView.removeActionListener(this);
     	if(view == app.getEuclidianView())
-    		cbView.setSelectedItem("Graphics View");
+    		cbView.setSelectedIndex(0);
 		else
-			cbView.setSelectedItem("Graphics View 2");
+			cbView.setSelectedIndex(1);
     	cbView.addActionListener(this);
         
         
@@ -511,9 +525,42 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         
 	}
 	
+	
 	public void setLabels() {
-		// TODO update labels (F.S.)
+	
+		//TODO --- finish set labels
+		
+		
+		// tab titles
+		tabbedPane.setTitleAt(0,app.getMenu("Properties.Basic"));
+        tabbedPane.setTitleAt(1, app.getPlain("xAxis"));
+        tabbedPane.setTitleAt(2, app.getPlain("yAxis"));   
+        tabbedPane.setTitleAt(3, app.getMenu("Grid"));	
+		
+
+        // window dimension panel
+		dimLabel[0].setText("X " + app.getPlain("min") + ":");
+		dimLabel[1].setText("X " + app.getPlain("max") + ":");
+		dimLabel[2].setText("Y " + app.getPlain("min") + ":");
+		dimLabel[3].setText("Y " + app.getPlain("max") + ":");
+		axesRatioLabel.setText(app.getPlain("xAxis") + " : " + app.getPlain("yAxis") + " = " );
+	//	dimPanelTitle = "ttt";
+			
+		
+		
+		
+		cbView.removeActionListener(this);
+		cbView.removeAllItems();
+		   cbView.addItem(app.getPlain("DrawingPad")); 
+	        cbView.addItem(app.getPlain("DrawingPad") + " 2"); 
+	        cbView.removeActionListener(this);
+		
+		
+		
 	}
+	
+	
+	
 	
 	public void actionPerformed(ActionEvent e) {	
 		doActionPerformed(e.getSource());		
@@ -572,9 +619,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		}		
 
 		else if (source == cbView) {
-			String viewStr = (String) cbView.getSelectedItem();
-
-			if(viewStr == "Graphics View")
+			
+			if(cbView.getSelectedIndex() == 0)
 				setView(app.getEuclidianView());
 			else
 				setView(app.getGuiManager().getEuclidianView2());
@@ -683,7 +729,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		private static final long serialVersionUID = 1L;
 
 		private int axis;		
-		private JCheckBox cbShowAxis, cbAxisNumber, cbManualTicks, cbPositiveAxis;
+		private JCheckBox cbShowAxis, cbAxisNumber, cbManualTicks, cbPositiveAxis, cbDrawAtBorder;
 		private NumberComboBox ncbTickDist;	
 		private JComboBox cbTickStyle, cbAxisLabel, cbUnitLabel;
 		private JTextField tfCross;
@@ -782,6 +828,13 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			tfCross.addActionListener(this);
 			crossPanel.add(new JLabel(app.getPlain("CrossAt") + ":"));
 			crossPanel.add(tfCross);
+			
+			cbDrawAtBorder = new JCheckBox();
+			cbDrawAtBorder.addActionListener(this);
+			crossPanel.add(cbDrawAtBorder);
+			crossPanel.add(new JLabel(app.getPlain("Border")));
+			
+			
 						
 			// add all panels
 			add(showAxisPanel);
@@ -852,6 +905,15 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				view.setPositiveAxes(posAxis);
 			}		
 			
+			else if (source == cbDrawAtBorder) {
+				boolean[] border = view.getDrawBorderAxes();				
+				border[axis] = cbDrawAtBorder.isSelected();		
+				view.setDrawBorderAxes(border);
+				if(!cbDrawAtBorder.isSelected())
+					view.setAxisCross(axis, 0.0);
+			}		
+			
+			
 			view.updateBackground();			
 			updateGUI();
 		}
@@ -909,20 +971,27 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	        cbShowAxis.setSelected(axis == 0 ? view.getShowXaxis() : view.getShowYaxis());
 	        cbShowAxis.addActionListener(this);
 	        
-	        // G.Sturr:  update axis crossing points
-	        tfCross.removeActionListener(this);       
-	        tfCross.setText(""+ view.getAxesCross()[axis]);
+	       
+	        tfCross.removeActionListener(this);     
+	        if(view.getDrawBorderAxes()[axis])
+	        	tfCross.setText("");
+	        else
+	        	tfCross.setText(""+ view.getAxesCross()[axis]);
+	        tfCross.setEnabled(!view.getDrawBorderAxes()[axis]);
 	        tfCross.addActionListener(this);
 	        tfCross.addFocusListener(this);
-	        
-	        
+
+
 	        cbPositiveAxis.removeActionListener(this);
-	        if(axis == 0)
-	        	cbPositiveAxis.setSelected(view.getPositiveAxes()[0]);
-	        else
-	        	cbPositiveAxis.setSelected(view.getPositiveAxes()[1]);
+	        cbPositiveAxis.setSelected(view.getPositiveAxes()[axis]);
 	        cbPositiveAxis.addActionListener(this);
-	            
+
+
+	        cbDrawAtBorder.removeActionListener(this);
+	        cbDrawAtBorder.setSelected(view.getDrawBorderAxes()[axis]);
+	        cbDrawAtBorder.addActionListener(this);
+
+	        
 	        
 		}
 
