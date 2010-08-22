@@ -290,7 +290,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		//             Import Data	
 		// ===============================================
 
-		item = new JMenuItem(app.getPlain("Import Data File") + " ...");
+		item = new JMenuItem(app.getMenu("ImportDataFile") + " ...");
 		item.setIcon(app.getImageIcon("document-open.png"));
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -375,11 +375,11 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			this.addSeparator();
 
 		if(!isEmptySelection()){   // && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
-			subMenu = new JMenu(app.getMenu("Data Analysis") + " ...");
+			subMenu = new JMenu(app.getMenu("DataAnalysis") + " ...");
 			subMenu.setIcon(app.getEmptyIcon()); 	 	
 			addItem(subMenu);   	 	
 
-			item = new JMenuItem(app.getMenu(app.getPlain("One Variable")),app.getEmptyIcon());		
+			item = new JMenuItem(app.getMenu(app.getMenu("OneVariable")),app.getEmptyIcon());		
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					view.showStatDialog(StatDialog.MODE_ONEVAR);
@@ -388,7 +388,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			addSubItem(subMenu,item);	
 			item.setEnabled((cp.isOneVarStatsPossible(selectedCellRanges)));
 
-			item = new JMenuItem(app.getMenu(app.getPlain("Two Variable")),app.getEmptyIcon());		
+			item = new JMenuItem(app.getMenu(app.getMenu("TwoVariable")),app.getEmptyIcon());		
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					view.showStatDialog(StatDialog.MODE_TWOVAR);
@@ -408,7 +408,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		// ===============================================
 
 		if( isShiftDown){
-			item = new JMenuItem(app.getMenu(app.getPlain("Probability Calculator")),app.getEmptyIcon());
+			item = new JMenuItem(app.getMenu(app.getMenu("ProbabilityCalculator")),app.getEmptyIcon());
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					view.showProbabilityCalculator();
@@ -431,7 +431,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		subMenu.setIcon(app.getEmptyIcon());
 		addItem(subMenu);
 
-		cbItem = new JCheckBoxMenuItem(app.getMenu("File Browser"));
+		cbItem = new JCheckBoxMenuItem(app.getMenu("FileBrowser"));
 		//cbItem.setIcon(app.getEmptyIcon());
 		cbItem.setSelected(view.getShowBrowserPanel());
 		cbItem.addActionListener(new ActionListener() {
@@ -442,7 +442,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		addSubItem(subMenu,cbItem);	
 
 
-		item = new JMenuItem(app.getMenu("Spreadsheet Options") + "...",app.getEmptyIcon());
+		item = new JMenuItem(app.getMenu("SpreadsheetOptions") + "...",app.getEmptyIcon());
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_SPREADSHEET);

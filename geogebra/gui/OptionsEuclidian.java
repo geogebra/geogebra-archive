@@ -832,7 +832,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			cbDrawAtBorder = new JCheckBox();
 			cbDrawAtBorder.addActionListener(this);
 			crossPanel.add(cbDrawAtBorder);
-			crossPanel.add(new JLabel(app.getPlain("Border")));
+			crossPanel.add(new JLabel(app.getPlain("StickToEdge")));
 			
 			
 						
