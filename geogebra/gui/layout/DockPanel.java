@@ -4,6 +4,7 @@ import geogebra.gui.app.GeoGebraFrame;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.main.Application;
 
+import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -12,10 +13,14 @@ import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -29,6 +34,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * Every object which should be dragged needs to be of type DockPanel.
@@ -68,6 +74,11 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * If this panel is visible.
 	 */
 	private boolean visible = false;
+	
+	/**
+	 * If this panel has focus.
+	 */
+	private boolean hasFocus = false;
 	
 	/**
 	 * The dimensions of the external window of this panel.
@@ -663,6 +674,20 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	
 	public void setVisible(boolean visible) {
 		this.visible = visible;
+	}
+	
+	public boolean hasFocus() {
+		return hasFocus;
+	}
+	
+	public void setFocus(boolean hasFocus) {
+		this.hasFocus = hasFocus;
+		
+		if(hasFocus) {
+			titlePanel.setBackground(SystemColor.control.brighter());
+		} else {
+			titlePanel.setBackground(SystemColor.control);
+		}
 	}
 	
 	/**

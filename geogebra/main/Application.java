@@ -3427,17 +3427,16 @@ public class Application implements KeyEventDispatcher {
 		return pluginmanager;
 	}// getPluginManager()
 	
-	
-	public static void debug(String s) {
-		doDebug(s, false, false, 0);
+	public static void debug(Object s) {
+		doDebug(s.toString(), false, false, 0);
 	}
 	
-	public static void debug(String s, int level) {
-		doDebug(s, false, false, level);
+	public static void debug(Object s, int level) {
+		doDebug(s.toString(), false, false, level);
 	}
 	
-	public static void debug(String s, boolean showTime, boolean showMemory, int level) {
-		doDebug(s, showTime, showMemory, level);
+	public static void debug(Object s, boolean showTime, boolean showMemory, int level) {
+		doDebug(s.toString(), showTime, showMemory, level);
 	}
 	
 	// Michael Borcherds 2008-06-22

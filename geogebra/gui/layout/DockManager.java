@@ -4,29 +4,48 @@ import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.main.Application;
 
+import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * Class responsible to manage the whole docking area of the window.
  * 
  * @author Florian Sonner
  */
-public class DockManager {
+public class DockManager implements AWTEventListener {
 	private Application app;
 	private Layout layout;
 	
+	/**
+	 * The glass panel used for drag'n'drop.
+	 */
 	private DockGlassPane glassPane;	
 	
+	/**
+	 * The root split pane.
+	 */
 	private DockSplitPane rootPane;
 	
+	/**
+	 * The dock panel which has the focus at the moment.
+	 */
+	private DockPanel focusedDockPanel;
+	
+	/**
+	 * A list with all registered dock panels.
+	 */
 	private ArrayList<DockPanel> dockPanels;
 	
 	/**
@@ -40,10 +59,19 @@ public class DockManager {
 		dockPanels = new ArrayList<DockPanel>();
 		glassPane = new DockGlassPane(this);
 		
-		if(!app.isApplet())
+		if(!app.isApplet()) {
 			app.setGlassPane(glassPane);
+		}
+		
+		// register focus changes
+		Toolkit.getDefaultToolkit().addAWTEventListener(this , AWTEvent.MOUSE_EVENT_MASK);
 	}
 	
+	/**
+	 * Register a new dock panel. Use Layout::registerPanel() as public interface.
+	 * 
+	 * @param dockPanel
+	 */
 	public void registerPanel(DockPanel dockPanel) {
 		dockPanels.add(dockPanel);
 		dockPanel.register(this);
@@ -190,7 +218,7 @@ public class DockManager {
 			}
 		}
 		
-		glassPane.activate(new DnDState(panel));
+		glassPane.startDrag(new DnDState(panel));
 	}
 	
 	/**
@@ -572,6 +600,30 @@ public class DockManager {
 			if(isPermanent) {
 				app.validateComponent();
 			}
+		}
+	}
+	
+	/**
+	 * Listen to mouse clicks and determine if the view focus changed.
+	 */
+	public void eventDispatched(AWTEvent event) {
+		// we also get notified about other mouse events, but we want to ignore them
+		if(event.getID() != MouseEvent.MOUSE_CLICKED) {
+			return;
+		}
+		
+		// determine ancestor element of the event source which is of type
+		// dock panel
+		DockPanel dp = (DockPanel)SwingUtilities.getAncestorOfClass(DockPanel.class, (Component)event.getSource());
+		
+		if(dp != null && dp != focusedDockPanel) {
+			// remove focus from previously focused dock panel
+			if(focusedDockPanel != null) {
+				focusedDockPanel.setFocus(false);
+			}
+			
+			focusedDockPanel = dp;
+			focusedDockPanel.setFocus(true);
 		}
 	}
 	

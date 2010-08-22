@@ -1,5 +1,7 @@
 package geogebra.gui.layout;
 
+import geogebra.main.Application;
+
 import java.awt.AWTEvent;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -10,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -24,7 +27,7 @@ import javax.swing.SwingUtilities;
 public class DockGlassPane extends JPanel implements AWTEventListener {
 	private static final long serialVersionUID = 1L;
 	
-	private boolean active = false;
+	private boolean dragInProgress = false;
 	private BasicStroke stroke;
 	private DockManager dockManager;
 
@@ -40,23 +43,22 @@ public class DockGlassPane extends JPanel implements AWTEventListener {
 		stroke = new BasicStroke(4);
 		
 		setOpaque(false);
-		setVisible(false);
 	}
 
-	public boolean isActive() {
-		return active;
+	public boolean isDragInProgress() {
+		return dragInProgress;
 	}
 	
 	/**
-	 * Activate the glass pane by adding the mouse listeners.
+	 * Start the dragging process by adding the mouse listeners.
 	 * 
 	 * @param state
 	 */
-	public void activate(DnDState state) {
-		if(active)
+	public void startDrag(DnDState state) {
+		if(dragInProgress)
 			return;
 		
-		active = true;
+		dragInProgress = true;
 		
 		Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.MOUSE_MOTION_EVENT_MASK | AWTEvent.MOUSE_EVENT_MASK);
 		setVisible(true);
@@ -100,11 +102,11 @@ public class DockGlassPane extends JPanel implements AWTEventListener {
 	/**
 	 * The mouse was released, quit the drag'n'drop mode.
 	 */
-	public void disable() {
-		if(!active)
+	public void stopDrag() {
+		if(!dragInProgress)
 			return;
 		
-		active = false;
+		dragInProgress = false;
 		
 		Toolkit.getDefaultToolkit().removeAWTEventListener(this);
 		setVisible(false);
@@ -286,7 +288,7 @@ public class DockGlassPane extends JPanel implements AWTEventListener {
 			if(event.getID() == MouseEvent.MOUSE_DRAGGED && ((MouseEvent)event).getModifiers() == MouseEvent.BUTTON1_MASK)
 				mouseDragged((MouseEvent)event);
 			else if(event.getID() == MouseEvent.MOUSE_RELEASED)
-				disable();
+				stopDrag();
 		}
 	}
 }

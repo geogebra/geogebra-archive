@@ -35,7 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-public class MyToolbar extends JPanel implements ComponentListener{
+public class ToolBar extends JPanel implements ComponentListener{
 
 	private static final long serialVersionUID = 8983050697241236851L;
 
@@ -54,7 +54,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
      * Creates a panel for the application's toolbar. 
      * Note: call initToolbar() to fill the panel.
      */
-	public MyToolbar(Application app)  {
+	public ToolBar(Application app)  {
 		this.app = app;	
 		addComponentListener(this);
 	}
@@ -62,7 +62,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	/**
      * Creates a toolbar using the current strToolBarDefinition. 
      */
-    public void initToolbar() {    	    	
+    public void initToolarBar() {    	    	
     	selectedMode = -1;
     	
         // create toolBars                       
@@ -424,9 +424,6 @@ public class MyToolbar extends JPanel implements ComponentListener{
 	        		 toolbar.add(menu);
 	        	 
 	        	 // add separator between two menus
-	        	 //menu = new Vector();
-	        	 //menu.add(TOOLBAR_SEPARATOR);	        	 
-	        	 //toolbar.add(menu);
 	        	 toolbar.add(TOOLBAR_SEPARATOR);
 	        	 
 	        	 // start next menu

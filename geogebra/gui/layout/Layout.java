@@ -3,7 +3,7 @@ package geogebra.gui.layout;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.InputDialog;
 import geogebra.gui.InputHandler;
-import geogebra.gui.toolbar.MyToolbar;
+import geogebra.gui.toolbar.ToolBar;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.io.layout.Perspective;
@@ -110,7 +110,7 @@ public class Layout {
 		DockSplitPaneXml[] spInfo = new DockSplitPaneXml[1];
 		spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
 		
-		String defToolbar = MyToolbar.getDefaultToolbarStringNoMacros();
+		String defToolbar = ToolBar.getDefaultToolbarStringNoMacros();
 		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, true, false, true, true, true, false);
 		
 		// basic geometry - just the euclidian view
