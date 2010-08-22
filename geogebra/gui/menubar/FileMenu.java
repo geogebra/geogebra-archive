@@ -395,7 +395,7 @@ class FileMenu extends BaseMenu {
 		};
 
 		// Added by Andy Zhu; Asymptote export
-		exportAsymptoteAction = new AbstractAction(app.getPlain("Graphics View as Asymptote")
+		exportAsymptoteAction = new AbstractAction(app.getPlain("GraphicsViewAsAsymptote")
 				+ " ...", app.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 

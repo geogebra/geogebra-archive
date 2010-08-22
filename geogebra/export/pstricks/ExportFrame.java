@@ -46,7 +46,7 @@ abstract public class ExportFrame extends JFrame{
 	 // end changes
 	protected JPanel panel;
 	protected JButton button,button_copy;
-	protected JCheckBox jcbPointSymbol,jcbGrayscale, jcbAsymptoteExport, 
+	protected JCheckBox jcbPointSymbol,jcbGrayscale,  
 	 // Andy Zhu - for use in Asymptote Frame
 	                    jcbShowAxes,jcbAsyCompact,jcbAsyCse5,jcbDotColors;
 	 // end changes
@@ -103,7 +103,6 @@ abstract public class ExportFrame extends JFrame{
  		labelYmax=new JLabel(app.getPlain("ymax"));
 		jcbPointSymbol=new JCheckBox(app.getPlain("DisplayPointSymbol"));
 		jcbGrayscale=new JCheckBox(app.getPlain("PGFExport.Grayscale"));
-		jcbAsymptoteExport=new JCheckBox(app.getPlain("ExporttoAsymptote"));
 		 // Andy Zhu: for use in Asymptote frame
 		jcbShowAxes   = new JCheckBox(app.getPlain("Show Axes/Grid"));
 		jcbAsyCompact = new JCheckBox(app.getPlain("Concise code"));
@@ -130,7 +129,6 @@ abstract public class ExportFrame extends JFrame{
 		comboFontSize=new JComboBox(msg);
 		jcbPointSymbol.setSelected(true);
 		jcbGrayscale.setSelected(false);
-		jcbAsymptoteExport.setSelected(false);
 		button.addActionListener(ggb);
 		button_copy.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -191,9 +189,6 @@ abstract public class ExportFrame extends JFrame{
 	}
 	public boolean isGrayscale(){
 		return jcbGrayscale.isSelected();
-	}
-	public boolean asymptoteExport(){
-		return jcbAsymptoteExport.isSelected();
 	}
 	public boolean getExportPointSymbol(){
 		return jcbPointSymbol.isSelected();
