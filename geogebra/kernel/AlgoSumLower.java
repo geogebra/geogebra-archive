@@ -29,6 +29,7 @@ public class AlgoSumLower extends AlgoFunctionAreaSums {
 	public AlgoSumLower(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n) {
 		super(cons, label, f, a, b, n, AlgoFunctionAreaSums.TYPE_LOWERSUM);		
+		cons.registerEuclidianViewAlgo(this);
 	}
 	
 	public String getClassName() {
