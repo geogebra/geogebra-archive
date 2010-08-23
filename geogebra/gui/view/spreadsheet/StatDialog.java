@@ -347,8 +347,8 @@ implements ActionListener, View   {
 		case MODE_TWOVAR:
 			//TODO -- get actual titles, handling ctrl-select
 			title = new String[2];	
-			title[0] = "X";
-			title[1] = "Y";
+			title[0] = app.getMenu("Column.X");
+			title[1] = app.getMenu("Column.Y");
 			break;
 
 		}
@@ -374,10 +374,10 @@ implements ActionListener, View   {
 		try {
 			switch(mode){
 			case MODE_ONEVAR:
-				setTitle(app.getPlain("One Variable Statistics"));	
+				setTitle(app.getMenu("OneVariableStatistics"));	
 				break;
 			case MODE_TWOVAR:
-				setTitle(app.getPlain("Two Variable Statistics"));	
+				setTitle(app.getMenu("TwoVariableStatistics"));	
 				break;
 
 			}
@@ -385,19 +385,19 @@ implements ActionListener, View   {
 			//===========================================
 			// button panel
 			
-			btnClose = new JButton(app.getPlain("Close"));
+			btnClose = new JButton(app.getMenu("Close"));
 			btnClose.addActionListener(this);
 			JPanel rightButtonPanel = new JPanel(new FlowLayout());
 			rightButtonPanel.add(btnClose);
 			
 			
-			btnOptions = new JButton(app.getPlain("Options"));
+			btnOptions = new JButton(app.getMenu("Options"));
 			btnOptions.addActionListener(this);
 			
-			btnExport = new JButton(app.getPlain("Export"));
+			btnExport = new JButton(app.getMenu("Export"));
 			btnExport.addActionListener(this);
 			
-			btnDisplay = new JButton(app.getPlain("Plots"));
+			btnDisplay = new JButton(app.getMenu("Plots"));
 			btnDisplay.addActionListener(this);
 			
 			JPanel centerButtonPanel = new JPanel(new FlowLayout());
@@ -406,11 +406,11 @@ implements ActionListener, View   {
 			centerButtonPanel.add(btnExport);
 			
 			
-			cbShowData = new JCheckBox(app.getPlain("Show Data"));
+			cbShowData = new JCheckBox(app.getMenu("ShowData"));
 			cbShowData.setSelected(showDataPanel);
 			cbShowData.addActionListener(this);
 			
-			cbShowCombo2 = new JCheckBox(app.getPlain("Show Plot2"));
+			cbShowCombo2 = new JCheckBox(app.getMenu("ShowPlot2"));
 			cbShowCombo2.setSelected(showComboPanel2);
 			cbShowCombo2.addActionListener(this);
 			

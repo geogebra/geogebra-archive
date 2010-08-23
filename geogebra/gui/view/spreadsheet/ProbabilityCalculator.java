@@ -128,7 +128,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			//===========================================
 			// button panel
 			
-			btnClose = new JButton(app.getPlain("Close"));
+			btnClose = new JButton(app.getMenu("Close"));
 			btnClose.addActionListener(this);
 			JPanel rightButtonPanel = new JPanel(new FlowLayout());
 			rightButtonPanel.add(btnClose);
@@ -154,10 +154,10 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			// control panel
 			
 			JPanel distPanel = this.createDistributionPanel();
-			distPanel.setBorder(BorderFactory.createTitledBorder("Distribution"));
+			distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
 				
 			JPanel probPanel = this.createProbPanel();
-			probPanel.setBorder(BorderFactory.createTitledBorder("Probability"));
+			probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
 			
 			JPanel controlPanel = new JPanel();
 			controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.Y_AXIS));
@@ -296,19 +296,19 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		parmLabels = new String[numDist][numDist];
 		distLabels = new String[numDist];
 
-		distLabels[DIST_NORMAL] = app.getPlain("Normal");
-		parmLabels[DIST_NORMAL][0] = app.getPlain("mean");
-		parmLabels[DIST_NORMAL][1] = app.getPlain("sigma");
+		distLabels[DIST_NORMAL] = app.getMenu("Distribution.Normal");
+		parmLabels[DIST_NORMAL][0] = app.getMenu("Mean");
+		parmLabels[DIST_NORMAL][1] = app.getMenu("StandardDeviation.short");
 
-		distLabels[DIST_STUDENT] = app.getPlain("Student");
-		parmLabels[DIST_STUDENT][0] = app.getPlain("df");
+		distLabels[DIST_STUDENT] = app.getMenu("Distribution.StudentT");
+		parmLabels[DIST_STUDENT][0] = app.getMenu("DegreesOfFreedom.short");
 
-		distLabels[DIST_CHISQUARE] = app.getPlain("ChiSquare");	
-		parmLabels[DIST_CHISQUARE][0] = app.getPlain("df");
+		distLabels[DIST_CHISQUARE] = app.getMenu("Distribution.ChiSquare");	
+		parmLabels[DIST_CHISQUARE][0] = app.getMenu("DegreesOfFreedom.short");
 
-		distLabels[DIST_BINOMIAL] = app.getPlain("Binomial");
-		parmLabels[DIST_BINOMIAL][0] = app.getPlain("n");
-		parmLabels[DIST_BINOMIAL][1] = app.getPlain("p");
+		distLabels[DIST_BINOMIAL] = app.getMenu("Distribution.Binomial");
+		parmLabels[DIST_BINOMIAL][0] = app.getMenu("Binomial.number");
+		parmLabels[DIST_BINOMIAL][1] = app.getMenu("Binonial.probability");
 
 
 	}

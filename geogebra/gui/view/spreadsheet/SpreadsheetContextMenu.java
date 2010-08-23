@@ -233,7 +233,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			item.setEnabled((cp.isCreatePointListPossible(selectedCellRanges)));
 
 
-			item = new JMenuItem(app.getCommand("Matrix"));
+			item = new JMenuItem(app.getMenu("Matrix"));
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					cp.CreateMatrix(column1, column2, row1, row2);

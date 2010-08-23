@@ -219,16 +219,16 @@ public class StatTablePanel extends JPanel {
 		case StatDialog.MODE_ONEVAR:
 			
 			String[][]statMap1 = { 
-					{app.getPlain("N") ,"Length"},
-					{app.getPlain("Mean") ,"Mean"},
-					{app.getPlain("Sigma") ,"SD"},
-					{app.getPlain("s") ,"SampleSD"},
+					{app.getMenu("Length.short") ,"Length"},
+					{app.getMenu("Mean") ,"Mean"},
+					{app.getMenu("StandardDeviation.short") ,"SD"},
+					{app.getMenu("SampleStandardDeviation.short") ,"SampleSD"},
 					{null , null},
-					{app.getPlain("Min") ,"Min"},
-					{app.getPlain("Q1") ,"Q1"},
-					{app.getPlain("Median") ,"Median"},
-					{app.getPlain("Q3") ,"Q3"},
-					{app.getPlain("Max") ,"Max"}
+					{app.getMenu("Minimum.short") ,"Min"},
+					{app.getMenu("LowerQuartile.short") ,"Q1"},
+					{app.getMenu("Median") ,"Median"},
+					{app.getMenu("UpperQuartile.short") ,"Q3"},
+					{app.getMenu("Minimum.short") ,"Max"}
 			};
 
 			text = createStatListString(statMap1, label);
@@ -241,7 +241,7 @@ public class StatTablePanel extends JPanel {
 			String[][]statMap2 = {
 					{app.getPlain("MeanX") ,"MeanX"},
 					{app.getPlain("MeanY") ,"MeanY"},
-					{app.getPlain("r") ,"CorrelationCoefficient"},
+					{app.getPlain("CorrelationCoefficient.short") ,"PMCC"},
 					
 					{app.getPlain("Sxx") ,"Sxx"},
 					{app.getPlain("Syy") ,"Syy"},

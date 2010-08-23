@@ -41,7 +41,6 @@ abstract public class ExportFrame extends JFrame{
 	 // Andy Zhu TODO
 	 ,comboFill;
 	protected JLabel labelFill;
-	final String[] comboFillText={"None","Only opaque fills","With opacity pen","By layering"};
 	static final int FILL_NONE = 0, FILL_OPAQUE = 1, FILL_OPACITY_PEN = 2, FILL_LAYER = 3;
 	 // end changes
 	protected JPanel panel;
@@ -104,10 +103,10 @@ abstract public class ExportFrame extends JFrame{
 		jcbPointSymbol=new JCheckBox(app.getPlain("DisplayPointSymbol"));
 		jcbGrayscale=new JCheckBox(app.getPlain("PGFExport.Grayscale"));
 		 // Andy Zhu: for use in Asymptote frame
-		jcbShowAxes   = new JCheckBox(app.getPlain("Show Axes/Grid"));
-		jcbAsyCompact = new JCheckBox(app.getPlain("Concise code"));
-		jcbAsyCse5    = new JCheckBox(app.getPlain("Concise using cse5"));
-		jcbDotColors  = new JCheckBox(app.getPlain("Keep dot colors"));
+		jcbShowAxes   = new JCheckBox(app.getMenu("ShowAxesGrid"));
+		jcbAsyCompact = new JCheckBox(app.getMenu("ConciseCode"));
+		jcbAsyCse5    = new JCheckBox(app.getMenu("ConciseUsingCSE5"));
+		jcbDotColors  = new JCheckBox(app.getMenu("KeepDotColors"));
 		jcbShowAxes.setSelected(true);
 		jcbAsyCompact.setSelected(false);
 		jcbAsyCse5.setSelected(false);
@@ -123,8 +122,10 @@ abstract public class ExportFrame extends JFrame{
 				}
 			}
 		});
+		final String[] comboFillText={app.getMenu("None"),app.getMenu("OnlyOpaqueFills"),app.getMenu("WithOpacityPen") ,app.getMenu("ByLayering")};
+
 		comboFill = new JComboBox(comboFillText);
-		labelFill = new JLabel(app.getPlain("Fill type:"));
+		labelFill = new JLabel(app.getMenu("FillType")+":");
 		 // end changes
 		comboFontSize=new JComboBox(msg);
 		jcbPointSymbol.setSelected(true);

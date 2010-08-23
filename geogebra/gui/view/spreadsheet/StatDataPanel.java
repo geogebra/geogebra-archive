@@ -182,7 +182,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		this.setLayout(new BorderLayout());
 		
 		//JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel header = new JLabel(app.getPlain("Data"));
+		JLabel header = new JLabel(app.getMenu("Data"));
 		//header.add(btnEnableAll);
 		//header.add(lblData);
 		

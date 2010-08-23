@@ -1,12 +1,13 @@
 package geogebra.export.pstricks;
 
+import geogebra.main.Application;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 
 /**
  * @author Andy Zhu
@@ -21,7 +22,7 @@ public class AsymptoteFrame extends ExportFrame{
 	 * @param ggb2asy
 	 */
 	public AsymptoteFrame(final GeoGebraToAsymptote ggb2asy){
-		super(ggb2asy,"Generate code");
+		super(ggb2asy,ggb2asy.app.getMenu("GenerateCode"));
 		initGui();
 	}
 	/** Opens GUI frame.
@@ -33,7 +34,7 @@ public class AsymptoteFrame extends ExportFrame{
 		comboFontSizeMore = new JComboBox(fontsizelist);
 		comboFontSizeMore.setSelectedIndex(10-Integer.parseInt(fontsizelist[0]));
 		
-		setTitle(app.getPlain("Geogebra to Asymptote export"));
+		setTitle(app.getMenu("GeogebraToAsymptoteExport"));
 		js.getViewport().add(textarea);
 		panel.setLayout(new GridBagLayout());
 		panel.add(labelXUnit, new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0,

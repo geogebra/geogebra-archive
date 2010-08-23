@@ -201,7 +201,7 @@ public class StatComboPanel extends JPanel{
 
 		numClassesPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		numClassesPanel.add(sliderNumClasses);
-		numClassesPanel.add(new JLabel(app.getPlain("classes" + ": ")));
+		numClassesPanel.add(new JLabel(app.getMenu("Classes" + ": ")));
 		numClassesPanel.add(lblNumClasses);
 	 
 	}
@@ -211,15 +211,15 @@ public class StatComboPanel extends JPanel{
 	private void createPlotMap(){
 		plotMap = new HashMap<Integer,String>();
 		
-		plotMap.put(PLOT_HISTOGRAM, app.getCommand("Histogram"));
-		plotMap.put(PLOT_BOXPLOT, app.getCommand("Boxplot"));
-		plotMap.put(PLOT_DOTPLOT, app.getCommand("DotPlot"));
-		plotMap.put(PLOT_STATISTICS_ONEVAR, app.getCommand("Statistics"));
-		plotMap.put(PLOT_HISTOGRAM, app.getCommand("Histogram"));
+		plotMap.put(PLOT_HISTOGRAM, app.getMenu("Histogram"));
+		plotMap.put(PLOT_BOXPLOT, app.getMenu("Boxplot"));
+		plotMap.put(PLOT_DOTPLOT, app.getMenu("DotPlot"));
+		plotMap.put(PLOT_STATISTICS_ONEVAR, app.getMenu("Statistics"));
+		plotMap.put(PLOT_HISTOGRAM, app.getMenu("Histogram"));
 		
-		plotMap.put(PLOT_SCATTERPLOT, app.getCommand("Scatterplot"));
-		plotMap.put(PLOT_RESIDUAL, app.getCommand("Residual Plot"));
-		plotMap.put(PLOT_STATISTICS_TWOVAR, app.getCommand("Statistics2"));
+		plotMap.put(PLOT_SCATTERPLOT, app.getMenu("Scatterplot"));
+		plotMap.put(PLOT_RESIDUAL, app.getMenu("ResidualPlot"));
+		plotMap.put(PLOT_STATISTICS_TWOVAR, app.getMenu("ResidualPlot"));
 		
 		
 		

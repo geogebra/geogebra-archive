@@ -379,7 +379,7 @@ implements
 		leftButtonPanel.add(btErase);
 		
 		
-		btClose = new JButton(app.getPlain("Close"));
+		btClose = new JButton(app.getMenu("Close"));
 		btClose.addActionListener(this);
 		
 		btCancel = new JButton(app.getPlain("Cancel"));

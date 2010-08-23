@@ -114,31 +114,31 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		layoutOptions.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		
 
-        cbShowGrid = new JCheckBox(app.getMenu("Show Gridlines"));  
+        cbShowGrid = new JCheckBox(app.getMenu("ShowGridlines"));  
         cbShowGrid.addActionListener(this);        
         layoutOptions.add(cbShowGrid); 
         
-        cbShowColumnHeader = new JCheckBox(app.getMenu("Show Column Header"));  
+        cbShowColumnHeader = new JCheckBox(app.getMenu("ShowColumnHeader"));  
         cbShowColumnHeader.addActionListener(this);
         layoutOptions.add(cbShowColumnHeader); 
         
-        cbShowRowHeader = new JCheckBox(app.getMenu("Show Row Header"));  
+        cbShowRowHeader = new JCheckBox(app.getMenu("ShowRowHeader"));  
         cbShowRowHeader.addActionListener(this);
         layoutOptions.add(cbShowRowHeader); 
         
-        cbShowHScrollbar = new JCheckBox(app.getMenu("Show Horizontal Scrollbars"));  
+        cbShowHScrollbar = new JCheckBox(app.getMenu("ShowHorizontalScrollbars"));  
         cbShowHScrollbar.addActionListener(this);
         layoutOptions.add(cbShowHScrollbar); 
         
-        cbShowVScrollbar = new JCheckBox(app.getMenu("Show Vertical Scrollbars"));  
+        cbShowVScrollbar = new JCheckBox(app.getMenu("ShowVerticalScrollbars"));  
         cbShowVScrollbar.addActionListener(this);
         layoutOptions.add(cbShowVScrollbar); 
         
-        cbShowBrowser = new JCheckBox(app.getMenu("Show File Browser"));  
+        cbShowBrowser = new JCheckBox(app.getMenu("ShowFileBrowser"));  
         cbShowBrowser.addActionListener(this);        
         layoutOptions.add(cbShowBrowser);
         
-        cbAllowSpecialEditor = new JCheckBox(app.getMenu("Use Buttons and Checkboxes "));
+        cbAllowSpecialEditor = new JCheckBox(app.getMenu("UseButtonsAndCheckboxes"));
         cbAllowSpecialEditor.addActionListener(this);        
         layoutOptions.add(cbAllowSpecialEditor);
         
@@ -158,7 +158,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		
 
 		  
-        cbShowBrowser = new JCheckBox(app.getMenu("Show Browser"));  
+        cbShowBrowser = new JCheckBox(app.getMenu("ShowBrowser"));  
         cbShowBrowser.addActionListener(this);        
         
         
