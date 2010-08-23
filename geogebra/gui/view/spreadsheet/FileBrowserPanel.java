@@ -213,7 +213,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 			setBackground(bgColor);	
 			setFont(app.getPlainFont());
 
-			menuItem = new JMenuItem(app.getMenu("Save to XML") + "...", app.getEmptyIcon());
+			menuItem = new JMenuItem(app.getMenu("SaveToXML") + "...", app.getEmptyIcon());
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
@@ -249,7 +249,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 			setBackground(bgColor);	
 			setFont(app.getPlainFont());
 
-			menuItem = new JMenuItem(app.getMenu("Open File Folder") + "...", app.getImageIcon("document-open.png"));
+			menuItem = new JMenuItem(app.getMenu("OpenFileFolder") + "...", app.getImageIcon("document-open.png"));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					JFileChooser fc = new JFileChooser();
@@ -264,7 +264,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 			add(menuItem);
 			menuItem.setBackground(bgColor);
 
-			menuItem = new JMenuItem(app.getMenu("Open Web Page") + "..." , app.getImageIcon("wiki.png"));
+			menuItem = new JMenuItem(app.getMenu("OpenFromWebpage") + "..." , app.getImageIcon("wiki.png"));
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 
@@ -293,7 +293,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 			
 			addSeparator();
 
-			menuItem = new JMenuItem(app.getMenu("Save to XML") + "...", app.getEmptyIcon());
+			menuItem = new JMenuItem(app.getMenu("SaveToXML") + "...", app.getEmptyIcon());
 			menuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 

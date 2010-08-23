@@ -273,7 +273,7 @@ class FileMenu extends BaseMenu {
 			}
 		};
 
-		loadURLAction = new AbstractAction(app.getMenu("LoadURL") + " ...", app
+		loadURLAction = new AbstractAction(app.getMenu("OpenWebpage") + " ...", app
 				.getImageIcon("document-open.png")) {
 			private static final long serialVersionUID = 1L;
 

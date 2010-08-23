@@ -26,8 +26,8 @@ public class InputDialogOpenDataFolderURL extends InputDialog{
 		//initString = "http://";
 		this.initString = initString;
 		
-		String title = app.getMenu("LoadURL");
-		String message =  app.getPlain("Enter Folder URL"); 
+		String title = app.getMenu("OpenFromWebpage");
+		String message =  app.getMenu("EnterWebAddress"); 
 		boolean showApply = false;
 		createGUI(title, message, false, DEFAULT_COLUMNS, 1, false, false, true, false, false, showApply);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
