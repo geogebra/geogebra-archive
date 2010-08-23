@@ -64,7 +64,7 @@ public class DockManager implements AWTEventListener {
 		}
 		
 		// register focus changes
-		Toolkit.getDefaultToolkit().addAWTEventListener(this , AWTEvent.MOUSE_EVENT_MASK);
+		//Toolkit.getDefaultToolkit().addAWTEventListener(this , AWTEvent.MOUSE_EVENT_MASK);
 	}
 	
 	/**
