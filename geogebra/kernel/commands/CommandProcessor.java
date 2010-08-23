@@ -2087,6 +2087,12 @@ class CmdTangent extends CommandProcessor {
 						c.getLabels(),
 						(GeoPoint) arg[0],
 						(GeoConic) arg[1]);
+			else if ((ok[0] = (arg[0] .isGeoConic()))
+					&& (ok[1] = (arg[1] .isGeoPoint())))
+				return kernel.Tangent(
+						c.getLabels(),
+						(GeoPoint) arg[1],
+						(GeoConic) arg[0]);
 			else if (
 					(ok[0] = (arg[0] .isGeoLine()))
 					&& (ok[1] = (arg[1] .isGeoConic())))
@@ -2116,6 +2122,16 @@ class CmdTangent extends CommandProcessor {
 								c.getLabel(),
 								(GeoPoint) arg[0],
 								((GeoFunctionable) arg[1]).getGeoFunction())};
+				return ret;
+			} else if (
+					(ok[0] = (arg[0] .isGeoFunctionable()))
+					&& (ok[1] = (arg[1] .isGeoPoint()))) {
+				GeoElement[] ret =
+				{
+						kernel.Tangent(
+								c.getLabel(),
+								(GeoPoint) arg[1],
+								((GeoFunctionable) arg[0]).getGeoFunction())};
 				return ret;
 			}
 			//Victor Franco 11-02-2007: for curve's
