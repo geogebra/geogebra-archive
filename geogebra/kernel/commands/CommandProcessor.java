@@ -248,7 +248,7 @@ public abstract class CommandProcessor  {
 		return new MyError(app, strs);
 	}
 	
-	public static GeoElement getBadArg(boolean[] ok, GeoElement[] arg) {
+	protected static GeoElement getBadArg(boolean[] ok, GeoElement[] arg) {
 		for (int i = 0 ; i < ok.length ; i++) {
 			if (!ok[i]) return arg[i];
 		}
@@ -5648,6 +5648,52 @@ class CmdOsculatingCircle extends CommandProcessor {
 					 throw argErr(app, c.getName(), arg[1]);
 				 else
 					 throw argErr(app, c.getName(), arg[2]);
+
+		 default:
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }
+ }
+
+ class CmdSample extends CommandProcessor {
+
+	 public CmdSample(Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 boolean[] ok = new boolean[n];
+		 GeoElement[] arg;
+
+		 switch (n) {
+		 case 2:			
+			 arg = resArgs(c);
+			 if ((ok[0] = arg[0].isGeoList()) &&
+					 (ok[1] = arg[1].isNumberValue()) ) 
+			 {
+				 GeoElement[] ret = { 
+						 kernel.Sample(c.getLabel(),
+								 (GeoList) arg[0], (NumberValue) arg[1], null) };
+				 return ret;
+
+			 }  else
+				 throw argErr(app, c.getName(), getBadArg(ok, arg));
+
+		 case 3:			
+			 arg = resArgs(c);
+			 if ((ok[0] = arg[0].isGeoList()) &&
+					 (ok[1] = arg[1].isNumberValue()) &&
+					 (ok[2] = arg[2].isGeoBoolean())) 
+			 {
+				 GeoElement[] ret = { 
+						 kernel.Sample(c.getLabel(),
+								 (GeoList) arg[0], (NumberValue) arg[1], (GeoBoolean) arg[2]) };
+				 return ret;
+
+			 }  else
+				 throw argErr(app, c.getName(), getBadArg(ok, arg));
+
 
 		 default:
 			 throw argNumErr(app, c.getName(), n);

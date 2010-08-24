@@ -92,6 +92,7 @@ import geogebra.kernel.statistics.AlgoRandomPoisson;
 import geogebra.kernel.statistics.AlgoRandomUniform;
 import geogebra.kernel.statistics.AlgoRank;
 import geogebra.kernel.statistics.AlgoSXX;
+import geogebra.kernel.statistics.AlgoSample;
 import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
 import geogebra.kernel.statistics.AlgoSampleVariance;
 import geogebra.kernel.statistics.AlgoShuffle;
@@ -3840,6 +3841,26 @@ public class Kernel {
 	final public GeoElement SumText(String label, GeoList list, GeoNumeric num) {
 		AlgoSumText algo = new AlgoSumText(cons, label, list, num);
 		GeoText ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * Sample[list,n]
+	 * Michael Borcherds
+	 */
+	final public GeoElement Sample(String label, GeoList list, NumberValue n) {
+		AlgoSample algo = new AlgoSample(cons, label, list, n, null);
+		GeoElement ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
+	 * Sample[list,n, withReplacement]
+	 * Michael Borcherds
+	 */
+	final public GeoElement Sample(String label, GeoList list, NumberValue n, GeoBoolean withReplacement) {
+		AlgoSample algo = new AlgoSample(cons, label, list, n, withReplacement);
+		GeoElement ret = algo.getResult();
 		return ret;
 	}
 	

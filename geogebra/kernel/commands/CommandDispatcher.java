@@ -417,6 +417,7 @@ public class CommandDispatcher {
     	cmdTable.put("PolyLine", new CmdPolyLine(kernel));	   
     	cmdTable.put("VerticalText", new CmdVerticalText(kernel));	   
     	cmdTable.put("RotateText", new CmdRotateText(kernel));	   
+    	cmdTable.put("Sample", new CmdSample(kernel));	   
 
      	                  	
     	
