@@ -40,8 +40,6 @@ implements EuclidianViewAlgo {
 	//     for interval x[i-1] to x[i+1]
 	//     (Numerical Recipes in C++, pp.406)
 	
-	// the function is sampled view_steps times over the currently visible part of the Upper/LowerSum that is in view
-	private static final double VIEW_STEPS = 100;
 	
 	private int type;
 	public static final int TYPE_UPPERSUM = 0;
@@ -398,7 +396,10 @@ implements EuclidianViewAlgo {
             double visibleMin = Math.max(Math.min(ad, bd), ev.getXmin());
             double visibleMax = Math.min(Math.max(ad, bd), ev.getXmax());	
             
-			double subStep = Math.abs(visibleMax - visibleMin) / VIEW_STEPS;	
+            // subsample every 5 pixels
+            double noOfSamples = Math.abs(ev.toScreenCoordXd(visibleMax) - ev.toScreenCoordX(visibleMin)) / 5;
+            
+			double subStep = Math.abs(visibleMax - visibleMin) / noOfSamples;	
 			boolean doSubSamples = !Kernel.isZero(subStep) && Math.abs(STEP) > subStep;	
 			boolean positiveStep = 	STEP >= 0; 		
 			for (int i=0; i < N ; i++) { 
