@@ -77,7 +77,7 @@ public class AlgoTableText extends AlgoElement {
     protected final void compute() {
     	int columns = geoList.size();
     	if (!geoList.isDefined() ||  columns == 0) {
-    		text.setTextString(sb.toString());
+    		text.setTextString("");
     		return;
     		//throw new MyError(app, app.getError("InvalidInput"));   		
     	}
@@ -138,7 +138,7 @@ public class AlgoTableText extends AlgoElement {
 
     	
     	if (columns == 0) {
-    		text.setTextString(sb.toString());
+    		text.setTextString("");
     		return;
     		//throw new MyError(app, app.getError("InvalidInput"));   		
     	}
@@ -152,7 +152,7 @@ public class AlgoTableText extends AlgoElement {
 		for (int c = 0 ; c < columns ; c++) {
 			GeoElement geo = geoList.get(c);
 			if (!geo.isGeoList()) {
-				text.setTextString(sb.toString());
+				text.setTextString("");
 				return;
 	    		//throw new MyError(app, app.getPlain("SyntaxErrorAisNotAList",geo.toValueString()));
 			}
@@ -161,7 +161,7 @@ public class AlgoTableText extends AlgoElement {
 		}
 		
     	if (rows == 0) {
-    		text.setTextString(sb.toString());
+    		text.setTextString("");
     		return;
     		//throw new MyError(app, app.getError("InvalidInput"));   		
     	}
