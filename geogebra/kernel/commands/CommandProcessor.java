@@ -4578,6 +4578,57 @@ class CmdOsculatingCircle extends CommandProcessor {
 	 }
  }
 
+ class CmdSlowPlot extends CommandProcessor {
+	 public CmdSlowPlot(Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 boolean[] ok = new boolean[n];
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+
+		 switch (n) {
+		 case 1 :
+			 if ( (ok[0] = (arg[0].isGeoFunctionable()) ) ){
+				 
+				 Application.debug(arg[0].getLabel());
+				 
+				 
+				 GeoNumeric var = new GeoNumeric(cons, 0.0);
+				 
+				 var.setLabel(null); // set label to next available
+				 var.setEuclidianVisible(true);
+				 var.setIntervalMin(0.0);
+				 var.setIntervalMax(1.0);
+				 var.setAnimating(true);
+				 var.setAnimationStep(0.01);
+				 var.setAnimationType(GeoElement.ANIMATION_INCREASING);
+				 var.update();
+				 
+				 String cmd = "Function["+arg[0].getLabel()+",x(Corner[1]), x(Corner[1]) (1-"+var.getLabel()+") + x(Corner(2)) "+var.getLabel()+"]";
+				 kernel.getAnimatonManager().startAnimation();
+				try {
+					return kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(cmd, true, false, true);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					throw argErr(app, c.getName(), arg[0]);
+				} catch (MyError e) {
+					e.printStackTrace();
+					throw argErr(app, c.getName(), arg[0]);					
+				}
+			 } else {
+				 throw argErr(app, c.getName(), arg[0]);
+			 }
+
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }
+ }
+
  class CmdCell extends CommandProcessor {
 	 public CmdCell(Kernel kernel) {
 		 super(kernel);
