@@ -401,7 +401,10 @@ public abstract class GeoElement
 	
 	// public int geoID;    
 	//  static private int geoCounter = 0;
-	protected AlgoElement algoParent = null; // Parent Algorithm
+	/** parent algorithm */
+	protected AlgoElement algoParent = null;
+	/** draw algorithm */
+	protected AlgoElement algoDraw = null;
 	private ArrayList algorithmList; 	// directly dependent algos
 	
 	//	set of all dependent algos sorted in topological order    
@@ -1300,6 +1303,19 @@ public abstract class GeoElement
 
 	final public AlgoElement getParentAlgorithm() {
 		return algoParent;
+	}
+	
+	public void setDrawAlgorithm(AlgoElement algorithm) {
+		if(algorithm != null){
+			algoDraw = algorithm.copy();
+			update();
+		}
+	}
+
+	final public AlgoElement getDrawAlgorithm() {
+		if(algoDraw == null)
+			return algoParent;
+		return algoDraw;
 	}
 	
 	final public ArrayList getAlgorithmList() {
@@ -4241,7 +4257,7 @@ public abstract class GeoElement
 		return oldSpreadsheetCoords;
 	}
 
-	final boolean isAlgoMacroOutput() {
+	public final boolean isAlgoMacroOutput() {
 		return isAlgoMacroOutput;
 	}
 

@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -41,20 +42,27 @@ public class DrawIntegralFunctions extends Drawable {
 		
 		n.setDrawable(true);
     	
-    	AlgoIntegralFunctions algo = (AlgoIntegralFunctions) n.getParentAlgorithm();
-    	f = algo.getF();
-    	g = algo.getG();
-        a = algo.getA();
-        b = algo.getB();    
+    	init();    
         
         update();
     }
 
+    private void init(){
+    	AlgoIntegralFunctions algo = (AlgoIntegralFunctions) n.getDrawAlgorithm();
+		f = algo.getF();
+		g = algo.getG();
+		a = algo.getA();
+		b = algo.getB();
+    }
+    
     final public void update() {						   
         isVisible = geo.isEuclidianVisible();
         if (!isVisible) return;
 		labelVisible = geo.isLabelVisible();            
 		updateStrokes(n);
+		
+		if(n.isAlgoMacroOutput())
+			init();
 		
 		// init gp
 		double aRW = a.getDouble();

@@ -99,7 +99,17 @@ public class DrawAngle extends Drawable {
 
 		angleDrawMode = -1;
 
-		AlgoElement algo = geo.getParentAlgorithm();
+		init();
+
+		if (angleDrawMode > -1) {
+			angle.setDrawable(true);
+			update();
+		}
+			
+	}
+
+	private void init(){
+		AlgoElement algo = geo.getDrawAlgorithm();
 		Construction cons = geo.getConstruction();
 		tempPoint = new GeoPoint(cons);
 		tempPoint.setCoords(0.0, 0.0, 1.0);
@@ -142,15 +152,12 @@ public class DrawAngle extends Drawable {
 			firstVec[0] = 1;
 			firstVec[1] = 0;
 		}
-
-		if (angleDrawMode > -1) {
-			angle.setDrawable(true);
-			update();
-		}
-			
 	}
-
+	
 	final public void update() {
+		if(geo.isAlgoMacroOutput())
+			init();
+		
 		isVisible = geo.isEuclidianVisible();
 		if (!isVisible) {
 			shape = null;

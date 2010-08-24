@@ -164,7 +164,10 @@ implements EuclidianViewAlgo {
 			GeoElement macroGeo = (GeoElement) macroOutputAndReferencedGeos.get(i);
 			GeoElement algoGeo = (GeoElement) algoOutputAndReferencedGeos.get(i);
 			algoGeo.set(macroGeo);	
-
+			if(algoGeo instanceof GeoNumeric){
+				((GeoNumeric) algoGeo).setDrawable(true);
+				algoGeo.setDrawAlgorithm(macroGeo.getParentAlgorithm());
+			}
 //			System.out.println("RESULT from macro: " + macroGeo + "\n => " + algoGeo);			
 //			System.out.println("  macroGeo kernel: " + macroGeo.kernel + ", printFigures: " + macroGeo.kernel.getPrintFigures());
 //			System.out.println("  algoGeo  kernel: " + algoGeo.kernel + ", printFigures: " + algoGeo.kernel.getPrintFigures());
@@ -181,10 +184,15 @@ implements EuclidianViewAlgo {
 		
 		for (int i=0; i < macroOutput.length; i++) {  
 			// copy output object of macro and make the copy part of this construction
-			setOutput(i,macroOutput[i].copyInternal(cons));			
-			getOutput()[i].setUseVisualDefaults(false);
-			getOutput()[i].setAdvancedVisualStyle(macroOutput[i]);	
-			getOutput()[i].setAlgoMacroOutput(true);
+			setOutput(i,macroOutput[i].copyInternal(cons));
+			GeoElement out = getOutput(i); 
+			out.setUseVisualDefaults(false);
+			out.setAdvancedVisualStyle(macroOutput[i]);	
+			if(out instanceof GeoNumeric){
+				((GeoNumeric) out).setDrawable(true);
+				out.setDrawAlgorithm(macroOutput[i].getParentAlgorithm());
+			}
+			out.setAlgoMacroOutput(true);
     	}
 	}
 	

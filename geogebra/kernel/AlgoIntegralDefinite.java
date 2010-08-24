@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
 
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootFunction;
@@ -75,6 +76,13 @@ public class AlgoIntegralDefinite extends AlgoElement {
         n.setDrawable(true);
     }
 
+    public AlgoIntegralDefinite copy(){
+    	return new AlgoIntegralDefinite(cons, (GeoFunction)f.copy(), 
+    			new MyDouble(kernel,a.getDouble()), new MyDouble(kernel,b.getDouble()));
+
+    }
+    
+    
     public String getClassName() {
         return "AlgoIntegralDefinite";
     }

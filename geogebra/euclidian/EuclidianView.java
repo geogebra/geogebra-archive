@@ -3266,7 +3266,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;
 
 		case GeoElement.GEO_CLASS_NUMERIC:
-			AlgoElement algo = geo.getParentAlgorithm();
+			AlgoElement algo = geo.getDrawAlgorithm();
 			if (algo == null) {
 				// independent number may be shown as slider
 				d = new DrawSlider(this, (GeoNumeric) geo);

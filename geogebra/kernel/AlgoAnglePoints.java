@@ -76,6 +76,22 @@ public class AlgoAnglePoints extends AlgoElement {
         // compute angle
         compute();
     }
+    
+    public AlgoAnglePoints(
+                     GeoPoint A,
+            GeoPoint B,
+            GeoPoint C,Construction cons) {
+    	super(cons);
+    	this.cons=cons;
+            this.A = A;
+            this.B = B;
+            this.C = C;
+         
+     }
+    
+    public AlgoAnglePoints copy(){
+    	return new AlgoAnglePoints(cons,(GeoPoint)A.copy(),(GeoPoint)B.copy(),(GeoPoint)C.copy());
+    }
 
     void setAlgoAnglePolygon(AlgoAnglePolygon algo) {
         algoAnglePoly = algo;

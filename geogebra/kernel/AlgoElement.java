@@ -64,12 +64,15 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	c.addToConstructionList(this, false);                 
     }
     
+    public AlgoElement copy(){
+    	return this;
+    }
     
     
 
     /**
      * initialize output list
-     * @param i 
+     * @param n Output length 
      * 
      */
     protected void setOutputLength(int n){

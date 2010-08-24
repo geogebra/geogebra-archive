@@ -30,8 +30,7 @@ public class DrawIntegral extends Drawable {
     private GeoNumeric n;
     private GeoFunction f;
     private NumberValue a, b;
-    
-	private GeneralPathClipped gp;
+    private GeneralPathClipped gp;
     boolean isVisible, labelVisible;
    
     public DrawIntegral(EuclidianView view, GeoNumeric n) {
@@ -41,19 +40,25 @@ public class DrawIntegral extends Drawable {
 		
 		n.setDrawable(true);
     	
-    	AlgoIntegralDefinite algo = (AlgoIntegralDefinite) n.getParentAlgorithm();
-    	f = algo.getFunction();
-        a = algo.getA();
-        b = algo.getB();    
+    	init();
         update();
     }
+    
+    private void init(){
+    	AlgoIntegralDefinite algo = (AlgoIntegralDefinite) n.getDrawAlgorithm();
+		f = algo.getFunction();
+		a = algo.getA();
+		b = algo.getB();
+    }
 
-    final public void update() {						   
-        isVisible = geo.isEuclidianVisible();
+    final public void update() {					
+    	isVisible = geo.isEuclidianVisible();
         if (!isVisible) return;
 		labelVisible = geo.isLabelVisible();            
 		updateStrokes(n);
-		
+		if(n.isAlgoMacroOutput())
+			init();
+        
 		// init gp
 		double aRW = a.getDouble();
 		double bRW = b.getDouble();

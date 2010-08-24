@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -63,6 +64,12 @@ public class AlgoIntegralFunctions extends AlgoElement {
 	public String getClassName() {
 		return "AlgoIntegralFunctions";
 	}
+	
+    public AlgoIntegralFunctions copy(){
+    	return new AlgoIntegralFunctions(cons, null, (GeoFunction)f.copy(),(GeoFunction)g.copy(), 
+    			new MyDouble(kernel,a.getDouble()), new MyDouble(kernel,b.getDouble()));
+
+    }
 
 	// for AlgoElement
 	protected void setInputOutput() {
