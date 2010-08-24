@@ -21,6 +21,7 @@ import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
+import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
@@ -4486,6 +4487,67 @@ class CmdOsculatingCircle extends CommandProcessor {
 	 }
  }
 
+ class CmdVerticalText extends CommandProcessor {
+	 public CmdVerticalText(Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 boolean[] ok = new boolean[n];
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+
+		 switch (n) {
+		 case 1 :
+			 if ( (ok[0] = (arg[0].isGeoText()) ) ){
+				 GeoElement[] ret =
+				 {
+						 kernel.VerticalText(
+								 c.getLabel(),
+								 (GeoText) arg[0])};
+				 return ret;
+			 } else {
+				 throw argErr(app, c.getName(), arg[0]);
+			 }
+
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }
+ }
+ 
+ class CmdRotateText extends CommandProcessor {
+	 public CmdRotateText(Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 boolean[] ok = new boolean[n];
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+
+		 switch (n) {
+		 case 2 :
+			 if ( (ok[0] = (arg[0].isGeoText()) )
+					 && (ok[1] = arg[1].isGeoNumeric())){
+				 GeoElement[] ret =
+				 {
+						 kernel.RotateText(
+								 c.getLabel(),
+								 (GeoText) arg[0], (GeoNumeric) arg[1])};
+				 return ret;
+			 } else {
+				 throw argErr(app, c.getName(), ok[0] ? arg[1] : arg[0]);
+			 }
+
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }
+ }
+ 
  class CmdObject extends CommandProcessor {
 	 public CmdObject(Kernel kernel) {
 		 super(kernel);

@@ -3873,6 +3873,19 @@ public class Kernel {
 		return num;
 	}
 	
+	final public GeoText VerticalText(String label, GeoText args) {
+		AlgoVerticalText algo = new AlgoVerticalText(cons, label, args);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	final public GeoText RotateText(String label, GeoText args, GeoNumeric angle) {
+		AlgoRotateText algo = new AlgoRotateText(cons, label, args, angle);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	
 	/** 
 	 * Variance[list]
 	 * Michael Borcherds

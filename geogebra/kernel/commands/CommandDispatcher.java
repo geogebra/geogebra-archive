@@ -415,6 +415,8 @@ public class CommandDispatcher {
     	cmdTable.put("RigidPolygon", new CmdRigidPolygon(kernel));	   
     	cmdTable.put("SolveODE", new CmdSolveODE(kernel));	   
     	cmdTable.put("PolyLine", new CmdPolyLine(kernel));	   
+    	cmdTable.put("VerticalText", new CmdVerticalText(kernel));	   
+    	cmdTable.put("RotateText", new CmdRotateText(kernel));	   
 
      	                  	
     	
