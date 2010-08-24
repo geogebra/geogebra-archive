@@ -33,6 +33,9 @@ implements EuclidianViewAlgo {
 	// largest possible number of rectangles
 	private static final int MAX_RECTANGLES = 10000;
 	
+	// subsample every 5 pixels
+	private static final int SAMPLE_PIXELS = 5;
+
 	// find global minimum in an interval with the following heuristic:
 	// 1) sample the function for some values of x in [a, b] 
 	// 2) get x[i] with minimal f(x[i])
@@ -397,7 +400,7 @@ implements EuclidianViewAlgo {
             double visibleMax = Math.min(Math.max(ad, bd), ev.getXmax());	
             
             // subsample every 5 pixels
-            double noOfSamples = Math.abs(ev.toScreenCoordXd(visibleMax) - ev.toScreenCoordX(visibleMin)) / 5;
+            double noOfSamples = Math.abs(ev.toScreenCoordXd(visibleMax) - ev.toScreenCoordX(visibleMin)) / SAMPLE_PIXELS;
             
 			double subStep = Math.abs(visibleMax - visibleMin) / noOfSamples;	
 			boolean doSubSamples = !Kernel.isZero(subStep) && Math.abs(STEP) > subStep;	
