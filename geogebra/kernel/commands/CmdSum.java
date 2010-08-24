@@ -114,7 +114,13 @@ public class CmdSum extends CommandProcessor {
 							list, (GeoNumeric) arg[1]) };
 					return ret;
 			}
-				else {
+				else if (allText) {
+					GeoElement[] ret = { 
+							kernel.SumText(c.getLabel(),
+							list, (GeoNumeric) arg[1]) };
+					return ret;	
+				
+				}	else {
 					throw argErr(app, c.getName(), arg[0]);
 				}
 			} else
