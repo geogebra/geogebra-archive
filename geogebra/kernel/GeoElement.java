@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.GuiManager;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -405,14 +404,16 @@ public abstract class GeoElement
 	protected AlgoElement algoParent = null;
 	/** draw algorithm */
 	protected AlgoElement algoDraw = null;
-	private ArrayList algorithmList; 	// directly dependent algos
+	private ArrayList<AlgoElement> algorithmList; 	// directly dependent algos
 	
 	//	set of all dependent algos sorted in topological order    
 	private AlgorithmSet algoUpdateSet;
 
 	/********************************************************/
 
-	/** Creates new GeoElement for given construction */
+	/** Creates new GeoElement for given construction 
+	 * @param c Construction
+	 */
 	public GeoElement(Construction c) {
 		super(c);
 		// this.geoID = geoCounter++;                                 
@@ -469,6 +470,10 @@ public abstract class GeoElement
 		}
 	}
 
+	/**
+	 * Returns how  should label look like in Euclidian view
+	 * @return label mode (name, value, name + value, caption)
+	 */
 	public int getLabelMode() {
 		return labelMode;
 	}
@@ -483,6 +488,7 @@ public abstract class GeoElement
 	 *  this is needed for assignment copies like:
 	 *  a = 2.7
 	 *  b = a   (here copy() is needed)
+	 *  @return copy of current element
 	 * */
 	public abstract GeoElement copy();
 	
@@ -1308,7 +1314,6 @@ public abstract class GeoElement
 	public void setDrawAlgorithm(AlgoElement algorithm) {
 		if(algorithm != null){
 			algoDraw = algorithm.copy();
-			update();
 		}
 	}
 
@@ -2673,8 +2678,8 @@ public abstract class GeoElement
 	 * Returns all predecessors (of type GeoElement) that this object depends on.
 	 * The predecessors are sorted topologically.
 	 */
-	public TreeSet getAllPredecessors() {
-		TreeSet set = new TreeSet();
+	public TreeSet<GeoElement> getAllPredecessors() {
+		TreeSet<GeoElement> set = new TreeSet();
 		addPredecessorsToSet(set, false);
 		set.remove(this);
 		return set;
@@ -3643,7 +3648,7 @@ public abstract class GeoElement
 
 	void getXMLanimationTags(StringBuilder sb) {
 		// animation step width
-		if (isChangeable() && (this instanceof GeoNumeric)) {
+		if (isChangeable()) {
 			sb.append("\t<animation");
 			sb.append(" step=\""+animationIncrement+"\"");
 			String animSpeed = animationSpeedObj == null ? "1" : animationSpeedObj.toGeoElement().getLabel();

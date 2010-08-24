@@ -22,7 +22,6 @@ import geogebra.main.MyError;
 import geogebra.util.Util;
 import geogebra3D.kernel3D.GeoPoint3D;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,25 +44,26 @@ import java.util.regex.Matcher;
  */
 public class Construction {
 
-	// Added for Intergeo File Format (Yves Kreis) -->
-	// writes the <elements> and the <constraints> part
+	/** Added for Intergeo File Format (Yves Kreis) -->
+	 writes the <elements> and the <constraints> part */
 	public static final int CONSTRUCTION = 0;
-	// writes the <display> part with the <display> tag
+	/** Added for Intergeo File Format (Yves Kreis) 
+	 * writes the <display> part with the <display> tag */
 	public static final int DISPLAY = 1;
-	// <-- Added for Intergeo File Format (Yves Kreis)
+ 
 
 	private String title, author, date;
 	// text for dynamic worksheets: 0 .. above, 1 .. below
 	private String[] worksheetText = new String[2];
 
 	// ConstructionElement List (for objects of type ConstructionElement)
-	private ArrayList ceList;
+	private ArrayList<ConstructionElement> ceList;
 
 	// AlgoElement List (for objects of type AlgoElement)
-	private ArrayList algoList; // used in updateConstruction()
+	private ArrayList<AlgoElement> algoList; // used in updateConstruction()
 
 	// GeoElementTable for (label, GeoElement) pairs
-	protected HashMap geoTable, localVariableTable;
+	protected HashMap<String,GeoElement> geoTable, localVariableTable;
 
 	// set with all labeled GeoElements in ceList order
 	private TreeSet<GeoElement> geoSet; //generic Object replaced by GeoElement (Zbynek Konecny, 2010-06-14)
@@ -72,12 +72,12 @@ public class Construction {
 	private TreeSet<GeoElement> geoSetLabelOrder;
 	
 	// list of random numbers
-	private TreeSet randomNumbers;
+	private TreeSet<GeoNumeric> randomNumbers;
 
 	// a map for sets with all labeled GeoElements in alphabetical order of
 	// specific types
 	// (points, lines, etc.)
-	private HashMap geoSetsTypeMap;	
+	private HashMap<Integer,TreeSet<GeoElement>> geoSetsTypeMap;	
 
 	// list of Macro commands used in this construction
 	private ArrayList usedMacros;
@@ -99,7 +99,7 @@ public class Construction {
 	// collect replace() requests to improve performance
 	// when many cells in the spreadsheet are redefined at once
 	private boolean collectRedefineCalls = false;
-	private HashMap redefineMap;
+	private HashMap<GeoElement,GeoElement> redefineMap;
 
 	// showOnlyBreakpoints in construction protocol
 	private boolean showOnlyBreakpoints;
@@ -124,13 +124,13 @@ public class Construction {
 	Construction(Kernel k, Construction parentConstruction) {
 		kernel = k;
 
-		ceList = new ArrayList();
-		algoList = new ArrayList();
+		ceList = new ArrayList<ConstructionElement>();
+		algoList = new ArrayList<AlgoElement>();
 		step = -1;
 
-		geoSet = new TreeSet();
-		geoSetLabelOrder = new TreeSet(new LabelComparator());
-		geoSetsTypeMap = new HashMap();
+		geoSet = new TreeSet<GeoElement>();
+		geoSetLabelOrder = new TreeSet<GeoElement>(new LabelComparator());
+		geoSetsTypeMap = new HashMap<Integer,TreeSet<GeoElement>>();
 		euclidianViewAlgos = new ArrayList();
 
 		if (parentConstruction != null)
@@ -156,7 +156,8 @@ public class Construction {
 	}
 
 	/**
-	 * Returns the last GeoElement object in the construction list;
+	 * Returns the last GeoElement object in the construction list.
+	 * @return the last GeoElement object in the construction list.
 	 */
 	public GeoElement getLastGeoElement() {
 		if (geoSet.size() > 0)
@@ -203,10 +204,18 @@ public class Construction {
 		geoTable.put(yAxisLocalName, yAxis);	
 	}
 
+	/**
+	 * Returns current kernel
+	 * @return current kernel
+	 */
 	public Kernel getKernel() {
 		return kernel;
 	}
 
+	/**
+	 * Returns current application
+	 * @return current application
+	 */
 	public Application getApplication() {
 		return kernel.getApplication();
 	}
@@ -219,21 +228,34 @@ public class Construction {
 		return kernel.getExtremumFinder();
 	}
 
+	/**
+	 * Returns x-axis
+	 * @return x-axis
+	 */
 	final public GeoAxis getXAxis() {
 		return xAxis;
 	}
 
+	/**
+	 * Returns y-axis
+	 * @return y-axis
+	 */
 	final public GeoAxis getYAxis() {
 		return yAxis;
 	}
 
 	/**
 	 * If this is set to true new construction elements won't get labels.
+	 * @param flag true iff labelcreation should be supressed
 	 */
 	public void setSuppressLabelCreation(boolean flag) {
 		supressLabelCreation = flag;
 	}
 
+	/**
+	 * Returns true iff new construction elements won't get labels.
+	 * @return true iff new construction elements won't get labels.
+	 */
 	public boolean isSuppressLabelsActive() {
 		return supressLabelCreation;
 	}
@@ -255,6 +277,8 @@ public class Construction {
 
 	/**
 	 * Returns the ConstructionElement for the given construction index.
+	 * @return the ConstructionElement for the given construction index.
+	 * @param index Construction index of element to look for
 	 */
 	public ConstructionElement getConstructionElement(int index) {
 		if (index < 0 || index >= ceList.size())
@@ -265,14 +289,16 @@ public class Construction {
 	/**
 	 * Returns a set with all labeled GeoElement objects of this construction in
 	 * construction order.
+	 * @return set with all labeled geos in construction order.
 	 */
-	final public TreeSet getGeoSetConstructionOrder() {
+	final public TreeSet<GeoElement> getGeoSetConstructionOrder() {
 		return geoSet;
 	}
 
 	/**
 	 * Returns a set with all labeled GeoElement objects of this construction in
 	 * alphabetical order of their labels.
+	 * @return set with all labeled geos in alphabetical order.
 	 */
 	final public TreeSet<GeoElement> getGeoSetLabelOrder() {
 		return geoSetLabelOrder;
@@ -284,9 +310,10 @@ public class Construction {
 	 * 
 	 * @param geoClassType
 	 *            : use GeoElement.GEO_CLASS_* constants
+	 * @return Set of elements of given type.
 	 */
-	final public TreeSet getGeoSetLabelOrder(int geoClassType) {
-		TreeSet typeSet = (TreeSet) geoSetsTypeMap.get(geoClassType);
+	final public TreeSet<GeoElement> getGeoSetLabelOrder(int geoClassType) {
+		TreeSet<GeoElement> typeSet = (TreeSet<GeoElement>) geoSetsTypeMap.get(geoClassType);
 		if (typeSet == null) {
 			typeSet = createTypeSet(geoClassType);
 		}
@@ -317,7 +344,7 @@ public class Construction {
 	/**
 	 * Adds the given Construction Element to this Construction at position
 	 * getStep() + 1.
-	 * 
+	 * @param ce Construction element to be added
 	 * @param checkContains
 	 *            : true to first check if ce is already in list
 	 */
@@ -645,6 +672,7 @@ public class Construction {
 
 	/**
 	 * Returns the total number of construction steps.
+	 * @return Total number of construction steps.
 	 */
 	public int steps() {
 		return ceList.size();
@@ -726,7 +754,7 @@ public class Construction {
 
 		// get ordered type set
 		int type = geo.getGeoClassType();
-		TreeSet typeSet = (TreeSet) geoSetsTypeMap.get(type);
+		TreeSet<GeoElement> typeSet = geoSetsTypeMap.get(type);
 		if (typeSet == null) {
 			typeSet = createTypeSet(type);
 		}
@@ -741,8 +769,8 @@ public class Construction {
 		 */
 	}
 
-	private TreeSet createTypeSet(int type) {
-		TreeSet typeSet = new TreeSet(new LabelComparator());
+	private TreeSet<GeoElement> createTypeSet(int type) {
+		TreeSet<GeoElement> typeSet = new TreeSet<GeoElement>(new LabelComparator());
 		geoSetsTypeMap.put(type, typeSet);
 		return typeSet;
 	}
@@ -753,7 +781,7 @@ public class Construction {
 
 		// set ordered type set
 		int type = geo.getGeoClassType();
-		TreeSet typeSet = (TreeSet) geoSetsTypeMap.get(type);
+		TreeSet<GeoElement> typeSet = geoSetsTypeMap.get(type);
 		if (typeSet != null)
 			typeSet.remove(geo);
 
@@ -875,7 +903,7 @@ public class Construction {
 	 * point i = (0,1), number e = Math.E, empty spreadsheet cells
 	 * 
 	 * @param label
-	 * @see willAutoCreateGeoElement()
+	 * @see #willAutoCreateGeoElement()
 	 */
 	private GeoElement autoCreateGeoElement(String label) {		
 		GeoElement createdGeo = null;
@@ -1289,6 +1317,8 @@ public class Construction {
 	 * Replaces oldGeo by newGeo in the current construction.
 	 * This may change the logic of the
 	 * construction and is a very powerful operation
+	 * @param oldGeo Geo to be replaced.
+	 * @param newGeo Geo to be used instead.
 	 */
 	public void replace(GeoElement oldGeo, GeoElement newGeo) throws Exception {
 		if (oldGeo == null || newGeo == null || oldGeo == newGeo)
@@ -1831,7 +1861,7 @@ public class Construction {
 	public void addRandomGeo(GeoElement num) {
 		if (randomNumbers == null) 
 			randomNumbers = new TreeSet();
-		randomNumbers.add(num);
+		randomNumbers.add((GeoNumeric)num);
 		num.setRandomGeo(true);
 	}
 	
