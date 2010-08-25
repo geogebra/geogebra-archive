@@ -72,6 +72,8 @@ public class AlgebraView extends JTree implements View {
 
 	private GeoElement selectedGeoElement;
 	private DefaultMutableTreeNode selectedNode;
+	
+	private AlgebraHelperBar helperBar;
 
 	/** Creates new AlgebraView */
 	public AlgebraView(AlgebraController algCtrl) {		
@@ -198,6 +200,17 @@ public class AlgebraView extends JTree implements View {
 		} else {
 			model.removeNodeFromParent(auxiliaryNode);			
 		}					
+	}
+	
+	/**
+	 * @return The helper bar for this view.
+	 */
+	public AlgebraHelperBar getHelperBar() {
+		if(helperBar == null) {
+			helperBar = new AlgebraHelperBar(this, app);
+		}
+		
+		return helperBar;
 	}
 		
 	

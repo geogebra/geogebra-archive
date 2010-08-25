@@ -501,8 +501,6 @@ public class Application implements KeyEventDispatcher {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.addKeyEventDispatcher(this);	
 
-		
-
 		// init plugin manager for applications
 		if (!isApplet)
 			pluginmanager = getPluginManager();

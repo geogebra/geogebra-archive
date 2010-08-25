@@ -6,17 +6,16 @@ import geogebra.main.Application;
 
 import java.awt.AWTEvent;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.Container;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ListIterator;
 
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 /**
@@ -24,9 +23,16 @@ import javax.swing.SwingUtilities;
  * 
  * @author Florian Sonner
  */
-public class DockManager implements AWTEventListener {
+public class DockManager implements AWTEventListener, MouseListener {
 	private Application app;
 	private Layout layout;
+	
+	/**
+	 * False if the application is running in unsigned mode. We can't use the
+	 * full focus detection mechanisms in this case but have to add mouse click
+	 * listeners to the euclidian view (just they may be active then).
+	 */
+	private boolean hasFullFocusSystem;
 	
 	/**
 	 * The glass panel used for drag'n'drop.
@@ -49,12 +55,11 @@ public class DockManager implements AWTEventListener {
 	private ArrayList<DockPanel> dockPanels;
 	
 	/**
-	 * @param app
 	 * @param layout
 	 */
 	public DockManager(Layout layout) {
 		this.layout = layout;
-		this.app = layout.getApp();
+		this.app = layout.getApplication();
 		
 		dockPanels = new ArrayList<DockPanel>();
 		glassPane = new DockGlassPane(this);
@@ -64,7 +69,12 @@ public class DockManager implements AWTEventListener {
 		}
 		
 		// register focus changes
-		//Toolkit.getDefaultToolkit().addAWTEventListener(this , AWTEvent.MOUSE_EVENT_MASK);
+		try {
+			Toolkit.getDefaultToolkit().addAWTEventListener(this , AWTEvent.MOUSE_EVENT_MASK);
+			hasFullFocusSystem = true;
+		} catch(Exception e) {
+			hasFullFocusSystem = false;
+		}
 	}
 	
 	/**
@@ -604,7 +614,9 @@ public class DockManager implements AWTEventListener {
 	}
 	
 	/**
-	 * Listen to mouse clicks and determine if the view focus changed.
+	 * Listen to mouse clicks and determine if the view focus changed. Just
+	 * used in case the full focus system is active, otherwise the mouse clicked
+	 * event should be intercepted for euclidian views (see DockManager::mouseClicked()).
 	 */
 	public void eventDispatched(AWTEvent event) {
 		// we also get notified about other mouse events, but we want to ignore them
@@ -617,13 +629,169 @@ public class DockManager implements AWTEventListener {
 		DockPanel dp = (DockPanel)SwingUtilities.getAncestorOfClass(DockPanel.class, (Component)event.getSource());
 		
 		if(dp != null && dp != focusedDockPanel) {
-			// remove focus from previously focused dock panel
-			if(focusedDockPanel != null) {
-				focusedDockPanel.setFocus(false);
+			setFocusedPanel(dp);
+		}
+	}
+
+	/**
+	 * This method is called if the user clicked upon an euclidian view and the
+	 * full focus system is not available.
+	 */
+	public void mouseClicked(MouseEvent e) {
+		Container euclidianView = (Container)e.getSource();
+		
+		// ignore clicks on the panel which was already focused
+		if(focusedDockPanel != null && focusedDockPanel.getComponent() == euclidianView) {
+			return;
+		}
+		
+		// try to find the panel which uses this EV as component
+		DockPanel euclidianViewPanel = null;
+		
+		for(DockPanel panel : dockPanels) {
+			if(panel.isVisible()) {
+				if(panel.getComponent() == euclidianView) {
+					euclidianViewPanel = panel;
+					break;
+				}
 			}
-			
-			focusedDockPanel = dp;
+		}
+		
+		if(euclidianViewPanel != null) {
+			setFocusedPanel(euclidianViewPanel);
+		} else {
+			Application.debug("Illegal mouse listener registration.");
+		}
+	}
+	
+	/**
+	 * Change the focused panel to "panel".
+	 * 
+	 * @param panel
+	 */
+	public void setFocusedPanel(DockPanel panel) {
+		// remove focus from previously focused dock panel
+		if(focusedDockPanel != null) {
+			focusedDockPanel.setFocus(false);
+		}
+		
+		focusedDockPanel = panel;
+		
+		if(focusedDockPanel != null) {
 			focusedDockPanel.setFocus(true);
+		}
+	}
+	
+	/**
+	 * @return The dock panel which has focus at the moment.
+	 */
+	public DockPanel getFocusedPanel() {
+		return focusedDockPanel;
+	}
+	
+	/**
+	 * Moves the focus between visible panels. Just the register order is taken
+	 * into consideration here, so the focus changing order does not depend upon
+	 * the visual order.
+	 * 
+	 * @param forward If the next or previous panel should be focused,
+	 * 		calling this method once with both possibilities will cancel out 
+	 * 		the effect so to say.
+	 */
+	public void moveFocus(boolean forward) {
+		if(focusedDockPanel == null)
+			return;
+		
+		// to follow the DRY principle we'll use a single iterator for both
+		// forward and backward iteration
+		Iterator<DockPanel> it = getForwardBackwardIterator(forward);
+		
+		// if the focused dock panel was found already
+		boolean foundFocused = false;
+		boolean changedFocus = false;
+		
+		while(it.hasNext()) {
+			DockPanel panel = it.next();
+			
+			// all we do for now on just takes visible dock panels
+			// into consideration
+			if(panel.isVisible()) {
+				// we already found the focused dock panel, so this is the
+				// new panel to focus
+				if(foundFocused) {
+					setFocusedPanel(panel);
+					changedFocus = true;
+					break;
+				}
+				
+				// is this the focused dock panel?
+				else if(panel == focusedDockPanel) {
+					foundFocused = true;
+				} 
+				
+				else {
+					// we have not reached the focused dock panel, therefore
+					// we do nothing
+				}
+			}
+		}
+		
+		// if just invisible dock panels (or none) followed the focused dock panel we have
+		// not changed the focus so far, so we go through our list from the beginning
+		if(!changedFocus) {
+			// recreate our iterator as we can't reset it
+			it = getForwardBackwardIterator(forward);
+			
+			
+			while(it.hasNext()) {
+				DockPanel panel = it.next();
+				
+				if(panel.isVisible()) {
+					// quit if we reached the focused panel until we found another
+					// visible panel
+					if(panel == focusedDockPanel) {
+						break;
+					}
+					
+					// change panel
+					else {
+						setFocusedPanel(panel);
+						changedFocus = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Helper method to create an iterator which either iterates forward or
+	 * backward through the dock panel list.
+	 * 
+	 * @param forward	If the returned iterator should return forward or backward
+	 * @return 			The iterator
+	 */
+	private Iterator<DockPanel> getForwardBackwardIterator(boolean forward) {
+		if(forward) {	
+			return dockPanels.iterator();
+		} else {
+			final ListIterator<DockPanel> original = dockPanels.listIterator(dockPanels.size());
+			
+			// we create our own iterator which iterates through our list in
+			// reversed order
+			return new Iterator<DockPanel>() {
+				public void remove() {
+					original.remove();
+				}
+				
+				public DockPanel next() {
+					return original.previous();
+				}
+				
+				public boolean hasNext() {
+					return original.hasPrevious();
+				}
+			};
 		}
 	}
 	
@@ -766,6 +934,14 @@ public class DockManager implements AWTEventListener {
 	}
 	
 	/**
+	 * @return True if all focus may change between all views, false if just
+	 * 		the euclidian views are affected by this. 
+	 */
+	public boolean hasFullFocusSystem() {
+		return hasFullFocusSystem;
+	}
+	
+	/**
 	 * Return a string which can be used to debug the view tree.
 	 * @param depth
 	 * @param pane
@@ -804,4 +980,15 @@ public class DockManager implements AWTEventListener {
 			strBuffer.append(str);
 		return strBuffer.toString();
 	}
+
+	// Unused members of the mouse listener interface which is used
+	// to manage focus for cases where a full focus system is not
+	// available.
+	public void mouseEntered(MouseEvent e) { }
+
+	public void mouseExited(MouseEvent e) { }
+
+	public void mousePressed(MouseEvent e) { }
+
+	public void mouseReleased(MouseEvent e) { }
 }

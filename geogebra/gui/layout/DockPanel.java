@@ -1,30 +1,29 @@
 package geogebra.gui.layout;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.main.Application;
 
-import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 import java.util.Comparator;
 
 import javax.swing.BorderFactory;
@@ -34,7 +33,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicButtonUI;
 
 /**
  * Every object which should be dragged needs to be of type DockPanel.
@@ -161,7 +160,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * The component used for this view.
 	 */
-	private Component component;
+	private JComponent component;
 	
 	/**
 	 * The location of this panel in the view menu. If -1 this panel won't appear there at all.
@@ -225,7 +224,31 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		return null; 
 	}
 	
+	/**
+	 * @return The main panel of this view.
+	 */
 	protected abstract JComponent loadComponent();
+	
+	/**
+	 * @return The main panel of this view (null if none was loaded yet).
+	 */
+	public JComponent getComponent() {
+		return component;
+	}
+	
+	/**
+	 * Method which is called if this dock panel gained focus. This happens
+	 * if setFocus(true) was called and this panel had no focus before.
+	 */
+	protected void focusGained() {
+	}
+	
+	/**
+	 * Method which is called if this dock panel lost focus. This happens
+	 * if setFocus(false) was called and this panel had focus before.
+	 */
+	protected void focusLost() {
+	}
 	
 	/**
 	 * Bind this view to a dock manager. Also initializes the whole GUI as just
@@ -235,7 +258,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 */
 	public void register(DockManager dockManager) {
 		this.dockManager = dockManager;
-		this.app = dockManager.getLayout().getApp();
+		this.app = dockManager.getLayout().getApplication();
 		
 		// the meta panel holds both title and style bar panel
 		JPanel metaPanel = new JPanel(new BorderLayout());
@@ -250,6 +273,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		
 		titleLabel = new JLabel(app.getPlain(title));
 		titleLabel.setFont(app.getPlainFont());
+		titleLabel.setForeground(Color.darkGray);
 		titlePanel.add(titleLabel, BorderLayout.WEST);
 
 		buttonPanel = new JPanel();
@@ -261,7 +285,13 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			toggleStyleBarButton = new JButton(app.getImageIcon("view-showtoolbar.png"));
 			toggleStyleBarButton.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
 			toggleStyleBarButton.addActionListener(this);
-			toggleStyleBarButton.setFocusPainted(false);
+			
+			if(Application.MAC_OS) {
+				toggleStyleBarButton.setUI(new TitleBarButtonUI());
+			} else {
+				toggleStyleBarButton.setFocusPainted(false);
+			}
+			
 			toggleStyleBarButton.setPreferredSize(new Dimension(16,16));
 			buttonPanel.add(toggleStyleBarButton);
 		}
@@ -270,7 +300,13 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		unwindowButton = new JButton(app.getImageIcon("view-unwindow.png"));
 		unwindowButton.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
 		unwindowButton.addActionListener(this);
-		unwindowButton.setFocusPainted(false);
+
+		if(Application.MAC_OS) {
+			unwindowButton.setUI(new TitleBarButtonUI());
+		} else {
+			unwindowButton.setFocusPainted(false);
+		}
+		
 		unwindowButton.setPreferredSize(new Dimension(16,16));
 		buttonPanel.add(unwindowButton);
 		
@@ -278,7 +314,13 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		windowButton = new JButton(app.getImageIcon("view-window.png"));
 		windowButton.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
 		windowButton.addActionListener(this);
-		windowButton.setFocusPainted(false);
+
+		if(Application.MAC_OS) {
+			windowButton.setUI(new TitleBarButtonUI());
+		} else {
+			windowButton.setFocusPainted(false);
+		}
+		
 		windowButton.setPreferredSize(new Dimension(16,16));
 		buttonPanel.add(windowButton);
 		
@@ -286,7 +328,13 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		closeButton = new JButton(app.getImageIcon("view-close.png"));
 		closeButton.setBorder(BorderFactory.createEmptyBorder(0,2,0,2));
 		closeButton.addActionListener(this);
-		closeButton.setFocusPainted(false);
+
+		if(Application.MAC_OS) {
+			closeButton.setUI(new TitleBarButtonUI());
+		} else {
+			closeButton.setFocusPainted(false);
+		}
+		
 		closeButton.setPreferredSize(new Dimension(16,16));
 		buttonPanel.add(closeButton);
 		
@@ -411,6 +459,13 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			if(hasStyleBar) {
 				styleBarPanel.add(loadStyleBar(), BorderLayout.CENTER);
 			}
+			
+			// add focus to euclidian view if we just have
+			// a limited focus system
+			if(!dockManager.hasFullFocusSystem()
+				&& component instanceof EuclidianView) {
+				component.addMouseListener(dockManager);
+			}
 		}
 		
 		if(hasStyleBar && isVisible()) {
@@ -449,7 +504,11 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * Update fonts.
 	 */
 	public void updateFonts() {
-		titleLabel.setFont(app.getPlainFont());
+		if(hasFocus && dockManager.hasFullFocusSystem()) {
+			titleLabel.setFont(app.getBoldFont());
+		} else {
+			titleLabel.setFont(app.getPlainFont());
+		}
 	}
 	
 	/**
@@ -483,7 +542,11 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 */
 	private void closePanel() {
 		dockManager.hide(this);
-		dockManager.getLayout().getApp().updateMenubar();
+		dockManager.getLayout().getApplication().updateMenubar();
+		
+		if(dockManager.getFocusedPanel() == this) {
+			dockManager.setFocusedPanel(null);
+		}
 	}
 	
 	/**
@@ -569,8 +632,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	}
 
 	/**
-	 * Return the embedded def string for this DockPanel.
-	 * @return
+	 * @return The embedded def string for this DockPanel.
 	 */
 	public String calculateEmbeddedDef() {
 		StringBuilder def = new StringBuilder();
@@ -609,8 +671,20 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		return def.reverse().toString();
 	}
 	
+	/**
+	 * @return The XML container which stores all relevant information for this
+	 *			panel.
+	 */
 	public DockPanelXml createInfo() {
-		return new DockPanelXml(id, visible, openInFrame, showStyleBar, frameBounds, embeddedDef, embeddedSize);
+		return new DockPanelXml(
+			id, 
+			visible, 
+			openInFrame, 
+			showStyleBar, 
+			frameBounds, 
+			embeddedDef, 
+			embeddedSize
+		);
 	}
 	
 	/**
@@ -680,13 +754,56 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		return hasFocus;
 	}
 	
+	/**
+	 * Mark this panel as focused. When gaining focus the panel will
+	 * automatically request focus for its parent frame.
+	 * 
+	 * @remark The focus system implemented here has nothing to do with
+	 * swings focus system, therefore Swings focus methods won't work here.
+	 * 
+	 * @param hasFocus
+	 */
 	public void setFocus(boolean hasFocus) {
+		// don't change anything if it's not necessary
+		if(this.hasFocus == hasFocus)
+			return;
+		
 		this.hasFocus = hasFocus;
 		
+		// request focus
 		if(hasFocus) {
-			titlePanel.setBackground(SystemColor.control.brighter());
+			if(openInFrame) {
+				frame.requestFocus();
+			} else {
+				if(!app.isApplet()) {
+					JFrame frame = app.getFrame();
+					
+					if(frame != null) {
+						frame.requestFocus();
+					}
+				}
+			}
+		}
+		
+		// call callback methods for focus changes 
+		if(hasFocus) {
+			focusGained();
 		} else {
-			titlePanel.setBackground(SystemColor.control);
+			focusLost();
+		}
+		
+		/*
+		 * Mark the focused view in bold if the focus system is available. If 
+		 * this isn't the case we always stick with the normal font as it would
+		 * confuse the users that the focus "indicator" just changes if we switch
+		 * between EVs. 
+		 */
+		if(dockManager.hasFullFocusSystem()) {
+			if(hasFocus) {
+				titleLabel.setFont(app.getBoldFont());
+			} else {
+				titleLabel.setFont(app.getPlainFont());
+			}
 		}
 	}
 	
@@ -750,4 +867,22 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	public void mouseEntered(MouseEvent e) {	}
 	public void mouseExited(MouseEvent e) { }
 	public void mouseReleased(MouseEvent e) { }
+	
+	/**
+	 * UI for the buttons in the title panel. Used for Mac as the normal
+	 * buttons are not displayed correclty as they are too small.
+	 * 
+	 * @author Florian Sonner
+	 */
+	private class TitleBarButtonUI extends BasicButtonUI
+	{ 
+		@Override
+		public void paint(Graphics g, JComponent component) {
+			JButton button = (JButton)component;
+			
+			// TODO implement drawing...
+			
+			super.paint(g, component);
+		}
+	}
 }

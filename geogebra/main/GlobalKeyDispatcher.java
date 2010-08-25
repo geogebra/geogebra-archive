@@ -205,14 +205,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				if (event.isControlDown() && app.hasFullGui()) {
 					consumed = true;
 					GuiManager gui = app.getGuiManager();
-					
-					// Ctrl-tab to toggle between Graphics and Spreadsheet Views
-					if (!gui.getSpreadsheetView().hasFocus()) {
-						gui.getSpreadsheetView().requestFocus();
-					}
-					else if (gui.getSpreadsheetView().hasFocus()) {
-						app.getEuclidianView().requestFocus();
-					}
+					gui.getLayout().getDockManager().moveFocus(!event.isShiftDown());
 					
 				} else if (app.getEuclidianView().hasFocus()|| app.getGuiManager().getAlgebraView().hasFocus()) {
 					if (event.isShiftDown()) app.selectLastGeo(); else app.selectNextGeo();

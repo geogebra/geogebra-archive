@@ -209,10 +209,12 @@ public class GuiManager {
 				}
 				
 				protected JComponent loadStyleBar() {
-					return app.getEuclidianView().getEuclidianStyleBar();
+					return app.getEuclidianView().getStyleBar();
 				}
 				
 				protected JComponent loadComponent() {
+					// the fact that this object is of type EuclidianView is
+					// used for the limited focus subsystem, see DockPanel::updatePanel() 
 					return app.getEuclidianView();
 				}
 			}
@@ -223,10 +225,14 @@ public class GuiManager {
 			new DockPanel(
 					Application.VIEW_ALGEBRA,	// view id 
 					"AlgebraWindow", 			// view title phrase
-					false,						// style bar?
+					true,						// style bar?
 					2, 							// menu order
 					'A'							// menu shortcut
-			) {				
+			) {	
+				protected JComponent loadStyleBar() {
+					return getAlgebraView().getHelperBar();
+				}
+				
 				protected JComponent loadComponent() {
 					JScrollPane scrollPane = new JScrollPane(getAlgebraView());
 					((JScrollPane)scrollPane).setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
@@ -253,6 +259,14 @@ public class GuiManager {
 				protected JComponent loadComponent() {
 					return getSpreadsheetView();
 				}
+				
+				protected void focusGained() {
+					Application.debug("Spreadsheet gained focus");
+				}
+				
+				protected void focusLost() {
+					Application.debug("Spreadsheet lost focus");
+				}
 			}
 		);
 		
@@ -263,7 +277,7 @@ public class GuiManager {
 					"CAS", 					// view title phrase 
 					false,					// style bar?
 					4						// menu order
-			) {					
+			) {
 				protected JComponent loadComponent() {
 					return getCasView().getCASViewComponent();
 				}
@@ -283,10 +297,12 @@ public class GuiManager {
 				}
 				
 				protected JComponent loadStyleBar() {
-					return getEuclidianView2().getEuclidianStyleBar();
+					return getEuclidianView2().getStyleBar();
 				}
 				
 				protected JComponent loadComponent() {
+					// the fact that this object is of type EuclidianView is
+					// used for the limited focus subsystem, see DockPanel::updatePanel()
 					return getEuclidianView2();
 				}
 			}
@@ -331,7 +347,7 @@ public class GuiManager {
 		return casView != null;
 	}
 
-	public JComponent getAlgebraView() {
+	public AlgebraView getAlgebraView() {
 		if (algebraView == null) {
 			initAlgebraController();
 			algebraView = new AlgebraView(algebraController);

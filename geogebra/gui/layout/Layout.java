@@ -439,7 +439,7 @@ public class Layout {
 	/**
 	 * @return The application object.
 	 */
-	public Application getApp() {
+	public Application getApplication() {
 		return app;
 	}
 	
@@ -481,7 +481,7 @@ public class Layout {
 			}
 			
 			layout.addPerspective(layout.createPerspective(inputString));
-			layout.getApp().updateMenubar();
+			layout.getApplication().updateMenubar();
 			
 			return true;
 		}
