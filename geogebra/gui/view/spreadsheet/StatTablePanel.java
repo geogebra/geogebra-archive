@@ -223,12 +223,13 @@ public class StatTablePanel extends JPanel {
 					{app.getMenu("Mean") ,"Mean"},
 					{app.getMenu("StandardDeviation.short") ,"SD"},
 					{app.getMenu("SampleStandardDeviation.short") ,"SampleSD"},
+					{app.getMenu("Sum") ,"Sum"},
 					{null , null},
 					{app.getMenu("Minimum.short") ,"Min"},
 					{app.getMenu("LowerQuartile.short") ,"Q1"},
 					{app.getMenu("Median") ,"Median"},
 					{app.getMenu("UpperQuartile.short") ,"Q3"},
-					{app.getMenu("Minimum.short") ,"Max"}
+					{app.getMenu("Maximum.short") ,"Max"}
 			};
 
 			text = createStatListString(statMap1, label);
@@ -313,7 +314,7 @@ public class StatTablePanel extends JPanel {
 			cmdStr = statMap[i][1];
 			
 			// create an interior list 
-			// e.g. { "N" , Length[geoLabel] }
+			// e.g. { "Mean" , Mean[geoLabel] }
 			if(cmdStr == null){
 				text += "{ \"\", \"\"}";
 				
@@ -323,7 +324,7 @@ public class StatTablePanel extends JPanel {
 				text += cmdStr + "[" + geoLabel + "]";
 				text += "}";
 			}
-			//==============================
+			
 			
 			// add comma delimiter
 			if(i<statMap.length - 1)
@@ -366,9 +367,9 @@ public class StatTablePanel extends JPanel {
 		//populateStatTable();
 		if(statList != null){
 			statList.updateCascade();
-			Application.debug("=======> con index " + statList.getConstructionIndex());
+			//Application.debug("=======> con index " + statList.getConstructionIndex());
 		}else{
-			Application.debug("statList is null");
+			//Application.debug("statList is null");
 		}
 		
 		statTable.repaint();
