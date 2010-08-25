@@ -778,7 +778,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 					JFrame frame = app.getFrame();
 					
 					if(frame != null) {
-						frame.requestFocus();
+						frame.toFront();
 					}
 				}
 			}

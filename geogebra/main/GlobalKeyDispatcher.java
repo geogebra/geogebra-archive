@@ -170,11 +170,19 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 
 					// ENTER: set focus to input field
 					if (app.hasFullGui() && app.getGuiManager().noMenusOpen())
-					if (app.showAlgebraInput() && 
-						!app.getGuiManager().getAlgebraInput().hasFocus()) 
 					{
-						app.getGuiManager().getAlgebraInput().requestFocus(); 
-						consumed = true;
+						if (app.showAlgebraInput() && 
+							!app.getGuiManager().getAlgebraInput().hasFocus()) 
+						{	
+							// focus this frame (needed for external view windows)
+							if(!app.isApplet() && app.getFrame() != null) {
+								app.getFrame().toFront();
+							}
+							
+							app.getGuiManager().getAlgebraInput().requestFocus();
+							
+							consumed = true;
+						}
 					}
 				}
 				break;			
