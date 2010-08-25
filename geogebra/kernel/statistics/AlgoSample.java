@@ -126,7 +126,7 @@ public class AlgoSample extends AlgoElement {
 	        // copy the geos back into a GeoList in a random order
 	        for (int i=0 ; i<size ; i++)
 	        {
-	        	int pos = (int) Math.floor(Math.random() * (size - i));
+	        	int pos = (int) Math.floor(Math.random() * (inputListSize - i));
 	        	outputList.add(list.get(pos));
 	        	list.remove(pos);
 	        }
