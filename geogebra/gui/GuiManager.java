@@ -123,10 +123,7 @@ public class GuiManager {
 	private ToolBar appToolbarPanel;	  
     private String strCustomToolbarDefinition;
     private Locale currentLocale;
-    private boolean htmlLoaded;//added by Zbynek Konecny, 2010-05-28 (see #126)
-    
-    private EuclidianView focusedEuclidianView;
-    
+    private boolean htmlLoaded;//added by Zbynek Konecny, 2010-05-28 (see #126)    
 
 	private Layout layout;
 
@@ -482,23 +479,27 @@ public class GuiManager {
 		return euclidianView2 != null;
 	}
 	
-	
+	/**
+	 * @todo Do not just use the default euclidian view if no EV has focus, but
+	 * determine if maybe just one EV is visible etc. 
+	 * 
+	 * @return The euclidian view to which new geo elements should be added by
+	 * default (if the user uses this mode). This is the focused euclidian
+	 * view or the first euclidian view at the moment.
+	 */
 	public EuclidianView getActiveEuclidianView() {
-		if(focusedEuclidianView == null)
-			focusedEuclidianView = app.getEuclidianView();
-		return focusedEuclidianView;
+		DockPanel focusedPanel = layout.getDockManager().getFocusedPanel();
+		
+		if(focusedPanel != null) {
+			if(focusedPanel.getComponent() instanceof EuclidianView) {
+				return (EuclidianView)focusedPanel.getComponent();
+			} else {
+				return app.getEuclidianView();
+			}
+		} else {
+			return app.getEuclidianView();
+		}
 	}
-
-	public void setActiveEuclidianView(EuclidianView activeEuclidianView) {
-		this.focusedEuclidianView = activeEuclidianView;
-	}
-
-	
-	
-	
-	
-	
-	
 	
 	/**
 	 * Attach a view which by using the view ID.

@@ -1,5 +1,6 @@
 package geogebra.gui.layout;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.main.Application;
@@ -23,14 +24,13 @@ import javax.swing.SwingUtilities;
  * 
  * @author Florian Sonner
  */
-public class DockManager implements AWTEventListener, MouseListener {
+public class DockManager implements AWTEventListener {
 	private Application app;
 	private Layout layout;
 	
 	/**
-	 * False if the application is running in unsigned mode. We can't use the
-	 * full focus detection mechanisms in this case but have to add mouse click
-	 * listeners to the euclidian view (just they may be active then).
+	 * False if the application is running in unsigned mode. We can only listen to 
+	 * euclidian view focus changes in this case.
 	 */
 	private boolean hasFullFocusSystem;
 	
@@ -539,6 +539,7 @@ public class DockManager implements AWTEventListener, MouseListener {
 		}
 		
 		panel.updatePanel();
+		setFocusedPanel(panel);
 		
 		Application.debug(getDebugTree(0, rootPane));
 	}
@@ -615,8 +616,15 @@ public class DockManager implements AWTEventListener, MouseListener {
 	
 	/**
 	 * Listen to mouse clicks and determine if the view focus changed. Just
-	 * used in case the full focus system is active, otherwise the mouse clicked
-	 * event should be intercepted for euclidian views (see DockManager::mouseClicked()).
+	 * used in case the full focus system is active. 
+	 * 
+	 * Euclidian views always inform the dock manager about focus changes using
+	 * their own mouse click events (see EuclidianController:mouseClicked()) because
+	 *   1) This AWT event cannot be used for unsigned applets but we need euclidian
+	 *      view focus changes for new object placement
+	 *   2) An own mouse listener may be called *after* the euclidian controller
+	 *      mouse listener was called, therefore new objects may be created in the wrong
+	 *      euclidian view as the focus was not changed at the time of object creation. 
 	 */
 	public void eventDispatched(AWTEvent event) {
 		// we also get notified about other mouse events, but we want to ignore them
@@ -628,39 +636,10 @@ public class DockManager implements AWTEventListener, MouseListener {
 		// dock panel
 		DockPanel dp = (DockPanel)SwingUtilities.getAncestorOfClass(DockPanel.class, (Component)event.getSource());
 		
-		if(dp != null && dp != focusedDockPanel) {
+		// ignore this if we didn't hit a dock panel at all or if we hit the euclidian
+		// view, they are always handled by their own mouse event (see doc comment above)
+		if(dp != null && !(dp.getComponent() instanceof EuclidianView)) {
 			setFocusedPanel(dp);
-		}
-	}
-
-	/**
-	 * This method is called if the user clicked upon an euclidian view and the
-	 * full focus system is not available.
-	 */
-	public void mouseClicked(MouseEvent e) {
-		Container euclidianView = (Container)e.getSource();
-		
-		// ignore clicks on the panel which was already focused
-		if(focusedDockPanel != null && focusedDockPanel.getComponent() == euclidianView) {
-			return;
-		}
-		
-		// try to find the panel which uses this EV as component
-		DockPanel euclidianViewPanel = null;
-		
-		for(DockPanel panel : dockPanels) {
-			if(panel.isVisible()) {
-				if(panel.getComponent() == euclidianView) {
-					euclidianViewPanel = panel;
-					break;
-				}
-			}
-		}
-		
-		if(euclidianViewPanel != null) {
-			setFocusedPanel(euclidianViewPanel);
-		} else {
-			Application.debug("Illegal mouse listener registration.");
 		}
 	}
 	
@@ -670,6 +649,10 @@ public class DockManager implements AWTEventListener, MouseListener {
 	 * @param panel
 	 */
 	public void setFocusedPanel(DockPanel panel) {
+		if(focusedDockPanel == panel) {
+			return;
+		}
+		
 		// remove focus from previously focused dock panel
 		if(focusedDockPanel != null) {
 			focusedDockPanel.setFocus(false);
@@ -980,15 +963,4 @@ public class DockManager implements AWTEventListener, MouseListener {
 			strBuffer.append(str);
 		return strBuffer.toString();
 	}
-
-	// Unused members of the mouse listener interface which is used
-	// to manage focus for cases where a full focus system is not
-	// available.
-	public void mouseEntered(MouseEvent e) { }
-
-	public void mouseExited(MouseEvent e) { }
-
-	public void mousePressed(MouseEvent e) { }
-
-	public void mouseReleased(MouseEvent e) { }
 }

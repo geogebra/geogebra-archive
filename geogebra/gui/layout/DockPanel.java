@@ -239,6 +239,9 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * Method which is called if this dock panel gained focus. This happens
 	 * if setFocus(true) was called and this panel had no focus before.
+	 * 
+	 * @remark If GeoGebra is running as unsigned applet focus is just changed between
+	 * euclidian views (even if other views were selected in the meantime).
 	 */
 	protected void focusGained() {
 	}
@@ -246,6 +249,9 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * Method which is called if this dock panel lost focus. This happens
 	 * if setFocus(false) was called and this panel had focus before.
+	 * 
+	 * @remark If GeoGebra is running as unsigned applet focus is just changed between
+	 * euclidian views (even if other views were selected in the meantime).
 	 */
 	protected void focusLost() {
 	}
@@ -458,13 +464,6 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			
 			if(hasStyleBar) {
 				styleBarPanel.add(loadStyleBar(), BorderLayout.CENTER);
-			}
-			
-			// add focus to euclidian view if we just have
-			// a limited focus system
-			if(!dockManager.hasFullFocusSystem()
-				&& component instanceof EuclidianView) {
-				component.addMouseListener(dockManager);
 			}
 		}
 		

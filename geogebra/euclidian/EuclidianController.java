@@ -19,6 +19,7 @@
 package geogebra.euclidian;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.gui.layout.DockPanel;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
@@ -64,6 +65,7 @@ import geogebra.main.GeoElementSelectionListener;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -89,6 +91,7 @@ import java.util.Iterator;
 import java.util.Locale;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.text.JTextComponent;
 
@@ -927,13 +930,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	public void mousePressed(MouseEvent e) {
-
-		// =============================================
-		// set this view to be the focused EV
-		// temporary code for testing (G.Sturr)		
-		app.getGuiManager().setActiveEuclidianView((EuclidianView) view);
-		// =============================================
+		// determine parent panel to change focus
+		DockPanel panel = (DockPanel)SwingUtilities.getAncestorOfClass(DockPanel.class, (Component)e.getSource());
 		
+		if(panel != null) {
+			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(panel);
+		}
 		
 		if (mode == EuclidianView.MODE_PEN) {
 			handleMousePressedForPenMode(e);
