@@ -650,7 +650,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 	}
 
 	public String getVarString() {	
-		return funX.getFunctionVariables().toString();
+		return funX.getVarString();
 	}
 	
 	final public boolean isFunctionInX() {		
