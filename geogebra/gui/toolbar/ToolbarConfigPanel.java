@@ -319,7 +319,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	 */
 	public void setToolBarString(String toolbarDefinition) {				
 		// create new tree model
-		Vector toolVec = ToolBar.createToolBarVec(toolbarDefinition);		
+		Vector toolVec = Toolbar.createToolBarVec(toolbarDefinition);		
 		DefaultTreeModel model = new DefaultTreeModel(generateRootNode(toolVec));
 		tree.setModel(model);		
 		collapseAllRows();	
@@ -329,7 +329,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		Vector usedTools = generateToolsVector(toolbarDefinition);
 		
 		toolListModel.clear();
-		toolListModel.addElement(ToolBar.TOOLBAR_SEPARATOR); // always display the separator in the tools list
+		toolListModel.addElement(Toolbar.TOOLBAR_SEPARATOR); // always display the separator in the tools list
 		
 		for(Iterator iter = allTools.iterator(); iter.hasNext();) {
 			Object next = iter.next();
@@ -386,10 +386,10 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	public Vector generateToolsVector(String toolbarDefinition) {				
 		Vector vector = new Vector();		
 		// separator
-		vector.add(ToolBar.TOOLBAR_SEPARATOR);
+		vector.add(Toolbar.TOOLBAR_SEPARATOR);
 				
 		// get default toolbar as nested vectors
-		Vector defTools = ToolBar.createToolBarVec(toolbarDefinition);				
+		Vector defTools = Toolbar.createToolBarVec(toolbarDefinition);				
 		for (int i=0; i < defTools.size(); i++) {
 			Object element = defTools.get(i);
 			

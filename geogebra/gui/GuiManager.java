@@ -10,7 +10,7 @@ import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
-import geogebra.gui.toolbar.ToolBar;
+import geogebra.gui.toolbar.Toolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.GeoGebraFileChooser;
@@ -120,7 +120,7 @@ public class GuiManager {
 	private GeoGebraFileChooser fileChooser;
 	private GeoGebraMenuBar menuBar;
 
-	private ToolBar appToolbarPanel;	  
+	private Toolbar appToolbarPanel;	  
     private String strCustomToolbarDefinition;
     private Locale currentLocale;
     private boolean htmlLoaded;//added by Zbynek Konecny, 2010-05-28 (see #126)    
@@ -637,7 +637,7 @@ public class GuiManager {
 
 	public JComponent getToolbarPanel() {
 		if (appToolbarPanel == null) {
-			appToolbarPanel = new ToolBar(app);
+			appToolbarPanel = new Toolbar(app);
 		}
 
 		return appToolbarPanel;
@@ -645,7 +645,7 @@ public class GuiManager {
 	
 	public void updateToolbar() {
 		if (appToolbarPanel != null) {
-			appToolbarPanel.initToolarBar();
+			appToolbarPanel.initToolbar();
 		}
 	}
 	
@@ -787,7 +787,7 @@ public class GuiManager {
 		}
 
 		if (appToolbarPanel != null) {
-			appToolbarPanel.initToolarBar();
+			appToolbarPanel.initToolbar();
 		}
 		
 		if (menuBar != null) {
@@ -834,7 +834,7 @@ public class GuiManager {
 
 		// TODO don't reinit GUIs anymore! (performance!) (F.S.)
 		if (appToolbarPanel != null)
-			appToolbarPanel.initToolarBar();
+			appToolbarPanel.initToolbar();
 		
 		if (propDialog != null)
 			// changed to force all language strings to be updated

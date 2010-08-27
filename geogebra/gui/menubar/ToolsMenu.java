@@ -2,7 +2,7 @@ package geogebra.gui.menubar;
 
 import geogebra.gui.ToolCreationDialog;
 import geogebra.gui.ToolManagerDialog;
-import geogebra.gui.toolbar.ToolBar;
+import geogebra.gui.toolbar.Toolbar;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
@@ -65,8 +65,8 @@ class ToolsMenu extends BaseMenu {
 			add(modeMenus[i]);
 		}
 
-		ToolBar toolbar = new ToolBar(app);
-		Vector modes = ToolBar.createToolBarVec(toolbar
+		Toolbar toolbar = new Toolbar(app);
+		Vector modes = Toolbar.createToolBarVec(toolbar
 				.getDefaultToolbarString());
 
 		int menuIndex = 0;
