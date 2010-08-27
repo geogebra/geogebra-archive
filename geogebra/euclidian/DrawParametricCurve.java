@@ -70,6 +70,11 @@ public class DrawParametricCurve extends Drawable {
     private static int countPoints = 0;
 	private static long countEvaluations = 0;
    
+	/**
+	 * Creates graphical representation of the curve 
+	 * @param view Euclidian view in which it should be drawn
+	 * @param curve Curve to be drawn
+	 */
     public DrawParametricCurve(EuclidianView view, ParametricCurve curve) {
     	this.view = view;
         this.curve = curve;
@@ -122,9 +127,13 @@ public class DrawParametricCurve extends Drawable {
     
     /**
      * Draws a parametric curve (x(t), y(t)) for t in [t1, t2]. 
-     * @param gp: generalpath that can be drawn afterwards
-     * @param calcLabelPos: whether label position should be calculated and returned
-     * @param moveToAllowed: whether moveTo() may be used for gp
+     * @param t1  min value of parameter
+     * @param t2 max value of parameter
+     * @param curve curve to be drawn
+     * @param view Euclidian view to be used
+     * @param gp generalpath that can be drawn afterwards
+     * @param calcLabelPos whether label position should be calculated and returned
+     * @param moveToAllowed whether moveTo() may be used for gp
      * @return label position as Point
      * @author Markus Hohenwarter, based on an algorithm by John Gillam     
      */
@@ -172,9 +181,9 @@ public class DrawParametricCurve extends Drawable {
     /**
      * Draws a parametric curve (x(t), y(t)) for t in [t1, t2]. 
      * @param: max_param_step: largest parameter step width allowed
-     * @param gp: generalpath that can be drawn afterwards
-     * @param calcLabelPos: whether label position should be calculated and returned
-     * @param moveToAllowed: whether moveTo() may be used for gp
+     * @param gp generalpath that can be drawn afterwards
+     * @param calcLabelPos whether label position should be calculated and returned
+     * @param moveToAllowed whether moveTo() may be used for gp
      * @return label position as Point
      * @author Markus Hohenwarter, based on an algorithm by John Gillam     
      */
@@ -667,6 +676,9 @@ public class DrawParametricCurve extends Drawable {
 	 /**
 	  * Calls gp.moveTo(x, y) only if the current point
 	  * is not already at this position.
+	  * @param gp path of the curve
+	  * @param x x-coord of start point
+	  * @param y y-coord of start point
 	  */
 	 public static void moveTo(GeneralPathClipped gp, double x, double y) {		
 		 drawTo(gp, x, y, false);
@@ -675,6 +687,9 @@ public class DrawParametricCurve extends Drawable {
 	 /**
 	  * Calls gp.lineTo(x, y) only if the current point
 	  * is not already at this position.
+	  * @param gp path of the curve
+	  * @param x x-coord of target point
+	  * @param y y-coord of target point
 	  */
 	 public static void lineTo(GeneralPathClipped gp, double x, double y) {			 		 
 		 drawTo(gp, x, y, true);
@@ -860,6 +875,10 @@ public class DrawParametricCurve extends Drawable {
         }
     }		
     
+	/**
+	 * Draw trace of the curve
+	 * @param g2 Graphic to be used
+	 */
 	final void drawTrace(Graphics2D g2) {	   
 	   g2.setPaint(geo.getObjectColor());	   
 	   g2.setStroke(objStroke); 		   
