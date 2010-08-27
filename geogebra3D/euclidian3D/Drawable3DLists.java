@@ -77,7 +77,7 @@ public class Drawable3DLists {
 	private void remove(Drawable3D drawable){
 	
 		//TODO fix it
-		//if (drawable!=null)
+		if (drawable!=null)
 			lists[drawable.getType()].remove(drawable);
 		
 	}
