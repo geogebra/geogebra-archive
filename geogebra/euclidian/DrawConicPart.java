@@ -222,7 +222,13 @@ implements Previewable {
         if (isVisible) {	
         	switch (draw_type) {
         		case DRAW_TYPE_ELLIPSE:
-					if (geo.alphaValue > 0.0f) {
+                	if (geo.shadingEnabled) {
+                        
+                        TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), geo.alphaValue, geo.shadingDistance, geo.shadingAngle);
+                        g2.fill(shape);
+
+                    }
+                    else if (geo.alphaValue > 0.0f) {
 						g2.setColor(geo.getFillColor());
 						g2.fill(shape);
 					}	
@@ -380,7 +386,7 @@ implements Previewable {
 				if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-				if (geo.alphaValue > 0.0f)
+				if (geo.alphaValue > 0.0f || geo.shadingEnabled)
 					return shape.intersects(x-3,y-3,6,6); 					
 				else
 					return strokedShape.intersects(x-3,y-3,6,6); 
