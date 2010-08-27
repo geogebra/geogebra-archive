@@ -35,7 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-public class MyToolbar extends JPanel implements ComponentListener{
+public class Toolbar extends JPanel implements ComponentListener{
 
 	private static final long serialVersionUID = 8983050697241236851L;
 
@@ -54,7 +54,7 @@ public class MyToolbar extends JPanel implements ComponentListener{
      * Creates a panel for the application's toolbar. 
      * Note: call initToolbar() to fill the panel.
      */
-	public MyToolbar(Application app)  {
+	public Toolbar(Application app)  {
 		this.app = app;	
 		addComponentListener(this);
 	}
