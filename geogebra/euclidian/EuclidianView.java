@@ -1485,7 +1485,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		}
 	}
 
-	protected void setAntialiasing(Graphics2D g2) {
+	protected static void setAntialiasing(Graphics2D g2) {
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
