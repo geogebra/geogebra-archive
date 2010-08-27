@@ -34,7 +34,7 @@ public class SurfaceMesh {
 	private final int triBufMarigin = 10000;
 
 	/** number of merges/splits per step */
-	private final int stepRefinement = 1000;
+	private final int stepRefinement = 100;
 
 	/** the maximum level of refinement */
 	private static final int maxLevel = 20;
@@ -62,7 +62,7 @@ public class SurfaceMesh {
 	private double desiredErrorPerAreaUnit;
 	
 	/** if true error, triangle count and update time is printed each update */
-	private static final boolean printInfo = true;
+	private static final boolean printInfo = false;
 	
 	/** if false, no updates of the mesh are done */
 	private boolean doUpdates = true;
