@@ -16,6 +16,7 @@ import geogebra.Matrix.GgbCoordSys;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -70,6 +71,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	 */	
 	public GeoPolygon(Construction c, GeoPointInterface[] points, GgbCoordSys cs, boolean createSegments) {
 		super(c);
+		//Application.printStacktrace("poly");
 		this.createSegments=createSegments;
 		setPoints(points, cs, createSegments);
 		setLabelVisible(false);
@@ -633,7 +635,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 	    return sbToString.toString();
    }      
    private StringBuilder sbToString = new StringBuilder(50);
-   
+
    final public String toValueString() {
 	   return kernel.format(getArea());
    }

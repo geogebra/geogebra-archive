@@ -13,13 +13,19 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.TexturePaint;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
@@ -108,9 +114,17 @@ implements Previewable {
         
 	final public void draw(Graphics2D g2) {
         if (isVisible) {
-        	if (poly.alphaValue > 0.0f) {
+        	if (poly.shadingEnabled) {
+                            
+            TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), poly.alphaValue, geo.shadingDistance, geo.shadingAngle);
+            g2.fill(gp);
+
+        	}
+        	else if (poly.alphaValue > 0.0f)
+        	{
 				g2.setPaint(poly.getFillColor());                       
-				g2.fill(gp);  				
+				g2.fill(gp);  
+        		
         	}        	        	
             	
             if (geo.doHighlighting()) {

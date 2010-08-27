@@ -419,7 +419,7 @@ final public class DrawConic extends Drawable implements Previewable {
 				   Arc2D.OPEN);
                     
             // set general path for filling the arc to screen borders
-			if (conic.alphaValue > 0.0f) {
+			if (conic.alphaValue > 0.0f || conic.shadingEnabled) {
 				if (gp == null) gp = new GeneralPathClipped(view);
 				else gp.reset();
 				Point2D sp = arc.getStartPoint();
@@ -615,7 +615,7 @@ final public class DrawConic extends Drawable implements Previewable {
         
         // we have drawn the hyperbola from x=a to x=x0
         // ensure correct filling by adding points at (2*x0, y)
-        if (conic.alphaValue > 0.0f) {
+        if (conic.alphaValue > 0.0f || conic.shadingEnabled) {
 	        hypRight.lineTo(Float.MAX_VALUE, y);
 	        hypRight.lineTo(Float.MAX_VALUE, -y);
 	        hypLeft.lineTo(-Float.MAX_VALUE, y);
@@ -723,7 +723,15 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_CIRCLE:                                                                                 
             case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 	
-				if (conic.alphaValue > 0.0f) {
+	        	if (conic.shadingEnabled) {
+                    
+	                TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), conic.alphaValue, geo.shadingDistance, geo.shadingAngle);
+	                g2.fill(shape);
+					if (arcFiller != null) 
+						Drawable.fillWithValueStrokePure(arcFiller, g2);
+
+	            	}
+	            	else if (conic.alphaValue > 0.0f) {
 					g2.setColor(conic.getFillColor());
 					g2.fill(shape);
 					if (arcFiller != null) 
@@ -745,7 +753,16 @@ final public class DrawConic extends Drawable implements Previewable {
                 break;            
             
            case GeoConic.CONIC_HYPERBOLA:               		          
-				if (conic.alphaValue > 0.0f) {
+           	if (conic.shadingEnabled) {
+                
+                TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), conic.alphaValue, geo.shadingDistance, geo.shadingAngle);
+                //g2.fill(gp);
+				if (hypLeftOnScreen) Drawable.fillWithValueStrokePure(hypLeft, g2);                                                
+				if (hypRightOnScreen) Drawable.fillWithValueStrokePure(hypRight, g2); 
+
+
+            	}
+            	else if (conic.alphaValue > 0.0f) {
 					g2.setColor(conic.getFillColor());
 					if (hypLeftOnScreen) Drawable.fillWithValueStrokePure(hypLeft, g2);                                                
 					if (hypRightOnScreen) Drawable.fillWithValueStrokePure(hypRight, g2); 
@@ -849,7 +866,7 @@ final public class DrawConic extends Drawable implements Previewable {
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-    			if (conic.alphaValue > 0.0f) 
+    			if (conic.alphaValue > 0.0f || conic.shadingEnabled) 
     				return shape.intersects(x-3,y-3,6,6);  
     			else
     				return strokedShape.intersects(x-3,y-3,6,6);            	
@@ -859,7 +876,7 @@ final public class DrawConic extends Drawable implements Previewable {
         			strokedShape = objStroke.createStrokedShape(hypLeft);
         			strokedShape2 = objStroke.createStrokedShape(hypRight);
         		}    		
-    			if (conic.alphaValue > 0.0f) 
+    			if (conic.alphaValue > 0.0f || conic.shadingEnabled) 
     				return hypLeft.intersects(x-3,y-3,6,6) || hypRight.intersects(x-3,y-3,6,6);  
     			else
     				return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);  

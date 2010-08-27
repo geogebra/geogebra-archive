@@ -339,6 +339,9 @@ public abstract class GeoElement
 	private int animationDirection = 1;
 	
 	public float alphaValue = 0.0f;
+	public boolean shadingEnabled = false;
+	public double shadingAngle = Math.PI / 4;
+	public int shadingDistance = 10;
 	public int labelOffsetX = 0, labelOffsetY = 0;
 	private boolean auxiliaryObject = false;	
 	private boolean selectionAllowed = true;
