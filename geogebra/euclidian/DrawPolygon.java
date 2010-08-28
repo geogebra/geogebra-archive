@@ -117,7 +117,7 @@ implements Previewable {
         	if (poly.isHatchingEnabled()) {
                             
         		// use decoStroke as it is always full (not dashed/dotted etc)
-            HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), poly.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+            HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
             g2.fill(gp);
 
         	}

@@ -860,8 +860,14 @@ public class DrawParametricCurve extends Drawable {
 			
         	if (fillCurve) {
 				try {
-	            	g2.setPaint(geo.getFillColor());                                  
-					g2.fill(gp);    
+					
+					if (geo.isHatchingEnabled()) {
+			            HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+			            g2.fill(gp);						
+					} else {
+						g2.setPaint(geo.getFillColor());                                  
+						g2.fill(gp);    
+					}
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
 				}   
@@ -923,7 +929,7 @@ public class DrawParametricCurve extends Drawable {
 	
 	final private static boolean filling(ParametricCurve curve) {
 		return !curve.isFunctionInX() &&
-				curve.toGeoElement().getAlphaValue() > 0;
+				(curve.toGeoElement().getAlphaValue() > 0 || curve.toGeoElement().isHatchingEnabled());
 	}
 
 }

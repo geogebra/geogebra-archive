@@ -106,8 +106,17 @@ public class DrawIntegralFunctions extends Drawable {
                 Drawable.drawWithValueStrokePure(gp, g2);             
             }         	
             			
-        	g2.setPaint(n.getFillColor());                                  
-        	Drawable.fillWithValueStrokePure(gp, g2);       
+        	if (geo.isHatchingEnabled()) {
+                
+        		// use decoStroke as it is always full (not dashed/dotted etc)
+        		HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+        		Drawable.fillWithValueStrokePure(gp, g2);       
+
+        	}
+        	else {
+        		g2.setPaint(n.getFillColor());                                  
+            	Drawable.fillWithValueStrokePure(gp, g2);       
+        	}
 					
 			g2.setPaint(n.getObjectColor());
 			g2.setStroke(objStroke);                                   
