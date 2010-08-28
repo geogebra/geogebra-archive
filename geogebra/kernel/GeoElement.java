@@ -4723,7 +4723,6 @@ public abstract class GeoElement
 	
 	public void setHatchingAngle(double angle) {
 		hatchingAngle = angle;
-		setHatchingEnabled(true);
 	}
 	
 	public double getHatchingAngle() {
@@ -4732,7 +4731,6 @@ public abstract class GeoElement
 	
 	public void setHatchingDistance(int distance) {
 		hatchingDistance = distance;
-		setHatchingEnabled(true);
 	}
 	
 	public int getHatchingDistance() {

@@ -2336,12 +2336,16 @@ public class MyXMLHandler implements DocHandler {
 			}
 			
 			String angle = (String) attrs.get("hatchAngle");
-			if (angle != null)
+			if (angle != null) {
 				geo.setHatchingAngle(Double.parseDouble(angle));
+				geo.setHatchingEnabled(true);
+			}
 
 			String distance = (String) attrs.get("hatchDistance");
-			if (angle != null)
+			if (angle != null) {
 				geo.setHatchingDistance(Integer.parseInt(distance));
+				geo.setHatchingEnabled(true);
+			}
 
 		String alpha = (String) attrs.get("alpha");
 		if (alpha != null
