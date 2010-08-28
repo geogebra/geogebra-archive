@@ -725,7 +725,7 @@ final public class DrawConic extends Drawable implements Previewable {
 			case GeoConic.CONIC_PARABOLA: 	
 	        	if (conic.isShadingEnabled()) {
                     
-	                TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), conic.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
+	                TextureHandler.setShading(g2, decoStroke, geo.getObjectColor(), conic.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
 	                g2.fill(shape);
 					if (arcFiller != null) 
 						Drawable.fillWithValueStrokePure(arcFiller, g2);

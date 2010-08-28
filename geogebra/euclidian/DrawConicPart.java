@@ -224,7 +224,7 @@ implements Previewable {
         		case DRAW_TYPE_ELLIPSE:
                 	if (geo.isShadingEnabled()) {
                         
-                        TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), geo.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
+                        TextureHandler.setShading(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
                         g2.fill(shape);
 
                     }

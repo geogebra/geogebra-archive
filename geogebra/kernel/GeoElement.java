@@ -4722,7 +4722,7 @@ public abstract class GeoElement
 		return shadingAngle;
 	}
 	
-	public void setshadingDistance(int distance) {
+	public void setShadingDistance(int distance) {
 		shadingDistance = distance;
 	}
 	

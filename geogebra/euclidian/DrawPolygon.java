@@ -116,7 +116,8 @@ implements Previewable {
         if (isVisible) {
         	if (poly.isShadingEnabled()) {
                             
-            TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), poly.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
+        		// use decoStroke as it is always full (not dashed/dotted etc)
+            TextureHandler.setShading(g2, decoStroke, geo.getObjectColor(), poly.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
             g2.fill(gp);
 
         	}
