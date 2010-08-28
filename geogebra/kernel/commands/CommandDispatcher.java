@@ -419,6 +419,7 @@ public class CommandDispatcher {
     	cmdTable.put("RotateText", new CmdRotateText(kernel));	   
     	cmdTable.put("Sample", new CmdSample(kernel));	   
     	cmdTable.put("SlowPlot", new CmdSlowPlot(kernel));	   
+    	cmdTable.put("ToolImage", new CmdToolImage(kernel));	   
 
      	                  	
     	

@@ -21,7 +21,6 @@ import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
-import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
@@ -52,9 +51,12 @@ import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.ImageManager;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -4627,6 +4629,60 @@ class CmdOsculatingCircle extends CommandProcessor {
 					e.printStackTrace();
 					throw argErr(app, c.getName(), arg[0]);					
 				}
+			 } else {
+				 throw argErr(app, c.getName(), arg[0]);
+			 }
+
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }
+	 }
+ }
+
+ class CmdToolImage extends CommandProcessor {
+	 public CmdToolImage(Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 boolean[] ok = new boolean[n];
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+
+		 switch (n) {
+		 case 1 :
+			 if ( (ok[0] = (arg[0].isGeoNumeric()) ) ){
+				 
+				 int mode = (int)((GeoNumeric)arg[0]).getDouble();
+				 
+				 String modeStr = kernel.getModeText(mode);
+				 
+				 if ("".equals(modeStr))
+					 throw argErr(app, c.getName(), arg[0]);
+				 
+				 Image im = app.getImageManager().getImageResource("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");			 
+
+				 BufferedImage image = ImageManager.toBufferedImage(im);
+					String fileName = app.createImage(image, "tool.png");
+
+					GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
+					geoImage.setFileName(fileName);
+					geoImage.setTooltipMode(GeoElement.TOOLTIP_OFF);
+					
+					boolean oldState = cons.isSuppressLabelsActive();
+					cons.setSuppressLabelCreation(true);
+					GeoPoint corner = new GeoPoint(cons,null,0,0,1);
+					cons.setSuppressLabelCreation(oldState);
+					try {
+						geoImage.setStartPoint(corner);
+					} catch (CircularDefinitionException e) {
+					}
+					geoImage.setLabel(null);
+					
+					GeoElement[] ret = {};
+					return ret;
+	
 			 } else {
 				 throw argErr(app, c.getName(), arg[0]);
 			 }
