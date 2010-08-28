@@ -339,7 +339,7 @@ public abstract class GeoElement
 	private int animationDirection = 1;
 	
 	public float alphaValue = 0.0f;
-	private boolean hatchingEnabled = true;
+	private boolean hatchingEnabled = false;
 	private double hatchingAngle = Math.PI / 4;
 	private int hatchingDistance = 10;
 	public int labelOffsetX = 0, labelOffsetY = 0;
@@ -3548,9 +3548,16 @@ public abstract class GeoElement
 				sb.append("\"");
 				sb.append(" dynamicb=\"");
 				sb.append(Util.encodeXML(colFunction.get(2).getLabel()));
-				sb.append("\"");
-				
+				sb.append("\"");				
 			}	
+			
+			if (isHatchingEnabled()) {
+				sb.append(" hatchAngle=\"");
+				sb.append(hatchingAngle);
+				sb.append("\" hatchDistance=\"");
+				sb.append(hatchingDistance);
+				sb.append("\"");
+			}
 			sb.append("/>\n");
 		}
 
@@ -4716,6 +4723,7 @@ public abstract class GeoElement
 	
 	public void setHatchingAngle(double angle) {
 		hatchingAngle = angle;
+		setHatchingEnabled(true);
 	}
 	
 	public double getHatchingAngle() {
@@ -4724,6 +4732,7 @@ public abstract class GeoElement
 	
 	public void setHatchingDistance(int distance) {
 		hatchingDistance = distance;
+		setHatchingEnabled(true);
 	}
 	
 	public int getHatchingDistance() {

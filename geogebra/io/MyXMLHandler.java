@@ -2334,6 +2334,14 @@ public class MyXMLHandler implements DocHandler {
 			} catch (Exception e) {
 				System.err.println("Error loading Dynamic Colors");
 			}
+			
+			String angle = (String) attrs.get("hatchAngle");
+			if (angle != null)
+				geo.setHatchingAngle(Double.parseDouble(angle));
+
+			String distance = (String) attrs.get("hatchDistance");
+			if (angle != null)
+				geo.setHatchingDistance(Integer.parseInt(distance));
 
 		String alpha = (String) attrs.get("alpha");
 		if (alpha != null
