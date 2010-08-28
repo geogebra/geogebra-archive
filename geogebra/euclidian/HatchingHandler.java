@@ -19,7 +19,7 @@ public class HatchingHandler {
 
 	private static BufferedImage bufferedImage = null;
 
-	public static void setShading(Graphics2D g2, BasicStroke objStroke, Color color, float backgroundTransparency, double dist, double angle ) {
+	public static void setHatching(Graphics2D g2, BasicStroke objStroke, Color color, float backgroundTransparency, double dist, double angle ) {
 
 		// round to nearest 5 degrees
 		angle = Math.round(angle * 36 / Math.PI) * Math.PI/36;

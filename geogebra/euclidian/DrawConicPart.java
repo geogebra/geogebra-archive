@@ -224,7 +224,7 @@ implements Previewable {
         		case DRAW_TYPE_ELLIPSE:
                 	if (geo.isHatchingEnabled()) {
                         
-                        HatchingHandler.setShading(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+                        HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
                         g2.fill(shape);
 
                     }

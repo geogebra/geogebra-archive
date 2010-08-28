@@ -138,7 +138,12 @@ public class DrawSlope extends Drawable {
     
     final public void draw(Graphics2D g2) {
         if (isVisible) {        
-            if (geo.alphaValue > 0.0f) {
+        	if (geo.isHatchingEnabled()) {
+        		// use decoStroke as it is always full (not dashed/dotted etc)
+                HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+                g2.fill(gp);
+        		
+        	} else if (geo.alphaValue > 0.0f) {
                 g2.setPaint(geo.getFillColor());                       
                 g2.fill(gp);  
             }

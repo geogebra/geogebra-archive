@@ -725,7 +725,7 @@ final public class DrawConic extends Drawable implements Previewable {
 			case GeoConic.CONIC_PARABOLA: 	
 	        	if (conic.isHatchingEnabled()) {
                     
-	                HatchingHandler.setShading(g2, decoStroke, geo.getObjectColor(), conic.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+	                HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), conic.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
 	                g2.fill(shape);
 					if (arcFiller != null) 
 						Drawable.fillWithValueStrokePure(arcFiller, g2);
@@ -755,7 +755,7 @@ final public class DrawConic extends Drawable implements Previewable {
            case GeoConic.CONIC_HYPERBOLA:               		          
            	if (conic.isHatchingEnabled()) {
                 
-                HatchingHandler.setShading(g2, objStroke, geo.getObjectColor(), conic.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+                HatchingHandler.setHatching(g2, objStroke, geo.getObjectColor(), conic.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
                 //g2.fill(gp);
 				if (hypLeftOnScreen) Drawable.fillWithValueStrokePure(hypLeft, g2);                                                
 				if (hypRightOnScreen) Drawable.fillWithValueStrokePure(hypRight, g2); 
