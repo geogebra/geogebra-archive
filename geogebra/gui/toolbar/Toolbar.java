@@ -624,6 +624,9 @@ public class Toolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_IMAGE);        
         sb.append(" , ");
         sb.append(EuclidianView.MODE_RELATION);  
+        sb.append(" , ");
+        sb.append(EuclidianView.MODE_PROBABILITY_CALCULATOR);
+ 
  
         // properties
         sb.append(" || ");

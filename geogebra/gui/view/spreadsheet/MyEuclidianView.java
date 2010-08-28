@@ -40,6 +40,14 @@ public class MyEuclidianView extends EuclidianView {
 	}	
 
 	
+	public void setMode(int mode) {
+		// .... do nothing
+
+	}
+	
+	
+	
+	
 /*	
 	public void getYAxisBuffer(Graphics2D g2) {
 		

@@ -1098,6 +1098,10 @@ public class Kernel {
 
 		case EuclidianView.MODE_RECORD_TO_SPREADSHEET:
 			return "RecordToSpreadsheet";
+			
+		case EuclidianView.MODE_PROBABILITY_CALCULATOR:
+			return "ProbabilityCalculator";
+			
 
 		default:
 			return "";

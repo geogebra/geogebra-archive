@@ -20,6 +20,7 @@ package geogebra.euclidian;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.gui.layout.DockPanel;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
@@ -388,6 +389,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			
 			break;
 
+
+
+		case EuclidianView.MODE_PROBABILITY_CALCULATOR:
+			
+			if(app.getGuiManager().getSpreadsheetView() != null)
+				((SpreadsheetView) app.getGuiManager().getSpreadsheetView()).showProbabilityCalculator();	
+			break;
+		
+			
 		case EuclidianView.MODE_PARALLEL:
 			previewDrawable = view.createPreviewParallelLine(selectedPoints, selectedLines);
 			break;

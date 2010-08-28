@@ -542,8 +542,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 	public void showProbabilityCalculator(){
-		probCalculator = new ProbabilityCalculator(view, app);
-		probCalculator.setVisible(true);	
+
+		if(probCalculator == null)
+			probCalculator = new ProbabilityCalculator(view, app);
+		if(!probCalculator.isVisible()){
+			probCalculator.setVisible(true);
+		}
+		probCalculator.toFront();
 	}
 		
 	

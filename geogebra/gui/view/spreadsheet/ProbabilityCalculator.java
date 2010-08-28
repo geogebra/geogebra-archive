@@ -3,7 +3,6 @@ package geogebra.gui.view.spreadsheet;
 
 
 import geogebra.gui.virtualkeyboard.MyTextField;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoPoint;
@@ -25,12 +24,10 @@ import java.awt.event.FocusListener;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
 
@@ -76,7 +73,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private boolean isIniting;
 	private boolean isSettingAxisPoints = false;
 	
-	private static final Color COLOR_PDF = new Color(0, 153, 153);
+	private static final Color COLOR_PDF = new Color(0, 0, 255);  //blue
 	
 	
 	
@@ -327,6 +324,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			
 		double[] d = getPlotDimensions(distType, parms);
 		
+		// remove old pdf geos
 		if(lowPoint != null)
 			lowPoint.remove();
 		lowPoint = null;
@@ -338,14 +336,14 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			integral.remove();
 		integral = null;
 		
-			if(pdf != null)
+		if(pdf != null)
 			pdf.remove();
 		pdf = null;
-		
 		
 		plotPanel.removeGeos();
 		plotPanel.setAutoRemoveGeos(false);
 		
+		// create new pdf
 		xMin = d[0];
 		xMax = d[1];
 		yMin = d[2];
@@ -626,8 +624,9 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		if(isVisible){
 		
 		}else{
-			removeGeos();
-			detachView();
+			app.setMoveMode();
+			//removeGeos();
+			//detachView();
 		}
 	}
 
