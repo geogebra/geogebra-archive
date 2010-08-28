@@ -37,7 +37,6 @@ import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
-import geogebra.kernel.LineProperties;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.TextProperties;
@@ -64,6 +63,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -3813,6 +3813,15 @@ public	class PropertiesPanel extends JPanel {
 			angleSlider.setPaintTicks(true);
 			angleSlider.setPaintLabels(true);
 			angleSlider.setSnapToTicks(true);
+
+			//Create the label table
+			Hashtable labelHash = new Hashtable();
+			labelHash.put( new Integer( 0 ), new JLabel("0\u00b0") );
+			labelHash.put( new Integer( 45 ), new JLabel("45\u00b0") );
+			labelHash.put( new Integer( 90 ), new JLabel("90\u00b0") );
+			labelHash.put( new Integer( 135 ), new JLabel("135\u00b0") );
+			labelHash.put( new Integer( 175 ), new JLabel("175\u00b0") );
+			angleSlider.setLabelTable( labelHash );
 
 			distanceSlider = new JSlider(5, 50);
 			distanceSlider.setMajorTickSpacing(10);
