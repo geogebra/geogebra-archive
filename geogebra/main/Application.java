@@ -4392,6 +4392,10 @@ public class Application implements KeyEventDispatcher {
 		return str;
 	}
 
+	public ImageManager getImageManager() {
+		return imageManager;
+	}
+
 		
 }
 

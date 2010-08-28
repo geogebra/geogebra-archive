@@ -167,7 +167,7 @@ public class ImageManager {
 	 * @param name
 	 * @return image from the full path name
 	 */
-	protected Image getImageResource(String name) {
+	public Image getImageResource(String name) {
 		Image img = null;
 		
 		 try {
