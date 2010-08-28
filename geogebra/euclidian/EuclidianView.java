@@ -1190,6 +1190,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 
 	public void updateSize() {
+		
+		
+		// record the old coord system
+		double xminTemp = getXmin();
+		double xmaxTemp = getXmax();
+		double yminTemp = getYmin();
+		double ymaxTemp = getYmax();	
+		
+		
 		width = getWidth();
 		height = getHeight();
 		if (width <= 0 || height <= 0)
@@ -1197,6 +1206,16 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		// real world values
 		setRealWorldBounds();
+		
+		
+		// ================================================
+		// G.Sturr 8/27/10: test: rescale on window resize
+		//
+		// reset the coord system so that our view dimensions are restored 
+		// using the new scaling factors. 
+		
+		//setRealWorldCoordSystem(xminTemp, xmaxTemp, yminTemp, ymaxTemp);
+		
 
 		GraphicsConfiguration gconf = getGraphicsConfiguration();
 		try {
