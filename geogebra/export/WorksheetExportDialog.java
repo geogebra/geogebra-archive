@@ -87,8 +87,7 @@ public class WorksheetExportDialog extends JDialog {
 	private Kernel kernel;
 	private InputPanel textAbove, textBelow;
 	private JCheckBox cbShowFrame, cbEnableRightClick, cbEnableLabelDrags, cbShowResetIcon,
-					cbShowMenuBar, cbSavePrint, cbShowToolBar, cbShowToolBarHelp, cbShowInputField,
-					cbOfflineArchiveAndGgbFile;
+					cbShowMenuBar, cbSavePrint, cbShowToolBar, cbShowToolBarHelp, cbShowInputField;
 	private JComboBox cbFileType;
 	private JButton exportButton;
 	private GraphicSizePanel sizePanel;
@@ -269,8 +268,8 @@ public class WorksheetExportDialog extends JDialog {
 	    	
 	    	//cbOfflineArchive.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    	//		GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, "false")).booleanValue() );
-	    	cbOfflineArchiveAndGgbFile.setSelected( Boolean.valueOf(ggbPref.loadPreference(
-	    			GeoGebraPreferences.EXPORT_WS_GGB_FILE, "false")).booleanValue() );
+	    	//cbOfflineArchiveAndGgbFile.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    	//		GeoGebraPreferences.EXPORT_WS_GGB_FILE, "false")).booleanValue() );
 	    	addHeight();
 	    
 		} catch (Exception e) {
@@ -307,7 +306,7 @@ public class WorksheetExportDialog extends JDialog {
     	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, Boolean.toString(cbShowInputField.isSelected()));    
     	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, Boolean.toString(cbOfflineArchive.isSelected()));        
     	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_SAVE_PRINT, Boolean.toString(cbSavePrint.isSelected()));
-    	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_GGB_FILE, Boolean.toString(cbOfflineArchiveAndGgbFile.isSelected()));        
+    	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_GGB_FILE, Boolean.toString(cbOfflineArchiveAndGgbFile.isSelected()));        
     }
 
 	/**
@@ -483,8 +482,8 @@ public class WorksheetExportDialog extends JDialog {
 		tab.add(appletPanel, BorderLayout.SOUTH);
 		
 		// ggb file or base64
-		cbOfflineArchiveAndGgbFile = new JCheckBox("ggb " + app.getMenu("File") + " & jar " + app.getMenu("Files"));		
-		appletPanel.add(cbOfflineArchiveAndGgbFile);
+		//cbOfflineArchiveAndGgbFile = new JCheckBox("ggb " + app.getMenu("File") + " & jar " + app.getMenu("Files"));		
+		//appletPanel.add(cbOfflineArchiveAndGgbFile);
 		
 		// file type (file/clipboard, mediaWiki)
 		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": JSXGraph",app.getMenu("Clipboard")+": JavaScript",app.getMenu("Clipboard")+": Moodle" };
@@ -649,12 +648,13 @@ public class WorksheetExportDialog extends JDialog {
 			// save construction file
 			// as worksheet_file.ggb
 			File ggbFile = null;
+			/*
 			if (cbOfflineArchiveAndGgbFile.isSelected()) {
 				String ggbFileName = Application.removeExtension(htmlFile).getName()
 						+ ".ggb";
 				ggbFile = new File(htmlFile.getParent(), ggbFileName);
 				app.getXMLio().writeGeoGebraFile(ggbFile);
-			}
+			}*/
 
 			// write html string to file
 			// UTF8 needed for eg writing out JavaScript
@@ -669,11 +669,12 @@ public class WorksheetExportDialog extends JDialog {
 			Thread runner = new Thread() {
 	    		public void run() {    
 	    			try {
+	    				/*
 		    			//copy jar to same directory as ggbFile
 	    				if (cbOfflineArchiveAndGgbFile.isSelected()) {	
 	    					// copy all jar files
 	    					copyJarsTo(getAppletCodebase(), HTMLfile.getParent());
-	    				}
+	    				}*/
 	    				
 		    			// open html file in browser
 	    				guiManager.showURLinBrowser(HTMLfile.toURL());
@@ -1120,15 +1121,16 @@ public class WorksheetExportDialog extends JDialog {
 		// archive geogebra.jar 
 		sb.append(" archive=\"geogebra.jar\"");
 		
-		
+		/*
 		if (cbOfflineArchiveAndGgbFile.isSelected()) {
 			// codebase for offline applet
 			sb.append("\n\tcodebase=\"./\"");
-		} else {
+		} else*/
+		{
 			// add codebase for online applets
 			sb.append("\n\tcodebase=\"");
 			sb.append(GeoGebra.GEOGEBRA_ONLINE_ARCHIVE_BASE);
-			if (!cbSavePrint.isSelected() && !cbOfflineArchiveAndGgbFile.isSelected())
+			if (!cbSavePrint.isSelected())// && !cbOfflineArchiveAndGgbFile.isSelected())
 				sb.append("unsigned/");
 			sb.append("\"");
 		}
@@ -1143,12 +1145,14 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("mayscript=\"true\"");// add MAYSCRIPT to ensure ggbOnInit() can be called
 		sb.append(">\n");
 
+		/*
 		if (cbOfflineArchiveAndGgbFile.isSelected() && ggbFile != null) {
 			// ggb file
 			sb.append("\t<param name=\"filename\" value=\"");
 			sb.append(ggbFile.getName());
 			sb.append("\"/>\n");		
-		} else {
+		} else*/
+		{
 			// base64 encoding
 			sb.append("\t<param name=\"ggbBase64\" value=\"");
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -1162,7 +1166,10 @@ public class WorksheetExportDialog extends JDialog {
 		}
 		
 		// loading image for online applet
-		if (!cbOfflineArchiveAndGgbFile.isSelected()) {
+		/*
+		if (!cbOfflineArchiveAndGgbFile.isSelected())
+		*/
+		{
 			sb.append("\t<param name=\"image\" value=\""+ GeoGebra.LOADING_GIF + "\"  />\n");
 			sb.append("\t<param name=\"boxborder\" value=\"false\"  />\n");
 			sb.append("\t<param name=\"centerimage\" value=\"true\"  />\n");
