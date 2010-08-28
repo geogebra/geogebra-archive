@@ -213,7 +213,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         dimPanel.add(xDimPanel);
         dimPanel.add(yDimPanel);
         dimPanel.add(axesRatioPanel);
-        dimPanel.setBorder(BorderFactory.createTitledBorder("Dimensions"));
+        dimPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Dimensions")));
 
 		
         //-------------------------------------
