@@ -159,7 +159,7 @@ public class StatTablePanel extends JPanel {
 		statTable.setTableHeader(null);
 		statScroller.setColumnHeaderView(null);
 		
-		JLabel header = new JLabel(app.getPlain("Statistics"));
+		JLabel header = new JLabel(app.getMenu("Statistics"));
 		header.setHorizontalAlignment(JLabel.LEFT);
 		
 		header.setBorder(BorderFactory.createCompoundBorder(
