@@ -114,9 +114,9 @@ implements Previewable {
         
 	final public void draw(Graphics2D g2) {
         if (isVisible) {
-        	if (poly.shadingEnabled) {
+        	if (poly.isShadingEnabled()) {
                             
-            TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), poly.alphaValue, geo.shadingDistance, geo.shadingAngle);
+            TextureHandler.setShading(g2, objStroke, geo.getObjectColor(), poly.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
             g2.fill(gp);
 
         	}

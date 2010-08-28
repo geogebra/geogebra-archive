@@ -3794,16 +3794,24 @@ public	class PropertiesPanel extends JPanel {
 		 */
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
-		private JSlider slider;
+		private JSlider fillingSlider;
+		private JSlider angleSlider;
 
 		public FillingPanel() {
 			//JLabel sizeLabel = new JLabel(app.getPlain("Filling") + ":");		
-			slider = new JSlider(0, 100);
-			slider.setMajorTickSpacing(25);
-			slider.setMinorTickSpacing(5);
-			slider.setPaintTicks(true);
-			slider.setPaintLabels(true);
-			slider.setSnapToTicks(true);
+			fillingSlider = new JSlider(0, 100);
+			fillingSlider.setMajorTickSpacing(25);
+			fillingSlider.setMinorTickSpacing(5);
+			fillingSlider.setPaintTicks(true);
+			fillingSlider.setPaintLabels(true);
+			fillingSlider.setSnapToTicks(true);
+
+			angleSlider = new JSlider(0, 175);
+			angleSlider.setMajorTickSpacing(45);
+			angleSlider.setMinorTickSpacing(5);
+			angleSlider.setPaintTicks(true);
+			angleSlider.setPaintLabels(true);
+			angleSlider.setSnapToTicks(true);
 
 			/*
 			Dimension dim = slider.getPreferredSize();
@@ -3813,9 +3821,16 @@ public	class PropertiesPanel extends JPanel {
 */
 			
 			// set label font
-			Dictionary labelTable = slider.getLabelTable();
+			Dictionary labelTable = fillingSlider.getLabelTable();
 			Enumeration en = labelTable.elements();
 			JLabel label;
+			while (en.hasMoreElements()) {
+				label = (JLabel) en.nextElement();
+				label.setFont(app.getSmallFont());
+			}
+
+			labelTable = angleSlider.getLabelTable();
+			en = labelTable.elements();
 			while (en.hasMoreElements()) {
 				label = (JLabel) en.nextElement();
 				label.setFont(app.getSmallFont());
@@ -3832,7 +3847,8 @@ public	class PropertiesPanel extends JPanel {
 			add(Box.createRigidArea(new Dimension(5,0)));			
 			add(sizeLabel);			
 			*/
-			add(slider);			
+			add(fillingSlider);			
+			add(angleSlider);			
 		}
 		
 		public void setLabels() {
@@ -3845,13 +3861,18 @@ public	class PropertiesPanel extends JPanel {
 				return null;
 
 			this.geos = geos;
-			slider.removeChangeListener(this);
+			fillingSlider.removeChangeListener(this);
+			angleSlider.removeChangeListener(this);
 
 			//	set value to first geo's alpha value
 			double alpha = ((GeoElement) geos[0]).getAlphaValue();
-			slider.setValue((int) Math.round(alpha * 100));
+			fillingSlider.setValue((int) Math.round(alpha * 100));
 
-			slider.addChangeListener(this);
+			double angle = ((GeoElement) geos[0]).getshadingAngle();
+			fillingSlider.setValue((int) Math.round(angle * 180 / Math.PI));
+
+			fillingSlider.addChangeListener(this);
+			angleSlider.addChangeListener(this);
 			return this;
 		}
 
@@ -3870,12 +3891,14 @@ public	class PropertiesPanel extends JPanel {
 		* change listener implementation for slider
 		*/
 		public void stateChanged(ChangeEvent e) {
-			if (!slider.getValueIsAdjusting()) {
-				float alpha = slider.getValue() / 100.0f;
+			if (!fillingSlider.getValueIsAdjusting() && !angleSlider.getValueIsAdjusting()) {
+				float alpha = fillingSlider.getValue() / 100.0f;
+				double angle = angleSlider.getValue() * Math.PI / 180.0;
 				GeoElement geo;
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoElement) geos[i];
 					geo.setAlphaValue(alpha);
+					geo.setShadingAngle(angle);
 					geo.updateRepaint();
 				}
 			}
