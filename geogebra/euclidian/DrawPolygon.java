@@ -114,10 +114,10 @@ implements Previewable {
         
 	final public void draw(Graphics2D g2) {
         if (isVisible) {
-        	if (poly.isShadingEnabled()) {
+        	if (poly.isHatchingEnabled()) {
                             
         		// use decoStroke as it is always full (not dashed/dotted etc)
-            TextureHandler.setShading(g2, decoStroke, geo.getObjectColor(), poly.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
+            HatchingHandler.setShading(g2, decoStroke, geo.getObjectColor(), poly.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
             g2.fill(gp);
 
         	}

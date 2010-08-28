@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
  * @author Michael Borcherds
  *
  */
-public class TextureHandler {
+public class HatchingHandler {
 
 	private static BufferedImage bufferedImage = null;
 

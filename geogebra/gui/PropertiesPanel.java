@@ -3885,10 +3885,10 @@ public	class PropertiesPanel extends JPanel {
 			double alpha = ((GeoElement) geos[0]).getAlphaValue();
 			fillingSlider.setValue((int) Math.round(alpha * 100));
 
-			double angle = ((GeoElement) geos[0]).getshadingAngle();
+			double angle = ((GeoElement) geos[0]).getHatchingAngle();
 			angleSlider.setValue((int) Math.round(angle * 180 / Math.PI));
 
-			int distance = ((GeoElement) geos[0]).getshadingDistance();
+			int distance = ((GeoElement) geos[0]).getHatchingDistance();
 			distanceSlider.setValue(distance);
 
 			fillingSlider.addChangeListener(this);
@@ -3920,8 +3920,8 @@ public	class PropertiesPanel extends JPanel {
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoElement) geos[i];
 					geo.setAlphaValue(alpha);
-					geo.setShadingAngle(angle);
-					geo.setShadingDistance(distance);
+					geo.setHatchingAngle(angle);
+					geo.setHatchingDistance(distance);
 					geo.updateRepaint();
 				}
 			}

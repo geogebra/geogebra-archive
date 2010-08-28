@@ -339,9 +339,9 @@ public abstract class GeoElement
 	private int animationDirection = 1;
 	
 	public float alphaValue = 0.0f;
-	private boolean shadingEnabled = true;
-	private double shadingAngle = Math.PI / 4;
-	private int shadingDistance = 10;
+	private boolean hatchingEnabled = true;
+	private double hatchingAngle = Math.PI / 4;
+	private int hatchingDistance = 10;
 	public int labelOffsetX = 0, labelOffsetY = 0;
 	private boolean auxiliaryObject = false;	
 	private boolean selectionAllowed = true;
@@ -4706,28 +4706,28 @@ public abstract class GeoElement
 		return realLabel;
 	}
 	
-	public boolean isShadingEnabled() {
-		return shadingEnabled;
+	public boolean isHatchingEnabled() {
+		return hatchingEnabled;
 	}
 	
-	public void setShadingEnabled(boolean enabled) {
-		shadingEnabled = enabled;
+	public void setHatchingEnabled(boolean enabled) {
+		hatchingEnabled = enabled;
 	}
 	
-	public void setShadingAngle(double angle) {
-		shadingAngle = angle;
+	public void setHatchingAngle(double angle) {
+		hatchingAngle = angle;
 	}
 	
-	public double getshadingAngle() {
-		return shadingAngle;
+	public double getHatchingAngle() {
+		return hatchingAngle;
 	}
 	
-	public void setShadingDistance(int distance) {
-		shadingDistance = distance;
+	public void setHatchingDistance(int distance) {
+		hatchingDistance = distance;
 	}
 	
-	public int getshadingDistance() {
-		return shadingDistance;
+	public int getHatchingDistance() {
+		return hatchingDistance;
 	}
 	
 	

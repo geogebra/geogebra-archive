@@ -222,9 +222,9 @@ implements Previewable {
         if (isVisible) {	
         	switch (draw_type) {
         		case DRAW_TYPE_ELLIPSE:
-                	if (geo.isShadingEnabled()) {
+                	if (geo.isHatchingEnabled()) {
                         
-                        TextureHandler.setShading(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getshadingDistance(), geo.getshadingAngle());
+                        HatchingHandler.setShading(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
                         g2.fill(shape);
 
                     }
@@ -386,7 +386,7 @@ implements Previewable {
 				if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-				if (geo.alphaValue > 0.0f || geo.isShadingEnabled())
+				if (geo.alphaValue > 0.0f || geo.isHatchingEnabled())
 					return shape.intersects(x-3,y-3,6,6); 					
 				else
 					return strokedShape.intersects(x-3,y-3,6,6); 
