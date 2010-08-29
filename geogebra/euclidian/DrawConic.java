@@ -745,20 +745,11 @@ final public class DrawConic extends Drawable implements Previewable {
                 break;            
             
            case GeoConic.CONIC_HYPERBOLA:               		          
-        	   if (conic.getFillType()==GeoElement.FILL_HATCH) { 
-                
-                HatchingHandler.setHatching(g2, objStroke, geo.getObjectColor(), conic.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
-                //g2.fill(gp);
-				if (hypLeftOnScreen) Drawable.fillWithValueStrokePure(hypLeft, g2);                                                
-				if (hypRightOnScreen) Drawable.fillWithValueStrokePure(hypRight, g2); 
+               
+				if (hypLeftOnScreen) fill(g2, hypLeft, true);                                            
+				if (hypRightOnScreen) fill(g2, hypRight, true);
 
-
-            	}
-            	else if (conic.alphaValue > 0.0f) {
-					g2.setColor(conic.getFillColor());
-					if (hypLeftOnScreen) Drawable.fillWithValueStrokePure(hypLeft, g2);                                                
-					if (hypRightOnScreen) Drawable.fillWithValueStrokePure(hypRight, g2); 
-				}	
+	
 				if (geo.doHighlighting()) {
 					 g2.setStroke(selStroke);
 					 g2.setColor(conic.getSelColor());

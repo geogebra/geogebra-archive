@@ -21,7 +21,7 @@ public class HatchingHandler {
 
 	private static BufferedImage bufferedImage = null;
 
-	public static void setHatching(Graphics2D g2, BasicStroke objStroke, Color color, float backgroundTransparency, double dist, double angle ) {
+	public static void setHatching(Graphics2D g2, BasicStroke objStroke, Color color, Color bgColor, float backgroundTransparency, double dist, double angle ) {
 
 		// round to nearest 5 degrees
 		angle = Math.round(angle / 5) * Math.PI/36;
@@ -66,7 +66,10 @@ public class HatchingHandler {
 		g2d.setComposite(AlphaComposite.Src);
 
 		// paint background transparent
-		g2d.setColor(new Color(1f, 1f, 1f, backgroundTransparency)); 
+		if (bgColor == null)
+			g2d.setColor(new Color(255, 255, 255, (int)(backgroundTransparency * 255f))); 
+		else
+			g2d.setColor(new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), (int)(backgroundTransparency * 255f))); 
 		g2d.fillRect(0, 0, xInt*3, yInt*3);
 
 
@@ -126,8 +129,13 @@ public class HatchingHandler {
 			// set total transparency
 			g2d.setComposite(AlphaComposite.Src);
 			
+			Color bgColor = geo.getBackgroundColor();
+			
 			// paint background transparent
-			g2d.setColor(new Color(0,0,0,0));
+			if (bgColor == null)
+				g2d.setColor(new Color(0,0,0,0));
+			else
+				g2d.setColor(new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue(), 0)); 
 			g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
 	
 			if (alpha > 0.0f) {
