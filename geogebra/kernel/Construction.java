@@ -550,9 +550,14 @@ public class Construction {
 			algo.initForNearToRelationship();						
 		}
 		
-		// update all algorithms
-		for (int i = 0; i < size; ++i) {
-			AlgoElement algo = (AlgoElement) algoList.get(i);		
+		// copy array to avoid problems with the list changing during the loop
+		// eg Polygon[A,B,RandomBetween[4,5]]
+		// http://www.geogebra.org/forum/viewtopic.php?p=56618
+        ArrayList<AlgoElement> tempList = new ArrayList<AlgoElement>(algoList);
+
+        // update all algorithms
+        for (int i = 0; i < size; ++i) {
+                AlgoElement algo = tempList.get(i);
 			
 			// reinit near to relationship to make sure points stay at their saved position
 			// keep this line, see http://code.google.com/p/geogebra/issues/detail?id=62
