@@ -32,6 +32,7 @@ import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
@@ -42,6 +43,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MatrixTransformable;
 import geogebra.kernel.Mirrorable;
+import geogebra.kernel.MyPoint;
 import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Rotateable;
 import geogebra.kernel.Translateable;
@@ -6860,6 +6862,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 
 			switch (n) {
 			case 2 :
+				app.getGuiManager().setScrollToShow(false);
 				arg = resArgs(c);
 				if ( arg[0] .isGeoList()) {
 
@@ -6891,6 +6894,42 @@ class CmdOsculatingCircle extends CommandProcessor {
 				GeoElement geo = (GeoElement) arg[1];
 				GeoElement[] ret = {  };
 				
+				if (geo.isGeoLocus()) {
+					
+					if (!geo.isDefined()) throw argErr(app, c.getName(), arg[1]);
+					
+					if (minCol + 1 != maxCol) throw argErr(app, c.getName(), arg[0]);
+					
+					GeoLocus locus = (GeoLocus)geo;
+					
+					ArrayList<MyPoint> al = locus.getMyPointList();
+					
+					int length = Math.min(al.size(), maxRow - minRow);
+					
+					for (int i = 0 ; i < length ; i++) {
+						int row = i + minRow;
+						
+						try {
+							// cell will have been autocreated by eg A1:A3 in command, so delete
+							kernel.lookupLabel(GeoElement.getSpreadsheetCellName(minCol, row)).remove();
+							kernel.lookupLabel(GeoElement.getSpreadsheetCellName(minCol + 1, row)).remove();
+							
+							MyPoint p = al.get(i);
+							
+							GeoElement.setSpreadsheetCell(app, row, minCol, new GeoNumeric(cons, p.x));
+							GeoElement.setSpreadsheetCell(app, row, minCol + 1, new GeoNumeric(cons, p.y));
+						} catch (Exception e) {
+							e.printStackTrace();
+							app.getGuiManager().setScrollToShow(true);
+							throw argErr(app, c.getName(), arg[1]);
+						}
+
+					}
+					app.getGuiManager().setScrollToShow(true);
+					
+					return ret;
+					
+				}
 				if (!geo.isGeoList()) {
 					for (int row = minRow ; row <= maxRow ; row++)
 					for (int col = minCol ; col <= maxCol ; col++) {
@@ -6901,10 +6940,12 @@ class CmdOsculatingCircle extends CommandProcessor {
 							
 							GeoElement.setSpreadsheetCell(app, row, col, geo);
 						} catch (Exception e) {
+							app.getGuiManager().setScrollToShow(true);
 							e.printStackTrace();
 							throw argErr(app, c.getName(), arg[1]);
 						}
 					}
+					app.getGuiManager().setScrollToShow(true);
 					return ret;
 				}
 				
@@ -6914,14 +6955,17 @@ class CmdOsculatingCircle extends CommandProcessor {
 				//if (list.isMatrix())
 				
 				app.storeUndoInfo();
+				app.getGuiManager().setScrollToShow(true);
 				return ret;
 				
 				} else {
 				
 					if (GeoElement.isSpreadsheetLabel(arg[0].getLabel())) {
 						
-						if (!arg[1].isGeoList())
+						if (!arg[1].isGeoList()) {
+							app.getGuiManager().setScrollToShow(true);
 							throw argErr(app, c.getName(), arg[1]);
+						}
 						
 						GeoList list = (GeoList)arg[1];
 	 					
@@ -6929,8 +6973,10 @@ class CmdOsculatingCircle extends CommandProcessor {
 	 					int column = GeoElement.getSpreadsheetColumn(matcher);
 	 					int row = GeoElement.getSpreadsheetRow(matcher);
 	 					
-	 					if (row == -1 || column == -1)
+	 					if (row == -1 || column == -1) {
+	 						app.getGuiManager().setScrollToShow(true);
 	 						throw argErr(app, c.getName(), arg[0]);
+	 					}
 						
 						if (list.isMatrix()) {
 							// 2D fill
@@ -6947,6 +6993,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 									}
 								}
 							} catch (Exception e) {
+								app.getGuiManager().setScrollToShow(true);
 								throw argErr(app, c.getName(), list);
 							}
 							
@@ -6963,17 +7010,21 @@ class CmdOsculatingCircle extends CommandProcessor {
 									GeoElement.setSpreadsheetCell(app, row, column + i, list.get(i).copy());
 								} catch (Exception e) {
 									e.printStackTrace();
+									app.getGuiManager().setScrollToShow(true);
 									throw argErr(app, c.getName(), arg[1]);
 								}
 						}
 						
-					} else
+					} else {
+						app.getGuiManager().setScrollToShow(true);
 						throw argErr(app, c.getName(), arg[0]);
+					}
 				}
 				
 				GeoElement geo = (GeoElement) arg[1];
 				GeoElement[] ret = {  };
 				app.storeUndoInfo();
+				app.getGuiManager().setScrollToShow(true);
 				return ret;
 
 

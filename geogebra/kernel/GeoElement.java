@@ -2032,8 +2032,8 @@ public abstract class GeoElement
 		
 			GeoElement cell = app.getKernel().lookupLabel(cellName);
 			if (cell != null) {
-				cell.setAuxiliaryObject(true);
 				cell.setVisualStyle(cellGeo);
+				cell.setAuxiliaryObject(true);
 			}
 		
 	}
