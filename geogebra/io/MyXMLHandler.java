@@ -2337,14 +2337,20 @@ public class MyXMLHandler implements DocHandler {
 			
 			String angle = (String) attrs.get("hatchAngle");
 			if (angle != null) {
-				geo.setHatchingAngle(Double.parseDouble(angle));
-				geo.setHatchingEnabled(true);
+				geo.setHatchingAngle(Integer.parseInt(angle));
+				geo.setFillType(GeoElement.FILL_HATCH);
 			}
 
 			String distance = (String) attrs.get("hatchDistance");
 			if (angle != null) {
 				geo.setHatchingDistance(Integer.parseInt(distance));
-				geo.setHatchingEnabled(true);
+				geo.setFillType(GeoElement.FILL_HATCH);
+			}
+
+			String filename = (String) attrs.get("image");
+			if (filename != null) {
+				geo.setFillImage(filename);
+				geo.setFillType(GeoElement.FILL_IMAGE);
 			}
 
 		String alpha = (String) attrs.get("alpha");
@@ -2926,7 +2932,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 
 		try {
-			((GeoImage) geo).setFileName((String) attrs.get("name"));
+			((GeoImage) geo).setImageFileName((String) attrs.get("name"));
 			return true;
 		} catch (Exception e) {
 			return false;

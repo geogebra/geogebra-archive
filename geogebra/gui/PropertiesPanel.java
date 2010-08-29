@@ -3823,7 +3823,7 @@ public	class PropertiesPanel extends JPanel {
 			fillingSlider.setPaintLabels(true);
 			fillingSlider.setSnapToTicks(true);
 
-			angleSlider = new JSlider(0, 175);
+			angleSlider = new JSlider(0, 180);
 			angleSlider.setMajorTickSpacing(45);
 			angleSlider.setMinorTickSpacing(5);
 			angleSlider.setPaintTicks(true);
@@ -3836,7 +3836,7 @@ public	class PropertiesPanel extends JPanel {
 			labelHash.put( new Integer( 45 ), new JLabel("45\u00b0") );
 			labelHash.put( new Integer( 90 ), new JLabel("90\u00b0") );
 			labelHash.put( new Integer( 135 ), new JLabel("135\u00b0") );
-			labelHash.put( new Integer( 175 ), new JLabel("175\u00b0") );
+			labelHash.put( new Integer( 180 ), new JLabel("180\u00b0") );
 			angleSlider.setLabelTable( labelHash );
 
 			distanceSlider = new JSlider(5, 50);
@@ -3977,23 +3977,24 @@ public	class PropertiesPanel extends JPanel {
 			
 			String modeStr;
 			Image im;
-			for(int i = 0; i<5; i++){		
+			for( int i = 0; i<5; i++){		
 				modeStr = kernel.getModeText(i);
 				im = app.getImageManager().getImageResource("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");			 
 				BufferedImage image = ImageManager.toBufferedImage(im);
 				JButton btn = new JButton(new ImageIcon(image));
+				btn.setToolTipText("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");
 				swatchPanel.add(btn);
 				
 				btn.addActionListener(new ActionListener(){
 					public void actionPerformed(ActionEvent e){
 						JButton btn = (JButton) e.getSource();
 						GeoElement geo;
-						for (int i = 0; i < geos.length; i++) {
-							geo = (GeoElement) geos[i];
+						for (int j = 0; j < geos.length; j++) {
+							geo = (GeoElement) geos[j];
 							ImageIcon ic =  (ImageIcon) btn.getIcon();
 							
-							BufferedImage image = ImageManager.toBufferedImage(ic.getImage());
-							geo.setFillImage(image);
+							// small hack - use tooltip to store filename
+							geo.setFillImage(btn.getToolTipText());
 							geo.updateRepaint();
 							
 						}	
@@ -4065,7 +4066,7 @@ public	class PropertiesPanel extends JPanel {
 			fillingSlider.setValue((int) Math.round(alpha * 100));
 
 			double angle = ((GeoElement) geos[0]).getHatchingAngle();
-			angleSlider.setValue((int) Math.round(angle * 180 / Math.PI));
+			angleSlider.setValue((int)angle);
 
 			int distance = ((GeoElement) geos[0]).getHatchingDistance();
 			distanceSlider.setValue(distance);
@@ -4093,7 +4094,7 @@ public	class PropertiesPanel extends JPanel {
 		public void stateChanged(ChangeEvent e) {
 			if (!fillingSlider.getValueIsAdjusting() && !angleSlider.getValueIsAdjusting() && !distanceSlider.getValueIsAdjusting()) {
 				float alpha = fillingSlider.getValue() / 100.0f;
-				double angle = angleSlider.getValue() * Math.PI / 180.0;
+				int angle = angleSlider.getValue();
 				int distance = distanceSlider.getValue();
 				GeoElement geo;
 				for (int i = 0; i < geos.length; i++) {
@@ -4118,14 +4119,12 @@ public	class PropertiesPanel extends JPanel {
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoElement) geos[i];
 					geo.setFillType(fillType);
-					geo.setHatchingEnabled(fillType == GeoElement.FILL_HATCH);
-					
 					
 					String modeStr  = kernel.getModeText(i);
-					Image im = app.getImageManager().getImageResource("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");			 
-					BufferedImage image = ImageManager.toBufferedImage(im);
+					//Image im = app.getImageManager().getImageResource("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");			 
+					//BufferedImage image = ImageManager.toBufferedImage(im);
 					
-					geo.setFillImage(image);	
+					geo.setFillImage("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");	
 
 					
 					geo.updateRepaint();

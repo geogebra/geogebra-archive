@@ -4667,7 +4667,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 					String fileName = app.createImage(image, "tool.png");
 
 					GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
-					geoImage.setFileName(fileName);
+					geoImage.setImageFileName(fileName);
 					geoImage.setTooltipMode(GeoElement.TOOLTIP_OFF);
 					
 					boolean oldState = cons.isSuppressLabelsActive();

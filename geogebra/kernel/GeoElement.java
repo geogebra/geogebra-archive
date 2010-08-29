@@ -28,10 +28,12 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.ImageManager;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -340,13 +342,13 @@ public abstract class GeoElement
 	private int animationDirection = 1;
 	
 	public float alphaValue = 0.0f;
-	private boolean hatchingEnabled = false;
-	private double hatchingAngle = Math.PI / 4;
+	private int hatchingAngle = 45; // in degrees
 	private int hatchingDistance = 10;
 	
 	//=================================
 	// G.Sturr new fill options 
-	private BufferedImage fillImage;
+	protected String imageFileName = "";
+	protected BufferedImage image;	
 	public static final int FILL_STANDARD = 0;
 	public static final int FILL_HATCH = 1;
 	public static final int FILL_IMAGE = 2;
@@ -3556,13 +3558,13 @@ public abstract class GeoElement
 			{
 				sb.append(" dynamicr=\"");
 				sb.append(Util.encodeXML(colFunction.get(0).getLabel()));
-				sb.append("\"");
+				sb.append('\"');
 				sb.append(" dynamicg=\"");
 				sb.append(Util.encodeXML(colFunction.get(1).getLabel()));
-				sb.append("\"");
+				sb.append('\"');
 				sb.append(" dynamicb=\"");
 				sb.append(Util.encodeXML(colFunction.get(2).getLabel()));
-				sb.append("\"");				
+				sb.append('\"');				
 			}	
 			
 			if (isHatchingEnabled()) {
@@ -3571,6 +3573,11 @@ public abstract class GeoElement
 				sb.append("\" hatchDistance=\"");
 				sb.append(hatchingDistance);
 				sb.append("\"");
+			} else if (fillType == FILL_IMAGE) {
+				sb.append(" image=\"");
+				sb.append(imageFileName);
+				sb.append('\"');
+				
 			}
 			sb.append("/>\n");
 		}
@@ -4728,14 +4735,14 @@ public abstract class GeoElement
 	}
 	
 	public boolean isHatchingEnabled() {
-		return hatchingEnabled;
+		return fillType == FILL_HATCH;
 	}
 	
-	public void setHatchingEnabled(boolean enabled) {
-		hatchingEnabled = enabled;
+	public void setFillingType(int type) {
+		fillType = type;
 	}
 	
-	public void setHatchingAngle(double angle) {
+	public void setHatchingAngle(int angle) {
 		hatchingAngle = angle;
 	}
 	
@@ -4752,19 +4759,49 @@ public abstract class GeoElement
 	}
 	
 	public BufferedImage getFillImage(){
-		return fillImage;
-	}
-	public void setFillImage(BufferedImage image){
-		this.fillImage = image;
+		//Image im = app.getImageManager().getImageResource(imageFileName);			 
+		//BufferedImage image = ImageManager.toBufferedImage(im);
+		return image;
 	}
 	
+	//public void setFillImage(BufferedImage image){
+	//	this.fillImage = image;
+	//}
 	
+	public void setFillImage(String filename) {
+		imageFileName=filename;		
+		Image im = app.getImageManager().getImageResource(imageFileName);			 
+		image = ImageManager.toBufferedImage(im);
+	}
 	
 	public int getFillType(){
 		return fillType;
 	}
 	public void setFillType(int fillType){
 		this.fillType = fillType;
+	}
+
+	/**
+	 * Tries to load the image using the given fileName.
+	 * @param fileName
+	 */
+	public void setImageFileName(String fileName) {	
+		if (fileName.equals(this.imageFileName))
+			return;
+				
+		this.imageFileName = fileName;
+		
+		if (fileName.startsWith("/geogebra")) { // internal image
+			Image im = app.getImageManager().getImageResource(imageFileName);			 
+			image = ImageManager.toBufferedImage(im);
+
+		} else {												
+			image = app.getExternalImage(fileName);	
+		}
+	}
+	
+	public String getImageFileName() {
+		return imageFileName;
 	}
 	
 

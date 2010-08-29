@@ -80,7 +80,7 @@ public final class DrawImage extends Drawable {
         	alphaComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);                
     	}
         
-        image = geoImage.getImage();             
+        image = geoImage.getFillImage();             
         int width = image.getWidth(null);
         int height = image.getHeight(null); 
         absoluteLocation = geoImage.isAbsoluteScreenLocActive();

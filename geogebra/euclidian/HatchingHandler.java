@@ -24,11 +24,10 @@ public class HatchingHandler {
 	public static void setHatching(Graphics2D g2, BasicStroke objStroke, Color color, float backgroundTransparency, double dist, double angle ) {
 
 		// round to nearest 5 degrees
-		angle = Math.round(angle * 36 / Math.PI) * Math.PI/36;
+		angle = Math.round(angle / 5) * Math.PI/36;
 
 		// constrain angle between 0 and 175 degrees
-		if (angle < 0) angle = 0;
-		else if (angle >= Math.PI) angle = 175 * Math.PI / 180;
+		if (angle < 0 || angle >= Math.PI) angle = 0;
 
 		// constrain distance between 5 and 50 pixels
 		if (dist < 5) dist = 5;

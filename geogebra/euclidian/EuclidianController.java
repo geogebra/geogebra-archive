@@ -754,7 +754,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// image was selected before Pen Tool selected
 			
 			penUsingOffsets = true;
-			penImage = penGeo.getImage();
+			penImage = penGeo.getFillImage();
 			//lastPenImage = penGeo;
 			
 			penWritingToExistingImage = true;
@@ -801,7 +801,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 		else if (lastPenImage != null && !penWritingToExistingImage) {
 
-			penImage = lastPenImage.getImage();
+			penImage = lastPenImage.getFillImage();
 
 			GeoPoint corner = lastPenImage.getCorner(0);
 			int x = ev.toScreenCoordX(corner.getInhomX());
@@ -813,7 +813,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// check if image is still the same size as the current euclidian view window
 			if ((penOffsetX >0 && penOffsetY > 0) || 
 					(x == 0 && y == height && height == ev.getHeight() && width == ev.getWidth()))
-				penImage = lastPenImage.getImage();
+				penImage = lastPenImage.getFillImage();
 			else {
 				penImage = null;
 				lastPenImage = null;
@@ -906,7 +906,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			//Application.debug(fileName);
 
 			GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
-			geoImage.setFileName(fileName);
+			geoImage.setImageFileName(fileName);
 			geoImage.setTooltipMode(GeoElement.TOOLTIP_OFF);
 			GeoPoint corner = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
 			corner.update();
@@ -1503,7 +1503,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// image
 		else if (movedGeoElement.isGeoImage()) {
-			Application.debug("1");
 			moveMode = MOVE_IMAGE;
 			movedGeoImage = (GeoImage) movedGeoElement;
 			view.setShowMouseCoords(false);

@@ -262,7 +262,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		// get LaTex and maybe a toggle switch 
 
 		if(geo.isGeoImage()){		
-			latexIcon.setImage(((GeoImage) geo).getImage());
+			latexIcon.setImage(((GeoImage) geo).getFillImage());
 			setIcon(latexIcon);
 			setHorizontalAlignment(this.CENTER);
 			setText("");

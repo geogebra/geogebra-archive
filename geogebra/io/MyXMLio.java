@@ -564,22 +564,22 @@ public class MyXMLio {
 			ZipOutputStream zip, String filePath) throws IOException {
 		// <-- Modified for Intergeo File Format (Yves Kreis)
 		// save all GeoImage images
-		TreeSet images = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_IMAGE);
-		if (images == null)
+		//TreeSet images = cons.getGeoSetLabelOrder(GeoElement.GEO_CLASS_IMAGE);
+		TreeSet geos = cons.getGeoSetLabelOrder();
+		if (geos == null)
 			return;
 
-		Iterator it = images.iterator();
+		Iterator<GeoElement> it = geos.iterator();
 		while (it.hasNext()) {
-			GeoImage geoImage = (GeoImage) it.next();
+			GeoElement geo =  it.next();
 			// Michael Borcherds 2007-12-10 this line put back (not needed now
 			// MD5 code put in the correct place!)
-			String fileName = geoImage.getFileName();
-			BufferedImage img = geoImage.getImage();
-			if (img != null)
-				// Modified for Intergeo File Format (Yves Kreis) -->
-				// writeImageToZip(zip, fileName, img);
-				writeImageToZip(zip, filePath + fileName, img);
-			// <-- Modified for Intergeo File Format (Yves Kreis)
+			String fileName = geo.getImageFileName();
+			if (fileName != null) {
+				BufferedImage img = geo.getFillImage();
+				if (img != null)
+					writeImageToZip(zip, filePath + fileName, img);
+			}
 		}
 	}
 

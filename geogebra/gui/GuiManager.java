@@ -1214,7 +1214,7 @@ public class GuiManager {
 		else {
 			// create GeoImage object for this fileName
 			GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
-			geoImage.setFileName(fileName);
+			geoImage.setImageFileName(fileName);
 			geoImage.setCorner(loc, 0);
 			geoImage.setLabel(null);
 	

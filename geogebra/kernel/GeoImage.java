@@ -30,9 +30,9 @@ implements Locateable, AbsoluteScreenLocateable,
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String fileName = ""; // image file
+	//private String imageFileName = ""; // image file
 	private GeoPoint [] corners; // corners of the image
-	private BufferedImage image;	
+	//private BufferedImage image;	
 	private int pixelWidth, pixelHeight;
 	private boolean inBackground;
 	private boolean hasAbsoluteLocation;
@@ -60,7 +60,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	public GeoImage(Construction c, String label, String fileName) {
 		this(c);
-		setFileName(fileName);
+		setImageFileName(fileName);
 		setLabel(label);
 	}  
 	
@@ -91,7 +91,7 @@ implements Locateable, AbsoluteScreenLocateable,
 
 	public void set(GeoElement geo) {
 		GeoImage img = (GeoImage) geo;
-		setFileName(img.fileName);
+		setImageFileName(img.imageFileName);
 		
 		// macro output: don't set corners
 		if (cons != geo.cons && isAlgoMacroOutput()) 
@@ -133,7 +133,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	public static void updateInstances() {
 		for (int i=instances.size()-1; i >= 0 ; i--) {
 			GeoImage geo = (GeoImage) instances.get(i);
-			geo.setFileName(geo.fileName);
+			geo.setImageFileName(geo.imageFileName);
 			geo.updateCascade();
 		}		
 	}
@@ -154,11 +154,11 @@ implements Locateable, AbsoluteScreenLocateable,
 	 * Tries to load the image using the given fileName.
 	 * @param fileName
 	 */
-	public void setFileName(String fileName) {	
-		if (this.fileName.equals(fileName))
+	public void setImageFileName(String fileName) {	
+		if (fileName.equals(this.imageFileName))
 			return;
 				
-		this.fileName = fileName;
+		this.imageFileName = fileName;
 														
 		image = app.getExternalImage(fileName);	
 		if (image != null) {
@@ -171,13 +171,9 @@ implements Locateable, AbsoluteScreenLocateable,
 		// Michael Borcherds 2007-12-10 MD5 code moved to Application.java
 	}
 	
-	public String getFileName() {
-		return fileName;
-	}
-	
-	final public BufferedImage getImage() {
-		return image;
-	}		
+	//final public BufferedImage getFillImage() {
+	//	return image;
+	//}		
 	
 	public void setStartPoint(GeoPointInterface p) throws CircularDefinitionException {    
 		setCorner((GeoPoint) p, 0);
@@ -409,7 +405,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	   	// name of image file
 		sb.append("\t<file name=\"");
 // Michael Borcherds 2007-12-10 this line restored (not needed now MD5 code put in the correct place)
-		sb.append(fileName);
+		sb.append(imageFileName);
 		sb.append("\"/>\n");
 		
 	 	// name of image file
@@ -755,8 +751,8 @@ implements Locateable, AbsoluteScreenLocateable,
 		if (((GeoImage)geo).pixelWidth != this.pixelWidth) return false;
 		if (((GeoImage)geo).pixelHeight != this.pixelHeight) return false;
 		
-		String md5A=this.fileName.substring(0, this.fileName.indexOf(File.separator));
-		String md5B=((GeoImage)geo).fileName.substring(0, ((GeoImage)geo).fileName.indexOf(File.separator));
+		String md5A=this.imageFileName.substring(0, this.imageFileName.indexOf(File.separator));
+		String md5B=((GeoImage)geo).imageFileName.substring(0, ((GeoImage)geo).imageFileName.indexOf(File.separator));
 		// MD5 checksums equal, so images almost certainly identical
 		if (md5A.equals(md5B)) return true;
 		return false;
