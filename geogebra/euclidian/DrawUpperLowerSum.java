@@ -302,21 +302,12 @@ public class DrawUpperLowerSum extends Drawable {
         		Application.debug(e.getMessage());
         	}
             
-        	if (sum.getFillType()==GeoElement.FILL_HATCH) { 
-        		// use decoStroke as it is always full (not dashed/dotted etc)
-                HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), sum.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
-                g2.fill(gp);
-        		
-        	} else        	
-        	if (sum.getFillColor().getAlpha() > 0) {
-				try {
-	            	g2.setPaint(sum.getFillColor());                                  
-					g2.fill(gp);    
-				} catch (Exception e) {
-					Application.debug(e.getMessage());
-				}   
+        	try {
+        		fill(g2, gp, false); // fill using default/hatching/image as appropriate
+        	} catch (Exception e) {
+        		e.printStackTrace();
         	}
-			
+        	
 			try {
 				if (geo.lineThickness > 0) {
 					g2.setPaint(sum.getObjectColor());

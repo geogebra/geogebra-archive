@@ -222,16 +222,7 @@ implements Previewable {
         if (isVisible) {	
         	switch (draw_type) {
         		case DRAW_TYPE_ELLIPSE:
-        			if (geo.getFillType()==GeoElement.FILL_HATCH) { 
-                        
-                        HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
-                        g2.fill(shape);
-
-                    }
-                    else if (geo.alphaValue > 0.0f) {
-						g2.setColor(geo.getFillColor());
-						g2.fill(shape);
-					}	
+        			fill(g2, shape, false); // fill using default/hatching/image as appropriate
 					
 		            if (geo.doHighlighting()) {
 		                g2.setPaint(geo.getSelColor());

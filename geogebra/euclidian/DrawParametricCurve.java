@@ -861,13 +861,8 @@ public class DrawParametricCurve extends Drawable {
         	if (fillCurve) {
 				try {
 					
-					if (geo.getFillType()==GeoElement.FILL_HATCH) { 
-			            HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
-			            g2.fill(gp);						
-					} else {
-						g2.setPaint(geo.getFillColor());                                  
-						g2.fill(gp);    
-					}
+					fill(g2, gp, false); // fill using default/hatching/image as appropriate
+
 				} catch (Exception e) {
 					System.err.println(e.getMessage());
 				}   

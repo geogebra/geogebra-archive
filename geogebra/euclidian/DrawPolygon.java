@@ -115,24 +115,7 @@ implements Previewable {
         
 	final public void draw(Graphics2D g2) {
 		if (isVisible) {
-			if (poly.getFillType()==GeoElement.FILL_HATCH) {
-
-				// use decoStroke as it is always full (not dashed/dotted etc)
-				HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
-				g2.fill(gp);
-
-			}
-			else if (poly.getFillType()==GeoElement.FILL_IMAGE)
-			{
-				HatchingHandler.setTexture(g2, poly);
-				g2.fill(gp);
-			}        	
-			else if (poly.alphaValue > 0.0f)
-			{
-				g2.setPaint(poly.getFillColor());                       
-				g2.fill(gp);  
-
-			}        	        	
+			fill(g2, gp, false); // fill using default/hatching/image as appropriate
 
 			if (geo.doHighlighting()) {
 				g2.setPaint(poly.getSelColor());

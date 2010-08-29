@@ -723,20 +723,12 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_CIRCLE:                                                                                 
             case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 	
-				if (conic.getFillType()==GeoElement.FILL_HATCH) { 
                     
-	                HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), conic.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
-	                g2.fill(shape);
-					if (arcFiller != null) 
-						Drawable.fillWithValueStrokePure(arcFiller, g2);
+					fill(g2, shape, false); // fill using default/hatching/image as appropriate
+					if (arcFiller != null )
+						fill(g2, arcFiller, true); // fill using default/hatching/image as appropriate
 
-	            	}
-	            	else if (conic.alphaValue > 0.0f) {
-					g2.setColor(conic.getFillColor());
-					g2.fill(shape);
-					if (arcFiller != null) 
-						Drawable.fillWithValueStrokePure(arcFiller, g2);
-				}			                                               
+					
                 if (geo.doHighlighting()) {
                     g2.setStroke(selStroke);
                     g2.setColor(conic.getSelColor());
