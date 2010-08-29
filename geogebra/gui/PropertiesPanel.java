@@ -3977,12 +3977,12 @@ public	class PropertiesPanel extends JPanel {
 			
 			String modeStr;
 			Image im;
-			for( int i = 0; i<5; i++){		
+			for( int i = 0; i < 5; i++) {		
 				modeStr = kernel.getModeText(i);
 				im = app.getImageManager().getImageResource("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");			 
 				BufferedImage image = ImageManager.toBufferedImage(im);
 				JButton btn = new JButton(new ImageIcon(image));
-				btn.setToolTipText("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");
+				btn.setToolTipText("mode_"+modeStr+"_32.gif");
 				swatchPanel.add(btn);
 				
 				btn.addActionListener(new ActionListener(){
@@ -3994,7 +3994,7 @@ public	class PropertiesPanel extends JPanel {
 							ImageIcon ic =  (ImageIcon) btn.getIcon();
 							
 							// small hack - use tooltip to store filename
-							geo.setFillImage(btn.getToolTipText());
+							geo.setFillImage("/geogebra/gui/toolbar/images/"+btn.getToolTipText());
 							geo.updateRepaint();
 							
 						}	
