@@ -25,6 +25,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -113,23 +114,28 @@ implements Previewable {
 	}
         
 	final public void draw(Graphics2D g2) {
-        if (isVisible) {
-        	if (poly.isHatchingEnabled()) {
-                            
-        		// use decoStroke as it is always full (not dashed/dotted etc)
-            HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
-            g2.fill(gp);
+		if (isVisible) {
+			if (poly.getFillType()==GeoElement.FILL_HATCH) {
 
-        	}
-        	else if (poly.alphaValue > 0.0f)
-        	{
+				// use decoStroke as it is always full (not dashed/dotted etc)
+				HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+				g2.fill(gp);
+
+			}
+			else if (poly.getFillType()==GeoElement.FILL_IMAGE)
+			{
+				HatchingHandler.setTexture(g2, poly);
+				g2.fill(gp);
+			}        	
+			else if (poly.alphaValue > 0.0f)
+			{
 				g2.setPaint(poly.getFillColor());                       
 				g2.fill(gp);  
-        		
-        	}        	        	
-            	
-            if (geo.doHighlighting()) {
-                g2.setPaint(poly.getSelColor());
+
+			}        	        	
+
+			if (geo.doHighlighting()) {
+				g2.setPaint(poly.getSelColor());
                 g2.setStroke(selStroke);            
                 g2.draw(gp);                
             }        

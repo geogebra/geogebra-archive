@@ -34,6 +34,7 @@ import geogebra.util.Util;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -342,6 +343,19 @@ public abstract class GeoElement
 	private boolean hatchingEnabled = false;
 	private double hatchingAngle = Math.PI / 4;
 	private int hatchingDistance = 10;
+	
+	//=================================
+	// G.Sturr new fill options 
+	private BufferedImage fillImage;
+	public static final int FILL_STANDARD = 0;
+	public static final int FILL_HATCH = 1;
+	public static final int FILL_IMAGE = 2;
+	private int fillType = FILL_STANDARD;
+	public  int numberOfFillTypes = 3;
+	
+	//=================================
+	
+	
 	public int labelOffsetX = 0, labelOffsetY = 0;
 	private boolean auxiliaryObject = false;	
 	private boolean selectionAllowed = true;
@@ -4737,7 +4751,21 @@ public abstract class GeoElement
 		return hatchingDistance;
 	}
 	
+	public BufferedImage getFillImage(){
+		return fillImage;
+	}
+	public void setFillImage(BufferedImage image){
+		this.fillImage = image;
+	}
 	
+	
+	
+	public int getFillType(){
+		return fillType;
+	}
+	public void setFillType(int fillType){
+		this.fillType = fillType;
+	}
 	
 
 }

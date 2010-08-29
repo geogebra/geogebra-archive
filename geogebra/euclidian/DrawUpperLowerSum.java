@@ -302,7 +302,7 @@ public class DrawUpperLowerSum extends Drawable {
         		Application.debug(e.getMessage());
         	}
             
-        	if (sum.isHatchingEnabled()) {
+        	if (sum.getFillType()==GeoElement.FILL_HATCH) { 
         		// use decoStroke as it is always full (not dashed/dotted etc)
                 HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), sum.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
                 g2.fill(gp);

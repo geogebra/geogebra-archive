@@ -1,5 +1,6 @@
 package geogebra.euclidian;
 
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -9,6 +10,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.TexturePaint;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -101,6 +103,18 @@ public class HatchingHandler {
 		// use the middle square of our 3 x 3 grid to fill with
 		g2.setPaint(new TexturePaint(bufferedImage.getSubimage(xInt, yInt, xInt, yInt), rect));
 
+
+	}
+	
+
+
+	public static void setTexture(Graphics2D g2, GeoElement geo) {
+
+		BufferedImage image = geo.getFillImage();
+		Rectangle2D tr = new Rectangle2D.Double(0, 0, image.getWidth(), image
+				.getHeight());
+		TexturePaint tp = new TexturePaint(geo.getFillImage(), tr);
+		g2.setPaint(tp);                       
 
 	}
 

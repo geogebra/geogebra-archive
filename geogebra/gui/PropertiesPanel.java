@@ -44,6 +44,7 @@ import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
+import geogebra.util.ImageManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -54,12 +55,14 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -72,6 +75,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -3787,18 +3791,30 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to select the filling of a polygon or conic section
 	 * @author Markus Hohenwarter
 	 */
-	private class FillingPanel extends JPanel implements ChangeListener, UpdateablePanel {
+	private class FillingPanel extends JPanel implements ChangeListener, UpdateablePanel, ActionListener {
 
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 		private Object[] geos;
+		
+		private FillingPanel fillingPanel;
+		
 		private JSlider fillingSlider;
 		private JSlider angleSlider;
 		private JSlider distanceSlider;
+		private JComboBox cbFillType;
+		
+		private JPanel transparencyPanel, hatchFillPanel, imagePanel, anglePanel, distancePanel;
+		private JLabel lblFillType;
+		private JButton btnOpenFile;
+		
 
 		public FillingPanel() {
+			
+			fillingPanel = this; 
+				
 			//JLabel sizeLabel = new JLabel(app.getPlain("Filling") + ":");		
 			fillingSlider = new JSlider(0, 100);
 			fillingSlider.setMajorTickSpacing(25);
@@ -3871,20 +3887,174 @@ public	class PropertiesPanel extends JPanel {
 			add(Box.createRigidArea(new Dimension(5,0)));			
 			add(sizeLabel);			
 			*/
-			add(fillingSlider);			
-			add(angleSlider);			
-			add(distanceSlider);			
+		
+			
+			//========================================
+			// create sub panels
+			
+			// panel for the fill type combobox
+			cbFillType = new JComboBox();
+			JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			lblFillType = new JLabel(app.getPlain("Filling" + ":"));
+			cbPanel.add(lblFillType);
+			cbPanel.add(cbFillType);
+			
+			// panels to hold sliders
+			transparencyPanel = new JPanel (new FlowLayout(FlowLayout.LEFT));
+			transparencyPanel.add(fillingSlider);
+				
+			anglePanel = new JPanel (new FlowLayout(FlowLayout.LEFT));
+			anglePanel.add(angleSlider);
+			
+			distancePanel = new JPanel (new FlowLayout(FlowLayout.LEFT));
+			distancePanel.add(distanceSlider);
+			
+			// hatchfill panel: only shown when hatch fill option is selected
+			hatchFillPanel = new JPanel();
+			hatchFillPanel.setLayout(new BoxLayout(hatchFillPanel,BoxLayout.X_AXIS));
+			hatchFillPanel.add(anglePanel);
+			hatchFillPanel.add(distancePanel);
+			hatchFillPanel.setVisible(false);
+			
+			// image panel: only shown when image fill option is selected
+			createImagePanel();
+			imagePanel.setVisible(false);
+			
+			
+			
+			//===========================================================
+			// put all the sub panels together
+			
+			this.setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+			this.add(cbPanel);
+			this.add(transparencyPanel);
+			this.add(hatchFillPanel);
+			this.add(imagePanel);
+			
+			
+			
 		}
 		
 		public void setLabels() {
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Filling")));
+			
+			//setBorder(BorderFactory.createTitledBorder(app.getPlain("Filling")));
+			
+			transparencyPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Transparency")));
+			anglePanel.setBorder(BorderFactory.createTitledBorder("Angle"));
+			distancePanel.setBorder(BorderFactory.createTitledBorder("Width"));
+			imagePanel.setBorder(BorderFactory.createTitledBorder("Images"));
+			
+			
+			btnOpenFile.setText(app.getMenu("OpenFile"));
+			
+			
+			// fill type combobox
+			lblFillType = new JLabel(app.getPlain("Filling" + ":"));
+			
+			int selectedIndex = cbFillType.getSelectedIndex();
+			cbFillType.removeActionListener(this);		
+			cbFillType.removeAllItems();
+					
+			cbFillType.addItem(app.getPlain("Standard")); // index 0
+			cbFillType.addItem(app.getPlain("Hatch")); // index 1
+			cbFillType.addItem(app.getPlain("Image")); // index 2
+			
+			cbFillType.setSelectedIndex(selectedIndex);
+			cbFillType.removeActionListener(this);
+				
+			
 		}
+		
+		private JPanel createImagePanel(){
+			
+			imagePanel = new JPanel(new BorderLayout());
+						
+			JPanel swatchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+			
+			
+			//====================================
+			// for testing ... images taken from toolbar icons
+			
+			String modeStr;
+			Image im;
+			for(int i = 0; i<5; i++){		
+				modeStr = kernel.getModeText(i);
+				im = app.getImageManager().getImageResource("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");			 
+				BufferedImage image = ImageManager.toBufferedImage(im);
+				JButton btn = new JButton(new ImageIcon(image));
+				swatchPanel.add(btn);
+				
+				btn.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						JButton btn = (JButton) e.getSource();
+						GeoElement geo;
+						for (int i = 0; i < geos.length; i++) {
+							geo = (GeoElement) geos[i];
+							ImageIcon ic =  (ImageIcon) btn.getIcon();
+							
+							BufferedImage image = ImageManager.toBufferedImage(ic.getImage());
+							geo.setFillImage(image);
+							geo.updateRepaint();
+							
+						}	
+					}
+				});				
+
+			}	
+			
+			//=====================================
+			
+			
+			JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			
+			//TODO -- dummy button
+			
+			btnOpenFile = new JButton();
+			btnPanel.add(btnOpenFile);
+			
+			imagePanel.add(swatchPanel,BorderLayout.WEST);
+			imagePanel.add(btnPanel, BorderLayout.EAST);
+			
+			return imagePanel;
+		}
+
+
+		private void updateFillTypePanel(int fillType){
+			
+			switch(fillType){
+				
+			case GeoElement.FILL_STANDARD:
+				hatchFillPanel.setVisible(false);
+				imagePanel.setVisible(false);
+				break;
+
+			case GeoElement.FILL_HATCH:
+				hatchFillPanel.setVisible(true);
+				imagePanel.setVisible(false);
+				break;
+				
+			case GeoElement.FILL_IMAGE:
+				hatchFillPanel.setVisible(false);
+				imagePanel.setVisible(true);
+				break;
+
+			}
+		}
+		
+		
 		
 		public JPanel update(Object[] geos) {
 			// check geos
 			if (!checkGeos(geos))
 				return null;
 
+			cbFillType.removeActionListener(this);
+			//	set selected fill type to first geo's fill type
+			cbFillType.setSelectedIndex(((GeoElement) geos[0]).getFillType());
+			cbFillType.addActionListener(this);		
+			updateFillTypePanel(((GeoElement) geos[0]).getFillType());
+			
+			
 			this.geos = geos;
 			fillingSlider.removeChangeListener(this);
 			angleSlider.removeChangeListener(this);
@@ -3935,6 +4105,35 @@ public	class PropertiesPanel extends JPanel {
 				}
 			}
 		}
+
+			
+		/**
+		* action listener for fill type combobox
+		*/
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
+			if (source == cbFillType) {
+				GeoElement geo;
+				int fillType = cbFillType.getSelectedIndex();
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoElement) geos[i];
+					geo.setFillType(fillType);
+					geo.setHatchingEnabled(fillType == GeoElement.FILL_HATCH);
+					
+					
+					String modeStr  = kernel.getModeText(i);
+					Image im = app.getImageManager().getImageResource("/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif");			 
+					BufferedImage image = ImageManager.toBufferedImage(im);
+					
+					geo.setFillImage(image);	
+
+					
+					geo.updateRepaint();
+				}
+				fillingPanel.updateFillTypePanel(fillType);
+			}
+		}
+		
 	}
 
 	/**

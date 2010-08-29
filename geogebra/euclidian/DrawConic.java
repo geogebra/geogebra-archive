@@ -723,7 +723,7 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_CIRCLE:                                                                                 
             case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 	
-	        	if (conic.isHatchingEnabled()) {
+				if (conic.getFillType()==GeoElement.FILL_HATCH) { 
                     
 	                HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), conic.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
 	                g2.fill(shape);
@@ -753,7 +753,7 @@ final public class DrawConic extends Drawable implements Previewable {
                 break;            
             
            case GeoConic.CONIC_HYPERBOLA:               		          
-           	if (conic.isHatchingEnabled()) {
+        	   if (conic.getFillType()==GeoElement.FILL_HATCH) { 
                 
                 HatchingHandler.setHatching(g2, objStroke, geo.getObjectColor(), conic.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
                 //g2.fill(gp);

@@ -531,7 +531,7 @@ public class DrawAngle extends Drawable {
 	final public void draw(Graphics2D g2) {
 		if (isVisible) {
 			if (!show90degrees || view.rightAngleStyle != EuclidianView.RIGHT_ANGLE_STYLE_L) {
-				if (geo.isHatchingEnabled()) {                  
+				if (geo.getFillType()==GeoElement.FILL_HATCH) {                 
 	        		// use decoStroke as it is always full (not dashed/dotted etc)
 					HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
 					g2.fill(shape);
@@ -558,7 +558,7 @@ public class DrawAngle extends Drawable {
 			if (show90degrees) {
 				switch (view.rightAngleStyle) {
 					case EuclidianView.RIGHT_ANGLE_STYLE_DOT:
-						if (geo.isHatchingEnabled()) {                  
+						if (geo.getFillType()==GeoElement.FILL_HATCH) {                  
 			        		// use decoStroke as it is always full (not dashed/dotted etc)
 							HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
 							g2.fill(shape);
