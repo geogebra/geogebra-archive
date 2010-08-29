@@ -107,12 +107,44 @@ public class HatchingHandler {
 	
 
 
-	public static void setTexture(Graphics2D g2, GeoElement geo) {
+	public static void setTexture(Graphics2D g2, GeoElement geo, float alpha) {
 
 		BufferedImage image = geo.getFillImage();
 		Rectangle2D tr = new Rectangle2D.Double(0, 0, image.getWidth(), image
 				.getHeight());
-		TexturePaint tp = new TexturePaint(geo.getFillImage(), tr);
+		
+		TexturePaint tp;
+		
+		if (alpha < 1.0f) {			
+			BufferedImage copy = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+	
+			Graphics2D g2d = copy.createGraphics();
+	
+			// enable anti-aliasing
+			EuclidianView.setAntialiasing(g2d);
+	
+			// set total transparency
+			g2d.setComposite(AlphaComposite.Src);
+			
+			// paint background transparent
+			g2d.setColor(new Color(0,0,0,0));
+			g2d.fillRect(0, 0, image.getWidth(), image.getHeight());
+	
+			if (alpha > 0.0f) {
+				// set partial transparency
+				AlphaComposite alphaComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+				g2.setComposite(alphaComp);                
+				
+				// paint image with specified transparency
+				g2d.drawImage(image, 0, 0, null);
+			}
+			
+			tp = new TexturePaint(copy, tr);
+		}
+		else {
+			tp = new TexturePaint(image, tr);
+		}
+		
 		g2.setPaint(tp);                       
 
 	}

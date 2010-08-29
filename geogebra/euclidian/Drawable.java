@@ -886,7 +886,7 @@ public abstract class Drawable extends DrawableND {
 		}
 		else if (geo.getFillType()==GeoElement.FILL_IMAGE)
 		{
-			HatchingHandler.setTexture(g2, geo);
+			HatchingHandler.setTexture(g2, geo, geo.alphaValue);
 			g2.fill(shape);
 		}        	
 		else if (geo.alphaValue > 0.0f)
