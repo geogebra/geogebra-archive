@@ -3829,6 +3829,7 @@ public	class PropertiesPanel extends JPanel {
 			fillingSlider.setSnapToTicks(true);
 
 			angleSlider = new JSlider(0, 180);
+			angleSlider.setPreferredSize(new Dimension(250,64));
 			angleSlider.setMajorTickSpacing(45);
 			angleSlider.setMinorTickSpacing(5);
 			angleSlider.setPaintTicks(true);
@@ -3845,6 +3846,7 @@ public	class PropertiesPanel extends JPanel {
 			angleSlider.setLabelTable( labelHash );
 
 			distanceSlider = new JSlider(5, 50);
+			distanceSlider.setPreferredSize(new Dimension(150,64));
 			distanceSlider.setMajorTickSpacing(10);
 			distanceSlider.setMinorTickSpacing(5);
 			distanceSlider.setPaintTicks(true);
@@ -3944,25 +3946,25 @@ public	class PropertiesPanel extends JPanel {
 			
 			//setBorder(BorderFactory.createTitledBorder(app.getPlain("Filling")));
 			
-			transparencyPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Transparency")));
-			anglePanel.setBorder(BorderFactory.createTitledBorder("Angle"));
-			distancePanel.setBorder(BorderFactory.createTitledBorder("Width"));
-			imagePanel.setBorder(BorderFactory.createTitledBorder("Images"));
+			transparencyPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Opacity")));
+			anglePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Angle")));
+			distancePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Spacing")));
+			imagePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Images")));
 			
 			
-			btnOpenFile.setText(app.getMenu("OpenFile"));
+			btnOpenFile.setText(app.getMenu("ChooseFromFile")+"...");
 			
 			
 			// fill type combobox
-			lblFillType = new JLabel(app.getPlain("Filling" + ":"));
+			lblFillType = new JLabel(app.getMenu("Filling") + ":");
 			
 			int selectedIndex = cbFillType.getSelectedIndex();
 			cbFillType.removeActionListener(this);		
 			cbFillType.removeAllItems();
 					
-			cbFillType.addItem(app.getPlain("Standard")); // index 0
-			cbFillType.addItem(app.getPlain("Hatch")); // index 1
-			cbFillType.addItem(app.getPlain("Image")); // index 2
+			cbFillType.addItem(app.getMenu("Filling.Standard")); // index 0
+			cbFillType.addItem(app.getMenu("Filling.Hatch")); // index 1
+			cbFillType.addItem(app.getMenu("Filling.Image")); // index 2
 			
 			cbFillType.setSelectedIndex(selectedIndex);
 			cbFillType.removeActionListener(this);
