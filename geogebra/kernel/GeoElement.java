@@ -4758,9 +4758,17 @@ public abstract class GeoElement
 		return hatchingDistance;
 	}
 	
-	public BufferedImage getFillImage(){
-		//Image im = app.getImageManager().getImageResource(imageFileName);			 
-		//BufferedImage image = ImageManager.toBufferedImage(im);
+	public BufferedImage getFillImage() {
+		
+		if (image != null) return image;
+		
+		if (imageFileName.startsWith("/geogebra")) {
+			Image im = app.getImageManager().getImageResource(imageFileName);			 
+			image = ImageManager.toBufferedImage(im);
+		} else {
+			image = app.getExternalImage(imageFileName);	
+		}
+		
 		return image;
 	}
 	
@@ -4770,8 +4778,7 @@ public abstract class GeoElement
 	
 	public void setFillImage(String filename) {
 		imageFileName=filename;		
-		Image im = app.getImageManager().getImageResource(imageFileName);			 
-		image = ImageManager.toBufferedImage(im);
+		image = null;
 	}
 	
 	public int getFillType(){
