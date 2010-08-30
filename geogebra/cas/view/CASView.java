@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import geogebra.cas.GeoGebraCAS;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.CasManager;
 import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.GeoElement;
@@ -134,11 +135,6 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		// input handler
 		casInputHandler = new CASInputHandler(this);
 
-		// Ulven 01.03.09: excange line 90-97 with:
-		// BtnPanel which sets up all the button.
-		// add(geogebra.cas.view.components.BtnPanel.getInstance(this),BorderLayout.NORTH);
-		createButtonPanel();
-
 		addFocusListener(this);
 
 		// TODO: remove
@@ -178,19 +174,11 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		return casInputHandler.resolveCASrowReferences(result, row, CASInputHandler.ROW_REFERENCE_DYNAMIC);
 	}
 
-	private void createButtonPanel() {
-		if (btPanel != null)
-			remove(btPanel);
-		btPanel = initButtons();
-		add(btPanel, BorderLayout.NORTH);
-	}
-
 	public void updateFonts() {
 		if (app.getFontSize() == getFont().getSize())
 			return;
 
 		setFont(app.getPlainFont());
-		createButtonPanel();
 		consoleTable.setFont(getFont());
 		validate();
 	}
@@ -310,70 +298,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		return this;
 	}
 
-	// Ulven 01.03.09: Drop this, do it in components.BtnPanel
-	private JPanel initButtons() {
-
-		final String[][][] menuStrings = 
-			{
-				{
-					// command for apply, visible text, tooltip text
-					{ "Evaluate", 	"=", 		app.getCommand("Evaluate")},
-					{ "Numeric", 	"\u2248", 	app.getCommand("Numeric") },
-					{ "CheckInput", "\u2713", 	app.getPlain("CheckInput")} 
-				},
-				{
-					{ "Expand", 	app.getCommand("Expand")  },
-					{ "Factor", 	app.getCommand("Factor")},
-					{ "Substitute", app.getCommand("Substitute") },
-					{ "Solve", 		app.getCommand("Solve"), app.getCommand("Solve"), "%0" },
-					{ "Derivative", app.getCommand("Derivative"),  app.getCommand("Derivative"),"%0" },
-					{ "Integral", 	app.getCommand("Integral"),  app.getCommand("Integral"),"%0" }
-				} 
-			};
-
-		JPanel btPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		final JComboBox[] menus = new JComboBox[menuStrings.length];
-
-		MyComboBoxListener ml = new MyComboBoxListener() {
-			public void doActionPerformed(Object source) {
-				for (int i = 0; i < menus.length; i++) {
-					if (source == menus[i]) {
-						int pos = menus[i].getSelectedIndex();
-						
-						// update tooltip
-						if (menuStrings[i][pos].length >= 3)
-							menus[i].setToolTipText(menuStrings[i][pos][2]);
-						
-						String[] params = null;
-						if (menuStrings[i][pos].length >= 4) {
-							params = new String[menuStrings[i][pos].length - 3];
-							for (int p=0; p<params.length; p++)
-								params[p] = menuStrings[i][pos][3+p];
-						}
-						
-						processInput(menuStrings[i][pos][0], params);
-					}
-				}
-			}
-		};
-
-		for (int i = 0; i < menus.length; i++) {
-			menus[i] = new JComboBox();
-			for (int k = 0; k < menuStrings[i].length; k++) {
-				// visible text
-				menus[i].addItem("  " + menuStrings[i][k][1]);
-			}
-			// tooltip
-			if (menuStrings[i][0].length >= 3)
-				menus[i].setToolTipText(menuStrings[i][0][2]);
-			menus[i].setFocusable(false);
-			menus[i].addMouseListener(ml);
-			menus[i].addActionListener(ml);
-			btPanel.add(menus[i]);
-		}
-
-		return btPanel;
-	}
+	
 
 	public Application getApp() {
 		return app;
@@ -473,8 +398,24 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		ignoreUpdateVars.remove(var);
 	}
 	
+	/**
+	 * Handles toolbar mode changes
+	 */
 	public void setMode(int mode) {
-		// playground for Markus :)
+		String modeText = kernel.getModeText(mode); // e.g. "Derivative"
+		String command = app.getCommand(modeText); // e.g. "Ableitung"
+		
+		switch (mode) {
+			case EuclidianConstants.MODE_CAS_SOLVE:
+			case EuclidianConstants.MODE_CAS_DERIVATIVE:
+			case EuclidianConstants.MODE_CAS_INTEGRAL:
+				processInput(command, new String[] {"%0"});
+				break;
+				
+			default:
+				// no parameters
+				processInput(command, null);
+		}				
 	}
 
 	/**

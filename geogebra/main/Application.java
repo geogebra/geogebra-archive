@@ -1237,6 +1237,10 @@ public class Application implements KeyEventDispatcher {
 			icon = imageManager.getImageIcon(path, borderColor);
 		}
 		*/
+		
+		if (icon == null) {
+			icon = getToolIcon(borderColor);
+		}
 				 
 		// scale icon if necessary
 		icon = ImageManager.getScaledIcon(icon, Math.min(icon.getIconWidth(), maxIconSize), 
@@ -1244,14 +1248,17 @@ public class Application implements KeyEventDispatcher {
 		
 		return icon;
 	}
+	
+	public ImageIcon getToolIcon(Color border) {
+		return imageManager.getImageIcon("/gui/toolbar/images/mode_tool_32.png", border);
+	}
 
 	public ImageIcon getEmptyIcon() {
 		return imageManager.getImageIcon("/gui/images/empty.gif");
 	}
 
 	public Image getInternalImage(String filename) {
-		return imageManager
-				.getInternalImage("/gui/images/" + filename);
+		return imageManager.getInternalImage("/gui/images/" + filename);
 	}
 	
 	public Image getRefreshViewImage() {		

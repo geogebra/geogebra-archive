@@ -94,7 +94,10 @@ import org.neuroph.contrib.jHRT.gui.HandwritingRecognitionTool;
  * This is done to be able to put class files of geogebra.gui.* packages into a
  * separate gui jar file.
  */
-public class GuiManager {
+public class GuiManager {	
+	
+	// default toolbars for specific views
+	public static final String TOOLBAR_DEFAULT_CAS = "1001 1002 1003 || 1004 1005 1006 1007 || 1008 1009";
 	
 	private static final int SPREADSHEET_INI_COLS = 26;
 	private static final int SPREADSHEET_INI_ROWS = 100;
@@ -276,7 +279,7 @@ public class GuiManager {
 			new DockPanel(
 					Application.VIEW_CAS, 	// view id
 					"CAS", 					// view title phrase 
-					"0",					// toolbar string
+					TOOLBAR_DEFAULT_CAS,	// toolbar string
 					false,					// style bar?
 					4						// menu order
 			) {

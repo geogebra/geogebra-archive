@@ -162,11 +162,19 @@ public interface EuclidianConstants {
 	public static final int MODE_SPHERE_TWO_POINTS = 521;
 	
 	
-	
-	
-	
+	// CAS view modes
+	public static final int MODE_CAS_EVALUATE = 1001;
+	public static final int MODE_CAS_NUMERIC = 1002;
+	public static final int MODE_CAS_CHECK_INPUT = 1003;
+	public static final int MODE_CAS_EXPAND = 1004;
+	public static final int MODE_CAS_FACTOR = 1005;
+	public static final int MODE_CAS_SUBSTITUTE = 1006;
+	public static final int MODE_CAS_SOLVE = 1007;
+	public static final int MODE_CAS_DERIVATIVE = 1008;
+	public static final int MODE_CAS_INTEGRAL = 1009;
 
-
-	public static final int MACRO_MODE_ID_OFFSET = 1001;
+	
+	// macro tools ID offset
+	public static final int MACRO_MODE_ID_OFFSET = 100001;
 
 }
