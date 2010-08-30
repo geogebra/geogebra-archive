@@ -1252,9 +1252,9 @@ public class MyXMLHandler implements DocHandler {
 		// construct default xml data in case we're using an old version which didn't
 		// store the layout xml.
 		DockPanelXml[] dpXml = new DockPanelXml[] {
-			new DockPanelXml(Application.VIEW_EUCLIDIAN, true, false, false, new Rectangle(400, 400), defEV, 200),
-			new DockPanelXml(Application.VIEW_ALGEBRA, tmp_showAlgebra, false, false, new Rectangle(200, 400), defAV, 200),
-			new DockPanelXml(Application.VIEW_SPREADSHEET, tmp_showSpreadsheet, false, false, new Rectangle(400, 400), defSV, 200)
+			new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(400, 400), defEV, 200),
+			new DockPanelXml(Application.VIEW_ALGEBRA, null, tmp_showAlgebra, false, false, new Rectangle(200, 400), defAV, 200),
+			new DockPanelXml(Application.VIEW_SPREADSHEET, null, tmp_showSpreadsheet, false, false, new Rectangle(400, 400), defSV, 200)
 		};
 		tmp_perspective.setDockPanelInfo(dpXml);
 		
@@ -1689,6 +1689,7 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleView(LinkedHashMap<String, String> attrs) {
 		try {
 			int viewId = Integer.parseInt((String)attrs.get("id"));
+			String toolbar = attrs.get("toolbar");
 			boolean isVisible = !((String)attrs.get("visible")).equals("false");
 			boolean openInFrame = !((String)attrs.get("inframe")).equals("false");
 			
@@ -1707,7 +1708,7 @@ public class MyXMLHandler implements DocHandler {
 			String embeddedDef = (String)attrs.get("location");
 			int embeddedSize = Integer.parseInt((String)attrs.get("size"));
 			
-			tmp_views.add(new DockPanelXml(viewId, isVisible, openInFrame, showStyleBar, windowRect, embeddedDef, embeddedSize));
+			tmp_views.add(new DockPanelXml(viewId, toolbar, isVisible, openInFrame, showStyleBar, windowRect, embeddedDef, embeddedSize));
 			
 			return true;
 		} catch(Exception e) {

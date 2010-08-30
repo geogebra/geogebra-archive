@@ -1,6 +1,7 @@
 package geogebra.gui.layout;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.toolbar.ToolbarContainer;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.main.Application;
@@ -112,6 +113,7 @@ public class DockManager implements AWTEventListener {
 					// TODO insert error panel
 				}
 				
+				panel.setToolbarString(dpInfo[i].getToolbarString());
 				panel.setFrameBounds(dpInfo[i].getFrameBounds());
 				panel.setEmbeddedDef(dpInfo[i].getEmbeddedDef());
 				panel.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
@@ -193,6 +195,12 @@ public class DockManager implements AWTEventListener {
 					currentParent.setLeftComponent(getPanel(dpInfo[i].getViewId()));
 				} else {
 					currentParent.setRightComponent(getPanel(dpInfo[i].getViewId()));
+				}
+				
+				// move toolbar to main container
+				if(getPanel(dpInfo[i].getViewId()).hasToolbar()) {
+					ToolbarContainer mainContainer = app.getGuiManager().getToolbarPanel();
+					mainContainer.addToolbar(getPanel(dpInfo[i].getViewId()).getToolbar());
 				}
 			}
 			
@@ -539,6 +547,16 @@ public class DockManager implements AWTEventListener {
 		}
 		
 		panel.updatePanel();
+		
+		// add toolbar to main toolbar container if necessary, *has* to be called after
+		// DockPanel::updatePanel() as the toolbar is initialized there
+		if(!panel.isOpenInFrame() && panel.hasToolbar()) {
+			ToolbarContainer mainContainer = app.getGuiManager().getToolbarPanel();
+			mainContainer.addToolbar(panel.getToolbar());
+			mainContainer.updateToolbarPanel();
+		}
+
+		// has to be called *after* the toolbar was added to the container
 		setFocusedPanel(panel);
 		
 		Application.debug(getDebugTree(0, rootPane));
@@ -611,6 +629,12 @@ public class DockManager implements AWTEventListener {
 			if(isPermanent) {
 				app.validateComponent();
 			}
+
+			if(panel.hasToolbar()) {
+				ToolbarContainer mainContainer = app.getGuiManager().getToolbarPanel();
+				mainContainer.removeToolbar(panel.getToolbar());
+				mainContainer.updateToolbarPanel();
+			}
 		}
 	}
 	
@@ -651,7 +675,7 @@ public class DockManager implements AWTEventListener {
 	public void setFocusedPanel(DockPanel panel) {
 		if(focusedDockPanel == panel) {
 			return;
-		}
+		} 
 		
 		// remove focus from previously focused dock panel
 		if(focusedDockPanel != null) {
@@ -820,11 +844,29 @@ public class DockManager implements AWTEventListener {
 	}
 	
 	/**
+	 * Update the toolbars of all dock panels.
+	 */
+	public void updateToolbars() {
+		for(DockPanel panel : dockPanels) {
+			panel.updateToolbar();
+		}
+	}
+	
+	/**
 	 * Update the fonts in all dock panels.
 	 */
 	public void updateFonts() {
 		for(DockPanel panel : dockPanels) {
 			panel.updateFonts();
+		}
+	}
+	
+	/**
+	 * Build the GUI of the toolbar.
+	 */
+	public void buildToolbarGui() {
+		for(DockPanel panel : dockPanels) {
+			panel.buildToolbarGui();
 		}
 	}
 	

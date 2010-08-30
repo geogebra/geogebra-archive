@@ -2,6 +2,8 @@ package geogebra.gui.layout;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.toolbar.Toolbar;
+import geogebra.gui.toolbar.ToolbarContainer;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.main.Application;
 
@@ -23,7 +25,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.ArrayList;
 import java.util.Comparator;
 
 import javax.swing.BorderFactory;
@@ -152,6 +153,34 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	private JPanel styleBarPanel;
 	
 	/**
+	 * Panel used for the toolbar if this dock panel has one.
+	 */
+	private JPanel toolbarPanel;
+	
+	/**
+	 * Toolbar container which is used if this dock panel is opened in its own frame.
+	 */
+	private ToolbarContainer toolbarContainer;
+	
+	/**
+	 * Toolbar associated with this dock panel or null if this panel has no toolbar.
+	 */
+	private Toolbar toolbar;
+	
+	/**
+	 * Toolbar definition string associated with this panel or null if this panel has no
+	 * toolbar. Always contains the string of the perspective loaded last.
+	 */
+	private String toolbarString;
+	
+	/**
+	 * Default toolbar definition string associated with this panel or null
+	 * if this panel has no toolbar. This string is specified in the constructor and won't
+	 * change. 
+	 */
+	private String defaultToolbarString;
+	
+	/**
 	 * The frame which holds this DockPanel if the DockPanel is opened in
 	 * an additional window.
 	 */
@@ -178,11 +207,12 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * 
 	 * @param id 			The id of the panel
 	 * @param title			The title phrase of the view located in plain.properties
+	 * @param toolbar		The default toolbar string (or null if this view has none)
 	 * @param hasStyleBar	If a style bar exists
 	 * @param menuOrder		The location of this view in the view menu, -1 if the view should not appear at all
 	 */
-	public DockPanel(int id, String title, boolean hasStyleBar, int menuOrder) {
-		this(id, title, hasStyleBar, menuOrder, '\u0000');
+	public DockPanel(int id, String title, String toolbar, boolean hasStyleBar, int menuOrder) {
+		this(id, title, toolbar, hasStyleBar, menuOrder, '\u0000');
 	}
 	
 	/**
@@ -190,13 +220,15 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * 
 	 * @param id 			The id of the panel
 	 * @param title			The title phrase of the view located in plain.properties
+	 * @param toolbar		The default toolbar string (or null if this view has none)
 	 * @param hasStyleBar	If a style bar exists
 	 * @param menuOrder		The location of this view in the view menu, -1 if the view should not appear at all
 	 * @param menuShortcut	The shortcut character which can be used to make this view visible
 	 */
-	public DockPanel(int id, String title, boolean hasStyleBar, int menuOrder, char menuShortcut) {
+	public DockPanel(int id, String title, String toolbar, boolean hasStyleBar, int menuOrder, char menuShortcut) {
 		this.id = id;
 		this.title = title;
+		this.defaultToolbarString = toolbar;
 		this.menuOrder = menuOrder;
 		this.menuShortcut = menuShortcut;
 		this.hasStyleBar = hasStyleBar;
@@ -344,7 +376,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		closeButton.setPreferredSize(new Dimension(16,16));
 		buttonPanel.add(closeButton);
 		
-		metaPanel.add(titlePanel);
+		metaPanel.add(titlePanel, BorderLayout.NORTH);
 		
 		// Style bar panel
 		if(hasStyleBar) {
@@ -356,6 +388,18 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 					BorderFactory.createEmptyBorder(0, 2, 0, 2)));
 			
 			metaPanel.add(styleBarPanel, BorderLayout.SOUTH);
+		}
+		
+		// toolbar panel
+		if(hasToolbar()) {
+			toolbarPanel = new JPanel(new BorderLayout());
+
+			toolbarPanel.setBorder(
+				BorderFactory.createCompoundBorder(
+					BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.controlShadow),
+					BorderFactory.createEmptyBorder(0, 2, 0, 2)));
+			
+			metaPanel.add(toolbarPanel, BorderLayout.CENTER);
 		}
 
 	   	// make titlebar visible if necessary
@@ -465,10 +509,28 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			if(hasStyleBar) {
 				styleBarPanel.add(loadStyleBar(), BorderLayout.CENTER);
 			}
+			
+			// load toolbar if this panel has one
+			if(hasToolbar()) {
+				toolbar = new Toolbar(app, this);
+			} 
+			
+			// euclidian view uses the general toolbar
+			if(component instanceof EuclidianView) {
+				// TODO implement..
+			}
 		}
 		
-		if(hasStyleBar && isVisible()) {
-			styleBarPanel.setVisible(showStyleBar);
+		// make panels visible if necessary
+		if(isVisible()) {
+			if(hasStyleBar) {
+				styleBarPanel.setVisible(showStyleBar);
+			} 
+			
+			// display toolbar panel if the dock panel is open in a frame
+			if(hasToolbar()) {
+				toolbarPanel.setVisible(frame != null);
+			}
 		}
 		
 		titlePanel.setVisible(dockManager.getLayout().isTitleBarVisible());
@@ -476,6 +538,25 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		// update the title bar if necessary
 		if(dockManager.getLayout().isTitleBarVisible()) {
 			updateTitleBar();
+		}
+	}
+	
+	/**
+	 * Update the toolbar of this dock panel if it's open in its own toolbar
+	 * container. 
+	 */
+	public void updateToolbar() {
+		if(isOpenInFrame() && hasToolbar()) {
+			toolbarContainer.updateToolbarPanel();
+		}
+	}
+	
+	/**
+	 * Update the toolbar GUI.
+	 */
+	public void buildToolbarGui() {
+		if(toolbarContainer != null) {
+			toolbarContainer.buildGui();
 		}
 	}
 	
@@ -552,8 +633,19 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * Display this panel in an external window.
 	 */
 	private void windowPanel() {
+		// move the toolbar from the main window to the panel
+		if(hasToolbar()) {			
+			if(toolbarContainer == null) {
+				toolbarContainer = new ToolbarContainer(app, false);
+			}
+			
+			toolbarContainer.addToolbar(toolbar);
+			toolbarContainer.buildGui();
+			toolbarPanel.add(toolbarContainer, BorderLayout.CENTER);
+		}
+		
 		dockManager.hide(this, false);
-		setVisible(true);
+		setVisible(true);		
 		createFrame();
 	}
 	
@@ -569,6 +661,12 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		
 		// show the panel in the main window
 		dockManager.show(this);
+		
+		// as this view already *had* focus and will retain focus DockManager::show()
+		// won't be able to update the active toolbar
+		if(hasToolbar()) {
+			app.getGuiManager().getToolbarPanel().setActiveToolbar(toolbar);
+		}
 	}
 	
 	/**
@@ -677,7 +775,8 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	public DockPanelXml createInfo() {
 		return new DockPanelXml(
 			id, 
-			visible, 
+			toolbarString,
+			visible,
 			openInFrame, 
 			showStyleBar, 
 			frameBounds, 
@@ -693,16 +792,27 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		return frame != null;
 	}
 	
+	/**
+	 * If this view should open in a frame. Has no immediate effect.
+	 * @param openInFrame
+	 */
 	public void setOpenInFrame(boolean openInFrame) {
 		this.openInFrame = openInFrame;
 	}
 	
-	public void setShowStyleBar(boolean showStyleBar) {
-		this.showStyleBar = showStyleBar;
-	}
-	
+	/**
+	 * @return Whether this view should open in frame.
+	 */
 	public boolean isOpenInFrame() {
 		return openInFrame;
+	}
+	
+	/**
+	 * If the stylebar of this view should be visible. Has no immediate effect.
+	 * @param showStyleBar
+	 */
+	public void setShowStyleBar(boolean showStyleBar) {
+		this.showStyleBar = showStyleBar;
 	}
 	
 	public void setFrameBounds(Rectangle frameBounds) {
@@ -762,15 +872,15 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * 
 	 * @param hasFocus
 	 */
-	public void setFocus(boolean hasFocus) {
+	public final void setFocus(boolean hasFocus) {
 		// don't change anything if it's not necessary
 		if(this.hasFocus == hasFocus)
 			return;
 		
 		this.hasFocus = hasFocus;
 		
-		// request focus
 		if(hasFocus) {
+			// request focus and change toolbar if necessary
 			if(openInFrame) {
 				frame.requestFocus();
 			} else {
@@ -781,7 +891,17 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 						frame.toFront();
 					}
 				}
+				
+				if(hasToolbar()) {
+					app.getGuiManager().getToolbarPanel().setActiveToolbar(toolbar);
+				} else {
+					app.getGuiManager().getToolbarPanel().setActiveToolbar(-1);
+				}
 			}
+		}
+		
+		else {
+			
 		}
 		
 		// call callback methods for focus changes 
@@ -813,29 +933,88 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		return id;
 	}
 	
+	/**
+	 * @return The title of this view. The String returned has to be the key of a value
+	 * in plain.properties
+	 */
 	public String getViewTitle() {
 		return title;
 	}
 	
+	/**
+	 * @return The order of this panel in the view menu, with 0 being "highest". Will be
+	 * -1 if this view does not appear in the menu at all.
+	 */
 	public int getMenuOrder() {
 		return menuOrder;
 	}
 	
+	/**
+	 * @return Whether the current view has a menu shortcut to toggle its visibility.
+	 */
 	public boolean hasMenuShortcut() {
 		return menuShortcut != '\u0000';
 	}
 	
+	/**
+	 * @return The menu shortcut of this view.
+	 */
 	public char getMenuShortcut() {
 		return menuShortcut;
 	}
 	
 	/**
-	 * Dock panel information as string for debugging.
+	 * @return The toolbar associated with this panel.
+	 */
+	public Toolbar getToolbar() {
+		return toolbar;
+	}
+	
+	/**
+	 * @return If this panel has a toolbar.
+	 */
+	public boolean hasToolbar() {
+		return defaultToolbarString != null;
+	}
+	
+	/**
+	 * @return The definition string associated with this toolbar.
+	 */
+	public String getToolbarString() {
+		return toolbarString;
+	}
+	
+	/**
+	 * Set the toolbar string of this view. If the toolbar string is null but this 
+	 * panel has a panel normally the default toolbar string is used. This is used for
+	 * backward compability. Has no visible effect.
+	 * 
+	 * @param toolbarString
+	 */
+	public void setToolbarString(String toolbarString) {
+		if(toolbarString == null && hasToolbar()) {
+			toolbarString = defaultToolbarString;
+		}
+		
+		this.toolbarString = toolbarString;
+	}
+	
+	/**
+	 * @return The default toolbar string of this panel (or null).
+	 */
+	public String getDefaultToolbarString() {
+		return defaultToolbarString;
+	}
+	
+	/**
+	 * @return dock panel information as string for debugging.
 	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[DockPanel,id=");
 		sb.append(getViewId());
+		sb.append(",toolbar=");
+		sb.append(getToolbarString());
 		sb.append(",visible=");
 		sb.append(isVisible());
 		sb.append(",inframe=");

@@ -50,16 +50,18 @@ public class ModeToggleMenu extends JPanel {
 	
 	private ActionListener popupMenuItemListener;
 	private Application app;
+	private Toolbar toolbar;
 	int size;
 	
 	final static Color bgColor = Color.white;
 	
-	public ModeToggleMenu(Application app, ModeToggleButtonGroup bg) {
+	public ModeToggleMenu(Application app, Toolbar toolbar, ModeToggleButtonGroup bg) {
 		this.app = app;
 		this.bg = bg;
+		this.toolbar = toolbar;
 		
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-			
+		
 		tbutton = new MyJToggleButton(this);		
 		tbutton.setAlignmentY(BOTTOM_ALIGNMENT);
 		add(tbutton);
@@ -196,8 +198,8 @@ public class ModeToggleMenu extends JPanel {
 			bg.setActivePopupMenu(popMenu);	
 			if (popMenu.isShowing()) return;
 			Point locButton = tbutton.getLocationOnScreen();			
-			Point locApp = app.getMainComponent().getLocationOnScreen();
-			popMenu.show(app.getMainComponent(), locButton.x - locApp.x, 
+			Point locApp = toolbar.getMainComponent().getLocationOnScreen();
+			popMenu.show(toolbar.getMainComponent(), locButton.x - locApp.x, 
 											locButton.y - locApp.y + tbutton.getHeight());
 		} else {
 			popMenu.setVisible(false);			

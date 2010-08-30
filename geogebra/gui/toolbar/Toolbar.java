@@ -13,155 +13,105 @@ the Free Software Foundation.
 package geogebra.gui.toolbar;
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.MySmallJButton;
+import geogebra.gui.layout.DockPanel;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
-import geogebra.util.Util;
 
-import java.awt.BorderLayout;
-import java.awt.FontMetrics;
-import java.awt.SystemColor;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.text.BreakIterator;
+import java.awt.CardLayout;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-public class Toolbar extends JPanel implements ComponentListener{
+/**
+ * Base class for a single toolbar, either for a dock panel or as a general toolbar.
+ * Toolbars are always visible as part of a ToolbarContainer.
+ */
+public class Toolbar extends JToolBar {
+	private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 8983050697241236851L;
+	/**
+	 * Integer used to indicate a separator in the toolbar.
+	 */
+	public static final Integer SEPARATOR = new Integer(-1);
 
-	public static final Integer TOOLBAR_SEPARATOR = new Integer(-1);
-
+	/**
+	 * Instance of the application.
+	 */
 	private Application app;
-	private ArrayList modeToggleMenus;   
-	private boolean showToolBarHelp = true;	
-	private JLabel modeNameLabel;
-	private JPanel toolbarHelpPanel;
-	private int selectedMode;
 	
+	/**
+	 * Dock panel associated to this toolbar or null if this is the general toolbar. Just
+	 * a single toolbar might have no dock panel, otherwise the ToolbarContainer logic
+	 * will not work properly.
+	 */
+	private DockPanel dockPanel;
+	
+	/**
+	 * The mode selected at the moment.
+	 */
+	private int selectedMode;
+
+	private ArrayList<ModeToggleMenu> modeToggleMenus;
 	private ModeToggleMenu temporaryModes;
 	
 	/**
-     * Creates a panel for the application's toolbar. 
-     * Note: call initToolbar() to fill the panel.
+	 * Creates general toolbar.
+	 * 
+	 * @param app
+	 */
+	public Toolbar(Application app) {
+		this(app, null);
+	}
+	
+	/**
+	 * Creates toolbar for a specific dock panel. Call buildGui() to actually
+	 * create the GUI of this toolbar.
+	 * 
+	 * @param app
+	 * @param dockPanel
      */
-	public Toolbar(Application app)  {
+	public Toolbar(Application app, DockPanel dockPanel)  {
 		this.app = app;	
-		addComponentListener(this);
+		this.dockPanel = dockPanel;
+		
+        setFloatable(false);
+        setBackground(getBackground());
 	}
 		
 	/**
      * Creates a toolbar using the current strToolBarDefinition. 
      */
-    public void initToolbar() {    	    	
+    public void buildGui() {    	    	
     	selectedMode = -1;
-    	
-        // create toolBars                       
-        removeAll();
-        setLayout(new BorderLayout(5,2));   
-        setBorder(BorderFactory.createCompoundBorder(
-        	BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),
-        	BorderFactory.createEmptyBorder(2, 2, 1, 2)));
         
-        JToolBar tb = new JToolBar();   
-        tb.setFloatable(false);  
-        tb.setBackground(getBackground());
         ModeToggleButtonGroup bg = new ModeToggleButtonGroup();     
-        modeToggleMenus = new ArrayList();
+        modeToggleMenus = new ArrayList<ModeToggleMenu>();
+    	
+        // create toolbar
+        removeAll(); 
 
-        // wrap toolbar to be vertically centered
-        JPanel toolbarPanel = new JPanel();
-        toolbarPanel.setLayout(new BoxLayout(toolbarPanel, BoxLayout.Y_AXIS));
-        toolbarPanel.add(Box.createVerticalGlue());
-        tb.setAlignmentX(LEFT_ALIGNMENT);
-       	toolbarPanel.add(tb);
-       	toolbarPanel.add(Box.createVerticalGlue());
-        
-       	if (showToolBarHelp) {       
-       		// mode label       		
-           	modeNameLabel = new JLabel();             	
-
-           	// put into panel to 
-           	toolbarHelpPanel = new JPanel();
-           	toolbarHelpPanel.setLayout(new BoxLayout(toolbarHelpPanel, BoxLayout.Y_AXIS));
-           	toolbarHelpPanel.add(Box.createVerticalGlue());
-           	modeNameLabel.setAlignmentX(LEFT_ALIGNMENT);
-           	toolbarHelpPanel.add(modeNameLabel);
-           	toolbarHelpPanel.add(Box.createVerticalGlue());
-           	
-           	add(toolbarHelpPanel, BorderLayout.CENTER);
-       	}   
-       	       	
-        // UNDO Toolbar     
-       	JPanel undoPanel = null;
-        if (app.isUndoActive()) {
-	        // undo part                  	   
-	        undoPanel = new JPanel();
-	        if (app.getMaxIconSize() >= 32) {
-	        	undoPanel.setLayout(new BoxLayout(undoPanel, BoxLayout.Y_AXIS));
-	        } else {
-	        	undoPanel.setLayout(new BoxLayout(undoPanel, BoxLayout.X_AXIS));
-	        }
-	        undoPanel.add(Box.createVerticalGlue());
-	        
-	        // undo button
-	        MySmallJButton button = new MySmallJButton(app.getGuiManager().getUndoAction(), 7); 	
-	        String text = app.getMenu("Undo");
-	        button.setText(null);
-	        button.setToolTipText(text);  
-	        button.setAlignmentX(RIGHT_ALIGNMENT);
-	        undoPanel.add(button);
-
-	        // redo button
-	        button = new MySmallJButton(app.getGuiManager().getRedoAction(), 7);         	        
-	        text = app.getMenu("Redo");
-	        button.setText(null);
-	        button.setToolTipText(text);        
-	        button.setAlignmentX(RIGHT_ALIGNMENT);
-	        undoPanel.add(button); 
-	       
-	        undoPanel.add(Box.createVerticalGlue());	               
-        }       
-                
-        // put together panel
-        removeAll();
-        setLayout(new BorderLayout(10,0));    
-        add(toolbarPanel, BorderLayout.WEST); 
-        
-        if (toolbarHelpPanel != null)
-        	add(toolbarHelpPanel, BorderLayout.CENTER);
-
-        if (undoPanel != null) {
-        	add(undoPanel, BorderLayout.EAST);
-        }
-        
+        setAlignmentX(LEFT_ALIGNMENT);
+       
         // add menus with modes to toolbar
-       	addCustomModesToToolbar(tb, bg);
+       	addCustomModesToToolbar(bg);
         
         // add invisible temporary menu
-       	temporaryModes = new ModeToggleMenu(app, bg);
+       	temporaryModes = new ModeToggleMenu(app, this, bg);
        	temporaryModes.setVisible(false);
        	modeToggleMenus.add(temporaryModes);
-        tb.add(temporaryModes);
-       	
-        setSelectedMode(app.getMode());
-        updateToolbarHelpText();
+        add(temporaryModes);
+        
+        selectMode(app.getMode());
     }
     
     /**
      * Sets toolbar mode. This will change the selected toolbar icon.
      * @return true if mode could be selected in toolbar. 
      */
-    public boolean setSelectedMode(int mode) {       
+    public boolean selectMode(int mode) {       
     	boolean success = false;
     	
     	// there is no special icon/button for the selection listener mode, use the move mode button instead
@@ -175,10 +125,6 @@ public class Toolbar extends JPanel implements ComponentListener{
     	}
     	
         if (modeToggleMenus != null) {
-        	// show move mode icon for algebra input (selection) mode
-        	//if (mode == EuclidianView.MODE_ALGEBRA_INPUT) {
-        	//	showMode = EuclidianView.MODE_MOVE;
-        	//}
         	       
          	for (int i=0; i < modeToggleMenus.size(); i++) {
          		ModeToggleMenu mtm = (ModeToggleMenu) modeToggleMenus.get(i);
@@ -196,11 +142,10 @@ public class Toolbar extends JPanel implements ComponentListener{
          		temporaryModes.setVisible(true);
          		temporaryModes.selectMode(mode);
          	}
-        }              
-                
-        updateToolbarHelpText();
+        } 
+        
         return success;
-    }     
+    }
     
     public int getSelectedMode() {
     	return selectedMode;
@@ -214,131 +159,6 @@ public class Toolbar extends JPanel implements ComponentListener{
     		return mtm.getFirstMode();
     	}
     }
-    
-    private void updateToolbarHelpText() {
-    	if (modeNameLabel == null) return;
-    	
-    	int mode = app.getMode();
-    	
-    	String toolName = app.getToolName(mode);
-    	String helpText = app.getToolHelp(mode);
-    	
-    	// get wrapped toolbar help text
-        String wrappedText = wrappedModeText(toolName, helpText, toolbarHelpPanel);    	
-    	modeNameLabel.setText(wrappedText);
-    	
-    	// tooltip
-    	modeNameLabel.setToolTipText(app.getToolTooltipHTML(mode));
-    	toolbarHelpPanel.validate();
-    }
-    
-    /** 
-     * Returns mode text and toolbar help as html text with line breaks
-     * to fit in the given panel.     
-     */
-    private String wrappedModeText(String modeName, String helpText, JPanel panel) {
-    	FontMetrics fm = getFontMetrics(app.getBoldFont());    	
-   
-    	// check width of panel
-    	int panelWidth = panel.getWidth();
-    	int charWidth = fm.stringWidth("W");    	
-    	panelWidth = panelWidth - charWidth; // needed for correct line breaks
-    	
-    	if (panelWidth <= 0) {    	
-    		return "";
-    	} 
-    	
-    	// show no more than 2 lines
-     	int maxLines = 2*fm.getHeight() < panel.getHeight() ? 2 : 1; 
-     	//Math.min(2, Math.round(panel.getHeight() / (float) fm.getHeight()));    	
-    	StringBuilder sbToolName = new StringBuilder();    
-    	sbToolName.append("<html><b>");
-    	
-    	// check if mode name itself fits
-    	if (fm.stringWidth(modeName) >  panelWidth)
-    		return "";
-    	
-    	// mode name
-    	BreakIterator iterator = BreakIterator.getWordInstance(app.getLocale());
-		iterator.setText(modeName);
-		int start = iterator.first();
-		int end = iterator.next();
-		int line = 1;
-		
-		int len = 0;
-		while (end != BreakIterator.DONE)
-		{
-			String word = modeName.substring(start,end);
-			if( len + fm.stringWidth(word) > panelWidth )
-			{
-				if (++line > maxLines) {
-					// if the tool name doesn't fit: return an empty string
-					return "";
-					
-					//sbToolName.append("...");
-					//sbToolName.append("</b></html>");
-					//return sbToolName.toString();
-				}
-				sbToolName.append("<br>");
-				len = fm.stringWidth(word);	
-			}
-			else
-			{
-				len += fm.stringWidth(word);
-			}
- 
-			sbToolName.append(Util.toHTMLString(word));
-			start = end;
-			end = iterator.next();
-		}		
-		sbToolName.append("</b>");
-    	
-		
-		// mode help text
-		StringBuilder sbToolHelp = new StringBuilder();   
-		fm = getFontMetrics(app.getPlainFont());
-		
-		// try to put help text into single line
-		if (line < maxLines && fm.stringWidth(helpText) < panelWidth) {
-			++line;
-			sbToolHelp.append("<br>");
-			sbToolHelp.append(Util.toHTMLString(helpText));
-		}
-		else {			
-			sbToolHelp.append(": ");
-			iterator.setText(helpText);
-			start = iterator.first();
-			end = iterator.next();
-			while (end != BreakIterator.DONE)
-			{
-				String word = helpText.substring(start,end);
-				if( len + fm.stringWidth(word) >  panelWidth)
-				{
-					if (++line > maxLines) {						
-						// show tool help only when it can be completely shown
-						sbToolHelp.setLength(0);
-						//sbToolHelp.append("...");
-						break;
-					}
-					sbToolHelp.append("<br>");
-					len = fm.stringWidth(word);								
-				}
-				else
-				{
-					len += fm.stringWidth(word);
-				}
-	 
-				sbToolHelp.append(Util.toHTMLString(word));
-				start = end;
-				end = iterator.next();
-			}
-		}
-		
-		// show tool help only when it can be completely shown		
-		sbToolName.append(sbToolHelp);
-		sbToolName.append("</html>");
-		return sbToolName.toString();
-	}
 
     
     /**
@@ -351,13 +171,21 @@ public class Toolbar extends JPanel implements ComponentListener{
      * @param tb
      * @param bg
      */    
-    private void addCustomModesToToolbar(JToolBar tb, ModeToggleButtonGroup bg) {  
+    private void addCustomModesToToolbar(ModeToggleButtonGroup bg) {  
     	Vector toolbarVec;
     	try {
-	    	toolbarVec = createToolBarVec(app.getGuiManager().getToolBarDefinition());
+    		if(dockPanel != null) {
+    			toolbarVec = parseToolbarString(dockPanel.getToolbarString());    			
+    		} else {
+    			toolbarVec = parseToolbarString(app.getGuiManager().getToolbarDefinition());
+    		}
 	    } catch (Exception e) {
-			Application.debug("invalid toolbar string: " + app.getGuiManager().getToolBarDefinition());
-			toolbarVec = createToolBarVec(getDefaultToolbarString());
+    		if(dockPanel != null) {
+    			Application.debug("invalid toolbar string: " + dockPanel.getToolbarString());    			
+    		} else {
+    			Application.debug("invalid toolbar string: " + app.getGuiManager().getToolbarDefinition());
+    		}
+			toolbarVec = parseToolbarString(getDefaultToolbarString());
 		}
  
     	// set toolbar
@@ -367,13 +195,13 @@ public class Toolbar extends JPanel implements ComponentListener{
 	        
 	        // separator between menus
 	        if (ob instanceof Integer) {
-	        	tb.addSeparator();
+	        	addSeparator();
 	        	continue;
 	        }
 	        
 	        // new menu
 	        Vector menu = (Vector) ob;
-	        ModeToggleMenu tm = new ModeToggleMenu(app, bg);
+	        ModeToggleMenu tm = new ModeToggleMenu(app, this, bg);
 	        modeToggleMenus.add(tm);	      
 	        
 	        for (int k = 0; k < menu.size(); k++) {
@@ -397,9 +225,42 @@ public class Toolbar extends JPanel implements ComponentListener{
 	        }
 	            
 	        if (tm.getToolsCount() > 0)
-	        	tb.add(tm);
+	        	add(tm);
 		}
     }
+    
+    /**
+     * @return The dock panel associated with this toolbar or null if this
+     * is the general toolbar.
+     */
+    public DockPanel getDockPanel() {
+    	return dockPanel;
+    }
+    
+    /**
+     * @return The top-most panel of the window this toolbar belongs to.
+     */
+    public Component getMainComponent() {
+    	// if this is the general toolbar the main component is the application main
+    	// component (not true for toolbars in EV)
+    	if(dockPanel == null) {
+    		return app.getMainComponent();
+    	}
+    	
+    	// this toolbar belongs to a dock panel
+    	else {
+    		// in frame?
+    		if(dockPanel.isOpenInFrame()) {
+    			return dockPanel;
+    		}
+    		
+    		// otherwise use the application main component
+    		else {
+    			return app.getMainComponent();
+    		}
+    	}
+    }
+    
     
     /**
 	 * Parses a toolbar definition string like "0 , 1 2 | 3 4 5 || 7 8 9"
@@ -408,8 +269,8 @@ public class Toolbar extends JPanel implements ComponentListener{
 	 * and "||" adds a separator before starting a new menu. 
 	 * @return toolbar as nested Vector objects with Integers for the modes. Note: separators have negative values.
 	 */
-	public static Vector createToolBarVec(String strToolBar) {			
-		String [] tokens = strToolBar.split(" ");
+	public static Vector parseToolbarString(String toolbarString) {			
+		String [] tokens = toolbarString.split(" ");
 		Vector toolbar = new Vector();
 		Vector menu = new Vector();		
 		
@@ -425,15 +286,15 @@ public class Toolbar extends JPanel implements ComponentListener{
 	        	 
 	        	 // add separator between two menus
 	        	 //menu = new Vector();
-	        	 //menu.add(TOOLBAR_SEPARATOR);	        	 
+	        	 //menu.add(SEPARATOR);	        	 
 	        	 //toolbar.add(menu);
-	        	 toolbar.add(TOOLBAR_SEPARATOR);
+	        	 toolbar.add(SEPARATOR);
 	        	 
 	        	 // start next menu
 	        	 menu = new Vector();	        	 
 	         }
 	         else if (tokens[i].equals(",")) { // separator within menu
-	        	 menu.add(TOOLBAR_SEPARATOR);
+	        	 menu.add(SEPARATOR);
 	         }
 	         else { // add mode to menu
 	        	 try  {	
@@ -454,14 +315,28 @@ public class Toolbar extends JPanel implements ComponentListener{
 	    	toolbar.add(menu);	   
 	    return toolbar;					
 	}
+	
+
     
 	/**
-	 * Returns the default toolbar String definition.
+	 * @return The default definition of this toolbar with macros.
 	 */
     public String getDefaultToolbarString() {
+    	if(dockPanel != null) {
+    		return dockPanel.getDefaultToolbarString();
+    	} else {
+    		return Toolbar.getAllTools(app);
+    	}
+    }
+    
+    /**
+     * @param app
+     * @return All tools as a toolbar definition string
+     */
+    public static String getAllTools(Application app) {
     	StringBuilder sb = new StringBuilder();
     	
-    	sb.append(getDefaultToolbarStringNoMacros());
+    	sb.append(getAllToolsNoMacros());
     	
         // macros       
         Kernel kernel = app.getKernel();
@@ -477,17 +352,15 @@ public class Toolbar extends JPanel implements ComponentListener{
         			sb.append(" ");
         		}        			
         	}             	                	        	
-        }            
-        
-        //Application.debug("defToolbar: " + sb);
+        }
         
         return sb.toString();
     }
     
     /**
-	 * Returns the default toolbar String definition.
+	 * @return The default definition of the general tool bar without macros.
 	 */
-    public static String getDefaultToolbarStringNoMacros() {
+    public static String getAllToolsNoMacros() {
     	StringBuilder sb = new StringBuilder();
     	
     	// move
@@ -623,8 +496,8 @@ public class Toolbar extends JPanel implements ComponentListener{
         sb.append(" ");
         sb.append(EuclidianView.MODE_IMAGE);        
         sb.append(" , ");
-        sb.append(EuclidianView.MODE_RELATION);  
-        sb.append(" , ");
+        sb.append(EuclidianView.MODE_RELATION);
+        sb.append(" ");
         sb.append(EuclidianView.MODE_PROBABILITY_CALCULATOR);
  
  
@@ -645,32 +518,5 @@ public class Toolbar extends JPanel implements ComponentListener{
         sb.append(EuclidianView.MODE_DELETE);              
         
         return sb.toString();
-    }
-
-	public boolean isShowToolBarHelp() {
-		return showToolBarHelp;
-	}
-
-	public void setShowToolBarHelp(boolean showToolBarHelp) {
-		this.showToolBarHelp = showToolBarHelp;
-	}
-
-	public void componentHidden(ComponentEvent e) {		
-	}
-
-	public void componentMoved(ComponentEvent e) {		
-	}
-
-	public void componentResized(ComponentEvent e) {
-		if (getWidth() != oldWidth) {
-			oldWidth = getWidth();
-			updateToolbarHelpText();
-		}		
-	}	
-	private int oldWidth;
-
-	public void componentShown(ComponentEvent e) {
-	}
-	
-	
+    }	
 }

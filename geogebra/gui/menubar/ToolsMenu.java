@@ -66,7 +66,7 @@ class ToolsMenu extends BaseMenu {
 		}
 
 		Toolbar toolbar = new Toolbar(app);
-		Vector modes = Toolbar.createToolBarVec(toolbar
+		Vector modes = Toolbar.parseToolbarString(toolbar
 				.getDefaultToolbarString());
 
 		int menuIndex = 0;

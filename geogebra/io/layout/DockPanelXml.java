@@ -17,10 +17,12 @@ public class DockPanelXml {
 	private boolean showStyleBar;
 	private Rectangle frameBounds;
 	private String embeddedDef;
+	private String toolbarString;
 	private int embeddedSize;
 	
 	/**
 	 * @param viewId		The view ID.
+	 * @param toolbar		The toolbar string of this panel or null.
 	 * @param isVisible		If this view is visible at the moment.
 	 * @param openInFrame 	If this view should be opened in a separate frame.
 	 * @param showStyleBar	If the style bar is visible
@@ -28,8 +30,9 @@ public class DockPanelXml {
 	 * @param embeddedDef	The definition string for the location of the view in the main window.
 	 * @param embeddedSize	The size of the view in the main window.
 	 */
-	public DockPanelXml(int viewId, boolean isVisible, boolean openInFrame, boolean showStyleBar, Rectangle windowRect, String embeddedDef, int embeddedSize) {
+	public DockPanelXml(int viewId, String toolbar, boolean isVisible, boolean openInFrame, boolean showStyleBar, Rectangle windowRect, String embeddedDef, int embeddedSize) {
 		this.viewId = viewId;
+		this.toolbarString = toolbar;
 		this.isVisible = isVisible;
 		this.openInFrame = openInFrame;
 		this.showStyleBar = showStyleBar;
@@ -40,6 +43,7 @@ public class DockPanelXml {
 	
 	/**
 	 * @param viewId		The view ID.
+	 * @param toolbar		The toolbar string of this view or null.
 	 * @param isVisible		If this view is visible at the moment.
 	 * @param inFrame 		If this view is in an separate window at the moment.
 	 * @param showStyleBar	If the style bar is visible
@@ -50,12 +54,13 @@ public class DockPanelXml {
 	 * @param embeddedDef	The definition string for the location of the view in the main window.
 	 * @param embeddedSize	The size of the view in the main window.
 	 */
-	public DockPanelXml(int viewId, boolean isVisible, boolean inFrame, boolean showStyleBar, int windowX, int windowY, int windowWidth, int windowHeight, String embeddedDef, int embeddedSize) {
-		this(viewId, isVisible, inFrame, showStyleBar, new Rectangle(windowX, windowY, windowWidth, windowHeight), embeddedDef, embeddedSize);
+	public DockPanelXml(int viewId, String toolbar, boolean isVisible, boolean inFrame, boolean showStyleBar, int windowX, int windowY, int windowWidth, int windowHeight, String embeddedDef, int embeddedSize) {
+		this(viewId, toolbar, isVisible, inFrame, showStyleBar, new Rectangle(windowX, windowY, windowWidth, windowHeight), embeddedDef, embeddedSize);
 	}
 	
 	/**
 	 * @param viewId		The view ID.
+	 * @param toolbar		The toolbar string of this view or null.
 	 * @param isVisible		If this view is visible at the moment.
 	 * @param inFrame 		If this view is in an separate window at the moment.
 	 * @param showStyleBar	If the style bar is visible
@@ -64,8 +69,8 @@ public class DockPanelXml {
 	 * @param embeddedDef	The definition string for the location of the view in the main window.
 	 * @param embeddedSize	The size of the view in the main window.
 	 */
-	public DockPanelXml(int viewId, boolean isVisible, boolean inFrame, boolean showStyleBar, Point windowLoc, Dimension windowSize, String embeddedDef, int embeddedSize) {
-		this(viewId, isVisible, inFrame, showStyleBar, new Rectangle(windowLoc, windowSize), embeddedDef, embeddedSize);
+	public DockPanelXml(int viewId, String toolbar, boolean isVisible, boolean inFrame, boolean showStyleBar, Point windowLoc, Dimension windowSize, String embeddedDef, int embeddedSize) {
+		this(viewId, toolbar, isVisible, inFrame, showStyleBar, new Rectangle(windowLoc, windowSize), embeddedDef, embeddedSize);
 	}
 
 	/**
@@ -73,6 +78,13 @@ public class DockPanelXml {
 	 */
 	public int getViewId() {
 		return viewId;
+	}
+	
+	/**
+	 * @return The toolbar string of this view (or an empty string).
+	 */
+	public String getToolbarString() {
+		return toolbarString;
 	}
 
 	/**
@@ -119,12 +131,18 @@ public class DockPanelXml {
 	}
 	
 	/**
-	 * @return
+	 * @return An XML representation of the data stored in this class.
 	 */
 	public String getXml() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<view id=\"");
 		sb.append(getViewId());
+		
+		if(getToolbarString() != null) {
+			sb.append("\" toolbar=\"");
+			sb.append(getToolbarString());
+		}
+		
 		sb.append("\" visible=\"");
 		sb.append(isVisible());
 		sb.append("\" inframe=\"");
@@ -152,6 +170,6 @@ public class DockPanelXml {
 	 * automatically otherwise.
 	 */
 	public Object clone() {
-		return new DockPanelXml(viewId, isVisible, openInFrame, showStyleBar, frameBounds, embeddedDef, embeddedSize);
+		return new DockPanelXml(viewId, toolbarString, isVisible, openInFrame, showStyleBar, frameBounds, embeddedDef, embeddedSize);
 	}
 }

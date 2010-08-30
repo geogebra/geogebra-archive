@@ -11,6 +11,7 @@ the Free Software Foundation.
 */
 
 package geogebra.gui.toolbar;
+import geogebra.gui.layout.DockPanel;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -48,6 +49,8 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	private static final int SCROLL_PANEL_WIDTH = 300;
 	private static final int SCROLL_PANEL_HEIGHT = 400;
 	
+	private DockPanel dockPanel;
+	
 	public JButton insertButton;
 	public JButton moveUpButton;
 	public JButton moveDownButton;
@@ -76,7 +79,7 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		toolListModel = new DefaultListModel();
 		toolList = new JList(toolListModel);
 		
-		setToolBarString(app.getGuiManager().getToolBarDefinition());	
+		setToolbar(null, app.getGuiManager().getToolbarDefinition());	
 		
 		configScrollPane = new JScrollPane(tree);
 		configScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -317,19 +320,21 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	/**
 	 * Inits the toolbar tree in this panel to show the given toolbar definition string.
 	 */
-	public void setToolBarString(String toolbarDefinition) {				
+	public void setToolbar(DockPanel dockPanel, String toolbarDefinition) {
+		this.dockPanel = dockPanel;
+		
 		// create new tree model
-		Vector toolVec = Toolbar.createToolBarVec(toolbarDefinition);		
+		Vector toolVec = Toolbar.parseToolbarString(toolbarDefinition);		
 		DefaultTreeModel model = new DefaultTreeModel(generateRootNode(toolVec));
 		tree.setModel(model);		
 		collapseAllRows();	
 		tree.setRowHeight(-1);
 		
-		Vector allTools = generateToolsVector(app.getGuiManager().getDefaultToolbarString());
+		Vector allTools = generateToolsVector(Toolbar.getAllTools(app));
 		Vector usedTools = generateToolsVector(toolbarDefinition);
 		
 		toolListModel.clear();
-		toolListModel.addElement(Toolbar.TOOLBAR_SEPARATOR); // always display the separator in the tools list
+		toolListModel.addElement(Toolbar.SEPARATOR); // always display the separator in the tools list
 		
 		for(Iterator iter = allTools.iterator(); iter.hasNext();) {
 			Object next = iter.next();
@@ -337,6 +342,25 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 			if(!usedTools.contains(next)) {
 				toolListModel.addElement(next);
 			}
+		}
+	}
+	
+	public void apply() {
+		if(dockPanel != null) {
+			dockPanel.setToolbarString(getToolBarString());
+		} else {
+			app.getGuiManager().setToolBarDefinition(getToolBarString());
+		}
+	}
+	
+	/**
+	 * Reset the current toolbar to its default state.
+	 */
+	public void resetDefaultToolbar() {
+		if(dockPanel != null) {
+			setToolbar(dockPanel, dockPanel.getDefaultToolbarString());
+		} else {
+			setToolbar(null, app.getGuiManager().getDefaultToolbarString());
 		}
 	}
 	
@@ -386,10 +410,10 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 	public Vector generateToolsVector(String toolbarDefinition) {				
 		Vector vector = new Vector();		
 		// separator
-		vector.add(Toolbar.TOOLBAR_SEPARATOR);
+		vector.add(Toolbar.SEPARATOR);
 				
 		// get default toolbar as nested vectors
-		Vector defTools = Toolbar.createToolBarVec(toolbarDefinition);				
+		Vector defTools = Toolbar.parseToolbarString(toolbarDefinition);				
 		for (int i=0; i < defTools.size(); i++) {
 			Object element = defTools.get(i);
 			

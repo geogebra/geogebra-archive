@@ -11,21 +11,28 @@ the Free Software Foundation.
 */
 
 package geogebra.gui.toolbar;
+import geogebra.gui.layout.DockPanel;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
-public class ToolbarConfigDialog extends JDialog {
+public class ToolbarConfigDialog extends JDialog implements ActionListener {
 	
 	private Application app;	
 	public ToolbarConfigPanel confPanel;
@@ -35,8 +42,26 @@ public class ToolbarConfigDialog extends JDialog {
 		this.app = app;
 		
 		setTitle(app.getMenu("Toolbar.Customize"));		
+		
+		// list with panels
+		JComboBox switcher = new JComboBox();
+		switcher.addItem(new KeyValue(-1, app.getPlain("General")));
+		
+		DockPanel[] panels = app.getGuiManager().getLayout().getDockManager().getPanels();
+		
+		for(DockPanel panel : panels) {
+			if(panel.hasToolbar()) {
+				switcher.addItem(new KeyValue(panel.getViewId(), app.getPlain(panel.getViewTitle())));
+			}
+		}
+
+		switcher.addActionListener(this); // add at the end to not be notified about items being added
+		
+		JPanel switcherPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		switcherPanel.add(switcher);
 
 		getContentPane().setLayout(new BorderLayout(5, 5));
+		getContentPane().add(switcherPanel, BorderLayout.NORTH);
 		confPanel = new ToolbarConfigPanel(app);
 		getContentPane().add(confPanel, BorderLayout.CENTER);
 		getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
@@ -46,11 +71,9 @@ public class ToolbarConfigDialog extends JDialog {
 	}
 		
 	private void apply() {				
-		app.getGuiManager().setToolBarDefinition(confPanel.getToolBarString());
+		confPanel.apply();
 		app.updateToolBar();
 		app.setUnsaved();
-		setVisible(false);
-		dispose();
 	}
 	
 	private JPanel createButtonPanel() {		
@@ -91,7 +114,7 @@ public class ToolbarConfigDialog extends JDialog {
 					dispose();
 				}
 				else if (src == btDefaultToolbar) {
-					confPanel.setToolBarString(app.getGuiManager().getDefaultToolbarString());
+					confPanel.resetDefaultToolbar();
 				}
 			}			
 		};		
@@ -102,4 +125,45 @@ public class ToolbarConfigDialog extends JDialog {
 		return btPanel;
 	}			
 	
+	/**
+	 * Key value pairs.
+	 */
+	private class KeyValue {
+		int key;
+		String value;
+		 
+		public KeyValue(int key, String value) {
+			this.key = key;
+			this.value = value;
+		}
+	 
+		public int getKey() { return key; }
+		public String getValue() { return value; }
+	 
+		@Override
+		public String toString() { return value; }
+	 
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof KeyValue) {
+				KeyValue kv = (KeyValue) obj;
+				return (kv.value.equals(this.value)) && (kv.key == this.key);
+			}
+			return false;
+		}
+	}
+
+	/**
+	 * Switch panel for which we want to change the toolbar.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		int id = ((KeyValue)((JComboBox)e.getSource()).getSelectedItem()).getKey();
+		
+		if(id == -1) {
+			confPanel.setToolbar(null, app.getGuiManager().getToolbarDefinition());
+		} else {
+			DockPanel panel = app.getGuiManager().getLayout().getDockManager().getPanel(id);
+			confPanel.setToolbar(panel, panel.getToolbarString());
+		}
+	}
 }

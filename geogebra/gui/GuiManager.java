@@ -12,6 +12,7 @@ import geogebra.gui.layout.Layout;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.toolbar.Toolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
+import geogebra.gui.toolbar.ToolbarContainer;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.GeoGebraFileChooser;
 import geogebra.gui.view.algebra.AlgebraController;
@@ -120,7 +121,7 @@ public class GuiManager {
 	private GeoGebraFileChooser fileChooser;
 	private GeoGebraMenuBar menuBar;
 
-	private Toolbar appToolbarPanel;	  
+	private ToolbarContainer toolbarPanel;	  
     private String strCustomToolbarDefinition;
     private Locale currentLocale;
     private boolean htmlLoaded;//added by Zbynek Konecny, 2010-05-28 (see #126)    
@@ -198,6 +199,7 @@ public class GuiManager {
 			new DockPanel(
 					Application.VIEW_EUCLIDIAN,	// view id 
 					"DrawingPad", 				// view title
+					null,						// toolbar string
 					true,						// style bar?
 					1							// menu order
 			) {
@@ -222,6 +224,7 @@ public class GuiManager {
 			new DockPanel(
 					Application.VIEW_ALGEBRA,	// view id 
 					"AlgebraWindow", 			// view title phrase
+					null,						// toolbar string
 					true,						// style bar?
 					2, 							// menu order
 					'A'							// menu shortcut
@@ -245,6 +248,7 @@ public class GuiManager {
 			new DockPanel(
 					Application.VIEW_SPREADSHEET, 		// view id
 					"Spreadsheet", 						// view title phrase
+					"0 66",								// toolbar string
 					true,								// style bar?
 					3, 									// menu order
 					'S'									// menu shortcut
@@ -272,6 +276,7 @@ public class GuiManager {
 			new DockPanel(
 					Application.VIEW_CAS, 	// view id
 					"CAS", 					// view title phrase 
+					"0",					// toolbar string
 					false,					// style bar?
 					4						// menu order
 			) {
@@ -285,7 +290,8 @@ public class GuiManager {
 		layout.registerPanel(
 			new DockPanel(
 					Application.VIEW_EUCLIDIAN2, 	// view id
-					"DrawingPad2", 				// view title phrase 
+					"DrawingPad2", 					// view title phrase
+					null,							// toolbar string
 					true,							// style bar?
 					5								// menu order
 			) {
@@ -635,17 +641,21 @@ public class GuiManager {
 		return layout;
 	}
 
-	public JComponent getToolbarPanel() {
-		if (appToolbarPanel == null) {
-			appToolbarPanel = new Toolbar(app);
+	public ToolbarContainer getToolbarPanel() {
+		if (toolbarPanel == null) {
+			toolbarPanel = new ToolbarContainer(app, true);
 		}
 
-		return appToolbarPanel;
+		return toolbarPanel;
 	}
 	
 	public void updateToolbar() {
-		if (appToolbarPanel != null) {
-			appToolbarPanel.initToolbar();
+		if (toolbarPanel != null) {
+			toolbarPanel.buildGui();
+		}
+		
+		if(layout != null) {
+			layout.getDockManager().updateToolbars();
 		}
 	}
 	
@@ -670,9 +680,9 @@ public class GuiManager {
 	}
 	
 	public void setShowToolBarHelp(boolean flag) {
-		if (appToolbarPanel != null || flag == false) {
+		if (toolbarPanel != null || flag == false) {
 			getToolbarPanel();
-			appToolbarPanel.setShowToolBarHelp(flag);
+			ToolbarContainer.setShowHelp(flag);
 		}
 	}
 
@@ -756,17 +766,17 @@ public class GuiManager {
 	                                              
 
 	public int getToolBarHeight() {
-		if (app.showToolBar() && appToolbarPanel != null)
-			return appToolbarPanel.getHeight();
+		if (app.showToolBar() && toolbarPanel != null)
+			return toolbarPanel.getHeight();
 		else
 			return 0;
 	}
 
 	public String getDefaultToolbarString() {
-		if (appToolbarPanel == null)
+		if (toolbarPanel == null)
 			return "";
 
-		return appToolbarPanel.getDefaultToolbarString();
+		return ((Toolbar)toolbarPanel.getComponent(0)).getDefaultToolbarString();
 	}
 
 	public void updateFonts() {
@@ -786,8 +796,12 @@ public class GuiManager {
 			SwingUtilities.updateComponentTreeUI(optionsDialog);
 		}
 
-		if (appToolbarPanel != null) {
-			appToolbarPanel.initToolbar();
+		if (toolbarPanel != null) {
+			toolbarPanel.buildGui();
+		}
+		
+		if(layout != null && layout.getDockManager() != null) {
+			layout.getDockManager().buildToolbarGui();
 		}
 		
 		if (menuBar != null) {
@@ -833,8 +847,13 @@ public class GuiManager {
 			algebraInput.setLabels();
 
 		// TODO don't reinit GUIs anymore! (performance!) (F.S.)
-		if (appToolbarPanel != null)
-			appToolbarPanel.initToolbar();
+		if (toolbarPanel != null) {
+			toolbarPanel.buildGui();
+		}
+		
+		if(layout != null) {
+			layout.getDockManager().buildToolbarGui();
+		}
 		
 		if (propDialog != null)
 			// changed to force all language strings to be updated
@@ -2462,54 +2481,60 @@ public class GuiManager {
 			return success;
 		}
 	}
-	
-	 public void setToolBarDefinition(String toolBarDefinition) {    	  
-	    	strCustomToolbarDefinition = toolBarDefinition;    	
-	    }
 
-	    public String getToolBarDefinition() {
-	    	if (strCustomToolbarDefinition == null && appToolbarPanel != null)
-	    		return appToolbarPanel.getDefaultToolbarString();
-	    	else
-	    		return strCustomToolbarDefinition;
-	    }        
-	  
+	public Toolbar getGeneralToolbar() {
+		return ((Toolbar) toolbarPanel.getComponent(0));
+	}
 
-	    public void removeFromToolbarDefinition(int mode) {    	
-	    	if (strCustomToolbarDefinition != null) {    		
-	    		//Application.debug("before: " + strCustomToolbarDefinition + ",  delete " + mode);
-	    		
-	    		strCustomToolbarDefinition = 
-	    			strCustomToolbarDefinition.replaceAll(Integer.toString(mode), "");
-	    		
-	    		if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
-	    			// if a macro mode is removed all higher macros get a new id (i.e. id-1)
-	    			int lastID = kernel.getMacroNumber() + EuclidianView.MACRO_MODE_ID_OFFSET-1;
-	    			for (int id=mode+1; id <= lastID; id++) {
-	    				strCustomToolbarDefinition = 
-	    					strCustomToolbarDefinition.replaceAll(Integer.toString(id), Integer.toString(id-1));
-	    			}
-	    		}
+	public void setToolBarDefinition(String toolBarDefinition) {
+		strCustomToolbarDefinition = toolBarDefinition;
+	}
 
-	    		//Application.debug("after: " + strCustomToolbarDefinition);
-	    	}    	
-	    }
-	    
-	    public void addToToolbarDefinition(int mode) {    	
-	    	if (strCustomToolbarDefinition != null) {
-	    		strCustomToolbarDefinition = 
-	    			strCustomToolbarDefinition + " | " + mode;
-	    	}  
-	    }
-	    
-	    public void showURLinBrowser(URL url) {
-        	if (app.getJApplet() != null) {
-        		app.getJApplet().getAppletContext().showDocument(url, "_blank");
-            } else {
-            	BrowserLauncher.openURL(url.toExternalForm());
-            }
-	    }
-	    
+	public String getToolbarDefinition() {
+		if (strCustomToolbarDefinition == null && toolbarPanel != null)
+			return getGeneralToolbar().getDefaultToolbarString();
+		else
+			return strCustomToolbarDefinition;
+	}
+
+	public void removeFromToolbarDefinition(int mode) {
+		if (strCustomToolbarDefinition != null) {
+			// Application.debug("before: " + strCustomToolbarDefinition +
+			// ",  delete " + mode);
+
+			strCustomToolbarDefinition = strCustomToolbarDefinition.replaceAll(
+					Integer.toString(mode), "");
+
+			if (mode >= EuclidianView.MACRO_MODE_ID_OFFSET) {
+				// if a macro mode is removed all higher macros get a new id
+				// (i.e. id-1)
+				int lastID = kernel.getMacroNumber()
+						+ EuclidianView.MACRO_MODE_ID_OFFSET - 1;
+				for (int id = mode + 1; id <= lastID; id++) {
+					strCustomToolbarDefinition = strCustomToolbarDefinition
+							.replaceAll(Integer.toString(id),
+									Integer.toString(id - 1));
+				}
+			}
+
+			// Application.debug("after: " + strCustomToolbarDefinition);
+		}
+	}
+
+	public void addToToolbarDefinition(int mode) {
+		if (strCustomToolbarDefinition != null) {
+			strCustomToolbarDefinition = strCustomToolbarDefinition + " | "
+					+ mode;
+		}
+	}
+
+	public void showURLinBrowser(URL url) {
+		if (app.getJApplet() != null) {
+			app.getJApplet().getAppletContext().showDocument(url, "_blank");
+		} else {
+			BrowserLauncher.openURL(url.toExternalForm());
+		}
+	}
 
 	    public void openHelp() {
 	    	try {
@@ -2653,22 +2678,9 @@ public class GuiManager {
 	    }
 	    
 	    public void setToolbarMode(int mode) {
-	    	if (appToolbarPanel == null) return;
+	    	if (toolbarPanel == null) return;
 	    	 
-        	appToolbarPanel.setSelectedMode(mode);	 
-        	
-        	/* Florian Sonner 2008-10-20 : Not compatible with the feature of custom toolbars
-        	// check if toolbar shows selected mode
-    		// if not we set the first mode of toolbar	    		
-			try {		
-				if (appToolbarPanel.getSelectedMode() != mode) {
-					int firstMode = appToolbarPanel.getFirstMode();
-					if (firstMode > 0)
-						setMode(firstMode);
-				}
-			} catch (Exception e) {
-				// ignore nullpoint exception
-			} */
+        	toolbarPanel.selectMode(mode);
 	    }
 	    
 	    /**
