@@ -18,7 +18,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
 
-import java.awt.CardLayout;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -137,10 +136,13 @@ public class Toolbar extends JToolBar {
          	if (success) {
          		this.selectedMode = mode;         		
          	} else {
-         		// we insert a temporary icon if possible
-         		temporaryModes.addMode(mode);
-         		temporaryModes.setVisible(true);
-         		temporaryModes.selectMode(mode);
+         		// don't display move mode icon in other views, this is a bit irritating
+         		if(dockPanel == null || mode != EuclidianView.MODE_MOVE) {
+	         		// we insert a temporary icon if possible
+	         		temporaryModes.addMode(mode);
+	         		temporaryModes.setVisible(true);
+	         		temporaryModes.selectMode(mode);
+         		}
          	}
         } 
         

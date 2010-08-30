@@ -31,7 +31,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 	/**
 	 * Show help text at the right.
 	 */
-	private static boolean showHelp;
+	private static boolean showHelp = true;
 	
 	/**
 	 * Application instance.
@@ -117,7 +117,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
         gluePanel.add(Box.createVerticalGlue());
         gluePanel.add(toolbarPanel);
         gluePanel.add(Box.createVerticalGlue());
-        add(gluePanel, BorderLayout.CENTER);
+        add(gluePanel, BorderLayout.WEST);
 		
         // UNDO Toolbar     
         if (isMain && app.isUndoActive()) {

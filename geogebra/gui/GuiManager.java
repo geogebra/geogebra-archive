@@ -9,6 +9,11 @@ import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
+import geogebra.gui.layout.panels.AlgebraDockPanel;
+import geogebra.gui.layout.panels.CasDockPanel;
+import geogebra.gui.layout.panels.Euclidian2DockPanel;
+import geogebra.gui.layout.panels.EuclidianDockPanel;
+import geogebra.gui.layout.panels.SpreadsheetDockPanel;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.toolbar.Toolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
@@ -95,10 +100,6 @@ import org.neuroph.contrib.jHRT.gui.HandwritingRecognitionTool;
  * separate gui jar file.
  */
 public class GuiManager {	
-	
-	// default toolbars for specific views
-	public static final String TOOLBAR_DEFAULT_CAS = "1001 1002 1003 || 1004 1005 1006 1007 || 1008 1009";
-	
 	private static final int SPREADSHEET_INI_COLS = 26;
 	private static final int SPREADSHEET_INI_ROWS = 100;
 	
@@ -198,123 +199,19 @@ public class GuiManager {
 	 */
 	protected void initLayoutPanels() {
 		// register euclidian view
-		layout.registerPanel(
-			new DockPanel(
-					Application.VIEW_EUCLIDIAN,	// view id 
-					"DrawingPad", 				// view title
-					null,						// toolbar string
-					true,						// style bar?
-					1							// menu order
-			) {
-				public ImageIcon getIcon() {
-					return app.getImageIcon("document-properties.png");
-				}
-				
-				protected JComponent loadStyleBar() {
-					return app.getEuclidianView().getStyleBar();
-				}
-				
-				protected JComponent loadComponent() {
-					// the fact that this object is of type EuclidianView is
-					// used for the limited focus subsystem, see DockPanel::updatePanel() 
-					return app.getEuclidianView();
-				}
-			}
-		);
+		layout.registerPanel(new EuclidianDockPanel(app));
 		
 		// register algebra view
-		layout.registerPanel(
-			new DockPanel(
-					Application.VIEW_ALGEBRA,	// view id 
-					"AlgebraWindow", 			// view title phrase
-					null,						// toolbar string
-					true,						// style bar?
-					2, 							// menu order
-					'A'							// menu shortcut
-			) {	
-				protected JComponent loadStyleBar() {
-					return getAlgebraView().getHelperBar();
-				}
-				
-				protected JComponent loadComponent() {
-					JScrollPane scrollPane = new JScrollPane(getAlgebraView());
-					((JScrollPane)scrollPane).setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
-					scrollPane.setBackground(Color.white);
-					
-					return scrollPane;
-				}
-			}
-		);
+		layout.registerPanel(new AlgebraDockPanel(app));
 		
 		// register spreadsheet view 
-		layout.registerPanel(
-			new DockPanel(
-					Application.VIEW_SPREADSHEET, 		// view id
-					"Spreadsheet", 						// view title phrase
-					"0 66",								// toolbar string
-					true,								// style bar?
-					3, 									// menu order
-					'S'									// menu shortcut
-			) {
-				protected JComponent loadStyleBar() {
-					return ((SpreadsheetView)getSpreadsheetView()).getSpreadsheetStyleBar();
-				}
-				
-				protected JComponent loadComponent() {
-					return getSpreadsheetView();
-				}
-				
-				protected void focusGained() {
-					Application.debug("Spreadsheet gained focus");
-				}
-				
-				protected void focusLost() {
-					Application.debug("Spreadsheet lost focus");
-				}
-			}
-		);
+		layout.registerPanel(new SpreadsheetDockPanel(app));
 		
 		// register CAS view 
-		layout.registerPanel(
-			new DockPanel(
-					Application.VIEW_CAS, 	// view id
-					"CAS", 					// view title phrase 
-					TOOLBAR_DEFAULT_CAS,	// toolbar string
-					false,					// style bar?
-					4						// menu order
-			) {
-				protected JComponent loadComponent() {
-					return getCasView().getCASViewComponent();
-				}
-			}
-		);
+		layout.registerPanel(new CasDockPanel(app));
 		
 		// register EuclidianView2  
-		layout.registerPanel(
-			new DockPanel(
-					Application.VIEW_EUCLIDIAN2, 	// view id
-					"DrawingPad2", 					// view title phrase
-					null,							// toolbar string
-					true,							// style bar?
-					5								// menu order
-			) {
-				public ImageIcon getIcon() {
-					return app.getImageIcon("document-properties.png");
-				}
-				
-				protected JComponent loadStyleBar() {
-					return getEuclidianView2().getStyleBar();
-				}
-				
-				protected JComponent loadComponent() {
-					// the fact that this object is of type EuclidianView is
-					// used for the limited focus subsystem, see DockPanel::updatePanel()
-					return getEuclidianView2();
-				}
-			}
-		);
-		
-		
+		layout.registerPanel(new Euclidian2DockPanel(app));	
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {
