@@ -112,6 +112,11 @@ public class HatchingHandler {
 
 	public static void setTexture(Graphics2D g2, GeoElement geo, float alpha) {
 
+		if(geo.getFillImage() == null){
+			g2.setPaint(geo.getFillColor()); 
+			return;
+		}
+		
 		BufferedImage image = geo.getFillImage();
 		Rectangle2D tr = new Rectangle2D.Double(0, 0, image.getWidth(), image
 				.getHeight());
