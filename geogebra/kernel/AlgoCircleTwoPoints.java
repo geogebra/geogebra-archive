@@ -73,11 +73,10 @@ public class AlgoCircleTwoPoints extends AlgoSphereNDTwoPoints {
     */
 
     final public String toString() {
-        // Michael Borcherds 2008-03-30
-        // simplified to allow better Chinese translation
+
         return app.getPlain("CircleThroughAwithCenterB",
-        		((GeoElement) getM()).getLabel(),
-        		((GeoElement) getP()).getLabel());
+        		((GeoElement) getP()).getLabel(),
+        		((GeoElement) getM()).getLabel());
 
     }
 }
