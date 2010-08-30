@@ -776,7 +776,7 @@ public class GuiManager {
 		if (toolbarPanel == null)
 			return "";
 
-		return ((Toolbar)toolbarPanel.getComponent(0)).getDefaultToolbarString();
+		return getGeneralToolbar().getDefaultToolbarString();
 	}
 
 	public void updateFonts() {
@@ -2483,7 +2483,7 @@ public class GuiManager {
 	}
 
 	public Toolbar getGeneralToolbar() {
-		return ((Toolbar) toolbarPanel.getComponent(0));
+		return toolbarPanel.getFirstToolbar();
 	}
 
 	public void setToolBarDefinition(String toolBarDefinition) {

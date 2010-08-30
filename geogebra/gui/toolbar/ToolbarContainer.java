@@ -391,6 +391,18 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		sbToolName.append("</html>");
 		return sbToolName.toString();
 	}
+    
+    /**
+     * @return The first toolbar in our list, used for the general toolbar in the main
+     * toolbar container.
+     */
+    public Toolbar getFirstToolbar() {
+    	if(toolbars.size() > 0) {
+    		return toolbars.get(0);
+    	} else {
+    		return null;
+    	}
+    }
 	
 	/**
 	 * @return If the help text is displayed.
