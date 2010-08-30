@@ -174,9 +174,9 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 	 * 
 	 * @param mode
 	 */
-	public void selectMode(int mode) {
+	public void setMode(int mode) {
 		for(Toolbar toolbar : toolbars) {
-			toolbar.selectMode(mode);
+			toolbar.setMode(mode);
 		}
 		
 		updateHelpText();

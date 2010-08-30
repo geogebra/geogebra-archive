@@ -104,14 +104,14 @@ public class Toolbar extends JToolBar {
        	modeToggleMenus.add(temporaryModes);
         add(temporaryModes);
         
-        selectMode(app.getMode());
+        setMode(app.getMode());
     }
     
     /**
      * Sets toolbar mode. This will change the selected toolbar icon.
      * @return true if mode could be selected in toolbar. 
      */
-    public boolean selectMode(int mode) {       
+    public boolean setMode(int mode) {       
     	boolean success = false;
     	
     	// there is no special icon/button for the selection listener mode, use the move mode button instead

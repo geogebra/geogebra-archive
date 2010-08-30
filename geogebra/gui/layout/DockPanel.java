@@ -552,6 +552,17 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	}
 	
 	/**
+	 * Change the toolbar mode.
+	 * 
+	 * @param mode
+	 */
+	public void setToolbarMode(int mode) {
+		if(isOpenInFrame() && hasToolbar()) {
+			toolbarContainer.setMode(mode);
+		}
+	}
+	
+	/**
 	 * Update the toolbar GUI.
 	 */
 	public void buildToolbarGui() {

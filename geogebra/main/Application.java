@@ -2577,6 +2577,7 @@ public class Application implements KeyEventDispatcher {
 
 		if (guiManager != null)
 			getGuiManager().setMode(mode);
+		
 		else if (euclidianView != null)
 			euclidianView.setMode(mode);
 	}

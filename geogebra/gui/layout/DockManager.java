@@ -853,6 +853,17 @@ public class DockManager implements AWTEventListener {
 	}
 	
 	/**
+	 * Change the toolbar mode for all toolbars in external frames.
+	 * 
+	 * @param mode
+	 */
+	public void setToolbarMode(int mode) {
+		for(DockPanel panel : dockPanels) {
+			panel.setToolbarMode(mode);
+		}
+	}
+	
+	/**
 	 * Update the fonts in all dock panels.
 	 */
 	public void updateFonts() {

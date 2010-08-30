@@ -2679,8 +2679,9 @@ public class GuiManager {
 	    
 	    public void setToolbarMode(int mode) {
 	    	if (toolbarPanel == null) return;
-	    	 
-        	toolbarPanel.selectMode(mode);
+	    	
+        	toolbarPanel.setMode(mode);
+        	layout.getDockManager().setToolbarMode(mode);
 	    }
 	    
 	    /**
