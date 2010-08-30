@@ -302,11 +302,6 @@ public class MyXMLio {
 		}
 
 		if (clearConstruction) {
-			// clear toolbar definition
-			if (app.hasFullGui()) {
-				app.getGuiManager().setToolBarDefinition(null);
-			}
-
 			// clear construction
 			kernel.clearConstruction();
 		}

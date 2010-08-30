@@ -1257,6 +1257,7 @@ public class MyXMLHandler implements DocHandler {
 			new DockPanelXml(Application.VIEW_SPREADSHEET, null, tmp_showSpreadsheet, false, false, new Rectangle(400, 400), defSV, 200)
 		};
 		tmp_perspective.setDockPanelInfo(dpXml);
+		tmp_perspective.setShowToolBar(true);
 		
 		Dimension evSize = app.getEuclidianView().getPreferredSize();
 		
