@@ -95,8 +95,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			
 		}
 
-		if (getComponentCount() > 2)
-			addSeparator();
+		
 		addChangeTypeItems();
 		
 		
