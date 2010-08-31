@@ -1141,17 +1141,19 @@ public class MyTable extends JTable implements FocusListener
 		if (ob instanceof GeoElement) {
 			GeoElement geo = (GeoElement) ob;
 			
-			if (!geo.isGeoText() && 
-					editor.getEditorInitString(geo).length() > MAX_CELL_EDIT_STRING_LENGTH) {
-				app.getGuiManager().showRedefineDialog(geo, false);
-				return true;
-			}
-			
+			if (!geo.isFixed()) {
+				if (!geo.isGeoText() && 
+						editor.getEditorInitString(geo).length() > MAX_CELL_EDIT_STRING_LENGTH) {
+					app.getGuiManager().showRedefineDialog(geo, false);
+					return true;
+				}
+	
 				if (geo.isGeoText() && ((GeoText)geo).isLaTeX() ) {
 					app.getGuiManager().showRedefineDialog(geo, true);
 					return true;
 				}
-			
+			}
+
 			
 			
 		}
