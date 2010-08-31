@@ -68,6 +68,7 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -3984,7 +3985,7 @@ public	class PropertiesPanel extends JPanel {
 			String modeStr;
 			Image im;
 			for( int i = 0; i < 20; i++) {		
-				modeStr = kernel.getModeText(i);
+				modeStr = kernel.getModeText(i).toLowerCase(Locale.US);
 				fileNAmeArray[i]="/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif";
 			}
 			

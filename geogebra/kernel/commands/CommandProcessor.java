@@ -62,6 +62,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 
 public abstract class CommandProcessor  {
@@ -4658,7 +4659,7 @@ class CmdOsculatingCircle extends CommandProcessor {
 				 
 				 int mode = (int)((GeoNumeric)arg[0]).getDouble();
 				 
-				 String modeStr = kernel.getModeText(mode);
+				 String modeStr = kernel.getModeText(mode).toLowerCase(Locale.US);
 				 
 				 if ("".equals(modeStr))
 					 throw argErr(app, c.getName(), arg[0]);
