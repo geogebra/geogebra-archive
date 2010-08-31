@@ -2109,6 +2109,14 @@ public class MyTable extends JTable implements FocusListener
 		public void letterOrDigitTyped() {
 			allowEditing = true;
 			repaint();  //G.Sturr 2009-10-10: cleanup when keypress edit begins
+			
+			// check if cell fixed
+			Object o = tableModel.getValueAt(getSelectedRow(), getSelectedColumn());			
+			if ( o != null && o instanceof GeoElement) {
+				GeoElement geo = (GeoElement)o;
+				if (geo.isFixed()) return;
+			}
+		
 			tableModel.setValueAt(null, getSelectedRow(), getSelectedColumn());
 			editCellAt(getSelectedRow(), getSelectedColumn()); 
 			// workaround, see
