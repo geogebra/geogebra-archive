@@ -3235,6 +3235,12 @@ public class Kernel {
 		return line;
 	}
 	
+	final public GeoLocus Voronoi(String label, GeoList list) {
+		AlgoVoronoi algo = new AlgoVoronoi(cons, label, list);
+		GeoLocus ret = algo.getResult();
+		return ret;
+	}
+	
 	/** 
 	 * FitPoly[list of coords,degree]
 	 * Hans-Petter Ulven
