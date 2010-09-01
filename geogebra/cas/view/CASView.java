@@ -405,16 +405,26 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		String modeText = kernel.getModeText(mode); // e.g. "Derivative"
 		String command = app.getCommand(modeText); // e.g. "Ableitung"
 		
-		switch (mode) {
+		switch (mode) {		
+			case EuclidianConstants.MODE_CAS_EVALUATE:
+			case EuclidianConstants.MODE_CAS_NUMERIC:
+			case EuclidianConstants.MODE_CAS_KEEP_INPUT:
+			case EuclidianConstants.MODE_CAS_EXPAND:
+			case EuclidianConstants.MODE_CAS_FACTOR:
+			case EuclidianConstants.MODE_CAS_SUBSTITUTE:			
+				// no parameters
+				processInput(command, null);
+				break;
+			
 			case EuclidianConstants.MODE_CAS_SOLVE:
 			case EuclidianConstants.MODE_CAS_DERIVATIVE:
 			case EuclidianConstants.MODE_CAS_INTEGRAL:
+				// use first variable in expression as parameter
 				processInput(command, new String[] {"%0"});
 				break;
 				
 			default:
-				// no parameters
-				processInput(command, null);
+				// ignore other modes
 		}				
 	}
 

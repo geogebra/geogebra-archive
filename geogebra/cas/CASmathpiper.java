@@ -275,7 +275,7 @@ public class CASmathpiper extends CASgeneric {
 		// allow certain commands for equations
 		ggbMathPiper.evaluate("NotEqu(exp) := Not( IsEquation(exp));");
 		
-		//ggbMathPiper.evaluate("CheckInput( (x_NotEqu == y_NotEqu) + z_NotEqu ) <-- Subst(a, x) Subst(b, y) Subst(c, z) (Hold(a + c) ==  Hold(b + c)) ;");
+		//ggbMathPiper.evaluate("KeepInput( (x_NotEqu == y_NotEqu) + z_NotEqu ) <-- Subst(a, x) Subst(b, y) Subst(c, z) (Hold(a + c) ==  Hold(b + c)) ;");
 		
 		
 		// standard commands for equations
@@ -306,7 +306,7 @@ public class CASmathpiper extends CASgeneric {
 		ggbMathPiper.evaluate("(a_NotEqu == b_NotEqu) / (c_NotEqu == d_NotEqu) <-- a / c == b / d;");
 		
 		
-		//ggbMathPiper.evaluate("CheckInput(x_IsAtom)  <-- Simplify(x) == Simplify(y);");
+		//ggbMathPiper.evaluate("KeepInput(x_IsAtom)  <-- Simplify(x) == Simplify(y);");
 		
 		
 		return true;

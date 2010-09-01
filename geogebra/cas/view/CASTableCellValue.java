@@ -225,8 +225,8 @@ public class CASTableCellValue {
 		
 		// stop if input is assignment
 		if (inputVE != null && inputVE.getLabel() != null) {
-			if (eval.startsWith("CheckInput")) {
-				setEvalCommand("CheckInput");
+			if (eval.startsWith("KeepInput")) {
+				setEvalCommand("KeepInput");
 			}
 			return;
 		}
@@ -441,11 +441,11 @@ public class CASTableCellValue {
 	final public void setEvalCommand(String cmd) {
 		evalCmd = cmd;
 		
-		boolean checkInputUsed = evalCmd != null && evalCmd.equals("CheckInput"); 
+		boolean keepInputUsed = evalCmd != null && evalCmd.equals("KeepInput"); 
 		if (inputVE != null)
-			inputVE.setCheckInputUsed(checkInputUsed);
+			inputVE.setKeepInputUsed(keepInputUsed);
 		if (evalVE != null)
-			evalVE.setCheckInputUsed(checkInputUsed);
+			evalVE.setKeepInputUsed(keepInputUsed);
 	}
 	
 	final public void setEvalComment(String comment) {

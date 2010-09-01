@@ -1112,8 +1112,8 @@ public class Kernel {
 		case EuclidianConstants.MODE_CAS_NUMERIC:
 			return "Numeric";
 		
-		case EuclidianConstants.MODE_CAS_CHECK_INPUT:
-			return "CheckInput";
+		case EuclidianConstants.MODE_CAS_KEEP_INPUT:
+			return "KeepInput";
 			
 		case EuclidianConstants.MODE_CAS_EXPAND:
 			return "Expand";

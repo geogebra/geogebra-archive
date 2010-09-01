@@ -116,7 +116,7 @@ public class CASInputHandler {
 		}
 		
 		// FIX common INPUT ERRORS in evalText
-		if (!hasSelectedText && (ggbcmd.equals("Evaluate") || ggbcmd.equals("CheckInput"))) {
+		if (!hasSelectedText && (ggbcmd.equals("Evaluate") || ggbcmd.equals("KeepInput"))) {
 			String fixedInput = fixInputErrors(selRowInput);
 			if (!fixedInput.equals(selRowInput)) {
 				cellValue.setInput(fixedInput);
@@ -138,16 +138,16 @@ public class CASInputHandler {
 		
 		boolean isAssignment = cellValue.getAssignmentVariable() != null;
 		boolean isEvaluate = ggbcmd.equals("Evaluate");
-		boolean isCheckInput = ggbcmd.equals("CheckInput");
+		boolean isKeepInput = ggbcmd.equals("KeepInput");
 		
 		// assignments are processed immediately, the ggbcmd creates a new row below
 		if (isAssignment) {
-			// tell row that CheckInput was used
-			if (isCheckInput)
-				cellValue.setEvalCommand("CheckInput");
+			// tell row that KeepInput was used
+			if (isKeepInput)
+				cellValue.setEvalCommand("KeepInput");
 			
 			// evaluate assignment row
-			boolean needInsertRow = !isEvaluate && !isCheckInput;
+			boolean needInsertRow = !isEvaluate && !isKeepInput;
 			boolean success = processRowsBelowThenEdit(selRow, !needInsertRow);
 			
 			// insert a new row below with the assignment label and process it using the current command
@@ -663,7 +663,7 @@ public class CASInputHandler {
 	}
 	 
 	 /**
-	  * Returns evalVE when isCheckInputUsed() is set and otherwise the value of evalVE.getLabel() in the underlying CAS.
+	  * Returns evalVE when isKeepInputUsed() is set and otherwise the value of evalVE.getLabel() in the underlying CAS.
 	  * @param evalVE
 	  * @return
 	  */
@@ -672,7 +672,7 @@ public class CASInputHandler {
 			assignmentResult.append(evalVE.getLabelForAssignment());
 			assignmentResult.append(evalVE.getAssignmentOperator());
 
-			if (evalVE.isCheckInputUsed()) {
+			if (evalVE.isKeepInputUsed()) {
 				// keep input
 				assignmentResult.append(evalVE.toString());
 			} else {

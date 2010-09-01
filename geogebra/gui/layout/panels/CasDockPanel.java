@@ -33,8 +33,6 @@ public class CasDockPanel extends DockPanel {
 	}
 	
 	private static String getDefaultToolbar() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("1001 1002 1003 || 1004 1005 1006 1007 || 1008 1009");
-		return sb.toString();
+		return "1001 1003 | 1002 || 1005 | 1004 || 1006 1007 | 1008 1009";		
 	}
 }

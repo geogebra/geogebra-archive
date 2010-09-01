@@ -24,7 +24,7 @@ public abstract class ValidExpression implements ExpressionValue {
         
     private Vector labels;
     private boolean inTree; // used by ExpressionNode
-    private boolean checkInputUsed; // flag used by GeoGebraCAS
+    private boolean keepInputUsed; // flag used by GeoGebraCAS
 
 	public void addLabel(String label) {  
     	initLabels();
@@ -161,12 +161,12 @@ public abstract class ValidExpression implements ExpressionValue {
 		// do nothing, see Command, ExpressionNode classes
 	  }
 	  
-	   public boolean isCheckInputUsed() {
-			return checkInputUsed;
+	   public boolean isKeepInputUsed() {
+			return keepInputUsed;
 		}
 
-		public void setCheckInputUsed(boolean checkInputUsed) {
-			this.checkInputUsed = checkInputUsed;
+		public void setKeepInputUsed(boolean keepInputUsed) {
+			this.keepInputUsed = keepInputUsed;
 		}
 	
 }

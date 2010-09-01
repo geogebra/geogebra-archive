@@ -165,7 +165,7 @@ public interface EuclidianConstants {
 	// CAS view modes
 	public static final int MODE_CAS_EVALUATE = 1001;
 	public static final int MODE_CAS_NUMERIC = 1002;
-	public static final int MODE_CAS_CHECK_INPUT = 1003;
+	public static final int MODE_CAS_KEEP_INPUT = 1003;
 	public static final int MODE_CAS_EXPAND = 1004;
 	public static final int MODE_CAS_FACTOR = 1005;
 	public static final int MODE_CAS_SUBSTITUTE = 1006;

@@ -64,7 +64,7 @@ public class CASOutputPanel extends JPanel {
 		if (cmd.length() == 0) {
 			outputSign.setText(OUTPUT_PREFIX);
 		}
-		else if (cmd.equals(app.getCommand("CheckInput"))) {
+		else if (cmd.equals(app.getCommand("KeepInput"))) {
 			// show check character
 			outputSign.setText("\u2713");
 		} 
