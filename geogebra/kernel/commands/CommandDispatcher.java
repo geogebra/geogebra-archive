@@ -420,7 +420,7 @@ public class CommandDispatcher {
     	cmdTable.put("Sample", new CmdSample(kernel));	   
     	cmdTable.put("SlowPlot", new CmdSlowPlot(kernel));	   
     	cmdTable.put("ToolImage", new CmdToolImage(kernel));	   
-    	//cmdTable.put("Voronoi", new CmdVoronoi(kernel));     	                  
+    	cmdTable.put("Voronoi", new CmdVoronoi(kernel));     	                  
     	
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   

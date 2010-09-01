@@ -251,6 +251,20 @@ class CmdMode extends CmdOneListFunction {
 
 }
 
+class CmdVoronoi extends CmdOneListFunction {
+
+	public CmdVoronoi(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.Voronoi(a, b);
+	}
+
+}
+
+
 /*
  * Sum[ list ]
  * adapted from CmdLcm by Michael Borcherds 2008-02-16
