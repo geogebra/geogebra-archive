@@ -12,6 +12,7 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.layout.DockPanel;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
+import geogebra3D.euclidian3D.EuclidianView3D;
 
 /**
  * Extending DefaultGuiManager class for 3D
@@ -37,8 +38,49 @@ public class GuiManager3D extends GuiManager {
 	 */
 	protected void initLayoutPanels() {
 		super.initLayoutPanels();
+		
+		String myToolBar3D =  EuclidianView3D.MODE_MOVE
+		+" || "
+		+EuclidianView3D.MODE_POINT_IN_REGION
+		+" "
+		+EuclidianView3D.MODE_INTERSECT
+		+" | "
+		+EuclidianView3D.MODE_JOIN
+		+" "
+		+EuclidianView3D.MODE_SEGMENT
+		+" "
+		+EuclidianView3D.MODE_RAY
+		+" , "
+		+EuclidianView3D.MODE_VECTOR
+		+" || "
+		+EuclidianView3D.MODE_POLYGON
+		//+" | "
+		//+EuclidianView3D.MODE_CIRCLE_THREE_POINTS
+		+" || "
+		+EuclidianView3D.MODE_PLANE_THREE_POINTS
+		+" , "
+		+EuclidianView3D.MODE_PLANE_POINT_LINE
+		+" | "
+		+EuclidianView3D.MODE_ORTHOGONAL_PLANE
+		+" , "
+		+EuclidianView3D.MODE_PARALLEL_PLANE
+		+" || "
+		+EuclidianView3D.MODE_SPHERE_TWO_POINTS
+		+" "
+		+EuclidianView3D.MODE_SPHERE_POINT_RADIUS
+		+" || "
+		+EuclidianView3D.MODE_TRANSLATEVIEW
+		+" "
+		+EuclidianView3D.MODE_ZOOM_IN
+		+" "
+		+EuclidianView3D.MODE_ZOOM_OUT
+		+" | "
+		+EuclidianView3D.MODE_VIEW_IN_FRONT_OF
+		;
     	
-    	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, "GraphicsView3D", null, false, 4) {
+    	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, "GraphicsView3D", 
+    			myToolBar3D, 
+    			false, 4) {
     		protected JComponent loadStyleBar() {
 				return null;
 			}

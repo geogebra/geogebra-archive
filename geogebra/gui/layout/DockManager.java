@@ -109,15 +109,15 @@ public class DockManager implements AWTEventListener {
 				
 				if(panel == null) {
 					// TODO insert error panel
+				}else{
+					panel.setToolbarString(dpInfo[i].getToolbarString());
+					panel.setFrameBounds(dpInfo[i].getFrameBounds());
+					panel.setEmbeddedDef(dpInfo[i].getEmbeddedDef());
+					panel.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
+					panel.setShowStyleBar(dpInfo[i].showStyleBar());
+					panel.setOpenInFrame(dpInfo[i].isOpenInFrame());
+					panel.setVisible(dpInfo[i].isVisible());
 				}
-				
-				panel.setToolbarString(dpInfo[i].getToolbarString());
-				panel.setFrameBounds(dpInfo[i].getFrameBounds());
-				panel.setEmbeddedDef(dpInfo[i].getEmbeddedDef());
-				panel.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
-				panel.setShowStyleBar(dpInfo[i].showStyleBar());
-				panel.setOpenInFrame(dpInfo[i].isOpenInFrame());
-				panel.setVisible(dpInfo[i].isVisible());
 			}
 			
 			updatePanels();
@@ -162,14 +162,23 @@ public class DockManager implements AWTEventListener {
 
 			// now insert the dock panels
 			for(int i = 0; i < dpInfo.length; ++i) {
+				
+				DockPanel panel = getPanel(dpInfo[i].getViewId());
+				
+				//manages case where the panel is not found (e.g. 3D view)
+				if (panel==null)
+					return;
+				
 				// skip panels which will not be drawn in the main window
 				if(!dpInfo[i].isVisible())
 					continue;
 				
 				if(dpInfo[i].isOpenInFrame()) {
-					show(getPanel(dpInfo[i].getViewId()));
+					show(panel);
 					continue;
 				}
+				
+				
 				
 				DockSplitPane currentParent = rootPane;
 				String[] directions = dpInfo[i].getEmbeddedDef().split(",");
@@ -190,13 +199,13 @@ public class DockManager implements AWTEventListener {
 				}
 
 				if(directions[directions.length - 1].equals("0") || directions[directions.length - 1].equals("3")) {
-					currentParent.setLeftComponent(getPanel(dpInfo[i].getViewId()));
+					currentParent.setLeftComponent(panel);
 				} else {
-					currentParent.setRightComponent(getPanel(dpInfo[i].getViewId()));
+					currentParent.setRightComponent(panel);
 				}
 				
 				// move toolbar to main container
-				if(getPanel(dpInfo[i].getViewId()).hasToolbar()) {
+				if(panel.hasToolbar()) {
 					ToolbarContainer mainContainer = app.getGuiManager().getToolbarPanel();
 					mainContainer.addToolbar(getPanel(dpInfo[i].getViewId()).getToolbar());
 				}
@@ -941,9 +950,11 @@ public class DockManager implements AWTEventListener {
 		
 		if(panel != null) {
 			return panel;
-		} else {
+		} else if (viewId==Application.VIEW_EUCLIDIAN3D){
+			return null;
+		}else{
 	        app.setDefaultCursor();
-			throw new IllegalArgumentException("viewId not found");
+			throw new IllegalArgumentException("viewId="+viewId+" not found");
 		}
 	}
 	

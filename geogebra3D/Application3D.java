@@ -42,10 +42,6 @@ public class Application3D extends Application{
     private EuclidianController3D euclidianController3D;      
     protected Kernel3D kernel3D;
     
-    /**
-     * ID of the 3D euclidian view for the layout manager.
-     */
-    public static final int VIEW_EUCLIDIAN3D = 512;
 
 
     public Application3D(CommandLineArguments args, GeoGebraFrame frame, boolean undoActive) {
@@ -67,65 +63,17 @@ public class Application3D extends Application{
 	    //TODO remove 3D test : just comment following line        
         new Test3D(kernel3D,euclidianView,euclidianView3D,this);
         
-        initToolBar3D();
         
     }
     
-    private void initToolBar3D(){
-        //init toolbar
-        
-        String myToolBar3D =  EuclidianView3D.MODE_MOVE
-        						+" || "
-        						+EuclidianView3D.MODE_POINT_IN_REGION
-        						+" "
-        						+EuclidianView3D.MODE_INTERSECT
-        						+" | "
-        						+EuclidianView3D.MODE_JOIN
-        						+" "
-        						+EuclidianView3D.MODE_SEGMENT
-        						+" "
-        						+EuclidianView3D.MODE_RAY
-        						+" , "
-        						+EuclidianView3D.MODE_VECTOR
-        						+" || "
-        						+EuclidianView3D.MODE_POLYGON
-        						//+" | "
-        						//+EuclidianView3D.MODE_CIRCLE_THREE_POINTS
-        						+" || "
-        						+EuclidianView3D.MODE_PLANE_THREE_POINTS
-        						+" , "
-        						+EuclidianView3D.MODE_PLANE_POINT_LINE
-        						+" | "
-        						+EuclidianView3D.MODE_ORTHOGONAL_PLANE
-        						+" , "
-        						+EuclidianView3D.MODE_PARALLEL_PLANE
-        						+" || "
-        						+EuclidianView3D.MODE_SPHERE_TWO_POINTS
-        						+" "
-        						+EuclidianView3D.MODE_SPHERE_POINT_RADIUS
-        						+" || "
-        						+EuclidianView3D.MODE_TRANSLATEVIEW
-        						+" "
-        						+EuclidianView3D.MODE_ZOOM_IN
-        						+" "
-        						+EuclidianView3D.MODE_ZOOM_OUT
-        						+" | "
-        						+EuclidianView3D.MODE_VIEW_IN_FRONT_OF
-        						;
-        
-        GuiManager dgm = (GuiManager) getGuiManager();
-        dgm.setToolBarDefinition( myToolBar3D );
-        //dgm.getLayout().getPerspective(0).setToolbarDefinition(myToolBar3D);
-        
-        super.updateToolBar();
- 		
-    }      
     
     
     //TODO remove this - keep until perspective manager process toolbar
+    /*
     public void updateToolBar() {
     	
     }    
+    */
     
 	public void initKernel(){
 		kernel3D = new Kernel3D(this);

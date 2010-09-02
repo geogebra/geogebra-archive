@@ -300,7 +300,8 @@ public class Application implements KeyEventDispatcher {
 	public static final int VIEW_SPREADSHEET = 4;
 	public static final int VIEW_CAS = 8;
 	public static final int VIEW_EUCLIDIAN2 = 16;
-	
+    public static final int VIEW_EUCLIDIAN3D = 512;
+
 	/**
 	 * The preferred size of this application. Used in case the frame size should be updated.
 	 */
