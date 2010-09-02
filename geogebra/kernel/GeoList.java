@@ -586,6 +586,12 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		  sb.append("\">\n");
 		  getXMLtags(sb);
 		  
+		  if (selectedIndex != 0) {
+			sb.append("\t<selectedIndex val=\"");
+			sb.append(selectedIndex);
+			sb.append("\"/>\n");
+		  }
+			
 		  // point style
 			sb.append("\t<pointSize val=\"");
 				sb.append(pointSize);
@@ -1133,8 +1139,16 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	  	public boolean hasDrawable3D() {
 			return true;
 		}
-		
-		
-		
+
+	  	/*
+	  	 * when list is visible (as a combobox) this returns the element selected by the user
+	  	 * or null if there's a problem
+	  	 */
+		public GeoElement getSelectedElement() {
+			if (selectedIndex > -1 && selectedIndex < size())
+				return get(selectedIndex);
+			else
+				return null;
+		}
 
 }

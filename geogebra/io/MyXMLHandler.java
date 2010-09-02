@@ -36,6 +36,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
@@ -2246,6 +2247,9 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("selectionAllowed")) {
 				ok = handleSelectionAllowed(attrs);
 				break;
+			} else if (eName.equals("selectedIndex")) {
+				ok = handleSelectedIndex(attrs);
+				break;
 			}
 
 		case 't':
@@ -2878,6 +2882,16 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleSelectionAllowed(LinkedHashMap<String, String> attrs) {
 		try {
 			geo.setSelectionAllowed(parseBoolean((String) attrs.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleSelectedIndex(LinkedHashMap<String, String> attrs) {
+		try {
+			if (geo.isGeoList())
+			((GeoList)geo).setSelectedIndex(Integer.parseInt(((String) attrs.get("val"))));
 			return true;
 		} catch (Exception e) {
 			return false;

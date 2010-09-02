@@ -4642,6 +4642,46 @@ class CmdOsculatingCircle extends CommandProcessor {
 	 }
  }
 
+ /*
+  * Element[ <list>, <n> ]
+  * Element[ <point>, <n> ]
+  */
+ class CmdSelectedElement extends CommandProcessor {
+ 	
+ 	public CmdSelectedElement(Kernel kernel) {
+ 		super(kernel);
+ 	}
+
+ 	
+ final public  GeoElement[] process(Command c) throws MyError {
+     int n = c.getArgumentNumber();
+     GeoElement[] arg;
+     
+     switch (n) {    	
+ 	case 1 :
+ 		arg = resArgs(c);
+ 		// list
+         if (arg[0].isGeoList())
+            	 
+            {
+         	GeoElement[] ret = {  kernel.SelectedElement(
+                             c.getLabel(),
+                             (GeoList) arg[0]) };
+                return ret; 
+            } 
+                  
+         // error
+         else {          
+         	throw argErr(app, c.getName(), arg[0]);	
+         	}            	
+          
+
+         default :
+             throw argNumErr(app, c.getName(), n);
+     }
+ }
+ }
+ 
  class CmdToolImage extends CommandProcessor {
 	 public CmdToolImage(Kernel kernel) {
 		 super(kernel);
