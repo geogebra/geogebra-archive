@@ -38,10 +38,8 @@ public class SpreadsheetDockPanel extends DockPanel {
 	}
 	
 	protected void focusGained() {
-		Application.debug("Spreadsheet gained focus");
 	}
 	
 	protected void focusLost() {
-		Application.debug("Spreadsheet lost focus");
 	}
 }

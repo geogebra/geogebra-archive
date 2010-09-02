@@ -204,13 +204,10 @@ public class ToolbarConfigPanel extends javax.swing.JPanel implements java.awt.e
 		
 		// DELETE
 		if (src == deleteButton) {									
-			if (selRow > 0) { // not root					
-				// delete node unless move node				
+			if (selRow > 0) { // not root				
 				Object userOb = selNode.getUserObject();
 				if (userOb == null)
-					userOb = ((DefaultMutableTreeNode) selNode.getFirstChild()).getUserObject();				
-				if (userOb instanceof Integer && ((Integer) userOb).intValue() == 0) 
-					return;
+					userOb = ((DefaultMutableTreeNode) selNode.getFirstChild()).getUserObject();
 				
 				// not move mode: delete node
 				model.removeNodeFromParent(selNode);				

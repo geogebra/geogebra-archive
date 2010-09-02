@@ -8,12 +8,10 @@ import geogebra.main.Application;
 
 import java.awt.AWTEvent;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -94,7 +92,7 @@ public class DockManager implements AWTEventListener {
 	 * @param spInfo
 	 * @param dpInfo
 	 * 
-	 * @see Layout::applyPerspective()
+	 * @see Layout#applyPerspective(geogebra.io.layout.Perspective)
 	 */
 	public void applyPerspective(DockSplitPaneXml[] spInfo, DockPanelXml[] dpInfo) {		
 		if(dockPanels != null) {			
@@ -487,7 +485,7 @@ public class DockManager implements AWTEventListener {
 			// this value is necessary to prevent panels which completely hide
 			// their opposite element
 			// TODO implement this
-			int parentSize;
+			//int parentSize;
 			
 			// the component opposite to the current component
 			Component opposite;
@@ -587,8 +585,11 @@ public class DockManager implements AWTEventListener {
 	 * @param isPermanent If this change is permanent.
 	 */
 	public void hide(DockPanel panel, boolean isPermanent) {
-		if(!panel.isVisible())
-			throw new IllegalArgumentException("DockPane is not visible and can't be hidden.");
+		if(!panel.isVisible()) {
+			// some views (especially CAS) will close so slowly that the user is able
+			// to issue another "close" call, therefore we quit quietly
+			return;
+		}
 		
 		panel.setVisible(false);
 		
@@ -809,6 +810,10 @@ public class DockManager implements AWTEventListener {
 		for(DockPanel panel : dockPanels) {
 			panel.updateLabels();
 		}
+		
+		for(DockPanel panel : dockPanels) {
+			panel.buildToolbarGui();
+		}
 	}
 	
 	/**
@@ -835,7 +840,7 @@ public class DockManager implements AWTEventListener {
 	 * 
 	 * This is required if the user changed whether the title bar should be displayed or not.
 	 * 
-	 * @see setLabels
+	 * @see #setLabels()
 	 */
 	public void updatePanels() {
 		for(DockPanel panel : dockPanels) {
@@ -870,12 +875,7 @@ public class DockManager implements AWTEventListener {
 		for(DockPanel panel : dockPanels) {
 			panel.updateFonts();
 		}
-	}
-	
-	/**
-	 * Build the GUI of the toolbar.
-	 */
-	public void buildToolbarGui() {
+		
 		for(DockPanel panel : dockPanels) {
 			panel.buildToolbarGui();
 		}
@@ -905,32 +905,28 @@ public class DockManager implements AWTEventListener {
 	}
 	
 	/**
-	 * Get the GeoGebraLayout instance.
-	 * 
-	 * @return
+	 * @return GeoGebraLayout instance
 	 */
 	public Layout getLayout() {
 		return layout;
 	}
 	
 	/**
-	 * Get the glass pane which is used to draw the preview rectangle if the user dragged
+	 * @return The glass pane which is used to draw the preview rectangle if the user dragged
 	 * a DockPanel.
-	 * 
-	 * @return
 	 */
 	public DockGlassPane getGlassPane() {
 		return glassPane;
 	}
 	
 	/**
-	 * Returns a specific DockPanel type.
+	 * Returns a specific DockPanel.
 	 * 
 	 * Use the constants VIEW_EUCLIDIAN, VIEW_ALGEBRA etc. as viewId.
 	 * 
 	 * @param viewId
 	 * @throws IllegalArgumentException
-	 * @return
+	 * @return The panel associated to the viewId
 	 */
 	public DockPanel getPanel(int viewId)
 		throws IllegalArgumentException
@@ -952,18 +948,15 @@ public class DockManager implements AWTEventListener {
 	}
 	
 	/**
-	 * Get all dock panels.
-	 * @return
+	 * @return All dock panels
 	 */
 	public DockPanel[] getPanels() {
 		return (DockPanel[])dockPanels.toArray(new DockPanel[0]);
 	}
 	
 	/**
-	 * Gets the root split pane which contains all other elements like DockPanels or
+	 * @return The root split pane which contains all other elements like DockPanels or
 	 * DockSplitPanes.
-	 * 
-	 * @return
 	 */
 	public DockSplitPane getRoot() {
 		return rootPane;
@@ -971,7 +964,7 @@ public class DockManager implements AWTEventListener {
 	
 	/**
 	 * @return True if all focus may change between all views, false if just
-	 * 		the euclidian views are affected by this. 
+	 * the euclidian views are affected by this. 
 	 */
 	public boolean hasFullFocusSystem() {
 		return hasFullFocusSystem;

@@ -568,6 +568,11 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	public void buildToolbarGui() {
 		if(toolbarContainer != null) {
 			toolbarContainer.buildGui();
+			toolbarContainer.updateHelpText();
+			
+			if(isOpenInFrame()) {
+				frame.validate();
+			}
 		}
 	}
 	
@@ -645,14 +650,19 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 */
 	private void windowPanel() {
 		// move the toolbar from the main window to the panel
-		if(hasToolbar()) {			
+		if(hasToolbar()) {
 			if(toolbarContainer == null) {
 				toolbarContainer = new ToolbarContainer(app, false);
 			}
 			
 			toolbarContainer.addToolbar(toolbar);
 			toolbarContainer.buildGui();
+			toolbarContainer.setActiveToolbar(getViewId());
 			toolbarPanel.add(toolbarContainer, BorderLayout.CENTER);
+			
+			ToolbarContainer mainContainer = app.getGuiManager().getToolbarPanel();
+			mainContainer.removeToolbar(toolbar);
+			mainContainer.updateToolbarPanel();
 		}
 		
 		dockManager.hide(this, false);
@@ -879,7 +889,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * automatically request focus for its parent frame.
 	 * 
 	 * @remark The focus system implemented here has nothing to do with
-	 * swings focus system, therefore Swings focus methods won't work here.
+	 * swings focus system, therefore Swings focus methods won't work.
 	 * 
 	 * @param hasFocus
 	 */

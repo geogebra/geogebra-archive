@@ -580,10 +580,10 @@ public class GuiManager {
 	}
 	
 	public void setShowToolBarHelp(boolean flag) {
-		if (toolbarPanel != null || flag == false) {
-			getToolbarPanel();
-			ToolbarContainer.setShowHelp(flag);
-		}
+		ToolbarContainer.setShowHelp(flag);
+		
+		toolbarPanel.buildGui();
+		// TODO update panels..
 	}
 
 	public JComponent getConstructionProtocolNavigation() {
@@ -700,10 +700,6 @@ public class GuiManager {
 			toolbarPanel.buildGui();
 		}
 		
-		if(layout != null && layout.getDockManager() != null) {
-			layout.getDockManager().buildToolbarGui();
-		}
-		
 		if (menuBar != null) {
 			menuBar.initMenubar();
 		}
@@ -746,13 +742,9 @@ public class GuiManager {
 		if (algebraInput != null)
 			algebraInput.setLabels();
 
-		// TODO don't reinit GUIs anymore! (performance!) (F.S.)
 		if (toolbarPanel != null) {
 			toolbarPanel.buildGui();
-		}
-		
-		if(layout != null) {
-			layout.getDockManager().buildToolbarGui();
+			toolbarPanel.updateHelpText();
 		}
 		
 		if (propDialog != null)

@@ -1,7 +1,7 @@
 package geogebra.gui.toolbar;
 
 import java.awt.BorderLayout;
-import java.awt.CardLayout;
+import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.SystemColor;
 import java.awt.event.ComponentEvent;
@@ -56,7 +56,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 	/**
 	 * Panel which contains all toolbars.
 	 */
-	private JPanel toolbarPanel;
+	private ToolbarPanel toolbarPanel;
 	
 	/**
 	 * Toolbars added to this container.
@@ -66,7 +66,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 	/**
 	 * The active toolbar.
 	 */
-	private int activeToolbar = -1;
+	private int activeToolbar;
 	
 	/**
 	 * Create a new toolbar container.
@@ -86,6 +86,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		
 		if(isMain) {
 			addToolbar(new Toolbar(app));
+			activeToolbar = -1;
 		}
 		
         // if the container is resized we have to check if the 
@@ -108,8 +109,12 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 			setBorder(BorderFactory.createEmptyBorder(2, 2, 1, 2));
 		}
 		
-		toolbarPanel = new JPanel(new CardLayout());
+		toolbarPanel = new ToolbarPanel();
 		updateToolbarPanel();
+		
+		// setActiveToolbar also makes the selected toolbar visible,
+		// therefore the following line is not completely useless ;)
+		setActiveToolbar(activeToolbar);
 		
         // wrap toolbar to be vertically centered
         JPanel gluePanel = new JPanel();
@@ -157,8 +162,13 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
            	modeNameLabel.setAlignmentX(LEFT_ALIGNMENT);
 
            	// put into panel to 
-           	toolbarHelpPanel = new JPanel();
-           	toolbarHelpPanel.setLayout(new BoxLayout(toolbarHelpPanel, BoxLayout.Y_AXIS));
+           	if(toolbarHelpPanel == null) {
+           		toolbarHelpPanel = new JPanel();
+           		toolbarHelpPanel.setLayout(new BoxLayout(toolbarHelpPanel, BoxLayout.Y_AXIS));
+           	} else {
+           		toolbarHelpPanel.removeAll();
+           	}
+           	
            	toolbarHelpPanel.add(Box.createVerticalGlue());
            	toolbarHelpPanel.add(modeNameLabel);
            	toolbarHelpPanel.add(Box.createVerticalGlue());
@@ -198,7 +208,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
      */
     public void setActiveToolbar(int id) {
     	activeToolbar = id;
-    	((CardLayout)toolbarPanel.getLayout()).show(toolbarPanel, Integer.toString(id));
+    	toolbarPanel.show(Integer.toString(id));
     }
 	
 	/**
@@ -211,6 +221,8 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 			toolbar.buildGui();
 			toolbarPanel.add(toolbar, Integer.toString(getViewId(toolbar)));
 		}
+		
+		toolbarPanel.show(Integer.toString(activeToolbar));
 	}
 	
 	/**
@@ -224,8 +236,10 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 	}
 	
 	/**
-	 * Removes a toolbar from this container. Use updateToolbarPanel() to update the GUI
-	 * after all toolbar changes were made.
+	 * Removes a toolbar from this container. Use {@link #updateToolbarPanel()} to update the GUI
+	 * after all toolbar changes were made. If the removed toolbar was the active toolbar as well
+	 * the active toolbar is changed to the general (but again, {@link #updateToolbarPanel()}
+	 * has to be called for a visible effect).
 	 * 
 	 * @param toolbar
 	 */
@@ -233,7 +247,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		toolbars.remove(toolbar);
 		
 		if(getViewId(toolbar) == activeToolbar) {
-			setActiveToolbar(-1);
+			activeToolbar = -1;
 		}
 	}
 	
@@ -267,7 +281,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 	/**
 	 * Update the help text.
 	 */
-    private void updateHelpText() {
+    public void updateHelpText() {
     	if (modeNameLabel == null) return;
     	
     	int mode = app.getMode();
@@ -424,4 +438,51 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 	public void componentHidden(ComponentEvent e) { }
 
 	public void componentMoved(ComponentEvent e) { }
+	
+	/**
+	 * Simple panel which displays a single component at a time. Just use
+	 * ToolbarPanel::add(Component, String) to add components, use
+	 * ToolbarPanel::show(String) to show a component.
+	 */
+	private class ToolbarPanel extends JPanel {
+		private static final long serialVersionUID = 1L;
+		
+		/**
+		 * Just sets the layout of this panel.
+		 */
+		public ToolbarPanel() {
+			super(new FlowLayout(FlowLayout.LEFT, 0, 0));
+		}
+
+		/**
+		 * Shows the component with the given name
+		 * @param name
+		 */
+		public void show(String name) {			
+			for(int i = 0; i < getComponentCount(); ++i) {
+				java.awt.Component comp = getComponent(i);
+				
+				if(comp != null) {
+					if(comp.getName() != null) {
+						comp.setVisible(comp.getName().equals(name));
+					} else {
+						comp.setVisible(false);
+					}
+				}
+			}
+			
+			invalidate();
+		}
+		
+		/**
+		 * Adds a component and hide it automatically.
+		 * @param comp
+		 * @param name
+		 */
+		public void add(java.awt.Component comp, String name) {
+			super.add(comp);
+			comp.setName(name);
+			comp.setVisible(false);
+		}
+	}
 }
