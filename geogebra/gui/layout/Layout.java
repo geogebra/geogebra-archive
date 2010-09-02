@@ -104,24 +104,30 @@ public class Layout {
 		defaultPerspectives = new Perspective[4];
 		
 		DockPanelXml[] dpInfo;
+		DockSplitPaneXml[] spInfo;
 		
-		// algebra & graphics - default of GeoGebra < 3.2
+		// algebra & graphics (default settings of GeoGebra < 3.2)
 		if (!use3D){ //ggb2D
 			dpInfo = new DockPanelXml[4];
 			dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(100, 100, 600, 400), "1", 500);
 			dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, null, true, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
 			dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
 			dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
+			
+			spInfo = new DockSplitPaneXml[1];
+			spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
 		}else{ //ggb3D
-			dpInfo = new DockPanelXml[4];
-			dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN3D, null, true, false, false, new Rectangle(100, 100, 600, 400), "1", 500);
-			dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, null, true, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
-			dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
-			dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
+			dpInfo = new DockPanelXml[5];
+			dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(100, 100, 600, 400), "1,1", 500);
+			dpInfo[1] = new DockPanelXml(Application.VIEW_EUCLIDIAN3D, null, true, false, false, new Rectangle(100, 100, 600, 400), "1,3", 500);
+			dpInfo[2] = new DockPanelXml(Application.VIEW_ALGEBRA, null, true, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
+			dpInfo[3] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1,2", 300);
+			dpInfo[4] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1,2", 300);
+			
+			spInfo = new DockSplitPaneXml[2];
+			spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
+			spInfo[1] = new DockSplitPaneXml("1", 0.35, DockSplitPane.HORIZONTAL_SPLIT);
 		}
-		
-		DockSplitPaneXml[] spInfo = new DockSplitPaneXml[1];
-		spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
 		
 		String defToolbar = Toolbar.getAllToolsNoMacros();
 		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, true, false, true, true, true, false);
