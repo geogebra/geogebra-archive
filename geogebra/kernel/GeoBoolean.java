@@ -148,9 +148,15 @@ AbsoluteScreenLocateable {
 	}
 
 	public void set(GeoElement geo) {
-		GeoBoolean b = (GeoBoolean) geo;
-		setValue(b.value);
-		isDefined = b.isDefined;
+		if (geo.isGeoNumeric()) {
+			// 1 = true
+			// 0 = false
+			setValue(Kernel.isZero(((GeoNumeric)geo).getDouble() - 1));
+		} else {
+			GeoBoolean b = (GeoBoolean) geo;
+			setValue(b.value);
+			isDefined = b.isDefined;
+		}
 	}
 
 	final public void setUndefined() {
