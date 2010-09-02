@@ -148,10 +148,11 @@ AbsoluteScreenLocateable {
 	}
 
 	public void set(GeoElement geo) {
-		if (geo.isGeoNumeric()) {
+		if (geo.isGeoNumeric()) { // eg SetValue[checkbox, 0]
 			// 1 = true
 			// 0 = false
 			setValue(Kernel.isZero(((GeoNumeric)geo).getDouble() - 1));
+			isDefined = true;
 		} else {
 			GeoBoolean b = (GeoBoolean) geo;
 			setValue(b.value);

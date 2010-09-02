@@ -101,7 +101,15 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
         return new GeoList(this);        
     }         
     
-    public void set(GeoElement geo) {    	
+    public void set(GeoElement geo) {
+    	
+		if (geo.isGeoNumeric()) { // eg SetValue[list, 2]
+			// 1 -> first element
+			selectedIndex = -1 + (int)((GeoNumeric)geo).getDouble();
+			isDefined = true;
+
+			return;
+		}
         GeoList l = (GeoList) geo;              
         
 		if (l.cons != cons && isAlgoMacroOutput()) {
