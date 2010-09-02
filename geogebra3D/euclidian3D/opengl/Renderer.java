@@ -165,6 +165,8 @@ public class Renderer implements GLEventListener {
 	public Renderer(EuclidianView3D view){
 		super();
 		
+		Application.debug("create gl renderer");
+		
 	    caps = new GLCapabilities();
 	    
 	    //anti-aliasing
@@ -1459,14 +1461,17 @@ public class Renderer implements GLEventListener {
         
         
         // check openGL version
-        Application.debug("openGL version : "+ gl.glGetString(GL.GL_VERSION));
+        final String version = gl.glGetString(GL.GL_VERSION);
+       
         
         // Check For VBO support
         final boolean VBOsupported = gl.isFunctionAvailable("glGenBuffersARB") &&
                 gl.isFunctionAvailable("glBindBufferARB") &&
                 gl.isFunctionAvailable("glBufferDataARB") &&
                 gl.isFunctionAvailable("glDeleteBuffersARB");
-        Application.debug("vbo supported : "+VBOsupported);
+        
+        Application.debug("openGL version : "+version
+        		+", vbo supported : "+VBOsupported);
         
        
         

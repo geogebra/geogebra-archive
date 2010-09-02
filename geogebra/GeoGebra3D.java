@@ -17,95 +17,57 @@
  */
 package geogebra;
 
-import geogebra.gui.FileDropTargetListener;
-import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.menubar.GeoGebraMenuBar;
-import geogebra.main.Application;
-import geogebra.util.Util;
-import geogebra3D.Application3D;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.net.URL;
 
-import java.awt.dnd.DropTarget;
 
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.UIManager;
-
-/**
- * GeoGebra3D's main window. 
- */
-public class GeoGebra3D extends GeoGebraFrame
+public class GeoGebra3D extends GeoGebra
 {
-
-	private static final long serialVersionUID = 1L;
 	
+	public static void main(String[] cmdArgs) {  
+		CommandLineArguments args = new CommandLineArguments(cmdArgs);
+		
+		Frame splashFrame = null;
+		
+    	boolean showSplash = true;
+    	if(!args.getBooleanValue("showSplash", true)) {
+    		showSplash = false;
+    	}
+    	
+    	if(args.getStringValue("help").length() > 0) {
+    		showSplash = false;
+    	}
+    	
+    	if (showSplash) {
+    	  // Show splash screen
+		  URL imageURL = GeoGebra.class.getResource("/geogebra3D/splash.png");
+		  if (imageURL != null) {
+		      splashFrame = SplashWindow.splash(
+		          Toolkit.getDefaultToolkit().createImage(imageURL)
+		      );
+		  } else {
+		      System.err.println("Splash image not found");
+		  }
+    	}
+		  
+		  // Start GeoGebra
+		  try {        			  		
+			  startGeoGebra(args);                	
+		  } catch (Throwable e) {
+		      e.printStackTrace();
+		      System.err.flush();
+		      System.exit(10);
+		  }
+		  
+		  // Hide splash screen
+		  if (splashFrame != null) splashFrame.setVisible(false);
+    }
 
-	/** 
-	 * Main method to create inital GeoGebra window.
-	 * @param args: file name parameter
-	 */
-	public static synchronized void main(String[] args) {		
-		
-		//allows toolbar to display before openGL
-		JPopupMenu.setDefaultLightWeightPopupEnabled(false);	
-		
-		// check java version
-		double javaVersion = Util.getJavaVersion();
-		if (javaVersion < 1.42) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Sorry, GeoGebra cannot be used with your Java version "
-									+ javaVersion
-									+ "\nPlease visit http://www.java.com to get a newer version of Java.");
-			return;
-		}
-		    	
-     	if (Application.MAC_OS) 
-    		initMacSpecifics();
-				
-    	// set system look and feel
-		try {							
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			Application.debug(e+"");
-		}	
-    	    
-		
-		
-		// create first window and show it
-		
-		createNewWindow(new CommandLineArguments(args));
-	}	
-	
-	
-	
-
-	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args) {				
-		// set Application's size, position and font size
-		GeoGebra3D wnd = new GeoGebra3D();
-		
-		//GeoGebra wnd = buildGeoGebra();
-
-		Application3D app = new Application3D(args, wnd, true);		
-		app.getGuiManager().setMenubar(new GeoGebraMenuBar(app, app.getGuiManager().getLayout()));
-		app.getGuiManager().initMenubar();
-		
-		// init GUI
-		wnd.app = (Application) app;
-		wnd.getContentPane().add(app.buildApplicationPanel());
-		wnd.setDropTarget(new DropTarget(wnd, new FileDropTargetListener(app)));			
-		wnd.addWindowFocusListener(wnd);
-		
-		updateAllTitles();	
-		
-		wnd.setVisible(true);
-		
-		// TODO create a perspective which shows the 3D view by default 
-		app.getGuiManager().setShowView(true, Application3D.VIEW_EUCLIDIAN3D);
-		
-		
-		return wnd;
-	}
+    private static void startGeoGebra(CommandLineArguments args) {
+    	// create and open first GeoGebra window        	
+    	geogebra.gui.app.GeoGebraFrame3D.main(args);
+    }
 
 	
 

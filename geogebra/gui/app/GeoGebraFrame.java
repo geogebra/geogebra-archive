@@ -60,7 +60,8 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	
 	public GeoGebraFrame() {
 		instances.add(this);
-		activeInstance = this;					
+		activeInstance = this;			
+		
 	}
 	
 //	public static void printInstances() {
@@ -181,6 +182,11 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	 * @param args: file name parameter
 	 */
 	public static synchronized void main(CommandLineArguments args) {		
+
+		init(args,new GeoGebraFrame());
+	}	
+	
+	public static synchronized void init(CommandLineArguments args, GeoGebraFrame wnd){
 		// check java version
 		double javaVersion = Util.getJavaVersion();
 		if (javaVersion < 1.42) {
@@ -217,8 +223,8 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		GeoGebraPreferences.getPref().loadFileList();	
     	    			
 		// create first window and show it		
-		createNewWindow(args);	
-	}	
+		createNewWindow(args,wnd);	
+	}
 	
 	/**
 	 * Returns the active GeoGebra window.
@@ -245,28 +251,48 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 	}
 	
 	
+	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args){
+		return createNewWindow(args,new GeoGebraFrame());
+	}
+	
 	/**
 	 * Creates new GeoGebra window
 	 * @param args Command line arguments
 	 * @return the new window
 	 */
 	//public abstract GeoGebra buildGeoGebra();
-	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args){
-		return createNewWindow(args,null);
+	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,GeoGebraFrame wnd){
+		return createNewWindow(args,null,wnd);
 	}
+	
+	
+	/**
+	 * return the application running geogebra
+	 * @param args
+	 * @param frame
+	 * @return the application running geogebra
+	 */
+	protected Application createApplication(CommandLineArguments args, JFrame frame){		
+		return new Application(args, frame, true);
+	}
+	
+	
+	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,Macro macro) {	
+		return createNewWindow(args,macro,new GeoGebraFrame());
+	}
+	
 	/**
 	 * Creates new GeoGebra window
 	 * @param args Command line arguments
 	 * @param macro Macro to open (or null for file edit mode)
 	 * @return the new window
 	 */
-	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,Macro macro) {				
+	public static synchronized GeoGebraFrame createNewWindow(CommandLineArguments args,Macro macro,GeoGebraFrame wnd) {				
 		// set Application's size, position and font size
 		// TODO Add layout glass pane (F.S.)
-		GeoGebraFrame wnd = new GeoGebraFrame();
 		
-		//GeoGebra wnd = buildGeoGebra();
-		final Application app = new Application(args, wnd, true);		
+		
+		Application app = wnd.createApplication(args,wnd);//new Application(args, wnd, true);		
 		
 		if(macro!=null)app.openMacro(macro);
 		//app.getApplicationGUImanager().setMenubar(new geogebra.gui.menubar.GeoGebraMenuBar(app));
@@ -284,6 +310,7 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		// init some things in the background
 		if (!app.isApplet())
 		{
+			/*
 			Thread runner = new Thread() {
 				public void run() {											
 					// init properties dialog
@@ -300,10 +327,40 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 					Drawable.drawEquation(app, app.getEuclidianView().g2Dtemp, 0, 0, "x^{2}", g2d.getFont(), false, Color.BLACK, Color.WHITE);
 				}
 			};
+			*/
+			Thread runner = wnd.createAppThread(app);
 			runner.start();
 		}
 				
 		return wnd;
+	}
+	
+	private AppThread createAppThread(Application app){
+		return new AppThread(app);
+	}
+	
+	private class AppThread extends Thread{
+		
+		Application app;
+		
+		public AppThread(Application app){
+			this.app=app;	
+		}
+		
+		public void run() {											
+			// init properties dialog
+			this.app.getGuiManager().initPropertiesDialog();		
+			
+			// init file chooser
+			this.app.getGuiManager().initFileChooser();	
+			
+			// init CAS
+			this.app.getKernel().getGeoGebraCAS();
+			
+			// init JLaTeXMath
+			Graphics2D g2d = this.app.getEuclidianView().g2Dtemp;
+			Drawable.drawEquation(this.app, this.app.getEuclidianView().g2Dtemp, 0, 0, "x^{2}", g2d.getFont(), false, Color.BLACK, Color.WHITE);
+		}
 	}
 
 	public static int getInstanceCount() {

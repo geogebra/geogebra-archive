@@ -34,6 +34,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
 
 
 public class Application3D extends Application{
@@ -44,7 +45,7 @@ public class Application3D extends Application{
     
 
 
-    public Application3D(CommandLineArguments args, GeoGebraFrame frame, boolean undoActive) {
+    public Application3D(CommandLineArguments args, JFrame frame, boolean undoActive) {
         this(args, frame, null, undoActive);
     }
 
@@ -53,7 +54,7 @@ public class Application3D extends Application{
     }
     
     
-    private Application3D(CommandLineArguments args, GeoGebraFrame frame, AppletImplementation applet, boolean undoActive) { 
+    private Application3D(CommandLineArguments args, JFrame frame, AppletImplementation applet, boolean undoActive) { 
     	
     	super(args, frame, applet, null, undoActive);
     	
@@ -68,12 +69,6 @@ public class Application3D extends Application{
     
     
     
-    //TODO remove this - keep until perspective manager process toolbar
-    /*
-    public void updateToolBar() {
-    	
-    }    
-    */
     
 	public void initKernel(){
 		kernel3D = new Kernel3D(this);

@@ -101,11 +101,12 @@ public class Layout {
 		defaultPerspectives = new Perspective[4];
 		
 		// algebra & graphics - default of GeoGebra < 3.2
-		DockPanelXml[] dpInfo = new DockPanelXml[4];
+		DockPanelXml[] dpInfo = new DockPanelXml[5];
 		dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(100, 100, 600, 400), "1", 500);
 		dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, null, true, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
+		dpInfo[4] = new DockPanelXml(Application.VIEW_EUCLIDIAN3D, null, true, false, false, new Rectangle(100, 100, 600, 400), "1", 500);
 		
 		DockSplitPaneXml[] spInfo = new DockSplitPaneXml[1];
 		spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);

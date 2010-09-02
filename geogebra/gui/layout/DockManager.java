@@ -425,6 +425,7 @@ public class DockManager implements AWTEventListener {
 	 * @param panel 
 	 */
 	public void show(DockPanel panel) {
+		
 		panel.setVisible(true);
 		
 		// TODO causes any problems?
