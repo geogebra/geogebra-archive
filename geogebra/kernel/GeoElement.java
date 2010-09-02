@@ -3946,6 +3946,10 @@ public abstract class GeoElement
 		return highlighted || selected;
 	}
 	
+	final public boolean isSelected(){
+		return selected;
+	}
+	
 	public boolean isNumberValue() {
 		return false;
 	}

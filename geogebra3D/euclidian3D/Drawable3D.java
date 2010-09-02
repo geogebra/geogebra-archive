@@ -640,7 +640,9 @@ public abstract class Drawable3D extends DrawableND {
 	 * @return true if geo is highlighted, or if it is part of a list highlighted
 	 */
 	public boolean doHighlighting(){
-		if (getGeoElement().doHighlighting())
+		if (getGeoElement().isSelected()
+				||
+				(getGeoElement().doHighlighting() && getView3D().hasMouse()))
 			return true;
 		if (createdByDrawList())
 			return ((Drawable3D) getDrawListCreator()).doHighlighting();

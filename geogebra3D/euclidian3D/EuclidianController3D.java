@@ -1216,13 +1216,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
-	
-	public void mouseExited(MouseEvent e) {
-
-		setHighlightedGeos(false);
-		
-		super.mouseExited(e);
-	}
 
 	//////////////////////////////////////
 	// SELECTED GEOS

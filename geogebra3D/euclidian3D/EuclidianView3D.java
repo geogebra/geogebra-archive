@@ -2273,7 +2273,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	public void mouseExited(){
+		//Application.debug("mouseExited");
 		hasMouse = false;
+	}
+	
+	public boolean hasMouse(){
+		return hasMouse;
 	}
 	
 
