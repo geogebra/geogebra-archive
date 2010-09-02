@@ -141,12 +141,20 @@ public class GuiManager {
 		this.kernel = app.getKernel();
 		
 		// the layout component
-		layout = new Layout();
+		createLayout();
 		
 		initAlgebraController(); // needed for keyboard input in EuclidianView
 		
 		//Zbynek Konecny, 2010-05-28 (see #126)
 		htmlLoaded = false;
+	}
+	
+	protected void createLayout(){
+		setLayout(new Layout(false));
+	}
+	
+	protected void setLayout(Layout layout){
+		this.layout = layout;
 	}
 	
 	public void initialize() {

@@ -10,6 +10,7 @@ import javax.swing.JComponent;
 
 import geogebra.gui.GuiManager;
 import geogebra.gui.layout.DockPanel;
+import geogebra.gui.layout.Layout;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
@@ -31,6 +32,10 @@ public class GuiManager3D extends GuiManager {
 	 */
 	public GuiManager3D(Application app) {
 		super(app);
+	}
+	
+	protected void createLayout(){
+		setLayout(new Layout(true));
 	}
 	
 	/**
