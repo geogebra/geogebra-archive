@@ -403,6 +403,7 @@ public abstract class Drawable extends DrawableND {
 					yOffset = (((Integer)(lineHeights.get(currentLine))).intValue() - ((Integer)(elementHeights.get(currentElement))).intValue()) / 2;
 					
 					// draw the string
+					g2.setFont(font); // JLaTeXMath changes g2's fontsize
 					xOffset += drawIndexedString(g2, lines[j], xLabel + xOffset, yLabel + height + yOffset + lineSpread).x;
 					
 					// add the height of this line if more lines follow
@@ -490,7 +491,7 @@ public abstract class Drawable extends DrawableND {
 	}//*/
 	
 	
-	private static HashMap equations;
+	private static HashMap<String, TeXIcon> equations;
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
 	
@@ -583,7 +584,7 @@ public abstract class Drawable extends DrawableND {
 
 		Font font = g2.getFont();
 		FontRenderContext frc = g2.getFontRenderContext();
-		int xoffset = 0, yoffset = 0;
+		int xoffset = 0;
 
 		// draw text line by line
 		int lineBegin = 0;
