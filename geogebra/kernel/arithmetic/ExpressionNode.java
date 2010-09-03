@@ -2787,6 +2787,7 @@ implements ExpressionValue, ExpressionNodeConstants {
                 break;
                 
             case FUNCTION_NVAR:
+            case ELEMENT_OF:
             	// multivariate functions
             	if (left.isGeoElement()) {
             		 sb.append(((GeoElement)left).getLabel());

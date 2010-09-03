@@ -1795,7 +1795,9 @@ ExpressionNode numberFunction():
 				else if (geo instanceof GeoFunctionNVar) {
 				  return new ExpressionNode(kernel, geoExp, ExpressionNode.FUNCTION_NVAR, myList);				}
 	      		else if (geo.isGeoCurveCartesian()) // vector function 
-	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.VEC_FUNCTION, myList.getListElement(0)); 
+	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.VEC_FUNCTION, myList); 
+	      		else if (geo.isGeoList()) // list1(1) to get first element of list1
+	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.ELEMENT_OF, myList); 
 	      		else {// error: no function
 	      			String [] str = { "FunctionExpected", funcName };
 	                throw new MyParseError(app, str);

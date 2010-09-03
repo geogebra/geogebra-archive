@@ -2,6 +2,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
@@ -79,9 +80,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	else if (operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
 	            	&& operation != NOT_EQUAL // ditto	
 	            	&& operation != CONTAINS // ditto	
-	            	&& operation != CONTAINS_STRICT // ditto	
-	            	
+	            	&& operation != CONTAINS_STRICT // ditto		            	
 	            	&& operation != SET_DIFFERENCE // ditto	
+	            	&& operation != ELEMENT_OF // list1(1) to get first element	
 	            	&& !rt.isVectorValue() // eg {1,2} + (1,2)
         			&& !rt.isTextValue()) // bugfix "" + {1,2} Michael Borcherds 2008-06-05
         	{ 
@@ -1606,7 +1607,39 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 	            throw new MyError(app, str3);
             }
                             
-       
+       /*
+        * list1={1,2,3}
+        * list1(3) to get 3rd element
+        */
+        case ELEMENT_OF:      
+            if (rt.isListValue() && lt instanceof GeoList) { 
+            	
+            	ListValue lv = (ListValue)rt;
+            	if (lv.size() == 1) { // list1(1)
+            		ExpressionValue ev = lv.getMyList().getListElement(0).evaluate();
+            		if (ev.isNumberValue())
+            			return ((GeoList)lt).get(-1 + (int)((NumberValue)ev).getDouble());
+            	}
+            	else if (lv.size() == 2) { // matrix1(1,2) (same as Element[matrix1,1,2]
+            		ExpressionValue ev0 = lv.getMyList().getListElement(0).evaluate();
+            		ExpressionValue ev1 = lv.getMyList().getListElement(1).evaluate();
+            		if (ev0.isNumberValue() && ev1.isNumberValue()) {
+            			GeoElement subList = ((GeoList)lt).get(-1 + (int)((NumberValue)ev0).getDouble());
+            			if (subList.isGeoList()) {
+            				return ((GeoList)subList).get(-1 + (int)((NumberValue)ev1).getDouble());
+            			}
+            		}
+            	}
+           }
+            
+            // fallthrough
+            {
+        	//Application.debug("FUNCTION lt: " + lt + ", " + lt.getClass() + " rt: " + rt + ", " + rt.getClass());
+	            String [] str = { "IllegalArgument", rt.toString() };
+	            throw new MyError(app, str);
+            }
+
+            
         case FUNCTION:      
             // function(number)
             if (rt.isNumberValue() && lt instanceof Functional) {    

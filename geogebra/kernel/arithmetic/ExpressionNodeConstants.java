@@ -99,11 +99,12 @@ public interface ExpressionNodeConstants {
     public static final int FUNCTION_NVAR = 44;
     public static final int VEC_FUNCTION = 45;
     public static final int DERIVATIVE = 46;  
+    public static final int ELEMENT_OF = 47;  
     
     
     // spreadsheet absolute reference using $ signs
-    public static final int $VAR_ROW = 70;
-    public static final int $VAR_COL = 71;
-    public static final int $VAR_ROW_COL = 72;
+    public static final int $VAR_ROW = 48;
+    public static final int $VAR_COL = 49;
+    public static final int $VAR_ROW_COL = 50;
 	
 }
