@@ -3440,6 +3440,24 @@ public class Application implements KeyEventDispatcher {
 		doDebug(s.toString(), false, false, 0);
 	}
 	
+	public static void debug(Object s[]) {
+		debug(s, 0);
+	}
+	
+	static StringBuilder debugSb = null;
+	
+	public static void debug(Object[] s, int level) {
+		if (debugSb == null) debugSb = new StringBuilder(); 
+		else debugSb.setLength(0);
+		
+		for (int i = 0 ; i < s.length ; i++) {
+			debugSb.append(s[i]);
+			debugSb.append('\n');
+		}
+		
+		debug(debugSb, level);
+	}
+	
 	public static void debug(Object s, int level) {
 		doDebug(s.toString(), false, false, level);
 	}
