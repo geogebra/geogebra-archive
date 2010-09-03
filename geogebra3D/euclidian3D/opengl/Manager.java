@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Color;
@@ -114,7 +115,8 @@ abstract public class Manager {
 	 */
 	public void update(){
 		//color factor for highlighting
-		colorFactor = (float) ((Math.sin(System.currentTimeMillis()/100.0)+1)/2);
+		//colorFactor = (float) ((Math.sin(System.currentTimeMillis()/100.0)+1)/2);
+		colorFactor = (float) Math.sin(System.currentTimeMillis()/100.0)+1;
 	}
 	
 	/////////////////////////////////////////////
@@ -309,15 +311,26 @@ abstract public class Manager {
 	// COLOR METHODS
 	/////////////////////////////////////////////
 
+	
 	/** return the color for highlighting object
 	 * @param c
+	 * @param amplitude amplitude of the variation of color
 	 * @return the color for highlighting object
 	 */
-	public Color getHigthlighting(Color c){
+	public Color getHigthlighting(Color c, int amplitude){
 		
+		/*
 		int r = (int) (c.getRed()*(1-colorFactor)+255*colorFactor);
 		int g = (int) (c.getGreen()*(1-colorFactor)+255*colorFactor);
 		int b = (int) (c.getBlue()*(1-colorFactor)+255*colorFactor);
+		*/
+		
+		float coeff = (float) (255-2*amplitude)/255;
+		int r = (int) (c.getRed()*coeff+amplitude*colorFactor);
+		int g = (int) (c.getGreen()*coeff+amplitude*colorFactor);
+		int b = (int) (c.getBlue()*coeff+amplitude*colorFactor);
+		
+		//Application.debug("COLOR_VARIATION="+COLOR_VARIATION+", COLOR_COEFF="+COLOR_COEFF +"\nr="+r+",g="+g+",b="+b);
 		
 		return new Color(r,g,b);
 	}

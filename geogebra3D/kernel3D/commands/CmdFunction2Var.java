@@ -1,6 +1,7 @@
 package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
@@ -70,6 +71,17 @@ public class CmdFunction2Var extends CmdFunction {
 						)
 				};
 				return ret;
+			} else if (
+					(ok[0] = (arg[0] instanceof GeoFunctionNVar)) //function
+	    			&& (ok[1] = arg[1].isGeoNumeric()) //first var
+	    			&& (ok[2] = arg[2].isNumberValue()) //from
+	    			&& (ok[3] = arg[3].isNumberValue()) //to
+	    			&& (ok[4] = arg[4].isGeoNumeric()) //second var
+	    			&& (ok[5] = arg[5].isNumberValue()) //from
+	    			&& (ok[6] = arg[6].isNumberValue()) //to
+					
+			) {
+				throw new MyError(app, "bounded xy-function not implemented yet");
 			}                                
 			else {
 				int i=0;

@@ -215,6 +215,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		this.kernel3D = (Kernel3D) ec.getKernel();
 		euclidianController3D.setView(this);
 		
+		
 		start();
 	}
 	

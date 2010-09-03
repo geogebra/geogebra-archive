@@ -17,7 +17,8 @@ import geogebra3D.euclidian3D.opengl.Renderer;
 public abstract class Drawable3DCurves extends Drawable3D {
 
 
-	
+	/** amplitude for blinking highlighting */
+	private static int HIGHLIGHTING_AMPLITUDE = 64;
 	
 	/**
 	 * common constructor
@@ -42,10 +43,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if(!isVisible())
 			return;	
 			
-		if(doHighlighting())
-			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),1.0f);
-		else
-			renderer.setColor(getGeoElement().getObjectColor(),1.0f);
+		setHighlightingColor(HIGHLIGHTING_AMPLITUDE, 1f);
 		//renderer.setDash(Renderer.DASH_NONE); 
 		//renderer.setMatrix(getMatrix());
 		
@@ -63,10 +61,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if(!isVisible())
 			return;
 		
-		if(doHighlighting())
-			renderer.setColor(renderer.getGeometryManager().getHigthlighting(getGeoElement().getObjectColor()),1.0f);
-		else
-			renderer.setColor(getGeoElement().getObjectColor(),1.0f);
+		setHighlightingColor(HIGHLIGHTING_AMPLITUDE, 1f);
 		
 		//renderer.setDash(getGeoElement().getLineType()); 
 		renderer.getTextures().setDashFromLineType(getGeoElement().getLineType()); 

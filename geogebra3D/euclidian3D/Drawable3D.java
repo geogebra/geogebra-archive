@@ -650,6 +650,18 @@ public abstract class Drawable3D extends DrawableND {
 	}
 	
 
+	/**
+	 * sets the color (for drawing) regarding geo's color, amplitude for blinking highlighting, 
+	 * and alpha value
+	 * @param amplitude
+	 * @param alpha
+	 */
+	protected void setHighlightingColor(int amplitude, float alpha){
+		if(doHighlighting())
+			getView3D().getRenderer().setColor(getView3D().getRenderer().getGeometryManager().getHigthlighting(getGeoElement().getObjectColor(),amplitude),alpha);
+		else
+			getView3D().getRenderer().setColor(getGeoElement().getObjectColor(),alpha);
+	}
 	
 	/////////////////////////////////////////////////////////////////////////////
 	// links to the GeoElement
