@@ -546,8 +546,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * container. 
 	 */
 	public void updateToolbar() {
-		if(isOpenInFrame() && hasToolbar()) {
-			Application.debug(toString());
+		if(isVisible() && isOpenInFrame() && hasToolbar()) {
 			toolbarContainer.updateToolbarPanel();
 		}
 	}
@@ -558,7 +557,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * @param mode
 	 */
 	public void setToolbarMode(int mode) {
-		if(isOpenInFrame() && hasToolbar()) {
+		if(isVisible() && isOpenInFrame() && hasToolbar()) {
 			toolbarContainer.setMode(mode);
 		}
 	}
