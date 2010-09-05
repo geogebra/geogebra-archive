@@ -6761,7 +6761,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setLineStyle(int lineStyle) {
 		penLineStyle = lineStyle;
 		
-		if (mode == EuclidianView.MODE_VISUAL_STYLE) {
+		//if (mode == EuclidianView.MODE_VISUAL_STYLE) {
 			ArrayList geos = app.getSelectedGeos();
 			
 			for (int i = 0 ; i < geos.size() ; i++) {
@@ -6770,10 +6770,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				geo.updateRepaint();
 				
 			}
-		}
+	//	}
 	}
 
-
+		
+	
 	final private static int eraserSize = 12;
 	private boolean erasing = false;
 	private int penSize = 3;
@@ -6781,7 +6782,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setSize(int size) {
 		penSize = size;
 		
-		if (mode == EuclidianView.MODE_VISUAL_STYLE) {
+	//	if (mode == EuclidianView.MODE_VISUAL_STYLE) {
 			ArrayList geos = app.getSelectedGeos();
 			
 			for (int i = 0 ; i < geos.size() ; i++) {
@@ -6794,7 +6795,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					geo.updateRepaint();
 				}
 			}
-		}
+	//	}
 		
 	}
 	
@@ -6813,6 +6814,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	//	}
 
 	}
+	
+	
+	public void setAlpha(float alpha) {	
+			ArrayList geos = app.getSelectedGeos();		
+			for (int i = 0 ; i < geos.size() ; i++) {
+				GeoElement geo = (GeoElement)geos.get(i);
+				geo.setAlphaValue(alpha);
+				geo.updateRepaint();
+			}
+	}
+	
+	
+	
 	
 	private void openMiniPropertiesPanel() {
 		if (!app.hasFullGui()) return;

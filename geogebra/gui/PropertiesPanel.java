@@ -14,6 +14,8 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.util.PopupMenuButton;
+import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SpringUtilities;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.virtualkeyboard.MyTextField;
@@ -44,7 +46,6 @@ import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
-import geogebra.util.ImageManager;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -62,13 +63,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
@@ -76,8 +75,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -99,8 +96,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 	/**
 	 * PropertiesPanel for displaying all gui elements for changing properties
@@ -3795,7 +3790,7 @@ public	class PropertiesPanel extends JPanel {
 	 * panel to select the filling of a polygon or conic section
 	 * @author Markus Hohenwarter
 	 */
-	private class FillingPanel extends JPanel implements ChangeListener, UpdateablePanel, ActionListener, ListSelectionListener {
+	private class FillingPanel extends JPanel implements ChangeListener, UpdateablePanel, ActionListener {
 
 		/**
 		 * 
@@ -3813,8 +3808,9 @@ public	class PropertiesPanel extends JPanel {
 		private JPanel transparencyPanel, hatchFillPanel, imagePanel, anglePanel, distancePanel;
 		private JLabel lblFillType;
 		private JButton btnOpenFile;
-		private JList imageList;
-
+		
+		private PopupMenuButton btnImage;
+		private String[] fileNameArray;
 
 		public FillingPanel() {
 			
@@ -3975,50 +3971,30 @@ public	class PropertiesPanel extends JPanel {
 		private JPanel createImagePanel(){
 			
 			
-			//===================================	
-			// create array of image files for the JList
+			//=============================================	
+			// create array of image files from toolbar icons	
+			// for testing only ... 
 			
-			// testing only ... images taken from toolbar icons
-			
-			String[] fileNAmeArray = new String[20];
-			
+			fileNameArray = new String[20];
 			String modeStr;
 			Image im;
 			for( int i = 0; i < 20; i++) {		
-				modeStr = kernel.getModeText(i).toLowerCase(Locale.US);
-				fileNAmeArray[i]="/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif";
+				modeStr = kernel.getModeText(i);
+				fileNameArray[i]="/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif";
 			}
+			//============================================
+	
 			
-
-			
-		
-			// =========================================
-			// create scroll pane with JList of images
-			
-				
-			// create JList with horizontal wrap and custom cell borders
-			imageList = new JList(fileNAmeArray);
-			
-			imageList.setCellRenderer(new ImageRenderer());
-			imageList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-			imageList.setVisibleRowCount(1);
-
-			imageList.addListSelectionListener(this); 
+			// panel for button to open external file		
 					
-			Dimension d = imageList.getPreferredScrollableViewportSize();
-			d.width = 400;
-			imageList.setPreferredSize(d);
-			JScrollPane pane = new JScrollPane(imageList);
-			pane.setPreferredSize(d);
-			
-		
-		
-			// panel for button to open external file			
-			JPanel btnPanel = new JPanel();
-			btnPanel.setLayout(new BoxLayout(btnPanel, BoxLayout.Y_AXIS));
+			btnImage = new PopupMenuButton(app, fileNameArray, -1,-1,new Dimension(32,32), GeoGebraIcon.MODE_IMAGE);
+			btnImage.addActionListener(this);			
 			
 			btnOpenFile = new JButton();
 			btnOpenFile.addActionListener(this);
+			
+			JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			btnPanel.add(btnImage);
 			btnPanel.add(btnOpenFile);
 			
 				
@@ -4027,44 +4003,11 @@ public	class PropertiesPanel extends JPanel {
 			// put all sub panels together
 			
 			imagePanel = new JPanel(new BorderLayout());
-			// preferred size is needed for the list scrollpane
-			imagePanel.setPreferredSize(new Dimension(400, 90)); 
-			
-			imagePanel.add(pane,BorderLayout.CENTER);
-			imagePanel.add(btnPanel, BorderLayout.EAST);
+			imagePanel.add(btnPanel, BorderLayout.CENTER);
 			
 			return imagePanel;
 		}
 
-
-		
-		class ImageRenderer extends DefaultListCellRenderer
-		{
-			Image im;
-		    public Component getListCellRendererComponent(JList list,
-		                                                  Object value,
-		                                                  int index,
-		                                                  boolean isSelected,
-		                                                  boolean cellHasFocus)
-		    {
-		    	// hide file name and draw icon from this image file name
-		    	setText("");
-		        
-		    	im = app.getImageManager().getImageResource((String)value);			 
-				BufferedImage image = ImageManager.toBufferedImage(im);
-				setIcon(new ImageIcon(image));
-		        
-		        // set border
-				if(isSelected)
-					setBorder(BorderFactory.createLineBorder(Color.BLUE,2));
-				else
-					setBorder(BorderFactory.createEtchedBorder());
-					
-		        
-		        return this;
-		    }
-		}
-	
 		
 		
 		private void updateFillTypePanel(int fillType){
@@ -4122,9 +4065,9 @@ public	class PropertiesPanel extends JPanel {
 			angleSlider.addChangeListener(this);
 			distanceSlider.addChangeListener(this);
 			
-			imageList.removeListSelectionListener(this);
-			imageList.setSelectedValue(((GeoElement) geos[0]).getImageFileName(), true);	
-			imageList.addListSelectionListener(this);
+		//	imageList.removeListSelectionListener(this);
+		//	imageList.setSelectedValue(((GeoElement) geos[0]).getImageFileName(), true);	
+		//	imageList.addListSelectionListener(this);
 			
 			return this;
 		}
@@ -4177,11 +4120,10 @@ public	class PropertiesPanel extends JPanel {
 					
 					// set default image to first imageList element
 					if(fillType == GeoElement.FILL_IMAGE && geo.getFillImage() == null){
-						String fileName = (String)(imageList.getModel()).getElementAt(0);
-						geo.setImageFileName(fileName);
-						geo.setFillImage(geo.getImageFileName());
-						imageList.setSelectedIndex(0);
-						imageList.repaint();
+					//	String fileName = (String)(imageList.getModel()).getElementAt(0);
+					//	geo.setFillImage(geo.getImageFileName());
+						//imageList.setSelectedIndex(0);
+						//imageTable.repaint();
 					}
 					
 					geo.updateRepaint();
@@ -4189,6 +4131,17 @@ public	class PropertiesPanel extends JPanel {
 				fillingPanel.updateFillTypePanel(fillType);
 			}
 
+			// handle image button selection 
+			else if(source == this.btnImage){		
+				String fileName = fileNameArray[btnImage.getSelectedIndex()];
+				if(fileName != null)
+					for (int i = 0; i < geos.length; i++) {
+						geo = (GeoElement) geos[i];
+						geo.setImageFileName(fileName);
+						geo.updateRepaint();
+					}
+			}	
+			
 			// handle load image file 
 			else if(source == btnOpenFile){		
 				String fileName = app.getGuiManager().getImageFromFile();
@@ -4196,27 +4149,9 @@ public	class PropertiesPanel extends JPanel {
 					for (int i = 0; i < geos.length; i++) {
 						geo = (GeoElement) geos[i];
 						geo.setImageFileName(fileName);
-						imageList.setSelectedIndex(-1);
-						imageList.repaint();
 						geo.updateRepaint();
 					}
 			}	
-		}
-
-		// selection listener for image list
-		public void valueChanged(ListSelectionEvent e) {
-
-			if (e.getValueIsAdjusting())
-				return;
-
-			JList myList = (JList)e.getSource();
-			GeoElement geo;
-			for (int j = 0; j < geos.length; j++) {
-				geo = (GeoElement) geos[j];					
-				geo.setFillImage((String) myList.getSelectedValue());
-				geo.updateRepaint();		
-			}	
-
 		}
 
 	}
