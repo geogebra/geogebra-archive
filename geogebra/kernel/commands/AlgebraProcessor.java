@@ -963,13 +963,13 @@ public class AlgebraProcessor {
 		eval = n.evaluate(); 
 		boolean dollarLabelFound = false;		
 		
+		ExpressionNode myNode = n;
+		if (myNode.isLeaf()) myNode = myNode.getLeftTree();
 		// leaf (no new label specified): just return the existing GeoElement
-		if (eval.isGeoElement() &&  n.getLabel() == null) 
+		if (myNode.getOperation() != ExpressionNode.ELEMENT_OF && eval.isGeoElement() &&  n.getLabel() == null) 
 		{
 			// take care of spreadsheet $ names: don't loose the wrapper ExpressionNode here
 			// check if we have a Variable 
-			ExpressionNode myNode = n;
-			if (myNode.isLeaf()) myNode = myNode.getLeftTree();
 			switch (myNode.getOperation()) {
 				case ExpressionNode.$VAR_COL:
 				case ExpressionNode.$VAR_ROW:
