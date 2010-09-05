@@ -90,11 +90,17 @@ public class DrawCurve3D extends Drawable3DCurves {
 	
 	protected void updateForItSelf(){
 		Renderer renderer = getView3D().getRenderer();
+		
+		
 		if (!curve.isEuclidianVisible() || !curve.isDefined()){
 			renderer.getGeometryManager().remove(geometryIndex);
 			geometryIndex = -1;
-		} else if(needRedraw()){
+		//} else if(needRedraw()){
+		}else{
 			renderer.getGeometryManager().remove(geometryIndex);
+			
+			needRedraw();
+			tree = new CurveTree(curve, getView3D());
 			
 			PlotterBrush brush = renderer.getGeometryManager().getBrush();
 
@@ -106,11 +112,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 
 			geometryIndex = brush.end();
 		}
-		/*
-		Application.debug(curve.evaluateCurve(curve.getMinParameter()).toString()+"\n"+curve.evaluateTangent(curve.getMinParameter()).toString());
-		Application.debug(curve.evaluateCurve(0).toString()+"\n"+curve.evaluateTangent(0).toString());
-		Application.debug(curve.evaluateCurve(curve.getMaxParameter()).toString()+"\n"+curve.evaluateTangent(curve.getMaxParameter()).toString());
-		 */
+		
 	}
 	
 	
