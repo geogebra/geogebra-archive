@@ -1802,7 +1802,14 @@ public abstract class GeoElement
 				break;
 				case 'n' : captionSB.append(getLabel());
 				break;
-				default : captionSB.append(ch);
+				case 'x' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointInterface)this).getInhomCoords().getX()) : "%x");
+				break;
+				case 'y' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointInterface)this).getInhomCoords().getY()) : "%y");
+				break;
+				case 'z' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointInterface)this).getInhomCoords().getZ()) : "%z");
+				break;
+				default : 	captionSB.append('%');
+							captionSB.append(ch);
 				}
 			} else {
 				captionSB.append(ch);
