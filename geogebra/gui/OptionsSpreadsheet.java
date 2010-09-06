@@ -150,10 +150,8 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbShowBrowser = new JCheckBox();  
         cbShowBrowser.addActionListener(this);        
          
-        dirRadioButton = new JRadioButton("Directory: ");
-        dirRadioButton.setSelected(true);
-
-        urlRadioButton = new JRadioButton("URL: ");
+        dirRadioButton = new JRadioButton("");
+        urlRadioButton = new JRadioButton("");
   
         //Register a listener for the radio buttons.
         dirRadioButton.addActionListener(this);
@@ -245,8 +243,10 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		cbShowBrowser.setText(app.getMenu("ShowFileBrowser"));  
 		cbAllowSpecialEditor.setText(app.getMenu("UseButtonsAndCheckboxes"));
 
-		locationPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Directory Location")));
-		
+		locationPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("DirectoryLocation")));
+		dirRadioButton.setText(app.getMenu("FileSystem" + ":"));
+		urlRadioButton.setText(app.getMenu("URL" + ":"));
+	        
 	}
 	
 	/**
