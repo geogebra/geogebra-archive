@@ -42,7 +42,7 @@ office@geogebra.org
 	
 	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
-		depends="clean, ggb-jar-files, copyDebug, obfuscate, delete3D, ggb-jar-index, 
+		depends="clean, ggb-jar-files, copyDebug, signDebug, obfuscate, delete3D, ggb-jar-index, 
 					copyJars, sign, pack, preloadHtml, finish">	  
 	</target>
 	
@@ -407,6 +407,28 @@ office@geogebra.org
 			storetype="pkcs12"
 			storepass="geogebra">
 		    <fileset dir="${build.dir}" includes="*.jar" />
+		</signjar>	
+	</target>
+	
+	<!-- Sign debug jar files -->
+	<target name="signDebug" description="repack and sign jar files twice (to ensure WebStart compatibility)">	    	
+		<!-- check if keystore file present -->
+		<condition property="keystore.present">
+			<available file="${workspace.dir}/igi-keystore.p12"/>
+		</condition>
+		
+		<antcall target="doSignDebug"/>
+		
+	</target>
+	
+	<!-- sign debug jars -->
+	<target name="doSignDebug" if="keystore.present" description="sign jar files">
+		<signjar 
+			keystore="${workspace.dir}/igi-keystore.p12" 	
+			alias="International GeoGebra Institute&apos;s GlobalSign nv-sa ID"
+			storetype="pkcs12"
+			storepass="geogebra">
+		    <fileset dir="${build.dir}/debug" includes="*.jar" />
 		</signjar>	
 	</target>
 	
