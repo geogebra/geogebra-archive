@@ -1,8 +1,6 @@
 package geogebra3D.euclidian3D.opengl;
 
-import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.euclidian.EuclidianView;
-import geogebra.main.Application;
 
 import java.nio.ByteBuffer;
 
@@ -88,22 +86,41 @@ public class Textures {
 	
 
 	
-	/** load a template texture
+	/** load a template texture (nearest type)
 	 * @param index
 	 */
-	public void loadTexture(int index){
+	public void loadTextureNearest(int index){
 
-		//gl.glBindTexture(GL.GL_TEXTURE_2D, texturesIndex[index]);
-		setTexture(texturesIndex[index]);
+		setTextureNearest(texturesIndex[index]);
+		
 	}
 	
-	
-	/** sets a computed texture
+	/** load a template texture (linear type)
 	 * @param index
 	 */
-	public void setTexture(int index){
+	public void loadTextureLinear(int index){
+
+		setTextureLinear(texturesIndex[index]);
+		
+	}
+	
+	/** sets a computed texture (nearest type)
+	 * @param index
+	 */
+	public void setTextureNearest(int index){
 
 		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
+		setTextureNearest();
+		
+	}
+	
+	/** sets a computed texture (linear type)
+	 * @param index
+	 */
+	public void setTextureLinear(int index){
+
+		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
+		setTextureLinear();
 		
 	}
 
@@ -114,26 +131,31 @@ public class Textures {
 	private void initDashTexture(int n, boolean[] description){
 
 		int sizeX = description.length; 
-		int sizeY = 1;
+		//int sizeY = 1;
 
-		byte[] bytes = new byte[4*sizeX*sizeY];
+		//byte[] bytes = new byte[4*sizeX*sizeY];
+		byte[] bytes = new byte[sizeX];
 
 		for (int i=0; i<sizeX; i++)
-			if (description[i])      		
+			if (description[i])   
+				bytes[i]= (byte) 255;
+				/*
 				bytes[4*i+0]=
 					bytes[4*i+1]= 
 						bytes[4*i+2]= 
 							bytes[4*i+3]= (byte) 255;
+							*/
 
 		ByteBuffer buf = ByteBuffer.wrap(bytes);
 
 		gl.glBindTexture(GL.GL_TEXTURE_2D, n);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_NEAREST);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_NEAREST);
+
+		
 
 
 		//TODO use gl.glTexImage1D ?
-		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  4, sizeX, sizeY, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buf);
+		//gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  4, sizeX, sizeY, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buf);
+		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  GL.GL_ALPHA, sizeX, 1, 0, GL.GL_ALPHA, GL.GL_UNSIGNED_BYTE, buf);
 
 	}
 	
@@ -142,27 +164,31 @@ public class Textures {
 	
 	
 	
+	/**
+	 * call the correct texture for the line type specified
+	 * @param lineType
+	 */
 	public void setDashFromLineType(int lineType){
 
     	switch (lineType) {
 		case EuclidianView.LINE_TYPE_FULL:
-			loadTexture(DASH_NONE);
+			loadTextureNearest(DASH_NONE);
 			break;
 			
 		case EuclidianView.LINE_TYPE_DOTTED:
-			loadTexture(DASH_DOTTED);
+			loadTextureNearest(DASH_DOTTED);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_SHORT:
-			loadTexture(DASH_SHORT);
+			loadTextureNearest(DASH_SHORT);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_LONG:
-			loadTexture(DASH_LONG);
+			loadTextureNearest(DASH_LONG);
 			break;
 
 		case EuclidianView.LINE_TYPE_DASHED_DOTTED:
-			loadTexture(DASH_DOTTED_DASHED);
+			loadTextureNearest(DASH_DOTTED_DASHED);
 			break;
 
 		default: 
@@ -178,17 +204,27 @@ public class Textures {
 
 	private void initFadingTexture(int index){
 		
+		/*
+		int n=256;
+		int sizeX = n,  sizeY = n;
 		
+		boolean[] description = new boolean[sizeX*sizeY];
 		
+		for (int i=0;i<sizeX;i++)
+				for (int j=0; j<sizeY;j++)
+					if (Math.random()*n*n>i*j)
+						description[i+sizeX*j]=true;
+		*/
+
 		
+		int n=2;
+		int sizeX = n,  sizeY = n;
 		boolean[] description = {
 				true, false,
 				false,false
 		};
 		
 		
-		
-		int sizeX = 2,  sizeY = 2;
 		
 		
 		byte[] bytes = new byte[sizeX*sizeY];
@@ -200,10 +236,18 @@ public class Textures {
 		ByteBuffer buf = ByteBuffer.wrap(bytes);
 
 		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_LINEAR);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_LINEAR);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
+		
+		/*
+		
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_NEAREST);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_NEAREST);
+*/
+
+		//TODO use gl.glTexImage1D ?
+		//gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  4, sizeX, sizeY, 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, buf);
+
+		
+		//setTextureLinear();
 
 
 		//TODO use gl.glTexImage1D ?
@@ -212,7 +256,19 @@ public class Textures {
 	}
 	
 	
+	private void setTextureLinear(){
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
 
+	}
+
+	private void setTextureNearest(){
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_NEAREST);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_NEAREST);
+	}
+	
 	/////////////////////////////////////////
 	// IMAGE TEXTURES
 	/////////////////////////////////////////
@@ -245,11 +301,9 @@ public class Textures {
 
 		
 		gl.glBindTexture(GL.GL_TEXTURE_2D, index[0]);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_LINEAR);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_LINEAR);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
-		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE); //prevent repeating the texture
-
+		
+		
+		
 		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0,  GL.GL_ALPHA, sizeX, sizeY, 0, GL.GL_ALPHA, GL.GL_UNSIGNED_BYTE, buf);
       
         

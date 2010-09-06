@@ -236,7 +236,7 @@ public class Renderer implements GLEventListener {
 	private void drawTransp(){
 		
 		
-		getTextures().loadTexture(Textures.FADING);
+		getTextures().loadTextureLinear(Textures.FADING);
 		
 		gl.glDisable(GL.GL_CULL_FACE);
 		drawable3DLists.drawTransp(this);
@@ -244,7 +244,7 @@ public class Renderer implements GLEventListener {
 
 		
 		//TODO fix it
-		gl.glDisable(GL.GL_TEXTURE_2D);
+		//gl.glDisable(GL.GL_TEXTURE_2D);
 		//TODO improve this !
 		gl.glEnable(GL.GL_CULL_FACE);
 		gl.glCullFace(GL.GL_FRONT); drawable3DLists.drawTranspClosed(this);//draws inside parts  
@@ -262,7 +262,7 @@ public class Renderer implements GLEventListener {
 	
 	private void drawNotTransp(){
 		
-		getTextures().loadTexture(Textures.FADING);
+		getTextures().loadTextureLinear(Textures.FADING);
 
         gl.glEnable(GL.GL_BLEND);
 		
@@ -1486,16 +1486,6 @@ public class Renderer implements GLEventListener {
         
         
         
-        //light
-        /*
-        float pos[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-        //float pos[] = { 0.0f, 0.0f, 1.0f, 0.0f };
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, pos, 0);        
-        gl.glEnable(GL.GL_LIGHTING);     
-        gl.glEnable(GL.GL_LIGHT0);
-        */
-        
-        
         
         
         float[] lightAmbient0 = {0.1f, 0.1f, 0.1f, 1.0f};
@@ -1511,18 +1501,6 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_LIGHT0);
         
         
-        /*
-        float[] lightAmbient1 = {0.1f, 0.1f, 0.1f, 1.0f};
-        float[] lightDiffuse1 = {1.0f, 1.0f, 1.0f, 1.0f};
-        float[] lightPosition1 = {-1.0f, -1.0f, -1.0f, 0.0f};
-        float[] lightSpecular1 = {0f, 0f, 0f, 1f};
-       
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbient1, 0);
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse1, 0);
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPosition1, 0);
-        gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecular1, 0);
-        gl.glEnable(GL.GL_LIGHT1);      
-        */
         
   
         gl.glShadeModel(GL.GL_SMOOTH);
