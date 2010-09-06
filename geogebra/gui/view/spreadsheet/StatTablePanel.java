@@ -240,13 +240,12 @@ public class StatTablePanel extends JPanel {
 		case StatDialog.MODE_TWOVAR:
 			
 			String[][]statMap2 = {
-					{app.getPlain("MeanX") ,"MeanX"},
-					{app.getPlain("MeanY") ,"MeanY"},
-					{app.getPlain("CorrelationCoefficient.short") ,"PMCC"},
-					
-					{app.getPlain("Sxx") ,"Sxx"},
-					{app.getPlain("Syy") ,"Syy"},
-					{app.getPlain("Sxy") ,"Sxy"},
+					{app.getMenu("MeanX") ,"MeanX"},
+					{app.getMenu("MeanY") ,"MeanY"},
+					{app.getMenu("CorrelationCoefficient.short") ,"PMCC"},
+					{app.getMenu("Sxx") ,"Sxx"},
+					{app.getMenu("Syy") ,"Syy"},
+					{app.getMenu("Sxy") ,"Sxy"},
 			};
 			
 			text = createStatListString(statMap2, label);
