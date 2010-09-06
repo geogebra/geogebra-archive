@@ -117,13 +117,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private ProbabilityCalculator probCalculator;
 	
 	// file browser default constants
-	public static final String DEFAULT_URL_STRING = "http://www.geogebra.org/static/data/data.xml";
-	public static final String DEFAULT_FILE_STRING = System.getProperty("user.dir");
+	public static final String DEFAULT_URL = "http://www.geogebra.org/static/data/data.xml";
+	public static final String DEFAULT_FILE = System.getProperty("user.dir");
+	public static final int DEFAULT_MODE = FileBrowserPanel.MODE_FILE;
 	
 	// file browser settings
-	private String initialURLString = "http://www.geogebra.org/static/data/data.xml";
-	private String initialFileString = DEFAULT_FILE_STRING; 
-	private int intialBrowserMode = FileBrowserPanel.MODE_FILE;
+	private String initialURL = DEFAULT_URL;
+	private String initialFilePath = DEFAULT_FILE; 
+	private int initialBrowserMode = DEFAULT_MODE;
 	
 
 	/**
@@ -1330,7 +1331,45 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		sb.append("/>\n");
 		//---- end layout
 		
+		
+		// file browser
+		sb.append("\t<spreadsheetBrowser ");
+		
+		if(initialFilePath != DEFAULT_FILE 
+				|| initialURL != DEFAULT_URL 
+				|| initialBrowserMode != DEFAULT_MODE)
+		{	
+			sb.append(" default=\"");
+			sb.append("false");
+			sb.append("\"");	
+			
+			sb.append(" dir=\"");
+			sb.append(initialFilePath);
+			sb.append("\"");
+
+			sb.append(" URL=\"");
+			sb.append(initialURL);
+			sb.append("\"");
+
+			sb.append(" mode=\"");
+			sb.append(initialBrowserMode);
+			sb.append("\"");	
+			
+		}else{
+			
+			sb.append(" default=\"");
+			sb.append("true");
+			sb.append("\"");	
+		}
+		
+		sb.append("/>\n");
+		
+		//---- end browser
+
 		sb.append("</spreadsheetView>\n");
+		
+		//Application.debug(sb);
+		
 	}
 
 
@@ -1536,7 +1575,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		if (fileBrowser == null) {
 			fileBrowser = new FileBrowserPanel(this);
 			fileBrowser.setMinimumSize(new Dimension(50, 0));
-			fileBrowser.setRoot(initialFileString, intialBrowserMode);
+			fileBrowser.setRoot(initialFilePath, initialBrowserMode);
 		}	
 		return fileBrowser;
 	}
@@ -1609,50 +1648,57 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	public int getInitialBrowserMode() {
-		return intialBrowserMode;
+		return initialBrowserMode;
 	}
 	
 	public void setInitialBrowserMode(int mode) {
-		intialBrowserMode = mode;
+		initialBrowserMode = mode;
 	}
 	
 	
 	public String getInitialURLString() {
-		return initialURLString;
+		return initialURL;
 	}
 
 	public void setInitialURLString(String initialURLString) {
-		this.initialURLString = initialURLString;
+		this.initialURL = initialURLString;
 	}
 
 	public String getInitialFileString() {
-		return initialFileString;
+		return initialFilePath;
 	}
 
 	public void setInitialFileString(String initialFileString) {
-		this.initialFileString = initialFileString;
+		this.initialFilePath = initialFileString;
 	}
 
 	
 	public void setBrowserDefaults(boolean doRestore){
 
 		if(doRestore){
-			initialFileString = DEFAULT_FILE_STRING;
-			initialURLString = DEFAULT_URL_STRING;
-			intialBrowserMode = FileBrowserPanel.MODE_FILE;
-			setFileBrowserDirectory(initialFileString, intialBrowserMode);
+			initialFilePath = DEFAULT_FILE;
+			initialURL = DEFAULT_URL;
+			initialBrowserMode = FileBrowserPanel.MODE_FILE;
+			initFileBrowser();
 
 		}else{
-			initialFileString = fileBrowser.getRootString();
-			intialBrowserMode = fileBrowser.getMode();
+			initialFilePath = fileBrowser.getRootString();
+			initialBrowserMode = fileBrowser.getMode();
 		}
+	}
+
+	public void initFileBrowser(){
+		if(initialBrowserMode == FileBrowserPanel.MODE_FILE)
+			setFileBrowserDirectory(initialFilePath, initialBrowserMode);
+		else
+			setFileBrowserDirectory(initialURL, initialBrowserMode);
 	}
 
 	public void setFileBrowserDirectory(String rootString, int mode) {
 		getFileBrowser().setRoot(rootString, mode);
 	}
-	
-	
+
+
 	
 	//================================================
 	//	         Spreadsheet Properties

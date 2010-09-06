@@ -662,7 +662,13 @@ public class MyXMLHandler implements DocHandler {
 						.getSpreadsheetView(), attrs);
 				break;
 			}
-
+			
+			if (eName.equals("spreadsheetBrowser")) {
+				ok = handleSpreadsheetBrowser(app.getGuiManager()
+						.getSpreadsheetView(), attrs);
+				break;
+			}
+			
 		default:
 			System.err.println("unknown tag in <spreadsheetView>: " + eName);
 		}
@@ -888,6 +894,31 @@ public class MyXMLHandler implements DocHandler {
 			return false;
 		}
 	}
+	
+	private boolean handleSpreadsheetBrowser(Object spreadsheetView,
+			LinkedHashMap<String, String> attrs) {
+
+		SpreadsheetView sv = (SpreadsheetView)spreadsheetView;
+		try {
+			if(Boolean.parseBoolean((String) attrs.get("default"))){
+				sv.setBrowserDefaults(true);
+				
+			}else{
+				
+			sv.setInitialBrowserMode(Integer.parseInt((String) attrs.get("mode")));
+			sv.setInitialFileString((String) attrs.get("dir"));
+			sv.setInitialURLString((String) attrs.get("URL"));
+			sv.initFileBrowser();
+			}
+			
+			return true;
+			
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	
 	
 
 //	private boolean handleCASSize(CasManager casView, LinkedHashMap<String, String> attrs) {

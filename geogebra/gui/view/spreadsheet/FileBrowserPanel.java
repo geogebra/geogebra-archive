@@ -268,13 +268,11 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 					try {
 
 						//TODO: 1) drop down history of URLs
-						//      2) store URL in XML 
-
+						
 						//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/Text.xml");
 						//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml");
-
 						String initString = "http://";				
-						initString  = view.DEFAULT_URL_STRING;
+						initString  = view.DEFAULT_URL;
 
 						InputDialog id = new InputDialogOpenDataFolderURL(app,view, initString);
 						id.setVisible(true);

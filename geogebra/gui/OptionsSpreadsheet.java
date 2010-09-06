@@ -167,6 +167,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         dirField.setColumns(30);
         dirField.addActionListener(this);
         dirField.addFocusListener(this);
+        dirField.setEditable(false);
         
         urlField = new MyTextField(app.getGuiManager());
         urlField.setAlignmentX(0.0f);
@@ -174,6 +175,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         urlField.setColumns(30);
         urlField.addActionListener(this);
         urlField.addFocusListener(this);
+        urlField.setEditable(false);
         
         browseButton = new JButton("...", app.getImageIcon("aux_folder.gif"));
         browseButton.addActionListener(this);
@@ -197,7 +199,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         dirPanel.setAlignmentX(0.0f);
         dirPanel.add(Box.createHorizontalStrut(tab));
         dirPanel.add(dirField);      
-        dirPanel.add(browseButton);
+       // dirPanel.add(browseButton);
         
         locationPanel.add(dirPanel);
         
@@ -332,12 +334,12 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         // disable/enable
         dirRadioButton.setEnabled(cbShowBrowser.isSelected());
         urlRadioButton.setEnabled(cbShowBrowser.isSelected());
+        restoreButton.setEnabled(cbShowBrowser.isSelected());
+        setCurrentButton.setEnabled(cbShowBrowser.isSelected());
         
 		dirField.setEnabled(cbShowBrowser.isSelected() && dirRadioButton.isSelected());
-        urlField.setEnabled(dirField.isEnabled());
         browseButton.setEnabled(dirField.isEnabled());
-        restoreButton.setEnabled(dirField.isEnabled());
-        setCurrentButton.setEnabled(dirField.isEnabled());
+        urlField.setEnabled(cbShowBrowser.isSelected() && urlRadioButton.isSelected());
         
 	}
 	

@@ -141,6 +141,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		defaultsPanel.updateGUI();
 		//fontPanel.updateGUI();
 		euclidianPanel.updateGUI();
+		spreadsheetPanel.updateGUI();
 	}
 
 	/**
