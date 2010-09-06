@@ -856,7 +856,7 @@ public class MyXMLHandler implements DocHandler {
 		SpreadsheetView sv = (SpreadsheetView)spreadsheetView;
 		try {
 			sv.setShowGrid(parseBoolean((String) attrs.get("showGrid")));	
-			sv.setShowBrowserPanel(parseBoolean((String) attrs.get("showBrowserPanel")));	
+			sv.setShowFileBrowser(parseBoolean((String) attrs.get("showBrowserPanel")));	
 			sv.setShowColumnHeader(parseBoolean((String) attrs.get("showColumnHeader")));	
 			sv.setShowRowHeader(parseBoolean((String) attrs.get("showRowHeader")));	
 			sv.setShowHScrollBar(parseBoolean((String) attrs.get("showHScrollBar")));	

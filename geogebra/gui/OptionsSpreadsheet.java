@@ -12,27 +12,21 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
-import geogebra.euclidian.EuclidianView;
-import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.view.spreadsheet.FileBrowserPanel;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -40,9 +34,7 @@ import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -71,6 +63,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	private JButton browseButton;
 	private JRadioButton dirRadioButton, urlRadioButton;
 
+	private JPanel locationPanel;
 	
 	
 	/**
@@ -94,13 +87,12 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		setLayout(new BorderLayout());
 		add(new JScrollPane(buildLayoutOptionsPanel()));
 		
-		/*
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
 		tabbedPane.addTab("Layout",null, new JScrollPane(buildLayoutOptionsPanel()));
 		tabbedPane.addTab("Browser",null, new JScrollPane(buildBrowserOptionsPanel()));
 		add(tabbedPane);
-		*/
+		
 		
 	    
 	}
@@ -114,31 +106,33 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		layoutOptions.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
 		
 
-        cbShowGrid = new JCheckBox(app.getMenu("ShowGridlines"));  
+        cbShowGrid = new JCheckBox();  
         cbShowGrid.addActionListener(this);        
         layoutOptions.add(cbShowGrid); 
         
-        cbShowColumnHeader = new JCheckBox(app.getMenu("ShowColumnHeader"));  
+        cbShowColumnHeader = new JCheckBox();  
         cbShowColumnHeader.addActionListener(this);
         layoutOptions.add(cbShowColumnHeader); 
         
-        cbShowRowHeader = new JCheckBox(app.getMenu("ShowRowHeader"));  
+        cbShowRowHeader = new JCheckBox();  
         cbShowRowHeader.addActionListener(this);
         layoutOptions.add(cbShowRowHeader); 
         
-        cbShowHScrollbar = new JCheckBox(app.getMenu("ShowHorizontalScrollbars"));  
+        cbShowHScrollbar = new JCheckBox();  
         cbShowHScrollbar.addActionListener(this);
         layoutOptions.add(cbShowHScrollbar); 
         
-        cbShowVScrollbar = new JCheckBox(app.getMenu("ShowVerticalScrollbars"));  
+        cbShowVScrollbar = new JCheckBox();  
         cbShowVScrollbar.addActionListener(this);
         layoutOptions.add(cbShowVScrollbar); 
-        
-        cbShowBrowser = new JCheckBox(app.getMenu("ShowFileBrowser"));  
+     
+        /*
+        cbShowBrowser = new JCheckBox();  
         cbShowBrowser.addActionListener(this);        
         layoutOptions.add(cbShowBrowser);
+        */
         
-        cbAllowSpecialEditor = new JCheckBox(app.getMenu("UseButtonsAndCheckboxes"));
+        cbAllowSpecialEditor = new JCheckBox();
         cbAllowSpecialEditor.addActionListener(this);        
         layoutOptions.add(cbAllowSpecialEditor);
         
@@ -150,19 +144,12 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	
 	private JPanel buildBrowserOptionsPanel() {
 		
-		JPanel browserOptions = new JPanel();
+		//====================================================
+		// create GUI elements
 		
-		browserOptions.setLayout(new BoxLayout(browserOptions, BoxLayout.Y_AXIS));
-
-		browserOptions.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
-		
-
-		  
-        cbShowBrowser = new JCheckBox(app.getMenu("ShowBrowser"));  
+        cbShowBrowser = new JCheckBox();  
         cbShowBrowser.addActionListener(this);        
-        
-        
-        
+         
         dirRadioButton = new JRadioButton("Directory: ");
         dirRadioButton.setSelected(true);
 
@@ -192,38 +179,55 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         urlField.addActionListener(this);
         urlField.addFocusListener(this);
         
-        browseButton = new JButton(app.getImageIcon("aux_folder.gif"));
+        browseButton = new JButton("...", app.getImageIcon("aux_folder.gif"));
         browseButton.addActionListener(this);
-        
+
+
+        //====================================================
+        // create sub panels 
+
         int tab = 15;
+
+        locationPanel = new JPanel();
+        locationPanel.setLayout(new BoxLayout(locationPanel, BoxLayout.Y_AXIS));
+        locationPanel.add(dirRadioButton);
         
         JPanel dirPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         dirPanel.setAlignmentX(0.0f);
         dirPanel.add(Box.createHorizontalStrut(tab));
-        dirPanel.add(dirRadioButton);
+        dirPanel.add(dirField);      
         dirPanel.add(browseButton);
-        dirPanel.add(dirField); 
         
-       
+        locationPanel.add(dirPanel);
+        
+        locationPanel.add(Box.createVerticalStrut(tab));
+        
+        locationPanel.add(urlRadioButton);
         JPanel urlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         urlPanel.setAlignmentX(0.0f);
         urlPanel.add(Box.createHorizontalStrut(tab));
-        urlPanel.add(urlRadioButton);
         urlPanel.add(urlField); 
         
+        locationPanel.add(urlPanel);
         
-        // Put it all together
+        locationPanel.setBorder(BorderFactory.createTitledBorder(""));
         
-        browserOptions.add(cbShowBrowser); 
-       // browserOptions.add(Box.createVerticalGlue());
-        browserOptions.add(dirPanel);
-      //  browserOptions.add(Box.createVerticalGlue());
-        browserOptions.add(urlPanel);
         
-        browserOptions.add(Box.createVerticalGlue());
-			
-		
-		return browserOptions;
+        //====================================================
+        // layout the browser panel
+        
+        
+        JPanel mainPanel = new JPanel();		
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));    
+        mainPanel.add(cbShowBrowser); 
+        mainPanel.add(Box.createVerticalStrut(tab));
+        mainPanel.add(locationPanel);
+    
+        JPanel browserPanel = new JPanel(new BorderLayout());
+    	browserPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));	
+    	browserPanel.add(mainPanel, BorderLayout.NORTH);
+       	
+		return browserPanel;
 	}
 	
 	
@@ -233,6 +237,16 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	 */
 	public void setLabels() {
 		//TODO -- add labels as needed
+		cbShowGrid.setText(app.getMenu("ShowGridlines"));              
+		cbShowColumnHeader.setText(app.getMenu("ShowColumnHeader"));  	      
+		cbShowRowHeader.setText(app.getMenu("ShowRowHeader"));  	        	        
+		cbShowHScrollbar.setText(app.getMenu("ShowHorizontalScrollbars"));          
+		cbShowVScrollbar.setText(app.getMenu("ShowVerticalScrollbars"));        
+		cbShowBrowser.setText(app.getMenu("ShowFileBrowser"));  
+		cbAllowSpecialEditor.setText(app.getMenu("UseButtonsAndCheckboxes"));
+
+		locationPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Directory Location")));
+		
 	}
 	
 	/**
@@ -246,7 +260,10 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	
 	
 	public void updateGUI() {				
-			
+					  
+        //======================================
+        // layout tab GUI
+		
 		cbShowGrid.removeActionListener(this);
 		cbShowGrid.setSelected(view.getShowGrid());
 		cbShowGrid.addActionListener(this);          
@@ -262,30 +279,32 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbShowHScrollbar.removeActionListener(this);
         cbShowHScrollbar.setSelected(view.getShowHScrollBar()); 
         cbShowHScrollbar.addActionListener(this);
-        
-        
+               
         cbShowVScrollbar.removeActionListener(this);
         cbShowVScrollbar.setSelected(view.getShowVScrollBar()); 
         cbShowVScrollbar.addActionListener(this);
+        
+      
+        cbAllowSpecialEditor.removeActionListener(this);
+        cbAllowSpecialEditor.setSelected(view.allowSpecialEditor()); 
+        cbAllowSpecialEditor.addActionListener(this);
+      
+        
+        
+        //======================================
+        // browser tab GUI
         
         cbShowBrowser.removeActionListener(this);
         cbShowBrowser.setSelected(view.getShowBrowserPanel()); 
         cbShowBrowser.addActionListener(this);
         
-        cbAllowSpecialEditor.removeActionListener(this);
-        cbAllowSpecialEditor.setSelected(view.allowSpecialEditor()); 
-        cbAllowSpecialEditor.addActionListener(this);
-        
-     
-        
-       /* 
         dirField.removeActionListener(this);
-        dirField.setText(System.getProperty("user.dir"));
+        dirField.setText(view.DEFAULT_FILE_STRING);
         dirField.setCaretPosition(0);
         dirField.addActionListener(this);
         
         urlField.removeActionListener(this);
-        urlField.setText("http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml");
+        urlField.setText(view.DEFAULT_URL_STRING);
         urlField.setCaretPosition(0);
         urlField.addActionListener(this);
         
@@ -295,7 +314,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		dirField.setEnabled(cbShowBrowser.isSelected() && dirRadioButton.isSelected());
         browseButton.setEnabled(cbShowBrowser.isSelected() && dirRadioButton.isSelected());
         urlField.setEnabled(cbShowBrowser.isSelected()&& urlRadioButton.isSelected());
-        */
+        
 	}
 	
 	
@@ -304,6 +323,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	}
 	
 	private void doActionPerformed(Object source) {	
+		
+		//========================================
+		// layout options
 		
 		if (source == cbShowGrid) {
 			view.setShowGrid(cbShowGrid.isSelected());			
@@ -324,33 +346,32 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		else if (source == cbShowVScrollbar) {
 			view.setShowVScrollBar(cbShowVScrollbar.isSelected());
 		}
-		
-		else if (source == cbShowBrowser) {
-			view.setShowBrowserPanel(cbShowBrowser.isSelected());
-		}
-		
+			
 		else if (source == cbAllowSpecialEditor) {
 			view.setAllowSpecialEditor(cbAllowSpecialEditor.isSelected());
 		}
 		
 		
 		
-		
-		
+		//========================================
+		// browser options
+				
+		else if (source == cbShowBrowser) {
+			view.setShowFileBrowser(cbShowBrowser.isSelected());
+		}
+
 		else if (source == dirRadioButton) {
 			dirField.selectAll();
-			view.getBrowserPanel().setDirectory(new File(dirField.getText()));
+			view.setFileBrowserDirectory(new File(dirField.getText()),FileBrowserPanel.MODE_FILE);
 		}
 		
 		else if (source == urlRadioButton) {
 			urlField.selectAll();
 			try {
-				view.getBrowserPanel().setDirectory(new URL(urlField.getText()));
+				view.setFileBrowserDirectory(new URL(urlField.getText()), FileBrowserPanel.MODE_URL);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
-			}
-			
-		
+			}		
 		}
 		
 		else if (source == browseButton) {
@@ -359,16 +380,15 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnVal = fc.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				view.getBrowserPanel().setDirectory(fc.getSelectedFile());
+				view.setFileBrowserDirectory(fc.getSelectedFile(), FileBrowserPanel.MODE_FILE);
 				dirField.setText(fc.getSelectedFile().getName());
 			}
 		}
 		
-		
-		
 		updateGUI();
 		
 	}
+	
 	
 
 	public void focusGained(FocusEvent arg0) {

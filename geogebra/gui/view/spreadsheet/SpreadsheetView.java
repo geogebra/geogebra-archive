@@ -6,7 +6,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -95,7 +94,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	// G.STURR 2010-2-12: needed for split panel, fileBrowser and toolbar
 	private JScrollPane spreadsheet;
-	private FileBrowserPanel browserPanel;
+	private FileBrowserPanel fileBrowser;
 	private int defaultDividerLocation = 150;
 	private SpreadsheetStyleBar styleBar;
 	private JPanel spreadsheetPanel;
@@ -117,9 +116,15 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private StatDialog twoVarStatDialog;
 	private ProbabilityCalculator probCalculator;
 	
+	// file browser init strings
+	public static final String DEFAULT_URL_STRING = "http://www.geogebra.org/static/data/data.xml";
+	public static final String DEFAULT_FILE_STRING = System.getProperty("user.dir");
+	
+	private int fileBrowserMode = FileBrowserPanel.MODE_FILE;
+	private Object fileBrowserRoot = new File(DEFAULT_FILE_STRING);
 	
 	
-	
+
 	/**
 	 * Construct spreadsheet view as a split panel. 
 	 * Left panel holds file tree browser, right panel holds spreadsheet. 
@@ -193,7 +198,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		// Add spreadsheet and browser panes to SpreadsheetView
 		setRightComponent(spreadsheet);	
-		setShowBrowserPanel(showBrowserPanel);  //adds browser Panel or null panel to left component
+		setShowFileBrowser(showBrowserPanel);  //adds browser Panel or null panel to left component
 		
 		
 		updateFonts();
@@ -220,7 +225,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		setShowColumnHeader(true);
 		setShowVScrollBar(true);
 		setShowHScrollBar(true);
-		setShowBrowserPanel(false);
+		setShowFileBrowser(false);
 		setAllowSpecialEditor(false);
 	}
 
@@ -1376,8 +1381,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				, newHeight));
 		*/
 		
-		if(browserPanel != null)
-			browserPanel.updateFonts();
+		if(fileBrowser != null)
+			fileBrowser.updateFonts();
 		
 	}
 	
@@ -1526,20 +1531,21 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 	
-	public FileBrowserPanel getBrowserPanel() {		
-		if (browserPanel == null) {
-			browserPanel = new FileBrowserPanel(this);
-			browserPanel.setMinimumSize(new Dimension(50, 0));
+	public FileBrowserPanel getFileBrowser() {		
+		if (fileBrowser == null) {
+			fileBrowser = new FileBrowserPanel(this);
+			fileBrowser.setMinimumSize(new Dimension(50, 0));
+			fileBrowser.setRoot(fileBrowserRoot, fileBrowserMode);
 		}	
-		return browserPanel;
+		return fileBrowser;
 	}
 	
 	
 	
-	public void setShowBrowserPanel(boolean showBrowser) {
+	public void setShowFileBrowser(boolean showFileBrowser) {
 		
-		if (showBrowser) {
-			setLeftComponent(getBrowserPanel());
+		if (showFileBrowser) {
+			setLeftComponent(getFileBrowser());
 			setDividerLocation(defaultDividerLocation);
 			setDividerSize(4);
 		} else {
@@ -1548,7 +1554,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			setDividerLocation(0);
 			setDividerSize(0);
 		}
-		showBrowserPanel = showBrowser;
+		showBrowserPanel = showFileBrowser;
 	}
 	
 	public boolean getShowBrowserPanel(){
@@ -1566,7 +1572,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void restoreBrowserPanel(){
 		setDividerLocation(getLastDividerLocation());
 		setDividerSize(4);
-		setLeftComponent(getBrowserPanel());
+		setLeftComponent(getFileBrowser());
 		
 	}
 	
@@ -1599,9 +1605,22 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return restorePanel;
 	}
 	
-	//END GSTURR (file browser support)
 	
 
+	public Object getFileBrowserDirectory() {
+		if(fileBrowserRoot == null){
+			fileBrowserRoot = new File(DEFAULT_FILE_STRING);
+			fileBrowserMode = FileBrowserPanel.MODE_FILE;
+		}
+		return fileBrowserRoot;
+	}
+
+	public void setFileBrowserDirectory(Object root, int mode) {
+		this.fileBrowserRoot = root;
+		this.fileBrowserMode = mode;
+		this.getFileBrowser().setRoot(fileBrowserRoot, mode);
+	}
+	
 	
 	
 	

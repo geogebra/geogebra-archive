@@ -436,7 +436,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		cbItem.setSelected(view.getShowBrowserPanel());
 		cbItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.setShowBrowserPanel(!view.getShowBrowserPanel());
+				view.setShowFileBrowser(!view.getShowBrowserPanel());
 			}
 		});	 
 		addSubItem(subMenu,cbItem);	

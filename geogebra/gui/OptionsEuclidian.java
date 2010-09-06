@@ -548,13 +548,13 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			
 		
 		
-		
+
 		cbView.removeActionListener(this);
 		cbView.removeAllItems();
-		   cbView.addItem(app.getPlain("DrawingPad")); 
-	        cbView.addItem(app.getPlain("DrawingPad2")); 
-	        cbView.removeActionListener(this);
-		
+		cbView.addItem(app.getPlain("DrawingPad")); 
+		cbView.addItem(app.getPlain("DrawingPad2")); 
+		cbView.removeActionListener(this);
+
 		
 		
 	}

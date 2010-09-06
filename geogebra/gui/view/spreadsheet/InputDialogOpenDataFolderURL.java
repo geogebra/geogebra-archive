@@ -67,7 +67,7 @@ public class InputDialogOpenDataFolderURL extends InputDialog{
 	}
 	
 	private boolean processInput() {
-		boolean succ = false;
+		boolean succ = true;
 		
 		URL url;
 		try {
@@ -75,11 +75,12 @@ public class InputDialogOpenDataFolderURL extends InputDialog{
 			
 		//	succ = view.loadSpreadsheetFromURL(url);
 	
-			succ = view.getBrowserPanel().setDirectory(url);
+			view.setFileBrowserDirectory(url, FileBrowserPanel.MODE_URL);
 			
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			succ = false;
 		}
 		
 		return succ;

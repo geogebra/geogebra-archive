@@ -12,7 +12,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,7 +21,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -70,31 +68,38 @@ import javax.swing.tree.TreePath;
  */
 public class FileBrowserPanel extends JPanel implements ActionListener, TreeSelectionListener, TreeExpansionListener {
 
+	// components
 	private SpreadsheetView view;
 	private Application app;
-
 	private FileBrowserPanel browserPanel;
 	private JTree tree;
 	private DefaultTreeModel treeModel;
 
-	private File rootFile;
-	private URL rootURL;
-
+	// parser
 	private static  QDParser xmlParser;
 	private static  myFileTreeHandler handler;
 
-	private boolean isXMLTree = false;
+	// directory
+	private Object root;
+	private File rootFile;
+	private URL rootURL;	
 
+	// GUI
 	public JButton minimizeButton;
 	private JButton menuButton;
-
-	private static final String URL_INIT_STRING = "http://www.geogebra.org/static/data/data.xml";
 	final static Color bgColor = Color.white;
 	final static Color fgColor = Color.black;
 
-
+	// mode constants
+	public final static int MODE_URL = 0;
+	public final static int MODE_FILE = 1;
+	public final static int MODE_HTML = 2;
+	private int mode;
+	
+	
 	/**
-	 * Construct a browser panel
+	 * Constructs a file browser panel with an empty file tree. Use setRoot() to
+	 * load a directory into the tree.
 	 */
 	public FileBrowserPanel(SpreadsheetView view) {
 
@@ -140,7 +145,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		tree.addMouseListener ( new MouseAdapter ()
 		{
 			public void mousePressed (MouseEvent e) {
-				if(Application.isRightClick(e) && !isXMLTree){		
+				if(Application.isRightClick(e) && mode == MODE_FILE){		
 					//ContextMenu contextMenu = new ContextMenu();
 					FileBrowserMenu contextMenu = new FileBrowserMenu();
 					contextMenu.show(e.getComponent(), e.getX(),e.getY());
@@ -185,21 +190,15 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		this.add(header, BorderLayout.NORTH);
 		this.add(treePane, BorderLayout.CENTER);
 
-		// Load the local file system root as directory default
-		// TODO: add a default directory option to preferences/XML
-		String curDir = System.getProperty("user.dir"); 
-		String homeDir = System.getProperty("user.home"); 
-		this.setDirectory(new File(homeDir));
+		
 		updateFonts();
-
-
-
 
 
 	}
 
 
-
+	
+	
 	//=============================================
 	//      Context Menu
 	//=============================================
@@ -238,8 +237,6 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	//      File Browser Menu
 	//=============================================
 
-
-
 	private class FileBrowserMenu extends JPopupMenu{
 
 		JMenuItem menuItem;
@@ -256,7 +253,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 					fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 					int returnVal = fc.showOpenDialog(browserPanel);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
-						setDirectory(fc.getSelectedFile());
+						setRoot(fc.getSelectedFile(), MODE_FILE);
 						// ((JButton)e.getSource()).setText(fc.getSelectedFile().getName());
 					}
 				}
@@ -277,7 +274,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 						//	URL url = new URL("http://www.santarosa.edu/~gsturr/data/BPS5/BPS5.xml");
 
 						String initString = "http://";				
-						initString  = URL_INIT_STRING;
+						initString  = view.DEFAULT_URL_STRING;
 
 						InputDialog id = new InputDialogOpenDataFolderURL(app,view, initString);
 						id.setVisible(true);
@@ -308,7 +305,7 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 			add(menuItem);
 			menuItem.setBackground(bgColor);
-			menuItem.setEnabled(!isXMLTree);
+			menuItem.setEnabled(mode == MODE_FILE);
 					
 
 		}
@@ -320,22 +317,35 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 	//   Set Directory Tree
 	//=============================================
 
-	public boolean setDirectory(URL rootURL){
-		return setDirectory(rootURL, null, true);
+	
+	public Object getRoot() {
+		return root;
 	}
 
-	public boolean setDirectory(File rootFile){
-		return setDirectory(null, rootFile, false);
+	public void setRoot(Object root, int mode) {
+		
+		if (root == null) return;
+		
+		this.root = root;
+		this.mode = mode;
+		
+		if(mode == MODE_URL)
+			this.rootURL = (URL) root;
+		if(mode == MODE_FILE)
+			this.rootFile = (File) root;
+		
+		loadRootDirectory();
 	}
-
-	private boolean setDirectory(URL rootURL, File rootFile, boolean isXMLTree){
+	
+	
+	private boolean loadRootDirectory(){
 
 		boolean succ = true;
 
-		this.isXMLTree = isXMLTree;
+		switch (mode){
 
-		if (isXMLTree) {
-			this.rootURL = rootURL;
+		case MODE_URL :
+			this.rootURL = (URL) root;
 			InputStream is;
 			try {
 
@@ -349,16 +359,16 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 				is.close();
 
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 				succ = false;
 			}
+			break;
 
-
-		} else {
+		case MODE_FILE:
 
 			try {
-				this.rootFile = rootFile;
+				this.rootFile = (File) root;
 				DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(
 						rootFile.getName());
 				addFileTree(newNode, rootFile);
@@ -423,15 +433,20 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 		if (node.isLeaf()) {
 			TreePath p = e.getPath();
-			if(isXMLTree){
+
+			switch(mode){
+			case MODE_URL:
 				try {
 					view.loadSpreadsheetFromURL(getURLFromPath(p));
 				} catch (MalformedURLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			}else{
+				break;
+
+			case MODE_FILE:
 				view.loadSpreadsheetFromURL(getFileFromPath(p));
+				break;
 			}
 		}
 
@@ -441,11 +456,12 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 
 	/**
 	 * Listener for expanded node. Adds sub-directory contents to the tree when
-	 * a node is expanded
+	 * a node is expanded.
+	 * Note: currently, XML trees have depth = 1 and cannot be expanded
 	 */
 	public void treeExpanded(TreeExpansionEvent e) {
 
-		if(!isXMLTree){
+		if(mode == MODE_FILE){
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath()
 			.getLastPathComponent();
 
