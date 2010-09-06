@@ -1052,7 +1052,7 @@ public class AlgebraProcessor {
 	}
 	
 	private GeoElement [] processList(ExpressionNode n, MyList evalList) {		
-		String label = evalList.getLabel();		
+		String label = n.getLabel();		
 				
 		GeoElement[] ret = new GeoElement[1];
 		
