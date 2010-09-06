@@ -72,7 +72,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	public int highestUsedColumn = -1; // for trace
 	
-	//short[] traceRow = new short[MAX_COLUMNS + 1]; // for trace
 	
 	private SpreadsheetTraceManager traceManager;
 	private TraceDialog traceDialog;
@@ -132,12 +131,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	 * Left panel holds file tree browser, right panel holds spreadsheet. 
 	 */
 	public SpreadsheetView(Application app, int columns, int rows) {
-		/*
-		JList table = new JList();
-		setViewportView(table);
-		table.setFocusable(true);
-		table.addKeyListener(new KeyListener0());
-		/**/
 		
 		this.app = app;
 		kernel = app.getKernel();
@@ -206,19 +199,26 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		updateFonts();
 		attachView();
 	
-		//G.Sturr 2010-4-10: Add listener for row/column size change.
+		// Add listener for row/column size change.
 		// Needed for auto-enlarging spreadsheet.
 		table.addComponentListener(this);
 		
 		traceManager = new SpreadsheetTraceManager(this);
 	
+		
+		//==============================================
+		//  DEBUG
+
 		//this.showProbabilityCalculator();
 	
 		
 	}
 	
 	
-	
+
+	//===============================================================
+	//             Defaults
+	//===============================================================
 	
 	
 	public void setDefaultLayout() {
@@ -236,6 +236,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		table.setInitialCellSelection(0,0);
 	}
 
+	
+	
+
+	//===============================================================
+	//              getters/setters
+	//===============================================================
+	
+	
 	public Application getApplication() {
 		return app;
 	}
@@ -243,6 +251,17 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public MyTable getTable() {
 		return table;
 	}
+	
+	
+	public JViewport getRowHeader(){
+		return spreadsheet.getRowHeader();
+	}
+	
+	public JViewport getColumnHeader(){
+		return spreadsheet.getColumnHeader();
+	}
+	
+
 	
 	private class Corner extends JComponent {
 		private static final long serialVersionUID = -4426785169061557674L;
@@ -253,16 +272,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	    }
 	}
 	
-
-	public JViewport getRowHeader(){
-		return spreadsheet.getRowHeader();
-	}
 	
-	public JViewport getColumnHeader(){
-		return spreadsheet.getColumnHeader();
-	}
 	
-
 
 	//===============================================================
 	//              VIEW Implementation
@@ -285,8 +296,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void add(GeoElement geo) {	
 		//Application.debug(new Date() + " ADD: " + geo);				
 
-		update(geo);
-		
+		update(geo);	
 		Point location = geo.getSpreadsheetCoords();
 		
 		// autoscroll to new cell's location
@@ -299,16 +309,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 		
-		
-		
 	}
 	
-	
-	private boolean scrollToShow = false;
-	
-	public void setScrollToShow(boolean scrollToShow) {
-		this.scrollToShow = scrollToShow;
-	}
 	
 	public void remove(GeoElement geo) {
 		//Application.debug(new Date() + " REMOVE: " + geo);
@@ -338,28 +340,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		//Application.debug("highestUsedColumn="+highestUsedColumn);
 	}
 	
-	/**
-	 * Updates highestUsedColumn when this is sent as a parameter
-	 */
-	private void checkColumnEmpty(int col) {
-		
-		if (col == -1) return; // end recursion
-		
-		// check if this was the last cell used in this column
-		boolean columnNotEmpty = false;
-		for (int r = 0 ; r < tableModel.getRowCount() ; r++) {
-			if (tableModel.getValueAt(r, col) != null) {
-				// column not empty
-				columnNotEmpty = true;
-				break;
-			}
-		}
-		if (!columnNotEmpty) {
-			highestUsedColumn--;
-			checkColumnEmpty(highestUsedColumn);
-		}
-		
-	}
+	
 	
 	public void rename(GeoElement geo) {
 		//Application.debug(new Date() + " RENAME");
@@ -382,26 +363,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void updateAuxiliaryObject(GeoElement geo) {		
 	}
 	
-// G.STURR -- selectedElems is no longer  used	
-//	public static HashSet selectedElems = new HashSet();
-	
-	public void repaintView() {
-		/*
-		 * Markus Hohenwarter 2008-09-18
-		 *   The following code is extremely slow and a very bad performance bottleneck.
-		 *   If this needs to be done, then definitely NOT in repaintView()
-		 * 
-		ArrayList elems = app.getSelectedGeos();
-		selectedElems.clear();
-		for (int i = 0; i < elems.size(); ++ i) {
-			GeoElement geo = (GeoElement)elems.get(i);
-			selectedElems.add(geo.getLabel());
-		}
-		if (System.currentTimeMillis() - table.selectionTime > 100) {
-			table.selectNone();
-		}
-		*/
-		
+	public void repaintView() {	
 		repaint();		
 	}
 	
@@ -502,6 +464,37 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		}
 	}	
 
+
+	/**
+	 * Updates highestUsedColumn when this is sent as a parameter
+	 */
+	private void checkColumnEmpty(int col) {
+		
+		if (col == -1) return; // end recursion
+		
+		// check if this was the last cell used in this column
+		boolean columnNotEmpty = false;
+		for (int r = 0 ; r < tableModel.getRowCount() ; r++) {
+			if (tableModel.getValueAt(r, col) != null) {
+				// column not empty
+				columnNotEmpty = true;
+				break;
+			}
+		}
+		if (!columnNotEmpty) {
+			highestUsedColumn--;
+			checkColumnEmpty(highestUsedColumn);
+		}
+		
+	}
+	
+	
+	
+	private boolean scrollToShow = false;
+	
+	public void setScrollToShow(boolean scrollToShow) {
+		this.scrollToShow = scrollToShow;
+	}
 	
 	
 
@@ -560,8 +553,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 	
 	
-	
-	
 
 	//=====================================================
 	//               Tracing
@@ -609,180 +600,12 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 	
-	
 	public int getHighestUsedColumn() {
 		//traceHandler.resetTraceRow(highestUsedColumn+1);
 		//traceHandler.resetTraceRow(highestUsedColumn+2);
 		return highestUsedColumn;
 	}
 			
-	/*
-	public int getTraceRow(int column) {
-		return traceHandler.getTraceRow(column);
-	}
-	*/
-	
-	
-	
-	/*
-	private void resetTraceRow(int col) {
-		if (col < MAX_COLUMNS) traceRow[col] = 1;
-	}
-	
-	
-	
-	public int getTraceRow(int column) {
-		if (column < 0 || column >= MAX_COLUMNS) return -1;
-		if (traceRow[column] == 0) traceRow[column] = 1; //first call
-		return (int)traceRow[column]++;
-	}
-	
-	
-	
-	boolean collectingTraces = false;
-	HashMap traces = null;
-	
-	
-	
-	public void startCollectingSpreadsheetTraces() {
-		collectingTraces = true;
-		if (traces == null)
-			traces = new HashMap();
-		traces.clear();
-	}
-	
-	
-	
-	
-	public void stopCollectingSpreadsheetTraces() {
-		collectingTraces = false;
-		
-		Iterator it = traces.values().iterator();
-		
-		while (it.hasNext()) {
-			traceToSpreadsheet((GeoElement)it.next());
-		}
-		
-		traces.clear();
-
-	}
-	
-	
-	
-	
-	private double[] coords = new double[2];
-
-	public void traceToSpreadsheet(GeoElement geo) {
-		
-		if (collectingTraces) {
-			traces.put(geo.getTraceColumn1(), geo);
-			return;
-		}
-		
-		Construction cons = app.getKernel().getConstruction();
-		
-		
-		switch (geo.getGeoClassType()) {
-			
-		case GeoElement.GEO_CLASS_POINT:
-			
-			GeoPoint P = (GeoPoint)geo;
-			
-    		boolean polar = P.getMode() == Kernel.COORD_POLAR;
-    		
-	    	if (polar)
-	    		P.getPolarCoords(coords);
-	    	else
-	    		P.getInhomCoords(coords);
-
-			
-	    	String col = P.getTraceColumn1(); // call before getTraceRow()
-	    	int row = P.getTraceRow();
-	    	if (row > 0) {
-    	    	//Application.debug(col+row);   		
-		    	app.getGuiManager().setScrollToShow(true);
-		    	
-		    	GeoNumeric traceCell = new GeoNumeric(cons, col + row,coords[0]);
-		    	traceCell.setAuxiliaryObject(true);
-		    	
-		    	col = P.getTraceColumn2(); // call before getTraceRow()
-    	    	//Application.debug(col+row);   		
-		    	
-		    	GeoNumeric traceCell2;
-		    	
-		    	if (polar) traceCell2 = new GeoAngle(cons,col+row,coords[1]);
-		    	else traceCell2 = new GeoNumeric(cons,col+row,coords[1]);
-		    	
-		    	traceCell2.setAuxiliaryObject(true);
-		    	
-		    	cons.getApplication().getGuiManager().setScrollToShow(false);	
-		    	
-		    	P.setLastTrace1(coords[0]);
-		    	P.setLastTrace2(coords[1]);
-	    	}
-			break;
-		case GeoElement.GEO_CLASS_VECTOR:
-			
-			GeoVector vector = (GeoVector)geo;
-			
-			vector.getInhomCoords(coords);
-			
-	    	col = vector.getTraceColumn1();
-	    	row = vector.getTraceRow();
-	    	if (row > 0) {
-		    	cons.getApplication().getGuiManager().setScrollToShow(true);
-	    		
-	    		GeoNumeric traceCell = new GeoNumeric(cons,col+row,coords[0]);
-		    	traceCell.setAuxiliaryObject(true);
-		    	GeoNumeric traceCell2 = new GeoNumeric(cons,vector.getTraceColumn2()+row,coords[1]);
-		    	traceCell2.setAuxiliaryObject(true);
-		    	
-		    	cons.getApplication().getGuiManager().setScrollToShow(false);
-		    	
-		    	vector.setLastTrace1(coords[0]);
-		    	vector.setLastTrace2(coords[1]);
-	    	}
-			break;
-		case GeoElement.GEO_CLASS_NUMERIC:
-			
-			GeoNumeric num = (GeoNumeric)geo;
-			
-	    	col = num.getTraceColumn1(); // must be called before getTraceRow()
-	    	row = num.getTraceRow();
-	    	
-	    	cons.getApplication().getGuiManager().setScrollToShow(true);
-	    	GeoNumeric traceCell = new GeoNumeric(cons, col+row, num.getValue());
-	    	cons.getApplication().getGuiManager().setScrollToShow(false);
-	    	
-	    	traceCell.setAuxiliaryObject(true);
-	    	
-	    	num.setLastTrace1(num.getValue());
-			break;
-		
-		}
-	}
-	
-	
-	*/
-	
-	
-	
-//	public void incrementTraceRow(int column) {
-//		if (column < 0 || column >= MAX_COLUMNS) return;
-//		traceRow[column]++;
-//	}
-	
-//	public void resetTraceRow(int column) {
-//		if (column < 0 || column >= MAX_COLUMNS) return;
-//		traceRow[column] = 0;
-//	}
-	
-	/* used to "reserve" a column
-	 * 
-	 */
-//	public void incrementHighestUsedColumn() {
-//		highestUsedColumn++;
-//	}
 	
 	
 	
@@ -815,9 +638,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
     }
 
-// G.Sturr, moved these declarations to the top
-//	protected int minSelectionRow = -1;
-//	protected int maxSelectionRow = -1;
 
 	public class RowHeaderRenderer extends JLabel implements ListCellRenderer, ListSelectionListener {
 	
@@ -903,10 +723,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
     }
 
-	
-	
-	    //G.STURR 2010-1-9
-	    //
+
 	    // Returns index of row to be resized if mouse point P is 
 		// near a row boundary (within 3 pixels) 
 	 	private int getResizingRow(Point p){ 
@@ -933,11 +750,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	        otherCursor = tmp; 
 	    } 
 	    
-	    //
-	    //END GSTURR
-	
-	
-	
+	  
 	
 	
 	protected int row0 = -1;
@@ -947,7 +760,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		public void mouseClicked(MouseEvent e) {
 			
-			// G.Sturr 2010-3-29
 			// Double clicking on a row boundary auto-adjusts the 
 			// height of the row above the boundary (the resizingRow)
 			
@@ -956,9 +768,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				table.fitRow(resizingRow);
 				e.consume();
 			}
-			
-			//END G.Sturr
-			
 		}
 		
 		public void mouseEntered(MouseEvent e) {
@@ -975,8 +784,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			int x = e.getX();
 			int y = e.getY();
 			
-			
-			//G.STURR 2010-1-9: 
 			// Update resizingRow. If nonnegative, then mouse is over a boundary
 			// and it gives the row to be resized (resizing is done in mouseDragged).
 			Point p = e.getPoint(); 
@@ -1075,23 +882,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 					table.setRowSelectionInterval((int)p.getY(), (int)p.getY());
 				}	
 			
-				//show contextMenu
-				
-				//G.STURR 2009-12-20 We now use single ContextMenu for all right clicks 
-				//
-				//ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, new boolean[0]);
-			    //   popupMenu.show(e.getComponent(), e.getX(), e.getY());
-				
-			//	ContextMenu popupMenu = new SpreadsheetContextMenu(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, 
-			//			maxSelectionRow, new boolean[0],1);
-				
+				//show contextMenu		
 				SpreadsheetContextMenu popupMenu = new SpreadsheetContextMenu(table, e.isShiftDown());
 		        popupMenu.show(e.getComponent(), e.getX(), e.getY());
-		        // END GSTURR
+		     
 			} 
 			
 			
-			//G.STURR 2010-1-9
 			// If row resize has happened, resize all other selected rows
 			if (doRowResize) {
 				if (minSelectionRow != -1 && maxSelectionRow != -1
@@ -1105,10 +902,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 				}
 				doRowResize = false;
 			}
-
 		}
-
 	}
+	
 	
 	protected class MouseMotionListener1 implements MouseMotionListener
 	{
