@@ -322,8 +322,40 @@ public class FileBrowserPanel extends JPanel implements ActionListener, TreeSele
 		return root;
 	}
 
-	public void setRoot(Object root, int mode) {
+	public String getRootString() {
+
+		String rootString = null;
+
+		if(mode == MODE_FILE)
+			rootString = rootFile.getPath();
+		if(mode == MODE_URL)
+			rootString = rootURL.getPath();
+
+		return rootString;
+	}
+	
+	public int getMode(){
+		return mode;
+	}
+	
+	
+	public void setRoot(String rootString, int mode) {
 		
+		Object root = null;
+		
+			if(mode == MODE_FILE)
+				root = new File(rootString);
+			else
+				try {
+					root = new URL(rootString);
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+		setRoot(root, mode);
+	}
+	
+	public void setRoot(Object root, int mode) {
+			
 		if (root == null) return;
 		
 		this.root = root;

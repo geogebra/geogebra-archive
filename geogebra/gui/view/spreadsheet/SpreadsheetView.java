@@ -116,13 +116,14 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private StatDialog twoVarStatDialog;
 	private ProbabilityCalculator probCalculator;
 	
-	// file browser init strings
+	// file browser default constants
 	public static final String DEFAULT_URL_STRING = "http://www.geogebra.org/static/data/data.xml";
 	public static final String DEFAULT_FILE_STRING = System.getProperty("user.dir");
 	
-	private int fileBrowserMode = FileBrowserPanel.MODE_FILE;
-	private Object fileBrowserRoot = new File(DEFAULT_FILE_STRING);
-	
+	// file browser settings
+	private String initialURLString = "http://www.geogebra.org/static/data/data.xml";
+	private String initialFileString = DEFAULT_FILE_STRING; 
+	private int intialBrowserMode = FileBrowserPanel.MODE_FILE;
 	
 
 	/**
@@ -1535,7 +1536,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		if (fileBrowser == null) {
 			fileBrowser = new FileBrowserPanel(this);
 			fileBrowser.setMinimumSize(new Dimension(50, 0));
-			fileBrowser.setRoot(fileBrowserRoot, fileBrowserMode);
+			fileBrowser.setRoot(initialFileString, intialBrowserMode);
 		}	
 		return fileBrowser;
 	}
@@ -1606,23 +1607,50 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 	
 	
+	
+	public int getInitialBrowserMode() {
+		return intialBrowserMode;
+	}
+	
+	public void setInitialBrowserMode(int mode) {
+		intialBrowserMode = mode;
+	}
+	
+	
+	public String getInitialURLString() {
+		return initialURLString;
+	}
 
-	public Object getFileBrowserDirectory() {
-		if(fileBrowserRoot == null){
-			fileBrowserRoot = new File(DEFAULT_FILE_STRING);
-			fileBrowserMode = FileBrowserPanel.MODE_FILE;
+	public void setInitialURLString(String initialURLString) {
+		this.initialURLString = initialURLString;
+	}
+
+	public String getInitialFileString() {
+		return initialFileString;
+	}
+
+	public void setInitialFileString(String initialFileString) {
+		this.initialFileString = initialFileString;
+	}
+
+	
+	public void setBrowserDefaults(boolean doRestore){
+
+		if(doRestore){
+			initialFileString = DEFAULT_FILE_STRING;
+			initialURLString = DEFAULT_URL_STRING;
+			intialBrowserMode = FileBrowserPanel.MODE_FILE;
+			setFileBrowserDirectory(initialFileString, intialBrowserMode);
+
+		}else{
+			initialFileString = fileBrowser.getRootString();
+			intialBrowserMode = fileBrowser.getMode();
 		}
-		return fileBrowserRoot;
 	}
 
-	public void setFileBrowserDirectory(Object root, int mode) {
-		this.fileBrowserRoot = root;
-		this.fileBrowserMode = mode;
-		this.getFileBrowser().setRoot(fileBrowserRoot, mode);
+	public void setFileBrowserDirectory(String rootString, int mode) {
+		getFileBrowser().setRoot(rootString, mode);
 	}
-	
-	
-	
 	
 	
 	

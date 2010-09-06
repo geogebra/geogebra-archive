@@ -59,10 +59,8 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	cbShowBrowser, cbAllowSpecialEditor;
 	
 	private JTextField dirField, urlField;
-	
-	private JButton browseButton;
+	private JButton browseButton, restoreButton, setCurrentButton;
 	private JRadioButton dirRadioButton, urlRadioButton;
-
 	private JPanel locationPanel;
 	
 	
@@ -180,7 +178,12 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         browseButton = new JButton("...", app.getImageIcon("aux_folder.gif"));
         browseButton.addActionListener(this);
 
-
+        restoreButton = new JButton("");
+        restoreButton.addActionListener(this);
+        
+        setCurrentButton = new JButton("");
+        setCurrentButton.addActionListener(this);
+        
         //====================================================
         // create sub panels 
 
@@ -208,6 +211,13 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         
         locationPanel.add(urlPanel);
         
+        JPanel setButtonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        setButtonPanel.setAlignmentX(LEFT_ALIGNMENT);
+        setButtonPanel.add(Box.createHorizontalStrut(2*tab));
+        setButtonPanel.add(restoreButton);
+        setButtonPanel.add(setCurrentButton);
+        locationPanel.add(setButtonPanel);
+        
         locationPanel.setBorder(BorderFactory.createTitledBorder(""));
         
         
@@ -234,6 +244,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	 * language was changed. Will be called after initialization automatically.
 	 */
 	public void setLabels() {
+		
 		//TODO -- add labels as needed
 		cbShowGrid.setText(app.getMenu("ShowGridlines"));              
 		cbShowColumnHeader.setText(app.getMenu("ShowColumnHeader"));  	      
@@ -243,9 +254,11 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		cbShowBrowser.setText(app.getMenu("ShowFileBrowser"));  
 		cbAllowSpecialEditor.setText(app.getMenu("UseButtonsAndCheckboxes"));
 
-		locationPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("DirectoryLocation")));
-		dirRadioButton.setText(app.getMenu("FileSystem" + ":"));
-		urlRadioButton.setText(app.getMenu("URL" + ":"));
+		locationPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("HomeDirectory")));
+		dirRadioButton.setText(app.getMenu("FileSystem") + ":");
+		urlRadioButton.setText(app.getMenu("URL") + ":");
+		restoreButton.setText(app.getMenu("Settings.ResetDefault"));
+		setCurrentButton.setText(app.getMenu("SetToCurrentLocation"));
 	        
 	}
 	
@@ -298,22 +311,33 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbShowBrowser.setSelected(view.getShowBrowserPanel()); 
         cbShowBrowser.addActionListener(this);
         
+        dirRadioButton.removeActionListener(this);
+        dirRadioButton.setSelected(view.getInitialBrowserMode() == FileBrowserPanel.MODE_FILE); 
+        dirRadioButton.addActionListener(this);
+       
+        urlRadioButton.removeActionListener(this);
+        urlRadioButton.setSelected(view.getInitialBrowserMode() == FileBrowserPanel.MODE_URL); 
+        urlRadioButton.addActionListener(this);
+        
         dirField.removeActionListener(this);
-        dirField.setText(view.DEFAULT_FILE_STRING);
+        dirField.setText(view.getInitialFileString());
         dirField.setCaretPosition(0);
         dirField.addActionListener(this);
         
         urlField.removeActionListener(this);
-        urlField.setText(view.DEFAULT_URL_STRING);
+        urlField.setText(view.getInitialURLString());
         urlField.setCaretPosition(0);
         urlField.addActionListener(this);
         
-        
+        // disable/enable
         dirRadioButton.setEnabled(cbShowBrowser.isSelected());
         urlRadioButton.setEnabled(cbShowBrowser.isSelected());
+        
 		dirField.setEnabled(cbShowBrowser.isSelected() && dirRadioButton.isSelected());
-        browseButton.setEnabled(cbShowBrowser.isSelected() && dirRadioButton.isSelected());
-        urlField.setEnabled(cbShowBrowser.isSelected()&& urlRadioButton.isSelected());
+        urlField.setEnabled(dirField.isEnabled());
+        browseButton.setEnabled(dirField.isEnabled());
+        restoreButton.setEnabled(dirField.isEnabled());
+        setCurrentButton.setEnabled(dirField.isEnabled());
         
 	}
 	
@@ -362,27 +386,36 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 
 		else if (source == dirRadioButton) {
 			dirField.selectAll();
-			view.setFileBrowserDirectory(new File(dirField.getText()),FileBrowserPanel.MODE_FILE);
+			view.setInitialFileString(dirField.getText());
+			view.setInitialBrowserMode(FileBrowserPanel.MODE_FILE);
+			view.setFileBrowserDirectory(dirField.getText(),FileBrowserPanel.MODE_FILE);
 		}
 		
 		else if (source == urlRadioButton) {
 			urlField.selectAll();
-			try {
-				view.setFileBrowserDirectory(new URL(urlField.getText()), FileBrowserPanel.MODE_URL);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}		
+			view.setFileBrowserDirectory(urlField.getText(), FileBrowserPanel.MODE_URL);
+			view.setInitialURLString(urlField.getText());
+			view.setInitialBrowserMode(FileBrowserPanel.MODE_URL);
+
 		}
-		
+
 		else if (source == browseButton) {
 			//System.out.println("browse button");
 			JFileChooser fc = new JFileChooser();
 			fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			int returnVal = fc.showOpenDialog(this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				view.setFileBrowserDirectory(fc.getSelectedFile(), FileBrowserPanel.MODE_FILE);
+				view.setFileBrowserDirectory(fc.getSelectedFile().getPath(), FileBrowserPanel.MODE_FILE);
 				dirField.setText(fc.getSelectedFile().getName());
 			}
+		}
+		
+		else if (source == restoreButton) {
+			view.setBrowserDefaults(true);
+		}
+		
+		else if (source == setCurrentButton) {
+			view.setBrowserDefaults(false);
 		}
 		
 		updateGUI();
