@@ -2,6 +2,7 @@ package geogebra.gui.layout.panels;
 
 import javax.swing.JComponent;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
@@ -20,7 +21,7 @@ public class SpreadsheetDockPanel extends DockPanel {
 		super(
 			Application.VIEW_SPREADSHEET, 		// view id
 			"Spreadsheet", 						// view title phrase
-			"0 66",								// toolbar string
+			getDefaultToolbar(),				// toolbar string
 			true,								// style bar?
 			3, 									// menu order
 			'S'									// menu shortcut
@@ -41,5 +42,11 @@ public class SpreadsheetDockPanel extends DockPanel {
 	}
 	
 	protected void focusLost() {
+	}
+	
+	private static String getDefaultToolbar() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(EuclidianView.MODE_PROBABILITY_CALCULATOR);
+		return sb.toString();
 	}
 }
