@@ -422,6 +422,7 @@ public class CommandDispatcher {
     	cmdTable.put("ToolImage", new CmdToolImage(kernel));	   
     	cmdTable.put("Voronoi", new CmdVoronoi(kernel));     	                  
     	cmdTable.put("SelectedElement", new CmdSelectedElement(kernel));     	                  
+    	cmdTable.put("SelectedIndex", new CmdSelectedIndex(kernel));     	                  
     	
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   
