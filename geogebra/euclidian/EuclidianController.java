@@ -10,12 +10,6 @@
 
  */
 
-/*
- * EuclidianController.java
- *
- * Created on 16. Oktober 2001, 15:41
- */
-
 package geogebra.euclidian;
 
 import geogebra.Matrix.GgbVector;
@@ -96,7 +90,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.text.JTextComponent;
 
-
+/**
+ * EuclidianController.java
+ *
+ * Created on 16. October 2001, 15:41
+ */
 public class EuclidianController implements MouseListener,
 MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniListener {
 
@@ -5839,47 +5837,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		boolean objectFound = 1 == 
 			handleAddSelected(hits, macroInput.length, false, selectedGeos, macroInput[index]);			
 
-		/*
-		// POLYGON instead of points special case:
-		// if no object was found maybe we need points
-		// in this case let's try to use a polygon's points 
-		int neededPoints = 0;				
-		if (!objectFound) {
-			// how many points do we need?						
-			for (int k = index; k < macroInput.length; k++) {
-				if (macroInput[k] == GeoPoint.class) 
-					++neededPoints;					
-				else 
-					break;				
-			}
-
-			// several points needed: look for polygons with this number of points
-			if (neededPoints > 2) {				
-				if (macroPolySearchList == null)
-					macroPolySearchList = new ArrayList();
-				// get polygons with needed number of points
-				view.getPolygons(hits, neededPoints, macroPolySearchList);
-
-				if (selectionPreview) {
-					addToHighlightedList(selectedGeos, macroPolySearchList , macroInput.length);
-					return false;
-				}
-
-				// now we only have polygons with the right number of points: choose one 
-				GeoPolygon poly = (GeoPolygon) chooseGeo(macroPolySearchList);
-				if (poly != null) {					
-					// success: let's take the points from the polygon
-					GeoPoint [] points = poly.getPoints();					
-					for (int k=0; k < neededPoints; k++) {
-						selectedGeos.add(points[k]);
-						app.toggleSelectedGeo(points[k]);
-					}										
-					index = index + neededPoints - 1;	
-					objectFound = true;
-				}
-			}									
-		}		
-		 */
+		//some old code for polygon removed in [6779]
 
 		// we're done if in selection preview
 		if (selectionPreview) 
@@ -5896,9 +5854,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				POINT_CREATED = false;
 			}
 		}
-
+		
+		
 		// object found in handleAddSelected()
-		if (objectFound) { 
+		if (objectFound || macroInput[index] == GeoNumeric.class || macroInput[index] == GeoAngle.class) {
+			if(!objectFound)index--;
 			// look ahead if we need a number or an angle next			
 			while (++index < macroInput.length) {				
 				// maybe we need a number
