@@ -37,6 +37,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	private Kernel kernel; 
 	private Construction cons;
 	
+	
 	private ArrayList<GeoElement> plotGeoCollection;
 	private GeoElement plotGeo;
 	//private GeoList boundList, freqList;
@@ -50,11 +51,15 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	private boolean showYAxis = false;
 	private boolean showArrows = false;
 	private boolean forceXAxisBuffer = false;
+	private boolean[] isEdgeAxis = {true,true};
 	
 	
 	// new EuclidianView instance 
 	private MyEuclidianView ev;
 	private EuclidianController ec;
+	
+	
+	private String[] regCmd = new String[StatDialog.regressionTypes];
 	
 	
 	
@@ -92,6 +97,16 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		this.addComponentListener(this);
 		
 		
+		regCmd[StatDialog.REG_NONE] = "";
+		regCmd[StatDialog.REG_LINEAR] = "FitLine";
+		regCmd[StatDialog.REG_LOG] = "FitLog";
+		regCmd[StatDialog.REG_POLY2] = "FitPoly";
+		
+		
+		
+		
+		
+		
 	}
 
 	
@@ -126,6 +141,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 			ev.setAxesLineStyle(EuclidianView.AXES_LINE_TYPE_FULL);
 		}
 		
+		ev.setDrawBorderAxes(isEdgeAxis);
 		
 		// ensure that the axis labels are shown
 		// by forcing a fixed pixel height below the x-axis
@@ -196,7 +212,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 			
 			if(label == null)
 				cons.setSuppressLabelCreation(true);
-			
+			//Application.debug(text);
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 				.processAlgebraCommandNoExceptionHandling(text, false);	
 			
@@ -415,12 +431,88 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	public void updateScatterPlot(GeoList dataList, boolean doCreate){
 
-		plotGeo = dataList;
-		setDataMinMax((GeoList) plotGeo, true);
-		String label = plotGeo.getLabel();	
+		removeGeos();
+		
+		setDataMinMax(dataList, true);
+		
+		GeoList tempGeo = new GeoList(cons);
+		tempGeo.setAuxiliaryObject(true);
+		tempGeo.setLabel(null);
+		
+		for(int i=0; i<dataList.size(); ++i)
+			tempGeo.add(dataList.get(i));	
+		
+		
+		// add the geo to our view and remove it from EV		
+		tempGeo.addView(ev);
+		ev.add(tempGeo);
+		tempGeo.removeView(app.getEuclidianView());
+		app.getEuclidianView().remove(tempGeo);
+			
+		// set visibility
+		tempGeo.setEuclidianVisible(true);
+		//geos[0].setAlgebraVisible(false);		
+		tempGeo.setAuxiliaryObject(true);
+		tempGeo.setLabelVisible(false);
+			
+		
+		plotGeoCollection.add(tempGeo);
+		
+		/*
+		setDataMinMax(dataList, true);
+		String label = dataList.getLabel();	
 		String text = "";
 		
-		// Set view parameters	
+		GeoElement tempGeo = null;
+		if(doCreate){
+			
+			text = label;
+			
+			//text = "{ FitLine[" + label + "] ," + label + "}";
+			
+			tempGeo  = createGeoFromString(text);
+			tempGeo.setObjColor(StatDialog.DOTPLOT_COLOR);
+			tempGeo.setAlphaValue(0.25f);
+		}	
+		
+		*/
+		
+		
+		// set view parameters	
+		double xBuffer = .25*(xMaxData - xMinData);
+		xMinEV = xMinData - xBuffer;
+		xMaxEV = xMaxData + xBuffer;
+		
+		double yBuffer = .25*(yMaxData - yMinData);
+		yMinEV = yMinData - yBuffer;
+		yMaxEV = yMaxData + yBuffer;
+		
+		showYAxis = true;
+		forceXAxisBuffer = false;
+		setEVParams();
+		
+		
+	}
+	
+	
+	public void updateRegressionPlot(GeoList dataList, boolean doCreate, int regType){
+			
+		if (regType == StatDialog.REG_NONE) return;
+		
+		setDataMinMax(dataList, true);
+		String label = dataList.getLabel();	
+		String text = regCmd[regType] + "[" + label + "]";
+		
+		if(regType == StatDialog.REG_POLY2)
+			text = regCmd[regType] + "[" + label + " ,2]";
+		
+		GeoElement tempGeo = null;
+		if(doCreate){
+			tempGeo  = createGeoFromString(text);
+			tempGeo.setObjColor(StatDialog.REGRESSION_COLOR);
+		}	
+		
+		// set view parameters	
 		double xBuffer = .25*(xMaxData - xMinData);
 		xMinEV = xMinData - xBuffer;
 		xMaxEV = xMaxData + xBuffer;
@@ -433,24 +525,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		forceXAxisBuffer = false;
 		setEVParams();
 			
-
-		// add the geo to our view and remove it from EV		
-		plotGeo.addView(ev);
-		ev.add(plotGeo);
-		plotGeo.removeView(app.getEuclidianView());
-		app.getEuclidianView().remove(plotGeo);
-		
-		// make it visible
-		plotGeo.setObjColor(StatDialog.DOTPLOT_COLOR);
-		plotGeo.setAlphaValue(0.25f);
-		
-		plotGeo.setEuclidianVisible(true);
-		plotGeo.update();
-		//Application.debug("scatterplot");		
 	}
-	
-	
-	
 	
 	
 	

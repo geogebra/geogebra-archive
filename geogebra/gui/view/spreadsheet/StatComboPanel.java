@@ -61,6 +61,7 @@ public class StatComboPanel extends JPanel{
 	private StatTablePanel statPanel;
 
 	private Application app;
+	private StatDialog statDialog;
 	private GeoList dataListSelected;
 	
 	private int mode;
@@ -70,10 +71,11 @@ public class StatComboPanel extends JPanel{
 	/***************************************** 
 	 * Construct a ComboStatPanel
 	 */
-	public  StatComboPanel(Application app, int defaultPlotIndex, GeoList dataListSelected, int mode){
+	public  StatComboPanel( StatDialog statDialog, int defaultPlotIndex, GeoList dataListSelected, int mode){
 		
 		this.dataListSelected = dataListSelected;
-		this.app = app;
+		this.statDialog = statDialog;
+		this.app = statDialog.getApp();
 		this.mode = mode;
 		
 		this.plotIndex = defaultPlotIndex;
@@ -220,18 +222,13 @@ public class StatComboPanel extends JPanel{
 		plotMap.put(PLOT_SCATTERPLOT, app.getMenu("Scatterplot"));
 		plotMap.put(PLOT_RESIDUAL, app.getMenu("ResidualPlot"));
 		plotMap.put(PLOT_STATISTICS_TWOVAR, app.getMenu("ResidualPlot"));
-		
-		
-		
+			
 		plotMapReverse = new HashMap<String, Integer>();
 		for(Integer key: plotMap.keySet()){
 			plotMapReverse.put(plotMap.get(key), key);
 		}
 		
 	}
-	
-	
-	
 	
 	
 	
@@ -279,7 +276,11 @@ public class StatComboPanel extends JPanel{
 			break;
 			
 		case PLOT_SCATTERPLOT:
+
 			plotPanel.updateScatterPlot( dataListSelected, doCreate);
+			plotPanel.setAutoRemoveGeos(false);
+			plotPanel.updateRegressionPlot(dataListSelected, doCreate, statDialog.getRegressionMode());
+			plotPanel.setAutoRemoveGeos(true);
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 			

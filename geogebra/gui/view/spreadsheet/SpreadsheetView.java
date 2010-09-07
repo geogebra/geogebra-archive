@@ -537,7 +537,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	public void notifySpreadsheetSelectionChange(){
 		if(isStatDialogVisible()){
-			oneVarStatDialog.handleSpreadsheetSelectionChange();
+			//oneVarStatDialog.handleSpreadsheetSelectionChange();
 		}
 	}
 	

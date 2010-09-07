@@ -21,18 +21,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class StatDialog extends JDialog 
 implements ActionListener, View   {
@@ -45,48 +40,81 @@ implements ActionListener, View   {
 	private SpreadsheetView spView;
 	private MyTable spreadsheetTable;
 	private StatDialog statDialog;
-	
-	
+		
 	// modes
 	public static final int MODE_ONEVAR =  0;
 	public static final int MODE_TWOVAR =  1;
 	private int mode;
-	
-	
+		
 	// data collections
 	private GeoList dataListAll, dataListSelected;
-	//private ArrayList<Integer> selectedColumns;
 	ArrayList<String> dataTitles ;
 	private Object dataSource;
 	
-
 	
 	// GUI objects
 	private JButton btnClose, btnOptions, btnExport, btnDisplay;
 	private JCheckBox cbShowData, cbShowCombo2;
+	private JComboBox comboRegression;
 	private StatComboPanel comboStatPanel, comboStatPanel2;;
 	private StatDataPanel dataPanel;
 	private StatTablePanel statPanel;
 	private JSplitPane statDataPanel; 
-	private JSplitPane displayPanel;
-	
-	JSplitPane comboPanelSplit;
+	private JSplitPane displayPanel;	
+	private JSplitPane comboPanelSplit;
 	private JPanel cardPanel;
-	
+		
 	
 	// flags
 	private boolean showDataPanel = false;
 	private boolean showComboPanel2 = false;
 	private boolean isIniting;
 	private Dimension defaultDialogDimension;
-	
-	
+		
 	// colors
 	public static final Color TABLE_GRID_COLOR = Color.GRAY;
 	public static final Color TABLE_HEADER_COLOR = new Color(240,240,240);   
 	public static final Color HISTOGRAM_COLOR = new Color(0,0,255); // blue with alpha 0.25   
 	public static final Color BOXPLOT_COLOR = new Color(204,0,0);  // rose with alpha 0.25 
 	public static final Color DOTPLOT_COLOR = new Color(0,204,204); // blue-green   
+	public static final Color REGRESSION_COLOR = Color.BLACK;    
+
+	// regression
+	public static final int REG_NONE = 0;
+	public static final int REG_LINEAR = 1;
+	public static final int REG_LOG = 2;
+	
+	//public static final int REG_LOGISTIC = 3;
+	public static final int REG_POW = 4;
+	public static final int REG_EXP = 5;
+	public static final int REG_SIN = 6;
+	public static final int REG_POLY2 = 3;
+	public static final int REG_POLY3 = 8;
+	public static final int REG_POLY4 = 9;
+	public static final int REG_POLY5 = 10;
+	public static final int REG_POLY6 = 11;
+	public static final int regressionTypes = 4;
+	
+	
+	
+	
+	
+	private int regressionMode = REG_NONE;
+	public int getRegressionMode() {
+		return regressionMode;
+	}
+
+	private String[] regressionLabels;
+	private String [] regCmd;
+	
+
+	public String[] getRegCmd() {
+		return regCmd;
+	}
+	
+	public Application getApp() {
+		return app;
+	}
 
 
 	/*************************************************
@@ -96,61 +124,73 @@ implements ActionListener, View   {
 		super(app.getFrame(),false);
 
 		isIniting = true;
-		this.app = app;	
-		kernel = app.getKernel();
-		cons = kernel.getConstruction();
+		this.app = app;
 		this.spView = spView;
 		this.spreadsheetTable = spView.getTable();
-		statDialog = this;
 		this.mode = mode;
-		
+		kernel = app.getKernel();
+		cons = kernel.getConstruction();
+		statDialog = this;
+			
 		defaultDialogDimension = new Dimension(600,500);
 	
-		//	selectedColumns = spreadsheetTable.getSelectedColumnsList();
+	
+		//===========================================
+		//load data from the data source (based on currently selected geos)
 		
-		//load data from current selection
 		setDataSource();
 		loadDataLists();
 
 
-		// create two StatCombo panels with default plots
+		//================================================
+		// Create two StatCombo panels with default plots.
+		// StatCombo panels display various plots and tables
+		// selected by a comboBox.
+		
 		switch(mode){
 
 		case MODE_ONEVAR:
-			comboStatPanel = new StatComboPanel(app, StatComboPanel.PLOT_HISTOGRAM, dataListSelected, mode);
-			comboStatPanel2 = new StatComboPanel(app, StatComboPanel.PLOT_BOXPLOT, dataListSelected, mode);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_HISTOGRAM, dataListSelected, mode);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_BOXPLOT, dataListSelected, mode);
 			break;
 
 		case MODE_TWOVAR:
-			comboStatPanel = new StatComboPanel(app, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode);
-			comboStatPanel2 = new StatComboPanel(app, StatComboPanel.PLOT_RESIDUAL, dataListSelected, mode);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_RESIDUAL, dataListSelected, mode);
 			break;		
 		}
 
-
-		// create a data panel
-		dataPanel = new StatDataPanel(app, this, dataListAll, mode);
-		dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-
 		
-		// create a table panel for the statistics
+		//================================================
+		// Create a StatPanel.
+		// StatPanels display basic statistics for the current data set
+		
 		statPanel = new StatTablePanel(app, dataListSelected, mode);
 		statPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		//statPanel.updateData(dataListSelected);
 
-		// init the GUI
+		
+		//================================================
+		// Create a DataPanel.
+		// Data panels display the current data set(s) and allow temporary editing. 
+		// Edited data is used by the statTable and statCombo panels. 
+		
+		dataPanel = new StatDataPanel(app, this, dataListAll, mode);
+		dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+	
+		
+		
+		//================================================
+		// Init the GUI and attach this view to the kernel
+		
 		initGUI();
 		updateFonts();
 		btnClose.requestFocus();
-
-
-		// attach this view to the kernel
-		attachView();
-		
-		
+		attachView();	
 		isIniting = false;
 
-	} //END  StatDialog constructor
+	} 
+	// END StatDialog constructor
 
 
 
@@ -178,6 +218,9 @@ implements ActionListener, View   {
 	//       Load Data
 	//=================================================
 	
+	/** 
+	 * Determines if the data source is from GeoList or a cell range.
+	 */
 	private void setDataSource(){
 		
 		GeoElement geo = app.getSelectedGeos().get(0);
@@ -189,15 +232,25 @@ implements ActionListener, View   {
 		}
 	}
 	
-
+	
+	
+	/**
+	 * Loads two GeoLists: (1) all data (2) selected data
+	 * Data can come from either a GeoList or a range of spreadsheet cells. 
+	 */
 	private void loadDataLists(){
 
+		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
 		String text = "";
 		
 		boolean isSorted = true;
 		boolean copyByValue = false;
 		boolean scanByColumn = true;
 		boolean doStoreUndo = false;
+		
+		
+		//=======================================
+		// create a string to represent the data 
 		
 		if(dataSource instanceof GeoList){
 			//dataListAll = dataSource;
@@ -212,36 +265,36 @@ implements ActionListener, View   {
 
 			case MODE_ONEVAR:
 
-				tempGeo = (GeoList) spreadsheetTable
-				.getCellRangeProcessor().createList(
-						(ArrayList<CellRange>) dataSource, scanByColumn,
-						copyByValue, isSorted, doStoreUndo, GeoElement.GEO_CLASS_NUMERIC);
+				tempGeo = (GeoList) cr.createList(
+						(ArrayList<CellRange>) dataSource, 
+						scanByColumn,
+						copyByValue, 
+						isSorted, 
+						doStoreUndo, 
+						GeoElement.GEO_CLASS_NUMERIC);
 				break;
 
 			case MODE_TWOVAR:
-				//copyByValue = true;	
-				tempGeo = (GeoList) spreadsheetTable
-				.getCellRangeProcessor().createPointList(
-						(ArrayList<CellRange>) dataSource, scanByColumn,
-						copyByValue, isSorted, doStoreUndo);
+				
+				tempGeo = (GeoList) cr.createPointList(
+						(ArrayList<CellRange>) dataSource, 
+						scanByColumn,
+						copyByValue, 
+						isSorted, 
+						doStoreUndo);
 				break;
-
-
 			}
+			
 			//text = tempGeo.toDefinedValueString();
 			text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 			tempGeo.remove();
-		}
-
-	
-		//System.out.println(text);
+		}	
+		//System.out.println(text);		
 		
-		/*			
-		GeoList tempGeo = (GeoList) spreadsheetTable.getCellRangeProcessor()
-				.createListFromColumn(selectedColumns.get(0), true, false, true, false, GeoElement.GEO_CLASS_NUMERIC);
-		String text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
-		tempGeo.remove();
-		*/
+		
+		
+		//===================================
+		// create the data lists
 		
 		if(dataListAll == null){
 			dataListAll = new GeoList(cons);
@@ -257,26 +310,17 @@ implements ActionListener, View   {
 			dataListSelected.setLabel(null);
 		}
 
+		
+		
+		//===================================
+		// load data into the lists
 				
-		try {
-			
-			//dataListAll.setFixed(false);
-			//dataListSelected.setFixed(false);
-			
+		try {			
 			dataListAll = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)dataListAll, text, true, false);
-
-		//	dataListSelected = (GeoList) kernel.getAlgebraProcessor()
-		//	.changeGeoElementNoExceptionHandling((GeoElement)dataListSelected, text, true,false);		
-			
-			
+				
 			for(int i=0; i<dataListAll.size(); ++i)
-				dataListSelected.add(dataListAll.get(i));
-			
-			
-			//dataListAll.setFixed(true);
-			//dataListSelected.setFixed(true);
-			
+				dataListSelected.add(dataListAll.get(i));		
 		} 
 		catch (Exception e) 
 		{
@@ -354,18 +398,12 @@ implements ActionListener, View   {
 		}
 
 		return title;
-
 	}
 
 
-	public void resetSpreadsheetSelection(){
-		//spreadsheetTable.setSelection(selectedColumns.get(0), 0, selectedColumns.get(0), 0);
-		
-	}
-	
 	
 	//=================================================
-	//       Create GUI
+	//       GUI
 	//=================================================
 	
 	
@@ -400,10 +438,13 @@ implements ActionListener, View   {
 			btnDisplay = new JButton(app.getMenu("Plots"));
 			btnDisplay.addActionListener(this);
 			
+			createRegressionComboBox();
+			
 			JPanel centerButtonPanel = new JPanel(new FlowLayout());
-			centerButtonPanel.add(btnOptions);
-			centerButtonPanel.add(btnDisplay);
-			centerButtonPanel.add(btnExport);
+			//centerButtonPanel.add(btnOptions);
+			//centerButtonPanel.add(btnDisplay);
+			//centerButtonPanel.add(btnExport);
+			centerButtonPanel.add(comboRegression);
 			
 			
 			cbShowData = new JCheckBox(app.getMenu("ShowData"));
@@ -422,7 +463,7 @@ implements ActionListener, View   {
 			
 			JPanel buttonPanel = new JPanel(new BorderLayout());
 			buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
-		//	buttonPanel.add(centerButtonPanel, BorderLayout.CENTER);
+			buttonPanel.add(centerButtonPanel, BorderLayout.CENTER);
 			buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
 			// END button panel
 			
@@ -495,6 +536,37 @@ implements ActionListener, View   {
 	}
 
 	
+	public void setLabels(){
+		
+		regressionLabels = new String[regressionTypes];
+		
+		regressionLabels[REG_NONE] = app.getPlain("None");
+		regressionLabels[REG_LINEAR] = app.getPlain("Linear");
+		regressionLabels[REG_LOG] = app.getPlain("Log");
+		regressionLabels[REG_POLY2] = app.getPlain("Poly2");
+			
+		
+	}
+	
+	
+	
+	private void createRegressionComboBox(){
+		
+		regressionLabels = new String[regressionTypes];
+		
+		regressionLabels[REG_NONE] = app.getPlain("None");
+		regressionLabels[REG_LINEAR] = app.getPlain("Linear");
+		regressionLabels[REG_LOG] = app.getPlain("Log");
+		regressionLabels[REG_POLY2] = app.getPlain("Poly2");
+		
+		comboRegression = new JComboBox(regressionLabels);
+		comboRegression.addActionListener(this);
+		
+	}
+	
+	
+	
+	
 
 	private void setShowComboPanel2(boolean showComboPanel2){
 		
@@ -538,9 +610,6 @@ implements ActionListener, View   {
 	}
 	
 	
-	
-	
-
 
 	public int getMode(){
 		return mode;
@@ -559,27 +628,34 @@ implements ActionListener, View   {
 			setShowDataPanel(cbShowData.isSelected());
 		}
 		
-		if(source == cbShowCombo2){
+		else if(source == cbShowCombo2){
 			setShowComboPanel2(cbShowCombo2.isSelected());
 		}
 		
 		
-		if(source == btnClose){
+		else if(source == btnClose){
 			setVisible(false);
 		}
 
-		if(source == btnExport){
+		else if(source == btnExport){
 			((CardLayout)cardPanel.getLayout()).show(cardPanel, "exportPanel");
 		}
 
-		if(source == btnOptions){
+		else if(source == btnOptions){
 			((CardLayout)cardPanel.getLayout()).show(cardPanel, "optionsPanel");
 		}
 
-		if(source == btnDisplay){
+		else if(source == btnDisplay){
 			((CardLayout)cardPanel.getLayout()).show(cardPanel, "displayPanel");
 		}
 
+		else if(source == comboRegression){
+			regressionMode = comboRegression.getSelectedIndex();
+			this.updateAllComboPanels(true);
+		}
+		
+		
+		
 		btnClose.requestFocus();
 	}
 
@@ -606,15 +682,6 @@ implements ActionListener, View   {
 	}
 
 
-
-	
-	public void handleSpreadsheetSelectionChange(){
-	//	if( !spreadsheetTable.getSelectedColumnsList().equals(selectedColumns)){
-	//		updateDataList();
-	//	}
-	//	dataPanel.loadDataTable(this.dataListAll);
-	}
-
 	
 	public void updateDialog(){
 
@@ -637,7 +704,6 @@ implements ActionListener, View   {
 	}
 
 
-	
 
 	public boolean isInDataSource(GeoElement geo){
 		// TODO handle case of GeoList data source
@@ -662,7 +728,6 @@ implements ActionListener, View   {
 	
 	
 	
-	
 	public void updateFonts() {
 
 		Font font = app.getPlainFont();
@@ -678,8 +743,6 @@ implements ActionListener, View   {
 		dataPanel.updateFonts(font);
 		statPanel.updateFonts(font);
 	}
-
-
 
 
 
