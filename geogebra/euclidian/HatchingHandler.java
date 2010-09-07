@@ -157,7 +157,7 @@ public class HatchingHandler {
 			if (alpha > 0.0f) {
 				// set partial transparency
 				AlphaComposite alphaComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-				g2.setComposite(alphaComp);                
+				g2d.setComposite(alphaComp);                
 
 				// paint image with specified transparency
 				g2d.drawImage(image, 0, 0, null);
