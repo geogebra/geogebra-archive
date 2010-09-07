@@ -26,6 +26,15 @@ public class AlgoSumTrapezoidal extends AlgoFunctionAreaSums {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Creates new trapezoidal sum
+	 * @param cons construction
+	 * @param label label
+	 * @param f function
+	 * @param a lower bound
+	 * @param b upper bound
+	 * @param n number of columns
+	 */
 	public AlgoSumTrapezoidal(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n) {
 		super(cons, label, f, a, b, n, AlgoFunctionAreaSums.TYPE_TRAPEZOIDALSUM);		
@@ -33,6 +42,11 @@ public class AlgoSumTrapezoidal extends AlgoFunctionAreaSums {
 	
 	public String getClassName() {
 		return "AlgoSumTrapezoidal";
+	}
+	
+	public AlgoSumTrapezoidal copy() {
+		return new AlgoSumTrapezoidal(this.cons,null,(GeoFunction)this.getF().copy(),(NumberValue)this.getA().deepCopy(kernel),
+				(NumberValue)this.getB().deepCopy(kernel),(NumberValue)this.getN().copy().evaluate());
 	}
 	
 }

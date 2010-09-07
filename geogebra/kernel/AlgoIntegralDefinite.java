@@ -40,6 +40,14 @@ public class AlgoIntegralDefinite extends AlgoElement {
     private static final int MAX_ITER = 100;
     private static LegendreGaussIntegrator gauss;   
 
+    /**
+     * Creates new labeled integral
+     * @param cons
+     * @param label
+     * @param f
+     * @param a
+     * @param b
+     */
     public AlgoIntegralDefinite(
         Construction cons,
         String label,
@@ -50,6 +58,13 @@ public class AlgoIntegralDefinite extends AlgoElement {
         n.setLabel(label);
     }
 
+    /**
+     * Creates new unlabeled integral
+     * @param cons
+     * @param f
+     * @param a
+     * @param b
+     */
     AlgoIntegralDefinite(
         Construction cons,
         GeoFunction f,
@@ -94,27 +109,47 @@ public class AlgoIntegralDefinite extends AlgoElement {
         input[1] = ageo;
         input[2] = bgeo;
 
-        output = new GeoElement[1];
-        output[0] = n;
+        setOutputLength(1);
+        setOutput(0,n);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the integral as GeoNumeric object
+     * @return the integral
+     */
     public GeoNumeric getIntegral() {
         return n;
     }
 
+    /**
+     * Returns the integral value without recomputing
+     * @return integral value 
+     */
     double getIntegralValue() {
         return n.value;
     }
 
+    /**
+     * Returns the function
+     * @return function to be integrated
+     */
     public GeoFunction getFunction() {
         return f;
     }
 
+    /**
+     * Returns the lower bound
+     * @return lower bound
+     */
     public NumberValue getA() {
         return a;
     }
 
+    /**
+     * Returns the upper bound
+     * @return upper bound
+     */
     public NumberValue getB() {
         return b;
     }
@@ -173,6 +208,10 @@ public class AlgoIntegralDefinite extends AlgoElement {
     /**
      * Computes integral of function fun in interval a, b using an adaptive Gauss 
      * quadrature approach.
+     * @return Integral value
+     * @param fun function to be integrated
+     * @param a lower bound
+     * @param b upper bound
      */
     public static double adaptiveGaussQuad(RealRootFunction fun, double a, double b) {
     	// init GaussQuad classes for numerical integration
@@ -193,5 +232,4 @@ public class AlgoIntegralDefinite extends AlgoElement {
         // simplified to allow better Chinese translation
         return app.getPlain("IntegralOfAfromBtoC",f.getLabel(),ageo.getLabel(),bgeo.getLabel());
     }
-
 }

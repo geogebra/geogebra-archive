@@ -20,7 +20,7 @@ import geogebra.kernel.roots.RealRootFunction;
 import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
-import geogebra.main.Application;
+
 
 
 /**
@@ -45,15 +45,25 @@ implements EuclidianViewAlgo {
 	
 	
 	private int type;
+	/** Upper Rieeman sum **/
 	public static final int TYPE_UPPERSUM = 0;
+	/** Lower Rieman sum **/
 	public static final int TYPE_LOWERSUM = 1;
+	/** Barchart from expression**/
 	public static final int TYPE_BARCHART = 2;
+	/** Barchart from raw data **/
 	public static final int TYPE_BARCHART_RAWDATA = 3;
+	/** Barchart from (values,frequencies)**/
 	public static final int TYPE_BARCHART_FREQUENCY_TABLE = 4;
+	/** Barchart from (values,frequencies) with given width**/
 	public static final int TYPE_BARCHART_FREQUENCY_TABLE_WIDTH = 5;
+	/** Histogram**/
 	public static final int TYPE_HISTOGRAM = 6;
+	/** Trapezoidal sum**/
 	public static final int TYPE_TRAPEZOIDALSUM = 7;
+	/** Boxplot**/
 	public static final int TYPE_BOXPLOT = 8;
+	/** Boxplot from raw data**/
 	public static final int TYPE_BOXPLOT_RAWDATA = 9;
 	
 	// tolerance for parabolic interpolation
@@ -74,7 +84,17 @@ implements EuclidianViewAlgo {
 	//private double [] widths;
 	
 	private ExtremumFinder extrFinder;
-		
+
+	/**
+	 * Upper o lower sum
+	 * @param cons
+	 * @param label
+	 * @param f
+	 * @param a
+	 * @param b
+	 * @param n
+	 * @param type
+	 */
 	public AlgoFunctionAreaSums(Construction cons, String label, GeoFunction f, 
 								   NumberValue a, NumberValue b, NumberValue n,
 								   int type) {
@@ -100,7 +120,14 @@ implements EuclidianViewAlgo {
 		sum.setDrawable(true);
 	}
 	
-	// BARCHART
+	/**
+	 *  BARCHART
+	 * @param cons
+	 * @param label
+	 * @param a
+	 * @param b
+	 * @param list1
+	 */
 	public AlgoFunctionAreaSums(Construction cons, String label,  
 			   NumberValue a, NumberValue b, GeoList list1) {
 
@@ -120,7 +147,14 @@ implements EuclidianViewAlgo {
 		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
-	// BarChart [<list of data without repetition>, <frequency of each of these data>]
+	/**
+	 *  BarChart [<list of data without repetition>, <frequency of each of these data>]
+	 * @param cons
+	 * @param label
+	 * @param list1
+	 * @param list2
+	 * @param dummy
+	 */
 	public AlgoFunctionAreaSums(Construction cons, String label,  
 			   GeoList list1, GeoList list2, boolean dummy) {
 
@@ -138,7 +172,14 @@ implements EuclidianViewAlgo {
 		sum.setDrawable(true);
 	}
 	
-	// BarChart [<list of data without repetition>, <frequency of each of these data>, <width>]
+	/**
+	 *  BarChart [<list of data without repetition>, <frequency of each of these data>, <width>]
+	 * @param cons
+	 * @param label
+	 * @param list1
+	 * @param list2
+	 * @param width
+	 */
 	public AlgoFunctionAreaSums(Construction cons, String label,  
 			   GeoList list1, GeoList list2, NumberValue width) {
 
@@ -159,7 +200,13 @@ implements EuclidianViewAlgo {
 		sum.setDrawable(true);
 	}
 	
-	// BarChart [<list of data>, <width>]
+	/**
+	 *  BarChart [<list of data>, <width>]
+	 * @param cons
+	 * @param label
+	 * @param list1
+	 * @param n
+	 */
 	public AlgoFunctionAreaSums(Construction cons, String label,  
 			GeoList list1, GeoNumeric n) {
 
@@ -179,9 +226,15 @@ implements EuclidianViewAlgo {
 		sum.setDrawable(true);
 	}
 		
-			// HISTOGRAM
-			public AlgoFunctionAreaSums(Construction cons, String label,  
-					   GeoList list1, GeoList list2) {
+	/**
+	 *  HISTOGRAM
+	 * @param cons
+	 * @param label
+	 * @param list1
+	 * @param list2
+	 */
+	public AlgoFunctionAreaSums(Construction cons, String label,  
+			GeoList list1, GeoList list2) {
 		
 		super(cons);
 		
@@ -195,13 +248,24 @@ implements EuclidianViewAlgo {
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
-		}
+	}
 			
 			
-			// BOXPLOT
-			public AlgoFunctionAreaSums(Construction cons, String label,  
-					NumberValue min, NumberValue Q1,
-					NumberValue median, NumberValue Q3, NumberValue max, NumberValue a, NumberValue b) {
+	/**
+	 *  BOXPLOT
+	 * @param cons
+	 * @param label
+	 * @param min
+	 * @param Q1
+	 * @param median
+	 * @param Q3
+	 * @param max
+	 * @param a
+	 * @param b
+	 */
+	public AlgoFunctionAreaSums(Construction cons, String label,  
+			NumberValue min, NumberValue Q1,
+			NumberValue median, NumberValue Q3, NumberValue max, NumberValue a, NumberValue b) {
 		
 		super(cons);
 		
@@ -224,11 +288,18 @@ implements EuclidianViewAlgo {
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
-		}
+	}
 
-			// BOXPLOT (raw data)
-			public AlgoFunctionAreaSums(Construction cons, String label,  
-					GeoList list1, NumberValue a, NumberValue b) {
+	/**
+	 *  BOXPLOT (raw data)
+	 * @param cons
+	 * @param label
+	 * @param list1
+	 * @param a
+	 * @param b
+	 */
+	public AlgoFunctionAreaSums(Construction cons, String label,  
+			GeoList list1, NumberValue a, NumberValue b) {
 		
 		super(cons);
 		
@@ -247,15 +318,12 @@ implements EuclidianViewAlgo {
 		compute();
 		sum.setLabel(label);
 		sum.setDrawable(true);
-		}
+	}
+	
 
 	final public void euclidianViewUpdate() {
 		compute();
 	}
-	
-	final public boolean wantsEuclidianViewUpdate() {
-    	return true;
-    }
 	
 	public abstract String getClassName();
 
@@ -318,43 +386,139 @@ implements EuclidianViewAlgo {
 			break;
 
 		}
-		output = new GeoElement[1];
-		output[0] = sum;
+		setOutputLength(1);
+		setOutput(0,sum);
 		setDependencies(); // done by AlgoElement
 	}
 
 	/**
- 	* number of intervals
- 	* @return
- 	*/
+ 	 * function
+ 	 * @return function
+ 	 */
+	public GeoFunction getF() {
+		return f;
+	}
+	
+	/**
+ 	 * number of intervals
+ 	 * @return number of intervals
+ 	 */
 	public int getIntervals() {
 		return N;
 	}
 	
+	/**
+	 * Returns length of step for sums
+	 * @return length of step for sums
+	 */
 	public double getStep() {
 		return STEP;
 	}
 	
+	/**
+	 * Returns list of function values
+	 * @return list of function values
+	 */
 	public double [] getValues() {
 		return yval;
 	}
 
+	/**
+	 * Returns list of left borders of columns
+	 * @return list of left borders of columns
+	 */
 	public double [] getLeftBorders() {
 		return leftBorder;
 	}	
 	
+	/**
+	 * Returns the resulting sum
+	 * @return the resulting sum
+	 */
 	public GeoNumeric getSum() {
 		return sum;
 	}
 	
+	/**
+	 * Returns lower bound for sums and y-offset for boxplots
+	 * @return lower bound for sums and y-offset for boxplots
+	 */
 	public NumberValue getA() {
 		return a;
 	}
-		
+	
+	/**
+	 * Returns upper bound for sums and y-scale for boxplots
+	 * @return upper bound for sums and y-scale for boxplots
+	 */
 	public NumberValue getB() {
 		return b;
 	}
 	
+	/**
+	 * Returns n
+	 * @return n
+	 */
+	public GeoNumeric getN() {
+		return (GeoNumeric)ngeo;
+	}
+	
+	/**
+	 * Returns list of raw data for boxplot
+	 * @return list of raw data for boxplot
+	 */
+	public GeoList getList1(){
+		return list1;
+	}
+	
+	/**
+	 * Returns list of frequencies for histogram
+	 * @return list of frequencies for histogram
+	 */
+	public GeoList getList2(){
+		return list2;
+	}
+	
+	/**
+	 * Returns minimum
+	 * @return minimum
+	 */
+	public GeoElement getMinGeo() {
+		return minGeo;
+	}
+
+	/**
+	 * Returns maximum
+	 * @return maximum
+	 */
+	public GeoElement getMaxGeo() {
+		return maxGeo;
+	}
+
+	/**
+	 * Returns Q1
+	 * @return Q1
+	 */
+	public GeoElement getQ1geo() {
+		return Q1geo;
+	}
+
+	/**
+	 * Returns Q3
+	 * @return Q3
+	 */
+	public GeoElement getQ3geo() {
+		return Q3geo;
+	}
+
+	/**
+	 * Returns median
+	 * @return median
+	 */
+	public GeoElement getMedianGeo() {
+		return medianGeo;
+	}
+
 	protected final void compute() {	
 		GeoElement geo; // temporary variable	
 		
@@ -577,7 +741,7 @@ implements EuclidianViewAlgo {
 			
 			int rawDataSize = list1.size();
 			
-			if (step < 0 || kernel.isZero(step) || rawDataSize < 2)
+			if (step < 0 || Kernel.isZero(step) || rawDataSize < 2)
 			{
 				sum.setUndefined();
 				return;
@@ -1020,8 +1184,8 @@ implements EuclidianViewAlgo {
 		calcBoxPlot();
 		
 		break;
-}
-}
+		}
+	}
 	
 	private void calcBoxPlot() {
 		if (yval == null || yval.length < N) {
@@ -1051,6 +1215,10 @@ implements EuclidianViewAlgo {
 		return getCommandDescription();
 	}
 	
+	/**
+	 * Returns true iff this is trapezoidal sum
+	 * @return true iff this is trapezoidal sums
+	 */
 	public boolean useTrapeziums() {
 		switch (type)
 		{
@@ -1060,6 +1228,11 @@ implements EuclidianViewAlgo {
 			return false;
 		}
 	}
+	
+	/**
+	 * Returns true iff this is histogram
+	 * @return true iff this is histogram
+	 */
 	public boolean isHistogram() {
 		switch (type)
 		{
@@ -1069,10 +1242,19 @@ implements EuclidianViewAlgo {
 			return false;
 		}
 	}
+	
+	/**
+	 * Returns type of the sum, see TYPE_* constants of this class
+	 * @return type of the sum
+	 */
 	public int getType() {
 		return type;
 	}
 	
+	/**
+	 * Returns true iff this is boxplot
+	 * @return true iff this is boxplot
+	 */
 	public boolean isBoxPlot() {
 		switch (type)
 		{

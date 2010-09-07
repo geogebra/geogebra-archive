@@ -30,7 +30,7 @@ public class DrawUpperLowerSum extends Drawable {
     private GeoNumeric sum;
     private NumberValue a, b; // interval borders
 
-    boolean isVisible, labelVisible;     
+    private boolean isVisible, labelVisible;     
     private AlgoFunctionAreaSums algo;   
     private GeneralPathClipped gp;
     private double [] coords = new double[2];
@@ -38,6 +38,11 @@ public class DrawUpperLowerSum extends Drawable {
     private boolean histogram;
     private boolean boxplot, barchartFreqs;
    
+    /**
+     * Creates graphical representation of the sum / barchart /...
+     * @param view Euclidian view to be drawn into
+     * @param n The sum / barchart / boxplot / histogram to be drawn
+     */
     public DrawUpperLowerSum(EuclidianView view, GeoNumeric n) {
     	this.view = view; 	
     	sum = n;
@@ -45,19 +50,26 @@ public class DrawUpperLowerSum extends Drawable {
 		
 		n.setDrawable(true);
     	
-    	algo = (AlgoFunctionAreaSums) n.getParentAlgorithm();    	
+    	init();  
+        update();
+    }
+    
+    private void init() {
+    	algo = (AlgoFunctionAreaSums) geo.getDrawAlgorithm();    	
 		this.trapeziums = algo.useTrapeziums();
 		this.histogram = algo.isHistogram();
 		this.boxplot = algo.isBoxPlot();
 		this.barchartFreqs = algo.getType() == AlgoFunctionAreaSums.TYPE_BARCHART_FREQUENCY_TABLE;
         a = algo.getA();
-        b = algo.getB();    
-        update();
+        b = algo.getB();  
     }
 
     final public void update() {				   
         isVisible = geo.isEuclidianVisible();
         if (!isVisible) return;
+        if(geo.isAlgoMacroOutput()){
+        	init();
+        }
 		labelVisible = geo.isLabelVisible();            
 		updateStrokes(sum);
 		

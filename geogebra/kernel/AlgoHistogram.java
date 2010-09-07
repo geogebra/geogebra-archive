@@ -12,6 +12,12 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+/**
+ * Histogram algorithm. See AlgoFunctionAreaSums for implementation.
+ * 
+ * @author George Sturr
+ *
+ */
 public class AlgoHistogram extends AlgoFunctionAreaSums {
 		
 	/**
@@ -19,6 +25,13 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Creates histogram
+	 * @param cons construction
+	 * @param label label for the histogram
+	 * @param list1 list of boundaries
+	 * @param list2 list of heights or raw data
+	 */
 	public AlgoHistogram(Construction cons, String label,
 								   GeoList list1, GeoList list2) {
 		super(cons, label, list1, list2);		
@@ -26,6 +39,10 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 	
 	public String getClassName() {
 		return "AlgoHistogram";
+	}
+	
+	public AlgoHistogram copy() {
+		return new AlgoHistogram(this.cons,null,(GeoList)this.getList1().copy(),(GeoList)this.getList2().copy());
 	}
 	
 }
