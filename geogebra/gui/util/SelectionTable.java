@@ -117,7 +117,7 @@ public class SelectionTable extends JTable{
 		setShowGrid(false);
 		//this.setIntercellSpacing(new Dimension(1,1));
 		setGridColor(MyTable.TABLE_GRID_COLOR);
-		setBackground(Color.white);
+		//setBackground(Color.white);
 		//setOpaque(true);
 		this.setTableHeader(null);
 		//this.setBorder(BorderFactory.createLineBorder(getGridColor()));
@@ -125,8 +125,7 @@ public class SelectionTable extends JTable{
 		
 		// set cell selection properties
 		setCellSelectionEnabled(true);
-		this.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);	
-		this.setCellSelectionEnabled(true);
+		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			
 	
 		// set cell dimensions
