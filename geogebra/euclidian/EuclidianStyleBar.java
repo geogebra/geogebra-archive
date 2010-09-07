@@ -1,7 +1,7 @@
 package geogebra.euclidian;
 
-import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.util.PopupMenuButton;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,7 +14,7 @@ import javax.swing.JToolBar;
 public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 
-	private JToggleButton btnShowGrid, btnShowAxes;
+	private JToggleButton btnShowGrid, btnShowAxes, btnVisualMode;
 	private PopupMenuButton btnColor, btnLineStyle, btnSize;
 	
 	private EuclidianController ec;
@@ -29,6 +29,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	//do we need this??
 	private int maxIconHeight = 16;
 	
+	private Color defaultBackground;
 	
 	
 	public EuclidianStyleBar(EuclidianView ev) {
@@ -37,6 +38,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		ec = ev.getEuclidianController(); 
 			
 		setFloatable(false);
+		defaultBackground = this.getBackground();
+		
 		initGUI();
 
 	}
@@ -44,6 +47,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	private void initGUI() {
 	
+		btnVisualMode = new JToggleButton(ev.getApplication().getImageIcon("magnet.gif"));
+		btnVisualMode.addActionListener(this);
+		btnVisualMode.setSelected(ev.getMode()==EuclidianView.MODE_VISUAL_STYLE);
+		add(btnVisualMode);
+		
 		btnShowAxes = new JToggleButton(ev.getApplication().getImageIcon("axes.gif"));
 		btnShowAxes.addActionListener(this);
 		btnShowAxes.setSelected(ev.getShowXaxis());
@@ -95,6 +103,14 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		
+		if (source.equals(btnVisualMode)) {		
+			if(btnVisualMode.isSelected())
+				ev.setMode(EuclidianView.MODE_VISUAL_STYLE);
+			else
+				ev.getApplication().setMoveMode();
+		}
+		
+		
 		if (source.equals(btnShowAxes)) {		
 			ev.setShowAxes(!ev.getShowXaxis(), true);
 			ev.repaint();
@@ -123,9 +139,19 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		else if (source == btnSize) {
 				ec.setSize(btnSize.getSliderValue());
 		}
+		
+		updateGUI();
 	}
 
 	private void updateGUI(){
+		
+		if(btnVisualMode.isSelected())
+			this.setBackground(defaultBackground.brighter());
+			//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+		else
+			this.setBackground(defaultBackground);
+			//this.setBorder(BorderFactory.createEmptyBorder());
+		
 		
 		btnShowAxes.removeActionListener(this);
 		btnShowAxes.setSelected(ev.getShowXaxis());

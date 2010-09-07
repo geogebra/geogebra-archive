@@ -385,7 +385,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			
 		case EuclidianView.MODE_VISUAL_STYLE:
 			
-			openMiniPropertiesPanel();
+		//	openMiniPropertiesPanel();
 			
 			break;
 
@@ -3538,7 +3538,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void setProperties(GeoElement geo) {
 		
 		if (!app.hasFullGui()) return;
-		if (!app.getGuiManager().miniPropertiesOpen()) return;
+	//	if (!app.getGuiManager().miniPropertiesOpen()) return;
 		
 		if (geo instanceof PointProperties) {
 			PointProperties p = (PointProperties)geo;
