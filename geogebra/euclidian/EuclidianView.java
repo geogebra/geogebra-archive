@@ -1951,6 +1951,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	public void setDrawBorderAxes(boolean[] drawBorderAxes) {
 		this.drawBorderAxes = drawBorderAxes;
+		// don't show corner coordinates if one of the axes is sticky
+		this.setAxesCornerCoordsVisible(!(drawBorderAxes[0] || drawBorderAxes[1]));
 	}
 	
 	// for xml handler
