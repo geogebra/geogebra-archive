@@ -2,9 +2,9 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -13,18 +13,41 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @author ggb3D
  *
  */
-public abstract class AlgoFunctionNVarND extends AlgoElement3D {
-	
-	
-	protected GeoElement function; //output function
-	
-	private NumberValue[] coords; // input : expression for each coord x, y, z, ...
-	protected NumberValue[] from;  // input : "from" and "to" values for each var 
+public class AlgoFunctionNVarND extends AlgoElement3D {
 
-	protected NumberValue[] to;
-    private GeoNumeric[] localVar;     // input : variables u, v, ...
 	
+	/** input function */
+	protected GeoElement inputFunction; 
+
+	/** output function */
+	protected GeoElement function; 
+	
+	//private NumberValue[] coords; // input : expression for each coord x, y, z, ...
+	/** input : "from" values for each var */
+	protected NumberValue[] from;  
+	/** input : "to" values for each var */
+	protected NumberValue[] to;
+    //private GeoNumeric[] localVar;     // input : variables u, v, ...
+	
+	
+	private AlgoFunctionNVarND(Construction cons,NumberValue[] from, NumberValue[] to){
+		super(cons);
+		
+		//this.coords = coords;
+    	this.from = from;
+    	this.to = to;
+    	//this.localVar = localVar;
+	}
+			
 	/**
+	 * Construct a function
+	 * 
+	 * @param cons 
+	 * @param label 
+	 * @param coords description of the function
+	 * @param localVar var of the function
+	 * @param from "from" values for each var
+	 * @param to "to" values for each var
 	 * 
 	 */
 	public AlgoFunctionNVarND(Construction cons, String label, 
@@ -32,13 +55,7 @@ public abstract class AlgoFunctionNVarND extends AlgoElement3D {
 			GeoNumeric[] localVar, NumberValue[] from, NumberValue[] to)  {
 
 
-		super(cons);
-		
-    	this.coords = coords;
-    	this.from = from;
-    	this.to = to;
-    	this.localVar = localVar;
-    	
+		this(cons,from,to);
     	
     	// we need to create Function objects for the coord NumberValues,
     	// so let's get the expressions of xcoord and ycoord and replace
@@ -64,17 +81,65 @@ public abstract class AlgoFunctionNVarND extends AlgoElement3D {
 		}
         
 		// create the function
-		function = createFunction(cons, fun);
+		function = new GeoFunctionNVar(cons, fun[0]);
+		
+		//end of construction
+		end(label,coords,localVar);
+	}
+	
+	
+	/**
+	 * Construct a function
+	 * 
+	 * @param cons 
+	 * @param label 
+	 * @param f (x,y) function
+	 * @param from "from" values for each var
+	 * @param to "to" values for each var
+	 * 
+	 */
+	public AlgoFunctionNVarND(Construction cons, String label, 
+			GeoFunctionNVar f,  
+			NumberValue[] from, NumberValue[] to)  {
+
+
+		this(cons,from,to);
+ 		
+		inputFunction = f;
+		function = inputFunction.copy();
+		
+		//end of construction
+		end(label,null,null);
+	}
+		
+	private void end(String label, NumberValue[] coords, GeoNumeric[] localVar){
        
-		GeoElement[] input = new GeoElement[coords.length+localVar.length+from.length+to.length];
+		int inputLength = from.length+to.length;
+		if (coords!=null)
+			inputLength+=coords.length;
+		else
+			inputLength+=1; //for the function
+		if (localVar!=null)
+			inputLength+=localVar.length;
+		GeoElement[] input = new GeoElement[inputLength];
+		
 		int index = 0;
-		for (int i=0;i<coords.length;i++){
-			input[index]=(GeoElement) coords[i];
+		
+		if(coords!=null)
+			for (int i=0;i<coords.length;i++){
+				input[index]=(GeoElement) coords[i];
+				index++;
+			}
+		else{
+			input[index]=inputFunction;
 			index++;
 		}
-		for (int i=0;i<localVar.length;i++){
-			input[index]=(GeoElement) localVar[i];
-			index++;
+		
+		for (int i=0;i<from.length;i++){
+			if (localVar!=null){
+				input[index]=(GeoElement) localVar[i];
+				index++;
+			}
 			input[index]=(GeoElement) from[i];
 			index++;
 			input[index]=(GeoElement) to[i];
@@ -90,12 +155,38 @@ public abstract class AlgoFunctionNVarND extends AlgoElement3D {
 		function.setLabel(label);
 	}
 
-	protected abstract GeoElement createFunction(Construction cons, FunctionNVar[] fun);
+	/**
+	 * @return the function
+	 */
+	public GeoFunctionNVar getFunction(){
+		return (GeoFunctionNVar) function;
+	}
 	
 	
+
+	protected void compute() {
+
+		if (inputFunction!=null)
+			function.set(inputFunction);
+		
+		((GeoFunctionNVar) function).setInterval(
+				getDouble(from), 
+				getDouble(to)			
+		);
+		
+	}
 	
-	
-	
+	private double[] getDouble(NumberValue[] values){
+		double[] ret = new double[values.length];
+		for (int i=0; i<values.length; i++)
+			ret[i]=values[i].getDouble();
+		return ret;
+	}
+
+	public String getClassName() {
+		
+		return "AlgoFunctionInterval";
+	}
 	
 	
 

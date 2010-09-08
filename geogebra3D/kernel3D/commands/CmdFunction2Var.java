@@ -40,12 +40,12 @@ public class CmdFunction2Var extends CmdFunction {
 		int n = c.getArgumentNumber();
 		boolean[] ok = new boolean[n];
 
-
+		GeoElement[] arg;
 
 		switch (n) {
 		case 7 :   
 			// create local variable at position 3 and resolve arguments
-	    	GeoElement[] arg = resArgsLocalNumVar(c, new int[] {1,4}, new int[] {2,5});    
+	    	arg = resArgsLocalNumVar(c, new int[] {1,4}, new int[] {2,5});    
 	    	
 			if (
 					(ok[0] = arg[0] .isNumberValue()) //function
@@ -71,7 +71,7 @@ public class CmdFunction2Var extends CmdFunction {
 						)
 				};
 				return ret;
-			} else if (
+			} /*else if (
 					(ok[0] = (arg[0] instanceof GeoFunctionNVar)) //function
 	    			&& (ok[1] = arg[1].isGeoNumeric()) //first var
 	    			&& (ok[2] = arg[2].isNumberValue()) //from
@@ -81,14 +81,56 @@ public class CmdFunction2Var extends CmdFunction {
 	    			&& (ok[6] = arg[6].isNumberValue()) //to
 					
 			) {
-				throw new MyError(app, "bounded xy-function not implemented yet");
-			}                                
+				GeoElement[] ret =
+				{
+						kernel3D.Function2Var(
+								c.getLabel(),
+								(GeoFunctionNVar) arg[0],
+								(NumberValue) arg[2],
+								(NumberValue) arg[3],
+								(NumberValue) arg[5],							
+								(NumberValue) arg[6]							
+						)
+				};
+				return ret;
+			}     */                           
 			else {
 				int i=0;
 				while (i<7 && ok[i])
 					i++;
 				throw argErr(app, "Function", arg[i]);
 			}
+			
+		case 5 :   
+	    	arg = resArgs(c);   
+	    	if (
+					(ok[0] = (arg[0] instanceof GeoFunctionNVar)) //function
+	    			&& (ok[1] = arg[1].isNumberValue()) //x from
+	    			&& (ok[2] = arg[2].isNumberValue()) //x to
+	    			&& (ok[3] = arg[3].isNumberValue()) //y from
+	    			&& (ok[4] = arg[4].isNumberValue()) //y to
+					
+			) {
+				GeoElement[] ret =
+				{
+						kernel3D.Function2Var(
+								c.getLabel(),
+								(GeoFunctionNVar) arg[0],
+								(NumberValue) arg[1],
+								(NumberValue) arg[2],
+								(NumberValue) arg[3],							
+								(NumberValue) arg[4]							
+						)
+				};
+				return ret;
+			}                                
+			else {
+				int i=0;
+				while (i<5 && ok[i])
+					i++;
+				throw argErr(app, "Function", arg[i]);
+			}
+
 
 		}
 

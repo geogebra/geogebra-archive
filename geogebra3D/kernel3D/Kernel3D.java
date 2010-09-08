@@ -717,20 +717,35 @@ public class Kernel3D
 			GeoNumeric localVarV, NumberValue Vfrom, NumberValue Vto 
 			){
 		
-		/*
-		GeoFunction2Var f = new GeoFunction2Var(cons);
-		f.setLabel(label);
-		*/
-		
-		AlgoFunction2Var algo = new AlgoFunction2Var(cons, label, 
-				zcoord, 
-				localVarU, Ufrom, Uto, 
-				localVarV, Vfrom, Vto);
+		AlgoFunctionNVarND algo = new AlgoFunctionNVarND(cons, label, 
+				new NumberValue[] {zcoord}, 
+				new GeoNumeric[] {localVarU, localVarV},
+				new NumberValue[] {Ufrom, Vfrom}, 
+				new NumberValue[] {Uto, Vto}
+		);
 		
 		
 		return algo.getFunction();
 		
 	}
+	
+	final public GeoFunctionNVar Function2Var(
+			String label, 
+			GeoFunctionNVar f, 
+			NumberValue xFrom, NumberValue xTo, 
+			NumberValue yFrom, NumberValue yTo 		
+			){
+		
+		AlgoFunctionNVarND algo = new AlgoFunctionNVarND(cons, label, 
+				f, 
+				new NumberValue[] {xFrom, xTo}, 
+				new NumberValue[] {yFrom, yTo});
+		
+		
+		return algo.getFunction();
+		
+	}
+
 
 	////////////////////////////////////////////////
 	// 3D CURVE (2 VARS)
