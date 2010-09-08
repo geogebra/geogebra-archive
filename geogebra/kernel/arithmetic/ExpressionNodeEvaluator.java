@@ -1613,24 +1613,16 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         */
         case ELEMENT_OF:      
             if (rt.isListValue() && lt instanceof GeoList) { 
-            	
+            	GeoElement subList = ((GeoList)lt);
             	ListValue lv = (ListValue)rt;
-            	if (lv.size() == 1) { // list1(1)
-            		ExpressionValue ev = lv.getMyList().getListElement(0).evaluate();
-            		if (ev.isNumberValue())
-            			return ((GeoList)lt).get(-1 + (int)((NumberValue)ev).getDouble());
+            	for(int i = 0; i < lv.size(); i++){
+            		ExpressionValue ev = lv.getMyList().getListElement(i).evaluate();
+            		subList = ((GeoList)subList).get(-1 + (int)((NumberValue)ev).getDouble());
+            		if(!(subList instanceof GeoList)) break;
             	}
-            	else if (lv.size() == 2) { // matrix1(1,2) (same as Element[matrix1,1,2]
-            		ExpressionValue ev0 = lv.getMyList().getListElement(0).evaluate();
-            		ExpressionValue ev1 = lv.getMyList().getListElement(1).evaluate();
-            		if (ev0.isNumberValue() && ev1.isNumberValue()) {
-            			GeoElement subList = ((GeoList)lt).get(-1 + (int)((NumberValue)ev0).getDouble());
-            			if (subList.isGeoList()) {
-            				return ((GeoList)subList).get(-1 + (int)((NumberValue)ev1).getDouble());
-            			}
-            		}
-            	}
-           }
+            	return subList; 
+            	
+           }else
             
             // fallthrough
             {
