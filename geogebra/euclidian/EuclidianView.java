@@ -2031,6 +2031,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 //		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 //				RenderingHints.VALUE_ANTIALIAS_OFF);
 
+		// make sure arrows don't go off screen (eg EMF export)
+		double arrowAdjust = drawArrows ? axesStroke.getLineWidth() : 0;
+	
 		
 		// ========================================
 		// X-AXIS
@@ -2138,20 +2141,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			g2.setStroke(axesStroke);
 			
 			//tempLine.setLine(0, yCrossPix, width, yCrossPix);
-			tempLine.setLine(xAxisStart, yCrossPix, width, yCrossPix);
+			tempLine.setLine(xAxisStart, yCrossPix, width - arrowAdjust - 1 , yCrossPix);
 			
 			g2.draw(tempLine);
 
-			if (drawArrows) {
-				// tur antialiasing on
-//				g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//						antiAliasValue);
+			if (drawArrows && ymin < 0 && ymax > 0) {
 
 				// draw arrow for x-axis
-				tempLine.setLine(width - 1, yCrossPix, width - 1 - arrowSize, yCrossPix
+				tempLine.setLine(width - arrowAdjust, yCrossPix + 0.5, width - arrowAdjust - arrowSize, yCrossPix
 						- arrowSize);
 				g2.draw(tempLine);
-				tempLine.setLine(width - 1, yCrossPix, width - 1 - arrowSize, yCrossPix
+				tempLine.setLine(width - arrowAdjust, yCrossPix - 0.5, width - arrowAdjust - arrowSize, yCrossPix
 						+ arrowSize);
 				g2.draw(tempLine);
 
@@ -2267,15 +2267,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			// y-Axis
 			
 			//tempLine.setLine(xZero, 0, xZero, height);
-			tempLine.setLine(xCrossPix, 0, xCrossPix, yAxisEnd);
+			tempLine.setLine(xCrossPix, arrowAdjust + 1, xCrossPix, yAxisEnd);
 				
 			g2.draw(tempLine);
 
 			if (drawArrows && xmin < 0 && xmax > 0) {
 				// draw arrow for y-axis
-				tempLine.setLine(xCrossPix, 0, xCrossPix - arrowSize, arrowSize);
+				tempLine.setLine(xCrossPix + 0.5, arrowAdjust, xCrossPix - arrowSize, arrowAdjust + arrowSize);
 				g2.draw(tempLine);
-				tempLine.setLine(xCrossPix, 0, xCrossPix + arrowSize, arrowSize);
+				tempLine.setLine(xCrossPix - 0.5, arrowAdjust, xCrossPix + arrowSize, arrowAdjust + arrowSize);
 				g2.draw(tempLine);
 			}								
 		}
