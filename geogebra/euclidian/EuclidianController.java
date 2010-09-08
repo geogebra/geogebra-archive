@@ -6714,6 +6714,104 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return false;
 	}
 
+	
+	
+	
+	//==============================================
+	//	        StyleBar 
+	//==============================================
+	
+	
+	//==============================================
+	// create new styles with getters/setters
+	
+	private MiniStyle penStyle = new MiniStyle(MiniStyle.MODE_PEN);
+	private MiniStyle standardStyle = new MiniStyle(MiniStyle.MODE_STANDARD);
+	
+	public MiniStyle getPenStyle() {
+		return penStyle;
+	}
+
+	public void setPenStyle(MiniStyle penStyle) {
+		this.penStyle = penStyle;
+	}
+
+	public MiniStyle getStandardStyle() {
+		return standardStyle;
+	}
+
+	public void setStandardStyle(MiniStyle standardStyle) {
+		this.standardStyle = standardStyle;
+	}
+
+	
+	
+	//==============================================
+	// methods to apply styles to selected geos
+	
+	public void applyLineStyle(MiniStyle vs) {
+
+		int lineStyle = vs.lineStyle;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			geo.setLineType(lineStyle);
+			geo.updateRepaint();			
+		}
+	
+	}
+	
+	public void applyPointSize(MiniStyle vs) {
+		
+		int lineSize = vs.lineSize;
+		int pointSize = vs.pointSize;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+
+			if (geo instanceof PointProperties) {
+				((PointProperties)geo).setPointSize(pointSize);
+				geo.updateRepaint();
+
+			} else {
+				geo.setLineThickness(lineSize);
+				geo.updateRepaint();
+			}
+		}
+	}
+
+	public void applyColor(MiniStyle vs) {
+		
+		Color color = vs.color;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			geo.setObjColor(color);
+			geo.updateRepaint();
+		}
+	}
+
+	public void applyAlpha(MiniStyle vs) {
+
+		float alpha = vs.alpha;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			geo.setAlphaValue(alpha);
+			geo.updateRepaint();
+		}
+	}
+
+	//=============================================
+	// END stylebar 
+	
+	
+	
+	
 	//******************************
 	// PropertiesPanelMini Listeners
 	//******************************
@@ -6784,8 +6882,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				geo.updateRepaint();
 			}
 	}
-	
-	
 	
 	
 	private void openMiniPropertiesPanel() {
