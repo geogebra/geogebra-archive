@@ -77,6 +77,18 @@ implements Previewable {
     			isVisible = false;
             	// don't return here to make sure that getBounds() works for offscreen points too
     		}             
+    		// draw trace
+    		if (poly.trace) {
+    			isTracing = true;
+    			Graphics2D g2 = view.getBackgroundGraphics();
+    			if (g2 != null) fill(g2, gp, false);
+    		} else {
+    			if (isTracing) {
+    				isTracing = false;
+    				view.updateBackground();
+    			}
+    		}	
+            
         }
     }
 	

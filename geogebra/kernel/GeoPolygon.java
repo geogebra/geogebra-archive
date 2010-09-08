@@ -27,7 +27,7 @@ import java.util.HashSet;
  * 
  * @author Markus Hohenwarter
  */
-public class GeoPolygon extends GeoElement implements NumberValue, Path, Region {
+public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -1019,6 +1019,20 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region 
 		return 0;
 	}
 
+   public boolean trace;
+
+	public boolean isTraceable() {
+		return true;
+	}
+
+	public void setTrace(boolean trace) {
+		this.trace = trace;
+	}
+
+	public boolean getTrace() {
+		return trace;
+	}
+	
 	
 	
 	
