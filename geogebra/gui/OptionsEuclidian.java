@@ -69,7 +69,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle, cbView;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
-	private NumberComboBox ncbGridTickX, ncbGridTickY, ncbMinX, ncbMaxX, ncbMinY, ncbMaxY;	
+	private NumberComboBox ncbGridTickX, ncbGridTickY; 
+	private JTextField tfMinX, tfMaxX, tfbMinY, tfMaxY;	
 	private AxisPanel xAxisPanel, yAxisPanel;
 	private JLabel gridLabel1, gridLabel2, gridLabel3;
 	
@@ -170,29 +171,29 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		//-------------------------------------
 		// window dimensions panel     
         JPanel xDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
-        ncbMinX = new NumberComboBox(app);
-		ncbMaxX = new NumberComboBox(app);	
-		ncbMinX.addItemListener(this);
-		ncbMaxX.addItemListener(this);	
+        tfMinX = new MyTextField(app.getGuiManager(),8);
+		tfMaxX = new MyTextField(app.getGuiManager(),8);
+		tfMinX.addActionListener(this);
+		tfMaxX.addActionListener(this);	
 		
 		dimLabel = new JLabel[4]; // "Xmin", "Xmax" etc.
 		for(int i=0;i<4;i++)
 			dimLabel[i] = new JLabel("");
 		
         xDimPanel.add(dimLabel[0]);
-        xDimPanel.add(ncbMinX);
+        xDimPanel.add(tfMinX);
         xDimPanel.add(dimLabel[1]);
-        xDimPanel.add(ncbMaxX);
+        xDimPanel.add(tfMaxX);
               
         JPanel yDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
-		ncbMinY = new NumberComboBox(app);
-		ncbMaxY = new NumberComboBox(app);		
-		ncbMinY.addItemListener(this);
-		ncbMaxY.addItemListener(this);	  
+		tfbMinY = new MyTextField(app.getGuiManager(),8);
+		tfMaxY = new MyTextField(app.getGuiManager(),8);		
+		tfbMinY.addActionListener(this);
+		tfMaxY.addActionListener(this);	  
         yDimPanel.add(dimLabel[2]);
-        yDimPanel.add(ncbMinY);
+        yDimPanel.add(tfbMinY);
         yDimPanel.add(dimLabel[3]);
-        yDimPanel.add(ncbMaxY);
+        yDimPanel.add(tfMaxY);
    
             
         JPanel axesRatioPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
@@ -431,18 +432,18 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
     	cbView.addActionListener(this);
         
         
-        ncbMinX.removeItemListener(this);
-	 	ncbMaxX.removeItemListener(this);
-        ncbMinY.removeItemListener(this);
-	 	ncbMaxY.removeItemListener(this);		 		
-	 		ncbMinX.setValue(view.getXmin());
-			ncbMaxX.setValue(view.getXmax());
-	 		ncbMinY.setValue(view.getYmin());
-			ncbMaxY.setValue(view.getYmax());
-	 	ncbMinX.addItemListener(this);
-	 	ncbMaxX.addItemListener(this);
-	 	ncbMinY.addItemListener(this);
-	 	ncbMaxY.addItemListener(this);
+        tfMinX.removeActionListener(this);
+	 	tfMaxX.removeActionListener(this);
+        tfbMinY.removeActionListener(this);
+	 	tfMaxY.removeActionListener(this);		 		
+	 		tfMinX.setText(kernel.format(view.getXmin()));
+			tfMaxX.setText(kernel.format(view.getXmax()));
+	 		tfbMinY.setText(kernel.format(view.getYmin()));
+			tfMaxY.setText(kernel.format(view.getYmax()));
+	 	tfMinX.addActionListener(this);
+	 	tfMaxX.addActionListener(this);
+	 	tfbMinY.addActionListener(this);
+	 	tfMaxY.addActionListener(this);
         
         
         cbGridType.removeActionListener(this);
@@ -626,6 +627,38 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				setView(app.getGuiManager().getEuclidianView2());
 		}
 
+		
+		else if (source == tfMinX) {
+			double min = kernel.getAlgebraProcessor().evaluateToDouble(tfMinX.getText());
+			double max =  view.getXmax();
+			if (min  + Kernel.MIN_PRECISION < max) {							
+				view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
+			}
+		}
+
+		else if (source == tfMaxX) {
+			double min = view.getXmin();
+			double max = kernel.getAlgebraProcessor().evaluateToDouble(tfMaxX.getText());
+			if (min + Kernel.MIN_PRECISION < max) {	
+				view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
+			}
+		}
+
+		else if (source == tfbMinY) {
+			double min = kernel.getAlgebraProcessor().evaluateToDouble(tfbMinY.getText());
+			double max =  view.getYmax();
+			if (min  + Kernel.MIN_PRECISION < max) {							
+				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
+			}
+		}
+
+		else if (source == tfMaxY) {
+			double min = view.getYmin();
+			double max = kernel.getAlgebraProcessor().evaluateToDouble(tfMaxY.getText());
+			if (min + Kernel.MIN_PRECISION < max) {	
+				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
+			}
+		}
 
 
 		view.updateBackground();		
@@ -672,38 +705,6 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				if(val == 4) val = 5;
 				ticks[2] = (val + 1)*Math.PI/12;
 				view.setGridDistances(ticks);
-			}
-		}
-
-		else if (source == ncbMinX) {
-			double min = ncbMinX.getValue();
-			double max =  view.getXmax();
-			if (min  + Kernel.MIN_PRECISION < max) {							
-				view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
-			}
-		}
-
-		else if (source == ncbMaxX) {
-			double min = view.getXmin();
-			double max = ncbMaxX.getValue();
-			if (min + Kernel.MIN_PRECISION < max) {	
-				view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
-			}
-		}
-
-		else if (source == ncbMinY) {
-			double min = ncbMinY.getValue();
-			double max =  view.getYmax();
-			if (min  + Kernel.MIN_PRECISION < max) {							
-				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
-			}
-		}
-
-		else if (source == ncbMaxY) {
-			double min = view.getYmin();
-			double max = ncbMaxY.getValue();
-			if (min + Kernel.MIN_PRECISION < max) {	
-				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
 			}
 		}
 
