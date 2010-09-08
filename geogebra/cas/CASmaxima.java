@@ -225,6 +225,11 @@ public class CASmaxima extends CASgeneric {
 				Application.debug("WARNING: replacing %c by const",1);
 			}
 			
+			if (result.indexOf("%e") > -1) {
+				result = result.replaceAll("%e","e");
+				Application.debug("WARNING: replacing %e by e",1);
+			}
+			
 			if (result.indexOf(" =") > -1) { // y = not :=
 				result = result.replaceAll(" =","==");
 				Application.debug("WARNING: replacing = by ==",1);
