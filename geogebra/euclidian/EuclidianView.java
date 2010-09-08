@@ -1841,8 +1841,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 		setAntialiasing(g);
 		
-		if(drawBorderAxes[0] || drawBorderAxes[1]){
+		// handle drawing axes near the screen edge
+ 		if(drawBorderAxes[0] || drawBorderAxes[1]){
+ 			
+ 			// edge axes are not drawn at the exact edge, instead they
+ 			// are inset enough to draw the labels
+ 			// labelOffset = amount of space needed to draw labels 
 			Point labelOffset = getMaximumLabelSize(g);
+			
+			// force the the axisCross position to be near the edge
 			if(drawBorderAxes[0])
 				axisCross[0] = ymin +  (labelOffset.y + 10)/yscale;
 			if(drawBorderAxes[1])
@@ -1958,10 +1965,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 **********************************************/
 	final void drawAxes(Graphics2D g2) {
 		
-		// screen x: yAxis crosses the xAxis here
+		// xCrossPix: yAxis crosses the xAxis at this x pixel
 		double xCrossPix =  this.xZero + axisCross[1] * xscale;
 		
-		// screen y: xAxis crosses the YAxis here
+		// yCrossPix: xAxis crosses the YAxis at his y pixel
 		double yCrossPix =  this.yZero - axisCross[0] * yscale;
 		
 		
@@ -1971,7 +1978,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		// xAxis start value (for drawing half-axis)
 		int xAxisStart = positiveAxes[0] ? (int) xCrossPix : 0;		
-		
+				
 		
 		// for axes ticks
 		double yZeroTick = yCrossPix;
@@ -1983,6 +1990,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		double xSmall1 = xCrossPix - 0;
 		double xSmall2 = xCrossPix - 2;
 		int xoffset, yoffset;
+		
+		
 		boolean bold = axesLineType == AXES_LINE_TYPE_FULL_BOLD
 						|| axesLineType == AXES_LINE_TYPE_ARROW_BOLD;
 		boolean drawArrows = axesLineType == AXES_LINE_TYPE_ARROW
@@ -1991,6 +2000,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// AXES_TICK_STYLE_MAJOR_MINOR = 0;
 		// AXES_TICK_STYLE_MAJOR = 1;
 		// AXES_TICK_STYLE_NONE = 2;
+		
 		boolean[] drawMajorTicks = { axesTickStyles[0] <= 1,
 				axesTickStyles[1] <= 1 };
 		boolean[] drawMinorTicks = { axesTickStyles[0] == 0,
@@ -2042,9 +2052,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			// numbers
 			double rw = xmin - (xmin % axesNumberingDistances[0]);
 			
-			if(getPositiveAxes()[0])  // start labels at the y-axis instead of screen border
-				rw = axisCross[0] - (axisCross[0] % axesNumberingDistances[0]) + axesNumberingDistances[0] ;
-					
+			if(getPositiveAxes()[0])  
+				// start labels at the y-axis instead of screen border
+				// be careful: axisCross[1] = x value for which the y-axis crosses, 
+				// so xmin is replaced axisCross[1] and not axisCross[0] 
+				rw = axisCross[1] - (axisCross[1] % axesNumberingDistances[0]) + axesNumberingDistances[0] ;
+			
 			double pix = xZero + rw * xscale;    
 			double axesStep = xscale * axesNumberingDistances[0]; // pixelstep
 			double smallTickPix;
