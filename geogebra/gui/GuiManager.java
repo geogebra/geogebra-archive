@@ -589,9 +589,6 @@ public class GuiManager {
 	
 	public void setShowToolBarHelp(boolean flag) {
 		ToolbarContainer.setShowHelp(flag);
-		
-		toolbarPanel.buildGui();
-		// TODO update panels..
 	}
 
 	public JComponent getConstructionProtocolNavigation() {
