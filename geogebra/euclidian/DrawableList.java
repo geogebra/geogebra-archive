@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import java.awt.Graphics2D;
+import java.util.Iterator;
 
 /**
  * List to store Drawable objects for fast drawing. 
@@ -22,15 +23,23 @@ public class DrawableList {
 	private Link head, tail;	
 	private int size = 0;
 	
+	/**
+	 * Creates new drawable list, no initiation done.
+	 */
 	public DrawableList() {
 	}
 	
+	/**
+	 * Number of drawables in list
+	 * @return number of drawables in list
+	 */
 	final int size() {
 		return size;
 	}
 	
 	/**
 	 * Inserts d at the end of the list.
+	 * @param d Drawable to be inserted
 	 */
 	public final void add(Drawable d) {		
 		if (d == null) return;
@@ -113,6 +122,8 @@ public class DrawableList {
 	
 	/**
 	 * Returns true iff d is in this list.
+	 * @param d Drawable to be looked for
+	 * @return true iff d is in this list.
 	 */
 	final boolean contains(Drawable d) {
 		Link cur = head;
@@ -124,7 +135,8 @@ public class DrawableList {
 	}
 	
 	/**
-	 * Removes d from list.	 
+	 * Removes d from list.
+	 * @param d Drawable to be removed	 
 	 */
 	final void remove(Drawable d) {
 		Link prev = null;
@@ -149,14 +161,22 @@ public class DrawableList {
 		}
 	}
 	
+	/**
+	 * Draws all drawables in the list.
+	 * @param g2 Graphic to be used
+	 */
 	public final void drawAll(Graphics2D g2) {		
 		Link cur = head;
 		while (cur != null) {
-				cur.d.draw(g2);
+			//defined check needed in case the GeoList changed its size
+				if(cur.d.geo.isDefined())cur.d.draw(g2);
 			cur = cur.next;
 		}
 	}	
 	
+	/**
+	 * Updates all drawables in list
+	 */
 	final void updateAll() {
 		Link cur = head;
 		while (cur != null) {
@@ -165,6 +185,9 @@ public class DrawableList {
 		}
 	}	
 	
+	/**
+	 * Updates fot size for all drawables in list
+	 */
 	final void updateFontSizeAll() {
 		Link cur = head;
 		while (cur != null) {
@@ -173,6 +196,9 @@ public class DrawableList {
 		}
 	}	
 	
+	/**
+	 * Empties the list
+	 */
 	void clear() {
 		head = null;
 		tail = null;
@@ -188,11 +214,19 @@ public class DrawableList {
 		}
 	}
 	
+	/**
+	 * Returns iterator pointing to head of the list
+	 * @return iterator pointing to head of the list
+	 */
 	public DrawableIterator getIterator() {
 		return new DrawableIterator(); 
 	}
 	
-	class DrawableIterator {
+	/**
+	 * Allows iteration over the list
+	 *
+	 */
+	class DrawableIterator implements Iterator<Drawable> {
 		private Link it;
 	
 		private DrawableIterator() {
@@ -209,8 +243,15 @@ public class DrawableList {
 			return (it != null);
 		}
 		
+		/**
+		 * Resets the iterator to the head of the list
+		 */
 		final public void reset() {
 			it = head;
+		}
+		
+		final public void remove() {
+			
 		}
 	
 	}

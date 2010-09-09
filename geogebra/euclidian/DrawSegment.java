@@ -42,8 +42,8 @@ implements Previewable {
     private GeoLine s;
     private GeoPoint A, B;
        
-    boolean isVisible, labelVisible;
-    private ArrayList points;
+    private boolean isVisible, labelVisible;
+    private ArrayList<GeoPoint> points;
     
     private Line2D.Double line;               
     private double [] coordsA = new double[2];
@@ -52,7 +52,11 @@ implements Previewable {
 	// For drawing ticks
 	private Line2D.Double [] decoTicks;	
     
-	/** Creates new DrawSegment */
+	/** 
+	 * Creates new DrawSegment
+	 * @param view Euclidian view to be used
+	 * @param s Segment to be drawn 
+	 */
     public DrawSegment(EuclidianView view, GeoLine s) {
     	this.view = view;
     	this.s = s;
@@ -63,8 +67,10 @@ implements Previewable {
     
 	/**
 	 * Creates a new DrawSegment for preview.     
+	 * @param view Euclidian view to be used
+	 * @param points endpoints of the segment
 	 */
-	DrawSegment(EuclidianView view, ArrayList points) {
+	DrawSegment(EuclidianView view, ArrayList<GeoPoint> points) {
 		this.view = view; 
 		this.points = points;
 
@@ -74,7 +80,7 @@ implements Previewable {
 	final public void update() {
         isVisible = geo.isEuclidianVisible();
         if (!isVisible) return; 
-		labelVisible = geo.isLabelVisible();       
+        labelVisible = geo.isLabelVisible();       
 		updateStrokes(geo);
 		
 		A = s.getStartPoint();
@@ -141,7 +147,7 @@ implements Previewable {
         }	
         
         // update decoration    		
-		//added by Loïc and Markus BEGIN,
+		//added by Loï¿½c and Markus BEGIN,
 		if (geo.decorationType != GeoElement.DECORATION_NONE && nLength > 0) {	
 			if (decoTicks == null) {
 				// only create these object when they are really needed
@@ -266,7 +272,6 @@ implements Previewable {
 	
    
 	final public void draw(Graphics2D g2) {
-		
 		// segments of polygons can have zero thickness
 		if (geo.lineThickness == 0)
 			return;
@@ -282,7 +287,7 @@ implements Previewable {
             g2.setStroke(objStroke);            
 			g2.draw(line);
 
-			//added by Loïc BEGIN			
+			//added by Loï¿½c BEGIN			
 			if (geo.decorationType != GeoElement.DECORATION_NONE){
 				g2.setStroke(decoStroke);
 				
@@ -335,6 +340,10 @@ implements Previewable {
         }
     }
     
+	/**
+	 * Draw segment's trace
+	 * @param g2
+	 */
 	final void drawTrace(Graphics2D g2) {
 		g2.setPaint(geo.getObjectColor());
 		g2.setStroke(objStroke);  
@@ -356,7 +365,7 @@ implements Previewable {
 		}
 	}
 	
-	Point2D.Double endPoint = new Point2D.Double();
+	private Point2D.Double endPoint = new Point2D.Double();
 	
 	final public void updateMousePos(double xRW, double yRW) {		
 		if (isVisible) { 											

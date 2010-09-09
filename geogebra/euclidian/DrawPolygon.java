@@ -13,20 +13,12 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.kernel.ConstructionDefaults;
-import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
-import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.TexturePaint;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
@@ -38,12 +30,17 @@ public class DrawPolygon extends Drawable
 implements Previewable {
    
     private GeoPolygon poly;            
-    boolean isVisible, labelVisible;
+    private boolean isVisible, labelVisible;
     
     private GeneralPathClipped gp;
     private double [] coords = new double[2];
-	private ArrayList points;              
-      
+	private ArrayList<GeoPoint> points;              
+     
+	/**
+	 * Creates new DrawPolygon
+	 * @param view Euclidian view to be used
+	 * @param poly Polygon to be drawn
+	 */
     public DrawPolygon(EuclidianView view, GeoPolygon poly) {
 		this.view = view; 
 		this.poly = poly;		
@@ -53,9 +50,11 @@ implements Previewable {
     }
     
     /**
-     * Creates a new DrawPolygon for preview.     
+     * Creates a new DrawPolygon for preview.
+     * @param view Euclidian view to be used
+     * @param points vertices     
      */
-	DrawPolygon(EuclidianView view, ArrayList points) {
+	DrawPolygon(EuclidianView view, ArrayList<GeoPoint> points) {
 		this.view = view; 
 		this.points = points;
 
