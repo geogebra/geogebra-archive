@@ -8,6 +8,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 /**
  * @author ggb3D
@@ -17,10 +18,10 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 
 	
 	/** input function */
-	protected GeoElement inputFunction; 
+	protected GeoFunctionNVar inputFunction; 
 
 	/** output function */
-	protected GeoElement function; 
+	protected GeoFunctionNVar function; 
 	
 	//private NumberValue[] coords; // input : expression for each coord x, y, z, ...
 	/** input : "from" values for each var */
@@ -84,7 +85,10 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 		function = new GeoFunctionNVar(cons, fun[0]);
 		
 		//end of construction
-		end(label,coords,localVar);
+		setInputOutput(coords,localVar);
+		
+		compute();
+		function.setLabel(label);
 	}
 	
 	
@@ -106,13 +110,20 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 		this(cons,from,to);
  		
 		inputFunction = f;
-		function = inputFunction.copy();
+		//function = new GeoFunctionNVar(cons, inputFunction.getFunction());//(GeoFunctionNVar) inputFunction.copy();
+		function = (GeoFunctionNVar) inputFunction.copy();
+		
+		
 		
 		//end of construction
-		end(label,null,null);
+		setInputOutput((NumberValue[]) null,(GeoNumeric[]) null);
+		
+		compute();
+		function.setLabel(label);
+		
 	}
 		
-	private void end(String label, NumberValue[] coords, GeoNumeric[] localVar){
+	private void setInputOutput(NumberValue[] coords, GeoNumeric[] localVar){
        
 		int inputLength = from.length+to.length;
 		if (coords!=null)
@@ -147,39 +158,45 @@ public class AlgoFunctionNVarND extends AlgoElement3D {
 		}
 		
 		
-		setInputOutput(
+		super.setInputOutput(
 				input, 
 				new GeoElement[] {function});
 		
-		compute();      
-		function.setLabel(label);
+		   
+		
 	}
 
 	/**
 	 * @return the function
 	 */
 	public GeoFunctionNVar getFunction(){
-		return (GeoFunctionNVar) function;
+		return function;
 	}
 	
 	
 
 	protected void compute() {
 
+		
 		if (inputFunction!=null)
 			function.set(inputFunction);
+			
 		
-		((GeoFunctionNVar) function).setInterval(
+		function.setInterval(
 				getDouble(from), 
 				getDouble(to)			
 		);
+		
+		//Application.debug(function.getFunction().evaluate(new double[] {1,1}));
 		
 	}
 	
 	private double[] getDouble(NumberValue[] values){
 		double[] ret = new double[values.length];
-		for (int i=0; i<values.length; i++)
+		for (int i=0; i<values.length; i++){
 			ret[i]=values[i].getDouble();
+			//Application.debug("ret["+i+"]="+ret[i]);
+		}
 		return ret;
 	}
 

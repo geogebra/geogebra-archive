@@ -738,8 +738,8 @@ public class Kernel3D
 		
 		AlgoFunctionNVarND algo = new AlgoFunctionNVarND(cons, label, 
 				f, 
-				new NumberValue[] {xFrom, xTo}, 
-				new NumberValue[] {yFrom, yTo});
+				new NumberValue[] {xFrom, yFrom}, 
+				new NumberValue[] {xTo, yTo});
 		
 		
 		return algo.getFunction();

@@ -5,6 +5,7 @@ import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.SurfaceMesh;
 import geogebra.kernel.GeoFunctionNVar;
+import geogebra.main.Application;
 
 /**
  * Class for drawing a 2-var function
@@ -37,6 +38,15 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	public DrawFunction2Var(EuclidianView3D a_view3d, GeoFunctionNVar function) {
 		super(a_view3d, function);
 		this.function=function;
+		
+		/*
+		Application.debug("function on ["
+				+function.getMinParameter(0)+","+function.getMaxParameter(0)
+				+"]x["
+				+function.getMinParameter(1)+","+function.getMaxParameter(1)
+				+"]"
+		);
+		*/
 
 		if (Double.isNaN(function.getMinParameter(0))){
 			unlimitedRange=true;

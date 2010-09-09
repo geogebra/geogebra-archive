@@ -415,14 +415,6 @@ implements FunctionalNVar, CasEvaluableFunction {
 			this.from = from;
 			this.to =to;
 			
-			/*
-			for (int i=0; i<start.length; i++)
-				from[i]=start[i];
-			
-			for (int i=0; i<end.length; i++)
-				to[i]=end[i];
-				
-				*/
 			
 			
 		}
