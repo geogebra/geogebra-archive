@@ -841,6 +841,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		initCursor();
 		euclidianController.setMode(mode);
 		if (clearRectangle(mode)) setSelectionRectangle(null);
+		getStyleBar().setMode(mode);
 	}
 	
 	/*

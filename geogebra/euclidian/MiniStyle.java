@@ -16,6 +16,7 @@ public class MiniStyle{
 	public int lineSize;
 	public int pointSize;
 	public Color color;
+	public int colorIndex;
 	public float alpha;
 
 	public MiniStyle(int mode){			
@@ -31,6 +32,7 @@ public class MiniStyle{
 		pointSize = 3;
 		lineSize = 3;
 		color = Color.black;
+		colorIndex = 23;  // index for black
 		alpha = 1.0f;
 	}
 	
@@ -39,6 +41,7 @@ public class MiniStyle{
 		pointSize = 3;
 		lineSize = 3;
 		color = Color.red;
+		colorIndex = 3;  // index for green
 		alpha = 0.25f;
 	}
 	

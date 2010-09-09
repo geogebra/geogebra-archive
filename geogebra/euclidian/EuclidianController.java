@@ -6749,9 +6749,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	//==============================================
 	// methods to apply styles to selected geos
 	
-	public void applyLineStyle(MiniStyle vs) {
+	public void applyLineStyle(MiniStyle style) {
 
-		int lineStyle = vs.lineStyle;
+		int lineStyle = style.lineStyle;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
@@ -6762,10 +6762,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	}
 	
-	public void applyPointSize(MiniStyle vs) {
+	public void applyPointSize(MiniStyle style) {
 		
-		int lineSize = vs.lineSize;
-		int pointSize = vs.pointSize;
+		int lineSize = style.lineSize;
+		int pointSize = style.pointSize;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
@@ -6782,9 +6782,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 	}
 
-	public void applyColor(MiniStyle vs) {
+	public void applyColor(MiniStyle style) {
 		
-		Color color = vs.color;
+		Color color = style.color;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
@@ -6794,9 +6794,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 	}
 
-	public void applyAlpha(MiniStyle vs) {
+	public void applyAlpha(MiniStyle style) {
 
-		float alpha = vs.alpha;
+		float alpha = style.alpha;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
