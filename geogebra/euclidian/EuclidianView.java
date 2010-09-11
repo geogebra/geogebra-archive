@@ -297,6 +297,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	protected boolean antiAliasing = true;
 
 	boolean showMouseCoords = false;
+	boolean allowShowMouseCoords = true;
+	
+
 	boolean showAxesRatio = false;
 	private boolean highlightAnimationButtons = false;
 
@@ -1496,7 +1499,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			drawZoomRectangle(g2);
 		}
 
-		if (showMouseCoords && (showAxes[0] || showAxes[1] || showGrid))
+		if (allowShowMouseCoords && showMouseCoords && (showAxes[0] || showAxes[1] || showGrid))
 			drawMouseCoords(g2);
 		if (showAxesRatio)
 			drawAxesRatio(g2);
@@ -4513,6 +4516,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void setShowMouseCoords(boolean b){
 		showMouseCoords=b;
 	}
+	
+	public boolean getAllowShowMouseCoords() {
+		return allowShowMouseCoords;
+	}
+
+	public void setAllowShowMouseCoords(boolean neverShowMouseCoords) {
+		this.allowShowMouseCoords = neverShowMouseCoords;
+	}
+	
 	
 	public boolean getShowMouseCoords(){
 		return showMouseCoords;

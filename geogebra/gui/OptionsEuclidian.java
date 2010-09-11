@@ -65,7 +65,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	private JPanel dimPanel; 
 	
 	private JButton btBackgroundColor, btAxesColor, btGridColor;
-	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick;
+	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick, cbShowMouseCoords;
 	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle, cbView;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
@@ -256,6 +256,10 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		bgPanel.add(btBackgroundColor);
 		label.setLabelFor(btBackgroundColor);
 		
+		cbShowMouseCoords = new JCheckBox();
+		cbShowMouseCoords.addActionListener(this);
+		bgPanel.add(cbShowMouseCoords);
+		
     
 		
 		
@@ -424,6 +428,11 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         cbBoldGrid.setSelected(view.getGridIsBold()); 
         cbBoldGrid.addActionListener(this);
         
+        cbShowMouseCoords.removeActionListener(this);
+        cbShowMouseCoords.setSelected(view.getAllowShowMouseCoords());
+        cbShowMouseCoords.addActionListener(this);      
+        
+        
         cbView.removeActionListener(this);
     	if(view == app.getEuclidianView())
     		cbView.setSelectedIndex(0);
@@ -555,6 +564,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		cbView.addItem(app.getPlain("DrawingPad")); 
 		cbView.addItem(app.getPlain("DrawingPad2")); 
 		cbView.removeActionListener(this);
+		
+		cbShowMouseCoords.setText(app.getMenu("ShowMouseCoordinates"));
 
 		
 		
@@ -590,7 +601,12 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		else if (source == cbBoldGrid) {
 			view.setGridIsBold(cbBoldGrid.isSelected());	// Michael Borcherds 2008-04-11		
 		}
-		
+
+		else if (source == cbShowMouseCoords) {
+			view.setAllowShowMouseCoords(cbShowMouseCoords.isSelected());	
+		}
+
+
 		else if (source == cbGridType) {
 			view.setGridType(cbGridType.getSelectedIndex());
 		}	
