@@ -38,7 +38,7 @@ public class EuclidianPen {
 	private boolean erasing = false;
 	
 	private MiniStyle style;
-	private int penSize, eraserSize, penLineStyle;
+	private int penSize, eraserSize = 16, penLineStyle;
 	private Color penColor;
 	
 	
@@ -51,7 +51,7 @@ public class EuclidianPen {
 		
 		this.style = new MiniStyle(app, MiniStyle.MODE_PEN);
 		penSize = style.pointSize;
-		eraserSize = style.pointSize;
+		//eraserSize = style.pointSize;
 		penColor = style.color;
 		penLineStyle = style.lineStyle;
 	}
@@ -69,7 +69,7 @@ public class EuclidianPen {
 	public void setStyle(MiniStyle style) {
 		this.style = style;
 		penSize = style.pointSize;
-		eraserSize = style.pointSize;
+		//eraserSize = style.pointSize;
 		penColor = style.color;
 		penLineStyle = style.lineStyle;
 		
@@ -229,7 +229,7 @@ public class EuclidianPen {
 		Shape circle;
 		if (Application.isRightClick(e)) {
 			g2D.setColor(Color.white);
-			circle = new Ellipse2D.Float(e.getX() - eraserSize, e.getY() - eraserSize, eraserSize*2, eraserSize*2);		
+			circle = new Ellipse2D.Float(e.getX() - eraserSize, e.getY() - eraserSize, eraserSize * 2, eraserSize * 2);		
 		} else {
 			g2D.setColor(penColor);
 			circle = new Ellipse2D.Float(e.getX() - penSize, e.getY() - penSize, penSize*2, penSize*2);
@@ -270,7 +270,7 @@ public class EuclidianPen {
 		Graphics2D g2d = (Graphics2D)penImage.getGraphics();
 
 		if (erasing) {
-			g2d.setStroke(EuclidianView.getStroke(2 * eraserSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
+			g2d.setStroke(EuclidianView.getStroke(2 * eraserSize, EuclidianView.LINE_TYPE_FULL));
 			g2d.setColor(new Color(0, 0, 0, 0)); // transparent	
 			g2d.setComposite(AlphaComposite.Src);
 		} else {
