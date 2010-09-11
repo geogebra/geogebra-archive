@@ -18,7 +18,7 @@ import javax.swing.SwingConstants;
 public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 
-	private JToggleButton btnShowGrid, btnShowAxes;
+	private JToggleButton btnShowGrid, btnShowAxes, btnBold, btnItalic;
 	private JButton btnMode;
 	private JLabel lblMode;
 	private PopupMenuButton btnColor, btnLineStyle, btnLineSize, btnPointStyle, btnPointSize;
@@ -88,6 +88,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			this.btnShowAxes.setVisible(false);
 			this.btnShowGrid.setVisible(false);
 			btnColor.getMySlider().setVisible(true);
+			btnLineSize.setVisible(true);
 			//this.setBackground(defaultBackground.brighter());
 			//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 			style = standardStyle;
@@ -100,6 +101,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			this.btnShowAxes.setVisible(false);
 			this.btnShowGrid.setVisible(false);
 			btnColor.getMySlider().setVisible(false);
+			btnLineSize.setVisible(false);
 			//this.setBackground(defaultBackground.brighter());
 			style = ec.getPen().getStyle();
 			break;
@@ -109,6 +111,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			lblMode.setIcon(null);
 			this.btnShowAxes.setVisible(true);
 			this.btnShowGrid.setVisible(true);
+			btnLineSize.setVisible(true);
 			//this.setBackground(defaultBackground);
 			btnColor.getMySlider().setVisible(true);
 			style = standardStyle;
@@ -153,7 +156,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		add(btnShowGrid);
 		
 		
-		this.addSeparator();
+		addSeparator();
 		
 		// color menu
 		btnColor = new PopupMenuButton(ev.getApplication(), getStyleBarColors(), -1,8,new Dimension(20,maxIconHeight), GeoGebraIcon.MODE_COLOR_SWATCH);		
@@ -165,6 +168,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//btnColor.setSelectedIndex(0);
 		btnColor.addActionListener(this);
 		add(btnColor);
+		
+		
+		addSeparator();
 		
 		// line style 
 		btnLineStyle = new PopupMenuButton(ev.getApplication(), lineStyleArray, -1,1,new Dimension(60,maxIconHeight), GeoGebraIcon.MODE_LINESTYLE);
@@ -187,6 +193,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnLineSize.addActionListener(this);
 		add(btnLineSize);
 		
+		addSeparator();
 		
 		// point size
 		btnPointSize = new PopupMenuButton(ev.getApplication(), null, null, null, new Dimension(20, maxIconHeight), GeoGebraIcon.MODE_SLIDER_POINT);	
@@ -198,7 +205,16 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnPointSize.addActionListener(this);
 		add(btnPointSize);
 				
+		addSeparator();
 		
+		btnBold = new JToggleButton(ev.getApplication().getImageIcon("format-text-bold.png"));
+		btnBold.setPreferredSize(new Dimension(16,16));
+		//add(btnBold);
+		
+		btnItalic = new JToggleButton(ev.getApplication().getImageIcon("format-text-italic.png"));
+		btnItalic.setPreferredSize(new Dimension(16,16));
+	//	add(btnItalic);
+	
 	}
 
 	
@@ -233,7 +249,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnShowGrid.setSelected(ev.getShowGrid());
 		btnShowGrid.addActionListener(this);
 			
-		btnLineSize.setText("" + btnLineSize.getSliderValue());
+		//btnLineSize.setText("" + btnLineSize.getSliderValue());
 		
 	}
 
@@ -277,8 +293,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				style.colorIndex = btnColor.getSelectedIndex();
 				style.color = (Color) btnColor.getSelectedValue();;
 				style.alpha = btnColor.getSliderValue() / 100.0f;
-				style.applyColor(style);
-				style.applyAlpha(style);
+				style.applyColor();
+				style.applyAlpha();
 
 			}
 		}
@@ -286,18 +302,18 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		else if (source == btnLineStyle) {
 			if(btnLineStyle.getSelectedValue() != null){	
 				style.lineStyle = (Integer) btnLineStyle.getSelectedValue();				
-				style.applyLineStyle(style);		
+				style.applyLineStyle();		
 			}
 		}
 				
 		else if (source == btnLineSize) {
 				style.lineSize = btnLineSize.getSliderValue();		
-				style.applyLineSize(style);						
+				style.applyLineSize();						
 		}
 
 		else if (source == btnPointSize) {
 			style.pointSize = btnPointSize.getSliderValue();		
-			style.applyPointSize(style);						
+			style.applyPointSize();						
 		}
 
 
@@ -307,6 +323,24 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		updateGUI();
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	//TODO: move this to MiniStyle class

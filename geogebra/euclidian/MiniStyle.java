@@ -1,7 +1,10 @@
 package geogebra.euclidian;
 
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.PointProperties;
+import geogebra.kernel.TextProperties;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -25,17 +28,32 @@ public class MiniStyle{
 	public Color color;
 	public int colorIndex;
 	public float alpha;
+	public boolean isBold = false;
+	public boolean isItalic = false;
 
+	private Color[] colorList;
+	
+	
+	/************************************************
+	 * Constructs MiniStyle
+	 */
 	public MiniStyle(Application app, int mode){	
 		
 		this.app = app;
-		
+		colorList  = createStyleBarColorList();
 		if(mode == MODE_PEN)
 			setPenDefaults();
 
 		else if(mode == MODE_STANDARD)
-			setStandardDefaults();			
+			setStandardDefaults();
+		
+		
 	}
+	
+	
+	
+	//==============================================
+	// set defaults
 
 	public void setPenDefaults(){	
 		lineStyle = EuclidianView.LINE_TYPE_FULL;
@@ -47,12 +65,12 @@ public class MiniStyle{
 	}
 	
 	public void setStandardDefaults(){	
-		lineStyle = EuclidianView.LINE_TYPE_FULL;
-		pointSize = 3;
-		lineSize = 3;
-		color = Color.red;
-		colorIndex = 3;  // index for green
-		alpha = 0.25f;
+		lineStyle = EuclidianView.DEFAULT_LINE_TYPE;
+		pointSize = EuclidianView.DEFAULT_POINT_SIZE;
+		lineSize = EuclidianView.DEFAULT_LINE_THICKNESS;
+		colorIndex = 0;  // index for red
+		color = colorList[colorIndex];
+		alpha = ConstructionDefaults.DEFAULT_POLYGON_ALPHA;
 	}
 	
 	
@@ -61,9 +79,8 @@ public class MiniStyle{
 	//==============================================
 	// methods to apply styles to selected geos
 	
-	public void applyLineStyle(MiniStyle style) {
+	public void applyLineStyle() {
 
-		int lineStyle = style.lineStyle;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
@@ -74,9 +91,8 @@ public class MiniStyle{
 	
 	}
 	
-	public void applyPointSize(MiniStyle style) {
+	public void applyPointSize() {
 		
-		int pointSize = style.pointSize;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
@@ -90,10 +106,8 @@ public class MiniStyle{
 	}
 
 
-	public void applyLineSize(MiniStyle style) {
+	public void applyLineSize() {
 
-		int lineSize = style.lineSize;
-		int pointSize = style.pointSize;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
@@ -105,9 +119,8 @@ public class MiniStyle{
 
 
 	
-	public void applyColor(MiniStyle style) {
+	public void applyColor() {
 		
-		Color color = style.color;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
@@ -117,9 +130,8 @@ public class MiniStyle{
 		}
 	}
 
-	public void applyAlpha(MiniStyle style) {
+	public void applyAlpha() {
 
-		float alpha = style.alpha;
 		ArrayList geos = app.getSelectedGeos();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
@@ -129,22 +141,46 @@ public class MiniStyle{
 		}
 	}
 
-	
-	
-	public void setAllProperties(GeoElement geo) {
+	public void applyBold() {
+
+		int fontStyle = 0;
+		if (isBold) fontStyle += 1;
+		if (isItalic) fontStyle += 2;
 		
-		if (geo instanceof PointProperties) {
-			PointProperties p = (PointProperties)geo;
-			p.setPointSize(pointSize);
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			if(geo.isGeoText()){
+			((GeoText)geo).setFontStyle(fontStyle);
+			geo.updateRepaint();
+			}
 		}
-		
-		geo.setLineThickness(lineSize);
-		geo.setLineType(lineStyle);
-		geo.setObjColor(color);
-		geo.setAlphaValue(alpha);
-		
-		geo.update();
-		
+	}
+
+	
+	
+	
+	public void setAllProperties() {
+
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			if (geo instanceof PointProperties) {
+				PointProperties p = (PointProperties)geo;
+				p.setPointSize(pointSize);
+			}
+
+			geo.setLineThickness(lineSize);
+			geo.setLineType(lineStyle);
+			geo.setObjColor(color);
+			geo.setAlphaValue(alpha);
+
+			geo.update();
+			
+		}
+
 	}
 	
 	
@@ -152,10 +188,19 @@ public class MiniStyle{
 	
 	
 	
+	//==============================================
+	// colors
+	
+	public Color getStyleBarColor(int index){
+		return colorList[index];
+	}
+	
+	public Color[] getStyleBarColorList(int index){
+		return colorList;
+	}
 	
 	
-	
-	public Color[] getStyleBarColors() {
+	private Color[] createStyleBarColorList() {
 		
 		Color[]	primaryColors = new Color[] {		
 				new Color(255, 0, 0), // Red

@@ -2475,14 +2475,8 @@ public class Application implements KeyEventDispatcher {
 		getGuiManager().updateMenubarSelection();
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
-			if (selectedGeos.size() > 0) {
-				
-				EuclidianView ev = getEuclidianView();
-				
-				for (int i = 0 ; i < selectedGeos.size() ; i++) {					
-					ev.getStyleBar().getStyle().setAllProperties(selectedGeos.get(i));
-				}
-				
+			if (selectedGeos.size() > 0) {				
+				getEuclidianView().getStyleBar().getStyle().setAllProperties();				
 			}
 		}
 	}
