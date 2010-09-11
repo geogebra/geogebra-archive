@@ -2667,7 +2667,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// set tooltip manager
 		ToolTipManager ttm = ToolTipManager.sharedInstance();
 		ttm.setInitialDelay(DEFAULT_INITIAL_DELAY / 2);
-		ttm.setEnabled(true);
+		ttm.setEnabled(app.getAllowToolTips());
 	}
 
 	protected void resetToolTipManager() {

@@ -117,6 +117,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 
 public class Application implements KeyEventDispatcher {
@@ -356,6 +357,8 @@ public class Application implements KeyEventDispatcher {
 	private boolean antialiasing = true;
 	private boolean printScaleString = false;
 	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
+	private boolean allowToolTips = true;
+
 
 	private boolean rightClickEnabled = true;
 	private boolean chooserPopupsEnabled = true;	
@@ -673,6 +676,23 @@ public class Application implements KeyEventDispatcher {
 		this.labelingStyle = labelingStyle;
 	}
 
+	
+	
+	public boolean getAllowToolTips() {
+		return allowToolTips;
+	}
+
+	/**
+	 * Sets allowToolTips flag and toggles tooltips for the application. 
+	 */
+	public void setAllowToolTips(boolean allowToolTips) {
+		this.allowToolTips = allowToolTips;
+		ToolTipManager.sharedInstance().setEnabled(allowToolTips);
+	}
+	
+	
+	
+	
 	/**
 	 * Updates the GUI of the main component.
 	 */
