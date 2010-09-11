@@ -4394,7 +4394,7 @@ class CmdOsculatingCircle extends CommandProcessor {
  * Victor Franco Espino 11-02-2007: End command's processors for new commands
  */
 
- class CmdTableText extends CommandProcessor {
+class CmdTableText extends CommandProcessor {
 	 public CmdTableText(Kernel kernel) {
 		 super(kernel);
 	 }
@@ -4490,7 +4490,55 @@ class CmdOsculatingCircle extends CommandProcessor {
 		 throw argErr(app, c.getName(), arg[0]);
 		 }
 	 }
- }
+}
+
+class CmdStemPlot extends CommandProcessor {
+	 public CmdStemPlot(Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 public GeoElement[] process(Command c) throws MyError {
+		 int n = c.getArgumentNumber();
+		 boolean[] ok = new boolean[n];
+		 GeoElement[] arg;
+		 arg = resArgs(c);
+
+		 switch (n) {
+
+		 case 1 :
+			 if ( (ok[0] = (arg[0].isGeoList()) ) ){
+				 GeoList list = (GeoList)arg[0];
+
+				 if (list.size() == 0)
+					 throw argErr(app, c.getName(), arg[0]);
+
+					 GeoElement[] ret =
+					 {
+						 kernel.StemPlot(
+								 c.getLabel(),
+								 (GeoList) arg[0])};
+				 return ret;
+			 } else {
+				 throw argErr(app, c.getName(), arg[0]);
+			 }
+
+
+
+		 case 0:
+			 throw argNumErr(app, c.getName(), n);
+
+		 default :
+
+			 GeoList list = wrapInList(kernel, arg, arg.length, -1);
+			 if (list != null) {
+				 GeoElement[] ret = { kernel.StemPlot(c.getLabel(), list)};
+				 return ret;             	     	 
+			 } 
+		 
+		 throw argErr(app, c.getName(), arg[0]);
+		 }
+	 }
+}
 
  class CmdVerticalText extends CommandProcessor {
 	 public CmdVerticalText(Kernel kernel) {

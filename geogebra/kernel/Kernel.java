@@ -3915,6 +3915,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * StemPlot[list]
+	 * Michael Borcherds
+	 */
+	final public GeoText StemPlot(String label, GeoList list) {
+		AlgoStemPlot algo = new AlgoStemPlot(cons, label, list);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	/** 
 	 * ToFraction[number]
 	 * Michael Borcherds
 	 */
