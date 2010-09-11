@@ -74,7 +74,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.cellSize = cellSize;
 
 		// create slider
-		if(mode == GeoGebraIcon.MODE_SLIDER){
+		if(mode == GeoGebraIcon.MODE_SLIDER_LINE || mode == GeoGebraIcon.MODE_SLIDER_POINT ){
 			hasTable = false;
 			getMySlider();
 			
@@ -135,7 +135,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			setIcon(selectedIcon);
 		}
 		
-		if(mode == GeoGebraIcon.MODE_SLIDER){
+		if(mode == GeoGebraIcon.MODE_SLIDER_LINE  || mode == GeoGebraIcon.MODE_SLIDER_POINT ){
 			Object args[] = {getSliderValue()};
 			selectedIcon.setImage(app, args, cellSize, mode);
 			setIcon(selectedIcon);
@@ -235,7 +235,11 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 
 	public void setSliderValue(int value) {
+		
+		mySlider.removeChangeListener(this);
 		mySlider.setValue(value);
+		mySlider.addChangeListener(this);
+		
 		if(hasTable)
 			myTable.setSliderValue(value);
 		updateGUI();

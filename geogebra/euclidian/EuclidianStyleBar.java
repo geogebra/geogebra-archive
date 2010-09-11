@@ -8,14 +8,20 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 
 public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 
-	private JToggleButton btnShowGrid, btnShowAxes, btnMode;
-	private PopupMenuButton btnColor, btnLineStyle, btnSize;
+	private JToggleButton btnShowGrid, btnShowAxes;
+	private JButton btnMode;
+	private JLabel lblMode;
+	private PopupMenuButton btnColor, btnLineStyle, btnLineSize, btnPointStyle, btnPointSize;
 	
 	private EuclidianController ec;
 	private EuclidianView ev;
@@ -32,11 +38,18 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	
 	private int mode;
-	private MiniStyle penStyle, standardStyle, style;
+	private MiniStyle standardStyle, style;
 	
-	private boolean isIniting;
 	
 
+
+	private boolean isIniting;
+	
+	
+	
+	/*************************************************
+	 * Constructs a styleBar
+	 */
 	public EuclidianStyleBar(EuclidianView ev) {
 		
 		isIniting = true;
@@ -47,10 +60,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		setFloatable(false);
 		defaultBackground = this.getBackground();
 		
-		penStyle = ec.getPenStyle();
-		standardStyle = ec.getStandardStyle();
-		
-		style = ec.getStandardStyle();
+		standardStyle = new MiniStyle(ev.getApplication(), MiniStyle.MODE_STANDARD);
 		
 		initGUI();
 		isIniting = false;
@@ -58,8 +68,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		setMode(ev.getMode());
 
 	}
-		
 	
+	public MiniStyle getStyle() {
+		return style;
+	}
 
 	public int getMode() {
 		return mode;
@@ -68,35 +80,38 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	public void setMode(int mode) {
 		this.mode = mode;	
 		
-
 		switch (mode){
 		case EuclidianView.MODE_VISUAL_STYLE:
 			btnMode.setIcon(ev.getApplication().getImageIcon("magnet.gif"));
+			lblMode.setIcon(ev.getApplication().getImageIcon("magnet.gif"));
 			this.btnMode.setVisible(true);
-			this.btnShowAxes.setVisible(true);
-			this.btnShowGrid.setVisible(true);
-			this.setBackground(defaultBackground.brighter());
+			this.btnShowAxes.setVisible(false);
+			this.btnShowGrid.setVisible(false);
+			btnColor.getMySlider().setVisible(true);
+			//this.setBackground(defaultBackground.brighter());
 			//this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-			style = ec.getStandardStyle();
+			style = standardStyle;
 			break;
 			
 		case EuclidianView.MODE_PEN:
 			btnMode.setIcon(ev.getApplication().getImageIcon("applications-graphics.png"));
+			lblMode.setIcon(ev.getApplication().getImageIcon("applications-graphics.png"));
 			this.btnMode.setVisible(true);
 			this.btnShowAxes.setVisible(false);
 			this.btnShowGrid.setVisible(false);
 			btnColor.getMySlider().setVisible(false);
-			this.setBackground(defaultBackground.brighter());
-			style = ec.getPenStyle();
+			//this.setBackground(defaultBackground.brighter());
+			style = ec.getPen().getStyle();
 			break;
 			
 		default:
 			this.btnMode.setVisible(false);
+			lblMode.setIcon(null);
 			this.btnShowAxes.setVisible(true);
 			this.btnShowGrid.setVisible(true);
-			this.setBackground(defaultBackground);
+			//this.setBackground(defaultBackground);
 			btnColor.getMySlider().setVisible(true);
-			style = ec.getStandardStyle();
+			style = standardStyle;
 			//this.setBorder(BorderFactory.createEmptyBorder());
 		}
 		
@@ -112,17 +127,27 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	private void initGUI() {
 	
-		btnMode = new JToggleButton();
+		btnMode = new JButton();
 		btnMode.addActionListener(this);
 		btnMode.setSelected(ev.getMode()==EuclidianView.MODE_VISUAL_STYLE);
-		add(btnMode);
+		//add(btnMode);
+		
+		lblMode = new JLabel();
+		lblMode.setPreferredSize(new Dimension(16,16));
+		lblMode.setBackground(Color.WHITE);
+		//lblMode.setBorder(BorderFactory.createEtchedBorder());
+		add(lblMode);
+		
 		
 		btnShowAxes = new JToggleButton(ev.getApplication().getImageIcon("axes.gif"));
+		btnShowAxes.setPreferredSize(new Dimension(16,16));
+		
 		btnShowAxes.addActionListener(this);
 		//btnShowAxes.setSelected(ev.getShowXaxis());
 		add(btnShowAxes);
 		
 		btnShowGrid = new JToggleButton(ev.getApplication().getImageIcon("grid.gif"));
+		btnShowGrid.setPreferredSize(new Dimension(16,16));
 		btnShowGrid.addActionListener(this);
 		//btnShowGrid.setSelected(ev.getShowGrid());
 		add(btnShowGrid);
@@ -142,23 +167,37 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		add(btnColor);
 		
 		// line style 
-		btnLineStyle = new PopupMenuButton(ev.getApplication(), lineStyleArray, -1,1,new Dimension(60,maxIconHeight), GeoGebraIcon.MODE_LINE);
+		btnLineStyle = new PopupMenuButton(ev.getApplication(), lineStyleArray, -1,1,new Dimension(60,maxIconHeight), GeoGebraIcon.MODE_LINESTYLE);
 		//btnLineStyle.setSelectedIndex(0);
 		btnLineStyle.addActionListener(this);
 		add(btnLineStyle);
 		
-		// size (lines and points ???)
-		btnSize = new PopupMenuButton(ev.getApplication(), null,null,null,new Dimension(20,maxIconHeight), GeoGebraIcon.MODE_SLIDER);
+		// line size
+		btnLineSize = new PopupMenuButton(ev.getApplication(), null,null,null,new Dimension(20,maxIconHeight), GeoGebraIcon.MODE_SLIDER_LINE);
 		//btnSize.getMySlider().setOrientation(JSlider.VERTICAL);
-		btnSize.getMySlider().setMinimum(1);
-		btnSize.getMySlider().setMaximum(13);
-		btnSize.getMySlider().setMajorTickSpacing(2);
-		btnSize.getMySlider().setMinorTickSpacing(1);
+		btnLineSize.getMySlider().setMinimum(1);
+		btnLineSize.getMySlider().setMaximum(13);
+		btnLineSize.getMySlider().setMajorTickSpacing(2);
+		btnLineSize.getMySlider().setMinorTickSpacing(1);
+		btnLineSize.setVerticalTextPosition(SwingConstants.CENTER); 
+		btnLineSize.setHorizontalTextPosition(SwingConstants.LEFT); 
 		//btnSize.getMySlider().setPaintLabels(true);
-		btnSize.getMySlider().setPaintTicks(true);
+		btnLineSize.getMySlider().setPaintTicks(true);
 		//btnSize.getMySlider().setValue(1);	
-		btnSize.addActionListener(this);
-		add(btnSize);
+		btnLineSize.addActionListener(this);
+		add(btnLineSize);
+		
+		
+		// point size
+		btnPointSize = new PopupMenuButton(ev.getApplication(), null, null, null, new Dimension(20, maxIconHeight), GeoGebraIcon.MODE_SLIDER_POINT);	
+		btnPointSize.getMySlider().setMinimum(1);
+		btnPointSize.getMySlider().setMaximum(9);
+		btnPointSize.getMySlider().setMajorTickSpacing(2);
+		btnPointSize.getMySlider().setMinorTickSpacing(1);
+		btnPointSize.getMySlider().setPaintTicks(true);		
+		btnPointSize.addActionListener(this);
+		add(btnPointSize);
+				
 		
 	}
 
@@ -170,7 +209,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnColor.setSelectedIndex(style.colorIndex);
 		btnColor.setSliderValue((int) (style.alpha*100));
 		btnLineStyle.setSelectedIndex(style.lineStyle);
-		btnSize.getMySlider().setValue(style.lineSize);
+		btnLineSize.setSliderValue(style.lineSize);
+		btnPointSize.setSliderValue(style.pointSize);
 		
 		
 	}
@@ -193,6 +233,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnShowGrid.setSelected(ev.getShowGrid());
 		btnShowGrid.addActionListener(this);
 			
+		btnLineSize.setText("" + btnLineSize.getSliderValue());
 		
 	}
 
@@ -230,30 +271,38 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		else if (source == btnColor) {
 			if(btnColor.getSelectedValue() != null){			
-				ec.setColor((Color) btnColor.getSelectedValue());
-				ec.setAlpha(btnColor.getSliderValue() / 100.0f);
-				/*
+				//ec.setColor((Color) btnColor.getSelectedValue());
+				//ec.setAlpha(btnColor.getSliderValue() / 100.0f);
+				
 				style.colorIndex = btnColor.getSelectedIndex();
 				style.color = (Color) btnColor.getSelectedValue();;
 				style.alpha = btnColor.getSliderValue() / 100.0f;
-				ec.setStandardStyle(style);
-				ec.applyColor(style);
-				ec.applyAlpha(style);
-				*/
-				
+				style.applyColor(style);
+				style.applyAlpha(style);
+
 			}
 		}
 		
 		else if (source == btnLineStyle) {
-			if(btnLineStyle.getSelectedValue() != null){
-				ec.setLineStyle((Integer) btnLineStyle.getSelectedValue());
-			//	ec.setSize(btnLineStyle.getSliderValue());
+			if(btnLineStyle.getSelectedValue() != null){	
+				style.lineStyle = (Integer) btnLineStyle.getSelectedValue();				
+				style.applyLineStyle(style);		
 			}
 		}
 				
-		else if (source == btnSize) {
-				ec.setSize(btnSize.getSliderValue());
+		else if (source == btnLineSize) {
+				style.lineSize = btnLineSize.getSliderValue();		
+				style.applyLineSize(style);						
 		}
+
+		else if (source == btnPointSize) {
+			style.pointSize = btnPointSize.getSliderValue();		
+			style.applyPointSize(style);						
+		}
+
+
+		if(mode == EuclidianView.MODE_PEN)
+			ec.getPen().setStyle(style);
 		
 		updateGUI();
 	}

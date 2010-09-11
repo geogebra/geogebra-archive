@@ -263,7 +263,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// used for gridlock when dragging polygons, segments etc
 	double[] transformCoordsOffset = new double[2];
 
-	/** Creates new EuclidianController */
+	
+	
+	
+	/*********************************************** 
+	 * Creates new EuclidianController 
+	 **********************************************/
 	public EuclidianController(Kernel kernel) {
 		setKernel(kernel);
 		setApplication(kernel.getApplication());
@@ -297,6 +302,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		this.view = view;
 	}
 
+	
+	
+	//==============================================
+	//  Pen 
+	
+	private EuclidianPen pen;
+	public void setPen(EuclidianPen pen){
+		this.pen = pen;
+	}
+	public EuclidianPen getPen(){
+		return pen;
+	}
+	
+	
+	
 	public int getMode(){
 		return mode;
 	}
@@ -331,10 +351,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}				
 			break;
 			
-		case EuclidianView.MODE_PEN:				
-			penOffsetX = 0;
-			penOffsetY = 0;
-			penUsingOffsets = false;
+		case EuclidianView.MODE_PEN:
+			pen.resetPenOffsets();
+			
 			view.setSelectionRectangle(null);
 			break;
 		}
@@ -375,8 +394,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (selection.size() == 1) {
 				GeoElement geo = (GeoElement)selection.get(0);
 				// getCorner(1) == null as we can't write to transformed images
-				if (geo.isGeoImage() && ((GeoImage)geo).getCorner(1) == null) penGeo = (GeoImage)geo; else penGeo = null;
-				penWritingToExistingImage = (penGeo != null);
+				if (geo.isGeoImage() && ((GeoImage)geo).getCorner(1) == null) 
+					pen.setPenGeo( (GeoImage)geo); 
+				else 
+					pen.setPenGeo(null);
+				
+				pen.setPenWritingToExistingImage(pen.getPenGeo() != null);
 			}
 			
 			// no break;
@@ -719,223 +742,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//view.setDrawMode(EuclidianView.DRAW_MODE_DIRECT_DRAW);
 
 	}
-
-	private int penOffsetX = 0;
-	private int penOffsetY = 0;
-	private boolean penUsingOffsets = false;
-	private BufferedImage penImage = null;
-	private GeoImage penGeo = null; // used if drawing to existing GeoImage
-	GeoImage lastPenImage = null;
-	boolean penWritingToExistingImage = false;
-
-	ArrayList penPoints = new ArrayList();
-
-	private void handleMousePressedForPenMode(MouseEvent e) {
-
-		Rectangle rect = view.getSelectionRectangle();
-
-
-		if (Application.isRightClick(e)) {
-			app.getEuclidianView().setCursor(app.getEraserCursor());
-			erasing = true;
-		} else {	
-			app.getEuclidianView().setCursor(app.getTransparentCursor());
-			erasing = false;
-		}
-		
-		EuclidianView ev = app.getEuclidianView();
-		//Graphics2D g2D = null;
-		
-		
-		
-		if (penGeo != null) {
-			// image was selected before Pen Tool selected
-			
-			penUsingOffsets = true;
-			penImage = penGeo.getFillImage();
-			//lastPenImage = penGeo;
-			
-			penWritingToExistingImage = true;
-			
-			if (penGeo.isAbsoluteScreenLocActive()) {
-				penOffsetX = penGeo.getAbsoluteScreenLocX();
-				penOffsetY = penGeo.getAbsoluteScreenLocY();
-			} else {
-				GeoPoint startPoint = penGeo.getStartPoint();
-				penOffsetX = view.toScreenCoordX(startPoint.inhomX);
-				penOffsetY = view.toScreenCoordY(startPoint.inhomY) - penImage.getHeight();
-				
-			}
-			
-			app.addSelectedGeo(penGeo);
-
-			
-			
-			penGeo = null;
-		} else
-		if (rect != null && (!penUsingOffsets || penOffsetX != rect.x || 
-				penOffsetY != rect.y) ) {
-			// just draw on a subset of the Graphics View
-			GraphicsEnvironment ge =
-				GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-			GraphicsDevice gs = ge.getDefaultScreenDevice();
-
-			GraphicsConfiguration gc =
-				gs.getDefaultConfiguration();
-			penImage = gc.createCompatibleImage((int)rect.getWidth(),
-					(int)rect.getHeight(), Transparency.BITMASK);
-			
-			lastPenImage = null;
-			
-			penOffsetX = rect.x;
-			penOffsetY = rect.y;
-			penUsingOffsets = true;
-			
-			penWritingToExistingImage = false;
-
-			
-			//view.setSelectionRectangle(null);
-		}
-		else if (lastPenImage != null && !penWritingToExistingImage) {
-
-			penImage = lastPenImage.getFillImage();
-
-			GeoPoint corner = lastPenImage.getCorner(0);
-			int x = ev.toScreenCoordX(corner.getInhomX());
-			int y = ev.toScreenCoordY(corner.getInhomY());
-			int width = penImage.getWidth();
-			int height = penImage.getHeight();
-
-			
-			// check if image is still the same size as the current euclidian view window
-			if ((penOffsetX >0 && penOffsetY > 0) || 
-					(x == 0 && y == height && height == ev.getHeight() && width == ev.getWidth()))
-				penImage = lastPenImage.getFillImage();
-			else {
-				penImage = null;
-				lastPenImage = null;
-			}
-			
-			penWritingToExistingImage = false;
-
-		}
-
-		if (penImage == null) {
-
-			GraphicsEnvironment ge =
-				GraphicsEnvironment.getLocalGraphicsEnvironment();
-
-			GraphicsDevice gs = ge.getDefaultScreenDevice();
-
-			GraphicsConfiguration gc =
-				gs.getDefaultConfiguration();
-			penImage = gc.createCompatibleImage(ev.getWidth(),
-					ev.getHeight(), Transparency.BITMASK);
-
-		}
-
-		//if (g2D == null) g2D = penImage.createGraphics();
-
-
-		Point newPoint = new Point(e.getX() - penOffsetX, e.getY() - penOffsetY);
-		Graphics2D g2D = (Graphics2D) ev.getGraphics();
-		Shape circle;
-		if (Application.isRightClick(e)) {
-			g2D.setColor(Color.white);
-			circle = new Ellipse2D.Float(e.getX() - eraserSize, e.getY() - eraserSize, eraserSize*2, eraserSize*2);		
-		} else {
-			g2D.setColor(penColor);
-			circle = new Ellipse2D.Float(e.getX() - penSize, e.getY() - penSize, penSize*2, penSize*2);
-		}
-		//g2D.drawOval(e.getX(), e.getY(), penSize, penSize);
-		g2D.fill(circle);
-
-		if (penPoints.size() == 0)
-			penPoints.add(newPoint);
-		else {
-			Point lastPoint = (Point)penPoints.get(penPoints.size() - 1);
-			if (lastPoint.distance(newPoint) > 3)
-				penPoints.add(newPoint);
-		}
-	}
-
-	public void handleMouseReleasedForPenMode(MouseEvent e) {
-
-		
-		if (penImage == null) return; // right click
-		
-		app.setDefaultCursor();
-		
-		Point newPoint = new Point(e.getX() - penOffsetX, e.getY() - penOffsetY);
-		penPoints.add(newPoint);
-
-
-		//if (lastPenImage != null) penImage = lastPenImage.getImage(); //app.getExternalImage(lastPenImage);
-
-
-
-		//Application.debug(penPoints.size()+"");
-
-		PolyBezier pb = new PolyBezier(penPoints);
-
-		Graphics2D g2d = (Graphics2D)penImage.getGraphics();
-
-		if (erasing) {
-			g2d.setStroke(EuclidianView.getStroke(2 * eraserSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
-			g2d.setColor(new Color(0, 0, 0, 0)); // transparent	
-			g2d.setComposite(AlphaComposite.Src);
-		} else {
-			g2d.setStroke(EuclidianView.getStroke(2 * penSize, (penPoints.size() <= 2) ? EuclidianView.LINE_TYPE_FULL : penLineStyle));
-			g2d.setColor(penColor);
-		}
-		g2d.draw(pb.gp);
-
-		penPoints.clear();
-
-		EuclidianView ev = app.getEuclidianView();
-
-		app.refreshViews(); // clear trace
-		ev.getGraphics().drawImage(penImage, penOffsetX, penOffsetY, null);
-
-
-		if (lastPenImage == null && !penWritingToExistingImage) {
-			String fileName = app.createImage(penImage, "penimage.png");
-			//Application.debug(fileName);
-
-			GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
-			geoImage.setImageFileName(fileName);
-			geoImage.setTooltipMode(GeoElement.TOOLTIP_OFF);
-			GeoPoint corner = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
-			corner.update();
-			geoImage.setCorner(corner, 0);
-			geoImage.setLabel(null);
-			if (penUsingOffsets) { // want to allow easy resizing
-				GeoPoint corner2 = (new GeoPoint(app.getKernel().getConstruction(), null, ev.toRealWorldCoordX(penOffsetX + penImage.getWidth()),ev.toRealWorldCoordY( penOffsetY + penImage.getHeight()),1.0));
-				corner.setLabelVisible(false);
-				corner2.setLabelVisible(false);
-				corner2.update();
-				geoImage.setCorner(corner2, 1);
-			}
-			corner.setEuclidianVisible(penUsingOffsets);
-			corner.setAuxiliaryObject(!penUsingOffsets);
-			corner.update();
-			geoImage.setFixed(!penUsingOffsets);
-
-			GeoImage.updateInstances();
-
-
-			lastPenImage = geoImage;
-		}
-
-		// doesn't work as all changes are in the image not the XML
-		//app.storeUndoInfo();
-		app.setUnsaved();
-
-		if (!penWritingToExistingImage) penImage = null;
-		//penWritingToExistingImage = false;
-
-	}
+	
+	
+	
+	
 
 	public void mousePressed(MouseEvent e) {
 		// determine parent panel to change focus
@@ -946,7 +756,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 		
 		if (mode == EuclidianView.MODE_PEN) {
-			handleMousePressedForPenMode(e);
+			pen.handleMousePressedForPenMode(e);
 			return;
 		}
 
@@ -1552,7 +1362,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (textfieldHasFocus) return;
 
 		if (mode == EuclidianView.MODE_PEN) {
-			handleMousePressedForPenMode(e);
+			pen.handleMousePressedForPenMode(e);
 			return;
 		}
 
@@ -1902,7 +1712,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (textfieldHasFocus) return;
 
 		if (mode == EuclidianView.MODE_PEN) {
-			handleMouseReleasedForPenMode(e);
+			pen.handleMouseReleasedForPenMode(e);
 			return;
 		}
 
@@ -3528,28 +3338,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void createNewPointIntersection(GeoPointInterface intersectionPoint){
 	}
 	
-
-	/*
-	 * sets properties from the MiniPropertiesDialog
-	 * (if open)
-	 */
-	public void setProperties(GeoElement geo) {
-		
-		if (!app.hasFullGui()) return;
-	//	if (!app.getGuiManager().miniPropertiesOpen()) return;
-		
-		if (geo instanceof PointProperties) {
-			PointProperties p = (PointProperties)geo;
-			p.setPointSize(penSize);
-		}
-		
-		geo.setLineThickness(penSize);
-		geo.setLineType(penLineStyle);
-		geo.setObjColor(penColor);
-		
-		geo.update();
-		
-	}
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable){
 		GeoPointInterface ret = kernel.Point(null, xRW, yRW);
@@ -6716,101 +6504,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	
 	
-	
-	//==============================================
-	//	        StyleBar 
-	//==============================================
-	
-	
-	//==============================================
-	// create new styles with getters/setters
-	
-	private MiniStyle penStyle = new MiniStyle(MiniStyle.MODE_PEN);
-	private MiniStyle standardStyle = new MiniStyle(MiniStyle.MODE_STANDARD);
-	
-	public MiniStyle getPenStyle() {
-		return penStyle;
-	}
 
-	public void setPenStyle(MiniStyle penStyle) {
-		this.penStyle = penStyle;
-	}
-
-	public MiniStyle getStandardStyle() {
-		return standardStyle;
-	}
-
-	public void setStandardStyle(MiniStyle standardStyle) {
-		this.standardStyle = standardStyle;
-	}
-
-	
-	
-	//==============================================
-	// methods to apply styles to selected geos
-	
-	public void applyLineStyle(MiniStyle style) {
-
-		int lineStyle = style.lineStyle;
-		ArrayList geos = app.getSelectedGeos();
-
-		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
-			geo.setLineType(lineStyle);
-			geo.updateRepaint();			
-		}
-	
-	}
-	
-	public void applyPointSize(MiniStyle style) {
-		
-		int lineSize = style.lineSize;
-		int pointSize = style.pointSize;
-		ArrayList geos = app.getSelectedGeos();
-
-		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
-
-			if (geo instanceof PointProperties) {
-				((PointProperties)geo).setPointSize(pointSize);
-				geo.updateRepaint();
-
-			} else {
-				geo.setLineThickness(lineSize);
-				geo.updateRepaint();
-			}
-		}
-	}
-
-	public void applyColor(MiniStyle style) {
-		
-		Color color = style.color;
-		ArrayList geos = app.getSelectedGeos();
-
-		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
-			geo.setObjColor(color);
-			geo.updateRepaint();
-		}
-	}
-
-	public void applyAlpha(MiniStyle style) {
-
-		float alpha = style.alpha;
-		ArrayList geos = app.getSelectedGeos();
-
-		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
-			geo.setAlphaValue(alpha);
-			geo.updateRepaint();
-		}
-	}
-
-	//=============================================
-	// END stylebar 
-	
-	
-	
 	
 	//******************************
 	// PropertiesPanelMini Listeners

@@ -2477,10 +2477,10 @@ public class Application implements KeyEventDispatcher {
 		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
 			if (selectedGeos.size() > 0) {
 				
-				EuclidianController ec = getEuclidianView().getEuclidianController();
+				EuclidianView ev = getEuclidianView();
 				
-				for (int i = 0 ; i < selectedGeos.size() ; i++) {
-					ec.setProperties(((GeoElement)(selectedGeos.get(i))));
+				for (int i = 0 ; i < selectedGeos.size() ; i++) {					
+					ev.getStyleBar().getStyle().setAllProperties(selectedGeos.get(i));
 				}
 				
 			}

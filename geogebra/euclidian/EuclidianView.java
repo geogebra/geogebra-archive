@@ -431,7 +431,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		setLayout(null);
 		setMinimumSize(new Dimension(20, 20));
 		euclidianController.setView(this);
-
+		euclidianController.setPen(new EuclidianPen(app,this));
+		
 		attachView();
 
 		// register Listener

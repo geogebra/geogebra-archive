@@ -28,9 +28,10 @@ public class GeoGebraIcon extends ImageIcon {
 	public static final int MODE_LATEX = 2;
 	public static final int MODE_TEXT = 3;
 	public static final int MODE_COLOR_SWATCH = 4;
-	public static final int MODE_POINT = 5;
-	public static final int MODE_LINE = 6;
-	public static final int MODE_SLIDER = 7;
+	public static final int MODE_POINTSTYLE = 5;
+	public static final int MODE_LINESTYLE = 6;
+	public static final int MODE_SLIDER_LINE = 7;
+	public static final int MODE_SLIDER_POINT = 8;
 	
 	
 	public void setImage(Application app, Object[] args, Dimension iconSize, int mode){
@@ -80,7 +81,7 @@ public class GeoGebraIcon extends ImageIcon {
 			break;
 
 
-		case MODE_LINE:
+		case MODE_LINESTYLE:
 
 			int dashStyle = (Integer)args[0];
 			//thickness = (Integer)args[1];
@@ -102,24 +103,33 @@ public class GeoGebraIcon extends ImageIcon {
 
 			break;
 			
-		case MODE_SLIDER:
+		case MODE_SLIDER_LINE:
 
-			int th = (Integer)args[0];
-			int center = (int) (w/2);
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 					RenderingHints.VALUE_ANTIALIAS_ON);
-			// fill background layer with opaque white
-			fillColor = new Color(1.0f,1.0f,1.0f,1.0f);	
-			g2.setPaint(fillColor);
-			//g2.fillRect(0, 0, iconSize.width, iconSize.height);
-			//if (getBackground()==Color.LIGHT_GRAY) g2.setColor(Color.LIGHT_GRAY); else g2.setColor(Color.WHITE); 
-
+			
 			// draw line
 			g2.setPaint(Color.DARK_GRAY);
-			//g2.setStroke(EuclidianView.getStroke(th, EuclidianView.LINE_TYPE_FULL));
-			
-			g2.fillRect(4, 4, 4 + th, h-8);
+			// args[0] = line thickness
+			g2.setStroke(EuclidianView.getStroke( (Integer)args[0], EuclidianView.LINE_TYPE_FULL));
+			g2.drawLine(1, h/2, w-1, h/2);
 
+			break;
+			
+						
+		case MODE_SLIDER_POINT:
+
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+					RenderingHints.VALUE_ANTIALIAS_ON);
+			
+			// draw circle
+			
+			int r =  (Integer)args[0];
+			g2.setPaint(Color.LIGHT_GRAY);
+			g2.fillOval(w/2 - r, h/2-r, 2*r, 2*r);
+			g2.setPaint(Color.BLACK);
+			g2.drawOval(w/2 - r, h/2-r, 2*r, 2*r);
+			
 			break;
 
 		}

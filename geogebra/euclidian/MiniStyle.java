@@ -1,6 +1,11 @@
 package geogebra.euclidian;
 
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.PointProperties;
+import geogebra.main.Application;
+
 import java.awt.Color;
+import java.util.ArrayList;
 
 /**
  * Class to hold style settings for the Euclidian stylebar
@@ -8,6 +13,8 @@ import java.awt.Color;
  *
  */
 public class MiniStyle{
+	
+	private Application app;
 	
 	final public static int MODE_PEN = 0;
 	final public static int MODE_STANDARD = 1;
@@ -19,7 +26,10 @@ public class MiniStyle{
 	public int colorIndex;
 	public float alpha;
 
-	public MiniStyle(int mode){			
+	public MiniStyle(Application app, int mode){	
+		
+		this.app = app;
+		
 		if(mode == MODE_PEN)
 			setPenDefaults();
 
@@ -47,6 +57,104 @@ public class MiniStyle{
 	
 	
 
+	
+	//==============================================
+	// methods to apply styles to selected geos
+	
+	public void applyLineStyle(MiniStyle style) {
+
+		int lineStyle = style.lineStyle;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			geo.setLineType(lineStyle);
+			geo.updateRepaint();			
+		}
+	
+	}
+	
+	public void applyPointSize(MiniStyle style) {
+		
+		int pointSize = style.pointSize;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+
+			if (geo instanceof PointProperties) {
+				((PointProperties)geo).setPointSize(pointSize);
+				geo.updateRepaint();
+				}
+		}
+	}
+
+
+	public void applyLineSize(MiniStyle style) {
+
+		int lineSize = style.lineSize;
+		int pointSize = style.pointSize;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			geo.setLineThickness(lineSize);
+			geo.updateRepaint();
+		}
+	}
+
+
+	
+	public void applyColor(MiniStyle style) {
+		
+		Color color = style.color;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			geo.setObjColor(color);
+			geo.updateRepaint();
+		}
+	}
+
+	public void applyAlpha(MiniStyle style) {
+
+		float alpha = style.alpha;
+		ArrayList geos = app.getSelectedGeos();
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = (GeoElement)geos.get(i);
+			geo.setAlphaValue(alpha);
+			geo.updateRepaint();
+		}
+	}
+
+	
+	
+	public void setAllProperties(GeoElement geo) {
+		
+		if (geo instanceof PointProperties) {
+			PointProperties p = (PointProperties)geo;
+			p.setPointSize(pointSize);
+		}
+		
+		geo.setLineThickness(lineSize);
+		geo.setLineType(lineStyle);
+		geo.setObjColor(color);
+		geo.setAlphaValue(alpha);
+		
+		geo.update();
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public Color[] getStyleBarColors() {
 		
 		Color[]	primaryColors = new Color[] {		
