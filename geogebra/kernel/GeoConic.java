@@ -37,9 +37,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	private static final double MAX_COEFFICIENT_SIZE = 100000;
 	private static final double MIN_COEFFICIENT_SIZE = 1;
 
-	// modes
+	/** mode for equations like ax^2+bxy+cy^2+dx+ey+f=0 */
 	public static final int EQUATION_IMPLICIT = 0;
-	public static final int EQUATION_EXPLICIT = 1; // for y = ...
+	/** mode for equations like y=ax^2+bx+c */
+	public static final int EQUATION_EXPLICIT = 1;
+	/** mode for equations like (x-m)^2/a^2+(y-n)^2/b^2=1 */
 	public static final int EQUATION_SPECIFIC = 2;
 
 	private static String[] vars = { "x\u00b2", "x y", "y\u00b2", "x", "y" };
@@ -335,11 +337,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			case CONIC_ELLIPSE :
 			case CONIC_HYPERBOLA :
 				//	xy vanished 
-				return (kernel.isZero(matrix[3]));
+				return (Kernel.isZero(matrix[3]));
 
 			case CONIC_PARABOLA :
 				// x\u00b2 or y\u00b2 vanished
-				return kernel.isZero(matrix[0]) || kernel.isZero(matrix[1]);
+				return Kernel.isZero(matrix[0]) || Kernel.isZero(matrix[1]);
 
 			default :
 			case CONIC_LINE :
@@ -565,7 +567,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 					case CONIC_CIRCLE :		
 						buildSphereNDString();
 						/*
-						if (kernel.isZero(b.x)) {
+						if (Kernel.isZero(b.x)) {
 							sbToValueString.append("x\u00b2");
 						} else {
 							sbToValueString.append("(x ");
@@ -573,7 +575,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 							sbToValueString.append(")\u00b2");
 						}												
 						sbToValueString.append(" + ");
-						if (kernel.isZero(b.y)) {
+						if (Kernel.isZero(b.y)) {
 							sbToValueString.append("y\u00b2");
 						} else {
 							sbToValueString.append("(y ");
@@ -610,7 +612,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 							sbToValueString.append(" / ");
 							sbToValueString.append(kernel.format(coeff0 * coeff0));
 							sbToValueString.append(" + ");
-							if (kernel.isZero(b.y)) {
+							if (Kernel.isZero(b.y)) {
 								sbToValueString.append("y");
 								sbToValueString.append(squared);
 							} else {
@@ -909,7 +911,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		defined = M.isDefined() && !M.isInfinite(); // check midpoint
 		
 		// check radius
-		if (kernel.isZero(r)) {
+		if (Kernel.isZero(r)) {
 			r = 0;
 		} 
 		else if (r < 0) {
@@ -936,7 +938,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		double r=B.distance(C);
 		
 		// check radius
-		if (kernel.isZero(r)) {
+		if (Kernel.isZero(r)) {
 			r = 0;
 		} 
 		else if (r < 0) {
@@ -959,6 +961,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	/**
 	 * makes this conic a circle with midpoint M and radius geoSegment
 	 *  Michael Borcherds 2008-03-13	
+	 *  @param M center of circle
+	 *  @param geoSegment length of geoSegment is radius of the circle
 	 */
 	final public void setCircle(GeoPoint M, GeoSegment geoSegment) {
 		defined = M.isDefined() && !M.isInfinite() &&
@@ -967,7 +971,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		double r=geoSegment.getLength();
 		
 		// check radius
-		if (kernel.isZero(r)) {
+		if (Kernel.isZero(r)) {
 			r = 0;
 		} 
 		else if (r < 0) {
@@ -1062,7 +1066,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				eigenvecY = 0.0d;
 				setEigenvectors();
 			}
-		} else if (kernel.isZero(r)) { // radius == 0
+		} else if (Kernel.isZero(r)) { // radius == 0
 			singlePoint();			
 		} else { // radius < 0 or radius = infinite
 			empty();
@@ -1647,13 +1651,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		getAffineTransform();
 		if (oldTransform == null)
 			oldTransform = new AffineTransform();
-		boolean eigenVectorsChanged = 
-			transform.getScaleX() != oldTransform.getScaleX() ||
-			transform.getScaleY() != oldTransform.getScaleY() ||
-			transform.getShearX() != oldTransform.getShearX() ||
-			transform.getShearY() != oldTransform.getShearY();
-		
-		if (eigenVectorsChanged) {				
+		boolean eigenVectorsSame = 
+			Kernel.isEqual(transform.getScaleX(), oldTransform.getScaleX(), Kernel.MIN_PRECISION) ||
+			Kernel.isEqual(transform.getScaleY(), oldTransform.getScaleY(), Kernel.MIN_PRECISION) ||
+			Kernel.isEqual(transform.getShearX(), oldTransform.getShearX(), Kernel.MIN_PRECISION) ||
+			Kernel.isEqual(transform.getShearY(), oldTransform.getShearY(), Kernel.MIN_PRECISION);
+
+		if (!eigenVectorsSame) {				
 			// updated old transform
 			oldTransform.setTransform(transform);
 													
@@ -1727,7 +1731,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	final private void classifyMidpointConic(boolean degenerate) {
 		// calc eigenvalues and eigenvectors
-		if (kernel.isZero(matrix[3])) {
+		if (Kernel.isZero(matrix[3])) {
 			// special case: submatrix S is allready diagonal
 			eigenval[0] = matrix[0];
 			eigenval[1] = matrix[1];
@@ -1764,12 +1768,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 		// beta lets us distinguish between Ellipse, Hyperbola,
 		// single singlePoint and intersecting lines
-		//  if (kernel.isZero(beta)) {
-		if (degenerate || kernel.isZero(beta)) {
+		//  if (Kernel.isZero(beta)) {
+		if (degenerate || Kernel.isZero(beta)) {
 			setEigenvectors();
 			// single point or intersecting lines
 			mu[0] = eigenval[0] / eigenval[1];
-			if (kernel.isZero(mu[0])) {
+			if (Kernel.isZero(mu[0])) {
 				mu[0] = 0.0;
 				intersectingLines(mu);
 			} else if (mu[0] < 0.0d) {
@@ -1924,13 +1928,13 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	final private void classifyParabolicConic(boolean degenerate) {			
 		// calc eigenvalues and first eigenvector               
-		if (kernel.isZero(matrix[3])) {						
+		if (Kernel.isZero(matrix[3])) {						
 			// special cases: submatrix S is allready diagonal
 			// either A[0] or A[1] have to be zero (due to detS = 0)
-			if (kernel.isZero(matrix[0])) {
+			if (Kernel.isZero(matrix[0])) {
 
 				// special case: the submatrix S is zero!!!
-				if (kernel.isZero(matrix[1])) {
+				if (Kernel.isZero(matrix[1])) {
 					handleSzero();
 					return;
 				}
@@ -1968,7 +1972,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			c.y = matrix[5] * eigenvecX - matrix[4] * eigenvecY;
 		}		
 
-		if (degenerate || kernel.isZero(c.x)) {
+		if (degenerate || Kernel.isZero(c.x)) {
 			setEigenvectors();
 			// b = T . (0, -c.y/lambda)
 			temp = c.y / lambda;
@@ -1982,7 +1986,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			});
 			mu[0] = -temp * temp + matrix[2] / lambda;
 			
-			if (kernel.isZero(mu[0])) {			
+			if (Kernel.isZero(mu[0])) {			
 				doubleLine();
 			} else if (mu[0] < 0) {			
 				mu[0] = Math.sqrt(-mu[0]);				
@@ -2027,8 +2031,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	// if S is the zero matrix, set conic as double line or empty
 	final private void handleSzero() {			
 		// conic is line 2*A[4] * x +  2*A[5] * y + A[2] = 0				
-	    if (kernel.isZero(matrix[4])) {
-	    	if (kernel.isZero(matrix[5])) {	    		
+	    if (Kernel.isZero(matrix[4])) {
+	    	if (Kernel.isZero(matrix[5])) {	    		
 	    		empty();
 	    		return;
 	    	} 
@@ -2154,7 +2158,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/** 
 	 * Computes the determinant of a conic's 3x3 matrix.
-	 * @param matrix: flat matrix of conic section 
+	 * @param matrix flat matrix of conic section 
 	 */
 	public static double det(double [] matrix) {
 		return matrix[0] * (matrix[1] * matrix[2] - matrix[5] * matrix[5])
@@ -2167,7 +2171,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	/**
 	 * Returns true iff the determinant of 2x2 matrix of eigenvectors is
 	 * positive. 
-	 * @return
+	 * @return true iff the determinant of 2x2 matrix of eigenvectors is
+	 * positive. 
 	 */
 	final boolean hasPositiveEigenvectorOrientation() {
 		//return eigenvec[0].x * eigenvec[1].y - eigenvec[0].y * eigenvec[1].x > 0;
@@ -2186,6 +2191,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	
 	/** 
 	 * states wheter P lies on this conic or not 
+	 * @return true iff P lies on this conic
+	 * @param P
+	 * @param eps precision
 	 */
 	 public boolean isIntersectionPointIncident(GeoPoint P, double eps) {		
 		return isOnFullConic(P, eps);
@@ -2194,6 +2202,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 /** 
 	 * states wheter P lies on this conic or not. Note: this method
 	 * is not overwritten by subclasses like isIntersectionPointIncident()
+	 * @return true P lies on this conic
+	 * @param P
+	 * @param eps precision
 	 */
 	final boolean isOnFullConic(GeoPoint P, double eps) {						
 		switch (type) {	
@@ -2269,8 +2280,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		double lambda = 0.0;
 		boolean aZero, bZero, equal = true;
 		for (int i = 0; i < 6; i++) {
-			aZero = kernel.isZero(matrix[i]);
-			bZero = kernel.isZero(B[i]);
+			aZero = Kernel.isZero(matrix[i]);
+			bZero = Kernel.isZero(B[i]);
 
 			// A[i] == 0 and B[i] != 0  => not equal
 			if (aZero && !bZero)
@@ -2673,9 +2684,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
 	
 	/**
-	 * Returns the smallest possible parameter value for this
+	 * Returns the smallest possible parameter value for this path
+	 * @return the smallest possible parameter value for this
 	 * path (may be Double.NEGATIVE_INFINITY)
-	 * @return
 	 */
 	public double getMinParameter() {
 		switch (type) {		
@@ -2702,9 +2713,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
 	
 	/**
-	 * Returns the largest possible parameter value for this
+	 * Returns the largest possible parameter value for this path
+	 * @return the largest possible parameter value for this
 	 * path (may be Double.POSITIVE_INFINITY)
-	 * @return
 	 */
 	public double getMaxParameter() {
 		switch (type) {
