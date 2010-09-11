@@ -4350,7 +4350,6 @@ public abstract class GeoElement
 		}
 		*/
 		
-    
 		int tempCASPrintForm = kernel.getCASPrintForm();
 		kernel.setCASPrintForm(ExpressionNodeType);
 
@@ -4384,10 +4383,10 @@ public abstract class GeoElement
 		}
 		
 		// GeoNumeric eg a=1
-		if (ret.equals("") && this.isGeoNumeric() && !substituteNumbers && label != null) {
+		if ("".equals(ret) && this.isGeoNumeric() && !substituteNumbers && label != null) {
 			ret = label;
 		}
-		if (ret.equals("") && !this.isGeoText()) {
+		if ("".equals(ret) && !this.isGeoText()) {
 			// eg Text[ (1,2), false]
 			ret = toOutputValueString();
 		}
@@ -4395,12 +4394,13 @@ public abstract class GeoElement
 		kernel.setCASPrintForm(tempCASPrintForm);
 		
 		if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
-			if (ret.equals("?")) ret = app.getPlain("undefined");
-			else if (ret.equals(Unicode.Infinity)) ret = app.getPlain("\\infty");
-			else if (ret.equals(Unicode.MinusInfinity)) ret = app.getPlain("-\\infty");
+			if ("?".equals(ret)) ret = app.getPlain("undefined");
+			else if ((Unicode.Infinity+"").equals(ret)) ret = app.getPlain("\\infty");
+			else if ((Unicode.MinusInfinity+"").equals(ret)) ret = app.getPlain("-\\infty");
 		}
 		
 		return ret;
+		
 	}
 
 	
