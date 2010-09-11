@@ -20,18 +20,23 @@ import java.util.HashSet;
 class MacroConstruction extends Construction {
 	
 	private Construction parentCons;
-	private HashSet reservedLabels;
+	private HashSet<String> reservedLabels;
 	private boolean globalVariableLookup = false;
 	
+	/**
+	 * Creates new macro construction
+	 * @param kernel Kernel
+	 */
 	public MacroConstruction(MacroKernel kernel) {
 		super(kernel, kernel.getParentKernel().getConstruction());
 		parentCons = kernel.getParentKernel().getConstruction();
-		reservedLabels = new HashSet();
+		reservedLabels = new HashSet<String>();
 	}		   
 	
 	/**
 	 * Set construction via XML string.	 
-	 * @return success state
+	 * @param xmlString XML string of the construction
+	 * @throws Exception
 	 */
 	public void loadXML(String xmlString) throws Exception {
 		if (undoManager == null)
@@ -67,7 +72,7 @@ class MacroConstruction extends Construction {
         }
     	    	       
         // global var handling        
-        GeoElement geo = geoTabelVarLookup(label);
+        GeoElement geo = geoTableVarLookup(label);
 
         if (geo == null && globalVariableLookup && !isReservedLabel(label)) {
         	// try parent construction        	
@@ -80,10 +85,18 @@ class MacroConstruction extends Construction {
     	return reservedLabels.contains(label);        	
     }
 
+    /**
+     * Returns true if geos of parent costruction can be referenced
+     * @return true if geos of parent costruction can be referenced
+     */
 	public boolean isGlobalVariableLookup() {
 		return globalVariableLookup;
 	}
 
+	 /**
+     * Set to true if geos of parent costruction should be referenced
+     * @param globalVariableLookup true if geos of parent costruction should be referenced
+     */
 	void setGlobalVariableLookup(boolean globalVariableLookup) {
 		this.globalVariableLookup = globalVariableLookup;
 	}
