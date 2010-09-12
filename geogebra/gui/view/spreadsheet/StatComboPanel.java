@@ -279,7 +279,8 @@ public class StatComboPanel extends JPanel{
 
 			plotPanel.updateScatterPlot( dataListSelected, doCreate);
 			plotPanel.setAutoRemoveGeos(false);
-			plotPanel.updateRegressionPlot(dataListSelected, doCreate, statDialog.getRegressionMode());
+			plotPanel.updateRegressionPlot(dataListSelected, doCreate, statDialog.getRegressionMode(), statDialog.getRegressionOrder());
+			statDialog.setRegEquation(plotPanel.getRegEquation());
 			plotPanel.setAutoRemoveGeos(true);
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;

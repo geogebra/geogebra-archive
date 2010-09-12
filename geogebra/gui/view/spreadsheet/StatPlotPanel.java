@@ -42,8 +42,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	private GeoElement plotGeo;
 	//private GeoList boundList, freqList;
 	
-	private boolean isAutoRemoveGeos = true;
-	
+	private boolean isAutoRemoveGeos = true;	
 	private double xMinData, xMaxData, yMinData, yMaxData;
 	
 	
@@ -60,9 +59,14 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	
 	private String[] regCmd = new String[StatDialog.regressionTypes];
+	private String regEquation;
 	
 	
-	
+	public String getRegEquation() {
+		return regEquation;
+	}
+
+
 	/*************************************************
 	 * Construct the panel
 	 */
@@ -100,11 +104,11 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		regCmd[StatDialog.REG_NONE] = "";
 		regCmd[StatDialog.REG_LINEAR] = "FitLine";
 		regCmd[StatDialog.REG_LOG] = "FitLog";
-		regCmd[StatDialog.REG_POLY2] = "FitPoly";
-		
-		
-		
-		
+		regCmd[StatDialog.REG_POLY] = "FitPoly";
+		regCmd[StatDialog.REG_POW] = "FitPow";
+		regCmd[StatDialog.REG_EXP] = "FitExp";
+		regCmd[StatDialog.REG_SIN] = "FitSin";
+		regCmd[StatDialog.REG_LOGISTIC] = "FitLogistic";
 		
 		
 	}
@@ -495,7 +499,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	}
 	
 	
-	public void updateRegressionPlot(GeoList dataList, boolean doCreate, int regType){
+	public void updateRegressionPlot(GeoList dataList, boolean doCreate, int regType, int order){
 			
 		if (regType == StatDialog.REG_NONE) return;
 		
@@ -503,14 +507,18 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		String label = dataList.getLabel();	
 		String text = regCmd[regType] + "[" + label + "]";
 		
-		if(regType == StatDialog.REG_POLY2)
-			text = regCmd[regType] + "[" + label + " ,2]";
+		if(regType == StatDialog.REG_POLY)
+			text = regCmd[regType] + "[" + label + "," + order + "]";
 		
 		GeoElement tempGeo = null;
-		if(doCreate){
+	// Regression cmds do not update with changes in data list
+	// so we must create a new geo on every update.
+	//	if(doCreate){
 			tempGeo  = createGeoFromString(text);
 			tempGeo.setObjColor(StatDialog.REGRESSION_COLOR);
-		}	
+	//	}	
+		
+		regEquation = tempGeo.getAlgebraDescription();
 		
 		// set view parameters	
 		double xBuffer = .25*(xMaxData - xMinData);

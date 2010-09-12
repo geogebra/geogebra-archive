@@ -28,6 +28,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 
 public class StatDialog extends JDialog 
 implements ActionListener, View   {
@@ -53,9 +54,11 @@ implements ActionListener, View   {
 	
 	
 	// GUI objects
+	private JLabel lblRegression, lblRegEquation;
+	private JTextField tfRegression;
 	private JButton btnClose, btnOptions, btnExport, btnDisplay;
 	private JCheckBox cbShowData, cbShowCombo2;
-	private JComboBox comboRegression;
+	private JComboBox cbRegression, cbPolyOrder;
 	private StatComboPanel comboStatPanel, comboStatPanel2;;
 	private StatDataPanel dataPanel;
 	private StatTablePanel statPanel;
@@ -83,30 +86,26 @@ implements ActionListener, View   {
 	public static final int REG_NONE = 0;
 	public static final int REG_LINEAR = 1;
 	public static final int REG_LOG = 2;
-	
-	//public static final int REG_LOGISTIC = 3;
+	public static final int REG_POLY = 3;
 	public static final int REG_POW = 4;
 	public static final int REG_EXP = 5;
 	public static final int REG_SIN = 6;
-	public static final int REG_POLY2 = 3;
-	public static final int REG_POLY3 = 8;
-	public static final int REG_POLY4 = 9;
-	public static final int REG_POLY5 = 10;
-	public static final int REG_POLY6 = 11;
-	public static final int regressionTypes = 4;
+	public static final int REG_LOGISTIC = 7;
 	
-	
-	
-	
-	
+	public static final int regressionTypes = 8;
 	private int regressionMode = REG_NONE;
+	private int regressionOrder;
+	private String[] regressionLabels;
+	private String [] regCmd;
+	private String regEquation;
+	
+
+	public int getRegressionOrder() {
+		return regressionOrder;
+	}
 	public int getRegressionMode() {
 		return regressionMode;
 	}
-
-	private String[] regressionLabels;
-	private String [] regCmd;
-	
 
 	public String[] getRegCmd() {
 		return regCmd;
@@ -188,6 +187,8 @@ implements ActionListener, View   {
 		btnClose.requestFocus();
 		attachView();	
 		isIniting = false;
+		setLabels();
+		updateGUI();
 
 	} 
 	// END StatDialog constructor
@@ -409,49 +410,37 @@ implements ActionListener, View   {
 	
 	private void initGUI() {
 
-		try {
-			switch(mode){
-			case MODE_ONEVAR:
-				setTitle(app.getMenu("OneVariableStatistics"));	
-				break;
-			case MODE_TWOVAR:
-				setTitle(app.getMenu("TwoVariableStatistics"));	
-				break;
-
-			}
-			
+		
 			//===========================================
 			// button panel
-			
-			btnClose = new JButton(app.getMenu("Close"));
+	
+			btnClose = new JButton();
 			btnClose.addActionListener(this);
 			JPanel rightButtonPanel = new JPanel(new FlowLayout());
 			rightButtonPanel.add(btnClose);
 			
 			
-			btnOptions = new JButton(app.getMenu("Options"));
+			btnOptions = new JButton();
 			btnOptions.addActionListener(this);
 			
-			btnExport = new JButton(app.getMenu("Export"));
+			btnExport = new JButton();
 			btnExport.addActionListener(this);
 			
-			btnDisplay = new JButton(app.getMenu("Plots"));
+			btnDisplay = new JButton();
 			btnDisplay.addActionListener(this);
 			
-			createRegressionComboBox();
 			
 			JPanel centerButtonPanel = new JPanel(new FlowLayout());
 			//centerButtonPanel.add(btnOptions);
 			//centerButtonPanel.add(btnDisplay);
 			//centerButtonPanel.add(btnExport);
-			centerButtonPanel.add(comboRegression);
 			
 			
-			cbShowData = new JCheckBox(app.getMenu("ShowData"));
+			cbShowData = new JCheckBox();
 			cbShowData.setSelected(showDataPanel);
 			cbShowData.addActionListener(this);
 			
-			cbShowCombo2 = new JCheckBox(app.getMenu("ShowPlot2"));
+			cbShowCombo2 = new JCheckBox();
 			cbShowCombo2.setSelected(showComboPanel2);
 			cbShowCombo2.addActionListener(this);
 			
@@ -472,8 +461,7 @@ implements ActionListener, View   {
 
 			//===========================================
 			// statData panel
-			
-			
+					
 			statPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 			dataPanel.setBorder(statPanel.getBorder());
 			
@@ -485,20 +473,32 @@ implements ActionListener, View   {
 			//statDataPanel.add(dataPanel, BorderLayout.SOUTH);
 			
 			
-			//===========================================
-			// display panels: options, export and display  (options/export not used yet)
 			
-			
-				
+			// create a plotComboPanel		
 			comboPanelSplit = new JSplitPane(
 					JSplitPane.VERTICAL_SPLIT, comboStatPanel, comboStatPanel2);
+			
+			JPanel regressionPanel = createRegressionPanel();
+			
+			JPanel plotComboPanel = new JPanel(new BorderLayout());
+			plotComboPanel.add(comboPanelSplit, BorderLayout.CENTER);	
+			if(mode == MODE_TWOVAR)
+				plotComboPanel.add(regressionPanel, BorderLayout.SOUTH);
+			
+			
+			
+			// display panel
 			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					statDataPanel, comboPanelSplit);
+					statDataPanel, plotComboPanel);
 			displayPanel.setDividerLocation(150);
 			
+			
+			// export panel
 			JPanel exportPanel = new JPanel();
 			exportPanel.add(new JLabel("export panel"));
 			
+			
+			// options panel
 			JPanel optionsPanel = new JPanel();
 			optionsPanel.add(new JLabel("options panel"));
 			
@@ -529,43 +529,80 @@ implements ActionListener, View   {
 			setShowDataPanel(showDataPanel);
 			
 			setLocationRelativeTo(app.getFrame());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
 	}
 
-	
+
+
+	private void setRegressionLabels(){	
+		regressionLabels[REG_NONE] = app.getPlain("None");
+		regressionLabels[REG_LINEAR] = app.getPlain("Linear");
+		regressionLabels[REG_LOG] = app.getPlain("Log");
+		regressionLabels[REG_POLY] = app.getPlain("Polynomial");
+		regressionLabels[REG_POW] = app.getPlain("Power");
+		regressionLabels[REG_EXP] = app.getPlain("Exponential");
+		regressionLabels[REG_SIN] = app.getPlain("Sin");
+		regressionLabels[REG_LOGISTIC] = app.getPlain("Logistic");	
+	}
+
 	public void setLabels(){
+
+		switch(mode){
+		case MODE_ONEVAR:
+			setTitle(app.getMenu("OneVariableStatistics"));	
+			break;
+		case MODE_TWOVAR:
+			setTitle(app.getMenu("TwoVariableStatistics"));	
+			break;
+		}
+
+
+		btnClose.setText(app.getMenu("Close"));
+		btnOptions.setText(app.getMenu("Options"));
+		btnExport.setText(app.getMenu("Export"));
+		btnDisplay.setText(app.getMenu("Plots"));
+
+		cbShowData.setText(app.getMenu("ShowData"));
+		cbShowCombo2.setText(app.getMenu("ShowPlot2"));
+
+
+		regressionLabels = new String[regressionTypes];
+		setRegressionLabels();
+		lblRegression.setText(app.getMenu("Regression Model")+ ":");
+	}
+
+
+
+
+	private JPanel createRegressionPanel(){
+		
+		String[] orders = {"2","3","4","5","6","7","8","9"};
+		cbPolyOrder = new JComboBox(orders);
+		cbPolyOrder.setSelectedIndex(0);
+		regressionOrder = 2;
+		cbPolyOrder.addActionListener(this);
 		
 		regressionLabels = new String[regressionTypes];
+		setRegressionLabels();
+		cbRegression = new JComboBox(regressionLabels);
+		cbRegression.addActionListener(this);
 		
-		regressionLabels[REG_NONE] = app.getPlain("None");
-		regressionLabels[REG_LINEAR] = app.getPlain("Linear");
-		regressionLabels[REG_LOG] = app.getPlain("Log");
-		regressionLabels[REG_POLY2] = app.getPlain("Poly2");
-			
+		lblRegression = new JLabel();
+		lblRegEquation = new JLabel();
 		
-	}
-	
-	
-	
-	private void createRegressionComboBox(){
+		tfRegression = new JTextField();
+		//tfRegression.setColumns(30);
 		
-		regressionLabels = new String[regressionTypes];
+		JPanel regressionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		regressionPanel.add(lblRegression);
+		regressionPanel.add(cbRegression);
+		regressionPanel.add(cbPolyOrder);
+		//regressionPanel.add(tfRegression);
+		//regressionPanel.add(lblRegEquation);
 		
-		regressionLabels[REG_NONE] = app.getPlain("None");
-		regressionLabels[REG_LINEAR] = app.getPlain("Linear");
-		regressionLabels[REG_LOG] = app.getPlain("Log");
-		regressionLabels[REG_POLY2] = app.getPlain("Poly2");
-		
-		comboRegression = new JComboBox(regressionLabels);
-		comboRegression.addActionListener(this);
+		return regressionPanel;
 		
 	}
-	
-	
-	
 	
 
 	private void setShowComboPanel2(boolean showComboPanel2){
@@ -609,8 +646,10 @@ implements ActionListener, View   {
 
 	}
 	
-	
 
+
+	
+	
 	public int getMode(){
 		return mode;
 	}
@@ -649,11 +688,14 @@ implements ActionListener, View   {
 			((CardLayout)cardPanel.getLayout()).show(cardPanel, "displayPanel");
 		}
 
-		else if(source == comboRegression){
-			regressionMode = comboRegression.getSelectedIndex();
+		else if(source == cbRegression){
+			regressionMode = cbRegression.getSelectedIndex();
 			this.updateAllComboPanels(true);
 		}
-		
+		else if(source == cbPolyOrder){
+			regressionOrder = cbPolyOrder.getSelectedIndex() + 2;
+			this.updateAllComboPanels(true);
+		}
 		
 		
 		btnClose.requestFocus();
@@ -681,7 +723,24 @@ implements ActionListener, View   {
 		}
 	}
 
-
+	
+	
+	public void setRegEquation(String eqn){
+		regEquation = eqn;
+		updateGUI();
+	}
+	
+	private void updateGUI(){
+		
+		if(isIniting) return;
+		
+		if(regressionMode != REG_NONE){
+			lblRegEquation.setText(regEquation);
+		}	
+		cbPolyOrder.setVisible(regressionMode == REG_POLY);	
+	}
+	
+	
 	
 	public void updateDialog(){
 
@@ -703,6 +762,22 @@ implements ActionListener, View   {
 		
 	}
 
+
+	public void updateFonts() {
+
+		Font font = app.getPlainFont();
+
+		int size = font.getSize();
+		if (size < 12) size = 12; // minimum size
+		double multiplier = (size)/12.0;
+
+		setFont(font);
+
+		comboStatPanel.updateStatTableFonts(font);
+		comboStatPanel2.updateStatTableFonts(font);
+		dataPanel.updateFonts(font);
+		statPanel.updateFonts(font);
+	}
 
 
 	public boolean isInDataSource(GeoElement geo){
@@ -727,23 +802,6 @@ implements ActionListener, View   {
 		}
 	
 	
-	
-	public void updateFonts() {
-
-		Font font = app.getPlainFont();
-
-		int size = font.getSize();
-		if (size < 12) size = 12; // minimum size
-		double multiplier = (size)/12.0;
-
-		setFont(font);
-
-		comboStatPanel.updateStatTableFonts(font);
-		comboStatPanel2.updateStatTableFonts(font);
-		dataPanel.updateFonts(font);
-		statPanel.updateFonts(font);
-	}
-
 
 
 
