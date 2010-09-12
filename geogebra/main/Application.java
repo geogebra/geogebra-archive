@@ -2968,8 +2968,8 @@ public class Application implements KeyEventDispatcher {
 			if (path.endsWith(JAR_FILES[0])) {
 				runningFromJar = true;
 				path = path.substring(0, path.length() -  JAR_FILES[0].length());
+				
 			}
-			
 			// set codebase
 			codebase = new URL(path);	
 			hasFullPermissions = true;
@@ -2984,8 +2984,6 @@ public class Application implements KeyEventDispatcher {
 			}
 		}
 		
-		// TODO: remove
-		System.out.println("codebase: " + codebase);
 	}
 	
 	final public boolean isWebstart() {
@@ -4391,8 +4389,8 @@ public class Application implements KeyEventDispatcher {
 
 		if (!codeBaseFolder.startsWith("file:/")) return null;
 
-		// strip "file:/"
-		return codeBaseFolder.substring(6);
+		// strip "file:/", leave leading / for Mac & Linux
+		return codeBaseFolder.substring(WINDOWS ? 6:5);
 	}
 
 	public void exportToLMS() {
