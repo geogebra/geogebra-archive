@@ -12,18 +12,13 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.cas.GeoGebraCAS;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.roots.RealRootDerivFunction;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
-import geogebra.main.MyError;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,10 +35,10 @@ implements ExpressionValue, RealRootFunction, Functional {
 	 /**
      * Creates new Function from expression where x is
      * the variable. 
-     * Note: call initFunction() after this constructor.
+     * Note: call {@link #initFunction()} after this constructor.
      */ 
     public Function(ExpressionNode expression) {
-    	super(expression);     
+    	super(expression);
     }
     
     
@@ -61,6 +56,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      */ 
     public Function(Kernel kernel) {
        super(kernel);
+       fVars = new FunctionVariable[1];
     }
     
     // copy constructor
