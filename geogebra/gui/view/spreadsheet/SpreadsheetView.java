@@ -109,7 +109,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean showBrowserPanel = false;
 	private boolean isColumnSelect = false; //TODO: do we need forced column select?
 	private boolean allowSpecialEditor = false;
-	
+	private boolean allowToolTips = true;
 	
 	private StatDialog oneVarStatDialog;
 	private StatDialog twoVarStatDialog;
@@ -1570,6 +1570,16 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public boolean getShowGrid() {
 		return showGrid;
 	}
+	
+	public boolean getAllowToolTips() {
+		return allowToolTips;
+	}
+
+	public void setAllowToolTips(boolean allowToolTips) {
+		this.allowToolTips = allowToolTips;
+	}
+	
+	
 	
 	/**
 	 * 

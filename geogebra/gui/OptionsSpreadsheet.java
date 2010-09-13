@@ -56,7 +56,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	
 	private JCheckBox cbShowGrid, cbShowRowHeader, 
 	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, 
-	cbShowBrowser, cbAllowSpecialEditor;
+	cbShowBrowser, cbAllowSpecialEditor, cbAllowToolTips;
 	
 	private JTextField dirField, urlField;
 	private JButton browseButton, restoreButton, setCurrentButton;
@@ -134,7 +134,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbAllowSpecialEditor.addActionListener(this);        
         layoutOptions.add(cbAllowSpecialEditor);
         
-        
+        cbAllowToolTips = new JCheckBox();
+        cbAllowToolTips.addActionListener(this);        
+        layoutOptions.add(cbAllowToolTips);
         
         return layoutOptions;
 	}
@@ -255,6 +257,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		cbShowVScrollbar.setText(app.getMenu("ShowVerticalScrollbars"));        
 		cbShowBrowser.setText(app.getMenu("ShowFileBrowser"));  
 		cbAllowSpecialEditor.setText(app.getMenu("UseButtonsAndCheckboxes"));
+		cbAllowToolTips.setText(app.getMenu("AllowToolTips"));
 
 		locationPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("HomeDirectory")));
 		dirRadioButton.setText(app.getMenu("FileSystem") + ":");
@@ -304,6 +307,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbAllowSpecialEditor.setSelected(view.allowSpecialEditor()); 
         cbAllowSpecialEditor.addActionListener(this);
       
+        cbAllowToolTips.removeActionListener(this);
+        cbAllowToolTips.setSelected(view.getAllowToolTips()); 
+        cbAllowToolTips.addActionListener(this);
         
         
         //======================================
@@ -377,7 +383,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 			view.setAllowSpecialEditor(cbAllowSpecialEditor.isSelected());
 		}
 		
-		
+		else if (source == cbAllowToolTips) {
+			view.setAllowToolTips(cbAllowToolTips.isSelected());
+		}
 		
 		//========================================
 		// browser options
