@@ -38,6 +38,9 @@ public class AlgoSequence extends AlgoElement {
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
     private boolean expIsFunctionOrCurve,  isEmpty;
     private AlgoElement expressionParentAlgo;
+    
+    // we need to check that some Object[] reference didn't cause infinite update cycle
+    private boolean updateRunning = false;
    
    
     /**
@@ -111,8 +114,8 @@ public class AlgoSequence extends AlgoElement {
         if (len == 5)
         	input[4] = var_step_geo;  
           
-        output = new GeoElement[1];
-    	output[0] = list;	   
+        setOutputLength(1);
+    	setOutput(0,list);	   
         
     	setDependencies(); // done by AlgoElement
     }
@@ -146,7 +149,9 @@ public class AlgoSequence extends AlgoElement {
         return list;
     }      
     
-    protected final void compute() {    	
+    protected final void compute() {
+    	if(updateRunning) return;
+    	updateRunning = true;
     	for (int i=1; i < input.length; i++) {
     		if (!input[i].isDefined()) {
        			list.setUndefined();
@@ -186,6 +191,7 @@ public class AlgoSequence extends AlgoElement {
     	
     	// revert label creation setting
     	cons.setSuppressLabelCreation(oldSuppressLabels);
+    	updateRunning = false;
     }         
     
     private void createNewList(double from, double to, double step) {     
