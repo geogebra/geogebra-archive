@@ -604,7 +604,6 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 
 		else if (source == cbShowMouseCoords) {
 			view.setAllowShowMouseCoords(cbShowMouseCoords.isSelected());	
-			app.setAllowToolTips(cbShowMouseCoords.isSelected());	
 		}
 
 
