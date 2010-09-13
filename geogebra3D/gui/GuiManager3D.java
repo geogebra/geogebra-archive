@@ -119,7 +119,7 @@ public class GuiManager3D extends GuiManager {
 			public void actionPerformed(ActionEvent e) {
 				// toggle axes
 				((Application3D) app).toggleAxis3D();
-				app.getEuclidianView().repaint();
+				//app.getEuclidianView().repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();
 				
@@ -133,7 +133,7 @@ public class GuiManager3D extends GuiManager {
 			public void actionPerformed(ActionEvent e) {
 				// toggle grid
 				((Application3D) app).toggleGrid3D();
-				app.getEuclidianView().repaint();
+				//app.getEuclidianView().repaint();
 				app.storeUndoInfo();
 				app.updateMenubar();
 				
@@ -147,7 +147,8 @@ public class GuiManager3D extends GuiManager {
 			public void actionPerformed(ActionEvent e) {
 				// toggle plane
 				((Application3D) app).togglePlane();
-				
+				app.storeUndoInfo();
+				app.updateMenubar();
 			}
 		};
 
