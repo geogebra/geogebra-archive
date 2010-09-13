@@ -55,9 +55,13 @@ implements ActionListener {
      
     private ImageIcon iconZoom;
 
+    public ContextMenuGraphicsWindow(Application app){
+    	super(app);	
+    }
+    
     /** Creates new ZoomMenu */
     public ContextMenuGraphicsWindow(Application app, double px, double py) {  
-        super(app);      
+        this(app);      
         
         iconZoom      = app.getImageIcon("zoom16.gif");
         

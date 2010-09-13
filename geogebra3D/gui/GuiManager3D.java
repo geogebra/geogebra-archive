@@ -24,7 +24,7 @@ import geogebra3D.euclidian3D.EuclidianView3D;
 public class GuiManager3D extends GuiManager {
 
 	
-	private AbstractAction showPlaneAction;
+	private AbstractAction showAxes3DAction, showGrid3DAction, showPlaneAction;
 	
 	/** 
 	 * default constructor
@@ -112,6 +112,33 @@ public class GuiManager3D extends GuiManager {
 		
 		if (!super.initActions())
 			return false;
+		showAxes3DAction = new AbstractAction(app.getMenu("Axes"),
+				app.getImageIcon("axes.gif")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				// toggle axes
+				((Application3D) app).toggleAxis3D();
+				app.getEuclidianView().repaint();
+				app.storeUndoInfo();
+				app.updateMenubar();
+				
+			}
+		};
+
+		showGrid3DAction = new AbstractAction(app.getMenu("Grid"),
+				app.getImageIcon("grid.gif")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				// toggle grid
+				((Application3D) app).toggleGrid3D();
+				app.getEuclidianView().repaint();
+				app.storeUndoInfo();
+				app.updateMenubar();
+				
+			}
+		};
 		
 		showPlaneAction = new AbstractAction(app.getMenu("Plane"),
 				app.getImageIcon("plane.gif")) {
@@ -129,6 +156,16 @@ public class GuiManager3D extends GuiManager {
 		
 	}
 	
+	
+	public AbstractAction getShowAxes3DAction() {
+		initActions();
+		return showAxes3DAction;
+	}
+
+	public AbstractAction getShowGrid3DAction() {
+		initActions();
+		return showGrid3DAction;
+	}
 	
 	public AbstractAction getShowPlaneAction() {
 		initActions();
@@ -150,6 +187,7 @@ public class GuiManager3D extends GuiManager {
 	 * Displays the zoom menu at the position p in the coordinate space of
 	 * euclidianView
 	 */
+	/*
 	public void showDrawingPadPopup(Component invoker, Point p) {
 		// clear highlighting and selections in views		
 		app.getEuclidianView().resetMode();
@@ -159,5 +197,21 @@ public class GuiManager3D extends GuiManager {
 				app, p.x, p.y);
 		popupMenu.show(invoker, p.x, p.y);
 	}
+	*/
+	
+	/**
+	 * Displays the zoom menu at the position p in the coordinate space of
+	 * euclidianView
+	 */
+	public void showDrawingPadPopup3D(Component invoker, Point p) {
+		// clear highlighting and selections in views		
+		((Application3D) app).getEuclidianView3D().resetMode();
+		
+		// menu for drawing pane context menu
+		ContextMenuGraphicsWindow3D popupMenu = new ContextMenuGraphicsWindow3D(
+				app, p.x, p.y);
+		popupMenu.show(invoker, p.x, p.y);
+	}
+	
 
 }

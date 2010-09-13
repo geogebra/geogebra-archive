@@ -14,6 +14,7 @@ import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
+import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoCoordSys2D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -27,6 +28,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.swing.JPanel;
 
 /**
  * Controller for the 3D view
@@ -1000,6 +1003,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
+	public void showDrawingPadPopup(Point mouseLoc){
+		((GuiManager3D) app.getGuiManager()).showDrawingPadPopup3D((JPanel) view, mouseLoc);		
+	}
 
 	
 	///////////////////////////////////////////

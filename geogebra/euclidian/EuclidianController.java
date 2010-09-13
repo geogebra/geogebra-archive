@@ -1702,6 +1702,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
 
 	}
+	
+	public void showDrawingPadPopup(Point mouseLoc){
+		app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);		
+	}
 
 	public void mouseReleased(MouseEvent e) {	
 		
@@ -1794,7 +1798,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					}
 					else {
 						// there are no selected geos: show drawing pad popup menu
-						app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
+						//app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
+						showDrawingPadPopup(mouseLoc);
 					}
 				} else {		
 					// there are hits
@@ -1817,7 +1822,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 							app.getGuiManager().showPopupMenu(geo,(JPanel) view, mouseLoc);
 						else
 							//for 3D : if the geo hitted is xOyPlane, then chooseGeo return null
-							app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
+							//app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
+							showDrawingPadPopup(mouseLoc);
 					}																										
 				}				
 				return;

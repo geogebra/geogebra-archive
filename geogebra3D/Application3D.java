@@ -151,7 +151,7 @@ public class Application3D extends Application{
 		super.refreshViews();
 	}
 	
-	public void toggleAxis(){
+	public void toggleAxis3D(){
 		// toggle axis
 		getEuclidianView3D().toggleAxis();
 	}
@@ -161,7 +161,7 @@ public class Application3D extends Application{
 		getEuclidianView3D().togglePlane();
 	}
 	
-	public void toggleGrid(){
+	public void toggleGrid3D(){
 		// toggle xOy grid
 		getEuclidianView3D().toggleGrid();
 	}

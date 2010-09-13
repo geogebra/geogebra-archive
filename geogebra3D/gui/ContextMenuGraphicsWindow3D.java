@@ -19,17 +19,31 @@ public class ContextMenuGraphicsWindow3D extends ContextMenuGraphicsWindow {
 	 * @param py
 	 */
 	public ContextMenuGraphicsWindow3D(Application app, double px, double py) {
-		super(app, px, py);
-		// TODO Auto-generated constructor stub
+		 super(app); 
+		 
+		 setTitle("<html>" + app.getPlain("DrawingPad") + " 3D" + "</html>");
+		 
+		 addAxesAndGridCheckBoxes();
+		
 	}
 	
 	
 
 	protected void addAxesAndGridCheckBoxes(){
 
-		super.addAxesAndGridCheckBoxes();
+        // checkboxes for axes and grid
+        JCheckBoxMenuItem cbShowAxes = new JCheckBoxMenuItem(((GuiManager3D) app.getGuiManager()).getShowAxes3DAction());
+        //cbShowAxes.setSelected(ev.getShowXaxis() && ev.getShowYaxis());
+        app.setShowAxesSelected(cbShowAxes);
+        cbShowAxes.setBackground(getBackground());
+        add(cbShowAxes);
+        
+        JCheckBoxMenuItem cbShowGrid = new JCheckBoxMenuItem(((GuiManager3D) app.getGuiManager()).getShowGrid3DAction());
+        //cbShowGrid.setSelected(ev.getShowGrid());
+        app.setShowGridSelected(cbShowGrid);
+        cbShowGrid.setBackground(getBackground());
+        add(cbShowGrid);
 
-		EuclidianView ev = app.getEuclidianView();
 		JCheckBoxMenuItem cbShowPlane = new JCheckBoxMenuItem(((GuiManager3D) app.getGuiManager()).getShowPlaneAction());
 		((Application3D) app).setShowPlaneSelected(cbShowPlane);
 		cbShowPlane.setBackground(getBackground());

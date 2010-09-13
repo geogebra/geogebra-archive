@@ -837,7 +837,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 		add(mi);
 	}
 
-	void setTitle(String str) {
+	protected void setTitle(String str) {
 		JLabel title = new JLabel(str);
 		title.setFont(app.getBoldFont());                      
 		title.setBackground(bgColor);
