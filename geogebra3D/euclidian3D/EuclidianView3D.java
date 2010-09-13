@@ -790,7 +790,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	/** tell the view that it has to be updated
+	/** 
+	 * tell the view that it has to be updated
 	 * 
 	 */
 	public void setWaitForUpdate(){
@@ -812,6 +813,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public boolean isStarted(){
 		return isStarted;
 	}
+	
 	
 	public void paint(Graphics g){
 		
@@ -978,7 +980,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public void reset() {
-		//drawList3D.clear();
+	
+		
+		setWaitForUpdate();
+		resetLabels();
 		
 	}
 
@@ -2552,6 +2557,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	/**
+	 * says all labels owned by the view that the view has changed
+	 */
+	public void resetOwnLabels(){
+		
+		xOyPlaneDrawable.setLabelWaitForReset();
+		
+		for(int i=0;i<3;i++){
+			axisDrawable[i].setLabelWaitForReset();
+		}
+				
+	}
+	
+	/**
 	 * says all drawables that the view has changed
 	 */
 	public void updateAllDrawables(){
@@ -2560,6 +2578,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		drawable3DLists.viewChanged();
 		
 	}
+	
+	
+	/**
+	 * says all labels to be recomputed
+	 */
+	public void resetLabels(){
+		
+		resetOwnLabels();
+		drawable3DLists.resetLabels();
+		
+	}
+	
+	
 	
 	/**
 	 * update all drawables now

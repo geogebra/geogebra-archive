@@ -144,6 +144,9 @@ public abstract class Drawable3D extends DrawableND {
 	/** says if the label has to be updated */
 	private boolean labelWaitForUpdate;
 	
+	/** says if the label has to be reset */
+	protected boolean labelWaitForReset;
+	
 	/** matrix for openGL display */
 	//private Ggb3DMatrix4x4 m_matrix = new Ggb3DMatrix4x4();
 	
@@ -235,21 +238,25 @@ public abstract class Drawable3D extends DrawableND {
 	 */
 	final public void update(){
 		
+
 		/*
-		if (getGeoElement().isGeoPolygon())
-			Application.debug(getGeoElement()+"\n waitForUpdate="+waitForUpdate);
-			*/
+		if (waitForUpdate||viewChanged||labelWaitForUpdate)
+			Application.debug(getGeoElement()+"\n waitForUpdate="+waitForUpdate
+					+"\n viewChanged="+viewChanged
+					+"\n labelWaitForUpdate="+labelWaitForUpdate
+					+"\n reset="+labelWaitForReset);
+					*/
 
 		if (waitForUpdate){
 			updateForItSelf();
 			waitForUpdate = false;
-			setLabelWaitForUpdate();//TODO remove that
+			//setLabelWaitForUpdate();//TODO remove that
 		}
 		
 		if (viewChanged){
 			updateForView();
 			viewChanged = false;
-			setLabelWaitForUpdate();//TODO remove that
+			//setLabelWaitForUpdate();//TODO remove that
 		}
 		
 		if (labelWaitForUpdate){
@@ -306,6 +313,15 @@ public abstract class Drawable3D extends DrawableND {
 	public void setLabelWaitForUpdate(){
 		
 		labelWaitForUpdate = true;
+	}
+	
+	/**
+	 * reset the label
+	 */
+	public void setLabelWaitForReset(){
+	
+		labelWaitForReset = true;
+		setLabelWaitForUpdate();		
 	}
 	
 	

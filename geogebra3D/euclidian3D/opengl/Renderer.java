@@ -197,6 +197,8 @@ public class Renderer implements GLEventListener {
         //link to 3D view
 		this.view3D=view;
 		
+		//textures
+		textures = new Textures();
 		
 		
 	}
@@ -645,7 +647,7 @@ public class Renderer implements GLEventListener {
       viewOrtho(x,y,w,h);
 
       
-      view3D.setWaitForUpdate();
+      view3D.reset();
     }
 
     /**
@@ -1549,10 +1551,13 @@ public class Renderer implements GLEventListener {
 
         
         //textures
-        textures = new Textures(gl);
+        textures.init(gl);
         
         
-        //gl.glPolygonMode(GL.GL_FRONT, GL.GL_LINE);gl.glPolygonMode(GL.GL_BACK, GL.GL_LINE);
+        
+        
+        //reset euclidian view
+        view3D.reset();
 
     }
 

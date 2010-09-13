@@ -3,6 +3,8 @@ package geogebra3D.euclidian3D.opengl;
 import geogebra.euclidian.EuclidianView;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.TreeSet;
 
 import javax.media.opengl.GL;
 
@@ -55,18 +57,25 @@ public class Textures {
 	
 	
 	
-	
-	
 
 	/** default constructor
 	 * @param gl
 	 */
-	public Textures(GL gl){
+	public Textures(){
+		
+		
+		
+	}
+	
+	public void init(GL gl){
 		this.gl = gl;
 		
 
 
 		gl.glEnable(GL.GL_TEXTURE_2D);
+		
+		
+		
 
 		texturesIndex = new int[TEXTURES_NUMBER];
 		gl.glGenTextures(TEXTURES_NUMBER, texturesIndex, 0);
