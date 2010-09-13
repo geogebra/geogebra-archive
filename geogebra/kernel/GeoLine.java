@@ -19,6 +19,10 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
@@ -26,7 +30,7 @@ import geogebra.main.Application;
 public class GeoLine extends GeoVec3D 
 implements Path, 
 Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties,
-GeoLineInterface, MatrixTransformable {
+GeoLineInterface, MatrixTransformable, GeoFunctionable {
 	
 	private static final long serialVersionUID = 1L;
 	// modes
@@ -888,6 +892,43 @@ GeoLineInterface, MatrixTransformable {
 
 
 	}
+	
+	/**
+	 * Creates a GeoFunction of the form f(x) = thisNumber 
+	 * needed for SumSquaredErrors[FitLine[]]
+	 * @return constant function
+	 */	
+	public GeoFunction getGeoFunction() {
+		GeoFunction ret;
+		
+		FunctionVariable fv = new FunctionVariable(kernel);
+		
+		// f(x_var) = -x/y x_var - z/y
+		
+		ExpressionNode temp = new ExpressionNode(kernel, 
+                new MyDouble(kernel, -x / y),
+                ExpressionNode.MULTIPLY, 
+                fv);
+		
+		temp = new ExpressionNode(kernel, 
+                temp, 
+                ExpressionNode.PLUS, 
+                new MyDouble(kernel, -z / y)
+            );
+		
+		Function fun = new Function(temp, fv);			
+		
+		ret = new GeoFunction(cons);
+		ret.setFunction(fun);							
+				
+		return ret;
+	}
+	
+	public boolean isGeoFunctionable() {
+		return true;
+	}
+	
+
 	
 	public boolean isMatrixTransformable() { 
 		return true;

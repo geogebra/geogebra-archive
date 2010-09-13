@@ -11,8 +11,8 @@ the Free Software Foundation.
 
 */
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.main.MyError;
@@ -32,9 +32,9 @@ public class CmdSumSquaredErrors extends CommandProcessor{
         GeoElement[] arg=resArgs(c);;
         switch(n) {
             case 2:
-            	if(  (arg[0].isGeoList() )&& (arg[1].isGeoFunction())  ){ 
+            	if(  (arg[0].isGeoList() )&& (arg[1].isGeoFunctionable())  ){ 
             		GeoElement[] ret={
-            				kernel.SumSquaredErrors(c.getLabel(),(GeoList)arg[0],(GeoFunction) arg[1]) 
+            				kernel.SumSquaredErrors(c.getLabel(),(GeoList)arg[0],(GeoFunctionable) arg[1]) 
             				};
                     return ret;
             	}else{

@@ -2804,7 +2804,7 @@ public class Kernel {
 	 * Hans-Petter Ulven
 	 * 2010-02-22
 	 */
-	final public GeoNumeric SumSquaredErrors(String label, GeoList list, GeoFunction function) {
+	final public GeoNumeric SumSquaredErrors(String label, GeoList list, GeoFunctionable function) {
 		AlgoSumSquaredErrors algo = new AlgoSumSquaredErrors(cons, label, list, function);
 		GeoNumeric sse=algo.getsse();
 		return sse;

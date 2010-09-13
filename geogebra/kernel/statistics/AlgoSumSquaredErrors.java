@@ -13,12 +13,14 @@ the Free Software Foundation.
 package geogebra.kernel.statistics;
 
 import geogebra.kernel.AlgoElement;
-import geogebra.kernel.GeoList;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionable;
+import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoElement;
-import geogebra.kernel.Construction;
 
 
 /**
@@ -32,16 +34,16 @@ public class AlgoSumSquaredErrors extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList inputList; //input
-	private GeoFunction function; //input
+	private GeoFunctionable function; //input
     private GeoNumeric sse; //output	
     private int size;
 
-    public AlgoSumSquaredErrors(Construction cons, String label, GeoList inputList,GeoFunction function) {
+    public AlgoSumSquaredErrors(Construction cons, String label, GeoList inputList,GeoFunctionable function) {
     	this(cons, inputList,function);
         sse.setLabel(label);
     }
 
-    public AlgoSumSquaredErrors(Construction cons, GeoList inputList,GeoFunction function) {
+    public AlgoSumSquaredErrors(Construction cons, GeoList inputList,GeoFunctionable function) {
         super(cons);
         this.inputList = inputList;
         this.function=function;
@@ -59,8 +61,8 @@ public class AlgoSumSquaredErrors extends AlgoElement {
     protected void setInputOutput(){
         input = new GeoElement[2];
         input[0] = inputList;
-        input[1] = function;
-
+        input[1] = function.toGeoElement();
+        
         output = new GeoElement[1];
         output[0] = sse;
         setDependencies(); // done by AlgoElement
@@ -73,10 +75,13 @@ public class AlgoSumSquaredErrors extends AlgoElement {
     protected final void compute() {
     	
     	size = inputList.size();
-    	if (!inputList.isDefined() ||  !function.isDefined()) {
+    	if (!inputList.isDefined() ||  !function.toGeoElement().isDefined()) {
     		sse.setUndefined();
     		return;
     	} 
+    	
+    	GeoFunction funGeo = function.getGeoFunction();
+    	
         //Calculate sse:
     	double	errorsum	=	0.0d;
     	GeoElement geo		=	null;
@@ -88,7 +93,7 @@ public class AlgoSumSquaredErrors extends AlgoElement {
     			point=(GeoPoint)geo;
     			x=point.getX();
     			y=point.getY();
-    			v=function.evaluate(x);
+    			v=funGeo.evaluate(x);
     			errorsum+=(v-y)*(v-y);
     		} else{
     			sse.setUndefined();
