@@ -4,10 +4,12 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
@@ -59,11 +61,11 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	
 	
 	private String[] regCmd = new String[StatDialog.regressionTypes];
-	private String regEquation;
 	
 	
-	public String getRegEquation() {
-		return regEquation;
+	private String regressionEqn;
+	public String getRegressionEqn(){
+		return regressionEqn;
 	}
 
 
@@ -502,23 +504,34 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 	public void updateRegressionPlot(GeoList dataList, boolean doCreate, int regType, int order){
 			
 		if (regType == StatDialog.REG_NONE) return;
-		
+
 		setDataMinMax(dataList, true);
 		String label = dataList.getLabel();	
 		String text = regCmd[regType] + "[" + label + "]";
-		
+
 		if(regType == StatDialog.REG_POLY)
 			text = regCmd[regType] + "[" + label + "," + order + "]";
-		
+
 		GeoElement tempGeo = null;
-	// Regression cmds do not update with changes in data list
-	// so we must create a new geo on every update.
-	//	if(doCreate){
-			tempGeo  = createGeoFromString(text);
-			tempGeo.setObjColor(StatDialog.REGRESSION_COLOR);
-	//	}	
-		
-		regEquation = tempGeo.getAlgebraDescription();
+		// Regression cmds do not update with changes in data list
+		// so we must create a new geo on every update.
+		//	if(doCreate){
+		tempGeo  = createGeoFromString(text);
+		tempGeo.setObjColor(StatDialog.REGRESSION_COLOR);
+		//	}
+
+		if(regType == StatDialog.REG_LINEAR){	
+			((GeoLine)tempGeo).setToExplicit();	
+			regressionEqn = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
+
+		}else if(regType == StatDialog.REG_NONE){
+			regressionEqn = "";
+
+		}else{
+			regressionEqn = "y = " + tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);		
+		}
+
+
 		
 		// set view parameters	
 		double xBuffer = .25*(xMaxData - xMinData);

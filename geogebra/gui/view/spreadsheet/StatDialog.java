@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 
+import geogebra.gui.util.GeoGebraIcon;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
@@ -61,7 +62,7 @@ implements ActionListener, View   {
 	private JComboBox cbRegression, cbPolyOrder;
 	private StatComboPanel comboStatPanel, comboStatPanel2;;
 	private StatDataPanel dataPanel;
-	private StatTablePanel statPanel;
+	private StatTable statTable;
 	private JSplitPane statDataPanel; 
 	private JSplitPane displayPanel;	
 	private JSplitPane comboPanelSplit;
@@ -100,6 +101,9 @@ implements ActionListener, View   {
 	private String regEquation;
 	
 
+	public String getRegEquation() {
+		return regEquation;
+	}
 	public int getRegressionOrder() {
 		return regressionOrder;
 	}
@@ -163,11 +167,9 @@ implements ActionListener, View   {
 		//================================================
 		// Create a StatPanel.
 		// StatPanels display basic statistics for the current data set
+		statTable = new StatTable(app, dataListSelected, mode);
 		
-		statPanel = new StatTablePanel(app, dataListSelected, mode);
-		statPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-		//statPanel.updateData(dataListSelected);
-
+		
 		
 		//================================================
 		// Create a DataPanel.
@@ -207,7 +209,7 @@ implements ActionListener, View   {
 			dataListSelected.remove();
 		dataListSelected = null;
 		
-		statPanel.removeGeos();
+		statTable.removeGeos();
 		dataPanel.removeGeos();
 		comboStatPanel.removeGeos();
 		comboStatPanel2.removeGeos();
@@ -462,6 +464,19 @@ implements ActionListener, View   {
 			//===========================================
 			// statData panel
 					
+			JLabel header = new JLabel(app.getMenu("Statistics"));
+			header.setHorizontalAlignment(JLabel.LEFT);		
+			header.setBorder(BorderFactory.createCompoundBorder(
+					BorderFactory.createEtchedBorder(),	
+					BorderFactory.createEmptyBorder(2,5,2,2)));
+			
+			// put it all into the stat panel
+			JPanel statPanel = new JPanel(new BorderLayout());
+			
+			statPanel.add(header, BorderLayout.NORTH);
+			statPanel.add(statTable, BorderLayout.CENTER);
+			statTable.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+			
 			statPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 			dataPanel.setBorder(statPanel.getBorder());
 			
@@ -593,6 +608,9 @@ implements ActionListener, View   {
 		tfRegression = new JTextField();
 		//tfRegression.setColumns(30);
 		
+		JPanel eqnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		eqnPanel.add(lblRegEquation);
+		
 		JPanel regressionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		regressionPanel.add(lblRegression);
 		regressionPanel.add(cbRegression);
@@ -600,7 +618,11 @@ implements ActionListener, View   {
 		//regressionPanel.add(tfRegression);
 		//regressionPanel.add(lblRegEquation);
 		
-		return regressionPanel;
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		mainPanel.add(eqnPanel,BorderLayout.CENTER);
+		mainPanel.add(regressionPanel,BorderLayout.SOUTH);
+		
+		return mainPanel;
 		
 	}
 	
@@ -726,18 +748,28 @@ implements ActionListener, View   {
 	
 	
 	public void setRegEquation(String eqn){
-		regEquation = eqn;
+		
+		if(lblRegEquation == null) return;		
+		GeoGebraIcon icon = (GeoGebraIcon) lblRegEquation.getIcon();
+		if(icon == null)
+			icon = new GeoGebraIcon();
+
+		if(this.regressionMode == REG_NONE)
+			icon = null;
+		else
+			icon.createLatexIcon(eqn, this.getFont(), false, Color.black, this.getBackground());
+
+		lblRegEquation.setIcon(icon);
+		lblRegEquation.revalidate();
 		updateGUI();
 	}
 	
 	private void updateGUI(){
 		
 		if(isIniting) return;
-		
-		if(regressionMode != REG_NONE){
-			lblRegEquation.setText(regEquation);
-		}	
 		cbPolyOrder.setVisible(regressionMode == REG_POLY);	
+		
+		repaint();		
 	}
 	
 	
@@ -758,7 +790,7 @@ implements ActionListener, View   {
 		comboStatPanel2.updateData(dataListSelected);
 		comboStatPanel.updatePlot(doCreateGeo);
 		comboStatPanel2.updatePlot(doCreateGeo);
-		statPanel.updateData(dataListSelected);
+		statTable.updateData(dataListSelected);
 		
 	}
 
@@ -776,7 +808,7 @@ implements ActionListener, View   {
 		comboStatPanel.updateStatTableFonts(font);
 		comboStatPanel2.updateStatTableFonts(font);
 		dataPanel.updateFonts(font);
-		statPanel.updateFonts(font);
+		statTable.updateFonts(font);
 	}
 
 

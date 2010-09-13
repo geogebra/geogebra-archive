@@ -1,6 +1,7 @@
 package geogebra.gui.util;
 
 
+import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
 import geogebra.util.ImageManager;
@@ -8,6 +9,7 @@ import geogebra.util.ImageManager;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -33,9 +35,12 @@ public class GeoGebraIcon extends ImageIcon {
 	public static final int MODE_SLIDER_LINE = 7;
 	public static final int MODE_SLIDER_POINT = 8;
 	
+	private Application app;
 	
 	public void setImage(Application app, Object[] args, Dimension iconSize, int mode){
 
+		this.app = app;
+		
 		Color lineColor, fillColor;	
 		float alpha; 
 		String fileName;
@@ -132,9 +137,58 @@ public class GeoGebraIcon extends ImageIcon {
 			
 			break;
 
-		}
+		
 
+		}
 		super.setImage(image);
 
 	}
+	
+	
+	
+	
+
+	/**
+	 * Draw a LaTeX image in the icon. Drawing is done twice. First draw gives 
+	 * the needed size of the image. Second draw renders the image with the correct
+	 * dimensions.
+	 */
+	public void createLatexIcon(String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
+		
+		// Create image with dummy size, then draw into it to get the correct size
+		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2image = image.createGraphics();
+		g2image.setBackground(bgColor);
+		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		Dimension d = new Dimension();
+		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, serif, fgColor,
+				bgColor);
+
+		// Now use this size and draw again to get the final image
+		image = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_ARGB);
+		g2image = image.createGraphics();
+		g2image.setBackground(bgColor);
+		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
+		g2image.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, serif, fgColor,
+				bgColor);
+
+		setImage(image);
+		
+	}
+	
+	
+	
+	
+	
+	
+	
 }

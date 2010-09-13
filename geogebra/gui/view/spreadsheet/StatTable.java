@@ -33,7 +33,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
-public class StatTablePanel extends JPanel {
+public class StatTable extends JScrollPane {
 	
 	// ggb 
 	private Application app;
@@ -54,19 +54,20 @@ public class StatTablePanel extends JPanel {
 	private static final Color TABLE_GRID_COLOR = StatDialog.TABLE_GRID_COLOR ;
 	private static final Color TABLE_HEADER_COLOR = StatDialog.TABLE_HEADER_COLOR;  
 	
+	public static final int TABLE_ONE_VAR = 0;
+	public static final int TABLE_TWO_VAR = 1;
+	public static final int TABLE_REGRESSION = 2;
 	
 	
 	
 	/*************************************************
 	 * Construct the panel
 	 */
-	public StatTablePanel(Application app, GeoList dataList, int mode){
+	public StatTable(Application app, GeoList dataList, int mode){
 		
 		this.app = app;	
-		kernel = app.getKernel();				
-		
+		this.kernel = app.getKernel();				
 		this.dataList = dataList;
-		this.statDialog = statDialog;
 		this.mode = mode;
 		
 		// construct the stat table	
@@ -131,34 +132,32 @@ public class StatTablePanel extends JPanel {
 		autoFitColumnWidth(statTable, 0, 50);
 		
 		
-		// enclose the table in a scroller
-		statScroller = new JScrollPane(statTable);
-		statScroller.setBorder(BorderFactory.createEmptyBorder());
+		// enclose the table in this scrollPane	
+		
+		this.setViewportView(statTable);
+		this.setBorder(BorderFactory.createEmptyBorder());
 		
 		// create row header
-		rowHeader = new MyRowHeader(statTable);	
-		
-		statScroller.setRowHeaderView(rowHeader);
-		
-		
-		
-		
+		rowHeader = new MyRowHeader(statTable);		
+		this.setRowHeaderView(rowHeader);
+	
 		
 		// set the  corners
-		statScroller.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner());
-		statScroller.setCorner(ScrollPaneConstants.LOWER_RIGHT_CORNER, new Corner());
-		statScroller.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, new Corner());
+		this.setCorner(ScrollPaneConstants.UPPER_RIGHT_CORNER, new Corner());
+		this.setCorner(ScrollPaneConstants.LOWER_RIGHT_CORNER, new Corner());
+		this.setCorner(ScrollPaneConstants.LOWER_LEFT_CORNER, new Corner());
 		
-		statScroller.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new Corner());
-		((JPanel)statScroller.getCorner(ScrollPaneConstants.UPPER_LEFT_CORNER)).
+		this.setCorner(ScrollPaneConstants.UPPER_LEFT_CORNER, new Corner());
+		((JPanel)this.getCorner(ScrollPaneConstants.UPPER_LEFT_CORNER)).
 			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1,TABLE_GRID_COLOR));
-		
-			
+				
 		
 		// hide the table header
 		statTable.setTableHeader(null);
-		statScroller.setColumnHeaderView(null);
+		this.setColumnHeaderView(null);
 		
+		
+		/*
 		JLabel header = new JLabel(app.getMenu("Statistics"));
 		header.setHorizontalAlignment(JLabel.LEFT);
 		
@@ -166,14 +165,12 @@ public class StatTablePanel extends JPanel {
 				BorderFactory.createEtchedBorder(),	
 				BorderFactory.createEmptyBorder(2,5,2,2)));
 		
-		
-		
 		// put it all into the stat panel
 		this.setLayout(new BorderLayout());
 		this.add(header, BorderLayout.NORTH);
 		this.add(statScroller, BorderLayout.CENTER);
 		this.setBorder(BorderFactory.createEmptyBorder());
-
+*/
 	
 		
 	} // END constructor
@@ -216,7 +213,7 @@ public class StatTablePanel extends JPanel {
 
 			
 		switch(mode){
-		case StatDialog.MODE_ONEVAR:
+		case TABLE_ONE_VAR:
 			
 			String[][]statMap1 = { 
 					{app.getMenu("Length.short") ,"Length"},
@@ -232,12 +229,11 @@ public class StatTablePanel extends JPanel {
 					{app.getMenu("Maximum.short") ,"Max"}
 			};
 
-			text = createStatListString(statMap1, label);
-			
+			text = createStatListString(statMap1, label);			
 			break;
 
 
-		case StatDialog.MODE_TWOVAR:
+		case TABLE_TWO_VAR:
 			
 			String[][]statMap2 = {
 					{app.getMenu("MeanX") ,"MeanX"},
@@ -248,8 +244,17 @@ public class StatTablePanel extends JPanel {
 					{app.getMenu("Sxy") ,"Sxy"},
 			};
 			
-			text = createStatListString(statMap2, label);
+			text = createStatListString(statMap2, label);	
+			break;
 			
+			
+		case TABLE_REGRESSION:
+			
+			String[][]statMap3 = {
+					
+			};
+			
+			text = createStatListString(statMap3, label);	
 			break;
 			
 		}
