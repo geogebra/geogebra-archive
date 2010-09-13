@@ -23,25 +23,30 @@ import java.util.ArrayList;
 public class AlgoDependentList extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;	
-	private ArrayList listItems; //input GeoElements
+	private ArrayList<GeoElement> listItems; //input GeoElements
     private GeoList geoList;     // output    
     
-    // spreadsheet cell range, e.g. A1:B5
-    private boolean isCellRange = false;
         
     /**
      * Creates a new algorithm that takes a list of GeoElements to build a Geolist with 
      * them.
-     * @param cons
-     * @param label
-     * @param listItems: list of GeoElement objects
+     * @param cons construction
+     * @param label label for new list
+     * @param listItems list of GeoElement objects
      */
-    public AlgoDependentList(Construction cons, String label, ArrayList listItems) {
+    public AlgoDependentList(Construction cons, String label, ArrayList<GeoElement> listItems) {
     	this (cons, listItems, false);
     	geoList.setLabel(label);
     }
     
-    AlgoDependentList(Construction cons, ArrayList listItems, boolean isCellRange) {
+    /**
+     * Creates an unlabeled algorithm that takes a list of GeoElements to build a Geolist with 
+     * them.
+     * @param cons
+     * @param listItems list of GeoElement objects
+     * @param isCellRange
+     */
+    AlgoDependentList(Construction cons, ArrayList<GeoElement> listItems, boolean isCellRange) {
     	super(cons);
     	this.listItems = listItems;
     	       
@@ -71,8 +76,8 @@ public class AlgoDependentList extends AlgoElement {
     		}
     	}          
         
-        output = new GeoElement[1];        
-        output[0] = geoList;        
+        setOutputLength(1);        
+        setOutput(0,geoList);        
         setDependencies(); // done by AlgoElement
     }    
     
@@ -92,6 +97,10 @@ public class AlgoDependentList extends AlgoElement {
     		    	 	    
     }
     
+    /**
+     * Returns the list
+     * @return the list as geo
+     */
     public GeoList getGeoList() { 
     	return geoList; 
     }       
@@ -105,8 +114,8 @@ public class AlgoDependentList extends AlgoElement {
     		AlgoElement algo = input[i].getParentAlgorithm();
     		if (algo != null && algo.hasSingleOutputType()) {
     			// all siblings have same type: add them all
-    			for (int k=0; k < algo.output.length; k++) {
-    				GeoElement geo = algo.output[k];
+    			for (int k=0; k < algo.getOutputLength(); k++) {
+    				GeoElement geo = algo.getOutput(k);
     				if (geo == input[i] || geo.isDefined())
     					geoList.add(geo);
     			}    			
@@ -118,7 +127,7 @@ public class AlgoDependentList extends AlgoElement {
     	}
     }   
     
-	StringBuilder sb; 
+	private StringBuilder sb; 
     final public String toString() {
 
         if (sb == null) sb = new StringBuilder();

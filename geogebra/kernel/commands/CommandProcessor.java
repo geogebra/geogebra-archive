@@ -1183,6 +1183,8 @@ class CmdVertex extends CommandProcessor {
 			arg = resArgs(c);
 			if (ok[0] = (arg[0] .isGeoConic()))
 				return kernel.Vertex(c.getLabels(), (GeoConic) arg[0]);
+			if (ok[0] = (arg[0] .isGeoPolygon()))
+				return kernel.Vertex(c.getLabels(), (GeoPolygon) arg[0]);
 			else if (ok[0] = (arg[0] .isNumberValue()))
 			{
 				GeoElement[] ret =

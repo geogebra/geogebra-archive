@@ -4702,6 +4702,15 @@ public class Kernel {
 		GeoPoint[] vertex = algo.getVertex();
 		return vertex;
 	}
+	
+	/** 
+	 * Vertices of polygon. returns 3+ GeoPoints
+	 */
+	final public GeoElement[] Vertex(String[] labels, GeoPolygon p) {
+		AlgoVertexPolygon algo = new AlgoVertexPolygon(cons, labels, p);
+		GeoElement[] vertex = algo.getVertex();
+		return vertex;
+	}
 
 	/** 
 	 * Center of conic

@@ -211,7 +211,7 @@ public class AlgebraProcessor {
 			if (storeUndo && geoElements != null)
 				app.storeUndoInfo();
 		} catch (MyError e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			//throw new Exception(e.getLocalizedMessage());
 			
 			// show error with nice "Show Online Help" box
