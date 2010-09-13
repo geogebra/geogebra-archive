@@ -846,7 +846,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			app.storeUndoInfo();
 			
 
-			((EuclidianView3D) view).setRotContinueAnimation(System.currentTimeMillis()-timeOld,animatedRotSpeed);
+			((EuclidianView3D) view).setRotContinueAnimation(
+					System.currentTimeMillis()-timeOld,
+					animatedRotSpeed);
+			
+			//Application.debug("animatedRotSpeed="+animatedRotSpeed);
 			
 			return true;
 		}else

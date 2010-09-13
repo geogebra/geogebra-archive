@@ -819,7 +819,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		if (!isStarted){
-			Application.debug("ici");
+			//Application.debug("ici");
 			isStarted = true;
 		}
 		
@@ -1450,6 +1450,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//if speed is too small, no animation
 		if (Math.abs(rotSpeed)<0.01)
 			return;
+		
+		//if speed is too large, use max speed
+		if (rotSpeed>0.1)
+			rotSpeed=0.1;
+		else if (rotSpeed<-0.1)
+			rotSpeed=-0.1;
+			
 		
 			
 		animatedContinueRot = true;
