@@ -1569,6 +1569,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             else if (lt.isVector3DValue()) {
             	return new MyDouble(kernel, ((Vector3DValue)lt).getPointAsDouble()[0]);
             }
+            else if (lt instanceof GeoLine) {
+            	return new MyDouble(kernel, ((GeoLine)lt).x);
+            }
             else { 
                  String [] str = { "IllegalArgument", "x(", lt.toString(), ")" };
                 throw new MyError(app, str);
@@ -1590,6 +1593,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             else if (lt.isVector3DValue()) {
             	return new MyDouble(kernel, ((Vector3DValue)lt).getPointAsDouble()[1]);
             }
+            else if (lt instanceof GeoLine) {
+            	return new MyDouble(kernel, ((GeoLine)lt).y);
+            }
             else { 
                  String [] str = { "IllegalArgument", "y(", lt.toString(), ")" };
                 throw new MyError(app, str);
@@ -1601,6 +1607,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 				return new MyDouble(kernel, 0);
             else if (lt.isVector3DValue()) {
             	return new MyDouble(kernel, ((Vector3DValue)lt).getPointAsDouble()[2]);
+            }
+            else if (lt instanceof GeoLine) {
+            	return new MyDouble(kernel, ((GeoLine)lt).z);
             }
             else {
 	            String [] str3 = { "IllegalArgument", "z(", lt.toString(), ")" };

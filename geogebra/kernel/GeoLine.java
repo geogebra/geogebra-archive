@@ -20,12 +20,12 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
@@ -903,8 +903,55 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
 		
 		FunctionVariable fv = new FunctionVariable(kernel);
 		
-		// f(x_var) = -x/y x_var - z/y
 		
+		ExpressionNode xCoord = new ExpressionNode(kernel, 
+                this,
+                ExpressionNode.XCOORD, 
+                null);
+
+		ExpressionNode yCoord = new ExpressionNode(kernel, 
+                this,
+                ExpressionNode.YCOORD, 
+                null);
+
+		ExpressionNode zCoord = new ExpressionNode(kernel, 
+                this,
+                ExpressionNode.ZCOORD, 
+                null);
+
+		
+		// f(x_var) = -x/y x_var - z/y
+
+		ExpressionNode temp = new ExpressionNode(kernel, 
+				xCoord,
+                ExpressionNode.DIVIDE, 
+                yCoord);
+		
+		temp = new ExpressionNode(kernel, 
+				new MyDouble(kernel, -1.0),
+                ExpressionNode.MULTIPLY, 
+                temp);
+		
+		temp = new ExpressionNode(kernel, 
+                temp,
+                ExpressionNode.MULTIPLY, 
+                fv);		
+		
+		temp = new ExpressionNode(kernel, 
+                temp,
+                ExpressionNode.MINUS, 
+                new ExpressionNode(kernel, 
+                		zCoord,
+                        ExpressionNode.DIVIDE, 
+                        yCoord));		
+		
+		
+		
+		
+		
+		
+		// f(x_var) = -x/y x_var - z/y
+		/*
 		ExpressionNode temp = new ExpressionNode(kernel, 
                 new MyDouble(kernel, -x / y),
                 ExpressionNode.MULTIPLY, 
@@ -914,12 +961,24 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
                 temp, 
                 ExpressionNode.PLUS, 
                 new MyDouble(kernel, -z / y)
-            );
+            );*/
 		
 		Function fun = new Function(temp, fv);			
+
 		
-		ret = new GeoFunction(cons);
-		ret.setFunction(fun);							
+		// we get a dependent function if this line has a label or is dependent
+		
+		if (isLabelSet() || !isIndependent()) {
+			// don't create a label for the new dependent function
+			boolean oldMacroMode = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			ret = kernel.DependentFunction(null, fun);
+			cons.setSuppressLabelCreation(oldMacroMode);
+		} else 
+		{
+			ret = new GeoFunction(cons);
+			ret.setFunction(fun);
+		}					
 				
 		return ret;
 	}
