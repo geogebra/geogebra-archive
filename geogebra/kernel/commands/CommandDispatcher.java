@@ -411,6 +411,7 @@ public class CommandDispatcher {
     	cmdTable.put("Shuffle", new CmdShuffle(kernel));
     	cmdTable.put("RandomElement", new CmdRandomElement(kernel));
     	cmdTable.put("ApplyMatrix", new CmdApplyMatrix(kernel));
+    	cmdTable.put("Shear", new CmdShear(kernel));
     	cmdTable.put("ComplexRoot", new CmdComplexRoot(kernel));	   
     	cmdTable.put("RigidPolygon", new CmdRigidPolygon(kernel));	   
     	cmdTable.put("SolveODE", new CmdSolveODE(kernel));	   

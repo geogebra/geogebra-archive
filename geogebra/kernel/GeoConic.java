@@ -1233,28 +1233,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		return true;
 	}
 
-	/**
-	 * rotate this conic by angle phi around (0,0)
-	 * [ a    b    0 ]
-	 * [ c    d     0 ]
-	 * [ 0      0       1 ]
-	 */
-	public void matrixTransform(GeoList geoMatrix) {
-		
-		MyList list = geoMatrix.getMyList();
-		
-		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
-			setUndefined();
-			return;
-		}
-		 
-		double a,b,c,d;
-		
-		a = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
-		b = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
-		c = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
-		d = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
- 
+	final public void matrixTransform(double a, double b, double c, double d) {
 		double det = a * d - b * c;
 		double det2 = det * det;
 		
@@ -1269,8 +1248,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		matrix[4] = A4 / det;
 		
 		classifyConic();
-
-		
 	}
 	
 	/**

@@ -5737,6 +5737,21 @@ public class Kernel {
 		GeoElement[] geos = { ret };
 		return geos;
 	}
+	
+	/**
+	 * apply matrix 
+	 * Michael Borcherds 2010-05-27
+	 */
+	final public GeoElement [] Shear(String label, MatrixTransformable Q, GeoLine l, GeoNumeric num) {	
+		if (label == null)
+			label = transformedGeoLabel((GeoElement)Q);
+	
+		AlgoShear algo = new AlgoShear(cons, label, Q, l,num);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) Q);
+		GeoElement[] geos = { ret };
+		return geos;
+	}
 
 	/**
 	 * mirror (invert) circle conic0 in circle conic1 

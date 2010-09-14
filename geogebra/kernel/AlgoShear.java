@@ -18,8 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.MyList;
-import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.Matrix.GgbVector;
 
 
 
@@ -28,7 +27,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @author  Markus
  * @version 
  */
-public class AlgoApplyMatrix extends AlgoTransformation {
+public class AlgoShear extends AlgoTransformation {
 
     /**
 	 * 
@@ -36,7 +35,8 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 	private static final long serialVersionUID = 1L;
 	private MatrixTransformable out;   
     private GeoElement geoIn, geoOut; 
-    private GeoList matrix;
+    private GeoLine l;
+    private GeoNumeric num;
     
   
     /**
@@ -44,15 +44,15 @@ public class AlgoApplyMatrix extends AlgoTransformation {
      * @param cons
      * @param label
      * @param in
-     * @param matrix
+     * @param l
+     * @param num
      */
-    public AlgoApplyMatrix(Construction cons, String label, MatrixTransformable in, GeoList matrix) {
+    public AlgoShear(Construction cons, String label, MatrixTransformable in, GeoLine l,GeoNumeric num) {
         super(cons);
         //this.in = in;      
-        this.matrix = matrix;
-        
-
-              
+        this.l = l;
+        this.num = num;
+                  
         geoIn = in.toGeoElement();
         out = (MatrixTransformable) geoIn.copy();               
         geoOut = out.toGeoElement();                       
@@ -65,14 +65,15 @@ public class AlgoApplyMatrix extends AlgoTransformation {
     }           
     
     public String getClassName() {
-        return "AlgoApplyMatrix";
+        return "AlgoShear";
     }
     
     // for AlgoElement
     protected void setInputOutput() {
-        input = new GeoElement[2];
-        input[1] = geoIn; 
-        input[0] = matrix;
+        input = new GeoElement[3];
+        input[2] = geoIn; 
+        input[0] = l;
+        input[1] = num;
         
         setOutputLength(1);        
         setOutput(0,geoOut);        
@@ -90,24 +91,31 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 
     protected final void compute() {
         geoOut.set(geoIn);
-        MyList list = matrix.getMyList();
-		
-		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
-			geoOut.setUndefined();
-			return;
-		}
-		 
-		double a,b,c,d;
-		
-		a = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
-		b = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
-		c = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
-		d = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
-		out.matrixTransform(a,b,c,d);	
+        
+        //matrix.add
+        Translateable tranOut = (Translateable) out;
+        double qx, qy; 
+        if (Math.abs(l.x) > Math.abs(l.y)) {
+            qx = l.z / l.x;
+            qy = 0.0d;
+        } else {
+            qx = 0.0d;
+            qy = l.z / l.y;
+        }
+        double s=-l.x/Math.sqrt(l.x*l.x+l.y*l.y);
+        double c=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
+        double n=num.getValue();
+        // translate -Q
+        tranOut.translate(new GgbVector(qx, qy,0));
         
         
-
+        out.matrixTransform(1-c*s*n,c*c*n,-s*s*n,1+s*c*n);
+         
+        tranOut.translate(new GgbVector(-qx, -qy,0));
+         //c -s 1 n = c (cn-s) c s = (1-csn) (ccn)  
+         //s c  0 1   s (sn+c) -s c  (-ssn) (1+scn)
     }       
     
 
 }
+

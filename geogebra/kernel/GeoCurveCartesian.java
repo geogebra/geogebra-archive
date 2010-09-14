@@ -17,7 +17,6 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
@@ -278,10 +277,12 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		
 	
 	final public void rotate(NumberValue phi){
-		ExpressionNode cosPhi = new ExpressionNode(kernel,phi,ExpressionNode.COS,null);
-		ExpressionNode sinPhi = new ExpressionNode(kernel,phi,ExpressionNode.SIN,null);
-		ExpressionNode minSinPhi = new ExpressionNode(kernel,new MyDouble(kernel,0.0),ExpressionNode.MINUS,sinPhi);
-		matrixTransform(cosPhi,minSinPhi,sinPhi,cosPhi);
+		//ExpressionNode cosPhi = new ExpressionNode(kernel,phi,ExpressionNode.COS,null);
+		//ExpressionNode sinPhi = new ExpressionNode(kernel,phi,ExpressionNode.SIN,null);
+		//ExpressionNode minSinPhi = new ExpressionNode(kernel,new MyDouble(kernel,0.0),ExpressionNode.MINUS,sinPhi);
+		double cosPhi = Math.cos(phi.getDouble());
+		double sinPhi = Math.sin(phi.getDouble());
+		matrixTransform(cosPhi,-sinPhi,sinPhi,cosPhi);
 	}
 	
 	public void dilate(NumberValue ratio,GeoPoint P){
@@ -299,32 +300,16 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
      *  [ sin(phi)      -cos(phi)   ]  
      */
 	private void mirror(NumberValue phi){				
-		ExpressionNode cosPhi = new ExpressionNode(kernel,phi,ExpressionNode.COS,null);
-		ExpressionNode sinPhi = new ExpressionNode(kernel,phi,ExpressionNode.SIN,null);
-		ExpressionNode minCosPhi = new ExpressionNode(kernel,new MyDouble(kernel,0.0),ExpressionNode.MINUS,cosPhi);
-		matrixTransform(cosPhi,sinPhi,sinPhi,minCosPhi);				
+		//ExpressionNode cosPhi = new ExpressionNode(kernel,phi,ExpressionNode.COS,null);
+		//ExpressionNode sinPhi = new ExpressionNode(kernel,phi,ExpressionNode.SIN,null);
+		//ExpressionNode minCosPhi = new ExpressionNode(kernel,new MyDouble(kernel,0.0),ExpressionNode.MINUS,cosPhi);
+		double cosPhi = Math.cos(phi.getDouble());
+		double sinPhi = Math.sin(phi.getDouble());
+		matrixTransform(cosPhi,sinPhi,sinPhi,-cosPhi);				
 	}
 	
 	
-	public void matrixTransform(GeoList matrix) {
-		
-		MyList list = matrix.getMyList();
-		
-		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
-			setUndefined();
-			return;
-		}
-		 
-		ExpressionValue a,b,c,d;
-		
-		a = ((NumberValue)(MyList.getCell(list,0,0).evaluate()));
-		b = ((NumberValue)(MyList.getCell(list,1,0).evaluate()));
-		c = ((NumberValue)(MyList.getCell(list,0,1).evaluate()));
-		d = ((NumberValue)(MyList.getCell(list,1,1).evaluate()));
- 
-		matrixTransform(a,b,c,d);
-		
-	}
+	
 	
 	/**
 	 * Transforms curve using matrix
@@ -335,17 +320,21 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 	 * @param c bottom left matrix element
 	 * @param d bottom right matrix element
 	 */
-	public void matrixTransform(ExpressionValue a,ExpressionValue b, ExpressionValue c, ExpressionValue d){
+	public void matrixTransform(double a,double b, double c, double d){
+		MyDouble ma = new MyDouble(kernel,a);
+		MyDouble mb = new MyDouble(kernel,b);
+		MyDouble mc = new MyDouble(kernel,c);
+		MyDouble md = new MyDouble(kernel,d);
 		ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
 		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
 		ExpressionNode transX = new ExpressionNode(kernel,
-				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,a),
+				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,ma),
 				ExpressionNode.PLUS,
-				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,b));
+				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,mb));
 		ExpressionNode transY = new ExpressionNode(kernel,
-				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,c),
+				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,mc),
 				ExpressionNode.PLUS,
-				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,d));
+				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,md));
 		funX.setExpression(transX);
 		funY.setExpression(transY);
 	}

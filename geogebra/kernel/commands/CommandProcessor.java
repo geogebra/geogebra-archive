@@ -17,6 +17,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoApplyMatrix;
 import geogebra.kernel.AlgoCellRange;
+import geogebra.kernel.AlgoShear;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -2928,6 +2929,102 @@ class CmdApplyMatrix extends CommandProcessor {
 						//newPoints[i] = new GeoPoint(cons);
 						String pointLabel = kernel.transformedGeoLabel(points[i]);
 						AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel, (MatrixTransformable)points[i], (GeoList)arg[0]);
+						//newPoints[i].setParentAlgorithm(algo);
+						//cons.addToAlgorithmList(algo);
+						newPoints[i] = (GeoPoint)algo.getResult();
+						newPoints[i].setVisualStyleForTransformations(points[i]);
+					}
+					
+					ret = kernel.Polygon(polyLabel, newPoints);
+					return ret;
+					
+					//GeoElement[] ret2 = {newPoints[0]};
+					//return ret2;
+					
+					
+				} else if (arg[1].isGeoSegment()) {
+					
+					GeoSegment seg = (GeoSegment)arg[1];
+					GeoPoint startPoint = seg.getStartPoint();
+					GeoPoint endPoint = seg.getEndPoint();
+					GeoPoint[] newPoints = new GeoPoint[2];
+					
+					String segLabel = null;		
+					if (seg.isLabelSet()) {		
+						segLabel = kernel.transformedGeoLabel(seg);
+					}			
+			
+
+					String pointLabel1 = kernel.transformedGeoLabel(startPoint);
+					AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel1, (MatrixTransformable)startPoint, (GeoList)arg[0]);
+
+					newPoints[0] = (GeoPoint)algo.getResult();
+					newPoints[0].setVisualStyleForTransformations(startPoint);
+				
+					String pointLabel2 = kernel.transformedGeoLabel(endPoint);
+					algo = new AlgoApplyMatrix(cons, pointLabel2, (MatrixTransformable)endPoint, (GeoList)arg[0]);
+
+					newPoints[1] = (GeoPoint)algo.getResult();
+					newPoints[1].setVisualStyleForTransformations(startPoint);
+					
+					GeoElement[] ret2 = {kernel.Segment(segLabel, newPoints[0], newPoints[1])};
+					return ret2;
+					
+					
+				} else 
+					throw argErr(app, c.getName(), arg[1]);
+			} else 	
+				throw argErr(app, c.getName(), arg[0]);
+			
+
+
+		default :
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+}
+
+class CmdShear extends CommandProcessor {
+
+	public CmdShear(Kernel kernel) {
+		super(kernel);
+	}
+
+	final public GeoElement[] process(Command c) throws MyError {
+		String label = c.getLabel();
+		int n = c.getArgumentNumber();
+
+		GeoElement[] arg;
+		GeoElement[] ret = new GeoElement[1];
+
+		switch (n) {          
+		case 3 :
+			arg = resArgs(c);
+
+			if (arg[0].isGeoLine() && arg[1].isGeoNumeric()) {
+				
+				if (arg[2].isMatrixTransformable()) {
+				MatrixTransformable Q = (MatrixTransformable) arg[2];
+
+
+				ret = kernel.Shear(label, Q, (GeoLine)arg[0],(GeoNumeric)arg[1]);
+				return ret;
+				} else if (arg[2].isGeoPolygon()) {
+					
+					GeoPolygon poly = (GeoPolygon)arg[2];
+					GeoPoint[] points = poly.getPoints();
+					GeoPoint[] newPoints = new GeoPoint[points.length];
+					
+					String [] polyLabel = null;		
+						if (poly.isLabelSet()) {		
+							polyLabel = new String[1];
+							polyLabel[0] = kernel.transformedGeoLabel(poly);
+						}			
+				
+					for (int i = 0 ; i < points.length ; i++) {
+						//newPoints[i] = new GeoPoint(cons);
+						String pointLabel = kernel.transformedGeoLabel(points[i]);
+						AlgoShear algo = new AlgoShear(cons, pointLabel, (MatrixTransformable)points[i], (GeoLine)arg[0],(GeoNumeric)arg[1]);
 						//newPoints[i].setParentAlgorithm(algo);
 						//cons.addToAlgorithmList(algo);
 						newPoints[i] = (GeoPoint)algo.getResult();

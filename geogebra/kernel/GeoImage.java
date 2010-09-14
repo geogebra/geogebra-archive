@@ -692,13 +692,13 @@ implements Locateable, AbsoluteScreenLocateable,
     	}     
 	}
 
-	public void matrixTransform(GeoList matrix) {
+	public void matrixTransform(double a,double b,double c, double d) {
 		if (!initTransformPoints()) return;
     	
     	// calculate the new corner points
     	for (int i=0; i < corners.length; i++) {
     		GeoVec2D vec = tempPoints[i].getVector();
-    		vec.multiplyMatrix(matrix.getMyList());    
+    		vec.matrixTransform(a, b, c, d);    
     		if (corners[i] == null) corners[i] = new GeoPoint(cons);
     		corners[i].setCoords(vec);    			
     	}     

@@ -863,23 +863,11 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
 		 return ": ";
 		 
 	 }
-	public void matrixTransform(GeoList matrix) {
+	public void matrixTransform(double p,double q,double r, double s) {
 		
-		MyList list = matrix.getMyList();
+		double x1,y1;
 		
-		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
-			setUndefined();
-			return;
-		}
-		 
-		double p,q,r,s,x1,y1;
-		
-		p = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
-		q = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
-		r = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
-		s = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
- 
-		if (kernel.isZero(y)) {
+		if (Kernel.isZero(y)) {
 			x1 = s;
 			y1 = -q;
 			setCoords(x1 * x, y1 * x , -q * r * z + s * p * z );

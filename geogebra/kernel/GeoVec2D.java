@@ -37,8 +37,7 @@ import org.apache.commons.math.complex.Complex;
  * @author  Markus
  * @version 
  */
-final public class GeoVec2D extends ValidExpression
-implements VectorValue {        
+final public class GeoVec2D extends ValidExpression implements MatrixTransformable, VectorValue {        
 
     public double x = Double.NaN;
     public double y = Double.NaN;    
@@ -684,13 +683,22 @@ implements VectorValue {
 			c = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
 			d = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
 	 
-			x1 = a*x + b*y;
-			y1 = c*x + d*y;
-			x=x1;
-			y=y1;
-			return;
+			matrixTransform(a,b,c,d);
 	 }
-	 
+	 public void matrixTransform(double a,double b,double c,double d) {
+		 
+			Double x1 = a*x + b*y;
+			Double y1 = c*x + d*y;
+
+			x=x1; 
+			y=y1;		
+	 }
+	 public boolean isMatrixTransformable(){
+		 return true;
+	 }
+	 public GeoElement toGeoElement(){
+		 return null;
+	 }
 	 /** multiplies 2D vector by a 3x3 affine matrix
 	  *  a b c
 	  *  d e f

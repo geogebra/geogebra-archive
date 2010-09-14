@@ -1130,24 +1130,10 @@ GeoPointInterface, MatrixTransformable {
 			return true;
 		}
 
-		public void matrixTransform(GeoList matrix) {
-			
-			MyList list = matrix.getMyList();
-			
-			if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {
-				setUndefined();
-				return;
-			}
-			 
-			double a,b,c,d,x1,y1;
-			
-			a = ((NumberValue)(MyList.getCell(list,0,0).evaluate())).getDouble();
-			b = ((NumberValue)(MyList.getCell(list,1,0).evaluate())).getDouble();
-			c = ((NumberValue)(MyList.getCell(list,0,1).evaluate())).getDouble();
-			d = ((NumberValue)(MyList.getCell(list,1,1).evaluate())).getDouble();
+		public void matrixTransform(double a,double b,double c,double d) {
 	 
-			x1 = a*x + b*y;
-			y1 = c*x + d*y;
+			Double x1 = a*x + b*y;
+			Double y1 = c*x + d*y;
 
 			setCoords(x1, y1, z);
 			
