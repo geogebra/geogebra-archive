@@ -26,6 +26,12 @@ public class AlgoRow extends AlgoElement {
 	private GeoElement geo;  // input
     private GeoNumeric num;     // output              
         
+    /**
+     * Creates new row algo
+     * @param cons
+     * @param label
+     * @param geo
+     */
     public AlgoRow(Construction cons, String label, GeoElement geo) {
     	super(cons);
         this.geo = geo;  
@@ -47,11 +53,15 @@ public class AlgoRow extends AlgoElement {
         input = new GeoElement[1];
         input[0] = geo;
         
-        output = new GeoElement[1];        
-        output[0] = num;        
+        setOutputLength(1);        
+        setOutput(0,num);        
         setDependencies(); // done by AlgoElement
     }    
     
+	/**
+	 * Returns the row number of the cell
+	 * @return row number of the cell
+	 */
     protected GeoNumeric getResult() { return num; }        
     
     // calc the current value of the arithmetic tree

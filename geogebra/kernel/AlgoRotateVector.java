@@ -34,6 +34,13 @@ public class AlgoRotateVector extends AlgoElement {
     private GeoNumeric angle; // input
     private GeoVector B; // output        
 
+    /**
+     * Creates new algo for vector rotation
+     * @param cons
+     * @param label
+     * @param A
+     * @param angle
+     */
     AlgoRotateVector(
         Construction cons,
         String label,
@@ -61,17 +68,31 @@ public class AlgoRotateVector extends AlgoElement {
         input[0] = A;
         input[1] = angle;
 
-        output = new GeoElement[1];
-        output[0] = B;
+        setOutputLength(1);
+        setOutput(0,B);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the input vector
+     * @return input vector
+     */
     GeoVector getVector() {
         return A;
     }
+    
+    /**
+     * Returns the rotation angle
+     * @return rotation angle
+     */
     GeoNumeric getAngle() {
         return angle;
     }
+    
+    /**
+     * Returns the resulting vector
+     * @return resulting vector
+     */
     GeoVector getRotatedVector() {
         return B;
     }

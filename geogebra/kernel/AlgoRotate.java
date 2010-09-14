@@ -35,13 +35,25 @@ public class AlgoRotate extends AlgoTransformation {
 	private Rotateable B;    
     private NumberValue angle; 
     private GeoElement Ageo, Bgeo, angleGeo;
-    
+    /**
+     * Creates new generic rotation algo
+     * @param cons
+     * @param label
+     * @param A
+     * @param angle
+     */
     AlgoRotate(Construction cons, String label,
             Rotateable A, NumberValue angle) {
     	this(cons, A, angle);
     	Bgeo.setLabel(label);
     }
     
+    /**
+     * Creates new unlabeled rotation algo
+     * @param cons
+     * @param A
+     * @param angle
+     */
     AlgoRotate(Construction cons, Rotateable A, NumberValue angle) {
         super(cons);        
         this.angle = angle;
@@ -69,11 +81,15 @@ public class AlgoRotate extends AlgoTransformation {
         input[0] = Ageo;
         input[1] = angle.toGeoElement();
 
-        output = new GeoElement[1];
-        output[0] = Bgeo;
+        setOutputLength(1);
+        setOutput(0,Bgeo);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the rotated object
+     * @return rotated object
+     */
     GeoElement getResult() {
         return Bgeo;
     }
@@ -84,6 +100,10 @@ public class AlgoRotate extends AlgoTransformation {
         B.rotate(angle);
     }
     
+    /**
+     * Returns true iff EuclidianView update is needed
+     * @return true iff EuclidianView update is needed
+     */
     final public boolean wantsEuclidianViewUpdate() {
         return Ageo.isGeoImage();
     }

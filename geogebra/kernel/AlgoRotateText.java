@@ -12,10 +12,13 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
-import geogebra.main.MyError;
 
 
+/**
+ * Handles rotated texts
+ * @author Michael
+ *
+ */
 
 public class AlgoRotateText extends AlgoElement {
 
@@ -26,11 +29,24 @@ public class AlgoRotateText extends AlgoElement {
      
     private StringBuffer sb = new StringBuffer();
     
+    /**
+     * Creates new text rotation algo
+     * @param cons
+     * @param label
+     * @param args
+     * @param angle
+     */
     AlgoRotateText(Construction cons, String label, GeoText args, GeoNumeric angle) {
     	this(cons,  args, angle);
         text.setLabel(label);
     }
 
+    /**
+     * Creates new unlabeled text rotation algo
+     * @param cons
+     * @param args
+     * @param angle
+     */
     AlgoRotateText(Construction cons, GeoText args, GeoNumeric angle) {
         super(cons);
         this.args = args;
@@ -54,11 +70,15 @@ public class AlgoRotateText extends AlgoElement {
 	    input[1] = angle;
 
 
-        output = new GeoElement[1];
-        output[0] = text;
+        setOutputLength(1);
+        setOutput(0,text);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the resulting text
+     * @return resulting text
+     */
     GeoText getResult() {
         return text;
     }

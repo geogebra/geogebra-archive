@@ -12,9 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
-
 
 /**
  * n-th element of a GeoList object.
@@ -33,6 +30,12 @@ public class AlgoSelectedElement extends AlgoElement {
 	private GeoList geoList; //input
     private GeoElement element; //output	
 
+    /**
+     * Creates new selected element algo
+     * @param cons
+     * @param label
+     * @param geoList
+     */
     AlgoSelectedElement(Construction cons, String label, GeoList geoList) {
         super(cons);
         this.geoList = geoList;
@@ -63,11 +66,15 @@ public class AlgoSelectedElement extends AlgoElement {
         input = new GeoElement[1];
         input[0] = geoList;
 
-        output = new GeoElement[1];
-        output[0] = element;
+        setOutputLength(1);
+        setOutput(0,element);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the selected element
+     * @return selected element
+     */
     GeoElement getElement() {
         return element;
     }

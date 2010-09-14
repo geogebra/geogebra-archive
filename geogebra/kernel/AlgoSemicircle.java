@@ -27,12 +27,25 @@ public class AlgoSemicircle extends AlgoElement {
 	private GeoPoint M; // midpoint of AB
 	private GeoConic conic;
 
+	/**
+	 * Creates new semicircle algoritm
+	 * @param cons construction
+	 * @param label label for the semicircle
+	 * @param A first endpoint
+	 * @param B second endpoint
+	 */
     AlgoSemicircle(Construction cons, String label,
     		GeoPoint A, GeoPoint B) {
     	this(cons, A, B);
     	conicPart.setLabel(label);
     }
     
+    /**
+	 * Creates new unlabeled semicircle algoritm
+	 * @param cons construction
+	 * @param A first endpoint
+	 * @param B second endpoint
+	 */
     public AlgoSemicircle(Construction cons, 
     		GeoPoint A, GeoPoint B) {
         super(cons);        
@@ -69,20 +82,32 @@ public class AlgoSemicircle extends AlgoElement {
         input[0] = A;      
         input[1] = B;    
 
-        output = new GeoElement[1];
-        output[0] = conicPart;
+        setOutputLength(1);
+        setOutput(0,conicPart);
 
         setDependencies();
     }
     
+	/**
+	 * Returns the semicercle
+	 * @return the semicircle
+	 */
     public GeoConicPart getSemicircle() {
     	return conicPart;
     }
     
+    /**
+     * Returns first endpoint
+     * @return first endpoint
+     */
     GeoPoint getA() {
     	return A;
     }
     
+    /**
+     * Returns second endpoint
+     * @return second endpoint
+     */
     GeoPoint getB() {
     	return B;
     }    

@@ -37,12 +37,27 @@ public class AlgoRotatePoint extends AlgoTransformation {
     private NumberValue angle; 
     private GeoElement Ageo, Bgeo, angleGeo;
     
+    /**
+     * Creates new point rotation algo
+     * @param cons
+     * @param label
+     * @param A
+     * @param angle
+     * @param Q
+     */
     AlgoRotatePoint(Construction cons, String label,
             PointRotateable A, NumberValue angle, GeoPoint Q) {
     	this(cons, A, angle, Q);
     	Bgeo.setLabel(label);
     }
     
+    /**
+     * Creates new unlabeled point rotation algo
+     * @param cons
+     * @param A
+     * @param angle
+     * @param Q
+     */
     AlgoRotatePoint(Construction cons, 
         PointRotateable A, NumberValue angle, GeoPoint Q) {
         super(cons);               
@@ -67,6 +82,10 @@ public class AlgoRotatePoint extends AlgoTransformation {
         return "AlgoRotatePoint";
     }
 
+    /**
+     * Returns true iff euclidian view updte is needed (for images)
+     * @return true iff euclidian view updte is needed 
+     */
     final public boolean wantsEuclidianViewUpdate() {
         return Ageo.isGeoImage();
     }
@@ -78,11 +97,15 @@ public class AlgoRotatePoint extends AlgoTransformation {
         input[1] = angleGeo;
         input[2] = Q;
 
-        output = new GeoElement[1];
-        output[0] = Bgeo;
+        setOutputLength(1);
+        setOutput(0,Bgeo);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the rotated point
+     * @return rotated point
+     */
     GeoElement getResult() {
         return Bgeo;
     }
