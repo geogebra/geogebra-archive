@@ -27,7 +27,7 @@ import geogebra.Matrix.GgbVector;
  * @author  Markus
  * @version 
  */
-public class AlgoShear extends AlgoTransformation {
+public class AlgoShearOrStretch extends AlgoTransformation {
 
     /**
 	 * 
@@ -35,8 +35,9 @@ public class AlgoShear extends AlgoTransformation {
 	private static final long serialVersionUID = 1L;
 	private MatrixTransformable out;   
     private GeoElement geoIn, geoOut; 
-    private GeoLine l;
+    private GeoVec3D l;
     private GeoNumeric num;
+    private boolean shear;
     
   
     /**
@@ -46,10 +47,11 @@ public class AlgoShear extends AlgoTransformation {
      * @param in
      * @param l
      * @param num
+     * @param shear shear if true, stretch otherwise
      */
-    public AlgoShear(Construction cons, String label, MatrixTransformable in, GeoLine l,GeoNumeric num) {
+    public AlgoShearOrStretch(Construction cons, String label, MatrixTransformable in, GeoVec3D l,GeoNumeric num,boolean shear) {
         super(cons);
-        //this.in = in;      
+        this.shear = shear;      
         this.l = l;
         this.num = num;
                   
@@ -65,7 +67,8 @@ public class AlgoShear extends AlgoTransformation {
     }           
     
     public String getClassName() {
-        return "AlgoShear";
+        if(shear)return "AlgoShear";
+        return "AlgoStretch";
     }
     
     // for AlgoElement
@@ -94,7 +97,8 @@ public class AlgoShear extends AlgoTransformation {
         
         //matrix.add
         Translateable tranOut = (Translateable) out;
-        double qx, qy; 
+        double qx, qy,s,c;
+        if(l instanceof GeoLine){
         if (Math.abs(l.x) > Math.abs(l.y)) {
             qx = l.z / l.x;
             qy = 0.0d;
@@ -102,18 +106,29 @@ public class AlgoShear extends AlgoTransformation {
             qx = 0.0d;
             qy = l.z / l.y;
         }
-        double s=-l.x/Math.sqrt(l.x*l.x+l.y*l.y);
-        double c=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
+        s=-l.x/Math.sqrt(l.x*l.x+l.y*l.y);
+        c=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
+        }
+        else{
+        	 qx = -((GeoVector)l).getStartPoint().x;
+        	 qy = -((GeoVector)l).getStartPoint().y;
+        	 s=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
+             c=l.x/Math.sqrt(l.x*l.x+l.y*l.y);
+        }
         double n=num.getValue();
         // translate -Q
         tranOut.translate(new GgbVector(qx, qy,0));
         
-        
-        out.matrixTransform(1-c*s*n,c*c*n,-s*s*n,1+s*c*n);
-         
+        if(shear)
+        	out.matrixTransform(1-c*s*n,c*c*n,-s*s*n,1+s*c*n);
+        else
+        	out.matrixTransform(c*c+s*s*n,c*s*(1-n),c*s*(1-n),s*s+c*c*n);        
         tranOut.translate(new GgbVector(-qx, -qy,0));
          //c -s 1 n = c (cn-s) c s = (1-csn) (ccn)  
          //s c  0 1   s (sn+c) -s c  (-ssn) (1+scn)
+        //c -s 1 0 = c -sn c s = (cc+ssn) (cs-csn)  
+        //s c  0 n   s cn -s c  (sc-csn) (ss+ccn)
+        
     }       
     
 

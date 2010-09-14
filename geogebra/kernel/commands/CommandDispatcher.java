@@ -96,7 +96,7 @@ public class CommandDispatcher {
         	cmdProc = (CommandProcessor) cmdTable.get(cmdName);    
         	
         	if (cmdProc == null)
-        		cmdProc = (CommandProcessor) internalCmdTable.get(cmdName);
+        		cmdProc = internalCmdTable.get(cmdName);
         }
                 
         GeoElement[] ret = null;
@@ -412,6 +412,7 @@ public class CommandDispatcher {
     	cmdTable.put("RandomElement", new CmdRandomElement(kernel));
     	cmdTable.put("ApplyMatrix", new CmdApplyMatrix(kernel));
     	cmdTable.put("Shear", new CmdShear(kernel));
+    	cmdTable.put("Stretch", new CmdStretch(kernel));
     	cmdTable.put("ComplexRoot", new CmdComplexRoot(kernel));	   
     	cmdTable.put("RigidPolygon", new CmdRigidPolygon(kernel));	   
     	cmdTable.put("SolveODE", new CmdSolveODE(kernel));	   
@@ -431,7 +432,7 @@ public class CommandDispatcher {
     	
     	
     	// internal command table for commands that should not be visible to the user
-    	internalCmdTable = new HashMap();
+    	internalCmdTable = new HashMap<String,CommandProcessor>();
     	// support parsing diff() results back from Maxima
     	internalCmdTable.put("diff", new CmdDerivative(kernel));
     }

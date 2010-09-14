@@ -5742,11 +5742,25 @@ public class Kernel {
 	 * apply matrix 
 	 * Michael Borcherds 2010-05-27
 	 */
-	final public GeoElement [] Shear(String label, MatrixTransformable Q, GeoLine l, GeoNumeric num) {	
+	final public GeoElement [] Shear(String label, MatrixTransformable Q, GeoVec3D l, GeoNumeric num) {	
 		if (label == null)
 			label = transformedGeoLabel((GeoElement)Q);
 	
-		AlgoShear algo = new AlgoShear(cons, label, Q, l,num);
+		AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, label, Q, l,num,true);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) Q);
+		GeoElement[] geos = { ret };
+		return geos;
+	}
+	/**
+	 * apply matrix 
+	 * Michael Borcherds 2010-05-27
+	 */
+	final public GeoElement [] Stretch(String label, MatrixTransformable Q, GeoVec3D l, GeoNumeric num) {	
+		if (label == null)
+			label = transformedGeoLabel((GeoElement)Q);
+	
+		AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, label, Q, l,num,false);
 		GeoElement ret = algo.getResult();
 		ret.setVisualStyleForTransformations((GeoElement) Q);
 		GeoElement[] geos = { ret };
