@@ -713,6 +713,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		hits = view.getHits();hits.removePolygons();
 		//Application.debug("MODE_TRANSLATEVIEW - "+hits.toString());
 
+		/*
 		if (!hits.isEmpty() && hits.size() == 1) {
 			Object hit0 = hits.get(0);
 			if (hit0 == kernel.getXAxis())
@@ -723,7 +724,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				moveMode = MOVE_VIEW;
 		} else {						
 			moveMode = MOVE_VIEW;
-		}						
+		}	
+		*/
+
+		moveMode = MOVE_VIEW;	
+		if (!hits.isEmpty() ) 
+			for(Object hit:hits){
+				if (hit == kernel.getXAxis())
+					moveMode = MOVE_X_AXIS;
+				if (hit == kernel.getYAxis())
+					moveMode = MOVE_Y_AXIS;
+			}	
 
 		startLoc = mouseLoc; 
 		if (!TEMPORARY_MODE) {
