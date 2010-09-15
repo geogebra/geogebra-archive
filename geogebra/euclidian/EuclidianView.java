@@ -2090,8 +2090,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 					if (showAxesNumbers[0]) {
 						String strNum = kernel.formatPiE(rw,
 								axesNumberFormat[0]);
-						boolean zero = strNum.equals("0");
-
+						
+						// flag to handle drawing a label at axis crossing point
+						boolean zero = strNum.equals("" + kernel.formatPiE(axisCross[1],
+								axesNumberFormat[0]));
+						
 						sb.setLength(0);
 						sb.append(strNum);
 						if (axesUnitLabels[0] != null && !piAxisUnit[0])
@@ -2100,6 +2103,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						TextLayout layout = new TextLayout(sb.toString(),
 								fontAxes, frc);
 						int x, y = (int) (yCrossPix + yoffset);
+						
+						// if label intersects the y-axis then draw it 6 pixels to the left
 						if (zero && showAxes[1]) {
 							x = (int) (pix + 6);
 						} else {
@@ -2232,9 +2237,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 					if (showAxesNumbers[1]) {
 						String strNum = kernel.formatPiE(rw,
 								axesNumberFormat[1]);
-						//TODO handle labels other than 0
-						boolean zero = axisCross[1] == 0 && strNum.equals("0");
-
+						
+						// flag for handling label at axis cross point
+						boolean zero = strNum.equals("" + kernel.formatPiE(axisCross[0],
+								axesNumberFormat[0]));
+						
 						sb.setLength(0);
 						sb.append(strNum);
 						if (axesUnitLabels[1] != null && !piAxisUnit[1])
@@ -2244,6 +2251,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 								fontAxes, frc);
 						int x = (int) (xCrossPix + xoffset - layout.getAdvance());
 						int y;
+						// if the label is at the axis cross point then draw it 2 pixels above
 						if (zero && showAxes[0]) {
 							y = (int) (yCrossPix - 2);
 						} else {
