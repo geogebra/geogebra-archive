@@ -26,6 +26,8 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 	private GeoPoint3D startPoint;
 	
 	private GgbMatrix matrix;
+	
+	private GgbVector labelPosition;
 
 	/** simple constructor
 	 * @param c
@@ -78,9 +80,13 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 		}
 		
 		setDrawingMatrix(new GgbMatrix4x4(matrix));
-		getLabelMatrix().setOrigin((GgbVector) matrix.getOrigin().add(matrix.getVx().mul(0.5)));
+		labelPosition = matrix.getOrigin().add(matrix.getVx().mul(0.5));
 	}
 
+	
+	public GgbVector getLabelPosition(){
+		return labelPosition;
+	}
 
 
 

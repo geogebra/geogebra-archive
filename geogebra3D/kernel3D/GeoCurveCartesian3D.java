@@ -185,8 +185,8 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 
 
 
-	public GgbMatrix4x4 getLabelMatrix() {
-		return GgbMatrix4x4.Identity();
+	public GgbVector getLabelPosition(){
+		return new GgbVector(4); //TODO
 	}
 
 

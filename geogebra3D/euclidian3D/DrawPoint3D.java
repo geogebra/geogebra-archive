@@ -73,14 +73,6 @@ implements Previewable, Functional2Var{
 	}	
 	
 	
-	protected void updateLabel(){
-		//if (getGeoElement()!=null)
-			label.update(getGeoElement().getLabelDescription(), 10, 
-					getGeoElement().getObjectColor(),
-					getLabelMatrix().getOrigin().copyVector(),
-					getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY);
-
-	}
 	
 	
 

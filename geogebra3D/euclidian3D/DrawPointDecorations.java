@@ -95,6 +95,10 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 		
 		updateForItSelf(p1, p2);
 	}
+	
+	protected void updateLabel(){
+		//nothing to do : there's no label
+	}
 
 
 	protected int getLineThickness(){

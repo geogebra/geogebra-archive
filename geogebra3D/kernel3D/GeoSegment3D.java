@@ -241,7 +241,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	
 	/////////////////////////////////////
 	// GeoSegmentInterface interface
-
+	
 
 	public double getPointX(double parameter) {
 		// TODO Auto-generated method stub

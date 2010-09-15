@@ -278,7 +278,6 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 		
 		//sets the drawing matrix to coords
 		getDrawingMatrix().setOrigin(getCoords());
-		getLabelMatrix().setOrigin(getCoords());
 
 	}
 	 
@@ -910,6 +909,14 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	}
     
     
+	
+	//////////////////////////////////
+	// GeoElement3DInterface interface
+
+	public GgbVector getLabelPosition(){
+		//Application.debug(inhom.toString());
+		return getCoords();
+	}
    
 
 }

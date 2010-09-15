@@ -58,10 +58,8 @@ implements Functional2Var, GeoCoordSys2D{
 		this(cons);
 		
 		setEquation(a, b, c, d);
-		
 		setLabel(label);
 		
-		//Application.debug(getCoordSys().getMatrixOrthonormal().toString());
 		
 		
 	}
@@ -235,6 +233,12 @@ implements Functional2Var, GeoCoordSys2D{
 		
 		return getCoordSys().getNormal();
 	}
+	
+
+	public GgbVector getLabelPosition(){
+		return getCoordSys().getPoint(0.5, 0.5);
+	}
+	
 	
 	
 	

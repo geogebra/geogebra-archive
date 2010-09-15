@@ -284,4 +284,10 @@ GeoLineInterface, GeoCoordSys{
 	}
 
 	
+
+	public GgbVector getLabelPosition(){
+		return coordsys.getPoint(0.5);
+	}
+
+	
 }

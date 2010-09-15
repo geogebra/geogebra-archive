@@ -137,8 +137,7 @@ public abstract class GeoElement3D
 	/** matrix used as orientation by the {@link Drawable3D} */
 	private GgbMatrix4x4 m_drawingMatrix = null;
 	
-	/** matrix used to draw the label by the {@link Drawable3D} */
-	private GgbMatrix4x4 labelMatrix = null;
+
 	
 	/** for some 3D element (like conics, polygons, etc), a 2D GeoElement is linked to (for calculation) */
 	private GeoElement geo2D = null;
@@ -213,11 +212,8 @@ public abstract class GeoElement3D
 	}
 	
 	
-	/** returns a 4x4 matrix for drawing the label
-	 * @return the label drawing matrix*/
-	public GgbMatrix4x4 getLabelMatrix(){
-		return labelMatrix;
-	}
+
+	abstract public GgbVector getLabelPosition();
 	
 	/** sets the 4x4 matrix for drawing the {@link Drawable3D} and the label
 	 * @param a_drawingMatrix the drawing matrix*/
@@ -225,11 +221,6 @@ public abstract class GeoElement3D
 		this.m_drawingMatrix = a_drawingMatrix;
 	}	
 	
-	/** sets the 4x4 matrix for drawing the label
-	 * @param a_drawingMatrix the drawing matrix*/
-	public void setLabelMatrix(GgbMatrix4x4 labelMatrix){
-		this.labelMatrix = labelMatrix;
-	}
 	
 	/** sets the pickability of the object
 	 * @param v pickability

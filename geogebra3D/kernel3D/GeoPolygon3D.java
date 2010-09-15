@@ -358,15 +358,11 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		return coordSys.getMatrixOrthonormal();
 	}
 	
-	 public GgbMatrix4x4 getLabelMatrix(){
-		 /*
-		 if (coordSys!=null)
-			 return coordSys.getLabelMatrix();
-		 else
-			 return null;
-			 */
-		 return null;
-	 }
+
+	public GgbVector getLabelPosition(){
+		return coordSys.getPoint(0.5, 0.5);
+	}
+
 
 	
 	public void setDrawingMatrix(GgbMatrix4x4 matrix) {

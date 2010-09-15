@@ -573,6 +573,21 @@ public class GgbVector
 	}
 
 	
+	/////////////////////////////////////////////////////
+	// BASIC OPERATIONS
+	/////////////////////////////////////////////////////
+	
+	public GgbVector add(GgbVector v){
+		
+		return (GgbVector) super.add(v);
+		
+	}
+	
+	public GgbVector mul(double val0){
+		
+		return (GgbVector) super.mul(val0);
+	}
+	
 	
 	///////////////////////////////////////////////////:
 	/** for testing the package */

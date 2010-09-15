@@ -42,7 +42,6 @@ public abstract class GeoVec extends GeoElement3D {
     	m_length = n;
     	v = new GgbVector(n);
     	setDrawingMatrix(GgbMatrix4x4.Identity());
-    	setLabelMatrix(GgbMatrix4x4.Identity());
     }  
 
     /** Creates new GeoVec with coordinates coords[] and label */

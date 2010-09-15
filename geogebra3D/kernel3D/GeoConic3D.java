@@ -98,8 +98,9 @@ extends GeoConicND implements GeoElement3DInterface{
 	 }
 	 
 
-	 public GgbMatrix4x4 getLabelMatrix(){
-		 return null;//coordSys.getLabelMatrix();
+
+	 public GgbVector getLabelPosition(){
+		 return new GgbVector(4); //TODO
 	 }
 
 

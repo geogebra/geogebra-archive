@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.GgbMatrix4x4;
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.DrawableND;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
@@ -250,7 +251,7 @@ public abstract class Drawable3D extends DrawableND {
 		if (waitForUpdate){
 			updateForItSelf();
 			waitForUpdate = false;
-			//setLabelWaitForUpdate();//TODO remove that
+			setLabelWaitForUpdate();//TODO remove that
 		}
 		
 		if (viewChanged){
@@ -273,8 +274,12 @@ public abstract class Drawable3D extends DrawableND {
 	 * update the label
 	 */
 	protected void updateLabel(){
+		
+		label.update(getGeoElement().getLabelDescription(), 10, 
+				getGeoElement().getObjectColor(),
+				getLabelPosition().copyVector(),
+				getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY);
 
-		//TODO create common code
 	}
 	
 	/**
@@ -352,12 +357,12 @@ public abstract class Drawable3D extends DrawableND {
 	}
 	
 	/**
-	 * get the label drawing matrix
+	 * get the label position
 	 * 
-	 * @return the label drawing matrix
+	 * @return the label position
 	 */
-	public GgbMatrix4x4 getLabelMatrix(){
-		return ((GeoElement3DInterface) getGeoElement()).getLabelMatrix();
+	public GgbVector getLabelPosition(){
+		return ((GeoElement3DInterface) getGeoElement()).getLabelPosition();
 	}
 	
 	/**

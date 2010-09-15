@@ -603,10 +603,10 @@ implements GeoElement3DInterface, Functional2Var{
 
 
 
+	
 
-	public GgbMatrix4x4 getLabelMatrix() {
-		// TODO Auto-generated method stub
-		return null;
+	public GgbVector getLabelPosition(){
+		return new GgbVector(4); //TODO
 	}
 
 

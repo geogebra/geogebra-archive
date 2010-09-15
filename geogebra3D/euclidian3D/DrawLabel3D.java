@@ -84,7 +84,7 @@ public class DrawLabel3D {
 		
 		if (text.equals(this.text)){
 			// update the texture TODO remove this
-			updateTexture();
+			//updateTexture();
 			return;
 		}
 		

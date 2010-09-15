@@ -590,6 +590,13 @@ public class GeoPolyhedron extends GeoElement3D {
 
 
 	
+	///////////////////////////////////////////
+	// GeoElement3DInterface
+
+	public GgbVector getLabelPosition(){
+		return new GgbVector(4); //TODO
+	}
+
 	
 
 }
