@@ -2403,11 +2403,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		double xCrossPix =  this.xZero + axisCross[1] * xscale;
 		double yCrossPix =  this.yZero - axisCross[0] * yscale;
 		int yAxisEnd = positiveAxes[1] ? (int) yCrossPix : height;		
-		int xAxisStart = positiveAxes[1] ? (int) xCrossPix : 0;
+		int xAxisStart = positiveAxes[0] ? (int) xCrossPix : 0;
 		
-		// set the clipping region (if positive direction axes)
+		// set the clipping region to the region defined by the axes
 		Shape oldClip = g2.getClip();
-		g2.setClip(xAxisStart, 0, width, yAxisEnd);
+		if(gridType != GRID_POLAR) // don't do this for polar grids
+			g2.setClip(xAxisStart, 0, width, yAxisEnd);
 		
 		
 		switch (gridType) {
