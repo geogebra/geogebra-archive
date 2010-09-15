@@ -86,6 +86,7 @@ import geogebra.kernel.statistics.AlgoPascal;
 import geogebra.kernel.statistics.AlgoProduct;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
+import geogebra.kernel.statistics.AlgoRSquare;
 import geogebra.kernel.statistics.AlgoRandom;
 import geogebra.kernel.statistics.AlgoRandomBinomial;
 import geogebra.kernel.statistics.AlgoRandomNormal;
@@ -2810,6 +2811,16 @@ public class Kernel {
 		return sse;
 	}	
 
+	/**
+	 * RSquare[<List of Points>,<Function>]
+	 */
+	final public GeoNumeric RSquare(String label, GeoList list, GeoFunctionable function) {
+		AlgoRSquare algo = new AlgoRSquare(cons, label, list, function);
+		GeoNumeric r2=algo.getRSquare();
+		return r2;
+	}	
+
+	
 	/** 
 	 * unit vector of line g
 	 */

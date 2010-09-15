@@ -336,6 +336,7 @@ public class CommandDispatcher {
     	cmdTable.put("FitSin", new CmdFitSin(kernel));   
     	cmdTable.put("FitLogistic", new CmdFitLogistic(kernel));  
     	cmdTable.put("SumSquaredErrors",new CmdSumSquaredErrors(kernel));
+    	cmdTable.put("RSquare",new CmdRSquare(kernel));
     	
     	cmdTable.put("DynamicCoordinates", new CmdDynamicCoordinates(kernel));  
 
