@@ -333,6 +333,10 @@ implements ExpressionValue, ExpressionNodeConstants {
     	return kernel.getExpressionNodeEvaluator().evaluate(this);
     }
     
+    public ExpressionValue evaluate(boolean cache) {   
+    	return kernel.getExpressionNodeEvaluator().evaluate(this);
+    }
+    
     /**
      * 
      * @param lt
@@ -935,8 +939,9 @@ implements ExpressionValue, ExpressionNodeConstants {
     /**
      * Returns a string representation of this node that can be used with 
      * the given CAS, e.g. "*" and "^" are always printed.
-     * @param symbolic: true for variable names, false for values of variables
-     * @param STRING_TYPE: e.g. ExpressionNode.STRING_TYPE_JASYMCA
+     * @param symbolic true for variable names, false for values of variables
+     * @param STRING_TYPE e.g. ExpressionNode.STRING_TYPE_JASYMCA
+     * @return string representation of this node that can be used with given CAS
      */
     final public String getCASstring(int STRING_TYPE, boolean symbolic) {
         int oldPrintForm = kernel.getCASPrintForm();
@@ -951,6 +956,7 @@ implements ExpressionValue, ExpressionNodeConstants {
     /**
      * Returns a string representation of this node that can be used with 
      * the GeoGebraCAS.
+     * @return GeoGebra CAS string representation of this node
      */
     final public String getCASstring(boolean symbolic) {
         return getCASstring(STRING_TYPE_GEOGEBRA, symbolic);
@@ -1102,7 +1108,7 @@ implements ExpressionValue, ExpressionNodeConstants {
      * Note: the resulting string may contain special unicode characters like
      * greek characters or special signs for integer exponents. These sould be
      * handled afterwards!
-     * @param symbolic: true for variable names, false for values of variables
+     * @param symbolic true for variable names, false for values of variables
      */
     final public String toLaTeXString(boolean symbolic) {
     	 if (isLeaf()) { // leaf is GeoElement or not                            
@@ -2883,7 +2889,11 @@ implements ExpressionValue, ExpressionNodeConstants {
      
     
     
-    // return operation number
+    /**
+     * return operation number
+     * @param ev
+     * @return operation number
+     */
     static public int opID(ExpressionValue ev) {
         if (ev.isExpressionNode())
 			return ((ExpressionNode)ev).operation;
@@ -2924,6 +2934,12 @@ implements ExpressionValue, ExpressionNodeConstants {
 		return false;
 	}
 	
+	/**
+	 * Returns true iff ev1 and ev2 are equal
+	 * @param ev1
+	 * @param ev2
+	 * @return true iff ev1 and ev2 are equal
+	 */
 	public static boolean isEqual(ExpressionValue ev1, ExpressionValue ev2) {
 		if (ev1.isNumberValue() && ev2.isNumberValue()) {
 			return Kernel.isEqual( ((NumberValue)ev1).getDouble(), ((NumberValue)ev2).getDouble(), Kernel.EPSILON);
@@ -2938,8 +2954,10 @@ implements ExpressionValue, ExpressionNodeConstants {
     /**
      * Returns whether the given expression will give the same String output
      * as val.
-     * @param symbolic: whether we should use the value (true) or the label (false) of ev when
-     * it is a GeoElement
+     * @param symbolic whether we should use the value (true) or the label (false) of ev when it is a GeoElement
+     * @param val
+     * @param ev 
+     * @return true iff output of ev and val are the same 
      */
     final public static boolean isEqualString(ExpressionValue ev, double val, boolean symbolic) {
     	if (ev.isLeaf() && ev instanceof NumberValue) {

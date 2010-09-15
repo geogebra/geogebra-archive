@@ -998,7 +998,10 @@ public class AlgebraProcessor {
 			return processText(n, eval);				
 		else if (eval instanceof MyList) {
 			return processList(n, (MyList) eval);
-		} 
+		}
+		else if (eval instanceof GeoList) {
+			return processList(n, ((GeoList) eval).getMyList());
+		}
 		
 		// REMOVED due to issue 131: http://code.google.com/p/geogebra/issues/detail?id=131
 //		// expressions like 2 a (where a:x + y = 1)

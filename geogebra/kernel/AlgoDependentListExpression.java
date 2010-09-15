@@ -37,7 +37,12 @@ public class AlgoDependentListExpression extends AlgoElement {
 	private ExpressionNode root;  // input
     private GeoList list;     // output              
         
-
+    /**
+     * Creates new dependent list algo. 
+     * @param cons construction
+     * @param label label for the list
+     * @param root expression deining the list
+     */
     public AlgoDependentListExpression(Construction cons, String label, ExpressionNode root) {
     	super(cons);
         this.root = root;  
@@ -58,19 +63,26 @@ public class AlgoDependentListExpression extends AlgoElement {
 	protected void setInputOutput() {
         input = root.getGeoElementVariables();
         
-        output = new GeoElement[1];        
-        output[0] = list;        
+        setOutputLength(1);        
+        setOutput(0,list);        
         setDependencies(); // done by AlgoElement
     }    
-    
+    /**
+     * Returns the resulting list
+     * @return resulting list
+     */
     public GeoList getList() { return list; }
-    
+    /**
+     * Returns the input expression
+     * @return input expression
+     */
     ExpressionNode getExpression() { return root; }
     
     // evaluate the current value of the arithmetic tree
     protected final void compute() {    
 		// get resulting list of ExpressionNodes		    	
-    	MyList myList = (MyList) root.evaluate();
+    	ExpressionValue evlist = root.evaluate();
+    	MyList myList = (evlist instanceof MyList)? (MyList)evlist: ((GeoList)evlist).getMyList();
 
 		int evalListSize = myList.size();
 		int cachedListSize = list.getCacheSize();    		
