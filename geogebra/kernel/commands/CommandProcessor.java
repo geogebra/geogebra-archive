@@ -4704,9 +4704,6 @@ class CmdStemPlot extends CommandProcessor {
 			 if ( (ok[0] = (arg[0].isGeoList()) ) ){
 				 GeoList list = (GeoList)arg[0];
 
-				 if (list.size() == 0)
-					 throw argErr(app, c.getName(), arg[0]);
-
 					 GeoElement[] ret =
 					 {
 						 kernel.StemPlot(
@@ -4718,16 +4715,33 @@ class CmdStemPlot extends CommandProcessor {
 			 }
 
 
+		 case 2 :
+			 if (!arg[0].isGeoList()){
+				 throw argErr(app, c.getName(), arg[0]);
+			 }
+			 if (!arg[1].isGeoNumeric()){
+				 throw argErr(app, c.getName(), arg[1]);
+			 }
+				 GeoList list = (GeoList)arg[0];
+
+					 GeoElement[] ret =
+					 {
+						 kernel.StemPlot(
+								 c.getLabel(),
+								 (GeoList) arg[0], (GeoNumeric) arg[1])};
+				 return ret;
+
+
 
 		 case 0:
 			 throw argNumErr(app, c.getName(), n);
 
 		 default :
 
-			 GeoList list = wrapInList(kernel, arg, arg.length, -1);
+			 list = wrapInList(kernel, arg, arg.length, -1);
 			 if (list != null) {
-				 GeoElement[] ret = { kernel.StemPlot(c.getLabel(), list)};
-				 return ret;             	     	 
+				 GeoElement[] ret2 = { kernel.StemPlot(c.getLabel(), list)};
+				 return ret2;             	     	 
 			 } 
 		 
 		 throw argErr(app, c.getName(), arg[0]);

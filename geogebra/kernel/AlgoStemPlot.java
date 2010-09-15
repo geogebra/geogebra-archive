@@ -25,20 +25,22 @@ public class AlgoStemPlot extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList geoList; //input
+	private GeoNumeric multiplier; //input
     private GeoText text; //output	
     
     private GeoList[] geoLists;
     
     private StringBuffer sb = new StringBuffer();
     
-    AlgoStemPlot(Construction cons, String label, GeoList geoList) {
-    	this(cons, geoList);
+    AlgoStemPlot(Construction cons, String label, GeoList geoList, GeoNumeric multiplier) {
+    	this(cons, geoList, multiplier);
         text.setLabel(label);
     }
 
-    AlgoStemPlot(Construction cons, GeoList geoList) {
+    AlgoStemPlot(Construction cons, GeoList geoList, GeoNumeric multiplier) {
         super(cons);
         this.geoList = geoList;
+        this.multiplier = multiplier;
                
         text = new GeoText(cons);
 		text.setIsTextCommand(true); // stop editing as text
@@ -56,8 +58,11 @@ public class AlgoStemPlot extends AlgoElement {
 
     protected void setInputOutput(){
 
-        input = new GeoElement[1];
+        input = new GeoElement[multiplier == null ? 1 : 2];
         input[0] = geoList;
+        
+        if (multiplier != null)
+        	input[1] = multiplier;
 
 
         output = new GeoElement[1];
@@ -94,18 +99,34 @@ public class AlgoStemPlot extends AlgoElement {
     	Arrays.sort(nos);
     	
     	double max = nos[size - 1];
+    	double min = nos[0];
     	
     	// next power of 10 above max eg 76 -> 100, 100->1000
-    	double multiplier = Math.pow(10.0, Math.round(Math.log10(max*1.00000001)));
+    	double multiplie = Math.pow(10.0, Math.round(Math.log10(max*1.00000001)));
+    	int noOfBins = 10;
     	
-    	double multTen = multiplier / 10;
-    	double multUnit = multiplier / 100;
+    	if (multiplier != null && multiplier.isDefined()) {
+    		multiplie = multiplier.getDouble();
+    	}
     	
+    	double multTen = multiplie / 10;
+    	double multUnit = multiplie / 100;
+    	
+    	int minBin = (int) ( min / multTen);
+    	int maxBin = (int) ( max / multTen);
+    	
+    	
+    	noOfBins = maxBin - minBin + 1;
+    	
+    	Application.debug("minBin = "+minBin);
+    	Application.debug("maxBin = "+maxBin);
+    	Application.debug("noOfBins = "+noOfBins);
+    	// StemAndLeaf[{22, 33, 44, 55, 22, 33, 44, 22, 33}]
     	//double [][] bins = new double[10][];
     	
-    	ArrayList<Integer> bins[] = new ArrayList[10];
+    	ArrayList<Integer> bins[] = new ArrayList[noOfBins];
     	
-    	for (int i = 0 ; i < 10 ; i++) {
+    	for (int i = 0 ; i < noOfBins ; i++) {
     		bins[i] = new ArrayList<Integer>();
     	}
     	
@@ -118,13 +139,13 @@ public class AlgoStemPlot extends AlgoElement {
     		// Kernel.EPSILON so that eg 9.7 -> 7 not 6
     		int ssd = (int)Math.floor(Kernel.EPSILON + (nos[i] - msd * multTen) / multUnit);
     		
-    		bins[msd].add(new Integer(ssd));
+    		bins[msd - minBin].add(new Integer(ssd));
     	
     	}
     	
     	int maxSize = 0;
     	
-    	for (int i = 0 ; i < 10 ; i++) {
+    	for (int i = 0 ; i < noOfBins ; i++) {
     		Collections.sort(bins[i]);
     		maxSize = Math.max(maxSize, bins[i].size());
     	}
@@ -152,9 +173,9 @@ public class AlgoStemPlot extends AlgoElement {
 	    	
 	    	// TableText[{11.1,322,3.11},{4,55,666,7777,88888},{6.11,7.99,8.01,9.81},{(1,2)},"c()"]
 	    	
-			for (int r = 0 ; r < 10 ; r++) {
+			for (int r = 0 ; r < noOfBins ; r++) {
 	    	for (int c=-1 ; c < maxSize; c++) {
-    			if (c == -1) sb.append(r+""); // stem
+    			if (c == -1) sb.append((r+minBin)+""); // stem
     			else sb.append(bins[r].size() > c ? bins[r].get(c)+"" : " " );
     			
     			if (c < maxSize - 1) sb.append("&"); // column separator
@@ -164,8 +185,13 @@ public class AlgoStemPlot extends AlgoElement {
 	    	}   
 		
     	}
+    	
+    	// avoid eg 31.0
+    	String key = (multUnit >= 1) ? ""+31*(int)multUnit : ""+31.0*multUnit;
 
-    	sb.append("\\end{array}");
+    	sb.append("\\end{array} \\fbox{\\text{");
+    	sb.append(app.getPlain("StemPlot.KeyAMeansB", "3|1", key));
+    	sb.append("}}");
     	
     	// surround in { } to make eg this work:
     	// FormulaText["\bgcolor{ff0000}"+TableText[matrix1]]

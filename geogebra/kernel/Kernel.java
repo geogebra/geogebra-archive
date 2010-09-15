@@ -3930,7 +3930,17 @@ public class Kernel {
 	 * Michael Borcherds
 	 */
 	final public GeoText StemPlot(String label, GeoList list) {
-		AlgoStemPlot algo = new AlgoStemPlot(cons, label, list);
+		AlgoStemPlot algo = new AlgoStemPlot(cons, label, list, null);
+		GeoText text = algo.getResult();
+		return text;
+	}
+	
+	/** 
+	 * StemPlot[list, number]
+	 * Michael Borcherds
+	 */
+	final public GeoText StemPlot(String label, GeoList list, GeoNumeric num) {
+		AlgoStemPlot algo = new AlgoStemPlot(cons, label, list, num);
 		GeoText text = algo.getResult();
 		return text;
 	}
