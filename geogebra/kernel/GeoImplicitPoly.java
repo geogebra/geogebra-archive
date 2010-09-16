@@ -88,7 +88,8 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 	}
 	
 	public GeoImplicitPoly(GeoImplicitPoly g){
-		this(g.cons,g.label,g.coeff);
+		this(g.cons);
+		set(g);
 	}
 	
 	/* 
