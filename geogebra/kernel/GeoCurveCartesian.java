@@ -164,6 +164,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 //				System.out.println("   funX after: " + funX.toLaTeXString(true));
 			}
 		}
+		distFun = new ParametricCurveDistanceFunction(this);
 	}		
 	
 	
@@ -182,6 +183,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		} else {
 			isDefined = false;
 		}	
+		distFun = new ParametricCurveDistanceFunction(this);
 	}
 	
 	
@@ -482,7 +484,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		distFun.setDistantPoint(P.x/P.z, P.y/P.z);	
 		
 		// check if P is on this curve and has the right path parameter already
-    	if (P.getPath() == this) { 
+    	if (P.getPath() == this || true) { 
     		// point A is on curve c, take its parameter
     		PathParameter pp = P.getPathParameter();
     		double pathParam = pp.t;
