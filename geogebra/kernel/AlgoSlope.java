@@ -68,7 +68,7 @@ public class AlgoSlope extends AlgoElement {
 
     // direction vector of g
     protected final void compute() {
-        if (g.isDefined())
+        if (g.isDefined() && !Kernel.isZero(g.y))
             slope.setValue(-g.x / g.y);
         else
             slope.setUndefined();

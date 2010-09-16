@@ -225,7 +225,11 @@ implements ExpressionValue, FunctionalNVar {
         else if (ev.isNumberValue()) {
         	isBooleanFunction = false;
         } 
+        else if (ev.isVectorValue()) {
+        	isBooleanFunction = false;
+        } 
         else {
+        	Application.debug(ev.getClass());
 			throw new MyError(app, "InvalidFunction");  
         }
     }
