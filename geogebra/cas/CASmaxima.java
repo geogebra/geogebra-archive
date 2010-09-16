@@ -38,13 +38,13 @@ public class CASmaxima extends CASgeneric {
 		StringBuilder sb = new StringBuilder();
 		
 		// not sequal(string(u), "u") or not equal(errcatch(fundef(u)), []);
-		sb.append("not sequal(string(");
+		sb.append("(not sequal(string(");
 		sb.append(var);
 		sb.append("), \"");
 		sb.append(var);
 		sb.append("\") or not equal(errcatch(fundef(");
 		sb.append(var);
-		sb.append(")), []);");
+		sb.append(")), []));");
 		
 		return "true".equals(evaluateMaxima(sb.toString()));
 	}
