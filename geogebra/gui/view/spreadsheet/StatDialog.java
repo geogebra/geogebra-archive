@@ -16,9 +16,15 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -32,7 +38,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
 public class StatDialog extends JDialog 
-implements ActionListener, View   {
+implements ActionListener, View, Printable   {
 	
 	
 	// ggb components
@@ -57,7 +63,7 @@ implements ActionListener, View   {
 	// GUI objects
 	private JLabel lblRegression, lblRegEquation;
 	private JTextField tfRegression;
-	private JButton btnClose, btnOptions, btnExport, btnDisplay;
+	private JButton btnClose, btnOptions, btnExport, btnDisplay, btnPrint;
 	private JCheckBox cbShowData, cbShowCombo2;
 	private JComboBox cbRegression, cbPolyOrder;
 	private StatComboPanel comboStatPanel, comboStatPanel2;;
@@ -66,7 +72,7 @@ implements ActionListener, View   {
 	private JSplitPane statDataPanel; 
 	private JSplitPane displayPanel;	
 	private JSplitPane comboPanelSplit;
-	private JPanel cardPanel;
+	private JPanel cardPanel, buttonPanel;
 		
 	
 	// flags
@@ -418,9 +424,6 @@ implements ActionListener, View   {
 	
 			btnClose = new JButton();
 			btnClose.addActionListener(this);
-			JPanel rightButtonPanel = new JPanel(new FlowLayout());
-			rightButtonPanel.add(btnClose);
-			
 			
 			btnOptions = new JButton();
 			btnOptions.addActionListener(this);
@@ -431,12 +434,8 @@ implements ActionListener, View   {
 			btnDisplay = new JButton();
 			btnDisplay.addActionListener(this);
 			
-			
-			JPanel centerButtonPanel = new JPanel(new FlowLayout());
-			//centerButtonPanel.add(btnOptions);
-			//centerButtonPanel.add(btnDisplay);
-			//centerButtonPanel.add(btnExport);
-			
+			btnPrint = new JButton();
+			btnPrint.addActionListener(this);
 			
 			cbShowData = new JCheckBox();
 			cbShowData.setSelected(showDataPanel);
@@ -447,12 +446,22 @@ implements ActionListener, View   {
 			cbShowCombo2.addActionListener(this);
 			
 			
+			JPanel rightButtonPanel = new JPanel(new FlowLayout());
+			rightButtonPanel.add(btnPrint);
+			rightButtonPanel.add(btnClose);
+			
+			JPanel centerButtonPanel = new JPanel(new FlowLayout());
+			//centerButtonPanel.add(btnOptions);
+			//centerButtonPanel.add(btnDisplay);
+			//centerButtonPanel.add(btnExport);
+			
+			
 			JPanel leftButtonPanel = new JPanel(new FlowLayout());
 			leftButtonPanel.add(cbShowData);
 			leftButtonPanel.add(cbShowCombo2);
 			
 			
-			JPanel buttonPanel = new JPanel(new BorderLayout());
+			buttonPanel = new JPanel(new BorderLayout());
 			buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
 			buttonPanel.add(centerButtonPanel, BorderLayout.CENTER);
 			buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
@@ -576,7 +585,8 @@ implements ActionListener, View   {
 		btnOptions.setText(app.getMenu("Options"));
 		btnExport.setText(app.getMenu("Export"));
 		btnDisplay.setText(app.getMenu("Plots"));
-
+		btnPrint.setText(app.getMenu("Print"));
+		
 		cbShowData.setText(app.getMenu("ShowData"));
 		cbShowCombo2.setText(app.getMenu("ShowPlot2"));
 
@@ -700,6 +710,10 @@ implements ActionListener, View   {
 
 		else if(source == btnExport){
 			((CardLayout)cardPanel.getLayout()).show(cardPanel, "exportPanel");
+		}
+		
+		else if(source == btnPrint){
+			new geogebra.export.PrintPreview(app, this, PageFormat.LANDSCAPE);
 		}
 
 		else if(source == btnOptions){
@@ -907,8 +921,85 @@ implements ActionListener, View   {
 		//clearView();
 		//kernel.notifyRemoveAll(this);		
 	}
+	
 
-	
-	
-	
+
+	public int print(Graphics g, PageFormat pageFormat, int pageIndex) {		
+		if (pageIndex > 0)
+			return (NO_SUCH_PAGE);
+		else {
+			Graphics2D g2d = (Graphics2D) g;
+			AffineTransform oldTransform = g2d.getTransform();
+
+			g2d.translate(pageFormat.getImageableX(), pageFormat
+					.getImageableY());
+
+			// construction title
+			int y = 0;
+			Construction cons = kernel.getConstruction();
+			String title = cons.getTitle();
+			if (!title.equals("")) {
+				Font titleFont = app.getBoldFont().deriveFont(Font.BOLD,
+						app.getBoldFont().getSize() + 2);
+				g2d.setFont(titleFont);
+				g2d.setColor(Color.black);
+				// Font fn = g2d.getFont();
+				FontMetrics fm = g2d.getFontMetrics();
+				y += fm.getAscent();
+				g2d.drawString(title, 0, y);
+			}
+
+			// construction author and date
+			String author = cons.getAuthor();
+			String date = cons.getDate();
+			String line = null;
+			if (!author.equals("")) {
+				line = author;
+			}
+			if (!date.equals("")) {
+				if (line == null)
+					line = date;
+				else
+					line = line + " - " + date;
+			}
+
+			if (line != null) {
+				g2d.setFont(app.getPlainFont());
+				g2d.setColor(Color.black);
+				// Font fn = g2d.getFont();
+				FontMetrics fm = g2d.getFontMetrics();
+				y += fm.getHeight();
+				g2d.drawString(line, 0, y);
+			}
+			if (y > 0) {
+				g2d.translate(0, y + 20); // space between title and drawing
+			}
+
+
+			//scale the dialog so that it fits on one page.
+			double xScale = pageFormat.getImageableWidth() / this.getWidth();
+			double yScale = (pageFormat.getImageableHeight() - (y+20)) / this.getHeight();
+			double scale = Math.min(xScale, yScale);
+
+			buttonPanel.setVisible(false);
+			this.paint(g2d,scale);
+			buttonPanel.setVisible(true);
+
+			System.gc();
+			return (PAGE_EXISTS);
+		}
+	}
+
+	/**
+	 * Paint the dialog with scale factor (used for printing).
+	 */
+	public void paint(Graphics graphics, double scale) {
+
+		Graphics2D g2 = (Graphics2D)graphics;
+		g2.scale(scale, scale);
+		super.paint(graphics);	
+
+	}
+
+
 }
