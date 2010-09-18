@@ -427,6 +427,7 @@ public class CommandDispatcher {
     	cmdTable.put("Hull", new CmdHull(kernel));     	                  
     	cmdTable.put("ConvexHull", new CmdConvexHull(kernel));     	                  
     	cmdTable.put("MinimumSpanningTree", new CmdMinimumSpanningTree(kernel));     	                  
+    	cmdTable.put("DelauneyTriangulation", new CmdDelauneyTriangulation(kernel));     	                  
     	cmdTable.put("SelectedElement", new CmdSelectedElement(kernel));     	                  
     	cmdTable.put("SelectedIndex", new CmdSelectedIndex(kernel));     	                  
     	cmdTable.put("StemPlot", new CmdStemPlot(kernel));     	                  

@@ -290,6 +290,19 @@ class CmdMinimumSpanningTree extends CmdOneListFunction {
 
 }
 
+class CmdDelauneyTriangulation extends CmdOneListFunction {
+
+	public CmdDelauneyTriangulation(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.DelauneyTriangulation(a, b);
+	}
+
+}
+
 
 /*
  * Sum[ list ]

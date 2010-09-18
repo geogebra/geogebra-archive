@@ -14,7 +14,7 @@ public class SimpleTriangulationRepresentation extends AbstractRepresentation {
     /* ***************************************************** */
     // Variables
     
-    private final ArrayList<VTriangle> triangles = new ArrayList<VTriangle>();
+    public final ArrayList<VTriangle> triangles = new ArrayList<VTriangle>();
     
     /* ***************************************************** */
     // Constructor

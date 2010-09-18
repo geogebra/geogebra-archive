@@ -32,6 +32,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.discrete.AlgoConvexHull;
+import geogebra.kernel.discrete.AlgoDelauneyTriangulation;
 import geogebra.kernel.discrete.AlgoHull;
 import geogebra.kernel.discrete.AlgoMinimumSpanningTree;
 import geogebra.kernel.optimization.ExtremumFinder;
@@ -3268,6 +3269,12 @@ public class Kernel {
 	
 	final public GeoLocus MinimumSpanningTree(String label, GeoList list) {
 		AlgoMinimumSpanningTree algo = new AlgoMinimumSpanningTree(cons, label, list);
+		GeoLocus ret = algo.getResult();
+		return ret;
+	}
+	
+	final public GeoLocus DelauneyTriangulation(String label, GeoList list) {
+		AlgoDelauneyTriangulation algo = new AlgoDelauneyTriangulation(cons, label, list);
 		GeoLocus ret = algo.getResult();
 		return ret;
 	}
