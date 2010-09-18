@@ -94,7 +94,8 @@ public class DrawLabel3D {
 		this.text = text;
 
 		//select correct font, calculates bounds
-		Font font = view.getFont();
+		//Font font = view.getFont();
+		Font font = view.getApplication().getPlainFont();//(false, Font.PLAIN, 60);
 		TextLayout textLayout = new TextLayout(text, font, new FontRenderContext(null, false, false));
 		Rectangle2D rectangle = textLayout.getBounds();		
 		int xMin = (int) rectangle.getMinX()-1;
@@ -111,6 +112,7 @@ public class DrawLabel3D {
 		gt.translate(0, -height-yMax);
 		g2d.transform(gt);
 		g2d.setColor(Color.BLACK);
+		g2d.setFont(font);
 		g2d.drawString(text, 0, height);
 
 		//creates the texture

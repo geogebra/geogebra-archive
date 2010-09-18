@@ -67,6 +67,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	//private Kernel kernel;
 	private Kernel3D kernel3D;
+	protected Application app;
 	private EuclidianController3D euclidianController3D;
 	private Renderer renderer;
 	private RendererFreezingPanel freezingPanel;
@@ -214,9 +215,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		this.euclidianController3D = ec;
 		this.kernel3D = (Kernel3D) ec.getKernel();
 		euclidianController3D.setView(this);
-		
+		app = ec.getApplication();	
 		
 		start();
+	}
+	
+	
+	public Application getApplication() {
+		return app;
 	}
 	
 	private void start(){
