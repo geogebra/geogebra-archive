@@ -35,7 +35,7 @@ public class TriangulationRepresentation extends AbstractRepresentation {
     private int mode;
     
     private int vertexnumber;
-    private Collection<VPoint> vertexpoints;
+    public Collection<VPoint> vertexpoints;
     
     private CalcCutOff calccutoff = null;
     private int length_cutoff = -1;

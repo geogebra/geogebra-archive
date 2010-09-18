@@ -1,10 +1,16 @@
 package signalprocesser.voronoi;
-import signalprocesser.voronoi.representation.*;
-import signalprocesser.voronoi.eventqueue.*;
-import signalprocesser.voronoi.statusstructure.*;
+import geogebra.main.Application;
 
-import java.util.*;
 import java.awt.Graphics2D;
+import java.util.Collection;
+
+import signalprocesser.voronoi.eventqueue.EventQueue;
+import signalprocesser.voronoi.eventqueue.VCircleEvent;
+import signalprocesser.voronoi.eventqueue.VEvent;
+import signalprocesser.voronoi.eventqueue.VSiteEvent;
+import signalprocesser.voronoi.representation.RepresentationInterface;
+import signalprocesser.voronoi.statusstructure.AbstractStatusStructure;
+import signalprocesser.voronoi.statusstructure.VLinkedNode;
 
 public class VoronoiAlgorithm {
     
@@ -87,9 +93,9 @@ public class VoronoiAlgorithm {
                     //  first and second nodes of queue)
                     VEvent nextevent = eventqueue.getFirstEvent();
                     if ( nextevent!=null && event.getY()==nextevent.getY() ) {
-                        // Increment original event by minus one pixel to fix error
-                        System.out.println("Please note: easy fix done to prevent degrading case");
-                        siteevent.getPoint().y--;
+                        // Increment original event by small amount to fix error
+                        Application.debug("Please note: easy fix done to prevent degrading case");
+                        siteevent.getPoint().y-=0.00000001;
                         
                         /*// Move remove entirely from queue and re-add - changing
                         //  something which the Comparator dependents on results

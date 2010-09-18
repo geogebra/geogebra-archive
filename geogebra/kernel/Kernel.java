@@ -33,6 +33,7 @@ import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.discrete.AlgoConvexHull;
 import geogebra.kernel.discrete.AlgoHull;
+import geogebra.kernel.discrete.AlgoMinimumSpanningTree;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
 import geogebra.kernel.statistics.AlgoCauchy;
@@ -3261,6 +3262,12 @@ public class Kernel {
 	
 	final public GeoLocus ConvexHull(String label, GeoList list) {
 		AlgoConvexHull algo = new AlgoConvexHull(cons, label, list);
+		GeoLocus ret = algo.getResult();
+		return ret;
+	}
+	
+	final public GeoLocus MinimumSpanningTree(String label, GeoList list) {
+		AlgoMinimumSpanningTree algo = new AlgoMinimumSpanningTree(cons, label, list);
 		GeoLocus ret = algo.getResult();
 		return ret;
 	}

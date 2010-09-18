@@ -43,12 +43,12 @@ import signalprocesser.voronoi.statusstructure.VLinkedNode;
 public class AlgoHull extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private GeoList inputList; //input
+	protected GeoList inputList; //input
 	private GeoNumeric percentage; // input
-    private GeoLocus locus; // output   
-    private ArrayList<MyPoint> al;
-    private ArrayList<VPoint> vl;
-    private int size;
+    protected GeoLocus locus; // output   
+    protected ArrayList<MyPoint> al;
+    protected ArrayList<VPoint> vl;
+    protected int size;
 
     public AlgoHull(Construction cons, String label, GeoList inputList, GeoNumeric percentage) {
         super(cons);
@@ -80,7 +80,7 @@ public class AlgoHull extends AlgoElement {
         return locus;
     }
 
-    protected final void compute() {
+    protected void compute() {
     	
     	size = inputList.size();
     	if (!inputList.isDefined() ||  size == 0) {
@@ -178,7 +178,7 @@ public class AlgoHull extends AlgoElement {
         
         private final ArrayList<VPoint> circleevents = new ArrayList<VPoint>();
         
-        private RepresentationInterface innerrepresentation = null;
+        RepresentationInterface innerrepresentation = null;
         
         /* ***************************************************** */
         // Data/Representation Interface Method
