@@ -107,15 +107,11 @@ public class AlgoHull extends AlgoElement {
                 // Calculate normalised length based off percentage
                 int val = (int)( percent * (max-min) + min );
                 
-                // Return value
-                //updateLengthSlider(rep, val);
-                //updateNormalisedLengthSlider(rep, val);
                 return val;
             }
         };
         
         AbstractRepresentation representation;
-        //vl = RepresentationFactory.convertPointsToBoundaryProblemPoints(vl);
         representation = RepresentationFactory.createTriangulationRepresentation();
 
         for (int i = 0 ; i < size ; i++) {
@@ -123,24 +119,11 @@ public class AlgoHull extends AlgoElement {
 			if (geo.isDefined() && geo.isGeoPoint()) {
 				GeoPointInterface p = (GeoPointInterface)geo;
 				p.getInhomCoords(inhom);
-				//vl.add(new VPoint(inhom[0], inhom[1]));
 				vl.add( representation.createPoint(inhom[0], inhom[1]) );			
 			}
 		}
 
-        //vl = RepresentationFactory.convertPointsToSimpleTriangulationPoints(vl);
-       
-        ///TriangulationRepresentation trianglarrep = (TriangulationRepresentation) representation;
-        //BoundaryProblemRepresentation boundaryRep = (BoundaryProblemRepresentation) representation
-        //trianglarrep.setCalcCutOff(calccutoff);
-       // ArrayList<VPoint> edge = trianglarrep.getPointsFormingOutterBoundary();
-        //trianglarrep.paint((Graphics2D) kernel.getApplication().getEuclidianView().getGraphics());
-
-        
-        
-        vl = RepresentationFactory.convertPointsToTriangulationPoints(vl);
         representation = RepresentationFactory.createTriangulationRepresentation();
-        //((TriangulationRepresentation)representation).setDetermineClustersMode();
         
         TriangulationRepresentation trianglarrep = (TriangulationRepresentation) representation;
         trianglarrep.setCalcCutOff(calccutoff);
@@ -152,7 +135,6 @@ public class AlgoHull extends AlgoElement {
         
          ArrayList<VPoint> edge = ((TriangulationRepresentation)representation).getPointsFormingOutterBoundary();
         
-        VHalfEdge outeredge = ((TriangulationRepresentation)representation).findOuterEdge();
         if (al == null) al = new ArrayList<MyPoint>();
         else al.clear();
        for (int i = 0 ; i < edge.size() ; i++) {
@@ -162,12 +144,10 @@ public class AlgoHull extends AlgoElement {
         }
         
 
-		//cons.setSuppressLabelCreation(oldState);
 		locus.setPoints(al);
 		locus.setDefined(true);
 
         
-        //outputList.setDefined(true);
        
     }
     

@@ -54,7 +54,6 @@ public class AlgoMinimumSpanningTree extends AlgoHull{
 		}
 
         
-        vl = RepresentationFactory.convertPointsToTriangulationPoints(vl);
         representation = RepresentationFactory.createTriangulationRepresentation();
         
         TriangulationRepresentation trianglarrep = (TriangulationRepresentation) representation;
@@ -69,7 +68,6 @@ public class AlgoMinimumSpanningTree extends AlgoHull{
         if (al == null) al = new ArrayList<MyPoint>();
         else al.clear();
         
-        // Paint for this method
         for ( VPoint point : trianglarrep.vertexpoints ) {
             VVertex vertex = (VVertex) point;
             
