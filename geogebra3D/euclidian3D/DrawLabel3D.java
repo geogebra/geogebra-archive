@@ -44,6 +44,9 @@ public class DrawLabel3D {
     /** current view where this label is drawn */
 	private EuclidianView3D view;
 	
+	/** says it wait for reset */
+	private boolean waitForReset;
+	
 	
 
 	/** shift for getting alpha value */
@@ -81,12 +84,11 @@ public class DrawLabel3D {
 		setIsVisible(true);
 		
 		
-		
-		if (text.equals(this.text)){
-			// update the texture TODO remove this
-			//updateTexture();
-			return;
-		}
+		if (waitForReset)
+			waitForReset = false;
+		else
+			if (text.equals(this.text))
+				return;
 		
 
 		this.text = text;
@@ -120,6 +122,13 @@ public class DrawLabel3D {
 		updateTexture();
 
 
+	}
+	
+	/**
+	 * set the label to be reset
+	 */
+	public void setWaitForReset(){
+		waitForReset = true;
 	}
 	
 	

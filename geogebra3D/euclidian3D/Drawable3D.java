@@ -326,6 +326,7 @@ public abstract class Drawable3D extends DrawableND {
 	public void setLabelWaitForReset(){
 	
 		labelWaitForReset = true;
+		label.setWaitForReset();
 		setLabelWaitForUpdate();		
 	}
 	
