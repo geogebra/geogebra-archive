@@ -264,6 +264,19 @@ class CmdVoronoi extends CmdOneListFunction {
 
 }
 
+class CmdConvexHull extends CmdOneListFunction {
+
+	public CmdConvexHull(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.ConvexHull(a, b);
+	}
+
+}
+
 
 /*
  * Sum[ list ]

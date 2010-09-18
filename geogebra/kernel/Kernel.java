@@ -20,7 +20,6 @@ package geogebra.kernel;
 
 import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -32,6 +31,8 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.kernel.discrete.AlgoConvexHull;
+import geogebra.kernel.discrete.AlgoHull;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
 import geogebra.kernel.statistics.AlgoCauchy;
@@ -3248,6 +3249,18 @@ public class Kernel {
 	
 	final public GeoLocus Voronoi(String label, GeoList list) {
 		AlgoVoronoi algo = new AlgoVoronoi(cons, label, list);
+		GeoLocus ret = algo.getResult();
+		return ret;
+	}
+	
+	final public GeoLocus Hull(String label, GeoList list, GeoNumeric percent) {
+		AlgoHull algo = new AlgoHull(cons, label, list, percent);
+		GeoLocus ret = algo.getResult();
+		return ret;
+	}
+	
+	final public GeoLocus ConvexHull(String label, GeoList list) {
+		AlgoConvexHull algo = new AlgoConvexHull(cons, label, list);
 		GeoLocus ret = algo.getResult();
 		return ret;
 	}
