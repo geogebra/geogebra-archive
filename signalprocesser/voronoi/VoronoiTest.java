@@ -232,18 +232,15 @@ public class VoronoiTest extends javax.swing.JFrame {
                 representationwrapper.innerrepresentation = representation;
                 if ( SHOW_INTERACTIVE_SWEEPLINE==false ) {
                     if ( points!=null ) {
-                    	Application.debug("1");
                         VoronoiAlgorithm.generateVoronoi(representationwrapper, points);
                     }
                 } else {
                     if ( attentiontovpoint!=null ) {
                         if ( points!=null ) {
-                        	Application.debug("2");
                             VoronoiAlgorithm.generateVoronoi(representationwrapper, points, g, attentiontovpoint, mouse_y);
                         }
                     } else {
                         if ( points!=null ) {
-                        	Application.debug("3");
                             VoronoiAlgorithm.generateVoronoi(representationwrapper, points, g, attentiontovpoint_onclick, mouse_y);
                         }
                     }
