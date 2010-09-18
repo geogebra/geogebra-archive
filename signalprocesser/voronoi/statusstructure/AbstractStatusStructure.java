@@ -51,9 +51,9 @@ abstract public class AbstractStatusStructure {
         g.drawLine(bounds.x, sweepline, bounds.x+bounds.width, sweepline);
         
         // Re-draw tree
-        if ( this instanceof BSTStatusStructure && VoronoiTest.treedialog!=null ) {
-            VoronoiTest.treedialog.setRootNode(((BSTStatusStructure)this).getRootNode(), sweepline);
-        }
+        //if ( this instanceof BSTStatusStructure && VoronoiTest.treedialog!=null ) {
+        //    VoronoiTest.treedialog.setRootNode(((BSTStatusStructure)this).getRootNode(), sweepline);
+        //}
         
         // Print double linked list info
         if ( siteevent!=null ) {

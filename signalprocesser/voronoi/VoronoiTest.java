@@ -1,51 +1,23 @@
 package signalprocesser.voronoi;
-import geogebra.main.Application;
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.Area;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.StringTokenizer;
-
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
-import signalprocesser.shared.JCollapsiblePanel;
 import signalprocesser.shared.StatusDialog;
-import signalprocesser.voronoi.representation.AbstractRepresentation;
-import signalprocesser.voronoi.representation.RepresentationFactory;
-import signalprocesser.voronoi.representation.RepresentationInterface;
+import signalprocesser.voronoi.representation.*;
 import signalprocesser.voronoi.representation.boundaryproblem.BoundaryProblemRepresentation;
 import signalprocesser.voronoi.representation.triangulation.TriangulationRepresentation;
-import signalprocesser.voronoi.shapegeneration.ShapeGeneration;
-import signalprocesser.voronoi.shapegeneration.ShapeGenerationException;
+import signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.debug.*;
 import signalprocesser.voronoi.statusstructure.VLinkedNode;
-import signalprocesser.voronoi.statusstructure.binarysearchtreeimpl.debug.DebugTree;
-import signalprocesser.voronoi.tools.CountryData;
-import signalprocesser.voronoi.tools.CountryListModel;
-import signalprocesser.voronoi.tools.TestSuite;
+import signalprocesser.voronoi.shapegeneration.*;
+import signalprocesser.voronoi.tools.*;
+import signalprocesser.shared.*;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
+import java.awt.font.*;
+import javax.swing.*;
 
 public class VoronoiTest extends javax.swing.JFrame {
     
@@ -79,7 +51,7 @@ public class VoronoiTest extends javax.swing.JFrame {
     private double expectedarea = -1;
     
     private String lastdirectoryopened = null;
-    private CountryListModel countrylistmodel;
+    //private CountryListModel countrylistmodel;
     private Shape alphashape; 
     
     private SignalPanel panel;
@@ -144,11 +116,11 @@ public class VoronoiTest extends javax.swing.JFrame {
        // }
         
         // Set countries to country list
-        try {
-            cboCountries.setModel( countrylistmodel = new CountryListModel(cboCountries,CountryData.getCountryList()) );
-        } catch ( IOException e ) {
-            displayError(e);
-        }
+        //try {
+            //cboCountries.setModel( countrylistmodel = new CountryListModel(cboCountries,CountryData.getCountryList()) );
+       // } catch ( IOException e ) {
+        //    displayError(e);
+       // }
         
         // Add panel
         panel = new SignalPanel();
@@ -258,18 +230,15 @@ public class VoronoiTest extends javax.swing.JFrame {
                 representationwrapper.innerrepresentation = representation;
                 if ( SHOW_INTERACTIVE_SWEEPLINE==false ) {
                     if ( points!=null ) {
-                    	Application.debug("generateVoronoi1");
                         VoronoiAlgorithm.generateVoronoi(representationwrapper, points);
                     }
                 } else {
                     if ( attentiontovpoint!=null ) {
                         if ( points!=null ) {
-                        	Application.debug("generateVoronoi2");
                             VoronoiAlgorithm.generateVoronoi(representationwrapper, points, g, attentiontovpoint, mouse_y);
                         }
                     } else {
                         if ( points!=null ) {
-                        	Application.debug("generateVoronoi3");
                             VoronoiAlgorithm.generateVoronoi(representationwrapper, points, g, attentiontovpoint_onclick, mouse_y);
                         }
                     }
@@ -340,7 +309,7 @@ public class VoronoiTest extends javax.swing.JFrame {
                     }
                     
                     // Paint line
-                    g.drawLine((int)prev.x, (int)prev.y,(int) point.x, (int)point.y);
+                    g.drawLine((int)prev.x, (int)prev.y, (int)point.x, (int)point.y);
                     
                     // Set the new previous point
                     prev = point;
@@ -480,7 +449,6 @@ public class VoronoiTest extends javax.swing.JFrame {
                 if ( representation==null ) {
                     points.add( new VPoint(x, y) );
                 } else {
-                	Application.debug("adding points");
                     points.add( representation.createPoint(x, y) );
                 }
             }
@@ -1769,15 +1737,15 @@ public class VoronoiTest extends javax.swing.JFrame {
                     }
                 } else if ( optCountryGeneration.isSelected() ) {
                     // Get the selected country file
-                    String countryfile = countrylistmodel.getSelectedCountry();
+                   // String countryfile = countrylistmodel.getSelectedCountry();
                     
                     // Get the points that form this country
-                    try {
-                        newborderpoints = CountryData.getCountryData(countryfile, shapebounds);
-                    } catch ( IOException e ) {
-                        displayError(e);
-                        return;
-                    }
+                   // try {
+                    //    newborderpoints = CountryData.getCountryData(countryfile, shapebounds);
+                   // } catch ( IOException e ) {
+                   //     displayError(e);
+                   //     return;
+                   // }
                 } else {
                     displayError("Unknown generation type selected");
                     return;
@@ -1805,16 +1773,12 @@ public class VoronoiTest extends javax.swing.JFrame {
                 if ( optNone.isSelected() ) {
                     points = newpoints;
                 } else if ( optVoronoiCells.isSelected() ) {
-                	Application.debug("convertPointsToVoronoiCellPoints");
                     points = RepresentationFactory.convertPointsToVoronoiCellPoints(newpoints);
                 } else if ( optSimpleTriangulation.isSelected() ) {
-                	Application.debug("convertPointsToSimpleTriangulationPoints");
                     points = RepresentationFactory.convertPointsToSimpleTriangulationPoints(newpoints);
                 } else if ( optEdgeRemoval.isSelected() ) {
-                	Application.debug("convertPointsToTriangulationPoints");
                     points = RepresentationFactory.convertPointsToTriangulationPoints(newpoints);
                 } else if ( optClustering.isSelected() ) {
-                	Application.debug("convertPointsToTriangulationPoints");
                     points = RepresentationFactory.convertPointsToTriangulationPoints(newpoints);
                 } else {
                     throw new RuntimeException("Unknown option selected");
@@ -2236,8 +2200,8 @@ public class VoronoiTest extends javax.swing.JFrame {
     }//GEN-LAST:event_btnClearPointsActionPerformed
     
     private void btnTestSuiteFormActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTestSuiteFormActionPerformed
-        TestSuite form = new TestSuite(false, this);
-        form.setVisible(true);
+        //TestSuite form = new TestSuite(false, this);
+       // form.setVisible(true);
     }//GEN-LAST:event_btnTestSuiteFormActionPerformed
     
     private void displayError(String message) {

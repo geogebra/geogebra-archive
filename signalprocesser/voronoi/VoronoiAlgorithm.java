@@ -87,9 +87,9 @@ public class VoronoiAlgorithm {
                     //  first and second nodes of queue)
                     VEvent nextevent = eventqueue.getFirstEvent();
                     if ( nextevent!=null && event.getY()==nextevent.getY() ) {
-                        // Increment original event by small amount to fix error
+                        // Increment original event by minus one pixel to fix error
                         System.out.println("Please note: easy fix done to prevent degrading case");
-                        siteevent.getPoint().y-=0.00000001;
+                        siteevent.getPoint().y--;
                         
                         /*// Move remove entirely from queue and re-add - changing
                         //  something which the Comparator dependents on results
