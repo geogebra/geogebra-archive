@@ -7033,14 +7033,15 @@ public class Kernel {
 	// FORMAT FOR NUMBERS
 	////////////////////////////////////////////////
 	
-	public double axisNumberDistance(double units, DecimalFormat numberFormat){
+	public double axisNumberDistance(double units, NumberFormat numberFormat){
 
 		// calc number of digits
 		int exp = (int) Math.floor(Math.log(units) / Math.log(10));
 		int maxFractionDigtis = Math.max(-exp, getPrintDecimals());
 		
 		// format the numbers
-		numberFormat.applyPattern("###0.##");	
+		if (numberFormat instanceof DecimalFormat)
+			((DecimalFormat) numberFormat).applyPattern("###0.##");	
 		numberFormat.setMaximumFractionDigits(maxFractionDigtis);
 		
 		// calc the distance

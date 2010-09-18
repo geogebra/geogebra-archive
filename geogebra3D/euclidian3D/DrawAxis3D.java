@@ -9,6 +9,7 @@ import geogebra3D.kernel3D.GeoCoordSys1D;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.TreeMap;
 
 /**
@@ -111,18 +112,18 @@ public class DrawAxis3D extends DrawLine3D {
     			label.update(strNum, 10, 
     					getGeoElement().getObjectColor(),
     					origin.copyVector(),
-    					axis.getNumbersXOffset()-4,axis.getNumbersYOffset()-6);
+    					axis.getNumbersXOffset(),axis.getNumbersYOffset());
     			//TODO optimize this
     		}else{
     			//creates new label
     			label = new DrawLabel3D(getView3D());
+    			label.setAnchor(true);
     			label.update(strNum, 10, 
     					getGeoElement().getObjectColor(),
     					origin.copyVector(),
-    					axis.getNumbersXOffset()-4,axis.getNumbersYOffset()-6);
+    					axis.getNumbersXOffset(),axis.getNumbersYOffset());
     			labels.put(strNum, label);
     		}
-    		//TODO 4 and 6 depends to police size -> anchor
        		
     	}
     	
@@ -174,8 +175,8 @@ public class DrawAxis3D extends DrawLine3D {
     	double vScale = v.norm(); //axis scale, used for ticks distance
     	
     	//calc orthogonal offsets
-    	int vx = (int) (v.get(1)*3*axis.getTickSize()/vScale);
-    	int vy = (int) (v.get(2)*3*axis.getTickSize()/vScale);
+    	int vx = (int) (v.get(1)*1.5*axis.getTickSize()/vScale);
+    	int vy = (int) (v.get(2)*1.5*axis.getTickSize()/vScale);
     	int xOffset = -vy;
     	int yOffset = vx;
     	
@@ -186,12 +187,12 @@ public class DrawAxis3D extends DrawLine3D {
     	
     	
     	//interval between two ticks
-    	//TODO merge with EuclidianView.setAxesIntervals(double scale, int axis)
     	//Application.debug("vscale : "+vScale);
     	double maxPix = 100; // only one tick is allowed per maxPix pixels
 		double units = maxPix / vScale;
 		
-		DecimalFormat numberFormat = new DecimalFormat();
+		NumberFormat numberFormat = NumberFormat.getInstance(Locale.ENGLISH);
+		//TODO see EuclidianView::setAxesIntervals	and Kernel::axisNumberDistance	
 		double distance = getView3D().getKernel().axisNumberDistance(units, numberFormat);
 
 		axis.updateDecorations(distance, numberFormat, 

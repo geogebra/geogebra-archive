@@ -30,11 +30,15 @@ public class DrawLabel3D {
     private GgbVector origin; 
     /** x and y offset */
     private float xOffset, yOffset;   
+    /** says if there's an anchor to do */
+    private boolean anchor;
     /** says if the label is visible */
     private boolean isVisible;
     
-    /** width and height of the texture text */
+    /** width and height of the text */
     private int height, width;
+    /** width and height of the texture */
+    private int height2, width2;
     
     /** buffer containing the texture */
     private ByteBuffer buffer;
@@ -133,6 +137,13 @@ public class DrawLabel3D {
 		waitForReset = true;
 	}
 	
+	/**
+	 * sets the anchor
+	 * @param flag
+	 */
+	public void setAnchor(boolean flag){
+		anchor = flag;
+	}
 	
 	/**
 	 * draws the label
@@ -148,15 +159,22 @@ public class DrawLabel3D {
 		
 		GgbVector v = view.getToScreenMatrix().mul(origin);
 		int x = (int) (v.getX()+xOffset);
+		if (anchor && xOffset<0) x-=width;
+			
 		int y = (int) (v.getY()+yOffset);
+		if (anchor && yOffset<0) y-=height;
+		
+		//x = (int) (v.getX());y = (int) (v.getY());
+		
 		int z = (int) v.getZ();
 		
 		
 		renderer.setColor(color, 1f);
 		
-		renderer.getTextures().setTextureNearest(textureIndex);
+		//renderer.getTextures().setTextureNearest(textureIndex);
+		renderer.getTextures().setTextureLinear(textureIndex);
 		
-		renderer.getGeometryManager().getText().rectangle(x, y, z, width, height);
+		renderer.getGeometryManager().getText().rectangle(x, y, z, width2, height2);
 		
 	}
 
@@ -171,7 +189,7 @@ public class DrawLabel3D {
     	}
     	
     	textureIndex = view.getRenderer().getTextures().createAlphaTexture(
-    			width, height, 
+    			width2, height2, 
     			buffer);
     	
     }
@@ -215,8 +233,8 @@ public class DrawLabel3D {
 		}
 		
 		//update width and height
-		width=w;
-		height=h;
+		width2=w;
+		height2=h;
 		
 		return bytes;
     }
