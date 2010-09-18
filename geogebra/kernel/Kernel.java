@@ -6661,7 +6661,7 @@ public class Kernel {
 	 * -infinity == -infinity returns true
 	 * undefined == undefined returns false eg 0/0	 
 	 */
-	final public boolean isEqual(double x, double y) {	
+	final public static boolean isEqual(double x, double y) {	
 		if (x == y) // handles infinity and NaN cases
 			return true;
 		else
