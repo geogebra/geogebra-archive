@@ -35,7 +35,7 @@ public class VoronoiTest extends javax.swing.JFrame {
     public static final int SHAPEMARGIN_LEFTRIGHT = 120;
     
     public static final int POINT_SIZE = 10;
-    public static final String SAVE_FILE = "voronoipoints.txt";
+    //public static final String SAVE_FILE = "voronoipoints.txt";
     
     public static DebugTree treedialog = null;
     
@@ -403,7 +403,7 @@ public class VoronoiTest extends javax.swing.JFrame {
     }
     
     private void savePoints() throws IOException {
-        savePoints(SAVE_FILE);
+        //savePoints(SAVE_FILE);
     }
     private void savePoints(String filename) throws IOException {
         FileWriter writer = new FileWriter(filename);
@@ -421,7 +421,7 @@ public class VoronoiTest extends javax.swing.JFrame {
     }
     
     private void loadPoints() throws IOException {
-        loadPoints(SAVE_FILE);
+        //loadPoints(SAVE_FILE);
     }
     private void loadPoints(String filename) throws IOException {
         // Clear the points array
