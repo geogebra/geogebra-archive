@@ -4388,6 +4388,11 @@ public class Application implements KeyEventDispatcher {
 		String codeBaseFolder = getCodeBase().toString();
 
 		if (!codeBaseFolder.startsWith("file:/")) return null;
+		
+		// change %20 to <space>
+		if (WINDOWS) {
+			codeBaseFolder = codeBaseFolder.replaceAll("%20", " ");
+		}
 
 		// strip "file:/", leave leading / for Mac & Linux
 		return codeBaseFolder.substring(WINDOWS ? 6:5);
