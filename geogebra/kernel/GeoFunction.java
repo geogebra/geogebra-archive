@@ -781,7 +781,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
         sb.append('(');
         sb.append(functionIn);
         sb.append(',');
-        sb.append(fun.getFunctionVariables());
+        sb.append(fun.getFunctionVariables()[0]);
         sb.append(',');
         sb.append(Double.toString(x));
         sb.append(')');
