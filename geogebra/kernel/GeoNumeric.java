@@ -126,7 +126,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 	
 	public boolean isDrawable() {		
-		return isDrawable || (isIndependent() && isLabelSet());		
+		return isDrawable || (getDrawAlgorithm()!=getParentAlgorithm()) || (isIndependent() && isLabelSet());		
 	}
 
 	public boolean isFillable() {

@@ -207,7 +207,7 @@ public class AlgoSequence extends AlgoElement {
     		
     		// create the sequence    		    
     		double currentVal = from;   
-    		int cacheListSize = list.getCacheSize();
+    		
     		
 			while ((step > 0 && currentVal <= to + Kernel.MIN_PRECISION) || 
 				   (step < 0 && currentVal >= to - Kernel.MIN_PRECISION)) 
@@ -223,36 +223,10 @@ public class AlgoSequence extends AlgoElement {
 				}
 				
 				// set local var value
-				updateLocalVar(currentVal);	  
+				updateLocalVar(currentVal);
 				
-				// only add new objects
-				GeoElement listElement = null;
 				
-				if (i < cacheListSize) {		
-					// we reuse existing list element from cache				
-					listElement = list.getCached(i);	
-					
-					if (expIsFunctionOrCurve) {
-						// for functions we always need a new element
-						listElement.setParentAlgorithm(null);
-			    		listElement.doRemove(); 
-	
-			    		// replace old list element by a new one
-						listElement = createNewListElement();						
-					}			
-				} else {
-					// create new list element
-					listElement = createNewListElement();					
-				}														
- 			    						
-				// copy current expression value to listElement    
-				if (!expIsFunctionOrCurve) {
-					listElement.set(expression);
-				}
-				
-				// set the value of our element
-				listElement.update();
-				list.add(listElement);	
+				addElement(i);
 				
 				currentVal += step;
 				if (kernel.isInteger(currentVal)) {
@@ -274,11 +248,46 @@ public class AlgoSequence extends AlgoElement {
     	last_from = from;
     	last_to = to;
     	last_step = step;
-    }        
+    }   
+    
+    private void addElement(int i) {
+    	// only add new objects
+		GeoElement listElement = null;
+		int cacheListSize = list.getCacheSize();
+		if (i < cacheListSize) {		
+			// we reuse existing list element from cache				
+			listElement = list.getCached(i);	
+			
+			if (expIsFunctionOrCurve) {
+				// for functions we always need a new element
+				listElement.setParentAlgorithm(null);
+	    		listElement.doRemove(); 
+
+	    		// replace old list element by a new one
+				listElement = createNewListElement();						
+			}			
+		} else {
+			// create new list element
+			listElement = createNewListElement();					
+		}														
+		    						
+		// copy current expression value to listElement    
+		if (!expIsFunctionOrCurve) {
+			listElement.set(expression);
+			if(listElement instanceof GeoNumeric){
+        		listElement.setDrawAlgorithm(expression.getParentAlgorithm().copy());
+				listElement.setEuclidianVisible(true);
+			}
+		}
+		
+		// set the value of our element
+		listElement.update();
+		list.add(listElement);	
+    }
     
     private GeoElement createNewListElement() {
     	GeoElement listElement = expression.copyInternal(cons);
-		listElement.setParentAlgorithm(this);
+    	listElement.setParentAlgorithm(this);
 		listElement.setConstructionDefaults();		
 		listElement.setUseVisualDefaults(false);
 				
