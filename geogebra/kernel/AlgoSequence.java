@@ -275,7 +275,7 @@ public class AlgoSequence extends AlgoElement {
 		if (!expIsFunctionOrCurve) {
 			listElement.set(expression);
 			if(listElement instanceof GeoNumeric){
-        		listElement.setDrawAlgorithm(expression.getParentAlgorithm().copy());
+        		listElement.setDrawAlgorithm(expression.getDrawAlgorithm().copy());
 				listElement.setEuclidianVisible(true);
 			}
 		}
