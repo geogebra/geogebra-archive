@@ -24,9 +24,12 @@ import geogebra.kernel.discrete.delauney.Pnt;
 import geogebra.kernel.discrete.delauney.Triangle;
 import geogebra.kernel.discrete.delauney.Triangulation;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 
 
 /**
@@ -131,6 +134,7 @@ public class AlgoVoronoi extends AlgoElement {
         if (al == null) al = new ArrayList<MyPoint>();
         else al.clear();
         
+        TreeSet<MyLine> tree = new TreeSet<MyLine>(AlgoDelauneyTriangulation.getComparator());
 
 		
         // Keep track of sites done; no drawing for initial triangles sites
@@ -144,18 +148,25 @@ public class AlgoVoronoi extends AlgoElement {
                 GeoPoint[] vertices = new GeoPoint[list.size()];
                 int i = 0;
                 Pnt firstPoint = null;
+                Pnt prevPoint = null;
                 for (Triangle tri: list) {
                     Pnt p = tri.getCircumcenter();
-                    al.add(new MyPoint(p.coord(0), p.coord(1), i != 0));
+                    //al.add(new MyPoint(p.coord(0), p.coord(1), i != 0));
 
+                    if (prevPoint != null)
+                    	tree.add(new MyLine(new Point2D.Double(prevPoint.coord(0) , prevPoint.coord(1)), new Point2D.Double(p.coord(0) , p.coord(1))));
+
+                    
                     if (i == 0) firstPoint = p;
+                    prevPoint = p;
                     i++;
                     //vertices[i++] = new GeoPoint(cons, null, p.coord(0), p.coord(1), 1);
                     //Application.debug(p.coord(0)+" "+p.coord(1));
                 }
                 
                 // close curve
-                al.add(new MyPoint(firstPoint.coord(0), firstPoint.coord(1), true));
+                //al.add(new MyPoint(firstPoint.coord(0), firstPoint.coord(1), true));
+            	tree.add(new MyLine(new Point2D.Double(prevPoint.coord(0) , prevPoint.coord(1)), new Point2D.Double(firstPoint.coord(0) , firstPoint.coord(1))));
 
                 //draw(vertices, withFill? getColor(site) : null);
                 //if (withSites) draw(site);
@@ -165,6 +176,15 @@ public class AlgoVoronoi extends AlgoElement {
                 //setListElement(index ++, vertices);
                 
             }
+        
+        Iterator<MyLine> it = tree.iterator();
+        
+        while (it.hasNext()) {
+        	MyLine line = it.next();
+        	al.add(new MyPoint(line.p1.x , line.p1.y, false));
+        	al.add(new MyPoint(line.p2.x , line.p2.y, true));
+        }
+
         
 		//cons.setSuppressLabelCreation(oldState);
 		locus.setPoints(al);
