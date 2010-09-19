@@ -2,13 +2,13 @@ package geogebra.kernel.discrete;
 
 import java.util.ArrayList;
 
-import signalprocesser.voronoi.VPoint;
-import signalprocesser.voronoi.VoronoiAlgorithm;
-import signalprocesser.voronoi.representation.AbstractRepresentation;
-import signalprocesser.voronoi.representation.RepresentationFactory;
-import signalprocesser.voronoi.representation.triangulation.TriangulationRepresentation;
-import signalprocesser.voronoi.representation.triangulation.VHalfEdge;
-import signalprocesser.voronoi.representation.triangulation.VVertex;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VoronoiAlgorithm;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.AbstractRepresentation;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.RepresentationFactory;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.triangulation.TriangulationRepresentation;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.triangulation.VHalfEdge;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.triangulation.VVertex;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;

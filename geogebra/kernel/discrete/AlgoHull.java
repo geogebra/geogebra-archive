@@ -20,18 +20,16 @@ import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.MyPoint;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VoronoiAlgorithm;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.AbstractRepresentation;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.RepresentationFactory;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.RepresentationInterface;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.triangulation.TriangulationRepresentation;
+import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.VLinkedNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-import signalprocesser.voronoi.VPoint;
-import signalprocesser.voronoi.VoronoiAlgorithm;
-import signalprocesser.voronoi.representation.AbstractRepresentation;
-import signalprocesser.voronoi.representation.RepresentationFactory;
-import signalprocesser.voronoi.representation.RepresentationInterface;
-import signalprocesser.voronoi.representation.triangulation.TriangulationRepresentation;
-import signalprocesser.voronoi.representation.triangulation.VHalfEdge;
-import signalprocesser.voronoi.statusstructure.VLinkedNode;
 
 
 /**

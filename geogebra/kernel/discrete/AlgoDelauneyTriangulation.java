@@ -6,21 +6,18 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
-import geogebra.kernel.discrete.AlgoDelauneyTriangulation.MyLine;
-import geogebra.main.Application;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
+import geogebra.kernel.discrete.signalprocesser.voronoi.VoronoiAlgorithm;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.AbstractRepresentation;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.RepresentationFactory;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.simpletriangulation.SimpleTriangulationRepresentation;
+import geogebra.kernel.discrete.signalprocesser.voronoi.representation.simpletriangulation.VTriangle;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TreeSet;
-
-import signalprocesser.voronoi.VPoint;
-import signalprocesser.voronoi.VoronoiAlgorithm;
-import signalprocesser.voronoi.representation.AbstractRepresentation;
-import signalprocesser.voronoi.representation.RepresentationFactory;
-import signalprocesser.voronoi.representation.simpletriangulation.SimpleTriangulationRepresentation;
-import signalprocesser.voronoi.representation.simpletriangulation.VTriangle;
 
 public class AlgoDelauneyTriangulation extends AlgoHull{
 
