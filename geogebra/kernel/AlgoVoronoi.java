@@ -12,9 +12,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.delauney.Pnt;
-import geogebra.delauney.Triangle;
-import geogebra.delauney.Triangulation;
+import geogebra.kernel.discrete.delauney.Pnt;
+import geogebra.kernel.discrete.delauney.Triangle;
+import geogebra.kernel.discrete.delauney.Triangulation;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,10 +1,10 @@
 package geogebra.euclidian;
 
-import geogebra.delauney.Pnt;
-import geogebra.delauney.Triangle;
-import geogebra.delauney.Triangulation;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.discrete.delauney.Pnt;
+import geogebra.kernel.discrete.delauney.Triangle;
+import geogebra.kernel.discrete.delauney.Triangulation;
 import geogebra.main.Application;
 
 import java.awt.AlphaComposite;

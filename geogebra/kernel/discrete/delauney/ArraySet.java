@@ -1,4 +1,4 @@
-package geogebra.delauney;
+package geogebra.kernel.discrete.delauney;
 
 /*
  * Copyright (c) 2007 by L. Paul Chew.
