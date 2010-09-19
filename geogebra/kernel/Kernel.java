@@ -35,6 +35,7 @@ import geogebra.kernel.discrete.AlgoConvexHull;
 import geogebra.kernel.discrete.AlgoDelauneyTriangulation;
 import geogebra.kernel.discrete.AlgoHull;
 import geogebra.kernel.discrete.AlgoMinimumSpanningTree;
+import geogebra.kernel.discrete.AlgoVoronoi;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
 import geogebra.kernel.statistics.AlgoCauchy;
