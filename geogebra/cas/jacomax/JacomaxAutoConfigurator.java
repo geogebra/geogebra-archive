@@ -65,11 +65,12 @@ public final class JacomaxAutoConfigurator {
         MaximaConfiguration result = new MaximaConfiguration();
         String osName = System.getProperty("os.name");
         
+        File file = null;
         File maximaFolder = null;
         
         // check codebase folder first, then check OS etc
         String codebase = Application.getCodeBaseFolder();
-        File file = new File(codebase);
+        if (codebase != null) file = new File(codebase);
         if (file != null) maximaFolder = chooseBestWindowsMaximaFolder(file);
         if (maximaFolder!=null) {
             logger.debug("Found Maxima with highest version number at {}", maximaFolder);
