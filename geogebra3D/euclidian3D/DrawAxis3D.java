@@ -216,7 +216,7 @@ public class DrawAxis3D extends DrawLine3D {
 
 		axis.updateDecorations(distance, numberFormat, 
 				xOffset, yOffset,
-				-vx-xOffset,-vy-yOffset);
+				-vx-2*xOffset,-vy-2*yOffset);
 		
     	
     }
