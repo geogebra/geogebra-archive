@@ -6,6 +6,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -95,14 +96,17 @@ public class MyCellEditorList extends DefaultCellEditor implements ActionListene
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean hasFocus) {
 
-			//super.getListCellRendererComponent(list, value, index, isSelected,hasFocus);
+			setBackground(Color.WHITE);
 			JLabel lbl = (JLabel)super.getListCellRendererComponent(
 	                list, value, index, isSelected, hasFocus);
 	        lbl.setHorizontalAlignment(LEFT);
 
 			if (value != null) {
 				GeoElement geo = (GeoElement) value;
-				setText(geo.getLabel());
+				if(geo.isGeoText())
+					setText(geo.toValueString());
+				else
+					setText(geo.getLabel());
 			} else
 				setText(" ");
 			

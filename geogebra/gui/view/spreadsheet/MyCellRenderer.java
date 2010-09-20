@@ -90,6 +90,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		button = new JButton();
 		comboBox = new JComboBox();
 		comboBox.setRenderer(new MyListCellRenderer());
+		
 		cbModel = new DefaultComboBoxModel();
 		comboBox.setModel(cbModel);
 	}
@@ -354,14 +355,17 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean hasFocus) {
 
-			//super.getListCellRendererComponent(list, value, index, isSelected,hasFocus);
+			setBackground(Color.WHITE);
 			JLabel lbl = (JLabel)super.getListCellRendererComponent(
 	                list, value, index, isSelected, hasFocus);
 	        lbl.setHorizontalAlignment(LEFT);
 
 			if (value != null) {
 				GeoElement geo = (GeoElement) value;
-				setText(geo.getLabel());
+				if(geo.isGeoText())
+					setText(geo.toValueString());
+				else
+					setText(geo.getLabel());
 			} else
 				setText(" ");
 			
