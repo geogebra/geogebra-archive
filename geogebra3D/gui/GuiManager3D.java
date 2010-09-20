@@ -32,6 +32,8 @@ public class GuiManager3D extends GuiManager {
 	 */
 	public GuiManager3D(Application app) {
 		super(app);
+		
+		javax.swing.JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 	}
 	
 	protected void createLayout(){
