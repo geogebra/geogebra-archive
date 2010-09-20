@@ -368,7 +368,7 @@ public abstract class Drawable3D extends DrawableND {
 	 * @return the label position
 	 */
 	public GgbVector getLabelPosition(){
-		return ((GeoElement3DInterface) getGeoElement()).getLabelPosition();
+		return getGeoElement().getLabelPosition();
 	}
 	
 	/**

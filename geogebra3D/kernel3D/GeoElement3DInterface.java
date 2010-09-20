@@ -22,9 +22,6 @@ public interface GeoElement3DInterface {
 	 * @return the drawing matrix*/
 	public GgbMatrix4x4 getDrawingMatrix();
 	
-	/** returns the position for drawing the label
-	 * @return the label position */
-	public GgbVector getLabelPosition();
 	
 	/** sets the 4x4 matrix for drawing the {@link Drawable3D} 
 	 * @param a_drawingMatrix the drawing matrix*/

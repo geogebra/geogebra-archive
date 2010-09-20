@@ -448,6 +448,9 @@ implements FunctionalNVar, CasEvaluableFunction {
 		}
 	  	
 	  	
+		public GgbVector getLabelPosition(){
+			return new GgbVector(0, 0, 0, 1); //TODO
+		}
 
 	    
 		/** to be able to fill it with an alpha value */

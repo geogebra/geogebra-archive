@@ -497,6 +497,14 @@ public abstract class GeoElement
 		return labelMode;
 	}
 	
+	/**
+	 * return the label position (2D or 3D vector)
+	 * @return the label position (2D or 3D vector)
+	 */
+	public GgbVector getLabelPosition(){
+		return null;
+	}
+	
 	/** 
 	 * Returns the GEO_CLASS_ type integer 
 	 */
