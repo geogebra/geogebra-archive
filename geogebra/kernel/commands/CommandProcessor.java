@@ -7732,9 +7732,9 @@ class CmdStemPlot extends CommandProcessor {
 
  
 
- class CmdPlayMidi extends CommandProcessor {
+ class CmdPlaySound extends CommandProcessor {
 
-	 public CmdPlayMidi(Kernel kernel) {
+	 public CmdPlaySound(Kernel kernel) {
 		 super(kernel);
 	 }
 

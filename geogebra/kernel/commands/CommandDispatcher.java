@@ -386,7 +386,7 @@ public class CommandDispatcher {
        	cmdTable.put("UpdateConstruction", new CmdUpdateConstruction(kernel));
        	cmdTable.put("SetValue", new CmdSetValue(kernel));
     	
-       	cmdTable.put("PlayMidi", new CmdPlayMidi(kernel));
+       	cmdTable.put("PlaySound", new CmdPlaySound(kernel));
     	
     	
        	cmdTable.put("ParseToNumber", new CmdParseToNumber(kernel));
