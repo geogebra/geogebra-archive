@@ -35,6 +35,7 @@ import geogebra.kernel.discrete.AlgoConvexHull;
 import geogebra.kernel.discrete.AlgoDelauneyTriangulation;
 import geogebra.kernel.discrete.AlgoHull;
 import geogebra.kernel.discrete.AlgoMinimumSpanningTree;
+import geogebra.kernel.discrete.AlgoTravelingSalesman;
 import geogebra.kernel.discrete.AlgoVoronoi;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
@@ -3258,6 +3259,12 @@ public class Kernel {
 	
 	final public GeoLocus Hull(String label, GeoList list, GeoNumeric percent) {
 		AlgoHull algo = new AlgoHull(cons, label, list, percent);
+		GeoLocus ret = algo.getResult();
+		return ret;
+	}
+	
+	final public GeoLocus TravelingSalesman(String label, GeoList list) {
+		AlgoTravelingSalesman algo = new AlgoTravelingSalesman(cons, label, list);
 		GeoLocus ret = algo.getResult();
 		return ret;
 	}

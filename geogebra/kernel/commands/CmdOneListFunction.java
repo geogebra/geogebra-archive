@@ -277,6 +277,19 @@ class CmdConvexHull extends CmdOneListFunction {
 
 }
 
+class CmdTravelingSalesman extends CmdOneListFunction {
+
+	public CmdTravelingSalesman(Kernel kernel) {
+		super(kernel);
+	}
+
+	final protected GeoElement doCommand(String a, GeoList b)
+	{
+		return kernel.TravelingSalesman(a, b);
+	}
+
+}
+
 class CmdMinimumSpanningTree extends CmdOneListFunction {
 
 	public CmdMinimumSpanningTree(Kernel kernel) {
