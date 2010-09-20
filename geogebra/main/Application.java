@@ -39,6 +39,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.ScriptManager;
+import geogebra.sound.MidiManager;
 import geogebra.util.DownloadManager;
 import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
@@ -4442,6 +4443,17 @@ public class Application implements KeyEventDispatcher {
 		return imageManager;
 	}
 
+	
+	private MidiManager midiSoundManager = null;
+
+	public MidiManager getMidiSoundManager() {
+		if(midiSoundManager == null){
+			midiSoundManager = new MidiManager(this);
+		}
+		return midiSoundManager;
+	}
+
+	
 		
 }
 

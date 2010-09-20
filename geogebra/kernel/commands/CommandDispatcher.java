@@ -385,7 +385,10 @@ public class CommandDispatcher {
        	cmdTable.put("SetTooltipMode", new CmdSetTooltipMode(kernel));
        	cmdTable.put("UpdateConstruction", new CmdUpdateConstruction(kernel));
        	cmdTable.put("SetValue", new CmdSetValue(kernel));
-       	
+    	
+       	cmdTable.put("PlayMidi", new CmdPlayMidi(kernel));
+    	
+    	
        	cmdTable.put("ParseToNumber", new CmdParseToNumber(kernel));
        	cmdTable.put("ParseToFunction", new CmdParseToFunction(kernel));
 

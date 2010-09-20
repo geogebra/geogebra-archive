@@ -54,6 +54,7 @@ import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.sound.MidiManager;
 import geogebra.util.ImageManager;
 
 import java.awt.Color;
@@ -7729,6 +7730,89 @@ class CmdStemPlot extends CommandProcessor {
 	}
  }
 
+ 
+
+ class CmdPlayMidi extends CommandProcessor {
+
+	 public CmdPlayMidi(Kernel kernel) {
+		 super(kernel);
+	 }
+
+	 final public  GeoElement[] process(Command c) throws MyError {
+		 
+		 int n = c.getArgumentNumber();
+		 GeoElement[] arg;
+		 GeoElement[] ret = {};
+		 
+		 MidiManager m = app.getMidiSoundManager();
+		 
+		 switch (n) {	 
+		 case 1 : 
+			 arg = resArgs(c);
+			 
+			 // play a midi file
+			 if ( arg[0].isGeoText() ) {
+					 //m.playString( ((MyStringBuffer)((GeoText)arg[0]).getText()).toString(), 0  );
+				 	m.playMidiFile( ((String)((GeoText)arg[0]).toValueString()));
+				 return ret;
+			 } 
+			 
+			 else {
+				 throw argErr(app, c.getName(), arg[0]);
+			 }
+
+		 case 2 :
+			 arg = resArgs(c);
+			 
+			 if ( arg[0].isGeoNumeric() && arg[1].isGeoNumeric()) {
+
+				 // play a note using args: note and duration 
+				 // use default instrument 0 = piano, default 50% velocity (volume) = 64)
+				 m.playNote((int)((GeoNumeric)arg[0]).getDouble(), ((GeoNumeric)arg[1]).getDouble(), 0, 64);							
+
+				 return ret;
+			 }
+
+			 else if ( arg[0].isGeoText() && arg[1].isGeoNumeric()) {
+				 	// play a sequence string
+					 m.playString( ((String)((GeoText)arg[0]).toValueString()),
+							 (int)((GeoNumeric)arg[1]).getDouble()  );				 
+				 return ret;
+			 } 
+			 
+			 else {
+				 throw argErr(app, c.getName(), arg[0]);
+			 }
+			
+			 
+		 case 3 :
+			 arg = resArgs(c);
+			 
+			 // play a note using args: note, duration, instrument
+			 if ( arg[0].isGeoNumeric() && arg[1].isGeoNumeric() && arg[2].isGeoNumeric()) {
+
+				 m.playNote((int)((GeoNumeric)arg[0]).getDouble(), //note 
+						 ((GeoNumeric)arg[1]).getDouble(),    //duration
+						 (int)((GeoNumeric)arg[2]).getDouble(),    //instrument
+						 64);							
+
+				 return ret;
+			 }
+
+			 else {
+				 throw argErr(app, c.getName(), arg[0]);
+			 }
+
+		 default :
+			 throw argNumErr(app, c.getName(), n);
+		 }			
+	 }
+ }
+
+ 
+ 
+ 
+ 
  class CmdFactors extends CommandProcessor {
 		
 		public CmdFactors (Kernel kernel) {
