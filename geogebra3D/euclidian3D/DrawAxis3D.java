@@ -32,7 +32,7 @@ public class DrawAxis3D extends DrawLine3D {
 		super(view3D, axis3D);
 		
 		setLabelWaitForReset();
-		//labels = new TreeMap<String, DrawLabel3D>();
+		labels = new TreeMap<String, DrawLabel3D>();
 	}	
 	
 	
@@ -67,11 +67,17 @@ public class DrawAxis3D extends DrawLine3D {
     	
     protected void updateLabel(){
     	
+    	
     	//are labels to be reset ?
     	if (labelWaitForReset){
+    		for(DrawLabel3D label : labels.values())
+        		label.setWaitForReset();
+    		
+    		/*
     		labels = new TreeMap<String, DrawLabel3D>();
     		//Application.printStacktrace("");
     		labelWaitForReset=false;
+    		*/
     	}
     	
   		//draw numbers
@@ -79,11 +85,14 @@ public class DrawAxis3D extends DrawLine3D {
   		
 		NumberFormat numberFormat = axis.getNumberFormat();
 		double distance = axis.getNumbersDistance();
+		
+		//Application.debug("drawMinMax="+getDrawMin()+","+getDrawMax());
     	
     	int iMin = (int) (getDrawMin()/distance);
     	int iMax = (int) (getDrawMax()/distance);
     	int nb = iMax-iMin+1;
     	
+    	//Application.debug("iMinMax="+iMin+","+iMax);
     	
     	if (nb<1){
     		Application.debug("nb="+nb);
@@ -145,8 +154,10 @@ public class DrawAxis3D extends DrawLine3D {
     protected void updateForItSelf(){
     	
     	updateDrawMinMax();
+    	//setDrawMinMax(-5, 5);
     	updateDecorations();
-    	updateLabel();
+    	setLabelWaitForUpdate();
+    	
     	
     	PlotterBrush brush = getView3D().getRenderer().getGeometryManager().getBrush();
        	brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
@@ -156,6 +167,7 @@ public class DrawAxis3D extends DrawLine3D {
        	super.updateForItSelf(false);
        	brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
        	brush.setTicks(PlotterBrush.TICKS_OFF);
+       	
     }
     
     
@@ -202,11 +214,9 @@ public class DrawAxis3D extends DrawLine3D {
     	
     }
     
+    
 	protected void updateForView(){
-		
-
-		
-		
+				
 		updateForItSelf();
 		
 	}

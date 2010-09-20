@@ -635,9 +635,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		mInv.set(m.inverse());
 		
-		waitForUpdate = true;
-		
-		//Application.debug("m = "); m.SystemPrint();
+		setWaitForUpdate();
 		
 	}
 
@@ -664,9 +662,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		updateMatrix();
 		
-		waitForUpdate = repaint;
-		//if (repaint)
-			//update();
+		if (repaint)
+			setWaitForUpdate();
 	}
 	
 	
@@ -789,7 +786,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			drawable3DLists.add(drawable3DListToBeAdded);
 			drawable3DListToBeAdded.clear();
 			drawable3DLists.viewChanged();
-			updateOwnDrawables();
+			viewChangedOwnDrawables();
 			waitForUpdate = false;
 		}
 
@@ -831,7 +828,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		//update();
-		setWaitForUpdate();
+		//setWaitForUpdate();
 		if (isFrozen)
 			super.paint(g);
 	}
@@ -976,20 +973,23 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	public void repaintView() {
-		//setWaitForUpdate(true);
 		
-		update();
+		//reset();
 		
+		//update();
+		setWaitForUpdate();
 		
 		//Application.debug("repaint View3D");
 		
 	}
 
 	public void reset() {
-	
 		
-		setWaitForUpdate();
+		//Application.printStacktrace("reset View3D");
 		resetLabels();
+		updateAllDrawables();
+		//setWaitForUpdate();
+		update();
 		
 	}
 
@@ -1002,6 +1002,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				//update(((GeoElement3DInterface) geo).getDrawable3D());
 			}
 		}
+	}
+	
+	private void updateAllDrawables(){
+		for (Drawable3D d:drawable3DMap.values())
+			update(d);
+		updateOwnDrawables();
+		
 	}
 	
 	/**
@@ -2556,16 +2563,26 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * says all drawables owned by the view that the view has changed
 	 */
-	public void updateOwnDrawables(){
+	public void viewChangedOwnDrawables(){
 		
 		xOyPlaneDrawable.viewChanged();
 		
-		for(int i=0;i<3;i++){
+		for(int i=0;i<3;i++)
 			axisDrawable[i].viewChanged();
-			//axis[i].getDrawable3D().setWaitForUpdate();
-		}
 		
-		//axis[1].getDrawable3D().viewChanged();
+		
+	}
+	
+	/**
+	 * tell all drawables owned by the view to be udpated
+	 */
+	public void updateOwnDrawables(){
+		
+		xOyPlaneDrawable.setWaitForUpdate();
+		
+		for(int i=0;i<3;i++)
+			axisDrawable[i].setWaitForUpdate();
+		
 		
 	}
 	
@@ -2585,9 +2602,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * says all drawables that the view has changed
 	 */
-	public void updateAllDrawables(){
+	public void viewChangedAllDrawables(){
 		
-		updateOwnDrawables();
+		viewChangedOwnDrawables();
 		drawable3DLists.viewChanged();
 		
 	}

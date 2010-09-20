@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
+import geogebra.main.Application;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoLine3D;
 
@@ -61,7 +62,8 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 		GgbVector o = getView3D().getToScreenMatrix().mul(cs.getOrigin());
 		GgbVector v = getView3D().getToScreenMatrix().mul(cs.getVx());
 						
-		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
+		double[] minmax = 
+			getView3D().getRenderer().getIntervalInFrustum(
 				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 				o, v);
 		

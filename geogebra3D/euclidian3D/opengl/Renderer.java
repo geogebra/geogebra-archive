@@ -647,7 +647,7 @@ public class Renderer implements GLEventListener {
       viewOrtho(x,y,w,h);
 
       
-      view3D.reset();
+      view3D.resetLabels();
     }
 
     /**
@@ -1608,14 +1608,6 @@ public class Renderer implements GLEventListener {
 		double front = (getFront() - o.get(3))/v.get(3);
 		double back = (getBack() - o.get(3))/v.get(3);
 		updateIntervalInFrustum(minmax, front, back);
-			
-		
-		/*
-		Application.debug("intersection = ("+left+","+right+
-				")/("+top+","+bottom+")/("+front+","+back+")"+
-				"\ninterval = ("+minmax[0]+","+minmax[1]+")");
-		*/
-				
 		
 		return minmax;
 	}

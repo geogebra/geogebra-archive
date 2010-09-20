@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
 import java.awt.Color;
@@ -126,6 +127,8 @@ public class DrawLabel3D {
 		
 		// update the texture
 		updateTexture();
+		
+		//Application.debug("textureIndex = "+textureIndex);
 
 
 	}
@@ -183,10 +186,12 @@ public class DrawLabel3D {
 	 */
     public void updateTexture() {
     	
+    	/*
     	if (textureIndex!=0){
     		view.getRenderer().getTextures().removeTexture(textureIndex);
     		textureIndex = 0;
     	}
+    	*/
     	
     	textureIndex = view.getRenderer().getTextures().createAlphaTexture(
     			width2, height2, 
