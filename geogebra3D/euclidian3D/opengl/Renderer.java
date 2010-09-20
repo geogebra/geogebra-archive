@@ -647,7 +647,7 @@ public class Renderer implements GLEventListener {
       viewOrtho(x,y,w,h);
 
       
-      view3D.resetLabels();
+      view3D.reset();
     }
 
     /**
@@ -1003,11 +1003,6 @@ public class Renderer implements GLEventListener {
         
     }
     
-    
-    public void removePolygon(int index){
-    	if (geometryManager!=null)
-    		geometryManager.remove(index);
-    }
    
     
     

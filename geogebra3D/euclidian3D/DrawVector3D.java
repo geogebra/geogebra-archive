@@ -13,8 +13,6 @@ import geogebra3D.kernel3D.GeoVector3D;
  */
 public class DrawVector3D extends Drawable3DCurves {
 
-	/** gl index of the geometry */
-	private int geometryIndex = -1;
 	
 	/**
 	 * Common constructor
@@ -40,7 +38,7 @@ public class DrawVector3D extends Drawable3DCurves {
 		
 
 		//renderer.drawSegment();
-		renderer.getGeometryManager().draw(geometryIndex);
+		renderer.getGeometryManager().draw(getGeometryIndex());
 		
 		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);		
 	}
@@ -56,7 +54,6 @@ public class DrawVector3D extends Drawable3DCurves {
 
 		Renderer renderer = getView3D().getRenderer();
 
-		renderer.getGeometryManager().remove(geometryIndex);
 		
 		GgbVector p1;
 		if (geo.getStartPoint()==null){
@@ -75,7 +72,7 @@ public class DrawVector3D extends Drawable3DCurves {
 		brush.setAffineTexture(0.5f, 0.125f);
 		brush.segment(p1,p2);
 		brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
-		geometryIndex = brush.end();
+		setGeometryIndex(brush.end());
 		
 		
 	}

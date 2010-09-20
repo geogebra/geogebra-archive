@@ -986,10 +986,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void reset() {
 		
 		//Application.printStacktrace("reset View3D");
-		resetLabels();
-		updateAllDrawables();
+		resetAllDrawables();
+		//updateAllDrawables();
 		//setWaitForUpdate();
-		update();
+		//update();
 		
 	}
 
@@ -2589,12 +2589,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * says all labels owned by the view that the view has changed
 	 */
-	public void resetOwnLabels(){
+	public void resetOwnDrawables(){
 		
-		xOyPlaneDrawable.setLabelWaitForReset();
+		xOyPlaneDrawable.setWaitForReset();
 		
 		for(int i=0;i<3;i++){
-			axisDrawable[i].setLabelWaitForReset();
+			axisDrawable[i].setWaitForReset();
 		}
 				
 	}
@@ -2613,10 +2613,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * says all labels to be recomputed
 	 */
-	public void resetLabels(){
+	public void resetAllDrawables(){
 		
-		resetOwnLabels();
-		drawable3DLists.resetLabels();
+		resetOwnDrawables();
+		drawable3DLists.resetAllDrawables();
 		
 	}
 	

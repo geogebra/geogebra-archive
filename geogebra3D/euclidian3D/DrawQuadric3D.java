@@ -13,8 +13,6 @@ import geogebra3D.kernel3D.GeoQuadric3D;
 public class DrawQuadric3D extends Drawable3DSurfaces {
 	
 	
-	/** gl index of the quadric */
-	private int quadricIndex = -1;
 
 
 	/**
@@ -29,7 +27,7 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 	}
 	
 	public void drawGeometry(Renderer renderer) {
-		renderer.getGeometryManager().draw(quadricIndex);
+		renderer.getGeometryManager().draw(getGeometryIndex());
 	}
 
 	void drawGeometryHiding(Renderer renderer) {
@@ -64,7 +62,6 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 		
 		Renderer renderer = getView3D().getRenderer();
 		
-		renderer.getGeometryManager().remove(quadricIndex);
 		
 
 		GeoQuadric3D quadric = (GeoQuadric3D) getGeoElement();
@@ -85,7 +82,7 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 			surface.setU((float) quadric.getMinParameter(0), (float) quadric.getMaxParameter(0));surface.setNbU(60); 
 			surface.setV((float) quadric.getMinParameter(1), (float) quadric.getMaxParameter(1));surface.setNbV(30);
 			surface.draw();
-			quadricIndex=surface.end();
+			setGeometryIndex(surface.end());
 			
 			break;
 		case GeoQuadric3D.QUADRIC_CONE:
@@ -113,7 +110,7 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 			}else{
 				surface.setV(min,max);surface.setNbV(3);surface.setVFading(fade, fade);surface.draw();
 			}
-			quadricIndex=surface.end();
+			setGeometryIndex(surface.end());
 			
 			
 			break;
@@ -128,21 +125,6 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 					o, v);
 			
-			/*
-			brush = renderer.getGeometryManager().getBrush();
-			
-
-			brush.start(120);
-			//brush.setColor(getGeoElement().getObjectColor());
-			brush.setThickness((float) quadric.getHalfAxis(1));
-			
-			min = (float) (minmax[0]+(minmax[1]-minmax[0])*-3); //TODO change that
-			max = (float) (minmax[1]+(minmax[1]-minmax[0])*3);
-			
-			brush.cylinder(quadric.getMidpoint(),quadric.getEigenvec3D(2), min, max);
-			quadricIndex = brush.end();
-			
-			*/
 			
 			
 			min = (float) minmax[0]; 
@@ -157,7 +139,7 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 			fade = (max-min)/10f;
 			surface.setV(min,max);surface.setNbV(3);surface.setVFading(fade, fade);surface.draw();
 			
-			quadricIndex=surface.end();
+			setGeometryIndex(surface.end());
 			
 			break;
 

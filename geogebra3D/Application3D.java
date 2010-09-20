@@ -222,6 +222,6 @@ public class Application3D extends Application{
 		
 		//euclidianView3D.setToFrozen(testSw); testSw=!testSw;
 		
-		euclidianView3D.resetLabels();
+		euclidianView3D.resetAllDrawables();
 	}
 }

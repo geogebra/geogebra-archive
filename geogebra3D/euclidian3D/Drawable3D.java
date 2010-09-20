@@ -145,17 +145,14 @@ public abstract class Drawable3D extends DrawableND {
 	/** says if the label has to be updated */
 	private boolean labelWaitForUpdate;
 	
-	/** says if the label has to be reset */
-	protected boolean labelWaitForReset;
+	/** says if this has to be reset */
+	protected boolean waitForReset;
 	
-	/** matrix for openGL display */
-	//private Ggb3DMatrix4x4 m_matrix = new Ggb3DMatrix4x4();
-	
-	/** label matrix for openGL display */
-	//private Ggb3DMatrix4x4 labelMatrix = Ggb3DMatrix4x4.Identity();;
+	/** gl index of the geometry */
+	private int geomIndex = -1;
 	
 	//links to the GeoElement
-	private GeoElement m_geo; 
+	private GeoElement geo; 
 	
 	/** label */
 	protected DrawLabel3D label;
@@ -266,6 +263,8 @@ public abstract class Drawable3D extends DrawableND {
 		}
 		
 		realtimeUpdate();
+		
+		waitForReset = false;
 	}
 	
 	
@@ -321,31 +320,37 @@ public abstract class Drawable3D extends DrawableND {
 	}
 	
 	/**
-	 * reset the label
+	 * reset the drawable
 	 */
-	public void setLabelWaitForReset(){
+	public void setWaitForReset(){
 	
-		labelWaitForReset = true;
+		waitForReset = true;
 		label.setWaitForReset();
-		setLabelWaitForUpdate();		
+		setLabelWaitForUpdate();
+		setWaitForUpdate();
+		viewChanged();
 	}
 	
 	
 	
+	protected void removeGeometryIndex(int index){
+		if (!waitForReset)
+			getView3D().getRenderer().getGeometryManager().remove(index);
+
+	}
+	
+	protected void setGeometryIndex(int index){
+		removeGeometryIndex(geomIndex);
+		geomIndex = index;
+	}
+	
+	
+	protected int getGeometryIndex(){
+		return geomIndex;
+	}
 	
 	
 
-	
-	/**
-	 * set the drawing matrix
-	 * 
-	 * @param a_matrix the drawing matrix
-	 */
-	/*
-	public void setMatrix(Ggb3DMatrix4x4 a_matrix){
-		m_matrix=a_matrix;
-	}
-	*/
 	
 	
 	/**
@@ -695,7 +700,7 @@ public abstract class Drawable3D extends DrawableND {
      * @return the GeoElement3DInterface linked to
      */  
     public GeoElement getGeoElement() {
-        return m_geo;
+        return geo;
     }   
     
     
@@ -704,7 +709,7 @@ public abstract class Drawable3D extends DrawableND {
      * @param a_geo the GeoElement
      */
     public void setGeoElement(GeoElement a_geo) {
-        this.m_geo = a_geo;
+        this.geo = a_geo;
         //((GeoElement3DInterface) a_geo).setDrawable3D(this);
     } 
     

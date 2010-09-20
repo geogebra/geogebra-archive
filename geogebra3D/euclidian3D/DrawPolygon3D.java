@@ -28,9 +28,6 @@ import java.util.Iterator;
 public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
-	/** gl index of the polygon */
-	private int polygonIndex = -1;
-	
 	
 	
 	/**
@@ -73,7 +70,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		renderer.endPolygonAndResetMatrix();
 		*/
 		
-		renderer.drawPolygon(polygonIndex);
+		renderer.drawPolygon(getGeometryIndex());
 		
 		renderer.setLayer(0);
 			
@@ -121,7 +118,6 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		Renderer renderer = getView3D().getRenderer();
 		
-		renderer.removePolygon(polygonIndex);
 		
 		//creates the polygon
 		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
@@ -139,7 +135,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		//Application.debug("udpate polygon index : "+polygonIndex+" >> "+index);
 		
-		polygonIndex = index;
+		setGeometryIndex(index);
 		
 		
 		

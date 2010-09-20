@@ -31,8 +31,10 @@ public class DrawAxis3D extends DrawLine3D {
 		
 		super(view3D, axis3D);
 		
-		setLabelWaitForReset();
 		labels = new TreeMap<String, DrawLabel3D>();
+		
+		//setLabelWaitForReset();
+		
 	}	
 	
 	
@@ -63,22 +65,27 @@ public class DrawAxis3D extends DrawLine3D {
     }
     	
 
+    
+    public void setWaitForReset(){
+    	super.setWaitForReset();
+    	for(DrawLabel3D label : labels.values())
+    		label.setWaitForReset();
+    }
 
     	
     protected void updateLabel(){
     	
     	
     	//are labels to be reset ?
+    	/*
     	if (labelWaitForReset){
     		for(DrawLabel3D label : labels.values())
         		label.setWaitForReset();
+        		
     		
-    		/*
-    		labels = new TreeMap<String, DrawLabel3D>();
-    		//Application.printStacktrace("");
-    		labelWaitForReset=false;
-    		*/
+    	
     	}
+    	 */
     	
   		//draw numbers
   		GeoAxis3D axis = (GeoAxis3D) getGeoElement();

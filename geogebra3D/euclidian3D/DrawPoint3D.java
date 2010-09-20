@@ -28,8 +28,6 @@ implements Previewable, Functional2Var{
 	
 	
 	
-	/** gl index of the geometry */
-	private int geometryIndex = -1;
 
 	
 		
@@ -53,7 +51,7 @@ implements Previewable, Functional2Var{
 	public void drawGeometry(Renderer renderer) {
 
 
-		renderer.getGeometryManager().draw(geometryIndex);
+		renderer.getGeometryManager().draw(getGeometryIndex());
 		/*
 		GeoPoint3D point = (GeoPoint3D) getGeoElement(); 
 		
@@ -80,8 +78,7 @@ implements Previewable, Functional2Var{
 		
 		Renderer renderer = getView3D().getRenderer();
 		
-		renderer.getGeometryManager().remove(geometryIndex);
-
+	
 
 		PlotterSurface surface;
 
@@ -91,7 +88,7 @@ implements Previewable, Functional2Var{
 		surface.setU((float) getMinParameter(0), (float) getMaxParameter(0));surface.setNbU(2*nb); 
 		surface.setV((float) getMinParameter(1), (float) getMaxParameter(1));surface.setNbV(nb);
 		surface.draw();
-		geometryIndex=surface.end();
+		setGeometryIndex(surface.end());
 		
 	}
 	

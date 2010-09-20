@@ -14,8 +14,6 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
 public class DrawCurve3D extends Drawable3DCurves {
 	private CurveTree tree;
 	
-	/** gl index of the quadric */
-	private int geometryIndex = -1;
 	
 	/** handle to the curve */
 	private GeoCurveCartesian3D curve;
@@ -41,7 +39,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 		
 		renderer.setThickness(getGeoElement().getLineThickness());
 
-		renderer.getGeometryManager().draw(geometryIndex);
+		renderer.getGeometryManager().draw(getGeometryIndex());
 		
 	}
 	
@@ -93,11 +91,10 @@ public class DrawCurve3D extends Drawable3DCurves {
 		
 		
 		if (!curve.isEuclidianVisible() || !curve.isDefined()){
-			renderer.getGeometryManager().remove(geometryIndex);
-			geometryIndex = -1;
+			setGeometryIndex(-1);
+			
 		//} else if(needRedraw()){
 		}else{
-			renderer.getGeometryManager().remove(geometryIndex);
 			
 			needRedraw();
 			tree = new CurveTree(curve, getView3D());
@@ -110,7 +107,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 			
 			brush.draw(tree,savedRadius);
 
-			geometryIndex = brush.end();
+			setGeometryIndex(brush.end());
 		}
 		
 	}

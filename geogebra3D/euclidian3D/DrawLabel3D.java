@@ -89,12 +89,11 @@ public class DrawLabel3D {
 		setIsVisible(true);
 		
 		
-		if (waitForReset)
-			waitForReset = false;
-		else
-			if (text.equals(this.text))
-				return;
-		
+
+
+		if (!waitForReset && text.equals(this.text))
+			return;
+
 
 		this.text = text;
 
@@ -127,7 +126,7 @@ public class DrawLabel3D {
 		
 		// update the texture
 		updateTexture();
-		
+		waitForReset = false;
 		//Application.debug("textureIndex = "+textureIndex);
 
 
@@ -186,12 +185,12 @@ public class DrawLabel3D {
 	 */
     public void updateTexture() {
     	
-    	/*
-    	if (textureIndex!=0){
+    	
+    	if (textureIndex!=0 && !waitForReset){
     		view.getRenderer().getTextures().removeTexture(textureIndex);
     		textureIndex = 0;
     	}
-    	*/
+    	
     	
     	textureIndex = view.getRenderer().getTextures().createAlphaTexture(
     			width2, height2, 

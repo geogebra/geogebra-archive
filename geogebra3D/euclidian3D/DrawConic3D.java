@@ -15,8 +15,6 @@ import geogebra3D.kernel3D.GeoConic3D;
 public class DrawConic3D extends Drawable3DCurves {
 	
 	
-	/** gl index of the quadric */
-	private int geometryIndex = -1;
 	
 	
 	
@@ -46,7 +44,7 @@ public class DrawConic3D extends Drawable3DCurves {
 		switch(conic.getType()){
 		case GeoConic.CONIC_CIRCLE:
 			//renderer.drawCircle(xc,yc,r);
-			renderer.getGeometryManager().draw(geometryIndex);
+			renderer.getGeometryManager().draw(getGeometryIndex());
 			break;
 		default:
 			break;
@@ -66,7 +64,6 @@ public class DrawConic3D extends Drawable3DCurves {
 		
 		Renderer renderer = getView3D().getRenderer();
 		
-		renderer.getGeometryManager().remove(geometryIndex);
 		
 		
 		GeoConic3D conic = (GeoConic3D) getGeoElement();
@@ -87,7 +84,7 @@ public class DrawConic3D extends Drawable3DCurves {
 			
 			brush.circle(center, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
 			
-			geometryIndex = brush.end();
+			setGeometryIndex(brush.end());
 			
 			
 			break;

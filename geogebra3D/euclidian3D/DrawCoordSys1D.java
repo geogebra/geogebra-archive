@@ -19,8 +19,6 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	private double drawMin;
 	private double drawMax;
 	
-	/** gl index of the segment */
-	private int segmentIndex = -1;
 
 
 	
@@ -77,7 +75,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	
 	public void drawGeometry(Renderer renderer) {
-		renderer.getGeometryManager().draw(segmentIndex);
+		renderer.getGeometryManager().draw(getGeometryIndex());
 	}
 	
 	
@@ -112,7 +110,6 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		Renderer renderer = getView3D().getRenderer();
 		
 
-		renderer.getGeometryManager().remove(segmentIndex);
 
 		
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
@@ -123,7 +120,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		brush.setAffineTexture(
 				(float) ((0.-getDrawMin())/(getDrawMax()-getDrawMin())),  0.25f);
 		brush.segment(p1, p2);
-		segmentIndex = brush.end();
+		setGeometryIndex(brush.end());
 		
 		
 		

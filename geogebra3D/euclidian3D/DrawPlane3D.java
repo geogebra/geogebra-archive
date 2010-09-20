@@ -25,8 +25,7 @@ import java.awt.Color;
 public class DrawPlane3D extends Drawable3DSurfaces {
 
 
-	/** gl index of the plane */
-	private int planeIndex = -1;
+
 	/** gl index of the grid */
 	private int gridIndex = -1;
 
@@ -50,7 +49,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		if (!((GeoPlane3D)getGeoElement()).isPlateVisible())
 			return;
 		//renderer.initMatrix();
-		renderer.getGeometryManager().draw(planeIndex);
+		renderer.getGeometryManager().draw(getGeometryIndex());
 		//renderer.resetMatrix();
 		
 	}
@@ -95,8 +94,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		GeoPlane3D geo = (GeoPlane3D) getGeoElement();
 		GgbCoordSys coordsys = geo.getCoordSys();
 		
-		// plane
-		renderer.getGeometryManager().remove(planeIndex);	
+		// plane	
 		
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
@@ -109,13 +107,13 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		surface.setUFading(fading, fading);
 		surface.setVFading(fading, fading);
 		surface.draw();
-		planeIndex=surface.end();
+		setGeometryIndex(surface.end());
 		
 		
 		
 		
 		// grid
-		renderer.getGeometryManager().remove(gridIndex);
+		removeGeometryIndex(gridIndex);
 		
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 		
@@ -146,17 +144,6 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	
 		gridIndex = brush.end();
 
-		/*
-		if (geo.isGridVisible()){
-			gridIndex = renderer.getGeometryManager().newGrid(
-					Color.BLACK, 1f,
-					//(float) (200/getView3D().getScale()),
-					(float) geo.getXmin(), (float) geo.getXmax(),
-					(float) geo.getYmin(), (float) geo.getYmax(),
-					(float) geo.getGridXd(), (float) geo.getGridYd(), 
-					(float) (0.4/getView3D().getScale()));
-		}
-		*/
 		
 	}
 

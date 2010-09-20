@@ -18,8 +18,6 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	private GeoFunctionNVar function;
 	
-	/** gl index of the geometry */
-	private int geometryIndex = -1;
 	
 	private boolean unlimitedRange;
 	
@@ -56,7 +54,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	}
 	
 	public void drawGeometry(Renderer renderer) {
-		renderer.getGeometryManager().draw(geometryIndex);
+		renderer.getGeometryManager().draw(getGeometryIndex());
 	}
 
 	void drawGeometryHiding(Renderer renderer) {
@@ -77,7 +75,6 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	protected void realtimeUpdate(){
 		Renderer renderer = getView3D().getRenderer();
 		mesh.setRadius(savedRadius);
-		renderer.getGeometryManager().remove(geometryIndex);
 		mesh.optimize();
 		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
@@ -103,7 +100,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		
 
 		surface.draw(mesh);
-		geometryIndex=surface.end();
+		setGeometryIndex(surface.end());
 	}
 	
 	/** gets the viewing radius based on the viewing frustum 
