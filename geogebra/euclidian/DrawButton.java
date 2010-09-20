@@ -16,6 +16,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoButton;
 import geogebra.main.Application;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -170,6 +171,7 @@ public final class DrawButton extends Drawable {
 		button.setOpaque(true);		
 		button.setFont(view.fontPoint);
 		button.setForeground(geo.getObjectColor());
+		button.setBackground(view.getBackground());
 		
 		// set checkbox state		
 		//jButton.removeItemListener(bl);
