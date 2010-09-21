@@ -109,8 +109,9 @@ public class AlgoMirror extends AlgoTransformation {
         	out.mirror(mirrorPoint);
         else if (geoOut instanceof GeoPoint) // invert Point in Circle
         	((GeoPoint)geoOut).mirror(mirrorConic); // Michael Borcherds 2008-02-10
-        else // invert circle in circle
+        else if(geoOut instanceof GeoConic) // invert circle in circle
         	((GeoConic)geoOut).mirror(mirrorConic); // Michael Borcherds 2010-01-21
+        else ((GeoCurveCartesian)geoOut).mirror(mirrorConic);
     }       
     
     final public String toString() {

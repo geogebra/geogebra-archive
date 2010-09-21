@@ -5778,6 +5778,17 @@ public class Kernel {
 		GeoElement[] geos = { ret };
 		return geos;
 	}
+	
+	final public GeoElement [] Mirror(String label, GeoCurveCartesian Q, GeoConic conic) {	
+		if (label == null)
+			label = transformedGeoLabel(Q);
+	
+		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) Q);
+		GeoElement[] geos = { ret };
+		return geos;
+	}
 
 	/**
 	 * apply matrix 

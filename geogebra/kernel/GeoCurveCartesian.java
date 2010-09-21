@@ -279,9 +279,6 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		
 	
 	final public void rotate(NumberValue phi){
-		//ExpressionNode cosPhi = new ExpressionNode(kernel,phi,ExpressionNode.COS,null);
-		//ExpressionNode sinPhi = new ExpressionNode(kernel,phi,ExpressionNode.SIN,null);
-		//ExpressionNode minSinPhi = new ExpressionNode(kernel,new MyDouble(kernel,0.0),ExpressionNode.MINUS,sinPhi);
 		double cosPhi = Math.cos(phi.getDouble());
 		double sinPhi = Math.sin(phi.getDouble());
 		matrixTransform(cosPhi,-sinPhi,sinPhi,cosPhi);
@@ -302,9 +299,6 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
      *  [ sin(phi)      -cos(phi)   ]  
      */
 	private void mirror(NumberValue phi){				
-		//ExpressionNode cosPhi = new ExpressionNode(kernel,phi,ExpressionNode.COS,null);
-		//ExpressionNode sinPhi = new ExpressionNode(kernel,phi,ExpressionNode.SIN,null);
-		//ExpressionNode minCosPhi = new ExpressionNode(kernel,new MyDouble(kernel,0.0),ExpressionNode.MINUS,cosPhi);
 		double cosPhi = Math.cos(phi.getDouble());
 		double sinPhi = Math.sin(phi.getDouble());
 		matrixTransform(cosPhi,sinPhi,sinPhi,-cosPhi);				
@@ -663,5 +657,35 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		return false;
 	}
 
+	 final public void mirror(GeoConic c) {
+	    	if (c.getType()==GeoConic.CONIC_CIRCLE)
+	    	{ 
+	    		
+	    		// Mirror point in circle
+	    		double r =  c.getHalfAxes()[0];
+	    		GeoVec2D midpoint=c.getTranslationVector();
+	    		double a=midpoint.x;
+	    		double b=midpoint.y;
+	    		this.translate(-a, -b);
+	    		ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
+	    		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
+	    		
+	    		ExpressionNode sf=new ExpressionNode(kernel, new MyDouble(kernel,r*r),ExpressionNode.DIVIDE,new ExpressionNode(kernel,
+	    				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,exprX),
+	    				ExpressionNode.PLUS,
+	    				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,exprY)));
+	    		ExpressionNode transX = new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,sf);
+	    		ExpressionNode transY = new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,sf);
+	    		funX.setExpression(transX);
+	    		funY.setExpression(transY);
+	    		this.translate(a, b);
+	            
+	    	}
+	    	else
+	    	{
+	    		setUndefined();
+	    	}
+	    }
+	 
 
 }
