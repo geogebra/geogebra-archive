@@ -2730,9 +2730,8 @@ class CmdRotate extends CommandProcessor {
 			arg = resArgs(c);
 
 			// rotate point, line or conic
-			if ((ok[0] = (arg[0] instanceof Rotateable))
+			if ((ok[0] = true)
 					&& (ok[1] = (arg[1] .isNumberValue()))) {
-				Rotateable p = (Rotateable) arg[0];
 				NumberValue phi = (NumberValue) arg[1];
 				//GeoElement geo = p.toGeoElement();
 
@@ -2753,7 +2752,7 @@ class CmdRotate extends CommandProcessor {
                 }
 				 */
 
-				ret = kernel.Rotate(label, p, phi);  
+				ret = kernel.Rotate(label, arg[0], phi);  
 				return ret;
 			}             
 
@@ -2773,10 +2772,10 @@ class CmdRotate extends CommandProcessor {
 			arg = resArgs(c);
 
 			// rotate point, line or conic
-			if ((ok[0] = (arg[0] instanceof PointRotateable))
+			if ((ok[0] = true)
 					&& (ok[1] = (arg[1] .isNumberValue()))
 					&& (ok[2] = (arg[2] .isGeoPoint()))) {
-				PointRotateable p = (PointRotateable) arg[0];
+				
 				NumberValue phi = (NumberValue) arg[1];
 				GeoPoint Q = (GeoPoint) arg[2];
 				//GeoElement geo = p.toGeoElement();
@@ -2796,7 +2795,7 @@ class CmdRotate extends CommandProcessor {
                 }
 				 */
 
-				ret = kernel.Rotate(label, p, phi, Q);
+				ret = kernel.Rotate(label, arg[0], phi, Q);
 				return ret;
 			}
 
@@ -3206,70 +3205,33 @@ class CmdMirror extends CommandProcessor {
 		case 2 :
 			arg = resArgs(c);
 
-			if (arg[0].isGeoPoint() && arg[1].isGeoConic())
-			{  // mirror point in circle Michael Borcherds 2008-02-10
-				GeoPoint Q = (GeoPoint) arg[0];
-				GeoConic conic = (GeoConic) arg[1];
-
-				if (conic.getType()==GeoConic.CONIC_CIRCLE)
-				{
-					ret = kernel.Mirror(label, Q, conic);
-					return ret;
-				}
-
-			}
 			
-			if (arg[0].isGeoCurveCartesian() && arg[1].isGeoConic())
+
+			if (arg[1].isGeoConic())
 			{  // mirror point in circle Michael Borcherds 2008-02-10
-				GeoCurveCartesian Q = (GeoCurveCartesian) arg[0];
-				GeoConic conic = (GeoConic) arg[1];
-
-				if (conic.getType()==GeoConic.CONIC_CIRCLE)
-				{
-					ret = kernel.Mirror(label, Q, conic);
-					return ret;
-				}
-
-			}
-
-			if (arg[0].isGeoConic() && arg[1].isGeoConic())
-			{  // mirror point in circle Michael Borcherds 2008-02-10
-				GeoConic conic0 = (GeoConic) arg[0];
 				GeoConic conic1 = (GeoConic) arg[1];
 
-				if (conic0.getType()==GeoConic.CONIC_CIRCLE && conic1.getType()==GeoConic.CONIC_CIRCLE)
+				boolean isValidConic = arg[0].isGeoConic() ? ((GeoConic) arg[0]).getType()==GeoConic.CONIC_CIRCLE||
+				((GeoConic) arg[0]).isDegenerate():false;
+				if (conic1.getType()==GeoConic.CONIC_CIRCLE && isValidConic || arg[0].isGeoPoint() 
+						|| arg[0] instanceof GeoCurveCartesian || arg[0] instanceof GeoLine || arg[0] instanceof GeoFunction )
 				{
-					ret = kernel.Mirror(label, conic0, conic1);
+					ret = kernel.Mirror(label,arg[0], conic1);
 					return ret;
 				}
 
 			}
 
 			// mirror object
-			if (ok[0] = (arg[0] instanceof Mirrorable)) {
-				Mirrorable p = (Mirrorable) arg[0];
+			if (ok[0] = (arg[0] instanceof Mirrorable)||(arg[0] instanceof GeoFunction)) {
+				
 				//GeoElement geo = p.toGeoElement();
 
 				// mirror at point
 				if (ok[1] = (arg[1] .isGeoPoint())) {	                	
 					GeoPoint Q = (GeoPoint) arg[1];	  
 
-					/*
-                    // if we are not in a nested command (suppress labels)
-                    // and no label is given and the input object is independent
-                    // we change the input object
-                    if (!cons.isSuppressLabelsActive() &&  
-                    	label == null && geo.isIndependent()) 
-                    {
-                        p.mirror(Q);
-                        geo.updateRepaint();
-                        ret[0] = geo;
-                    } else {
-                        ret = kernel.Mirror(label, p, Q);
-                    }
-					 */
-
-					ret = kernel.Mirror(label, p, Q);
+					ret = kernel.Mirror(label, arg[0], Q);
 					return ret;
 				} 
 				// mirror is line
@@ -3291,7 +3253,7 @@ class CmdMirror extends CommandProcessor {
                     }
 					 */
 
-					ret = kernel.Mirror(label, p, line);
+					ret = kernel.Mirror(label, arg[0], line);
 					return ret;
 				}
 			}              

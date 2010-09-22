@@ -43,7 +43,7 @@ public class AlgoRotate extends AlgoTransformation {
      * @param angle
      */
     AlgoRotate(Construction cons, String label,
-            Rotateable A, NumberValue angle) {
+            GeoElement A, NumberValue angle) {
     	this(cons, A, angle);
     	Bgeo.setLabel(label);
     }
@@ -54,16 +54,25 @@ public class AlgoRotate extends AlgoTransformation {
      * @param A
      * @param angle
      */
-    AlgoRotate(Construction cons, Rotateable A, NumberValue angle) {
+    AlgoRotate(Construction cons, GeoElement A, NumberValue angle) {
         super(cons);        
         this.angle = angle;
 
-        Ageo = A.toGeoElement();
         angleGeo = angle.toGeoElement();
         
+        
+        
         // create output object
-        Bgeo = Ageo.copy();
-        B = (Rotateable) Bgeo;
+        if(A instanceof Rotateable){
+	        Ageo = A.toGeoElement();
+	        Bgeo = Ageo.copy();
+	        B = (Rotateable) Bgeo;
+        }
+        else if(A instanceof GeoFunction){
+        	Ageo = A;
+            Bgeo = new GeoCurveCartesian(cons);
+            B = (Rotateable) Bgeo;	
+        }
         setInputOutput();
         
         cons.registerEuclidianViewAlgo(this);
@@ -96,19 +105,14 @@ public class AlgoRotate extends AlgoTransformation {
 
     // calc rotated point
     protected final void compute() {
-        Bgeo.set(Ageo);
+    	if(Ageo instanceof GeoFunction){
+    		((GeoFunction)Ageo).toGeoCurveCartesian((GeoCurveCartesian)Bgeo);
+    	}
+    	else Bgeo.set(Ageo);
         B.rotate(angle);
     }
     
-    /**
-     * Returns true iff EuclidianView update is needed
-     * @return true iff EuclidianView update is needed
-     */
-    final public boolean wantsEuclidianViewUpdate() {
-        return Ageo.isGeoImage();
-    }
-
-    
+       
     final public String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation

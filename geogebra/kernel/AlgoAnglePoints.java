@@ -24,7 +24,7 @@ package geogebra.kernel;
  * @author  Markus
  * @version 
  */
-public class AlgoAnglePoints extends AlgoElement {
+public class AlgoAnglePoints extends AlgoElement  implements AlgoDrawInformation{
 
     /**
 	 * 

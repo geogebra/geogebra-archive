@@ -46,7 +46,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
      * @param Q
      */
     AlgoRotatePoint(Construction cons, String label,
-            PointRotateable A, NumberValue angle, GeoPoint Q) {
+            GeoElement A, NumberValue angle, GeoPoint Q) {
     	this(cons, A, angle, Q);
     	Bgeo.setLabel(label);
     }
@@ -59,13 +59,24 @@ public class AlgoRotatePoint extends AlgoTransformation {
      * @param Q
      */
     AlgoRotatePoint(Construction cons, 
-        PointRotateable A, NumberValue angle, GeoPoint Q) {
+    		GeoElement A, NumberValue angle, GeoPoint Q) {
         super(cons);               
         this.angle = angle;
         this.Q = Q;
 
-        Ageo = A.toGeoElement();
         angleGeo = angle.toGeoElement();
+        
+        if(A instanceof Rotateable){
+	        Ageo = A.toGeoElement();
+	        Bgeo = Ageo.copy();
+	        B = (PointRotateable) Bgeo;
+        }
+        else if(A instanceof GeoFunction){
+        	Ageo = A;
+            Bgeo = new GeoCurveCartesian(cons);
+            B = (PointRotateable) Bgeo;	
+        }
+        
         
         // create output object
         Bgeo = Ageo.copy();       
@@ -112,7 +123,10 @@ public class AlgoRotatePoint extends AlgoTransformation {
 
     // calc rotated point
     protected final void compute() {
-        Bgeo.set(Ageo);
+    	if(Ageo instanceof GeoFunction){
+    		((GeoFunction)Ageo).toGeoCurveCartesian((GeoCurveCartesian)Bgeo);
+    	}
+    	else Bgeo.set(Ageo);
         B.rotate(angle, Q);
     }
        

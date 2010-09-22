@@ -24,7 +24,7 @@ package geogebra.kernel;
  * @author  Markus
  * @version 
  */
-public class AlgoAngleLines extends AlgoElement {
+public class AlgoAngleLines extends AlgoElement  implements AlgoDrawInformation{
 
     /**
 	 * 
@@ -33,7 +33,13 @@ public class AlgoAngleLines extends AlgoElement {
 	private GeoLine g, h; // input
     private GeoAngle angle; // output           
 
-    AlgoAngleLines(Construction cons, String label, GeoLine g, GeoLine h) {
+    /**
+     * Creates new unlabeled angle between lines algo
+     * @param cons construction
+     * @param g first line
+     * @param h second line
+     */
+    AlgoAngleLines(Construction cons,  GeoLine g, GeoLine h) {
         super(cons);
         this.g = g;
         this.h = h;
@@ -42,7 +48,24 @@ public class AlgoAngleLines extends AlgoElement {
 
         // compute angle
         compute();
+        
+    }
+    
+    /**
+     * Creates new labeled angle between lines algo
+     * @param cons construction
+     * @param label angle label
+     * @param g first line
+     * @param h second line
+     */
+    
+    AlgoAngleLines(Construction cons, String label, GeoLine g, GeoLine h) {
+        this(cons,g,h);
         angle.setLabel(label);
+    }
+    
+    public AlgoAngleLines copy(){
+    	return new AlgoAngleLines(cons,(GeoLine)g.copy(),(GeoLine)h.copy());
     }
 
     public String getClassName() {
@@ -55,17 +78,31 @@ public class AlgoAngleLines extends AlgoElement {
         input[0] = g;
         input[1] = h;
 
-        output = new GeoElement[1];
-        output[0] = angle;
+        setOutputLength(1);
+        setOutput(0,angle);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the resulting angle
+     * @return resulting angle
+     */
     GeoAngle getAngle() {
         return angle;
     }
+    
+    /**
+     * Returns the first line
+     * @return first line
+     */
     public GeoLine getg() {
         return g;
     }
+    
+    /**
+     * Returns the second line
+     * @return second line
+     */
     public GeoLine geth() {
         return h;
     }

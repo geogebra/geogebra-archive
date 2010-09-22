@@ -13,9 +13,24 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
-
+/**
+ * Represents geos that can be translated 
+ *
+ */
 public interface Translateable {
+	/**
+	 * Translate by vector
+	 * @param v translation vector
+	 */
 	public void translate(GgbVector v);
+	/**
+	 * Return the geo
+	 * @return geo element
+	 */
 	public GeoElement toGeoElement();
+	/**
+	 * Returns true if the element is translateable
+	 * @return true
+	 */
 	public boolean isTranslateable();
 }

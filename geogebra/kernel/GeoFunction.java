@@ -19,6 +19,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.FunctionalNVar;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
@@ -35,7 +36,7 @@ import java.util.Locale;
  */
 public class GeoFunction extends GeoElement
 implements Path, Translateable, Traceable, Functional, FunctionalNVar, GeoFunctionable,
-CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
+CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilateable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -461,7 +462,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
 				P.x = intervalMax;
 		}
 		
-		P.y = evaluate(P.x); // changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, x²]]
+		P.y = evaluate(P.x); // changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, xï¿½]]
 		P.z = 1.0;
 		
 		// set path parameter for compatibility with
@@ -1061,5 +1062,39 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction {
 		sb.append(")");
 		return sb.toString();
 	 }
+	 private Function varFun;
+	 
+	 /**
+	  * Converts this function to cartesian curve and stores result to given curve
+	  * @param curve Curve to be stored to
+	  */
+	 public void toGeoCurveCartesian(GeoCurveCartesian curve) {
+		 curve.setFunctionY((Function)fun.deepCopy(kernel));
+		 varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
+		 curve.setFunctionX(varFun);
+		 curve.setInterval(-100, 100);
+	 }
+
+	public void dilate(NumberValue r, GeoPoint S) {
+		double rd=r.getNumber().getDouble(),
+		a=S.x,
+		b=S.y;
+		if(Kernel.isZero(rd)){
+			setUndefined();
+			return;
+		}
+		FunctionVariable oldX = fun.getFunctionVariable();
+		ExpressionNode newX= new ExpressionNode(kernel,
+				new ExpressionNode(kernel,oldX,ExpressionNode.PLUS,new MyDouble(kernel,a*rd-a)),
+				ExpressionNode.DIVIDE,
+				r);
+		ExpressionNode oldY = fun.getExpression().replace(oldX, newX);
+		fun.setExpression(new ExpressionNode(kernel,
+				new ExpressionNode(kernel,oldY,ExpressionNode.MULTIPLY,r),
+				ExpressionNode.PLUS,
+				new MyDouble(kernel,-b*rd+b)));
+		// TODO Auto-generated method stub
+		
+	}
 
 }

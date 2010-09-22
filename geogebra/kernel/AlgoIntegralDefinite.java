@@ -24,7 +24,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * 
  * @author Markus Hohenwarter
  */
-public class AlgoIntegralDefinite extends AlgoElement {
+public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInformation{
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input

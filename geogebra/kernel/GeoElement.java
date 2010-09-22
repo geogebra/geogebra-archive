@@ -1338,9 +1338,9 @@ public abstract class GeoElement
 		return algoParent;
 	}
 	
-	public void setDrawAlgorithm(AlgoElement algorithm) {
+	public void setDrawAlgorithm(AlgoDrawInformation algorithm) {
 		if(algorithm != null){
-			algoDraw = algorithm.copy();
+			algoDraw = (AlgoElement)algorithm;
 		}
 	}
 

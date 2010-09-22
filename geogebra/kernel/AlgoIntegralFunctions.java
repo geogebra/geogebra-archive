@@ -22,7 +22,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  * 
  * @author Markus Hohenwarter
  */
-public class AlgoIntegralFunctions extends AlgoElement {
+public class AlgoIntegralFunctions extends AlgoElement  implements AlgoDrawInformation{
 
 
 	private static final long serialVersionUID = 1L;

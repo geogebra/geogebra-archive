@@ -5055,7 +5055,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != point) {
 						if (geos[i] instanceof Mirrorable)
-							kernel.Mirror(null,  (Mirrorable) geos[i], point);
+							kernel.Mirror(null,  geos[i], point);
 						else if (geos[i].isGeoPolygon()) {
 							kernel.Mirror(null, (GeoPolygon) geos[i], point);
 						}
@@ -5150,7 +5150,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != line) {
 						if (geos[i] instanceof Mirrorable)
-							kernel.Mirror(null,  (Mirrorable) geos[i], line);
+							kernel.Mirror(null,  geos[i], line);
 						else if (geos[i].isGeoPolygon()) {
 							kernel.Mirror(null, (GeoPolygon) geos[i], line);
 						}
@@ -5292,7 +5292,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != point) {
 						if (geos[i] instanceof PointRotateable)
-							kernel.Rotate(null,  (PointRotateable) geos[i], num, point);
+							kernel.Rotate(null,   geos[i], num, point);
 						else if (geos[i].isGeoPolygon()) {
 							kernel.Rotate(null, (GeoPolygon) geos[i], num, point);
 						}

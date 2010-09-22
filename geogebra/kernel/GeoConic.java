@@ -22,13 +22,14 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class GeoConic extends GeoConicND
-implements Path, Region, Traceable, 
+implements Path, Region, Traceable, ConicMirrorable,
 Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTransformable
 {
 	
@@ -1344,7 +1345,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	    		double p = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 	    		
 	    		// does circle being inverted pass through center of the other?
-	    		if (kernel.isEqual(p, r2)) { 
+	    		if (Kernel.isEqual(p, r2)) { 
 	    			AlgoIntersectConics intersect = new AlgoIntersectConics(cons, this, c);
 	    			cons.removeFromConstructionList(intersect);
 	    			
@@ -1377,10 +1378,57 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	    		setCircleMatrix(temp, r3);
 	    		temp.removeOrSetUndefinedIfHasFixedDescendent();
 	    	}
-	    	else
-	    	{
-	    		setUndefined();
-	    	}
+	    	else if (c.isCircle() && (this.getType() == GeoConic.CONIC_LINE || this.getType() == GeoConic.CONIC_PARALLEL_LINES))
+	    	{ // Mirror point in circle
+	    		
+	    			/*
+	    			qpx+qqy+qc=0
+	    			pqx-ppy=pqa-ppb
+	    			(pp+qq)y=pqb-ppa-qc
+	    			2px=pa-qb-c
+	    			2qy=-pa+qb-c
+	    			*/
+	    			
+	    			if (c.getType()==GeoConic.CONIC_CIRCLE)
+	    	    	{ // Mirror point in circle
+	    	    		double r =  c.getHalfAxes()[0];
+	    	    		GeoVec2D midpoint=c.getTranslationVector();
+	    	    		double a=midpoint.x;
+	    	    		double b=midpoint.y;
+	    	    		double lx = (getLines()[0]).x;
+	    	    		double ly = (getLines()[0]).y;
+	    	    		double lz = (getLines()[0]).z;
+	    	    		double perpY,perpX;
+	    	    		
+	    	    		if(lx == 0){
+	    	    			perpX = a;
+	    	    			perpY = -ly/lz;
+	    	    		}else{
+	    	    			perpY = -(lx*ly*a-lx*lx*b+ly*lz)/(lx*lx+ly*ly);
+	    	    			perpX = (-lz-ly*perpY)/lx;
+	    	    		
+	    	    		}
+	    				double dist2 = ((perpX-a)*(perpX-a)+(perpY-b)*(perpY-b));
+	    	    		//if line goes through center, we keep it
+	    	    		if(!Kernel.isZero(dist2)){
+	    	    		double sf=r*r/dist2;
+	    	            //GeoPoint p =new GeoPoint(cons,null,a+sf*(perpX-a), b+sf*(perpY-b) ,1.0);
+	    	            GeoPoint m =new GeoPoint(cons);
+	    	            m.setCoords(a+sf*(perpX-a)/2, b+sf*(perpY-b)/2 ,1.0);
+	    	            GeoPoint p =new GeoPoint(cons);
+	    	            
+	    	            setSphereND(m,sf/2*Math.sqrt(((perpX-a)*(perpX-a)+(perpY-b)*(perpY-b))));
+	    	    		}else type = GeoConic.CONIC_LINE;
+	    	    	}
+	    	    	else
+	    	    	{
+	    	    		setUndefined();
+	    	    	}		
+	    		}
+	    		
+	    		
+	    		
+	    	
 			setAffineTransform();
 			//updateDegenerates(); // for degenerate conics
 	    }
@@ -1962,7 +2010,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 					-temp * eigenvecX
 			});
 			mu[0] = -temp * temp + matrix[2] / lambda;
-			
+			Application.debug(mu[0]);
 			if (Kernel.isZero(mu[0])) {			
 				doubleLine();
 			} else if (mu[0] < 0) {			

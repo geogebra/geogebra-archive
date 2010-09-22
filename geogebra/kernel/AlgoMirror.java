@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 
 
 /**
@@ -38,22 +40,51 @@ public class AlgoMirror extends AlgoTransformation {
     private GeoConic mirrorConic;      
     private GeoElement mirror;
     
-    AlgoMirror(Construction cons, String label,Mirrorable in,GeoPoint p) {
+    /**
+     * Creates new "mirror at point" algo
+     * @param cons
+     * @param label
+     * @param in
+     * @param p
+     */
+    AlgoMirror(Construction cons, String label,GeoElement in,GeoPoint p) {
     	this(cons, in, null, p, null);  
     	 geoOut.setLabel(label);
     }
     
-    AlgoMirror(Construction cons, String label,Mirrorable in,GeoConic c) {
-    	this(cons, in, null, null, c);  
-    	 geoOut.setLabel(label);
+    /**
+     * Creates new "mirror at conic" algo
+     * @param cons
+     * @param label
+     * @param in
+     * @param c
+     */
+    AlgoMirror(Construction cons, String label,GeoElement in,GeoConic c) {
+    	this(cons,in,null,null,c);  
+    	geoOut.setLabel(label);
     }
     
-    AlgoMirror(Construction cons, String label,Mirrorable in,GeoLine g) {
+    /**
+     * Creates new "mirror at line" algo 
+     * @param cons
+     * @param label
+     * @param in
+     * @param g
+     */
+    AlgoMirror(Construction cons, String label,GeoElement in,GeoLine g) {
     	this(cons, in, g, null, null);
     	 geoOut.setLabel(label);
     }    
     
-    AlgoMirror(Construction cons, Mirrorable in, GeoLine g, GeoPoint p, GeoConic c) {
+    /**
+     * Creates new "mirror at *" algo
+     * @param cons
+     * @param in
+     * @param g
+     * @param p
+     * @param c
+     */
+    AlgoMirror(Construction cons, GeoElement in, GeoLine g, GeoPoint p, GeoConic c) {
         super(cons);
         //this.in = in;      
         mirrorLine = g;
@@ -67,9 +98,19 @@ public class AlgoMirror extends AlgoTransformation {
 		else
 			mirror = c; // Michael Borcherds 2008-02-10
               
-        geoIn = in.toGeoElement();
-        out = (Mirrorable) geoIn.copy();               
-        geoOut = out.toGeoElement();                       
+        geoIn = in;
+        if (mirror instanceof GeoConic && geoIn instanceof GeoLine){
+        	out = new GeoConic(cons);
+        	geoOut = (GeoElement)out;
+        }
+        else if(geoIn instanceof Mirrorable){
+        	out = (Mirrorable) geoIn.copy();               
+        	geoOut = out.toGeoElement();
+        	
+        }else if (geoIn instanceof GeoFunction){
+        	out = new GeoCurveCartesian(cons);
+        	geoOut = (GeoElement)out;
+        }
         setInputOutput();
               
         cons.registerEuclidianViewAlgo(this);
@@ -87,31 +128,35 @@ public class AlgoMirror extends AlgoTransformation {
         input[0] = geoIn; 
         input[1] = mirror;
         
-        output = new GeoElement[1];        
-        output[0] = geoOut;        
+        setOutputLength(1);        
+        setOutput(0,geoOut);        
         setDependencies(); // done by AlgoElement
     }           
-        
+    
+    /**
+     * Returns the transformed geo
+     * @return transformed geo
+     */
     GeoElement getResult() { 
     	return geoOut; 
     }       
 
-    final public boolean wantsEuclidianViewUpdate() {
-        return geoIn.isGeoImage();
-    }
-
+    
     protected final void compute() {
-        geoOut.set(geoIn);
+    	if(mirror instanceof GeoConic && geoIn instanceof GeoLine){
+    		((GeoLine)geoIn).toGeoConic((GeoConic)geoOut);    		
+    	}
+    	else if(geoIn instanceof GeoFunction){
+    		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
+    		//return;
+    	}else
+    	    geoOut.set(geoIn);
         
         if (mirror == mirrorLine)
         	out.mirror(mirrorLine);
         else if (mirror == mirrorPoint)
         	out.mirror(mirrorPoint);
-        else if (geoOut instanceof GeoPoint) // invert Point in Circle
-        	((GeoPoint)geoOut).mirror(mirrorConic); // Michael Borcherds 2008-02-10
-        else if(geoOut instanceof GeoConic) // invert circle in circle
-        	((GeoConic)geoOut).mirror(mirrorConic); // Michael Borcherds 2010-01-21
-        else ((GeoCurveCartesian)geoOut).mirror(mirrorConic);
+        else ((ConicMirrorable)out).mirror(mirrorConic);
     }       
     
     final public String toString() {

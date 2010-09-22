@@ -274,8 +274,10 @@ public class AlgoSequence extends AlgoElement {
 		// copy current expression value to listElement    
 		if (!expIsFunctionOrCurve) {
 			listElement.set(expression);
-			if(listElement instanceof GeoNumeric){
-        		listElement.setDrawAlgorithm(expression.getDrawAlgorithm().copy());
+			AlgoElement drawAlgo = expression.getDrawAlgorithm();
+			if(listElement instanceof GeoNumeric && drawAlgo instanceof AlgoDrawInformation){
+				Application.debug(expression.getDrawAlgorithm().getClass().getName());
+        		listElement.setDrawAlgorithm(((AlgoDrawInformation)drawAlgo).copy());
 				listElement.setEuclidianVisible(true);
 			}
 		}

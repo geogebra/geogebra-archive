@@ -5694,9 +5694,9 @@ public class Kernel {
 	/**
 	 * rotate geoRot by angle phi around (0,0)
 	 */
-	final public GeoElement [] Rotate(String label, Rotateable geoRot, NumberValue phi) {
+	final public GeoElement [] Rotate(String label, GeoElement geoRot, NumberValue phi) {
 		if (label == null)
-			label = transformedGeoLabel(geoRot.toGeoElement());
+			label = transformedGeoLabel(geoRot);
 		
 		if (geoRot.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
@@ -5712,9 +5712,9 @@ public class Kernel {
 	/**
 	 * rotate geoRot by angle phi around Q
 	 */
-	final public GeoElement [] Rotate(String label, PointRotateable geoRot, NumberValue phi, GeoPoint Q) {
+	final public GeoElement [] Rotate(String label, GeoElement geoRot, NumberValue phi, GeoPoint Q) {
 		if (label == null)
-			label = transformedGeoLabel(geoRot.toGeoElement());
+			label = transformedGeoLabel(geoRot);
 		
 		if (geoRot.toGeoElement().isLimitedPath())
 			// handle segments, rays and arcs separately
@@ -5748,7 +5748,7 @@ public class Kernel {
 	/**
 	 * mirror geoMir at point Q
 	 */
-	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoPoint Q) {	
+	final public GeoElement [] Mirror(String label, GeoElement geoMir, GeoPoint Q) {	
 		if (label == null)
 			label = transformedGeoLabel(geoMir.toGeoElement());
 		
@@ -5768,13 +5768,13 @@ public class Kernel {
 	 * mirror (invert) point Q in circle 
 	 * Michael Borcherds 2008-02-10
 	 */
-	final public GeoElement [] Mirror(String label, GeoPoint Q, GeoConic conic) {	
+	final public GeoElement [] Mirror(String label, GeoElement Q, GeoConic conic) {	
 		if (label == null)
-			label = transformedGeoLabel(Q);
+			label = transformedGeoLabel((GeoElement)Q);
 	
 		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);
 		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) Q);
+		ret.setVisualStyleForTransformations(Q);
 		GeoElement[] geos = { ret };
 		return geos;
 	}
@@ -5852,9 +5852,9 @@ public class Kernel {
 	/**
 	 * mirror geoMir at line g
 	 */
-	final public GeoElement [] Mirror(String label, Mirrorable geoMir, GeoLine g) {
+	final public GeoElement [] Mirror(String label, GeoElement geoMir, GeoLine g) {
 		if (label == null)
-			label = transformedGeoLabel(geoMir.toGeoElement());
+			label = transformedGeoLabel(geoMir);
 		
 		if (geoMir.toGeoElement().isLimitedPath()) {
 			// handle segments, rays and arcs separately

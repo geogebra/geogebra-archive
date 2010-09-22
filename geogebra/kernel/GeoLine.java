@@ -980,6 +980,13 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
 	public boolean isMatrixTransformable() { 
 		return true;
 	}
+	
+	public void toGeoConic(GeoConic con){
+		con.lines = new GeoLine[2];
+		con.lines[0] = this;
+		con.lines[1] = this;
+		con.type = GeoConic.CONIC_LINE;		
+	}
 
 
 }

@@ -164,9 +164,10 @@ implements EuclidianViewAlgo {
 			GeoElement macroGeo = (GeoElement) macroOutputAndReferencedGeos.get(i);
 			GeoElement algoGeo = (GeoElement) algoOutputAndReferencedGeos.get(i);
 			algoGeo.set(macroGeo);	
-			if(algoGeo instanceof GeoNumeric){
+			AlgoElement drawAlgo = macroGeo.getParentAlgorithm();
+			if(drawAlgo instanceof AlgoDrawInformation){
 				((GeoNumeric) algoGeo).setDrawable(true);
-				algoGeo.setDrawAlgorithm(macroGeo.getParentAlgorithm());
+				algoGeo.setDrawAlgorithm(((AlgoDrawInformation)drawAlgo).copy());
 			}
 //			System.out.println("RESULT from macro: " + macroGeo + "\n => " + algoGeo);			
 //			System.out.println("  macroGeo kernel: " + macroGeo.kernel + ", printFigures: " + macroGeo.kernel.getPrintFigures());
@@ -188,10 +189,13 @@ implements EuclidianViewAlgo {
 			GeoElement out = getOutput(i); 
 			out.setUseVisualDefaults(false);
 			out.setAdvancedVisualStyle(macroOutput[i]);	
-			if(out instanceof GeoNumeric){
+			
+			AlgoElement drawAlgo = macroOutput[i].getParentAlgorithm();
+			if(drawAlgo instanceof AlgoDrawInformation){
 				((GeoNumeric) out).setDrawable(true);
-				out.setDrawAlgorithm(macroOutput[i].getParentAlgorithm());
+				out.setDrawAlgorithm(((AlgoDrawInformation)drawAlgo).copy());
 			}
+			
 			out.setAlgoMacroOutput(true);
     	}
 	}
