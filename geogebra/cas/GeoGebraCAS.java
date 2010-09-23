@@ -226,8 +226,9 @@ public class GeoGebraCAS {
 			//Application.debug("caching result: "+result);		
 			getPolynomialCoeffsCache.put(getPolynomialCoeffsSB.toString(), result);
 
-			//Application.debug(sbPolyCoeffs+"");
-			//Application.debug(result+"");
+			// TODO: remove
+			Application.debug(sbPolyCoeffs+"");
+			Application.debug(result+"");
 			
 			// remove { } to get "b, 0, 3*a"
 			result = result.substring(1, result.length()-1);

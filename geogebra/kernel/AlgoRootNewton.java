@@ -96,6 +96,15 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
     	double root = Double.NaN;
     	double [] borders = getDomain(fun, start);
     	
+    	// check if midpoint is defined
+    	// if not take right border
+    	double eval = fun.evaluate(start);
+    	if (Double.isNaN(eval) || Double.isInfinite(eval)) {
+    		// shift left border slightly right
+    		borders[0] =  0.9 * borders[0] + 0.1 * borders[1];
+    		start = (borders[0] + borders[1])/2;
+    	}
+    	
     	// for Newton's method we need the derivative of our function fun
         RealRootDerivFunction derivFun = fun.getRealRootDerivFunction();        
         
@@ -110,7 +119,6 @@ public class AlgoRootNewton extends AlgoIntersectAbstract {
             	root = rootFinderNewton.solve(new RealRootDerivAdapter(derivFun), borders[0], borders[1], start);                      
             } 
             catch (Exception e) {  
-            	e.printStackTrace();
             	root = Double.NaN;
             }
         }

@@ -4016,8 +4016,20 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 		// first hit is a function
 		else if (a.isGeoFunctionable()) {
-			GeoFunction aFun = (GeoFunction) a;
-			if (b.isGeoFunctionable()) {
+			GeoFunction aFun = ((GeoFunctionable) a).getGeoFunction();
+		    if (b.isGeoLine()) {
+				// line and function
+				if (aFun.isPolynomialFunction(false))
+					return kernel.IntersectPolynomialLineSingle(null, aFun,
+							(GeoLine) b, xRW, yRW);
+				else {
+					GeoPoint startPoint = new GeoPoint(kernel.getConstruction());
+					startPoint.setCoords(xRW, yRW, 1.0);
+					return kernel.IntersectFunctionLine(null, aFun, (GeoLine) b,
+							startPoint);
+				}
+			} 
+		    else if (b.isGeoFunctionable()) {
 				GeoFunction bFun = ((GeoFunctionable) b).getGeoFunction();
 				if (aFun.isPolynomialFunction(false) && bFun.isPolynomialFunction(false))
 					return kernel.IntersectPolynomialsSingle(null, aFun, bFun,
@@ -4028,19 +4040,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					return kernel.IntersectFunctions(null, aFun, bFun,
 							startPoint);
 				}
-			} else if (b.isGeoLine()) {
-				// line and function
-				GeoFunction f = (GeoFunction) a;
-				if (f.isPolynomialFunction(false))
-					return kernel.IntersectPolynomialLineSingle(null, f,
-							(GeoLine) b, xRW, yRW);
-				else {
-					GeoPoint startPoint = new GeoPoint(kernel.getConstruction());
-					startPoint.setCoords(xRW, yRW, 1.0);
-					return kernel.IntersectFunctionLine(null, f, (GeoLine) b,
-							startPoint);
-				}
-			} else
+			} 		    
+		    else
 				return null;
 		} else
 			return null;

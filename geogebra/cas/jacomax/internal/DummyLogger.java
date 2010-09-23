@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DummyLogger {
 
-	final static boolean trace = true;
+	final static boolean trace = false;
 	
 	public void trace(String string) {
 		if (trace) Application.debug(string);

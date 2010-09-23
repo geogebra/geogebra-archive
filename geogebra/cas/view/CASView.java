@@ -143,6 +143,8 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	
 	
 	public void showSubstituteDialog(String prefix, String evalText, String postfix, int selRow) {
+		if (subDialog != null && subDialog.isShowing()) return;
+		
 		CASSubDialog d = new CASSubDialog(this, prefix, evalText, postfix, selRow);
 		d.setAlwaysOnTop(true);
 		d.setVisible(true);
