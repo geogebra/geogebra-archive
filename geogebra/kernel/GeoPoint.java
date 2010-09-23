@@ -445,7 +445,7 @@ GeoPointInterface, MatrixTransformable, ConicMirrorable {
 	
 	final public void updateCoords() {
 		// infinite point
-		if (kernel.isZero(z)) {
+		if (Kernel.isZero(z)) {
 			isInfinite = true;
 			isDefined = !(Double.isNaN(x) || Double.isNaN(y));
 			inhomX = Double.NaN;

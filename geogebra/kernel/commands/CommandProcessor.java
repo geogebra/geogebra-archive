@@ -2638,50 +2638,25 @@ class CmdTranslate extends CommandProcessor {
 
 			// translate object
 			if ((ok[0] = (arg[0] instanceof Translateable))
-					&& (ok[1] = (arg[1] .isGeoVector()))) {
+					&& (ok[1] = (arg[1].isGeoVector()||arg[1].isGeoPoint())))  {
 				Translateable p = (Translateable) arg[0];
-				GeoVector v = (GeoVector) arg[1];
-				//GeoElement geo = p.toGeoElement();
-
-				/*
-                // if we are not in a nested command (suppress labels)
-                // and no label is given
-                // we change the input object
-                if (!cons.isSuppressLabelsActive() &&  
-                	label == null && geo.isIndependent()) 
-                {
-                        p.translate(v);                     
-                        geo.updateRepaint();
-                        ret[0] = geo;
-                } else {
-                    ret = kernel.Translate(label, p, v);                 
-                }
-				 */
-
+				GeoVec3D v = (GeoVec3D) arg[1]; 
 				ret = kernel.Translate(label, p, v); 
 				return ret;
 			}
 
 			// translate polygon
 			else  if ((ok[0] = (arg[0] .isGeoPolygon()))
-					&& (ok[1] = (arg[1] .isGeoVector())))
-				return kernel.Translate(label, (GeoPolygon) arg[0], (GeoVector) arg[1]);
+					&& (ok[1] = (arg[1].isGeoVector()||arg[1].isGeoPoint())))
+				return kernel.Translate(label, (GeoPolygon) arg[0], (GeoVec3D) arg[1]);
 			else if (
 					(ok[0] = (arg[0] .isGeoVector()))
 					&& (ok[1] = (arg[1] .isGeoPoint()))) {
 				GeoVector v = (GeoVector) arg[0];
 				GeoPoint P = (GeoPoint) arg[1];
-				/* removed Michael Borcherds 2008-12-03
-				 * doesn't work as the XML etc isn't updated 
-
-                if (label == null) {                    
-                    v.setStartPoint(P);
-                    v.updateRepaint();
-                    ret[0] = v;                 
-                } else*/
-				{
-					ret[0] = kernel.Translate(label, v, P);
-				}
+				
+				ret[0] = kernel.Translate(label, v, P);
+				
 				return ret;
 			}
 
@@ -2733,24 +2708,7 @@ class CmdRotate extends CommandProcessor {
 			if ((ok[0] = true)
 					&& (ok[1] = (arg[1] .isNumberValue()))) {
 				NumberValue phi = (NumberValue) arg[1];
-				//GeoElement geo = p.toGeoElement();
-
-				/*
-                // if we are not in a nested command (suppress labels)
-                // and no label is given and the input object is independent
-                // we change the input object
-                if (!cons.isSuppressLabelsActive() &&                		
-                	label == null && geo.isIndependent()) 
-                {                	
-                        p.rotate(phi);
-                        geo.updateRepaint();
-                        ret[0] = geo;
-                } 
-                // otherwise we create a new object
-                else {                	
-                    ret = kernel.Rotate(label, p, phi);           
-                }
-				 */
+				
 
 				ret = kernel.Rotate(label, arg[0], phi);  
 				return ret;
@@ -2778,22 +2736,7 @@ class CmdRotate extends CommandProcessor {
 				
 				NumberValue phi = (NumberValue) arg[1];
 				GeoPoint Q = (GeoPoint) arg[2];
-				//GeoElement geo = p.toGeoElement();
-
-				/*
-                // if we are not in a nested command (suppress labels)
-                // and no label is given and the input object is independent
-                // we change the input object
-                if (!cons.isSuppressLabelsActive() &&  
-                	label == null && geo.isIndependent()) 
-                {
-                        p.rotate(phi, Q);
-                        geo.updateRepaint();
-                        ret[0] = geo;
-                } else {
-                    ret = kernel.Rotate(label, p, phi, Q);
-                }
-				 */
+				
 
 				ret = kernel.Rotate(label, arg[0], phi, Q);
 				return ret;
@@ -2837,7 +2780,31 @@ class CmdDilate extends CommandProcessor {
 		GeoElement[] arg;
 		GeoElement[] ret = new GeoElement[1];
 
-		switch (n) {          
+		switch (n) {
+		case 2 :
+			arg = resArgs(c);
+
+			// dilate point, line or conic
+			if ((ok[0] = (arg[0] instanceof Dilateable))
+					&& (ok[1] = (arg[1] .isNumberValue()))) {
+				Dilateable p = (Dilateable) arg[0];
+				NumberValue phi = (NumberValue) arg[1];
+				ret = kernel.Dilate(label, p, phi);
+				return ret;
+			}
+
+			// dilate polygon
+			else  if ((ok[0] = (arg[0] .isGeoPolygon()))
+					&& (ok[1] = (arg[1] .isNumberValue())))
+				return kernel.Dilate(label, (GeoPolygon) arg[0], (NumberValue) arg[1],null);
+			else {
+				if (!ok[0])
+					throw argErr(app, c.getName(), arg[0]);
+				else
+					throw argErr(app, c.getName(), arg[1]);
+			}
+
+		
 		case 3 :
 			arg = resArgs(c);
 
@@ -2848,23 +2815,6 @@ class CmdDilate extends CommandProcessor {
 				Dilateable p = (Dilateable) arg[0];
 				NumberValue phi = (NumberValue) arg[1];
 				GeoPoint Q = (GeoPoint) arg[2];
-				//GeoElement geo = p.toGeoElement();
-
-				/*
-                // if we are not in a nested command (suppress labels)
-                // and no label is given and the input object is independent
-                // we change the input object
-                if (!cons.isSuppressLabelsActive() &&  
-                	label == null && geo.isIndependent()) 
-                {
-                        p.dilate(phi, Q);
-                        geo.updateRepaint();
-                        ret[0] = geo;
-                } else {
-                    ret = kernel.Dilate(label, p, phi, Q);
-                }
-				 */
-
 				ret = kernel.Dilate(label, p, phi, Q);
 				return ret;
 			}
@@ -2907,11 +2857,11 @@ class CmdApplyMatrix extends CommandProcessor {
 
 			if (arg[0] .isGeoList()) {
 				
-				if (arg[1].isMatrixTransformable()) {
-				MatrixTransformable Q = (MatrixTransformable) arg[1];
+				if (arg[1].isMatrixTransformable() || arg[1].isGeoFunction()) {
+				//MatrixTransformable Q = (MatrixTransformable) arg[1];
 
 
-				ret = kernel.ApplyMatrix(label, Q, (GeoList)arg[0]);
+				ret = kernel.ApplyMatrix(label, arg[1], (GeoList)arg[0]);
 				return ret;
 				} else if (arg[1].isGeoPolygon()) {
 					
@@ -2928,7 +2878,7 @@ class CmdApplyMatrix extends CommandProcessor {
 					for (int i = 0 ; i < points.length ; i++) {
 						//newPoints[i] = new GeoPoint(cons);
 						String pointLabel = kernel.transformedGeoLabel(points[i]);
-						AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel, (MatrixTransformable)points[i], (GeoList)arg[0]);
+						AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel, points[i], (GeoList)arg[0]);
 						//newPoints[i].setParentAlgorithm(algo);
 						//cons.addToAlgorithmList(algo);
 						newPoints[i] = (GeoPoint)algo.getResult();
@@ -2956,13 +2906,13 @@ class CmdApplyMatrix extends CommandProcessor {
 			
 
 					String pointLabel1 = kernel.transformedGeoLabel(startPoint);
-					AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel1, (MatrixTransformable)startPoint, (GeoList)arg[0]);
+					AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel1, startPoint, (GeoList)arg[0]);
 
 					newPoints[0] = (GeoPoint)algo.getResult();
 					newPoints[0].setVisualStyleForTransformations(startPoint);
 				
 					String pointLabel2 = kernel.transformedGeoLabel(endPoint);
-					algo = new AlgoApplyMatrix(cons, pointLabel2, (MatrixTransformable)endPoint, (GeoList)arg[0]);
+					algo = new AlgoApplyMatrix(cons, pointLabel2, endPoint, (GeoList)arg[0]);
 
 					newPoints[1] = (GeoPoint)algo.getResult();
 					newPoints[1].setVisualStyleForTransformations(startPoint);
@@ -3003,11 +2953,11 @@ class CmdShear extends CommandProcessor {
 
 			if ((arg[0] instanceof GeoVec3D) && arg[1].isGeoNumeric()) {
 				
-				if (arg[2].isMatrixTransformable()) {
-				MatrixTransformable Q = (MatrixTransformable) arg[2];
+				if (arg[2].isMatrixTransformable()||arg[2].isGeoFunction()) {
+				
 
 
-				ret = kernel.Shear(label, Q, (GeoVec3D)arg[0],(GeoNumeric)arg[1]);
+				ret = kernel.Shear(label, arg[2], (GeoVec3D)arg[0],(GeoNumeric)arg[1]);
 				return ret;
 				} else if (arg[2].isGeoPolygon()) {
 					
@@ -3024,7 +2974,7 @@ class CmdShear extends CommandProcessor {
 					for (int i = 0 ; i < points.length ; i++) {
 						//newPoints[i] = new GeoPoint(cons);
 						String pointLabel = kernel.transformedGeoLabel(points[i]);
-						AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel, (MatrixTransformable)points[i], (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
+						AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel, points[i], (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
 						//newPoints[i].setParentAlgorithm(algo);
 						//cons.addToAlgorithmList(algo);
 						newPoints[i] = (GeoPoint)algo.getResult();
@@ -3038,7 +2988,7 @@ class CmdShear extends CommandProcessor {
 					//return ret2;
 					
 					
-				} else if (arg[1].isGeoSegment()) {
+				} else if (arg[2].isGeoSegment()) {
 					
 					GeoSegment seg = (GeoSegment)arg[1];
 					GeoPoint startPoint = seg.getStartPoint();
@@ -3052,13 +3002,13 @@ class CmdShear extends CommandProcessor {
 			
 
 					String pointLabel1 = kernel.transformedGeoLabel(startPoint);
-					AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel1, (MatrixTransformable)startPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
+					AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel1, startPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
 
 					newPoints[0] = (GeoPoint)algo.getResult();
 					newPoints[0].setVisualStyleForTransformations(startPoint);
 				
 					String pointLabel2 = kernel.transformedGeoLabel(endPoint);
-					algo = new AlgoShearOrStretch(cons, pointLabel2, (MatrixTransformable)endPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
+					algo = new AlgoShearOrStretch(cons, pointLabel2, endPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
 
 					newPoints[1] = (GeoPoint)algo.getResult();
 					newPoints[1].setVisualStyleForTransformations(startPoint);
@@ -3099,11 +3049,9 @@ class CmdStretch extends CommandProcessor {
 
 			if ((arg[0] instanceof GeoVec3D) && arg[1].isGeoNumeric()) {
 				
-				if (arg[2].isMatrixTransformable()) {
-				MatrixTransformable Q = (MatrixTransformable) arg[2];
-
-
-				ret = kernel.Stretch(label, Q, (GeoVec3D)arg[0],(GeoNumeric)arg[1]);
+				if (arg[2].isMatrixTransformable()||arg[2].isGeoFunction()) {
+				
+				ret = kernel.Stretch(label, arg[2], (GeoVec3D)arg[0],(GeoNumeric)arg[1]);
 				return ret;
 				} else if (arg[2].isGeoPolygon()) {
 					
@@ -3120,7 +3068,7 @@ class CmdStretch extends CommandProcessor {
 					for (int i = 0 ; i < points.length ; i++) {
 						//newPoints[i] = new GeoPoint(cons);
 						String pointLabel = kernel.transformedGeoLabel(points[i]);
-						AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel, (MatrixTransformable)points[i], (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
+						AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel, points[i], (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
 						//newPoints[i].setParentAlgorithm(algo);
 						//cons.addToAlgorithmList(algo);
 						newPoints[i] = (GeoPoint)algo.getResult();
@@ -3148,13 +3096,13 @@ class CmdStretch extends CommandProcessor {
 			
 
 					String pointLabel1 = kernel.transformedGeoLabel(startPoint);
-					AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel1, (MatrixTransformable)startPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
+					AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel1, startPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
 
 					newPoints[0] = (GeoPoint)algo.getResult();
 					newPoints[0].setVisualStyleForTransformations(startPoint);
 				
 					String pointLabel2 = kernel.transformedGeoLabel(endPoint);
-					algo = new AlgoShearOrStretch(cons, pointLabel2, (MatrixTransformable)endPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
+					algo = new AlgoShearOrStretch(cons, pointLabel2, endPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
 
 					newPoints[1] = (GeoPoint)algo.getResult();
 					newPoints[1].setVisualStyleForTransformations(startPoint);

@@ -5666,7 +5666,7 @@ public class Kernel {
 	/**
 	 * translate geoTrans by vector v
 	 */
-	final public GeoElement [] Translate(String label, Translateable geoTrans, GeoVector v) {
+	final public GeoElement [] Translate(String label, Translateable geoTrans, GeoVec3D v) {
 		
 		if (label == null)
 			label = transformedGeoLabel(geoTrans.toGeoElement());
@@ -5685,7 +5685,7 @@ public class Kernel {
 	 * translates vector v to point A. The resulting vector is equal
 	 * to v and has A as startPoint
 	 */
-	final public GeoVector Translate(String label, GeoVector v, GeoPoint A) {
+	final public GeoVector Translate(String label, GeoVec3D v, GeoPoint A) {
 		AlgoTranslateVector algo = new AlgoTranslateVector(cons, label, v, A);
 		GeoVector vec = algo.getTranslatedVector();
 		return vec;
@@ -5744,6 +5744,25 @@ public class Kernel {
 		GeoElement[] geos = { ret };
 		return geos;
 	}
+	
+	/**
+	 * dilate geoRot by r from origin
+	 */
+	final public GeoElement [] Dilate(String label, Dilateable geoRot, NumberValue r) {
+		if (label == null)
+			label = transformedGeoLabel(geoRot.toGeoElement());
+		
+		if (geoRot.toGeoElement().isLimitedPath())
+			// handle segments, rays and arcs separately
+			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_DILATE, label, null, null, null, r);
+		
+		// standard case
+		AlgoDilate algo = new AlgoDilate(cons, label, geoRot, r,null);
+		GeoElement ret = algo.getResult();
+		ret.setVisualStyleForTransformations((GeoElement) geoRot);
+		GeoElement[] geos = { ret };
+		return geos;
+	}
 
 	/**
 	 * mirror geoMir at point Q
@@ -5794,7 +5813,7 @@ public class Kernel {
 	 * apply matrix 
 	 * Michael Borcherds 2010-05-27
 	 */
-	final public GeoElement [] ApplyMatrix(String label, MatrixTransformable Q, GeoList matrix) {	
+	final public GeoElement [] ApplyMatrix(String label, GeoElement Q, GeoList matrix) {	
 		if (label == null)
 			label = transformedGeoLabel((GeoElement)Q);
 	
@@ -5809,7 +5828,7 @@ public class Kernel {
 	 * apply matrix 
 	 * Michael Borcherds 2010-05-27
 	 */
-	final public GeoElement [] Shear(String label, MatrixTransformable Q, GeoVec3D l, GeoNumeric num) {	
+	final public GeoElement [] Shear(String label, GeoElement Q, GeoVec3D l, GeoNumeric num) {	
 		if (label == null)
 			label = transformedGeoLabel((GeoElement)Q);
 	
@@ -5823,7 +5842,7 @@ public class Kernel {
 	 * apply matrix 
 	 * Michael Borcherds 2010-05-27
 	 */
-	final public GeoElement [] Stretch(String label, MatrixTransformable Q, GeoVec3D l, GeoNumeric num) {	
+	final public GeoElement [] Stretch(String label, GeoElement Q, GeoVec3D l, GeoNumeric num) {	
 		if (label == null)
 			label = transformedGeoLabel((GeoElement)Q);
 	
@@ -5880,11 +5899,11 @@ public class Kernel {
 	/**
 	 * translate poly by vector v
 	 */
-	final public GeoElement [] Translate(String label, GeoPolygon poly, GeoVector v) {
+	final public GeoElement [] Translate(String label, GeoPolygon poly, GeoVec3D v) {
 		return transformPoly(label, poly, translatePoints(poly.getPoints(), v));
 	}	
 	
-	GeoPoint [] translatePoints(GeoPoint [] points, GeoVector v) {		
+	GeoPoint [] translatePoints(GeoPoint [] points, GeoVec3D v) {		
 		// rotate all points
 		GeoPoint [] newPoints = new GeoPoint[points.length];
 		for (int i = 0; i < points.length; i++) {			
@@ -6018,7 +6037,7 @@ public class Kernel {
 		}
 	}
 	
-	GeoPoint [] transformPoints(int type, GeoPoint [] points, GeoPoint Q, GeoLine l, GeoVector vec, NumberValue n) {
+	GeoPoint [] transformPoints(int type, GeoPoint [] points, GeoPoint Q, GeoLine l, GeoVec3D vec, NumberValue n) {
 		GeoPoint [] result = null;
 		
 		switch (type) {
@@ -6060,7 +6079,7 @@ public class Kernel {
 	}	
 	
 	GeoLine getTransformedLine(int type, GeoLine line, GeoPoint Q, GeoLine l,
-			GeoVector vec, NumberValue n) {
+			GeoVec3D vec, NumberValue n) {
 
 		GeoLine ret = null;
 
@@ -6100,7 +6119,7 @@ public class Kernel {
 	}
 
 	GeoConic getTransformedConic(int type, GeoConic conic, GeoPoint Q,
-			GeoLine l, GeoVector vec, NumberValue n) {
+			GeoLine l, GeoVec3D vec, NumberValue n) {
 
 		GeoConic ret;
 

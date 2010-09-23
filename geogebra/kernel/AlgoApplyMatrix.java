@@ -46,7 +46,7 @@ public class AlgoApplyMatrix extends AlgoTransformation {
      * @param in
      * @param matrix
      */
-    public AlgoApplyMatrix(Construction cons, String label, MatrixTransformable in, GeoList matrix) {
+    public AlgoApplyMatrix(Construction cons, String label, GeoElement in, GeoList matrix) {
         super(cons);
         //this.in = in;      
         this.matrix = matrix;
@@ -54,8 +54,15 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 
               
         geoIn = in.toGeoElement();
-        out = (MatrixTransformable) geoIn.copy();               
-        geoOut = out.toGeoElement();                       
+        
+        if(geoIn instanceof GeoFunction){
+        	out = new GeoCurveCartesian(cons);
+        	geoOut = (GeoElement)out;
+        }
+        else{
+        	out = (MatrixTransformable) geoIn.copy();               
+        	geoOut = out.toGeoElement();
+        }                    
         setInputOutput();
               
         cons.registerEuclidianViewAlgo(this);
@@ -89,7 +96,10 @@ public class AlgoApplyMatrix extends AlgoTransformation {
    
 
     protected final void compute() {
-        geoOut.set(geoIn);
+    	if(geoIn.isGeoFunction()){
+    		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
+    	}
+    	else geoOut.set(geoIn); 
         MyList list = matrix.getMyList();
 		
 		if (list.getMatrixCols() != 2 || list.getMatrixRows() != 2) {

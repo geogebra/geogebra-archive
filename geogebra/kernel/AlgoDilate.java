@@ -36,13 +36,28 @@ public class AlgoDilate extends AlgoTransformation {
     private Dilateable B;    
     private NumberValue r; 
     private GeoElement Ageo, Bgeo, rgeo;
-    
+    /**
+     * Creates new labeled enlarge geo
+     * @param cons
+     * @param label
+     * @param A
+     * @param r
+     * @param S
+     */
     AlgoDilate(Construction cons, String label,
     		Dilateable A, NumberValue r, GeoPoint S) {
     	this(cons, A, r, S);
     	Bgeo.setLabel(label);    
     }
     
+  
+    /**
+     * Creates new unlabeled enlarge geo
+     * @param cons
+     * @param A
+     * @param r
+     * @param S
+     */
     AlgoDilate(Construction cons, 
     		Dilateable A, NumberValue r, GeoPoint S) {
         super(cons);        
@@ -61,8 +76,7 @@ public class AlgoDilate extends AlgoTransformation {
         cons.registerEuclidianViewAlgo(this);
         
         compute();
-        
-             
+           
     }
 
     public String getClassName() {
@@ -71,16 +85,20 @@ public class AlgoDilate extends AlgoTransformation {
 
     // for AlgoElement
     protected void setInputOutput() {    	
-        input = new GeoElement[3];
+        input = new GeoElement[S==null ? 2:3];
         input[0] = Ageo;
         input[1] = rgeo;
-        input[2] = S;
+        if(S != null)input[2] = S;
 
-        output = new GeoElement[1];
-        output[0] = Bgeo;
+        setOutputLength(1);
+        setOutput(0,Bgeo);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the resulting GeoElement
+     * @return the resulting GeoElement
+     */
     GeoElement getResult() {
         return Bgeo;
     }
@@ -88,17 +106,21 @@ public class AlgoDilate extends AlgoTransformation {
     // calc rotated point
     protected final void compute() {
         Bgeo.set(Ageo);
-        B.dilate(r, S);
+        if(S==null){
+        	//Application.debug(cons.getOrigin());
+        	B.dilate(r, cons.getOrigin());
+        }
+        else
+        	B.dilate(r, S);
     }
        
-    final public boolean wantsEuclidianViewUpdate() {
-        return Ageo.isGeoImage();
-    }
+   
 
     final public String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        return app.getPlain("ADilatedByFactorBfromC",Ageo.getLabel(),rgeo.getLabel(),S.getLabel());
+    	String sLabel = S == null ? cons.getOrigin().toValueString() : S.getLabel();
+    	return app.getPlain("ADilatedByFactorBfromC",Ageo.getLabel(),rgeo.getLabel(),sLabel);
 
     }
 }

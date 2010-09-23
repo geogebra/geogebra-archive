@@ -49,15 +49,21 @@ public class AlgoShearOrStretch extends AlgoTransformation {
      * @param num
      * @param shear shear if true, stretch otherwise
      */
-    public AlgoShearOrStretch(Construction cons, String label, MatrixTransformable in, GeoVec3D l,GeoNumeric num,boolean shear) {
+    public AlgoShearOrStretch(Construction cons, String label, GeoElement in, GeoVec3D l,GeoNumeric num,boolean shear) {
         super(cons);
         this.shear = shear;      
         this.l = l;
         this.num = num;
                   
         geoIn = in.toGeoElement();
-        out = (MatrixTransformable) geoIn.copy();               
-        geoOut = out.toGeoElement();                       
+        if(geoIn instanceof GeoFunction){
+        	out = new GeoCurveCartesian(cons);
+        	geoOut = (GeoElement)out;
+        }
+        else{
+        	out = (MatrixTransformable) geoIn.copy();               
+        	geoOut = out.toGeoElement();
+        }
         setInputOutput();
               
         cons.registerEuclidianViewAlgo(this);
@@ -93,7 +99,10 @@ public class AlgoShearOrStretch extends AlgoTransformation {
    
 
     protected final void compute() {
-        geoOut.set(geoIn);
+    	if(geoIn.isGeoFunction()){
+    		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
+    	}
+    	else geoOut.set(geoIn); 
         
         //matrix.add
         Translateable tranOut = (Translateable) out;

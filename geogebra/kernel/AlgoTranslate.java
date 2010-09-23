@@ -37,14 +37,14 @@ public class AlgoTranslate extends AlgoTransformation {
 	private static final long serialVersionUID = 1L;
 	private Translateable out;   
     private GeoElement inGeo, outGeo;
-    private GeoVector v;  // input      
+    private GeoVec3D v;  // input      
     
-    AlgoTranslate(Construction cons, String label, Translateable in, GeoVector v) {
+    AlgoTranslate(Construction cons, String label, Translateable in, GeoVec3D v) {
     	this(cons, in, v);
     	outGeo.setLabel(label);
     }
             
-    AlgoTranslate(Construction cons, Translateable in, GeoVector v) {
+    AlgoTranslate(Construction cons, Translateable in, GeoVec3D v) {
         super(cons);        
         this.v = v;
         

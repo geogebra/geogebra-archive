@@ -424,7 +424,7 @@ GeoSegmentInterface {
 	 * creates new transformed segment
 	 */
     public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, 
-			GeoLine l, GeoVector vec, NumberValue n) {	
+			GeoLine l, GeoVec3D vec, NumberValue n) {	
 
 		if (keepTypeOnGeometricTransform) {			
 			// mirror endpoints

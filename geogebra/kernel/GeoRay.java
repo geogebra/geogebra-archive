@@ -189,7 +189,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
      */
 
 	public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, 
-													GeoLine l, GeoVector vec, NumberValue n) {	
+													GeoLine l, GeoVec3D vec, NumberValue n) {	
 		AlgoElement algoParent = keepTypeOnGeometricTransform ?
 				getParentAlgorithm() : null;				
 		

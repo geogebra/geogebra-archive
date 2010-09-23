@@ -32,10 +32,10 @@ public class AlgoTranslateVector extends AlgoElement {
 	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint A;   // input
-    private GeoVector v;  // input
+    private GeoVec3D v;  // input
     private GeoVector w;     // output        
             
-    AlgoTranslateVector(Construction cons, String label,  GeoVector v, GeoPoint A) {
+    AlgoTranslateVector(Construction cons, String label,  GeoVec3D v, GeoPoint A) {
         super(cons);
         this.A = A;        
         this.v = v;
@@ -63,13 +63,13 @@ public class AlgoTranslateVector extends AlgoElement {
         input[0] = v;        
         input[1] = A;        
         
-        output = new GeoElement[1];        
-        output[0] = w;        
+        setOutputLength(1);        
+        setOutput(0,w);        
         setDependencies(); // done by AlgoElement
     }           
         
     GeoPoint getPoint() { return A; }
-    GeoVector getVector() { return v; }
+    GeoVec3D getVector() { return v; }
     GeoVector getTranslatedVector() { return w; }
         
     // simply copy v

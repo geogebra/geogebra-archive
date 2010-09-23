@@ -624,7 +624,7 @@ implements LimitedPath, NumberValue, LineProperties {
 
 	
 	public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, 
-			GeoLine l, GeoVector vec, NumberValue n) {	
+			GeoLine l, GeoVec3D vec, NumberValue n) {	
 
 		AlgoElement algoParent = null;		
 		if (keepTypeOnGeometricTransform) {

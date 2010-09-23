@@ -50,8 +50,7 @@ public class Construction {
 	/** Added for Intergeo File Format (Yves Kreis) 
 	 * writes the <display> part with the <display> tag */
 	public static final int DISPLAY = 1;
- 
-
+	
 	private String title, author, date;
 	// text for dynamic worksheets: 0 .. above, 1 .. below
 	private String[] worksheetText = new String[2];
@@ -69,7 +68,7 @@ public class Construction {
 
 	// set with all labeled GeoElements in ceList order
 	private TreeSet<GeoElement> geoSet; //generic Object replaced by GeoElement (Zbynek Konecny, 2010-06-14)
-
+	private GeoPoint origin;
 	// set with all labeled GeoElements in alphabetical order
 	private TreeSet<GeoElement> geoSetLabelOrder;
 	
@@ -124,6 +123,17 @@ public class Construction {
 		this(k, null);
 	}
 
+	/**
+	 * Returns the point (0,0)
+	 * @return point (0,0)
+	 */
+	public final GeoPoint getOrigin(){
+		if(origin==null){
+			origin=new GeoPoint(this);
+			origin.setCoords(0.0, 0.0, 1.0);
+		}
+		return origin;
+	}
 	/**
 	 * Creates a new Construction.
 	 * @param k Kernel
