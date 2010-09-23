@@ -227,13 +227,16 @@ public class GeoGebraPreferences {
     		return;
     	}
     	
-    	// get the GeoGebra version with which the preferences were saved
-    	// (the version number is stored since version 3.9.41)
-    	String oldVersion = ggbPrefs.get(VERSION, null);
-    	
-    	// current factory defaults possibly available?
-    	if(oldVersion != null && oldVersion.equals(GeoGebra.VERSION_STRING)) {
-    		factoryDefaultXml  = ggbPrefs.get(XML_FACTORY_DEFAULT, null);
+    	// when applet unsigned this may be null
+    	if(ggbPrefs != null) {
+	    	// get the GeoGebra version with which the preferences were saved
+	    	// (the version number is stored since version 3.9.41)
+	    	String oldVersion = ggbPrefs.get(VERSION, null);
+	    	
+	    	// current factory defaults possibly available?
+	    	if(oldVersion != null && oldVersion.equals(GeoGebra.VERSION_STRING)) {
+	    		factoryDefaultXml  = ggbPrefs.get(XML_FACTORY_DEFAULT, null);
+	    	}
     	}
     	
     	// if this is an old version or the factory defaults were not saved in the 
