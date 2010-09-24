@@ -18,10 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
-
-
-
 /**
  *
  * @author  Markus
@@ -103,6 +99,10 @@ public class AlgoMirror extends AlgoTransformation {
         	out = new GeoConic(cons);
         	geoOut = (GeoElement)out;
         }
+        else if (mirror instanceof GeoConic && geoIn instanceof GeoConic){
+        	out = new GeoCurveCartesian(cons);
+        	geoOut = (GeoElement)out;
+        }
         else if(geoIn instanceof Mirrorable){
         	out = (Mirrorable) geoIn.copy();               
         	geoOut = out.toGeoElement();
@@ -145,10 +145,12 @@ public class AlgoMirror extends AlgoTransformation {
     protected final void compute() {
     	if(mirror instanceof GeoConic && geoIn instanceof GeoLine){
     		((GeoLine)geoIn).toGeoConic((GeoConic)geoOut);    		
+    	}else if(mirror instanceof GeoConic && geoIn instanceof GeoConic){
+    		((GeoConic)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);    		
     	}
+    		
     	else if(geoIn instanceof GeoFunction){
     		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
-    		//return;
     	}else
     	    geoOut.set(geoIn);
         

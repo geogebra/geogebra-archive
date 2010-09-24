@@ -3159,9 +3159,7 @@ class CmdMirror extends CommandProcessor {
 			{  // mirror point in circle Michael Borcherds 2008-02-10
 				GeoConic conic1 = (GeoConic) arg[1];
 
-				boolean isValidConic = arg[0].isGeoConic() ? ((GeoConic) arg[0]).getType()==GeoConic.CONIC_CIRCLE||
-				((GeoConic) arg[0]).isDegenerate():false;
-				if (conic1.getType()==GeoConic.CONIC_CIRCLE && isValidConic || arg[0].isGeoPoint() 
+				if (conic1.getType()==GeoConic.CONIC_CIRCLE && arg[0].isGeoConic() || arg[0].isGeoPoint() 
 						|| arg[0] instanceof GeoCurveCartesian || arg[0] instanceof GeoLine || arg[0] instanceof GeoFunction )
 				{
 					ret = kernel.Mirror(label,arg[0], conic1);

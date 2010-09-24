@@ -40,33 +40,40 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 
 	private static final long serialVersionUID = 1L;
 	
+	/** inner function representation */
 	protected Function fun;		
+	/** true if this function should be considered defined */
 	protected boolean isDefined = true;
-	public boolean trace, spreadsheetTrace;	
+	private boolean trace;	
 	
 	// if the function includes a division by var, e.g. 1/x, 1/(2+x)
     private boolean includesDivisionByVar = false;
     
-    //  function may be limited to interval [a, b] 
-    protected boolean interval = false; 
-    protected double intervalMin, intervalMax; // interval borders 
+    /**  function may be limited to interval [a, b] */ 
+    protected boolean interval = false;
+    /** lower interval bound */
+    protected double intervalMin;
+    /** upper interval bound */
+    protected double intervalMax; 
     
     // parent conditional function
    // private GeoFunctionConditional parentCondFun = null;
     
 	
-//	Victor Franco Espino 25-04-2007
-	/*
-	 * Parameter in dialog box for adjust color of curvature
+	/**
+	 * Creates new function
+	 * @param c construction
 	 */
-	double CURVATURE_COLOR = 15;//optimal value 
-
-    //Victor Franco Espino 25-04-2007
-
 	public GeoFunction(Construction c) {
 		super(c);
 	}
 
+	/**
+	 * Creates new function
+	 * @param c construction
+	 * @param label label for function
+	 * @param f function
+	 */
 	public GeoFunction(Construction c, String label, Function f) {
 		super(c);
 		fun = f;		
@@ -85,7 +92,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	return GEO_CLASS_FUNCTION;
     }
 
-	/** copy constructor */
+	/** copy constructor 
+	 * @param f Function to be copied */
 	public GeoFunction(GeoFunction f) {
 		super(f.cons);
 		set(f);
@@ -119,6 +127,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 	
 
+	/**
+	 * Sets the inner function
+	 * @param f function
+	 */
 	public void setFunction(Function f) {
 		fun = f;
 	}
@@ -127,7 +139,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return fun;
 	}	
 	
-   final public boolean setInterval(double a, double b) {
+	/**
+	 * Sets interval for the function
+	 * @param a lower bound
+	 * @param b upper bound
+	 * @return true if the resulting interval is non-empty
+	 */
+	final public boolean setInterval(double a, double b) {
     	if (a <= b) {         
             interval = true;
             this.intervalMin = a; 
@@ -139,6 +157,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	return interval;  
     }		
 	
+   /**
+    * Returns function expression
+    * @return function expression
+    */
 	final public ExpressionNode getFunctionExpression() {
 		if (fun == null)
 			return null;
@@ -149,6 +171,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 /**
      * Replaces geo and all its dependent geos in this function's
      * expression by copies of their values.
+     * @param geo geo to be replaced 
      */
     public void replaceChildrenByValues(GeoElement geo) {     	
     	if (fun != null) {
@@ -160,8 +183,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * Returns the corresponding Function for the given x-value.
 	 * This is important for conditional functions where we have
 	 * two differen Function objects.
-	 * @param startValue
-	 * @return
+	 * @param x x-value
+	 * @return coresponding function
 	 */
 	public Function getFunction(double x) {
 		return fun;
@@ -169,8 +192,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	
 	/**
 	 * Set this function to the n-th derivative of f
-	 * @param f
-	 * @param order
+	 * @param fd function to be differenced
+	 * @param n order of derivative
 	 */
 	public void setDerivative(CasEvaluableFunction fd, int n) {
 		GeoFunction f = (GeoFunction) fd;
@@ -215,22 +238,31 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	
 	/**
 	 * Returns this function's value at position x.
-	 * @param x
+	 * @param vals array of length 1 containing x
 	 * @return f(val[0]) or f(val[1])
 	 */
 	public double evaluate(double[] vals) {
 		
 		return evaluate(vals[0]);
 	}
-	
+	/**
+	 * If restricted to interval, returns its minimum
+	 * @return interval minimum
+	 */
 	public final double getIntervalMin() {
 		return intervalMin;
 	}
-
+	/**
+	 * If restricted to interval, returns its maximum
+	 * @return interval maximum
+	 */
 	public final double getIntervalMax() {
 		return intervalMax;
 	}
-	
+	/**
+	 * Iff restricted to interval, returns true
+	 * @return true iff restricted to interval
+	 */
 	public final boolean hasInterval() {
 		return interval;
 	}
@@ -269,26 +301,23 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return fun != null && !isBooleanFunction();
 	}
 	
+	/**
+	 * Shifts the function by vx to right and by vy up
+	 * @param vx horizontal shift
+	 * @param vy vertical shift
+	 */
 	public void translate(double vx, double vy) {
 		fun.translate(vx, vy);
 	}
 
-	public void setMode(int mode) {
-		// dummy
-	}
-
-	public int getMode() {
-		// dummy
-		return -1;
-	}
 	
 	/**
 	 * Returns true if this function is a polynomial.
-	 * 
-	 * @param forRootFinding: set to true if you want to allow
+	 * @return true if this function is a polynomial.
+	 * @param forRootFinding set to true if you want to allow
 	 * functions that can be factored into polynomial factors
 	 * for root finding (e.g. sqrt(x) could be replaced by x)
-	 * @param symbolic: function's symbolic expression must be a polynomial,
+	 * @param symbolic function's symbolic expression must be a polynomial,
 	 * e.g. x^2 is ok but not x^a
 	 */
 	public boolean isPolynomialFunction(boolean forRootFinding, boolean symbolic) {		
@@ -303,6 +332,14 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 						fun.getPolynomialFactors(forRootFinding))
 					!= null;
 	}
+
+	/**
+	 * Returns true if this function is a polynomial.
+	 * @return true if this function is a polynomial.
+	 * @param forRootFinding set to true if you want to allow
+	 * functions that can be factored into polynomial factors
+	 * for root finding (e.g. sqrt(x) could be replaced by x)
+	 */
 	
 	public boolean isPolynomialFunction(boolean forRootFinding) {
 		return isPolynomialFunction(forRootFinding, false);
@@ -311,6 +348,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	/**
      * Returns whether this function includes a division by variable,
      * e.g. f(x) = 1/x, 1/(2+x), sin(3/x), ...
+     * @return true iff this function includes a division by variable
      */
     final public boolean includesDivisionByVar() {
     	if (includesDivisionByVarFun != fun) {
@@ -326,6 +364,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return isDefined && fun != null;
 	}
 
+	/**
+	 * Changes the defined state
+	 * @param defined true iff the function should be considered defined
+	 */
 	public void setDefined(boolean defined) {
 		isDefined = defined;
 	}
@@ -354,6 +396,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
+	/** StringBuilder for temporary string manipulation */
 	protected StringBuilder sbToString = new StringBuilder(80);
 	
 	public String toValueString() {	
@@ -592,6 +635,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return isGeoFunction();
 	}
 	
+	/**
+	 * Returns true iff the function is boolean
+	 * @return true iff the function is boolean
+	 */
 	public boolean isBooleanFunction() {
 		if (fun != null)
 			return fun.isBooleanFunction();
@@ -686,6 +733,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		
 	}
 	
+	/**
+	 * Sums two functions and stores the result to another 
+	 * @param resultFun resulting function
+	 * @param fun1 first addend
+	 * @param fun2 second addend
+	 * @return resultFun
+	 */
 	public static GeoFunction add(GeoFunction resultFun, GeoFunction fun1, GeoFunction fun2) {
 		
 		Kernel kernel = fun1.getKernel();
@@ -708,6 +762,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
        	return resultFun;
 	}
 	
+	/**
+	 * Subtracts two functions and stores the result to another 
+	 * @param resultFun resulting function
+	 * @param fun1 minuend
+	 * @param fun2 subtrahend
+	 * @return resultFun
+	 */
 	public static GeoFunction subtract(GeoFunction resultFun, GeoFunction fun1, GeoFunction fun2) {
 		
 		Kernel kernel = fun1.getKernel();
@@ -735,6 +796,11 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * to make the result a linear combination of existing functions; fit(x)=a*f(x)+b*g(x)+c*h(x)+..
 	 * @author Hans-Petter Ulven
 	 * @version 2010-02-22
+	 * @param resultFun Resulting function
+	 * @param number number
+	 * @param fun function
+	 * @return resultFun
+	 * 
 	 */
 	public static GeoFunction mult(GeoFunction resultFun, double number, GeoFunction fun) {
 		
@@ -762,14 +828,23 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return false;
 	}
 	
-	/* over-ridden in GeoFunctionConditional
-	 * 
+	/**
+	 * Returns true iff x is in the interval
+	 * over-ridden in GeoFunctionConditional
+	 * @param x
+	 * @return true iff x is in the interval
 	 */
 	public boolean evaluateCondition(double x) {
 		if (!interval) return true;
 		return x > intervalMin && x < intervalMax;
 	}
 	
+	/**
+	 * Returns the limit
+	 * @param x point to evaluate the limit
+	 * @param direction 1 for limit above, -1 for limit below, standard limit otherwise
+	 * @return the limit
+	 */
 	public double getLimit(double x, int direction) {
    	String functionIn = fun.getExpression().getCASstring(kernel.getCurrentCAS(), true);
 	    
@@ -802,36 +877,53 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 	}
 
-	/* over-ridden in GeoFunctionConditional
-	 * 
+	/**
+	 * Adds vertical asymptotes to the StringBuilder
+	 *  over-ridden in GeoFunctionConditional
+	 * @param f function whose asymptotes we are looking for
+	 * @param verticalSB StringBuilder for the result
+	 * @param reverse if true, we reverse the parent conditional function condition
 	 */
 	public void getVerticalAsymptotes(GeoFunction f, StringBuilder verticalSB, boolean reverse) {
 		getVerticalAsymptotesStatic(this, f, verticalSB, reverse);
 	}
 	
-	/* over-ridden in GeoFunctionConditional
-	 * 
+	/**
+	 * Adds horizontal positive asymptotes to the StringBuilder
+	 *  over-ridden in GeoFunctionConditional
+	 * @param f function whose asymptotes we are looking for
+	 * @param SB StringBuilder for the result
 	 */
 	public void getHorizontalPositiveAsymptote(GeoFunction f, StringBuilder SB) {
 		getHorizontalAsymptoteStatic(this, f, SB, true);		
 	}
 	
-	/* over-ridden in GeoFunctionConditional
-	 * 
+	/**
+	 * Adds horizontal negative asymptotes to the StringBuilder
+	 *  over-ridden in GeoFunctionConditional
+	 * @param f function whose asymptotes we are looking for
+	 * @param SB StringBuilder for the result
 	 */
 	public void getHorizontalNegativeAsymptote(GeoFunction f, StringBuilder SB) {
 		getHorizontalAsymptoteStatic(this, f, SB, false);		
 	}
 	
-	/* over-ridden in GeoFunctionConditional
-	 * 
+	/**
+	 * Adds diagonal positive asymptotes to the StringBuilder
+	 *  over-ridden in GeoFunctionConditional
+	 * @param f function whose asymptotes we are looking for
+	 * @param SB StringBuilder for the result
 	 */
+	
 	public void getDiagonalPositiveAsymptote(GeoFunction f, StringBuilder SB) {
 		getDiagonalAsymptoteStatic(this, f, SB, true);		
 	}
 	
-	/* over-ridden in GeoFunctionConditional
-	 * 
+	/**
+	 * Adds diagonal negative asymptotes to the StringBuilder
+	 *  over-ridden in GeoFunctionConditional
+	 * @param f function whose asymptotes we are looking for
+	 * @param SB StringBuilder for the result
 	 */
 	public void getDiagonalNegativeAsymptote(GeoFunction f, StringBuilder SB) {
 		getDiagonalAsymptoteStatic(this, f, SB, false);		
@@ -839,6 +931,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	
 	private static StringBuilder sb;
 
+	/**
+     * Adds diagonal asymptotes to the string builder SB
+     * @param f function whose asymptotes we are looking for
+     * @param parentFunction parent function (in case of conditional functions)
+     * @param SB StringBuilder for the result
+     * @param positiveInfinity if true, we look for limit at positive infinity, for false, we use negative infinity
+     */
     protected void getDiagonalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
     	String functionIn = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
 	    
@@ -905,6 +1004,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 
     }
     
+    /**
+     * Adds horizontal asymptotes to the string builder SB
+     * @param f function whose asymptotes we are looking for
+     * @param parentFunction parent function (in case of conditional functions)
+     * @param SB StringBuilder for the result
+     * @param positiveInfinity if true, we look for limit at positive infinity, for false, we use negative infinity
+     */
     protected void getHorizontalAsymptoteStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder SB, boolean positiveInfinity) {
     	String functionStr = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
     	if (sb == null) sb = new StringBuilder();
@@ -940,6 +1046,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 
     }
     
+    /**
+     * Adds vertical asymptotes to the string builder VerticalSB
+     * @param f function whose asymptotes we are looking for
+     * @param parentFunction parent function (in case of conditional functions)
+     * @param verticalSB StringBuilder for the result
+     * @param reverseCondition if true, we reverse the parent conditional function condition
+     */
     protected void getVerticalAsymptotesStatic(GeoFunction f, GeoFunction parentFunction, StringBuilder verticalSB, boolean reverseCondition) {
     	
     	String functionStr = f.getFunction().getExpression().getCASstring(kernel.getCurrentCAS(), true);
@@ -1072,7 +1185,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		 curve.setFunctionY((Function)fun.deepCopy(kernel));
 		 varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
 		 curve.setFunctionX(varFun);
-		 curve.setInterval(-100, 100);
+		 double min = app.getEuclidianView().getXminForFunctions();
+		 double max = app.getEuclidianView().getXminForFunctions();
+		 curve.setInterval(min, max);
 	 }
 
 	public void dilate(NumberValue r, GeoPoint S) {
@@ -1093,7 +1208,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				new ExpressionNode(kernel,oldY,ExpressionNode.MULTIPLY,r),
 				ExpressionNode.PLUS,
 				new MyDouble(kernel,-b*rd+b)));
-		// TODO Auto-generated method stub
 		
 	}
 

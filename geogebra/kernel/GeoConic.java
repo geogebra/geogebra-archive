@@ -20,14 +20,18 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.MyList;
+import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
+/**
+ * Conics in 2D
+ */
 public class GeoConic extends GeoConicND
 implements Path, Region, Traceable, ConicMirrorable,
 Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTransformable
@@ -51,16 +55,25 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	// enable negative sign of first coefficient in implicit equations
 	private static boolean KEEP_LEADING_SIGN = false;
 
-	// types    
+	/** single point type*/    
 	public static final int CONIC_SINGLE_POINT = QUADRIC_SINGLE_POINT;
+	/** intersecting lines type*/
 	public static final int CONIC_INTERSECTING_LINES = QUADRIC_INTERSECTING_LINES;
+	/** ellipse type*/
 	public static final int CONIC_ELLIPSE = QUADRIC_ELLIPSOID;
+	/** circle type*/
 	public static final int CONIC_CIRCLE = QUADRIC_SPHERE;
+	/** hyperbola type*/
 	public static final int CONIC_HYPERBOLA = QUADRIC_HYPERBOLOID;
+	/** empty conic type*/
 	public static final int CONIC_EMPTY = QUADRIC_EMPTY;
+	/** double line type*/
 	public static final int CONIC_DOUBLE_LINE = QUADRIC_DOUBLE_LINE;
+	/** parallel lines type */
 	public static final int CONIC_PARALLEL_LINES = QUADRIC_PARALLEL_LINES;
+	/** parabola type */
 	public static final int CONIC_PARABOLA = QUADRIC_PARABOLOID;
+	/** line type */
 	public static final int CONIC_LINE = QUADRIC_LINE;
 
 	/* 
@@ -72,15 +85,20 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	//int type = -1; // of conic
 	private double maxCoeffAbs; // maximum absolute value of coeffs in matrix A[]
 	private AffineTransform transform, oldTransform;
+	/** true if should be traced */
 	public boolean trace;	
 
-	// (eigenvecX, eigenvecY) are coords of currently calculated first eigenvector
-	// (eigenvecX, eigenvecY) is not a unit vector
-	double eigenvecX, eigenvecY;
+	/**
+	 * (eigenvecX, eigenvecY) are coords of currently calculated first eigenvector
+	 * (eigenvecX, eigenvecY) is not a unit vector
+	 */
+	double eigenvecX;
+	/** @see #eigenvecX	 */
+	double eigenvecY;
 
 	/** translation vector (midpoint, vertex) */    
 	GeoVec2D b = new GeoVec2D(kernel);
-	//public double linearEccentricity, eccentricity, p;
+	/** lines of which this conic consists in case it's degenerate */
 	GeoLine[] lines;
 	private GeoPoint singlePoint;
 	private GeoPoint [] startPoints;
@@ -98,7 +116,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	
 
-	
+	/**
+	 * Creates a conic
+	 * @param c construction
+	 */
 	public GeoConic(Construction c) {
 		super(c,2);	
 		eqnSolver = c.getEquationSolver();
@@ -107,7 +128,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 
 	
-	/** Creates new GeoConic with Coordinate System for 3D */
+	/** 
+	 * Creates new GeoConic with Coordinate System for 3D 
+	 * @param c construction
+	 * @param label label
+	 * @param coeffs coefficients
+	 */
 	protected GeoConic(Construction c, String label, double[] coeffs) {
 
 		this(c);
@@ -116,8 +142,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}	
 	
 	
-	
-
+	/**
+	 * Creates copy of conic in construction of conic
+	 * @param conic conic to be copied
+	 */
 	public GeoConic(GeoConic conic) {
 		this(conic.cons);
 		set(conic);
@@ -273,6 +301,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		super.update();        				
 	}
 
+	/**
+	 * Sets equation mode to specific, implicit or explicit
+	 * @param mode equation mode (one of EQUATION_* constants)
+	 */
 	final public void setToStringMode(int mode) {
 		switch (mode) {
 			case EQUATION_SPECIFIC :				
@@ -288,44 +320,42 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		}						
 	}
 
+	/**
+	 * Returns equation mode  (specific, implicit or explicit)
+	 * @return equation mode (one of EQUATION_* constants)
+	 */
 	final public int getToStringMode() {
 		return toStringMode;
 	}
-
 	
-
-	
-	/**
-	 * returns true if this conic is a circle or an ellipse
-	 * @return
-	 *
-	public boolean isElliptic() {
-		return (type == CONIC_CIRCLE || type == CONIC_ELLIPSE);
-	}*/
 
 	/**
 	 * returns true if this conic is a circle 
 	 * Michael Borcherds 2008-03-23
-	 * @return
+	 * @return true iff  this conic is circle
 	 */
 	public boolean isCircle() {
 		return (type == CONIC_CIRCLE);
 	}
 
+	/** Changes equation mode to Specific */
 	final public void setToSpecific() {
 		setToStringMode(EQUATION_SPECIFIC);
 	}
 
+	/** Changes equation mode to Implicit */
 	final public void setToImplicit() {
 		setToStringMode(EQUATION_IMPLICIT);
 	}
 	
+	/** Changes equation mode to Explicit */
 	final public void setToExplicit() {
 		setToStringMode(EQUATION_EXPLICIT);
 	}
 
 	/**
-	 * Returns whether specific equation representation is possible.     
+	 * Returns whether specific equation representation is possible.    
+	 * @return true iff specific equation representation is possible. 
 	 */
 	final public boolean isSpecificPossible() {
 		switch (type) {
@@ -353,6 +383,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	/**
 	 * Returns wheter explicit parabola equation representation (y = a x\u00b2 + b x + c) 
 	 * is possible. 
+	 * @return true iff explicit equation is possible
 	 */
 	final public boolean isExplicitPossible() {
 		if (type == CONIC_LINE) return false;
@@ -414,7 +445,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		return true;
 	}
 
-	
+	/**
+	 * Returns whether this conic consists of lines
+	 * @return true for line conics
+	 */
 	final public boolean isLineConic() {
 		switch (type) {
 			case CONIC_DOUBLE_LINE :
@@ -428,6 +462,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		}
 	}
 
+	/**
+	 * Returns whether this conic is degenerate
+	 * @return true iff degenerate
+	 */
 	final public boolean isDegenerate() {
 		switch (type) {
 			case CONIC_CIRCLE :
@@ -441,6 +479,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		}
 	}
 
+	/**
+	 *  sets conic's matrix from coefficients of equation
+	 *  from array
+	 *  @param coeffs Array of coefficients
+	 */  
 	final public void setCoeffs(double[] coeffs) {
 		setCoeffs(
 			coeffs[0],
@@ -451,9 +494,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			coeffs[5]);
 	}
 
-	/*
+	/**
 	 *  sets conic's matrix from coefficients of equation
 	 *  a x\u00b2 + b xy + c y\u00b2 + d x + e y + f = 0
+	 * @param a 
+	 * @param b 
+	 * @param c 
+	 * @param d 
+	 * @param e 
+	 * @param f 
 	 */
 	final public void setCoeffs(
 		double a,
@@ -472,76 +521,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		classifyConic();
 	}
 
-	/**
-	 * Changes the matrix coeffs so that the absolute maximum of A[0], ..., A[6] is
-	 * between 10 and 100. Writes the results into out[].
-	 *
-	final private void avoidHugePrintCoeffs(double [] out) {
-		//	avoid huge coefficients
-		// find absolute maximum
-		double max = Double.NEGATIVE_INFINITY;
-		for (int i = 0; i < 6; i++) {
-			double abs = Math.abs(A[i]);
-			if (abs > max)
-				max = abs;
-		}
-		
-		if (1.0 <= max && max < 100.0) {
-			coeffs[0] = A[0]; // x\u00b2
-			coeffs[2] = A[1]; // y\u00b2
-			coeffs[5] = A[2]; // constant
-			coeffs[1] = 2 * A[3]; // xy        
-			coeffs[3] = 2 * A[4]; // x
-			coeffs[4] = 2 * A[5]; // y  
-			return;
-		}
 	
-		// find factor to get 10 <= max < 100
-		double divisor = 1E-2;
-		while (true) {
-			if (divisor > max)
-				break;
-			else
-				divisor *= 10;
-		}
-		double factor = 100.0 / divisor;
-		coeffs[0] = A[0] * factor; // x\u00b2
-		coeffs[2] = A[1] * factor; // y\u00b2
-		coeffs[5] = A[2] * factor; // constant
-		coeffs[1] = 2 * A[3] * factor; // xy        
-		coeffs[3] = 2 * A[4] * factor; // x
-		coeffs[4] = 2 * A[5] * factor; // y
-	}*/
 
 	private double[] coeffs = new double[6];	
 	
-	/**
-	 * returns equation of conic.
-	 * in implicit mode: a x\u00b2 + b xy + c y\u00b2 + d x + e y + f = 0. 
-	 * in specific mode: y\u00b2 = ...  , (x - m)\u00b2 + (y - n)\u00b2 = r\u00b2, ...
-	 */
-	/*
-	public String toString() {	
-		StringBuilder sbToString = getSbToString();
-		sbToString.setLength(0);
-		sbToString.append(label);
-		sbToString.append(": ");
-		sbToString.append(buildValueString()); 
-		return sbToString.toString();
-	}
-		
-	private StringBuilder sbToString;
-	protected StringBuilder getSbToString() {
-		if (sbToString == null)
-			sbToString = new StringBuilder(80);
-		return sbToString;
-	}
 	
-	public String toValueString() {
-		return buildValueString().toString();	
-	}	
-	
-		*/
 	
 	protected StringBuilder buildValueString() {
 		coeffs[0] = matrix[0]; // x\u00b2
@@ -567,25 +551,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				switch (type) {					
 					case CONIC_CIRCLE :		
 						buildSphereNDString();
-						/*
-						if (Kernel.isZero(b.x)) {
-							sbToValueString.append("x\u00b2");
-						} else {
-							sbToValueString.append("(x ");
-							sbToValueString.append(kernel.formatSigned(-b.x));
-							sbToValueString.append(")\u00b2");
-						}												
-						sbToValueString.append(" + ");
-						if (Kernel.isZero(b.y)) {
-							sbToValueString.append("y\u00b2");
-						} else {
-							sbToValueString.append("(y ");
-							sbToValueString.append(kernel.formatSigned(-b.y));
-							sbToValueString.append(")\u00b2");
-						}
-						sbToValueString.append(" = ");
-						sbToValueString.append(kernel.format(halfAxes[0] * halfAxes[0]));
-						*/
 						return sbToValueString;
 
 					case CONIC_ELLIPSE :					
@@ -736,57 +701,32 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		}
 	}
 	
-	/*
-	private StringBuilder sbToValueString;
-	private StringBuilder sbToValueString() {
-		if (sbToValueString == null)
-			sbToValueString = new StringBuilder();
-		return sbToValueString;
-	}
-	*/
-
-/*
-	public String printMatrix() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[\t");
-		sb.append(kernel.format(A[0]));
-		sb.append("\t\t");
-		sb.append(kernel.format(A[3]));
-		sb.append("\t\t");
-		sb.append(kernel.format(A[4]));
-		sb.append("\t]\n");
-
-		sb.append("[\t");
-		sb.append(kernel.format(A[3]));
-		sb.append("\t\t");
-		sb.append(kernel.format(A[1]));
-		sb.append("\t\t");
-		sb.append(kernel.format(A[5]));
-		sb.append("\t]\n");
-
-		sb.append("[\t");
-		sb.append(kernel.format(A[4]));
-		sb.append("\t\t");
-		sb.append(kernel.format(A[5]));
-		sb.append("\t\t");
-		sb.append(kernel.format(A[2]));
-		sb.append("\t]");
-
-		return sb.toString();
-	}
-*/
-
+	/**
+	 * Returns the halfaxes
+	 * @return lengths of halfaxes
+	 */
 	final public double[] getHalfAxes() {
 		return halfAxes;
 	}
-	// for intersecting lines, parallel lines
+	/**
+	 * for intersecting lines, parallel lines
+	 * @return lines the conic consists of
+	 */
 	final public GeoLine[] getLines() {
 		return lines;
 	}
+	/**
+	 * Returns the point (in case this conic is a single point)
+	 * @return the single point
+	 */
 	final public GeoPoint getSinglePoint() {
 		return singlePoint;
 	}
 
+	/**
+	 * Returns the eigenvector-real worl transformation
+	 * @return eigenvector-real worl transformation
+	 */
 	final public AffineTransform getAffineTransform() {
 		if (transform == null)
 			transform = new AffineTransform();
@@ -808,7 +748,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			b.y);
 	}
 
-	
+	/**
+	 * Returns midpoint or vertex
+	 * @return midpoint or vertex
+	 */
 	final public GeoVec2D getTranslationVector() {
 		return b;
 	}
@@ -824,6 +767,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	/**
 	 * Transforms coords of point P from Eigenvector space to real world space.
 	 * Note: P.setCoords() is not called here!
+	 * @param P point in EV coords
 	 */
 	final void coordsEVtoRW(GeoPoint P) {
 		// rotate by alpha
@@ -851,13 +795,14 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		P.y = px * eigenvec[1].x + P.y * eigenvec[1].y;
 	}
 	
-	/** return copy of flat matrix */
+	/** @return copy of flat matrix 	 */
 	final public double[] getMatrix() {
 		double[] ret = { matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5] };
 		return ret;
 	}
 
-	/** set out with flat matrix of this conic */
+	/** set out with flat matrix of this conic 
+	 * @param out array in which the flat matrix should be stored*/
 	final public void getMatrix(double[] out) {
 		for (int i = 0; i < 6; i++) {
 			out[i] = matrix[i];
@@ -865,6 +810,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
 
 	/** set conic's matrix from flat matrix      
+	 * @param matrix array from which the flat matrix should be read
 	 */
 	final public void setMatrix(double[] matrix) {
 		for (int i = 0; i < 6; i++) {
@@ -875,6 +821,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/** 
 	 * Set conic's matrix from flat matrix (array of length 6).	 
+	 * @param matrix array from which the flat matrix should be read
 	 */
 	final public void setDegenerateMatrixFromArray(double[] matrix) {
 		for (int i = 0; i < 6; i++) {
@@ -883,7 +830,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		classifyConic(true);						
 	}
 
-	/** set conic's matrix from 3x3 matrix (not necessarily be symmetric).   
+	/** 
+	 * set conic's matrix from 3x3 matrix (not necessarily be symmetric).
+	 * @param C matrix   
 	 */
 	final public void setMatrix(double[][] C) {
 		matrix[0] = C[0][0];
@@ -895,41 +844,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		classifyConic();
 	}
 	
-	/*
-	public void setSphereND(GeoPointInterface M, double radius){
-		setCircle((GeoPoint) M, radius);
-	}
-	*/
-
-	/*
-	 * makes this conic a circle with midpoint M and radius r
-	 *
-	final public void setCircle(GeoPoint M, double r) {
-		
-		setSphereND(M, r);
-		
-		/*
-		defined = M.isDefined() && !M.isInfinite(); // check midpoint
-		
-		// check radius
-		if (Kernel.isZero(r)) {
-			r = 0;
-		} 
-		else if (r < 0) {
-			defined = false;
-		}					
-
-		if (defined) {
-			setCircleMatrix(M, r);
-			setAffineTransform();
-		} 
-				
-	}
-	*/
+	
+	
 
 	/**
 	 * makes this conic a circle with midpoint M and radius BC
 	 *  Michael Borcherds 2008-03-13	
+	 * @param M midpoint
+	 * @param B first radius endpoint
+	 * @param C second radius endpoint
 	 */
 	final public void setCircle(GeoPoint M, GeoPoint B, GeoPoint C) {
 		defined = M.isDefined() && !M.isInfinite() &&
@@ -1037,46 +960,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	final private void setCircleMatrix(GeoPoint M, double r) {
 		
 		setSphereNDMatrix(M, r);
-		
-		/*
-		// set midpoint
-		b.x = M.inhomX;
-		b.y = M.inhomY;
-
-		// set halfAxes = radius		
-		halfAxes[0] = r;
-		halfAxes[1] = r;
-		// set conic's matrix with M(mx, my, mz) and r
-		//  [   1   0       -m       ]
-		//  [   0   1       -n       ]
-		//  [  -m  -n       m\u00b2+n\u00b2-r\u00b2 ]        
-		matrix[0] = 1.0d;
-		matrix[1] = 1.0d;
-		matrix[2] = b.x * b.x + b.y * b.y - r * r;
-		matrix[3] = 0.0;
-		matrix[4] = -b.x;
-		matrix[5] = -b.y;
-
-		if (r > kernel.getEpsilon()) { // radius not zero 
-			if (type != CONIC_CIRCLE) {
-				type = CONIC_CIRCLE;
-				linearEccentricity = 0.0d;
-				eccentricity = 0.0d;
-				// set first eigenvector and eigenvectors
-				eigenvecX = 1.0d;
-				eigenvecY = 0.0d;
-				setEigenvectors();
-			}
-		} else if (Kernel.isZero(r)) { // radius == 0
-			singlePoint();			
-		} else { // radius < 0 or radius = infinite
-			empty();
-		}
-		*/
 	}
 
 	/**
 	 *  set Parabola from focus and line
+	 *  @param F focus
+	 *  @param g line
 	 */
 	final public void setParabola(GeoPoint F, GeoLine g) {
 		defined = F.isDefined() && !F.isInfinite() && g.isDefined();
@@ -1099,8 +988,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		classifyConic();
 	}
 
-	// set the matrix
-	// of ellipse or hyperbola with given foci B, C and length of first half axis a
+	/**
+	 * set the matrix of ellipse or hyperbola 
+	 * @param B first focus
+	 * @param C second focus
+	 * @param a first half axis
+	 */
 	final public void setEllipseHyperbola(
 		GeoPoint B,
 		GeoPoint C,
@@ -1175,6 +1068,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/**
 	 * translate this conic by vector (vx, vy)
+	 * @param vx x-coord of translation vector
+	 * @param vy y-coord of translation vector
 	 */
 	final public void translate(double vx, double vy) {
 		doTranslate(vx, vy);
@@ -1323,7 +1218,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}	
 
 	/**
-	 * Invert circle in circle
+	 * Invert circle in or line in circle
 	 * @version 2010-01-21
 	 * @author Michael Borcherds 
 	 * @param c Circle used as mirror
@@ -1381,13 +1276,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	    	else if (c.isCircle() && (this.getType() == GeoConic.CONIC_LINE || this.getType() == GeoConic.CONIC_PARALLEL_LINES))
 	    	{ // Mirror point in circle
 	    		
-	    			/*
-	    			qpx+qqy+qc=0
-	    			pqx-ppy=pqa-ppb
-	    			(pp+qq)y=pqb-ppa-qc
-	    			2px=pa-qb-c
-	    			2qy=-pa+qb-c
-	    			*/
 	    			
 	    			if (c.getType()==GeoConic.CONIC_CIRCLE)
 	    	    	{ // Mirror point in circle
@@ -1415,8 +1303,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	    	            //GeoPoint p =new GeoPoint(cons,null,a+sf*(perpX-a), b+sf*(perpY-b) ,1.0);
 	    	            GeoPoint m =new GeoPoint(cons);
 	    	            m.setCoords(a+sf*(perpX-a)/2, b+sf*(perpY-b)/2 ,1.0);
-	    	            GeoPoint p =new GeoPoint(cons);
-	    	            
 	    	            setSphereND(m,sf/2*Math.sqrt(((perpX-a)*(perpX-a)+(perpY-b)*(perpY-b))));
 	    	    		}else type = GeoConic.CONIC_LINE;
 	    	    	}
@@ -1463,7 +1349,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
 
 	/**
-	 * mirror this point at line g
+	 * mirror this point at line g 
 	 */
 	final public void mirror(GeoLine g) {
 		// Y = S(phi).(X - Q) + Q
@@ -1556,9 +1442,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 *************************************/
 	
 	/**
-	 * Sets both eigenvectors on file load.
+	 * Sets both eigenvectors to e0, e1 on file load.
 	 * (note: needed for "near-to-relationship" after loading a file)  
-	 * @param homogenous coordinates 
+	 * @param x0 homogenous x-coord of e0
+	 * @param y0 homogenous y-coord of e0
+	 * @param z0 homogenous z-coord of e0
+	 * @param x1 homogenous x-coord of e1
+	 * @param y1 homogenous y-coord of e1
+	 * @param z1 homogenous z-coord of e1
+	 *  
 	 */
 	final public void setEigenvectors(
 		double x0,
@@ -1720,7 +1612,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		setAffineTransform();		
 		
 		// Application.debug("conic: " + this.getLabel() + " type " + getTypeString() );
-		// Application.debug("           detS: " + (A0A1 - A3A3));
+		// Application.debug("           detS: " + (A0A1 - A3A3));ELLIPSE
 	}
 	
 	
@@ -1885,7 +1777,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		setEigenvectors();
 
 		// circle 
-		if (kernel.isEqual(mu[0], mu[1])) {
+		if (Kernel.isEqual(mu[0], mu[1])) {
 			type = GeoConic.CONIC_CIRCLE;
 			halfAxes[0] = Math.sqrt(1.0d / mu[0]);
 			halfAxes[1] = halfAxes[0];
@@ -2010,7 +1902,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 					-temp * eigenvecX
 			});
 			mu[0] = -temp * temp + matrix[2] / lambda;
-			Application.debug(mu[0]);
 			if (Kernel.isZero(mu[0])) {			
 				doubleLine();
 			} else if (mu[0] < 0) {			
@@ -2048,6 +1939,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		//Application.debug("double line : " + lines[0]);
 	}
 	
+	/**
+	 * Change this conic to double line
+	 */
 	final public void enforceDoubleLine() {
 		defined = true;
 		doubleLine();
@@ -2184,6 +2078,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	/** 
 	 * Computes the determinant of a conic's 3x3 matrix.
 	 * @param matrix flat matrix of conic section 
+	 * @return matrix determinant
 	 */
 	public static double det(double [] matrix) {
 		return matrix[0] * (matrix[1] * matrix[2] - matrix[5] * matrix[5])
@@ -2204,6 +2099,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		return eigenvec[0].x * eigenvec[1].y > eigenvec[0].y * eigenvec[1].x;
 	}
 
+	/**
+	 * Sets orientation of eigenvectors to positive or negative
+	 * @param flag true for positive, false for negative
+	 */
 	final void setPositiveEigenvectorOrientation(boolean flag) {
 			if (flag != hasPositiveEigenvectorOrientation()) {
 				eigenvec[1].x = -eigenvec[1].x;
@@ -2321,7 +2220,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 					lambda = matrix[i] / B[i];
 				// check equality
 				else
-					equal = kernel.isEqual(matrix[i], lambda * B[i]);
+					equal = Kernel.isEqual(matrix[i], lambda * B[i]);
 			}
 			// leaf loop
 			if (!equal)
@@ -2332,6 +2231,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/**
 	 * evaluates P . A . P
+	 * @param P point for the conic to be evaluated at
+	 * @return 0 iff P lies on conic
 	 */
 	final public double evaluate(GeoPoint P) {
 		return P.x * (matrix[0] * P.x + matrix[3] * P.y + matrix[4] * P.z)
@@ -2341,6 +2242,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/**
 	 * evaluates (p.x, p.y, 1) . A . (p.x, p.y, 1)
+	 * @param p inhomogenous coords of a point
+	 * @return 0 iff (p.x, p.y, 1) lies on conic
 	 */
 	final double evaluate(GeoVec2D p) {
 		return matrix[2]
@@ -2352,6 +2255,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/**
 	 * evaluates (x, y, 1) . A . (x, y, 1)
+	 * @param x inhomogenous x-coord of a point
+	 * @param y inhomogenous y-coord of a point
+	 * @return 0 iff (p.x, p.y, 1) lies on conic
 	 */
 	final double evaluate(double x, double y) {
 		return matrix[2]
@@ -2363,6 +2269,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/**
 	 *  Sets the GeoLine polar to A.P, the polar line of P relativ to this conic.
+	 * @param P point to which we want the polar
+	 * @param polar GeoLine in which the result should be stored 
 	 */
 	final public void polarLine(GeoPoint P, GeoLine polar) {
 		//<Zbynek Konecny, 2010-03-15>
@@ -2379,7 +2287,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/**
 	 * Sets the GeoLine diameter to X.S.v + a.v (v is a direction), 
-	 * the diameter line parallel to g relativ to this conic.
+	 * the diameter line parallel to v relativ to this conic.
+	 * @param v direction of diameter
+	 * @param diameter GeoLine for storing the result
 	 */
 	final public void diameterLine(GeoVector v, GeoLine diameter) {
 		diameter.x = matrix[0] * v.x + matrix[3] * v.y;
@@ -2428,6 +2338,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	}
 
+	/**
+	 * Returns description of current specific equation
+	 * @return description of current specific equation
+	 */
 	public String getSpecificEquation() {
 		  String ret = null;
 		  switch (type) {
@@ -2866,8 +2780,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		}
 	}
 	
-	
-
 
 	/**
 	 * Point's parameters are set to its EV coordinates
@@ -2893,8 +2805,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			rp.setT2(P.y/this.halfAxes[1]);
 			coordsEVtoRW(P);
 		}
-
-
 	}
 
 
@@ -2920,7 +2830,66 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			P.z = 1.0;
 			coordsEVtoRW(P);
 		}
-		
+	}
+	
+	/**
+	 * Sets curve to this conic
+	 * @param curve curve for storing this conic
+	 */
+	public void toGeoCurveCartesian(GeoCurveCartesian curve) {
+		FunctionVariable fv = new FunctionVariable(kernel,"t");
+		ExpressionNode evX=null,evY=null;
+		double min=0,max=0;
+		if(type==CONIC_ELLIPSE){
+			evX = new ExpressionNode(kernel, 
+					new ExpressionNode(kernel,fv,ExpressionNode.COS,null),
+					ExpressionNode.MULTIPLY,
+					new MyDouble(kernel,halfAxes[0]));
+			evY = new ExpressionNode(kernel, 
+					new ExpressionNode(kernel,fv,ExpressionNode.SIN,null),
+					ExpressionNode.MULTIPLY,
+					new MyDouble(kernel,halfAxes[1]));
+			min = 0;
+			max= 2*Math.PI;
+			
+		}
+		else if(type==CONIC_HYPERBOLA){
+			evX = new ExpressionNode(kernel, 
+					new ExpressionNode(kernel,fv,ExpressionNode.COSH,null),
+					ExpressionNode.MULTIPLY,
+					new MyDouble(kernel,halfAxes[0]));
+			evY = new ExpressionNode(kernel, 
+					new ExpressionNode(kernel,fv,ExpressionNode.SINH,null),
+					ExpressionNode.MULTIPLY,
+					new MyDouble(kernel,halfAxes[1]));
+			min = -2*Math.PI;
+			max = 2*Math.PI;
+		}
+		else if(type==CONIC_PARABOLA){
+			evY = new ExpressionNode(kernel,new ExpressionNode(kernel, fv),ExpressionNode.MULTIPLY,new MyDouble(kernel,Math.sqrt(2*p)));
+			evX = new ExpressionNode(kernel, 
+					fv,
+					ExpressionNode.MULTIPLY,
+					fv);
+			min = app.getEuclidianView().getXminForFunctions();
+			max = app.getEuclidianView().getXmaxForFunctions();
+			}
+		else return;
+		ExpressionNode rwX = new ExpressionNode(kernel,new ExpressionNode(kernel, 
+				new ExpressionNode(kernel,evX,ExpressionNode.MULTIPLY,new MyDouble(kernel,eigenvec[0].x)),
+				ExpressionNode.PLUS,
+				new ExpressionNode(kernel,evY,ExpressionNode.MULTIPLY,new MyDouble(kernel,eigenvec[0].y))),
+				ExpressionNode.PLUS,
+				new MyDouble(kernel,b.x));
+		ExpressionNode rwY = new ExpressionNode(kernel,new ExpressionNode(kernel, 
+				new ExpressionNode(kernel,evX,ExpressionNode.MULTIPLY,new MyDouble(kernel,eigenvec[0].y)),
+				ExpressionNode.PLUS,
+				new ExpressionNode(kernel,evY,ExpressionNode.MULTIPLY,new MyDouble(kernel,-eigenvec[0].x))),
+				ExpressionNode.PLUS,
+				new MyDouble(kernel,b.y));
+		curve.setFunctionX(new Function(rwX,fv));
+		curve.setFunctionY(new Function(rwY,fv));
+		curve.setInterval(min, max);				
 	}
 
 }

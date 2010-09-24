@@ -4213,6 +4213,22 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	/**
+	 * When function (or parabola) is transformed to curve, we need
+	 * some good estimate for which part of curve should be ploted
+	 * @return lower bound for function -> curve transform
+	 */
+	public double getXmaxForFunctions() {
+		return 2*xmax-xmin+ymax-ymin;
+	}
+	/**
+	 * @see #getXmaxForFunctions()
+	 * @return upper bound for function -> curve transform
+	 */
+	public double getXminForFunctions() {
+		return 2*xmin-xmax+ymin-ymax;
+	}
+	
+	/**
 	 * @return Returns the xmax.
 	 */
 	public double getXmax() {
