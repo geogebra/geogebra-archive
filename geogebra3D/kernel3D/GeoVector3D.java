@@ -293,7 +293,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 		public void setStartPoint(GeoPointInterface pI)	throws CircularDefinitionException {
 			
 
-			Application.debug("point : "+((GeoElement) pI).getLabel());
+			//Application.debug("point : "+((GeoElement) pI).getLabel());
 			
 	    	GeoPoint3D p = (GeoPoint3D) pI;
 	    	

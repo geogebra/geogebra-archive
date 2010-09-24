@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -214,7 +215,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 
 
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void updatePreview() {
 		
 		
@@ -281,19 +282,19 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		GeoPoint3D[] points = new GeoPoint3D[selectedPoints.size()+1];
 		
 		index =0;
-		//String s="points = ";
 		for (Iterator p = selectedPoints.iterator(); p.hasNext();){
 			points[index]= (GeoPoint3D) p.next();
-			//s+=points[index].getLabel()+", ";
 			index++;
 		}
 		
 		points[index] = getView3D().getCursor3D();
-		//Application.debug(s);
 			
+		//sets the points of the polygon
 		((GeoPolygon3D) getGeoElement()).setPoints(points,null,false);
-		
-		//setWaitForUpdate();
+		//check if all points are on the same plane
+		((GeoPolygon3D) getGeoElement()).updateCoordSys();
+		if (getGeoElement().isDefined())
+			setWaitForUpdate();
 		
 		
 	}

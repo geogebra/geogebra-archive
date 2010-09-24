@@ -81,6 +81,9 @@ public class DrawLabel3D {
 	public void update(String text, int fontsize, Color color,
 			GgbVector v, float xOffset, float yOffset){
 		
+		if (text.length()==0)
+			return;
+		
 		this.origin = v;
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;

@@ -272,6 +272,9 @@ public abstract class GeoQuadricND extends GeoElement {
 		return type;
 	}
 	
+	final public void setType(int type) {
+		this.type = type;
+	}
 	
 	//////////////////////////////////////:
 	// STRING

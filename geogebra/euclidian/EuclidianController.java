@@ -382,6 +382,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		closeMiniPropertiesPanel();
 
+
+
+		view.setPreview(switchPreviewableForInitNewMode(mode));	
+		toggleModeChangedKernel = false;
+	}	
+	
+	
+	protected Previewable switchPreviewableForInitNewMode(int mode){
+		
 		Previewable previewDrawable = null;
 		// init preview drawables
 		switch (mode) {
@@ -536,10 +545,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}		
 			break;
 		}
-
-		view.setPreview(previewDrawable);	
-		toggleModeChangedKernel = false;
-	}	
+		
+		return previewDrawable;
+	}
 
 
 

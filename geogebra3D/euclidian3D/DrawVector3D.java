@@ -1,9 +1,16 @@
 package geogebra3D.euclidian3D;
 
 
+import java.util.ArrayList;
+
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.Previewable;
+import geogebra.kernel.CircularDefinitionException;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.kernel3D.GeoCoordSys1D;
+import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoSegment3D;
 import geogebra3D.kernel3D.GeoVector3D;
 
 /**
@@ -11,7 +18,8 @@ import geogebra3D.kernel3D.GeoVector3D;
  * @author matthieu
  *
  */
-public class DrawVector3D extends Drawable3DCurves {
+public class DrawVector3D extends Drawable3DCurves
+implements Previewable {
 
 	
 	/**
@@ -90,6 +98,78 @@ public class DrawVector3D extends Drawable3DCurves {
 	}
 
 	
+	
+	
+
+	
+	////////////////////////////////
+	// Previewable interface 
+	
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private ArrayList selectedPoints;
+
+	/**
+	 * constructor for previewable
+	 * @param view3D
+	 * @param selectedPoints
+	 * @param cs1D
+	 */
+	@SuppressWarnings("unchecked")
+	public DrawVector3D(EuclidianView3D view3D, ArrayList selectedPoints){
+		
+		super(view3D);
+		
+		GeoVector3D v = new GeoVector3D(view3D.getKernel().getConstruction());
+		setGeoElement(v);
+		v.setIsPickable(false);
+		setGeoElement(v);
+		
+		this.selectedPoints = selectedPoints;
+		
+		updatePreview();
+		
+	}	
+
+	
+
+
+
+
+	public void updateMousePos(double xRW, double yRW) {	
+		
+	}
+
+
+	public void updatePreview() {
+		
+		GeoPoint3D firstPoint = null;
+		GeoPoint3D secondPoint = null;
+		if (selectedPoints.size()>=1){
+			firstPoint = (GeoPoint3D) selectedPoints.get(0);
+			if (selectedPoints.size()==2)
+				secondPoint = (GeoPoint3D) selectedPoints.get(1);
+			else
+				secondPoint = getView3D().getCursor3D();
+		}
+			
+		
+		if (selectedPoints.size()>=1){
+			((GeoVector3D) getGeoElement()).setCoords(
+					secondPoint.getCoords().sub(firstPoint.getCoords()).get());
+			try {
+				((GeoVector3D) getGeoElement()).setStartPoint(firstPoint);
+			} catch (CircularDefinitionException e) {
+				e.printStackTrace();
+			}
+			getGeoElement().setEuclidianVisible(true);
+			setWaitForUpdate();
+		}else{
+			getGeoElement().setEuclidianVisible(false);
+		}
+		
+			
+	}
 		
 		
 		

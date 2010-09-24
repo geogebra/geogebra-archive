@@ -1,16 +1,23 @@
 package geogebra3D.euclidian3D;
 
+import java.util.ArrayList;
+
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.Previewable;
+import geogebra.kernel.CircularDefinitionException;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoQuadric3D;
+import geogebra3D.kernel3D.GeoVector3D;
 
 /**
  * Class for drawing quadrics.
  * @author matthieu
  *
  */
-public class DrawQuadric3D extends Drawable3DSurfaces {
+public class DrawQuadric3D extends Drawable3DSurfaces
+implements Previewable {
 	
 	
 
@@ -180,6 +187,74 @@ public class DrawQuadric3D extends Drawable3DSurfaces {
 		default:
 			return DRAW_TYPE_SURFACES;
 		}
+	}
+	
+	
+	
+	
+
+	////////////////////////////////
+	// Previewable interface 
+	
+	
+	@SuppressWarnings("rawtypes")
+	private ArrayList selectedPoints;
+
+	/**
+	 * constructor for previewable
+	 * @param view3D
+	 * @param selectedPoints
+	 * @param cs1D
+	 */
+	@SuppressWarnings("unchecked")
+	public DrawQuadric3D(EuclidianView3D view3D, ArrayList selectedPoints, int type){
+		
+		super(view3D);
+		
+		GeoQuadric3D q = new GeoQuadric3D(view3D.getKernel().getConstruction());
+		setGeoElement(q);
+		q.setIsPickable(false);
+		q.setType(type);
+		setGeoElement(q);
+		
+		this.selectedPoints = selectedPoints;
+		
+		updatePreview();
+		
+	}	
+
+	
+
+
+
+
+	public void updateMousePos(double xRW, double yRW) {	
+		
+	}
+
+
+	public void updatePreview() {
+		
+		GeoPoint3D firstPoint = null;
+		GeoPoint3D secondPoint = null;
+		if (selectedPoints.size()>=1){
+			firstPoint = (GeoPoint3D) selectedPoints.get(0);
+			if (selectedPoints.size()==2)
+				secondPoint = (GeoPoint3D) selectedPoints.get(1);
+			else
+				secondPoint = getView3D().getCursor3D();
+		}
+			
+		
+		if (selectedPoints.size()>=1){		
+			((GeoQuadric3D) getGeoElement()).setSphereND(firstPoint, secondPoint);
+			getGeoElement().setEuclidianVisible(true);
+			setWaitForUpdate();
+		}else{
+			getGeoElement().setEuclidianVisible(false);
+		}
+		
+			
 	}
 
 }

@@ -7,6 +7,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
+import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
@@ -244,6 +245,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected void movePoint(boolean repaint){
 		
 		
+		
+		
 		if (movedGeoPoint3D.hasPath()){
 			
 			setMouseInformation(movedGeoPoint3D);		
@@ -305,6 +308,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			movedGeoPoint3D.updateCascade();//TODO modify movedGeoPoint3D.updateCascade()
 		}
 		
+		// update previewable
+		if (view.getPreviewDrawable() != null) 	
+			view.updatePreviewable();
 		
 	}
 
@@ -744,6 +750,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected void initNewMode(int mode) {
 		super.initNewMode(mode);
 		
+		
+		
 		//sets the visibility of EuclidianView3D 3D cursor
 		if (mode==EuclidianView.MODE_MOVE)
 			view3D.setShowCursor3D(false);
@@ -751,7 +759,23 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			view3D.setShowCursor3D(true);
 	}
 
-	
+	protected Previewable switchPreviewableForInitNewMode(int mode){
+
+		Previewable previewDrawable = null;
+		
+		switch (mode) {
+
+		case EuclidianView.MODE_SPHERE_TWO_POINTS:
+			previewDrawable = view3D.createPreviewSphere(selectedPoints);
+			break;
+		default:
+			previewDrawable = super.switchPreviewableForInitNewMode(mode);
+			break;
+		}
+		
+		return previewDrawable;
+
+	}
 	
 	//not only moveable hits are selected in move mode
 	protected boolean move(Hits hits) {		

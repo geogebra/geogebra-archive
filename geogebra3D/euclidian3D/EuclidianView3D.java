@@ -15,6 +15,7 @@ import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoQuadricND;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
@@ -2041,39 +2042,46 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Previewable createPreviewLine(ArrayList selectedPoints){
 
 		return new DrawLine3D(this, selectedPoints);
 		
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Previewable createPreviewSegment(ArrayList selectedPoints){
 		return new DrawSegment3D(this, selectedPoints);
 	}	
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Previewable createPreviewRay(ArrayList selectedPoints){
 		return new DrawRay3D(this, selectedPoints);
 	}	
 	
-	@SuppressWarnings("unchecked")
+
+	@SuppressWarnings("rawtypes")
 	public Previewable createPreviewVector(ArrayList selectedPoints){
-		//return new DrawVector3D(this, selectedPoints);
-		return null;
+		return new DrawVector3D(this, selectedPoints);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
 		return new DrawPolygon3D(this, selectedPoints);
 	}	
 
+	/**
+	 * @param selectedPoints
+	 * @return a preview sphere (center-point)
+	 */
+	@SuppressWarnings("rawtypes")
+	public Previewable createPreviewSphere(ArrayList selectedPoints){
+		return new DrawQuadric3D(this, selectedPoints, GeoQuadricND.QUADRIC_SPHERE);
+	}	
 
 	
 	
 	public void updatePreviewable(){
-
 
 		getPreviewDrawable().updatePreview();
 	}
