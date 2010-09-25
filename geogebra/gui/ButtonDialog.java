@@ -22,6 +22,7 @@ import geogebra.kernel.GeoTextField;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -119,6 +120,11 @@ public class ButtonDialog extends JDialog
 									getGeoSetNameDescriptionOrder();			
 		
 		final JComboBox cbAdd = new JComboBox(comboModel);
+
+		// make sure it's not too big (eg long GeoList)
+		Dimension size = new Dimension(app.getScreenSize().width / 2, cbAdd.getPreferredSize().height);
+		cbAdd.setMaximumSize(size);
+		cbAdd.setPreferredSize(size);
 		
 		if (textField) {
 			// lists for combo boxes to select input and output objects
