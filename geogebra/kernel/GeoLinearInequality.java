@@ -2,6 +2,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.Inequality;
+import geogebra.main.Application;
 import geogebra.util.Unicode;
 
 public class GeoLinearInequality extends GeoLine {
@@ -10,16 +11,18 @@ public class GeoLinearInequality extends GeoLine {
 		super(c);
 		if (equ != null)
 			this.op = ((Inequality)equ).op;
-		
+		update(); // make sure operation correct in AlgebraView
 	}
 
     public GeoLinearInequality(GeoLinearInequality line) {
     	super((GeoLine)line);
     }
+    
 	public GeoLinearInequality(Construction cons, String label, double a,
 			double b, double c, char op) {
 		super(cons, label, a, b, c);
 		this.op = op;
+		update(); // make sure operation correct in AlgebraView
 	}
 
 	public String getClassName() {

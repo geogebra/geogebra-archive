@@ -20,12 +20,11 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
@@ -39,7 +38,7 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
     public static final int PARAMETRIC = 2;		
     public static final int EQUATION_IMPLICIT_NON_CANONICAL = 3;		
     
-	public char op; // eg '=', '<' for GeoLinearInequality
+	public char op = '='; // eg '=', '<' for GeoLinearInequality
 	
     private String parameter = "\u03bb";	
     GeoPoint startPoint, endPoint;    
