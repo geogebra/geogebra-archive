@@ -24,6 +24,7 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.FontMetrics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,6 +43,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.text.JTextComponent;
 
 public class ButtonDialog extends JDialog 
@@ -121,22 +123,31 @@ public class ButtonDialog extends JDialog
 		
 		final JComboBox cbAdd = new JComboBox(comboModel);
 
-		// make sure it's not too big (eg long GeoList)
-		Dimension size = new Dimension(app.getScreenSize().width / 2, cbAdd.getPreferredSize().height);
-		cbAdd.setMaximumSize(size);
-		cbAdd.setPreferredSize(size);
+		
 		
 		if (textField) {
 			// lists for combo boxes to select input and output objects
 			// fill combobox models
 			Iterator it = sortedSet.iterator();
 			comboModel.addElement(null);
+			FontMetrics fm = getFontMetrics(getFont());
+			int width = (int)cbAdd.getPreferredSize().getWidth();
 			while (it.hasNext()) {
 				GeoElement geo = (GeoElement) it.next();				
 				if (!geo.isGeoImage() && !(geo.isGeoButton()) && !(geo.isGeoBoolean())) {				
 					comboModel.addElement(geo);
+					String str = geo.toString();
+					if (width < fm.stringWidth(str))
+						width = fm.stringWidth(str);
 				}
 			}	
+			
+			// make sure it's not too wide (eg long GeoList)
+			Dimension size = new Dimension(Math.min(app.getScreenSize().width/2, width), cbAdd.getPreferredSize().height);
+			cbAdd.setMaximumSize(size);
+			cbAdd.setPreferredSize(size);
+
+
 			
 			if (comboModel.getSize() > 1) {
 		
