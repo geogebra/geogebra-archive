@@ -36,6 +36,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoLinearInequality;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
@@ -2232,6 +2233,9 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("outlyingIntersections")) {
 				ok = handleOutlyingIntersections(attrs);
 				break;
+			} else if (eName.equals("operation")) {
+				ok = handleOperation(attrs);
+				break;
 			} /*else if (eName.equals("objCoords")) {
 				ok = handleObjCoords(attrs);
 				break;
@@ -3182,11 +3186,27 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
+	private boolean handleOperation(LinkedHashMap<String, String> attrs) {
+		if (!(geo instanceof GeoLinearInequality)) {
+			Application
+					.debug("wrong element type for <operation>: "
+							+ geo.getClassName());
+			return false;
+		}
+
+		try {
+			((GeoLinearInequality)geo).setOperation(((String) attrs.get("val")).charAt(0));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	private boolean handleKeepTypeOnTransform(LinkedHashMap<String, String> attrs) {
 		if (!(geo instanceof LimitedPath)) {
 			Application
 					.debug("wrong element type for <outlyingIntersections>: "
-							+ geo.getClass());
+							+ geo.getClassName());
 			return false;
 		}
 

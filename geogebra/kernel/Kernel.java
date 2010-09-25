@@ -858,6 +858,8 @@ public class Kernel {
     				return new GeoLine(cons);
     			else if (type.equals("list"))
     				return new GeoList(cons);    			
+        		else if (type.equals("linearinequality"))
+        			return new GeoLinearInequality(cons, null);    			
     			else 
     				return new GeoLocus(cons);
     		

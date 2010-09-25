@@ -35,6 +35,7 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POINT_COMPLEX =  14;
 	
 	public static final int DEFAULT_LINE = 20;			
+	public static final int DEFAULT_LINEAR_INEQUALITY = 21;			
 	public static final int DEFAULT_VECTOR = 30;	
 	public static final int DEFAULT_CONIC = 40;
 	public static final int DEFAULT_CONIC_SECTOR = 41;
@@ -62,6 +63,7 @@ public class ConstructionDefaults {
 	
 	// lines
 	private static final Color colLine = Color.black;
+	private static final Color colInequality= Color.red;
 
 	// conics
 	private static final Color colConic = Color.black;
@@ -69,6 +71,7 @@ public class ConstructionDefaults {
 	// polygons
 	protected static final Color colPolygon = new Color(153, 51, 0);	
 	public static final float DEFAULT_POLYGON_ALPHA = 0.1f;
+	public static final float DEFAULT_INEQUALITY_ALPHA = 0.25f;
 
 	// angles
 	private static final Color colAngle = new Color(0, 100, 0);
@@ -200,6 +203,13 @@ public class ConstructionDefaults {
 		line.setObjColor(colLine);
 		defaultGeoElements.put(DEFAULT_LINE, line);
 		
+		// line
+		GeoLinearInequality linearInequality = new GeoLinearInequality(cons, null);	
+		linearInequality.setLocalVariableLabel("LinearInequality");
+		linearInequality.setObjColor(colInequality);
+		linearInequality.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
+		defaultGeoElements.put(DEFAULT_LINEAR_INEQUALITY, linearInequality);
+		
 		// vector
 		GeoVector vector = new GeoVector(cons);
 		vector.setLocalVariableLabel("Vector");
@@ -315,7 +325,7 @@ public class ConstructionDefaults {
 		// all object types that are not specifically supported
 		// should get the default values of a line
 		int type = DEFAULT_LINE;
-
+		
 		switch (geo.getGeoClassType()) {
 		case GeoElement.GEO_CLASS_POINT:
 			GeoPoint p = (GeoPoint) geo;
@@ -336,6 +346,10 @@ public class ConstructionDefaults {
 
 		case GeoElement.GEO_CLASS_ANGLE:
 			type = DEFAULT_ANGLE;	
+			break;
+
+		case GeoElement.GEO_CLASS_LINEAR_INEQUALITY:
+			type = DEFAULT_LINEAR_INEQUALITY;	
 			break;
 
 		case GeoElement.GEO_CLASS_BOOLEAN:

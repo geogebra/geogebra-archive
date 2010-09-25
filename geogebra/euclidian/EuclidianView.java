@@ -31,6 +31,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoLinearInequality;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
@@ -3288,7 +3289,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;
 
 		case GeoElement.GEO_CLASS_LINEAR_INEQUALITY:
-			d = new DrawLine(this, (GeoLine) geo);
+			d = new DrawLinearInequality(this, (GeoLinearInequality) geo);
 			break;
 
 		case GeoElement.GEO_CLASS_POLYGON:

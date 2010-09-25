@@ -8,7 +8,8 @@ public class GeoLinearInequality extends GeoLine {
 	
     public GeoLinearInequality(Construction c, Equation equ) {
 		super(c);
-		this.op = ((Inequality)equ).op;
+		if (equ != null)
+			this.op = ((Inequality)equ).op;
 		
 	}
 
@@ -25,6 +26,10 @@ public class GeoLinearInequality extends GeoLine {
     	return "GeoLinearInequality";
     }
     
+    protected String getTypeString() {
+		return "LinearInequality";
+	}
+    
     public int getGeoClassType() {
     	return GEO_CLASS_LINEAR_INEQUALITY;
     }
@@ -33,6 +38,26 @@ public class GeoLinearInequality extends GeoLine {
         return new GeoLinearInequality(this);        
     }    
     
-    
+	public boolean isFillable() {
+		return true;
+	}
+	
+	public void setOperation(char op) {
+		this.op = op;
+	}
+	
+    /**
+     * returns all class-specific xml tags for saveXML
+     * GeoGebra File Format
+     */
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb);
+
+    	sb.append("\t<operation val=\"");
+        sb.append(op);
+        sb.append("\"/>\n");
+        
+	}
+  
 
 }

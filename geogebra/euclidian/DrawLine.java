@@ -37,7 +37,7 @@ import java.util.ArrayList;
 /**
  * Draws a line or a ray.
  */
-public final class DrawLine extends Drawable implements Previewable {
+public class DrawLine extends Drawable implements Previewable {
 
     // clipping attributes
     private static final int LEFT = 0;
@@ -52,14 +52,18 @@ public final class DrawLine extends Drawable implements Previewable {
     public static final int PREVIEW_PERPENDICULAR_BISECTOR = 3;           
     public static final int PREVIEW_ANGLE_BISECTOR = 4;           
     
-    private GeoLine g;    
+    protected GeoLine g;    
     //private double [] coeffs = new double[3];
     
-    private Line2D.Double line;    
-    private double y1, y2, x1, x2, k, d, gx, gy, gz;    
+    protected Line2D.Double line;    
+    protected double y1, y2, x1, x2, k, d;
+	protected double gx;
+	protected double gy;
+	protected double gz;    
     private int labelPos = LEFT, p1Pos, p2Pos;
     private int x, y;    
-    private boolean isVisible, labelVisible;
+    protected boolean isVisible;
+	protected boolean labelVisible;
     
     private ArrayList points, lines; // for preview
     private GeoPoint startPoint, previewPoint2;
@@ -106,7 +110,7 @@ public final class DrawLine extends Drawable implements Previewable {
 		updatePreview();
 	}
 
-	final public void update() {  
+	public void update() {  
 		//	take line g here, not geo this object may be used for conics too
         isVisible = g.isEuclidianVisible(); 
         if (isVisible) {
@@ -146,7 +150,7 @@ public final class DrawLine extends Drawable implements Previewable {
     
     // transform line to screen coords
     // write start and endpoint into (x1,y1), (x2,y2)
-    final private void setClippedLine() {   
+    protected final void setClippedLine() {   
     // first calc two points in screen coords that are on the line
         
         // abs(slope) < 1
@@ -272,7 +276,7 @@ public final class DrawLine extends Drawable implements Previewable {
     }    
     
     // set label position (xLabel, yLabel)
-    final private void setLabelPosition() {                      
+    protected final void setLabelPosition() {                      
         // choose smallest position change                
         // 1-Norm distance between old label position 
         // and point 1, point 2                
@@ -331,7 +335,7 @@ public final class DrawLine extends Drawable implements Previewable {
         }                     
     }
 
-    final public void draw(Graphics2D g2) {                                
+    public void draw(Graphics2D g2) {                                
         if (isVisible) {        	
             if (geo.doHighlighting()) {
                 // draw line              
