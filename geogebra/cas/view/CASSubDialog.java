@@ -102,10 +102,6 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		
 
 		// buttons
-		btSub = new JButton(app.getPlain("Substitute"));
-		btSub.setActionCommand("Substitute");
-		btSub.addActionListener(this);
-
 		btEval = new JButton("=");
 		btEval.setToolTipText(app.getCommand("Evaluate"));
 		btEval.setActionCommand("Evaluate");
@@ -115,15 +111,20 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		btNumeric.setToolTipText(app.getCommand("Numeric"));
 		btNumeric.setActionCommand("Numeric");
 		btNumeric.addActionListener(this);
+		
+		btSub = new JButton(app.getPlain("\u2713"));
+		btNumeric.setToolTipText(app.getCommand("Substitute"));
+		btSub.setActionCommand("Substitute");
+		btSub.addActionListener(this);
 
 //		btCancel = new JButton(app.getPlain("Cancel"));
 //		btCancel.setActionCommand("Cancel");
 //		btCancel.addActionListener(this);
 		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-		btPanel.add(btSub);
 		btPanel.add(btEval);
 		btPanel.add(btNumeric);
+		btPanel.add(btSub);
 		//btPanel.add(btCancel);
 
 		// Create the JOptionPane.
@@ -182,20 +183,29 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		fromExp = casView.resolveCASrowReferences(fromExp, editRow);
 		toExp = casView.resolveCASrowReferences(toExp, editRow);
 		
+		// make sure pure substitute is not evaluated 
+		boolean keepInput = true;
+		
 		// substitute command
 		String subCmd = "Substitute[" + evalText + "," + fromExp + ", " +  toExp + "]"; 
 		if (actionCommand.equals("Evaluate")) {
 			subCmd = "Simplify[" + subCmd + "]"; 
+			keepInput = false;
 		}
 		else if (actionCommand.equals("Numeric")) {
 			subCmd = "Numeric[" + subCmd + "]";
+			keepInput = false;
 		}
-			
+	
 		try {
 			CASTableCellValue currCell = table.getCASTableCellValue(editRow);
 			currCell.setProcessingInformation("", subCmd, "");
 			currCell.setEvalCommand("Substitute");
 			currCell.setEvalComment(fromExp + "=" + toExp);
+			
+			// make sure pure substitute is not evaluated 
+			currCell.setKeepInputUsed(keepInput);
+			
 			casView.processRow(editRow);
 			table.startEditingRow(editRow + 1);
 			return true;

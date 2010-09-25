@@ -440,8 +440,10 @@ public class CASTableCellValue {
 	
 	final public void setEvalCommand(String cmd) {
 		evalCmd = cmd;
-		
-		boolean keepInputUsed = evalCmd != null && evalCmd.equals("KeepInput"); 
+		setKeepInputUsed(evalCmd != null && evalCmd.equals("KeepInput"));
+	}
+	
+	public void setKeepInputUsed(boolean keepInputUsed) {
 		if (inputVE != null)
 			inputVE.setKeepInputUsed(keepInputUsed);
 		if (evalVE != null)
