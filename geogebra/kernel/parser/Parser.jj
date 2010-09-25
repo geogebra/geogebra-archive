@@ -724,7 +724,6 @@ Equation equation():
 {    
     lhs = expressionnode() <EQUAL> rhs = expressionnode()
         {             
-			Application.printStacktrace("");
             return new Equation(kernel, lhs, rhs); 
         }
 }

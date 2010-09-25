@@ -292,7 +292,7 @@ public class GeoGebraCAS {
 	final synchronized public String getCASCommand(String name, ArrayList args, boolean symbolic) {
 		StringBuilder sbCASCommand = new StringBuilder(80);
 				
-		// build command key as name + "." + args.size()
+		// build command key as name + ".N"
 		sbCASCommand.setLength(0);
 		sbCASCommand.append(name);
 		sbCASCommand.append(".N");
@@ -334,9 +334,9 @@ public class GeoGebraCAS {
 			return sbCASCommand.toString();
 		}
 		
+		// build command key as name + "." + args.size()
 		// remove 'N'
 		sbCASCommand.setLength(sbCASCommand.length() - 1);
-
 		// add eg '3'
 		sbCASCommand.append(args.size());
 		
@@ -351,10 +351,7 @@ public class GeoGebraCAS {
 			sbCASCommand.append('(');
 			for (int i=0; i < args.size(); i++) {
 				ExpressionValue ev = (ExpressionValue) args.get(i);				
-				if (symbolic)
-					sbCASCommand.append(ev.toString());
-				else
-					sbCASCommand.append(ev.toValueString());
+				sbCASCommand.append(toString(ev,symbolic));
 				sbCASCommand.append(',');
 			}
 			sbCASCommand.setCharAt(sbCASCommand.length()-1, ')');

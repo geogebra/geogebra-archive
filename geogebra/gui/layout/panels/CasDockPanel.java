@@ -33,6 +33,6 @@ public class CasDockPanel extends DockPanel {
 	}
 	
 	private static String getDefaultToolbar() {
-		return "1001 1003 | 1002 || 1005 | 1004 || 1006 1007 | 1008 1009";		
+		return "1001 1002 1003 || 1005 | 1004 || 1006 | 1007 || 1008 1009";		
 	}
 }

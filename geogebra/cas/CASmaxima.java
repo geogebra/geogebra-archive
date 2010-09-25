@@ -37,6 +37,7 @@ public class CASmaxima extends CASgeneric {
 		// check if var is assigned a value or defined as function in Maxima
 		StringBuilder sb = new StringBuilder();
 		
+		// TODO: improve
 		// not sequal(string(u), "u") or not equal(errcatch(fundef(u)), []);
 		sb.append("(not sequal(string(");
 		sb.append(var);
@@ -76,9 +77,16 @@ public class CASmaxima extends CASgeneric {
 		// convert parsed input to Maxima string
 		String MaximaString = toMaximaString(casInput, useGeoGebraVariables);
 		
-		// now done in evaluateRaw
-		//if (!MaximaString.endsWith(";")) MaximaString = MaximaString + ';';
-			
+		// Maxima simplification is turned off by default using simp:false;
+		// We turn it on here using ev(command, simp) when KeepInput is not used
+		if (!casInput.isKeepInputUsed()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("ev(");
+			sb.append(MaximaString);
+			sb.append(",simp)");
+			MaximaString = sb.toString();
+		}
+		
 		// EVALUATE input in Maxima 
 		String result = evaluateMaxima(MaximaString);
 
@@ -314,6 +322,10 @@ public class CASmaxima extends CASgeneric {
 	
 	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
 	
+		// turn auto-simplification off, so a+a gives a+a
+		// ev( a+a, simp ) is needed to get 2*a
+	    ggbMaxima.executeCall("simp:false;");
+		
 		// set line length of "terminal"
 		// we don't want lines broken
 	    ggbMaxima.executeCall("linel:1000000;");
