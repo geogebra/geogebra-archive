@@ -187,6 +187,7 @@ TOKEN :  {
   | < GREATER:	">" >
   | < LESS_EQUAL: ("<=" | "\u2264") >
   | < GREATER_EQUAL: (">=" | "\u2265") >
+  | < INEQUALITY: ( < LESS > | < LESS_EQUAL > | < GREATER_EQUAL > | < GREATER > ) >
   | < PARALLEL: "\u2225" >
   | < PERPENDICULAR: "\u22a5" >
   | < EQUAL:    "=" >
@@ -388,6 +389,14 @@ ValidExpression buildValidExpression() :
 } 
 {         
      (  
+        // g: 3x + y < 7 
+        LOOKAHEAD(2147483647)
+        (l = <SPREADSHEET_LABEL> | l = <LABEL>)  (":" | <ASSIGNMENT> )  ve = inequality()        
+    |          
+        // 3x + y < 7	
+        LOOKAHEAD(2147483647)
+        ve = inequality()           
+    |          
         // f(x) =  x^2 + 3	
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
@@ -715,7 +724,23 @@ Equation equation():
 {    
     lhs = expressionnode() <EQUAL> rhs = expressionnode()
         {             
+			Application.printStacktrace("");
             return new Equation(kernel, lhs, rhs); 
+        }
+}
+
+/**
+ * equation =       expression < expression
+ */
+Equation inequality():
+{
+    ExpressionNode lhs, rhs;
+    Token c = null;
+}
+{    
+    lhs = expressionnodePlusMinus() (c = < LESS > | c = < LESS_EQUAL > | c = < GREATER_EQUAL > | c = < GREATER > ) rhs = expressionnodePlusMinus()
+        {             
+            return new Inequality(kernel, lhs, rhs, c.image); 
         }
 }
 
@@ -972,6 +997,31 @@ ExpressionNode expressionnode():
 	         ret = new ExpressionNode(kernel, ret, ExpressionNode.OR, f);                   
         }
     )*
+    { 
+    	ExpressionNode en;
+    	if (ret.isExpressionNode())
+    		en = (ExpressionNode) ret;
+    	else
+    		en = new ExpressionNode(kernel, ret);
+    	
+    	//en.expandEquationExpressions();
+    	if (ExternalCASParsing)
+    		en.simplifyLeafs();
+    	return en; 
+    }
+}
+
+/**
+ *  expression =  term +/- term
+ */
+ExpressionNode expressionnodePlusMinus():
+{
+    ExpressionValue ret, f;
+    Token x;
+}
+{
+    ret = plusminusnode()                 
+    
     { 
     	ExpressionNode en;
     	if (ret.isExpressionNode())

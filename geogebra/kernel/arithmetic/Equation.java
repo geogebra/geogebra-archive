@@ -27,12 +27,12 @@ import java.util.Iterator;
  */
 public class Equation extends ValidExpression {
 
-    private ExpressionNode lhs;
-    private ExpressionNode rhs;
+    protected ExpressionNode lhs;
+    protected ExpressionNode rhs;
     
     private Polynomial leftPoly, rightPoly; // polynomial in normalForm   
     private Polynomial normalForm; // polynomial in normalForm
-    private Kernel kernel;
+    protected Kernel kernel;
    
     /** check whether ExpressionNodes are evaluable to instances of Polynomial
      * or NumberValue and build an Equation out of them
@@ -320,7 +320,7 @@ public class Equation extends ValidExpression {
         return sb.toString();
 	}
 	
-	final public String toString() {
+	public String toString() {
         StringBuilder sb = new StringBuilder();
         
         // left hand side
