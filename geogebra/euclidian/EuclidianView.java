@@ -3287,6 +3287,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			d = new DrawLine(this, (GeoLine) geo);
 			break;
 
+		case GeoElement.GEO_CLASS_LINEAR_INEQUALITY:
+			d = new DrawLine(this, (GeoLine) geo);
+			break;
+
 		case GeoElement.GEO_CLASS_POLYGON:
 			d = new DrawPolygon(this, (GeoPolygon) geo);
 			break;

@@ -28,14 +28,13 @@ import java.util.Iterator;
  */
 public class Inequality extends Equation {
 
-	private char op = '<';
+	public char op = '<';
   
     /** check whether ExpressionNodes are evaluable to instances of Polynomial
      * or NumberValue and build an Inequality out of them
      */
     public Inequality(Kernel kernel, ExpressionValue lhs, ExpressionValue rhs, String op) {
     	super(kernel, lhs, rhs);
-    	Application.debug(op);
     	if (op.equals(">=")) this.op = Unicode.GREATER_EQUAL;
     	else if (op.equals("<=")) this.op = Unicode.LESS_EQUAL;
     	else this.op = op.charAt(0);

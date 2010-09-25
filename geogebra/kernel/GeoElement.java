@@ -296,6 +296,7 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_IMPLICIT_POLY = 24;
 	public static final int GEO_CLASS_FUNCTION_NVAR = 25;
 	public static final int GEO_CLASS_POLYLINE = 26;
+	public static final int GEO_CLASS_LINEAR_INEQUALITY = 27;
 	
 	
 	public static final int LABEL_NAME = 0;
@@ -859,6 +860,8 @@ public abstract class GeoElement
 			typePriority = 90; break;
 		case  GEO_CLASS_LINE:
 			typePriority = 100; break;
+		case  GEO_CLASS_LINEAR_INEQUALITY:
+			typePriority = 101; break;
 		case  GEO_CLASS_RAY:
 		case  GEO_CLASS_SEGMENT:
 			typePriority = 110; break;

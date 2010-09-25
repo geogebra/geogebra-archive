@@ -546,7 +546,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		switch (toStringMode) {
 			case EQUATION_SPECIFIC :
 				if (!isSpecificPossible())
-					return kernel.buildImplicitEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, KEEP_LEADING_SIGN, true);						
+					return kernel.buildImplicitEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, KEEP_LEADING_SIGN, true, '=');						
 				
 				switch (type) {					
 					case CONIC_CIRCLE :		
@@ -596,7 +596,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 							return kernel.buildImplicitEquation(								
 								coeffs,
 								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, 
-								KEEP_LEADING_SIGN, true);
+								KEEP_LEADING_SIGN, true, '=');
 
 					case CONIC_HYPERBOLA :
 						if (Kernel.isZero(coeffs[1])) { // xy coeff = 0	
@@ -651,7 +651,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 								coeffs,
 								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
 								KEEP_LEADING_SIGN,
-								true);
+								true, '=');
 
 					case CONIC_PARABOLA :
 						if (!Kernel.isZero(coeffs[2]))
@@ -671,7 +671,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 								coeffs,
 								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
 								KEEP_LEADING_SIGN,
-								true);
+								true, '=');
 
 					case CONIC_DOUBLE_LINE :
 						sbToValueString.append('(');
@@ -697,7 +697,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 					return kernel.buildExplicitConicEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, 4, KEEP_LEADING_SIGN); 
 
 			default : //implicit
-				return kernel.buildImplicitEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, KEEP_LEADING_SIGN, true);
+				return kernel.buildImplicitEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, KEEP_LEADING_SIGN, true, '=');
 		}
 	}
 	

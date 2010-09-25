@@ -374,7 +374,7 @@ implements GeoElement3DInterface, Functional2Var{
     		coeffs[7] = 2 * matrix[8]; // y
     		coeffs[8] = 2 * matrix[9]; // z
     		
-    		return kernel.buildImplicitEquation(coeffs, vars3D, false, true);
+    		return kernel.buildImplicitEquation(coeffs, vars3D, false, true, '=');
     	}
     	
     	return sbToValueString;

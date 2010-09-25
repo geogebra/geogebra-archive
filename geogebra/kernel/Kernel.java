@@ -1830,6 +1830,17 @@ public class Kernel {
 		return line;
 	}
 
+	/** Line a x + b y + c = 0 named label */
+	final public GeoLinearInequality Inequality(
+		String label,
+		double a,
+		double b,
+		double c,
+		char op) {
+		GeoLinearInequality line = new GeoLinearInequality(cons, label, a, b, c, op);
+		return line;
+	}
+
 	/** Conic label with equation ax� + bxy + cy� + dx + ey + f = 0  */
 	final public GeoConic Conic(
 		String label,
@@ -2065,9 +2076,18 @@ public class Kernel {
 	 * represented by trees. e.g. y = k x + d
 	 */
 	final public GeoLine DependentLine(String label, Equation equ) {
-		AlgoDependentLine algo = new AlgoDependentLine(cons, label, equ);
+		AlgoDependentLine algo = new AlgoDependentLine(cons, label, equ, false);
 		GeoLine line = algo.getLine();
 		return line;
+	}
+
+	/** Inequality dependent on coefficients of arithmetic expressions with variables,
+	 * represented by trees. e.g. y < k x + d
+	 */
+	final public GeoLinearInequality DependentInequality(String label, Equation equ) {
+		AlgoDependentLine algo = new AlgoDependentLine(cons, label, equ, true);
+		GeoLine line = algo.getLine();
+		return (GeoLinearInequality)line;
 	}
 
 	/** Conic dependent on coefficients of arithmetic expressions with variables,
@@ -6879,14 +6899,20 @@ public class Kernel {
 		double[] numbers,
 		String[] vars,
 		boolean KEEP_LEADING_SIGN,
-		boolean CANCEL_DOWN) {
+		boolean CANCEL_DOWN,
+		char op) {
 
 		sbBuildImplicitEquation.setLength(0);
 		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN, CANCEL_DOWN));
-		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
+		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) {
 			sbBuildImplicitEquation.append(" == ");
+		}
 		else
-			sbBuildImplicitEquation.append(" = ");
+		{
+			sbBuildImplicitEquation.append(' ');
+			sbBuildImplicitEquation.append(op);
+			sbBuildImplicitEquation.append(' ');
+		}
 		
 		// temp is set by buildImplicitVarPart
 		sbBuildImplicitEquation.append(format(-temp[vars.length]));
@@ -6922,7 +6948,7 @@ public class Kernel {
 		double d, dabs, q = numbers[pos];
 		// coeff of y� is 0 or coeff of y is not 0
 		if (isZero(q))
-			return buildImplicitEquation(numbers, vars, KEEP_LEADING_SIGN, true);
+			return buildImplicitEquation(numbers, vars, KEEP_LEADING_SIGN, true, '=');
 
 		int i, leadingNonZero = numbers.length;
 		for (i = 0; i < numbers.length; i++) {
@@ -6988,7 +7014,8 @@ public class Kernel {
 	// y = k x + d
 	final StringBuilder buildExplicitLineEquation(
 		double[] numbers,
-		String[] vars) {
+		String[] vars,
+		char op) {
 
 		double d, dabs, q = numbers[1];		
 		sbBuildExplicitLineEquation.setLength(0);
@@ -6999,10 +7026,14 @@ public class Kernel {
 		if (isZero(q)) {
 			sbBuildExplicitLineEquation.append("x");
 						
-			if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
+			if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) {
 				sbBuildExplicitLineEquation.append(" == ");
-			else
-				sbBuildExplicitLineEquation.append(" = ");
+			}
+			else {
+				sbBuildExplicitLineEquation.append(' ');
+				sbBuildExplicitLineEquation.append(op);
+				sbBuildExplicitLineEquation.append(' ');
+			}
 			
 			sbBuildExplicitLineEquation.append(format(-numbers[2] / numbers[0]));
 			return sbBuildExplicitLineEquation;
@@ -7010,10 +7041,14 @@ public class Kernel {
 
 		// standard case: y-coeff not 0
 		sbBuildExplicitLineEquation.append("y");
-		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
+		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) {
 			sbBuildExplicitLineEquation.append(" == ");
-		else
-			sbBuildExplicitLineEquation.append(" = ");
+		}
+		else {
+			sbBuildExplicitLineEquation.append(' ');
+			sbBuildExplicitLineEquation.append(op);
+			sbBuildExplicitLineEquation.append(' ');
+		}
 
 		// x coeff
 		d = -numbers[0] / q;

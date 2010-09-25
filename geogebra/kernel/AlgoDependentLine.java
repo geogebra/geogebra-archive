@@ -35,14 +35,15 @@ public class AlgoDependentLine extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Equation equation;
-	private GeoLine line1, line2;
+	protected Equation equation;
+	protected GeoLine line1;
+	protected GeoLine line2;
 	private NumberValue num;
-    private ExpressionValue [] ev = new ExpressionValue[3];  // input
-    private ExpressionNode root;
-    private GeoLine g;     // output       
+    protected ExpressionValue [] ev = new ExpressionValue[3];  // input
+    protected ExpressionNode root;
+    protected GeoLine g;     // output       
     
-    private int mode;
+    protected int mode;
     public final static int MODE_EQUATION = 0;
     public final static int MODE_ADD      = 1;
     public final static int MODE_SUBTRACT = 2;
@@ -51,7 +52,7 @@ public class AlgoDependentLine extends AlgoElement {
     
         
     /** Creates new AlgoDependentLine */
-    public AlgoDependentLine(Construction cons, String label, Equation equ) {        
+    public AlgoDependentLine(Construction cons, String label, Equation equ, boolean inequality) {        
        	super(cons, false); // don't add to construction list yet
         equation = equ;  
         mode = MODE_EQUATION;
@@ -73,48 +74,12 @@ public class AlgoDependentLine extends AlgoElement {
         // if we get here, all is ok: let's add this algorithm to the construction list
         cons.addToConstructionList(this, false);
         
-        g = new GeoLine(cons); 
+        g = inequality ? new GeoLinearInequality(cons, equ) : new GeoLine(cons);
         setInputOutput(); // for AlgoElement
         
         // compute value of dependent number        
         compute();      
         g.setLabel(label);        
-    }   
-    
-    public AlgoDependentLine(Construction cons, GeoLine line1, GeoLine line2, int mode, ExpressionNode root) {        
-       	super(cons, false); // don't add to construction list yet
-        this.line1 = line1;
-        this.line2 = line2;
-        this.mode = mode;
-        this.root = root;
-        
-        cons.addToConstructionList(this, false);
-        
-        g = new GeoLine(cons);
-        setInputOutput(); // for AlgoElement
-        
-        // compute value of dependent number        
-        g.setMode(GeoLine.EQUATION_IMPLICIT_NON_CANONICAL);
-        compute();      
-        g.setLabel(root.getLabel());        
-    }   
-    
-    public AlgoDependentLine(Construction cons, GeoLine line1, NumberValue num, int mode, ExpressionNode root) {        
-       	super(cons, false); // don't add to construction list yet
-        this.line1 = line1;
-        this.num = num;
-        this.mode = mode;
-        this.root = root;
-        
-        cons.addToConstructionList(this, false);
-        
-        g = new GeoLine(cons);
-        setInputOutput(); // for AlgoElement
-        
-        // compute value of dependent number        
-        g.setMode(GeoLine.EQUATION_IMPLICIT_NON_CANONICAL);
-        compute();      
-        g.setLabel(root.getLabel());        
     }   
     
 	public String getClassName() {

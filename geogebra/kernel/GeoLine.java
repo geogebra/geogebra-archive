@@ -39,6 +39,8 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
     public static final int PARAMETRIC = 2;		
     public static final int EQUATION_IMPLICIT_NON_CANONICAL = 3;		
     
+	protected char op; // eg '=', '<' for GeoLinearInequality
+	
     private String parameter = "\u03bb";	
     GeoPoint startPoint, endPoint;    
     
@@ -589,7 +591,7 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
                 g[0] = x;
                 g[1] = y;
                 g[2] = z;  
-                return kernel.buildExplicitLineEquation(g, vars);
+                return kernel.buildExplicitLineEquation(g, vars, op);
             
             case PARAMETRIC:       				                  
 				  	getInhomPointOnLine(P); // point
@@ -613,18 +615,18 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
                 g[1] = y;
                 g[2] = z;                
                 if (kernel.isZero(x) || kernel.isZero(y)) 
-					return kernel.buildExplicitLineEquation(g, vars);
+					return kernel.buildExplicitLineEquation(g, vars, op);
                 else
-                    return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN, false);
+                    return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN, false, op);
             
             default:   // EQUATION_IMPLICIT    
                 g[0] = x;
                 g[1] = y;
                 g[2] = z;                
                 if (kernel.isZero(x) || kernel.isZero(y)) 
-					return kernel.buildExplicitLineEquation(g, vars);
+					return kernel.buildExplicitLineEquation(g, vars, op);
                 else
-                    return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN, true);
+                    return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN, true, op);
         }    	    	
     }        
     

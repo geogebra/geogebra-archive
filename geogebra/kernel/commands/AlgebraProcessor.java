@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
+import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyStringBuffer;
@@ -601,7 +602,12 @@ public class AlgebraProcessor {
 			else if (ve instanceof Command) {
 				ret = cmdDispatcher.processCommand((Command) ve, true);
 			}
-	
+			
+			// Inequality in x,y (linear or quadratic are valid): line or conic
+			else if (ve instanceof Inequality) {
+				ret = processInequality((Inequality) ve);
+			}
+			
 			// Equation in x,y (linear or quadratic are valid): line or conic
 			else if (ve instanceof Equation) {
 				ret = processEquation((Equation) ve);
@@ -758,7 +764,7 @@ public class AlgebraProcessor {
 			switch (equ.degree()) {
 				// linear equation -> LINE   
 				case 1 :
-					return processLinear(equ);
+					return processLine(equ, false);
 	
 				// quadratic equation -> CONIC                                  
 				case 2 :
@@ -799,16 +805,48 @@ public class AlgebraProcessor {
 		
 	}
 	
+	protected GeoElement[] processInequality(Inequality equ) throws MyError {		
+		//Application.debug("Inequality: " + equ);        
+		
+		try {
+			equ.initEquation();	
+			
+			// check no terms in z
+			checkNoTermsInZ(equ);
+
+			// consider algebraic degree of equation  
+			 // check not equation of eg plane
+			switch (equ.degree()) {
+				// linear equation -> LINE   
+				case 1 :
+					return processLine(equ, true);
+	
+				// quadratic equation -> CONIC                                  
+				//case 2 :
+				//	return processConic(equ);
+	
+				default :
+					String [] errors = {"InvalidEquation", "TODO: Please enter linear inequality"};
+					throw new MyError(app, errors);
+
+			}
+		} 
+		catch (MyError eqnError) {
+			eqnError.printStackTrace();
+				String [] errors = {"InvalidEquation", eqnError.getLocalizedMessage()};
+				throw new MyError(app, errors);
+			
+        }        
+		
+		
+	}
+	
 	protected void checkNoTermsInZ(Equation equ){
 		if (!equ.getNormalForm().isFreeOf('z')) 
 			throw new MyError(app, "InvalidEquation");
 	}
 
-	protected GeoElement[] processLinear(Equation equ) {
-		return processLine(equ);
-	}
-	
-	protected GeoElement[] processLine(Equation equ) {
+	protected GeoElement[] processLine(Equation equ, boolean inequality) {
 		double a = 0, b = 0, c = 0;
 		GeoLine line;
 		GeoElement[] ret = new GeoElement[1];
@@ -822,9 +860,9 @@ public class AlgebraProcessor {
 			a = lhs.getCoeffValue("x");
 			b = lhs.getCoeffValue("y");
 			c = lhs.getCoeffValue("");
-			line = kernel.Line(label, a, b, c);
+			line = inequality ? kernel.Inequality(label, a, b, c, ((Inequality)equ).op) : kernel.Line(label, a, b, c);
 		} else
-			line = kernel.DependentLine(label, equ);
+			line = inequality ? kernel.DependentInequality(label, equ) : kernel.DependentLine(label, equ);
 
 		if (isExplicit) {
 			line.setToExplicit();
@@ -944,6 +982,11 @@ public class AlgebraProcessor {
 				Command c = (Command) n.getLeft();
 				c.setLabels(n.getLabels());
 				return cmdDispatcher.processCommand(c, true);
+			 }
+			 else if (leaf instanceof Inequality) {
+				 Inequality eqn = (Inequality) n.getLeft();
+				 eqn.setLabels(n.getLabels());
+				 return processInequality(eqn);
 			 }
 			 else if (leaf instanceof Equation) {
 				 Equation eqn = (Equation) n.getLeft();

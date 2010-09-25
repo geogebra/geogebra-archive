@@ -327,7 +327,7 @@ implements Functional2Var, GeoCoordSys2D{
 		
 		
 		return kernel.buildImplicitEquation(
-				getCoordSys().getEquationVector().get(), VAR_STRING, KEEP_LEADING_SIGN, false
+				getCoordSys().getEquationVector().get(), VAR_STRING, KEEP_LEADING_SIGN, false, '='
 				);   
 		
 	}
