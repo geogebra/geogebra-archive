@@ -1,6 +1,9 @@
 package geogebra.euclidian;
 
 import geogebra.kernel.GeoLinearInequality;
+import geogebra.kernel.Kernel;
+import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.awt.Graphics2D;
 
@@ -45,12 +48,26 @@ public class DrawLinearInequality extends DrawLine {
     			y2 = temp;
     		}
     		
+    		// make sure y1 & y2 in right order for vertical line
+    		if (y1 < y2 && Kernel.isEqual(x1, x2)) {
+    			double temp = x1;
+    			x1 = x2;
+    			x2 = temp;
+    			temp = y1;
+    			y1 = y2;
+    			y2 = temp;    			
+    		}
+    		
     		gp.moveTo(x2, y2);
     		gp.lineTo(x1, y1);
     		
-    		boolean above = ((GeoLinearInequality)g).op == '>';
+    		char op = ((GeoLinearInequality)g).op;
     		
-    		if (above) {
+    		boolean above = op == '>' || op == Unicode.GREATER_EQUAL;
+    		
+    		above = !(g.y <= 0);
+
+    		if (!above) {
 	    		if (x1 < 0) 
 	    			gp.lineTo(0, 0);
 	    		
