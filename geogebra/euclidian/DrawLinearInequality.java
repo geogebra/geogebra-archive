@@ -63,11 +63,16 @@ public class DrawLinearInequality extends DrawLine {
     		
     		char op = ((GeoLinearInequality)g).op;
     		
+    		//Application.debug(g.x + "x +"+g.y+" y "+op+(-g.z));
+    		//Application.debug(op);
+    		
     		boolean above = op == '>' || op == Unicode.GREATER_EQUAL;
     		
-    		above = !(g.y <= 0);
+    		//Application.debug("above = "+above);
+    		if (g.y <= 0) above = !above;
+    		//Application.debug("above = "+above);
 
-    		if (!above) {
+    		if (above) {
 	    		if (x1 < 0) 
 	    			gp.lineTo(0, 0);
 	    		
