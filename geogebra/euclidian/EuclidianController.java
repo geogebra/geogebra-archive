@@ -1122,12 +1122,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (translateableGeos != null) {
 				moveMode = MOVE_DEPENDENT;
 
-				// snap to grid when dragging polygons, segments etc
-				// use first point
-				((GeoPoint)translateableGeos.get(0)).getInhomCoords(transformCoordsOffset);
-				transformCoordsOffset[0]-=xRW;
-				transformCoordsOffset[1]-=yRW;
-				
+				GeoPoint point = ((GeoPoint)translateableGeos.get(0));
+				if (point.getParentAlgorithm() != null) {
+					// make sure snap-to-grid works for dragging (a + x(A), b + x(B))
+					transformCoordsOffset[0] = 0;
+					transformCoordsOffset[1] = 0;
+					
+				} else {
+					// snap to grid when dragging polygons, segments, images etc
+					// use first point
+					point.getInhomCoords(transformCoordsOffset);
+					transformCoordsOffset[0]-=xRW;
+					transformCoordsOffset[1]-=yRW;
+				}
 				startPoint.setLocation(xRW, yRW);					
 				view.setDragCursor();
 				if (translationVec == null)
@@ -2930,6 +2937,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	final protected void moveDependent(boolean repaint) {
+
 		translationVec.setX(xRW - startPoint.x);
 		translationVec.setY(yRW - startPoint.y);
 
