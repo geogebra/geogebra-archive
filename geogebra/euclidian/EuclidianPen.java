@@ -13,6 +13,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Transparency;
 import java.awt.event.MouseEvent;
@@ -268,6 +269,10 @@ public class EuclidianPen {
 		PolyBezier pb = new PolyBezier(penPoints);
 
 		Graphics2D g2d = (Graphics2D)penImage.getGraphics();
+		
+		EuclidianView.setAntialiasing(g2d);
+		g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
+
 
 		if (erasing) {
 			g2d.setStroke(EuclidianView.getStroke(2 * eraserSize, EuclidianView.LINE_TYPE_FULL));
