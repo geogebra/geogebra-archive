@@ -808,7 +808,6 @@ public class AlgebraProcessor {
 	protected GeoElement[] processInequality(Inequality equ) throws MyError {		
 		//Application.debug("Inequality: " + equ);        
 		
-		try {
 			equ.initEquation();	
 			
 			// check no terms in z
@@ -826,17 +825,10 @@ public class AlgebraProcessor {
 				//	return processConic(equ);
 	
 				default :
-					String [] errors = {"InvalidEquation", "TODO: Please enter linear inequality"};
+					String [] errors = {"InvalidInequality", ""};
 					throw new MyError(app, errors);
 
 			}
-		} 
-		catch (MyError eqnError) {
-			eqnError.printStackTrace();
-				String [] errors = {"InvalidEquation", eqnError.getLocalizedMessage()};
-				throw new MyError(app, errors);
-			
-        }        
 		
 		
 	}
