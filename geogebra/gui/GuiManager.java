@@ -209,11 +209,11 @@ public class GuiManager {
 		// register euclidian view
 		layout.registerPanel(new EuclidianDockPanel(app));
 		
-		// register algebra view
-		layout.registerPanel(new AlgebraDockPanel(app));
-		
 		// register spreadsheet view 
 		layout.registerPanel(new SpreadsheetDockPanel(app));
+		
+		// register algebra view
+		layout.registerPanel(new AlgebraDockPanel(app));
 		
 		// register CAS view 
 		layout.registerPanel(new CasDockPanel(app));

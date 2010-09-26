@@ -28,10 +28,10 @@ public class Euclidian2DockPanel extends DockPanel {
 		this.app = app;
 	}
 	
-	public ImageIcon getIcon() {
-		return app.getImageIcon("document-properties.png");
-	}
-	
+//	public ImageIcon getIcon() {
+//		return app.getImageIcon("document-properties.png");
+//	}
+//	
 	protected JComponent loadStyleBar() {
 		return app.getGuiManager().getEuclidianView2().getStyleBar();
 	}

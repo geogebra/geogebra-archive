@@ -28,10 +28,10 @@ public class EuclidianDockPanel extends DockPanel {
 		this.app = app;
 	}
 
-	@Override
-	public ImageIcon getIcon() {
-		return app.getImageIcon("document-properties.png");
-	}
+//	@Override
+//	public ImageIcon getIcon() {
+//		return app.getImageIcon("document-properties.png");
+//	}
 
 	@Override
 	protected JComponent loadStyleBar() {

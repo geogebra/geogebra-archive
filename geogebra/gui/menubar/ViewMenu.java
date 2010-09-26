@@ -93,6 +93,13 @@ class ViewMenu extends BaseMenu {
 	 */
 	private void initItems()
 	{
+		// views
+		//menuViews = new JMenu(app.getMenu("Views")+" ...");
+		initViewItems(this);
+		add(this);
+		addSeparator();
+		
+		
 		JMenuItem mi;
 		
 		menuPerspectives = new JMenu(app.getMenu("Perspectives") + " ...");
@@ -106,34 +113,29 @@ class ViewMenu extends BaseMenu {
 			addSeparator();
 		}
 		
-		menuViews = new JMenu(app.getMenu("Views")+" ...");
-		initViewItems();
-		add(menuViews);
 
-		addSeparator();
-		
 		// show/hide keyboard
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
 		app.setEmptyIcon(cbShowKeyboard);
 		add(cbShowKeyboard);
 		
-		cbShowHandwriting = new JCheckBoxMenuItem(showHandwritingAction);
-		app.setEmptyIcon(cbShowHandwriting);
-		add(cbShowHandwriting);
+//		cbShowHandwriting = new JCheckBoxMenuItem(showHandwritingAction);
+//		app.setEmptyIcon(cbShowHandwriting);
+//		add(cbShowHandwriting);
+//		
+//		menuHandwriting = new JMenu(app.getMenu("Handwriting"));
+//		menuHandwriting.setIcon(app.getEmptyIcon());
+//		cbShowHandwritingAutoAdd = new JCheckBoxMenuItem(showHandwritingAutoAddAction);
+//		app.setEmptyIcon(cbShowHandwritingAutoAdd);
+//		menuHandwriting.add(cbShowHandwritingAutoAdd);
+//		cbShowHandwritingTimedAdd = new JCheckBoxMenuItem(showHandwritingTimedAddAction);
+//		app.setEmptyIcon(cbShowHandwritingTimedAdd);
+//		menuHandwriting.add(cbShowHandwritingTimedAdd);
+//		cbShowHandwritingTimedRecognise = new JCheckBoxMenuItem(showHandwritingTimedRecogniseAction);
+//		app.setEmptyIcon(cbShowHandwritingTimedRecognise);
+//		menuHandwriting.add(cbShowHandwritingTimedRecognise);
 		
-		menuHandwriting = new JMenu(app.getMenu("Handwriting"));
-		menuHandwriting.setIcon(app.getEmptyIcon());
-		cbShowHandwritingAutoAdd = new JCheckBoxMenuItem(showHandwritingAutoAddAction);
-		app.setEmptyIcon(cbShowHandwritingAutoAdd);
-		menuHandwriting.add(cbShowHandwritingAutoAdd);
-		cbShowHandwritingTimedAdd = new JCheckBoxMenuItem(showHandwritingTimedAddAction);
-		app.setEmptyIcon(cbShowHandwritingTimedAdd);
-		menuHandwriting.add(cbShowHandwritingTimedAdd);
-		cbShowHandwritingTimedRecognise = new JCheckBoxMenuItem(showHandwritingTimedRecogniseAction);
-		app.setEmptyIcon(cbShowHandwritingTimedRecognise);
-		menuHandwriting.add(cbShowHandwritingTimedRecognise);
-		
-		add(menuHandwriting);
+//		add(menuHandwriting);
 		
 		addSeparator();
 
@@ -468,10 +470,10 @@ class ViewMenu extends BaseMenu {
 		
 		cbShowAlgebraInput.setSelected(app.showAlgebraInput());
 		cbShowKeyboard.setSelected(Application.isVirtualKeyboardActive());
-		cbShowHandwriting.setSelected(Application.isHandwritingRecognitionActive());
-		cbShowHandwritingAutoAdd.setSelected(Application.isHandwritingRecognitionAutoAdd());
-		cbShowHandwritingTimedAdd.setSelected(Application.isHandwritingRecognitionTimedAdd());
-		cbShowHandwritingTimedRecognise.setSelected(Application.isHandwritingRecognitionTimedRecognise());
+//		cbShowHandwriting.setSelected(Application.isHandwritingRecognitionActive());
+//		cbShowHandwritingAutoAdd.setSelected(Application.isHandwritingRecognitionAutoAdd());
+//		cbShowHandwritingTimedAdd.setSelected(Application.isHandwritingRecognitionTimedAdd());
+//		cbShowHandwritingTimedRecognise.setSelected(Application.isHandwritingRecognitionTimedRecognise());
 		cbShowCmdList.setSelected(app.showCmdList());
 		cbShowInputTop.setSelected(app.showInputTop());
 		cbShowToolBar.setSelected(app.showToolBar());
@@ -577,7 +579,7 @@ class ViewMenu extends BaseMenu {
 		}
 	}
 	
-	private void initViewItems() {
+	private void initViewItems(JMenu menu) {
 		DockPanel[] dockPanels = layout.getDockManager().getPanels();
 		Arrays.sort(dockPanels, new DockPanel.MenuOrderComparator());
 		int viewsInMenu = 0;
@@ -610,7 +612,7 @@ class ViewMenu extends BaseMenu {
 					setMenuShortCutShiftAccelerator(cb, panel.getMenuShortcut());
 				}
 
-				menuViews.add(cb);
+				menu.add(cb);
 				cbViews[i] = cb;
 				++i;
 			}
