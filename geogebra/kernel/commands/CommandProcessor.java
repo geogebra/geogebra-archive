@@ -226,7 +226,7 @@ public abstract class CommandProcessor  {
 		sb.append(app.getPlain("Syntax"));
 		sb.append(":\n");
 		sb.append(app.getCommandSyntax(cmd));
-		return new MyError(app, sb.toString());
+		return new MyError(app, sb.toString(),cmd);
 	}
 
 	protected final MyError argNumErr(
@@ -3017,19 +3017,20 @@ class CmdShear extends CommandProcessor {
 		case 3 :
 			arg = resArgs(c);
 
-			if ((arg[0] instanceof GeoVec3D) && arg[1].isGeoNumeric()) {
+			if ((arg[1] instanceof GeoVec3D) && arg[2].isGeoNumeric()) {
 				
 				if (arg[0].isMatrixTransformable()||arg[0].isGeoFunction()||arg[0].isGeoPolygon()||arg[0].isGeoSegment()) {
 				
-
-
-				ret = kernel.Shear(label, arg[2], (GeoVec3D)arg[0],(GeoNumeric)arg[1]);
-				return ret;
+					ret = kernel.Shear(label, arg[0], (GeoVec3D)arg[1],(GeoNumeric)arg[2]);
+					return ret;
 				 					
 				} else 
 					throw argErr(app, c.getName(), arg[0]);
-			} else 	
-				throw argErr(app, c.getName(), arg[1]);
+			} else {
+				if(!(arg[1] instanceof GeoVec3D)) throw argErr(app, c.getName(), arg[1]);
+				throw argErr(app, c.getName(), arg[2]);
+			}
+				
 			
 
 
@@ -3072,9 +3073,10 @@ class CmdStretch extends CommandProcessor {
 					
 				} else 
 					throw argErr(app, c.getName(), arg[0]);
-			} else 	
-				throw argErr(app, c.getName(), arg[1]);
-			
+			}  else {
+				if(!(arg[1] instanceof GeoVec3D)) throw argErr(app, c.getName(), arg[1]);
+				throw argErr(app, c.getName(), arg[2]);
+			}
 
 
 		default :
