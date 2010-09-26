@@ -4095,9 +4095,6 @@ public abstract class GeoElement
 		moveObjectsUpdateList.clear();
 		moveObjectsUpdateList.ensureCapacity(size);
 		
-		// only use end position for a single point
-		Point2D.Double position = size == 1 ? endPosition : null;
-		
 		for (int i=0; i < size; i++) {
 			GeoElement geo = (GeoElement) geos.get(i);
 			
@@ -4106,7 +4103,9 @@ public abstract class GeoElement
 			 * eg Image with one corner, Rigid Polygon
 			 * and stops grid-lock working properly
 			 * but is needed for eg dragging (a + x(A), b + x(B)) */
-			moved = geo.moveObject(rwTransVec, geo.isGeoPoint() ? position : null, moveObjectsUpdateList) || moved;		
+			Application.debug((geo.getParentAlgorithm() == null)+" "+size+" "+geo.getClassName());
+			Point2D.Double position = (size == 1) && (geo.getParentAlgorithm() != null) ? endPosition : null;
+			moved = geo.moveObject(rwTransVec, position, moveObjectsUpdateList) || moved;		
 		}					
 							
 		// take all independent input objects and build a common updateSet
