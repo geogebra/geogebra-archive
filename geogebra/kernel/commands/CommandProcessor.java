@@ -1,4 +1,4 @@
-/*
+/**
  * GeoGebra - Dynamic Mathematics for Everyone 
  * http://www.geogebra.org
  * 
@@ -15,9 +15,7 @@ package geogebra.kernel.commands;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
-import geogebra.kernel.AlgoApplyMatrix;
 import geogebra.kernel.AlgoCellRange;
-import geogebra.kernel.AlgoShearOrStretch;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -42,11 +40,8 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.MatrixTransformable;
 import geogebra.kernel.Mirrorable;
 import geogebra.kernel.MyPoint;
-import geogebra.kernel.PointRotateable;
-import geogebra.kernel.Rotateable;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -74,6 +69,10 @@ public abstract class CommandProcessor  {
 	Construction cons;
 	private AlgebraProcessor algProcessor;
 
+	/**
+	 * Creates new command processor
+	 * @param kernel kernel
+	 */
 	public CommandProcessor(Kernel kernel) {	      
 		this.kernel = kernel;     
 		cons = kernel.getConstruction();
@@ -265,15 +264,17 @@ public abstract class CommandProcessor  {
 	/**
 	 * Creates a dependent list with all GeoElement objects from the given array.
 	 * @param args
-	 * @param type: -1 for any GeoElement object type; GeoElement.GEO_CLASS_ANGLE, etc. for specific types
+	 * @param type -1 for any GeoElement object type; GeoElement.GEO_CLASS_ANGLE, etc. for specific types
 	 * @return null if GeoElement objects did not have the correct type
 	 * @author Markus Hohenwarter
+	 * @param kernel 
+	 * @param length 
 	 * @date Jan 26, 2008
 	 */
 	public static GeoList wrapInList(Kernel kernel, GeoElement [] args, int length, int type) {
 		Construction cons=kernel.getConstruction();
 		boolean correctType = true;		        
-		ArrayList geoElementList = new ArrayList();
+		ArrayList<GeoElement> geoElementList = new ArrayList<GeoElement>();
 		for (int i=0; i < length; i++) {
 			if (type < 0 || args[i].getGeoClassType() == type) 
 				geoElementList.add(args[i]);
@@ -305,18 +306,28 @@ public abstract class CommandProcessor  {
  *     Command classes used by CommandDispatcher
  *  *****************************************/
 
-
+/**
+ * Center[ <GeoConic> ] Center[ <GeoPoint>, <GeoPoint> ]
+ */
 class CmdCenter extends CmdMidpoint {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCenter(Kernel kernel) {
 		super(kernel);
 	}
 }
 
-/*
+/**
  * Midpoint[ <GeoConic> ] Midpoint[ <GeoPoint>, <GeoPoint> ]
  */
 class CmdMidpoint extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdMidpoint(Kernel kernel) {
 		super(kernel);
 	}
@@ -367,11 +378,15 @@ class CmdMidpoint extends CommandProcessor {
 
 
 
-/*
+/**
  * Orthogonal[ <GeoPoint>, <GeoVector> ] Orthogonal[ <GeoPoint>, <GeoLine> ]
  */
 class CmdOrthogonalLine extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdOrthogonalLine(Kernel kernel) {
 		super(kernel);
 	}
@@ -425,11 +440,15 @@ class CmdOrthogonalLine extends CommandProcessor {
 }
 
 
-/*
+/**
  * LineBisector[ <GeoPoint>, <GeoPoint> ] LineBisector[ <GeoSegment> ]
  */
 class CmdLineBisector extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdLineBisector(Kernel kernel) {
 		super(kernel);
 	}
@@ -485,12 +504,16 @@ class CmdLineBisector extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * AngularBisector[ <GeoPoint>, <GeoPoint>, <GeoPoint> ] AngularBisector[
  * <GeoLine>, <GeoLine> ]
  */
 class CmdAngularBisector extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdAngularBisector(Kernel kernel) {
 		super(kernel);
 	}
@@ -552,11 +575,15 @@ class CmdAngularBisector extends CommandProcessor {
 }
 
 
-/*
+/**
  * Direction[ <GeoLine> ]
  */
 class CmdDirection extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDirection(Kernel kernel) {
 		super(kernel);
 	}
@@ -584,11 +611,15 @@ class CmdDirection extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Slope[ <GeoLine> ] Slope[ <GeoFunction> ]
  */
 class CmdSlope extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdSlope(Kernel kernel) {
 		super(kernel);
 	}
@@ -613,11 +644,15 @@ class CmdSlope extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * OrthogonalVector[ <GeoLine> ] OrthogonalVector[ <GeoVector> ]
  */
 class CmdOrthogonalVector extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdOrthogonalVector(Kernel kernel) {
 		super(kernel);
 	}
@@ -655,11 +690,15 @@ class CmdOrthogonalVector extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * UnitVector[ <GeoLine> ] UnitVector[ <GeoVector> ]
  */
 class CmdUnitVector extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdUnitVector(Kernel kernel) {
 		super(kernel);
 	}
@@ -691,11 +730,15 @@ class CmdUnitVector extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * UnitOrthogonalVector[ <GeoLine> ] UnitOrthogonalVector[ <GeoVector> ]
  */
 class CmdUnitOrthogonalVector extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdUnitOrthogonalVector(Kernel kernel) {
 		super(kernel);
 	}
@@ -736,7 +779,7 @@ class CmdUnitOrthogonalVector extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Length[ <GeoVector> ] 
  * Length[ <GeoPoint> ]
  * Length[ <GeoList> ] 
@@ -747,6 +790,10 @@ class CmdUnitOrthogonalVector extends CommandProcessor {
  */
 class CmdLength extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdLength(Kernel kernel) {
 		super(kernel);
 	}
@@ -854,12 +901,16 @@ class CmdLength extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Distance[ <GeoPoint>, <GeoPoint> ] Distance[ <GeoPoint>, <GeoLine> ]
  * Distance[ <GeoLine>, <GeoPoint> ] Distance[ <GeoLine>, <GeoLine> ]
  */
 class CmdDistance extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDistance(Kernel kernel) {
 		super(kernel);
 	}
@@ -938,7 +989,7 @@ class CmdDistance extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Angle[ number ] Angle[ <GeoPolygon> ] Angle[ <GeoConic> ] Angle[ <GeoVector> ]
  * Angle[ <GeoPoint> ] Angle[ <GeoVector>, <GeoVector> ] Angle[ <GeoLine>,
  * <GeoLine> ] Angle[ <GeoPoint>, <GeoPoint>, <GeoPoint> ] Angle[ <GeoPoint>,
@@ -946,6 +997,10 @@ class CmdDistance extends CommandProcessor {
  */
 class CmdAngle extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdAngle(Kernel kernel) {
 		super(kernel);
 	}
@@ -956,7 +1011,7 @@ class CmdAngle extends CommandProcessor {
 		GeoElement[] arg;
 
 		switch (n) {
-		/*
+		/**
 		 * // Anlge[ constant number ] // get number value ExpressionNode en =
 		 * null; ExpressionValue eval; double value = 0.0; // check if we got
 		 * number: // ExpressionNode && NumberValue || Assignment // build
@@ -1085,13 +1140,17 @@ class CmdAngle extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Area[ <GeoPoint>, ..., <GeoPoint> ]
  * Area[ <GeoConic> ]
  * Area[ <Polygon> ] (returns Polygon directly)
  */
 class CmdArea extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdArea(Kernel kernel) {
 		super(kernel);
 	}
@@ -1137,11 +1196,15 @@ class CmdArea extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Focus[ <GeoConic> ]
  */
 class CmdFocus extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdFocus(Kernel kernel) {
 		super(kernel);
 	}
@@ -1165,11 +1228,15 @@ class CmdFocus extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Vertex[ <GeoConic> ]
  */
 class CmdVertex extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdVertex(Kernel kernel) {
 		super(kernel);
 	}
@@ -1227,99 +1294,31 @@ class CmdVertex extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Corner[ <Image>, <number> ]
  */
 class CmdCorner extends CmdVertex {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCorner (Kernel kernel) {
 		super(kernel);
 	}
 
 }
 
-// ggb3D : moved to CmdCircle.java
 
-/*
- * Circle[ <GeoPoint>, <GeoNumeric> ] Circle[ <GeoPoint>, <GeoPoint> ] Circle[
- * <GeoPoint>, <GeoPoint>, <GeoPoint> ]
- */
-/*
-class CmdCircle extends CommandProcessor {
-
-	public CmdCircle(Kernel kernel) {
-		super(kernel);
-	}
-
-final public GeoElement[] process(Command c) throws MyError {
-    int n = c.getArgumentNumber();
-    boolean[] ok = new boolean[n];
-    GeoElement[] arg;
-
-    switch (n) {
-        case 2 :
-            arg = resArgs(c);
-            if ((ok[0] = (arg[0] .isGeoPoint()))
-                && (ok[1] = (arg[1] .isNumberValue()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Circle(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (NumberValue) arg[1])};
-                return ret;
-            } else if (
-                (ok[0] = (arg[0] .isGeoPoint()))
-                    && (ok[1] = (arg[1] .isGeoPoint()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Circle(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (GeoPoint) arg[1])};
-                return ret;
-            } else {
-                if (!ok[0])
-                    throw argErr(app, "Circle", arg[0]);
-                else
-                    throw argErr(app, "Circle", arg[1]);
-            }
-
-        case 3 :
-            arg = resArgs(c);
-            if ((ok[0] = (arg[0] .isGeoPoint()))
-                && (ok[1] = (arg[1] .isGeoPoint()))
-                && (ok[2] = (arg[2] .isGeoPoint()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.Circle(
-                            c.getLabel(),
-                            (GeoPoint) arg[0],
-                            (GeoPoint) arg[1],
-                            (GeoPoint) arg[2])};
-                return ret;
-            } else {
-                if (!ok[0])
-                    throw argErr(app, "Circle", arg[0]);
-                else if (!ok[1])
-                    throw argErr(app, "Circle", arg[1]);
-                else
-                    throw argErr(app, "Circle", arg[2]);
-            }
-
-        default :
-            throw argNumErr(app, "Circle", n);
-    }
-}
-}
- */
-
-
-/*
+/**
  * Semicircle[ <GeoPoint>, <GeoPoint> ]
  */
 class CmdSemicircle extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdSemicircle(Kernel kernel) {
 		super(kernel);
 	}
@@ -1354,11 +1353,15 @@ class CmdSemicircle extends CommandProcessor {
 	}    
 }
 
-/*
+/**
  * Locus[ <GeoPoint Q>, <GeoPoint P> ]
  */
 class CmdLocus extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdLocus(Kernel kernel) {
 		super(kernel);
 	}
@@ -1393,11 +1396,15 @@ class CmdLocus extends CommandProcessor {
 	}   
 }
 
-/*
+/**
  * Arc[ <GeoConic>, <Number>, <Number> ] Arc[ <GeoConic>, <GeoPoint>, <GeoPoint> ]
  */
 class CmdArc extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdArc(Kernel kernel) {
 		super(kernel);
 	}
@@ -1450,12 +1457,16 @@ class CmdArc extends CommandProcessor {
 	}   
 }
 
-/*
+/**
  * Sector[ <GeoConic>, <Number>, <Number> ] Sector[ <GeoConic>, <GeoPoint>,
  * <GeoPoint> ]
  */
 class CmdSector extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdSector(Kernel kernel) {
 		super(kernel);
 	}
@@ -1508,11 +1519,15 @@ class CmdSector extends CommandProcessor {
 	} 
 }
 
-/*
+/**
  * CircleArc[ <GeoPoint center>, <GeoPoint>, <GeoPoint> ]
  */
 class CmdCircleArc extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCircleArc(Kernel kernel) {
 		super(kernel);
 	}
@@ -1552,11 +1567,15 @@ class CmdCircleArc extends CommandProcessor {
 	}   
 }
 
-/*
+/**
  * CircleSector[ <GeoPoint center>, <GeoPoint>, <GeoPoint> ]
  */
 class CmdCircleSector extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCircleSector(Kernel kernel) {
 		super(kernel);
 	}
@@ -1596,11 +1615,15 @@ class CmdCircleSector extends CommandProcessor {
 	}  
 }
 
-/*
+/**
  * CircumcircleArc[ <GeoPoint center>, <GeoPoint>, <GeoPoint> ]
  */
 class CmdCircumcircleArc extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCircumcircleArc(Kernel kernel) {
 		super(kernel);
 	}
@@ -1640,11 +1663,15 @@ class CmdCircumcircleArc extends CommandProcessor {
 	}   
 }
 
-/*
+/**
  * CircumcircleSector[ <GeoPoint center>, <GeoPoint>, <GeoPoint> ]
  */
 class CmdCircumcircleSector extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCircumcircleSector(Kernel kernel) {
 		super(kernel);
 	}
@@ -1684,11 +1711,15 @@ class CmdCircumcircleSector extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Parabola[ <GeoPoint>, <GeoLine> ]
  */
 class CmdParabola extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdParabola(Kernel kernel) {
 		super(kernel);
 	}
@@ -1723,11 +1754,15 @@ class CmdParabola extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Div[ a, b ]
  */
 class CmdDiv extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDiv(Kernel kernel) {
 		super(kernel);
 	}
@@ -1771,11 +1806,15 @@ class CmdDiv extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Mod[a, b]
  */
 class CmdMod extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdMod(Kernel kernel) {
 		super(kernel);
 	}
@@ -1819,11 +1858,15 @@ class CmdMod extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Ellipse[ <GeoPoint>, <GeoPoint>, <NumberValue> ]
  */
 class CmdEllipse extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdEllipse(Kernel kernel) {
 		super(kernel);
 	}
@@ -1872,11 +1915,15 @@ class CmdEllipse extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Hyperbola[ <GeoPoint>, <GeoPoint>, <NumberValue> ]
  */
 class CmdHyperbola extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdHyperbola(Kernel kernel) {
 		super(kernel);
 	}
@@ -1924,11 +1971,15 @@ class CmdHyperbola extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Conic[ five GeoPoints ]
  */
 class CmdConic extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdConic(Kernel kernel) {
 		super(kernel);
 	}
@@ -1969,11 +2020,15 @@ class CmdConic extends CommandProcessor {
 }
 
 
-/*
+/**
  * Polar[ <GeoPoint>, <GeoConic> ]
  */
 class CmdPolar extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdPolar(Kernel kernel) {
 		super(kernel);
 	}
@@ -2013,11 +2068,15 @@ class CmdPolar extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Diameter[ <GeoVector>, <GeoConic> ] Diameter[ <GeoLine>, <GeoConic> ]
  */
 class CmdDiameter extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDiameter(Kernel kernel) {
 		super(kernel);
 	}
@@ -2069,7 +2128,7 @@ class CmdDiameter extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Tangent[ <GeoPoint>, <GeoConic> ] Tangent[ <GeoLine>, <GeoConic> ] Tangent[
  * <NumberValue>, <GeoFunction> ] Tangent[ <GeoPoint>, <GeoFunction> ]
  *  Tangent[ <GeoPoint>, <GeoCurveCartesian> ] Tangent[<GeoPoint>,<GeoImplicitPoly>]
@@ -2077,6 +2136,10 @@ class CmdDiameter extends CommandProcessor {
  */
 class CmdTangent extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdTangent(Kernel kernel) {
 		super(kernel);
 	}
@@ -2198,11 +2261,15 @@ class CmdTangent extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Asymptote[ <GeoConic> ]
  */
 class CmdAsymptote extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdAsymptote(Kernel kernel) {
 		super(kernel);
 	}
@@ -2233,11 +2300,15 @@ class CmdAsymptote extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Numerator[ <Function> ]
  */
 class CmdNumerator extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdNumerator(Kernel kernel) {
 		super(kernel);
 	}
@@ -2264,11 +2335,15 @@ class CmdNumerator extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Denominator[ <Function> ]
  */
 class CmdDenominator extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDenominator(Kernel kernel) {
 		super(kernel);
 	}
@@ -2296,11 +2371,15 @@ class CmdDenominator extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Axes[ <GeoConic> ]
  */
 class CmdAxes extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdAxes(Kernel kernel) {
 		super(kernel);
 	}
@@ -2325,11 +2404,15 @@ class CmdAxes extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * FirstAxis[ <GeoConic> ]
  */
 class CmdFirstAxis extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdFirstAxis(Kernel kernel) {
 		super(kernel);
 	}
@@ -2356,11 +2439,15 @@ class CmdFirstAxis extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * SecondAxis[ <GeoConic> ]
  */
 class CmdSecondAxis extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdSecondAxis(Kernel kernel) {
 		super(kernel);
 	}
@@ -2387,11 +2474,15 @@ class CmdSecondAxis extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * FirstAxisLength[ <GeoConic> ]
  */
 class CmdFirstAxisLength extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdFirstAxisLength(Kernel kernel) {
 		super(kernel);
 	}
@@ -2421,11 +2512,15 @@ class CmdFirstAxisLength extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * SecondAxisLength[ <GeoConic> ]
  */
 class CmdSecondAxisLength extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdSecondAxisLength(Kernel kernel) {
 		super(kernel);
 	}
@@ -2455,12 +2550,16 @@ class CmdSecondAxisLength extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * LinearEccentricity[ <GeoConic> ]
  * Excentricity[ <GeoConic> ]
  */
 class CmdExcentricity extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdExcentricity(Kernel kernel) {
 		super(kernel);
 	}
@@ -2486,11 +2585,15 @@ class CmdExcentricity extends CommandProcessor {
 		}
 	}
 }
-/*
+/**
  * Eccentricity[ <GeoConic> ]
  */
 class CmdEccentricity extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdEccentricity(Kernel kernel) {
 		super(kernel);
 	}
@@ -2517,11 +2620,15 @@ class CmdEccentricity extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Parameter[ <GeoConic> ]
  */
 class CmdParameter extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdParameter(Kernel kernel) {
 		super(kernel);
 	}
@@ -2548,11 +2655,15 @@ class CmdParameter extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Radius[ <GeoConic> ]
  */
 class CmdRadius extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdRadius(Kernel kernel) {
 		super(kernel);
 	}
@@ -2581,11 +2692,15 @@ class CmdRadius extends CommandProcessor {
 
 
 
-/*
+/**
  * Directrix[ <GeoConic> ]
  */
 class CmdDirectrix extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDirectrix(Kernel kernel) {
 		super(kernel);
 	}
@@ -2612,7 +2727,7 @@ class CmdDirectrix extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Translate[ <GeoPoint>, <GeoVector> ] Translate[ <GeoLine>, <GeoVector> ]
  * Translate[ <GeoConic>, <GeoVector> ] Translate[ <GeoFunction>, <GeoVector> ]
  * Translate[ <GeoVector>, <GeoPoint> ] // set start point 
@@ -2621,6 +2736,10 @@ class CmdDirectrix extends CommandProcessor {
  */
 class CmdTranslate extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdTranslate(Kernel kernel) {
 		super(kernel);
 	}
@@ -2637,18 +2756,12 @@ class CmdTranslate extends CommandProcessor {
 			arg = resArgs(c);
 
 			// translate object
-			if ((ok[0] = (arg[0] instanceof Translateable))
+			if ((ok[0] = (arg[0] instanceof Translateable || arg[0] instanceof GeoPolygon))
 					&& (ok[1] = (arg[1].isGeoVector()||arg[1].isGeoPoint())))  {
-				Translateable p = (Translateable) arg[0];
 				GeoVec3D v = (GeoVec3D) arg[1]; 
-				ret = kernel.Translate(label, p, v); 
+				ret = kernel.Translate(label, arg[0], v); 
 				return ret;
 			}
-
-			// translate polygon
-			else  if ((ok[0] = (arg[0] .isGeoPolygon()))
-					&& (ok[1] = (arg[1].isGeoVector()||arg[1].isGeoPoint())))
-				return kernel.Translate(label, (GeoPolygon) arg[0], (GeoVec3D) arg[1]);
 			else if (
 					(ok[0] = (arg[0] .isGeoVector()))
 					&& (ok[1] = (arg[1] .isGeoPoint()))) {
@@ -2674,7 +2787,7 @@ class CmdTranslate extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Rotate[ <GeoPoint>, <NumberValue> ] 
  * Rotate[ <GeoVector>, <NumberValue> ]
  * Rotate[ <GeoLine>, <NumberValue> ] 
@@ -2688,6 +2801,10 @@ class CmdTranslate extends CommandProcessor {
  */
 class CmdRotate extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdRotate(Kernel kernel) {
 		super(kernel);
 	}
@@ -2761,7 +2878,7 @@ class CmdRotate extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Dilate[ <GeoPoint>, <NumberValue>, <GeoPoint> ] 
  * Dilate[ <GeoLine>, <NumberValue>, <GeoPoint> ] 
  * Dilate[ <GeoConic>, <NumberValue>, <GeoPoint> ]
@@ -2769,6 +2886,10 @@ class CmdRotate extends CommandProcessor {
  */ 
 class CmdDilate extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDilate(Kernel kernel) {
 		super(kernel);
 	}
@@ -2785,11 +2906,10 @@ class CmdDilate extends CommandProcessor {
 			arg = resArgs(c);
 
 			// dilate point, line or conic
-			if ((ok[0] = (arg[0] instanceof Dilateable))
+			if ((ok[0] = (arg[0] instanceof Dilateable || arg[0].isGeoPolygon()))
 					&& (ok[1] = (arg[1] .isNumberValue()))) {
-				Dilateable p = (Dilateable) arg[0];
 				NumberValue phi = (NumberValue) arg[1];
-				ret = kernel.Dilate(label, p, phi);
+				ret = kernel.Dilate(label, arg[0], phi);
 				return ret;
 			}
 
@@ -2809,22 +2929,15 @@ class CmdDilate extends CommandProcessor {
 			arg = resArgs(c);
 
 			// dilate point, line or conic
-			if ((ok[0] = (arg[0] instanceof Dilateable))
+			if ((ok[0] = (arg[0] instanceof Dilateable || arg[0] instanceof GeoPolygon))
 					&& (ok[1] = (arg[1] .isNumberValue()))
 					&& (ok[2] = (arg[2] .isGeoPoint()))) {
-				Dilateable p = (Dilateable) arg[0];
 				NumberValue phi = (NumberValue) arg[1];
 				GeoPoint Q = (GeoPoint) arg[2];
-				ret = kernel.Dilate(label, p, phi, Q);
+				ret = kernel.Dilate(label, arg[0], phi, Q);
 				return ret;
 			}
 
-			// dilate polygon
-			else  if ((ok[0] = (arg[0] .isGeoPolygon()))
-					&& (ok[1] = (arg[1] .isNumberValue()))
-					&& (ok[2] = (arg[2] .isGeoPoint())))
-				return kernel.Dilate(label, (GeoPolygon) arg[0], (NumberValue) arg[1], 
-						(GeoPoint) arg[2]);
 			else {
 				if (!ok[0])
 					throw argErr(app, c.getName(), arg[0]);
@@ -2837,9 +2950,15 @@ class CmdDilate extends CommandProcessor {
 		}
 	}
 }
-
+/**
+ * ApplyMatrix[<Matrix>,<Object>]
+ */
 class CmdApplyMatrix extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdApplyMatrix(Kernel kernel) {
 		super(kernel);
 	}
@@ -2857,71 +2976,11 @@ class CmdApplyMatrix extends CommandProcessor {
 
 			if (arg[0] .isGeoList()) {
 				
-				if (arg[1].isMatrixTransformable() || arg[1].isGeoFunction()) {
-				//MatrixTransformable Q = (MatrixTransformable) arg[1];
-
-
+				if (arg[1].isMatrixTransformable() || arg[1].isGeoFunction() || arg[1].isGeoPolygon()) {
 				ret = kernel.ApplyMatrix(label, arg[1], (GeoList)arg[0]);
 				return ret;
-				} else if (arg[1].isGeoPolygon()) {
-					
-					GeoPolygon poly = (GeoPolygon)arg[1];
-					GeoPoint[] points = poly.getPoints();
-					GeoPoint[] newPoints = new GeoPoint[points.length];
-					
-					String [] polyLabel = null;		
-						if (poly.isLabelSet()) {		
-							polyLabel = new String[1];
-							polyLabel[0] = kernel.transformedGeoLabel(poly);
-						}			
-				
-					for (int i = 0 ; i < points.length ; i++) {
-						//newPoints[i] = new GeoPoint(cons);
-						String pointLabel = kernel.transformedGeoLabel(points[i]);
-						AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel, points[i], (GeoList)arg[0]);
-						//newPoints[i].setParentAlgorithm(algo);
-						//cons.addToAlgorithmList(algo);
-						newPoints[i] = (GeoPoint)algo.getResult();
-						newPoints[i].setVisualStyleForTransformations(points[i]);
-					}
-					
-					ret = kernel.Polygon(polyLabel, newPoints);
-					return ret;
-					
-					//GeoElement[] ret2 = {newPoints[0]};
-					//return ret2;
-					
-					
-				} else if (arg[1].isGeoSegment()) {
-					
-					GeoSegment seg = (GeoSegment)arg[1];
-					GeoPoint startPoint = seg.getStartPoint();
-					GeoPoint endPoint = seg.getEndPoint();
-					GeoPoint[] newPoints = new GeoPoint[2];
-					
-					String segLabel = null;		
-					if (seg.isLabelSet()) {		
-						segLabel = kernel.transformedGeoLabel(seg);
-					}			
-			
-
-					String pointLabel1 = kernel.transformedGeoLabel(startPoint);
-					AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, pointLabel1, startPoint, (GeoList)arg[0]);
-
-					newPoints[0] = (GeoPoint)algo.getResult();
-					newPoints[0].setVisualStyleForTransformations(startPoint);
-				
-					String pointLabel2 = kernel.transformedGeoLabel(endPoint);
-					algo = new AlgoApplyMatrix(cons, pointLabel2, endPoint, (GeoList)arg[0]);
-
-					newPoints[1] = (GeoPoint)algo.getResult();
-					newPoints[1].setVisualStyleForTransformations(startPoint);
-					
-					GeoElement[] ret2 = {kernel.Segment(segLabel, newPoints[0], newPoints[1])};
-					return ret2;
-					
-					
-				} else 
+				} 
+				else 
 					throw argErr(app, c.getName(), arg[1]);
 			} else 	
 				throw argErr(app, c.getName(), arg[0]);
@@ -2934,8 +2993,15 @@ class CmdApplyMatrix extends CommandProcessor {
 	}
 }
 
+/**
+ * Shear[<Object>,<Line>,<Ratio>]
+ */
 class CmdShear extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdShear(Kernel kernel) {
 		super(kernel);
 	}
@@ -2953,74 +3019,17 @@ class CmdShear extends CommandProcessor {
 
 			if ((arg[0] instanceof GeoVec3D) && arg[1].isGeoNumeric()) {
 				
-				if (arg[2].isMatrixTransformable()||arg[2].isGeoFunction()) {
+				if (arg[0].isMatrixTransformable()||arg[0].isGeoFunction()||arg[0].isGeoPolygon()||arg[0].isGeoSegment()) {
 				
 
 
 				ret = kernel.Shear(label, arg[2], (GeoVec3D)arg[0],(GeoNumeric)arg[1]);
 				return ret;
-				} else if (arg[2].isGeoPolygon()) {
-					
-					GeoPolygon poly = (GeoPolygon)arg[2];
-					GeoPoint[] points = poly.getPoints();
-					GeoPoint[] newPoints = new GeoPoint[points.length];
-					
-					String [] polyLabel = null;		
-						if (poly.isLabelSet()) {		
-							polyLabel = new String[1];
-							polyLabel[0] = kernel.transformedGeoLabel(poly);
-						}			
-				
-					for (int i = 0 ; i < points.length ; i++) {
-						//newPoints[i] = new GeoPoint(cons);
-						String pointLabel = kernel.transformedGeoLabel(points[i]);
-						AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel, points[i], (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
-						//newPoints[i].setParentAlgorithm(algo);
-						//cons.addToAlgorithmList(algo);
-						newPoints[i] = (GeoPoint)algo.getResult();
-						newPoints[i].setVisualStyleForTransformations(points[i]);
-					}
-					
-					ret = kernel.Polygon(polyLabel, newPoints);
-					return ret;
-					
-					//GeoElement[] ret2 = {newPoints[0]};
-					//return ret2;
-					
-					
-				} else if (arg[2].isGeoSegment()) {
-					
-					GeoSegment seg = (GeoSegment)arg[1];
-					GeoPoint startPoint = seg.getStartPoint();
-					GeoPoint endPoint = seg.getEndPoint();
-					GeoPoint[] newPoints = new GeoPoint[2];
-					
-					String segLabel = null;		
-					if (seg.isLabelSet()) {		
-						segLabel = kernel.transformedGeoLabel(seg);
-					}			
-			
-
-					String pointLabel1 = kernel.transformedGeoLabel(startPoint);
-					AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel1, startPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
-
-					newPoints[0] = (GeoPoint)algo.getResult();
-					newPoints[0].setVisualStyleForTransformations(startPoint);
-				
-					String pointLabel2 = kernel.transformedGeoLabel(endPoint);
-					algo = new AlgoShearOrStretch(cons, pointLabel2, endPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],true);
-
-					newPoints[1] = (GeoPoint)algo.getResult();
-					newPoints[1].setVisualStyleForTransformations(startPoint);
-					
-					GeoElement[] ret2 = {kernel.Segment(segLabel, newPoints[0], newPoints[1])};
-					return ret2;
-					
-					
+				 					
 				} else 
-					throw argErr(app, c.getName(), arg[1]);
+					throw argErr(app, c.getName(), arg[0]);
 			} else 	
-				throw argErr(app, c.getName(), arg[0]);
+				throw argErr(app, c.getName(), arg[1]);
 			
 
 
@@ -3029,9 +3038,15 @@ class CmdShear extends CommandProcessor {
 		}
 	}
 }
-
+/**
+ * Stretch[<Object>,<Line>,<Ratio>]
+ */
 class CmdStretch extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdStretch(Kernel kernel) {
 		super(kernel);
 	}
@@ -3047,74 +3062,18 @@ class CmdStretch extends CommandProcessor {
 		case 3 :
 			arg = resArgs(c);
 
-			if ((arg[0] instanceof GeoVec3D) && arg[1].isGeoNumeric()) {
+			if ((arg[1] instanceof GeoVec3D) && arg[2].isGeoNumeric()) {
 				
-				if (arg[2].isMatrixTransformable()||arg[2].isGeoFunction()) {
+				if (arg[0].isMatrixTransformable()||arg[0].isGeoFunction()||arg[0].isGeoPolygon()||arg[0].isGeoSegment()) {
 				
-				ret = kernel.Stretch(label, arg[2], (GeoVec3D)arg[0],(GeoNumeric)arg[1]);
+				ret = kernel.Stretch(label, arg[0], (GeoVec3D)arg[1],(GeoNumeric)arg[2]);
 				return ret;
-				} else if (arg[2].isGeoPolygon()) {
-					
-					GeoPolygon poly = (GeoPolygon)arg[2];
-					GeoPoint[] points = poly.getPoints();
-					GeoPoint[] newPoints = new GeoPoint[points.length];
-					
-					String [] polyLabel = null;		
-						if (poly.isLabelSet()) {		
-							polyLabel = new String[1];
-							polyLabel[0] = kernel.transformedGeoLabel(poly);
-						}			
-				
-					for (int i = 0 ; i < points.length ; i++) {
-						//newPoints[i] = new GeoPoint(cons);
-						String pointLabel = kernel.transformedGeoLabel(points[i]);
-						AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel, points[i], (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
-						//newPoints[i].setParentAlgorithm(algo);
-						//cons.addToAlgorithmList(algo);
-						newPoints[i] = (GeoPoint)algo.getResult();
-						newPoints[i].setVisualStyleForTransformations(points[i]);
-					}
-					
-					ret = kernel.Polygon(polyLabel, newPoints);
-					return ret;
-					
-					//GeoElement[] ret2 = {newPoints[0]};
-					//return ret2;
-					
-					
-				} else if (arg[1].isGeoSegment()) {
-					
-					GeoSegment seg = (GeoSegment)arg[1];
-					GeoPoint startPoint = seg.getStartPoint();
-					GeoPoint endPoint = seg.getEndPoint();
-					GeoPoint[] newPoints = new GeoPoint[2];
-					
-					String segLabel = null;		
-					if (seg.isLabelSet()) {		
-						segLabel = kernel.transformedGeoLabel(seg);
-					}			
-			
-
-					String pointLabel1 = kernel.transformedGeoLabel(startPoint);
-					AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, pointLabel1, startPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
-
-					newPoints[0] = (GeoPoint)algo.getResult();
-					newPoints[0].setVisualStyleForTransformations(startPoint);
-				
-					String pointLabel2 = kernel.transformedGeoLabel(endPoint);
-					algo = new AlgoShearOrStretch(cons, pointLabel2, endPoint, (GeoVec3D)arg[0],(GeoNumeric)arg[1],false);
-
-					newPoints[1] = (GeoPoint)algo.getResult();
-					newPoints[1].setVisualStyleForTransformations(startPoint);
-					
-					GeoElement[] ret2 = {kernel.Segment(segLabel, newPoints[0], newPoints[1])};
-					return ret2;
-					
+				 					
 					
 				} else 
-					throw argErr(app, c.getName(), arg[1]);
+					throw argErr(app, c.getName(), arg[0]);
 			} else 	
-				throw argErr(app, c.getName(), arg[0]);
+				throw argErr(app, c.getName(), arg[1]);
 			
 
 
@@ -3124,7 +3083,7 @@ class CmdStretch extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * (2nd argument is the mirror) 
  * Mirror[ <GeoPoint>, <GeoPoint> ] 
  * Mirror[<GeoLine>, <GeoPoint> ] 
@@ -3138,6 +3097,10 @@ class CmdStretch extends CommandProcessor {
  */ 
 class CmdMirror extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdMirror(Kernel kernel) {
 		super(kernel);
 	}
@@ -3184,7 +3147,7 @@ class CmdMirror extends CommandProcessor {
 				else if (ok[1] = (arg[1] .isGeoLine())) {
 					GeoLine line = (GeoLine) arg[1];
 
-					/*
+					/**
                     // if we are not in a nested command (suppress labels)
                     // and no label is given and the input object is independent
                     // we change the input object
@@ -3229,11 +3192,15 @@ class CmdMirror extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Relation[ <GeoElement>, <GeoElement> ]
  */
 class CmdRelation extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdRelation(Kernel kernel) {
 		super(kernel);
 	}
@@ -3268,11 +3235,15 @@ class CmdRelation extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Delete[ <GeoElement> ]
  */
 class CmdDelete extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDelete(Kernel kernel) {
 		super(kernel);
 	}
@@ -3300,13 +3271,17 @@ class CmdDelete extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Derivative[ <GeoFunction> ]
  * Derivative[ <GeoFunctionNVar>, <var> ]
  * Derivative[ <GeoCurveCartesian> ]
  */
 class CmdDerivative extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDerivative (Kernel kernel) {
 		super(kernel);
 	}
@@ -3435,12 +3410,16 @@ class CmdDerivative extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Integral[ <GeoFunction> ] Integral[ <GeoFunction>, <Number a>, <Number b> ]
  * Integral[ <GeoFunction f>, <GeoFunction g>, <Number a>, <Number b> ]
  */
 class CmdIntegral extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdIntegral (Kernel kernel) {
 		super(kernel);
 	}
@@ -3528,11 +3507,15 @@ class CmdIntegral extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * UpperSum[ <GeoFunction>, <Number>, <Number>, <Number> ]
  */
 class CmdUpperSum extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdUpperSum (Kernel kernel) {
 		super(kernel);
 	}
@@ -3567,11 +3550,15 @@ class CmdUpperSum extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * BarChart[ <Number>, <Number>, <List> ]
  */
 class CmdBarChart extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdBarChart (Kernel kernel) {
 		super(kernel);
 	}
@@ -3684,11 +3671,15 @@ class CmdBarChart extends CommandProcessor {
 		}
 	}
 }
-/*
+/**
  * BarChart[ <Number>, <Number>, <List> ]
  */
 class CmdBoxPlot extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdBoxPlot (Kernel kernel) {
 		super(kernel);
 	}
@@ -3737,11 +3728,15 @@ class CmdBoxPlot extends CommandProcessor {
 		}
 	}
 }
-/*
+/**
  * Histogram[ <List>, <List> ]
  */
 class CmdHistogram extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdHistogram (Kernel kernel) {
 		super(kernel);
 	}
@@ -3776,12 +3771,16 @@ class CmdHistogram extends CommandProcessor {
 
 
 
-/*
+/**
  * DotPlot[ <List of Numeric> ]
  * G.Sturr 2010-8-10
  */
 class CmdDotPlot extends CmdOneListFunction {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdDotPlot(Kernel kernel) {
 		super(kernel);
 	}
@@ -3796,11 +3795,15 @@ class CmdDotPlot extends CmdOneListFunction {
 
 
 
-/*
+/**
  * LowerSum[ <GeoFunction>, <Number>, <Number>, <Number> ]
  */
 class CmdLowerSum extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdLowerSum (Kernel kernel) {
 		super(kernel);
 	}
@@ -3835,11 +3838,15 @@ class CmdLowerSum extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * LowerSum[ <GeoFunction>, <Number>, <Number>, <Number> ]
  */
 class CmdTrapezoidalSum extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdTrapezoidalSum (Kernel kernel) {
 		super(kernel);
 	}
@@ -3874,11 +3881,15 @@ class CmdTrapezoidalSum extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Polynomial[ <GeoFunction> ]
  */
 class CmdPolynomial extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdPolynomial (Kernel kernel) {
 		super(kernel);
 	}
@@ -3929,11 +3940,15 @@ class CmdPolynomial extends CommandProcessor {
 	}    
 }
 
-/*
+/**
  * TaylorSeries[ <GeoFunction>, <Number>, <Number> ]
  */
 class CmdTaylorSeries extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdTaylorSeries (Kernel kernel) {
 		super(kernel);
 	}
@@ -3966,12 +3981,16 @@ class CmdTaylorSeries extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Root[ <GeoFunction> ] Root[ <GeoFunction> , <Number> ] Root[ <GeoFunction> ,
  * <Number> , <Number> ]
  */
 class CmdRoot extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdRoot (Kernel kernel) {
 		super(kernel);
 	}
@@ -4040,11 +4059,15 @@ class CmdRoot extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * ComplexRoot[ <GeoFunction> ]
  */
 class CmdComplexRoot extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdComplexRoot (Kernel kernel) {
 		super(kernel);
 	}
@@ -4070,11 +4093,15 @@ class CmdComplexRoot extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * Extremum[ <GeoFunction> ]
  */
 class CmdExtremum extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdExtremum (Kernel kernel) {
 		super(kernel);
 	}
@@ -4099,11 +4126,15 @@ class CmdExtremum extends CommandProcessor {
 	}
 }
 
-/*
+/**
  * TurningPoint[ <GeoFunction> ]
  */
 class CmdTurningPoint extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdTurningPoint (Kernel kernel) {
 		super(kernel);
 	}
@@ -4131,11 +4162,15 @@ class CmdTurningPoint extends CommandProcessor {
 
 
 
-/*
+/**
  * Centroid[ <Polygon> ]
  */
 class CmdCentroid extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCentroid (Kernel kernel) {
 		super(kernel);
 	}
@@ -4164,12 +4199,16 @@ class CmdCentroid extends CommandProcessor {
 
 
 
-/*
+/**
  * If[ <GeoBoolean>, <GeoElement> ]
  * If[ <GeoBoolean>, <GeoElement>, <GeoElement> ]
  */
 class CmdIf extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdIf(Kernel kernel) {
 		super(kernel);
 	}
@@ -4236,11 +4275,15 @@ class CmdIf extends CommandProcessor {
 
 }
 
-/*
+/**
  * CountIf[ <GeoBoolean>, <GeoList> ]
  */
 class CmdCountIf extends CommandProcessor {
 
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCountIf(Kernel kernel) {
 		super(kernel);
 	}
@@ -4285,11 +4328,16 @@ class CmdCountIf extends CommandProcessor {
 
 }
 
-/**
- * Victor Franco Espino 11-02-2007: Command's processors for new commands
- */
 
+/**
+ * AffineRatio[<Point>,<Point>,<Point>]
+ * @author Victor Franco Espino
+ */
 class CmdAffineRatio extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdAffineRatio(Kernel kernel) {
 		super(kernel);
 	}
@@ -4328,7 +4376,15 @@ class CmdAffineRatio extends CommandProcessor {
 	}
 }
 
+/**
+ * CrossRtio[<Point>,<Point>,<Point>,<Point>]
+ *  @author Victor Franco Espino
+ */
 class CmdCrossRatio extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCrossRatio(Kernel kernel) {
 		super(kernel);
 	}
@@ -4371,7 +4427,15 @@ class CmdCrossRatio extends CommandProcessor {
 	}
 }
 
+/**
+ * CurvatureVector[<Point>,<Curve>], CurvatureVector[<Point>,<Function>]
+ * @author Victor Franco Espino
+ */
 class CmdCurvatureVector extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCurvatureVector(Kernel kernel) {
 		super(kernel);
 	}
@@ -4415,7 +4479,15 @@ class CmdCurvatureVector extends CommandProcessor {
 	}
 }
 
+/**
+ * Curvature[<Point>,<Curve>], Curvature[<Point>,<Function>]
+ * @author Victor Franco Espino
+ */
 class CmdCurvature extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdCurvature(Kernel kernel) {
 		super(kernel);
 	}
@@ -4459,9 +4531,16 @@ class CmdCurvature extends CommandProcessor {
 	}
 }
 
-
+/**
+ * OsculatingCircle[<Point>,<Function>],OsculatingCircle[<Point>,<Curve>]
+ * @author Victor Franco Espino
+ */
 
 class CmdOsculatingCircle extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
 	public CmdOsculatingCircle(Kernel kernel) {
 		super(kernel);
 	}
@@ -4507,12 +4586,16 @@ class CmdOsculatingCircle extends CommandProcessor {
 
 
 
-/*
- * Victor Franco Espino 11-02-2007: End command's processors for new commands
+/**
+ * TableText[<Matrix>],TableText[<Matrix>,<Point>]
  */
 
 class CmdTableText extends CommandProcessor {
-	 public CmdTableText(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdTableText(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -4609,8 +4692,15 @@ class CmdTableText extends CommandProcessor {
 	 }
 }
 
+/**
+* StemPlot
+*/
 class CmdStemPlot extends CommandProcessor {
-	 public CmdStemPlot(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdStemPlot(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -4630,7 +4720,7 @@ class CmdStemPlot extends CommandProcessor {
 					 {
 						 kernel.StemPlot(
 								 c.getLabel(),
-								 (GeoList) arg[0])};
+								 list)};
 				 return ret;
 			 } else {
 				 throw argErr(app, c.getName(), arg[0]);
@@ -4671,8 +4761,15 @@ class CmdStemPlot extends CommandProcessor {
 	 }
 }
 
- class CmdVerticalText extends CommandProcessor {
-	 public CmdVerticalText(Kernel kernel) {
+ /**
+ *VerticalText 
+ */
+ class CmdVerticalText  extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdVerticalText(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -4701,8 +4798,15 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
  
- class CmdRotateText extends CommandProcessor {
-	 public CmdRotateText(Kernel kernel) {
+ /**
+ *RotateText 
+ */
+ class CmdRotateText  extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdRotateText(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -4732,8 +4836,15 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
  
- class CmdObject extends CommandProcessor {
-	 public CmdObject(Kernel kernel) {
+ /**
+ *Object 
+ */
+ class CmdObject  extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdObject(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -4762,8 +4873,15 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdSlowPlot extends CommandProcessor {
-	 public CmdSlowPlot(Kernel kernel) {
+ /**
+ *SlowPlot 
+ */
+ class CmdSlowPlot  extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdSlowPlot(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -4804,7 +4922,6 @@ class CmdStemPlot extends CommandProcessor {
 				try {
 					return kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(sb.toString(), true, false, true);
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					throw argErr(app, c.getName(), arg[0]);
 				} catch (MyError e) {
@@ -4821,12 +4938,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- /*
+ /**
   * SelectedElement[ <list>, <n> ]
   * SelectedElement[ <point>, <n> ]
   */
- class CmdSelectedElement extends CommandProcessor {
- 	
+ class CmdSelectedElement  extends CommandProcessor {
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
+
  	public CmdSelectedElement(Kernel kernel) {
  		super(kernel);
  	}
@@ -4861,12 +4982,15 @@ class CmdStemPlot extends CommandProcessor {
  }
  }
  
- /*
+ /**
   * SelectedElement[ <list>, <n> ]
   * SelectedElement[ <point>, <n> ]
   */
- class CmdSelectedIndex extends CommandProcessor {
- 	
+  class CmdSelectedIndex  extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
  	public CmdSelectedIndex(Kernel kernel) {
  		super(kernel);
  	}
@@ -4901,8 +5025,15 @@ class CmdStemPlot extends CommandProcessor {
  }
  }
  
- class CmdToolImage extends CommandProcessor {
-	 public CmdToolImage(Kernel kernel) {
+ /**
+ *ToolImage 
+ */
+ class CmdToolImage  extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdToolImage(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -4955,8 +5086,15 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdCell extends CommandProcessor {
-	 public CmdCell(Kernel kernel) {
+ /**
+ *Cell 
+ */
+ class CmdCell  extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdCell(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -4987,14 +5125,20 @@ class CmdStemPlot extends CommandProcessor {
  }
 
 
- class CmdColumnName extends CommandProcessor {
-	 public CmdColumnName(Kernel kernel) {
+ /**
+ *ColumnName 
+ */
+ class CmdColumnName  extends CommandProcessor {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdColumnName(Kernel kernel) {
 		 super(kernel);
 	 }
 
 	 public GeoElement[] process(Command c) throws MyError {
 		 int n = c.getArgumentNumber();
-		 boolean[] ok = new boolean[n];
 		 GeoElement[] arg;
 		 arg = resArgs(c);
 
@@ -5021,9 +5165,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdHull extends CommandProcessor {
+ /**
+ *Hull 
+ */
+ class CmdHull  extends CommandProcessor {
 
-	 public CmdHull(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdHull(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5051,9 +5202,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
 
  }
- class CmdAppend extends CommandProcessor {
+ /**
+ *Append 
+ */
+ class CmdAppend  extends CommandProcessor {
 
-	 public CmdAppend(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdAppend(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5086,9 +5244,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdJoin extends CommandProcessor {
+ /**
+ *Join 
+ */
+ class CmdJoin  extends CommandProcessor {
 
-	 public CmdJoin(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdJoin(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5128,9 +5293,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdUnion extends CommandProcessor {
+ /**
+ *Union 
+ */
+ class CmdUnion  extends CommandProcessor {
 
-	 public CmdUnion(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdUnion(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5158,19 +5330,18 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- /*
- class CmdIntersection extends CmdIntersect {
 
-	 public CmdIntersection(Kernel kernel) {
-		 super(kernel);
-	 }
 
- }
+ /**
+ *Insert 
  */
+ class CmdInsert  extends CommandProcessor {
 
- class CmdInsert extends CommandProcessor {
-
-	 public CmdInsert(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInsert(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5198,9 +5369,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdIsInteger extends CommandProcessor {
+ /**
+ *IsInteger 
+ */
+ class CmdIsInteger  extends CommandProcessor {
 
-	 public CmdIsInteger(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdIsInteger(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5228,9 +5406,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdRandomPoisson extends CommandProcessor {
+ /**
+ *RandomPoisson 
+ */
+ class CmdRandomPoisson  extends CommandProcessor {
 
-	 public CmdRandomPoisson(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdRandomPoisson(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5258,9 +5443,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdFractionText extends CommandProcessor {
+ /**
+ *FractionText 
+ */
+ class CmdFractionText  extends CommandProcessor {
 
-	 public CmdFractionText(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdFractionText(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5288,9 +5480,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdKeepIf extends CommandProcessor {
+ /**
+ *KeepIf 
+ */
+ class CmdKeepIf  extends CommandProcessor {
 
-	 public CmdKeepIf(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdKeepIf(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5333,18 +5532,22 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdAxisStepX extends CommandProcessor {
+ /**
+ *AxisStepX 
+ */
+ class CmdAxisStepX  extends CommandProcessor {
 
-	 public CmdAxisStepX(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdAxisStepX(Kernel kernel) {
 		 super(kernel);
 	 }
 
 	 public GeoElement[] process(Command c) throws MyError {
 		 int n = c.getArgumentNumber();
-		 boolean[] ok = new boolean[n];
-		 GeoElement[] arg;
-		 arg = resArgs(c);
-
+		 
 		 switch (n) {
 		 case 0:                 
 
@@ -5360,17 +5563,22 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdAxisStepY extends CommandProcessor {
+ /**
+ *AxisStepY 
+ */
+ class CmdAxisStepY  extends CommandProcessor {
 
-	 public CmdAxisStepY(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdAxisStepY(Kernel kernel) {
 		 super(kernel);
 	 }
 
 	 public GeoElement[] process(Command c) throws MyError {
 		 int n = c.getArgumentNumber();
-		 boolean[] ok = new boolean[n];
-		 GeoElement[] arg;
-		 arg = resArgs(c);
+		 
 
 		 switch (n) {
 		 case 0:                 
@@ -5387,9 +5595,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdSimplify extends CommandProcessor {
+ /**
+ *Simplify 
+ */
+ class CmdSimplify  extends CommandProcessor {
 
-	 public CmdSimplify (Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdSimplify (Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5419,9 +5634,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
  }
 
- class CmdDynamicCoordinates extends CommandProcessor {
+ /**
+ *DynamicCoordinates 
+ */
+ class CmdDynamicCoordinates  extends CommandProcessor {
 
-	 public CmdDynamicCoordinates (Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdDynamicCoordinates (Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5454,9 +5676,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
  }
 
- class CmdTDistribution extends CommandProcessor {
+ /**
+ *TDistribution 
+ */
+ class CmdTDistribution  extends CommandProcessor {
 
-	 public CmdTDistribution(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdTDistribution(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5485,9 +5714,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInverseTDistribution extends CommandProcessor {
+ /**
+ *InverseTDistribution 
+ */
+ class CmdInverseTDistribution  extends CommandProcessor {
 
-	 public CmdInverseTDistribution(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseTDistribution(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5517,9 +5753,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdChiSquared extends CommandProcessor {
+ /**
+ *ChiSquared 
+ */
+ class CmdChiSquared  extends CommandProcessor {
 
-	 public CmdChiSquared(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdChiSquared(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5548,9 +5791,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInverseChiSquared extends CommandProcessor {
+ /**
+ *InverseChiSquared 
+ */
+ class CmdInverseChiSquared  extends CommandProcessor {
 
-	 public CmdInverseChiSquared(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseChiSquared(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5580,9 +5830,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdExponential extends CommandProcessor {
+ /**
+ *Exponential 
+ */
+ class CmdExponential  extends CommandProcessor {
 
-	 public CmdExponential(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdExponential(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5614,9 +5871,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInverseExponential extends CommandProcessor {
+ /**
+ *InverseExponential 
+ */
+ class CmdInverseExponential  extends CommandProcessor {
 
-	 public CmdInverseExponential(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseExponential(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5650,9 +5914,16 @@ class CmdStemPlot extends CommandProcessor {
  }
 
 
- class CmdFDistribution extends CommandProcessor {
+ /**
+ *FDistribution 
+ */
+ class CmdFDistribution  extends CommandProcessor {
 
-	 public CmdFDistribution(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdFDistribution(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5687,9 +5958,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInverseFDistribution extends CommandProcessor {
+ /**
+ *InverseFDistribution 
+ */
+ class CmdInverseFDistribution  extends CommandProcessor {
 
-	 public CmdInverseFDistribution(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseFDistribution(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5725,9 +6003,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdGamma extends CommandProcessor {
+ /**
+ *Gamma 
+ */
+ class CmdGamma  extends CommandProcessor {
 
-	 public CmdGamma(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdGamma(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5762,9 +6047,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInverseGamma extends CommandProcessor {
+ /**
+ *InverseGamma 
+ */
+ class CmdInverseGamma  extends CommandProcessor {
 
-	 public CmdInverseGamma(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseGamma(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5800,9 +6092,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdCauchy extends CommandProcessor {
+ /**
+ *Cauchy 
+ */
+ class CmdCauchy  extends CommandProcessor {
 
-	 public CmdCauchy(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdCauchy(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5837,9 +6136,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInverseCauchy extends CommandProcessor {
+ /**
+ *InverseCauchy 
+ */
+ class CmdInverseCauchy  extends CommandProcessor {
 
-	 public CmdInverseCauchy(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseCauchy(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5875,9 +6181,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdPascal extends CommandProcessor {
+ /**
+ *Pascal 
+ */
+ class CmdPascal  extends CommandProcessor {
 
-	 public CmdPascal(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdPascal(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5912,9 +6225,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInversePascal extends CommandProcessor {
+ /**
+ *InversePascal 
+ */
+ class CmdInversePascal  extends CommandProcessor {
 
-	 public CmdInversePascal(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInversePascal(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5950,9 +6270,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdWeibull extends CommandProcessor {
+ /**
+ *Weibull 
+ */
+ class CmdWeibull  extends CommandProcessor {
 
-	 public CmdWeibull(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdWeibull(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -5987,9 +6314,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInverseWeibull extends CommandProcessor {
+ /**
+ *InverseWeibull 
+ */
+ class CmdInverseWeibull  extends CommandProcessor {
 
-	 public CmdInverseWeibull(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseWeibull(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6025,9 +6359,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdZipf extends CommandProcessor {
+ /**
+ *Zipf 
+ */
+ class CmdZipf  extends CommandProcessor {
 
-	 public CmdZipf(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdZipf(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6062,9 +6403,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdSample extends CommandProcessor {
+ /**
+ *Sample 
+ */
+ class CmdSample  extends CommandProcessor {
 
-	 public CmdSample(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdSample(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6109,9 +6457,16 @@ class CmdStemPlot extends CommandProcessor {
  }
 
 
- class CmdInverseZipf extends CommandProcessor {
+ /**
+ *InverseZipf 
+ */
+ class CmdInverseZipf  extends CommandProcessor {
 
-	 public CmdInverseZipf(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseZipf(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6147,9 +6502,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdHyperGeometric extends CommandProcessor {
+ /**
+ *HyperGeometric 
+ */
+ class CmdHyperGeometric  extends CommandProcessor {
 
-	 public CmdHyperGeometric(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdHyperGeometric(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6187,9 +6549,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }
  }
 
- class CmdInverseHyperGeometric extends CommandProcessor {
+ /**
+ *InverseHyperGeometric 
+ */
+ class CmdInverseHyperGeometric  extends CommandProcessor {
 
-	 public CmdInverseHyperGeometric(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdInverseHyperGeometric(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6228,9 +6597,16 @@ class CmdStemPlot extends CommandProcessor {
 
  }
 
- class CmdCopyFreeObject extends CommandProcessor {
+ /**
+ *CopyFreeObject 
+ */
+ class CmdCopyFreeObject  extends CommandProcessor {
 
-	 public CmdCopyFreeObject (Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdCopyFreeObject (Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6276,9 +6652,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
  }
 
- class CmdSetColor extends CommandProcessor {
+ /**
+ *SetColor 
+ */
+ class CmdSetColor  extends CommandProcessor {
 
-	 public CmdSetColor (Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdSetColor (Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6297,8 +6680,8 @@ class CmdStemPlot extends CommandProcessor {
 			 
 				 String color = geogebra.util.Util.removeSpaces(((GeoText)arg[1]).getTextString()).toUpperCase();
 				 // lookup Color
-				 HashMap colors = app.getColorsHashMap();				 
-				 Color col = (Color)colors.get(color);
+				 HashMap<String,Color> colors = app.getColorsHashMap();				 
+				 Color col = colors.get(color);
 				 
 				 // support for translated color names
 				 if (col == null) {
@@ -6359,17 +6742,22 @@ class CmdStemPlot extends CommandProcessor {
 		 }
 	 }    
  }
- class CmdUpdateConstruction extends CommandProcessor {
+ /**
+ *UpdateConstruction 
+ */
+ class CmdUpdateConstruction  extends CommandProcessor {
 
-	 public CmdUpdateConstruction (Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdUpdateConstruction (Kernel kernel) {
 		 super(kernel);
 	 }
 
 	 final public GeoElement[] process(Command c) throws MyError {
 		 int n = c.getArgumentNumber();
-		 GeoElement[] arg;
-		 arg = resArgs(c);
-
+		
 		 switch (n) {
 		 case 0:
 				app.getKernel().updateConstruction();
@@ -6382,9 +6770,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
  }
  
- class CmdSetValue extends CommandProcessor {
+ /**
+ *SetValue 
+ */
+ class CmdSetValue  extends CommandProcessor {
 
-	 public CmdSetValue (Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdSetValue (Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -6424,9 +6819,9 @@ class CmdStemPlot extends CommandProcessor {
 				 	
 				 	// update the list too if necessary
 				 	if (!geo.isLabelSet()) { // eg like first element of {1,2,a}
-						Iterator it = kernel.getConstruction().getGeoSetConstructionOrder().iterator();
+						Iterator<GeoElement> it = kernel.getConstruction().getGeoSetConstructionOrder().iterator();
 						while (it.hasNext()) {
-							GeoElement geo2 = (GeoElement)it.next();
+							GeoElement geo2 = it.next();
 							if (geo2.isGeoList()) {
 								GeoList gl = (GeoList)geo2;
 								for (int i = 0; i < gl.size() ; i++) {
@@ -6448,8 +6843,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
  }
  
- class CmdSetDynamicColor extends CommandProcessor {
+ /**
+ *SetDynamicColor 
+ */
+ class CmdSetDynamicColor  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetDynamicColor (Kernel kernel) {
 			super(kernel);
 		}
@@ -6494,8 +6897,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetConditionToShowObject extends CommandProcessor {
+ /**
+ *SetConditionToShowObject 
+ */
+ class CmdSetConditionToShowObject  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetConditionToShowObject (Kernel kernel) {
 			super(kernel);
 		}
@@ -6530,8 +6941,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetFilling extends CommandProcessor {
+ /**
+ *SetFilling 
+ */
+ class CmdSetFilling  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetFilling (Kernel kernel) {
 			super(kernel);
 		}
@@ -6561,8 +6980,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdParseToNumber extends CommandProcessor {
+ /**
+ *ParseToNumber 
+ */
+ class CmdParseToNumber  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdParseToNumber (Kernel kernel) {
 			super(kernel);
 		}
@@ -6603,8 +7030,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdParseToFunction extends CommandProcessor {
+ /**
+ *ParseToFunction 
+ */
+ class CmdParseToFunction  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdParseToFunction (Kernel kernel) {
 			super(kernel);
 		}
@@ -6645,8 +7080,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdLineStyle extends CommandProcessor {
+ /**
+ *LineStyle 
+ */
+ class CmdLineStyle  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdLineStyle (Kernel kernel) {
 			super(kernel);
 		}
@@ -6687,8 +7130,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetLineThickness extends CommandProcessor {
+ /**
+ *SetLineThickness 
+ */
+ class CmdSetLineThickness  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetLineThickness (Kernel kernel) {
 			super(kernel);
 		}
@@ -6724,8 +7175,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetPointStyle extends CommandProcessor {
+ /**
+ *SetPointStyle 
+ */
+ class CmdSetPointStyle  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetPointStyle (Kernel kernel) {
 			super(kernel);
 		}
@@ -6762,8 +7221,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetPointSize extends CommandProcessor {
+ /**
+ *SetPointSize 
+ */
+ class CmdSetPointSize  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetPointSize (Kernel kernel) {
 			super(kernel);
 		}
@@ -6799,8 +7266,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetFixed extends CommandProcessor {
+ /**
+ *SetFixed 
+ */
+ class CmdSetFixed  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetFixed (Kernel kernel) {
 			super(kernel);
 		}
@@ -6829,15 +7304,22 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdRename extends CommandProcessor {
+ /**
+ *Rename 
+ */
+ class CmdRename  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdRename (Kernel kernel) {
 			super(kernel);
 		}
 
 		final public    GeoElement[] process(Command c) throws MyError {
 			int n = c.getArgumentNumber();
-			boolean[] ok = new boolean[n];
 			GeoElement[] arg;
 
 			switch (n) {
@@ -6861,8 +7343,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdHideLayer extends CommandProcessor {
+ /**
+ *HideLayer 
+ */
+ class CmdHideLayer  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdHideLayer (Kernel kernel) {
 			super(kernel);
 		}
@@ -6878,9 +7368,9 @@ class CmdStemPlot extends CommandProcessor {
 					GeoNumeric layerGeo = (GeoNumeric)arg[0];
 					int layer = (int)layerGeo.getDouble();
 					
-					Iterator it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+					Iterator<GeoElement> it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
 					while (it.hasNext()) {
-						GeoElement geo = (GeoElement) it.next();
+						GeoElement geo = it.next();
 						if (geo.getLayer() == layer) {
 							geo.setEuclidianVisible(false);
 							geo.updateRepaint();
@@ -6899,8 +7389,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdShowLayer extends CommandProcessor {
+ /**
+ *ShowLayer 
+ */
+ class CmdShowLayer  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdShowLayer (Kernel kernel) {
 			super(kernel);
 		}
@@ -6916,9 +7414,9 @@ class CmdStemPlot extends CommandProcessor {
 					GeoNumeric layerGeo = (GeoNumeric)arg[0];
 					int layer = (int)layerGeo.getDouble();
 					
-					Iterator it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
+					Iterator<GeoElement> it = kernel.getConstruction().getGeoSetLabelOrder().iterator();
 					while (it.hasNext()) {
-						GeoElement geo = (GeoElement) it.next();
+						GeoElement geo = it.next();
 						if (geo.getLayer() == layer) {
 							geo.setEuclidianVisible(true);
 							geo.updateRepaint();
@@ -6937,8 +7435,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetCoords extends CommandProcessor {
+ /**
+ *SetCoords 
+ */
+ class CmdSetCoords  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetCoords (Kernel kernel) {
 			super(kernel);
 		}
@@ -6990,8 +7496,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdFillRow extends CommandProcessor {
+ /**
+ *FillRow 
+ */
+ class CmdFillRow  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdFillRow (Kernel kernel) {
 			super(kernel);
 		}
@@ -7020,10 +7534,8 @@ class CmdStemPlot extends CommandProcessor {
 				if (list.size() == 0)
 					return ret;
 				
-				StringBuilder sb = new StringBuilder();
-				
 				for (int col = 0 ; col < list.size() ; col++) {
-					String cellName = GeoElement.getSpreadsheetCellName(col, row);
+					
 					GeoElement cellGeo = list.get(col).copy();
 					
 					
@@ -7034,36 +7546,6 @@ class CmdStemPlot extends CommandProcessor {
 						throw argErr(app, c.getName(), arg[1]);
 					}
 					
-					/*
-					sb.setLength(0);
-					sb.append(cellName);
-					if (cellGeo.isGeoFunction()) sb.append("(x)");
-					sb.append("=");
-
-					// getLabel() returns algoParent.getCommandDescription() or  toValueString()
-					// if there's no label (eg {1,2})
-					sb.append(cellGeo.getLabel());
-					
-					// we only sometimes need (x), eg
-					// B2(x)=f(x)
-					// B2(x)=x^2
-					if (cellGeo.isGeoFunction() && cellGeo.isLabelSet()) sb.append("(x)");
-					
-					//Application.debug(sb.toString());
-					
-					try {
-						app.getKernel().getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(sb.toString(), false);
-					
-						GeoElement cell = kernel.lookupLabel(cellName);
-						if (cell != null) {
-							cell.setAuxiliaryObject(true);
-							cell.setVisualStyle(cellGeo);
-						}
-						
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw argErr(app, c.getName(), null);
-					}*/
 				}
 				
 				app.storeUndoInfo();
@@ -7081,8 +7563,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdFillColumn extends CommandProcessor {
+ /**
+ *FillColumn 
+ */
+ class CmdFillColumn  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdFillColumn (Kernel kernel) {
 			super(kernel);
 		}
@@ -7111,10 +7601,7 @@ class CmdStemPlot extends CommandProcessor {
 				if (list.size() == 0)
 					return ret;
 				
-				StringBuilder sb = new StringBuilder();
-				
 				for (int row = 0 ; row < list.size() ; row++) {
-					String cellName = GeoElement.getSpreadsheetCellName(col, row);
 					GeoElement cellGeo = list.get(row).copy();
 					
 					try {
@@ -7140,8 +7627,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdFillCells extends CommandProcessor {
+ /**
+ *FillCells 
+ */
+ class CmdFillCells  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdFillCells (Kernel kernel) {
 			super(kernel);
 		}
@@ -7239,9 +7734,10 @@ class CmdStemPlot extends CommandProcessor {
 					return ret;
 				}
 				
-				GeoList list = (GeoList)geo;
+				
 				
 				// TODO finish
+				// GeoList list = (GeoList)geo;
 				//if (list.isMatrix())
 				
 				app.storeUndoInfo();
@@ -7311,7 +7807,7 @@ class CmdStemPlot extends CommandProcessor {
 					}
 				}
 				
-				GeoElement geo = (GeoElement) arg[1];
+				
 				GeoElement[] ret = {  };
 				app.storeUndoInfo();
 				app.getGuiManager().setScrollToShow(true);
@@ -7326,8 +7822,16 @@ class CmdStemPlot extends CommandProcessor {
 	
  }
 
- class CmdPan extends CommandProcessor {
+ /**
+ *Pan 
+ */
+ class CmdPan  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdPan (Kernel kernel) {
 			super(kernel);
 		}
@@ -7362,15 +7866,22 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdZoomIn extends CommandProcessor {
+ /**
+ *ZoomIn 
+ */
+ class CmdZoomIn  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdZoomIn (Kernel kernel) {
 			super(kernel);
 		}
 
 		final public    GeoElement[] process(Command c) throws MyError {
 			int n = c.getArgumentNumber();
-			boolean ok;
 			GeoElement[] arg;
 
 			switch (n) {
@@ -7378,14 +7889,13 @@ class CmdStemPlot extends CommandProcessor {
 				arg = resArgs(c);
 				if (arg[0].isGeoNumeric()) {
 					GeoNumeric numGeo = (GeoNumeric)arg[0];
-					int zoom = (int)numGeo.getDouble();
-					
+									
 					EuclidianView ev = app.getEuclidianView();					
 					double px = ev.getWidth() /2 ; //mouseLoc.x;
 					double py = ev.getHeight() / 2 ; //mouseLoc.y;			
 
 				double factor = numGeo.getDouble();
-				if (kernel.isZero(factor))
+				if (Kernel.isZero(factor))
 					throw argErr(app, c.getName(), arg[0]);
 				
 				ev.zoom(px, py, factor, 4, true);
@@ -7404,14 +7914,13 @@ class CmdStemPlot extends CommandProcessor {
 				if ((ok0=arg[0].isGeoNumeric()) && arg[1].isGeoPoint()) {
 					GeoNumeric numGeo = (GeoNumeric)arg[0];
 					GeoPoint p = (GeoPoint)arg[1];
-					int zoom = (int)numGeo.getDouble();
-					
+									
 					EuclidianView ev = app.getEuclidianView();					
 					double px = ev.toScreenCoordXd(p.inhomX); //mouseLoc.x;
 					double py = ev.toScreenCoordYd(p.inhomY); //mouseLoc.y;
 
 				double factor = numGeo.getDouble();
-				if (kernel.isZero(factor))
+				if (Kernel.isZero(factor))
 					throw argErr(app, c.getName(), arg[0]);
 				
 				ev.zoom(px, py, factor, 4, true);
@@ -7431,15 +7940,22 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdZoomOut extends CommandProcessor {
+ /**
+ *ZoomOut 
+ */
+ class CmdZoomOut  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdZoomOut (Kernel kernel) {
 			super(kernel);
 		}
 
 		final public    GeoElement[] process(Command c) throws MyError {
 			int n = c.getArgumentNumber();
-			boolean[] ok = new boolean[n];
 			GeoElement[] arg;
 
 			switch (n) {
@@ -7447,15 +7963,14 @@ class CmdStemPlot extends CommandProcessor {
 				arg = resArgs(c);
 				if (arg[0].isGeoNumeric()) {
 					GeoNumeric numGeo = (GeoNumeric)arg[0];
-					int zoom = (int)numGeo.getDouble();
-					
+								
 					EuclidianView ev = app.getEuclidianView();					
 					double px = ev.getWidth() / 2 ; //mouseLoc.x;
 					double py = ev.getHeight() / 2 ; //mouseLoc.y;
 
 				double factor = numGeo.getDouble();
 				
-				if (kernel.isZero(factor))
+				if (Kernel.isZero(factor))
 					throw argErr(app, c.getName(), arg[0]);
 
 				ev.zoom(px, py, 1 / factor, 4, true);
@@ -7474,14 +7989,13 @@ class CmdStemPlot extends CommandProcessor {
 				if ((ok0=arg[0].isGeoNumeric()) && arg[1].isGeoPoint()) {
 					GeoNumeric numGeo = (GeoNumeric)arg[0];
 					GeoPoint p = (GeoPoint)arg[1];
-					int zoom = (int)numGeo.getDouble();
-					
+										
 					EuclidianView ev = app.getEuclidianView();					
 					double px = ev.toScreenCoordXd(p.inhomX); //mouseLoc.x;
 					double py = ev.toScreenCoordYd(p.inhomY); //mouseLoc.y;
 
 				double factor = numGeo.getDouble();
-				if (kernel.isZero(factor))
+				if (Kernel.isZero(factor))
 					throw argErr(app, c.getName(), arg[0]);
 				
 				ev.zoom(px, py, 1 / factor, 4, true);
@@ -7501,8 +8015,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetLayer extends CommandProcessor {
+ /**
+ *SetLayer 
+ */
+ class CmdSetLayer  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetLayer (Kernel kernel) {
 			super(kernel);
 		}
@@ -7531,8 +8053,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetLabelMode extends CommandProcessor {
+ /**
+ *SetLabelMode 
+ */
+ class CmdSetLabelMode  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetLabelMode (Kernel kernel) {
 			super(kernel);
 		}
@@ -7561,8 +8091,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetTooltipMode extends CommandProcessor {
+ /**
+ *SetTooltipMode 
+ */
+ class CmdSetTooltipMode  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetTooltipMode (Kernel kernel) {
 			super(kernel);
 		}
@@ -7591,8 +8129,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSetCaption extends CommandProcessor {
+ /**
+ *SetCaption 
+ */
+ class CmdSetCaption  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSetCaption (Kernel kernel) {
 			super(kernel);
 		}
@@ -7622,8 +8168,16 @@ class CmdStemPlot extends CommandProcessor {
 		}
 	}
 
- class CmdSelectObjects extends CommandProcessor {
+ /**
+ *SelectObjects 
+ */
+ class CmdSelectObjects  extends CommandProcessor {
 
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSelectObjects(Kernel kernel) {
 			super(kernel);
 		}
@@ -7653,9 +8207,16 @@ class CmdStemPlot extends CommandProcessor {
 
  
 
- class CmdPlaySound extends CommandProcessor {
+ /**
+ *PlaySound 
+ */
+ class CmdPlaySound  extends CommandProcessor {
 
-	 public CmdPlaySound(Kernel kernel) {
+	/**
+	* Create new command processor
+	* @param kernel kernel
+	*/
+	public CmdPlaySound(Kernel kernel) {
 		 super(kernel);
 	 }
 
@@ -7734,8 +8295,16 @@ class CmdStemPlot extends CommandProcessor {
  
  
  
- class CmdFactors extends CommandProcessor {
+ /**
+ *Factors 
+ */
+ class CmdFactors  extends CommandProcessor {
 		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdFactors (Kernel kernel) {
 			super(kernel);
 		}
@@ -7765,8 +8334,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
 	}
 
- class CmdSolveODE extends CommandProcessor {
+ /**
+ *SolveODE 
+ */
+ class CmdSolveODE  extends CommandProcessor {
 		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdSolveODE (Kernel kernel) {
 			super(kernel);
 		}
@@ -7845,8 +8422,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
 	}
 
- class CmdCoefficients extends CommandProcessor {
+ /**
+ *Coefficients 
+ */
+ class CmdCoefficients  extends CommandProcessor {
 		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdCoefficients (Kernel kernel) {
 			super(kernel);
 		}
@@ -7882,8 +8467,16 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
 	}
 
- class CmdLimit extends CommandProcessor {
+ /**
+ *Limit 
+ */
+ class CmdLimit  extends CommandProcessor {
 		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdLimit (Kernel kernel) {
 			super(kernel);
 		}
@@ -7914,8 +8507,16 @@ class CmdStemPlot extends CommandProcessor {
 		 }    
 		}
  
- class CmdLimitBelow extends CommandProcessor {
+ /**
+ *LimitBelow 
+ */
+ class CmdLimitBelow  extends CommandProcessor {
 		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdLimitBelow (Kernel kernel) {
 			super(kernel);
 		}
@@ -7946,8 +8547,16 @@ class CmdStemPlot extends CommandProcessor {
 		 }    
 		}
  
- class CmdLimitAbove extends CommandProcessor {
+ /**
+ *LimitAbove 
+ */
+ class CmdLimitAbove  extends CommandProcessor {
 		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdLimitAbove (Kernel kernel) {
 			super(kernel);
 		}
@@ -7978,8 +8587,16 @@ class CmdStemPlot extends CommandProcessor {
 		 }    
 		}
 
- class CmdPartialFractions extends CommandProcessor {
+ /**
+ *PartialFractions 
+ */
+ class CmdPartialFractions  extends CommandProcessor {
 		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdPartialFractions (Kernel kernel) {
 			super(kernel);
 		}
@@ -8006,8 +8623,16 @@ class CmdStemPlot extends CommandProcessor {
 		 }    
 		}
 
- class CmdDegree extends CommandProcessor {
+ /**
+ *Degree 
+ */
+ class CmdDegree  extends CommandProcessor {
 		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
 		public CmdDegree (Kernel kernel) {
 			super(kernel);
 		}

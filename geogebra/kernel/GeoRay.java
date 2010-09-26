@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
 
 /**
  * @author Markus Hohenwarter
@@ -29,6 +28,8 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	
 	/**
 	 * Creates ray with start point A.
+	 * @param c construction
+	 * @param A start point
 	 */
 	public GeoRay(Construction c, GeoPoint A) {
 		super(c);		
@@ -145,7 +146,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	/**
 	 * Returns the smallest possible parameter value for this
 	 * path (may be Double.NEGATIVE_INFINITY)
-	 * @return
+	 * @return smallest possible parameter
 	 */
 	public double getMinParameter() {
 		return 0;
@@ -154,7 +155,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	/**
 	 * Returns the largest possible parameter value for this
 	 * path (may be Double.POSITIVE_INFINITY)
-	 * @return
+	 * @return largest possible parameter
 	 */
 	public double getMaxParameter() {
 		return Double.POSITIVE_INFINITY;
@@ -185,11 +186,10 @@ final public class GeoRay extends GeoLine implements LimitedPath {
    
     /**
      * Creates a new ray using a geometric transform.
-     * @param type of transform (Kernel constant)
+     * @param t transform
      */
 
-	public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, 
-													GeoLine l, GeoVec3D vec, NumberValue n) {	
+	public GeoElement [] createTransformedObject(Transform t) {	
 		AlgoElement algoParent = keepTypeOnGeometricTransform ?
 				getParentAlgorithm() : null;				
 		
@@ -198,7 +198,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 			//	transform points
 			AlgoJoinPointsRay algo = (AlgoJoinPointsRay) algoParent;
 			GeoPoint [] points = {algo.getP(), algo.getQ()};
-			points = kernel.transformPoints(type, points, Q, l, vec, n);	
+			points = t.transformPoints(points);	
 			GeoElement ray = kernel.Ray(label, points[0], points[1]);
 			ray.setVisualStyleForTransformations(this);
 			GeoElement [] geos = {ray, points[0], points[1]};
@@ -207,10 +207,10 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		else if (algoParent instanceof AlgoRayPointVector) {			
 			// transform startpoint
 			GeoPoint [] points = {getStartPoint()};
-			points = kernel.transformPoints(type, points, Q, l, vec, n);					
+			points = t.transformPoints(points);					
 						
 			// get transformed line from this ray
-			GeoLine transformedLine = kernel.getTransformedLine(type, this, Q, l, vec, n);
+			GeoLine transformedLine = t.getTransformedLine(this);
 			cons.removeFromConstructionList(transformedLine.getParentAlgorithm());
 									
 			// get direction of transformed line
@@ -229,7 +229,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 			
 		} else {
 			//	create LINE	
-			GeoLine transformedLine = kernel.getTransformedLine(type, this, Q, l, vec, n);
+			GeoLine transformedLine = t.getTransformedLine(this);
 			transformedLine.setLabel(label);
 			GeoElement [] ret = { transformedLine };
 			return ret;

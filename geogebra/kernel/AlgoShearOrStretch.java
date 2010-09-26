@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.NumberValue;
 
 
 
@@ -36,12 +37,12 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 	private MatrixTransformable out;   
     private GeoElement geoIn, geoOut; 
     private GeoVec3D l;
-    private GeoNumeric num;
+    private NumberValue num;
     private boolean shear;
     
   
     /**
-     * Creates new apply matrix algorithm
+     * Creates new shear or stretch algorithm
      * @param cons
      * @param label
      * @param in
@@ -49,7 +50,20 @@ public class AlgoShearOrStretch extends AlgoTransformation {
      * @param num
      * @param shear shear if true, stretch otherwise
      */
-    public AlgoShearOrStretch(Construction cons, String label, GeoElement in, GeoVec3D l,GeoNumeric num,boolean shear) {
+    public AlgoShearOrStretch(Construction cons, String label, GeoElement in, GeoVec3D l,NumberValue num,boolean shear) {
+        this(cons,in,l,num,shear);    
+        geoOut.setLabel(label);
+    }    
+    
+    /**
+     * Creates new shear or stretch algorithm
+     * @param cons
+     * @param in
+     * @param l
+     * @param num
+     * @param shear shear if true, stretch otherwise
+     */
+    public AlgoShearOrStretch(Construction cons, GeoElement in, GeoVec3D l,NumberValue num,boolean shear) {
         super(cons);
         this.shear = shear;      
         this.l = l;
@@ -69,8 +83,8 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         cons.registerEuclidianViewAlgo(this);
         
         compute();          
-        geoOut.setLabel(label);
-    }           
+        
+    }
     
     public String getClassName() {
         if(shear)return "AlgoShear";
@@ -82,7 +96,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         input = new GeoElement[3];
         input[2] = geoIn; 
         input[0] = l;
-        input[1] = num;
+        input[1] = num.toGeoElement();
         
         setOutputLength(1);        
         setOutput(0,geoOut);        
@@ -124,7 +138,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         	 s=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
              c=l.x/Math.sqrt(l.x*l.x+l.y*l.y);
         }
-        double n=num.getValue();
+        double n=num.getDouble();
         // translate -Q
         tranOut.translate(new GgbVector(qx, qy,0));
         

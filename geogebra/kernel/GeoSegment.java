@@ -67,12 +67,13 @@ GeoSegmentInterface {
 	}
 //	 Michael Borcherds 2007-11-20
 
+	/**
+	 * Creates new segment
+	 * @param c construction
+	 * @param A first endpoint
+	 * @param B second endpoint
+	 */
 	public GeoSegment(Construction c, GeoPoint A, GeoPoint B) {
-		/*
-		super(c);		
-		setStartPoint(A);
-		setEndPoint(B);
-		*/
 		this(c);
 		setPoints(A, B);
 	}
@@ -226,8 +227,8 @@ GeoSegmentInterface {
         return true;
     }
     
-    final public HashSet getVariables() {
-        HashSet varset = new HashSet();        
+    final public HashSet<GeoElement> getVariables() {
+        HashSet<GeoElement> varset = new HashSet<GeoElement>();        
         varset.add(this);        
         return varset;          
     }                   
@@ -365,7 +366,7 @@ GeoSegmentInterface {
 	/**
 	 * Returns the smallest possible parameter value for this
 	 * path.
-	 * @return
+	 * @return smallest possible parameter
 	 */
 	public double getMinParameter() {
 		return 0;
@@ -374,7 +375,7 @@ GeoSegmentInterface {
 	/**
 	 * Returns the largest possible parameter value for this
 	 * path.
-	 * @return
+	 * @return largest possible parameter
 	 */
 	public double getMaxParameter() {
 		return 1;
@@ -423,13 +424,12 @@ GeoSegmentInterface {
 	/**
 	 * creates new transformed segment
 	 */
-    public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, 
-			GeoLine l, GeoVec3D vec, NumberValue n) {	
+    public GeoElement [] createTransformedObject(Transform t) {	
 
 		if (keepTypeOnGeometricTransform) {			
 			// mirror endpoints
 			GeoPoint [] points = {getStartPoint(), getEndPoint()};
-			points = kernel.transformPoints(type, points, Q, l, vec, n);	
+			points = t.transformPoints(points);	
 			// create SEGMENT
 			GeoElement segment = kernel.Segment(label, points[0], points[1]);
 			segment.setVisualStyleForTransformations(this);
@@ -438,7 +438,7 @@ GeoSegmentInterface {
 		} 
 		else {
 			//	create LINE
-			GeoLine transformedLine = kernel.getTransformedLine(type, this, Q, l, vec, n);
+			GeoLine transformedLine = t.getTransformedLine(this);
 			transformedLine.setLabel(label);
 			transformedLine.setVisualStyleForTransformations(this);
 			GeoElement [] geos = {transformedLine};

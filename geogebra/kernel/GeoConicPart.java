@@ -33,7 +33,9 @@ implements LimitedPath, NumberValue, LineProperties {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	/** conic arc*/
 	public static final int CONIC_PART_ARC = 1;
+	/** conic sector */
 	public static final int CONIC_PART_SECTOR = 2;
 		
 	// parameters (e.g. angles) for arc
@@ -48,12 +50,20 @@ implements LimitedPath, NumberValue, LineProperties {
 	private boolean allowOutlyingIntersections = false;
 	private boolean keepTypeOnGeometricTransform = true;
 			
-	// GeoCirclePart is constructed by AlgoCirclePart... 
+	/**
+	 * GeoCirclePart is constructed by AlgoCirclePart... 
+	 * @param c
+	 * @param type CONIC_PART_ARC or CONIC_PART_SECTOR
+	 */
 	public GeoConicPart(Construction c, int type) {
 		super(c);				
 		conic_part_type = type;			
 	}
 	
+	/**
+	 * Copy constructor
+	 * @param conic
+	 */
 	public GeoConicPart(GeoConicPart conic) {
 		this(conic.cons, conic.getConicPartType());
 		set(conic);
@@ -149,8 +159,8 @@ implements LimitedPath, NumberValue, LineProperties {
 		return 
 			posOrientation == c.posOrientation &&
 			conic_part_type == c.conic_part_type &&		
-			kernel.isEqual(paramStart, c.paramStart) &&
-			kernel.isEqual(paramEnd, c.paramEnd) &&
+			Kernel.isEqual(paramStart, c.paramStart) &&
+			Kernel.isEqual(paramEnd, c.paramEnd) &&
 			super.isEqual(c);			 
 	}
 	
@@ -623,8 +633,7 @@ implements LimitedPath, NumberValue, LineProperties {
 	}
 
 	
-	public GeoElement [] createTransformedObject(int type, String label, GeoPoint Q, 
-			GeoLine l, GeoVec3D vec, NumberValue n) {	
+	public GeoElement [] createTransformedObject(Transform t) {	
 
 		AlgoElement algoParent = null;		
 		if (keepTypeOnGeometricTransform) {
@@ -643,8 +652,8 @@ implements LimitedPath, NumberValue, LineProperties {
 	        GeoConic circle = algoCircle.getCircle();
 	        
 	        // transform points and circle
-			points = kernel.transformPoints(type, points, Q, l, vec, n);			
-			GeoConic transformedCircle = kernel.getTransformedConic(type,  circle, Q, l, vec, n);	
+			points = t.transformPoints(points);			
+			GeoConic transformedCircle = t.getTransformedConic(circle);	
 			cons.removeFromConstructionList(transformedCircle.getParentAlgorithm());			
 										
 			// create a new arc from the transformed circle using startPoint and endPoint
@@ -659,7 +668,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		else if (algoParent instanceof AlgoConicPartCircumcircle) {
 			GeoPoint [] points ={ (GeoPoint) algoParent.input[0], 
 					 (GeoPoint) algoParent.input[1],  (GeoPoint) algoParent.input[2]};			
-			points = kernel.transformPoints(type, points, Q, l, vec, n);
+			points = t.transformPoints(points);
 			
 			AlgoConicPartCircumcircle algo = new AlgoConicPartCircumcircle(cons, label, points[0], points[1], points[2], conic_part_type);
 			GeoConicPart res = algo.getConicPart();
@@ -672,7 +681,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		else if (algoParent instanceof AlgoConicPartConicParameters) {
 			AlgoConicPartConicParameters algo = (AlgoConicPartConicParameters) algoParent;			
 						
-			GeoConic transformedConic = kernel.getTransformedConic(type,  algo.conic, Q, l, vec, n);	
+			GeoConic transformedConic = t.getTransformedConic(algo.conic);	
 			cons.removeFromConstructionList(transformedConic.getParentAlgorithm());			
 										
 			algo = new AlgoConicPartConicParameters(cons, label, transformedConic, algo.startParam, algo.endParam, conic_part_type);			
@@ -685,10 +694,10 @@ implements LimitedPath, NumberValue, LineProperties {
 		else if (algoParent instanceof AlgoConicPartConicPoints) {
 			AlgoConicPartConicPoints algo = (AlgoConicPartConicPoints) algoParent;			
 			GeoPoint [] points ={ algo.getStartPoint(), algo.getEndPoint() };			
-			points = kernel.transformPoints(type, points, Q, l, vec, n);									
+			points = t.transformPoints(points);									
 			GeoConic orgConic = algo.getConic();
 			
-			GeoConic transformedConic = kernel.getTransformedConic(type, orgConic, Q, l, vec, n);	
+			GeoConic transformedConic = t.getTransformedConic(orgConic);	
 			cons.removeFromConstructionList(transformedConic.getParentAlgorithm());		
 		
 			algo = new AlgoConicPartConicPoints(cons, label, transformedConic, points[0], points[1], conic_part_type);			
@@ -701,7 +710,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		else if (algoParent instanceof AlgoSemicircle) {			
 			AlgoSemicircle algo = (AlgoSemicircle) algoParent;			
 			GeoPoint [] points ={ algo.getA(), algo.getB() };			
-			points = kernel.transformPoints(type, points, Q, l, vec, n);
+			points = t.transformPoints(points);
 			
 			GeoConic semCirc;
 			if (type == Kernel.TRANSFORM_MIRROR_AT_LINE) {
@@ -717,7 +726,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		
 		else {
 			//	create CONIC
-			GeoConic transformedConic = kernel.getTransformedConic(type, this, Q, l, vec, n);
+			GeoConic transformedConic = t.getTransformedConic(this);
 			transformedConic.setLabel(label);
 			GeoElement [] ret = { transformedConic };
 			return ret;
@@ -727,8 +736,9 @@ implements LimitedPath, NumberValue, LineProperties {
 		return new GeoConicPart(this);
 	}
 	
-	/*
+	/**
 	 * not supported for Arcs etc
+	 * @param geoMatrix 
 	 */
 	public void matrixTransform(GeoList geoMatrix) {
 		

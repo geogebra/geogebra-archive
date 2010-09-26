@@ -5688,19 +5688,9 @@ public class Kernel {
 	/**
 	 * translate geoTrans by vector v
 	 */
-	final public GeoElement [] Translate(String label, Translateable geoTrans, GeoVec3D v) {
-		
-		if (label == null)
-			label = transformedGeoLabel(geoTrans.toGeoElement());
-
-		if (geoTrans.toGeoElement().isLimitedPath())
-			// handle segments, rays and arcs separately
-			return ((LimitedPath) geoTrans).createTransformedObject(TRANSFORM_TRANSLATE, label, null, null, v, null); 
-		
-		// standard case	
-		AlgoTranslate algo = new AlgoTranslate(cons, label, geoTrans, v);			
-		GeoElement [] geos = {algo.getResult()};
-		return geos;				
+	final public GeoElement [] Translate(String label, GeoElement geoTrans, GeoVec3D v) {
+		Transform t = new TransformTranslate(v);
+		return t.transform(geoTrans, label);				
 	}
 	
 	/**
@@ -5717,17 +5707,8 @@ public class Kernel {
 	 * rotate geoRot by angle phi around (0,0)
 	 */
 	final public GeoElement [] Rotate(String label, GeoElement geoRot, NumberValue phi) {
-		if (label == null)
-			label = transformedGeoLabel(geoRot);
-		
-		if (geoRot.toGeoElement().isLimitedPath())
-			// handle segments, rays and arcs separately
-			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_ROTATE, label, null, null, null, phi);
-		
-		// standard case
-		AlgoRotate algo = new AlgoRotate(cons, label, geoRot, phi);				
-		GeoElement [] geos = {algo.getResult()};
-		return geos;					
+		Transform t = new TransformRotate(phi);
+		return t.transform(geoRot, label);					
 	}
 
 
@@ -5735,100 +5716,41 @@ public class Kernel {
 	 * rotate geoRot by angle phi around Q
 	 */
 	final public GeoElement [] Rotate(String label, GeoElement geoRot, NumberValue phi, GeoPoint Q) {
-		if (label == null)
-			label = transformedGeoLabel(geoRot);
-		
-		if (geoRot.toGeoElement().isLimitedPath())
-			// handle segments, rays and arcs separately
-			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_ROTATE_AROUND_POINT, label, Q, null, null, phi);
-		
-		// standard case
-		AlgoRotatePoint algo = new AlgoRotatePoint(cons, label, geoRot, phi, Q);			
-		GeoElement [] geos = {algo.getResult()};
-		return geos;		
+		Transform t = new TransformRotate(phi,Q);
+		return t.transform(geoRot, label);		
 	}
 		
 	/**
 	 * dilate geoRot by r from S
 	 */
-	final public GeoElement [] Dilate(String label, Dilateable geoRot, NumberValue r, GeoPoint S) {
-		if (label == null)
-			label = transformedGeoLabel(geoRot.toGeoElement());
-		
-		if (geoRot.toGeoElement().isLimitedPath())
-			// handle segments, rays and arcs separately
-			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_DILATE, label, S, null, null, r);
-		
-		// standard case
-		AlgoDilate algo = new AlgoDilate(cons, label, geoRot, r, S);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) geoRot);
-		GeoElement[] geos = { ret };
-		return geos;
+	final public GeoElement [] Dilate(String label, GeoElement geoDil, NumberValue r, GeoPoint S) {
+		Transform t = new TransformDilate(r,S);
+		return t.transform(geoDil, label);		
 	}
 	
 	/**
 	 * dilate geoRot by r from origin
 	 */
-	final public GeoElement [] Dilate(String label, Dilateable geoRot, NumberValue r) {
-		if (label == null)
-			label = transformedGeoLabel(geoRot.toGeoElement());
-		
-		if (geoRot.toGeoElement().isLimitedPath())
-			// handle segments, rays and arcs separately
-			return ((LimitedPath) geoRot).createTransformedObject(TRANSFORM_DILATE, label, null, null, null, r);
-		
-		// standard case
-		AlgoDilate algo = new AlgoDilate(cons, label, geoRot, r,null);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) geoRot);
-		GeoElement[] geos = { ret };
-		return geos;
+	final public GeoElement [] Dilate(String label, GeoElement geoDil, NumberValue r) {
+		Transform t = new TransformDilate(r);
+		return t.transform(geoDil, label);
 	}
 
 	/**
 	 * mirror geoMir at point Q
 	 */
 	final public GeoElement [] Mirror(String label, GeoElement geoMir, GeoPoint Q) {	
-		if (label == null)
-			label = transformedGeoLabel(geoMir.toGeoElement());
-		
-		if (geoMir.toGeoElement().isLimitedPath())
-			// handle segments, rays and arcs separately
-			return ((LimitedPath) geoMir).createTransformedObject(TRANSFORM_MIRROR_AT_POINT, label, Q, null, null, null);
-		
-		// standard case
-		AlgoMirror algo = new AlgoMirror(cons, label, geoMir, Q);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) geoMir);
-		GeoElement[] geos = { ret };
-		return geos;
+		Transform t = new TransformMirror(Q);
+		return t.transform(geoMir, label);
 	}
 
 	/**
-	 * mirror (invert) point Q in circle 
+	 * mirror (invert) element Q in circle 
 	 * Michael Borcherds 2008-02-10
 	 */
 	final public GeoElement [] Mirror(String label, GeoElement Q, GeoConic conic) {	
-		if (label == null)
-			label = transformedGeoLabel((GeoElement)Q);
-	
-		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations(Q);
-		GeoElement[] geos = { ret };
-		return geos;
-	}
-	
-	final public GeoElement [] Mirror(String label, GeoCurveCartesian Q, GeoConic conic) {	
-		if (label == null)
-			label = transformedGeoLabel(Q);
-	
-		AlgoMirror algo = new AlgoMirror(cons, label, Q, conic);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) Q);
-		GeoElement[] geos = { ret };
-		return geos;
+		Transform t = new TransformMirror(conic);
+		return t.transform(Q, label);
 	}
 
 	/**
@@ -5836,211 +5758,36 @@ public class Kernel {
 	 * Michael Borcherds 2010-05-27
 	 */
 	final public GeoElement [] ApplyMatrix(String label, GeoElement Q, GeoList matrix) {	
-		if (label == null)
-			label = transformedGeoLabel((GeoElement)Q);
-	
-		AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, label, Q, matrix);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) Q);
-		GeoElement[] geos = { ret };
-		return geos;
+		Transform t = new TransformApplyMatrix(matrix);
+		return t.transform(Q, label);
 	}
 	
 	/**
-	 * apply matrix 
-	 * Michael Borcherds 2010-05-27
+	 * shear
 	 */
 	final public GeoElement [] Shear(String label, GeoElement Q, GeoVec3D l, GeoNumeric num) {	
-		if (label == null)
-			label = transformedGeoLabel((GeoElement)Q);
-	
-		AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, label, Q, l,num,true);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) Q);
-		GeoElement[] geos = { ret };
-		return geos;
+		Transform t = new TransformShearOrStretch(l,num,true);
+		return t.transform(Q, label);
 	}
 	/**
 	 * apply matrix 
 	 * Michael Borcherds 2010-05-27
 	 */
 	final public GeoElement [] Stretch(String label, GeoElement Q, GeoVec3D l, GeoNumeric num) {	
-		if (label == null)
-			label = transformedGeoLabel((GeoElement)Q);
-	
-		AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, label, Q, l,num,false);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) Q);
-		GeoElement[] geos = { ret };
-		return geos;
-	}
-
-	/**
-	 * mirror (invert) circle conic0 in circle conic1 
-	 * Michael Borcherds 2008-02-10
-	 */
-	final public GeoElement [] Mirror(String label, GeoConic conic0, GeoConic conic1) {	
-		if (label == null)
-			label = transformedGeoLabel(conic0);
-	
-		AlgoMirror algo = new AlgoMirror(cons, label, conic0, conic1);		
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) conic0);
-		GeoElement[] geos = { ret };
-		return geos;	
+		Transform t = new TransformShearOrStretch(l,num,false);
+		return t.transform(Q, label);
 	}
 
 	/**
 	 * mirror geoMir at line g
 	 */
 	final public GeoElement [] Mirror(String label, GeoElement geoMir, GeoLine g) {
-		if (label == null)
-			label = transformedGeoLabel(geoMir);
+		Transform t = new TransformMirror(g);
+		return t.transform(geoMir, label);
 		
-		if (geoMir.toGeoElement().isLimitedPath()) {
-			// handle segments, rays and arcs separately
-			GeoElement [] geos =  ((LimitedPath) geoMir).createTransformedObject(TRANSFORM_MIRROR_AT_LINE, label, null, g, null, null);
 			
-//			if (geos[0] instanceof Orientable && geoMir instanceof Orientable)
-//				((Orientable)geos[0]).setOppositeOrientation( (Orientable)geoMir);
-			
-			return geos;
-		}
-		// standard case
-		AlgoMirror algo = new AlgoMirror(cons, label, geoMir, g);
-		GeoElement ret = algo.getResult();
-		ret.setVisualStyleForTransformations((GeoElement) geoMir);
-		GeoElement[] geos = { ret };
-		return geos;
 	}			
 	
-	/* ******************************
-	 * Transformations for polygons 
-	 * ******************************/
-	
-	/**
-	 * translate poly by vector v
-	 */
-	final public GeoElement [] Translate(String label, GeoPolygon poly, GeoVec3D v) {
-		return transformPoly(label, poly, translatePoints(poly.getPoints(), v));
-	}	
-	
-	GeoPoint [] translatePoints(GeoPoint [] points, GeoVec3D v) {		
-		// rotate all points
-		GeoPoint [] newPoints = new GeoPoint[points.length];
-		for (int i = 0; i < points.length; i++) {			
-			newPoints[i] = (GeoPoint) Translate(transformedGeoLabel(points[i]), points[i], v)[0]; 				
-			newPoints[i].setVisualStyleForTransformations(points[i]);
-		}			
-		return newPoints;
-	}
-	
-	public static String transformedGeoLabel(GeoElement geo) {
-		if (geo.isLabelSet() && !geo.hasIndexLabel() && !geo.label.endsWith("'''")) {
-			return geo.label + "'";
-		} else {
-			return null;
-		}
-	}
-	
-	/**
-	 * rotates poly by angle phi around (0,0)
-	 */
-	final public GeoElement [] Rotate(String label, GeoPolygon poly, NumberValue phi) {
-		return transformPoly(label, poly, rotPoints(poly.getPoints(), phi, null));
-	}
-	
-	/**
-	 * rotates poly by angle phi around Q
-	 */
-	final public GeoElement [] Rotate(String label,	GeoPolygon poly, NumberValue phi, GeoPoint Q) {		
-		return transformPoly(label, poly, rotPoints(poly.getPoints(), phi, Q));
-	}
-				
-	GeoPoint [] rotPoints(GeoPoint [] points, NumberValue phi, GeoPoint Q) {		
-		// rotate all points
-		GeoPoint [] rotPoints = new GeoPoint[points.length];
-		for (int i = 0; i < points.length; i++) {
-			String pointLabel = transformedGeoLabel(points[i]);
-			if (Q == null)
-				rotPoints[i] = (GeoPoint) Rotate(pointLabel, points[i], phi)[0]; 	
-			else
-				rotPoints[i] = (GeoPoint) Rotate(pointLabel, points[i], phi, Q)[0];
-			rotPoints[i].setVisualStyleForTransformations(points[i]);
-		}			
-		return rotPoints;
-	}
-		
-	/**
-	 * dilate geoRot by r from S
-	 */
-	final public GeoElement [] Dilate(String label, GeoPolygon poly, NumberValue r, GeoPoint S) {
-		return transformPoly(label, poly, dilatePoints(poly.getPoints(), r, S));
-	}
-	
-	GeoPoint [] dilatePoints(GeoPoint [] points, NumberValue r, GeoPoint S) {		
-		// dilate all points
-		GeoPoint [] newPoints = new GeoPoint[points.length];
-		for (int i = 0; i < points.length; i++) {
-			String pointLabel = transformedGeoLabel(points[i]);
-			newPoints[i] = (GeoPoint) Dilate(pointLabel, points[i], r, S)[0];			
-			newPoints[i].setVisualStyleForTransformations(points[i]);
-		}			
-		return newPoints;
-	}	
-
-	/**
-	 * mirror geoMir at point Q
-	 */
-	final public GeoElement [] Mirror(String label, GeoPolygon poly, GeoPoint Q) {
-		return transformPoly(label, poly, mirrorPoints(poly.getPoints(), Q, null));	
-	}
-
-	/**
-	 * mirror geoMir at line g
-	 */
-	final public GeoElement [] Mirror(String label, GeoPolygon poly, GeoLine g) {
-		return transformPoly(label, poly, mirrorPoints(poly.getPoints(), null, g));	
-	}	
-	
-	GeoPoint [] mirrorPoints(GeoPoint [] points, GeoPoint Q, GeoLine g) {		
-		// mirror all points
-		GeoPoint [] newPoints = new GeoPoint[points.length];
-		for (int i = 0; i < points.length; i++) {
-			String pointLabel = transformedGeoLabel(points[i]);
-			if (Q == null)
-				newPoints[i] = (GeoPoint) Mirror(pointLabel, points[i], g)[0]; 	
-			else
-				newPoints[i] = (GeoPoint) Mirror(pointLabel, points[i], Q)[0];
-			newPoints[i].setVisualStyleForTransformations(points[i]);
-		}			
-		return newPoints;
-	}		
-	
-	private GeoElement [] transformPoly(String label, GeoPolygon oldPoly, GeoPoint [] transformedPoints) {
-		// get label for polygon
-		String [] polyLabel = null;		
-		if (label == null) {							
-			if (oldPoly.isLabelSet()) {		
-				polyLabel = new String[1];
-				polyLabel[0] = transformedGeoLabel(oldPoly);
-			}			
-		} else {
-			polyLabel = new String[1];
-			polyLabel[0] = label;
-		}
-		
-		// use visibility of points for transformed points
-		GeoPoint [] oldPoints = oldPoly.getPoints();
-		for (int i=0; i < oldPoints.length; i++) {
-			transformedPoints[i].setEuclidianVisible(oldPoints[i].isSetEuclidianVisible());			
-			transformedPoints[i].setVisualStyleForTransformations(oldPoints[i]);
-			notifyUpdate(transformedPoints[i]);
-		}
-	
-		// build the polygon from the transformed points
-		return Polygon(polyLabel, transformedPoints);
-	}			    
 	
 	static final int TRANSFORM_TRANSLATE = 0;
 	static final int TRANSFORM_MIRROR_AT_POINT = 1;
@@ -6059,128 +5806,7 @@ public class Kernel {
 		}
 	}
 	
-	GeoPoint [] transformPoints(int type, GeoPoint [] points, GeoPoint Q, GeoLine l, GeoVec3D vec, NumberValue n) {
-		GeoPoint [] result = null;
-		
-		switch (type) {
-			case TRANSFORM_TRANSLATE:
-				result = translatePoints(points, vec);	
-				break;
-				
-			case TRANSFORM_MIRROR_AT_POINT:
-				result = mirrorPoints(points, Q, null);	
-				break;
-				
-			case TRANSFORM_MIRROR_AT_LINE:	
-				result = mirrorPoints(points, null, l);	
-				break;
-				
-			case TRANSFORM_ROTATE:
-				result = rotPoints(points, n, null);		
-				break;
-				
-			case TRANSFORM_ROTATE_AROUND_POINT:
-				result = rotPoints(points, n, Q);	
-				break;
-				
-			case TRANSFORM_DILATE:
-				result = dilatePoints(points, n, Q);	
-				break;
-				
-			default:
-				return null;			
-		}
-				
-		// use visibility of points for transformed points
-		for (int i=0; i < points.length; i++) {
-			result[i].setEuclidianVisible(points[i].isSetEuclidianVisible());			
-			result[i].setVisualStyleForTransformations(points[i]);
-			notifyUpdate(result[i]);
-		}
-		return result;
-	}	
 	
-	GeoLine getTransformedLine(int type, GeoLine line, GeoPoint Q, GeoLine l,
-			GeoVec3D vec, NumberValue n) {
-
-		GeoLine ret = null;
-
-		switch (type) {
-		case Kernel.TRANSFORM_TRANSLATE:
-			AlgoTranslate algoTrans = new AlgoTranslate(cons, line, vec);
-			ret = (GeoLine) algoTrans.getResult();
-			break;
-
-		case Kernel.TRANSFORM_MIRROR_AT_POINT:
-		case Kernel.TRANSFORM_MIRROR_AT_LINE:
-			AlgoMirror algoMirror = new AlgoMirror(cons, line, l, Q, null);
-			ret = (GeoLine) algoMirror.getResult();
-			break;
-
-		case Kernel.TRANSFORM_ROTATE:
-			AlgoRotate algoRotate = new AlgoRotate(cons, line, n);
-			ret = (GeoLine) algoRotate.getResult();
-			break;
-
-		case Kernel.TRANSFORM_ROTATE_AROUND_POINT:
-			AlgoRotatePoint algoRotatePoint = new AlgoRotatePoint(cons, line,
-					n, Q);
-			ret = (GeoLine) algoRotatePoint.getResult();
-			break;
-
-		case Kernel.TRANSFORM_DILATE:
-			AlgoDilate algoDilate = new AlgoDilate(cons, line, n, Q);
-			ret = (GeoLine) algoDilate.getResult();
-			break;
-
-		default:
-			return null;
-		}
-		ret.setVisualStyleForTransformations(line);
-		return ret;
-	}
-
-	GeoConic getTransformedConic(int type, GeoConic conic, GeoPoint Q,
-			GeoLine l, GeoVec3D vec, NumberValue n) {
-
-		GeoConic ret;
-
-		switch (type) {
-		case Kernel.TRANSFORM_TRANSLATE:
-			AlgoTranslate algoTrans = new AlgoTranslate(cons, conic, vec);
-			ret = (GeoConic) algoTrans.getResult();
-			break;
-
-		case Kernel.TRANSFORM_MIRROR_AT_POINT:
-		case Kernel.TRANSFORM_MIRROR_AT_LINE:
-			AlgoMirror algoMirror = new AlgoMirror(cons, conic, l, Q, null);
-			ret = (GeoConic) algoMirror.getResult();
-			break;
-
-		case Kernel.TRANSFORM_ROTATE:
-			AlgoRotate algoRotate = new AlgoRotate(cons, conic, n);
-			ret = (GeoConic) algoRotate.getResult();
-			break;
-
-		case Kernel.TRANSFORM_ROTATE_AROUND_POINT:
-			AlgoRotatePoint algoRotatePoint = new AlgoRotatePoint(cons, conic,
-					n, Q);
-			ret = (GeoConic) algoRotatePoint.getResult();
-			break;
-
-		case Kernel.TRANSFORM_DILATE:
-			AlgoDilate algoDilate = new AlgoDilate(cons, conic, n, Q);
-			ret = (GeoConic) algoDilate.getResult();
-			break;
-
-		default:
-			return null;
-		}
-
-		ret.setVisualStyleForTransformations(conic);
-		return ret;
-	}
-
 	/***********************************
 	 * CALCULUS
 	 ***********************************/

@@ -5238,11 +5238,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoVector vec = getSelectedVectors()[0];						
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != vec) {
-						if (geos[i] instanceof Translateable)
-							kernel.Translate(null,  (Translateable) geos[i], vec);
-						else if (geos[i].isGeoPolygon()) {
-							kernel.Translate(null, (GeoPolygon) geos[i], vec);
-						}
+						if (geos[i] instanceof Translateable || geos[i].isGeoPolygon())
+							kernel.Translate(null,   geos[i], vec);
 					}
 				}		
 				return true;
@@ -5357,11 +5354,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoPoint point = getSelectedPoints()[0];					
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != point) {
-						if (geos[i] instanceof Dilateable)
-							kernel.Dilate(null,  (Dilateable) geos[i], num, point);
-						else if (geos[i].isGeoPolygon()) {
-							kernel.Dilate(null, (GeoPolygon) geos[i], num, point);
-						}
+						if (geos[i] instanceof Dilateable || geos[i].isGeoPolygon())
+							kernel.Dilate(null,  geos[i], num, point);
+						
 					}
 				}		
 				return true;

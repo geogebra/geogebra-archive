@@ -47,6 +47,17 @@ public class AlgoApplyMatrix extends AlgoTransformation {
      * @param matrix
      */
     public AlgoApplyMatrix(Construction cons, String label, GeoElement in, GeoList matrix) {
+    	this(cons,in,matrix);          
+        geoOut.setLabel(label);
+    }           
+    
+    /**
+     * Creates new apply matrix algorithm
+     * @param cons
+     * @param in
+     * @param matrix
+     */
+    public AlgoApplyMatrix(Construction cons, GeoElement in, GeoList matrix) {
         super(cons);
         //this.in = in;      
         this.matrix = matrix;
@@ -68,7 +79,6 @@ public class AlgoApplyMatrix extends AlgoTransformation {
         cons.registerEuclidianViewAlgo(this);
         
         compute();          
-        geoOut.setLabel(label);
     }           
     
     public String getClassName() {
