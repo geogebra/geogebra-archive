@@ -513,6 +513,14 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			// load toolbar if this panel has one
 			if(hasToolbar()) {
 				toolbar = new Toolbar(app, this);
+				
+				if(isOpenInFrame()) {
+					toolbarContainer = new ToolbarContainer(app, false);
+					toolbarContainer.addToolbar(toolbar);
+					toolbarContainer.buildGui();
+					toolbarContainer.setActiveToolbar(getViewId());
+					toolbarPanel.add(toolbarContainer, BorderLayout.CENTER);
+				}
 			} 
 			
 			// euclidian view uses the general toolbar
