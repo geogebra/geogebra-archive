@@ -6659,6 +6659,9 @@ public class Kernel {
 			}
 			else {
 				sbBuildExplicitLineEquation.append(' ');
+				if(numbers[0]<Kernel.MIN_PRECISION){
+					op = oppositeSign(op);
+				}
 				sbBuildExplicitLineEquation.append(op);
 				sbBuildExplicitLineEquation.append(' ');
 			}
@@ -6674,6 +6677,9 @@ public class Kernel {
 		}
 		else {
 			sbBuildExplicitLineEquation.append(' ');
+			if(numbers[1] <Kernel.MIN_PRECISION){
+				op = oppositeSign(op);
+			}
 			sbBuildExplicitLineEquation.append(op);
 			sbBuildExplicitLineEquation.append(' ');
 		}
@@ -6700,6 +6706,20 @@ public class Kernel {
 		}
 		return sbBuildExplicitLineEquation;
 	}
+	/**
+	 * Inverts the > or < sign
+	 * @param op
+	 * @return opposite sign
+	 */
+	public static char oppositeSign(char op) {
+		switch(op) {
+		case '=':return '=';
+		case '<':return '>';
+		case '>':return '<';
+		default: return '?';
+		}
+	}
+
 	private StringBuilder sbBuildExplicitLineEquation = new StringBuilder(50);
 
 	/*
