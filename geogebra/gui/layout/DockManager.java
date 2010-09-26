@@ -369,6 +369,16 @@ public class DockManager implements AWTEventListener {
 		}
 
 		updatePanels();
+		
+		// add toolbar to main toolbar container if necessary
+		if(source.hasToolbar()) {
+			ToolbarContainer mainContainer = app.getGuiManager().getToolbarPanel();
+			mainContainer.addToolbar(source.getToolbar());
+			mainContainer.updateToolbarPanel();
+		}
+
+		// has to be called *after* the toolbar was added to the container
+		setFocusedPanel(source);
 
 		// Manually dispatch a resize event as the size of the 
 		// euclidian view isn't updated all the time.
@@ -602,6 +612,7 @@ public class DockManager implements AWTEventListener {
 		}
 		
 		panel.setVisible(false);
+		setFocusedPanel(null);
 		
 		if(isPermanent) {
 			app.getGuiManager().detachView(panel.getViewId());
