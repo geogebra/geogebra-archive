@@ -6531,7 +6531,8 @@ public class Kernel {
 		char op) {
 
 		sbBuildImplicitEquation.setLength(0);
-		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN, CANCEL_DOWN));
+		Application.debug("implicit");
+		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN || (op == '='), CANCEL_DOWN));
 		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) {
 			sbBuildImplicitEquation.append(" == ");
 		}
@@ -7185,7 +7186,7 @@ public class Kernel {
 		for (int i = 0; i < numbers.length; i++) {
 			gcd = gcd((long) numbers[i], gcd);
 		}
-		return gcd;
+		return Math.abs(gcd);
 	}
 	
 	/**
