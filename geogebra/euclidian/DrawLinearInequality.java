@@ -28,100 +28,134 @@ public class DrawLinearInequality extends DrawLine {
             gz = g.z;
             
             setClippedLine();
+            
+            // make copies so that label positioning (DrawLine.setLabelPosition()) works
+            double xx1 = x1;
+            double xx2 = x2;
+            double yy1 = y1;
+            double yy2 = y2;
 			
-            // line on screen?		
-    		if (!line.intersects( -EuclidianView.CLIP_DISTANCE,  -EuclidianView.CLIP_DISTANCE, view.width + EuclidianView.CLIP_DISTANCE, view.height + EuclidianView.CLIP_DISTANCE)) {				
-    			isVisible = false;
-            	// don't return here to make sure that getBounds() works for offscreen points too
-    		}
-    		
-    		gp = new GeneralPathClipped(view);
-    		gp.reset();
-    		
     		// make sure x1 is min
-    		if (x1 > x2) {
-    			double temp = x1;
-    			x1 = x2;
-    			x2 = temp;
-    			temp = y1;
-    			y1 = y2;
-    			y2 = temp;
+    		if (xx1 > xx2) {
+    			double temp = xx1;
+    			xx1 = xx2;
+    			xx2 = temp;
+    			temp = yy1;
+    			yy1 = yy2;
+    			yy2 = temp;
     		}
     		
     		// make sure y1 & y2 in right order for vertical line
-    		if (y1 < y2 && Kernel.isEqual(x1, x2)) {
-    			double temp = x1;
-    			x1 = x2;
-    			x2 = temp;
-    			temp = y1;
-    			y1 = y2;
-    			y2 = temp;    			
+    		if (yy1 < yy2 && Kernel.isEqual(xx1, xx2)) {
+    			double temp = xx1;
+    			xx1 = xx2;
+    			xx2 = temp;
+    			temp = yy1;
+    			yy1 = yy2;
+    			yy2 = temp;    			
     		}
-    		
-    		gp.moveTo(x2, y2);
-    		gp.lineTo(x1, y1);
-    		
+ 
     		char op = ((GeoLinearInequality)g).op;
-    		
-    		//Application.debug(g.x + "x +"+g.y+" y "+op+(-g.z));
-    		//Application.debug(op);
-    		
+       		
     		boolean above = op == '>' || op == Unicode.GREATER_EQUAL;
     		
     		//Application.debug("above = "+above);
     		if (g.y <= 0) above = !above;
     		//Application.debug("above = "+above);
 
-    		if (above) {
-	    		if (x1 < 0) 
-	    			gp.lineTo(0, 0);
-	    		
-	    		if (y1 > view.height) {
-	    			gp.lineTo(0, view.height);
-	    			gp.lineTo(0, 0);
-	    		} 
-	    		
-	    		if (y2 > 0) {
-		    		gp.lineTo(view.width, 0);
-		    		if (x2 < view.width) gp.lineTo(view.width, view.height);
-	    		}
-    		} else { // below
+    		// line on screen?		
+    		if (!line.intersects( -EuclidianView.CLIP_DISTANCE,  -EuclidianView.CLIP_DISTANCE, view.width + EuclidianView.CLIP_DISTANCE, view.height + EuclidianView.CLIP_DISTANCE)) {				
     			
-    			if (y1 < 0) {
-    				gp.lineTo(0, 0);
-    				gp.lineTo(0, view.height);
+    			double meanX = (view.getXmax() + view.getXmin()) / 2 ;
+    			double meanY = (view.getYmax() + view.getYmin()) / 2 ;
+    			
+    			// check if midpoint of screen is above or below line
+    			double onScreen = g.x * meanX + g.y * meanY + g.z;
+    			
+    			//Application.debug(onScreen+" "+above+" "+xx1+" "+xx2);
+    			
+    			// vertical line
+    			if (Kernel.isZero(g.y)) onScreen = -onScreen;
+    			
+    			if ((onScreen > 0) == above) {
+    	    		if (gp == null) gp = new GeneralPathClipped(view);
+    	    		else gp.reset();
+    	    		//Application.debug("drawing rectangle");
+    	    		gp.moveTo(0, 0);
+    	    		gp.lineTo(0, view.height);
+    	    		gp.lineTo(view.width, view.height);
+    	    		gp.lineTo(view.width, 0);
+    	    		gp.lineTo(0, 0);
+    	    		gp.closePath();
+    				
     			}
     			
-	    		if (x1 < 0) 
-	    			gp.lineTo(0, view.height);
+    			else {
+    				isVisible = false;
+    			}
+    		}
+    		else
+    		{
+    		
+	    		if (gp == null) gp = new GeneralPathClipped(view);
+	    		else gp.reset();
 	    		
-	    		if (y2 < view.height) {
-	    			gp.lineTo(view.width, view.height);
-		    		if (x2 < view.width) {
-		    			gp.lineTo(view.width, 0);
+	   		
+	    		gp.moveTo(xx2, yy2);
+	    		gp.lineTo(xx1, yy1);
+	    		
+	
+	    		if (above) {
+		    		if (xx1 < 0) 
+		    			gp.lineTo(0, 0);
+		    		
+		    		if (yy1 > view.height) {
+		    			gp.lineTo(0, view.height);
+		    			gp.lineTo(0, 0);
 		    		} 
+		    		
+		    		if (yy2 > 0) {
+			    		gp.lineTo(view.width, 0);
+			    		if (xx2 < view.width) gp.lineTo(view.width, view.height);
+		    		}
+	    		} else { // below
+	    			
+	    			if (yy1 < 0) {
+	    				gp.lineTo(0, 0);
+	    				gp.lineTo(0, view.height);
+	    			}
+	    			
+		    		if (xx1 < 0) 
+		    			gp.lineTo(0, view.height);
+		    		
+		    		if (yy2 < view.height) {
+		    			gp.lineTo(view.width, view.height);
+			    		if (xx2 < view.width) {
+			    			gp.lineTo(view.width, 0);
+			    		} 
+		    		}
+		    		
+		    		    			
 	    		}
 	    		
-	    		    			
+	    		gp.lineTo(xx2, yy2);
+	    		
+	    		//gp.append(line, true);
+	    		gp.closePath();
+	            
+				// draw trace
+				if (g.trace) {
+					isTracing = true;
+					Graphics2D g2 = view.getBackgroundGraphics();
+					if (g2 != null) drawTrace(g2);
+				} else {
+					if (isTracing) {
+						isTracing = false;
+						view.updateBackground();
+					}
+				}			
+            
     		}
-    		
-    		gp.lineTo(x2, y2);
-    		
-    		//gp.append(line, true);
-    		gp.closePath();
-            
-			// draw trace
-			if (g.trace) {
-				isTracing = true;
-				Graphics2D g2 = view.getBackgroundGraphics();
-				if (g2 != null) drawTrace(g2);
-			} else {
-				if (isTracing) {
-					isTracing = false;
-					view.updateBackground();
-				}
-			}			
-            
             if (labelVisible) {
 				labelDesc = geo.getLabelDescription();
 				setLabelPosition();      
