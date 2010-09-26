@@ -2840,7 +2840,28 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		FunctionVariable fv = new FunctionVariable(kernel,"t");
 		ExpressionNode evX=null,evY=null;
 		double min=0,max=0;
-		if(type==CONIC_ELLIPSE){
+		if(type == CONIC_CIRCLE){
+			evX = new ExpressionNode(kernel, 
+					new ExpressionNode(kernel,fv,ExpressionNode.COS,null),
+					ExpressionNode.MULTIPLY,
+					new MyDouble(kernel,halfAxes[0]));
+			evY = new ExpressionNode(kernel, 
+					new ExpressionNode(kernel,fv,ExpressionNode.SIN,null),
+					ExpressionNode.MULTIPLY,
+					new MyDouble(kernel,halfAxes[1]));
+			ExpressionNode rwX = new ExpressionNode(kernel, evX,
+					ExpressionNode.PLUS,
+					new MyDouble(kernel,b.x));
+			ExpressionNode rwY = new ExpressionNode(kernel,evY,
+					ExpressionNode.PLUS,
+					new MyDouble(kernel,b.y));
+			curve.setFunctionX(new Function(rwX,fv));
+			curve.setFunctionY(new Function(rwY,fv));
+			curve.setInterval(0, 2*Math.PI);	
+			return;
+			
+		}
+		if(type == CONIC_ELLIPSE){
 			evX = new ExpressionNode(kernel, 
 					new ExpressionNode(kernel,fv,ExpressionNode.COS,null),
 					ExpressionNode.MULTIPLY,
@@ -2850,10 +2871,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 					ExpressionNode.MULTIPLY,
 					new MyDouble(kernel,halfAxes[1]));
 			min = 0;
-			max= 2*Math.PI;
+			max = 2*Math.PI;
 			
 		}
-		else if(type==CONIC_HYPERBOLA){
+		else if(type == CONIC_HYPERBOLA){
 			evX = new ExpressionNode(kernel, 
 					new ExpressionNode(kernel,fv,ExpressionNode.COSH,null),
 					ExpressionNode.MULTIPLY,
@@ -2865,7 +2886,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			min = -2*Math.PI;
 			max = 2*Math.PI;
 		}
-		else if(type==CONIC_PARABOLA){
+		else if(type == CONIC_PARABOLA){
 			evY = new ExpressionNode(kernel,new ExpressionNode(kernel, fv),ExpressionNode.MULTIPLY,new MyDouble(kernel,Math.sqrt(2*p)));
 			evX = new ExpressionNode(kernel, 
 					fv,
@@ -2889,7 +2910,27 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				new MyDouble(kernel,b.y));
 		curve.setFunctionX(new Function(rwX,fv));
 		curve.setFunctionY(new Function(rwY,fv));
-		curve.setInterval(min, max);				
+		curve.setInterval(min, max);			
+		
+	}
+
+
+
+	/**
+	 * Some ellipses might be circles by accident.
+	 * This method tells us whether we can rely on this conic being circle after some points are moved.
+	 * @return true iff the conic will remain circle after changing parent inputs
+	 */
+	public boolean keepsType() {
+		if(getParentAlgorithm()==null)
+			return true;
+		if(getParentAlgorithm() instanceof AlgoConicFivePoints)
+			return false;
+		if(getParentAlgorithm() instanceof AlgoEllipseFociPoint)
+			return false;
+		if(getParentAlgorithm() instanceof AlgoEllipseFociLength)
+			return false;
+		return true;
 	}
 
 }

@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.MyDouble;
+
 /**
  *
  * @author  Markus
@@ -99,7 +101,8 @@ public class AlgoMirror extends AlgoTransformation {
         	out = new GeoConic(cons);
         	geoOut = (GeoElement)out;
         }
-        else if (mirror instanceof GeoConic && geoIn instanceof GeoConic){
+        else if (mirror instanceof GeoConic && geoIn instanceof GeoConic && 
+        		(!((GeoConic)geoIn).isCircle()||!((GeoConic)geoIn).keepsType())){
         	out = new GeoCurveCartesian(cons);
         	geoOut = (GeoElement)out;
         }
@@ -107,9 +110,11 @@ public class AlgoMirror extends AlgoTransformation {
         	out = (Mirrorable) geoIn.copy();               
         	geoOut = out.toGeoElement();
         	
-        }else if (geoIn instanceof GeoFunction){
+        }else if (geoIn instanceof GeoFunction && mirror!= mirrorPoint){
         	out = new GeoCurveCartesian(cons);
         	geoOut = (GeoElement)out;
+        }else if (geoIn instanceof GeoFunction && mirror == mirrorPoint){
+        	geoOut = geoIn.copy();
         }
         setInputOutput();
               
@@ -145,19 +150,23 @@ public class AlgoMirror extends AlgoTransformation {
     protected final void compute() {
     	if(mirror instanceof GeoConic && geoIn instanceof GeoLine){
     		((GeoLine)geoIn).toGeoConic((GeoConic)geoOut);    		
-    	}else if(mirror instanceof GeoConic && geoIn instanceof GeoConic){
+    	}
+    	else if(mirror instanceof GeoConic && geoIn instanceof GeoConic && geoOut instanceof GeoCurveCartesian){
     		((GeoConic)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);    		
     	}
-    		
-    	else if(geoIn instanceof GeoFunction){
+    	else if(geoIn instanceof GeoFunction && mirror != mirrorPoint){
     		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
-    	}else
-    	    geoOut.set(geoIn);
+    	}
+    	else geoOut.set(geoIn);
         
         if (mirror == mirrorLine)
         	out.mirror(mirrorLine);
-        else if (mirror == mirrorPoint)
-        	out.mirror(mirrorPoint);
+        else if (mirror == mirrorPoint){
+        	if(geoOut.isGeoFunction())
+        		((GeoFunction)geoOut).dilate(new MyDouble(kernel,-1), mirrorPoint);
+        	else
+        		out.mirror(mirrorPoint);
+        }
         else ((ConicMirrorable)out).mirror(mirrorConic);
     }       
     
