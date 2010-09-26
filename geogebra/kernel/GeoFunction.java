@@ -1186,7 +1186,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		 varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
 		 curve.setFunctionX(varFun);
 		 double min = app.getEuclidianView().getXminForFunctions();
-		 double max = app.getEuclidianView().getXminForFunctions();
+		 double max = app.getEuclidianView().getXmaxForFunctions();
 		 curve.setInterval(min, max);
 	 }
 
