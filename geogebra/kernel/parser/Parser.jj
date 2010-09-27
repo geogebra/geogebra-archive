@@ -50,6 +50,7 @@ import geogebra.main.*;
 import geogebra.kernel.*;
 import geogebra.kernel.arithmetic.*;
 import geogebra.kernel.arithmetic3D.*;
+import geogebra.util.Unicode;
 import java.util.*;
 
 public class Parser {
@@ -385,6 +386,7 @@ ValidExpression buildValidExpression() :
     ValidExpression ve;
     ExpressionNode lhs, rhs;
     Token l = new Token();
+    Token c = null;
     Vector labels = new Vector();
 } 
 {         
@@ -393,10 +395,7 @@ ValidExpression buildValidExpression() :
         LOOKAHEAD(2147483647)
         (l = <SPREADSHEET_LABEL> | l = <LABEL>)  (":" | <ASSIGNMENT> )  ve = inequality()        
     |          
-        // 3x + y < 7	
-        LOOKAHEAD(2147483647)
-        ve = inequality()           
-    |          
+              
         // f(x) =  x^2 + 3	
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
@@ -425,6 +424,29 @@ ValidExpression buildValidExpression() :
         // could be expression too!!!
         // eg. t = 2 x     or     t = 2 s
         LOOKAHEAD(2147483647)
+        
+        lhs = expressionnodePlusMinus() (c = < LESS > | c = < LESS_EQUAL > | c = < GREATER_EQUAL > | c = < GREATER > ) rhs = expressionnodePlusMinus()
+        {
+          		      
+            // maybe expression
+            if (lhs.isSingleVariable() && !rhs.includesPolynomial()) {                                  
+                int sign = 0;
+                if(c.image.equals(">"))
+                	sign = ExpressionNode.GREATER;
+                else if(c.image.equals("<"))
+                	sign = ExpressionNode.LESS;
+                else if(c.image.equals(""+Unicode.GREATER_EQUAL) || c.image.equals(">="))
+                	sign = ExpressionNode.GREATER_EQUAL;
+                else if(c.image.equals(""+Unicode.LESS_EQUAL) || c.image.equals("<="))
+                	sign = ExpressionNode.LESS_EQUAL;	
+                ve = new ExpressionNode(kernel,lhs,sign,rhs);                         
+            } else {
+                // it's an inequality
+                ve = new Inequality(kernel, lhs, rhs, c.image); 
+            }
+        }
+     |
+     LOOKAHEAD(2147483647)
         lhs = expressionnode() <EQUAL> rhs = expressionnode()
         {             
             // maybe expression
