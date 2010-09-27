@@ -302,6 +302,7 @@ implements EuclidianViewAlgo {
 				break;									
 										
 			case GeoElement.GEO_CLASS_LINE:						
+			case GeoElement.GEO_CLASS_LINEAR_INEQUALITY:						
 				initLine((GeoLine) macroGeo, (GeoLine) algoGeo);
 				break;	
 				

@@ -1410,6 +1410,7 @@ public abstract class GeoElement
 			case GEO_CLASS_CONICPART:
 			case GEO_CLASS_IMAGE:
 			case GEO_CLASS_LINE:
+			case GEO_CLASS_LINEAR_INEQUALITY:
 			case GEO_CLASS_RAY:
 			case GEO_CLASS_SEGMENT:
 			case GEO_CLASS_TEXT:
