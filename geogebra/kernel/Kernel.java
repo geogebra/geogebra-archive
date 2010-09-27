@@ -6531,7 +6531,6 @@ public class Kernel {
 		char op) {
 
 		sbBuildImplicitEquation.setLength(0);
-		Application.debug("implicit");
 		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN || (op == '='), CANCEL_DOWN));
 		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) {
 			sbBuildImplicitEquation.append(" == ");

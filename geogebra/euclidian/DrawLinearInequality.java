@@ -2,15 +2,25 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoLinearInequality;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 import geogebra.util.Unicode;
 
 import java.awt.Graphics2D;
 
+/**
+ * Graphical representation of linear inequality
+ * @author Michael Borcherds
+ *
+ */
 public class DrawLinearInequality extends DrawLine {
 
     private GeneralPathClipped gp;
+    private boolean offScreen; //to avoid OpenJDK glitch we don't draw offscreen line
 
+    /**
+     * Creates new drawable linear inequality
+     * @param euclidianView
+     * @param geo
+     */
 	public DrawLinearInequality(EuclidianView euclidianView,
 			GeoLinearInequality geo) {
 		super(euclidianView, geo);
@@ -20,6 +30,7 @@ public class DrawLinearInequality extends DrawLine {
 	final public void update() {  
 		//	take line g here, not geo this object may be used for conics too
         isVisible = g.isEuclidianVisible(); 
+        offScreen = false;
         if (isVisible) {
 			labelVisible = geo.isLabelVisible();
 			updateStrokes(geo);
@@ -81,6 +92,7 @@ public class DrawLinearInequality extends DrawLine {
     	    		if (gp == null) gp = new GeneralPathClipped(view);
     	    		else gp.reset();
     	    		//Application.debug("drawing rectangle");
+    	    		offScreen = true; 
     	    		gp.moveTo(0, 0);
     	    		gp.lineTo(0, view.height);
     	    		gp.lineTo(view.width, view.height);
@@ -175,8 +187,9 @@ public class DrawLinearInequality extends DrawLine {
             
             // draw line              
             g2.setPaint(geo.getObjectColor());
-            g2.setStroke(objStroke);            
-			g2.draw(line);    
+            g2.setStroke(objStroke);     
+            //in OpenJDK drawing offscreen line causes trouble, so we have to check
+			if(!offScreen)g2.draw(line);
 					
 			g2.setColor(geo.getObjectColor());
 			fill(g2, gp, false);
