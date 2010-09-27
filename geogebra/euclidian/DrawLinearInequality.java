@@ -70,8 +70,8 @@ public class DrawLinearInequality extends DrawLine {
        		
     		boolean above = op == '>' || op == Unicode.GREATER_EQUAL;
     		
-    		//Application.debug("above = "+above);
-    		if (g.y <= 0) above = !above;
+    		//above must be also handled for vertical ineqs
+    		if (g.y < 0 || (Kernel.isZero(g.y) && g.x > 0)) above = !above;
     		//Application.debug("above = "+above);
 
     		// line on screen?		
