@@ -4354,8 +4354,6 @@ public class Kernel {
 			return null;
 		}
     }
-	//Application.debug(kernel.format(a.inner(d))+" UnitVector[Segment[A,B]] + "+kernel.format(b.inner(d))+" UnitPerpendicularVector[Segment[A,B]]");
-	points[0].setEuclidianVisible(false);
 	points[0].update();
 	
 	return Polygon(labels, points);
