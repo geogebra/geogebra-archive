@@ -66,7 +66,7 @@ public class DrawLinearInequality extends DrawLine {
     			yy2 = temp;    			
     		}
  
-    		char op = ((GeoLinearInequality)g).op;
+    		char op = ((GeoLinearInequality)g).getOperation();
        		
     		boolean above = op == '>' || op == Unicode.GREATER_EQUAL;
     		

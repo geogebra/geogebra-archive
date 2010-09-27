@@ -2233,9 +2233,6 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("outlyingIntersections")) {
 				ok = handleOutlyingIntersections(attrs);
 				break;
-			} else if (eName.equals("operation")) {
-				ok = handleOperation(attrs);
-				break;
 			} /*else if (eName.equals("objCoords")) {
 				ok = handleObjCoords(attrs);
 				break;
@@ -3180,22 +3177,6 @@ public class MyXMLHandler implements DocHandler {
 			LimitedPath lpath = (LimitedPath) geo;
 			lpath.setAllowOutlyingIntersections(parseBoolean((String) attrs
 					.get("val")));
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private boolean handleOperation(LinkedHashMap<String, String> attrs) {
-		if (!(geo instanceof GeoLinearInequality)) {
-			Application
-					.debug("wrong element type for <operation>: "
-							+ geo.getClassName());
-			return false;
-		}
-
-		try {
-			((GeoLinearInequality)geo).setOperation(((String) attrs.get("val")).charAt(0));
 			return true;
 		} catch (Exception e) {
 			return false;

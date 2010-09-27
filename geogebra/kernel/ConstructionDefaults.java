@@ -35,7 +35,8 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POINT_COMPLEX =  14;
 	
 	public static final int DEFAULT_LINE = 20;			
-	public static final int DEFAULT_LINEAR_INEQUALITY = 21;			
+	public static final int DEFAULT_LINEAR_INEQUALITY = 21; // dashed			
+	public static final int DEFAULT_LINEAR_INEQUALITY_STRICT = 22; // solid			
 	public static final int DEFAULT_VECTOR = 30;	
 	public static final int DEFAULT_CONIC = 40;
 	public static final int DEFAULT_CONIC_SECTOR = 41;
@@ -203,12 +204,20 @@ public class ConstructionDefaults {
 		line.setObjColor(colLine);
 		defaultGeoElements.put(DEFAULT_LINE, line);
 		
-		// line
+		// inequality
 		GeoLinearInequality linearInequality = new GeoLinearInequality(cons, null);	
 		linearInequality.setLocalVariableLabel("LinearInequality");
 		linearInequality.setObjColor(colInequality);
 		linearInequality.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
 		defaultGeoElements.put(DEFAULT_LINEAR_INEQUALITY, linearInequality);
+		
+		// inequality (strict)
+		linearInequality = new GeoLinearInequality(cons, null);	
+		linearInequality.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+		linearInequality.setLocalVariableLabel("LinearInequality");
+		linearInequality.setObjColor(colInequality);
+		linearInequality.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
+		defaultGeoElements.put(DEFAULT_LINEAR_INEQUALITY_STRICT, linearInequality);
 		
 		// vector
 		GeoVector vector = new GeoVector(cons);
@@ -349,7 +358,10 @@ public class ConstructionDefaults {
 			break;
 
 		case GeoElement.GEO_CLASS_LINEAR_INEQUALITY:
-			type = DEFAULT_LINEAR_INEQUALITY;	
+			if (((GeoLinearInequality)geo).isStrict())
+				type = DEFAULT_LINEAR_INEQUALITY_STRICT;	
+			else
+				type = DEFAULT_LINEAR_INEQUALITY;	
 			break;
 
 		case GeoElement.GEO_CLASS_BOOLEAN:

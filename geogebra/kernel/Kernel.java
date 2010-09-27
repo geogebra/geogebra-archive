@@ -1169,6 +1169,13 @@ public class Kernel {
 			double y = Double.parseDouble((String) attrs.get("y"));
 			double z = Double.parseDouble((String) attrs.get("z"));
 			v.setCoords(x, y, z);
+			
+			if (geo instanceof GeoLinearInequality) {
+				char op = ((String) attrs.get("op")).charAt(0);
+				Application.debug("setting op = "+op);
+				((GeoLinearInequality)geo).setOperation(op);
+			}
+			
 			return true;
 		} catch (Exception e) {
 			return false;

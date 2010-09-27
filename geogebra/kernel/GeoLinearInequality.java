@@ -10,8 +10,12 @@ public class GeoLinearInequality extends GeoLine {
     public GeoLinearInequality(Construction c, Equation equ) {
 		super(c);
 		if (equ != null)
-			this.op = ((Inequality)equ).op;
-		update(); // make sure operation correct in AlgebraView
+			setOperation(((Inequality)equ).op);
+		
+		// make sure dashed / solid according to op
+		// already set (wrongly) in super() call
+		setConstructionDefaults();
+		update();
 	}
 
     public GeoLinearInequality(GeoLinearInequality line) {
@@ -21,8 +25,12 @@ public class GeoLinearInequality extends GeoLine {
 	public GeoLinearInequality(Construction cons, String label, double a,
 			double b, double c, char op) {
 		super(cons, label, a, b, c);
-		this.op = op;
-		update(); // make sure operation correct in AlgebraView
+		setOperation(op);
+		
+		// make sure dashed / solid according to op
+		// already set (wrongly) in super() call
+		setConstructionDefaults();
+		update();
 	}
 
 	public String getClassName() {
@@ -49,18 +57,12 @@ public class GeoLinearInequality extends GeoLine {
 		this.op = op;
 	}
 	
-    /**
-     * returns all class-specific xml tags for saveXML
-     * GeoGebra File Format
-     */
-	protected void getXMLtags(StringBuilder sb) {
-        super.getXMLtags(sb);
-
-    	sb.append("\t<operation val=\"");
-        sb.append(op);
-        sb.append("\"/>\n");
-        
+	public char getOperation() {
+		return op;
 	}
-  
-
+	
+	public boolean isStrict() {
+		return op == '<' || op == '>';
+	}
+	
 }

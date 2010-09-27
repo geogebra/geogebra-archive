@@ -38,7 +38,7 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
     public static final int PARAMETRIC = 2;		
     public static final int EQUATION_IMPLICIT_NON_CANONICAL = 3;		
     
-	public char op = '='; // eg '=', '<' for GeoLinearInequality
+	protected char op = '='; // eg '=', '<' for GeoLinearInequality
 	
     private String parameter = "\u03bb";	
     GeoPoint startPoint, endPoint;    
