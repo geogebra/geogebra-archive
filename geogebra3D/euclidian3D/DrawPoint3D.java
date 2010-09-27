@@ -84,7 +84,8 @@ implements Previewable, Functional2Var{
 
 		surface = renderer.getGeometryManager().getSurface();
 		surface.start(this);
-		int nb = 4; //TODO change number of vertices regarding point size
+		//number of vertices depends on point size
+		int nb = 2+((GeoPoint3D) getGeoElement()).getPointSize();
 		surface.setU((float) getMinParameter(0), (float) getMaxParameter(0));surface.setNbU(2*nb); 
 		surface.setV((float) getMinParameter(1), (float) getMaxParameter(1));surface.setNbV(nb);
 		surface.draw();
@@ -94,7 +95,7 @@ implements Previewable, Functional2Var{
 	
 	protected void updateForView(){
 		
-		updateForItSelf();
+		//updateForItSelf();
 		
 	}
 	
