@@ -64,7 +64,7 @@ public class ConstructionDefaults {
 	
 	// lines
 	private static final Color colLine = Color.black;
-	private static final Color colInequality= Color.red;
+	private static final Color colInequality= Color.blue;
 
 	// conics
 	private static final Color colConic = Color.black;
