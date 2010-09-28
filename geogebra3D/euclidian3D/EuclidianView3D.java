@@ -2605,6 +2605,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			axisDrawable[i].setWaitForReset();
 		}
 				
+		pointDecorations.setWaitForReset();
 	}
 	
 	/**
