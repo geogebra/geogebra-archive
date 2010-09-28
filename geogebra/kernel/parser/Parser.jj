@@ -429,7 +429,7 @@ ValidExpression buildValidExpression() :
         {
           		      
             // maybe expression
-            if (lhs.isSingleVariable() && !rhs.includesPolynomial()) {                                  
+            if (!lhs.includesPolynomial() && !rhs.includesPolynomial()) {                                  
                 int sign = 0;
                 if(c.image.equals(">"))
                 	sign = ExpressionNode.GREATER;
