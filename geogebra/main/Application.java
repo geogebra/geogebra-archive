@@ -4021,8 +4021,8 @@ public class Application implements KeyEventDispatcher {
 			Image image = new BufferedImage(size,size, BufferedImage.TYPE_INT_ARGB);
 			
 			Graphics2D g = (Graphics2D) image.getGraphics();
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-					RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+			EuclidianView.setAntialiasing(g);
+			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
 
 			g.setColor(Color.BLACK);
 			g.setStroke(EuclidianView.getStroke(4,  EuclidianView.LINE_TYPE_FULL ));
