@@ -188,10 +188,6 @@ public class GeoPolyhedron extends GeoElement3D {
 		
 		
 		// create missing faces
-		/*
-		for (Iterator<ConstructionElementCycle> it = faces.iterator(); it.hasNext();){
-			currentFace = it.next();
-			*/
 		for (ConstructionElementCycle currentFace : polygonsIndex.keySet()){
 			
 			//if a polygons already corresponds to the face description, then pass it
@@ -245,13 +241,6 @@ public class GeoPolyhedron extends GeoElement3D {
 		 polygon = (GeoPolygon3D) algo.getPoly();
 		 // refresh color to ensure segments have same color as polygon:
 		 polygon.setObjColor(getObjectColor()); 
-		 
-		 //TODO translation for face
-		 String s="face";
-		 for(int i=0;i<points.length;i++)
-			 s+=points[i].getLabel();
-		 //polygon.setLabel(s);
-		 
 
 		 return polygon;
 	 }
@@ -355,8 +344,40 @@ public class GeoPolyhedron extends GeoElement3D {
 	    	for (ConstructionElementCycle key : polygonsIndex.keySet()){
 	    		StringBuffer sb = new StringBuffer();
 	    		sb.append("face"); //TODO translation
-	    		for(Iterator<ConstructionElement> it = key.iterator();it.hasNext();)
-	    			sb.append(((GeoElement) it.next()).getLabel());
+	    		
+	    		//stores points names and find the first
+	    		String[] points = new String[key.size()];
+	    		int indexFirstPointName=0;	    		
+	    		int i=0;
+	    		for(Iterator<ConstructionElement> it = key.iterator();it.hasNext();){
+	    			points[i]=((GeoElement) it.next()).getLabel();
+	    			if (points[i].compareToIgnoreCase(points[indexFirstPointName])<0)
+	    				indexFirstPointName = i;
+	    			i++;
+	    		}
+	    		
+	    		//sets the direction to the next first name
+	    		int indexSecondPointPlus = indexFirstPointName+1;
+	    		if (indexSecondPointPlus==points.length)
+	    			indexSecondPointPlus=0;
+	    		int indexSecondPointMinus = indexFirstPointName-1;
+	    		if (indexSecondPointMinus==-1)
+	    			indexSecondPointMinus=points.length-1;
+	    		
+	    		if (points[indexSecondPointPlus]
+	    		           .compareToIgnoreCase(points[indexSecondPointMinus])<0){
+	    			for (int j=indexFirstPointName;j<points.length;j++)
+		    			sb.append(points[j]);
+		    		for (int j=0;j<indexFirstPointName;j++)
+		    			sb.append(points[j]);
+	    		}else{
+	    			for (int j=indexFirstPointName;j>=0;j--)
+		    			sb.append(points[j]);
+		    		for (int j=points.length-1;j>indexFirstPointName;j--)
+		    			sb.append(points[j]);
+	    		}
+	    		
+	    		
 	    		polygons.get(polygonsIndex.get(key)).setLabel(sb.toString());
 	    	}	
 	    }
@@ -366,8 +387,20 @@ public class GeoPolyhedron extends GeoElement3D {
 	    	for (ConstructionElementCycle key : segmentsIndex.keySet()){
 	    		StringBuffer sb = new StringBuffer();
 	    		sb.append("edge"); //TODO translation
-	    		for(Iterator<ConstructionElement> it = key.iterator();it.hasNext();)
-	    			sb.append(((GeoElement) it.next()).getLabel());
+	    		String[] points = new String[2];
+	    		int i=0;
+	    		for(Iterator<ConstructionElement> it = key.iterator();it.hasNext();){
+	    			points[i]=((GeoElement) it.next()).getLabel();
+	    			i++;
+	    		}
+	    		//sets the points names in order
+	    		if (points[0].compareToIgnoreCase(points[1])<0){
+	    			sb.append(points[0]);
+	    			sb.append(points[1]);
+	    		}else{
+	    			sb.append(points[1]);
+	    			sb.append(points[0]);
+	    		}
 	    		segments.get(segmentsIndex.get(key)).setLabel(sb.toString());
 	    	}	
 	    }
