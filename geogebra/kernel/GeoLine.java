@@ -450,13 +450,7 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
      * rotate this line by angle phi around (0,0)
      */
     final public void rotate(NumberValue phiVal) {
-    	double phi = phiVal.getDouble();
-		double cos = Math.cos(phi);
-		double sin = Math.sin(phi);
-        
-        double x0 = x * cos - y * sin;
-        y = x * sin + y * cos;
-        x = x0;        
+    	rotateXY(phiVal);        
     }
         
     /**

@@ -24,7 +24,6 @@ import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -44,8 +43,8 @@ import java.util.TreeSet;
  */
 final public class GeoPoint extends GeoVec3D 
 implements VectorValue, 
-Translateable, PointRotateable, Mirrorable, Dilateable, PointProperties,
-GeoPointInterface, MatrixTransformable, ConicMirrorable {   	
+Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, ConicMirrorable, PointProperties,
+GeoPointInterface  {   	
 	
 	private static final long serialVersionUID = 1L;
 
@@ -693,8 +692,12 @@ GeoPointInterface, MatrixTransformable, ConicMirrorable {
     		GeoVec2D midpoint=c.getTranslationVector();
     		double a=midpoint.x;
     		double b=midpoint.y;
-    		double sf=r*r/((inhomX-a)*(inhomX-a)+(inhomY-b)*(inhomY-b));
-            setCoords( a+sf*(inhomX-a), b+sf*(inhomY-b) ,1.0);
+    		if(Double.isInfinite(x)||Double.isInfinite(y2D))
+    			setCoords(a,b,1.0);
+    		else {
+    			double sf=r*r/((inhomX-a)*(inhomX-a)+(inhomY-b)*(inhomY-b));
+    			setCoords( a+sf*(inhomX-a), b+sf*(inhomY-b) ,1.0);
+    		}
     	}
     	else
     	{
@@ -725,29 +728,17 @@ GeoPointInterface, MatrixTransformable, ConicMirrorable {
         y -= qy;        
         
         // S(phi)        
-        mirror(2.0 * Math.atan2(-g.x, g.y));
+        mirrorXY(2.0 * Math.atan2(-g.x, g.y));
         
         // translate back +Q
         x += qx;
         y += qy;
         
          // update inhom coords
-         updateCoords();
+       updateCoords();
     }
     
-    /**
-     * mirror transform with angle phi
-     *  [ cos(phi)       sin(phi)   ]
-     *  [ sin(phi)      -cos(phi)   ]  
-     */
-    final private void mirror(double phi) {
-        double cos = Math.cos(phi);
-        double sin = Math.sin(phi);
-                
-        double x0 = x * cos + y * sin;
-        y = x * sin - y * cos;
-        x = x0;        
-    }
+  
  
 /***********************************************************/
     

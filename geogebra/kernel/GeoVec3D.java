@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.main.Application;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.Util;
 
 
@@ -355,5 +355,29 @@ implements Traceable {
 		y=0;
 		z=0;
 	}
+	
+	protected void rotateXY(NumberValue phi){
+		double ph = phi.getDouble();
+        double cos = Math.cos(ph);
+        double sin = Math.sin(ph);
+        
+        double x0 = x * cos - y * sin;
+        y = x * sin + y * cos;
+        x = x0; 
+	}
+	
+	  /**
+     * mirror transform with angle phi
+     *  [ cos(phi)       sin(phi)   ]
+     *  [ sin(phi)      -cos(phi)   ]  
+     */
+    protected final void mirrorXY(double phi) {
+        double cos = Math.cos(phi);
+        double sin = Math.sin(phi);
+                
+        double x0 = x * cos + y * sin;
+        y = x * sin - y * cos;
+        x = x0;        
+    }
     
 }

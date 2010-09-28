@@ -633,7 +633,7 @@ implements LimitedPath, NumberValue, LineProperties {
 	}
 
 	
-	public GeoElement [] createTransformedObject(Transform t) {	
+	public GeoElement [] createTransformedObject(Transform t,String label) {	
 
 		AlgoElement algoParent = null;		
 		if (keepTypeOnGeometricTransform) {

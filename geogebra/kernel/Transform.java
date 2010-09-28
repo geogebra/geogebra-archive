@@ -54,7 +54,7 @@ public abstract class Transform {
 		if (geo.isLimitedPath()) {
 			// handle segments, rays and arcs separately
 			GeoElement[] geos = ((LimitedPath) geo)
-					.createTransformedObject(this);
+					.createTransformedObject(this,label);
 
 			// if (geos[0] instanceof Orientable && geoMir instanceof
 			// Orientable)
@@ -116,10 +116,18 @@ public abstract class Transform {
 		return ret;
 	}
 
-	public GeoLine getTransformedLine(GeoLine line) {
-		GeoLine ret = (GeoLine) doTransform(line);
+	public GeoElement getTransformedLine(GeoLine line) {
+		GeoElement ret = doTransform(line);
 		ret.setVisualStyleForTransformations(line);
 		return ret;
+	}
+	
+	/** 
+	 * True if the transformation is affine
+	 * @return true by default, overriden e.g. for circle inverse
+	 */
+	public boolean isAffine() {
+		return true;
 	}
 }
 
@@ -273,6 +281,11 @@ class TransformMirror extends Transform {
 			algo = new AlgoMirror(cons, geo, null, null, (GeoConic) mirror);
 		}
 		return algo.getResult();
+	}
+	
+	@Override
+	public boolean isAffine() {
+		return ! mirror.isGeoConic();
 	}
 
 }

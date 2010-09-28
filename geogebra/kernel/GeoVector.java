@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -34,7 +35,7 @@ import java.util.Iterator;
  * @version 
  */
 final public class GeoVector extends GeoVec3D
-implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
+implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, GeoVectorInterface {
 
 	/**
 	 * 
@@ -292,14 +293,47 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
      * rotate this vector by angle phi around (0,0)
      */
     final public void rotate(NumberValue phi) {    	
-    	double ph = phi.getDouble();
-        double cos = Math.cos(ph);
-        double sin = Math.sin(ph);
-        
-        double x0 = x * cos - y * sin;
-        y = x * sin + y * cos;
-        x = x0;        
+    	rotateXY(phi);  
+    
     }            
+    
+    /** 
+     * Called when transforming Ray[point,direction] -- doesn't do anything.
+     */
+    public void translate(GgbVector v) {
+    	
+    }
+
+	public void rotate(NumberValue r, GeoPoint S) {
+		
+	}
+
+	public void mirror(GeoPoint Q) {
+    
+		setCoords(- x,- y, z );
+		
+	}
+
+	public void mirror(GeoLine g) {
+		mirrorXY(2.0 * Math.atan2(-g.x, g.y));
+		
+	}
+
+	public void dilate(NumberValue rval, GeoPoint S) {
+		double r = rval.getDouble();	
+	    setCoords(r * x, r * y, z);
+	 	
+	}
+
+	public void matrixTransform(double a,double b,double c,double d) {
+		 
+		Double x1 = a*x + b*y;
+		Double y1 = c*x + d*y;
+
+		setCoords(x1, y1, z);
+		
+	}
+
     
 /*********************************************************************/   
     
@@ -530,8 +564,13 @@ implements Path, VectorValue, Locateable, Rotateable, GeoVectorInterface {
 	}
 
 	public boolean isVector3DValue() {
-		return false;
+		return false;		
+	}
+	
+	public boolean isMatrixTransformable() {
+		return true;
 	}
 
+	
 	
 }

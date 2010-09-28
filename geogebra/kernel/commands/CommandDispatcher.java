@@ -108,7 +108,7 @@ public class CommandDispatcher {
             throw e;
         } catch (Exception e) {        	  
             cons.setSuppressLabelCreation(oldMacroMode);        	  
-            //e.printStackTrace();
+            e.printStackTrace();
             if(cmdProc == null)
             	throw new MyError(app, app.getError("UnknownCommand") + " : " + 
             		app.getCommand(c.getName()));

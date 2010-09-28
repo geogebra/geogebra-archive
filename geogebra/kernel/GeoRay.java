@@ -189,7 +189,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
      * @param t transform
      */
 
-	public GeoElement [] createTransformedObject(Transform t) {	
+	public GeoElement [] createTransformedObject(Transform t,String label) {	
 		AlgoElement algoParent = keepTypeOnGeometricTransform ?
 				getParentAlgorithm() : null;				
 		
@@ -199,37 +199,69 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 			AlgoJoinPointsRay algo = (AlgoJoinPointsRay) algoParent;
 			GeoPoint [] points = {algo.getP(), algo.getQ()};
 			points = t.transformPoints(points);	
-			GeoElement ray = kernel.Ray(label, points[0], points[1]);
-			ray.setVisualStyleForTransformations(this);
-			GeoElement [] geos = {ray, points[0], points[1]};
+			if(t.isAffine()){
+				GeoElement ray = kernel.Ray(label, points[0], points[1]);
+				ray.setVisualStyleForTransformations(this);
+				GeoElement [] geos = {ray, points[0], points[1]};
 			return geos;
+			}
+			else {
+				GeoPoint inf = new GeoPoint(cons);
+				inf.setCoords(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
+				inf = (GeoPoint)t.doTransform(inf);
+				AlgoConicPartCircumcircle ae = new AlgoConicPartCircumcircle(cons, Transform.transformedGeoLabel(this),
+			    		points[0], points[1],inf,GeoConicPart.CONIC_PART_ARC);
+				cons.removeFromAlgorithmList(ae);
+				GeoElement arc = ae.getConicPart(); 				
+				arc.setVisualStyleForTransformations(this);
+				GeoElement [] geos = {arc, points[0], points[1]};
+				return geos;		
+			}
 		}
 		else if (algoParent instanceof AlgoRayPointVector) {			
 			// transform startpoint
 			GeoPoint [] points = {getStartPoint()};
 			points = t.transformPoints(points);					
 						
-			// get transformed line from this ray
-			GeoLine transformedLine = t.getTransformedLine(this);
-			cons.removeFromConstructionList(transformedLine.getParentAlgorithm());
-									
-			// get direction of transformed line
 			boolean oldSuppressLabelCreation = cons.isSuppressLabelsActive();
 			cons.setSuppressLabelCreation(true);
-			AlgoDirection algoDir = new AlgoDirection(cons, transformedLine);
-			cons.removeFromConstructionList(algoDir);
-			GeoVector direction = algoDir.getVector();
-			cons.setSuppressLabelCreation(oldSuppressLabelCreation);
+			AlgoDirection ad = new AlgoDirection(cons,this);
+			cons.removeFromAlgorithmList(ad);
+			GeoVector direction = ad.getVector();
+			if(t.isAffine()) {
+				
+				direction = (GeoVector)t.doTransform(direction);
+				cons.setSuppressLabelCreation(oldSuppressLabelCreation);
+				
+				// ray through transformed point with direction of transformed line
+				GeoElement ray = kernel.Ray(label, points[0], direction);
+				ray.setVisualStyleForTransformations(this);
+				GeoElement [] geos = new GeoElement[] {ray, points[0]};
+				return geos;
+			}else {
+				AlgoTranslate at = new AlgoTranslate(cons,getStartPoint(),direction);
+				cons.removeFromAlgorithmList(at);
+				GeoPoint thirdPoint = (GeoPoint) at.getResult();
+				GeoPoint inf = new GeoPoint(cons);
+				inf.setCoords(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, 1);
+						
+				GeoPoint [] points2 = new GeoPoint[] {thirdPoint,inf};
+				points2 = t.transformPoints(points2);
+				cons.setSuppressLabelCreation(oldSuppressLabelCreation);
+				AlgoConicPartCircumcircle ae = new AlgoConicPartCircumcircle(cons, Transform.transformedGeoLabel(this),
+			    		points[0], points2[0],points2[1],GeoConicPart.CONIC_PART_ARC);
+				GeoElement arc = ae.getConicPart(); 				
+				arc.setVisualStyleForTransformations(this);
+				GeoElement [] geos = {arc, points[0]};
+				return geos;		
+						
+			}
 			
-			// ray through transformed point with direction of transformed line
-			GeoElement ray = kernel.Ray(label, points[0], direction);
-			ray.setVisualStyleForTransformations(this);
-			GeoElement [] geos = {ray, points[0], direction};
-			return geos;					
+							
 			
 		} else {
 			//	create LINE	
-			GeoLine transformedLine = t.getTransformedLine(this);
+			GeoElement transformedLine = t.getTransformedLine(this);
 			transformedLine.setLabel(label);
 			GeoElement [] ret = { transformedLine };
 			return ret;

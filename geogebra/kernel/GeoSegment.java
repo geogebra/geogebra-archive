@@ -424,9 +424,9 @@ GeoSegmentInterface {
 	/**
 	 * creates new transformed segment
 	 */
-    public GeoElement [] createTransformedObject(Transform t) {	
+    public GeoElement [] createTransformedObject(Transform t,String label) {	
 
-		if (keepTypeOnGeometricTransform) {			
+		if (keepTypeOnGeometricTransform && t.isAffine()) {			
 			// mirror endpoints
 			GeoPoint [] points = {getStartPoint(), getEndPoint()};
 			points = t.transformPoints(points);	
@@ -436,9 +436,26 @@ GeoSegmentInterface {
 			GeoElement [] geos = {segment, points[0], points[1]};	
 			return geos;	
 		} 
+		else if(!t.isAffine()) {			
+			// mirror endpoints
+			
+			boolean oldSuppressLabelCreation = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			GeoPoint [] points = {getStartPoint(), getEndPoint(), kernel.Midpoint(getEndPoint(), getStartPoint())};
+			points = t.transformPoints(points);
+			cons.setSuppressLabelCreation(oldSuppressLabelCreation);
+			points[0].setLabel(Transform.transformedGeoLabel(getStartPoint()));
+			points[1].setLabel(Transform.transformedGeoLabel(getEndPoint()));
+			AlgoConicPartCircumcircle ae = new AlgoConicPartCircumcircle(cons, Transform.transformedGeoLabel(this),
+			    		points[0], points[2],points[1],GeoConicPart.CONIC_PART_ARC);
+			GeoElement arc = ae.getConicPart(); 				
+			arc.setVisualStyleForTransformations(this);
+			GeoElement [] geos = {arc, points[0], points[1]};	
+			return geos;	
+		} 
 		else {
 			//	create LINE
-			GeoLine transformedLine = t.getTransformedLine(this);
+			GeoElement transformedLine = t.getTransformedLine(this);
 			transformedLine.setLabel(label);
 			transformedLine.setVisualStyleForTransformations(this);
 			GeoElement [] geos = {transformedLine};
