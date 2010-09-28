@@ -323,9 +323,13 @@ public class CASmaxima extends CASgeneric {
 	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
 	
 		// turn auto-simplification off, so a+a gives a+a
-		// ev( a+a, simp ) is needed to get 2*a
+		// with this setting ev( a+a, simp ) is needed to get 2*a
 	    ggbMaxima.executeCall("simp:false;");
-		
+	    
+	    // variable ordering: then factor(a^2-b^2) gives (a-b)*(b+a) instead of Ð(b-a)(b+a) 
+	    // see http://www.geogebra.org/trac/ticket/281
+	    ggbMaxima.executeCall("ordergreat(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,z);");
+	    
 		// set line length of "terminal"
 		// we don't want lines broken
 	    ggbMaxima.executeCall("linel:1000000;");
