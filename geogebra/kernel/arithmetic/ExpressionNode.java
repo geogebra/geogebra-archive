@@ -3012,5 +3012,35 @@ implements ExpressionValue, ExpressionNodeConstants {
     private String multiplicationSpace(int type) {
     	return (type == STRING_TYPE_LATEX) ? " \\; " : " ";
     }
+
+
+	public Double getCoefficient(FunctionVariable fv) {
+		Application.debug(this);
+		if(this.isLeaf()){
+			if(this.equals(fv) || left.equals(fv)){
+				return 1.0;
+			}
+			
+				return 0.0;
+			
+		}
+		
+		Double lc = getLeftTree() == null ? null : getLeftTree().getCoefficient(fv);
+		Double rc = getRightTree() == null ? null : getRightTree().getCoefficient(fv);
+		Application.debug("lc"+lc+"rc"+rc);
+		if(this.operation == PLUS && lc != null && rc != null){
+			return lc+rc;
+		}else if(this.operation == MINUS && lc != null && rc != null){
+			return lc-rc;
+		}else if(this.operation == MULTIPLY && lc != null && rc == 0.0){
+			return lc*((MyDouble)getRightTree().evaluate()).getDouble();
+		}else if(this.operation == MULTIPLY && lc == 0.0 && rc != null){	
+			return rc*((MyDouble)getLeftTree().evaluate()).getDouble();
+		}else if(this.operation == DIVIDE && lc!=null && rc == null){
+			return lc/((MyDouble)getRightTree().evaluate()).getDouble();
+		}else return ((MyDouble)this.evaluate()).getDouble();
+		
+		
+	}
 	
 }

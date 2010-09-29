@@ -36,7 +36,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoLinearInequality;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;

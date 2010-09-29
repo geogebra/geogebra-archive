@@ -857,9 +857,7 @@ public class Kernel {
     			if (type.equals("line"))
     				return new GeoLine(cons);
     			else if (type.equals("list"))
-    				return new GeoList(cons);    			
-        		else if (type.equals("linearinequality"))
-        			return new GeoLinearInequality(cons, null);    			
+    				return new GeoList(cons);    					
     			else 
     				return new GeoLocus(cons);
     		
@@ -1169,13 +1167,6 @@ public class Kernel {
 			double y = Double.parseDouble((String) attrs.get("y"));
 			double z = Double.parseDouble((String) attrs.get("z"));
 			v.setCoords(x, y, z);
-			
-			if (geo instanceof GeoLinearInequality) {
-				char op = ((String) attrs.get("op")).charAt(0);
-				Application.debug("setting op = "+op);
-				((GeoLinearInequality)geo).setOperation(op);
-			}
-			
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1839,16 +1830,7 @@ public class Kernel {
 		return line;
 	}
 
-	/** Line a x + b y + c = 0 named label */
-	final public GeoLinearInequality Inequality(
-		String label,
-		double a,
-		double b,
-		double c,
-		char op) {
-		GeoLinearInequality line = new GeoLinearInequality(cons, label, a, b, c, op);
-		return line;
-	}
+	
 
 	/** Conic label with equation ax� + bxy + cy� + dx + ey + f = 0  */
 	final public GeoConic Conic(
@@ -1916,7 +1898,7 @@ public class Kernel {
 	/**
 	 * Creates a free list object with the given
 	 * @param label
-	 * @param geoElementList: list of GeoElement objects
+	 * @param geoElementList list of GeoElement objects
 	 * @return
 	 */
 	final public GeoList List(String label, ArrayList geoElementList, boolean isIndependent) {
@@ -2085,19 +2067,12 @@ public class Kernel {
 	 * represented by trees. e.g. y = k x + d
 	 */
 	final public GeoLine DependentLine(String label, Equation equ) {
-		AlgoDependentLine algo = new AlgoDependentLine(cons, label, equ, false);
+		AlgoDependentLine algo = new AlgoDependentLine(cons, label, equ);
 		GeoLine line = algo.getLine();
 		return line;
 	}
 
-	/** Inequality dependent on coefficients of arithmetic expressions with variables,
-	 * represented by trees. e.g. y < k x + d
-	 */
-	final public GeoLinearInequality DependentInequality(String label, Equation equ) {
-		AlgoDependentLine algo = new AlgoDependentLine(cons, label, equ, true);
-		GeoLine line = algo.getLine();
-		return (GeoLinearInequality)line;
-	}
+	
 
 	/** Conic dependent on coefficients of arithmetic expressions with variables,
 	 * represented by trees. e.g. y� = 2 p x 

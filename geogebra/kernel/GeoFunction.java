@@ -55,7 +55,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     protected double intervalMin;
     /** upper interval bound */
     protected double intervalMax; 
-    
+    private boolean evalSwapped;
     // parent conditional function
    // private GeoFunctionConditional parentCondFun = null;
     
@@ -646,10 +646,19 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			return false;
 	}
 
+	public void swapEval(){
+		evalSwapped = !evalSwapped;
+	}
 	
 	public void evaluateCurve(double t, double[] out) {
-		out[0] = t;
-		out[1] = evaluate(t);		
+		if(evalSwapped){
+			out[1] = t;
+			out[0] = evaluate(t);
+		}
+		else{
+			out[0] = t;
+			out[1] = evaluate(t);
+		}
 	}		
 	
 	/**

@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -20,12 +21,18 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.FunctionalNVar;
+import geogebra.kernel.arithmetic.Inequality;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Explicit function in multiple variables, e.g. f(a, b, c) := a^2 + b - 3c. 
@@ -38,7 +45,9 @@ import java.util.Locale;
 public class GeoFunctionNVar extends GeoElement
 implements FunctionalNVar, CasEvaluableFunction {
 
-	protected FunctionNVar fun;		
+	protected FunctionNVar fun;
+	private List<Inequality> ineqs;
+	private boolean isAboveBorder;
 	protected boolean isDefined = true;
 	
 	/** intervals for plotting, may be null (then interval is R) */
@@ -182,13 +191,13 @@ implements FunctionalNVar, CasEvaluableFunction {
 	}
 
 	protected boolean showInEuclidianView() {
-		return isDefined() && !isBooleanFunction();
+		return isDefined();
 	}
 	
 	
 	public String toString() {
 		sbToString.setLength(0);
-		if (isLabelSet()) {
+		if (isLabelSet() && !this.isBooleanFunction()) {
 			sbToString.append(label);
 			sbToString.append("(");
 			sbToString.append(getVarString());
@@ -198,6 +207,7 @@ implements FunctionalNVar, CasEvaluableFunction {
 		return sbToString.toString();
 	}
 	protected StringBuilder sbToString = new StringBuilder(80);
+	private boolean containsBorder;
 	
 	public String toValueString() {	
 		if (isDefined())
@@ -457,6 +467,31 @@ implements FunctionalNVar, CasEvaluableFunction {
 		public boolean isFillable() {
 			return hasDrawable3D();
 		}
+		
+		public List<Inequality> getIneqs() {
+			if(ineqs == null)initIneqs(this.getFunctionExpression());			
+			return ineqs;
+		}
+
+
+		private void initIneqs(ExpressionNode fe) {
+			int op = fe.getOperation();
+			ExpressionNode leftTree = fe.getLeftTree();
+			ExpressionNode rightTree = fe.getRightTree();
+			if(op == ExpressionNode.GREATER||op == ExpressionNode.GREATER_EQUAL||
+					op == ExpressionNode.LESS||op == ExpressionNode.LESS_EQUAL)	{
+				if(ineqs==null)ineqs = new ArrayList<Inequality>();
+				ineqs.add(new Inequality(kernel,leftTree,rightTree,op,getFunction().getFunctionVariables()));
+			}if(op == ExpressionNode.AND || op == ExpressionNode.OR){
+				initIneqs(leftTree);
+				initIneqs(rightTree);
+			}
+			
+			
+			
+		}
+
+		
 	 
 /*
 		public GgbVector evaluateNormal(double u, double v){

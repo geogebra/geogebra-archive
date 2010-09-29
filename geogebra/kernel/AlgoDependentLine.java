@@ -52,7 +52,7 @@ public class AlgoDependentLine extends AlgoElement {
     
         
     /** Creates new AlgoDependentLine */
-    public AlgoDependentLine(Construction cons, String label, Equation equ, boolean inequality) {        
+    public AlgoDependentLine(Construction cons, String label, Equation equ) {        
        	super(cons, false); // don't add to construction list yet
         equation = equ;  
         mode = MODE_EQUATION;
@@ -74,7 +74,7 @@ public class AlgoDependentLine extends AlgoElement {
         // if we get here, all is ok: let's add this algorithm to the construction list
         cons.addToConstructionList(this, false);
         
-        g = inequality ? new GeoLinearInequality(cons, equ) : new GeoLine(cons);
+        g = new GeoLine(cons);
         setInputOutput(); // for AlgoElement
         
         // compute value of dependent number        

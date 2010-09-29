@@ -391,10 +391,7 @@ ValidExpression buildValidExpression() :
 } 
 {         
      (  
-        // g: 3x + y < 7 
-        LOOKAHEAD(2147483647)
-        (l = <SPREADSHEET_LABEL> | l = <LABEL>)  (":" | <ASSIGNMENT> )  ve = inequality()        
-    |          
+             
               
         // f(x) =  x^2 + 3	
         LOOKAHEAD(2147483647)
@@ -423,29 +420,7 @@ ValidExpression buildValidExpression() :
         // equation without label and only one variable on the lhs
         // could be expression too!!!
         // eg. t = 2 x     or     t = 2 s
-        LOOKAHEAD(2147483647)
         
-        lhs = expressionnodePlusMinus() (c = < LESS > | c = < LESS_EQUAL > | c = < GREATER_EQUAL > | c = < GREATER > ) rhs = expressionnodePlusMinus()
-        {
-          		      
-            // maybe expression
-            if (!lhs.includesPolynomial() && !rhs.includesPolynomial()) {                                  
-                int sign = 0;
-                if(c.image.equals(">"))
-                	sign = ExpressionNode.GREATER;
-                else if(c.image.equals("<"))
-                	sign = ExpressionNode.LESS;
-                else if(c.image.equals(""+Unicode.GREATER_EQUAL) || c.image.equals(">="))
-                	sign = ExpressionNode.GREATER_EQUAL;
-                else if(c.image.equals(""+Unicode.LESS_EQUAL) || c.image.equals("<="))
-                	sign = ExpressionNode.LESS_EQUAL;	
-                ve = new ExpressionNode(kernel,lhs,sign,rhs);                         
-            } else {
-                // it's an inequality
-                ve = new Inequality(kernel, lhs, rhs, c.image); 
-            }
-        }
-     |
      LOOKAHEAD(2147483647)
         lhs = expressionnode() <EQUAL> rhs = expressionnode()
         {             
@@ -750,20 +725,7 @@ Equation equation():
         }
 }
 
-/**
- * equation =       expression < expression
- */
-Equation inequality():
-{
-    ExpressionNode lhs, rhs;
-    Token c = null;
-}
-{    
-    lhs = expressionnodePlusMinus() (c = < LESS > | c = < LESS_EQUAL > | c = < GREATER_EQUAL > | c = < GREATER > ) rhs = expressionnodePlusMinus()
-        {             
-            return new Inequality(kernel, lhs, rhs, c.image); 
-        }
-}
+
 
 
 /**

@@ -28,10 +28,10 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoLinearInequality;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
@@ -3286,11 +3286,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 		case GeoElement.GEO_CLASS_LINE:
 			d = new DrawLine(this, (GeoLine) geo);
-			break;
-
-		case GeoElement.GEO_CLASS_LINEAR_INEQUALITY:
-			d = new DrawLinearInequality(this, (GeoLinearInequality) geo);
-			break;
+			break;		
 
 		case GeoElement.GEO_CLASS_POLYGON:
 			d = new DrawPolygon(this, (GeoPolygon) geo);
@@ -3298,6 +3294,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 		case GeoElement.GEO_CLASS_POLYLINE:
 			d = new DrawPolyLine(this, (GeoPolyLine) geo);
+			break;
+			
+		case GeoElement.GEO_CLASS_FUNCTION_NVAR:
+			if(((GeoFunctionNVar) geo).isBooleanFunction()) {
+				d = new DrawInequality(this, (GeoFunctionNVar) geo);
+			}
 			break;
 
 		case GeoElement.GEO_CLASS_ANGLE:

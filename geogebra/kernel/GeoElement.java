@@ -862,6 +862,8 @@ public abstract class GeoElement
 			typePriority = 100; break;
 		case  GEO_CLASS_LINEAR_INEQUALITY:
 			typePriority = 101; break;
+		case  GEO_CLASS_FUNCTION_NVAR:
+			typePriority = 102; break;
 		case  GEO_CLASS_RAY:
 		case  GEO_CLASS_SEGMENT:
 			typePriority = 110; break;
@@ -921,6 +923,7 @@ public abstract class GeoElement
 	 * and the location of texts for example.
 	 */
 	public void setAllVisualProperties(GeoElement geo, boolean keepAdvanced) {
+		Application.debug(geo.getObjectColor());
 		if(keepAdvanced)
 			setVisualStyle(geo);
 		else

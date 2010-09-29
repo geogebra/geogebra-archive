@@ -311,15 +311,7 @@ implements Traceable {
         sb.append("\t<coords");
         sb.append(" x=\""); sb.append(x); sb.append("\"");
         sb.append(" y=\""); sb.append(y); sb.append("\"");
-        sb.append(" z=\""); sb.append(z); sb.append("\"");
-                
-        if (this instanceof GeoLinearInequality) {
-             sb.append(" op=\"");
-            // Util.encodeXML to make sure <, > encoded OK
-            sb.append(Util.encodeXML(""+((GeoLinearInequality)this).getOperation()));
-            sb.append("\"");
-        }
-                
+        sb.append(" z=\""); sb.append(z); sb.append("\"");        
         sb.append("/>\n");
 
     }
