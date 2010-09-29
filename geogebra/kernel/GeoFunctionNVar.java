@@ -110,6 +110,8 @@ implements FunctionalNVar, CasEvaluableFunction {
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
+		ineqs = new ArrayList<Inequality>();
+		initIneqs(this.getFunctionExpression());
 	}
 	
 
