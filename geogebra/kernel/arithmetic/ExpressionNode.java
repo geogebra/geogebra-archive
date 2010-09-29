@@ -3014,8 +3014,13 @@ implements ExpressionValue, ExpressionNodeConstants {
     }
 
 
+    /**
+     * If the expression is linear in fv, returns the corresponding coefficient. 
+     * Otherwise returns null.
+     * @param fv
+     * @return coefficient or null
+     */
 	public Double getCoefficient(FunctionVariable fv) {
-		Application.debug(this);
 		if(this.isLeaf()){
 			if(this.equals(fv) || left.equals(fv)){
 				return 1.0;
@@ -3027,18 +3032,20 @@ implements ExpressionValue, ExpressionNodeConstants {
 		
 		Double lc = getLeftTree() == null ? null : getLeftTree().getCoefficient(fv);
 		Double rc = getRightTree() == null ? null : getRightTree().getCoefficient(fv);
-		Application.debug("lc"+lc+"rc"+rc);
+		if(lc==null || rc ==null) return null;
 		if(this.operation == PLUS && lc != null && rc != null){
 			return lc+rc;
-		}else if(this.operation == MINUS && lc != null && rc != null){
+		}else if(this.operation == MINUS){
 			return lc-rc;
-		}else if(this.operation == MULTIPLY && lc != null && rc == 0.0){
+		}else if(this.operation == MULTIPLY && rc == 0.0){
 			return lc*((MyDouble)getRightTree().evaluate()).getDouble();
-		}else if(this.operation == MULTIPLY && lc == 0.0 && rc != null){	
+		}else if(this.operation == MULTIPLY && lc == 0.0 ){	
 			return rc*((MyDouble)getLeftTree().evaluate()).getDouble();
-		}else if(this.operation == DIVIDE && lc!=null && rc == null){
+		}else if(this.operation == DIVIDE){
 			return lc/((MyDouble)getRightTree().evaluate()).getDouble();
-		}else return ((MyDouble)this.evaluate()).getDouble();
+		}else if((left.equals(fv)||right.equals(fv)))
+			return null;
+		return ((MyDouble)this.evaluate()).getDouble();
 		
 		
 	}

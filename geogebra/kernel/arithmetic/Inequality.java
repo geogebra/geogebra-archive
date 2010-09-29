@@ -12,12 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
-import geogebra.util.Unicode;
 
 
 
@@ -27,8 +25,11 @@ import geogebra.util.Unicode;
  */
 public class Inequality {
 
+	/** x > f(y) */
 	public static final int INEQUALITY_PARAMETRIC_X = 0;
+	/** y > f(x) */
 	public static final int INEQUALITY_PARAMETRIC_Y = 1;
+	/** f(x,y) >0 */
 	public static final int INEQUALITY_IMPLICIT = 1;
 	private int op = ExpressionNode.LESS;
 	private int type;
@@ -38,10 +39,16 @@ public class Inequality {
   
     /** check whether ExpressionNodes are evaluable to instances of Polynomial
      * or NumberValue and build an Inequality out of them
+     * @param kernel 
+     * @param lhs 
+     * @param rhs 
+     * @param op 
+     * @param fv 
      */
     public Inequality(Kernel kernel, ExpressionValue lhs, ExpressionValue rhs, int op,FunctionVariable[] fv) {
     	 	
     	this.op = op;
+    	this.kernel = kernel;
     	ExpressionNode n = null;
 		
 		if(op == ExpressionNode.GREATER || op == ExpressionNode.GREATER_EQUAL){
@@ -52,7 +59,7 @@ public class Inequality {
 			n = new ExpressionNode(kernel,rhs,ExpressionNode.MINUS,lhs);
 		}
 		Double d = n.getCoefficient(fv[1]);
-		//Application.debug(d+" "+isAboveBorder);
+		Application.debug(d);
 		Function fun =null;
 		if(d!= null && !Kernel.isZero(d)){
 			isAboveBorder = d>0;
@@ -62,6 +69,7 @@ public class Inequality {
 			type = INEQUALITY_PARAMETRIC_Y;
 		}else {
 			d = n.getCoefficient(fv[0]);
+			Application.debug(d);
 			isAboveBorder = d>0;
 			ExpressionNode m = new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-d));
 			m.simplifyLeafs();
@@ -95,10 +103,20 @@ public class Inequality {
 		return border;
 	}
 
+	/**
+	 * Returns true for parametric ineqs like y>border(x), false for y<border(x)
+	 * (for PARAMETRIC_X vars are swapped)
+	 * @return true for parametric ineqs like y>border(x), false for y<border(x)
+	 * 
+	 */
 	public boolean isAboveBorder() {
 		return isAboveBorder;
 	}
 
+	/**
+	 * Returns type of ineq
+	 * @return one of {@link #INEQUALITY_IMPLICIT} {@link #INEQUALITY_PARAMETRIC_X} {@link #INEQUALITY_PARAMETRIC_Y} 
+	 */
 	public int getType() {
 		return type;
 	}
