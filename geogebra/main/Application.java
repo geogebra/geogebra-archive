@@ -3450,7 +3450,10 @@ public class Application implements KeyEventDispatcher {
 	}// getPluginManager()
 	
 	public static void debug(Object s) {
-		doDebug(s.toString(), false, false, 0);
+		if(s==null)
+			doDebug("<null>", false, false, 0);
+		else
+			doDebug(s.toString(), false, false, 0);
 	}
 	
 	public static void debug(Object s[]) {
