@@ -335,8 +335,12 @@ public class AlgoSequence extends AlgoElement {
 			// set local var value
 			updateLocalVar(currentVal);	   			    		
 			
-			// copy expression value to listElement    				
-			listElement.set(expression);
+			// copy expression value to listElement
+			// if it's undefined, just copy the undefined property
+			if(expression.isDefined())
+				listElement.set(expression);
+			else
+				listElement.setUndefined();
 			listElement.update();
 			
 			currentVal += step;

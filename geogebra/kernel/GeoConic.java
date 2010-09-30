@@ -528,6 +528,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	
 	
 	protected StringBuilder buildValueString() {
+		sbToValueString().setLength(0);
+	       if (!isDefined()) {
+	    	   sbToValueString.append("?");
+	    	   return sbToValueString;
+	       }
 		coeffs[0] = matrix[0]; // x\u00b2
 		coeffs[2] = matrix[1]; // y\u00b2
 		coeffs[5] = matrix[2]; // constant
@@ -535,7 +540,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		coeffs[3] = 2 * matrix[4]; // x
 		coeffs[4] = 2 * matrix[5]; // y  
 		
-		sbToValueString().setLength(0);				
+						
 		
 		if (type == CONIC_LINE) {
 			sbToValueString.append(lines[0].toStringLHS());
