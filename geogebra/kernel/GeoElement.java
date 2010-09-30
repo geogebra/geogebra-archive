@@ -923,7 +923,6 @@ public abstract class GeoElement
 	 * and the location of texts for example.
 	 */
 	public void setAllVisualProperties(GeoElement geo, boolean keepAdvanced) {
-		Application.debug(geo.getObjectColor());
 		if(keepAdvanced)
 			setVisualStyle(geo);
 		else
