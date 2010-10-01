@@ -53,9 +53,16 @@ public interface ExpressionNodeConstants {
     // arithmetic
     public static final int PLUS = 0;
     public static final int MINUS = 1;
+    
+    // these next three must be adjacent
+    // so that brackets work for eg a/(b/c)
+    // and are removed in (a/b)/c
+    // see case DIVIDE in ExpressionNode
     public static final int MULTIPLY = 2;
     public static final int DIVIDE = 3;
-    public static final int POWER = 4;               
+    public static final int POWER = 4;            
+    
+    
     public static final int COS = 5;   
     public static final int SIN = 6;   
     public static final int TAN = 7;   
