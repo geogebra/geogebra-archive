@@ -1687,11 +1687,11 @@ implements ExpressionValue, ExpressionNodeConstants {
             			}
             			                       
 		                // left wing              	
-                   		append(sb, leftStr, left, operation, STRING_TYPE);
+                   		append(sb, leftStr, left, MULTIPLY, STRING_TYPE); // not +, -
 		                sb.append(" / ");
 		                 
 		                // right wing
-		         		append(sb, rightStr, right, operation, STRING_TYPE);
+		         		append(sb, rightStr, right, POWER, STRING_TYPE); // not +, -, *, /    
 	            	}
 	                break;
                 
