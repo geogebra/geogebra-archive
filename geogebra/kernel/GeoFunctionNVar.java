@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -34,6 +35,8 @@ import java.util.List;
 public class GeoFunctionNVar extends GeoElement
 implements FunctionalNVar, CasEvaluableFunction, Region {
 
+	private static final double STRICT_INEQ_OFFSET = 4*Kernel.MIN_PRECISION;
+	private static final int SEEK_DENSITY = 30;
 	protected FunctionNVar fun;
 	private List<Inequality> ineqs;
 	private boolean isAboveBorder;
@@ -260,7 +263,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				sb.append(" label =\"");
 				sb.append(label);
 				sb.append("\" exp=\"");
-				sb.append(toString());
+				sb.append(toValueString());
 				// expression   
 			sb.append("\"/>\n");
 		 }
@@ -498,10 +501,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		}
 
 		public void pointChangedForRegion(GeoPointInterface P) {
-			double bestX = 0, bestY = 0, bestDist = Double.POSITIVE_INFINITY,
-			myX = P.getX2D(), myY = P.getY2D();
-			
-			if(!isInRegion(P)){
+			if(!isInRegion(P) && ((GeoPoint)P).isDefined()){
+				double bestX = 0, bestY = 0, bestDist = Double.POSITIVE_INFINITY,
+				myX = P.getX2D(), myY = P.getY2D();
 				if(ineqs==null)initIneqs(getFunctionExpression());
 				int size = ineqs.size();
 				for(int i = 0; i<size; i++){
@@ -510,25 +512,50 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 					if(in.getType()==Inequality.INEQUALITY_PARAMETRIC_Y){
 						px = P.getX2D();
 						py = in.getBorder().evaluate(px);
-						py += in.isAboveBorder()? 0.03 : -0.03;
+						py += in.isAboveBorder()? STRICT_INEQ_OFFSET : -STRICT_INEQ_OFFSET;
 					}
 					else{
 						py = P.getY2D();
 						px = in.getBorder().evaluate(py);
-						px += in.isAboveBorder()? 0.03 : -0.03;
+						px += in.isAboveBorder()? STRICT_INEQ_OFFSET : -STRICT_INEQ_OFFSET;
 					}
 					double myDist = Math.abs(py-myY)+Math.abs(px-myX);
-					Application.debug(i+":"+myDist);
 					if((myDist < bestDist) && isInRegion(px,py)){
 						bestDist = myDist;
 						bestX = px;
 						bestY = py;
 					}
 				}
-				((GeoPoint)P).setCoords(bestX, bestY, 1);
+				if(isInRegion(bestX,bestY))
+					((GeoPoint)P).setCoords(bestX, bestY, 1);
+				else tryLocateInEV(P); 
+					
 			}
 			
 		}
+
+	/**
+	 * We seek for a point in region by desperately testing grid points
+	 * in euclidian view. This should be called only when every algorithm fails.
+	 * @param P
+	 */
+	private void tryLocateInEV(GeoPointInterface P) {
+		EuclidianView ev = kernel.getApplication().getEuclidianView();
+		boolean found = false;
+		for (int i = 0; !found && i < ev.getWidth() / SEEK_DENSITY; i++)
+			for (int j = 0; !found && j < ev.getHeight() / SEEK_DENSITY; j++) {
+				double rx = ev.toRealWorldCoordX(SEEK_DENSITY * i);
+				double ry = ev.toRealWorldCoordX(SEEK_DENSITY * i);
+				if (isInRegion(rx, ry)) {
+					((GeoPoint) P).setCoords(rx, ry, 1);
+					Application.debug("Desperately found"+rx+","+ry);
+					found = true;
+				}
+			}	
+		if(!found)
+			((GeoPoint)P).setUndefined();
+			
+	}
 
 		public void regionChanged(GeoPointInterface P) {
 			pointChangedForRegion(P);

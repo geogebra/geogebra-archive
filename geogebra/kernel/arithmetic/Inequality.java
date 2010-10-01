@@ -15,7 +15,7 @@ package geogebra.kernel.arithmetic;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
+
 
 
 
@@ -58,20 +58,18 @@ public class Inequality {
 		else {
 			n = new ExpressionNode(kernel,rhs,ExpressionNode.MINUS,lhs);
 		}
-		Double d = n.getCoefficient(fv[1]);
-		Application.debug(d);
+		Double coefY = n.getCoefficient(fv[1]);
+		Double coefX = n.getCoefficient(fv[0]);
 		Function fun =null;
-		if(d!= null && !Kernel.isZero(d)){
-			isAboveBorder = d>0;
-			ExpressionNode m = new ExpressionNode(kernel,new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-d)),ExpressionNode.PLUS,fv[1]);
+		if(coefY!= null && !Kernel.isZero(coefY) && !Double.isNaN(coefY) && (coefX == null || Math.abs(coefX)<Math.abs(coefY))){
+			isAboveBorder = coefY>0;
+			ExpressionNode m = new ExpressionNode(kernel,new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-coefY)),ExpressionNode.PLUS,fv[1]);
 			m.simplifyLeafs();
 			fun = new Function(m,fv[0]);
 			type = INEQUALITY_PARAMETRIC_Y;
-		}else {
-			d = n.getCoefficient(fv[0]);
-			Application.debug(d);
-			isAboveBorder = d>0;
-			ExpressionNode m = new ExpressionNode(kernel, new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-d)),ExpressionNode.PLUS,fv[0]);
+		}else if(coefX != null && !Kernel.isZero(coefX) && !Double.isNaN(coefX)){
+			isAboveBorder = coefX>0;
+			ExpressionNode m = new ExpressionNode(kernel, new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-coefX)),ExpressionNode.PLUS,fv[0]);
 			m.simplifyLeafs();
 			fun = new Function(m,fv[1]);
 			type = INEQUALITY_PARAMETRIC_X;
