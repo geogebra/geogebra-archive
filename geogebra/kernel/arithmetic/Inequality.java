@@ -63,7 +63,7 @@ public class Inequality {
 		Function fun =null;
 		if(d!= null && !Kernel.isZero(d)){
 			isAboveBorder = d>0;
-			ExpressionNode m = new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-d));
+			ExpressionNode m = new ExpressionNode(kernel,new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-d)),ExpressionNode.PLUS,fv[1]);
 			m.simplifyLeafs();
 			fun = new Function(m,fv[0]);
 			type = INEQUALITY_PARAMETRIC_Y;
@@ -71,14 +71,16 @@ public class Inequality {
 			d = n.getCoefficient(fv[0]);
 			Application.debug(d);
 			isAboveBorder = d>0;
-			ExpressionNode m = new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-d));
+			ExpressionNode m = new ExpressionNode(kernel, new ExpressionNode(kernel,n,ExpressionNode.DIVIDE,new MyDouble(kernel,-d)),ExpressionNode.PLUS,fv[0]);
 			m.simplifyLeafs();
 			fun = new Function(m,fv[1]);
 			type = INEQUALITY_PARAMETRIC_X;
 		}
 		border = new GeoFunction(kernel.getConstruction());
 		border.setFunction((Function)fun.deepCopy(kernel));
-		if(type == INEQUALITY_PARAMETRIC_X)border.swapEval();
+		if(type == INEQUALITY_PARAMETRIC_X){
+			border.swapEval();			
+		}
 		if(isStrict())
 			border.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		else

@@ -13,26 +13,15 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
-import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
-import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
-import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
-import geogebra.util.Unicode;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Explicit function in multiple variables, e.g. f(a, b, c) := a^2 + b - 3c. 
@@ -43,7 +32,7 @@ import java.util.Set;
  * @author Markus Hohenwarter
  */
 public class GeoFunctionNVar extends GeoElement
-implements FunctionalNVar, CasEvaluableFunction {
+implements FunctionalNVar, CasEvaluableFunction, Region {
 
 	protected FunctionNVar fun;
 	private List<Inequality> ineqs;
@@ -204,7 +193,10 @@ implements FunctionalNVar, CasEvaluableFunction {
 			sbToString.append("(");
 			sbToString.append(getVarString());
 			sbToString.append(") = ");
-		}		
+		}else {
+			sbToString.append(label);
+			sbToString.append(": ");
+		}
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
@@ -490,6 +482,56 @@ implements FunctionalNVar, CasEvaluableFunction {
 			}
 			
 			
+			
+		}
+
+		public boolean isRegion() {
+			return isBooleanFunction();
+		}
+		public boolean isInRegion(GeoPointInterface P) {
+			P.updateCoords2D();
+			return isInRegion(P.getX2D(),P.getY2D());
+		}
+
+		public boolean isInRegion(double x0, double y0) {
+			return fun.evaluateBoolean(new double[] {x0,y0});
+		}
+
+		public void pointChangedForRegion(GeoPointInterface P) {
+			double bestX = 0, bestY = 0, bestDist = Double.POSITIVE_INFINITY,
+			myX = P.getX2D(), myY = P.getY2D();
+			
+			if(!isInRegion(P)){
+				if(ineqs==null)initIneqs(getFunctionExpression());
+				int size = ineqs.size();
+				for(int i = 0; i<size; i++){
+					Inequality in = ineqs.get(i);
+					double px,py;
+					if(in.getType()==Inequality.INEQUALITY_PARAMETRIC_Y){
+						px = P.getX2D();
+						py = in.getBorder().evaluate(px);
+						py += in.isAboveBorder()? 0.03 : -0.03;
+					}
+					else{
+						py = P.getY2D();
+						px = in.getBorder().evaluate(py);
+						px += in.isAboveBorder()? 0.03 : -0.03;
+					}
+					double myDist = Math.abs(py-myY)+Math.abs(px-myX);
+					Application.debug(i+":"+myDist);
+					if((myDist < bestDist) && isInRegion(px,py)){
+						bestDist = myDist;
+						bestX = px;
+						bestY = py;
+					}
+				}
+				((GeoPoint)P).setCoords(bestX, bestY, 1);
+			}
+			
+		}
+
+		public void regionChanged(GeoPointInterface P) {
+			pointChangedForRegion(P);
 			
 		}
 
