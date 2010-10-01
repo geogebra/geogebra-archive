@@ -1190,18 +1190,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 	         	}           		 
         		 
         		 sb.append(' ');
-                 sb.append(rightStr);
+         		append(sb, rightStr, right, operation, STRING_TYPE);
+         		//sb.append(rightStr);
                  break;
                  
         	case AND:
-        		if (left.isLeaf() || opID(left) >= AND) {
-       		 		sb.append(leftStr);
-        		} else {
-        			sb.append(leftBracket(STRING_TYPE));
-        			sb.append(leftStr);
-        			sb.append(rightBracket(STRING_TYPE));
-        		}
-        		        		
+           		append(sb, leftStr, left, operation, STRING_TYPE);
+       		        		
        		 	sb.append(' ');
 	       		switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1217,17 +1212,12 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      	}     
        		 	sb.append(' ');
        		 	
-	       		if (right.isLeaf() || opID(right) >= AND) {
-	   		 		sb.append(rightStr);
-	    		} else {
-	    			sb.append(leftBracket(STRING_TYPE));
-	    			sb.append(rightStr);
-	    			sb.append(rightBracket(STRING_TYPE));
-	    		}               
-                break;
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	break;
                 
         	case EQUAL_BOOLEAN:
-           	 	sb.append(leftStr);
+        		append(sb, leftStr, left, operation, STRING_TYPE);
+           	 	//sb.append(leftStr);
            	 	sb.append(' ');
 	           	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1240,11 +1230,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strEQUAL_BOOLEAN);        		
 		      	}              	 	
            	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+                //sb.append(rightStr);
                 break;
                 
         	case NOT_EQUAL:
-           	 	sb.append(leftStr);
+        		append(sb, leftStr, left, operation, STRING_TYPE);
+           	 	//sb.append(leftStr);
            	 	sb.append(' ');
 	           	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1259,11 +1251,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strNOT_EQUAL);        		
 		      	}       
            	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
                 
         	case IS_ELEMENT_OF:
-           	 	sb.append(leftStr);
+        		append(sb, leftStr, left, operation, STRING_TYPE);
+        		//sb.append(leftStr);
            	 	sb.append(' ');
 	           	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1274,11 +1268,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strIS_ELEMENT_OF);        		
 		      	}       
            	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
                 
         	case CONTAINS:
-           	 	sb.append(leftStr);
+        		append(sb, leftStr, left, operation, STRING_TYPE);
+           	 	//sb.append(leftStr);
            	 	sb.append(' ');
 	           	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1289,11 +1285,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strCONTAINS);        		
 		      	}       
            	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
                 
         	case CONTAINS_STRICT:
-           	 	sb.append(leftStr);
+        		append(sb, leftStr, left, operation, STRING_TYPE);
+           	 	//sb.append(leftStr);
            	 	sb.append(' ');
 	           	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1304,11 +1302,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strCONTAINS_STRICT);        		
 		      	}       
            	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
                 
         	case SET_DIFFERENCE:
-           	 	sb.append(leftStr);
+        		append(sb, leftStr, left, operation, STRING_TYPE);
+           	 	//sb.append(leftStr);
            	 	sb.append(' ');
 	           	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1319,23 +1319,29 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strSET_DIFFERENCE);        		
 		      	}       
            	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
                 
             case LESS:
-            	 sb.append(leftStr);
+        		append(sb, leftStr, left, operation, STRING_TYPE);
+           	 	//sb.append(leftStr);
         		 sb.append(" < ");
-                 sb.append(rightStr);
+         		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                  break;
                  
             case GREATER:
-           	 	sb.append(leftStr);
+        		append(sb, leftStr, left, operation, STRING_TYPE);
+           	 	//sb.append(leftStr);
            	 	sb.append(" > ");
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
             	
            case LESS_EQUAL:
-           	 	sb.append(leftStr);
+       		append(sb, leftStr, left, operation, STRING_TYPE);
+       	 	//sb.append(leftStr);
            	 	sb.append(' ');
 	           	 switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1350,11 +1356,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strLESS_EQUAL);        		
 		      	}        
            	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
                 
            case GREATER_EQUAL:
-          	 	sb.append(leftStr);
+       		append(sb, leftStr, left, operation, STRING_TYPE);
+       	 	//sb.append(leftStr);
           	 	sb.append(' ');
           	 	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1369,11 +1377,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strGREATER_EQUAL);        		
 		      	}    
           	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
                 
            case PARALLEL:
-         	 	sb.append(leftStr);
+       		append(sb, leftStr, left, operation, STRING_TYPE);
+       	 	//sb.append(leftStr);
          	 	sb.append(' ');
         	 	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1384,11 +1394,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strPARALLEL);        		
 		      	}             	 
          	 	sb.append(' ');
-                sb.append(rightStr);
+        		append(sb, rightStr, right, operation, STRING_TYPE);
+           	 	//sb.append(rightStr);
                 break;
                
            case PERPENDICULAR:
-       	 	sb.append(leftStr);
+       		append(sb, leftStr, left, operation, STRING_TYPE);
+       	 	//sb.append(leftStr);
        	 	sb.append(' ');
        	 	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1399,11 +1411,13 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strPERPENDICULAR);        		
 		      	}   
        	 	sb.append(' ');
-               sb.append(rightStr);
+    		append(sb, rightStr, right, operation, STRING_TYPE);
+       	 	//sb.append(rightStr);
                break;
        
            case VECTORPRODUCT:
-       	 	sb.append(leftStr);
+       		append(sb, leftStr, left, operation, STRING_TYPE);
+       	 	//sb.append(leftStr);
        	 	sb.append(' ');
        	 	switch (STRING_TYPE) {
 		      		case STRING_TYPE_LATEX:
@@ -1414,7 +1428,8 @@ implements ExpressionValue, ExpressionNodeConstants {
 		      			sb.append(strVECTORPRODUCT);        		
 		      	}   
        	 	sb.append(' ');
-               sb.append(rightStr);
+    		append(sb, rightStr, right, operation, STRING_TYPE);
+       	 	//sb.append(rightStr);
                break;
        
             case PLUS:          
@@ -1433,23 +1448,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                    // check for 0
 	                	if (valueForm) {
 	            			if (isEqualString(left, 0, !valueForm)) {
-			            		if (right.isLeaf() || opID(right) >= PLUS) {
-		        					sb.append(rightStr);
-		        				} else {
-		        					sb.append(leftBracket(STRING_TYPE));
-		    	                    sb.append(rightStr);
-		    	                    sb.append(rightBracket(STRING_TYPE)); 
-		        				}
+	            	    		append(sb, rightStr, right, operation, STRING_TYPE);
 	        		    		break;
 	            			} 
 	            			else if (isEqualString(right, 0, !valueForm)) {
-	            				if (left.isLeaf() || opID(left) >= PLUS) {
-		        					sb.append(leftStr);
-		        				} else {
-		        					sb.append(leftBracket(STRING_TYPE));
-		    	                    sb.append(leftStr);
-		    	                    sb.append(rightBracket(STRING_TYPE)); 
-		        				}
+	            	       		append(sb, leftStr, left, operation, STRING_TYPE);
 	        		    		break;
 	            			}
 	                	}
@@ -1548,24 +1551,12 @@ implements ExpressionValue, ExpressionNodeConstants {
                 default:
                 	// check for 1 at left
         			if (isEqualString(left, 1, !valueForm)) {
-        				if (right.isLeaf() || opID(right) >= MULTIPLY) {
-        					sb.append(rightStr);
-        				} else {
-        					sb.append(leftBracket(STRING_TYPE));
-    	                    sb.append(rightStr);
-    	                    sb.append(rightBracket(STRING_TYPE)); 
-        				}
-    		    		break;
+        	    		append(sb, rightStr, right, operation, STRING_TYPE);
+   		    		break;
         			} 
         			// check for 0 at right
         			else if (isEqualString(right, 1, !valueForm)) {
-        				if (left.isLeaf() || opID(left) >= MULTIPLY) {
-        					sb.append(leftStr);
-        				} else {
-        					sb.append(leftBracket(STRING_TYPE));
-    	                    sb.append(leftStr);
-    	                    sb.append(rightBracket(STRING_TYPE)); 
-        				}
+        	       		append(sb, leftStr, left, operation, STRING_TYPE);
    		    		break;
         			}
         			
@@ -1696,23 +1687,11 @@ implements ExpressionValue, ExpressionNodeConstants {
             			}
             			                       
 		                // left wing              	
-		                if (left.isLeaf()|| opID(left) >= DIVIDE) { // not +, -, *
-		                    sb.append(leftStr);                
-		                } else { 
-		                    sb.append(leftBracket(STRING_TYPE));
-		                    sb.append(leftStr);
-		                    sb.append(rightBracket(STRING_TYPE));
-		                }                
+                   		append(sb, leftStr, left, operation, STRING_TYPE);
 		                sb.append(" / ");
 		                 
 		                // right wing
-		                if (right.isLeaf() || opID(right) >= POWER) // not +, -, *, /                
-		                    sb.append(rightStr);
-		                else { 
-		                    sb.append(leftBracket(STRING_TYPE));
-		                    sb.append(rightStr);
-		                    sb.append(rightBracket(STRING_TYPE));
-		                }          
+		         		append(sb, rightStr, right, operation, STRING_TYPE);
 	            	}
 	                break;
                 
@@ -3049,5 +3028,19 @@ implements ExpressionValue, ExpressionNodeConstants {
 		
 		
 	}
+    /*
+     * appends a string to sb
+     * brackets are put it if the order of operation dictates
+     */
+    private void append(StringBuilder sb, String str, ExpressionValue ev, int op, int STRING_TYPE) {
+   		if (ev.isLeaf() || opID(ev) >= op) {
+		 		sb.append(str);
+		} else {
+			sb.append(leftBracket(STRING_TYPE));
+			sb.append(str);
+			sb.append(rightBracket(STRING_TYPE));
+		}               
+   	
+    }
 	
 }
