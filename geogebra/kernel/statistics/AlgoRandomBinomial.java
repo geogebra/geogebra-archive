@@ -45,8 +45,14 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 		if (input[0].isDefined() && input[1].isDefined()) {
 			if (b.getDouble() < 0)
 				num.setUndefined();
-			else
-				num.setValue(randomBinomialTRS((int)a.getDouble(), b.getDouble()));
+			else {
+				// disabled randomBinomialTRS() as it doesn't work well
+				// eg when p is near 0.5
+				// http://www.geogebra.org/forum/viewtopic.php?f=8&t=18685
+				//num.setValue(randomBinomialTRS((int)a.getDouble(), b.getDouble()));
+				num.setValue(randomBinomial((int)a.getDouble(), b.getDouble()));
+			}
+			
 		} else
 			num.setUndefined();
 	}
