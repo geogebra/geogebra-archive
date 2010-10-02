@@ -381,6 +381,8 @@ public class Toolbar extends JToolBar {
         sb.append(EuclidianView.MODE_INTERSECT);
         sb.append(" ");
         sb.append (EuclidianView.MODE_MIDPOINT);       
+        sb.append(" ");
+        sb.append (EuclidianView.MODE_ATTACH_DETACH);       
                             
         // basic lines 
         sb.append(" | ");

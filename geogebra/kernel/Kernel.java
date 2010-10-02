@@ -1139,6 +1139,9 @@ public class Kernel {
 		case EuclidianConstants.MODE_CAS_INTEGRAL:
 			return "Integral";											
 			
+		case EuclidianConstants.MODE_ATTACH_DETACH:
+			return "AttachDetachPoint";											
+			
 		default:
 			return "";
 		}

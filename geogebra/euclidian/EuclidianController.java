@@ -216,6 +216,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected ArrayList selectedSegments = new ArrayList();
 
+	protected ArrayList selectedRegions = new ArrayList();
+	protected ArrayList selectedPaths = new ArrayList();
 	protected ArrayList selectedConics = new ArrayList();
 	protected ArrayList selectedImplicitpoly = new ArrayList();
 
@@ -2532,6 +2534,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 			changedKernel = mirrorAtCircle(hits.getTopHits());
+			break;
+
+		case EuclidianView.MODE_ATTACH_DETACH: // Michael Borcherds 2008-03-23
+			changedKernel = attachDetach(hits.getTopHits(), e);
 			break;
 
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
@@ -5210,6 +5216,90 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return false;
 	}
 
+	final protected boolean attachDetach(Hits hits, MouseEvent e) {
+		if (hits.isEmpty())
+			return false;
+		
+		addSelectedRegion(hits, 1, false);
+		
+		addSelectedPath(hits, 1, false);
+
+		addSelectedPoint(hits, 1, false);
+
+		if (selectedPoints.size() == 1) {
+			
+			GeoPoint p = (GeoPoint)selectedPoints.get(0);
+			
+			
+			if (p.isPointOnPath() || p.isPointInRegion()) {
+				
+				getSelectedPoints();
+				
+				// move point (20,20) pixels when detached
+				double x = view.toScreenCoordX(p.inhomX) + 20;
+				double y = view.toScreenCoordY(p.inhomY) + 20;
+				
+				try {
+					GeoPoint newPoint = new GeoPoint(kernel.getConstruction(),null, view.toRealWorldCoordX(x),view.toRealWorldCoordY(y),1.0);
+					kernel.getConstruction().replace(p, newPoint);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+				return true;
+			}			
+		}
+
+		if (selPoints() == 1) {
+			if (selRegions() == 1) {
+				Region regions[] = getSelectedRegions();
+				GeoPoint[] points = getSelectedPoints();
+
+				if (!((GeoElement)regions[0]).isChildOf(points[0])) {
+					double x = points[0].inhomX;
+					double y = points[0].inhomY;
+					StringBuilder sb = new StringBuilder();
+					sb.append(points[0].getLabel());
+					sb.append("=PointIn[");
+					sb.append(((GeoElement)regions[0]).getLabel());
+					sb.append(']');
+					//Application.debug(sb.toString());
+					kernel.getAlgebraProcessor().processAlgebraCommand(sb.toString(), false);
+					//points[0].updateRepaint();
+					//points[0].setCoords(view.toRealWorldCoordX(e.getX()),view.toRealWorldCoordY(e.getY()), 1.0);
+					//Application.debug(view.toRealWorldCoordX(e.getX())+ " "+view.toRealWorldCoordY(e.getY()));
+					//points[0].updateRepaint();
+					return true;
+				}
+				
+			} else if (selPaths() == 1) {
+				Path paths[] = getSelectedPaths();
+				GeoPoint[] points = getSelectedPoints();
+				
+				if (!((GeoElement)paths[0]).isChildOf(points[0])) {
+
+					double x = points[0].inhomX;
+					double y = points[0].inhomY;
+					StringBuilder sb = new StringBuilder();
+					sb.append(points[0].getLabel());
+					sb.append("=Point[");
+					sb.append(((GeoElement)paths[0]).getLabel());
+					sb.append(']');
+					//Application.debug(sb.toString());
+					kernel.getAlgebraProcessor().processAlgebraCommand(sb.toString(), false);
+					//points[0].updateRepaint();
+					//points[0].setCoords(view.toRealWorldCoordX(e.getX()),view.toRealWorldCoordY(e.getY()), 1.0);
+					//Application.debug(view.toRealWorldCoordX(e.getX())+ " "+view.toRealWorldCoordY(e.getY()));
+					//points[0].updateRepaint();
+					return true;
+				}
+				
+			}
+		} 
+		return false;
+	}
+
 	// get translateable and vector
 	final protected boolean translateByVector(Hits hits) {
 		if (hits.isEmpty())
@@ -5946,6 +6036,30 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return conics;
 	}
 	
+	final protected Region[] getSelectedRegions() {
+		Region[] regions = new Region[selectedRegions.size()];
+		int i = 0;
+		Iterator it = selectedRegions.iterator();
+		while (it.hasNext()) {
+			regions[i] = (Region) it.next();
+			i++;
+		}
+		clearSelection(selectedConics);
+		return regions;
+	}
+	
+	final protected Path[] getSelectedPaths() {
+		Path[] paths = new Path[selectedPaths.size()];
+		int i = 0;
+		Iterator it = selectedPaths.iterator();
+		while (it.hasNext()) {
+			paths[i] = (Path) it.next();
+			i++;
+		}
+		clearSelection(selectedPaths);
+		return paths;
+	}
+	
 	final protected GeoImplicitPoly[] getSelectedImplicitpoly() {
 		GeoImplicitPoly[] implicitPoly = new GeoImplicitPoly[selectedImplicitpoly.size()];
 		int i = 0;
@@ -6038,6 +6152,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedConics, GeoConic.class);
 	}
 	
+	final protected int addSelectedPath(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPaths, Path.class);
+	}
+	
+	final protected int addSelectedRegion(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedRegions, Region.class);
+	}
+	
 	final protected int addSelectedImplicitpoly(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedImplicitpoly, GeoImplicitPoly.class);
@@ -6097,6 +6221,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final int selConics() {
 		return selectedConics.size();
+	}
+	
+	final int selPaths() {
+		return selectedPaths.size();
+	}
+	
+	final int selRegions() {
+		return selectedRegions.size();
 	}
 	
 	final int selImplicitpoly() {
