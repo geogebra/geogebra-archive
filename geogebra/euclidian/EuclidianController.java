@@ -6411,8 +6411,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						retIndex = geo;
 					}
 
-					// find point-on-path with the highest construction index
-					if (((GeoPointInterface)geo).isPointOnPath()) {
+					// find point-on-path/region with the highest construction index
+					if (((GeoPointInterface)geo).isPointOnPath() || ((GeoPointInterface)geo).isPointInRegion()) {
 						pointOnPathCount ++;
 						if (retPath == null) {
 							retPath = geo;

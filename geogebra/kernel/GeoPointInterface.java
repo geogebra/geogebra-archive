@@ -61,6 +61,8 @@ public interface GeoPointInterface {
 	public void getInhomCoords(double[] coords);
 	
 	public double distance(GeoPointInterface P);
+
+	public boolean isPointInRegion();
 	
 
 }
