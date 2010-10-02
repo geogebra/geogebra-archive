@@ -7408,6 +7408,8 @@ public class Kernel {
 	final public static String defaultLibraryJavaScript = "function ggbOnInit() {}";
 	
 	String libraryJavaScript = defaultLibraryJavaScript;
+
+	private boolean wantAnimationStarted = false;
 	
 	public void setLibraryJavaScript(String str) {
 		Application.debug(str);
@@ -7512,5 +7514,15 @@ public class Kernel {
 		return geo.getAlternatives();
 	}
 
+	/*
+	 * used to delay animation start until everything loaded
+	 */
+	public void setWantAnimationStarted(boolean b) {
+		wantAnimationStarted   = true;		
+	}
+	
+	public boolean wantAnimationStarted() {
+		return wantAnimationStarted;
+	}
 	
 }

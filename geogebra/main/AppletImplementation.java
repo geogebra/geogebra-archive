@@ -146,6 +146,11 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 * in a separate thread.
 	 */
 	public void initInBackground() {	
+
+		// start animation if wanted by ggb file
+		if (kernel.wantAnimationStarted())
+			kernel.getAnimatonManager().startAnimation();
+
 		// call JavaScript function ggbOnInit()
 		initJavaScript();
 		Object [] noArgs = { };

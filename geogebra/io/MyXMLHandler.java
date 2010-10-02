@@ -457,9 +457,13 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("geogebra")) {
 				// start animation if necessary
 				if (startAnimation) {
-					kernel.getAnimatonManager().startAnimation();
+					if (app.isApplet())
+						// start later, in initInBackground()
+						kernel.setWantAnimationStarted(true);
+					else
+						kernel.getAnimatonManager().startAnimation();					
 				}
-
+				
 				// perform tasks to maintain backward compability
 				if(ggbFileFormat < 3.3 && hasGuiElement) {
 					createCompabilityLayout();
