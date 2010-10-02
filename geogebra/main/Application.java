@@ -148,9 +148,7 @@ public class Application implements KeyEventDispatcher {
 	// supported GUI languages (from properties files)
 	public static ArrayList<Locale> supportedLocales = new ArrayList<Locale>();
 	static {
-		// TODO: remove IS_PRE_RELEASE
-		if (GeoGebra.IS_PRE_RELEASE)
-			supportedLocales.add(new Locale("sq")); // Albanian
+		supportedLocales.add(new Locale("sq")); // Albanian
 		
 		supportedLocales.add(new Locale("ar")); // Arabic
 		supportedLocales.add(new Locale("eu")); // Basque
@@ -188,6 +186,7 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("ml")); // Malayalam (Virtual Keyboard & numerals only)
 		supportedLocales.add(new Locale("mk")); // Macedonian
 		supportedLocales.add(new Locale("mr")); // Marati
+		supportedLocales.add(new Locale("ms")); // Malay
 		// supportedLocales.add(new Locale("ne")); // Nepalese
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
 		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian(Nynorsk)
@@ -201,30 +200,24 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("ru")); // Russian
 		supportedLocales.add(new Locale("sr")); // Serbian
 		// TODO: remove IS_PRE_RELEASE
-		if (GeoGebra.IS_PRE_RELEASE)
-			supportedLocales.add(new Locale("si")); // Sinhala (Sri Lanka)
+		supportedLocales.add(new Locale("si")); // Sinhala (Sri Lanka)
 		
 		supportedLocales.add(new Locale("sk")); // Slovakian
 		supportedLocales.add(new Locale("sl")); // Slovenian
 		supportedLocales.add(new Locale("es")); // Spanish
 		supportedLocales.add(new Locale("sv")); // Swedish
 		// supportedLocales.add(new Locale("ty")); // Tahitian
-		// TODO: remove IS_PRE_RELEASE
-		if (GeoGebra.IS_PRE_RELEASE)
-			supportedLocales.add(new Locale("ta")); // Tamil
+		supportedLocales.add(new Locale("ta")); // Tamil
 		
 		// supportedLocales.add(new Locale("te")); // Telugu
-		// TODO: remove IS_PRE_RELEASE
-		if (GeoGebra.IS_PRE_RELEASE)
-			supportedLocales.add(new Locale("th")); // Thai
+		supportedLocales.add(new Locale("th")); // Thai
 
 		supportedLocales.add(new Locale("tr")); // Turkish
-		// supportedLocales.add(new Locale("uk")); // Ukrainian
+		 supportedLocales.add(new Locale("uk")); // Ukrainian
 		// supportedLocales.add(new Locale("ur")); // Urdu
 		supportedLocales.add(new Locale("vi")); // Vietnamese
 		supportedLocales.add(new Locale("cy")); // Welsh
 
-		// TODO: remove IS_PRE_RELEASE
 		if (GeoGebra.IS_PRE_RELEASE)
 			supportedLocales.add(new Locale("ji")); // Yiddish
 	}
