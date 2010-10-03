@@ -2,6 +2,7 @@ package geogebra.kernel.commands;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
@@ -42,6 +43,7 @@ public class CmdFirst extends CommandProcessor {
 		case 2:
 			boolean list = arg[0].isGeoList();
 			boolean string = arg[0].isGeoText();
+			boolean locus = arg[0].isGeoLocus();
 			if ( list && arg[1].isGeoNumeric() ) {
 				GeoElement[] ret = { 
 						kernel.First(c.getLabel(),
@@ -51,6 +53,11 @@ public class CmdFirst extends CommandProcessor {
 				GeoElement[] ret = { 
 						kernel.First(c.getLabel(),
 						(GeoText) arg[0], (GeoNumeric) arg[1] ) };
+				return ret;
+			} else if ( locus && arg[1].isGeoNumeric() ) {
+				GeoElement[] ret = { 
+						kernel.FirstLocus(c.getLabel(),
+						(GeoLocus) arg[0], (GeoNumeric) arg[1] ) };
 				return ret;
 			} else
 				throw argErr(app, c.getName(), (list && string) ? arg[1] : arg[0]);

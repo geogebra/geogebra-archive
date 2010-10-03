@@ -3701,6 +3701,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * FirstLocus[locus,n]
+	 * Michael Borcherds
+	 */
+	final public GeoList FirstLocus(String label, GeoLocus locus, GeoNumeric n) {
+		AlgoFirstLocus algo = new AlgoFirstLocus(cons, label, locus, n);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * First[string,n]
 	 * Michael Borcherds
 	 */

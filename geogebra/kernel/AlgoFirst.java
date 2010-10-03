@@ -21,12 +21,12 @@ package geogebra.kernel;
 public class AlgoFirst extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private GeoList inputList; //input
-	private GeoNumeric n; //input
-    private GeoList outputList; //output	
-    private int size;
+	protected GeoElement inputList; //input
+	protected GeoNumeric n; //input
+    protected GeoList outputList; //output	
+    protected int size;
 
-    AlgoFirst(Construction cons, String label, GeoList inputList, GeoNumeric n) {
+    AlgoFirst(Construction cons, String label, GeoElement inputList, GeoNumeric n) {
         super(cons);
         this.inputList = inputList;
         this.n=n;
@@ -65,9 +65,9 @@ public class AlgoFirst extends AlgoElement {
         return outputList;
     }
 
-    protected final void compute() {
+    protected void compute() {
     	
-    	size = inputList.size();
+    	size = ((GeoList)inputList).size();
     	int outsize = n == null ? 1 : (int)n.getDouble();
     	
     	if (!inputList.isDefined() ||  size == 0 || outsize < 0 || outsize > size) {
@@ -81,7 +81,7 @@ public class AlgoFirst extends AlgoElement {
     	if (outsize == 0) return; // return empty list
     	
     	for (int i=0 ; i<outsize ; i++)
-    		outputList.add(inputList.get(i).copyInternal(cons));
+    		outputList.add(((GeoList)inputList).get(i).copyInternal(cons));
    }
   
 }

@@ -270,5 +270,9 @@ public class GeoLocus extends GeoElement implements Path {
 		myPointList = al;
 		
 	}
+	
+	public ArrayList<MyPoint> getPoints() {
+		return myPointList;
+	}
 
 }
