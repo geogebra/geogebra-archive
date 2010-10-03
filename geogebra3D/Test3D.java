@@ -461,7 +461,7 @@ public class Test3D{
 		GeoPoint E=kernel3D.Point("E", 0, 1);
 		GeoPolygon p=(GeoPolygon) kernel3D.Polygon(null, new GeoPoint[] {A,B,C,D,E})[0];
 
-		GeoPoint M= kernel3D.PointIn("M",(Region) p,0.5,0.5);  
+		GeoPoint M= kernel3D.PointIn("M",(Region) p,0.5,0.5, true);  
 	}
 
 	

@@ -2424,16 +2424,25 @@ public class Kernel {
 	
 	
 	/** Point in region with cartesian coordinates (x,y)   */
-	final public GeoPoint PointIn(String label, Region region, double x, double y) {
+	final public GeoPoint PointIn(String label, Region region, double x, double y, boolean addToConstruction) {
+		boolean oldMacroMode = false;
+		if (!addToConstruction) {
+			oldMacroMode = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);		
+
+		}
 		AlgoPointInRegion algo = new AlgoPointInRegion(cons, label, region, x, y);
-		Application.debug("PointIn - \n x="+x+"\n y="+y);
+		//Application.debug("PointIn - \n x="+x+"\n y="+y);
 		GeoPoint p = algo.getP();    
+		if (!addToConstruction) {
+			cons.setSuppressLabelCreation(oldMacroMode);
+		}
 		return p;
 	}
 	
 	/** Point in region */
 	final public GeoPoint PointIn(String label, Region region) {  
-		return PointIn(label,region,0,0); //TODO do as for paths
+		return PointIn(label,region,0,0, true); //TODO do as for paths
 	}	
 	
 	/** Point P + v   */

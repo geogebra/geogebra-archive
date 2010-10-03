@@ -98,6 +98,8 @@ import javax.swing.text.JTextComponent;
 public class EuclidianController implements MouseListener,
 MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniListener {
 
+	private int mx, my; // keep track of mouse position
+	
 	protected static final int MOVE_NONE = 101;
 
 	protected static final int MOVE_POINT = 102;
@@ -1736,7 +1738,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	public void mouseReleased(MouseEvent e) {	
-		
+		if (e != null) {
+			mx = e.getX();
+			my = e.getY();
+		}
 		// reset
 		transformCoordsOffset[0] = 0;
 		transformCoordsOffset[1] = 0;
@@ -3389,7 +3394,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	protected GeoPointInterface createNewPoint(boolean forPreviewable, Region region){
-		GeoPointInterface ret = kernel.PointIn(null,region,xRW, yRW);
+		GeoPointInterface ret = kernel.PointIn(null, region, xRW, yRW, true);
 		return ret;
 	}
 
@@ -5257,19 +5262,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoPoint[] points = getSelectedPoints();
 
 				if (!((GeoElement)regions[0]).isChildOf(points[0])) {
-					double x = points[0].inhomX;
-					double y = points[0].inhomY;
-					StringBuilder sb = new StringBuilder();
-					sb.append(points[0].getLabel());
-					sb.append("=PointIn[");
-					sb.append(((GeoElement)regions[0]).getLabel());
-					sb.append(']');
-					//Application.debug(sb.toString());
-					kernel.getAlgebraProcessor().processAlgebraCommand(sb.toString(), false);
-					//points[0].updateRepaint();
-					//points[0].setCoords(view.toRealWorldCoordX(e.getX()),view.toRealWorldCoordY(e.getY()), 1.0);
-					//Application.debug(view.toRealWorldCoordX(e.getX())+ " "+view.toRealWorldCoordY(e.getY()));
-					//points[0].updateRepaint();
+					try {
+						GeoPoint newPoint = kernel.PointIn(null, regions[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false);
+						kernel.getConstruction().replace(points[0], newPoint);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+						return false;
+					}
 					return true;
 				}
 				
@@ -5278,20 +5277,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoPoint[] points = getSelectedPoints();
 				
 				if (!((GeoElement)paths[0]).isChildOf(points[0])) {
+					
+					try {
+						GeoPoint newPoint = kernel.Point(null, paths[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false);
+						kernel.getConstruction().replace(points[0], newPoint);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+						return false;
+					}
 
-					double x = points[0].inhomX;
-					double y = points[0].inhomY;
-					StringBuilder sb = new StringBuilder();
-					sb.append(points[0].getLabel());
-					sb.append("=Point[");
-					sb.append(((GeoElement)paths[0]).getLabel());
-					sb.append(']');
-					//Application.debug(sb.toString());
-					kernel.getAlgebraProcessor().processAlgebraCommand(sb.toString(), false);
-					//points[0].updateRepaint();
-					//points[0].setCoords(view.toRealWorldCoordX(e.getX()),view.toRealWorldCoordY(e.getY()), 1.0);
-					//Application.debug(view.toRealWorldCoordX(e.getX())+ " "+view.toRealWorldCoordY(e.getY()));
-					//points[0].updateRepaint();
 					return true;
 				}
 				
@@ -6044,7 +6038,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			regions[i] = (Region) it.next();
 			i++;
 		}
-		clearSelection(selectedConics);
+		clearSelection(selectedRegions);
 		return regions;
 	}
 	
