@@ -163,16 +163,15 @@ implements EuclidianViewAlgo {
 		for (int i=0; i < size; i++) {	
 			GeoElement macroGeo = (GeoElement) macroOutputAndReferencedGeos.get(i);
 			GeoElement algoGeo = (GeoElement) algoOutputAndReferencedGeos.get(i);
-			algoGeo.set(macroGeo);	
-			AlgoElement drawAlgo = macroGeo.getParentAlgorithm();
-			if(drawAlgo instanceof AlgoDrawInformation){
-				((GeoNumeric) algoGeo).setDrawable(true);
-				algoGeo.setDrawAlgorithm(((AlgoDrawInformation)drawAlgo).copy());
+			if(macroGeo.isDefined()){
+				algoGeo.set(macroGeo);	
+				AlgoElement drawAlgo = macroGeo.getParentAlgorithm();
+				if(drawAlgo instanceof AlgoDrawInformation){
+					((GeoNumeric) algoGeo).setDrawable(true);
+					algoGeo.setDrawAlgorithm(((AlgoDrawInformation)drawAlgo).copy());
+				}
 			}
-//			System.out.println("RESULT from macro: " + macroGeo + "\n => " + algoGeo);			
-//			System.out.println("  macroGeo kernel: " + macroGeo.kernel + ", printFigures: " + macroGeo.kernel.getPrintFigures());
-//			System.out.println("  algoGeo  kernel: " + algoGeo.kernel + ", printFigures: " + algoGeo.kernel.getPrintFigures());
-				
+			else algoGeo.setUndefined();		
 		}		
 	}
 	
