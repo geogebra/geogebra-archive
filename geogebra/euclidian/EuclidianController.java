@@ -407,7 +407,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (selection.size() == 1) {
 				GeoElement geo = (GeoElement)selection.get(0);
 				// getCorner(1) == null as we can't write to transformed images
-				if (geo.isGeoImage() && ((GeoImage)geo).getCorner(1) == null) 
+				
+				GeoPoint c1 = ((GeoImage)geo).getCorner(0);
+				GeoPoint c2 = ((GeoImage)geo).getCorner(1);
+				GeoPoint c3 = ((GeoImage)geo).getCorner(2);
+							
+				if (geo.isGeoImage() && c3 == null &&
+						(c2 == null // c2 = null -> not transformed
+						
+					// or c1 and c2 are the correct spacing for the image not to be transformed
+					// (ie image was probably created by the Pen Tool)
+					|| (c1 != null && c2 != null && c1.inhomY == c2.inhomY && view.toScreenCoordX(c2.inhomX) - view.toScreenCoordX(c1.inhomX) == ((GeoImage)geo).getFillImage().getWidth() ))) 
 					pen.setPenGeo( (GeoImage)geo); 
 				else 
 					pen.setPenGeo(null);
