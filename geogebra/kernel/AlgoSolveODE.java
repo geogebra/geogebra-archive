@@ -99,9 +99,13 @@ public class AlgoSolveODE extends AlgoElement {
 			} catch (DerivativeException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				locus.setDefined(false);
+				return;
 			} catch (IntegratorException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				locus.setDefined(false);
+				return;
 			} // now y contains final state at time t=16.0
 			
 			//g.setDefined(true);
