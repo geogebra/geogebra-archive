@@ -29,7 +29,7 @@ import java.util.Set;
  */
 public class CommandDispatcher {
     
-	private Kernel kernel;
+	protected Kernel kernel;
     private Construction cons;
     private Application app;
     

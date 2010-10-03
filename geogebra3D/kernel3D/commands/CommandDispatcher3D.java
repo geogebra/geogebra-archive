@@ -1,55 +1,54 @@
 package geogebra3D.kernel3D.commands;
 
 
+import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.CommandDispatcher;
-import geogebra3D.kernel3D.Kernel3D;
+import geogebra.kernel.kernel3D.Kernel3D;
+import geogebra.main.Application;
 
 public class CommandDispatcher3D extends CommandDispatcher {
 	
-	Kernel3D kernel3D;
 
-	public CommandDispatcher3D(Kernel3D kernel3D) {
-		super(kernel3D);
-		this.kernel3D = kernel3D;
-		//Application.debug("CommandDispatcher3D");
+	public CommandDispatcher3D(Kernel kernel) {
+		super(kernel);
 	}
 
 	protected void initCmdTable() {  
 		super.initCmdTable();
 		//Application.debug("CommandDispatcher3D.initCmdTable()");
-		cmdTable.put("Segment", new CmdSegment3D(kernel3D));
-		cmdTable.put("Line", new CmdLine3D(kernel3D));
-		cmdTable.put("Ray", new CmdRay3D(kernel3D));
-		cmdTable.put("Vector", new CmdVector3D(kernel3D));
-		cmdTable.put("Polygon", new CmdPolygon3D(kernel3D));
-		cmdTable.put("Point", new CmdPoint3D(kernel3D));
-		cmdTable.put("Circle", new CmdCircle3D(kernel3D));
+		cmdTable.put("Segment", new CmdSegment3D(kernel));
+		cmdTable.put("Line", new CmdLine3D(kernel));
+		cmdTable.put("Ray", new CmdRay3D(kernel));
+		cmdTable.put("Vector", new CmdVector3D(kernel));
+		cmdTable.put("Polygon", new CmdPolygon3D(kernel));
+		cmdTable.put("Point", new CmdPoint3D(kernel));
+		cmdTable.put("Circle", new CmdCircle3D(kernel));
 		
-		cmdTable.put("CurveCartesian", new CmdCurveCartesian3D(kernel3D));
-		
-		
-		cmdTable.put("Plane", new CmdPlane(kernel3D));
-		cmdTable.put("OrthogonalPlane", new CmdOrthogonalPlane(kernel3D));
-		
-		cmdTable.put("Polyhedron", new CmdPolyhedron(kernel3D));
+		cmdTable.put("CurveCartesian", new CmdCurveCartesian3D(kernel));
 		
 		
-		cmdTable.put("Prism", new CmdPrism(kernel3D));
-		cmdTable.put("Pyramid", new CmdPyramid(kernel3D));
+		cmdTable.put("Plane", new CmdPlane(kernel));
+		cmdTable.put("OrthogonalPlane", new CmdOrthogonalPlane(kernel));
+		
+		cmdTable.put("Polyhedron", new CmdPolyhedron(kernel));
 		
 		
-		cmdTable.put("PointIn", new CmdPointIn3D(kernel3D));   
+		cmdTable.put("Prism", new CmdPrism(kernel));
+		cmdTable.put("Pyramid", new CmdPyramid(kernel));
+		
+		
+		cmdTable.put("PointIn", new CmdPointIn3D(kernel));   
 		  
 		
-    	cmdTable.put("Intersect", new CmdIntersect3D(kernel3D));	
+    	cmdTable.put("Intersect", new CmdIntersect3D(kernel));	
     	
     	
-    	cmdTable.put("Sphere", new CmdSphere3D(kernel3D));	
-    	cmdTable.put("Cone", new CmdCone(kernel3D));	
-       	cmdTable.put("Cylinder", new CmdCylinder(kernel3D));	
+    	cmdTable.put("Sphere", new CmdSphere3D(kernel));	
+    	cmdTable.put("Cone", new CmdCone(kernel));	
+       	cmdTable.put("Cylinder", new CmdCylinder(kernel));	
        	
 
-		cmdTable.put("Function", new CmdFunction2Var(kernel3D));
+		cmdTable.put("Function", new CmdFunction2Var(kernel));
     	    	
 	}
 	

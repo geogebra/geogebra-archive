@@ -2,8 +2,8 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
-import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoRay3D;
+import geogebra.kernel.kernel3D.GeoCoordSys1D;
+import geogebra.kernel.kernel3D.GeoRay3D;
 
 import java.util.ArrayList;
 

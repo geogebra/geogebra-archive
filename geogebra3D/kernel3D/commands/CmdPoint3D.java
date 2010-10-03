@@ -6,8 +6,8 @@ import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdPoint;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.Kernel3D;
 
 
 
@@ -16,20 +16,11 @@ import geogebra3D.kernel3D.Kernel3D;
  */
 public class CmdPoint3D extends CmdPoint {
 	
-	Kernel3D kernel3D;
-
 	public CmdPoint3D(Kernel kernel) {
 		super(kernel);
 		
 		
 	}
-	
-	public CmdPoint3D(Kernel3D kernel3D) {
-		this( (Kernel) kernel3D);
-		this.kernel3D = kernel3D;
-		
-		
-	}	
 	
 	
 	public GeoElement[] process(Command c) throws MyError {	
@@ -49,13 +40,13 @@ public class CmdPoint3D extends CmdPoint {
 				GeoElement geo0 = arg[0];
 				if (ok[0] = (geo0.isPath())) {
 					GeoElement[] ret =
-					{ kernel3D.Point3D(c.getLabel(), (Path) geo0)};
+					{ kernel.Point3D(c.getLabel(), (Path) geo0)};
 					return ret;
 				}
 				// if arg[0] isn't a Path, try to process it as a region (e.g. GeoPlane3D)
 				if (ok[0] = (arg[0].isRegion())) {
 					GeoElement[] ret =
-					{ kernel3D.Point3DIn(c.getLabel(), (Region) arg[0])};
+					{ kernel.Point3DIn(c.getLabel(), (Region) arg[0])};
 					return ret;
 				}
 				

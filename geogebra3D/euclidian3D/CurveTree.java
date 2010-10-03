@@ -1,11 +1,11 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector3D;
+import geogebra.kernel.kernel3D.GeoCurveCartesian3D;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
-import geogebra3D.kernel3D.GeoCurveCartesian3D;
 
 /**
- * @author André Eriksson
+ * @author Andrï¿½ Eriksson
  * Tree representing a parametric curve
  */
 public class CurveTree {
@@ -328,7 +328,7 @@ public class CurveTree {
 /**
  * Class representing a node in CurveTree
  * 
- * @author André Eriksson
+ * @author Andrï¿½ Eriksson
  * @see CurveTree
  */
 class CurveTreeNode{

@@ -3765,6 +3765,8 @@ public class MyXMLHandler implements DocHandler {
 					((ExpressionNode) ve).setForceVector();
 				}
 			}
+			
+			Application.debug(""+kernel.getAlgebraProcessor());
 
 			GeoElement[] result = kernel.getAlgebraProcessor()
 					.processValidExpression(ve);

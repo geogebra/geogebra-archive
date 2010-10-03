@@ -4,10 +4,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdRay;
+import geogebra.kernel.kernel3D.GeoElement3D;
+import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 
 
@@ -16,19 +16,12 @@ import geogebra3D.kernel3D.Kernel3D;
  */
 public class CmdRay3D extends CmdRay {
 	
-	Kernel3D kernel3D;
 
 	public CmdRay3D(Kernel kernel) {
 		super(kernel);
 		
 	}
 
-	public CmdRay3D(Kernel3D kernel3D) {
-		this( (Kernel) kernel3D);
-		this.kernel3D = kernel3D;
-
-
-	}	
 	
 
 	public GeoElement[] process(Command c) throws MyError {	
@@ -52,7 +45,7 @@ public class CmdRay3D extends CmdRay {
 						&& (ok[1] = (geo1.isGeoPoint()))) {
 					GeoElement[] ret =
 					{
-							kernel3D.Ray3D(
+							kernel.Ray3D(
 									c.getLabel(),
 									(GeoPoint3D) geo0,
 									(GeoPoint3D) geo1)};

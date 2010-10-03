@@ -4,10 +4,11 @@ import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPointInterface;
+import geogebra.kernel.Kernel;
+import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 import java.util.LinkedHashMap;
 
@@ -26,7 +27,7 @@ public class MyXMLHandler3D extends MyXMLHandler {
 	 * @param kernel
 	 * @param cons
 	 */
-	public MyXMLHandler3D(Kernel3D kernel, Construction cons) {
+	public MyXMLHandler3D(Kernel kernel, Construction cons) {
 		super(kernel, cons);
 	}
 	

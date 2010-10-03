@@ -4,11 +4,11 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdIntersect;
+import geogebra.kernel.kernel3D.GeoCoordSys;
+import geogebra.kernel.kernel3D.GeoCoordSys2D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoCoordSys;
-import geogebra3D.kernel3D.GeoCoordSys2D;
-import geogebra3D.kernel3D.Kernel3D;
 
 
 /*
@@ -16,12 +16,10 @@ import geogebra3D.kernel3D.Kernel3D;
  */
 public class CmdIntersect3D extends CmdIntersect {
 	
-	Kernel3D kernel3D;
 	
 	
-	public CmdIntersect3D(Kernel3D kernel3D) {
-		super( (Kernel) kernel3D);
-		this.kernel3D = kernel3D;
+	public CmdIntersect3D(Kernel kernel) {
+		super(kernel);
 		
 		
 	}	
@@ -41,7 +39,7 @@ public  GeoElement[] process(Command c) throws MyError {
             	if ((arg[0] instanceof GeoCoordSys2D) && (arg[1] instanceof GeoCoordSys2D)){
             		GeoElement[]ret =
                     {
-                         kernel3D.Intersect(
+                         kernel.Intersect(
                             c.getLabel(),
                             (GeoCoordSys2D) arg[0],
                             (GeoCoordSys2D) arg[1])};
@@ -50,7 +48,7 @@ public  GeoElement[] process(Command c) throws MyError {
 
             	GeoElement[] ret =
                     {
-                         kernel3D.Intersect(
+                         kernel.Intersect(
                             c.getLabel(),
                             (GeoCoordSys) arg[0],
                             (GeoCoordSys) arg[1])};

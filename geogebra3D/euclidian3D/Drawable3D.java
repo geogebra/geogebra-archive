@@ -6,11 +6,11 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.DrawableND;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernel3D.GeoElement3D;
+import geogebra.kernel.kernel3D.GeoElement3DInterface;
+import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoElement3DInterface;
-import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.awt.Graphics2D;
 import java.text.DecimalFormat;

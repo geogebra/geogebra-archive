@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra3D.kernel3D.GeoSegment3D;
+import geogebra.kernel.kernel3D.GeoSegment3D;
 
 import java.util.ArrayList;
 

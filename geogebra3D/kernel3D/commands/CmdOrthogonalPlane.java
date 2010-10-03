@@ -4,12 +4,12 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CommandProcessor;
+import geogebra.kernel.kernel3D.GeoCoordSys;
+import geogebra.kernel.kernel3D.GeoCoordSys1D;
+import geogebra.kernel.kernel3D.GeoPlane3D;
+import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoCoordSys;
-import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoPlane3D;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 /*
  * Orthogonal[ <GeoPoint3D>, <GeoCoordSys> ]
@@ -17,18 +17,10 @@ import geogebra3D.kernel3D.Kernel3D;
 public class CmdOrthogonalPlane extends CommandProcessor {
 	
 	
-	Kernel3D kernel3D;
-	
 	
 	public CmdOrthogonalPlane(Kernel kernel) {
 		super(kernel);
 	}
-
-	public CmdOrthogonalPlane(Kernel3D kernel3D) {
-		this( (Kernel) kernel3D);
-		this.kernel3D = kernel3D;
-		
-	}	
 	
 	
 
@@ -46,7 +38,7 @@ public class CmdOrthogonalPlane extends CommandProcessor {
 	    	) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel3D.OrthogonalPlane3D(
+	    				kernel.OrthogonalPlane3D(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
 	    						(GeoCoordSys) arg[1])};

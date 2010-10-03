@@ -65,7 +65,7 @@ import java.util.regex.Matcher;
 public abstract class CommandProcessor  {
 
 	protected Application app;
-	Kernel kernel;
+	protected Kernel kernel;
 	Construction cons;
 	private AlgebraProcessor algProcessor;
 

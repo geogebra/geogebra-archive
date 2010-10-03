@@ -4,11 +4,11 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdSegment;
+import geogebra.kernel.kernel3D.GeoElement3D;
+import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 
 
@@ -17,20 +17,12 @@ import geogebra3D.kernel3D.Kernel3D;
  */
 public class CmdSegment3D extends CmdSegment {
 	
-	Kernel3D kernel3D;
 
 	public CmdSegment3D(Kernel kernel) {
 		super(kernel);
-		//Application.debug("CmdSegment3D");
 		
 	}
 	
-	public CmdSegment3D(Kernel3D kernel3D) {
-		this( (Kernel) kernel3D);
-		this.kernel3D = kernel3D;
-		//Application.debug("CmdSegment3D");
-		
-	}	
 	
 	
 	public GeoElement[] process(Command c) throws MyError {	
@@ -53,7 +45,7 @@ public class CmdSegment3D extends CmdSegment {
             			&& (ok[1] = (geo1.isGeoPoint()))) {
             		GeoElement[] ret =
             		{
-            				kernel3D.Segment3D(
+            				kernel.Segment3D(
             						c.getLabel(),
             						(GeoPoint3D) geo0,
             						(GeoPoint3D) geo1)};

@@ -2,6 +2,7 @@ package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -9,25 +10,24 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.kernel.commands.CommandDispatcher;
+import geogebra.kernel.kernel3D.GeoPlane3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoPlane3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 
 public class AlgebraProcessor3D extends AlgebraProcessor {
 	
 	
-	private Kernel3D kernel3D;
 
-	public AlgebraProcessor3D(Kernel3D kernel3D) {
-		super(kernel3D);
-		this.kernel3D=kernel3D;
-		//Application.debug("AlgebraProcessor3D");
-		cmdDispatcher = new CommandDispatcher3D(kernel3D);
+	public AlgebraProcessor3D(Kernel kernel) {
+		super(kernel);
 	}
 	
-
+	protected CommandDispatcher newCommandDispatcher(Kernel kernel){
+		return new CommandDispatcher3D(kernel);
+	}
 	
 	
 	
@@ -67,14 +67,14 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 			double y = p[1];
 			double z = p[2];
 			if (isVector)
-				ret[0] = kernel3D.Vector3D(label, x, y, z);	
+				ret[0] = kernel.Vector3D(label, x, y, z);	
 			else
-				ret[0] = kernel3D.Point3D(label, x, y, z);			
+				ret[0] = kernel.Point3D(label, x, y, z);			
 		} else {
 			if (isVector)
-				ret[0] = kernel3D.DependentVector3D(label, n);
+				ret[0] = kernel.DependentVector3D(label, n);
 			else
-				ret[0] = kernel3D.DependentPoint3D(label, n);
+				ret[0] = kernel.DependentPoint3D(label, n);
 		}
 
 		return ret;
@@ -84,15 +84,11 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 	protected void checkNoTermsInZ(Equation equ){
 	}
 	
-	protected GeoElement[] processLinear(Equation equ) {
-		return processPlane(equ);
-		//TODO be able to change type if line wanted
-		/*
-		if (equ.getNormalForm().getCoeffValue("z") != 0)
-			return processPlane(equ);
+	protected GeoElement[] processLine(Equation equ, boolean inequality) {
+		if (inequality)
+			return super.processLine(equ, inequality); //TODO add inequalities in 3D
 		else
-			return processLine(equ);
-			*/
+			return processPlane(equ);
 	}
 
 	protected GeoElement[] processPlane(Equation equ) {
@@ -111,10 +107,10 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 			c = lhs.getCoeffValue("z");
 			d = lhs.getCoeffValue("");
 			//Application.debug("TODO: add kernel3D.Plane3D(label, a, b, c, d)");
-			plane = kernel3D.Plane3D(label, a, b, c, d);
+			plane = kernel.Plane3D(label, a, b, c, d);
 		} else
 			//Application.debug("TODO: add kernel3D.DependentPlane3D(label, equ)");
-			plane = kernel3D.DependentPlane3D(label, equ);
+			plane = kernel.DependentPlane3D(label, equ);
 
 		ret[0] = plane;
 		return ret;

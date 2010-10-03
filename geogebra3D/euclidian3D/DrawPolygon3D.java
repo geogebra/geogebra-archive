@@ -5,13 +5,13 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.kernel3D.ConstructionDefaults3D;
+import geogebra.kernel.kernel3D.GeoElement3DInterface;
+import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernel3D.GeoPolygon3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.ConstructionDefaults3D;
-import geogebra3D.kernel3D.GeoElement3DInterface;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.GeoPolygon3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 import java.util.ArrayList;
 import java.util.Iterator;

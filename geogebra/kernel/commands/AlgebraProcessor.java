@@ -46,7 +46,7 @@ import java.util.Set;
 
 public class AlgebraProcessor {
 	
-	private Kernel kernel;
+	protected Kernel kernel;
 	private Construction cons;
 	private Application app;
 	private Parser parser;
@@ -58,10 +58,20 @@ public class AlgebraProcessor {
 		this.kernel = kernel;
 		cons = kernel.getConstruction();
 		
-		cmdDispatcher = new CommandDispatcher(kernel);
+		cmdDispatcher = newCommandDispatcher(kernel);
 		app = kernel.getApplication();
 		parser = kernel.getParser();
 	}
+	
+	/**
+	 * @param kernel 
+	 * @return a new command dispatcher (used for 3D)
+	 */
+	protected CommandDispatcher newCommandDispatcher(Kernel kernel){
+		return new CommandDispatcher(kernel);
+	}
+	
+	
 	
 	public Set getPublicCommandSet() {
 		return cmdDispatcher.getPublicCommandSet();

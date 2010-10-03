@@ -6,25 +6,18 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.CmdCircle;
 import geogebra.kernel.commands.CommandProcessor;
+import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 public class CmdSphere3D extends CommandProcessor {
 	
-	
-	Kernel3D kernel3D;
 	
 	
 	public CmdSphere3D(Kernel kernel) {
 		super(kernel);
 	}
 
-	public CmdSphere3D(Kernel3D kernel3D) {
-		this( (Kernel) kernel3D);
-		this.kernel3D = kernel3D;
-		
-	}	
 	
 	
 
@@ -40,7 +33,7 @@ public class CmdSphere3D extends CommandProcessor {
 	    			&& (ok[1] = ( arg[1] .isNumberValue() ))) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel3D.Sphere(
+	    				kernel.Sphere(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
 	    						(NumberValue) arg[1])};
@@ -49,7 +42,7 @@ public class CmdSphere3D extends CommandProcessor {
 	    			&& (ok[1] = ( arg[1].isGeoElement3D() && arg[1] .isGeoPoint() ))) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel3D.Sphere(
+	    				kernel.Sphere(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
 	    						(GeoPoint3D) arg[1])};

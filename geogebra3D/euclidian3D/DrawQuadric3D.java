@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.CircularDefinitionException;
+import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernel3D.GeoQuadric3D;
+import geogebra.kernel.kernel3D.GeoVector3D;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.GeoQuadric3D;
-import geogebra3D.kernel3D.GeoVector3D;
 
 /**
  * Class for drawing quadrics.

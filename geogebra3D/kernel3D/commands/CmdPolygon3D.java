@@ -4,9 +4,9 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdPolygon;
+import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.Kernel3D;
 
 
 
@@ -15,20 +15,11 @@ import geogebra3D.kernel3D.Kernel3D;
  */
 public class CmdPolygon3D extends CmdPolygon {
 	
-	Kernel3D kernel3D;
 
 	public CmdPolygon3D(Kernel kernel) {
 		super(kernel);
-		
-		
+				
 	}
-	
-	public CmdPolygon3D(Kernel3D kernel3D) {
-		this( (Kernel) kernel3D);
-		this.kernel3D = kernel3D;
-		
-		
-	}	
 	
 	
 	public GeoElement[] process(Command c) throws MyError {	
@@ -63,7 +54,7 @@ public class CmdPolygon3D extends CmdPolygon {
 				s+=c.getLabels()[i]+", ";
 			Application.debug("labels = "+s);
 			*/
-			return kernel3D.Polygon3D(c.getLabels(), points);
+			return kernel.Polygon3D(c.getLabels(), points);
 		}
  
 		return super.process(c);

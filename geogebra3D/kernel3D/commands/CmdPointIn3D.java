@@ -6,8 +6,8 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdPointIn;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.Kernel3D;
 
 
 /*
@@ -15,12 +15,10 @@ import geogebra3D.kernel3D.Kernel3D;
  */
 public class CmdPointIn3D extends CmdPointIn {
 
-	Kernel3D kernel3D;
 	
 	
-	public CmdPointIn3D(Kernel3D kernel3D) {
-		super( (Kernel) kernel3D);
-		this.kernel3D = kernel3D;
+	public CmdPointIn3D(Kernel kernel) {
+		super(kernel);
 		
 		
 	}	
@@ -36,7 +34,7 @@ public class CmdPointIn3D extends CmdPointIn {
 			if (ok[0] = (arg[0].isRegion())) {
 				if (arg[0].isGeoElement3D()){
 					GeoElement[] ret =
-					{ kernel3D.Point3DIn(c.getLabel(), (Region) arg[0])};
+					{ kernel.Point3DIn(c.getLabel(), (Region) arg[0])};
 					return ret;
 				}else
 					return super.process(c);

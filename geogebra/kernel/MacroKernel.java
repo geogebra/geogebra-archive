@@ -11,6 +11,15 @@ the Free Software Foundation.
 */
 package geogebra.kernel;
 
+import java.util.LinkedHashMap;
+
+import geogebra.io.MyXMLHandler;
+import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
+import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.main.Application;
+import geogebra.main.MyError;
+import geogebra3D.kernel3D.arithmetic.ExpressionNodeEvaluator3D;
+
 
 
 /**
@@ -23,6 +32,7 @@ public class MacroKernel extends Kernel  {
 	
 	public MacroKernel(Kernel parentKernel) {
 		this.parentKernel = parentKernel;
+		
 		app = parentKernel.app;
 		setUndoActive(false);
 		setAllowVisibilitySideEffects(false);
@@ -88,5 +98,31 @@ public class MacroKernel extends Kernel  {
 	public Macro getMacro(String name) {
 		return parentKernel.getMacro(name);	
 	}			
+	
+	
+	////////////////////////////////////////
+	// METHODS USING KERNEL3D
+	////////////////////////////////////////
+	
+	public MyXMLHandler newMyXMLHandler(Construction cons){
+		return parentKernel.newMyXMLHandler(this, cons);		
+	}
+	
+	
+	protected AlgebraProcessor newAlgebraProcessor(Kernel kernel){
+		return parentKernel.newAlgebraProcessor(kernel);
+	}
+	
+	protected ExpressionNodeEvaluator newExpressionNodeEvaluator(){
+		return parentKernel.newExpressionNodeEvaluator();
+	}
+	
+	public GeoElement createGeoElement(Construction cons, String type) throws MyError {    
+		return parentKernel.createGeoElement(cons, type);
+	}
+	
+	public boolean handleCoords(GeoElement geo, LinkedHashMap<String, String> attrs) {
+		return parentKernel.handleCoords(geo, attrs);
+	}
 	
 }

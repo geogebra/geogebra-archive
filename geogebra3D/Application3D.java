@@ -20,13 +20,13 @@ package geogebra3D;
 import geogebra.CommandLineArguments;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.kernel.kernel3D.GeoPlane3D;
+import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.gui.GuiManager3D;
-import geogebra3D.kernel3D.GeoPlane3D;
-import geogebra3D.kernel3D.Kernel3D;
 import geogebra3D.util.ImageManager3D;
 
 import java.awt.Component;

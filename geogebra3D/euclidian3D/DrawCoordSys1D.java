@@ -2,10 +2,10 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.kernel3D.GeoCoordSys1D;
+import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.util.ArrayList;
 

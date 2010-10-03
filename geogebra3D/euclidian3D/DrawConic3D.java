@@ -2,9 +2,9 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.kernel3D.GeoConic3D;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoConic3D;
 
 /**
  * @author ggb3D
