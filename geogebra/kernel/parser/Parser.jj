@@ -1535,12 +1535,14 @@ ExpressionValue myDouble():
    (
      (c = <FLOAT> | c = <EFLOAT>)
     	{
+    	    c.image = c.image.replaceFirst("e", "E" );
     		val = MyDouble.parseDouble( c.image );
     	}
     |
       (c = <BFLOAT>) 
   		{
-    		val = MyDouble.parseDouble( c.image.replaceFirst("b", "E" ));
+  		    c.image = c.image.replaceFirst("b", "E" );
+    		val = MyDouble.parseDouble( c.image );
     	}
     |
       (c = <PERCENTAGE>) 
@@ -1553,7 +1555,7 @@ ExpressionValue myDouble():
     	if (ExternalCASParsing || GeoGebraCASParsing) {
     		// preserve string from MathPiper: it may have higher
     		// precision than double
-    	   return new MySpecialDouble(kernel, val, c.image);  
+    	   	return new MySpecialDouble(kernel, val, c.image);  
     	}
     	else {
       	  return new MyDouble(kernel, val);

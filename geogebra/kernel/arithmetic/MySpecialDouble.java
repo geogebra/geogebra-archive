@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
+import java.math.BigDecimal;
+
 import geogebra.kernel.Kernel;
 
 /**
@@ -29,6 +31,19 @@ public class MySpecialDouble extends MyDouble {
 	public MySpecialDouble(Kernel kernel, double val, String strToString) {
 		super(kernel, val);
 		this.kernel = kernel;
+		
+		// convert scientific notation to plain decimal
+		// e.g. 8.571428571428571E-1 to 0.8571428571428571
+		if (strToString.indexOf('E') > -1) {
+			strToString = new BigDecimal(strToString).toPlainString();
+			
+			// remove trailing 0s
+			int pos = strToString.length();
+			while (strToString.charAt(--pos) == '0');
+			if (pos < strToString.length() -1)
+				strToString = strToString.substring(0, pos+1);
+		}
+		
 		this.strToString = strToString;
 	}
 	
