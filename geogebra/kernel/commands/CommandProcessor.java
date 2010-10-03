@@ -821,6 +821,11 @@ class CmdLength extends CommandProcessor {
 				{ kernel.Length(c.getLabel(), (GeoText) arg[0])};
 				return ret;
 			}
+			else if (arg[0].isGeoLocus()) {
+				GeoElement[] ret =
+				{ kernel.Length(c.getLabel(), (GeoLocus) arg[0])};
+				return ret;
+			}
 			else {
 				throw argErr(app, c.getName(), arg[0]);
 			}

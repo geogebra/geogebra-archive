@@ -4256,6 +4256,14 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Length[locus]
+	 */
+	final public GeoNumeric Length(String label, GeoLocus locus) {
+		AlgoLengthLocus algo = new AlgoLengthLocus(cons, label, locus);
+		return algo.getLength();
+	}
+	
+	/** 
 	 * Element[text, number]
 	 */
 	final public GeoElement Element(String label, GeoText text, NumberValue n) {
