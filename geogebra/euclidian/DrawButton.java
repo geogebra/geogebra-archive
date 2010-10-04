@@ -171,7 +171,8 @@ public final class DrawButton extends Drawable {
 		button.setOpaque(true);		
 		button.setFont(view.fontPoint);
 		button.setForeground(geo.getObjectColor());
-		button.setBackground(view.getBackground());
+		Color bgCol = geo.getBackgroundColor();
+		button.setBackground(bgCol != null ? bgCol : view.getBackground());
 		
 		// set checkbox state		
 		//jButton.removeItemListener(bl);

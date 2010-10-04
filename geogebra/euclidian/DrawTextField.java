@@ -17,6 +17,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.arithmetic.ExpressionNode;
 
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -251,6 +252,8 @@ public final class DrawTextField extends Drawable {
 		label.setFont(view.fontPoint);
 		textField.setForeground(geo.getObjectColor());
 		label.setForeground(geo.getObjectColor());
+		Color bgCol = geo.getBackgroundColor();
+		textField.setBackground(bgCol != null ? bgCol : view.getBackground());
 		
 		textField.setFocusable(true);
 		textField.setEditable(true);
