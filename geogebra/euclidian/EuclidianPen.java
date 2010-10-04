@@ -162,6 +162,9 @@ public class EuclidianPen {
 		penOffsetX = 0;
 		penOffsetY = 0;
 		penUsingOffsets = false;
+		penImage = null;
+		penGeo = null;
+		lastPenImage = null;
 	}
 	
 	
@@ -186,7 +189,6 @@ public class EuclidianPen {
 		}
 		
 		//Graphics2D g2D = null;
-		
 		
 		
 		if (penGeo != null) {
@@ -264,7 +266,6 @@ public class EuclidianPen {
 		
 		// check if mouse pressed over existing image
 		if (penImage == null && hits != null && hits.size() > 0) {
-			Application.debug("KKKKKKKKKKK");
 			GeoImage hit = (GeoImage)hits.get(0);
 			
 			GeoPoint c1 = hit.getCorner(0);
