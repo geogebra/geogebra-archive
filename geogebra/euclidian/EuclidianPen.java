@@ -192,8 +192,6 @@ public class EuclidianPen {
 		if (penGeo != null) {
 			// image was selected before Pen Tool selected
 			
-			Application.debug("jkhkjhkjH");
-			
 			penUsingOffsets = true;
 			penImage = penGeo.getFillImage();
 			//lastPenImage = penGeo;
