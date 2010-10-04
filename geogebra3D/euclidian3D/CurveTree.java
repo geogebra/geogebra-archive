@@ -109,8 +109,10 @@ public class CurveTree {
 	public void drawStartPointIfVisible(PlotterBrush brush){
 		GgbVector3D pos = start.getPos();
 		if(pos.isDefined() && pos.isFinite() 
-				&& pointVisible(pos))
+				&& pointVisible(pos)){
 			brush.addPointToCurve3D(pos,start.getTangent());
+			brush.setCurvePos(0);
+		}
 	}
 	
 	/**

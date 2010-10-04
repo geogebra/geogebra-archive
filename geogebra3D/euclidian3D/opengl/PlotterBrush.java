@@ -64,6 +64,9 @@ public class PlotterBrush {
 	
 	static final private float TEXTURE_AFFINE_FACTOR = 0.05f; 
 	
+	/** curve position (for texture) */
+	private float curvePos;
+	
 	// arrows	
 	/** no arrows */
 	static final public int ARROW_TYPE_NONE=0;
@@ -358,7 +361,6 @@ public class PlotterBrush {
 	 */
 	private void startDrawingCurve(){
 		firstCurvePoint = true;
-		setTextureType(PlotterBrush.TEXTURE_LINEAR);
 	}
 	
 	/** adds the point with the specified position and tangent to the curve currently being drawn.
@@ -379,7 +381,7 @@ public class PlotterBrush {
 				start = end;
 				end = new PlotterBrushSection(start,position,tangent,thickness);
 	
-				setTextureX(1);
+				addCurvePos(0);
 				join();
 			}
 		}
@@ -407,7 +409,7 @@ public class PlotterBrush {
 				start = end;
 				end = new PlotterBrushSection(start,position,tangent,thickness);
 	
-				setTextureX(1);
+				addCurvePos((float) position.sub(start.getCenter()).norm());
 				join();
 			}
 		}
@@ -434,6 +436,10 @@ public class PlotterBrush {
 	 * @param radius the radius of a sphere bounding the viewing volume
 	 */
 	public void draw(CurveTree tree, double radius){
+		
+		
+
+		setTextureType(PlotterBrush.TEXTURE_LINEAR);
 		
 		tree.setRadius(radius);
 		
@@ -502,7 +508,25 @@ public class PlotterBrush {
 	// TEXTURE
 	////////////////////////////////////
 	
-
+	/**
+	 * sets the position of the point on the curve
+	 * and sets the texture x
+	 * @param pos 
+	 * 
+	 */
+	public void setCurvePos(float pos){
+		curvePos = pos;
+		setTextureX(pos);
+	}
+	
+	/**
+	 * add the distance to the position on the curve
+	 * @param distance 
+	 * 
+	 */
+	public void addCurvePos(float distance){
+		setCurvePos(curvePos+distance);
+	}
 	
 	/** set affine texture zero position
 	 * @param posZero position of the "center" of the cylinder

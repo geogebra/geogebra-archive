@@ -218,7 +218,7 @@ public class Application3D extends Application{
 	public void test(){
 		Application.debug("test3D");
 		
-		//loadXML(new File("geogebra3D/samples/test.ggb"), false);
+		loadXML(new File("geogebra3D/samples/test.ggb"), false);
 		
 		//euclidianView3D.setToFrozen(testSw); testSw=!testSw;
 		
