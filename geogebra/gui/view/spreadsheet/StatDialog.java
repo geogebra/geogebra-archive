@@ -771,7 +771,7 @@ implements ActionListener, View, Printable   {
 		if(this.regressionMode == REG_NONE)
 			icon = null;
 		else
-			icon.createLatexIcon(eqn, this.getFont(), false, Color.black, this.getBackground());
+			icon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, this.getBackground());
 
 		lblRegEquation.setIcon(icon);
 		lblRegEquation.revalidate();
