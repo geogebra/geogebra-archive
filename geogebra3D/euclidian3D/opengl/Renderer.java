@@ -466,13 +466,14 @@ public class Renderer implements GLEventListener {
         gl.glEnable(GL.GL_BLEND);
         drawTransp();
         gl.glDepthMask(true);
-        gl.glDisable(GL.GL_TEXTURE_2D);
+        //gl.glDisable(GL.GL_TEXTURE_2D);
         
 
        
         //drawing not hidden parts
         gl.glEnable(GL.GL_CULL_FACE);
-        gl.glDisable(GL.GL_BLEND);
+        //gl.glDisable(GL.GL_BLEND);
+        //gl.glEnable(GL.GL_TEXTURE_2D);
         drawable3DLists.draw(this);
   
         

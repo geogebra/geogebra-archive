@@ -205,6 +205,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public static final int DEFAULT_ANGLE_SIZE = 30;
 
 	public static final int DEFAULT_LINE_TYPE = LINE_TYPE_FULL;
+	
+	public static final int DEFAULT_LINE_TYPE_HIDDEN = LINE_TYPE_DASHED_LONG;
 
 	public static final float SELECTION_ADD = 2.0f;
 

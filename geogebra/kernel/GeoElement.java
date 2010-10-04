@@ -392,6 +392,7 @@ public abstract class GeoElement
 	// note: line thickness in Drawable is calculated as lineThickness / 2.0f
 	public int lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
 	public int lineType = EuclidianView.DEFAULT_LINE_TYPE;		
+	public int lineTypeHidden = EuclidianView.DEFAULT_LINE_TYPE_HIDDEN;		
 	
 	// decoration types
 	public int decorationType = DECORATION_NONE;	
@@ -3763,6 +3764,9 @@ public abstract class GeoElement
 		sb.append(" type=\"");
 		sb.append(lineType);
 		sb.append("\"");
+		sb.append(" typeHidden=\"");
+		sb.append(lineTypeHidden);
+		sb.append("\"");		
 		sb.append("/>\n");
 	}	
 
@@ -3810,6 +3814,13 @@ public abstract class GeoElement
 	public int getLineType() {
 		return lineType;
 	}
+	
+	/**
+	 * @return the line type for hidden parts
+	 */
+	public int getLineTypeHidden() {
+		return lineTypeHidden;
+	}	
 
 	/**
 	 * @param f
@@ -3823,6 +3834,13 @@ public abstract class GeoElement
 	 */
 	public void setLineType(int i) {
 		lineType = i;
+	}
+	
+	/**
+	 * @param i
+	 */
+	public void setLineTypeHidden(int i) {
+		lineTypeHidden = i;
 	}
 	
 	public void setDecorationType(int type) {

@@ -2443,6 +2443,7 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleLineStyle(LinkedHashMap<String, String> attrs) {
 		try {
 			geo.setLineType(Integer.parseInt((String) attrs.get("type")));			
+			geo.setLineTypeHidden(Integer.parseInt((String) attrs.get("typeHidden")));			
 			geo.setLineThickness(Integer.parseInt((String) attrs.get("thickness")));						
 			return true;
 		} catch (Exception e) {

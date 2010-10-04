@@ -173,31 +173,31 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		
 		// line
 		GeoLine3D line = new GeoLine3D(cons);
-		line.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		//line.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		line.setLocalVariableLabel("Line3D");
 		defaultGeoElements.put(DEFAULT_LINE3D, line);		
 		
 		// segment
 		GeoSegment3D segment = new GeoSegment3D(cons);
-		segment.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		//segment.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		segment.setLocalVariableLabel("Segment3D");
 		defaultGeoElements.put(DEFAULT_SEGMENT3D, segment);		
 
 		// ray
 		GeoRay3D ray = new GeoRay3D(cons);
-		ray.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		//ray.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		ray.setLocalVariableLabel("Ray3D");
 		defaultGeoElements.put(DEFAULT_RAY3D, ray);		
 		
 		// axis
 		GeoAxis3D axis = new GeoAxis3D(cons);
-		axis.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+		//axis.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		axis.setLocalVariableLabel("Axis3D");
 		defaultGeoElements.put(DEFAULT_AXIS3D, axis);		
 		
 		// vector 3D
 		GeoVector3D vector = new GeoVector3D(cons);
-		vector.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		//vector.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		vector.setObjColor(colVector);
 		vector.setLocalVariableLabel("Vector3D");
 		defaultGeoElements.put(DEFAULT_VECTOR3D, vector);		
@@ -208,14 +208,14 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		// conic
 		GeoConic3D conic = new GeoConic3D(cons);	
 		conic.setLocalVariableLabel("Conic3D");
-		conic.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		//conic.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		conic.setObjColor(colConic3D);
 		defaultGeoElements.put(DEFAULT_CONIC3D, conic);
 		
 		// curve
 		GeoCurveCartesian3D curve = new GeoCurveCartesian3D(cons);	
 		curve.setLocalVariableLabel("Curve3D");
-		curve.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		//curve.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		curve.setObjColor(colCurveCartesian3D);
 		defaultGeoElements.put(DEFAULT_CURVECARTESIAN3D, curve);
 		
@@ -227,7 +227,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		plane.setObjColor(colPlane3D);
 		plane.setAlphaValue(DEFAULT_PLANE3D_ALPHA);
 		plane.setLineThickness(DEFAULT_PLANE3D_GRID_THICKNESS);
-		plane.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+		//plane.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		defaultGeoElements.put(DEFAULT_PLANE3D, plane);
 		
 		// polygon
@@ -235,7 +235,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		polygon.setLocalVariableLabel("Polygon3D");
 		polygon.setObjColor(colPolygon3D);
 		polygon.setAlphaValue(DEFAULT_POLYGON3D_ALPHA);
-		polygon.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
+		//polygon.setLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
 		polygon.setLayer(2);
 		defaultGeoElements.put(DEFAULT_POLYGON3D, polygon);
 
