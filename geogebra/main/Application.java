@@ -2490,9 +2490,15 @@ public class Application implements KeyEventDispatcher {
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
 			if (selectedGeos.size() > 0) {				
-				getEuclidianView().getStyleBar().getStyle().setAllProperties();				
+				getEuclidianView().getStyleBar().applyVisualStyle();				
 			}
 		}
+		
+		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {			
+				getEuclidianView().getStyleBar().updateSelection();				
+		}
+		
+		
 	}
 
 	public void updateMenuWindow() {
@@ -4020,8 +4026,8 @@ public class Application implements KeyEventDispatcher {
 			EuclidianView.setAntialiasing(g);
 			g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);	
 
-			g.setColor(Color.BLACK);
-			g.setStroke(EuclidianView.getStroke(4,  EuclidianView.LINE_TYPE_FULL ));
+			g.setColor(Color.DARK_GRAY);
+			g.setStroke(EuclidianView.getStroke(2,  EuclidianView.LINE_TYPE_FULL ));
 			
 			g.drawOval(10 * size / 48, 10 * size / 48, 30 * size / 48, 30 * size / 48);
 			

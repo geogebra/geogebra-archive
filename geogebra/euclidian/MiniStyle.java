@@ -25,6 +25,7 @@ public class MiniStyle{
 	public int lineStyle;
 	public int lineSize;
 	public int pointSize;
+	public int pointStyle;
 	public Color color;
 	public int colorIndex;
 	public float alpha;
@@ -91,7 +92,7 @@ public class MiniStyle{
 	
 	}
 	
-	public void applyPointSize() {
+	public void applyPointStyle() {
 		
 		ArrayList geos = app.getSelectedGeos();
 
@@ -100,6 +101,7 @@ public class MiniStyle{
 
 			if (geo instanceof PointProperties) {
 				((PointProperties)geo).setPointSize(pointSize);
+				((PointProperties)geo).setPointStyle(pointStyle);
 				geo.updateRepaint();
 				}
 		}

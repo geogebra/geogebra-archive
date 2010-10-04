@@ -39,8 +39,53 @@ public class EuclidianPen {
 	private boolean erasing = false;
 	
 	private MiniStyle style;
-	private int penSize, eraserSize = 16, penLineStyle;
+	private int penSize; 
+	public int getPenSize() {
+		return penSize;
+	}
+
+
+
+
+	public void setPenSize(int penSize) {
+		this.penSize = penSize;
+	}
+
+
+
+
+	public int getPenLineStyle() {
+		return penLineStyle;
+	}
+
+
+
+
+	public void setPenLineStyle(int penLineStyle) {
+		this.penLineStyle = penLineStyle;
+	}
+
+
+
+
+	public Color getPenColor() {
+		return penColor;
+	}
+
+
+
+
+	public void setPenColor(Color penColor) {
+		this.penColor = penColor;
+	}
+
+
+
+	private int eraserSize;
+	private int penLineStyle;
 	private Color penColor;
+	
+	
 	
 	
 	/************************************************
@@ -55,14 +100,23 @@ public class EuclidianPen {
 		//eraserSize = style.pointSize;
 		penColor = style.color;
 		penLineStyle = style.lineStyle;
+		setDefaults();
 	}
 
 	
-
+	
+	
 	//===========================================
 	//       Getters/Setters
 	//===========================================
 
+	public void setDefaults(){
+		  penSize = 3; 
+		  eraserSize = 16;
+		  penLineStyle = EuclidianView.LINE_TYPE_FULL;
+		  penColor = Color.black;	
+	}
+	
 	public MiniStyle getStyle() {
 		return style;
 	}

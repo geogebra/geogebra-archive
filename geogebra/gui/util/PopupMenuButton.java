@@ -1,19 +1,16 @@
 package geogebra.gui.util;
 
 
-import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.Method;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -46,19 +43,38 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	private JSlider mySlider;
 	private GeoGebraIcon selectedIcon;
 	
+	private Color fgColor;
+	private int fontStyle = 0;
+	
+	
+	public void setFontStyle(int fontStyle) {
+		this.fontStyle = fontStyle;
+	}
+
+	public void setFgColor(Color fgColor) {
+		this.fgColor = fgColor;
+		if(myTable != null)
+			myTable.setFgColor(fgColor);
+		updateGUI();
+	}
+
 	private SelectionTable myTable;
-	private Dimension cellSize;
+	public SelectionTable getMyTable() {
+		return myTable;
+	}
+
+	private Dimension iconSize;
 	
 	private boolean hasTable, hasSlider;
 	
 	// flag to determine if the popup should persist after a mouse click
-	private boolean keepVisible = false;
+	private boolean keepVisible = true;
 	
-
+	private boolean isIniting = true;
 	
 
 	/** Button constructor */
-	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension cellSize, Integer mode){
+	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension iconSize, Integer mode){
 		super(); 
 		this.app = app;
 
@@ -66,15 +82,18 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		
 		// create the popup
 		myPopup = new JPopupMenu();
-		myPopup.setBackground(this.getBackground());
+		//myPopup.setBackground(this.getBackground());
 		myPopup.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
 
 
 		this.mode = mode;
-		this.cellSize = cellSize;
-
-		// create slider
-		if(mode == GeoGebraIcon.MODE_SLIDER_LINE || mode == GeoGebraIcon.MODE_SLIDER_POINT ){
+		this.iconSize = iconSize;
+		// place text to the left of drop down icon
+		this.setHorizontalTextPosition(JButton.LEFT); 
+		this.setHorizontalAlignment(JButton.LEFT);
+		
+		// create slider only
+		if(mode == SelectionTable.MODE_SLIDER_LINE ){
 			hasTable = false;
 			getMySlider();
 			
@@ -86,7 +105,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			this.columns = columns;
 			this.data = data;
 
-			myTable = new SelectionTable(app,data,rows,columns,cellSize,mode);
+			myTable = new SelectionTable(app,data,rows,columns,iconSize,mode);
 			setSelectedIndex(0);	
 
 			// add a mouse listener to the table that handles table selection
@@ -117,10 +136,13 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			}
 		});
 				
-		updateGUI();				
+		isIniting = false;
+		//updateGUI();				
 	}
 	
-	
+	 public void update(Object[] geos) {
+		 
+	 }
 	
 	//=============================================
 	//         GUI
@@ -128,20 +150,38 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 
 	
 	private void updateGUI(){
-		
+		if(isIniting) return;
 		if(hasTable){
-			myTable.repaint();
-			myTable.updateIcon(selectedIcon, data[getSelectedIndex()]);
+
+			switch (mode){
+
+			case SelectionTable.MODE_LINESTYLE:
+				selectedIcon.createLineStyleIcon( (Integer)data[getSelectedIndex()],  getSliderValue(),  iconSize,  fgColor,  null);
+				break;
+
+			case SelectionTable.MODE_POINTSTYLE:
+				selectedIcon.createPointStyleIcon( (Integer)data[getSelectedIndex()],  getSliderValue(),  iconSize,  fgColor,  null);
+				break;
+				
+			case SelectionTable.MODE_COLOR_SWATCH_TEXT:
+				selectedIcon.createTextSymbolIcon("A", app.getPlainFont(), iconSize,  fgColor,  null);
+				break;
+
+			case SelectionTable.MODE_TEXT:
+				
+				setText((String)data[getSelectedIndex()]);
+				break;
+				
+			default:
+				myTable.updateIcon(selectedIcon, data[getSelectedIndex()]);
+				myTable.repaint();
+				setIcon(selectedIcon);
+
+			}
 			setIcon(selectedIcon);
+			repaint();
 		}
 		
-		if(mode == GeoGebraIcon.MODE_SLIDER_LINE  || mode == GeoGebraIcon.MODE_SLIDER_POINT ){
-			Object args[] = {getSliderValue()};
-			selectedIcon.setImage(app, args, cellSize, mode);
-			setIcon(selectedIcon);
-		}
-		
-		repaint();
 	}
 
 	

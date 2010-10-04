@@ -16,6 +16,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.SpringUtilities;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.virtualkeyboard.MyTextField;
@@ -3988,7 +3989,7 @@ public	class PropertiesPanel extends JPanel {
 			
 			// panel for button to open external file		
 					
-			btnImage = new PopupMenuButton(app, fileNameArray, -1,-1,new Dimension(32,32), GeoGebraIcon.MODE_IMAGE);
+			btnImage = new PopupMenuButton(app, fileNameArray, -1,-1,new Dimension(32,32), SelectionTable.MODE_IMAGE);
 			btnImage.addActionListener(this);			
 			
 			btnOpenFile = new JButton();

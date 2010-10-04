@@ -14,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.DefaultTableModel;
@@ -50,6 +51,38 @@ public class SelectionTable extends JTable{
 	private int mode;
 	private Object iconArgs[];
 
+	private Color fgColor, bgColor;
+	private float alpha;
+	
+	public void setAlpha(float alpha) {
+		this.alpha = alpha;
+	}
+
+
+	public void setFgColor(Color fgColor) {
+		this.fgColor = fgColor;
+		repaint();
+	}
+
+
+
+	public void setBgColor(Color bgColor) {
+		this.bgColor = bgColor;
+	}
+
+
+	public static final int MODE_IMAGE = 0;
+	public static final int MODE_IMAGE_FILE = 1;
+	public static final int MODE_LATEX = 2;
+	public static final int MODE_TEXT = 3;
+	public static final int MODE_COLOR_SWATCH = 4;
+	public static final int MODE_POINTSTYLE = 5;
+	public static final int MODE_LINESTYLE = 6;
+	public static final int MODE_SLIDER_LINE = 7;
+	public static final int MODE_SLIDER_POINT = 8;
+	public static final int MODE_COLOR_SWATCH_TEXT = 9;
+	
+	
 
 	public SelectionTable(Application app, Object[] data, int rows, int columns, Dimension iconSize, int mode){
 		
@@ -88,17 +121,7 @@ public class SelectionTable extends JTable{
 		numColumns = columns;
 		model = new DefaultTableModel(rows, columns);
 		
-		int r=0;
-		int c=0;
-		for(int i=0; i < Math.min(data.length, this.numRows * this.numColumns); i++){
-			model.setValueAt(data[i], r, c);
-			++c;
-			if(c == this.numColumns){
-				c = 0;
-				++r;
-			}
-			
-		}
+		populateModel(data);
 		
 		// add the model to the table
 		this.setModel(model);
@@ -115,8 +138,7 @@ public class SelectionTable extends JTable{
 		this.setAutoResizeMode(AUTO_RESIZE_OFF);
 		this.setAutoCreateColumnsFromModel(false);
 		setShowGrid(false);
-		//this.setIntercellSpacing(new Dimension(1,1));
-		setGridColor(MyTable.TABLE_GRID_COLOR);
+		//setGridColor(MyTable.TABLE_GRID_COLOR);
 		//setBackground(Color.white);
 		//setOpaque(true);
 		this.setTableHeader(null);
@@ -155,6 +177,23 @@ public class SelectionTable extends JTable{
 	}  
 
 
+
+
+	/** loads a one dimensional array of data into the table model*/
+	public void populateModel( Object [] data){
+
+		int r=0;
+		int c=0;
+		for(int i=0; i < Math.min(data.length, this.numRows * this.numColumns); i++){
+			model.setValueAt(data[i], r, c);
+			++c;
+			if(c == this.numColumns){
+				c = 0;
+				++r;
+			}
+		}
+	}
+	
 	
 	 //==============================================
 	 //    Listeners
@@ -192,9 +231,10 @@ public class SelectionTable extends JTable{
 
 	 public void setSelectedIndex(int index){
 
-		 int row = (int) Math.floor(index/data.length);
-		 int column = index % data.length;
+		 int row = (int) Math.floor(index / getColumnCount()) ;
+		 int column = index - (row * getColumnCount());
 		 this.changeSelection(row, column, false, false);
+		// Application.debug("=======SET SELECTED INDEX: " + index + "," + row + ", " + column );
 
 	 }
 
@@ -214,17 +254,30 @@ public class SelectionTable extends JTable{
 	
 
 	public void updateIcon(GeoGebraIcon icon, Object value){
+		
+		switch (mode){
 
-		iconArgs[0] = value;
+		case MODE_IMAGE:
+			icon.createFileImageIcon( app, (String)value, alpha, iconSize,  fgColor,  bgColor);
+			break;
 
-		if(mode == GeoGebraIcon.MODE_COLOR_SWATCH){
-			iconArgs[1] = getSliderValue()/100.0f;	
-		}else{
-			iconArgs[1] = getSliderValue();		
+		case MODE_LINESTYLE:
+			icon.createLineStyleIcon( (Integer)value,  2,  iconSize,  Color.BLACK,  null);
+			break;
+
+		case MODE_COLOR_SWATCH:
+		case MODE_COLOR_SWATCH_TEXT:
+			alpha = getSliderValue()/100.0f;
+			fgColor = (Color)value;
+			icon.createColorSwatchIcon( alpha,  iconSize, fgColor , null);
+			break;
+
+		case MODE_POINTSTYLE:
+			icon.createPointStyleIcon( (Integer)value,  4,  iconSize,  Color.BLACK,  null);
+			break;
+			
 		}
-
-		icon.setImage(app, iconArgs, iconSize, mode);
-
+			
 	}
 	
 	
@@ -237,7 +290,9 @@ public class SelectionTable extends JTable{
 
 		private Border normalBorder, selectedBorder, rollOverBorder;
 		private GeoGebraIcon icon;
-		private Object[] iconArgs;
+		//TODO --- selection color should be centralized, not from spreadsheet
+		// also maybe try to simulate combobox gui with checkmark for selection?
+		private Color selectionColor =  MyTable.SELECTED_BACKGROUND_COLOR ;
 		
 		public MyCellRenderer() {
 			setOpaque(true);
@@ -247,10 +302,11 @@ public class SelectionTable extends JTable{
 			normalBorder = BorderFactory.createEmptyBorder();
 			//normalBorder = BorderFactory.createEtchedBorder();
 			//normalBorder = BorderFactory.createLineBorder(Color.BLACK);
-			selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 2);
+			selectedBorder = BorderFactory.createLineBorder(Color.DARK_GRAY, 2);		
 			rollOverBorder = BorderFactory.createLineBorder(Color.DARK_GRAY, 2);
+			
 			icon = new GeoGebraIcon();
-			iconArgs = new Object[3];
+			setFont(app.getPlainFont());
 		}
 		
 		
@@ -258,35 +314,53 @@ public class SelectionTable extends JTable{
 														boolean isSelected,boolean hasFocus, int row,int column) 
 	    {
 			
-			this.setAlignmentX(CENTER_ALIGNMENT);
-			this.setAlignmentY(CENTER_ALIGNMENT);
 			
-	    	// hide file name and draw icon from this image file name
-			setText("");
-			
-			if(value == null){
-				
+			setAlignmentX(CENTER_ALIGNMENT);
+			setAlignmentY(CENTER_ALIGNMENT);
+
+			// hide file name and draw icon from this image file name
+			if(mode == MODE_TEXT){
+				this.setHorizontalAlignment(SwingConstants.LEFT);
+				this.setVerticalAlignment(SwingConstants.CENTER);
 				setIcon(null);
+				setText((String)value);
 				
-			}else{
 				
-				updateIcon(icon,value);
-				setIcon(icon);
+				if (isSelected) {
+					setBackground(selectionColor);
+				} 
+				else if(row == rollOverRow && column == rollOverColumn) {
+					setBackground(selectionColor);
+				}
+				else{
+					setBackground(table.getBackground());
+				}
+				
+				
+				
+			}else{		
+				setText("");
+				if(value == null){				
+					setIcon(null);
+				}else{
+					updateIcon(icon,value);
+					setIcon(icon);
+				}
 
+
+				// set border --- should this be in prepareRenderer??
+				setBackground(table.getBackground());
+				if (isSelected) {
+					setBorder(selectedBorder);
+				} 
+				else if(row == rollOverRow && column == rollOverColumn) {
+					setBorder(rollOverBorder);
+				}
+				else{
+					setBorder(normalBorder);
+				}
 			}
-
-	    	// set border --- should this be in prepareRenderer??
-	    	setBackground(table.getBackground());
-	    	if (isSelected) {
-	    		setBorder(selectedBorder);
-	    	} 
-	    	else if(row == rollOverRow && column == rollOverColumn) {
-	    		setBorder(rollOverBorder);
-	    	}
-	    	else{
-	    		setBorder(normalBorder);
-	    	}
-	        
+			
 	        return this;
 	    }
 	}
