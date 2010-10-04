@@ -787,15 +787,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if(panel != null) {
 			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(panel);
 		}
+		Hits hits;
+		setMouseLocation(e);
 		
 		if (mode == EuclidianView.MODE_PEN) {
-			pen.handleMousePressedForPenMode(e);
+			view.setHits(mouseLoc);
+			hits = view.getHits();
+			hits.removeAllButImages();
+			pen.handleMousePressedForPenMode(e, hits);
 			return;
 		}
 
 		//GeoElement geo;
-		Hits hits;
-		setMouseLocation(e);
 		transformCoords();	
 
 		moveModeSelectionHandled = false;
@@ -827,7 +830,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 			view.setHits(mouseLoc);
-			hits = view.getHits();switchModeForRemovePolygons(hits);
+			hits = view.getHits();
+			switchModeForRemovePolygons(hits);
 			if (!hits.isEmpty()) // bugfix 2008-02-19 removed this:&& ((GeoElement) hits.get(0)).isGeoPoint())
 			{
 				DONT_CLEAR_SELECTION=true;
@@ -1402,7 +1406,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (textfieldHasFocus) return;
 
 		if (mode == EuclidianView.MODE_PEN) {
-			pen.handleMousePressedForPenMode(e);
+			pen.handleMousePressedForPenMode(e, null);
 			return;
 		}
 

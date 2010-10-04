@@ -159,24 +159,25 @@ public class Hits extends ArrayList {
 	 */
 	final public void removePolygons(){
 		
-		//Application.printStacktrace("");
 		
 		if (size() - polyCount > 0) {
-			/* mathieu 2010-04-03 : fixing index bug 
-			for (int i = 0; i < size(); ++i) {
+			
+			for (int i = size() - 1 ; i >= 0 ; i-- ) {
 				GeoElement geo = (GeoElement) get(i);
 				if (geo.isGeoPolygon())
 					remove(i);
-			}
-			*/
-			for (int i = 0; i < size(); ) {
-				GeoElement geo = (GeoElement) get(i);
-				if (geo.isGeoPolygon())
-					remove(i);
-				else
-					i++;
 			}
 		}
+	}
+	
+	final public void removeAllButImages(){
+
+		for (int i = size() - 1 ; i >= 0 ; i-- ) {
+				GeoElement geo = (GeoElement) get(i);
+				if (!geo.isGeoImage())
+					remove(i);
+			}
+
 	}
 	
 	

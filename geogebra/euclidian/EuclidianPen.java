@@ -172,7 +172,7 @@ public class EuclidianPen {
 	//===========================================
 
 	
-	public void handleMousePressedForPenMode(MouseEvent e) {
+	public void handleMousePressedForPenMode(MouseEvent e, Hits hits) {
 
 		Rectangle rect = view.getSelectionRectangle();
 
@@ -260,6 +260,43 @@ public class EuclidianPen {
 			
 			penWritingToExistingImage = false;
 
+		}
+		
+		// check if mouse pressed over existing image
+		if (penImage == null && hits != null && hits.size() > 0) {
+			Application.debug("KKKKKKKKKKK");
+			GeoImage hit = (GeoImage)hits.get(0);
+			
+			GeoPoint c1 = hit.getCorner(0);
+			GeoPoint c2 = hit.getCorner(1);
+
+			int width = hit.getFillImage().getWidth();
+			
+			int x1 = view.toScreenCoordX(c1.getInhomX());
+			int y1 = view.toScreenCoordY(c1.getInhomY());
+			int x2 = c2 == null ? x1 + width : view.toScreenCoordX(c2.getInhomX());
+			int y2 = c2 == null ? y1 : view.toScreenCoordY(c2.getInhomY());
+			
+			if ( y1 == y2 && x1 + width == x2) { // check image isn't rotated / scaled
+				penGeo = hit;
+				penUsingOffsets = true;
+				penImage = penGeo.getFillImage();
+				//lastPenImage = penGeo;
+				
+				penWritingToExistingImage = true;
+				
+				if (penGeo.isAbsoluteScreenLocActive()) {
+					penOffsetX = penGeo.getAbsoluteScreenLocX();
+					penOffsetY = penGeo.getAbsoluteScreenLocY();
+				} else {
+					GeoPoint startPoint = penGeo.getStartPoint();
+					penOffsetX = view.toScreenCoordX(startPoint.inhomX);
+					penOffsetY = view.toScreenCoordY(startPoint.inhomY) - penImage.getHeight();
+					
+				}
+				
+				app.addSelectedGeo(penGeo);
+			}
 		}
 
 		if (penImage == null) {
