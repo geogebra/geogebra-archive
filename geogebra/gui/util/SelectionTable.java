@@ -81,6 +81,7 @@ public class SelectionTable extends JTable{
 	public static final int MODE_SLIDER_LINE = 7;
 	public static final int MODE_SLIDER_POINT = 8;
 	public static final int MODE_COLOR_SWATCH_TEXT = 9;
+	public static final int MODE_ICON = 10;
 	
 	
 
@@ -261,6 +262,11 @@ public class SelectionTable extends JTable{
 			icon.createFileImageIcon( app, (String)value, alpha, iconSize,  fgColor,  bgColor);
 			break;
 
+		case MODE_ICON:
+			icon.setImage(app.getImageIcon((String)value).getImage());
+			break;
+			
+			
 		case MODE_LINESTYLE:
 			icon.createLineStyleIcon( (Integer)value,  2,  iconSize,  Color.BLACK,  null);
 			break;

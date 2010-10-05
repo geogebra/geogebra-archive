@@ -30,7 +30,7 @@ import javax.swing.JToolBar;
  */
 public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
-	private PopupMenuButton btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize;
+	private PopupMenuButton btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnMode;
 	private PopupMenuButton[] popupBtnList;
 			
 	
@@ -123,6 +123,24 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	private void initGUI() {
 	
+		
+		//========================================
+		// mode button
+		
+		String[] modeArray = new String[]{
+				"cursor_arrow.png",
+				"applications-graphics.png",
+				"delete_small.gif",
+				"mode_point_16.gif",
+				"mode_copyvisualStyle_16.png"
+		};
+		btnMode = new PopupMenuButton(ev.getApplication(), modeArray, -1,1,
+				new Dimension(20,maxIconHeight), SelectionTable.MODE_ICON);
+		btnMode.addActionListener(this);
+		btnMode.setKeepVisible(false);
+		add(btnMode);
+		
+		
 		//========================================
 		// pen button
 		btnPen = new MyToggleButton(ev.getApplication().getImageIcon("applications-graphics.png")){
@@ -131,7 +149,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			      }
 			};
 		btnPen.addActionListener(this);
-		add(btnPen);
+		//add(btnPen);
 
 		
 		//========================================
@@ -142,19 +160,19 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			      }
 			};
 		btnDelete.addActionListener(this);
-		add(btnDelete);
+		//add(btnDelete);
 		
 		
 		
 		//========================================
 		// hide/show labels button
-		btnLabel = new MyToggleButton(ev.getApplication().getImageIcon("mode_point_16.gif")){
+		btnLabel = new MyToggleButton(ev.getApplication().getImageIcon("mode_copyvisualStyle_16.png")){
 		      public void update(Object[] geos) {
 					this.setVisible((geos.length == 0 && mode == EuclidianView.MODE_MOVE) || mode == EuclidianView.MODE_SHOW_HIDE_LABEL);	  
 			      }
 			};
 		btnLabel.addActionListener(this);
-		add(btnLabel);
+		//add(btnLabel);
 		
 		
 		//========================================
@@ -166,7 +184,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		      }
 		};
 		btnCopyVisualStyle.addActionListener(this);
-		add(this.btnCopyVisualStyle);
+		//add(this.btnCopyVisualStyle);
+		
 		
 		
 		this.addSeparator();
@@ -510,6 +529,29 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private void updateGUI(){
 
 		if(isIniting) return;
+
+		btnMode.removeActionListener(this);
+		switch (mode){
+		case EuclidianView.MODE_MOVE:
+			btnMode.setSelectedIndex(0);
+			break;
+		case EuclidianView.MODE_PEN:
+			btnMode.setSelectedIndex(1);
+			break;
+		case EuclidianView.MODE_DELETE:
+			btnMode.setSelectedIndex(2);
+			break;
+		case EuclidianView.MODE_SHOW_HIDE_LABEL:
+			btnMode.setSelectedIndex(3);
+			break;
+		case EuclidianView.MODE_VISUAL_STYLE:
+			btnMode.setSelectedIndex(4);
+			break;
+		}
+		btnMode.addActionListener(this);
+
+
+		
 		
 		btnPen.removeActionListener(this);
 		btnPen.setSelected(mode == EuclidianView.MODE_PEN);
@@ -566,6 +608,27 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
+		
+		if (source.equals(btnMode)) {
+			switch (btnMode.getSelectedIndex()){
+			case 0:
+				ev.getApplication().setMoveMode();
+				break;
+			case 1:
+				ev.getApplication().setMode(EuclidianView.MODE_PEN);
+				break;
+			case 2:
+				ev.getApplication().setMode(EuclidianView.MODE_DELETE);	
+				break;
+			case 3:
+				ev.getApplication().setMode(EuclidianView.MODE_SHOW_HIDE_LABEL);
+				break;
+			case 4:
+				ev.getApplication().setMode(EuclidianView.MODE_VISUAL_STYLE);
+			}
+		}
+
+		
 		
 		if (source.equals(btnCopyVisualStyle)) {		
 			if(btnCopyVisualStyle.isSelected())
