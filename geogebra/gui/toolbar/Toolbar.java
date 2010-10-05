@@ -503,7 +503,6 @@ public class Toolbar extends JToolBar {
         sb.append(EuclidianView.MODE_BUTTON_ACTION);
         sb.append(" ");
         sb.append(EuclidianView.MODE_TEXTFIELD_ACTION);
-        sb.append(" , ");  
 
         // properties
         sb.append(" || ");
