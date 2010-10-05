@@ -6515,13 +6515,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// eg multiple fixed images from Pen Tool
 			if (!includeFixed && allFixed) return null; 
 			
-			// no points selected, multiple objects selected
+			/* no points selected, multiple objects selected
 			// popup a menu to choose from
 			ToolTipManager ttm = ToolTipManager.sharedInstance();		
 			ttm.setEnabled(false);			
 			ListDialog dialog = new ListDialog((JPanel) view, geos, null);
 			if (app.areChooserPopupsEnabled()) ret = dialog.showDialog((JPanel) view, mouseLoc);			
-			ttm.setEnabled(true);				
+			ttm.setEnabled(true);			*/
+			
+			// popup removed, just return something at this stage
+			ret = geos.get(0);
 		}
 		return ret;	
 
