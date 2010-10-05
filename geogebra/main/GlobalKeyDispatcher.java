@@ -476,14 +476,14 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		switch (keyCode) {
 		
 		case KeyEvent.VK_CONTEXT_MENU:
-			if (geos.size() == 1) {
+			//if (geos.size() == 1) {
 				Component comp = event.getComponent();
 				Point p = MouseInfo.getPointerInfo().getLocation();
 				p.translate(-comp.getLocationOnScreen().x, -comp.getLocationOnScreen().y);
-				app.getGuiManager().togglePopupMenu(geos.get(0), comp, p);
-			} else {
-				app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
-			}
+				app.getGuiManager().togglePopupMenu(geos, comp, p);
+			//} else {
+			//	app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
+			//}
 			break;
 		case KeyEvent.VK_PAGE_UP:
 			Iterator<GeoElement> it = geos.iterator();

@@ -1835,14 +1835,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				hits = view.getHits().getTopHits();
 				if (hits.isEmpty()) {
 					// no hits
-					if (app.selectedGeosSize() == 1) {
-						GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
-						app.getGuiManager().showPopupMenu(selGeo, (JPanel) view, mouseLoc);
+					if (app.selectedGeosSize() > 0) {
+						//GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
+						app.getGuiManager().showPopupMenu(app.getSelectedGeos(), (JPanel) view, mouseLoc);
 					}
-					else if (app.selectedGeosSize() > 1) {
-						// there are selected geos: show them
-						app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
-					}
+					//else if (app.selectedGeosSize() > 1) {
+					//	// there are selected geos: show them
+					//	app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
+					//}
 					else {
 						// there are no selected geos: show drawing pad popup menu
 						//app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
@@ -1854,19 +1854,22 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						// selected geos: add first hit to selection and show properties
 						app.addSelectedGeo((GeoElement) hits.get(0));
 
-						if (app.selectedGeosSize() == 1) {
-							GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
-							app.getGuiManager().showPopupMenu(selGeo, (JPanel) view, mouseLoc);
-						}
-						else  { // more than 1 selected					
-							app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
-						}
+						//if (app.selectedGeosSize() == 1) {
+							//GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
+							app.getGuiManager().showPopupMenu(app.getSelectedGeos(), (JPanel) view, mouseLoc);
+						//}
+						//else  { // more than 1 selected					
+						//	app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
+						//}
 					}
 					else {
 						// no selected geos: choose geo and show popup menu
 						geo = chooseGeo(hits, false);
-						if (geo!=null)
-							app.getGuiManager().showPopupMenu(geo,(JPanel) view, mouseLoc);
+						if (geo!=null) {
+							ArrayList<GeoElement> geos = new ArrayList();
+							geos.add(geo);
+							app.getGuiManager().showPopupMenu(geos,(JPanel) view, mouseLoc);
+						}
 						else
 							//for 3D : if the geo hitted is xOyPlane, then chooseGeo return null
 							//app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);

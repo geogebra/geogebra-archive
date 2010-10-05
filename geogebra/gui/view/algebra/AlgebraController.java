@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.tree.TreePath;
@@ -197,13 +198,15 @@ public class AlgebraController
 					AlgebraContextMenu contextMenu = new AlgebraContextMenu(app);
 					contextMenu.show(view, e.getPoint().x, e.getPoint().y);
 				} else {
-					app.getGuiManager().showPopupMenu(geo, view, e.getPoint());
+                    ArrayList<GeoElement> temp = new ArrayList<GeoElement>();
+                    temp.add(geo);
+					app.getGuiManager().showPopupMenu(temp, view, e.getPoint());
 				}			
 			} 
-			// multiple selection: properties dialog
+			// multiple selection: popup menu (several geos)
 			else {
 				if(geo != null) {
-					app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
+					app.getGuiManager().showPopupMenu(app.getSelectedGeos(), view, e.getPoint());
 				}
 			}	
 		}

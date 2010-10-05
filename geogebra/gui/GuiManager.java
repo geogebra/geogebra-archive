@@ -852,11 +852,11 @@ public class GuiManager {
 	 * Displays the popup menu for geo at the position p in the coordinate space
 	 * of the component invoker
 	 */
-	public void showPopupMenu(GeoElement geo, Component invoker, Point p) {
-		if (geo == null || !app.letShowPopupMenu())
+	public void showPopupMenu(ArrayList<GeoElement> geos, Component invoker, Point p) {
+		if (geos == null || !app.letShowPopupMenu())
 			return;
 		
-		if (app.getKernel().isAxis(geo)) {
+		if (app.getKernel().isAxis(geos.get(0))) {
 			showDrawingPadPopup(invoker, p);
 		} else {
 			// clear highlighting and selections in views
@@ -866,7 +866,7 @@ public class GuiManager {
 			screenPos.translate(p.x, p.y);
 	
 			
-			popupMenu = new ContextMenuGeoElement(app, geo,
+			popupMenu = new ContextMenuGeoElement(app, geos,
 					screenPos);
 			popupMenu.show(invoker, p.x, p.y);
 		}
@@ -877,9 +877,9 @@ public class GuiManager {
 	 * Toggles the popup menu for geo at the position p in the coordinate space
 	 * of the component invoker
 	 */
-	public void togglePopupMenu(GeoElement geo, Component invoker, Point p) {
+	public void togglePopupMenu(ArrayList<GeoElement> geos, Component invoker, Point p) {
 		if (popupMenu == null || !popupMenu.isVisible()) {
-			showPopupMenu(geo, invoker, p);
+			showPopupMenu(geos, invoker, p);
 			return;
 		}
 		
@@ -908,6 +908,7 @@ public class GuiManager {
 	 * Displays the porperties dialog for geos
 	 */
 	public void showPropertiesDialog(ArrayList geos) {
+		Application.printStacktrace("");
 		if (!app.letShowPropertiesDialog())
 			return;
 		

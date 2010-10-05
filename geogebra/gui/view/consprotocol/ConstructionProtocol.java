@@ -527,7 +527,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
                 // right click
                 if (Application.isRightClick(e)) {
                     GeoElement geo = data.getGeoElement(row);
-                    app.getGuiManager().showPopupMenu(geo, table, origin);
+                    ArrayList<GeoElement> temp = new ArrayList<GeoElement>();
+                    temp.add(geo);
+                    app.getGuiManager().showPopupMenu(temp, table, origin);
                 } else { // left click     
                 	
                 	if (e.getClickCount() == 1) {

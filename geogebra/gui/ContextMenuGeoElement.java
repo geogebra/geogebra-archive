@@ -60,6 +60,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	final static Color bgColor = Color.white;
 	final static Color fgColor = Color.black;
 
+	private ArrayList<GeoElement> geos;
 	private GeoElement geo;
 	private GeoPoint point;
 	private GeoLine line;
@@ -75,14 +76,21 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	}
 
 	/** Creates new MyPopupMenu for GeoElement*/
-	public ContextMenuGeoElement(Application app, GeoElement geo, Point location) {
+	public ContextMenuGeoElement(Application app, ArrayList<GeoElement> geos, Point location) {
 		this(app);
-		this.geo = geo;
+		this.geos = geos;
+		geo = geos.get(0);
 		//this.location = location;                               
 
-		String title = geo.getLongDescriptionHTML(false, true);
+		String title;
+		
+		if (geos.size() == 1) {
+		title = geo.getLongDescriptionHTML(false, true);
 		if (title.length() > 80)
 			title = geo.getNameDescriptionHTML(false, true);
+		} else {
+			title = app.getPlain("Selection");
+		}
 		setTitle(title);        
 
 		if (app.getGuiManager().showView(Application.VIEW_ALGEBRA)) {
@@ -119,8 +127,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					point.setMode(Kernel.COORD_CARTESIAN);
-					point.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo instanceof GeoPoint) {
+							point = (GeoPoint)geo;
+							point.setMode(Kernel.COORD_CARTESIAN);
+							point.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -135,8 +149,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					point.setMode(Kernel.COORD_POLAR);
-					point.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo instanceof GeoPoint) {
+							point = (GeoPoint)geo;
+							point.setMode(Kernel.COORD_POLAR);
+							point.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -184,8 +204,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					line.setMode(GeoLine.EQUATION_IMPLICIT);
-					line.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo instanceof GeoLine && !(geo instanceof GeoSegment)) {
+							line = (GeoLine)geo;
+							line.setMode(GeoLine.EQUATION_IMPLICIT);
+							line.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -204,8 +230,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					line.setMode(GeoLine.EQUATION_EXPLICIT);
-					line.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo instanceof GeoLine && !(geo instanceof GeoSegment)) {
+							line = (GeoLine)geo;
+							line.setMode(GeoLine.EQUATION_EXPLICIT);
+							line.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -220,8 +252,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					line.setMode(GeoLine.PARAMETRIC);
-					line.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo instanceof GeoLine && !(geo instanceof GeoSegment)) {
+							line = (GeoLine)geo;
+							line.setMode(GeoLine.PARAMETRIC);
+							line.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -245,8 +283,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					vector.setMode(Kernel.COORD_CARTESIAN);
-					vector.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo instanceof GeoVector) {
+							vector = (GeoVector)geo;
+							vector.setMode(Kernel.COORD_CARTESIAN);
+							vector.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -261,8 +305,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					vector.setMode(Kernel.COORD_POLAR);
-					vector.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo instanceof GeoVector) {
+							vector = (GeoVector)geo;
+							vector.setMode(Kernel.COORD_POLAR);
+							vector.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -311,8 +361,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					conic.setToImplicit();
-					conic.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo.getClass() == GeoConic.class) {
+							conic = (GeoConic)geo;
+							conic.setToImplicit();
+							conic.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -334,8 +390,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					private static final long serialVersionUID = 1L;
 
 					public void actionPerformed(ActionEvent e) {
-						conic.setToSpecific();
-						conic.updateRepaint();
+						for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+							GeoElement geo = geos.get(i);
+							if (geo.getClass() == GeoConic.class) {
+								conic = (GeoConic)geo;
+								conic.setToSpecific();
+								conic.updateRepaint();
+							}
+						}
 						app.storeUndoInfo();
 					}
 				};
@@ -355,8 +417,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					conic.setToExplicit();
-					conic.updateRepaint();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo.getClass() == GeoConic.class) {
+							conic = (GeoConic)geo;
+							conic.setToExplicit();
+							conic.updateRepaint();
+						}
+					}
 					app.storeUndoInfo();
 				}
 			};
@@ -369,27 +437,33 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 	private void addTextItems() {
 		if (geo.isGeoText()) {
-			final GeoText geoText = (GeoText) geo;
+			//GeoText geoText = (GeoText) geo;
 			// show object
 			JCheckBoxMenuItem cbItem = new JCheckBoxMenuItem(app.getPlain("AbsoluteScreenLocation"));
 			app.setEmptyIcon(cbItem);
-			cbItem.setSelected(geoText.isAbsoluteScreenLocActive());
+			cbItem.setSelected(((GeoText) geo).isAbsoluteScreenLocActive());
 			cbItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					boolean flag = !geoText.isAbsoluteScreenLocActive();
-					if (flag) {
-						// convert real world to screen coords
-						int x = app.getEuclidianView().toScreenCoordX(geoText.getRealWorldLocX());
-						int y = app.getEuclidianView().toScreenCoordY(geoText.getRealWorldLocY());
-						geoText.setAbsoluteScreenLoc(x, y);							
-					} else {
-						// convert screen coords to real world 
-						double x = app.getEuclidianView().toRealWorldCoordX(geoText.getAbsoluteScreenLocX());
-						double y = app.getEuclidianView().toRealWorldCoordY(geoText.getAbsoluteScreenLocY());
-						geoText.setRealWorldLoc(x, y);
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						if (geo.isGeoText()) {
+							GeoText geoText = (GeoText)geo;
+							boolean flag = !geoText.isAbsoluteScreenLocActive();
+							if (flag) {
+								// convert real world to screen coords
+								int x = app.getEuclidianView().toScreenCoordX(geoText.getRealWorldLocX());
+								int y = app.getEuclidianView().toScreenCoordY(geoText.getRealWorldLocY());
+								geoText.setAbsoluteScreenLoc(x, y);							
+							} else {
+								// convert screen coords to real world 
+								double x = app.getEuclidianView().toRealWorldCoordX(geoText.getAbsoluteScreenLocX());
+								double y = app.getEuclidianView().toRealWorldCoordY(geoText.getAbsoluteScreenLocY());
+								geoText.setRealWorldLoc(x, y);
+							}
+							geoText.setAbsoluteScreenLocActive(flag);            		
+							geoText.updateRepaint();
+						}
 					}
-					geoText.setAbsoluteScreenLocActive(flag);            		
-					geoText.updateRepaint();
 					app.storeUndoInfo();
 				}        	
 			});
@@ -459,8 +533,12 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				cbItem.setSelected(geo.isSetEuclidianVisible());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						geo.setEuclidianVisible(!geo.isSetEuclidianVisible());
-						geo.updateRepaint();
+						for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+							GeoElement geo = geos.get(i);
+							geo.setEuclidianVisible(!geo.isSetEuclidianVisible());
+							geo.updateRepaint();
+							
+						}
 						app.storeUndoInfo();
 					}        	
 				});
@@ -474,8 +552,12 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				cbItem.setIcon(app.getImageIcon("mode_showhidelabel_16.gif"));
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						geo.setLabelVisible(!geo.isLabelVisible());
-						geo.updateRepaint();
+						for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+							GeoElement geo = geos.get(i);
+							geo.setLabelVisible(!geo.isLabelVisible());
+							geo.updateRepaint();
+							
+						}
 						app.storeUndoInfo();
 					}        	
 				});
@@ -489,8 +571,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				cbItem.setSelected(((Traceable) geo).getTrace());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						((Traceable) geo).setTrace(!((Traceable) geo).getTrace());
-						geo.updateRepaint();
+						for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+							GeoElement geo = geos.get(i);
+							if (geo.isTraceable()) {
+								((Traceable) geo).setTrace(!((Traceable) geo).getTrace());
+								geo.updateRepaint();
+							}
+							
+						}
 						app.storeUndoInfo();
 					}       	
 				});
@@ -540,8 +628,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
                 cbItem.setSelected(((GeoNumeric) geo).isAnimating() && app.getKernel().getAnimatonManager().isRunning());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-                		geo.setAnimating(!(geo.isAnimating() && app.getKernel().getAnimatonManager().isRunning()));
-						geo.updateRepaint();
+						for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+							GeoElement geo = geos.get(i);
+							if (geo.isAnimatable()) {
+		                		geo.setAnimating(!(geo.isAnimating() && app.getKernel().getAnimatonManager().isRunning()));
+								geo.updateRepaint();
+							}
+							
+						}
 						app.storeUndoInfo();
 						
                         app.getEuclidianView().repaint();
@@ -565,8 +659,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				cbItem.setSelected(geo.isAuxiliaryObject());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						geo.setAuxiliaryObject(!geo.isAuxiliaryObject());
-						geo.updateRepaint();
+						for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+							GeoElement geo = geos.get(i);
+							if (geo.isAlgebraShowable()) {
+								geo.setAuxiliaryObject(!geo.isAuxiliaryObject());
+								geo.updateRepaint();
+							}
+							
+						}
 						app.storeUndoInfo();
 					}        	
 				});
@@ -581,8 +681,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				cbItem.setSelected(geo.isFixed());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						geo.setFixed(!geo.isFixed());
-						geo.updateRepaint();
+						for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+							GeoElement geo = geos.get(i);
+							if (geo.isFixable()) {
+								geo.setFixed(!geo.isFixed());
+								geo.updateRepaint();
+							}
+							
+						}
 						app.storeUndoInfo();
 					}       	
 				});
@@ -600,7 +706,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 
 		// EDIT: copy to input bar       
-		if (app.showAlgebraInput() && !geo.isGeoImage() && geo.isDefined()) {
+		if (geos.size() == 1 && app.showAlgebraInput() && !geo.isGeoImage() && geo.isDefined()) {
 			addAction(new AbstractAction(
 					app.getMenu("CopyToInputBar"),
 					app.getImageIcon("edit.png")) {
@@ -640,7 +746,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 
 		// Rename      
-		if (app.letRename() && geo.isRenameable())  {    
+		if (geos.size() == 1 && app.letRename() && geo.isRenameable())  {    
 			addAction(new AbstractAction(
 					app.getPlain("Rename"),
 					app.getImageIcon("rename.png")) {
@@ -655,7 +761,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 		// EDITING      
 		// EDIT Text in special dialog
-		if (geo.isTextValue() && !geo.isTextCommand() && !geo.isFixed()) {
+		if (geos.size() == 1 && geo.isTextValue() && !geo.isTextCommand() && !geo.isFixed()) {
 			addAction(new AbstractAction(
 					app.getPlain("Edit"),
 					app.getImageIcon("edit.png")) {
@@ -800,7 +906,10 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 				public void actionPerformed(ActionEvent e) {
 					//geo.remove();
-					geo.removeOrSetUndefinedIfHasFixedDescendent();
+					for (int i = geos.size() - 1 ; i >= 0 ; i--) {
+						GeoElement geo = geos.get(i);
+						geo.removeOrSetUndefinedIfHasFixedDescendent();
+					}
 					app.storeUndoInfo();
 				}
 			});       
@@ -818,14 +927,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				private static final long serialVersionUID = 1L;
 
 				public void actionPerformed(ActionEvent e) {
-					tempArrayList.clear();
-					tempArrayList.add(geo);
-					app.getGuiManager().showPropertiesDialog(tempArrayList);
+					//tempArrayList.clear();
+					//tempArrayList.add(geo);
+					app.getGuiManager().showPropertiesDialog(geos);
 				}
 			});
 		}
 	}
-	private ArrayList tempArrayList = new ArrayList();
+	//private ArrayList tempArrayList = new ArrayList();
 
 	void addAction(Action ac) {
 		JMenuItem mi = this.add(ac);
