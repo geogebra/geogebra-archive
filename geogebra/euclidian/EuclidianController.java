@@ -6363,6 +6363,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		case 1:
 			ret =  (GeoElement) geos.get(0);
+			
+			if (!includeFixed && ret.isFixed()) return null;
+			
 			break;
 
 		default:	
