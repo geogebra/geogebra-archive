@@ -10,13 +10,26 @@ import geogebra.kernel.arithmetic.NumberValue;
  */
 public abstract class Transform {
 
+	/**
+	 * Creates label for transformed geo by appending '. No more than
+	 * three 's are appended. For functions we use _1 instead.
+	 * @param geo source geo
+	 * @return label for transformed geo
+	 */
 	public static String transformedGeoLabel(GeoElement geo) {
-			                if (geo.isLabelSet() && !geo.hasIndexLabel() && !geo.label.endsWith("'''")) {
-			                        return geo.label + "'";
+		if(geo.isGeoFunction()){
+			if (geo.isLabelSet() && !geo.hasIndexLabel())
+				return geo.getFreeLabel(geo.getLabel());
+			return null;
+		}
+		
+		if (geo.isLabelSet() && !geo.hasIndexLabel()
+				&& !geo.label.endsWith("'''")) {
+			return geo.getFreeLabel(geo.label + "'");
 		} else {
-			                        return null;
+			return null;
 		}
-		}
+	}
 	/**
 	 * Apply the transform to given element and set label for result 
 	 * 
@@ -99,6 +112,11 @@ public abstract class Transform {
 		return cons.getKernel().Polygon(polyLabel, transformedPoints);
 	}
 
+	/**
+	 * Applies the transform to all points
+	 * @param points
+	 * @return array of transformed points
+	 */
 	public GeoPoint[] transformPoints(GeoPoint[] points) {
 		// dilate all points
 		GeoPoint[] newPoints = new GeoPoint[points.length];
@@ -110,12 +128,22 @@ public abstract class Transform {
 		return newPoints;
 	}
 
+	/**
+	 * Applies the transform to a conic
+	 * @param conic
+	 * @return transformed conic
+	 */
 	public GeoConic getTransformedConic(GeoConic conic) {
 		GeoConic ret = (GeoConic) doTransform(conic);
 		ret.setVisualStyleForTransformations(conic);
 		return ret;
 	}
 
+	/**
+	 * Applies the transform to a line
+	 * @param line
+	 * @return transformed line
+	 */
 	public GeoElement getTransformedLine(GeoLine line) {
 		GeoElement ret = doTransform(line);
 		ret.setVisualStyleForTransformations(line);
@@ -143,21 +171,23 @@ class TransformRotate extends Transform {
 	private NumberValue angle;
 
 	/**
+	 * @param cons 
 	 * @param angle
 	 */
-	public TransformRotate(NumberValue angle) {
+	public TransformRotate(Construction cons,NumberValue angle) {
 		this.angle = angle;
-		this.cons = angle.toGeoElement().getConstruction();
+		this.cons = cons;
 	}
 	
 	/**
+	 * @param cons 
 	 * @param angle
 	 * @param center
 	 */
-	public TransformRotate(NumberValue angle,GeoPoint center) {
+	public TransformRotate(Construction cons,NumberValue angle,GeoPoint center) {
 		this.angle = angle;
 		this.center = center;
-		this.cons = center.getConstruction();
+		this.cons = cons;
 	}
 
 	@Override
@@ -183,11 +213,12 @@ class TransformTranslate extends Transform {
 	private GeoVec3D transVec;
 
 	/**
+	 * @param cons 
 	 * @param transVec
 	 */
-	public TransformTranslate(GeoVec3D transVec) {
+	public TransformTranslate(Construction cons,GeoVec3D transVec) {
 		this.transVec = transVec;
-		this.cons = transVec.getConstruction();
+		this.cons = cons;
 	}
 
 	@Override
@@ -211,21 +242,23 @@ class TransformDilate extends Transform {
 	private GeoPoint center;
 
 	/**
+	 * @param cons 
 	 * @param ratio
 	 */
-	public TransformDilate(NumberValue ratio) {
+	public TransformDilate(Construction cons,NumberValue ratio) {
 		this.ratio = ratio;
-		this.cons = ratio.toGeoElement().getConstruction();
+		this.cons = cons;
 	}
 
 	/**
+	 * @param cons 
 	 * @param ratio
 	 * @param center
 	 */
-	public TransformDilate(NumberValue ratio, GeoPoint center) {
+	public TransformDilate(Construction cons,NumberValue ratio, GeoPoint center) {
 		this.ratio = ratio;
 		this.center = center;
-		this.cons = center.getConstruction();
+		this.cons = cons;
 	}
 
 	@Override
@@ -247,27 +280,30 @@ class TransformMirror extends Transform {
 	private GeoElement mirror;
 
 	/**
+	 * @param cons 
 	 * @param mirrorPoint
 	 */
-	public TransformMirror(GeoPoint mirrorPoint) {
+	public TransformMirror(Construction cons,GeoPoint mirrorPoint) {
 		mirror = mirrorPoint;
-		cons = mirror.getConstruction();
+		this.cons = cons;
 	}
 
 	/**
+	 * @param cons 
 	 * @param mirrorCircle
 	 */
-	public TransformMirror(GeoConic mirrorCircle) {
+	public TransformMirror(Construction cons,GeoConic mirrorCircle) {
 		mirror = mirrorCircle;
-		cons = mirror.getConstruction();
+		this.cons = cons;
 	}
 
 	/**
+	 * @param cons 
 	 * @param mirrorLine
 	 */
-	public TransformMirror(GeoLine mirrorLine) {
+	public TransformMirror(Construction cons,GeoLine mirrorLine) {
 		mirror = mirrorLine;
-		cons = mirror.getConstruction();
+		this.cons = cons;
 	}
 
 	@Override
@@ -303,15 +339,16 @@ class TransformShearOrStretch extends Transform {
 	private NumberValue num;
 
 	/**
+	 * @param cons 
 	 * @param line
 	 * @param num
 	 * @param shear
 	 */
-	public TransformShearOrStretch(GeoVec3D line, GeoNumeric num, boolean shear) {
+	public TransformShearOrStretch(Construction cons,GeoVec3D line, GeoNumeric num, boolean shear) {
 		this.shear = shear;
 		this.line = line;
 		this.num = num;
-		this.cons = line.getConstruction();
+		this.cons = cons;
 	}
 
 	@Override
@@ -335,11 +372,12 @@ class TransformApplyMatrix extends Transform {
 
 	
 	/**
+	 * @param cons 
 	 * @param matrix
 	 */
-	public TransformApplyMatrix(GeoList matrix) {
+	public TransformApplyMatrix(Construction cons,GeoList matrix) {
 		this.matrix = matrix;
-		this.cons = matrix.getConstruction();
+		this.cons = cons;
 	}
 
 	@Override

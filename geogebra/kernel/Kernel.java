@@ -5753,7 +5753,7 @@ public class Kernel {
 	 * translate geoTrans by vector v
 	 */
 	final public GeoElement [] Translate(String label, GeoElement geoTrans, GeoVec3D v) {
-		Transform t = new TransformTranslate(v);
+		Transform t = new TransformTranslate(cons, v);
 		return t.transform(geoTrans, label);				
 	}
 	
@@ -5771,7 +5771,7 @@ public class Kernel {
 	 * rotate geoRot by angle phi around (0,0)
 	 */
 	final public GeoElement [] Rotate(String label, GeoElement geoRot, NumberValue phi) {
-		Transform t = new TransformRotate(phi);
+		Transform t = new TransformRotate(cons, phi);
 		return t.transform(geoRot, label);					
 	}
 
@@ -5780,7 +5780,7 @@ public class Kernel {
 	 * rotate geoRot by angle phi around Q
 	 */
 	final public GeoElement [] Rotate(String label, GeoElement geoRot, NumberValue phi, GeoPoint Q) {
-		Transform t = new TransformRotate(phi,Q);
+		Transform t = new TransformRotate(cons, phi,Q);
 		return t.transform(geoRot, label);		
 	}
 		
@@ -5788,7 +5788,7 @@ public class Kernel {
 	 * dilate geoRot by r from S
 	 */
 	final public GeoElement [] Dilate(String label, GeoElement geoDil, NumberValue r, GeoPoint S) {
-		Transform t = new TransformDilate(r,S);
+		Transform t = new TransformDilate(cons, r,S);
 		return t.transform(geoDil, label);		
 	}
 	
@@ -5796,7 +5796,7 @@ public class Kernel {
 	 * dilate geoRot by r from origin
 	 */
 	final public GeoElement [] Dilate(String label, GeoElement geoDil, NumberValue r) {
-		Transform t = new TransformDilate(r);
+		Transform t = new TransformDilate(cons, r);
 		return t.transform(geoDil, label);
 	}
 
@@ -5804,7 +5804,7 @@ public class Kernel {
 	 * mirror geoMir at point Q
 	 */
 	final public GeoElement [] Mirror(String label, GeoElement geoMir, GeoPoint Q) {	
-		Transform t = new TransformMirror(Q);
+		Transform t = new TransformMirror(cons, Q);
 		return t.transform(geoMir, label);
 	}
 
@@ -5813,7 +5813,7 @@ public class Kernel {
 	 * Michael Borcherds 2008-02-10
 	 */
 	final public GeoElement [] Mirror(String label, GeoElement Q, GeoConic conic) {	
-		Transform t = new TransformMirror(conic);
+		Transform t = new TransformMirror(cons, conic);
 		return t.transform(Q, label);
 	}
 
@@ -5822,7 +5822,7 @@ public class Kernel {
 	 * Michael Borcherds 2010-05-27
 	 */
 	final public GeoElement [] ApplyMatrix(String label, GeoElement Q, GeoList matrix) {	
-		Transform t = new TransformApplyMatrix(matrix);
+		Transform t = new TransformApplyMatrix(cons, matrix);
 		return t.transform(Q, label);
 	}
 	
@@ -5830,7 +5830,7 @@ public class Kernel {
 	 * shear
 	 */
 	final public GeoElement [] Shear(String label, GeoElement Q, GeoVec3D l, GeoNumeric num) {	
-		Transform t = new TransformShearOrStretch(l,num,true);
+		Transform t = new TransformShearOrStretch(cons, l, num, true);
 		return t.transform(Q, label);
 	}
 	/**
@@ -5838,7 +5838,7 @@ public class Kernel {
 	 * Michael Borcherds 2010-05-27
 	 */
 	final public GeoElement [] Stretch(String label, GeoElement Q, GeoVec3D l, GeoNumeric num) {	
-		Transform t = new TransformShearOrStretch(l,num,false);
+		Transform t = new TransformShearOrStretch(cons, l, num, false);
 		return t.transform(Q, label);
 	}
 
@@ -5846,7 +5846,7 @@ public class Kernel {
 	 * mirror geoMir at line g
 	 */
 	final public GeoElement [] Mirror(String label, GeoElement geoMir, GeoLine g) {
-		Transform t = new TransformMirror(g);
+		Transform t = new TransformMirror(cons, g);
 		return t.transform(geoMir, label);
 		
 			
