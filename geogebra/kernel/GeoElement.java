@@ -3982,7 +3982,7 @@ public abstract class GeoElement
 	}
 	
 	final public boolean doHighlighting() {
-		return highlighted || selected;
+		return (highlighted || selected) && !isFixed();
 	}
 	
 	final public boolean isSelected(){
