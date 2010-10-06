@@ -46,7 +46,7 @@ class ToolsMenu extends BaseMenu {
 		add(showManageToolsAction);
 		addSeparator();
 
-		JMenu[] modeMenus = new JMenu[12];
+		JMenu[] modeMenus = new JMenu[13];
 		modeMenus[0] = new JMenu(app.getMenu("MovementTools"));
 		modeMenus[1] = new JMenu(app.getMenu("PointTools"));
 		modeMenus[2] = new JMenu(app.getMenu("BasicLineTools"));
@@ -57,8 +57,9 @@ class ToolsMenu extends BaseMenu {
 		modeMenus[7] = new JMenu(app.getMenu("MeasurementTools"));
 		modeMenus[8] = new JMenu(app.getMenu("TransformationTools"));
 		modeMenus[9] = new JMenu(app.getMenu("SpecialObjectTools"));
-		modeMenus[10] = new JMenu(app.getMenu("GeneralTools"));
-		modeMenus[11] = new JMenu(app.getMenu("CustomTools"));
+		modeMenus[10] = new JMenu(app.getMenu("ActionObjectTools"));
+		modeMenus[11] = new JMenu(app.getMenu("GeneralTools"));
+		modeMenus[12] = new JMenu(app.getMenu("CustomTools"));
 
 		for (int i = 0; i < modeMenus.length; ++i) {
 			modeMenus[i].setIcon(app.getEmptyIcon());
