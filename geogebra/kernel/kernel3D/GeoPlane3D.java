@@ -66,10 +66,13 @@ implements Functional2Var, GeoCoordSys2D{
 	
 	public void setEquation(double a, double b, double c, double d){
 		
-		getCoordSys().makeCoordSys(new double[] {a,b,c,d});
-		getCoordSys().makeOrthoMatrix(true);
+		setEquation(new double[] {a,b,c,d});
 	}
 	
+	private void setEquation(double[] v){
+		getCoordSys().makeCoordSys(v);
+		getCoordSys().makeOrthoMatrix(true);
+	}
 	
 	
 	
@@ -285,7 +288,12 @@ implements Functional2Var, GeoCoordSys2D{
 
 
 	public void set(GeoElement geo) {
-		// TODO Raccord de méthode auto-généré
+		
+		if (geo instanceof GeoPlane3D){
+			GeoPlane3D plane = (GeoPlane3D) geo;
+			setEquation(plane.getCoordSys().getEquationVector().get());
+			
+		}
 		
 	}
 
@@ -381,6 +389,7 @@ implements Functional2Var, GeoCoordSys2D{
 	public GgbCoordSys getCoordSys() {
 		return coordsys;
 	}
+	
 
 	public boolean isDefined() {
 		return coordsys.isDefined();
