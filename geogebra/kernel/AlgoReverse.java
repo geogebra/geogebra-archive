@@ -25,6 +25,12 @@ public class AlgoReverse extends AlgoElement {
     private GeoList outputList; //output	
     private int size;
 
+    /**
+     * Creates new reverse list algo
+     * @param cons
+     * @param label
+     * @param inputList
+     */
     AlgoReverse(Construction cons, String label, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
@@ -44,11 +50,15 @@ public class AlgoReverse extends AlgoElement {
         input = new GeoElement[1];
         input[0] = inputList;
 
-        output = new GeoElement[1];
-        output[0] = outputList;
+        setOutputLength(1);
+        setOutput(0, outputList);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the reversed list
+     * @return reversed list
+     */
     GeoList getResult() {
         return outputList;
     }

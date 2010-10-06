@@ -97,6 +97,9 @@ public class AlgoMirror extends AlgoTransformation {
 			mirror = c; // Michael Borcherds 2008-02-10
               
         geoIn = in;
+        if(geoIn.isGeoList()){
+        	geoOut = new GeoList(cons);
+        }
         if (mirror instanceof GeoConic && geoIn instanceof GeoLine){
         	out = new GeoConic(cons);
         	geoOut = (GeoElement)out;
@@ -148,6 +151,9 @@ public class AlgoMirror extends AlgoTransformation {
 
     
     protected final void compute() {
+    	if(geoIn.isGeoList()){
+    		return;
+    	}
     	if(mirror instanceof GeoConic && geoIn instanceof GeoLine){
     		((GeoLine)geoIn).toGeoConic((GeoConic)geoOut);    		
     	}

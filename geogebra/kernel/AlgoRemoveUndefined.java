@@ -14,7 +14,7 @@ package geogebra.kernel;
 
 
 /**
- * Take objects from the middle of a list
+ * Remove undefined objects from a list
  * @author Michael Borcherds
  * @version 2008-03-04
  */
@@ -26,6 +26,12 @@ public class AlgoRemoveUndefined extends AlgoElement {
     private GeoList outputList; //output	
     private int size;
 
+    /**
+     * Creates new undefined removal algo
+     * @param cons
+     * @param label
+     * @param inputList
+     */
     AlgoRemoveUndefined(Construction cons, String label, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
@@ -45,11 +51,15 @@ public class AlgoRemoveUndefined extends AlgoElement {
         input = new GeoElement[1];
         input[0] = inputList;
 
-        output = new GeoElement[1];
-        output[0] = outputList;
+        setOutputLength(1);
+        setOutput(0,outputList);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the pruned list
+     * @return pruned list
+     */
     GeoList getResult() {
         return outputList;
     }

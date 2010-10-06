@@ -12,8 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
+
 
 
 /**
@@ -33,6 +32,12 @@ public class AlgoRandomElement extends AlgoElement {
 	private GeoList geoList; //input
     private GeoElement element; //output	
 
+    /**
+     * Creates new random element algo
+     * @param cons
+     * @param label
+     * @param geoList
+     */
     AlgoRandomElement(Construction cons, String label, GeoList geoList) {
         super(cons);
         this.geoList = geoList;
@@ -55,11 +60,15 @@ public class AlgoRandomElement extends AlgoElement {
 	        input = new GeoElement[1];
 	        input[0] = geoList;
 
-        output = new GeoElement[1];
-        output[0] = element;
+        setOutputLength(1);
+        setOutput(0,element);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns chosen element
+     * @return chosen element
+     */
     GeoElement getElement() {
         return element;
     }

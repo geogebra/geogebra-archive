@@ -409,7 +409,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				if(geosOK){					
 					setFgColor(((GeoElement)geos[0]).getObjectColor());
 					setSliderValue( ((PointProperties)geos[0]).getPointSize());
-					setSelectedIndex(pointStyleMap.get(((PointProperties)geos[0]).getPointStyle()));
+					//setSelectedIndex(pointStyleMap.get(((PointProperties)geos[0]).getPointStyle()));
 				}
 			}		  
 		};

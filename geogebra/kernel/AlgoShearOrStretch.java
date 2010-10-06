@@ -68,9 +68,12 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         this.shear = shear;      
         this.l = l;
         this.num = num;
-                  
-        geoIn = in.toGeoElement();
-        if(geoIn instanceof GeoFunction){
+         
+        geoIn = in;
+        if(geoIn.isGeoList()){
+        	geoOut = new GeoList(cons);
+        }
+        else if(geoIn instanceof GeoFunction){
         	out = new GeoCurveCartesian(cons);
         	geoOut = (GeoElement)out;
         }
@@ -113,6 +116,9 @@ public class AlgoShearOrStretch extends AlgoTransformation {
    
 
     protected final void compute() {
+    	if(geoIn.isGeoList()){
+    		return;
+    	}
     	if(geoIn.isGeoFunction()){
     		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
     	}
@@ -146,12 +152,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         	out.matrixTransform(1-c*s*n,c*c*n,-s*s*n,1+s*c*n);
         else
         	out.matrixTransform(c*c+s*s*n,c*s*(1-n),c*s*(1-n),s*s+c*c*n);        
-        tranOut.translate(new GgbVector(-qx, -qy,0));
-         //c -s 1 n = c (cn-s) c s = (1-csn) (ccn)  
-         //s c  0 1   s (sn+c) -s c  (-ssn) (1+scn)
-        //c -s 1 0 = c -sn c s = (cc+ssn) (cs-csn)  
-        //s c  0 n   s cn -s c  (sc-csn) (ss+ccn)
-        
+        tranOut.translate(new GgbVector(-qx, -qy,0));        
     }       
     
 

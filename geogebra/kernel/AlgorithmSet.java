@@ -22,19 +22,30 @@ import java.util.Iterator;
  */
 public class AlgorithmSet {
 
-	private HashMap hashMap;
+	private HashMap<AlgoElement,AlgoElement> hashMap;
 	
     private Link head, tail;
     private int size;   
     
+    /**
+     * Creates new algorithm set
+     */
     public AlgorithmSet() {
         size = 0;
     }
     
+    /**
+     * Returns number of algos
+     * @return number of algos
+     */
     final public int getSize() {
         return size;
     }
     
+    /**
+     * Returns true iff empty
+     * @return true iff empty
+     */
     final public boolean isEmpty() {
         return size == 0;
     }
@@ -42,7 +53,8 @@ public class AlgorithmSet {
     /**
      * Inserts algo into set sorted by constructionIndex. Note: this leads to a topological sorting
      * of the algorithms which is important for updating.
-     * @return: true = the algo was added, false = the algo was already in the set
+     * @return true = the algo was added, false = the algo was already in the set
+     * @param algo algo to be added
      */
     final public boolean add(AlgoElement algo) {   
     	if (contains(algo))
@@ -51,7 +63,7 @@ public class AlgorithmSet {
     	// empty list?
         if (head == null) {
         	if (hashMap == null) {
-        		hashMap = new HashMap();
+        		hashMap = new HashMap<AlgoElement,AlgoElement>();
         	}        	
         	hashMap.put(algo, algo);
           			
@@ -103,6 +115,7 @@ public class AlgorithmSet {
     
     /**
      * Inserts all algos of set at the end of this set.
+     * @param algoSet set of algos to be added
      */
     public void addAll(AlgorithmSet algoSet) {
         Link cur = algoSet.head;
@@ -114,6 +127,8 @@ public class AlgorithmSet {
     
     /**
      * Returns true if this set contains algo.
+     * @return true iff this set contains algo.
+     * @param algo
      */
     final public boolean contains(AlgoElement algo) {
         if (size == 0 || algo == null) return false;
@@ -123,6 +138,8 @@ public class AlgorithmSet {
     
     /**
      * Removes algo from set.    
+     * @return true if found and removed, false if not found
+     * @param algo algo to be removed
      */
     final public boolean remove(AlgoElement algo) {
     	Object remObj = hashMap.remove(algo);
@@ -168,7 +185,7 @@ public class AlgorithmSet {
     /**
      * Updates all algorithms of this set until the given algorithm
      * is reached.
-     * @param lastAlgoToUpdate: last algorithm to update
+     * @param lastAlgoToUpdate last algorithm to update
      */
     final public void updateAllUntil(AlgoElement lastAlgoToUpdate) {
         Link cur = head;
@@ -183,8 +200,9 @@ public class AlgorithmSet {
     
     /**
      * Adds all algorithms in this set to the given collection
+     * @param collection
      */
-    final public void addAllToCollection(Collection collection) {
+    final public void addAllToCollection(Collection<AlgoElement> collection) {
     	Link cur = head;
         while (cur != null) {
         	collection.add(cur.algo);
@@ -218,11 +236,15 @@ public class AlgorithmSet {
         }
     }
     
+    /**
+     * Returns iterator for this set
+     * @return iterator for this set
+     */
     public AlgorithmSetIterator getIterator() {
     	return new AlgorithmSetIterator();
     }       
     
-    private class AlgorithmSetIterator implements Iterator {
+    private class AlgorithmSetIterator implements Iterator<AlgoElement> {
     	private Link cur = head;
     	
     	public void remove() {
@@ -234,8 +256,8 @@ public class AlgorithmSet {
     		return cur != null;
     	}
     	
-    	public Object next() {
-    		Object ret = cur.algo;
+    	public AlgoElement next() {
+    		AlgoElement ret = cur.algo;
     		cur = cur.next; 
     		return ret;
     	}    	

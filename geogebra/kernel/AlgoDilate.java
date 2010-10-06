@@ -45,7 +45,7 @@ public class AlgoDilate extends AlgoTransformation {
      * @param S
      */
     AlgoDilate(Construction cons, String label,
-    		Dilateable A, NumberValue r, GeoPoint S) {
+    		GeoElement A, NumberValue r, GeoPoint S) {
     	this(cons, A, r, S);
     	Bgeo.setLabel(label);    
     }
@@ -59,22 +59,22 @@ public class AlgoDilate extends AlgoTransformation {
      * @param S
      */
     AlgoDilate(Construction cons, 
-    		Dilateable A, NumberValue r, GeoPoint S) {
+    		GeoElement A, NumberValue r, GeoPoint S) {
         super(cons);        
         this.r = r;
         this.S = S;
 
-        Ageo = A.toGeoElement();
-        rgeo = r.toGeoElement();               
+        Ageo = A;
+        rgeo = r.toGeoElement();
         
+        if(!A.isGeoList()){
         // create output object
-        Bgeo = Ageo.copy();
-        B = (Dilateable) Bgeo;
-        
+        	Bgeo = Ageo.copy();
+        	B = (Dilateable) Bgeo;                    
+        }        
+        else Bgeo = new GeoList(cons);
         setInputOutput();
-        
         cons.registerEuclidianViewAlgo(this);
-        
         compute();
            
     }
@@ -105,6 +105,9 @@ public class AlgoDilate extends AlgoTransformation {
 
     // calc rotated point
     protected final void compute() {
+    	if(Ageo.isGeoList()){
+    		return;
+    	}
         Bgeo.set(Ageo);
         if(S==null){
         	//Application.debug(cons.getOrigin());

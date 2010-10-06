@@ -73,6 +73,10 @@ public class AlgoRotate extends AlgoTransformation {
             Bgeo = new GeoCurveCartesian(cons);
             B = (Rotateable) Bgeo;	
         }
+        else if(A.isGeoList()){
+        	Ageo = A;
+        	Bgeo = new GeoList(cons);
+        }
         setInputOutput();
         
         cons.registerEuclidianViewAlgo(this);
@@ -105,6 +109,9 @@ public class AlgoRotate extends AlgoTransformation {
 
     // calc rotated point
     protected final void compute() {
+    	if(Ageo.isGeoList()){
+    		return;
+    	}
     	if(Ageo instanceof GeoFunction){
     		((GeoFunction)Ageo).toGeoCurveCartesian((GeoCurveCartesian)Bgeo);
     	}

@@ -21,11 +21,18 @@ import geogebra.kernel.arithmetic.NumberValue;
 
 /**
  * Computes Max[a, b]
- * @author  Markus Hohenwarter
+ * @author  Markus Hohenwarterarea of conic c
  * @version 
  */
 public class AlgoMax extends AlgoTwoNumFunction {         
         
+	/**
+	 * Creates new max algo
+	 * @param cons
+	 * @param label
+	 * @param a
+	 * @param b
+	 */
     AlgoMax(Construction cons, String label, NumberValue a, NumberValue b) {       
 	  super(cons, label, a, b); 
     }   

@@ -2761,13 +2761,8 @@ class CmdTranslate extends CommandProcessor {
 			arg = resArgs(c);
 
 			// translate object
-			if ((ok[0] = (arg[0] instanceof Translateable || arg[0] instanceof GeoPolygon))
-					&& (ok[1] = (arg[1].isGeoVector()||arg[1].isGeoPoint())))  {
-				GeoVec3D v = (GeoVec3D) arg[1]; 
-				ret = kernel.Translate(label, arg[0], v); 
-				return ret;
-			}
-			else if (
+			
+			if (
 					(ok[0] = (arg[0] .isGeoVector()))
 					&& (ok[1] = (arg[1] .isGeoPoint()))) {
 				GeoVector v = (GeoVector) arg[0];
@@ -2775,6 +2770,11 @@ class CmdTranslate extends CommandProcessor {
 				
 				ret[0] = kernel.Translate(label, v, P);
 				
+				return ret;
+			} else if ((ok[0] = (arg[0] instanceof Translateable || arg[0] instanceof GeoPolygon ||arg[0].isGeoList()))
+					&& (ok[1] = (arg[1].isGeoVector()||arg[1].isGeoPoint())))  {
+				GeoVec3D v = (GeoVec3D) arg[1]; 
+				ret = kernel.Translate(label, arg[0], v); 
 				return ret;
 			}
 
@@ -2836,10 +2836,7 @@ class CmdRotate extends CommandProcessor {
 				return ret;
 			}             
 
-			// rotate polygon
-			else  if ((ok[0] = (arg[0] .isGeoPolygon()))
-					&& (ok[1] = (arg[1] .isNumberValue())))
-				return kernel.Rotate(label, (GeoPolygon) arg[0], (NumberValue) arg[1]);
+						
 			else {
 				if (!ok[0])
 					throw argErr(app, c.getName(), arg[0]);
@@ -2865,11 +2862,7 @@ class CmdRotate extends CommandProcessor {
 			}
 
 			// rotate polygon
-			else  if ((ok[0] = (arg[0] .isGeoPolygon()))
-					&& (ok[1] = (arg[1] .isNumberValue()))
-					&& (ok[2] = (arg[2] .isGeoPoint())))
-				return kernel.Rotate(label, (GeoPolygon) arg[0], (NumberValue) arg[1], 
-						(GeoPoint) arg[2]);
+			
 			else {
 				if (!ok[0])
 					throw argErr(app, c.getName(), arg[0]);
@@ -2911,17 +2904,13 @@ class CmdDilate extends CommandProcessor {
 			arg = resArgs(c);
 
 			// dilate point, line or conic
-			if ((ok[0] = (arg[0] instanceof Dilateable || arg[0].isGeoPolygon()))
+			if ((ok[0] = (arg[0] instanceof Dilateable || arg[0].isGeoPolygon() || arg[0].isGeoList()))
 					&& (ok[1] = (arg[1] .isNumberValue()))) {
 				NumberValue phi = (NumberValue) arg[1];
 				ret = kernel.Dilate(label, arg[0], phi);
 				return ret;
 			}
 
-			// dilate polygon
-			else  if ((ok[0] = (arg[0] .isGeoPolygon()))
-					&& (ok[1] = (arg[1] .isNumberValue())))
-				return kernel.Dilate(label, (GeoPolygon) arg[0], (NumberValue) arg[1],null);
 			else {
 				if (!ok[0])
 					throw argErr(app, c.getName(), arg[0]);
@@ -2934,7 +2923,7 @@ class CmdDilate extends CommandProcessor {
 			arg = resArgs(c);
 
 			// dilate point, line or conic
-			if ((ok[0] = (arg[0] instanceof Dilateable || arg[0] instanceof GeoPolygon))
+			if ((ok[0] = (arg[0] instanceof Dilateable || arg[0].isGeoPolygon() ||arg[0].isGeoList()))
 					&& (ok[1] = (arg[1] .isNumberValue()))
 					&& (ok[2] = (arg[2] .isGeoPoint()))) {
 				NumberValue phi = (NumberValue) arg[1];
@@ -2981,7 +2970,7 @@ class CmdApplyMatrix extends CommandProcessor {
 
 			if (arg[0] .isGeoList()) {
 				
-				if (arg[1].isMatrixTransformable() || arg[1].isGeoFunction() || arg[1].isGeoPolygon()) {
+				if (arg[1].isMatrixTransformable() || arg[1].isGeoFunction() || arg[1].isGeoPolygon()||arg[0].isGeoList()) {
 				ret = kernel.ApplyMatrix(label, arg[1], (GeoList)arg[0]);
 				return ret;
 				} 
@@ -3024,7 +3013,7 @@ class CmdShear extends CommandProcessor {
 
 			if ((arg[1] instanceof GeoVec3D) && arg[2].isGeoNumeric()) {
 				
-				if (arg[0].isMatrixTransformable()||arg[0].isGeoFunction()||arg[0].isGeoPolygon()||arg[0].isGeoSegment()) {
+				if (arg[0].isMatrixTransformable()||arg[0].isGeoFunction()||arg[0].isGeoPolygon()||arg[0].isGeoList()) {
 				
 					ret = kernel.Shear(label, arg[0], (GeoVec3D)arg[1],(GeoNumeric)arg[2]);
 					return ret;
@@ -3070,7 +3059,7 @@ class CmdStretch extends CommandProcessor {
 
 			if ((arg[1] instanceof GeoVec3D) && arg[2].isGeoNumeric()) {
 				
-				if (arg[0].isMatrixTransformable()||arg[0].isGeoFunction()||arg[0].isGeoPolygon()||arg[0].isGeoSegment()) {
+				if (arg[0].isMatrixTransformable()||arg[0].isGeoFunction()||arg[0].isGeoPolygon()||arg[0].isGeoList()) {
 				
 				ret = kernel.Stretch(label, arg[0], (GeoVec3D)arg[1],(GeoNumeric)arg[2]);
 				return ret;

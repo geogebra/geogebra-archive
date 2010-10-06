@@ -28,6 +28,13 @@ public class AlgoMin extends AlgoTwoNumFunction {
 
 	private static final long serialVersionUID = 1L;
 	       
+	/**
+	 * Creates new min algo
+	 * @param cons
+	 * @param label
+	 * @param a
+	 * @param b
+	 */
     AlgoMin(Construction cons, String label, NumberValue a, NumberValue b) {       
 	  super(cons, label, a, b); 
     }   
@@ -36,7 +43,7 @@ public class AlgoMin extends AlgoTwoNumFunction {
         return "AlgoMin";
     }
     
-    // calc area of conic c 
+    // calc minimum of a,b 
     protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		double min = Math.min(a.getDouble(), b.getDouble());

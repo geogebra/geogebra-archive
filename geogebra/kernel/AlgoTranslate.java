@@ -20,10 +20,6 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 
-
-
-
-
 /**
  *
  * @author  Markus
@@ -39,20 +35,37 @@ public class AlgoTranslate extends AlgoTransformation {
     private GeoElement inGeo, outGeo;
     private GeoVec3D v;  // input      
     
-    AlgoTranslate(Construction cons, String label, Translateable in, GeoVec3D v) {
+    /**
+     * Creates labeled translation algo
+     * @param cons
+     * @param label
+     * @param in
+     * @param v
+     */
+    AlgoTranslate(Construction cons, String label, GeoElement in, GeoVec3D v) {
     	this(cons, in, v);
     	outGeo.setLabel(label);
     }
             
-    AlgoTranslate(Construction cons, Translateable in, GeoVec3D v) {
+    /**
+     * Creates unlabeled translation algo
+     * @param cons
+     * @param in
+     * @param v
+     */
+    AlgoTranslate(Construction cons, GeoElement in, GeoVec3D v) {
         super(cons);        
         this.v = v;
         
-        inGeo = in.toGeoElement();
+        inGeo = in;
                 
         // create out
+        if(in.isGeoList()){
+        	outGeo = new GeoList(cons);
+        }else {
         outGeo = inGeo.copy();
         out = (Translateable) outGeo;
+        }
         setInputOutput();
         
         cons.registerEuclidianViewAlgo(this);
@@ -70,22 +83,21 @@ public class AlgoTranslate extends AlgoTransformation {
         input[0] = inGeo;        
         input[1] = v;        
         
-        output = new GeoElement[1];        
-        output[0] = outGeo;        
+        setOutputLength(1);        
+        setOutput(0,outGeo);        
         setDependencies(); // done by AlgoElement
     }           
         
     GeoElement getResult() { return outGeo; }
         
     // calc translated point
-    protected final void compute() {      
+    protected final void compute() {
+    	if(inGeo.isGeoList()){
+    		return;
+    	}
         outGeo.set(inGeo);
         out.translate(new GgbVector(new double[] {v.x,v.y,v.z}));
     }       
-    
-    final public boolean wantsEuclidianViewUpdate() {
-        return inGeo.isGeoImage();
-    }
 
     
     final public String toString() {

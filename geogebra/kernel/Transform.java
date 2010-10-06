@@ -36,7 +36,9 @@ public abstract class Transform {
 	 * @param geo
 	 * @return transformed geo
 	 */
-	protected abstract GeoElement doTransform(GeoElement geo);
+	protected GeoElement doTransform(GeoElement geo){
+		return getTransformAlgo(geo).getResult();
+	}
 
 	/** construction */
 	protected Construction cons;
@@ -64,6 +66,9 @@ public abstract class Transform {
 		if (label == null)
 			label = transformedGeoLabel(geo);
 
+		if(geo.isGeoList()){
+			return transformList(label, (GeoList)geo);
+		}
 		if (geo.isLimitedPath()) {
 			// handle segments, rays and arcs separately
 			GeoElement[] geos = ((LimitedPath) geo)
@@ -85,6 +90,37 @@ public abstract class Transform {
 
 	}
 
+	private GeoList[] transformList(String label, GeoList geo) {
+		GeoList ret = transformList(geo);
+		
+		ret.setVisualStyleForTransformations(geo);
+		AlgoElement algo = getTransformAlgo(geo);
+		ret.setParentAlgorithm(algo);
+		algo.setOutput(0, ret);
+		algo.input[0] = geo;
+		ret.setLabel(label);
+		GeoList[] geos = { ret };
+		return geos;
+	}
+	
+	private GeoList transformList(GeoList geo) {
+		GeoList ret = new GeoList(cons);
+		for(int i = 0; i < geo.size(); i++){
+			GeoElement current = geo.get(i);
+			if(current.isGeoList()){
+				ret.add(transformList((GeoList)current));
+			}
+			else ret.add(doTransform(current));			
+		}
+		return ret;
+	}
+	/**
+	 * Returns algo that will be used for traansforming given geo 
+	 * @param geo
+	 * @return algo that will be used for traansforming given geo
+	 */
+	protected abstract AlgoTransformation getTransformAlgo(GeoElement geo);
+	
 	private GeoElement[] transformPoly(String label, GeoPolygon oldPoly,
 			GeoPoint[] transformedPoints) {
 		// get label for polygon
@@ -191,13 +227,13 @@ class TransformRotate extends Transform {
 	}
 
 	@Override
-	protected GeoElement doTransform(GeoElement geo) {
+	protected AlgoTransformation getTransformAlgo(GeoElement geo) {
 		AlgoTransformation algo = null;
 		if (center == null) {
 			algo = new AlgoRotate(cons,geo,angle);
 		}
 		else algo = new AlgoRotatePoint(cons,geo,angle,center);
-		return algo.getResult();
+		return algo;
 	}
 
 }
@@ -222,10 +258,9 @@ class TransformTranslate extends Transform {
 	}
 
 	@Override
-	protected GeoElement doTransform(GeoElement geo) {
-		AlgoTranslate algo = new AlgoTranslate(cons, (Translateable) geo,
-				transVec);
-		return algo.getResult();
+	protected AlgoTransformation getTransformAlgo(GeoElement geo) {
+		AlgoTranslate algo = new AlgoTranslate(cons, geo, transVec);
+		return algo;
 	}
 
 }
@@ -262,9 +297,9 @@ class TransformDilate extends Transform {
 	}
 
 	@Override
-	protected GeoElement doTransform(GeoElement geo) {
-		AlgoDilate algo = new AlgoDilate(cons, (Dilateable) geo, ratio, center);
-		return algo.getResult();
+	protected AlgoTransformation getTransformAlgo(GeoElement geo) {
+		AlgoDilate algo = new AlgoDilate(cons, geo, ratio, center);
+		return algo;
 	}
 
 }
@@ -307,7 +342,7 @@ class TransformMirror extends Transform {
 	}
 
 	@Override
-	protected GeoElement doTransform(GeoElement geo) {
+	protected AlgoTransformation getTransformAlgo(GeoElement geo) {
 		AlgoMirror algo = null;
 		if (mirror.isGeoLine()) {
 			algo = new AlgoMirror(cons, geo, (GeoLine) mirror, null, null);
@@ -316,7 +351,7 @@ class TransformMirror extends Transform {
 		} else {
 			algo = new AlgoMirror(cons, geo, null, null, (GeoConic) mirror);
 		}
-		return algo.getResult();
+		return algo;
 	}
 	
 	@Override
@@ -352,10 +387,10 @@ class TransformShearOrStretch extends Transform {
 	}
 
 	@Override
-	protected GeoElement doTransform(GeoElement geo) {
+	protected AlgoTransformation getTransformAlgo(GeoElement geo) {
 		AlgoShearOrStretch algo = new AlgoShearOrStretch(cons, geo, line, num,
 				shear);
-		return algo.getResult();
+		return algo;
 	}
 
 }
@@ -381,9 +416,9 @@ class TransformApplyMatrix extends Transform {
 	}
 
 	@Override
-	protected GeoElement doTransform(GeoElement geo) {
+	protected AlgoTransformation getTransformAlgo(GeoElement geo) {
 		AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, null, geo, matrix);
-		return algo.getResult();
+		return algo;
 	}
 
 }

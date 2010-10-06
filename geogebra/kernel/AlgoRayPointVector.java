@@ -12,17 +12,27 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-
+/**
+ * Creates ray from point and direction vector
+ *
+ */
 public class AlgoRayPointVector extends AlgoElement {
 
     /**
-	 * 
+	 *  
 	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P; // input
     private GeoVector v; // input
     private GeoRay ray; // output       
 
+    /**
+     * Creates new ray algo
+     * @param cons
+     * @param label
+     * @param P
+     * @param v
+     */
     AlgoRayPointVector(
         Construction cons,
         String label,
@@ -49,17 +59,30 @@ public class AlgoRayPointVector extends AlgoElement {
         input[0] = P;
         input[1] = v;
 
-        output = new GeoElement[1];
-        output[0] = ray;
+        setOutputLength(1);
+        setOutput(0,ray);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the ray
+     * @return resulting ray
+     */
     GeoRay getRay() {
         return ray;
     }
+    /**
+     * Returns the endpoint
+     * @return the endpoint
+     */
     GeoPoint getP() {
         return P;
     }
+    
+    /**
+     * Returns the direction
+     * @return direction vector
+     */
     GeoVector getv() {
         return v;
     }

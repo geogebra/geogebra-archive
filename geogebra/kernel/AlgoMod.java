@@ -30,7 +30,13 @@ import geogebra.kernel.arithmetic.NumberValue;
  */
 public class AlgoMod extends AlgoTwoNumFunction {
 
-      
+    /**
+     * Creates new mod algo  
+     * @param cons
+     * @param label
+     * @param a
+     * @param b
+     */
     AlgoMod(Construction cons, String label, NumberValue a, NumberValue b) {       
 	  super(cons, label, a, b);     
     }   

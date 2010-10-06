@@ -26,6 +26,12 @@ public class AlgoReducedRowEchelonForm extends AlgoElement {
 	private GeoList inputList; //input
     private GeoList outputList; //output	
 
+    /**
+     * Creates new reduced echelon form algo
+     * @param cons
+     * @param label label for result
+     * @param inputList original matrix
+     */
     AlgoReducedRowEchelonForm(Construction cons, String label, GeoList inputList) {
         super(cons);
         this.inputList = inputList;
@@ -45,11 +51,15 @@ public class AlgoReducedRowEchelonForm extends AlgoElement {
         input = new GeoElement[1];
         input[0] = inputList;
 
-        output = new GeoElement[1];
-        output[0] = outputList;
+        setOutputLength(1);
+        setOutput(0,outputList);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns the reduced matrix
+     * @return reduced matrix
+     */
     GeoList getResult() {
         return outputList;
     }

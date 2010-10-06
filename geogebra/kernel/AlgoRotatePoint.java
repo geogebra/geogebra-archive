@@ -76,7 +76,10 @@ public class AlgoRotatePoint extends AlgoTransformation {
             Bgeo = new GeoCurveCartesian(cons);
             B = (PointRotateable) Bgeo;	
         }
-        
+        else if(A.isGeoList()){
+        	Ageo = A;
+        	Bgeo = new GeoList(cons);
+        }
         
         // create output object
         Bgeo = Ageo.copy();       
@@ -123,6 +126,9 @@ public class AlgoRotatePoint extends AlgoTransformation {
 
     // calc rotated point
     protected final void compute() {
+    	if(Ageo.isGeoList()){
+    		return;
+    	}
     	if(Ageo instanceof GeoFunction){
     		((GeoFunction)Ageo).toGeoCurveCartesian((GeoCurveCartesian)Bgeo);
     	}
