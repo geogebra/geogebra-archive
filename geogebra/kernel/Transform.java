@@ -1,6 +1,7 @@
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.util.GgbMat;
 
 /**
  * Container for transforms
@@ -193,6 +194,21 @@ public abstract class Transform {
 	public boolean isAffine() {
 		return true;
 	}
+	/**
+	 * True if the transform preserves angles 
+	 * @return true iff similar
+	 */
+	public boolean isSimilar() {		
+		return true;
+	}
+	
+	/**
+	 * Returns true when orientation of e.g. semicircles is changed
+	 * @return true iff changes orientation of objects
+	 */
+	public boolean changesOrientation() {
+		return false;
+	}	
 }
 
 /**
@@ -358,6 +374,11 @@ class TransformMirror extends Transform {
 	public boolean isAffine() {
 		return ! mirror.isGeoConic();
 	}
+	
+	@Override
+	public boolean changesOrientation() {
+		return mirror.isGeoLine() || mirror.isGeoConic();
+	}	
 
 }
 
@@ -392,6 +413,15 @@ class TransformShearOrStretch extends Transform {
 				shear);
 		return algo;
 	}
+	
+	@Override
+	public boolean isSimilar() {
+		return false;
+	}
+	
+	public boolean changesOrientation() {
+		return !shear && num.getDouble()<0;
+	}	
 
 }
 
@@ -417,8 +447,18 @@ class TransformApplyMatrix extends Transform {
 
 	@Override
 	protected AlgoTransformation getTransformAlgo(GeoElement geo) {
-		AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, null, geo, matrix);
+		AlgoApplyMatrix algo = new AlgoApplyMatrix(cons, geo, matrix);
 		return algo;
+	}
+	
+	@Override
+	public boolean isSimilar() {
+		return false;
+	}
+	
+	public boolean changesOrientation() {
+		GgbMat ggbMatrix = new GgbMat(matrix);
+		return ggbMatrix.getDeterminant()<0;
 	}
 
 }

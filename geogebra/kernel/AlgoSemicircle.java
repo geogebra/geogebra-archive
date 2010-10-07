@@ -112,6 +112,14 @@ public class AlgoSemicircle extends AlgoElement {
     	return B;
     }    
     
+    /**
+     * Returns the full circle
+     * @return full circle
+     */
+    public GeoConic getConic() {
+    	return conic;
+    }
+    
     protected void compute() {
     	if (!conic.isDefined()) {
     		conicPart.setUndefined();
