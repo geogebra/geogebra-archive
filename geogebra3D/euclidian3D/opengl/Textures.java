@@ -31,16 +31,32 @@ public class Textures {
 	/** dotted dash: 1-(3), ... */
 	static public int DASH_DOTTED = DASH_LONG+1;		
 	/** dotted/dashed dash: 7-(4)-1-(4), ... */
-	static public int DASH_DOTTED_DASHED = DASH_DOTTED+1;	
+	static public int DASH_DOTTED_DASHED = DASH_DOTTED+1;
+	/** (hidden) no dash. */
+	static public int DASH_NONE_HIDDEN = DASH_DOTTED_DASHED+1;	
+	/** (hidden) simple dash: 1-(1), ... */
+	static public int DASH_SHORT_HIDDEN = DASH_NONE_HIDDEN+1;	
+	/** (hidden) long dash: 2-(2), ... */
+	static public int DASH_LONG_HIDDEN = DASH_SHORT_HIDDEN+1;	
+	/** (hidden) dotted dash: 1-(3), ... */
+	static public int DASH_DOTTED_HIDDEN = DASH_LONG_HIDDEN+1;		
+	/** (hidden) dotted/dashed dash: 7-(4)-1-(4), ... */
+	static public int DASH_DOTTED_DASHED_HIDDEN = DASH_DOTTED_HIDDEN+1;	
     /** number of dash styles */
-    static private int DASH_NUMBER = DASH_DOTTED_DASHED+1;  
+    static private int DASH_NUMBER = DASH_DOTTED_DASHED_HIDDEN+1;  
 	/** description of the dash styles */
 	static private boolean[][] DASH_DESCRIPTION = {
 		{true}, // DASH_NONE
 		{true, false, true, false}, // DASH_SHORT
 		{true, true, false, false}, // DASH_LONG
-		{true, false, true, false, true, false, true, false}, //, false, false}, // DASH_DOTTED
-		{true,true,true,true, true,true,true,false, false,false,false,true, false,false,false,false} // DASH_DOTTED_DASHED
+		{true, false, true, false, true, false, true, false},  // DASH_DOTTED
+		{true,true,true,true, true,true,true,false, false,false,false,true, false,false,false,false}, // DASH_DOTTED_DASHED
+		{true, true, false, false}, // DASH_NONE_HIDDEN
+		{true, false, false, false}, // DASH_SHORT_HIDDEN
+		{true, false, false, false}, // DASH_LONG_HIDDEN
+		{true, false, false, false, true, false, false, false},  // DASH_DOTTED_HIDDEN
+		{false,false,true,true, true,false,false,false, false,false,false,true, false,false,false,false} // DASH_DOTTED_DASHED_HIDDEN
+		
 	};
 
 	
@@ -172,7 +188,6 @@ public class Textures {
 
 	
 	
-	
 	/**
 	 * call the correct texture for the line type specified
 	 * @param lineType
@@ -205,7 +220,38 @@ public class Textures {
     	}
 	}
 	
+	/**
+	 * call the correct texture for the line type specified
+	 * for hidden parts
+	 * @param lineType
+	 */
+	public void setDashFromLineTypeHidden(int lineType){
 
+    	switch (lineType) {
+		case EuclidianView.LINE_TYPE_FULL:
+			loadTextureNearest(DASH_NONE_HIDDEN);
+			break;
+			
+		case EuclidianView.LINE_TYPE_DOTTED:
+			loadTextureNearest(DASH_DOTTED_HIDDEN);
+			break;
+
+		case EuclidianView.LINE_TYPE_DASHED_SHORT:
+			loadTextureNearest(DASH_SHORT_HIDDEN);
+			break;
+
+		case EuclidianView.LINE_TYPE_DASHED_LONG:
+			loadTextureNearest(DASH_LONG_HIDDEN);
+			break;
+
+		case EuclidianView.LINE_TYPE_DASHED_DOTTED:
+			loadTextureNearest(DASH_DOTTED_DASHED_HIDDEN);
+			break;
+
+		default: 
+			break;
+    	}
+	}
 
 	/////////////////////////////////////////
 	// DASH TEXTURES

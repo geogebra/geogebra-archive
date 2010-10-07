@@ -617,6 +617,16 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		}	
    }
    
+   public void setLineTypeHidden(int type) {
+		super.setLineType(type);
+		if (segments != null) {
+			for (int i=0; i < segments.length; i++) {
+				((GeoElement) segments[i]).setLineTypeHidden(type);	
+				segments[i].update();
+			}
+		}	
+  }
+   
    public void setLineThickness(int th) {
 		super.setLineThickness(th);
 		if (segments != null) {

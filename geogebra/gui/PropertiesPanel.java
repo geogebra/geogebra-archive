@@ -130,7 +130,7 @@ public	class PropertiesPanel extends JPanel {
 		private TextOptionsPanel textOptionsPanel;
 		private ArcSizePanel arcSizePanel;
 		private LineStylePanel lineStylePanel;
-		private LineStylePanelHidden lineStylePanelHidden;
+		private LineStyleHiddenPanel lineStylePanelHidden;
 		// added by Lo�c BEGIN
 		private DecoSegmentPanel decoSegmentPanel;
 		private DecoAnglePanel decoAnglePanel;
@@ -222,7 +222,7 @@ public	class PropertiesPanel extends JPanel {
 			arcSizePanel = new ArcSizePanel();
 			slopeTriangleSizePanel = new SlopeTriangleSizePanel();
 			lineStylePanel = new LineStylePanel();
-			lineStylePanelHidden = new LineStylePanelHidden();
+			lineStylePanelHidden = new LineStyleHiddenPanel();
 			// added by Lo�c BEGIN
 			decoSegmentPanel=new DecoSegmentPanel();
 			decoAnglePanel=new DecoAnglePanel();
@@ -4162,12 +4162,12 @@ public	class PropertiesPanel extends JPanel {
 
 	}
 	
-	
+
 	/**
-	 * abstract panel to select style (dashing) of a GeoLine
-	 * @author Markus Hohenwarter, mathieu
+	 * panel to select thickness and style (dashing) of a GeoLine
+	 * @author Markus Hohenwarter
 	 */
-	abstract private class LineStyleDashPanel
+	private class LineStylePanel
 		extends JPanel
 		implements ChangeListener, ActionListener, UpdateablePanel {
 
@@ -4175,155 +4175,13 @@ public	class PropertiesPanel extends JPanel {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
-		protected Object[] geos;
-		protected JLabel dashLabel;
-		protected JComboBox dashCB;
-
-		public LineStyleDashPanel() {
-		
-			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-			initPanels();
-		}
-		
-		protected void initPanels(){
-
-			// line style panel	
-			JPanel dashPanel = getLineStylePanel();
-			dashPanel.setAlignmentX(Component.LEFT_ALIGNMENT);	
-			add(dashPanel);	
-			
-		}
-
-		protected JPanel getLineStylePanel(){
-			// line style combobox (dashing)		
-			DashListRenderer renderer = new DashListRenderer();
-			renderer.setPreferredSize(
-				new Dimension(130, app.getFontSize() + 6));
-			dashCB = new JComboBox(EuclidianView.getLineTypes());
-			dashCB.setRenderer(renderer);
-			dashCB.addActionListener(this);
-
-			// line style panel		
-			JPanel dashPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			dashLabel = new JLabel();
-			dashPanel.add(dashLabel);
-			dashPanel.add(dashCB);
-						
-			return dashPanel;
-		}
-		
-		public void setLabels() {
-			
-			dashLabel.setText(app.getPlain("LineStyle") + ":");
-		}
-		
-
-		public JPanel update(Object[] geos) {
-			// check geos
-			if (!checkGeos(geos))
-				return null;
-
-			this.geos = geos;
-			dashCB.removeActionListener(this);
-
-			//	set slider value to first geo's thickness 
-			GeoElement temp, geo0 = (GeoElement) geos[0];
-
-			//	check if geos have same line style
-			boolean equalStyle = true;
-			for (int i = 1; i < geos.length; i++) {
-				temp = (GeoElement) geos[i];
-				// same style?
-				if (getLineType(geo0) != getLineType(temp))
-					equalStyle = false;
-			}
-
-			// select common line style
-			if (equalStyle) {
-				int type = getLineType(geo0);				
-				for (int i = 0; i < dashCB.getItemCount(); i++) {
-					if (type == ((Integer) dashCB.getItemAt(i)).intValue()) {
-						dashCB.setSelectedIndex(i);
-						break;
-					}
-				}
-			} else
-				dashCB.setSelectedItem(null);
-
-			dashCB.addActionListener(this);
-			return this;
-		}
-
-		/**
-		 * @param geo
-		 * @return the line type of the geo
-		 */
-		protected int getLineType(GeoElement geo){
-			return geo.getLineType();
-		}
-		
-		/**
-		 * sets the line type of the geo
-		 * @param geo
-		 * @param type 
-		 * 
-		 */
-		protected void setLineType(GeoElement geo, int type){
-			geo.setLineType(type);
-		}
-		
-		protected boolean checkGeos(Object[] geos) {
-			boolean geosOK = true;
-			for (int i = 0; i < geos.length; i++) {
-				GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
-				if (!(geo.isPath()
-					|| (geo.isGeoList() && ((GeoList)geo).showLineProperties() )
-					|| (geo.isGeoNumeric()
-						&& ((GeoNumeric) geo).isDrawable()))) {
-					geosOK = false;
-					break;
-				}
-			}
-			return geosOK;
-		}
-
-
-
-		/**
-		* action listener implementation for coord combobox
-		*/
-		public void actionPerformed(ActionEvent e) {
-			Object source = e.getSource();
-			if (source == dashCB) {
-				GeoElement geo;
-				int type = ((Integer) dashCB.getSelectedItem()).intValue();
-				for (int i = 0; i < geos.length; i++) {
-					geo = (GeoElement) geos[i];
-					setLineType(geo,type);
-					geo.updateRepaint();
-				}
-			}
-		}
-	} 
-
-
-	/**
-	 * panel to select thickness and style (dashing) of a GeoLine
-	 * @author Markus Hohenwarter
-	 */
-	private class LineStylePanel
-		extends LineStyleDashPanel {
-
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 1L;
+		private Object[] geos;
 		private JSlider slider;
 		private JPanel thicknessPanel;
+		private JLabel dashLabel;
+		private JComboBox dashCB;
 
-		
-		protected void initPanels(){
-			
+		public LineStylePanel() {
 			// thickness slider		
 			slider = new JSlider(1, 13);
 			slider.setMajorTickSpacing(2);
@@ -4332,7 +4190,12 @@ public	class PropertiesPanel extends JPanel {
 			slider.setPaintLabels(true);
 			slider.setSnapToTicks(true);
 
-		
+			/*
+			Dimension dim = slider.getPreferredSize();
+			dim.width = SLIDER_MAX_WIDTH;
+			slider.setMaximumSize(dim);
+			slider.setPreferredSize(dim);
+*/
 			
 			// set label font
 			Dictionary labelTable = slider.getLabelTable();
@@ -4345,23 +4208,46 @@ public	class PropertiesPanel extends JPanel {
 			//slider.setFont(app.getSmallFont());	
 			slider.addChangeListener(this);
 
+			// line style combobox (dashing)		
+			DashListRenderer renderer = new DashListRenderer();
+			renderer.setPreferredSize(
+				new Dimension(130, app.getFontSize() + 6));
+			dashCB = new JComboBox(EuclidianView.getLineTypes());
+			dashCB.setRenderer(renderer);
+			dashCB.addActionListener(this);
+
+			// line style panel
+			JPanel dashPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			dashLabel = new JLabel();
+			dashPanel.add(dashLabel);
+			dashPanel.add(dashCB);
+
 			// thickness panel
 			thicknessPanel = new JPanel();
+			/*
+			JLabel thicknessLabel = new JLabel(app.getPlain("Thickness") + ":");
+			thicknessPanel.setLayout(new BoxLayout(thicknessPanel, BoxLayout.X_AXIS));	
+			thicknessLabel.setAlignmentY(Component.TOP_ALIGNMENT);
+			slider.setAlignmentY(Component.TOP_ALIGNMENT);			
+			//thicknessPanel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
+			//		BorderFactory.createEmptyBorder(3,5,0,5)));	
+			thicknessPanel.add(Box.createRigidArea(new Dimension(5,0)));
+			thicknessPanel.add(thicknessLabel);
+			*/				
 			thicknessPanel.add(slider);			
 
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			thicknessPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+			dashPanel.setAlignmentX(Component.LEFT_ALIGNMENT);	
 			add(thicknessPanel);
-			
-			super.initPanels();
-			
+			add(dashPanel);			
 		}
-
 		
 		public void setLabels() {
 			thicknessPanel.setBorder(
 					BorderFactory.createTitledBorder(app.getPlain("Thickness")));
 			
-			super.setLabels();
+			dashLabel.setText(app.getPlain("LineStyle") + ":");
 		}
 		
 		private int maxMinimumThickness(Object[] geos) {
@@ -4378,12 +4264,13 @@ public	class PropertiesPanel extends JPanel {
 		}
 
 		public JPanel update(Object[] geos) {
-			
-			if (super.update(geos)==null)
+			// check geos
+			if (!checkGeos(geos))
 				return null;
-			
-			
+
+			this.geos = geos;
 			slider.removeChangeListener(this);
+			dashCB.removeActionListener(this);
 
 			//	set slider value to first geo's thickness 
 			GeoElement temp, geo0 = (GeoElement) geos[0];
@@ -4392,14 +4279,46 @@ public	class PropertiesPanel extends JPanel {
 			// allow polygons to have thickness 0
 			slider.setMinimum(maxMinimumThickness(geos));
 
+			//	check if geos have same line style
+			boolean equalStyle = true;
+			for (int i = 1; i < geos.length; i++) {
+				temp = (GeoElement) geos[i];
+				// same style?
+				if (geo0.getLineType() != temp.getLineType())
+					equalStyle = false;
+			}
 
-
-
+			// select common line style
+			if (equalStyle) {
+				int type = geo0.getLineType();				
+				for (int i = 0; i < dashCB.getItemCount(); i++) {
+					if (type == ((Integer) dashCB.getItemAt(i)).intValue()) {
+						dashCB.setSelectedIndex(i);
+						break;
+					}
+				}
+			} else
+				dashCB.setSelectedItem(null);
 
 			slider.addChangeListener(this);
+			dashCB.addActionListener(this);
 			return this;
 		}
 
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
+				if (!(geo.isPath()
+					|| (geo.isGeoList() && ((GeoList)geo).showLineProperties() )
+					|| (geo.isGeoNumeric()
+						&& ((GeoNumeric) geo).isDrawable()))) {
+					geosOK = false;
+					break;
+				}
+			}
+			return geosOK;
+		}
 
 		/**
 		* change listener implementation for slider
@@ -4416,59 +4335,126 @@ public	class PropertiesPanel extends JPanel {
 			}
 		}
 
-		
+		/**
+		* action listener implementation for coord combobox
+		*/
+		public void actionPerformed(ActionEvent e) {
+			Object source = e.getSource();
+			if (source == dashCB) {
+				GeoElement geo;
+				int type = ((Integer) dashCB.getSelectedItem()).intValue();
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoElement) geos[i];
+					geo.setLineType(type);
+					geo.updateRepaint();
+				}
+			}
+		}
 	} 
 
 	
+
+
+
 	/**
-	 * panel that extends LineStylePanel, adding possibility to select 
+	 * select 
 	 * dash style for hidden parts.
 	 * @author matthieu
 	 *
 	 */
-	private class LineStylePanelHidden extends LineStyleDashPanel{
-		
-		public void setLabels() {
-			
-			dashLabel.setText(app.getPlain("LineStyleHidden") + ":");
+	private class LineStyleHiddenPanel extends JPanel implements UpdateablePanel, ActionListener {
+		private static final long serialVersionUID = 1L;
+		private Object[] geos;
+		private JRadioButton[] buttons;
+
+		public LineStyleHiddenPanel() {
+
+			PointStyleListRenderer renderer = new PointStyleListRenderer();
+			renderer.setPreferredSize(new Dimension(18,18));		
+
+
+			buttons = new JRadioButton[3];
+
+			buttons[EuclidianView.LINE_TYPE_HIDDEN_NONE] 
+			        = new JRadioButton(app.getPlain("None"));			
+			buttons[EuclidianView.LINE_TYPE_HIDDEN_NONE]
+			        .setActionCommand("none");
+
+			buttons[EuclidianView.LINE_TYPE_HIDDEN_DASHED] 
+			        = new JRadioButton(app.getPlain("Dashed"));			
+			buttons[EuclidianView.LINE_TYPE_HIDDEN_DASHED]
+			        .setActionCommand("dashed");
+
+			buttons[EuclidianView.LINE_TYPE_HIDDEN_AS_NOT_HIDDEN] 
+			        = new JRadioButton(app.getPlain("AsNotHidden"));	
+			buttons[EuclidianView.LINE_TYPE_HIDDEN_AS_NOT_HIDDEN]
+			        .setActionCommand("asNotHidden");
+
+			ButtonGroup buttonGroup = new ButtonGroup();
+			for(int i=0; i<3; i++){
+				buttons[i].addActionListener(this);
+				add(buttons[i]);
+				buttonGroup.add(buttons[i]);
+			}
+
+
+
 		}
-		
-		protected boolean checkGeos(Object[] geos) {
+
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getMenu("HiddenPartStyle") ));
+		}
+
+		public JPanel update(Object[] geos) {
+			// check geos
+			if (!checkGeos(geos))
+				return null;
+
+			this.geos = geos;
+
+			//	set value to first line's style 
+			GeoElement geo0 = (GeoElement) geos[0];
+
+			// update radio buttons 
+			buttons[geo0.getLineTypeHidden()].setSelected(true);
+
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
-				if (!(geo.isGeoElement3D())) {
+				GeoElement geo = (GeoElement) geos[i];
+				if (!(geo.isPath())
+						|| !(geo.isGeoElement3D())) {
 					geosOK = false;
 					break;
 				}
 			}
-			return geosOK && super.checkGeos(geos);
+			return geosOK;
 		}
 
-		
-		/**
-		 * @param geo
-		 * @return the line type of the geo (for hidden parts)
-		 */
-		protected int getLineType(GeoElement geo){
-			return geo.getLineTypeHidden();
-		}
-		
-		/**
-		 * sets the line type of the geo (for hidden parts)
-		 * @param geo
-		 * @param type 
-		 * 
-		 */
-		protected void setLineType(GeoElement geo, int type){
-			geo.setLineTypeHidden(type);
-		}
+		public void actionPerformed(ActionEvent e) {
 
-		public void stateChanged(ChangeEvent arg0) {
-			
-			
+
+			int type = EuclidianView.LINE_TYPE_HIDDEN_NONE;
+
+			if (e.getActionCommand()=="dashed"){	
+				type = EuclidianView.LINE_TYPE_HIDDEN_DASHED;
+			}else if (e.getActionCommand()=="asNotHidden"){
+				type = EuclidianView.LINE_TYPE_HIDDEN_AS_NOT_HIDDEN;
+			}
+
+
+			GeoElement geo;
+			for (int i = 0; i < geos.length; i++) {
+				geo = (GeoElement) geos[i];
+				geo.setLineTypeHidden(type);
+				geo.updateRepaint();
+			}
 		}
 	}
+
 	
 	// added by Lo�c
 	private class DecoSegmentPanel extends JPanel implements ActionListener , UpdateablePanel {

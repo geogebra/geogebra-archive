@@ -1,5 +1,6 @@
 package geogebra3D.euclidian3D;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -61,9 +62,16 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if(!isVisible())
 			return;
 		
+		if (getGeoElement().getLineTypeHidden()==EuclidianView.LINE_TYPE_HIDDEN_NONE)
+			return;
+		
 		setHighlightingColor(HIGHLIGHTING_AMPLITUDE, 1f);
 		
-		renderer.getTextures().setDashFromLineType(getGeoElement().getLineTypeHidden()); 
+		if (getGeoElement().getLineTypeHidden()==EuclidianView.LINE_TYPE_HIDDEN_AS_NOT_HIDDEN)
+			renderer.getTextures().setDashFromLineType(getGeoElement().getLineType()); 
+		else
+			renderer.getTextures().setDashFromLineTypeHidden(getGeoElement().getLineType()); 
+		
 		drawGeometryHidden(renderer);		
 		
 
