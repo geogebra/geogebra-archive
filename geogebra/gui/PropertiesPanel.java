@@ -3292,8 +3292,9 @@ public	class PropertiesPanel extends JPanel {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement)geos[i];
-				if (!geo.getGeoElementForPropertiesDialog().isGeoPoint()
-						&& (!(geo.isGeoList() && ((GeoList)geo).showPointProperties()))) {
+				if (geo.isGeoElement3D() || //TODO add point style to 3D points
+						(!geo.getGeoElementForPropertiesDialog().isGeoPoint()
+						&& (!(geo.isGeoList() && ((GeoList)geo).showPointProperties())))) {
 					geosOK = false;
 					break;
 				}
@@ -4080,11 +4081,17 @@ public	class PropertiesPanel extends JPanel {
 
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
+			
+			cbFillType.setVisible(true); //TODO remove this (see below)
 			for (int i = 0; i < geos.length; i++) {
 				if (!((GeoElement) geos[i]).isFillable()) {
 					geosOK = false;
 					break;
 				}
+				
+				//TODO add fill type for 3D elements
+				if (((GeoElement) geos[i]).isGeoElement3D())
+					cbFillType.setVisible(false);
 			}
 			return geosOK;
 		}
