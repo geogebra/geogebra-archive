@@ -225,6 +225,21 @@ public  GeoElement[] process(Command c) throws MyError {
                             (NumberValue) arg[2])};
                 return ret;
             }
+            // Polynomial - Line with index of point
+            // check before GeoFunctionable as GeoLine is now GeoFunctionable
+            else if (
+                (ok[0] = (arg[0] .isGeoFunctionable()))
+                    && (ok[1] = (arg[1] .isGeoLine()))
+                    && (ok[2] = (arg[2] .isNumberValue()))) {
+                GeoElement[] ret =
+                    {
+                         kernel.IntersectPolynomialLineSingle(
+                            c.getLabel(),
+                            ((GeoFunctionable) arg[0]).getGeoFunction(),
+                            (GeoLine) arg[1],
+                            (NumberValue) arg[2])};
+                return ret;
+            }
             // Polynomial - Polynomial with index of point
             else if (
                 (ok[0] = (arg[0] .isGeoFunctionable()))
@@ -236,20 +251,6 @@ public  GeoElement[] process(Command c) throws MyError {
                             c.getLabel(),
                             ((GeoFunctionable) arg[0]).getGeoFunction(),
                             ((GeoFunctionable) arg[1]).getGeoFunction(),
-                            (NumberValue) arg[2])};
-                return ret;
-            }
-            // Polynomial - Line with index of point
-            else if (
-                (ok[0] = (arg[0] .isGeoFunctionable()))
-                    && (ok[1] = (arg[1] .isGeoLine()))
-                    && (ok[2] = (arg[2] .isNumberValue()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.IntersectPolynomialLineSingle(
-                            c.getLabel(),
-                            ((GeoFunctionable) arg[0]).getGeoFunction(),
-                            (GeoLine) arg[1],
                             (NumberValue) arg[2])};
                 return ret;
             }
@@ -340,6 +341,21 @@ public  GeoElement[] process(Command c) throws MyError {
 				return new GeoElement[]{kernel.IntersectImplicitpolyConicSingle(
                     c.getLabel(), (GeoImplicitPoly) arg[1],
                     (GeoConic) arg[0], (NumberValue) arg[2] )};
+            // Function - Line with startPoint
+            // check before GeoFunctionable as GeoLine is now GeoFunctionable
+            else if (
+                (ok[0] = (arg[0] .isGeoFunctionable()))
+                    && (ok[1] = (arg[1] .isGeoLine()))
+                    && (ok[2] = (arg[2] .isGeoPoint()))) {
+                GeoElement[] ret =
+                    {
+                         kernel.IntersectFunctionLine(
+                            c.getLabel(),
+                            ((GeoFunctionable) arg[0]).getGeoFunction(),
+                            (GeoLine) arg[1],
+                            (GeoPoint) arg[2])};
+                return ret;
+            }
             // Function - Function with startPoint
             else if (
                 (ok[0] = (arg[0] .isGeoFunctionable()))
@@ -351,20 +367,6 @@ public  GeoElement[] process(Command c) throws MyError {
                             c.getLabel(),
                             ((GeoFunctionable) arg[0]).getGeoFunction(),
                             ((GeoFunctionable) arg[1]).getGeoFunction(),
-                            (GeoPoint) arg[2])};
-                return ret;
-            }
-            // Function - Line with startPoint
-            else if (
-                (ok[0] = (arg[0] .isGeoFunctionable()))
-                    && (ok[1] = (arg[1] .isGeoLine()))
-                    && (ok[2] = (arg[2] .isGeoPoint()))) {
-                GeoElement[] ret =
-                    {
-                         kernel.IntersectFunctionLine(
-                            c.getLabel(),
-                            ((GeoFunctionable) arg[0]).getGeoFunction(),
-                            (GeoLine) arg[1],
                             (GeoPoint) arg[2])};
                 return ret;
             }
