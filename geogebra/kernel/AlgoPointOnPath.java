@@ -12,13 +12,16 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.NumberValue;
+
 
 
 public class AlgoPointOnPath extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private Path path; // input
-    private GeoPoint P; // output       
+    private GeoPoint P; // output      
+    private NumberValue param;
 
     AlgoPointOnPath(
         Construction cons,
@@ -39,17 +42,37 @@ public class AlgoPointOnPath extends AlgoElement {
         P.setLabel(label);
     }
 
-    public String getClassName() {
+    public AlgoPointOnPath(Construction cons, String label, Path path, double x,
+			double y, NumberValue param) {
+    	super(cons);
+        this.path = path;
+        
+        // create point on path and compute current location
+        P = new GeoPoint(cons);
+        P.setPath(path);
+        P.setCoords(x, y, 1.0);
+		this.param = param;
+		setInputOutput(); // for AlgoElement	       	        
+		compute();
+		P.setLabel(label);
+	}
+
+	public String getClassName() {
         return "AlgoPointOnPath";
     }
 
     // for AlgoElement
     protected void setInputOutput() {
-        input = new GeoElement[1];
-        input[0] = path.toGeoElement();
-
-        output = new GeoElement[1];
-        output[0] = P;
+    	if(param == null){
+    		input = new GeoElement[1];
+    		input[0] = path.toGeoElement();
+    	}else {
+    		input = new GeoElement[2];
+    		input[0] = path.toGeoElement();
+    		input[1] = param.toGeoElement();    		
+    	}
+        setOutputLength(1);
+        setOutput(0, P);
         setDependencies(); // done by AlgoElement
     }
 
@@ -61,6 +84,10 @@ public class AlgoPointOnPath extends AlgoElement {
     }
       
     protected final void compute() {
+    	if(param != null){
+    		PathParameter pp = P.getPathParameter();
+    		pp.setT(param.getDouble());
+    	}
     	if (input[0].isDefined()) {	    	
 	        path.pathChanged(P);
 	        P.updateCoords();

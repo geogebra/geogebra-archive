@@ -2456,9 +2456,13 @@ public class Kernel {
 	}
 	
 	/** Point anywhere on path with    */
-	final public GeoPoint Point(String label, Path path) {						
+	final public GeoPoint Point(String label, Path path, NumberValue param) {						
 		// try (0,0)
-		AlgoPointOnPath algo = new AlgoPointOnPath(cons, label, path, 0, 0);
+		AlgoPointOnPath algo = null;
+		if(param == null)
+			algo = new AlgoPointOnPath(cons, label, path, 0, 0);
+		else
+			algo = new AlgoPointOnPath(cons, label, path, 0, 0,param);
 		GeoPoint p = algo.getP(); 
 		
 		// try (1,0) 
@@ -2474,6 +2478,11 @@ public class Kernel {
 		}
 				
 		return p;
+	}
+
+	public GeoElement Point(String label, Path path) {
+
+		return Point(label,path,null);
 	}
 	
 	
@@ -8064,5 +8073,6 @@ public class Kernel {
 	public boolean wantAnimationStarted() {
 		return wantAnimationStarted;
 	}
+
 	
 }

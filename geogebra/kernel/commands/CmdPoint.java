@@ -10,10 +10,11 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.MyError;
 
 
-/*
+/**
  * Point[ <Path> ] Point[ <Point>, <Vector> ]
  */
 public class CmdPoint extends CommandProcessor {
@@ -43,7 +44,17 @@ public  GeoElement[] process(Command c) throws MyError {
 
         case 2 :
             arg = resArgs(c);
-            if ((ok[0] = (arg[0] .isGeoPoint()))
+            if ((ok[0] = (arg[0] .isPath()))
+                    && (ok[1] = (arg[1].isNumberValue()))) {
+                    GeoElement[] ret =
+                        {
+                             kernel.Point(
+                                c.getLabel(),
+                                (Path) arg[0],
+                                (NumberValue) arg[1])};
+                    return ret;
+                }
+            else if ((ok[0] = (arg[0] .isGeoPoint()))
                 && (ok[1] = (arg[1] .isGeoVector()))) {
                 GeoElement[] ret =
                     {
