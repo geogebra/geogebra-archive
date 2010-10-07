@@ -4383,17 +4383,17 @@ public	class PropertiesPanel extends JPanel {
 			buttons = new JRadioButton[3];
 
 			buttons[EuclidianView.LINE_TYPE_HIDDEN_NONE] 
-			        = new JRadioButton(app.getPlain("None"));			
+			        = new JRadioButton(app.getMenu("Hidden.Invisible"));			
 			buttons[EuclidianView.LINE_TYPE_HIDDEN_NONE]
 			        .setActionCommand("none");
 
 			buttons[EuclidianView.LINE_TYPE_HIDDEN_DASHED] 
-			        = new JRadioButton(app.getPlain("Dashed"));			
+			        = new JRadioButton(app.getMenu("Hidden.Dashed"));			
 			buttons[EuclidianView.LINE_TYPE_HIDDEN_DASHED]
 			        .setActionCommand("dashed");
 
 			buttons[EuclidianView.LINE_TYPE_HIDDEN_AS_NOT_HIDDEN] 
-			        = new JRadioButton(app.getPlain("AsNotHidden"));	
+			        = new JRadioButton(app.getMenu("Hidden.Unchanged"));	
 			buttons[EuclidianView.LINE_TYPE_HIDDEN_AS_NOT_HIDDEN]
 			        .setActionCommand("asNotHidden");
 
@@ -4409,7 +4409,7 @@ public	class PropertiesPanel extends JPanel {
 		}
 
 		public void setLabels() {
-			setBorder(BorderFactory.createTitledBorder(app.getMenu("HiddenPartStyle") ));
+			setBorder(BorderFactory.createTitledBorder(app.getMenu("HiddenLineStyle") ));
 		}
 
 		public JPanel update(Object[] geos) {
