@@ -12,14 +12,19 @@ the Free Software Foundation.
 
 package geogebra.gui.inputbar;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.InputPanel;
+import geogebra.kernel.CircularDefinitionException;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoText;
+import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra.util.LowerCaseDictionary;
 
-import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.KeyboardFocusManager;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,12 +35,10 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Iterator;
-import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 
 /**
  * @author Markus Hohenwarter
@@ -254,8 +257,32 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			  
 			  app.getGuiManager().setScrollToShow(true);
 			  
-			  boolean success = null != 
-				 app.getKernel().getAlgebraProcessor().processAlgebraCommand( input, true );				
+			  GeoElement[] geos = app.getKernel().getAlgebraProcessor().processAlgebraCommand( input, true );
+			  
+			  boolean success = null != geos;
+			  
+			  // create texts in the middle of the visible view
+			  if (success && geos[0].isGeoText()) {
+				  GeoText text = (GeoText)geos[0];
+				  if (!text.isTextCommand() && text.getStartPoint() == null) {
+					  
+					  Construction cons = text.getConstruction();
+					  EuclidianView ev = app.getEuclidianView();
+					  
+					  boolean oldSuppressLabelsStatus = cons.isSuppressLabelsActive();
+					  cons.setSuppressLabelCreation(true);
+					  GeoPoint p = new GeoPoint(text.getConstruction(), null, ( ev.getXmin() + ev.getXmax() ) / 2, ( ev.getYmin() + ev.getYmax() ) / 2, 1.0);
+					  cons.setSuppressLabelCreation(oldSuppressLabelsStatus);
+					  
+					  try {
+						text.setStartPoint(p);
+						text.update();
+					} catch (CircularDefinitionException e1) {
+						e1.printStackTrace();
+					}
+				  }
+			  }
+				 				
 			  
 			  app.getGuiManager().setScrollToShow(false);
 
