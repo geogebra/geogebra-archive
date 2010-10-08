@@ -2490,12 +2490,12 @@ public class Application implements KeyEventDispatcher {
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
 			if (selectedGeos.size() > 0) {				
-				getEuclidianView().getStyleBar().applyVisualStyle();				
+				getEuclidianView().getStyleBar().applyVisualStyle(selectedGeos);				
 			}
 		}
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {			
-				getEuclidianView().getStyleBar().updateSelection();				
+				getEuclidianView().getStyleBar().updateStyleBar();				
 		}
 		
 		

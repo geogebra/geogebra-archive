@@ -38,7 +38,6 @@ public class EuclidianPen {
 
 	private boolean erasing = false;
 	
-	private MiniStyle style;
 	private int penSize; 
 	public int getPenSize() {
 		return penSize;
@@ -94,12 +93,7 @@ public class EuclidianPen {
 	public EuclidianPen(Application app, EuclidianView view){
 		this.view = view;
 		this.app = app;
-		
-		this.style = new MiniStyle(app, MiniStyle.MODE_PEN);
-		penSize = style.pointSize;
-		//eraserSize = style.pointSize;
-		penColor = style.color;
-		penLineStyle = style.lineStyle;
+	
 		setDefaults();
 	}
 
@@ -117,18 +111,7 @@ public class EuclidianPen {
 		  penColor = Color.black;	
 	}
 	
-	public MiniStyle getStyle() {
-		return style;
-	}
-
-	public void setStyle(MiniStyle style) {
-		this.style = style;
-		penSize = style.pointSize;
-		//eraserSize = style.pointSize;
-		penColor = style.color;
-		penLineStyle = style.lineStyle;
-		
-	}
+	
 	
 	public boolean isErasing() {
 		return erasing;

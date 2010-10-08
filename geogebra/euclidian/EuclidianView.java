@@ -3253,6 +3253,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			addToDrawableLists(d);
 			repaint();			
 		}
+		
+		getStyleBar().add(geo);
 	}
 
 	

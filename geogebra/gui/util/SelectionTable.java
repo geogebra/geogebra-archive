@@ -259,7 +259,7 @@ public class SelectionTable extends JTable{
 		switch (mode){
 
 		case MODE_IMAGE:
-			icon.createFileImageIcon( app, (String)value, alpha, iconSize,  fgColor,  bgColor);
+			icon.createFileImageIcon( app, (String)value, alpha, iconSize);
 			break;
 
 		case MODE_ICON:

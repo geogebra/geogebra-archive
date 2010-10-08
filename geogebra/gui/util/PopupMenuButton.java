@@ -85,9 +85,9 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		//myPopup.setBackground(this.getBackground());
 		myPopup.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
 
-
 		this.mode = mode;
 		this.iconSize = iconSize;
+		
 		// place text to the left of drop down icon
 		this.setHorizontalTextPosition(JButton.LEFT); 
 		this.setHorizontalAlignment(JButton.LEFT);
@@ -153,6 +153,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		if(isIniting) return;
 		if(hasTable){
 
+			// draw the icon for the current selection
 			switch (mode){
 
 			case SelectionTable.MODE_LINESTYLE:
@@ -178,7 +179,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				setIcon(selectedIcon);
 
 			}
-			setIcon(selectedIcon);
+			if(mode == SelectionTable.MODE_TEXT)
+				setIcon(selectedIcon);
+			else
+				setIcon(selectedIcon.ensureIconSize(iconSize));
 			repaint();
 		}
 		

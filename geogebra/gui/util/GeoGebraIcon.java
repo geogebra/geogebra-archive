@@ -12,6 +12,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
@@ -29,7 +30,7 @@ import javax.swing.ImageIcon;
 public class GeoGebraIcon extends ImageIcon {
 
 
-	public void createFileImageIcon(Application app, String fileName, float alpha, Dimension iconSize, Color fgColor, Color bgColor){
+	public void createFileImageIcon(Application app, String fileName, float alpha, Dimension iconSize){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
@@ -457,5 +458,43 @@ public class GeoGebraIcon extends ImageIcon {
 	}
 
 
+	
+public GeoGebraIcon ensureIconSize(Dimension iconSize){
+		
+		int h = iconSize.height;
+		int w = iconSize.width;
+
+		BufferedImage newImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = newImage.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		try {	
+			Image currentImage =  this.getImage();
+			if(currentImage !=null){
+				int h2 = currentImage.getHeight(null);
+				int w2 = currentImage.getWidth(null);
+
+				if(h2 == h && w2 == w) 
+					return this;
+
+				int wInset = (w - w2) > 0 ? (w-w2)/2 : w;
+				int hInset = (h - h2) > 0 ? (h-h2)/2 : h;
+
+				g2.drawImage(currentImage, hInset, wInset, null);
+			}
+			setImage(newImage);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		return this;
+		
+	}
+	
+	
+	
 
 }
