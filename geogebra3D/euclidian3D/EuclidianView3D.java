@@ -726,6 +726,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void setZZero(double val) { ZZero=val; }
 	
 	
+	/**  @return max value for x-axis (linked to grid)*/
+	public double getXMax(){ return 1; }
+	/**  @return min value for x-axis (linked to grid)*/
+	public double getXMin(){ return -1; }
+	/**  @return max value for y-axis (linked to grid)*/
+	public double getYMax(){ return 2; }
+	/**  @return min value for y-axis (linked to grid)*/
+	public double getYMin(){ return -2; }
+	/**  @return max value for z-axis */
+	public double getZMax(){ return 3; }
+	/**  @return min value for z-axis */
+	public double getZMin(){ return -3; }
+
+	
 	//TODO specific scaling for each direction
 	private double scale = 100; 
 

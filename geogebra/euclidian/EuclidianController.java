@@ -55,7 +55,6 @@ import geogebra.kernel.Region;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.kernel3D.Region3D;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
@@ -3268,6 +3267,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				onPathPossible, inRegionPossible, intersectPossible, 
 				doSingleHighlighting, true);
 	}
+	
+	protected Hits getRegionHits(Hits hits){
+		return hits.getHits(Region.class, tempArrayList);
+	}
 
 		
 	// update the new point (used for preview in 3D)
@@ -3278,7 +3281,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean doSingleHighlighting, boolean chooseGeo) {
 
 		// create hits for region
-		Hits regionHits = hits.getHits(Region3D.class, tempArrayList);
+		Hits regionHits = getRegionHits(hits);//hits.getHits(Region.class, tempArrayList);
 
 		// only keep polygon in hits if one side of polygon is in hits too
 		// removed: Point Tool creates Point on edge of Polygon

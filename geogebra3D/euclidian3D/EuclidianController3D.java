@@ -19,6 +19,7 @@ import geogebra.kernel.kernel3D.GeoCoordSys2D;
 import geogebra.kernel.kernel3D.GeoElement3DInterface;
 import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.kernel3D.Kernel3D;
+import geogebra.kernel.kernel3D.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
 
@@ -216,8 +217,24 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 		//getting new position of the point
-		GgbVector[] project = o.projectPlaneThruVIfPossible(currentPlane, v);
-		point.setCoords(project[0]);
+		GgbVector[] projects = o.projectPlaneThruVIfPossible(currentPlane, v);
+		GgbVector project = projects[0];
+		
+		/*
+		//max x value
+		if (project.getX()>view3D.getXMax())
+			project.setX(view3D.getXMax());
+		else if (project.getX()<view3D.getXMin())
+			project.setX(view3D.getXMin());
+		
+		//max y value
+		if (project.getY()>view3D.getYMax())
+			project.setY(view3D.getYMax());
+		else if (project.getY()<view3D.getYMin())
+			project.setY(view3D.getYMin());
+		*/
+		
+		point.setCoords(project);
 	}
 	
 	
@@ -278,6 +295,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 				//getting new position of the point
 				GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
+				
+				/*
+				//max z value
+				if (project.getZ()>view3D.getZMax())
+					project.setZ(view3D.getZMax());
+				else if (project.getZ()<view3D.getZMin())
+					project.setZ(view3D.getZMin());
+				*/
+				
 				movedGeoPoint3D.setCoords(project);
 
 				//update the moving plane altitude
@@ -325,6 +351,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	//////////////////////////////////////////////
 	// creating a new point
 	
+	
+	protected Hits getRegionHits(Hits hits){
+		return hits.getHits(Region3D.class, tempArrayList);
+	}
 	
 	
 	/**
