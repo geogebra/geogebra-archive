@@ -8,6 +8,7 @@ import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionable;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
@@ -472,6 +473,40 @@ public class AlgebraProcessor {
 	}
 
 	/**
+	 * Parses given String str and tries to evaluate it to a GeoImplicitPoly object.
+	 * Returns null if something went wrong.
+	 * @param str 
+	 * @boolean showErrors if false, only stacktraces are printed
+	 * @return implicit polygon or null
+	 */
+	public GeoElement evaluateToGeoElement(String str,boolean showErrors) {
+		boolean oldMacroMode = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+
+		GeoElement geo = null;
+		try {
+			ValidExpression ve = parser.parseGeoGebraExpression(str);		
+			GeoElement [] temp = processValidExpression(ve);
+			geo = temp[0];			
+		} catch (CircularDefinitionException e) {
+			Application.debug("CircularDefinition");
+			app.showError("CircularDefinition");
+		} catch (Exception e) {		
+			e.printStackTrace();
+			if(showErrors)app.showError("InvalidInput");			
+		} catch (MyError e) {
+			e.printStackTrace();
+			if(showErrors)app.showError(e);
+		} catch (Error e) {
+			e.printStackTrace();
+			if(showErrors)app.showError("InvalidInput");			 
+		} 
+		
+		cons.setSuppressLabelCreation(oldMacroMode);
+		return geo;
+	}
+	
+	/**
 	 * Checks if label is valid.	 
 	 */
 	public String parseLabel(String label) throws ParseException {
@@ -756,13 +791,13 @@ public class AlgebraProcessor {
 		return ret;
 	}
 
-	protected GeoElement[] processEquation(Equation equ) throws MyError {		
+	public GeoElement[] processEquation(Equation equ) throws MyError {		
 		Application.debug("EQUATION: " + equ);        
 		Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
 		
 		try {
 			equ.initEquation();	
-			
+			Application.debug("EQUATION: " + equ.getNormalForm());    	
 			// check no terms in z
 			checkNoTermsInZ(equ);
 
@@ -851,6 +886,7 @@ public class AlgebraProcessor {
 		GeoConic conic;
 		String label = equ.getLabel();
 		Polynomial lhs = equ.getNormalForm();
+		
 		boolean isExplicit = equ.isExplicit("y");
 		boolean isSpecific =
 			!isExplicit && (equ.isExplicit("yy") || equ.isExplicit("xx"));

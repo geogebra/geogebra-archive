@@ -73,6 +73,11 @@ public class DrawInequality extends Drawable {
 				case Inequality.INEQUALITY_PARAMETRIC_X: 
 					updateParametricX(ineq,gp[i]);
 					break;
+				case Inequality.INEQUALITY_IMPLICIT: 
+					DrawImplicitPoly dip = new DrawImplicitPoly(view, ineq.getImpBorder());
+					dip.update();
+					dip.draw(view.getBackgroundGraphics());
+					break;
 			}
 				
 			// gp on screen?

@@ -35,7 +35,6 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POINT_COMPLEX =  14;
 	
 	public static final int DEFAULT_LINE = 20;			
-	public static final int DEFAULT_INEQUALITY_STRICT = 22; // solid
 	public static final int DEFAULT_INEQUALITY = 23; // dashed		
 	public static final int DEFAULT_VECTOR = 30;	
 	public static final int DEFAULT_CONIC = 40;
@@ -205,18 +204,12 @@ public class ConstructionDefaults {
 		defaultGeoElements.put(DEFAULT_LINE, line);
 		
 		GeoFunctionNVar inequality = new GeoFunctionNVar(cons, null);	
-		inequality.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		inequality.setLocalVariableLabel("Inequality");
 		inequality.setObjColor(colInequality);
 		inequality.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
 		defaultGeoElements.put(DEFAULT_INEQUALITY, inequality);
 		
-		GeoFunctionNVar inequalityStrict = new GeoFunctionNVar(cons, null);	
-		inequalityStrict.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-		inequalityStrict.setLocalVariableLabel("InequalityStrict");
-		inequalityStrict.setObjColor(colInequality);
-		inequalityStrict.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
-		defaultGeoElements.put(DEFAULT_INEQUALITY_STRICT, inequalityStrict);
+		
 		
 		
 		// vector

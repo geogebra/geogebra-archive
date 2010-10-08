@@ -472,13 +472,21 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 
 
 		private void initIneqs(ExpressionNode fe) {
+			if(ineqs==null)ineqs = new ArrayList<Inequality>();
 			int op = fe.getOperation();
 			ExpressionNode leftTree = fe.getLeftTree();
 			ExpressionNode rightTree = fe.getRightTree();
 			if(op == ExpressionNode.GREATER||op == ExpressionNode.GREATER_EQUAL||
 					op == ExpressionNode.LESS||op == ExpressionNode.LESS_EQUAL)	{
-				if(ineqs==null)ineqs = new ArrayList<Inequality>();
-				ineqs.add(new Inequality(kernel,leftTree,rightTree,op,getFunction().getFunctionVariables()));
+				Inequality newIneq = new Inequality(kernel,leftTree,rightTree,op,getFunction().getFunctionVariables());
+				if(newIneq.getType() == Inequality.INEQUALITY_IMPLICIT){
+					newIneq.getImpBorder().setVisualStyle(this);
+					if (newIneq.isStrict())
+						newIneq.getImpBorder().setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+					else
+						newIneq.getImpBorder().setLineType(EuclidianView.LINE_TYPE_FULL);
+				}
+				ineqs.add(newIneq);
 			}if(op == ExpressionNode.AND || op == ExpressionNode.OR){
 				initIneqs(leftTree);
 				initIneqs(rightTree);
@@ -501,35 +509,45 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		}
 
 		public void pointChangedForRegion(GeoPointInterface P) {
+			RegionParameters rp = P.getRegionParameters();
 			if(!isInRegion(P) && ((GeoPoint)P).isDefined()){
-				double bestX = 0, bestY = 0, bestDist = Double.POSITIVE_INFINITY,
+				double bestX = rp.getT1(), bestY = rp.getT2(), 
 				myX = P.getX2D(), myY = P.getY2D();
+				double bestDist = (bestY-myY)*(bestY-myY)+(bestX-myX)*(bestX-myX);
+				
 				if(ineqs==null)initIneqs(getFunctionExpression());
 				int size = ineqs.size();
+				
 				for(int i = 0; i<size; i++){
 					Inequality in = ineqs.get(i);
-					double px,py;
+					double px=0,py=0;
 					if(in.getType()==Inequality.INEQUALITY_PARAMETRIC_Y){
 						px = P.getX2D();
 						py = in.getBorder().evaluate(px);
 						py += in.isAboveBorder()? STRICT_INEQ_OFFSET : -STRICT_INEQ_OFFSET;
 					}
-					else{
+					else if(in.getType()==Inequality.INEQUALITY_PARAMETRIC_X){
 						py = P.getY2D();
 						px = in.getBorder().evaluate(py);
 						px += in.isAboveBorder()? STRICT_INEQ_OFFSET : -STRICT_INEQ_OFFSET;
 					}
-					double myDist = Math.abs(py-myY)+Math.abs(px-myX);
+					double myDist = (py-myY)*(py-myY)+(px-myX)*(px-myX);
 					if((myDist < bestDist) && isInRegion(px,py)){
 						bestDist = myDist;
 						bestX = px;
 						bestY = py;
 					}
 				}
-				if(isInRegion(bestX,bestY))
+				if(isInRegion(bestX,bestY)){
+					rp.setT1(bestX);
+					rp.setT2(bestY);
 					((GeoPoint)P).setCoords(bestX, bestY, 1);
+				}
 				else tryLocateInEV(P); 
 					
+			}else{
+				rp.setT1(P.getX2D());
+				rp.setT2(P.getY2D());
 			}
 			
 		}
@@ -548,7 +566,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				double ry = ev.toRealWorldCoordX(SEEK_DENSITY * i);
 				if (isInRegion(rx, ry)) {
 					((GeoPoint) P).setCoords(rx, ry, 1);
-					Application.debug("Desperately found"+rx+","+ry);
+					//Application.debug("Desperately found"+rx+","+ry);
 					found = true;
 				}
 			}	
