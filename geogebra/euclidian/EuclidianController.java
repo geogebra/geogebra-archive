@@ -55,20 +55,14 @@ import geogebra.kernel.Region;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernel3D.Region3D;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.Transparency;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -77,9 +71,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -3286,7 +3278,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean doSingleHighlighting, boolean chooseGeo) {
 
 		// create hits for region
-		Hits regionHits = hits.getHits(Region.class, tempArrayList);
+		Hits regionHits = hits.getHits(Region3D.class, tempArrayList);
 
 		// only keep polygon in hits if one side of polygon is in hits too
 		// removed: Point Tool creates Point on edge of Polygon
