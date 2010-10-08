@@ -43,7 +43,7 @@ public class CmdSum extends CommandProcessor {
 			
 			for (int i = 0 ; i < size ; i++) {
 				GeoElement geo = list.get(i);
-				if (!geo.isGeoFunction()) {
+				if (!geo.isGeoFunctionable()) {
 					allFunctions = false;
 				}
 				if (!geo.isNumberValue()) {
@@ -71,15 +71,15 @@ public class CmdSum extends CommandProcessor {
 							list) };
 					return ret;
 				}
-				else if (allFunctions) {
-					GeoElement[] ret = { 
-							kernel.SumFunctions(c.getLabel(),
-							list) };
-					return ret;
-				}
 				else if (allNumbersVectorsPoints) {
 					GeoElement[] ret = { 
 							kernel.SumPoints(c.getLabel(),
+							list) };
+					return ret;
+				}
+				else if (allFunctions) {
+					GeoElement[] ret = { 
+							kernel.SumFunctions(c.getLabel(),
 							list) };
 					return ret;
 				}

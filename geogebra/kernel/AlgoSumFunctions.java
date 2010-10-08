@@ -79,12 +79,12 @@ public class AlgoSumFunctions  extends AlgoElement {
     	}
     	else if (n == 1)
     	{
-    		if (!geoList.get(0).isGeoFunction()) {
+    		if (!geoList.get(0).isGeoFunctionable()) {
         		resultFun.setUndefined();
         		return;
         	}
     		
-           	GeoFunction fun1 = (GeoFunction)geoList.get(0);
+           	GeoFunction fun1 = ((GeoFunctionable)geoList.get(0)).getGeoFunction();
 
         	FunctionVariable x1 = fun1.getFunction().getFunctionVariable();
         	FunctionVariable x =  new FunctionVariable(kernel);
@@ -98,7 +98,7 @@ public class AlgoSumFunctions  extends AlgoElement {
     		return;
     	}
 
-		if (!geoList.get(0).isGeoFunction() || !geoList.get(1).isGeoFunction()) {
+		if (!geoList.get(0).isGeoFunctionable() || !geoList.get(1).isGeoFunctionable()) {
     		resultFun.setUndefined();
     		return;
     	}
@@ -106,17 +106,17 @@ public class AlgoSumFunctions  extends AlgoElement {
 		// try needed for Sum[Sequence[If[x < i, i x], i, 1, 3]] at the moment
 		try {
 	    	// add first two:
-	    	resultFun = GeoFunction.add(resultFun,(GeoFunction)geoList.get(0), (GeoFunction)geoList.get(1));
+	    	resultFun = GeoFunction.add(resultFun,((GeoFunctionable)geoList.get(0)).getGeoFunction(), ((GeoFunctionable)geoList.get(1)).getGeoFunction());
 	    	
 	    	if (n == 2) return;
 	    	
 	    	for (int i = 2 ; i < n ; i++) {  	
 	    		
-	    		if (!geoList.get(i).isGeoFunction()) {
+	    		if (!geoList.get(i).isGeoFunctionable()) {
 	        		resultFun.setUndefined();
 	        		return;
 	        	}
-	    		resultFun = GeoFunction.add(resultFun,resultFun, (GeoFunction)geoList.get(i));
+	    		resultFun = GeoFunction.add(resultFun,resultFun, ((GeoFunctionable)geoList.get(i)).getGeoFunction());
 	    	}
 		}
 		catch (Exception e) {
