@@ -3022,9 +3022,9 @@ implements ExpressionValue, ExpressionNodeConstants {
 			return rc*((MyDouble)getLeftTree().evaluate()).getDouble();
 		}else if(this.operation == DIVIDE){
 			return lc/((MyDouble)getRightTree().evaluate()).getDouble();
-		}else if((left.equals(fv)||right.equals(fv)))
+		}else if((left.contains(fv)||right.contains(fv)))
 			return null;
-		return ((MyDouble)this.evaluate()).getDouble();
+		return 0.0;
 		
 		
 	}
