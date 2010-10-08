@@ -5248,6 +5248,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (p.isPointOnPath() || p.isPointInRegion()) {
 				
 				getSelectedPoints();
+				getSelectedRegions();
+				getSelectedPaths();
 				
 				// move point (20,20) pixels when detached
 				double x = view.toScreenCoordX(p.inhomX) + 20;
@@ -5266,22 +5268,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		if (selPoints() == 1) {
-			if (selRegions() == 1) {
-				Region regions[] = getSelectedRegions();
-				GeoPoint[] points = getSelectedPoints();
-
-				if (!((GeoElement)regions[0]).isChildOf(points[0])) {
-					try {
-						GeoPoint newPoint = kernel.PointIn(null, regions[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false);
-						kernel.getConstruction().replace(points[0], newPoint);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-						return false;
-					}
-					return true;
-				}
-				
-			} else if (selPaths() == 1) {
+			if (selPaths() == 1 && !altDown) { // press alt to force region (ie inside) not path (edge)
 				Path paths[] = getSelectedPaths();
 				GeoPoint[] points = getSelectedPoints();
 				
@@ -5298,7 +5285,22 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					return true;
 				}
 				
-			}
+			} else if (selRegions() == 1) {
+				Region regions[] = getSelectedRegions();
+				GeoPoint[] points = getSelectedPoints();
+
+				if (!((GeoElement)regions[0]).isChildOf(points[0])) {
+					try {
+						GeoPoint newPoint = kernel.PointIn(null, regions[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false);
+						kernel.getConstruction().replace(points[0], newPoint);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+						return false;
+					}
+					return true;
+				}
+				
+			} 
 		} 
 		return false;
 	}
