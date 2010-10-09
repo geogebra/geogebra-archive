@@ -268,7 +268,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 	
 	
-	public void setSelectedIndex(int selectedIndex) {
+	public void setSelectedIndex(Integer selectedIndex) {
+		if(selectedIndex == null)
+			selectedIndex = -1;
+		
 		myTable.setSelectedIndex(selectedIndex);
 		updateGUI();
 	}

@@ -29,6 +29,16 @@ import javax.swing.ImageIcon;
  */
 public class GeoGebraIcon extends ImageIcon {
 
+	public GeoGebraIcon(){
+		super();
+	}
+
+	
+	public GeoGebraIcon(Application app, String fileName, Dimension iconSize){
+		super();
+		setImage(app.getImageIcon(fileName).getImage());
+		ensureIconSize(iconSize);
+	}
 
 	public void createFileImageIcon(Application app, String fileName, float alpha, Dimension iconSize){
 
