@@ -2541,7 +2541,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		public TextEditPanel() {
 			td = new TextInputDialog(app, app.getPlain("Text"), null, null,
-										30, 5);
+										30, 5, false);
 			setLayout(new BorderLayout());
 			add(td.getInputPanel(), BorderLayout.CENTER);
 			JPanel btPanel = new JPanel(new BorderLayout(0,0));

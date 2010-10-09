@@ -11,6 +11,7 @@ the Free Software Foundation.
 */
 package geogebra.gui;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.GeoElement;
@@ -47,15 +48,18 @@ public class TextInputDialog extends InputDialog {
 	private GeoText text;
 	private boolean isLaTeX;
 	private GeoPoint startPoint;
+	private boolean isTextMode = false;
 	
+
 	/**
 	 * Input Dialog for a GeoText object
 	 */
 	public TextInputDialog(Application app,  String title, GeoText text, GeoPoint startPoint,
-								int cols, int rows) {	
+								int cols, int rows, boolean isTextMode) {	
 		super(app.getFrame(), false);
 		this.app = app;
 		this.startPoint = startPoint;
+		this.isTextMode = isTextMode;
 		inputHandler = new TextInputHandler();
 				
 		// create LaTeX checkbox
@@ -248,6 +252,8 @@ public class TextInputDialog extends InputDialog {
 				if (isShowing()) {	
 					// text dialog window is used and open
 					setVisible(!finished);
+					if(isTextMode)
+						app.setMode(EuclidianConstants.MODE_TEXT);
 				} else {		
 					// text input field embedded in properties window
 					
@@ -264,6 +270,9 @@ public class TextInputDialog extends InputDialog {
 				else {
 					setGeoText(text);
 				}
+				
+				if(isTextMode)
+					app.setMode(EuclidianConstants.MODE_TEXT);
 			}
 			else if (source == cbLaTeX) {
 				isLaTeX = cbLaTeX.isSelected();

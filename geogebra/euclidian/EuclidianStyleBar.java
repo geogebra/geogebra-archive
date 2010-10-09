@@ -119,15 +119,18 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 
 	public void setMode(int mode) {
+		// MODE_TEXT temporarily switches to  MODE_SELECTION_LISTENER 
+		// so we need to ignore this.
+		if(mode == EuclidianConstants.MODE_SELECTION_LISTENER) return;
+		
 		this.mode = mode;	
 		updateStyleBar();
 		updateGUI();
 	}
 	
 	public void add(GeoElement geo) {
-		
-		applyVisualStyle(geo);
-		
+		if(mode != EuclidianConstants.MODE_MOVE)
+			applyVisualStyle(geo);
 	}
 	
 	

@@ -2,6 +2,7 @@ package geogebra.gui;
 
 import geogebra.CommandLineArguments;
 import geogebra.GeoGebra;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
@@ -1021,8 +1022,9 @@ public class GuiManager {
 	}
 
 	public JDialog createTextDialog(GeoText text, GeoPoint startPoint) {
+		boolean isTextMode = app.getMode() == EuclidianConstants.MODE_TEXT;
 		TextInputDialog id = new TextInputDialog(app, app.getPlain("Text"),
-				text, startPoint, 30, 6);
+				text, startPoint, 30, 6, isTextMode);
 		return id;
 	}
 
