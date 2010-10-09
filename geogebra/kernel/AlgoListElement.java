@@ -35,6 +35,13 @@ public class AlgoListElement extends AlgoElement {
 	private GeoElement numGeo, num2Geo = null;
     private GeoElement element; //output	
 
+    /**
+     * Creates new labeled element algo
+     * @param cons
+     * @param label
+     * @param geoList
+     * @param num
+     */
     AlgoListElement(Construction cons, String label, GeoList geoList, NumberValue num) {
         super(cons);
         this.geoList = geoList;
@@ -66,6 +73,14 @@ public class AlgoListElement extends AlgoElement {
         element.setLabel(label);
     }
 
+    /**
+     * Creates new unlabeed element algo
+     * @param cons
+     * @param label
+     * @param geoList
+     * @param num2
+     * @param num
+     */
     AlgoListElement(Construction cons, String label, GeoList geoList, NumberValue num2, NumberValue num) {
         super(cons);
         this.geoList = geoList;
@@ -119,15 +134,19 @@ public class AlgoListElement extends AlgoElement {
     	{
 	        input = new GeoElement[3];
 	        input[0] = geoList;
-	        input[1] = numGeo;
-	        input[2] = num2Geo;	
+	        input[2] = numGeo;
+	        input[1] = num2Geo;	
     	}
 
-        output = new GeoElement[1];
-        output[0] = element;
+        setOutputLength(1);
+        setOutput(0,element);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns chosen element
+     * @return chosen element
+     */
     GeoElement getElement() {
         return element;
     }

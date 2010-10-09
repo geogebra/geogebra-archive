@@ -97,9 +97,9 @@ public class AlgoShearOrStretch extends AlgoTransformation {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[3];
-        input[2] = geoIn; 
-        input[0] = l;
-        input[1] = num.toGeoElement();
+        input[0] = geoIn; 
+        input[1] = l;
+        input[2] = num.toGeoElement();
         
         setOutputLength(1);        
         setOutput(0,geoOut);        
