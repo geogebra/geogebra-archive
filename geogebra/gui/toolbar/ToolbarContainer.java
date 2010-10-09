@@ -218,8 +218,10 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		toolbarPanel.removeAll();
 		
 		for(Toolbar toolbar : toolbars) {
-			toolbar.buildGui();
-			toolbarPanel.add(toolbar, Integer.toString(getViewId(toolbar)));
+			if(toolbar != null) {
+				toolbar.buildGui();
+				toolbarPanel.add(toolbar, Integer.toString(getViewId(toolbar)));
+			}
 		}
 		
 		toolbarPanel.show(Integer.toString(activeToolbar));

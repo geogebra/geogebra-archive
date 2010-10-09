@@ -1300,6 +1300,12 @@ public class MyXMLHandler implements DocHandler {
 		// calculate window dimensions
 		int width = evSize.width;
 		int height = evSize.height;
+		
+		// minimal size for documents, necessary for GeoGebra < 3
+		if(width <= 100 || height <= 100) {
+			width = 600;
+			height = 440;
+		}
 	
 		if(splitOrientation == JSplitPane.HORIZONTAL_SPLIT) {
 			if(tmp_showSpreadsheet) {
@@ -1495,6 +1501,13 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleSplitDivider(Application app, LinkedHashMap<String, String> attrs) {
 		try {
 			tmp_spHorizontal = !"false".equals((String) attrs.get("horizontal"));
+			
+			// There were just two panels in GeoGebra < 3.2, therefore just one split divider position
+			// may be given. 'loc' in < 3.2 corresponds to 'loc2' in 3.2+.
+			if(attrs.get("loc2") == null) {
+				attrs.put("loc2", attrs.get("loc"));
+				attrs.put("loc", "0"); // prevent NP exception in Integer.parseInt()
+			}
 			
 			if(tmp_spHorizontal) {
 				tmp_sp1 = Integer.parseInt((String) attrs.get("loc"));

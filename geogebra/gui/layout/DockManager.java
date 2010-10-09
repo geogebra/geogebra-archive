@@ -119,8 +119,6 @@ public class DockManager implements AWTEventListener {
 					panel.setVisible(dpInfo[i].isVisible());
 				}
 			}
-			
-			updatePanels();
 		}
 		
 		if(spInfo.length > 0) {
@@ -178,8 +176,6 @@ public class DockManager implements AWTEventListener {
 					continue;
 				}
 				
-				
-				
 				DockSplitPane currentParent = rootPane;
 				String[] directions = dpInfo[i].getEmbeddedDef().split(",");
 				
@@ -203,6 +199,8 @@ public class DockManager implements AWTEventListener {
 				} else {
 					currentParent.setRightComponent(panel);
 				}
+
+				panel.updatePanel();
 				
 				// move toolbar to main container
 				if(panel.hasToolbar()) {

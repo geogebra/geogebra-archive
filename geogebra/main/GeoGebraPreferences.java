@@ -12,9 +12,6 @@
 
 package geogebra.main;
 
-
-
-
 import geogebra.GeoGebra;
 
 import java.io.BufferedInputStream;
