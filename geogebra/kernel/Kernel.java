@@ -1858,9 +1858,11 @@ public class Kernel {
 		p.setCoords(x, y, 1.0);
 		if (complex) {
 			p.setMode(COORD_COMPLEX);
+			/* removed as this sets the mode back to COORD_CARTESIAN
+
 			// we have to reset the visual style as the constructor
 			// did not know that this was a complex number
-			p.setConstructionDefaults();
+			//p.setConstructionDefaults(); */
 		}
 		else
 			p.setMode(COORD_CARTESIAN);
