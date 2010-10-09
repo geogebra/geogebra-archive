@@ -268,31 +268,25 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 						Color geoColor = ((GeoElement) geos[0]).getObjectColor();
 						float alpha = 1.0f;
-						boolean geoFillable = true;
+						boolean hasFillable = false;
 						
-						// check for fillable geo
-						// if true, then set slider to first geo's alpha value
+						// check if selection contains a fillable geo
+						// if true, then set slider to first fillable's alpha value
 						for (int i = 0; i < geos.length; i++) {
-							if (!((GeoElement) geos[i]).isFillable()) {
-								geoFillable = false;
+							if (((GeoElement) geos[i]).isFillable()) {
+								hasFillable = true;
+								alpha = ((GeoElement) geos[i]).getAlphaValue();
 								break;
 							}
 						}
-						if(geoFillable)
-							alpha = ((GeoElement) geos[0]).getAlphaValue();
 						
-						//set the button
-						setButton(geoColor, alpha, geoFillable);
+						setButton(geoColor, alpha, hasFillable);
 						
 						this.setKeepVisible(mode == EuclidianView.MODE_MOVE);
 					}
 				}
 			}
 			
-			public void setDefault(){
-				//Color geoColor = ((GeoElement) geos[0]).getObjectColor();
-				
-			}
 			
 			private void setButton(Color color, float alpha, boolean showSlider){
 				
