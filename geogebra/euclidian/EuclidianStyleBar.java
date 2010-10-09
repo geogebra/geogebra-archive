@@ -350,9 +350,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					}
 					btnTextColor.getMyTable().populateModel(textColors);					
 					setSelectedIndex(index);
-				//	setFgColor(((GeoElement)geos[0]).getObjectColor());
-					setFgColor(Color.black);
-					
+					setFgColor(((GeoElement)geos[0]).getObjectColor());
 					setFontStyle(((GeoText)geos[0]).getFontStyle());
 				}
 			}
@@ -793,7 +791,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		else if (source == btnTextColor) {
 			if(btnTextColor.getSelectedValue() != null){
 				applyVisualStyle(app.getSelectedGeos());
-				//btnTextColor.setFgColor((Color)btnTextColor.getSelectedValue());
+				btnTextColor.setFgColor((Color)btnTextColor.getSelectedValue());
 				//btnItalic.setForeground((Color)btnTextColor.getSelectedValue());
 				//btnBold.setForeground((Color)btnTextColor.getSelectedValue());
 			}
