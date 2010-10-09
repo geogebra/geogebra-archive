@@ -119,11 +119,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 
 	public void setMode(int mode) {
+		
+		this.mode = mode;
+		
 		// MODE_TEXT temporarily switches to  MODE_SELECTION_LISTENER 
 		// so we need to ignore this.
 		if(mode == EuclidianConstants.MODE_SELECTION_LISTENER) return;
 		
-		this.mode = mode;	
 		updateStyleBar();
 		updateGUI();
 	}
@@ -150,13 +152,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				"applications-graphics.png",
 				"delete_small.gif",
 				"mode_point_16.gif",
-				"mode_copyvisualStyle_16.png"
+				"mode_copyvisualstyle_16.png"
 		};
 		btnMode = new PopupMenuButton(ev.getApplication(), modeArray, -1,1,
 				new Dimension(20,maxIconHeight), SelectionTable.MODE_ICON);
 		btnMode.addActionListener(this);
 		btnMode.setKeepVisible(false);
-		//add(btnMode);
+		add(btnMode);
 		
 		
 		//========================================
@@ -184,7 +186,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		//========================================
 		// hide/show labels button
-		btnLabel = new MyToggleButton(ev.getApplication().getImageIcon("mode_copyvisualStyle_16.png")){
+		btnLabel = new MyToggleButton(ev.getApplication().getImageIcon("mode_copyvisualstyle_16.png")){
 		      public void update(Object[] geos) {
 					this.setVisible((geos.length == 0 && mode == EuclidianView.MODE_MOVE) || mode == EuclidianView.MODE_SHOW_HIDE_LABEL);	  
 			      }
@@ -196,7 +198,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//========================================
 		// visual style button
 		
-		btnCopyVisualStyle = new MyToggleButton(ev.getApplication().getImageIcon("mode_copyvisualStyle_16.png")){
+		btnCopyVisualStyle = new MyToggleButton(ev.getApplication().getImageIcon("mode_copyvisualstyle_16.png")){
 		      public void update(Object[] geos) {
 				this.setVisible( (geos.length > 0 && mode == EuclidianView.MODE_MOVE) || mode == EuclidianView.MODE_VISUAL_STYLE);	  
 		      }
