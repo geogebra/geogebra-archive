@@ -78,7 +78,13 @@ public class AlgoReverse extends AlgoElement {
         
  	    for (int i=0 ; i<size ; i++)
  	    {
-     	   outputList.add(inputList.get(size-1-i));
+ 	    	// need to copy elements like eg {(1,1)} so the properties can be set independently
+ 	    	GeoElement geo = inputList.get(size-1-i);
+ 	    	if (!geo.isLabelSet()) {
+ 	    		geo = geo.copyInternal(cons);
+ 	    	}
+ 	    	
+     	   outputList.add(geo);
         }      
      }
     
