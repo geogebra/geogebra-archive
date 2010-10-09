@@ -158,7 +158,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				new Dimension(20,maxIconHeight), SelectionTable.MODE_ICON);
 		btnMode.addActionListener(this);
 		btnMode.setKeepVisible(false);
-		add(btnMode);
+		//add(btnMode);
 		
 		
 		//========================================
