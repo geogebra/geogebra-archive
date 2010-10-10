@@ -13,10 +13,9 @@ the Free Software Foundation.
 package geogebra.gui.app;
 
 
+
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Locale;
 
 import javax.swing.filechooser.FileFilter;
@@ -123,17 +122,17 @@ public class MyFileFilter extends FileFilter {
      * Files that begin with "." are ignored.
      *
      * @see #getExtension
-     * @see FileFilter#accepts
+     * @see FileFilter#accept
      */
     public boolean accept(File f) {
-	if(f != null) {
-	    if(f.isDirectory())
-			return true;
-	    String extension = getExtension(f);
-	    if(extension != null && filters.contains(getExtension(f)));
-			return true;
-	}
-	return false;
+		if(f != null) {
+		    if(f.isDirectory())
+				return true;
+		    String extension = getExtension(f);
+		    if(extension != null && filters.contains(getExtension(f)))
+				return true;
+		}
+		return false;
     }
 
     /**
