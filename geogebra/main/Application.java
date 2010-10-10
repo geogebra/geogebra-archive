@@ -158,7 +158,7 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("zh", "CN")); // Chinese (Simplified)
 		supportedLocales.add(new Locale("zh", "TW")); // Chinese (Traditional)
 		supportedLocales.add(new Locale("hr")); // Croatian
-		supportedLocales.add(new Locale("cz")); // Czech
+		supportedLocales.add(new Locale("cs")); // Czech
 		supportedLocales.add(new Locale("da")); // Danish
 		supportedLocales.add(new Locale("nl")); // Dutch
 		supportedLocales.add(new Locale("en")); // English
@@ -231,7 +231,6 @@ public class Application implements KeyEventDispatcher {
 		specialLanguageNames.put("bs", "Bosnian");
 		specialLanguageNames.put("zhCN", "Chinese Simplified");
 		specialLanguageNames.put("zhTW", "Chinese Traditional");
-		specialLanguageNames.put("cz", "Czech");
 		specialLanguageNames.put("en", "English (US)");
 		specialLanguageNames.put("enGB", "English (UK)");
 		specialLanguageNames.put("enAU", "English (Australia)");
