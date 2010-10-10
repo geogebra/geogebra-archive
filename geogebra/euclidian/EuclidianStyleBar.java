@@ -38,7 +38,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			
 	
 	private MyToggleButton btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
-    		btnBold, btnItalic, btnDelete, btnLabel, btnEraser, btnHideShowLabel;
+    		btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel;
 	private MyToggleButton[] toggleBtnList;
 
 	private JButton btnPenDelete, btnDeleteGeo;
@@ -52,6 +52,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private HashMap<Integer,Integer> defaultGeoMap;
 	private Construction cons; 
 	
+	private ArrayList<GeoElement> defaultGeos;
 	
 	
 	private int maxIconHeight = 20;	
@@ -105,6 +106,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		for(int i = 0; i < lineStyleArray.length; i++)
 			lineStyleMap.put(lineStyleArray[i], i);
 		
+		defaultGeos = new ArrayList<GeoElement>();
+		
+		
 		initGUI();
 		isIniting = false;
 		
@@ -131,8 +135,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	public void add(GeoElement geo) {
-		if(mode != EuclidianConstants.MODE_MOVE)
-			applyVisualStyle(geo);
+		//if(mode != EuclidianConstants.MODE_MOVE)
+			//applyVisualStyle(geo);
 	}
 	
 	
@@ -164,8 +168,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//========================================
 		// pen button
 		btnPen = new MyToggleButton(ev.getApplication().getImageIcon("applications-graphics.png")){
-		      public void update(Object[] geos) {
-					this.setVisible((geos.length == 0 && mode == EuclidianView.MODE_MOVE) || mode == EuclidianView.MODE_PEN);	  
+		      @Override
+			public void update(Object[] geos) {
+					this.setVisible((geos.length == 0 && mode == EuclidianConstants.MODE_MOVE) || mode == EuclidianConstants.MODE_PEN);	  
 			      }
 			};
 		btnPen.addActionListener(this);
@@ -175,8 +180,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//========================================
 		// delete button
 		btnDelete = new MyToggleButton(ev.getApplication().getImageIcon("delete_small.gif")){
-		      public void update(Object[] geos) {
-					this.setVisible((geos.length == 0 && mode == EuclidianView.MODE_MOVE)  || mode == EuclidianView.MODE_DELETE);	  
+		      @Override
+			public void update(Object[] geos) {
+					this.setVisible((geos.length == 0 && mode == EuclidianConstants.MODE_MOVE)  || mode == EuclidianConstants.MODE_DELETE);	  
 			      }
 			};
 		btnDelete.addActionListener(this);
@@ -187,8 +193,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//========================================
 		// hide/show labels button
 		btnLabel = new MyToggleButton(ev.getApplication().getImageIcon("mode_copyvisualstyle_16.png")){
-		      public void update(Object[] geos) {
-					this.setVisible((geos.length == 0 && mode == EuclidianView.MODE_MOVE) || mode == EuclidianView.MODE_SHOW_HIDE_LABEL);	  
+		      @Override
+			public void update(Object[] geos) {
+					this.setVisible((geos.length == 0 && mode == EuclidianConstants.MODE_MOVE) || mode == EuclidianConstants.MODE_SHOW_HIDE_LABEL);	  
 			      }
 			};
 		btnLabel.addActionListener(this);
@@ -199,8 +206,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		// visual style button
 		
 		btnCopyVisualStyle = new MyToggleButton(ev.getApplication().getImageIcon("mode_copyvisualstyle_16.png")){
-		      public void update(Object[] geos) {
-				this.setVisible( (geos.length > 0 && mode == EuclidianView.MODE_MOVE) || mode == EuclidianView.MODE_VISUAL_STYLE);	  
+		      @Override
+			public void update(Object[] geos) {
+				this.setVisible( (geos.length > 0 && mode == EuclidianConstants.MODE_MOVE) || mode == EuclidianConstants.MODE_VISUAL_STYLE);	  
 		      }
 		};
 		btnCopyVisualStyle.addActionListener(this);
@@ -215,8 +223,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		// show axes button
 		
 		btnShowAxes = new MyToggleButton(ev.getApplication().getImageIcon("axes.gif")){
-		      public void update(Object[] geos) {
-				this.setVisible(geos.length == 0  && mode != EuclidianView.MODE_PEN);	  
+		      @Override
+			public void update(Object[] geos) {
+				this.setVisible(geos.length == 0  && mode != EuclidianConstants.MODE_PEN);	  
 		      }
 		};
 		
@@ -230,8 +239,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		// show grid button
 		
 		btnShowGrid = new MyToggleButton(ev.getApplication().getImageIcon("grid.gif")){
-		      public void update(Object[] geos) {
-					this.setVisible(geos.length == 0 && mode != EuclidianView.MODE_PEN);	  
+		      @Override
+			public void update(Object[] geos) {
+					this.setVisible(geos.length == 0 && mode != EuclidianConstants.MODE_PEN);	  
 			      }
 			};
 			
@@ -248,9 +258,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnColor = new PopupMenuButton(ev.getApplication(), colors, -1,8,
 				new Dimension(20,maxIconHeight), SelectionTable.MODE_COLOR_SWATCH) {
 
+			@Override
 			public void update(Object[] geos) {
 
-				if( mode == EuclidianView.MODE_PEN){
+				if( mode == EuclidianConstants.MODE_PEN){
 					this.setVisible(true);
 					setSelectedIndex(colorMap.get(ec.getPen().getPenColor()));
 					setSliderValue(100);
@@ -259,7 +270,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				}else{
 
 
-					boolean geosOK = (geos.length > 0 || mode == EuclidianView.MODE_PEN);
+					boolean geosOK = (geos.length > 0 || mode == EuclidianConstants.MODE_PEN);
 					for (int i = 0; i < geos.length; i++) {
 						GeoElement geo = (GeoElement)geos[i];
 						if (geo instanceof GeoImage || geo instanceof GeoText  )
@@ -287,7 +298,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 						
 						setButton(geoColor, alpha, hasFillable);
 						
-						this.setKeepVisible(mode == EuclidianView.MODE_MOVE);
+						this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
 					}
 				}
 			}
@@ -308,7 +319,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				setSelectedIndex(index);
 				
 				
-				setSliderValue((int) Math.round(alpha * 100));
+				setSliderValue(Math.round(alpha * 100));
 				getMySlider().setVisible(showSlider);
 				
 				
@@ -332,6 +343,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnTextColor = new PopupMenuButton(ev.getApplication(), textColors, -1,8,
 				new Dimension(20,maxIconHeight), SelectionTable.MODE_COLOR_SWATCH_TEXT) {
 
+			@Override
 			public void update(Object[] geos) {
 
 				boolean geosOK = (geos.length > 0);
@@ -373,9 +385,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnLineStyle = new PopupMenuButton(ev.getApplication(), lineStyleArray, -1,1,
 				new Dimension(80,maxIconHeight), SelectionTable.MODE_LINESTYLE){
 
+			@Override
 			public void update(Object[] geos) {
 
-				if( mode == EuclidianView.MODE_PEN){
+				if( mode == EuclidianConstants.MODE_PEN){
 					this.setVisible(true);
 					setFgColor(ec.getPen().getPenColor());
 					setSliderValue(ec.getPen().getPenSize());
@@ -405,7 +418,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					
 					setSelectedIndex(lineStyleMap.get(((GeoElement)geos[0]).getLineType()));
 					
-					this.setKeepVisible(mode == EuclidianView.MODE_MOVE);
+					this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
 				}							
 			}
 			}
@@ -428,6 +441,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnPointStyle = new PopupMenuButton(ev.getApplication(), pointStyleArray, 2, -1, 
 				new Dimension(20, maxIconHeight), SelectionTable.MODE_POINTSTYLE){
 
+			@Override
 			public void update(Object[] geos) {
 
 				boolean geosOK = (geos.length > 0 );
@@ -447,7 +461,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					
 					setSliderValue( ((PointProperties)geos[0]).getPointSize());
 					setSelectedIndex(pointStyleMap.get(((PointProperties)geos[0]).getPointStyle()));
-					this.setKeepVisible(mode == EuclidianView.MODE_MOVE);
+					this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
 				}
 			}		  
 		};
@@ -464,6 +478,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		// bold text button
 		
 		btnBold = new MyToggleButton(new GeoGebraIcon()){
+			@Override
 			public void update(Object[] geos) {
 				boolean geosOK = (geos.length > 0 );
 				for (int i = 0; i < geos.length; i++) {
@@ -492,6 +507,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		// italic text button
 		
 		btnItalic = new MyToggleButton(new GeoGebraIcon()){
+			@Override
 			public void update(Object[] geos) {
 				boolean geosOK = (geos.length > 0 );
 				for (int i = 0; i < geos.length; i++) {
@@ -530,6 +546,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnTextSize = new PopupMenuButton(ev.getApplication(), textSizeArray, -1, 1, 
 				new Dimension(80, maxIconHeight), SelectionTable.MODE_TEXT){
 
+			@Override
 			public void update(Object[] geos) {
 
 				boolean geosOK = (geos.length > 0 );
@@ -557,13 +574,14 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		GeoGebraIcon ic = new GeoGebraIcon();
 		ic.setImage(app.getImageIcon("delete_small.gif").getImage());
 		ic.ensureIconSize(new Dimension(maxIconHeight,maxIconHeight));
-		btnEraser = new MyToggleButton(ic){
+		btnPenEraser = new MyToggleButton(ic){
+			@Override
 			public void update(Object[] geos) {
-				this.setVisible(mode == EuclidianView.MODE_PEN);
+				this.setVisible(mode == EuclidianConstants.MODE_PEN);
 			}	
 		};
-		btnEraser.addActionListener(this);
-		add(btnEraser);
+		btnPenEraser.addActionListener(this);
+		add(btnPenEraser);
 		
 		
 		//this.addSeparator();
@@ -580,6 +598,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		// hide/show label button
 		
 		btnHideShowLabel = new MyToggleButton(new GeoGebraIcon(app,"mode_showhidelabel_16.gif", new Dimension(maxIconHeight,maxIconHeight))){
+			@Override
 			public void update(Object[] geos) {
 				boolean geosOK = (geos.length > 0 );
 				for (int i = 0; i < geos.length; i++) {
@@ -598,13 +617,26 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnHideShowLabel.addActionListener(this);
 		add(btnHideShowLabel);
 		
+		//========================================
+		// pen delete button
+		btnPenDelete = new JButton("\u2718");
+		Dimension d = new Dimension(maxIconHeight,maxIconHeight);
+		btnPenDelete.setPreferredSize(d);
+		btnPenDelete.setMaximumSize(d);
+		btnPenDelete.addActionListener(this);
+		add(btnPenDelete);
+		
+		
+		
+		
+		
 		
 		popupBtnList = new PopupMenuButton[]{
 				btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize};
 		
 		toggleBtnList = new MyToggleButton[]{
 				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
-	            btnBold, btnItalic, btnDelete, btnLabel, btnEraser, btnHideShowLabel};	
+	            btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel};	
 		
 	}
 
@@ -618,19 +650,19 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 		btnMode.removeActionListener(this);
 		switch (mode){
-		case EuclidianView.MODE_MOVE:
+		case EuclidianConstants.MODE_MOVE:
 			btnMode.setSelectedIndex(0);
 			break;
-		case EuclidianView.MODE_PEN:
+		case EuclidianConstants.MODE_PEN:
 			btnMode.setSelectedIndex(1);
 			break;
-		case EuclidianView.MODE_DELETE:
+		case EuclidianConstants.MODE_DELETE:
 			btnMode.setSelectedIndex(2);
 			break;
-		case EuclidianView.MODE_SHOW_HIDE_LABEL:
+		case EuclidianConstants.MODE_SHOW_HIDE_LABEL:
 			btnMode.setSelectedIndex(3);
 			break;
-		case EuclidianView.MODE_VISUAL_STYLE:
+		case EuclidianConstants.MODE_VISUAL_STYLE:
 			btnMode.setSelectedIndex(4);
 			break;
 		}
@@ -640,15 +672,15 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		
 		btnPen.removeActionListener(this);
-		btnPen.setSelected(mode == EuclidianView.MODE_PEN);
+		btnPen.setSelected(mode == EuclidianConstants.MODE_PEN);
 		btnPen.addActionListener(this);
 		
 		btnDelete.removeActionListener(this);
-		btnDelete.setSelected(mode == EuclidianView.MODE_DELETE);
+		btnDelete.setSelected(mode == EuclidianConstants.MODE_DELETE);
 		btnDelete.addActionListener(this);
 		
 		btnLabel.removeActionListener(this);
-		btnLabel.setSelected(mode == EuclidianView.MODE_SHOW_HIDE_LABEL);
+		btnLabel.setSelected(mode == EuclidianConstants.MODE_SHOW_HIDE_LABEL);
 		btnLabel.addActionListener(this);
 		
 		btnShowAxes.removeActionListener(this);
@@ -672,16 +704,18 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 	public void updateStyleBar(){
 	
-		if(mode == EuclidianView.MODE_VISUAL_STYLE)
+		if(mode == EuclidianConstants.MODE_VISUAL_STYLE)
 			return;
+		
 		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
 		
 		
-		if(mode == EuclidianView.MODE_MOVE){
+		if(mode == EuclidianConstants.MODE_MOVE){
 			geos = ev.getApplication().getSelectedGeos();
 		}
 		else if (defaultGeoMap.containsKey(mode)){
 			geos.add(cons.getConstructionDefaults().getDefaultGeo(defaultGeoMap.get(mode)));
+			defaultGeos = geos;
 		}
 		
 		
@@ -692,16 +726,16 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			toggleBtnList[i].update(geos.toArray());
 		}
 		
-		//btnDeleteGeo.setVisible(geos.toArray().length >0);
+		btnPenDelete.setVisible((mode == EuclidianConstants.MODE_PEN));
 		
 	}
 	
 	private void createDefaultMap(){
 		defaultGeoMap = new HashMap<Integer,Integer>();
-		defaultGeoMap.put(EuclidianView.MODE_POINT, ConstructionDefaults.DEFAULT_POINT_FREE);
-		defaultGeoMap.put(EuclidianView.MODE_POLYGON, ConstructionDefaults.DEFAULT_POLYGON);
-		defaultGeoMap.put(EuclidianView.MODE_TEXT, ConstructionDefaults.DEFAULT_TEXT);
-		defaultGeoMap.put(EuclidianView.MODE_JOIN, ConstructionDefaults.DEFAULT_LINE);
+		defaultGeoMap.put(EuclidianConstants.MODE_POINT, ConstructionDefaults.DEFAULT_POINT_FREE);
+		defaultGeoMap.put(EuclidianConstants.MODE_POLYGON, ConstructionDefaults.DEFAULT_POLYGON);
+		defaultGeoMap.put(EuclidianConstants.MODE_TEXT, ConstructionDefaults.DEFAULT_TEXT);
+		defaultGeoMap.put(EuclidianConstants.MODE_JOIN, ConstructionDefaults.DEFAULT_LINE);
 		
 	}
 	
@@ -717,76 +751,79 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
+
 		
+		// mode changing buttons, removed for now?
+		/* 
 		if (source.equals(btnMode)) {
 			switch (btnMode.getSelectedIndex()){
 			case 0:
 				ev.getApplication().setMoveMode();
 				break;
 			case 1:
-				ev.getApplication().setMode(EuclidianView.MODE_PEN);
+				ev.getApplication().setMode(EuclidianConstants.MODE_PEN);
 				break;
 			case 2:
-				ev.getApplication().setMode(EuclidianView.MODE_DELETE);	
+				ev.getApplication().setMode(EuclidianConstants.MODE_DELETE);	
 				break;
 			case 3:
-				ev.getApplication().setMode(EuclidianView.MODE_SHOW_HIDE_LABEL);
+				ev.getApplication().setMode(EuclidianConstants.MODE_SHOW_HIDE_LABEL);
 				break;
 			case 4:
-				ev.getApplication().setMode(EuclidianView.MODE_VISUAL_STYLE);
+				ev.getApplication().setMode(EuclidianConstants.MODE_VISUAL_STYLE);
 			}
 		}
 
-		
-		
 		if (source.equals(btnCopyVisualStyle)) {		
 			if(btnCopyVisualStyle.isSelected())
-				ev.getApplication().setMode(EuclidianView.MODE_VISUAL_STYLE);
+				ev.getApplication().setMode(EuclidianConstants.MODE_VISUAL_STYLE);
 			else
 				ev.getApplication().setMoveMode();
 		}
-		
-		
+
+
 		if (source.equals(btnPen)) {		
 			if(btnPen.isSelected())
-				ev.getApplication().setMode(EuclidianView.MODE_PEN);
+				ev.getApplication().setMode(EuclidianConstants.MODE_PEN);
 			else
 				ev.getApplication().setMoveMode();
 		}
-		
+
 		if (source.equals(btnDelete)) {		
 			if(btnDelete.isSelected())
-				ev.getApplication().setMode(EuclidianView.MODE_DELETE);
+				ev.getApplication().setMode(EuclidianConstants.MODE_DELETE);
 			else
 				ev.getApplication().setMoveMode();
 		}
-		
+
 		if (source.equals(btnLabel)) {		
 			if(btnLabel.isSelected())
-				ev.getApplication().setMode(EuclidianView.MODE_SHOW_HIDE_LABEL);
+				ev.getApplication().setMode(EuclidianConstants.MODE_SHOW_HIDE_LABEL);
 			else
 				ev.getApplication().setMoveMode();
 		}
+
+	*/
 		
 		
-		
+
 		if (source.equals(btnShowAxes)) {		
 			ev.setShowAxes(!ev.getShowXaxis(), true);
 			ev.repaint();
 		}
-		
+
 		else if (source.equals(btnShowGrid)) {
 			ev.showGrid(!ev.getShowGrid());
 			ev.repaint();
 		}
 		else if (source == btnColor) {
 			if(btnColor.getSelectedValue() != null){
-				if(mode == EuclidianView.MODE_MOVE){
-					applyVisualStyle(app.getSelectedGeos());
+				if(mode == EuclidianConstants.MODE_MOVE){
+					//applyVisualStyle(app.getSelectedGeos());
 					//btnLineStyle.setFgColor((Color)btnColor.getSelectedValue());
 					//btnPointStyle.setFgColor((Color)btnColor.getSelectedValue());
 				}
-				else if(mode == EuclidianView.MODE_PEN){
+				else if(mode == EuclidianConstants.MODE_PEN){
 					ec.getPen().setPenColor((Color) btnColor.getSelectedValue());
 					//btnLineStyle.setFgColor((Color)btnColor.getSelectedValue());
 				}
@@ -795,7 +832,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		}
 		else if (source == btnTextColor) {
 			if(btnTextColor.getSelectedValue() != null){
-				applyVisualStyle(app.getSelectedGeos());
+				//applyVisualStyle(app.getSelectedGeos());
 				btnTextColor.setFgColor((Color)btnTextColor.getSelectedValue());
 				//btnItalic.setForeground((Color)btnTextColor.getSelectedValue());
 				//btnBold.setForeground((Color)btnTextColor.getSelectedValue());
@@ -803,57 +840,82 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		}
 		else if (source == btnLineStyle) {
 			if(btnLineStyle.getSelectedValue() != null){
-				if(mode == EuclidianView.MODE_MOVE)
-					applyVisualStyle(app.getSelectedGeos());
-				else if(mode == EuclidianView.MODE_PEN){
-					ec.getPen().setPenLineStyle((Integer) btnLineStyle.getSelectedValue());
-					ec.getPen().setPenSize((Integer) btnLineStyle.getSliderValue());
+				if(mode == EuclidianConstants.MODE_MOVE){
+					//applyVisualStyle(app.getSelectedGeos());
 				}
-					
+				else if(mode == EuclidianConstants.MODE_PEN){
+					ec.getPen().setPenLineStyle((Integer) btnLineStyle.getSelectedValue());
+					ec.getPen().setPenSize(btnLineStyle.getSliderValue());
+				}
+
 			}
 		}
 		else if (source == btnPointStyle) {
 			if(btnPointStyle.getSelectedValue() != null){
-				applyVisualStyle(app.getSelectedGeos());				
+				//applyVisualStyle(app.getSelectedGeos());				
 			}
 		}
 		else if (source == btnBold || source == btnItalic) {
-			applyVisualStyle(app.getSelectedGeos());			
+			//applyVisualStyle(app.getSelectedGeos());			
 		}
 		else if (source == btnTextSize) {
-			applyVisualStyle(app.getSelectedGeos());			
-	}
+			//applyVisualStyle(app.getSelectedGeos());			
+		}
+
+		else if (source == btnPenDelete) {
+			//delete pen image
+		}
+		else if (source == btnPenEraser) {
+			//toggle between pen and eraser mode;			
+		}
+
 		
-		applyVisualStyle(app.getSelectedGeos());
+		
+		
+		//==============================================
+		// apply visual styles on any change ?????
+
+		if(mode == EuclidianConstants.MODE_MOVE){
+			applyVisualStyle(app.getSelectedGeos());
+		} 
+		else if(mode == EuclidianConstants.MODE_PEN){
+			// do nothing for now
+		}
+		else{
+			applyVisualStyle(defaultGeos);
+		}
+		
+		
 		updateGUI();
+		
 	}
 
-	
-	
-	
+
+
+
 	//==============================================
 	//           Apply Styles
 	//==============================================
-	
+
 	private void applyLineStyle(ArrayList<GeoElement> geos) {
 		int lineStyle = (Integer) btnLineStyle.getSelectedValue();
 		int lineSize = btnLineStyle.getSliderValue();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
+			GeoElement geo = geos.get(i);
 			geo.setLineType(lineStyle);
 			geo.setLineThickness(lineSize);
 			geo.updateRepaint();			
 		}
 
 	}
-	
+
 	private void applyPointStyle(ArrayList<GeoElement> geos) {
 		int pointStyle = (Integer) btnPointStyle.getSelectedValue();
 		int pointSize = btnPointStyle.getSliderValue();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
+			GeoElement geo = geos.get(i);
 
 			if (geo instanceof PointProperties) {
 				((PointProperties)geo).setPointSize(pointSize);
@@ -870,7 +932,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		float alpha = btnColor.getSliderValue() / 100.0f;
 		
 		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
+			GeoElement geo = geos.get(i);
 			if (!(geo instanceof GeoImage || geo instanceof GeoText)){
 				geo.setObjColor(color);
 				geo.setAlphaValue(alpha);
@@ -884,7 +946,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		Color color = (Color) btnTextColor.getSelectedValue();
 
 		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
+			GeoElement geo = geos.get(i);
 			if(geo.isGeoText()){
 				geo.setObjColor(color);
 				geo.updateRepaint();
@@ -899,7 +961,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		if (btnItalic.isSelected()) fontStyle += 2;
 		
 		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
+			GeoElement geo = geos.get(i);
 			if(geo.isGeoText()){
 			((GeoText)geo).setFontStyle(fontStyle);
 			geo.updateRepaint();
@@ -912,7 +974,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		int fontSize = btnTextSize.getSelectedIndex() * 2 - 4; // transform indices to the range -4, .. , 4
 		
 		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
+			GeoElement geo = geos.get(i);
 			if(geo.isGeoText()){
 			((GeoText)geo).setFontSize(fontSize); 
 			geo.updateRepaint();
@@ -923,7 +985,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private void applyHideShowLabel(ArrayList<GeoElement> geos) {
 		boolean visible = btnHideShowLabel.isSelected();
 		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = (GeoElement)geos.get(i);
+			GeoElement geo = geos.get(i);
 			geo.setLabelVisible(visible);
 			geo.updateRepaint();
 			}		
@@ -931,14 +993,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	
 	
-	
-	public void applyVisualStyle(GeoElement geo) {
-		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
-		geos.add(geo);
-		applyVisualStyle(geos);
-	}
 	public void applyVisualStyle(ArrayList<GeoElement> geos) {
 		
+		if(geos == null || geos.size() < 1) return;
 		
 		if(btnColor.isVisible()) applyColor(geos);
 		if(btnLineStyle.isVisible()) applyLineStyle(geos);
@@ -986,7 +1043,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			if(doTextColor){
 				colors[i+8] = colors[i].darker();
 			}else{
-				rgb = Color.HSBtoRGB((float) (.9*hsb[0]), (float) (.5*hsb[1]), (float) (1*hsb[2]));
+				rgb = Color.HSBtoRGB((float) (.9*hsb[0]), (float) (.5*hsb[1]), (1*hsb[2]));
 				colors[i+8] = new Color(rgb);
 			}
 			// third row: gray scales (white ==> black)
@@ -1012,8 +1069,6 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			super(imageIcon);
 		}
 		public void update(Object[] geos) {	 
-		}
-		public void setDefault() {	 
 		}
 	}
 
