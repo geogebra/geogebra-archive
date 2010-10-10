@@ -1191,6 +1191,10 @@ public abstract class GeoElement
 		return auxiliaryObject;
 	}
 	
+	public boolean isAuxiliaryObjectByDefault() {
+		return false;
+	}
+	
 	public GeoElement toGeoElement() {
 		return this;
 	}
@@ -1204,7 +1208,7 @@ public abstract class GeoElement
 	}
 
 	/**
-	 * sets wheter the object's label should be drawn in 
+	 * sets whether the object's label should be drawn in 
 	 * an EuclidianView
 	 * @param visible
 	 */
@@ -3499,11 +3503,19 @@ public abstract class GeoElement
 	}
 	
     final void getAuxiliaryXML(StringBuilder sb) {
-		if (auxiliaryObject) {
-			sb.append("\t<auxiliary val=\"");
-			sb.append(auxiliaryObject);
-			sb.append("\"/>\n");
-		} 	
+    	if (!isAuxiliaryObjectByDefault()) {
+			if (auxiliaryObject) {
+				sb.append("\t<auxiliary val=\"");
+				sb.append("true");
+				sb.append("\"/>\n");
+			} 	
+    	} else { // needed for eg GeoTexts (in Algebra View but Auxilliary by default from ggb 4.0)
+			if (!auxiliaryObject) {
+				sb.append("\t<auxiliary val=\"");
+				sb.append("false");
+				sb.append("\"/>\n");
+			} 	    		
+    	}
 	}
 
 	/**

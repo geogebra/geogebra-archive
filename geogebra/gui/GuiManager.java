@@ -906,10 +906,9 @@ public class GuiManager {
 	}
 
 	/**
-	 * Displays the porperties dialog for geos
+	 * Displays the properties dialog for geos
 	 */
 	public void showPropertiesDialog(ArrayList geos) {
-		Application.printStacktrace("");
 		if (!app.letShowPropertiesDialog())
 			return;
 		

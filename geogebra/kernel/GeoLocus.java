@@ -31,7 +31,8 @@ public class GeoLocus extends GeoElement implements Path {
 	public GeoLocus(Construction c) {
 		super(c);				
 		myPointList = new ArrayList<MyPoint>(500);		
-		setAlgebraVisible(false);
+		//setAlgebraVisible(false);
+		setAuxiliaryObject(true);
 	}  
 			
 	public GeoElement copy() {
@@ -75,11 +76,16 @@ public class GeoLocus extends GeoElement implements Path {
 	}
 	
 	public String toString() {		
-		return getLabel();
-	}	
+		sbToString.setLength(0);
+		sbToString.append(label);
+		sbToString.append(" = ");
+		sbToString.append(getCommandDescription());
+		return sbToString.toString();
+	}
+	private StringBuilder sbToString = new StringBuilder(80);
 
 	public boolean showInAlgebraView() {
-		return false;
+		return true;
 	}
 
 	public String getClassName() {
@@ -100,7 +106,7 @@ public class GeoLocus extends GeoElement implements Path {
 	protected void getXMLtags(StringBuilder sb) {
 	   	getXMLvisualTags(sb);		
 	   	getLineStyleXML(sb);
- 
+		getAuxiliaryXML(sb); 
    	}
 
 	public void setMode(int mode) {
@@ -274,5 +280,10 @@ public class GeoLocus extends GeoElement implements Path {
 	public ArrayList<MyPoint> getPoints() {
 		return myPointList;
 	}
+	
+	final public boolean isAuxiliaryObjectByDefault() {
+		return true;
+	}
+	
 
 }

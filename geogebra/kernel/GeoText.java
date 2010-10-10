@@ -35,7 +35,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	public GeoText(Construction c) {
 		super(c);
 		// don't show in algebra view	
-		setAlgebraVisible(false); 	
+		//setAlgebraVisible(false); 
+		setAuxiliaryObject(true);
 	}  
 	
 	public GeoText(Construction c, String label, String value) {
@@ -265,7 +266,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	private StringBuilder sbToString = new StringBuilder(80);
 
 	public boolean showInAlgebraView() {
-		return false;
+		return true;
 	}
 
 	protected boolean showInEuclidianView() {		
@@ -417,6 +418,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		}
 						
 		getBreakpointXML(sb);
+		
+		getAuxiliaryXML(sb);
 
 		// store location of text (and possible labelOffset)
 		sb.append(getXMLlocation());			
@@ -743,6 +746,12 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	final public boolean isAuxiliaryObjectByDefault() {
+		return true;
+	}
+	
+
 
 
 }
