@@ -2,12 +2,10 @@ package geogebra.gui.view.algebra;
 
 import geogebra.main.Application;
 
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
 /**
@@ -15,6 +13,9 @@ import javax.swing.JToolBar;
  * buttons to change the functionality (e.g. show auxiliary objects).
  */
 public class AlgebraHelperBar extends JToolBar implements ActionListener {
+	/** */
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * The algebra view which uses this tool bar.
 	 */
@@ -31,6 +32,13 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	private JButton toggleAuxiliary;
 	
 	/**
+	 * Button to toggle between the two tree modes of the algebra view:
+	 *  - Categorize objects by free / independent / auxiliary
+	 *  - Categorize objects by their type 
+	 */
+	private JButton toggleTypeTreeMode;
+	
+	/**
 	 * Helper bar.
 	 * 
 	 * @param algebraView
@@ -42,11 +50,15 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 		
 		setFloatable(false);
 		
-		toggleAuxiliary = new JButton("..");
+		toggleAuxiliary = new JButton(app.getImageIcon("auxiliary.png"));
 		toggleAuxiliary.addActionListener(this);
 		add(toggleAuxiliary);
 		
 		addSeparator();
+		
+		toggleTypeTreeMode = new JButton(app.getImageIcon("tree.png"));
+		toggleTypeTreeMode.addActionListener(this);
+		add(toggleTypeTreeMode);
 		
 		updateStates();
 		updateLabels();
@@ -57,6 +69,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	 */
 	public void updateStates() {
 		toggleAuxiliary.setSelected(app.showAuxiliaryObjects());
+		toggleTypeTreeMode.setSelected(algebraView.getTreeMode() == AlgebraView.MODE_TYPE);
 	}
 	
 	/**
@@ -64,6 +77,12 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	 */
 	public void updateLabels() {
 		toggleAuxiliary.setToolTipText(app.getPlain("AuxiliaryObjects"));
+		
+		if(algebraView.getTreeMode() == algebraView.MODE_TYPE) {
+			toggleTypeTreeMode.setToolTipText(app.getPlain("TreeModeDependency"));
+		} else {
+			toggleTypeTreeMode.setToolTipText(app.getPlain("TreeModeType"));
+		}
 	}
 
 	/**
@@ -73,6 +92,10 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 		if(e.getSource() == toggleAuxiliary) {
 			app.setShowAuxiliaryObjects(!app.showAuxiliaryObjects());
 			toggleAuxiliary.setSelected(app.showAuxiliaryObjects());
+		} else if(e.getSource() == toggleTypeTreeMode) {
+			algebraView.setTreeMode((algebraView.getTreeMode() == AlgebraView.MODE_TYPE) ? AlgebraView.MODE_DEPENDENCY : AlgebraView.MODE_TYPE);
+			toggleTypeTreeMode.setSelected(algebraView.getTreeMode() == AlgebraView.MODE_TYPE);
+			updateLabels();
 		}
 	}
 }

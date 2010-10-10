@@ -707,7 +707,7 @@ public class PropertiesDialog
 				}
 				
 				treeModel.insertNodeInto(typeNode, root, pos);				
-			}			
+			}
 			
 			// check if already present in type node
 			int pos = AlgebraView.binarySearchGeo(typeNode, geo.getLabel());
@@ -721,14 +721,7 @@ public class PropertiesDialog
 			// make sure something is selected
 			if (getSelectionModel().isSelectionEmpty()) {
 				selectFirstElement();					
-			}
-		
-			/*
-			if (isShowing()) {
-				TreePath geoPath = new TreePath(newNode.getPath());
-				//addSelectionPath(geoPath);
-				makeVisible(geoPath);
-			} */		
+			}	
 		}		
 		
 

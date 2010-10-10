@@ -39,7 +39,7 @@ public class AlgebraDockPanel extends DockPanel {
 	
 	protected JComponent loadComponent() {
 		JScrollPane scrollPane = new JScrollPane(app.getGuiManager().getAlgebraView());
-		((JScrollPane)scrollPane).setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		scrollPane.setBackground(Color.white);
 		
 		return scrollPane;
