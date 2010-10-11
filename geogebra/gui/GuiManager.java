@@ -208,7 +208,7 @@ public class GuiManager {
 	 */
 	protected void initLayoutPanels() {
 		// register euclidian view
-		layout.registerPanel(new EuclidianDockPanel(app));
+		layout.registerPanel(newEuclidianDockPanel());
 		
 		// register spreadsheet view 
 		layout.registerPanel(new SpreadsheetDockPanel(app));
@@ -221,6 +221,13 @@ public class GuiManager {
 		
 		// register EuclidianView2  
 		layout.registerPanel(new Euclidian2DockPanel(app));	
+	}
+	
+	/**
+	 * @return new euclidian view
+	 */
+	protected EuclidianDockPanel newEuclidianDockPanel(){
+		return new EuclidianDockPanel(app,null);
 	}
 	
 	public boolean isPropertiesDialogSelectionListener() {

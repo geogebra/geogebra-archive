@@ -4,6 +4,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import geogebra.gui.layout.DockPanel;
+import geogebra.gui.toolbar.Toolbar;
 import geogebra.main.Application;
 
 /**
@@ -16,11 +17,11 @@ public class EuclidianDockPanel extends DockPanel {
 	/**
 	 * @param app
 	 */
-	public EuclidianDockPanel(Application app) {
+	public EuclidianDockPanel(Application app, String toolbar) {
 		super(
 			Application.VIEW_EUCLIDIAN,	// view id 
 			"DrawingPad", 				// view title
-			null,						// toolbar string
+			toolbar,						// toolbar string
 			true,						// style bar?
 			1							// menu order
 		);

@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 import geogebra.gui.GuiManager;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
+import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.gui.toolbar.Toolbar;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
@@ -46,10 +47,10 @@ public class GuiManager3D extends GuiManager {
 	protected void initLayoutPanels() {
 		super.initLayoutPanels();
 		
-		String myToolBar3D = Toolbar.getAllToolsNoMacros3D();
+		//String myToolBar3D = Toolbar.getAllToolsNoMacros3D();
     	
     	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, "GraphicsView3D", 
-    			myToolBar3D, 
+    			null, 
     			false, 4) {
     		protected JComponent loadStyleBar() {
 				return null;
@@ -66,6 +67,9 @@ public class GuiManager3D extends GuiManager {
 	}
 	
 	
+	protected EuclidianDockPanel newEuclidianDockPanel(){
+		return new EuclidianDockPanel(app,Toolbar.getAllToolsNoMacros());
+	}
 	
 	//////////////////////////////
 	// ACTIONS
