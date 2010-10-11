@@ -577,9 +577,8 @@ public class AlgebraView extends JTree implements View {
 			depNode.removeAllChildren();
 			auxiliaryNode.removeAllChildren();
 		} else {
-			for (String key : typeNodesMap.keySet()) {
-				typeNodesMap.get(key).removeAllChildren();
-			}
+			rootType.removeAllChildren();
+			typeNodesMap.clear();
 		}
 		
 		model.reload();
