@@ -49,8 +49,9 @@ implements Locateable, AbsoluteScreenLocateable,
 	public GeoImage(Construction c) {
 		super(c);
 		setAlphaValue(1f);
-		setAlgebraVisible(false); // don't show in algebra view		
-
+		//setAlgebraVisible(false); // don't show in algebra view		
+		setAuxiliaryObject(true);
+		
 		// three corners of the image: first, second and fourth
 		corners = new GeoPoint[3]; 			
 				
@@ -331,7 +332,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	}	
 
 	public boolean showInAlgebraView() {
-		return false;
+		return true;
 	}
 
 	protected boolean showInEuclidianView() {		
@@ -425,6 +426,8 @@ implements Locateable, AbsoluteScreenLocateable,
 				}
 			}
 		}
+		
+		getAuxiliaryXML(sb);
 		
 //	   	sb.append(getXMLvisualTags());
 //	   	sb.append(getBreakpointXML());
@@ -793,6 +796,14 @@ implements Locateable, AbsoluteScreenLocateable,
 			}
 			
 			return al;
+	}
+	
+	final public boolean isAuxiliaryObjectByDefault() {
+		return true;
+	}
+
+	final public boolean isAlgebraViewEditable() {
+		return false;
 	}
 
 

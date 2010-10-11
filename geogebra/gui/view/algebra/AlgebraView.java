@@ -25,13 +25,12 @@ import geogebra.kernel.View;
 import geogebra.main.Application;
 
 import java.awt.Font;
-import java.awt.Point;
+import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
-import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -348,6 +347,14 @@ public class AlgebraView extends JTree implements View {
 	 */
 	public void startEditing(GeoElement geo, boolean shiftDown) {
 		if (geo == null) return;
+		
+		// open Object Properties for eg GeoImages
+		if (!geo.isAlgebraViewEditable()) {
+			ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
+			geos.add(geo);
+			app.getGuiManager().showPropertiesDialog(geos);
+			return;
+		}
 
 		if (!shiftDown || !geo.isPointOnPath() && !geo.isPointInRegion()) {
 			if (!geo.isIndependent()

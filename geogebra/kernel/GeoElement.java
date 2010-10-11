@@ -1330,6 +1330,10 @@ public abstract class GeoElement
 	public abstract boolean showInAlgebraView();
 	protected abstract boolean showInEuclidianView();
 	
+	public boolean isAlgebraViewEditable() {
+		return true;
+	}
+	
 	final public boolean isEuclidianShowable() {
 		return showInEuclidianView();
 	}
