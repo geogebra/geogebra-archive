@@ -95,7 +95,8 @@ implements Previewable, Functional2Var{
 	
 	protected void updateForView(){
 		
-		//updateForItSelf();
+		updateForItSelf();
+		//TODO only if zoom
 		
 	}
 	

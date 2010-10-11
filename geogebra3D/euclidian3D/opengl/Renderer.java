@@ -337,7 +337,7 @@ public class Renderer implements GLEventListener {
         // update 3D view
         geometryManager.update();
         view3D.update();
-        view3D.updateDrawablesNow();
+        //view3D.updateDrawablesNow();
 
         // update 3D drawables
         drawable3DLists.updateAll();

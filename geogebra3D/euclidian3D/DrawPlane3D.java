@@ -95,16 +95,22 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		GgbCoordSys coordsys = geo.getCoordSys();
 		
 		// plane	
-		
-		
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
 		
 		surface.start(geo);
+		/*
 		float dimension = (float) (200/getView3D().getScale()) * 2f;
 		surface.setU(-dimension, dimension);surface.setNbU(2);
 		surface.setV(-dimension, dimension);surface.setNbV(2);
-		float fading = dimension * 0.5f;
+		*/
+		
+		surface.setU((float) geo.getXmin(), (float) geo.getXmax());surface.setNbU(2);
+		surface.setV((float) geo.getYmin(), (float) geo.getYmax());surface.setNbV(2);
+		
+		float fading;
+		fading = (float) ((geo.getXmax()-geo.getXmin()) * 0.25);
 		surface.setUFading(fading, fading);
+		fading = (float) ((geo.getYmax()-geo.getYmin()) * 0.25);
 		surface.setVFading(fading, fading);
 		surface.draw();
 		setGeometryIndex(surface.end());
@@ -147,6 +153,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 	protected void updateForView(){
 		
+		/* TODO
 		GgbCoordSys cs = ((GeoPlane3D) getGeoElement()).getCoordSys();
 		
 		GgbVector o = getView3D().getToScreenMatrix().mul(cs.getOrigin());
@@ -163,12 +170,17 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		
 		//Application.debug("corners : "+xMinMax[0]+","+yMinMax[0]+" -- "+xMinMax[1]+","+yMinMax[1]);
 		
-		((GeoPlane3D) getGeoElement()).setGridCorners(xMinMax[0], yMinMax[0], xMinMax[1], yMinMax[1]);
-		
+		double factor = 1.5;
+		((GeoPlane3D) getGeoElement()).setGridCorners(
+				xMinMax[0]*factor, 
+				yMinMax[0]*factor, 
+				xMinMax[1]*factor, 
+				yMinMax[1]*factor);
+		*/
 		
 
-		//double l=10*200/getView3D().getScale();
-		//((GeoPlane3D) getGeoElement()).setGridCorners(-l, -l, l, l);//TODO
+		double l= (200/getView3D().getScale()) * 2f;
+		((GeoPlane3D) getGeoElement()).setGridCorners(-l, -l, l, l);//TODO
 		
 		updateForItSelf();
 	}

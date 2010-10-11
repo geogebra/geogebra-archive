@@ -25,6 +25,7 @@ import geogebra.kernel.kernel3D.GeoElement3D;
 import geogebra.kernel.kernel3D.GeoElement3DInterface;
 import geogebra.kernel.kernel3D.GeoLine3D;
 import geogebra.kernel.kernel3D.GeoPlane3D;
+import geogebra.kernel.kernel3D.GeoPlane3DConstant;
 import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.kernel3D.GeoPolygon3D;
 import geogebra.kernel.kernel3D.GeoQuadric3D;
@@ -476,9 +477,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 			case GeoElement3D.GEO_CLASS_PLANE3D:
-				d = new DrawPlane3D(this, (GeoPlane3D) geo);
-				break;									
+				if (geo instanceof GeoPlane3DConstant)
+					d = new DrawPlaneConstant3D(this, (GeoPlane3D) geo);
+				else
+					d = new DrawPlane3D(this, (GeoPlane3D) geo);
 
+				break;		
+				
 
 			case GeoElement3D.GEO_CLASS_POLYGON3D:
 				d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
@@ -802,10 +807,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			drawable3DLists.add(drawable3DListToBeAdded);
 			drawable3DListToBeAdded.clear();
 			drawable3DLists.viewChanged();
-			viewChangedOwnDrawables();
+			
+			//viewChangedOwnDrawables();
+			setWaitForUpdateOwnDrawables();
+			updateOwnDrawablesNow();
+			
 			waitForUpdate = false;
 		}
 
+
+		// update decorations
+		pointDecorations.update();
 	}
 	
 	
@@ -1004,7 +1016,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//Application.printStacktrace("reset View3D");
 		resetAllDrawables();
 		//updateAllDrawables();
-		//setWaitForUpdate();
+		setWaitForUpdate();
 		//update();
 		
 	}
@@ -1023,7 +1035,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private void updateAllDrawables(){
 		for (Drawable3D d:drawable3DMap.values())
 			update(d);
-		updateOwnDrawables();
+		setWaitForUpdateOwnDrawables();
 		
 	}
 	
@@ -2593,6 +2605,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * says all drawables owned by the view that the view has changed
 	 */
+	/*
 	public void viewChangedOwnDrawables(){
 		
 		//xOyPlaneDrawable.viewChanged();
@@ -2603,11 +2616,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 	}
+	*/
 	
 	/**
 	 * tell all drawables owned by the view to be udpated
 	 */
-	public void updateOwnDrawables(){
+	public void setWaitForUpdateOwnDrawables(){
 		
 		xOyPlaneDrawable.setWaitForUpdate();
 		
@@ -2634,13 +2648,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * says all drawables that the view has changed
 	 */
+	/*
 	public void viewChangedAllDrawables(){
 		
 		viewChangedOwnDrawables();
 		drawable3DLists.viewChanged();
 		
 	}
-	
+	*/
 	
 	/**
 	 * says all labels to be recomputed
@@ -2683,7 +2698,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * update all drawables now
 	 */
-	public void updateDrawablesNow(){
+	public void updateOwnDrawablesNow(){
 		
 		// calc draw min/max for axis
 		for(int i=0;i<3;i++){
@@ -2708,7 +2723,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		
-		
 		// update axis
 		axisDrawable[AXIS_X].setDrawMinMax(xmin, xmax);
 		axisDrawable[AXIS_Y].setDrawMinMax(ymin, ymax);
@@ -2721,12 +2735,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		xOyPlane.setGridDistances(axis[AXIS_X].getNumbersDistance(), axis[AXIS_Y].getNumbersDistance());
 		xOyPlaneDrawable.update();
 
+		/*
+		Application.debug("x:("+xmin+","+xmax+")\ny:("+ymin+","+ymax+")\n"+
+				"plane -- x:("+xOyPlane.getXmin()+","+xOyPlane.getXmax()+")\nplane -- y:("+xOyPlane.getYmin()+","+xOyPlane.getYmax()+")");
+		 */
 		
-		
-
-		
-		// update decorations
-		pointDecorations.update();
 	}
 	
 	
