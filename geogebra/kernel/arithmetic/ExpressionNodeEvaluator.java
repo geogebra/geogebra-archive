@@ -1672,6 +1672,8 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             	if (funN.getVarNumber() == list.size()) {
             		double [] args = list.toDouble(); 
             		if (args != null)
+            			if(funN.isBooleanFunction())
+            				return new MyBoolean(funN.evaluateBoolean(args));
             			return new MyDouble(kernel, funN.evaluate(args));
             	}
             } 

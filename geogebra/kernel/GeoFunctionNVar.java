@@ -138,6 +138,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
      * @return f(vals)
      */
 	public double evaluate(double[] vals) {
+		Application.printStacktrace("");
 		if (fun == null)
 			return Double.NaN;
 		else 
@@ -204,8 +205,6 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		return sbToString.toString();
 	}
 	protected StringBuilder sbToString = new StringBuilder(80);
-	private boolean containsBorder;
-	
 	public String toValueString() {	
 		if (isDefined())
 			return fun.toValueString();
@@ -509,6 +508,8 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		}
 
 		public void pointChangedForRegion(GeoPointInterface P) {
+			if(!((GeoPoint)P).isDefined())
+				return;
 			RegionParameters rp = P.getRegionParameters();
 			if(!isInRegion(P) && ((GeoPoint)P).isDefined()){
 				double bestX = rp.getT1(), bestY = rp.getT2(), 
