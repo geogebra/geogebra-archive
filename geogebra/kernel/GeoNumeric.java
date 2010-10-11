@@ -529,7 +529,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		intervalMaxActive = true;
 		
 		if (intervalMinActive && max.getDouble() <= getIntervalMin()) {
-			setIntervalMin(new MyDouble(kernel,max.getDouble() - 1));
+			setUndefined();
 		}
 		
 		setValue(value);			
@@ -542,12 +542,13 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public void setIntervalMin(NumberValue min) {
 		if (Double.isNaN(min.getDouble()) || Double.isInfinite(min.getDouble()))
 				return;
-		
+
 		intervalMin = min;
 		intervalMinActive = true;	
 		
 		if (intervalMaxActive && min.getDouble() >= getIntervalMax()) {
-			setIntervalMax(new MyDouble(kernel,min.getDouble() + 1));
+
+			setUndefined();
 		}
 		
 		setValue(value);			
@@ -946,7 +947,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @param value
 	 */
 	public void setIntervalMin(double value) {
-			intervalMin = new MyDouble(kernel, value);		
+			setIntervalMin(new MyDouble(kernel, value));		
 	}
 	
 	/**
@@ -954,7 +955,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @param value
 	 */
 	public void setIntervalMax(double value) {
-		intervalMax = new MyDouble(kernel, value);		
+		setIntervalMax(new MyDouble(kernel, value));		
 	}
 
 	/**
