@@ -17,6 +17,7 @@ import geogebra.gui.layout.DockPanel;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -522,4 +523,50 @@ public class Toolbar extends JToolBar {
         
         return sb.toString();
     }	
+    
+    
+
+	/**
+	 * @return default toolbar (3D)
+	 */
+    public static String getAllToolsNoMacros3D() {
+		return EuclidianView3D.MODE_MOVE
+		+" || "
+		+EuclidianView3D.MODE_POINT_IN_REGION
+		+" "
+		+EuclidianView3D.MODE_INTERSECT
+		+" | "
+		+EuclidianView3D.MODE_JOIN
+		+" "
+		+EuclidianView3D.MODE_SEGMENT
+		+" "
+		+EuclidianView3D.MODE_RAY
+		+" , "
+		+EuclidianView3D.MODE_VECTOR
+		+" || "
+		+EuclidianView3D.MODE_POLYGON
+		//+" | "
+		//+EuclidianView3D.MODE_CIRCLE_THREE_POINTS
+		+" || "
+		+EuclidianView3D.MODE_PLANE_THREE_POINTS
+		+" , "
+		+EuclidianView3D.MODE_PLANE_POINT_LINE
+		+" | "
+		+EuclidianView3D.MODE_ORTHOGONAL_PLANE
+		+" , "
+		+EuclidianView3D.MODE_PARALLEL_PLANE
+		+" || "
+		+EuclidianView3D.MODE_SPHERE_TWO_POINTS
+		+" "
+		+EuclidianView3D.MODE_SPHERE_POINT_RADIUS
+		+" || "
+		+EuclidianView3D.MODE_TRANSLATEVIEW
+		+" "
+		+EuclidianView3D.MODE_ZOOM_IN
+		+" "
+		+EuclidianView3D.MODE_ZOOM_OUT
+		+" | "
+		+EuclidianView3D.MODE_VIEW_IN_FRONT_OF
+		;
+	}
 }

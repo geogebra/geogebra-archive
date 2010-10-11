@@ -106,6 +106,8 @@ public class Layout {
 		DockPanelXml[] dpInfo;
 		DockSplitPaneXml[] spInfo;
 		
+		String defToolbar;
+		
 		// algebra & graphics (default settings of GeoGebra < 3.2)
 		if (!use3D){ //ggb2D
 			dpInfo = new DockPanelXml[4];
@@ -116,6 +118,8 @@ public class Layout {
 			
 			spInfo = new DockSplitPaneXml[1];
 			spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
+			
+			defToolbar = Toolbar.getAllToolsNoMacros();
 		}else{ //ggb3D
 			dpInfo = new DockPanelXml[5];
 			dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(100, 100, 600, 400), "1,1", 500);
@@ -126,10 +130,12 @@ public class Layout {
 			
 			spInfo = new DockSplitPaneXml[2];
 			spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
-			spInfo[1] = new DockSplitPaneXml("1", 0.35, DockSplitPane.HORIZONTAL_SPLIT);
+			spInfo[1] = new DockSplitPaneXml("1", 0.5, DockSplitPane.HORIZONTAL_SPLIT);
+			
+			defToolbar = Toolbar.getAllToolsNoMacros3D();
 		}
 		
-		String defToolbar = Toolbar.getAllToolsNoMacros();
+		//String defToolbar = Toolbar.getAllToolsNoMacros();
 		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, true, false, true, true, true, false);
 		
 		// basic geometry - just the euclidian view
