@@ -15,7 +15,6 @@ package geogebra.gui;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.util.PopupMenuButton;
-import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.SpringUtilities;
 import geogebra.gui.view.algebra.InputPanel;
@@ -45,6 +44,7 @@ import geogebra.kernel.PointProperties;
 import geogebra.kernel.TextProperties;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
@@ -181,6 +181,11 @@ public	class PropertiesPanel extends JPanel {
 				
 		private JTabbedPane tabs;
 
+		/**
+		 * @param app
+		 * @param colChooser
+		 * @param isDefaults
+		 */
 		public PropertiesPanel(Application app, JColorChooser colChooser, boolean isDefaults) {					
 			this.isDefaults = isDefaults;
 			
@@ -1311,7 +1316,6 @@ public	class PropertiesPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
 		private JComboBox tooltipModeCB;
-		private boolean showNameValueComboBox;
 		JLabel label;
 
 		public TooltipPanel() {
@@ -4861,19 +4865,19 @@ class SliderPanel
 		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
         kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 		if (equalMin){
-			if (onlyAngles)
-				tfMin.setText(kernel.formatAngle(num0.getIntervalMin()).toString());
-			else
-				tfMin.setText(kernel.format(num0.getIntervalMin()));
+			//if (onlyAngles)
+				tfMin.setText(num0.getIntervalMinObject().getLabel());
+			//else
+				//tfMin.setText(num0.getIntervalMinObject().toString());
 		} else {
 			tfMin.setText("");
 		}
 		
 		if (equalMax){
-			if (onlyAngles)
-				tfMax.setText(kernel.formatAngle(num0.getIntervalMax()).toString());
-			else
-				tfMax.setText(kernel.format(num0.getIntervalMax()));
+			//if (onlyAngles)
+				tfMax.setText(num0.getIntervalMaxObject().getLabel());
+			//else
+				//tfMax.setText(num0.getIntervalMinObject().toString());
 		} else {
 			tfMax.setText("");
 		}
@@ -4952,9 +4956,9 @@ class SliderPanel
 	private void doTextFieldActionPerformed(JTextField source) {			
 		String inputText = source.getText().trim();
 		boolean emptyString = inputText.equals("");
-		double value = Double.NaN;
+		NumberValue value = new MyDouble(kernel,Double.NaN);
 		if (!emptyString) {
-			value = kernel.getAlgebraProcessor().evaluateToDouble(inputText);					
+			value = kernel.getAlgebraProcessor().evaluateToNumeric(inputText,true);					
 		}			
 		
 		if (source == tfMin) {
@@ -4982,7 +4986,7 @@ class SliderPanel
 		else if (source == tfWidth) {
 			for (int i = 0; i < geos.length; i++) {
 				GeoNumeric num = (GeoNumeric) geos[i];
-				num.setSliderWidth(value);
+				num.setSliderWidth(value.getDouble());
 				num.updateRepaint();
 			}
 		} 

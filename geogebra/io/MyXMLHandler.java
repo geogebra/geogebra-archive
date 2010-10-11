@@ -86,6 +86,7 @@ public class MyXMLHandler implements DocHandler {
 	private static final int MODE_GEOGEBRA = 1;
 	private static final int MODE_MACRO = 50;
 	private static final int MODE_EUCLIDIAN_VIEW = 100;
+	/** currently parsing tags for Euclidian3D view */
 	protected static final int MODE_EUCLIDIAN_VIEW3D = 101; //only for 3D
 	private static final int MODE_SPREADSHEET_VIEW = 150;
 	private static final int MODE_CAS_VIEW = 160;
@@ -115,6 +116,7 @@ public class MyXMLHandler implements DocHandler {
 	private GeoElement geo;
 	private Command cmd;
 	private Macro macro;
+	/** application */
 	protected Application app;
 	
 	private String[] macroInputLabels, macroOutputLabels;
@@ -129,6 +131,7 @@ public class MyXMLHandler implements DocHandler {
 	// for macros we need to change the kernel, so remember the original kernel
 	// too
 	private Kernel kernel, origKernel;
+	/** construction */
 	protected Construction cons;
 
 	private Construction origCons;
@@ -149,6 +152,7 @@ public class MyXMLHandler implements DocHandler {
 	private LinkedList<GeoExpPair> showObjectConditionList = new LinkedList<GeoExpPair>();
 	private LinkedList<GeoExpPair> dynamicColorList = new LinkedList<GeoExpPair>();
 	private LinkedList<GeoExpPair> animationSpeedList = new LinkedList<GeoExpPair>();
+	private LinkedList<GeoExpPair> minMaxList = new LinkedList<GeoExpPair>();
 
 	private class GeoExpPair {
 		GeoElement geo;
@@ -199,7 +203,8 @@ public class MyXMLHandler implements DocHandler {
 	/**
 	 * Array lists to store temporary panes and views of a perspective.
 	 */
-	private ArrayList tmp_panes, tmp_views;
+	private ArrayList<DockSplitPaneXml> tmp_panes;
+	private ArrayList<DockPanelXml>tmp_views;
 	
 	/**
 	 * Backward compatibility for version < 3.03 where no layout component was used.
@@ -217,7 +222,11 @@ public class MyXMLHandler implements DocHandler {
 	 */
 	private boolean tmp_showAlgebra, tmp_showSpreadsheet;
 
-	/** Creates a new instance of MyXMLHandler */
+	
+
+	/** Creates a new instance of MyXMLHandler 
+	 * @param kernel 
+	 * @param cons */
 	public MyXMLHandler(Kernel kernel, Construction cons) {
 		origKernel = kernel;
 		origCons = cons;
@@ -996,9 +1005,15 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
+	/**
+	 * <axis id="0" label="x" unitLabel="x" showNumbers="true"
+	 *	tickDistance="2"/>
+	 * @param ev
+	 * @param attrs
+	 * @return true iff succesful
+	 */
 	protected boolean handleAxis(EuclidianViewInterface ev, LinkedHashMap<String, String> attrs) {
-		// <axis id="0" label="x" unitLabel="x" showNumbers="true"
-		// tickDistance="2"/>
+		
 		try {
 			int axis = Integer.parseInt((String) attrs.get("id"));
 			String strShowAxis = (String) attrs.get("show");
@@ -1118,9 +1133,9 @@ public class MyXMLHandler implements DocHandler {
 		return true;
 	}
 	
-	private boolean handleAlgebraStyle(LinkedHashMap attrs) {
+	private boolean handleAlgebraStyle(LinkedHashMap<String, String> attrs) {
 		try {
-			kernel.setAlgebraStyle(Integer.parseInt((String) attrs.get("val")));
+			kernel.setAlgebraStyle(Integer.parseInt(attrs.get("val")));
 			return true;
 		} catch (Exception e) {
 			return false;
@@ -1632,8 +1647,8 @@ public class MyXMLHandler implements DocHandler {
 		try {
 			tmp_perspective = new Perspective((String)attrs.get("id"));
 			tmp_perspectives.add(tmp_perspective);
-			tmp_panes = new ArrayList();
-			tmp_views = new ArrayList();
+			tmp_panes = new ArrayList<DockSplitPaneXml>();
+			tmp_views = new ArrayList<DockPanelXml>();
 			mode = MODE_GUI_PERSPECTIVE;
 			
 			return true;
@@ -2019,6 +2034,7 @@ public class MyXMLHandler implements DocHandler {
 				processShowObjectConditionList();
 				processDynamicColorList();
 				processAnimationSpeedList();
+				processMinMaxList();
 				//processDynamicCoordinatesList();
 
 				if (kernel == origKernel) {
@@ -2811,12 +2827,9 @@ public class MyXMLHandler implements DocHandler {
 
 			String str = (String) attrs.get("min");
 			if (str != null) {
-				num.setIntervalMin(Double.parseDouble(str));
-			}
-
-			str = (String) attrs.get("max");
-			if (str != null) {
-				num.setIntervalMax(Double.parseDouble(str));
+				minMaxList.add(new GeoExpPair(geo, str));
+				String str2 = (String) attrs.get("max");
+				minMaxList.add(new GeoExpPair(geo, str2));
 			}
 
 			str = (String) attrs.get("absoluteScreenLocation");
@@ -3145,7 +3158,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 		
-	private boolean handleEmphasizeRightAngle(LinkedHashMap attrs) {
+	private boolean handleEmphasizeRightAngle(LinkedHashMap<String,String> attrs) {
 		if (!(geo.isGeoAngle())) {
 			System.err.println("wrong element type for <emphasizeRightAngle>: "
 					+ geo.getClass());
@@ -3154,7 +3167,7 @@ public class MyXMLHandler implements DocHandler {
 
 		try {
 			GeoAngle angle = (GeoAngle) geo;
-			angle.setEmphasizeRightAngle(parseBoolean((String) attrs.get("val")));
+			angle.setEmphasizeRightAngle(parseBoolean(attrs.get("val")));
 			return true;
 		} catch (Exception e) {
 
@@ -3301,7 +3314,9 @@ public class MyXMLHandler implements DocHandler {
 		return true;
 	}
 	
-	/** create absolute start point (coords expected) */
+	/** create absolute start point (coords expected) 
+	 * @param attrs 
+	 * @return start point */
 	protected GeoPointInterface handleAbsoluteStartPoint(LinkedHashMap<String, String> attrs) {
 		double x = Double.parseDouble((String) attrs.get("x"));
 		double y = Double.parseDouble((String) attrs.get("y"));
@@ -3313,11 +3328,11 @@ public class MyXMLHandler implements DocHandler {
 
 	private void processStartPointList() {
 		try {
-			Iterator it = startPointList.iterator();
+			Iterator<LocateableExpPair> it = startPointList.iterator();
 			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
 
 			while (it.hasNext()) {
-				LocateableExpPair pair = (LocateableExpPair) it.next();
+				LocateableExpPair pair = it.next();
 				GeoPointInterface P = pair.point != null ? pair.point : 
 								algProc.evaluateToPoint(pair.exp);
 				pair.locateable.setStartPoint(P, pair.number);
@@ -3376,11 +3391,11 @@ public class MyXMLHandler implements DocHandler {
 
 	private void processShowObjectConditionList() {
 		try {
-			Iterator it = showObjectConditionList.iterator();
+			Iterator<GeoExpPair> it = showObjectConditionList.iterator();
 			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
 
 			while (it.hasNext()) {
-				GeoExpPair pair = (GeoExpPair) it.next();
+				GeoExpPair pair = it.next();
 				GeoBoolean condition = algProc.evaluateToBoolean(pair.exp);
 				pair.geo.setShowObjectCondition(condition);
 			}
@@ -3395,13 +3410,34 @@ public class MyXMLHandler implements DocHandler {
 	
 	private void processAnimationSpeedList() {
 		try {
-			Iterator it = animationSpeedList.iterator();
+			Iterator<GeoExpPair> it = animationSpeedList.iterator();
 			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
 
 			while (it.hasNext()) {
-				GeoExpPair pair = (GeoExpPair) it.next();
+				GeoExpPair pair =  it.next();
 				NumberValue num = algProc.evaluateToNumeric(pair.exp, false);
 				pair.geo.setAnimationSpeedObject(num);
+			}
+		} catch (Exception e) {
+			animationSpeedList.clear();
+			e.printStackTrace();
+			throw new MyError(app, "processAnimationSpeedList: " + e.toString());
+		}
+		animationSpeedList.clear();
+	}
+	
+	private void processMinMaxList() {
+		try {
+			Iterator<GeoExpPair> it = minMaxList.iterator();
+			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
+
+			while (it.hasNext()) {
+				GeoExpPair pair = it.next();
+				NumberValue num = algProc.evaluateToNumeric(pair.exp, false);
+				((GeoNumeric)pair.geo).setIntervalMin(num);
+				GeoExpPair pair2 = it.next();
+				NumberValue num2 = algProc.evaluateToNumeric(pair2.exp, false);
+				((GeoNumeric)pair.geo).setIntervalMax(num2);
 			}
 		} catch (Exception e) {
 			animationSpeedList.clear();
@@ -3416,11 +3452,11 @@ public class MyXMLHandler implements DocHandler {
 	// Michael Borcherds 2008-05-18
 	private void processDynamicColorList() {
 		try {
-			Iterator it = dynamicColorList.iterator();
+			Iterator<GeoExpPair> it = dynamicColorList.iterator();
 			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
 
 			while (it.hasNext()) {
-				GeoExpPair pair = (GeoExpPair) it.next();
+				GeoExpPair pair = it.next();
 				pair.geo.setColorFunction(algProc.evaluateToList(pair.exp));
 			}
 		} catch (Exception e) {
@@ -3620,8 +3656,8 @@ public class MyXMLHandler implements DocHandler {
 		ExpressionNode en;
 		String arg = null;
 
-		Collection values = attrs.values();
-		Iterator it = values.iterator();
+		Collection<String> values = attrs.values();
+		Iterator<String> it = values.iterator();
 		while (it.hasNext()) {
 			// parse argument expressions
 			try {
@@ -3654,12 +3690,12 @@ public class MyXMLHandler implements DocHandler {
 		return true;
 	}
 
-	private boolean handleCmdOutput(LinkedHashMap attrs) {
+	private boolean handleCmdOutput(LinkedHashMap<String,String> attrs) {
 		try {
 			// set labels for command processing
 			String label;
-			Collection values = attrs.values();
-			Iterator it = values.iterator();
+			Collection<String> values = attrs.values();
+			Iterator<String> it = values.iterator();
 			int countLabels = 0;
 			while (it.hasNext()) {
 				label = (String) it.next();
@@ -3739,8 +3775,8 @@ public class MyXMLHandler implements DocHandler {
 	 * @return
 	 */
 	private String[] getAttributeStrings(LinkedHashMap<String, String> attrs) {
-		Collection values = attrs.values();
-		Iterator it = values.iterator();
+		Collection<String> values = attrs.values();
+		Iterator<String> it = values.iterator();
 
 		String[] ret = new String[values.size()];
 		int i = 0;
@@ -3812,9 +3848,21 @@ public class MyXMLHandler implements DocHandler {
 	// UTILS
 	// ====================================
 
+	/**
+	 * Parse string to boolean
+	 * @param str 
+	 * @return true for "true", false otherwise
+	 * @throws Exception 
+	 */
 	protected boolean parseBoolean(String str) throws Exception {
 		return "true".equals(str);
 	}
+	/**
+	 * Parse string to boolean
+	 * @param str 
+	 * @return false for "fale", true otherwise
+	 * @throws Exception 
+	 */
 	protected boolean parseBooleanRev(String str) throws Exception {
 		return !"false".equals(str);
 	}

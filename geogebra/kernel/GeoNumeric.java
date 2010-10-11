@@ -61,8 +61,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	// for slider	
 	private boolean intervalMinActive = false;
 	private boolean intervalMaxActive = false;
-	private double intervalMin = Double.NEGATIVE_INFINITY;
-	private double intervalMax = Double.POSITIVE_INFINITY; 
+	private NumberValue intervalMin;
+	private NumberValue intervalMax; 
 	private double sliderWidth = this instanceof GeoAngle ? DEFAULT_SLIDER_WIDTH_PIXEL_ANGLE : DEFAULT_SLIDER_WIDTH_PIXEL;
 	private double sliderX, sliderY;
 	private boolean sliderFixed = false;
@@ -160,19 +160,19 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 						// set both to default
 						double min = Math.min(getDefaultSliderMin(), Math.floor(value));
 						double max = Math.max(getDefaultSliderMax(), Math.ceil(value));
-						setIntervalMin(min);
-						setIntervalMax(max);												
+						setIntervalMin(new MyDouble(kernel,min));
+						setIntervalMax(new MyDouble(kernel,max));												
 					} else {
 						// max is available but no min
 						double min = Math.min(getDefaultSliderMin(), Math.floor(value));
-						setIntervalMin(min);				
+						setIntervalMin(new MyDouble(kernel,min));				
 					}
 				}
 				else { // min exists
 					if (!intervalMaxActive) {
 						//	min is available but no max
 						double max = Math.max(getDefaultSliderMax(), Math.ceil(value));
-						setIntervalMax(max);					
+						setIntervalMax(new MyDouble(kernel,max));					
 					}
 				}			
 				
@@ -283,7 +283,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	// Michael Borcherds 2008-04-30
 	final public boolean isEqual(GeoElement geo) {
 		// return false if it's a different type, otherwise use equals() method
-		if (geo.isGeoNumeric()) return kernel.isEqual(value, ((GeoNumeric)geo).value); else return false;
+		if (geo.isGeoNumeric()) 
+			return Kernel.isEqual(value, ((GeoNumeric)geo).value); 
+		else 
+			return false;
 	}
 
 	/**
@@ -300,11 +303,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @param changeAnimationValue if true, value is changed also for animation
 	 */
 	void setValue(double x, boolean changeAnimationValue) {
-		if (intervalMinActive && x < intervalMin) {			
-			value = intervalMin;			
+		if (intervalMinActive && x < getIntervalMin()) {			
+			value = getIntervalMin();			
 		}					
-		else if (intervalMaxActive && x > intervalMax) {
-			value = intervalMax;			
+		else if (intervalMaxActive && x > getIntervalMax()) {
+			value = getIntervalMax();			
 		}						
 		else		 
 			value = x;
@@ -453,12 +456,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		sb.append("\t<slider");
 		if (intervalMinActive) {
 			sb.append(" min=\"");
-			sb.append(intervalMin);
+			sb.append(getIntervalMinObject().getLabel());
 			sb.append("\"");
 		}
 		if (intervalMinActive) {
 			sb.append(" max=\"");
-			sb.append(intervalMax);
+			sb.append(getIntervalMaxObject().getLabel());
 			sb.append("\"");
 		}
 		
@@ -519,14 +522,14 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * Changes maximal value for slider
 	 * @param max New maximum for slider
 	 */
-	public void setIntervalMax(double max) {	
-		if (Double.isNaN(max) || Double.isInfinite(max)) return;
+	public void setIntervalMax(NumberValue max) {	
+		if (Double.isNaN(max.getDouble()) || Double.isInfinite(max.getDouble())) return;
 
 		intervalMax = max;
 		intervalMaxActive = true;
 		
-		if (intervalMinActive && max <= intervalMin) {
-			setIntervalMin(max - 1);
+		if (intervalMinActive && max.getDouble() <= getIntervalMin()) {
+			setIntervalMin(new MyDouble(kernel,max.getDouble() - 1));
 		}
 		
 		setValue(value);			
@@ -536,15 +539,15 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * Changes minimal value for slider
 	 * @param min New minimum for slider
 	 */
-	public void setIntervalMin(double min) {
-		if (Double.isNaN(min) || Double.isInfinite(min))
+	public void setIntervalMin(NumberValue min) {
+		if (Double.isNaN(min.getDouble()) || Double.isInfinite(min.getDouble()))
 				return;
 		
 		intervalMin = min;
 		intervalMinActive = true;	
 		
-		if (intervalMaxActive && min >= intervalMax) {
-			setIntervalMax(min + 1);
+		if (intervalMaxActive && min.getDouble() >= getIntervalMax()) {
+			setIntervalMax(new MyDouble(kernel,min.getDouble() + 1));
 		}
 		
 		setValue(value);			
@@ -575,7 +578,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @return maximal value for slider
 	 */ 
 	public final double getIntervalMax() {
-		return intervalMax;
+		return intervalMax.getDouble();
 	}
 
 	/**
@@ -583,7 +586,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @return minimal value for slider
 	 */ 
 	public final double getIntervalMin() {
-		return intervalMin;
+		return intervalMin.getDouble();
 	}
 	/**
 	 * Returns slider width in pixels
@@ -820,7 +823,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		double oldValue = getValue();
 		
 		// compute animation step based on speed and frame rates
-		double intervalWidth = intervalMax - intervalMin;
+		double intervalWidth = getIntervalMax() - getIntervalMin();
 		double step = intervalWidth * getAnimationSpeed() * getAnimationDirection() /
 				      (AnimationManager.STANDARD_ANIMATION_TIME * frameRate);
 		
@@ -834,20 +837,20 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			case GeoElement.ANIMATION_DECREASING:
 			case GeoElement.ANIMATION_INCREASING:
 				// jump to other end of slider
-				if (animationValue > intervalMax) 
+				if (animationValue > getIntervalMax()) 
 					animationValue = animationValue - intervalWidth;
-				else if (animationValue < intervalMin) 
+				else if (animationValue < getIntervalMin()) 
 					animationValue = animationValue + intervalWidth;		
 				break;
 			
 			case GeoElement.ANIMATION_OSCILLATING:
 			default: 		
-				if (animationValue >= intervalMax) {
-					animationValue = intervalMax;
+				if (animationValue >= getIntervalMax()) {
+					animationValue = getIntervalMax();
 					changeAnimationDirection();
 				} 
-				else if (animationValue <= intervalMin) {
-					animationValue = intervalMin;
+				else if (animationValue <= getIntervalMin()) {
+					animationValue = getIntervalMin();
 					changeAnimationDirection();			
 				}		
 				break;
@@ -855,9 +858,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				
 		// take current slider increment size into account:
 		// round animationValue to newValue using slider's increment setting	
-		double param = animationValue - intervalMin;
+		double param = animationValue - getIntervalMin();
 		param = Kernel.roundToScale(param, animationIncrement);		
-		double newValue = intervalMin + param;	
+		double newValue = getIntervalMin() + param;	
 		
 		if (animationIncrement > Kernel.MIN_PRECISION) {
 			// round to decimal fraction, e.g. 2.800000000001 to 2.8
@@ -936,6 +939,38 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 */
 	public int getMinimumLineThickness() {
 		return (isSlider() ? 1 : 0);
+	}
+
+	/**
+	 * Set interval min
+	 * @param value
+	 */
+	public void setIntervalMin(double value) {
+			intervalMin = new MyDouble(kernel, value);		
+	}
+	
+	/**
+	 * Set interval max
+	 * @param value
+	 */
+	public void setIntervalMax(double value) {
+		intervalMax = new MyDouble(kernel, value);		
+	}
+
+	/**
+	 * Get interval min as geo
+	 * @return interval min
+	 */
+	public GeoElement getIntervalMinObject() {
+		return intervalMin.toGeoElement();
+	}
+	
+	/**
+	 * Get interval max as geo
+	 * @return interval max
+	 */
+	public GeoElement getIntervalMaxObject() {
+		return intervalMax.toGeoElement();
 	}
 
 
