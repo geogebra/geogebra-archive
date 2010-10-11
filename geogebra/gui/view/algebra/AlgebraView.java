@@ -137,7 +137,7 @@ public class AlgebraView extends JTree implements View {
 		addMouseMotionListener(algCtrl);
 		
 		// add small border
-		setBorder(BorderFactory.createEmptyBorder(2,4,2,4));
+		setBorder(BorderFactory.createEmptyBorder(2,2,2,0));
 		
 		// initializes the tree model
 		model = new DefaultTreeModel(null);
@@ -154,6 +154,8 @@ public class AlgebraView extends JTree implements View {
 		setInvokesStopCellEditing(true);
 		setScrollsOnExpand(true);	
 		setRowHeight(-1); // to enable flexible height of cells
+		
+		setToggleClickCount(1);
 		
 		attachView();						
 	}

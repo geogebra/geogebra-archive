@@ -7,7 +7,10 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -32,6 +35,9 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		
 		iconShown = app.getImageIcon("shown.gif");
 		iconHidden = app.getImageIcon("hidden.gif");
+		
+		setOpenIcon(app.getImageIcon("tree-close.png"));
+		setClosedIcon(app.getImageIcon("tree-open.png"));
 	}
 	
 	public Component getTreeCellRendererComponent(
@@ -74,7 +80,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 			setFont(app.getFontCanDisplay(text, Font.BOLD));
 			setText(text);
 			
-			if (geo.doHighlighting())				   
+			if (geo.doHighlighting()) 
 				setBackground(Application.COLOR_SELECTION);
 			else 
 				setBackground(getBackgroundNonSelectionColor());
@@ -86,31 +92,30 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 				setIcon(iconHidden);
 			}
 			
-//				 TODO: LaTeX in AlgebraView
-			//if (geo.isGeoFunction()) {
-				
-		//	}
-			
-			
-			/*// HIGHLIGHTING
-			if (geo.highlight) {
-				//setBorder(BorderFactory.createLineBorder(geo.selColor));
-				setBackground(geo.selColor);
-			} else {
-				//setBorder(null);
-			}*/
+			// TODO: LaTeX in AlgebraView
 		}								
-		//	no leaf (no GeoElement)
+		// no GeoElement
 		else { 
-			if (expanded) {
-				setIcon(getOpenIcon());
-			} else {
-				setIcon(getClosedIcon());
+			// has children, display icon to expand / collapse the node
+			if(!node.isLeaf()) {
+				if (expanded) {
+					setIcon(getOpenIcon());
+				} else {
+					setIcon(getClosedIcon());
+				}
+				
+				setBorder(null);
 			}
+			
+			// no children, display no icon
+			else {
+				// align all elements, therefore add the space the icon would normally take as a padding 
+				setBorder(BorderFactory.createEmptyBorder(0, getOpenIcon().getIconWidth() + getIconTextGap(), 0, 0));
+				setIcon(null);
+			}
+			
 			setForeground(Color.black);
 			setBackground(getBackgroundNonSelectionColor());
-			selected = false;				
-			setBorder(null);
 			String str = value.toString();
 			setText(str);
 			
@@ -119,28 +124,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		}		
 		
 		return this;
-	}							
-	
-//	
-//	final public void paint(Graphics g) {
-//		Graphics2D g2 = (Graphics2D) g;
-//		 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//                RenderingHints.VALUE_ANTIALIAS_ON);                                        
-//		 g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-//                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//		 
-//		 //Font f = app.getFontCanDisplay(getText(), Font.BOLD);
-//		 Font f = new Font("SansSerif", Font.BOLD, 12);
-//		 //UIManager.put("Tree.font", f);
-//		 //g2.setFont(f);
-//		 setFont(f);
-//		 super.paint(g);
-//		// UIManager.put("Tree.font", app.getBoldFont());
-//			
-//		 
-//		 //TODO: remove
-//		 System.out.println("paint renderer with font: " + getText() + ", "+ f);
-//	}
+	}
 	
 	
 } // MyRenderer
