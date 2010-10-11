@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -348,6 +349,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 
 	private StringBuilder sbToString = new StringBuilder(50);
+	private ArrayList<GeoNumeric> minMaxListeners;
+	private boolean minMaxUpdating;
 
 	public String toValueString() {
 		return kernel.format(value);
@@ -525,14 +528,15 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public void setIntervalMax(NumberValue max) {	
 		if (Double.isNaN(max.getDouble()) || Double.isInfinite(max.getDouble())) return;
 
+		if(intervalMax instanceof GeoNumeric){
+			((GeoNumeric)intervalMax).unregisterMinMaxListener(this);
+		}
 		intervalMax = max;
 		intervalMaxActive = true;
-		
-		if (intervalMinActive && max.getDouble() <= getIntervalMin()) {
-			setUndefined();
+		if(max instanceof GeoNumeric){
+			((GeoNumeric)max).registerMinMaxListener(this);
 		}
-		
-		setValue(value);			
+		resolveMinMax();
 	}
 	
 	/**
@@ -542,16 +546,15 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public void setIntervalMin(NumberValue min) {
 		if (Double.isNaN(min.getDouble()) || Double.isInfinite(min.getDouble()))
 				return;
-
+		if(intervalMin instanceof GeoNumeric){
+			((GeoNumeric)intervalMin).unregisterMinMaxListener(this);
+		}
 		intervalMin = min;
 		intervalMinActive = true;	
-		
-		if (intervalMaxActive && min.getDouble() >= getIntervalMax()) {
-
-			setUndefined();
+		if(min instanceof GeoNumeric){
+			((GeoNumeric)min).registerMinMaxListener(this);
 		}
-		
-		setValue(value);			
+		resolveMinMax();
 	}
 	
 	/**
@@ -748,8 +751,34 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		
 		// if this was a random number, make sure it's removed
 		cons.removeRandomGeo(this);
+		if(intervalMin instanceof GeoNumeric)
+			((GeoNumeric)intervalMin).unregisterMinMaxListener(this);
+		if(intervalMax instanceof GeoNumeric)
+			((GeoNumeric)intervalMax).unregisterMinMaxListener(this);
 	}
 
+	/**
+	 * Given geo depends on this one (via min or max value for slider)
+	 * and shoud be updated
+	 * @param geo geo to be updated
+	 */
+	public void registerMinMaxListener(GeoNumeric geo){
+		if(minMaxListeners == null)
+			minMaxListeners = new ArrayList<GeoNumeric>();
+		minMaxListeners.add(geo);		
+	}
+	
+	/**
+	 * Given geo no longer depends on this one (via min or max value for slider)
+	 * and shoud not be updated any more
+	 * @param geo
+	 */
+	public void unregisterMinMaxListener(GeoNumeric geo){
+		if(minMaxListeners == null)
+			minMaxListeners = new ArrayList<GeoNumeric>();
+		minMaxListeners.remove(geo);		
+	}
+	
 	
 	public void update() {  	
 		super.update();
@@ -758,6 +787,14 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if (this == view.getEuclidianController().recordObject){	
     		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
     	}
+		if (minMaxListeners != null && !minMaxUpdating) {
+			minMaxUpdating = true;
+			for (int i=0; i < minMaxListeners.size(); i++) {
+				GeoNumeric geo = minMaxListeners.get(i);
+				geo.resolveMinMax();								
+			}		
+			minMaxUpdating = false;
+		}
     		
     	/* spreadsheet trace now handled in GeoElement.update()	
     	if (isSpreadsheetTraceable() && getSpreadsheetTrace()){ 
@@ -793,6 +830,19 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
     	
     }	
 	
+	private void resolveMinMax() {
+		if(intervalMin == null || intervalMax == null)
+			return;
+		boolean ok =  (getIntervalMin() < getIntervalMax());
+		intervalMinActive = ok;
+		intervalMaxActive = ok;
+		setEuclidianVisible(ok);
+		
+		if(ok)setValue(value);
+		
+		update();
+	}
+
 	/**
 	 * Returns whether this number can be animated. Only free numbers with min and max interval
 	 * values can be animated (i.e. shown or hidden sliders). 
