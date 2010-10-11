@@ -20,6 +20,7 @@ import geogebra.kernel.kernel3D.GeoElement3DInterface;
 import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.kernel.kernel3D.Region3D;
+import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
@@ -62,6 +63,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** 3D point that is currently moved */
 	protected GeoPoint3D movedGeoPoint3D = null;
 	
+	/** min/max values for moving a point */
+	private double[] xMinMax, yMinMax, zMinMax;
+	
 	/** current plane where the movedGeoPoint3D lies */
 	protected GgbMatrix4x4 currentPlane = null;
 	
@@ -76,8 +80,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	/** 3D location of the mouse */
 	protected GgbVector mouseLoc3D;	
-	/** starting 3D location of the mouse */
-	protected GgbVector startLoc3D;
 	
 	/** picking point */
 	protected GgbVector pickPoint;
@@ -120,6 +122,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	public EuclidianController3D(Kernel kernel) {
 		super(kernel);
 		
+		// inits min max
+		xMinMax = new double[2];
+		yMinMax = new double[2];
+		zMinMax = new double[2];
 		
 	}
 	
@@ -144,11 +150,28 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	////////////////////////////////////////////
 	// setters movedGeoElement -> movedGeoPoint, ...
+	
+	private double[] getMinMax(double min, double val, double max){
+		
+		if (val<min)
+			min = val;
+		else if (val>max)
+			max = val;
+		
+		return new double[] {min,max};
+	}
+	
 	public void setMovedGeoPoint(GeoElement geo){
 		
-		movedGeoPoint3D = (GeoPoint3D) movedGeoElement;
-		startLoc3D = movedGeoPoint3D.getCoords().copyVector(); 
+		movedGeoPoint3D = (GeoPoint3D) geo;
+		
+		// sets the min/max values
+		xMinMax = getMinMax(view3D.getXMin(), movedGeoPoint3D.getCoords().getX(), view3D.getXMax());
+		yMinMax = getMinMax(view3D.getYMin(), movedGeoPoint3D.getCoords().getY(), view3D.getYMax());
+		zMinMax = getMinMax(view3D.getZMin(), movedGeoPoint3D.getCoords().getZ(), view3D.getZMax());
+			
 
+		
 		if (!movedGeoPoint3D.hasPath() && !movedGeoPoint3D.hasRegion() ){
 			
 			GgbMatrix4x4 plane = GgbMatrix4x4.Identity(); 
@@ -170,6 +193,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	////////////////////////////////////////////:
 	// moving points
+	
 	
 	
 	/**
@@ -236,18 +260,18 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 		//max x value
-		if (project.getX()>view3D.getXMax())
-			project.setX(view3D.getXMax());
-		else if (project.getX()<view3D.getXMin())
-			project.setX(view3D.getXMin());
+		if (project.getX()>xMinMax[1])
+			project.setX(xMinMax[1]);
+		else if (project.getX()<xMinMax[0])
+			project.setX(xMinMax[0]);
 		
 		//max y value
-		if (project.getY()>view3D.getYMax())
-			project.setY(view3D.getYMax());
-		else if (project.getY()<view3D.getYMin())
-			project.setY(view3D.getYMin());
-		
-		
+		if (project.getY()>yMinMax[1])
+			project.setY(yMinMax[1]);
+		else if (project.getY()<yMinMax[0])
+			project.setY(yMinMax[0]);
+
+	
 		point.setCoords(project);
 	}
 	
@@ -275,16 +299,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected void movePoint(boolean repaint){
 		
-		
-		
+
+			
 		
 		if (movedGeoPoint3D.hasPath()){
 			
 			setMouseInformation(movedGeoPoint3D);		
 			movedGeoPoint3D.doPath();
 						
-		}else if (movedGeoPoint3D.hasRegion()){
-						
+		}else if (movedGeoPoint3D.hasRegion()){						
 			if ((isShiftDown)){//&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
 				//frees the point and moves it along z-axis if it belong to xOy plane
 				movedGeoPoint3D.freeUp();
@@ -318,10 +341,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				
 				
 				//max z value
-				if (project.getZ()>view3D.getZMax())
-					project.setZ(view3D.getZMax());
-				else if (project.getZ()<view3D.getZMin())
-					project.setZ(view3D.getZMin());
+				if (project.getZ()>zMinMax[1])
+					project.setZ(zMinMax[1]);
+				else if (project.getZ()<zMinMax[0])
+					project.setZ(zMinMax[0]);
 				
 				
 				movedGeoPoint3D.setCoords(project);
@@ -542,7 +565,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	protected void updateMovedGeoPoint(GeoPointInterface point){
-		movedGeoPoint3D = (GeoPoint3D) point;
+		//movedGeoPoint3D = (GeoPoint3D) point;
+		setMovedGeoPoint((GeoPoint3D) point);
 	}
 	
 	
