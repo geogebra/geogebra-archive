@@ -122,8 +122,6 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 		brush.setColor(Color.GRAY);
 		
-		double l=10*200/getView3D().getScale();
-		geo.setGridCorners(-l, -l, l, l);//TODO
 		//double dx = Math.max(geo.getGridXd(), geo.getGridYd()); //TODO
 		double dx = Math.min(geo.getGridXd(), geo.getGridYd());
 		double dy = dx; //TODO
@@ -166,6 +164,11 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		//Application.debug("corners : "+xMinMax[0]+","+yMinMax[0]+" -- "+xMinMax[1]+","+yMinMax[1]);
 		
 		((GeoPlane3D) getGeoElement()).setGridCorners(xMinMax[0], yMinMax[0], xMinMax[1], yMinMax[1]);
+		
+		
+
+		//double l=10*200/getView3D().getScale();
+		//((GeoPlane3D) getGeoElement()).setGridCorners(-l, -l, l, l);//TODO
 		
 		updateForItSelf();
 	}

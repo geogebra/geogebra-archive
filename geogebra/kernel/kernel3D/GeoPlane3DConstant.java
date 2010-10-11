@@ -1,5 +1,6 @@
 package geogebra.kernel.kernel3D;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
@@ -33,6 +34,22 @@ public class GeoPlane3DConstant extends GeoPlane3D {
 		}
 		
 		setFixed(true);
+	}
+	
+	
+	public GgbVector getPoint(double x2d, double y2d){
+		
+		if (x2d>getXmax())
+			x2d=getXmax();
+		else if (x2d<getXmin())
+			x2d=getXmin();
+		
+		if (y2d>getYmax())
+			y2d=getYmax();
+		else if (y2d<getYmin())
+			y2d=getYmin();		
+		
+		return super.getPoint(x2d,y2d);
 	}
 
 	

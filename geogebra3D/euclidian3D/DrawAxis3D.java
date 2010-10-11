@@ -160,7 +160,7 @@ public class DrawAxis3D extends DrawLine3D {
     
     protected void updateForItSelf(){
     	
-    	updateDrawMinMax();
+    	//updateDrawMinMax();
     	//setDrawMinMax(-5, 5);
     	updateDecorations();
     	setLabelWaitForUpdate();

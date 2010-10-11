@@ -50,7 +50,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	 * @param drawMin
 	 * @param drawMax
 	 */
-	protected void setDrawMinMax(double drawMin, double drawMax){
+	public void setDrawMinMax(double drawMin, double drawMax){
 		this.drawMin = drawMin;
 		this.drawMax = drawMax;
 	}
@@ -59,14 +59,14 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	/**
 	 * @return the minimum extremity
 	 */
-	protected double getDrawMin(){
+	public double getDrawMin(){
 		return drawMin;
 	}
 	
 	/**
 	 * @return the maximum extremity
 	 */
-	protected double getDrawMax(){
+	public double getDrawMax(){
 		return drawMax;
 	}
 	

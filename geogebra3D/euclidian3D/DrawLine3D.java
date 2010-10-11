@@ -55,7 +55,7 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	/**
 	 *  update min and max values
 	 */
-	protected void updateDrawMinMax(){
+	public void updateDrawMinMax(){
 		
 		GgbCoordSys cs = ((GeoCoordSys1D) getGeoElement()).getCoordSys();
 		

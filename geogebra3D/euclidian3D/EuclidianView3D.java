@@ -38,6 +38,7 @@ import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -727,17 +728,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	/**  @return max value for x-axis (linked to grid)*/
-	public double getXMax(){ return 1; }
+	public double getXMax(){ return axisDrawable[AXIS_X].getDrawMax(); }
 	/**  @return min value for x-axis (linked to grid)*/
-	public double getXMin(){ return -1; }
+	public double getXMin(){ return axisDrawable[AXIS_X].getDrawMin(); }
 	/**  @return max value for y-axis (linked to grid)*/
-	public double getYMax(){ return 2; }
+	public double getYMax(){ return axisDrawable[AXIS_Y].getDrawMax(); }
 	/**  @return min value for y-axis (linked to grid)*/
-	public double getYMin(){ return -2; }
+	public double getYMin(){ return axisDrawable[AXIS_Y].getDrawMin(); }
 	/**  @return max value for z-axis */
-	public double getZMax(){ return 3; }
+	public double getZMax(){ return axisDrawable[AXIS_Z].getDrawMax(); }
 	/**  @return min value for z-axis */
-	public double getZMin(){ return -3; }
+	public double getZMin(){ return axisDrawable[AXIS_Z].getDrawMin(); }
 
 	
 	//TODO specific scaling for each direction
@@ -2291,20 +2292,27 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	public void setMoveCursor(){
-
-		//Application.printStacktrace("setMoveCursor");
+		
+		// 3D cursor
 		cursor = CURSOR_MOVE;
 	}
 	
 	public void setDragCursor(){
-		//Application.printStacktrace("setDragCursor");
+
+		// 2D cursor is invisible
+		setCursor(app.getTransparentCursor());
+
+		// 3D cursor
 		cursor = CURSOR_DRAG;
 	}
 	
 	public void setDefaultCursor(){
-		//Application.printStacktrace("setDefaultCursor");
+		
+		// 2D cursor
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		
+		// 3D cursor
 		cursor = CURSOR_DEFAULT;
-		//setHitCursor();
 	}
 	
 	public void setHitCursor(){
@@ -2587,7 +2595,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void viewChangedOwnDrawables(){
 		
-		xOyPlaneDrawable.viewChanged();
+		//xOyPlaneDrawable.viewChanged();
+		xOyPlaneDrawable.setWaitForUpdate();
 		
 		for(int i=0;i<3;i++)
 			axisDrawable[i].viewChanged();
@@ -2644,20 +2653,79 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
+	static private double[] dilateMinMax(double min, double max, double delta, double factor){
+		
+		//preserve old values
+		double minOld = min;			
+		double maxOld = max;
+		
+		//dilate
+		min*=factor;
+		max*=factor;
+		
+		//preserve middle
+		if (maxOld<delta/2){
+			if (maxOld>(max-min)/2)
+				maxOld=(max-min)/2;
+			min += maxOld-max;
+			max = maxOld;
+		}else if (-minOld<delta/2){
+			if (-minOld>(max-min)/2)
+				minOld=-(max-min)/2;
+			max += minOld-min;
+			min = minOld;
+		}
+		
+		return new double[] {min, max};
+	}
+	
 	
 	/**
 	 * update all drawables now
 	 */
 	public void updateDrawablesNow(){
 		
+		// calc draw min/max for axis
+		for(int i=0;i<3;i++){
+			axisDrawable[i].updateDrawMinMax();
+		}
+		
+		
+		// sets min/max for the plane and axis
+		double xmin = axisDrawable[AXIS_X].getDrawMin(); 
+		double ymin = axisDrawable[AXIS_Y].getDrawMin();
+		double xmax = axisDrawable[AXIS_X].getDrawMax(); 
+		double ymax = axisDrawable[AXIS_Y].getDrawMax();
+		double xdelta = xmax - xmin;
+		double ydelta = ymax - ymin;
+		if (ydelta>1.5*xdelta){
+			double[] ret=dilateMinMax(ymin,ymax,ydelta,1.5*xdelta/ydelta);
+			ymin = ret[0]; ymax = ret[1];
+		}else if (xdelta>1.5*ydelta){
+			double[] ret=dilateMinMax(xmin,xmax,xdelta,1.5*ydelta/xdelta);
+			xmin = ret[0]; xmax = ret[1];
+		}
+		
+		
+		
+		
+		// update axis
+		axisDrawable[AXIS_X].setDrawMinMax(xmin, xmax);
+		axisDrawable[AXIS_Y].setDrawMinMax(ymin, ymax);
 		for(int i=0;i<3;i++){
 			axisDrawable[i].update();
 		}
-		xOyPlaneDrawable.update();
+		
+		// update xOyPlane
+		xOyPlane.setGridCorners(xmin,ymin,xmax,ymax);
 		xOyPlane.setGridDistances(axis[AXIS_X].getNumbersDistance(), axis[AXIS_Y].getNumbersDistance());
+		xOyPlaneDrawable.update();
 
 		
 		
+
+		
+		// update decorations
 		pointDecorations.update();
 	}
 	

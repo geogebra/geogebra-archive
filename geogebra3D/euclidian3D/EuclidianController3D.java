@@ -20,8 +20,8 @@ import geogebra.kernel.kernel3D.GeoElement3DInterface;
 import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.kernel.kernel3D.Region3D;
-import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
+import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -71,8 +71,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
-	
 	private Point mouseLocOld = new Point();
+	private GgbVector positionOld = new GgbVector(4);
 	
 	/** 3D location of the mouse */
 	protected GgbVector mouseLoc3D;	
@@ -81,6 +81,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	/** picking point */
 	protected GgbVector pickPoint;
+	
+	private static int MOVE_POINT_MODE_NONE = 0;
+	private static int MOVE_POINT_MODE_XY = 1;
+	private static int MOVE_POINT_MODE_Z = 2;
+	private int movePointMode = MOVE_POINT_MODE_NONE;
 	
 
 	/** says if a rotation of the view occurred (with right-button) */
@@ -114,6 +119,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 */
 	public EuclidianController3D(Kernel kernel) {
 		super(kernel);
+		
+		
 	}
 	
 	
@@ -150,6 +157,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
 			
 		}
+		
+		view3D.setDragCursor();
 	}
 
 	
@@ -205,9 +214,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		//getting current pick point and direction v 
 		GgbVector o;
-		if (useOldMouse)
-			o = view3D.getPickFromScenePoint(point.getCoords(),mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
-		else
+		if (useOldMouse){
+			if (movePointMode != MOVE_POINT_MODE_XY){
+				mouseLocOld = (Point) mouseLoc.clone();
+				positionOld = point.getCoords().copyVector();
+				movePointMode = MOVE_POINT_MODE_XY;
+			}
+			o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
+		}else
 			o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 		view3D.toSceneCoords3D(o);
 		
@@ -220,7 +234,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		GgbVector[] projects = o.projectPlaneThruVIfPossible(currentPlane, v);
 		GgbVector project = projects[0];
 		
-		/*
+		
 		//max x value
 		if (project.getX()>view3D.getXMax())
 			project.setX(view3D.getXMax());
@@ -232,7 +246,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			project.setY(view3D.getYMax());
 		else if (project.getY()<view3D.getYMin())
 			project.setY(view3D.getYMin());
-		*/
+		
 		
 		point.setCoords(project);
 	}
@@ -271,7 +285,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 						
 		}else if (movedGeoPoint3D.hasRegion()){
 						
-			if ((isShiftDown)&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
+			if ((isShiftDown)){//&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
 				//frees the point and moves it along z-axis if it belong to xOy plane
 				movedGeoPoint3D.freeUp();
 				setCurrentPlane(GgbMatrix4x4.Identity());
@@ -285,24 +299,30 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 			if (isShiftDown && mouseLoc != null){ //moves the point along z-axis
 
-
 				//getting current pick point and direction v 
-				GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+				if (movePointMode != MOVE_POINT_MODE_Z){
+					mouseLocOld = (Point) mouseLoc.clone();
+					positionOld = movedGeoPoint3D.getCoords().copyVector();
+					movePointMode = MOVE_POINT_MODE_Z;
+				}
+				//GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+				//view3D.toSceneCoords3D(o);
+				GgbVector o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y);
 				view3D.toSceneCoords3D(o);
-
+				
 				GgbVector v = new GgbVector(new double[] {0,0,1,0});
 				view3D.toSceneCoords3D(v);
 
 				//getting new position of the point
 				GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
 				
-				/*
+				
 				//max z value
 				if (project.getZ()>view3D.getZMax())
 					project.setZ(view3D.getZMax());
 				else if (project.getZ()<view3D.getZMin())
 					project.setZ(view3D.getZMin());
-				*/
+				
 				
 				movedGeoPoint3D.setCoords(project);
 
@@ -1033,6 +1053,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		default:
 			super.switchModeForMousePressed(e);
 		}
+		
+		// reset the move point mode
+		movePointMode = MOVE_POINT_MODE_NONE;
 	}
 	
 	
@@ -1265,9 +1288,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	final protected void setMouseLocation(MouseEvent e) {
 
+		/*
 		if (mouseLoc!=null)
 			mouseLocOld = (Point) mouseLoc.clone();
-		
+		*/
 
 		isShiftDown= e.isShiftDown();//Application.isAltDown(e);
 		
