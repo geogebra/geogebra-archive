@@ -465,7 +465,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 		
-		//Ggb3DVector coordOld = P.getInhomCoords();
+		GgbVector coordsOld = P.getInhomCoords();
 		
 		double minDist = Double.POSITIVE_INFINITY;
 		GgbVector res = null;
@@ -474,15 +474,25 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		// find closest point on each segment
 		PathParameter pp = P.getPathParameter();
 		for (int i=0; i < segments.length; i++) {
-			//P.setCoords(coordOld,false); //prevent circular path.pointChanged
-			segments[i].pointChanged(P);			
+			
+			P.setCoords(coordsOld,false); //prevent circular path.pointChanged
 
-			//double dist = P.getInhomCoords().sub(coordOld).squareNorm();			
-			double dist = 0;
+			segments[i].pointChanged(P);
+
+			double dist;// = P.getInhomCoords().sub(coordsOld).squareNorm();			
+			//double dist = 0;
 			if (P.getWillingCoords()!=null && P.getWillingDirection()!=null)
 				dist=P.getInhomCoords().distLine(P.getWillingCoords(), P.getWillingDirection());
-
-			//Application.debug("distance au segment "+i+" : "+dist);
+			else{
+				dist = P.getInhomCoords().sub(coordsOld).squareNorm();
+				/*
+				Application.debug("old=\n"+coordsOld+
+						"P=\n"+P.getInhomCoords()+
+						"\n\ndistance au segment "+i+" : "+dist);
+						*/
+			}
+			
+			
 			if (dist < minDist) {
 				minDist = dist;
 				// remember closest point
@@ -508,19 +518,26 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 	public void setRegionChanged(GeoPointInterface PI, double x, double y){
 		
-		//Application.debug("x = "+x+", y = "+y);
+		
 		((GeoPoint3D) PI).setCoords2D(x, y);
 		((GeoPoint3D) PI).updateCoordsFrom2D(false);
+		//Application.debug("x = "+x+", y = "+y+"\n"+((GeoPoint3D) PI).getCoords());
+	}
+	
+	protected boolean isInRegion(GeoPointInterface PI, boolean update){
+		GeoPoint3D P = (GeoPoint3D) PI;
+
+		if (update){
+			//udpate region coords
+			P.updateCoords2D(this);
+		}
+		
+		return isInRegion(P.getX2D(), P.getY2D());
 	}
 	
 	public boolean isInRegion(GeoPointInterface PI){
 		
-		GeoPoint3D P = (GeoPoint3D) PI;
-		
-		//udpate region coords
-		P.updateCoords2D(this);
-		
-		return isInRegion(P.getX2D(), P.getY2D());
+		return isInRegion(PI,true);
 		
 	}
 	

@@ -823,6 +823,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		return true;
 	}
 	
+	protected boolean isInRegion(GeoPointInterface PI, boolean update){
+		return isInRegion(PI);
+	}
+	
 	public boolean isInRegion(GeoPointInterface PI){
 		
 		GeoPoint P = (GeoPoint) PI;
@@ -859,6 +863,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	
 	public void regionChanged(GeoPointInterface P){
 		
+
+		
 		//GeoPoint P = (GeoPoint) PI;
 		RegionParameters rp = P.getRegionParameters();
 		
@@ -876,7 +882,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 					p0.inhomX + rp.getT1()*xu + rp.getT2()*xv,
 					p0.inhomY + rp.getT1()*yu + rp.getT2()*yv);
 			
-			if (!isInRegion(P)){
+			if (!isInRegion(P,false)){
 				pointChanged(P);
 				rp.setIsOnPath(true);
 			}	
@@ -900,6 +906,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	
 	
 	public void pointChangedForRegion(GeoPointInterface P){
+		
 		P.updateCoords2D();
 		
 		RegionParameters rp = P.getRegionParameters();
