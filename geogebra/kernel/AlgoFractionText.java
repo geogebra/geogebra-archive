@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.util.Unicode;
+
 
 public class AlgoFractionText extends AlgoElement {
 
@@ -62,6 +64,8 @@ public class AlgoFractionText extends AlgoElement {
 			
 			if (frac[1] == 1) { // integer
 		    	text.setTextString(kernel.format(frac[0]));				
+			} else if (frac[1] == 0) { // 1 / 0 or -1 / 0
+		    	text.setTextString(frac[0] < 0 ? "-"+Unicode.Infinity : ""+Unicode.Infinity);				
 			} else {
 				sb.setLength(0);
 		    	sb.append("{\\frac{");
