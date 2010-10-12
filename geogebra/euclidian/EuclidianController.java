@@ -3304,8 +3304,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		GeoPointInterface point = null;
 
-
-
+		
 		//	try to get an intersection point
 		if (createPoint && intersectPossible) {
 			GeoPointInterface intersectPoint = getSingleIntersectionPoint(hits);
@@ -4018,7 +4017,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		GeoElement a = (GeoElement) hits.get(0);
 		GeoElement b = (GeoElement) hits.get(1);
-
+		
 		// first hit is a line
 		if (a.isGeoLine()) {
 			if (b.isGeoLine())
@@ -4049,9 +4048,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (b.isGeoLine())
 				return kernel.IntersectLineConicSingle(null, (GeoLine) b,
 						(GeoConic) a, xRW, yRW);
-			else if (b.isGeoConic())
+			else if (b.isGeoConic() && !a.isEqual(b)) {
 				return kernel.IntersectConicsSingle(null, (GeoConic) a,
 						(GeoConic) b, xRW, yRW);
+			}
 			else
 				return null;
 		}
