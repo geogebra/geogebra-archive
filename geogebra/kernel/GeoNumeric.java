@@ -787,6 +787,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if (this == view.getEuclidianController().recordObject){	
     		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
     	}
+	  	//END G.Sturr
 		if (minMaxListeners != null && !minMaxUpdating) {
 			minMaxUpdating = true;
 			for (int i=0; i < minMaxListeners.size(); i++) {
@@ -794,40 +795,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				geo.resolveMinMax();								
 			}		
 			minMaxUpdating = false;
-		}
-    		
-    	/* spreadsheet trace now handled in GeoElement.update()	
-    	if (isSpreadsheetTraceable() && getSpreadsheetTrace()){ 
-        	cons.getApplication().getGuiManager().traceToSpreadsheet(this);
-    	}		
-		*/
-		
-		// -------- old code
-		
-		/*
-		// TO_DO: can we move this to Drawable? (problem: dependant GeoNumeric not drawn!)
-		EuclidianView view = kernel.getApplication().getEuclidianView();	
-        // record to spreadsheet tool
-    	if (this == view.getEuclidianController().recordObject
-    			&& this.getLastTrace1() != value) {
-    		
-    		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
-	    	/*
-	    	String col = getTraceColumn1(); // must be called before getTraceRow()
-	    	String row = getTraceRow() + "";
-	    	
-	    	cons.getApplication().getGuiManager().setScrollToShow(true);
-	    	GeoNumeric traceCell = new GeoNumeric(cons,col+row,value);
-	    	cons.getApplication().getGuiManager().setScrollToShow(false);
-	    	
-	    	traceCell.setAuxiliaryObject(true);
-	    	
-	    	setLastTrace1(value);*/
-	    
-    //	}
-    	
-    	//END G.Sturr
-    	
+		}    	
     }	
 	
 	private void resolveMinMax() {
@@ -836,9 +804,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		boolean ok =  (getIntervalMin() < getIntervalMax());
 		intervalMinActive = ok;
 		intervalMaxActive = ok;
-		setEuclidianVisible(ok);
-		
-		if(ok)setValue(value);
+			
+		if(ok)
+			setValue(isDefined() ? value : 1.0);
+		else 
+			setUndefined();
 		
 		update();
 	}
