@@ -18,6 +18,7 @@ import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
+import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoAxis;
@@ -633,7 +634,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoElement geo = (GeoElement) hits.get(0);
 
 				// F3 key: copy definition to input bar
-				app.getGlobalKeyDispatcher().handleFunctionKeyForAlgebraInput(3, geo);
+				if (mode != EuclidianView.MODE_ATTACH_DETACH)
+					app.getGlobalKeyDispatcher().handleFunctionKeyForAlgebraInput(3, geo);
 
 				moveMode = MOVE_NONE;	
 				return;
@@ -5259,8 +5261,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				double y = view.toScreenCoordY(p.inhomY) + 20;
 				
 				try {
+					Construction cons = kernel.getConstruction();
+					boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
+					cons.setSuppressLabelCreation(true);
 					GeoPoint newPoint = new GeoPoint(kernel.getConstruction(),null, view.toRealWorldCoordX(x),view.toRealWorldCoordY(y),1.0);
-					kernel.getConstruction().replace(p, newPoint);
+					cons.setSuppressLabelCreation(oldLabelCreationFlag);
+					cons.replace(p, newPoint);
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -5278,7 +5284,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				if (!((GeoElement)paths[0]).isChildOf(points[0])) {
 					
 					try {
+						Construction cons = kernel.getConstruction();
+						boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
+						cons.setSuppressLabelCreation(true);
 						GeoPoint newPoint = kernel.Point(null, paths[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false);
+						cons.setSuppressLabelCreation(oldLabelCreationFlag);
 						kernel.getConstruction().replace(points[0], newPoint);
 					} catch (Exception e1) {
 						e1.printStackTrace();
@@ -5294,7 +5304,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 				if (!((GeoElement)regions[0]).isChildOf(points[0])) {
 					try {
+						Construction cons = kernel.getConstruction();
+						boolean oldLabelCreationFlag = cons.isSuppressLabelsActive();
+						cons.setSuppressLabelCreation(true);
 						GeoPoint newPoint = kernel.PointIn(null, regions[0], view.toRealWorldCoordX(mx), view.toRealWorldCoordY(my), false);
+						cons.setSuppressLabelCreation(oldLabelCreationFlag);
 						kernel.getConstruction().replace(points[0], newPoint);
 					} catch (Exception e1) {
 						e1.printStackTrace();
