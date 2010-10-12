@@ -80,7 +80,7 @@ public class AlgoFractionText extends AlgoElement {
 	    	text.setLaTeX(true,false);
 
 		} else
-			text.setUndefined();
+			text.setTextString(app.getPlain("undefined"));
 	}
   
     /*	Algorithm To Convert A Decimal To A Fraction
