@@ -3,10 +3,8 @@ package geogebra.main;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
-import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
-import geogebra.gui.menubar.RequestFocusListener;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -23,17 +21,11 @@ import java.awt.Component;
 import java.awt.KeyEventDispatcher;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
-import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
 
@@ -668,13 +660,13 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					// update number
 					if (geo.isGeoNumeric()) {
 						GeoNumeric num = (GeoNumeric) geo;
-						double newValue = num.getValue() + changeVal * num.animationIncrement;
-						if (num.animationIncrement > Kernel.MIN_PRECISION) {
+						double newValue = num.getValue() + changeVal * num.getAnimationStep();
+						if (num.getAnimationStep() > Kernel.MIN_PRECISION) {
 							// round to decimal fraction, e.g. 2.800000000001 to 2.8
 							if (num.isGeoAngle())
-								newValue = Kernel.PI_180 * app.getKernel().checkDecimalFraction(newValue * Kernel.CONST_180_PI, 1 / num.animationIncrement);
+								newValue = Kernel.PI_180 * app.getKernel().checkDecimalFraction(newValue * Kernel.CONST_180_PI, 1 / num.getAnimationStep());
 							else
-								newValue = app.getKernel().checkDecimalFraction(newValue, 1 / num.animationIncrement);
+								newValue = app.getKernel().checkDecimalFraction(newValue, 1 / num.getAnimationStep());
 						}
 						num.setValue(newValue);					
 					} 
@@ -683,7 +675,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					else if (geo.isGeoPoint() && !geo.isGeoElement3D()) {
 						GeoPoint p = (GeoPoint) geo;
 						if (p.hasPath()) {
-							p.addToPathParameter(changeVal * p.animationIncrement);
+							p.addToPathParameter(changeVal * p.getAnimationStep());
 						}
 					}
 				}	
@@ -728,7 +720,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * F3: copy definition to input field
 	 * F4: copy value to input field
 	 * F5: copy name to input field
-	 * @param fkey numer
+	 * @param fkey number
 	 */
 	public void handleFunctionKeyForAlgebraInput(int fkey, GeoElement geo) {
 		if (!app.hasFullGui() || !app.showAlgebraInput()) 
@@ -755,7 +747,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	/**
 	 * Tries to move the given objects after pressing an arrow key on the keyboard.
 	 * 
-	 * @param keyCode: VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT
+	 * @param keyCode VK_UP, VK_DOWN, VK_RIGHT, VK_LEFT
 	 * @return whether any object was moved
 	 */
 	private boolean handleArrowKeyMovement(ArrayList<GeoElement> geos, double xdiff, double ydiff, double zdiff) {	
@@ -769,9 +761,9 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		// set translation vector
 		if (tempVec == null)
 			tempVec = new GgbVector(4); // 4 coords for 3D
-		double xd = geo.animationIncrement * xdiff;
-		double yd = geo.animationIncrement * ydiff;						
-		double zd = geo.animationIncrement * zdiff;						
+		double xd = geo.getAnimationStep() * xdiff;
+		double yd = geo.getAnimationStep() * ydiff;						
+		double zd = geo.getAnimationStep() * zdiff;						
 		tempVec.setX(xd);tempVec.setY(yd);;tempVec.setZ(zd);
 		
 		// move objects
@@ -802,8 +794,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	/**
 	 * Changes the font size of the user interface and construction element styles (thickness,
 	 * size) for a given fontSize. 
-	 * @param fontSize: 12-32pt
-	 * @param grayScale: whether only black should be used as a color
+	 * @param fontSize 12-32pt
+	 * @param blackWhiteMode whether only black should be used as a color
 	 * @return whether change was performed
 	 */	
 	private boolean changeFontsAndGeoElements(int fontSize, boolean blackWhiteMode) {

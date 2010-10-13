@@ -152,6 +152,7 @@ public class MyXMLHandler implements DocHandler {
 	private LinkedList<GeoExpPair> showObjectConditionList = new LinkedList<GeoExpPair>();
 	private LinkedList<GeoExpPair> dynamicColorList = new LinkedList<GeoExpPair>();
 	private LinkedList<GeoExpPair> animationSpeedList = new LinkedList<GeoExpPair>();
+	private LinkedList<GeoExpPair> animationStepList = new LinkedList<GeoExpPair>();
 	private LinkedList<GeoExpPair> minMaxList = new LinkedList<GeoExpPair>();
 
 	private class GeoExpPair {
@@ -221,6 +222,8 @@ public class MyXMLHandler implements DocHandler {
 	 * If the algebra or spreadsheet view is visible. (version < 3.03)
 	 */
 	private boolean tmp_showAlgebra, tmp_showSpreadsheet;
+
+	
 
 	
 
@@ -2034,6 +2037,7 @@ public class MyXMLHandler implements DocHandler {
 				processShowObjectConditionList();
 				processDynamicColorList();
 				processAnimationSpeedList();
+				processAnimationStepList();
 				processMinMaxList();
 				//processDynamicCoordinatesList();
 
@@ -2534,45 +2538,6 @@ public class MyXMLHandler implements DocHandler {
 		
 		return kernel.handleCoords(geo, attrs);
 		
-		/*
-		if (!(geo instanceof GeoVec3D)) {
-			System.err.println("wrong element type for <coords>: "
-					+ geo.getClass());
-			return false;
-		}
-		GeoVec3D v = (GeoVec3D) geo;
-		
-
-
-		try {
-			// for points: make path parameter invalid to force update in setCoords
-			if (v.isGeoPoint()) {
-				GeoPoint p = (GeoPoint) v;
-				if (p.hasPath()) 
-					p.clearPathParameter();
-			}
-			
-			double x = Double.parseDouble((String) attrs.get("x"));
-			double y = Double.parseDouble((String) attrs.get("y"));
-			double z = Double.parseDouble((String) attrs.get("z"));
-				
-			// DEBUGGING code:
-			// check if dependent point is different to saved position
-//			if (geo.isGeoPoint() && !geo.isIndependent()) {
-//				GeoPoint point = (GeoPoint) geo;
-//				GeoPoint loadedPoint = new GeoPoint(cons);
-//				loadedPoint.setCoords(x, y, z);
-//				if (!point.isEqual(loadedPoint)) {
-//					System.out.println("UNEQUAL: point " + point + ", loaded: " + loadedPoint + ", parentAlgo: " + point.getParentAlgorithm());
-//				}
-//			}
-			
-			v.setCoords(x, y, z);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-		*/
 	}
 	
 	// for point or vector
@@ -2962,8 +2927,13 @@ public class MyXMLHandler implements DocHandler {
 
 	private boolean handleAnimation(LinkedHashMap<String, String> attrs) {
 		try {
-			geo.setAnimationStep(Double.parseDouble((String) attrs.get("step")));
 			
+			
+			String strStep = (String) attrs.get("step");
+			if (strStep != null) {
+				// store speed expression to be processed later
+				animationStepList.add(new GeoExpPair(geo, strStep));			
+			}
 			String strSpeed = (String) attrs.get("speed");
 			if (strSpeed != null) {
 				// store speed expression to be processed later
@@ -3336,8 +3306,7 @@ public class MyXMLHandler implements DocHandler {
 				GeoPointInterface P = pair.point != null ? pair.point : 
 								algProc.evaluateToPoint(pair.exp);
 				pair.locateable.setStartPoint(P, pair.number);
-				
-				//Application.debug("locateable : "+ ((GeoElement) pair.locateable).getLabel() + ", startPoint : "+((GeoElement) P).getLabel());
+								
 			}
 		} catch (Exception e) {
 			startPointList.clear();
@@ -3426,6 +3395,24 @@ public class MyXMLHandler implements DocHandler {
 		animationSpeedList.clear();
 	}
 	
+	private void processAnimationStepList() {
+		try {
+			Iterator<GeoExpPair> it = animationStepList.iterator();
+			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
+
+			while (it.hasNext()) {
+				GeoExpPair pair =  it.next();
+				NumberValue num = algProc.evaluateToNumeric(pair.exp, false);
+				pair.geo.setAnimationStep(num);
+			}
+		} catch (Exception e) {
+			animationStepList.clear();
+			e.printStackTrace();
+			throw new MyError(app, "processAnimationStepList: " + e.toString());
+		}
+		animationSpeedList.clear();
+	}
+	
 	private void processMinMaxList() {
 		try {
 			Iterator<GeoExpPair> it = minMaxList.iterator();
@@ -3446,8 +3433,6 @@ public class MyXMLHandler implements DocHandler {
 		}
 		animationSpeedList.clear();
 	}
-	
-
 
 	// Michael Borcherds 2008-05-18
 	private void processDynamicColorList() {

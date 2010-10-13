@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.util.Util;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -82,7 +83,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		super(c);
 		setEuclidianVisible(isGeoAngle());
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
-		animationIncrement = DEFAULT_SLIDER_INCREMENT;					
+		setAnimationStep(DEFAULT_SLIDER_INCREMENT);					
 	}
 
 	public String getClassName() {
@@ -459,12 +460,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		sb.append("\t<slider");
 		if (intervalMinActive) {
 			sb.append(" min=\"");
-			sb.append(getIntervalMinObject().getLabel());
+			sb.append(Util.encodeXML(getIntervalMinObject().getLabel()));
 			sb.append("\"");
 		}
 		if (intervalMinActive) {
 			sb.append(" max=\"");
-			sb.append(getIntervalMaxObject().getLabel());
+			sb.append(Util.encodeXML(getIntervalMaxObject().getLabel()));
 			sb.append("\"");
 		}
 		
@@ -884,10 +885,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		// take current slider increment size into account:
 		// round animationValue to newValue using slider's increment setting	
 		double param = animationValue - getIntervalMin();
-		param = Kernel.roundToScale(param, animationIncrement);		
+		param = Kernel.roundToScale(param, getAnimationStep());		
 		double newValue = getIntervalMin() + param;	
 		
-		if (animationIncrement > Kernel.MIN_PRECISION) {
+		if (getAnimationStep() > Kernel.MIN_PRECISION) {
 			// round to decimal fraction, e.g. 2.800000000001 to 2.8
 			newValue = kernel.checkDecimalFraction(newValue);
 		}

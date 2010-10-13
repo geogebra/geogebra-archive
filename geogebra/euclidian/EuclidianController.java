@@ -2909,10 +2909,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		param = param * (max - min) / movedGeoNumeric.getSliderWidth();					
 
 		// round to animation step scale				
-		param = Kernel.roundToScale(param, movedGeoNumeric.animationIncrement);
+		param = Kernel.roundToScale(param, movedGeoNumeric.getAnimationStep());
 		double val = min + param;	
 
-		if (movedGeoNumeric.animationIncrement > Kernel.MIN_PRECISION) {
+		if (movedGeoNumeric.getAnimationStep() > Kernel.MIN_PRECISION) {
 			// round to decimal fraction, e.g. 2.800000000001 to 2.8
 			val = kernel.checkDecimalFraction(val);
 		}

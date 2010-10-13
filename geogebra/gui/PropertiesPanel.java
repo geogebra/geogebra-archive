@@ -4872,7 +4872,7 @@ class SliderPanel
 			if (onlyAngles && (min0 == null ||(!min0.isLabelSet() && min0.isIndependent())))
 				tfMin.setText(kernel.formatAngle(num0.getIntervalMin()).toString());			
 			else
-				tfMin.setText(num0.getIntervalMinObject().getLabel());
+				tfMin.setText(min0.getLabel());
 		} else {
 			tfMin.setText("");
 		}
@@ -4882,7 +4882,7 @@ class SliderPanel
 			if (onlyAngles &&  (max0 == null ||(!max0.isLabelSet() && max0.isIndependent()) ))
 				tfMax.setText(kernel.formatAngle(num0.getIntervalMax()).toString());
 			else
-				tfMax.setText(num0.getIntervalMaxObject().getLabel());
+				tfMax.setText(max0.getLabel());
 		} else {
 			tfMax.setText("");
 		}
@@ -5084,12 +5084,14 @@ class AnimationStepPanel
 		//kernel.setMaximumFractionDigits(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 		kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 
-        if (equalStep)
-			if (onlyAngles)
+        if (equalStep){
+        	GeoElement stepGeo = geo0.getAnimationStepObject();
+			if (onlyAngles && (stepGeo == null ||(!stepGeo.isLabelSet() && stepGeo.isIndependent())))
 				tfAnimStep.setText(
 					kernel.formatAngle(geo0.getAnimationStep()).toString());
 			else
-				tfAnimStep.setText(kernel.format(geo0.getAnimationStep()));
+				tfAnimStep.setText(stepGeo.getLabel());
+        }
 		else
 			tfAnimStep.setText("");
         
@@ -5131,10 +5133,10 @@ class AnimationStepPanel
 	}
 
 	private void doActionPerformed() {
-		double newVal =
-			kernel.getAlgebraProcessor().evaluateToDouble(
-				tfAnimStep.getText());
-		if (!Double.isNaN(newVal)) {
+		NumberValue newVal =
+			kernel.getAlgebraProcessor().evaluateToNumeric(
+				tfAnimStep.getText(),true);
+		if (newVal != null && !Double.isNaN(newVal.getDouble())) {
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				geo.setAnimationStep(newVal);

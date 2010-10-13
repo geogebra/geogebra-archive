@@ -24,6 +24,7 @@ import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
@@ -331,7 +332,7 @@ public abstract class GeoElement
 	protected Color labelColor = objColor; 
 	protected Color fillColor = objColor;
 	public int layer=0; 	// Michael Borcherds 2008-02-23
-	public double animationIncrement = 0.1;
+	private NumberValue animationIncrement;
 	private NumberValue animationSpeedObj;
 	private boolean animating = false;
 
@@ -1505,19 +1506,29 @@ public abstract class GeoElement
 	}
 
 	public void setAnimationStep(double s) {
-		if (s > 0 && s < 1000)
-			animationIncrement = s;
+		setAnimationStep(new MyDouble(kernel, s));
+	}
+	
+	public void setAnimationStep(NumberValue v) {
+			animationIncrement = v;
 	}
 
 	public double getAnimationStep() {
-		return animationIncrement;
+		if(animationIncrement == null)
+			animationIncrement = new MyDouble(kernel, GeoNumeric.DEFAULT_SLIDER_INCREMENT);
+		return animationIncrement.getDouble();
+	}
+	
+	public GeoElement getAnimationStepObject() {
+		if(animationIncrement == null)
+			return null;
+		return animationIncrement.toGeoElement();
 	}
 	
 	public GeoElement getAnimationSpeedObject() {
 		if (animationSpeedObj == null)
 			return null;
-		else		
-			return animationSpeedObj.toGeoElement();
+		return animationSpeedObj.toGeoElement();
 	}
 	
 	/**
@@ -3719,8 +3730,9 @@ public abstract class GeoElement
 		// animation step width
 		if (isChangeable()) {
 			sb.append("\t<animation");
-			sb.append(" step=\""+animationIncrement+"\"");
-			String animSpeed = animationSpeedObj == null ? "1" : animationSpeedObj.toGeoElement().getLabel();
+			String animStep = animationIncrement == null ? "1" : getAnimationStepObject().getLabel();
+			sb.append(" step=\""+Util.encodeXML(animStep)+"\"");
+			String animSpeed = animationSpeedObj == null ? "1" : getAnimationSpeedObject().getLabel();
 			sb.append(" speed=\""+Util.encodeXML(animSpeed)+"\"");
 			sb.append(" type=\""+animationType+"\"");
 			sb.append(" playing=\"");

@@ -87,7 +87,7 @@ public final class GeoAngle extends GeoNumeric {
 		setAlphaValue(ConstructionDefaults.DEFAULT_ANGLE_ALPHA);
 		setLabelMode(GeoElement.LABEL_NAME);
 		setEuclidianVisible(false);
-		animationIncrement = Math.PI / 180.0;
+		setAnimationStep(Math.PI / 180.0);
 	}
 
 	/**
@@ -317,7 +317,7 @@ public final class GeoAngle extends GeoNumeric {
 	// Michael Borcherds 2007-10-21 END	
 
 	final public String toValueString() {
-		return isEuclidianVisible() ? kernel.formatAngle(value, 1/animationIncrement).toString() : kernel.formatAngle(value).toString();
+		return isEuclidianVisible() ? kernel.formatAngle(value, 1/getAnimationStep()).toString() : kernel.formatAngle(value).toString();
 	}
 
 	// overwrite
