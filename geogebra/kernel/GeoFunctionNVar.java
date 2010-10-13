@@ -478,13 +478,6 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			if(op == ExpressionNode.GREATER||op == ExpressionNode.GREATER_EQUAL||
 					op == ExpressionNode.LESS||op == ExpressionNode.LESS_EQUAL)	{
 				Inequality newIneq = new Inequality(kernel,leftTree,rightTree,op,getFunction().getFunctionVariables());
-				if(newIneq.getType() == Inequality.INEQUALITY_IMPLICIT){
-					newIneq.getImpBorder().setVisualStyle(this);
-					if (newIneq.isStrict())
-						newIneq.getImpBorder().setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-					else
-						newIneq.getImpBorder().setLineType(EuclidianView.LINE_TYPE_FULL);
-				}
 				ineqs.add(newIneq);
 			}if(op == ExpressionNode.AND || op == ExpressionNode.OR){
 				initIneqs(leftTree);
@@ -524,12 +517,12 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 					double px=0,py=0;
 					if(in.getType()==Inequality.INEQUALITY_PARAMETRIC_Y){
 						px = P.getX2D();
-						py = in.getBorder().evaluate(px);
+						py = in.getFunBorder().evaluate(px);
 						py += in.isAboveBorder()? STRICT_INEQ_OFFSET : -STRICT_INEQ_OFFSET;
 					}
 					else if(in.getType()==Inequality.INEQUALITY_PARAMETRIC_X){
 						py = P.getY2D();
-						px = in.getBorder().evaluate(py);
+						px = in.getFunBorder().evaluate(py);
 						px += in.isAboveBorder()? STRICT_INEQ_OFFSET : -STRICT_INEQ_OFFSET;
 					}
 					double myDist = (py-myY)*(py-myY)+(px-myX)*(px-myX);

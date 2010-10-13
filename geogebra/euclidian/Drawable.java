@@ -76,6 +76,8 @@ public abstract class Drawable extends DrawableND {
 	Rectangle labelRectangle = new Rectangle(); // for label hit testing
 	Shape strokedShape, strokedShape2;
 	
+	private boolean fillInverted;
+	
 	private int lastFontSize = -1;
 	
 	// tracing	
@@ -900,6 +902,19 @@ public abstract class Drawable extends DrawableND {
 	}
 
 
+	/**
+	 * @param invert invert fill
+	 */
+	public void setFillInverted(boolean invert){
+		fillInverted = invert;
+	}
+	
+	/**
+	 * @return the fillInverted
+	 */
+	public boolean isFillInverted() {
+		return fillInverted;
+	}
 
 	
 	/*  

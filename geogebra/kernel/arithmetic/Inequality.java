@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImplicitPoly;
@@ -27,14 +28,19 @@ public class Inequality {
 	public static final int INEQUALITY_PARAMETRIC_X = 0;
 	/** y > f(x) */
 	public static final int INEQUALITY_PARAMETRIC_Y = 1;
-	/** f(x,y) >0 */
+	/** f(x,y) >0, degree of f greater than 2 */
 	public static final int INEQUALITY_IMPLICIT = 2;
+	/** f(x,y) >0, f is quadratic */
+	public static final int INEQUALITY_CONIC = 3;
 	/** can be used e.g. by PointIn, but cannot be drawn */
-	public static final int INEQUALITY_INVALID = 3;
+	public static final int INEQUALITY_INVALID = 4;
+	
 	private int op = ExpressionNode.LESS;
 	private int type;
 	private GeoImplicitPoly impBorder;
-	private GeoFunction border;
+	private GeoConic conicBorder;
+	private GeoFunction funBorder;
+	private GeoElement border;
 	private Kernel kernel;
 	private boolean isAboveBorder;
 
@@ -83,29 +89,36 @@ public class Inequality {
 			fun = new Function(m, fv[1]);
 			type = INEQUALITY_PARAMETRIC_X;
 		} else {
-			type = INEQUALITY_IMPLICIT;
+			
 			GeoElement newBorder = kernel.getAlgebraProcessor().evaluateToGeoElement(n.toString() + "=0",false);
 				if(newBorder.isGeoImplicitPoly()){
-					impBorder = (GeoImplicitPoly)newBorder; 			
-				}			
-			
-						
+					type = INEQUALITY_IMPLICIT;
+					impBorder = (GeoImplicitPoly)newBorder;
+					border = impBorder;					
+				}
+				if(newBorder.isGeoConic()){
+					type = INEQUALITY_CONIC;
+					conicBorder = (GeoConic)newBorder;
+					border = conicBorder;
+					isAboveBorder=true;
+				}						
 		}
 		if (type == INEQUALITY_PARAMETRIC_X || type == INEQUALITY_PARAMETRIC_Y) {
-			border = new GeoFunction(kernel.getConstruction());
-			border.setFunction((Function) fun.deepCopy(kernel));
+			funBorder = new GeoFunction(kernel.getConstruction());
+			funBorder.setFunction((Function) fun.deepCopy(kernel));
 			if (type == INEQUALITY_PARAMETRIC_X) {
-				border.swapEval();
+				funBorder.swapEval();
 			}
-			if (isStrict())
-				border.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-			else
-				border.setLineType(EuclidianView.LINE_TYPE_FULL);
+			border = funBorder;
 		}
+		if (isStrict())
+			border.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+		else
+			border.setLineType(EuclidianView.LINE_TYPE_FULL);
 	}
 
 	/**
-	 * @return
+	 * @return implicit border
 	 */
 	public GeoImplicitPoly getImpBorder() {
 		return impBorder;
@@ -125,8 +138,8 @@ public class Inequality {
 	/**
 	 * @return border for parametric equations
 	 */
-	public GeoFunction getBorder() {
-		return border;
+	public GeoFunction getFunBorder() {
+		return funBorder;
 	}
 
 	/**
@@ -148,6 +161,14 @@ public class Inequality {
 	 */
 	public int getType() {
 		return type;
+	}
+
+	
+	/**
+	 * @return the conicBorder
+	 */
+	public GeoConic getConicBorder() {
+		return conicBorder;
 	}
 
 } // end of class Equation

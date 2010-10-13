@@ -51,20 +51,20 @@ public class DrawImplicitPoly extends Drawable {
 		if (!geo.isDefined()) return;
 		if (geo.doHighlighting()) {
             g2.setStroke(selStroke);
-            g2.setColor(implicitPoly.getSelColor());
+            g2.setColor(geo.getSelColor());
             for (GeneralPath g:gps){
             	Drawable.drawWithValueStrokePure(g, g2);
             }
         }                  
         g2.setStroke(objStroke);
-        g2.setColor(implicitPoly.getObjectColor());
+        g2.setColor(geo.getObjectColor());
         for (GeneralPath g:gps){
         	Drawable.drawWithValueStrokePure(g, g2);	
         }
 
         if (labelVisible) {
 			g2.setFont(view.fontConic); 
-			g2.setColor(implicitPoly.getLabelColor());                   
+			g2.setColor(geo.getLabelColor());                   
 			drawLabel(g2);                                                               
         } 
 	}
@@ -96,11 +96,7 @@ public class DrawImplicitPoly extends Drawable {
 
 	@Override
 	public void setGeoElement(GeoElement geo) {
-		if (geo instanceof GeoImplicitPoly){
-//			Application.debug("setElement");
-			implicitPoly=(GeoImplicitPoly) geo;
-			this.geo=geo;
-		}
+		this.geo=geo;		
 	}
 
 	@Override

@@ -703,7 +703,7 @@ final public class DrawConic extends Drawable implements Previewable {
     
 	final public void draw(Graphics2D g2) {
         if (!isVisible) return;                
-        g2.setColor(conic.getObjectColor());        		
+        g2.setColor(geo.getObjectColor());        		
         switch (type) {
             case GeoConic.CONIC_SINGLE_POINT:                         
                 drawPoint.draw(g2);
@@ -731,15 +731,15 @@ final public class DrawConic extends Drawable implements Previewable {
 					
                 if (geo.doHighlighting()) {
                     g2.setStroke(selStroke);
-                    g2.setColor(conic.getSelColor());
+                    g2.setColor(geo.getSelColor());
                     g2.draw(shape);		
                 }                  
                 g2.setStroke(objStroke);
-                g2.setColor(conic.getObjectColor());				
+                g2.setColor(geo.getObjectColor());				
                 g2.draw(shape);    
                 if (labelVisible) {
 					g2.setFont(view.fontConic); 
-					g2.setColor(conic.getLabelColor());                   
+					g2.setColor(geo.getLabelColor());                   
 					drawLabel(g2);                                                               
                 }                
                 break;            
@@ -752,19 +752,19 @@ final public class DrawConic extends Drawable implements Previewable {
 	
 				if (geo.doHighlighting()) {
 					 g2.setStroke(selStroke);
-					 g2.setColor(conic.getSelColor());
+					 g2.setColor(geo.getSelColor());
 					 
 					 if (hypLeftOnScreen) Drawable.drawWithValueStrokePure(hypLeft, g2);                                               
 					 if (hypRightOnScreen) Drawable.drawWithValueStrokePure(hypRight, g2); 				
 				 }  
 				 g2.setStroke(objStroke);
-				 g2.setColor(conic.getObjectColor());				 
+				 g2.setColor(geo.getObjectColor());				 
 				 if (hypLeftOnScreen) Drawable.drawWithValueStrokePure(hypLeft, g2);                                                
 				 if (hypRightOnScreen) Drawable.drawWithValueStrokePure(hypRight, g2); 
 				             
 				 if (labelVisible) {
 					 g2.setFont(view.fontConic); 
-					 g2.setColor(conic.getLabelColor());                   
+					 g2.setColor(geo.getLabelColor());                   
 					 drawLabel(g2);                                                                     
 				 }                            
                 break;      
@@ -849,7 +849,7 @@ final public class DrawConic extends Drawable implements Previewable {
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-    			if (conic.alphaValue > 0.0f || conic.isHatchingEnabled()) 
+    			if (geo.alphaValue > 0.0f || geo.isHatchingEnabled()) 
     				return shape.intersects(x-3,y-3,6,6);  
     			else
     				return strokedShape.intersects(x-3,y-3,6,6);            	
@@ -859,7 +859,8 @@ final public class DrawConic extends Drawable implements Previewable {
         			strokedShape = objStroke.createStrokedShape(hypLeft);
         			strokedShape2 = objStroke.createStrokedShape(hypRight);
         		}    		
-    			if (conic.alphaValue > 0.0f || conic.isHatchingEnabled()) 
+    			if (geo.alphaValue > 0.0f || geo.isHatchingEnabled()
+    					) 
     				return hypLeft.intersects(x-3,y-3,6,6) || hypRight.intersects(x-3,y-3,6,6);  
     			else
     				return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);  
