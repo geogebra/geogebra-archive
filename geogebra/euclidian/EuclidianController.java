@@ -5051,7 +5051,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				toggleModeChangedKernel = false;
 			} else {
 				// standard case: copy visual properties
-				geo.setVisualStyle(movedGeoElement);
+				geo.setAdvancedVisualStyle(movedGeoElement);
 				geo.updateRepaint();
 				return true;
 			}
