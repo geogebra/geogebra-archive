@@ -7517,15 +7517,14 @@ class CmdStemPlot extends CommandProcessor {
 				if ((ok[0] = (arg[0] .isGeoNumeric()))
 						&& (ok[1] = (arg[1] .isGeoList()))) {
 
-				int row = (int)((GeoNumeric)arg[0]).getDouble();
+				int row = -1 + (int)((GeoNumeric)arg[0]).getDouble();
 				
 				if (row < 0 || row > SpreadsheetView.MAX_ROWS)
 					throw argErr(app, c.getName(), arg[0]);
 				
 				GeoList list = (GeoList)arg[1];
 				
-				GeoElement geo = (GeoElement) arg[1];
-				GeoElement[] ret = { geo };
+				GeoElement[] ret = { list };
 				
 				if (list.size() == 0)
 					return ret;
@@ -7584,15 +7583,13 @@ class CmdStemPlot extends CommandProcessor {
 				if ((ok[0] = (arg[0] .isGeoNumeric()))
 						&& (ok[1] = (arg[1] .isGeoList()))) {
 
-				int col = (int)((GeoNumeric)arg[0]).getDouble();
+				int col = -1 + (int)((GeoNumeric)arg[0]).getDouble();
 				
 				if (col < 0 || col > SpreadsheetView.MAX_COLUMNS)
 					throw argErr(app, c.getName(), arg[0]);
 				
 				GeoList list = (GeoList)arg[1];
-				
-				GeoElement geo = (GeoElement) arg[1];
-				GeoElement[] ret = { geo };
+				GeoElement[] ret = { list };
 				
 				if (list.size() == 0)
 					return ret;
