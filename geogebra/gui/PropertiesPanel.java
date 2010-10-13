@@ -2281,14 +2281,14 @@ public	class PropertiesPanel extends JPanel {
 			// repopulate model with names of points from the geoList's model
 			// take all points from construction
 			//TreeSet points = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
-			TreeSet points = kernel.getPointSet();
+			TreeSet<GeoElement> points = kernel.getPointSet();
 			if (points.size() != cbModel.getSize() - 1) {				
 				cbModel.removeAllElements();
 				cbModel.addElement(null);			
-				Iterator it = points.iterator();
+				Iterator<GeoElement> it = points.iterator();
 				int count = 0;
 				while (it.hasNext() || ++count > MAX_COMBOBOX_ENTRIES) {
-					GeoElement p = (GeoElement) it.next();
+					GeoElement p = it.next();
 					cbModel.addElement(p.getLabel());				
 				}
 			}
@@ -2432,7 +2432,7 @@ public	class PropertiesPanel extends JPanel {
 			
 			// repopulate model with names of points from the geoList's model
 			// take all points from construction
-			TreeSet points = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
+			TreeSet<GeoElement> points = kernel.getConstruction().getGeoSetLabelOrder(GeoElement.GEO_CLASS_POINT);
 			if (points.size() != cbModel[0].getSize() - 1) {			
 				// clear models
 				for (int k=0; k<3; k++) {					
@@ -2441,10 +2441,10 @@ public	class PropertiesPanel extends JPanel {
 				}
 								
 				// insert points
-				Iterator it = points.iterator();
+				Iterator<GeoElement> it = points.iterator();
 				int count=0;
 				while (it.hasNext() || ++count > MAX_COMBOBOX_ENTRIES) {
-					GeoPoint p = (GeoPoint) it.next();						
+					GeoPoint p = (GeoPoint)it.next();						
 					for (int k=0; k<3; k++) {
 						cbModel[k].addElement(p.getLabel());
 					}
@@ -3868,11 +3868,11 @@ public	class PropertiesPanel extends JPanel {
 */
 			
 			// set label font
-			Dictionary labelTable = fillingSlider.getLabelTable();
-			Enumeration en = labelTable.elements();
+			Dictionary<?, ?> labelTable = fillingSlider.getLabelTable();
+			Enumeration<?> en = labelTable.elements();
 			JLabel label;
 			while (en.hasMoreElements()) {
-				label = (JLabel) en.nextElement();
+				label = (JLabel)en.nextElement();
 				label.setFont(app.getSmallFont());
 			}
 
@@ -3988,7 +3988,6 @@ public	class PropertiesPanel extends JPanel {
 			
 			fileNameArray = new String[20];
 			String modeStr;
-			Image im;
 			for( int i = 0; i < 20; i++) {		
 				modeStr = kernel.getModeText(i).toLowerCase(Locale.US);
 				fileNameArray[i]="/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif";
@@ -4467,8 +4466,12 @@ public	class PropertiesPanel extends JPanel {
 	}
 
 	
-	// added by Lo�c
+	/**
+	 * Panel for segment decoration
+	 * @author Loic
+	 */
 	private class DecoSegmentPanel extends JPanel implements ActionListener , UpdateablePanel {
+		private static final long serialVersionUID = 1L;
 		private JComboBox decoCombo;
 		private JLabel decoLabel;
 		private Object[] geos;
@@ -4641,7 +4644,7 @@ public	class PropertiesPanel extends JPanel {
 				}
 				/*
 				// If it isn't a right angle
-				else if (!kernel.isEqual(((GeoAngle)geos[i]).getValue(), Kernel.PI_HALF)){
+				else if (!Kernel.isEqual(((GeoAngle)geos[i]).getValue(), Kernel.PI_HALF)){
 					geosOK=false;
 					break;
 				}*/
@@ -4664,8 +4667,10 @@ public	class PropertiesPanel extends JPanel {
 		
 	}
 
-	/*
+	/**
 	 * allows using a single = in condition to show object and dynamic color
+	 * @param strCond Condition to be processed
+	 * @return processed condition
 	 */
 	public static String replaceEqualsSigns(String strCond) {
 		// needed to make next replace easier
@@ -4845,11 +4850,11 @@ class SliderPanel
 		for (int i = 0; i < geos.length; i++) {
 			temp = (GeoNumeric) geos[i];
 
-			if (!num0.isIntervalMinActive() || !temp.isIntervalMinActive() || !kernel.isEqual(num0.getIntervalMin(), temp.getIntervalMin()))
+			if (!num0.isIntervalMinActive() || !temp.isIntervalMinActive() || !Kernel.isEqual(num0.getIntervalMin(), temp.getIntervalMin()))
 				equalMin = false;
-			if (!num0.isIntervalMaxActive() || !temp.isIntervalMaxActive() || !kernel.isEqual(num0.getIntervalMax(), temp.getIntervalMax()))
+			if (!num0.isIntervalMaxActive() || !temp.isIntervalMaxActive() || !Kernel.isEqual(num0.getIntervalMax(), temp.getIntervalMax()))
 				equalMax = false;
-			if (!kernel.isEqual(num0.getSliderWidth(), temp.getSliderWidth()))
+			if (!Kernel.isEqual(num0.getSliderWidth(), temp.getSliderWidth()))
 				equalWidth = false;
 			if (num0.isSliderFixed() != temp.isSliderFixed())
 				equalSliderFixed = false;
@@ -4860,24 +4865,24 @@ class SliderPanel
 				onlyAngles = false;
 		}
 
-		// set values
-		//int oldDigits = kernel.getMaximumFractionDigits();
-		//kernel.setMaximumFractionDigits(PropertiesDialogGeoElement.TEXT_FIELD_FRACTION_DIGITS);
+		
         kernel.setTemporaryPrintDecimals(PropertiesDialog.TEXT_FIELD_FRACTION_DIGITS);
 		if (equalMin){
-			//if (onlyAngles)
+			GeoElement min0 = num0.getIntervalMinObject();
+			if (onlyAngles && (min0 == null ||(!min0.isLabelSet() && min0.isIndependent())))
+				tfMin.setText(kernel.formatAngle(num0.getIntervalMin()).toString());			
+			else
 				tfMin.setText(num0.getIntervalMinObject().getLabel());
-			//else
-				//tfMin.setText(num0.getIntervalMinObject().toString());
 		} else {
 			tfMin.setText("");
 		}
 		
 		if (equalMax){
-			//if (onlyAngles)
+			GeoElement max0 = num0.getIntervalMaxObject();
+			if (onlyAngles &&  (max0 == null ||(!max0.isLabelSet() && max0.isIndependent()) ))
+				tfMax.setText(kernel.formatAngle(num0.getIntervalMax()).toString());
+			else
 				tfMax.setText(num0.getIntervalMaxObject().getLabel());
-			//else
-				//tfMax.setText(num0.getIntervalMinObject().toString());
 		} else {
 			tfMax.setText("");
 		}
@@ -4958,29 +4963,30 @@ class SliderPanel
 		boolean emptyString = inputText.equals("");
 		NumberValue value = new MyDouble(kernel,Double.NaN);
 		if (!emptyString) {
-			value = kernel.getAlgebraProcessor().evaluateToNumeric(inputText,true);					
+			value = kernel.getAlgebraProcessor().evaluateToNumeric(inputText,false);					
 		}			
 		
-		if (source == tfMin) {
+		if (source == tfMin || source == tfMax) {
 			for (int i = 0; i < geos.length; i++) {
 				GeoNumeric num = (GeoNumeric) geos[i];
-				if (emptyString) {
-					num.setIntervalMinInactive();
-				} else {
-					num.setIntervalMin(value);
+				boolean dependsOnListener = false;
+				GeoElement geoValue = value.toGeoElement();
+				if(num.getMinMaxListeners()!=null)
+					for(GeoNumeric listener : num.getMinMaxListeners()){
+						if(geoValue.isChildOf(listener) || geoValue == listener) 
+							dependsOnListener = true;
+					}
+				if(dependsOnListener || geoValue.isChildOf(num) || geoValue == num){
+					app.showErrorDialog(app.getError("CircularDefinition"));
 				}
-				num.updateRepaint();				
-			}
-		}
-		else if (source == tfMax) {
-			for (int i = 0; i < geos.length; i++) {
-				GeoNumeric num = (GeoNumeric) geos[i];
-				if (emptyString) {
-					num.setIntervalMaxInactive();
-				} else {
-					num.setIntervalMax(value);
+				else{ 
+					if(source == tfMin)
+						num.setIntervalMin(value);
+					else
+						num.setIntervalMax(value);
 				}
 				num.updateRepaint();
+			
 			}
 		}
 		else if (source == tfWidth) {
@@ -5677,7 +5683,7 @@ class ColorFunctionPanel
 		processed = false;
 	}
 	
-	boolean processed = false;
+	private boolean processed = false;
 
 	public void focusLost(FocusEvent e) {
 		if (!processed)

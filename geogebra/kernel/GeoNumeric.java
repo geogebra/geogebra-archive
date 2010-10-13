@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -350,7 +351,6 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 
 	private StringBuilder sbToString = new StringBuilder(50);
 	private ArrayList<GeoNumeric> minMaxListeners;
-	private boolean minMaxUpdating;
 
 	public String toValueString() {
 		return kernel.format(value);
@@ -532,7 +532,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			((GeoNumeric)intervalMax).unregisterMinMaxListener(this);
 		}
 		intervalMax = max;
-		intervalMaxActive = true;
+		intervalMaxActive = !Double.isNaN(max.getDouble());
 		if(max instanceof GeoNumeric){
 			((GeoNumeric)max).registerMinMaxListener(this);
 		}
@@ -550,7 +550,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			((GeoNumeric)intervalMin).unregisterMinMaxListener(this);
 		}
 		intervalMin = min;
-		intervalMinActive = true;	
+		intervalMinActive = !Double.isNaN(min.getDouble());;	
 		if(min instanceof GeoNumeric){
 			((GeoNumeric)min).registerMinMaxListener(this);
 		}
@@ -759,7 +759,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 
 	/**
 	 * Given geo depends on this one (via min or max value for slider)
-	 * and shoud be updated
+	 * and should be updated
 	 * @param geo geo to be updated
 	 */
 	public void registerMinMaxListener(GeoNumeric geo){
@@ -770,7 +770,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	
 	/**
 	 * Given geo no longer depends on this one (via min or max value for slider)
-	 * and shoud not be updated any more
+	 * and should not be updated any more
 	 * @param geo
 	 */
 	public void unregisterMinMaxListener(GeoNumeric geo){
@@ -779,6 +779,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		minMaxListeners.remove(geo);		
 	}
 	
+	/**
+	 * @return list of min/max listeners
+	 */
+	public List<GeoNumeric> getMinMaxListeners() {
+		return minMaxListeners;
+	}
 	
 	public void update() {  	
 		super.update();
@@ -788,13 +794,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
     		cons.getApplication().getGuiManager().traceToSpreadsheet(this);
     	}
 	  	//END G.Sturr
-		if (minMaxListeners != null && !minMaxUpdating) {
-			minMaxUpdating = true;
+		if (minMaxListeners != null) {			
 			for (int i=0; i < minMaxListeners.size(); i++) {
 				GeoNumeric geo = minMaxListeners.get(i);
 				geo.resolveMinMax();								
-			}		
-			minMaxUpdating = false;
+			}					
 		}    	
     }	
 	
