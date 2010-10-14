@@ -337,8 +337,8 @@ public class Renderer implements GLEventListener {
         // update 3D view
         geometryManager.update();
         view3D.update();
-        //view3D.updateDrawablesNow();
-
+        view3D.updateOwnDrawablesNow();
+        
         // update 3D drawables
         drawable3DLists.updateAll();
 
@@ -1305,7 +1305,7 @@ public class Renderer implements GLEventListener {
         //mouseY+=30; //TODO understand this offset
         //glu.gluPickMatrix((double) mouseX, (double) (viewport[3] - mouseY), 5.0, 5.0, viewport, 0);
         glu.gluPickMatrix((double) mouseX, (double) (dim.height - mouseY), MOUSE_PICK_WIDTH, MOUSE_PICK_WIDTH, viewport, 0);
-        gl.glOrtho(left,right,bottom,top,front,back);
+        gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
     	gl.glMatrixMode(GL.GL_MODELVIEW);
     	
         
@@ -1569,17 +1569,28 @@ public class Renderer implements GLEventListener {
     
 	int left = 0; int right = 640;
 	int bottom = 0; int top = 480;
-	//int front = -1000; int back = 1000;
 	int front = -1000; int back = 1000;
+	
+	/** factor for drawing more than between front and back */
+	private final static float DEPTH_FACTOR = 4f;
 	
 	
 	public int getLeft(){ return left;	}
 	public int getRight(){ return right;	}
 	public int getBottom(){ return bottom;	}
 	public int getTop(){ return top;	}
-	public int getFront(){ return front;	}
-	public int getBack(){ return back;	}
-	
+	public float getFront(boolean extended){ 
+		if (extended)
+			return front*DEPTH_FACTOR;
+		else
+			return front;	
+	}
+	public float getBack(boolean extended){ 
+		if (extended)
+			return back*DEPTH_FACTOR;
+		else
+			return back;	
+	}	
 	
 	
 	
@@ -1589,7 +1600,9 @@ public class Renderer implements GLEventListener {
 	 * @param v direction of the line
 	 * @return interval to draw the line
 	 */
-	public double[] getIntervalInFrustum(double[] minmax, GgbVector o, GgbVector v){
+	public double[] getIntervalInFrustum(double[] minmax, 
+			GgbVector o, GgbVector v,
+			boolean extendedDepth){
 		
 		
 		
@@ -1601,8 +1614,8 @@ public class Renderer implements GLEventListener {
 		double bottom = (getBottom() - o.get(2))/v.get(2);
 		updateIntervalInFrustum(minmax, top, bottom);
 		
-		double front = (getFront() - o.get(3))/v.get(3);
-		double back = (getBack() - o.get(3))/v.get(3);
+		double front = (getFront(extendedDepth) - o.get(3))/v.get(3);
+		double back = (getBack(extendedDepth) - o.get(3))/v.get(3);
 		updateIntervalInFrustum(minmax, front, back);
 		
 		return minmax;
@@ -1642,7 +1655,7 @@ public class Renderer implements GLEventListener {
     	gl.glMatrixMode(GL.GL_PROJECTION);
     	gl.glLoadIdentity();
 
-    	gl.glOrtho(left,right,bottom,top,front,back);
+    	gl.glOrtho(getLeft(),getRight(),getBottom(),getTop(),getFront(true),getBack(true));
     	gl.glMatrixMode(GL.GL_MODELVIEW);
     	
     	
@@ -1664,6 +1677,10 @@ public class Renderer implements GLEventListener {
     	bottom=y-h/2;
     	right=left+w;
     	top = bottom+h;
+    	
+    	//sets depth equals width
+    	front = -w/2;
+    	back = w/2;
     	
     	/*
     	Application.debug("viewOrtho:"+

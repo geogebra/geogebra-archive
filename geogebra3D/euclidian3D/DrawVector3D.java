@@ -53,7 +53,7 @@ implements Previewable {
 
 
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 
 		
 		GeoVector3D geo = ((GeoVector3D) getGeoElement());
@@ -82,7 +82,7 @@ implements Previewable {
 		brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
 		setGeometryIndex(brush.end());
 		
-		
+		return true;
 	}
 	
 	protected void updateForView(){

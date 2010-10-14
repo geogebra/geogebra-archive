@@ -31,10 +31,11 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	
 	
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 
 		updateForItSelf(true);
+		return true;
 
 	}
 	
@@ -54,8 +55,9 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 
 	/**
 	 *  update min and max values
+	 * @param extendedDepth says if the depth is to be extended
 	 */
-	public void updateDrawMinMax(){
+	protected void updateDrawMinMax(boolean extendedDepth){
 		
 		GgbCoordSys cs = ((GeoCoordSys1D) getGeoElement()).getCoordSys();
 		
@@ -65,7 +67,7 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 		double[] minmax = 
 			getView3D().getRenderer().getIntervalInFrustum(
 				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-				o, v);
+				o, v, extendedDepth);
 		
 		//Application.debug("minmax="+minmax[0]+", "+minmax[1]);
 		
@@ -73,6 +75,12 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	}
 	
 	
+	/**
+	 *  update min and max values
+	 */
+	public void updateDrawMinMax(){
+		updateDrawMinMax(true);
+	}
 	
 	
 	

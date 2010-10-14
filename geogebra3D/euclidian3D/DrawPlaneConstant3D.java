@@ -14,6 +14,8 @@ import geogebra3D.euclidian3D.opengl.Textures;
 
 import java.awt.Color;
 
+import javax.sql.XAConnection;
+
 
 
 
@@ -25,19 +27,42 @@ import java.awt.Color;
 public class DrawPlaneConstant3D extends DrawPlane3D {
 
 
-	
+	private DrawAxis3D xAxis, yAxis;
 	
 	/**
 	 * Common constructor
 	 * @param a_view3D
 	 * @param a_plane3D
 	 */
-	public DrawPlaneConstant3D(EuclidianView3D a_view3D, GeoPlane3D a_plane3D){
+	public DrawPlaneConstant3D(EuclidianView3D a_view3D, GeoPlane3D a_plane3D,
+			DrawAxis3D xAxis, DrawAxis3D yAxis){
 		
 		super(a_view3D, a_plane3D);
+		
+		this.xAxis = xAxis;
+		this.yAxis = yAxis;
 	}
 	
 	
+	protected boolean updateForItSelf(){
+		
+		double[] xMinMax = xAxis.getDrawMinMax();
+		double[] yMinMax = yAxis.getDrawMinMax();
+		
+		((GeoPlane3D) getGeoElement()).setGridCorners(
+				xMinMax[0],yMinMax[0],
+				xMinMax[1],yMinMax[1]
+				);
+		
+		((GeoPlane3D) getGeoElement()).setGridDistances(
+				xAxis.getNumbersDistance(), 
+				yAxis.getNumbersDistance()
+				);
+
+		super.updateForItSelf();
+		
+		return !(xAxis.waitForUpdate() || yAxis.waitForUpdate());
+	}
 	
 	protected void updateForView(){
 		

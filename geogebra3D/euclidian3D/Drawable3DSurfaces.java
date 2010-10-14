@@ -109,12 +109,13 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	
 	
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 		//update alpha value
 		//use 1-Math.sqrt(1-alpha) because transparent parts are drawn twice
 		alpha = (float) (1-Math.pow(1-getGeoElement().getAlphaValue(),1./3.));
 		
+		return true;
 	}
 	
 	protected void updateForView(){

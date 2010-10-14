@@ -91,9 +91,11 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 
 
 	
-	protected void updateForItSelf() {
+	protected boolean updateForItSelf() {
 		
 		updateForItSelf(p1, p2);
+		
+		return true;
 	}
 	
 	protected void updateLabel(){

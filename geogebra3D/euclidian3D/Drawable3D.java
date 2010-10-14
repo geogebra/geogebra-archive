@@ -245,11 +245,7 @@ public abstract class Drawable3D extends DrawableND {
 					+"\n reset="+labelWaitForReset);
 					*/
 
-		if (waitForUpdate){
-			updateForItSelf();
-			waitForUpdate = false;
-			setLabelWaitForUpdate();//TODO remove that
-		}
+
 		
 		if (viewChanged){
 			updateForView();
@@ -260,6 +256,12 @@ public abstract class Drawable3D extends DrawableND {
 		if (labelWaitForUpdate){
 			updateLabel();
 			labelWaitForUpdate = false;
+		}
+		
+		if (waitForUpdate){
+			if (updateForItSelf())
+				waitForUpdate = false;
+			setLabelWaitForUpdate();//TODO remove that
 		}
 		
 		realtimeUpdate();
@@ -289,8 +291,9 @@ public abstract class Drawable3D extends DrawableND {
 	
 	/**
 	 * update the drawable when element has changed
+	 * @return true if the update is finished
 	 */
-	abstract protected void updateForItSelf();
+	abstract protected boolean updateForItSelf();
 	
 	
 	/**
@@ -301,6 +304,12 @@ public abstract class Drawable3D extends DrawableND {
 		waitForUpdate = true;
 	}
 	
+	/**
+	 * @return true if this wait for update
+	 */
+	public boolean waitForUpdate(){
+		return waitForUpdate;
+	}
 	
 	/**
 	 * says that the view has changed

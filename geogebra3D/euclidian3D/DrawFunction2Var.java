@@ -112,8 +112,8 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		double x2 = temp.getRight();
 		double y1 = temp.getTop();
 		double y2 = temp.getBottom();
-		double z1 = temp.getFront();
-		double z2 = temp.getBack();
+		double z1 = temp.getFront(true);
+		double z2 = temp.getBack(true);
 		GgbVector [] v = new GgbVector[8];
 		v[0] = new GgbVector(x1,y1,z1);
 		v[1] = new GgbVector(x1,y2,z1);
@@ -134,7 +134,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		}
 	}
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		updateRadius();
 		if(unlimitedRange){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
@@ -142,7 +142,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		} else
 			mesh = new SurfaceMesh(function, savedRadius, false);
 
-		super.updateForItSelf();
+		return super.updateForItSelf();
 	}
 	
 	protected void updateForView(){

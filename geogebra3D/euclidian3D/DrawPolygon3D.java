@@ -107,7 +107,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 	
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 		
 		super.updateForItSelf();
@@ -132,7 +132,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		// if index==0, no polygon have been created
 		if (index==0)
-			return;
+			return true;
 		
 		//Application.debug("udpate polygon index : "+polygonIndex+" >> "+index);
 		
@@ -149,6 +149,9 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		}
 		
 		renderer.endPolygon();
+		
+		
+		return true;
 		
 	}
 	

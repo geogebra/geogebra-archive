@@ -58,7 +58,7 @@ public class DrawConic3D extends Drawable3DCurves {
 
 	
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 		
 		
@@ -93,6 +93,7 @@ public class DrawConic3D extends Drawable3DCurves {
 		
 		}
 
+		return true;
 	}
 	
 	

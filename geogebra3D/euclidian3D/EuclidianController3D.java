@@ -166,9 +166,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		movedGeoPoint3D = (GeoPoint3D) geo;
 		
 		// sets the min/max values
-		xMinMax = getMinMax(view3D.getXMin(), movedGeoPoint3D.getCoords().getX(), view3D.getXMax());
-		yMinMax = getMinMax(view3D.getYMin(), movedGeoPoint3D.getCoords().getY(), view3D.getYMax());
-		zMinMax = getMinMax(view3D.getZMin(), movedGeoPoint3D.getCoords().getZ(), view3D.getZMax());
+		double[] minmax;
+		minmax = view3D.getXMinMax();
+		xMinMax = getMinMax(minmax[0], movedGeoPoint3D.getCoords().getX(), minmax[1]);
+		minmax = view3D.getYMinMax();
+		yMinMax = getMinMax(minmax[0], movedGeoPoint3D.getCoords().getY(), minmax[1]);
+		minmax = view3D.getZMinMax();
+		zMinMax = getMinMax(minmax[0], movedGeoPoint3D.getCoords().getZ(), minmax[1]);
 			
 
 		

@@ -64,8 +64,8 @@ public class DrawCurve3D extends Drawable3DCurves {
 		double x2 = temp.getRight();
 		double y1 = temp.getTop();
 		double y2 = temp.getBottom();
-		double z1 = temp.getFront();
-		double z2 = temp.getBack();
+		double z1 = temp.getFront(true);
+		double z2 = temp.getBack(true);
 		GgbVector [] v = new GgbVector[8];
 		v[0] = new GgbVector(x1,y1,z1,1);
 		v[1] = new GgbVector(x1,y2,z1,1);
@@ -86,7 +86,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 	}
 
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		Renderer renderer = getView3D().getRenderer();
 		
 		
@@ -110,6 +110,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 			setGeometryIndex(brush.end());
 		}
 		
+		return true;
 	}
 	
 	

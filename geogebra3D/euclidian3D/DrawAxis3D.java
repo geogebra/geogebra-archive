@@ -31,9 +31,10 @@ public class DrawAxis3D extends DrawLine3D {
 		
 		super(view3D, axis3D);
 		
+		super.setDrawMinMax(-2, 2);
+		
 		labels = new TreeMap<String, DrawLabel3D>();
 		
-		//setLabelWaitForReset();
 		
 	}	
 	
@@ -75,18 +76,6 @@ public class DrawAxis3D extends DrawLine3D {
     	
     protected void updateLabel(){
     	
-    	
-    	//are labels to be reset ?
-    	/*
-    	if (labelWaitForReset){
-    		for(DrawLabel3D label : labels.values())
-        		label.setWaitForReset();
-        		
-    		
-    	
-    	}
-    	 */
-    	
   		//draw numbers
   		GeoAxis3D axis = (GeoAxis3D) getGeoElement();
   		
@@ -94,9 +83,10 @@ public class DrawAxis3D extends DrawLine3D {
 		double distance = axis.getNumbersDistance();
 		
 		//Application.debug("drawMinMax="+getDrawMin()+","+getDrawMax());
-    	
-    	int iMin = (int) (getDrawMin()/distance);
-    	int iMax = (int) (getDrawMax()/distance);
+		double[] minmax = getDrawMinMax(); 
+		
+    	int iMin = (int) (minmax[0]/distance);
+    	int iMax = (int) (minmax[1]/distance);
     	int nb = iMax-iMin+1;
     	
     	//Application.debug("iMinMax="+iMin+","+iMax);
@@ -147,7 +137,7 @@ public class DrawAxis3D extends DrawLine3D {
 		// update end of axis label
 		label.update(((GeoAxis3D) getGeoElement()).getAxisLabel(), 10, 
 				getGeoElement().getObjectColor(),
-				((GeoCoordSys1D) getGeoElement()).getPoint(getDrawMax()),
+				((GeoCoordSys1D) getGeoElement()).getPoint(minmax[1]),
 				axis.labelOffsetX-4,axis.labelOffsetY-6
 		);
 
@@ -158,28 +148,34 @@ public class DrawAxis3D extends DrawLine3D {
 
 
     
-    protected void updateForItSelf(){
+    protected boolean updateForItSelf(){
     	
-    	//updateDrawMinMax();
-    	//setDrawMinMax(-5, 5);
-    	updateDecorations();
     	setLabelWaitForUpdate();
     	
+    	double[] minmax = getDrawMinMax(); 
     	
     	PlotterBrush brush = getView3D().getRenderer().getGeometryManager().getBrush();
        	brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
        	brush.setTicks(PlotterBrush.TICKS_ON);
        	brush.setTicksDistance( (float) ((GeoAxis3D) getGeoElement()).getNumbersDistance());
-       	brush.setTicksOffset((float) (-getDrawMin()/(getDrawMax()-getDrawMin())));
+       	brush.setTicksOffset((float) (-minmax[0]/(minmax[1]-minmax[0])));
        	super.updateForItSelf(false);
        	brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
        	brush.setTicks(PlotterBrush.TICKS_OFF);
        	
+       	
+       	return (System.currentTimeMillis()>time+TIME_END);
+       	
     }
     
     
+
     
-    private void updateDecorations(){
+    
+    /**
+     * update values for ticks and labels
+     */
+    public void updateDecorations(){
     	
 
 		
@@ -222,11 +218,68 @@ public class DrawAxis3D extends DrawLine3D {
     }
     
     
+    /**
+     * @return distance between two ticks
+     */
+    public double getNumbersDistance(){
+    	return ((GeoAxis3D) getGeoElement()).getNumbersDistance();
+    }
+    
+    
 	protected void updateForView(){
-				
-		updateForItSelf();
-		
+
+		updateDrawMinMax();
+    	updateDecorations();
+    	
+    	setWaitForUpdate();
+	}
+	
+	
+	// depth is not used in extended way
+	public void updateDrawMinMax(){
+		updateDrawMinMax(false);
+	}
+	
+	
+	
+	
+	
+	
+	private long time;
+	
+
+	private static final int TIME_WAIT = 500;
+	private static final int TIME_END = TIME_WAIT+500;
+	private static final float TIME_FACTOR = 1f/((float) (TIME_END-TIME_WAIT));
+	
+	private double drawMinFinal, drawMaxFinal;
+	
+	public void setDrawMinMax(double drawMin, double drawMax){
+		time = System.currentTimeMillis();
+		drawMinFinal = drawMin;
+		drawMaxFinal = drawMax;
+	}
+
+	
+	public double[] getDrawMinMax(){
+		double dt = (System.currentTimeMillis()-(time+TIME_WAIT))*TIME_FACTOR;
+
+		if (dt>0){
+			if (dt>1){
+				super.setDrawMinMax(drawMinFinal, drawMaxFinal);
+			}else{
+				double[] minmaxIni = super.getDrawMinMax();
+				double[] minmax = new double[2];
+				minmax[0]=drawMinFinal*dt+minmaxIni[0]*(1-dt);
+				minmax[1]=drawMaxFinal*dt+minmaxIni[1]*(1-dt);
+				return minmax;
+			}
+		}
+
+		return super.getDrawMinMax();
 	}
 	
 
+	
+	
 }

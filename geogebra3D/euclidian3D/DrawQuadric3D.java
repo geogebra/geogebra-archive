@@ -61,7 +61,7 @@ implements Previewable {
 	
 	
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 		
 		super.updateForItSelf();
@@ -100,7 +100,7 @@ implements Previewable {
 								
 			minmax = getView3D().getRenderer().getIntervalInFrustum(
 					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-					o, v);
+					o, v, true);
 			
 			min = (float) minmax[0]; 
 			max = (float) minmax[1];		
@@ -130,7 +130,7 @@ implements Previewable {
 								
 			minmax = getView3D().getRenderer().getIntervalInFrustum(
 					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-					o, v);
+					o, v, true);
 			
 			
 			
@@ -153,7 +153,7 @@ implements Previewable {
 		}
 		
 		
-		
+		return true;
 	}
 
 	

@@ -74,7 +74,7 @@ implements Previewable, Functional2Var{
 	
 	
 
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 		Renderer renderer = getView3D().getRenderer();
 		
@@ -91,6 +91,7 @@ implements Previewable, Functional2Var{
 		surface.draw();
 		setGeometryIndex(surface.end());
 		
+		return true;
 	}
 	
 	protected void updateForView(){

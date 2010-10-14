@@ -85,7 +85,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	
 
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 		
 		super.updateForItSelf();
@@ -148,7 +148,7 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	
 		gridIndex = brush.end();
 
-		
+		return true;
 	}
 
 	protected void updateForView(){

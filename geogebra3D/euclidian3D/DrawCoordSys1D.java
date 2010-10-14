@@ -16,8 +16,7 @@ import java.util.ArrayList;
  */
 public abstract class DrawCoordSys1D extends Drawable3DCurves implements Previewable {
 
-	private double drawMin;
-	private double drawMax;
+	private double[] drawMinMax = new double[2];
 	
 
 
@@ -51,24 +50,18 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	 * @param drawMax
 	 */
 	public void setDrawMinMax(double drawMin, double drawMax){
-		this.drawMin = drawMin;
-		this.drawMax = drawMax;
+		this.drawMinMax[0] = drawMin;
+		this.drawMinMax[1] = drawMax;
 	}
 	
 	
 	/**
-	 * @return the minimum extremity
+	 * @return the min-max extremity
 	 */
-	public double getDrawMin(){
-		return drawMin;
+	public double[] getDrawMinMax(){
+		return drawMinMax;
 	}
 	
-	/**
-	 * @return the maximum extremity
-	 */
-	public double getDrawMax(){
-		return drawMax;
-	}
 	
 	/////////////////////////////////////////
 	// DRAWING GEOMETRIES
@@ -82,11 +75,13 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 		GeoCoordSys1D cs = (GeoCoordSys1D) getGeoElement();
-		updateForItSelf(cs.getPoint(getDrawMin()).getInhomCoords(),cs.getPoint(getDrawMax()).getInhomCoords());
+		double[] minmax = getDrawMinMax(); 
+		updateForItSelf(cs.getPoint(minmax[0]).getInhomCoords(),cs.getPoint(minmax[1]).getInhomCoords());
 	
+		return true;
 	}
 
 	/**
@@ -97,13 +92,16 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	protected void updateForItSelf(GgbVector p1, GgbVector p2){
 
 		//TODO prevent too large values
-		if (Math.abs(getDrawMin())>1E10)
+		
+		double[] minmax = getDrawMinMax(); 
+		
+		if (Math.abs(minmax[0])>1E10)
 			return;
 		
-		if (Math.abs(getDrawMax())>1E10)
+		if (Math.abs(minmax[1])>1E10)
 			return;
 		
-		if (getDrawMin()>getDrawMax())
+		if (minmax[0]>minmax[1])
 			return;
 		
 		
@@ -118,7 +116,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		brush.setThickness(getLineThickness(),(float) getView3D().getScale());
 		//brush.setColor(getGeoElement().getObjectColor());
 		brush.setAffineTexture(
-				(float) ((0.-getDrawMin())/(getDrawMax()-getDrawMin())),  0.25f);
+				(float) ((0.-minmax[0])/(minmax[1]-minmax[0])),  0.25f);
 		brush.segment(p1, p2);
 		setGeometryIndex(brush.end());
 		

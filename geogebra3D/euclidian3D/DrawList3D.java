@@ -123,12 +123,12 @@ public class DrawList3D extends Drawable3D {
 	}
 
 
-	protected void updateForItSelf() {
+	protected boolean updateForItSelf() {
 		
 		
 		
 		isVisible = geoList.isEuclidianVisible();
-    	if (!isVisible) return;    	
+    	if (!isVisible) return true;    	
     	
     	// go through list elements and create and/or update drawables
     	int size = geoList.size();
@@ -160,8 +160,7 @@ public class DrawList3D extends Drawable3D {
     			d.setCreatedByDrawListVisible(false);
     	}
     	
-    	//Application.debug("drawables : "+drawables.size());
-		
+    	return true;
 	}
 
 	@Override

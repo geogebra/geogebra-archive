@@ -350,15 +350,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 
-		//plane and axis
-		
-		xOyPlane = kernel3D.getXOYPlane();
-		xOyPlane.setEuclidianVisible(true);
-		xOyPlane.setGridVisible(true);
-		xOyPlane.setPlateVisible(false);
-		//add(xOyPlane);xOyPlaneDrawable = (DrawPlane3D) getDrawableND(xOyPlane);
-		xOyPlaneDrawable = (DrawPlane3D) createDrawable(xOyPlane);
 
+		//axis
 		axis = new GeoAxis3D[3];
 		axisDrawable = new DrawAxis3D[3];
 		axis[0] = kernel3D.getXAxis3D();
@@ -368,12 +361,20 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		for(int i=0;i<3;i++){
 			axis[i].setLabelVisible(true);
-			//add(axis[i]); axisDrawable[i] = (DrawAxis3D) getDrawableND(axis[i]);
 			axisDrawable[i] = (DrawAxis3D) createDrawable(axis[i]);
 		}
 		
 		
-			//axis[1].setLabelVisible(true);add(axis[1]);
+		//plane	
+		xOyPlane = kernel3D.getXOYPlane();
+		xOyPlane.setEuclidianVisible(true);
+		xOyPlane.setGridVisible(true);
+		xOyPlane.setPlateVisible(false);
+		xOyPlaneDrawable = (DrawPlane3D) createDrawable(xOyPlane);
+
+		
+		
+			
 	}
 	
 	
@@ -478,7 +479,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 			case GeoElement3D.GEO_CLASS_PLANE3D:
 				if (geo instanceof GeoPlane3DConstant)
-					d = new DrawPlaneConstant3D(this, (GeoPlane3D) geo);
+					d = new DrawPlaneConstant3D(this, (GeoPlane3D) geo,
+							axisDrawable[AXIS_X],axisDrawable[AXIS_Y]);
 				else
 					d = new DrawPlane3D(this, (GeoPlane3D) geo);
 
@@ -732,18 +734,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void setZZero(double val) { ZZero=val; }
 	
 	
-	/**  @return max value for x-axis (linked to grid)*/
-	public double getXMax(){ return axisDrawable[AXIS_X].getDrawMax(); }
-	/**  @return min value for x-axis (linked to grid)*/
-	public double getXMin(){ return axisDrawable[AXIS_X].getDrawMin(); }
-	/**  @return max value for y-axis (linked to grid)*/
-	public double getYMax(){ return axisDrawable[AXIS_Y].getDrawMax(); }
+
+	/**  @return min-max value for x-axis (linked to grid)*/
+	public double[] getXMinMax(){ return axisDrawable[AXIS_X].getDrawMinMax(); }
 	/**  @return min value for y-axis (linked to grid)*/
-	public double getYMin(){ return axisDrawable[AXIS_Y].getDrawMin(); }
-	/**  @return max value for z-axis */
-	public double getZMax(){ return axisDrawable[AXIS_Z].getDrawMax(); }
+	public double[] getYMinMax(){ return axisDrawable[AXIS_Y].getDrawMinMax(); }
 	/**  @return min value for z-axis */
-	public double getZMin(){ return axisDrawable[AXIS_Z].getDrawMin(); }
+	public double[] getZMinMax(){ return axisDrawable[AXIS_Z].getDrawMinMax(); }
 
 	
 	//TODO specific scaling for each direction
@@ -808,9 +805,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			drawable3DListToBeAdded.clear();
 			drawable3DLists.viewChanged();
 			
-			//viewChangedOwnDrawables();
+			viewChangedOwnDrawables();
 			setWaitForUpdateOwnDrawables();
-			updateOwnDrawablesNow();
 			
 			waitForUpdate = false;
 		}
@@ -1013,9 +1009,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void reset() {
 		
-		//Application.printStacktrace("reset View3D");
+		//Application.debug("reset View3D");
 		resetAllDrawables();
 		//updateAllDrawables();
+		viewChangedOwnDrawables();
 		setWaitForUpdate();
 		//update();
 		
@@ -2645,17 +2642,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		pointDecorations.setWaitForReset();
 	}
 	
-	/**
-	 * says all drawables that the view has changed
-	 */
-	/*
-	public void viewChangedAllDrawables(){
-		
-		viewChangedOwnDrawables();
-		drawable3DLists.viewChanged();
-		
-	}
-	*/
+
 	
 	/**
 	 * says all labels to be recomputed
@@ -2668,30 +2655,29 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	static private double[] dilateMinMax(double min, double max, double delta, double factor){
+	
+	private void viewChangedOwnDrawables(){
 		
-		//preserve old values
-		double minOld = min;			
-		double maxOld = max;
-		
-		//dilate
-		min*=factor;
-		max*=factor;
-		
-		//preserve middle
-		if (maxOld<delta/2){
-			if (maxOld>(max-min)/2)
-				maxOld=(max-min)/2;
-			min += maxOld-max;
-			max = maxOld;
-		}else if (-minOld<delta/2){
-			if (-minOld>(max-min)/2)
-				minOld=-(max-min)/2;
-			max += minOld-min;
-			min = minOld;
+		// calc draw min/max for axis
+		for(int i=0;i<3;i++){
+			//axisDrawable[i].updateDrawMinMax();
+			//axisDrawable[i].updateDecorations();
+			axisDrawable[i].updateForView();
 		}
 		
-		return new double[] {min, max};
+
+		/*
+		// sets min/max for the plane and axis
+		double xmin = axisDrawable[AXIS_X].getDrawMin(); 
+		double ymin = axisDrawable[AXIS_Y].getDrawMin();
+		double xmax = axisDrawable[AXIS_X].getDrawMax(); 
+		double ymax = axisDrawable[AXIS_Y].getDrawMax();
+		
+		// update xOyPlane
+		xOyPlane.setGridCorners(xmin,ymin,xmax,ymax);
+		xOyPlane.setGridDistances(axis[AXIS_X].getNumbersDistance(), axis[AXIS_Y].getNumbersDistance());
+
+		 */
 	}
 	
 	
@@ -2700,45 +2686,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void updateOwnDrawablesNow(){
 		
-		// calc draw min/max for axis
-		for(int i=0;i<3;i++){
-			axisDrawable[i].updateDrawMinMax();
-		}
-		
-		
-		// sets min/max for the plane and axis
-		double xmin = axisDrawable[AXIS_X].getDrawMin(); 
-		double ymin = axisDrawable[AXIS_Y].getDrawMin();
-		double xmax = axisDrawable[AXIS_X].getDrawMax(); 
-		double ymax = axisDrawable[AXIS_Y].getDrawMax();
-		double xdelta = xmax - xmin;
-		double ydelta = ymax - ymin;
-		if (ydelta>1.5*xdelta){
-			double[] ret=dilateMinMax(ymin,ymax,ydelta,1.5*xdelta/ydelta);
-			ymin = ret[0]; ymax = ret[1];
-		}else if (xdelta>1.5*ydelta){
-			double[] ret=dilateMinMax(xmin,xmax,xdelta,1.5*ydelta/xdelta);
-			xmin = ret[0]; xmax = ret[1];
-		}
-		
-		
-		
-		// update axis
-		axisDrawable[AXIS_X].setDrawMinMax(xmin, xmax);
-		axisDrawable[AXIS_Y].setDrawMinMax(ymin, ymax);
 		for(int i=0;i<3;i++){
 			axisDrawable[i].update();
 		}
 		
 		// update xOyPlane
-		xOyPlane.setGridCorners(xmin,ymin,xmax,ymax);
-		xOyPlane.setGridDistances(axis[AXIS_X].getNumbersDistance(), axis[AXIS_Y].getNumbersDistance());
 		xOyPlaneDrawable.update();
 
-		/*
-		Application.debug("x:("+xmin+","+xmax+")\ny:("+ymin+","+ymax+")\n"+
-				"plane -- x:("+xOyPlane.getXmin()+","+xOyPlane.getXmax()+")\nplane -- y:("+xOyPlane.getYmin()+","+xOyPlane.getYmax()+")");
-		 */
 		
 	}
 	

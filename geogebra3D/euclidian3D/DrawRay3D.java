@@ -27,10 +27,12 @@ public class DrawRay3D extends DrawCoordSys1D {
 	
 	
 	
-	protected void updateForItSelf(){
+	protected boolean updateForItSelf(){
 		
 
 		updateForItSelf(true);
+		
+		return true;
 
 	}
 	
@@ -63,7 +65,7 @@ public class DrawRay3D extends DrawCoordSys1D {
 				
 		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
 				new double[] {0,Double.POSITIVE_INFINITY},
-				o, v);
+				o, v, true);
 		
 		setDrawMinMax(minmax[0], minmax[1]);
 		
