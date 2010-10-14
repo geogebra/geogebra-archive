@@ -36,16 +36,9 @@ public class CASmaxima extends CASgeneric {
 	public boolean isVariableBound(String var) {
 		// check if var is assigned a value or defined as function in Maxima
 		StringBuilder sb = new StringBuilder();
-		
-		// TODO: improve
-		// not sequal(string(u), "u") or not equal(errcatch(fundef(u)), []);
-		sb.append("(not sequal(string(");
+		sb.append("issymbolbound('");
 		sb.append(var);
-		sb.append("), \"");
-		sb.append(var);
-		sb.append("\") or not equal(errcatch(fundef(");
-		sb.append(var);
-		sb.append(")), []));");
+		sb.append(");");
 		
 		return "true".equals(evaluateMaxima(sb.toString()));
 	}
@@ -383,6 +376,24 @@ public class CASmaxima extends CASgeneric {
 	      "cl:append(cl,[coeff(ex,v,kloop)]),simp)," +
 	      "cl" +
 	      ")$");
+	    
+	    /*
+	     * Tests if a given symbol is a function-symbol (function name)
+	     * Implemented as LISP-function as you cannot do this with maxima-functions
+	     */
+	    ggbMaxima.executeCall(":lisp (defun $myfun (sym) " +
+	    		"(cond ((fboundp sym)) ((get sym 'mprops) t) (t nil)))");
+	    
+	    /*
+	     * Takes a symbol and tests if a it is already bound to something.
+	     * ( = bound to a function-name or a variable-name).
+	     *  Note: weird formal parameter name as due to maxima's dynamic scoping rules
+	     *        using a "normal" formal parameter just doesn't work.
+	     *        (just try changing "ggbnsrphdbgse5tfd" and then call "issymbolbound('x)")
+	     */
+	    ggbMaxima.executeCall("issymbolbound(ggbnsrphdbgse5tfd):= " +
+	    		"myfun(ggbnsrphdbgse5tfd) " +
+	    		"or ?boundp(ggbnsrphdbgse5tfd);");
 	   
 	    /*
 	     * eg integrate(x^n,x) asks if n+1 is zero
