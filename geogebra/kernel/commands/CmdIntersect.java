@@ -97,13 +97,6 @@ public  GeoElement[] process(Command c) throws MyError {
                     (GeoConic) arg[0],
                     (GeoConic) arg[1]);
 			else if (
-                (ok[0] = (arg[0].isGeoFunctionable()))
-                    && (ok[1] = (arg[1].isGeoFunctionable())))
-				return kernel.IntersectPolynomials(
-                    c.getLabels(),
-                    ((GeoFunctionable) arg[0]).getGeoFunction(),
-                    ((GeoFunctionable) arg[1]).getGeoFunction());
-			else if (
                 (ok[0] = (arg[0] .isGeoFunctionable()))
                     && (ok[1] = (arg[1] .isGeoLine())))
 				return kernel.IntersectPolynomialLine(
@@ -117,6 +110,13 @@ public  GeoElement[] process(Command c) throws MyError {
                     c.getLabels(),
                     ((GeoFunctionable) arg[1]).getGeoFunction(),
                     (GeoLine) arg[0]);
+			else if ( // check after GeoLine as GeoLine is now GeoFunctionable
+	                (ok[0] = (arg[0].isGeoFunctionable()))
+	                    && (ok[1] = (arg[1].isGeoFunctionable())))
+					return kernel.IntersectPolynomials(
+	                    c.getLabels(),
+	                    ((GeoFunctionable) arg[0]).getGeoFunction(),
+	                    ((GeoFunctionable) arg[1]).getGeoFunction());
             //implicit Poly - Polynomial
 			else if (
 	                (ok[0] = (arg[0] .isGeoImplicitPoly()))
