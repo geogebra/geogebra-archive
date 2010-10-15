@@ -95,7 +95,6 @@ public class AlgoPrimeFactors extends AlgoElement {
     // copied from AlgoInterationList.java
     // TODO should it be centralised?
     private void setListElement(int index, double value) {
-    	Application.debug(value);
     	GeoNumeric listElement;
     	if (index < outputList.getCacheSize()) {
     		// use existing list element
