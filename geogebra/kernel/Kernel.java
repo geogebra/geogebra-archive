@@ -3882,6 +3882,16 @@ public class Kernel {
 	}
 	
 	/** 
+	 * PrimeFactors[list]
+	 * Michael Borcherds
+	 */
+	final public GeoList PrimeFactors(String label, NumberValue num) {
+		AlgoPrimeFactors algo = new AlgoPrimeFactors(cons, label, num);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	/** 
 	 * Invert[matrix]
 	 * Michael Borcherds
 	 */

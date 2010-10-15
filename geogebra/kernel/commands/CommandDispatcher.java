@@ -435,6 +435,7 @@ public class CommandDispatcher {
     	cmdTable.put("SelectedElement", new CmdSelectedElement(kernel));     	                  
     	cmdTable.put("SelectedIndex", new CmdSelectedIndex(kernel));     	                  
     	cmdTable.put("StemPlot", new CmdStemPlot(kernel));     	                  
+    	cmdTable.put("PrimeFactors", new CmdPrimeFactors(kernel));     	                  
     	
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   
