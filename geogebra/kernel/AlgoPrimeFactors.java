@@ -42,7 +42,7 @@ public class AlgoPrimeFactors extends AlgoElement {
     }
 
     public String getClassName() {
-        return "AlgoMode";
+        return "AlgoPrimeFactors";
     }
 
     protected void setInputOutput(){
