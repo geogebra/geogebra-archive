@@ -28,6 +28,7 @@ public class CASmaxima extends CASgeneric {
 	
 	public CASmaxima(CASparser casParser) {
 		super(casParser);
+		Application.setCASVersionString("Maxima"); // called later on with eg "Maxima 5.22.1"
 	}
 	
 	/**

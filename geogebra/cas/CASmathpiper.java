@@ -5,6 +5,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
 import java.util.MissingResourceException;
@@ -32,6 +33,7 @@ public class CASmathpiper extends CASgeneric {
 		if (ggbMathPiper == null) {
 			ggbMathPiper = org.mathpiper.interpreters.Interpreters.newSynchronousInterpreter();
 			initMyMathPiperFunctions();
+			Application.setCASVersionString("MathPiper "+org.mathpiper.Version.version); 
 		}
 		
 		return ggbMathPiper;
