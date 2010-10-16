@@ -65,7 +65,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private static final long serialVersionUID = 1L;
 
 	private Application app;
-	private JComboBox cbFormat, cbDPI;
+	private JComboBox cbFormat, cbDPI, cbTransparent;
 	private JLabel sizeLabel;
 	private JButton cancelButton;
 		
@@ -74,6 +74,8 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 	private NumberFormat sizeLabelFormat;
 	
 	private boolean textAsShapes=true;
+	private boolean transparent=true;
+	private boolean EMFPlus=true;
 	
 	private final int FORMAT_PNG = 0;
 	private final int FORMAT_PDF = 1;
@@ -148,11 +150,23 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		cbDPI = new JComboBox(dpiStr);
 		cbDPI.setSelectedItem("300");			
 		final JLabel resolutionInDPILabel=new JLabel(app.getPlain("ResolutionInDPI") + ":");
+		final JCheckBox cbTransparent = new JCheckBox(app.getMenu("Transparent"),transparent);
+		final JCheckBox cbEMFPlus = new JCheckBox(app.getMenu("EMFPlus"),EMFPlus);
+
+		final JCheckBox textAsShapesCB = new JCheckBox(app.getPlain("ExportTextAsShapes"),textAsShapes);
+		
+		// make sure panel is wide enough
 		if  (cbFormat.getSelectedIndex()==FORMAT_PNG)
 		{
 			dpiPanel.add(resolutionInDPILabel);
 			dpiPanel.add(cbDPI);
+			dpiPanel.add(cbTransparent);
+		} else if  (cbFormat.getSelectedIndex()==FORMAT_EMF){
+			dpiPanel.add(cbEMFPlus);
+		} else {
+			dpiPanel.add(textAsShapesCB);
 		}
+		
 		p.add(dpiPanel);
 		cbDPI.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {							
@@ -161,13 +175,23 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		});	
 		
 		
-		final JCheckBox textAsShapesCB = new JCheckBox(app.getPlain("ExportTextAsShapes"),textAsShapes);
-		dpiPanel.add(textAsShapesCB);
 		
-		if  (cbFormat.getSelectedIndex()==FORMAT_SVG || cbFormat.getSelectedIndex()==FORMAT_PDF)
-			dpiPanel.add(textAsShapesCB);
+		//if  (cbFormat.getSelectedIndex()==FORMAT_SVG || cbFormat.getSelectedIndex()==FORMAT_PDF)
+		//	dpiPanel.add(textAsShapesCB);
 
 				
+		cbTransparent.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				transparent=cbTransparent.isSelected();
+			}					
+		});
+		
+		cbEMFPlus.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				EMFPlus=cbEMFPlus.isSelected();
+			}					
+		});
+		
 		textAsShapesCB.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				textAsShapes=textAsShapesCB.isSelected();
@@ -182,23 +206,31 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 					case FORMAT_PDF:
 						dpiPanel.remove(resolutionInDPILabel);
 						dpiPanel.remove(cbDPI);
+						dpiPanel.remove(cbEMFPlus);
+						dpiPanel.remove(cbTransparent);
 						dpiPanel.add(textAsShapesCB);
 						break;
 					case FORMAT_EPS:
 						dpiPanel.remove(resolutionInDPILabel);
 						dpiPanel.remove(cbDPI);
+						dpiPanel.remove(cbEMFPlus);
+						dpiPanel.remove(cbTransparent);
 						dpiPanel.add(textAsShapesCB);
 						textAsShapesCB.setEnabled(false);
 						textAsShapesCB.setSelected(true);
 						break;
 					case FORMAT_EMF:
+						dpiPanel.add(cbEMFPlus);
 						dpiPanel.remove(resolutionInDPILabel);
 						dpiPanel.remove(cbDPI);
+						dpiPanel.remove(cbTransparent);
 						dpiPanel.remove(textAsShapesCB);
 						break;
 					default: // PNG
 						dpiPanel.add(resolutionInDPILabel);
 						dpiPanel.add(cbDPI);
+						dpiPanel.remove(cbEMFPlus);
+						dpiPanel.add(cbTransparent);
 						dpiPanel.remove(textAsShapesCB);
 						cbDPI.setSelectedItem("300");
 						cbDPI.setEnabled(true);	
@@ -242,7 +274,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 								break;		
 															
 							case FORMAT_EMF: // EMF
-								exportEMF(false, true);
+								exportEMF(false, EMFPlus);
 								break;
 								
 							case FORMAT_PDF: // PDF
@@ -277,7 +309,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 								break;		
 															
 							case FORMAT_EMF: // EMF
-								exportEMF(true, true);
+								exportEMF(true, EMFPlus);
 								break;
 								
 							case FORMAT_PDF: // PDF
@@ -660,7 +692,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		try {			
 			// draw graphics view into image
 			BufferedImage img =
-				app.getEuclidianView().getExportImage(exportScale, !exportToClipboard); // enable transparency if the user saves the png						
+				app.getEuclidianView().getExportImage(exportScale, transparent); 
 			
 			// write image to file
 			MyImageIO.write(img, "png", getDPI(),  file);	
