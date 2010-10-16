@@ -432,33 +432,31 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					setSliderValue(ec.getPen().getPenSize());
 					setSelectedIndex(lineStyleMap.get(ec.getPen().getPenLineStyle()));
 				}else{
-				
-				boolean geosOK = (geos.length > 0);
-				for (int i = 0; i < geos.length; i++) {
-					GeoElement geo = (GeoElement)geos[i];
-					if (!(geo.isPath()
-							|| geo.isGeoPolygon()
-							|| (geo.isGeoLocus() && ((GeoList)geo).showLineProperties() )
-							|| geo.isGeoList()
-							|| (geo.isGeoNumeric()
-									&& ((GeoNumeric) geo).isDrawable()))) {
-						geosOK = false;
-						break;
-					}
-				}
-				this.setVisible(geosOK);
 
-				if(geosOK){	
-					//setFgColor(((GeoElement)geos[0]).getObjectColor());
-					
-					setFgColor(Color.black);
-					setSliderValue( ((GeoElement)geos[0]).getLineThickness());
-					
-					setSelectedIndex(lineStyleMap.get(((GeoElement)geos[0]).getLineType()));
-					
-					this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
-				}							
-			}
+					boolean geosOK = (geos.length > 0 );
+					for (int i = 0; i < geos.length; i++) {
+						GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
+						if (!(geo.isPath()
+								|| (geo.isGeoList() && ((GeoList)geo).showLineProperties() )
+								|| (geo.isGeoNumeric() && ((GeoNumeric) geo).isDrawable()))) {
+							geosOK = false;
+							break;
+						}
+					}
+
+					this.setVisible(geosOK);
+
+					if(geosOK){	
+						//setFgColor(((GeoElement)geos[0]).getObjectColor());
+
+						setFgColor(Color.black);
+						setSliderValue( ((GeoElement)geos[0]).getLineThickness());
+
+						setSelectedIndex(lineStyleMap.get(((GeoElement)geos[0]).getLineType()));
+
+						this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
+					}							
+				}
 			}
 
 		};
@@ -625,7 +623,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			public void update(Object[] geos) {
 				boolean geosOK = (geos.length > 0 );
 				for (int i = 0; i < geos.length; i++) {
-					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
+					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())
+							|| ((GeoElement)geos[i]) instanceof GeoList ) {
 						geosOK = false;
 						break;
 					} 
@@ -653,7 +652,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			public void update(Object[] geos) {
 				boolean geosOK = (geos.length > 0 );
 				for (int i = 0; i < geos.length; i++) {
-					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
+					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())
+							|| ((GeoElement)geos[i]) instanceof GeoList ) {
 						geosOK = false;
 						break;
 					}
@@ -693,7 +693,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				boolean geosOK = (geos.length > 0 );
 				for (int i = 0; i < geos.length; i++) {
 					GeoElement geo = (GeoElement)geos[i];
-					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
+					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())
+							|| ((GeoElement)geos[i]) instanceof GeoList ) {
 						geosOK = false;
 						break;
 					}
