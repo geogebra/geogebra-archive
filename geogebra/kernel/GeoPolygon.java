@@ -267,7 +267,12 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
     private void defaultSegmentLabels() {
     	//  no labels for segments specified
         //  set labels of segments according to point names
-        if (points.length == 3) {          
+        if (points.length == 3) {    
+        	
+        	// make sure segment opposite C is called c not a_1
+        	if (getParentAlgorithm() instanceof AlgoPolygonRegular)
+        		points[2].setLabel(null);
+        	
            setLabel(segments[0], points[2]);
            setLabel(segments[1], points[0]);
            setLabel(segments[2], points[1]); 
