@@ -92,10 +92,15 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 				setIcon(iconHidden);
 			}
 			
+			// sometimes objects do not identify themselves as GeoElement for a second,
+			// causing the else-part to give them a border (because they have no children)
+			// we have to remove this border to prevent an unnecessary indent
+			setBorder(null);
+			
 			// TODO: LaTeX in AlgebraView
 		}								
 		// no GeoElement
-		else { 
+		else {			
 			// has children, display icon to expand / collapse the node
 			if(!node.isLeaf()) {
 				if (expanded) {

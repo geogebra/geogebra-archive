@@ -67,8 +67,12 @@ public class AlgebraController
 	private GeoElement lastSelectedGeo = null;
 
 	public void mouseClicked(java.awt.event.MouseEvent e) {	
-		// right click is consumed in mousePressed
-		if (e.isConsumed()) return;
+		// right click is consumed in mousePressed, but in GeoGebra3D,
+		// where heavyweight popup menus are enabled this doesn't work
+		// so make sure that this is no right click as well (ticket #302)
+		if (e.isConsumed() || Application.isRightClick(e)) {
+			return;
+		}
 		
 		// get GeoElement at mouse location		
 		TreePath tp = view.getPathForLocation(e.getX(), e.getY());
