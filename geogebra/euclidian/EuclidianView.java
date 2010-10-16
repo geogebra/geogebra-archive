@@ -3254,7 +3254,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			repaint();			
 		}
 		
-		getStyleBar().add(geo);
 	}
 
 	

@@ -3,6 +3,8 @@ package geogebra.euclidian;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoTableText;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
@@ -12,6 +14,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.PointProperties;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -33,12 +36,13 @@ import javax.swing.JToolBar;
  */
 public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
-	private PopupMenuButton btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnMode;
+	private PopupMenuButton btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnMode, 
+		btnTableTextJustify;
 	private PopupMenuButton[] popupBtnList;
 			
 	
 	private MyToggleButton btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
-    		btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel;
+    		btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel, btnTableTextLinesV, btnTableTextLinesH;
 	private MyToggleButton[] toggleBtnList;
 
 	private JButton btnPenDelete, btnDeleteGeo;
@@ -65,7 +69,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private boolean isIniting;
 	private boolean needUndo = false;
 	
+	private AlgoTableText tableText;
 	
+	String[] bracketArray = { "{", "}" , "(", ")", "|"};
 	
 	/*************************************************
 	 * Constructs a styleBar
@@ -107,8 +113,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		for(int i = 0; i < lineStyleArray.length; i++)
 			lineStyleMap.put(lineStyleArray[i], i);
 		
-		defaultGeos = new ArrayList<GeoElement>();
-		
+		defaultGeos = new ArrayList<GeoElement>();		
 		
 		initGUI();
 		isIniting = false;
@@ -135,19 +140,109 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		updateGUI();
 	}
 	
-	public void add(GeoElement geo) {
-		//if(mode != EuclidianConstants.MODE_MOVE)
-			//applyVisualStyle(geo);
+	
+	
+	
+	public void updateStyleBar(){
+	
+		if(mode == EuclidianConstants.MODE_VISUAL_STYLE)
+			return;
+		
+		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
+		
+		if(mode == EuclidianConstants.MODE_MOVE){
+			geos = ev.getApplication().getSelectedGeos();
+		}
+		else if (defaultGeoMap.containsKey(mode)){
+			geos.add(cons.getConstructionDefaults().getDefaultGeo(defaultGeoMap.get(mode)));
+			defaultGeos = geos;
+		}
+		
+		updateTableText(geos.toArray());
+		for(int i = 0; i < popupBtnList.length; i++){
+			popupBtnList[i].update(geos.toArray());
+		}
+		for(int i = 0; i < toggleBtnList.length; i++){
+			toggleBtnList[i].update(geos.toArray());
+		}
+		
+		btnPenDelete.setVisible((mode == EuclidianConstants.MODE_PEN));
+		
+	}
+	
+	private void updateTableText(Object[] geos){
+		
+		tableText = null;
+		if (geos.length == 0) return;
+		
+		for (int i = 0; i < geos.length; i++) {
+			if ((((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
+				AlgoElement algo = ((GeoElement)geos[i]).getParentAlgorithm();
+				if(algo != null  && (algo instanceof AlgoTableText)){
+					tableText = (AlgoTableText) algo;
+				}		
+			}			
+		}
+		
+	}
+	
+	
+	
+	private void createDefaultMap(){
+		defaultGeoMap = new HashMap<Integer,Integer>();
+		defaultGeoMap.put(EuclidianConstants.MODE_POINT, ConstructionDefaults.DEFAULT_POINT_FREE);
+		defaultGeoMap.put(EuclidianConstants.MODE_POLYGON, ConstructionDefaults.DEFAULT_POLYGON);
+		defaultGeoMap.put(EuclidianConstants.MODE_TEXT, ConstructionDefaults.DEFAULT_TEXT);
+		defaultGeoMap.put(EuclidianConstants.MODE_JOIN, ConstructionDefaults.DEFAULT_LINE);
+		
 	}
 	
 	
 	
 	//=====================================================
-	//                   GUI
+	//                  Init  GUI
 	//=====================================================
 	
 	private void initGUI() {
+		
+		createButtons();
+		createTextButtons();
+		
+		add(btnShowAxes);
+		add(btnShowGrid);
+		add(btnColor);
+		add(btnTextColor);
+		add(btnLineStyle);
+		add(btnPointStyle);
+		add(btnBold);
+		add(btnItalic);
+		add(btnTextSize);
 	
+		createTableTextButtons();
+		add(btnTableTextJustify);
+		add(btnTableTextLinesV);
+		add(btnTableTextLinesH);
+		
+		add(btnPenEraser);
+		add(btnHideShowLabel);
+		add(btnPenDelete);
+			
+		popupBtnList = new PopupMenuButton[]{
+				btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnTableTextJustify};
+		
+		toggleBtnList = new MyToggleButton[]{
+				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
+	            btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel, btnTableTextLinesV, btnTableTextLinesH};	
+	}
+	
+	
+
+	
+	//=====================================================
+	//                 Create Buttons
+	//=====================================================
+	
+	private void createButtons() {
 		
 		//========================================
 		// mode button
@@ -214,15 +309,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		};
 		btnCopyVisualStyle.addActionListener(this);
 		//add(this.btnCopyVisualStyle);
-		
-		
-		
-		//this.addSeparator();
-		
+
 		
 		//========================================
-		// show axes button
-		
+		// show axes button	
 		btnShowAxes = new MyToggleButton(ev.getApplication().getImageIcon("axes.gif")){
 		      @Override
 			public void update(Object[] geos) {
@@ -232,25 +322,19 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		btnShowAxes.setPreferredSize(new Dimension(16,16));
 		btnShowAxes.addActionListener(this);
-		add(btnShowAxes);
 		
 		
 		
 		//========================================
 		// show grid button
-		
 		btnShowGrid = new MyToggleButton(ev.getApplication().getImageIcon("grid.gif")){
 		      @Override
 			public void update(Object[] geos) {
 					this.setVisible(geos.length == 0 && mode != EuclidianConstants.MODE_PEN);	  
 			      }
-			};
-			
+			};			
 		btnShowGrid.setPreferredSize(new Dimension(16,16));
 		btnShowGrid.addActionListener(this);
-		add(btnShowGrid);
-		
-		
 		
 		
 		//========================================
@@ -319,14 +403,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				getMyTable().populateModel(colors);					
 				setSelectedIndex(index);
 				
-				
 				setSliderValue(Math.round(alpha * 100));
-				getMySlider().setVisible(showSlider);
-				
-				
+				getMySlider().setVisible(showSlider);	
 			}
-			
-
 		};
 
 		btnColor.getMySlider().setMinimum(0);
@@ -335,51 +414,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnColor.getMySlider().setMinorTickSpacing(5);
 		btnColor.setSliderValue(50);
 		btnColor.addActionListener(this);
-		add(btnColor);
 		
 		
-		//========================================
-		// text color  button
-		
-		btnTextColor = new PopupMenuButton(ev.getApplication(), textColors, -1,8,
-				new Dimension(20,maxIconHeight), SelectionTable.MODE_COLOR_SWATCH_TEXT) {
-
-			@Override
-			public void update(Object[] geos) {
-
-				boolean geosOK = (geos.length > 0);
-				for (int i = 0; i < geos.length; i++) {
-					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
-						geosOK = false;
-						break;
-					}
-				}
-				setVisible(geosOK);
-				
-				if(geosOK){			
-					Color geoColor = ((GeoElement) geos[0]).getObjectColor();
-					int index;
-					if(textColorMap.containsKey(geoColor)){
-						textColors[textColors.length-1] = Color.WHITE;
-						index = textColorMap.get(geoColor);
-					}else{		
-						textColors[textColors.length-1] = geoColor;
-						index = textColors.length-1;
-					}
-					btnTextColor.getMyTable().populateModel(textColors);					
-					setSelectedIndex(index);
-					setFgColor(((GeoElement)geos[0]).getObjectColor());
-					setFontStyle(((GeoText)geos[0]).getFontStyle());
-				}
-			}
-
-		};
-		btnTextColor.getMySlider().setVisible(false);
-		btnTextColor.setSliderValue(100);
-		btnTextColor.addActionListener(this);
-		add(btnTextColor);
-
-		
+	
 		//========================================
 		// line style button
 		
@@ -432,9 +469,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnLineStyle.getMySlider().setMinorTickSpacing(1);
 		btnLineStyle.getMySlider().setPaintTicks(true);	
 		btnLineStyle.addActionListener(this);
-		add(btnLineStyle);
-		
-		
+				
 		
 		//========================================
 		// point style button
@@ -472,12 +507,119 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnPointStyle.getMySlider().setMinorTickSpacing(1);
 		btnPointStyle.getMySlider().setPaintTicks(true);		
 		btnPointStyle.addActionListener(this);
-		add(btnPointStyle);
-			
+		
+	
+		//========================================
+		// eraser button
+		GeoGebraIcon ic = new GeoGebraIcon();
+		ic.setImage(app.getImageIcon("delete_small.gif").getImage());
+		ic.ensureIconSize(new Dimension(maxIconHeight,maxIconHeight));
+		btnPenEraser = new MyToggleButton(ic){
+			@Override
+			public void update(Object[] geos) {
+				this.setVisible(mode == EuclidianConstants.MODE_PEN);
+			}	
+		};
+		btnPenEraser.addActionListener(this);
+		
 		
 		//========================================
-		// bold text button
+		// delete geo button
+		btnDeleteGeo = new JButton(app.getImageIcon("delete_small.gif"));
+		btnDeleteGeo.addActionListener(this);
+		//add(btnDeleteGeo);
 		
+		
+		
+		//========================================
+		// hide/show label button
+		btnHideShowLabel = new MyToggleButton(new GeoGebraIcon(app,"mode_showhidelabel_16.gif", new Dimension(maxIconHeight,maxIconHeight))){
+			@Override
+			public void update(Object[] geos) {
+				// only show this button when handling selection, do not use it for defaults
+				if(mode != EuclidianConstants.MODE_MOVE) return;
+				boolean geosOK = (geos.length > 0 );
+				for (int i = 0; i < geos.length; i++) {
+					if ((((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
+						geosOK = false;
+						break;
+					}
+				}
+				this.setVisible(geosOK);
+				if(geosOK){	
+					btnHideShowLabel.setSelected(((GeoElement)geos[0]).isLabelVisible());
+				}
+			}	
+			
+		};
+		btnHideShowLabel.addActionListener(this);
+		
+		//========================================
+		// pen delete button
+		btnPenDelete = new JButton("\u2718");
+		Dimension d = new Dimension(maxIconHeight,maxIconHeight);
+		btnPenDelete.setPreferredSize(d);
+		btnPenDelete.setMaximumSize(d);
+		btnPenDelete.addActionListener(this);
+
+	}
+
+	
+
+	
+	
+
+	//=====================================================
+	//           Text Format Buttons
+	//=====================================================
+	
+	private void createTextButtons() {	
+
+		//========================
+		// text color  button
+		
+		btnTextColor = new PopupMenuButton(ev.getApplication(), textColors, -1,8,
+				new Dimension(20,maxIconHeight), SelectionTable.MODE_COLOR_SWATCH_TEXT) {
+
+			@Override
+			public void update(Object[] geos) {
+
+				boolean geosOK = (geos.length > 0);
+				for (int i = 0; i < geos.length; i++) {
+					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText()) 
+							|| ((GeoElement)geos[i]) instanceof GeoList ) {
+						geosOK = false;
+						break;
+					}
+				}
+				setVisible(geosOK);
+				
+				if(geosOK){			
+					Color geoColor = ((GeoElement) geos[0]).getObjectColor();
+					int index;
+					if(textColorMap.containsKey(geoColor)){
+						textColors[textColors.length-1] = Color.WHITE;
+						index = textColorMap.get(geoColor);
+					}else{		
+						textColors[textColors.length-1] = geoColor;
+						index = textColors.length-1;
+					}
+					btnTextColor.getMyTable().populateModel(textColors);					
+					setSelectedIndex(index);
+					setFgColor(((GeoElement)geos[0]).getObjectColor());
+					setFontStyle(((GeoText)geos[0]).getFontStyle());
+				}
+			}
+
+		};
+		btnTextColor.getMySlider().setVisible(false);
+		btnTextColor.setSliderValue(100);
+		btnTextColor.addActionListener(this);
+		
+			
+		//========================================
+		// bold text button
+
 		btnBold = new MyToggleButton(new GeoGebraIcon()){
 			@Override
 			public void update(Object[] geos) {
@@ -486,7 +628,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
 						geosOK = false;
 						break;
-					}
+					} 
 				}
 				this.setVisible(geosOK);
 				if(geosOK){	
@@ -500,13 +642,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//btnBold.setFont((new Font (app.getPlainFont().getFamily(),Font.BOLD,maxIconHeight-4)));
 		btnBold.setForeground(Color.BLACK);
 		btnBold.addActionListener(this);
-		add(btnBold);
-		
-		
-		
+
+
+
 		//========================================
 		// italic text button
-		
+
 		btnItalic = new MyToggleButton(new GeoGebraIcon()){
 			@Override
 			public void update(Object[] geos) {
@@ -523,27 +664,26 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					btnItalic.setSelected(style == Font.ITALIC || style == (Font.BOLD + Font.ITALIC));
 				}
 			}	
-			
+
 		};
 		btnItalic.setPreferredSize(new Dimension(maxIconHeight, maxIconHeight));
 		//btnItalic.setText(app.getPlain("Italic").substring(0,1));
 		//btnItalic.setFont((new Font (app.getPlainFont().getFamily(),Font.ITALIC,maxIconHeight-4)));
 		btnItalic.setForeground(Color.BLACK);
 		btnItalic.addActionListener(this);
-		add(btnItalic);
-	
-		
+
+
 		//========================================
 		// text size button
-		
+
 		String[] textSizeArray = new String[] { 
 				app.getPlain("ExtraSmall"), 
 				app.getPlain("Small"), 
 				app.getPlain("Medium"), 
 				app.getPlain("Large"), 
 				app.getPlain("ExtraLarge") };
-		
-		
+
+
 		btnTextSize = new PopupMenuButton(ev.getApplication(), textSizeArray, -1, 1, 
 				new Dimension(80, maxIconHeight), SelectionTable.MODE_TEXT){
 
@@ -566,85 +706,99 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			}		  
 		};	
 		btnTextSize.addActionListener(this);
-		add(btnTextSize);
-	
-		
-		
-		//========================================
-		// eraser button
-		GeoGebraIcon ic = new GeoGebraIcon();
-		ic.setImage(app.getImageIcon("delete_small.gif").getImage());
-		ic.ensureIconSize(new Dimension(maxIconHeight,maxIconHeight));
-		btnPenEraser = new MyToggleButton(ic){
-			@Override
-			public void update(Object[] geos) {
-				this.setVisible(mode == EuclidianConstants.MODE_PEN);
-			}	
-		};
-		btnPenEraser.addActionListener(this);
-		add(btnPenEraser);
-		
-		
-		//this.addSeparator();
-		
-		//========================================
-		// delete geo button
-		btnDeleteGeo = new JButton(app.getImageIcon("delete_small.gif"));
-		btnDeleteGeo.addActionListener(this);
-		//add(btnDeleteGeo);
-		
-		
-		
-		//========================================
-		// hide/show label button
-		
-		btnHideShowLabel = new MyToggleButton(new GeoGebraIcon(app,"mode_showhidelabel_16.gif", new Dimension(maxIconHeight,maxIconHeight))){
-			@Override
-			public void update(Object[] geos) {
-				// only show this button when handling selection, do not use it for defaults
-				if(mode != EuclidianConstants.MODE_MOVE) return;
-				boolean geosOK = (geos.length > 0 );
-				for (int i = 0; i < geos.length; i++) {
-					if ((((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
-						geosOK = false;
-						break;
-					}
-				}
-				this.setVisible(geosOK);
-				if(geosOK){	
-					btnHideShowLabel.setSelected(((GeoElement)geos[0]).isLabelVisible());
-				}
-			}	
-			
-		};
-		btnHideShowLabel.addActionListener(this);
-		add(btnHideShowLabel);
-		
-		//========================================
-		// pen delete button
-		btnPenDelete = new JButton("\u2718");
-		Dimension d = new Dimension(maxIconHeight,maxIconHeight);
-		btnPenDelete.setPreferredSize(d);
-		btnPenDelete.setMaximumSize(d);
-		btnPenDelete.addActionListener(this);
-		add(btnPenDelete);
-		
-		
-		
-		
-		
-		
-		popupBtnList = new PopupMenuButton[]{
-				btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize};
-		
-		toggleBtnList = new MyToggleButton[]{
-				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
-	            btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel};	
-		
+
 	}
 
 	
 	
+	
+	//================================================
+	//      Create TableText buttons
+	//================================================
+	
+	
+	private void createTableTextButtons(){
+
+		
+		//==============================
+		// justification buttons
+		String[] justifyIcons = new String[]{
+				"format-justify-left.png",
+				"format-justify-center.png",
+				"format-justify-right.png"
+		};
+		btnTableTextJustify = new PopupMenuButton(ev.getApplication(), justifyIcons, 1,-1,
+				new Dimension(20,maxIconHeight), SelectionTable.MODE_ICON){
+			@Override
+			public void update(Object[] geos) {
+				if(tableText != null){					
+					this.setVisible(true);
+					String justification = tableText.getJustification(); 
+					if(justification.equals("c")) btnTableTextJustify.setSelectedIndex(1);
+					else if (justification.equals("r")) btnTableTextJustify.setSelectedIndex(2);
+					else btnTableTextJustify.setSelectedIndex(0); //left align
+					
+				}else{
+					this.setVisible(false);
+				}
+			}
+			public String getJustification() {
+				String s = "l";
+				if(this.getSelectedIndex() == 1) s = "c";
+				if(this.getSelectedIndex() == 2) s = "r";
+				return s;
+			}
+		};
+		
+		btnTableTextJustify.addActionListener(this);
+		btnTableTextJustify.setKeepVisible(false);	
+	
+		
+		//====================================
+		// vertical grid lines toggle button
+		GeoGebraIcon ic = new GeoGebraIcon();
+		ic.setImage(app.getImageIcon("delete_small.gif").getImage());
+		ic.ensureIconSize(new Dimension(maxIconHeight,maxIconHeight));
+		btnTableTextLinesV = new MyToggleButton(ic){
+			@Override
+			public void update(Object[] geos) {
+				if(tableText != null){
+					setVisible(true);
+					setSelected(tableText.isVerticalLines());
+				}else{
+					setVisible(false);
+				}
+			}	
+		};
+		btnTableTextLinesV.addActionListener(this);
+		
+		//====================================
+		// horizontal grid lines toggle button
+		ic = new GeoGebraIcon();
+		ic.setImage(app.getImageIcon("delete_small.gif").getImage());
+		ic.ensureIconSize(new Dimension(maxIconHeight,maxIconHeight));
+		btnTableTextLinesH = new MyToggleButton(ic){
+			@Override
+			public void update(Object[] geos) {
+				if(tableText != null){
+					setVisible(true);
+					setSelected(tableText.isHorizontalLines());
+				}else{
+					setVisible(false);
+				}
+			}
+		};
+		btnTableTextLinesH.addActionListener(this);
+		
+		
+	}
+		
+		
+
+	
+	//=====================================================
+	//                 Event Handlers
+	//=====================================================
 	
 	
 	private void updateGUI(){
@@ -704,57 +858,17 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 	}
 
-
-	public void updateStyleBar(){
-	
-		if(mode == EuclidianConstants.MODE_VISUAL_STYLE)
-			return;
-		
-		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
-		
-		
-		if(mode == EuclidianConstants.MODE_MOVE){
-			geos = ev.getApplication().getSelectedGeos();
-		}
-		else if (defaultGeoMap.containsKey(mode)){
-			geos.add(cons.getConstructionDefaults().getDefaultGeo(defaultGeoMap.get(mode)));
-			defaultGeos = geos;
-		}
-		
-		
-		for(int i = 0; i < popupBtnList.length; i++){
-			popupBtnList[i].update(geos.toArray());
-		}
-		for(int i = 0; i < toggleBtnList.length; i++){
-			toggleBtnList[i].update(geos.toArray());
-		}
-		
-		btnPenDelete.setVisible((mode == EuclidianConstants.MODE_PEN));
-		
-	}
-	
-	private void createDefaultMap(){
-		defaultGeoMap = new HashMap<Integer,Integer>();
-		defaultGeoMap.put(EuclidianConstants.MODE_POINT, ConstructionDefaults.DEFAULT_POINT_FREE);
-		defaultGeoMap.put(EuclidianConstants.MODE_POLYGON, ConstructionDefaults.DEFAULT_POLYGON);
-		defaultGeoMap.put(EuclidianConstants.MODE_TEXT, ConstructionDefaults.DEFAULT_TEXT);
-		defaultGeoMap.put(EuclidianConstants.MODE_JOIN, ConstructionDefaults.DEFAULT_LINE);
-		
-	}
 	
 	
 	
 	
 	
-	
-	//=====================================================
-	//                 Event Handlers
-	//=====================================================
 	
 
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 
+		
 		
 		// mode changing buttons, removed for now?
 		/* 
@@ -873,7 +987,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		else if (source == btnHideShowLabel) {
 			applyHideShowLabel(targetGeos);			
 		}
-		
+		else if (source == btnTableTextJustify || source == btnTableTextLinesH ||source == btnTableTextLinesV ) {
+			applyTableTextFormat(targetGeos);			
+		}
 		
 		
 		else if (source == btnPenDelete) {
@@ -883,8 +999,6 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			//toggle between pen and eraser mode;			
 		}
 
-		
-		
 		if(needUndo){
 			app.storeUndoInfo();
 			needUndo = false;
@@ -993,8 +1107,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	
-	
-	
+
 	private void applyTextSize(ArrayList<GeoElement> geos) {
 
 		int fontSize = btnTextSize.getSelectedIndex() * 2 - 4; // transform indices to the range -4, .. , 4
@@ -1022,6 +1135,43 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	
+	private void applyTableTextFormat(ArrayList<GeoElement> geos) {
+
+		AlgoElement algo = null;
+		GeoElement[] input;
+		GeoElement geo;
+		GeoList geoList;
+		String arg = null;
+		String cmdText = null;
+
+		String[] justifyArray = { "l", "c", "r"};
+		arg = justifyArray[btnTableTextJustify.getSelectedIndex()];
+		if(this.btnTableTextLinesH.isSelected()) arg += "_";
+		if(this.btnTableTextLinesV.isSelected()) arg += "|";
+		
+		ArrayList<GeoElement> newGeos = new ArrayList<GeoElement>();
+
+		for (int i = 0; i < geos.size(); i++) {
+
+			// get the  TableText algo for this geo and its input
+			geo = geos.get(i);
+			algo = geo.getParentAlgorithm();
+			input = algo.getInput();
+
+			// create a new TableText cmd
+			cmdText = "TableText[";
+			cmdText += ((GeoList) input[0]).getCommandDescription();
+			cmdText += "," + "\"" + arg + "\"]";
+
+			// use the new cmd to redefine the geo and save it to a list.
+			// (the list is needed to reselect the geo)
+			newGeos.add(redefineGeo(geo, cmdText));
+		}
+
+		// reset the selection 
+		app.setSelectedGeos(newGeos);
+	}
+
 	
 	public void applyVisualStyle(ArrayList<GeoElement> geos) {
 		
@@ -1097,6 +1247,30 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		return colors;
 		
 	}
+	
+	
+	
+	public GeoElement redefineGeo(GeoElement geo, String cmdtext) {		
+		GeoElement newGeo = null;
+		
+		if (cmdtext == null)
+			return newGeo;
+		
+		try {
+			newGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(
+					geo, cmdtext, true);
+			app.doAfterRedefine(newGeo); 
+			newGeo.updateRepaint();
+			return newGeo;
+			
+		} catch (Exception e) {
+			app.showError("ReplaceFailed");			
+		} catch (MyError err) {
+			app.showError(err);			
+		} 
+		return newGeo;
+	}
+	
 	
 	
 	

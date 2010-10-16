@@ -108,7 +108,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			myTable = new SelectionTable(app,data,rows,columns,iconSize,mode);
 			setSelectedIndex(0);	
 
-			// add a mouse listener to the table that handles table selection
+			// add a mouse listener to handle table selection
 			myTable.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -135,10 +135,33 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				}
 			}
 		});
-				
+		
+		
+		
+		
+		
 		isIniting = false;
 		//updateGUI();				
 	}
+	
+	protected void processMouseEvent(MouseEvent e){
+		
+		// Don't fire mouseReleased if the mouse is over the triangle
+		// region. We want the popup to be triggered but do not want
+		// to fire an ActionPerformed event. ActionPerformed events 
+		// are fired only after a selection is made in the popup. 
+		if(e.getID() == MouseEvent.MOUSE_RELEASED){
+			Point locButton = getLocation();
+			int h = e.getX() - locButton.x;
+			// mouse is over the popup triangle side of the button
+			if(e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) 
+				return;
+		}
+		
+		super.processMouseEvent(e);
+	}
+	
+	
 	
 	 public void update(Object[] geos) {
 		 
@@ -225,7 +248,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	/**
 	 * Pass a popup action event up to the button invoker. If the first button
 	 * click triggered our popup (the click was in the triangle region), then we
-	 * must pass action events from the popup up to the invoker
+	 * must pass action events from the popup to the invoker
 	 */
 	public void handlePopupActionEvent(){
 		updateGUI();
