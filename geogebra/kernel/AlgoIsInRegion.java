@@ -43,7 +43,7 @@ public class AlgoIsInRegion extends AlgoElement {
 		setOutputLength(1);
 		setOutput(0, result);
 		input = new GeoElement[2];
-		input[0] = (GeoPoint) pi;
+		input[0] = (GeoElement) pi;
 		input[1] = (GeoElement) region;
 		setDependencies();
 	}
