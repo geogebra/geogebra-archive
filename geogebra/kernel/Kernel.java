@@ -6977,8 +6977,6 @@ public class Kernel {
 						if (Efound)
 							sb.append(")");
 						
-						// TODO: remove
-						//Application.printStacktrace(sb.toString());
 						
 						return sb.toString();
 					}					
@@ -8084,6 +8082,18 @@ public class Kernel {
 	
 	public boolean wantAnimationStarted() {
 		return wantAnimationStarted;
+	}
+
+	/**
+	 * Determine whether point is inregion
+	 * @param label
+	 * @param pi
+	 * @param region
+	 * @return GeoBoolean which is true iff point is in region
+	 */
+	public GeoBoolean isInRegion(String label,GeoPointInterface pi, Region region) {
+		AlgoIsInRegion algo = new AlgoIsInRegion(cons,label,pi,region);
+		return algo.getResult();
 	}
 
 	

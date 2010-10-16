@@ -28,7 +28,7 @@ import java.util.Set;
  * 
  */
 public class CommandDispatcher {
-    
+    /** kernel **/
 	protected Kernel kernel;
     private Construction cons;
     private Application app;
@@ -436,6 +436,8 @@ public class CommandDispatcher {
     	cmdTable.put("SelectedIndex", new CmdSelectedIndex(kernel));     	                  
     	cmdTable.put("StemPlot", new CmdStemPlot(kernel));     	                  
     	cmdTable.put("PrimeFactors", new CmdPrimeFactors(kernel));     	                  
+    	cmdTable.put("IsInRegion", new CmdIsInRegion(kernel));     	                  
+    	cmdTable.put("Slider", new CmdSlider(kernel));     
     	
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   

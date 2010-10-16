@@ -34,6 +34,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
@@ -42,6 +43,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Mirrorable;
 import geogebra.kernel.MyPoint;
+import geogebra.kernel.Region;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -8692,3 +8694,66 @@ class CmdStemPlot extends CommandProcessor {
 	 }    
 	}
  
+ class CmdSlider  extends CommandProcessor {
+		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
+		public CmdSlider (Kernel kernel) {
+			super(kernel);
+		}
+		
+	final public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+		arg = resArgs(c);
+		if (n < 2 || n > 5)
+			throw argNumErr(app, c.getName(), n);
+		for (int i = 0; i < n; i++)
+			if (!arg[i].isNumberValue())
+				throw argErr(app, c.getName(), arg[i]);
+
+		GeoNumeric slider = new GeoNumeric(kernel.getConstruction());
+		slider.setIntervalMin((NumberValue) arg[0]);
+		slider.setIntervalMax((NumberValue) arg[1]);
+		if (n > 2)
+			slider.setAnimationSpeedObject((NumberValue) arg[2]);
+		if (n > 3)
+			slider.setAnimationStep((NumberValue) arg[3]);
+		if (n > 4)
+			slider.setSliderWidth(((NumberValue) arg[4]).getDouble());
+		slider.setEuclidianVisible(true);
+		slider.setLabel(c.getLabel());		
+		return new GeoElement[] { slider };
+
+	}    
+ }
+ 
+ class CmdIsInRegion  extends CommandProcessor {
+		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
+		public CmdIsInRegion (Kernel kernel) {
+			super(kernel);
+		}
+		
+		final public GeoElement[] process(Command c) throws MyError {  	    
+			int n = c.getArgumentNumber();
+			GeoElement[] arg;
+			arg = resArgs(c);
+			if (n != 2)
+				throw argNumErr(app, c.getName(), n);
+			if (!arg[0].isGeoPoint())
+				throw argErr(app, c.getName(), arg[0]);
+			if (!arg[1].isRegion())
+				throw argErr(app, c.getName(), arg[1]);
+			
+		    GeoBoolean slider = kernel.isInRegion(c.getLabel(),(GeoPointInterface)arg[0],(Region)arg[1]);
+		    return new GeoElement[] {slider};                		             
+		}    
+	}
