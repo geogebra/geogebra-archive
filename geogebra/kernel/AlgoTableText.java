@@ -269,5 +269,20 @@ public class AlgoTableText extends AlgoElement {
 		if (!finalCell) sb.append("&"); // separate columns    				
 		// End Loïc
     }
+
+	public boolean isVerticalLines() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isHorizontalLines() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public String getJustification() {
+		// TODO Auto-generated method stub
+		return null;
+	}
   
 }
