@@ -15,8 +15,7 @@ package geogebra.kernel.arithmetic;
 import geogebra.kernel.GeoFunction;
 
 
-public interface Functional {
-	public double evaluate(double x);
+public interface Functional extends Evaluatable{
 	public Function getFunction();
 	public GeoFunction getGeoDerivative(int order);
 }

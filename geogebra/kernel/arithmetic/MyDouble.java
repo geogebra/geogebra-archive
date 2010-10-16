@@ -376,8 +376,8 @@ implements NumberValue {
 		return this;
 	}	
   
-	final public MyDouble apply(Functional f) {
-		val = f.evaluate(val);
+	final public MyDouble apply(Evaluatable lt) {
+		val = lt.evaluate(val);
 		isAngle = false; // want function to return numbers eg f(x) = sin(x), f(45°)
 		return this;
 	}

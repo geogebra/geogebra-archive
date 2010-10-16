@@ -19,17 +19,17 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.Evaluatable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
 Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties,
-GeoLineInterface, MatrixTransformable, GeoFunctionable {
+GeoLineInterface, MatrixTransformable, GeoFunctionable, Evaluatable {
 	
 	private static final long serialVersionUID = 1L;
 	// modes
@@ -981,6 +981,11 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable {
 		con.lines[0] = this;
 		con.lines[1] = this;
 		con.type = GeoConic.CONIC_LINE;		
+	}
+
+	public double evaluate(double x_var) {
+		if (Kernel.isZero(y)) return Double.NaN;
+		return (-x * x_var - z) / y;
 	}
 
 

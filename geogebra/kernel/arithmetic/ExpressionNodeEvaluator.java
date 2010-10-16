@@ -1644,13 +1644,11 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             
         case FUNCTION:      
             // function(number)
-            if (rt.isNumberValue() && lt instanceof Functional) {    
-            	NumberValue arg = (NumberValue) rt;                     			            
-            	return arg.getNumber().apply((Functional)lt);
-            }
-            else if (rt.isNumberValue() && lt instanceof GeoFunctionable) { // eg GeoLine    
-            	NumberValue arg = (NumberValue) rt;                     			            
-            	return arg.getNumber().apply(((GeoFunctionable)lt).getGeoFunction().getFunction());
+            if (rt.isNumberValue()) {
+            	if( lt instanceof Evaluatable) {    
+	            	NumberValue arg = (NumberValue) rt;                     			            
+	            	return arg.getNumber().apply((Evaluatable)lt);
+            	}
             }
             else if (lt.isPolynomialInstance() &&
                 rt.isPolynomialInstance() && ((Polynomial) rt).degree() == 0) {  
