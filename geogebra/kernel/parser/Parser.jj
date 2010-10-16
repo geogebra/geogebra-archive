@@ -1825,7 +1825,7 @@ ExpressionNode numberFunction():
 	      		} 		
       		}
       		else { // no derivative
-	      		if (geo.isGeoFunction()) // function 
+	      		if (geo.isGeoFunctionable()) // function 
 	      			return new ExpressionNode(kernel, geoExp, ExpressionNode.FUNCTION, myList.getListElement(0)); 
 				else if (geo instanceof GeoFunctionNVar) {
 				  return new ExpressionNode(kernel, geoExp, ExpressionNode.FUNCTION_NVAR, myList);				}

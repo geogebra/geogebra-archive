@@ -1,6 +1,7 @@
 package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoVec2D;
@@ -1646,6 +1647,10 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             if (rt.isNumberValue() && lt instanceof Functional) {    
             	NumberValue arg = (NumberValue) rt;                     			            
             	return arg.getNumber().apply((Functional)lt);
+            }
+            else if (rt.isNumberValue() && lt instanceof GeoFunctionable) { // eg GeoLine    
+            	NumberValue arg = (NumberValue) rt;                     			            
+            	return arg.getNumber().apply(((GeoFunctionable)lt).getGeoFunction().getFunction());
             }
             else if (lt.isPolynomialInstance() &&
                 rt.isPolynomialInstance() && ((Polynomial) rt).degree() == 0) {  
