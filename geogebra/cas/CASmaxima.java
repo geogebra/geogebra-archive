@@ -315,6 +315,14 @@ public class CASmaxima extends CASgeneric {
 	
 	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
 	
+		// read version string
+		String buildInfo = ggbMaxima.executeCall("build_info();");
+		Application.debug(buildInfo);	
+		String matchStr = "Maxima version: ";		
+		int versionIndexStart = buildInfo.indexOf(matchStr);
+		int versionIndexEnd = buildInfo.indexOf("\n",versionIndexStart);
+		Application.setCASVersionString("Maxima "+buildInfo.subSequence(versionIndexStart + matchStr.length(), versionIndexEnd));
+		
 		// turn auto-simplification off, so a+a gives a+a
 		// with this setting ev( a+a, simp ) is needed to get 2*a
 	    ggbMaxima.executeCall("simp:false;");

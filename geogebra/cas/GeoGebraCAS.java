@@ -56,11 +56,13 @@ public class GeoGebraCAS {
 				case Application.CAS_MAXIMA:
 					cas = getMaxima();
 					currentCAS = CAS;
+					Application.setCASVersionString("Maxima"); // called later on with eg "Maxima 5.22.1"
 					break;
 				
 				default:
 					cas = getMathPiper();
 					currentCAS = CAS;
+					Application.setCASVersionString("MathPiper"); 
 					break;
 			}
 		} catch (Exception e) {

@@ -4456,6 +4456,18 @@ public class Application implements KeyEventDispatcher {
 		}
 		return midiSoundManager;
 	}
+	
+	private static String CASVersionString = "MathPiper"; // default
+
+	public static void setCASVersionString(String string) {
+		CASVersionString = string;
+		
+	}
+
+	public static String getCASVersionString() {
+		return CASVersionString;
+		
+	}
 
 	
 		

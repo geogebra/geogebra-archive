@@ -209,10 +209,8 @@ public class GeoGebraMenuBar extends JMenuBar {
 		sb.append(System.getProperty("java.version")); 
 		sb.append(", ");
 		sb.append(app.getHeapSize()/1024/1024);
-		sb.append("MB");
-		if (app.getKernel().getCurrentCAS() == Application.CAS_MAXIMA) {
-			sb.append(", Maxima");
-		}
+		sb.append("MB, ");
+		sb.append(Application.getCASVersionString());
 		sb.append(")<br>");	
 		sb.append(GeoGebra.BUILD_DATE);
 
