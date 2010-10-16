@@ -28,10 +28,12 @@ import java.util.ArrayList;
 /**
  * List of GeoElements
  */
-public class GeoList extends GeoElement implements ListValue, LineProperties, PointProperties, TextProperties {
+public class GeoList extends GeoElement implements ListValue, LineProperties, PointProperties, TextProperties, Traceable {
 	
 	public final static int ELEMENT_TYPE_MIXED = -1;
 
+	public boolean trace;
+	
 	private static final long serialVersionUID = 1L;
 	private static String STR_OPEN = "{";
 	private static String STR_CLOSE = "}";
@@ -1158,5 +1160,18 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			else
 				return null;
 		}
+
+		public void setTrace(boolean trace) {
+			this.trace = trace;
+		}
+
+		public boolean getTrace() {
+			return trace;
+		}
+	    
+		public boolean isTraceable() {
+			return true;
+		}
+	    
 
 }

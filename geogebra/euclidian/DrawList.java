@@ -89,10 +89,44 @@ public final class DrawList extends Drawable {
     		drawables.remove(i);
     	}
     	
+		// draw trace
+		if (geoList.trace) {
+			isTracing = true;
+			Graphics2D g2 = view.getBackgroundGraphics();
+			if (g2 != null) drawTrace(g2);
+		} else {
+			if (isTracing) {
+				isTracing = false;
+				view.updateBackground();
+			}
+		}			
+
+		
+    	
     	//G.Sturr 2010-6-28 spreadsheet trace is now handled in GeoElement.update()
 		//if (geoList.getSpreadsheetTrace())
 		   // recordToSpreadsheet(geoList);
     }
+    
+	final void drawTrace(Graphics2D g2) {
+		g2.setPaint(geo.getObjectColor());
+		g2.setStroke(objStroke);  
+    	if (isVisible) {
+    		boolean doHighlight = geoList.doHighlighting();    	
+    		
+    		int size = drawables.size();    		
+    		for (int i=0; i < size; i++) {     			     			
+    			Drawable d = (Drawable) drawables.get(i);
+    			// draw only those drawables that have been created by this list;
+    			// if d belongs to another object, we don't want to mess with it here
+    			if (createdByDrawList() || !d.geo.isLabelSet()) {
+    				d.draw(g2);
+    			}
+    		}
+    	}
+	}
+    
+
     
     /*
      * matthieu 2010-07-01
