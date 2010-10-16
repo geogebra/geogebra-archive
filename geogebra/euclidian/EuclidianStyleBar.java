@@ -719,7 +719,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	
 	private void createTableTextButtons(){
-
+		Dimension iconDimension = new Dimension(16, maxIconHeight);
 		
 		//==============================
 		// justification buttons
@@ -757,10 +757,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		//====================================
 		// vertical grid lines toggle button
-		GeoGebraIcon ic = new GeoGebraIcon();
-		ic.setImage(app.getImageIcon("delete_small.gif").getImage());
-		ic.ensureIconSize(new Dimension(maxIconHeight,maxIconHeight));
-		btnTableTextLinesV = new MyToggleButton(ic){
+		btnTableTextLinesV = new MyToggleButton(GeoGebraIcon.createVGridIcon(iconDimension)){
 			@Override
 			public void update(Object[] geos) {
 				if(tableText != null){
@@ -775,10 +772,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		//====================================
 		// horizontal grid lines toggle button
-		ic = new GeoGebraIcon();
-		ic.setImage(app.getImageIcon("delete_small.gif").getImage());
-		ic.ensureIconSize(new Dimension(maxIconHeight,maxIconHeight));
-		btnTableTextLinesH = new MyToggleButton(ic){
+		btnTableTextLinesH = new MyToggleButton(GeoGebraIcon.createHGridIcon(iconDimension)){
 			@Override
 			public void update(Object[] geos) {
 				if(tableText != null){

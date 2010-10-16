@@ -30,6 +30,41 @@ public class AlgoTableText extends AlgoElement {
     
     private int VERTICAL = 0;
     private int HORIZONTAL = 1;
+    
+    // style variables
+    private int alignment;
+	private boolean verticalLines;
+	private boolean horizontalLines;
+	private String justification;
+	private String openBracket;
+	private String closeBracket;
+    
+	// getters for style variables (used by EuclidianStyleBar)
+	public int getAlignment() {
+		return alignment;
+	}
+
+	public boolean isVerticalLines() {
+		return verticalLines;
+	}
+
+	public boolean isHorizontalLines() {
+		return horizontalLines;
+	}
+
+	public String getJustification() {
+		return justification;
+	}
+
+	public String getOpenBracket() {
+		return openBracket;
+	}
+
+	public String getCloseBracket() {
+		return closeBracket;
+	}
+	
+    
 
     AlgoTableText(Construction cons, String label, GeoList geoList, GeoText args) {
     	this(cons, geoList, args);
@@ -73,25 +108,25 @@ public class AlgoTableText extends AlgoElement {
     GeoText getResult() {
         return text;
     }
-
-    protected final void compute() {
+    
+    
+    
+    
+   
+	
+    private void parseArgs() {
+    	
     	int columns = geoList.size();
-    	if (!geoList.isDefined() ||  columns == 0) {
-    		text.setTextString("");
-    		return;
-    		//throw new MyError(app, app.getError("InvalidInput"));   		
-    	}
-    	
-    	int alignment = HORIZONTAL;
-    	
-    	boolean verticalLines = false;
-    	boolean horizontalLines = false;
-    	
-    	String justification = "l"; // default (l, c or r)
-    	
+   
+    	// set defaults
+    	alignment = HORIZONTAL;
+    	verticalLines = false;
+    	horizontalLines = false;
+    	justification = "l"; 
     	// need an open & close together, so can't use ""
-    	String openBracket = "\\left.";
-    	String closeBracket = "\\right.";
+    	openBracket = "\\left.";
+    	closeBracket = "\\right.";
+
     	
     	if (args != null) {
     		String optionsStr = args.getTextString();
@@ -125,14 +160,34 @@ public class AlgoTableText extends AlgoElement {
     		
     	} else if (geoList.get(columns-1).isGeoText()) {
     		
-    		// support for older files before the fix
-    		
+    		// support for older files before the fix   		
      		GeoText options = (GeoText)geoList.get(columns-1);
      		String optionsStr = options.getTextString();
      		if (optionsStr.indexOf("h") > -1) alignment = HORIZONTAL; // horizontal table
      		if (optionsStr.indexOf("c") > -1) justification = "c";
      		else if (optionsStr.indexOf("r") > -1) justification = "r";
- 
+    	}
+    }
+    
+    
+    
+    
+    
+    protected final void compute() {
+    	
+    	int columns = geoList.size();
+    	
+    	if (!geoList.isDefined() ||  columns == 0) {
+    		text.setTextString("");
+    		return;
+    		//throw new MyError(app, app.getError("InvalidInput"));   		
+    	}
+    	
+    	parseArgs();
+    	
+    		
+    	// support for older files before the fix
+    	if (geoList.get(columns-1).isGeoText()) {
      		columns --;
     	}
 
@@ -270,19 +325,6 @@ public class AlgoTableText extends AlgoElement {
 		// End Loïc
     }
 
-	public boolean isVerticalLines() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean isHorizontalLines() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public String getJustification() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
   
 }

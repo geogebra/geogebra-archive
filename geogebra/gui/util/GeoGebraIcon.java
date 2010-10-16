@@ -33,13 +33,14 @@ public class GeoGebraIcon extends ImageIcon {
 		super();
 	}
 
-	
+
 	public GeoGebraIcon(Application app, String fileName, Dimension iconSize){
 		super();
 		setImage(app.getImageIcon(fileName).getImage());
 		ensureIconSize(iconSize);
 	}
 
+	
 	public void createFileImageIcon(Application app, String fileName, float alpha, Dimension iconSize){
 
 		int h = iconSize.height;
@@ -49,6 +50,50 @@ public class GeoGebraIcon extends ImageIcon {
 		setImage(image);
 	}
 
+	
+	public static ImageIcon createHGridIcon(Dimension iconSize){
+
+		int h = iconSize.height;
+		int w = iconSize.width;
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);	 
+		
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// draw 3 horizontal lines
+		g2.setPaint(Color.GRAY);
+
+		for(int i=1; i<=3; i++)
+			g2.drawLine(4, 4*i, 12, 4*i);
+
+		ImageIcon ic = new ImageIcon(image);
+		ensureIconSize(ic, iconSize);
+		
+		return ic;
+	}
+	
+	
+	public static ImageIcon createVGridIcon(Dimension iconSize){
+
+		int h = iconSize.height;
+		int w = iconSize.width;
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);	 
+		
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		// draw 3 horizontal lines
+		g2.setPaint(Color.GRAY);
+
+		for(int i=1; i<=3; i++)
+			g2.drawLine(4*i, 4, 4*i, 12);
+
+		ImageIcon ic = new ImageIcon(image);
+		ensureIconSize(ic, iconSize);
+		
+		return ic;
+	}
+	
 
 
 	public void createColorSwatchIcon(float alpha, Dimension iconSize, Color fgColor, Color bgColor){
@@ -463,8 +508,6 @@ public class GeoGebraIcon extends ImageIcon {
 			// for circle points
 			circle.setFrame(xUL, yUL, diameter, diameter);
 		}
-
-
 	}
 
 
@@ -503,8 +546,43 @@ public GeoGebraIcon ensureIconSize(Dimension iconSize){
 		return this;
 		
 	}
-	
-	
+
+
+public static void ensureIconSize(ImageIcon icon, Dimension iconSize){
+
+	int h = iconSize.height;
+	int w = iconSize.width;
+
+	BufferedImage newImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+	Graphics2D g2 = newImage.createGraphics();
+	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+	try {	
+		Image currentImage =  icon.getImage();
+		if(currentImage !=null){
+			int h2 = currentImage.getHeight(null);
+			int w2 = currentImage.getWidth(null);
+
+			if(h2 == h && w2 == w) 
+				return;
+
+			int wInset = (w - w2) > 0 ? (w-w2)/2 : w;
+			int hInset = (h - h2) > 0 ? (h-h2)/2 : h;
+
+			g2.drawImage(currentImage, hInset, wInset, null);
+		}
+		icon.setImage(newImage);
+
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+
+
+	return;
+
+}
+
+
 	
 
 }
