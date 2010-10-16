@@ -135,7 +135,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		fun = f;
 	}
 			
-	final public Function getFunction() {
+	public Function getFunction() {
 		return fun;
 	}	
 	
@@ -162,10 +162,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     * @return function expression
     */
 	final public ExpressionNode getFunctionExpression() {
-		if (fun == null)
+		if (getFunction() == null)
 			return null;
 		else 
-			return fun.getExpression();
+			return getFunction().getExpression();
 	}	
 	
 	 /**
@@ -646,6 +646,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			return false;
 	}
 
+	/** changes variable interpretation:
+	 * if swapped, the function is considered to be 
+	 * x=f(y).
+	 */
 	public void swapEval(){
 		evalSwapped = !evalSwapped;
 	}
@@ -757,7 +761,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     	FunctionVariable x2 = fun2.getFunction().getFunctionVariable();
     	FunctionVariable x =  new FunctionVariable(kernel);
     	
-
     	ExpressionNode left = fun1.getFunctionExpression().getCopy(kernel);
        	ExpressionNode right = fun2.getFunctionExpression().getCopy(kernel);    
        	

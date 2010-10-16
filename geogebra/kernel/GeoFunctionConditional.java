@@ -29,9 +29,6 @@ public class GeoFunctionConditional extends GeoFunction {
 	
 	private boolean isDefined = true;
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private GeoFunction condFun, ifFun, elseFun;	
 
@@ -39,10 +36,10 @@ public class GeoFunctionConditional extends GeoFunction {
 	 * Creates a new GeoFunctionConditional object.
 	 * 
 	 * @param c
-	 * @param condFun: a GeoFunction that evaluates
+	 * @param condFun a GeoFunction that evaluates
 	 * 	to a boolean value (i.e. isBooleanFunction() returns true)
 	 * @param ifFun
-	 * @param elseFun: may be null
+	 * @param elseFun may be null
 	 */
 	public GeoFunctionConditional(Construction c, 
 			GeoFunction condFun, GeoFunction ifFun, GeoFunction elseFun) {
@@ -52,6 +49,10 @@ public class GeoFunctionConditional extends GeoFunction {
 		this.elseFun 	= elseFun;					
 	}	
 	
+	/**
+	 * Copy constructor
+	 * @param geo
+	 */
 	public GeoFunctionConditional(GeoFunctionConditional geo) {
 		super(geo.cons);		
 		set(geo);					
@@ -118,13 +119,22 @@ public class GeoFunctionConditional extends GeoFunction {
 		return isDefined;
 	}    
       
+    /**
+     * Returns the function which is used, if condition is satisfied
+     * @return if branch of function
+     */
     final public GeoFunction getIfFunction() {
     	return ifFun;
     }
     
+    /**
+     * Returns the function which is used, if condition is not satisfied
+     * @return else branch of function
+     */
     final public GeoFunction getElseFunction() {
     	return elseFun;
     }
+            
     
 	 /**
      * Replaces geo and all its dependent geos in this function's
@@ -145,7 +155,7 @@ public class GeoFunctionConditional extends GeoFunction {
     /**
 	 * Set this function to the n-th derivative of f
 	 * @param f
-	 * @param order
+	 * @param n order of derivative
 	 */
 	public void setDerivative(CasEvaluableFunction f, int n) {		
 		GeoFunctionConditional fcond = (GeoFunctionConditional) f;
@@ -187,6 +197,33 @@ public class GeoFunctionConditional extends GeoFunction {
 		ifFun.translate(vx, vy);	
 		if (elseFun != null)
 			elseFun.translate(vx, vy);			
+	}
+	
+	/**
+	 * Returns non-conditional function f which satisfies f(x)=this(x) if x
+	 * satisfies conditional function and f(x)=0 otherwise
+	 */
+	public Function getFunction() {
+		if (fun == null) {
+			ExpressionNode en = new ExpressionNode(kernel, condFun
+					.getFunctionExpression(), ExpressionNode.MULTIPLY, ifFun
+					.getFunctionExpression());
+			if (elseFun != null)
+				en = new ExpressionNode(kernel, en, ExpressionNode.PLUS,
+						new ExpressionNode(kernel, new ExpressionNode(kernel,
+								condFun.getFunctionExpression(),
+								ExpressionNode.NOT, null),
+								ExpressionNode.MULTIPLY, elseFun
+										.getFunctionExpression()));
+			ExpressionNode en2 = en.getCopy(kernel);
+			en2.replace(condFun.getFunction().getFunctionVariable(), ifFun
+					.getFunction().getFunctionVariable());
+			if (elseFun != null)
+				en2.replace(elseFun.getFunction().getFunctionVariable(), ifFun
+						.getFunction().getFunctionVariable());
+			fun = new Function(en2, ifFun.getFunction().getFunctionVariable());
+		}
+		return fun;
 	}
 	
 	/**

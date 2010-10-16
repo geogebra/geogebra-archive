@@ -17,7 +17,9 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 
-
+/**
+ * Sum of functions, may take whole list or just several first elements 
+ */
 public class AlgoSumFunctions  extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
@@ -27,18 +29,32 @@ public class AlgoSumFunctions  extends AlgoElement {
     }
 
 	private GeoList geoList; //input
-    public GeoNumeric Truncate; //input	
-    public GeoFunction resultFun;
+    private GeoNumeric truncate; //input	
+    private GeoFunction resultFun;
     
    
+    /**
+     * Creates labeled function sum algo
+     * @param cons
+     * @param label
+     * @param geoList
+     */
     public AlgoSumFunctions(Construction cons, String label, GeoList geoList) {
         this(cons, label, geoList, null);
     }
 
-    public AlgoSumFunctions(Construction cons, String label, GeoList geoList, GeoNumeric Truncate) {
+    /**
+     * Creates labeled function sum algo for truncated list 
+     * (or whole list if truncate == null)
+     * @param cons
+     * @param label
+     * @param geoList
+     * @param truncate
+     */
+    public AlgoSumFunctions(Construction cons, String label, GeoList geoList, GeoNumeric truncate) {
     	super(cons);
         this.geoList = geoList;
-        this.Truncate=Truncate;
+        this.truncate = truncate;
         
         resultFun = new GeoFunction(cons);
 
@@ -48,21 +64,25 @@ public class AlgoSumFunctions  extends AlgoElement {
     }
 
     protected void setInputOutput(){
-    	if (Truncate == null) {
+    	if (truncate == null) {
 	        input = new GeoElement[1];
 	        input[0] = geoList;
     	}
     	else {
     		 input = new GeoElement[2];
              input[0] = geoList;
-             input[1] = Truncate;
+             input[1] = truncate;
     	}
 
-        output = new GeoElement[1];
-        output[0] = resultFun;
+        setOutputLength(1);
+        setOutput(0, resultFun);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * Returns result
+     * @return sum of functions
+     */
     public GeoElement getResult() {
         return resultFun;
     }
@@ -71,7 +91,7 @@ public class AlgoSumFunctions  extends AlgoElement {
     protected final void compute() {
     	//Sum[{x^2,x^3}]
     	
-    	int n = Truncate == null ? geoList.size() : (int)Truncate.getDouble();
+    	int n = truncate == null ? geoList.size() : (int)truncate.getDouble();
     	
     	if (n == 0 || n > geoList.size()) {
     		resultFun.setUndefined();
@@ -103,68 +123,21 @@ public class AlgoSumFunctions  extends AlgoElement {
     		return;
     	}
 		
-		// try needed for Sum[Sequence[If[x < i, i x], i, 1, 3]] at the moment
-		try {
-	    	// add first two:
-	    	resultFun = GeoFunction.add(resultFun,((GeoFunctionable)geoList.get(0)).getGeoFunction(), ((GeoFunctionable)geoList.get(1)).getGeoFunction());
+		
+	    // add first two:
+	    resultFun = GeoFunction.add(resultFun,((GeoFunctionable)geoList.get(0)).getGeoFunction(), 
+	    		((GeoFunctionable)geoList.get(1)).getGeoFunction());
 	    	
-	    	if (n == 2) return;
+	    if (n == 2) return;
 	    	
-	    	for (int i = 2 ; i < n ; i++) {  	
+	    for (int i = 2 ; i < n ; i++) {  	
 	    		
-	    		if (!geoList.get(i).isGeoFunctionable()) {
-	        		resultFun.setUndefined();
-	        		return;
-	        	}
-	    		resultFun = GeoFunction.add(resultFun,resultFun, ((GeoFunctionable)geoList.get(i)).getGeoFunction());
-	    	}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-    		resultFun.setUndefined();
-    		return;			
-		}
-    	
-    	/*
-    	// this works:
-       	GeoFunction fun1 = (GeoFunction)geoList.get(0);
-       	GeoFunction fun2 = (GeoFunction)geoList.get(1);
-
-    	FunctionVariable x1 = fun1.getFunction().getFunctionVariable();
-    	FunctionVariable x2 = fun2.getFunction().getFunctionVariable();
-    	FunctionVariable x =  new FunctionVariable(kernel);
-    	
-
-    	ExpressionNode left = fun1.getFunctionExpression().getCopy(fun1.getKernel());
-       	ExpressionNode right = fun2.getFunctionExpression().getCopy(fun2.getKernel());    
-       	
-    	ExpressionNode sum = new ExpressionNode(kernel, left.replace(x1,x), ExpressionNode.PLUS, right.replace(x2,x));
-    	
-    	Function f = new Function(sum,x);//, fun1.getFunction().getFunctionVariable());
-    	//f.setExpression(n1);
-    	//f.initFunction();
-    	//f.set
-    	
-       	resultFun.setFunction(f);
-       	resultFun.setDefined(true);*/
-
-    
-    
-    /*
-       	//ExpressionNode left2 = new ExpressionNode(kernel, left, ExpressionNode.FUNCTION, x);
-       	//ExpressionNode right2 = new ExpressionNode(kernel, right, ExpressionNode.FUNCTION, x);
-       	
-    	
-    	//ExpressionNode sum = new ExpressionNode(kernel, left, ExpressionNode.PLUS, right.replace(x2,x));
-       	ExpressionNode left2 = new ExpressionNode(kernel,fun1.getFunction().getFunctionVariable());
-       	ExpressionNode right2 = new ExpressionNode(kernel,fun2.getFunction().getFunctionVariable());
-    	ExpressionNode n2 = new ExpressionNode(kernel, left2, ExpressionNode.PLUS, right2);
-    	ExpressionValue ev = n2.evaluate();
-    	
-    	Application.debug(ev.getClass()+"");
-    	
-    	FunctionVariable fVar = new FunctionVariable((MyDouble)ev);
-    	Function f = new Function(n1,fVar);*/
+	    	if (!geoList.get(i).isGeoFunctionable()) {
+	       		resultFun.setUndefined();
+	       		return;
+	       	}
+	    	resultFun = GeoFunction.add(resultFun,resultFun, ((GeoFunctionable)geoList.get(i)).getGeoFunction());
+	    }
     }	
     
 
