@@ -96,6 +96,7 @@ public class WorksheetExportDialog extends JDialog {
 	private JTabbedPane tabbedPane;
 	private GeoGebraPreferences ggbPref;
 	private GuiManager guiManager;
+	private boolean removeLineBreaks;
 
 	public WorksheetExportDialog(Application app) {
 		super(app.getFrame(), true);
@@ -270,7 +271,7 @@ public class WorksheetExportDialog extends JDialog {
 	    			ggbPref.EXPORT_WS_ALLOW_RESCALING, "true")).booleanValue() );
 	    	cbRemoveLinebreaks.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			ggbPref.EXPORT_WS_REMOVE_LINEBREAKS, "false")).booleanValue() );
-	    	
+	    	removeLineBreaks = cbRemoveLinebreaks.isSelected();
 	    	//cbOfflineArchive.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    	//		GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, "false")).booleanValue() );
 	    	//cbOfflineArchiveAndGgbFile.setSelected( Boolean.valueOf(ggbPref.loadPreference(
@@ -503,6 +504,12 @@ public class WorksheetExportDialog extends JDialog {
 		cbRemoveLinebreaks = new JCheckBox(app.getMenu("RemoveLineBreaks"));		
 		appletPanel.add(cbRemoveLinebreaks);
 		
+		cbRemoveLinebreaks.addActionListener (new ActionListener () {
+		    public void actionPerformed(ActionEvent e) {
+		    	
+		    	removeLineBreaks = cbRemoveLinebreaks.isSelected();
+		    }
+		});
 		// file type (file/clipboard, mediaWiki)
 		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": JSXGraph",app.getMenu("Clipboard")+": JavaScript",app.getMenu("Clipboard")+": Moodle" };
 		cbFileType = new JComboBox(fileTypeStrings);
@@ -629,7 +636,7 @@ public class WorksheetExportDialog extends JDialog {
 				appletHeight = sizePanel.getSelectedHeight();
 			}
 
-			stringSelection = new StringSelection(getAppletTag(null, appletWidth, appletHeight, false));
+			stringSelection = new StringSelection(getAppletTag(null, appletWidth, appletHeight, false, removeLineBreaks));
 			break;
 			
 		case TYPE_JSXGRAPH:
@@ -874,7 +881,7 @@ public class WorksheetExportDialog extends JDialog {
 
 	private void appendWithLineBreak(StringBuilder sb, String string) {
 		sb.append(string);
-		if (!cbRemoveLinebreaks.isSelected())
+		if (!removeLineBreaks)
 			sb.append("\n");
 		
 	}
@@ -968,7 +975,7 @@ public class WorksheetExportDialog extends JDialog {
 		appendWithLineBreak(sb, "<![CDATA[");
 		appendWithLineBreak(sb, "<div id='ggbapplet'>");
 		
-		sb.append(getAppletTag(null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true));
+		sb.append(getAppletTag(null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true, removeLineBreaks));
 
 		appendWithLineBreak(sb, "</div>");
 		appendWithLineBreak(sb, "]]>");
@@ -1055,7 +1062,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		// include applet tag
 		appendWithLineBreak(sb, "");
-		sb.append(getAppletTag(ggbFile, appletWidth, appletHeight, true));
+		sb.append(getAppletTag(ggbFile, appletWidth, appletHeight, true, removeLineBreaks));
 		appendWithLineBreak(sb, "");
 
 		// text after applet
@@ -1141,7 +1148,10 @@ public class WorksheetExportDialog extends JDialog {
 		return sb.toString();
 	}
 	
-	public String getAppletTag(File ggbFile, int width, int height, boolean mayscript) {
+	public String getAppletTag(File ggbFile, int width, int height, boolean mayscript, boolean RemoveLineBreaks) {
+		
+		this.removeLineBreaks = RemoveLineBreaks;
+		
 		StringBuilder sb = new StringBuilder();
 		// include applet
 		sb.append("<applet name=\"ggbApplet\" code=\"geogebra.GeoGebraApplet\"");
@@ -1170,8 +1180,8 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("\" height=\"");
 		sb.append(height);
 		sb.append("\"");
-		if (mayscript && !cbUseBrowserForJavaScript.isSelected());
-		sb.append("mayscript=\"true\"");// add MAYSCRIPT to ensure ggbOnInit() can be called
+		if (mayscript && !cbUseBrowserForJavaScript.isSelected())
+			sb.append("mayscript=\"true\"");// add MAYSCRIPT to ensure ggbOnInit() can be called
 		appendWithLineBreak(sb, ">");
 
 		/*

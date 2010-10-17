@@ -4420,7 +4420,7 @@ public class Application implements KeyEventDispatcher {
 			height = WorksheetExportDialog.DEFAULT_APPLET_HEIGHT;
 		}		
 
-		clipboard.setContents(new StringSelection(d.getAppletTag(null, width, height, false)), null);
+		clipboard.setContents(new StringSelection(d.getAppletTag(null, width, height, false, true)), null);
 		d.setVisible(false);
 		d.dispose();
 		
