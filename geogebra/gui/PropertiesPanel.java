@@ -4738,6 +4738,7 @@ class SliderPanel
 	private PropertiesPanel propPanel;
 	private JPanel intervalPanel, sliderPanel, animationPanel;
 	private boolean useTabbedPane;
+	private boolean actionPerforming;
 
 	public SliderPanel(Application app, PropertiesPanel propPanel, boolean useTabbedPane) {
 		this.app = app;
@@ -4874,9 +4875,10 @@ class SliderPanel
 		for (int i = 0; i < geos.length; i++) {
 			temp = (GeoNumeric) geos[i];
 
-			if (!num0.isIntervalMinActive() || !temp.isIntervalMinActive() || !Kernel.isEqual(num0.getIntervalMin(), temp.getIntervalMin()))
+			// we don't check isIntervalMinActive, because we want to display the interval even if it's empty
+			if (num0.getIntervalMinObject() == null || temp.getIntervalMinObject() == null || !Kernel.isEqual(num0.getIntervalMin(), temp.getIntervalMin()))
 				equalMin = false;
-			if (!num0.isIntervalMaxActive() || !temp.isIntervalMaxActive() || !Kernel.isEqual(num0.getIntervalMax(), temp.getIntervalMax()))
+			if (num0.getIntervalMinObject() == null || temp.getIntervalMinObject() == null || !Kernel.isEqual(num0.getIntervalMax(), temp.getIntervalMax()))
 				equalMax = false;
 			if (!Kernel.isEqual(num0.getSliderWidth(), temp.getSliderWidth()))
 				equalWidth = false;
@@ -4982,7 +4984,8 @@ class SliderPanel
 		update(geos);
 	}
 
-	private void doTextFieldActionPerformed(JTextField source) {			
+	private void doTextFieldActionPerformed(JTextField source) {
+		actionPerforming = true;
 		String inputText = source.getText().trim();
 		boolean emptyString = inputText.equals("");
 		NumberValue value = new MyDouble(kernel,Double.NaN);
@@ -5025,13 +5028,15 @@ class SliderPanel
 			propPanel.updateSelection(geos);
 		else
 			update(geos);
+		actionPerforming = false;
 	}
 
 	public void focusGained(FocusEvent arg0) {
 	}
 
 	public void focusLost(FocusEvent e) {
-		doTextFieldActionPerformed((JTextField) e.getSource());
+		if (!actionPerforming)
+			doTextFieldActionPerformed((JTextField) e.getSource());
 	}
 }	
 
