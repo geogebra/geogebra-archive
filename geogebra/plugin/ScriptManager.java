@@ -7,8 +7,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -56,12 +54,7 @@ public class ScriptManager {
 	}
 	
 
-	public void evalScript(final String script, final String arg) {
-		// avoid security problems calling from JavaScript
-		AccessController.doPrivileged(new PrivilegedAction() {
-			public Object run() {
-				// perform the security-sensitive operation here
-
+	public void evalScript(String script, String arg) {
 			//Application.debug(script);
 	        Context cx = Context.enter();
 	            // Initialize the standard objects (Object, Function, etc.)
@@ -76,15 +69,18 @@ public class ScriptManager {
 	            // JavaScript to execute
 	            //String s = "ggbApplet.evalCommand('F=(2,3)')";
 	            
+	            // No class loader for unsigned applets so don't try and optimize.
+	            // http://www.mail-archive.com/batik-dev@xmlgraphics.apache.org/msg00108.html
+	            if (!app.hasFullPermissions()) {
+	            	cx.setOptimizationLevel(-1);
+	            	Context.setCachingEnabled(false);
+	            }
 	            // Now evaluate the string we've collected.
 	            Object result = cx.evaluateString(scope, script + app.getKernel().getLibraryJavaScript(), app.getPlain("ErrorAtLine"), 1, null);
-				return null;
 
 	            // Convert the result to a string and print it.
 	            //Application.debug("script result: "+(Context.toString(result)));
 	        
-			}
-		});
 			
 	}
 
