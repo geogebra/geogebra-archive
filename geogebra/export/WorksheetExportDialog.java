@@ -88,7 +88,7 @@ public class WorksheetExportDialog extends JDialog {
 	private InputPanel textAbove, textBelow;
 	private JCheckBox cbShowFrame, cbEnableRightClick, cbEnableLabelDrags, cbShowResetIcon,
 					cbShowMenuBar, cbSavePrint, cbShowToolBar, cbShowToolBarHelp, cbShowInputField,
-					cbUseBrowserForJavaScript, cbAllowRescaling;
+					cbUseBrowserForJavaScript, cbAllowRescaling, cbRemoveLinebreaks;
 	private JComboBox cbFileType;
 	private JButton exportButton;
 	private GraphicSizePanel sizePanel;
@@ -268,6 +268,8 @@ public class WorksheetExportDialog extends JDialog {
 	    			ggbPref.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
 	    	cbAllowRescaling.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			ggbPref.EXPORT_WS_ALLOW_RESCALING, "true")).booleanValue() );
+	    	cbRemoveLinebreaks.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_REMOVE_LINEBREAKS, "false")).booleanValue() );
 	    	
 	    	//cbOfflineArchive.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    	//		GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, "false")).booleanValue() );
@@ -310,6 +312,8 @@ public class WorksheetExportDialog extends JDialog {
     	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, Boolean.toString(cbOfflineArchive.isSelected()));        
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_SAVE_PRINT, Boolean.toString(cbSavePrint.isSelected()));
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_USE_BROWSER_FOR_JAVASCRIPT, Boolean.toString(cbUseBrowserForJavaScript.isSelected()));
+       	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_ALLOW_RESCALING, Boolean.toString(cbAllowRescaling.isSelected()));
+       	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_REMOVE_LINEBREAKS, Boolean.toString(cbRemoveLinebreaks.isSelected()));
            	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_GGB_FILE, Boolean.toString(cbOfflineArchiveAndGgbFile.isSelected()));        
     }
 
@@ -495,6 +499,9 @@ public class WorksheetExportDialog extends JDialog {
 		// ggb file or base64
 		//cbOfflineArchiveAndGgbFile = new JCheckBox("ggb " + app.getMenu("File") + " & jar " + app.getMenu("Files"));		
 		//appletPanel.add(cbOfflineArchiveAndGgbFile);
+		
+		cbRemoveLinebreaks = new JCheckBox(app.getMenu("RemoveLineBreaks"));		
+		appletPanel.add(cbRemoveLinebreaks);
 		
 		// file type (file/clipboard, mediaWiki)
 		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": JSXGraph",app.getMenu("Clipboard")+": JavaScript",app.getMenu("Clipboard")+": Moodle" };
@@ -782,7 +789,7 @@ public class WorksheetExportDialog extends JDialog {
 //	    }
 //	}
 	
-	private void appendBase64(StringBuffer sb) throws IOException {
+	private void appendBase64(StringBuilder sb) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		//try {
 			app.getXMLio().writeGeoGebraFile(baos, false);
@@ -793,7 +800,7 @@ public class WorksheetExportDialog extends JDialog {
 
 	}
 	
-	private void appendBase64Unzipped(StringBuffer sb) throws IOException {
+	private void appendBase64Unzipped(StringBuilder sb) throws IOException {
 			sb.append(geogebra.util.Base64.encode(app.getXMLio().getFullXML().getBytes(), 0));
 	}
 	
@@ -803,7 +810,7 @@ public class WorksheetExportDialog extends JDialog {
 	 * for insertion into MediaWiki
 	 */
 	private String getMediaWiki() throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("<ggb_applet width=\"");
 		sb.append(sizePanel.getSelectedWidth());
@@ -838,98 +845,106 @@ public class WorksheetExportDialog extends JDialog {
 	}	
 	
 	private String getJavaScript() throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
-		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n");
-		sb.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
-		sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
-		sb.append("<head>\n");
-		sb.append("<title>\n");
+		appendWithLineBreak(sb, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
+		appendWithLineBreak(sb, "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+		appendWithLineBreak(sb, "<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+		appendWithLineBreak(sb, "<head>");
+		appendWithLineBreak(sb, "<title>");
 		Construction cons = kernel.getConstruction();
 		String title = cons.getTitle();
 		sb.append(Util.toHTMLString(title));
-		sb.append("</title>\n");
-		sb.append("<body>\n");
+		appendWithLineBreak(sb, "</title>");
+		appendWithLineBreak(sb, "<body>");
 
-		sb.append("<script type=\"text/javascript\">\n");
+		appendWithLineBreak(sb, "<script type=\"text/javascript\">");
 		
 		// base64 encoding
 		sb.append("loadBase64Unzipped('");
 		appendBase64Unzipped(sb);	
-		sb.append("');\n");
-	    sb.append("</script>\n");
-	    sb.append("</body>\n");
-	    sb.append("</html>\n");
+		appendWithLineBreak(sb, "');");
+		appendWithLineBreak(sb, "</script>");
+		appendWithLineBreak(sb, "</body>");
+		appendWithLineBreak(sb, "</html>");
 		return sb.toString();
+		
+	}
+
+
+	private void appendWithLineBreak(StringBuilder sb, String string) {
+		sb.append(string);
+		if (!cbRemoveLinebreaks.isSelected())
+			sb.append("\n");
 		
 	}
 
 
 	private String getJSXGraph() throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
-		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n");
-		sb.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
-		sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
-		sb.append("<head>\n");
-		sb.append("<title>\n");
+		appendWithLineBreak(sb, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
+		appendWithLineBreak(sb, "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+		appendWithLineBreak(sb, "<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+		appendWithLineBreak(sb, "<head>");
+		appendWithLineBreak(sb, "<title>");
 		Construction cons = kernel.getConstruction();
 		String title = cons.getTitle();
 		sb.append(Util.toHTMLString(title));
-		sb.append("</title>\n");
+		appendWithLineBreak(sb, "</title>");
 		
-		sb.append(" <style type=\"text/css\">\n");
-		sb.append("  .jxgbox {\n");
-		sb.append("    position:relative; /* for IE 7 */\n");
-		sb.append("    overflow:hidden;\n");
-		sb.append("    background-color:#ffffff;\n");
-		sb.append("    border-style:solid;\n");
-		sb.append("    border-width:1px;\n");
-		sb.append("    border-color:#356AA0;\n");
-		sb.append("    -moz-border-radius:10px;\n");
-		sb.append("    -webkit-border-radius:10px;\n");
-		sb.append("  }\n");
-		sb.append("  .JXGtext {\n");
-		sb.append("    background-color:transparent;\n");
-		sb.append("    font-family: Arial, Helvetica, Geneva;\n");
-		sb.append("    font-size:11px;\n");
-		sb.append("    padding:0px;\n");
-		sb.append("    margin:0px;\n");
-		sb.append("  }\n");
-		sb.append("  </style>\n");
+		appendWithLineBreak(sb, " <style type=\"text/css\">");
+		appendWithLineBreak(sb, "  .jxgbox {");
+		appendWithLineBreak(sb, "    position:relative; /* for IE 7 */");
+		appendWithLineBreak(sb, "    overflow:hidden;");
+		appendWithLineBreak(sb, "    background-color:#ffffff;");
+		appendWithLineBreak(sb, "    border-style:solid;");
+		appendWithLineBreak(sb, "    border-width:1px;");
+		appendWithLineBreak(sb, "    border-color:#356AA0;");
+		appendWithLineBreak(sb, "    -moz-border-radius:10px;");
+		appendWithLineBreak(sb, "    -webkit-border-radius:10px;");
+		appendWithLineBreak(sb, "  }");
+		appendWithLineBreak(sb, "  .JXGtext {");
+		appendWithLineBreak(sb, "    background-color:transparent;");
+		appendWithLineBreak(sb, "    font-family: Arial, Helvetica, Geneva;");
+		appendWithLineBreak(sb, "    font-size:11px;");
+		appendWithLineBreak(sb, "    padding:0px;");
+		appendWithLineBreak(sb, "    margin:0px;");
+		appendWithLineBreak(sb, "  }");
+		appendWithLineBreak(sb, "  </style>");
 		
-		sb.append("  <script type=\"text/javascript\" src=\"http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/loadjsxgraph.js\"></script>\n");
-		sb.append("  <script type=\"text/javascript\" src=\"http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/GeogebraReader.js\"></script>\n");
-		sb.append("</head>\n");
-		sb.append("<body>\n");
+		appendWithLineBreak(sb, "  <script type=\"text/javascript\" src=\"http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/loadjsxgraph.js\"></script>");
+		appendWithLineBreak(sb, "  <script type=\"text/javascript\" src=\"http://jsxgraph.uni-bayreuth.de/~alfred/jsxgraph/branches/0.80/src/GeogebraReader.js\"></script>");
+		appendWithLineBreak(sb, "</head>");
+		appendWithLineBreak(sb, "<body>");
 		sb.append("<div id=\"box\" class=\"jxgbox\" style=\"width:");
 		sb.append(sizePanel.getSelectedWidth()+"");
 		sb.append("px; height:");
 		sb.append(sizePanel.getSelectedHeight()+"");
-		sb.append("px;\"></div>\n");
+		appendWithLineBreak(sb, "px;\"></div>");
 		
 		sb.append(getFooter(cons, true));
 
-		sb.append("<div id=\"debug\" style=\"display:block;\"></div>\n");
-		sb.append("<script type=\"text/javascript\">\n");
-		sb.append("JXG.JSXGraph.licenseText = '';\n");
+		appendWithLineBreak(sb, "<div id=\"debug\" style=\"display:block;\"></div>");
+		appendWithLineBreak(sb, "<script type=\"text/javascript\">");
+		appendWithLineBreak(sb, "JXG.JSXGraph.licenseText = '';");
 		sb.append("JXG.JSXGraph.loadBoardFromString('box','");
 		
 		// append base64 encoded XML (not zipped)
 		sb.append(geogebra.util.Base64.encode(app.getXMLio().getFullXML().getBytes(),0));
 		
-		sb.append("', 'Geogebra');\n");
-	    sb.append("</script>\n");
-	    sb.append("</body>\n");
-	    sb.append("</html>\n");
+		appendWithLineBreak(sb, "', 'Geogebra');");
+		appendWithLineBreak(sb, "</script>");
+		appendWithLineBreak(sb, "</body>");
+		appendWithLineBreak(sb, "</html>");
 		return sb.toString();
 	
 	}
 	private String getGoogleGadget() throws IOException {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
-		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-		sb.append("<Module>\n");
+		appendWithLineBreak(sb, "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+		appendWithLineBreak(sb, "<Module>");
 		sb.append("<ModulePrefs title=\"");
 		Construction cons = kernel.getConstruction();
 		String title = cons.getTitle();
@@ -946,19 +961,19 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("author=\"");
 		sb.append(Util.toHTMLString(cons.getAuthor()));
 		sb.append("\" author_email=\"xxx@google.com\" ");
-		sb.append("description=\"GeoGebra applet as a Google-Site gadget\" thumbnail=\"http://www.geogebra.org/static/images/geogebra_logo67x60.png\">\n");
-		sb.append("</ModulePrefs>\n");
+		appendWithLineBreak(sb, "description=\"GeoGebra applet as a Google-Site gadget\" thumbnail=\"http://www.geogebra.org/static/images/geogebra_logo67x60.png\">");
+		appendWithLineBreak(sb, "</ModulePrefs>");
 		
-		sb.append("<Content type=\"html\">\n");
-		sb.append("<![CDATA[\n");
-		sb.append("<div id='ggbapplet'>\n");
+		appendWithLineBreak(sb, "<Content type=\"html\">");
+		appendWithLineBreak(sb, "<![CDATA[");
+		appendWithLineBreak(sb, "<div id='ggbapplet'>");
 		
 		sb.append(getAppletTag(null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true));
 
-		sb.append("</div>\n");
-		sb.append("]]>\n");
-		sb.append("</Content>\n");
-		sb.append("</Module>\n");
+		appendWithLineBreak(sb, "</div>");
+		appendWithLineBreak(sb, "]]>");
+		appendWithLineBreak(sb, "</Content>");
+		appendWithLineBreak(sb, "</Module>");
 		
 		return sb.toString();
 		
@@ -971,7 +986,7 @@ public class WorksheetExportDialog extends JDialog {
 	 *            construction File
 	 */
 	private String getHTML(File ggbFile) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// applet width
 		int appletWidth, appletHeight;
@@ -991,12 +1006,12 @@ public class WorksheetExportDialog extends JDialog {
 		// xhtml header
 		// The declaration may be optionally omitted because it declares as its encoding the default encoding.
 		// and casuses problems on some servers (when short php tags enabled)
-		//sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n");
-		sb.append("\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n");
-		sb.append("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n");
+		//sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		appendWithLineBreak(sb, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
+		appendWithLineBreak(sb, "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+		appendWithLineBreak(sb, "<html xmlns=\"http://www.w3.org/1999/xhtml\">");
 
-		sb.append("<head>\n");
+		appendWithLineBreak(sb, "<head>");
 		sb.append("<title>");
 		Construction cons = kernel.getConstruction();
 		String title = cons.getTitle();
@@ -1006,68 +1021,68 @@ public class WorksheetExportDialog extends JDialog {
 		}
 		sb.append(Util.toHTMLString(app.getPlain("ApplicationName") + " "
 				+ app.getPlain("DynamicWorksheet")));
-		sb.append("</title>\n");
+		appendWithLineBreak(sb, "</title>");
 		// charset
-		sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n");
-		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />\n");
+		appendWithLineBreak(sb, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />");
 		
-		sb.append("<meta name=\"generator\" content=\"GeoGebra\" />\n");
+		appendWithLineBreak(sb, "<meta name=\"generator\" content=\"GeoGebra\" />");
 		String css = app.getSetting("cssDynamicWorksheet");
 		if (css != null) {
 			sb.append(css);
-			sb.append("\n");
+			appendWithLineBreak(sb, "");
 		}
-		sb.append("</head>\n");
+		appendWithLineBreak(sb, "</head>");
 
-		sb.append("<body>\n");
-		sb.append("<table border=\"0\" width=\"" + pageWidth + "\">\n");
-		sb.append("<tr><td>\n");
+		appendWithLineBreak(sb, "<body>");
+		appendWithLineBreak(sb, "<table border=\"0\" width=\"" + pageWidth + "\">");
+		appendWithLineBreak(sb, "<tr><td>");
 
 		// header with title
 		if (!title.equals("")) {
 			sb.append("<h2>");
 			sb.append(Util.toHTMLString(title));
-			sb.append("</h2>\n");
+			appendWithLineBreak(sb, "</h2>");
 		}
 
 		// text before applet
 		String text = textAbove.getText();
 		if (text != null) {
-			sb.append("<p>\n");
+			appendWithLineBreak(sb, "<p>");
 			sb.append(Util.toHTMLString(text));
-			sb.append("</p>\n");
+			appendWithLineBreak(sb, "</p>");
 		}
 
 		// include applet tag
-		sb.append("\n\n");
+		appendWithLineBreak(sb, "");
 		sb.append(getAppletTag(ggbFile, appletWidth, appletHeight, true));
-		sb.append("\n\n");
+		appendWithLineBreak(sb, "");
 
 		// text after applet
 		text = textBelow.getText();
 		if (text != null) {
-			sb.append("<p>\n");
+			appendWithLineBreak(sb, "<p>");
 			sb.append(Util.toHTMLString(text));
-			sb.append("</p>\n");
+			appendWithLineBreak(sb, "</p>");
 		}
 
 		sb.append(getFooter(cons, false));
 
-		sb.append("</td></tr>\n");
+		appendWithLineBreak(sb, "</td></tr>");
 		sb.append("</table>");
 		
 		appendJavaScript(sb);
 		
-		sb.append("</body>\n");
+		appendWithLineBreak(sb, "</body>");
 		sb.append("</html>");
 
 		return sb.toString();
 	}
 	
-	private void appendJavaScript(StringBuffer sb) {
-		sb.append("<script type=\"text/javascript\">\n");
+	private void appendJavaScript(StringBuilder sb) {
+		appendWithLineBreak(sb, "<script type=\"text/javascript\">");
 		
-		sb.append("var ggbApplet = document.ggbApplet;\n");
+		appendWithLineBreak(sb, "var ggbApplet = document.ggbApplet;");
 		sb.append(kernel.getLibraryJavaScript());
 
 		Construction cons = kernel.getConstruction();
@@ -1081,17 +1096,18 @@ public class WorksheetExportDialog extends JDialog {
 			if (!script.equals("")) {
 				// for each GeoElement with a JavaScript, create a function call
 				// with the same name as the geo's label (prefixed by ggb)
-				sb.append("\nfunction ggb");
+				sb.append("function ggb");
 				sb.append(geo.getLabel());
-				sb.append("() {\n");
-				sb.append("var ggbApplet = document.ggbApplet;\n");
-				sb.append(geo.getJavaScript());
-				sb.append("\n}\n");
-				
+				appendWithLineBreak(sb, "() {");
+				appendWithLineBreak(sb, "var ggbApplet = document.ggbApplet;");
+				appendWithLineBreak(sb, geo.getJavaScript());
+				appendWithLineBreak(sb, "}");
+							
 			}
 		}
 		
-		sb.append("\n</script>\n");
+		appendWithLineBreak(sb, "");
+		appendWithLineBreak(sb, "</script>");
 	}
 
 	
@@ -1120,13 +1136,13 @@ public class WorksheetExportDialog extends JDialog {
 		}
 		sb.append(guiManager.getCreatedWithHTML(JSXGraph));
 		sb.append("</span>");
-		sb.append("</p>\n");
+		appendWithLineBreak(sb, "</p>");
 		
 		return sb.toString();
 	}
 	
 	public String getAppletTag(File ggbFile, int width, int height, boolean mayscript) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		// include applet
 		sb.append("<applet name=\"ggbApplet\" code=\"geogebra.GeoGebraApplet\"");
 		// archive geogebra.jar 
@@ -1135,11 +1151,12 @@ public class WorksheetExportDialog extends JDialog {
 		/*
 		if (cbOfflineArchiveAndGgbFile.isSelected()) {
 			// codebase for offline applet
-			sb.append("\n\tcodebase=\"./\"");
+			sb.append("\tcodebase=\"./\"");
 		} else*/
 		{
 			// add codebase for online applets
-			sb.append("\n\tcodebase=\"");
+			appendWithLineBreak(sb, "");
+			sb.append("\tcodebase=\"");
 			sb.append(GeoGebra.GEOGEBRA_ONLINE_ARCHIVE_BASE);
 			if (!cbSavePrint.isSelected())// && !cbOfflineArchiveAndGgbFile.isSelected())
 				sb.append("unsigned/");
@@ -1147,21 +1164,22 @@ public class WorksheetExportDialog extends JDialog {
 		}
 		
 		// width, height
-		sb.append("\n\twidth=\"");
+		appendWithLineBreak(sb, "");
+		sb.append("\twidth=\"");
 		sb.append(width);
 		sb.append("\" height=\"");
 		sb.append(height);
 		sb.append("\"");
 		if (mayscript && !cbUseBrowserForJavaScript.isSelected());
 		sb.append("mayscript=\"true\"");// add MAYSCRIPT to ensure ggbOnInit() can be called
-		sb.append(">\n");
+		appendWithLineBreak(sb, ">");
 
 		/*
 		if (cbOfflineArchiveAndGgbFile.isSelected() && ggbFile != null) {
 			// ggb file
 			sb.append("\t<param name=\"filename\" value=\"");
 			sb.append(ggbFile.getName());
-			sb.append("\"/>\n");		
+			sb.append("\"/>");		
 		} else*/
 		{
 			// base64 encoding
@@ -1173,7 +1191,7 @@ public class WorksheetExportDialog extends JDialog {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			sb.append("\"/>\n");
+			appendWithLineBreak(sb, "\"/>");
 		}
 		
 		// loading image for online applet
@@ -1181,31 +1199,31 @@ public class WorksheetExportDialog extends JDialog {
 		if (!cbOfflineArchiveAndGgbFile.isSelected())
 		*/
 		{
-			sb.append("\t<param name=\"image\" value=\""+ GeoGebra.LOADING_GIF + "\"  />\n");
-			sb.append("\t<param name=\"boxborder\" value=\"false\"  />\n");
-			sb.append("\t<param name=\"centerimage\" value=\"true\"  />\n");
+			appendWithLineBreak(sb, "\t<param name=\"image\" value=\""+ GeoGebra.LOADING_GIF + "\"  />");
+			appendWithLineBreak(sb, "\t<param name=\"boxborder\" value=\"false\"  />");
+			appendWithLineBreak(sb, "\t<param name=\"centerimage\" value=\"true\"  />");
 		}
 
 		if (useWorksheet) {
 			appendAllAppletParameters(sb, TYPE_HTMLFILE);			
 		} else {// button type
-			sb.append("\t<param name=\"type\" value=\"button\"  />\n");
+			appendWithLineBreak(sb, "\t<param name=\"type\" value=\"button\"  />");
 			// white background
-			sb.append("\t<param name=\"bgcolor\" value=\"#FFFFFF\"  />\n");
+			appendWithLineBreak(sb, "\t<param name=\"bgcolor\" value=\"#FFFFFF\"  />");
 		}
 
 		sb.append("Sorry, the GeoGebra Applet could not be started. Please make sure that ");
 		sb.append("Java 1.5 (or later) is installed and active in your browser ");
-		sb.append("(<a href=\"http://java.sun.com/getjava\">Click here to install Java now</a>)\n");
+		appendWithLineBreak(sb, "(<a href=\"http://java.sun.com/getjava\">Click here to install Java now</a>)");
 		sb.append("</applet>");
 		return sb.toString();
 	}
 	
-	private void appletParam(StringBuffer sb, String param, boolean value, int type) {
+	private void appletParam(StringBuilder sb, String param, boolean value, int type) {
 		appletParam(sb, param, value+"", type);
 	
 	}
-	private void appletParam(StringBuffer sb, String param, String value, int type) {
+	private void appletParam(StringBuilder sb, String param, String value, int type) {
 		
 		switch (type) {
 		case TYPE_MEDIAWIKI:
@@ -1229,12 +1247,12 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append(param);
 			sb.append("\" value=\"");
 			sb.append(value);
-			sb.append("\" />\n");
+			appendWithLineBreak(sb, "\" />");
 		}
 		
 	}
 	
-	private void appendGgbAppletParameters(StringBuffer sb, int type) {
+	private void appendGgbAppletParameters(StringBuilder sb, int type) {
 		
 		// framePossible (double click opens GeoGebra window)
 		appletParam(sb, "framePossible", cbShowFrame.isSelected(), type);
@@ -1276,12 +1294,12 @@ public class WorksheetExportDialog extends JDialog {
 		
 	}
 	
-	StringBuffer sb2 = new StringBuffer();
+	StringBuilder sb2 = new StringBuilder();
 	
 	/**
 	 * Appends all selected applet parameters
 	 */
-	private void appendAllAppletParameters(StringBuffer sb, int type) {
+	private void appendAllAppletParameters(StringBuilder sb, int type) {
 		
 		
 		// JVM arguments, for Java 1.6.0_10 and later
@@ -1293,7 +1311,7 @@ public class WorksheetExportDialog extends JDialog {
 //			javaArgs += " -Djnlp.packEnabled=true";
 //		}
 
-		//sb.append("\t<param name=\"java_arguments\" value=\"" + javaArgs + "\" />\n");		
+		//sb.append("\t<param name=\"java_arguments\" value=\"" + javaArgs + "\" />");		
 		appletParam(sb, "java_arguments", javaArgs, type);
 		
 		// add caching information to help JVM with faster applet loading
@@ -1307,7 +1325,7 @@ public class WorksheetExportDialog extends JDialog {
 				if (i < Application.JAR_FILES.length - 1) sb2.append(", ");
 			}
 		}
-		//sb.append("\" />\n");
+		//sb.append("\" />");
 		
 		appletParam(sb, "cache_archive", sb2.toString(), type);
 
@@ -1323,7 +1341,7 @@ public class WorksheetExportDialog extends JDialog {
 				if (i < Application.JAR_FILES.length-1) sb2.append(", ");
 			}
 		}
-		//sb.append("\" />\n");
+		//sb.append("\" />");
 		appletParam(sb, "cache_version", sb2.toString(), type);
 		
 		appendGgbAppletParameters(sb, type);
