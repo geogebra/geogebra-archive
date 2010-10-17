@@ -105,11 +105,19 @@ public class DrawImplicitPoly extends Drawable {
         if (!isVisible) return;
         labelVisible = geo.isLabelVisible();
         
-        updateStrokes(implicitPoly);      
+//        firstX=Double.NaN;
+//        firstY=Double.NaN;
+        
+        updateStrokes(implicitPoly);    
+        
+        pointNearRDCornerX=0;
+        pointNearRDCornerY=0;
         
         if (implicitPoly!=null&&implicitPoly.getCoeff()!=null&&!implicitPoly.isConstant()){ 
         	updateGP();
         }
+        
+        
         
      // draw trace
 		if (implicitPoly.getTrace()) {
@@ -131,11 +139,23 @@ public class DrawImplicitPoly extends Drawable {
         
         if (labelVisible) {
         	labelDesc = geo.getLabelDescription();
+        	setLabelPosition();
 			addLabelOffset();
         }
 	}
 	
+	// set label position (xLabel, yLabel) fixed #255
+	//TODO find good label position
+    protected final void setLabelPosition() {
+    	xLabel=pointNearRDCornerX-10;
+    	yLabel=pointNearRDCornerY-10;
+    }
+	
 	private List<GeneralPath> gps;
+	/**
+	 * X and Y of the point on the curve next to the Right Down Corner of the View, for the Label
+	 */
+	private int pointNearRDCornerX=0, pointNearRDCornerY=0;
 	private ArrayList<Double[]> singularitiesCollection;
 	
 	//Second Algorithm
@@ -174,6 +194,11 @@ public class DrawImplicitPoly extends Drawable {
 			singularitiesCollection=new ArrayList<Double[]>();
 		int gridWidth=(int)Math.ceil(view.getWidth()/GRIDSIZE);
 		int gridHeight=(int)Math.ceil(view.getHeight()/GRIDSIZE);
+		//ticket #249
+		if (view.getWidth()==0||view.getHeight()==0){ 
+			Application.debug("View not visible (width or height equal to zero)");
+			return;
+		}
 		grid=new GridRect[gridWidth][gridHeight];
 		remember=new boolean[gridWidth][gridHeight];
 		scaleX=(view.xmax-view.xmin)/view.getWidth();
@@ -276,6 +301,10 @@ public class DrawImplicitPoly extends Drawable {
 	
 	private GeneralPath startPath(int w, int h, double x, double y) {
 //		Application.debug("startPath at "+x+"/"+y+" in GridRect["+w+","+h+"]");
+//		if (Double.isNaN(firstX)||Double.isNaN(firstY)){ //Save the first point on the curve for the label
+//			firstX=view.toScreenCoordXd(x);
+//			firstY=view.toScreenCoordYd(y);
+//		}
 		GeneralPath gp=new GeneralPath();
 		double sx=x;
 		double sy=y;
@@ -489,6 +518,10 @@ public class DrawImplicitPoly extends Drawable {
 				float newPathY=(float)view.toScreenCoordYd(sy);
 				if (reachedSingularity||(newPathX-pathX)*(newPathX-pathX)+(newPathY-pathY)*(newPathY-pathY)>MIN_PATH_GAP*MIN_PATH_GAP){
 					gp.lineTo(newPathX, newPathY);
+					if (pointNearRDCornerY+pointNearRDCornerX<(int)pathY+(int)pathX){
+						pointNearRDCornerX=(int)pathX;
+						pointNearRDCornerY=(int)pathY;
+					}
 					stepCount++;
 					pathX=newPathX;
 					pathY=newPathY;
