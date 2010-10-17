@@ -436,7 +436,7 @@ public class ScriptManager {
 	}
 	
 	public void callJavaScript(String jsFunction, Object [] args) {		
-		if (app.isApplet()) {
+		if (app.isApplet() && app.useBrowserForJavaScript()) {
 			app.getApplet().callJavaScript(jsFunction, args);
 		} else {
 

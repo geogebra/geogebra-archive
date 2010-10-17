@@ -87,7 +87,8 @@ public class WorksheetExportDialog extends JDialog {
 	private Kernel kernel;
 	private InputPanel textAbove, textBelow;
 	private JCheckBox cbShowFrame, cbEnableRightClick, cbEnableLabelDrags, cbShowResetIcon,
-					cbShowMenuBar, cbSavePrint, cbShowToolBar, cbShowToolBarHelp, cbShowInputField;
+					cbShowMenuBar, cbSavePrint, cbShowToolBar, cbShowToolBarHelp, cbShowInputField,
+					cbUseBrowserForJavaScript, cbAllowRescaling;
 	private JComboBox cbFileType;
 	private JButton exportButton;
 	private GraphicSizePanel sizePanel;
@@ -256,15 +257,17 @@ public class WorksheetExportDialog extends JDialog {
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_MENUBAR, "false")).booleanValue() );
 	    	cbSavePrint.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SAVE_PRINT, "false")).booleanValue() );
-	    	
+	    	cbUseBrowserForJavaScript.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_USE_BROWSER_FOR_JAVASCRIPT, "true")).booleanValue() );
 	    	cbShowToolBar.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR, "false")).booleanValue() );
 	    	cbShowToolBarHelp.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, "false")).booleanValue() );
-	    	cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
-	    	
+	    	cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());	    	
 	    	cbShowInputField.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			ggbPref.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
+	    	cbAllowRescaling.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			ggbPref.EXPORT_WS_ALLOW_RESCALING, "true")).booleanValue() );
 	    	
 	    	//cbOfflineArchive.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    	//		GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, "false")).booleanValue() );
@@ -305,8 +308,9 @@ public class WorksheetExportDialog extends JDialog {
     	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, Boolean.toString(cbShowToolBarHelp.isSelected()));
     	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, Boolean.toString(cbShowInputField.isSelected()));    
     	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, Boolean.toString(cbOfflineArchive.isSelected()));        
-    	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_SAVE_PRINT, Boolean.toString(cbSavePrint.isSelected()));
-    	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_GGB_FILE, Boolean.toString(cbOfflineArchiveAndGgbFile.isSelected()));        
+       	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_SAVE_PRINT, Boolean.toString(cbSavePrint.isSelected()));
+       	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_USE_BROWSER_FOR_JAVASCRIPT, Boolean.toString(cbUseBrowserForJavaScript.isSelected()));
+           	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_GGB_FILE, Boolean.toString(cbOfflineArchiveAndGgbFile.isSelected()));        
     }
 
 	/**
@@ -422,6 +426,9 @@ public class WorksheetExportDialog extends JDialog {
 		funcPanel.add(cbShowFrame);
 		funcPanel.add(Box.createVerticalGlue());
 		
+		cbUseBrowserForJavaScript = new JCheckBox(app.getMenu("UseBrowserForJS"));
+		funcPanel.add(cbUseBrowserForJavaScript);
+
 		// GUI panel
 		JPanel guiPanel = new JPanel();
 		guiPanel.setLayout(new BoxLayout(guiPanel, BoxLayout.Y_AXIS));
@@ -453,13 +460,17 @@ public class WorksheetExportDialog extends JDialog {
 		
 		// right column
 		// save, print
-		cbSavePrint = new JCheckBox(app.getMenu("Save") + ", " + app.getMenu("Print") + ", " + app.getMenu("Undo"));
+		cbSavePrint = new JCheckBox(app.getMenu("SavePrintUndo"));
 		guiPanelEast.add(cbSavePrint);
+
 		// showToolBarHelp				
 		cbShowToolBarHelp = new JCheckBox(app.getMenu("ShowToolBarHelp"));
 		cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());
 		guiPanelEast.add(cbShowToolBarHelp);
 		
+		// Allow Rescaling
+		cbAllowRescaling = new JCheckBox(app.getMenu("AllowRescaling"));
+		guiPanelEast.add(cbAllowRescaling);
 		
 		// width and height of applet, info about double clicking
 		int width, height;
@@ -1141,7 +1152,7 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("\" height=\"");
 		sb.append(height);
 		sb.append("\"");
-		if (mayscript);
+		if (mayscript && !cbUseBrowserForJavaScript.isSelected());
 		sb.append("mayscript=\"true\"");// add MAYSCRIPT to ensure ggbOnInit() can be called
 		sb.append(">\n");
 
@@ -1255,8 +1266,11 @@ public class WorksheetExportDialog extends JDialog {
 		// showAlgebraInput
 		appletParam(sb, "showAlgebraInput", cbShowInputField.isSelected(), type);
 		
+		// Use Browser for JavaScript (eg Buttons)
+		appletParam(sb, "useBrowserForJS", cbUseBrowserForJavaScript.isSelected(), type);
+		
 		// allowRescaling
-		appletParam(sb, "allowRescaling", true, type);
+		appletParam(sb, "allowRescaling", cbAllowRescaling.isSelected(), type);
 		
 		
 		
@@ -1286,8 +1300,12 @@ public class WorksheetExportDialog extends JDialog {
 		//sb.append("\t<param name=\"cache_archive\" value=\"");
 		sb2.setLength(0);
 		for (int i=0; i < Application.JAR_FILES.length; i++) {
-			sb2.append(Application.JAR_FILES[i]);
-			if (i < Application.JAR_FILES.length-1) sb2.append(", ");
+			
+			// don't include geogebra_javascript.jar unless necessary
+			if (!Application.JAR_FILES[i].equals(Application.JAVASCRIPT_JAR_NAME) || !cbUseBrowserForJavaScript.isSelected()) {
+				sb2.append(Application.JAR_FILES[i]);
+				if (i < Application.JAR_FILES.length - 1) sb2.append(", ");
+			}
 		}
 		//sb.append("\" />\n");
 		
@@ -1299,8 +1317,11 @@ public class WorksheetExportDialog extends JDialog {
 		//sb.append("\t<param name=\"cache_version\" value=\"");
 		sb2.setLength(0);
 		for (int i=0; i < Application.JAR_FILES.length; i++) {
-			sb2.append(GeoGebra.VERSION_STRING);
-			if (i < Application.JAR_FILES.length-1) sb2.append(", ");
+
+			if (!Application.JAR_FILES[i].equals(Application.JAVASCRIPT_JAR_NAME) || !cbUseBrowserForJavaScript.isSelected()) {
+				sb2.append(GeoGebra.VERSION_STRING);
+				if (i < Application.JAR_FILES.length-1) sb2.append(", ");
+			}
 		}
 		//sb.append("\" />\n");
 		appletParam(sb, "cache_version", sb2.toString(), type);

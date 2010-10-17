@@ -54,6 +54,8 @@ public class GeoGebraPreferences {
 	public static final String EXPORT_WS_OFFLINE_ARCHIVE = "export_ws_offline_archive";	
 	public static final String EXPORT_WS_GGB_FILE = "export_ws_ggb_file";
 	public static final String EXPORT_WS_SAVE_PRINT = "export_ws_save_print";
+	public static final String EXPORT_WS_USE_BROWSER_FOR_JAVASCRIPT = "export_ws_browser_for_js";
+	public static final String EXPORT_WS_ALLOW_RESCALING = "export_ws_allow_rescaling";
 	
 	// picture export dialog
 	public static final String EXPORT_PIC_FORMAT = "export_pic_format";

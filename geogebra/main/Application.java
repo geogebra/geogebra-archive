@@ -131,13 +131,14 @@ public class Application implements KeyEventDispatcher {
 
 	// jar file names
 	public final static String CAS_JAR_NAME = "geogebra_cas.jar";
+	public final static String JAVASCRIPT_JAR_NAME = "geogebra_javascript.jar";
 	public static final String[] JAR_FILES = { 
 			"geogebra.jar", 
 			"geogebra_main.jar",
 			"geogebra_gui.jar", 
 			CAS_JAR_NAME, 
 			"geogebra_export.jar",
-			"geogebra_javascript.jar",
+			JAVASCRIPT_JAR_NAME, // don't put at end (sometimes omitted, see WorksheetExportDialog)
 			"jlatexmath.jar", // LaTeX
 			"jlm_greek.jar", // Greek Unicode codeblock (for LaTeX texts)
 			"jlm_cyrillic.jar",  // Cyrillic Unicode codeblock (for LaTeX texts)
@@ -4467,6 +4468,16 @@ public class Application implements KeyEventDispatcher {
 	public static String getCASVersionString() {
 		return CASVersionString;
 		
+	}
+	
+	private boolean useBrowserForJavaScript = true;
+
+	public void setUseBrowserForJavaScript(boolean useBrowserForJavaScript) {
+		this.useBrowserForJavaScript = useBrowserForJavaScript;
+	}
+
+	public boolean useBrowserForJavaScript() {
+		return useBrowserForJavaScript;
 	}
 
 	

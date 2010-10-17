@@ -4666,7 +4666,7 @@ public abstract class GeoElement
 	public void runJavaScript(String arg) {
 		
 		try {
-		if (app.isApplet()) {
+		if (app.isApplet() && app.useBrowserForJavaScript()) {
 			if (arg == null) {
 				Object [] args = { };
 				app.getApplet().callJavaScript("ggb"+getLabel(), args);				

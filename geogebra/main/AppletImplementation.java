@@ -68,6 +68,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	public boolean showOpenButton, undoActive;
 	public boolean showToolBar, showToolBarHelp, showAlgebraInput;
 	public boolean enableRightClick = true;
+	public boolean useBrowserForJavaScript = true;
 	public boolean enableChooserPopups = true;
 	public boolean errorDialogsActive = true;
 	public boolean enableLabelDrags = true;
@@ -156,7 +157,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 		Object [] noArgs = { };
 		Object [] arg = { ggbOnInitParam };
 
-		callJavaScript("ggbOnInit", (ggbOnInitParam == null) ? noArgs : arg );
+		app.getScriptManager().callJavaScript("ggbOnInit", (ggbOnInitParam == null) ? noArgs : arg );
 
 		// give applet time to repaint
 		Thread initingThread = new Thread() {
@@ -242,6 +243,9 @@ public class AppletImplementation implements AppletImplementationInterface {
 		// showAlgebraInput = "true" or parameter is not available
 		showAlgebraInput = "true".equals(applet.getParameter("showAlgebraInput"));
 
+		// default is true
+		useBrowserForJavaScript = !"false".equals(applet.getParameter("useBrowserForJS"));
+		
 		// showFrame = "true" or "false"  states whether it is possible
 		// to open the application frame by double clicking on the drawing pad
 		// !false is used for downward compatibility	
@@ -452,6 +456,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 		//app.setShowSpreadsheetView(showSpreadsheet);
 		//app.setShowAlgebraView(showAlgebraView);
 		app.setShowAlgebraInput(showAlgebraInput, true);
+		app.setUseBrowserForJavaScript(useBrowserForJavaScript);
 		app.setShowToolBar(showToolBar, showToolBarHelp);	
 		app.setRightClickEnabled(enableRightClick);
 		app.setChooserPopupsEnabled(enableChooserPopups);
@@ -1233,6 +1238,9 @@ public class AppletImplementation implements AppletImplementationInterface {
 	}
 
 	public synchronized void initJavaScript() {
+		
+		if (!app.useBrowserForJavaScript()) return;
+		
 		if (browserWindow == null) {
 			try {							
 				browserWindow = JSObject.getWindow(applet);
