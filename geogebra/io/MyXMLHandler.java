@@ -2414,6 +2414,11 @@ public class MyXMLHandler implements DocHandler {
 				geo.setHatchingAngle(Integer.parseInt(angle));
 				geo.setFillType(GeoElement.FILL_HATCH);
 			}
+			
+			String inverse = (String) attrs.get("inverseFill");
+			if (inverse != null) {
+				geo.setInverseFill(Boolean.parseBoolean(inverse));				
+			}
 
 			String distance = (String) attrs.get("hatchDistance");
 			if (angle != null) {

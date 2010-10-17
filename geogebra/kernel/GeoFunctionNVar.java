@@ -102,7 +102,6 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
-		ineqs = new ArrayList<Inequality>();
 		initIneqs(this.getFunctionExpression());
 	}
 	
@@ -471,13 +470,15 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 
 
 		private void initIneqs(ExpressionNode fe) {
-			if(ineqs==null)ineqs = new ArrayList<Inequality>();
+			if(ineqs==null)
+				ineqs = new ArrayList<Inequality>();
 			int op = fe.getOperation();
 			ExpressionNode leftTree = fe.getLeftTree();
 			ExpressionNode rightTree = fe.getRightTree();
 			if(op == ExpressionNode.GREATER||op == ExpressionNode.GREATER_EQUAL||
 					op == ExpressionNode.LESS||op == ExpressionNode.LESS_EQUAL)	{
 				Inequality newIneq = new Inequality(kernel,leftTree,rightTree,op,getFunction().getFunctionVariables());
+				newIneq.getBorder().setInverseFill(newIneq.isAboveBorder() ^ this.isInverseFill());
 				ineqs.add(newIneq);
 			}if(op == ExpressionNode.AND || op == ExpressionNode.OR){
 				initIneqs(leftTree);
@@ -488,6 +489,13 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			
 		}
 
+
+				
+		public void update(){
+			super.update();
+			for(Inequality ineq:getIneqs())
+				ineq.updateCoef();			
+		}
 		public boolean isRegion() {
 			return isBooleanFunction();
 		}

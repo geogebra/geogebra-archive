@@ -69,18 +69,21 @@ public abstract class Drawable extends DrawableND {
 	protected EuclidianView view;
 	protected GeoElement geo;
 	public int xLabel, yLabel;
-	int mouseX, mouseY; // for Previewables
-	protected String labelDesc; // label Description
+	/** for Previewables */
+	int mouseX, mouseY; 
+	/** label Description */
+	protected String labelDesc; 
 	private String oldLabelDesc;	
 	private boolean labelHasIndex = false;
-	Rectangle labelRectangle = new Rectangle(); // for label hit testing
+	/** for label hit testing */
+	Rectangle labelRectangle = new Rectangle(); 
 	Shape strokedShape, strokedShape2;
 	
-	private boolean fillInverted;
+	
 	
 	private int lastFontSize = -1;
 	
-	// tracing	
+	/** tracing */	
 	protected boolean isTracing = false;
 	
 	//boolean createdByDrawList = false;	
@@ -902,19 +905,7 @@ public abstract class Drawable extends DrawableND {
 	}
 
 
-	/**
-	 * @param invert invert fill
-	 */
-	public void setFillInverted(boolean invert){
-		fillInverted = invert;
-	}
 	
-	/**
-	 * @return the fillInverted
-	 */
-	public boolean isFillInverted() {
-		return fillInverted;
-	}
 
 	
 	/*  

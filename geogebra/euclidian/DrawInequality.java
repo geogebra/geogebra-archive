@@ -4,6 +4,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.arithmetic.Inequality;
+
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -16,12 +17,11 @@ import java.util.ArrayList;
  */
 public class DrawInequality extends Drawable {
 
-	private boolean offScreen; // to avoid OpenJDK glitch we don't draw
-	// offscreen line
+	
 
 	private boolean isVisible;
 	private boolean labelVisible;
-	private Drawable rd;
+	
 	private GeoFunctionNVar function;
 	private int ineqCount;
 	private ArrayList<Drawable> drawables;
@@ -29,8 +29,8 @@ public class DrawInequality extends Drawable {
 	/**
 	 * Creates new drawable linear inequality
 	 * 
-	 * @param euclidianView
-	 * @param geo
+	 * @param view
+	 * @param function boolean 2-var function
 	 */
 	public DrawInequality(EuclidianView view, GeoFunctionNVar function) {
 		this.view = view;
@@ -64,10 +64,10 @@ public class DrawInequality extends Drawable {
 			Drawable draw;
 			switch (ineq.getType()){
 				case Inequality.INEQUALITY_PARAMETRIC_Y: 
-					draw = new DrawParametricInequality(ineq,view);
+					draw = new DrawParametricInequality(ineq, view, geo);
 					break;
 				case Inequality.INEQUALITY_PARAMETRIC_X: 
-					draw = new DrawParametricInequality(ineq,view);
+					draw = new DrawParametricInequality(ineq, view, geo);
 					break;
 				case Inequality.INEQUALITY_CONIC: 
 					draw = new DrawConic(view, ineq.getConicBorder());
@@ -80,8 +80,6 @@ public class DrawInequality extends Drawable {
 				default: draw = null;
 					
 			}
-			if(ineq.isAboveBorder())
-				draw.setFillInverted(true);
 			draw.update();
 			draw.setGeoElement(function);
 			drawables.add(draw);
@@ -143,9 +141,10 @@ public class DrawInequality extends Drawable {
 		private Inequality ineq;
 		private GeneralPathClipped gp;
 		
-		protected DrawParametricInequality(Inequality ineq,EuclidianView view){
+		protected DrawParametricInequality(Inequality ineq,EuclidianView view,GeoElement geo){
 			this.view = view;
 			this.ineq = ineq;
+			this.geo = geo;
 		}
 		@Override
 		public void draw(Graphics2D g2) {
@@ -206,7 +205,7 @@ public class DrawInequality extends Drawable {
 			if(ineq.getType() == Inequality.INEQUALITY_PARAMETRIC_X){
 				double ax = view.toRealWorldCoordY(0);
 				double bx = view.toRealWorldCoordY(view.height);
-				if (isFillInverted()) {
+				if (geo.isInverseFill() ^ ineq.isAboveBorder()) {
 					gp.moveTo(view.width+10, -10);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
 							false, false);
@@ -225,7 +224,7 @@ public class DrawInequality extends Drawable {
 			else{
 				double ax = view.toRealWorldCoordX(0);
 				double bx = view.toRealWorldCoordX(view.width);
-				if (isFillInverted()) {
+				if (geo.isInverseFill() ^ ineq.isAboveBorder()) {
 					gp.moveTo(-10, -10);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
 							false, false);

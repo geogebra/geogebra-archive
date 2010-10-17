@@ -346,6 +346,7 @@ public abstract class GeoElement
 	public float alphaValue = 0.0f;
 	private int hatchingAngle = 45; // in degrees
 	private int hatchingDistance = 10;
+	private boolean inverseFill = false;
 	
 	//=================================
 	// G.Sturr new fill options 
@@ -3626,7 +3627,9 @@ public abstract class GeoElement
 				sb.append(" image=\"");
 				sb.append(imageFileName);
 				sb.append('\"');
-				
+			}
+			if(inverseFill){
+				sb.append(" inverseFill=\"true\"");				
 			}
 			sb.append("/>\n");
 		}
@@ -4879,6 +4882,20 @@ public abstract class GeoElement
 	
 	public String getImageFileName() {
 		return imageFileName;
+	}
+
+	/**
+	 * @param inverseFill the inverseFill to set
+	 */
+	public void setInverseFill(boolean inverseFill) {
+		this.inverseFill = inverseFill;
+	}
+
+	/**
+	 * @return the inverseFill
+	 */
+	public boolean isInverseFill() {
+		return inverseFill;
 	}
 	
 

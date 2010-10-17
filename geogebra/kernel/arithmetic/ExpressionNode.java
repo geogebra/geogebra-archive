@@ -3017,11 +3017,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 		}else if(this.operation == MINUS){
 			return lc-rc;
 		}else if(this.operation == MULTIPLY && rc == 0.0){
-			return lc*((MyDouble)getRightTree().evaluate()).getDouble();
+			return lc*((NumberValue)getRightTree().evaluate()).getDouble();
 		}else if(this.operation == MULTIPLY && lc == 0.0 ){	
-			return rc*((MyDouble)getLeftTree().evaluate()).getDouble();
+			return rc*((NumberValue)getLeftTree().evaluate()).getDouble();
 		}else if(this.operation == DIVIDE){
-			return lc/((MyDouble)getRightTree().evaluate()).getDouble();
+			return lc/((NumberValue)getRightTree().evaluate()).getDouble();
 		}else if((left.contains(fv)||right.contains(fv)))
 			return null;
 		return 0.0;

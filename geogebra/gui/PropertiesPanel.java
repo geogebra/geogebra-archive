@@ -27,6 +27,7 @@ import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
@@ -3815,6 +3816,7 @@ public	class PropertiesPanel extends JPanel {
 		private JSlider angleSlider;
 		private JSlider distanceSlider;
 		private JComboBox cbFillType;
+		private JCheckBox cbFillInverse;
 		
 		private JPanel transparencyPanel, hatchFillPanel, imagePanel, anglePanel, distancePanel;
 		private JLabel lblFillType;
@@ -3822,6 +3824,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		private PopupMenuButton btnImage;
 		private String[] fileNameArray;
+		private JLabel lblFillInverse;
 
 		public FillingPanel() {
 			
@@ -3909,9 +3912,13 @@ public	class PropertiesPanel extends JPanel {
 			// panel for the fill type combobox
 			cbFillType = new JComboBox();
 			JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			lblFillType = new JLabel(app.getPlain("Filling" + ":"));
+			lblFillType = new JLabel(app.getPlain("Filling") + ":");
+			cbFillInverse = new JCheckBox();
+			lblFillInverse = new JLabel(app.getPlain("InverseFilling"));
 			cbPanel.add(lblFillType);
 			cbPanel.add(cbFillType);
+			cbPanel.add(cbFillInverse);
+			cbPanel.add(lblFillInverse);
 			
 			// panels to hold sliders
 			transparencyPanel = new JPanel (new FlowLayout(FlowLayout.LEFT));
@@ -4053,6 +4060,11 @@ public	class PropertiesPanel extends JPanel {
 			//	set selected fill type to first geo's fill type
 			cbFillType.setSelectedIndex(((GeoElement) geos[0]).getFillType());
 			cbFillType.addActionListener(this);		
+			
+			cbFillInverse.removeActionListener(this);
+			//	set selected fill type to first geo's fill type
+			cbFillInverse.setSelected(((GeoElement) geos[0]).isInverseFill());
+			cbFillInverse.addActionListener(this);
 			updateFillTypePanel(((GeoElement) geos[0]).getFillType());
 			
 			
@@ -4084,9 +4096,12 @@ public	class PropertiesPanel extends JPanel {
 
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
-			
+			cbFillInverse.setVisible(true);
 			cbFillType.setVisible(true); //TODO remove this (see below)
 			for (int i = 0; i < geos.length; i++) {
+				if (!(geos[i] instanceof GeoFunctionNVar)){
+					cbFillInverse.setVisible(false);
+				}
 				if (!((GeoElement) geos[i]).isFillable()) {
 					geosOK = false;
 					break;
@@ -4146,7 +4161,16 @@ public	class PropertiesPanel extends JPanel {
 				}
 				fillingPanel.updateFillTypePanel(fillType);
 			}
-
+			else if (source == cbFillInverse) {
+				
+				
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoElement) geos[i];
+					geo.setInverseFill(cbFillInverse.isSelected());
+					geo.updateRepaint();
+				}
+				
+			}
 			// handle image button selection 
 			else if(source == this.btnImage){		
 				String fileName = fileNameArray[btnImage.getSelectedIndex()];
