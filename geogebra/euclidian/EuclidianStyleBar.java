@@ -100,7 +100,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		setPreferredSize(d);
 
 		
-		colors = getStyleBarColors(false);
+		colors = getStyleBarColors(true);
 		colorMap = new HashMap<Color,Integer>();
 		for(int i = 0; i < colors.length; i++)
 			colorMap.put(colors[i], i);

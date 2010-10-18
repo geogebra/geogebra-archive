@@ -265,6 +265,7 @@ public class SelectionTable extends JTable{
 	public ImageIcon getDataIcon(Object value){
 		
 		ImageIcon icon = null;
+		if(value == null) return icon;
 		
 		switch (mode){
 
@@ -308,34 +309,23 @@ public class SelectionTable extends JTable{
 	
 	class MyCellRenderer extends JLabel implements TableCellRenderer {
 
-		private Border normalBorder, selectedBorder, rollOverBorder;
+		private Border normalBorder, selectedBorder, rollOverBorder, emptyBorder;
 		private Color selectionColor, rollOverColor;
 		
 		public MyCellRenderer() {
 			
 			//TODO --- selection color should be centralized, not from spreadsheet
-			
+
 			selectionColor =  MyTable.SELECTED_BACKGROUND_COLOR ;
 			rollOverColor =  Color.LIGHT_GRAY;
-			if(mode == SelectionTable.MODE_COLOR_SWATCH || mode == SelectionTable.MODE_COLOR_SWATCH_TEXT){
-				selectionColor = this.getBackground();
-				rollOverColor = this.getBackground();
-			}
-			
-			
-			normalBorder = BorderFactory.createEmptyBorder();
-			selectedBorder = BorderFactory.createEmptyBorder();
-			selectedBorder = BorderFactory.createEmptyBorder();
-			if(mode == SelectionTable.MODE_COLOR_SWATCH || mode == SelectionTable.MODE_COLOR_SWATCH_TEXT || mode == SelectionTable.MODE_POINTSTYLE){
-				normalBorder = BorderFactory.createLineBorder(Color.GRAY);
-				selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 3);			
-				selectedBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
-			}
-			
+
+			emptyBorder = BorderFactory.createEmptyBorder();
+			selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 3);			
+			rollOverBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
+
 			setOpaque(true);
 			setHorizontalAlignment(CENTER);
-			setVerticalAlignment(CENTER);
-			
+			setVerticalAlignment(CENTER);			
 			setFont(app.getPlainFont());
 		}
 		
@@ -343,8 +333,7 @@ public class SelectionTable extends JTable{
 		public Component getTableCellRendererComponent(JTable table, Object value,
 														boolean isSelected,boolean hasFocus, int row,int column) 
 	    {
-			
-			
+					
 			setAlignmentX(CENTER_ALIGNMENT);
 			setAlignmentY(CENTER_ALIGNMENT);
 
@@ -360,49 +349,38 @@ public class SelectionTable extends JTable{
 							
 			}else{		
 				setText("");
-				if(value == null){				
-					setIcon(null);
-				}else{
-					setIcon(getDataIcon(value));
+				setIcon(getDataIcon(value));
+			}
+			
+			
+			if(mode == SelectionTable.MODE_COLOR_SWATCH || mode == SelectionTable.MODE_COLOR_SWATCH_TEXT){
+				setBackground(table.getBackground());
+				if (isSelected) {
+					setBorder(selectedBorder);
+				} 
+				else if(row == rollOverRow && column == rollOverColumn) {
+					setBorder(rollOverBorder);
+				}
+				else{			
+					setBorder(emptyBorder);
+				}
+				
+			}else{
+
+				if (isSelected) {
+					setBackground(selectionColor);
+				} 
+				else if(row == rollOverRow && column == rollOverColumn) {
+					setBackground(rollOverColor);
+				}
+				else{
+					setBackground(table.getBackground());
 				}
 			}
-			
-			
-			if (isSelected) {
-				setBackground(selectionColor);
-				setBorder(selectedBorder);
-			} 
-			else if(row == rollOverRow && column == rollOverColumn) {
-				setBackground(rollOverColor);
-				setBorder(rollOverBorder);
-			}
-			else{
-				setBackground(table.getBackground());
-				setBorder(normalBorder);
-			}
-						
+		
 	        return this;
 	    }
 	}
 
-	@Override
-	public void paint(Graphics graphics) {
-		super.paint(graphics);	
-		Graphics2D g2 = (Graphics2D)graphics;
-
-		g2.setStroke(new BasicStroke(1));
-		
-		Rectangle r = this.getCellRect(this.getSelectedRow(), this.getSelectedColumn(), true);
-		//r. grow(1, 1);
-		g2.setPaint(Color.BLACK);
-		//g2.draw(r);
-		
-		r = this.getCellRect(this.rollOverRow, this.rollOverColumn, true);
-		//r.grow(1, 1);
-		g2.setPaint(Color.GRAY);
-		//g2.draw(r);
-		
-	}
-	
 	
 }
