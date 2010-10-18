@@ -3917,6 +3917,17 @@ public class Application implements KeyEventDispatcher {
 					fileName.substring(0, dotPos));
 	}
 
+	public static String removeExtension(String fileName) {
+		if (fileName == null)
+			return null;
+		int dotPos = fileName.indexOf('.');
+
+		if (dotPos <= 0)
+			return fileName;
+		else
+			return fileName.substring(0, dotPos);
+	}
+
 	public final LowerCaseDictionary getCommandDictionary() {
 		return commandDict;
 	}
@@ -4420,7 +4431,7 @@ public class Application implements KeyEventDispatcher {
 			height = WorksheetExportDialog.DEFAULT_APPLET_HEIGHT;
 		}		
 
-		clipboard.setContents(new StringSelection(d.getAppletTag(null, width, height, false, true)), null);
+		clipboard.setContents(new StringSelection(d.getAppletTag(this, null, width, height, false, true)), null);
 		d.setVisible(false);
 		d.dispose();
 		

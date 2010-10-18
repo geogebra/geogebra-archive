@@ -206,7 +206,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	            File file, pngFile = null;
 	            prot.setUseColors(useColors);
 	            file = app.getGuiManager().showSaveDialog(Application.FILE_EXT_HTML, null,
-	                   app.getPlain("html") + " " + app.getMenu("Files"));
+	                   app.getPlain("html") + " " + app.getMenu("Files"), true);
 	            if (file == null) return;                       
 	            try {          
 	               BufferedImage img = null;

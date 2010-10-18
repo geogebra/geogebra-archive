@@ -803,7 +803,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 						app.getGuiManager().showSaveDialog(
 								"gif", // change to Application.FILE_EXT_GIF
 								null,
-								app.getPlain("gif") + " " + app.getMenu("Files"));
+								app.getPlain("gif") + " " + app.getMenu("Files"), true);
 
 
 					GeoNumeric num = (GeoNumeric)geo;

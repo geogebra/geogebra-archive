@@ -15,6 +15,7 @@ package geogebra.export;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.TitlePanel;
+import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
@@ -90,7 +92,7 @@ public class WorksheetExportDialog extends JDialog {
 					cbShowMenuBar, cbSavePrint, cbShowToolBar, cbShowToolBarHelp, cbShowInputField,
 					cbUseBrowserForJavaScript, cbAllowRescaling, cbRemoveLinebreaks;
 	private JComboBox cbFileType;
-	private JButton exportButton;
+	private JButton exportButton, exportAllButton;
 	private GraphicSizePanel sizePanel;
 	private boolean useWorksheet = true, kernelChanged = false;			
 	private JTabbedPane tabbedPane;
@@ -195,6 +197,32 @@ public class WorksheetExportDialog extends JDialog {
 			}
 		});
 		
+
+		
+		if (GeoGebraFrame.getInstanceCount() > 1) {
+			exportAllButton = new JButton(app.getMenu("ExportAllWorksheets"));
+			exportAllButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {				
+					Thread runner = new Thread() {
+						public void run() {
+							setVisible(false);
+							if (kernelChanged)
+								app.storeUndoInfo();
+							
+							try {
+								exportAllOpenFilesToHTML();
+							} catch (Exception e) {
+			    				app.showError("SaveFileFailed");
+			    				Application.debug(e.toString());					
+							}
+	
+						}
+					};
+					runner.start();
+				}
+			});
+		}
+		
 		/*
 		JButton clipboardButton = new JButton(app.getMenu("Clipboard"));
 		clipboardButton.addActionListener(new ActionListener() {
@@ -221,10 +249,14 @@ public class WorksheetExportDialog extends JDialog {
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		buttonPanel.add(Box.createHorizontalGlue());
+		
+		if (exportAllButton != null) {
+			buttonPanel.add(exportAllButton);
+			buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+		}
+		
 		buttonPanel.add(exportButton);
-		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
-		//buttonPanel.add(clipboardButton);
-		buttonPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
 		buttonPanel.add(cancelButton);
 		
 		getContentPane().setLayout(new BorderLayout());
@@ -615,7 +647,7 @@ public class WorksheetExportDialog extends JDialog {
 		
 		switch (type) {
 		case TYPE_HTMLCLIPBOARD:
-			stringSelection = new StringSelection(getHTML(null));
+			stringSelection = new StringSelection(getHTML(app, null, null, null));
 			break;
 			
 		case TYPE_MEDIAWIKI:
@@ -636,7 +668,7 @@ public class WorksheetExportDialog extends JDialog {
 				appletHeight = sizePanel.getSelectedHeight();
 			}
 
-			stringSelection = new StringSelection(getAppletTag(null, appletWidth, appletHeight, false, removeLineBreaks));
+			stringSelection = new StringSelection(getAppletTag(app, null, appletWidth, appletHeight, false, removeLineBreaks));
 			break;
 			
 		case TYPE_JSXGRAPH:
@@ -665,7 +697,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		htmlFile = guiManager.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
 				.getPlain("html")
-				+ " " + app.getMenu("Files"));
+				+ " " + app.getMenu("Files"), true);
 		if (htmlFile == null)
 			return;
 		
@@ -686,7 +718,7 @@ public class WorksheetExportDialog extends JDialog {
 			FileOutputStream fos = new FileOutputStream(htmlFile);
 			Writer fw = new OutputStreamWriter(fos, "UTF8");
 
-			fw.write(getHTML(ggbFile));
+			fw.write(getHTML(app, ggbFile, null, null));
 			fw.close();
 
 			final File HTMLfile = htmlFile;
@@ -715,6 +747,83 @@ public class WorksheetExportDialog extends JDialog {
 			app.showError("SaveFileFailed");
 			Application.debug(ex.toString());
 		} 
+	}
+	
+	/**
+	 * Exports all open ggb files as separate html files linked with Next and Back buttons
+	 * @throws IOException 
+	 */
+	private void exportAllOpenFilesToHTML() throws IOException {
+		
+		final ArrayList<GeoGebraFrame> ggbInstances = GeoGebraFrame.getInstances();
+
+		int size = ggbInstances.size();
+		
+		File htmlFile = null;
+
+		File currFile = Application.removeExtension(app.getCurrentFile());
+		if (currFile != null)
+			htmlFile = Application
+					.addExtension(currFile, Application.FILE_EXT_HTML);
+
+		htmlFile = guiManager.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
+				.getPlain("html")
+				+ " " + app.getMenu("Files"), false);
+		
+		if (htmlFile == null)
+			return;
+		
+		String fileBase = Application.removeExtension(htmlFile.toString());
+		
+
+		StringBuilder next = new StringBuilder();
+		StringBuilder prev = new StringBuilder();
+		
+		for (int i = 0; i < size; i++) {
+			GeoGebraFrame ggb = (GeoGebraFrame) ggbInstances.get(i);
+			Application application = ggb.getApplication();
+			
+			htmlFile = new File(fileBase+(i+1)+".html");
+			//Application.debug("writing "+htmlFile);
+			FileOutputStream fos = new FileOutputStream(htmlFile);
+			Writer fw = new OutputStreamWriter(fos, "UTF8");
+			
+			next.setLength(0);
+			prev.setLength(0);
+			
+			if (i > 0) {
+				prev.append(fileBase);
+				prev.append((i + 0)+"");
+				prev.append(".html");
+			}
+			if (i < size - 1) {
+				next.append(fileBase);
+				next.append((i + 2)+"");
+				next.append(".html");
+			}
+
+			fw.write(getHTML(application, null, next.toString(), prev.toString()));
+			fw.close();
+
+		}
+		
+
+
+			final File HTMLfile = new File(fileBase+"1.html");
+			// open browser
+			Thread runner = new Thread() {
+	    		public void run() {    
+	    			try {
+	    				
+		    			// open html file in browser
+	    				guiManager.showURLinBrowser(HTMLfile.toURL());
+	    			} catch (Exception ex) {			
+	    				app.showError("SaveFileFailed");
+	    				Application.debug(ex.toString());
+	    			} 
+	    		}
+			};
+			runner.start();
 	}
 	
 	/**
@@ -975,7 +1084,7 @@ public class WorksheetExportDialog extends JDialog {
 		appendWithLineBreak(sb, "<![CDATA[");
 		appendWithLineBreak(sb, "<div id='ggbapplet'>");
 		
-		sb.append(getAppletTag(null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true, removeLineBreaks));
+		sb.append(getAppletTag(app, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true, removeLineBreaks));
 
 		appendWithLineBreak(sb, "</div>");
 		appendWithLineBreak(sb, "]]>");
@@ -992,7 +1101,7 @@ public class WorksheetExportDialog extends JDialog {
 	 * @param ggbFile
 	 *            construction File
 	 */
-	private String getHTML(File ggbFile) {
+	private String getHTML(Application app, File ggbFile, String nextLink, String previousLink) {
 		StringBuilder sb = new StringBuilder();
 
 		// applet width
@@ -1062,7 +1171,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		// include applet tag
 		appendWithLineBreak(sb, "");
-		sb.append(getAppletTag(ggbFile, appletWidth, appletHeight, true, removeLineBreaks));
+		sb.append(getAppletTag(app, ggbFile, appletWidth, appletHeight, true, removeLineBreaks));
 		appendWithLineBreak(sb, "");
 
 		// text after applet
@@ -1077,6 +1186,26 @@ public class WorksheetExportDialog extends JDialog {
 
 		appendWithLineBreak(sb, "</td></tr>");
 		sb.append("</table>");
+		
+		if (previousLink != null && previousLink.length() > 0) {		
+			sb.append("<form method=\"post\" action=\"");
+			sb.append(previousLink);
+			appendWithLineBreak(sb, "\">");
+			sb.append("<input type=\"submit\" value=\"");
+			sb.append(app.getMenu("Back"));
+			appendWithLineBreak(sb, "\">");
+			appendWithLineBreak(sb, "</form>");		
+		}
+		
+		if (nextLink != null && nextLink.length() > 0) {
+			sb.append("<form method=\"post\" action=\"");
+			sb.append(nextLink);
+			appendWithLineBreak(sb, "\">");
+			sb.append("<input type=\"submit\" value=\"");
+			sb.append(app.getMenu("Next"));
+			appendWithLineBreak(sb, "\">");
+			appendWithLineBreak(sb, "</form>");					
+		}
 		
 		appendJavaScript(sb);
 		
@@ -1148,7 +1277,7 @@ public class WorksheetExportDialog extends JDialog {
 		return sb.toString();
 	}
 	
-	public String getAppletTag(File ggbFile, int width, int height, boolean mayscript, boolean RemoveLineBreaks) {
+	public String getAppletTag(Application app, File ggbFile, int width, int height, boolean mayscript, boolean RemoveLineBreaks) {
 		
 		this.removeLineBreaks = RemoveLineBreaks;
 		

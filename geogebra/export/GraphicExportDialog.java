@@ -466,7 +466,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		file =
 			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_EPS, null,
-				app.getPlain("eps") + " " + app.getMenu("Files"));
+				app.getPlain("eps") + " " + app.getMenu("Files"), true);
 		if (file == null)
 			return false;
 		try {		
@@ -506,7 +506,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		file =
 			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_EMF, null,
-				app.getPlain("emf") + " " + app.getMenu("Files"));
+				app.getPlain("emf") + " " + app.getMenu("Files"), true);
 		//  Michael Borcherds 2008-03-02 END
 
 		if (file == null)
@@ -551,7 +551,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		file =
 			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_PDF, null,
-				app.getPlain("pdf") + " " + app.getMenu("Files"));
+				app.getPlain("pdf") + " " + app.getMenu("Files"), true);
 		
 		if (file == null)
 			return false;
@@ -612,7 +612,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 		file =
 			app.getGuiManager().showSaveDialog(
 				Application.FILE_EXT_SVG, null,
-				app.getPlain("svg") + " " + app.getMenu("Files"));
+				app.getPlain("svg") + " " + app.getMenu("Files"), true);
 		
 		if (file == null)
 			return false;
@@ -684,7 +684,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 			file =
 				app.getGuiManager().showSaveDialog(
 					Application.FILE_EXT_PNG, null,
-					app.getPlain("png") + " " + app.getMenu("Files"));
+					app.getPlain("png") + " " + app.getMenu("Files"), true);
 		}
 
 		if (file == null) return false;

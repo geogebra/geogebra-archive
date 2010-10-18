@@ -1539,7 +1539,7 @@ public class GuiManager {
 		// Modified for Intergeo File Format (Yves Kreis) -->
 				// Application.FILE_EXT_GEOGEBRA, currentFile,
 				// app.getPlain("ApplicationName") + " " + app.getMenu("Files"));
-				fileExtensions, app.getCurrentFile(), fileDescriptions);
+				fileExtensions, app.getCurrentFile(), fileDescriptions, true);
 		// <-- Modified for Intergeo File Format (Yves Kreis)
 		if (file == null)
 			return false;
@@ -1553,15 +1553,15 @@ public class GuiManager {
 	   
 
 	public File showSaveDialog(String fileExtension, File selectedFile,
-			String fileDescription) {
+			String fileDescription, boolean promptOverwrite) {
 		// Added for Intergeo File Format (Yves Kreis) -->
 		String[] fileExtensions = { fileExtension };
 		String[] fileDescriptions = { fileDescription };
-		return showSaveDialog(fileExtensions, selectedFile, fileDescriptions);
+		return showSaveDialog(fileExtensions, selectedFile, fileDescriptions, promptOverwrite);
 	}
 
 	public File showSaveDialog(String[] fileExtensions, File selectedFile,
-			String[] fileDescriptions) {
+			String[] fileDescriptions, boolean promptOverwrite) {
 		// <-- Added for Intergeo File Format (Yves Kreis)
 		boolean done = false;
 		File file = null;
@@ -1653,7 +1653,7 @@ public class GuiManager {
 				file = addExtension(file, fileExtension);
 				fileChooser.setSelectedFile(file);
 
-				if (file.exists()) {
+				if (promptOverwrite && file.exists()) {
 					// ask overwrite question
 
 					// Michael Borcherds 2008-05-04

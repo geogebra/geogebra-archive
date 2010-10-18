@@ -144,7 +144,7 @@ abstract public class ExportFrame extends JFrame{
         		currentFile =
 		            app.getGuiManager().showSaveDialog(
 		                Application.FILE_EXT_TEX, currentFile,
-		                "TeX " + app.getMenu("Files"));
+		                "TeX " + app.getMenu("Files"), true);
 		        if (currentFile == null)
 		            return;
 		        else {
