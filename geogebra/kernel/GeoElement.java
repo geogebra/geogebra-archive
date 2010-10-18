@@ -548,6 +548,21 @@ public abstract class GeoElement
 	}
 	
 	/**
+	 * Copies the given points array. The resulting points are part of the given construction.
+	 */
+	public static GeoPointInterface [] copyPointsND(
+			Construction cons, 
+			GeoPointInterface [] points) {
+		GeoPointInterface [] pointsCopy = new GeoPointInterface[points.length];
+		for (int i=0; i < points.length; i++) {
+			pointsCopy[i] = (GeoPointInterface) ((GeoElement) points[i]).copyInternal(cons);			
+			((GeoElement) pointsCopy[i]).set((GeoElement) points[i]);
+		}
+		
+		return pointsCopy;
+	}
+	
+	/**
 	 * Copies the given segments array. The resulting segments are part of the given construction.
 	 *
 	public static GeoSegment [] copySegments(Construction cons, GeoSegment [] segments) {

@@ -395,6 +395,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		return ret;		
 	} 		
 	
+	protected GeoPointInterface newGeoPoint(){
+		return new GeoPoint(cons);
+	}
+	
 	public void set(GeoElement geo) {
 		GeoPolygon poly = (GeoPolygon) geo;		
 		area = poly.area;
@@ -404,15 +408,18 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		if (points.length != poly.points.length) {
 			GeoPointInterface [] tempPoints = new GeoPointInterface[poly.points.length];
 			for (int i=0; i < tempPoints.length; i++) {
-				tempPoints[i] = i < points.length ? points[i] : new GeoPoint(cons);
+				tempPoints[i] = i < points.length ? points[i] : newGeoPoint();
 			}
 			points = tempPoints;
 		}
 		
 		for (int i=0; i < points.length; i++) {				
-			((GeoPoint) points[i]).set(poly.points[i]);
+			((GeoElement) points[i]).set((GeoElement) poly.points[i]);
 		}	
+		
+		setCoordSys(null);
 		updateSegments();
+		
 	}
 	
 	
@@ -433,6 +440,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	public GeoPoint [] getPoints() {
 		return (GeoPoint []) points;
 	}
+	
+
 	
 	/**
 	 * Returns the segments of this polygon.

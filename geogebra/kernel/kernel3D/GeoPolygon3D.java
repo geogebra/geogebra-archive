@@ -211,15 +211,6 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		 setDefined();
 		 
 		 coordSys = cs;
-
-		 /*
-		 Application.debug("coordSys ="+coordSys);
-		 
-		 String s = "points = ";
-		 for (int i=0;i<points.length;i++)
-			 s+=points[i].getLabel()+", ";
-		 Application.debug(s);
-		 */
 		 
 		 points2D = new GeoPoint[points.length];
 		 for(int i=0; i<points.length; i++){
@@ -233,30 +224,6 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 			
 		 }
 		 
-		 
-		 /*
-		 // turn off the kernel notifications for algos below
-		 this.getKernel().setSilentMode(true);
-		 
-		 // if there's no coord sys, create it with AlgoCoordSys2D
-		 if (coordSys==null){
-			 AlgoCoordSys2D algo = new AlgoCoordSys2D(this.getConstruction(),null,(GeoPoint3D[]) points,false);
-			 coordSys = algo.getCoordSys();
-		 }
-		 
-		 //Application.debug("coordSys ="+coordSys);
-		 
-		 //sets the 2D points in coord sys
-		 points2D = new GeoPoint[points.length];
-		 for(int i=0; i<points.length; i++){
-			 points2D[i]=(GeoPoint) ((Kernel3D) this.getKernel()).From3Dto2D(null, (GeoPoint3D) points[i], this.coordSys);
-			 //cons.removeFromConstructionList(points2D[i]);    
-		 }
-		 
-		 // turn on the kernel notifications 
-		 this.getKernel().setSilentMode(false);
-		 */
-			 
 	}
 	 
 	 
@@ -575,13 +542,21 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		isPickable = v;
 	}
 
-
-	/*
-	public void getXML(StringBuilder sb) {
-		super.getXML(sb);
-		Application.debug("label="+label+", XML="+Util.encodeXML(label));
-	}
-	*/
 	
+	
+	public GeoElement copyInternal(Construction cons) {						
+		GeoPolygon3D ret = new GeoPolygon3D(cons, null); 
+		ret.points = GeoElement.copyPointsND(cons, points);		
+		ret.set(this);
+				
 
+		
+		
+		return ret;		
+	} 
+	
+	protected GeoPointInterface newGeoPoint(){
+		return new GeoPoint3D(cons);
+	}
+	
 }

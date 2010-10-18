@@ -86,6 +86,17 @@ GeoLineInterface, GeoCoordSys{
 	}
 	
 	
+	public void set(GeoElement geo) {
+		if (geo instanceof GeoCoordSys1D){
+			if (!geo.isDefined())
+				setUndefined();
+			else
+				setCoord((GeoCoordSys1D) geo);
+		}
+
+	}
+	
+	
 	/**
 	 * @param cons 
 	 * @return a new instance of the proper GeoCoordSys1D (GeoLine3D, GeoSegment3D, ...)

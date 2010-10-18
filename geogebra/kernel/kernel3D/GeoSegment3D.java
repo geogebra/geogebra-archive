@@ -100,13 +100,6 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 		return false;
 	}
 
-	/**
-	 * TODO set this to Geo
-	 * @param geo the GeoElement
-	 */
-	public void set(GeoElement geo) {
-		
-	}
 
 
 	

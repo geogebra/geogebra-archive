@@ -52,10 +52,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 		return false;
 	}
 
-	public void set(GeoElement geo) {
-		// TODO Raccord de méthode auto-généré
 
-	}
 
 
 	public boolean showInAlgebraView() {
