@@ -210,9 +210,10 @@ public class WorksheetExportDialog extends JDialog {
 								app.storeUndoInfo();
 							
 							try {
-								exportAllOpenFilesToHTML();
+								exportAllOpenFilesToHTMLasTabs();
 							} catch (Exception e) {
 			    				app.showError("SaveFileFailed");
+			    				e.printStackTrace();
 			    				Application.debug(e.toString());					
 							}
 	
@@ -750,6 +751,127 @@ public class WorksheetExportDialog extends JDialog {
 	}
 	
 	/**
+	 * Exports all open ggb files as one html files with Tabs to choose
+	 * @throws IOException 
+	 */
+	private void exportAllOpenFilesToHTMLasTabs() throws IOException {
+		
+		File htmlFile = null;
+
+		File currFile = Application.removeExtension(app.getCurrentFile());
+		if (currFile != null)
+			htmlFile = Application
+					.addExtension(currFile, Application.FILE_EXT_HTML);
+
+		htmlFile = guiManager.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
+				.getPlain("html")
+				+ " " + app.getMenu("Files"), true);
+		
+		if (htmlFile == null)
+			return;
+		
+		
+		StringBuilder sb = new StringBuilder();
+	
+
+	
+	appendWithLineBreak(sb,"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
+	appendWithLineBreak(sb,"<html lang=\"en\">");
+	appendWithLineBreak(sb,"<head>");
+	appendWithLineBreak(sb,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">");
+	appendWithLineBreak(sb,"<title>Simple Tabber Example</title>");
+	 
+	appendWithLineBreak(sb,"<script type=\"text/javascript\" src=\"tabber.js\"></script>");
+	appendWithLineBreak(sb,"<link rel=\"stylesheet\" href=\"ggb.css\" TYPE=\"text/css\" MEDIA=\"screen\">");
+	//appendWithLineBreak(sb,"<link rel=\"stylesheet\" href=\"example-print.css\" TYPE=\"text/css\" MEDIA=\"print\">");
+	 
+	appendWithLineBreak(sb,"<script type=\"text/javascript\">");
+	 
+	appendWithLineBreak(sb,"document.write('<style type=\"text/css\">.tabber{display:none;}<\\/style>');");
+	appendWithLineBreak(sb,"</script>");
+	 
+	appendWithLineBreak(sb,"</head>");
+	appendWithLineBreak(sb,"<body>");
+	 
+	appendWithLineBreak(sb,"<h1>Tabber Example</h1>");
+	 
+		appendWithLineBreak(sb,"<div class=\"tabber\">");
+	 
+		
+		
+		final ArrayList<GeoGebraFrame> ggbInstances = GeoGebraFrame.getInstances();
+
+		int size = ggbInstances.size();
+		
+		for (int i = 0; i < size; i++) {
+			GeoGebraFrame ggb = (GeoGebraFrame) ggbInstances.get(i);
+			Application application = ggb.getApplication();
+
+			appendWithLineBreak(sb,"<div class=\"tabbertab\">");
+			
+			//appendWithLineBreak(sb,"<h2>Tab 1</h2>");
+			sb.append("<h2>");
+			File file = application.getCurrentFile();
+			
+			if (file != null)
+				sb.append(file.getName());
+			else 
+				sb.append("Tab "+(i+1));
+			
+			sb.append("</h2>");
+
+			//appendWithLineBreak(sb,"<p>Tab 1 content.</p>");
+			sb.append("<p>");			
+
+			sb.append(getAppletTag(application, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), false, removeLineBreaks));
+			sb.append("</p>");
+
+			appendWithLineBreak(sb,"</div>");
+
+		}
+	 
+	 
+	appendWithLineBreak(sb,"</div>");
+	 
+	appendWithLineBreak(sb,"</body>");
+	appendWithLineBreak(sb,"</html>");
+	
+	FileOutputStream fos = new FileOutputStream(htmlFile);
+	Writer fw = new OutputStreamWriter(fos, "UTF8");
+	fw.write(sb.toString());
+	fw.close();
+	
+	String text = app.loadTextFile("/geogebra/export/ggb.css");
+	fos = new FileOutputStream(htmlFile.getParent()+"/ggb.css");
+	fw = new OutputStreamWriter(fos, "UTF8");
+	fw.write(text);
+	fw.close();
+
+	text = app.loadTextFile("/geogebra/export/tabber.js");
+	fos = new FileOutputStream(htmlFile.getParent()+"/tabber.js");
+	fw = new OutputStreamWriter(fos, "UTF8");
+	fw.write(text);
+	fw.close();
+
+	final File HTMLfile = htmlFile;
+	// open browser
+	Thread runner = new Thread() {
+		public void run() {    
+			try {
+				
+    			// open html file in browser
+				guiManager.showURLinBrowser(HTMLfile.toURL());
+			} catch (Exception ex) {			
+				app.showError("SaveFileFailed");
+				Application.debug(ex.toString());
+			} 
+		}
+	};
+	runner.start();
+
+	
+	}
+	/**
 	 * Exports all open ggb files as separate html files linked with Next and Back buttons
 	 * @throws IOException 
 	 */
@@ -773,7 +895,7 @@ public class WorksheetExportDialog extends JDialog {
 		if (htmlFile == null)
 			return;
 		
-		String fileBase = Application.removeExtension(htmlFile.toString());
+		String fileBase = Application.removeExtension(htmlFile.getName());
 		
 
 		StringBuilder next = new StringBuilder();
@@ -784,7 +906,7 @@ public class WorksheetExportDialog extends JDialog {
 			Application application = ggb.getApplication();
 			
 			htmlFile = new File(fileBase+(i+1)+".html");
-			//Application.debug("writing "+htmlFile);
+			//Application.debug("writing "+fileBase+(i+1)+".html");
 			FileOutputStream fos = new FileOutputStream(htmlFile);
 			Writer fw = new OutputStreamWriter(fos, "UTF8");
 			
