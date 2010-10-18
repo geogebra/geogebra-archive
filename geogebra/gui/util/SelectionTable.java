@@ -5,16 +5,24 @@ package geogebra.gui.util;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.DefaultTableModel;
@@ -76,12 +84,12 @@ public class SelectionTable extends JTable{
 	public static final int MODE_LATEX = 2;
 	public static final int MODE_TEXT = 3;
 	public static final int MODE_COLOR_SWATCH = 4;
-	public static final int MODE_POINTSTYLE = 5;
-	public static final int MODE_LINESTYLE = 6;
-	public static final int MODE_SLIDER_LINE = 7;
-	public static final int MODE_SLIDER_POINT = 8;
-	public static final int MODE_COLOR_SWATCH_TEXT = 9;
-	public static final int MODE_ICON = 10;
+	public static final int MODE_COLOR_SWATCH_TEXT = 5;
+	public static final int MODE_POINTSTYLE = 6;
+	public static final int MODE_LINESTYLE = 7;
+	public static final int MODE_SLIDER = 8;
+	public static final int MODE_ICON = 9;
+	public static final int MODE_ICON_FILE = 10;
 	
 	
 
@@ -139,11 +147,7 @@ public class SelectionTable extends JTable{
 		this.setAutoResizeMode(AUTO_RESIZE_OFF);
 		this.setAutoCreateColumnsFromModel(false);
 		setShowGrid(false);
-		//setGridColor(MyTable.TABLE_GRID_COLOR);
-		//setBackground(Color.white);
-		//setOpaque(true);
 		this.setTableHeader(null);
-		//this.setBorder(BorderFactory.createLineBorder(getGridColor()));
 		this.setBorder(null);
 		
 		// set cell selection properties
@@ -152,8 +156,12 @@ public class SelectionTable extends JTable{
 			
 	
 		// set cell dimensions
-		rowHeight = iconSize.height + 3;
-		columnWidth = iconSize.width + 3;
+		int padding = 4;
+		if(mode == MODE_COLOR_SWATCH || mode == MODE_COLOR_SWATCH_TEXT)
+			padding = 1;
+		
+		rowHeight = iconSize.height + padding;
+		columnWidth = iconSize.width + padding;
 		setRowHeight(rowHeight);	
 		for (int i = 0; i < getColumnCount(); ++ i) {
 			getColumnModel().getColumn(i).setPreferredWidth(columnWidth);
@@ -254,36 +262,42 @@ public class SelectionTable extends JTable{
 	
 	
 
-	public void updateIcon(GeoGebraIcon icon, Object value){
+	public ImageIcon getDataIcon(Object value){
+		
+		ImageIcon icon = null;
 		
 		switch (mode){
 
 		case MODE_IMAGE:
-			icon.createFileImageIcon( app, (String)value, alpha, iconSize);
+			icon = GeoGebraIcon.createFileImageIcon( app, (String)value, alpha, iconSize);
 			break;
 
 		case MODE_ICON:
-			icon.setImage(app.getImageIcon((String)value).getImage());
+			icon = (ImageIcon) value;
+			break;
+						
+		case MODE_ICON_FILE:
+			icon = app.getImageIcon((String)value);
 			break;
 			
-			
 		case MODE_LINESTYLE:
-			icon.createLineStyleIcon( (Integer)value,  2,  iconSize,  Color.BLACK,  null);
+			icon = GeoGebraIcon.createLineStyleIcon( (Integer)value,  2,  iconSize,  Color.BLACK,  null);
 			break;
 
 		case MODE_COLOR_SWATCH:
 		case MODE_COLOR_SWATCH_TEXT:
 			alpha = getSliderValue()/100.0f;
 			fgColor = (Color)value;
-			icon.createColorSwatchIcon( alpha,  iconSize, fgColor , null);
+			icon = GeoGebraIcon.createColorSwatchIcon( alpha,  iconSize, fgColor , null);
 			break;
 
 		case MODE_POINTSTYLE:
-			icon.createPointStyleIcon( (Integer)value,  4,  iconSize,  Color.BLACK,  null);
+			icon = GeoGebraIcon.createPointStyleIcon( (Integer)value,  4,  iconSize,  Color.BLACK,  null);
 			break;
 			
 		}
 			
+		return icon;
 	}
 	
 	
@@ -295,23 +309,33 @@ public class SelectionTable extends JTable{
 	class MyCellRenderer extends JLabel implements TableCellRenderer {
 
 		private Border normalBorder, selectedBorder, rollOverBorder;
-		private GeoGebraIcon icon;
-		//TODO --- selection color should be centralized, not from spreadsheet
-		// also maybe try to simulate combobox gui with checkmark for selection?
-		private Color selectionColor =  MyTable.SELECTED_BACKGROUND_COLOR ;
+		private Color selectionColor, rollOverColor;
 		
 		public MyCellRenderer() {
+			
+			//TODO --- selection color should be centralized, not from spreadsheet
+			
+			selectionColor =  MyTable.SELECTED_BACKGROUND_COLOR ;
+			rollOverColor =  Color.LIGHT_GRAY;
+			if(mode == SelectionTable.MODE_COLOR_SWATCH || mode == SelectionTable.MODE_COLOR_SWATCH_TEXT){
+				selectionColor = this.getBackground();
+				rollOverColor = this.getBackground();
+			}
+			
+			
+			normalBorder = BorderFactory.createEmptyBorder();
+			selectedBorder = BorderFactory.createEmptyBorder();
+			selectedBorder = BorderFactory.createEmptyBorder();
+			if(mode == SelectionTable.MODE_COLOR_SWATCH || mode == SelectionTable.MODE_COLOR_SWATCH_TEXT || mode == SelectionTable.MODE_POINTSTYLE){
+				normalBorder = BorderFactory.createLineBorder(Color.GRAY);
+				selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 3);			
+				selectedBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
+			}
+			
 			setOpaque(true);
 			setHorizontalAlignment(CENTER);
 			setVerticalAlignment(CENTER);
 			
-			normalBorder = BorderFactory.createEmptyBorder();
-			//normalBorder = BorderFactory.createEtchedBorder();
-			//normalBorder = BorderFactory.createLineBorder(Color.BLACK);
-			selectedBorder = BorderFactory.createLineBorder(Color.DARK_GRAY, 2);		
-			rollOverBorder = BorderFactory.createLineBorder(Color.DARK_GRAY, 2);
-			
-			icon = new GeoGebraIcon();
 			setFont(app.getPlainFont());
 		}
 		
@@ -324,52 +348,61 @@ public class SelectionTable extends JTable{
 			setAlignmentX(CENTER_ALIGNMENT);
 			setAlignmentY(CENTER_ALIGNMENT);
 
-			// hide file name and draw icon from this image file name
 			if(mode == MODE_TEXT){
 				this.setHorizontalAlignment(SwingConstants.LEFT);
 				this.setVerticalAlignment(SwingConstants.CENTER);
-				setIcon(null);
 				setText((String)value);
-				
-				
-				if (isSelected) {
-					setBackground(selectionColor);
-				} 
-				else if(row == rollOverRow && column == rollOverColumn) {
-					setBackground(selectionColor);
+				if(isSelected){
+					setIcon(GeoGebraIcon.createPointStyleIcon( 0,  2,  new Dimension(8,8),  Color.BLACK,  null));
+				}else{
+					setIcon(GeoGebraIcon.createEmptyIcon(8,8));
 				}
-				else{
-					setBackground(table.getBackground());
-				}
-				
-				
-				
+							
 			}else{		
 				setText("");
 				if(value == null){				
 					setIcon(null);
 				}else{
-					updateIcon(icon,value);
-					setIcon(icon);
-				}
-
-
-				// set border --- should this be in prepareRenderer??
-				setBackground(table.getBackground());
-				if (isSelected) {
-					setBorder(selectedBorder);
-				} 
-				else if(row == rollOverRow && column == rollOverColumn) {
-					setBorder(rollOverBorder);
-				}
-				else{
-					setBorder(normalBorder);
+					setIcon(getDataIcon(value));
 				}
 			}
 			
+			
+			if (isSelected) {
+				setBackground(selectionColor);
+				setBorder(selectedBorder);
+			} 
+			else if(row == rollOverRow && column == rollOverColumn) {
+				setBackground(rollOverColor);
+				setBorder(rollOverBorder);
+			}
+			else{
+				setBackground(table.getBackground());
+				setBorder(normalBorder);
+			}
+						
 	        return this;
 	    }
 	}
 
+	@Override
+	public void paint(Graphics graphics) {
+		super.paint(graphics);	
+		Graphics2D g2 = (Graphics2D)graphics;
+
+		g2.setStroke(new BasicStroke(1));
+		
+		Rectangle r = this.getCellRect(this.getSelectedRow(), this.getSelectedColumn(), true);
+		//r. grow(1, 1);
+		g2.setPaint(Color.BLACK);
+		//g2.draw(r);
+		
+		r = this.getCellRect(this.rollOverRow, this.rollOverColumn, true);
+		//r.grow(1, 1);
+		g2.setPaint(Color.GRAY);
+		//g2.draw(r);
+		
+	}
+	
 	
 }

@@ -6,6 +6,7 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -41,7 +42,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	
 	private JPopupMenu myPopup;
 	private JSlider mySlider;
-	private GeoGebraIcon selectedIcon;
+	private ImageIcon selectedIcon;
 	
 	private Color fgColor;
 	private int fontStyle = 0;
@@ -78,12 +79,13 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		super(); 
 		this.app = app;
 
-		selectedIcon = new GeoGebraIcon();
+		selectedIcon = new ImageIcon();
 		
 		// create the popup
 		myPopup = new JPopupMenu();
-		//myPopup.setBackground(this.getBackground());
-		myPopup.setBorder(BorderFactory.createEmptyBorder(3,3,3,3));
+		myPopup.setBackground(Color.WHITE);
+		myPopup.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY),
+				BorderFactory.createEmptyBorder(3,3,3,3)));
 
 		this.mode = mode;
 		this.iconSize = iconSize;
@@ -93,7 +95,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.setHorizontalAlignment(JButton.LEFT);
 		
 		// create slider only
-		if(mode == SelectionTable.MODE_SLIDER_LINE ){
+		if(mode == SelectionTable.MODE_SLIDER ){
 			hasTable = false;
 			getMySlider();
 			
@@ -118,6 +120,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				}
 			});
 
+			myTable.setBackground(myPopup.getBackground());
 			myPopup.add(myTable);
 		}
 
@@ -135,21 +138,23 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				}
 			}
 		});
-		
-		
-		
-		
+			
 		
 		isIniting = false;
 		//updateGUI();				
 	}
 	
+	
+	/**
+	 * Override processMouseEvents to prevent firing a mouseReleased event and
+	 * the resulting ActionPerformed event when the mouse is clicked in the
+	 * dropdown triangle region. Clicking in this part of the button should just
+	 * trigger the popup. ActionPerformed events will be fired by the popup
+	 * following user selection.
+	 */
+	@Override
 	protected void processMouseEvent(MouseEvent e){
 		
-		// Don't fire mouseReleased if the mouse is over the triangle
-		// region. We want the popup to be triggered but do not want
-		// to fire an ActionPerformed event. ActionPerformed events 
-		// are fired only after a selection is made in the popup. 
 		if(e.getID() == MouseEvent.MOUSE_RELEASED){
 			Point locButton = getLocation();
 			int h = e.getX() - locButton.x;
@@ -180,32 +185,40 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			switch (mode){
 
 			case SelectionTable.MODE_LINESTYLE:
-				selectedIcon.createLineStyleIcon( (Integer)data[getSelectedIndex()],  getSliderValue(),  iconSize,  fgColor,  null);
+				selectedIcon = GeoGebraIcon.createLineStyleIcon( (Integer)data[getSelectedIndex()],  getSliderValue(),  iconSize,  fgColor,  null);
 				break;
 
 			case SelectionTable.MODE_POINTSTYLE:
-				selectedIcon.createPointStyleIcon( (Integer)data[getSelectedIndex()],  getSliderValue(),  iconSize,  fgColor,  null);
+				selectedIcon = GeoGebraIcon.createPointStyleIcon( (Integer)data[getSelectedIndex()],  getSliderValue(),  iconSize,  fgColor,  null);
 				break;
 				
 			case SelectionTable.MODE_COLOR_SWATCH_TEXT:
-				selectedIcon.createTextSymbolIcon("A", app.getPlainFont(), iconSize,  fgColor,  null);
+				selectedIcon = GeoGebraIcon.createTextSymbolIcon("A", app.getPlainFont(), iconSize,  fgColor,  null);
 				break;
 
 			case SelectionTable.MODE_TEXT:
+				//setText((String)data[getSelectedIndex()]);
 				
-				setText((String)data[getSelectedIndex()]);
+				selectedIcon = GeoGebraIcon.createStringIcon((String)data[getSelectedIndex()], app.getPlainFont(), 
+						false, false, false, iconSize, Color.BLACK, null);
+				this.setMargin(new Insets(0,10,0,0));
 				break;
+	
 				
 			default:
-				myTable.updateIcon(selectedIcon, data[getSelectedIndex()]);
-				myTable.repaint();
-				setIcon(selectedIcon);
-
+				selectedIcon = myTable.getDataIcon(data[getSelectedIndex()]);
+				
 			}
+			
+			/*
 			if(mode == SelectionTable.MODE_TEXT)
 				setIcon(selectedIcon);
 			else
 				setIcon(selectedIcon.ensureIconSize(iconSize));
+			*/
+			
+			setIcon(selectedIcon);
+			myTable.repaint();
 			repaint();
 		}
 		
@@ -236,6 +249,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		else
 			d.width = 110;
 		mySlider.setPreferredSize(d);
+		
+		mySlider.setBackground(myPopup.getBackground());
 
 		myPopup.add(mySlider);
 	}
@@ -251,14 +266,14 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	 * must pass action events from the popup to the invoker
 	 */
 	public void handlePopupActionEvent(){
-		updateGUI();
 		this.fireActionPerformed(new ActionEvent(this,
 				ActionEvent.ACTION_PERFORMED,getActionCommand())); 
+		updateGUI();
 	}
 	
 	
 	/**
-	 * Change listener for our slider. This also fires an action event up to the
+	 * Change listener for slider. Fires an action event up to the
 	 * button invoker.
 	 */
 	public void stateChanged(ChangeEvent e) {
@@ -339,6 +354,12 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	 */
 	@Override
 	public void setIcon(Icon icon) {
+		if(icon == null){
+			super.setIcon(null);
+			return;
+		}
+		
+		icon = GeoGebraIcon.ensureIconSize((ImageIcon) icon, iconSize);
 		
 		// get icon width and height		
 		int w = 4;

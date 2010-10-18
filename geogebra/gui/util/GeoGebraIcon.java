@@ -13,6 +13,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
@@ -27,27 +28,32 @@ import javax.swing.ImageIcon;
  * @author G. Sturr
  *
  */
-public class GeoGebraIcon extends ImageIcon {
+public class GeoGebraIcon {
 
 	public GeoGebraIcon(){
 		super();
 	}
 
-
-	public GeoGebraIcon(Application app, String fileName, Dimension iconSize){
-		super();
-		setImage(app.getImageIcon(fileName).getImage());
-		ensureIconSize(iconSize);
-	}
-
 	
-	public void createFileImageIcon(Application app, String fileName, float alpha, Dimension iconSize){
+	public static ImageIcon createEmptyIcon(int width, int height){
+
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);	 
+		ImageIcon ic = new ImageIcon(image);
+		return ic;
+	}
+	
+	
+	public static ImageIcon createFileImageIcon(Application app, String fileName, float alpha, Dimension iconSize){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);	 
 		image = ImageManager.toBufferedImage( app.getImageManager().getImageResource(fileName));
-		setImage(image);
+		
+		ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+		
+		return ic;
 	}
 
 	
@@ -67,7 +73,7 @@ public class GeoGebraIcon extends ImageIcon {
 			g2.drawLine(4, 4*i, 12, 4*i);
 
 		ImageIcon ic = new ImageIcon(image);
-		ensureIconSize(ic, iconSize);
+		//ensureIconSize(ic, iconSize);
 		
 		return ic;
 	}
@@ -89,14 +95,14 @@ public class GeoGebraIcon extends ImageIcon {
 			g2.drawLine(4*i, 4, 4*i, 12);
 
 		ImageIcon ic = new ImageIcon(image);
-		ensureIconSize(ic, iconSize);
+		//ensureIconSize(ic, iconSize);
 		
 		return ic;
 	}
 	
 
 
-	public void createColorSwatchIcon(float alpha, Dimension iconSize, Color fgColor, Color bgColor){
+	public static ImageIcon createColorSwatchIcon(float alpha, Dimension iconSize, Color fgColor, Color bgColor){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
@@ -127,13 +133,16 @@ public class GeoGebraIcon extends ImageIcon {
 		g2.setStroke(new BasicStroke(thickness)); 
 		g2.drawRect(offset, offset, w-2*offset, h-2*offset);
 
-		setImage(image);
+		ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+		
+		return ic;
 
 	}
 
 
 
-	public void createLineStyleIcon(int dashStyle, int thickness, Dimension iconSize, Color fgColor, Color bgColor){
+	public static ImageIcon createLineStyleIcon(int dashStyle, int thickness, Dimension iconSize, Color fgColor, Color bgColor){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
@@ -153,12 +162,15 @@ public class GeoGebraIcon extends ImageIcon {
 		int mid = h / 2;
 		g2.drawLine(4, mid, w - 4, mid);
 
-		setImage(image);
+		ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+		
+		return ic;
 
 	}
 
 
-	public void createTextSymbolIcon(String symbol,Font font, Dimension iconSize, Color fgColor, Color bgColor){
+	public static ImageIcon createTextSymbolIcon(String symbol,Font font, Dimension iconSize, Color fgColor, Color bgColor){
 		
 		int h = iconSize.height;
 		int w = iconSize.width;
@@ -182,13 +194,17 @@ public class GeoGebraIcon extends ImageIcon {
 
 	    g2.drawString (symbol, msg_x, msg_y-2);
 	    g2.fillRect(1, h-5, w-1, 3);
-		setImage(image);
+	    
+	    ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+		
+		return ic;
 
 	}
 	
-	
-	public void createCharIcon(String c,Font font, boolean isBold, boolean isItalic, Dimension iconSize, Color fgColor, Color bgColor){
-		
+
+	public static ImageIcon createStringIcon(String c,Font font, boolean isBold, boolean isItalic, boolean isCentered, Dimension iconSize, Color fgColor, Color bgColor){
+
 		int h = iconSize.height;
 		int w = iconSize.width;
 
@@ -198,52 +214,95 @@ public class GeoGebraIcon extends ImageIcon {
 
 		if(bgColor != null)
 			g2.setBackground(bgColor);
+
+		g2.setColor (fgColor);
+		font = font.deriveFont((h-6)*1.0f);
+		if(isBold)
+			font = font.deriveFont(Font.BOLD);
+		if(isItalic)
+			font = font.deriveFont(Font.ITALIC);
+		g2.setFont (font);
+
+
+		FontMetrics fm = g2.getFontMetrics ();
+		int symbolWidth = fm.stringWidth (c);
+		int ascent = fm.getMaxAscent ();
+		int descent= fm.getMaxDescent ();
+		int x = (isCentered) ? w/2 - symbolWidth/2 : 1;
+		int mid_y = h/2 - descent/2 + ascent/2 - 1;
+
+		g2.drawString (c, x, mid_y);
+
+		return new ImageIcon(image);
 		
-	    g2.setColor (fgColor);
-	    font = font.deriveFont((h-4)*1.0f);
-	    if(isBold)
-	    	font = font.deriveFont(Font.BOLD);
-	    if(isItalic)
-	    	font = font.deriveFont(Font.ITALIC);
-	    g2.setFont (font);
-	    
-	    
-	    FontMetrics fm = g2.getFontMetrics ();
-	    int symbolWidth = fm.stringWidth (c);
-	    int ascent = fm.getMaxAscent ();
-	    int descent= fm.getMaxDescent ();
-	    int msg_x = w/2 - symbolWidth/2;
-	    int msg_y = h/2 - descent/2 + ascent/2;
-
-	    g2.drawString (c, msg_x, msg_y);
-	   
-		setImage(image);
-
-	}
-	
-	
-	
-	
-	
-	
-	public void createPointStyleIcon(int pointStyle, int pointSize, Dimension iconSize, Color fgColor, Color bgColor){
-
-		PointStyleImage image = new PointStyleImage(iconSize, pointStyle, pointSize,  fgColor,  bgColor);
-		setImage(image);
-
 	}
 
-	
 
 
-//TODO: draw LaTeX centered within a given icon size
+	public static ImageIcon createBracketIcon( String[] brackets,Font font, Dimension iconSize, Color fgColor, Color bgColor){
+/*
+		String latex = "\\left" + brackets[0] + "\\equiv" + "\\right" + brackets[1]; 
+		ImageIcon icon = createLatexIcon(app, latex, font, false, fgColor, null);
+		icon = GeoGebraIcon.ensureIconSize(icon, iconSize);
+	*/	
+		
+		int h = iconSize.height;
+		int w = iconSize.width;
+
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+				
+		if(bgColor != null)
+			g2.setBackground(bgColor);
+
+		g2.setColor (fgColor);
+		font = font.deriveFont((h-4)*1.0f);
+		g2.setFont (font);
+		FontMetrics fm = g2.getFontMetrics ();
+
+		//int symbolWidth = fm.stringWidth (c);
+		//int msg_x = w/2 - symbolWidth/2;
+
+		int ascent = fm.getMaxAscent ();
+		int descent = fm.getMaxDescent ();
+		int mid_y = h/2 - descent/2 + ascent/2;
+
+		int x = 2;
+		g2.drawString (brackets[0] + "::" + brackets[1], x, mid_y);
+		
+		return new ImageIcon(image);
+
+	}
+
+
+
+
+
+	public static ImageIcon createPointStyleIcon(int pointStyle, int pointSize, Dimension iconSize, Color fgColor, Color bgColor){
+
+		//TODO: PointStyleIcon as a stand alone class
+		GeoGebraIcon g = new GeoGebraIcon();
+		PointStyleImage image = g.new PointStyleImage(iconSize, pointStyle, pointSize,  fgColor,  bgColor);
+
+		ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+
+		return ic;
+
+	}
+
+
+
+
+	//TODO: draw LaTeX centered within a given icon size
 
 	/**
 	 * Draw a LaTeX image in the icon. Drawing is done twice. First draw gives 
 	 * the needed size of the image. Second draw renders the image with the correct
 	 * dimensions.
 	 */
-	public void createLatexIcon(Application app, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
+	public static ImageIcon createLatexIcon(Application app, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
 
 		// Create image with dummy size, then draw into it to get the correct size
 		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -271,7 +330,10 @@ public class GeoGebraIcon extends ImageIcon {
 		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, serif, fgColor,
 				bgColor);
 
-		setImage(image);
+		ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+		
+		return ic;
 
 	}
 
@@ -511,78 +573,38 @@ public class GeoGebraIcon extends ImageIcon {
 	}
 
 
-	
-public GeoGebraIcon ensureIconSize(Dimension iconSize){
-		
+
+	public static ImageIcon ensureIconSize(ImageIcon icon, Dimension iconSize){
+
 		int h = iconSize.height;
 		int w = iconSize.width;
-
+		int h2 = icon.getIconHeight();
+		int w2 = icon.getIconWidth();
+		if(h2 == h && w2 == w) 
+			return icon;
+		
+		int wInset = (w - w2) > 0 ? (w-w2)/2 : 0;
+		int hInset = (h - h2) > 0 ? (h-h2)/2 : 0;
+		
 		BufferedImage newImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = newImage.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		try {	
-			Image currentImage =  this.getImage();
+			Image currentImage =  icon.getImage();
 			if(currentImage !=null){
-				int h2 = currentImage.getHeight(null);
-				int w2 = currentImage.getWidth(null);
-
-				if(h2 == h && w2 == w) 
-					return this;
-
-				int wInset = (w - w2) > 0 ? (w-w2)/2 : w;
-				int hInset = (h - h2) > 0 ? (h-h2)/2 : h;
-
-				g2.drawImage(currentImage, hInset, wInset, null);
+				g2.drawImage(currentImage, wInset, hInset, null);
+				icon.setImage(newImage);
 			}
-			setImage(newImage);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		
-		return this;
-		
+		return icon;
 	}
 
 
-public static void ensureIconSize(ImageIcon icon, Dimension iconSize){
 
-	int h = iconSize.height;
-	int w = iconSize.width;
-
-	BufferedImage newImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-	Graphics2D g2 = newImage.createGraphics();
-	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-	try {	
-		Image currentImage =  icon.getImage();
-		if(currentImage !=null){
-			int h2 = currentImage.getHeight(null);
-			int w2 = currentImage.getWidth(null);
-
-			if(h2 == h && w2 == w) 
-				return;
-
-			int wInset = (w - w2) > 0 ? (w-w2)/2 : w;
-			int hInset = (h - h2) > 0 ? (h-h2)/2 : h;
-
-			g2.drawImage(currentImage, hInset, wInset, null);
-		}
-		icon.setImage(newImage);
-
-	} catch (Exception e) {
-		e.printStackTrace();
-	}
-
-
-	return;
-
-}
-
-
-	
 
 }
