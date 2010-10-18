@@ -58,7 +58,30 @@ public final class DrawLocus extends Drawable {
 			yLabel = (int) (lastPointCoords[1] + 4 + view.fontSize);   
 			addLabelOffset();           
 		}
+		
+		// draw trace
+		if (locus.trace) {
+			isTracing = true;
+			Graphics2D g2 = view.getBackgroundGraphics();
+			if (g2 != null) drawTrace(g2);
+		} else {
+			if (isTracing) {
+				isTracing = false;
+				view.updateBackground();
+			}
+		}			
+
    }
+    
+	final void drawTrace(Graphics2D g2) {
+    	if (isVisible) {
+    		g2.setPaint(geo.getObjectColor());
+    		g2.setStroke(objStroke);  
+            Drawable.drawWithValueStrokePure(gp, g2);
+    	}
+	}
+    
+
     
     private void buildGeneralPath(ArrayList pointList) {    
     	if (gp == null)

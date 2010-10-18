@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 
 
-public class GeoLocus extends GeoElement implements Path {
+public class GeoLocus extends GeoElement implements Path, Traceable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -224,6 +224,8 @@ public class GeoLocus extends GeoElement implements Path {
 	private double closestPointDist;
 	private int closestPointIndex;
 
+	public boolean trace;
+
 	public void pathChanged(GeoPointInterface P) {
 		// find closest point on changed path to P
 		pointChanged(P);
@@ -285,5 +287,18 @@ public class GeoLocus extends GeoElement implements Path {
 		return true;
 	}
 	
+	public void setTrace(boolean trace) {
+		this.trace = trace;
+	}
+
+	public boolean getTrace() {
+		return trace;
+	}
+    
+	public boolean isTraceable() {
+		return true;
+	}
+    
+
 
 }

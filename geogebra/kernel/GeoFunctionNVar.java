@@ -137,7 +137,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
      * @return f(vals)
      */
 	public double evaluate(double[] vals) {
-		Application.printStacktrace("");
+		//Application.printStacktrace("");
 		if (fun == null)
 			return Double.NaN;
 		else 
