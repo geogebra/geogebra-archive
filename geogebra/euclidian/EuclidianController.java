@@ -4537,6 +4537,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// set startpoint of text to midpoint of two points
 			GeoPoint midPoint = kernel.Midpoint(points[0], points[1]);
 			createDistanceText(points[0], points[1], midPoint, length);			
+			return true;
 		} 
 
 		// SEGMENT
@@ -4569,7 +4570,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// set startpoint of text to midpoint between point and line
 			GeoPoint midPoint = kernel.Midpoint(points[0], kernel.ProjectedPoint(points[0], lines[0]));
-			createDistanceText(points[0],lines[0], midPoint, length);		
+			createDistanceText(points[0],lines[0], midPoint, length);	
+			return true;
 		}
 
 		// circumference of CONIC
