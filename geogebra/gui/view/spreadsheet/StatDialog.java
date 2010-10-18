@@ -28,6 +28,7 @@ import java.awt.print.Printable;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -764,14 +765,14 @@ implements ActionListener, View, Printable   {
 	public void setRegEquation(String eqn){
 		
 		if(lblRegEquation == null) return;		
-		GeoGebraIcon icon = (GeoGebraIcon) lblRegEquation.getIcon();
+		ImageIcon icon = (ImageIcon) lblRegEquation.getIcon();
 		if(icon == null)
-			icon = new GeoGebraIcon();
+			icon = new ImageIcon();
 
 		if(this.regressionMode == REG_NONE)
 			icon = null;
 		else
-			icon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, this.getBackground());
+			icon = GeoGebraIcon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, this.getBackground());
 
 		lblRegEquation.setIcon(icon);
 		lblRegEquation.revalidate();

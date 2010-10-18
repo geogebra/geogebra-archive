@@ -41,7 +41,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	/***/
 	private static final long serialVersionUID = 1L;
 
-	private static final String ¯ = null;
+	
 	
 	private PopupMenuButton btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnMode, 
 		btnTableTextJustify, btnTableTextBracket;
