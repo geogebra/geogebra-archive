@@ -91,8 +91,8 @@ public class Test3D{
 		
         //init 3D view
         view3D.setZZero(-0.0);
-        view3D.setYZero(-100);
-        view3D.setRotXYinDegrees(-60,22.5,true);
+        view3D.setYZero(-117);
+        view3D.setRotXYinDegrees(-60,20,true);
         //view3D.setRotXYinDegrees(0,0,true);
 
         test();

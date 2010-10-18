@@ -22,6 +22,24 @@ public class DrawAxis3D extends DrawLine3D {
 	
 	private TreeMap<String, DrawLabel3D>  labels;
 	
+	
+
+	/** distance between two ticks */
+    private double distance = 1;
+    
+
+    /** time the last update of min/max occured */
+	private long time;
+
+	/** delay to wait before doing the update */
+	private static final int TIME_WAIT = 500;
+	/** delay for the update to have ended */
+	private static final int TIME_END = TIME_WAIT+500;
+	/** time factor for min/max calculation */
+	private static final float TIME_FACTOR = 1f/((float) (TIME_END-TIME_WAIT));
+	/** min/max when the update is finished */
+	private double drawMinFinal, drawMaxFinal;
+	
 	/**
 	 * common constructor
 	 * @param view3D
@@ -34,7 +52,6 @@ public class DrawAxis3D extends DrawLine3D {
 		super.setDrawMinMax(-2, 2);
 		
 		labels = new TreeMap<String, DrawLabel3D>();
-		
 		
 	}	
 	
@@ -218,20 +235,23 @@ public class DrawAxis3D extends DrawLine3D {
     }
     
     
+    
     /**
      * @return distance between two ticks
      */
     public double getNumbersDistance(){
-    	return ((GeoAxis3D) getGeoElement()).getNumbersDistance();
+    	double dt = (System.currentTimeMillis()-(time+TIME_WAIT))*TIME_FACTOR;
+    	
+    	//update the distance from the geo only if rotation has ended
+    	if (dt>0)
+    		distance = ((GeoAxis3D) getGeoElement()).getNumbersDistance();
+
+    	return distance;
     }
     
     
 	protected void updateForView(){
 
-		updateDrawMinMax();
-    	updateDecorations();
-    	
-    	setWaitForUpdate();
 	}
 	
 	
@@ -245,14 +265,6 @@ public class DrawAxis3D extends DrawLine3D {
 	
 	
 	
-	private long time;
-	
-
-	private static final int TIME_WAIT = 500;
-	private static final int TIME_END = TIME_WAIT+500;
-	private static final float TIME_FACTOR = 1f/((float) (TIME_END-TIME_WAIT));
-	
-	private double drawMinFinal, drawMaxFinal;
 	
 	public void setDrawMinMax(double drawMin, double drawMax){
 		time = System.currentTimeMillis();

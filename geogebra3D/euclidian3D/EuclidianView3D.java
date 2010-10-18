@@ -128,6 +128,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private DrawPlane3D xOyPlaneDrawable;
 	private DrawAxis3D[] axisDrawable;
 	
+	
 	/** number of drawables linked to this view (xOy plane, Ox, Oy, Oz axis) */
 	static final public int DRAWABLES_NB = 4;
 	/** id of z-axis */
@@ -740,7 +741,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**  @return min value for y-axis (linked to grid)*/
 	public double[] getYMinMax(){ return axisDrawable[AXIS_Y].getDrawMinMax(); }
 	/**  @return min value for z-axis */
-	public double[] getZMinMax(){ return axisDrawable[AXIS_Z].getDrawMinMax(); }
+	public double[] getZMinMax(){ 
+		return axisDrawable[AXIS_Z].getDrawMinMax(); 
+	}
 
 	
 	//TODO specific scaling for each direction
@@ -2658,14 +2661,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	private void viewChangedOwnDrawables(){
 		
-		// calc draw min/max for axis
-		for(int i=0;i<3;i++){
-			//axisDrawable[i].updateDrawMinMax();
-			//axisDrawable[i].updateDecorations();
-			axisDrawable[i].updateForView();
+		// calc draw min/max for x and y axis
+		for(int i=0;i<2;i++){
+			axisDrawable[i].updateDrawMinMax();
 		}
 		
-
+		//for z axis, use bottom to top min/max
+		double zmin = (renderer.getBottom()-getYZero())/getScale();
+		double zmax = (renderer.getTop()-getYZero())/getScale();
+		axisDrawable[AXIS_Z].setDrawMinMax(zmin, zmax);
+		
+		//update decorations and wait for update
+		for(int i=0;i<3;i++){
+			axisDrawable[i].updateDecorations();
+			axisDrawable[i].setWaitForUpdate();
+		}
 		/*
 		// sets min/max for the plane and axis
 		double xmin = axisDrawable[AXIS_X].getDrawMin(); 
