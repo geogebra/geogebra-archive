@@ -56,7 +56,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
@@ -77,6 +76,10 @@ public class WorksheetExportDialog extends JDialog {
 	public static final int DEFAULT_APPLET_WIDTH = 600;
 	public static final int DEFAULT_APPLET_HEIGHT = 500;	
 	
+	final private static int TYPE_SINGLE_FILE = 0;
+	final private static int TYPE_SINGLE_FILE_TABS = 1;
+	final private static int TYPE_MULTIPLE_FILES = 2;
+	
 	final private static int TYPE_HTMLFILE = 0;
 	final private static int TYPE_HTMLCLIPBOARD = 1;
 	final private static int TYPE_MEDIAWIKI = 2;
@@ -90,11 +93,11 @@ public class WorksheetExportDialog extends JDialog {
 	private InputPanel textAbove, textBelow;
 	private JCheckBox cbShowFrame, cbEnableRightClick, cbEnableLabelDrags, cbShowResetIcon,
 					cbShowMenuBar, cbSavePrint, cbShowToolBar, cbShowToolBarHelp, cbShowInputField,
-					cbUseBrowserForJavaScript, cbAllowRescaling, cbRemoveLinebreaks;
-	private JComboBox cbFileType;
-	private JButton exportButton, exportAllButton;
+					cbUseBrowserForJavaScript, cbAllowRescaling, cbRemoveLinebreaks, cbOpenButton;
+	private JComboBox cbFileType, cbAllWorksheets;
+	private JButton exportButton;
 	private GraphicSizePanel sizePanel;
-	private boolean useWorksheet = true, kernelChanged = false;			
+	private boolean kernelChanged = false;			
 	private JTabbedPane tabbedPane;
 	private GeoGebraPreferences ggbPref;
 	private GuiManager guiManager;
@@ -171,26 +174,52 @@ public class WorksheetExportDialog extends JDialog {
 						if (kernelChanged)
 							app.storeUndoInfo();
 						
+						int multipleType = cbAllWorksheets.getSelectedIndex();
 						int type = cbFileType.getSelectedIndex();
 						
-						// index 0 = file + html
-						if ( type == TYPE_HTMLFILE)
-							exportHTMLtoFile();
-						else
-							//index 1 = clipboard + html
-							// index 2 = clipboard + mediawiki
-							// index 3 = clipboard + google gadget
-							try {
-								exportToClipboard(type);
-								
-								if (type == TYPE_GOOGLEGADGET) {
-									// open Google Gadgets Editor
-									app.getGuiManager().showURLinBrowser("http://code.google.com/apis/gadgets/docs/tools.html#GGE");
+						switch (multipleType) {
+						
+						case TYPE_SINGLE_FILE:
+						
+							// index 0 = file + html
+							if ( type == TYPE_HTMLFILE)
+								exportHTMLtoFile();
+							else
+								//index 1 = clipboard + html
+								// index 2 = clipboard + mediawiki
+								// index 3 = clipboard + google gadget
+								try {
+									exportToClipboard(type);
+									
+									if (type == TYPE_GOOGLEGADGET) {
+										// open Google Gadgets Editor
+										app.getGuiManager().showURLinBrowser("http://code.google.com/apis/gadgets/docs/tools.html#GGE");
+									}
+								} catch (Exception e) {
+				    				app.showError("SaveFileFailed");
+				    				Application.debug(e.toString());					
 								}
+								break;
+								
+						case TYPE_SINGLE_FILE_TABS:
+							try {
+								exportAllOpenFilesToHTMLasTabs();
 							} catch (Exception e) {
 			    				app.showError("SaveFileFailed");
+			    				e.printStackTrace();
 			    				Application.debug(e.toString());					
 							}
+							break;
+						case TYPE_MULTIPLE_FILES:
+							try {
+								exportAllOpenFilesToHTML();
+							} catch (Exception e) {
+			    				app.showError("SaveFileFailed");
+			    				e.printStackTrace();
+			    				Application.debug(e.toString());					
+							}
+							break;
+						}  
 					}
 				};
 				runner.start();
@@ -199,30 +228,6 @@ public class WorksheetExportDialog extends JDialog {
 		
 
 		
-		if (GeoGebraFrame.getInstanceCount() > 1) {
-			exportAllButton = new JButton(app.getMenu("ExportAllWorksheets"));
-			exportAllButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {				
-					Thread runner = new Thread() {
-						public void run() {
-							setVisible(false);
-							if (kernelChanged)
-								app.storeUndoInfo();
-							
-							try {
-								exportAllOpenFilesToHTMLasTabs();
-							} catch (Exception e) {
-			    				app.showError("SaveFileFailed");
-			    				e.printStackTrace();
-			    				Application.debug(e.toString());					
-							}
-	
-						}
-					};
-					runner.start();
-				}
-			});
-		}
 		
 		/*
 		JButton clipboardButton = new JButton(app.getMenu("Clipboard"));
@@ -250,11 +255,6 @@ public class WorksheetExportDialog extends JDialog {
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		buttonPanel.add(Box.createHorizontalGlue());
-		
-		if (exportAllButton != null) {
-			buttonPanel.add(exportAllButton);
-			buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
-		}
 		
 		buttonPanel.add(exportButton);
 		buttonPanel.add(Box.createRigidArea(new Dimension(10, 0)));
@@ -286,6 +286,8 @@ public class WorksheetExportDialog extends JDialog {
 	    			GeoGebraPreferences.EXPORT_WS_RESET_ICON, "false")).booleanValue() );
 	    	cbShowFrame.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_FRAME_POSSIBLE, "false")).booleanValue() );
+	    	cbOpenButton.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_BUTTON_TO_OPEN, "false")).booleanValue() );
 	    	
 	    	cbShowMenuBar.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_MENUBAR, "false")).booleanValue() );
@@ -348,6 +350,7 @@ public class WorksheetExportDialog extends JDialog {
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_USE_BROWSER_FOR_JAVASCRIPT, Boolean.toString(cbUseBrowserForJavaScript.isSelected()));
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_ALLOW_RESCALING, Boolean.toString(cbAllowRescaling.isSelected()));
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_REMOVE_LINEBREAKS, Boolean.toString(cbRemoveLinebreaks.isSelected()));
+       	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_BUTTON_TO_OPEN, Boolean.toString(cbOpenButton.isSelected()));
            	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_GGB_FILE, Boolean.toString(cbOfflineArchiveAndGgbFile.isSelected()));        
     }
 
@@ -395,7 +398,7 @@ public class WorksheetExportDialog extends JDialog {
 		if (text.length() > 0)
 			textBelow.setText(text);
 
-		// action listener for radio buttons
+		/*		// action listener for radio buttons
 		ActionListener lst = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String cmd = e.getActionCommand();
@@ -426,7 +429,7 @@ public class WorksheetExportDialog extends JDialog {
 		bg.add(rb);			
 		appletPanel.add(rb);
 		
-		centerPanel.add(appletPanel, BorderLayout.CENTER);
+		centerPanel.add(appletPanel, BorderLayout.CENTER);*/
 		tab.add(centerPanel, BorderLayout.CENTER);		
 
 		return tab;
@@ -462,6 +465,11 @@ public class WorksheetExportDialog extends JDialog {
 		// framPossible
 		cbShowFrame = new JCheckBox(app.getPlain("DoubleClickToOpen"));		
 		funcPanel.add(cbShowFrame);
+		
+		// button to open applet
+		cbOpenButton = new JCheckBox(app.getPlain("OpenButton"));		
+		funcPanel.add(cbOpenButton);
+		
 		funcPanel.add(Box.createVerticalGlue());
 		
 		cbUseBrowserForJavaScript = new JCheckBox(app.getMenu("UseBrowserForJS"));
@@ -544,6 +552,14 @@ public class WorksheetExportDialog extends JDialog {
 		    }
 		});
 		// file type (file/clipboard, mediaWiki)
+		String worksheetStrings[] = { app.getMenu("SingleFile"), app.getMenu("SingleFileTabs"), app.getMenu("LinkedFiles") };
+		cbAllWorksheets = new JComboBox(worksheetStrings);
+		cbAllWorksheets.setEnabled(GeoGebraFrame.getInstanceCount() > 1);
+		JPanel secondLine3 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));				
+		//secondLine2.add(new JLabel(app.getPlain("AxisLabel") + ":"));
+		secondLine3.add(cbAllWorksheets);
+		appletPanel.add(secondLine3);	
+		
 		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": JSXGraph",app.getMenu("Clipboard")+": JavaScript",app.getMenu("Clipboard")+": Moodle" };
 		cbFileType = new JComboBox(fileTypeStrings);
 		cbFileType.setEnabled(true);
@@ -559,10 +575,13 @@ public class WorksheetExportDialog extends JDialog {
 		    	if (exportButton != null)
 			        if (cbFileType.getSelectedIndex() == TYPE_HTMLFILE) {
 			        	exportButton.setLabel(app.getMenu("Export"));
+			    		cbAllWorksheets.setEnabled(GeoGebraFrame.getInstanceCount() > 1);			        	
 			        }
 			        else
 			        {
 			        	exportButton.setLabel(app.getMenu("Clipboard"));
+			        	cbAllWorksheets.setEnabled(false);
+			        	cbAllWorksheets.setSelectedIndex(TYPE_SINGLE_FILE);
 			        }
 		    }
 		});
@@ -633,7 +652,7 @@ public class WorksheetExportDialog extends JDialog {
 	}
 
 	private void updateEnabledStates() {				
-		tabbedPane.setEnabledAt(1, useWorksheet);
+		tabbedPane.setEnabledAt(1, !cbOpenButton.isSelected());
 	}
 
 	private void centerOnScreen() {
@@ -661,7 +680,7 @@ public class WorksheetExportDialog extends JDialog {
 		
 		case TYPE_MOODLE:
 			int appletWidth, appletHeight;
-			if (!useWorksheet) { // change width and height for open button
+			if (cbOpenButton.isSelected()) { // change width and height for open button
 				appletWidth = BUTTON_WIDTH;
 				appletHeight = BUTTON_HEIGHT;
 			} else {
@@ -1228,7 +1247,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		// applet width
 		int appletWidth, appletHeight;
-		if (!useWorksheet) { // change width and height for open button
+		if (cbOpenButton.isSelected()) { // change width and height for open button
 			appletWidth = BUTTON_WIDTH;
 			appletHeight = BUTTON_HEIGHT;
 		} else {
@@ -1465,7 +1484,7 @@ public class WorksheetExportDialog extends JDialog {
 			appendWithLineBreak(sb, "\t<param name=\"centerimage\" value=\"true\"  />");
 		}
 
-		if (useWorksheet) {
+		if (!cbOpenButton.isSelected()) {
 			appendAllAppletParameters(sb, TYPE_HTMLFILE);			
 		} else {// button type
 			appendWithLineBreak(sb, "\t<param name=\"type\" value=\"button\"  />");
