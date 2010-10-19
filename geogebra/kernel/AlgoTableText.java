@@ -33,11 +33,8 @@ public class AlgoTableText extends AlgoElement {
     
     // style variables
     private int alignment;
-	private boolean verticalLines;
-	private boolean horizontalLines;
-	private String justification;
-	private String openBracket;
-	private String closeBracket;
+	private boolean verticalLines, horizontalLines;
+	private String justification, openBracket, closeBracket, openString, closeString;
     
 	// getters for style variables (used by EuclidianStyleBar)
 	public int getAlignment() {
@@ -56,12 +53,12 @@ public class AlgoTableText extends AlgoElement {
 		return justification;
 	}
 
-	public String getOpenBracket() {
-		return openBracket;
+	public String getOpenSymbol() {
+		return openString;
 	}
 
-	public String getCloseBracket() {
-		return closeBracket;
+	public String getCloseSymbol() {
+		return closeString;
 	}
 	
     
@@ -110,10 +107,7 @@ public class AlgoTableText extends AlgoElement {
     }
     
     
-    
-    
    
-	
     private void parseArgs() {
     	
     	int columns = geoList.size();
@@ -139,23 +133,34 @@ public class AlgoTableText extends AlgoElement {
     		if (optionsStr.indexOf("||||") > -1) {
     			openBracket = "\\left| \\left|";
     			closeBracket = "\\right| \\right|";
+    			openString = "||";
+    			closeString = "||";
     		} else if (optionsStr.indexOf("||") > -1) {
     			openBracket = "\\left|";
     			closeBracket = "\\right|";
+    			openString = "|";
+    			closeString = "|";
     		} else if (optionsStr.indexOf('(') > -1) {
     			openBracket = "\\left(";
+    			openString = "(";
     		} else if (optionsStr.indexOf('[') > -1) {
     			openBracket = "\\left[";
+    			openString = "[";
+    			
     		} else if (optionsStr.indexOf('{') > -1) {
     			openBracket = "\\left\\{";
+    			openString = "{";
     		} 
     		
     		if (optionsStr.indexOf(')') > -1) {
     			closeBracket = "\\right)";
+    			closeString = ")";
     		} else if (optionsStr.indexOf(']') > -1) {
     			closeBracket = "\\right]";
+    			closeString = "]";
     		} else if (optionsStr.indexOf('}') > -1) {
     			closeBracket = "\\right\\}";
+    			closeString = "}";
     		} 
     		
     	} else if (geoList.get(columns-1).isGeoText()) {

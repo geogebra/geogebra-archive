@@ -238,7 +238,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		mySlider.setMinorTickSpacing(5);
 		mySlider.setPaintTicks(false);
 		mySlider.setPaintLabels(false);
-		mySlider.setSnapToTicks(true);
+	//	mySlider.setSnapToTicks(true);
 
 		mySlider.addChangeListener(this);
 
@@ -282,7 +282,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		
 		if(mySlider != null)
 			setSliderValue(mySlider.getValue());
-		
+		//System.out.println(mySlider.getValue());
 		this.fireActionPerformed(new ActionEvent(this,
 				ActionEvent.ACTION_PERFORMED,getActionCommand())); 
 		

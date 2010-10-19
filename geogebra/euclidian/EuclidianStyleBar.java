@@ -77,6 +77,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private boolean needUndo = false;
 	
 	private AlgoTableText tableText;
+	private final String[] bracketArray = { "\u00D8" , "{ }" , "( )", "[ ]", "| |", "|| ||"};
+	private final String[] bracketArray2 = { "\u00D8" , "{ }" , "( )", "[ ]", "||", "||||"};
 	
 	
 	
@@ -759,33 +761,33 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//==============================
 		// bracket style popup
 
-		String[] bracketArray = { "\u00D8" , "{ }" , "( )", "| |", "[ ]", "||"};
+		
 	
 		ImageIcon[] bracketIcons = new ImageIcon[bracketArray.length];
 		for(int i = 0; i<bracketIcons.length; i++){
-				bracketIcons[i] = GeoGebraIcon.createStringIcon(bracketArray[i], app.getPlainFont(), true, false, true, iconDimension , Color.BLACK, null);
+				bracketIcons[i] = GeoGebraIcon.createStringIcon(bracketArray[i], app.getPlainFont(), true, false, true, new Dimension(30,maxIconHeight) , Color.BLACK, null);
 		}
 		
 		btnTableTextBracket = new PopupMenuButton(ev.getApplication(), bracketIcons, 2,-1,
-				new Dimension(40,maxIconHeight), SelectionTable.MODE_ICON){
+				new Dimension(30,maxIconHeight), SelectionTable.MODE_ICON){
 			@Override
 			public void update(Object[] geos) {
 				if(tableText != null){					
 					this.setVisible(true);
-					String justification = tableText.getJustification(); 
-					if(justification.equals("c")) btnTableTextBracket.setSelectedIndex(1);
-					else if (justification.equals("r")) btnTableTextBracket.setSelectedIndex(2);
-					else btnTableTextBracket.setSelectedIndex(0); //left align
+					String s = tableText.getOpenSymbol() + " " + tableText.getCloseSymbol(); 
+					int index = 0;
+					for(int i = 0; i < bracketArray.length; i++){
+						if(s.equals(bracketArray[i])) {
+							index = i;
+							break;
+						}
+					}
+					//System.out.println("index" + index);
+					btnTableTextBracket.setSelectedIndex(index); 
 					
 				}else{
 					this.setVisible(false);
 				}
-			}
-			public String getJustification() {
-				String s = "l";
-				if(this.getSelectedIndex() == 1) s = "c";
-				if(this.getSelectedIndex() == 2) s = "r";
-				return s;
 			}
 		};
 		
@@ -1032,7 +1034,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			btnTableTextLinesV.toggle();
 			applyTableTextFormat(targetGeos);			
 		}
-		
+		else if (source == btnTableTextBracket ) {
+			applyTableTextFormat(targetGeos);			
+		}
 		
 		else if (source == btnPenDelete) {
 			
@@ -1195,7 +1199,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		arg = justifyArray[btnTableTextJustify.getSelectedIndex()];
 		if(this.btnTableTextLinesH.isSelected()) arg += "_";
 		if(this.btnTableTextLinesV.isSelected()) arg += "|";
-		
+		if(btnTableTextBracket.getSelectedIndex() >0)
+			arg += this.bracketArray2[btnTableTextBracket.getSelectedIndex()];
 		ArrayList<GeoElement> newGeos = new ArrayList<GeoElement>();
 
 		for (int i = 0; i < geos.size(); i++) {

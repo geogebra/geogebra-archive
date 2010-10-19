@@ -322,7 +322,8 @@ public class SelectionTable extends JTable{
 			emptyBorder = BorderFactory.createEmptyBorder();
 			selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 3);			
 			rollOverBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
-
+			normalBorder = BorderFactory.createLineBorder(Color.GRAY, 1);
+			
 			setOpaque(true);
 			setHorizontalAlignment(CENTER);
 			setVerticalAlignment(CENTER);			
@@ -362,7 +363,7 @@ public class SelectionTable extends JTable{
 					setBorder(rollOverBorder);
 				}
 				else{			
-					setBorder(emptyBorder);
+					setBorder(normalBorder);
 				}
 				
 			}else{

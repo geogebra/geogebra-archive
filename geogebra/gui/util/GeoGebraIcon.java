@@ -203,7 +203,7 @@ public class GeoGebraIcon {
 	}
 	
 
-	public static ImageIcon createStringIcon(String c,Font font, boolean isBold, boolean isItalic, boolean isCentered, Dimension iconSize, Color fgColor, Color bgColor){
+	public static ImageIcon createStringIcon(String str, Font font, boolean isBold, boolean isItalic, boolean isCentered, Dimension iconSize, Color fgColor, Color bgColor){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
@@ -225,13 +225,13 @@ public class GeoGebraIcon {
 
 
 		FontMetrics fm = g2.getFontMetrics ();
-		int symbolWidth = fm.stringWidth (c);
+		int symbolWidth = fm.stringWidth (str);
 		int ascent = fm.getMaxAscent ();
 		int descent= fm.getMaxDescent ();
 		int x = (isCentered) ? w/2 - symbolWidth/2 : 1;
 		int mid_y = h/2 - descent/2 + ascent/2 - 1;
 
-		g2.drawString (c, x, mid_y);
+		g2.drawString (str, x, mid_y);
 
 		return new ImageIcon(image);
 		
