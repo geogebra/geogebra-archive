@@ -25,7 +25,7 @@ public class DrawAxis3D extends DrawLine3D {
 	
 
 	/** distance between two ticks */
-    private double distance = 1;
+    //private double distance = 1;
     
 
     /** time the last update of min/max occured */
@@ -204,7 +204,9 @@ public class DrawAxis3D extends DrawLine3D {
     	GgbVector v = axis.getCoordSys().getVx().copyVector();
     	getView3D().toScreenCoords3D(v);
     	v.set(3, 0); //set z-coord to 0
-    	double vScale = v.norm(); //axis scale, used for ticks distance
+    	//double vScale = v.norm(); //axis scale, used for ticks distance
+    	double vScale = getView3D().getScale(); //TODO use different scales for x/y/z
+    	//Application.debug("vScale="+vScale);
     	
     	//calc orthogonal offsets
     	int vx = (int) (v.get(1)*1.5*axis.getTickSize()/vScale);
@@ -240,6 +242,7 @@ public class DrawAxis3D extends DrawLine3D {
      * @return distance between two ticks
      */
     public double getNumbersDistance(){
+    	/*
     	double dt = (System.currentTimeMillis()-(time+TIME_WAIT))*TIME_FACTOR;
     	
     	//update the distance from the geo only if rotation has ended
@@ -247,6 +250,8 @@ public class DrawAxis3D extends DrawLine3D {
     		distance = ((GeoAxis3D) getGeoElement()).getNumbersDistance();
 
     	return distance;
+    	*/
+    	return ((GeoAxis3D) getGeoElement()).getNumbersDistance();
     }
     
     
