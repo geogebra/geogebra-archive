@@ -1311,7 +1311,6 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			return newGeo;
 		
 		try {
-			Application.debug(cmdtext);
 			newGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(
 					geo, cmdtext, true);
 			app.doAfterRedefine(newGeo); 
