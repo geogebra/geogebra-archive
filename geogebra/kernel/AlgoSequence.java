@@ -150,11 +150,13 @@ public class AlgoSequence extends AlgoElement {
     }      
     
     protected final void compute() {
-    	if(updateRunning) return;
+    	if(updateRunning)
+    		return;    	
     	updateRunning = true;
     	for (int i=1; i < input.length; i++) {
     		if (!input[i].isDefined()) {
        			list.setUndefined();
+       			updateRunning = false;
     			return;
     		}
     	}    	
