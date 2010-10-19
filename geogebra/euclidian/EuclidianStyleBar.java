@@ -14,6 +14,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.TextProperties;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
@@ -25,10 +26,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 /**
  * Stylebar for the Euclidian Views
@@ -1191,9 +1190,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		AlgoElement algo = null;
 		GeoElement[] input;
 		GeoElement geo;
-		GeoList geoList;
 		String arg = null;
-		String cmdText = null;
 
 		String[] justifyArray = { "l", "c", "r"};
 		arg = justifyArray[btnTableTextJustify.getSelectedIndex()];
@@ -1202,6 +1199,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		if(btnTableTextBracket.getSelectedIndex() >0)
 			arg += this.bracketArray2[btnTableTextBracket.getSelectedIndex()];
 		ArrayList<GeoElement> newGeos = new ArrayList<GeoElement>();
+		
+		StringBuilder cmdText = new StringBuilder();
 
 		for (int i = 0; i < geos.size(); i++) {
 
@@ -1211,13 +1210,16 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			input = algo.getInput();
 
 			// create a new TableText cmd
-			cmdText = "TableText[";
-			cmdText += ((GeoList) input[0]).getCommandDescription();
-			cmdText += "," + "\"" + arg + "\"]";
+			cmdText.setLength(0);
+			cmdText.append("TableText[");
+			cmdText.append(((GeoList) input[0]).getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false));
+			cmdText.append(",\"");
+			cmdText.append(arg);
+			cmdText.append("\"]");
 
 			// use the new cmd to redefine the geo and save it to a list.
 			// (the list is needed to reselect the geo)
-			newGeos.add(redefineGeo(geo, cmdText));
+			newGeos.add(redefineGeo(geo, cmdText.toString()));
 		}
 
 		// reset the selection 
@@ -1309,6 +1311,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			return newGeo;
 		
 		try {
+			Application.debug(cmdtext);
 			newGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(
 					geo, cmdtext, true);
 			app.doAfterRedefine(newGeo); 
