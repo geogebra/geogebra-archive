@@ -104,22 +104,22 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 
 	public void set(GeoElement geo) {
-		GeoFunction geoFun = (GeoFunction) geo;				
-						
-		if (geo == null || geoFun.fun == null) {
+		Function geoFun = ((GeoFunction) geo).getFunction();
+			
+		if (geo == null || geoFun == null) {
 			fun = null;
 			isDefined = false;
 			return;
 		} else {
-			isDefined = geoFun.isDefined;
-			fun = new Function(geoFun.fun, kernel);
+			isDefined = geo.isDefined();
+			fun = new Function(geoFun, kernel);		
 		}			
 	
 		// macro OUTPUT
 		if (geo.cons != cons && isAlgoMacroOutput()) {								
 			// this object is an output object of AlgoMacro
 			// we need to check the references to all geos in its function's expression
-			if (!geoFun.isIndependent()) {
+			if (!geo.isIndependent()) {
 				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
 				algoMacro.initFunction(this.fun);	
 			}			

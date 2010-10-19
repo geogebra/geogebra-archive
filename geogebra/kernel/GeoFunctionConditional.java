@@ -30,7 +30,9 @@ public class GeoFunctionConditional extends GeoFunction {
 	private boolean isDefined = true;
 
 	private static final long serialVersionUID = 1L;
-	private GeoFunction condFun, ifFun, elseFun;	
+	private GeoFunction condFun, ifFun, elseFun;
+
+	private Function uncondFun;	
 
 	/**
 	 * Creates a new GeoFunctionConditional object.
@@ -99,7 +101,8 @@ public class GeoFunctionConditional extends GeoFunction {
 				elseFun.setConstruction(cons);
 			}
 			elseFun.set(geoFunCond.elseFun);
-		}					
+		}		
+		uncondFun = null; //will be evaluated in getFunction()
 	}	
 	
 	
@@ -150,6 +153,7 @@ public class GeoFunctionConditional extends GeoFunction {
     	if (elseFun != null) {
     		elseFun.replaceChildrenByValues(geo);
     	}
+    	uncondFun = null;
     }
       
     /**
@@ -161,7 +165,7 @@ public class GeoFunctionConditional extends GeoFunction {
 		GeoFunctionConditional fcond = (GeoFunctionConditional) f;
 		ifFun.setDerivative(fcond.ifFun, n);
 		if (elseFun != null)
-			elseFun.setDerivative(fcond.elseFun, n);					
+			elseFun.setDerivative(fcond.elseFun, n);		
 	}
 	
 				
@@ -197,6 +201,7 @@ public class GeoFunctionConditional extends GeoFunction {
 		ifFun.translate(vx, vy);	
 		if (elseFun != null)
 			elseFun.translate(vx, vy);			
+		uncondFun = null;
 	}
 	
 	/**
@@ -204,7 +209,7 @@ public class GeoFunctionConditional extends GeoFunction {
 	 * satisfies conditional function and f(x)=0 otherwise
 	 */
 	public Function getFunction() {
-		if (fun == null) {
+		if (uncondFun == null) {
 			ExpressionNode en = new ExpressionNode(kernel, condFun
 					.getFunctionExpression(), ExpressionNode.MULTIPLY, ifFun
 					.getFunctionExpression());
@@ -221,9 +226,9 @@ public class GeoFunctionConditional extends GeoFunction {
 			if (elseFun != null)
 				en2.replace(elseFun.getFunction().getFunctionVariable(), ifFun
 						.getFunction().getFunctionVariable());
-			fun = new Function(en2, ifFun.getFunction().getFunctionVariable());
+			uncondFun = new Function(en2, ifFun.getFunction().getFunctionVariable());
 		}
-		return fun;
+		return uncondFun;
 	}
 	
 	/**
