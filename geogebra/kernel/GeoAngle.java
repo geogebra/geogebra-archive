@@ -350,7 +350,11 @@ public final class GeoAngle extends GeoNumeric {
 
 		sb.append("\t<value val=\"");
 		sb.append(rawValue);
-		sb.append("\"/>\n");
+		sb.append("\"");
+		if (isRandom()) {
+			sb.append(" random=\"true\"");
+		}
+		sb.append("/>\n");
 
 		// if angle is drawable then we need to save visual options too
 		if (isDrawable() || isSliderable()) {

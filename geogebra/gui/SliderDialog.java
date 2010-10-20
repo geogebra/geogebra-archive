@@ -32,6 +32,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -49,6 +50,7 @@ public class SliderDialog extends JDialog
 	private JRadioButton rbNumber, rbAngle, rbInteger;
 	private InputPanel tfLabel;
 	private JPanel optionPane;
+	private JCheckBox cbRandom;
 	
 	private Application app;
 	private SliderPanel sliderPanel;
@@ -122,11 +124,14 @@ public class SliderDialog extends JDialog
 				BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		tfLabel.setBorder(border);
 		
+		cbRandom = new JCheckBox("Random");
+		
 		// put together label textfield and radioPanel
 		JPanel topPanel = new JPanel();
 		topPanel.setLayout(new BorderLayout(0,0));
-		JPanel labelPanel = new JPanel();
-		labelPanel.add(tfLabel);
+		JPanel labelPanel = new JPanel(new BorderLayout(0,0));
+		labelPanel.add(tfLabel, BorderLayout.NORTH);
+		labelPanel.add(cbRandom, BorderLayout.SOUTH);
 		topPanel.add(labelPanel, BorderLayout.CENTER);
 		topPanel.add(radioPanel, BorderLayout.WEST);
 
@@ -185,6 +190,7 @@ public class SliderDialog extends JDialog
 			geoResult.setLabelMode(GeoElement.LABEL_NAME_VALUE);
 			geoResult.setLabelVisible(true);
 			geoResult.update();
+			((GeoNumeric)geoResult).setRandom(cbRandom.isSelected());
 
 			setVisible(false);
 			

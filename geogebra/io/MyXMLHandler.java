@@ -2339,8 +2339,9 @@ public class MyXMLHandler implements DocHandler {
 			System.err.println("unknown tag in <element>: " + eName);
 		}
 
-		if (!ok)
+		if (!ok) {
 			System.err.println("error in <element>: " + eName);
+		}
 	}
 
 
@@ -2644,6 +2645,10 @@ public class MyXMLHandler implements DocHandler {
 			if (isNumber) {
 				GeoNumeric n = (GeoNumeric) geo;
 				n.setValue(Double.parseDouble(strVal));
+				
+				// random
+				n.setRandom("true".equals(attrs.get("random")));
+			
 			} else if (isBoolean) {
 				GeoBoolean bool = (GeoBoolean) geo;
 				bool.setValue(parseBoolean(strVal));
@@ -2653,6 +2658,7 @@ public class MyXMLHandler implements DocHandler {
 			}
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

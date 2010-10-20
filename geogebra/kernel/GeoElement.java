@@ -430,7 +430,7 @@ public abstract class GeoElement
 	private ArrayList<AlgoElement> algorithmList; 	// directly dependent algos
 	
 	//	set of all dependent algos sorted in topological order    
-	private AlgorithmSet algoUpdateSet;
+	protected AlgorithmSet algoUpdateSet;
 
 	/********************************************************/
 
@@ -4736,7 +4736,9 @@ public abstract class GeoElement
 		AlgoElement algo = getParentAlgorithm();
 		if (algo != null) {
 			algo.compute(); // eg AlgoRandom etc
-		}				
+		} else if (this.isGeoNumeric()) {
+			((GeoNumeric)this).updateRandom();
+		}
 	}
 
 	public boolean isMatrixTransformable() { 

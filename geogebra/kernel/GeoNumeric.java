@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -352,6 +353,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 
 	private StringBuilder sbToString = new StringBuilder(50);
 	private ArrayList<GeoNumeric> minMaxListeners;
+	private boolean randomSlider = true;
 
 	public String toValueString() {
 		return kernel.format(value);
@@ -408,7 +410,11 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	protected void getXMLtags(StringBuilder sb) {
 		sb.append("\t<value val=\"");
 		sb.append(value);
-		sb.append("\"/>\n");
+		sb.append("\"");
+		if (isRandom()) {
+			sb.append(" random=\"true\"");
+		}
+		sb.append("/>\n");
 		
 		//	colors
 		getXMLvisualTags(sb);
@@ -785,6 +791,29 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 */
 	public List<GeoNumeric> getMinMaxListeners() {
 		return minMaxListeners;
+	}
+	
+	public void setRandom(boolean random) {
+		randomSlider = random;
+		if (random) cons.addRandomGeo(this);
+		else cons.removeRandomGeo(this);
+	}
+	
+	public boolean isRandom() {
+		return randomSlider;
+	}
+	
+	public void updateRandom() {
+		if (randomSlider) {
+			double min = getIntervalMin();
+			double max = getIntervalMax();
+			double increment = getAnimationStep();
+			int n = 1 + (int)Math.round( (max - min ) / increment );
+			value = Math.floor(Math.random() * n) * increment + min;
+			// update all algorithms in the algorithm set of this GeoElement        
+			updateCascade();
+		}
+
 	}
 	
 	public void update() {  	

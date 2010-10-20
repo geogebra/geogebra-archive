@@ -4728,7 +4728,7 @@ class SliderPanel
 	private JTextField tfWidth;
 	private JTextField [] tfields;
 	private JLabel [] tLabels;
-	private JCheckBox cbSliderFixed;
+	private JCheckBox cbSliderFixed, cbRandom;
 	private JComboBox coSliderHorizontal;
 	
 	private Application app;
@@ -4753,6 +4753,10 @@ class SliderPanel
 		cbSliderFixed = new JCheckBox();
 		cbSliderFixed.addActionListener(this);
 		sliderPanel.add(cbSliderFixed);		
+		
+		cbRandom = new JCheckBox();
+		cbRandom.addActionListener(this);
+		sliderPanel.add(cbRandom);		
 		
 		coSliderHorizontal = new JComboBox();
 		coSliderHorizontal.addActionListener(this);
@@ -4828,6 +4832,7 @@ class SliderPanel
 		initPanels();
 		
 		cbSliderFixed.setText(app.getPlain("fixed"));
+		cbRandom.setText(app.getPlain("Random"));
 		
 		String [] comboStr = {app.getPlain("horizontal"), app.getPlain("vertical")};
 		
@@ -4862,6 +4867,7 @@ class SliderPanel
 			tfields[i].removeActionListener(this);
 		coSliderHorizontal.removeActionListener(this);
 		cbSliderFixed.removeActionListener(this);
+		cbRandom.removeActionListener(this);
 
 		// check if properties have same values
 		GeoNumeric temp, num0 = (GeoNumeric) geos[0];
@@ -4869,6 +4875,7 @@ class SliderPanel
 		boolean equalMin = true;
 		boolean equalWidth = true;
 		boolean equalSliderFixed = true;
+		boolean random = true;
 		boolean equalSliderHorizontal = true;
 		boolean onlyAngles = true;
 
@@ -4884,6 +4891,8 @@ class SliderPanel
 				equalWidth = false;
 			if (num0.isSliderFixed() != temp.isSliderFixed())
 				equalSliderFixed = false;
+			if (num0.isRandom() != temp.isRandom())
+				random = false;
 			if (num0.isSliderHorizontal() != temp.isSliderHorizontal())
 				equalSliderHorizontal = false;
 			
@@ -4925,6 +4934,9 @@ class SliderPanel
 		if (equalSliderFixed)
 			cbSliderFixed.setSelected(num0.isSliderFixed());
 		
+		if (random)
+			cbRandom.setSelected(num0.isRandom());
+		
 		if (equalSliderHorizontal) {
 			// TODO why doesn't this work when you create a slider
 			coSliderHorizontal.setSelectedIndex(num0.isSliderHorizontal() ? 0 : 1);
@@ -4935,6 +4947,7 @@ class SliderPanel
 			tfields[i].addActionListener(this);
 		coSliderHorizontal.addActionListener(this);
 		cbSliderFixed.addActionListener(this);
+		cbRandom.addActionListener(this);
 	
 		return this;
 	}
@@ -4958,6 +4971,8 @@ class SliderPanel
 		Object source = e.getSource();
 		if (source == cbSliderFixed) 
 			doCheckBoxActionPerformed((JCheckBox) source);
+		else if (source == cbRandom)
+			doRandomActionPerformed((JCheckBox) source);
 		else if (source == coSliderHorizontal)
 			doComboBoxActionPerformed((JComboBox) source);
 		else
@@ -4969,6 +4984,16 @@ class SliderPanel
 		for (int i = 0; i < geos.length; i++) {
 			GeoNumeric num = (GeoNumeric) geos[i];
 			num.setSliderFixed(fixed);
+			num.updateRepaint();
+		}
+		update(geos);
+	}
+	
+	private void doRandomActionPerformed(JCheckBox source) {	
+		boolean random = source.isSelected();			
+		for (int i = 0; i < geos.length; i++) {
+			GeoNumeric num = (GeoNumeric) geos[i];
+			num.setRandom(random);
 			num.updateRepaint();
 		}
 		update(geos);

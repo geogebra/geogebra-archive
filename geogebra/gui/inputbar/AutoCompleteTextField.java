@@ -201,7 +201,8 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		case KeyEvent.VK_F9: 
 			// needed for applets
-			app.getGlobalKeyDispatcher().handleGeneralKeys(e);
+			if (app.isApplet())
+				app.getGlobalKeyDispatcher().handleGeneralKeys(e);
 			break;
 
 			/*
