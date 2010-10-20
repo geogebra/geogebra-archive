@@ -210,10 +210,14 @@ implements NumberValue {
     	return this; 
     }
   
+    /**
+     * Tangens function
+     * @return tangens of value
+     */
    final public MyDouble tan() {  		
 	    // Math.tan() gives a very large number for tan(pi/2)
 	    // but should be undefined for pi/2, 3pi/2, 5pi/2, etc.
-   		if (kernel.isEqual(val % Math.PI, Kernel.PI_HALF)) {
+   		if (Kernel.isEqual(Math.abs(val) % Math.PI, Kernel.PI_HALF)) {
    			val = Double.NaN;
    		} else {
    			val = Math.tan(val);
@@ -237,7 +241,7 @@ implements NumberValue {
 	
     final public MyDouble floor() {  
     	// angle in degrees
-    	// kernel.checkInteger() needed otherwise floor(60°) gives 59°
+    	// kernel.checkInteger() needed otherwise floor(60ï¿½) gives 59ï¿½
 		if (isAngle && kernel.getAngleUnit() == Kernel.ANGLE_DEGREE) {
 			set(Kernel.PI_180 * Math.floor( kernel.checkInteger(val * Kernel.CONST_180_PI)));	
 		}
@@ -250,7 +254,7 @@ implements NumberValue {
 	
     final public MyDouble ceil() {
     	// angle in degrees
-    	// kernel.checkInteger() needed otherwise ceil(241°) fails
+    	// kernel.checkInteger() needed otherwise ceil(241ï¿½) fails
 		if (isAngle && kernel.getAngleUnit() == Kernel.ANGLE_DEGREE) {
 			set(Kernel.PI_180 * Math.ceil(kernel.checkInteger(val * Kernel.CONST_180_PI)));		
 		}
@@ -378,7 +382,7 @@ implements NumberValue {
   
 	final public MyDouble apply(Evaluatable lt) {
 		val = lt.evaluate(val);
-		isAngle = false; // want function to return numbers eg f(x) = sin(x), f(45°)
+		isAngle = false; // want function to return numbers eg f(x) = sin(x), f(45ï¿½)
 		return this;
 	}
     
