@@ -35,7 +35,7 @@ public class AlgoTravelingSalesman extends AlgoHull{
     protected void compute() {
     	
     	size = inputList.size();
-    	if (!inputList.isDefined() ||  size == 0) {
+    	if (!inputList.isDefined() ||  size < 3) {
     		locus.setUndefined();
     		return;
     	} 
