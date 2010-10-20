@@ -572,16 +572,21 @@ public class DrawImplicitPoly extends Drawable {
 		double a2=1;
 		int e;
 		if (e1!=e2){
-			while(a2-a1>Double.MIN_VALUE){
+//			Application.debug("enter bisec");
+			//solved #278 PRECISION to small (was Double.MIN_VALUE)
+			while(a2-a1>Kernel.MAX_PRECISION){
 				e=epsSignum(implicitPoly.evalPolyAt(x1+(x2-x1)*(a2+a1)/2,y1+(y2-y1)*(a2+a1)/2,true));
-				if (e==0)
+				if (e==0){
+//					Application.debug("leave bisec");
 					return (a2+a1)/2;
+				}
 				if (e==e1){
 					a1=(a2+a1)/2;
 				}else{
 					a2=(a1+a2)/2;
 				}
 			}
+//			Application.debug("leave bisec");
 			return a1;
 		}
 		return Double.NaN;
