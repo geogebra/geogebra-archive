@@ -32,14 +32,13 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
-import geogebra.kernel.Path;
-import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
@@ -55,9 +54,10 @@ final public class DrawConic extends Drawable implements Previewable {
     
     // plotpoints per quadrant for hyperbola
     private static final int PLOT_POINTS = 32;
+    /** maximum number of plot points */
 	static final int MAX_PLOT_POINTS = 300;
-    // maximum of pixels for a standard circle radius
-    // bigger circles are drawn via Arc2D 
+    /** maximum of pixels for a standard circle radius
+    * bigger circles are drawn via Arc2D */ 
     public static final double HUGE_RADIUS = 1E12;  
            
     private GeoConic conic;
@@ -68,22 +68,22 @@ final public class DrawConic extends Drawable implements Previewable {
     private double [] labelCoords = new double[2];      
     
     // CONIC_SINGLE_POINT
-    boolean firstPoint = true;
+    private boolean firstPoint = true;
     private GeoPoint  point;
     private DrawPoint drawPoint;
     
     // CONIC_INTERSECTING_LINES
-    boolean firstLines = true;
+    private boolean firstLines = true;
     private GeoLine [] lines;
     private DrawLine [] drawLines;
     
     // CONIC_CIRCLE
-    boolean firstCircle = true;
+    private boolean firstCircle = true;
     private GeoVec2D midpoint;    
     private Arc2D.Double arc;   
     private GeneralPathClipped arcFiller, gp;
     private RectangularShape circle;
-    double  mx, my, radius, yradius, angSt, angEnd;    
+    private double  mx, my, radius, yradius, angSt, angEnd;    
     
     // for ellipse, hyperbola, parabola
     private AffineTransform conicTransform, 
@@ -91,20 +91,20 @@ final public class DrawConic extends Drawable implements Previewable {
     private Shape shape;     
     
     // CONIC_ELLIPSE    
-    boolean firstEllipse = true;
+    private boolean firstEllipse = true;
     private double [] halfAxes;      
     private Ellipse2D.Double ellipse;    
     
     // CONIC_PARABOLA   
-    boolean firstParabola = true;
+    private boolean firstParabola = true;
     private double x0, y0;
-    private int i, k2;
+    private int k2;
     private GeoVec2D vertex;
     private QuadCurve2D.Double parabola;    
     private double [] parpoints = new double[6];        
     
     // CONIC_HYPERBOLA   
-    boolean firstHyperbola = true;    
+    private boolean firstHyperbola = true;    
     private double a,b, tsq, step, t, denom;
     private double x, y;
     private int index0, index1, n, points;
@@ -112,12 +112,16 @@ final public class DrawConic extends Drawable implements Previewable {
     private boolean hypLeftOnScreen, hypRightOnScreen;      
     
     // preview of circle (two points or three points)
-	private ArrayList prevPoints, prevSegments, prevConics; 
+	private ArrayList<GeoPoint> prevPoints;
+	private ArrayList<GeoSegment> prevSegments;
+	private ArrayList<GeoConic> prevConics; 
 	private GeoPoint [] previewTempPoints;  
 	private GeoNumeric previewTempRadius;
 	private int previewMode, neededPrevPoints;
     
-    /** Creates new DrawVector */
+    /** Creates new DrawVector 
+     * @param view 
+     * @param c */
     public DrawConic(EuclidianView view, GeoConic c) {
     	this.view = view;
         initConic(c);
@@ -136,8 +140,11 @@ final public class DrawConic extends Drawable implements Previewable {
     
 	/**
 	 * Creates a new DrawConic for preview of a circle 
+	 * @param view 
+	 * @param mode 
+	 * @param points 
 	 */
-	DrawConic(EuclidianView view, int mode, ArrayList points) {
+	DrawConic(EuclidianView view, int mode, ArrayList<GeoPoint> points) {
 		this.view = view; 
 		prevPoints = points;
 		previewMode = mode;	
@@ -155,8 +162,13 @@ final public class DrawConic extends Drawable implements Previewable {
 	
 	/**
 	 * Creates a new DrawConic for preview of a compass circle (radius or segment first, then center point) 
+	 * @param view 
+	 * @param mode 
+	 * @param points 
+	 * @param segments 
+	 * @param conics 
 	 */
-	DrawConic(EuclidianView view, int mode, ArrayList points, ArrayList segments, ArrayList conics) {
+	DrawConic(EuclidianView view, int mode, ArrayList<GeoPoint> points, ArrayList<GeoSegment> segments, ArrayList<GeoConic> conics) {
 		this.view = view; 
 		prevPoints = points;
 		prevSegments = segments;
@@ -173,7 +185,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	
 	
 
-	final public void update() {
+	final public void update() {		
         isVisible = geo.isEuclidianVisible();
         if (!isVisible) return;
         labelVisible = geo.isLabelVisible();
@@ -294,7 +306,7 @@ final public class DrawConic extends Drawable implements Previewable {
             //drawLines[0].font = view.fontConic;
             //drawLines[1].font = view.fontConic;            
         }
-        for (i=0; i < 2; i++) {
+        for (int i=0; i < 2; i++) {
 			lines[i].copyLabel(conic);					
 			lines[i].setObjColor(conic.getObjectColor());					
 			lines[i].setLabelColor(conic.getLabelColor());	
@@ -320,7 +332,7 @@ final public class DrawConic extends Drawable implements Previewable {
             if (ellipse == null) ellipse = new Ellipse2D.Double();
         }        
         
-        i = -1; // bugfix
+        int i = -1; // bugfix
         
         // if circle is very big, draw arc: this is very important
         // for graphical continuity
@@ -575,11 +587,7 @@ final public class DrawConic extends Drawable implements Previewable {
 		 // hyperbola is visible on screen	
 		 step = Math.sqrt((x0 - a) / (x0 + a)) / (points - 1);		               		    
 		 
-//		 Application.debug("n: " + n);
-//		Application.debug("POINTS: " + points);
-//		 Application.debug("x0   = " + x0);                
-//		 Application.debug("a     = " + a);
-//		 Application.debug("step = " + step + "\n");		
+	
 
         // build Polyline of parametric hyperbola
         // hyp(t) = 1/(1-t�) {a(1+t�), 2bt}, 0 <= t < 1
@@ -588,7 +596,7 @@ final public class DrawConic extends Drawable implements Previewable {
         hypLeft.addPoint(points-1, -a, 0);
   
   		t = step;
-  		i = 1;
+  		int i = 1;
         index0 = points;    // points ... 2*points - 2
         index1 = points-2;  // points-2 ... 0
         while (index1 >= 0) {			        	
@@ -665,7 +673,7 @@ final public class DrawConic extends Drawable implements Previewable {
         // i = 2*k is quadratic number
         // make parabola big enough: k*p >= 2*x0 -> 2*k >= 4*x0/p
         x0 = 4*x0/conic.p;
-        i = 4; 
+        int i = 4; 
         k2 = 16;
         while (k2 < x0) {
             i += 2;
@@ -723,8 +731,22 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_CIRCLE:                                                                                 
             case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 	
-                    
-					fill(g2, shape, false); // fill using default/hatching/image as appropriate
+                    if(conic.isInverseFill()){                    	
+                    	Area a = new Area(shape);
+                    	GeneralPathClipped gs = new GeneralPathClipped(view);
+                    	gs.moveTo(0,0);
+                    	gs.lineTo(view.width,0);
+                    	gs.lineTo(view.width,view.height);
+                    	gs.lineTo(0,view.height);
+                    	gs.lineTo(0,0);
+                    	gs.closePath();
+                    	Area b = new Area(gs);
+                    	b.subtract(a);
+                    	fill(g2, b, false);
+                    }
+                    else {                    	
+                    	fill(g2, shape, false); // fill using default/hatching/image as appropriate
+                    }
 					if (arcFiller != null )
 						fill(g2, arcFiller, true); // fill using default/hatching/image as appropriate
 
@@ -745,10 +767,25 @@ final public class DrawConic extends Drawable implements Previewable {
                 break;            
             
            case GeoConic.CONIC_HYPERBOLA:               		          
-               
+        	   if(conic.isInverseFill()){                    	
+               	Area a1 = new Area(hypLeft);
+               	Area a2 = new Area(hypRight);
+               	GeneralPathClipped gs = new GeneralPathClipped(view);
+               	gs.moveTo(0,0);
+               	gs.lineTo(view.width,0);
+               	gs.lineTo(view.width,view.height);
+               	gs.lineTo(0,view.height);
+               	gs.lineTo(0,0);
+               	gs.closePath();
+               	Area b = new Area(gs);
+               	b.subtract(a1);
+               	b.subtract(a2);
+               	fill(g2, b, false);
+               }
+               else {
 				if (hypLeftOnScreen) fill(g2, hypLeft, true);                                            
 				if (hypRightOnScreen) fill(g2, hypRight, true);
-
+               }
 	
 				if (geo.doHighlighting()) {
 					 g2.setStroke(selStroke);
@@ -792,6 +829,10 @@ final public class DrawConic extends Drawable implements Previewable {
         }		
 	}
     
+	/**
+	 * Draw trace of the conic
+	 * @param g2
+	 */
 	final public void drawTrace(Graphics2D g2) {             
 	    g2.setColor(conic.getObjectColor());
 		switch (type) {
@@ -850,7 +891,7 @@ final public class DrawConic extends Drawable implements Previewable {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
     			if (geo.alphaValue > 0.0f || geo.isHatchingEnabled()) 
-    				return shape.intersects(x-3,y-3,6,6);  
+    				return shape.intersects(x-3,y-3,6,6) ^ conic.isInverseFill();  
     			else
     				return strokedShape.intersects(x-3,y-3,6,6);            	
             	
@@ -861,7 +902,7 @@ final public class DrawConic extends Drawable implements Previewable {
         		}    		
     			if (geo.alphaValue > 0.0f || geo.isHatchingEnabled()
     					) 
-    				return hypLeft.intersects(x-3,y-3,6,6) || hypRight.intersects(x-3,y-3,6,6);  
+    				return (hypLeft.intersects(x-3,y-3,6,6) || hypRight.intersects(x-3,y-3,6,6)) ^ conic.isInverseFill();  
     			else
     				return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);  
             	

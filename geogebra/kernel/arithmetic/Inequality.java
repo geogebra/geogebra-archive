@@ -17,6 +17,7 @@ import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImplicitPoly;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 
 /**
@@ -107,7 +108,12 @@ public class Inequality {
 					type = INEQUALITY_CONIC;
 					conicBorder = (GeoConic)newBorder;
 					border = conicBorder;
-					isAboveBorder=true;
+					GeoVec2D midpoint = conicBorder.getTranslationVector();
+					ExpressionNode normalCopy = (ExpressionNode) normal.deepCopy(kernel);
+					normalCopy.replace(fv[0], new MyDouble(kernel,midpoint.x));
+					normalCopy.replace(fv[1], new MyDouble(kernel,midpoint.y));
+					double valAtCenter = ((NumberValue)normalCopy.evaluate()).getDouble(); 						
+					isAboveBorder = (valAtCenter < 0) ^ (conicBorder.getType() == GeoConic.CONIC_HYPERBOLA);
 				}						
 		}
 		if (type == INEQUALITY_PARAMETRIC_X || type == INEQUALITY_PARAMETRIC_Y) {
@@ -124,20 +130,31 @@ public class Inequality {
 			border.setLineType(EuclidianView.LINE_TYPE_FULL);
 	}
 	
+	/**
+	 * Updates the coefficient k in y<k*f(x) for parametric,
+	 * for implicit runs full update.
+	 */
 	public void updateCoef(){
 		double coefVal,otherVal;
 		if(type == INEQUALITY_PARAMETRIC_Y){
 			coefVal = normal.getCoefficient(fv[1]);
 			otherVal = normal.getCoefficient(fv[0]);
-		}else{
+			isAboveBorder = coefVal>0;
+			if(coefVal == 0 || Math.abs(otherVal)>Math.abs(coefVal))
+				update();
+			else
+				coef.set(-coefVal);
+		}else if(type == INEQUALITY_PARAMETRIC_X){
 			coefVal = normal.getCoefficient(fv[0]);
 			otherVal = normal.getCoefficient(fv[1]);
+			isAboveBorder = coefVal>0;
+			if(coefVal == 0 || Math.abs(otherVal)>Math.abs(coefVal))
+				update();
+			else
+				coef.set(-coefVal);
 		}
-		isAboveBorder = coefVal>0;
-		if(coefVal == 0 || Math.abs(otherVal)>Math.abs(coefVal))
-			update();
-		else
-			coef.set(-coefVal);				
+		else update();
+						
 	}
 
 	/**
@@ -176,6 +193,10 @@ public class Inequality {
 		return isAboveBorder;
 	}
 	
+	/**
+	 * Returns border, which can be function, conic or implicit polynomial
+	 * @return border
+	 */
 	public GeoElement getBorder(){
 		return border;
 	}

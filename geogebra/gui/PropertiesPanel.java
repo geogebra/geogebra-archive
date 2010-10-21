@@ -4097,10 +4097,12 @@ public	class PropertiesPanel extends JPanel {
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			cbFillInverse.setVisible(true);
+			lblFillInverse.setVisible(true);
 			cbFillType.setVisible(true); //TODO remove this (see below)
 			for (int i = 0; i < geos.length; i++) {
 				if (!(geos[i] instanceof GeoFunctionNVar)){
 					cbFillInverse.setVisible(false);
+					lblFillInverse.setVisible(false);
 				}
 				if (!((GeoElement) geos[i]).isFillable()) {
 					geosOK = false;

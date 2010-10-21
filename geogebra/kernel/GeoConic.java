@@ -2250,7 +2250,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * @param p inhomogenous coords of a point
 	 * @return 0 iff (p.x, p.y, 1) lies on conic
 	 */
-	final double evaluate(GeoVec2D p) {
+	public final double evaluate(GeoVec2D p) {
 		return matrix[2]
 			+ matrix[4] * p.x
 			+ matrix[5] * p.y

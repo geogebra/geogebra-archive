@@ -71,7 +71,7 @@ public class DrawInequality extends Drawable {
 					break;
 				case Inequality.INEQUALITY_CONIC: 
 					draw = new DrawConic(view, ineq.getConicBorder());
-										
+					ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
 					break;	
 				case Inequality.INEQUALITY_IMPLICIT: 
 					draw = new DrawImplicitPoly(view, ineq.getImpBorder());
@@ -80,11 +80,17 @@ public class DrawInequality extends Drawable {
 				default: draw = null;
 					
 			}
-			draw.update();
+			
 			draw.setGeoElement(function);
+			draw.update();
 			drawables.add(draw);
 			}
-			else drawables.get(i).update();
+			else {
+				if(ineq.getType() == Inequality.INEQUALITY_CONIC) {					
+					ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());
+				}
+				drawables.get(i).update();
+			}
 			// gp on screen?
 			/*if (!gp[i].intersects(0, 0, view.width, view.height)) {
 				isVisible = false;
