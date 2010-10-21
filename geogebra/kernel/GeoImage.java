@@ -14,14 +14,15 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
+/**
+ * Image with given filename and corners
+ */
 public class GeoImage extends GeoElement 
 implements Locateable, AbsoluteScreenLocateable,
 		   PointRotateable, Mirrorable, Translateable, Dilateable, MatrixTransformable {
@@ -39,13 +40,17 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	// for absolute screen location
 	private int screenX, screenY;
-	boolean hasAbsoluteScreenLocation = false;	
+	private boolean hasAbsoluteScreenLocation = false;	
 	
 	// corner points for transformations
 	private GeoPoint [] tempPoints;
 	
-	private static Vector instances = new Vector();
+	private static Vector<GeoImage> instances = new Vector<GeoImage>();
 	
+	/**
+	 * Creates new image
+	 * @param c construction
+	 */
 	public GeoImage(Construction c) {
 		super(c);
 		setAlphaValue(1f);
@@ -58,7 +63,12 @@ implements Locateable, AbsoluteScreenLocateable,
 		instances.add(this);						
 	}  
 
-	
+	/**
+	 * Creates new labeled image
+	 * @param c construction
+	 * @param label
+	 * @param fileName path to the image
+	 */
 	public GeoImage(Construction c, String label, String fileName) {
 		this(c);
 		setImageFileName(fileName);
@@ -67,6 +77,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	/**
 	 * Copy constructor
+	 * @param img source image
 	 */
 	public GeoImage(GeoImage img) {
 		this(img.cons);
@@ -142,11 +153,17 @@ implements Locateable, AbsoluteScreenLocateable,
 	public boolean showToolTipText() {
 		return !inBackground && super.showToolTipText();
 	}
-	
+	/**
+	 * True for background images
+	 * @return true for background images
+	 */
 	final public boolean isInBackground() {
 		return inBackground;
 	}
-	
+	/**
+	 * Switch to background image (or vice versa)
+	 * @param flag true to make it background image
+	 */
 	public void setInBackground(boolean flag) {
 		inBackground = flag;		
 	}
@@ -201,8 +218,8 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	/**
 	 * Sets a corner of this image. 
-	 * @param p
-	 * @param number: 0, 1 or 2 (first, second and fourth corner)
+	 * @param p corner point
+	 * @param number 0, 1 or 2 (first, second and fourth corner)
 	 */
 	public void setCorner(GeoPoint p, int number)  {
 		// macro output uses initStartPoint() only
@@ -287,7 +304,11 @@ implements Locateable, AbsoluteScreenLocateable,
 	public GeoPoint [] getStartPoints() {
 		return corners;
 	}
-	
+	/**
+	 * Returns n-th corner point
+	 * @param number 1 for boottom left, others clockwise
+	 * @return corner point
+	 */
 	final public GeoPoint getCorner(int number) {
 		return corners[number];
 	}
@@ -302,13 +323,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		// is irrelevant for the rest of the construction
 	}
 	
-	public void setMode(int mode) {
-	}
-
-	public int getMode() {
-		return 0;
-	}
-
+	
 	final public boolean isDefined() {
 		for (int i=0; i < corners.length; i++) {
 			if (corners[i] != null  && !corners[i].isDefined())
@@ -538,8 +553,8 @@ implements Locateable, AbsoluteScreenLocateable,
 	 * coordinates. Note: if this image
 	 * has an absolute screen location, result is set to undefined.
 	 * 
-	 * @param result: here the result is stored.
-	 * @param number of the corner point 1, 2, 3 or 4) 
+	 * @param result here the result is stored.
+	 * @param n number of the corner point (1, 2, 3 or 4) 
 	 */
 	public void calculateCornerPoint(GeoPoint result, int n) {		
 		if (hasAbsoluteScreenLocation) {
@@ -767,8 +782,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		return false;
 	}	
 
-	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
+	public boolean isVector3DValue() {		
 		return false;
 	}
 	
@@ -782,7 +796,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		return true;
 	}
 	
-	ArrayList<GeoPoint> al = null;
+	private ArrayList<GeoPoint> al = null;
 
 	/**
 	 * Returns all free parent points of this GeoElement.	 
