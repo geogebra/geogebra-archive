@@ -318,9 +318,11 @@ implements Locateable, AbsoluteScreenLocateable,
 	}
 
 	/**
-	 * doesn't do anything
+	 * makes image invisible
+	 * needed for Sequence's cached images
  	*/
 	public void setUndefined() {
+		setEuclidianVisible(false);
 	}
 
 	public String toValueString() {
