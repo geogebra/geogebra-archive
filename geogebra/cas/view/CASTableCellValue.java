@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import geogebra.cas.MaximaVersionUnsupportedExecption;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -203,7 +204,9 @@ public class CASTableCellValue {
 			view.getCAS().getCASparser().resolveVariablesForCAS(ve);
 			
 			return ve;
-		} catch (Throwable e) {
+		}catch (MaximaVersionUnsupportedExecption e) {
+			throw e; // propagate exception
+		}catch (Throwable e) {
 			return null;
 		}
 		

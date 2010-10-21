@@ -15,8 +15,11 @@ import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
+import java.util.Arrays;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class CASmaxima extends CASgeneric {
@@ -276,33 +279,47 @@ public class CASmaxima extends CASgeneric {
 		return ret;
 	}
 	
+	/**
+	 * Initializes Maxima.
+	 */
+	synchronized public void initialize()
+	{
+		if (ggbMaxima != null) // this should never happen :)
+			throw new IllegalStateException();
+		
+		MaximaConfiguration configuration = casParser.getKernel().getApplication().maximaConfiguration;
+		
+		if (configuration == null) configuration = JacomaxAutoConfigurator.guessMaximaConfiguration();
+		
+		MaximaProcessLauncher launcher = new MaximaProcessLauncher(configuration);
+		ggbMaxima = launcher.launchInteractiveProcess();
+		try {
+			initMyMaximaFunctions();
+//			System.out.println(ggbMaxima.executeCall("1+2;"));
+			
+			int[] version = determineMaximaVersion();
+			StringBuilder v = new StringBuilder("Maxima ");
+			for (int i = 0; i < version.length; ++i)
+			{
+				v.append(version[i]);
+				v.append('.');
+			}
+			Application.setCASVersionString(v.toString());
+			
+			// There are problems with Maxima versions < 5.22. See ticket #295
+			if (version[0] < 5 || (version[0] == 5 && version[1] < 22))
+					throw new MaximaVersionUnsupportedExecption(version);
+
+		} catch (MaximaTimeoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}				
+	}
+	
 	
 	private synchronized MaximaInteractiveProcess getMaxima() {
-		if (ggbMaxima == null) {
-			MaximaConfiguration configuration = casParser.getKernel().getApplication().maximaConfiguration;
-			
-			if (configuration == null) configuration = JacomaxAutoConfigurator.guessMaximaConfiguration();
-			
-			MaximaProcessLauncher launcher = new MaximaProcessLauncher(configuration);
-			ggbMaxima = launcher.launchInteractiveProcess();
-			try {
-				initMyMaximaFunctions();
-				System.out.println(ggbMaxima.executeCall("1+2;"));
-			} catch (MaximaTimeoutException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//process.terminate();		
-		}
-		
-
-				
-				
-				
-
-			
-		
-	
+		if (ggbMaxima == null) // this should never happen :)
+			throw new IllegalStateException("CASmaxima was not initialized");
 		return ggbMaxima;
 	}
 	
@@ -317,12 +334,14 @@ public class CASmaxima extends CASgeneric {
 	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
 	
 		// read version string
+/*
 		String buildInfo = ggbMaxima.executeCall("build_info();");
 		Application.debug(buildInfo);	
 		String matchStr = "Maxima version: ";		
 		int versionIndexStart = buildInfo.indexOf(matchStr);
 		int versionIndexEnd = buildInfo.indexOf("\n",versionIndexStart);
 		Application.setCASVersionString("Maxima "+buildInfo.subSequence(versionIndexStart + matchStr.length(), versionIndexEnd));
+*/		
 		
 		// turn auto-simplification off, so a+a gives a+a
 		// with this setting ev( a+a, simp ) is needed to get 2*a
@@ -427,5 +446,28 @@ public class CASmaxima extends CASgeneric {
        
         return getMaxima().executeCall(maximaInput);
 
+	}
+	
+	/**
+	 * Determines the version of the underlying maxima version.
+	 * @return An array of 3 elements, containing, major, minor and build version number, respectively.
+	 * @throws MaximaTimeoutException
+	 */
+	private int[] determineMaximaVersion() throws MaximaTimeoutException
+	{
+		String buildinfo = ggbMaxima.executeCall("build_info();");
+		
+		int[] retval = new int[3];
+		Pattern p = Pattern.compile("Maxima version: (\\d+).(\\d+).(\\d+)");
+		Matcher m = p.matcher(buildinfo);
+		if (!m.find())
+			retval[0] = retval[1] = retval[2] = -1;
+		else
+		{
+			retval[0] = Integer.parseInt(m.group(1));
+			retval[1] = Integer.parseInt(m.group(2));
+			retval[2] = Integer.parseInt(m.group(3));
+		}
+		return retval;	
 	}
 }

@@ -55,6 +55,7 @@ public class GeoGebraCAS {
 			switch (CAS) {
 				case Application.CAS_MAXIMA:
 					cas = getMaxima();
+					((CASmaxima) cas).initialize();
 					currentCAS = CAS;
 					break;
 				
@@ -63,7 +64,10 @@ public class GeoGebraCAS {
 					currentCAS = CAS;
 					break;
 			}
-		} catch (Exception e) {
+		}catch (MaximaVersionUnsupportedExecption e){
+			app.showErrorDialog(app.getError("CAS.MaximaVersionUnsupported"));
+			setCurrentCAS(Application.CAS_MATHPIPER);
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
