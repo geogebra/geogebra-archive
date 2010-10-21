@@ -175,6 +175,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		zMinMax = getMinMax(minmax[0], movedGeoPoint3D.getCoords().getZ(), minmax[1]);
 			
 
+		//Application.debug("xMinMax="+xMinMax[0]+","+xMinMax[1]);
 		
 		if (!movedGeoPoint3D.hasPath() && !movedGeoPoint3D.hasRegion() ){
 			
@@ -263,22 +264,27 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		GgbVector project = projects[0];
 		
 		
-		//max x value
-		if (project.getX()>xMinMax[1])
-			project.setX(xMinMax[1]);
-		else if (project.getX()<xMinMax[0])
-			project.setX(xMinMax[0]);
-		
-		//max y value
-		if (project.getY()>yMinMax[1])
-			project.setY(yMinMax[1]);
-		else if (project.getY()<yMinMax[0])
-			project.setY(yMinMax[0]);
+		//min-max x and y values
+		checkXYMinMax(project);
 
 	
 		point.setCoords(project);
 	}
 	
+	
+	private void checkXYMinMax(GgbVector v){
+		//min-max x value
+		if (v.getX()>xMinMax[1])
+			v.setX(xMinMax[1]);
+		else if (v.getX()<xMinMax[0])
+			v.setX(xMinMax[0]);
+		
+		//min-max y value
+		if (v.getY()>yMinMax[1])
+			v.setY(yMinMax[1]);
+		else if (v.getY()<yMinMax[0])
+			v.setY(yMinMax[0]);
+	}
 	
 	
 	/**
@@ -293,6 +299,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 		view3D.toSceneCoords3D(o);
+		
+		
 		point.setWillingCoords(o);
 		
 		//TODO do this once
@@ -319,6 +327,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			}else{
 				setMouseInformation(movedGeoPoint3D);			
 				movedGeoPoint3D.doRegion();
+				if (movedGeoPoint3D.getRegion()==view3D.getxOyPlane()){
+					GgbVector coords = movedGeoPoint3D.getCoords();
+					checkXYMinMax(coords);
+					movedGeoPoint3D.setWillingCoords(coords);
+					movedGeoPoint3D.setWillingDirection(null);
+					movedGeoPoint3D.doRegion();
+				}
+					
 			}
 					
 		}else {
@@ -427,15 +443,19 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
 				ret.setWillingCoords(point.getCoords());
 				ret.doPath();
+				ret.setWillingCoords(null);
+				ret.setWillingDirection(null);
 			}else
 				return null;
 			break;
 			
 		case EuclidianView3D.PREVIEW_POINT_REGION:
 			if (inRegionPossible){
-				ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());
+				ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());			
 				ret.setWillingCoords(point.getCoords());
 				ret.doRegion();
+				ret.setWillingCoords(null);
+				ret.setWillingDirection(null);
 			}else
 				return null;
 			break;
@@ -498,13 +518,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		GeoPoint3D point3D;
 		
-		if (!forPreviewable)
-			point3D = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
-		else{
+			
+		if (!forPreviewable){
+			//if there's "no" 3D cursor, no point is created
+			if (view3D.getCursor3DType()==EuclidianView3D.PREVIEW_POINT_NONE)
+				return null;
+			else
+				point3D = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
+		}else{
 			//if xOy plane is visible, then the point is on it
+			
 			if (view3D.getxOyPlane().isPlateVisible() ||
 					view3D.getxOyPlane().isGridVisible()) 
 				return createNewPoint(true, (Region) view3D.getxOyPlane());
+			
 			
 			point3D = view3D.getCursor3D();
 			point3D.setPath(null);
@@ -552,10 +579,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		GeoPoint3D point3D;
 		
+		/*
 		if (!forPreviewable)
 			point3D = ((Kernel3D) getKernel()).Point3DIn(null,region);
 		else{
-			point3D = view3D.getCursor3D();
+			point3D = view3D.getCursor3D();			
 			point3D.setPath(null);
 			point3D.setRegion(region);
 			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_REGION);
@@ -564,7 +592,63 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		setMouseInformation(point3D);
 		point3D.doRegion();
 		
-		return point3D;
+		if (region==view3D.getxOyPlane()){
+			GgbVector coords = point3D.getInhomCoords();
+			if (
+					coords.getX()<view3D.getxOyPlane().getXmin()
+					||
+					coords.getX()>view3D.getxOyPlane().getXmax()
+					||
+					coords.getY()<view3D.getxOyPlane().getYmin()
+					||
+					coords.getY()>view3D.getxOyPlane().getYmax()
+			){
+				view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_NONE);
+				return null;
+			}
+		}
+		*/
+		
+		point3D = view3D.getCursor3D();			
+		point3D.setPath(null);
+		point3D.setRegion(region);
+		
+		setMouseInformation(point3D);
+		point3D.doRegion();
+		
+		if (region==view3D.getxOyPlane()){
+			GgbVector coords = point3D.getInhomCoords();
+			if (
+					coords.getX()<view3D.getxOyPlane().getXmin()
+					||
+					coords.getX()>view3D.getxOyPlane().getXmax()
+					||
+					coords.getY()<view3D.getxOyPlane().getYmin()
+					||
+					coords.getY()>view3D.getxOyPlane().getYmax()
+			){
+				view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_NONE);
+				return null;
+			}
+		}
+		
+
+		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_REGION);
+
+
+		if (!forPreviewable){
+			GeoPoint3D ret = ((Kernel3D) getKernel()).Point3DIn(null,region);
+			ret.set((GeoElement) point3D);
+			//ret.setRegion(region);
+			ret.doRegion();
+			
+			Application.debug("ici");
+			
+
+			return ret;
+		}else
+			return point3D;
+			
 	}
 	
 	

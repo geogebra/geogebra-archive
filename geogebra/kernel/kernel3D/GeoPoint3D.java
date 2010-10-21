@@ -473,34 +473,12 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     		
     		updateCoords2D(region);
     		
-    		/*
-    		GgbVector coords;
-    		GgbVector[] project;
-    		
-    		if (getWillingCoords()!=null) //use willing coords
-    			coords = getWillingCoords();
-    		else //use real coords
-    			coords = getCoords();
-
-    		if (getWillingDirection()==null){ //use normal direction for projection
-    			project = ((Region3D) region).getNormalProjection(coords);
-    			//coords.projectPlane(coordSys2D.getMatrix4x4());
-    		}else{ //use willing direction for projection
-    			project = ((Region3D) region).getProjection(coords,getWillingDirection());
-    			//project = coords.projectPlaneThruV(coordSys2D.getMatrix4x4(),getWillingDirection());
-    		}
-    			
-    		x2D = project[1].get(1);
-    		y2D = project[1].get(2);
-    		*/
-    		
     	}else{//project on xOy plane
     		x2D = getX();
     		y2D = getY();
     		z2D = getZ();
     	}
     	
-    	//Application.debug("x2D = "+x2D+", y2D = "+y2D);
     			
     }
     

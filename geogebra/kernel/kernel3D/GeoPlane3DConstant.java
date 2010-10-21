@@ -37,6 +37,7 @@ public class GeoPlane3DConstant extends GeoPlane3D {
 	}
 	
 	
+	/*
 	public GgbVector getPoint(double x2d, double y2d){
 		
 		if (x2d>getXmax())
@@ -52,6 +53,7 @@ public class GeoPlane3DConstant extends GeoPlane3D {
 		return super.getPoint(x2d,y2d);
 	}
 
+*/
 	
 	protected boolean isAvailableAtConstructionStep(int step) {
 		// this method is overwritten
