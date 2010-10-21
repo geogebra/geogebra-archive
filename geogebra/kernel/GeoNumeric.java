@@ -804,7 +804,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 	
 	public void updateRandom() {
-		if (randomSlider) {
+		if (randomSlider && isIntervalMaxActive() && isIntervalMinActive()) {
 			double min = getIntervalMin();
 			double max = getIntervalMax();
 			double increment = getAnimationStep();
