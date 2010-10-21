@@ -1975,32 +1975,40 @@ public class Application implements KeyEventDispatcher {
 
 	}
 
-	public void showErrorDialog(String msg) {
+	public void showErrorDialog(final String msg) {
 		if (!isErrorDialogsActive)
 			return;
 		
 		Application.printStacktrace("showErrorDialog: "+msg);
-		
 		isErrorDialogShowing = true;
 		
+		// use SwingUtilities to make sure this gets executed in the correct (=GUI) thread.
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {		
 		//TODO investigate why this freezes Firefox sometimes
-		JOptionPane.showConfirmDialog(mainComp, msg,
-    				getPlain("ApplicationName") + " - " + getError("Error"),
-    				JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
-		
-		isErrorDialogShowing = false;
+				JOptionPane.showConfirmDialog(mainComp, msg,
+						getPlain("ApplicationName") + " - " + getError("Error"),
+						JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE);
+				isErrorDialogShowing = false;
+			}
+		});
 	}
 	
 	public boolean isErrorDialogShowing() {
 		return isErrorDialogShowing;
 	}
 	
-	public void showMessage(String message) {		
+	public void showMessage(final String message) {		
 		//Application.debug("showMessage: "+message);
-
-		JOptionPane.showConfirmDialog(mainComp, message,
-    				getPlain("ApplicationName") + " - " + getMenu("Info"),
-    				JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);		
+		
+		// use SwingUtilities to make sure this gets executed in the correct (=GUI) thread.
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JOptionPane.showConfirmDialog(mainComp, message,
+	    				getPlain("ApplicationName") + " - " + getMenu("Info"),
+	    				JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE);		
+			}
+		});
 	}
 
 	/**
