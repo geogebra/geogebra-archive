@@ -6,12 +6,12 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
@@ -52,7 +52,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	 * @param cs2D 2D coord sys where the polygon is drawn
 	 * @param createSegments says if the polygon has to creates its edges
 	 */
-	public GeoPolygon3D(Construction c, GeoPointInterface[] points, GgbCoordSys cs2D, boolean createSegments) {
+	public GeoPolygon3D(Construction c, GeoPointND[] points, GgbCoordSys cs2D, boolean createSegments) {
 		super(c, points, cs2D, createSegments);
 
 		this.createSegments = createSegments;
@@ -64,7 +64,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	 * @param c the construction
 	 * @param points vertices 
 	 */
-	public GeoPolygon3D(Construction c, GeoPointInterface[] points) {
+	public GeoPolygon3D(Construction c, GeoPointND[] points) {
 		this(c,points,null,true);
 	}
 
@@ -107,7 +107,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	  * @param endPoint the end point
 	  * @return the segment
 	  */
-	 public GeoSegmentInterface createSegment(GeoPointInterface startPoint, GeoPointInterface endPoint, boolean euclidianVisible){
+	 public GeoSegmentInterface createSegment(GeoPointND startPoint, GeoPointND endPoint, boolean euclidianVisible){
 		 GeoSegmentInterface segment;
 
 		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, 
@@ -405,7 +405,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 	
 	//TODO merge with GeoPolygon
-	public void pathChanged(GeoPointInterface PI) {		
+	public void pathChanged(GeoPointND PI) {		
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 		
@@ -428,7 +428,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 	
 	//TODO merge with GeoPolygon
-	public void pointChanged(GeoPointInterface PI) {
+	public void pointChanged(GeoPointND PI) {
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 		
@@ -483,7 +483,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	///////////////////////////////////
 	// REGION3D INTERFACE
 	
-	public void setRegionChanged(GeoPointInterface PI, double x, double y){
+	public void setRegionChanged(GeoPointND PI, double x, double y){
 		
 		
 		((GeoPoint3D) PI).setCoords2D(x, y);
@@ -491,7 +491,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		//Application.debug("x = "+x+", y = "+y+"\n"+((GeoPoint3D) PI).getCoords());
 	}
 	
-	protected boolean isInRegion(GeoPointInterface PI, boolean update){
+	protected boolean isInRegion(GeoPointND PI, boolean update){
 		GeoPoint3D P = (GeoPoint3D) PI;
 
 		if (update){
@@ -502,7 +502,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		return isInRegion(P.getX2D(), P.getY2D());
 	}
 	
-	public boolean isInRegion(GeoPointInterface PI){
+	public boolean isInRegion(GeoPointND PI){
 		
 		return isInRegion(PI,true);
 		
@@ -555,7 +555,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		return ret;		
 	} 
 	
-	protected GeoPointInterface newGeoPoint(){
+	protected GeoPointND newGeoPoint(){
 		return new GeoPoint3D(cons);
 	}
 	

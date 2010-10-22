@@ -19,6 +19,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.EllipticArcLength;
+import geogebra.kernel.kernelND.GeoPointND;
 
 
 /**
@@ -319,7 +320,7 @@ implements LimitedPath, NumberValue, LineProperties {
 	/** 
 	 * states wheter P lies on this conic part or not 
 	 */
-	public boolean isOnPath(GeoPointInterface PI, double eps) {
+	public boolean isOnPath(GeoPointND PI, double eps) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -390,7 +391,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		return false;
 	}
 	
-	public void pointChanged(GeoPointInterface PI) {
+	public void pointChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -476,7 +477,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		}	
 	}
 	
-	public void pathChanged(GeoPointInterface PI) {	
+	public void pathChanged(GeoPointND PI) {	
 		
 		GeoPoint P = (GeoPoint) PI;
 		

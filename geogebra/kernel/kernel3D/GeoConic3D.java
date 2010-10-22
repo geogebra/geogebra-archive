@@ -5,11 +5,11 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
-import geogebra.kernel.GeoConicND;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoSegmentInterface;
+import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**
@@ -214,7 +214,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 		@Override
-		public void setSphereND(GeoPointInterface M, GeoSegmentInterface segment) {
+		public void setSphereND(GeoPointND M, GeoSegmentInterface segment) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -222,7 +222,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 		@Override
-		public void setSphereND(GeoPointInterface M, GeoPointInterface P) {
+		public void setSphereND(GeoPointND M, GeoPointND P) {
 			// TODO Auto-generated method stub
 			
 		}
@@ -298,7 +298,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 		@Override
-		protected void addPointOnConic(GeoPointInterface p) {
+		public void addPointOnConic(GeoPointND p) {
 			// TODO Auto-generated method stub
 			
 		}

@@ -4,9 +4,9 @@ import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.PathMover;
+import geogebra.kernel.kernelND.GeoPointND;
 
 /**
  * 
@@ -36,7 +36,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	 * @param p1 start point
 	 * @param p2 end point
 	 */
-	public GeoSegment3D(Construction c, GeoPoint3D p1, GeoPoint3D p2){
+	public GeoSegment3D(Construction c, GeoPointND p1, GeoPointND p2){
 		super(c,p1,p2);
 	}
 	
@@ -184,7 +184,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
 	}
 	
 	
-	public boolean isOnPath(GeoPointInterface p, double eps) {
+	public boolean isOnPath(GeoPointND p, double eps) {
 		// TODO Auto-generated method stub
 		return false;
 	}

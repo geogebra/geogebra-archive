@@ -6,11 +6,11 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVectorInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 
@@ -286,11 +286,11 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 
 		
 
-		public GeoPointInterface getStartPoint() {
+		public GeoPointND getStartPoint() {
 			return startPoint;
 		}
 
-		public void setStartPoint(GeoPointInterface pI)	throws CircularDefinitionException {
+		public void setStartPoint(GeoPointND pI)	throws CircularDefinitionException {
 			
 
 			//Application.debug("point : "+((GeoElement) pI).getLabel());
@@ -321,7 +321,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 			
 		}
 
-		public GeoPointInterface[] getStartPoints() {
+		public GeoPointND[] getStartPoints() {
 			if (startPoint == null)
 				return null;
 		
@@ -334,7 +334,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 			return startPoint == null; //TODO || startPoint.isAbsoluteStartPoint();
 		}
 
-		public void initStartPoint(GeoPointInterface p, int number) {
+		public void initStartPoint(GeoPointND p, int number) {
 			startPoint = (GeoPoint3D) p;
 			
 		}
@@ -343,7 +343,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 			return false;
 		}
 
-		public void removeStartPoint(GeoPointInterface p) {
+		public void removeStartPoint(GeoPointND p) {
 			if (startPoint == p) {
 				try {
 					setStartPoint(null);
@@ -352,7 +352,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 			
 		}
 
-		public void setStartPoint(GeoPointInterface p, int number) throws CircularDefinitionException {
+		public void setStartPoint(GeoPointND p, int number) throws CircularDefinitionException {
 			setStartPoint(p);
 			
 		}

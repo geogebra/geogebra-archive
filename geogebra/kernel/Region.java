@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 
 
 /**
@@ -21,7 +23,7 @@ public interface Region {
 	 * 
 	 * 
 	 */
-	public void pointChangedForRegion(GeoPointInterface P);
+	public void pointChangedForRegion(GeoPointND P);
 	
 	
 	/**
@@ -31,14 +33,14 @@ public interface Region {
 	 * 
 	 *
 	 */
-	public void regionChanged(GeoPointInterface P);
+	public void regionChanged(GeoPointND P);
 	
 	
 	
 	/**
 	 * Returns true if the given point lies inside this Region.
 	 */	
-	public boolean isInRegion(GeoPointInterface P);
+	public boolean isInRegion(GeoPointND P);
 	
 	/** says if the point (x0,y0) is in the region
 	 * @param x0 x-coord of the point

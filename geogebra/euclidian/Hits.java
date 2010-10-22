@@ -2,9 +2,9 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegmentInterface;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -212,12 +212,12 @@ public class Hits extends ArrayList {
 	 * returns array of changeable GeoElements out of hits that implement
 	 * PointRotateable
 	 */
-	final public Hits getPointRotateableHits(GeoPointInterface rotCenter) {
+	final public Hits getPointRotateableHits(GeoPointND rotCenter) {
 		return getMoveables(TEST_ROTATEMOVEABLE, rotCenter);
 	}
 
 
-	protected Hits getMoveables(int test, GeoPointInterface rotCenter) {
+	protected Hits getMoveables(int test, GeoPointND rotCenter) {
 
 
 		GeoElement geo;
@@ -233,7 +233,7 @@ public class Hits extends ArrayList {
 				}
 				// point with changeable parent coords
 				else if (geo.isGeoPoint()) {
-					GeoPointInterface point = (GeoPointInterface) geo;
+					GeoPointND point = (GeoPointND) geo;
 					if (point.hasChangeableCoordParentNumbers())
 						moveableList.add(point);
 				}
@@ -378,7 +378,7 @@ public class Hits extends ArrayList {
 		Hits topHitsList = new Hits();
 		if (containsGeoPoint(topHitsList)) {
 			//Hits topHitsList = new Hits();
-			getHits(GeoPointInterface.class, false, topHitsList);
+			getHits(GeoPointND.class, false, topHitsList);
 			return topHitsList;
 		} else
 			return clone();

@@ -18,6 +18,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoPointND;
+
 
 
 /**
@@ -31,7 +34,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoPointInterface A, B, C; // input    
+	private GeoPointND A, B, C; // input    
     protected GeoConicND circle; // output     
 
     // line bisectors
@@ -56,18 +59,18 @@ public class AlgoCircleThreePoints extends AlgoElement {
     protected AlgoCircleThreePoints(
         Construction cons,
         String label,
-        GeoPointInterface A,
-        GeoPointInterface B,
-        GeoPointInterface C) {
+        GeoPointND A,
+        GeoPointND B,
+        GeoPointND C) {
         this(cons, A, B, C);
         circle.setLabel(label);
     }
     
     public AlgoCircleThreePoints(
             Construction cons,           
-            GeoPointInterface A,
-            GeoPointInterface B,
-            GeoPointInterface C) {
+            GeoPointND A,
+            GeoPointND B,
+            GeoPointND C) {
     	
             super(cons);
             
@@ -95,7 +98,7 @@ public class AlgoCircleThreePoints extends AlgoElement {
 	 * @param B second point
 	 * @param C third point
      */
-    protected void setPoints(GeoPointInterface A, GeoPointInterface B, GeoPointInterface C){
+    protected void setPoints(GeoPointND A, GeoPointND B, GeoPointND C){
     	
         this.A = A;
         this.B = B;

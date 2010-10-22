@@ -1,10 +1,11 @@
 package geogebra.kernel.kernel3D;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.kernelND.GeoPointND;
 
 public class GeoRay3D extends GeoLine3D {
 
-	public GeoRay3D(Construction c, GeoPoint3D O) {
+	public GeoRay3D(Construction c, GeoPointND O) {
 		super(c);
 		setStartPoint(O);
         

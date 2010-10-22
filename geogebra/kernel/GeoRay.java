@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 
 /**
  * @author Markus Hohenwarter
@@ -85,7 +87,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPointInterface PI) {
+	public void pointChanged(GeoPointND PI) {
 		super.pointChanged(PI);
 		
 		GeoPoint P = (GeoPoint) PI;
@@ -101,7 +103,7 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		} 
 	}
 
-	public void pathChanged(GeoPointInterface PI) {
+	public void pathChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		

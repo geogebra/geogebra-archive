@@ -6,10 +6,10 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
-import geogebra.kernel.GeoQuadricND;
 import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.arithmetic.Functional2Var;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
@@ -112,11 +112,11 @@ implements GeoElement3DInterface, Functional2Var{
 	
 
 	
-	public void setSphereND(GeoPointInterface M, GeoSegmentInterface segment){
+	public void setSphereND(GeoPointND M, GeoSegmentInterface segment){
 		//TODO
 	}
 	
-	public void setSphereND(GeoPointInterface M, GeoPointInterface P){
+	public void setSphereND(GeoPointND M, GeoPointND P){
 		//TODO do this in GeoQuadricND, implement degenerate cases
 		setSphereNDMatrix(M, M.distance(P));
 	}

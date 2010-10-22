@@ -21,7 +21,7 @@ package geogebra.kernel.kernel3D;
 import geogebra.kernel.AlgoSphereNDTwoPoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoQuadricND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 
 
 /**

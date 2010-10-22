@@ -6,10 +6,10 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLineInterface;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.kernel.kernelND.GeoPointND;
 
 public abstract class GeoCoordSys1D extends GeoElement3D implements Path,
 GeoLineInterface, GeoCoordSys{
@@ -27,7 +27,7 @@ GeoLineInterface, GeoCoordSys{
 	}
 	
 	
-	public GeoCoordSys1D(Construction c, GeoPoint3D O, GeoPoint3D I){
+	public GeoCoordSys1D(Construction c, GeoPointND O, GeoPointND I){
 		this(c);
 		setCoord(O,I);
 	}	
@@ -65,18 +65,18 @@ GeoLineInterface, GeoCoordSys{
 	 * If I (or O) is infinite, I is used as direction vector.
 	 * @param O origin point
 	 * @param I unit point*/
-	public void setCoord(GeoPoint3D O, GeoPoint3D I){
+	public void setCoord(GeoPointND O, GeoPointND I){
 		
 		if (I.isInfinite())
 			if (O.isInfinite())
 				setUndefined(); //TODO infinite line
 			else
-				setCoord(O.getCoords(),I.getCoords());
+				setCoord(O.getCoordsInD(3),I.getCoordsInD(3));
 		else
 			if (O.isInfinite())
-				setCoord(I.getCoords(),O.getCoords());
+				setCoord(I.getCoordsInD(3),O.getCoordsInD(3));
 			else
-				setCoord(O.getCoords(),I.getCoords().sub(O.getCoords()));
+				setCoord(O.getCoordsInD(3),I.getCoordsInD(3).sub(O.getCoordsInD(3)));
 		
 	}
 	
@@ -164,7 +164,7 @@ GeoLineInterface, GeoCoordSys{
 		return true;
 	}
 	
-	public void pointChanged(GeoPointInterface PI){
+	public void pointChanged(GeoPointND PI){
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 
@@ -237,7 +237,7 @@ GeoLineInterface, GeoCoordSys{
 	}
 	
 	
-	public void pathChanged(GeoPointInterface PI){
+	public void pathChanged(GeoPointND PI){
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 		
@@ -248,7 +248,7 @@ GeoLineInterface, GeoCoordSys{
 	}
 	
 	
-	public boolean isOnPath(GeoPointInterface PI, double eps){
+	public boolean isOnPath(GeoPointND PI, double eps){
 		return false; //TODO
 	}
 

@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 
 import java.util.HashSet;
 
@@ -300,7 +301,7 @@ GeoSegmentInterface {
 	/* 
 	 * Path interface
 	 */	     	
-    public void pointChanged(GeoPointInterface PI) {
+    public void pointChanged(GeoPointND PI) {
 		GeoPoint P = (GeoPoint) PI;
 			
 		PathParameter pp = P.getPathParameter();
@@ -334,7 +335,7 @@ GeoSegmentInterface {
 		}
 	}
 
-	public void pathChanged(GeoPointInterface PI) {
+	public void pathChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;	
 		PathParameter pp = P.getPathParameter();

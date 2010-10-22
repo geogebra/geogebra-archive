@@ -1,6 +1,7 @@
-package geogebra.kernel;
+package geogebra.kernel.kernelND;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.RegionParameters;
 
 
 
@@ -12,7 +13,7 @@ import geogebra.Matrix.GgbVector;
  *
  */
 
-public interface GeoPointInterface {
+public interface GeoPointND {
 
 	
 	/** Returns whether this point has changeable numbers as coordinates */
@@ -48,21 +49,47 @@ public interface GeoPointInterface {
 	
 	public boolean isFinite();
 
-	public void set(GeoPointInterface p);
+	public void set(GeoPointND p);
 
 	/** return the coordinates of the vector (this,Q) 
 	 * @param Q ending point
 	 * @return coords of the vector */
-	public double[] vectorTo(GeoPointInterface Q);
+	public double[] vectorTo(GeoPointND Q);
 	
 	
 	public GgbVector getInhomCoords();
 	
 	public void getInhomCoords(double[] coords);
 	
-	public double distance(GeoPointInterface P);
+	public double distance(GeoPointND P);
 
 	public boolean isPointInRegion();
 	
-
+	public int getPointSize();
+	
+	public boolean hasPath();
+	
+	//public void doPath();
+	
+	public boolean hasRegion();
+	
+	/** 
+	 * Sets homogeneous coordinates and updates
+	 * inhomogeneous coordinates
+	 */
+	public void setCoords(double x, double y, double z);
+	
+	/**
+	 * @param dimension
+	 * @return the coords of the point in the given dimension (extended or projected)
+	 */
+	public GgbVector getInhomCoordsInD(int dimension);
+	
+	/**
+	 * @param dimension
+	 * @return the coords of the point in the given dimension (extended or projected)
+	 */
+	public GgbVector getCoordsInD(int dimension);
+	
+	
 }

@@ -18,11 +18,11 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.discrete.delauney.Pnt;
 import geogebra.kernel.discrete.delauney.Triangle;
 import geogebra.kernel.discrete.delauney.Triangulation;
+import geogebra.kernel.kernelND.GeoPointND;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public class AlgoVoronoi extends AlgoElement {
 		for (int i = 0 ; i < size ; i++) {
 			GeoElement geo = inputList.get(i);
 			if (geo.isDefined() && geo.isGeoPoint()) {
-				GeoPointInterface p = (GeoPointInterface)geo;
+				GeoPointND p = (GeoPointND)geo;
 				p.getInhomCoords(inhom);
 				if (Math.abs(inhom[0]) > initialSize) initialSize = Math.abs(inhom[0]);
 				if (Math.abs(inhom[1]) > initialSize) initialSize = Math.abs(inhom[1]);
@@ -115,7 +115,7 @@ public class AlgoVoronoi extends AlgoElement {
 		for (int i = 0 ; i < size ; i++) {
 			GeoElement geo = inputList.get(i);
 			if (geo.isDefined() && geo.isGeoPoint()) {
-				GeoPointInterface p = (GeoPointInterface)geo;
+				GeoPointND p = (GeoPointND)geo;
 				p.getInhomCoords(inhom);
 				dt.delaunayPlace(new Pnt(inhom[0], inhom[1]));
 			}

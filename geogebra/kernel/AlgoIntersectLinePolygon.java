@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -144,7 +145,7 @@ implements AlgoElementWithResizeableOutput{
     	
     	//update and/or create points
     	int index = 0;
-    	for (GeoPointInterface point : pointsTree.values()){
+    	for (GeoPointND point : pointsTree.values()){
     		if (index<pointsList.getNumber())//re-affect old point
     			pointsList.get(index).set((GeoElement) point);
     		else{//add new point to the list and to the output
@@ -160,8 +161,8 @@ implements AlgoElementWithResizeableOutput{
     	
     	//update and/or create segments
     	index = 0;
-    	GeoPointInterface startPoint = null;
-    	for (GeoPointInterface point : pointsTree.values()){
+    	GeoPointND startPoint = null;
+    	for (GeoPointND point : pointsTree.values()){
     		if (startPoint!=null){
     			
     			GgbVector middle = (GgbVector) startPoint.getInhomCoords().add(point.getInhomCoords()).mul(0.5);

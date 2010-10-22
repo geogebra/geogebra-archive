@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbCoordSys;
+import geogebra.kernel.kernelND.GeoPointND;
 
 
 
@@ -26,7 +27,7 @@ import geogebra.Matrix.GgbCoordSys;
 public class AlgoPolyLine extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	protected GeoPointInterface [] points;  // input
+	protected GeoPointND [] points;  // input
 	private GeoList geoList;  // alternative input
     protected GeoPolyLine poly;     // output
        
@@ -34,11 +35,11 @@ public class AlgoPolyLine extends AlgoElement {
     	this(cons, labels, null, geoList);
     }
     
-    protected AlgoPolyLine(Construction cons, String [] labels, GeoPointInterface [] points) {
+    protected AlgoPolyLine(Construction cons, String [] labels, GeoPointND [] points) {
     	this(cons, labels, points, null);
     }
  
-    protected AlgoPolyLine(Construction cons, String [] labels, GeoPointInterface [] points, GeoList geoList) {
+    protected AlgoPolyLine(Construction cons, String [] labels, GeoPointND [] points, GeoList geoList) {
     	this(cons,labels,points,geoList,null,true,null);
     }
     
@@ -52,7 +53,7 @@ public class AlgoPolyLine extends AlgoElement {
      * @param polyhedron polyhedron (when segment is part of), used for 3D
      */
     protected AlgoPolyLine(Construction cons, String [] labels, 
-    		GeoPointInterface [] points, GeoList geoList, GgbCoordSys cs2D, 
+    		GeoPointND [] points, GeoList geoList, GgbCoordSys cs2D, 
     		boolean createSegments, GeoElement polyhedron) {
         super(cons);
         this.points = points;           

@@ -4,9 +4,9 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.Matrix.GgbVector3D;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoCurveCartesianND;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**

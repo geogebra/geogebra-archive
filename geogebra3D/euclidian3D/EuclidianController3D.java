@@ -9,7 +9,6 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -20,6 +19,7 @@ import geogebra.kernel.kernel3D.GeoElement3DInterface;
 import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.kernel.kernel3D.Region3D;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
@@ -61,7 +61,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	/** 3D point that is currently moved */
-	protected GeoPoint3D movedGeoPoint3D = null;
+	//protected GeoPoint3D movedGeoPoint3D = null;
 	
 	/** min/max values for moving a point */
 	private double[] xMinMax, yMinMax, zMinMax;
@@ -163,36 +163,33 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	public void setMovedGeoPoint(GeoElement geo){
 		
-		movedGeoPoint3D = (GeoPoint3D) geo;
+		movedGeoPoint = (GeoPointND) geo;
+		GgbVector coords = movedGeoPoint.getInhomCoordsInD(3);
 		
 		// sets the min/max values
 		double[] minmax;
 		minmax = view3D.getXMinMax();
-		xMinMax = getMinMax(minmax[0], movedGeoPoint3D.getCoords().getX(), minmax[1]);
+		xMinMax = getMinMax(minmax[0], coords.getX(), minmax[1]);
 		minmax = view3D.getYMinMax();
-		yMinMax = getMinMax(minmax[0], movedGeoPoint3D.getCoords().getY(), minmax[1]);
+		yMinMax = getMinMax(minmax[0], coords.getY(), minmax[1]);
 		minmax = view3D.getZMinMax();
-		zMinMax = getMinMax(minmax[0], movedGeoPoint3D.getCoords().getZ(), minmax[1]);
+		zMinMax = getMinMax(minmax[0], coords.getZ(), minmax[1]);
 			
 
 		//Application.debug("xMinMax="+xMinMax[0]+","+xMinMax[1]);
 		
-		if (!movedGeoPoint3D.hasPath() && !movedGeoPoint3D.hasRegion() ){
+		if (!movedGeoPoint.hasPath() && !movedGeoPoint.hasRegion() ){
 			
 			GgbMatrix4x4 plane = GgbMatrix4x4.Identity(); 
 			setCurrentPlane(plane);
 			//update the moving plane altitude
-			getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
+			getCurrentPlane().set(coords, 4);
 			
 		}
 		
 		view3D.setDragCursor();
 	}
 
-	
-	public void resetMovedGeoPoint(){
-		movedGeoPoint3D = null;
-	}
 
 
 	
@@ -312,95 +309,100 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected void movePoint(boolean repaint){
 		
 
-			
-		
-		if (movedGeoPoint3D.hasPath()){
-			
-			setMouseInformation(movedGeoPoint3D);		
-			movedGeoPoint3D.doPath();
-						
-		}else if (movedGeoPoint3D.hasRegion()){						
-			if ((isShiftDown)){//&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
-				//frees the point and moves it along z-axis if it belong to xOy plane
-				movedGeoPoint3D.freeUp();
-				setCurrentPlane(GgbMatrix4x4.Identity());
-			}else{
-				setMouseInformation(movedGeoPoint3D);			
-				movedGeoPoint3D.doRegion();
-				if (movedGeoPoint3D.getRegion()==view3D.getxOyPlane()){
-					GgbVector coords = movedGeoPoint3D.getCoords();
-					checkXYMinMax(coords);
-					movedGeoPoint3D.setWillingCoords(coords);
-					movedGeoPoint3D.setWillingDirection(null);
+		if (movedGeoPoint instanceof GeoPoint3D){
+			GeoPoint3D movedGeoPoint3D = (GeoPoint3D) movedGeoPoint;
+
+
+
+
+			if (movedGeoPoint3D.hasPath()){
+
+				setMouseInformation(movedGeoPoint3D);		
+				movedGeoPoint3D.doPath();
+
+			}else if (movedGeoPoint3D.hasRegion()){						
+				if (isShiftDown){//&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
+					//frees the point and moves it along z-axis if it belong to xOy plane
+					movedGeoPoint3D.freeUp();
+					setCurrentPlane(GgbMatrix4x4.Identity());
+				}else{
+					setMouseInformation(movedGeoPoint3D);			
 					movedGeoPoint3D.doRegion();
+					if (movedGeoPoint3D.getRegion()==view3D.getxOyPlane()){
+						GgbVector coords = movedGeoPoint3D.getCoords();
+						checkXYMinMax(coords);
+						movedGeoPoint3D.setWillingCoords(coords);
+						movedGeoPoint3D.setWillingDirection(null);
+						movedGeoPoint3D.doRegion();
+					}
+
 				}
-					
+
+			}else {
+
+
+				if (isShiftDown && mouseLoc != null){ //moves the point along z-axis
+
+					//getting current pick point and direction v 
+					if (movePointMode != MOVE_POINT_MODE_Z){
+						mouseLocOld = (Point) mouseLoc.clone();
+						positionOld = movedGeoPoint3D.getCoords().copyVector();
+						movePointMode = MOVE_POINT_MODE_Z;
+					}
+					//GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+					//view3D.toSceneCoords3D(o);
+					GgbVector o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y);
+					view3D.toSceneCoords3D(o);
+
+					GgbVector v = new GgbVector(new double[] {0,0,1,0});
+					view3D.toSceneCoords3D(v);
+
+					//getting new position of the point
+					GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
+
+
+					//max z value
+					if (project.getZ()>zMinMax[1])
+						project.setZ(zMinMax[1]);
+					else if (project.getZ()<zMinMax[0])
+						project.setZ(zMinMax[0]);
+
+
+					movedGeoPoint3D.setCoords(project);
+
+					//update the moving plane altitude
+					getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
+
+
+				}else{
+
+					movePointOnCurrentPlane(movedGeoPoint3D, true);
+
+				}
+
+				//update point decorations
+				view3D.updatePointDecorations(movedGeoPoint3D);
+
+
 			}
-					
-		}else {
-			
-			
-			if (isShiftDown && mouseLoc != null){ //moves the point along z-axis
-
-				//getting current pick point and direction v 
-				if (movePointMode != MOVE_POINT_MODE_Z){
-					mouseLocOld = (Point) mouseLoc.clone();
-					positionOld = movedGeoPoint3D.getCoords().copyVector();
-					movePointMode = MOVE_POINT_MODE_Z;
-				}
-				//GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
-				//view3D.toSceneCoords3D(o);
-				GgbVector o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y);
-				view3D.toSceneCoords3D(o);
-				
-				GgbVector v = new GgbVector(new double[] {0,0,1,0});
-				view3D.toSceneCoords3D(v);
-
-				//getting new position of the point
-				GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
-				
-				
-				//max z value
-				if (project.getZ()>zMinMax[1])
-					project.setZ(zMinMax[1]);
-				else if (project.getZ()<zMinMax[0])
-					project.setZ(zMinMax[0]);
-				
-				
-				movedGeoPoint3D.setCoords(project);
-
-				//update the moving plane altitude
-				getCurrentPlane().set(movedGeoPoint3D.getCoords(), 4);
 
 
+
+			//update 3D cursor coordinates (false : no path or region update)
+			view3D.getCursor3D().setCoords(movedGeoPoint3D.getCoords(),false);
+
+
+			if (repaint){
+				movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
 			}else{
-
-				movePointOnCurrentPlane(movedGeoPoint3D, true);
-
+				movedGeoPoint3D.updateCascade();//TODO modify movedGeoPoint3D.updateCascade()
 			}
-			
-			//update point decorations
-			view3D.updatePointDecorations(movedGeoPoint3D);
 
-			
+			// update previewable
+			if (view.getPreviewDrawable() != null) 	
+				view.updatePreviewable();
+		
 		}
-		
-		
-
-		//update 3D cursor coordinates (false : no path or region update)
-		view3D.getCursor3D().setCoords(movedGeoPoint3D.getCoords(),false);
-		
-		
-		if (repaint){
-			movedGeoPoint3D.updateRepaint();//for highlighting in algebraView
-		}else{
-			movedGeoPoint3D.updateCascade();//TODO modify movedGeoPoint3D.updateCascade()
-		}
-		
-		// update previewable
-		if (view.getPreviewDrawable() != null) 	
-			view.updatePreviewable();
-		
 	}
 
 
@@ -423,7 +425,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/**
 	 * return a copy of the preview point if one
 	 */
-	protected GeoPointInterface getNewPoint(Hits hits,
+	protected GeoPointND getNewPoint(Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
 			boolean doSingleHighlighting) {
 				
@@ -492,15 +494,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	/** put sourcePoint coordinates in point */
-	protected void createNewPoint(GeoPointInterface sourcePoint){
+	protected void createNewPoint(GeoPointND sourcePoint){
 		GeoPoint3D point3D = view3D.getCursor3D();
-		point3D.setCoords((GeoPoint3D) sourcePoint);
-		point3D.updateCoords();
+		point3D.setCoords(sourcePoint.getCoordsInD(3),false);
 		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_NONE);
+		//Application.debug("sourcePoint:\n"+sourcePoint.getCoordsInD(3)+"\ncursor:\n"+view3D.getCursor3D().getCoords());
 	}
 	
 	/** put intersectionPoint coordinates in point */
-	protected void createNewPointIntersection(GeoPointInterface intersectionPoint){
+	protected void createNewPointIntersection(GeoPointND intersectionPoint){
 		GeoPoint3D point3D = view3D.getCursor3D();
 		point3D.setCoords((GeoPoint3D) intersectionPoint);
 		//point3D.setParentAlgorithm(((GeoPoint3D) intersectionPoint).getParentAlgorithm());
@@ -514,7 +516,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * create a new free point
 	 * or update the preview point
 	 */
-	protected GeoPointInterface createNewPoint(boolean forPreviewable){
+	protected GeoPointND createNewPoint(boolean forPreviewable){
 		
 		GeoPoint3D point3D;
 		
@@ -550,7 +552,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * create a new path point
 	 * or update the preview point
 	 */	
-	protected GeoPointInterface createNewPoint(boolean forPreviewable, Path path){
+	protected GeoPointND createNewPoint(boolean forPreviewable, Path path){
 			
 		GeoPoint3D point3D;
 		
@@ -575,7 +577,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * create a new region point
 	 * or update the preview point
 	 */	
-	protected GeoPointInterface createNewPoint(boolean forPreviewable, Region region){
+	protected GeoPointND createNewPoint(boolean forPreviewable, Region region){
 		
 		GeoPoint3D point3D;
 		
@@ -651,18 +653,18 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 	}
 	
-	
-	protected void updateMovedGeoPoint(GeoPointInterface point){
+	/*
+	protected void updateMovedGeoPoint(GeoPointND point){
 		//movedGeoPoint3D = (GeoPoint3D) point;
 		setMovedGeoPoint((GeoPoint3D) point);
 	}
-	
+	*/
 	
 	
 	
 	// tries to get a single intersection point for the given hits
 	// i.e. hits has to include two intersectable objects.
-	protected GeoPointInterface getSingleIntersectionPoint(Hits hits) {
+	protected GeoPointND getSingleIntersectionPoint(Hits hits) {
 
 		
 		if (hits.isEmpty() || hits.size() != 2)
@@ -716,6 +718,19 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// creating new objects
 	
 	
+	/** return selected points as ND points
+	 * @return selected points
+	 */
+	final protected GeoPointND[] getSelectedPointsND() {		
+
+		GeoPointND[] ret = new GeoPointND[selectedPoints.size()];
+		getSelectedPointsInterface(ret);
+		
+		//Application.printStacktrace("");
+		
+		return ret;	
+	}
+	
 	/** return selected points as 3D points
 	 * @return selected points
 	 */
@@ -727,9 +742,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		//Application.printStacktrace("");
 		
 		return ret;	
-	}
-	
-
+	}	
 	
 	/**
 	 * @return selected 3D lines
@@ -743,19 +756,19 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 	// fetch the two selected points for line
 	protected void join(){
-		GeoPoint3D[] points = getSelectedPoints3D();
+		GeoPointND[] points = getSelectedPointsND();
 		((Kernel3D) getKernel()).Line3D(null,points[0], points[1]);
 	}
 	
 	// fetch the two selected points for segment
 	protected void segment(){
-		GeoPoint3D[] points = getSelectedPoints3D();
+		GeoPointND[] points = getSelectedPointsND();
 		((Kernel3D) getKernel()).Segment3D(null,points[0], points[1]);
 	}
 	
 	// fetch the two selected points for ray
 	protected void ray(){
-		GeoPoint3D[] points = getSelectedPoints3D();
+		GeoPointND[] points = getSelectedPointsND();
 		((Kernel3D) getKernel()).Ray3D(null,points[0], points[1]);
 	}
 	
@@ -861,7 +874,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// moved GeoElements
 	
 	public GeoElement getMovedGeoPoint(){
-		return movedGeoPoint3D;
+		return (GeoElement) movedGeoPoint;
 	}
 	
 	

@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
@@ -44,7 +45,7 @@ import java.util.TreeSet;
 final public class GeoPoint extends GeoVec3D 
 implements VectorValue, 
 Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, ConicMirrorable, PointProperties,
-GeoPointInterface  {   	
+GeoPointND  {   	
 	
 	private static final long serialVersionUID = 1L;
 
@@ -138,7 +139,7 @@ GeoPointInterface  {
     }
     
     
-    public void set(GeoPointInterface p){
+    public void set(GeoPointND p){
     	set((GeoElement) p);
     }
     
@@ -538,7 +539,7 @@ GeoPointInterface  {
        	return inhomY;
     }     
     
-    final public double[] vectorTo(GeoPointInterface QI){
+    final public double[] vectorTo(GeoPointND QI){
     	GeoPoint Q = (GeoPoint) QI;
     	return new double[]{
     			Q.getInhomX()-getInhomX(),
@@ -547,7 +548,7 @@ GeoPointInterface  {
     	                  };
     }
     
-    public double distance(GeoPointInterface P){
+    public double distance(GeoPointND P){
     	return distance((GeoPoint) P);
     }
     
@@ -1116,7 +1117,32 @@ GeoPointInterface  {
 		public GgbVector getInhomCoords(){
 			return new GgbVector(new double[] {inhomX, inhomY});
 		}
+
+		public GgbVector getInhomCoordsInD(int dimension){
+			switch(dimension){
+			case 2:
+				return getInhomCoords();
+			case 3:
+				GgbVector v = new GgbVector(3);
+				v.setX(inhomX);
+				v.setY(inhomY);
+				v.setZ(0);
+				return v;
+			default:
+				return null;
+			}
+		}
 		
+		public GgbVector getCoordsInD(int dimension){
+			switch(dimension){
+			case 2:
+				return new GgbVector(x,y,z);
+			case 3:
+				return new GgbVector(x,y,0,z);
+			default:
+				return null;
+			}
+		}		
 		public boolean isMatrixTransformable() {
 			return true;
 		}
@@ -1129,6 +1155,17 @@ GeoPointInterface  {
 			setCoords(x1, y1, z);
 			
 		}
+		
+		
+		//////////////////////////////////////
+		// 3D stuff
+		//////////////////////////////////////
+		
+	  	public boolean hasDrawable3D() {
+			return true;
+		}
 	    
-
+	  	public GgbVector getLabelPosition(){
+			return getCoordsInD(3);
+		}
 }

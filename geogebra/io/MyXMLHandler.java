@@ -39,7 +39,6 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVec3D;
@@ -56,6 +55,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -168,7 +168,7 @@ public class MyXMLHandler implements DocHandler {
 	private class LocateableExpPair {
 		Locateable locateable;
 		String exp; // String with expression to create point 
-		GeoPointInterface point; // free point
+		GeoPointND point; // free point
 		int number; // number of startPoint
 
 		LocateableExpPair(Locateable g, String s, int n) {
@@ -177,7 +177,7 @@ public class MyXMLHandler implements DocHandler {
 			number = n;
 		}
 		
-		LocateableExpPair(Locateable g, GeoPointInterface p, int n) {
+		LocateableExpPair(Locateable g, GeoPointND p, int n) {
 			locateable = g;
 			point = p;
 			number = n;
@@ -3275,7 +3275,7 @@ public class MyXMLHandler implements DocHandler {
 				p.setCoords(x, y, z);
 				*/
 				
-				GeoPointInterface p = handleAbsoluteStartPoint(attrs);
+				GeoPointND p = handleAbsoluteStartPoint(attrs);
 				
 				if (number == 0) {
 					// set first start point right away
@@ -3298,7 +3298,7 @@ public class MyXMLHandler implements DocHandler {
 	/** create absolute start point (coords expected) 
 	 * @param attrs 
 	 * @return start point */
-	protected GeoPointInterface handleAbsoluteStartPoint(LinkedHashMap<String, String> attrs) {
+	protected GeoPointND handleAbsoluteStartPoint(LinkedHashMap<String, String> attrs) {
 		double x = Double.parseDouble((String) attrs.get("x"));
 		double y = Double.parseDouble((String) attrs.get("y"));
 		double z = Double.parseDouble((String) attrs.get("z"));
@@ -3314,7 +3314,7 @@ public class MyXMLHandler implements DocHandler {
 
 			while (it.hasNext()) {
 				LocateableExpPair pair = it.next();
-				GeoPointInterface P = pair.point != null ? pair.point : 
+				GeoPointND P = pair.point != null ? pair.point : 
 								algProc.evaluateToPoint(pair.exp);
 				pair.locateable.setStartPoint(P, pair.number);
 								

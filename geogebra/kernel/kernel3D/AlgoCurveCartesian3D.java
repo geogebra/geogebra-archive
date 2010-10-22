@@ -3,10 +3,10 @@ package geogebra.kernel.kernel3D;
 import geogebra.kernel.AlgoCurveCartesian;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoCurveCartesian;
-import geogebra.kernel.GeoCurveCartesianND;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoCurveCartesianND;
 
 
 public class AlgoCurveCartesian3D extends AlgoCurveCartesian {

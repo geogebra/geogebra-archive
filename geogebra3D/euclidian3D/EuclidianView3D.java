@@ -15,7 +15,6 @@ import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoQuadricND;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.kernel3D.GeoAxis3D;
@@ -33,6 +32,8 @@ import geogebra.kernel.kernel3D.GeoRay3D;
 import geogebra.kernel.kernel3D.GeoSegment3D;
 import geogebra.kernel.kernel3D.GeoVector3D;
 import geogebra.kernel.kernel3D.Kernel3D;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
@@ -464,9 +465,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				break;				
 
 				// 3D stuff
-
+			case GeoElement.GEO_CLASS_POINT:
 			case GeoElement3D.GEO_CLASS_POINT3D:
-				d = new DrawPoint3D(this, (GeoPoint3D) geo);
+				d = new DrawPoint3D(this, (GeoPointND) geo);
 				break;									
 
 			case GeoElement3D.GEO_CLASS_VECTOR3D:

@@ -35,7 +35,6 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
@@ -51,6 +50,7 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.sound.MidiManager;
@@ -8832,7 +8832,7 @@ class CmdStemPlot extends CommandProcessor {
 			if (!arg[1].isRegion())
 				throw argErr(app, c.getName(), arg[1]);
 			
-		    GeoBoolean slider = kernel.isInRegion(c.getLabel(),(GeoPointInterface)arg[0],(Region)arg[1]);
+		    GeoBoolean slider = kernel.isInRegion(c.getLabel(),(GeoPointND)arg[0],(Region)arg[1]);
 		    return new GeoElement[] {slider};                		             
 		}    
 	}

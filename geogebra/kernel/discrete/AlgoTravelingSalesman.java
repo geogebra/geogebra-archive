@@ -3,7 +3,6 @@ package geogebra.kernel.discrete;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
@@ -15,6 +14,7 @@ import geogebra.kernel.discrete.signalprocesser.voronoi.representation.simpletri
 import geogebra.kernel.discrete.tsp.method.tsp.BranchBound;
 import geogebra.kernel.discrete.tsp.method.tsp.Opt3;
 import geogebra.kernel.discrete.tsp.model.Node;
+import geogebra.kernel.kernelND.GeoPointND;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class AlgoTravelingSalesman extends AlgoHull{
         for (int i = 0 ; i < size ; i++) {
 			GeoElement geo = inputList.get(i);
 			if (geo.isDefined() && geo.isGeoPoint()) {
-				GeoPointInterface p = (GeoPointInterface)geo;
+				GeoPointND p = (GeoPointND)geo;
 				p.getInhomCoords(inhom);
 				nodes[i] = new Node(inhom[0], inhom[1]);
 			}

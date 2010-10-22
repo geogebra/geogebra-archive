@@ -24,6 +24,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.util.HashSet;
@@ -169,7 +170,7 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
 		return startPoint == null || startPoint.isAbsoluteStartPoint();
 	}
 	
-	public void setStartPoint(GeoPointInterface p, int number)  throws CircularDefinitionException {
+	public void setStartPoint(GeoPointND p, int number)  throws CircularDefinitionException {
 		setStartPoint(p);
 	}
 	
@@ -177,11 +178,11 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
 	 * Sets the startpoint without performing any checks.
 	 * This is needed for macros.	 
 	 */
-	public void initStartPoint(GeoPointInterface p, int number) {
+	public void initStartPoint(GeoPointND p, int number) {
 		startPoint = (GeoPoint) p;
 	}
 	
-	public void removeStartPoint(GeoPointInterface p) {    
+	public void removeStartPoint(GeoPointND p) {    
 		if (startPoint == p) {
 			try {
 				setStartPoint(null);
@@ -191,7 +192,7 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
 	
 
    
-    public void setStartPoint(GeoPointInterface pI) throws CircularDefinitionException {  
+    public void setStartPoint(GeoPointND pI) throws CircularDefinitionException {  
     	
     	GeoPoint p = (GeoPoint) pI;
     	
@@ -482,7 +483,7 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
 		return false;
 	}
 	
-	public void pointChanged(GeoPointInterface P) {
+	public void pointChanged(GeoPointND P) {
 		if (startPoint == null && waitingForStartPoint) {
 			// remember waiting points
 			if (waitingPointSet == null) waitingPointSet = new HashSet();
@@ -494,12 +495,12 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
 		pathSegment.pointChanged(P);
 	}
 
-	public void pathChanged(GeoPointInterface P) {		
+	public void pathChanged(GeoPointND P) {		
 		updatePathSegment();
 		pathSegment.pathChanged(P);
 	}
 	
-	public boolean isOnPath(GeoPointInterface P, double eps) {
+	public boolean isOnPath(GeoPointND P, double eps) {
 		updatePathSegment(); // Michael Borcherds 2008-06-10 bugfix
 		return pathSegment.isOnPath(P, eps);
 	}

@@ -2,8 +2,8 @@ package geogebra.kernel.kernel3D;
 
 import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVectorInterface;
+import geogebra.kernel.kernelND.GeoPointND;
 
 
 /**
@@ -21,7 +21,7 @@ public class AlgoVector3D extends AlgoVector {
 	 * @param P
 	 * @param Q
 	 */
-	public AlgoVector3D(Construction cons, String label, GeoPointInterface P, GeoPointInterface Q) {
+	public AlgoVector3D(Construction cons, String label, GeoPointND P, GeoPointND Q) {
 		super(cons, label, P, Q);
 	}
 
@@ -33,7 +33,7 @@ public class AlgoVector3D extends AlgoVector {
 	}
 
 
-	protected GeoPointInterface newStartPoint(){
+	protected GeoPointND newStartPoint(){
 
 		return new GeoPoint3D((GeoPoint3D) getP());
 

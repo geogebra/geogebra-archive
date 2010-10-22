@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 import java.awt.Color;
 
 /**
@@ -35,11 +37,11 @@ public interface GeoSegmentInterface {
 	////////////////////////////////////////////////
 	// Path Interface
 	
-	boolean isOnPath(GeoPointInterface p, double eps);
+	boolean isOnPath(GeoPointND p, double eps);
 	
-	void pointChanged(GeoPointInterface p);
+	void pointChanged(GeoPointND p);
 	
-	public void pathChanged(GeoPointInterface PI);
+	public void pathChanged(GeoPointND PI);
 
 	
 	/**

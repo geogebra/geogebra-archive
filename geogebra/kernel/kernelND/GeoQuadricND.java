@@ -1,9 +1,13 @@
-package geogebra.kernel;
+package geogebra.kernel.kernelND;
 
 import java.awt.geom.AffineTransform;
 
 import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.kernel3D.GeoQuadric3D;
 import geogebra.main.Application;
@@ -35,7 +39,7 @@ public abstract class GeoQuadricND extends GeoElement {
 	public static final int QUADRIC_CONE = 30;
 	public static final int QUADRIC_CYLINDER = 31;
 	
-	protected int type = -1; // of quadric
+	public int type = -1; // of quadric
 
 
 
@@ -43,10 +47,10 @@ public abstract class GeoQuadricND extends GeoElement {
 	 * @see {@link GeoConic}
 	 * @see {@link GeoQuadric3D}
 	 */
-	protected double[] matrix;
+	public double[] matrix;
 	
 	
-	protected double[] halfAxes;
+	public double[] halfAxes;
 	
 
 	
@@ -140,14 +144,14 @@ public abstract class GeoQuadricND extends GeoElement {
 	 * @param M center
 	 * @param segment
 	 */
-	abstract public void setSphereND(GeoPointInterface M, GeoSegmentInterface segment);
+	abstract public void setSphereND(GeoPointND M, GeoSegmentInterface segment);
 	
 	
 	
 	/**
 	 * makes this quadric a sphere with midpoint M and radius r
 	 */
-	public void setSphereND(GeoPointInterface M, double r) {
+	public void setSphereND(GeoPointND M, double r) {
 		defined = ((GeoElement) M).isDefined() && !M.isInfinite(); // check midpoint
 		
 		// check radius
@@ -165,10 +169,10 @@ public abstract class GeoQuadricND extends GeoElement {
 	}
 	
 	
-	abstract public void setSphereND(GeoPointInterface M, GeoPointInterface P);
+	abstract public void setSphereND(GeoPointND M, GeoPointND P);
 	
 	
-	protected void setSphereNDMatrix(GeoPointInterface M, double r){
+	protected void setSphereNDMatrix(GeoPointND M, double r){
 				
 		
 		double[] coords = M.getInhomCoords().get();

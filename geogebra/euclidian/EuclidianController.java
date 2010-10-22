@@ -38,7 +38,6 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
@@ -56,6 +55,7 @@ import geogebra.kernel.Region;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
@@ -163,7 +163,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// protected GeoVec2D b;
 
-	protected GeoPoint movedGeoPoint;
+	protected GeoPointND movedGeoPoint;
 	protected boolean movedGeoPointDragged = false;
 
 	protected GeoLine movedGeoLine;
@@ -1111,7 +1111,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// point with changeable coord parent numbers
 			if (movedGeoElement.isGeoPoint() && 
-					((GeoPointInterface) movedGeoElement).hasChangeableCoordParentNumbers()) {
+					((GeoPointND) movedGeoElement).hasChangeableCoordParentNumbers()) {
 				translateableGeos = new ArrayList();
 				translateableGeos.add(movedGeoElement);
 			}
@@ -1375,9 +1375,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	////////////////////////////////////////////
 	// setters movedGeoElement -> movedGeoPoint, ...
 	public void setMovedGeoPoint(GeoElement geo){
-		movedGeoPoint = (GeoPoint) movedGeoElement;
+		movedGeoPoint = (GeoPointND) movedGeoElement;
 
-		AlgoElement algo = movedGeoPoint.getParentAlgorithm();
+		AlgoElement algo = ((GeoElement) movedGeoPoint).getParentAlgorithm();
 		if (algo != null && algo instanceof AlgoDynamicCoordinates) {
 			movedGeoPoint = ((AlgoDynamicCoordinates)algo).getParentPoint();
 		}
@@ -2755,7 +2755,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected void movePoint(boolean repaint) {
 		movedGeoPoint.setCoords(xRW, yRW, 1.0);
-		movedGeoPoint.updateCascade();	
+		((GeoElement) movedGeoPoint).updateCascade();	
 		movedGeoPointDragged = true;
 
 		if (repaint)
@@ -3239,7 +3239,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 
-		GeoPointInterface point = getNewPoint(hits, onPathPossible, inRegionPossible, intersectPossible, doSingleHighlighting);
+		GeoPointND point = getNewPoint(hits, onPathPossible, inRegionPossible, intersectPossible, doSingleHighlighting);
 
 		if (point != null) {
 
@@ -3261,7 +3261,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 	// creates or get the new point (used for 3D)
-	protected GeoPointInterface getNewPoint(Hits hits,
+	protected GeoPointND getNewPoint(Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible, 
 			boolean doSingleHighlighting) {
 
@@ -3276,7 +3276,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		
 	// update the new point (used for preview in 3D)
-	public GeoPointInterface updateNewPoint(
+	public GeoPointND updateNewPoint(
 			boolean forPreviewable,
 			Hits hits,
 			boolean onPathPossible, boolean inRegionPossible, boolean intersectPossible,
@@ -3297,17 +3297,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (hits.containsGeoPoint()){
 			createPoint = false;
 			if (forPreviewable){
-				createNewPoint((GeoPointInterface) hits.getHits(GeoPointInterface.class, tempArrayList).get(0));				
+				createNewPoint((GeoPointND) hits.getHits(GeoPointND.class, tempArrayList).get(0));				
 			}
 		}
 
 
-		GeoPointInterface point = null;
+		GeoPointND point = null;
 
 		
 		//	try to get an intersection point
 		if (createPoint && intersectPossible) {
-			GeoPointInterface intersectPoint = getSingleIntersectionPoint(hits);
+			GeoPointND intersectPoint = getSingleIntersectionPoint(hits);
 			if (intersectPoint != null) {
 				if (!forPreviewable){
 					point = intersectPoint;
@@ -3386,34 +3386,34 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	/** only used in 3D */
-	protected void createNewPoint(GeoPointInterface sourcePoint){
+	protected void createNewPoint(GeoPointND sourcePoint){
 
 
 	}
 
 	/** only used in 3D */
-	protected void createNewPointIntersection(GeoPointInterface intersectionPoint){
+	protected void createNewPointIntersection(GeoPointND intersectionPoint){
 	}
 	
 
-	protected GeoPointInterface createNewPoint(boolean forPreviewable){
-		GeoPointInterface ret = kernel.Point(null, xRW, yRW);
+	protected GeoPointND createNewPoint(boolean forPreviewable){
+		GeoPointND ret = kernel.Point(null, xRW, yRW);
 		return ret;
 	}
 
-	protected GeoPointInterface createNewPoint(boolean forPreviewable, Path path){
-		GeoPointInterface ret = kernel.Point(null, path, xRW, yRW, true);
+	protected GeoPointND createNewPoint(boolean forPreviewable, Path path){
+		GeoPointND ret = kernel.Point(null, path, xRW, yRW, true);
 		return ret;
 	}
 
-	protected GeoPointInterface createNewPoint(boolean forPreviewable, Region region){
-		GeoPointInterface ret = kernel.PointIn(null, region, xRW, yRW, true);
+	protected GeoPointND createNewPoint(boolean forPreviewable, Region region){
+		GeoPointND ret = kernel.PointIn(null, region, xRW, yRW, true);
 		return ret;
 	}
 
 
-	protected void updateMovedGeoPoint(GeoPointInterface point){
-		movedGeoPoint = (GeoPoint) point;
+	protected void updateMovedGeoPoint(GeoPointND point){
+		movedGeoPoint = point;
 	}
 
 
@@ -3551,8 +3551,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				moveMode = MOVE_POINT;
 			}
 			else if (!pointHits.isEmpty()) {
-				movedGeoPoint = (GeoPoint)pointHits.get(0);
-				movedGeoPoint.setSelected(true);
+				movedGeoPoint = (GeoPointND)pointHits.get(0);
+				((GeoElement) movedGeoPoint).setSelected(true);
 				moveMode = MOVE_POINT;
 			}
 			else if (!numberHits.isEmpty() && numberHits.contains(movedGeoNumeric))
@@ -4011,7 +4011,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// tries to get a single intersection point for the given hits
 	// i.e. hits has to include two intersectable objects.
-	protected GeoPointInterface getSingleIntersectionPoint(Hits hits) {
+	protected GeoPointND getSingleIntersectionPoint(Hits hits) {
 		if (hits.isEmpty() || hits.size() != 2)
 			return null;
 
@@ -5957,10 +5957,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return ret;
 	}	
 
-	final protected void getSelectedPointsInterface(GeoPointInterface[] result) {	
+	final protected void getSelectedPointsInterface(GeoPointND[] result) {	
 
 		for (int i = 0; i < selectedPoints.size(); i++) {		
-			result[i] = (GeoPointInterface) selectedPoints.get(i);
+			result[i] = (GeoPointND) selectedPoints.get(i);
 		}
 		clearSelection(selectedPoints);
 
@@ -6147,8 +6147,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final protected int addSelectedPoint(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPoints, GeoPointInterface.class);
-		//ggb3D 2009-06-26 //return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPoints, GeoPoint.class);
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPoints, GeoPointND.class);
 	}
 
 	final protected int addSelectedNumeric(Hits hits, int max,
@@ -6439,7 +6438,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					}
 
 					// find point-on-path/region with the highest construction index
-					if (((GeoPointInterface)geo).isPointOnPath() || ((GeoPointInterface)geo).isPointInRegion()) {
+					if (((GeoPointND)geo).isPointOnPath() || ((GeoPointND)geo).isPointInRegion()) {
 						pointOnPathCount ++;
 						if (retPath == null) {
 							retPath = geo;
@@ -6654,7 +6653,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	/** return the current movedGeoPoint */
 	public GeoElement getMovedGeoPoint(){
-		return movedGeoPoint;
+		return ((GeoElement) movedGeoPoint);
 	}
 
 	private boolean textfieldHasFocus = false;

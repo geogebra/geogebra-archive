@@ -21,6 +21,7 @@ import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
@@ -487,7 +488,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPointInterface PI) {			
+	public void pointChanged(GeoPointND PI) {			
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -514,7 +515,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		pp.t = P.x;
 	}
 	
-	public boolean isOnPath(GeoPointInterface PI, double eps) {
+	public boolean isOnPath(GeoPointND PI, double eps) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -525,7 +526,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			Math.abs(fun.evaluate(P.inhomX) - P.inhomY) <= eps;
 	}
 
-	public void pathChanged(GeoPointInterface PI) {
+	public void pathChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		

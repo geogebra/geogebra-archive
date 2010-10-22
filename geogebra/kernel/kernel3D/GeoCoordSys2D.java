@@ -3,8 +3,8 @@ package geogebra.kernel.kernel3D;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoPointND;
 
 /** Simple interface for elements that have a 2D coord sys
  * @author matthieu

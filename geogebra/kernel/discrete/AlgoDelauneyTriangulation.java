@@ -3,7 +3,6 @@ package geogebra.kernel.discrete;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
@@ -12,6 +11,7 @@ import geogebra.kernel.discrete.signalprocesser.voronoi.representation.AbstractR
 import geogebra.kernel.discrete.signalprocesser.voronoi.representation.RepresentationFactory;
 import geogebra.kernel.discrete.signalprocesser.voronoi.representation.simpletriangulation.SimpleTriangulationRepresentation;
 import geogebra.kernel.discrete.signalprocesser.voronoi.representation.simpletriangulation.VTriangle;
+import geogebra.kernel.kernelND.GeoPointND;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class AlgoDelauneyTriangulation extends AlgoHull{
         for (int i = 0 ; i < size ; i++) {
 			GeoElement geo = inputList.get(i);
 			if (geo.isDefined() && geo.isGeoPoint()) {
-				GeoPointInterface p = (GeoPointInterface)geo;
+				GeoPointND p = (GeoPointND)geo;
 				p.getInhomCoords(inhom);
 				vl.add( representation.createPoint(inhom[0], inhom[1]) );			
 			}

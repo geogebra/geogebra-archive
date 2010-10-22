@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 import java.util.ArrayList;
 
 
@@ -13,13 +15,13 @@ import java.util.ArrayList;
 @SuppressWarnings("serial")
 public class LocateableList extends ArrayList<Locateable> {
 	
-	private GeoPointInterface point;
+	private GeoPointND point;
 
 	
 	/** constructor
 	 * @param point
 	 */
-	public LocateableList(GeoPointInterface point){
+	public LocateableList(GeoPointND point){
 		super();
 		this.point = point;
 	}

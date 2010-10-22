@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 /**
  * Simple common interface for GeoVector and GeoVector3D
  * 
@@ -10,9 +12,9 @@ public interface GeoVectorInterface {
 
 	void setLabel(String label);
 
-	void setStartPoint(GeoPointInterface p) throws CircularDefinitionException;
+	void setStartPoint(GeoPointND p) throws CircularDefinitionException;
 
-	GeoPointInterface getStartPoint();
+	GeoPointND getStartPoint();
 
 	void setUndefined();
 	

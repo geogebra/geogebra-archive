@@ -9,6 +9,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernel3D.GeoElement3D;
 import geogebra.kernel.kernel3D.GeoElement3DInterface;
 import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
@@ -597,9 +598,9 @@ public abstract class Drawable3D extends DrawableND {
 			
 			// check if one is on a path and the other not
 			if (this.getGeoElement().isGeoPoint() && this.getGeoElement().isGeoPoint()){
-				if ((((GeoPoint3D) this.getGeoElement()).hasPath())&&(!((GeoPoint3D) d.getGeoElement()).hasPath()))
+				if ((((GeoPointND) this.getGeoElement()).hasPath())&&(!((GeoPointND) d.getGeoElement()).hasPath()))
 					return -1;
-				if ((!((GeoPoint3D) this.getGeoElement()).hasPath())&&(((GeoPoint3D) d.getGeoElement()).hasPath()))
+				if ((!((GeoPointND) this.getGeoElement()).hasPath())&&(((GeoPointND) d.getGeoElement()).hasPath()))
 					return 1;			 
 			}
 

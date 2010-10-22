@@ -4,6 +4,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.kernel3D.GeoCoordSys1D;
 import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
@@ -198,15 +199,15 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		
 		
 		if (selectedPoints.size()==2){
-			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
-			GeoPoint3D secondPoint = (GeoPoint3D) selectedPoints.get(1);
-			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
+			GeoPointND firstPoint = (GeoPointND) selectedPoints.get(0);
+			GeoPointND secondPoint = (GeoPointND) selectedPoints.get(1);
+			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoordsInD(3), secondPoint.getCoordsInD(3));
 			getGeoElement().setEuclidianVisible(true);
 			setWaitForUpdate();
 		}else if (selectedPoints.size()==1){
-			GeoPoint3D firstPoint = (GeoPoint3D) selectedPoints.get(0);
-			GeoPoint3D secondPoint = getView3D().getCursor3D();
-			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoords(), secondPoint.getCoords());
+			GeoPointND firstPoint = (GeoPointND) selectedPoints.get(0);
+			GeoPointND secondPoint = getView3D().getCursor3D();
+			((GeoCoordSys1D) getGeoElement()).setCoordFromPoints(firstPoint.getCoordsInD(3), secondPoint.getCoordsInD(3));
 			getGeoElement().setEuclidianVisible(true);
 			setWaitForUpdate();
 		}else{

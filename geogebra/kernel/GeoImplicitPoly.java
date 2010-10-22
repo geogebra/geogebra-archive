@@ -39,6 +39,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 /**
@@ -531,7 +532,7 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 //		Application.debug("squarefree: "+sqEngine.baseSquarefreePart(genPoly));
 	}
 	
-	public void setNearestPointOnCurve(GeoPointInterface PI){
+	public void setNearestPointOnCurve(GeoPointND PI){
 //		GeoLine g=new GeoLine(cons);
 //		PI.updateCoords2D();
 //		double x=PI.getX2D();
@@ -563,17 +564,17 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 //		}
 	}
 
-	public void pointChanged(GeoPointInterface PI) {
+	public void pointChanged(GeoPointND PI) {
 		Application.debug("point changed="+PI);
 		setNearestPointOnCurve(PI);
 	}
 
-	public void pathChanged(GeoPointInterface PI) {
+	public void pathChanged(GeoPointND PI) {
 		Application.debug("path changed="+PI);
 		setNearestPointOnCurve(PI);
 	}
 
-	public boolean isOnPath(GeoPointInterface PI, double eps) {
+	public boolean isOnPath(GeoPointND PI, double eps) {
 		Application.debug("on path? "+PI+"; eps="+eps);
 		
 		return false;

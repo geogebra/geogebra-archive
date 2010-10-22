@@ -74,6 +74,7 @@ import geogebra.kernel.kernel3D.GeoQuadric3D;
 import geogebra.kernel.kernel3D.GeoRay3D;
 import geogebra.kernel.kernel3D.GeoSegment3D;
 import geogebra.kernel.kernel3D.GeoVector3D;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
 import geogebra.kernel.statistics.AlgoCauchy;
@@ -7729,7 +7730,7 @@ public class Kernel {
 	*/
 	
 	/** Segment3D label linking points P1 and P2   */
-	final public GeoSegment3D Segment3D(String label, GeoPoint3D P1, GeoPoint3D P2){
+	final public GeoSegment3D Segment3D(String label, GeoPointND P1, GeoPointND P2){
 		AlgoJoinPoints3D algo = new AlgoJoinPoints3D(cons, label, P1, P2, GeoElement3D.GEO_CLASS_SEGMENT3D);
 		GeoSegment3D s = (GeoSegment3D) algo.getCS();
 		return s;
@@ -7737,7 +7738,7 @@ public class Kernel {
 	
 	
 	/** Line3D label linking points P1 and P2   */	
-	final public GeoLine3D Line3D(String label, GeoPoint3D P1, GeoPoint3D P2){
+	final public GeoLine3D Line3D(String label, GeoPointND P1, GeoPointND P2){
 		AlgoJoinPoints3D algo = new AlgoJoinPoints3D(cons, label, P1, P2, GeoElement3D.GEO_CLASS_LINE3D);
 		GeoLine3D l = (GeoLine3D) algo.getCS();
 		return l;
@@ -7745,7 +7746,7 @@ public class Kernel {
 	
 	
 	/** Ray3D label linking points P1 and P2   */	
-	final public GeoRay3D Ray3D(String label, GeoPoint3D P1, GeoPoint3D P2){
+	final public GeoRay3D Ray3D(String label, GeoPointND P1, GeoPointND P2){
 		//Application.debug("Kernel3D : Ray3D");
 		//AlgoJoinPointsRay3D algo = new AlgoJoinPointsRay3D(cons, label, P1, P2);
 		//GeoRay3D l = algo.getRay3D();
@@ -8091,7 +8092,7 @@ public class Kernel {
 	 * @param region
 	 * @return GeoBoolean which is true iff point is in region
 	 */
-	public GeoBoolean isInRegion(String label,GeoPointInterface pi, Region region) {
+	public GeoBoolean isInRegion(String label,GeoPointND pi, Region region) {
 		AlgoIsInRegion algo = new AlgoIsInRegion(cons,label,pi,region);
 		return algo.getResult();
 	}

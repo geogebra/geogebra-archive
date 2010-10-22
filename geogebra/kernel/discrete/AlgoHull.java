@@ -18,7 +18,6 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.discrete.signalprocesser.voronoi.VPoint;
 import geogebra.kernel.discrete.signalprocesser.voronoi.VoronoiAlgorithm;
@@ -27,6 +26,7 @@ import geogebra.kernel.discrete.signalprocesser.voronoi.representation.Represent
 import geogebra.kernel.discrete.signalprocesser.voronoi.representation.RepresentationInterface;
 import geogebra.kernel.discrete.signalprocesser.voronoi.representation.triangulation.TriangulationRepresentation;
 import geogebra.kernel.discrete.signalprocesser.voronoi.statusstructure.VLinkedNode;
+import geogebra.kernel.kernelND.GeoPointND;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -115,7 +115,7 @@ public class AlgoHull extends AlgoElement {
         for (int i = 0 ; i < size ; i++) {
 			GeoElement geo = inputList.get(i);
 			if (geo.isDefined() && geo.isGeoPoint()) {
-				GeoPointInterface p = (GeoPointInterface)geo;
+				GeoPointND p = (GeoPointND)geo;
 				p.getInhomCoords(inhom);
 				vl.add( representation.createPoint(inhom[0], inhom[1]) );			
 			}

@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 
@@ -31,11 +32,11 @@ import geogebra.main.Application;
 public class AlgoVector extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	private GeoPointInterface P, Q;   // input
+	private GeoPointND P, Q;   // input
     private GeoVectorInterface  v;     // output     
         
     /** Creates new AlgoVector */  
-    protected AlgoVector(Construction cons, String label, GeoPointInterface P, GeoPointInterface Q) {
+    protected AlgoVector(Construction cons, String label, GeoPointND P, GeoPointND Q) {
         super(cons);
         this.P = P;
         this.Q = Q;         
@@ -47,7 +48,7 @@ public class AlgoVector extends AlgoElement {
         	if (P.isLabelSet())
         		v.setStartPoint(P);
             else {
-            	GeoPointInterface startPoint = newStartPoint();
+            	GeoPointND startPoint = newStartPoint();
             	//GeoPoint startPoint = new GeoPoint(P);
             	startPoint.set(P);
             	v.setStartPoint(startPoint);
@@ -72,7 +73,7 @@ public class AlgoVector extends AlgoElement {
     }
     
     
-    protected GeoPointInterface newStartPoint(){
+    protected GeoPointND newStartPoint(){
     	
     	return new GeoPoint((GeoPoint) P);
  
@@ -100,8 +101,8 @@ public class AlgoVector extends AlgoElement {
     }           
     
     public GeoVectorInterface getVector() { return v; }
-    public GeoPointInterface getP() { return P; }
-    public GeoPointInterface getQ() { return Q; }
+    public GeoPointND getP() { return P; }
+    public GeoPointND getQ() { return Q; }
     
     // calc the vector between P and Q    
     protected final void compute() {
@@ -110,7 +111,7 @@ public class AlgoVector extends AlgoElement {
         	v.setCoords(P.vectorTo(Q));
             
             // update position of unlabeled startpoint
-            GeoPointInterface startPoint = v.getStartPoint();
+            GeoPointND startPoint = v.getStartPoint();
             
             if (startPoint!=null)
             	if (!startPoint.isLabelSet())

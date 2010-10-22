@@ -13,7 +13,6 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
@@ -37,6 +36,7 @@ import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic.TextValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
@@ -407,11 +407,11 @@ public class AlgebraProcessor {
 	 * Parses given String str and tries to evaluate it to a GeoPoint.
 	 * Returns null if something went wrong.
 	 */
-	public GeoPointInterface evaluateToPoint(String str) {
+	public GeoPointND evaluateToPoint(String str) {
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 
-		GeoPointInterface p = null;
+		GeoPointND p = null;
 		GeoElement [] temp = null;;
 		try {
 			ValidExpression ve = parser.parseGeoGebraExpression(str);
@@ -421,7 +421,7 @@ public class AlgebraProcessor {
 			}
 			 
 			 temp = processValidExpression(ve);
-			 p = (GeoPointInterface) temp[0];
+			 p = (GeoPointND) temp[0];
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
 			app.showError("CircularDefinition");

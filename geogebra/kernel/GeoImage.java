@@ -14,6 +14,8 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.io.File;
@@ -193,18 +195,18 @@ implements Locateable, AbsoluteScreenLocateable,
 	//	return image;
 	//}		
 	
-	public void setStartPoint(GeoPointInterface p) throws CircularDefinitionException {    
+	public void setStartPoint(GeoPointND p) throws CircularDefinitionException {    
 		setCorner((GeoPoint) p, 0);
 	}
 	
-	public void removeStartPoint(GeoPointInterface p) {    
+	public void removeStartPoint(GeoPointND p) {    
 		for (int i=0; i < corners.length; i++) {
 			if (corners[i] == p)
 				setCorner(null, i);
 		}
 	}
 	
-	public void setStartPoint(GeoPointInterface p, int number) throws CircularDefinitionException {
+	public void setStartPoint(GeoPointND p, int number) throws CircularDefinitionException {
 		setCorner((GeoPoint) p, number);
 	}
 	
@@ -212,7 +214,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	 * Sets the startpoint without performing any checks.
 	 * This is needed for macros.	 
 	 */
-	public void initStartPoint(GeoPointInterface p, int number) {
+	public void initStartPoint(GeoPointND p, int number) {
 		corners[number] = (GeoPoint) p;
 	}
 	

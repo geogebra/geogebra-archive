@@ -19,6 +19,8 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 
 /**
  *
@@ -34,7 +36,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoPointInterface M; // input
+	private GeoPointND M; // input
     private NumberValue r; // input
     private GeoElement rgeo;
     private GeoQuadricND sphereND; // output    
@@ -46,7 +48,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     protected AlgoSphereNDPointRadius(
             Construction cons,
             String label,
-            GeoPointInterface M,
+            GeoPointND M,
             NumberValue r) {
         	
             this(cons, M, r);
@@ -56,7 +58,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     protected AlgoSphereNDPointRadius(
             Construction cons,
             String label,
-            GeoPointInterface M,
+            GeoPointND M,
             GeoSegmentInterface segment, boolean dummy) {
         	
             this(cons, M, segment, dummy);
@@ -65,7 +67,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
         
     public AlgoSphereNDPointRadius(
             Construction cons,
-            GeoPointInterface M,
+            GeoPointND M,
             NumberValue r) {
         	
             super(cons);
@@ -84,7 +86,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     
     protected AlgoSphereNDPointRadius(
             Construction cons,
-            GeoPointInterface M,
+            GeoPointND M,
             GeoSegmentInterface rgeo, boolean dummy) {
         	
             super(cons);
@@ -125,7 +127,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     }
     
     
-    protected GeoPointInterface getM() {
+    protected GeoPointND getM() {
         return M;
     }
     

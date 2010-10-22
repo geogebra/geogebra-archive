@@ -4,16 +4,16 @@ import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.PathMover;
+import geogebra.kernel.kernelND.GeoPointND;
 
 public class GeoLine3D extends GeoCoordSys1D {
 
-	GeoPoint3D startPoint;
+	GeoPointND startPoint;
 	
 	/** creates a line joining O and I */
-	public GeoLine3D(Construction c, GeoPoint3D O, GeoPoint3D I) {
+	public GeoLine3D(Construction c, GeoPointND O, GeoPointND I) {
 		super(c, O, I);
 	}
 
@@ -25,7 +25,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 		super(c,o,v);
 	}
 
-	final void setStartPoint(GeoPoint3D P) {        	
+	final void setStartPoint(GeoPointND P) {        	
     	startPoint = P;	    	
     }
     
@@ -131,7 +131,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 	//Path3D interface
 	
 	
-	public boolean isOnPath(GeoPointInterface p, double eps) {
+	public boolean isOnPath(GeoPointND p, double eps) {
 		// TODO Auto-generated method stub
 		return false;
 	}

@@ -4,8 +4,10 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
@@ -35,11 +37,11 @@ implements Previewable, Functional2Var{
 	/**
 	 * common constructor
 	 * @param view3D
-	 * @param point3D
+	 * @param point
 	 */
-	public DrawPoint3D(EuclidianView3D view3D, GeoPoint3D point3D) {     
+	public DrawPoint3D(EuclidianView3D view3D, GeoPointND point) {     
 		
-		super(view3D, point3D);
+		super(view3D, (GeoElement) point);
 		
 	}
 	
@@ -52,11 +54,6 @@ implements Previewable, Functional2Var{
 
 
 		renderer.getGeometryManager().draw(getGeometryIndex());
-		/*
-		GeoPoint3D point = (GeoPoint3D) getGeoElement(); 
-		
-		renderer.drawPoint(point.getPointSize());
-		*/
 
 
 	}
@@ -85,7 +82,7 @@ implements Previewable, Functional2Var{
 		surface = renderer.getGeometryManager().getSurface();
 		surface.start(this);
 		//number of vertices depends on point size
-		int nb = 2+((GeoPoint3D) getGeoElement()).getPointSize();
+		int nb = 2+((GeoPointND) getGeoElement()).getPointSize();
 		surface.setU((float) getMinParameter(0), (float) getMaxParameter(0));surface.setNbU(2*nb); 
 		surface.setV((float) getMinParameter(1), (float) getMaxParameter(1));surface.setNbV(nb);
 		surface.draw();
@@ -172,7 +169,7 @@ implements Previewable, Functional2Var{
 
 	public GgbVector evaluatePoint(double u, double v) {
 		
-		GeoPoint3D point = (GeoPoint3D) getGeoElement(); 
+		GeoPointND point = (GeoPointND) getGeoElement(); 
 		
 		double r = point.getPointSize()/getView3D().getScale()*1.5;
 		GgbVector n = new GgbVector(new double[] {
@@ -180,7 +177,7 @@ implements Previewable, Functional2Var{
 				Math.sin(u)*Math.cos(v)*r,
 				Math.sin(v)*r});
 		
-		return (GgbVector) n.add(point.getInhomCoords());
+		return (GgbVector) n.add(point.getInhomCoordsInD(3));
 	}
 
 

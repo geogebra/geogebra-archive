@@ -20,6 +20,7 @@ package geogebra.kernel.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoPointND;
 
 
 
@@ -39,9 +40,9 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
 	
 	//inputs
 	/** first point */
-	private GeoPoint3D P;
+	private GeoPointND P;
 	/** second point */
-	private GeoPoint3D Q;
+	private GeoPointND Q;
 	/** polygon or polyhedron (when segment is part of) */
 	private GeoElement poly;
 	
@@ -58,7 +59,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param P first point
      * @param Q second point
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
-    public AlgoJoinPoints3D(Construction cons, String label, GeoPoint3D P, GeoPoint3D Q, int geoClassType) {
+    public AlgoJoinPoints3D(Construction cons, String label, GeoPointND P, GeoPointND Q, int geoClassType) {
 
     	this(cons,label,P,Q,null,geoClassType);
  
@@ -72,7 +73,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param poly poly polygon or polyhedron (when segment is part of) 
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
     AlgoJoinPoints3D(Construction cons, String label, 
-    		GeoPoint3D P, GeoPoint3D Q, GeoElement poly, int geoClassType) {
+    		GeoPointND P, GeoPointND Q, GeoElement poly, int geoClassType) {
 
     	this(cons,P,Q,poly,geoClassType);
     	cs.setLabel(label);
@@ -87,7 +88,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * @param poly polygon or polyhedron (when segment is part of) 
      * @param geoClassType type (GeoSegment3D, GeoLine3D, ...) */    
     AlgoJoinPoints3D(Construction cons, 
-    		GeoPoint3D P, GeoPoint3D Q, GeoElement poly, int geoClassType) {
+    		GeoPointND P, GeoPointND Q, GeoElement poly, int geoClassType) {
     	super(cons);
 
 
@@ -133,7 +134,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * return the first point
      * @return the first point
      */
-    GeoPoint3D getP() {
+    GeoPointND getP() {
         return P;
     }
     
@@ -141,7 +142,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
      * return the second point
      * @return the second point
      */   
-    GeoPoint3D getQ() {
+    GeoPointND getQ() {
         return Q;
     }
     
@@ -160,8 +161,8 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     		if (!poly.isDefined())
     			cs.setUndefined();
 
-    	if ((P.isDefined()||P.isInfinite())&&(Q.isDefined()||Q.isInfinite()))
-    		cs.setCoord((GeoPoint3D) P, (GeoPoint3D) Q);
+    	if ((((GeoElement) P).isDefined()||P.isInfinite())&&(((GeoElement) Q).isDefined()||Q.isInfinite()))
+    		cs.setCoord(P,Q);
     	else
     		cs.setUndefined();
 

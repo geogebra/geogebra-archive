@@ -22,6 +22,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoCurveCartesianND;
 
 /**
  * Cartesian curve: Curve[ x-expression in var, y-expression in var, var, from, to]

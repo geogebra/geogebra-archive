@@ -18,6 +18,8 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoCurveCartesianND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
 
@@ -431,7 +433,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPointInterface PI) {	
+	public void pointChanged(GeoPointND PI) {	
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -442,7 +444,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		pathChanged(P);	
 	}
 	
-	public boolean isOnPath(GeoPointInterface PI, double eps) {		
+	public boolean isOnPath(GeoPointND PI, double eps) {		
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -458,7 +460,7 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 		return onPath;
 	}
 
-	public void pathChanged(GeoPointInterface PI) {
+	public void pathChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		

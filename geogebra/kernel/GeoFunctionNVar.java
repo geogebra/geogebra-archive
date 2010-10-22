@@ -19,6 +19,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -499,7 +500,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		public boolean isRegion() {
 			return isBooleanFunction();
 		}
-		public boolean isInRegion(GeoPointInterface P) {
+		public boolean isInRegion(GeoPointND P) {
 			P.updateCoords2D();
 			return isInRegion(P.getX2D(),P.getY2D());
 		}
@@ -508,7 +509,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			return fun.evaluateBoolean(new double[] {x0,y0});
 		}
 
-		public void pointChangedForRegion(GeoPointInterface P) {
+		public void pointChangedForRegion(GeoPointND P) {
 			if(!((GeoPoint)P).isDefined())
 				return;
 			RegionParameters rp = P.getRegionParameters();
@@ -559,7 +560,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	 * in euclidian view. This should be called only when every algorithm fails.
 	 * @param P
 	 */
-	private void tryLocateInEV(GeoPointInterface P) {
+	private void tryLocateInEV(GeoPointND P) {
 		EuclidianView ev = kernel.getApplication().getEuclidianView();
 		boolean found = false;
 		for (int i = 0; !found && i < ev.getWidth() / SEEK_DENSITY; i++)
@@ -577,7 +578,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			
 	}
 
-		public void regionChanged(GeoPointInterface P) {
+		public void regionChanged(GeoPointND P) {
 			pointChangedForRegion(P);
 			
 		}

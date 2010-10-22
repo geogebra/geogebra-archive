@@ -24,6 +24,8 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
@@ -232,7 +234,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	/**
 	 * Adds a point to the list of points that this conic passes through.
 	 */
-	protected final void addPointOnConic(GeoPointInterface p) {
+	public final void addPointOnConic(GeoPointND p) {
 		if (pointsOnConic == null)
 			pointsOnConic = new ArrayList<GeoPoint>();
 		pointsOnConic.add((GeoPoint)p);				
@@ -882,7 +884,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	
 	
 	
-	public void setSphereND(GeoPointInterface M, GeoSegmentInterface segment){
+	public void setSphereND(GeoPointND M, GeoSegmentInterface segment){
 		setCircle((GeoPoint) M, (GeoSegment) segment);
 	}
 	
@@ -914,7 +916,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
 
 	
-	public void setSphereND(GeoPointInterface M, GeoPointInterface P){
+	public void setSphereND(GeoPointND M, GeoPointND P){
 		setCircle((GeoPoint) M, (GeoPoint) P);
 	}
 	
@@ -2389,7 +2391,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * Path interface
 	 */
 	 
-	public void pointChanged(GeoPointInterface PI) {
+	public void pointChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -2514,7 +2516,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		}		
 	}
 	
-	public void pathChanged(GeoPointInterface PI) {
+	public void pathChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -2617,7 +2619,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		}
 	}
 	
-	public boolean isOnPath(GeoPointInterface PI, double eps) {
+	public boolean isOnPath(GeoPointND PI, double eps) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -2756,7 +2758,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		
 
 	
-	public boolean isInRegion(GeoPointInterface PI) {
+	public boolean isInRegion(GeoPointND PI) {
 		double x0 = PI.getX2D();
 		double y0 = PI.getY2D();
 		
@@ -2792,7 +2794,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * Last change: Zbynek Konecny
 	 */
 	
-	public void pointChangedForRegion(GeoPointInterface PI) {
+	public void pointChangedForRegion(GeoPointND PI) {
 		PI.updateCoords2D();
 
 		RegionParameters rp = PI.getRegionParameters();
@@ -2820,7 +2822,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * Last change: Zbynek Konecny
 	 */
 	
-	public void regionChanged(GeoPointInterface PI) {
+	public void regionChanged(GeoPointND PI) {
 		//GeoPoint P = (GeoPoint) PI;
 		RegionParameters rp = PI.getRegionParameters();
 		

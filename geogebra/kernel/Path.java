@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 /**
  * @author Markus Hohenwarter
  */
@@ -35,7 +37,7 @@ public interface Path {
 	 * 
 	 * Note: P.setCoords() is not called!
 	 */
-	public void pointChanged(GeoPointInterface PI);
+	public void pointChanged(GeoPointND PI);
 	
 	/**
 	 * Sets coords of P and its path parameter
@@ -44,12 +46,12 @@ public interface Path {
 	 * 
 	 * Note: P.setCoords() is not called!
 	 */
-	public void pathChanged(GeoPointInterface PI);
+	public void pathChanged(GeoPointND PI);
 	
 	/**
 	 * Returns true iff the given point lies on this path.
 	 */	
-	public boolean isOnPath(GeoPointInterface PI, double eps);
+	public boolean isOnPath(GeoPointND PI, double eps);
 	
 	/**
 	 * Returns this path as an object of type GeoElement.

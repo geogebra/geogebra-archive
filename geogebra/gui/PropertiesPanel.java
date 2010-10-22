@@ -33,7 +33,6 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
@@ -47,6 +46,7 @@ import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -2343,7 +2343,7 @@ public	class PropertiesPanel extends JPanel {
 
 		private void doActionPerformed() {
 			String strLoc = (String) cbLocation.getSelectedItem();
-			GeoPointInterface newLoc = null;
+			GeoPointND newLoc = null;
 
 			if (strLoc == null || strLoc.trim().length() == 0) {
 				newLoc = null;
@@ -2507,7 +2507,7 @@ public	class PropertiesPanel extends JPanel {
 				number = 2;
 			
 			String strLoc = (String) cbLocation[number].getSelectedItem();
-			GeoPointInterface newLoc = null;
+			GeoPointND newLoc = null;
 
 			if (strLoc == null || strLoc.trim().length() == 0) {
 				newLoc = null;

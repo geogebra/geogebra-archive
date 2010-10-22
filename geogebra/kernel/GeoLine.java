@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
@@ -127,7 +128,7 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable, Evaluatable {
     /**
      * Returns whether this point lies on this line, segment or ray.     
      */
-    final public boolean isOnPath(GeoPointInterface PI, double eps) {  
+    final public boolean isOnPath(GeoPointND PI, double eps) {  
     	
     	GeoPoint P = (GeoPoint) PI;
     	
@@ -683,7 +684,7 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable, Evaluatable {
 		return false;
 	}
 	 
-	public void pointChanged(GeoPointInterface P) {
+	public void pointChanged(GeoPointND P) {
 		doPointChanged((GeoPoint) P);
 	}
 		
@@ -712,7 +713,7 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable, Evaluatable {
 		}		
 	}				
 
-	public void pathChanged(GeoPointInterface PI) {
+	public void pathChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		

@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.util.HashSet;
@@ -30,7 +31,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 
 	public static final int POLYLINE_MAX_POINTS = 500;
 	
-	protected GeoPointInterface [] points;
+	protected GeoPointND [] points;
 	
 	protected double length;
 	private boolean defined = false;		
@@ -39,14 +40,14 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 	 * @param c the construction
 	 * @param points vertices 
 	 */
-	public GeoPolyLine(Construction cons, String label, GeoPointInterface[] points) {
+	public GeoPolyLine(Construction cons, String label, GeoPointND[] points) {
 		super(cons);
 		this.points = points;
 		setLabel(label);
 	}
 	
 
-	public GeoPolyLine(Construction cons, GeoPointInterface[] points) {
+	public GeoPolyLine(Construction cons, GeoPointND[] points) {
 		super(cons);
 		this.points = points;
 	}
@@ -96,7 +97,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 		
 		// make sure both arrays have same size
 		if (points.length != poly.points.length) {
-			GeoPointInterface [] tempPoints = new GeoPointInterface[poly.points.length];
+			GeoPointND [] tempPoints = new GeoPointND[poly.points.length];
 			for (int i=0; i < tempPoints.length; i++) {
 				tempPoints[i] = i < points.length ? points[i] : new GeoPoint(cons);
 			}
@@ -242,7 +243,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 	// dummy segment to use in calculations
 	GeoSegment seg = new GeoSegment(cons);
 
-	public boolean isOnPath(GeoPointInterface PI, double eps) {
+	public boolean isOnPath(GeoPointND PI, double eps) {
 
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -258,7 +259,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 		return false;
 	}
 
-	public void pathChanged(GeoPointInterface PI) {		
+	public void pathChanged(GeoPointND PI) {		
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -280,7 +281,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 		P.z = 1.0;	
 	}
 
-	public void pointChanged(GeoPointInterface PI) {
+	public void pointChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
 		
@@ -350,7 +351,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 	}
 
 
-	public GeoPointInterface[] getPoints() {
+	public GeoPointND[] getPoints() {
 		return points;
 	}
 
@@ -378,7 +379,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 	}
 
 
-	public void setPoints(GeoPointInterface[] points) {
+	public void setPoints(GeoPointND[] points) {
 		this.points = points;
 		
 	}

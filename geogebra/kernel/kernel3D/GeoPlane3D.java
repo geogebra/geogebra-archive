@@ -5,9 +5,9 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Functional2Var;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 public class GeoPlane3D extends GeoElement3D
@@ -96,7 +96,7 @@ implements Functional2Var, GeoCoordSys2D{
 		return coords.projectPlaneThruV(getCoordSys().getMatrixOrthonormal(),willingDirection);
 	}
 
-	public boolean isInRegion(GeoPointInterface PI) {
+	public boolean isInRegion(GeoPointND PI) {
 		GgbVector planeCoords = getNormalProjection(PI.getInhomCoords())[1];
 		return Kernel.isEqual(planeCoords.get(3),0,Kernel.STANDARD_PRECISION);
 	}
@@ -105,7 +105,7 @@ implements Functional2Var, GeoCoordSys2D{
 		return true;
 	}
 
-	public void pointChangedForRegion(GeoPointInterface P) {
+	public void pointChangedForRegion(GeoPointND P) {
 		
 		P.updateCoords2D();
 		P.updateCoordsFrom2D(false);
@@ -113,7 +113,7 @@ implements Functional2Var, GeoCoordSys2D{
 		
 	}
 
-	public void regionChanged(GeoPointInterface P) {
+	public void regionChanged(GeoPointND P) {
 		pointChangedForRegion(P);
 		
 	}

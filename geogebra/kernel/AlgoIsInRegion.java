@@ -3,6 +3,8 @@
  */
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 
 /**
  * Determine whether point is in region.
@@ -11,7 +13,7 @@ package geogebra.kernel;
  */
 public class AlgoIsInRegion extends AlgoElement {
 
-	private GeoPointInterface pi;
+	private GeoPointND pi;
 	private Region region;
 	private GeoBoolean result;
 
@@ -22,7 +24,7 @@ public class AlgoIsInRegion extends AlgoElement {
 	 * @param pi
 	 * @param region
 	 */
-	public AlgoIsInRegion(Construction c, String label, GeoPointInterface pi,
+	public AlgoIsInRegion(Construction c, String label, GeoPointND pi,
 			Region region) {
 		super(c);
 		this.pi = pi;

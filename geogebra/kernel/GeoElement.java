@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.ImageManager;
@@ -550,12 +551,12 @@ public abstract class GeoElement
 	/**
 	 * Copies the given points array. The resulting points are part of the given construction.
 	 */
-	public static GeoPointInterface [] copyPointsND(
+	public static GeoPointND [] copyPointsND(
 			Construction cons, 
-			GeoPointInterface [] points) {
-		GeoPointInterface [] pointsCopy = new GeoPointInterface[points.length];
+			GeoPointND [] points) {
+		GeoPointND [] pointsCopy = new GeoPointND[points.length];
 		for (int i=0; i < points.length; i++) {
-			pointsCopy[i] = (GeoPointInterface) ((GeoElement) points[i]).copyInternal(cons);			
+			pointsCopy[i] = (GeoPointND) ((GeoElement) points[i]).copyInternal(cons);			
 			((GeoElement) pointsCopy[i]).set((GeoElement) points[i]);
 		}
 		
@@ -1852,11 +1853,11 @@ public abstract class GeoElement
 				break;
 				case 'n' : captionSB.append(getLabel());
 				break;
-				case 'x' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointInterface)this).getInhomCoords().getX()) : "%x");
+				case 'x' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointND)this).getInhomCoords().getX()) : "%x");
 				break;
-				case 'y' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointInterface)this).getInhomCoords().getY()) : "%y");
+				case 'y' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointND)this).getInhomCoords().getY()) : "%y");
 				break;
-				case 'z' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointInterface)this).getInhomCoords().getZ()) : "%z");
+				case 'z' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointND)this).getInhomCoords().getZ()) : "%z");
 				break;
 				default : 	captionSB.append('%');
 							captionSB.append(ch);
@@ -2256,7 +2257,7 @@ public abstract class GeoElement
 					if (app.languageIs(app.getLocale(), "ar")) chars=arabic; else
 						chars = pointLabels;
 
-				GeoPointInterface point = (GeoPointInterface)this;
+				GeoPointND point = (GeoPointND)this;
 				if (point.getMode() == Kernel.COORD_COMPLEX)
 					chars = complexLabels;
 

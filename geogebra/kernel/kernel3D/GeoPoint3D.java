@@ -33,7 +33,6 @@ import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
@@ -45,6 +44,7 @@ import geogebra.kernel.PointProperties;
 import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
@@ -55,7 +55,7 @@ import geogebra.util.Util;
  * @version 
  */
 final public class GeoPoint3D extends GeoVec4D
-implements GeoPointInterface, PointProperties, Vector3DValue{   	
+implements GeoPointND, PointProperties, Vector3DValue{   	
 	
 	/**
 	 * 
@@ -144,7 +144,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     ///////////////////////////////////////////////////////////
     // GEOPOINTINTERFACE (TODO move it to GeoPointND)
     
-    public double distance(GeoPointInterface P){
+    public double distance(GeoPointND P){
     	return distance((GeoPoint3D) P);
     }
     
@@ -222,12 +222,15 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	final public void setCoords(double x, double y, double z, double w) {
 		
 		setWillingCoords(null);
-		setCoords(new GgbVector(new double[] {x,y,z,w}));
+		setCoords(new GgbVector(x,y,z,w));
 		
 	}  	
 
 	
-	
+	//sets from 2D coords
+	final public void setCoords(double x, double y, double z){
+		setCoords(x,y,0,z);
+	}
 	
 	
 	
@@ -291,6 +294,36 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     final public GgbVector getInhomCoords() {
     	return inhom.copyVector();
     }   
+
+    public GgbVector getInhomCoordsInD(int dimension){
+    	switch(dimension){
+    	case 3:
+    		return getInhomCoords();
+    	case 2:
+    		GgbVector v = new GgbVector(2);
+    		v.setX(inhom.getX());
+    		v.setY(inhom.getY());
+    		return v;
+    	default:
+    		return null;
+    	}
+    }
+    
+    public GgbVector getCoordsInD(int dimension){
+    	switch(dimension){
+    	case 3:
+    		return getCoords();
+    	case 2:
+    		GgbVector v = new GgbVector(2);
+    		v.setX(getCoords().getX());
+    		v.setY(getCoords().getY());
+       		v.setZ(getCoords().getW());
+       		return v;
+    	default:
+    		return null;
+    	}
+    }
+   
     
     /** 
      * Returns (x/w, y/w, z/w) GgbVector.
@@ -300,7 +333,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
     }   
     
     
-    final public double[] vectorTo(GeoPointInterface QI){
+    final public double[] vectorTo(GeoPointND QI){
     	GeoPoint3D Q = (GeoPoint3D) QI;
     	//Application.debug("v=\n"+Q.getCoords().sub(getCoords()).get());
     	return Q.getCoords().sub(getCoords()).get();
@@ -643,7 +676,7 @@ implements GeoPointInterface, PointProperties, Vector3DValue{
 	}
 	
 	
-	public void set(GeoPointInterface P){
+	public void set(GeoPointND P){
 		set((GeoElement) P);
 	}
 	

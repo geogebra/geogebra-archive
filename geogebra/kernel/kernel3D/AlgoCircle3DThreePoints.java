@@ -6,8 +6,8 @@ import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoPointInterface;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 /**
@@ -39,14 +39,14 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 	 * @param C third point
 	 */
 	public AlgoCircle3DThreePoints(Construction cons, String label,
-			GeoPointInterface A, GeoPointInterface B, GeoPointInterface C) {
+			GeoPointND A, GeoPointND B, GeoPointND C) {
 		super(cons, label, A, B, C);
 		
 	}
 
 	
 	
-    protected void setPoints(GeoPointInterface A, GeoPointInterface B, GeoPointInterface C){
+    protected void setPoints(GeoPointND A, GeoPointND B, GeoPointND C){
     	
     	
     	points3D = new GeoPoint3D[3];

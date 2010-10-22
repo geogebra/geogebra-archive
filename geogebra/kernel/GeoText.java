@@ -3,6 +3,7 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.kernel.arithmetic.TextValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
@@ -125,15 +126,15 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	 * Sets the startpoint without performing any checks.
 	 * This is needed for macros.	 
 	 */
-	public void initStartPoint(GeoPointInterface p, int number) {
+	public void initStartPoint(GeoPointND p, int number) {
 		startPoint = (GeoPoint) p;
 	}
 	
-	public void setStartPoint(GeoPointInterface p, int number)  throws CircularDefinitionException {
+	public void setStartPoint(GeoPointND p, int number)  throws CircularDefinitionException {
 		setStartPoint(p);
 	}
 	
-	public void removeStartPoint(GeoPointInterface p) {    
+	public void removeStartPoint(GeoPointND p) {    
 		if (startPoint == p) {
 			try {
 				setStartPoint(null);
@@ -141,7 +142,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		}
 	}
 			
-	public void setStartPoint(GeoPointInterface p) throws CircularDefinitionException { 
+	public void setStartPoint(GeoPointND p) throws CircularDefinitionException { 
 		// don't allow this if it's eg Text["hello",(2,3)]
 		if (alwaysFixed) return;		
 		
@@ -181,12 +182,12 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		if (startPoint != null) startPoint.getLocateableList().unregisterLocateable(this);
 	}
 	
-	public GeoPointInterface getStartPoint() {
+	public GeoPointND getStartPoint() {
 		return startPoint;
 	}
 	
 	
-	public GeoPointInterface [] getStartPoints() {
+	public GeoPointND [] getStartPoints() {
 		if (startPoint == null)
 			return null;
 	
