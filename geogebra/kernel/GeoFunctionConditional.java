@@ -131,6 +131,14 @@ public class GeoFunctionConditional extends GeoFunction {
     }
     
     /**
+     * Returns condition which determines if "ifFun" or "elseFun" is used
+     * @return condition of function
+     */
+    final public GeoFunction getCondFunction() {
+    	return condFun;
+    }
+    
+    /**
      * Returns the function which is used, if condition is not satisfied
      * @return else branch of function
      */

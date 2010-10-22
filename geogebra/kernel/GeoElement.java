@@ -4432,12 +4432,29 @@ public abstract class GeoElement
 		kernel.setCASPrintForm(ExpressionNodeType);
 
 		String ret="";
-		if (this.isGeoFunctionConditional() && ExpressionNodeType == ExpressionNode.STRING_TYPE_MATH_PIPER) {
+		if (this.isGeoFunctionConditional()) {
 			GeoFunctionConditional geoFun = (GeoFunctionConditional)this;
+			if (ExpressionNodeType == ExpressionNode.STRING_TYPE_MATH_PIPER) {
 			
 			// get in form If(x<3, etc
 			ret = geoFun.toSymbolicString();
 			//Application.debug(ret);
+			} else if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
+				
+				StringBuilder sb = new StringBuilder();
+				sb.append("f(x) = \\left\\{ \\begin{array}{ll} ");
+				sb.append(geoFun.getIfFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+				sb.append("& : ");
+				sb.append(geoFun.getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));				
+				sb.append("\\\\ ");
+				sb.append(geoFun.getElseFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+				sb.append("& : \\mathrm{");
+				sb.append(app.getPlain("otherwise"));
+				sb.append("} \\end{array} \\right. ");
+				
+				ret = sb.toString();
+				
+			}
 			
 		} else if (this.isGeoFunction()) {
 			GeoFunction geoFun = (GeoFunction)this;
