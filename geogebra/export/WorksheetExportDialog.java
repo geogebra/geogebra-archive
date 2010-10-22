@@ -93,7 +93,8 @@ public class WorksheetExportDialog extends JDialog {
 	private InputPanel textAbove, textBelow;
 	private JCheckBox cbShowFrame, cbEnableRightClick, cbEnableLabelDrags, cbShowResetIcon,
 					cbShowMenuBar, cbSavePrint, cbShowToolBar, cbShowToolBarHelp, cbShowInputField,
-					cbUseBrowserForJavaScript, cbAllowRescaling, cbRemoveLinebreaks, cbOpenButton;
+					cbUseBrowserForJavaScript, cbAllowRescaling, cbRemoveLinebreaks, cbOpenButton
+					, cbIncludeHTML5;
 	private JComboBox cbFileType, cbAllWorksheets;
 	private JButton exportButton;
 	private GraphicSizePanel sizePanel;
@@ -295,6 +296,8 @@ public class WorksheetExportDialog extends JDialog {
 	    			GeoGebraPreferences.EXPORT_WS_SAVE_PRINT, "false")).booleanValue() );
 	    	cbUseBrowserForJavaScript.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_USE_BROWSER_FOR_JAVASCRIPT, "true")).booleanValue() );
+	    	cbIncludeHTML5.setSelected( Boolean.valueOf(ggbPref.loadPreference(
+	    			GeoGebraPreferences.EXPORT_WS_INCLUDE_HTML5, "false")).booleanValue() );
 	    	cbShowToolBar.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR, "false")).booleanValue() );
 	    	cbShowToolBarHelp.setSelected( Boolean.valueOf(ggbPref.loadPreference(
@@ -348,6 +351,7 @@ public class WorksheetExportDialog extends JDialog {
     	//ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, Boolean.toString(cbOfflineArchive.isSelected()));        
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_SAVE_PRINT, Boolean.toString(cbSavePrint.isSelected()));
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_USE_BROWSER_FOR_JAVASCRIPT, Boolean.toString(cbUseBrowserForJavaScript.isSelected()));
+       	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_INCLUDE_HTML5, Boolean.toString(cbIncludeHTML5.isSelected()));
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_ALLOW_RESCALING, Boolean.toString(cbAllowRescaling.isSelected()));
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_REMOVE_LINEBREAKS, Boolean.toString(cbRemoveLinebreaks.isSelected()));
        	ggbPref.savePreference(GeoGebraPreferences.EXPORT_WS_BUTTON_TO_OPEN, Boolean.toString(cbOpenButton.isSelected()));
@@ -474,6 +478,9 @@ public class WorksheetExportDialog extends JDialog {
 		
 		cbUseBrowserForJavaScript = new JCheckBox(app.getMenu("UseBrowserForJS"));
 		funcPanel.add(cbUseBrowserForJavaScript);
+
+		cbIncludeHTML5 = new JCheckBox(app.getMenu("IncludeHTML5"));
+		funcPanel.add(cbIncludeHTML5);
 
 		// GUI panel
 		JPanel guiPanel = new JPanel();
@@ -688,7 +695,7 @@ public class WorksheetExportDialog extends JDialog {
 				appletHeight = sizePanel.getSelectedHeight();
 			}
 
-			stringSelection = new StringSelection(getAppletTag(app, null, appletWidth, appletHeight, false, removeLineBreaks));
+			stringSelection = new StringSelection(getAppletTag(app, null, appletWidth, appletHeight, false, removeLineBreaks, cbIncludeHTML5.isSelected()));
 			break;
 			
 		case TYPE_JSXGRAPH:
@@ -842,7 +849,7 @@ public class WorksheetExportDialog extends JDialog {
 			//appendWithLineBreak(sb,"<p>Tab 1 content.</p>");
 			sb.append("<p>");			
 
-			sb.append(getAppletTag(application, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), false, removeLineBreaks));
+			sb.append(getAppletTag(application, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), false, removeLineBreaks, cbIncludeHTML5.isSelected()));
 			sb.append("</p>");
 
 			appendWithLineBreak(sb,"</div>");
@@ -1225,7 +1232,7 @@ public class WorksheetExportDialog extends JDialog {
 		appendWithLineBreak(sb, "<![CDATA[");
 		appendWithLineBreak(sb, "<div id='ggbapplet'>");
 		
-		sb.append(getAppletTag(app, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true, removeLineBreaks));
+		sb.append(getAppletTag(app, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true, removeLineBreaks, cbIncludeHTML5.isSelected()));
 
 		appendWithLineBreak(sb, "</div>");
 		appendWithLineBreak(sb, "]]>");
@@ -1312,7 +1319,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		// include applet tag
 		appendWithLineBreak(sb, "");
-		sb.append(getAppletTag(app, ggbFile, appletWidth, appletHeight, true, removeLineBreaks));
+		sb.append(getAppletTag(app, ggbFile, appletWidth, appletHeight, true, removeLineBreaks, cbIncludeHTML5.isSelected()));
 		appendWithLineBreak(sb, "");
 
 		// text after applet
@@ -1418,11 +1425,29 @@ public class WorksheetExportDialog extends JDialog {
 		return sb.toString();
 	}
 	
-	public String getAppletTag(Application app, File ggbFile, int width, int height, boolean mayscript, boolean RemoveLineBreaks) {
+	public String getAppletTag(Application app, File ggbFile, int width, int height, boolean mayscript, boolean RemoveLineBreaks, boolean includeHTML5) {
 		
 		this.removeLineBreaks = RemoveLineBreaks;
 		
 		StringBuilder sb = new StringBuilder();
+		
+		// JavaScript version for non-Java devices eg Android, iPhone
+		if (includeHTML5) {			
+			sb.append("<div id=\"ggjsviewer_div\" class=\"ggbApplet\" style=\"width: ");
+			sb.append(width);
+			sb.append("px; height: ");
+			sb.append(height);
+			appendWithLineBreak(sb, "px; border: 1px solid black;\">");
+			appendWithLineBreak(sb, "</div>");
+			appendWithLineBreak(sb, "<script>");
+			appendWithLineBreak(sb, "var s = document.createElement(\"script\");");
+			appendWithLineBreak(sb, "s.type=\"text/javascript\";");
+			appendWithLineBreak(sb, "s.src=\"http://ggb.math.u-szeged.hu/ggb/geogebramobile/geogebramobile/geogebramobile.nocache.js\";");
+			appendWithLineBreak(sb, "document.getElementsByTagName(\"head\")[0].appendChild(s);");
+			appendWithLineBreak(sb, "</script>");			
+		}
+		
+		
 		// include applet
 		sb.append("<applet name=\"ggbApplet\" code=\"geogebra.GeoGebraApplet\"");
 		// archive geogebra.jar 
