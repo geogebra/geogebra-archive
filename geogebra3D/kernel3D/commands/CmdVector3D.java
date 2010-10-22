@@ -6,6 +6,7 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdVector;
 import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.kernel3D.Kernel3D;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
 
 
@@ -36,15 +37,18 @@ public class CmdVector3D extends CmdVector {
 		switch (n) {
 		case 2 :
 			arg = resArgs(c);
-			if (arg[0].isGeoElement3D() && arg[1].isGeoElement3D()){
+			//if one of the args is a 3D point, 
+			//then the vector is a 3D vector
+			//else it will be a 2D (calling super method)
+			if (arg[0].isGeoElement3D() || arg[1].isGeoElement3D()){
 				if ((ok[0] = (arg[0] .isGeoPoint()))
 						&& (ok[1] = (arg[1] .isGeoPoint()))) {
 					GeoElement[] ret =
 					{
 							kernel.Vector3D(
 									c.getLabel(),
-									(GeoPoint3D) arg[0],
-									(GeoPoint3D) arg[1])};
+									(GeoPointND) arg[0],
+									(GeoPointND) arg[1])};
 					return ret;
 				} else {
 					if (!ok[0])

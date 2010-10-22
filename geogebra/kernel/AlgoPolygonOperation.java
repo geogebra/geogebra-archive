@@ -17,6 +17,7 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.GeneralPathClipped;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
@@ -126,7 +127,7 @@ public class AlgoPolygonOperation extends AlgoIntersectAbstract {
 		// otherwise: points and segments are also output objects
 		else {
 			// size = poly + points + segments
-			GeoSegmentInterface[] segments = poly.getSegments();
+			GeoSegmentND[] segments = poly.getSegments();
 			GeoPoint[] points = poly.getPoints();
 			int size = 1 + segments.length + points.length;
 
@@ -291,7 +292,7 @@ public class AlgoPolygonOperation extends AlgoIntersectAbstract {
 		}
 		
 		// update all segments and set labels for new segments
-		GeoSegmentInterface[] segments = poly.getSegments();    	           
+		GeoSegmentND[] segments = poly.getSegments();    	           
 		for (int i=0; i < segments.length; i++) {   
 			GeoElement seg = (GeoElement) segments[i];
 			if (labelPointsAndSegments) {				

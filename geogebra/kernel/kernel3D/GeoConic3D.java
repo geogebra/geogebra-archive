@@ -7,9 +7,9 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**
@@ -214,7 +214,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 		@Override
-		public void setSphereND(GeoPointND M, GeoSegmentInterface segment) {
+		public void setSphereND(GeoPointND M, GeoSegmentND segment) {
 			// TODO Auto-generated method stub
 			
 		}

@@ -436,7 +436,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		switch(view3D.getCursor3DType()){		
 		case EuclidianView3D.PREVIEW_POINT_FREE:
 			ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
-			ret.setCoords(point);
+			ret.setCoords((GeoPointND) point);
 			ret.updateCoords();
 			break;
 
@@ -504,7 +504,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** put intersectionPoint coordinates in point */
 	protected void createNewPointIntersection(GeoPointND intersectionPoint){
 		GeoPoint3D point3D = view3D.getCursor3D();
-		point3D.setCoords((GeoPoint3D) intersectionPoint);
+		point3D.setCoords(intersectionPoint);
 		//point3D.setParentAlgorithm(((GeoPoint3D) intersectionPoint).getParentAlgorithm());
 		point3D.updateCoords();
 		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_DEPENDENT);
@@ -774,7 +774,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	// fetch the two selected points for vector
 	protected void vector(){
-		GeoPoint3D[] points = getSelectedPoints3D();
+		GeoPointND[] points = getSelectedPointsND();
 		((Kernel3D) getKernel()).Vector3D(null,points[0], points[1]);
 	}
 	

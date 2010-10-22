@@ -3,7 +3,9 @@ package geogebra3D.euclidian3D;
 
 
 
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernel3D.GeoSegment3D;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.util.ArrayList;
 
@@ -21,11 +23,11 @@ public class DrawSegment3D extends DrawCoordSys1D {
 	/**
 	 * Common constructor
 	 * @param a_view3D
-	 * @param a_segment3D
+	 * @param segment
 	 */
-	public DrawSegment3D(EuclidianView3D a_view3D, GeoSegment3D a_segment3D){
+	public DrawSegment3D(EuclidianView3D a_view3D, GeoSegmentND segment){
 		
-		super(a_view3D,a_segment3D);
+		super(a_view3D,(GeoElement) segment);
 		
 		setDrawMinMax(0, 1);
 	}

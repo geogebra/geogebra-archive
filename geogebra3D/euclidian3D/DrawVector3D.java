@@ -10,6 +10,7 @@ import geogebra.kernel.kernel3D.GeoCoordSys1D;
 import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.kernel3D.GeoSegment3D;
 import geogebra.kernel.kernel3D.GeoVector3D;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
@@ -68,7 +69,7 @@ implements Previewable {
 			p1 = new GgbVector(4);
 			p1.setW(1);
 		}else
-			p1 = geo.getStartPoint().getInhomCoords();
+			p1 = geo.getStartPoint().getCoordsInD(3);
 		GgbVector p2 = (GgbVector) p1.add(geo.getCoords());
 		
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
@@ -143,12 +144,12 @@ implements Previewable {
 
 	public void updatePreview() {
 		
-		GeoPoint3D firstPoint = null;
-		GeoPoint3D secondPoint = null;
+		GeoPointND firstPoint = null;
+		GeoPointND secondPoint = null;
 		if (selectedPoints.size()>=1){
-			firstPoint = (GeoPoint3D) selectedPoints.get(0);
+			firstPoint = (GeoPointND) selectedPoints.get(0);
 			if (selectedPoints.size()==2)
-				secondPoint = (GeoPoint3D) selectedPoints.get(1);
+				secondPoint = (GeoPointND) selectedPoints.get(1);
 			else
 				secondPoint = getView3D().getCursor3D();
 		}
@@ -156,7 +157,7 @@ implements Previewable {
 		
 		if (selectedPoints.size()>=1){
 			((GeoVector3D) getGeoElement()).setCoords(
-					secondPoint.getCoords().sub(firstPoint.getCoords()).get());
+					secondPoint.getCoordsInD(3).sub(firstPoint.getCoordsInD(3)).get());
 			try {
 				((GeoVector3D) getGeoElement()).setStartPoint(firstPoint);
 			} catch (CircularDefinitionException e) {

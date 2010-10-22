@@ -33,7 +33,6 @@ import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoLineInterface;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
@@ -41,7 +40,6 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
-import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
@@ -55,7 +53,9 @@ import geogebra.kernel.Region;
 import geogebra.kernel.Translateable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
@@ -5145,7 +5145,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				for (int k=0; k < points.length; k++) {
 					tempArrayList.remove(points[k]);
 				}
-				GeoSegmentInterface [] segs = poly.getSegments();
+				GeoSegmentND [] segs = poly.getSegments();
 				for (int k=0; k < segs.length; k++) {
 					tempArrayList.remove(segs[k]);
 				}
@@ -6006,11 +6006,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 
 	
-	final protected void getSelectedLinesInterface(GeoLineInterface[] lines) {
+	final protected void getSelectedLinesInterface(GeoLineND[] lines) {
 		int i = 0;
 		Iterator it = selectedLines.iterator();
 		while (it.hasNext()) {
-			lines[i] = (GeoLineInterface) it.next();
+			lines[i] = (GeoLineND) it.next();
 			i++;
 		}
 		clearSelection(selectedLines);
@@ -6157,7 +6157,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final protected int addSelectedLine(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLines, GeoLineInterface.class);
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLines, GeoLineND.class);
 	}
 
 	final protected int addSelectedSegment(Hits hits, int max,

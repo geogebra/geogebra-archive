@@ -25,12 +25,14 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
 Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties,
-GeoLineInterface, MatrixTransformable, GeoFunctionable, Evaluatable {
+GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	
 	private static final long serialVersionUID = 1L;
 	// modes
@@ -685,30 +687,34 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable, Evaluatable {
 	}
 	 
 	public void pointChanged(GeoPointND P) {
-		doPointChanged((GeoPoint) P);
+		doPointChanged(P);
 	}
 		
 	
 	
-	private void doPointChanged(GeoPoint P) {
+	private void doPointChanged(GeoPointND P) {
+		
+		GgbVector coords = P.getCoordsInD(2);
+	
 		// project P on line
-		double px = P.x/P.z;
-		double py = P.y/P.z;
+		double px = coords.getX()/coords.getZ();
+		double py = coords.getY()/coords.getZ();
 		// param of projection point on perpendicular line
 		double t = -(z + x*px + y*py) / (x*x + y*y); 
 		// calculate projection point using perpendicular line
-		P.x = px + t * x;
-		P.y = py + t * y;
-		P.z = 1.0;	
+		px += t * x;
+		py += t * y;
+		P.setCoords2D(px, py, 1);
+		
 						
 		// set path parameter
 		if (startPoint != null) {
 			PathParameter pp = P.getPathParameter();
 			if (Math.abs(x) <= Math.abs(y)) {	
-				pp.t = (startPoint.z * P.x - startPoint.x) / (y * startPoint.z);								
+				pp.t = (startPoint.z * px - startPoint.x) / (y * startPoint.z);								
 			} 
 			else {		
-				pp.t = (startPoint.y - startPoint.z * P.y) / (x * startPoint.z);			
+				pp.t = (startPoint.y - startPoint.z * py) / (x * startPoint.z);			
 			}
 		}		
 	}				
@@ -989,5 +995,17 @@ GeoLineInterface, MatrixTransformable, GeoFunctionable, Evaluatable {
 		return (-x * x_var - z) / y;
 	}
 
+	
+
+
+	//////////////////////////////////////
+	// 3D stuff
+	//////////////////////////////////////
+	
+	public GgbVector getPointInD(int dimension, double lambda){
+
+		return null;
+		
+	}
 
 }

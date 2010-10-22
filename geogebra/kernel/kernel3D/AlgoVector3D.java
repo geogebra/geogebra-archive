@@ -35,11 +35,14 @@ public class AlgoVector3D extends AlgoVector {
 
 	protected GeoPointND newStartPoint(){
 
-		return new GeoPoint3D((GeoPoint3D) getP());
+		return new GeoPoint3D(getP());
 
 	}
 
+	protected void setCoords(){
+		getVector().setCoords(getQ().getCoordsInD(3).sub(getP().getCoordsInD(3)).get());
+	}
 
-	
+
 
 }

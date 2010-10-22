@@ -156,6 +156,7 @@ public class Hits3D extends Hits {
 		}
 		
 		// add the parent of this if it's a segment from a GeoPolygon3D or GeoPolyhedron
+		/* TODO ?
 		for (Iterator<GeoElement> iter = segmentList.iterator(); iter.hasNext();) {
 			GeoSegment3D seg = (GeoSegment3D) iter.next();
 			GeoElement parent = seg.getGeoParent();
@@ -163,7 +164,7 @@ public class Hits3D extends Hits {
 				if (!this.contains(parent))
 					this.add(seg.getGeoParent());				
 		}
-		
+		*/
 		
 		//debug
 		/*

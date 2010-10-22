@@ -314,7 +314,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	case 3:
     		return getCoords();
     	case 2:
-    		GgbVector v = new GgbVector(2);
+    		GgbVector v = new GgbVector(3);
     		v.setX(getCoords().getX());
     		v.setY(getCoords().getY());
        		v.setZ(getCoords().getW());
@@ -547,9 +547,9 @@ implements GeoPointND, PointProperties, Vector3DValue{
      * @param x x-coord
      * @param y y-coord
      */
-    public void setCoords2D(double x, double y){
-    	x2D = x;
-    	y2D = y;
+    public void setCoords2D(double x, double y, double z){
+    	x2D = x/z;
+    	y2D = y/z;
     }
     
 	public double getX2D(){
@@ -652,8 +652,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	return GEO_CLASS_POINT3D;  
     }
     
-    public GeoPoint3D(GeoPoint3D point) {
-    	super(point.cons);
+    public GeoPoint3D(GeoPointND point) {
+    	super(((GeoElement) point).getConstruction());
         set((GeoElement) point);        
     }
     
@@ -683,7 +683,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	public void set(GeoElement geo) {
 
     	if (geo.isGeoPoint()) {
-	    	GeoPoint3D p = (GeoPoint3D) geo;  
+	    	GeoPointND p = (GeoPointND) geo;  
 	    	if (p.getPathParameter() != null) {
 	    		PathParameter pathParameter = getPathParameter();
 		    	pathParameter.set(p.getPathParameter());

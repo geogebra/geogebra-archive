@@ -5,7 +5,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.ConstructionElementCycle;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoSegmentInterface;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -198,7 +198,7 @@ public class GeoPolyhedron extends GeoElement3D {
 			GeoPoint3D[] p = new GeoPoint3D[currentFace.size()];
 			
 			//edges linked to the face
-			GeoSegmentInterface[] s = new GeoSegmentInterface[currentFace.size()];
+			GeoSegmentND[] s = new GeoSegmentND[currentFace.size()];
 			
 			Iterator<ConstructionElement> it2 = currentFace.iterator();
 			GeoPoint3D endPoint = (GeoPoint3D) it2.next();

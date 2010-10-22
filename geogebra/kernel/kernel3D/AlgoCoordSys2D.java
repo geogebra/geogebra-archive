@@ -93,6 +93,13 @@ public abstract class AlgoCoordSys2D extends AlgoElement3D {
 				
 		GgbCoordSys coordsys = cs.getCoordSys();
 		
+		for(int j=0;j<points.length;j++)
+			if (!points[j].isDefined()){
+				coordsys.setUndefined();
+				return;
+			}
+		
+		
 		//recompute the coord sys
 		coordsys.resetCoordSys();
 		int i;

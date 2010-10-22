@@ -7,7 +7,6 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.kernel3D.GeoQuadric3D;
 import geogebra.main.Application;
@@ -144,7 +143,7 @@ public abstract class GeoQuadricND extends GeoElement {
 	 * @param M center
 	 * @param segment
 	 */
-	abstract public void setSphereND(GeoPointND M, GeoSegmentInterface segment);
+	abstract public void setSphereND(GeoPointND M, GeoSegmentND segment);
 	
 	
 	

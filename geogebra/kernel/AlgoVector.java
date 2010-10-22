@@ -108,8 +108,8 @@ public class AlgoVector extends AlgoElement {
     protected final void compute() {
         if (P.isFinite() && Q.isFinite()) {     
         	     	
-        	v.setCoords(P.vectorTo(Q));
-            
+           	setCoords();
+                       
             // update position of unlabeled startpoint
             GeoPointND startPoint = v.getStartPoint();
             
@@ -120,6 +120,10 @@ public class AlgoVector extends AlgoElement {
         } else {
             v.setUndefined();
         }
-    }       
+    }
+    
+    protected void setCoords(){
+    	v.setCoords(P.vectorTo(Q));
+    }
     
 }

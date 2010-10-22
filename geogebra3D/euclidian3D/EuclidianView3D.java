@@ -34,6 +34,7 @@ import geogebra.kernel.kernel3D.GeoVector3D;
 import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
@@ -474,8 +475,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				d = new DrawVector3D(this, (GeoVector3D) geo);
 				break;									
 
+			case GeoElement3D.GEO_CLASS_SEGMENT:
 			case GeoElement3D.GEO_CLASS_SEGMENT3D:
-				d = new DrawSegment3D(this, (GeoSegment3D) geo);
+				d = new DrawSegment3D(this, (GeoSegmentND) geo);
 				break;									
 
 
@@ -2154,13 +2156,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			case PREVIEW_POINT_PATH:
 				// use path drawing directions for the cross
 				t = 1/getScale();
+				GgbMatrix4x4 matrix = GgbMatrix4x4.Identity();
+				if (getCursor3D().getPath() instanceof GeoElement3DInterface)
+					matrix = ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix();
 				getCursor3D().getDrawingMatrix().setVx(
-						(GgbVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVx().normalized().mul(t));
+						(GgbVector) matrix.getVx().normalized().mul(t));
 				t *= (10+((GeoElement) getCursor3D().getPath()).getLineThickness());
 				getCursor3D().getDrawingMatrix().setVy(
-						(GgbVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVy().mul(t));
+						(GgbVector) matrix.getVy().mul(t));
 				getCursor3D().getDrawingMatrix().setVz(
-						(GgbVector) ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix().getVz().mul(t));
+						(GgbVector) matrix.getVz().mul(t));
 				break;
 			case PREVIEW_POINT_DEPENDENT:
 				//use size of intersection

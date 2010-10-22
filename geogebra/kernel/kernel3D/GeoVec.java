@@ -22,6 +22,7 @@ import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
+import geogebra.kernel.kernelND.GeoPointND;
 
 /**
  *
@@ -82,6 +83,9 @@ public abstract class GeoVec extends GeoElement3D {
 		setCoords(vec.v);		
 	}
 	
+	public void setCoords(GeoPointND p){
+		setCoords(p.getCoordsInD(3));		
+	}
 	
 
 	final public GgbVector getCoords() {

@@ -399,6 +399,14 @@ GeoPointND  {
 		return path != null || super.isFixable();
 	}		
     
+	
+    public void setCoords2D(double x, double y, double z){
+    	this.x = x;
+		this.y = y;
+		this.z = z;
+    }
+    
+    
 	/** 
 	 * Sets homogeneous coordinates and updates
 	 * inhomogeneous coordinates
@@ -1111,7 +1119,6 @@ GeoPointND  {
 		
 		//only used for 3D stuff
 		public void updateCoordsFrom2D(boolean doPathOrRegion){
-			
 		}
 		
 		public GgbVector getInhomCoords(){

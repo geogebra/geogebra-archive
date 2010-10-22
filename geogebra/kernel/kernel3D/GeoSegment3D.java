@@ -4,9 +4,9 @@ import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.PathMover;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 /**
  * 
@@ -18,7 +18,7 @@ import geogebra.kernel.kernelND.GeoPointND;
  * @author ggb3d
  *
  */
-public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentInterface {
+public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 	
 
 	/** if is a segment from a GeoPolygon3D or GeoPolyhedron */

@@ -12,10 +12,12 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.util.HashSet;
 
@@ -23,7 +25,7 @@ import java.util.HashSet;
  * @author Markus Hohenwarter
  */
 final public class GeoSegment extends GeoLine implements LimitedPath, NumberValue, LineProperties,
-GeoSegmentInterface {
+GeoSegmentND {
 
 	private static final long serialVersionUID = 1L;
 	// GeoSegment is constructed by AlgoJoinPointsSegment 
@@ -301,16 +303,13 @@ GeoSegmentInterface {
 	/* 
 	 * Path interface
 	 */	     	
-    public void pointChanged(GeoPointND PI) {
-		GeoPoint P = (GeoPoint) PI;
+    public void pointChanged(GeoPointND P) {
 			
 		PathParameter pp = P.getPathParameter();
 		
 		// special case: segment of length 0
 		if (length == 0) {
-			P.x = startPoint.inhomX;
-			P.y = startPoint.inhomY;
-			P.z = 1.0;
+			P.setCoords2D(startPoint.inhomX, startPoint.inhomY,1);
 			if (!(pp.t >= 0 && pp.t <= 1)) {
 				pp.t = 0.0;
 			}
@@ -323,14 +322,10 @@ GeoSegmentInterface {
 		// ensure that the point doesn't get outside the segment
 		// i.e. ensure 0 <= t <= 1 
 		if (pp.t < 0.0) {
-			P.x = startPoint.x;
-			P.y = startPoint.y;
-			P.z = startPoint.z; 
+			P.setCoords2D(startPoint.x, startPoint.y,startPoint.z);
 			pp.t = 0.0;
 		} else if  (pp.t > 1.0) {
-			P.x = endPoint.x;
-			P.y = endPoint.y;
-			P.z = endPoint.z; 
+			P.setCoords2D(endPoint.x, endPoint.y,endPoint.z);
 			pp.t = 1.0;
 		}
 	}
@@ -471,5 +466,31 @@ GeoSegmentInterface {
     public void setZero() {
     	setCoords(0, 1, 0);
     }
+    
+    
+
+	//////////////////////////////////////
+	// 3D stuff
+	//////////////////////////////////////
+	
+  	public boolean hasDrawable3D() {
+		return true;
+	}
+    
+  	public GgbVector getLabelPosition(){
+		return new GgbVector(getPointX(0.5), getPointY(0.5), 0, 1);
+	}
+  	
+  	public GgbVector getPointInD(int dimension, double lambda){
+
+		switch(dimension){
+		case 3:
+			return new GgbVector(getPointX(lambda), getPointY(lambda), 0, 1);
+		case 2:
+			return new GgbVector(getPointX(lambda), getPointY(lambda), 1);
+		default:
+			return null;
+		}
+	}
 	
 }

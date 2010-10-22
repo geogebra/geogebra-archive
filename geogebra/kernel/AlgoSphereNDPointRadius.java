@@ -21,6 +21,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 /**
  *
@@ -59,7 +60,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
             Construction cons,
             String label,
             GeoPointND M,
-            GeoSegmentInterface segment, boolean dummy) {
+            GeoSegmentND segment, boolean dummy) {
         	
             this(cons, M, segment, dummy);
             sphereND.setLabel(label);
@@ -87,7 +88,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
     protected AlgoSphereNDPointRadius(
             Construction cons,
             GeoPointND M,
-            GeoSegmentInterface rgeo, boolean dummy) {
+            GeoSegmentND rgeo, boolean dummy) {
         	
             super(cons);
             

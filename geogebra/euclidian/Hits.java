@@ -3,8 +3,8 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
-import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -122,7 +122,7 @@ public class Hits extends ArrayList {
 			GeoElement geo = (GeoElement) it.next();
 			if (geo.isGeoPolygon()) {
 				boolean sidePresent = false;
-				GeoSegmentInterface [] sides = ((GeoPolygon) geo).getSegments();
+				GeoSegmentND [] sides = ((GeoPolygon) geo).getSegments();
 				for (int k=0; k < sides.length; k++) {
 					if (this.contains(sides[k])) {
 						sidePresent = true;

@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.util.ArrayList;
 
@@ -123,7 +124,7 @@ public class AlgoPolygonRegular extends AlgoElement {
     	// otherwise: points and segments are also output objects
     	else {
 	    	// size = poly + points (without A, B) + segments
-	    	GeoSegmentInterface[] segments = poly.getSegments();
+	    	GeoSegmentND[] segments = poly.getSegments();
 	    	GeoPoint [] points = poly.getPoints();
 	        int size = 1 + segments.length + points.length - 2; 
 	       
@@ -235,7 +236,7 @@ public class AlgoPolygonRegular extends AlgoElement {
 		}
 		
 		// update all segments and set labels for new segments
-		GeoSegmentInterface[] segments = poly.getSegments();    	           
+		GeoSegmentND[] segments = poly.getSegments();    	           
 		for (int i=0; i < segments.length; i++) {   
 			GeoElement seg = (GeoElement) segments[i];
 			if (labelPointsAndSegments) {				

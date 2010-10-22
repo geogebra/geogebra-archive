@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 
 
@@ -167,7 +168,7 @@ public class AlgoPolygon extends AlgoElement {
     }    
     
     private void setOutput() {
-    	GeoSegmentInterface [] segments = poly.getSegments();
+    	GeoSegmentND [] segments = poly.getSegments();
     	int size = 1;
     	if (segments!=null)
     		size+=segments.length;

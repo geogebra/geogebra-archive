@@ -26,6 +26,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
@@ -884,7 +885,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	
 	
 	
-	public void setSphereND(GeoPointND M, GeoSegmentInterface segment){
+	public void setSphereND(GeoPointND M, GeoSegmentND segment){
 		setCircle((GeoPoint) M, (GeoSegment) segment);
 	}
 	

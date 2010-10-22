@@ -5,14 +5,14 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLineInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 
 public abstract class GeoCoordSys1D extends GeoElement3D implements Path,
-GeoLineInterface, GeoCoordSys{
+GeoLineND, GeoCoordSys{
 	
 	protected GgbCoordSys coordsys;
 
@@ -124,17 +124,33 @@ GeoLineInterface, GeoCoordSys{
 */
 	
 	
-	
-	//public GeoPoint3D getPoint(double lambda){
-	/** returns the point at position lambda on the coord sys */
+	/** returns the point at position lambda on the coord sys 
+	 * @param lambda 
+	 * @return the point at position lambda on the coord sys  */
 	public GgbVector getPoint(double lambda){
-		/*
-		GgbVector v=new GgbVector(new double[] {lambda,1});
-		GgbVector r=getMatrix().mul(v);		
-		return r;
-		*/
 		return coordsys.getPoint(lambda);
 		
+	}
+
+
+	
+
+	/** returns the point at position lambda on the coord sys in the dimension given
+	 * @param dimension 
+	 * @param lambda 
+	 * @return the point at position lambda on the coord sys  
+	 * */
+	public GgbVector getPointInD(int dimension, double lambda){
+
+		GgbVector v = getPoint(lambda);
+		switch(dimension){
+		case 3:
+			return v;
+		case 2:
+			return new GgbVector(v.getX(), v.getY(), v.getW());
+		default:
+			return null;
+		}
 	}
 
 

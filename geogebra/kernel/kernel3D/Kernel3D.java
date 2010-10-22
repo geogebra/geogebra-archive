@@ -216,8 +216,11 @@ public class Kernel3D
 	/** return all points of the current construction */
 	public TreeSet getPointSet(){
 		TreeSet t3d = getConstruction().getGeoSetLabelOrder(GeoElement3D.GEO_CLASS_POINT3D);
+		TreeSet t = super.getPointSet();
+		
+		t.addAll(t3d);
 		//TODO add super.getPointSet()
-		return t3d;
+		return t;
 	}
 	
 	

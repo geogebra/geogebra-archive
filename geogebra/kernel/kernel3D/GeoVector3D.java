@@ -23,7 +23,7 @@ public class GeoVector3D extends GeoVec4D
 implements GeoVectorInterface, Locateable, Vector3DValue{
 	
 	
-	private GeoPoint3D startPoint;
+	private GeoPointND startPoint;
 	
 	private GgbMatrix matrix;
 	
@@ -72,7 +72,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 	public void updateStartPointPosition(){
 		
 		if(startPoint!=null)
-			matrix.set(startPoint.getCoords(),2);
+			matrix.set(startPoint.getCoordsInD(3),2);
 		else{
 			for(int i=1;i<4;i++)
 				matrix.set(i, 2, 0.0);
@@ -290,12 +290,12 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 			return startPoint;
 		}
 
-		public void setStartPoint(GeoPointND pI)	throws CircularDefinitionException {
+		public void setStartPoint(GeoPointND p)	throws CircularDefinitionException {
 			
 
 			//Application.debug("point : "+((GeoElement) pI).getLabel());
 			
-	    	GeoPoint3D p = (GeoPoint3D) pI;
+	    	//GeoPoint3D p = (GeoPoint3D) pI;
 	    	
 	    	if (startPoint == p) return;
 	    	
@@ -303,7 +303,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 			//TODO if (isAlgoMacroOutput()) return; 				
 	    	
 			// check for circular definition
-			if (isParentOf(p))
+			if (isParentOf((GeoElement) p))
 				throw new CircularDefinitionException();
 
 			// remove old dependencies
@@ -325,7 +325,7 @@ implements GeoVectorInterface, Locateable, Vector3DValue{
 			if (startPoint == null)
 				return null;
 		
-			GeoPoint3D [] ret = new GeoPoint3D[1];
+			GeoPointND [] ret = new GeoPointND[1];
 			ret[0] = startPoint;
 			return ret;	
 		}

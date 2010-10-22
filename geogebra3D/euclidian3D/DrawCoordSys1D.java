@@ -2,8 +2,10 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernel3D.GeoCoordSys1D;
 import geogebra.kernel.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -27,7 +29,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	 * @param a_view3D
 	 * @param cs1D
 	 */
-	public DrawCoordSys1D(EuclidianView3D a_view3D, GeoCoordSys1D cs1D){
+	public DrawCoordSys1D(EuclidianView3D a_view3D, GeoElement cs1D){
 		
 		super(a_view3D, cs1D);
 	}	
@@ -78,9 +80,9 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	protected boolean updateForItSelf(){
 		
-		GeoCoordSys1D cs = (GeoCoordSys1D) getGeoElement();
+		GeoLineND cs = (GeoLineND) getGeoElement();
 		double[] minmax = getDrawMinMax(); 
-		updateForItSelf(cs.getPoint(minmax[0]).getInhomCoords(),cs.getPoint(minmax[1]).getInhomCoords());
+		updateForItSelf(cs.getPointInD(3,minmax[0]).getInhomCoords(),cs.getPointInD(3,minmax[1]).getInhomCoords());
 	
 		return true;
 	}

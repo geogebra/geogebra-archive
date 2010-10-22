@@ -1,6 +1,6 @@
-package geogebra.kernel;
+package geogebra.kernel.kernelND;
 
-import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.GeoElement;
 
 import java.awt.Color;
 
@@ -10,7 +10,7 @@ import java.awt.Color;
  * @author ggb3D
  *
  */
-public interface GeoSegmentInterface {
+public interface GeoSegmentND {
 
 
 	void setLabel(String string);

@@ -7658,8 +7658,8 @@ public class Kernel {
 	 */
 	final public GeoVector3D Vector3D(
 		String label,
-		GeoPoint3D P,
-		GeoPoint3D Q) {
+		GeoPointND P,
+		GeoPointND Q) {
 		AlgoVector3D algo = new AlgoVector3D(cons, label, P, Q);
 		GeoVector3D v = (GeoVector3D) algo.getVector();
 		v.setEuclidianVisible(true);

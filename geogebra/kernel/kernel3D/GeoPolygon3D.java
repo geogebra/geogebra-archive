@@ -7,11 +7,11 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
-import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
@@ -95,7 +95,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	  * @param oldSegment the old segment 
 	  */
 	
-	 public void removeSegment(GeoSegmentInterface oldSegment){
+	 public void removeSegment(GeoSegmentND oldSegment){
 		 ((GeoSegment3D) oldSegment).getParentAlgorithm().remove();
 	 }
 	 
@@ -107,14 +107,14 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	  * @param endPoint the end point
 	  * @return the segment
 	  */
-	 public GeoSegmentInterface createSegment(GeoPointND startPoint, GeoPointND endPoint, boolean euclidianVisible){
-		 GeoSegmentInterface segment;
+	 public GeoSegmentND createSegment(GeoPointND startPoint, GeoPointND endPoint, boolean euclidianVisible){
+		 GeoSegmentND segment;
 
 		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, 
 				 (GeoPoint3D) startPoint, (GeoPoint3D) endPoint, this, GeoElement3D.GEO_CLASS_SEGMENT3D);            
 		 cons.removeFromConstructionList(algoSegment);               
 
-		 segment = (GeoSegmentInterface) algoSegment.getCS(); 
+		 segment = (GeoSegmentND) algoSegment.getCS(); 
 		 // refresh color to ensure segments have same color as polygon:
 		 segment.setObjColor(getObjectColor()); 
 
@@ -416,7 +416,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		
 		//find the segment where the point lies
 		int index = (int) pp.getT();
-		GeoSegmentInterface seg = segments[index];
+		GeoSegmentND seg = segments[index];
 		
 		//sets the path parameter for the segment, calc the new position of the point
 		pp.setT(pp.getT() - index);		
@@ -486,7 +486,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	public void setRegionChanged(GeoPointND PI, double x, double y){
 		
 		
-		((GeoPoint3D) PI).setCoords2D(x, y);
+		((GeoPoint3D) PI).setCoords2D(x, y, 1);
 		((GeoPoint3D) PI).updateCoordsFrom2D(false);
 		//Application.debug("x = "+x+", y = "+y+"\n"+((GeoPoint3D) PI).getCoords());
 	}

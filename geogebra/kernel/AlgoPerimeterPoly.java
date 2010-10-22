@@ -12,6 +12,8 @@
 
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoSegmentND;
+
 /**
  * Algorithm to compute the circumference of a
  * {@link geogebra.kernel.GeoPolygon GeoPolygon}.
@@ -62,7 +64,7 @@ public class AlgoPerimeterPoly extends AlgoElement {
 			return;
 		}
 				
-		GeoSegmentInterface[] segment = polygon.getSegments();
+		GeoSegmentND[] segment = polygon.getSegments();
 		double length = 0;
 		for (int i = 0; i < segment.length; i++) {
 			length = length + (segment[i].getLength());		

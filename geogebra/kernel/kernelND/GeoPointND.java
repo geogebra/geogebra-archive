@@ -1,7 +1,10 @@
 package geogebra.kernel.kernelND;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.LocateableList;
+import geogebra.kernel.PathParameter;
 import geogebra.kernel.RegionParameters;
+import geogebra.kernel.kernel3D.Region3D;
 
 
 
@@ -50,6 +53,10 @@ public interface GeoPointND {
 	public boolean isFinite();
 
 	public void set(GeoPointND p);
+	
+	public String getStartPointXML();
+	
+	public LocateableList getLocateableList();
 
 	/** return the coordinates of the vector (this,Q) 
 	 * @param Q ending point
@@ -69,6 +76,8 @@ public interface GeoPointND {
 	
 	public boolean hasPath();
 	
+	public PathParameter getPathParameter();
+	
 	//public void doPath();
 	
 	public boolean hasRegion();
@@ -78,6 +87,14 @@ public interface GeoPointND {
 	 * inhomogeneous coordinates
 	 */
 	public void setCoords(double x, double y, double z);
+	
+
+    /** set 2D coords
+     * @param x x-coord
+     * @param y y-coord
+     */
+    public void setCoords2D(double x, double y, double z);
+    
 	
 	/**
 	 * @param dimension

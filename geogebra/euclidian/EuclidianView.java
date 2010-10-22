@@ -40,7 +40,6 @@ import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
-import geogebra.kernel.GeoSegmentInterface;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVec2D;
@@ -48,6 +47,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.View;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
 import java.awt.BasicStroke;
@@ -2902,7 +2902,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			GeoElement geo = (GeoElement) it.next();
 			if (geo.isGeoPolygon()) {
 				boolean sidePresent = false;
-				GeoSegmentInterface [] sides = ((GeoPolygon) geo).getSegments();
+				GeoSegmentND [] sides = ((GeoPolygon) geo).getSegments();
 				for (int k=0; k < sides.length; k++) {
 					if (hits.contains(sides[k])) {
 						sidePresent = true;
