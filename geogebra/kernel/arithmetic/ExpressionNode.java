@@ -2535,9 +2535,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             case FLOOR:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\lfloor");
+	        			sb.append("\\lfloor ");
 	                     sb.append(leftStr);
-	                     sb.append("\\rfloor");
+	                     sb.append("\\rfloor ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2556,9 +2556,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             case CEIL:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\lceil");
+	        			sb.append("\\lceil ");
 	                     sb.append(leftStr);
-	                     sb.append("\\rceil");
+	                     sb.append("\\rceil ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
