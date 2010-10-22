@@ -20,6 +20,7 @@ import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Dilateable;
+import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
@@ -45,6 +46,7 @@ import geogebra.kernel.Mirrorable;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.Region;
 import geogebra.kernel.Translateable;
+import geogebra.kernel.arithmetic.BooleanValue;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionalNVar;
@@ -64,10 +66,17 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
+/**
+ * Resolves arguments of the command, checks their validity 
+ * and creates resulting geos via appropriate Kernel methods 
+ */
 public abstract class CommandProcessor  {
 
+	/** application */
 	protected Application app;
+	/** kernel */
 	protected Kernel kernel;
+	/** construction */
 	Construction cons;
 	private AlgebraProcessor algProcessor;
 
@@ -84,9 +93,19 @@ public abstract class CommandProcessor  {
 
 	/**
 	 *  Every CommandProcessor has to implement this method
+	 * @param c command
+	 *  @return list of resulting geos
+	 * @throws MyError 
+	 * @throws CircularDefinitionException 
 	 */
 	public abstract GeoElement [] process(Command c) throws MyError, CircularDefinitionException;   	
 
+	/**
+	 * Resolves arguments. When argument produces mor geos, only first is taken.
+	 * @param c
+	 * @return array of arguments
+	 * @throws MyError
+	 */
 	protected final GeoElement[] resArgs(Command c) throws MyError {	  	
 		boolean oldMacroMode = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
@@ -108,6 +127,12 @@ public abstract class CommandProcessor  {
 		return result;
 	}    
 
+	/**
+	 * Resolves argument
+	 * @param arg
+	 * @return array of arguments
+	 * @throws MyError
+	 */
 	final GeoElement[] resArg(ExpressionNode arg) throws MyError {
 		GeoElement[] geos = algProcessor.processExpressionNode(arg);
 
@@ -124,6 +149,10 @@ public abstract class CommandProcessor  {
 	 * Resolve arguments of a command that has a local numeric variable
 	 * at the  position varPos. Initializes the variable with the NumberValue
 	 * at initPos.  
+	 * @param c 
+	 * @param varPos 
+	 * @param initPos 
+	 * @return Array of arguments
 	 */
 	protected final GeoElement [] resArgsLocalNumVar(Command c, int varPos, int initPos) {
 		// check if there is a local variable in arguments    	
@@ -163,6 +192,10 @@ public abstract class CommandProcessor  {
 	 * Resolve arguments of a command that has a several local numeric variable
 	 * at the  position varPos. Initializes the variable with the NumberValue
 	 * at initPos.  
+	 * @param c 
+	 * @param varPos positions of local variables
+	 * @param initPos positions of vars to be initialized
+	 * @return array of arguments
 	 */
 	protected final GeoElement [] resArgsLocalNumVar(Command c, int varPos[], int initPos[]) {
 		
@@ -210,6 +243,13 @@ public abstract class CommandProcessor  {
 	
 	private StringBuilder sb;
 
+	/**
+	 * Creates wrong argument error
+	 * @param app
+	 * @param cmd
+	 * @param arg
+	 * @return wrong argument error
+	 */
 	protected final MyError argErr(Application app, String cmd, Object arg) {
 		String localName = app.getCommand(cmd);
 		if (sb == null) sb = new StringBuilder();
@@ -231,6 +271,13 @@ public abstract class CommandProcessor  {
 		return new MyError(app, sb.toString(),cmd);
 	}
 
+	/**
+	 * Creates wrong parameter count error
+	 * @param app
+	 * @param cmd
+	 * @param argNumber
+	 * @return wrong parameter count error
+	 */
 	protected final MyError argNumErr(
 			Application app,
 			String cmd,
@@ -251,11 +298,24 @@ public abstract class CommandProcessor  {
 		return new MyError(app, sb.toString(), cmd);
 	}
 
+	/**
+	 * Creates change dependent error
+	 * @param app
+	 * @param geo
+	 * @return change dependent error
+	 */
 	final MyError chDepErr(Application app, GeoElement geo) {
 		String[] strs = { "ChangeDependent", geo.getLongDescription()};
 		return new MyError(app, strs);
 	}
 	
+	/**
+	 * Returns bad argument (according to ok array) and throws error if no
+	 * was found.
+	 * @param ok
+	 * @param arg
+	 * @return bad argument
+	 */
 	protected static GeoElement getBadArg(boolean[] ok, GeoElement[] arg) {
 		for (int i = 0 ; i < ok.length ; i++) {
 			if (!ok[i]) return arg[i];
@@ -8693,7 +8753,11 @@ class CmdStemPlot extends CommandProcessor {
 	     }
 	 }    
 	}
- 
+ /**
+  * 
+  * Slider[<Min>,<Max>,<Increment>,<Speed>,<Width>,<Angle>,<Horizontal>,<Animating>,<Random>]
+  *
+  */
  class CmdSlider  extends CommandProcessor {
 		
 
@@ -8709,21 +8773,33 @@ class CmdStemPlot extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 		arg = resArgs(c);
-		if (n < 2 || n > 5)
+		if (n < 2 || n > 9)
 			throw argNumErr(app, c.getName(), n);
-		for (int i = 0; i < n; i++)
+		for (int i = 0; i < Math.min(n,5); i++)
 			if (!arg[i].isNumberValue())
 				throw argErr(app, c.getName(), arg[i]);
-
-		GeoNumeric slider = new GeoNumeric(kernel.getConstruction());
+		for (int i = 5; i < n; i++)
+			if (!arg[i].isBooleanValue())
+				throw argErr(app, c.getName(), arg[i]);
+		GeoNumeric slider;
+		if(n>5 && ((BooleanValue) arg[5]).getBoolean())
+			slider = new GeoAngle(kernel.getConstruction());
+		else
+			slider = new GeoNumeric(kernel.getConstruction());
 		slider.setIntervalMin((NumberValue) arg[0]);
 		slider.setIntervalMax((NumberValue) arg[1]);
 		if (n > 2)
-			slider.setAnimationSpeedObject((NumberValue) arg[2]);
+			slider.setAnimationStep((NumberValue) arg[2]);
 		if (n > 3)
-			slider.setAnimationStep((NumberValue) arg[3]);
+			slider.setAnimationSpeedObject((NumberValue) arg[3]);
 		if (n > 4)
 			slider.setSliderWidth(((NumberValue) arg[4]).getDouble());
+		if (n > 6)
+			slider.setSliderHorizontal(((BooleanValue) arg[6]).getBoolean());
+		if (n > 7)
+			slider.setAnimating(((BooleanValue) arg[7]).getBoolean());
+		if (n > 8)
+			slider.setRandom(((BooleanValue) arg[8]).getBoolean());
 		slider.setEuclidianVisible(true);
 		slider.setLabel(c.getLabel());		
 		return new GeoElement[] { slider };
@@ -8731,6 +8807,9 @@ class CmdStemPlot extends CommandProcessor {
 	}    
  }
  
+ /**
+  * IsInRegion[<Point>,<Region>]
+  */
  class CmdIsInRegion  extends CommandProcessor {
 		
 

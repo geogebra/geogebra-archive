@@ -71,7 +71,7 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 		myPointList.add(new MyPoint(x, y, lineTo));	
 	}
 	
-	public ArrayList getMyPointList() {
+	public ArrayList<MyPoint> getMyPointList() {
 		return myPointList;
 	}
 	
