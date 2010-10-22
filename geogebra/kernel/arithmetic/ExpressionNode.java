@@ -2483,7 +2483,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             	sb.append(leftStr);
 	            sb.append(')');
                 break;
-            //<Zbynek Konecny, 2010-03-16>
+
             /*FIXME: Complex numbers here are sometimes
              * (a,b) and sometimes (a+bi), Maxima needs a+b*%i,
              * Mathpiper a+b*I or complex(a,b).
@@ -2529,15 +2529,14 @@ implements ExpressionValue, ExpressionNodeConstants {
 		        		sb.append(leftStr);
 		                sb.append(')');
 	        	}         
-            break;
-            //</Zbynek>
+            break;          
             
             case FLOOR:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\lfloor ");
+	        			sb.append("\\left\\lfloor ");
 	                     sb.append(leftStr);
-	                     sb.append("\\rfloor ");
+	                     sb.append("\\right\\rfloor ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
@@ -2556,9 +2555,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             case CEIL:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\lceil ");
+	        			sb.append("\\left\\lceil ");
 	                     sb.append(leftStr);
-	                     sb.append("\\rceil ");
+	                     sb.append("\\right\\rceil ");
 	        			break;
 	        			
 	        		case STRING_TYPE_MATH_PIPER:
