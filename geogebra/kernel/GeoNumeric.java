@@ -353,7 +353,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 
 	private StringBuilder sbToString = new StringBuilder(50);
 	private ArrayList<GeoNumeric> minMaxListeners;
-	private boolean randomSlider = true;
+	private boolean randomSlider = false;
 
 	public String toValueString() {
 		return kernel.format(value);
@@ -799,21 +799,32 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		else cons.removeRandomGeo(this);
 	}
 	
+	/*
+	 * returns true for random sliders
+	 * (can be hidden to make random numbers which still use intervalMin, Max, interval)
+	 */
 	public boolean isRandom() {
 		return randomSlider;
 	}
 	
 	public void updateRandom() {
 		if (randomSlider && isIntervalMaxActive() && isIntervalMinActive()) {
-			double min = getIntervalMin();
-			double max = getIntervalMax();
-			double increment = getAnimationStep();
-			int n = 1 + (int)Math.round( (max - min ) / increment );
-			value = Math.floor(Math.random() * n) * increment + min;
-			// update all algorithms in the algorithm set of this GeoElement        
+			// update all algorithms in the algorithm set of this GeoElement    
+			value = getRandom();
 			updateCascade();
 		}
 
+	}
+	
+	/*
+	 * returns a random number in the slider's range (and using step-size)
+	 */
+	private double getRandom() {
+		double min = getIntervalMin();
+		double max = getIntervalMax();
+		double increment = getAnimationStep();
+		int n = 1 + (int)Math.round( (max - min ) / increment );
+		return kernel.checkDecimalFraction(Math.floor(Math.random() * n) * increment + min);	
 	}
 	
 	public void update() {  	
@@ -874,6 +885,36 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		if (!intervalMinActive || !intervalMaxActive) 
 			return false;
 		
+		
+		// special case for random slider
+		// animationValue goes from 0 to animationStep
+		if (isRandom()) {
+			
+			double animationStep = getAnimationStep();
+			
+			// check not silly value
+			if (animationValue < -2 * animationStep) {
+				animationValue = 0;
+			}
+			
+			double intervalWidth = getIntervalMax() - getIntervalMin();
+			double step = intervalWidth * getAnimationSpeed() /
+					      (AnimationManager.STANDARD_ANIMATION_TIME * frameRate);			
+			// update animation value
+			if (Double.isNaN(animationValue) || animationValue < 0)
+				animationValue = 0;
+			animationValue = animationValue + Math.abs(step);
+			
+			if (animationValue > animationStep) {
+				animationValue -= animationStep;
+				setValue(getRandom(), false);
+				return true;				
+			}			
+			
+			// no update needed
+			return false;
+		}
+		
 		// remember old value of number to decide whether update is necessary
 		double oldValue = getValue();
 		
@@ -910,18 +951,20 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				}		
 				break;
 		}
+		
+		double newValue;
 				
 		// take current slider increment size into account:
 		// round animationValue to newValue using slider's increment setting	
 		double param = animationValue - getIntervalMin();
 		param = Kernel.roundToScale(param, getAnimationStep());		
-		double newValue = getIntervalMin() + param;	
+		newValue = getIntervalMin() + param;				
 		
 		if (getAnimationStep() > Kernel.MIN_PRECISION) {
 			// round to decimal fraction, e.g. 2.800000000001 to 2.8
 			newValue = kernel.checkDecimalFraction(newValue);
 		}
-										
+		
 		// change slider's value without changing animationValue
 		setValue(newValue, false);
 		
