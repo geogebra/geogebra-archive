@@ -66,7 +66,7 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath">		
+			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath">		
 	</target>
 	
 	<!-- compiles grammar -->
@@ -95,20 +95,20 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files3D" 
-			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath, ggb-copy-jogl">		
+			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath, ggb-copy-jogl">		
 	</target>
 	
 	<manifest file="../manifest.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_algos.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
 	<manifest file="../manifest3D.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra3D"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_3d.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar jogl.jar gluegen-rt.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_algos.jar geogebra_3d.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar jogl.jar gluegen-rt.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
@@ -214,6 +214,7 @@ office@geogebra.org
 		    <arg value="geogebra_main.jar"/>
 			<arg value="geogebra_gui.jar"/>
 			<arg value="geogebra_cas.jar"/>
+			<arg value="geogebra_algos.jar"/>
 			<arg value="geogebra_export.jar"/>
 			<arg value="geogebra_javascript.jar"/>
 			<arg value="geogebra_properties.jar"/>
@@ -251,6 +252,7 @@ office@geogebra.org
 		    <arg value="geogebra_main.jar"/>
 			<arg value="geogebra_gui.jar"/>
 			<arg value="geogebra_cas.jar"/>
+			<arg value="geogebra_algos.jar"/>
 			<arg value="geogebra_3d.jar"/>
 			<arg value="geogebra_export.jar"/>
 			<arg value="geogebra_javascript.jar"/>
@@ -276,15 +278,18 @@ office@geogebra.org
 					geogebra/gui/**,
 					geogebra/export/**, 
 					geogebra/cas/**,
+			geogebra/kernel/discrete/**,
+			geogebra/kernel/statistics/**,
 					jasymca/**,		
-					geogebra/euclidian3D/**,
-					geogebra/kernel3D/**,
+					geogebra/kernelxx/arithmetic3D/**,
+					geogebra/kernelxx/kernel3D/**,
 					geogebra3D/**,			
 					3D/**,			
 					org/mathpiper/**,
 					org/mozilla/**,
 					org/freehep/**, 
 					edu/**,
+					org/apache/**,
 					org/apache/log4j/**, 
 				    tutor/**,
 					meta-inf/**"		
@@ -314,10 +319,23 @@ office@geogebra.org
 			basedir="${src.dir}"
 			includes="geogebra/cas/**,
 					jasymca/**,	
-					edu/**,
+					edu/jas/**,
+					edu/mas/**,
 					org/apache/log4j/**,
 					org/mathpiper/**"
 			excludes="**/*.java" 
+		/>
+	</target>
+
+	<target name="ggb-algos-jar" depends="clean" description="create unsigned geogebra_algos.jar">
+		<jar jarfile="${build.dir}/geogebra_algos.jar"
+			basedir="${src.dir}"
+			includes="geogebra/kernel/discrete/**,
+					geogebra/kernel/statistics/**,
+					edu/uci/**,
+					org/apache/**"
+			excludes="**/*.java,
+			org/apache/log4j/**" 
 		/>
 	</target>
 
@@ -332,9 +350,9 @@ office@geogebra.org
 	<target name="ggb-3d-jar" depends="clean" description="create unsigned geogebra_3d.jar">
 		<jar jarfile="${build.dir}/geogebra_3d.jar"
 			basedir="${src.dir}"
-			includes="geogebra/euclidian3D/**,
-			geogebra/kernel3D/**,
-			geogebra3D/**,	"		
+			includes="geogebra/kernelxx/kernel3D/**,
+					geogebra/kernelxx/arithmetic3D/**,
+					geogebra3D/**,	"		
 			excludes="**/*.java" 
 		/>
 	</target>

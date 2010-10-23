@@ -432,6 +432,7 @@ public class CommandDispatcher {
     	cmdTable.put("MinimumSpanningTree", new CmdMinimumSpanningTree(kernel));     	                  
     	cmdTable.put("DelauneyTriangulation", new CmdDelauneyTriangulation(kernel));     	                  
     	cmdTable.put("TravelingSalesman", new CmdTravelingSalesman(kernel));     	                  
+    	cmdTable.put("ShortestDistance", new CmdShortestDistance(kernel));     	                  
     	cmdTable.put("SelectedElement", new CmdSelectedElement(kernel));     	                  
     	cmdTable.put("SelectedIndex", new CmdSelectedIndex(kernel));     	                  
     	cmdTable.put("StemPlot", new CmdStemPlot(kernel));     	                  

@@ -35,6 +35,7 @@ import geogebra.kernel.discrete.AlgoConvexHull;
 import geogebra.kernel.discrete.AlgoDelauneyTriangulation;
 import geogebra.kernel.discrete.AlgoHull;
 import geogebra.kernel.discrete.AlgoMinimumSpanningTree;
+import geogebra.kernel.discrete.AlgoShortestDistance;
 import geogebra.kernel.discrete.AlgoTravelingSalesman;
 import geogebra.kernel.discrete.AlgoVoronoi;
 import geogebra.kernel.kernel3D.AlgoCircle3DThreePoints;
@@ -3359,6 +3360,12 @@ public class Kernel {
 	
 	final public GeoLocus MinimumSpanningTree(String label, GeoList list) {
 		AlgoMinimumSpanningTree algo = new AlgoMinimumSpanningTree(cons, label, list);
+		GeoLocus ret = algo.getResult();
+		return ret;
+	}
+	
+	final public GeoLocus ShortestDistance(String label, GeoList list, GeoPointND start, GeoPointND end) {
+		AlgoShortestDistance algo = new AlgoShortestDistance(cons, label, list, start, end);
 		GeoLocus ret = algo.getResult();
 		return ret;
 	}

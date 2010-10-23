@@ -6,6 +6,7 @@
 -injars build/geogebra_main.jar
 -injars build/geogebra_gui.jar
 -injars build/geogebra_export.jar
+-injars build/geogebra_algos.jar
 -injars build/geogebra_cas.jar
 -injars build/geogebra_3d.jar
 
