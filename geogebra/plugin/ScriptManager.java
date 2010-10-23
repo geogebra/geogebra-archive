@@ -55,7 +55,7 @@ public class ScriptManager {
 	
 
 	public void evalScript(String script, String arg) {
-			Application.debug(app.getKernel().getLibraryJavaScript() + script);
+			//Application.debug(app.getKernel().getLibraryJavaScript() + script);
 	        Context cx = Context.enter();
 	            // Initialize the standard objects (Object, Function, etc.)
 	            // This must be done before scripts can be executed. Returns
