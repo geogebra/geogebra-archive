@@ -209,9 +209,13 @@ public final class DrawText extends Drawable {
         	Color bg = geo.getBackgroundColor();
         	
         	if (bg != null) {
+        		
         		// needed to calculate labelRectangle
-    			g2.setFont(textFont);    	
-    			drawMultilineText(g2);   
+    			if (isLaTeX) drawMultilineLaTeX(g2, textFont, geo.getObjectColor(), view.getBackground());
+    			else { 
+        			g2.setFont(textFont);    	
+    				drawMultilineText(g2);   
+    			}
     			
 				g2.setStroke(objStroke);
 				g2.setPaint(bg);
@@ -222,7 +226,7 @@ public final class DrawText extends Drawable {
         		g2.setPaint(geo.getObjectColor());				
     			g2.setFont(textFont);    			
     			g2.setStroke(objStroke); // needed eg for \sqrt
-    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),view.getBackground());       
+    			drawMultilineLaTeX(g2, textFont, geo.getObjectColor(),bg != null ? bg : view.getBackground());       
         	} 
         	else {
         		g2.setPaint(geo.getObjectColor());				
