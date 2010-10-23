@@ -55,7 +55,7 @@ public class ScriptManager {
 	
 
 	public void evalScript(String script, String arg) {
-			//Application.debug(script);
+			Application.debug(app.getKernel().getLibraryJavaScript() + script);
 	        Context cx = Context.enter();
 	            // Initialize the standard objects (Object, Function, etc.)
 	            // This must be done before scripts can be executed. Returns
@@ -76,7 +76,7 @@ public class ScriptManager {
 	            	Context.setCachingEnabled(false);
 	            }
 	            // Now evaluate the string we've collected.
-	            Object result = cx.evaluateString(scope, script + app.getKernel().getLibraryJavaScript(), app.getPlain("ErrorAtLine"), 1, null);
+	            Object result = cx.evaluateString(scope, app.getKernel().getLibraryJavaScript() + script , app.getPlain("ErrorAtLine"), 1, null);
 
 	            // Convert the result to a string and print it.
 	            //Application.debug("script result: "+(Context.toString(result)));
