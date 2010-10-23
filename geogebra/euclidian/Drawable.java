@@ -619,7 +619,7 @@ public abstract class Drawable extends DrawableND {
 		//labelRectangle.setLocation(xLabel, yLabel - fontSize);
 		int height = (int) ( (lines +1)*lineSpread);
 		
-		return new Rectangle(xLabel, yLabel - fontSize, xoffset, height);
+		return new Rectangle(xLabel-3, yLabel - fontSize -3, xoffset+6, height+6);
 		//labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
 
 	}
@@ -668,7 +668,7 @@ public abstract class Drawable extends DrawableND {
 			if (p.y > yoffset) yoffset = p.y;
 			labelHasIndex = yoffset > 0;			
 			int height = (int) ( (lines +1)*lineSpread);
-			labelRectangle.setBounds(xLabel, yLabel - fontSize, xoffset, height );
+			labelRectangle.setBounds(xLabel-3, yLabel - fontSize - 3, xoffset + 6, height + 6 );
 		}
 	}		
 	
