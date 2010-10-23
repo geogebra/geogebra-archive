@@ -211,11 +211,8 @@ public final class DrawText extends Drawable {
         	if (bg != null) {
         		
         		// needed to calculate labelRectangle
-    			if (isLaTeX) drawMultilineLaTeX(g2, textFont, geo.getObjectColor(), view.getBackground());
-    			else { 
-        			g2.setFont(textFont);    	
-    				drawMultilineText(g2);   
-    			}
+    			if (isLaTeX) drawMultilineLaTeX(view.getTempGraphics2D(textFont), textFont, geo.getObjectColor(), view.getBackground());
+    			else drawMultilineText(view.getTempGraphics2D(textFont));   
     			
 				g2.setStroke(objStroke);
 				g2.setPaint(bg);
