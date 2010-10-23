@@ -363,12 +363,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					getMySlider().setVisible(false);
 
 				}else{
-
-
 					boolean geosOK = (geos.length > 0 || mode == EuclidianConstants.MODE_PEN);
 					for (int i = 0; i < geos.length; i++) {
 						GeoElement geo = (GeoElement)geos[i];
-						if (geo instanceof GeoImage || geo instanceof GeoText  )
+						if (geo instanceof GeoImage)
 							geosOK = false;
 						break;
 					}
@@ -376,8 +374,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					setVisible(geosOK);
 
 					if(geosOK){
-
-						Color geoColor = ((GeoElement) geos[0]).getObjectColor();
+						Color geoColor;
+						if(geos[0] instanceof TextProperties)
+							geoColor = ((GeoElement) geos[0]).getBackgroundColor();
+						else
+							geoColor = ((GeoElement) geos[0]).getObjectColor();
+						
 						float alpha = 1.0f;
 						boolean hasFillable = false;
 						
@@ -401,11 +403,16 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			
 			private void setButton(Color color, float alpha, boolean showSlider){
 				
+				//TODO: handle null color properly
+				if (color == null) color = Color.WHITE;
+				
 				int index;
+				// if color is in our table then select it and color the non-standard swatch white
 				if(colorMap.containsKey(color)){
 					colors[colors.length-1] = Color.WHITE;
 					index = colorMap.get(color);
 				}else{		
+					// otherwise show the color in the non-standard swatch
 					colors[colors.length-1] = color;
 					index = colors.length-1;
 				}
@@ -863,10 +870,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			btnMode.setSelectedIndex(4);
 			break;
 		}
-		btnMode.addActionListener(this);
-
-
-		
+		btnMode.addActionListener(this);	
 		
 		btnPen.removeActionListener(this);
 		btnPen.setSelected(mode == EuclidianConstants.MODE_PEN);
@@ -893,15 +897,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	
 	
-	
-	
-	
 
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-
-		
-		
+	
 		// mode changing buttons, removed for now?
 		/* 
 		if (source.equals(btnMode)) {
@@ -1104,8 +1103,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
-			if (!(geo instanceof GeoImage || geo instanceof GeoText)){
-				if(geo.getObjectColor() != color || geo.getAlphaValue() != alpha ){
+			if (!(geo instanceof GeoImage)){
+				if(geo instanceof TextProperties && (geo.getBackgroundColor() != color || geo.getAlphaValue() != alpha )){
+					geo.setBackgroundColor(color);
+					geo.setAlphaValue(alpha);
+					geo.updateRepaint();
+					needUndo = true;
+				}else if(geo.getObjectColor() != color || geo.getAlphaValue() != alpha ){
 					geo.setObjColor(color);
 					geo.setAlphaValue(alpha);
 					geo.updateRepaint();
