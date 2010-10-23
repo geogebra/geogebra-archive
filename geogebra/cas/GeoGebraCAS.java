@@ -180,8 +180,12 @@ public class GeoGebraCAS {
 		getPolynomialCoeffsSB.append(variable);
 		
 		String result = (String)(getPolynomialCoeffsCache.get(getPolynomialCoeffsSB.toString()));
-		
 		if (result != null) {
+			
+			// MathPiper returns odd result
+			// eg getPolynomialCoeffs((e)^(-x),x)
+			if (!result.startsWith("{") || ! result.endsWith("}")) return null;
+			
 			//Application.debug("using cached result: "+result);
 			// remove { } to get "b, 0, 3*a"
 			result = result.substring(1, result.length()-1);
