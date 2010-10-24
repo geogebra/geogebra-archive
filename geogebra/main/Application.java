@@ -137,6 +137,7 @@ public class Application implements KeyEventDispatcher {
 			"geogebra_main.jar",
 			"geogebra_gui.jar", 
 			CAS_JAR_NAME, 
+			"geogebra_algos.jar",
 			"geogebra_export.jar",
 			JAVASCRIPT_JAR_NAME, // don't put at end (sometimes omitted, see WorksheetExportDialog)
 			"jlatexmath.jar", // LaTeX
