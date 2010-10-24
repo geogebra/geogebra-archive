@@ -58,7 +58,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -5578,11 +5578,11 @@ class ColorFunctionPanel
 		tfBlue.addActionListener(this);
 		tfBlue.addFocusListener(this);
 		
-		nameLabelR = new JLabel();	
+		nameLabelR = new JLabel("", JLabel.TRAILING);	
 		nameLabelR.setLabelFor(inputPanelR);
-		nameLabelG = new JLabel();	
+		nameLabelG = new JLabel("", JLabel.TRAILING);	
 		nameLabelG.setLabelFor(inputPanelG);
-		nameLabelB = new JLabel();	
+		nameLabelB = new JLabel("", JLabel.TRAILING);	
 		nameLabelB.setLabelFor(inputPanelB);
 		
 		btRemove = new JButton("\u2718");
@@ -5599,24 +5599,21 @@ class ColorFunctionPanel
 				tfBlue.setText("");
 			}
 		});
-
-		// put it all together
-		//setLayout(new FlowLayout(FlowLayout.LEFT));
-		//JPanel listPane = new JPanel();
-		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		JPanel red = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JPanel green = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JPanel blue = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		red.add(nameLabelR);		
-		red.add(inputPanelR);
-		green.add(nameLabelG);		
-		green.add(inputPanelG);
-		blue.add(nameLabelB);		
-		blue.add(inputPanelB);
-		add(red);
-		add(green);
-		add(blue);
+		
+		setLayout(new SpringLayout());
+		add(nameLabelR);		
+		add(inputPanelR);
+		add(nameLabelG);		
+		add(inputPanelG);
+		add(nameLabelB);		
+		add(inputPanelB);
 		add(btRemove);
+		add(new JPanel()); // dummy
+		
+		SpringUtilities.makeCompactGrid(this,
+                4, 2, //rows, cols
+                6, 6,        //initX, initY
+                6, 6);       //xPad, yPad
 		
 		setLabels();
 	}
