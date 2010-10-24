@@ -404,7 +404,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	public void set(GeoElement geo) {
 		GeoPolygon poly = (GeoPolygon) geo;		
 		area = poly.area;
-		defined = poly.defined;	
+		
 		
 		// make sure both arrays have same size
 		if (points.length != poly.points.length) {
@@ -421,7 +421,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		
 		setCoordSys(null);
 		updateSegments();
-		
+		defined = poly.defined;	
 	}
 	
 	
