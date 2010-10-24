@@ -68,7 +68,7 @@ public class AlgoInsert extends AlgoElement {
     	// -1 means insert in last place, -2 means penultimate etc
     	if (insertPoint < 0) insertPoint = size + insertPoint + 2;
    	
-    	if (!inputGeo.isDefined() || !inputList.isDefined() || insertPoint == 0 || insertPoint > size+1) {
+    	if (!inputGeo.isDefined() || !inputList.isDefined() || insertPoint <= 0 || insertPoint > size+1) {
     		outputList.setUndefined();
     		return;
     	} 
