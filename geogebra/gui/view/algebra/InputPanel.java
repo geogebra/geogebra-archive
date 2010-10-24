@@ -11,8 +11,8 @@ import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyListener;
 
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -104,13 +104,19 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	private MyComboBox cbSpecialChars, cbGreekLetters;
 	
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
-		this(initText, app, 1, columns, true, true, false);
+		this(initText, app, 1, columns, true, true, false, null);
 		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
 		atf.setAutoComplete(autoComplete);
 	}		
+
+	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,
+			boolean showGreekLetters, boolean showDisplayChars) {
+		this(initText, app, rows, columns, showSpecialChars,
+			showGreekLetters, showDisplayChars, null);
+	}
 	
 	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,
-						boolean showGreekLetters, boolean showDisplayChars) {
+						boolean showGreekLetters, boolean showDisplayChars, KeyListener keyListener) {
 		
 		this.app = app;
 		
@@ -120,6 +126,9 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 			textComponent = new AutoCompleteTextField(columns, app);		
 		
 		textComponent.addFocusListener(this);
+		
+		if (keyListener != null)
+		textComponent.addKeyListener(keyListener);
 		
 		if (initText != null) textComponent.setText(initText);		
 		cbSpecialChars = new MyComboBox();

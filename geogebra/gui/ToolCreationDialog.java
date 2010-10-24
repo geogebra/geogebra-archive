@@ -69,6 +69,8 @@ implements GeoElementSelectionListener {
 	private InputListModel inputList;
 	private DefaultComboBoxModel cbInputAddList, cbOutputAddList;
 	
+	private boolean allowMultiple = false;
+	
 	private Macro newTool;
 	
 
@@ -386,8 +388,8 @@ implements GeoElementSelectionListener {
 			getContentPane().add(navPanel, BorderLayout.SOUTH);									
 							
 			// output and input panel
-			JPanel outputPanel = createInputOutputPanel(app, outputList, cbOutputAddList, true);
-			JPanel inputPanel = createInputOutputPanel(app, inputList, cbInputAddList, true);
+			JPanel outputPanel = createInputOutputPanel(app, outputList, cbOutputAddList, true, false);
+			JPanel inputPanel = createInputOutputPanel(app, inputList, cbInputAddList, true, false);
 			
 			tabbedPane.addTab(app.getMenu("OutputObjects"), null, outputPanel, null);
 			tabbedPane.addTab(app.getMenu("InputObjects"), null, inputPanel, null);															
@@ -506,8 +508,9 @@ implements GeoElementSelectionListener {
 	 */
 	public static JPanel createInputOutputPanel(Application app, 
 			final DefaultListModel listModel, final DefaultComboBoxModel cbModel,
-			boolean showUpDownButtons) 
+			boolean showUpDownButtons, boolean allowMultiple) 
 	{		
+		
 		JPanel panel = new JPanel(new BorderLayout(5, 5));		
 		panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		
@@ -541,7 +544,7 @@ implements GeoElementSelectionListener {
 		
 		// list to show selected geos
 		JList list = new JList(listModel);												
-		panel.add(createListUpDownRemovePanel(app, list, cbAdd, true, showUpDownButtons), BorderLayout.CENTER);			
+		panel.add(createListUpDownRemovePanel(app, list, cbAdd, true, showUpDownButtons, allowMultiple), BorderLayout.CENTER);			
 		
 		// renderer to show long description of geos in list and combobox
 		MyCellRenderer rend = new MyCellRenderer();
@@ -562,7 +565,7 @@ implements GeoElementSelectionListener {
 	 * @return Panel with the list, buttons and comboBox
 	 */
 	public static JPanel createListUpDownRemovePanel(Application app, final JList list, final JComboBox cbAdd, 
-			boolean showRemoveButton, boolean showUpDownButtons) {
+			boolean showRemoveButton, boolean showUpDownButtons, final boolean allowMultiple) {
 		JPanel centerPanel = new JPanel(new BorderLayout(5,5));
 		
 		JPanel listPanel = new JPanel(new BorderLayout(5,3));
@@ -644,7 +647,7 @@ implements GeoElementSelectionListener {
 									break;
 								}									
 							}
-							cbModel.insertElementAt(geo, k);
+							if (!allowMultiple) cbModel.insertElementAt(geo, k);
 						}
 						
 						// remove from list
@@ -700,12 +703,16 @@ class MyCellRenderer extends DefaultListCellRenderer {
         super.getListCellRendererComponent(list, value, index, iss, chf);
        
         if (value != null) {
-        	GeoElement geo = (GeoElement) value;
-        	String text = geo.getLongDescriptionHTML(true, true);
-        	if (text.length() < 100)
-        		setText(text);
-        	else
-        		setText(geo.getNameDescriptionHTML(true, true));
+        	if (value instanceof String) {
+        		setText((String)value);
+        	} else {
+	        	GeoElement geo = (GeoElement) value;
+	        	String text = geo.getLongDescriptionHTML(true, true);
+	        	if (text.length() < 100)
+	        		setText(text);
+	        	else
+	        		setText(geo.getNameDescriptionHTML(true, true));
+        	}
         }
         else setText(" "); // Michael Borcherds 2008-02-18 bugfix: height is too small if no objects
         return this;
