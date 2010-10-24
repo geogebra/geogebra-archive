@@ -1060,6 +1060,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @return interval min
 	 */
 	public GeoElement getIntervalMinObject() {
+		if (intervalMin == null) return null;
 		return intervalMin.toGeoElement();
 	}
 	
@@ -1068,6 +1069,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @return interval max
 	 */
 	public GeoElement getIntervalMaxObject() {
+		if (intervalMax == null) return null;
 		return intervalMax.toGeoElement();
 	}
 
