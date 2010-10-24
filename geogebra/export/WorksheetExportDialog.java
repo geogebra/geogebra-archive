@@ -1623,12 +1623,8 @@ public class WorksheetExportDialog extends JDialog {
 		//sb.append("\t<param name=\"cache_archive\" value=\"");
 		sb2.setLength(0);
 		for (int i=0; i < Application.JAR_FILES.length; i++) {
-			
-			// don't include geogebra_javascript.jar unless necessary
-			if (!Application.JAR_FILES[i].equals(Application.JAVASCRIPT_JAR_NAME) || !cbUseBrowserForJavaScript.isSelected()) {
-				sb2.append(Application.JAR_FILES[i]);
-				if (i < Application.JAR_FILES.length - 1) sb2.append(", ");
-			}
+			sb2.append(Application.JAR_FILES[i]);
+			if (i < Application.JAR_FILES.length - 1) sb2.append(", ");
 		}
 		//sb.append("\" />");
 		
@@ -1640,11 +1636,8 @@ public class WorksheetExportDialog extends JDialog {
 		//sb.append("\t<param name=\"cache_version\" value=\"");
 		sb2.setLength(0);
 		for (int i=0; i < Application.JAR_FILES.length; i++) {
-
-			if (!Application.JAR_FILES[i].equals(Application.JAVASCRIPT_JAR_NAME) || !cbUseBrowserForJavaScript.isSelected()) {
-				sb2.append(GeoGebra.VERSION_STRING);
-				if (i < Application.JAR_FILES.length-1) sb2.append(", ");
-			}
+			sb2.append(GeoGebra.VERSION_STRING);
+			if (i < Application.JAR_FILES.length-1) sb2.append(", ");
 		}
 		//sb.append("\" />");
 		appletParam(sb, "cache_version", sb2.toString(), type);
