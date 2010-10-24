@@ -5564,9 +5564,9 @@ class ColorFunctionPanel
 		this.propPanel = propPanel;
 		
 		// non auto complete input panel
-		InputPanel inputPanelR = new InputPanel(null, app, 1, 7, false, false, false);
-		InputPanel inputPanelG = new InputPanel(null, app, 1, 7, false, false, false);
-		InputPanel inputPanelB = new InputPanel(null, app, 1, 7, false, false, false);
+		InputPanel inputPanelR = new InputPanel(null, app, 1, 20, false, false, false);
+		InputPanel inputPanelG = new InputPanel(null, app, 1, 20, false, false, false);
+		InputPanel inputPanelB = new InputPanel(null, app, 1, 20, false, false, false);
 		tfRed = (AutoCompleteTextField) inputPanelR.getTextComponent();				
 		tfGreen = (AutoCompleteTextField) inputPanelG.getTextComponent();				
 		tfBlue = (AutoCompleteTextField) inputPanelB.getTextComponent();				
@@ -5601,13 +5601,21 @@ class ColorFunctionPanel
 		});
 
 		// put it all together
-		setLayout(new FlowLayout(FlowLayout.LEFT));
-		add(nameLabelR);		
-		add(inputPanelR);
-		add(nameLabelG);		
-		add(inputPanelG);
-		add(nameLabelB);		
-		add(inputPanelB);
+		//setLayout(new FlowLayout(FlowLayout.LEFT));
+		//JPanel listPane = new JPanel();
+		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		JPanel red = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel green = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel blue = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		red.add(nameLabelR);		
+		red.add(inputPanelR);
+		green.add(nameLabelG);		
+		green.add(inputPanelG);
+		blue.add(nameLabelB);		
+		blue.add(inputPanelB);
+		add(red);
+		add(green);
+		add(blue);
 		add(btRemove);
 		
 		setLabels();
