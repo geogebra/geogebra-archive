@@ -2283,7 +2283,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			case CURSOR_HIT:
 				switch(getCursor3DType()){
 				case PREVIEW_POINT_FREE:
-					renderer.drawCursorCross3D();
+					//renderer.drawCursorCross3D();
+					renderer.drawCursorCross2D();
 					break;
 				case PREVIEW_POINT_REGION:
 					renderer.drawCursorCross2D();
