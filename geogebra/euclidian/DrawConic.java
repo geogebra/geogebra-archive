@@ -183,7 +183,6 @@ final public class DrawConic extends Drawable implements Previewable {
 		initPreview();
 	} 
 	
-	
 
 	final public void update() {		
         isVisible = geo.isEuclidianVisible();
@@ -301,17 +300,13 @@ final public class DrawConic extends Drawable implements Previewable {
             drawLines = new DrawLine[2];
             drawLines[0] = new DrawLine(view, lines[0]);
             drawLines[1] = new DrawLine(view, lines[1]);                    
-            drawLines[0].setGeoElement(conic);
-            drawLines[1].setGeoElement(conic);
+            drawLines[0].setGeoElement(geo);
+            drawLines[1].setGeoElement(geo);
             //drawLines[0].font = view.fontConic;
             //drawLines[1].font = view.fontConic;            
         }
         for (int i=0; i < 2; i++) {
-			lines[i].copyLabel(conic);					
-			lines[i].setObjColor(conic.getObjectColor());					
-			lines[i].setLabelColor(conic.getLabelColor());	
-			lines[i].lineThickness = conic.lineThickness;
-			lines[i].lineType = conic.lineType;		
+			drawLines[i].forceLineType(conic.lineType);		
 			drawLines[i].update();			
         }
            
@@ -938,6 +933,9 @@ final public class DrawConic extends Drawable implements Previewable {
     
     public void setGeoElement(GeoElement geo) {
         this.geo = geo;
+        if(drawLines != null)
+        	for(int i=0; i<2 && drawLines[i]!=null; i++)
+        		drawLines[i].setGeoElement(geo);
     }
     
     private void initPreview() {

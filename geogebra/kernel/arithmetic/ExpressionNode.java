@@ -3015,11 +3015,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 			return lc+rc;
 		}else if(this.operation == MINUS){
 			return lc-rc;
-		}else if(this.operation == MULTIPLY && rc == 0.0){
+		}else if(this.operation == MULTIPLY && !getRightTree().containsObjectType(fv.getClass())){
 			return lc*((NumberValue)getRightTree().evaluate()).getDouble();
-		}else if(this.operation == MULTIPLY && lc == 0.0 ){	
+		}else if(this.operation == MULTIPLY && !getLeftTree().containsObjectType(fv.getClass())){	
 			return rc*((NumberValue)getLeftTree().evaluate()).getDouble();
-		}else if(this.operation == DIVIDE){
+		}else if(this.operation == DIVIDE && !getRightTree().containsObjectType(fv.getClass())){
 			return lc/((NumberValue)getRightTree().evaluate()).getDouble();
 		}else if((left.contains(fv)||right.contains(fv)))
 			return null;

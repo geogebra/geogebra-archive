@@ -341,9 +341,9 @@ public abstract class Drawable extends DrawableND {
 		// split on $ but not \$
 		String[] elements = labelDesc.split("(?<![\\\\])(\\$)", -1);
 		
-		ArrayList lineHeights = new ArrayList();
+		ArrayList<Integer> lineHeights = new ArrayList<Integer>();
 		lineHeights.add(new Integer(lineSpread + lineSpace));
-		ArrayList elementHeights = new ArrayList();
+		ArrayList<Integer> elementHeights = new ArrayList<Integer>();
 		
 		// use latex by default just if there is just a single element
 		boolean isLaTeX = (elements.length == 1);
@@ -500,6 +500,19 @@ public abstract class Drawable extends DrawableND {
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
 	
+	/**
+	 * Renders LaTeX equation using JLaTeXMath
+	 * @param app
+	 * @param g2
+	 * @param x
+	 * @param y
+	 * @param text
+	 * @param font
+	 * @param serif
+	 * @param fgColor
+	 * @param bgColor
+	 * @return dimension of rendered equation
+	 */
 	final  public static Dimension drawEquationJLaTeXMath(Application app, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
 	{
 		
@@ -508,7 +521,7 @@ public abstract class Drawable extends DrawableND {
 			// initialise definitions 
 			if (initJLaTeXMath == null) initJLaTeXMath = new TeXFormula("\\DeclareMathOperator{\\sech}{sech} \\DeclareMathOperator{\\csch}{csch}");
 			
-			equations = new HashMap();
+			equations = new HashMap<String, TeXIcon>();
 			
 		   try{
 			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_GREEK);
@@ -639,8 +652,6 @@ public abstract class Drawable extends DrawableND {
 			int fontSize = g2.getFont().getSize();
 			float lineSpread = fontSize * 1.5f;
 
-			Font font = g2.getFont();
-			FontRenderContext frc = g2.getFontRenderContext();
 			int xoffset = 0, yoffset = 0;
 			// text with indices
 			// label description has changed, search for possible indices
@@ -779,7 +790,7 @@ public abstract class Drawable extends DrawableND {
 		
 	/**
 	 * Adds geo's label offset to xLabel and yLabel.
-	 * @param ensureLabelOnScreen: if true we make sure that the label is drawn on screen
+	 * @param ensureLabelOnScreen if true we make sure that the label is drawn on screen
 	 * 
 	 * @return whether something was changed
 	 */
@@ -823,14 +834,30 @@ public abstract class Drawable extends DrawableND {
 	public boolean hitLabel(int x, int y) {
 		return labelRectangle.contains(x, y);
 	}
-
+	private boolean forcedLineType;
+	
+	/**
+	 * Set fixed line type and ignore line type of the geo.
+	 * Needed for inequalities. 
+	 * @param type
+	 */
+	final void forceLineType(int type){
+		forcedLineType = true;
+		lineType = type;
+	}
+	
+	/**
+	 * Update strokes (default,selection,deco) accordingly to geo
+	 * @param geo
+	 */
 	final void updateStrokes(GeoElement geo) {
 		strokedShape = null;
 		strokedShape2 = null;		
 		
 		if (lineThickness != geo.lineThickness) {
 			lineThickness = geo.lineThickness;
-			lineType = geo.lineType;
+			if(!forcedLineType)
+				lineType = geo.lineType;
 
 			float width = lineThickness / 2.0f;
 			objStroke = EuclidianView.getStroke(width, lineType);
@@ -840,7 +867,8 @@ public abstract class Drawable extends DrawableND {
 					width + EuclidianView.SELECTION_ADD,
 					EuclidianView.LINE_TYPE_FULL);
 		} else if (lineType != geo.lineType) {
-			lineType = geo.lineType;
+			if(!forcedLineType)
+				lineType = geo.lineType;
 
 			float width = lineThickness / 2.0f;
 			objStroke = EuclidianView.getStroke(width, lineType);

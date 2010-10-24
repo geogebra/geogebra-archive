@@ -101,12 +101,18 @@ public class Inequality {
 			GeoElement newBorder = kernel.getAlgebraProcessor().evaluateToGeoElement(normal.toString() + "=0",false);
 				if(newBorder.isGeoImplicitPoly()){
 					type = INEQUALITY_IMPLICIT;
-					impBorder = (GeoImplicitPoly)newBorder;
+					if(impBorder==null)
+						impBorder = (GeoImplicitPoly)newBorder;
+					else
+						impBorder.set(newBorder);
 					border = impBorder;					
 				}
 				if(newBorder.isGeoConic()){
 					type = INEQUALITY_CONIC;
-					conicBorder = (GeoConic)newBorder;
+					if(impBorder == null)
+						conicBorder = (GeoConic)newBorder;
+					else
+						conicBorder.set(newBorder);					
 					border = conicBorder;
 					GeoVec2D midpoint = conicBorder.getTranslationVector();
 					ExpressionNode normalCopy = (ExpressionNode) normal.deepCopy(kernel);
