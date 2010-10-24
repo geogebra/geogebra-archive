@@ -778,7 +778,7 @@ public abstract class GeoElement
 	public Color getFillColor() {
 		if (colFunction == null) return fillColor;	
 		//else return RGBtoColor((int)colFunction.getValue(),alphaValue);
-		else return getRGBFromList(alphaValue);
+		else return getRGBFromList(getAlphaValue());
 	}
 	
 	/* return black if the color is white, so it can be seen
@@ -917,6 +917,18 @@ public abstract class GeoElement
 	}
 
 	public float getAlphaValue() {
+		if (colFunction == null || colFunction.size() == 3)
+			return alphaValue;
+		
+		GeoElement geo = colFunction.get(3);
+		if (geo.isDefined()) { 
+			double alpha = ((NumberValue) geo).getDouble();
+			
+			// ensure between 0 and 1
+			alpha = alpha/2 - Math.floor(alpha/2);
+			if (alpha>0.5) alpha=2*(1-alpha); else alpha=2*alpha;
+			return (float)alpha;
+		}
 		return alphaValue;
 	}
 		
@@ -3631,6 +3643,11 @@ public abstract class GeoElement
 				sb.append(" dynamicb=\"");
 				sb.append(Util.encodeXML(colFunction.get(2).getLabel()));
 				sb.append('\"');				
+				if (colFunction.size() == 4) {
+					sb.append(" dynamica=\"");
+					sb.append(Util.encodeXML(colFunction.get(3).getLabel()));
+					sb.append('\"');									
+				}
 			}	
 			
 			if (isHatchingEnabled()) {

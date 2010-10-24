@@ -5552,9 +5552,11 @@ class ColorFunctionPanel
 	private static final long serialVersionUID = 1L;
 	
 	private Object[] geos; // currently selected geos
-	private JTextField tfRed, tfGreen, tfBlue;
+	private JTextField tfRed, tfGreen, tfBlue, tfAlpha;
 	private JButton btRemove;
-	private JLabel nameLabelR,nameLabelG,nameLabelB;
+	private JLabel nameLabelR, nameLabelG, nameLabelB, nameLabelA;
+	
+	private String defaultR = "0", defaultG = "0", defaultB = "0", defaultA = "1";
 	
 	private Kernel kernel;
 	private PropertiesPanel propPanel;
@@ -5567,9 +5569,11 @@ class ColorFunctionPanel
 		InputPanel inputPanelR = new InputPanel(null, app, 1, 20, false, false, false);
 		InputPanel inputPanelG = new InputPanel(null, app, 1, 20, false, false, false);
 		InputPanel inputPanelB = new InputPanel(null, app, 1, 20, false, false, false);
+		InputPanel inputPanelA = new InputPanel(null, app, 1, 20, false, false, false);
 		tfRed = (AutoCompleteTextField) inputPanelR.getTextComponent();				
 		tfGreen = (AutoCompleteTextField) inputPanelG.getTextComponent();				
 		tfBlue = (AutoCompleteTextField) inputPanelB.getTextComponent();				
+		tfAlpha = (AutoCompleteTextField) inputPanelA.getTextComponent();				
 		
 		tfRed.addActionListener(this);
 		tfRed.addFocusListener(this);
@@ -5577,6 +5581,8 @@ class ColorFunctionPanel
 		tfGreen.addFocusListener(this);
 		tfBlue.addActionListener(this);
 		tfBlue.addFocusListener(this);
+		tfAlpha.addActionListener(this);
+		tfAlpha.addFocusListener(this);
 		
 		nameLabelR = new JLabel("", JLabel.TRAILING);	
 		nameLabelR.setLabelFor(inputPanelR);
@@ -5584,6 +5590,8 @@ class ColorFunctionPanel
 		nameLabelG.setLabelFor(inputPanelG);
 		nameLabelB = new JLabel("", JLabel.TRAILING);	
 		nameLabelB.setLabelFor(inputPanelB);
+		nameLabelA = new JLabel("", JLabel.TRAILING);	
+		nameLabelA.setLabelFor(inputPanelA);
 		
 		btRemove = new JButton("\u2718");
 		btRemove.addActionListener(new ActionListener() {
@@ -5597,6 +5605,7 @@ class ColorFunctionPanel
 				tfRed.setText("");
 				tfGreen.setText("");
 				tfBlue.setText("");
+				tfAlpha.setText("");
 			}
 		});
 		
@@ -5607,11 +5616,13 @@ class ColorFunctionPanel
 		add(inputPanelG);
 		add(nameLabelB);		
 		add(inputPanelB);
+		add(nameLabelA);		
+		add(inputPanelA);
 		add(btRemove);
 		add(new JPanel()); // dummy
 		
 		SpringUtilities.makeCompactGrid(this,
-                4, 2, //rows, cols
+                5, 2, //rows, cols
                 6, 6,        //initX, initY
                 6, 6);       //xPad, yPad
 		
@@ -5630,6 +5641,7 @@ class ColorFunctionPanel
 		nameLabelR.setText(app.getMenu("Red") + ":");
 		nameLabelG.setText(app.getMenu("Green") + ":");
 		nameLabelB.setText(app.getMenu("Blue") + ":");
+		nameLabelA.setText(app.getMenu("Opacity") + ":");
 		
 		btRemove.setToolTipText(app.getPlain("Remove"));
 	}
@@ -5638,34 +5650,60 @@ class ColorFunctionPanel
 		this.geos = geos;
 		if (!checkGeos(geos))
 			return null;
+		
+		boolean someFillable = false;
+		for (int i = 0 ; i < geos.length ; i++) {
+			if (((GeoElement)geos[i]).isFillable()) {
+				someFillable = true;
+				continue;
+			}
+		}
+		
+		tfAlpha.setVisible(someFillable);
+		nameLabelA.setVisible(someFillable);
+		
+		GeoElement geo = (GeoElement)geos[0];
+		Color col = geo.getObjectColor();
+		defaultR = "" + col.getRed() / 255.0;
+		defaultG = "" + col.getGreen() / 255.0;
+		defaultB = "" + col.getBlue() / 255.0;
+		defaultA = "" + geo.getFillColor().getAlpha() / 255.0;
 
 		tfRed.removeActionListener(this);
 		tfGreen.removeActionListener(this);
 		tfBlue.removeActionListener(this);
+		tfAlpha.removeActionListener(this);
 		btRemove.removeActionListener(this);
 
 		// take condition of first geo
 		String strRed = "";
 		String strGreen = "";
 		String strBlue = "";
+		String strAlpha = "";
 		GeoElement geo0 = (GeoElement) geos[0];	
 		GeoList colorList = geo0.getColorFunction();
 		if (colorList != null) {
 			strRed = colorList.get(0).getLabel();
 			strGreen = colorList.get(1).getLabel();
 			strBlue = colorList.get(2).getLabel();
+			if (colorList.size() == 4)
+				strAlpha = colorList.get(3).getLabel();
 		}	
 		
 		for (int i=0; i < geos.length; i++) {
-			GeoElement geo = (GeoElement) geos[i];	
+			geo = (GeoElement) geos[i];	
 			GeoList colorListTemp = geo.getColorFunction();
 			if (colorListTemp != null) {
 				String strRedTemp = colorListTemp.get(0).getLabel();
 				String strGreenTemp = colorListTemp.get(1).getLabel();
 				String strBlueTemp = colorListTemp.get(2).getLabel();
+				String strAlphaTemp = "";
+				if (colorListTemp.size() == 4)
+					strAlphaTemp = colorListTemp.get(3).getLabel();
 				if (!strRed.equals(strRedTemp)) strRed = "";
 				if (!strGreen.equals(strGreenTemp)) strGreen = "";
 				if (!strBlue.equals(strBlueTemp)) strBlue = "";
+				if (!strAlpha.equals(strAlphaTemp)) strAlpha = "";
 			}	
 		}		
 
@@ -5675,6 +5713,8 @@ class ColorFunctionPanel
 		tfGreen.addActionListener(this);
 		tfBlue.setText(strBlue);
 		tfBlue.addActionListener(this);
+		tfAlpha.setText(strAlpha);
+		tfAlpha.addActionListener(this);
 		return this;
 	}
 
@@ -5687,7 +5727,7 @@ class ColorFunctionPanel
 	 * handle textfield changes
 	 */
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == tfRed || e.getSource() == tfGreen || e.getSource() == tfBlue)
+		if (e.getSource() == tfRed || e.getSource() == tfGreen || e.getSource() == tfBlue|| e.getSource() == tfAlpha)
 			doActionPerformed();
 	}
 
@@ -5695,25 +5735,35 @@ class ColorFunctionPanel
 		processed = true;
 		
 		GeoList list = null;
+		GeoList listAlpha = null;
 		String strRed = tfRed.getText();
 		String strGreen = tfGreen.getText();
 		String strBlue = tfBlue.getText();
+		String strAlpha = tfAlpha.getText();
 		
 		strRed = PropertiesPanel.replaceEqualsSigns(strRed);
 		strGreen = PropertiesPanel.replaceEqualsSigns(strGreen);
 		strBlue = PropertiesPanel.replaceEqualsSigns(strBlue);
+		strAlpha = PropertiesPanel.replaceEqualsSigns(strAlpha);
 		
 		if ((strRed == null || strRed.trim().length() == 0) &&
-			(strGreen == null || strGreen.trim().length() == 0) &&
+				(strGreen == null || strGreen.trim().length() == 0) &&
+				(strAlpha == null || strAlpha.trim().length() == 0) &&
 			(strBlue == null || strBlue.trim().length() == 0)) {
 			//num = null;
 			list=null;
+			listAlpha=null;
 		} else {
-			if (strRed == null || strRed.trim().length() == 0) strRed="0";
-			if (strGreen == null || strGreen.trim().length() == 0) strGreen="0";
-			if (strBlue == null || strBlue.trim().length() == 0) strBlue="0";
+			if (strRed == null || strRed.trim().length() == 0) strRed = defaultR;
+			if (strGreen == null || strGreen.trim().length() == 0) strGreen = defaultG;
+			if (strBlue == null || strBlue.trim().length() == 0) strBlue = defaultB;
+			if (strAlpha == null || strAlpha.trim().length() == 0) strAlpha = defaultA;
 	
 			list = kernel.getAlgebraProcessor().evaluateToList("{"+strRed + ","+strGreen+","+strBlue+"}");
+			
+			if (!"1".equals(strAlpha))
+				listAlpha = kernel.getAlgebraProcessor().evaluateToList("{"+strRed + ","+strGreen+","+strBlue+","+strAlpha+"}");
+		
 		}
 		
 				
@@ -5721,11 +5771,15 @@ class ColorFunctionPanel
 		//try {
 		if (list != null) {							//
 		if (((list.get(0) instanceof NumberValue)) && 	// bugfix, enter "x" for a color 
-			((list.get(1) instanceof NumberValue)) &&	//
-			((list.get(2) instanceof NumberValue)) )		//
+				((list.get(1) instanceof NumberValue)) &&	//
+				((list.get(2) instanceof NumberValue)) &&	//
+			((list.size() == 3  || list.get(3) instanceof NumberValue)) )		//
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
-				geo.setColorFunction(list);				
+				if (geo.isFillable() && listAlpha != null)
+					geo.setColorFunction(listAlpha);				
+				else
+					geo.setColorFunction(list);				
 			}	
 			
 	
@@ -5738,6 +5792,7 @@ class ColorFunctionPanel
 			tfRed.setText(strRed);
 			tfGreen.setText(strGreen);
 			tfBlue.setText(strBlue);
+			tfAlpha.setText(strAlpha);
 		}
 
 	}

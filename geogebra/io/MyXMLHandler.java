@@ -2382,12 +2382,10 @@ public class MyXMLHandler implements DocHandler {
 
 		// Dynamic colors
 		// Michael Borcherds 2008-04-02
-		String red = "";
-		String green = "";
-		String blue = "";
-		red = (String) attrs.get("dynamicr");
-		green = (String) attrs.get("dynamicg");
-		blue = (String) attrs.get("dynamicb");
+		String red = (String) attrs.get("dynamicr");
+		String green = (String) attrs.get("dynamicg");
+		String blue = (String) attrs.get("dynamicb");
+		String alpha = (String) attrs.get("dynamica");
 
 		if (red != null && green != null && blue != null)
 			try {
@@ -2398,12 +2396,22 @@ public class MyXMLHandler implements DocHandler {
 						green = "0";
 					if (blue.equals(""))
 						blue = "0";
+					
+					StringBuilder sb = new StringBuilder();
+					sb.append('{');
+					sb.append(red);
+					sb.append(',');
+					sb.append(green);
+					sb.append(',');
+					sb.append(blue);
+					if (alpha != null && !alpha.equals("")) {
+						sb.append(',');
+						sb.append(alpha);
+					}
+					sb.append('}');
 
-					// geo.setColorFunction(kernel.getAlgebraProcessor().evaluateToList("{"+red
-					// + ","+green+","+blue+"}"));
 					// need to to this at end of construction (dependencies!)
-					dynamicColorList.add(new GeoExpPair(geo, "{" + red + ","
-							+ green + "," + blue + "}"));
+					dynamicColorList.add(new GeoExpPair(geo, sb.toString()));
 
 				}
 			} catch (Exception e) {
@@ -2433,7 +2441,7 @@ public class MyXMLHandler implements DocHandler {
 				geo.setFillType(GeoElement.FILL_IMAGE);
 			}
 
-		String alpha = (String) attrs.get("alpha");
+		alpha = (String) attrs.get("alpha");
 		if (alpha != null
 				&& (!geo.isGeoList() || ggbFileFormat > 3.19)) // ignore alpha value for lists prior to GeoGebra 3.2
 			geo.setAlphaValue(Float.parseFloat(alpha));
