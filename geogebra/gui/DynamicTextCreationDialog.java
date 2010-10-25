@@ -293,15 +293,33 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener, Key
 				Object obj = listModel.get(i);
 				
 				if (obj instanceof String) {
+					boolean addSpaceAtStart = !((String)obj).startsWith(" ");
+					boolean addSpaceAtEnd = !((String)obj).endsWith(" ");
+					
+					
+					String str = text.toString();
+					if (str.endsWith(" ") || str.endsWith(" \"")) addSpaceAtStart = false;
+					
+					
 					if (forDefinition) text.append("+\"");
+					
+					// add space if there's not one already
+					if (addSpaceAtStart) text.append(' ');
+					
 					text.append((String)obj);
+
+					// add space if there's not one already
+					if (addSpaceAtEnd) text.append(' ');
+					
 					if (forDefinition) text.append('\"');
 				} else if (obj instanceof GeoElement) {
 					if (forDefinition) {
 						text.append('+');
 						text.append(((GeoElement)obj).getLabel());
+						text.append("+\" \""); // add +" " to end
 					} else {
 						text.append(((GeoElement)obj).toValueString());
+						text.append(' '); // add space to end
 					}
 				}
 				
