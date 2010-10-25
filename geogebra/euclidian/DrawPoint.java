@@ -28,6 +28,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
@@ -81,7 +82,14 @@ public final class DrawPoint extends Drawable {
     	
     	if (gp != null) gp.reset(); // stop trace being left when (filled diamond) point moved
     	
-        isVisible = geo.isEuclidianVisible();       				 
+        isVisible = geo.isEuclidianVisible();    
+        
+        //if it's a 3D point, looks if it's on xOy plane
+        //TODO use other planes and regions
+    	if (geo.isGeoElement3D())
+    		isVisible &= Kernel.isZero(((GeoPointND) geo).getCoordsInD(3).getZ());
+    		
+        
     	// still needs updating if it's being traced to the spreadsheet
         if (!isVisible && !P.getSpreadsheetTrace()) return;
 		labelVisible = geo.isLabelVisible();

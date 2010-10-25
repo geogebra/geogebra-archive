@@ -48,6 +48,7 @@ import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Util;
+import geogebra3D.Application3D;
 
 
 /**
@@ -939,7 +940,22 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		return new Geo3DVec(kernel, getX(), getY(), getZ());
 	}
     
-    
+	
+	//////////////////////////////////
+	// display in a 2D view ?
+	
+	/*
+	public boolean isVisibleInView(Object view){
+		if (view==((Application3D) app).getEuclidianView3D())
+			return true;
+		
+		if (view==((Application3D) app).getEuclidianView())
+			return Kernel.isZero(getCoords().getZ());
+		
+		return false;
+		
+	}
+    */
 	
 	//////////////////////////////////
 	// GeoElement3DInterface interface
