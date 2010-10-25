@@ -321,6 +321,19 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
         }    	    	
 	}
     
+    public void setBackgroundColor(Color color) {        	
+    	super.setBackgroundColor(color);
+    	  	
+    	if (geoList == null || geoList.size() == 0) return;    	
+
+    	int size = geoList.size();	        
+        for (int i=0; i < size; i++) {
+        	GeoElement geo = get(i);
+        	if (!geo.isLabelSet())
+        		geo.setBackgroundColor(color);
+        }    	    	
+	}
+
     public void setEuclidianVisible(boolean visible) {
     	super.setEuclidianVisible(visible);
     	 	
