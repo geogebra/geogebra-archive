@@ -231,6 +231,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 		systemInfoPanel.add(new JButton(new AbstractAction(app.getPlain("SystemInformation")) {
 			public void actionPerformed(ActionEvent arg0) {
 				StringBuilder systemInfo = new StringBuilder();
+				systemInfo.append("[code]");
 				systemInfo.append(vsb);
 				systemInfo.append(" (");
 				systemInfo.append(GeoGebra.BUILD_DATE);
@@ -266,7 +267,7 @@ public class GeoGebraMenuBar extends JMenuBar {
 				
 				systemInfo.append("\n\nPreferences:\n");
 				systemInfo.append(GeoGebraPreferences.getPref().getXMLPreferences());
-				
+				systemInfo.append("[/code]");
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
 					new StringSelection(systemInfo.toString()), null
 				);
