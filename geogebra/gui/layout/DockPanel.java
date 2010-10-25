@@ -739,7 +739,10 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * title panel.
 	 */
 	public void mousePressed(MouseEvent arg0) {
-		dockManager.drag(this);
+		if(arg0.getClickCount()==2)
+			toggleStyleBar();
+		else
+			dockManager.drag(this);
 	}
 	
 	/**
