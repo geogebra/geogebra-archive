@@ -5627,10 +5627,12 @@ class ColorFunctionPanel
 		add(inputPanelB);
 		add(nameLabelA);		
 		add(inputPanelA);
-		add(cbColorSpace);
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		buttonPanel.add(btRemove);
-		add(buttonPanel);
+		JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		leftPanel.add(cbColorSpace);
+		JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		rightPanel.add(btRemove);
+		add(leftPanel);
+		add(rightPanel);
 		SpringUtilities.makeCompactGrid(this,
                 5, 2, //rows, cols
                 6, 6,        //initX, initY
