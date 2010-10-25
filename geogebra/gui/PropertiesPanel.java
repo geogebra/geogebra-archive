@@ -5027,10 +5027,10 @@ class SliderPanel
 				GeoElement geoValue = value.toGeoElement();
 				if(num.getMinMaxListeners()!=null)
 					for(GeoNumeric listener : num.getMinMaxListeners()){
-						if(geoValue.isChildOf(listener) || geoValue == listener) 
+						if(geoValue.isChildOrEqual(listener)) 
 							dependsOnListener = true;
 					}
-				if(dependsOnListener || geoValue.isChildOf(num) || geoValue == num){
+				if(dependsOnListener || geoValue.isChildOrEqual(num)){
 					app.showErrorDialog(app.getError("CircularDefinition"));
 				}
 				else{ 

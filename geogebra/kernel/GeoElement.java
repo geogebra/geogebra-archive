@@ -404,9 +404,11 @@ public abstract class GeoElement
 	protected boolean strLaTeXneedsUpdate = true;	
 	
 	// line thickness and line type: s	
-	// note: line thickness in Drawable is calculated as lineThickness / 2.0f
+	/** note: line thickness in Drawable is calculated as lineThickness / 2.0f*/
 	public int lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
-	public int lineType = EuclidianView.DEFAULT_LINE_TYPE;		
+	/** line type (full, dashed, ...) see EuclidianView.LINE_TYPE*/
+	public int lineType = EuclidianView.DEFAULT_LINE_TYPE;	
+	/** line type for hidden parts (for 3D) */
 	public int lineTypeHidden = EuclidianView.DEFAULT_LINE_TYPE_HIDDEN;		
 	
 	// decoration types
@@ -442,7 +444,7 @@ public abstract class GeoElement
 	protected AlgoElement algoDraw = null;
 	private ArrayList<AlgoElement> algorithmList; 	// directly dependent algos
 	
-	//	set of all dependent algos sorted in topological order    
+	/**	set of all dependent algos sorted in topological order */    
 	protected AlgorithmSet algoUpdateSet;
 
 	/********************************************************/
@@ -472,6 +474,7 @@ public abstract class GeoElement
 	/**
 	 * Returns label of GeoElement. If the label is null then 
 	 * algoParent.getCommandDescription() or  toValueString() is returned.     
+	 * @return geo's label
 	 */
 	public String getLabel() {			
 		if (!labelSet && !localVarLabelSet) {
@@ -487,6 +490,10 @@ public abstract class GeoElement
 		label = c.label;
 	}
 
+	/**
+	 * Switch label mode among value, name, value+name and caption
+	 * @param mode LABEL_ mode
+	 */
 	public void setLabelMode(int mode) {
 		switch (mode) {
 			case LABEL_NAME_VALUE :
@@ -524,6 +531,7 @@ public abstract class GeoElement
 	
 	/** 
 	 * Returns the GEO_CLASS_ type integer 
+	 * @return GEO_CLASS_ type integer 
 	 */
 	public abstract int getGeoClassType();
 
@@ -540,6 +548,8 @@ public abstract class GeoElement
 	 * This method always returns a GeoElement of the
 	 * SAME CLASS as this GeoElement. Furthermore the resulting geo
 	 * is in construction cons.
+	 * @param cons construction
+	 * @return copy in given construction
 	 */
 	public GeoElement copyInternal(Construction cons) {
 		// default implementation: changed in some subclasses
@@ -550,6 +560,9 @@ public abstract class GeoElement
 	
 	/**
 	 * Copies the given points array. The resulting points are part of the given construction.
+	 * @param cons 
+	 * @param points 
+	 * @return copy of points in construction cons
 	 */
 	public static GeoPoint [] copyPoints(Construction cons, GeoPoint [] points) {
 		GeoPoint [] pointsCopy = new GeoPoint[points.length];
@@ -562,6 +575,9 @@ public abstract class GeoElement
 	
 	/**
 	 * Copies the given points array. The resulting points are part of the given construction.
+	 * @param cons 
+	 * @param points 
+	 * @return copy of points in construction cons
 	 */
 	public static GeoPointND [] copyPointsND(
 			Construction cons, 
@@ -600,7 +616,8 @@ public abstract class GeoElement
 		return false;
 	}
 
-	/** every subclass implements it's own set method */
+	/** every subclass implements it's own set method 
+	 * @param geo geo to copy */
 	public abstract void set(GeoElement geo);
 
 	public abstract boolean isDefined();
@@ -611,6 +628,9 @@ public abstract class GeoElement
 	 * Returns definition or value string of this object.
 	 * Automatically increases decimals to at least 5, e.g.
 	 *  FractionText[4/3] -> FractionText[1.333333333333333] 
+	 * @param useChangeable if false, point on path is ignored
+	 * @param useOutputValueString  if true, use outputValueString rather than valueString
+	 * @return definition or value string of this object
 	 */
 	public String getRedefineString(boolean useChangeable, boolean useOutputValueString) {
 		boolean increasePrecision = kernel.ensureTemporaryPrintAccuracy(MIN_EDITING_PRINT_PRECISION);
@@ -631,6 +651,7 @@ public abstract class GeoElement
 	/**
 	 * Returns the definition of this GeoElement for the
 	 * input field, e.g. A1 = 5, B1 = A1 + 2
+	 * @return definition for input field
 	 */
 	public String getDefinitionForInputBar() {
     	// for expressions like "3 = 2 A2 - A1"
@@ -657,6 +678,7 @@ public abstract class GeoElement
 	/**
 	 * Returns the value of this GeoElement for the
 	 * input field, e.g. A1 = 5, B1 = A1 + 2
+	 * @return value for input field
 	 */
 	public String getValueForInputBar() {
 		boolean increasePrecision = kernel.ensureTemporaryPrintAccuracy(MIN_EDITING_PRINT_PRECISION);
@@ -710,7 +732,10 @@ public abstract class GeoElement
 		selColor =
 			new Color(color.getRed(), color.getGreen(), color.getBlue(), 100);
 	}
-	
+	/**
+	 * Returns true if color was explicitly set
+	 * @return true if color was explicitly set
+	 */
 	public boolean isColorSet() {
 		return isColorSet;
 	}
@@ -836,8 +861,9 @@ public abstract class GeoElement
 		else return getRGBFromList(getAlphaValue());
 	}
 	
-	/* return black if the color is white, so it can be seen
-	 * 
+	/** 
+	 * return black if the color is white, so it can be seen
+	 * @return color for algebra view (same as label or black)
 	 */
 	public Color getAlgebraColor() {
 		Color col = getLabelColor();
@@ -880,6 +906,10 @@ public abstract class GeoElement
 	}
 
 	// Michael Borcherds 2008-03-01
+	/**
+	 * Sets layer
+	 * @param layer layer from 0 to 9
+	 */
 	public void setLayer(int layer){
 		if (layer == this.layer
 				// layer valid only for Drawable objects	
@@ -895,6 +925,9 @@ public abstract class GeoElement
 	}
 	
 	// Michael Borcherds 2008-02-23
+	/**
+	 * @return layer of this geo (0 to 9)
+	 */
 	public int getLayer(){
 		return layer;
 	}
@@ -2885,16 +2918,14 @@ public abstract class GeoElement
 		if (geo == null || isIndependent())
 			return false;
 		else
-			return geo.isParentOf(this);
-			
-//		GeoElement [] input = algoParent.getInput();
-//		for (int i = 0; i < input.length; i++) {
-//			if (geo == input[i])
-//				return true;
-//			if (input[i].isChildOf(geo))
-//				return true;
-//		}
-//		return false;				
+			return geo.isParentOf(this);			
+	}
+	
+	/**
+	 * Returns whether this object is dependent on geo.
+	 */
+	public boolean isChildOrEqual(GeoElement geo) {				
+		return this == geo || isChildOf(geo);			
 	}
 	
 	/**

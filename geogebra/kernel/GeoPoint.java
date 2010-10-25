@@ -224,16 +224,20 @@ GeoPointND  {
 		if (isFixed())
 			return false;
 		
-		ArrayList coords = getCoordParentNumbers();		
+		ArrayList<GeoNumeric> coords = getCoordParentNumbers();		
 		if (coords.size() == 0) return false;
 		
-		Object num1 = coords.get(0);
-		Object num2 = coords.get(1);
+		GeoNumeric num1 = coords.get(0);
+		GeoNumeric num2 = coords.get(1);
 		
 		if (num1 == null || num2 == null) return false;
-	
-		boolean ret = ((GeoNumeric)num1).isChangeable() && 
-				((GeoNumeric)num2).isChangeable();
+		
+		if(num1.getIntervalMaxObject().isChildOrEqual(num2))return false;
+		if(num2.getIntervalMaxObject().isChildOrEqual(num1))return false;
+		if(num1.getIntervalMinObject().isChildOrEqual(num2))return false;
+		if(num2.getIntervalMinObject().isChildOrEqual(num1))return false;		
+		boolean ret = num1.isChangeable() && 
+				num2.isChangeable();
 
 		return ret;
 	}
@@ -247,10 +251,10 @@ GeoPointND  {
 	 * 
 	 * @return null if this point is not defined using two GeoNumeric objects
 	 */
-	final public ArrayList getCoordParentNumbers() {				
+	final public ArrayList<GeoNumeric> getCoordParentNumbers() {				
 		// init changeableCoordNumbers
 		if (changeableCoordNumbers == null) {
-			changeableCoordNumbers = new ArrayList(2);			
+			changeableCoordNumbers = new ArrayList<GeoNumeric>(2);			
 			AlgoElement parentAlgo = getParentAlgorithm();
 			
 			// dependent point of form P = (a, b)
@@ -283,7 +287,7 @@ GeoPointND  {
 		
 		return changeableCoordNumbers;
 	}
-	private ArrayList changeableCoordNumbers = null;
+	private ArrayList<GeoNumeric> changeableCoordNumbers = null;
 	private boolean hasPolarParentNumbers = false;
 	
 	/**
