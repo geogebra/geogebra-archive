@@ -5556,6 +5556,12 @@ class ColorFunctionPanel
 	private JButton btRemove;
 	private JLabel nameLabelR, nameLabelG, nameLabelB, nameLabelA;
 	
+	
+	private JComboBox cbColorSpace;
+	private int colorSpace = GeoElement.COLORSPACE_RGB;
+	// flag to prevent unneeded relabeling of the colorSpace comboBox
+	private boolean allowSetComboBoxLabels = true;
+	
 	private String defaultR = "0", defaultG = "0", defaultB = "0", defaultA = "1";
 	
 	private Kernel kernel;
@@ -5608,6 +5614,9 @@ class ColorFunctionPanel
 				tfAlpha.setText("");
 			}
 		});
+				
+		cbColorSpace = new JComboBox();
+		cbColorSpace.addActionListener(this);
 		
 		setLayout(new SpringLayout());
 		add(nameLabelR);		
@@ -5618,9 +5627,10 @@ class ColorFunctionPanel
 		add(inputPanelB);
 		add(nameLabelA);		
 		add(inputPanelA);
-		add(btRemove);
-		add(new JPanel()); // dummy
-		
+		add(cbColorSpace);
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		buttonPanel.add(btRemove);
+		add(buttonPanel);
 		SpringUtilities.makeCompactGrid(this,
                 5, 2, //rows, cols
                 6, 6,        //initX, initY
@@ -5637,10 +5647,35 @@ class ColorFunctionPanel
 				app.getMenu("DynamicColors")
 			)
 		);
+
+		if(allowSetComboBoxLabels){  
+			cbColorSpace.removeActionListener(this);
+			cbColorSpace.removeAllItems();
+			cbColorSpace.addItem(app.getMenu("RGB"));
+			cbColorSpace.addItem(app.getMenu("HSV"));
+			cbColorSpace.addItem(app.getMenu("HSL"));
+			cbColorSpace.addActionListener(this);
+		}
+		allowSetComboBoxLabels = true;
+
+		switch(colorSpace){
+		case GeoElement.COLORSPACE_RGB:
+			nameLabelR.setText(app.getMenu("Red") + ":");
+			nameLabelG.setText(app.getMenu("Green") + ":");
+			nameLabelB.setText(app.getMenu("Blue") + ":");
+			break;
+		case GeoElement.COLORSPACE_HSB:
+			nameLabelR.setText(app.getMenu("Hue") + ":");
+			nameLabelG.setText(app.getMenu("Saturation") + ":");
+			nameLabelB.setText(app.getMenu("Value") + ":");
+			break;
+		case GeoElement.COLORSPACE_HSL:
+			nameLabelR.setText(app.getMenu("Hue") + ":");
+			nameLabelG.setText(app.getMenu("Saturation") + ":");
+			nameLabelB.setText(app.getMenu("Lightness") + ":");
+			break;
+		}
 		
-		nameLabelR.setText(app.getMenu("Red") + ":");
-		nameLabelG.setText(app.getMenu("Green") + ":");
-		nameLabelB.setText(app.getMenu("Blue") + ":");
 		nameLabelA.setText(app.getMenu("Opacity") + ":");
 		
 		btRemove.setToolTipText(app.getPlain("Remove"));
@@ -5674,6 +5709,7 @@ class ColorFunctionPanel
 		tfBlue.removeActionListener(this);
 		tfAlpha.removeActionListener(this);
 		btRemove.removeActionListener(this);
+		cbColorSpace.removeActionListener(this);
 
 		// take condition of first geo
 		String strRed = "";
@@ -5688,7 +5724,9 @@ class ColorFunctionPanel
 			strBlue = colorList.get(2).getLabel();
 			if (colorList.size() == 4)
 				strAlpha = colorList.get(3).getLabel();
-		}	
+		}
+		colorSpace = geo0.getColorSpace();
+		cbColorSpace.setSelectedIndex(colorSpace);
 		
 		for (int i=0; i < geos.length; i++) {
 			geo = (GeoElement) geos[i];	
@@ -5715,6 +5753,7 @@ class ColorFunctionPanel
 		tfBlue.addActionListener(this);
 		tfAlpha.setText(strAlpha);
 		tfAlpha.addActionListener(this);
+		cbColorSpace.addActionListener(this);
 		return this;
 	}
 
@@ -5729,6 +5768,12 @@ class ColorFunctionPanel
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == tfRed || e.getSource() == tfGreen || e.getSource() == tfBlue|| e.getSource() == tfAlpha)
 			doActionPerformed();
+		if ( e.getSource() == cbColorSpace){
+			colorSpace = cbColorSpace.getSelectedIndex();
+			allowSetComboBoxLabels = false;
+			setLabels();
+			doActionPerformed();
+		}
 	}
 
 	private void doActionPerformed() {
@@ -5779,7 +5824,8 @@ class ColorFunctionPanel
 				if (geo.isFillable() && listAlpha != null)
 					geo.setColorFunction(listAlpha);				
 				else
-					geo.setColorFunction(list);				
+					geo.setColorFunction(list);	
+				geo.setColorSpace(colorSpace);
 			}	
 			
 	

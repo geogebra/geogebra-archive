@@ -2386,6 +2386,7 @@ public class MyXMLHandler implements DocHandler {
 		String green = (String) attrs.get("dynamicg");
 		String blue = (String) attrs.get("dynamicb");
 		String alpha = (String) attrs.get("dynamica");
+		String colorSpace = (String) attrs.get("colorSpace");
 
 		if (red != null && green != null && blue != null)
 			try {
@@ -2412,7 +2413,7 @@ public class MyXMLHandler implements DocHandler {
 
 					// need to to this at end of construction (dependencies!)
 					dynamicColorList.add(new GeoExpPair(geo, sb.toString()));
-
+					geo.setColorSpace(Integer.parseInt(colorSpace));
 				}
 			} catch (Exception e) {
 				System.err.println("Error loading Dynamic Colors");

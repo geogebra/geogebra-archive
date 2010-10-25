@@ -361,7 +361,19 @@ public abstract class GeoElement
 	
 	//=================================
 	
+	public final static int COLORSPACE_RGB = 0;
+	public final static int COLORSPACE_HSB = 1;
+	public final static int COLORSPACE_HSL = 2;
+	private int colorSpace = COLORSPACE_RGB;
 	
+	public int getColorSpace() {
+		return colorSpace;
+	}
+
+	public void setColorSpace(int colorSpace) {
+		this.colorSpace = colorSpace;
+	}
+
 	public int labelOffsetX = 0, labelOffsetY = 0;
 	private boolean auxiliaryObject = false;	
 	private boolean selectionAllowed = true;
@@ -752,19 +764,62 @@ public abstract class GeoElement
 		
 		//Application.debug("red"+redD+"green"+greenD+"blue"+blueD);
 		
-		return new Color((int)(redD*255.0), (int)(greenD*255.0), (int)(blueD*255.0), alpha);
+		
+		// adjust color triple to alternate color spaces, default to RGB
+		switch(colorSpace){
+		
+		case GeoElement.COLORSPACE_HSB:
+			
+			int rgb = Color.HSBtoRGB((float)redD, (float)greenD, (float)blueD); 
+			redD = (rgb>>16)&0xFF; 
+			greenD = (rgb>>8)&0xFF; 
+			blueD = rgb&0xFF; 
+			return new Color((int)redD, (int)greenD, (int)blueD, alpha);
+			
+		case GeoElement.COLORSPACE_HSL:
+			
+			// algorithm taken from wikipedia article:
+			// http://en.wikipedia.org/wiki/HSL_and_HSV
+			
+			double H = redD *6;
+			double S = greenD;
+			double L = blueD;
+			
+			double C = (1 - Math.abs(2*L-1))*S;
+			double X = C*(1- Math.abs(H % 2 - 1));
+			
+			double R1 = 0, G1 = 0, B1 = 0;
 
-		/*
-		if (red < 0) red = 0;
-		if (red > 255) red = 255;
-		
-		if (green < 0) green = 0;
-		if (green > 255) green = 255;
-		
-		if (blue < 0) blue = 0;
-		if (blue > 255) blue = 255;	
-		
-		return new Color(red, green, blue, alpha);		*/
+			if(H < 1){
+				R1 = C; G1 = X; B1 = 0;
+			}else if(H < 2){
+				R1 = X; G1 = C; B1 = 0;
+			}else if(H < 3){
+				R1 = 0; G1 = C; B1 = X;
+			}else if(H < 4){
+				R1 = 0; G1 = X; B1 = C;
+			}else if(H < 5){
+				R1 = X; G1 = 0; B1 = C;
+			}else if(H < 6){
+				R1 = C; G1 = 0; B1 = X;
+			}
+
+			double m = L-.5*C;
+
+			Color c = new Color((int)((R1+m)*255.0), (int)((G1+m)*255.0), (int)((B1+m)*255.0), alpha);
+			
+			if(c == null){
+				Application.printStacktrace("error converting HSL to RGB");
+			}		
+			return c;
+
+				
+		case GeoElement.COLORSPACE_RGB:
+		default:
+			return new Color((int)(redD*255.0), (int)(greenD*255.0), (int)(blueD*255.0), alpha);
+
+		}
+	
 	}
 
 	// Michael Borcherds 2008-04-02
@@ -3648,6 +3703,9 @@ public abstract class GeoElement
 					sb.append(Util.encodeXML(colFunction.get(3).getLabel()));
 					sb.append('\"');									
 				}
+				sb.append(" colorSpace=\"");
+				sb.append(colorSpace);
+				sb.append('\"');	
 			}	
 			
 			if (isHatchingEnabled()) {
