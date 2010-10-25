@@ -533,17 +533,6 @@ public abstract class Drawable3D extends DrawableND {
     	if (colored)
     		renderer.setTextColor(getGeoElement().getObjectColor());
     	
-		//renderer.setMatrix(getLabelMatrix());
-		
-    	
-    	/*
-		renderer.drawText(
-				//getLabelMatrix().getOrigin().copyVector(),
-				//getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY,
-				label);
-				//getGeoElement().getLabelDescription(),colored); 
-				 * 
-				 */
     	label.draw(renderer);
 				
     }

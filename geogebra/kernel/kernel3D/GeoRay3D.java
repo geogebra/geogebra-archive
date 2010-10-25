@@ -2,8 +2,9 @@ package geogebra.kernel.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoRayND;
 
-public class GeoRay3D extends GeoLine3D {
+public class GeoRay3D extends GeoLine3D implements GeoRayND{
 
 	public GeoRay3D(Construction c, GeoPointND O) {
 		super(c);

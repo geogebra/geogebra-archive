@@ -12,13 +12,15 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoRayND;
 
 
 /**
  * @author Markus Hohenwarter
  */
-final public class GeoRay extends GeoLine implements LimitedPath {
+final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 	
 	/**
 	 * 
@@ -87,18 +89,15 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 	/* 
 	 * Path interface
 	 */	 
-	public void pointChanged(GeoPointND PI) {
-		super.pointChanged(PI);
-		
-		GeoPoint P = (GeoPoint) PI;
+	public void pointChanged(GeoPointND P) {
+		super.pointChanged(P);
 		
 		// ensure that the point doesn't get outside the ray
-		// i.e. ensure 0 <= t <= 1 
+		// i.e. ensure 0 <= t 
 		PathParameter pp = P.getPathParameter();
 		if (pp.t < 0.0) {
-			P.x = startPoint.x;
-			P.y = startPoint.y;
-			P.z = startPoint.z; 
+			P.setCoords2D(startPoint.x, startPoint.y,startPoint.z);
+			P.updateCoordsFrom2D(false);
 			pp.t = 0.0;
 		} 
 	}
@@ -281,5 +280,12 @@ final public class GeoRay extends GeoLine implements LimitedPath {
 		return isSameDirection((GeoLine)geo) && ((GeoRay)geo).getStartPoint().isEqual(getStartPoint());
 
 	}
+	
+	
+	
+	
+	
+
+ 
 	
 }

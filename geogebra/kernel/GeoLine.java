@@ -1004,10 +1004,47 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	// 3D stuff
 	//////////////////////////////////////
 	
-	public GgbVector getPointInD(int dimension, double lambda){
 
-		return null;
-		
+  	public boolean hasDrawable3D() {
+		return true;
 	}
+    
+  	public GgbVector getLabelPosition(){
+		return getPointInD(3, 0.5);
+	}
+ 	
+  	public GgbVector getPointInD(int dimension, double lambda){
+
+  		if (dimension<2 || dimension>3)
+  			return null;
+  		
+  		GgbVector startCoords;
+  		 
+  		//TODO merge with getPointOnLine
+		// point defined by parent algorithm
+		if (startPoint != null && startPoint.isFinite()) {
+			startCoords=startPoint.getCoordsInD(dimension);
+		} 
+		// point on axis
+		else {
+			startCoords = new GgbVector(dimension+1);
+			if (Math.abs(x) > Math.abs(y)) {
+				startCoords.setX(-z / x);
+			} else {
+				startCoords.setY(-z / y);
+			}   
+			startCoords.set(dimension+1, 1); //last homogeneous coord
+		}  
+		
+		GgbVector direction = new GgbVector(dimension+1);
+		direction.setX(y*lambda);direction.setY(-x*lambda);
+		
+  		return startCoords.add(direction);
+	}
+  	
+	public GgbVector getViewDirection(){
+		return getPointInD(3, 1).sub(getPointInD(3, 0));
+	}
+	
 
 }

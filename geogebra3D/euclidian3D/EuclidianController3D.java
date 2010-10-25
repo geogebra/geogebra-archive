@@ -79,6 +79,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	private Point mouseLocOld = new Point();
 	private GgbVector positionOld = new GgbVector(4);
 	
+	
 	/** 3D location of the mouse */
 	protected GgbVector mouseLoc3D;	
 	
@@ -302,9 +303,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		point.setWillingCoords(o);
 		
 		//TODO do this once
-		GgbVector v = new GgbVector(new double[] {0,0,1,0});
-		view3D.toSceneCoords3D(v);			
-		point.setWillingDirection(v);
+		//GgbVector v = new GgbVector(new double[] {0,0,1,0});
+		//view3D.toSceneCoords3D(v);			
+		point.setWillingDirection(view3D.getViewDirection());
 	}
 	
 	protected void movePoint(boolean repaint){
@@ -312,9 +313,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		if (movedGeoPoint instanceof GeoPoint3D){
 			GeoPoint3D movedGeoPoint3D = (GeoPoint3D) movedGeoPoint;
-
-
-
 
 			if (movedGeoPoint3D.hasPath()){
 
@@ -403,6 +401,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if (view.getPreviewDrawable() != null) 	
 				view.updatePreviewable();
 		
+		}else{
+			GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+			view3D.toSceneCoords3D(o);
+			//TODO do this once
+			//GgbVector v = new GgbVector(new double[] {0,0,1,0});
+			//view3D.toSceneCoords3D(view3D.getViewDirection());		
+			GgbVector coords = o.projectPlaneThruVIfPossible(GgbMatrix4x4.Identity(), view3D.getViewDirection())[1]; //TODO use current region instead of identity
+			xRW = coords.getX(); yRW = coords.getY();
+			super.movePoint(repaint);
+			
 		}
 	}
 
@@ -776,19 +784,30 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// fetch the two selected points for line
 	protected void join(){
 		GeoPointND[] points = getSelectedPointsND();
-		((Kernel3D) getKernel()).Line3D(null,points[0], points[1]);
+		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[0]).isGeoElement3D())
+			((Kernel3D) getKernel()).Line3D(null,points[0], points[1]);
+		else
+			getKernel().Line(null, (GeoPoint) points[0], (GeoPoint) points[1]);
 	}
 	
 	// fetch the two selected points for segment
 	protected void segment(){
 		GeoPointND[] points = getSelectedPointsND();
-		((Kernel3D) getKernel()).Segment3D(null,points[0], points[1]);
+		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[0]).isGeoElement3D())
+			((Kernel3D) getKernel()).Segment3D(null,points[0], points[1]);
+		else
+			getKernel().Segment(null, (GeoPoint) points[0], (GeoPoint) points[1]);
+		
 	}
 	
 	// fetch the two selected points for ray
 	protected void ray(){
 		GeoPointND[] points = getSelectedPointsND();
-		((Kernel3D) getKernel()).Ray3D(null,points[0], points[1]);
+		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[0]).isGeoElement3D())
+			((Kernel3D) getKernel()).Ray3D(null,points[0], points[1]);
+		else
+			getKernel().Ray(null, (GeoPoint) points[0], (GeoPoint) points[1]);
+		
 	}
 	
 	// fetch the two selected points for vector
@@ -988,7 +1007,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			//Application.debug("ici");
 			Hits hits = view.getHits().getTopHits();
 			if(!hits.isEmpty()){
-				GeoElement3DInterface geo = (GeoElement3DInterface) view.getHits().getTopHits().get(0);
+				GeoElement geo = (GeoElement) view.getHits().getTopHits().get(0);
 				GgbVector vn = geo.getViewDirection();
 				if (vn!=null){
 					view3D.setRotAnimation(vn);

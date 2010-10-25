@@ -3,8 +3,10 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernel3D.GeoCoordSys1D;
 import geogebra.kernel.kernel3D.GeoLine3D;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -21,11 +23,11 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	/**
 	 * common constructor
 	 * @param a_view3D
-	 * @param a_line3D
+	 * @param line
 	 */
-	public DrawLine3D(EuclidianView3D a_view3D, GeoLine3D a_line3D){
+	public DrawLine3D(EuclidianView3D a_view3D, GeoLineND line){
 		
-		super(a_view3D, a_line3D);
+		super(a_view3D, (GeoElement) line);
 	}	
 	
 	
@@ -59,10 +61,10 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 	 */
 	protected void updateDrawMinMax(boolean extendedDepth){
 		
-		GgbCoordSys cs = ((GeoCoordSys1D) getGeoElement()).getCoordSys();
+		GeoLineND line = (GeoLineND) getGeoElement();
 		
-		GgbVector o = getView3D().getToScreenMatrix().mul(cs.getOrigin());
-		GgbVector v = getView3D().getToScreenMatrix().mul(cs.getVx());
+		GgbVector o = getView3D().getToScreenMatrix().mul(line.getPointInD(3, 0));
+		GgbVector v = getView3D().getToScreenMatrix().mul(line.getPointInD(3, 1)).sub(o);
 						
 		double[] minmax = 
 			getView3D().getRenderer().getIntervalInFrustum(

@@ -32,8 +32,10 @@ import geogebra.kernel.kernel3D.GeoRay3D;
 import geogebra.kernel.kernel3D.GeoSegment3D;
 import geogebra.kernel.kernel3D.GeoVector3D;
 import geogebra.kernel.kernel3D.Kernel3D;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
+import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -122,6 +124,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	static public GgbVector vy = new GgbVector(new double[] {0.0, 1.0, 0.0,  0.0});
 	/** vz vector */
 	static public GgbVector vz = new GgbVector(new double[] {0.0, 0.0, 1.0,  0.0});
+	
+	/** direction of view */
+	private GgbVector viewDirection = vz.copyVector();
+
 	
 	//axis and xOy plane
 	private GeoPlane3D xOyPlane;
@@ -475,7 +481,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				d = new DrawVector3D(this, (GeoVector3D) geo);
 				break;									
 
-			case GeoElement3D.GEO_CLASS_SEGMENT:
+			case GeoElement.GEO_CLASS_SEGMENT:
 			case GeoElement3D.GEO_CLASS_SEGMENT3D:
 				d = new DrawSegment3D(this, (GeoSegmentND) geo);
 				break;									
@@ -496,12 +502,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				break;									
 
 
+			case GeoElement.GEO_CLASS_LINE:	
 			case GeoElement3D.GEO_CLASS_LINE3D:	
-				d = new DrawLine3D(this, (GeoLine3D) geo);	
+				d = new DrawLine3D(this, (GeoLineND) geo);	
 				break;									
 
-			case GeoElement3D.GEO_CLASS_RAY3D:					
-				d = new DrawRay3D(this, (GeoRay3D) geo);					
+			case GeoElement.GEO_CLASS_RAY:
+			case GeoElement3D.GEO_CLASS_RAY3D:
+				d = new DrawRay3D(this, (GeoRayND) geo);					
 				break;	
 
 			case GeoElement3D.GEO_CLASS_CONIC3D:					
@@ -648,8 +656,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		mInv.set(m.inverse());
 		
+		
+		//update view direction
+		viewDirection = vz.copyVector();
+		toSceneCoords3D(viewDirection);	
+		
 		setWaitForUpdate();
 		
+	}
+	
+	/**
+	 * 
+	 * @return direction of the eye
+	 */
+	public GgbVector getViewDirection(){
+		return viewDirection;
 	}
 
 	
@@ -2156,9 +2177,22 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			case PREVIEW_POINT_PATH:
 				// use path drawing directions for the cross
 				t = 1/getScale();
-				GgbMatrix4x4 matrix = GgbMatrix4x4.Identity();
-				if (getCursor3D().getPath() instanceof GeoElement3DInterface)
+				GgbMatrix4x4 matrix;
+				if (((GeoElement)getCursor3D().getPath()).isGeoElement3D())
 					matrix = ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix();
+				else{
+					GgbVector v = ((GeoElement)getCursor3D().getPath()).getViewDirection();
+					if (v==null)
+						matrix = GgbMatrix4x4.Identity();
+					else{
+					   GgbMatrix m = new GgbMatrix(4, 2);
+					   m.set(v, 1);
+					   m.set(4, 2, 1);
+					   matrix = new GgbMatrix4x4(m);
+					}
+						
+				}
+				
 				getCursor3D().getDrawingMatrix().setVx(
 						(GgbVector) matrix.getVx().normalized().mul(t));
 				t *= (10+((GeoElement) getCursor3D().getPath()).getLineThickness());

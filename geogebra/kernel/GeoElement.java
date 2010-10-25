@@ -5039,5 +5039,13 @@ public abstract class GeoElement
 		return inverseFill;
 	}
 	
+	/**
+	 * 
+	 * @return direction of the view to see the element in a "standard" view (for 3D).
+	 * E.g. orthogonal to a plane, along a line, ...
+	 */
+	public GgbVector getViewDirection(){
+		return null;
+	}
 
 }

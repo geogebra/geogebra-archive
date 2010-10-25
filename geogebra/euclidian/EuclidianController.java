@@ -146,8 +146,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected Point oldLoc = new Point();
 
-	double xRW, yRW, // real world coords of mouse location
-	xRWold = Double.NEGATIVE_INFINITY, yRWold = xRWold, temp;
+	protected double xRW;
+
+	protected double yRW;
+
+	double xRWold = Double.NEGATIVE_INFINITY, yRWold = xRWold, temp;
 
 	// for moving conics:
 	protected Point2D.Double startPoint = new Point2D.Double();
