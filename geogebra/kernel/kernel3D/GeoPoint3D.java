@@ -23,6 +23,7 @@ package geogebra.kernel.kernel3D;
 import java.awt.geom.Point2D;
 import java.util.TreeSet;
 
+import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.AlgebraView;
@@ -314,10 +315,20 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	case 3:
     		return getCoords();
     	case 2:
+    		//Application.debug("willingCoords=\n"+willingCoords+"\nwillingDirection=\n"+willingDirection);
+    		GgbVector coords;
+    		if (getWillingCoords()!=null)
+    			if (getWillingDirection()!=null){
+    				//TODO use region matrix in place of identity
+    				coords=getWillingCoords().projectPlaneThruV(GgbMatrix4x4.Identity(), getWillingDirection())[1];
+    			}else
+    				coords=getWillingCoords().projectPlane(GgbMatrix4x4.Identity())[1];
+    		else
+    			coords=getCoords();
     		GgbVector v = new GgbVector(3);
-    		v.setX(getCoords().getX());
-    		v.setY(getCoords().getY());
-       		v.setZ(getCoords().getW());
+    		v.setX(coords.getX());
+    		v.setY(coords.getY());
+       		v.setZ(coords.getW());
        		return v;
     	default:
     		return null;
@@ -575,7 +586,10 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	 * @param doPathOrRegion says if the path or the region calculations have to be done
 	 */
 	public void updateCoordsFrom2D(boolean doPathOrRegion){
-		setCoords(((Region3D) region).getPoint(getX2D(), getY2D()), doPathOrRegion);
+		if (region==null)
+			setCoords(new GgbVector(getX2D(), getY2D(), 0, 1), doPathOrRegion);
+		else
+			setCoords(((Region3D) region).getPoint(getX2D(), getY2D()), doPathOrRegion);
 	}
 	
 	

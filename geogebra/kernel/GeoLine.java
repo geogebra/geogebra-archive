@@ -695,6 +695,8 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	private void doPointChanged(GeoPointND P) {
 		
 		GgbVector coords = P.getCoordsInD(2);
+		
+		
 	
 		// project P on line
 		double px = coords.getX()/coords.getZ();
@@ -705,7 +707,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 		px += t * x;
 		py += t * y;
 		P.setCoords2D(px, py, 1);
-		
+		P.updateCoordsFrom2D(false);
 						
 		// set path parameter
 		if (startPoint != null) {

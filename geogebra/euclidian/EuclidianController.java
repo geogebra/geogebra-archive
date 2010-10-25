@@ -3402,7 +3402,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	protected GeoPointND createNewPoint(boolean forPreviewable, Path path){
-		GeoPointND ret = kernel.Point(null, path, xRW, yRW, true);
+		return createNewPoint(forPreviewable, path, xRW, yRW);
+	}
+	
+	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, double x, double y){
+		GeoPointND ret = kernel.Point(null, path, x, y, true);
 		return ret;
 	}
 

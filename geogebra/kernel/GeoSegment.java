@@ -18,6 +18,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 
 import java.util.HashSet;
 
@@ -310,6 +311,7 @@ GeoSegmentND {
 		// special case: segment of length 0
 		if (length == 0) {
 			P.setCoords2D(startPoint.inhomX, startPoint.inhomY,1);
+			P.updateCoordsFrom2D(false);
 			if (!(pp.t >= 0 && pp.t <= 1)) {
 				pp.t = 0.0;
 			}
@@ -323,23 +325,23 @@ GeoSegmentND {
 		// i.e. ensure 0 <= t <= 1 
 		if (pp.t < 0.0) {
 			P.setCoords2D(startPoint.x, startPoint.y,startPoint.z);
+			P.updateCoordsFrom2D(false);				
 			pp.t = 0.0;
 		} else if  (pp.t > 1.0) {
 			P.setCoords2D(endPoint.x, endPoint.y,endPoint.z);
+			P.updateCoordsFrom2D(false);
 			pp.t = 1.0;
 		}
 	}
 
-	public void pathChanged(GeoPointND PI) {
+	public void pathChanged(GeoPointND P) {
 		
-		GeoPoint P = (GeoPoint) PI;	
 		PathParameter pp = P.getPathParameter();
 		
 		// special case: segment of length 0
 		if (length == 0) {
-			P.x = startPoint.inhomX;
-			P.y = startPoint.inhomY;
-			P.z = 1.0;	
+			P.setCoords2D(startPoint.inhomX, startPoint.inhomY,1);
+			P.updateCoordsFrom2D(false);
 			if (!(pp.t >= 0 && pp.t <= 1)) {
 				pp.t = 0.0;
 			}
@@ -354,9 +356,8 @@ GeoSegmentND {
 		}
 		
 		// calc point for given parameter
-		P.x = startPoint.inhomX + pp.t * y;
-		P.y = startPoint.inhomY - pp.t * x;
-		P.z = 1.0;	
+		P.setCoords2D(startPoint.inhomX + pp.t * y, startPoint.inhomY - pp.t * x,1);
+		P.updateCoordsFrom2D(false);
 	}
 	
 	/**

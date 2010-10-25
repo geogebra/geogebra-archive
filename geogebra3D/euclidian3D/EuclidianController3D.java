@@ -9,6 +9,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -431,44 +432,57 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				
 		GeoPoint3D point = view3D.getCursor3D();
 				
-		GeoPoint3D ret = null;
+		GeoPoint3D point3D;
+		GeoPointND ret;
 		
 		switch(view3D.getCursor3DType()){		
 		case EuclidianView3D.PREVIEW_POINT_FREE:
-			ret = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
-			ret.setCoords((GeoPointND) point);
-			ret.updateCoords();
+			point3D = ((Kernel3D) getKernel()).Point3D(null, 0,0,0);
+			point3D.setCoords((GeoPointND) point);
+			point3D.updateCoords();
+			ret = point3D;
 			break;
 
 		case EuclidianView3D.PREVIEW_POINT_PATH:
 			if (onPathPossible){
-				ret = ((Kernel3D) getKernel()).Point3D(null,point.getPath());
-				ret.setWillingCoords(point.getCoords());
-				ret.doPath();
-				ret.setWillingCoords(null);
-				ret.setWillingDirection(null);
+				Path path = point.getPath();
+				if (((GeoElement) path).isGeoElement3D()){
+					point3D = ((Kernel3D) getKernel()).Point3D(null,path);
+					point3D.setWillingCoords(point.getCoords());
+					point3D.doPath();
+					point3D.setWillingCoords(null);
+					point3D.setWillingDirection(null);
+					ret = point3D;
+					
+				}else{
+					GgbVector coords = point.getCoordsInD(2);
+					return super.createNewPoint(false, path, coords.getX(), coords.getY()); 
+				}
+	
 			}else
 				return null;
 			break;
 			
 		case EuclidianView3D.PREVIEW_POINT_REGION:
 			if (inRegionPossible){
-				ret = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());			
-				ret.setWillingCoords(point.getCoords());
-				ret.doRegion();
-				ret.setWillingCoords(null);
-				ret.setWillingDirection(null);
+				point3D = ((Kernel3D) getKernel()).Point3DIn(null,point.getRegion());			
+				point3D.setWillingCoords(point.getCoords());
+				point3D.doRegion();
+				point3D.setWillingCoords(null);
+				point3D.setWillingDirection(null);
+				ret = point3D;
 			}else
 				return null;
 			break;
 			
 		case EuclidianView3D.PREVIEW_POINT_DEPENDENT:
 			if (intersectPossible){
-			ret = ((Kernel3D) kernel).Intersect(null, 
-					(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(0), 
-					(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(1));
-			}
-			return ret;
+				point3D = ((Kernel3D) kernel).Intersect(null, 
+						(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(0), 
+						(GeoCoordSys1D) view3D.getCursor3DIntersectionOf(1));
+			}else
+				point3D = null;
+			return point3D;
 			
 		case EuclidianView3D.PREVIEW_POINT_NONE:
 		default:
@@ -481,10 +495,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 
 			
-		ret.update();
+		((GeoElement) ret).update();
 		//point.setEuclidianVisible(false);
 		
-		view3D.addToHits3D(ret);
+		view3D.addToHits3D((GeoElement) ret);
 
 		return ret;
 	
@@ -571,6 +585,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		setMouseInformation(point3D);
 		point3D.doPath();
+		//point3D.updateCoordsFrom2D(false);
 		
 		//Application.debug("hop");
 				
