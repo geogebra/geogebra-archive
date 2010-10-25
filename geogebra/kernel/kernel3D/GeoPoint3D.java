@@ -340,7 +340,9 @@ implements GeoPointND, PointProperties, Vector3DValue{
      * Returns (x/w, y/w, z/w) GgbVector.
      */
     final public void getInhomCoords(double[] d) {
-    	Application.debug("TODO: getInhomCoords(double[] d)");
+    	double[] coords = getInhomCoords().get();
+    	for (int i=0; i<d.length; i++)
+    		d[i]=coords[i];
     }   
     
     
@@ -791,6 +793,10 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	public int getPointStyle() {
 		//TODO
 		return 0;
+	}
+	
+	public boolean getTrace(){
+		return false; //TODO
 	}
 
 	public void setPointSize(int size) {

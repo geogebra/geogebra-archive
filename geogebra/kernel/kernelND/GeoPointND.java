@@ -107,6 +107,10 @@ public interface GeoPointND {
 	 * @return the coords of the point in the given dimension (extended or projected)
 	 */
 	public GgbVector getCoordsInD(int dimension);
+
+	public int getPointStyle();
+
+	public boolean getTrace();
 	
 	
 }

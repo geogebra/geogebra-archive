@@ -28,6 +28,7 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.awt.BasicStroke;
@@ -51,7 +52,7 @@ public final class DrawPoint extends Drawable {
 	
 	private static int SELECTION_DIAMETER_MIN = 20;
 	       
-    private GeoPoint P;    
+    private GeoPointND P;    
     
 	private int diameter, hightlightDiameter, selDiameter, pointSize;
     boolean isVisible, labelVisible;   
@@ -66,10 +67,10 @@ public final class DrawPoint extends Drawable {
     private static BasicStroke [] crossStrokes = new BasicStroke[10];
     
     /** Creates new DrawPoint */
-    public DrawPoint(EuclidianView view, GeoPoint P) {      
+    public DrawPoint(EuclidianView view, GeoPointND P) {      
     	this.view = view;          
         this.P = P;
-        geo = P;
+        geo = (GeoElement) P;
         
         //crossStrokes[1] = new BasicStroke(1f);
 
@@ -93,15 +94,15 @@ public final class DrawPoint extends Drawable {
 		view.toScreenCoords(coords);	
 		
 		// point outside screen?
-        if (coords[0] > view.width + P.pointSize || coords[0] < -P.pointSize ||
-        	coords[1] > view.height + P.pointSize || coords[1] < -P.pointSize)  
+        if (coords[0] > view.width + P.getPointSize() || coords[0] < -P.getPointSize() ||
+        	coords[1] > view.height + P.getPointSize() || coords[1] < -P.getPointSize())  
         {
         	isVisible = false;
         	// don't return here to make sure that getBounds() works for offscreen points too
         }
         
-        if (pointSize != P.pointSize) {
-        	pointSize = P.pointSize;
+        if (pointSize != P.getPointSize()) {
+        	pointSize = P.getPointSize();
 			diameter = 2 * pointSize;
 			HIGHLIGHT_OFFSET = pointSize / 2 + 1;
 			//HIGHLIGHT_OFFSET = pointSize / 2 + 1;
@@ -243,11 +244,11 @@ public final class DrawPoint extends Drawable {
        //G.Sturr 2010-6-28 spreadsheet trace is now handled in GeoElement.update() 
       //  if (P.getSpreadsheetTrace()) recordToSpreadsheet(P); 
 		if (P == view.getEuclidianController().recordObject)
-		    recordToSpreadsheet(P);
+		    recordToSpreadsheet((GeoElement) P);
 
         
 		// draw trace
-		if (P.trace) {
+		if (P.getTrace()) {
 			isTracing = true;
 			Graphics2D g2 = view.getBackgroundGraphics();
 			if (g2 != null) drawTrace(g2);

@@ -254,12 +254,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		view3D.toSceneCoords3D(o);
 		
 		
-		GgbVector v = new GgbVector(new double[] {0,0,1,0});
-		view3D.toSceneCoords3D(v);
-		
 		
 		//getting new position of the point
-		GgbVector[] projects = o.projectPlaneThruVIfPossible(currentPlane, v);
+		GgbVector[] projects = o.projectPlaneThruVIfPossible(getCurrentPlane(), view3D.getViewDirection());
 		GgbVector project = projects[0];
 		
 		
@@ -507,6 +504,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		//point.setEuclidianVisible(false);
 		
 		view3D.addToHits3D((GeoElement) ret);
+		
+
+		setMovedGeoPoint(point3D);
 
 		return ret;
 	

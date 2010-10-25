@@ -152,38 +152,6 @@ public abstract class GeoElement3D
 	
 	
 	
-	// GeoElement3D types 
-	/** id for {@link GeoPoint3D} */
-	public static final int GEO_CLASS_POINT3D = 3010;
-	/** id for {@link GeoVector3D} */
-	public static final int GEO_CLASS_VECTOR3D = 3011;
-	/** id for {@link GeoSegment3D} */
-	public static final int GEO_CLASS_SEGMENT3D = 3110;
-	/** id for {@link GeoLine3D} */
-	public static final int GEO_CLASS_LINE3D = 3120;
-	/** id for {@link GeoRay3D} */
-	public static final int GEO_CLASS_RAY3D = 3121;
-	/** id for {@link GeoConic3D} */
-	public static final int GEO_CLASS_CONIC3D = 3122;
-	/** id for {@link GeoAxis3D} */
-	public static final int GEO_CLASS_AXIS3D = 3123;
-	/** id for {@link GeoCurveCartesian3D} */
-	public static final int GEO_CLASS_CURVECARTESIAN3D = 3124;
-
-
-
-	/** id for {@link GeoPolygon3D} */
-	public static final int GEO_CLASS_POLYGON3D = 3211;
-	/** id for {@link GeoPlane3D} */
-	public static final int GEO_CLASS_PLANE3D = 3220;
-	/** id for {@link GeoQuadric3D} */
-	public static final int GEO_CLASS_QUADRIC = 3230;
-
-	
-	
-	/** id for {@link GeoPolyhedron} */
-	public static final int GEO_CLASS_POLYHEDRON = 3310;
-
 
 	
 	/********************************************************/

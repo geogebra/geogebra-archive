@@ -2681,8 +2681,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				xRW = p.inhomX;
 				yRW = p.inhomY;
 			} else if (geo.isGeoPoint()) {
-				xRW = ((GeoPoint)geo).inhomX;
-				yRW = ((GeoPoint)geo).inhomY;
+				GgbVector coords = ((GeoPointND) geo).getInhomCoordsInD(2);
+				xRW = coords.getX();
+				yRW = coords.getY();
 			} else transformCoords(); // grid lock
 		} else transformCoords(); // grid lock
 	}

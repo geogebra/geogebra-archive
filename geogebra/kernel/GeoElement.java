@@ -299,6 +299,25 @@ public abstract class GeoElement
 	public static final int GEO_CLASS_FUNCTION_NVAR = 25;
 	public static final int GEO_CLASS_POLYLINE = 26;
 	public static final int GEO_CLASS_LINEAR_INEQUALITY = 27;
+
+	// 3D types 
+	public static final int GEO_CLASS_POINT3D = 3010;
+	public static final int GEO_CLASS_VECTOR3D = 3011;
+	public static final int GEO_CLASS_SEGMENT3D = 3110;
+	public static final int GEO_CLASS_LINE3D = 3120;
+	public static final int GEO_CLASS_RAY3D = 3121;
+	public static final int GEO_CLASS_CONIC3D = 3122;
+	public static final int GEO_CLASS_AXIS3D = 3123;
+	public static final int GEO_CLASS_CURVECARTESIAN3D = 3124;
+
+	public static final int GEO_CLASS_POLYGON3D = 3211;
+	public static final int GEO_CLASS_PLANE3D = 3220;
+	public static final int GEO_CLASS_QUADRIC = 3230;
+	
+	public static final int GEO_CLASS_POLYHEDRON = 3310;
+
+	
+	
 	
 	
 	public static final int LABEL_NAME = 0;
