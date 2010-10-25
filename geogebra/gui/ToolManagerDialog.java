@@ -200,7 +200,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			toolList.setCellRenderer(new MacroCellRenderer());
 			toolList.setVisibleRowCount(6);
 			
-			JPanel centerPanel = ToolCreationDialog.createListUpDownRemovePanel(app, toolList, null, false, true, false);
+			JPanel centerPanel = ToolCreationDialog.createListUpDownRemovePanel(app, toolList, null, false, true, false, null);
 													
 			//JScrollPane jScrollPane1 = new JScrollPane(toolList);
 			//jScrollPane1.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED ));

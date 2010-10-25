@@ -50,6 +50,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataListener;
 
+import org.mozilla.javascript.ContextFactory.Listener;
+
 
 /**
  * Dialog to create a new user defined tool
@@ -388,8 +390,8 @@ implements GeoElementSelectionListener {
 			getContentPane().add(navPanel, BorderLayout.SOUTH);									
 							
 			// output and input panel
-			JPanel outputPanel = createInputOutputPanel(app, outputList, cbOutputAddList, true, false);
-			JPanel inputPanel = createInputOutputPanel(app, inputList, cbInputAddList, true, false);
+			JPanel outputPanel = createInputOutputPanel(app, outputList, cbOutputAddList, true, false, null);
+			JPanel inputPanel = createInputOutputPanel(app, inputList, cbInputAddList, true, false, null);
 			
 			tabbedPane.addTab(app.getMenu("OutputObjects"), null, outputPanel, null);
 			tabbedPane.addTab(app.getMenu("InputObjects"), null, inputPanel, null);															
@@ -508,7 +510,7 @@ implements GeoElementSelectionListener {
 	 */
 	public static JPanel createInputOutputPanel(Application app, 
 			final DefaultListModel listModel, final DefaultComboBoxModel cbModel,
-			boolean showUpDownButtons, boolean allowMultiple) 
+			boolean showUpDownButtons, boolean allowMultiple, ActionListener listener) 
 	{		
 		
 		JPanel panel = new JPanel(new BorderLayout(5, 5));		
@@ -540,11 +542,12 @@ implements GeoElementSelectionListener {
 			}
 		};
 		cbAdd.addActionListener(ac);
+		if (listener != null) cbAdd.addActionListener(listener);
 		cbAdd.addMouseListener(ac);
 		
 		// list to show selected geos
 		JList list = new JList(listModel);												
-		panel.add(createListUpDownRemovePanel(app, list, cbAdd, true, showUpDownButtons, allowMultiple), BorderLayout.CENTER);			
+		panel.add(createListUpDownRemovePanel(app, list, cbAdd, true, showUpDownButtons, allowMultiple, listener), BorderLayout.CENTER);			
 		
 		// renderer to show long description of geos in list and combobox
 		MyCellRenderer rend = new MyCellRenderer();
@@ -565,7 +568,7 @@ implements GeoElementSelectionListener {
 	 * @return Panel with the list, buttons and comboBox
 	 */
 	public static JPanel createListUpDownRemovePanel(Application app, final JList list, final JComboBox cbAdd, 
-			boolean showRemoveButton, boolean showUpDownButtons, final boolean allowMultiple) {
+			boolean showRemoveButton, boolean showUpDownButtons, final boolean allowMultiple, ActionListener listener) {
 		JPanel centerPanel = new JPanel(new BorderLayout(5,5));
 		
 		JPanel listPanel = new JPanel(new BorderLayout(5,3));
@@ -638,16 +641,18 @@ implements GeoElementSelectionListener {
 						if (cbAdd != null) {
 							DefaultComboBoxModel cbModel = (DefaultComboBoxModel) cbAdd.getModel();
 							
-							//	take from list and insert sorted into add-combobox
-							GeoElement geo = (GeoElement) listModel.elementAt(selIndices[i]);
-							int k=0;
-							for (; k < cbModel.getSize(); k++) {
-								GeoElement cbGeo = (GeoElement) cbModel.getElementAt(k);
-								if (comparator.compare(geo, cbGeo) <= 0) {									
-									break;
-								}									
+							if (!allowMultiple) {
+								//	take from list and insert sorted into add-combobox
+								GeoElement geo = (GeoElement) listModel.elementAt(selIndices[i]);
+								int k=0;
+								for (; k < cbModel.getSize(); k++) {
+									GeoElement cbGeo = (GeoElement) cbModel.getElementAt(k);
+									if (comparator.compare(geo, cbGeo) <= 0) {									
+										break;
+									}									
+								}
+								cbModel.insertElementAt(geo, k);
 							}
-							if (!allowMultiple) cbModel.insertElementAt(geo, k);
 						}
 						
 						// remove from list
@@ -659,6 +664,15 @@ implements GeoElementSelectionListener {
 		btUp.addActionListener(ac);
 		btDown.addActionListener(ac);
 		btRemove.addActionListener(ac);
+		
+		if (listener != null) {
+			btRemove.addActionListener(listener);
+			btUp.addActionListener(listener);
+			btDown.addActionListener(listener);
+			DefaultListModel listModel = (DefaultListModel) list.getModel();
+			listModel.addListDataListener((ListDataListener)listener);
+		}
+
 		
 		return centerPanel;
 	}

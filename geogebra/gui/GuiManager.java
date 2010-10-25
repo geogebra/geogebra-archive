@@ -2318,10 +2318,18 @@ public class GuiManager {
 
 
 	/**
-	 * Creates a new text at given startPoint
+	 * Creates a new checkbox at given startPoint
 	 */
 	public void showBooleanCheckboxCreationDialog(Point loc, GeoBoolean bool) {
 		CheckboxCreationDialog d = new CheckboxCreationDialog(app, loc, bool);
+		d.setVisible(true);
+	}
+
+	/**
+	 * Creates a new dynamic text at given startPoint
+	 */
+	public void showDynamicTextCreationDialog(GeoPoint loc) {
+		DynamicTextCreationDialog d = new DynamicTextCreationDialog(app, loc);
 		d.setVisible(true);
 	}
 

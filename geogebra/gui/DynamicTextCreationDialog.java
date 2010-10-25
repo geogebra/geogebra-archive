@@ -14,14 +14,15 @@ package geogebra.gui;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.view.algebra.InputPanel;
+import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -38,6 +39,9 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -45,24 +49,25 @@ import javax.swing.text.JTextComponent;
  * visibility of a list of objects.
  */
 public class DynamicTextCreationDialog extends JDialog 
-implements WindowFocusListener, ActionListener, GeoElementSelectionListener, KeyListener {
+implements WindowFocusListener, ActionListener, GeoElementSelectionListener, KeyListener, ListDataListener {
 	
 	private static final long serialVersionUID = 1L;
 
-	private JTextComponent tfCaption;
-	private JButton btApply, btCancel;
+	private JTextComponent tfFreeText;
+	private JButton btApply, btCancel, btAdd;
 	private JPanel optionPane, btPanel;
+	private JLabel previewLabel;
 	private DefaultListModel listModel;
 	private DefaultComboBoxModel comboModel;
 	
-	private Point location;
+	private GeoPoint location;
 	private Application app;
 	private GeoText geoText;
 	
 	/**
 	 * Dialog to create a Dynamic Text
 	 */
-	public DynamicTextCreationDialog(Application app, Point location) {	
+	public DynamicTextCreationDialog(Application app, GeoPoint location) {	
 		super(app.getFrame(), false);
 		this.app = app;
 		this.location = location;
@@ -122,26 +127,45 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener, Key
 		setResizable(false);		
 		
 		// create caption panel
-		JLabel captionLabel = new JLabel(app.getMenu("FreeText")+":");
+		JLabel freeTextLabel = new JLabel(app.getMenu("FreeText")+":");
 		String initString = geoText == null ? "" : geoText.getCaption();
 		InputPanel ip = new InputPanel(initString, app, 1, 15, true, true, true, this);				
-		tfCaption = ip.getTextComponent();
-		if (tfCaption instanceof AutoCompleteTextField) {
-			AutoCompleteTextField atf = (AutoCompleteTextField) tfCaption;
+		tfFreeText = ip.getTextComponent();
+		if (tfFreeText instanceof AutoCompleteTextField) {
+			AutoCompleteTextField atf = (AutoCompleteTextField) tfFreeText;
 			atf.setAutoComplete(false);
 		}
 		
-		captionLabel.setLabelFor(tfCaption);
+		freeTextLabel.setLabelFor(tfFreeText);
 		JPanel captionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		captionPanel.add(captionLabel);
+		captionPanel.add(freeTextLabel);
 		captionPanel.add(ip);
+		
+		btAdd = new JButton(app.getMenu("Add"));
+		btAdd.addActionListener(this);		
+		captionPanel.add(btAdd);
 		
 		// list panel
 		JPanel listPanel = ToolCreationDialog.
-			createInputOutputPanel(app, listModel, comboModel, false, true);
+			createInputOutputPanel(app, listModel, comboModel, true, true, this);
+		
+		JPanel previewPanel = new JPanel();
+			
+		previewPanel.setBorder(
+			BorderFactory.createTitledBorder(
+					app.getMenu("Preview")
+				)
+			);
+		
+		previewLabel = new JLabel(" ");
+		previewPanel.add(previewLabel);
+
+		JPanel centerPanel = new JPanel(new BorderLayout(5,10));
+		centerPanel.add(listPanel, BorderLayout.NORTH);
+		centerPanel.add(previewPanel, BorderLayout.SOUTH);
 		
 		// buttons
-		btApply = new JButton(app.getPlain("CreateText"));
+		btApply = new JButton(app.getMenu("CreateText"));
 		btApply.setActionCommand("CreateText");
 		btApply.addActionListener(this);
 		btCancel = new JButton(app.getPlain("Cancel"));
@@ -150,13 +174,14 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener, Key
 		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		btPanel.add(btApply);
 		btPanel.add(btCancel);
+		
 			
 		//Create the JOptionPane.
 		optionPane = new JPanel(new BorderLayout(5,5));
 		
 		// create object list
 		optionPane.add(captionPanel, BorderLayout.NORTH);
-		optionPane.add(listPanel, BorderLayout.CENTER);	
+		optionPane.add(centerPanel, BorderLayout.CENTER);	
 		optionPane.add(btPanel, BorderLayout.SOUTH);	
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
@@ -175,46 +200,24 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener, Key
 			apply();
 			setVisible(false);
 		}
+		else if (src == btAdd) {
+			addFreeText();
+		}
+		else updatePreview(); // object added
 	}
 	
 	private void apply() {
-		// 	create new GeoBoolean
-		//if (geoText == null) {
-		//	geoText = new GeoBoolean(app.getKernel().getConstruction());				
-		//	geoText.setAbsoluteScreenLoc(location.x, location.y);
-		//	geoText.setLabel(null);	
-		//}
-
 		
-		StringBuilder text = new StringBuilder();
-		text.append("\"\""); // means we can just start all with +
-		
-		// set visibility condition for all GeoElements in list
-			for (int i=0; i < listModel.size(); i++) {
-				Object obj = listModel.get(i);
-				
-				if (obj instanceof String) {
-					text.append("+\"");
-					text.append((String)obj);
-					text.append('\"');
-				} else if (obj instanceof GeoElement) {
-					text.append('+');
-					text.append(((GeoElement)obj).getLabel());
-				}
-				
-			}
 			
-			geoText = app.getKernel().getAlgebraProcessor().evaluateToText(text.toString(), true);
+			geoText = app.getKernel().getAlgebraProcessor().evaluateToText(getText(true), true);
 		
-		// set caption text
-		String strCaption = tfCaption.getText().trim();
-		if (strCaption.length() > 0) {
-			geoText.setCaption(strCaption);			
-		}
 		
-		// update boolean (updates visibility of geos from list too)		
-		//geoText.setValue(true);
 		geoText.setEuclidianVisible(true);
+		try {
+			geoText.setStartPoint(location);
+		} catch (CircularDefinitionException e) {
+			e.printStackTrace();
+		}
 		geoText.setLabelVisible(true);
 		geoText.updateRepaint();
 		
@@ -246,25 +249,78 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener, Key
 	}
 
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		//Application.debug(e.getKeyCode());
 	}
 
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		//Application.debug(e.getKeyCode());
+				
 		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-			listModel.addElement(tfCaption.getText());
-			Application.debug(tfCaption.getText());
-			tfCaption.setText("");
+			addFreeText();
 		}
 		
 	}
 
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		//Application.debug(e);
+	}
+	
+	private void addFreeText() {
+		String str = tfFreeText.getText();
 		
+		if (str.length() == 0) return;
+
+		// replace all " by '
+		while (str.indexOf('\"') > -1)
+			str = str.replace('\"', '\'');
+
+		listModel.addElement(str);
+		tfFreeText.setText("");
+		
+		updatePreview();
+		
+	}
+	
+	private void updatePreview() {
+        SwingUtilities.invokeLater( new Runnable(){ public void
+        	run() { previewLabel.setText(getText(false));
+        	} });
+	}
+	
+	private String getText(boolean forDefinition) {
+		StringBuilder text = new StringBuilder();
+		if (forDefinition) text.append("\"\""); // means we can just start all with +
+		
+		// set visibility condition for all GeoElements in list
+			for (int i=0; i < listModel.size(); i++) {
+				Object obj = listModel.get(i);
+				
+				if (obj instanceof String) {
+					if (forDefinition) text.append("+\"");
+					text.append((String)obj);
+					if (forDefinition) text.append('\"');
+				} else if (obj instanceof GeoElement) {
+					if (forDefinition) {
+						text.append('+');
+						text.append(((GeoElement)obj).getLabel());
+					} else {
+						text.append(((GeoElement)obj).toValueString());
+					}
+				}
+				
+			}
+			
+			return text.toString();
+
+	}
+
+	public void intervalAdded(ListDataEvent e) {
+		updatePreview();
+	}
+
+	public void intervalRemoved(ListDataEvent e) {
+		updatePreview();
+	}
+
+	public void contentsChanged(ListDataEvent e) {
+		updatePreview();
 	}
 
 }

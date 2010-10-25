@@ -1063,6 +1063,9 @@ public class Kernel {
 		case EuclidianConstants.MODE_TEXT:
 			return "Text";
 
+		case EuclidianConstants.MODE_DYNAMIC_TEXT:
+			return "DynamicText";
+
 		case EuclidianConstants.MODE_IMAGE:
 			return "Image";
 

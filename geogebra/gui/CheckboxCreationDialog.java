@@ -137,7 +137,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		
 		// list panel
 		JPanel listPanel = ToolCreationDialog.
-			createInputOutputPanel(app, listModel, comboModel, false, false);
+			createInputOutputPanel(app, listModel, comboModel, false, false, null);
 		
 		// buttons
 		btApply = new JButton(app.getPlain("Apply"));
