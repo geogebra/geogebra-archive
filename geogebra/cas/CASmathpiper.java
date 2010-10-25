@@ -33,6 +33,7 @@ public class CASmathpiper extends CASgeneric {
 		if (ggbMathPiper == null) {
 			ggbMathPiper = org.mathpiper.interpreters.Interpreters.newSynchronousInterpreter();
 			initMyMathPiperFunctions();
+			evaluateMathPiper("Factor(42)"); // this solves ticket #320
 			Application.setCASVersionString("MathPiper "+org.mathpiper.Version.version); 
 		}
 		
