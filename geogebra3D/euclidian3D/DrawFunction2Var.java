@@ -158,7 +158,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
 			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-		} else if(oldRadius!=savedRadius)
+		} else if(oldRadius!=savedRadius && mesh != null)
 			mesh.turnOnUpdates();
 	}
 
