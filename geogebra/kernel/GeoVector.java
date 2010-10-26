@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 
 import java.util.HashSet;
@@ -36,7 +37,7 @@ import java.util.Iterator;
  * @version 
  */
 final public class GeoVector extends GeoVec3D
-implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, GeoVectorInterface {
+implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, GeoVectorND {
 
 	/**
 	 * 

@@ -54,7 +54,7 @@ public class CmdPolygon3D extends CmdPolygon {
 				s+=c.getLabels()[i]+", ";
 			Application.debug("labels = "+s);
 			*/
-			return kernel.Polygon3D(c.getLabels(), points);
+			return kernel.getManager3D().Polygon3D(c.getLabels(), points);
 		}
  
 		return super.process(c);

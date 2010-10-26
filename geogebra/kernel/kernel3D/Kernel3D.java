@@ -34,6 +34,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Manager3DInterface;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.Equation;
@@ -159,7 +160,16 @@ public class Kernel3D
     
     
     
+
     
+	/* *******************************************
+	 *  Methods for 3D manager
+	 * ********************************************/
+	
+	protected Manager3DInterface newManager3D(Kernel kernel){
+		return new Manager3D(kernel);
+	}
+
     
 	/* *******************************************
 	 *  Methods for MyXMLHandler
@@ -323,7 +333,7 @@ public class Kernel3D
 			if ((!geo.isFixed()) && (geo.isIndependent())){
 				GeoLine line = (GeoLine) geo;
 				GeoElement[] ret = new GeoElement[1];		
-				ret[0] = Plane3D(null, line.getX(), line.getY(), 0, line.getZ());
+				ret[0] = getManager3D().Plane3D(null, line.getX(), line.getY(), 0, line.getZ());
 				ret[0].remove();
 				return addAlternatives(superRet, ret);
 				

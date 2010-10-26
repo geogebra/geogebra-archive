@@ -12,6 +12,7 @@ import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.commands.CommandDispatcher;
 import geogebra.kernel.kernel3D.GeoPlane3D;
+import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -67,14 +68,14 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 			double y = p[1];
 			double z = p[2];
 			if (isVector)
-				ret[0] = kernel.Vector3D(label, x, y, z);	
+				ret[0] = kernel.getManager3D().Vector3D(label, x, y, z);	
 			else
-				ret[0] = kernel.Point3D(label, x, y, z);			
+				ret[0] = (GeoPoint3D) kernel.getManager3D().Point3D(label, x, y, z);			
 		} else {
 			if (isVector)
-				ret[0] = kernel.DependentVector3D(label, n);
+				ret[0] = kernel.getManager3D().DependentVector3D(label, n);
 			else
-				ret[0] = kernel.DependentPoint3D(label, n);
+				ret[0] = (GeoPoint3D) kernel.getManager3D().DependentPoint3D(label, n);
 		}
 
 		return ret;
@@ -107,10 +108,10 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 			c = lhs.getCoeffValue("z");
 			d = lhs.getCoeffValue("");
 			//Application.debug("TODO: add kernel3D.Plane3D(label, a, b, c, d)");
-			plane = kernel.Plane3D(label, a, b, c, d);
+			plane = (GeoPlane3D) kernel.getManager3D().Plane3D(label, a, b, c, d);
 		} else
 			//Application.debug("TODO: add kernel3D.DependentPlane3D(label, equ)");
-			plane = kernel.DependentPlane3D(label, equ);
+			plane = (GeoPlane3D) kernel.getManager3D().DependentPlane3D(label, equ);
 
 		ret[0] = plane;
 		return ret;

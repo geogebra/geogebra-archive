@@ -46,7 +46,7 @@ public class CmdSegment3D extends CmdSegment {
             			&& (ok[1] = (geo1.isGeoPoint()))) {
             		GeoElement[] ret =
             		{
-            				kernel.Segment3D(
+            				kernel.getManager3D().Segment3D(
             						c.getLabel(),
             						(GeoPointND) geo0,
             						(GeoPointND) geo1)};

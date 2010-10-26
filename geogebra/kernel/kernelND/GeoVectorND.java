@@ -1,6 +1,6 @@
-package geogebra.kernel;
+package geogebra.kernel.kernelND;
 
-import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.CircularDefinitionException;
 
 /**
  * Simple common interface for GeoVector and GeoVector3D
@@ -8,7 +8,7 @@ import geogebra.kernel.kernelND.GeoPointND;
  * @author ggb3D
  *
  */
-public interface GeoVectorInterface {
+public interface GeoVectorND {
 
 	void setLabel(String label);
 

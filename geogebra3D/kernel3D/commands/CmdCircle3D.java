@@ -34,7 +34,7 @@ public class CmdCircle3D extends CmdCircle {
 	    				&& (ok[2] = (arg[2] .isGeoPoint()))) {
 	    			GeoElement[] ret =
 	    			{
-	    					kernel.Circle3D(
+	    					kernel.getManager3D().Circle3D(
 	    							c.getLabel(),
 	    							(GeoPoint3D) arg[0],
 	    							(GeoPoint3D) arg[1],

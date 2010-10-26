@@ -38,43 +38,6 @@ import geogebra.kernel.discrete.AlgoMinimumSpanningTree;
 import geogebra.kernel.discrete.AlgoShortestDistance;
 import geogebra.kernel.discrete.AlgoTravelingSalesman;
 import geogebra.kernel.discrete.AlgoVoronoi;
-import geogebra.kernel.kernel3D.AlgoCircle3DThreePoints;
-import geogebra.kernel.kernel3D.AlgoCone;
-import geogebra.kernel.kernel3D.AlgoCurveCartesian3D;
-import geogebra.kernel.kernel3D.AlgoCylinder;
-import geogebra.kernel.kernel3D.AlgoDependentPlane3D;
-import geogebra.kernel.kernel3D.AlgoDependentPoint3D;
-import geogebra.kernel.kernel3D.AlgoDependentVector3D;
-import geogebra.kernel.kernel3D.AlgoFunctionNVarND;
-import geogebra.kernel.kernel3D.AlgoIntersectCS1D1D;
-import geogebra.kernel.kernel3D.AlgoIntersectCS1D2D;
-import geogebra.kernel.kernel3D.AlgoIntersectCS2D2D;
-import geogebra.kernel.kernel3D.AlgoIntersectCoordSys;
-import geogebra.kernel.kernel3D.AlgoJoinPoints3D;
-import geogebra.kernel.kernel3D.AlgoOrthoPlanePoint;
-import geogebra.kernel.kernel3D.AlgoPlane;
-import geogebra.kernel.kernel3D.AlgoPlaneThroughPoint;
-import geogebra.kernel.kernel3D.AlgoPoint3DInRegion;
-import geogebra.kernel.kernel3D.AlgoPoint3DOnPath;
-import geogebra.kernel.kernel3D.AlgoPolygon3D;
-import geogebra.kernel.kernel3D.AlgoPolyhedron;
-import geogebra.kernel.kernel3D.AlgoSpherePointRadius;
-import geogebra.kernel.kernel3D.AlgoSphereTwoPoints;
-import geogebra.kernel.kernel3D.AlgoVector3D;
-import geogebra.kernel.kernel3D.GeoConic3D;
-import geogebra.kernel.kernel3D.GeoCoordSys;
-import geogebra.kernel.kernel3D.GeoCoordSys1D;
-import geogebra.kernel.kernel3D.GeoCoordSys2D;
-import geogebra.kernel.kernel3D.GeoCurveCartesian3D;
-import geogebra.kernel.kernel3D.GeoElement3D;
-import geogebra.kernel.kernel3D.GeoLine3D;
-import geogebra.kernel.kernel3D.GeoPlane3D;
-import geogebra.kernel.kernel3D.GeoPoint3D;
-import geogebra.kernel.kernel3D.GeoPolyhedron;
-import geogebra.kernel.kernel3D.GeoQuadric3D;
-import geogebra.kernel.kernel3D.GeoRay3D;
-import geogebra.kernel.kernel3D.GeoSegment3D;
-import geogebra.kernel.kernel3D.GeoVector3D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
@@ -307,6 +270,10 @@ public class Kernel {
 	
 	/** Evaluator for ExpressionNode */
 	protected ExpressionNodeEvaluator expressionNodeEvaluator;
+	
+	
+	/** 3D manager */
+	private Manager3DInterface manager3D;
 				
 	public Kernel(Application app) {
 		this();
@@ -314,6 +281,32 @@ public class Kernel {
 		
 		newConstruction();
 		getExpressionNodeEvaluator();
+		
+		setManager3D(newManager3D(this));
+	}
+	
+	
+	/**
+	 * @param kernel
+	 * @return a new 3D manager
+	 */
+	protected Manager3DInterface newManager3D(Kernel kernel){
+		return null;
+	}
+	
+	/**
+	 * sets the 3D manager
+	 * @param manager
+	 */
+	public void setManager3D(Manager3DInterface manager){
+		this.manager3D = manager;
+	}
+	
+	/**
+	 * @return the 3D manager of this
+	 */
+	public Manager3DInterface getManager3D(){
+		return manager3D;
 	}
 	
 	/**
@@ -1601,7 +1594,7 @@ public class Kernel {
 		notifyRenameListenerAlgos();
 	}
 
-	protected final void notifyUpdate(GeoElement geo) {
+	public final void notifyUpdate(GeoElement geo) {
 		if (notifyViewsActive) {
 			for (int i = 0; i < viewCnt; ++i) {
 				views[i].update(geo);
@@ -7628,454 +7621,6 @@ public class Kernel {
 		return geo.getAlternatives();
 	}
 	
-/** Point3D label with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3D(String label, double x, double y, double z) {
-		GeoPoint3D p = new GeoPoint3D(cons);
-		p.setCoords(x, y, z, 1.0);
-		p.setLabel(label); // invokes add()        
-		
-
-		return p;
-	}
-	
-	/** Point dependent on arithmetic expression with variables,
-	 * represented by a tree. e.g. P = (4t, 2s)
-	 */
-	final public GeoPoint3D DependentPoint3D(
-			String label,
-			ExpressionNode root) {
-			AlgoDependentPoint3D algo = new AlgoDependentPoint3D(cons, label, root);
-			GeoPoint3D P = algo.getPoint3D();
-			return P;
-		}
-
-	final public GeoVector3D DependentVector3D(
-			String label,
-			ExpressionNode root) {
-			AlgoDependentVector3D algo = new AlgoDependentVector3D(cons, label, root);
-			GeoVector3D P = algo.getVector3D();
-			return P;
-		}
-
-	final public GeoVector3D Vector3D(String label, double x, double y, double z) {
-		GeoVector3D v = new GeoVector3D(cons, x, y, z);
-		v.setLabel(label); // invokes add()                
-		return v;
-	}
-	
-	/** 
-	 * Vector named label from Point P to Q
-	 */
-	final public GeoVector3D Vector3D(
-		String label,
-		GeoPointND P,
-		GeoPointND Q) {
-		AlgoVector3D algo = new AlgoVector3D(cons, label, P, Q);
-		GeoVector3D v = (GeoVector3D) algo.getVector();
-		v.setEuclidianVisible(true);
-		v.update();
-		notifyUpdate(v);
-		return v;
-	}
-	
-	
-	/** Point in region with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3DIn(String label, Region region, double x, double y, double z) {
-		//Application.debug("Point3DIn - \n x="+x+"\n y="+y+"\n z="+z);
-		AlgoPoint3DInRegion algo = new AlgoPoint3DInRegion(cons, label, region, x, y, z);
-		GeoPoint3D p = algo.getP();    
-		return p;
-	}
-	
-	/** Point in region */
-	final public GeoPoint3D Point3DIn(String label, Region region) {  
-		return Point3DIn(label,region,0,0,0); //TODO do as for paths
-	}	
-	
-	
-	
-	
-	/** Point3D on a 1D path with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3D(String label, Path path, double x, double y, double z) {
-		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, x, y, z);
-		GeoPoint3D p = algo.getP();		
-		//p.setLabel(label);
-		//p.setObjColor(ConstructionDefaults.colPathPoint);
-		return p;
-	}	
-	
-	/** Point3D on a 1D path without cartesian coordinates   */
-	final public GeoPoint3D Point3D(String label, Path path) {
-		// try (0,0,0)
-		//AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, 0, 0, 0);
-		//GeoPoint3D p = algo.getP(); 
-		GeoPoint3D p = Point3D(label,path,0,0,0);
-			
-		/* TODO below
-		// try (1,0,0) 
-		if (!p.isDefined()) {
-			p.setCoords(1,0,1);
-			algo.update();
-		}
-		
-		// try (random(),0)
-		if (!p.isDefined()) {
-			p.setCoords(Math.random(),0,1);
-			algo.update();
-		}
-		*/
-
-
-		return p;
-	}	
-	
-	
-	/** Segment3D label linking points v1 and v2   */
-	/*
-	final public GeoSegment3D Segment3D(String label, Ggb3DVector v1, Ggb3DVector v2){
-		GeoSegment3D s = new GeoSegment3D(cons,v1,v2);
-		s.setLabel(label);
-		return s;
-	}
-	*/
-	
-	/** Segment3D label linking points P1 and P2   */
-	final public GeoSegment3D Segment3D(String label, GeoPointND P1, GeoPointND P2){
-		AlgoJoinPoints3D algo = new AlgoJoinPoints3D(cons, label, P1, P2, GeoElement3D.GEO_CLASS_SEGMENT3D);
-		GeoSegment3D s = (GeoSegment3D) algo.getCS();
-		return s;
-	}	
-	
-	
-	/** Line3D label linking points P1 and P2   */	
-	final public GeoLine3D Line3D(String label, GeoPointND P1, GeoPointND P2){
-		AlgoJoinPoints3D algo = new AlgoJoinPoints3D(cons, label, P1, P2, GeoElement3D.GEO_CLASS_LINE3D);
-		GeoLine3D l = (GeoLine3D) algo.getCS();
-		return l;
-	}	
-	
-	
-	/** Ray3D label linking points P1 and P2   */	
-	final public GeoRay3D Ray3D(String label, GeoPointND P1, GeoPointND P2){
-		//Application.debug("Kernel3D : Ray3D");
-		//AlgoJoinPointsRay3D algo = new AlgoJoinPointsRay3D(cons, label, P1, P2);
-		//GeoRay3D l = algo.getRay3D();
-		AlgoJoinPoints3D algo = new AlgoJoinPoints3D(cons, label, P1, P2, GeoElement3D.GEO_CLASS_RAY3D);
-		GeoRay3D l = (GeoRay3D) algo.getCS();
-		return l;
-	}	
-	
-
-
-	
-	/** Polygon3D linking points P1, P2, ...  
-	 * @param label name of the polygon
-	 * @param points vertices of the polygon
-	 * @return the polygon */
-    final public GeoElement [] Polygon3D(String[] label, GeoPoint3D[] points){
-		
-    	
-    	AlgoPolygon3D algo = new AlgoPolygon3D(cons,label,points,null);
-    	
-    	return algo.getOutput();
-		
-	}	
-	
-    /** Polyhedron with vertices and faces description
-     * @param label name
-     * @param faces faces description
-     * @return the polyhedron
-     */
-    final public GeoElement[] Polyhedron(String[] labels, GeoList faces){
-		
-    	
-    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,faces);
-    	
-    	return algo.getOutput();
-		
-	}	
-    
-    /** Prism with vertices (last one is first vertex of second parallel face)
-     * @param label name
-     * @param points vertices
-     * @return the polyhedron
-     */
-    final public GeoElement [] Prism(String[] labels, GeoPoint3D[] points){
-		
-    	
-    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,points,GeoPolyhedron.TYPE_PRISM);
-    	
-    	return algo.getOutput();
-		
-	}	
-    
-    /** Pyramid with vertices (last one as apex)
-     * @param label name
-     * @param points vertices
-     * @return the polyhedron
-     */
-    final public GeoElement [] Pyramid(String[] labels, GeoPoint3D[] points){
-		    	
-    	AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,points, GeoPolyhedron.TYPE_PYRAMID);
-    	
-    	return algo.getOutput();
-		
-	}
-	
-
-    
-	/** Line a x + b y + c z + d = 0 named label */
-	final public GeoPlane3D Plane3D(
-		String label,
-		double a,
-		double b,
-		double c,
-		double d) {
-		GeoPlane3D plane = new GeoPlane3D(cons, label, a, b, c, d);
-		return plane;
-	}
-	
-	
-	/** Line dependent on coefficients of arithmetic expressions with variables,
-	 * represented by trees.
-	 */
-	final public GeoPlane3D DependentPlane3D(String label, Equation equ) {
-		AlgoDependentPlane3D algo = new AlgoDependentPlane3D(cons, label, equ);
-		return algo.getPlane();
-	}
-	
-	/** 
-	* Plane named label through Point point parallel to plane pIn
-	*/
-	final public GeoPlane3D Plane3D(String label, GeoPoint3D point, GeoCoordSys cs) {
-		AlgoPlaneThroughPoint algo = new AlgoPlaneThroughPoint(cons, label, point, cs);
-		return algo.getPlane();
-	}
-	
-	
-	
-	/** 
-	 * Line named label through Point P orthogonal to line l
-	 */
-	final public GeoPlane3D OrthogonalPlane3D(
-		String label,
-		GeoPoint3D point,
-		GeoCoordSys cs) {
-		
-		return new AlgoOrthoPlanePoint(cons, label, point, cs).getPlane();
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-	/** Axis3D label linking with (o,v) coord sys   */
-	/*
-	final public GeoAxis3D Axis3D(String label, Ggb3DVector o, Ggb3DVector v){
-		GeoAxis3D a=new GeoAxis3D(cons,o,v);
-		a.setLabel(label);
-		return a;
-	}	
-	*/
-	
-	
-	/** Sphere label linking with center o and radius r   */
-	final public GeoQuadric3D Sphere(
-			String label, 
-			GeoPoint3D M, 
-			NumberValue r){
-		AlgoSpherePointRadius algo = new AlgoSpherePointRadius(cons, label, M, r);
-		return algo.getSphere();
-	}	
-	
-	/** 
-	 * Sphere with midpoint M through point P
-	 */
-	final public GeoQuadric3D Sphere(String label, GeoPoint3D M, GeoPoint3D P) {
-		AlgoSphereTwoPoints algo = new AlgoSphereTwoPoints(cons, label, M, P);
-		return algo.getSphere();
-	}
-
-
-	/** 
-	 * Cone
-	 */
-	final public GeoQuadric3D Cone(String label, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {
-		AlgoCone algo = new AlgoCone(cons, label, origin, direction, r);
-		return algo.getQuadric();
-	}
-	
-	
-
-	/** 
-	 * Cylinder
-	 */
-	final public GeoQuadric3D Cylinder(String label, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {
-		AlgoCylinder algo = new AlgoCylinder(cons, label, origin, direction, r);
-		return algo.getQuadric();
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	/** 
-	 * circle through points A, B, C
-	 */
-	final public GeoConic3D Circle3D(
-		String label,
-		GeoPoint3D A,
-		GeoPoint3D B,
-		GeoPoint3D C) {
-		AlgoCircleThreePoints algo = new AlgoCircle3DThreePoints(cons, label, A, B, C);
-		GeoConic3D circle = (GeoConic3D) algo.getCircle();
-		//circle.setToSpecific();
-		circle.update();
-		notifyUpdate(circle);
-		return circle;
-	}
-	
-	
-	
-	/** 
-	 * plane through points A, B, C
-	 */
-	final public GeoPlane3D Plane3D(
-		String label,
-		GeoPoint3D A,
-		GeoPoint3D B,
-		GeoPoint3D C) {
-		AlgoPlane algo = new AlgoPlane(cons, label, A,B,C);
-		GeoPlane3D plane = (GeoPlane3D) algo.getCoordSys();
-		return plane;
-	}
-	
-	
-	
-	
-	////////////////////////////////////////////////
-	// INTERSECTION (POINTS)
-	
-	
-	/** Calculate the intersection of two coord sys (eg line and plane).
-	 * @param label name of the point
-	 * @param cs1 first coord sys
-	 * @param cs2 second coord sys
-	 * @return point intersection
-	 */
-	final public GeoPoint3D Intersect(
-			String label,
-			GeoCoordSys cs1,
-			GeoCoordSys cs2) {
-		
-		AlgoIntersectCoordSys algo = null;
-		
-		if (cs1 instanceof GeoCoordSys1D){
-    		if (cs2 instanceof GeoCoordSys1D)
-    			algo = new AlgoIntersectCS1D1D(cons,label,
-    					(GeoCoordSys1D) cs1,(GeoCoordSys1D) cs2);
-    		else if (cs2 instanceof GeoCoordSys2D)
-    			algo = new AlgoIntersectCS1D2D(cons,label, 
-    					(GeoCoordSys1D) cs1, (GeoCoordSys2D) cs2);
-    	}else if (cs1 instanceof GeoCoordSys2D){
-    		if (cs2 instanceof GeoCoordSys1D)
-    			algo = new AlgoIntersectCS1D2D(cons,label, 
-    					(GeoCoordSys2D) cs1, (GeoCoordSys1D) cs2);
-    	}
-		
-		GeoPoint3D p = (GeoPoint3D) algo.getIntersection();
-		return p;
-	}
-	
-	/** Calculate the intersection of two 2D coord sys (eg two planes).
-	 * @param label name of the point
-	 * @param cs1 first coord sys
-	 * @param cs2 second coord sys
-	 * @return intersection
-	 */
-	final public GeoLine3D Intersect(
-			String label,
-			GeoCoordSys2D cs1,
-			GeoCoordSys2D cs2) {
-		
-		AlgoIntersectCoordSys algo = new AlgoIntersectCS2D2D(cons,label, cs1, cs2);
-		
-		GeoLine3D l = (GeoLine3D) algo.getIntersection();
-		return l;
-	}
-	
-	
-	////////////////////////////////////////////////
-	// FUNCTIONS (2 VARS)
-	
-	final public GeoFunctionNVar Function2Var(
-			String label, 
-			NumberValue zcoord, 
-			GeoNumeric localVarU, NumberValue Ufrom, NumberValue Uto, 
-			GeoNumeric localVarV, NumberValue Vfrom, NumberValue Vto 
-			){
-		
-		AlgoFunctionNVarND algo = new AlgoFunctionNVarND(cons, label, 
-				new NumberValue[] {zcoord}, 
-				new GeoNumeric[] {localVarU, localVarV},
-				new NumberValue[] {Ufrom, Vfrom}, 
-				new NumberValue[] {Uto, Vto}
-		);
-		
-		
-		return algo.getFunction();
-		
-	}
-	
-	final public GeoFunctionNVar Function2Var(
-			String label, 
-			GeoFunctionNVar f, 
-			NumberValue xFrom, NumberValue xTo, 
-			NumberValue yFrom, NumberValue yTo 		
-			){
-		
-		AlgoFunctionNVarND algo = new AlgoFunctionNVarND(cons, label, 
-				f, 
-				new NumberValue[] {xFrom, yFrom}, 
-				new NumberValue[] {xTo, yTo});
-		
-		
-		return algo.getFunction();
-		
-	}
-
-
-	////////////////////////////////////////////////
-	// 3D CURVE (2 VARS)
-	
-	/** 
-	 * 3D Cartesian curve command:
- 	 * Curve[ <expression x-coord>, <expression y-coord>,  <expression z-coord>, <number-var>, <from>, <to> ]  
-	 */
-	final public GeoCurveCartesian3D CurveCartesian3D(String label, 
-			NumberValue xcoord, NumberValue ycoord, NumberValue zcoord, 
-			GeoNumeric localVar, NumberValue from, NumberValue to) 
-	{									
-		AlgoCurveCartesian3D algo = new AlgoCurveCartesian3D(cons, label, 
-				new NumberValue[] {xcoord, ycoord, zcoord} , localVar, from, to);
-		return (GeoCurveCartesian3D) algo.getCurve();		
-	}	
-	
 	
 	
 	
@@ -8106,6 +7651,12 @@ public class Kernel {
 		AlgoIsInRegion algo = new AlgoIsInRegion(cons,label,pi,region);
 		return algo.getResult();
 	}
+	
+	
+	
+	
+	
+	
 
 	
 }

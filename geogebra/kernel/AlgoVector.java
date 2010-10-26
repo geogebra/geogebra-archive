@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 
 
@@ -33,7 +34,7 @@ public class AlgoVector extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoPointND P, Q;   // input
-    private GeoVectorInterface  v;     // output     
+    private GeoVectorND  v;     // output     
         
     /** Creates new AlgoVector */  
     protected AlgoVector(Construction cons, String label, GeoPointND P, GeoPointND Q) {
@@ -66,7 +67,7 @@ public class AlgoVector extends AlgoElement {
     
     
     
-    protected GeoVectorInterface createNewVector(){
+    protected GeoVectorND createNewVector(){
     	
     	return new GeoVector(cons);
     	
@@ -100,7 +101,7 @@ public class AlgoVector extends AlgoElement {
         setDependencies(); // done by AlgoElement
     }           
     
-    public GeoVectorInterface getVector() { return v; }
+    public GeoVectorND getVector() { return v; }
     public GeoPointND getP() { return P; }
     public GeoPointND getQ() { return Q; }
     

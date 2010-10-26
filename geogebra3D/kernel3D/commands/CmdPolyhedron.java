@@ -37,7 +37,7 @@ public class CmdPolyhedron extends CommandProcessor {
 		else if (!(arg[0].isGeoList()))
 			throw argErr(app, c.getName(), arg[0]);
 		else 
-			return kernel.Polyhedron(c.getLabels(), (GeoList) arg[0]);
+			return kernel.getManager3D().Polyhedron(c.getLabels(), (GeoList) arg[0]);
 
 		
 

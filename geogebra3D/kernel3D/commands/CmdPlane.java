@@ -36,10 +36,10 @@ public class CmdPlane extends CommandProcessor {
 	    	) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel.Plane3D(
+	    				kernel.getManager3D().Plane3D(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
-	    						(GeoCoordSys) arg[1])};
+	    						(GeoElement) arg[1])};
 	    		return ret;
 	    	}else{
 	    		if (!ok[0])
@@ -55,7 +55,7 @@ public class CmdPlane extends CommandProcessor {
 	    			&& (ok[2] = (arg[2] .isGeoPoint() && arg[2].isGeoElement3D() ))) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel.Plane3D(
+	    				kernel.getManager3D().Plane3D(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
 	    						(GeoPoint3D) arg[1],

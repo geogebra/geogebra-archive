@@ -40,7 +40,7 @@ public class CmdCone extends CommandProcessor {
 	    	) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel.Cone(
+	    				kernel.getManager3D().Cone(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
 	    						(GeoVector3D) arg[1],

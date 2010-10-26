@@ -44,7 +44,7 @@ public class CmdPrism extends CommandProcessor {
             }
         }
         // everything ok
-        return kernel.Prism(c.getLabels(), points);
+        return kernel.getManager3D().Prism(c.getLabels(), points);
 		
 		
 

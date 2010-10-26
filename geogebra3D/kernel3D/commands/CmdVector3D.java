@@ -45,7 +45,7 @@ public class CmdVector3D extends CmdVector {
 						&& (ok[1] = (arg[1] .isGeoPoint()))) {
 					GeoElement[] ret =
 					{
-							kernel.Vector3D(
+							kernel.getManager3D().Vector3D(
 									c.getLabel(),
 									(GeoPointND) arg[0],
 									(GeoPointND) arg[1])};

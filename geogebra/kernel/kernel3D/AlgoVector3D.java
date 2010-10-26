@@ -2,8 +2,8 @@ package geogebra.kernel.kernel3D;
 
 import geogebra.kernel.AlgoVector;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoVectorInterface;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 
 
 /**
@@ -26,7 +26,7 @@ public class AlgoVector3D extends AlgoVector {
 	}
 
 
-	protected GeoVectorInterface createNewVector(){
+	protected GeoVectorND createNewVector(){
 
 		return new GeoVector3D(cons);
 

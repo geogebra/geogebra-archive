@@ -126,7 +126,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			for(int i=0;i<numPoints+1;i++)
 				points[i] = a_points[i];
 			for(int i=0;i<numPoints-1;i++){
-				outputPoints[i] = ((Kernel3D) kernel).Point3D(null, 0, 0, 0);
+				outputPoints[i] = (GeoPoint3D) kernel.getManager3D().Point3D(null, 0, 0, 0);
 				points[numPoints+1+i] = outputPoints[i];
 			}
 			

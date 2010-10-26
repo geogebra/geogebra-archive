@@ -33,7 +33,7 @@ public class CmdSphere3D extends CommandProcessor {
 	    			&& (ok[1] = ( arg[1] .isNumberValue() ))) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel.Sphere(
+	    				kernel.getManager3D().Sphere(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
 	    						(NumberValue) arg[1])};
@@ -42,7 +42,7 @@ public class CmdSphere3D extends CommandProcessor {
 	    			&& (ok[1] = ( arg[1].isGeoElement3D() && arg[1] .isGeoPoint() ))) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel.Sphere(
+	    				kernel.getManager3D().Sphere(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
 	    						(GeoPoint3D) arg[1])};

@@ -38,10 +38,10 @@ public class CmdOrthogonalPlane extends CommandProcessor {
 	    	) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel.OrthogonalPlane3D(
+	    				kernel.getManager3D().OrthogonalPlane3D(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
-	    						(GeoCoordSys) arg[1])};
+	    						(GeoElement) arg[1])};
 	    		return ret;
 	    	}else{
 	    		if (!ok[0])

@@ -38,7 +38,10 @@ public class MacroKernel extends Kernel  {
 		setAllowVisibilitySideEffects(false);
 		
 		macroCons = new MacroConstruction(this);
-		cons = macroCons;				
+		cons = macroCons;	
+		
+		//does 3D as parentKernel
+		setManager3D(getParentKernel().newManager3D(this));
 	}
 	
 	public final boolean isMacroKernel() {

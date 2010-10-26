@@ -6,11 +6,11 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoVectorInterface;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Locateable;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 
 
@@ -20,7 +20,7 @@ import geogebra.main.Application;
  *
  */
 public class GeoVector3D extends GeoVec4D
-implements GeoVectorInterface, Locateable, Vector3DValue{
+implements GeoVectorND, Locateable, Vector3DValue{
 	
 	
 	private GeoPointND startPoint;

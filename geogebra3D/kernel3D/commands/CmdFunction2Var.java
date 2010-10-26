@@ -51,7 +51,7 @@ public class CmdFunction2Var extends CmdFunction {
 			) {
 				GeoElement[] ret =
 				{
-						kernel.Function2Var(
+						kernel.getManager3D().Function2Var(
 								c.getLabel(),
 								(NumberValue) arg[0],
 								(GeoNumeric) arg[1],
@@ -105,7 +105,7 @@ public class CmdFunction2Var extends CmdFunction {
 			) {
 				GeoElement[] ret =
 				{
-						kernel.Function2Var(
+						kernel.getManager3D().Function2Var(
 								c.getLabel(),
 								(GeoFunctionNVar) arg[0],
 								(NumberValue) arg[1],

@@ -45,7 +45,7 @@ public class CmdLine3D extends CmdLine {
 						&& (ok[1] = (geo1.isGeoPoint()))) {
 					GeoElement[] ret =
 					{
-							kernel.Line3D(
+							kernel.getManager3D().Line3D(
 									c.getLabel(),
 									(GeoPointND) geo0,
 									(GeoPointND) geo1)};

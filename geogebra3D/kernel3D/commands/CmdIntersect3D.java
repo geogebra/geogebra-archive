@@ -39,19 +39,19 @@ public  GeoElement[] process(Command c) throws MyError {
             	if ((arg[0] instanceof GeoCoordSys2D) && (arg[1] instanceof GeoCoordSys2D)){
             		GeoElement[]ret =
                     {
-                         kernel.Intersect(
+            				kernel.getManager3D().Intersect(
                             c.getLabel(),
-                            (GeoCoordSys2D) arg[0],
-                            (GeoCoordSys2D) arg[1])};
+                            (GeoElement) arg[0],
+                            (GeoElement) arg[1])};
             		return ret;
             	}
 
             	GeoElement[] ret =
                     {
-                         kernel.Intersect(
+            			kernel.getManager3D().Intersect(
                             c.getLabel(),
-                            (GeoCoordSys) arg[0],
-                            (GeoCoordSys) arg[1])};
+                            (GeoElement) arg[0],
+                            (GeoElement) arg[1])};
                 return ret;
             }
 

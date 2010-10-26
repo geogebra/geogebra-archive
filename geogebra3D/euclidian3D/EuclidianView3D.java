@@ -277,7 +277,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		//previewables
 		kernel3D.setSilentMode(true);
-		cursor3D = kernel3D.Point3D(null, 1, 1, 0);
+		cursor3D = (GeoPoint3D) kernel3D.getManager3D().Point3D(null, 1, 1, 0);
 		cursor3D.setIsPickable(false);
 		cursor3D.setLabelOffset(5, -5);
 		cursor3D.setEuclidianVisible(false);

@@ -38,7 +38,7 @@ public class CmdCylinder extends CommandProcessor {
 	    	) {
 	    		GeoElement[] ret =
 	    		{
-	    				kernel.Cylinder(
+	    				kernel.getManager3D().Cylinder(
 	    						c.getLabel(),
 	    						(GeoPoint3D) arg[0],
 	    						(GeoVector3D) arg[1],
