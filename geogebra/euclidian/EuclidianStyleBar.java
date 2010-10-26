@@ -42,7 +42,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 	
 	
-	private PopupMenuButton btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnMode, 
+	private PopupMenuButton btnColor, btnBgColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnMode, 
 		btnTableTextJustify, btnTableTextBracket;
 	private PopupMenuButton[] popupBtnList;
 			
@@ -214,11 +214,14 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private void initGUI() {
 		
 		createButtons();
+		createColorButton();
+		createBgColorButton();
 		createTextButtons();
 		
 		add(btnShowAxes);
 		add(btnShowGrid);
 		add(btnColor);
+		add(btnBgColor);
 		add(btnTextColor);
 		add(btnLineStyle);
 		add(btnPointStyle);
@@ -237,7 +240,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		add(btnPenDelete);
 			
 		popupBtnList = new PopupMenuButton[]{
-				btnColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnTableTextJustify, btnTableTextBracket};
+				btnColor, btnBgColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnTableTextJustify, btnTableTextBracket};
 		
 		toggleBtnList = new MyToggleButton[]{
 				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
@@ -346,92 +349,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		//btnShowGrid.setPreferredSize(new Dimension(16,16));
 		btnShowGrid.addActionListener(this);
 		
-		
-		//========================================
-		// object color button  (color for everything except text)
-		
-		btnColor = new PopupMenuButton(ev.getApplication(), colors, -1,8,
-				new Dimension(20,maxIconHeight), SelectionTable.MODE_COLOR_SWATCH) {
-
-			@Override
-			public void update(Object[] geos) {
-
-				if( mode == EuclidianConstants.MODE_PEN){
-					this.setVisible(true);
-					setSelectedIndex(colorMap.get(ec.getPen().getPenColor()));
-					setSliderValue(100);
-					getMySlider().setVisible(false);
-
-				}else{
-					boolean geosOK = (geos.length > 0 || mode == EuclidianConstants.MODE_PEN);
-					for (int i = 0; i < geos.length; i++) {
-						GeoElement geo = (GeoElement)geos[i];
-						if (geo instanceof GeoImage)
-							geosOK = false;
-						break;
-					}
-
-					setVisible(geosOK);
-
-					if(geosOK){
-						Color geoColor;
-						if(geos[0] instanceof TextProperties)
-							geoColor = ((GeoElement) geos[0]).getBackgroundColor();
-						else
-							geoColor = ((GeoElement) geos[0]).getObjectColor();
-						
-						float alpha = 1.0f;
-						boolean hasFillable = false;
-						
-						// check if selection contains a fillable geo
-						// if true, then set slider to first fillable's alpha value
-						for (int i = 0; i < geos.length; i++) {
-							if (((GeoElement) geos[i]).isFillable()) {
-								hasFillable = true;
-								alpha = ((GeoElement) geos[i]).getAlphaValue();
-								break;
-							}
-						}
-						
-						setButton(geoColor, alpha, hasFillable);
-						
-						this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
-					}
-				}
-			}
-			
-			
-			private void setButton(Color color, float alpha, boolean showSlider){
-				
-				//TODO: handle null color properly
-				if (color == null) color = Color.WHITE;
-				
-				int index;
-				// if color is in our table then select it and color the non-standard swatch white
-				if(colorMap.containsKey(color)){
-					colors[colors.length-1] = Color.WHITE;
-					index = colorMap.get(color);
-				}else{		
-					// otherwise show the color in the non-standard swatch
-					colors[colors.length-1] = color;
-					index = colors.length-1;
-				}
-
-				getMyTable().populateModel(colors);					
-				setSelectedIndex(index);
-				
-				setSliderValue(Math.round(alpha * 100));
-				getMySlider().setVisible(showSlider);	
-			}
-		};
-
-		btnColor.getMySlider().setMinimum(0);
-		btnColor.getMySlider().setMaximum(100);
-		btnColor.getMySlider().setMajorTickSpacing(25);
-		btnColor.getMySlider().setMinorTickSpacing(5);
-		btnColor.setSliderValue(50);
-		btnColor.addActionListener(this);
-		
+	
 		
 	
 		//========================================
@@ -577,8 +495,168 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 
 	
-
 	
+	//========================================
+	// object color button  (color for everything except text)
+
+	private void createColorButton(){
+		btnColor = new PopupMenuButton(ev.getApplication(), colors, -1,8,
+				new Dimension(20,maxIconHeight), SelectionTable.MODE_COLOR_SWATCH) {
+
+			@Override
+			public void update(Object[] geos) {
+
+				if( mode == EuclidianConstants.MODE_PEN){
+					this.setVisible(true);
+					setSelectedIndex(colorMap.get(ec.getPen().getPenColor()));
+					setSliderValue(100);
+					getMySlider().setVisible(false);
+
+				}else{
+					boolean geosOK = (geos.length > 0 || mode == EuclidianConstants.MODE_PEN);
+					for (int i = 0; i < geos.length; i++) {
+						GeoElement geo = ((GeoElement)geos[i]).getGeoElementForPropertiesDialog();
+						if (geo instanceof GeoImage || geo instanceof GeoText)
+							geosOK = false;
+						break;
+					}
+
+					setVisible(geosOK);
+
+					if(geosOK){
+						Color geoColor;
+						geoColor = ((GeoElement) geos[0]).getObjectColor();
+
+						float alpha = 1.0f;
+						boolean hasFillable = false;
+
+						// check if selection contains a fillable geo
+						// if true, then set slider to first fillable's alpha value
+						for (int i = 0; i < geos.length; i++) {
+							if (((GeoElement) geos[i]).isFillable()) {
+								hasFillable = true;
+								alpha = ((GeoElement) geos[i]).getAlphaValue();
+								break;
+							}
+						}
+
+						setButton(geoColor, alpha, hasFillable);
+
+						this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
+					}
+				}
+			}
+
+
+			private void setButton(Color color, float alpha, boolean showSlider){
+
+				//TODO: handle null color properly
+				if (color == null) color = Color.WHITE;
+
+				int index;
+				// if color is in our table then select it and color the non-standard swatch white
+				if(colorMap.containsKey(color)){
+					colors[colors.length-1] = Color.WHITE;
+					index = colorMap.get(color);
+				}else{		
+					// otherwise show the color in the non-standard swatch
+					colors[colors.length-1] = color;
+					index = colors.length-1;
+				}
+
+				getMyTable().populateModel(colors);					
+				setSelectedIndex(index);
+
+				setSliderValue(Math.round(alpha * 100));
+				getMySlider().setVisible(showSlider);	
+			}
+		};
+
+		btnColor.getMySlider().setMinimum(0);
+		btnColor.getMySlider().setMaximum(100);
+		btnColor.getMySlider().setMajorTickSpacing(25);
+		btnColor.getMySlider().setMinorTickSpacing(5);
+		btnColor.setSliderValue(50);
+		btnColor.addActionListener(this);
+	}
+
+
+
+
+	private void createBgColorButton(){
+		btnBgColor = new PopupMenuButton(ev.getApplication(), colors, -1,8,
+				new Dimension(20,maxIconHeight), SelectionTable.MODE_COLOR_SWATCH) {
+
+			@Override
+			public void update(Object[] geos) {
+
+				boolean geosOK = (geos.length > 0);
+				for (int i = 0; i < geos.length; i++) {
+					GeoElement geo = ((GeoElement)geos[i]).getGeoElementForPropertiesDialog();
+					if (!(geo instanceof GeoText))
+						geosOK = false;
+					break;
+				}
+
+				setVisible(geosOK);
+
+				if(geosOK){
+					Color geoColor;	
+					geoColor = ((GeoElement) geos[0]).getBackgroundColor();
+
+					float alpha = 1.0f;
+					boolean hasFillable = false;
+
+					// check if selection contains a fillable geo
+					// if true, then set slider to first fillable's alpha value
+					for (int i = 0; i < geos.length; i++) {
+						if (((GeoElement) geos[i]).isFillable()) {
+							hasFillable = true;
+							alpha = ((GeoElement) geos[i]).getAlphaValue();
+							break;
+						}
+					}
+
+					setButton(geoColor, alpha, hasFillable);
+
+					this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
+				}
+			}
+
+
+			private void setButton(Color color, float alpha, boolean showSlider){
+
+				//TODO: handle null color properly
+				if (color == null) color = Color.WHITE;
+
+				int index;
+				// if color is in our table then select it and color the non-standard swatch white
+				if(colorMap.containsKey(color)){
+					colors[colors.length-1] = Color.WHITE;
+					index = colorMap.get(color);
+				}else{		
+					// otherwise show the color in the non-standard swatch
+					colors[colors.length-1] = color;
+					index = colors.length-1;
+				}
+
+				getMyTable().populateModel(colors);					
+				setSelectedIndex(index);
+
+				setSliderValue(Math.round(alpha * 100));
+				getMySlider().setVisible(showSlider);	
+			}
+		};
+
+		btnBgColor.getMySlider().setMinimum(0);
+		btnBgColor.getMySlider().setMaximum(100);
+		btnBgColor.getMySlider().setMajorTickSpacing(25);
+		btnBgColor.getMySlider().setMinorTickSpacing(5);
+		btnBgColor.setSliderValue(50);
+		btnBgColor.addActionListener(this);
+	}
+
+
 	
 
 	//=====================================================
@@ -600,15 +678,16 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				boolean geosOK = (geos.length > 0);
 				for (int i = 0; i < geos.length; i++) {
 					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText()) 
-							|| ((GeoElement)geos[i]) instanceof GeoList ) {
+							 ) {
 						geosOK = false;
 						break;
 					}
 				}
 				setVisible(geosOK);
 				
-				if(geosOK){			
-					Color geoColor = ((GeoElement) geos[0]).getObjectColor();
+				if(geosOK){
+					GeoElement geo = ((GeoElement)geos[0]).getGeoElementForPropertiesDialog(); 
+					Color geoColor = geo.getObjectColor();
 					int index;
 					if(textColorMap.containsKey(geoColor)){
 						textColors[textColors.length-1] = Color.WHITE;
@@ -619,8 +698,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					}
 					btnTextColor.getMyTable().populateModel(textColors);					
 					setSelectedIndex(index);
-					setFgColor(((GeoElement)geos[0]).getObjectColor());
-					setFontStyle(((GeoText)geos[0]).getFontStyle());
+					setFgColor(geoColor);
+					setFontStyle(((GeoText)geo).getFontStyle());
 				}
 			}
 
@@ -982,6 +1061,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				}
 			}
 		}
+		
+		else if (source == btnBgColor) {
+			if(btnColor.getSelectedValue() != null){
+				applyBgColor(targetGeos);
+			}
+		}
+		
 		else if (source == btnTextColor) {
 			if(btnTextColor.getSelectedValue() != null){
 				applyTextColor(targetGeos);
@@ -1102,11 +1188,29 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		float alpha = btnColor.getSliderValue() / 100.0f;
 
 		for (int i = 0 ; i < geos.size() ; i++) {
-			
 			GeoElement geo = geos.get(i);
-			
+			// apply object color to all other geos except images or text
+			if(!(geo.getGeoElementForPropertiesDialog() instanceof GeoImage || geo.getGeoElementForPropertiesDialog() instanceof GeoText))
+				if((geo.getObjectColor() != color || geo.getAlphaValue() != alpha) ){
+					geo.setObjColor(color);
+					geo.setAlphaValue(alpha);
+					geo.updateRepaint();
+					needUndo = true;
+				}
+		}
+	}
+
+
+	private void applyBgColor(ArrayList<GeoElement> geos) {
+
+		Color color = (Color) btnBgColor.getSelectedValue();
+		float alpha = btnBgColor.getSliderValue() / 100.0f;
+
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geo = geos.get(i);
+
 			// if text geo, then apply background color 
-			if(geo instanceof TextProperties){
+			if(geo instanceof TextProperties)
 				if(geo.getBackgroundColor() != color || geo.getAlphaValue() != alpha ){
 					geo.setBackgroundColor(color);
 					// TODO apply background alpha 
@@ -1114,26 +1218,17 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					geo.updateRepaint();
 					needUndo = true;
 				}
-				
-			}else{
-			// otherwise, apply object color to all other geos except images
-				if(!(geo instanceof GeoImage))
-					if((geo.getObjectColor() != color || geo.getAlphaValue() != alpha) ){
-						geo.setObjColor(color);
-						geo.setAlphaValue(alpha);
-						geo.updateRepaint();
-						needUndo = true;
-					}
-			}
 		}
 	}
+
+
 
 	private void applyTextColor(ArrayList<GeoElement> geos) {
 
 		Color color = (Color) btnTextColor.getSelectedValue();
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
-			if(geo.isGeoText() && geo.getObjectColor() != color){
+			if( ((GeoElement)geo.getGeoElementForPropertiesDialog()).isGeoText() && geo.getObjectColor() != color){
 				geo.setObjColor(color);
 				geo.updateRepaint();
 				needUndo = true;
@@ -1246,6 +1341,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		needUndo = false;
 		
 		if(btnColor.isVisible()) applyColor(geos);
+		if(btnBgColor.isVisible()) applyBgColor(geos);
 		if(btnLineStyle.isVisible()) applyLineStyle(geos);
 		if(btnPointStyle.isVisible()) applyPointStyle(geos);
 		if(btnBold.isVisible()) applyTextBold(geos);
