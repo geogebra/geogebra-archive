@@ -998,6 +998,7 @@ public abstract class GeoElement
 		case  GEO_CLASS_LOCUS:
 			typePriority = 130; break;
 		case  GEO_CLASS_POINT:
+		case  GEO_CLASS_POINT3D:
 			typePriority = 140; break;
 		case  GEO_CLASS_TEXT:
 			typePriority = 150; break;
