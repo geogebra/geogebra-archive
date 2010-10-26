@@ -4887,7 +4887,7 @@ class SliderPanel
 			// we don't check isIntervalMinActive, because we want to display the interval even if it's empty
 			if (num0.getIntervalMinObject() == null || temp.getIntervalMinObject() == null || !Kernel.isEqual(num0.getIntervalMin(), temp.getIntervalMin()))
 				equalMin = false;
-			if (num0.getIntervalMinObject() == null || temp.getIntervalMinObject() == null || !Kernel.isEqual(num0.getIntervalMax(), temp.getIntervalMax()))
+			if (num0.getIntervalMaxObject() == null || temp.getIntervalMaxObject() == null || !Kernel.isEqual(num0.getIntervalMax(), temp.getIntervalMax()))
 				equalMax = false;
 			if (!Kernel.isEqual(num0.getSliderWidth(), temp.getSliderWidth()))
 				equalWidth = false;
