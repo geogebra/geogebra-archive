@@ -1102,19 +1102,28 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		float alpha = btnColor.getSliderValue() / 100.0f;
 
 		for (int i = 0 ; i < geos.size() ; i++) {
+			
 			GeoElement geo = geos.get(i);
-			if (!(geo instanceof GeoImage)){
-				if(geo instanceof TextProperties && (geo.getBackgroundColor() != color || geo.getAlphaValue() != alpha )){
+			
+			// if text geo, then apply background color 
+			if(geo instanceof TextProperties){
+				if(geo.getBackgroundColor() != color || geo.getAlphaValue() != alpha ){
 					geo.setBackgroundColor(color);
-					geo.setAlphaValue(alpha);
-					geo.updateRepaint();
-					needUndo = true;
-				}else if(geo.getObjectColor() != color || geo.getAlphaValue() != alpha ){
-					geo.setObjColor(color);
-					geo.setAlphaValue(alpha);
+					// TODO apply background alpha 
+					// --------
 					geo.updateRepaint();
 					needUndo = true;
 				}
+				
+			}else{
+			// otherwise, apply object color to all other geos except images
+				if(!(geo instanceof GeoImage))
+					if((geo.getObjectColor() != color || geo.getAlphaValue() != alpha) ){
+						geo.setObjColor(color);
+						geo.setAlphaValue(alpha);
+						geo.updateRepaint();
+						needUndo = true;
+					}
 			}
 		}
 	}
