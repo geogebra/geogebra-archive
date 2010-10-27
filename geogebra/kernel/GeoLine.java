@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.Evaluatable;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -1044,6 +1045,10 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
   	
 	public GgbVector getViewDirection(){
 		return getPointInD(3, 1).sub(getPointInD(3, 0));
+	}
+	
+	public GgbVector getCartesianEquationVector(GgbMatrix m){
+		return new GgbVector(x, y, z);
 	}
 	
 

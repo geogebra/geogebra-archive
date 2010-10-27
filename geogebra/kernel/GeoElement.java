@@ -985,6 +985,7 @@ public abstract class GeoElement
 		case  GEO_CLASS_CURVE_POLAR:
 			typePriority = 90; break;
 		case  GEO_CLASS_LINE:
+		case  GEO_CLASS_LINE3D:
 			typePriority = 100; break;
 		case  GEO_CLASS_LINEAR_INEQUALITY:
 			typePriority = 101; break;
@@ -992,6 +993,8 @@ public abstract class GeoElement
 			typePriority = 102; break;
 		case  GEO_CLASS_RAY:
 		case  GEO_CLASS_SEGMENT:
+		case  GEO_CLASS_RAY3D:
+		case  GEO_CLASS_SEGMENT3D:
 			typePriority = 110; break;
 		case  GEO_CLASS_VECTOR:
 			typePriority = 120; break;

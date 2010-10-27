@@ -137,6 +137,12 @@ public class GgbVector
 		return val[3];
 	}
 	
+	/** returns v last coord  
+	 * @return last coord*/	
+	public double getLast(){
+		return val[getRows()-1];
+	}
+	
 	/** sets the "x-coord" 
 	 * @param val
 	 */

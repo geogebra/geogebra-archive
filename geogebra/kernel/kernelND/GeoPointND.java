@@ -89,6 +89,14 @@ public interface GeoPointND {
 	public void setCoords(double x, double y, double z);
 	
 
+    
+	/** Sets homogenous coordinates and updates
+	 * inhomogenous coordinates
+	 * @param v coords
+	 * @param doPathOrRegion says if path (or region) calculations have to be done
+	 */    
+	public void setCoords(GgbVector v, boolean doPathOrRegion);
+
     /** set 2D coords
      * @param x x-coord
      * @param y y-coord

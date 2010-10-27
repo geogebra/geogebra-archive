@@ -175,7 +175,4 @@ public class GeoLine3D extends GeoCoordSys1D {
 	
 	
 	
-	
-	
-	
 }

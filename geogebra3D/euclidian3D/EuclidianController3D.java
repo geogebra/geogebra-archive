@@ -745,18 +745,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// creating new objects
 	
 	
-	/** return selected points as ND points
-	 * @return selected points
-	 */
-	final protected GeoPointND[] getSelectedPointsND() {		
-
-		GeoPointND[] ret = new GeoPointND[selectedPoints.size()];
-		getSelectedPointsInterface(ret);
-		
-		//Application.printStacktrace("");
-		
-		return ret;	
-	}
 	
 	/** return selected points as 3D points
 	 * @return selected points
@@ -764,7 +752,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	final protected GeoPoint3D[] getSelectedPoints3D() {		
 
 		GeoPoint3D[] ret = new GeoPoint3D[selectedPoints.size()];
-		getSelectedPointsInterface(ret);
+		getSelectedPointsND(ret);
 		
 		//Application.printStacktrace("");
 		
@@ -781,19 +769,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return lines;
 	}
 		
-	// fetch the two selected points for line
-	protected void join(){
-		GeoPointND[] points = getSelectedPointsND();
-		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[0]).isGeoElement3D())
-			getKernel().getManager3D().Line3D(null,points[0], points[1]);
-		else
-			getKernel().Line(null, (GeoPoint) points[0], (GeoPoint) points[1]);
-	}
 	
 	// fetch the two selected points for segment
 	protected void segment(){
 		GeoPointND[] points = getSelectedPointsND();
-		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[0]).isGeoElement3D())
+		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[1]).isGeoElement3D())
 			getKernel().getManager3D().Segment3D(null,points[0], points[1]);
 		else
 			getKernel().Segment(null, (GeoPoint) points[0], (GeoPoint) points[1]);
@@ -803,7 +783,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// fetch the two selected points for ray
 	protected void ray(){
 		GeoPointND[] points = getSelectedPointsND();
-		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[0]).isGeoElement3D())
+		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[1]).isGeoElement3D())
 			getKernel().getManager3D().Ray3D(null,points[0], points[1]);
 		else
 			getKernel().Ray(null, (GeoPoint) points[0], (GeoPoint) points[1]);

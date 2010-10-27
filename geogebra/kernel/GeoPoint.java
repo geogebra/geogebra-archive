@@ -447,6 +447,18 @@ GeoPointND  {
 		}			
 	}  
 	
+	public void setCoords(GgbVector v, boolean doPathOrRegion){
+		
+		if (doPathOrRegion)
+			setCoords(v.getX(),v.getY(),v.getLast());
+		else{
+			// set coordinates
+			this.x = v.getX();
+			this.y = v.getY();
+			this.z = v.getLast();	
+		}
+	}
+	
 	private PathParameter tempPathParameter;
 	private PathParameter getTempPathparameter() {
 		if (tempPathParameter == null) {

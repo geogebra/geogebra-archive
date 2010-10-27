@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -25,6 +26,8 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
+import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
@@ -52,7 +55,7 @@ public class DrawLine extends Drawable implements Previewable {
     public static final int PREVIEW_PERPENDICULAR_BISECTOR = 3;           
     public static final int PREVIEW_ANGLE_BISECTOR = 4;           
     
-    protected GeoLine g;    
+    protected GeoLineND g;    
     //private double [] coeffs = new double[3];
     
     protected Line2D.Double line;    
@@ -66,16 +69,16 @@ public class DrawLine extends Drawable implements Previewable {
 	protected boolean labelVisible;
     
     private ArrayList points, lines; // for preview
-    private GeoPoint startPoint, previewPoint2;
+    private GeoPointND startPoint, previewPoint2;
    
     // clipping attributes
     private boolean [] attr1 = new boolean[4], attr2 = new boolean[4];
     
     /** Creates new DrawLine */
-    public DrawLine(EuclidianView view, GeoLine g) {      
+    public DrawLine(EuclidianView view, GeoLineND g) {      
     	this.view = view;          
         this.g = g;
-        geo = g;              
+        geo = (GeoElement) g;              
         update();
     }
     
@@ -112,14 +115,21 @@ public class DrawLine extends Drawable implements Previewable {
 
 	public void update() {  
 		//	take line g here, not geo this object may be used for conics too
-        isVisible = g.isEuclidianVisible(); 
+        isVisible = geo.isEuclidianVisible(); 
         if (isVisible) {
 			labelVisible = geo.isLabelVisible();
 			updateStrokes(geo);
-            gx = g.x;
-            gy = g.y;
-            gz = g.z;
-            
+			
+			GgbVector equation = g.getCartesianEquationVector(null);//TODO
+			if (equation==null){
+				isVisible = false;
+				return;
+			}
+			
+			gx=equation.getX();
+			gy=equation.getY();
+			gz=equation.getZ();
+
             setClippedLine();
 			
             // line on screen?		
@@ -129,7 +139,7 @@ public class DrawLine extends Drawable implements Previewable {
     		}
             
 			// draw trace
-			if (g.trace) {
+			if (g.getTrace()) {
 				isTracing = true;
 				Graphics2D g2 = view.getBackgroundGraphics();
 				if (g2 != null) drawTrace(g2);
@@ -370,7 +380,7 @@ public class DrawLine extends Drawable implements Previewable {
 		case PREVIEW_PERPENDICULAR_BISECTOR:
 			isVisible = (points.size() == 1); 
 			if (isVisible) {
-				startPoint = (GeoPoint) points.get(0);
+				startPoint = (GeoPointND) points.get(0);
 			}		                              			                                           
 			break;
 		case PREVIEW_PARALLEL:
@@ -380,8 +390,8 @@ public class DrawLine extends Drawable implements Previewable {
 		case PREVIEW_ANGLE_BISECTOR:
 			isVisible = (points.size() == 2);  
 			if (isVisible) {
-				startPoint = (GeoPoint) points.get(0);
-				previewPoint2 = (GeoPoint) points.get(1);
+				startPoint = (GeoPointND) points.get(0);
+				previewPoint2 = (GeoPointND) points.get(1);
 			}		                              			                                           
 			break;
 		}
@@ -393,6 +403,8 @@ public class DrawLine extends Drawable implements Previewable {
 
 	public void updateMousePos(double xRW, double yRW) {	
 		if (isVisible) { 	
+			
+			GgbVector coords;
 			
 			switch (previewMode) {
 			case PREVIEW_LINE:
@@ -418,34 +430,46 @@ public class DrawLine extends Drawable implements Previewable {
 				else
 					view.getEuclidianController().setLineEndPoint(null);
 				
-				// line through first point and mouse position			
-				GeoVec3D.cross(startPoint, xRW, yRW, 1.0, g);
+				// line through first point and mouse position	
+				coords = startPoint.getCoordsInD(2).crossProduct(new GgbVector(xRW, yRW, 1));
+				((GeoLine) g).setCoords(coords.getX(), coords.getY(), coords.getZ());
+				//GeoVec3D.cross(startPoint, xRW, yRW, 1.0, g);
     
 				break;
 				
 			case PREVIEW_PARALLEL:
 			    // calc the line g through (xRW,yRW) and perpendicular to l
 				GeoLine l = (GeoLine)lines.get(0);
-			    GeoVec3D.cross(xRW, yRW, 1.0, l.y, -l.x, 0.0, g);
+			    GeoVec3D.cross(xRW, yRW, 1.0, l.y, -l.x, 0.0, ((GeoLine) g));
 	
 				break;
 			case PREVIEW_PERPENDICULAR:
 			    // calc the line g through (xRW,yRW) and parallel to l
 				l = (GeoLine)lines.get(0);
-			    GeoVec3D.cross(xRW, yRW, 1.0, l.x, l.y, 0.0, g);
+			    GeoVec3D.cross(xRW, yRW, 1.0, l.x, l.y, 0.0, ((GeoLine) g));
 	
 			    break;
 			case PREVIEW_PERPENDICULAR_BISECTOR:
 			    // calc the perpendicular bisector
-			    GeoVec3D.cross((xRW + startPoint.inhomX)/2, (yRW + startPoint.inhomY)/2, 1.0, -yRW + startPoint.inhomY, xRW - startPoint.inhomX,  0.0, g);
+				coords = startPoint.getInhomCoordsInD(2);
+				double x = coords.getX();
+				double y = coords.getY();
+			    GeoVec3D.cross((xRW + x)/2, (yRW + y)/2, 1.0, -yRW + y, xRW - x,  0.0, ((GeoLine) g));
 	
 			    break;
 			case PREVIEW_ANGLE_BISECTOR:
 				GeoLine g1 = new GeoLine(view.getKernel().getConstruction());                       
-		        GeoLine h = new GeoLine(view.getKernel().getConstruction());                       
-		        GeoVec3D.cross(previewPoint2, startPoint, g1);
-		        GeoVec3D.cross(previewPoint2, xRW, yRW, 1.0, h);        
-
+		        GeoLine h = new GeoLine(view.getKernel().getConstruction()); 
+		        
+		        //GeoVec3D.cross(previewPoint2, startPoint, g1);
+		        //GeoVec3D.cross(previewPoint2, xRW, yRW, 1.0, h);       
+		        
+		        coords = previewPoint2.getCoordsInD(2).crossProduct(startPoint.getCoordsInD(2));
+		        g1.setCoords(coords.getX(), coords.getY(), coords.getZ());
+		        coords = previewPoint2.getCoordsInD(2).crossProduct(new GgbVector(xRW, yRW, 1));
+				h.setCoords(coords.getX(), coords.getY(), coords.getZ());
+		        
+		        
 		        // (gx, gy) is direction of g = B v A        
 		        double gx = g1.y;
 		        double gy = -g1.x;
@@ -494,20 +518,21 @@ public class DrawLine extends Drawable implements Previewable {
            
 
 		            // set bisector
-		            g.x = -wy;
-		            g.y =  wx;
-		            g.z = - (previewPoint2.inhomX * g.x + previewPoint2.inhomY * g.y);
+		            coords = previewPoint2.getInhomCoordsInD(2);
+		            ((GeoLine) g).x = -wy;
+		            ((GeoLine) g).y =  wx;
+		            ((GeoLine) g).z = - (coords.getX() * ((GeoLine) g).x + coords.getY() * ((GeoLine) g).y);
 	
 			    break;
 			}
 			
-			if (g.isZero()) {
+			if (((GeoLine) g).isZero()) {
 				isVisible = false;
 				return;
 			}
-			gx = g.x;
-			gy = g.y;
-			gz = g.z;
+			gx = ((GeoLine) g).x;
+			gy = ((GeoLine) g).y;
+			gz = ((GeoLine) g).z;
 			setClippedLine();      
 
 		}

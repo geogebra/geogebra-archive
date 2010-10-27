@@ -3411,7 +3411,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, double x, double y){
-		GeoPointND ret = kernel.Point(null, path, x, y, true);
+		GeoPointND ret;
+		if (((GeoElement) path).isGeoElement3D())
+			ret = (GeoPointND) kernel.getManager3D().Point3D(null, path, x, y, 0);
+		else
+			ret = kernel.Point(null, path, x, y, true);
 		return ret;
 	}
 
@@ -3449,9 +3453,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// fetch the two selected points
+	/*
 	protected void join(){
 		GeoPoint[] points = getSelectedPoints();
 		GeoLine line = kernel.Line(null, points[0], points[1]);
+	}
+	*/
+	
+	protected void join(){
+		GeoPointND[] points = getSelectedPointsND();
+		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[1]).isGeoElement3D())
+			getKernel().getManager3D().Line3D(null,points[0], points[1]);
+		else
+			getKernel().Line(null, (GeoPoint) points[0], (GeoPoint) points[1]);
 	}
 
 	private void recordSingleObjectToSpreadSheet(GeoElement geo) {
@@ -5970,7 +5984,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return ret;
 	}	
 
-	final protected void getSelectedPointsInterface(GeoPointND[] result) {	
+	final protected void getSelectedPointsND(GeoPointND[] result) {	
 
 		for (int i = 0; i < selectedPoints.size(); i++) {		
 			result[i] = (GeoPointND) selectedPoints.get(i);
@@ -5978,12 +5992,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		clearSelection(selectedPoints);
 
 	}
+	
+
+	/** return selected points as ND points
+	 * @return selected points
+	 */
+	final protected GeoPointND[] getSelectedPointsND() {		
+
+		GeoPointND[] ret = new GeoPointND[selectedPoints.size()];
+		getSelectedPointsND(ret);
+		
+		return ret;	
+	}
 
 
 	final protected GeoPoint[] getSelectedPoints() {		
 
 		GeoPoint[] ret = new GeoPoint[selectedPoints.size()];
-		getSelectedPointsInterface(ret);
+		getSelectedPointsND(ret);
 
 		return ret;
 

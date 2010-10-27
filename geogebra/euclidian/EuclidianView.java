@@ -47,6 +47,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.View;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
@@ -3297,7 +3298,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;
 
 		case GeoElement.GEO_CLASS_LINE:
-			d = new DrawLine(this, (GeoLine) geo);
+		case GeoElement.GEO_CLASS_LINE3D:
+			d = new DrawLine(this, (GeoLineND) geo);
 			break;		
 
 		case GeoElement.GEO_CLASS_POLYGON:

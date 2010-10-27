@@ -1,5 +1,6 @@
 package geogebra.kernel.kernelND;
 
+import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbVector;
 
 /**
@@ -16,5 +17,17 @@ public interface GeoLineND {
 	 * @return the point at position lambda on the coord sys  
 	 * */
 	public GgbVector getPointInD(int dimension, double lambda);
+
+	public boolean getTrace();
+	
+	/**
+	 * 
+	 * @param m
+	 * @return the (a,b,c) equation vector that describe the line
+	 * in the plane described by the matrix m
+	 * (ie ax+by+c=0 is an equation of the line in the plane)
+	 */
+	public GgbVector getCartesianEquationVector(GgbMatrix m);
+
 
 }
