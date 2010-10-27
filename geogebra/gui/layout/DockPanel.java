@@ -232,7 +232,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		this.menuOrder = menuOrder;
 		this.menuShortcut = menuShortcut;
 		this.hasStyleBar = hasStyleBar;
-		
+		this.setMinimumSize(new Dimension(5,5));
 		setLayout(new BorderLayout());
 	}
 	
