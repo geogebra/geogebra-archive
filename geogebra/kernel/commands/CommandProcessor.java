@@ -8839,7 +8839,7 @@ class CmdStemPlot extends CommandProcessor {
 
  
  /*
-  * Take[ <List>,m,n ]
+  * ShortestDistance[ <List of Segments>, <Start Point>, <End Point>, <Boolean Weighted> ]
   * Michael Borcherds
   * 2008-03-04
   */
@@ -8856,12 +8856,12 @@ class CmdStemPlot extends CommandProcessor {
  		arg = resArgs(c);
  		
  		switch (n) {
- 		case 3:
+ 		case 4:
 
- 			if ( (ok[0] = arg[0].isGeoList()) && (ok[1] = arg[1].isGeoPoint()) && (ok[2] = arg[2].isGeoPoint()) ) {
+ 			if ( (ok[0] = arg[0].isGeoList()) && (ok[1] = arg[1].isGeoPoint()) && (ok[2] = arg[2].isGeoPoint())&& (ok[3] = arg[3].isGeoBoolean()) ) {
  				GeoElement[] ret = { 
  						kernel.ShortestDistance(c.getLabel(),
- 						(GeoList) arg[0], (GeoPointND) arg[1], (GeoPointND) arg[2] ) };
+ 						(GeoList) arg[0], (GeoPointND) arg[1], (GeoPointND) arg[2] , (GeoBoolean) arg[3] ) };
  				return ret;
  			} else
  				throw argErr(app, c.getName(), getBadArg(ok, arg));

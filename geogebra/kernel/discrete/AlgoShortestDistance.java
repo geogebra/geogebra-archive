@@ -5,11 +5,13 @@ import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.MyPoint;
+import geogebra.kernel.discrete.AlgoShortestDistance.MyLink;
 import geogebra.kernel.kernelND.GeoPointND;
 
 import java.util.ArrayList;
@@ -23,13 +25,15 @@ public class AlgoShortestDistance extends AlgoElement {
 	GeoPointND start, end;
 	GeoList inputList;
 	GeoLocus locus;
+	GeoBoolean weighted;
     protected ArrayList<MyPoint> al;
 
-	public AlgoShortestDistance(Construction cons, String label, GeoList inputList, GeoPointND start, GeoPointND end) {
+	public AlgoShortestDistance(Construction cons, String label, GeoList inputList, GeoPointND start, GeoPointND end, GeoBoolean weighted) {
         super(cons);
         this.inputList = inputList;
         this.start = start;
         this.end = end;
+        this.weighted = weighted;
                
         locus = new GeoLocus(cons);
 
@@ -40,10 +44,11 @@ public class AlgoShortestDistance extends AlgoElement {
 	}
 	
     protected void setInputOutput(){
-        input = new GeoElement[3];
+        input = new GeoElement[4];
         input[0] = inputList;
         input[1] = (GeoElement)start;
         input[2] = (GeoElement)end;
+        input[3] = (GeoElement)weighted;
 
         output = new GeoElement[1];
         output[0] = locus;
@@ -61,7 +66,7 @@ public class AlgoShortestDistance extends AlgoElement {
     protected final void compute() {
     	
     	int size = inputList.size();
-    	if (!inputList.isDefined() ||  size == 0) {
+    	if (!inputList.isDefined() || !weighted.isDefined() ||  size == 0) {
     		locus.setUndefined();
     		return;
     	} 
@@ -94,20 +99,16 @@ public class AlgoShortestDistance extends AlgoElement {
 					nodes2.put(node2, p2);
 				} 
 				
+				// take note of start and end points
 				if (p1 == start) startNode = node1;
 				else if (p1 == end) endNode = node1;
 				
 				if (p2 == start) startNode = node2;
 				else if (p2 == end) endNode = node2;
-				
-				//if (i == 0) startNode = node1;
-				//else if (i == size - 1) endNode = node2;
-				
+							
 				// add edge to graph
 				  g.addEdge(new MyLink(seg.getLength(), 1, node1, node2),node1, node2, EdgeType.UNDIRECTED); 
 
-				//p.getInhomCoords(inhom);
-				//vl.add( representation.createPoint(inhom[0], inhom[1]) );			
 			}
 		}
         
@@ -121,56 +122,23 @@ public class AlgoShortestDistance extends AlgoElement {
     		return;
         }
         
+        DijkstraShortestPath<MyNode,MyLink> alg;
 
-        /*
-     // Graph<V, E> where V is the type of the vertices
-     // and E is the type of the edges
-     Graph<Integer, String> g = new SparseMultigraph<Integer, String>();
-     // Add some vertices. From above we defined these to be type Integer.
-     g.addVertex((Integer)1);
-     g.addVertex((Integer)2);
-     g.addVertex((Integer)3);
-     // Add some edges. From above we defined these to be of type String
-     // Note that the default is for undirected edges.
-     g.addEdge("Edge-A", 1, 2); // Note that Java 1.5 auto-boxes primitives
-     g.addEdge("Edge-B", 2, 3);
-     // Let's see what we have. Note the nice output from the
-     // SparseMultigraph<V,E> toString() method
-     System.out.println("The graph g = " + g.toString());
-*/
-     
-        /*
-  // Create some MyNode objects to use as vertices
-     MyNode n1 = new MyNode(1); MyNode n2 = new MyNode(2); MyNode n3 = new MyNode(3);
-     MyNode n4 = new MyNode(4); MyNode n5 = new MyNode(5); // note n1-n5 declared elsewhere.
-  // Add some directed edges along with the vertices to the graph
-  g.addEdge(new MyLink(2.0, 48),n1, n2, EdgeType.DIRECTED); // This method
-  g.addEdge(new MyLink(2.0, 48),n2, n3, EdgeType.DIRECTED);
-  g.addEdge(new MyLink(3.0, 192), n3, n5, EdgeType.DIRECTED);
-  g.addEdge(new MyLink(2.0, 48), n5, n4, EdgeType.DIRECTED); // or we can use
-  g.addEdge(new MyLink(2.0, 48), n4, n2); // In a directed graph the
-  g.addEdge(new MyLink(2.0, 48), n3, n1); // first node is the source
-  g.addEdge(new MyLink(10.0, 48), n2, n5);// and the second the destination
-*/
-
-        
-        Transformer<MyLink, Double> wtTransformer = new Transformer<MyLink,Double>() {
-        	public Double transform(MyLink link) {
-        	return link.weight;
-        	}
-        	};
-        	DijkstraShortestPath<MyNode,MyLink> alg = new DijkstraShortestPath(g, wtTransformer);
-        	
-        		
-        		
-        //Unweighted Shortest Path
-        //To find the shortest path assuming uniform link weights (e.g., 1 for each link) in the graph we created
-        //we can use the following code from BasicDirectedGraph.java:
-        //DijkstraShortestPath<MyNode,MyLink> alg = new DijkstraShortestPath(g);
+        if (weighted.getBoolean() == true) {
+        	//weighted Shortest Path
+        	// use length of segments to weight
+	        Transformer<MyLink, Double> wtTransformer = new Transformer<MyLink,Double>() {
+	        	public Double transform(MyLink link) {
+	        	return link.weight;
+	        	}
+	        	};
+        	alg = new DijkstraShortestPath<MyNode, MyLink>(g, wtTransformer);
+        } else {
+        	//Unweighted Shortest Path
+        	alg = new DijkstraShortestPath<MyNode, MyLink>(g);
+        }
+         		
         List<MyLink> list = alg.getPath(startNode, endNode);
-        //System.out.println("The shortest unweighted path from" + n1 +
-        //" to " + n4 + " is:");
-        //System.out.println(list.toString());
         
 		double inhom[] = new double[2];
 	   	
@@ -186,31 +154,6 @@ public class AlgoShortestDistance extends AlgoElement {
 
         }
         
-        
-        
-        
-        
-        
-        /*
-        for ( VPoint point : trianglarrep.vertexpoints ) {
-            VVertex vertex = (VVertex) point;
-            
-            // Check the vertex has edges
-            if ( vertex.hasEdges()==false ) {
-                continue;
-            }
-            
-
-            // Paint each of those edges
-            for ( VHalfEdge edge : vertex.getEdges() ) {
-                // Simple addition to show MST
-                if ( edge.shownonminimumspanningtree==false ) continue;
-                
-                VVertex vertex2 = edge.next.vertex;
-                
-                 }
-            }*/
-
 		locus.setPoints(al);
 		locus.setDefined(true);
        

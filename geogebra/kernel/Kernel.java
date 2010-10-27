@@ -3360,8 +3360,8 @@ public class Kernel {
 		return ret;
 	}
 	
-	final public GeoLocus ShortestDistance(String label, GeoList list, GeoPointND start, GeoPointND end) {
-		AlgoShortestDistance algo = new AlgoShortestDistance(cons, label, list, start, end);
+	final public GeoLocus ShortestDistance(String label, GeoList list, GeoPointND start, GeoPointND end, GeoBoolean weighted) {
+		AlgoShortestDistance algo = new AlgoShortestDistance(cons, label, list, start, end, weighted);
 		GeoLocus ret = algo.getResult();
 		return ret;
 	}

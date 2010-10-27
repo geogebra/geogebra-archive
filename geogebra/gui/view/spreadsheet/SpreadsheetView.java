@@ -135,7 +135,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		this.app = app;
 		kernel = app.getKernel();
 		view = this;
-		
 		// table
 		tableModel = new DefaultTableModel(rows, columns);
 		table = new MyTable(this, tableModel);
