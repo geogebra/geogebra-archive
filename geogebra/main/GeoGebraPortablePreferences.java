@@ -214,7 +214,7 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
 	String path;
    	try {    		    		    		    	
 	    	// save last four files
-	    	for (int i=1; i <= 4; i++) {	    		
+	    	for (int i=1; i <= Application.MAX_RECENT_FILES; i++) {	    		
 	    		File file = Application.getFromFileList(i-1);
 	    		if (file != null){
 	    			path=file.getCanonicalPath();									//debug("saveFilelist(): "+path.toString());
