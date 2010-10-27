@@ -3814,8 +3814,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// fetch the two selected points for ray
 	protected void ray(){
-		GeoPoint[] points = getSelectedPoints();
-		kernel.Ray(null, points[0], points[1]);
+		GeoPointND[] points = getSelectedPointsND();
+		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[1]).isGeoElement3D())
+			getKernel().getManager3D().Ray3D(null,points[0], points[1]);
+		else
+			getKernel().Ray(null, (GeoPoint) points[0], (GeoPoint) points[1]);
 	}
 
 

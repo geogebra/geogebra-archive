@@ -18,12 +18,15 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.clipping.ClipLine;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPointND;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
@@ -40,8 +43,8 @@ import java.util.ArrayList;
 public class DrawRay extends Drawable
 implements Previewable {
    
-    private GeoLine ray;
-    private GeoPoint A;
+    private GeoLineND ray;
+    //private GeoPoint A;
      
     boolean isVisible, labelVisible;
     private ArrayList points;
@@ -51,10 +54,10 @@ implements Previewable {
 	private double [] v = new double[2];
      
     /** Creates new DrawSegment */
-    public DrawRay(EuclidianView view, GeoLine ray) {
+    public DrawRay(EuclidianView view, GeoLineND ray) {
     	this.view = view;
     	this.ray = ray;
-    	geo = ray;
+    	geo = (GeoElement) ray;
     	    	
     	
         update();
@@ -78,17 +81,23 @@ implements Previewable {
         isVisible = geo.isEuclidianVisible();
         if (isVisible) { 
 			labelVisible = showLabel && geo.isLabelVisible();       
-			updateStrokes(ray);
+			updateStrokes((GeoElement) ray);
 			
-	    	A = ray.getStartPoint();			
-			
+	    	
 			// calc start point of ray in screen coords
-			A.getInhomCoords(a);
+			a=ray.getStartInhomCoords().get();
 			view.toScreenCoords(a);
 
 			// calc direction vector of ray in screen coords
-			v[0] = ray.y * view.xscale;
-			v[1] = ray.x * view.yscale;
+			
+			GgbVector equation = ray.getCartesianEquationVector(null);//TODO
+			if (equation==null){
+				isVisible = false;
+				return;
+			}
+			
+			v[0] = equation.getY() * view.xscale;
+			v[1] = equation.getX() * view.yscale;
 			
 			setClippedLine();
 			
@@ -99,7 +108,7 @@ implements Previewable {
     		}
 			
 			// draw trace
-			if (ray.trace) {
+			if (ray.getTrace()) {
 				isTracing = true;
 				Graphics2D g2 = view.getBackgroundGraphics();
 				if (g2 != null) drawTrace(g2);
@@ -205,8 +214,8 @@ implements Previewable {
 		isVisible = points.size() == 1;
 		if (isVisible) { 
 			//	start point
-			A = (GeoPoint) points.get(0);						   			
-			A.getInhomCoords(a);			                        
+			GgbVector coords = ((GeoPointND) points.get(0)).getInhomCoordsInD(2);						   			
+			a = coords.get();			                        
 			view.toScreenCoords(a);						
 			line.setLine(a[0], a[1], a[0], a[1]);                                   			                                            
 		}
@@ -251,9 +260,11 @@ implements Previewable {
 			else
 				view.getEuclidianController().setLineEndPoint(null);
 
+			/*
 			a[0] = A.inhomX;
 			a[1] = A.inhomY;
 			view.toScreenCoords(a);
+			*/
 			v[0] = xx - a[0];
 			v[1] = yy - a[1];
 			setClippedLine();                                   			                                            

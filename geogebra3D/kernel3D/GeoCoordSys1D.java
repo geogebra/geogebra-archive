@@ -262,9 +262,6 @@ GeoLineND, GeoCoordSys{
 	
 	public void pathChanged(GeoPointND P){
 		
-		
-		Application.printStacktrace("");
-		
 		PathParameter pp = P.getPathParameter();
 		P.setCoords(getPoint(pp.getT()),false);
 
@@ -340,13 +337,17 @@ GeoLineND, GeoCoordSys{
 		if (!Kernel.isZero(origin.getZ()) || !Kernel.isZero(origin.getZ()))
 			return null;
 		
-		double x = direction.getY();
-		double y = -direction.getX();
+		double x = -direction.getY();
+		double y = direction.getX();
 		double z = -x*origin.getX()-y*origin.getY();
 		
 		return new GgbVector(x, y, z);
 	}
 	
+	
+	public GgbVector getStartInhomCoords(){
+		return getCoordSys().getOrigin().getInhomCoords();
+	}
 	
 	
 	

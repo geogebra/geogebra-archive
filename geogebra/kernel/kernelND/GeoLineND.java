@@ -28,6 +28,12 @@ public interface GeoLineND {
 	 * (ie ax+by+c=0 is an equation of the line in the plane)
 	 */
 	public GgbVector getCartesianEquationVector(GgbMatrix m);
+	
+	/**
+	 * 
+	 * @return coords of the starting point
+	 */
+	public GgbVector getStartInhomCoords();
 
 
 }

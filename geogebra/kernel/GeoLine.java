@@ -1051,5 +1051,9 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 		return new GgbVector(x, y, z);
 	}
 	
+	public GgbVector getStartInhomCoords(){
+		return startPoint.getInhomCoords();
+	}
+	
 
 }
