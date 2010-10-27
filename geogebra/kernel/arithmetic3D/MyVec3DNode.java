@@ -22,9 +22,9 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
-import geogebra.kernel.kernel3D.Geo3DVec;
 import geogebra.main.Application;
 import geogebra.main.MyParseError;
+import geogebra3D.kernel3D.Geo3DVec;
 
 import java.util.HashSet;
 

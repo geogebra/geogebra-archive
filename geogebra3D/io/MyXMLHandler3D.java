@@ -4,11 +4,11 @@ import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.kernel3D.GeoPoint3D;
-import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 import java.util.LinkedHashMap;
 

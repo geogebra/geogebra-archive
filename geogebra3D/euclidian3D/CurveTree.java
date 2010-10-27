@@ -1,8 +1,8 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector3D;
-import geogebra.kernel.kernel3D.GeoCurveCartesian3D;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
+import geogebra3D.kernel3D.GeoCurveCartesian3D;
 
 /**
  * @author Andr� Eriksson

@@ -7,10 +7,10 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.CmdCurveCartesian;
 import geogebra.kernel.commands.CmdLine;
-import geogebra.kernel.kernel3D.GeoElement3D;
-import geogebra.kernel.kernel3D.GeoPoint3D;
-import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 
 

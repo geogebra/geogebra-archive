@@ -4,7 +4,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.LocateableList;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.RegionParameters;
-import geogebra.kernel.kernel3D.Region3D;
+import geogebra3D.kernel3D.Region3D;
 
 
 

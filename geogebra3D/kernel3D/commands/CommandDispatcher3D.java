@@ -3,8 +3,8 @@ package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.CommandDispatcher;
-import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.Application;
+import geogebra3D.kernel3D.Kernel3D;
 
 public class CommandDispatcher3D extends CommandDispatcher {
 	

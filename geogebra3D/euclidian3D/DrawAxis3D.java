@@ -1,11 +1,11 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
-import geogebra.kernel.kernel3D.GeoAxis3D;
-import geogebra.kernel.kernel3D.GeoCoordSys1D;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.kernel3D.GeoAxis3D;
+import geogebra3D.kernel3D.GeoCoordSys1D;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

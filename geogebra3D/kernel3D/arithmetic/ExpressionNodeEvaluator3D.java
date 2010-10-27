@@ -8,9 +8,9 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
-import geogebra.kernel.kernel3D.Geo3DVec;
-import geogebra.kernel.kernel3D.GeoVector3D;
 import geogebra.main.Application;
+import geogebra3D.kernel3D.Geo3DVec;
+import geogebra3D.kernel3D.GeoVector3D;
 
 
 /**

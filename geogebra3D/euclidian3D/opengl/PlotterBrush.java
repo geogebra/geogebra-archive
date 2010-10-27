@@ -4,8 +4,8 @@ import geogebra.Matrix.GgbVector;
 import geogebra.Matrix.GgbVector3D;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.kernel3D.GeoCurveCartesian3DInterface;
 import geogebra3D.euclidian3D.CurveTree;
+import geogebra3D.kernel3D.GeoCurveCartesian3DInterface;
 
 import java.awt.Color;
 

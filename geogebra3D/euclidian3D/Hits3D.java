@@ -2,9 +2,9 @@ package geogebra3D.euclidian3D;
 
 import geogebra.euclidian.Hits;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.kernel3D.GeoCoordSys2D;
-import geogebra.kernel.kernel3D.GeoSegment3D;
 import geogebra3D.euclidian3D.Drawable3D.drawableComparator;
+import geogebra3D.kernel3D.GeoCoordSys2D;
+import geogebra3D.kernel3D.GeoSegment3D;
 
 import java.util.ArrayList;
 import java.util.Iterator;

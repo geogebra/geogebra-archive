@@ -4,11 +4,11 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdRay;
-import geogebra.kernel.kernel3D.GeoElement3D;
-import geogebra.kernel.kernel3D.GeoPoint3D;
-import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.GeoElement3D;
+import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 
 

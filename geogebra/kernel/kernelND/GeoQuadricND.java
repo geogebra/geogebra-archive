@@ -8,8 +8,8 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.kernel3D.GeoQuadric3D;
 import geogebra.main.Application;
+import geogebra3D.kernel3D.GeoQuadric3D;
 
 
 /** Abstract class describing quadrics in n-dimension space.

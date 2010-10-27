@@ -6,11 +6,11 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
-import geogebra.kernel.kernel3D.GeoPlane3D;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.Textures;
+import geogebra3D.kernel3D.GeoPlane3D;
 
 import java.awt.Color;
 

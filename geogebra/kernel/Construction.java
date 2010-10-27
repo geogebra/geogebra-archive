@@ -16,11 +16,11 @@ import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.kernel.kernel3D.GeoPoint3D;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Util;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.util.ArrayList;
 import java.util.Comparator;

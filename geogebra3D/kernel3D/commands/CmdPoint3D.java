@@ -6,8 +6,8 @@ import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdPoint;
-import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.Kernel3D;
 
 
 

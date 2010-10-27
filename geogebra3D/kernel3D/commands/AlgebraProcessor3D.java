@@ -11,11 +11,11 @@ import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.commands.CommandDispatcher;
-import geogebra.kernel.kernel3D.GeoPlane3D;
-import geogebra.kernel.kernel3D.GeoPoint3D;
-import geogebra.kernel.kernel3D.Kernel3D;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.GeoPlane3D;
+import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.Kernel3D;
 
 
 public class AlgebraProcessor3D extends AlgebraProcessor {
