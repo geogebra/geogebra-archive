@@ -467,8 +467,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			@Override
 			public void update(Object[] geos) {
 				// only show this button when handling selection, do not use it for defaults
-				if(mode != EuclidianConstants.MODE_MOVE) return;
-				boolean geosOK = (geos.length > 0 );
+				if(mode != EuclidianConstants.MODE_MOVE){
+					this.setVisible(false);
+					return;
+				}
+				boolean geosOK = (geos.length > 0);
 				for (int i = 0; i < geos.length; i++) {
 					if ((((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
 						geosOK = false;
@@ -663,6 +666,20 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	//           Text Format Buttons
 	//=====================================================
 	
+	private boolean checkGeoText(Object[] geos){
+		boolean geosOK = (geos.length > 0);
+		for (int i = 0; i < geos.length; i++) {
+			if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText()) 
+					 ) {
+				geosOK = false;
+				break;
+			}
+		}
+		return geosOK;
+	}
+	
+	
+	
 	private void createTextButtons() {	
 
 		Dimension iconDimension = new Dimension(16, maxIconHeight);
@@ -675,14 +692,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			@Override
 			public void update(Object[] geos) {
 
-				boolean geosOK = (geos.length > 0);
-				for (int i = 0; i < geos.length; i++) {
-					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText()) 
-							 ) {
-						geosOK = false;
-						break;
-					}
-				}
+				boolean geosOK = checkGeoText(geos);
 				setVisible(geosOK);
 				
 				if(geosOK){
@@ -716,17 +726,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnBold = new MyToggleButton(boldIcon){
 			@Override
 			public void update(Object[] geos) {
-				boolean geosOK = (geos.length > 0 );
-				for (int i = 0; i < geos.length; i++) {
-					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
-						geosOK = false;
-						break;
-					} 
-				}
-				this.setVisible(geosOK);
-				if(geosOK){	
-					int style = ((TextProperties)geos[0]).getFontStyle();
-					//int style = ((GeoText)geos[0]).getFontStyle();
+
+				boolean geosOK = checkGeoText(geos);
+				setVisible(geosOK);
+				if(geosOK){
+					GeoElement geo = ((GeoElement)geos[0]).getGeoElementForPropertiesDialog();
+					int style = ((GeoText)geo).getFontStyle();
 					btnBold.setSelected(style == Font.BOLD || style == (Font.BOLD + Font.ITALIC));		
 				}
 			}		  
@@ -742,17 +747,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnItalic = new MyToggleButton(italicIcon){
 			@Override
 			public void update(Object[] geos) {
-				boolean geosOK = (geos.length > 0 );
-				for (int i = 0; i < geos.length; i++) {
-					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())
-							|| ((GeoElement)geos[i]) instanceof GeoList ) {
-						geosOK = false;
-						break;
-					}
-				}
+
+				boolean geosOK = checkGeoText(geos);
+				setVisible(geosOK);
 				this.setVisible(geosOK);
 				if(geosOK){	
-					int style = ((GeoText)geos[0]).getFontStyle();
+					GeoElement geo = ((GeoElement)geos[0]).getGeoElementForPropertiesDialog();
+					int style = ((GeoText)geo).getFontStyle();
 					btnItalic.setSelected(style == Font.ITALIC || style == (Font.BOLD + Font.ITALIC));
 				}
 			}	
@@ -778,23 +779,17 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			@Override
 			public void update(Object[] geos) {
 
-				boolean geosOK = (geos.length > 0 );
-				for (int i = 0; i < geos.length; i++) {
-					GeoElement geo = (GeoElement)geos[i];
-					if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())
-							|| ((GeoElement)geos[i]) instanceof GeoList ) {
-						geosOK = false;
-						break;
-					}
-				}
-				this.setVisible(geosOK);
+				boolean geosOK = checkGeoText(geos);
+				setVisible(geosOK);
 
-				if(geosOK){								
-					setSelectedIndex(((GeoText)geos[0]).getFontSize() / 2 + 2); // font size ranges from -4 to 4, transform this to 0,1,..,4
+				if(geosOK){
+					GeoElement geo = ((GeoElement)geos[0]).getGeoElementForPropertiesDialog();
+					setSelectedIndex(((GeoText)geo).getFontSize() / 2 + 2); // font size ranges from -4 to 4, transform this to 0,1,..,4
 				}
 			}		  
 		};	
 		btnTextSize.addActionListener(this);
+		btnTextSize.setKeepVisible(false);
 
 	}
 
@@ -1237,48 +1232,50 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 
 	private void applyTextItalic(ArrayList<GeoElement> geos) {
+
 		int fontStyle = 0;
 		if (btnItalic.isSelected()) fontStyle += 2;
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
-			if(geo.isGeoText() && ((GeoText)geo).getFontStyle() != fontStyle){
-			((GeoText)geo).setFontStyle(fontStyle);
-			geo.updateRepaint();
-			needUndo = true;
+			if(geo instanceof TextProperties && ((TextProperties)geo).getFontStyle() != fontStyle){
+				((TextProperties)geo).setFontStyle(fontStyle);
+				geo.updateRepaint();
+				needUndo = true;
 			}
 		}
 	}
-	
-	
+
+
 	private void applyTextBold(ArrayList<GeoElement> geos) {
 
 		int fontStyle = 0;
 		if (btnBold.isSelected()) fontStyle += 1;
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
-			if(geo.isGeoText() && ((GeoText)geo).getFontStyle() != fontStyle){
-			((GeoText)geo).setFontStyle(fontStyle);
-			geo.updateRepaint();
-			needUndo = true;
+			if(geo instanceof TextProperties && ((TextProperties)geo).getFontStyle() != fontStyle){
+				((TextProperties)geo).setFontStyle(fontStyle);
+				geo.updateRepaint();
+				needUndo = true;
 			}
 		}
 	}
-	
+
 	
 
 	private void applyTextSize(ArrayList<GeoElement> geos) {
 
 		int fontSize = btnTextSize.getSelectedIndex() * 2 - 4; // transform indices to the range -4, .. , 4
-		
+
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
-			if(geo.isGeoText()   && ((GeoText)geo).getFontSize() != fontSize){
-			((GeoText)geo).setFontSize(fontSize); 
-			geo.updateRepaint();
-			needUndo = true;
+			if(geo instanceof TextProperties && ((TextProperties)geo).getFontSize() != fontSize){
+				((TextProperties)geo).setFontSize(fontSize);
+				geo.updateRepaint();
+				needUndo = true;
 			}		
 		}
 	}
+	
 	
 	private void applyHideShowLabel(ArrayList<GeoElement> geos) {
 		boolean visible = btnHideShowLabel.isSelected();
