@@ -281,7 +281,6 @@ office@geogebra.org
 			geogebra/kernel/discrete/**,
 			geogebra/kernel/statistics/**,
 					jasymca/**,		
-					geogebra/kernel/kernel3D/**,
 					geogebra3D/**,			
 					3D/**,			
 					org/mathpiper/**,
@@ -349,8 +348,7 @@ office@geogebra.org
 	<target name="ggb-3d-jar" depends="clean" description="create unsigned geogebra_3d.jar">
 		<jar jarfile="${build.dir}/geogebra_3d.jar"
 			basedir="${src.dir}"
-			includes="geogebra/kernel/kernel3D/**,
-					geogebra3D/**,	"		
+			includes="geogebra3D/**"		
 			excludes="**/*.java" 
 		/>
 	</target>
