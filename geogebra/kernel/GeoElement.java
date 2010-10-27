@@ -4600,6 +4600,10 @@ public abstract class GeoElement
 		else if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && ((GeoList)this).isMatrix()) {
 			ret = toLaTeXString(substituteNumbers);
 		}
+		// vectors
+		else if (this.isGeoVector() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
+			ret = toLaTeXString(substituteNumbers);
+		}
 		else 
 		{
 			ret = substituteNumbers ? this.toValueString()

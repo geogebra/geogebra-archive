@@ -21,6 +21,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -572,7 +573,33 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
 	public boolean isMatrixTransformable() {
 		return true;
 	}
-
 	
+	private StringBuilder sb;
+
+    public String toLaTeXString(boolean symbolic) {
+    	if (sb == null) sb = new StringBuilder();
+    	else sb.setLength(0);
+    	
+		sb.append("{\\left(\\begin{array}{l}");
+		
+    	if (symbolic && getParentAlgorithm() instanceof AlgoDependentVector) {
+    		AlgoDependentVector algo = (AlgoDependentVector)getParentAlgorithm();
+    		String symbolicStr = algo.toString();
+    		String[] inputs = symbolicStr.substring(1, symbolicStr.length() - 1).split(",");
+    		for (int i = 0 ; i < inputs.length ; i++) {
+    	    	sb.append(inputs[i]);
+    	    	sb.append(" \\\\ ");    			
+    		}
+    	} else {
+	    	sb.append(kernel.format(x));
+	    	sb.append(" \\\\ ");
+	    	sb.append(kernel.format(y));
+	    	sb.append(" \\\\ ");
+    	}
+    	
+    	sb.append("\\end{array}\\right)}"); 
+    	return sb.toString();
+    }     
+
 	
 }
