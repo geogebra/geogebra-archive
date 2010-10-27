@@ -35,6 +35,7 @@ class FileMenu extends BaseMenu {
 		loadAction,
 		loadURLAction,
 		exportWorksheet,
+		recent,
 		exportLMSAction,
 		exportGraphicAction,
 		exportPgfAction,
@@ -98,11 +99,8 @@ class FileMenu extends BaseMenu {
 		JMenu submenu = new JMenu(app.getMenu("Export"));
 		submenu.setIcon(app.getEmptyIcon());
 		add(submenu);
-		mi = submenu.add(exportWorksheet);
-		setMenuShortCutShiftAccelerator(mi, 'W');
 		
-		//mi = submenu.add(exportGeoGebraTubeAction);
-
+		
 		submenu.addSeparator();
 		// submenu.add(htmlCPAction);
 		mi = submenu.add(exportGraphicAction);
@@ -120,25 +118,35 @@ class FileMenu extends BaseMenu {
 
 		// Added by Andy Zhu
 		mi = submenu.add(exportAsymptoteAction);
+		// End Export SubMenu
 		
-		// End
+		//mi = submenu.add(exportGeoGebraTubeAction);
+		
+		// recent SubMenu
+		addSeparator();
+		JMenu submenuRecent = new JMenu(app.getMenu("Recent"));
+		submenu.setIcon(app.getEmptyIcon());
+		add(submenuRecent);
+		mi = submenu.add(exportWorksheet);
+		//setMenuShortCutShiftAccelerator(mi, 'W');
+
 
 		// DONE HERE WHEN APPLET
 		if (app.isApplet())
 			return;
 
-		// LAST FILES list
+		// Recent files list
 		int size = Application.getFileListSize();
 		if (size > 0) {
 			addSeparator();
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < Application.MAX_RECENT_FILES ; i++) {
 				File file = Application.getFromFileList(i);
 				if (file != null) {
 					mi = new JMenuItem(file.getName());
 					mi.setIcon(app.getImageIcon("geogebra.gif"));
 					ActionListener al = new LoadFileListener(app, file);
 					mi.addActionListener(al);
-					add(mi);
+					submenuRecent.add(mi);
 				}
 			}
 		}

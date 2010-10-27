@@ -197,11 +197,11 @@ public class GeoGebraPortablePreferences extends GeoGebraPreferences{
    }//saveDefaultLocle(Locale)
    
    /**
-    * Loads the names of the four last used files from the preferences backing store.
+    * Loads the names of the eight last used files from the preferences backing store.
     */
    public  void loadFileList() {
    	// load last four files
-   	for (int i=4; i >= 1; i--) {	
+   	for (int i=Application.MAX_RECENT_FILES; i >= 1; i--) {	
    		File file = new File(get(APP_FILE_ + i, ""));									//debug("loadFileList() called: "+file.toString());
    		Application.addToFileList(file);	    		
    	}				    	

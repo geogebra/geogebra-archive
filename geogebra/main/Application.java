@@ -249,9 +249,12 @@ public class Application implements KeyEventDispatcher {
 
 	// Font settings
 	public static final int MIN_FONT_SIZE = 10;
-	// currently used application fonts
 
+	// currently used application fonts
 	private int appFontSize;
+
+	// maximum number of files to (save &) show in File -> Recent submenu
+	public static final int MAX_RECENT_FILES = 8;
 
 	// file extension string
 	public static final String FILE_EXT_GEOGEBRA = "ggb";
@@ -4278,7 +4281,7 @@ public class Application implements KeyEventDispatcher {
 	// determines which CAS is being used
 	final public static int CAS_MATHPIPER = ExpressionNode.STRING_TYPE_MATH_PIPER;
 	final public static int CAS_MAXIMA = ExpressionNode.STRING_TYPE_MAXIMA;
-	
+
 	
 	public void setDefaultCAS(int CAS) {
 		boolean success = false;

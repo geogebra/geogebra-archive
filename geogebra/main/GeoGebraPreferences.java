@@ -191,23 +191,23 @@ public class GeoGebraPreferences {
     }
     
     /**
-     * Loads the names of the four last used files from the preferences backing store.
+     * Loads the names of the eight last used files from the preferences backing store.
      */
     public  void loadFileList() {
-    	// load last four files
-    	for (int i=4; i >= 1; i--) {	
+    	// load last eight files
+    	for (int i=Application.MAX_RECENT_FILES; i >= 1; i--) {	
     		File file = new File(ggbPrefs.get(APP_FILE_ + i, ""));
     		Application.addToFileList(file);	    		
     	}				    	
     }  
     	
     /**
-     * Saves the names of the four last used files.
+     * Saves the names of the eight last used files.
      */
     public  void saveFileList() {
     	try {    		    		    		    	
 	    	// save last four files
-	    	for (int i=1; i <= 4; i++) {	    		
+	    	for (int i=1; i <= Application.MAX_RECENT_FILES; i++) {	    		
 	    		File file = Application.getFromFileList(i-1);
 	    		if (file != null)
 	    			ggbPrefs.put(APP_FILE_ + i, file.getCanonicalPath());
