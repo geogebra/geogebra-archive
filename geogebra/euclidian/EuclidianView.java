@@ -4652,7 +4652,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
-		return new DrawPolyLine(this, selectedPoints);
+		return new DrawPolygon(this, selectedPoints);
 	}	
 	
 	public Previewable createPreviewPolyLine(ArrayList selectedPoints){
