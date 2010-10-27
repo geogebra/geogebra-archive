@@ -212,7 +212,7 @@ public	class PropertiesPanel extends JPanel {
 				graphicsViewLocationPanel = new GraphicsViewLocationPanel(app, this);
 				
 				//coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
-				sliderPanel = new SliderPanel(app, this, false);
+				sliderPanel = new SliderPanel(app, this, false, true);
 			}
 			
 			showObjectPanel = new ShowObjectPanel();
@@ -243,7 +243,7 @@ public	class PropertiesPanel extends JPanel {
 			auxPanel = new AuxiliaryObjectPanel();
 			animStepPanel = new AnimationStepPanel(app);
 			animSpeedPanel = new AnimationSpeedPanel(app);
-			sliderPanel = new SliderPanel(app, this, false);
+			sliderPanel = new SliderPanel(app, this, false, true);
 			startPointPanel = new StartPointPanel();
 			cornerPointsPanel = new CornerPointsPanel();
 			textEditPanel = new TextEditPanel();
@@ -4739,14 +4739,15 @@ class SliderPanel
 	private Kernel kernel;
 	private PropertiesPanel propPanel;
 	private JPanel intervalPanel, sliderPanel, animationPanel;
-	private boolean useTabbedPane;
+	private boolean useTabbedPane, includeRandom;
 	private boolean actionPerforming;
 
-	public SliderPanel(Application app, PropertiesPanel propPanel, boolean useTabbedPane) {
+	public SliderPanel(Application app, PropertiesPanel propPanel, boolean useTabbedPane, boolean includeRandom) {
 		this.app = app;
 		kernel = app.getKernel();
 		this.propPanel = propPanel;
 		this.useTabbedPane = useTabbedPane;
+		this.includeRandom = includeRandom;
 					
 		intervalPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));	
 		sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));		
@@ -4938,6 +4939,8 @@ class SliderPanel
 		
 		if (random)
 			cbRandom.setSelected(num0.isRandom());
+		
+		cbRandom.setVisible(includeRandom);
 		
 		if (equalSliderHorizontal) {
 			// TODO why doesn't this work when you create a slider
