@@ -355,7 +355,7 @@ class FileMenu extends BaseMenu {
 				}
 
 				catch (java.lang.NoClassDefFoundError ee) {
-					app.showErrorDialog(app.getError("ExportJarMissing"));
+					app.showError("ExportJarMissing");
 					ee.printStackTrace();
 				}
 			}
@@ -372,7 +372,7 @@ class FileMenu extends BaseMenu {
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPstricks not available");
 				} catch (java.lang.NoClassDefFoundError ee) {
-					app.showErrorDialog(app.getError("ExportJarMissing"));
+					app.showError("ExportJarMissing");
 					ee.printStackTrace();
 				}
 			}
@@ -388,7 +388,7 @@ class FileMenu extends BaseMenu {
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToPGF not available");
 				} catch (java.lang.NoClassDefFoundError ee) {
-					app.showErrorDialog(app.getError("ExportJarMissing"));
+					app.showError("ExportJarMissing");
 					ee.printStackTrace();
 				}
 			}
@@ -405,7 +405,7 @@ class FileMenu extends BaseMenu {
 				} catch (Exception ex) {
 					Application.debug("GeoGebraToAsymptote not available");
 				} catch (java.lang.NoClassDefFoundError ee) {
-					app.showErrorDialog(app.getError("ExportJarMissing"));
+					app.showError("ExportJarMissing");
 					ee.printStackTrace();
 				}
 			}
@@ -443,7 +443,7 @@ class FileMenu extends BaseMenu {
 				}
 
 				catch (java.lang.NoClassDefFoundError ee) {
-					app.showErrorDialog(app.getError("ExportJarMissing"));
+					app.showError("ExportJarMissing");
 					ee.printStackTrace();
 				}
 			}
@@ -481,7 +481,7 @@ class FileMenu extends BaseMenu {
 				}
 
 				catch (java.lang.NoClassDefFoundError ee) {
-					app.showErrorDialog(app.getError("ExportJarMissing"));
+					app.showError("ExportJarMissing");
 					ee.printStackTrace();
 				}
 			}
