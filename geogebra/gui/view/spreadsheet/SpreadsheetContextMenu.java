@@ -290,15 +290,18 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		//             Import Data	
 		// ===============================================
 
-		item = new JMenuItem(app.getMenu("ImportDataFile") + " ...");
-		item.setIcon(app.getImageIcon("document-open.png"));
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				File dataFile = app.getGuiManager().getDataFile();				
-				table.getView().loadSpreadsheetFromURL(dataFile);
-			}
-		});
-		addItem(item);
+		if(app.hasFullPermissions()){
+			item = new JMenuItem(app.getMenu("ImportDataFile") + " ...");
+			item.setIcon(app.getImageIcon("document-open.png"));
+			item.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					File dataFile = app.getGuiManager().getDataFile();
+					if(dataFile != null)
+						table.getView().loadSpreadsheetFromURL(dataFile);
+				}
+			});
+			addItem(item);
+		}
 
 		/*
 		if (app.selectedGeosSize() >= 0) {

@@ -117,12 +117,12 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	// file browser default constants
 	public static final String DEFAULT_URL = "http://www.geogebra.org/static/data/data.xml";
-	public static final String DEFAULT_FILE = System.getProperty("user.dir");
+	private String defaultFile; 
 	public static final int DEFAULT_MODE = FileBrowserPanel.MODE_FILE;
 	
 	// file browser settings
 	private String initialURL = DEFAULT_URL;
-	private String initialFilePath = DEFAULT_FILE; 
+	private String initialFilePath; 
 	private int initialBrowserMode = DEFAULT_MODE;
 	
 
@@ -204,6 +204,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		
 		traceManager = new SpreadsheetTraceManager(this);
 	
+		// init the default file location for the file browser
+		if(app.hasFullPermissions()){
+			defaultFile = System.getProperty("user.dir");
+			initialFilePath = defaultFile;
+		}
 		
 		//==============================================
 		//  DEBUG
@@ -1130,7 +1135,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		// file browser
 		sb.append("\t<spreadsheetBrowser ");
 		
-		if(initialFilePath != DEFAULT_FILE 
+		if(initialFilePath != defaultFile 
 				|| initialURL != DEFAULT_URL 
 				|| initialBrowserMode != DEFAULT_MODE)
 		{	
@@ -1367,14 +1372,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	
 	
 	public FileBrowserPanel getFileBrowser() {		
-		if (fileBrowser == null) {
+		if (fileBrowser == null && app.hasFullPermissions()) {
 			fileBrowser = new FileBrowserPanel(this);
 			fileBrowser.setMinimumSize(new Dimension(50, 0));
 			fileBrowser.setRoot(initialFilePath, initialBrowserMode);
 		}	
 		return fileBrowser;
 	}
-	
 	
 	
 	public void setShowFileBrowser(boolean showFileBrowser) {
@@ -1471,7 +1475,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void setBrowserDefaults(boolean doRestore){
 
 		if(doRestore){
-			initialFilePath = DEFAULT_FILE;
+			initialFilePath = defaultFile;
 			initialURL = DEFAULT_URL;
 			initialBrowserMode = FileBrowserPanel.MODE_FILE;
 			initFileBrowser();
@@ -1483,6 +1487,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 	public void initFileBrowser(){
+		// don't init file browser without full permissions (e.g. unsigned applets)
+		if(!app.hasFullPermissions()) return;
+		
 		if(initialBrowserMode == FileBrowserPanel.MODE_FILE)
 			setFileBrowserDirectory(initialFilePath, initialBrowserMode);
 		else
