@@ -13,6 +13,7 @@ import geogebra.kernel.GeoSegment;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.discrete.AlgoShortestDistance.MyLink;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,8 +74,6 @@ public class AlgoShortestDistance extends AlgoElement {
     	
         
         HashMap<GeoPointND, MyNode> nodes = new HashMap<GeoPointND, MyNode>();
-        HashMap<MyNode, GeoPointND> nodes2 = new HashMap<MyNode, GeoPointND>();
-        
         
         SparseMultigraph<MyNode, MyLink> g = new SparseMultigraph<MyNode, MyLink>();
         
@@ -91,12 +90,10 @@ public class AlgoShortestDistance extends AlgoElement {
 				if (node1 == null) {
 					node1 = new MyNode(p1);
 					nodes.put(p1, node1);
-					nodes2.put(node1, p1);
 				} 
 				if (node2 == null) {
 					node2 = new MyNode(p2);
 					nodes.put(p2, node2);
-					nodes2.put(node2, p2);
 				} 
 				
 				// take note of start and end points
@@ -140,17 +137,46 @@ public class AlgoShortestDistance extends AlgoElement {
          		
         List<MyLink> list = alg.getPath(startNode, endNode);
         
-		double inhom[] = new double[2];
-	   	
+		double inhom1[] = new double[2];
+		double inhom2[] = new double[2];
+		double inhomLast[] = new double[2];
+		
+		MyNode n1, n2;
+		MyLink link = list.get(0);
+		n1 = link.n1;
+		n2 = link.n2;
+		
+		// nodes may not be in the right order, might need n1 or n2
+		if (n1 == startNode) {
+			n1.id.getInhomCoords(inhomLast);
+		} else if (n2 == startNode) {
+			n2.id.getInhomCoords(inhomLast);			
+		} else if (n1 == endNode) {
+			n1.id.getInhomCoords(inhomLast);
+		} else if (n2 == endNode) {
+			n2.id.getInhomCoords(inhomLast);			
+		}
+
+		MyPoint pt = new MyPoint(inhomLast[0] , inhomLast[1], false);
+        al.add(pt);
+        	   	
         for (int i = 0 ; i < list.size() ; i++) {
-        	MyLink link = list.get(i);
-        	GeoPointND p1 = nodes2.get(link.n1);
-        	GeoPointND p2 = nodes2.get(link.n2);
-        	
-            p1.getInhomCoords(inhom);
-            al.add(new MyPoint(inhom[0] , inhom[1], false));
-            p2.getInhomCoords(inhom);
-            al.add(new MyPoint(inhom[0] , inhom[1], true));
+        	link = list.get(i);
+    		link.n1.id.getInhomCoords(inhom1);
+    		link.n2.id.getInhomCoords(inhom2);
+    		
+    		// nodes may not be in the right order, might need n1 or n2
+    		if (inhom1[1] == inhomLast[1] && inhom1[0] == inhomLast[0]) {
+    			pt = new MyPoint(inhom2[0] , inhom2[1], true);
+    			inhomLast[0] = inhom2[0];
+    			inhomLast[1] = inhom2[1];
+    		} else {
+    			pt = new MyPoint(inhom1[0] , inhom1[1], true);
+    			inhomLast[0] = inhom1[0];
+    			inhomLast[1] = inhom1[1];
+    		}
+    		
+    		al.add(pt);
 
         }
         
@@ -163,8 +189,8 @@ public class AlgoShortestDistance extends AlgoElement {
 
     class MyLink {
     	protected MyNode n1, n2;
-    	double capacity; // should be private
-    	double weight; // should be private for good practice
+    	double capacity; 
+    	double weight; 
     	int id;
     	public MyLink(double weight, double capacity, MyNode n1, MyNode n2) {
     		this.id = edgeCount++; // This is defined in the outer class.
