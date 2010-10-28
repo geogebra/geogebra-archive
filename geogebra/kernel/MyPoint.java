@@ -37,4 +37,8 @@ public class MyPoint {
 	public String toString() {
 		return "(" + x + ", " + y + ")";
 	}
+
+	public double distance(MyPoint p) {
+		return GeoVec2D.length(p.x - x, p.y - y);
+	}
 }

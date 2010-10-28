@@ -4316,6 +4316,14 @@ public class Kernel {
 	}
 	
 	/**
+	 * Perimeter of Locus
+	 */
+	final public GeoNumeric Perimeter(String label, GeoLocus locus) {
+		AlgoPerimeterLocus algo = new AlgoPerimeterLocus(cons, label, locus);
+	    return algo.getResult();
+	}
+	
+	/**
 	 * Circumference named label of GeoConic
 	 */
 	final public GeoNumeric Circumference(String label, GeoConic conic) {
