@@ -234,7 +234,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	        	
 	        	// offScreen = includesScreenCompletely or the shape does not intersect the view rectangle
 	        	boolean offScreen =  includesScreenCompletely || !shape.getBounds2D().intersects(viewRect);
-	        	if (geo.alphaValue == 0f) {
+	        	if (geo.getAlphaValue() == 0f) {
 	        		// no filling
 	        		isVisible = !offScreen;
 	        	} else {
@@ -426,7 +426,7 @@ final public class DrawConic extends Drawable implements Previewable {
 				   Arc2D.OPEN);
                     
             // set general path for filling the arc to screen borders
-			if (conic.alphaValue > 0.0f || conic.isHatchingEnabled()) {
+			if (conic.getAlphaValue() > 0.0f || conic.isHatchingEnabled()) {
 				if (gp == null) gp = new GeneralPathClipped(view);
 				else gp.reset();
 				Point2D sp = arc.getStartPoint();
@@ -618,7 +618,7 @@ final public class DrawConic extends Drawable implements Previewable {
         
         // we have drawn the hyperbola from x=a to x=x0
         // ensure correct filling by adding points at (2*x0, y)
-        if (conic.alphaValue > 0.0f || conic.isHatchingEnabled()) {
+        if (conic.getAlphaValue() > 0.0f || conic.isHatchingEnabled()) {
 	        hypRight.lineTo(Float.MAX_VALUE, y);
 	        hypRight.lineTo(Float.MAX_VALUE, -y);
 	        hypLeft.lineTo(-Float.MAX_VALUE, y);
@@ -885,7 +885,7 @@ final public class DrawConic extends Drawable implements Previewable {
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-    			if (geo.alphaValue > 0.0f || geo.isHatchingEnabled()) 
+    			if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled()) 
     				return shape.intersects(x-3,y-3,6,6) ^ conic.isInverseFill();  
     			else
     				return strokedShape.intersects(x-3,y-3,6,6);            	
@@ -895,7 +895,7 @@ final public class DrawConic extends Drawable implements Previewable {
         			strokedShape = objStroke.createStrokedShape(hypLeft);
         			strokedShape2 = objStroke.createStrokedShape(hypRight);
         		}    		
-    			if (geo.alphaValue > 0.0f || geo.isHatchingEnabled()
+    			if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled()
     					) 
     				return (hypLeft.intersects(x-3,y-3,6,6) || hypRight.intersects(x-3,y-3,6,6)) ^ conic.isInverseFill();  
     			else

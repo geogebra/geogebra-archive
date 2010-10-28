@@ -861,7 +861,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 
 		public float getAlphaValue() {
 			
-			if (alphaValue == -1) {
+			if (getAlphaValue() == -1) {
 				// no alphaValue set
 				// so we need to set it to that of the first element, if there is one
 				if (geoList != null && geoList.size() > 0) {
@@ -890,7 +890,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 				}
 			}
 			
-			return alphaValue;
+			return super.getAlphaValue();
 		}
 		
 		public void setAlphaValue(float alpha) {

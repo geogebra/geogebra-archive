@@ -75,8 +75,8 @@ public final class DrawImage extends Drawable {
 			 
         if (!isVisible) return;
         
-        if (geo.alphaValue != alpha) {
-        	alpha = geo.alphaValue;
+        if (geo.getAlphaValue() != alpha) {
+        	alpha = geo.getAlphaValue();
         	alphaComp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);                
     	}
         

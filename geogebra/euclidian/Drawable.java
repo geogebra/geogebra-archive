@@ -911,7 +911,7 @@ public abstract class Drawable extends DrawableND {
 		if (geo.getFillType()==GeoElement.FILL_HATCH) {
 			
 			// use decoStroke as it is always full (not dashed/dotted etc)
-			HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.getBackgroundColor(), geo.alphaValue, geo.getHatchingDistance(), geo.getHatchingAngle());
+			HatchingHandler.setHatching(g2, decoStroke, geo.getObjectColor(), geo.getBackgroundColor(), geo.getAlphaValue(), geo.getHatchingDistance(), geo.getHatchingAngle());
 			if (usePureStroke)
 				Drawable.fillWithValueStrokePure(shape, g2);
 			else
@@ -920,10 +920,10 @@ public abstract class Drawable extends DrawableND {
 		}
 		else if (geo.getFillType()==GeoElement.FILL_IMAGE)
 		{
-			HatchingHandler.setTexture(g2, geo, geo.alphaValue);
+			HatchingHandler.setTexture(g2, geo, geo.getAlphaValue());
 			g2.fill(shape);
 		}        	
-		else if (geo.alphaValue > 0.0f)
+		else if (geo.getAlphaValue() > 0.0f)
 		{
 			g2.setPaint(geo.getFillColor());                       
 			g2.fill(shape);  

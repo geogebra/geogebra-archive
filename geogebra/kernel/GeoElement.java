@@ -363,7 +363,7 @@ public abstract class GeoElement
 	private int animationType = ANIMATION_OSCILLATING;
 	private int animationDirection = 1;
 	
-	public float alphaValue = 0.0f;
+	protected float alphaValue = 0.0f;
 	private int hatchingAngle = 45; // in degrees
 	private int hatchingDistance = 10;
 	private boolean inverseFill = false;
