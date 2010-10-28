@@ -580,24 +580,42 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
     	if (sb == null) sb = new StringBuilder();
     	else sb.setLength(0);
     	
-		sb.append("{\\left(\\begin{array}{l}");
-		
+    	
+    	String[] inputs;
     	if (symbolic && getParentAlgorithm() instanceof AlgoDependentVector) {
     		AlgoDependentVector algo = (AlgoDependentVector)getParentAlgorithm();
     		String symbolicStr = algo.toString();
-    		String[] inputs = symbolicStr.substring(1, symbolicStr.length() - 1).split(",");
-    		for (int i = 0 ; i < inputs.length ; i++) {
-    	    	sb.append(inputs[i]);
-    	    	sb.append(" \\\\ ");    			
-    		}
+    		inputs = symbolicStr.substring(1, symbolicStr.length() - 1).split(",");
     	} else {
-	    	sb.append(kernel.format(x));
-	    	sb.append(" \\\\ ");
-	    	sb.append(kernel.format(y));
-	    	sb.append(" \\\\ ");
+    		inputs = new String[2];
+    		inputs[0] = kernel.format(x);
+    		inputs[1] = kernel.format(y);
     	}
     	
-    	sb.append("\\end{array}\\right)}"); 
+    	boolean alignOnDecimalPoint = true;
+		for (int i = 0 ; i < inputs.length ; i++) {
+	    	if (inputs[i].indexOf('.') == -1) {
+	    		alignOnDecimalPoint = false;
+	    		continue;
+	    	}
+		}
+		
+		if (alignOnDecimalPoint) {
+			sb.append("\\left( \\begin{tabular}{r@{.}l}");
+			for (int i = 0 ; i < inputs.length ; i++) {
+				inputs[i] = inputs[i].replace('.', '&');
+			}
+		} else {			
+			sb.append("\\left( \\begin{tabular}{r}");
+		}
+		
+		
+		for (int i = 0 ; i < inputs.length ; i++) {
+	    	sb.append(inputs[i]);
+	    	sb.append(" \\\\ ");    			
+		}
+    	
+    	sb.append("\\end{tabular} \\right)"); 
     	return sb.toString();
     }     
 
