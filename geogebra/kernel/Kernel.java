@@ -4331,6 +4331,14 @@ public class Kernel {
 	    return algo.getCircumference();
 	}
 	
+	/**
+	 * Path Parameter for eg point on circle
+	 */
+	final public GeoNumeric PathParameter(String label, GeoPoint p) {
+	    AlgoPathParameter algo = new AlgoPathParameter(cons, label, p);
+	    return algo.getResult();
+	}
+	
 	// PhilippWeissenbacher 2007-04-10
 		
 	/** 

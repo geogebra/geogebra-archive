@@ -8870,5 +8870,36 @@ class CmdStemPlot extends CommandProcessor {
  			throw argNumErr(app, c.getName(), n);
  		}
  	}
+ 	
 
  }
+ 
+ 
+	class CmdPathParameter extends CommandProcessor {
+
+ 		public CmdPathParameter(Kernel kernel) {
+ 			super(kernel);
+ 		}
+
+ 		public GeoElement[] process(Command c) throws MyError {
+ 			int n = c.getArgumentNumber();
+ 			GeoElement[] arg;
+
+ 			switch (n) {
+ 			case 1:
+ 				arg = resArgs(c);
+ 				if ( (arg[0].isGeoPoint())) {
+
+ 					GeoElement[] ret = { kernel.PathParameter(c.getLabel(),
+ 							(GeoPoint) arg[0]) };
+ 					return ret;
+
+ 				} else
+ 					throw argErr(app, c.getName(), arg[0]);
+
+ 			default:
+ 				throw argNumErr(app, c.getName(), n);
+ 			}
+ 		}
+
+ 	}
