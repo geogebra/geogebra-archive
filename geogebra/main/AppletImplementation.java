@@ -1231,6 +1231,20 @@ public class AppletImplementation implements AppletImplementationInterface {
 	}
 
 	/**
+	 * returns a String (base-64 encoded PNG file of the Graphics View)
+	 */
+	public synchronized String getPNGBase64(double exportScale, boolean transparent, double DPI) {
+		return ggbApi.getPNGBase64(exportScale, transparent, DPI);
+	}
+
+	/**
+	 * returns a String (base-64 encoded PNG file of the Graphics View)
+	 */
+	public synchronized boolean writePNGtoFile(String filename, double exportScale, boolean transparent, double DPI) {
+		return ggbApi.writePNGtoFile(filename, exportScale, transparent, DPI);
+	}
+
+	/**
 	 * Sets the mode of the geometry window (EuclidianView). 
 	 */
 	public synchronized void setMode(int mode) {

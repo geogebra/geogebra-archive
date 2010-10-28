@@ -11,7 +11,9 @@ package geogebra.plugin;
  
  */
 import geogebra.GeoGebra;
+import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianView;
+import geogebra.io.MyImageIO;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
@@ -25,11 +27,13 @@ import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.main.Application;
+import geogebra.util.DownloadManager;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -40,7 +44,8 @@ import java.util.Locale;
 import java.util.TreeSet;
 
 import javax.imageio.ImageIO;
-import geogebra.cas.GeoGebraCAS;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 
 
 /** 
@@ -974,6 +979,67 @@ public class GgbAPI {
 			return "";
 		}
 	}
+	
+	
+	/*
+	 * saves a PNG file
+	 * signed applets only
+	 */
+	public synchronized boolean writePNGtoFile(String filename, double exportScale, boolean transparent, double DPI) {
+		if (!app.hasFullPermissions()) return false;
+		File file = new File(filename);
+
+		if (file == null) return false;
+
+		try {			
+			// draw graphics view into image
+			BufferedImage img =
+				app.getEuclidianView().getExportImage(exportScale, transparent); 
+			
+			// write image to file
+			MyImageIO.write(img, "png", (float)DPI,  file);	
+			
+			return true;
+		} catch (Exception ex) {
+			Application.debug(ex.toString());
+			return false;
+		} catch (Error ex) {
+			Application.debug(ex.toString());
+			return false;
+		} 
+	}
+	
+	/*
+	 * returns a String (base-64 encoded PNG file of the Graphics View)
+	 */
+	public synchronized String getPNGBase64(double exportScale, boolean transparent, double DPI) {
+		BufferedImage img =
+			app.getEuclidianView().getExportImage(exportScale, transparent); 
+
+		
+	    try {
+		    Iterator it = ImageIO.getImageWritersByFormatName("png");
+		    ImageWriter writer = (ImageWriter) it.next();
+		    ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+
+		    ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
+		    
+		    writer.setOutput(ios);
+		
+		    MyImageIO.writeImage(writer, img, DPI);
+		    
+		    byte[] image = baos.toByteArray();
+			String ret = geogebra.util.Base64.encode(baos.toByteArray(), 0);
+	    
+			baos.close();
+			
+			return ret;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	
 	/**
 	 * Returns the type of the object with the given name as a string (e.g. point, line, circle, ...)

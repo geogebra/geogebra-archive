@@ -1,5 +1,7 @@
 package geogebra.io;
 
+import geogebra.main.Application;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -24,17 +26,23 @@ import org.w3c.dom.NodeList;
 public class MyImageIO {
 
 	public static void write(BufferedImage img, String format, float DPI, File outFile) throws IOException {
-		float xDPI = DPI;
-		float yDPI = DPI;
 				 
 	    Iterator it = ImageIO.getImageWritersByFormatName(format);
 	    ImageWriter writer = (ImageWriter) it.next();
-	    ImageWriteParam writeParam = writer.getDefaultWriteParam();
-	    RenderedImage ri = img;
 	    FileImageOutputStream fios = new FileImageOutputStream(outFile);
 	    writer.setOutput(fios);
 	
+	    writeImage(writer, img, DPI);	
+
+	    fios.close();
+	}
 	
+	public static void writeImage(ImageWriter writer, BufferedImage img, double DPI) throws IOException {
+		float xDPI = (float)DPI;
+		float yDPI = (float)DPI;
+
+	    ImageWriteParam writeParam = writer.getDefaultWriteParam();
+	    RenderedImage ri = img;
 	    // set the DPI
 	    IIOMetadata destMeta = writer.getDefaultImageMetadata(
 	                                                       new ImageTypeSpecifier(ri), writeParam);
@@ -69,6 +77,9 @@ public class MyImageIO {
 	
 	    // close everything
 	    writer.dispose();
-	    fios.close();
+
 	}
+
+
+
 }
