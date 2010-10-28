@@ -100,6 +100,9 @@ class FileMenu extends BaseMenu {
 		submenu.setIcon(app.getEmptyIcon());
 		add(submenu);
 		
+		mi = submenu.add(exportWorksheet);
+		setMenuShortCutShiftAccelerator(mi, 'W');
+
 		mi = submenu.add(exportGraphicAction);
 		setMenuShortCutShiftAccelerator(mi, 'P');
 
@@ -124,9 +127,6 @@ class FileMenu extends BaseMenu {
 		JMenu submenuRecent = new JMenu(app.getMenu("Recent"));
 		submenu.setIcon(app.getEmptyIcon());
 		add(submenuRecent);
-		mi = submenu.add(exportWorksheet);
-		//setMenuShortCutShiftAccelerator(mi, 'W');
-
 
 		// DONE HERE WHEN APPLET
 		if (app.isApplet())
