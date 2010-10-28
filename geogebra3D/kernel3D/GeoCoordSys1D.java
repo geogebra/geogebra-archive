@@ -349,6 +349,11 @@ GeoLineND, GeoCoordSys{
 		return getCoordSys().getOrigin().getInhomCoords();
 	}
 	
-	
+	/**
+	 * @return inhom coords of the end point
+	 */
+	public GgbVector getEndInhomCoords(){
+		return getCoordSys().getPoint(1).getInhomCoords();
+	}
 	
 }

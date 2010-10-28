@@ -3762,8 +3762,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// fetch the two selected points for segment
 	protected void segment(){
-		GeoPoint[] points = getSelectedPoints();
-		GeoSegment segment = kernel.Segment(null, points[0], points[1]);
+		GeoPointND[] points = getSelectedPointsND();
+		if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[1]).isGeoElement3D())
+			getKernel().getManager3D().Segment3D(null,points[0], points[1]);
+		else
+			getKernel().Segment(null, (GeoPoint) points[0], (GeoPoint) points[1]);
 	}
 
 	// get two points and create vector between them

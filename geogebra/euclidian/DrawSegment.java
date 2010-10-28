@@ -18,12 +18,17 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.clipping.ClipLine;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -39,8 +44,7 @@ import java.util.ArrayList;
 public class DrawSegment extends Drawable
 implements Previewable {
    
-    private GeoLine s;
-    private GeoPoint A, B;
+    private GeoLineND s;
        
     private boolean isVisible, labelVisible;
     private ArrayList<GeoPoint> points;
@@ -57,10 +61,10 @@ implements Previewable {
 	 * @param view Euclidian view to be used
 	 * @param s Segment to be drawn 
 	 */
-    public DrawSegment(EuclidianView view, GeoLine s) {
+    public DrawSegment(EuclidianView view, GeoLineND s) {
     	this.view = view;
     	this.s = s;
-    	geo = s;
+    	geo = (GeoElement) s;
     	        
         update();
     }
@@ -83,11 +87,19 @@ implements Previewable {
         labelVisible = geo.isLabelVisible();       
 		updateStrokes(geo);
 		
-		A = s.getStartPoint();
-        B = s.getEndPoint();       
-        
-		A.getInhomCoords(coordsA);
-        B.getInhomCoords(coordsB);
+        GgbVector A = s.getStartInhomCoords();
+        GgbVector B = s.getEndInhomCoords();
+		
+		if (geo.isGeoElement3D() && (!Kernel.isZero(A.getZ()) || !Kernel.isZero(B.getZ())) ){
+			//TODO generalize
+			isVisible = false;
+			return;
+		}else{
+			coordsA[0] = A.getX(); coordsA[1] = A.getY();
+			coordsB[0] = B.getX(); coordsB[1] = B.getY();
+		}
+		
+		
 		boolean onscreenA = view.toScreenCoords(coordsA);
 		boolean onscreenB = view.toScreenCoords(coordsB);	
 		
@@ -110,7 +122,7 @@ implements Previewable {
 		}
 		     		    	
 		// draw trace
-		if (s.trace) {
+		if (s.getTrace()) {
 			isTracing = true;
 			Graphics2D g2 = view.getBackgroundGraphics();
 			if (g2 != null) drawTrace(g2);
@@ -355,8 +367,7 @@ implements Previewable {
 		if (isVisible) { 
 
 			//	start point
-			A = (GeoPoint) points.get(0);						   			
-			A.getInhomCoords(coordsA);			                        
+			coordsA = ((GeoPointND) points.get(0)).getInhomCoordsInD(2).get();	
 			view.toScreenCoords(coordsA);		
 			
 			if (line == null)

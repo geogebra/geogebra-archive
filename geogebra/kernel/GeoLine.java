@@ -1056,4 +1056,9 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	}
 	
 
+	public GgbVector getEndInhomCoords(){
+		return getEndPoint().getInhomCoords();
+	}
+	
+
 }

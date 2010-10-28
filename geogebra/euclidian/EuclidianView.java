@@ -3291,7 +3291,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;					
 
 		case GeoElement.GEO_CLASS_SEGMENT:
-			d = new DrawSegment(this, (GeoSegment) geo);
+		case GeoElement.GEO_CLASS_SEGMENT3D:
+			d = new DrawSegment(this, (GeoSegmentND) geo);
 			break;
 
 		case GeoElement.GEO_CLASS_RAY:

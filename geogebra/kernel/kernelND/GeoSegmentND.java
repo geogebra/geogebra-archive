@@ -1,5 +1,6 @@
 package geogebra.kernel.kernelND;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoElement;
 
 import java.awt.Color;
@@ -10,7 +11,7 @@ import java.awt.Color;
  * @author ggb3D
  *
  */
-public interface GeoSegmentND {
+public interface GeoSegmentND extends GeoLineND {
 
 
 	void setLabel(String string);
@@ -60,9 +61,6 @@ public interface GeoSegmentND {
 
 
 	boolean isEuclidianVisible();
-
-
-
 
 
 	

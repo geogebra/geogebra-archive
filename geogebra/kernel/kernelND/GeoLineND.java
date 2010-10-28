@@ -36,4 +36,10 @@ public interface GeoLineND {
 	public GgbVector getStartInhomCoords();
 
 
+
+	/**
+	 * @return inhom coords of the end point
+	 */
+	public GgbVector getEndInhomCoords();
+
 }
