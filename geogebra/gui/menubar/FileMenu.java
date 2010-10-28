@@ -100,9 +100,6 @@ class FileMenu extends BaseMenu {
 		submenu.setIcon(app.getEmptyIcon());
 		add(submenu);
 		
-		
-		submenu.addSeparator();
-		// submenu.add(htmlCPAction);
 		mi = submenu.add(exportGraphicAction);
 		setMenuShortCutShiftAccelerator(mi, 'P');
 
