@@ -5,6 +5,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.GeoPolygon;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
@@ -34,11 +35,11 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	/**
 	 * Common constructor
 	 * @param a_view3D
-	 * @param a_polygon3D
+	 * @param polygon
 	 */
-	public DrawPolygon3D(EuclidianView3D a_view3D, GeoPolygon3D a_polygon3D){
+	public DrawPolygon3D(EuclidianView3D a_view3D, GeoPolygon polygon){
 		
-		super(a_view3D, a_polygon3D);
+		super(a_view3D, polygon);
 		
 		
 		
@@ -98,7 +99,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 
 	public int getType(){
-		if (((GeoPolygon3D) getGeoElement()).isPartOfClosedSurface())
+		if (((GeoPolygon) getGeoElement()).isPartOfClosedSurface())
 			return DRAW_TYPE_CLOSED_SURFACES;
 		else
 			return DRAW_TYPE_SURFACES;
@@ -121,7 +122,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		
 		//creates the polygon
-		GeoPolygon3D polygon = (GeoPolygon3D) getGeoElement();
+		GeoPolygon polygon = (GeoPolygon) getGeoElement();
 		
 		GgbVector v = polygon.getViewDirection();
 		//Application.debug("normal\n"+v.toString());
@@ -143,9 +144,8 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 				
 		for(int i=0;i<polygon.getNumPoints();i++){
 			v = polygon.getPoint3D(i);
-			//Application.debug("point["+i+"]\n"+v.toString());
-			//renderer.addToPolygon(polygon.getPointX(i), polygon.getPointY(i));
 			renderer.addToPolygon(v.get(1),v.get(2),v.get(3));
+			//Application.debug("v["+i+"]=\n"+v);
 		}
 		
 		renderer.endPolygon();

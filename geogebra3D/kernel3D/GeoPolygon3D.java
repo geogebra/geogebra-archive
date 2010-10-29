@@ -326,10 +326,6 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	}
 	
 
-	public GgbVector getLabelPosition(){
-		return coordSys.getPoint(0.5, 0.5);
-	}
-
 
 	
 	public void setDrawingMatrix(GgbMatrix4x4 matrix) {
@@ -350,12 +346,13 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
     /** set the alpha value to alpha for openGL
      * @param alpha alpha value
      */
+	 /*
 	public void setAlphaValue(float alpha) {
 
 		alphaValue = alpha;
 
 	}
-	
+	*/
 	
 	
 	
@@ -368,9 +365,6 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 	
 	
-	/** if this is a part of a closed surface
-	 * @return if this is a part of a closed surface
-	 */
 	public boolean isPartOfClosedSurface(){
 		return isPartOfClosedSurface;
 	}

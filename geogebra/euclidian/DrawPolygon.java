@@ -12,10 +12,14 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -68,7 +72,9 @@ implements Previewable {
 			updateStrokes(poly);
 			
             // build general path for this polygon
-			addPointsToPath(poly.getPoints());
+			isVisible=addPointsToPath(poly.getPointsND());
+			if (!isVisible)
+				return;
 			gp.closePath();
         	
         	 // polygon on screen?		
@@ -91,14 +97,18 @@ implements Previewable {
         }
     }
 	
-	private void addPointsToPath(GeoPoint[] points) {
+	//return false if a point doesn't lie on the plane
+	private boolean addPointsToPath(GeoPointND[] points) {
 		if (gp == null)
 			gp = new GeneralPathClipped(view);
 		else
 			gp.reset();
 		
 		// first point
-		points[0].getInhomCoords(coords);
+		GgbVector v = points[0].getInhomCoordsInD(3);
+		if (!Kernel.isZero(v.getZ())) //TODO generalize
+			return false;		
+		coords[0] = v.getX(); coords[1] = v.getY();
 		view.toScreenCoords(coords);			
         gp.moveTo(coords[0], coords[1]);   
 		
@@ -107,7 +117,11 @@ implements Previewable {
 		double ysum = coords[1];
         
         for (int i=1; i < points.length; i++) {
-			points[i].getInhomCoords(coords);
+        	v = points[i].getInhomCoordsInD(3);
+    		if (!Kernel.isZero(v.getZ())){ //TODO generalize
+    			return false;		
+    		}
+    		coords[0] = v.getX(); coords[1] = v.getY();
 			view.toScreenCoords(coords);	
 			if (labelVisible) {
 				xsum += coords[0];
@@ -121,7 +135,9 @@ implements Previewable {
 			xLabel = (int) (xsum / points.length);
 			yLabel = (int) (ysum / points.length);
 			addLabelOffset();                                       
-		}  
+		} 
+		
+		return true;
 	}
         
 	final public void draw(Graphics2D g2) {

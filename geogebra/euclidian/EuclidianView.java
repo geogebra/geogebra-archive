@@ -3306,6 +3306,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;		
 
 		case GeoElement.GEO_CLASS_POLYGON:
+		case GeoElement.GEO_CLASS_POLYGON3D:
 			d = new DrawPolygon(this, (GeoPolygon) geo);
 			break;
 

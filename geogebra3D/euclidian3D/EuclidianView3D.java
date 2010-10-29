@@ -15,6 +15,7 @@ import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.kernelND.GeoLineND;
@@ -497,8 +498,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				break;		
 				
 
+			case GeoElement3D.GEO_CLASS_POLYGON:
 			case GeoElement3D.GEO_CLASS_POLYGON3D:
-				d = new DrawPolygon3D(this, (GeoPolygon3D) geo);
+				d = new DrawPolygon3D(this, (GeoPolygon) geo);
 				break;									
 
 

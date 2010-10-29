@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbCoordSys;
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -38,7 +39,9 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	protected GeoPointND [] points;
 	protected GeoSegmentND [] segments;
 	
-
+	/** view direction of the polygon (TODO generalize) */
+	private GgbVector viewDirection = new GgbVector(0, 0, 1, 0);
+	
 	/** first point for region coord sys */
 	protected GeoPoint p0;
 	/** second point for region coord sys */
@@ -443,7 +446,9 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		return (GeoPoint []) points;
 	}
 	
-
+	public GeoPointND [] getPointsND() {
+		return points;
+	}
 	
 	/**
 	 * Returns the segments of this polygon.
@@ -1054,6 +1059,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 
    public boolean trace;
 
+
 	public boolean isTraceable() {
 		return true;
 	}
@@ -1068,6 +1074,47 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	
 	
 	
+	/////////////////////
+	// 3D stuff
+	/////////////////////
+
+	public GgbVector getViewDirection(){
+		return viewDirection;
+	}
+
+	/**
+	 * Returns the i-th 3D point of this polygon.
+	 * @param i number of point
+	 * @return the i-th point
+	 */	 
+	public GgbVector getPoint3D(int i){
+		return getPoint(i).getCoordsInD(3);
+	}
 	
+
+	/** if this is a part of a closed surface
+	 * @return if this is a part of a closed surface
+	 */
+	public boolean isPartOfClosedSurface(){
+		return false; //TODO
+	}
+
+
+	public boolean hasDrawable3D() {
+		return true;
+	}	
+	
+	public GgbVector getLabelPosition(){
+		double x = 0;
+		double y = 0;
+		double z = 0;
+		for (int i=0; i<getNumPoints(); i++){
+			GgbVector coords = getPoint3D(i);
+			x+=coords.getX();
+			y+=coords.getY();
+			z+=coords.getZ();
+		}
+		return new GgbVector(x/getNumPoints(), y/getNumPoints(), z/getNumPoints(), 1);
+	}
 
 }
