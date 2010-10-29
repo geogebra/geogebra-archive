@@ -22,7 +22,7 @@ public class GeoGebra extends Object {
 	
 	// GeoGebra version
 	public static final String BUILD_DATE = "29 October 2010";
-	public static final String VERSION_STRING = "3.9.105.0";
+	public static final String VERSION_STRING = "3.9.106.0";
 	public static final String SHORT_VERSION_STRING = "4.0"; // used for online archive
 
 	// File format versions
