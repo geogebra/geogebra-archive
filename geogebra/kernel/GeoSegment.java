@@ -494,6 +494,35 @@ GeoSegmentND {
 		}
 	}
   	
+    /** Calculates the euclidian distance between this GeoSegment and GeoPoint P.
+     * 
+     * returns distance from endpoints if appropriate
+     */
+    final public double distance(GeoPoint p) {     
+
+		double px = p.inhomX;
+		double py = p.inhomY;
+		
+		// project P on line
+		// param of projection point on perpendicular line
+		double t = -(z + x*px + y*py) / (x*x + y*y); 
+		// calculate projection point using perpendicular line
+		px += t * x;
+		py += t * y;
+						
+		// calculate parameter
+		if (Math.abs(x) <= Math.abs(y)) {	
+			t = (startPoint.z * px - startPoint.x) / (y * startPoint.z);								
+		} 
+		else {		
+			t = (startPoint.y - startPoint.z * py) / (x * startPoint.z);			
+		}
+
+		if (t < 0) return p.distance(startPoint);
+    	if (t > 1) return p.distance(endPoint);
+    	
+    	return super.distance(p);
+    }
 
 	
 }

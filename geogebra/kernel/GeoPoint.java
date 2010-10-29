@@ -31,6 +31,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -117,6 +118,7 @@ GeoPointND  {
     		regionParameters = new RegionParameters();
     	return regionParameters;
     }
+    
     
 	public String getClassName() {
 		return "GeoPoint";
@@ -576,6 +578,10 @@ GeoPointND  {
     	return distance((GeoPoint) P);
     }
     
+	public Point2D.Double getNearestPoint(GeoPoint p) {
+		return new Point2D.Double(inhomX, inhomY);
+	}
+
     // euclidian distance between this GeoPoint and P
     final public double distance(GeoPoint P) {       
         return GeoVec2D.length(	P.inhomX - inhomX, 

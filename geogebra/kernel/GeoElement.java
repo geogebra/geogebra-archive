@@ -5075,5 +5075,24 @@ public abstract class GeoElement
 	public GgbVector getViewDirection(){
 		return null;
 	}
+	
+	/*
+	 * gets shortest distance to point p
+	 * overridden in eg GeoPoint, GeoLine
+	 * for compound paths
+	 */
+	public double distance(GeoPoint p) {
+		return Double.POSITIVE_INFINITY;
+	}
+	
+	/*
+	 * Gets nearest point on object to p
+	 * overridden in eg GeoPoint, GeoLine
+	 * for compound paths
+	 */
+	public Point2D.Double getNearestPoint(GeoPoint p) {
+		return null;
+	}
+	
 
 }

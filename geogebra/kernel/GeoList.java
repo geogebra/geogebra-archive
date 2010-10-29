@@ -17,18 +17,21 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 
 /**
  * List of GeoElements
  */
-public class GeoList extends GeoElement implements ListValue, LineProperties, PointProperties, TextProperties, Traceable {
+public class GeoList extends GeoElement implements ListValue, LineProperties, PointProperties, TextProperties, Traceable, Path {
 	
 	public final static int ELEMENT_TYPE_MIXED = -1;
 
@@ -861,7 +864,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 
 		public float getAlphaValue() {
 			
-			if (getAlphaValue() == -1) {
+			if (super.getAlphaValue() == -1) {
 				// no alphaValue set
 				// so we need to set it to that of the first element, if there is one
 				if (geoList != null && geoList.size() > 0) {
@@ -1145,6 +1148,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		// G.Sturr 2010-6-12
 		// Selection index for lists used in comboBoxes
 		private int selectedIndex = 0;
+
+		private int closestPointIndex;
 		
 		public int getSelectedIndex() {
 			return selectedIndex;
@@ -1184,6 +1189,104 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	    
 		public boolean isTraceable() {
 			return true;
+		}
+
+		public boolean isLimitedPath() {
+			return false;
+		}
+		
+		public boolean isPath() {
+			return true;
+		}
+		
+		/*
+		 * adapted from GeoLocus
+		 */
+		public void pointChanged(GeoPointND PI) {
+			//Application.debug("pointChanged",1);
+			GeoPoint P = (GeoPoint) PI;
+			
+			P.updateCoords();
+			
+			// find closest point on path
+			Point2D.Double closestPoint = getNearestPoint(P);
+			
+			Path path = (Path)get(closestPointIndex);
+			
+			path.pointChanged(P);
+			
+			PathParameter pp = P.getPathParameter();
+				
+				// update path param
+				// 0-1 for first obj
+				// 1-2 for second
+				// etc
+				pp.t += closestPointIndex;			
+		
+		}
+
+		public Point2D.Double getNearestPoint(GeoPoint p) {
+			//Application.printStacktrace(p.inhomX+" "+p.inhomY);
+			double distance = Double.POSITIVE_INFINITY;
+			closestPointIndex = 0; // default - first object
+			//double closestIndex = -1;
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	double d = geo.distance(p);
+		    	//Application.debug(d+" "+distance);
+		    	if (d < distance) {
+		    		distance = d;
+		    		closestPointIndex = i;
+		    	}
+			}
+			
+			//Application.debug("closestPointIndex="+closestPointIndex);
+			
+			return get(closestPointIndex).getNearestPoint(p);
+		}
+
+		public void pathChanged(GeoPointND PI) {
+			
+			
+			PathParameter pp = PI.getPathParameter();
+			
+			double t = pp.getT();
+			int n = (int)Math.floor(t);
+			pp.setT(t - n);
+			
+			//Application.debug("pathChanged "+n);
+
+			((Path)get(n)).pathChanged(PI);
+			
+			t = pp.getT();
+			pp.setT(t + n);
+
+		}
+
+		public boolean isOnPath(GeoPointND PI, double eps) {
+			//Application.debug("isOnPath",1);
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (((Path)geo).isOnPath(PI, eps)) return true;
+			}
+			return false;
+		}
+
+		public double getMinParameter() {
+			return 0;
+		}
+
+		public double getMaxParameter() {
+			return geoList.size();
+		}
+
+		public boolean isClosedPath() {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		public PathMover createPathMover() {
+			return new PathMoverGeneric(this);
 		}
 	    
 

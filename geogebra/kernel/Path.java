@@ -79,6 +79,7 @@ public interface Path {
 	/**
 	 * Returns a PathMover object for this path.
 	 */
-	public PathMover createPathMover();	
+	public PathMover createPathMover();
+
 	
 }

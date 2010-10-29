@@ -28,7 +28,9 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
+
+import java.awt.Point;
+import java.awt.geom.Point2D;
 
 public class GeoLine extends GeoVec3D 
 implements Path, 
@@ -242,7 +244,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
         
     /** Calculates the euclidian distance between this GeoLine and GeoPoint P.
      */
-    final public double distance(GeoPoint p) {                        
+    public double distance(GeoPoint p) {                        
         return Math.abs( (x * p.inhomX + y * p.inhomY + z) / 
                             GeoVec2D.length(x, y) );
     }
@@ -720,7 +722,17 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 				pp.t = (startPoint.y - startPoint.z * py) / (x * startPoint.z);			
 			}
 		}		
-	}				
+	}			
+	
+	public Point2D.Double getNearestPoint(GeoPoint p) {
+		double px = p.inhomX;
+		double py = p.inhomY;
+		// param of projection point on perpendicular line
+		double t = -(z + x*px + y*py) / (x*x + y*y); 
+		// calculate projection point using perpendicular line
+		return new Point2D.Double(px + t * x, py + t * y);
+
+	}
 
 	public void pathChanged(GeoPointND PI) {
 		
