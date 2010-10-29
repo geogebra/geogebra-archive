@@ -336,7 +336,11 @@ public interface JavaScriptAPI {
 	public void setRepaintingActive(boolean flag);
 	
 	
-	/**
+	public boolean writePNGtoFile(String filename, double exportScale, boolean transparent, double DPI);
+
+	public String getPNGBase64(double exportScale, boolean transparent, double DPI);
+
+		/**
 	 * Sets the Cartesian coordinate system in the graphics window.
 	 */
 	public void setCoordSystem(double xmin, double xmax, double ymin, double ymax);

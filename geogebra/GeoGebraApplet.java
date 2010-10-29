@@ -306,6 +306,14 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		return getAppletImplementation().getObjectName(i);
 	}
 
+	public synchronized String getPNGBase64(double exportScale, boolean transparent, double DPI) {
+		return getAppletImplementation().getPNGBase64(exportScale, transparent, DPI);
+	}
+	
+	public synchronized boolean writePNGtoFile(String filename, double exportScale, boolean transparent, double DPI) {
+		return getAppletImplementation().writePNGtoFile(filename, exportScale, transparent, DPI);
+	}
+	
 	public synchronized int getObjectNumber() {
 		return getAppletImplementation().getObjectNumber();
 	}
