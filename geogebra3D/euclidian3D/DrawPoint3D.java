@@ -220,6 +220,17 @@ implements Previewable, Functional2Var{
 
 
 	
+
+	protected float getLabelOffsetX(){
+		//consistent with DrawPoint
+		return super.getLabelOffsetX()+4;
+	}
+
+	protected float getLabelOffsetY(){
+		//consistent with DrawPoint
+		return super.getLabelOffsetY()-2*((GeoPointND) getGeoElement()).getPointSize();
+	}
+	
 	
 	
 

@@ -280,8 +280,24 @@ public abstract class Drawable3D extends DrawableND {
 		label.update(getGeoElement().getLabelDescription(), 10, 
 				getGeoElement().getObjectColor(),
 				getLabelPosition().copyVector(),
-				getGeoElement().labelOffsetX,-getGeoElement().labelOffsetY);
+				getLabelOffsetX(),-getLabelOffsetY());
 
+	}
+	
+	/**
+	 * 
+	 * @return x offset for the label
+	 */
+	protected float getLabelOffsetX(){
+		return getGeoElement().labelOffsetX;
+	}
+	
+	/**
+	 * 
+	 * @return y offset for the label
+	 */
+	protected float getLabelOffsetY(){
+		return getGeoElement().labelOffsetY;
 	}
 	
 	/**
