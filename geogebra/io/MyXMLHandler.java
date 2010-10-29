@@ -153,6 +153,7 @@ public class MyXMLHandler implements DocHandler {
 	private LinkedList<GeoExpPair> dynamicColorList = new LinkedList<GeoExpPair>();
 	private LinkedList<GeoExpPair> animationSpeedList = new LinkedList<GeoExpPair>();
 	private LinkedList<GeoExpPair> animationStepList = new LinkedList<GeoExpPair>();
+	private LinkedList<GeoElement> animatingList = new LinkedList<GeoElement>();
 	private LinkedList<GeoExpPair> minMaxList = new LinkedList<GeoExpPair>();
 
 	private class GeoExpPair {
@@ -2039,7 +2040,7 @@ public class MyXMLHandler implements DocHandler {
 				processAnimationSpeedList();
 				processAnimationStepList();
 				processMinMaxList();
-				//processDynamicCoordinatesList();
+				processAnimatingList(); // must be after min/maxList otherwise GeoElement.setAnimating doesn't work
 
 				if (kernel == origKernel) {
 					mode = MODE_GEOGEBRA;
@@ -2964,8 +2965,13 @@ public class MyXMLHandler implements DocHandler {
 			if (type != null)
 				geo.setAnimationType(Integer.parseInt(type));
 			
+			// doesn't work for hidden sliders now that intervalMin/Max are set at end of XML (dynamic slider range(
+			//geo.setAnimating(parseBoolean((String) attrs.get("playing")));
 			
-			geo.setAnimating(parseBoolean((String) attrs.get("playing")));
+			// replacement
+			if (parseBoolean((String) attrs.get("playing")))
+				animatingList.add(geo);			
+
 			
 			return true;
 		} catch (Exception e) {
@@ -3431,6 +3437,23 @@ public class MyXMLHandler implements DocHandler {
 			throw new MyError(app, "processAnimationStepList: " + e.toString());
 		}
 		animationSpeedList.clear();
+	}
+	
+	private void processAnimatingList() {
+		try {
+			Iterator<GeoElement> it = animatingList.iterator();
+			AlgebraProcessor algProc = kernel.getAlgebraProcessor();
+
+			while (it.hasNext()) {
+				GeoElement geo = it.next();
+				geo.setAnimating(true);
+			}
+		} catch (Exception e) {
+			animatingList.clear();
+			e.printStackTrace();
+			throw new MyError(app, "processAnimatingList: " + e.toString());
+		}
+		animatingList.clear();
 	}
 	
 	private void processMinMaxList() {
