@@ -1222,7 +1222,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			// 1-2 for second
 			// etc
 			pp.t += closestPointIndex;			
-			Application.debug(pp.t);
+			//Application.debug(pp.t);
 		
 		}
 
@@ -1256,6 +1256,11 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			pp.setT(t - n);
 			
 			//Application.debug("pathChanged "+n);
+			
+			if (n >= size() || n < 0) {
+				Application.debug("problem with path param "+PI.getLabel());
+				n = 0;
+			}
 
 			((Path)get(n)).pathChanged(PI);
 			

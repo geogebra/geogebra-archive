@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
@@ -2448,7 +2449,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			case CONIC_ELLIPSE:			
 				//	transform to eigenvector coord-system
 				coordsRWtoEV(P);				
-				
+
 				// calc parameter 
 				px = P.x / P.z;
 				py = P.y / P.z;		
@@ -2940,5 +2941,42 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			return false;
 		return true;
 	}
+	
+    /** Calculates the euclidian distance between this GeoConic and GeoPoint P.
+     * used for compound paths
+     */
+    public double distance(GeoPoint p) {                        
+        //if (!isCircle()) return Double.POSITIVE_INFINITY;
+        
+        /*
+		double xC = - matrix[4];
+		double yC = - matrix[5];
+		double r = halfAxes[0];
+		
+		double x = p.inhomX;
+		double y = p.inhomY;
+		
+		double d = GeoVec2D.length(x - xC, y - yC);
+		return Math.abs(d - r);
+		*/
+        
+        boolean temp = cons.isSuppressLabelsActive();
+        cons.setSuppressLabelCreation(true);
+        GeoPoint closestPoint = new GeoPoint(cons, null, p.x, p.y, p.z);
+        cons.setSuppressLabelCreation(temp);
+        closestPoint.setPath(this);
+        pointChanged(closestPoint);
+        
+        closestPoint.updateCoords();
+        
+        //Application.debug("closest point = "+closestPoint.inhomX+","+closestPoint.inhomY);
+        //Application.debug("distance = "+p.distance(closestPoint));
+        
+        return p.distance(closestPoint);
+
+
+    }
+    
+
 
 }
