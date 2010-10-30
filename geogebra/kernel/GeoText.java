@@ -568,6 +568,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		return fontSize;
 	}
 	public void setFontSize(int size) {
+		if (size < MIN_FONTSIZE) size = -MIN_FONTSIZE;
+		else if (size > MAX_FONTSIZE) size = MAX_FONTSIZE;
 		fontSize = size;
 	}
 	public int getFontStyle() {

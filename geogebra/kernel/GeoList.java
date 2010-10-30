@@ -994,6 +994,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		}
 
 		public void setFontSize(int size) {
+			if (size < MIN_FONTSIZE) size = -MIN_FONTSIZE;
+			else if (size > MAX_FONTSIZE) size = MAX_FONTSIZE;
 			fontSize = size;
 
 			if (geoList == null || geoList.size() == 0) return;
