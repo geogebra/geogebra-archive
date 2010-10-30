@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.MyBoolean;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyStringBuffer;
@@ -198,6 +199,29 @@ public class AlgoDependentListExpression extends AlgoElement {
 					GeoText text = new GeoText(cons);
 					text.setTextString(str.toValueString());
 					geo = text;
+				}
+				
+				// add point to list
+				list.add(geo);	
+			}
+			else if (element instanceof MyBoolean) {
+				MyBoolean bool = (MyBoolean)element;
+				// try to use cached element of same type
+				if (i < cachedListSize) {
+					GeoElement cachedGeo = list.getCached(i);
+					
+					// the cached element is a point: set value
+					if (cachedGeo.isGeoBoolean()) {
+						((GeoBoolean) cachedGeo).setValue(bool.getBoolean());
+						geo = cachedGeo;
+					}     			
+				}
+				
+				// no cached point: create new one
+				if (geo == null) {
+					GeoBoolean geoBool = new GeoBoolean(cons);
+					geoBool.setValue(bool.getBoolean());					
+					geo = geoBool;
 				}
 				
 				// add point to list
