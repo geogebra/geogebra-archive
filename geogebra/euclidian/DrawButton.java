@@ -12,12 +12,13 @@
 
 package geogebra.euclidian;
 
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoButton;
+import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -168,8 +169,14 @@ public final class DrawButton extends Drawable {
 // Michael Borcherds 2007-10-18 END
 		}			
 		
+		int fontSize = view.fontSize + geoButton.getFontSize();
+		Application app = view.getApplication();
+		
+		Font vFont = view.getFont();
+		
 		button.setOpaque(true);		
-		button.setFont(view.fontPoint);
+		button.setFont(app.getFontCanDisplay(button.getText(), false, vFont.getStyle(), fontSize));				
+
 		button.setForeground(geo.getObjectColor());
 		Color bgCol = geo.getBackgroundColor();
 		button.setBackground(bgCol != null ? bgCol : view.getBackground());

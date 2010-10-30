@@ -753,6 +753,10 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	final public boolean isAuxiliaryObjectByDefault() {
 		return true;
 	}
+
+	public boolean justFontSize() {
+		return false;
+	}
 	
 
 

@@ -12,5 +12,6 @@ public interface TextProperties {
 	public boolean isSerifFont();
 	public void setSerifFont(boolean serifFont);
 	public boolean useSignificantFigures();
+	public boolean justFontSize();
 
 }

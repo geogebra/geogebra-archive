@@ -16,10 +16,12 @@ import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -246,10 +248,17 @@ public final class DrawTextField extends Drawable {
 // Michael Borcherds 2007-10-18 END
 		}			
 		
+		
+		int fontSize = view.fontSize + geoButton.getFontSize();
+		Application app = view.getApplication();
+		
+		Font vFont = view.getFont();
+		Font font = app.getFontCanDisplay(textField.getText(), false, vFont.getStyle(), fontSize);
+		
 		textField.setOpaque(true);		
 		label.setOpaque(false);		
-		textField.setFont(view.fontPoint);
-		label.setFont(view.fontPoint);
+		textField.setFont(font);				
+		label.setFont(font);
 		textField.setForeground(geo.getObjectColor());
 		label.setForeground(geo.getObjectColor());
 		Color bgCol = geo.getBackgroundColor();

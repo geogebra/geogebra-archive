@@ -3353,6 +3353,7 @@ public	class PropertiesPanel extends JPanel {
 		
 		private JPanel secondLine;
 		private boolean secondLineVisible = false;
+		private boolean justDisplayFontSize = true;
 
 		
 		public TextOptionsPanel() {	
@@ -3382,11 +3383,14 @@ public	class PropertiesPanel extends JPanel {
 
 			// font, size
 			JPanel firstLine = new JPanel();
-			firstLine.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));			
-			firstLine.add(cbFont);			
+			firstLine.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));		
+			
+			if (!justDisplayFontSize) {
+				firstLine.add(cbFont);			
+				firstLine.add(btBold);
+				firstLine.add(btItalic);
+			}
 			firstLine.add(cbSize);	
-			firstLine.add(btBold);
-			firstLine.add(btItalic);
 			
 			// bold, italic
 			secondLine = new JPanel();
@@ -3397,8 +3401,10 @@ public	class PropertiesPanel extends JPanel {
 			
 			setLayout(new BorderLayout(5,5));
 			add(firstLine, BorderLayout.NORTH);
-			add(secondLine, BorderLayout.SOUTH);	
-			secondLineVisible = true;
+			if (!justDisplayFontSize) {
+				add(secondLine, BorderLayout.SOUTH);	
+			}
+			secondLineVisible = !justDisplayFontSize;
 		}
 		
 		public void setLabels() {
@@ -3505,10 +3511,17 @@ public	class PropertiesPanel extends JPanel {
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
 			for (int i = 0; i < geos.length; i++) {
-				if (!(((GeoElement)geos[i]).getGeoElementForPropertiesDialog().isGeoText())) {
-					geosOK = false;
-					break;
-				}
+				GeoElement geo = (GeoElement)geos[i];
+				
+				if (geo instanceof TextProperties && !((TextProperties)geo).justFontSize())
+					justDisplayFontSize  = false;
+				
+				if (!(geo.getGeoElementForPropertiesDialog().isGeoText())) {
+					if (!((GeoElement)geos[i]).isGeoButton()) {
+						geosOK = false;
+						break;
+					}
+				} 
 			}
 			return geosOK;
 		}

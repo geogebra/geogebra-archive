@@ -3020,12 +3020,15 @@ public class MyXMLHandler implements DocHandler {
 					+ geo.getClass());
 			return false;
 		}
+		
+		Object serif = attrs.get("serif");
+		Object style = attrs.get("style");
 
 		try {
 			TextProperties text = (TextProperties) geo;
-			text.setSerifFont(parseBoolean((String) attrs.get("serif")));
-			text.setFontSize(Integer.parseInt((String) attrs.get("size")));
-			text.setFontStyle(Integer.parseInt((String) attrs.get("style")));
+			text.setFontSize(Integer.parseInt((String) attrs.get("size"))); // compulsory
+			if (serif != null) text.setSerifFont(parseBoolean((String) serif));
+			if (style != null) text.setFontStyle(Integer.parseInt((String) style));
 			return true;
 		} catch (Exception e) {
 			return false;

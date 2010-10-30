@@ -1296,6 +1296,10 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		public PathMover createPathMover() {
 			return new PathMoverGeneric(this);
 		}
+
+		public boolean justFontSize() {
+			return false;
+		}
 	    
 
 }

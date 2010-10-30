@@ -13,13 +13,15 @@
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 
 /**
  * 
  * @author Michael
  * @version
  */
-public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {			
+public class GeoButton extends GeoElement implements AbsoluteScreenLocateable, TextProperties {			
 
 	/**
 	 * 
@@ -27,6 +29,8 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 	private static final long serialVersionUID = 1L;
 	
 	private boolean buttonFixed = false;
+	
+	private int fontSize = 0;
 	
 	public GeoButton(Construction c) {
 		super(c);			
@@ -101,6 +105,7 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 	}
 	
 	private StringBuilder sbToString;
+
 	private StringBuilder getSbToString() {
 		if (sbToString == null)
 			sbToString = new StringBuilder();
@@ -186,6 +191,64 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable {
 	final public boolean isLabelValueShowable() {
 		return false;
 	}
+
+	public int getFontSize() {
+		return fontSize ;
+	}
+	public void setFontSize(int size) {
+		if (size < MIN_FONTSIZE) size = -MIN_FONTSIZE;
+		else if (size > MAX_FONTSIZE) size = MAX_FONTSIZE;
+		fontSize = size;
+	}
+
+	public int getFontStyle() {
+		return 0;
+	}
+
+	public void setFontStyle(int fontStyle) {
+		
+	}
+
+	public int getPrintDecimals() {
+		return 0;
+	}
+
+	public int getPrintFigures() {
+		return 0;
+	}
+
+	public void setPrintDecimals(int printDecimals, boolean update) {
+	
+	}
+
+	public void setPrintFigures(int printFigures, boolean update) {
+	}
+
+	public boolean isSerifFont() {
+		return false;
+	}
+
+	public void setSerifFont(boolean serifFont) {
+	}
+
+	public boolean useSignificantFigures() {
+		return false;
+	}
+
+	public boolean justFontSize() {
+		return true;
+	}
+	
+	protected void getXMLtags(StringBuilder sb) {
+		super.getXMLtags(sb);
+		// font settings
+		if (fontSize != 0) {
+			sb.append("\t<font size=\"");
+			sb.append(fontSize);
+			sb.append("\"/>\n");
+		}
+	}
+
 
 
 }
