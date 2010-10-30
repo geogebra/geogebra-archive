@@ -875,14 +875,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_CONIC_FIVE_POINTS:
 		case EuclidianView.MODE_POLYGON:
 		case EuclidianView.MODE_POLYLINE:
-		case EuclidianView.MODE_RIGID_POLYGON:
 		case EuclidianView.MODE_REGULAR_POLYGON:	
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
+			hits = view.getHits();
+			hits.removePolygons();
 			createNewPoint(hits, true, true, true); 
 			break;
 
+		case EuclidianView.MODE_RIGID_POLYGON:
+			view.setHits(mouseLoc);
+			hits = view.getHits();
+			hits.removePolygons();
+			createNewPoint(hits, false, false, false, false); 
+			break;
+			
 		case EuclidianView.MODE_PARALLEL:
 		case EuclidianView.MODE_PARABOLA: // Michael Borcherds 2008-04-08
 		case EuclidianView.MODE_ORTHOGONAL:
@@ -3363,7 +3370,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						path = (Path) pathHits.get(0);
 					createPoint = path != null;
 				} else {
-					createPoint = false;
+					createPoint = true; // create as free point if onPathPossible=false
 				}
 			}
 
