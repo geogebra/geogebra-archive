@@ -3016,7 +3016,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// if alt pressed, make sure slope is a multiple of 15 degrees
 		if ((mode == EuclidianView.MODE_JOIN || mode == EuclidianView.MODE_SEGMENT
-				|| mode == EuclidianView.MODE_RAY || mode == EuclidianView.MODE_VECTOR)
+				|| mode == EuclidianView.MODE_RAY || mode == EuclidianView.MODE_VECTOR
+				|| mode == EuclidianView.MODE_POLYGON || mode == EuclidianView.MODE_POLYLINE)
 				&& useLineEndPoint && lineEndPoint != null) {
 			xRW = lineEndPoint.x;
 			yRW = lineEndPoint.y;

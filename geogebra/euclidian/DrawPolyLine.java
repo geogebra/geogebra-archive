@@ -20,6 +20,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 /**
@@ -141,12 +142,44 @@ implements Previewable {
 		}	
 	}
 	
+	private Point2D.Double endPoint = new Point2D.Double();
+
 	final public void updateMousePos(double xRW, double yRW) {	
-		if (isVisible) {
-			gp.lineTo(view.toScreenCoordX(xRW), view.toScreenCoordY(yRW));
+		if (isVisible) { 											
+			//double xRW = view.toRealWorldCoordX(mx);
+			//double yRW = view.toRealWorldCoordY(my);
+			
+			int mx = view.toScreenCoordX(xRW);
+			int my = view.toScreenCoordY(yRW);
+			
+			// round angle to nearest 15 degrees if alt pressed
+			if (view.getEuclidianController().altDown) {
+				GeoPoint p = (GeoPoint)points.get(points.size() - 1);
+				double px = p.inhomX;
+				double py = p.inhomY;
+				double angle = Math.atan2(yRW - py, xRW - px) * 180 / Math.PI;
+				double radius = Math.sqrt((py - yRW) * (py - yRW) + (px - xRW) * (px - xRW));
+				
+				// round angle to nearest 15 degrees
+				angle = Math.round(angle / 15) * 15; 
+				
+				xRW = px + radius * Math.cos(angle * Math.PI / 180);
+				yRW = py + radius * Math.sin(angle * Math.PI / 180);
+				
+				mx = view.toScreenCoordX(xRW);
+				my = view.toScreenCoordY(yRW);
+				
+				endPoint.x = xRW;
+				endPoint.y = yRW;
+				view.getEuclidianController().setLineEndPoint(endPoint);
+				gp.lineTo(mx, my);
+			}
+			else
+				view.getEuclidianController().setLineEndPoint(null);
+				gp.lineTo(view.toScreenCoordX(xRW), view.toScreenCoordY(yRW));                                   			                                            
 		}
 	}
-    
+
 	final public void drawPreview(Graphics2D g2) {
     	if (isVisible) {
        						
