@@ -2656,21 +2656,20 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	// Michael Borcherds 2008-03-01
 	public void drawObjectsPre(Graphics2D g2) {
 		
-		// TODO layers for HotEquations
-		// all in layer 0 currently
-		paintChildren(g2);  // draws HotEquations and Checkboxes (booleans)
+		// TODO layers for Buttons and Textfields
+		paintChildren(g2);  // draws Buttons and Textfields
 		
 	}
 	
 	// Michael Borcherds 2008-03-01
 	protected void drawObjects(Graphics2D g2) {
 		
-		// TODO layers for HotEquations
-		// all in layer 0 currently
-		paintChildren(g2);  // draws HotEquations and Checkboxes (booleans)
 		
 		drawGeometricObjects(g2);
 		
+		// TODO layers for Buttons and Textfields
+		paintChildren(g2);  // draws Buttons and Textfields
+
 		if (previewDrawable != null ) {
 			previewDrawable.drawPreview(g2);
 		}		
