@@ -36,8 +36,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.security.AccessController;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Locale;
@@ -985,28 +987,38 @@ public class GgbAPI {
 	 * saves a PNG file
 	 * signed applets only
 	 */
-	public synchronized boolean writePNGtoFile(String filename, double exportScale, boolean transparent, double DPI) {
+	public synchronized boolean writePNGtoFile(String filename, final double exportScale, final boolean transparent, final double DPI) {
 		if (!app.hasFullPermissions()) return false;
-		File file = new File(filename);
+		final File file = new File(filename);
 
 		if (file == null) return false;
 
-		try {			
-			// draw graphics view into image
-			BufferedImage img =
-				app.getEuclidianView().getExportImage(exportScale, transparent); 
-			
-			// write image to file
-			MyImageIO.write(img, "png", (float)DPI,  file);	
-			
-			return true;
-		} catch (Exception ex) {
-			Application.debug(ex.toString());
-			return false;
-		} catch (Error ex) {
-			Application.debug(ex.toString());
-			return false;
-		} 
+		return AccessController.doPrivileged(new PrivilegedAction() {
+			public Boolean run() {
+
+				try {			
+					// draw graphics view into image
+					BufferedImage img =
+						app.getEuclidianView().getExportImage(exportScale, transparent); 
+					
+					// write image to file
+					MyImageIO.write(img, "png", (float)DPI,  file);	
+					
+					return true;
+				} catch (Exception ex) {
+					Application.debug(ex.toString());
+					return false;
+				} catch (Error ex) {
+					Application.debug(ex.toString());
+					return false;
+				} 
+
+			}
+		});
+
+		
+		
+		
 	}
 	
 	/*
