@@ -1217,11 +1217,12 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			
 			PathParameter pp = P.getPathParameter();
 				
-				// update path param
-				// 0-1 for first obj
-				// 1-2 for second
-				// etc
-				pp.t += closestPointIndex;			
+			// update path param
+			// 0-1 for first obj
+			// 1-2 for second
+			// etc
+			pp.t += closestPointIndex;			
+			Application.debug(pp.t);
 		
 		}
 

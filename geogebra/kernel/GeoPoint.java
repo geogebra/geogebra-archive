@@ -44,7 +44,7 @@ import java.util.TreeSet;
  * @version 
  */
 final public class GeoPoint extends GeoVec3D 
-implements VectorValue, 
+implements VectorValue, Path,
 Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, ConicMirrorable, PointProperties,
 GeoPointND  {   	
 	
@@ -108,7 +108,7 @@ GeoPointND  {
     
     final public PathParameter getPathParameter() {
     	if (pathParameter == null)
-    		pathParameter = new PathParameter();
+    		pathParameter = new PathParameter(0);
     	return pathParameter;
     }
     
@@ -1197,4 +1197,42 @@ GeoPointND  {
 	  	public GgbVector getLabelPosition(){
 			return getCoordsInD(3);
 		}
+
+		public void pointChanged(GeoPointND PI) {
+			GeoPoint p = (GeoPoint)PI;
+			p.x = x;
+			p.y = y;
+			p.z = z;
+			
+			PI.getPathParameter().setT(0);
+			
+		}
+
+		public void pathChanged(GeoPointND PI) {
+			PI.setCoords(x, y, z);
+			PI.getPathParameter().setT(0);
+			
+		}
+
+		public boolean isOnPath(GeoPointND PI, double eps) {
+			return isEqual((GeoElement) PI);
+		}
+
+		public double getMinParameter() {
+			return 0;
+		}
+
+		public double getMaxParameter() {
+			return 0;
+		}
+
+		public boolean isClosedPath() {
+			return false;
+		}
+
+		public PathMover createPathMover() {
+			return null;
+		}
+		
+
 }
