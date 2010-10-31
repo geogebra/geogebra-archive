@@ -3237,7 +3237,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	final protected boolean createNewPoint(Hits hits,
 			boolean onPathPossible, boolean intersectPossible, boolean doSingleHighlighting) {
 
-		return createNewPoint(hits,onPathPossible, true, intersectPossible,  doSingleHighlighting);		
+		// inRegionpossible must be false so that the Segment Tool creates a point on the edge of a circle
+		return createNewPoint(hits,onPathPossible, false, intersectPossible,  doSingleHighlighting);		
 	}
 
 	// create new point at current position if hits is null
