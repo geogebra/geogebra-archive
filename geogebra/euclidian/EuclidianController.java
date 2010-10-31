@@ -924,8 +924,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_MIDPOINT:
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, false, false, true);			
+			hits = view.getHits();
+			hits.removePolygons();
+			if (hits.isEmpty() || (!((GeoElement) hits.get(0)).isGeoSegment() && !((GeoElement) hits.get(0)).isGeoConic())) 
+				createNewPoint(hits, false, false, true);			
 			break;
 
 		case EuclidianView.MODE_MOVE_ROTATE:
@@ -4235,9 +4237,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return false;
 
 		boolean hitPoint = (addSelectedPoint(hits, 2, false) != 0);
-
-		//if (selSegments() == 0)
-		//	hitPoint = (addSelectedPoint(hits, 2, false) != 0);
 
 		if (!hitPoint && selPoints() == 0) {
 			addSelectedSegment(hits, 1, false); // segment needed
