@@ -3385,12 +3385,10 @@ public	class PropertiesPanel extends JPanel {
 			JPanel firstLine = new JPanel();
 			firstLine.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));		
 			
-			if (!justDisplayFontSize) {
-				firstLine.add(cbFont);			
-				firstLine.add(btBold);
-				firstLine.add(btItalic);
-			}
+			firstLine.add(cbFont);			
 			firstLine.add(cbSize);	
+			firstLine.add(btBold);
+			firstLine.add(btItalic);
 			
 			// bold, italic
 			secondLine = new JPanel();
@@ -3401,10 +3399,8 @@ public	class PropertiesPanel extends JPanel {
 			
 			setLayout(new BorderLayout(5,5));
 			add(firstLine, BorderLayout.NORTH);
-			if (!justDisplayFontSize) {
-				add(secondLine, BorderLayout.SOUTH);	
-			}
-			secondLineVisible = !justDisplayFontSize;
+			add(secondLine, BorderLayout.SOUTH);	
+			secondLineVisible = true;
 		}
 		
 		public void setLabels() {
@@ -3459,7 +3455,14 @@ public	class PropertiesPanel extends JPanel {
 			// check geos
 			if (!checkGeos(geos))
 				return null;
-
+			
+			// hide most options for Buttons / Textfields
+			cbFont.setVisible(!justDisplayFontSize);
+			btBold.setVisible(!justDisplayFontSize);
+			btItalic.setVisible(!justDisplayFontSize);
+			secondLine.setVisible(!justDisplayFontSize);
+			secondLineVisible = !justDisplayFontSize;
+			
 			this.geos = geos;			
 			
 			cbSize.removeActionListener(this);
@@ -3510,11 +3513,13 @@ public	class PropertiesPanel extends JPanel {
 
 		private boolean checkGeos(Object[] geos) {
 			boolean geosOK = true;
+			justDisplayFontSize = true;
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement)geos[i];
 				
-				if (geo instanceof TextProperties && !((TextProperties)geo).justFontSize())
+				if (geo instanceof TextProperties && !((TextProperties)geo).justFontSize()) {
 					justDisplayFontSize  = false;
+				}
 				
 				if (!(geo.getGeoElementForPropertiesDialog().isGeoText())) {
 					if (!((GeoElement)geos[i]).isGeoButton()) {
