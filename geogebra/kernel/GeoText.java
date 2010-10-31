@@ -758,6 +758,12 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		return false;
 	}
 	
+	public boolean isRedefineable() {
+		return true;
+	}
+	
+	
+	
 
 
 
