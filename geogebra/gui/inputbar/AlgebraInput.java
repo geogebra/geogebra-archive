@@ -19,8 +19,9 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
-import geogebra.kernel.View;
+import geogebra.kernel.commands.CommandProcessor;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;
@@ -235,7 +236,17 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		// command combobox
 		if (source == cmdCB) { 			
 			if (cmdCB.getSelectedIndex() != 0) { // not title
-				insertCommand((String) cmdCB.getSelectedItem());				
+				String cmd = (String) cmdCB.getSelectedItem();
+				
+				// copy command into input bar
+				insertCommand(cmd);	
+				
+				// show command's syntax
+				StringBuilder sb = new StringBuilder();
+				cmd = app.translateCommand(cmd); // internal name
+				CommandProcessor.getCommandSyntax(sb, app, cmd, -1);
+				app.showError(new MyError(app, sb.toString(), cmd));
+				
 				//cmdCB.setSelectedIndex(0);
 			}					
 		}			

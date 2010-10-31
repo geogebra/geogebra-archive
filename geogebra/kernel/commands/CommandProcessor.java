@@ -275,7 +275,7 @@ public abstract class CommandProcessor  {
 	 * Creates wrong parameter count error
 	 * @param app
 	 * @param cmd
-	 * @param argNumber
+	 * @param argNumber (-1 for just show syntax)
 	 * @return wrong parameter count error
 	 */
 	protected final MyError argNumErr(
@@ -284,18 +284,36 @@ public abstract class CommandProcessor  {
 			int argNumber) {
 		if (sb == null) sb = new StringBuilder();
 		else sb.setLength(0);
+		getCommandSyntax(sb, app,
+				cmd,
+				argNumber);
+		return new MyError(app, sb.toString(), cmd);
+	}
+	
+	/**
+	 * Copies error syntax into a StringBuilder
+	 * @param sb
+	 * @param app
+	 * @param cmd
+	 * @param argNumber (-1 for just show syntax)
+	 */
+	public static void getCommandSyntax(StringBuilder sb, Application app,
+			String cmd,
+			int argNumber) {
 		sb.append(app.getCommand("Command"));
 		sb.append(' ');
 		sb.append(app.getCommand(cmd));
-		sb.append(":\n");
-		sb.append(app.getError("IllegalArgumentNumber"));
-		sb.append(": ");
-		sb.append(argNumber);
+		if (argNumber > -1) {
+			sb.append(":\n");
+			sb.append(app.getError("IllegalArgumentNumber"));
+			sb.append(": ");
+			sb.append(argNumber);
+		}
 		sb.append("\n\n");
 		sb.append(app.getPlain("Syntax"));
 		sb.append(":\n");
 		sb.append(app.getCommandSyntax(cmd));
-		return new MyError(app, sb.toString(), cmd);
+		
 	}
 
 	/**
