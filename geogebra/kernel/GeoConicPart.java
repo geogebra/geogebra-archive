@@ -397,7 +397,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		GeoPoint P = (GeoPoint) PI;
 		
 		PathParameter pp = P.getPathParameter(); 
-		pp.pathType = type;
+		pp.setPathType(type);
 
 		switch (type) {
 			case CONIC_CIRCLE:
@@ -483,7 +483,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		GeoPoint P = (GeoPoint) PI;
 		
 		PathParameter pp = P.getPathParameter();						
-		if (pp.pathType != type || Double.isNaN(pp.t)) {		
+		if (pp.getPathType() != type || Double.isNaN(pp.t)) {		
 			pointChanged(P);
 			return;
 		}
@@ -501,7 +501,7 @@ implements LimitedPath, NumberValue, LineProperties {
 			case CONIC_ELLIPSE:	
 				// if type of path changed (other conic) then we
 				// have to recalc the parameter with pointChanged()
-				if (pp.pathType != type) {					
+				if (pp.getPathType() != type) {					
 					pointChanged(P);
 					return;
 				}		
@@ -523,7 +523,7 @@ implements LimitedPath, NumberValue, LineProperties {
 				if (posOrientation) { // segment
 					// if type of path changed (other conic) then we
 					// have to recalc the parameter with pointChanged()
-					if (pp.pathType != type) {					
+					if (pp.getPathType() != type) {					
 						pointChanged(P);						
 					}	else {
 						lines[0].pathChanged(P);

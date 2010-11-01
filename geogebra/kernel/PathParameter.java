@@ -18,7 +18,7 @@ package geogebra.kernel;
 public class PathParameter {
 	
 	double t;
-	int pathType = -1;
+	private int pathType = -1;
 	
 	public PathParameter() {
 		t = Double.NaN;

@@ -993,7 +993,7 @@ public class GgbAPI {
 
 		if (file == null) return false;
 
-		return AccessController.doPrivileged(new PrivilegedAction() {
+		return (Boolean) AccessController.doPrivileged(new PrivilegedAction() {
 			public Boolean run() {
 
 				try {			

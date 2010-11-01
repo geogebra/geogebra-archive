@@ -2399,7 +2399,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		
 		double px, py;		
 		PathParameter pp = P.getPathParameter();
-		pp.pathType = type;
+		pp.setPathType(type);
 			
 		switch (type) {
 			case CONIC_EMPTY:
@@ -2525,7 +2525,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		// if type of path changed (other conic) then we
 		// have to recalc the parameter with pointChanged()
 		PathParameter pp = P.getPathParameter();		
-		if (pp.pathType != type || Double.isNaN(pp.t)) {		
+		if (pp.getPathType() != type || Double.isNaN(pp.t)) {		
 			pointChanged(P);
 			return;
 		}
