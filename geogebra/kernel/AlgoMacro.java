@@ -90,7 +90,7 @@ implements EuclidianViewAlgo {
 		return "AlgoMacro";
 	}
 	
-	String getCommandName() {
+	public String getCommandName() {
 		return macro.getCommandName();
 	}
     
