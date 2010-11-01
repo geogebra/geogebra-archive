@@ -3075,7 +3075,16 @@ public abstract class GeoElement
 				algoParent.getCommandDescription(),
 				addHTMLtag);
 	}
-	
+
+	public String getCommandNameHTML(boolean addHTMLtag) {
+		if (algoParent == null)
+			return "";
+		else
+			return indicesToHTML(
+				algoParent.getCommandName(),
+				addHTMLtag);
+	}
+		
 	/**
 	 * Converts indices to HTML <sub> tags if necessary.
 	 */
@@ -3185,7 +3194,7 @@ public abstract class GeoElement
 			if (reverseOrder) {
 				// reverse order: "A point"				
 				sbLongDescHTML.append(' ');
-				sbLongDescHTML.append(typeString);								
+				sbLongDescHTML.append(typeString.toLowerCase());								
 			}
 
 			// add dependency information
@@ -3272,7 +3281,7 @@ public abstract class GeoElement
 	
 	/**
 	 * Returns toValueString() if isDefined() ist true, else
-	 * the translation of "undefined" is returne
+	 * the translation of "undefined" is returned
 	 */
 	final public String toDefinedValueString() {
 		if (isDefined())
@@ -3526,7 +3535,9 @@ public abstract class GeoElement
 		if (reverseOrder) {
 			//	reverse order: "A point"
 			sbNameDescriptionHTML.append(' ');
-			sbNameDescriptionHTML.append(typeString);							
+			// For Hungarian, the standard is to lowercase the type.
+			// I don't know if this is OK for Basque as well. -- Zoltan
+			sbNameDescriptionHTML.append(typeString.toLowerCase());							
 		}
 		
 		if (addHTMLtag)

@@ -44,6 +44,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	                
 	        private JCheckBox cbDrawingPadPicture, cbScreenshotPicture;
 	        private JCheckBox cbColor;
+	        private JCheckBox cbIcons;
 	        private GraphicSizePanel sizePanel;
 	        private boolean kernelChanged = false;
 	        private ConstructionProtocol prot;
@@ -99,9 +100,13 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	            picPanel.setBorder(BorderFactory.createEtchedBorder());     
 	            cp.add(picPanel, BorderLayout.CENTER);
 	            
-	            cbColor =  new JCheckBox(
+	            cbColor = new JCheckBox(
 	                app.getPlain("ColorfulConstructionProtocol")); 
 	            cbColor.setSelected(false);
+	            
+	            cbIcons = new JCheckBox(
+	                app.getPlain("ToolbarIconsConstructionProtocolExport")); 
+	            cbIcons.setSelected(false);
 	            
 	            // disable width and height field when checkbox is deselected
 	            cbDrawingPadPicture.addActionListener(new ActionListener() {
@@ -127,6 +132,11 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	                	prot.setUseColors(cbColor.isSelected());                     
 	                }
 	            });
+	            cbIcons.addActionListener(new ActionListener() {
+	                public void actionPerformed(ActionEvent e) {          
+	                	prot.setAddIcons(cbIcons.isSelected());                     
+	                }
+	            });
 	                    
 	            //  Cancel and Export Button
 	             JButton cancelButton = new JButton(app.getPlain("Cancel"));
@@ -143,7 +153,8 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	                                dispose();      
 	                                if (kernelChanged) app.storeUndoInfo();              
 	                                exportHTML(cbDrawingPadPicture.isSelected(), sizePanel.getSelectedWidth(),
-	                                                    cbScreenshotPicture.isSelected(), cbColor.isSelected());            
+	                                                    cbScreenshotPicture.isSelected(), cbColor.isSelected(),
+	                                                    cbIcons.isSelected());            
 	                           }
 	                        };
 	                        runner.start();                  
@@ -155,6 +166,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	             
 	            JPanel southPanel = new JPanel(new BorderLayout()); 
 	            southPanel.add(cbColor, BorderLayout.NORTH);    
+	            southPanel.add(cbIcons, BorderLayout.CENTER);    
 	            southPanel.add(buttonPanel, BorderLayout.SOUTH);     
 	            cp.add(southPanel, BorderLayout.SOUTH);
 	             
@@ -195,14 +207,15 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	        
 	        /**
 	         *  Exports construction protocol as html
+	         * @param addIcons 
 	         * @param includePicture: states whether a picture of the drawing pad
-	         * should be exportet with the html output file
+	         * should be exported with the html output file
 	         * @param includeAlgebraPicture: states whether a picture of the algebraWindow
-	         * should be exportet with the html output file
+	         * should be exported with the html output file
 	         */
 	        private void exportHTML(boolean includePicture, int width,
 	        						boolean includeAlgebraPicture,
-	                                                   boolean useColors) {    
+	                                                   boolean useColors, boolean addIcons) {    
 	            File file, pngFile = null;
 	            prot.setUseColors(useColors);
 	            file = app.getGuiManager().showSaveDialog(Application.FILE_EXT_HTML, null,
@@ -226,10 +239,16 @@ public class ConstructionProtocolExportDialog extends JDialog implements KeyList
 	                   ImageIO.write(img, "png", pngFile);
 	               } 
 	                               
-	                 // write html string to file
-	                 FileWriter fw = new FileWriter(file);
-	                 fw.write(prot.getHTML(pngFile));
-	                 fw.close();                
+	               // write html string to file
+                   String thisPath = file.getParent();
+
+              	 // if icons are to be displayed, create a subdirectory for them
+	               if (addIcons)
+	                	 (new File(thisPath + "/GeoGebraToolbarIcons")).mkdir();
+	               
+	               FileWriter fw = new FileWriter(file);
+	               fw.write(prot.getHTML(pngFile, thisPath));
+	               fw.close();                
 	            } catch (IOException ex) {
 	                app.showError("SaveFileFailed");
 	                Application.debug(ex.toString());                      

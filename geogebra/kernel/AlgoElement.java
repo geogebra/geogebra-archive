@@ -845,7 +845,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * translate class name to internal command name
      * GeoGebra File Format
      */
-    String getCommandName() {
+    public String getCommandName() {
         String cmdname, classname;
         // get class name
         //classname = this.getClass().toString();

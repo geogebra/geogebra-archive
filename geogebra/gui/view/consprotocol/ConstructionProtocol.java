@@ -21,7 +21,6 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra.util.Util;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -31,6 +30,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
@@ -40,17 +40,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Locale;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
@@ -97,7 +99,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
     
     private AbstractAction printPreviewAction, exportHtmlAction; 
     
-    private boolean useColors;    
+    private boolean useColors, addIcons;    
 
     //  for drag & drop
     boolean dragging = false;
@@ -121,6 +123,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
         thisDialog = this;
         data = new ConstructionTableData();
         useColors = true;
+        addIcons = false;
 
         table = new JTable();
         table.setAutoCreateColumnsFromModel(false);
@@ -303,7 +306,12 @@ public class ConstructionProtocol extends JDialog implements Printable {
         cbUseColors.setSelected(flag);
         data.updateAll();
     }
-
+    
+    public void setAddIcons(boolean flag) {
+        addIcons = flag;
+        data.updateAll();
+    }    
+    
     // Michael Borcherds 2008-05-15
     public void update() {
         data.updateAll();
@@ -368,7 +376,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
         });
         mView.add(cbUseColors);    
         menuBar.add(mView);
-                
         
         JMenu mHelp = new JMenu(app.getMenu("Help"));
         JMenuItem mi = new JMenuItem(app.getMenu("FastHelp"), 
@@ -1100,31 +1107,149 @@ public class ConstructionProtocol extends JDialog implements Printable {
         }
         
         // html code without <html> tags
-        public String getPlainHTMLAt(int nRow, int nCol) {
-            if (nRow < 0 || nRow >= getRowCount())
-                return "";
-            switch (nCol) {
-                case 0 :
-                    return ""
-                        + (((RowData) rowList.get(nRow))
-                            .geo
-                            .getConstructionIndex()
-                            + 1);
-                case 1 :
-                    return ((RowData) rowList.get(nRow)).geo.getNameDescriptionHTML(false, false);
-                case 2 :
-                    return ((RowData) rowList.get(nRow)).geo.getDefinitionDescriptionHTML(false);
-                case 3 :
-                    return ((RowData) rowList.get(nRow)).geo.getCommandDescriptionHTML(false);
-                case 4 :
-                    return ((RowData) rowList.get(nRow)).geo.getAlgebraDescriptionHTML(false);
-                case 5:             
-                    return ((RowData) rowList.get(nRow)).consProtocolVisible.toString();
-            }
-            return "";
-        }
+		public String getPlainHTMLAt(int nRow, int nCol, String thisPath) {
+			if (nRow < 0 || nRow >= getRowCount())
+				return "";
+			switch (nCol) {
+			case 0:
+				return ""
+						+ (((RowData) rowList.get(nRow)).geo
+								.getConstructionIndex() + 1);
+			case 1:
+				return ((RowData) rowList.get(nRow)).geo
+						.getNameDescriptionHTML(false, false);
+			case 2:
+				return ((RowData) rowList.get(nRow)).geo
+						.getDefinitionDescriptionHTML(false);
+			case 3:
+				return ((RowData) rowList.get(nRow)).geo
+						.getCommandDescriptionHTML(false);
+			case 4:
+				return ((RowData) rowList.get(nRow)).geo
+						.getAlgebraDescriptionHTML(false);
+			case 5:
+				return ((RowData) rowList.get(nRow)).consProtocolVisible
+						.toString();
+			case 6: { // Displaying toolbar icons in the list on demand.
+
+				/* Step 1.
+				 * Heuristics to find out the toolbar icon (stored in String mode).
+				 * Mostly the lowercased command variable will give
+				 * the needed toolbar, but sometimes additional logic is needed.
+				 */
+				String className = ((RowData) rowList.get(nRow)).geo.getClassName();
+				String parentAlgoClassName = null;
+				if (((RowData) rowList.get(nRow)).geo.getParentAlgorithm() != null)
+					parentAlgoClassName = ((RowData) rowList.get(nRow)).geo
+							.getParentAlgorithm().getClassName();
+				String command = ((RowData) rowList.get(nRow)).geo
+						.getCommandNameHTML(false);
+				String mode = "";
+
+				if (parentAlgoClassName == null) {
+					if (className.equals("GeoPoint"))
+						mode = "point";
+					if (className.equals("GeoBoolean"))
+						mode = "showhideobject";
+					if (className.equals("GeoImage"))
+						mode = "image";
+					if (className.equals("GeoText"))
+						mode = "text";
+				} else {
+					// This will work in general, if parentAlgoClassName is not null:
+					mode = command;
+
+					if (parentAlgoClassName.equals("AlgoDependentText"))
+						mode = "text";
+
+					if (command.equalsIgnoreCase("line"))
+						mode = "join";
+					if (command.equalsIgnoreCase("orthogonalline"))
+						mode = "orthogonal";
+					if (command.equalsIgnoreCase("circle"))
+						mode = "circle2";
+					if (command.equalsIgnoreCase("circlearc"))
+						mode = "circlearc3";
+					if (command.equalsIgnoreCase("ellipse"))
+						mode = "ellipse3";
+					if (command.equalsIgnoreCase("hyperbola"))
+						mode = "hyperbola3";
+					if (command.equalsIgnoreCase("conic"))
+						mode = "conic5";
+					if (command.equalsIgnoreCase("pointin"))
+						mode = "pointinregion";
+					if (command.equalsIgnoreCase("translate"))
+						mode = "vectorfrompoint";
+					if (command.equalsIgnoreCase("polar"))
+						mode = "polardiameter";
+					if (command.equalsIgnoreCase("fitliney"))
+						mode = "fitline";
+					if (command.equalsIgnoreCase("circumcirclearc"))
+						mode = "circumcirclearc3";
+					if (command.equalsIgnoreCase("circumsector"))
+						mode = "circumsector3";
+					if (command.equalsIgnoreCase("circlesector"))
+						mode = "circlesector3";
+					if (command.equalsIgnoreCase("circumcirclesector"))
+						mode = "circumcirclesector3";
+					if (command.equalsIgnoreCase("rotate"))
+						mode = "rotatebyangle";
+					if (command.equalsIgnoreCase("circumference"))
+						mode = "distance";
+					if (command.equalsIgnoreCase("mirror")) {
+						mode = "mirroratpoint";
+						// FIXME: Still additional logic is needed here.
+						// mode = "mirroratline";
+						// mode = "mirroratcircle";
+					}
+					if (command.equalsIgnoreCase("dilate"))
+						mode = "dilatefrompoint";					
+				}
+				// If no valid mode found, return with no icon:
+				if (mode.equals(""))
+					return "";
+
+				/*
+				 * Step 2. Copying the toolbar icon to the export directory. 
+				 */
+				String gifFileName = "mode_" + mode.toLowerCase(Locale.US)
+						+ "_32.gif";
+				ImageIcon icon = app.getToolBarImage(gifFileName, null);
+				Image img1 = icon.getImage();
+				BufferedImage img2 = toBufferedImage(img1);
+				
+				File gifFile = new File(thisPath + "/GeoGebraToolbarIcons/" + gifFileName);
+				try {
+					ImageIO.write(img2, "gif", gifFile);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return "<img src=\"GeoGebraToolbarIcons/" + gifFileName + "\">";
+			}
+			}
+			return "";
+		}        
         
-        
+		/* The following code has been copy-pasted from
+		 * http://forums.sun.com/thread.jspa?threadID=5330345, posted by _Matt_.
+		 * Its purpose is to convert an icon to a format which can be
+		 * copied to the file system (for 
+		 */
+		public BufferedImage toBufferedImage(Image i) {
+	        if (i instanceof BufferedImage) {
+	            return (BufferedImage)i;
+	        }
+	        Image img;
+	        img = new ImageIcon(i).getImage();
+	        BufferedImage b;
+	        b = new BufferedImage(img.getWidth(null),img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+	        Graphics g = b.createGraphics();
+	        g.drawImage(img, 0, 0, null);
+	        g.dispose();
+	        return b;
+	    }		
+		
 
         /* ************************
          * View Implementation
@@ -1416,11 +1541,17 @@ public class ConstructionProtocol extends JDialog implements Printable {
      
      /**
       * Returns a html representation of the construction protocol.
+     * @param thisPath 
       * @param imgFile: image file to be included
+     * @throws IOException 
       */
-    public String getHTML(File imgFile) {
+    public String getHTML(File imgFile, String thisPath) throws IOException {
         StringBuilder sb = new StringBuilder();
 
+        // Let's be W3C compliant:
+        sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n" +
+        		"\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n" +
+        		"<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">");
         sb.append("<html>\n");
         sb.append("<head>\n");
         sb.append("<title>");
@@ -1434,7 +1565,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
         if (css != null) {
             sb.append(css);
             sb.append("\n");
-        } 
+        }
+        sb.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">");
         sb.append("</head>\n");
         
         sb.append("<body>\n");
@@ -1483,16 +1615,25 @@ public class ConstructionProtocol extends JDialog implements Printable {
         // table
         sb.append("<table border=\"1\">\n");
 
-        //  table headers
+        // table headers
         sb.append("<tr>\n");
         TableColumnModel colModel = table.getColumnModel();
         int nColumns = colModel.getColumnCount();
+        
         for (int nCol = 0; nCol < nColumns; nCol++) {
             TableColumn tk = colModel.getColumn(nCol);
             title = (String) tk.getIdentifier();
             sb.append("<th>");
             sb.append(Util.toHTMLString(title));
             sb.append("</th>\n");
+
+            // toolbar icon will be inserted between the 0th and the 1st column 
+			if (nCol == 0 && addIcons) {
+				sb.append("<th>");
+				sb.append(app.getPlain("ToolbarIcon"));
+				sb.append("</th>\n");
+			}
+
         }
         sb.append("</tr>\n");
 
@@ -1502,7 +1643,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
             sb.append("<tr  valign=\"baseline\">\n");
             for (int nCol = 0; nCol < nColumns; nCol++) {
                 int col = table.getColumnModel().getColumn(nCol).getModelIndex();
-                String str = data.getPlainHTMLAt(nRow, col);
+                String str = data.getPlainHTMLAt(nRow, col, thisPath);
                 sb.append("<td>");
                 if (str.equals(""))
                     sb.append("&nbsp;"); // space
@@ -1518,6 +1659,15 @@ public class ConstructionProtocol extends JDialog implements Printable {
                         sb.append(str);
                 }
                 sb.append("</td>\n");
+                
+                // toolbar icon will be inserted between the 0th and the 1st column 
+    			if (nCol == 0 && addIcons) {
+    				sb.append("<td>");
+                    String imgFileName = data.getPlainHTMLAt(nRow, 6, thisPath);
+    				sb.append(imgFileName);
+    				sb.append("</td>\n");
+    			}
+
             }
             sb.append("</tr>\n");
         }
@@ -1556,6 +1706,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
     		sb.append("useColors=\"");
     		sb.append(useColors);
     		sb.append("\"");
+    		sb.append(" addIcons=\"");
+    		sb.append(addIcons);
+    		sb.append("\"");
     		sb.append(" showOnlyBreakpoints=\"");
     		sb.append(kernel.showOnlyBreakpoints());
     		sb.append("\"");    		    	
@@ -1563,4 +1716,5 @@ public class ConstructionProtocol extends JDialog implements Printable {
     	
     	return sb.toString();
     }
+
 }

@@ -1433,12 +1433,12 @@ public class Application implements KeyEventDispatcher {
 	public static char unicodeComma = '.'; // \u060c for Arabic comma
 	//public static char unicodeThousandsSeparator = ','; // \u066c for Arabic
 
-	// for basque you have to say "A point" instead of "point A"
+	// for Basque and Hungarian you have to say "A point" instead of "point A"
 	private boolean reverseNameDescription = false;
 	private boolean isAutoCompletePossible = true;
 
 	final public boolean isReverseNameDescriptionLanguage() {
-		// for Basque
+		// for Basque and Hungarian 
 		return reverseNameDescription;
 	}
 	
@@ -1455,7 +1455,7 @@ public class Application implements KeyEventDispatcher {
 		String lang = locale.getLanguage();
 		// reverseLanguage = "zh".equals(lang); removed Michael Borcherds
 		// 2008-03-31
-		reverseNameDescription = "eu".equals(lang);
+		reverseNameDescription = "eu".equals(lang) || "hu".equals(lang);
 
 		// used for axes labels
 		rightToLeftDigits = ("ar".equals(lang) || "fa".equals(lang));

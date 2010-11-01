@@ -43,7 +43,7 @@ public class ImageManager {
 		
 	private Hashtable<String, ImageIcon> iconTable = new Hashtable<String, ImageIcon>();
 	private Hashtable<String, Image> internalImageTable = new Hashtable<String, Image>();
-	private Hashtable<String, Image> externalImageTable = new Hashtable<String, Image>();
+	private static Hashtable<String, Image> externalImageTable = new Hashtable<String, Image>();
 	
 	
 	private Toolkit toolKit;
@@ -130,7 +130,7 @@ public class ImageManager {
 		}			
 	}	
 		
-	public BufferedImage getExternalImage(String fileName) {		
+	public static BufferedImage getExternalImage(String fileName) {		
 		return (BufferedImage) externalImageTable.get(fileName);
 	}
 	
