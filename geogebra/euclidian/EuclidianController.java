@@ -899,8 +899,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_POLAR_DIAMETER:
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, false, true, true);
+			hits = view.getHits();
+			hits.removePolygons();
+			if (hits.size() == 0)
+				createNewPoint(hits, false, true, true);
 			break;		
 
 		case EuclidianView.MODE_COMPASSES:		// Michael Borcherds 2008-03-13	
@@ -3374,6 +3376,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					createPoint = path != null;
 				} else {
 					createPoint = true; // create as free point if onPathPossible=false
+					//Application.printStacktrace("");
 				}
 			}
 
