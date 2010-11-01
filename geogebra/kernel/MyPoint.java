@@ -41,4 +41,8 @@ public class MyPoint {
 	public double distance(MyPoint p) {
 		return GeoVec2D.length(p.x - x, p.y - y);
 	}
+
+	public GeoPoint getGeoPoint(Construction cons) {
+		return new GeoPoint(cons, null, x, y, 1.0);
+	}
 }

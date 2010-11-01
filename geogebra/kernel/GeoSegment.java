@@ -494,15 +494,11 @@ GeoSegmentND {
 		}
 	}
   	
-    /** Calculates the euclidian distance between this GeoSegment and GeoPoint P.
-     * 
-     * returns distance from endpoints if appropriate
-     */
-    final public double distance(GeoPoint p) {     
-
-		double px = p.inhomX;
-		double py = p.inhomY;
-		
+  	/*
+  	 * returns the paramter for the closest point to P on the Segment (extrapolated)
+  	 * so answers can be returned outside the range [0,1]
+  	 */
+  	final public double getParameter(double px, double py){
 		// project P on line
 		// param of projection point on perpendicular line
 		double t = -(z + x*px + y*py) / (x*x + y*y); 
@@ -512,12 +508,23 @@ GeoSegmentND {
 						
 		// calculate parameter
 		if (Math.abs(x) <= Math.abs(y)) {	
-			t = (startPoint.z * px - startPoint.x) / (y * startPoint.z);								
+			return (startPoint.z * px - startPoint.x) / (y * startPoint.z);								
 		} 
 		else {		
-			t = (startPoint.y - startPoint.z * py) / (x * startPoint.z);			
+			return (startPoint.y - startPoint.z * py) / (x * startPoint.z);			
 		}
+  		
+  	}
+  	
+    /** Calculates the euclidian distance between this GeoSegment and GeoPoint P.
+     * 
+     * returns distance from endpoints if appropriate
+     */
+    final public double distance(GeoPoint p) {     
 
+    	double t = getParameter(p.inhomX, p.inhomY);
+
+    	// if t is outside the range [0,1] then the closest point is not on the Segment
 		if (t < 0) return p.distance(startPoint);
     	if (t > 1) return p.distance(endPoint);
     	

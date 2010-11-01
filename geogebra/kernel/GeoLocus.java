@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 
@@ -174,82 +175,142 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 			return false;
 	}
 	
+	private MyPoint getClosestPoint(GeoPoint P) {
+		GeoLine l = getClosestLine(P);
+		
+		boolean temp = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+		GeoSegment closestSegment = new GeoSegment(cons);
+		cons.setSuppressLabelCreation(temp);
+		
+		if (closestPointIndex == -1) return null;
+		
+		MyPoint locusPoint = (MyPoint) myPointList.get(closestPointIndex);
+		MyPoint locusPoint2 = (MyPoint) myPointList.get(closestPointIndex + 1);
+		
+		closestSegment.setCoords(l.x, l.y, l.z);
+		
+		cons.setSuppressLabelCreation(true);
+		closestSegment.setStartPoint(locusPoint.getGeoPoint(cons));
+		closestSegment.setEndPoint(locusPoint2.getGeoPoint(cons));
+		cons.setSuppressLabelCreation(temp);
+		
+		closestPointParameter = closestSegment.getParameter(P.x/P.z, P.y/P.z);
+		
+		if (closestPointParameter < 0) closestPointParameter = 0;
+		else if (closestPointParameter > 1) closestPointParameter = 1;
+
+		return new MyPoint((1 - closestPointParameter) * locusPoint.x + closestPointParameter * locusPoint2.x, (1 - closestPointParameter) * locusPoint.y + closestPointParameter * locusPoint2.y, false);		
+	}
+	
 	/**
 	 * Returns the point of this locus that is closest
 	 * to GeoPoint P.
 	 */
-	private MyPoint getClosestPoint(GeoPoint P) {		
+	private GeoLine getClosestLine(GeoPoint P) {		
 		int size = myPointList.size();
 		if (size == 0)
 			return null;
 		
 		// can't use P.inhomX, P.inhomY in path updating yet, so compute them
-		double px = P.x/P.z;
-		double py = P.y/P.z;
+		//double px = P.x/P.z;
+		//double py = P.y/P.z;
 		
-		// handle undefined case: probably caused by path that became undefined
-		if (Double.isNaN(px) || Double.isNaN(py)) {	
-			// use previous path parameter
-			double pathParameter = P.getPathParameter().t;
-			if (Double.isNaN(pathParameter) || Double.isInfinite(pathParameter))
-				closestPointIndex = 0;
-			else {
-				closestPointIndex = (int) pathParameter;				
-				if (closestPointIndex < 0)
-					closestPointIndex = 0;
-				else if (closestPointIndex > size)
-					closestPointIndex = size - 1;
-			}			
-			return (MyPoint) myPointList.get(closestPointIndex);
-		}
+		P.updateCoords();
+		
+
 		
 		// search for closest point on path
-		MyPoint closestPoint  = null;
+		//MyPoint closestPoint  = null;
 		closestPointDist = Double.MAX_VALUE;
 		closestPointIndex = -1;
 		
+		// make a segment and points to reuse
+		GeoSegment segment = new GeoSegment(cons);
+		GeoPoint p1 = new GeoPoint(cons);
+		GeoPoint p2 = new GeoPoint(cons);
+		segment.setStartPoint(p1);
+		segment.setEndPoint(p2);
 		
+		double closestx = 0, closesty = 0, closestz = 0;
 		
 		// search for closest point		
-		for (int i=0; i < size; i++) {
+		for (int i=0; i < size - 1; i++) {
 			MyPoint locusPoint = (MyPoint) myPointList.get(i);
-			double dist = locusPoint.distSqr(px, py);
+			MyPoint locusPoint2 = (MyPoint) myPointList.get(i+1);
+			
+			double x1 = locusPoint.x;
+			double x2 = locusPoint2.x;
+			double y1 = locusPoint.y;
+			double y2 = locusPoint2.y;
+			
+			
+			// line thro' 2 points
+			segment.setCoords(y1 - y2, x2 - x1, x1 * y2 - y1 * x2);
+			p1.setCoords(x1, y1, 1.0);
+			p2.setCoords(x2, y2, 1.0);
+			
+			
+			double dist = segment.distance(P);
 			if (dist < closestPointDist) {
 				closestPointDist = dist;
 				closestPointIndex = i;
-				closestPoint = locusPoint;
+				closestx = segment.x;
+				closesty = segment.y;
+				closestz = segment.z;
 			}
 		}
 		
-		return closestPoint;
+		segment.setCoords(closestx, closesty, closestz);
+		
+		return segment;
 	}
 	private double closestPointDist;
 	private int closestPointIndex;
+	private double closestPointParameter;
 
 	public boolean trace;
 
-	public void pathChanged(GeoPointND P) {
+	public void pathChanged(GeoPointND PI) {
 		// find closest point on changed path to P
-		pointChanged(P);
+		//pointChanged(PI);
+		
+		// new method
+		// keep point on same segment, the same proportion along it
+		// better for loci with very few segments eg from ShortestDistance[ ]
+		GeoPoint P = (GeoPoint) PI;
+		PathParameter pp = P.getPathParameter();
+		
+		int n = (int)Math.floor(pp.t);
+		
+		double t = pp.t - n; // between 0 and 1
+		
+		// might occur if locus has changed no of segments/points
+		if (n >= myPointList.size() - 1) n = 0;
+		
+		MyPoint locusPoint = (MyPoint) myPointList.get(n);
+		MyPoint locusPoint2 = (MyPoint) myPointList.get(n + 1);
+		
+		P.x = (1 - t) * locusPoint.x + t * locusPoint2.x;
+		P.y = (1 - t) * locusPoint.y + t * locusPoint2.y;
+		P.z = 1.0;		
+
+
 	}
 
 	public void pointChanged(GeoPointND PI) {
 		
 		GeoPoint P = (GeoPoint) PI;
-		
-		// find closest point on path
+
+		// this updates closestPointParameter and closestPointIndex
 		MyPoint closestPoint = getClosestPoint(P);
 		
 		PathParameter pp = P.getPathParameter();
 		if (closestPoint != null) {
-			P.x = closestPoint.x;
-			P.y = closestPoint.y;
+			P.x = closestPoint.x;//(1 - closestPointParameter) * locusPoint.x + closestPointParameter * locusPoint2.x;
+			P.y = closestPoint.y;//(1 - closestPointParameter) * locusPoint.y + closestPointParameter * locusPoint2.y;
 			P.z = 1.0;
-			pp.t = closestPointIndex;					
-		}		
-		else {
-			// remember last path parameter, don't delete it
-			//pp.t = Double.NaN;			
+			pp.t = closestPointIndex + closestPointParameter;					
 		}		
 	}
 	

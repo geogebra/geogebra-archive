@@ -242,7 +242,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
         return kernel.isEqual(g.x * x, -g.y * y);        
     }
         
-    /** Calculates the euclidian distance between this GeoLine and GeoPoint P.
+    /** Calculates the euclidian distance between this GeoLine and (px, py).
      */
     public double distance(GeoPoint p) {                        
         return Math.abs( (x * p.inhomX + y * p.inhomY + z) / 
