@@ -1223,7 +1223,8 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			// 0-1 for first obj
 			// 1-2 for second
 			// etc
-			pp.t += closestPointIndex;			
+			//Application.debug(pp.t+" "+path.getMinParameter()+" "+path.getMaxParameter());
+			pp.t = closestPointIndex + PathNormalizer.toNormalizedPathParameter(pp.t, path.getMinParameter(), path.getMaxParameter())  ;			
 			//Application.debug(pp.t);
 		
 		}
@@ -1253,9 +1254,13 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			
 			PathParameter pp = PI.getPathParameter();
 			
+			
 			double t = pp.getT();
 			int n = (int)Math.floor(t);
-			pp.setT(t - n);
+			Path path = (Path)get(n);
+
+			
+			pp.setT(PathNormalizer.toParentPathParameter(t - n, path.getMinParameter(), path.getMaxParameter()));
 			
 			//Application.debug("pathChanged "+n);
 			
@@ -1264,10 +1269,11 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 				n = 0;
 			}
 
-			((Path)get(n)).pathChanged(PI);
+			path.pathChanged(PI);
 			
 			t = pp.getT();
-			pp.setT(t + n);
+			//Application.debug(PathNormalizer.toNormalizedPathParameter(t, path.getMinParameter(), path.getMaxParameter()));
+			pp.setT(PathNormalizer.toNormalizedPathParameter(t, path.getMinParameter(), path.getMaxParameter()) + n);
 
 		}
 

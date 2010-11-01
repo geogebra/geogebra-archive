@@ -2651,10 +2651,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				//   left branch: t = (1, 3)
 				return -1;
 															
-			case CONIC_EMPTY:										
-			case CONIC_SINGLE_POINT:
 			case CONIC_CIRCLE:
 			case CONIC_ELLIPSE:
+				return -Math.PI;
+				
+			case CONIC_EMPTY:										
+			case CONIC_SINGLE_POINT:
 			default:
 				return 0;		
 		}		
@@ -2674,7 +2676,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 									
 			case CONIC_CIRCLE:
 			case CONIC_ELLIPSE:
-				return Kernel.PI_2;
+				return Math.PI;
 				
 			case CONIC_HYPERBOLA:
 			case CONIC_INTERSECTING_LINES:
