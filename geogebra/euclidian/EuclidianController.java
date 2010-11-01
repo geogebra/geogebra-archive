@@ -917,7 +917,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setHits(mouseLoc);
 			hits = view.getHits().getTopHits();
 			// check if we got a polygon
-			if (hits.isEmpty() || !((GeoElement) hits.get(0)).isGeoPolygon()) {
+			if (hits.isEmpty()) {
 				createNewPoint(hits, false, false, true);			
 			}			
 			break;
