@@ -1162,4 +1162,11 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		return updateAfterAlgo;
 	}	
 	
+	/**
+	 * Returns the mode ID of a related tool. 
+	 * @return mode ID, returns -1 if there is no related tool.
+	 */
+	public int getRelatedModeID() {
+		return -1;
+	}
 }
