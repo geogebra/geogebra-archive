@@ -1213,7 +1213,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			// find closest point on path
 			Point2D.Double closestPoint = getNearestPoint(P);
 			
-			Path path = (Path)get(closestPointIndex);
+			PathOrPoint path = (PathOrPoint)get(closestPointIndex);
 			
 			path.pointChanged(P);
 			
@@ -1257,7 +1257,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			
 			double t = pp.getT();
 			int n = (int)Math.floor(t);
-			Path path = (Path)get(n);
+			PathOrPoint path = (PathOrPoint)get(n);
 
 			
 			pp.setT(PathNormalizer.toParentPathParameter(t - n, path.getMinParameter(), path.getMaxParameter()));
@@ -1281,7 +1281,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			//Application.debug("isOnPath",1);
 			for (int i=0 ; i < geoList.size() ; i++) {
 				GeoElement geo = (GeoElement)geoList.get(i);
-		    	if (((Path)geo).isOnPath(PI, eps)) return true;
+		    	if (((PathOrPoint)geo).isOnPath(PI, eps)) return true;
 			}
 			return false;
 		}

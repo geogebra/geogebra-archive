@@ -44,7 +44,7 @@ import java.util.TreeSet;
  * @version 
  */
 final public class GeoPoint extends GeoVec3D 
-implements VectorValue, Path,
+implements VectorValue, PathOrPoint,
 Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, ConicMirrorable, PointProperties,
 GeoPointND  {   	
 	
