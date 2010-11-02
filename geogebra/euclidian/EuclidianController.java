@@ -515,8 +515,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 								(geo.isNumberValue() || geo.isBooleanValue()) && geo.isIndependent())
 				) 
 				{
-					app.addSelectedGeo(geo);
 					geo.setEuclidianVisible(true);					
+					app.addSelectedGeo(geo);
 					geo.updateRepaint();										
 				}
 			}	
