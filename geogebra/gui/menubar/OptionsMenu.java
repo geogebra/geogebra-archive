@@ -97,7 +97,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		menuPointCapturing = new JMenu(app.getMenu("PointCapturing"));
 		menuPointCapturing.setIcon(app.getImageIcon("magnet.gif"));
 		String[] strPointCapturing = { "Labeling.automatic", "on",
-				app.getMenu("on") + " (" + app.getMenu("Grid") + ")", "off" };
+				"Labeling.OnGrid", "off" };
 		String[] strPointCapturingAC = { "3 PointCapturing",
 				"1 PointCapturing", "2 PointCapturing", "0 PointCapturing" };
 		addRadioButtonMenuItems(menuPointCapturing, (ActionListener) this,
