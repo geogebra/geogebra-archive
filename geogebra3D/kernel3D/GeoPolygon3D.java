@@ -108,10 +108,15 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	  * @return the segment
 	  */
 	 public GeoSegmentND createSegment(GeoPointND startPoint, GeoPointND endPoint, boolean euclidianVisible){
+		
+		 //if start and end points are both 2D, then use super method
+		 if (!((GeoElement) startPoint).isGeoElement3D() && !((GeoElement) endPoint).isGeoElement3D())
+			 return super.createSegment(startPoint, endPoint, euclidianVisible);
+			 
 		 GeoSegmentND segment;
 
 		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, 
-				 (GeoPoint3D) startPoint, (GeoPoint3D) endPoint, this, GeoElement3D.GEO_CLASS_SEGMENT3D);            
+				startPoint, endPoint, this, GeoElement3D.GEO_CLASS_SEGMENT3D);            
 		 cons.removeFromConstructionList(algoSegment);               
 
 		 segment = (GeoSegmentND) algoSegment.getCS(); 
@@ -231,12 +236,12 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 		 coordSys.resetCoordSys();
 		 for(int i=0;(!coordSys.isMadeCoordSys())&&(i<points.length);i++)
-			 coordSys.addPoint(((GeoPoint3D) points[i]).getCoords());
+			 coordSys.addPoint(points[i].getCoordsInD(3));
 
 		 if (coordSys.makeOrthoMatrix(true)){
 			 for(int i=0;i<points.length;i++){
 				 //project the point on the coord sys
-				 GgbVector[] project=((GeoPoint3D) points[i]).getCoords().projectPlane(coordSys.getMatrixOrthonormal());
+				 GgbVector[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
 
 				 //Application.debug("project["+i+"]="+project[1]);
 				 

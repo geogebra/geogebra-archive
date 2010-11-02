@@ -5,6 +5,7 @@ import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.kernelND.GeoPointND;
 
 /**
  * AlgoElement creating a GeoPolygon3D
@@ -44,7 +45,7 @@ public class AlgoPolygon3D extends AlgoPolygon {
 	 * @param points vertices of the polygon
 	 * @param polyhedron polyhedron (when segment is part of)
 	 */   
-	public AlgoPolygon3D(Construction cons, String[] label, GeoPoint3D[] points, GeoElement polyhedron) {
+	public AlgoPolygon3D(Construction cons, String[] label, GeoPointND[] points, GeoElement polyhedron) {
 		this(cons, label, points, true, polyhedron);
 
 	}
@@ -58,7 +59,7 @@ public class AlgoPolygon3D extends AlgoPolygon {
      * @param polyhedron polyhedron (when segment is part of)
      */
 	public AlgoPolygon3D(Construction cons, String[] labels, 
-			GeoPoint3D[] points, boolean createSegments, GeoElement polyhedron) {
+			GeoPointND[] points, boolean createSegments, GeoElement polyhedron) {
 		super(cons, labels, points, null,null,createSegments, polyhedron);
 		
 	}

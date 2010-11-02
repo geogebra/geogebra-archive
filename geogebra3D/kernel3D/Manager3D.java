@@ -186,7 +186,7 @@ public class Manager3D implements Manager3DInterface {
 	final public GeoElement [] Polygon3D(String[] label, GeoPointND[] points){
 
 
-		AlgoPolygon3D algo = new AlgoPolygon3D(cons,label,(GeoPoint3D[]) points,null);
+		AlgoPolygon3D algo = new AlgoPolygon3D(cons,label,points,null);
 
 		return algo.getOutput();
 

@@ -173,9 +173,9 @@ implements Previewable {
 		isVisible = size > 0;
 		
 		if (isVisible) { 		
-			GeoPoint[] pointsArray = new GeoPoint[size];
+			GeoPointND[] pointsArray = new GeoPointND[size];
 			for (int i=0; i < size; i++) {
-				pointsArray[i] = (GeoPoint) points.get(i);
+				pointsArray[i] = (GeoPointND) points.get(i);
 			}
 			addPointsToPath(pointsArray);								              
 		}	

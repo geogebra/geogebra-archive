@@ -778,9 +778,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	// build polygon	
+	/*
 	protected void polygon(){
-		getKernel().getManager3D().Polygon3D(null, getSelectedPoints3D());
+		//check if there is a 3D point
+			GeoPointND[] points = getSelectedPointsND();
+			
+			boolean point3D = false;
+			for (int i=0; i<points.length && !point3D; i++)
+				point3D = point3D || ((GeoElement) points[i]).isGeoElement3D();
+			if (point3D)
+				kernel.getManager3D().Polygon3D(null, points);
+			else
+				kernel.Polygon(null, getSelectedPointsND());
 	}
+	*/
 	
 	protected void circleOrSphere(NumberValue num){
 		GeoPoint3D[] points = getSelectedPoints3D();	

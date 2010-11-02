@@ -4,6 +4,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdPolygon;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -28,32 +29,23 @@ public class CmdPolygon3D extends CmdPolygon {
 		GeoElement[] arg;
 		arg = resArgs(c);
 		
-		//check if each arguments are 3D args
-		boolean ok3D = true;
+		//check if one of arguments is 3D 
+		boolean ok3D = false;
 		for(int i=0;i<n;i++)
-			ok3D = ok3D && (arg[i].isGeoElement3D());
-		
-		//Application.debug("CmdPolygon3D - "+ok3D);
-		//Application.printStacktrace("");
+			ok3D = ok3D || (arg[i].isGeoElement3D());
 		
 		if (ok3D){
 			// polygon for given points
-			GeoPoint3D[] points = new GeoPoint3D[n];
+			GeoPointND[] points = new GeoPointND[n];
 			// check arguments
 			for (int i = 0; i < n; i++) {
 				if (!(arg[i].isGeoPoint()))
 					throw argErr(app, c.getName(), arg[i]);
 				else {
-					points[i] = (GeoPoint3D) arg[i];
+					points[i] = (GeoPointND) arg[i];
 				}
 			}
-			// everything ok
-			/*
-			String s="";
-			for (int i=0;i<c.getLabels().length;i++)
-				s+=c.getLabels()[i]+", ";
-			Application.debug("labels = "+s);
-			*/
+
 			return kernel.getManager3D().Polygon3D(c.getLabels(), points);
 		}
  

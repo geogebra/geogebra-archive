@@ -3896,8 +3896,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void polygon(){
 		if (polygonRigid)
 			kernel.RigidPolygon(null, getSelectedPoints());
-		else
-			kernel.Polygon(null, getSelectedPoints());
+		else{
+			//check if there is a 3D point
+			GeoPointND[] pointsND = getSelectedPointsND();
+			GeoPoint[] points = new GeoPoint[pointsND.length];
+			boolean point3D = false;
+			for (int i=0; i<pointsND.length && !point3D; i++)
+				if (((GeoElement) pointsND[i]).isGeoElement3D())
+					point3D=true;
+				else 
+					points[i]=(GeoPoint) pointsND[i];
+			if (point3D)
+				kernel.getManager3D().Polygon3D(null, pointsND);
+			else
+				kernel.Polygon(null, points);
+		}
 	}
 
 	// get two objects (lines or conics) and create intersection point

@@ -170,7 +170,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	/** return number for points
 	 * @return number for points
 	 */
-	public int getNumPoints(){
+	public int getPointsLength(){
 		return points.length;
 	}
 	
@@ -1108,13 +1108,13 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		double x = 0;
 		double y = 0;
 		double z = 0;
-		for (int i=0; i<getNumPoints(); i++){
+		for (int i=0; i<getPointsLength(); i++){
 			GgbVector coords = getPoint3D(i);
 			x+=coords.getX();
 			y+=coords.getY();
 			z+=coords.getZ();
 		}
-		return new GgbVector(x/getNumPoints(), y/getNumPoints(), z/getNumPoints(), 1);
+		return new GgbVector(x/getPointsLength(), y/getPointsLength(), z/getPointsLength(), 1);
 	}
 
 }

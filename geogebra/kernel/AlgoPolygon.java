@@ -146,9 +146,11 @@ public class AlgoPolygon extends AlgoElement {
     		}
     	} else {    	
     		// points as input
-    		if (polyhedron==null)
-    			input = (GeoElement[]) points;
-    		else{
+    		if (polyhedron==null){
+    			input = new GeoElement[points.length];
+    			for(int i = 0; i < points.length; i++)
+    				input[i]=(GeoElement) points[i];
+    		}else{
     			input = new GeoElement[points.length+1];
     			for(int i = 0; i < points.length; i++)
     				input[i]=(GeoElement) points[i];

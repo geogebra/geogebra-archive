@@ -970,6 +970,7 @@ public abstract class GeoElement
 		case  GEO_CLASS_LIST:
 			typePriority = 40; break;
 		case  GEO_CLASS_POLYGON :
+		case  GEO_CLASS_POLYGON3D :
 			typePriority = 50; break;
 		case  GEO_CLASS_POLYLINE :
 			typePriority = 51; break;

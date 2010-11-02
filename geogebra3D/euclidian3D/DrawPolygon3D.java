@@ -6,6 +6,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.ConstructionDefaults3D;
@@ -142,7 +143,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		
 				
-		for(int i=0;i<polygon.getNumPoints();i++){
+		for(int i=0;i<polygon.getPointsLength();i++){
 			v = polygon.getPoint3D(i);
 			renderer.addToPolygon(v.get(1),v.get(2),v.get(3));
 			//Application.debug("v["+i+"]=\n"+v);
@@ -226,12 +227,12 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		int index =0;
 		Iterator<ArrayList> spi = segmentsPoints.iterator();
 		Iterator i = selectedPoints.iterator();
-		GeoPoint3D point = null; // current point of the selected points
+		GeoPointND point = null; // current point of the selected points
 		ArrayList sp = null; // segment selected points
 		
 		// set points to existing segments points
 		for (; i.hasNext() && spi.hasNext();){
-			point = (GeoPoint3D) i.next();
+			point = (GeoPointND) i.next();
 			if (sp!=null)
 				sp.add(point);	// add second point to precedent segment
 			
@@ -254,7 +255,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 			
 			sp = new ArrayList();
 			segmentsPoints.add(sp);
-			point = (GeoPoint3D) i.next();
+			point = (GeoPointND) i.next();
 			sp.add(point);
 			DrawSegment3D s = new DrawSegment3D(getView3D(),sp);
 			s.getGeoElement().setObjColor(ConstructionDefaults3D.colPolygon3D);
@@ -282,11 +283,11 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		getGeoElement().setEuclidianVisible(true);
 		
-		GeoPoint3D[] points = new GeoPoint3D[selectedPoints.size()+1];
+		GeoPointND[] points = new GeoPointND[selectedPoints.size()+1];
 		
 		index =0;
 		for (Iterator p = selectedPoints.iterator(); p.hasNext();){
-			points[index]= (GeoPoint3D) p.next();
+			points[index]= (GeoPointND) p.next();
 			index++;
 		}
 		

@@ -1047,8 +1047,8 @@ GeoPointND  {
 	public void setVisualStyle(GeoElement geo) {
 		super.setVisualStyle(geo);
 		if (geo.isGeoPoint()) {
-			pointSize = ((GeoPoint) geo).pointSize;
-			pointStyle = ((GeoPoint) geo).pointStyle;
+			pointSize = ((GeoPointND) geo).getPointSize();
+			pointStyle = ((GeoPointND) geo).getPointStyle();
 		}		
 		else if (geo instanceof PointProperties) {
 			setPointSize(((PointProperties)geo).getPointSize());

@@ -123,7 +123,7 @@ public class AlgoVertexPolygon extends AlgoElement implements AlgoElementWithRes
 	}
 	protected final void compute() {
 
-		int length = p.getNumPoints();
+		int length = p.getPointsLength();
 		for(int i=length;i<pointsList.size();i++) {
 			pointsList.get(i).setUndefined();
 		}
