@@ -17,6 +17,7 @@ import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.AnimatedGifEncoder;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoUserInputElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
@@ -99,7 +100,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			addVectorItems();
 			addConicItems();
 			addNumberItems();	
-			
+			addUserInputItem();
 			
 		}
 
@@ -428,6 +429,37 @@ public class ContextMenuGeoElement extends JPopupMenu {
 					app.storeUndoInfo();
 				}
 			};
+			addAction(action);
+		}
+	}
+	
+	private void addUserInputItem(){
+		if (geo instanceof GeoUserInputElement){
+			final GeoUserInputElement inputElement=(GeoUserInputElement)geo;
+			AbstractAction action;
+			if (inputElement.isInputForm()){
+				action=new AbstractAction(app.getPlain("ExtendedForm")) {
+					
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e) {
+						inputElement.setExtendedForm();
+						inputElement.updateRepaint();
+						app.storeUndoInfo();
+					}
+				};
+			}else{
+				action=new AbstractAction(app.getPlain("InputForm")) {
+					
+					private static final long serialVersionUID = 1L;
+
+					public void actionPerformed(ActionEvent e) {
+						inputElement.setInputForm();
+						inputElement.updateRepaint();
+						app.storeUndoInfo();
+					}
+				};
+			}
 			addAction(action);
 		}
 	}

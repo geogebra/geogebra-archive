@@ -918,11 +918,15 @@ public class AlgebraProcessor {
 		String label = equ.getLabel();
 		Polynomial lhs = equ.getNormalForm();
 		boolean isIndependent = lhs.isConstant();
+		GeoImplicitPoly poly;
 		if (isIndependent){
-			ret[0]=kernel.ImplicitPoly(label, lhs);
+			poly=kernel.ImplicitPoly(label, lhs);
 		}else{
-			ret[0]=kernel.DependentImplicitPoly(label, equ);
+			poly=kernel.DependentImplicitPoly(label, equ);
 		}
+		poly.setUserInput(equ);
+		ret[0]=poly;
+//		Application.debug("User Input: "+equ);
 		ret[0].updateRepaint();
 		return ret;
 	}

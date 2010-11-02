@@ -32,8 +32,6 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
-import edu.jas.ufd.FactorAbstract;
-import edu.jas.ufd.FactorFactory;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -45,7 +43,7 @@ import geogebra.main.Application;
 /**
  * Represents implicit bivariat polynomial equations, with degree greater than 2.
  */
-public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
+public class GeoImplicitPoly extends GeoUserInputElement implements Path, Traceable{
 
 	private double[][] coeff;
 	private double[][] coeffSquarefree;
@@ -54,8 +52,6 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 	
 	private static GenPolynomialRing<BigRational> CoeffRing;
 
-	private String userInput; //TODO Stores the Polynomial in the exact way the user entered it
-	private boolean showUserInput;
 	
 	private boolean defined = true;
 	private boolean isConstant;
@@ -68,8 +64,6 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 
 	protected GeoImplicitPoly(Construction c) {
 		super(c);
-		userInput="";
-		showUserInput=false;
 		degX=-1;
 		degY=-1;
 		coeffSquarefree=null;
@@ -119,10 +113,6 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 		Application.debug("Conic -> "+this);
 	}
 	
-	public void setuserInput(String s){
-		userInput=s;
-		showUserInput=true;
-	}
 
 	@Override
 	public GeoElement copy() {
@@ -217,6 +207,7 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 	public void set(GeoElement geo) {	
 		if (!(geo instanceof GeoImplicitPoly))
 			return;
+		super.set(geo);
 		setCoeff(((GeoImplicitPoly)geo).getCoeff());
 		this.defined=geo.isDefined();
 	}
@@ -250,8 +241,6 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 	
 	@Override
 	public String toValueString() {
-		if (showUserInput&&userInput.length()>0)
-			return userInput;
 		if (coeff==null)
 			return "";		
 		StringBuilder sb=new StringBuilder();
@@ -304,7 +293,8 @@ public class GeoImplicitPoly extends GeoElement implements Path, Traceable{
 	
 	@Override
 	public String toString() {
-		return label+": "+toValueString();
+		return super.toString();
+//		return label+": "+toValueString();
 	}
 
 	@Override
