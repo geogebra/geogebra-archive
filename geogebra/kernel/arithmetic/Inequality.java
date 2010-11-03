@@ -17,6 +17,7 @@ import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImplicitPoly;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 
@@ -109,15 +110,25 @@ public class Inequality {
 				}
 				if(newBorder.isGeoConic()){
 					type = INEQUALITY_CONIC;
-					if(impBorder == null)
+					if(conicBorder == null)
 						conicBorder = (GeoConic)newBorder;
 					else
 						conicBorder.set(newBorder);					
 					border = conicBorder;
 					GeoVec2D midpoint = conicBorder.getTranslationVector();
 					ExpressionNode normalCopy = (ExpressionNode) normal.deepCopy(kernel);
-					normalCopy.replace(fv[0], new MyDouble(kernel,midpoint.x));
-					normalCopy.replace(fv[1], new MyDouble(kernel,midpoint.y));
+					double midX,midY;
+					if(conicBorder.type == GeoConic.CONIC_INTERSECTING_LINES){
+						GeoLine[] lines = conicBorder.getLines();
+						midX = midpoint.x+lines[0].x+lines[1].x;
+						midY = midpoint.y+lines[0].y+lines[1].y;
+					}
+					else {
+						midX =midpoint.x;
+						midY = midpoint.y;
+					}
+					normalCopy.replace(fv[0], new MyDouble(kernel,midX));
+					normalCopy.replace(fv[1], new MyDouble(kernel,midY));
 					double valAtCenter = ((NumberValue)normalCopy.evaluate()).getDouble(); 						
 					isAboveBorder = (valAtCenter < 0) ^ (conicBorder.getType() == GeoConic.CONIC_HYPERBOLA);
 				}						

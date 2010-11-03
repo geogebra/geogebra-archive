@@ -32,6 +32,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.Kernel;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -308,6 +309,46 @@ final public class DrawConic extends Drawable implements Previewable {
         for (int i=0; i < 2; i++) {
 			drawLines[i].forceLineType(conic.lineType);		
 			drawLines[i].update();			
+        }
+        if(conic.type == GeoConic.CONIC_PARALLEL_LINES){
+        	GeneralPathClipped gpc = new GeneralPathClipped(view);
+        	gpc.moveTo(drawLines[0].x2,drawLines[0].y2);
+        	gpc.lineTo(drawLines[0].x1,drawLines[0].y1);
+        	if(!Kernel.isZero(lines[0].x) && lines[0].x*lines[0].y < 0)
+        		gpc.lineTo(0,view.height);
+        	else if(!Kernel.isZero(lines[0].x))
+        		gpc.lineTo(view.width,view.height);
+            gpc.lineTo(drawLines[1].x1,drawLines[1].y1);
+            gpc.lineTo(drawLines[1].x2,drawLines[1].y2);
+            if(!Kernel.isZero(lines[0].x) && lines[0].x*lines[0].y < 0)
+        		gpc.lineTo(view.width,0);
+        	else if(!Kernel.isZero(lines[0].x))
+        		gpc.lineTo(0,0);
+            gpc.lineTo(drawLines[0].x2,drawLines[0].y2);
+            
+            gpc.closePath();
+            shape = gpc;
+        }
+        else if(conic.type == GeoConic.CONIC_INTERSECTING_LINES){
+	        GeneralPathClipped gpc = new GeneralPathClipped(view);
+	        gpc.moveTo(drawLines[0].x2,drawLines[0].y2);
+        	gpc.lineTo(drawLines[0].x1,drawLines[0].y1);
+        	if(lines[0].x*lines[0].y < 0)
+        		gpc.lineTo(0,view.height);
+        	if(lines[1].x*lines[1].y > 0) 
+        		gpc.lineTo(view.width,view.height);
+        	
+        	
+            gpc.lineTo(drawLines[1].x1,drawLines[1].y1);
+            gpc.lineTo(drawLines[1].x2,drawLines[1].y2);
+            if(lines[1].x*lines[1].y > 0) 
+        		gpc.lineTo(0,0);
+            if(lines[0].x*lines[0].y < 0)
+        		gpc.lineTo(view.width,0);
+            
+            gpc.lineTo(drawLines[0].x2,drawLines[0].y2);
+	        gpc.closePath();
+	        shape = gpc;
         }
            
     }
@@ -717,6 +758,13 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_PARALLEL_LINES:
                 drawLines[0].draw(g2);
                 drawLines[1].draw(g2);
+                if(conic.isInverseFill()){                    	
+                	Area a = new Area(shape);
+                	Area b = new Area(view.getBoundingPath());
+                	b.subtract(a);
+                	fill(g2, b, false);
+                }
+                else fill(g2, shape, false);
                 break;             
                 
             case GeoConic.CONIC_LINE:
@@ -728,14 +776,7 @@ final public class DrawConic extends Drawable implements Previewable {
 			case GeoConic.CONIC_PARABOLA: 	
                     if(conic.isInverseFill()){                    	
                     	Area a = new Area(shape);
-                    	GeneralPathClipped gs = new GeneralPathClipped(view);
-                    	gs.moveTo(0,0);
-                    	gs.lineTo(view.width,0);
-                    	gs.lineTo(view.width,view.height);
-                    	gs.lineTo(0,view.height);
-                    	gs.lineTo(0,0);
-                    	gs.closePath();
-                    	Area b = new Area(gs);
+                    	Area b = new Area(view.getBoundingPath());
                     	b.subtract(a);
                     	fill(g2, b, false);
                     }
@@ -763,19 +804,12 @@ final public class DrawConic extends Drawable implements Previewable {
             
            case GeoConic.CONIC_HYPERBOLA:               		          
         	   if(conic.isInverseFill()){                    	
-               	Area a1 = new Area(hypLeft);
-               	Area a2 = new Area(hypRight);
-               	GeneralPathClipped gs = new GeneralPathClipped(view);
-               	gs.moveTo(0,0);
-               	gs.lineTo(view.width,0);
-               	gs.lineTo(view.width,view.height);
-               	gs.lineTo(0,view.height);
-               	gs.lineTo(0,0);
-               	gs.closePath();
-               	Area b = new Area(gs);
-               	b.subtract(a1);
-               	b.subtract(a2);
-               	fill(g2, b, false);
+	               	Area a1 = new Area(hypLeft);
+	               	Area a2 = new Area(hypRight);
+	               	Area b = new Area(view.getBoundingPath());
+	               	b.subtract(a1);
+	               	b.subtract(a2);
+	               	fill(g2, b, false);
                }
                else {
 				if (hypLeftOnScreen) fill(g2, hypLeft, true);                                            
@@ -866,7 +900,22 @@ final public class DrawConic extends Drawable implements Previewable {
 	final public boolean hit(int x, int y) {   
 		if (!isVisible)
 			return false;
-		
+		if ((geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled()) 
+				&& type != GeoConic.CONIC_SINGLE_POINT && type != GeoConic.CONIC_DOUBLE_LINE){
+			double realX = view.toRealWorldCoordX(x);
+			double realY = view.toRealWorldCoordY(y);
+			double x3 = view.toRealWorldCoordX(3)-view.toRealWorldCoordX(0);
+			double y3 = view.toRealWorldCoordY(3)-view.toRealWorldCoordY(0);
+			int insideNeigbors =
+			(conic.isInRegion(realX,realY) ? 1:0) +	
+			(conic.isInRegion(realX-x3,realY-y3) ? 1:0) +
+			(conic.isInRegion(realX+x3,realY-y3) ? 1:0) +
+			(conic.isInRegion(realX-x3,realY+y3) ? 1:0) +
+			(conic.isInRegion(realX+x3,realY+y3) ? 1:0);
+			if(conic.isInverseFill())
+				return insideNeigbors < 5;
+			return  insideNeigbors > 0;
+		}
         switch (type) {
             case GeoConic.CONIC_SINGLE_POINT:                         
                 return drawPoint.hit(x, y);                                
@@ -885,31 +934,14 @@ final public class DrawConic extends Drawable implements Previewable {
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-    			if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled()) 
-    				return shape.intersects(x-3,y-3,6,6) ^ conic.isInverseFill();  
-    			else
-    				return strokedShape.intersects(x-3,y-3,6,6);            	
+    			return strokedShape.intersects(x-3,y-3,6,6);            	
             	
             case GeoConic.CONIC_HYPERBOLA: 
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(hypLeft);
         			strokedShape2 = objStroke.createStrokedShape(hypRight);
         		}    		
-    			if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled()
-    					) 
-    				return (hypLeft.intersects(x-3,y-3,6,6) || hypRight.intersects(x-3,y-3,6,6)) ^ conic.isInverseFill();  
-    			else
-    				return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);  
-            	
-            	/*
-            	if (tempPoint == null) {
-	       			 tempPoint = new GeoPoint(conic.getConstruction());
-	       		}	       		
-	       		double rwX = view.toRealWorldCoordX(x);	       		
-	       		double rwY = view.toRealWorldCoordY(y);	       		
-	       		tempPoint.setCoords(rwX, rwY, 1.0);
-	       		return conic.isOnPath(tempPoint, 0.09);
-	       		*/                                                                                                          
+    			return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);              	                                                                                                          
         }        
         return false;
     }

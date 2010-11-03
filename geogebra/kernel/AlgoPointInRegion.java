@@ -13,12 +13,24 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+/**
+ * Point in region algorithm
+ * @author mathieu
+ *
+ */
 public class AlgoPointInRegion extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private Region region; // input
     private GeoPoint P; // output       
 
+    /**
+     * @param cons
+     * @param label
+     * @param region
+     * @param x
+     * @param y
+     */
     AlgoPointInRegion(
         Construction cons,
         String label,
@@ -46,14 +58,21 @@ public class AlgoPointInRegion extends AlgoElement {
         input = new GeoElement[1];
         input[0] = region.toGeoElement();
 
-        output = new GeoElement[1];
-        output[0] = P;
+        setOutputLength(1);
+        setOutput(0,P);
         setDependencies(); // done by AlgoElement
     }
 
+    /** returns the point 
+     * @return resulting point 
+     */
     GeoPoint getP() {
-        return P;
+        return P;        
     }
+    /**
+     * Returns the region
+     * @return region
+     */
     Region getRegion() {
         return region;
     }

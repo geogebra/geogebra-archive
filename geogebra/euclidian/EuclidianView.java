@@ -4685,4 +4685,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			ArrayList selectedLines) {
 		return new DrawLine(this, selectedPoints, selectedLines, false);
 	}
+	public GeneralPathClipped getBoundingPath(){
+		GeneralPathClipped gs = new GeneralPathClipped(this);
+    	gs.moveTo(0,0);
+    	gs.lineTo(width,0);
+    	gs.lineTo(width,height);
+    	gs.lineTo(0,height);
+    	gs.lineTo(0,0);
+    	gs.closePath();
+    	return gs;
+	}
 }

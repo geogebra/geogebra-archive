@@ -27,7 +27,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.geom.AffineTransform;
@@ -2778,17 +2777,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * Last change Zbynek Konecny 
 	 */
 	public boolean isInRegion(double x0, double y0) {
+		if(type == CONIC_INTERSECTING_LINES)
+				return evaluate(x0,y0)*evaluate(b.x+lines[0].x+lines[1].x,b.y+lines[0].y+lines[1].y) >= 0;
+		if(type == CONIC_HYPERBOLA)
+			return evaluate(x0,y0)*evaluate(b.x,b.y) <= 0;		
+		return evaluate(x0,y0)*evaluate(b.x,b.y) >= 0; 
 		
-		switch (type) {
-		case CONIC_CIRCLE:
-			return (x0 - b.x) * (x0 - b.x) + (y0 - b.y) * (y0 - b.y) <= halfAxes[0] * halfAxes[0];
-			
-		case CONIC_ELLIPSE: //multiplication by matrix[0] for c:1-x^2-2y^2=0
-			return matrix[0]*(matrix[0] * x0 * x0 + matrix[1] * y0 * y0 + matrix[2] +
-			2 * (matrix[3] * x0 * y0 + matrix[4] * x0 + matrix[5] * y0)) <= 0;
-			default:
-				return false;
-		}
 	}
 	
 
@@ -2835,11 +2829,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		else{
 			//pointChangedForRegion(P);
 			GeoPoint P=(GeoPoint)PI;
-			P.isDefined();
+			if(P.isDefined()){
 			P.x=rp.getT1()*halfAxes[0];
 			P.y=rp.getT2()*halfAxes[1];
 			P.z = 1.0;
 			coordsEVtoRW(P);
+			}
 		}
 	}
 	

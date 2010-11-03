@@ -70,7 +70,7 @@ public class DrawInequality extends Drawable {
 					draw = new DrawParametricInequality(ineq, view, geo);
 					break;
 				case Inequality.INEQUALITY_CONIC: 
-					draw = new DrawConic(view, ineq.getConicBorder());
+					draw = new DrawConic(view, ineq.getConicBorder());					
 					ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
 					break;	
 				case Inequality.INEQUALITY_IMPLICIT: 
