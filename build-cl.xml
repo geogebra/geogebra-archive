@@ -475,8 +475,7 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 			keystore="${workspace.dir}/igi-keystore.p12" 	
 			alias="International GeoGebra Institute&apos;s GlobalSign nv-sa ID"
 			storetype="pkcs12"
-			storepass="geogebra"
-			executable="/usr/bin/jarsigner">
+			storepass="geogebra">
 		    <fileset dir="${build.dir}" includes="*.jar" />
 		</signjar>	
 	</target>
@@ -498,8 +497,7 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 			keystore="${workspace.dir}/igi-keystore.p12" 	
 			alias="International GeoGebra Institute&apos;s GlobalSign nv-sa ID"
 			storetype="pkcs12"
-			storepass="geogebra"
-			executable="/usr/bin/jarsigner">
+			storepass="geogebra">
 		    <fileset dir="${build.dir}/debug" includes="*.jar" />
 		</signjar>	
 	</target>
