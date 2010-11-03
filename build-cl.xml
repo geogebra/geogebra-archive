@@ -125,7 +125,6 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 	</target>
 
         <target name="compile-oe">
-                <mkdir dir="${build.dir}/classes"/>
                 <path id="build.class.path">
                         <fileset dir="${src.dir}">
                                 <include name="*.jar"/>
