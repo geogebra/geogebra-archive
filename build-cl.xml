@@ -116,7 +116,14 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 	</target>
 	
 	<!-- compiles grammar -->
+	<!-- FIXME: First it deletes all files which are generated (local clean). This may be time consuming. -->
 	<target name="compile-grammar">
+		<delete>
+		    <fileset dir="./geogebra/kernel" includes="**/*.class"/>
+		</delete>
+		<delete>
+		    <fileset dir="./geogebra/kernel/parser" includes="**/*.java"/>
+		</delete>
 		<javacc
 		   target="./geogebra/kernel/parser/Parser.jj"
 		   javacchome="./javacc"
@@ -468,7 +475,8 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 			keystore="${workspace.dir}/igi-keystore.p12" 	
 			alias="International GeoGebra Institute&apos;s GlobalSign nv-sa ID"
 			storetype="pkcs12"
-			storepass="geogebra">
+			storepass="geogebra"
+			executable="/usr/bin/jarsigner">
 		    <fileset dir="${build.dir}" includes="*.jar" />
 		</signjar>	
 	</target>
@@ -490,7 +498,8 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 			keystore="${workspace.dir}/igi-keystore.p12" 	
 			alias="International GeoGebra Institute&apos;s GlobalSign nv-sa ID"
 			storetype="pkcs12"
-			storepass="geogebra">
+			storepass="geogebra"
+			executable="/usr/bin/jarsigner">
 		    <fileset dir="${build.dir}/debug" includes="*.jar" />
 		</signjar>	
 	</target>
