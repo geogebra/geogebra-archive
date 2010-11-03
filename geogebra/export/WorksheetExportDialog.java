@@ -1433,18 +1433,17 @@ public class WorksheetExportDialog extends JDialog {
 		
 		// JavaScript version for non-Java devices eg Android, iPhone
 		if (includeHTML5) {			
-			sb.append("<div id=\"ggjsviewer_div\" class=\"ggbApplet\" style=\"width: ");
+			appendWithLineBreak(sb, "<script type=\"text/javascript\" language=\"javascript\" src=\"http://www.geogebra.org/mobile/4.0/geogebramobile/geogebramobile.nocache.js\"></script>"); 
+		    //</head> 
+		   
+		    //<body> 
+			sb.append("<div id=\"geogebramobile_div\" class=\"ggbApplet\" style=\"width: ");
 			sb.append(width);
 			sb.append("px; height: ");
 			sb.append(height);
 			appendWithLineBreak(sb, "px; border: 1px solid black;\">");
 			appendWithLineBreak(sb, "</div>");
-			appendWithLineBreak(sb, "<script>");
-			appendWithLineBreak(sb, "var s = document.createElement(\"script\");");
-			appendWithLineBreak(sb, "s.type=\"text/javascript\";");
-			appendWithLineBreak(sb, "s.src=\"http://ggb.math.u-szeged.hu/ggb/geogebramobile/geogebramobile/geogebramobile.nocache.js\";");
-			appendWithLineBreak(sb, "document.getElementsByTagName(\"head\")[0].appendChild(s);");
-			appendWithLineBreak(sb, "</script>");			
+			appendWithLineBreak(sb, "<noscript id=\"ggbappletwrapper\"> ");			
 		}
 		
 		
@@ -1521,6 +1520,9 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append("Java 1.5 (or later) is installed and active in your browser ");
 		appendWithLineBreak(sb, "(<a href=\"http://java.sun.com/getjava\">Click here to install Java now</a>)");
 		sb.append("</applet>");
+		if (includeHTML5) {	
+			appendWithLineBreak(sb, "</noscript>");
+		}
 		return sb.toString();
 	}
 	
