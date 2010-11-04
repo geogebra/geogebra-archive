@@ -1894,7 +1894,10 @@ implements ExpressionValue, ExpressionNodeConstants {
             		default:
             			sb.append("cos(");         		
             	}    		
-                sb.append(leftStr);
+            	if(STRING_TYPE == STRING_TYPE_PGF)
+                	sb.append("("+leftStr+") 180/pi");
+                else 
+                	sb.append(leftStr);
                 sb.append(rightBracket(STRING_TYPE));
                 break;
             
@@ -1915,7 +1918,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        		default:
 	        			sb.append("sin(");         		
 	        	}           		
-                sb.append(leftStr);
+               	if(STRING_TYPE == STRING_TYPE_PGF)
+                	sb.append("("+leftStr+") 180/pi");
+                else 
+                	sb.append(leftStr);
                 sb.append(rightBracket(STRING_TYPE));
 
                 break;
@@ -1937,7 +1943,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        		default:
 	        			sb.append("tan(");         		
 	        	}            		
-                sb.append(leftStr);
+               	if(STRING_TYPE == STRING_TYPE_PGF)
+                	sb.append("("+leftStr+") 180/pi");
+                else 
+                	sb.append(leftStr);
                 sb.append(rightBracket(STRING_TYPE));
                 break;
                 
@@ -1958,7 +1967,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        		default:
 	        			sb.append("csc(");         		
 	        	}            		
-                sb.append(leftStr);
+               	if(STRING_TYPE == STRING_TYPE_PGF)
+                	sb.append("("+leftStr+") 180/pi");
+                else 
+                	sb.append(leftStr);
                 sb.append(rightBracket(STRING_TYPE));
                 break;
                 
@@ -1979,7 +1991,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        		default:
 	        			sb.append("sec(");         		
 	        	}            		
-                sb.append(leftStr);
+               	if(STRING_TYPE == STRING_TYPE_PGF)
+                	sb.append("("+leftStr+") 180/pi");
+                else 
+                	sb.append(leftStr);
                 sb.append(rightBracket(STRING_TYPE));
                 break;
                 
@@ -2000,7 +2015,10 @@ implements ExpressionValue, ExpressionNodeConstants {
 	        		default:
 	        			sb.append("cot(");         		
 	        	}            		
-                sb.append(leftStr);
+               	if(STRING_TYPE == STRING_TYPE_PGF)
+                	sb.append("("+leftStr+") 180/pi");
+                else 
+                	sb.append(leftStr);
                 sb.append(rightBracket(STRING_TYPE));
                 break;
                 
