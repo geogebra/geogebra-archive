@@ -84,9 +84,9 @@ public class WorksheetExportDialog extends JDialog {
 	final private static int TYPE_HTMLCLIPBOARD = 1;
 	final private static int TYPE_MEDIAWIKI = 2;
 	final private static int TYPE_GOOGLEGADGET = 3;
-	final private static int TYPE_JSXGRAPH = 4;
-	final private static int TYPE_JAVASCRIPT = 5;
-	final private static int TYPE_MOODLE = 6;
+	final private static int TYPE_MOODLE = 4;
+	//final private static int TYPE_JSXGRAPH = 4;
+	//final private static int TYPE_JAVASCRIPT = 5;
 
 	private Application app;
 	private Kernel kernel;
@@ -567,7 +567,7 @@ public class WorksheetExportDialog extends JDialog {
 		secondLine3.add(cbAllWorksheets);
 		appletPanel.add(secondLine3);	
 		
-		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": JSXGraph",app.getMenu("Clipboard")+": JavaScript",app.getMenu("Clipboard")+": Moodle" };
+		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": Moodle" };
 		cbFileType = new JComboBox(fileTypeStrings);
 		cbFileType.setEnabled(true);
 		JPanel secondLine2 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));				
@@ -698,13 +698,13 @@ public class WorksheetExportDialog extends JDialog {
 			stringSelection = new StringSelection(getAppletTag(app, null, appletWidth, appletHeight, false, removeLineBreaks, cbIncludeHTML5.isSelected()));
 			break;
 			
-		case TYPE_JSXGRAPH:
-			stringSelection = new StringSelection(getJSXGraph());
-		break;
+		//case TYPE_JSXGRAPH:
+		//	stringSelection = new StringSelection(getJSXGraph());
+		//break;
 		
-		case TYPE_JAVASCRIPT:
-			stringSelection = new StringSelection(getJavaScript());
-		break;
+		//case TYPE_JAVASCRIPT:
+		//	stringSelection = new StringSelection(getJavaScript());
+		//break;
 		}
 		
 		clipboard.setContents(stringSelection, null);
@@ -1053,15 +1053,16 @@ public class WorksheetExportDialog extends JDialog {
 //	    }
 //	}
 	
-	private void appendBase64(StringBuilder sb) throws IOException {
+	private boolean appendBase64(StringBuilder sb) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		//try {
+		try {
 			app.getXMLio().writeGeoGebraFile(baos, false);
 			sb.append(geogebra.util.Base64.encode(baos.toByteArray(), 0));
-		//} catch (IOException e) {
-		//	e.printStackTrace();
-		//}
-
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
 	}
 	
 	private void appendBase64Unzipped(StringBuilder sb) throws IOException {
@@ -1108,6 +1109,7 @@ public class WorksheetExportDialog extends JDialog {
 		
 	}	
 	
+	/*
 	private String getJavaScript() throws IOException {
 		StringBuilder sb = new StringBuilder();
 
@@ -1134,16 +1136,19 @@ public class WorksheetExportDialog extends JDialog {
 		return sb.toString();
 		
 	}
-
+*/
 
 	private void appendWithLineBreak(StringBuilder sb, String string) {
 		sb.append(string);
 		if (!removeLineBreaks)
-			sb.append("\n");
+			sb.append('\n');
+		else
+			sb.append(' ');
 		
 	}
 
 
+	/*
 	private String getJSXGraph() throws IOException {
 		StringBuilder sb = new StringBuilder();
 		
@@ -1159,7 +1164,7 @@ public class WorksheetExportDialog extends JDialog {
 		
 		appendWithLineBreak(sb, " <style type=\"text/css\">");
 		appendWithLineBreak(sb, "  .jxgbox {");
-		appendWithLineBreak(sb, "    position:relative; /* for IE 7 */");
+		appendWithLineBreak(sb, "    position:relative;");
 		appendWithLineBreak(sb, "    overflow:hidden;");
 		appendWithLineBreak(sb, "    background-color:#ffffff;");
 		appendWithLineBreak(sb, "    border-style:solid;");
@@ -1203,7 +1208,8 @@ public class WorksheetExportDialog extends JDialog {
 		appendWithLineBreak(sb, "</html>");
 		return sb.toString();
 	
-	}
+	} */
+	
 	private String getGoogleGadget() throws IOException {
 		StringBuilder sb = new StringBuilder();
 
@@ -1432,18 +1438,19 @@ public class WorksheetExportDialog extends JDialog {
 		StringBuilder sb = new StringBuilder();
 		
 		// JavaScript version for non-Java devices eg Android, iPhone
-		if (includeHTML5) {			
+		if (includeHTML5) {	
+			
+			
 			appendWithLineBreak(sb, "<script type=\"text/javascript\" language=\"javascript\" src=\"http://www.geogebra.org/mobile/4.0/geogebramobile/geogebramobile.nocache.js\"></script>"); 
-		    //</head> 
-		   
-		    //<body> 
 			sb.append("<div id=\"geogebramobile_div\" class=\"ggbApplet\" style=\"width: ");
 			sb.append(width);
 			sb.append("px; height: ");
 			sb.append(height);
 			appendWithLineBreak(sb, "px; border: 1px solid black;\">");
-			appendWithLineBreak(sb, "</div>");
-			appendWithLineBreak(sb, "<noscript id=\"ggbappletwrapper\"> ");			
+			sb.append("<span id=\"ggbBase64\" style=\"display: none;\">");
+			appendBase64(sb);
+			appendWithLineBreak(sb, "</span></div>");			
+			appendWithLineBreak(sb, "<noscript id=\"ggbappletwrapper\">");			
 		}
 		
 		
@@ -1488,13 +1495,7 @@ public class WorksheetExportDialog extends JDialog {
 		{
 			// base64 encoding
 			sb.append("\t<param name=\"ggbBase64\" value=\"");
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			try {
-				app.getXMLio().writeGeoGebraFile(baos, false);
-				sb.append(geogebra.util.Base64.encode(baos.toByteArray(), 0));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			appendBase64(sb);
 			appendWithLineBreak(sb, "\"/>");
 		}
 		
@@ -1525,7 +1526,7 @@ public class WorksheetExportDialog extends JDialog {
 		}
 		return sb.toString();
 	}
-	
+		
 	private void appletParam(StringBuilder sb, String param, boolean value, int type) {
 		appletParam(sb, param, value+"", type);
 	
