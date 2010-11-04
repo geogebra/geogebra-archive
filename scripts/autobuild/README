@@ -1,0 +1,18 @@
+These files are for automated server-side builds using Subversion via HTTP.
+
+Usage:
+
+1. Edit autobuild.conf.
+
+2. Run ./checkout to create a working copy of the repository (this step
+   is needed only once).
+
+3. Run ./update every time you want to generate a fresh build.
+
+4. (Optional.) Create a cronjob (using 'crontab -e') to periodically
+   create a build (currently not suggested). Make sure you are 'cd'ing
+   to this directory before running ./update.
+
+Maintainer:
+
+Zoltan Kovacs <zoltan@geogebra.org>

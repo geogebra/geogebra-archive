@@ -1,0 +1,16 @@
+#!/bin/sh
+
+test -r autobuild.conf || {
+ echo "Cannot find autobuild.conf"
+ exit 1
+ }
+. ./autobuild.conf
+NOW=`date +%Y%m%d-%H%M`
+cd $SVNDIR/geogebra
+svn update | tail -1 | grep ^At && exit 0 # No updates found.
+export JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun
+ant -f build-cl.xml
+cd build
+COPYDIR=$WWWDIR/$NOW
+mkdir -p $COPYDIR
+cp -a * $COPYDIR
