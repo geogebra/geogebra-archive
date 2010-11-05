@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 
 
@@ -86,7 +87,9 @@ public class AlgoPointOnPath extends AlgoElement {
     protected final void compute() {
     	if(param != null){
     		PathParameter pp = P.getPathParameter();
+    		//Application.debug(param.getDouble()+" "+path.getMinParameter()+" "+path.getMaxParameter());
     		pp.setT(PathNormalizer.toParentPathParameter(param.getDouble(), path.getMinParameter(), path.getMaxParameter()));
+    		//Application.debug(pp.t);
     	}
     	if (input[0].isDefined()) {	    	
 	        path.pathChanged(P);

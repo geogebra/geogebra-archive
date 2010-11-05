@@ -265,12 +265,16 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 		
 		// parameter is between 0 and points.length - 1,
 		// i.e. floor(parameter) gives the point index
-		
+		int index;
 		PathParameter pp = P.getPathParameter();
-		pp.t = pp.t % (points.length - 1);
-		if (pp.t < 0) 
-			pp.t += (points.length - 1);
-		int index = (int) Math.floor(pp.t) ;		
+		if (pp.t == points.length - 1) { // at very end of path
+			index = points.length - 2;
+		} else {
+			pp.t = pp.t % (points.length - 1);
+			if (pp.t < 0) 
+				pp.t += (points.length - 1);
+			index = (int) Math.floor(pp.t) ;	
+		}
 		setSegmentPoints((GeoPoint)points[index], (GeoPoint)points[index + 1]);
 		
 		double segParameter = pp.t - index;
