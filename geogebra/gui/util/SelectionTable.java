@@ -5,16 +5,10 @@ package geogebra.gui.util;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Rectangle2D;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -22,11 +16,11 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  * Creates a table to display and select images and other custom icons. The
@@ -54,44 +48,44 @@ public class SelectionTable extends JTable{
 
 	private Object[] data;
 	private int numRows, numColumns, rowHeight, columnWidth;
+	public int getColumnWidth() {
+		return columnWidth;
+	}
+
+
 	private Dimension iconSize;
 	
 	private int mode;
-	private Object iconArgs[];
-
+	
 	private Color fgColor, bgColor;
 	private float alpha;
 	
 	public void setAlpha(float alpha) {
 		this.alpha = alpha;
 	}
-
-
 	public void setFgColor(Color fgColor) {
 		this.fgColor = fgColor;
 		repaint();
 	}
-
-
-
 	public void setBgColor(Color bgColor) {
 		this.bgColor = bgColor;
 	}
 
 
-	public static final int MODE_IMAGE = 0;
-	public static final int MODE_IMAGE_FILE = 1;
-	public static final int MODE_LATEX = 2;
-	public static final int MODE_TEXT = 3;
-	public static final int MODE_COLOR_SWATCH = 4;
-	public static final int MODE_COLOR_SWATCH_TEXT = 5;
-	public static final int MODE_POINTSTYLE = 6;
-	public static final int MODE_LINESTYLE = 7;
-	public static final int MODE_SLIDER = 8;
-	public static final int MODE_ICON = 9;
-	public static final int MODE_ICON_FILE = 10;
+	
+	public static final int MODE_TEXT = 0;
+	public static final int MODE_ICON = 1;
+	public static final int MODE_IMAGE = 2;
+	public static final int MODE_LATEX = 3;
 	
 	
+	
+	boolean useColorSwatchBorder = false;
+	public void setUseColorSwatchBorder(boolean useColorSwatchBorder) {
+		this.useColorSwatchBorder = useColorSwatchBorder;
+		setCellDimensions();
+	}
+
 
 	public SelectionTable(Application app, Object[] data, int rows, int columns, Dimension iconSize, int mode){
 		
@@ -100,9 +94,6 @@ public class SelectionTable extends JTable{
 		this.myTable = this;
 		this.mode = mode;
 		this.iconSize = iconSize;
-		//selectedIcon = new GeoGebraIcon();
-		
-		iconArgs = new Object[2];
 		
 		//=======================================
 		// determine the dimensions of the table
@@ -149,26 +140,12 @@ public class SelectionTable extends JTable{
 		setShowGrid(false);
 		this.setTableHeader(null);
 		this.setBorder(null);
+		setCellDimensions();
 		
 		// set cell selection properties
 		setCellSelectionEnabled(true);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			
-	
-		// set cell dimensions
-		int padding = 4;
-		if(mode == MODE_COLOR_SWATCH || mode == MODE_COLOR_SWATCH_TEXT)
-			padding = 1;
-		
-		rowHeight = iconSize.height + padding;
-		columnWidth = iconSize.width + padding;
-		setRowHeight(rowHeight);	
-		for (int i = 0; i < getColumnCount(); ++ i) {
-			getColumnModel().getColumn(i).setPreferredWidth(columnWidth);
-		}
-		
-		
-		
+				
 		//=======================================
 		// add listener for mouse roll over
 		RollOverListener rollOverListener = new RollOverListener();
@@ -203,6 +180,29 @@ public class SelectionTable extends JTable{
 		}
 	}
 	
+	// set cell dimensions
+	private void setCellDimensions(){
+		
+		int padding = useColorSwatchBorder ? 1 : 4;
+		rowHeight = iconSize.height + padding;
+		setRowHeight(rowHeight);
+		
+		columnWidth = iconSize.width + padding;
+		
+		int w;
+		for (int i = 0; i < getColumnCount(); ++ i) {		
+			if(mode == MODE_TEXT){
+				w = getMaxColumnWidth(this,i); 
+				getColumnModel().getColumn(i).setPreferredWidth(w);
+				columnWidth = Math.max(w, columnWidth);
+			}else{
+				getColumnModel().getColumn(i).setPreferredWidth(columnWidth);
+			}
+		}
+		repaint();
+	}
+	
+	
 	
 	 //==============================================
 	 //    Listeners
@@ -235,11 +235,17 @@ public class SelectionTable extends JTable{
 
 
 	 public int getSelectedIndex(){
-		 return this.getColumnCount() * this.getSelectedRow()  + this.getSelectedColumn();
+		 int index = this.getColumnCount() * this.getSelectedRow()  + this.getSelectedColumn();
+		 if(index <-1) index = -1;
+		 return index;
 	 }
 
 	 public void setSelectedIndex(int index){
-
+		 if(index == -1){
+			 this.clearSelection();
+			 return;
+		 }
+			 
 		 int row = (int) Math.floor(index / getColumnCount()) ;
 		 int column = index - (row * getColumnCount());
 		 this.changeSelection(row, column, false, false);
@@ -247,6 +253,13 @@ public class SelectionTable extends JTable{
 
 	 }
 
+	 public Object getSelectedValue(){
+		 if(getSelectedRow() != -1 && getSelectedColumn() != -1)
+			 return model.getValueAt(getSelectedRow(), getSelectedColumn());
+		 else 
+			 return null;
+	 }
+	 
 	 public int getSliderValue() {
 		 return sliderValue;
 	 }
@@ -265,7 +278,7 @@ public class SelectionTable extends JTable{
 	public ImageIcon getDataIcon(Object value){
 		
 		ImageIcon icon = null;
-		if(value == null) return icon;
+		if(value == null) return GeoGebraIcon.createStringIcon("\u00D8", app.getPlainFont(), true, false, true, iconSize , Color.GRAY, null);
 		
 		switch (mode){
 
@@ -277,25 +290,6 @@ public class SelectionTable extends JTable{
 			icon = (ImageIcon) value;
 			break;
 						
-		case MODE_ICON_FILE:
-			icon = app.getImageIcon((String)value);
-			break;
-			
-		case MODE_LINESTYLE:
-			icon = GeoGebraIcon.createLineStyleIcon( (Integer)value,  2,  iconSize,  Color.BLACK,  null);
-			break;
-
-		case MODE_COLOR_SWATCH:
-		case MODE_COLOR_SWATCH_TEXT:
-			alpha = getSliderValue()/100.0f;
-			fgColor = (Color)value;
-			icon = GeoGebraIcon.createColorSwatchIcon( alpha,  iconSize, fgColor , null);
-			break;
-
-		case MODE_POINTSTYLE:
-			icon = GeoGebraIcon.createPointStyleIcon( (Integer)value,  4,  iconSize,  Color.BLACK,  null);
-			break;
-			
 		}
 			
 		return icon;
@@ -309,7 +303,7 @@ public class SelectionTable extends JTable{
 	
 	class MyCellRenderer extends JLabel implements TableCellRenderer {
 
-		private Border normalBorder, selectedBorder, rollOverBorder, emptyBorder;
+		private Border normalBorder, selectedBorder, rollOverBorder, paddingBorder;
 		private Color selectionColor, rollOverColor;
 		
 		public MyCellRenderer() {
@@ -319,7 +313,7 @@ public class SelectionTable extends JTable{
 			selectionColor =  MyTable.SELECTED_BACKGROUND_COLOR ;
 			rollOverColor =  Color.LIGHT_GRAY;
 
-			emptyBorder = BorderFactory.createEmptyBorder();
+			paddingBorder = BorderFactory.createEmptyBorder(0,5,0,5);
 			selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 3);			
 			rollOverBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
 			normalBorder = BorderFactory.createLineBorder(Color.GRAY, 1);
@@ -342,11 +336,12 @@ public class SelectionTable extends JTable{
 				this.setHorizontalAlignment(SwingConstants.LEFT);
 				this.setVerticalAlignment(SwingConstants.CENTER);
 				setText((String)value);
-				if(isSelected){
-					setIcon(GeoGebraIcon.createPointStyleIcon( 0,  2,  new Dimension(8,8),  Color.BLACK,  null));
-				}else{
-					setIcon(GeoGebraIcon.createEmptyIcon(8,8));
-				}
+				setBorder(paddingBorder);
+				//if(isSelected){
+				//	setIcon(GeoGebraIcon.createPointStyleIcon( 0,  2,  new Dimension(8,8),  Color.BLACK,  null));
+				//}else{
+					//setIcon(GeoGebraIcon.createEmptyIcon(8,8));
+				//}
 							
 			}else{		
 				setText("");
@@ -354,7 +349,7 @@ public class SelectionTable extends JTable{
 			}
 			
 			
-			if(mode == SelectionTable.MODE_COLOR_SWATCH || mode == SelectionTable.MODE_COLOR_SWATCH_TEXT){
+			if(useColorSwatchBorder){
 				setBackground(table.getBackground());
 				if (isSelected) {
 					setBorder(selectedBorder);
@@ -383,5 +378,36 @@ public class SelectionTable extends JTable{
 	    }
 	}
 
+	
+
+	
+	/**
+	 * Finds the maximum preferred width of a column.
+	 */
+	public int getMaxColumnWidth(JTable table, int column){
+		
+		TableColumn tableColumn = table.getColumnModel().getColumn(column); 
+		
+		// iterate through the rows and find the preferred width
+		int maxPrefWidth = 0;
+		int colPrefWidth = 0;
+		for (int row = 0; row < table.getRowCount(); row++) {
+			if(table.getValueAt(row, column)!=null){
+			colPrefWidth = (int) table.getCellRenderer(row, column)
+					.getTableCellRendererComponent(table,
+							table.getValueAt(row, column), false, false,
+							row, column).getPreferredSize().getWidth();
+			maxPrefWidth = Math.max(maxPrefWidth, colPrefWidth);
+			}
+		}
+		
+		return maxPrefWidth + table.getIntercellSpacing().width;
+	}
+	
+	
+	
+	
+	
+	
 	
 }

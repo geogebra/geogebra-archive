@@ -13,7 +13,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
@@ -37,7 +36,25 @@ public class GeoGebraIcon {
 	
 	public static ImageIcon createEmptyIcon(int width, int height){
 
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);	 
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		ImageIcon ic = new ImageIcon(image);
+		return ic;
+	}
+	
+	
+	public static ImageIcon createNullSymbolIcon(int width, int height){
+
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		g2.setPaint(Color.GRAY);
+		// draw a rectangle with an x inside
+		g2.drawRect(3, 3, width-6, height-6);
+		int k = 7;
+		g2.drawLine(k, k, width-k, height-k);
+		g2.drawLine(k, height-k, width-k, k );
 		ImageIcon ic = new ImageIcon(image);
 		return ic;
 	}

@@ -6,7 +6,6 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -42,7 +41,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	
 	private JPopupMenu myPopup;
 	private JSlider mySlider;
-	private ImageIcon selectedIcon;
+	
 	
 	private Color fgColor;
 	private int fontStyle = 0;
@@ -66,6 +65,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 
 	private Dimension iconSize;
 	
+	public void setIconSize(Dimension iconSize) {
+		this.iconSize = iconSize;
+	}
+
 	private boolean hasTable, hasSlider;
 	
 	// flag to determine if the popup should persist after a mouse click
@@ -74,12 +77,20 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	private boolean isIniting = true;
 	
 
-	/** Button constructor */
+	/** Button constructors */
 	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension iconSize, Integer mode){
+		this( app, data, rows, columns, iconSize, mode,  true,  false);	
+	}
+	
+	
+	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension iconSize, 
+			Integer mode, boolean hasTable, boolean hasSlider){
 		super(); 
 		this.app = app;
-
-		selectedIcon = new ImageIcon();
+		this.hasTable = hasTable;
+		this.hasSlider = hasSlider;
+		this.mode = mode;
+		this.iconSize = iconSize;
 		
 		// create the popup
 		myPopup = new JPopupMenu();
@@ -87,22 +98,29 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		myPopup.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY),
 				BorderFactory.createEmptyBorder(3,3,3,3)));
 
-		this.mode = mode;
-		this.iconSize = iconSize;
+
+		// add a mouse listener to our button that triggers the popup		
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				Point locButton = getLocation();
+				int h = e.getX() - locButton.x;
+
+				// trigger popup if the mouse is over the right side of the button
+				if(e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) { 
+					myPopup.show(getParent(), locButton.x,locButton.y + getHeight());
+				}
+			}
+		});
+		
 		
 		// place text to the left of drop down icon
 		this.setHorizontalTextPosition(JButton.LEFT); 
 		this.setHorizontalAlignment(JButton.LEFT);
 		
-		// create slider only
-		if(mode == SelectionTable.MODE_SLIDER ){
-			hasTable = false;
-			getMySlider();
-			
 
 		// create selection table
-		}else{
-			hasTable = true;
+		if(hasTable){
 			this.rows = rows;
 			this.columns = columns;
 			this.data = data;
@@ -120,24 +138,23 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				}
 			});
 
+			
+			// if displaying text, then adjust the width 
+			if(mode == SelectionTable.MODE_TEXT){
+				 Dimension d = this.getPreferredSize();
+				 d.width = myTable.getColumnWidth();
+				 setMinimumSize(d); 
+			 }
+			
+			
 			myTable.setBackground(myPopup.getBackground());
 			myPopup.add(myTable);
 		}
 
 
-		// add a mouse listener to our button that triggers the popup		
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				Point locButton = getLocation();
-				int h = e.getX() - locButton.x;
-
-				// trigger popup if the mouse is over the right side of the button
-				if(e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) { 
-					myPopup.show(getParent(), locButton.x,locButton.y + getHeight());
-				}
-			}
-		});
+		// create slider
+		if(hasSlider)
+			getMySlider();
 			
 		
 		isIniting = false;
@@ -177,55 +194,48 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	//=============================================
 
 	
-	private void updateGUI(){
-		if(isIniting) return;
-		if(hasTable){
+	 private void updateGUI(){
 
-			// draw the icon for the current selection
-			switch (mode){
+		 if(isIniting) return;
+		 setIcon(getButtonIcon());
+		 
+		 if(hasTable){
+			 myTable.repaint();
 
-			case SelectionTable.MODE_LINESTYLE:
-				selectedIcon = GeoGebraIcon.createLineStyleIcon( (Integer)data[getSelectedIndex()],  getSliderValue(),  iconSize,  fgColor,  null);
-				break;
+		 }
+		 repaint();
+	 }
 
-			case SelectionTable.MODE_POINTSTYLE:
-				selectedIcon = GeoGebraIcon.createPointStyleIcon( (Integer)data[getSelectedIndex()],  getSliderValue(),  iconSize,  fgColor,  null);
-				break;
-				
-			case SelectionTable.MODE_COLOR_SWATCH_TEXT:
-				selectedIcon = GeoGebraIcon.createTextSymbolIcon("A", app.getPlainFont(), iconSize,  fgColor,  null);
-				break;
-
-			case SelectionTable.MODE_TEXT:
-				//setText((String)data[getSelectedIndex()]);
-				
-				selectedIcon = GeoGebraIcon.createStringIcon((String)data[getSelectedIndex()], app.getPlainFont(), 
-						false, false, false, iconSize, Color.BLACK, null);
-				this.setMargin(new Insets(0,10,0,0));
-				break;
 	
-				
-			default:
-				selectedIcon = myTable.getDataIcon(data[getSelectedIndex()]);
-				
-			}
-			
-			/*
-			if(mode == SelectionTable.MODE_TEXT)
-				setIcon(selectedIcon);
-			else
-				setIcon(selectedIcon.ensureIconSize(iconSize));
-			*/
-			
-			setIcon(selectedIcon);
-			myTable.repaint();
-			repaint();
-		}
+	public ImageIcon getButtonIcon(){
 		
-	}
+		ImageIcon icon = (ImageIcon) this.getIcon();
+		
+		if(hasTable){
+		// draw the icon for the current selection
+		switch (mode){
+			
+		case SelectionTable.MODE_TEXT:
+			
+			//setText((String)data[getSelectedIndex()]);
+			 Dimension d = iconSize;
+			 d.width = myTable.getColumnWidth();
+		
+			icon = GeoGebraIcon.createStringIcon((String)data[getSelectedIndex()], app.getPlainFont(), 
+					false, false, false, d, Color.BLACK, null);
+			//this.setMargin(new Insets(0,5,0,0));
+			break;
 
-	
-	
+		case SelectionTable.MODE_ICON:
+			icon  = (ImageIcon) myTable.getSelectedValue();
+			break;
+			
+		default:
+			icon = myTable.getDataIcon(data[getSelectedIndex()]);
+		}
+		}
+		return icon;
+	}
 
 	
 	/** 
@@ -302,11 +312,12 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 
 	public Object getSelectedValue() {
-		return data[getSelectedIndex()];
+		return myTable.getSelectedValue();
 	}
 	
 	
 	public void setSelectedIndex(Integer selectedIndex) {
+		
 		if(selectedIndex == null)
 			selectedIndex = -1;
 		
@@ -354,12 +365,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	 */
 	@Override
 	public void setIcon(Icon icon) {
-		if(icon == null){
-			super.setIcon(null);
-			return;
-		}
-		
-		icon = GeoGebraIcon.ensureIconSize((ImageIcon) icon, iconSize);
+		if(icon == null)
+			icon = GeoGebraIcon.createEmptyIcon(1, iconSize.height);
+		else
+			icon = GeoGebraIcon.ensureIconSize((ImageIcon) icon, iconSize);
 		
 		// get icon width and height		
 		int w = 4;

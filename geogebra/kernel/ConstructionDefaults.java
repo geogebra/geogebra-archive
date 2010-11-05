@@ -314,7 +314,13 @@ public class ConstructionDefaults {
 		return defaultGeoElements.get(type);		
 	}
 	
-	
+	/**
+	 * Adds a key/value pair to defaultGeoElements.
+	 * (used by Euclidian.EuclidianStyleBar to restore a default geo to previous state) 
+	 */
+	public void addDefaultGeo(Integer defaultType, GeoElement geo) {
+		defaultGeoElements.put(defaultType, geo);		
+	}
 	
 	
 	/**

@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.SpringUtilities;
@@ -78,6 +79,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
@@ -4010,19 +4012,20 @@ public	class PropertiesPanel extends JPanel {
 			//=============================================	
 			// create array of image files from toolbar icons	
 			// for testing only ... 
-			
+			ImageIcon[] iconArray = new ImageIcon[20];
 			fileNameArray = new String[20];
 			String modeStr;
 			for( int i = 0; i < 20; i++) {		
 				modeStr = kernel.getModeText(i).toLowerCase(Locale.US);
 				fileNameArray[i]="/geogebra/gui/toolbar/images/mode_"+modeStr+"_32.gif";
+				iconArray[i] = GeoGebraIcon.createFileImageIcon( app, fileNameArray[i], 1.0f, new Dimension(32,32));
 			}
 			//============================================
 	
 			
 			// panel for button to open external file		
 					
-			btnImage = new PopupMenuButton(app, fileNameArray, -1,-1,new Dimension(32,32), SelectionTable.MODE_IMAGE);
+			btnImage = new PopupMenuButton(app, iconArray, -1,-1,new Dimension(32,32), SelectionTable.MODE_ICON);
 			btnImage.addActionListener(this);			
 			
 			btnOpenFile = new JButton();
