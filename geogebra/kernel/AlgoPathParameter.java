@@ -61,7 +61,7 @@ public class AlgoPathParameter extends AlgoElement {
 		
 		Path p = point.getPath();
 		
-		Application.debug(point.getPathParameter().getT()+" "+p.getMinParameter()+" "+p.getMaxParameter());
+		//Application.debug(point.getPathParameter().getT()+" "+p.getMinParameter()+" "+p.getMaxParameter());
 		
 		value.setValue(PathNormalizer.toNormalizedPathParameter(point.getPathParameter().getT(), p.getMinParameter(), p.getMaxParameter()));
 	
