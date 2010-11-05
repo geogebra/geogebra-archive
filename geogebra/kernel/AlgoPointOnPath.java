@@ -86,7 +86,7 @@ public class AlgoPointOnPath extends AlgoElement {
     protected final void compute() {
     	if(param != null){
     		PathParameter pp = P.getPathParameter();
-    		pp.setT(param.getDouble());
+    		pp.setT(PathNormalizer.toParentPathParameter(param.getDouble(), path.getMinParameter(), path.getMaxParameter()));
     	}
     	if (input[0].isDefined()) {	    	
 	        path.pathChanged(P);

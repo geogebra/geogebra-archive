@@ -1257,6 +1257,16 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			
 			double t = pp.getT();
 			int n = (int)Math.floor(t);
+			
+			// check n is in a sensible range
+			if (n >= size() || n < 0) {
+				double check = t - size();				
+				// t = size() when at very end of path
+				// so check == 0 is OK, just need to set n = size() - 1
+				if (check != 0.0)
+					Application.debug("problem with path param "+PI.getLabel());
+				n = (n < 0) ? 0 : size() - 1;
+			}
 			PathOrPoint path = (PathOrPoint)get(n);
 
 			
@@ -1264,10 +1274,6 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			
 			//Application.debug("pathChanged "+n);
 			
-			if (n >= size() || n < 0) {
-				Application.debug("problem with path param "+PI.getLabel());
-				n = 0;
-			}
 
 			path.pathChanged(PI);
 			

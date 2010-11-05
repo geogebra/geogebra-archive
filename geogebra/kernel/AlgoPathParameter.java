@@ -12,6 +12,8 @@
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 
 /**
  * Adapted from AlgoPerimeterPoly
@@ -57,7 +59,11 @@ public class AlgoPathParameter extends AlgoElement {
 			return;
 		}
 		
-		value.setValue(point.getPathParameter().getT());
+		Path p = point.getPath();
+		
+		Application.debug(point.getPathParameter().getT()+" "+p.getMinParameter()+" "+p.getMaxParameter());
+		
+		value.setValue(PathNormalizer.toNormalizedPathParameter(point.getPathParameter().getT(), p.getMinParameter(), p.getMaxParameter()));
 	
 	}
 				

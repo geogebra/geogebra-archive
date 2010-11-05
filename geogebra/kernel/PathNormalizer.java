@@ -28,6 +28,10 @@ public class PathNormalizer implements Path {
 	 * @return parameter value in [min, max]
 	 */
 	public static double toParentPathParameter(double tn, double min, double max) {
+		
+		// for Points as Paths (min=max=0)
+		if (min == max) return min;
+
 		if (tn < 0) tn = 0; 
 		else if (tn > 1) tn = 1;
 
@@ -64,6 +68,10 @@ public class PathNormalizer implements Path {
 	 * @return parameter value in [0,1] 
 	 */
 	public static double toNormalizedPathParameter(double t, double min, double max) {
+		
+		// for Points as Paths (min=max=0)
+		if (min == max) return 0;
+		
 		if (t < min) t = min; else if (t > max) t = max;
 
 		if (min == Double.NEGATIVE_INFINITY) { 
