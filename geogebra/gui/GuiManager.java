@@ -656,6 +656,23 @@ public class GuiManager {
 		constProtocol.setVisible(true);
 	}
 
+	/**
+	 * Displays the construction protocol dialog
+	 */
+	public void hideConstructionProtocol() {
+		if (constProtocol == null) return;
+		app.getEuclidianView().resetMode();
+		constProtocol.setVisible(false);
+	}
+
+	/**
+	 * returns whether the construction protocol is visible
+	 */
+	public boolean isConstructionProtocolVisible() {
+		if (constProtocol == null) return false;
+		return constProtocol.isVisible();
+	}
+
 	public JDialog getConstructionProtocol() {
 		if (constProtocol == null) {		
 			constProtocol = new ConstructionProtocol(app);

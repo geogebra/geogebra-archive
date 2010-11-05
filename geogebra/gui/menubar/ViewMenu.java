@@ -54,6 +54,7 @@ class ViewMenu extends BaseMenu {
 		cbShowInputTop, 					// Florian Sonner 2008-09-12
 		cbShowToolBar, 						// Florian Sonner 2009-01-10
 		cbShowToolBarTop, 					// Florian Sonner 2009-01-10
+		cbShowConsProt,
 		cbShowConsProtNavigation,
 		cbShowConsProtNavigationPlay,
 		cbShowConsProtNavigationOpenProt,
@@ -140,12 +141,12 @@ class ViewMenu extends BaseMenu {
 		addSeparator();
 
 		// show/hide cmdlist, algebra input
-		cbShowAlgebraInput = new JCheckBoxMenuItem(showAlgebraInputAction);
-		add(cbShowAlgebraInput);
 
-		menuInput = new JMenu(app.getMenu("InputField") + " ...");
+		menuInput = new JMenu(app.getMenu("InputField"));
 		menuInput.setIcon(app.getEmptyIcon());
 		cbShowCmdList = new JCheckBoxMenuItem(showCmdListAction);
+		cbShowAlgebraInput = new JCheckBoxMenuItem(showAlgebraInputAction);
+		menuInput.add(cbShowAlgebraInput);
 		app.setEmptyIcon(cbShowCmdList);
 		menuInput.add(cbShowCmdList);
 		cbShowInputTop = new JCheckBoxMenuItem(showInputTopAction);
@@ -154,12 +155,12 @@ class ViewMenu extends BaseMenu {
 
 		add(menuInput);
 
-		cbShowToolBar = new JCheckBoxMenuItem(showToolBarAction);
-		app.setEmptyIcon(cbShowToolBar);
-		add(cbShowToolBar);
 
 		menuToolBar = new JMenu(app.getMenu("Toolbar"));
 		menuToolBar.setIcon(app.getEmptyIcon());
+		cbShowToolBar = new JCheckBoxMenuItem(showToolBarAction);
+		app.setEmptyIcon(cbShowToolBar);
+		menuToolBar.add(cbShowToolBar);
 		cbShowToolBarTop = new JCheckBoxMenuItem(showToolBarTopAction);
 		app.setEmptyIcon(cbShowToolBarTop);
 		menuToolBar.add(cbShowToolBarTop);
@@ -167,6 +168,9 @@ class ViewMenu extends BaseMenu {
 		add(menuToolBar);
 		
 	    // Construction Protocol
+		cbShowConsProt = new JCheckBoxMenuItem(
+				constProtocolAction);
+		app.setEmptyIcon(cbShowConsProt);
 		cbShowConsProtNavigation = new JCheckBoxMenuItem(
 				showConsProtNavigationAction);
 		app.setEmptyIcon(cbShowConsProtNavigation);
@@ -177,11 +181,10 @@ class ViewMenu extends BaseMenu {
 				showConsProtNavigationOpenProtAction);
 		app.setEmptyIcon(cbShowConsProtNavigationOpenProt);
 
-		add(constProtocolAction);
 
-		menuConsProt = new JMenu(app.getPlain("ConstructionProtocol")
-				+ " ...");
+		menuConsProt = new JMenu(app.getPlain("ConstructionProtocol"));
 		menuConsProt.setIcon(app.getImageIcon("table.gif"));
+		menuConsProt.add(cbShowConsProt);
 		menuConsProt.add(cbShowConsProtNavigation);
 		menuConsProt.add(cbShowConsProtNavigationPlay);
 		menuConsProt.add(cbShowConsProtNavigationOpenProt);
@@ -288,7 +291,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showAlgebraInputAction = new AbstractAction(app.getMenu("InputField")) {
+		showAlgebraInputAction = new AbstractAction(app.getMenu("Show")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -308,7 +311,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showInputTopAction = new AbstractAction(app.getMenu("InputOnTop"), app
+		showInputTopAction = new AbstractAction(app.getMenu("ShowAtTop"), app
 				.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
@@ -317,7 +320,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showToolBarAction = new AbstractAction(app.getMenu("Toolbar")) {
+		showToolBarAction = new AbstractAction(app.getMenu("Show")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -326,7 +329,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		showToolBarTopAction = new AbstractAction(app.getMenu("ToolBarOnTop")) {
+		showToolBarTopAction = new AbstractAction(app.getMenu("ShowAtTop")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -411,15 +414,17 @@ class ViewMenu extends BaseMenu {
 		};
 
 		constProtocolAction = new AbstractAction(app
-				.getPlain("ConstructionProtocol"), app
-				.getImageIcon("table.gif")) {
+				.getMenu("Show")) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				try {
 					Thread runner = new Thread() {
 						public void run() {
-							app.getGuiManager().showConstructionProtocol();
+							GuiManager gm = app.getGuiManager();
+							if (gm.isConstructionProtocolVisible())
+								gm.hideConstructionProtocol();
+							else gm.showConstructionProtocol();
 							app.updateMenubar();
 						}
 					};
@@ -479,6 +484,7 @@ class ViewMenu extends BaseMenu {
 		cbShowToolBar.setSelected(app.showToolBar());
 		cbShowToolBarTop.setSelected(app.showToolBarTop());
 		
+		cbShowConsProt.setSelected(app.getGuiManager().isConstructionProtocolVisible());
 		cbShowConsProtNavigation.setSelected(app.showConsProtNavigation());
 		
 		cbShowConsProtNavigationPlay.setSelected(guiMananager
@@ -487,12 +493,11 @@ class ViewMenu extends BaseMenu {
 				.isConsProtNavigationProtButtonVisible());
 		
 		cbShowConsProtNavigationPlay.setEnabled(app.showConsProtNavigation());
-		cbShowConsProtNavigationOpenProt.setEnabled(app
-				.showConsProtNavigation());
+		cbShowConsProtNavigationOpenProt.setEnabled(app.showConsProtNavigation());
 		
 		// enable menus if necessary
-		menuInput.setEnabled(app.showAlgebraInput());
-		menuToolBar.setEnabled(app.showToolBar());
+		//menuInput.setEnabled(app.showAlgebraInput());
+		//menuToolBar.setEnabled(app.showToolBar());
 	
 		if(!app.isApplet())
 			updatePerspectives();
