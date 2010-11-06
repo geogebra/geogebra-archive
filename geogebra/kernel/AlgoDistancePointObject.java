@@ -24,21 +24,21 @@ package geogebra.kernel;
  * @author  Markus
  * @version 
  */
-public class AlgoDistancePointLine extends AlgoElement {
+public class AlgoDistancePointObject extends AlgoElement {
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P; // input
-    private GeoLine g; // input
+    private GeoElement g; // input
     private GeoNumeric dist; // output       
 
-    AlgoDistancePointLine(
+    AlgoDistancePointObject(
         Construction cons,
         String label,
         GeoPoint P,
-        GeoLine g) {
+        GeoElement g) {
         super(cons);
         this.P = P;
         this.g = g;
@@ -51,7 +51,7 @@ public class AlgoDistancePointLine extends AlgoElement {
     }
 
     public String getClassName() {
-        return "AlgoDistancePointLine";
+        return "AlgoDistancePointObject";
     }
 
     // for AlgoElement
@@ -71,7 +71,7 @@ public class AlgoDistancePointLine extends AlgoElement {
     GeoPoint getP() {
         return P;
     }
-    GeoLine getg() {
+    GeoElement getg() {
         return g;
     }
 

@@ -1022,28 +1022,24 @@ class CmdDistance extends CommandProcessor {
 			}
 
 			// distance between point and line
-			else if (
-					(ok[0] = (arg[0] .isGeoPoint()))
-					&& (ok[1] = (arg[1] .isGeoLine()))) {
+			else if (arg[0] .isGeoPoint()) {
 				GeoElement[] ret =
 				{
 						kernel.Distance(
 								c.getLabel(),
 								(GeoPoint) arg[0],
-								(GeoLine) arg[1])};
+								arg[1])};
 				return ret;
 			}
 
 			// distance between line and point
-			else if (
-					(ok[0] = (arg[0] .isGeoLine()))
-					&& (ok[1] = (arg[1] .isGeoPoint()))) {
+			else if (arg[1] .isGeoPoint()) {
 				GeoElement[] ret =
 				{
 						kernel.Distance(
 								c.getLabel(),
 								(GeoPoint) arg[1],
-								(GeoLine) arg[0])};
+								arg[0])};
 				return ret;
 			}
 

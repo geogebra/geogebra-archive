@@ -2991,8 +2991,8 @@ public class Kernel {
 	final public GeoNumeric Distance(
 		String label,
 		GeoPoint P,
-		GeoLine g) {
-		AlgoDistancePointLine algo = new AlgoDistancePointLine(cons, label, P, g);
+		GeoElement g) {
+		AlgoDistancePointObject algo = new AlgoDistancePointObject(cons, label, P, g);
 		GeoNumeric num = algo.getDistance();
 		return num;
 	}
