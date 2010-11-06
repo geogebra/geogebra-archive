@@ -356,7 +356,7 @@ GeoPointND, Animatable  {
 	 * values can be animated (i.e. shown or hidden sliders). 
 	 */
 	public boolean isAnimatable() {
-		return isPointOnPath() && !isFixed();
+		return isPointOnPath() && isChangeable();
 	}
 	
 	public boolean hasPath() {
