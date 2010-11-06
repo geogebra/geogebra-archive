@@ -4,6 +4,7 @@ package geogebra.gui.view.spreadsheet;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
@@ -42,20 +43,42 @@ public class StatDialog extends JDialog
 implements ActionListener, View, Printable   {
 	
 	
-	// ggb components
+	// ggb 
 	private Application app;
 	private Kernel kernel; 
 	private Construction cons;
 	private SpreadsheetView spView;
 	private MyTable spreadsheetTable;
-	private StatDialog statDialog;
-		
+	
+	
+	private StatDialog statDialog;	
+	private StatGeo statGeo;
+	
+	public StatGeo getStatGeo() {
+		if(statGeo == null)
+			statGeo = new StatGeo(app);
+		return statGeo;
+	}
+	
+	
 	// modes
 	public static final int MODE_ONEVAR =  0;
 	public static final int MODE_TWOVAR =  1;
 	private int mode;
-		
+	
+	
 	// data collections
+	private GeoList statList;
+	private GeoElement regressionModel;
+	
+	public GeoElement getRegressionModel() {
+		return regressionModel;
+	}
+	public void setRegressionModel(GeoElement regressionModel) {
+		this.regressionModel = regressionModel;
+	}
+
+
 	private GeoList dataListAll, dataListSelected;
 	ArrayList<String> dataTitles ;
 	private Object dataSource;
@@ -172,9 +195,10 @@ implements ActionListener, View, Printable   {
 
 		
 		//================================================
-		// Create a StatPanel.
+		// Create a statList and StatPanel.
 		// StatPanels display basic statistics for the current data set
-		statTable = new StatTable(app, dataListSelected, mode);
+		statList = getStatGeo().createBasicStatList(dataListSelected,mode);
+		statTable = new StatTable(app, statList, mode);
 		
 		
 		
@@ -210,11 +234,11 @@ implements ActionListener, View, Printable   {
 		
 		if(dataListAll != null)
 			dataListAll.remove();
-		dataListAll = null;
 		
 		if(dataListSelected != null)
 			dataListSelected.remove();
-		dataListSelected = null;
+		
+		statList.remove();
 		
 		statTable.removeGeos();
 		dataPanel.removeGeos();
@@ -727,11 +751,11 @@ implements ActionListener, View, Printable   {
 
 		else if(source == cbRegression){
 			regressionMode = cbRegression.getSelectedIndex();
-			this.updateAllComboPanels(true);
+			setRegressionModel();
 		}
 		else if(source == cbPolyOrder){
 			regressionOrder = cbPolyOrder.getSelectedIndex() + 2;
-			this.updateAllComboPanels(true);
+			setRegressionModel();
 		}
 		
 		
@@ -761,11 +785,40 @@ implements ActionListener, View, Printable   {
 	}
 
 	
-	
-	public void setRegEquation(String eqn){
+	private void setRegressionModel(){
+		if(regressionModel != null)
+			regressionModel.remove();
 		
-		if(lblRegEquation == null) return;		
+		regressionModel = statGeo.createRegressionPlot(dataListSelected, regressionMode, regressionOrder);
+		regressionModel.removeView(app.getEuclidianView());
+		app.getEuclidianView().remove(regressionModel);
+		setRegEquation();
+		this.updateAllComboPanels(true);
+	}
+	
+	
+	public void setRegEquation(){
+		
+		// get the LaTeX string for the regression equation 
+		String eqn;
+		
+		if(regressionMode == StatDialog.REG_NONE){
+			eqn = "";}
+		
+
+		else if(regressionMode == REG_LINEAR){
+			
+			((GeoLine)regressionModel).setToExplicit();	
+			eqn = regressionModel.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
+
+		}else{
+			
+			eqn = "y = " + regressionModel.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);		
+		}
+		
+		// create an icon with the LaTeX string	
 		ImageIcon icon = (ImageIcon) lblRegEquation.getIcon();
+
 		if(icon == null)
 			icon = new ImageIcon();
 
@@ -774,10 +827,14 @@ implements ActionListener, View, Printable   {
 		else
 			icon = GeoGebraIcon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, this.getBackground());
 
+
+		// set the label icon with our equation string
 		lblRegEquation.setIcon(icon);
 		lblRegEquation.revalidate();
+		
 		updateGUI();
 	}
+	
 	
 	private void updateGUI(){
 		
@@ -805,7 +862,10 @@ implements ActionListener, View, Printable   {
 		comboStatPanel2.updateData(dataListSelected);
 		comboStatPanel.updatePlot(doCreateGeo);
 		comboStatPanel2.updatePlot(doCreateGeo);
-		statTable.updateData(dataListSelected);
+		
+		statList.remove();
+		statList = statGeo.createBasicStatList(dataListSelected, mode);
+		statTable.updateData(statList);
 		
 	}
 
@@ -992,7 +1052,7 @@ implements ActionListener, View, Printable   {
 	}
 
 	/**
-	 * Paint the dialog with scale factor (used for printing).
+	 * Paint the dialog with given scale factor (used for printing).
 	 */
 	public void paint(Graphics graphics, double scale) {
 

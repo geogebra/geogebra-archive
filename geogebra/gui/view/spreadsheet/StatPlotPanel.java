@@ -68,6 +68,20 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 		return regressionEqn;
 	}
 
+	private GeoElement regModel;
+	
+	
+	
+
+	public GeoElement getRegModel() {
+		return regModel;
+	}
+
+
+	public void setRegModel(GeoElement regModel) {
+		this.regModel = regModel;
+	}
+
 
 	/*************************************************
 	 * Construct the panel
@@ -531,6 +545,7 @@ public class StatPlotPanel extends JPanel implements ComponentListener {
 			regressionEqn = "y = " + tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);		
 		}
 
+		regModel = tempGeo;
 
 		
 		// set view parameters	

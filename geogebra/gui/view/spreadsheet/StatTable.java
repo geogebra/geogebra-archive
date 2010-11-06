@@ -48,28 +48,25 @@ public class StatTable extends JScrollPane {
 	private JScrollPane statScroller;
 	
 	// data and stat lists
-	private GeoList dataList, statList;
+	private GeoList statList;
 	
 	// layout
 	private static final Color TABLE_GRID_COLOR = StatDialog.TABLE_GRID_COLOR ;
 	private static final Color TABLE_HEADER_COLOR = StatDialog.TABLE_HEADER_COLOR;  
-	
-	public static final int TABLE_ONE_VAR = 0;
-	public static final int TABLE_TWO_VAR = 1;
-	public static final int TABLE_REGRESSION = 2;
 	
 	
 	
 	/*************************************************
 	 * Construct the panel
 	 */
-	public StatTable(Application app, GeoList dataList, int mode){
+	public StatTable(Application app, GeoList statList, int mode){
 		
 		this.app = app;	
 		this.kernel = app.getKernel();				
-		this.dataList = dataList;
+		this.statList = statList;
 		this.mode = mode;
 		
+			
 		// construct the stat table	
 		statTable = new JTable(){
 			// disable cell editing
@@ -90,9 +87,6 @@ public class StatTable extends JScrollPane {
 		};
 
 		
-		// create GeoList statList 
-		// --- this holds our stats as a list of geos  
-		createStatList();
 
 		// load the statList results into statTable 
 		populateStatTable(); 
@@ -183,10 +177,6 @@ public class StatTable extends JScrollPane {
 			statList = null;
 		}
 		
-		if(dataList != null){
-			dataList.remove();
-			dataList = null;
-		}
 	}
 	
 	
@@ -203,148 +193,12 @@ public class StatTable extends JScrollPane {
 	
 	
 	
-	
-	private void  createStatList(){
-		
-		String label = dataList.getLabel();	
-		
-		String text = "";
-		ArrayList<String> list = new ArrayList<String>();	
-
-			
-		switch(mode){
-		case TABLE_ONE_VAR:
-			
-			String[][]statMap1 = { 
-					{app.getMenu("Length.short") ,"Length"},
-					{app.getMenu("Mean") ,"Mean"},
-					{app.getMenu("StandardDeviation.short") ,"SD"},
-					{app.getMenu("SampleStandardDeviation.short") ,"SampleSD"},
-					{app.getMenu("Sum") ,"Sum"},
-					{null , null},
-					{app.getMenu("Minimum.short") ,"Min"},
-					{app.getMenu("LowerQuartile.short") ,"Q1"},
-					{app.getMenu("Median") ,"Median"},
-					{app.getMenu("UpperQuartile.short") ,"Q3"},
-					{app.getMenu("Maximum.short") ,"Max"}
-			};
-
-			text = createStatListString(statMap1, label);			
-			break;
-
-
-		case TABLE_TWO_VAR:
-			
-			String[][]statMap2 = {
-					{app.getMenu("MeanX") ,"MeanX"},
-					{app.getMenu("MeanY") ,"MeanY"},
-					{app.getMenu("CorrelationCoefficient.short") ,"PMCC"},
-					{app.getMenu("Sxx") ,"Sxx"},
-					{app.getMenu("Syy") ,"Syy"},
-					{app.getMenu("Sxy") ,"Sxy"},
-			};
-			
-			text = createStatListString(statMap2, label);	
-			break;
-			
-			
-		case TABLE_REGRESSION:
-			
-			String[][]statMap3 = {
-					
-			};
-			
-			text = createStatListString(statMap3, label);	
-			break;
-			
-		}
-
-		//System.out.println(text);	
-		
-		Construction cons = kernel.getConstruction();
-		try {
-			
-			/*
-			if(statList != null) 
-				statList.remove();
-			
-			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();	
-			cons.setSuppressLabelCreation(true);
-			
-			GeoElement[] geos = kernel.getAlgebraProcessor()
-				.processAlgebraCommandNoExceptionHandling(text, false);	
-			
-
-
-			geos[0].setLabel("statList");
-			geos[0].setAuxiliaryObject(true);
-			statList = (GeoList) geos[0];
-
-			cons.setSuppressLabelCreation(oldSuppressLabelMode);
-
-			 */
-
-
-			if(statList == null){
-				statList = new GeoList(kernel.getConstruction());
-				statList.setLabel("statList");
-				//statList.setLabel(null);
-				statList.setAuxiliaryObject(true);
-				statList.updateCascade();
-			}
-
-			statList = (GeoList) kernel.getAlgebraProcessor()
-			.changeGeoElementNoExceptionHandling((GeoElement)statList, text, true, false);
-
-
-		} catch (Exception ex) {
-			Application.debug("Creating list failed with exception: " + ex);
-		}	
-
-	}
-	
-	private String createStatListString(String[][] statMap, String geoLabel){
-		
-		String text = "";
-		String nameStr = "";
-		String cmdStr = "";
-				
-		// generate a list of lists
-		// e.g. { {name, cmd[]}, {name, cmd[]} }
-		text += "{";
-		for(int i = 0 ; i < statMap.length; ++ i){
-			
-			nameStr = statMap[i][0];
-			cmdStr = statMap[i][1];
-			
-			// create an interior list 
-			// e.g. { "Mean" , Mean[geoLabel] }
-			if(cmdStr == null){
-				text += "{ \"\", \"\"}";
-				
-			}else{
-				text += "{";
-				text += "\"" + nameStr + "\",";
-				text += cmdStr + "[" + geoLabel + "]";
-				text += "}";
-			}
-			
-			
-			// add comma delimiter
-			if(i<statMap.length - 1)
-				text += ",";
-		}
-		text += "}";
-		
-		return text; 
-	}
-	
-	
-	
-	
 	private void populateStatTable(){
 		
-		//statList.updateCascade();
+		if(statList == null){
+			statTable.setModel(new DefaultTableModel(1, 1));
+			return;
+		}
 		
 		TableModel statModel = new DefaultTableModel(statList.size(), 1);
 		GeoList list;
@@ -381,11 +235,15 @@ public class StatTable extends JScrollPane {
 	
 	}
 	
-	public void updateData(GeoList dataList){
-		this.dataList = dataList;
-		createStatList();
-		populateStatTable();
+	public void updateData(GeoList statList){
 		
+		
+		//this.dataList = dataList;
+		//statDialog.getStatGeo().createStatList(dataList,mode);
+		
+		this.statList = statList;
+		populateStatTable();
+		rowHeader.populateRowModel();
 		updateFonts(getFont());
 		
 		// repaint
@@ -537,31 +395,37 @@ public class StatTable extends JScrollPane {
 	
 
 	public class MyRowHeader extends JList  {
-		
+
 		DefaultListModel model;
 		JTable table;
-		
+
 
 		public MyRowHeader(JTable table){
 			super();
 			this.table = table;
-			
+
 			model = new DefaultListModel();
-			GeoList list;
-			for (int elem = 0; elem < statList.size(); ++elem){
-				list = (GeoList)statList.get(elem);	
-				model.addElement(list.get(0));
-			}
-				setModel(model);
-			
+			populateRowModel();
+			setModel(model);
 			setCellRenderer(new RowHeaderRenderer(table));
-			
-		//	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		//	setSelectionModel( table.getSelectionModel());
-			
-			
+
+			//	setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			//	setSelectionModel( table.getSelectionModel());
 		}
 
+		public void populateRowModel(){
+			
+			model.removeAllElements();
+			if(statList != null){
+				GeoList list;
+				for (int elem = 0; elem < statList.size(); ++elem){
+					list = (GeoList)statList.get(elem);	
+					model.addElement(list.get(0));
+				}
+			}
+			//setModel(model);
+			
+		}
 
 		class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 

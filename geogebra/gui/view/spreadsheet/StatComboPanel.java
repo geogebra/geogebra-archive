@@ -1,5 +1,6 @@
 package geogebra.gui.view.spreadsheet;
 
+import geogebra.euclidian.EuclidianController;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -15,7 +16,9 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -40,14 +43,11 @@ public class StatComboPanel extends JPanel{
 	public static final int PLOT_BOXPLOT = 1;
 	public static final int PLOT_DOTPLOT = 2;
 	private static final int PLOT_NORMALQUANTILE = 3;
-	public static final int PLOT_STATISTICS_ONEVAR = 4;
-	
 	
 	// two variable plot types
 	public static final int PLOT_SCATTERPLOT = 5;
 	public static final int PLOT_RESIDUAL = 6;
-	public static final int PLOT_STATISTICS_TWOVAR= 7;
-	
+	public static final int PLOT_REGRESSION_ANALYSIS= 7;
 	
 	// plot reference vars
 	private HashMap<Integer, String> plotMap;
@@ -61,16 +61,22 @@ public class StatComboPanel extends JPanel{
 
 	private JComboBox cbPlotTypes;
 	private JPanel statDisplayPanel;
-	private StatPlotPanel plotPanel;
+	private PlotPanel plotPanel;
 	private StatTable statTable;
 	private JLabel lblRegCmd;
 
 	private Application app;
 	private StatDialog statDialog;
+	private StatGeo statGeo;
 	private GeoList dataListSelected;
+	private GeoList regressionAnalysisList;
+	
+	private StatTable regressionAnalysisTable;
 	
 	private int mode;
 
+	private ArrayList<GeoElement> plotGeoList;
+	private GeoElement plotTitleX, plotTitleY;
 	
 	
 	/***************************************** 
@@ -82,8 +88,11 @@ public class StatComboPanel extends JPanel{
 		this.statDialog = statDialog;
 		this.app = statDialog.getApp();
 		this.mode = mode;
-		
+		this.statGeo = statDialog.getStatGeo();
 		this.plotIndex = defaultPlotIndex;
+		
+		plotGeoList = new ArrayList<GeoElement>();
+		
 		createPlotMap();
 			
 		createGUI();
@@ -92,11 +101,17 @@ public class StatComboPanel extends JPanel{
 	}
 	
 	
+	
+	//==============================================
+	//              GUI
+	//==============================================
+	
+	
 	private void createGUI(){
 		
 		// ======================================
-		// create the control panel  
-		// This holds the plot chooser combo box 
+		// Create the control panel  
+		// This holds a comboBox for choosing plots 
 		// and other plot-dependent controls
 		
 		createNumClassesPanel();
@@ -112,25 +127,25 @@ public class StatComboPanel extends JPanel{
 		
 		
 		// =======================================
-		// create a plot panel and a stat table panel,
-		// then put them in a card layout
-		
-		plotPanel = new StatPlotPanel(app);
+		// create a plot panel 
+		plotPanel = new PlotPanel(new EuclidianController(app.getKernel()));
 		plotPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 	
 		
+		// =======================================
 		//create regression analysis panel
-		lblRegCmd = new JLabel("");
-		statTable = new StatTable(app, dataListSelected, statTable.TABLE_REGRESSION);
-		
+		lblRegCmd = new JLabel("label");
+		//regressionAnalysisList = statDialog.getStatGeo().createRegressionAnalysisList(dataListSelected, null);
+		regressionAnalysisList = statDialog.getStatGeo().createBasicStatList(dataListSelected,mode);		
+		regressionAnalysisTable = new StatTable(app, regressionAnalysisList, mode);
 		JPanel regressionPanel = new JPanel(new BorderLayout());
 		regressionPanel.add(lblRegCmd, BorderLayout.NORTH);
-		regressionPanel.add(statTable, BorderLayout.CENTER);
+		regressionPanel.add(regressionAnalysisTable, BorderLayout.CENTER);
 		regressionPanel.setBorder(BorderFactory.createEmptyBorder());
 
 		
-		//statPanel.setBorder(plotPanel.getBorder());
-
+		// =======================================
+		// put these panels in a card layout
 		statDisplayPanel = new JPanel(new CardLayout());
 		statDisplayPanel.add("plotPanel", plotPanel);
 		statDisplayPanel.add("regressionPanel", regressionPanel);
@@ -146,10 +161,7 @@ public class StatComboPanel extends JPanel{
 		this.add(statDisplayPanel,BorderLayout.CENTER);
 		this.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		
-		
-		
 	}
-	
 	
 	
 	
@@ -163,13 +175,12 @@ public class StatComboPanel extends JPanel{
 			cbPlotTypes.addItem(plotMap.get(PLOT_HISTOGRAM));
 			cbPlotTypes.addItem(plotMap.get(PLOT_BOXPLOT));
 			cbPlotTypes.addItem(plotMap.get(PLOT_DOTPLOT));
-		//	cbPlotTypes.addItem(plotMap.get(PLOT_STATISTICS_ONEVAR));
 			break;
 
 		case StatDialog.MODE_TWOVAR:
 			cbPlotTypes.addItem(plotMap.get(PLOT_SCATTERPLOT));
 			cbPlotTypes.addItem(plotMap.get(PLOT_RESIDUAL));
-			cbPlotTypes.addItem(plotMap.get(PLOT_STATISTICS_TWOVAR));
+			cbPlotTypes.addItem(plotMap.get(PLOT_REGRESSION_ANALYSIS));
 			break;
 
 		}
@@ -196,7 +207,7 @@ public class StatComboPanel extends JPanel{
 		lblNumClasses.setHorizontalAlignment(JTextField.CENTER);
 		lblNumClasses.setBackground(Color.WHITE);
 
-		sliderNumClasses = new JSlider(JSlider.HORIZONTAL, 2, 20, numClasses);
+		sliderNumClasses = new JSlider(JSlider.HORIZONTAL, 3, 20, numClasses);
 		Dimension d = sliderNumClasses.getPreferredSize();
 		d.width = 80;
 		sliderNumClasses.setPreferredSize(d);
@@ -231,12 +242,10 @@ public class StatComboPanel extends JPanel{
 		plotMap.put(PLOT_HISTOGRAM, app.getMenu("Histogram"));
 		plotMap.put(PLOT_BOXPLOT, app.getMenu("Boxplot"));
 		plotMap.put(PLOT_DOTPLOT, app.getMenu("DotPlot"));
-		plotMap.put(PLOT_STATISTICS_ONEVAR, app.getMenu("Statistics"));
-		plotMap.put(PLOT_HISTOGRAM, app.getMenu("Histogram"));
 		
 		plotMap.put(PLOT_SCATTERPLOT, app.getMenu("Scatterplot"));
 		plotMap.put(PLOT_RESIDUAL, app.getMenu("ResidualPlot"));
-		plotMap.put(PLOT_STATISTICS_TWOVAR, app.getMenu("Regression Analysis"));
+		plotMap.put(PLOT_REGRESSION_ANALYSIS, app.getMenu("Regression Analysis"));
 			
 		plotMapReverse = new HashMap<String, Integer>();
 		for(Integer key: plotMap.keySet()){
@@ -246,8 +255,95 @@ public class StatComboPanel extends JPanel{
 	}
 	
 	
+	//==============================================
+	//              UPDATE
+	//==============================================
+	
+	public void updatePlot(boolean doCreate){
+		GeoElement geo;
+		numClassesPanel.setVisible(false);
+		
+		if(doCreate)
+			clearPlotGeoList();
+		
+		
+		switch(plotIndex){
+
+		case PLOT_HISTOGRAM:			
+			if(doCreate)
+				plotGeoList.add(statGeo.createHistogram( dataListSelected, numClasses));
+			plotPanel.setPlotSettings(statGeo.updateHistogram( dataListSelected, numClasses));
+			numClassesPanel.setVisible(true);
+			
+			
+			
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			break;	
+
+		case PLOT_BOXPLOT:
+			if(doCreate)
+				plotGeoList.add(statGeo.createBoxPlot( dataListSelected));
+			plotPanel.setPlotSettings(statGeo.updateBoxPlot( dataListSelected));
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			break;
+		case PLOT_DOTPLOT:
+			if(doCreate)
+				plotGeoList.add(statGeo.createDotPlot( dataListSelected));
+			plotPanel.setPlotSettings(statGeo.updateDotPlot(dataListSelected, plotGeoList.get(plotGeoList.size()-1)));
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			break;
+
+
+
+		case PLOT_SCATTERPLOT:
+			if(doCreate)
+				plotGeoList.add(statGeo.createScatterPlot(dataListSelected));
+			plotPanel.setPlotSettings(statGeo.updateScatterPlot(dataListSelected));
+			if(statDialog.getRegressionModel()!=null){
+				if(doCreate)
+					plotGeoList.add(statGeo.createRegressionPlot(dataListSelected, statDialog.getRegressionMode(), statDialog.getRegressionOrder()));
+	
+			}
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			break;
+			
+		case PLOT_REGRESSION_ANALYSIS:
+			regressionAnalysisList = statGeo.createRegressionAnalysisList(dataListSelected, statDialog.getRegressionModel() );
+			regressionAnalysisTable.updateData(regressionAnalysisList);
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "regressionPanel");
+			
+			break;
+			
+			default:
+				//System.out.println(plotMap.get(plotIndex));
+		}
+
+		
+		if(doCreate){
+			for(GeoElement listGeo:plotGeoList){
+				// add the geo to our view and remove it from EV		
+				listGeo.addView(plotPanel);
+				plotPanel.add(listGeo);
+				listGeo.removeView(app.getEuclidianView());
+				app.getEuclidianView().remove(listGeo);
+			}
+		}
+		
+		
+		
+	}
+
 	
 	
+	
+	public void clearPlotGeoList(){
+
+		for(GeoElement geo : plotGeoList){
+			if(geo != null)
+				geo.remove();
+		}
+		plotGeoList.clear();
+	}
 
 	public void removeGeos(){
 		//statPanel.removeGeos();
@@ -255,62 +351,18 @@ public class StatComboPanel extends JPanel{
 		if(dataListSelected != null)
 			dataListSelected.remove();
 
-		plotPanel.removeGeos();
+		clearPlotGeoList();
 	}
 	
+	
 	public void detachView(){
-		plotPanel.detachView();
+		//plotPanel.detachView();
 		
 	}
 
 	public void updateData(GeoList dataList){
 		dataListSelected = dataList;
 	}
-	
-	
-	public void updatePlot(boolean doCreate){
-		numClassesPanel.setVisible(false);
-		switch(plotIndex){
-		case PLOT_HISTOGRAM:
-			plotPanel.updateHistogram( dataListSelected, numClasses, doCreate);
-			numClassesPanel.setVisible(true);
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
-			break;	
-		case PLOT_BOXPLOT:
-			plotPanel.updateBoxPlot( dataListSelected, doCreate);
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
-			break;
-		case PLOT_DOTPLOT:
-			plotPanel.updateDotPlot( dataListSelected, doCreate);
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
-			break;
-		case PLOT_STATISTICS_ONEVAR:
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "statPanel");
-			//statPanel.updateTable();
-			statTable.updateData(dataListSelected);
-			break;
-			
-		case PLOT_SCATTERPLOT:
-
-			plotPanel.updateScatterPlot( dataListSelected, doCreate);
-			plotPanel.setAutoRemoveGeos(false);
-			plotPanel.updateRegressionPlot(dataListSelected, doCreate, statDialog.getRegressionMode(), statDialog.getRegressionOrder());
-			statDialog.setRegEquation(plotPanel.getRegressionEqn());
-			plotPanel.setAutoRemoveGeos(true);
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
-			break;
-			
-		case PLOT_STATISTICS_TWOVAR:
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "regressionPanel");
-			statTable.updateData(dataListSelected);
-			break;
-			
-			default:
-				//System.out.println(plotMap.get(plotIndex));
-		}
-
-	}
-
 
 	public void updateStatTableFonts(Font font){
 		//statPanel.updateFonts(font);
@@ -325,8 +377,6 @@ public class StatComboPanel extends JPanel{
 	
 	
 	
-}
-	// END class ComboStatPanel 
-	//========================================================
+} // END class ComboStatPanel 
 
 
