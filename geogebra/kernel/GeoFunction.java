@@ -1223,5 +1223,16 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				new MyDouble(kernel,-b*rd+b)));
 		
 	}
+	
+	/*
+	 * gets shortest distance to point p
+	 * for compound paths
+	 * (returns *vertical* distance for functions)
+	 */
+	public double distance(GeoPoint p) {
+		return Math.abs(evaluate(p.inhomX) - p.inhomY);
+	}
+	
+
 
 }

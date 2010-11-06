@@ -699,5 +699,17 @@ implements Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilatea
 	    	}
 	    }
 	 
+		/*
+		 * gets shortest distance to point p
+		 * overridden in eg GeoPoint, GeoLine
+		 * for compound paths
+		 */
+		public double distance(GeoPoint p) {
+			double t = getClosestParameter(p, 0);
+			return GeoVec2D.length(funX.evaluate(t) - p.x, funY.evaluate(t) - p.y);
+		}
+		
+
+	 
 
 }
