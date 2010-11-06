@@ -17,7 +17,7 @@ import geogebra.main.Application;
 
 
 
-public class AlgoPointOnPath extends AlgoElement {
+public class AlgoPointOnPath extends AlgoElement implements PathAlgo {
 
 	private static final long serialVersionUID = 1L;
 	private Path path; // input

@@ -440,6 +440,7 @@ public class CommandDispatcher {
     	cmdTable.put("IsInRegion", new CmdIsInRegion(kernel));     	                  
     	cmdTable.put("Slider", new CmdSlider(kernel));     
     	cmdTable.put("PathParameter", new CmdPathParameter(kernel));     
+    	cmdTable.put("ClosestPoint", new CmdClosestPoint(kernel));     
     	
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   

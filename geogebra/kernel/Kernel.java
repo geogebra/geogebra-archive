@@ -2480,6 +2480,12 @@ public class Kernel {
 		return p;
 	}
 
+	/** Point anywhere on path with    */
+	final public GeoPoint ClosestPoint(String label, Path path, GeoPoint p) {						
+		AlgoClosestPoint algo = new AlgoClosestPoint(cons, label, path, p);				
+		return algo.getP();
+	}
+
 	public GeoElement Point(String label, Path path) {
 
 		return Point(label,path,null);

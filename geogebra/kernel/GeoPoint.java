@@ -218,11 +218,11 @@ GeoPointND, Animatable  {
 		if (algo != null && algo instanceof AlgoDynamicCoordinates) return true;
 		
 		// make sure Point[circle, param] is not draggable
-		if (isPointOnPath()) {			
-			return ((AlgoPointOnPath)algo).isChangeable() && !isFixed();
+		if (algo instanceof PathAlgo) {			
+			return ((PathAlgo)algo).isChangeable() && !isFixed();
 		}
 		
-		return !isFixed() && (isIndependent() || isPointInRegion()); 
+		return !isFixed() && (isIndependent() || isPointOnPath() || isPointInRegion()); 
 	}	 
 	
 	/**
