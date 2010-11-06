@@ -91,7 +91,6 @@ class FileMenu extends BaseMenu {
 		addSeparator();
 		
 		mi = add(exportLMSAction);
-		setMenuShortCutShiftAccelerator(mi, 'M');
 		
 		addSeparator();
 		
@@ -215,11 +214,12 @@ class FileMenu extends BaseMenu {
 			}
 		};
 
-		exportLMSAction = new AbstractAction(app.getMenu("Embed"), app
+		exportLMSAction = new AbstractAction(app.getMenu("Share"+"..."), app
 				.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
+				// TODO: change to GeoGebraTube Upload
 				app.exportToLMS();
 			}
 		};
