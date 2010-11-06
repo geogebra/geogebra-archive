@@ -16,14 +16,15 @@ package geogebra.gui;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.AnimatedGifEncoder;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
+import geogebra.kernel.Animatable;
 import geogebra.kernel.GeoConic;
-import geogebra.kernel.GeoUserInputElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoUserInputElement;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Traceable;
@@ -657,7 +658,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			if (geo.isAnimatable()) {            	
 				cbItem = new JCheckBoxMenuItem( app.getPlain("Animating"));
 				app.setEmptyIcon(cbItem);
-                cbItem.setSelected(((GeoNumeric) geo).isAnimating() && app.getKernel().getAnimatonManager().isRunning());
+                cbItem.setSelected(((Animatable) geo).isAnimating() && app.getKernel().getAnimatonManager().isRunning());
 				cbItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						for (int i = geos.size() - 1 ; i >= 0 ; i--) {

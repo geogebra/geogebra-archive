@@ -46,7 +46,7 @@ import java.util.TreeSet;
 final public class GeoPoint extends GeoVec3D 
 implements VectorValue, PathOrPoint,
 Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, ConicMirrorable, PointProperties,
-GeoPointND  {   	
+GeoPointND, Animatable  {   	
 	
 	private static final long serialVersionUID = 1L;
 
@@ -55,6 +55,8 @@ GeoPointND  {
 	//public int pointSize = EuclidianView.DEFAULT_POINT_SIZE; 
 	public int pointSize;
 	private int pointStyle;
+	
+	private double animationValue;
 	
 	private Path path;
 	private PathParameter pathParameter;
@@ -152,6 +154,7 @@ GeoPointND  {
 	    		pathParameter = getPathParameter();
 		    	pathParameter.set(p.pathParameter);
 	    	}
+	    	animationValue = p.animationValue;
 	    	setCoords(p.x, p.y, p.z);     
 	    	setMode(p.toStringMode); // complex etc
     	}
@@ -343,6 +346,14 @@ GeoPointND  {
 		return path != null;
 	}
 	
+	/**
+	 * Returns whether this number can be animated. Only free numbers with min and max interval
+	 * values can be animated (i.e. shown or hidden sliders). 
+	 */
+	public boolean isAnimatable() {
+		return isPointOnPath() && !isFixed();
+	}
+	
 	public boolean hasPath() {
 		return path != null;
 	}
@@ -429,7 +440,11 @@ GeoPointND  {
 			// remember path parameter for undefined case
 			PathParameter tempPathParameter = getTempPathparameter();
 			tempPathParameter.set(getPathParameter());
-			path.pointChanged(this);
+			path.pointChanged(this);			
+
+			
+			// make sure animation starts from the correct place
+			animationValue = PathNormalizer.toNormalizedPathParameter(getPathParameter().t, path.getMinParameter(), path.getMaxParameter());
 		}
 		
 		// region
@@ -446,7 +461,8 @@ GeoPointND  {
 			PathParameter pathParameter = getPathParameter();
 			PathParameter tempPathParameter = getTempPathparameter();
 			pathParameter.set(tempPathParameter);
-		}			
+		}		
+		
 	}  
 	
 	public void setCoords(GgbVector v, boolean doPathOrRegion){
@@ -1233,6 +1249,66 @@ GeoPointND  {
 		public PathMover createPathMover() {
 			return null;
 		}
-		
+
+		/**
+		 * Performs the next automatic animation step for this numbers. This changes
+		 * the value but will NOT call update() or updateCascade().
+		 * 
+		 * @return whether the value of this number was changed
+		 */
+		final public synchronized boolean doAnimationStep(double frameRate) {
+			
+			
+			PathParameter pp = getPathParameter();
+			
+			// remember old value of parameter to decide whether update is necessary
+			double oldValue = pp.t;
+			
+			// compute animation step based on speed and frame rates
+			double intervalWidth = 1;
+			double step = intervalWidth * getAnimationSpeed() * getAnimationDirection() /
+					      (AnimationManager.STANDARD_ANIMATION_TIME * frameRate);
+			
+			// update animation value
+			if (Double.isNaN(animationValue))
+				animationValue = oldValue;
+			animationValue = animationValue + step;
+			
+			// make sure we don't get outside our interval
+			switch (getAnimationType()) {		
+				case GeoElement.ANIMATION_DECREASING:
+				case GeoElement.ANIMATION_INCREASING:
+					// jump to other end of slider
+					if (animationValue > 1) 
+						animationValue = animationValue - intervalWidth;
+					else if (animationValue < 0) 
+						animationValue = animationValue + intervalWidth;		
+					break;
+				
+				case GeoElement.ANIMATION_OSCILLATING:
+				default: 		
+					if (animationValue >= 1) {
+						animationValue = 1;
+						changeAnimationDirection();
+					} 
+					else if (animationValue <= 0) {
+						animationValue = 0;
+						changeAnimationDirection();			
+					}		
+					break;
+			}
+						
+			// change slider's value without changing animationValue
+			pp.t = PathNormalizer.toParentPathParameter(animationValue, path.getMinParameter(), path.getMaxParameter());
+			
+			// return whether value of slider has changed
+			if (pp.t != oldValue) {
+		        path.pathChanged(this);
+		        updateCoords();
+		        return true;
+			} else {
+				return false;
+			}
+		}	
 
 }

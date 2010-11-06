@@ -11,4 +11,6 @@ public interface Animatable {
 	 */
 	public boolean doAnimationStep(double frameRate);
 
+	public boolean isAnimating();
+
 }
