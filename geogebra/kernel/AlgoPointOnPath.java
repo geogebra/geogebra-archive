@@ -104,4 +104,8 @@ public class AlgoPointOnPath extends AlgoElement {
         // simplified to allow better Chinese translation        
         return app.getPlain("PointOnA", input[0].getLabel());
     }
+    
+	public boolean isChangeable() {
+		return param == null;
+	}
 }

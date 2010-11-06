@@ -216,8 +216,13 @@ GeoPointND, Animatable  {
 		// if we drag a AlgoDynamicCoordinates, we want its point to be dragged
 		AlgoElement algo = getParentAlgorithm();
 		if (algo != null && algo instanceof AlgoDynamicCoordinates) return true;
-
-		return !isFixed() && (isIndependent() || isPointOnPath() || isPointInRegion()); 
+		
+		// make sure Point[circle, param] is not draggable
+		if (isPointOnPath()) {			
+			return ((AlgoPointOnPath)algo).isChangeable() && !isFixed();
+		}
+		
+		return !isFixed() && (isIndependent() || isPointInRegion()); 
 	}	 
 	
 	/**
