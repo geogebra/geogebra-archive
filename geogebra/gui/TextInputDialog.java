@@ -12,7 +12,6 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -41,7 +40,7 @@ public class TextInputDialog extends InputDialog {
 	
 	private static final long serialVersionUID = 1L;
 
-	protected JCheckBox cbLaTeX;
+	private JCheckBox cbLaTeX;
 	private JComboBox cbLaTeXshortcuts;
 	private ComboBoxListener cbl;
 	private JPanel latexPanel;
@@ -53,6 +52,13 @@ public class TextInputDialog extends InputDialog {
 
 	/**
 	 * Input Dialog for a GeoText object
+	 * @param app 
+	 * @param title 
+	 * @param text 
+	 * @param startPoint 
+	 * @param cols 
+	 * @param rows 
+	 * @param isTextMode 
 	 */
 	public TextInputDialog(Application app,  String title, GeoText text, GeoPoint startPoint,
 								int cols, int rows, boolean isTextMode) {	
@@ -189,45 +195,59 @@ public class TextInputDialog extends InputDialog {
 		}
 	}
 	
+	/**
+	 * Set content of the textarea and 
+	 * LaTex checkbox from the text
+	 * @param text GeoText text to be edited
+	 */
 	public void setGeoText(GeoText text) {
 		this.text = text;
         boolean createText = text == null;   
         isLaTeX = text == null ? false: text.isLaTeX();
         //String label = null;
-        
-        String descString;
+                
         
         if (createText) {
             //initString = "\"\"";
-        	initString = null;
-            descString = app.getPlain("Text");
+        	initString = null;            
             isLaTeX = false;
         }           
         else {                                
         	//label = text.getLabel();
           
-            initString = text.isIndependent() ? 
-                           // "\"" + text.toValueString() + "\"" :
-            		 		text.getTextString() :
-                            text.getCommandDescription(); 
-            descString = text.getNameDescription();
+            initString = "";
+            if(text.isIndependent()){ 
+            	initString = text.getTextString();
+            	if(text.getKernel().lookupLabel(initString) != null)
+            		initString = "\"" + initString + "\"";            		 		
+            }
+            else
+            	initString = text.getCommandDescription();            
             isLaTeX = text.isLaTeX();
         }           
-        
-        //msgLabel.setText(descString);
+                
         inputPanel.setText(initString);
         cbLaTeX.setSelected(isLaTeX);
         cbLaTeXshortcuts.setEnabled(isLaTeX);
 	}
 	
+	/**
+	 * @return panel with LaTeX checkbox
+	 */
 	public JPanel getLaTeXPanel() {
 		return latexPanel;
 	}
 	
+	/**
+	 * @return panel with textarea
+	 */
 	public JPanel getInputPanel() {
 		return inputPanel;
 	}
 	
+	/**
+	 * @return apply button
+	 */
 	public JButton getApplyButton() {
 		return btApply;
 	}
@@ -235,6 +255,7 @@ public class TextInputDialog extends InputDialog {
 	
 	/**
 	 * Returns state of LaTeX Formula checkbox. 
+	 * @return true if switched to LaTeX mode
 	 */
 	public boolean isLaTeX() {
 		return cbLaTeX.isSelected();		
@@ -374,12 +395,10 @@ public class TextInputDialog extends InputDialog {
 	
 	private class TextInputHandler implements InputHandler {
 		
-		private Kernel kernel;
-		private EuclidianView euclidianView;
+		private Kernel kernel;		
        
         private TextInputHandler() { 
-        	kernel = app.getKernel();
-        	euclidianView = app.getEuclidianView();
+        	kernel = app.getKernel();        	
         }        
         
         public boolean processInput(String inputValue) {
