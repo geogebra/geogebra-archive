@@ -25,6 +25,7 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.GuiManager;
+import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyXMLio;
@@ -994,49 +995,65 @@ public class Application implements KeyEventDispatcher {
 	 * @return true if a file was loaded successfully
 	 */
 	private boolean handleFileArg(CommandLineArguments args) {
-		if(args == null || !args.containsArg("file")) 
+		if(args == null || args.getNoOfFiles() == 0) 
 			return false;
 		
-		String fileArgument = args.getStringValue("file");
-
-		try {
-			boolean success;
-			String lowerCase = fileArgument.toLowerCase(Locale.US);
-			boolean isMacroFile = lowerCase.endsWith(FILE_EXT_GEOGEBRA_TOOL);
+		boolean successRet = true;
+		
+		for (int i = 0 ; i < args.getNoOfFiles() ; i++) {
 			
-			if (lowerCase.startsWith("http") || lowerCase.startsWith("file")) {
-				//replace all whitespace characters by %20 in URL string
-				fileArgument = fileArgument.replaceAll("\\s", "%20");
-				URL url = new URL(fileArgument);
-				success = loadXML(url, isMacroFile);
-				
-				if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
-					getGuiManager().getLayout().setPerspectives(tmpPerspectives);
-				} else {
-					updateContentPane(true);
-				}
-			} else if (lowerCase.startsWith("base64://")) {
-				
-				// substring to strip off base64://
-				byte [] zipFile = geogebra.util.Base64.decode(fileArgument.substring(9));
-				success = loadXML(zipFile);
-				
-				if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
-					getGuiManager().getLayout().setPerspectives(tmpPerspectives);
-				} else {
-					updateContentPane(true);
-				}
+			final String fileArgument = args.getStringValue("file"+i);
+			
+			if (i > 0) { // load in new Window
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {		
+						String[] argsNew = {fileArgument};
+						GeoGebraFrame.createNewWindow(new CommandLineArguments(argsNew));
+					}
+				});
 			} else {
-				File f = new File(fileArgument);
-				f = f.getCanonicalFile();
-				success = getGuiManager().loadFile(f, isMacroFile);
+	
+				try {
+					boolean success;
+					String lowerCase = fileArgument.toLowerCase(Locale.US);
+					boolean isMacroFile = lowerCase.endsWith(FILE_EXT_GEOGEBRA_TOOL);
+					
+					if (lowerCase.startsWith("http:") || lowerCase.startsWith("file:")) {
+						//replace all whitespace characters by %20 in URL string
+						String fileArgument2 = fileArgument.replaceAll("\\s", "%20");
+						URL url = new URL(fileArgument2);
+						success = loadXML(url, isMacroFile);
+						
+						if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
+							getGuiManager().getLayout().setPerspectives(tmpPerspectives);
+						} else {
+							updateContentPane(true);
+						}
+					} else if (lowerCase.startsWith("base64://")) {
+						
+						// substring to strip off base64://
+						byte [] zipFile = geogebra.util.Base64.decode(fileArgument.substring(9));
+						success = loadXML(zipFile);
+						
+						if(success && !isMacroFile && hasFullGui() && !getGuiManager().getLayout().isIgnoringDocument()) {
+							getGuiManager().getLayout().setPerspectives(tmpPerspectives);
+						} else {
+							updateContentPane(true);
+						}
+					} else {
+						File f = new File(fileArgument);
+						f = f.getCanonicalFile();
+						success = getGuiManager().loadFile(f, isMacroFile);
+					}
+					
+					successRet = successRet && success;
+				} catch (Exception e) {
+					e.printStackTrace();
+					successRet = false;
+				}
 			}
-			
-			return success;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
 		}
+		return successRet;
 	}
 
 	final public Kernel getKernel() {

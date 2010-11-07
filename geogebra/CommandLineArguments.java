@@ -1,5 +1,7 @@
 package geogebra;
 
+import geogebra.main.Application;
+
 import java.util.HashMap;
 
 /**
@@ -7,11 +9,11 @@ import java.util.HashMap;
  * for GeoGebra is available online at http://www.geogebra.org/wiki.
  * 
  * Arguments are accepted in the following format:
- * 	  --key1=value1 --key2=value2 ... file
+ * 	  --key1=value1 --key2=value2 ... file1 file2 ... filen
  * 
- * The last argument "file" has no "--key=" prefix and
- * specifies the file to load. The value of this argument
- * is stored with "file" as the key.
+ * The last arguments have no "--key=" prefix and
+ * specifies the files to load. The value of these arguments
+ * are stored with "file0", "file1", etc as the keys.
  * 
  * If no value is specified (ie "--key=" or "--key") an empty string is
  * regarded as value.
@@ -21,7 +23,7 @@ public class CommandLineArguments {
 	 * Hash map to store the options.
 	 */
 	private HashMap<String, String> args;
-	
+	private int noOfFiles = 0;
 	/**
 	 * Parse the argument array created by Java.
 	 * 
@@ -48,12 +50,18 @@ public class CommandLineArguments {
 					args.put(cmdArgs[i].substring(2), "");
 				}
 			} else {
-				// this is the filename
-				if(i == cmdArgs.length - 1) {
-					args.put("file", cmdArgs[i]);
-				}
+				// no -- prefix, therefore a filename
+				args.put("file"+(noOfFiles++), cmdArgs[i]);
 			}
 		}
+	}
+	
+	/*
+	 * returns number of files, eg
+	 * geogebra.jar file1.ggb file2.ggb will return 2
+	 */
+	public int getNoOfFiles() {
+		return noOfFiles;
 	}
 	
 	/**
