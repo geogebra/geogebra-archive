@@ -161,6 +161,10 @@ public class DrawImplicitPoly extends Drawable {
 	//Second Algorithm
 	final public static double EPS=Kernel.EPSILON;
 	
+	/**
+	 * @param x
+	 * @return 0 if |x|<EPS, sgn(x) otherwise
+	 */
 	public int epsSignum(double x){
 		if (x>EPS)
 			return 1;
@@ -590,6 +594,15 @@ public class DrawImplicitPoly extends Drawable {
 			return a1;
 		}
 		return Double.NaN;
+	}
+
+	/**
+	 * Returns the poly to be draw
+	 * (might not be equal to geo, if this is part of bigger geo)
+	 * @return poly
+	 */
+	public GeoImplicitPoly getPoly() {
+		return implicitPoly;
 	}
 
 }

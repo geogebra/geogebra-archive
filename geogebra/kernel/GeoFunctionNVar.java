@@ -471,7 +471,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 
 
 		private void initIneqs(ExpressionNode fe) {
-			if(ineqs==null)
+			if(fe==this.getFunctionExpression())
 				ineqs = new ArrayList<Inequality>();
 			int op = fe.getOperation();
 			ExpressionNode leftTree = fe.getLeftTree();

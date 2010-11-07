@@ -159,25 +159,22 @@ public class Inequality {
 	 * full update.
 	 */
 	public void updateCoef() {
-		double coefVal, otherVal;
+		Double coefVal = null, otherVal = null;
 		if (type == INEQUALITY_PARAMETRIC_Y) {
 			coefVal = normal.getCoefficient(fv[1]);
 			otherVal = normal.getCoefficient(fv[0]);
-			isAboveBorder = coefVal > 0;
-			if (coefVal == 0 || Math.abs(otherVal) > Math.abs(coefVal))
-				update();
-			else
-				coef.set(-coefVal);
+			
 		} else if (type == INEQUALITY_PARAMETRIC_X) {
 			coefVal = normal.getCoefficient(fv[0]);
-			otherVal = normal.getCoefficient(fv[1]);
-			isAboveBorder = coefVal > 0;
-			if (coefVal == 0 || Math.abs(otherVal) > Math.abs(coefVal))
-				update();
-			else
-				coef.set(-coefVal);
-		} else
+			otherVal = normal.getCoefficient(fv[1]);			
+		} 
+			
+		if (coefVal == null || coefVal == 0 || (otherVal != null && Math.abs(otherVal) > Math.abs(coefVal)))
 			update();
+		else {
+			isAboveBorder = coefVal > 0;
+			coef.set(-coefVal);
+		}
 
 	}
 

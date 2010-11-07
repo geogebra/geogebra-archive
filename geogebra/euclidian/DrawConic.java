@@ -1077,4 +1077,13 @@ final public class DrawConic extends Drawable implements Previewable {
 		if (conic != null)
 			conic.remove();
 	}
+
+	/**
+	 * Returns the conic to be draw
+	 * (might not be equal to geo, if this is part of bigger geo)
+	 * @return conic
+	 */
+	public GeoConic getConic() {
+		return conic;
+	}
 }

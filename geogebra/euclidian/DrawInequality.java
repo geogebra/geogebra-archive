@@ -4,6 +4,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.arithmetic.Inequality;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -50,40 +51,38 @@ public class DrawInequality extends Drawable {
 
 		// init gp
 
-		double ax = view.toRealWorldCoordX(0);
-		double bx = view.toRealWorldCoordX(view.width);
-
 		ineqCount = function.getIneqs().size();
 		// plot like definite integral
 		if (drawables == null) 
-			drawables = new ArrayList<Drawable>(ineqCount);
-				
-		for (int i = 0; i < ineqCount; i++) {
-			Inequality ineq = function.getIneqs().get(i);
-			if(drawables.size() <= i){
-			Drawable draw;
-			switch (ineq.getType()){
-				case Inequality.INEQUALITY_PARAMETRIC_Y: 
-					draw = new DrawParametricInequality(ineq, view, geo);
-					break;
-				case Inequality.INEQUALITY_PARAMETRIC_X: 
-					draw = new DrawParametricInequality(ineq, view, geo);
-					break;
-				case Inequality.INEQUALITY_CONIC: 
-					draw = new DrawConic(view, ineq.getConicBorder());					
-					ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
-					break;	
-				case Inequality.INEQUALITY_IMPLICIT: 
-					draw = new DrawImplicitPoly(view, ineq.getImpBorder());
-					
-					break;
-				default: draw = null;
-					
-			}
+			drawables = new ArrayList<Drawable>(ineqCount);		
 			
-			draw.setGeoElement(function);
-			draw.update();
-			drawables.add(draw);
+		for (int i = 0; i < ineqCount; i++) {
+			Inequality ineq = function.getIneqs().get(i);			
+			if(drawables.size() <= i || !matchBorder(ineq.getBorder(),i)){
+				Drawable draw;
+				switch (ineq.getType()){
+					case Inequality.INEQUALITY_PARAMETRIC_Y: 
+						draw = new DrawParametricInequality(ineq, view, geo);
+						break;
+					case Inequality.INEQUALITY_PARAMETRIC_X: 
+						draw = new DrawParametricInequality(ineq, view, geo);
+						break;
+					case Inequality.INEQUALITY_CONIC: 
+						draw = new DrawConic(view, ineq.getConicBorder());					
+						ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
+						break;	
+					case Inequality.INEQUALITY_IMPLICIT: 
+						draw = new DrawImplicitPoly(view, ineq.getImpBorder());
+						break;
+					default: draw = null;
+				}
+			
+				draw.setGeoElement(function);
+				draw.update();
+				if(drawables.size() <= i)
+					drawables.add(draw);
+				else
+					drawables.set(i,draw);
 			}
 			else {
 				if(ineq.getType() == Inequality.INEQUALITY_CONIC) {					
@@ -98,16 +97,23 @@ public class DrawInequality extends Drawable {
 				// offscreen points too
 			}*/
 
-			if (labelVisible) {
-				xLabel = (int) Math.round((ax + bx) / 2) - 6;
-				yLabel = (int) view.yZero - view.fontSize;
-				labelDesc = geo.getLabelDescription();
-				addLabelOffset();
-			}
+			
 		}
 	}
 
 	
+
+	private boolean matchBorder(GeoElement border, int i) {
+		Drawable d = drawables.get(i);
+		if(d instanceof DrawConic && ((DrawConic)d).getConic().equals(border))
+			return true;
+		if(d instanceof DrawImplicitPoly && ((DrawImplicitPoly)d).getPoly().equals(border))
+			return true;
+		if(drawables.get(i) instanceof DrawParametricInequality && ((DrawParametricInequality)d).getBorder().equals(border))
+			return ((DrawParametricInequality)drawables.get(i)).isXparametric();
+		
+		return false;
+	}
 
 	public void draw(Graphics2D g2) {
 		if (isVisible) {
@@ -150,7 +156,11 @@ public class DrawInequality extends Drawable {
 		protected DrawParametricInequality(Inequality ineq,EuclidianView view,GeoElement geo){
 			this.view = view;
 			this.ineq = ineq;
-			this.geo = geo;
+			this.geo = geo;			
+		}
+		
+		private Object getBorder() {
+			return ineq.getBorder();			
 		}
 		@Override
 		public void draw(Graphics2D g2) {
@@ -226,6 +236,12 @@ public class DrawInequality extends Drawable {
 					gp.lineTo(-10, -10);
 					gp.closePath();
 				}
+				if (labelVisible) {
+					xLabel = (int) Math.round((ax + bx) / 2) - 6;
+					yLabel = (int) view.yZero - view.fontSize;
+					labelDesc = geo.getLabelDescription();
+					addLabelOffset();
+				}
 			}
 			else{
 				double ax = view.toRealWorldCoordX(0);
@@ -245,7 +261,19 @@ public class DrawInequality extends Drawable {
 					gp.lineTo(-10, view.height+10);
 					gp.closePath();
 				}
+				border.evaluateCurve(ax);
+				if (labelVisible) {
+					yLabel = (int) Math.round((ax + bx) / 2) - 6;
+					xLabel = (int) view.xZero;
+					labelDesc = geo.getLabelDescription();
+					addLabelOffset();
+				}
 			}
+			
+		}
+		
+		private boolean  isXparametric(){
+			return ineq.getType() == Inequality.INEQUALITY_PARAMETRIC_X;
 		}
 		
 	}
