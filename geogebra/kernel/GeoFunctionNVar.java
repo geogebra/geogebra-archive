@@ -479,8 +479,10 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			if(op == ExpressionNode.GREATER||op == ExpressionNode.GREATER_EQUAL||
 					op == ExpressionNode.LESS||op == ExpressionNode.LESS_EQUAL)	{
 				Inequality newIneq = new Inequality(kernel,leftTree,rightTree,op,getFunction().getFunctionVariables());
-				newIneq.getBorder().setInverseFill(newIneq.isAboveBorder() ^ this.isInverseFill());
-				ineqs.add(newIneq);
+				if(newIneq.getType()!=Inequality.INEQUALITY_INVALID){
+					newIneq.getBorder().setInverseFill(newIneq.isAboveBorder() ^ this.isInverseFill());
+					ineqs.add(newIneq);
+				}
 			}if(op == ExpressionNode.AND || op == ExpressionNode.OR){
 				initIneqs(leftTree);
 				initIneqs(rightTree);
