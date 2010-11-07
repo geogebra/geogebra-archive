@@ -61,9 +61,6 @@ public class StatGeo   {
 	//=================================================
 
 
-
-
-
 	public GeoElement createGeoFromString(String text ){
 		return createGeoFromString(text, null);
 	}
@@ -307,10 +304,9 @@ public class StatGeo   {
 	}
 
 
-	public PlotSettings updatePDF(String expr, double xMin, double xMax, double yMin, double yMax, PlotPanel plotPanel){
+	public PlotSettings updatePDF(String expr, double xMin, double xMax, double yMin, double yMax){
 
-		PlotSettings ps = plotPanel.getPlotSettings();
-
+		PlotSettings ps = new PlotSettings();	
 		// set view parameters	
 		ps.xMinEV = xMin;
 		ps.xMaxEV = xMax;
@@ -318,6 +314,8 @@ public class StatGeo   {
 		ps.yMaxEV = yMax;
 		ps.showYAxis = false;
 		ps.forceXAxisBuffer = true;
+		ps.isEdgeAxis[0] = false;
+		ps.isEdgeAxis[1] = false;
 
 		/*
 		setEVParams();

@@ -2,10 +2,17 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.Hits;
+import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+
+import javax.swing.JPanel;
 
 /**
  * 
@@ -18,6 +25,8 @@ import java.awt.event.ComponentListener;
 public class PlotPanel extends EuclidianView implements ComponentListener {
 	
 	
+	private EuclidianController ec;
+	
 	private static boolean[] showAxes = { true, true };
 	private static boolean showGrid = false;
 	
@@ -29,6 +38,7 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 	}
 	public void setPlotSettings(PlotSettings plotSettings) {
 		this.plotSettings = plotSettings;
+		this.setEVParams();
 	}
 	
 
@@ -37,13 +47,17 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 	/*************************************************
 	 * Construct the panel
 	 */
-	public PlotPanel(EuclidianController ec) {
-		super(ec, showAxes, showGrid);
-					
-		removeMouseListener(ec);
-		removeMouseMotionListener(ec);
-		removeMouseWheelListener(ec);
+	public PlotPanel(Kernel kernel) {
+		super(new EuclidianController(kernel), showAxes, showGrid);
+		
+		this.ec = this.getEuclidianController();
+		
+		setMouseEnabled(false);
+		setMouseMotionEnabled(false);
+		setMouseWheelEnabled(false);
+		setAllowShowMouseCoords(false);
 		setAxesCornerCoordsVisible(false);
+		
 		
 		setAntialiasing(true);
 		updateFonts();
@@ -57,6 +71,27 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 		
 	}
 
+	public void setMouseEnabled(boolean enableMouse){
+		removeMouseListener(ec);
+		if(enableMouse)
+			addMouseListener(ec);
+	}
+
+	public void setMouseMotionEnabled(boolean enableMouseMotion){
+		removeMouseMotionListener(ec);	
+		if(enableMouseMotion)
+			addMouseMotionListener(ec);
+	}
+
+	public void setMouseWheelEnabled(boolean enableMouseWheel){
+		removeMouseWheelListener(ec);	
+		if(enableMouseWheel)
+			addMouseWheelListener(ec);
+	}
+
+	
+	
+	
 	
 	
 	/**
@@ -111,11 +146,22 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 
 		setRealWorldCoordSystem(plotSettings.xMinEV, plotSettings.xMaxEV, plotSettings.yMinEV, plotSettings.yMaxEV);
 	
+		setAxesCornerCoordsVisible(false);
 		//Application.debug("setEVParms");
 		repaint();
 	}
 	
 	
+	
+	
+	protected void processMouseEvent(MouseEvent e){
+		if(e.getClickCount() > 1 || Application.isRightClick(e)){
+			e.consume();
+			return;
+		}else{
+			super.processMouseEvent(e);
+		}	
+	}
 	
 	
 	//==================================================
@@ -132,7 +178,6 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 	}
 	public void componentShown(ComponentEvent arg0) {
 	}
-
 
 
 }

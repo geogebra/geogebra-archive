@@ -128,7 +128,7 @@ public class StatComboPanel extends JPanel{
 		
 		// =======================================
 		// create a plot panel 
-		plotPanel = new PlotPanel(new EuclidianController(app.getKernel()));
+		plotPanel = new PlotPanel(app.getKernel());
 		plotPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 	
 		

@@ -2,6 +2,7 @@ package geogebra.gui.view.spreadsheet;
 
 
 
+import geogebra.euclidian.EuclidianController;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -20,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -33,8 +35,10 @@ import javax.swing.border.BevelBorder;
 
 public class ProbabilityCalculator extends JDialog implements View, ActionListener, FocusListener   {
 	 
+	//ggb
 	private Application app;
 	private Kernel kernel; 
+	private StatGeo statGeo;
 	private ProbabilityCalculator probDialog;
 	
 	// supported distributions
@@ -45,7 +49,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	
 	// parms
 	private int numDist = 4;
-	private int selectedDist = DIST_NORMAL;
+	private int selectedDist = DIST_NORMAL;  // default: startup with normal distribution
 	private String[] distLabels; 
 	private String[][] parmLabels;
 	private int numParms = 3;
@@ -54,27 +58,27 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private double low = -1, high = 1, prob = 0;
 	
 	
-	// gui
+	// GUI
 	private JButton btnClose, btnOptions, btnExport, btnDisplay;
 	private JComboBox comboDistribution;
 	private JTextField[] fldParmArray;
 	private JTextField fldLow,fldHigh,fldResult;
 	private JLabel[] lblParmArray;
-	private StatPlotPanel plotPanel;
+	private PlotPanel plotPanel;
 	
 	
 	// GeoElements
 	private GeoPoint lowPoint,highPoint;
 	private GeoFunction pdf;
 	private GeoElement integral;
-	
+	private ArrayList<GeoElement> plotGeoList;
 	
 	// flags
 	private boolean isIniting;
 	private boolean isSettingAxisPoints = false;
 	
 	private static final Color COLOR_PDF = new Color(0, 0, 255);  //blue
-	
+	private static final Color COLOR_POINT = Color.GRAY;
 	
 	
 	/*************************************************
@@ -86,29 +90,55 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		isIniting = true;
 		this.app = app;	
 		kernel = app.getKernel();
+		statGeo = new StatGeo(app);
 		probDialog = this;
 		
 		// init variables
 		selectedParms = new double[4];
+		setDefaults(selectedDist);
 		setLabels();
+		plotGeoList = new ArrayList<GeoElement>();
 		
 		// init the GUI
 		initGUI();
 		updateFonts();
+		updatePlot();
 		updateGUI();
 		
 		attachView();
 		btnClose.requestFocus();
 		isIniting = false;
 			
-	} //============= END  constructor
+	} 
 	
 	
 	
-	
-	public void removeGeos(){
-		plotPanel.removeGeos();
+	private void clearPlotGeoList(){
+		for(GeoElement geo : plotGeoList){
+			if(geo != null)
+				geo.remove();
+		}
+		plotGeoList.clear();
 	}
+
+	public void removeGeos(){	
+		clearPlotGeoList();
+	}
+	
+	private void hideGeosFromViews(){
+			for(GeoElement listGeo:plotGeoList){
+				// add the geo to our view and remove it from EV		
+				listGeo.addView(plotPanel);
+				plotPanel.add(listGeo);
+				listGeo.removeView(app.getEuclidianView());
+				app.getEuclidianView().remove(listGeo);
+				
+				// turn off tooltips
+				listGeo.setTooltipMode(GeoElement.TOOLTIP_OFF);
+			}
+	}
+	
+	
 	
 	
 	
@@ -167,15 +197,17 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			//===========================================
 			// plot panel
 	
-			plotPanel = new StatPlotPanel(app);
+			plotPanel = new PlotPanel(app.getKernel());
+			plotPanel.setMouseEnabled(true);
+			plotPanel.setMouseMotionEnabled(true);
 			
 			plotPanel.setBorder(BorderFactory.createCompoundBorder(
 					BorderFactory.createEmptyBorder(2, 2, 2, 2),
 					BorderFactory.createBevelBorder(BevelBorder.LOWERED))); 
 					
 			
-			setDefaults(selectedDist);
-			plotPDF(selectedDist);
+			//setDefaults(selectedDist);
+			//plotPDF(selectedDist);
 			plotPanel.setPreferredSize(new Dimension(350,300));
 			
 			
@@ -207,16 +239,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		comboDistribution = new JComboBox(distLabels);
 		comboDistribution.setSelectedIndex(selectedDist);
 		comboDistribution.removeItemAt(DIST_BINOMIAL);
-		comboDistribution.addActionListener(new ActionListener() {       
-			public void actionPerformed(ActionEvent e)
-			{
-				selectedDist = comboDistribution.getSelectedIndex();
-				setDefaults(selectedDist);
-				probDialog.plotPDF(selectedDist);
-				updateGUI();
-				btnClose.requestFocus();
-			}
-		});      
+		comboDistribution.addActionListener(this);
 		
 		
 		// parm panel
@@ -321,55 +344,43 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	}
 	
 	private void plotPDF(int distType, double[]parms, double xMin, double xMax, double yMin, double yMax){
+		
+		removeGeos();	
 			
-		double[] d = getPlotDimensions(distType, parms);
-		
-		// remove old pdf geos
-		if(lowPoint != null)
-			lowPoint.remove();
-		lowPoint = null;
-		if(highPoint != null)
-			highPoint.remove();
-		highPoint = null;
-		
-		if(integral != null)
-			integral.remove();
-		integral = null;
-		
-		if(pdf != null)
-			pdf.remove();
-		pdf = null;
-		
-		plotPanel.removeGeos();
-		plotPanel.setAutoRemoveGeos(false);
-		
 		// create new pdf
+		double[] d = getPlotDimensions(distType, parms);
 		xMin = d[0];
 		xMax = d[1];
 		yMin = d[2];
 		yMax = d[3];
-	
-		pdf = (GeoFunction) plotPanel.createPDF(buildExpressionPDF(distType,parms), xMin, xMax, yMin, yMax);	
+		String expr = buildPDFExpression(distType,parms);
+		pdf = (GeoFunction) statGeo.createGeoFromString(expr, "pdf");
+		plotGeoList.add(pdf);
+		plotPanel.setPlotSettings(statGeo.updatePDF(expr, xMin, xMax, yMin, yMax));
 		pdf.setObjColor(COLOR_PDF);
 		pdf.setLineThickness(3);
-		
+		pdf.setFixed(true);
 		createXAxisPoints();
 		createIntegral();
 		
-		plotPanel.setAutoRemoveGeos(true);
-	
+		hideGeosFromViews();
+		
 	}
 	
 	private void createXAxisPoints(){
 		
 		String text = "Point[xAxis]";
-		lowPoint = (GeoPoint) plotPanel.createGeoFromString(text,"A");
-		lowPoint.setObjColor(COLOR_PDF);
+		lowPoint = (GeoPoint) statGeo.createGeoFromString(text,"A");
+		plotGeoList.add(lowPoint);
+		lowPoint.setObjColor(COLOR_POINT);
+		lowPoint.setPointSize(4);
 		
 		text = "Point[xAxis]";
-		highPoint = (GeoPoint) plotPanel.createGeoFromString(text,"B");
-		highPoint.setObjColor(COLOR_PDF);
-	
+		highPoint = (GeoPoint) statGeo.createGeoFromString(text,"B");
+		plotGeoList.add(highPoint);
+		highPoint.setObjColor(COLOR_POINT);
+		highPoint.setPointSize(4);
+		
 		setXAxisPoints();	
 	}
 	
@@ -379,7 +390,8 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		String text = "Integral[" + pdf.getLabel() + ", x(" + lowPoint.getLabel() 
 						+ "), x(" + highPoint.getLabel() + ")]";
 		//System.out.println(text);
-		integral  = plotPanel.createGeoFromString(text,"integral");
+		integral  = statGeo.createGeoFromString(text,"integral");
+		plotGeoList.add(integral);
 		integral.setObjColor(COLOR_PDF);
 		integral.setAlphaValue(0.25f);
 		
@@ -387,17 +399,18 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	
 	
 	public void setXAxisPoints(){
-		System.out.println(low);
+
 		isSettingAxisPoints = true;
 		lowPoint.setCoords(low, 0.0, 1.0);
 		lowPoint.updateCascade();
 		highPoint.setCoords(high, 0.0, 1.0);
 		highPoint.updateCascade();
-		plotPanel.getMyEuclidianView().repaint();
+		plotPanel.repaint();
 		isSettingAxisPoints = false;
 	}
+
 	
-	private String buildExpressionPDF(int type, double[]parms){
+	private String buildPDFExpression(int type, double[]parms){
 		String expr = "";
 
 		switch(type){
@@ -461,7 +474,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			xMin = mean - 5*sigma;
 			xMax = mean + 5*sigma;
 			yMin = 0;
-			yMax = 1.2* evaluateFunction(this.buildExpressionPDF(distType, parms), mean);
+			yMax = 1.2* evaluateFunction(this.buildPDFExpression(distType, parms), mean);
 	
 			break;
 
@@ -472,7 +485,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			xMin = -5;
 			xMax = 5;
 			yMin = 0;
-			yMax = 1.2* evaluateFunction(this.buildExpressionPDF(distType, parms), 0);
+			yMax = 1.2* evaluateFunction(this.buildPDFExpression(distType, parms), 0);
 			
 			break;
 
@@ -483,9 +496,9 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			xMax = 4*k;
 			yMin = 0;
 			if(k>2)
-				yMax = 1.2* evaluateFunction(this.buildExpressionPDF(distType, parms), k-2);
+				yMax = 1.2* evaluateFunction(this.buildPDFExpression(distType, parms), k-2);
 			else
-				yMax = 1.2* evaluateFunction(this.buildExpressionPDF(distType, parms), 0);
+				yMax = 1.2* evaluateFunction(this.buildPDFExpression(distType, parms), 0);
 			break;
 		}
 		
@@ -519,9 +532,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			low = 0;
 			high = 6;
 			break;
-			
-			
-			
 
 		}
 	
@@ -530,11 +540,14 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	private double calcProb(int distType, double[] parms, double low, double high){
 		
+		if(low > high) 	return 0;
+		
 		String exprHigh = "";
 		String exprLow = "";
 		double prob = 0;
-
+		
 		try {
+			
 			switch(distType){
 			
 			case DIST_NORMAL:
@@ -597,9 +610,11 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 				fldParmArray[i].setVisible(false);
 
 			}else{
+				
 				lblParmArray[i].setVisible(true);
-				fldParmArray[i].setVisible(true);
 				lblParmArray[i].setText(parmLabels[selectedDist][i]);
+				
+				fldParmArray[i].setVisible(true);
 				fldParmArray[i].removeActionListener(this);
 				fldParmArray[i].setText("" + kernel.format(selectedParms[i]));
 				fldParmArray[i].setCaretPosition(0);
@@ -625,7 +640,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		
 		}else{
 			app.setMoveMode();
-			//removeGeos();
+			removeGeos();
 			//detachView();
 		}
 	}
@@ -661,15 +676,23 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		Object source = e.getSource();	
 		if(source == btnClose){
 			setVisible(false);
-			
+
 		}
 		else if (source instanceof JTextField) {
 			doTextFieldActionPerformed((JTextField)source);
-		}			
+		}	
+
+		else if (source == comboDistribution) {
+			selectedDist = comboDistribution.getSelectedIndex();
+			setDefaults(selectedDist);
+			updatePlot();
+			updateGUI();
+			btnClose.requestFocus();
+		}
 		//btnClose.requestFocus();
 	}
 
-	
+
 	
 	private void doTextFieldActionPerformed(JTextField source) {
 		
@@ -776,7 +799,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	public void detachView() {
 		kernel.detach(this);
-		plotPanel.detachView();
+		//plotPanel.detachView();
 		//clearView();
 		//kernel.notifyRemoveAll(this);		
 	}
