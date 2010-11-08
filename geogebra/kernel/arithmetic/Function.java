@@ -66,7 +66,6 @@ implements ExpressionValue, RealRootFunction, Functional {
         isBooleanFunction = f.isBooleanFunction;
         isConstantFunction = f.isConstantFunction;
        
-        app = kernel.getApplication();
         this.kernel = kernel;
     }
     

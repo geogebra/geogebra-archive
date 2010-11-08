@@ -2,9 +2,8 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoFunctionNVar;
+import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
-import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -23,7 +22,7 @@ public class DrawInequality extends Drawable {
 	private boolean isVisible;
 	private boolean labelVisible;
 	
-	private GeoFunctionNVar function;
+	private FunctionalNVar function;
 	private int ineqCount;
 	private ArrayList<Drawable> drawables;
 
@@ -33,10 +32,10 @@ public class DrawInequality extends Drawable {
 	 * @param view
 	 * @param function boolean 2-var function
 	 */
-	public DrawInequality(EuclidianView view, GeoFunctionNVar function) {
+	public DrawInequality(EuclidianView view, FunctionalNVar function) {
 		this.view = view;
 		this.function = function;
-		geo = function;
+		geo = (GeoElement)function;
 		update();
 
 	}
@@ -67,6 +66,9 @@ public class DrawInequality extends Drawable {
 					case Inequality.INEQUALITY_PARAMETRIC_X: 
 						draw = new DrawParametricInequality(ineq, view, geo);
 						break;
+					case Inequality.INEQUALITY_1VAR: 
+						draw = new DrawInequality1Var(ineq, view, geo);
+						break;	
 					case Inequality.INEQUALITY_CONIC: 
 						draw = new DrawConic(view, ineq.getConicBorder());					
 						ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
@@ -77,7 +79,7 @@ public class DrawInequality extends Drawable {
 					default: draw = null;
 				}
 			
-				draw.setGeoElement(function);
+				draw.setGeoElement((GeoElement)function);
 				draw.update();
 				if(drawables.size() <= i)
 					drawables.add(draw);
@@ -167,8 +169,7 @@ public class DrawInequality extends Drawable {
 			if (geo.doHighlighting()) {
 				g2.setPaint(geo.getSelColor());
 				g2.setStroke(selStroke);
-				for (int i = 0; i < ineqCount; i++)
-					Drawable.drawWithValueStrokePure(gp, g2);
+				Drawable.drawWithValueStrokePure(gp, g2);
 			}
 			fill(g2, gp, true); // fill using default/hatching/image as
 			// appropriate
@@ -176,8 +177,7 @@ public class DrawInequality extends Drawable {
 			if (geo.lineThickness > 0) {
 				g2.setPaint(geo.getObjectColor());
 				g2.setStroke(objStroke);
-				for (int i = 0; i < ineqCount; i++)
-					Drawable.drawWithValueStrokePure(gp, g2);
+				Drawable.drawWithValueStrokePure(gp, g2);
 			}
 
 			if (labelVisible) {

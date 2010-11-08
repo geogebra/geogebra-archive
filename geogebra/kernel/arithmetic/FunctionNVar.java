@@ -12,16 +12,16 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.Construction;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Function of N variables that returns either a number
@@ -35,14 +35,14 @@ implements ExpressionValue, FunctionalNVar {
 	
 	protected ExpressionNode expression;
     protected FunctionVariable[] fVars;    
+    private List<Inequality> ineqs;
     
-    // standard case: number function, see initFunction()
+    /** standard case: number function, see initFunction() */
     protected boolean isBooleanFunction = false;
     
-    // if the function is of type f(x) = c
+    /** if the function is of type f(x) = c */
     protected boolean isConstantFunction = false; 
       
-    protected Application app;
     protected Kernel kernel;    
     
 	private StringBuilder sb = new StringBuilder(80);	
@@ -52,8 +52,7 @@ implements ExpressionValue, FunctionalNVar {
      * Note: call initFunction() after this constructor.
      */ 
     public FunctionNVar(ExpressionNode expression) {
-    	kernel = expression.getKernel();
-    	app = kernel.getApplication();        	
+    	kernel = expression.getKernel();    	
         
         this.expression = expression;       
     }
@@ -64,8 +63,7 @@ implements ExpressionValue, FunctionalNVar {
      * variables in expression is already known.
      */ 
     public FunctionNVar(ExpressionNode exp, FunctionVariable[] fVars) {
-    	kernel = exp.getKernel();
-    	app = kernel.getApplication();               
+    	kernel = exp.getKernel();       
         
         expression = exp;
         this.fVars = fVars;
@@ -76,8 +74,7 @@ implements ExpressionValue, FunctionalNVar {
      * do this later.    
      */ 
     public FunctionNVar(Kernel kernel) {
-        this.kernel = kernel;
-        app = kernel.getApplication();
+        this.kernel = kernel;        
 
     }
     
@@ -87,8 +84,7 @@ implements ExpressionValue, FunctionalNVar {
         fVars = f.fVars; // no deep copy of function variable             
         isBooleanFunction = f.isBooleanFunction;
         isConstantFunction = f.isConstantFunction;
-       
-        app = kernel.getApplication();
+               
         this.kernel = kernel;
     }
     
@@ -226,7 +222,7 @@ implements ExpressionValue, FunctionalNVar {
         	isBooleanFunction = false;
         } 
         else {
-			throw new MyError(app, "InvalidFunction");  
+			throw new MyError(kernel.getApplication(), "InvalidFunction");  
         }
     }
 
@@ -505,5 +501,36 @@ implements ExpressionValue, FunctionalNVar {
 			sb.append(")");	
 			return sb.toString();
 	 }
+	 
+	 	public List<Inequality> getIneqs() {
+			return ineqs;
+		}
 
+
+		public void initIneqs(ExpressionNode fe, boolean inverseFill) {
+			if(fe == getExpression())
+				ineqs = new ArrayList<Inequality>();
+			int op = fe.getOperation();
+			ExpressionNode leftTree = fe.getLeftTree();
+			ExpressionNode rightTree = fe.getRightTree();
+			if(op == ExpressionNode.GREATER||op == ExpressionNode.GREATER_EQUAL||
+					op == ExpressionNode.LESS||op == ExpressionNode.LESS_EQUAL)	{
+				Inequality newIneq = new Inequality(kernel,leftTree,rightTree,op,getFunction().getFunctionVariables());
+				if(newIneq.getType()!=Inequality.INEQUALITY_INVALID ){
+					if(newIneq.getType()!=Inequality.INEQUALITY_1VAR)
+						newIneq.getBorder().setInverseFill(newIneq.isAboveBorder() ^ inverseFill);
+					ineqs.add(newIneq);
+				}
+			}if(op == ExpressionNode.AND || op == ExpressionNode.OR){
+				initIneqs(leftTree,inverseFill);
+				initIneqs(rightTree,inverseFill);
+			}
+			
+			
+			
+		}
+	public void updateIneqs() {
+		for(Inequality ineq:getIneqs())
+			ineq.updateCoef();
+	}
 }

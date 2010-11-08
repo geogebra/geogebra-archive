@@ -20,9 +20,6 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -103,7 +100,8 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
-		initIneqs(this.getFunctionExpression());
+		fun.initIneqs(this.getFunctionExpression(),isInverseFill());
+		ineqs = fun.getIneqs();
 	}
 	
 
@@ -197,7 +195,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			sbToString.append("(");
 			sbToString.append(getVarString());
 			sbToString.append(") = ");
-		}else {
+		}else if(isLabelSet()) {
 			sbToString.append(label);
 			sbToString.append(": ");
 		}
@@ -464,40 +462,21 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			return hasDrawable3D();
 		}
 		
-		public List<Inequality> getIneqs() {
-			if(ineqs == null)initIneqs(this.getFunctionExpression());			
+		
+		/**
+		 * @return the ineqs
+		 */
+		public List<Inequality> getIneqs(){
+			if(ineqs == null){
+				fun.initIneqs(fun.getExpression(),isInverseFill());
+				ineqs = fun.getIneqs();
+			}
 			return ineqs;
 		}
-
-
-		private void initIneqs(ExpressionNode fe) {
-			if(fe==this.getFunctionExpression())
-				ineqs = new ArrayList<Inequality>();
-			int op = fe.getOperation();
-			ExpressionNode leftTree = fe.getLeftTree();
-			ExpressionNode rightTree = fe.getRightTree();
-			if(op == ExpressionNode.GREATER||op == ExpressionNode.GREATER_EQUAL||
-					op == ExpressionNode.LESS||op == ExpressionNode.LESS_EQUAL)	{
-				Inequality newIneq = new Inequality(kernel,leftTree,rightTree,op,getFunction().getFunctionVariables());
-				if(newIneq.getType()!=Inequality.INEQUALITY_INVALID){
-					newIneq.getBorder().setInverseFill(newIneq.isAboveBorder() ^ this.isInverseFill());
-					ineqs.add(newIneq);
-				}
-			}if(op == ExpressionNode.AND || op == ExpressionNode.OR){
-				initIneqs(leftTree);
-				initIneqs(rightTree);
-			}
-			
-			
-			
-		}
-
-
 				
 		public void update(){
 			super.update();
-			for(Inequality ineq:getIneqs())
-				ineq.updateCoef();			
+			fun.updateIneqs();			
 		}
 		public boolean isRegion() {
 			return isBooleanFunction();
@@ -520,7 +499,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				myX = P.getX2D(), myY = P.getY2D();
 				double bestDist = (bestY-myY)*(bestY-myY)+(bestX-myX)*(bestX-myX);
 				
-				if(ineqs==null)initIneqs(getFunctionExpression());
+				if(ineqs==null){
+					fun.initIneqs(getFunctionExpression(),isInverseFill());
+				}
 				int size = ineqs.size();
 				
 				for(int i = 0; i<size; i++){

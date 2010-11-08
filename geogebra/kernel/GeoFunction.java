@@ -19,6 +19,7 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.FunctionalNVar;
+import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -26,6 +27,7 @@ import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -59,6 +61,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     private boolean evalSwapped;
     // parent conditional function
    // private GeoFunctionConditional parentCondFun = null;
+
+	private List<Inequality> ineqs;
     
 	
 	/**
@@ -77,8 +81,11 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 */
 	public GeoFunction(Construction c, String label, Function f) {
 		super(c);
-		fun = f;		
-		setLabel(label);		
+		fun = f;				
+		fun.initFunction();
+		if(fun.isBooleanFunction())
+			setVisualStyle(cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_INEQUALITY_1VAR));		
+		setLabel(label);	
 	}
 	
 	public String getClassName() {
@@ -125,6 +132,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
+		fun.initIneqs(this.getFunctionExpression(),isInverseFill());
+		ineqs = fun.getIneqs();
 	}
 	
 
@@ -364,6 +373,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public boolean isDefined() {
 		return isDefined && fun != null;
 	}
+	
+	public boolean isFillable(){
+		return isBooleanFunction();
+	}
 
 	/**
 	 * Changes the defined state
@@ -382,18 +395,21 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 
 	protected boolean showInEuclidianView() {
-		return isDefined() && !isBooleanFunction();
+		return isDefined();
 	}
 	
 	
 	public String toString() {
 		sbToString.setLength(0);
-		if (isLabelSet()) {
+		if (isLabelSet() && !isBooleanFunction()) {
 			sbToString.append(label);
 			sbToString.append("(");
 			sbToString.append(getVarString());
 			sbToString.append(") = ");
-		}		
+		}else if(isLabelSet()) {
+			sbToString.append(label);
+			sbToString.append(": ");
+		}
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
@@ -422,29 +438,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			return app.getPlain("undefined");
 	}
 	
-	/*
-	public final String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(label);
-		sb.append("(x) = ");
-		if (fun != null)
-			sb.append(fun.toValueString());
-		else
-			sb.append(app.getPlain("undefined"));		
-		return sb.toString();
-	}
 	
-	// function names should not be expanded 
-	public final String toValueString() {
-		if (label == null) { 
-			// this is a special case that will only occur
-			// for functions without label that are directly
-			// used as command arguments
-			return fun.toString();
-		}
-		return label;
-	}*/
-	
+		
 	/**
 	   * save object in xml format
 	   */ 
@@ -1231,6 +1226,18 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 */
 	public double distance(GeoPoint p) {
 		return Math.abs(evaluate(p.inhomX) - p.inhomY);
+	}
+
+	
+	/**
+	 * @return the ineqs
+	 */
+	public List<Inequality> getIneqs() {
+		if(ineqs == null){
+			fun.initIneqs(this.getFunctionExpression(),isInverseFill());
+			ineqs = fun.getIneqs();
+		}
+		return ineqs;
 	}
 	
 

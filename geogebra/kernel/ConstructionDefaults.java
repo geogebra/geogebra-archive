@@ -18,6 +18,7 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,7 +36,8 @@ public class ConstructionDefaults {
 	public static final int DEFAULT_POINT_COMPLEX =  14;
 	
 	public static final int DEFAULT_LINE = 20;			
-	public static final int DEFAULT_INEQUALITY = 23; // dashed		
+	public static final int DEFAULT_INEQUALITY = 23; 
+	public static final int DEFAULT_INEQUALITY_1VAR = 24;//TODO: make this actually used
 	public static final int DEFAULT_VECTOR = 30;	
 	public static final int DEFAULT_CONIC = 40;
 	public static final int DEFAULT_CONIC_SECTOR = 41;
@@ -89,9 +91,9 @@ public class ConstructionDefaults {
 	// numbers (slope, definite integral)
 	private static final Color colNumber = Color.black;	
 	
-	// preview colors
+	/** preview color */
 	public static final Color colPreview = Color.darkGray;
-
+	/** preview fill color */
 	public static final Color colPreviewFill = new Color(
 			colPolygon.getRed(), 
 			colPolygon.getGreen(), 
@@ -104,11 +106,12 @@ public class ConstructionDefaults {
 	public static final int LABEL_VISIBLE_ALWAYS_OFF = 2;
 	public static final int LABEL_VISIBLE_POINTS_ONLY = 3;
 	public static final int LABEL_VISIBLE_USE_DEFAULTS = 4;
+	
 		
-	// construction
+	/** construction */
 	protected Construction cons;
 	
-	// defaultGeoElement list
+	/** defaultGeoElement list */
 	protected HashMap<Integer,GeoElement> defaultGeoElements;		
 	
 	private int lineThickness = EuclidianView.DEFAULT_LINE_THICKNESS;
@@ -131,22 +134,21 @@ public class ConstructionDefaults {
 	
 	/**
 	 * Returns a set of all default GeoElements used by this construction.
+	 * @return set of (integer,geo) pairs
 	 */
-	public Set getDefaultGeos() {
+	public Set<Map.Entry<Integer,GeoElement>> getDefaultGeos() {
 		return defaultGeoElements.entrySet();
 	}
 	
 	protected String strFree = " (free)";
 	protected String strDependent = " (dependent)";
 	
+	/**
+	 * Fills the list of default geos
+	 */
 	protected void createDefaultGeoElements() {
-		defaultGeoElements = new HashMap();		
-		
-		Application app = cons.getApplication();		
-//		String strFree = " (" + app.getPlain("free") + ")";
-//		String strDependent = " (" + app.getPlain("dependent") + ")";
-		//String strFree = " (free)";
-		//String strDependent = " (dependent)";
+		defaultGeoElements = new HashMap<Integer,GeoElement>();		
+				
 						
 		// free point
 		GeoPoint freePoint = new GeoPoint(cons);	
@@ -204,10 +206,16 @@ public class ConstructionDefaults {
 		defaultGeoElements.put(DEFAULT_LINE, line);
 		
 		GeoFunctionNVar inequality = new GeoFunctionNVar(cons, null);	
-		inequality.setLocalVariableLabel("Inequality");
+		//inequality.setLocalVariableLabel("Inequality");
 		inequality.setObjColor(colInequality);
 		inequality.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
 		defaultGeoElements.put(DEFAULT_INEQUALITY, inequality);
+		
+		GeoFunction inequality1var = new GeoFunction(cons);	
+		//inequality.setLocalVariableLabel("Inequality");
+		inequality1var.setObjColor(colInequality);
+		inequality1var.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
+		defaultGeoElements.put(DEFAULT_INEQUALITY_1VAR, inequality1var); //TODO: Make this used
 		
 		
 		
@@ -309,6 +317,7 @@ public class ConstructionDefaults {
 	/**
 	 * Returns a default GeoElement of this construction.
 	 * @param type use DEFAULT_* constants (e.g. DEFAULT_POINT_FREE) 
+	 * @return default geo for given type
 	 */
 	public GeoElement getDefaultGeo(int type) {
 		return defaultGeoElements.get(type);		
@@ -317,6 +326,8 @@ public class ConstructionDefaults {
 	/**
 	 * Adds a key/value pair to defaultGeoElements.
 	 * (used by Euclidian.EuclidianStyleBar to restore a default geo to previous state) 
+	 * @param defaultType 
+	 * @param geo 
 	 */
 	public void addDefaultGeo(Integer defaultType, GeoElement geo) {
 		defaultGeoElements.put(defaultType, geo);		
@@ -376,7 +387,7 @@ public class ConstructionDefaults {
 		case GeoElement.GEO_CLASS_FUNCTION_NVAR:
 				type = DEFAULT_INEQUALITY;				
 			break;
-		case GeoElement.GEO_CLASS_FUNCTION:			
+		case GeoElement.GEO_CLASS_FUNCTION:
 		case GeoElement.GEO_CLASS_INTERVAL:
 		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
 			type = DEFAULT_FUNCTION;

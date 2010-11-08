@@ -12,12 +12,27 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.GeoElement;
+import java.util.List;
 
-
-
+/**
+ * Interface for GeoFunction and GeoFunctionNVar
+ * 
+ * @author Markus
+ *
+ */
 public interface FunctionalNVar {
+	/**
+	 * @param vals
+	 * @return value at vals
+	 */
 	public double evaluate(double[] vals);
+	/**
+	 * @return function
+	 */
 	public FunctionNVar getFunction();
+	/**
+	 * @return list of inequalities
+	 */
+	public List<Inequality> getIneqs();
 	//public GeoFunctionNVar getGeoDerivative(int order, int nvar);
 }

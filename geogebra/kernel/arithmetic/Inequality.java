@@ -13,11 +13,13 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 
@@ -25,6 +27,9 @@ import geogebra.kernel.Kernel;
  * stores left and right hand side of an inequality as Expressions
  */
 public class Inequality {
+
+	/** can be used e.g. by PointIn, but cannot be drawn */
+	public static final int INEQUALITY_INVALID = 0;
 
 	/** x > f(y) */
 	public static final int INEQUALITY_PARAMETRIC_X = 1;
@@ -34,8 +39,9 @@ public class Inequality {
 	public static final int INEQUALITY_IMPLICIT = 3;
 	/** f(x,y) >0, f is quadratic */
 	public static final int INEQUALITY_CONIC = 4;
-	/** can be used e.g. by PointIn, but cannot be drawn */
-	public static final int INEQUALITY_INVALID = 0;
+	
+	/** inequality with one variable*/
+	public static final int INEQUALITY_1VAR = 5;
 
 	private int op = ExpressionNode.LESS;
 	private int type;
@@ -48,6 +54,7 @@ public class Inequality {
 	private ExpressionNode normal;
 	private FunctionVariable[] fv;
 	private MyDouble coef;
+	private GeoPoint[] zeros;
 
 	/**
 	 * check whether ExpressionNodes are evaluable to instances of Polynomial or
@@ -76,6 +83,12 @@ public class Inequality {
 	}
 
 	private void update() {
+		if(fv.length == 1){
+			funBorder = new GeoFunction(kernel.getConstruction());
+			funBorder.setFunction(new Function(normal, fv[0]));
+			type = INEQUALITY_1VAR;
+			return;
+		}
 		Double coefY = normal.getCoefficient(fv[1]);
 		Double coefX = normal.getCoefficient(fv[0]);
 		Function fun = null;
@@ -99,7 +112,21 @@ public class Inequality {
 			m.simplifyLeafs();
 			fun = new Function(m, fv[1]);
 			type = INEQUALITY_PARAMETRIC_X;
-		} else {
+		} else if (coefX != null && Kernel.isZero(coefX) && coefY == null){
+			normal.replace(fv[0], new MyDouble(kernel,0));
+			fun = new Function(normal, fv[1]);
+			funBorder = new GeoFunction(kernel.getConstruction());
+			funBorder.setFunction(fun);
+			type = INEQUALITY_1VAR;
+		} else if (coefY != null && Kernel.isZero(coefY) && coefX == null){
+			normal.replace(fv[1], new MyDouble(kernel,0));
+			fun = new Function(normal, fv[0]);
+			funBorder = new GeoFunction(kernel.getConstruction());
+			funBorder.setFunction(fun);
+			type = INEQUALITY_1VAR;
+		}
+		
+		else {
 
 			GeoElement newBorder = kernel.getAlgebraProcessor()
 					.evaluateToGeoElement(normal.toString() + "=0", false);
@@ -148,9 +175,9 @@ public class Inequality {
 			}
 			border = funBorder;
 		}
-		if (isStrict())
+		if (isStrict() && border != null)
 			border.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-		else
+		else if(border != null)
 			border.setLineType(EuclidianView.LINE_TYPE_FULL);
 	}
 
@@ -238,6 +265,20 @@ public class Inequality {
 	 */
 	public GeoConic getConicBorder() {
 		return conicBorder;
+	}
+
+	/**
+	 * @return zero points for 1var ineqs
+	 */
+	public GeoPoint[] getZeros() {
+		if(zeros == null){
+			Construction cons = kernel.getConstruction();
+			boolean supress = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);
+			zeros = kernel.Root(null, funBorder);
+			cons.setSuppressLabelCreation(supress);
+		}
+		return zeros;
 	}
 
 } // end of class Equation

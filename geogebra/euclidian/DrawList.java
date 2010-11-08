@@ -23,7 +23,6 @@ import geogebra.kernel.GeoList;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.ArrayList;
 
 
 /**
@@ -38,6 +37,11 @@ public final class DrawList extends Drawable {
 	private DrawListArray drawables;
 	private boolean isVisible;
 	
+    /**
+     * Creates new drawable list
+     * @param view
+     * @param geoList
+     */
     public DrawList(EuclidianView view, GeoList geoList) {      
     	this.view = view;          
         this.geoList = geoList;
@@ -108,12 +112,14 @@ public final class DrawList extends Drawable {
 		   // recordToSpreadsheet(geoList);
     }
     
+	/**
+	 * Draws trace
+	 * @param g2
+	 */
 	final void drawTrace(Graphics2D g2) {
 		g2.setPaint(geo.getObjectColor());
 		g2.setStroke(objStroke);  
     	if (isVisible) {
-    		boolean doHighlight = geoList.doHighlighting();    	
-    		
     		int size = drawables.size();    		
     		for (int i=0; i < size; i++) {     			     			
     			Drawable d = (Drawable) drawables.get(i);

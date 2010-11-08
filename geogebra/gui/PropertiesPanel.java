@@ -3867,7 +3867,7 @@ public	class PropertiesPanel extends JPanel {
 			angleSlider.setSnapToTicks(true);
 
 			//Create the label table
-			Hashtable labelHash = new Hashtable();
+			Hashtable<Integer,JLabel> labelHash = new Hashtable<Integer,JLabel>();
 			labelHash.put( new Integer( 0 ), new JLabel("0\u00b0") );
 			labelHash.put( new Integer( 45 ), new JLabel("45\u00b0") );
 			labelHash.put( new Integer( 90 ), new JLabel("90\u00b0") );
@@ -3913,18 +3913,7 @@ public	class PropertiesPanel extends JPanel {
 				label.setFont(app.getSmallFont());
 			}
 
-			/*
-			//slider.setFont(app.getSmallFont());	
-			slider.addChangeListener(this);
-			setLayout(new BoxLayout(this, BoxLayout.X_AXIS));	
-			sizeLabel.setAlignmentY(TOP_ALIGNMENT);
-			slider.setAlignmentY(TOP_ALIGNMENT);			
-			//setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
-			//		BorderFactory.createEmptyBorder(3,5,0,5)));
-			add(Box.createRigidArea(new Dimension(5,0)));			
-			add(sizeLabel);			
-			*/
-		
+			
 			
 			//========================================
 			// create sub panels

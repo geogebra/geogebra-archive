@@ -47,6 +47,7 @@ import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.View;
+import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoRayND;
@@ -3387,7 +3388,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 		case GeoElement.GEO_CLASS_FUNCTION:
 		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
-			d = new DrawParametricCurve(this, (ParametricCurve) geo);
+			if(((GeoFunction) geo).isBooleanFunction()) {
+				d = new DrawInequality(this,(FunctionalNVar) geo);
+			}
+			else 
+				d = new DrawParametricCurve(this, (ParametricCurve) geo);
 			break;
 
 		case GeoElement.GEO_CLASS_TEXT:
