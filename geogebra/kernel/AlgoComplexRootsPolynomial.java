@@ -24,6 +24,10 @@ public class AlgoComplexRootsPolynomial extends AlgoRootsPolynomial{
         setRootPoints(curRoots, curComplexRoots, curRealRoots);
     }
     
+    public String getClassName() {
+        return "AlgoComplexPolynomial";
+    }
+    
     // roots of f
     private void computeComplexRoots() {
         if (f.isDefined()) {
