@@ -2088,10 +2088,10 @@ public class Application implements KeyEventDispatcher {
 		if (currentFile != null) {
 			currentPath = currentFile.getParentFile();
 			addToFileList(currentFile);
+		} 	
 
-			updateTitle();
-			updateMenubar();
-		} 		
+		updateTitle();
+		updateMenubar();	
 	}
 
 	public static void addToFileList(File file) {

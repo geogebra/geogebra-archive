@@ -112,14 +112,15 @@ class FileMenu extends BaseMenu {
 		mi = submenu.add(exportPSTricksAction);
 		setMenuShortCutShiftAccelerator(mi, 'T');
 
-		// Added by Loïc Le Coq
 		mi = submenu.add(exportPgfAction);
-
-		// Added by Andy Zhu
 		mi = submenu.add(exportAsymptoteAction);
 		// End Export SubMenu
 		
 		//mi = submenu.add(exportGeoGebraTubeAction);
+
+		// DONE HERE WHEN APPLET
+		if (app.isApplet())
+			return;
 		
 		// recent SubMenu
 		addSeparator();
@@ -127,14 +128,9 @@ class FileMenu extends BaseMenu {
 		submenu.setIcon(app.getEmptyIcon());
 		add(submenuRecent);
 
-		// DONE HERE WHEN APPLET
-		if (app.isApplet())
-			return;
-
 		// Recent files list
 		int size = Application.getFileListSize();
 		if (size > 0) {
-			addSeparator();
 			for (int i = 0; i < Application.MAX_RECENT_FILES ; i++) {
 				File file = Application.getFromFileList(i);
 				if (file != null) {

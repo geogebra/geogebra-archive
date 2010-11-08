@@ -624,20 +624,42 @@ public class AlgebraView extends JTree implements View {
 	 */
 	private void removeFromModel(DefaultMutableTreeNode node, DefaultTreeModel model) {
 		model.removeNodeFromParent(node);
-		nodeTable.remove(node.getUserObject());            
+		nodeTable.remove(node.getUserObject());
+		
+		// remove the type branch if there are no more children
+		if(treeMode == MODE_TYPE) {
+			String typeString = ((GeoElement)node.getUserObject()).getObjectType();
+			DefaultMutableTreeNode parent = (DefaultMutableTreeNode) typeNodesMap.get(typeString);
+			
+			// this has been the last node
+			if(parent.getChildCount() == 0) {
+				typeNodesMap.remove(typeString);
+				model.removeNodeFromParent(parent);
+			}
+		}            
 	}
 
 	/**
 	   * updates node of GeoElement geo (needed for highlighting)
 	   * @see EuclidianView.setHighlighted()
 	   */
-	final public void update(GeoElement geo) {	
-		if (isEditing())
-			cancelEditing();
+	final public void update(GeoElement geo) {			
 		DefaultMutableTreeNode node =
-			(DefaultMutableTreeNode) nodeTable.get(geo);						
+			(DefaultMutableTreeNode) nodeTable.get(geo);
+		
 		if (node != null) {
-			((DefaultTreeModel)getModel()).nodeChanged(node);		
+			((DefaultTreeModel)getModel()).nodeChanged(node);
+			
+			/*
+			 * Cancel editing if the updated geo element has been edited, but
+			 * not otherwise because editing geos while animation is running
+			 * won't work then (ticket #151). 
+			 */
+			if (isEditing()) {
+				if(getEditingPath().equals(new TreePath(node.getPath()))) {
+					cancelEditing();
+				}
+			}
 		} 	
 	}
 	
