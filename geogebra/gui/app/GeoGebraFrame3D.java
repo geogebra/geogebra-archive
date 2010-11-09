@@ -19,8 +19,7 @@ public class GeoGebraFrame3D extends GeoGebraFrame {
 		GeoGebraFrame.init(args,new GeoGebraFrame3D());
 	}
 	
-	protected Application createApplication(CommandLineArguments args, JFrame frame){		
-		Application.debug("ici");
+	protected Application createApplication(CommandLineArguments args, JFrame frame){	
 		return new Application3D(args, frame, true);
 	}
 
