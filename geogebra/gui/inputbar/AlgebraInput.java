@@ -47,14 +47,22 @@ import javax.swing.JPanel;
 public class AlgebraInput extends  JPanel implements ActionListener, KeyListener, MouseListener, FocusListener {
 	private static final long serialVersionUID = 1L;
 	
+	
+	private boolean showCommandButton = false;	  //<=========== set this flag to test the command button
+	
+	
 	private Application app;
 
 	private JLabel inputLabel, helpIcon;
  	
 	private MyComboBox cmdCB; // for command list
 	
+	private CommandPopupMenuButton cmdButton; // alternate button for command list
+	
 	// autocompletion text field
-	private AutoCompleteTextField inputField;	
+	private AutoCompleteTextField inputField;
+
+	
 
 	/**
 	 * creates new AlgebraInput
@@ -90,12 +98,25 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			cmdCB.addActionListener(this);
 		}
 		
+		
+		// set up command popup button
+		cmdButton = new CommandPopupMenuButton(app);
+		cmdButton.setDownwardPopup(false);
+		cmdButton.addActionListener(this);	
+		
 		updateFonts();
 				
 		// add to panel				 		
 		setLayout(new BorderLayout(2, 2));	
 		JPanel iconLabelPanel = new JPanel();
 		iconLabelPanel.add(helpIcon);
+		
+		if (app.showCmdList() && showCommandButton ) {
+			JPanel cbPanel = new JPanel(new BorderLayout());
+			cbPanel.add(cmdButton, BorderLayout.CENTER);
+			iconLabelPanel.add(cbPanel);
+		}
+		
 		iconLabelPanel.add(inputLabel);
 		add(iconLabelPanel, BorderLayout.WEST);   
 		add(inputPanel, BorderLayout.CENTER);
@@ -201,6 +222,9 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		LowerCaseDictionary dict = app.getCommandDictionary();
 		if (dict == null || cmdCB == null) return;
 		
+		// localize the  cmdButton 
+		cmdButton.setCommands();
+		
 		ActionListener [] listeners = cmdCB.getActionListeners();
 		for (int i=0; i < listeners.length; i++) 
 			cmdCB.removeActionListener(listeners[i]);
@@ -250,6 +274,11 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 				//cmdCB.setSelectedIndex(0);
 			}					
 		}			
+		
+		if (source == cmdButton) { 		
+			String cmd = cmdButton.getSelectedCommand();
+			insertCommand(cmd);	
+		}
 	}
 
 	public void keyPressed(KeyEvent e) {

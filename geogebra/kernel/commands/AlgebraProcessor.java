@@ -78,6 +78,23 @@ public class AlgebraProcessor {
 		return cmdDispatcher.getPublicCommandSet();
 	}
 	
+	/**
+	 * Returns an array of public command sets. Each set is a categorized subset
+	 * of the command table.
+	 */
+	public Set[] getPublicCommandSubSets() {
+		return cmdDispatcher.getPublicCommandSubSets();
+	}
+	
+	/**
+	 * Returns the localized name of a command subset.
+	 * Indices are defined in CommandDispatcher.
+	 */
+	public String getSubCommandSetName(int index){
+		return cmdDispatcher.getSubCommandSetName(index);
+	}
+	
+
 	final public GeoElement[] processCommand(Command c, boolean labelOutput) throws MyError {
 		return cmdDispatcher.processCommand(c, labelOutput);
 	}

@@ -16,10 +16,14 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 /**
  * JButton with popup component. A mouse click on the left side of the button
@@ -74,10 +78,62 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	// flag to determine if the popup should persist after a mouse click
 	private boolean keepVisible = true;
 	
-	private boolean isIniting = true;
+	private boolean isDownwardPopup = true;
 	
+	public void setDownwardPopup(boolean isDownwardPopup) {
+		this.isDownwardPopup = isDownwardPopup;
+	}
 
+	private boolean isStandardButton = false;
+	
+	
+	public void setStandardButton(boolean isStandardButton) {
+		this.isStandardButton = isStandardButton;
+	}
+
+	private boolean isIniting = true;
+	private JMenuItem component;
+	protected boolean popupIsVisible;
+	
+	
+	
+	/*************************************
 	/** Button constructors */
+	
+	public PopupMenuButton(){
+		this( null, null, -1, -1, null, -1,  false,  false);
+	}
+	
+	
+	public PopupMenuButton(JComponent component){
+		this( null, null, -1, -1, null, -1,  false,  false);
+		this.component = (JMenuItem) component;
+		myPopup.add(component);
+	}
+	
+	public PopupMenuButton(ImageIcon icon, JComponent component){
+		this( null, null, -1, -1, null, -1,  false,  false);
+		myPopup.add(component);
+		setIcon(icon);	
+	}
+	
+	public PopupMenuButton(String text, JComponent component){
+		this( null, null, -1, -1, null, -1,  false,  false);
+		myPopup.add(component);
+		setText(text);
+		setIcon(GeoGebraIcon.createEmptyIcon(1, 1));
+	}
+	
+	public PopupMenuButton(String text,ImageIcon icon,  JComponent component){
+		this( null, null, -1, -1, null, -1,  false,  false);
+		myPopup.add(component);
+		setText(text);
+		setIcon(icon);
+	}
+	
+	
+	
+	
 	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension iconSize, Integer mode){
 		this( app, data, rows, columns, iconSize, mode,  true,  false);	
 	}
@@ -101,15 +157,35 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 
 		// add a mouse listener to our button that triggers the popup		
 		addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				popupIsVisible = myPopup.isShowing();
+			}
+			
 			@Override
 			public void mousePressed(MouseEvent e) {
+	
+				if(popupIsVisible == true && !myPopup.isVisible()){
+					popupIsVisible = false;
+					return;
+				}
+				
 				Point locButton = getLocation();
 				int h = e.getX() - locButton.x;
 
 				// trigger popup if the mouse is over the right side of the button
-				if(e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) { 
-					myPopup.show(getParent(), locButton.x,locButton.y + getHeight());
+				// or the button is a standard button (pressing anywhere triggers the popup)
+				if( isStandardButton || e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) { 
+					if(isDownwardPopup)
+						// popup appears below the button
+						myPopup.show(getParent(), locButton.x,locButton.y + getHeight());
+					else
+						// popup appears above the button
+						myPopup.show(getParent(), locButton.x,locButton.y - myPopup.getPreferredSize().height);
 				}
+				
+				popupIsVisible = myPopup.isShowing();
 			}
 		});
 		
@@ -133,8 +209,6 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					handlePopupActionEvent();
-					if(!keepVisible)
-						myPopup.setVisible(false);
 				}
 			});
 
@@ -155,10 +229,14 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		// create slider
 		if(hasSlider)
 			getMySlider();
-			
 		
 		isIniting = false;
 		//updateGUI();				
+	}
+	
+	
+	public void addPopupComponent(JComponent component){
+		myPopup.add(component);
 	}
 	
 	
@@ -176,7 +254,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			Point locButton = getLocation();
 			int h = e.getX() - locButton.x;
 			// mouse is over the popup triangle side of the button
-			if(e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) 
+			if(isStandardButton || e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) 
 				return;
 		}
 		
@@ -184,6 +262,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 	
 	
+
 	
 	 public void update(Object[] geos) {
 		 
@@ -279,6 +358,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.fireActionPerformed(new ActionEvent(this,
 				ActionEvent.ACTION_PERFORMED,getActionCommand())); 
 		updateGUI();
+		if(!keepVisible)
+			myPopup.setVisible(false);
 	}
 	
 	
@@ -365,10 +446,24 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	 */
 	@Override
 	public void setIcon(Icon icon) {
-		if(icon == null)
+		
+		if(isStandardButton) {
+			super.setIcon(icon);
+			return;
+		}
+		
+		if(iconSize == null) 
+			if(icon != null)
+				iconSize = new Dimension(icon.getIconWidth(), icon.getIconHeight());
+			else
+				iconSize = new Dimension(1,1);
+
+		if(icon == null){
 			icon = GeoGebraIcon.createEmptyIcon(1, iconSize.height);
-		else
+		}else{
 			icon = GeoGebraIcon.ensureIconSize((ImageIcon) icon, iconSize);
+		}
+		
 		
 		// get icon width and height		
 		int w = 4;
@@ -397,6 +492,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		
 		super.setIcon(new ImageIcon(image));
 	}
+
+	
 	
 	
 	

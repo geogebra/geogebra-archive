@@ -340,7 +340,10 @@ public class Application implements KeyEventDispatcher {
 	private Hashtable translateCommandTable;
 	// command dictionary
 	private LowerCaseDictionary commandDict;
-
+	
+	// array of dictionaries corresponding to the sub command tables
+	private LowerCaseDictionary[] subCommandDict;
+	
 	private boolean initing = false;
 	protected boolean showAlgebraView = true;	
 	private boolean showAuxiliaryObjects = false;
@@ -1652,6 +1655,19 @@ public class Application implements KeyEventDispatcher {
 
 		Enumeration e = rbcommand.getKeys();
 		Set publicCommandNames = kernel.getAlgebraProcessor().getPublicCommandSet();
+		
+		//=====================================
+		// init sub command dictionaries
+		Set[] publicSubCommandNames = kernel.getAlgebraProcessor().getPublicCommandSubSets();
+		if(subCommandDict == null){
+			subCommandDict = new LowerCaseDictionary[publicSubCommandNames.length];
+			for(int i=0; i<subCommandDict.length; i++)
+				subCommandDict[i] = new LowerCaseDictionary();	
+		}
+		for(int i=0; i<subCommandDict.length; i++)
+			subCommandDict[i].clear();
+		//=====================================
+		
 		while (e.hasMoreElements()) {
 			String internal = (String) e.nextElement();
 			// Application.debug(internal);
@@ -1666,6 +1682,13 @@ public class Application implements KeyEventDispatcher {
 					// only add public commands to the command dictionary
 					if (publicCommandNames.contains(internal))
 						commandDict.addEntry(local);
+					
+					// add public commands to the sub-command dictionaries
+					for(int i=0; i<subCommandDict.length; i++){
+						if (publicSubCommandNames[i].contains(internal))
+							subCommandDict[i].addEntry(local);
+					}
+					
 				}
 			}
 		}
@@ -3959,6 +3982,14 @@ public class Application implements KeyEventDispatcher {
 
 	public final LowerCaseDictionary getCommandDictionary() {
 		return commandDict;
+	}
+	
+	/**
+	 * Returns an array of command dictionaries corresponding to the categorized 
+	 * sub command sets created in CommandDispatcher.  
+	 */
+	public final LowerCaseDictionary[] getSubCommandDictionary() {
+		return subCommandDict;
 	}
 	
 	final static int MEMORY_CRITICAL = 100*1024;

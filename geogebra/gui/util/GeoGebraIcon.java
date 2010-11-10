@@ -118,6 +118,60 @@ public class GeoGebraIcon {
 	}
 	
 
+	/**
+	 * Creates a 16x16 pixel icon representing a tree display of data
+	 */
+	public static ImageIcon createTreeIcon(){
+
+		BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);	 
+		
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g2.setPaint(Color.DARK_GRAY);
+
+		for(int i=3; i< 12; i = i+2){
+			g2.drawLine(6, i, 12, i);
+		
+			if(i % 3 == 0){
+				g2.fillRect(2, i-1, 3, 3);
+				g2.drawLine(2, i, 12, i);
+			}
+		}
+		
+			
+			
+		ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+		
+		return ic;
+	}
+	
+	
+	/**
+	 * Creates a 16x16 pixel icon representing a list display of data
+	 */
+	public static ImageIcon createListIcon(){
+
+		BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);	 
+		
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g2.setPaint(Color.DARK_GRAY);
+
+		
+		for(int i=3; i<=12; i = i+2)
+			g2.drawLine(4, i, 10, i);
+			
+		ImageIcon ic = new ImageIcon(image);
+		//ensureIconSize(ic, iconSize);
+		
+		return ic;
+	}
+	
+	
+
 
 	public static ImageIcon createColorSwatchIcon(float alpha, Dimension iconSize, Color fgColor, Color bgColor){
 
