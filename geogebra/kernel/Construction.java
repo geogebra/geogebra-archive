@@ -1308,33 +1308,40 @@ public class Construction {
      * @param algo
      */
     public void setLabelDependsOn(String label, AlgoElementWithResizeableOutput algo){
+    	//Application.debug(label);
     	if (label!=null)
     		labelDependsOn.put(label, algo);
     }
     
     
+    
+    
     /**
      * when a new element is handled (on file loading), if the label
      * depend on an AlgoElementWithResizeableOutput, the label will be set 
-     * on its output or the GeoElement will be added to the algo's output
+     * on its output or the GeoElement will be created by the algo's output handlers
      * @param label Label that depends on an AlgoElementWithResizeableOutput
-     * @param geo Empty geo of the expected type
+     * @param type 
      * @return geo, possibly already computed by the algo
      */
-    public GeoElement resolveLabelDependency(String label, GeoElement geo){
+    public GeoElement resolveLabelDependency(String label, int type){
     	AlgoElementWithResizeableOutput algo = labelDependsOn.get(label);
+    	
+    	//Application.debug(label);
     	
     	GeoElement ret;
     	if (algo!=null){
-    		//Application.debug(label+", geo:"+geo.toString());
-    		ret=algo.addCreatedElementToOutput(geo);
-    		//Application.debug("ret:"+ret.toString());
+    		//Application.debug(label+", type:"+type);
+
     		labelDependsOn.remove(label);
+    		ret=algo.addLabelToOutput(label,type);
+    		//Application.debug("ret:"+ret.toString());
     	}else
-    		ret=geo;
+    		ret=null;
     	
     	return ret;
     }
+    
     
     /**
      * says if the label depends on any algo
@@ -1342,6 +1349,9 @@ public class Construction {
      * @return if the label depends on any algo
      */
     public boolean isDependentLabel(String label){
+    	
+    	//Application.debug("isDependentLabel("+label+")="+labelDependsOn.containsKey(label));
+    	
     	return labelDependsOn.containsKey(label);
     }
 	

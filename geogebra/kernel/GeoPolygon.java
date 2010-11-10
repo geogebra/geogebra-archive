@@ -75,7 +75,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	 * @param createSegments says if the polygon has to creates its edges
 	 */	
 	public GeoPolygon(Construction c, GeoPointND[] points, GgbCoordSys cs, boolean createSegments) {
-		super(c);
+		this(c);
 		//Application.printStacktrace("poly");
 		this.createSegments=createSegments;
 		setPoints(points, cs, createSegments);
@@ -83,6 +83,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 	}
 	
+	public GeoPolygon(Construction cons) {
+		super(cons);
+	}
+
 	/** for 3D stuff (unused here)
 	 * @param cs GeoCoordSys2D
 	 */

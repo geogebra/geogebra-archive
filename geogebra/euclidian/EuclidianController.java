@@ -853,7 +853,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_POINT_IN_REGION:				
 			view.setHits(mouseLoc);
 			hits = view.getHits();
-			// if mode==EuclidianView.MODE_POINT_INSIDE, point can be in a region
+			// if mode==EuclidianView.MODE_POINT_IN_REGION, point can be in a region
 			createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_IN_REGION, true, true); 
 			break;
 
@@ -880,7 +880,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			hits.removePolygons();
-			createNewPoint(hits, true, true, true); 
+			createNewPoint(hits, true, true, true, true);
 			break;
 
 		case EuclidianView.MODE_RIGID_POLYGON:
@@ -1421,7 +1421,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			DRAGGING_OCCURED = true;			
 
 			// Michael Borcherds 2007-10-07 allow right mouse button to drag points
-			if (Application.isRightClick(e)){
+			// Mathieu Blossier - allow moving point already creating
+			if (Application.isRightClick(e) 
+					|| mode == EuclidianView.MODE_POINT 
+					|| mode == EuclidianView.MODE_POINT_IN_REGION
+					|| mode == EuclidianView.MODE_JOIN
+			){
 				view.setHits(mouseLoc);
 				if (!(view.getHits().isEmpty())) 
 				{
@@ -1429,8 +1434,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					oldMode = mode; // remember current mode			
 					view.setMode(EuclidianView.MODE_MOVE);
 					handleMousePressedForMoveMode(e, true);	
+					
+					//DONT_CLEAR_SELECTION=true;
+					
 					return;
 				}
+				
 			}
 			if (!app.isRightClickEnabled()) return;
 			//			 Michael Borcherds 2007-10-07
@@ -1595,6 +1604,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			//view.incrementTraceRow(); // for spreadsheet/trace
 
+			
 			movePoint(repaint);
 			break;
 
@@ -1746,7 +1756,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// used for 3D
 	protected void processReleaseForMovedGeoPoint(){
-
+		
 		// deselect point after drag, but not on click
 		if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
 
@@ -2202,6 +2212,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		processMouseMoved(e);
 	}
 
+	
+	private boolean mouseIsOverLabel = false;
+	
+	/**
+	 * 
+	 * @return true if the mouse is over a label
+	 */
+	public boolean mouseIsOverLabel(){
+		return mouseIsOverLabel;
+	}
 
 
 	protected void processMouseMoved(MouseEvent e) {	
@@ -2233,15 +2253,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		boolean noHighlighting = false;		
 		altDown=e.isAltDown();		
 
-		// label hit in move mode: block all other hits
-		if (moveMode(mode)) {
-			GeoElement geo = view.getLabelHit(mouseLoc);
+		// label hit
+		GeoElement geo = view.getLabelHit(mouseLoc);
+		if (geo != null)
+			mouseIsOverLabel = true;
+		else
+			mouseIsOverLabel = false;
+		if (moveMode(mode)) {	// label hit in move mode: block all other hits		
 			if (geo != null) {				
 				//Application.debug("hop");
 				noHighlighting = true;
 				tempArrayList.clear();
 				tempArrayList.add(geo);
-				hits = tempArrayList;				
+				hits = tempArrayList;						
 			}
 		}
 		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_IN_REGION) {
@@ -6850,7 +6874,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	}
 	
-	private boolean moveMode(int mode) {
+	protected boolean moveMode(int mode) {
 		if (mode == EuclidianView.MODE_MOVE ||
 				mode == EuclidianView.MODE_VISUAL_STYLE)
 			return true;

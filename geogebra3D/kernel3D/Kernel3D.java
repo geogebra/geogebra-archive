@@ -243,7 +243,30 @@ public class Kernel3D
 	
 	
 	
-	
+	   public int getClassType(String type) throws MyError {    
+	    	
+	     	
+	    	switch (type.charAt(0)) {
+	   		case 'p': // point, polygon
+				if (type.equals("point3d")){
+					return GeoElement.GEO_CLASS_POINT3D;
+				}
+				else if (type.equals("polygon3d"))
+					return GeoElement.GEO_CLASS_POLYGON3D;
+				else if (type.equals("polyhedron"))
+					return GeoElement.GEO_CLASS_POLYHEDRON;
+				
+			case 's': // segment 
+				if (type.equals("segment3d"))
+					return GeoElement.GEO_CLASS_SEGMENT3D;	 
+				
+	    	}
+	    	
+
+	    	
+	    	return super.getClassType(type);
+
+	    }
 	
 	
 	

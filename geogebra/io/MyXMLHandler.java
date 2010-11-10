@@ -2085,10 +2085,21 @@ public class MyXMLHandler implements DocHandler {
 		// does a geo element with this label exist?
 		geo = kernel.lookupLabel(label);
 		
+		//Application.debug(label+", geo="+geo);
+		
 		if (geo == null) {
-			geo = kernel.createGeoElement(cons, type);
-			geo = cons.resolveLabelDependency(label, geo);
-			geo.setLoadedLabel(label);
+			
+			//try to find an algo on which this label depends
+			geo = cons.resolveLabelDependency(label, kernel.getClassType(type));
+			//if none, create new geo
+			if (geo==null){
+				geo = kernel.createGeoElement(cons, type);
+				geo.setLoadedLabel(label);
+			}
+			
+			
+			
+			
 
 			// independent GeoElements should be hidden by default
 			// (as older versions of this file format did not
@@ -3781,6 +3792,8 @@ public class MyXMLHandler implements DocHandler {
 					//Application.debug("dependent label : "+label);
 					break;
 				}
+				//else
+				//	Application.debug("not dependent label : "+label);
 				
 				if ("".equals(label))
 					label = null;

@@ -1315,5 +1315,24 @@ GeoPointND, Animatable  {
 				return false;
 			}
 		}	
+		
+		
+		/////////////////////////////////////////
+		// MOVING THE POINT (3D)
+		/////////////////////////////////////////
+		
+		
+
+		public void switchMoveMode(){
+			
+		}
+		
+
+		public boolean getMoveMode(){
+			if (hasPath())
+				return MOVE_MODE_Z;
+			else
+				return MOVE_MODE_XY;
+		}
 
 }

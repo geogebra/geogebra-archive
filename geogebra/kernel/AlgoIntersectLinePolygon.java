@@ -229,53 +229,29 @@ implements AlgoElementWithResizeableOutput{
     	
     }
     
-    public GeoElement addCreatedElementToOutput(GeoElement geo){
+    public GeoElement addLabelToOutput(String label, int type){
     	
     	GeoElement ret;
-    	ret = getOutputList(geo.getGeoClassType()).addCreatedElement(geo);
     	
-    	/*
-    	switch (geo.getGeoClassType()){
+    	GeoElement geo;
+    	
+    	switch (type){
     	case GeoElement.GEO_CLASS_POINT:
-    		ret = pointsList.addCreatedElement(geo);
-    		
-    		if (nbLabelSetPoints<pointsList.size()){
-    			GeoElement geo2 = pointsList.get(nbLabelSetPoints);
-    			//geo2.setLabel(geo.getLabel());
-    			geo=geo2;
-    			nbLabelSetPoints++;
-    		}else{
-    			pointsList.add((GeoPoint) geo);
-    			setOutputDependencies(geo);
-    			nbLabelSetPoints++;
-    		}
-    		
-    		break;
-    		/*
+    		geo=new GeoPoint(getConstruction());
     	case GeoElement.GEO_CLASS_SEGMENT:
-    		if (nbLabelSetSegment<segmentsList.size() && !computedGeo){
-    			GeoElement geo2 = segmentsList.get(nbLabelSetSegment);
-    			//geo2.setLabel(geo.getLabel());
-    			geo=geo2;
-    			nbLabelSetSegment++;
-    		}else{
-    			segmentsList.add((GeoSegment) geo);
-    			setOutputDependencies(geo);
-    			if (!computedGeo)
-    				nbLabelSetSegment++;
-    		}
-    		break;
-    		
+    		geo=new GeoSegment(getConstruction());
     	default:
-    		Application.printStacktrace("wrong geo class type");
-    		ret = null;
-    		break;
+    		geo=null;
     	}
-    	*/
+    	
+    	ret = getOutputList(type).addCreatedElement(geo);
+    	
+    	
     	
     	return ret;
     }
-       
+    
+    
     protected GeoElement getOutput(int i){
     	
     	//return pointsList.get(i);

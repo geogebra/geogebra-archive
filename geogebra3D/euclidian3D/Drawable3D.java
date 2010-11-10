@@ -149,6 +149,7 @@ public abstract class Drawable3D extends DrawableND {
 	/** says if this has to be reset */
 	protected boolean waitForReset;
 	
+	
 	/** gl index of the geometry */
 	private int geomIndex = -1;
 	
@@ -221,6 +222,7 @@ public abstract class Drawable3D extends DrawableND {
 		
 		waitForUpdate = true;
 		viewChanged = true;
+		
 	}
 	
 	

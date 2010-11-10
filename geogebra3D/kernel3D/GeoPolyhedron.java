@@ -295,6 +295,19 @@ public class GeoPolyhedron extends GeoElement3D {
 	 
 	 
 	 
+	 public void defaultLabels(String [] labels){
+		 
+		 if (labels == null || labels.length == 0) 
+	    		labels = new String[1];
+
+		 setLabel(labels[0]); 
+
+
+		 defaultPolygonsLabels();
+		 defaultSegmentLabels();
+
+	 }
+	 
 	 
 	    /**
 	     * Inits the labels of this polyhedron, its faces and edges.
@@ -305,8 +318,9 @@ public class GeoPolyhedron extends GeoElement3D {
 	    	
 	    	int index=1;
 	    	
-	    	if (labels == null || labels.length == 0) 
-	    		return;
+	    	if (labels == null || labels.length == 0) {
+	    		labels = new String[1];
+	    	}
 
 	        // first label for polyhedron itself
 	    	setLabel(labels[0]); 
@@ -619,6 +633,13 @@ public class GeoPolyhedron extends GeoElement3D {
 	/** to be able to fill it with an alpha value */
 	public boolean isFillable() {
 		return true;
+	}
+	
+	
+	
+	protected void getXMLtags(StringBuilder sb) {
+		getLineStyleXML(sb);
+		super.getXMLtags(sb);
 	}
 
 

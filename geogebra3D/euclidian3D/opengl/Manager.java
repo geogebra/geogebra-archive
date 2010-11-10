@@ -71,12 +71,14 @@ abstract public class Manager {
 		
 		
 		// creating geometries
-		cursor = new PlotterCursor(this);
 		
 		brush = new PlotterBrush(this);
 		surface = new PlotterSurface(this);
 		
 		text = new PlotterText(this);
+		
+
+		cursor = new PlotterCursor(this);
 		
 		//geogebra
 		this.view3D = view3D;

@@ -86,10 +86,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** picking point */
 	protected GgbVector pickPoint;
 	
-	private static int MOVE_POINT_MODE_NONE = 0;
-	private static int MOVE_POINT_MODE_XY = 1;
-	private static int MOVE_POINT_MODE_Z = 2;
-	private int movePointMode = MOVE_POINT_MODE_NONE;
+	
+	
+	/** says that a free point has just been created (used for 3D cursor) */
+	private boolean freePointJustCreated = false;
 	
 
 	/** says if a rotation of the view occurred (with right-button) */
@@ -243,11 +243,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		//getting current pick point and direction v 
 		GgbVector o;
 		if (useOldMouse){
-			if (movePointMode != MOVE_POINT_MODE_XY){
+			//if (movePointMode != MOVE_POINT_MODE_XY){
 				mouseLocOld = (Point) mouseLoc.clone();
 				positionOld = point.getCoords().copyVector();
-				movePointMode = MOVE_POINT_MODE_XY;
-			}
+				//movePointMode = MOVE_POINT_MODE_XY;
+			//}
 			o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y); 
 		}else
 			o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
@@ -305,7 +305,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		point.setWillingDirection(view3D.getViewDirection());
 	}
 	
+	
+
+	
 	protected void movePoint(boolean repaint){
+		
+		
+		//Application.debug("movePointMode="+movePointMode);
 		
 
 		if (movedGeoPoint instanceof GeoPoint3D){
@@ -317,11 +323,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				movedGeoPoint3D.doPath();
 
 			}else if (movedGeoPoint3D.hasRegion()){						
-				if (isShiftDown){//&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
+				/*if (isShiftDown){//&&(movedGeoPoint3D.getRegion()==view3D.getxOyPlane())){ 
 					//frees the point and moves it along z-axis if it belong to xOy plane
 					movedGeoPoint3D.freeUp();
 					setCurrentPlane(GgbMatrix4x4.Identity());
-				}else{
+				}else{*/
 					setMouseInformation(movedGeoPoint3D);			
 					movedGeoPoint3D.doRegion();
 					if (movedGeoPoint3D.getRegion()==view3D.getxOyPlane()){
@@ -332,23 +338,26 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 						movedGeoPoint3D.doRegion();
 					}
 
-				}
+				//}
 
 			}else {
 
 
-				if (isShiftDown && mouseLoc != null){ //moves the point along z-axis
+				//if (isShiftDown && mouseLoc != null){ //moves the point along z-axis
+				if (movedGeoPoint.getMoveMode() == GeoPointND.MOVE_MODE_Z){ //moves the point along z-axis
 
+					/*
 					//getting current pick point and direction v 
 					if (movePointMode != MOVE_POINT_MODE_Z){
 						mouseLocOld = (Point) mouseLoc.clone();
 						positionOld = movedGeoPoint3D.getCoords().copyVector();
 						movePointMode = MOVE_POINT_MODE_Z;
 					}
-					//GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
-					//view3D.toSceneCoords3D(o);
-					GgbVector o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y);
+					*/
+					GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 					view3D.toSceneCoords3D(o);
+					//GgbVector o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y);
+					//view3D.toSceneCoords3D(o);
 
 					GgbVector v = new GgbVector(new double[] {0,0,1,0});
 					view3D.toSceneCoords3D(v);
@@ -372,7 +381,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 				}else{
 
-					movePointOnCurrentPlane(movedGeoPoint3D, true);
+					movePointOnCurrentPlane(movedGeoPoint3D, false);
 
 				}
 
@@ -397,7 +406,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			// update previewable
 			if (view.getPreviewDrawable() != null) 	
 				view.updatePreviewable();
-		
+			
+			// geo point has been moved
+			movedGeoPointDragged = true;
+			
 		}else{
 			GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 			view3D.toSceneCoords3D(o);
@@ -446,6 +458,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			point3D.setCoords((GeoPointND) point);
 			point3D.updateCoords();
 			ret = point3D;
+			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
+			view3D.updateMatrixForCursor3D();
+			freePointJustCreated = true;
 			break;
 
 		case EuclidianView3D.PREVIEW_POINT_PATH:
@@ -504,6 +519,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		//point.setEuclidianVisible(false);
 		
 		view3D.addToHits3D((GeoElement) ret);
+		view3D.updateCursor3D();
 		
 
 		setMovedGeoPoint(point3D);
@@ -518,8 +534,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** put sourcePoint coordinates in point */
 	protected void createNewPoint(GeoPointND sourcePoint){
 		GeoPoint3D point3D = view3D.getCursor3D();
+		/*
 		point3D.setCoords(sourcePoint.getCoordsInD(3),false);
-		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_NONE);
+		point3D.setPointSize(sourcePoint.getPointSize());
+		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
+		*/
+		point3D.set(sourcePoint);
+		point3D.setPath(sourcePoint.getPath());
+		point3D.setRegion(sourcePoint.getRegion());
+		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
+		
 		//Application.debug("sourcePoint:\n"+sourcePoint.getCoordsInD(3)+"\ncursor:\n"+view3D.getCursor3D().getCoords());
 	}
 	
@@ -550,14 +574,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			else
 				point3D = (GeoPoint3D) kernel.getManager3D().Point3D(null, 0,0,0);
 		}else{
-			//if xOy plane is visible, then the point is on it
-			/*
-			if (view3D.getxOyPlane().isPlateVisible() ||
-					view3D.getxOyPlane().isGridVisible()) 
-				return createNewPoint(true, (Region) view3D.getxOyPlane());
-			*/
-			
-			//point3D = view3D.getCursor3D();
 			point3D = (GeoPoint3D) createNewPoint(true, (Region) view3D.getxOyPlane());
 			if (point3D==null)
 				return null;
@@ -893,7 +909,25 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected void processReleaseForMovedGeoPoint(){
 		
+		
+		
 		((EuclidianView3D) view).updatePointDecorations(null);
+		
+		
+		//Application.debug("movedGeoPointDragged="+movedGeoPointDragged);
+		
+		if(freePointJustCreated)
+			//avoid swith if the point is created by a click
+			freePointJustCreated=false;
+		else{
+			//switch the direction of move (xy or z)
+			if (!movedGeoPointDragged){
+				movedGeoPoint.switchMoveMode();
+				((EuclidianView3D) view).getCursor3D().setMoveMode(movedGeoPoint.getMoveMode());
+			}
+		}
+		
+		
 		super.processReleaseForMovedGeoPoint();
 		
 	}
@@ -925,6 +959,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			//Application.debug(view.getHits().toString());
 			
 			super.processMouseMoved(mouseEvent);
+				
+			
 		}
 	}
 	
@@ -937,10 +973,21 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 		//sets the visibility of EuclidianView3D 3D cursor
+		/*
 		if (mode==EuclidianView.MODE_MOVE)
 			view3D.setShowCursor3D(false);
 		else
 			view3D.setShowCursor3D(true);
+			*/
+		
+		
+		//Application.printStacktrace("");
+		
+		//init the move point mode
+		/*
+		if (mode==EuclidianView.MODE_MOVE)
+			movePointMode = MOVE_POINT_MODE_XY;
+			*/
 	}
 
 	protected Previewable switchPreviewableForInitNewMode(int mode){
@@ -1168,7 +1215,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:	
 			view.setHits(mouseLoc);
 			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, true, true, true); 
+			createNewPoint(hits, true, true, true, true);
 			break;
 			
 		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
@@ -1188,8 +1235,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			super.switchModeForMousePressed(e);
 		}
 		
-		// reset the move point mode
-		movePointMode = MOVE_POINT_MODE_NONE;
 	}
 	
 	

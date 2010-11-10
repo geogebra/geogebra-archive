@@ -1,9 +1,14 @@
 package geogebra3D.kernel3D;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.AlgoElementWithResizeableOutput;
+import geogebra.kernel.AlgoSimpleRootsPolynomial;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.AlgoElement.OutputHandler;
+import geogebra.kernel.AlgoElement.elementFactory;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -14,10 +19,11 @@ import java.util.ArrayList;
  * Creates a new GeoPolyhedron
  *
  */
-public class AlgoPolyhedron extends AlgoElement3D {
+public class AlgoPolyhedron extends AlgoElement3D
+implements AlgoElementWithResizeableOutput{
 
 	/** the polyhedron created */
-	protected GeoPolyhedron polyhedron;
+	//protected GeoPolyhedron polyhedron;
 	
 	/** all points of the polyhedron (needed for the faces description) */
 	private GeoPoint3D[] inputPoints;
@@ -27,10 +33,14 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	
 	
 	/** points generated as output (e.g. for prisms) */
-	private GeoPoint3D[] outputPoints;
+	private OutputHandler<GeoPoint3D> outputPoints;
 	
+	private OutputHandler<GeoSegment3D> outputSegments;
+	private OutputHandler<GeoPolygon3D> outputPolygons;
 	
 	private int type;
+
+	private OutputHandler<GeoPolyhedron> outputPolyhedron;
 	
 	
 	/////////////////////////////////////////////
@@ -39,7 +49,48 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	
 	private AlgoPolyhedron(Construction c){
 		super(c);
-		polyhedron = new GeoPolyhedron(c);
+		//polyhedron = new GeoPolyhedron(c);
+
+		outputPolyhedron=new OutputHandler<GeoPolyhedron>(new elementFactory<GeoPolyhedron>() {
+			public GeoPolyhedron newElement() {
+				GeoPolyhedron p=new GeoPolyhedron(cons);
+				p.setParentAlgorithm(AlgoPolyhedron.this);
+				return p;
+			}
+		});
+		
+		outputPoints=new OutputHandler<GeoPoint3D>(new elementFactory<GeoPoint3D>() {
+			public GeoPoint3D newElement() {
+				GeoPoint3D p=new GeoPoint3D(cons);
+				p.setCoords(0, 0, 0, 1);
+				//GeoPoint3D p=(GeoPoint3D) kernel.getManager3D().Point3D(null, 0, 0, 0);//new GeoPoint3D(cons);
+				p.setParentAlgorithm(AlgoPolyhedron.this);
+				return p;
+			}
+		});
+	
+		
+
+		outputPolygons=new OutputHandler<GeoPolygon3D>(new elementFactory<GeoPolygon3D>() {
+			public GeoPolygon3D newElement() {
+				GeoPolygon3D p=new GeoPolygon3D(cons);
+				//p.setParentAlgorithm(AlgoPolyhedron.this);
+				return p;
+			}
+		});
+		
+		
+		
+		outputSegments=new OutputHandler<GeoSegment3D>(new elementFactory<GeoSegment3D>() {
+			public GeoSegment3D newElement() {
+				GeoSegment3D s=new GeoSegment3D(cons);
+				//s.setParentAlgorithm(AlgoPolyhedron.this);
+				return s;
+			}
+		});
+
+		
+		
 	}
 	
 	/** creates a polyhedron regarding vertices and faces description
@@ -65,6 +116,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		
 		this.type = type;
 		
+		outputPolyhedron.adjustOutputSize(1);
+		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
 		
 		
 		int numPoints;
@@ -72,7 +125,6 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		switch(type){
 		case GeoPolyhedron.TYPE_PYRAMID://construct a pyramid with last point as apex
 			this.inputPoints = a_points;
-			outputPoints = new GeoPoint3D[0];
 			numPoints = inputPoints.length;
 			
 			
@@ -122,12 +174,13 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			inputPoints = a_points;
 			numPoints = a_points.length - 1;
 			GeoPoint3D[] points = new GeoPoint3D[numPoints*2];
-			outputPoints = new GeoPoint3D[numPoints-1];
+			outputPoints.adjustOutputSize(numPoints-1);
+			outputPoints.setLabels(null);
 			for(int i=0;i<numPoints+1;i++)
 				points[i] = a_points[i];
 			for(int i=0;i<numPoints-1;i++){
-				outputPoints[i] = (GeoPoint3D) kernel.getManager3D().Point3D(null, 0, 0, 0);
-				points[numPoints+1+i] = outputPoints[i];
+				//outputPoints[i] = (GeoPoint3D) kernel.getManager3D().Point3D(null, 0, 0, 0);
+				points[numPoints+1+i] = outputPoints.getElement(i);
 			}
 			
 			//bottom of the prism
@@ -158,16 +211,44 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			break;
 		}
 		
+		setInput();
 		polyhedron.updateFaces();
-		setInputOutput();
-		polyhedron.initLabels(labels);
-		compute();
-
+		setOutput();
 		
+		//compute();
+
+		update();
+		
+        //set labels dependencies: will be used with Construction.resolveLabelDependency()
+        if (labels!=null && labels.length>1)
+        	for (int i=0; i<labels.length; i++){
+        		cons.setLabelDependsOn(labels[i], this);
+        	}
+		
+        
+        
+        polyhedron.defaultLabels(labels);
 	}
 	
-	
-	
+
+
+	public GeoElement addLabelToOutput(String label, int type){
+
+		switch(type){
+		case GeoElement.GEO_CLASS_POLYHEDRON:
+			return outputPolyhedron.addLabel(label);
+		case GeoElement.GEO_CLASS_POINT3D:
+			return outputPoints.addLabel(label);
+		case GeoElement.GEO_CLASS_POLYGON3D:
+			return outputPolygons.addLabel(label);
+		case GeoElement.GEO_CLASS_SEGMENT3D:
+			return outputSegments.addLabel(label);
+		default:
+			return null;
+		}
+
+	}
+
 	
 	
 	/////////////////////////////////////////////
@@ -182,6 +263,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	 */
 	public AlgoPolyhedron(Construction c, String[] labels, GeoList faces) {
 		this(c,faces);
+
+		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
 		polyhedron.initLabels(labels);
 	}
 	
@@ -195,9 +278,10 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		this.faces = faces;
 		setFaces();
 
-		outputPoints = new GeoPoint3D[0];
+		//outputPoints = new GeoPoint3D[0];
 		
-		setInputOutput();
+		setInput();
+		setOutput();
 		
 	}
 	
@@ -208,6 +292,8 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	 */
 	private void setFaces(){
 		
+
+		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
 		
 		for(int i=0;i<faces.size();i++){ 
 			polyhedron.startNewFace();
@@ -234,7 +320,7 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	////////////////////////////////////////////
 
 	
-	protected void setInputOutput(){
+	protected void setInput(){
 		
 		// input : inputPoints or list of faces
 		if(this.faces == null){
@@ -247,15 +333,12 @@ public class AlgoPolyhedron extends AlgoElement3D {
 		for (int i = 0; i < input.length; i++) {
             input[i].addAlgorithm(this);
         }
+	}
 
 		
-		updateOutput();
-		for (int i=0;i<outputPoints.length;i++)
-			outputPoints[i].setParentAlgorithm(this);
-			
+	protected void setOutput(){
 		
-        polyhedron.setParentAlgorithm(this); 
-       
+		updateOutput();
         cons.addToAlgorithmList(this);  
 		
 	}
@@ -265,22 +348,11 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	
 	
 	private void updateOutput(){
-						
-		GeoSegment3D[] segments = polyhedron.getSegments();
-		GeoPolygon3D[] polygons = polyhedron.getFaces();
 		
-		
-		// output : polyhedron, polygons, segments, and outputPoints			
-		output = new GeoElement[1+polygons.length+segments.length+outputPoints.length];	
-		
-		output[0] = polyhedron;
-		for(int i=0; i<polygons.length; i++)
-			output[1+i] = polygons[i];
-		for(int i=0; i<segments.length; i++)
-			output[1+polygons.length+i] = segments[i];
-		for(int i=0; i<outputPoints.length; i++){
-			output[1+polygons.length+segments.length+ i] = outputPoints[i];
-		}
+		//add polyhedron's segments and polygons, without setting this algo as algoparent
+		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
+		outputPolygons.addOutput(polyhedron.getFaces(),false);
+		outputSegments.addOutput(polyhedron.getSegments(),false);
 		
 	}
 
@@ -307,6 +379,10 @@ public class AlgoPolyhedron extends AlgoElement3D {
 	
 	
 	protected void compute() {
+		
+
+		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
+		
 		switch(type){
 		case GeoPolyhedron.TYPE_PYRAMID:
 			//TODO remove this and replace with tesselation
@@ -323,12 +399,9 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			GgbVector v = inputPoints[inputPoints.length-1].getCoords().sub(inputPoints[0].getCoords());
 			//Application.debug("v=\n"+v);
 			//translate all output points
-			for (int i=0;i<outputPoints.length;i++){
-				outputPoints[i].setCoords(inputPoints[i+1].getCoords().add(v));
-				outputPoints[i].updateCoords();
-				//outputPoints[i].update();
-				//outputPoints[i].updateCascade();
-				//Application.debug("point["+i+"]="+points[i]);
+			for (int i=0;i<outputPoints.size();i++){
+				outputPoints.getElement(i).setCoords(inputPoints[i+1].getCoords().add(v));
+				outputPoints.getElement(i).updateCoords();
 			}
 			
 			
@@ -367,6 +440,4 @@ public class AlgoPolyhedron extends AlgoElement3D {
 			return "AlgoPolyhedron";
 		}
 	}
-	
-
 }

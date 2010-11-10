@@ -896,62 +896,25 @@ public class Renderer implements GLEventListener {
  
     
     
-    
-    /** draws a 2D cross cursor 
-     */    
-    public void drawCursorCross2D(){
-    	
-    	gl.glDisable(GL.GL_LIGHTING);
-    	initMatrix();
-    	geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.TYPE_CROSS2D));
-		resetMatrix();
-    	gl.glEnable(GL.GL_LIGHTING);
-   	
-    }
-    
     /** draws a 3D cross cursor
+     * @param type 
      */    
-    public void drawCursorCross3D(){
+    public void drawCursor(int type){
     	
-    	gl.glDisable(GL.GL_LIGHTING);
+    	if (!PlotterCursor.isTypeAlready(type))
+    		gl.glDisable(GL.GL_LIGHTING);
+    	
     	initMatrix();
-    	geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.TYPE_CROSS3D));
+    	geometryManager.draw(geometryManager.cursor.getIndex(type));
 		resetMatrix();
-    	gl.glEnable(GL.GL_LIGHTING);
+    	
+		if (!PlotterCursor.isTypeAlready(type))
+			gl.glEnable(GL.GL_LIGHTING);
    	
     } 
     
-    /** draws a cylinder cursor 
-     */    
-    public void drawCursorCylinder(){
- 
-    	gl.glDisable(GL.GL_LIGHTING);  
-     	initMatrix();
-    	geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.TYPE_CYLINDER));
-    	resetMatrix();
-    	gl.glEnable(GL.GL_LIGHTING);
-
-    	
-    }
-    
-    
     
 
-    
-    /** draws a diamond cursor  
-     *
-     */    
-    public void drawCursorDiamond(){
- 
-    	gl.glDisable(GL.GL_LIGHTING);  
-    	initMatrix();
-    	geometryManager.draw(geometryManager.cursor.getIndex(PlotterCursor.TYPE_DIAMOND));
-    	resetMatrix();  	
-    	gl.glEnable(GL.GL_LIGHTING);
-
-    	
-    }
-    
    
     
     

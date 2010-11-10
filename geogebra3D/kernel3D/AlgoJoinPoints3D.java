@@ -21,6 +21,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 
 
@@ -112,6 +113,7 @@ public class AlgoJoinPoints3D extends AlgoElement3D {
     	default:
     		cs = null;
     	}
+    	
     	
     	
     	if (poly==null)

@@ -24,6 +24,7 @@ import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.opengl.PlotterCursor;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
 import geogebra3D.kernel3D.GeoAxis3D;
@@ -163,6 +164,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public static final int PREVIEW_POINT_REGION = 3;
 	/** dependent point under the cursor */
 	public static final int PREVIEW_POINT_DEPENDENT = 4;
+	/** already existing point under the cursor */
+	public static final int PREVIEW_POINT_ALREADY = 5;
+	
+	
+	
 	private int cursor3DType = PREVIEW_POINT_NONE;
 
 	
@@ -171,7 +177,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private static final int CURSOR_MOVE = 2;
 	private static final int CURSOR_HIT = 3;
 	private int cursor = CURSOR_DEFAULT;
-	private boolean cursor3DVisible = false;
+	private boolean cursor3DVisible = true;
 	
 
 	//mouse
@@ -2154,74 +2160,142 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				false);
 			
 			
-			
-			// update cursor3D matrix
-			double t;
-			
-			switch(getCursor3DType()){
-			case PREVIEW_POINT_FREE:
-				// use default directions for the cross
-				t = 1/getScale();
-				getCursor3D().getDrawingMatrix().setVx((GgbVector) vx.mul(t));
-				getCursor3D().getDrawingMatrix().setVy((GgbVector) vy.mul(t));
-				getCursor3D().getDrawingMatrix().setVz((GgbVector) vz.mul(t));
-				break;
-			case PREVIEW_POINT_REGION:
-				// use region drawing directions for the cross
-				t = 1/getScale();
-				getCursor3D().getDrawingMatrix().setVx(
-						(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx().mul(t));
-				getCursor3D().getDrawingMatrix().setVy(
-						(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy().mul(t));
-				getCursor3D().getDrawingMatrix().setVz(
-						(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz().mul(t));
-				break;
-			case PREVIEW_POINT_PATH:
-				// use path drawing directions for the cross
-				t = 1/getScale();
-				GgbMatrix4x4 matrix;
-				if (((GeoElement)getCursor3D().getPath()).isGeoElement3D())
-					matrix = ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix();
-				else{
-					GgbVector v = ((GeoElement)getCursor3D().getPath()).getViewDirection();
-					if (v==null)
-						matrix = GgbMatrix4x4.Identity();
-					else{
-					   GgbMatrix m = new GgbMatrix(4, 2);
-					   m.set(v, 1);
-					   m.set(4, 2, 1);
-					   matrix = new GgbMatrix4x4(m);
-					}
-						
-				}
-				
-				getCursor3D().getDrawingMatrix().setVx(
-						(GgbVector) matrix.getVx().normalized().mul(t));
-				t *= (10+((GeoElement) getCursor3D().getPath()).getLineThickness());
-				getCursor3D().getDrawingMatrix().setVy(
-						(GgbVector) matrix.getVy().mul(t));
-				getCursor3D().getDrawingMatrix().setVz(
-						(GgbVector) matrix.getVz().mul(t));
-				break;
-			case PREVIEW_POINT_DEPENDENT:
-				//use size of intersection
-				int t1 = getCursor3DIntersectionOf(0).getLineThickness();
-				int t2 = getCursor3DIntersectionOf(1).getLineThickness();
-				if (t1>t2)
-					t2=t1;
-				t = (t2+6)/getScale();
-				getCursor3D().getDrawingMatrix().setVx((GgbVector) vx.mul(t));
-				getCursor3D().getDrawingMatrix().setVy((GgbVector) vy.mul(t));
-				getCursor3D().getDrawingMatrix().setVz((GgbVector) vz.mul(t));
-				break;
-			}
-			
-			
-			
-			
-			
-			//Application.debug("update");
+			updateMatrixForCursor3D();
 		}
+		
+	}
+
+	/**
+	 * update cursor3D matrix
+	 */
+	public void updateMatrixForCursor3D(){		
+		double t;
+
+		GgbMatrix4x4 matrix;
+		GgbMatrix4x4 m2;
+
+		switch(getCursor3DType()){
+		case PREVIEW_POINT_FREE:
+			// use default directions for the cross
+			t = 1/getScale();
+			getCursor3D().getDrawingMatrix().setVx((GgbVector) vx.mul(t));
+			getCursor3D().getDrawingMatrix().setVy((GgbVector) vy.mul(t));
+			getCursor3D().getDrawingMatrix().setVz((GgbVector) vz.mul(t));
+			break;
+		case PREVIEW_POINT_REGION:
+			// use region drawing directions for the cross
+			t = 1/getScale();
+			getCursor3D().getDrawingMatrix().setVx(
+					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx().mul(t));
+			getCursor3D().getDrawingMatrix().setVy(
+					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy().mul(t));
+			getCursor3D().getDrawingMatrix().setVz(
+					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz().mul(t));
+			break;
+		case PREVIEW_POINT_PATH:
+			// use path drawing directions for the cross
+			t = 1/getScale();
+
+			GgbVector v = ((GeoElement)getCursor3D().getPath()).getViewDirection();
+			GgbMatrix m = new GgbMatrix(4, 2);
+			m.set(v, 1);
+			m.set(4, 2, 1);
+			//GgbMatrix4x4 m2 = new GgbMatrix4x4(m);
+
+			matrix = new GgbMatrix4x4(m);
+			
+			/*
+			matrix = new GgbMatrix4x4();
+			matrix.setVx(m2.getVy());
+			matrix.setVy(m2.getVz());
+			matrix.setVz(m2.getVx());
+			matrix.setOrigin(m2.getOrigin());
+			*/
+
+			getCursor3D().getDrawingMatrix().setVx(
+					(GgbVector) matrix.getVx().normalized().mul(t));
+			t *= (10+((GeoElement) getCursor3D().getPath()).getLineThickness());
+			getCursor3D().getDrawingMatrix().setVy(
+					(GgbVector) matrix.getVy().mul(t));
+			getCursor3D().getDrawingMatrix().setVz(
+					(GgbVector) matrix.getVz().mul(t));
+			break;
+		case PREVIEW_POINT_DEPENDENT:
+			//use size of intersection
+			int t1 = getCursor3DIntersectionOf(0).getLineThickness();
+			int t2 = getCursor3DIntersectionOf(1).getLineThickness();
+			if (t1>t2)
+				t2=t1;
+			t = (t2+6)/getScale();
+			getCursor3D().getDrawingMatrix().setVx((GgbVector) vx.mul(t));
+			getCursor3D().getDrawingMatrix().setVy((GgbVector) vy.mul(t));
+			getCursor3D().getDrawingMatrix().setVz((GgbVector) vz.mul(t));
+			break;			
+		case PREVIEW_POINT_ALREADY:
+			//use size of point
+			t = (getCursor3D().getPointSize()/6+2)/getScale();
+
+			if (getCursor3D().hasPath()){
+				v = ((GeoElement)getCursor3D().getPath()).getViewDirection();
+				m = new GgbMatrix(4, 2);
+				m.set(v, 1);
+				m.set(4, 2, 1);
+				m2 = new GgbMatrix4x4(m);
+
+				matrix = new GgbMatrix4x4();
+				matrix.setVx(m2.getVy());
+				matrix.setVy(m2.getVz());
+				matrix.setVz(m2.getVx());
+				matrix.setOrigin(m2.getOrigin());
+
+
+				/*
+					if (((GeoElement)getCursor3D().getPath()).isGeoElement3D())
+						matrix = ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix();
+					else{
+						GgbVector v = ((GeoElement)getCursor3D().getPath()).getViewDirection();
+						if (v==null)
+							matrix = GgbMatrix4x4.Identity();
+						else{
+							GgbMatrix m = new GgbMatrix(4, 2);
+							m.set(v, 1);
+							m.set(4, 2, 1);
+							matrix = new GgbMatrix4x4(m);
+						}
+
+					}
+				 */
+			}else if (getCursor3D().hasRegion()){
+				//matrix = ((GeoElement3D) getCursor3D().getRegion()).getDrawingMatrix();
+				v = ((GeoElement)getCursor3D().getRegion()).getViewDirection();
+				m = new GgbMatrix(4, 2);
+				m.set(v, 1);
+				m.set(4, 2, 1);
+				m2 = new GgbMatrix4x4(m);
+
+				matrix = new GgbMatrix4x4();
+				matrix.setVx(m2.getVy());
+				matrix.setVy(m2.getVz());
+				matrix.setVz(m2.getVx());
+				matrix.setOrigin(m2.getOrigin());
+			}else
+				matrix = GgbMatrix4x4.Identity();
+
+			getCursor3D().getDrawingMatrix().setVx(
+					(GgbVector) matrix.getVx().normalized().mul(t));
+			getCursor3D().getDrawingMatrix().setVy(
+					(GgbVector) matrix.getVy().mul(t));
+			getCursor3D().getDrawingMatrix().setVz(
+					(GgbVector) matrix.getVz().mul(t));
+			break;
+		}
+
+
+
+
+
+		//Application.debug("getCursor3DType()="+getCursor3DType());
+
 		
 	}
 	
@@ -2242,7 +2316,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 		
 			
-		setCursor3DType(PREVIEW_POINT_NONE);
+		//setCursor3DType(PREVIEW_POINT_NONE);
 		
 		this.previewDrawable = previewDrawable;
 		
@@ -2307,7 +2381,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void drawCursor(Renderer renderer){
 
-		if (hasMouse && cursor3DVisible){
+		if (hasMouse && !getEuclidianController().mouseIsOverLabel() && cursor3DVisible){
 			
 			renderer.setMatrix(getCursor3D().getDrawingMatrix());
 			
@@ -2317,19 +2391,35 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				//renderer.drawCursorCross3D();
 				//break;
 			case CURSOR_HIT:
+				//Application.debug("getCursor3DType()="+getCursor3DType());				
 				switch(getCursor3DType()){
 				case PREVIEW_POINT_FREE:
-					//renderer.drawCursorCross3D();
-					renderer.drawCursorCross2D();
+					renderer.drawCursor(PlotterCursor.TYPE_CROSS2D);
 					break;
 				case PREVIEW_POINT_REGION:
-					renderer.drawCursorCross2D();
+					renderer.drawCursor(PlotterCursor.TYPE_CROSS2D);
 					break;
 				case PREVIEW_POINT_PATH:
-					renderer.drawCursorCylinder();
+					renderer.drawCursor(PlotterCursor.TYPE_CYLINDER);
 					break;
 				case PREVIEW_POINT_DEPENDENT:
-					renderer.drawCursorDiamond();
+					renderer.drawCursor(PlotterCursor.TYPE_DIAMOND);
+					break;
+
+				case PREVIEW_POINT_ALREADY:
+					/*
+					if (getCursor3D().hasPath())
+						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_Z);
+					else if (getCursor3D().hasRegion())
+						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_XY);
+					else{
+					 */
+					//if (((GeoPointND) getEuclidianController().getMovedGeoPoint()).getMoveMode()==GeoPointND.MOVE_MODE_XY)
+					if (getCursor3D().getMoveMode()==GeoPointND.MOVE_MODE_XY)
+						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_XY);
+					else
+						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_Z);
+					//}
 					break;
 				}
 				break;
@@ -2355,7 +2445,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void setDragCursor(){
 
 		// 2D cursor is invisible
-		setCursor(app.getTransparentCursor());
+		//setCursor(app.getTransparentCursor());
 
 		// 3D cursor
 		cursor = CURSOR_DRAG;

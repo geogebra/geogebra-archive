@@ -334,7 +334,7 @@ GeoLineND, GeoCoordSys{
 		//TODO generalize it to other planes than xOy
 		
 		//if lines is not in the plane, return null
-		if (!Kernel.isZero(origin.getZ()) || !Kernel.isZero(origin.getZ()))
+		if (!Kernel.isZero(origin.getZ()) || !Kernel.isZero(direction.getZ()))
 			return null;
 		
 		double x = -direction.getY();

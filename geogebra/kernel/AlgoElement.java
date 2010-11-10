@@ -140,7 +140,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * the OutputHandler changes output on it's own and will 'overwrite' any direct changes.
      * @param <T> extends GeoElement: type of the OutputHandler 
      */
-    protected class OutputHandler<T extends GeoElement>{
+    public class OutputHandler<T extends GeoElement>{
     	private elementFactory<T> fac;
     	private ArrayList<T> outputList;
     	private String[] labels;
@@ -148,6 +148,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	 * use Labels for this outputs
     	 */
     	public boolean setLabels;
+    	
+    	/** number of labels already set */
+    	private int labelsSetLength = 0;
+    	
 
 		/**
 		 * @param fac elementFactory to create new Elements of type T
@@ -195,6 +199,20 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		}
 		
 		/**
+		 * add the geos list to the output
+		 * @param geos
+		 * @param setDependencies says if the dependencies have to be set for this output
+		 */
+		public void addOutput(T[] geos, boolean setDependencies){
+			for (int i=0; i<geos.length; i++){
+				outputList.add(geos[i]);
+				if (setDependencies)
+					setOutputDependencies(geos[i]);
+			}
+			refreshOutput();
+		}
+		
+		/**
 		 * set setLabels to true
 		 * @param labels use this Strings as labels. If labels == null, default labels are used
 		 */
@@ -219,6 +237,31 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 						outputList.get(i).setLabel(null);
 				}
 			}
+		}
+		
+		
+		/**
+		 * set the label to the next geo with no label (or create new one)
+		 * @param label
+		 * @return corresponding geo
+		 */
+		public T addLabel(String label){
+			T geo;
+			if (labelsSetLength<outputList.size()){
+				geo = getElement(labelsSetLength);
+				//Application.debug(label+", geo="+geo);
+			}else{
+				geo = fac.newElement();
+				outputList.add(geo);
+				setOutputDependencies(geo);
+				refreshOutput();
+			}
+			
+			labelsSetLength++;
+			geo.setLabel(label);
+			
+			return geo;
+			
 		}
 		
 		/**
@@ -252,7 +295,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      *
      * @param <S>
      */
-    protected interface elementFactory<S extends GeoElement>{
+    public interface elementFactory<S extends GeoElement>{
     	
     	/**
     	 * this is called by the OutputHandler every Time a new Element is needed.

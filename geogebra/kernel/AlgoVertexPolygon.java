@@ -160,12 +160,14 @@ public class AlgoVertexPolygon extends AlgoElement implements AlgoElementWithRes
 		return pointsList.get(i);
 	}
 
-	public GeoElement addCreatedElementToOutput(GeoElement geo) {
+	public GeoElement addLabelToOutput(String label, int type) {
+
 		GeoElement ret;
 		if (nbLabelSet<pointsList.size()){ //set geo equal to element of the list
 			ret=pointsList.get(nbLabelSet);
 			nbLabelSet++;
 		}else{ // add this geo at the end of the list
+			GeoPoint geo = new GeoPoint(getConstruction());
 			pointsList.add((GeoPoint)geo);
 			ret=geo;
 			setOutputDependencies(geo);
@@ -173,4 +175,6 @@ public class AlgoVertexPolygon extends AlgoElement implements AlgoElementWithRes
 		}
 		return ret;
 	}
+	
+	
 }

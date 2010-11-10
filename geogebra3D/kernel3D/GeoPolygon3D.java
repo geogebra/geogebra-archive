@@ -69,6 +69,10 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	}
 
 
+	public GeoPolygon3D(Construction cons) {
+		super(cons);
+	}
+
 	/////////////////////////////////////////
 	// GeoPolygon3D
 	public int getGeoClassType() {

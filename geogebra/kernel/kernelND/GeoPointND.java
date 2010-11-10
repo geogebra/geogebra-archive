@@ -2,7 +2,9 @@ package geogebra.kernel.kernelND;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.LocateableList;
+import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
 import geogebra3D.kernel3D.Region3D;
 
@@ -119,6 +121,33 @@ public interface GeoPointND {
 	public int getPointStyle();
 
 	public boolean getTrace();
+
+	public Path getPath();
+
+	public Region getRegion();
+	
+	
+	/////////////////////////////////////////
+	// MOVING THE POINT (3D)
+	/////////////////////////////////////////
+	
+	
+	public static boolean MOVE_MODE_XY = true;
+	public static boolean MOVE_MODE_Z = false;
+	
+	/**
+	 * sets the move mode (along xOy or along Oz)
+	 */
+	public void switchMoveMode();
+	
+	/**
+	 * 
+	 * @return the move mode (along xOy or along Oz)
+	 */
+	public boolean getMoveMode();
+	
+	//private boolean movePointMode = MOVE_POINT_MODE_XY;
+
 	
 	
 }

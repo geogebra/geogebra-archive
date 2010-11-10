@@ -1,5 +1,9 @@
 package geogebra3D.euclidian3D.opengl;
 
+import java.awt.Color;
+
+import geogebra.Matrix.GgbVector;
+
 import javax.media.opengl.GL;
 
 
@@ -19,6 +23,8 @@ public class PlotterCursor {
 	static public int TYPE_DIAMOND = 1;
 	static public int TYPE_CYLINDER = 2;
 	static public int TYPE_CROSS3D = 3;
+	static public int TYPE_ALREADY_XY = 4;
+	static public int TYPE_ALREADY_Z = 5;
 	
 	
 	
@@ -26,7 +32,10 @@ public class PlotterCursor {
 	static private float thickness = 1.25f;
 	static private float thickness2 = 1.25f;
 	static private float depth = 1f;
-	
+
+	static private float size_start_move = 0f;
+	static private float size_move = 20f;
+
 	private int[] index;
 	
 	private Manager manager;
@@ -39,8 +48,10 @@ public class PlotterCursor {
 		
 		this.manager = manager;
 		
-		index = new int[4];
+		index = new int[6];
 		
+		
+		//crosses
 		for (int i=0; i<4; i++){
 			index[i] = manager.startNewList();
 			manager.startGeometry(Manager.QUADS);
@@ -48,10 +59,60 @@ public class PlotterCursor {
 			manager.endGeometry();
 			manager.endList();
 		}
+		
+		//moving cursors
+		PlotterBrush brush = manager.getBrush();
+		
+		
+
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
+		
+		//sets the thickness for arrows
+		brush.setThickness(1,1.5f);
+		
+		
+		brush.setAffineTexture(0.5f, 0.125f);
+		
+		
+		
+		//xy
+		brush.start(8);
+		brush.setColor(Color.GRAY);
+		brush.setThickness(thickness);//re sets the thickness
+		brush.segment(new GgbVector(size_start_move, 0, 0, 1),new GgbVector(size_move, 0, 0, 1));
+		brush.setThickness(thickness);//re sets the thickness
+		brush.segment(new GgbVector(-size_start_move, 0, 0, 1),new GgbVector(-size_move, 0, 0, 1));
+		brush.setThickness(thickness);//re sets the thickness
+		brush.segment(new GgbVector(0, size_start_move, 0, 1),new GgbVector(0, size_move, 0, 1));
+		brush.setThickness(thickness);//re sets the thickness
+		brush.segment(new GgbVector(0, -size_start_move, 0, 1),new GgbVector(0, -size_move, 0, 1));
+		index[4] =brush.end();
+
+
+		//z
+		brush.start(8);
+		brush.setColor(Color.GRAY);
+		brush.setThickness(thickness);//re sets the thickness
+		brush.segment(new GgbVector(0, 0, size_start_move, 1),new GgbVector(0, 0, size_move, 1));
+		brush.setThickness(thickness);//re sets the thickness
+		brush.segment(new GgbVector(0, 0, -size_start_move, 1),new GgbVector(0, 0, -size_move, 1));
+		index[5] =brush.end();
+
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
 
 	}
 
 	
+	
+	/**
+	 * used to say if light is on or not
+	 * @param type
+	 * @return true it type is of "already" (xy or z)
+	 */
+	static public boolean isTypeAlready(int type){
+		return type==TYPE_ALREADY_XY || type==TYPE_ALREADY_Z;
+	}
+
 
 	//////////////////////////////////
 	// INDEX

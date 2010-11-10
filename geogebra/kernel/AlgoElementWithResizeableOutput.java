@@ -8,12 +8,13 @@ package geogebra.kernel;
  */
 public interface AlgoElementWithResizeableOutput {
 	
+	
 	/**
-	 * add the geo to output list.
-	 * If needed, only the label is taken for an already computed geo.
-	 * @param geo
+	 * add new label to output list, regarding the type of geo
+	 * @param label
+	 * @param type 
 	 * @return geo, possibly already computed by the algo
 	 */
-	public GeoElement addCreatedElementToOutput(GeoElement geo);
+	public GeoElement addLabelToOutput(String label, int type);
 
 }

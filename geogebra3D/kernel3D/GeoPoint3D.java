@@ -705,7 +705,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	    		PathParameter pathParameter = getPathParameter();
 		    	pathParameter.set(p.getPathParameter());
 	    	}
-	    	setCoords(p);     
+	    	setCoords(p);   
+	    	//TODO ? moveMode = p.getMoveMode();
 	    	updateCoords();
 	    	//TODO setMode(p.toStringMode); // complex etc
     	}
@@ -964,6 +965,34 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		//Application.debug(inhom.toString());
 		return getCoords();
 	}
+	
+	
+	
+
+	/////////////////////////////////////////
+	// MOVING THE POINT (3D)
+	/////////////////////////////////////////
+	
+	private boolean moveMode = MOVE_MODE_XY;
+
+	public void switchMoveMode(){
+		moveMode = !moveMode;
+	}
+	
+	public void setMoveMode(boolean flag){
+		moveMode = flag;
+	}
+	
+
+	public boolean getMoveMode(){
+		if (hasPath())
+			return MOVE_MODE_Z;
+		else if (hasRegion())
+			return MOVE_MODE_XY;
+		else
+			return moveMode;
+	}
+
    
 
 }

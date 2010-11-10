@@ -853,6 +853,88 @@ public class Kernel {
 	 */
 	
 	
+	public int getClassType(String type) throws MyError {   
+    	switch (type.charAt(0)) {
+		case 'a': //angle    			
+			return GeoElement.GEO_CLASS_ANGLE;	    			     		    			
+			
+		case 'b': //angle
+			if (type.equals("boolean"))
+				return GeoElement.GEO_CLASS_BOOLEAN;
+			else
+    			return GeoElement.GEO_CLASS_BUTTON; // "button"
+		
+		case 'c': // conic
+			if (type.equals("conic"))
+				return GeoElement.GEO_CLASS_CONIC;   
+			else if (type.equals("conicpart"))    					
+				return GeoElement.GEO_CLASS_CONICPART;
+			else if (type.equals("circle")) { // bug in GeoGebra 2.6c
+				return GeoElement.GEO_CLASS_CONIC;
+			}
+			
+		case 'd': // doubleLine 			// bug in GeoGebra 2.6c
+			return GeoElement.GEO_CLASS_CONIC;   			
+			
+		case 'e': // ellipse, emptyset	//  bug in GeoGebra 2.6c
+			return GeoElement.GEO_CLASS_CONIC;    			
+				
+		case 'f': // function
+			return GeoElement.GEO_CLASS_FUNCTION;
+		
+		case 'h': // hyperbola			//  bug in GeoGebra 2.6c
+			return GeoElement.GEO_CLASS_CONIC;   			
+			
+		case 'i': // image,implicitpoly
+			if (type.equals("image"))    				
+				return GeoElement.GEO_CLASS_IMAGE;
+			else if (type.equals("intersectinglines")) //  bug in GeoGebra 2.6c
+				return GeoElement.GEO_CLASS_CONIC;
+			else if (type.equals("implicitpoly"))
+				return GeoElement.GEO_CLASS_IMPLICIT_POLY;
+		
+		case 'l': // line, list, locus
+			if (type.equals("line"))
+				return GeoElement.GEO_CLASS_LINE;
+			else if (type.equals("list"))
+				return GeoElement.GEO_CLASS_LIST;    					
+			else 
+				return GeoElement.GEO_CLASS_LOCUS;
+		
+		case 'n': // numeric
+			return GeoElement.GEO_CLASS_NUMERIC;
+			
+		case 'p': // point, polygon
+			if (type.equals("point"))
+				return GeoElement.GEO_CLASS_POINT;
+			else if (type.equals("polygon"))
+				return GeoElement.GEO_CLASS_POLYGON;
+			else if (type.equals("polyline"))
+				return GeoElement.GEO_CLASS_POLYLINE;
+			else // parabola, parallelLines, point //  bug in GeoGebra 2.6c
+				return GeoElement.GEO_CLASS_CONIC;
+			
+		case 'r': // ray
+			return GeoElement.GEO_CLASS_RAY;
+			
+		case 's': // segment    			
+			return GeoElement.GEO_CLASS_SEGMENT;	    			    			
+			
+		case 't': 
+			if (type.equals("text"))
+				return GeoElement.GEO_CLASS_TEXT; // text
+			else
+    			return GeoElement.GEO_CLASS_TEXTFIELD; // textfield
+			
+		case 'v': // vector
+			return GeoElement.GEO_CLASS_VECTOR;
+		
+		default:    			
+			throw new MyError(cons.getApplication(), "Kernel: GeoElement of type "
+		            + type + " could not be created.");		    		
+	}  
+	}
+	
 	
 	/**
      * Creates a new GeoElement object for the given type string.

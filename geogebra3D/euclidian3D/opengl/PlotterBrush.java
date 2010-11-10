@@ -55,7 +55,7 @@ public class PlotterBrush {
 	private float[] textureX = new float[2];
 	private float[] textureY = new float[2];
 	/** type of texture */
-	static final private int TEXTURE_CONSTANT_0 = 0; 
+	static final public int TEXTURE_CONSTANT_0 = 0; 
 	static final private int TEXTURE_ID = 1;
 	static final private int TEXTURE_AFFINE = 2;
 	static final private int TEXTURE_LINEAR = 3;
@@ -479,6 +479,7 @@ public class PlotterBrush {
 	}
 	
 	
+	
 	////////////////////////////////////
 	// COLOR
 	////////////////////////////////////
@@ -545,7 +546,7 @@ public class PlotterBrush {
 	/** sets the type of texture
 	 * @param type
 	 */
-	public void setTextureType(int type){
+	private void setTextureType(int type){
 		textureTypeX = type;
 	}
 
