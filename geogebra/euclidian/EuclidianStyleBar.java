@@ -50,8 +50,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	// buttons and lists of buttons
 	private ColorPopupMenuButton btnColor,btnBgColor, btnTextColor;
+	
 	private PopupMenuButton   btnLineStyle, btnPointStyle, btnTextSize, btnMode, 
 		btnTableTextJustify, btnTableTextBracket, btnCaptionStyle;
+	
 	private MyToggleButton btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
     		btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel, 
     		btnTableTextLinesV, btnTableTextLinesH;
@@ -162,16 +164,26 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	public void updateStyleBar(){
 	
 		if(mode == EuclidianConstants.MODE_VISUAL_STYLE) return;
-		
+
 		// geos = list of geos that will have their properties set by stylebar buttons
 		// The buttons also use this list to update their gui and set visibility
 		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
 
 		// If in move mode, geos contains all selected geos
 		if(mode == EuclidianConstants.MODE_MOVE){
-			geos = ev.getApplication().getSelectedGeos();
+
+			boolean hasGeosInThisView = false;
+			for(GeoElement geo: ev.getApplication().getSelectedGeos()){
+				if(geo.isVisibleInView(ev) && geo.isEuclidianVisible()){
+					hasGeosInThisView = true;
+					break;
+				}
+			}
+			if(hasGeosInThisView) 
+				geos = ev.getApplication().getSelectedGeos();;
+
 		}
-		
+
 		// For all other modes, geos contains the default geo for current mode.
 		// The original default geo state is saved. Stylebar buttons temporarily change the default
 		// geo, but when the mode changes the default geo is restored to its previous state.

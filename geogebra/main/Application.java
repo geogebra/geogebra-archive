@@ -2550,7 +2550,8 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {			
-				getEuclidianView().getStyleBar().updateStyleBar();				
+				getEuclidianView().getStyleBar().updateStyleBar();	
+				getGuiManager().getEuclidianView2().getStyleBar().updateStyleBar();
 		}
 		
 		
