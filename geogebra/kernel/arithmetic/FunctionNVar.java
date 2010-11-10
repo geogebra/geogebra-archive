@@ -540,7 +540,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 * @param fe
 	 * @param inverseFill
 	 */
-	public void initIneqs(ExpressionNode fe, boolean inverseFill) {
+	public void initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {
 		if (fe == getExpression())
 			ineqs = new ArrayList<Inequality>();
 		int op = fe.getOperation();
@@ -549,7 +549,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		if (op == ExpressionNode.GREATER || op == ExpressionNode.GREATER_EQUAL
 				|| op == ExpressionNode.LESS || op == ExpressionNode.LESS_EQUAL) {
 			Inequality newIneq = new Inequality(kernel, leftTree, rightTree,
-					op, getFunction().getFunctionVariables());
+					op, getFunction().getFunctionVariables(),functional);
 			if (newIneq.getType() != Inequality.INEQUALITY_INVALID) {
 				if (newIneq.getType() != Inequality.INEQUALITY_1VAR_X
 						&& newIneq.getType() != Inequality.INEQUALITY_1VAR_Y)
@@ -559,8 +559,8 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 			}
 		}
 		if (op == ExpressionNode.AND || op == ExpressionNode.OR) {
-			initIneqs(leftTree, inverseFill);
-			initIneqs(rightTree, inverseFill);
+			initIneqs(leftTree, inverseFill,functional);
+			initIneqs(rightTree, inverseFill,functional);
 		}
 
 	}

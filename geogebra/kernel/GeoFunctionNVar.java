@@ -115,7 +115,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
-		fun.initIneqs(this.getFunctionExpression(),isInverseFill());
+		fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
 		ineqs = fun.getIneqs();
 	}
 	
@@ -495,7 +495,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		 */
 		public List<Inequality> getIneqs(){
 			if(ineqs == null){
-				fun.initIneqs(fun.getExpression(),isInverseFill());
+				fun.initIneqs(fun.getExpression(),isInverseFill(),this);
 				ineqs = fun.getIneqs();
 			}
 			return ineqs;
@@ -527,7 +527,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				double bestDist = (bestY-myY)*(bestY-myY)+(bestX-myX)*(bestX-myX);
 				
 				if(ineqs==null){
-					fun.initIneqs(getFunctionExpression(),isInverseFill());
+					fun.initIneqs(getFunctionExpression(),isInverseFill(),this);
 				}
 				int size = ineqs.size();
 				

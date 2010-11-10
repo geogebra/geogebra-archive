@@ -388,6 +388,11 @@ public class ConstructionDefaults {
 				type = DEFAULT_INEQUALITY;				
 			break;
 		case GeoElement.GEO_CLASS_FUNCTION:
+			if(((GeoFunction)geo).isBooleanFunction())
+				type = DEFAULT_INEQUALITY_1VAR; 
+			else
+				type = DEFAULT_FUNCTION;
+			break;
 		case GeoElement.GEO_CLASS_INTERVAL:
 		case GeoElement.GEO_CLASS_FUNCTIONCONDITIONAL:
 			type = DEFAULT_FUNCTION;

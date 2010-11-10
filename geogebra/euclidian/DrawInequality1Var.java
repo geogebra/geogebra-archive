@@ -119,7 +119,7 @@ public class DrawInequality1Var extends Drawable {
 			x[0] = -10;
 			int numOfX = 1;
 			for (int i = 0; i < roots.length; i++)
-				if (roots[i].x >  view.toRealWorldCoordX(-10) && roots[i].x < view.toRealWorldCoordX(view.height +10))
+				if (roots[i].x >  view.toRealWorldCoordX(-10) && roots[i].x < view.toRealWorldCoordX(view.width +10))
 					x[numOfX++] = view.toScreenCoordX(roots[i].x);
 			x[numOfX++] = view.width + 10;
 

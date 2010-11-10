@@ -13,10 +13,13 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.AlgoDependentFunction;
+import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
@@ -58,6 +61,7 @@ public class Inequality {
 	private FunctionVariable[] fv;
 	private MyDouble coef;
 	private GeoPoint[] zeros;
+	private FunctionalNVar function;
 
 	/**
 	 * check whether ExpressionNodes are evaluable to instances of Polynomial or
@@ -70,12 +74,14 @@ public class Inequality {
 	 * @param fv
 	 */
 	public Inequality(Kernel kernel, ExpressionValue lhs, ExpressionValue rhs,
-			int op, FunctionVariable[] fv) {
+			int op, FunctionVariable[] fv,FunctionalNVar function) {
 
 		this.op = op;
 		this.kernel = kernel;
 		this.fv = fv;
+		this.function = function;
 
+		
 		if (op == ExpressionNode.GREATER || op == ExpressionNode.GREATER_EQUAL) {
 			normal = new ExpressionNode(kernel, lhs, ExpressionNode.MINUS, rhs);
 
@@ -87,8 +93,7 @@ public class Inequality {
 
 	private void update() {
 		if(fv.length == 1){
-			funBorder = new GeoFunction(kernel.getConstruction());
-			funBorder.setFunction(new Function(normal, fv[0]));			
+			init1varFunction();
 			if(fv[0].toString().equals("y")){
 				type = INEQUALITY_1VAR_Y;
 			}
@@ -196,6 +201,20 @@ public class Inequality {
 			border.setLineType(EuclidianView.LINE_TYPE_FULL);
 	}
 
+	private void init1varFunction() {
+		Construction cons = kernel.getConstruction();
+		boolean supress = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+		AlgoDependentFunction df = new AlgoDependentFunction(cons,null, new Function(normal, fv[0]));
+		funBorder = df.getFunction();		
+		AlgoElement thisPar = ((GeoElement) function).getParentAlgorithm();
+		if(thisPar != null)
+			thisPar.setUpdateAfterAlgo(df);//TODO: make this work
+		zeros = kernel.Root(null, funBorder);		
+		cons.setSuppressLabelCreation(supress);
+		
+	}
+
 	/**
 	 * Updates the coefficient k in y<k*f(x) for parametric, for implicit runs
 	 * full update.
@@ -209,10 +228,7 @@ public class Inequality {
 		} else if (type == INEQUALITY_PARAMETRIC_X) {
 			coefVal = normal.getCoefficient(fv[0]);
 			otherVal = normal.getCoefficient(fv[1]);			
-		} else if (type == INEQUALITY_1VAR_X || type == INEQUALITY_1VAR_Y) {
-			Application.debug("uz");
-			updateZeros();
-		}
+		} 
 		if (coefVal == null || coefVal == 0 || (otherVal != null && Math.abs(otherVal) > Math.abs(coefVal)))
 			update();
 		else {
@@ -287,20 +303,10 @@ public class Inequality {
 	/**
 	 * @return zero points for 1var ineqs
 	 */
-	public GeoPoint[] getZeros() {
-		if(zeros == null){
-			updateZeros();
-		}
+	public GeoPoint[] getZeros() {		
 		return zeros;
 	}
 
-	private void updateZeros() {
-		Construction cons = kernel.getConstruction();
-		boolean supress = cons.isSuppressLabelsActive();
-		cons.setSuppressLabelCreation(true);
-		zeros = kernel.Root(null, funBorder);
-		cons.setSuppressLabelCreation(supress);
-		
-	}
+	
 
 } // end of class Equation
