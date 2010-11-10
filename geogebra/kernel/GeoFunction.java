@@ -453,7 +453,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				sb.append(" label =\"");
 				sb.append(label);
 				sb.append("\" exp=\"");
-				sb.append(toString());
+				sb.append(toValueString());
 				// expression   
 			sb.append("\"/>\n");
 		 }
@@ -630,11 +630,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public boolean isGeoFunctionable() {
 		return isGeoFunction();
 	}
-	
-	/**
-	 * Returns true iff the function is boolean
-	 * @return true iff the function is boolean
-	 */
+		
 	public boolean isBooleanFunction() {
 		if (fun != null)
 			return fun.isBooleanFunction();

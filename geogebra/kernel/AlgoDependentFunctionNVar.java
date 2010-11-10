@@ -12,14 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
-import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.Functional;
-import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 
 /**
  * This class is needed to handle dependent multivariate functions like
@@ -30,14 +23,23 @@ import geogebra.main.Application;
 public class AlgoDependentFunctionNVar extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
-	protected FunctionNVar fun;
-    protected GeoFunctionNVar f; // output         
+	private FunctionNVar fun;
+    private GeoFunctionNVar f; // output         
 
+    /**
+     * @param cons
+     * @param label
+     * @param fun
+     */
     public AlgoDependentFunctionNVar(Construction cons, String label, FunctionNVar fun) {
         this(cons, fun);
        	f.setLabel(label);
     }
     
+    /**
+     * @param cons
+     * @param fun
+     */
     AlgoDependentFunctionNVar(Construction cons, FunctionNVar fun) {
         super(cons);
         this.fun = fun;
@@ -49,6 +51,9 @@ public class AlgoDependentFunctionNVar extends AlgoElement {
         compute();
     }
     
+    /**
+     * @param cons
+     */
     public AlgoDependentFunctionNVar(Construction cons) {
 		super(cons);
 	}
@@ -61,11 +66,14 @@ public class AlgoDependentFunctionNVar extends AlgoElement {
     protected void setInputOutput() {
         input = fun.getGeoElementVariables();
 
-        output = new GeoElement[1];
-        output[0] = f;
+        setOutputLength(1);
+        setOutput(0,f);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * @return resulting function
+     */
     public GeoFunctionNVar getFunction() {
         return f;
     }
@@ -84,7 +92,7 @@ public class AlgoDependentFunctionNVar extends AlgoElement {
         f.setDefined(isDefined);
     }
     
-    StringBuilder sb;
+    private StringBuilder sb;
     public String toString() {
         if (sb == null) sb = new StringBuilder();
         else sb.setLength(0);

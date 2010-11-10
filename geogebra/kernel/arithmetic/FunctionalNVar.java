@@ -34,5 +34,11 @@ public interface FunctionalNVar {
 	 * @return list of inequalities
 	 */
 	public List<Inequality> getIneqs();
+	
+	/**
+	 * Returns true iff the function is boolean
+	 * @return true iff the function is boolean
+	 */
+	public boolean isBooleanFunction();
 	//public GeoFunctionNVar getGeoDerivative(int order, int nvar);
 }

@@ -35,23 +35,37 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 
 	private static final double STRICT_INEQ_OFFSET = 4*Kernel.MIN_PRECISION;
 	private static final int SEEK_DENSITY = 30;
-	protected FunctionNVar fun;
-	private List<Inequality> ineqs;
-	private boolean isAboveBorder;
-	protected boolean isDefined = true;
+	private FunctionNVar fun;
+	private List<Inequality> ineqs;	
+	private boolean isDefined = true;
 	
 	/** intervals for plotting, may be null (then interval is R) */
 	private double[] from, to;
 
+	/**
+	 * Creates new GeoFunction
+	 * @param c
+	 */
 	public GeoFunctionNVar(Construction c) {
 		super(c);
 	}
 	
+	/**
+	 * Creates new GeoFunction from Function
+	 * @param c
+	 * @param f function to be wrapped
+	 */
 	public GeoFunctionNVar(Construction c, FunctionNVar f) {
 		this(c);
 		fun = f;	
 	}
 
+	/**
+	 * Creates labeled GeoFunction from Function
+	 * @param c
+	 * @param label
+	 * @param f function to be wrapped
+	 */
 	public GeoFunctionNVar(Construction c, String label, FunctionNVar f) {
 		this(c,f);	
 		setLabel(label);		
@@ -69,7 +83,8 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
     	return GEO_CLASS_FUNCTION_NVAR;
     }
 
-	/** copy constructor */
+	/** copy constructor 
+	 * @param f source function */
 	public GeoFunctionNVar(GeoFunctionNVar f) {
 		super(f.cons);
 		set(f);
@@ -105,6 +120,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	}
 	
 
+	/**
+	 * @param f
+	 */
 	public void setFunction(FunctionNVar f) {
 		fun = f;
 	}
@@ -113,6 +131,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		return fun;
 	}
 	
+	/**
+	 * @return expression of the wrapped function
+	 */
 	final public ExpressionNode getFunctionExpression() {
 		if (fun == null)
 			return null;
@@ -123,6 +144,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	 /**
      * Replaces geo and all its dependent geos in this function's
      * expression by copies of their values.
+	 * @param geo 
      */
     public void replaceChildrenByValues(GeoElement geo) {     	
     	if (fun != null) {
@@ -171,6 +193,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		return isDefined && fun != null;
 	}
 
+	/**
+	 * @param defined
+	 */
 	public void setDefined(boolean defined) {
 		isDefined = defined;
 	}
@@ -202,7 +227,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
-	protected StringBuilder sbToString = new StringBuilder(80);
+	private StringBuilder sbToString = new StringBuilder(80);
 	public String toValueString() {	
 		if (isDefined())
 			return fun.toValueString();
@@ -307,7 +332,11 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 //	public boolean isGeoDeriveable() {
 //		return true;
 //	}
-	
+	/** 
+	 * Returns name of i-th variable
+	 * @param i index of variable
+	 * @return name of i-th variable
+	 */
 	public String getVarString(int i) {	
 		return fun == null ? "" : fun.getVarString(i);
 	}
@@ -316,9 +345,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		return fun == null ? "" : fun.getVarString();
 	}
 	
-	final public boolean isFunctionInX() {		
-		return false;
-	}
+
 	
     // Michael Borcherds 2009-02-15
 	public boolean isEqual(GeoElement geo) {

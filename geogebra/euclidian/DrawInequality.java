@@ -66,8 +66,11 @@ public class DrawInequality extends Drawable {
 					case Inequality.INEQUALITY_PARAMETRIC_X: 
 						draw = new DrawParametricInequality(ineq, view, geo);
 						break;
-					case Inequality.INEQUALITY_1VAR: 
-						draw = new DrawInequality1Var(ineq, view, geo);
+					case Inequality.INEQUALITY_1VAR_X: 
+						draw = new DrawInequality1Var(ineq, view, geo, false);
+						break;
+					case Inequality.INEQUALITY_1VAR_Y: 
+						draw = new DrawInequality1Var(ineq, view, geo, true);
 						break;	
 					case Inequality.INEQUALITY_CONIC: 
 						draw = new DrawConic(view, ineq.getConicBorder());					
