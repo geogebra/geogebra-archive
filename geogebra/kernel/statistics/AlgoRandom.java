@@ -44,9 +44,15 @@ public class AlgoRandom extends AlgoTwoNumFunction {
 		
 	}
 
-	private static double random(double a, double b) {
-		double min = Math.min(a, b);
-		double max = Math.max(a, b);
+	private double random(double a, double b) {
+		// make sure 4.000000001 is not rounded up to 5
+		a = kernel.checkInteger(a);
+		b = kernel.checkInteger(b);
+		
+		// Math.floor/ceil to make sure
+		// RandomBetween[3.2, 4.7] is between 3.2 and 4.7
+		double min = Math.ceil(Math.min(a, b));
+		double max = Math.floor(Math.max(a, b));
 		return Math.floor(Math.random()*(max - min +1)) + min;
 
 	}
