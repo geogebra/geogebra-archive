@@ -420,6 +420,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			xRW = coords.getX(); yRW = coords.getY();
 			super.movePoint(repaint);
 			
+			view3D.getCursor3D().setCoords(movedGeoPoint.getCoordsInD(3),false);
+			
 		}
 	}
 
@@ -506,7 +508,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 		case EuclidianView3D.PREVIEW_POINT_NONE:
 		default:
-			//Application.debug("super.getNewPoint");
 			return super.getNewPoint(hits, 
 					onPathPossible, inRegionPossible, intersectPossible, 
 					doSingleHighlighting);			
@@ -543,6 +544,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		point3D.setPath(sourcePoint.getPath());
 		point3D.setRegion(sourcePoint.getRegion());
 		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
+		view3D.getCursor3D().setMoveMode(sourcePoint.getMoveMode());
 		
 		//Application.debug("sourcePoint:\n"+sourcePoint.getCoordsInD(3)+"\ncursor:\n"+view3D.getCursor3D().getCoords());
 	}

@@ -2159,6 +2159,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				true, true, true, false, //TODO doSingleHighlighting = false ? 
 				false);
 			
+			/*
+			if (getCursor3DType()!=PREVIEW_POINT_NONE)
+				getCursor3D().setMoveMode(((GeoPointND) getEuclidianController()
+						.getMovedGeoPoint()).getMoveMode());
+						*/
 			
 			updateMatrixForCursor3D();
 		}
@@ -2249,24 +2254,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				matrix.setOrigin(m2.getOrigin());
 
 
-				/*
-					if (((GeoElement)getCursor3D().getPath()).isGeoElement3D())
-						matrix = ((GeoElement3DInterface) getCursor3D().getPath()).getDrawingMatrix();
-					else{
-						GgbVector v = ((GeoElement)getCursor3D().getPath()).getViewDirection();
-						if (v==null)
-							matrix = GgbMatrix4x4.Identity();
-						else{
-							GgbMatrix m = new GgbMatrix(4, 2);
-							m.set(v, 1);
-							m.set(4, 2, 1);
-							matrix = new GgbMatrix4x4(m);
-						}
-
-					}
-				 */
 			}else if (getCursor3D().hasRegion()){
-				//matrix = ((GeoElement3D) getCursor3D().getRegion()).getDrawingMatrix();
 				v = ((GeoElement)getCursor3D().getRegion()).getViewDirection();
 				m = new GgbMatrix(4, 2);
 				m.set(v, 1);
