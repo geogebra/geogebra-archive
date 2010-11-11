@@ -174,7 +174,7 @@ public abstract class GeoQuadricND extends GeoElement {
 	protected void setSphereNDMatrix(GeoPointND M, double r){
 				
 		
-		double[] coords = M.getInhomCoords().get();
+		double[] coords = M.getInhomCoordsInD(3).get();
 		
 		// set midpoint
 		setMidpoint(coords);

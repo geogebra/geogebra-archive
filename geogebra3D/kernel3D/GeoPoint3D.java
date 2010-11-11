@@ -144,10 +144,11 @@ implements GeoPointND, PointProperties, Vector3DValue{
     
 
     ///////////////////////////////////////////////////////////
-    // GEOPOINTINTERFACE (TODO move it to GeoPointND)
+    // GeoPointND interface (TODO move it to abstract method)
     
     public double distance(GeoPointND P){
-    	return distance((GeoPoint3D) P);
+    	//TODO dimension ?
+    	return getInhomCoordsInD(3).distance(P.getInhomCoordsInD(3));
     }
     
     // euclidian distance between this GeoPoint3D and P

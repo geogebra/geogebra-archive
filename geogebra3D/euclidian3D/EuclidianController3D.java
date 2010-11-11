@@ -810,7 +810,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	*/
 	
 	protected void circleOrSphere(NumberValue num){
-		GeoPoint3D[] points = getSelectedPoints3D();	
+		GeoPointND[] points = getSelectedPointsND();	
 
 		getKernel().getManager3D().Sphere(null, points[0], num);
 	}
@@ -1192,7 +1192,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		switch (mode) {
 		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:
-			GeoPoint3D[] points = getSelectedPoints3D();
+			GeoPointND[] points = getSelectedPointsND();
 			getKernel().getManager3D().Sphere(null, points[0], points[1]);
 			break;
 		default:

@@ -21,6 +21,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.AlgoSphereNDTwoPoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 
 
@@ -33,16 +34,16 @@ public class AlgoSphereTwoPoints extends AlgoSphereNDTwoPoints {
 
      public AlgoSphereTwoPoints(
         Construction cons,
-        GeoPoint3D M,
-        GeoPoint3D P) {
+        GeoPointND M,
+        GeoPointND P) {
         super(cons,M,P);
     }
     
     public AlgoSphereTwoPoints(
             Construction cons,
             String label,
-            GeoPoint3D M,
-            GeoPoint3D P) {
+            GeoPointND M,
+            GeoPointND P) {
          super(cons, label,M, P);
     }
     

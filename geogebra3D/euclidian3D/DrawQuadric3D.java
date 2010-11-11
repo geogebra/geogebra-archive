@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.CircularDefinitionException;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoPoint3D;
@@ -235,12 +236,12 @@ implements Previewable {
 
 	public void updatePreview() {
 		
-		GeoPoint3D firstPoint = null;
-		GeoPoint3D secondPoint = null;
+		GeoPointND firstPoint = null;
+		GeoPointND secondPoint = null;
 		if (selectedPoints.size()>=1){
-			firstPoint = (GeoPoint3D) selectedPoints.get(0);
+			firstPoint = (GeoPointND) selectedPoints.get(0);
 			if (selectedPoints.size()==2)
-				secondPoint = (GeoPoint3D) selectedPoints.get(1);
+				secondPoint = (GeoPointND) selectedPoints.get(1);
 			else
 				secondPoint = getView3D().getCursor3D();
 		}

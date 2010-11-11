@@ -21,6 +21,7 @@ package geogebra3D.kernel3D;
 import geogebra.kernel.AlgoSphereNDPointRadius;
 import geogebra.kernel.Construction;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 
 /**
@@ -35,7 +36,7 @@ public class AlgoSpherePointRadius extends AlgoSphereNDPointRadius {
 	public AlgoSpherePointRadius(
             Construction cons,
             String label,
-            GeoPoint3D M,
+            GeoPointND M,
             NumberValue r) {
         	
             super(cons, label, M, r);
@@ -44,7 +45,7 @@ public class AlgoSpherePointRadius extends AlgoSphereNDPointRadius {
     AlgoSpherePointRadius(
             Construction cons,
             String label,
-            GeoPoint3D M,
+            GeoPointND M,
             GeoSegment3D segment, boolean dummy) {
         	
             super(cons, label, M, segment, dummy);

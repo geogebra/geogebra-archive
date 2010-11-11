@@ -289,7 +289,7 @@ public class Manager3D implements Manager3DInterface {
 			String label, 
 			GeoPointND M, 
 			NumberValue r){
-		AlgoSpherePointRadius algo = new AlgoSpherePointRadius(cons, label, (GeoPoint3D) M, r);
+		AlgoSpherePointRadius algo = new AlgoSpherePointRadius(cons, label, M, r);
 		return algo.getSphere();
 	}	
 
@@ -297,7 +297,7 @@ public class Manager3D implements Manager3DInterface {
 	 * Sphere with midpoint M through point P
 	 */
 	final public GeoQuadric3D Sphere(String label, GeoPointND M, GeoPointND P) {
-		AlgoSphereTwoPoints algo = new AlgoSphereTwoPoints(cons, label, (GeoPoint3D) M, (GeoPoint3D) P);
+		AlgoSphereTwoPoints algo = new AlgoSphereTwoPoints(cons, label, M, P);
 		return algo.getSphere();
 	}
 

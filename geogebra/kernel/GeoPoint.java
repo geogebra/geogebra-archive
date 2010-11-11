@@ -596,7 +596,8 @@ GeoPointND, Animatable  {
     }
     
     public double distance(GeoPointND P){
-    	return distance((GeoPoint) P);
+    	//TODO dimension ?
+    	return getInhomCoordsInD(3).distance(P.getInhomCoordsInD(3));
     }
     
 	public Point2D.Double getNearestPoint(GeoPoint p) {
