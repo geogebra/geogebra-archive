@@ -322,6 +322,8 @@ implements ActionListener, View, Printable   {
 			//text = tempGeo.toDefinedValueString();
 			text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 			tempGeo.remove();
+			
+			
 		}	
 		//System.out.println(text);		
 		
@@ -352,7 +354,8 @@ implements ActionListener, View, Printable   {
 		try {			
 			dataListAll = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)dataListAll, text, true, false);
-				
+
+			dataListSelected.clear();
 			for(int i=0; i<dataListAll.size(); ++i)
 				dataListSelected.add(dataListAll.get(i));		
 		} 

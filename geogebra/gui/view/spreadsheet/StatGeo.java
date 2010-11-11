@@ -1,7 +1,5 @@
 package geogebra.gui.view.spreadsheet;
 
-import java.util.ArrayList;
-
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -132,7 +130,7 @@ public class StatGeo   {
 	public GeoList  createBasicStatList(GeoList dataList, int mode){
 
 		GeoList statList = null;
-		String label = dataList.getLabel();	
+		String label = dataList.getLabel();	      //getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);  
 		String text = "";
 		
 		switch(mode){
