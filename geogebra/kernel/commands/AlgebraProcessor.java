@@ -1067,7 +1067,8 @@ public class AlgebraProcessor {
 		else if (eval instanceof MyList) {
 			return processList(n, (MyList) eval);
 		}
-		else if (eval instanceof GeoList) {
+		//we have to process list in case list=matrix1(1), but not when list=list2 
+		else if (eval instanceof GeoList  && myNode.hasOperations()) {
 			return processList(n, ((GeoList) eval).getMyList());
 		}
 		
