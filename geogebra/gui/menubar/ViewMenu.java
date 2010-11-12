@@ -229,6 +229,7 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 		
+		/*
 		showHandwritingAction = new AbstractAction(app.getPlain("ShowHandwriting")) {
 			private static final long serialVersionUID = 1L;
 
@@ -289,7 +290,7 @@ class ViewMenu extends BaseMenu {
 					app.getGuiManager().getHandwriting().repaint();
 				}
 			}
-		};
+		}; */
 
 		showAlgebraInputAction = new AbstractAction(app.getMenu("Show")) {
 			private static final long serialVersionUID = 1L;

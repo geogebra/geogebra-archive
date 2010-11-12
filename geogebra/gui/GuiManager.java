@@ -8,7 +8,6 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.inputbar.AlgebraInput;
-import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.layout.panels.AlgebraDockPanel;
 import geogebra.gui.layout.panels.CasDockPanel;
@@ -74,8 +73,6 @@ import java.util.ResourceBundle;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -84,7 +81,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
@@ -92,8 +88,6 @@ import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
-
-import org.neuroph.contrib.jHRT.gui.HandwritingRecognitionTool;
 
 
 /**
@@ -2759,6 +2753,7 @@ public class GuiManager {
 
 		}
 		
+		/*
 		HandwritingRecognitionTool handwritingRecognition = null;
 		
 		public Component getHandwriting() {
@@ -2779,6 +2774,16 @@ public class GuiManager {
 			handwritingRecognition.repaint();
 			
 		}
+		
+				public boolean showHandwritingRecognition() {
+			if (handwritingRecognition == null) 
+				return false;
+			
+			return handwritingRecognition.isVisible();
+		}
+
+
+		*/
 		
 		PropertiesPanelMini ppm;
 
@@ -2815,13 +2820,6 @@ public class GuiManager {
 				return false;
 			
 			return virtualKeyboard.isVisible();
-		}
-
-		public boolean showHandwritingRecognition() {
-			if (handwritingRecognition == null) 
-				return false;
-			
-			return handwritingRecognition.isVisible();
 		}
 
 		public boolean noMenusOpen() {
