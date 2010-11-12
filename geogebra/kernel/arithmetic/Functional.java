@@ -15,7 +15,20 @@ package geogebra.kernel.arithmetic;
 import geogebra.kernel.GeoFunction;
 
 
+/**
+ * Element which can be considered function (function, line)
+ *
+ */
 public interface Functional extends Evaluatable{
+	/**
+	 * Returns the function
+	 * @return function
+	 */
 	public Function getFunction();
+	/**
+	 * Returns the function's derivative wrapped in GeoElement
+	 * @param order order of the derivative
+	 * @return wrapped derivative
+	 */
 	public GeoFunction getGeoDerivative(int order);
 }

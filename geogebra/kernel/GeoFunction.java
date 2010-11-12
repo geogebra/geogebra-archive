@@ -493,15 +493,30 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			P.x = P.x / P.z;			
 		}
 				
-		if (interval) {
-			//	don't let P move out of interval			
-			if (P.x < intervalMin) 
-				P.x = intervalMin;
-			else if (P.x > intervalMax) 
-				P.x = intervalMax;
-		}
 		
-		P.y = evaluate(P.x); // changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, x�]]
+		if(!isBooleanFunction()){
+			if (interval) {
+				//	don't let P move out of interval			
+				if (P.x < intervalMin) 
+					P.x = intervalMin;
+				else if (P.x > intervalMax) 
+					P.x = intervalMax;
+			}
+			P.y = evaluate(P.x);// changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, x�]] 
+		}
+		else {
+			P.y = 0.0;
+			double bestDist = Double.MAX_VALUE;
+			getIneqs();
+			if(!this.evaluateBoolean(P.x))
+				for(Inequality ineq:ineqs){
+					for(GeoPoint point:ineq.getZeros())
+						if(Math.abs(point.x-P.x)<bestDist){
+							P.x = point.x;
+							bestDist = Math.abs(point.x-P.x);
+						}
+				}
+		}
 		P.z = 1.0;
 		
 		// set path parameter for compatibility with
@@ -517,8 +532,17 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		if (P.getPath() == this)
 			return true;
 		
-		return isDefined &&
-			Math.abs(fun.evaluate(P.inhomX) - P.inhomY) <= eps;
+		if(!isBooleanFunction()){
+			return isDefined &&	Math.abs(fun.evaluate(P.inhomX) - P.inhomY) <= eps;
+		}
+		else{
+			if (P.z == 1.0) {
+				P.x = P.x;			
+			} else {
+				P.x = P.x / P.z;			
+			}
+			return evaluateBoolean(P.x);
+		}
 	}
 
 	public void pathChanged(GeoPointND PI) {

@@ -19,13 +19,11 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
-import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 
 /**
  * stores left and right hand side of an inequality as Expressions
@@ -43,12 +41,12 @@ public class Inequality {
 	public static final int INEQUALITY_IMPLICIT = 3;
 	/** f(x,y) >0, f is quadratic */
 	public static final int INEQUALITY_CONIC = 4;
-	
-	/** inequality with one variable*/
+
+	/** inequality with one variable */
 	public static final int INEQUALITY_1VAR_X = 5;
-	/** inequality with one variable, called y*/
+	/** inequality with one variable, called y */
 	public static final int INEQUALITY_1VAR_Y = 6;
-	
+
 	private int op = ExpressionNode.LESS;
 	private int type;
 	private GeoImplicitPoly impBorder;
@@ -72,16 +70,16 @@ public class Inequality {
 	 * @param rhs
 	 * @param op
 	 * @param fv
+	 * @param function
 	 */
 	public Inequality(Kernel kernel, ExpressionValue lhs, ExpressionValue rhs,
-			int op, FunctionVariable[] fv,FunctionalNVar function) {
+			int op, FunctionVariable[] fv, FunctionalNVar function) {
 
 		this.op = op;
 		this.kernel = kernel;
 		this.fv = fv;
 		this.function = function;
 
-		
 		if (op == ExpressionNode.GREATER || op == ExpressionNode.GREATER_EQUAL) {
 			normal = new ExpressionNode(kernel, lhs, ExpressionNode.MINUS, rhs);
 
@@ -92,19 +90,13 @@ public class Inequality {
 	}
 
 	private void update() {
-		if(fv.length == 1){
-			init1varFunction();
-			if(fv[0].toString().equals("y")){
+		if (fv.length == 1) {
+			init1varFunction(0);
+			if (fv[0].toString().equals("y")) {
 				type = INEQUALITY_1VAR_Y;
-			}
-			else
+			} else
 				type = INEQUALITY_1VAR_X;
-			border = funBorder;
-			if (isStrict()){
-				border.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-			}
-			else
-				border.setLineType(EuclidianView.LINE_TYPE_FULL);
+
 			return;
 		}
 		Double coefY = normal.getCoefficient(fv[1]);
@@ -130,20 +122,16 @@ public class Inequality {
 			m.simplifyLeafs();
 			fun = new Function(m, fv[1]);
 			type = INEQUALITY_PARAMETRIC_X;
-		} else if (coefX != null && Kernel.isZero(coefX) && coefY == null){
-			normal.replace(fv[0], new MyDouble(kernel,0));
-			fun = new Function(normal, fv[1]);
-			funBorder = new GeoFunction(kernel.getConstruction());
-			funBorder.setFunction(fun);
+		} else if (coefX != null && Kernel.isZero(coefX) && coefY == null) {
+			normal.replace(fv[0], new MyDouble(kernel, 0));
+			init1varFunction(1);
 			type = INEQUALITY_1VAR_Y;
-		} else if (coefY != null && Kernel.isZero(coefY) && coefX == null){
-			normal.replace(fv[1], new MyDouble(kernel,0));
-			fun = new Function(normal, fv[0]);
-			funBorder = new GeoFunction(kernel.getConstruction());
-			funBorder.setFunction(fun);
+		} else if (coefY != null && Kernel.isZero(coefY) && coefX == null) {
+			normal.replace(fv[1], new MyDouble(kernel, 0));
+			init1varFunction(0);
 			type = INEQUALITY_1VAR_X;
 		}
-		
+
 		else {
 
 			GeoElement newBorder = kernel.getAlgebraProcessor()
@@ -190,29 +178,39 @@ public class Inequality {
 			funBorder.setFunction(fun);
 			if (type == INEQUALITY_PARAMETRIC_X) {
 				funBorder.swapEval();
-			}			
+			}
 		}
-		if(funBorder!= null) 
+		if (funBorder != null)
 			border = funBorder;
-		if (isStrict()){
+		if (isStrict()) {
 			border.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
-		}
-		else
+		} else
 			border.setLineType(EuclidianView.LINE_TYPE_FULL);
 	}
 
-	private void init1varFunction() {
+	private void init1varFunction(int varIndex) {
 		Construction cons = kernel.getConstruction();
 		boolean supress = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
-		AlgoDependentFunction df = new AlgoDependentFunction(cons,null, new Function(normal, fv[0]));
-		funBorder = df.getFunction();		
-		AlgoElement thisPar = ((GeoElement) function).getParentAlgorithm();
-		if(thisPar != null)
-			thisPar.setUpdateAfterAlgo(df);//TODO: make this work
-		zeros = kernel.Root(null, funBorder);		
+		if (normal.containsObjectType(GeoElement.class)) {
+			AlgoDependentFunction df = new AlgoDependentFunction(cons, null,
+					new Function(normal, fv[varIndex]));
+			funBorder = df.getFunction();
+			AlgoElement thisPar = ((GeoElement) function).getParentAlgorithm();
+			if (thisPar != null)
+				thisPar.setUpdateAfterAlgo(df);// TODO: make this work
+		} else {
+			funBorder = new GeoFunction(cons);
+			funBorder.setFunction(new Function(normal, fv[varIndex]));
+		}
+		zeros = kernel.Root(null, funBorder);
 		cons.setSuppressLabelCreation(supress);
-		
+		border = funBorder;
+		if (isStrict()) {
+			border.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
+		} else
+			border.setLineType(EuclidianView.LINE_TYPE_FULL);
+
 	}
 
 	/**
@@ -224,12 +222,13 @@ public class Inequality {
 		if (type == INEQUALITY_PARAMETRIC_Y) {
 			coefVal = normal.getCoefficient(fv[1]);
 			otherVal = normal.getCoefficient(fv[0]);
-			
+
 		} else if (type == INEQUALITY_PARAMETRIC_X) {
 			coefVal = normal.getCoefficient(fv[0]);
-			otherVal = normal.getCoefficient(fv[1]);			
-		} 
-		if (coefVal == null || coefVal == 0 || (otherVal != null && Math.abs(otherVal) > Math.abs(coefVal)))
+			otherVal = normal.getCoefficient(fv[1]);
+		}
+		if (coefVal == null || coefVal == 0
+				|| (otherVal != null && Math.abs(otherVal) > Math.abs(coefVal)))
 			update();
 		else {
 			isAboveBorder = coefVal > 0;
@@ -303,10 +302,8 @@ public class Inequality {
 	/**
 	 * @return zero points for 1var ineqs
 	 */
-	public GeoPoint[] getZeros() {		
+	public GeoPoint[] getZeros() {
 		return zeros;
 	}
-
-	
 
 } // end of class Equation

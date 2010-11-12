@@ -36,6 +36,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Creates new Function from expression where x is
      * the variable. 
      * Note: call {@link #initFunction()} after this constructor.
+	 * @param expression 
      */ 
     public Function(ExpressionNode expression) {
     	super(expression);
@@ -45,6 +46,8 @@ implements ExpressionValue, RealRootFunction, Functional {
     /**
      * Creates new Function from expression where the function
      * variable in expression is already known.
+     * @param exp 
+     * @param fVar 
      */ 
     public Function(ExpressionNode exp, FunctionVariable fVar) {
     	super(exp, new FunctionVariable [] {fVar});
@@ -53,13 +56,19 @@ implements ExpressionValue, RealRootFunction, Functional {
     /**
      * Creates a Function that has no expression yet. Use setExpression() to
      * do this later.    
+     * @param kernel 
      */ 
     public Function(Kernel kernel) {
        super(kernel);
        fVars = new FunctionVariable[1];
     }
     
-    // copy constructor
+    
+    /**
+     * Copy constructor
+     * @param f source function
+     * @param kernel
+     */
     public Function(Function f, Kernel kernel) {   
         super(f.expression.getCopy(kernel));
         fVars = f.fVars; // no deep copy of function variable            
@@ -74,8 +83,10 @@ implements ExpressionValue, RealRootFunction, Functional {
     }   
     
     /**
-     * Use this methode only if you really know
+     * Use this method only if you really know
      * what you are doing.
+     * @param exp expression
+     * @param var variable
      */
     public void setExpression(ExpressionNode exp, FunctionVariable var) {
         super.setExpression(exp, new FunctionVariable[] {var});
@@ -85,6 +96,9 @@ implements ExpressionValue, RealRootFunction, Functional {
         return this;
     }
     
+    /**
+     * @return variable
+     */
     public FunctionVariable getFunctionVariable() {
         return fVars[0];
     }
@@ -135,14 +149,16 @@ implements ExpressionValue, RealRootFunction, Functional {
     }
     
     /**
-     * translate this function by vector (vx, vy)
-     */
+	 * Shifts the function by vx to right and by vy up
+	 * @param vx horizontal shift
+	 * @param vy vertical shift
+	 */
     final public void translate(double vx, double vy) {                  
         boolean isLeaf = expression.isLeaf();
         ExpressionValue left = expression.getLeft();
 
         // translate x
-        if (!kernel.isZero(vx)) {
+        if (!Kernel.isZero(vx)) {
             if (isLeaf && left == fVars[0]) { // special case: f(x) = x
                 expression = shiftXnode(vx);            
              } else {
@@ -153,7 +169,7 @@ implements ExpressionValue, RealRootFunction, Functional {
         }
          
         // translate y
-        if (!kernel.isZero(vy)) {                       
+        if (!Kernel.isZero(vy)) {                       
             if (isLeaf && left != fVars[0]) { // special case f(x) = constant               
                 MyDouble c = ((NumberValue) expression.getLeft()).getNumber();
                 c.set(c.getDouble() + vy);
@@ -187,7 +203,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                 switch (en.getOperation()) {
                     case ExpressionNode.PLUS :
                         temp = num.getDouble() - vx;                    
-                        if (kernel.isZero(temp)) {                      
+                        if (Kernel.isZero(temp)) {                      
                             expression = expression.replace(en, fVars[0]);                          
                         } else if (temp < 0) {
                             en.setOperation(ExpressionNode.MINUS);
@@ -199,7 +215,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 
                     case ExpressionNode.MINUS :
                         temp = num.getDouble() + vx;
-                        if (kernel.isZero(temp)) {
+                        if (Kernel.isZero(temp)) {
                             expression = expression.replace(en, fVars[0]);                      
                         } else if (temp < 0) {
                             en.setOperation(ExpressionNode.PLUS);
@@ -247,7 +263,10 @@ implements ExpressionValue, RealRootFunction, Functional {
         }
         return node;
     }
-    
+    /**
+     * Shifts the function by vy up
+     * @param vy vertical translation
+     */
     final public void translateY(double vy) {                                  
         try { // is there a constant number to the right
             MyDouble num = (MyDouble) expression.getRight();
@@ -259,7 +278,7 @@ implements ExpressionValue, RealRootFunction, Functional {
             switch (expression.getOperation()) {
                 case ExpressionNode.PLUS :
                     temp = num.getDouble() + vy;
-                    if (kernel.isZero(temp)) {
+                    if (Kernel.isZero(temp)) {
                         expression = expression.getLeftTree();
                     } else if (temp < 0) {
                         expression.setOperation(ExpressionNode.MINUS);
@@ -271,7 +290,7 @@ implements ExpressionValue, RealRootFunction, Functional {
 
                 case ExpressionNode.MINUS :
                     temp = num.getDouble() - vy;
-                    if (kernel.isZero(temp)) {
+                    if (Kernel.isZero(temp)) {
                         expression = expression.getLeftTree();
                     } else if (temp < 0) {
                         expression.setOperation(ExpressionNode.PLUS);
@@ -314,8 +333,8 @@ implements ExpressionValue, RealRootFunction, Functional {
     private ExpressionNode factorParentExp;
     
     //  factors of polynomial function   
-    private LinkedList symbolicPolyFactorList;
-    private LinkedList numericPolyFactorList;
+    private LinkedList<PolyFunction> symbolicPolyFactorList;
+    private LinkedList<PolyFunction> numericPolyFactorList;
     private boolean symbolicPolyFactorListDefined;
     
     /**
@@ -323,12 +342,13 @@ implements ExpressionValue, RealRootFunction, Functional {
      * relevant for root finding. A list of PolyFunction (resp. SymbolicPolyFunction) objects
      * is returned. Note: may return null if this function is no polynomial.
      * 
-     * @param rootFindingSimplification: for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
+     * @param rootFindingSimplification for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
+     * @return all non-constant polynomial factors of this function
      * 
      */
-    final public LinkedList getPolynomialFactors(boolean rootFindingSimplification) { 
+    final public LinkedList<PolyFunction> getPolynomialFactors(boolean rootFindingSimplification) { 
     	// try to get symbolic polynomial factors
-    	LinkedList result = getSymbolicPolynomialFactors(rootFindingSimplification);     	          	    
+    	LinkedList<PolyFunction> result = getSymbolicPolynomialFactors(rootFindingSimplification);     	          	    
     	
     	// if this didn't work try to get numeric polynomial factors
     	if (result == null) {
@@ -342,10 +362,12 @@ implements ExpressionValue, RealRootFunction, Functional {
      * of this function
      * relevant for root finding. A list of PolyFunction (resp. SymbolicPolyFunction) objects
      * is returned. Note: may return null if the n-th derivative is no polynomial.
+     * @param n 
      * 
-     * @param rootFindingSimplification: for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x  
+     * @param rootFindingSimplification for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x  
+     * @return all non-constant polynomial factors of the n-th derivative
      */
-    final public LinkedList getSymbolicPolynomialDerivativeFactors(int n, boolean rootFindingSimplification) { 
+    final public LinkedList<PolyFunction> getSymbolicPolynomialDerivativeFactors(int n, boolean rootFindingSimplification) { 
     	Function deriv = getDerivative(n);
     	if (deriv == null)
 			return null;
@@ -358,6 +380,8 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Tries to expand this function to a polynomial with numeric coefficients
      * and returns its n-th derivative as a PolyFunction object.
      * Note: may return null if the n-th derivative is no polynomial.
+     * @param n order
+     * @return derivative
      * 
      */
     final public PolyFunction getNumericPolynomialDerivative(int n) {      	
@@ -378,15 +402,16 @@ implements ExpressionValue, RealRootFunction, Functional {
      * relevant for root finding. A list of PolyFunction (resp. SymbolicPolyFunction) objects
      * is returned. Note: may return null if this function is no polynomial.
      * 
-     * @param rootFindingSimplification: for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
+     * @param rootFindingSimplification for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
+     * @return all symbolic non-constant polynomial factors of this function
      */
-    public LinkedList getSymbolicPolynomialFactors(boolean rootFindingSimplification) {       	
+    public LinkedList<PolyFunction> getSymbolicPolynomialFactors(boolean rootFindingSimplification) {       	
         if (factorParentExp != expression) { 
             // new expression
             factorParentExp = expression;
             
             if (symbolicPolyFactorList == null)
-            	symbolicPolyFactorList = new LinkedList();
+            	symbolicPolyFactorList = new LinkedList<PolyFunction>();
             else
             	symbolicPolyFactorList.clear();
             symbolicPolyFactorListDefined = 
@@ -407,11 +432,11 @@ implements ExpressionValue, RealRootFunction, Functional {
      * 
      * Note: we use the values of variables here (different to getSymbolicPolynomialFactors()).
      * 
-     * @param rootFindingSimplification: for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
+     * @param rootFindingSimplification for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
      */
-    private LinkedList getNumericPolynomialFactors(boolean rootFindingSimplification) {  
+    private LinkedList<PolyFunction> getNumericPolynomialFactors(boolean rootFindingSimplification) {  
     	if (numericPolyFactorList == null)
-    		numericPolyFactorList = new LinkedList();
+    		numericPolyFactorList = new LinkedList<PolyFunction>();
         else
         	numericPolyFactorList.clear();
         
@@ -427,10 +452,10 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Adds all polynomial factors in ev to the given list (ev is
      * an ExpressionNode in the beginning).
      * @return false when a non-polynomial was found (e.g. sin(x))
-     * @param symbolic: true for symbolic coefficients, false for numeric coefficients
-     * @param rootFindingSimplification: for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
+     * @param symbolic true for symbolic coefficients, false for numeric coefficients
+     * @param rootFindingSimplification for root finding factors may be simplified, e.g. sqrt(x) may be simplified to x
      */
-    private boolean addPolynomialFactors(ExpressionValue ev, List l, 
+    private boolean addPolynomialFactors(ExpressionValue ev, List<PolyFunction> l, 
     									 boolean symbolic, boolean rootFindingSimplification) {
         if (ev.isExpressionNode()) {
             ExpressionNode node = (ExpressionNode) ev;
@@ -461,7 +486,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                     		return false;
                     	}                    	   
                  		if (node.operation == ExpressionNode.POWER) {                    			
-                			if (kernel.isZero(rightVal))
+                			if (Kernel.isZero(rightVal))
                 				// left^0 = 1
                 				return addPolynomialFactors(new MyDouble(kernel, 1), l, symbolic, rootFindingSimplification);
                 			else if (rightVal > 0) 
@@ -469,7 +494,7 @@ implements ExpressionValue, RealRootFunction, Functional {
                 				return addPolynomialFactors(node.getLeft(), l, symbolic, rootFindingSimplification);       
                 		}                				
             			else { // division            				               				                			    
-                    		if (kernel.isZero(rightVal))
+                    		if (Kernel.isZero(rightVal))
 								// left / 0 = undefined	 
                					return false;
 							else
@@ -507,7 +532,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Expands the given expression and builds a PolyFunction (or SymbolicPolyFunction) object
      * with the coefficients of the resulting polynomial.    
      * @return null when node is not a polynomial
-     * @param symbolic: true for symbolic coefficients (SymbolicPolyFunction), false for numeric coefficients (PolyFunction)
+     * @param symbolic true for symbolic coefficients (SymbolicPolyFunction), false for numeric coefficients (PolyFunction)
      */
     private PolyFunction expandToPolyFunction(ExpressionValue ev, boolean symbolic) {
         ExpressionNode node;
@@ -599,6 +624,8 @@ implements ExpressionValue, RealRootFunction, Functional {
  
     /**
      * Returns n-th derivative of this function
+     * @param n order
+     * @return derivative
      */
     final public Function getDerivative(int n) {
     	StringBuilder sb = new StringBuilder();
@@ -618,6 +645,9 @@ implements ExpressionValue, RealRootFunction, Functional {
     /**
      * Creates the difference expression (a - b) and stores the result in
      * Function c.
+     * @param a 
+     * @param b 
+     * @param c 
      */
     final public static void difference(Function a, Function b, 
                     Function c) {
@@ -638,6 +668,9 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Creates the difference expression (a - line) and stores the result in
      * Function c. This is needed for the intersection of function a and line ax + by + c = 0.
      * b != 0 is assumed.
+     * @param f 
+     * @param line 
+     * @param c 
      */
     final public static void difference(Function f, GeoLine line, Function c) {     
         // build expression for line: ax + by + c = 0 (with b != 0) 
@@ -694,6 +727,7 @@ implements ExpressionValue, RealRootFunction, Functional {
      * Tries to build a RealRootDerivFunction out of this
      * function and its derivative. This can be used for root finding.
      * Note: changes to the function will not affect the returned RealRootDerivFunction.
+     * @return real root function
      */
     final public RealRootDerivFunction getRealRootDerivFunction() {
         Function deriv = getDerivative(1);
@@ -731,6 +765,10 @@ implements ExpressionValue, RealRootFunction, Functional {
 		}
     }
 	
+	/**
+	 * Decides whether function includes division by expression containing function variable
+	 * @return true if function includes division by variable
+	 */
 	public final boolean includesDivisionByVariable() {
 		if (expression == null)
 			return false;
