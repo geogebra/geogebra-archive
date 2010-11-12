@@ -70,7 +70,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
 	private NumberComboBox ncbGridTickX, ncbGridTickY; 
-	private JTextField tfMinX, tfMaxX, tfbMinY, tfMaxY;	
+	private JTextField tfMinX, tfMaxX, tfMinY, tfMaxY;	
 	private AxisPanel xAxisPanel, yAxisPanel;
 	private JLabel gridLabel1, gridLabel2, gridLabel3;
 	
@@ -169,16 +169,19 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		// create sub panels
 		
 		//-------------------------------------
-		// window dimensions panel     
-        JPanel xDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
-        tfMinX = new MyTextField(app.getGuiManager(),8);
-		tfMaxX = new MyTextField(app.getGuiManager(),8);
-		tfMinX.addActionListener(this);
-		tfMaxX.addActionListener(this);	
+		// window dimensions panel 
 		
 		dimLabel = new JLabel[4]; // "Xmin", "Xmax" etc.
 		for(int i=0;i<4;i++)
 			dimLabel[i] = new JLabel("");
+		
+        JPanel xDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
+        tfMinX = new MyTextField(app.getGuiManager(),8);
+		tfMaxX = new MyTextField(app.getGuiManager(),8);
+		tfMinX.addActionListener(this);
+		tfMaxX.addActionListener(this);
+		tfMinX.addFocusListener(this);
+		tfMaxX.addFocusListener(this);
 		
         xDimPanel.add(dimLabel[0]);
         xDimPanel.add(tfMinX);
@@ -186,12 +189,15 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         xDimPanel.add(tfMaxX);
               
         JPanel yDimPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,5));
-		tfbMinY = new MyTextField(app.getGuiManager(),8);
+		tfMinY = new MyTextField(app.getGuiManager(),8);
 		tfMaxY = new MyTextField(app.getGuiManager(),8);		
-		tfbMinY.addActionListener(this);
-		tfMaxY.addActionListener(this);	  
+		tfMinY.addActionListener(this);
+		tfMaxY.addActionListener(this);
+		tfMinY.addFocusListener(this);
+		tfMaxY.addFocusListener(this);
+		
         yDimPanel.add(dimLabel[2]);
-        yDimPanel.add(tfbMinY);
+        yDimPanel.add(tfMinY);
         yDimPanel.add(dimLabel[3]);
         yDimPanel.add(tfMaxY);
    
@@ -443,15 +449,15 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
         
         tfMinX.removeActionListener(this);
 	 	tfMaxX.removeActionListener(this);
-        tfbMinY.removeActionListener(this);
+        tfMinY.removeActionListener(this);
 	 	tfMaxY.removeActionListener(this);		 		
 	 		tfMinX.setText(kernel.format(view.getXmin()));
 			tfMaxX.setText(kernel.format(view.getXmax()));
-	 		tfbMinY.setText(kernel.format(view.getYmin()));
+	 		tfMinY.setText(kernel.format(view.getYmin()));
 			tfMaxY.setText(kernel.format(view.getYmax()));
 	 	tfMinX.addActionListener(this);
 	 	tfMaxX.addActionListener(this);
-	 	tfbMinY.addActionListener(this);
+	 	tfMinY.addActionListener(this);
 	 	tfMaxY.addActionListener(this);
         
         
@@ -660,8 +666,8 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			}
 		}
 
-		else if (source == tfbMinY) {
-			double min = kernel.getAlgebraProcessor().evaluateToDouble(tfbMinY.getText());
+		else if (source == tfMinY) {
+			double min = kernel.getAlgebraProcessor().evaluateToDouble(tfMinY.getText());
 			double max =  view.getYmax();
 			if (min  + Kernel.MIN_PRECISION < max) {							
 				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
@@ -730,7 +736,14 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	}
 	
 	
-	
+	public void focusGained(FocusEvent arg0) {
+	}
+
+	public void focusLost(FocusEvent e) {
+		// handle focus changes in text fields
+		doActionPerformed(e.getSource());
+		
+	}
 	
 	
 	
@@ -1022,16 +1035,9 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 
 		
 		
-	}
+	} // end AxisPanel class
+	
 
-	public void focusGained(FocusEvent arg0) {
-	}
-
-	public void focusLost(FocusEvent e) {
-		
-		doActionPerformed(e.getSource());
-		
-	}
 
 
 }
