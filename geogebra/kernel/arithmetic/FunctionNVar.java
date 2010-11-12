@@ -15,7 +15,6 @@ package geogebra.kernel.arithmetic;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.ArrayList;
@@ -32,7 +31,9 @@ import java.util.List;
 public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		FunctionalNVar {
 
+	/** function expression*/
 	protected ExpressionNode expression;
+	/** function variables */
 	protected FunctionVariable[] fVars;
 	private List<Inequality> ineqs;
 
@@ -42,6 +43,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	/** if the function is of type f(x) = c */
 	protected boolean isConstantFunction = false;
 
+	/** kernel */
 	protected Kernel kernel;
 
 	private StringBuilder sb = new StringBuilder(80);
@@ -49,6 +51,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	/**
 	 * Creates new Function from expression. Note: call initFunction() after
 	 * this constructor.
+	 * @param expression 
 	 */
 	public FunctionNVar(ExpressionNode expression) {
 		kernel = expression.getKernel();
@@ -59,6 +62,8 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	/**
 	 * Creates new Function from expression where the function variables in
 	 * expression is already known.
+	 * @param exp 
+	 * @param fVars 
 	 */
 	public FunctionNVar(ExpressionNode exp, FunctionVariable[] fVars) {
 		kernel = exp.getKernel();
@@ -70,6 +75,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	/**
 	 * Creates a Function that has no expression yet. Use setExpression() to do
 	 * this later.
+	 * @param kernel kernel
 	 */
 	public FunctionNVar(Kernel kernel) {
 		this.kernel = kernel;
@@ -90,6 +96,11 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		this.kernel = kernel;
 	}
 
+	/**
+	 * Determine whether var is function variable of this function
+	 * @param var
+	 * @return true if var is function variable of this function
+	 */
 	public boolean isFunctionVariable(String var) {
 		if (fVars == null)
 			return false;
@@ -101,6 +112,9 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		}
 	}
 
+	/**
+	 * @return kernel
+	 */
 	public Kernel getKernel() {
 		return kernel;
 	}
@@ -255,6 +269,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	/**
 	 * Returns whether this function always evaluates to the same numerical
 	 * value, i.e. it is of the form f(x1,...,xn) = c.
+	 * @return true iff constant
 	 */
 	final public boolean isConstantFunction() {
 		if (isConstantFunction)
@@ -539,6 +554,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 * initializes inequalities
 	 * @param fe
 	 * @param inverseFill
+	 * @param functional function to which ineqs are associated
 	 */
 	public void initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {
 		if (fe == getExpression())
@@ -569,6 +585,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 * updates list of inequalities
 	 */
 	public void updateIneqs() {
+		if(ineqs == null) return;
 		for (Inequality ineq : getIneqs())
 			ineq.updateCoef();
 	}
