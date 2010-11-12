@@ -9,7 +9,7 @@ import geogebra.main.Application;
 /**
  * Dock panel for the secondary euclidian view.
  */
-public class Euclidian2DockPanel extends DockPanel {
+public class Euclidian2DockPanel extends EuclidianDockPanelAbstract {
 	private static final long serialVersionUID = 1L;
 	private Application app;
 	

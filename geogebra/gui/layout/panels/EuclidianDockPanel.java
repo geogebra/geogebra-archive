@@ -1,5 +1,7 @@
 package geogebra.gui.layout.panels;
 
+import java.awt.event.MouseEvent;
+
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
@@ -10,7 +12,7 @@ import geogebra.main.Application;
 /**
  * Dock panel for the primary euclidian view.
  */
-public class EuclidianDockPanel extends DockPanel {
+public class EuclidianDockPanel extends EuclidianDockPanelAbstract {
 	private static final long serialVersionUID = 1L;
 	private Application app;
 	
@@ -45,5 +47,6 @@ public class EuclidianDockPanel extends DockPanel {
 		// used for the limited focus subsystem, see DockPanel::updatePanel() 
 		return app.getEuclidianView();
 	}
+	
 
 }

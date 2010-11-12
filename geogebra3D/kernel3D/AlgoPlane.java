@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoPointND;
 
 /**
  * @author ggb3D
@@ -17,7 +18,7 @@ public class AlgoPlane extends AlgoCoordSys2D {
 	 * @param B second point
 	 * @param C third point
 	 */
-	public AlgoPlane(Construction c, String label, GeoPoint3D A, GeoPoint3D B, GeoPoint3D C) {
+	public AlgoPlane(Construction c, String label, GeoPointND A, GeoPointND B, GeoPointND C) {
 		this(c,A,B,C);
 		((GeoElement) cs).setLabel(label);
 	}
@@ -28,8 +29,8 @@ public class AlgoPlane extends AlgoCoordSys2D {
 	 * @param B second point
 	 * @param C third point
 	 */
-	public AlgoPlane(Construction c, GeoPoint3D A, GeoPoint3D B, GeoPoint3D C) {		
-		super(c,new GeoPoint3D[] {A, B, C},true,true);
+	public AlgoPlane(Construction c, GeoPointND A, GeoPointND B, GeoPointND C) {		
+		super(c,new GeoPointND[] {A, B, C},true,true);
 	}
 	
 	

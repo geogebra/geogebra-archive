@@ -824,7 +824,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	protected void orthogonal() {
 		// fetch selected point and line
-		GeoPoint3D[] points = getSelectedPoints3D();
+		GeoPointND[] points = getSelectedPointsND();
 		GeoCoordSys1D[] lines = getSelectedLines3D();
 		// create new line
 		getKernel().getManager3D().OrthogonalPlane3D(null, points[0], lines[0]);
@@ -851,7 +851,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (selPoints() == 1) {
 			if (selLines() == 1) {
 				// fetch selected point and line
-				GeoPoint3D[] points = getSelectedPoints3D();
+				GeoPointND[] points = getSelectedPointsND();
 				GeoCoordSys1D[] lines = getSelectedLines3D();
 				// create new plane
 				getKernel().getManager3D().Plane3D(null, points[0], lines[0]);
@@ -1179,7 +1179,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		switch (mode) {
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
-			GeoPoint3D[] points = getSelectedPoints3D();
+			GeoPointND[] points = getSelectedPointsND();
 			getKernel().getManager3D().Plane3D(null, points[0], points[1], points[2]);
 			return true;
 		default:

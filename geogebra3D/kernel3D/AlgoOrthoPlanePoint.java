@@ -19,6 +19,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 
@@ -31,19 +32,19 @@ import geogebra.main.Application;
 public class AlgoOrthoPlanePoint extends AlgoElement3D {
 
  
-	private GeoPoint3D point; // input
+	private GeoPointND point; // input
     private GeoCoordSys cs; // input
     private GeoPlane3D plane; // output       
 
 
-    public AlgoOrthoPlanePoint(Construction cons, String label, GeoPoint3D point, GeoCoordSys cs) {
+    public AlgoOrthoPlanePoint(Construction cons, String label, GeoPointND point, GeoCoordSys cs) {
         super(cons);
         this.point = point;
         this.cs = cs;
         plane = new GeoPlane3D(cons);
         //g.setStartPoint(P);
         
-        setInputOutput(new GeoElement[] {point, (GeoElement) cs}, new GeoElement[] {plane});
+        setInputOutput(new GeoElement[] {(GeoElement) point, (GeoElement) cs}, new GeoElement[] {plane});
 
         // compute plane 
         compute();
@@ -80,12 +81,12 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
 
 		//Application.debug(m.toString());
 
-		coordsys.addPoint(point.getCoords());
+		coordsys.addPoint(point.getCoordsInD(3));
 		//TODO addVectorToCoordSys
-		coordsys.addPoint((GgbVector) point.getCoords().add(m.getVy()));
-		coordsys.addPoint((GgbVector) point.getCoords().add(m.getVz()));
+		coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(m.getVy()));
+		coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(m.getVz()));
 		//cs direction for normal vector
-		coordsys.addPoint((GgbVector) point.getCoords().add(m.getVx()));
+		coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(m.getVx()));
 		
 		coordsys.makeOrthoMatrix(true);
 		

@@ -14,6 +14,7 @@ import geogebra.gui.layout.panels.AlgebraDockPanel;
 import geogebra.gui.layout.panels.CasDockPanel;
 import geogebra.gui.layout.panels.Euclidian2DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanel;
+import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.layout.panels.SpreadsheetDockPanel;
 import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.toolbar.Toolbar;
@@ -410,17 +411,14 @@ public class GuiManager {
 	 * view or the first euclidian view at the moment.
 	 */
 	public EuclidianView getActiveEuclidianView() {
-		DockPanel focusedPanel = layout.getDockManager().getFocusedPanel();
-		
-		if(focusedPanel != null) {
-			if(focusedPanel.getComponent() instanceof EuclidianView) {
-				return (EuclidianView)focusedPanel.getComponent();
-			} else {
-				return app.getEuclidianView();
-			}
-		} else {
+
+		EuclidianDockPanelAbstract focusedEuclidianPanel = layout.getDockManager().getFocusedEuclidianPanel();
+
+		if(focusedEuclidianPanel != null) 
+			return (EuclidianView)focusedEuclidianPanel.getComponent();			
+		else 
 			return app.getEuclidianView();
-		}
+		
 	}
 	
 	/**

@@ -583,6 +583,10 @@ public class Application implements KeyEventDispatcher {
 		return fontManager.getBoldFont();
 	}
 	
+	final public Font getItalicFont() {
+		return fontManager.getItalicFont();
+	}
+	
 	final public Font getPlainFont() {
 		return fontManager.getPlainFont();
 	}

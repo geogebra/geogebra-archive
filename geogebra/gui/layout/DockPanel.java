@@ -57,8 +57,8 @@ import javax.swing.plaf.basic.BasicButtonUI;
 public abstract class DockPanel extends JPanel implements ActionListener, WindowListener, MouseListener {
 	private static final long serialVersionUID = 1L;
 	
-	private DockManager dockManager;
-	private Application app;
+	protected DockManager dockManager;
+	protected Application app;
 	
 	/**
 	 * The ID of this dock panel.
@@ -78,7 +78,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * If this panel has focus.
 	 */
-	private boolean hasFocus = false;
+	protected boolean hasFocus = false;
 	
 	/**
 	 * The dimensions of the external window of this panel.
@@ -120,7 +120,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * The label with the view title.
 	 */
-	private JLabel titleLabel;
+	protected JLabel titleLabel;
 	
 	/**
 	 * The panel which holds all buttons.
@@ -950,13 +950,20 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		 * between EVs. 
 		 */
 		if(dockManager.hasFullFocusSystem()) {
-			if(hasFocus) {
-				titleLabel.setFont(app.getBoldFont());
-			} else {
-				titleLabel.setFont(app.getPlainFont());
-			}
+			setTitleLabelFocus();
 		}
 	}
+	
+	
+	/**
+	 * sets the title label when this has not the focus
+	 */	
+	protected void setTitleLabelFocus(){
+		if(hasFocus) 
+			titleLabel.setFont(app.getBoldFont());
+		else
+			titleLabel.setFont(app.getPlainFont());
+	}	
 	
 	/**
 	 * @return An unique ID for this DockPanel.

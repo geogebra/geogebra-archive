@@ -16,7 +16,7 @@ import javax.swing.UIManager;
  */
 public class FontManager {
 	
-	private Font boldFont, plainFont, smallFont, serifFont, serifFontBold, javaSans, javaSerif;
+	private Font boldFont, italicFont, plainFont, smallFont, serifFont, serifFontBold, javaSans, javaSerif;
 	private int fontSize;
 	private String sansName, serifName;
 	
@@ -163,6 +163,7 @@ public class FontManager {
 		// create similar font with the specified size
 		plainFont = getFont(sans, Font.PLAIN, size);
 		boldFont = getFont(sans, Font.BOLD, size);
+		italicFont = getFont(sans, Font.ITALIC, size);
 		smallFont = getFont(sans, Font.PLAIN, size - 2);
 	
 		// serif
@@ -306,6 +307,10 @@ public class FontManager {
 	
 	final public Font getBoldFont() {
 		return boldFont;
+	}
+	
+	final public Font getItalicFont() {
+		return italicFont;
 	}
 
 	final public Font getPlainFont() {

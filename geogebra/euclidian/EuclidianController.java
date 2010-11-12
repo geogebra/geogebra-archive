@@ -14,6 +14,7 @@ package geogebra.euclidian;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.gui.layout.DockPanel;
+import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
@@ -778,7 +779,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	public void mousePressed(MouseEvent e) {
 		// determine parent panel to change focus
-		DockPanel panel = (DockPanel)SwingUtilities.getAncestorOfClass(DockPanel.class, (Component)e.getSource());
+		EuclidianDockPanelAbstract panel = (EuclidianDockPanelAbstract)SwingUtilities.getAncestorOfClass(EuclidianDockPanelAbstract.class, (Component)e.getSource());
 		
 		if(panel != null) {
 			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(panel);

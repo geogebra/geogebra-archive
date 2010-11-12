@@ -145,6 +145,8 @@ public interface GeoPointND {
 	 * @return the move mode (along xOy or along Oz)
 	 */
 	public boolean getMoveMode();
+
+	public boolean isDefined();
 	
 	//private boolean movePointMode = MOVE_POINT_MODE_XY;
 

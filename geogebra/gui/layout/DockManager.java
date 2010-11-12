@@ -1,6 +1,7 @@
 package geogebra.gui.layout;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.toolbar.ToolbarContainer;
 import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
@@ -47,6 +48,11 @@ public class DockManager implements AWTEventListener {
 	 * The dock panel which has the focus at the moment.
 	 */
 	private DockPanel focusedDockPanel;
+	
+	/**
+	 * The euclidian dock panel which had the focus the last.
+	 */
+	private EuclidianDockPanelAbstract focusedEuclidianDockPanel;
 	
 	/**
 	 * A list with all registered dock panels.
@@ -707,6 +713,26 @@ public class DockManager implements AWTEventListener {
 		if(focusedDockPanel != null) {
 			focusedDockPanel.setFocus(true);
 		}
+		
+		
+		// euclidian focus
+		
+		if (!(panel instanceof EuclidianDockPanelAbstract))
+			return;
+		
+		if(focusedEuclidianDockPanel != panel) {
+			// remove focus from previously focused dock panel
+			if(focusedEuclidianDockPanel != null) {
+				focusedEuclidianDockPanel.setEuclidianFocus(false);
+			}
+
+			focusedEuclidianDockPanel = (EuclidianDockPanelAbstract) panel;
+
+			if(focusedEuclidianDockPanel != null) {
+				focusedEuclidianDockPanel.setEuclidianFocus(true);
+			}
+		}
+		
 	}
 	
 	/**
@@ -715,6 +741,13 @@ public class DockManager implements AWTEventListener {
 	public DockPanel getFocusedPanel() {
 		return focusedDockPanel;
 	}
+	
+	/**
+	 * @return The dock euclidian panel which had focus the last.
+	 */
+	public EuclidianDockPanelAbstract getFocusedEuclidianPanel() {
+		return focusedEuclidianDockPanel;
+	}	
 	
 	/**
 	 * Moves the focus between visible panels. Just the register order is taken

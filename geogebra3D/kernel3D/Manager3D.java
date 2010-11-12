@@ -273,7 +273,7 @@ public class Manager3D implements Manager3DInterface {
 			GeoPointND point,
 			GeoElement cs) {
 
-		return new AlgoOrthoPlanePoint(cons, label, (GeoPoint3D) point, (GeoCoordSys) cs).getPlane();
+		return new AlgoOrthoPlanePoint(cons, label, point, (GeoCoordSys) cs).getPlane();
 	}
 
 
@@ -360,7 +360,7 @@ public class Manager3D implements Manager3DInterface {
 			GeoPointND A,
 			GeoPointND B,
 			GeoPointND C) {
-		AlgoPlane algo = new AlgoPlane(cons, label, (GeoPoint3D) A, (GeoPoint3D) B, (GeoPoint3D) C);
+		AlgoPlane algo = new AlgoPlane(cons, label, A, B, C);
 		GeoPlane3D plane = (GeoPlane3D) algo.getCoordSys();
 		return plane;
 	}
