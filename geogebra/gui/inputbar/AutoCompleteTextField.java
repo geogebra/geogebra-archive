@@ -300,11 +300,12 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	/**
 	 * Automatically closes parentheses (, {, [ when next sign
 	 * is a space or end of input text.
+	 * and ignores ] }, ) if the brackets already match (simple check)
 	 */
 	public void keyTyped(KeyEvent e) {
 		// only handle parentheses
 		char ch = e.getKeyChar();
-		if (!(ch == '(' || ch == '{' || ch == '[')) {
+		if (!(ch == '(' || ch == '{' || ch == '[' || ch == '}' || ch == ')' || ch == ']')) {
 			super.keyTyped(e);
 			return;
 		}
@@ -313,13 +314,38 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		int caretPos = getCaretPosition();
 		String text = getText();
 		
+		if (ch == '}' || ch == ')' || ch == ']') {
+			
+			// simple check if brackets match
+			if (text.charAt(caretPos)==ch) {
+				int count = 0;
+				for (int i = 0 ; i < text.length() ; i++) {
+					char c = text.charAt(i);
+					if (c == '{') count++;
+					else if (c == '}') count--;
+					else if (c == '(') count+=1E3;
+					else if (c == ')') count-=1E3;
+					else if (c == '[') count+=1E6;
+					else if (c == ']') count-=1E6;
+				}
+			
+				if (count == 0) { 
+					// if brackets match, just move the cursor forwards one
+					e.consume();
+					caretPos++;
+				}
+			}
+			
+		}
+
+		
 		// auto-close parentheses
 		if (caretPos == text.length() || Character.isWhitespace(text.charAt(caretPos))) {		
 			switch (ch){
-//				case '(':
-//					// opening parentheses: insert closing parenthesis automatically
-//					insertString(")");
-//					break;	
+				case '(':
+					// opening parentheses: insert closing parenthesis automatically
+					insertString(")");
+					break;	
 					
 				case '{':
 					// opening braces: insert closing parenthesis automatically
