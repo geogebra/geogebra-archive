@@ -793,9 +793,24 @@ public abstract class AbstractVectorGraphicsIO extends VectorGraphicsIO {
      * Clears any existing transformation and sets the a new one.
      * The default implementation calls writeTransform using the
      * inverted affine transform to calculate it.
-s     *
+     * 
+     * new version by Calixte Denizet 
+     * fixes eg writing output from JLaTeXMath -> PDF
+     *
      * @param transform to be written
      */
+    protected void writeSetTransform(AffineTransform transform) throws IOException {
+    	try {
+	    	AffineTransform deltaTransform = new AffineTransform(oldTransform.createInverse());
+	        deltaTransform.concatenate(transform);
+	    	writeTransform(deltaTransform);
+    	} catch (NoninvertibleTransformException e) {
+    		// ignored...
+    	}
+    }
+
+    
+    /* old version
     protected void writeSetTransform(AffineTransform transform) throws IOException {
     	try {
 	    	AffineTransform deltaTransform = new AffineTransform(transform);
@@ -804,7 +819,7 @@ s     *
     	} catch (NoninvertibleTransformException e) {
     		// ignored...
     	}
-    }
+    }*/
 
     /*
      * ================================================================================ |
