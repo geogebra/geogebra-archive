@@ -1,6 +1,7 @@
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.GgbMat;
 
 /**
@@ -106,13 +107,23 @@ public abstract class Transform {
 	
 	private GeoList transformList(GeoList geo) {
 		GeoList ret = new GeoList(cons);
+		boolean suppress = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
 		for(int i = 0; i < geo.size(); i++){
+			Application.debug(ret.getElementType());
 			GeoElement current = geo.get(i);
 			if(current.isGeoList()){
 				ret.add(transformList((GeoList)current));
+			}else if(current.isLimitedPath() ){
+				GeoElement[] geos = ((LimitedPath) current)
+				.createTransformedObject(this,null);
+				ret.add(geos[0]);
+				
 			}
-			else ret.add(doTransform(current));			
+			else ret.add(doTransform(current));
+			Application.debug(ret.getElementType());
 		}
+		cons.setSuppressLabelCreation(suppress);
 		return ret;
 	}
 	/**

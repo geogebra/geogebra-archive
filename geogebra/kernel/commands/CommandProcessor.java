@@ -41,7 +41,6 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.Mirrorable;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -1071,6 +1070,10 @@ class CmdDistance extends CommandProcessor {
 	}
 }
 
+/**
+ * ClosestPoint[Point,Path]
+ * ClosestPoint[Path,Point]
+ */
 class CmdClosestPoint extends CommandProcessor {
 
 	/**
@@ -3262,7 +3265,7 @@ class CmdMirror extends CommandProcessor {
 			}
 
 			// mirror object
-			if (ok[0] = (arg[0] instanceof Mirrorable)||(arg[0] instanceof GeoFunction)) {
+			if (ok[0] = true) {
 				
 				//GeoElement geo = p.toGeoElement();
 
@@ -8910,13 +8913,16 @@ class CmdStemPlot extends CommandProcessor {
 	}
 
  
- /*
+ /**
   * ShortestDistance[ <List of Segments>, <Start Point>, <End Point>, <Boolean Weighted> ]
   * Michael Borcherds
   * 2008-03-04
   */
  class CmdShortestDistance extends CommandProcessor {
 
+ 	/**
+ 	 * @param kernel
+ 	 */
  	public CmdShortestDistance(Kernel kernel) {
  		super(kernel);
  	}
@@ -8947,8 +8953,15 @@ class CmdStemPlot extends CommandProcessor {
  }
  
  
+	/**
+	 * PathParameter[Point on path]
+	 *
+	 */
 	class CmdPathParameter extends CommandProcessor {
 
+ 		/**
+ 		 * @param kernel
+ 		 */
  		public CmdPathParameter(Kernel kernel) {
  			super(kernel);
  		}
