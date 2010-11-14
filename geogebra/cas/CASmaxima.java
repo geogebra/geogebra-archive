@@ -101,11 +101,6 @@ public class CASmaxima extends CASgeneric {
 	final synchronized public String getEvaluateGeoGebraCASerror() {
 		// TODO: implement for Maxima
 		return null;
-		
-//		if (response != null)
-//			return response.getExceptionMessage();
-//		else 
-//			return null;
 	}
 	
 	/**
@@ -197,15 +192,6 @@ public class CASmaxima extends CASgeneric {
 			
 			final boolean debug = true;
 			if (debug) Application.debug("Expression for Maxima: "+exp, 1);
-			
-			// evaluate the MathPiper expression
-			//RawMaximaSession maxima = getMaxima();
-			
-			//result = maxima.executeExpectingSingleOutput(exp);
-			//String results[] = maxima.executeExpectingMultipleLabels(exp);			
-			//result = results[results.length - 1];
-			
-			//String results[] = executeRaw(exp).split("\n");
 			
 			String res = executeRaw(exp);
 			
@@ -347,16 +333,6 @@ public class CASmaxima extends CASgeneric {
 	
 	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
 	
-		// read version string
-/*
-		String buildInfo = ggbMaxima.executeCall("build_info();");
-		Application.debug(buildInfo);	
-		String matchStr = "Maxima version: ";		
-		int versionIndexStart = buildInfo.indexOf(matchStr);
-		int versionIndexEnd = buildInfo.indexOf("\n",versionIndexStart);
-		Application.setCASVersionString("Maxima "+buildInfo.subSequence(versionIndexStart + matchStr.length(), versionIndexEnd));
-*/		
-		
 		// turn auto-simplification off, so a+a gives a+a
 		// with this setting ev( a+a, simp ) is needed to get 2*a
 	    ggbMaxima.executeCall("simp:false;");
