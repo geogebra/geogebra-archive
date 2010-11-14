@@ -106,8 +106,6 @@ public class ContextMenuGeoElement extends JPopupMenu {
 		}
 
 		
-		addChangeTypeItems();
-		
 		
 		if (getComponentCount() > 2)
 			addSeparator();
@@ -506,49 +504,6 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	
 	
 	
-	private void addChangeTypeItems() {
-
-		/*
-		if ((!geo.isIndependent()) || (geo.isFixed())) 
-			return;
-			*/
-		
-		GeoElement[] alternatives = app.getKernel().getAlternatives(geo);
-		
-		if (alternatives==null)
-			return;
-		
-		AbstractAction action;
-		StringBuilder sb = new StringBuilder();
-
-		for (int i=0;i<alternatives.length;i++) {
-			
-			final GeoElement alternative = alternatives[i];
-			
-			sb.setLength(0);
-			sb.append(app.getPlain("Change type to "));
-			sb.append(app.getPlain(alternatives[i].getObjectType()));
-			action = new AbstractAction(sb.toString()) {
-				/**
-				 * 
-				 */
-				private static final long serialVersionUID = 1L;
-
-				public void actionPerformed(ActionEvent e) {
-					
-					geo.setAllVisualProperties(alternative, true);
-					try {
-						app.getKernel().getConstruction().replace(geo, alternative);
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-				}
-			};
-			addAction(action);
-		}
-
-
-	}
 
 
 	private void addForAllItems() {

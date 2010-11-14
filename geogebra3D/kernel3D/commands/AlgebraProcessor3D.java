@@ -13,6 +13,7 @@ import geogebra.kernel.commands.AlgebraProcessor;
 import geogebra.kernel.commands.CommandDispatcher;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra3D.gui.layout.panels.EuclidianDockPanel3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -88,8 +89,13 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 	protected GeoElement[] processLine(Equation equ, boolean inequality) {
 		if (inequality)
 			return super.processLine(equ, inequality); //TODO add inequalities in 3D
-		else
-			return processPlane(equ);
+		else{
+			//check if the 3D view has the focus
+			if (app.getGuiManager().getLayout().getDockManager().getFocusedEuclidianPanel() instanceof EuclidianDockPanel3D){
+				return processPlane(equ);
+			}else
+				return super.processLine(equ, inequality);
+		}
 	}
 
 	protected GeoElement[] processPlane(Equation equ) {
@@ -107,10 +113,8 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 			b = lhs.getCoeffValue("y");
 			c = lhs.getCoeffValue("z");
 			d = lhs.getCoeffValue("");
-			//Application.debug("TODO: add kernel3D.Plane3D(label, a, b, c, d)");
 			plane = (GeoPlane3D) kernel.getManager3D().Plane3D(label, a, b, c, d);
 		} else
-			//Application.debug("TODO: add kernel3D.DependentPlane3D(label, equ)");
 			plane = (GeoPlane3D) kernel.getManager3D().DependentPlane3D(label, equ);
 
 		ret[0] = plane;

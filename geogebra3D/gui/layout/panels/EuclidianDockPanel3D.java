@@ -1,0 +1,52 @@
+package geogebra3D.gui.layout.panels;
+
+import java.awt.event.MouseEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+
+import geogebra.gui.layout.DockPanel;
+import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
+import geogebra.gui.toolbar.Toolbar;
+import geogebra.main.Application;
+import geogebra3D.Application3D;
+
+/**
+ * Dock panel for the primary euclidian view.
+ */
+public class EuclidianDockPanel3D extends EuclidianDockPanelAbstract {
+	private static final long serialVersionUID = 1L;
+	private Application app;
+	
+	/**
+	 * @param app
+	 */
+	public EuclidianDockPanel3D(Application app) {
+		super(
+			Application.VIEW_EUCLIDIAN3D,	// view id 
+			"GraphicsView3D", 				// view title
+			null,						// toolbar string
+			false,						// style bar?
+			4							// menu order
+		);
+		
+		this.app = app;
+	}
+
+//	@Override
+//	public ImageIcon getIcon() {
+//		return app.getImageIcon("document-properties.png");
+//	}
+
+	@Override
+	protected JComponent loadStyleBar() {
+		return null;//app.getEuclidianView().getStyleBar();
+	}
+
+	@Override
+	protected JComponent loadComponent() {
+		return ((Application3D)app).getEuclidianView3D();
+	}
+	
+
+}

@@ -1,21 +1,19 @@
 package geogebra3D.gui;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-
-import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-
 import geogebra.gui.GuiManager;
-import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.Layout;
+import geogebra.gui.layout.panels.Euclidian2DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.gui.toolbar.Toolbar;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
-import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.gui.layout.panels.EuclidianDockPanel3D;
+
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+
+import javax.swing.AbstractAction;
 
 /**
  * Extending DefaultGuiManager class for 3D
@@ -46,29 +44,38 @@ public class GuiManager3D extends GuiManager {
 	 */
 	protected void initLayoutPanels() {
 		super.initLayoutPanels();
-		
-		//String myToolBar3D = Toolbar.getAllToolsNoMacros3D();
-    	
-    	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, "GraphicsView3D", 
+
+		/*
+
+    	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, 
+    			"GraphicsView3D", 
     			null, 
     			false, 4) {
     		protected JComponent loadStyleBar() {
 				return null;
 			}
-			
+
     		protected JComponent loadComponent() {
 				return ((Application3D)app).getEuclidianView3D();
 			}
 		};
 		panel3D.setMaximumSize(new Dimension(0,0));
 		panel3D.setMinimumSize(new Dimension(0,0));
-		
+
     	getLayout().registerPanel(panel3D);
+
+		 */
+		
+		getLayout().registerPanel(new EuclidianDockPanel3D(app));
 	}
 	
 	
 	protected EuclidianDockPanel newEuclidianDockPanel(){
 		return new EuclidianDockPanel(app,Toolbar.getAllToolsNoMacros());
+	}
+	
+	protected Euclidian2DockPanel newEuclidian2DockPanel(){
+		return new Euclidian2DockPanel(app,Toolbar.getAllToolsNoMacros());
 	}
 	
 	//////////////////////////////

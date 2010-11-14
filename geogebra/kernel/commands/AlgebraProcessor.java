@@ -49,7 +49,7 @@ public class AlgebraProcessor {
 	
 	protected Kernel kernel;
 	private Construction cons;
-	private Application app;
+	protected Application app;
 	private Parser parser;
 	protected CommandDispatcher cmdDispatcher;
 	

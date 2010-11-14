@@ -4916,17 +4916,6 @@ public abstract class GeoElement
 		return false;
 	}
 	
-	///////////////////////////////////////////
-	// CHANGING TYPE OF A GEO (mathieu)
-	///////////////////////////////////////////
-	
-	/**
-	 * @return possible alternatives for this geo (e.g. number -> complex)
-	 */
-	public GeoElement[] getAlternatives(){
-		
-		return null;
-	}
 
 
 

@@ -7713,17 +7713,7 @@ public class Kernel {
 	}
 	
 	
-	///////////////////////////////////////////
-	// CHANGING TYPE OF A GEO (mathieu)
-	///////////////////////////////////////////
-	
-	/**
-	 * @return possible alternatives for a given geo (e.g. number -> complex)
-	 */
-	public GeoElement[] getAlternatives(GeoElement geo){
-		
-		return geo.getAlternatives();
-	}
+
 	
 	
 	

@@ -16,11 +16,11 @@ public class Euclidian2DockPanel extends EuclidianDockPanelAbstract {
 	/**
 	 * @param app
 	 */
-	public Euclidian2DockPanel(Application app) {
+	public Euclidian2DockPanel(Application app, String toolbar) {
 		super(
 			Application.VIEW_EUCLIDIAN2, 	// view id
 			"DrawingPad2", 					// view title phrase
-			null,							// toolbar string
+			toolbar,							// toolbar string
 			true,							// style bar?
 			5								// menu order
 		);

@@ -2,6 +2,7 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -304,6 +305,44 @@ public interface EuclidianViewInterface {
 			ArrayList selectedLines);
 	public Previewable createPreviewPerpendicularBisector(ArrayList selectedPoints);
 	public Previewable createPreviewAngleBisector(ArrayList selectedPoints);
+	
+	
+	
+	//options
+	public Color getBackground();
+	public Color getAxesColor();
+	public Color getGridColor();
+	public boolean getShowGrid();
+	public boolean getGridIsBold();
+	public boolean getAllowShowMouseCoords();
+	public double getXmin();
+	public double getXmax();
+	public double getYmin();
+	public double getYmax();
+	public int getAxesLineStyle();
+	public int getGridLineStyle();
+	public boolean isAutomaticGridDistance();
+	public double[] getGridDistances();
+	public void setBackground(Color showColorChooser);
+	public void setAxesColor(Color showColorChooser);
+	public void setGridColor(Color showColorChooser);
+	public void showGrid(boolean selected);
+	public void setGridIsBold(boolean selected);
+	public void setAllowShowMouseCoords(boolean selected);
+	public void setGridType(int selectedIndex);
+	public void setAxesLineStyle(int selectedIndex);
+	public void setGridLineStyle(int type);
+	public void setAutomaticGridDistance(boolean b);
+	public void setRealWorldCoordSystem(double min, double max, double ymin,
+			double ymax);
+	public void updateBackground();
+	public void setGridDistances(double[] ticks);
+	public void setAutomaticAxesNumberingDistance(boolean b, int axis);
+	public void setAxesTickStyles(int[] styles);
+	public boolean[] getDrawBorderAxes();
+	public void setDrawBorderAxes(boolean[] border);
+	public boolean[] isAutomaticAxesNumberingDistance();
+	public double[] getAxesNumberingDistances();
 	
 	
 

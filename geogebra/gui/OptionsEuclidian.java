@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Kernel;
@@ -56,7 +57,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	
 	private Application app;
 	private Kernel kernel;
-	private EuclidianView view;
+	private EuclidianViewInterface view;
 	
 	// GUI
 	private JTabbedPane tabbedPane;
@@ -94,7 +95,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	}
 	
 	
-	public void setView(EuclidianView view){
+	public void setView(EuclidianViewInterface view){
 		this.view = view;
 		if(!isIniting)
 			updateGUI();

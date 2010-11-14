@@ -5,6 +5,7 @@ import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.app.MyFileFilter;
 import geogebra.gui.inputbar.AlgebraInput;
@@ -215,7 +216,7 @@ public class GuiManager {
 		layout.registerPanel(new CasDockPanel(app));
 		
 		// register EuclidianView2  
-		layout.registerPanel(new Euclidian2DockPanel(app));	
+		layout.registerPanel(newEuclidian2DockPanel());	
 	}
 	
 	/**
@@ -224,6 +225,11 @@ public class GuiManager {
 	protected EuclidianDockPanel newEuclidianDockPanel(){
 		return new EuclidianDockPanel(app,null);
 	}
+	
+	protected Euclidian2DockPanel newEuclidian2DockPanel(){
+		return new Euclidian2DockPanel(app,null);
+	}
+	
 	
 	public boolean isPropertiesDialogSelectionListener() {
 		return app.getCurrentSelectionListener() == propDialog;
@@ -404,12 +410,12 @@ public class GuiManager {
 	 * default (if the user uses this mode). This is the focused euclidian
 	 * view or the first euclidian view at the moment.
 	 */
-	public EuclidianView getActiveEuclidianView() {
+	public EuclidianViewInterface getActiveEuclidianView() {
 
 		EuclidianDockPanelAbstract focusedEuclidianPanel = layout.getDockManager().getFocusedEuclidianPanel();
 
-		if(focusedEuclidianPanel != null) 
-			return (EuclidianView)focusedEuclidianPanel.getComponent();			
+		if(focusedEuclidianPanel != null)
+			return (EuclidianViewInterface)focusedEuclidianPanel.getComponent();			
 		else 
 			return app.getEuclidianView();
 		

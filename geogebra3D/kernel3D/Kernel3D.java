@@ -341,50 +341,6 @@ public class Kernel3D
 	
 
 	
-	
-
-	///////////////////////////////////////////
-	// CHANGING TYPE OF A GEO (mathieu)
-	///////////////////////////////////////////
-	
-	
-	public GeoElement[] getAlternatives(GeoElement geo){
-		
-		GeoElement[] superRet = super.getAlternatives(geo);
-		
-		if (geo.isGeoLine()){
-			if ((!geo.isFixed()) && (geo.isIndependent())){
-				GeoLine line = (GeoLine) geo;
-				GeoElement[] ret = new GeoElement[1];		
-				ret[0] = getManager3D().Plane3D(null, line.getX(), line.getY(), 0, line.getZ());
-				ret[0].remove();
-				return addAlternatives(superRet, ret);
-				
-			}
-		}
-		
-		return superRet;
-	}
-	
-	private GeoElement[] addAlternatives(GeoElement[] superAlternatives, GeoElement[] newAlternatives){
-		
-		int l = 0;
-		if (superAlternatives!=null)
-			l = superAlternatives.length;
-		
-		GeoElement[] ret = new GeoElement[l+newAlternatives.length];
-		
-		for(int i=0;i<l;i++)
-			ret[i]=superAlternatives[i];
-		
-		for(int i=0;i<newAlternatives.length;i++)
-			ret[l+i]=newAlternatives[i];
-		
-		return ret;
-		
-		
-	}
-	
 
 	
 	

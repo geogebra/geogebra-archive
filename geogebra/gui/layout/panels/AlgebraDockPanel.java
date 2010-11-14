@@ -44,4 +44,15 @@ public class AlgebraDockPanel extends DockPanel {
 		
 		return scrollPane;
 	}
+	
+	
+
+	protected void setActiveToolBar(){
+		//use the focused euclidian view for active toolbar
+		if(dockManager.getFocusedEuclidianPanel()==null || !dockManager.getFocusedEuclidianPanel().hasToolbar()) {
+			app.getGuiManager().getToolbarPanel().setActiveToolbar(-1);
+		} else {
+			app.getGuiManager().getToolbarPanel().setActiveToolbar(dockManager.getFocusedEuclidianPanel().getToolbar());
+		}
+	}
 }

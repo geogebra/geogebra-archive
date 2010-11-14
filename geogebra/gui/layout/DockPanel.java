@@ -933,11 +933,8 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 					}
 				}
 				
-				if(hasToolbar()) {
-					app.getGuiManager().getToolbarPanel().setActiveToolbar(toolbar);
-				} else {
-					app.getGuiManager().getToolbarPanel().setActiveToolbar(-1);
-				}
+				
+				setActiveToolBar();
 			}
 		}
 		
@@ -960,6 +957,17 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		 */
 		if(dockManager.hasFullFocusSystem()) {
 			setTitleLabelFocus();
+		}
+	}
+	
+	/**
+	 * sets the active toolbar
+	 */
+	protected void setActiveToolBar(){
+		if(hasToolbar()) {
+			app.getGuiManager().getToolbarPanel().setActiveToolbar(toolbar);
+		} else {
+			app.getGuiManager().getToolbarPanel().setActiveToolbar(-1);
 		}
 	}
 	

@@ -45,6 +45,7 @@ import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -2878,6 +2879,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
+	
+	/////////////////////////////
+	// OPTIONS
+	////////////////////////////
 
 
 	public int toScreenCoordX(double minX) {
@@ -2973,6 +2978,193 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void setPositiveAxes(boolean[] positiveAxis) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	public Color getAxesColor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public Color getGridColor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public boolean getShowGrid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public boolean getGridIsBold() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public boolean getAllowShowMouseCoords() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public double getXmin() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public double getXmax() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public double getYmin() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public double getYmax() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public int getAxesLineStyle() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public int getGridLineStyle() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public boolean isAutomaticGridDistance() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public double[] getGridDistances() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public void setAxesColor(Color showColorChooser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setGridColor(Color showColorChooser) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void showGrid(boolean selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setGridIsBold(boolean selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setAllowShowMouseCoords(boolean selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setGridType(int selectedIndex) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setAxesLineStyle(int selectedIndex) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setGridLineStyle(int type) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setAutomaticGridDistance(boolean b) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setRealWorldCoordSystem(double min, double max, double ymin,
+			double ymax) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void updateBackground() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setGridDistances(double[] ticks) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setAutomaticAxesNumberingDistance(boolean b, int axis) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setAxesTickStyles(int[] styles) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public boolean[] getDrawBorderAxes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public void setDrawBorderAxes(boolean[] border) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public boolean[] isAutomaticAxesNumberingDistance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public double[] getAxesNumberingDistances() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
