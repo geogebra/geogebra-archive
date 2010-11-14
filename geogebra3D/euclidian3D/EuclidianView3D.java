@@ -2239,7 +2239,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			break;			
 		case PREVIEW_POINT_ALREADY:
 			//use size of point
-			t = (getCursor3D().getPointSize()/6+2)/getScale();
+			t = 1/getScale();//(getCursor3D().getPointSize()/6+2)/getScale();
 
 			if (getCursor3D().hasPath()){
 				v = ((GeoElement)getCursor3D().getPath()).getViewDirection();

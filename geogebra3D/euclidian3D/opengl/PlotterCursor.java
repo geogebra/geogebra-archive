@@ -33,9 +33,10 @@ public class PlotterCursor {
 	static private float thickness2 = 1.25f;
 	static private float depth = 1f;
 
-	static private float size_start_move = 0f;
-	static private float size_move = 20f;
-
+	static private float size_start_move = 7f;
+	static private float size_move = 40f;
+	static private float thickness3 = 2*thickness;
+	
 	private int[] index;
 	
 	private Manager manager;
@@ -68,7 +69,7 @@ public class PlotterCursor {
 		brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
 		
 		//sets the thickness for arrows
-		brush.setThickness(1,1.5f);
+		brush.setThickness(1,1f);
 		
 		
 		brush.setAffineTexture(0.5f, 0.125f);
@@ -78,13 +79,13 @@ public class PlotterCursor {
 		//xy
 		brush.start(8);
 		brush.setColor(Color.GRAY);
-		brush.setThickness(thickness);//re sets the thickness
+		brush.setThickness(thickness3);//re sets the thickness
 		brush.segment(new GgbVector(size_start_move, 0, 0, 1),new GgbVector(size_move, 0, 0, 1));
-		brush.setThickness(thickness);//re sets the thickness
+		brush.setThickness(thickness3);//re sets the thickness
 		brush.segment(new GgbVector(-size_start_move, 0, 0, 1),new GgbVector(-size_move, 0, 0, 1));
-		brush.setThickness(thickness);//re sets the thickness
+		brush.setThickness(thickness3);//re sets the thickness
 		brush.segment(new GgbVector(0, size_start_move, 0, 1),new GgbVector(0, size_move, 0, 1));
-		brush.setThickness(thickness);//re sets the thickness
+		brush.setThickness(thickness3);//re sets the thickness
 		brush.segment(new GgbVector(0, -size_start_move, 0, 1),new GgbVector(0, -size_move, 0, 1));
 		index[4] =brush.end();
 
@@ -92,9 +93,9 @@ public class PlotterCursor {
 		//z
 		brush.start(8);
 		brush.setColor(Color.GRAY);
-		brush.setThickness(thickness);//re sets the thickness
+		brush.setThickness(thickness3);//re sets the thickness
 		brush.segment(new GgbVector(0, 0, size_start_move, 1),new GgbVector(0, 0, size_move, 1));
-		brush.setThickness(thickness);//re sets the thickness
+		brush.setThickness(thickness3);//re sets the thickness
 		brush.segment(new GgbVector(0, 0, -size_start_move, 1),new GgbVector(0, 0, -size_move, 1));
 		index[5] =brush.end();
 
