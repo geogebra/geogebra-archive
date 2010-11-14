@@ -2,7 +2,13 @@ package geogebra.gui.layout.panels;
 
 import geogebra.gui.layout.DockPanel;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.MouseEvent;
+
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 
 /**
@@ -22,6 +28,8 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 	
 	
 	private boolean hasEuclidianFocus;
+	
+	private JLabel euclidianFocus;
 
 	/**
 	 * default constructor
@@ -47,16 +55,29 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 	 */
 	public final void setEuclidianFocus(boolean hasFocus) {
 		hasEuclidianFocus = hasFocus;
-		setTitleLabelFocus();
+		euclidianFocus.setVisible(hasEuclidianFocus);
 	}
 	
-	protected void setTitleLabelFocus(){
-		if(hasFocus) 
-			titleLabel.setFont(app.getBoldFont());
-		else if (hasEuclidianFocus)
-			titleLabel.setFont(app.getItalicFont());
-		else
-			titleLabel.setFont(app.getPlainFont());
+	
+	
+	
+	/**
+	 * create the focus panel (composed of titleLabel, and, for EuclidianDockPanels, focus icon)
+	 * @return the focus panel
+	 */
+	protected JComponent createFocusPanel(){
+		JPanel panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		
+		//add title label
+		panel.add(super.createFocusPanel(), BorderLayout.WEST);
+		
+		//euclidian focus
+		euclidianFocus = new JLabel(app.getImageIcon("view-euclidian-focus.png"));
+		euclidianFocus.setVisible(false);
+		panel.add(euclidianFocus, BorderLayout.EAST);
+		
+		return panel;
 	}
 
 }

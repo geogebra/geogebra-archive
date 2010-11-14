@@ -288,6 +288,18 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	protected void focusLost() {
 	}
 	
+	
+	/**
+	 * create the focus panel (composed of titleLabel, and, for EuclidianDockPanels, focus icon)
+	 * @return the focus panel
+	 */
+	protected JComponent createFocusPanel(){
+		titleLabel = new JLabel(app.getPlain(title));
+		titleLabel.setFont(app.getPlainFont());
+		titleLabel.setForeground(Color.darkGray);
+		return titleLabel;
+	}
+	
 	/**
 	 * Bind this view to a dock manager. Also initializes the whole GUI as just
 	 * at this point the application is available.
@@ -309,10 +321,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
 		titlePanel.setLayout(new BorderLayout());
 		
-		titleLabel = new JLabel(app.getPlain(title));
-		titleLabel.setFont(app.getPlainFont());
-		titleLabel.setForeground(Color.darkGray);
-		titlePanel.add(titleLabel, BorderLayout.WEST);
+		titlePanel.add(createFocusPanel(), BorderLayout.WEST);
 
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
