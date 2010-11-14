@@ -3195,6 +3195,8 @@ public abstract class GeoElement
 			if (reverseOrder) {
 				// reverse order: "A point"				
 				sbLongDescHTML.append(' ');
+				// For Hungarian, the standard is to lowercase the type.
+				// I don't know if this is OK for Basque as well. -- Zoltan
 				sbLongDescHTML.append(typeString.toLowerCase());								
 			}
 
@@ -3462,8 +3464,10 @@ public abstract class GeoElement
 		if (app.isReverseNameDescriptionLanguage()) {
 			//	reverse order: "A point"
 			sbNameDescription.append(label);				
-			sbNameDescription.append(' ');			
-			sbNameDescription.append(typeString);			
+			sbNameDescription.append(' ');		
+			// For Hungarian, the standard is to lowercase the type.
+			// I don't know if this is OK for Basque as well. -- Zoltan
+			sbNameDescription.append(typeString.toLowerCase());			
 		}	
 		else {
 			// standard order: "point A"
