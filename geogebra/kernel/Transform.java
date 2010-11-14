@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import org.apache.commons.math.linear.LUDecompositionImpl;
+
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.util.GgbMat;
@@ -469,7 +471,7 @@ class TransformApplyMatrix extends Transform {
 	
 	public boolean changesOrientation() {
 		GgbMat ggbMatrix = new GgbMat(matrix);
-		return ggbMatrix.getDeterminant()<0;
+		return new LUDecompositionImpl(ggbMatrix).getDeterminant()<0;
 	}
 
 }
