@@ -158,7 +158,7 @@ public class CASmaxima extends CASgeneric {
 		}
 		
 		// TODO: remove
-		System.out.println("CASmaxima.toMaxima: " + MaximaStr);
+//		System.out.println("CASmaxima.toMaxima: " + MaximaStr);
 		return MaximaStr;
 	}	
 	
@@ -252,6 +252,20 @@ public class CASmaxima extends CASgeneric {
 			// replace eg [x=0,x=1] with {x=0,x=1}
 			while (result.indexOf('[') > -1) result = result.replace('[','{');
 			while (result.indexOf(']') > -1) result = result.replace(']','}');
+			
+			// if the result consists of a list containing only 1 other list, flatten it
+			result = result.trim();
+			int cnt = 0;
+			for (int i = 0; i < result.length(); ++i)
+				if (result.charAt(i) == '{')
+					++cnt;
+			if (cnt == 2)
+			{
+				if (result.startsWith("{{") && result.endsWith("}}"))
+					result = result.substring(1, result.length() - 1);
+				else
+					throw new UnsupportedOperationException("An unexpected error occurred while parsing Maxima's output");
+			}
 
 			return result;
 		} catch (MaximaTimeoutException e) {
