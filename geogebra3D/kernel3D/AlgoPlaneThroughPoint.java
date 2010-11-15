@@ -17,6 +17,7 @@ import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoPointND;
 
 
 /**
@@ -32,19 +33,19 @@ import geogebra.kernel.GeoElement;
 public class AlgoPlaneThroughPoint extends AlgoElement3D {
 
  
-	private GeoPoint3D point; // input
+	private GeoPointND point; // input
     private GeoCoordSys cs; // input
     private GeoPlane3D plane; // output       
 
 
-    public AlgoPlaneThroughPoint(Construction cons, String label, GeoPoint3D point, GeoCoordSys cs) {
+    public AlgoPlaneThroughPoint(Construction cons, String label, GeoPointND point, GeoCoordSys cs) {
         super(cons);
         this.point = point;
         this.cs = cs;
         plane = new GeoPlane3D(cons);
         //g.setStartPoint(P);
         
-        setInputOutput(new GeoElement[] {point, (GeoElement) cs}, new GeoElement[] {plane});
+        setInputOutput(new GeoElement[] {(GeoElement) point, (GeoElement) cs}, new GeoElement[] {plane});
 
         // compute plane 
         compute();
@@ -69,15 +70,15 @@ public class AlgoPlaneThroughPoint extends AlgoElement3D {
 		//recompute the coord sys
     	coordsys.resetCoordSys();
 		
-    	coordsys.addPoint(point.getCoords());
-    	coordsys.addPoint((GgbVector) point.getCoords().add(cs.getCoordSys().getVx()));
+    	coordsys.addPoint(point.getCoordsInD(3));
+    	coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(cs.getCoordSys().getVx()));
 		
 		switch (cs.getCoordSys().getDimension()){
 		case 1: //line, segment, ...
 			coordsys.addPoint(cs.getCoordSys().getOrigin());
 			break;
 		case 2: //plane, polygon, ...
-			coordsys.addPoint((GgbVector) point.getCoords().add(cs.getCoordSys().getVy()));
+			coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(cs.getCoordSys().getVy()));
 			break;
 		}
 		

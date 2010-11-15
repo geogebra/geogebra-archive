@@ -883,7 +883,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (selPoints() == 1) {
 			if (selCoordSys2D() == 1) {
 				// fetch selected point and vector
-				GeoPoint3D[] points = getSelectedPoints3D();
+				GeoPointND[] points = getSelectedPointsND();
 				GeoCoordSys2D[] cs = getSelectedCoordSys2D();
 				// create new plane
 				getKernel().getManager3D().Plane3D(null, points[0], (GeoElement) cs[0]);

@@ -259,7 +259,7 @@ public class Manager3D implements Manager3DInterface {
 	 * Plane named label through Point point parallel to plane pIn
 	 */
 	final public GeoPlane3D Plane3D(String label, GeoPointND point, GeoElement cs) {
-		AlgoPlaneThroughPoint algo = new AlgoPlaneThroughPoint(cons, label, (GeoPoint3D) point, (GeoCoordSys) cs);
+		AlgoPlaneThroughPoint algo = new AlgoPlaneThroughPoint(cons, label, point, (GeoCoordSys) cs);
 		return algo.getPlane();
 	}
 
