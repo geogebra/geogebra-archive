@@ -454,6 +454,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		return points;
 	}
 	
+	public GeoPointND getPointND(int i) {
+		return points[i];
+	}	
+	
 	/**
 	 * Returns the segments of this polygon.
 	 * Note that this array may change dynamically.

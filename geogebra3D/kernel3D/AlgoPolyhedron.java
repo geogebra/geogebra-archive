@@ -9,6 +9,8 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.AlgoElement.OutputHandler;
 import geogebra.kernel.AlgoElement.elementFactory;
+import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -26,7 +28,9 @@ implements AlgoElementWithResizeableOutput{
 	//protected GeoPolyhedron polyhedron;
 	
 	/** all points of the polyhedron (needed for the faces description) */
-	private GeoPoint3D[] inputPoints;
+	private GeoPointND[] inputPoints;
+	
+	private GeoPolygon inputPolygon;
 	
 	/** lists describing the faces (for polyhedron of TYPE_NONE) */
 	private GeoList faces = null;
@@ -49,7 +53,6 @@ implements AlgoElementWithResizeableOutput{
 	
 	private AlgoPolyhedron(Construction c){
 		super(c);
-		//polyhedron = new GeoPolyhedron(c);
 
 		outputPolyhedron=new OutputHandler<GeoPolyhedron>(new elementFactory<GeoPolyhedron>() {
 			public GeoPolyhedron newElement() {
@@ -111,7 +114,7 @@ implements AlgoElementWithResizeableOutput{
 	 * @param a_points vertices
 	 * @param type type of polyhedron
 	 */
-	public AlgoPolyhedron(Construction c, String[] labels, GeoPoint3D[] a_points, int type) {
+	public AlgoPolyhedron(Construction c, String[] labels, GeoPointND[] a_points, int type) {
 		this(c);
 		
 		this.type = type;
@@ -147,39 +150,129 @@ implements AlgoElementWithResizeableOutput{
 
 			
 			break;
-			
-			/*
-		case GeoPolyhedron.TYPE_PSEUDO_PRISM://construct a "pseudo-prismatic" polyhedron
-			this.points = a_points;
-			outputPointsIndex = a_points.length;
-			numPoints = points.length /2;
-			faces = new int[numPoints+2][];
-			for (int i=0; i<numPoints; i++){
-				faces[i]=new int[4];
-				faces[i][0]=i;
-				faces[i][1]=(i+1)%(numPoints);
-				faces[i][2]=numPoints + ((i+1)%(numPoints));
-				faces[i][3]=numPoints + i;
-			}
-			faces[numPoints]=new int[numPoints];
-			for (int i=0; i<numPoints; i++)
-				faces[numPoints][i]=numPoints-i-1;
-			faces[numPoints+1]=new int[numPoints];
-			for (int i=0; i<numPoints; i++)
-				faces[numPoints+1][i]=numPoints+i;
-			break;
-			*/
 
 		case GeoPolyhedron.TYPE_PRISM://construct a prism
 			inputPoints = a_points;
 			numPoints = a_points.length - 1;
-			GeoPoint3D[] points = new GeoPoint3D[numPoints*2];
+			GeoPointND[] points = new GeoPointND[numPoints*2];
 			outputPoints.adjustOutputSize(numPoints-1);
 			outputPoints.setLabels(null);
 			for(int i=0;i<numPoints+1;i++)
 				points[i] = a_points[i];
 			for(int i=0;i<numPoints-1;i++){
 				//outputPoints[i] = (GeoPoint3D) kernel.getManager3D().Point3D(null, 0, 0, 0);
+				points[numPoints+1+i] = outputPoints.getElement(i);
+			}
+			
+			//bottom of the prism
+			polyhedron.startNewFace();
+			//for (int i=numPoints-1; i>=0; i--)
+			for (int i=0; i<numPoints; i++)
+				polyhedron.addPointToCurrentFace(points[i]);
+			polyhedron.endCurrentFace();
+			
+			//sides of the prism
+			for (int i=0; i<numPoints; i++){
+				polyhedron.startNewFace();
+				polyhedron.addPointToCurrentFace(points[i]);
+				polyhedron.addPointToCurrentFace(points[(i+1)%(numPoints)]);
+				polyhedron.addPointToCurrentFace(points[numPoints + ((i+1)%(numPoints))]);
+				polyhedron.addPointToCurrentFace(points[numPoints + i]);
+				polyhedron.endCurrentFace();
+			}
+			
+
+			
+			//top of the prism
+			polyhedron.startNewFace();
+			for (int i=0; i<numPoints; i++)
+				polyhedron.addPointToCurrentFace(points[numPoints+i]);
+			polyhedron.endCurrentFace();
+			
+			break;
+		}
+		
+		setInput();
+		polyhedron.updateFaces();
+		setOutput();
+		
+		//compute();
+
+		update();
+		
+        //set labels dependencies: will be used with Construction.resolveLabelDependency()
+        if (labels!=null && labels.length>1)
+        	for (int i=0; i<labels.length; i++){
+        		cons.setLabelDependsOn(labels[i], this);
+        	}
+		
+        
+        
+        polyhedron.defaultLabels(labels);
+	}
+	
+
+	
+	
+	/** creates a polyhedron regarding basis and first vertex of second parallel face
+	 * @param c construction 
+	 * @param labels 
+	 * @param polygon 
+	 * @param point 
+	 * @param type type of polyhedron
+	 */
+	public AlgoPolyhedron(Construction c, String[] labels, GeoPolygon polygon, GeoPointND point, int type) {
+		this(c);
+		
+		this.type = type;
+		
+		outputPolyhedron.adjustOutputSize(1);
+		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
+		
+		inputPolygon = polygon;
+		
+		
+		int numPoints;
+		
+		switch(type){
+		/*
+		case GeoPolyhedron.TYPE_PYRAMID://construct a pyramid with last point as apex
+			this.inputPoints = a_points;
+			numPoints = inputPoints.length;
+			
+			
+			//base of the pyramid
+			polyhedron.startNewFace();
+			//for (int i=numPoints-2; i>=0; i--)
+			for (int i=0; i<numPoints-1; i++)
+				polyhedron.addPointToCurrentFace(this.inputPoints[i]);
+			polyhedron.endCurrentFace();
+			
+			//sides of the pyramid
+			for (int i=0; i<numPoints-1; i++){
+				polyhedron.startNewFace();
+				polyhedron.addPointToCurrentFace(this.inputPoints[i]);
+				polyhedron.addPointToCurrentFace(this.inputPoints[(i+1)%(numPoints-1)]);
+				polyhedron.addPointToCurrentFace(this.inputPoints[numPoints-1]);//apex
+				polyhedron.endCurrentFace();
+			}
+			
+
+			
+			break;
+*/
+		case GeoPolyhedron.TYPE_PRISM://construct a prism
+			numPoints = polygon.getPointsLength();
+			inputPoints = new GeoPointND[numPoints+1];
+			for(int i=0;i<numPoints;i++)
+				inputPoints[i] = polygon.getPointND(i);
+			inputPoints[numPoints] = point;
+			GeoPointND[] points = new GeoPointND[numPoints*2];
+			outputPoints.adjustOutputSize(numPoints-1);
+			outputPoints.setLabels(null);
+			for(int i=0;i<numPoints+1;i++)
+				points[i] = inputPoints[i];
+			for(int i=0;i<numPoints-1;i++){
 				points[numPoints+1+i] = outputPoints.getElement(i);
 			}
 			
@@ -238,7 +331,7 @@ implements AlgoElementWithResizeableOutput{
 		case GeoElement.GEO_CLASS_POLYHEDRON:
 			return outputPolyhedron.addLabel(label);
 		case GeoElement.GEO_CLASS_POINT3D:
-			return outputPoints.addLabel(label);
+			return (GeoElement) outputPoints.addLabel(label);
 		case GeoElement.GEO_CLASS_POLYGON3D:
 			return outputPolygons.addLabel(label);
 		case GeoElement.GEO_CLASS_SEGMENT3D:
@@ -324,7 +417,15 @@ implements AlgoElementWithResizeableOutput{
 		
 		// input : inputPoints or list of faces
 		if(this.faces == null){
-			input = inputPoints;
+			if (inputPolygon==null){
+				input = new GeoElement[inputPoints.length];
+				for (int i=0; i<inputPoints.length; i++)
+					input[i] = (GeoElement) inputPoints[i];
+			}else{
+				input = new GeoElement[2];
+				input[0] = inputPolygon;
+				input[1] = (GeoElement) inputPoints[inputPoints.length-1];
+			}
 		}else{
 			input = new GeoElement[1];
 			input[0] = this.faces;
@@ -388,7 +489,7 @@ implements AlgoElementWithResizeableOutput{
 			//TODO remove this and replace with tesselation
 			GgbVector interiorPoint = new GgbVector(4);
 			for (int i=0;i<inputPoints.length;i++){
-				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoords());
+				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoordsInD(3));
 			}
 			interiorPoint = (GgbVector) interiorPoint.mul((double) 1/(inputPoints.length));
 			polyhedron.setInteriorPoint(interiorPoint);
@@ -396,11 +497,11 @@ implements AlgoElementWithResizeableOutput{
 			break;
 		case GeoPolyhedron.TYPE_PRISM:
 			//translation from bottom to top
-			GgbVector v = inputPoints[inputPoints.length-1].getCoords().sub(inputPoints[0].getCoords());
+			GgbVector v = inputPoints[inputPoints.length-1].getCoordsInD(3).sub(inputPoints[0].getCoordsInD(3));
 			//Application.debug("v=\n"+v);
 			//translate all output points
 			for (int i=0;i<outputPoints.size();i++){
-				outputPoints.getElement(i).setCoords(inputPoints[i+1].getCoords().add(v));
+				outputPoints.getElement(i).setCoords(inputPoints[i+1].getCoordsInD(3).add(v),true);
 				outputPoints.getElement(i).updateCoords();
 			}
 			
@@ -411,7 +512,7 @@ implements AlgoElementWithResizeableOutput{
 			//TODO remove this and replace with tesselation
 			interiorPoint = new GgbVector(4);
 			for (int i=0;i<inputPoints.length-1;i++){
-				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoords());
+				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoordsInD(3));
 			}
 			interiorPoint = (GgbVector) interiorPoint.mul((double) 1/(inputPoints.length-1));
 			polyhedron.setInteriorPoint((GgbVector) interiorPoint.add(v.mul(0.5)));

@@ -101,6 +101,14 @@ public interface Manager3DInterface {
 			 */
 			 public GeoElement [] Prism(String[] labels, GeoPointND[] points);
 
+			 /** Prism with basis and first vertex of second parallel face
+			  * @param labels 
+			  * @param polygon 
+			  * @param point 
+			  * @return the polyhedron
+			  */
+			 public GeoElement [] Prism(String[] labels, GeoPolygon polygon, GeoPointND point);
+
 			/** Pyramid with vertices (last one as apex)
 			 * @param label name
 			 * @param points vertices

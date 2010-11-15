@@ -6,6 +6,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Manager3DInterface;
 import geogebra.kernel.Path;
@@ -214,11 +215,21 @@ public class Manager3D implements Manager3DInterface {
 	final public GeoElement [] Prism(String[] labels, GeoPointND[] points){
 
 
-		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,(GeoPoint3D[]) points,GeoPolyhedron.TYPE_PRISM);
+		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,points,GeoPolyhedron.TYPE_PRISM);
 
 		return algo.getOutput();
 
 	}	
+	
+	
+	 final public GeoElement [] Prism(String[] labels, GeoPolygon polygon, GeoPointND point){
+		 
+		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,polygon,point,GeoPolyhedron.TYPE_PRISM);
+
+		return algo.getOutput();
+
+	 }
+
 
 	/** Pyramid with vertices (last one as apex)
 	 * @param label name
@@ -227,7 +238,7 @@ public class Manager3D implements Manager3DInterface {
 	 */
 	final public GeoElement [] Pyramid(String[] labels, GeoPointND[] points){
 
-		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,(GeoPoint3D[]) points, GeoPolyhedron.TYPE_PYRAMID);
+		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels, points, GeoPolyhedron.TYPE_PYRAMID);
 
 		return algo.getOutput();
 

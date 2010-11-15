@@ -5,6 +5,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.ConstructionElementCycle;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
@@ -122,9 +123,9 @@ public class GeoPolyhedron extends GeoElement3D {
 	 * and to the point list if it's a new one
 	 * @param point
 	 */
-	public void addPointToCurrentFace(GeoPoint3D point){
+	public void addPointToCurrentFace(GeoPointND point){
 
-		currentFace.add(point);
+		currentFace.add((GeoElement) point);
 	}
 	
 	
@@ -195,20 +196,20 @@ public class GeoPolyhedron extends GeoElement3D {
 				continue;
 			
 			//vertices of the face
-			GeoPoint3D[] p = new GeoPoint3D[currentFace.size()];
+			GeoPointND[] p = new GeoPointND[currentFace.size()];
 			
 			//edges linked to the face
 			GeoSegmentND[] s = new GeoSegmentND[currentFace.size()];
 			
 			Iterator<ConstructionElement> it2 = currentFace.iterator();
-			GeoPoint3D endPoint = (GeoPoint3D) it2.next();
+			GeoPointND endPoint = (GeoPointND) it2.next();
 			int j=0;
 			p[j]= endPoint; //first point for the polygon
-			GeoPoint3D firstPoint = endPoint;
+			GeoPointND firstPoint = endPoint;
 			for (; it2.hasNext();){
 				// creates edges
-				GeoPoint3D startPoint = endPoint;
-				endPoint = (GeoPoint3D) it2.next();
+				GeoPointND startPoint = endPoint;
+				endPoint = (GeoPointND) it2.next();
 				s[j] = createSegment(startPoint, endPoint);
 				
 				//points for the polygon
@@ -232,7 +233,7 @@ public class GeoPolyhedron extends GeoElement3D {
 	 * @param points vertices of the polygon
 	 * @return the polygon
 	 */
-	public GeoPolygon3D createPolygon(GeoPoint3D[] points){
+	public GeoPolygon3D createPolygon(GeoPointND[] points){
 		 GeoPolygon3D polygon;
 
 		 AlgoPolygon3D algo = new AlgoPolygon3D(cons,null,points,false,this);            
@@ -255,10 +256,10 @@ public class GeoPolyhedron extends GeoElement3D {
 	  * @return the segment
 	  */
 	
-	 public GeoSegment3D createSegment(GeoPoint3D startPoint, GeoPoint3D endPoint){
+	 public GeoSegment3D createSegment(GeoPointND startPoint, GeoPointND endPoint){
 		 
 		 ConstructionElementCycle key = 
-			 ConstructionElementCycle.SegmentDescription(startPoint,endPoint);
+			 ConstructionElementCycle.SegmentDescription((GeoElement) startPoint,(GeoElement) endPoint);
 		 /*
 			 new ConstructionElementCycle();
 		 key.add(startPoint);key.add(endPoint);
