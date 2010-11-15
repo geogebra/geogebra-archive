@@ -46,6 +46,16 @@ public class SelectionTable extends JTable{
 	
 	private int sliderValue;	
 
+	private int horizontalAlignment = SwingConstants.LEFT;
+	
+
+
+	public void setHorizontalAlignment(int horizontalAlignment) {
+		this.horizontalAlignment = horizontalAlignment;
+	}
+
+
+
 	private Object[] data;
 	private int numRows, numColumns, rowHeight, columnWidth;
 	public int getColumnWidth() {
@@ -138,9 +148,11 @@ public class SelectionTable extends JTable{
 		this.setAutoResizeMode(AUTO_RESIZE_OFF);
 		this.setAutoCreateColumnsFromModel(false);
 		setShowGrid(false);
+		setGridColor(Color.GRAY);
 		this.setTableHeader(null);
 		this.setBorder(null);
 		setCellDimensions();
+		setFont(app.getPlainFont());
 		
 		// set cell selection properties
 		setCellSelectionEnabled(true);
@@ -182,15 +194,25 @@ public class SelectionTable extends JTable{
 	
 	// set cell dimensions
 	private void setCellDimensions(){
-		
+
 		int padding = useColorSwatchBorder ? 1 : 4;
-		rowHeight = iconSize.height + padding;
+
+		// match row height to specified icon height
+		// when mode=text then let font size adjust row height automatically  
+		if(mode != MODE_TEXT){		
+			rowHeight = iconSize.height + padding;	
+		} else{
+			rowHeight = getMaxRowHeight(this) + padding;
+		}
+
 		setRowHeight(rowHeight);
 		
-		columnWidth = iconSize.width + padding;
 		
+		// set the column widths
+		columnWidth = iconSize.width + padding;
 		int w;
-		for (int i = 0; i < getColumnCount(); ++ i) {		
+		for (int i = 0; i < getColumnCount(); ++ i) {	
+			// for mode=text, adjust column width to the maximum width in the column	
 			if(mode == MODE_TEXT){
 				w = getMaxColumnWidth(this,i); 
 				getColumnModel().getColumn(i).setPreferredWidth(w);
@@ -198,10 +220,16 @@ public class SelectionTable extends JTable{
 			}else{
 				getColumnModel().getColumn(i).setPreferredWidth(columnWidth);
 			}
+
 		}
 		repaint();
 	}
 	
+	
+	public void updateFonts(){
+		setFont(app.getPlainFont());
+		setCellDimensions();
+	}
 	
 	
 	 //==============================================
@@ -321,19 +349,19 @@ public class SelectionTable extends JTable{
 			setOpaque(true);
 			setHorizontalAlignment(CENTER);
 			setVerticalAlignment(CENTER);			
-			setFont(app.getPlainFont());
+			
 		}
 		
 		
 		public Component getTableCellRendererComponent(JTable table, Object value,
 														boolean isSelected,boolean hasFocus, int row,int column) 
 	    {
-					
+			setFont(app.getPlainFont());
 			setAlignmentX(CENTER_ALIGNMENT);
 			setAlignmentY(CENTER_ALIGNMENT);
 
 			if(mode == MODE_TEXT){
-				this.setHorizontalAlignment(SwingConstants.LEFT);
+				this.setHorizontalAlignment(horizontalAlignment);
 				this.setVerticalAlignment(SwingConstants.CENTER);
 				setText((String)value);
 				setBorder(paddingBorder);
@@ -405,6 +433,30 @@ public class SelectionTable extends JTable{
 	}
 	
 	
+	/**
+	 * Finds the maximum preferred height of all cells.
+	 */
+	public int getMaxRowHeight(JTable table){
+
+		TableColumn tableColumn; 
+
+		// iterate through all cells
+		int maxPrefHeight = 0;
+		int cellPrefHeight = 0;
+		for (int r = 0; r < table.getRowCount(); r++) {
+			for (int c = 0; c < table.getColumnCount(); c++) {
+				tableColumn = table.getColumnModel().getColumn(c); 
+				if(table.getValueAt(r, c) != null){
+					cellPrefHeight = (int) table.getCellRenderer(r, c).getTableCellRendererComponent(table,
+							table.getValueAt(r, c), false, false,
+							r, c).getPreferredSize().getHeight();
+					maxPrefHeight = Math.max(maxPrefHeight, cellPrefHeight);
+				}
+			}
+		}
+		return maxPrefHeight + table.getIntercellSpacing().height;
+	}
+
 	
 	
 	

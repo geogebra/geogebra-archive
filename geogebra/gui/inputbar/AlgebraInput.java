@@ -38,8 +38,10 @@ import java.awt.event.MouseListener;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JToggleButton;
 
 /**
  * @author Markus Hohenwarter
@@ -57,12 +59,14 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
  	
 	private MyComboBox cmdCB; // for command list
 	
-	private CommandPopupMenuButton cmdButton; // alternate button for command list
 	
 	// autocompletion text field
 	private AutoCompleteTextField inputField;
 
 	
+
+	private JToggleButton btnToggleInputPanel;
+	InputPanel inputPanel;
 
 	/**
 	 * creates new AlgebraInput
@@ -82,7 +86,12 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputLabel = new JLabel(); 
 		inputLabel.addMouseListener(this);
 
-		InputPanel inputPanel = new InputPanel(null, app, 30, true);
+		
+		if(showCommandButton)
+			inputPanel = new InputPanel(null, app, 30);
+		else
+			inputPanel = new InputPanel(null, app, 30, true);
+		
 		inputField = (AutoCompleteTextField) inputPanel.getTextComponent();		
 		
 		// set up input field		
@@ -99,30 +108,33 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		}
 		
 		
-		// set up command popup button
-		cmdButton = new CommandPopupMenuButton(app);
-		cmdButton.setDownwardPopup(false);
-		cmdButton.addActionListener(this);	
-		
 		updateFonts();
 				
 		// add to panel				 		
 		setLayout(new BorderLayout(2, 2));	
 		JPanel iconLabelPanel = new JPanel();
 		iconLabelPanel.add(helpIcon);
+
+		// create toggle button to hide/show the input help panel
+		btnToggleInputPanel = new JToggleButton();
+		btnToggleInputPanel.setSelectedIcon(app.getImageIcon("go-previous-gray.png"));
+		btnToggleInputPanel.setIcon(app.getImageIcon("go-next-gray.png"));
+		btnToggleInputPanel.addActionListener(this);
+		btnToggleInputPanel.setFocusable(false);
 		
-		if (app.showCmdList() && showCommandButton ) {
-			JPanel cbPanel = new JPanel(new BorderLayout());
-			cbPanel.add(cmdButton, BorderLayout.CENTER);
-			iconLabelPanel.add(cbPanel);
-		}
 		
 		iconLabelPanel.add(inputLabel);
 		add(iconLabelPanel, BorderLayout.WEST);   
 		add(inputPanel, BorderLayout.CENTER);
 		if (app.showCmdList()) {
 			JPanel p = new JPanel(new BorderLayout(5,5));
-			p.add(cmdCB, BorderLayout.CENTER);		
+			
+			if(showCommandButton)
+				p.add(btnToggleInputPanel, BorderLayout.CENTER);
+			else
+				p.add(cmdCB, BorderLayout.CENTER);
+			
+			p.add(Box.createRigidArea(new Dimension(10,1)), BorderLayout.EAST);
 			add(p, BorderLayout.EAST);
 		}
 		
@@ -164,7 +176,9 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		//inputButton.setToolTipText(app.getMenu("Mode") + " " + app.getMenu("InputField"));   
 		if (helpIcon != null)
 			helpIcon.setToolTipText(app.getMenu("FastHelp"));		
-		setCommandNames();				
+		setCommandNames();	
+		// update the help panel
+		app.getInputHelpPanel().setLabels();
 	}	
 	
 	public void updateFonts() {
@@ -175,6 +189,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			// set to approx half screen height
 			cmdCB.setMaximumRowCount(app.getScreenSize().height/app.getFontSize()/3);
 		}
+		//update the help panel
+		app.getInputHelpPanel().updateFonts();
 	}    
 	
 //	/**
@@ -196,7 +212,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
 	
 	// see actionPerformed
-	private void insertCommand(String cmd) {
+	public void insertCommand(String cmd) {
 		if (cmd == null) return;
 		
 		int pos = inputField.getCaretPosition();
@@ -211,6 +227,20 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.requestFocus();
 	}
 	
+	
+	public void insertString(String str) {
+		if (str == null) return;
+		
+		int pos = inputField.getCaretPosition();
+		String oldText = inputField.getText();
+		String newText = 
+			oldText.substring(0, pos) + str +
+			oldText.substring(pos);			 			
+		
+		inputField.setText(newText);
+		inputField.setCaretPosition(pos + str.length());		
+		inputField.requestFocus();
+	}
 
 	
 	
@@ -221,9 +251,6 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		app.initTranslatedCommands();
 		LowerCaseDictionary dict = app.getCommandDictionary();
 		if (dict == null || cmdCB == null) return;
-		
-		// localize the  cmdButton 
-		cmdButton.setCommands();
 		
 		ActionListener [] listeners = cmdCB.getActionListeners();
 		for (int i=0; i < listeners.length; i++) 
@@ -275,10 +302,12 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			}					
 		}			
 		
-		if (source == cmdButton) { 		
-			String cmd = cmdButton.getSelectedCommand();
-			insertCommand(cmd);	
+		
+		if (source == btnToggleInputPanel) { 
+			app.setShowInputHelpPanel(btnToggleInputPanel.isSelected());
 		}
+			
+		
 	}
 
 	public void keyPressed(KeyEvent e) {

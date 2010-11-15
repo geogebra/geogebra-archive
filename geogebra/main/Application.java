@@ -27,6 +27,8 @@ import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.inputbar.InputBarHelpPanel;
+import geogebra.gui.util.AnimatedPaneSlider;
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.Perspective;
@@ -62,7 +64,6 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -70,6 +71,8 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -118,7 +121,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 
@@ -385,6 +390,16 @@ public class Application implements KeyEventDispatcher {
 	private GgbAPI ggbapi = null;
 	private PluginManager pluginmanager = null;
 	private ScriptManager scriptManager = null;
+
+	
+	// GUI elements to support a sidebar help panel for the input bar.
+	// The help panel slides open on a button press from the input bar.
+	private JSplitPane applicationSplitPane;
+	private InputBarHelpPanel inputHelpPanel;
+	public InputBarHelpPanel getInputHelpPanel() {
+		return inputHelpPanel;
+	}
+	
 
 	public Application(CommandLineArguments args, JFrame frame, boolean undoActive) {
 		this(args, frame, null, null, undoActive);
@@ -802,10 +817,21 @@ public class Application implements KeyEventDispatcher {
 			}
 		}
 		
+		//==================
+		// G.Sturr 2010-11-14
+		// Create a help panel for the input bar and a JSplitPane to contain it.
+		// The splitPane defaults with the application on the left and null on the right. 
+		// Our help panel will be added/removed as needed by the input bar.
+		inputHelpPanel = new InputBarHelpPanel(this);
+		applicationSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, null);
+		// help panel is on the right, so set all resize weight to the left pane
+		applicationSplitPane.setResizeWeight(1.0);
+		
+		
 		panel.add(topPanel, BorderLayout.NORTH);
-		panel.add(centerPanel, BorderLayout.CENTER);
+		panel.add(applicationSplitPane, BorderLayout.CENTER);
 		panel.add(bottomPanel, BorderLayout.SOUTH);
-
+		
 		// init labels
 		setLabels();
 		
@@ -822,6 +848,29 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
+	/**
+	 * Open/close the sidebar help panel for the input bar
+	 */
+	public void setShowInputHelpPanel(boolean isVisible){
+		if(isVisible){
+			if(applicationSplitPane.getRightComponent()==null)
+				applicationSplitPane.setRightComponent(inputHelpPanel);
+
+			applicationSplitPane.setDividerLocation(applicationSplitPane.getLastDividerLocation());
+			//slideScrollPane(applicationSplitPane.getLastDividerLocation());
+			applicationSplitPane.setDividerSize(10);
+
+		}else{
+			applicationSplitPane.setLastDividerLocation(applicationSplitPane.getDividerLocation());
+			//slideScrollPane(applicationSplitPane.getWidth());
+			applicationSplitPane.setRightComponent(null);
+			applicationSplitPane.setDividerSize(0);
+		}
+	}
+
+	
+
+	
 	private Macro macro;
 	
 	/**
