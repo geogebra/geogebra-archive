@@ -317,7 +317,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if (ch == '}' || ch == ')' || ch == ']') {
 			
 			// simple check if brackets match
-			if (text.charAt(caretPos)==ch) {
+			if (text.length() > caretPos && text.charAt(caretPos)==ch) {
 				int count = 0;
 				for (int i = 0 ; i < text.length() ; i++) {
 					char c = text.charAt(i);
@@ -333,7 +333,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 					// if brackets match, just move the cursor forwards one
 					e.consume();
 					caretPos++;
-				}
+				} 
 			}
 			
 		}
