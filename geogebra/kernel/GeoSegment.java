@@ -18,7 +18,6 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 
 import java.util.HashSet;
 
@@ -35,18 +34,29 @@ GeoSegmentND {
 	private boolean defined;
 	private boolean allowOutlyingIntersections = false;
 	private boolean keepTypeOnGeometricTransform = true; // for mirroring, rotation, ...
-	
+	/** no decoration */
 	public static final int SEGMENT_DECORATION_NONE = 0;
+	/** one tick */
 	public static final int SEGMENT_DECORATION_ONE_TICK = 1;
+	/** two ticks */
 	public static final int SEGMENT_DECORATION_TWO_TICKS = 2;
+	/** three ticks */
 	public static final int SEGMENT_DECORATION_THREE_TICKS = 3;
 //	 Michael Borcherds 20071006 start
+	/** one arrow */
 	public static final int SEGMENT_DECORATION_ONE_ARROW = 4;
+	/** two arrows */
 	public static final int SEGMENT_DECORATION_TWO_ARROWS = 5;
+	/** three arrows */
 	public static final int SEGMENT_DECORATION_THREE_ARROWS = 6;
 //	 Michael Borcherds 20071006 end
 	
 	// added by Lo�c
+	/**
+	 * Returns array of all decoration types
+	 * @see #SEGMENT_DECORATION_ONE_TICK etc.
+	 * @return array of all decoration types
+	 */
 	public static final Integer[] getDecoTypes() {
 		Integer[] ret = { new Integer(SEGMENT_DECORATION_NONE),
 				new Integer(SEGMENT_DECORATION_ONE_TICK),
@@ -494,9 +504,12 @@ GeoSegmentND {
 		}
 	}
   	
-  	/*
+  	/**
   	 * returns the paramter for the closest point to P on the Segment (extrapolated)
   	 * so answers can be returned outside the range [0,1]
+  	 * @param px 
+  	 * @param py 
+  	 * @return closest parameter
   	 */
   	final public double getParameter(double px, double py){
 		// project P on line

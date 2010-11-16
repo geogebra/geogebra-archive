@@ -1302,7 +1302,7 @@ public class Construction {
     /**
      * set that the label depends on the algo.
      * Used when loading file, algos implementing AlgoElementWithResizeableOutput
-     * tell that output labels depend on it (used with {@link #resolveLabelDependency(String, GeoElement)} when element
+     * tell that output labels depend on it (used with {@link #resolveLabelDependency(String, int)} when element
      * is handled) 
      * @param label
      * @param algo

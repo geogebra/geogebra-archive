@@ -43,7 +43,6 @@ public interface PathMover {
 	
 	/**
 	 * Sets point p to the next position on the path
-	 * @param result
 	 * @return true: draw line to point p; false: move to point p
 	 */
 	public boolean getNext(GeoPoint p);
@@ -52,7 +51,7 @@ public interface PathMover {
 	 * Returns false whenever the next call of getNext() 
      * would lead to passing the init path parameter
      * (note: there are two orientations) 
-	 * @param result
+	 * @return 
 	 */
 	public boolean hasNext();	
 	
@@ -61,6 +60,9 @@ public interface PathMover {
 	 */
 	public void resetStartParameter();
 	
+	/**
+	 * @return
+	 */
 	public double getCurrentParameter();
 	
 	/**
@@ -72,6 +74,7 @@ public interface PathMover {
 	/**
 	 * Returns whether the orientation of moving along the
 	 * path is positive.
+	 * @return 
 	 */
 	public boolean hasPositiveOrientation();	
 	
@@ -82,16 +85,20 @@ public interface PathMover {
 	
 	/**
 	 * Increases the step width. Returns whether this was possible.	 
+	 * @return 
 	 */
 	public boolean biggerStep();
 	
 	/**
 	 * Sets step width. Returns whether this was possible.	 
+	 * @param step 
+	 * @return 
 	 */
 	public boolean setStep(double step);
 	
 	/**
 	 * Get step width.	 	 
+	 * @return 
 	 */
 	public double getStep();
 	

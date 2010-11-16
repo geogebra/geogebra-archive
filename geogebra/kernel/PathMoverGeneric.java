@@ -13,7 +13,9 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
-
+/**
+ * Path mover for most common paths
+ */
 public class PathMoverGeneric implements PathMover {		
 	
 	private static final int BOUNDS_FIXED = 1;
@@ -29,6 +31,10 @@ public class PathMoverGeneric implements PathMover {
 	protected boolean posOrientation;
 	private boolean maxBorderSet, minBorderSet;
 	
+	/**
+	 * Creates new path mover for given path
+	 * @param path
+	 */
 	public PathMoverGeneric(Path path) {		
 		this.path = path;
 	}
@@ -62,7 +68,7 @@ public class PathMoverGeneric implements PathMover {
 				max_param  =  1 - OPEN_BORDER_OFFSET;
 				
 				// transform start parameter to be in (-1, 1)
-				start_param = inverseInfFunction(start_param);										
+				start_param = PathNormalizer.inverseInfFunction(start_param);										
 			}
 			else { 
 				// (-infinite, max_param]
@@ -176,6 +182,10 @@ public class PathMoverGeneric implements PathMover {
 		return lineTo;
 	}
 	
+	/**
+	 * Updates path parameter of point p from curr_param
+	 * @param p
+	 */
 	protected void calcPoint(GeoPoint p) {
 		double param;
 		switch (mode) {
@@ -184,12 +194,12 @@ public class PathMoverGeneric implements PathMover {
 				break;
 			
 			case BOUNDS_INFINITE:
-				param = infFunction(curr_param);
+				param = PathNormalizer.infFunction(curr_param);
 				break;
 			
 			case BOUNDS_FIXED_INFINITE:
 			case BOUNDS_INFINITE_FIXED:
-				param = offset + infFunction(curr_param);				
+				param = offset + PathNormalizer.infFunction(curr_param);				
 				break;
 			
 			default:
@@ -270,26 +280,5 @@ public class PathMoverGeneric implements PathMover {
 		curr_param = last_param;		
 	}
 	
-	/**
-	 * Function t: (-1, 1) -> (-inf, +inf)
-	 * @param t
-	 * @return
-	 */
-	public static double infFunction(double t) {		
-		return  t /  (1 - Math.abs(t));
-	}
-	
-	/**
-	 * Function z: (-inf, +inf) -> (-1, 1)
-	 * @param t
-	 * @return
-	 */
-	public static double inverseInfFunction(double z) {
-		if (z >= 0) {
-			return z / (1 + z);
-		} else {
-			return z / (1 - z);
-		}
-	}
 
 }

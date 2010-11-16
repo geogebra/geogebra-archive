@@ -14,10 +14,17 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 
+/**
+ * Path mover for locus
+ */
 public class PathMoverLocus extends PathMoverGeneric {		
 	
-	private ArrayList myPointList;
+	private ArrayList<MyPoint> myPointList;
 	
+	/**
+	 * Creates new path mover for given locus
+	 * @param locus
+	 */
 	public PathMoverLocus(GeoLocus locus) {		
 		super(locus);
 		myPointList = locus.getMyPointList();

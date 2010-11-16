@@ -16,7 +16,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.EllipticArcLength;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -127,23 +126,38 @@ implements LimitedPath, NumberValue, LineProperties {
 			allowOutlyingIntersections = cp.allowOutlyingIntersections;
 		}
 	}
-	
+	/**
+	 * Sector or arc
+	 * @return CONIC_PART_ARC or CONIC_PART_SECTOR
+	 */
 	final public int getConicPartType() {
 		return conic_part_type;
 	}
 	
+	/**
+	 * @return start parameter
+	 */
 	final public double getParameterStart() {
 		return paramStart;
 	}
 	
+	/**
+	 * @return end parameter
+	 */
 	final public double getParameterEnd() {
 		return paramEnd;
 	}
 	
+	/**
+	 * @return end parameter - start parameter
+	 */
 	final public double getParameterExtent() {
 		return paramExtent;
 	}
 	
+	/**
+	 * @return start parameter
+	 */
 	final public boolean positiveOrientation() {
 		return posOrientation;
 	}	
@@ -171,6 +185,9 @@ implements LimitedPath, NumberValue, LineProperties {
 	 * For type CONIC_PART_ARC the value is
 	 * the length, for CONIC_PART_SECTOR the value is an area. 
 	 * This method should only be called by the parent algorithm 
+	 * @param a 
+	 * @param b 
+	 * @param positiveOrientation 
 	 */
 	final public void setParameters(double a, double b, boolean positiveOrientation) {
 		value_defined = super.isDefined();
@@ -270,10 +287,18 @@ implements LimitedPath, NumberValue, LineProperties {
 		value_defined = false;
 	}
 	
+	/**
+	 * Returns arc length
+	 * @return arc length
+	 */
 	final public double getValue() {
 		return value;
 	}
 	
+	/**
+	 * Returns the area
+	 * @return area
+	 */
 	final public double getArea() {
 		return area;
 	}
@@ -545,7 +570,7 @@ implements LimitedPath, NumberValue, LineProperties {
 	/**
 	 * Returns the smallest possible parameter value for this
 	 * path (may be Double.NEGATIVE_INFINITY)
-	 * @return
+	 * 
 	 */
 	public double getMinParameter() {
 		switch (type) {
@@ -570,7 +595,7 @@ implements LimitedPath, NumberValue, LineProperties {
 	/**
 	 * Returns the largest possible parameter value for this
 	 * path (may be Double.POSITIVE_INFINITY)
-	 * @return
+	 * 
 	 */
 	public double getMaxParameter() {
 		switch (type) {
@@ -759,6 +784,81 @@ implements LimitedPath, NumberValue, LineProperties {
 		setUndefined();
 		
 	}
+	
+	
+	public boolean isInRegion(double x0, double y0) {
+			
+		if(!super.isInRegion(x0, y0))
+			return false;
+		
+		double arg = computeArg(x0,y0);
+		if (arg < 0) 
+			arg += Kernel.PI_2;
+		Application.debug(paramStart+"-"+arg+"-"+paramEnd);
+		return (arg >= -Kernel.EPSILON) && (arg <= paramExtent+Kernel.EPSILON);
+		
+	}
+	
+	
+	private double computeArg(double x0, double y0) {
+		double px = x0 - b.x;
+		double py = y0 - b.y;
+		
+		// rotate by -alpha
+		double px2 = px * eigenvec[0].x + py * eigenvec[0].y;
+		py = px * eigenvec[1].x + py * eigenvec[1].y;			
+
+		// calc parameter 
+			
+		
+		// relation between the internal parameter t and the angle theta:
+		// t = atan(a/b tan(theta)) where tan(theta) = py / px
+		double arg = Math.atan2(halfAxes[0]*py, halfAxes[1]*px2);
+		if (arg < 0)
+			arg += Kernel.PI_2;
+		return arg - paramStart;
+			
+	}
+
+	protected void moveBackToRegion(GeoPointND pi,RegionParameters rp) {
+		double x0=pi.getX2D(), y0 = pi.getY2D();
+		if(!super.isInRegion(x0,y0)){
+			pointChanged(pi);
+			rp.setIsOnPath(true);
+		}
+		else{
+			rp.setIsOnPath(false);
+			double arg = computeArg(x0,y0);
+			double px=3,py=3;
+			if(arg<0){
+				px =Math.cos(paramStart);
+				py = Math.sin(paramStart);
+				//arg += Kernel.PI_2;
+			}
+			if(arg>paramExtent){
+				px = Math.cos(paramEnd);
+				py = Math.sin(paramEnd);
+			}
+			if(px<2){
+				double ratio = Math.sqrt((x0-b.x)*(x0-b.x)+(y0-b.y)*(y0-b.y))/halfAxes[0];
+				px = ratio * px;
+				py = ratio * py;
+				rp.setT1(px);
+				rp.setT2(py);
+			}
+			regionChanged(pi);
+		}
+	}
+	
+	public void regionChanged(GeoPointND PI){
+		super.regionChanged(PI);
+		PI.updateCoords2D();
+		if(!isInRegion(PI))
+			pointChanged(PI);
+		
+	}
+	
+	
 	
 	
 }

@@ -2433,7 +2433,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				line.pointChanged(P);
 							
 				// convert line parameter to (-1,1)
-				pp.t = PathMoverGeneric.inverseInfFunction(pp.t);
+				pp.t = PathNormalizer.inverseInfFunction(pp.t);
 				if (!firstLine) {
 					pp.t = pp.t + 2;// convert from (-1,1) to (1,3)									
 				}				
@@ -2490,7 +2490,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				P.z = 1.0;
 
 				// compute t in (-1,1) from s in (-inf, inf)
-				pp.t = PathMoverGeneric.inverseInfFunction(s);	
+				pp.t = PathNormalizer.inverseInfFunction(s);	
 				if (px < 0) { // left branch									
 					pp.t = pp.t + 2; // convert (-1,1) to (1,3)
 					P.x = -P.x;
@@ -2799,8 +2799,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 		if (!isInRegion(PI)){
 
-			pointChanged(PI);
-			rp.setIsOnPath(true);
+			moveBackToRegion(PI,rp);
 		}else{
 			GeoPoint P=(GeoPoint)PI;
 			rp.setIsOnPath(false);
@@ -2811,6 +2810,18 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			coordsEVtoRW(P);
 		}
 	}
+
+
+	/**
+	 * Move a point  back to region
+	 * @param pi
+	 * @param rp
+	 */
+	protected void moveBackToRegion(GeoPointND pi,RegionParameters rp) {
+		pointChanged(pi);
+		rp.setIsOnPath(true);		
+	}
+
 
 
 	/**

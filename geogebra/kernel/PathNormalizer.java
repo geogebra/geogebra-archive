@@ -62,6 +62,7 @@ public class PathNormalizer implements Path {
 	
 	/**
 	 * Converts path parameter value t from range [min, max] to [0, 1].
+	 * @param t parameter to be normalized
 	 * 
 	 * @param min of range [min, max]
 	 * @param max of range [min, max]
@@ -132,7 +133,7 @@ public class PathNormalizer implements Path {
 	/**
 	 * Function t: (-1, 1) -> (-inf, +inf)
 	 * @param t
-	 * @return
+	 * @return parameter in (-1,1) to be mapped into all reals
 	 */
 	public static double infFunction(double t) {		
 		return  t /  (1 - Math.abs(t));
@@ -140,8 +141,8 @@ public class PathNormalizer implements Path {
 	
 	/**
 	 * Function z: (-inf, +inf) -> (-1, 1)
-	 * @param t
-	 * @return
+	 * @param z
+	 * @return arbitrary parameter to be mapped into (-1,1)
 	 */
 	public static double inverseInfFunction(double z) {
 		if (z >= 0) {

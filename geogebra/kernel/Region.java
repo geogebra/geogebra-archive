@@ -7,8 +7,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 /**
  * @author Mathieu Blossier
  * 
- * 
- * 
+
  */
 
 
@@ -20,7 +19,7 @@ public interface Region {
 	 * Sets coords of P  when
 	 * the coords of P have changed.
 	 * Afterwards P lies in this region.
-	 * 
+	 * @param P 
 	 * 
 	 */
 	public void pointChangedForRegion(GeoPointND P);
@@ -30,6 +29,7 @@ public interface Region {
 	 * Sets coords of P 
 	 * when this region has changed.
 	 * Afterwards P lies in this region.
+	 * @param P 
 	 * 
 	 *
 	 */
@@ -39,6 +39,8 @@ public interface Region {
 	
 	/**
 	 * Returns true if the given point lies inside this Region.
+	 * @param P point
+	 * @return true if the given point lies inside this Region.
 	 */	
 	public boolean isInRegion(GeoPointND P);
 	
@@ -52,6 +54,7 @@ public interface Region {
 	
 	/**
 	 * Returns this region as an object of type GeoElement.
+	 * @return this region as an object of type GeoElement.
 	 */
 	public GeoElement toGeoElement();
 
