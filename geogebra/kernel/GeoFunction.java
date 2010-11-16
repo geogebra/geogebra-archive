@@ -505,15 +505,26 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			P.y = evaluate(P.x);// changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, x�]] 
 		}
 		else {
-			P.y = 0.0;
+			double px;
+			boolean yfun = getVarString().equals("y");
+			if(yfun){
+				P.x = 0.0;
+				px = P.y;
+			}else{
+				P.y = 0.0;
+				px = P.x;
+			}
 			double bestDist = Double.MAX_VALUE;
-			getIneqs();
-			if(!this.evaluateBoolean(P.x))
+			getIneqs();			
+			if(!this.evaluateBoolean(px))
 				for(Inequality ineq:ineqs){
 					for(GeoPoint point:ineq.getZeros())
-						if(Math.abs(point.x-P.x)<bestDist){
-							P.x = point.x;
-							bestDist = Math.abs(point.x-P.x);
+						if(Math.abs(point.x-px)<bestDist){
+							bestDist = Math.abs(point.x-px);
+							if(yfun)
+								P.y = point.x;
+							else
+								P.x=point.x;
 						}
 				}
 		}
