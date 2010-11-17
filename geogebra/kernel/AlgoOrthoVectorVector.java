@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 /**
@@ -58,6 +60,11 @@ public class AlgoOrthoVectorVector extends AlgoElement {
     public String getClassName() {
         return "AlgoOrthoVectorVector";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ORTHOGONAL;
+    }
+    
     
     // for AlgoElement
     protected void setInputOutput() {

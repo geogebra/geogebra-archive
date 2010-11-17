@@ -12,6 +12,7 @@
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.integration.EllipticArcLength;
 
 /**
@@ -49,7 +50,7 @@ public class AlgoCircumferenceConic extends AlgoElement {
 	public String getClassName() {
 		return "AlgoCircumferenceConic";
 	}
-
+	
 	protected void setInputOutput() {
 		input = new GeoElement[1];
 		input[0] = conic;

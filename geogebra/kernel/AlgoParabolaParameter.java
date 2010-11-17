@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 /**
@@ -46,6 +48,11 @@ public class AlgoParabolaParameter extends AlgoElement {
     public String getClassName() {
         return "AlgoParabolaParameter";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_PARABOLA;
+    }
+    
     
     // for AlgoElement
     protected void setInputOutput() {

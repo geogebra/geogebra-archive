@@ -21,6 +21,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -125,6 +126,13 @@ GeoPointND, Animatable  {
 	public String getClassName() {
 		return "GeoPoint";
 	}        
+	
+	// This shouldn't be put here.
+	/*
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_POINT;
+    }
+	*/
 	
     protected String getTypeString() {
     	if (toStringMode == Kernel.COORD_COMPLEX)

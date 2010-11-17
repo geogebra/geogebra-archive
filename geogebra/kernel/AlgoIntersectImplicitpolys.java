@@ -25,6 +25,7 @@ import edu.jas.arith.BigRational;
 import edu.jas.gb.GBFactory;
 import edu.jas.gb.GroebnerBase;
 import edu.jas.poly.GenPolynomial;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.main.Application;
 
 /**
@@ -176,7 +177,7 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
     	GroebnerBase<BigRational> gb = GBFactory.getImplementation(BigRational.ONE);
     	List<GenPolynomial<BigRational>> G=gb.GB(polynomials);
     	//G=gb.minimalGB(G);
-    	Application.debug("Gröbner Basis: "+G);
+    	Application.debug("Grï¿½bner Basis: "+G);
     	boolean[] var=new boolean[2];
     	var[0]=var[1]=true;
     	setRootsPolynomial(GeoImplicitPoly.getUnivariatPoly(G,var));
@@ -191,6 +192,10 @@ public class AlgoIntersectImplicitpolys extends AlgoSimpleRootsPolynomial {
 		return "AlgoIntersectImplicitpolys";
 	}
 	
-	
+	@Override
+	public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
+    }
+    
 
 }

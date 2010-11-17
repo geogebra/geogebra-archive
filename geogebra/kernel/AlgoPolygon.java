@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbCoordSys;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 
@@ -103,6 +104,10 @@ public class AlgoPolygon extends AlgoElement {
         
     public String getClassName() {
         return "AlgoPolygon";
+    }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_POLYGON;
     }
     
     /**

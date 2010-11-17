@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -46,6 +48,10 @@ public class AlgoAngleConic extends AlgoElement {
         return "AlgoAngleConic";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ANGLE;
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[1];

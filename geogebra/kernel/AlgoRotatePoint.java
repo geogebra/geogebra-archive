@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -96,6 +97,12 @@ public class AlgoRotatePoint extends AlgoTransformation {
         return "AlgoRotatePoint";
     }
 
+
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ROTATE_BY_ANGLE;
+    }
+
+    
     /**
      * Returns true iff euclidian view updte is needed (for images)
      * @return true iff euclidian view updte is needed 

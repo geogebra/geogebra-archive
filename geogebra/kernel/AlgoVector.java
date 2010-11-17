@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
@@ -89,6 +90,11 @@ public class AlgoVector extends AlgoElement {
     public String getClassName() {
         return "AlgoVector";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_VECTOR;
+    }
+
     
     // for AlgoElement
     public void setInputOutput() {

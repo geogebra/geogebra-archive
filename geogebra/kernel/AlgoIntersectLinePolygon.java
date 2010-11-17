@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
@@ -95,6 +96,10 @@ implements AlgoElementWithResizeableOutput{
         return "AlgoIntersectLinePolygon";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

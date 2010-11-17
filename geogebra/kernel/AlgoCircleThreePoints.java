@@ -20,7 +20,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
-
+import geogebra.euclidian.EuclidianConstants;
 
 
 /**
@@ -122,6 +122,10 @@ public class AlgoCircleThreePoints extends AlgoElement {
         return "AlgoCircleThreePoints";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_CIRCLE_THREE_POINTS;
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {
     	setInput();

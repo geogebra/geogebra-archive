@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  * Creates all angles of a polygon.
@@ -40,6 +42,10 @@ public class AlgoAnglePolygon extends AlgoElement {
 
     public String getClassName() {
         return "AlgoAnglePolygon";
+    }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ANGLE;
     }
 
     // for AlgoElement

@@ -22,6 +22,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 /**
  *
  * @author  Markus
@@ -64,6 +66,11 @@ public class AlgoEllipseFociPoint extends AlgoElement {
     public String getClassName() {
         return "AlgoEllipseFociPoint";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ELLIPSE_THREE_POINTS;
+    }
+    
 
     // for AlgoElement
     protected void setInputOutput() {

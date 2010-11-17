@@ -1132,11 +1132,16 @@ public class ConstructionProtocol extends JDialog implements Printable {
 						.toString();
 			case 6: { // Displaying toolbar icons in the list on demand.
 
-				/* Step 1.
+				int m = ((RowData) rowList.get(nRow)).geo.getRelatedModeID();
+				// System.out.println("mode = " + m);
+
+				/* This was the old code based on heuristics.
+				
+				 * Step 1.
 				 * Heuristics to find out the toolbar icon (stored in String mode).
 				 * Mostly the lowercased command variable will give
 				 * the needed toolbar, but sometimes additional logic is needed.
-				 */
+				 
 				String className = ((RowData) rowList.get(nRow)).geo.getClassName();
 				String parentAlgoClassName = null;
 				if (((RowData) rowList.get(nRow)).geo.getParentAlgorithm() != null)
@@ -1208,15 +1213,24 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				// If no valid mode found, return with no icon:
 				if (mode.equals(""))
 					return "";
-
+				 */
+				
 				/*
 				 * Step 2. Copying the toolbar icon to the export directory. 
 				 */
-				String gifFileName = "mode_" + mode.toLowerCase(Locale.US)
-						+ "_32.gif";
-				ImageIcon icon = app.getToolBarImage(gifFileName, null);
+				// String gifFileName = "mode_" + mode.toLowerCase(Locale.US)
+				//		+ "_32.gif";
+				// ImageIcon icon = app.getToolBarImage(gifFileName, null);
+
+				if (m == -1)
+					return "";
+				
+				ImageIcon icon = app.getModeIcon(m);
+				String gifFileName = "m" + Integer.toString(m) + ".gif";
+					
 				Image img1 = icon.getImage();
 				BufferedImage img2 = toBufferedImage(img1);
+				
 				
 				File gifFile = new File(thisPath + "/GeoGebraToolbarIcons/" + gifFileName);
 				try {

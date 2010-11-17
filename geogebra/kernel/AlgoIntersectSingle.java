@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  * Single intersection point 
@@ -47,6 +49,10 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		return "AlgoIntersectSingle";
 	}
     
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
+    }
+	
 	// for AlgoElement
 	public void setInputOutput() {
 		input = new GeoElement[3];

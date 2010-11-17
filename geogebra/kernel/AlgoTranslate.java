@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.EuclidianConstants;
 
 /**
  *
@@ -76,6 +77,11 @@ public class AlgoTranslate extends AlgoTransformation {
     public String getClassName() {
         return "AlgoTranslate";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TRANSLATEVIEW;
+    }
+
     
     // for AlgoElement
     protected void setInputOutput() {

@@ -17,6 +17,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 
@@ -45,6 +47,10 @@ public class AlgoAreaConic extends AlgoElement {
   
     public String getClassName() {
         return "AlgoAreaConic";
+    }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_AREA;
     }
     
     // for AlgoElement

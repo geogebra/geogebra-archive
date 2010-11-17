@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 public class AlgoTangentFunctionPoint extends AlgoElement {
 
@@ -65,6 +67,11 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         return "AlgoTangentFunctionPoint";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TANGENTS;
+    }
+
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

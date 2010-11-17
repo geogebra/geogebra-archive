@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -61,6 +63,10 @@ public class AlgoAnglePoints extends AlgoElement  implements AlgoDrawInformation
         return "AlgoAnglePoints";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ANGLE;
+    }
+    
     private AlgoAnglePoints(
         Construction cons,
         GeoPoint A,

@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
@@ -39,6 +40,11 @@ public class AlgoHyperbolaFociLength extends AlgoConicFociLength {
     public String getClassName() {
         return "AlgoHyperbolaFociLength";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_HYPERBOLA_THREE_POINTS;
+    }
+    
 
 	final public String toString() {
         // Michael Borcherds 2008-03-30

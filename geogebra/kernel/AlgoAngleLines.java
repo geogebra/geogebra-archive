@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -72,6 +74,10 @@ public class AlgoAngleLines extends AlgoElement  implements AlgoDrawInformation{
         return "AlgoAngleLines";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ANGLE;
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  * Angle bisectors between two lines
@@ -60,6 +62,10 @@ public class AlgoAngularBisectorLines extends AlgoElement {
         return "AlgoAngularBisectorLines";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ANGULAR_BISECTOR;
+    }
+    
     AlgoAngularBisectorLines(Construction cons, GeoLine g, GeoLine h) {
         super(cons);
         this.g = g;

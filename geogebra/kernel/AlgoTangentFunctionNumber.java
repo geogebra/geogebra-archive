@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 
 /**
@@ -67,6 +68,11 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
         return "AlgoTangentFunctionNumber";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TANGENTS;
+    }
+
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
@@ -62,6 +63,11 @@ public class AlgoPointOnPath extends AlgoElement implements PathAlgo {
         return "AlgoPointOnPath";
     }
 
+	public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_POINT;
+    }
+    
+	
     // for AlgoElement
     protected void setInputOutput() {
     	if(param == null){

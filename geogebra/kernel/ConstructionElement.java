@@ -193,7 +193,6 @@ implements Comparable {
 	 */
 	public abstract String getClassName();
 	
-	
 /* Comparable interface */
 	
 	/**

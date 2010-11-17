@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 /**
  * Semicircle defined by two points A and B (start and end point).
  */
@@ -76,6 +78,11 @@ public class AlgoSemicircle extends AlgoElement {
 		return "AlgoSemicircle";
 	}
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_SEMICIRCLE;
+    }
+
+	
     // for AlgoElement
 	protected void setInputOutput() {
         input = new GeoElement[2];

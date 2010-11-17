@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -62,6 +64,10 @@ public class AlgoConicFivePoints extends AlgoElement {
 
     public String getClassName() {
         return "AlgoConicFivePoints";
+    }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_CONIC_FIVE_POINTS;
     }
 
     // for AlgoElement

@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -53,6 +55,11 @@ public class AlgoDistanceLineLine extends AlgoElement {
         return "AlgoDistanceLineLine";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_DISTANCE;
+    }
+    
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

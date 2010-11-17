@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.ExpressionNode;
 
 
@@ -84,6 +85,11 @@ public class AlgoText extends AlgoElement {
 		return "AlgoText";
 	}
 
+	public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TEXT;
+    }
+
+	
 	// for AlgoElement
 	protected void setInputOutput() {
 

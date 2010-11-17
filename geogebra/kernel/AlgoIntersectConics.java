@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -60,6 +62,11 @@ public class AlgoIntersectConics extends AlgoIntersect {
 	public String getClassName() {
 		return "AlgoIntersectConics";
 	}
+	
+	public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
+    }
+    
     
     AlgoIntersectConics(Construction cons, GeoConic A, GeoConic B) {           
     	super(cons);     

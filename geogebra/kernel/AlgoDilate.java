@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -83,6 +84,11 @@ public class AlgoDilate extends AlgoTransformation {
         return "AlgoDilate";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_DILATE_FROM_POINT;
+    }
+    
+    
     // for AlgoElement
     protected void setInputOutput() {    	
         input = new GeoElement[S==null ? 2:3];

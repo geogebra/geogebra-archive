@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.Function;
 
 
@@ -51,6 +52,11 @@ public class AlgoIntersectFunctionsNewton extends AlgoRootNewton {
     public String getClassName() {
         return "AlgoIntersectFunctionsNewton";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
+    }
+    
     
     // for AlgoElement
     protected void setInputOutput() {

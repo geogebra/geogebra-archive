@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 /**
  * Two tangents through point P to conic section c
  */
@@ -81,6 +83,11 @@ public class AlgoTangentPoint extends AlgoElement {
         return "AlgoTangentPoint";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TANGENTS;
+    }
+
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

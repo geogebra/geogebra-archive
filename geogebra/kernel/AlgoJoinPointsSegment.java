@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -69,6 +71,10 @@ public class AlgoJoinPointsSegment extends AlgoElement {
         return "AlgoJoinPointsSegment";
     }
 
+	public int getRelatedModeID() {
+		return EuclidianConstants.MODE_SEGMENT;
+	}
+    
     // for AlgoElement
     protected void setInputOutput() {
     	GeoElement [] efficientInput = new GeoElement[2];

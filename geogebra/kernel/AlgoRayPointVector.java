@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 /**
  * Creates ray from point and direction vector
  *
@@ -52,6 +54,11 @@ public class AlgoRayPointVector extends AlgoElement {
     public String getClassName() {
         return "AlgoRayPointVector";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_RAY;
+    }
+    
 
     // for AlgoElement
     protected void setInputOutput() {

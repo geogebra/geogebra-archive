@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -61,6 +63,11 @@ public class AlgoHyperbolaFociPoint extends AlgoElement {
     public String getClassName() {
         return "AlgoHyperbolaFociPoint";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_HYPERBOLA_THREE_POINTS;
+    }
+    
 
     // for AlgoElement
     protected void setInputOutput() {

@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 public class AlgoAngleVectors extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
@@ -44,6 +46,10 @@ public class AlgoAngleVectors extends AlgoElement {
         return "AlgoAngleVectors";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ANGLE;
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

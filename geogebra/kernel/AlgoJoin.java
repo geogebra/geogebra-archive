@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 public class AlgoJoin extends AlgoElement {
 
@@ -36,7 +38,7 @@ public class AlgoJoin extends AlgoElement {
 	public String getClassName() {
 		return "AlgoJoin";
 	}
-
+	
 	protected void setInputOutput(){
 		input = new GeoElement[1];
 

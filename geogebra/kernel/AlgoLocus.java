@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.main.Application;
 
 import java.awt.geom.Point2D;
@@ -113,6 +114,11 @@ public class AlgoLocus extends AlgoElement implements EuclidianViewAlgo {
     public String getClassName() {
         return "AlgoLocus";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_LOCUS;
+    }
+    
     
     public ArrayList getMoveableInputPoints() {
     	return null;

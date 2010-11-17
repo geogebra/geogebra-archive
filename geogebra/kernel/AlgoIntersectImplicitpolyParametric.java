@@ -17,6 +17,8 @@ the Free Software Foundation.
  */
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
 /**
@@ -109,5 +111,10 @@ public class AlgoIntersectImplicitpolyParametric extends
 	public String getClassName() {
         return "AlgoIntersectImplicitpolyParametric";
     }
-
+	
+	public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
+    }
+    
+	
 }

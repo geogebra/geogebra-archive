@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -88,6 +89,11 @@ public class AlgoRotate extends AlgoTransformation {
         return "AlgoRotate";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ROTATE_BY_ANGLE;
+    }
+    
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

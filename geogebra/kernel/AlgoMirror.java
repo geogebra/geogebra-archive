@@ -70,6 +70,7 @@ public class AlgoMirror extends AlgoTransformation {
      * @param g
      */
     AlgoMirror(Construction cons, String label,GeoElement in,GeoLine g) {
+    	
     	this(cons, in, g, null, null);
     	 geoOut.setLabel(label);
     }    

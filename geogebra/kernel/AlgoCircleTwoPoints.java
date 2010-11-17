@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoQuadricND;
 
 
@@ -53,8 +54,11 @@ public class AlgoCircleTwoPoints extends AlgoSphereNDTwoPoints {
         return "AlgoCircleTwoPoints";
     }
 
-
-
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_CIRCLE_TWO_POINTS;
+    }
+    
+    
     public GeoConic getCircle() {
         return (GeoConic) getSphereND();
     }

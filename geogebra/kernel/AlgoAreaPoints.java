@@ -17,6 +17,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 public class AlgoAreaPoints extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
@@ -42,6 +44,10 @@ public class AlgoAreaPoints extends AlgoElement {
         return "AlgoAreaPoints";
     }
     
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_AREA;
+    }
+        
     // for AlgoElement
     protected void setInputOutput() {
         input = P;

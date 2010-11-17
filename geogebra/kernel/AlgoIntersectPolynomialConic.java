@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.PolyFunction;
@@ -77,6 +78,11 @@ public class AlgoIntersectPolynomialConic extends AlgoSimpleRootsPolynomial {
 		return "AlgoIntersectPolynomialConic";
 	}
 
+	@Override
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
+    }
+	
 	@Override
 	protected double getYValue(double x) {
 		return h.evaluate(x);

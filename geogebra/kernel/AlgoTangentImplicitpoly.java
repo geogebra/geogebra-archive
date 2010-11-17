@@ -23,6 +23,7 @@ import edu.jas.poly.ExpVector;
 import edu.jas.poly.GenPolynomial;
 import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.main.Application;
 
 /**
@@ -148,7 +149,7 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 		//3 polynomials, use groebner basis to simplify the system
 		GroebnerBase<BigRational> gb = GBFactory.getImplementation(BigRational.ONE);
     	List<GenPolynomial<BigRational>> G=gb.GB(polynomials);
-    	Application.debug("Gröbner Basis: "+G);
+    	Application.debug("Grï¿½bner Basis: "+G);
 
     	//we want to get univariat polynomials in x or y (we can solve them)
     	boolean[] varSet=new boolean[3];
@@ -240,6 +241,12 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 		return "AlgoTangentImplicitpoly";
 	}
 
+	@Override
+	public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TANGENTS;
+    }
+
+	
 	public GeoLine[] getTangents() {
 		return tangents.getOutput(new GeoLine[tangents.size()]);
 	}

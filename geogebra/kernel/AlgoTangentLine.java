@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 /**
@@ -55,6 +57,11 @@ public class AlgoTangentLine extends AlgoElement {
     public String getClassName() {
         return "AlgoTangentLine";
     }        
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TANGENTS;
+    }
+
     
     AlgoTangentLine(Construction cons, GeoLine g, GeoConic c) {
         super(cons);

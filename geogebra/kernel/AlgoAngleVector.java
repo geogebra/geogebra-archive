@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 public class AlgoAngleVector extends AlgoElement {
@@ -39,6 +41,10 @@ public class AlgoAngleVector extends AlgoElement {
         return "AlgoAngleVector";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ANGLE;
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[1];

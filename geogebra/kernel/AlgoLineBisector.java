@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 public class AlgoLineBisector extends AlgoElement {
 
@@ -39,6 +41,11 @@ public class AlgoLineBisector extends AlgoElement {
     public String getClassName() {
         return "AlgoLineBisector";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_LINE_BISECTOR;
+    }
+    
     
     // for AlgoElement
     protected void setInputOutput() {

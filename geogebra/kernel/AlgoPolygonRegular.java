@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -91,6 +92,11 @@ public class AlgoPolygonRegular extends AlgoElement {
     public String getClassName() {
         return "AlgoPolygonRegular";
     }        
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_POLYGON;
+    }
+    
     
     // for AlgoElement
     protected void setInputOutput() {

@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 /**
@@ -56,6 +58,11 @@ public class AlgoTranslateVector extends AlgoElement {
     public String getClassName() {
         return "AlgoTranslateVector";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TRANSLATE_BY_VECTOR;
+    }
+
     
     // for AlgoElement
     protected void setInputOutput() {

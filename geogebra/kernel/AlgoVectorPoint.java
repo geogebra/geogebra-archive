@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 /**
@@ -49,6 +51,11 @@ public class AlgoVectorPoint extends AlgoElement {
     public String getClassName() {
         return "AlgoVectorPoint";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_VECTOR_FROM_POINT;
+    }
+
     
     // for AlgoElement
     protected void setInputOutput() {

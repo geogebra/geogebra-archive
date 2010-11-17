@@ -12,11 +12,13 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 public class MyPoint {
 	public double x, y;
 	public boolean lineTo;
-	
+
 	public MyPoint(double x, double y, boolean lineTo) {
 		this.x = x;
 		this.y = y;

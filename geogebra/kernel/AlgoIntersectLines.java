@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -50,6 +52,10 @@ public class AlgoIntersectLines extends AlgoIntersectAbstract {
         return "AlgoIntersectLines";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

@@ -3085,7 +3085,15 @@ public abstract class GeoElement
 				algoParent.getCommandName(),
 				addHTMLtag);
 	}
-		
+
+	public int getRelatedModeID() {
+		if (algoParent == null)
+			return -1;
+		else
+			return algoParent.getRelatedModeID();
+	}
+	
+	
 	/**
 	 * Converts indices to HTML <sub> tags if necessary.
 	 */
@@ -5100,7 +5108,6 @@ public abstract class GeoElement
 	 */
 	public Point2D.Double getNearestPoint(GeoPoint p) {
 		return null;
-	}
-	
+	}	
 
 }

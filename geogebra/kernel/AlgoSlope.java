@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -49,6 +51,11 @@ public class AlgoSlope extends AlgoElement {
         return "AlgoSlope";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_SLOPE;
+    }
+
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[1];

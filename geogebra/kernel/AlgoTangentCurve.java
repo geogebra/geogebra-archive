@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 /**
  * @author Victor Franco Espino
  * version 11-02-2007
@@ -49,6 +51,11 @@ public class AlgoTangentCurve extends AlgoElement {
         return "AlgoTangentCurve";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TANGENTS;
+    }
+
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

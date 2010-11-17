@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  * Point in region algorithm
@@ -51,6 +53,10 @@ public class AlgoPointInRegion extends AlgoElement {
 
     public String getClassName() {
         return "AlgoPointInRegion";
+    }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_POINT_IN_REGION;
     }
 
     // for AlgoElement

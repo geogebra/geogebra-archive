@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 /**
@@ -33,6 +35,10 @@ public class AlgoIntersectPolynomialLine extends AlgoRootsPolynomial {
     
     public String getClassName() {
         return "AlgoIntersectPolynomialLine";
+    }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_INTERSECT;
     }
     
     public GeoPoint [] getIntersectionPoints() {

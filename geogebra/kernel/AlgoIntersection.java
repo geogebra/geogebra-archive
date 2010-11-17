@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 public class AlgoIntersection extends AlgoIntersectAbstract {
 
 	private static final long serialVersionUID = 1L;
@@ -40,6 +42,7 @@ public class AlgoIntersection extends AlgoIntersectAbstract {
         return "AlgoIntersection";
     }
 
+  
     protected void setInputOutput(){
         input = new GeoElement[2];
         

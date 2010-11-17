@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.GgbCoordSys;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoPointND;
 
 
@@ -86,6 +87,11 @@ public class AlgoPolyLine extends AlgoElement {
     public String getClassName() {
         return "AlgoPolyLine";
     }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_POLYLINE;
+    }
+    
     
     /**
      * Update point array of polygon using the given array list
