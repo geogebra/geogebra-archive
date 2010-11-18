@@ -5089,7 +5089,7 @@ public abstract class GeoElement
 	 * E.g. orthogonal to a plane, along a line, ...
 	 */
 	public GgbVector getViewDirection(){
-		return null;
+		return new GgbVector(0, 0, 1, 0);
 	}
 	
 	/*
@@ -5101,12 +5101,22 @@ public abstract class GeoElement
 		return Double.POSITIVE_INFINITY;
 	}
 	
+	public double distance(GeoPointND p) {
+		if (p instanceof GeoPoint)
+			return distance((GeoPoint) p);
+		Application.debug("TODO : distance from "+getClassName()+" to ND point");
+		return Double.POSITIVE_INFINITY;
+	}	
+	
 	/*
 	 * Gets nearest point on object to p
 	 * overridden in eg GeoPoint, GeoLine
 	 * for compound paths
 	 */
 	public Point2D.Double getNearestPoint(GeoPoint p) {
+		return null;
+	}	
+	public Point2D.Double getNearestPoint(GeoPointND p) {
 		return null;
 	}	
 

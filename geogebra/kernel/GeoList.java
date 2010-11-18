@@ -1204,9 +1204,11 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		/*
 		 * adapted from GeoLocus
 		 */
-		public void pointChanged(GeoPointND PI) {
+		public void pointChanged(GeoPointND P) {
 			//Application.debug("pointChanged",1);
-			GeoPoint P = (GeoPoint) PI;
+			
+			
+			//GeoPoint P = (GeoPoint) PI;
 			
 			P.updateCoords();
 			
@@ -1229,7 +1231,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		
 		}
 
-		public Point2D.Double getNearestPoint(GeoPoint p) {
+		public Point2D.Double getNearestPoint(GeoPointND p) {
 			//Application.printStacktrace(p.inhomX+" "+p.inhomY);
 			double distance = Double.POSITIVE_INFINITY;
 			closestPointIndex = 0; // default - first object

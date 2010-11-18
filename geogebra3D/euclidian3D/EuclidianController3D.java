@@ -610,10 +610,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		}			
 		
 		setMouseInformation(point3D);
-		point3D.doPath();
-		//point3D.updateCoordsFrom2D(false);
-		
-		//Application.debug("hop");
+		/*
+		if (((GeoElement) path).isGeoList())
+			Application.printStacktrace("TODO: path==GeoList");
+		else*/
+			point3D.doPath();
 				
 		return point3D;
 	}

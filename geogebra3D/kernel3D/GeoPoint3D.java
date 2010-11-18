@@ -461,6 +461,9 @@ implements GeoPointND, PointProperties, Vector3DValue{
   
 	final public void doPath(){
 		path.pointChanged(this);
+		//check if the path is a 2D path : in this case, 2D coords have been modified
+		if (!((GeoElement) path).isGeoElement3D())
+			updateCoordsFrom2D(false);
 		updateCoords(); 
 	}
 	

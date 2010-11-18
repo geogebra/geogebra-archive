@@ -609,9 +609,13 @@ GeoPointND, Animatable  {
     }
     
 	public Point2D.Double getNearestPoint(GeoPoint p) {
+		return getNearestPoint((GeoPointND) p);
+	}
+	
+	public Point2D.Double getNearestPoint(GeoPointND p) {
 		return new Point2D.Double(inhomX, inhomY);
 	}
-
+	
     // euclidian distance between this GeoPoint and P
     final public double distance(GeoPoint P) {       
         return GeoVec2D.length(	P.inhomX - inhomX, 
@@ -1228,13 +1232,10 @@ GeoPointND, Animatable  {
 			return getCoordsInD(3);
 		}
 
-		public void pointChanged(GeoPointND PI) {
-			GeoPoint p = (GeoPoint)PI;
-			p.x = x;
-			p.y = y;
-			p.z = z;
+		public void pointChanged(GeoPointND p) {
+			p.setCoords2D(x, y, z);
 			
-			PI.getPathParameter().setT(0);
+			p.getPathParameter().setT(0);
 			
 		}
 

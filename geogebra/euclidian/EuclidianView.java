@@ -1277,6 +1277,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		// tell kernel
 		kernel.setEuclidianViewBounds(xmin, xmax, ymin, ymax, xscale, yscale);
+		
 	}
 
 	protected void calcPrintingScale() {
@@ -3554,6 +3555,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		updateBackgroundImage(); // clear traces and images
 		// resetMode();
 	}
+	
 
 	final public void repaintView() {
 		repaint();

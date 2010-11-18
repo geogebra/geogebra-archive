@@ -168,5 +168,10 @@ public class DrawList3D extends Drawable3D {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	//no label for 3D lists
+	protected void updateLabel(){
+		
+	}
 
 }
