@@ -38,7 +38,7 @@ import java.util.Locale;
  * @author Markus Hohenwarter
  */
 public class GeoFunction extends GeoElement
-implements Path, Translateable, Traceable, Functional, FunctionalNVar, GeoFunctionable,
+implements Path, Translateable, Traceable, Functional, FunctionalNVar, GeoFunctionable,Region,
 CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilateable {
 
 	private static final long serialVersionUID = 1L;
@@ -505,28 +505,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			P.y = evaluate(P.x);// changed from fun.evaluate so that it works with eg Point[If[x < -1, x + 1, x�]] 
 		}
 		else {
-			double px;
-			boolean yfun = getVarString().equals("y");
-			if(yfun){
-				P.x = 0.0;
-				px = P.y;
-			}else{
-				P.y = 0.0;
-				px = P.x;
-			}
-			double bestDist = Double.MAX_VALUE;
-			getIneqs();			
-			if(!this.evaluateBoolean(px))
-				for(Inequality ineq:ineqs){
-					for(GeoPoint point:ineq.getZeros())
-						if(Math.abs(point.x-px)<bestDist){
-							bestDist = Math.abs(point.x-px);
-							if(yfun)
-								P.y = point.x;
-							else
-								P.x=point.x;
-						}
-				}
+			pointChangedBoolean(true,P);
 		}
 		P.z = 1.0;
 		
@@ -536,6 +515,32 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		pp.t = P.x;
 	}
 	
+	private void pointChangedBoolean(boolean b, GeoPoint P) {
+		double px;
+		boolean yfun = getVarString().equals("y");
+		if(yfun){
+			if(b)P.x = 0.0;
+			px = P.y;
+		}else{
+			if(b)P.y = 0.0;
+			px = P.x;
+		}
+		double bestDist = Double.MAX_VALUE;
+		getIneqs();			
+		if(!this.evaluateBoolean(px))
+			for(Inequality ineq:ineqs){
+				for(GeoPoint point:ineq.getZeros())
+					if(Math.abs(point.x-px)<bestDist){
+						bestDist = Math.abs(point.x-px);
+						if(yfun)
+							P.y = point.x;
+						else
+							P.x=point.x;
+					}
+			}
+		
+	}
+
 	public boolean isOnPath(GeoPointND PI, double eps) {
 		
 		GeoPoint P = (GeoPoint) PI;
@@ -547,12 +552,11 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			return isDefined &&	Math.abs(fun.evaluate(P.inhomX) - P.inhomY) <= eps;
 		}
 		else{
-			if (P.z == 1.0) {
-				P.x = P.x;			
-			} else {
-				P.x = P.x / P.z;			
+			double px = getVarString().equals("y") ? P.y :P.x;
+			if (P.z != 1.0) {
+					px = px / P.z;		
 			}
-			return evaluateBoolean(P.x);
+			return evaluateBoolean(px);
 		}
 	}
 
@@ -1271,9 +1275,46 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return ineqs;
 	}
 	
-	public void update(){
-		super.update();
-//		fun.updateIneqs();			
+
+	public boolean isInRegion(GeoPointND P) {
+		return isInRegion(P.getX2D(),P.getY2D());
+	}
+
+	public boolean isInRegion(double x0, double y0) {
+		if(getVarString().equals("y"))
+			return evaluateBoolean(y0);	
+		return evaluateBoolean(x0);
+	}
+
+	public void pointChangedForRegion(GeoPointND PI) {
+		GeoPoint P = (GeoPoint) PI;
+		
+		if (P.z == 1.0) {
+			P.x = P.x;			
+		} else {
+			P.x = P.x / P.z;			
+		}
+				
+		
+		pointChangedBoolean(false,P);
+		
+		P.z = 1.0;
+		
+		// set path parameter for compatibility with
+		// PathMoverGeneric
+		RegionParameters pp = P.getRegionParameters();
+		pp.setT1(P.x);
+		pp.setT2(P.y);
+		
+		
+	}
+
+	public boolean isRegion(){
+		return isBooleanFunction();
+	}
+	public void regionChanged(GeoPointND P) {
+		pointChangedForRegion(P);
+		
 	}
 
 }
