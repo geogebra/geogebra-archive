@@ -17,6 +17,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
@@ -82,8 +83,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		sb.append(oldText.substring(pos));            
 		setText(sb.toString());
 
-		setCaretPosition(pos + text.length());
-
+		//setCaretPosition(pos + text.length());
+		final int newPos = pos + text.length();
 
 		// make sure AutoComplete works
 		if (this instanceof AutoCompleteTextField) {
@@ -91,6 +92,15 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			tf.updateCurrentWord();
 			tf.updateAutoCompletion();
 		}
+
+		// prevent the text from being selected when the cursor is at the end of the string
+		// TODO: this just stops the problem, but I don't know why it happens (G.S.)
+		SwingUtilities.invokeLater(new Runnable() {  
+			public void run() {  
+				setCaretPosition(newPos); 
+			}   
+		});  
+
 
 
 	}

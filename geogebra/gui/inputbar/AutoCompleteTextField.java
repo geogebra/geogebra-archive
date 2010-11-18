@@ -199,19 +199,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 				e.consume();
 				popup.setVisible(false);
 				insertString((String) symbolTable.getSelectedValue());
+				
 			}
 			if(keyCode == KeyEvent.VK_ESCAPE){
 				e.consume();
 				popup.setVisible(false);
 			}
 			
-			// prevent the text from being selected when the cursor is at the end of the string
-			// TODO: this just stops the problem, don't know why it happens
-			SwingUtilities.invokeLater(new Runnable() {  
-				public void run() {  
-					thisField.setCaretPosition(thisField.getCaretPosition());  
-				}   
-			});  
+			
 			
 			return;
 		}
