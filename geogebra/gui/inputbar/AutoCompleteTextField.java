@@ -168,6 +168,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	boolean ctrlC = false;
 
+	
+	private int caretPosition; // restores caret position when popup is done 
+
 	public void keyPressed(KeyEvent e) {        
 		// we don't want to trap AltGr
 		// as it is used eg for entering {[}] is some locales
@@ -187,6 +190,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		
 		// show popup on ctrl-up_arrow
 		if ((e.isControlDown()||Application.isControlDown(e)) && keyCode == KeyEvent.VK_UP){
+			caretPosition = getCaretPosition();
 			popup.show(thisField, getCaretPixelPosition().x, getCaretPixelPosition().y);
 			symbolTable.requestFocus();
 			return;
@@ -197,17 +201,17 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			
 			if(keyCode == KeyEvent.VK_ENTER){
 				e.consume();
+				setCaretPosition(caretPosition);
 				popup.setVisible(false);
 				insertString((String) symbolTable.getSelectedValue());
 				
 			}
 			if(keyCode == KeyEvent.VK_ESCAPE){
 				e.consume();
+				setCaretPosition(caretPosition);
 				popup.setVisible(false);
 			}
-			
-			
-			
+				
 			return;
 		}
 		// END popup handling
