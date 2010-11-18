@@ -40,7 +40,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	// vars for the symbol table popup (G.Sturr 2010-11-15) 
 	private JPopupMenu popup;
-	private AutoCompleteTextField myAutoField = this;
+	private AutoCompleteTextField thisField = this;
 	private SelectionTable symbolTable;
 	
 	
@@ -187,20 +187,32 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		
 		// show popup on ctrl-up_arrow
 		if ((e.isControlDown()||Application.isControlDown(e)) && keyCode == KeyEvent.VK_UP){
-			popup.show(myAutoField, getCaretPixelPosition().x, getCaretPixelPosition().y);
+			popup.show(thisField, getCaretPixelPosition().x, getCaretPixelPosition().y);
 			symbolTable.requestFocus();
 			return;
 		}
 		
 		// handle key presses from the popup symbol table
 		if(e.getSource()==symbolTable){
+			
 			if(keyCode == KeyEvent.VK_ENTER){
-				insertString((String) symbolTable.getSelectedValue());
+				e.consume();
 				popup.setVisible(false);
+				insertString((String) symbolTable.getSelectedValue());
 			}
 			if(keyCode == KeyEvent.VK_ESCAPE){
+				e.consume();
 				popup.setVisible(false);
 			}
+			
+			// prevent the text from being selected when the cursor is at the end of the string
+			// TODO: this just stops the problem, don't know why it happens
+			SwingUtilities.invokeLater(new Runnable() {  
+				public void run() {  
+					thisField.setCaretPosition(thisField.getCaretPosition());  
+				}   
+			});  
+			
 			return;
 		}
 		// END popup handling
