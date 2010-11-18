@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -5119,5 +5120,64 @@ public abstract class GeoElement
 	public Point2D.Double getNearestPoint(GeoPointND p) {
 		return null;
 	}	
+	
+	
+	
+	
 
+	////////////////////////////////////
+	// xmin, xmax
+	////////////////////////////////////
+	
+	/**
+	 * @return the xmin value above all euclidian views
+	 */
+	public double getXmin(){
+
+		if(viewSet.isEmpty())
+			return app.getGuiManager().getActiveEuclidianView().getXmin();
+		
+		double xmin = Double.POSITIVE_INFINITY;
+		for(Object view : viewSet)
+			if (xmin>((EuclidianViewInterface) view).getXmin())
+				xmin = ((EuclidianViewInterface) view).getXmin();
+			
+		return xmin;
+	}
+	
+	/**
+	 * @return the xmin value for the view
+	 */
+	public double getXmin(EuclidianViewInterface view){
+		if (viewSet.contains(view))
+			return view.getXmin();
+		else
+			return getXmin();
+	}
+	
+	/**
+	 * @return the xmax value above all euclidian views
+	 */
+	public double getXmax(){
+
+		if(viewSet.isEmpty())
+			return app.getGuiManager().getActiveEuclidianView().getXmax();
+		
+		double xmax = Double.NEGATIVE_INFINITY;
+		for(Object view : viewSet)
+			if (xmax<((EuclidianViewInterface) view).getXmax())
+				xmax = ((EuclidianViewInterface) view).getXmax();
+			
+		return xmax;
+	}
+
+	/**
+	 * @return the xmax value for the view
+	 */
+	public double getXmax(EuclidianViewInterface view){
+		if (viewSet.contains(view))
+			return view.getXmax();
+		else
+			return getXmax();
+	}
 }

@@ -584,9 +584,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 */
 	public double getMinParameter() {
 		if (interval)
-			return Math.max(kernel.getXmin(), intervalMin);
+			return Math.max(getXmin(), intervalMin);
 		else
-			return kernel.getXmin();
+			return getXmin();
 	}
 	
 	/**
@@ -598,9 +598,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 */
 	public double getMaxParameter() {
 		if (interval)
-			return Math.min(kernel.getXmax(), intervalMax);
+			return Math.min(getXmax(), intervalMax);
 		else
-			return kernel.getXmax();
+			return getXmax();
 	}
 	
 	public PathMover createPathMover() {

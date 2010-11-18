@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.roots.RealRootUtil;
@@ -93,9 +94,19 @@ public class DrawParametricCurve extends Drawable {
 		
 		fillCurve = filling(curve);
 		
+		double min = curve.getMinParameter();
+		double max = curve.getMaxParameter();
+		if (curve instanceof GeoFunction){
+			double minView = ((GeoElement) curve).getXmin(view);
+			double maxView = ((GeoElement) curve).getXmax(view);
+			if (min<minView)
+				min=minView;
+			if (max>maxView)
+				max=maxView;				
+		}
 		Point labelPoint = plotCurve(curve,
-					curve.getMinParameter(),
-					curve.getMaxParameter(), 
+					min,
+					max,
 					view, gp,
 					labelVisible, !fillCurve); 
 
