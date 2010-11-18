@@ -5,6 +5,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.ConstructionElementCycle;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
@@ -42,6 +43,8 @@ public class GeoPolyhedron extends GeoElement3D {
 	/** edges */
 	protected TreeMap<Long, GeoSegment3D> segments;
 	
+	/** edges linked (e.g basis of the prism) */
+	protected TreeMap<ConstructionElementCycle,GeoSegmentND> segmentsLinked;
 	
 	
 	
@@ -53,6 +56,10 @@ public class GeoPolyhedron extends GeoElement3D {
 	
 	/** faces */
 	protected TreeMap<Long,GeoPolygon3D> polygons;
+	
+	/** faces linked */
+	protected TreeSet<GeoPolygon> polygonsLinked;
+
 	
 	
 	/** segments to remove for update */
@@ -88,8 +95,10 @@ public class GeoPolyhedron extends GeoElement3D {
 		segments = new TreeMap<Long, GeoSegment3D>();
 		
 		oldPolygons = new TreeSet<ConstructionElementCycle>();		
-		oldSegments = new TreeSet<ConstructionElementCycle>();		
-
+		oldSegments = new TreeSet<ConstructionElementCycle>();	
+		
+		segmentsLinked = new TreeMap<ConstructionElementCycle,GeoSegmentND>();
+		polygonsLinked = new TreeSet<GeoPolygon>();
 	}
 	
 	
@@ -246,7 +255,16 @@ public class GeoPolyhedron extends GeoElement3D {
 		 return polygon;
 	 }
 	
-	
+	/**
+	 * add the polygon as a polygon linked to this (e.g basis of a prism)
+	 * @param polygon
+	 */
+	public void addPolygonLinked(GeoPolygon polygon){
+		polygonsLinked.add(polygon);
+		GeoSegmentND[] segments = polygon.getSegments();
+		for (int i=0; i<segments.length; i++)
+			addSegmentLinked(segments[i]);
+	}
 	
 	 /**
 	  * return a segment joining startPoint and endPoint
@@ -256,19 +274,19 @@ public class GeoPolyhedron extends GeoElement3D {
 	  * @return the segment
 	  */
 	
-	 public GeoSegment3D createSegment(GeoPointND startPoint, GeoPointND endPoint){
+	 public GeoSegmentND createSegment(GeoPointND startPoint, GeoPointND endPoint){
 		 
 		 ConstructionElementCycle key = 
 			 ConstructionElementCycle.SegmentDescription((GeoElement) startPoint,(GeoElement) endPoint);
-		 /*
-			 new ConstructionElementCycle();
-		 key.add(startPoint);key.add(endPoint);
-		 */
 
+		 //check if this segment is not already created
 		 if (segmentsIndex.containsKey(key))
 			 return segments.get(segmentsIndex.get(key));
-				
-			
+
+		 //check if this segment is not a segment linked
+		 if (segmentsLinked.containsKey(key))
+			 return segmentsLinked.get(key);
+
 		 GeoSegment3D segment;
 
 		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, 
@@ -293,6 +311,12 @@ public class GeoPolyhedron extends GeoElement3D {
 	 }
 	 
 	 
+	 public void addSegmentLinked(GeoSegmentND segment){
+		 ConstructionElementCycle key = 
+			 ConstructionElementCycle.SegmentDescription(segment.getStartPointAsGeoElement(),segment.getEndPointAsGeoElement());
+
+		 segmentsLinked.put(key,segment);
+	 }
 	 
 	 
 	 
@@ -451,6 +475,11 @@ public class GeoPolyhedron extends GeoElement3D {
 		 for (GeoPolygon3D polygon : polygons.values()){
 			 polygon.setInteriorPoint(point);
 		 }
+		 /* TODO
+		 for (GeoPolygon polygon : polygonsLinked){
+			 polygon.setInteriorPoint(point);
+		 }
+		 */
 	 }
 
 	 
@@ -462,8 +491,16 @@ public class GeoPolyhedron extends GeoElement3D {
 		 for (GeoPolygon3D polygon : polygons.values()){
 			 polygon.setEuclidianVisible(visible,false);
 		 }
+		 
+		 for (GeoPolygon polygon : polygonsLinked){
+			 polygon.setEuclidianVisible(visible,false);
+		 }
 
 		 for (GeoSegment3D segment : segments.values()){
+			 segment.setEuclidianVisible(visible);
+		 }
+		 
+		 for (GeoSegmentND segment : segmentsLinked.values()){
 			 segment.setEuclidianVisible(visible);
 		 }
 	 }  
@@ -474,27 +511,26 @@ public class GeoPolyhedron extends GeoElement3D {
 		   
 	   		super.setObjColor(color);
 	   		
+
+	   		for (GeoPolygon3D polygon : polygons.values()){
+	   			polygon.setObjColor(color);
+	   			polygon.update();
+	   		}
 	   		
-	   		//if (polygons != null) {
-	   			/*
-	   			for (int i=0; i < polygons.length; i++) {
-	   				polygons[i].setObjColor(color);
-	   				polygons[i].update();
-	   			}
-	   			*/
-	   			for (GeoPolygon3D polygon : polygons.values()){
-	   				polygon.setObjColor(color);
-	   				polygon.update();
-		   		}
-	   			
-	   	   		for (GeoSegment3D segment : segments.values()){
-		   			segment.setObjColor(color);
-		   			segment.update();
-		   		}
-	   		//}
+	   		for (GeoPolygon polygon : polygonsLinked){
+	   			polygon.setObjColor(color);
+	   			polygon.update();
+	   		}
+
+	   		for (GeoSegment3D segment : segments.values()){
+	   			segment.setObjColor(color);
+	   			segment.update();
+	   		}
 	   		
-	   		
-	
+	   		for (GeoSegmentND segment : segmentsLinked.values()){
+	   			segment.setObjColor(color);
+	   			segment.update();
+	   		}
 	   }
 	   
 	 
@@ -507,14 +543,11 @@ public class GeoPolyhedron extends GeoElement3D {
    				polygon.update();
 	   		}
    			
-   			/*
-	   		if (polygons != null) {
-	   			for (int i=0; i < polygons.length; i++) {
-	   				polygons[i].setAlphaValue(alpha);
-	   				polygons[i].update();
-	   			}
+
+	   		for (GeoPolygon polygon : polygonsLinked){
+	   			polygon.setAlphaValue(alpha);
+	   			polygon.update();
 	   		}
-	   		*/
 	   		
 	   		
 	

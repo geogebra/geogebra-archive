@@ -247,14 +247,12 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 	}
 
 	public GeoElement getStartPointAsGeoElement() {
-		// TODO Auto-generated method stub
-		return null;
+		return (GeoElement) startPoint;
 	}
 	
 	
 	public GeoElement getEndPointAsGeoElement() {
-		// TODO Auto-generated method stub
-		return null;
+		return (GeoElement) endPoint;
 	}
 
 

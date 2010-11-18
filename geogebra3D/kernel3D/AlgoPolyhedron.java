@@ -11,6 +11,7 @@ import geogebra.kernel.AlgoElement.OutputHandler;
 import geogebra.kernel.AlgoElement.elementFactory;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
 import java.util.ArrayList;
@@ -277,11 +278,15 @@ implements AlgoElementWithResizeableOutput{
 			}
 			
 			//bottom of the prism
+			/*
 			polyhedron.startNewFace();
 			//for (int i=numPoints-1; i>=0; i--)
 			for (int i=0; i<numPoints; i++)
 				polyhedron.addPointToCurrentFace(points[i]);
 			polyhedron.endCurrentFace();
+			*/
+			polyhedron.addPolygonLinked(polygon);
+			
 			
 			//sides of the prism
 			for (int i=0; i<numPoints; i++){

@@ -18,6 +18,10 @@ public abstract class GeoCoordSys1D extends GeoElement3D implements Path,
 GeoLineND, GeoCoordSys{
 	
 	protected GgbCoordSys coordsys;
+	
+	protected GeoPointND startPoint;
+
+	protected GeoPointND endPoint;
 
 	public GeoCoordSys1D(Construction c){
 		super(c);
@@ -69,6 +73,9 @@ GeoLineND, GeoCoordSys{
 	 * @param O origin point
 	 * @param I unit point*/
 	public void setCoord(GeoPointND O, GeoPointND I){
+		
+		startPoint = O;
+		endPoint = I;
 		
 		if (I.isInfinite())
 			if (O.isInfinite())
@@ -355,5 +362,9 @@ GeoLineND, GeoCoordSys{
 	public GgbVector getEndInhomCoords(){
 		return getCoordSys().getPoint(1).getInhomCoords();
 	}
+	
+	
+	
+
 	
 }
