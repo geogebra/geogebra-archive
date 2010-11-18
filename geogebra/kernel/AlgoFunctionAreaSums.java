@@ -85,6 +85,15 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	
 	private ExtremumFinder extrFinder;
 
+	// maximum frequency of bar chart
+	// this is used by stat dialogs when setting window dimensions
+	private double freqMax;
+	public double getFreqMax() {
+		return freqMax;
+	}
+
+	
+	
 	/**
 	 * Upper o lower sum
 	 * @param cons
@@ -733,8 +742,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				return;
 			}
 			
-			double mini = Double.MAX_VALUE;
-			double maxi = Double.MIN_VALUE;
+			double mini = Double.POSITIVE_INFINITY;
+			double maxi = Double.NEGATIVE_INFINITY;
 			int minIndex=-1, maxIndex=-1;
 			
 			double step = n.getDouble();
@@ -849,6 +858,16 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				sum.setValue(list1.size() * step);	
 
 			}
+			
+			// find maximum frequency
+			// this is used by the stat dialogs
+			freqMax = 0.0;
+			for(int k = 0; k < yval.length; ++k){
+				if(yval[k] > freqMax)
+					freqMax = yval[k];
+			}
+
+			
 			break;
 			
 		case TYPE_BARCHART_FREQUENCY_TABLE:
