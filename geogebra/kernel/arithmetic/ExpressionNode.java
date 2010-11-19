@@ -1574,9 +1574,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 //					}
         			
         			// check for degree sign at right
-        			else if (rightStr.equals("1\u00b0") || rightStr.equals("\u00b0")) {
+        			else if (rightStr.equals(Unicode.oneDegree) || rightStr.equals(Unicode.degree)) {
+        				if (!left.isLeaf()) sb.append('('); // needed for eg (a+b)\u00b0
         				sb.append(leftStr);
-        				sb.append("\u00b0");
+        				if (!left.isLeaf()) sb.append(')'); // needed for eg (a+b)\u00b0
+        				sb.append(Unicode.degree);
         				break;
         			}
                 	           

@@ -21,6 +21,9 @@ public class Unicode {
 	final public static char RightToLeftMark = '\u200f';
 	final public static char LeftToRightMark = '\u200e';
 	final public static String superscriptMinusOneBracket = "\u207b\u00b9(";
+	final public static char degreeChar = '\u00b0';
+	final public static String degree = degreeChar+"";
+	public static final Object oneDegree = "1"+degreeChar;
 	
 	/*
 	 * converts an integer to a unicode superscript string (including minus sign)
