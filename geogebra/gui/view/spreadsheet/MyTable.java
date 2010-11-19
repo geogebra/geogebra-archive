@@ -1898,9 +1898,15 @@ public class MyTable extends JTable implements FocusListener
 				
 			case KeyEvent.VK_HOME:
 
-				// move to top left of spreadsheet
 				// if shift pressed, select cells too
-				changeSelection(0, 0, false, e.isShiftDown());
+				if (Application.isControlDown(e)) {
+					// move to top left of spreadsheet
+					changeSelection(0, 0, false, e.isShiftDown());
+				}
+				else {
+					// move to left of current row
+					changeSelection(row, 0, false, e.isShiftDown());
+				}
 				
 				e.consume();
 				break;
