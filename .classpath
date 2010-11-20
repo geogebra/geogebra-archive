@@ -25,6 +25,5 @@
 	<classpathentry kind="lib" path="jlatexmath.jar"/>
 	<classpathentry kind="lib" path="jlm_greek.jar"/>
 	<classpathentry kind="lib" path="jlm_cyrillic.jar"/>
-	<classpathentry kind="lib" path="ch.ntb.usb-0.5.9.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

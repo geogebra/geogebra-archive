@@ -1070,6 +1070,14 @@ public class GgbAPI {
 	
 	
 	
+	public synchronized void registerLoggerListener(String JSFunctionName) {
+		app.getScriptManager().registerLoggerListener(JSFunctionName);
+	}
+
+	public synchronized void unregisterLoggerListener(String JSFunctionName) {
+		app.getScriptManager().unregisterLoggerListener(JSFunctionName);
+	}
+	
 	public synchronized void registerAddListener(String JSFunctionName) {
 		app.getScriptManager().registerAddListener(JSFunctionName);
 	}
