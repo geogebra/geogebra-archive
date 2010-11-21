@@ -2341,7 +2341,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// mode specific highlighting of selectable objects
 	// returns wheter repaint is necessary
-	final boolean refreshHighlighting(Hits hits) {
+	public final boolean refreshHighlighting(Hits hits) {
 		boolean repaintNeeded = false;
 		
 		//	clear old highlighting
@@ -2386,7 +2386,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_VISUAL_STYLE:
 		case EuclidianView.MODE_MOVE:
 			// move() is for highlighting and selecting
-			if (selectionPreview) {		
+			if (selectionPreview) {	
 				move(hits.getTopHits());				
 			} else {
 				if (DRAGGING_OCCURED && app.selectedGeosSize() == 1)

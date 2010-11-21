@@ -1042,7 +1042,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	//not only moveable hits are selected in move mode
 	protected boolean move(Hits hits) {		
 		addSelectedGeo(hits.getTopHits(1), 1, false);	
-		//Application.debug("top hits: "+hits.getTopHits());
+		//Application.debug("top hits: "+hits.getTopHits(1));
 		return false;
 	}
 	

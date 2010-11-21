@@ -3194,7 +3194,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 	final public void mouseMovedOver(GeoElement geo) {
-
+		Hits geos = null;
+		if (geo != null) {
+			tempArrayList.clear();
+			tempArrayList.add(geo);
+			geos = tempArrayList;
+		}
+		boolean repaintNeeded = euclidianController3D.refreshHighlighting(geos);
+		if (repaintNeeded)
+			getKernel().notifyRepaint();
 	}
 
 }
