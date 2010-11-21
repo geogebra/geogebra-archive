@@ -9,6 +9,7 @@
 -injars build/geogebra_algos.jar
 -injars build/geogebra_cas.jar
 -injars build/geogebra_3d.jar
+-injars build/geogebra_usb.jar
 
 -outjars build/temp
 
@@ -95,6 +96,35 @@
 
 -keep class geogebra.gui.virtualkeyboard.VirtualKeyboard { public static void main(java.lang.String[]); }
 
+## USB library uses reflection, see JavaDeviceFactory
+-keep class org.concord.sensor.pseudo.PseudoSensorDevice { <methods>; }
+-keep class org.concord.sensor.nativelib.NativeVernierSensorDevice { <methods>; }
+-keep class org.concord.sensor.vernier.labpro.LabProSensorDevice { <methods>; }
+-keep class org.concord.sensor.vernier.labquest.LabQuestSensorDevice { <methods>; }
+-keep class org.concord.sensor.nativelib.NativeTISensorDevice { <methods>; }
+-keep class org.concord.sensor.dataharvest.DataHarvestSensorDevice { <methods>; }
+-keep class org.concord.sensor.pasco.SW500SensorDevice { <methods>; }
+-keep class org.concord.sensor.pasco.AirLinkSensorDevice { <methods>; }
+-keep class org.concord.sensor.pasco.PascoUsbSensorDevice { <methods>; }
+-keep class org.concord.sensor.cc.CCInterface0 { <methods>; }
+-keep class org.concord.sensor.cc.CCInterface1 { <methods>; }
+-keep class org.concord.sensor.cc.CCInterface2 { <methods>; }
+
+-keep class org.concord.sensor.SensorConfig { <methods>; }
+-keep class org.concord.sensor.impl.ExperimentConfigImpl { <methods>; }
+-keep class org.concord.sensor.ExperimentRequest { <methods>; }
+-keep class org.concord.sensor.device.DeviceReader { <methods>; }
+
+-keep class ccsd.vernier.ExperimentConfig  { <methods>; }
+-keep class ccsd.vernier.NativeBridge  { <methods>; }
+-keep class ccsd.vernier.NativeBridgeConstants  { <methods>; }
+-keep class ccsd.vernier.NativeBridgeJNI  { <methods>; }
+-keep class ccsd.vernier.SensorConfig  { <methods>; }
+-keep class ccsd.vernier.SensorParam  { <methods>; }
+-keep class ccsd.vernier.SWIGTYPE_p_float  { <methods>; }
+-keep class ccsd.vernier.SWIGTYPE_p_p_ExperimentConfig  { <methods>; }
+-keep class ccsd.vernier.SWIGTYPE_p_SensorParam  { <methods>; }
+-keep class ccsd.vernier.SWIGTYPE_p_void  { <methods>; }
 
 
 #####
