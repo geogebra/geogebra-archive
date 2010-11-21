@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.main.Application;
 
 
 /**
@@ -432,6 +433,31 @@ public class GeoFunctionConditional extends GeoFunction {
 		else if (elseFun != null) elseFun.getHorizontalNegativeAsymptote((GeoFunction)this, verticalSB);
 
 	}
+	
+	/**
+	 * Sets this function by applying a GeoGebraCAS command to a function.
+	 * 
+	 * @param ggbCasCmd the GeoGebraCAS command needs to include % in all places
+	 * where the function f should be substituted, e.g. "Derivative(%,x)"
+	 * @param f the function that the CAS command is applied to
+	 */
+	public void setUsingCasCommand(String ggbCasCmd, CasEvaluableFunction f, boolean symbolic){
+		GeoFunctionConditional ff = (GeoFunctionConditional) f;
+		
+		if (ff.ifFun != null) {
+			ifFun.setUsingCasCommand(ggbCasCmd, ff.ifFun, symbolic);
+		} else {
+			ifFun = null;
+		}
+		
+		if (ff.elseFun != null) {
+			elseFun.setUsingCasCommand(ggbCasCmd, ff.elseFun, symbolic);
+		} else {
+			elseFun = null;
+		}
+	}	
+	
+
 
 
 }
