@@ -637,33 +637,63 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
    }
    
    public void setLineType(int type) {
-		super.setLineType(type);
-		if (segments != null) {
-			for (int i=0; i < segments.length; i++) {
-				segments[i].setLineType(type);	
-				segments[i].update();
-			}
-		}	
+	   setLineType(type,true);
+   }
+ 
+   
+   /**
+    * set the line type (and eventually the segments)
+    * @param type
+    * @param updateSegments
+    */
+   public void setLineType(int type, boolean updateSegments) {
+	   super.setLineType(type);
+	   if (updateSegments)
+		   if (segments != null) {
+			   for (int i=0; i < segments.length; i++) {
+				   segments[i].setLineType(type);	
+				   segments[i].update();
+			   }
+		   }	
    }
    
    public void setLineTypeHidden(int type) {
-		super.setLineType(type);
-		if (segments != null) {
-			for (int i=0; i < segments.length; i++) {
-				((GeoElement) segments[i]).setLineTypeHidden(type);	
-				segments[i].update();
-			}
-		}	
+	   setLineTypeHidden(type, true);
+   }
+
+   /** set the hidden line type (and eventually the segments)
+    * @param type
+    * @param updateSegments
+    */
+   public void setLineTypeHidden(int type, boolean updateSegments) {
+	   super.setLineTypeHidden(type);
+		if (updateSegments)
+			if (segments != null) {
+				for (int i=0; i < segments.length; i++) {
+					((GeoElement) segments[i]).setLineTypeHidden(type);	
+					segments[i].update();
+				}
+			}	
   }
    
    public void setLineThickness(int th) {
-		super.setLineThickness(th);
-		if (segments != null) {
-			for (int i=0; i < segments.length; i++) {
-				segments[i].setLineThickness(th);
-				segments[i].update();
-			}
-		}	
+	   setLineThickness(th,true);
+   }
+
+   /** set the line thickness (and eventually the segments)
+    * @param th
+    * @param updateSegments
+    */
+   public void setLineThickness(int th, boolean updateSegments) {
+	   super.setLineThickness(th);
+
+		if (updateSegments)
+			if (segments != null) {
+				for (int i=0; i < segments.length; i++) {
+					segments[i].setLineThickness(th);
+					segments[i].update();
+				}
+			}	
    }
 	
    final public String toString() {

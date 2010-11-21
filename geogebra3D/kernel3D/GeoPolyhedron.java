@@ -6,6 +6,8 @@ import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.ConstructionElementCycle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.Path;
+import geogebra.kernel.PathMover;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
@@ -21,7 +23,7 @@ import java.util.TreeSet;
  * Class describing a GeoPolyhedron
  *
  */
-public class GeoPolyhedron extends GeoElement3D {
+public class GeoPolyhedron extends GeoElement3D {//implements Path {
 
 	
 	public static final int TYPE_NONE = 0;
@@ -532,6 +534,94 @@ public class GeoPolyhedron extends GeoElement3D {
 	   			segment.update();
 	   		}
 	   }
+	 
+
+	   public void setLineType(int type) {
+			super.setLineType(type);
+
+			if (polygons==null)
+				return;
+			
+			for (GeoPolygon3D polygon : polygons.values()){
+	   			polygon.setLineType(type,false);
+	   			polygon.update();
+	   		}
+	   		
+	   		for (GeoPolygon polygon : polygonsLinked){
+	   			polygon.setLineType(type,false);
+	   			polygon.update();
+	   		}
+
+	   		for (GeoSegment3D segment : segments.values()){
+	   			segment.setLineType(type);
+	   			segment.update();
+	   		}
+	   		
+	   		for (GeoSegmentND segment : segmentsLinked.values()){
+	   			((GeoElement) segment).setLineType(type);
+	   			segment.update();
+	   		}
+			
+	  }
+	   
+	 
+
+	   public void setLineTypeHidden(int type) {
+			super.setLineTypeHidden(type);
+
+			if (polygons==null)
+				return;
+			
+			for (GeoPolygon3D polygon : polygons.values()){
+	   			polygon.setLineTypeHidden(type,false);
+	   			polygon.update();
+	   		}
+	   		
+	   		for (GeoPolygon polygon : polygonsLinked){
+	   			polygon.setLineTypeHidden(type,false);
+	   			polygon.update();
+	   		}
+
+	   		for (GeoSegment3D segment : segments.values()){
+	   			segment.setLineTypeHidden(type);
+	   			segment.update();
+	   		}
+	   		
+	   		for (GeoSegmentND segment : segmentsLinked.values()){
+	   			((GeoElement) segment).setLineTypeHidden(type);
+	   			segment.update();
+	   		}
+			
+	  }
+	   
+	   
+
+	   public void setLineThickness(int th) {
+			super.setLineThickness(th);
+			
+			if (polygons==null)
+				return;
+			
+			for (GeoPolygon3D polygon : polygons.values()){
+	   			polygon.setLineThickness(th,false);
+	   			polygon.update();
+	   		}
+	   		
+	   		for (GeoPolygon polygon : polygonsLinked){
+	   			polygon.setLineThickness(th,false);
+	   			polygon.update();
+	   		}
+
+	   		for (GeoSegment3D segment : segments.values()){
+	   			segment.setLineThickness(th);
+	   			segment.update();
+	   		}
+	   		
+	   		for (GeoSegmentND segment : segmentsLinked.values()){
+	   			segment.setLineThickness(th);
+	   			segment.update();
+	   		}
+	   }
 	   
 	 
 		public void setAlphaValue(float alpha) {
@@ -686,5 +776,58 @@ public class GeoPolyhedron extends GeoElement3D {
 	}
 
 	
+	
+	
+	///////////////////////////////////////////
+	// Path Interface
+	
+
+	/*
+	public void pointChanged(GeoPointND PI) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void pathChanged(GeoPointND PI) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public boolean isOnPath(GeoPointND PI, double eps) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public double getMinParameter() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public double getMaxParameter() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	public boolean isClosedPath() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public PathMover createPathMover() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	*/
+	
+	public boolean isPath(){
+		return true;
+	}
 
 }
