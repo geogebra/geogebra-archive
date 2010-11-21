@@ -595,7 +595,8 @@ implements AlgoElementWithResizeableOutput{
 				v = inputPoints[inputPoints.length-1].getCoordsInD(3).sub(inputPoints[0].getCoordsInD(3));
 				shift=1;
 			}else{
-				v=new GgbVector(0, 0, inputHeight.getDouble(), 0); //TODO ortho to basis
+				//TODO use Oz for default orientation
+				v=inputPolygon.getViewDirection().normalized().mul(inputHeight.getDouble());
 				shift=0;
 			}
 			
