@@ -22,8 +22,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 
 /**
  * JButton with popup component. A mouse click on the left side of the button
@@ -44,6 +42,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	private Application app;
 	
 	private JPopupMenu myPopup;
+	public JPopupMenu getMyPopup() {
+		return myPopup;
+	}
+
 	private JSlider mySlider;
 	
 	
@@ -140,7 +142,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	
 	
 	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension iconSize, 
-			Integer mode, boolean hasTable, boolean hasSlider){
+			Integer mode, final boolean hasTable, boolean hasSlider){
 		super(); 
 		this.app = app;
 		this.hasTable = hasTable;
@@ -177,6 +179,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				// trigger popup if the mouse is over the right side of the button
 				// or the button is a standard button (pressing anywhere triggers the popup)
 				if( isStandardButton || e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) { 
+					if(hasTable)
+						myTable.updateFonts();
 					if(isDownwardPopup)
 						// popup appears below the button
 						myPopup.show(getParent(), locButton.x,locButton.y + getHeight());
@@ -212,14 +216,15 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				}
 			});
 
-			
-			// if displaying text, then adjust the width 
+	/*		
+			// if displaying text only, then adjust the width 
 			if(mode == SelectionTable.MODE_TEXT){
 				 Dimension d = this.getPreferredSize();
 				 d.width = myTable.getColumnWidth();
 				 setMinimumSize(d); 
+				 setMaximumSize(d); 
 			 }
-			
+		*/	
 			
 			myTable.setBackground(myPopup.getBackground());
 			myPopup.add(myTable);
@@ -231,7 +236,16 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			getMySlider();
 		
 		isIniting = false;
-		//updateGUI();				
+		
+		
+		if(mode == SelectionTable.MODE_TEXT && iconSize.width == -1){
+			iconSize.width = myTable.getColumnWidth()-4;
+			iconSize.height = myTable.getRowHeight()-4;	
+		}
+		
+		
+		
+		
 	}
 	
 	
@@ -276,46 +290,17 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	 private void updateGUI(){
 
 		 if(isIniting) return;
+		 
 		 setIcon(getButtonIcon());
 		 
 		 if(hasTable){
 			 myTable.repaint();
-
 		 }
+		 
 		 repaint();
 	 }
 
 	
-	public ImageIcon getButtonIcon(){
-		
-		ImageIcon icon = (ImageIcon) this.getIcon();
-		
-		if(hasTable){
-		// draw the icon for the current selection
-		switch (mode){
-			
-		case SelectionTable.MODE_TEXT:
-			
-			//setText((String)data[getSelectedIndex()]);
-			 Dimension d = iconSize;
-			 d.width = myTable.getColumnWidth();
-		
-			icon = GeoGebraIcon.createStringIcon((String)data[getSelectedIndex()], app.getPlainFont(), 
-					false, false, false, d, Color.BLACK, null);
-			//this.setMargin(new Insets(0,5,0,0));
-			break;
-
-		case SelectionTable.MODE_ICON:
-			icon  = (ImageIcon) myTable.getSelectedValue();
-			break;
-			
-		default:
-			icon = myTable.getDataIcon(data[getSelectedIndex()]);
-		}
-		}
-		return icon;
-	}
-
 	
 	/** 
 	 * Create our JSlider 
@@ -438,9 +423,42 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 
 
 	 //==============================================
-	 //    Set Icon
+	 //    Icon Handling
 	 //==============================================
 
+	
+
+	public ImageIcon getButtonIcon(){
+
+		ImageIcon icon = (ImageIcon) this.getIcon();
+
+		// draw the icon for the current table selection
+		if(hasTable){
+			switch (mode){
+			
+			case SelectionTable.MODE_TEXT:
+				// Strings are converted to icons. We don't use setText so that the button size can be controlled
+				// regardless of the layout manager.
+
+				icon = GeoGebraIcon.createStringIcon((String)data[getSelectedIndex()], app.getPlainFont(), 
+						false, false, true, iconSize, Color.BLACK, null);
+
+				break;
+
+			case SelectionTable.MODE_ICON:
+				icon  = (ImageIcon) myTable.getSelectedValue();
+				break;
+
+			default:
+				icon = myTable.getDataIcon(data[getSelectedIndex()]);
+			}
+		}
+		return icon;
+	}
+
+	
+	
+	
 	/**
 	 * Append a downward triangle image to the right hand side of an input icon.
 	 */
@@ -466,7 +484,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		
 		
 		// get icon width and height		
-		int w = 4;
+		int w = 0;
 		int h = 18;
 		if(icon != null){
 			w = (icon.getIconWidth() > 0) ? icon.getIconWidth() : 0;

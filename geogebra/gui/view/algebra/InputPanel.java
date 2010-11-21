@@ -3,16 +3,22 @@ package geogebra.gui.view.algebra;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.inputbar.MyComboBox;
+import geogebra.gui.util.PopupMenuButton;
+import geogebra.gui.util.SelectionTable;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -21,7 +27,7 @@ import javax.swing.text.JTextComponent;
 /**
  * @author Markus Hohenwarter
  */
-public class InputPanel extends JPanel implements FocusListener, VirtualKeyboardListener {
+public class InputPanel extends JPanel implements FocusListener, VirtualKeyboardListener, ActionListener {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -111,11 +117,12 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 
 	
 	public final static String [] symbols = { 	
-		"\u00b2",  // exponents ^2 
-		"\u00b3",  // exponents ^3 
-		"\u00b0", // degree	
 		"\u03c0", // pi	
 		Kernel.EULER_STRING, // e
+		
+		"\u00b2",  // exponents ^2 
+		"\u00b3",  // exponents ^3 
+		"\u00b0", // degree			
 		"\u221e", // infinity
 		ExpressionNode.strVECTORPRODUCT, //  "\u2297", // vector product (circled times)
 		ExpressionNode.strEQUAL_BOOLEAN,
@@ -180,6 +187,14 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	
 	private JTextComponent textComponent;	
 	private MyComboBox cbSpecialChars, cbGreekLetters;
+
+	private PopupMenuButton symbolButton;
+
+	public PopupMenuButton getSymbolButton() {
+		return symbolButton;
+	}
+
+	private PopupMenuButton functionButton;
 	
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
 		this(initText, app, 1, columns, true, true, false, null);
@@ -219,6 +234,8 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		if (initText != null) textComponent.setText(initText);		
 		cbSpecialChars = new MyComboBox();
 		cbGreekLetters  = new MyComboBox();
+		
+		this.createPopupButton();
 		
 		// make sure we use a font that can display special characters
 		cbSpecialChars.setFont(app.getFontCanDisplay(Kernel.EULER_STRING));
@@ -274,9 +291,12 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 			add(textComponent, BorderLayout.CENTER);
 			
 			JPanel cbPanel = new JPanel(new BorderLayout(2,0));			
-			cbPanel.add(cbSpecialChars, BorderLayout.WEST);
-			cbPanel.add(cbGreekLetters, BorderLayout.EAST);
+			//cbPanel.add(cbSpecialChars, BorderLayout.WEST);
+			//cbPanel.add(cbGreekLetters, BorderLayout.EAST);
+			cbPanel.add(symbolButton,BorderLayout.WEST);
+			//cbPanel.add(functionButton,BorderLayout.EAST);
 			add(cbPanel, BorderLayout.EAST);	
+			
 		}		
 		
 		cbSpecialChars.setVisible(showSpecialChars);
@@ -328,6 +348,38 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	}
 
 	
+	private void createPopupButton(){
+		
+		int k = 0;
+		String[] allSymbols = new String[symbols.length + greek.length];
+		while(k < symbols.length){
+			allSymbols[k] = symbols[k];
+			k++;
+		}
+		while(k < symbols.length + greek.length){
+			allSymbols[k] = greek[k - symbols.length];
+			k++;
+		}
+		
+		symbolButton = new PopupMenuButton(app, allSymbols, -1,12,new Dimension(-1,-1), SelectionTable.MODE_TEXT);
+		symbolButton.setFocusable(false);
+		symbolButton.setSelectedIndex(0);
+		symbolButton.setKeepVisible(false);
+		symbolButton.getMyTable().setShowGrid(true);
+		symbolButton.getMyTable().setBorder(BorderFactory.createLineBorder(symbolButton.getMyTable().getGridColor()));
+		symbolButton.getMyPopup().setBorder(BorderFactory.createEmptyBorder());
+		symbolButton.addActionListener(this);
+		
+		functionButton = new PopupMenuButton(app, this.functions, -1,3,new Dimension(-1,16), SelectionTable.MODE_TEXT);
+		functionButton.setFocusable(false);
+		functionButton.setSelectedIndex(0);
+		functionButton.setKeepVisible(false);
+		functionButton.getMyTable().setShowGrid(true);
+		functionButton.addActionListener(this);
+		
+	}
+	
+	
 	
 	/**
 	 * Inserts string at current position of the input textfield and gives focus
@@ -345,6 +397,14 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 
 	public void focusLost(FocusEvent e) {
 		app.getGuiManager().setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == symbolButton){
+			insertString((String) symbolButton.getSelectedValue());		
+		}
+			
+		
 	}
 
 }

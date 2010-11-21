@@ -153,6 +153,7 @@ public class SelectionTable extends JTable{
 		this.setBorder(null);
 		setCellDimensions();
 		setFont(app.getPlainFont());
+		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		// set cell selection properties
 		setCellSelectionEnabled(true);

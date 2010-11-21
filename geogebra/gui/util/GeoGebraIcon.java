@@ -148,28 +148,69 @@ public class GeoGebraIcon {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
 	/**
-	 * Creates a 16x16 pixel icon representing a list display of data
+	 * Creates a 16x16 pixel icon to represent rightward opening/closing a list display of data 
 	 */
-	public static ImageIcon createListIcon(){
+	public static ImageIcon listRightIcon(){
 
-		BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);	 
-		
+		BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);	 		
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
 		g2.setPaint(Color.DARK_GRAY);
-
+	
+		for(int i=3; i<=12; i = i+2){
+			g2.drawLine(1, i, 6, i);
+		}
 		
-		for(int i=3; i<=12; i = i+2)
-			g2.drawLine(4, i, 10, i);
+		g2.setPaint(Color.GRAY);
+		g2.drawLine(10, 5, 10, 9);
+		g2.drawLine(9, 5, 9, 9);
+		g2.drawLine(8, 5, 8, 9);
+		
+		for(int i=0; i<=4; i++){
+			g2.drawLine(11+i, 3+i , 11+i, 11-i);
+		}
 			
 		ImageIcon ic = new ImageIcon(image);
-		//ensureIconSize(ic, iconSize);
 		
 		return ic;
 	}
 	
+	
+
+	/**
+	 * Creates a 16x16 pixel icon to represent leftward opening/closing a list display of data 
+	 */
+	public static ImageIcon listLeftIcon(){
+
+		BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);	 		
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2.setPaint(Color.DARK_GRAY);
+	
+		for(int i=3; i<=12; i = i+2){
+			g2.drawLine(10, i, 15, i);
+		}
+		
+		g2.setPaint(Color.GRAY);
+		g2.drawLine(8, 5, 8, 9);
+		g2.drawLine(7, 5, 7, 9);
+		g2.drawLine(6, 5, 6, 9);
+		
+		for(int i=0; i<=4; i++){
+			g2.drawLine(5-i, 11-i , 5-i, 3+i);
+		}
+			
+		ImageIcon ic = new ImageIcon(image);
+		
+		return ic;
+	}
 	
 
 
@@ -287,7 +328,7 @@ public class GeoGebraIcon {
 			g2.setBackground(bgColor);
 
 		g2.setColor (fgColor);
-		font = font.deriveFont((h-6)*1.0f);
+		//font = font.deriveFont((h-6)*1.0f);
 		if(isBold)
 			font = font.deriveFont(Font.BOLD);
 		if(isItalic)

@@ -921,7 +921,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 
 		btnTextSize = new PopupMenuButton(app, textSizeArray, -1, 1, 
-				new Dimension(10, iconHeight), SelectionTable.MODE_TEXT){
+				new Dimension(-1, iconHeight), SelectionTable.MODE_TEXT){
 
 			@Override
 			public void update(Object[] geos) {

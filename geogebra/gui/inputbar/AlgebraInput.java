@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.gui.inputbar;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -50,7 +51,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	private static final long serialVersionUID = 1L;
 	
 	
-	private boolean showCommandButton = false;	  //<=========== set this flag to test the command button
+	private boolean showCommandButton = true;	  //<=========== set this flag to test the command button
 	
 	
 	private Application app;
@@ -81,10 +82,10 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	
 	public void initGUI() {
 		removeAll();
-		helpIcon = new JLabel(app.getImageIcon("help.png")); 
-		helpIcon.addMouseListener(this);
+		//helpIcon = new JLabel(app.getImageIcon("help.png")); 
+		//helpIcon.addMouseListener(this);
 		inputLabel = new JLabel(); 
-		inputLabel.addMouseListener(this);
+		//inputLabel.addMouseListener(this);
 
 		
 		if(showCommandButton)
@@ -113,18 +114,21 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		// add to panel				 		
 		setLayout(new BorderLayout(2, 2));	
 		JPanel iconLabelPanel = new JPanel();
-		iconLabelPanel.add(helpIcon);
+		//iconLabelPanel.add(helpIcon);
 
+		
+		
 		// create toggle button to hide/show the input help panel
 		btnToggleInputPanel = new JToggleButton();
-		btnToggleInputPanel.setSelectedIcon(app.getImageIcon("go-previous-gray.png"));
-		btnToggleInputPanel.setIcon(app.getImageIcon("go-next-gray.png"));
+		btnToggleInputPanel.setSelectedIcon(GeoGebraIcon.listLeftIcon());
+		btnToggleInputPanel.setIcon(GeoGebraIcon.listRightIcon());
 		btnToggleInputPanel.addActionListener(this);
 		btnToggleInputPanel.setFocusable(false);
 		
-		
+		this.inputPanel.getSymbolButton().setDownwardPopup(false);
 		iconLabelPanel.add(inputLabel);
 		add(iconLabelPanel, BorderLayout.WEST);   
+		
 		add(inputPanel, BorderLayout.CENTER);
 		if (app.showCmdList()) {
 			JPanel p = new JPanel(new BorderLayout(5,5));
@@ -175,11 +179,14 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			inputLabel.setText( app.getPlain("InputLabel") + ":");
 		//inputButton.setToolTipText(app.getMenu("Mode") + " " + app.getMenu("InputField"));   
 		if (helpIcon != null)
-			helpIcon.setToolTipText(app.getMenu("FastHelp"));		
+			helpIcon.setToolTipText(app.getMenu("FastHelp"));	
+		
 		setCommandNames();	
 		// update the help panel
 		app.getInputHelpPanel().setLabels();
+		app.getInputHelpPanel().setCommands();
 	}	
+	
 	
 	public void updateFonts() {
 		inputField.setFont(app.getBoldFont());		
