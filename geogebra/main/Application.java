@@ -826,6 +826,7 @@ public class Application implements KeyEventDispatcher {
 		applicationSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, null);
 		// help panel is on the right, so set all resize weight to the left pane
 		applicationSplitPane.setResizeWeight(1.0);
+		applicationSplitPane.setDividerSize(0);
 		
 		
 		panel.add(topPanel, BorderLayout.NORTH);
