@@ -344,8 +344,10 @@ public interface EuclidianViewInterface {
 	public boolean[] isAutomaticAxesNumberingDistance();
 	public double[] getAxesNumberingDistances();
 	
-	
-
+	// for AlgebraView
+	public int getMode();
+	public void clickedGeo(GeoElement geo, MouseEvent e);
+	public void mouseMovedOver(GeoElement geo);
 
 
 	

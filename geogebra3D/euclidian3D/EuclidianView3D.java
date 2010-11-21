@@ -3167,4 +3167,34 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return null;
 	}
 
+	
+	////////////////////////////////////////
+	// ALGEBRA VIEW
+	////////////////////////////////////////
+	
+
+	public int getMode() {
+		return euclidianController3D.getMode();
+	}
+
+	protected Hits tempArrayList = new Hits();
+	
+	public void clickedGeo(GeoElement geo, MouseEvent e) {
+		if (geo == null)
+			return;
+
+		tempArrayList.clear();
+		tempArrayList.add(geo);
+		boolean changedKernel = euclidianController3D.processMode(tempArrayList,
+				e);
+		if (changedKernel)
+			app.storeUndoInfo();
+		getKernel().notifyRepaint();
+		
+	}
+
+	final public void mouseMovedOver(GeoElement geo) {
+
+	}
+
 }

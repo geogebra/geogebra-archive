@@ -6,6 +6,7 @@ import geogebra.kernel.AlgoSimpleRootsPolynomial;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.AlgoElement.OutputHandler;
 import geogebra.kernel.AlgoElement.elementFactory;
@@ -32,6 +33,8 @@ implements AlgoElementWithResizeableOutput{
 	private GeoPointND[] inputPoints;
 	
 	private GeoPolygon inputPolygon;
+	
+	private GeoNumeric inputHeight;
 	
 	/** lists describing the faces (for polyhedron of TYPE_NONE) */
 	private GeoList faces = null;
@@ -328,6 +331,87 @@ implements AlgoElementWithResizeableOutput{
         polyhedron.defaultLabels(labels);
 	}
 	
+	
+	
+	
+	/** creates a right prism or pyramid regarding basis and height
+	 * @param c construction 
+	 * @param labels 
+	 * @param polygon 
+	 * @param height 
+	 * @param type type of polyhedron
+	 */
+	public AlgoPolyhedron(Construction c, String[] labels, GeoPolygon polygon, GeoNumeric height, int type) {
+		this(c);
+		
+		this.type = type;
+		
+		outputPolyhedron.adjustOutputSize(1);
+		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
+		
+		inputPolygon = polygon;
+		inputHeight = height;
+		
+		int numPoints;
+		
+		switch(type){
+		case GeoPolyhedron.TYPE_PRISM://construct a prism
+			numPoints = polygon.getPointsLength();
+			inputPoints = new GeoPointND[numPoints];
+			for(int i=0;i<numPoints;i++)
+				inputPoints[i] = polygon.getPointND(i);
+			GeoPointND[] points = new GeoPointND[numPoints*2];
+			outputPoints.adjustOutputSize(numPoints);
+			outputPoints.setLabels(null);
+			for(int i=0;i<numPoints;i++)
+				points[i] = inputPoints[i];
+			for(int i=0;i<numPoints;i++){
+				points[numPoints+i] = outputPoints.getElement(i);
+			}
+			
+			//bottom of the prism
+			polyhedron.addPolygonLinked(polygon);
+			
+			
+			//sides of the prism
+			for (int i=0; i<numPoints; i++){
+				polyhedron.startNewFace();
+				polyhedron.addPointToCurrentFace(points[i]);
+				polyhedron.addPointToCurrentFace(points[(i+1)%(numPoints)]);
+				polyhedron.addPointToCurrentFace(points[numPoints + ((i+1)%(numPoints))]);
+				polyhedron.addPointToCurrentFace(points[numPoints + i]);
+				polyhedron.endCurrentFace();
+			}
+			
+
+			
+			//top of the prism
+			polyhedron.startNewFace();
+			for (int i=0; i<numPoints; i++)
+				polyhedron.addPointToCurrentFace(points[numPoints+i]);
+			polyhedron.endCurrentFace();
+			
+			break;
+		}
+		
+		setInput();
+		polyhedron.updateFaces();
+		setOutput();
+		
+		//compute();
+
+		update();
+		
+        //set labels dependencies: will be used with Construction.resolveLabelDependency()
+        if (labels!=null && labels.length>1)
+        	for (int i=0; i<labels.length; i++){
+        		cons.setLabelDependsOn(labels[i], this);
+        	}
+		
+        
+        
+        polyhedron.defaultLabels(labels);
+	}
 
 
 	public GeoElement addLabelToOutput(String label, int type){
@@ -429,7 +513,10 @@ implements AlgoElementWithResizeableOutput{
 			}else{
 				input = new GeoElement[2];
 				input[0] = inputPolygon;
-				input[1] = (GeoElement) inputPoints[inputPoints.length-1];
+				if (inputHeight==null)
+					input[1] = (GeoElement) inputPoints[inputPoints.length-1];
+				else
+					input[1] = inputHeight;
 			}
 		}else{
 			input = new GeoElement[1];
@@ -502,11 +589,19 @@ implements AlgoElementWithResizeableOutput{
 			break;
 		case GeoPolyhedron.TYPE_PRISM:
 			//translation from bottom to top
-			GgbVector v = inputPoints[inputPoints.length-1].getCoordsInD(3).sub(inputPoints[0].getCoordsInD(3));
-			//Application.debug("v=\n"+v);
+			GgbVector v;
+			int shift;
+			if (inputHeight==null){
+				v = inputPoints[inputPoints.length-1].getCoordsInD(3).sub(inputPoints[0].getCoordsInD(3));
+				shift=1;
+			}else{
+				v=new GgbVector(0, 0, inputHeight.getDouble(), 0); //TODO ortho to basis
+				shift=0;
+			}
+			
 			//translate all output points
 			for (int i=0;i<outputPoints.size();i++){
-				outputPoints.getElement(i).setCoords(inputPoints[i+1].getCoordsInD(3).add(v),true);
+				outputPoints.getElement(i).setCoords(inputPoints[i+shift].getCoordsInD(3).add(v),true);
 				outputPoints.getElement(i).updateCoords();
 			}
 			

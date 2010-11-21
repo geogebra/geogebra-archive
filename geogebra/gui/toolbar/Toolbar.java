@@ -558,8 +558,10 @@ public class Toolbar extends JToolBar {
 		+" , "
 		+EuclidianView3D.MODE_PARALLEL_PLANE
 		+" || "
+		+EuclidianView3D.MODE_RIGHT_PRISM		
+		//+" , "
 		//+EuclidianView3D.MODE_PRISM		
-		//+" | "
+		+" | "
 		+EuclidianView3D.MODE_SPHERE_TWO_POINTS
 		+" "
 		+EuclidianView3D.MODE_SPHERE_POINT_RADIUS

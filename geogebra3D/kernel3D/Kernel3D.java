@@ -150,6 +150,9 @@ public class Kernel3D
 		case EuclidianView3D.MODE_PRISM:
 			return "Prism";		
 			
+		case EuclidianView3D.MODE_RIGHT_PRISM:
+			return "RightPrism";		
+			
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
 			return "SpherePointRadius";
 						

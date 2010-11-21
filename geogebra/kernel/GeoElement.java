@@ -4945,7 +4945,11 @@ public abstract class GeoElement
 	public boolean isVisibleInView(Object view){
 		// if no views are set, add geo to both  by default
 		if(viewSet.isEmpty()){
-			viewSet.add(app.getGuiManager().getActiveEuclidianView());
+			EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();
+			viewSet.add(ev);
+			// if ev is a 3D view, then also add 1st 2D euclidian view
+			if (!(ev instanceof EuclidianView))
+				viewSet.add(app.getEuclidianView());
 			/*
 			viewSet.add(app.getEuclidianView());
 			

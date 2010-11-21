@@ -165,8 +165,11 @@ public interface EuclidianConstants {
 	/** creates a sphere with midpoint through another point */
 	public static final int MODE_SPHERE_TWO_POINTS = 521;
 	
-	/** creates a sphere with midpoint through another point */
+	/** creates a prism with basis and first vertex of the second parallel face */
 	public static final int MODE_PRISM = 531;
+	
+	/** creates a prism with basis and first vertex of the second parallel face */
+	public static final int MODE_RIGHT_PRISM = 532;
 	
 	// CAS view modes
 	public static final int MODE_CAS_EVALUATE = 1001;

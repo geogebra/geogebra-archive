@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.gui.view.algebra;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -94,7 +95,8 @@ public class AlgebraController
 		
 		// check double click
 		int clicks = e.getClickCount();
-		EuclidianView ev = app.getEuclidianView();
+		//EuclidianView ev = app.getEuclidianView();
+		EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();
 		if (clicks == 2) {										
 			app.clearSelectedGeos();
 			ev.resetMode();

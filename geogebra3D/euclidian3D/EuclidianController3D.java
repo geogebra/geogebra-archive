@@ -9,7 +9,9 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -895,7 +897,33 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 	
-	
+	/** get basis and height;
+	 * create prism
+	 * 
+	 * @param hits
+	 * @return true if a prism has been created
+	 */
+	final protected boolean rightPrism(Hits hits) {
+		
+		
+		if (hits.isEmpty())
+			return false;
+
+		addSelectedPolygon(hits, 1, false);
+		addSelectedNumeric(hits, 1, false);
+
+		if (selPolygons() == 1) {
+			if (selNumbers() == 1) {
+				// fetch selected point and vector
+				GeoPolygon[] basis = getSelectedPolygons();
+				GeoNumeric[] height = getSelectedNumbers();
+				// create new plane
+				getKernel().getManager3D().Prism(null, basis[0], height[0]);
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	
 	///////////////////////////////////////////
@@ -1142,6 +1170,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			changedKernel = parallelPlane(hits);
 			break;
 			
+		case EuclidianView3D.MODE_RIGHT_PRISM:
+			changedKernel = rightPrism(hits);
+			break;
+			
 		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:	
 			changedKernel = circleOrSphere2(hits, mode);
 			break;
@@ -1233,6 +1265,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			hits = view.getHits();hits.removePolygons();
 			createNewPoint(hits, true, false, true, true);
 			break;	
+			
+		case EuclidianView3D.MODE_RIGHT_PRISM:
+			view.setHits(mouseLoc);
+			hits = view.getHits();hits.removePolygons();
+			break;
 			
 		default:
 			super.switchModeForMousePressed(e);

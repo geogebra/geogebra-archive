@@ -2673,7 +2673,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// process mode and return whether kernel was changed
-	final boolean processMode(Hits hits, MouseEvent e) {
+	public final boolean processMode(Hits hits, MouseEvent e) {
 		boolean changedKernel = false;
 
 		if (hits==null)
@@ -6312,7 +6312,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return selectedPoints.size();
 	}
 
-	final int selNumbers() {
+	protected final int selNumbers() {
 		return selectedNumbers.size();
 	}
 
@@ -6320,7 +6320,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return selectedLists.size();
 	}
 
-	final int selPolygons() {
+	protected final int selPolygons() {
 		return selectedPolygons.size();
 	}
 

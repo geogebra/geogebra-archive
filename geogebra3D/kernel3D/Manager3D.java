@@ -230,6 +230,13 @@ public class Manager3D implements Manager3DInterface {
 
 	 }
 
+	 final public GeoElement [] Prism(String[] labels, GeoPolygon polygon, GeoNumeric height){
+
+		 AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,polygon,height,GeoPolyhedron.TYPE_PRISM);
+
+		 return algo.getOutput();
+
+	 }
 
 	/** Pyramid with vertices (last one as apex)
 	 * @param label name

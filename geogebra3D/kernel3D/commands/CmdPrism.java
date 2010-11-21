@@ -1,6 +1,7 @@
 package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
@@ -45,6 +46,12 @@ public class CmdPrism extends CommandProcessor {
 								c.getLabels(),
 								(GeoPolygon) arg[0],
 								(GeoPointND) arg[1]);
+			} else if ((ok[0] = (arg[0] .isGeoPolygon()))
+					&& (ok[1] = (arg[1] .isGeoNumeric()))) {
+				return kernel.getManager3D().Prism(
+								c.getLabels(),
+								(GeoPolygon) arg[0],
+								(GeoNumeric) arg[1]);		
 			} else {
                 if (!ok[0])
                     throw argErr(app, "Prism", arg[0]);
