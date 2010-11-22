@@ -92,7 +92,10 @@ public class Inequality {
 	private void update() {
 		if (fv.length == 1) {
 			init1varFunction(0);
-			if (fv[0].toString().equals("y")) {
+			if(!funBorder.isPolynomialFunction(false)){
+				type = INEQUALITY_INVALID;
+			}
+			else if (fv[0].toString().equals("y")) {
 				type = INEQUALITY_1VAR_Y;
 			} else
 				type = INEQUALITY_1VAR_X;
@@ -125,11 +128,13 @@ public class Inequality {
 		} else if (coefX != null && Kernel.isZero(coefX) && coefY == null) {
 			normal.replace(fv[0], new MyDouble(kernel, 0));
 			init1varFunction(1);
-			type = INEQUALITY_1VAR_Y;
+			type = funBorder.isPolynomialFunction(false) ?				
+				INEQUALITY_1VAR_Y:INEQUALITY_INVALID;
 		} else if (coefY != null && Kernel.isZero(coefY) && coefX == null) {
 			normal.replace(fv[1], new MyDouble(kernel, 0));
 			init1varFunction(0);
-			type = INEQUALITY_1VAR_X;
+			type = funBorder.isPolynomialFunction(false) ?				
+					INEQUALITY_1VAR_X:INEQUALITY_INVALID;
 		}
 
 		else {
