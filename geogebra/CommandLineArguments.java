@@ -49,9 +49,20 @@ public class CommandLineArguments {
 				} else {
 					args.put(cmdArgs[i].substring(2), "");
 				}
-			} else if(!cmdArgs[i].startsWith("-")) {
+			} else if(!cmdArgs[i].startsWith("-")) { // make sure we don't process -open from eg
+				// javaws -open "file1.ggb file2.ggb" http://www.geogebra.org/webstart/4.0/geogebra-40.jnlp
 				// no -- or - prefix, therefore a filename
-				args.put("file"+(noOfFiles++), cmdArgs[i]);
+				
+				if (cmdArgs[i].indexOf(' ') > -1) {
+					// process multiple files from eg
+					// javaws -open "file1.ggb file2.ggb" http://www.geogebra.org/webstart/4.0/geogebra-40.jnlp
+					String[] files = cmdArgs[i].split(" ");
+					for (int j = 0 ; j < files.length ; j++) {
+						args.put("file"+(noOfFiles++), files[j]);						
+					}
+				} else {
+					args.put("file"+(noOfFiles++), cmdArgs[i]);
+				}
 			} else {
 				Application.debug("unknown argument "+cmdArgs[i]);
 			}
