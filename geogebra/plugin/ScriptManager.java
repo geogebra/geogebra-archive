@@ -8,6 +8,8 @@ import geogebra.usb.USBLogger;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.SwingUtilities;
+
 import org.concord.framework.data.stream.DataListener;
 import org.concord.framework.data.stream.DataStreamEvent;
 import org.concord.sensor.SensorDataProducer;
@@ -382,20 +384,26 @@ public class ScriptManager {
 	 */
 	public synchronized void unregisterLoggerListener(String JSFunctionName) {
 		if (loggerListenerMap != null) {
+			
 			loggerListenerMap.remove(JSFunctionName);		
 			Application.debug("unregisterLoggerListener for object: " + JSFunctionName);
 			
-			Application.debug(loggerListenerMap.size()+"",1);
+			//Application.debug(loggerListenerMap.size()+"",1);
 			
 			// stop events from logging device
 			if (loggerListenerMap.size() == 0 && logger != null) {
-				SensorDataProducer sDataProducer = logger.sDataProducer;
+				final SensorDataProducer sDataProducer = logger.sDataProducer;
 				
-				if (sDataProducer != null)
-					Application.debug("stopping logging",1);
-					sDataProducer.stop();
+				if (sDataProducer != null) {
+		            SwingUtilities.invokeLater( new Runnable(){ public void
+		            	run() { 					
+			            	Application.debug("stopping logging",1);
+							sDataProducer.stop();
+		            	} });
+				}
 				
 			}
+			
 		}
 	}					
 	/**
