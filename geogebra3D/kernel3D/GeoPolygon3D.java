@@ -344,12 +344,6 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 	
 	
-	 /** says if the object is pickable
-	  * @return true if the object is pickable
-	  */
-	 public boolean isPickable(){
-		 return isPickable;
-	 }
 	 
 	
     /** set the alpha value to alpha for openGL
@@ -538,13 +532,6 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 	
 	
-	/** sets the pickability of the object
-	 * @param v pickability
-	 */
-	public void setIsPickable(boolean v){
-		isPickable = v;
-	}
-
 	
 	
 	public GeoElement copyInternal(Construction cons) {						

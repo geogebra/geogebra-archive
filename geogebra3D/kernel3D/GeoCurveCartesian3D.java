@@ -209,12 +209,6 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 
 
 
-	public boolean isPickable() {
-		return true;
-	}
-
-
-
 
 
 	public void setDrawable3D(Drawable3D d) {
@@ -243,9 +237,6 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 
 
 
-	public void setIsPickable(boolean v) {
-		
-	}
 	
 
   	public boolean isGeoElement3D() {

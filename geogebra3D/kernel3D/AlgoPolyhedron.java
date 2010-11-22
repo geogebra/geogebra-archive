@@ -552,8 +552,22 @@ implements AlgoElementWithResizeableOutput{
 	
 	
 	
+	/**
+	 * @return the polyhedron
+	 */
+	public GeoPolyhedron getPolyhedron(){
+		return outputPolyhedron.getElement(0);
+	}
 	
 	
+	/**
+	 * set output points invisible (use for previewable)
+	 * @param visible 
+	 */
+	public void setOutputPointsInvisible(boolean visible){
+		for (int i=0; i<outputPoints.size(); i++)
+			outputPoints.getElement(i).setEuclidianVisible(visible);
+	}
 	
 	
 	

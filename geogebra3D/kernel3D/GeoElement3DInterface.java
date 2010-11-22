@@ -59,16 +59,6 @@ public interface GeoElement3DInterface {
 
 
 	
-	/** says if the object is pickable
-	 * @return true if the object is pickable
-	 */
-	public boolean isPickable();
-	
-	
-	/** sets the pickability of the object
-	 * @param v pickability
-	 */
-	public void setIsPickable(boolean v);
 
 	
 

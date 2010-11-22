@@ -2139,6 +2139,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return new DrawQuadric3D(this, selectedPoints, GeoQuadricND.QUADRIC_SPHERE);
 	}	
 
+	/**
+	 * @param selectedPolygon
+	 * @return a preview right prism (basis and height)
+	 */
+	@SuppressWarnings("rawtypes")
+	public Previewable createPreviewRightPrism(ArrayList selectedPolygons){
+		return new DrawPolyhedron3D(this, selectedPolygons);
+	}	
 	
 	
 	public void updatePreviewable(){
@@ -2297,7 +2305,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			this.previewDrawable.disposePreview();
 		
 		if (previewDrawable!=null){
-			addToDrawable3DLists((Drawable3D) previewDrawable);
+			if (((Drawable3D) previewDrawable).getGeoElement()!=null)
+				addToDrawable3DLists((Drawable3D) previewDrawable);
 			//drawable3DLists.add((Drawable3D) previewDrawable);
 		}
 		

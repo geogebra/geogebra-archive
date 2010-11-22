@@ -1212,4 +1212,27 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	public int getRelatedModeID() {
 		return -1;
 	}
+	
+	
+	
+	///////////////////////////////////////////
+	// USED FOR PREVIEWABLES
+	///////////////////////////////////////////
+
+	
+	/**
+	 * remove all outputs from algebra view
+	 */
+	public void removeOutputFromAlgebraView(){
+		for (int i=0; i<getOutputLength();i++)
+			app.getGuiManager().getAlgebraView().remove(getOutput(i));
+	}	
+	
+	/**
+	 * remove all outputs from picking
+	 */
+	public void removeOutputFromPicking(){
+		for (int i=0; i<getOutputLength();i++)
+			getOutput(i).setIsPickable(false);
+	}
 }

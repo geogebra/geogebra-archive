@@ -501,10 +501,9 @@ public abstract class Drawable3D extends DrawableND {
 		else
 			ret = this;
 
-		if (getGeoElement() instanceof GeoElement3DInterface) //TODO remove this
-			if (!((GeoElement3DInterface) getGeoElement()).isPickable()){
-				return ret;
-			}
+		if (!getGeoElement().isPickable())
+			return ret;
+			
 		
 		if(!getGeoElement().isEuclidianVisible() || !isVisible())
 			return ret;	
@@ -536,10 +535,10 @@ public abstract class Drawable3D extends DrawableND {
      */
     private void drawLabel(Renderer renderer, boolean colored, boolean forPicking){
 
+    	
     	if (forPicking) 
-    		if (getGeoElement() instanceof GeoElement3DInterface) //TODO remove this
-    			if(!((GeoElement3DInterface) getGeoElement()).isPickable())
-    				return;
+    		if(!(getGeoElement().isPickable()))
+    			return;
     	
 		if(!isVisible())
 			return;

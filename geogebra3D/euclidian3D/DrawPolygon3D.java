@@ -190,7 +190,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		getGeoElement().setObjColor(ConstructionDefaults3D.colPolygon3D);
 		getGeoElement().setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
-		((GeoElement3DInterface) getGeoElement()).setIsPickable(false);
+		getGeoElement().setIsPickable(false);
 		
 		this.selectedPoints = selectedPoints;
 		

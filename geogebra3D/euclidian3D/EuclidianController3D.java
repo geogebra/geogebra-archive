@@ -1030,6 +1030,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView.MODE_SPHERE_TWO_POINTS:
 			previewDrawable = view3D.createPreviewSphere(selectedPoints);
 			break;
+			
+		case EuclidianView.MODE_RIGHT_PRISM:
+			previewDrawable = view3D.createPreviewRightPrism(selectedPolygons);
+			break;
+			
+			
 		default:
 			previewDrawable = super.switchPreviewableForInitNewMode(mode);
 			break;

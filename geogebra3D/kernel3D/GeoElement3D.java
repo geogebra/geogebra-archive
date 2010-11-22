@@ -147,8 +147,6 @@ public abstract class GeoElement3D
 	private Drawable3D drawable3D = null;
 	
 	
-	/** says if it's a pickable object */
-	private boolean isPickable = true;
 	
 	
 	
@@ -190,19 +188,6 @@ public abstract class GeoElement3D
 	}	
 	
 	
-	/** sets the pickability of the object
-	 * @param v pickability
-	 */
-	public void setIsPickable(boolean v){
-		isPickable = v;
-	}
-	
-	/** says if the object is pickable
-	 * @return true if the object is pickable
-	 */
-	public boolean isPickable(){
-		return isPickable;
-	}
 	
 	
 	// link to 2D GeoElement

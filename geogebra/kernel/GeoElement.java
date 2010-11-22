@@ -5184,4 +5184,28 @@ public abstract class GeoElement
 		else
 			return getXmax();
 	}
+	
+	
+
+	///////////////////////////////
+	// 3D
+	///////////////////////////////
+
+
+	/** says if it's a pickable object */
+	private boolean isPickable = true;
+
+	/** sets the pickability of the object
+	 * @param v pickability
+	 */
+	public void setIsPickable(boolean v){
+		isPickable = v;
+	}
+	
+	/** says if the object is pickable
+	 * @return true if the object is pickable
+	 */
+	public boolean isPickable(){
+		return isPickable;
+	}
 }

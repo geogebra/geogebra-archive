@@ -107,15 +107,6 @@ extends GeoConicND implements GeoElement3DInterface{
 
 		
 
-	 /** says if the object is pickable
-	  * @return true if the object is pickable
-	  */
-	 public boolean isPickable(){
-		 return true;
-	 }
-
-
-
 	 /////////////////////////////////////////
 	 // link with GeoElement2D
 
@@ -199,12 +190,6 @@ extends GeoConicND implements GeoElement3DInterface{
 
 	 
 		
-		/** sets the pickability of the object
-		 * @param v pickability
-		 */
-		public void setIsPickable(boolean v){
-		}
-
 
 
 		protected StringBuilder buildValueString() {

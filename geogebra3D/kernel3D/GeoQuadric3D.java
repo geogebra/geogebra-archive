@@ -631,12 +631,6 @@ implements GeoElement3DInterface, Functional2Var{
 
 
 
-	public boolean isPickable() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-
 
 
 
@@ -663,10 +657,6 @@ implements GeoElement3DInterface, Functional2Var{
 
 
 
-	public void setIsPickable(boolean v) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 }
