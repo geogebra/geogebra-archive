@@ -49,9 +49,11 @@ public class CommandLineArguments {
 				} else {
 					args.put(cmdArgs[i].substring(2), "");
 				}
-			} else {
-				// no -- prefix, therefore a filename
+			} else if(!cmdArgs[i].startsWith("-")) {
+				// no -- or - prefix, therefore a filename
 				args.put("file"+(noOfFiles++), cmdArgs[i]);
+			} else {
+				Application.debug("unknown argument "+cmdArgs[i]);
 			}
 		}
 	}
