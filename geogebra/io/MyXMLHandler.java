@@ -41,6 +41,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
+import geogebra.kernel.GeoUserInputElement;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.LimitedPath;
@@ -2340,6 +2341,12 @@ public class MyXMLHandler implements DocHandler {
 				ok = handleTooltipMode(attrs);
 				break;
 			}
+			
+		case 'u':
+			if (eName.equals("userinput")){
+				ok =handleUserInput(attrs);
+				break;
+			}
 
 		case 'v':
 			if (eName.equals("value")) {
@@ -2355,6 +2362,7 @@ public class MyXMLHandler implements DocHandler {
 			System.err.println("error in <element>: " + eName);
 		}
 	}
+
 
 
 	private boolean handleShow(LinkedHashMap<String, String> attrs) {
@@ -3606,7 +3614,7 @@ public class MyXMLHandler implements DocHandler {
 	}
 
 	private boolean handleCoefficients(LinkedHashMap<String, String> attrs) {
-		Application.debug(attrs.toString());
+	//	Application.debug(attrs.toString());
 		if (!(geo.isGeoImplicitPoly())) {
 			System.err.println("wrong element type for <coefficients>: "
 					+ geo.getClass());
@@ -3657,6 +3665,32 @@ public class MyXMLHandler implements DocHandler {
 			return false;
 		}
 		return false;
+	}
+	
+	private boolean handleUserInput(LinkedHashMap<String, String> attrs) {
+//		Application.debug(attrs.toString());
+		if (!(geo instanceof GeoUserInputElement)) {
+			System.err.println("wrong element type for <userinput>: "
+					+ geo.getClass());
+			return false;
+		}
+		try{
+			if (geo.isIndependent()){
+				String value=attrs.get("value");
+				if (value==null)
+					return false;
+				ValidExpression ve=parser.parseGeoGebraExpression(value);
+				((GeoUserInputElement)geo).setUserInput(ve);
+			}
+			if (attrs.get("show")!=null && attrs.get("show").equals("true"))
+				((GeoUserInputElement)geo).setInputForm();
+			else
+				((GeoUserInputElement)geo).setExtendedForm();
+			return true;
+		}catch (Exception e) {
+			Application.debug(e.getMessage());
+			return false;
+		}
 	}
 	
 	// ====================================

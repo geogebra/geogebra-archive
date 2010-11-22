@@ -50,7 +50,7 @@ public abstract class GeoUserInputElement extends GeoElement {
 	}
 
 	public String toString(){
-		if (inputForm){
+		if (inputForm&&userInput!=null){
 			return label+": "+userInput.toValueString();
 		}else{
 			return label+": "+toValueString();
@@ -62,6 +62,19 @@ public abstract class GeoUserInputElement extends GeoElement {
 			return;
 		userInput=((GeoUserInputElement)geo).userInput;
 	}
+
+	@Override
+	protected void getXMLtags(StringBuilder sb) {
+		super.getXMLtags(sb);
+		sb.append("\t<userinput show=\"");
+		sb.append(inputForm);
+		if (isIndependent()){ //if dependent we save the expression somewhere else anyway
+			sb.append("\" value=\"");
+			sb.append(userInput);
+		}
+		sb.append("\" />\n");
+	}
+	
 	
 
 }

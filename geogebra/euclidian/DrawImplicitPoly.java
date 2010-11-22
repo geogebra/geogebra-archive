@@ -36,6 +36,7 @@ public class DrawImplicitPoly extends Drawable {
 	private GeoImplicitPoly implicitPoly;
 	private boolean isVisible;
 	private boolean labelVisible;
+	private int fillSign; //0=>no filling, only curve -1=>fill the negativ part, 1=>fill positiv part
 	
 	public DrawImplicitPoly(EuclidianView view,GeoImplicitPoly implicitPoly) {
 //		Application.debug("DrawImplicitPoly, new object");
@@ -59,7 +60,8 @@ public class DrawImplicitPoly extends Drawable {
         g2.setStroke(objStroke);
         g2.setColor(geo.getObjectColor());
         for (GeneralPath g:gps){
-        	Drawable.drawWithValueStrokePure(g, g2);	
+        	Drawable.drawWithValueStrokePure(g, g2);
+        	
         }
 
         if (labelVisible) {
@@ -157,6 +159,7 @@ public class DrawImplicitPoly extends Drawable {
 	 */
 	private int pointNearRDCornerX=0, pointNearRDCornerY=0;
 	private ArrayList<Double[]> singularitiesCollection;
+	private ArrayList<Double[]> boundaryIntersectCollection;
 	
 	//Second Algorithm
 	final public static double EPS=Kernel.EPSILON;
@@ -196,6 +199,8 @@ public class DrawImplicitPoly extends Drawable {
 	private void updateGP(){
 		try{
 			singularitiesCollection=new ArrayList<Double[]>();
+			if (fillSign!=0)
+				boundaryIntersectCollection=new ArrayList<Double[]>();
 		int gridWidth=(int)Math.ceil(view.getWidth()/GRIDSIZE);
 		int gridHeight=(int)Math.ceil(view.getHeight()/GRIDSIZE);
 		//ticket #249
@@ -382,6 +387,9 @@ public class DrawImplicitPoly extends Drawable {
 					reachedEnd=true;
 					break;
 				}
+			}
+			if (reachedEnd&&fillSign!=0){ //we reached the boundary
+				
 			}
 			if (lastW!=w||lastH!=h){
 				int dw=(int)Math.signum(lastW-w);

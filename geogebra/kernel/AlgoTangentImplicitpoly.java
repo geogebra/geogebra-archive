@@ -40,6 +40,8 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 	
 	private String[] labels;
 	
+	private final static double EPS_ANGLE=1E-3;
+	
 
 	protected AlgoTangentImplicitpoly(Construction c) {
 		super(c);
@@ -121,8 +123,8 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 		 * 
 		 * if a point (R) is given we search for points (x0,y0) such that there exists scalar l:
 		 * (1) P(x0,y0)=0 (point on curve)
-		 * (2) x-l*(dP(x0,y0)/dy)=R.x
-		 * (3) y+l*(dP(x0,y0)/dx)=R.y 
+		 * (2) x0-l*(dP(x0,y0)/dy)=R.x
+		 * (3) y0+l*(dP(x0,y0)/dx)=R.y 
 		 * 
 		 * if line (g) given:
 		 * (1) P(x0,y0)=0 (point on curve)
@@ -211,7 +213,31 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
     				Double[] pair=new Double[2];
     				pair[vE]=roots[i];
     				pair[1-vE]=actRoots.get(j);
-    				valPairs.add(pair);
+    				//test the pair we found:
+    				double lx;
+    				double ly;
+    				if (R!=null){
+    					lx=R.x-pair[0];
+    					ly=R.y-pair[1];
+    				}else{
+    					lx=g.y;
+    					ly=-g.x;
+    				}
+    				double tx=p.evalDiffXPolyAt(pair[0], pair[1]);
+    				double ty=p.evalDiffYPolyAt(pair[0], pair[1]);
+//    				double ll=Math.sqrt(lx*lx+ly*ly);
+//    				lx=lx/ll;
+//    				ly=ly/ll;
+//    				double tl=Math.sqrt(tx*tx+ty*ty);
+//    				tx=tx/tl;
+//    				ty=ty/tl;
+    				double ip=tx*lx+ty*ly;
+//    				if (Math.abs(ip)<EPS_ANGLE)
+    				if (ip*ip<=(lx*lx+ly*ly)*(tx*tx+ty*ty)*EPS_ANGLE*EPS_ANGLE)
+    					if (p.evalPolyAt(pair[0], pair[1])<Kernel.MIN_PRECISION)
+    						valPairs.add(pair);
+//    				else
+//    					Application.debug("ip="+ip);
     			}
     		}
     	}
