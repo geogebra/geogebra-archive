@@ -120,8 +120,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		
 		// create toggle button to hide/show the input help panel
 		btnToggleInputPanel = new JToggleButton();
-		btnToggleInputPanel.setSelectedIcon(GeoGebraIcon.listLeftIcon());
-		btnToggleInputPanel.setIcon(GeoGebraIcon.listRightIcon());
+		btnToggleInputPanel.setSelectedIcon(GeoGebraIcon.listRightIcon());
+		btnToggleInputPanel.setIcon(GeoGebraIcon.listLeftIcon());
 		btnToggleInputPanel.addActionListener(this);
 		btnToggleInputPanel.setFocusable(false);
 		

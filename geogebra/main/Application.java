@@ -856,14 +856,9 @@ public class Application implements KeyEventDispatcher {
 		if(isVisible){
 			if(applicationSplitPane.getRightComponent()==null)
 				applicationSplitPane.setRightComponent(inputHelpPanel);
-
-			applicationSplitPane.setDividerLocation(applicationSplitPane.getLastDividerLocation());
-			//slideScrollPane(applicationSplitPane.getLastDividerLocation());
-			applicationSplitPane.setDividerSize(10);
+			applicationSplitPane.setDividerSize(8);
 
 		}else{
-			applicationSplitPane.setLastDividerLocation(applicationSplitPane.getDividerLocation());
-			//slideScrollPane(applicationSplitPane.getWidth());
 			applicationSplitPane.setRightComponent(null);
 			applicationSplitPane.setDividerSize(0);
 		}

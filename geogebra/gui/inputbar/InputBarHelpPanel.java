@@ -228,7 +228,9 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 	public void setLabels(){
 
-		
+		setCommands();
+		cmdTreeModel.setRoot(rootSubCommands);
+		cmdTreeModel.reload();
 
 	}
 
@@ -324,12 +326,6 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		}	
 
 		rootSubCommands.add(rootAllCommands);
-		
-		
-		
-		
-		
-		
 
 	}
 
