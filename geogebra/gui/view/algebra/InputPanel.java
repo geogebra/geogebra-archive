@@ -184,6 +184,53 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	
 	
 	
+	public final static String [] tableSymbols = {
+		"\u03b1", "\u03b2", "\u03b3", "\u03b4", "\u03b5", "\u03b6", "\u03b7", "\u03b8",
+		"\u03b9", "\u03ba", "\u03bb", "\u03bc", "\u03bd", "\u03be", "\u03bf", 
+		"\u03c1", "\u03c3", "\u03c4", "\u03c5", "\u03c6", "\u03c7", "\u03c8",
+		"\u03c9",
+	
+		"\u0393", // Gamma
+		"\u0394", // Delta
+		"\u0398", // Theta
+		"\u039b", // Lambda
+		"\u039e", // Xi
+		"\u03a0", // Pi
+		"\u03a3", // Sigma
+		"\u03a6", // Phi
+		"\u03a8", // Psi
+		"\u03a9",  // Omega
+		
+		
+		"\u03c0", // pi	
+		Kernel.EULER_STRING, // e
+		
+		"\u00b2",  // exponents ^2 
+		"\u00b3",  // exponents ^3 
+		"\u00b0", // degree			
+		"\u221e", // infinity
+		ExpressionNode.strVECTORPRODUCT, //  "\u2297", // vector product (circled times)
+		ExpressionNode.strEQUAL_BOOLEAN,
+		ExpressionNode.strNOT_EQUAL,
+		ExpressionNode.strLESS_EQUAL,
+		ExpressionNode.strGREATER_EQUAL,
+		ExpressionNode.strNOT,
+		ExpressionNode.strAND,
+		ExpressionNode.strOR, 
+		ExpressionNode.strPARALLEL,
+		ExpressionNode.strPERPENDICULAR,
+		ExpressionNode.strIS_ELEMENT_OF,
+		ExpressionNode.strCONTAINS,
+		ExpressionNode.strCONTAINS_STRICT,
+		
+		
+		
+	};
+	
+	
+	
+	
+	
 	
 	private JTextComponent textComponent;	
 	private MyComboBox cbSpecialChars, cbGreekLetters;
@@ -350,18 +397,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	
 	private void createPopupButton(){
 		
-		int k = 0;
-		String[] allSymbols = new String[symbols.length + greek.length];
-		while(k < symbols.length){
-			allSymbols[k] = symbols[k];
-			k++;
-		}
-		while(k < symbols.length + greek.length){
-			allSymbols[k] = greek[k - symbols.length];
-			k++;
-		}
-		
-		symbolButton = new PopupMenuButton(app, allSymbols, -1,12,new Dimension(-1,-1), SelectionTable.MODE_TEXT);
+		symbolButton = new PopupMenuButton(app, tableSymbols, 5,11,new Dimension(-1,-1), SelectionTable.MODE_TEXT);
 		symbolButton.setFocusable(false);
 		symbolButton.setSelectedIndex(0);
 		symbolButton.setKeepVisible(false);

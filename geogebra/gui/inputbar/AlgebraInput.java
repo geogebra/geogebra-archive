@@ -134,7 +134,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			JPanel p = new JPanel(new BorderLayout(5,5));
 			
 			if(showCommandButton)
-				p.add(btnToggleInputPanel, BorderLayout.CENTER);
+				p.add(btnToggleInputPanel, BorderLayout.WEST);
 			else
 				p.add(cmdCB, BorderLayout.CENTER);
 			
