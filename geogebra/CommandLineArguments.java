@@ -53,11 +53,12 @@ public class CommandLineArguments {
 				// javaws -open "file1.ggb file2.ggb" http://www.geogebra.org/webstart/4.0/geogebra-40.jnlp
 				// no -- or - prefix, therefore a filename
 				
-				if (cmdArgs[i].indexOf(' ') > -1) {
+				if (cmdArgs[i].indexOf(' ') > -1 && Application.isWebstart()) {
 					// process multiple files from eg
 					// javaws -open "file1.ggb file2.ggb" http://www.geogebra.org/webstart/4.0/geogebra-40.jnlp
 					String[] files = cmdArgs[i].split(" ");
 					for (int j = 0 ; j < files.length ; j++) {
+						files[j] = files[j].replaceAll("%20", " ");
 						args.put("file"+(noOfFiles++), files[j]);						
 					}
 				} else {

@@ -1,7 +1,6 @@
 package geogebra.usb;
 
 import org.concord.framework.data.stream.DataListener;
-import org.concord.framework.data.stream.DataStreamEvent;
 import org.concord.framework.text.UserMessageHandler;
 import org.concord.sensor.DeviceConfig;
 import org.concord.sensor.ExperimentConfig;
