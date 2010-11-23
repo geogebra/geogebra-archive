@@ -62,6 +62,7 @@ public class CommandLineArguments {
 						args.put("file"+(noOfFiles++), files[j]);						
 					}
 				} else {
+					cmdArgs[i] = cmdArgs[i].replaceAll("%20", " ");
 					args.put("file"+(noOfFiles++), cmdArgs[i]);
 				}
 			} else {
