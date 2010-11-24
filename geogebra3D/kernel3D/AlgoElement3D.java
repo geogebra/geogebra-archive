@@ -111,6 +111,19 @@ abstract public class AlgoElement3D extends AlgoElement{
 	/**
 	 * set the {@link GeoElement} in input and in output.
 	 * call finally {@link #setInputOutput()}
+	 * @param input elements in input
+	 * @param efficientInput input used for updating
+	 * @param a_output elements in output
+	 */
+	protected void setInputOutput(GeoElement[] input, GeoElement[] efficientInput, GeoElement[] a_output) {
+		this.input = input;
+		this.output = a_output;
+		setEfficientDependencies(input, efficientInput);
+	}
+	
+	/**
+	 * set the {@link GeoElement} in input and in output.
+	 * call finally {@link #setInputOutput()}
 	 * @param a_input elements in input
 	 * @param a_output elements in output
 	 * @param setDependencies says if the dependencies have to be set

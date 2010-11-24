@@ -74,6 +74,7 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
@@ -4701,5 +4702,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
     	gs.lineTo(0,0);
     	gs.closePath();
     	return gs;
+	}
+	
+	
+	//for previewable
+	public boolean handlePreviewableKeys(KeyEvent event){
+		return false;
 	}
 }

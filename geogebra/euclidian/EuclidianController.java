@@ -564,7 +564,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void initShowMouseCoords() {
 		view.setShowMouseCoords(mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_MOVE);	}
 
-	void clearSelections() {
+	public void clearSelections() {
 
 		clearSelection(selectedNumbers);
 		clearSelection(selectedPoints);

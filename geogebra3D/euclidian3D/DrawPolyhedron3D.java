@@ -4,6 +4,8 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.GgbVector;
+import geogebra.euclidian.HandleKeys;
+import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPolygon;
@@ -17,6 +19,7 @@ import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.GeoPolyhedron;
 import geogebra3D.kernel3D.Kernel3D;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -30,7 +33,7 @@ import java.util.Iterator;
  * @author matthieu
  *
  */
-public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable {
+public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable, HandleKeys {
 
 
 	
@@ -111,33 +114,21 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable 
 		
 		super(a_view3D);
 		
-		Kernel3D kernel = (Kernel3D) getView3D().getKernel();
-
-		/*
-		setGeoElement(new GeoPolyhedron(kernel.getConstruction()));
-		
-		getGeoElement().setObjColor(ConstructionDefaults3D.colPolygon3D);
-		getGeoElement().setAlphaValue(ConstructionDefaults3D.DEFAULT_POLYGON3D_ALPHA);
-		getGeoElement().setIsPickable(false);
-		*/
 		
 		this.selectedPolygons = selectedPolygons;
 		
-		height = new GeoNumeric(kernel.getConstruction(), 1);
-		
-		/*
-		segments = new ArrayList<DrawSegment3D>();
-		segmentsPoints = new ArrayList<ArrayList>();
-		*/
+		newHeight();
 
 		updatePreview();
 		
 	}	
 
 	
-	
 
 
+	private void newHeight(){
+		height = new GeoNumeric(getView3D().getKernel().getConstruction(), 1);
+	}
 
 
 
@@ -149,26 +140,42 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable 
 		
 	}
 
+	
+	private boolean algoShown = false;
 
 	private void createAlgo(){
 		algo = new AlgoPolyhedron(getView3D().getKernel().getConstruction(),
 				null, basis, height, GeoPolyhedron.TYPE_PRISM);
 		algo.removeOutputFromAlgebraView();
 		algo.removeOutputFromPicking();
-		algo.setOutputPointsInvisible(false);
+		algo.setOutputPointsEuclidianVisible(false);
+		algo.notifyUpdateOutputPoints();
+		
 		
 	}
+	
+	private void removeAlgo(){
+		algo.remove();
+		algoShown=false;
+	}
+	
+	private void hideAlgo(){
+		algo.setOutputSegmentsAndPolygonsEuclidianVisible(false);
+		algo.notifyUpdateOutputSegmentsAndPolygons();
+		algoShown=false;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+		
+			
+	}
+
+
 	public void updatePreview() {
 		
 		//Application.debug(selectedPolygons.size());
 		
 		if (selectedPolygons.size()==0){
-			if (algo!=null){
-				algo.getPolyhedron().setEuclidianVisible(false);
-				basis.setEuclidianVisible(true);
-				getView3D().setWaitForUpdate();
+			if (algo!=null && algoShown){
+				hideAlgo();
 			}
 		}else if (selectedPolygons.size()==1){
 			if (algo==null){
@@ -176,28 +183,77 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable 
 				createAlgo();
 			}else if (basis!=selectedPolygons.get(0)){
 				basis = (GeoPolygon) selectedPolygons.get(0);
-				algo.remove();
+				removeAlgo();
 				createAlgo();
 			}
-			algo.getPolyhedron().setEuclidianVisible(true);
+			algo.setOutputSegmentsAndPolygonsEuclidianVisible(true);
+			algo.notifyUpdateOutputSegmentsAndPolygons();
+			algoShown=true;
 			
-			getView3D().setWaitForUpdate();
 				
 		}
 	}
+	
+	
+	
+	
 	
 	public void disposePreview() {
 		super.disposePreview();
 		
 		if (algo!=null)
-			algo.remove();
+			removeAlgo();
 		
-		/*
-		// dispose segments
-		for (Iterator<DrawSegment3D> s = segments.iterator(); s.hasNext();)
-			s.next().disposePreview();
-*/
 		
+	}
+
+	public boolean handleKey(KeyEvent event) {
+
+		switch (event.getKeyCode()) {					
+		case KeyEvent.VK_ESCAPE: //escape current algo
+			if (algoShown){
+				hideAlgo();
+				getView3D().getEuclidianController().clearSelections();
+				return true;
+			}
+			return false;
+		case KeyEvent.VK_ENTER: //create the polyhedron
+			if (algoShown){
+				height.setLabel(null);
+				Hits hits = new Hits();
+				hits.add(height);
+				((EuclidianController3D) getView3D().getEuclidianController()).rightPrism(hits);
+				disposePreview();
+				getView3D().getEuclidianController().clearSelections();
+				algo=null;
+				basis=null;
+				newHeight();
+				return true;
+			}
+			return false;
+		case KeyEvent.VK_RIGHT: //augment the height
+		case KeyEvent.VK_UP:
+		case KeyEvent.VK_PAGE_UP:
+			if (algoShown){
+				height.setValue(height.getValue()+0.1);
+				algo.update();
+				return true;
+			}
+			return false;
+		case KeyEvent.VK_LEFT: //reduce the height
+		case KeyEvent.VK_DOWN:
+		case KeyEvent.VK_PAGE_DOWN:
+			if (algoShown){
+				height.setValue(height.getValue()-0.1);
+				algo.update();
+				return true;
+			}
+			return false;
+			
+			
+		default:
+			return false;
+		}
 	}
 
 

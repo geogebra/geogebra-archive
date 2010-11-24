@@ -5,6 +5,7 @@ import geogebra.kernel.GeoElement;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -351,7 +352,8 @@ public interface EuclidianViewInterface {
 
 
 	
-	
+	//for previewable
+	public boolean handlePreviewableKeys(KeyEvent event);
 
 	
 }

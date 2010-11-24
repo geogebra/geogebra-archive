@@ -80,6 +80,12 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			Application.debug("test");
 			app.test();			
 		}
+		
+		
+		// FOR PREVIEWABLES
+		if (app.getGuiManager().getActiveEuclidianView().handlePreviewableKeys(event))
+			return true;
+		
 				
 		// GENERAL KEYS: 
 		// handle ESC, function keys, zooming with Ctrl +, Ctlr -, etc.

@@ -10,6 +10,7 @@ import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.euclidian.HandleKeys;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
@@ -51,6 +52,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -3212,6 +3214,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		boolean repaintNeeded = euclidianController3D.refreshHighlighting(geos);
 		if (repaintNeeded)
 			getKernel().notifyRepaint();
+	}
+	
+	
+	
+
+	//for previewable
+	public boolean handlePreviewableKeys(KeyEvent event){
+		if (getPreviewDrawable() instanceof HandleKeys)
+			return ((HandleKeys) getPreviewDrawable()).handleKey(event);
+		return false;
 	}
 
 }

@@ -560,18 +560,6 @@ implements AlgoElementWithResizeableOutput{
 	}
 	
 	
-	/**
-	 * set output points invisible (use for previewable)
-	 * @param visible 
-	 */
-	public void setOutputPointsInvisible(boolean visible){
-		for (int i=0; i<outputPoints.size(); i++)
-			outputPoints.getElement(i).setEuclidianVisible(visible);
-	}
-	
-	
-	
-	
 	
 	
 	
@@ -656,4 +644,50 @@ implements AlgoElementWithResizeableOutput{
 			return "AlgoPolyhedron";
 		}
 	}
+	
+	
+	/**
+	 * set visibility of output segments and polygons
+	 * @param visible
+	 */
+	public void setOutputSegmentsAndPolygonsEuclidianVisible(boolean visible){
+		for (int i=0; i<outputSegments.size(); i++)
+			outputSegments.getElement(i).setEuclidianVisible(visible);
+		for (int i=0; i<outputPolygons.size(); i++)
+			outputPolygons.getElement(i).setEuclidianVisible(visible, false);
+	}
+	
+	/**
+	 * notify kernel update of output segments and polygons
+	 */
+	public void notifyUpdateOutputSegmentsAndPolygons(){
+		for (int i=0; i<outputSegments.size(); i++)
+			getKernel().notifyUpdate(outputSegments.getElement(i));
+		for (int i=0; i<outputPolygons.size(); i++)
+			getKernel().notifyUpdate(outputPolygons.getElement(i));
+	}
+
+
+	/**
+	 * set output points invisible (use for previewable)
+	 * @param visible 
+	 */
+	public void setOutputPointsEuclidianVisible(boolean visible){
+		for (int i=0; i<outputPoints.size(); i++)
+			outputPoints.getElement(i).setEuclidianVisible(visible);
+	}
+	
+	
+	/**
+	 * notify kernel update of output points
+	 */
+	public void notifyUpdateOutputPoints(){
+		for (int i=0; i<outputPoints.size(); i++)
+			getKernel().notifyUpdate(outputPoints.getElement(i));
+	}
+
+
+	
+	
+	
 }
