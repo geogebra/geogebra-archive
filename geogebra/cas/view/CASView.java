@@ -165,6 +165,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 */
 	public void processInput(String ggbcmd, String[] params) {
 		casInputHandler.processCurrentRow(ggbcmd, params);
+		getApp().storeUndoInfo();
 	}
 	
 	public void processRow(int row) {
