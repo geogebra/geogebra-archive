@@ -757,9 +757,18 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	if (isInfinite()) 
 			return app.getPlain("undefined");
     	
-    	
+    	StringBuilder sbToString = getSbBuildValueString();
+		sbToString.setLength(0);
+		sbToString.append("(");
+		sbToString.append(kernel.format(inhom.get(1))); 
+		sbToString.append(", ");
+		sbToString.append(kernel.format(inhom.get(2)));
+		sbToString.append(", ");
+		sbToString.append(kernel.format(inhom.get(3)));
+		sbToString.append(")");
+		
 		//TODO use point property
-		return "("+kernel.format(inhom.get(1))+", "+kernel.format(inhom.get(2))+", "+kernel.format(inhom.get(3))+")";
+		return sbToString.toString(); 
 	}
 
 
