@@ -46,9 +46,9 @@ public class Relation extends java.lang.Object {
     final public String relation(GeoElement a, GeoElement b) {
         // check defined state
         if (!a.isDefined()) {
-            return app.getPlain("AisNotDefined",a.getNameDescription());
+            return getPlainNumerical("AisNotDefined",a.getNameDescription());
         } else if (!b.isDefined()) {
-            return app.getPlain("AisNotDefined",b.getNameDescription());
+            return getPlainNumerical("AisNotDefined",b.getNameDescription());
         }
 
         // decide what relation method can be used                                
@@ -89,11 +89,11 @@ public class Relation extends java.lang.Object {
 		else if (a instanceof GeoList && b instanceof GeoList)
 			return relation((GeoList) a, (GeoList) b);
 		else {
-           return app.getPlain("AandBcannotBeCompared",a.getNameDescription(),b.getNameDescription());
+           return getPlainNumerical("AandBcannotBeCompared",a.getNameDescription(),b.getNameDescription());
         }
     }
 
-    /**
+	/**
      * description of the relation between two lists a, b
      * (equal, unequal)
      */
@@ -126,13 +126,13 @@ public class Relation extends java.lang.Object {
         StringBuilder sb = new StringBuilder();
         sb.append(equalityString(a, b, a.isEqual(b)));
         sb.append("\n");
-        //sb.append(app.getPlain("Length"));
+        //sb.append(getPlain("Length"));
         //sb.append(": ");
         //sb.append(relation((NumberValue) a, (NumberValue) b));
     	if (kernel.isEqual(((NumberValue) a).getDouble(),((NumberValue) b).getDouble()))
-    	    sb.append(app.getPlain("AhasTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));
+    	    sb.append(getPlainNumerical("AhasTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));
     	else
-        	sb.append(app.getPlain("AdoesNothaveTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));	        		  
+        	sb.append(getPlainNumerical("AdoesNothaveTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));	        		  
         kernel.resetPrecision();
         return sb.toString();
     }
@@ -280,15 +280,15 @@ public class Relation extends java.lang.Object {
         	sb.append("\n");
 	        if (type == GeoConicPart.CONIC_PART_ARC) {
 	        	if (kernel.isEqual(((NumberValue) a).getDouble(),((NumberValue) b).getDouble()))
-	        	    sb.append(app.getPlain("AhasTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));
+	        	    sb.append(getPlainNumerical("AhasTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));
 	        	else
-		        	sb.append(app.getPlain("AdoesNothaveTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));	        		  
+		        	sb.append(getPlainNumerical("AdoesNothaveTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));	        		  
 	        } else {
 	        	//sb.append(app.getCommand("Area"));
 	        	if (kernel.isEqual(((NumberValue) a).getDouble(),((NumberValue) b).getDouble()))
-	        	    sb.append(app.getPlain("AhasTheSameAreaAsB",a.getNameDescription(),b.getNameDescription()));
+	        	    sb.append(getPlainNumerical("AhasTheSameAreaAsB",a.getNameDescription(),b.getNameDescription()));
 	        	else
-		        	sb.append(app.getPlain("AdoesNothaveTheSameAreaAsB",a.getNameDescription(),b.getNameDescription()));	  
+		        	sb.append(getPlainNumerical("AdoesNothaveTheSameAreaAsB",a.getNameDescription(),b.getNameDescription()));	  
 	        }	        	
 	        //sb.append(": ");
 	        //sb.append(relation((NumberValue) a, (NumberValue) b));
@@ -349,9 +349,9 @@ public class Relation extends java.lang.Object {
         GeoElement b,
         boolean equal) {
         if (equal)
-            return app.getPlain("AandBareEqual",a.getNameDescription(),b.getNameDescription());
+            return getPlainNumerical("AandBareEqual",a.getNameDescription(),b.getNameDescription());
         else
-            return app.getPlain("AandBareNotEqual",a.getNameDescription(),b.getNameDescription());
+            return getPlainNumerical("AandBareNotEqual",a.getNameDescription(),b.getNameDescription());
     }
 
     // "Relation of a and b: linear dependent"
@@ -361,9 +361,9 @@ public class Relation extends java.lang.Object {
         GeoElement b,
         boolean dependent) {
         if (dependent)
-            return app.getPlain("AandBareLinearlyDependent",a.getNameDescription(),b.getNameDescription());
+            return getPlainNumerical("AandBareLinearlyDependent",a.getNameDescription(),b.getNameDescription());
         else
-            return app.getPlain("AandBareLinearlyIndependent",a.getNameDescription(),b.getNameDescription());
+            return getPlainNumerical("AandBareLinearlyIndependent",a.getNameDescription(),b.getNameDescription());
     }
 
     // "a lies on b"
@@ -373,9 +373,9 @@ public class Relation extends java.lang.Object {
         GeoElement b,
         boolean incident) {
         if (incident)
-            return app.getPlain("AliesOnB",a.getNameDescription(),b.getNameDescription());
+            return getPlainNumerical("AliesOnB",a.getNameDescription(),b.getNameDescription());
         else
-            return app.getPlain("AdoesNotLieOnB",a.getNameDescription(),b.getNameDescription());
+            return getPlainNumerical("AdoesNotLieOnB",a.getNameDescription(),b.getNameDescription());
     }
 
     // "a lies on the perimeter of b"
@@ -385,19 +385,19 @@ public class Relation extends java.lang.Object {
         GeoElement b,
         boolean incident) {
         if (incident)
-            return app.getPlain("AliesOnThePerimeterOfB",a.getNameDescription(),b.getNameDescription());
+            return getPlainNumerical("AliesOnThePerimeterOfB",a.getNameDescription(),b.getNameDescription());
         else
-            return app.getPlain("AdoesNotLieOnThePerimeterOfB",a.getNameDescription(),b.getNameDescription());
+            return getPlainNumerical("AdoesNotLieOnThePerimeterOfB",a.getNameDescription(),b.getNameDescription());
     }
 
     // "Relation of a and b: parallel"    
     final private String parallelString(GeoLine a, GeoLine b) {
-        return app.getPlain("AandBareParallel",a.getNameDescription(),b.getNameDescription());
+        return getPlainNumerical("AandBareParallel",a.getNameDescription(),b.getNameDescription());
     }
 
     // Michael Borcherds 2008-05-15
     final private String perpendicularString(GeoLine a, GeoLine b) {
-        return app.getPlain("AandBarePerpendicular",a.getNameDescription(),b.getNameDescription());
+        return getPlainNumerical("AandBarePerpendicular",a.getNameDescription(),b.getNameDescription());
     }
 
     // "a intersects with b"
@@ -409,9 +409,9 @@ public class Relation extends java.lang.Object {
         // Michael Borcherds 2008-05-14
         // updated for better translation
         if (intersects)
-            sb.append(app.getPlain("AIntersectsWithB",a.getNameDescription(),b.getNameDescription()));
+            sb.append(getPlainNumerical("AIntersectsWithB",a.getNameDescription(),b.getNameDescription()));
         else
-            sb.append(app.getPlain("ADoesNotIntersectWithB",a.getNameDescription(),b.getNameDescription()));
+            sb.append(getPlainNumerical("ADoesNotIntersectWithB",a.getNameDescription(),b.getNameDescription()));
         return sb.toString();
     }
 
@@ -421,37 +421,49 @@ public class Relation extends java.lang.Object {
        
         switch (type) {
             case AlgoIntersectLineConic.INTERSECTION_PRODUCING_LINE :
-                //strType = app.getPlain("producingLine");
-            	return app.getPlain("AisaDegenerateBranchOfB",a.getNameDescription(),b.getNameDescription());
+                //strType = getPlain("producingLine");
+            	return getPlainNumerical("AisaDegenerateBranchOfB",a.getNameDescription(),b.getNameDescription());
                 //break;
 
             case AlgoIntersectLineConic.INTERSECTION_ASYMPTOTIC_LINE :
-                //strType = app.getPlain("asymptoticLine");
-            	return app.getPlain("AisAnAsymptoteToB",a.getNameDescription(),b.getNameDescription());
+                //strType = getPlain("asymptoticLine");
+            	return getPlainNumerical("AisAnAsymptoteToB",a.getNameDescription(),b.getNameDescription());
                 //break;
 
             case AlgoIntersectLineConic.INTERSECTION_MEETING_LINE :
-                //strType = app.getPlain("meetingLine");
-            	return app.getPlain("AintersectsWithBOnce",a.getNameDescription(),b.getNameDescription());
+                //strType = getPlain("meetingLine");
+            	return getPlainNumerical("AintersectsWithBOnce",a.getNameDescription(),b.getNameDescription());
                 //break;
 
             case AlgoIntersectLineConic.INTERSECTION_TANGENT_LINE :
-                //strType = app.getPlain("tangentLine");
-            	return app.getPlain("AisaTangentToB",a.getNameDescription(),b.getNameDescription());
+                //strType = getPlain("tangentLine");
+            	return getPlainNumerical("AisaTangentToB",a.getNameDescription(),b.getNameDescription());
                 //break;
 
             case AlgoIntersectLineConic.INTERSECTION_SECANT_LINE :
-                //strType = app.getPlain("secantLine");
-            	return app.getPlain("AintersectsWithBTwice",a.getNameDescription(),b.getNameDescription());
+                //strType = getPlain("secantLine");
+            	return getPlainNumerical("AintersectsWithBTwice",a.getNameDescription(),b.getNameDescription());
                 //break;
 
             default :
                 //case AlgoIntersectLineConic.INTERSECTION_PASSING_LINE:
-                //strType = app.getPlain("passingLine");
-            	return app.getPlain("ADoesNotIntersectWithB",a.getNameDescription(),b.getNameDescription());
+                //strType = getPlain("passingLine");
+            	return getPlainNumerical("ADoesNotIntersectWithB",a.getNameDescription(),b.getNameDescription());
                 //break;
         }
 
     }
+
+	private String getPlainNumerical(String string, String nameDescription,
+			String nameDescription2) {
+		
+		return app.getPlain(string, nameDescription, nameDescription2) + "\n" + app.getPlain("CheckedNumerically");
+	}
+	
+    private String getPlainNumerical(String string, String nameDescription) {
+		return app.getPlain(string, nameDescription) + "\n" + app.getPlain("CheckedNumerically");
+	}
+
+
 
 }
