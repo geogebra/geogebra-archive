@@ -2729,7 +2729,10 @@ public abstract class GeoElement
 	 * Note: no dependent objects are updated.
 	 * @see updateRepaint()
 	 */
-	public void update() {		
+	public void update() {
+		
+		//Application.debug(label);
+		
 		if (labelWanted && !labelSet) {
 			// check if this object's label needs to be set
 			if (isVisible())

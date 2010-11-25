@@ -196,13 +196,12 @@ implements AlgoElementWithResizeableOutput{
 			break;
 		}
 		
+		update();
+		
 		setInput();
 		polyhedron.updateFaces();
 		setOutput();
 		
-		//compute();
-
-		update();
 		
         //set labels dependencies: will be used with Construction.resolveLabelDependency()
         if (labels!=null && labels.length>1)
@@ -312,13 +311,12 @@ implements AlgoElementWithResizeableOutput{
 			break;
 		}
 		
+		update();
+		
 		setInput();
 		polyhedron.updateFaces();
 		setOutput();
 		
-		//compute();
-
-		update();
 		
         //set labels dependencies: will be used with Construction.resolveLabelDependency()
         if (labels!=null && labels.length>1)
@@ -394,13 +392,13 @@ implements AlgoElementWithResizeableOutput{
 			break;
 		}
 		
+		
+		update();
+		
 		setInput();
 		polyhedron.updateFaces();
 		setOutput();
 		
-		//compute();
-
-		update();
 		
         //set labels dependencies: will be used with Construction.resolveLabelDependency()
         if (labels!=null && labels.length>1)
@@ -411,6 +409,8 @@ implements AlgoElementWithResizeableOutput{
         
         
         polyhedron.defaultLabels(labels);
+        
+        
 	}
 
 
@@ -605,19 +605,20 @@ implements AlgoElementWithResizeableOutput{
 			//translate all output points
 			for (int i=0;i<outputPoints.size();i++){
 				outputPoints.getElement(i).setCoords(inputPoints[i+shift].getCoordsInD(3).add(v),true);
-				outputPoints.getElement(i).updateCoords();
+				//outputPoints.getElement(i).updateCoords();
+				//outputPoints.getElement(i).update();
 			}
 			
 			
-			polyhedron.updatePolygonsAndSegmentsFromParentAlgorithms();
+			//polyhedron.updatePolygonsAndSegmentsFromParentAlgorithms();
 			//polyhedron.update();			
 			
 			//TODO remove this and replace with tesselation
 			interiorPoint = new GgbVector(4);
-			for (int i=0;i<inputPoints.length-1;i++){
+			for (int i=0;i<inputPoints.length-shift;i++){
 				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoordsInD(3));
 			}
-			interiorPoint = (GgbVector) interiorPoint.mul((double) 1/(inputPoints.length-1));
+			interiorPoint = (GgbVector) interiorPoint.mul((double) 1/(inputPoints.length-shift));
 			polyhedron.setInteriorPoint((GgbVector) interiorPoint.add(v.mul(0.5)));
 			
 			break;
@@ -631,6 +632,21 @@ implements AlgoElementWithResizeableOutput{
 		}
 
 	}
+	
+	
+    public void update() {
+    	
+        // compute output from input
+        compute();
+        
+        //polyhedron
+        getPolyhedron().update();
+        
+
+        //output points
+        for (int i=0; i<outputPoints.size(); i++)
+			outputPoints.getElement(i).update();
+    }
 
 
 

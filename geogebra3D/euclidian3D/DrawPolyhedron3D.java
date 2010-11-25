@@ -236,7 +236,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		case KeyEvent.VK_PAGE_UP:
 			if (algoShown){
 				height.setValue(height.getValue()+0.1);
-				algo.update();
+				height.updateCascade();
 				return true;
 			}
 			return false;
@@ -245,7 +245,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		case KeyEvent.VK_PAGE_DOWN:
 			if (algoShown){
 				height.setValue(height.getValue()-0.1);
-				algo.update();
+				height.updateCascade();
 				return true;
 			}
 			return false;

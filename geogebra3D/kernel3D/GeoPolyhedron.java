@@ -651,6 +651,7 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 		
 
 
+		/*
 		public void update() {
 
 			for (GeoPolygon3D polygon : polygons.values()){
@@ -664,11 +665,11 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 
 		}
 		   
-	 
+	 */
 		
-		/**
+		/*
 		 * update the polygons and the segments from their parent algorithms
-		 */
+		 *
 		public void updatePolygonsAndSegmentsFromParentAlgorithms() {
 
 			for (GeoPolygon3D polygon : polygons.values()){
@@ -682,7 +683,7 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 
 
 		}
-	 
+	 */
 	 
 	
 

@@ -137,42 +137,50 @@ public class AlgoPolygon extends AlgoElement {
     }
     
     
+    
+    
+    
     // for AlgoElement
     protected void setInputOutput() {
+    	
+    	//efficient inputs are points or list
+    	GeoElement [] efficientInput;
+    	
     	if (geoList != null) {
     		// list as input
-    		if (polyhedron==null){
-    			input = new GeoElement[1];
-    			input[0] = geoList;
-    		}else{
-    			input = new GeoElement[2];
-    			input[0] = geoList;
-    			input[1] = polyhedron;
-    		}
+    		efficientInput = new GeoElement[1];
+    		efficientInput[0] = geoList;
     	} else {    	
     		// points as input
-    		if (polyhedron==null){
-    			input = new GeoElement[points.length];
-    			for(int i = 0; i < points.length; i++)
-    				input[i]=(GeoElement) points[i];
-    		}else{
-    			input = new GeoElement[points.length+1];
-    			for(int i = 0; i < points.length; i++)
-    				input[i]=(GeoElement) points[i];
-    			input[points.length] = polyhedron;
-    		}
+    		efficientInput = new GeoElement[points.length];
+    		for(int i = 0; i < points.length; i++)
+    			efficientInput[i]=(GeoElement) points[i];
     	}    	
-    	// set dependencies
-        for (int i = 0; i < input.length; i++) {
-            input[i].addAlgorithm(this);
-        }
+    	
+    	//add polyhedron to inputs
+    	if (polyhedron==null){
+    		input=efficientInput;  		
+    	}else{
+    		input = new GeoElement[efficientInput.length+1];
+    		for (int i=0; i<efficientInput.length; i++)
+    			input[i]=efficientInput[i];
+    		input[efficientInput.length]=polyhedron;
+    	}
+    	
+    	
+    	setEfficientDependencies(input, efficientInput);
         
+    	//set output after, to avoid segments to have this to parent algo
     	setOutput();
-
-        // parent of output
+    	
+    	
+    	
+    	
+    	// parent of output
         poly.setParentAlgorithm(this);       
         cons.addToAlgorithmList(this); 
     }    
+    
     
     private void setOutput() {
     	GeoSegmentND [] segments = poly.getSegments();

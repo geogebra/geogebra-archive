@@ -520,20 +520,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
        for (int i = 0; i < getOutputLength(); i++) {
     	   
     	   setOutputDependencies(getOutput(i));
-    	   /*
-           output[i].setParentAlgorithm(this);
-           
-           // every algorithm with an image as output
-           // should be notified about view changes
-           if (output[i].isGeoImage())
-           		cons.registerEuclidianViewAlgo(this);
-           
-           //  make sure that every output has same construction as this algorithm
-           // this is important for macro constructions that have input geos from
-           // outside the macro: the output should be part of the macro construction!
-           if (cons != output[i].cons)
-           	output[i].setConstruction(cons); 
-           	*/            
+        
        }   
    }
     
