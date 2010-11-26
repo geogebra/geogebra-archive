@@ -1132,7 +1132,20 @@ public class ConstructionProtocol extends JDialog implements Printable {
 						.toString();
 			case 6: { // Displaying toolbar icons in the list on demand.
 
-				int m = ((RowData) rowList.get(nRow)).geo.getRelatedModeID();
+				int m;
+				// Markus' idea to find the correct icon:
+				// 1) check if an object has a parent algorithm:
+				if (((RowData) rowList.get(nRow)).geo.getParentAlgorithm() != null) {
+					// 2) if it has a parent algorithm and its modeID returned is > -1,
+					// then use this one:
+					m = ((RowData) rowList.get(nRow)).geo.getParentAlgorithm().getRelatedModeID();
+				}
+				// 3) otherwise use the modeID of the GeoElement itself:
+				else
+					m = ((RowData) rowList.get(nRow)).geo.getRelatedModeID();
+				
+				
+				
 				// System.out.println("mode = " + m);
 
 				/* This was the old code based on heuristics.

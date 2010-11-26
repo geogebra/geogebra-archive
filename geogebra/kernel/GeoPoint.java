@@ -127,13 +127,12 @@ GeoPointND, Animatable  {
 		return "GeoPoint";
 	}        
 	
-	// This shouldn't be put here.
-	/*
+
     public int getRelatedModeID() {
     	return EuclidianConstants.MODE_POINT;
     }
-	*/
-	
+
+    
     protected String getTypeString() {
     	if (toStringMode == Kernel.COORD_COMPLEX)
     		return "ComplexNumber";

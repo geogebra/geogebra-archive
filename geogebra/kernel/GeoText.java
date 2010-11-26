@@ -1,5 +1,6 @@
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.kernel.arithmetic.TextValue;
@@ -277,6 +278,10 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	public String getClassName() {
 		return "GeoText";
 	}
+
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TEXT;
+    }
 	
     protected String getTypeString() {
 		return "Text";
