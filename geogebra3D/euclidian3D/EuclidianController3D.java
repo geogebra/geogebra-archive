@@ -1570,4 +1570,21 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
+
+	/////////////////////////////////////////////////////
+	// 
+	// BUTTONS
+	//
+	/////////////////////////////////////////////////////
+
+	
+	public void mouseClicked(MouseEvent e) {
+		
+		// if a view button is clicked, do it and return
+		if (view3D.handleMouseClickedForButtons())
+			return;
+		
+		super.mouseClicked(e);
+	}
+	
 }

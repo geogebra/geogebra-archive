@@ -4,7 +4,7 @@ package geogebra3D.euclidian3D;
 
 
 import geogebra.Matrix.GgbVector;
-import geogebra.euclidian.HandleKeys;
+import geogebra.euclidian.HandleAction;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoNumeric;
@@ -33,7 +33,7 @@ import java.util.Iterator;
  * @author matthieu
  *
  */
-public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable, HandleKeys {
+public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable, HandleAction {
 
 
 	
@@ -176,6 +176,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		if (selectedPolygons.size()==0){
 			if (algo!=null && algoShown){
 				hideAlgo();
+				getView3D().setButtonVisible(false);
 			}
 		}else if (selectedPolygons.size()==1){
 			if (algo==null){
@@ -189,6 +190,8 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 			algo.setOutputSegmentsAndPolygonsEuclidianVisible(true);
 			algo.notifyUpdateOutputSegmentsAndPolygons();
 			algoShown=true;
+			
+			getView3D().setButtonVisible(true);
 			
 				
 		}
@@ -204,33 +207,41 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		if (algo!=null)
 			removeAlgo();
 		
+		getView3D().setButtonVisible(false);
 		
+	}
+	
+	public boolean handleOK(){
+		if (algoShown){
+			height.setLabel(null);
+			Hits hits = new Hits();
+			hits.add(height);
+			((EuclidianController3D) getView3D().getEuclidianController()).rightPrism(hits);
+			disposePreview();
+			getView3D().getEuclidianController().clearSelections();
+			algo=null;
+			basis=null;
+			newHeight();
+			return true;
+		}else
+			return false;
+	}
+	
+	
+	public boolean handleCancel(){
+		if (algoShown){
+			hideAlgo();
+			getView3D().getEuclidianController().clearSelections();
+			getView3D().setButtonVisible(false);
+			return true;
+		}else
+			return false;
 	}
 
 	public boolean handleKey(KeyEvent event) {
 
-		switch (event.getKeyCode()) {					
-		case KeyEvent.VK_ESCAPE: //escape current algo
-			if (algoShown){
-				hideAlgo();
-				getView3D().getEuclidianController().clearSelections();
-				return true;
-			}
-			return false;
-		case KeyEvent.VK_ENTER: //create the polyhedron
-			if (algoShown){
-				height.setLabel(null);
-				Hits hits = new Hits();
-				hits.add(height);
-				((EuclidianController3D) getView3D().getEuclidianController()).rightPrism(hits);
-				disposePreview();
-				getView3D().getEuclidianController().clearSelections();
-				algo=null;
-				basis=null;
-				newHeight();
-				return true;
-			}
-			return false;
+		switch (event.getKeyCode()) {
+		
 		case KeyEvent.VK_RIGHT: //augment the height
 		case KeyEvent.VK_UP:
 		case KeyEvent.VK_PAGE_UP:
@@ -240,6 +251,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 				return true;
 			}
 			return false;
+			
 		case KeyEvent.VK_LEFT: //reduce the height
 		case KeyEvent.VK_DOWN:
 		case KeyEvent.VK_PAGE_DOWN:

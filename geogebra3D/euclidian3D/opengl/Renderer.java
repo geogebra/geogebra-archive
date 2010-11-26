@@ -503,7 +503,11 @@ public class Renderer implements GLEventListener {
     	geometryManager.getText().draw3D(gl, (float) v.getX(), (float) v.getY(), (float) v.getZ());
     	
     	*/
-    	
+        
+        gl.glDisable(GL.GL_BLEND);
+        view3D.drawButtons(this);
+        gl.glEnable(GL.GL_BLEND);
+   	
     	//drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
@@ -914,6 +918,13 @@ public class Renderer implements GLEventListener {
     } 
     
     
+    public void drawButton(int type){
+    	//gl.glDisable(GL.GL_LIGHTING);
+    	geometryManager.draw(geometryManager.getViewButtons().getIndex(type));
+    	//gl.glEnable(GL.GL_LIGHTING);
+    }
+    
+    
 
    
     
@@ -1232,7 +1243,8 @@ public class Renderer implements GLEventListener {
     	
     	//double pickTime = System.currentTimeMillis();
 
-    	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
+    	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1
+    				+view3D.buttonsLength();
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
@@ -1284,15 +1296,25 @@ public class Renderer implements GLEventListener {
     	
     	drawHits = new Drawable3D[BUFSIZE];
   
-    	//primitives.enableVBO(gl);
+    	
+    	
+    	// picking view buttons
+    	pickingLoop = 0;
+    	for (int i=0; i<view3D.buttonsLength(); i++){   		
+    		gl.glLoadName(pickingLoop);
+    		view3D.drawButton(this, i);
+    		pickingLoop++;
+    	}
+    	
     	
         // picking objects
-        pickingLoop = 0;
     	gl.glPushMatrix();
         gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         drawable3DLists.drawForPicking(this);
         gl.glPopMatrix();
+        
 
+        // picking labels
         int labelLoop = pickingLoop;
         
         if (pickingMode == PICKING_MODE_LABELS){
@@ -1308,22 +1330,23 @@ public class Renderer implements GLEventListener {
            	gl.glDisable(GL.GL_ALPHA_TEST);
             
         }
-
-        //primitives.disableVBO(gl);
         
+        
+        //end picking
         hits = gl.glRenderMode(GL.GL_RENDER); // Switch To Render Mode, Find Out How Many
              
+        
         //hits are stored
         Hits3D hits3D = new Hits3D();
         hits3D.init();
-        //view3D.getHits().init();
-        
-        //String s="doPick (labelLoop = "+labelLoop+")";
         
         int names, ptr = 0;
         float zMax, zMin;
         int num;
-        for (int i = 0; i < hits; i++) { 
+        boolean buttonPicked = false;
+        view3D.setButtonPicked(EuclidianView3D.BUTTON_PICKED_NONE);
+        
+        for (int i = 0; i < hits && !buttonPicked; i++) { 
         	     
           names = selectBuffer.get(ptr);  
           ptr++; // min z    
@@ -1333,31 +1356,34 @@ public class Renderer implements GLEventListener {
           
           ptr++;
           
+          
           for (int j = 0; j < names; j++){ 
         	num = selectBuffer.get(ptr);
-        	//((Hits3D) view3D.getHits()).addDrawable3D(drawHits[num],num>labelLoop);
-        	hits3D.addDrawable3D(drawHits[num],num>labelLoop);
-        	//s+="\n("+num+") "+drawHits[num].getGeoElement().getLabel();
-        	drawHits[num].zPickMin = zMin;
-        	drawHits[num].zPickMax = zMax;
+        	
+        	if (num<view3D.buttonsLength()){
+        		//Application.debug("button: "+num);
+        		view3D.setButtonPicked(num);
+        		buttonPicked=true;
+        	}else{
+        		hits3D.addDrawable3D(drawHits[num],num>=labelLoop);
+        		drawHits[num].zPickMin = zMin;
+        		drawHits[num].zPickMax = zMax;
+        	}
+        	
         	ptr++;
           }
           
           
         }
         
-        //Application.debug(s);
         
         // sets the GeoElements in view3D
-        //((Hits3D) view3D.getHits()).sort();
         hits3D.sort();
         view3D.setHits(hits3D);
-        //Application.debug(hits3D.toString());
        
         waitForPick = false;
         
         
-        //Application.debug("pick : "+((int) (System.currentTimeMillis()-pickTime)));
         
         gl.glEnable(GL.GL_LIGHTING);
     }
@@ -1367,18 +1393,19 @@ public class Renderer implements GLEventListener {
     	gl.glLoadName(loop);
     }
     
-    public void pick(Drawable3D d){
-    	pickingLoop++;
+    
+    public void pick(Drawable3D d){    	
     	gl.glLoadName(pickingLoop);
     	Drawable3D ret = d.drawForPicking(this);	
     	drawHits[pickingLoop] = ret;
+    	pickingLoop++;
     }
     
-    public void pickLabel(Drawable3D d){
-    	pickingLoop++;
+    public void pickLabel(Drawable3D d){   	
     	gl.glLoadName(pickingLoop);
     	d.drawLabelForPicking(this);	
     	drawHits[pickingLoop] = d;
+    	pickingLoop++;
     }
     
     /** returns the depth between 0 and 2, in double format, from an integer offset 

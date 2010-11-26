@@ -589,7 +589,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return mouseLoc;
 	}
 
-	final public void mouseClicked(MouseEvent e) {	
+	public void mouseClicked(MouseEvent e) {	
 		
 		if (mode == EuclidianView.MODE_PEN)
 			return;

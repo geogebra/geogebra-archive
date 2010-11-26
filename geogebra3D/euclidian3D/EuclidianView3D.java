@@ -10,7 +10,7 @@ import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
-import geogebra.euclidian.HandleKeys;
+import geogebra.euclidian.HandleAction;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
@@ -26,6 +26,7 @@ import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterCursor;
+import geogebra3D.euclidian3D.opengl.PlotterViewButtons;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
 import geogebra3D.kernel3D.GeoAxis3D;
@@ -2364,7 +2365,63 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 
 	
+	/////////////////////////////////////////////////////
+	// 
+	// BUTTONS
+	//
+	/////////////////////////////////////////////////////
+
+	final static public int BUTTON_PICKED_NONE = -1;
+	final static public int BUTTON_PICKED_OK = 0;
+	final static public int BUTTON_PICKED_CANCEL = 1;
 	
+	private int buttonPicked = BUTTON_PICKED_NONE;
+	
+	private boolean buttonsVisible = false;
+	
+	public void setButtonVisible(boolean visible){
+		buttonsVisible = visible;
+	}
+	
+	public void setButtonPicked(int i){
+		buttonPicked = i;
+	}
+	
+	
+	public void drawButtons(Renderer renderer){
+		
+		if (!buttonsVisible)
+			return;
+		
+		renderer.drawButton(PlotterViewButtons.TYPE_OK);
+		renderer.drawButton(PlotterViewButtons.TYPE_CANCEL);
+	}
+	
+	public void drawButton(Renderer renderer, int type){
+
+		if (!buttonsVisible)
+			return;
+		renderer.drawButton(type);
+	}
+	
+	public int buttonsLength(){
+		return 2;
+	}
+
+	public boolean handleMouseClickedForButtons(){
+		switch(buttonPicked){
+		case BUTTON_PICKED_NONE:
+			return false;
+		case BUTTON_PICKED_OK:
+			return ((HandleAction) getPreviewDrawable()).handleOK();
+		case BUTTON_PICKED_CANCEL:
+			return ((HandleAction) getPreviewDrawable()).handleCancel();
+		default:
+			Application.debug("button clicked : "+buttonPicked);
+			return true;
+
+		}
+	}
 	
 
 	/////////////////////////////////////////////////////
@@ -3221,8 +3278,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	//for previewable
 	public boolean handlePreviewableKeys(KeyEvent event){
-		if (getPreviewDrawable() instanceof HandleKeys)
-			return ((HandleKeys) getPreviewDrawable()).handleKey(event);
+		if (getPreviewDrawable() instanceof HandleAction)
+			switch(event.getKeyCode()){
+			case KeyEvent.VK_ENTER: 
+				return ((HandleAction) getPreviewDrawable()).handleOK();
+			case KeyEvent.VK_ESCAPE: 
+				return ((HandleAction) getPreviewDrawable()).handleCancel();
+			default:
+				return ((HandleAction) getPreviewDrawable()).handleKey(event);
+			}
+			
 		return false;
 	}
 

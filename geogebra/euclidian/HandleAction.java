@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
  *
  * For previewable that handles keys (return, esc, ...)
  */
-public interface HandleKeys {
+public interface HandleAction {
 	
 	/**
 	 * handle the key and return true if has done something
@@ -15,5 +15,18 @@ public interface HandleKeys {
 	 * @return true if has done something
 	 */
 	public boolean handleKey(KeyEvent event);
+	
+	
+	/**
+	 * handle OK action
+	 * @return true if has done something
+	 */
+	public boolean handleOK();
+	
+	/**
+	 * handle Cancel action
+	 * @return true if has done something
+	 */
+	public boolean handleCancel();
 
 }
