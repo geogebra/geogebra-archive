@@ -135,19 +135,32 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 		
 		setDrawBorderAxes(plotSettings.isEdgeAxis);
 		
-		// ensure that the axis labels are shown
-		// by forcing a fixed pixel height below the x-axis
 		
 		if(plotSettings.forceXAxisBuffer){
+			// ensure that the axis labels are shown
+			// by forcing a fixed pixel height below the x-axis	
 			double pixelOffset = 30 * app.getSmallFont().getSize()/12.0;
 			double pixelHeight = this.getHeight(); 
-			plotSettings.yMinEV = - pixelOffset * plotSettings.yMaxEV / (pixelHeight + pixelOffset);
+			plotSettings.yMin = - pixelOffset * plotSettings.yMax / (pixelHeight + pixelOffset);
 		}
 
-		setRealWorldCoordSystem(plotSettings.xMinEV, plotSettings.xMaxEV, plotSettings.yMinEV, plotSettings.yMaxEV);
-	
+		
 		setAxesCornerCoordsVisible(false);
-		//Application.debug("setEVParms");
+		
+		this.setAutomaticAxesNumberingDistance(plotSettings.xAxesIntervalAuto, 0);
+		this.setAutomaticAxesNumberingDistance(plotSettings.yAxesIntervalAuto, 1);
+		if(!plotSettings.xAxesIntervalAuto){
+			setAxesNumberingDistance(plotSettings.xAxesInterval, 0);
+		}
+		if(!plotSettings.yAxesIntervalAuto){
+			setAxesNumberingDistance(plotSettings.yAxesInterval, 1);
+		}
+
+		setPointCapturing(plotSettings.pointCaptureStyle);
+
+		// do this last ?
+		setRealWorldCoordSystem(plotSettings.xMin, plotSettings.xMax, plotSettings.yMin, plotSettings.yMax);
+		
 		repaint();
 	}
 	

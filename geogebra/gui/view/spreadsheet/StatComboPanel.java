@@ -272,10 +272,8 @@ public class StatComboPanel extends JPanel{
 		case PLOT_HISTOGRAM:			
 			if(doCreate)
 				plotGeoList.add(statGeo.createHistogram( dataListSelected, numClasses));
-			plotPanel.setPlotSettings(statGeo.updateHistogram( dataListSelected, numClasses));
+			plotPanel.setPlotSettings(statGeo.updateHistogram( dataListSelected, plotGeoList.get(plotGeoList.size()-1)));
 			numClassesPanel.setVisible(true);
-			
-			
 			
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;	
