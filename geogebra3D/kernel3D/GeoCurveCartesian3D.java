@@ -193,7 +193,7 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 
 
 
-	public GgbVector getViewDirection() {
+	public GgbVector getMainDirection() {
 		return null;
 	}
 

@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbMatrixUtil;
@@ -846,6 +847,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			viewChangedOwnDrawables();
 			setWaitForUpdateOwnDrawables();
+			
+			//view buttons
+			if (buttonsVisible)
+				updateScreenButtonsPosition();
+			
 			
 			waitForUpdate = false;
 		}
@@ -2213,7 +2219,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			// use path drawing directions for the cross
 			t = 1/getScale();
 
-			GgbVector v = ((GeoElement)getCursor3D().getPath()).getViewDirection();
+			GgbVector v = ((GeoElement)getCursor3D().getPath()).getMainDirection();
 			GgbMatrix m = new GgbMatrix(4, 2);
 			m.set(v, 1);
 			m.set(4, 2, 1);
@@ -2253,7 +2259,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			t = 1/getScale();//(getCursor3D().getPointSize()/6+2)/getScale();
 
 			if (getCursor3D().hasPath()){
-				v = ((GeoElement)getCursor3D().getPath()).getViewDirection();
+				v = ((GeoElement)getCursor3D().getPath()).getMainDirection();
 				m = new GgbMatrix(4, 2);
 				m.set(v, 1);
 				m.set(4, 2, 1);
@@ -2267,7 +2273,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 			}else if (getCursor3D().hasRegion()){
-				v = ((GeoElement)getCursor3D().getRegion()).getViewDirection();
+				v = ((GeoElement)getCursor3D().getRegion()).getMainDirection();
 				m = new GgbMatrix(4, 2);
 				m.set(v, 1);
 				m.set(4, 2, 1);
@@ -2374,40 +2380,162 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	final static public int BUTTON_PICKED_NONE = -1;
 	final static public int BUTTON_PICKED_OK = 0;
 	final static public int BUTTON_PICKED_CANCEL = 1;
+	final static public int BUTTON_PICKED_HANDLE = 2;
+	final static public int BUTTON_LENGTH = 2;
+	final static public int BUTTON_LENGTH_WITH_HANDLE = 3;
 	
 	private int buttonPicked = BUTTON_PICKED_NONE;
 	
 	private boolean buttonsVisible = false;
 	
-	public void setButtonVisible(boolean visible){
+	private boolean buttonHandleMoving = false;
+	
+	private GgbVector handlePos, handleDirection;
+	
+	/**
+	 * sets the visibility of the view buttons
+	 * @param visible
+	 */
+	public void setButtonsVisible(boolean visible){
 		buttonsVisible = visible;
 	}
 	
+	/**
+	 * sets which button is picked
+	 * @param i
+	 */
 	public void setButtonPicked(int i){
 		buttonPicked = i;
 	}
+
+	/**
+	 * set if the handle button is moving
+	 * @param move
+	 */
+	public void setButtonHandleMoving(boolean move){
+		buttonHandleMoving = move;		
+	}
 	
+	/**
+	 * say if the handle button is moving
+	 */
+	public boolean getButtonHandleMoving(){
+		return buttonHandleMoving;
+	}
 	
+	/**
+	 * 
+	 * @return picked button
+	 */
+	public int getButtonPicked(){
+		return buttonPicked;
+	}	
+	
+	/**
+	 * draws all buttons (but not handle)
+	 * @param renderer
+	 */
 	public void drawButtons(Renderer renderer){
 		
 		if (!buttonsVisible)
 			return;
 		
+		renderer.translate(getScreenButtonsPosition());
 		renderer.drawButton(PlotterViewButtons.TYPE_OK);
 		renderer.drawButton(PlotterViewButtons.TYPE_CANCEL);
+		renderer.resetMatrix();
 	}
 	
+	/**
+	 * draw the button regarding its type
+	 * @param renderer
+	 * @param type
+	 */
 	public void drawButton(Renderer renderer, int type){
 
 		if (!buttonsVisible)
 			return;
+		
+		renderer.translate(getScreenButtonsPosition());
 		renderer.drawButton(type);
+		renderer.resetMatrix();
 	}
 	
-	public int buttonsLength(){
-		return 2;
+	/**
+	 * draws handle button
+	 * @param renderer
+	 */
+	public void drawButtonHandle(Renderer renderer){
+		
+		if (!buttonsVisible)
+			return;
+		
+		renderer.setMatrix(buttonHandleMatrix);
+		renderer.drawButtonHandle();
+	}
+	
+	
+	private GgbMatrix4x4 buttonHandleMatrix = GgbMatrix4x4.Identity();
+	private GgbVector screenButtonsPosition = new GgbVector(0,0,0,1);
+	
+	
+	/**
+	 * 
+	 * @return button handle matrix
+	 */
+	public GgbMatrix4x4 getButtonHandleMatrix(){
+		return buttonHandleMatrix;
+	}
+	
+	/**
+	 * update position of the buttons
+	 * @param pos
+	 * @param direction 
+	 */
+	public void updateButtonsPosition(GgbVector pos, GgbVector direction){	
+		
+		handlePos = pos; handleDirection = direction;
+		
+		GgbMatrix m = new GgbMatrix(4, 2);
+		m.set(new GgbVector[] {direction,pos});
+		
+		buttonHandleMatrix = new GgbMatrix4x4(m);
+		buttonHandleMatrix.mulAllButOrigin(1/getScale());
+		
+		updateScreenButtonsPosition();
+	}
+	
+	private void updateScreenButtonsPosition(){	
+		GgbVector screenPos = getToScreenMatrix().mul(handlePos);
+		GgbVector screenDirection = getToScreenMatrix().mul(handleDirection);
+		
+		double dy;
+		
+		//Application.debug(screenDirection.toString());
+		if (screenDirection.getX()*screenDirection.getY()<=0){
+			dy = PlotterViewButtons.SHIFT;
+		}else{
+			dy = -PlotterViewButtons.SHIFT-PlotterViewButtons.HEIGHT;
+		}
+		
+		screenButtonsPosition.setX(screenPos.getX()+PlotterViewButtons.SHIFT);
+		screenButtonsPosition.setY(screenPos.getY()+dy);
 	}
 
+
+	/**
+	 *  
+	 * @return screen position of buttons
+	 */
+	public GgbVector getScreenButtonsPosition(){
+		return screenButtonsPosition;
+	}
+	
+
+	/**
+	 * handles click on a view button
+	 * @return true if a view button is clicked
+	 */
 	public boolean handleMouseClickedForButtons(){
 		switch(buttonPicked){
 		case BUTTON_PICKED_NONE:
@@ -2438,7 +2566,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void drawCursor(Renderer renderer){
 
-		if (hasMouse && !getEuclidianController().mouseIsOverLabel() && cursor3DVisible){
+		if (hasMouse 
+				&& !getEuclidianController().mouseIsOverLabel() 
+				&& cursor3DVisible
+				&& buttonPicked == BUTTON_PICKED_NONE
+		){
 			
 			renderer.setMatrix(getCursor3D().getDrawingMatrix());
 			

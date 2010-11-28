@@ -1,5 +1,7 @@
 package geogebra.euclidian;
 
+import geogebra.Matrix.GgbVector;
+
 import java.awt.event.KeyEvent;
 
 /**
@@ -28,5 +30,25 @@ public interface HandleAction {
 	 * @return true if has done something
 	 */
 	public boolean handleCancel();
+	
+	/**
+	 * handle new start position
+	 * @param pos
+	 */	
+	public void handleStartPosition(GgbVector pos);
+	
+	
+	/**
+	 * handle new position
+	 * @param pos
+	 */
+	public void handlePosition(GgbVector pos);
+	
 
+	/**
+	 * 
+	 * @return main direction (for handle)
+	 */
+	public GgbVector getMainDirection();
+	
 }

@@ -125,7 +125,7 @@ extends GeoConicND implements GeoElement3DInterface{
 	 }
 	 
 
-	 public GgbVector getViewDirection(){ 
+	 public GgbVector getMainDirection(){ 
 		 return coordSys.getNormal();
 	 };
 

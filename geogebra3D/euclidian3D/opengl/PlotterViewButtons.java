@@ -21,14 +21,25 @@ public class PlotterViewButtons {
 	
 	final static public int TYPE_OK = 0;
 	final static public int TYPE_CANCEL = 1;
+	final static public int TYPE_HANDLE = 2;
 	
 	
-	final static public int TYPE_LENGTH = 2;
+	final static public int TYPE_LENGTH = 3;
 	
 	
 	static private float size = 25f;
-	static private float shift = size+10f;
+	static private float shift = 10f;
+	static private float shift2 = size+shift;
 	static private float transparency = 0.25f;
+	
+
+	/** shift (separation) value */
+	static public float SHIFT = shift;
+	/** height of screen buttons value */
+	static public float HEIGHT = size;
+	
+	static private float handleSize = 60f;
+	static private float thickness = 3f;
 	
 	private int[] index;
 	
@@ -46,13 +57,33 @@ public class PlotterViewButtons {
 		
 		
 		//buttons
-		for (int i=0; i<TYPE_LENGTH; i++){
+		for (int i=0; i<2; i++){
 			index[i] = manager.startNewList();
 			manager.startGeometry(Manager.QUADS);
 			button(i);
 			manager.endGeometry();
 			manager.endList();
 		}
+
+		//handle
+		PlotterBrush brush = manager.getBrush();
+
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
+
+		//sets the thickness for arrows
+		brush.setThickness(1,0.7f);
+
+		brush.setAffineTexture(0.5f, 0.125f);
+
+		brush.start(16);
+		brush.setColor(Color.GRAY);
+		brush.setThickness(thickness);//re sets the thickness
+		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(handleSize, 0, 0, 1));
+		brush.setThickness(thickness);//re sets the thickness
+		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(-handleSize, 0, 0, 1));
+		index[2] =brush.end();
+
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
 		
 
 	}
@@ -93,10 +124,10 @@ public class PlotterViewButtons {
 			//red
 			manager.color(1,0,0,transparency);
 
-			manager.vertex(shift+size, size, 0);
-			manager.vertex(shift, size, 0);
-			manager.vertex(shift, 0, 0);
-			manager.vertex(shift+size, 0, 0);
+			manager.vertex(shift2+size, size, 0);
+			manager.vertex(shift2, size, 0);
+			manager.vertex(shift2, 0, 0);
+			manager.vertex(shift2+size, 0, 0);
 			
 
 			break;

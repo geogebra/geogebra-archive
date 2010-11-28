@@ -1055,7 +1055,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
   		return startCoords.add(direction);
 	}
   	
-	public GgbVector getViewDirection(){
+	public GgbVector getMainDirection(){
 		return getPointInD(3, 1).sub(getPointInD(3, 0));
 	}
 	

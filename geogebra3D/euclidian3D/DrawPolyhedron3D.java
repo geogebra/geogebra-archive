@@ -176,29 +176,36 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		if (selectedPolygons.size()==0){
 			if (algo!=null && algoShown){
 				hideAlgo();
-				getView3D().setButtonVisible(false);
+				getView3D().setButtonsVisible(false);
 			}
 		}else if (selectedPolygons.size()==1){
 			if (algo==null){
 				basis = (GeoPolygon) selectedPolygons.get(0);
 				createAlgo();
+				updateMainDirection();
 			}else if (basis!=selectedPolygons.get(0)){
 				basis = (GeoPolygon) selectedPolygons.get(0);
 				removeAlgo();
 				createAlgo();
+				updateMainDirection();
 			}
 			algo.setOutputSegmentsAndPolygonsEuclidianVisible(true);
 			algo.notifyUpdateOutputSegmentsAndPolygons();
 			algoShown=true;
 			
-			getView3D().setButtonVisible(true);
+			getView3D().setButtonsVisible(true);
+			
+			updateButtonsPosition();
 			
 				
 		}
 	}
 	
 	
-	
+	private void updateButtonsPosition(){
+		
+		getView3D().updateButtonsPosition(algo.getTopMiddlePoint(),getMainDirection());
+	}
 	
 	
 	public void disposePreview() {
@@ -207,7 +214,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		if (algo!=null)
 			removeAlgo();
 		
-		getView3D().setButtonVisible(false);
+		getView3D().setButtonsVisible(false);
 		
 	}
 	
@@ -232,7 +239,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		if (algoShown){
 			hideAlgo();
 			getView3D().getEuclidianController().clearSelections();
-			getView3D().setButtonVisible(false);
+			getView3D().setButtonsVisible(false);
 			return true;
 		}else
 			return false;
@@ -248,6 +255,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 			if (algoShown){
 				height.setValue(height.getValue()+0.1);
 				height.updateCascade();
+				updateButtonsPosition();
 				return true;
 			}
 			return false;
@@ -258,6 +266,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 			if (algoShown){
 				height.setValue(height.getValue()-0.1);
 				height.updateCascade();
+				updateButtonsPosition();
 				return true;
 			}
 			return false;
@@ -268,7 +277,31 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		}
 	}
 
-
 	
+	private GgbVector startPos;
+	private double startHeight;
+	
+	public void handleStartPosition(GgbVector pos){
+		startPos = pos;
+		startHeight = height.getValue();
+	}
+	
+	
+	public void handlePosition(GgbVector pos){
+		//Application.debug(startPos.toString()+"\n--\n"+pos.toString());
+		
+		height.setValue(startHeight+pos.sub(startPos).dotproduct(getMainDirection()));
+		height.updateCascade();
+		updateButtonsPosition();
+	}
 
+	public GgbVector getMainDirection(){
+		return mainDirection;
+	}
+	
+	private GgbVector mainDirection;
+	
+	private void updateMainDirection(){
+		mainDirection = basis.getMainDirection().normalized();
+	}
 }

@@ -234,7 +234,7 @@ implements Functional2Var, GeoCoordSys2D{
 		return getCoordSys().getMatrixOrthonormal();
 	}
 	
-	public GgbVector getViewDirection(){
+	public GgbVector getMainDirection(){
 		
 		return getCoordSys().getNormal();
 	}

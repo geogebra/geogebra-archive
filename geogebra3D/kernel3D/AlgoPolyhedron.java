@@ -598,7 +598,7 @@ implements AlgoElementWithResizeableOutput{
 				shift=1;
 			}else{
 				//TODO use Oz for default orientation
-				v=inputPolygon.getViewDirection().normalized().mul(inputHeight.getDouble());
+				v=inputPolygon.getMainDirection().normalized().mul(inputHeight.getDouble());
 				shift=0;
 			}
 			
@@ -703,7 +703,16 @@ implements AlgoElementWithResizeableOutput{
 	}
 
 
-	
-	
+	/**
+	 * used for previewable of prism
+	 * @return the middle point of the top face (for prism)
+	 */
+	public GgbVector getTopMiddlePoint(){
+		GgbVector ret = new GgbVector(4);
+		for (int i=0; i<outputPoints.size(); i++)
+			ret = ret.add(outputPoints.getElement(i).getCoordsInD(3));
+		
+		return ret.mul((double) 1/outputPoints.size());
+	}
 	
 }

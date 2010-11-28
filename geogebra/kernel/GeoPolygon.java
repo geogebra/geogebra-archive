@@ -39,8 +39,6 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	protected GeoPointND [] points;
 	protected GeoSegmentND [] segments;
 	
-	/** view direction of the polygon (TODO generalize) */
-	private GgbVector viewDirection = new GgbVector(0, 0, 1, 0);
 	
 	/** first point for region coord sys */
 	protected GeoPoint p0;
@@ -1116,9 +1114,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	// 3D stuff
 	/////////////////////
 
-	public GgbVector getViewDirection(){
-		return viewDirection;
-	}
+
 
 	/**
 	 * Returns the i-th 3D point of this polygon.

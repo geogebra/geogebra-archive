@@ -6,6 +6,7 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.HandleAction;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
@@ -361,11 +362,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					//GgbVector o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y);
 					//view3D.toSceneCoords3D(o);
 
-					GgbVector v = new GgbVector(new double[] {0,0,1,0});
-					view3D.toSceneCoords3D(v);
+
 
 					//getting new position of the point
-					GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, v, EuclidianView3D.vz);
+					GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, view3D.getViewDirection(), EuclidianView3D.vz);
 
 
 					//max z value
@@ -983,7 +983,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * tells to proceed mouseMoved() (for synchronization with 3D renderer)
 	 */
 	public void processMouseMoved(){
+		
 		if (mouseMoved){
+			
+			if (view3D.getButtonPicked()==EuclidianView3D.BUTTON_PICKED_HANDLE){
+				handleMouseMovedForViewButtons();
+				return;
+			}
+			
 			mouseMoved = false;
 			((EuclidianView3D) view).updateCursor3D();
 			
@@ -1063,7 +1070,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			Hits hits = view.getHits().getTopHits();
 			if(!hits.isEmpty()){
 				GeoElement geo = (GeoElement) view.getHits().getTopHits().get(0);
-				GgbVector vn = geo.getViewDirection();
+				GgbVector vn = geo.getMainDirection();
 				if (vn!=null){
 					view3D.setRotAnimation(vn);
 				}
@@ -1587,4 +1594,47 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		super.mouseClicked(e);
 	}
 	
+	
+	protected boolean handleMousePressedForViewButtons(){
+		
+		if (view3D.getButtonPicked()==EuclidianView3D.BUTTON_PICKED_HANDLE){
+			view3D.setButtonHandleMoving(true);
+			((HandleAction) view3D.getPreviewDrawable()).handleStartPosition(getCoordsForViewButtons());
+			return true;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * mouse is moved for view buttons (handle)
+	 */
+	protected void handleMouseMovedForViewButtons(){
+
+		if (!view3D.getButtonHandleMoving() || mouseLoc == null)
+			return;
+	
+		((HandleAction) view3D.getPreviewDrawable()).handlePosition(getCoordsForViewButtons());
+	}
+	
+	private GgbVector getCoordsForViewButtons(){
+		
+		GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+		view3D.toSceneCoords3D(o);
+
+
+		//getting new position of the handle button
+		return view3D.getButtonHandleMatrix().getOrigin().projectNearLine(o, view3D.getViewDirection(), 
+				((HandleAction) view3D.getPreviewDrawable()).getMainDirection());
+
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		
+		//check if it's "view buttons mode"
+		if (view3D.getButtonHandleMoving())
+			view3D.setButtonHandleMoving(false);
+		else
+			super.mouseReleased(e);
+	}
 }

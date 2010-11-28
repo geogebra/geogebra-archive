@@ -5091,13 +5091,24 @@ public abstract class GeoElement
 		return inverseFill;
 	}
 	
+	
+	private GgbVector mainDirection = new GgbVector(0, 0, 1, 0);
+	
 	/**
 	 * 
-	 * @return direction of the view to see the element in a "standard" view (for 3D).
+	 * @return "main" direction of the element, e.g. for seeing it in a "standard" view (for 3D).
 	 * E.g. orthogonal to a plane, along a line, ...
 	 */
-	public GgbVector getViewDirection(){
-		return new GgbVector(0, 0, 1, 0);
+	public GgbVector getMainDirection(){
+		return mainDirection;
+	}
+	
+	/**
+	 * set the main direction
+	 * @param direction
+	 */
+	public void setMainDirection(GgbVector direction){
+		mainDirection = direction;
 	}
 	
 	/*

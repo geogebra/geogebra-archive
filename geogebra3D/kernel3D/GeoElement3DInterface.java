@@ -55,7 +55,7 @@ public interface GeoElement3DInterface {
      * (null if none)
      * @return a direction for view 
      */
-	public GgbVector getViewDirection();
+	public GgbVector getMainDirection();
 
 
 	

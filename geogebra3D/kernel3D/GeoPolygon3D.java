@@ -156,7 +156,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	 /** return the normal of the polygon's plane
 	 * @return the normal of the polygon's plane
 	 */
-	public GgbVector getViewDirection(){
+	public GgbVector getMainDirection(){
 		
 		
 		if (interiorPoint==null)

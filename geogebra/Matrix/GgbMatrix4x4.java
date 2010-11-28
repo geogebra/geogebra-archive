@@ -102,6 +102,16 @@ public class GgbMatrix4x4 extends GgbMatrix {
 		
 	}
 	
+	///////////////////////////////////////////////////
+	// OPERATIONS
+	
+	public void mulAllButOrigin(double v){
+		for (int i=0; i<12; i++)
+			val[i]*=v;
+
+			
+	}
+	
 	
 	///////////////////////////////////////////////////
 	// SETTERS AND GETTERS

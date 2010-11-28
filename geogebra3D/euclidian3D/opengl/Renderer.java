@@ -382,6 +382,7 @@ public class Renderer implements GLEventListener {
         view3D.drawCursor(this);
         
          
+        view3D.drawButtonHandle(this);
         //drawWireFrame();
         
         
@@ -849,8 +850,11 @@ public class Renderer implements GLEventListener {
     	gl.glPushMatrix();
 		gl.glMultMatrixd(a_drawingMatrix,0);
     }     
-    
 
+    public void translate(GgbVector v){
+    	gl.glPushMatrix();
+    	gl.glTranslated(v.getX(), v.getY(), v.getZ());
+    }
     
     /**
      * turn off the last drawing matrix set in openGL.
@@ -924,7 +928,11 @@ public class Renderer implements GLEventListener {
     	//gl.glEnable(GL.GL_LIGHTING);
     }
     
-    
+    public void drawButtonHandle(){
+    	initMatrix();
+    	geometryManager.draw(geometryManager.getViewButtons().getIndex(PlotterViewButtons.TYPE_HANDLE));
+    	resetMatrix();
+    }
 
    
     
@@ -1244,7 +1252,7 @@ public class Renderer implements GLEventListener {
     	//double pickTime = System.currentTimeMillis();
 
     	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1
-    				+view3D.buttonsLength();
+    				+EuclidianView3D.BUTTON_LENGTH_WITH_HANDLE;
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
@@ -1300,20 +1308,29 @@ public class Renderer implements GLEventListener {
     	
     	// picking view buttons
     	pickingLoop = 0;
-    	for (int i=0; i<view3D.buttonsLength(); i++){   		
+    	for (int i=0; i<EuclidianView3D.BUTTON_LENGTH; i++){   		
     		gl.glLoadName(pickingLoop);
     		view3D.drawButton(this, i);
     		pickingLoop++;
     	}
     	
     	
-        // picking objects
+        // set the scene matrix
     	gl.glPushMatrix();
         gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
-        drawable3DLists.drawForPicking(this);
-        gl.glPopMatrix();
         
-
+        // picking handle button
+        gl.glLoadName(pickingLoop);
+		view3D.drawButtonHandle(this);
+		pickingLoop++;
+        
+		// picking objects
+        drawable3DLists.drawForPicking(this);
+        
+        
+        // set off the scene matrix
+        gl.glPopMatrix();
+ 
         // picking labels
         int labelLoop = pickingLoop;
         
@@ -1360,7 +1377,7 @@ public class Renderer implements GLEventListener {
           for (int j = 0; j < names; j++){ 
         	num = selectBuffer.get(ptr);
         	
-        	if (num<view3D.buttonsLength()){
+        	if (num<EuclidianView3D.BUTTON_LENGTH_WITH_HANDLE){
         		//Application.debug("button: "+num);
         		view3D.setButtonPicked(num);
         		buttonPicked=true;

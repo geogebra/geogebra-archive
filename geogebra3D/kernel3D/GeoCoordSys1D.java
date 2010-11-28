@@ -178,7 +178,7 @@ GeoLineND, GeoCoordSys{
 	}
 
 	
-	public GgbVector getViewDirection(){ 
+	public GgbVector getMainDirection(){ 
 		return getCoordSys().getMatrixOrthonormal().getVx();
 	};
 

@@ -774,8 +774,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	
-	
-	
+	/**
+	 * 
+	 * @return true if a view button has been pressed (see 3D)
+	 */
+	protected boolean handleMousePressedForViewButtons(){
+		return false;
+	}
 
 	public void mousePressed(MouseEvent e) {
 		// determine parent panel to change focus
@@ -784,8 +789,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if(panel != null) {
 			app.getGuiManager().getLayout().getDockManager().setFocusedPanel(panel);
 		}
-		Hits hits;
+		
 		setMouseLocation(e);
+		
+		if (handleMousePressedForViewButtons())
+			return;
+		
+		Hits hits;
 		
 		if (mode == EuclidianView.MODE_PEN) {
 			view.setHits(mouseLoc);

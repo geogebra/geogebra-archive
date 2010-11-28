@@ -613,7 +613,7 @@ implements GeoElement3DInterface, Functional2Var{
 
 
 
-	public GgbVector getViewDirection() {
+	public GgbVector getMainDirection() {
 		// TODO Auto-generated method stub
 		return null;
 	}
