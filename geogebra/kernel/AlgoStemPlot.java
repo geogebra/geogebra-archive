@@ -22,22 +22,22 @@ public class AlgoStemPlot extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoList geoList; //input
-	private GeoNumeric multiplier; //input
+	private GeoNumeric scaleAdjustment; //input
 	private GeoText text; //output	
 
 	private GeoList[] geoLists;
 
 	private StringBuffer sb = new StringBuffer();
 
-	AlgoStemPlot(Construction cons, String label, GeoList geoList, GeoNumeric multiplier) {
-		this(cons, geoList, multiplier);
+	AlgoStemPlot(Construction cons, String label, GeoList geoList, GeoNumeric scaleAdjustment) {
+		this(cons, geoList, scaleAdjustment);
 		text.setLabel(label);
 	}
 
-	AlgoStemPlot(Construction cons, GeoList geoList, GeoNumeric multiplier) {
+	AlgoStemPlot(Construction cons, GeoList geoList, GeoNumeric scaleAdjustment) {
 		super(cons);
 		this.geoList = geoList;
-		this.multiplier = multiplier;
+		this.scaleAdjustment = scaleAdjustment;
 
 		text = new GeoText(cons);
 		text.setIsTextCommand(true); // stop editing as text
@@ -55,11 +55,11 @@ public class AlgoStemPlot extends AlgoElement {
 
 	protected void setInputOutput(){
 
-		input = new GeoElement[multiplier == null ? 1 : 2];
+		input = new GeoElement[scaleAdjustment == null ? 1 : 2];
 		input[0] = geoList;
 
-		if (multiplier != null)
-			input[1] = multiplier;
+		if (scaleAdjustment != null)
+			input[1] = scaleAdjustment;
 
 
 		output = new GeoElement[1];
@@ -230,20 +230,19 @@ public class AlgoStemPlot extends AlgoElement {
 
 		// find the plot magnitude (power of ten)
 		int magnitude;
-		
-		// case 1: default, no user supplied multiplier
-		if(input.length == 1){
-			// find next power of 10 above max eg 76 -> 100, 100->1000
-			// also allow for negative values: find the maximum of either max or abs(min)
-			double maxTemp = Math.max(max, Math.abs(min));
-			magnitude = (int) Math.floor(Math.log10(maxTemp*1.00000001));
-		
-		
-		// case 2: multiplier (treated as power of ten) supplied by user
-		}else{
-			magnitude = (int) Math.floor(Math.log10(multiplier.getDouble()*1.00000001));
+
+		// find next power of 10 above max eg 76 -> 100, 100->1000
+		// also allow for negative values: find the maximum of either max or abs(min)
+		double maxTemp = Math.max(max, Math.abs(min));
+		magnitude = (int) Math.floor(Math.log10(maxTemp*1.00000001));
+
+		// increment/decrement magnitude with user input
+		// don't adjust by more than 1 order 
+		if(input.length == 2){
+			int s = Math.abs(scaleAdjustment.getDouble()) > 1 ? 0: (int)scaleAdjustment.getDouble();
+			magnitude = magnitude + s;
 		}
-		
+
 		double factor = Math.pow(10.0, 1 - magnitude); // factor for creating the stem plot
 		double multUnit = Math.pow(10.0, magnitude-1); // factor for building the key
 		
