@@ -376,7 +376,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		if(node.isLeaf()){
 			Object nodeInfo = node.getUserObject();
 			selectedCommand = (String)nodeInfo;
-			insertInputBarString(selectedCommand);
+			insertInputBarCommand(selectedCommand);
 			if(functionTable.getSelectedIndex() != -1)
 				functionTable.clearSelection();
 		}
@@ -592,18 +592,21 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	
 	
 	
+	private void insertInputBarString(String str){
+		((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertString(str);
+	}
 
-
-	private void insertInputBarString(String cmd){
+	private void insertInputBarCommand(String cmd){
 		//((AlgebraInput)app.getGuiManager().getAlgebraInput()).getInputPanel().insertString(cmd);
 		//((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertString(cmd);
 		//app.getGuiManager().insertStringIntoTextfield(cmd, false,false,false);
-		//((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertCommand(cmd);
+		((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertCommand(cmd);
+	/*
 		if(app.getGuiManager().getCurrentKeyboardListener() != null){
 			VirtualKeyboardListener tf =  app.getGuiManager().getCurrentKeyboardListener();
 			tf.insertString(cmd);
 		}
-		
+		*/
 		
 	}
 
