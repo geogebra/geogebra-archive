@@ -824,6 +824,7 @@ public class Application implements KeyEventDispatcher {
 		// Our help panel will be added/removed as needed by the input bar.
 		inputHelpPanel = new InputBarHelpPanel(this);
 		applicationSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, centerPanel, null);
+		applicationSplitPane.setBorder(BorderFactory.createEmptyBorder());
 		// help panel is on the right, so set all resize weight to the left pane
 		applicationSplitPane.setResizeWeight(1.0);
 		applicationSplitPane.setDividerSize(0);

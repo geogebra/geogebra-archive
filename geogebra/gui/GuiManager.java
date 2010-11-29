@@ -2650,6 +2650,7 @@ public class GuiManager {
 			JFrame fr = app.getFrame();
 			if (fr != null) {
 				((GeoGebraFrame) fr).updateSize();
+				app.validateComponent();
 			}
 		}
 		
