@@ -228,14 +228,24 @@ public class AlgoStemPlot extends AlgoElement {
 		double max = data[outlierIndex[1] - 1];
 		double min = data[outlierIndex[0]];
 
-		// find next power of 10 above max eg 76 -> 100, 100->1000
-		// also allow for negative values: find the maximum of either max or abs(min)
-		double maxTemp = Math.max(max, Math.abs(min));	
-		int magnitude = (int) Math.floor(Math.log10(maxTemp*1.00000001));
-		double factor = Math.pow(10.0, 1 - magnitude); // muliplier for creating the stem plot
-		double multUnit = Math.pow(10.0, magnitude-1);; //multiplier for key
+		// find the plot magnitude (power of ten)
+		int magnitude;
 		
-		//Application.debug(factor + ", " + magnitude);
+		// case 1: default, no user supplied multiplier
+		if(input.length == 1){
+			// find next power of 10 above max eg 76 -> 100, 100->1000
+			// also allow for negative values: find the maximum of either max or abs(min)
+			double maxTemp = Math.max(max, Math.abs(min));
+			magnitude = (int) Math.floor(Math.log10(maxTemp*1.00000001));
+		
+		
+		// case 2: multiplier (treated as power of ten) supplied by user
+		}else{
+			magnitude = (int) Math.floor(Math.log10(multiplier.getDouble()*1.00000001));
+		}
+		
+		double factor = Math.pow(10.0, 1 - magnitude); // factor for creating the stem plot
+		double multUnit = Math.pow(10.0, magnitude-1); // factor for building the key
 		
 		// create stemLines -- a list of ArrayLists that stores the stem & leaf values for each line of the plot
 		ArrayList<ArrayList<Integer>> stemLines = createStemPlotArray(data, factor, outlierIndex) ;
