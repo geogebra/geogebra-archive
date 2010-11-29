@@ -27,16 +27,18 @@ public class PlotterViewButtons {
 	final static public int TYPE_LENGTH = 3;
 	
 	
-	static private float size = 25f;
-	static private float shift = 10f;
+	static private float size = 32f;
+	static private float shift = 5f;
 	static private float shift2 = size+shift;
 	static private float transparency = 0.25f;
 	
 
 	/** shift (separation) value */
-	static public float SHIFT = shift;
+	static public float SHIFT = 10f;
 	/** height of screen buttons value */
 	static public float HEIGHT = size;
+	/** width of screen buttons value */
+	static public float WIDTH = size+shift2;
 	
 	static private float handleSize = 60f;
 	static private float thickness = 3f;
@@ -76,7 +78,7 @@ public class PlotterViewButtons {
 		brush.setAffineTexture(0.5f, 0.125f);
 
 		brush.start(16);
-		brush.setColor(Color.GRAY);
+		brush.setColor(Color.GRAY,0.5f);
 		brush.setThickness(thickness);//re sets the thickness
 		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(handleSize, 0, 0, 1));
 		brush.setThickness(thickness);//re sets the thickness
@@ -110,23 +112,30 @@ public class PlotterViewButtons {
 
 		switch(i){
 		case TYPE_OK:
-			//green
-			manager.color(0,1,0,transparency);
 
+			manager.color(1,1,1);
+
+			manager.texture(1, 1);
 			manager.vertex(size, size, 0);
+			manager.texture(0, 1);
 			manager.vertex(0, size, 0);
+			manager.texture(0, 0);
 			manager.vertex(0, 0, 0);
+			manager.texture(1, 0);
 			manager.vertex(size, 0, 0);
 			
 			break;
 		case TYPE_CANCEL:
-			
-			//red
-			manager.color(1,0,0,transparency);
 
+			manager.color(1,1,1);
+			
+			manager.texture(1, 1);
 			manager.vertex(shift2+size, size, 0);
+			manager.texture(0, 1);
 			manager.vertex(shift2, size, 0);
+			manager.texture(0, 0);
 			manager.vertex(shift2, 0, 0);
+			manager.texture(1, 0);
 			manager.vertex(shift2+size, 0, 0);
 			
 

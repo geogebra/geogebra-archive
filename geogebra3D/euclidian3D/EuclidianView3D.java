@@ -30,6 +30,7 @@ import geogebra3D.euclidian3D.opengl.PlotterCursor;
 import geogebra3D.euclidian3D.opengl.PlotterViewButtons;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
+import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoAxis3D;
 import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
@@ -2437,12 +2438,23 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void drawButtons(Renderer renderer){
 		
-		if (!buttonsVisible)
+		if (!buttonsVisible || buttonHandleMoving)
 			return;
 		
 		renderer.translate(getScreenButtonsPosition());
+		
+		if (buttonPicked==BUTTON_PICKED_OK)
+			renderer.getTextures().loadTextureLinear(Textures.BUTTON_OK_PICKED);
+		else
+			renderer.getTextures().loadTextureLinear(Textures.BUTTON_OK);
 		renderer.drawButton(PlotterViewButtons.TYPE_OK);
+		
+		if (buttonPicked==BUTTON_PICKED_CANCEL)
+			renderer.getTextures().loadTextureLinear(Textures.BUTTON_CANCEL_PICKED);
+		else
+			renderer.getTextures().loadTextureLinear(Textures.BUTTON_CANCEL);
 		renderer.drawButton(PlotterViewButtons.TYPE_CANCEL);
+		
 		renderer.resetMatrix();
 	}
 	
@@ -2471,7 +2483,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			return;
 		
 		renderer.setMatrix(buttonHandleMatrix);
-		renderer.drawButtonHandle();
+		
+		renderer.drawButtonHandle((buttonPicked==BUTTON_PICKED_HANDLE) && !buttonHandleMoving);
 	}
 	
 	
@@ -2511,15 +2524,28 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		double dy;
 		
-		//Application.debug(screenDirection.toString());
+		//shift from handle button
 		if (screenDirection.getX()*screenDirection.getY()<=0){
 			dy = PlotterViewButtons.SHIFT;
 		}else{
 			dy = -PlotterViewButtons.SHIFT-PlotterViewButtons.HEIGHT;
 		}
 		
-		screenButtonsPosition.setX(screenPos.getX()+PlotterViewButtons.SHIFT);
-		screenButtonsPosition.setY(screenPos.getY()+dy);
+		//stay in the screen
+		double x = screenPos.getX()+PlotterViewButtons.SHIFT;
+		if (x<getRenderer().getLeft())
+			x=getRenderer().getLeft();
+		else if (x+PlotterViewButtons.WIDTH>getRenderer().getRight())
+			x=getRenderer().getRight()-PlotterViewButtons.WIDTH;
+		
+		double y = screenPos.getY()+dy;
+		if (y<getRenderer().getBottom())
+			y=getRenderer().getBottom();
+		else if (y+PlotterViewButtons.HEIGHT>getRenderer().getTop())
+			y=getRenderer().getTop()-PlotterViewButtons.HEIGHT;
+		
+		screenButtonsPosition.setX(x);
+		screenButtonsPosition.setY(y);
 	}
 
 

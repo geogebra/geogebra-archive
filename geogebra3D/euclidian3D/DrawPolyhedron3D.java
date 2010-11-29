@@ -220,7 +220,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 	
 	public boolean handleOK(){
 		if (algoShown){
-			height.setLabel(null);
+			//height.setLabel(null);
 			Hits hits = new Hits();
 			hits.add(height);
 			((EuclidianController3D) getView3D().getEuclidianController()).rightPrism(hits);

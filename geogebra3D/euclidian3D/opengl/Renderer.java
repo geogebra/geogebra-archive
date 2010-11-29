@@ -234,6 +234,15 @@ public class Renderer implements GLEventListener {
 			gl.glDisable(GL.GL_CULL_FACE);
 	}
 	
+	/** sets if openGL blending is done or not
+	 * @param flag
+	 */
+	public void setBlending(boolean flag){
+		if (flag)
+			gl.glEnable(GL.GL_BLEND);
+		else
+			gl.glDisable(GL.GL_BLEND);
+	}
 	
 	private void drawTransp(){
 		
@@ -505,9 +514,11 @@ public class Renderer implements GLEventListener {
     	
     	*/
         
-        gl.glDisable(GL.GL_BLEND);
+        //gl.glDisable(GL.GL_BLEND);
+        gl.glEnable(GL.GL_TEXTURE_2D);
         view3D.drawButtons(this);
-        gl.glEnable(GL.GL_BLEND);
+        gl.glDisable(GL.GL_TEXTURE_2D);
+        //gl.glEnable(GL.GL_BLEND);
    	
     	//drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
@@ -922,15 +933,26 @@ public class Renderer implements GLEventListener {
     } 
     
     
+    /**
+     * draws a view button
+     * @param type
+     */
     public void drawButton(int type){
-    	//gl.glDisable(GL.GL_LIGHTING);
     	geometryManager.draw(geometryManager.getViewButtons().getIndex(type));
-    	//gl.glEnable(GL.GL_LIGHTING);
     }
     
-    public void drawButtonHandle(){
+    /**
+     * draws the handle view button
+     * @param removeBlending
+     */
+    public void drawButtonHandle(boolean removeBlending){
     	initMatrix();
+    	if (removeBlending)
+    		setBlending(false);
     	geometryManager.draw(geometryManager.getViewButtons().getIndex(PlotterViewButtons.TYPE_HANDLE));
+    	if (removeBlending)
+    		setBlending(true);
+    	
     	resetMatrix();
     }
 

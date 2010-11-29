@@ -2,11 +2,19 @@ package geogebra3D.euclidian3D.opengl;
 
 import geogebra.euclidian.EuclidianView;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.PixelGrabber;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
+
+import com.sun.opengl.util.BufferUtil;
+
 
 
 /**
@@ -68,7 +76,19 @@ public class Textures {
 	static public int FADING = DASH_NUMBER;
 	
 	
-	static private int TEXTURES_NUMBER = FADING+1;
+	///////////////////
+	//view buttons
+	/** button OK */
+	static public int BUTTON_OK = FADING+1;
+	/** button OK picked */
+	static public int BUTTON_OK_PICKED = BUTTON_OK+1;
+	
+	/** button cancel */
+	static public int BUTTON_CANCEL = BUTTON_OK_PICKED+1;
+	/** button cancel picked */
+	static public int BUTTON_CANCEL_PICKED = BUTTON_CANCEL+1;
+	
+	static private int TEXTURES_NUMBER = BUTTON_CANCEL_PICKED+1;
 
 	
 	
@@ -103,8 +123,12 @@ public class Textures {
 		// fading textures
 		initFadingTexture(texturesIndex[FADING]);
 
-
-
+		// view buttons textures
+		initViewButtonsTextures(texturesIndex[BUTTON_OK],"button-ok.png");
+		initViewButtonsTextures(texturesIndex[BUTTON_OK_PICKED],"button-ok-picked.png");
+		initViewButtonsTextures(texturesIndex[BUTTON_CANCEL],"button-cancel.png");
+		initViewButtonsTextures(texturesIndex[BUTTON_CANCEL_PICKED],"button-cancel-picked.png");
+		
 		gl.glDisable(GL.GL_TEXTURE_2D);
 
 	}
@@ -310,7 +334,61 @@ public class Textures {
 
 	}
 	
+	private void initViewButtonsTextures(int index, String name){
+
+		
+		
+		
+		try {
+			//gets the image
+			BufferedImage img = readImage("geogebra3D/gui/images",name);
+
+			
+			//turn it into pixels for texture 2D
+			boolean storeAlphaChannel = true; 
+			int[] packedPixels = new int[img.getWidth() * img.getHeight()];
+
+			PixelGrabber pixelgrabber = new PixelGrabber(img, 0, 0, img.getWidth(), img.getHeight(), packedPixels, 0, img.getWidth());
+			try {
+				pixelgrabber.grabPixels();
+			} catch (InterruptedException e) {
+				throw new RuntimeException();
+			}
+
+			int bytesPerPixel = storeAlphaChannel ? 4 : 3;
+			ByteBuffer unpackedPixels = BufferUtil.newByteBuffer(packedPixels.length * bytesPerPixel);
+
+			for (int row = img.getHeight() - 1; row >= 0; row--) {
+				for (int col = 0; col < img.getWidth(); col++) {
+					int packedPixel = packedPixels[row * img.getWidth() + col];
+					unpackedPixels.put((byte) ((packedPixel >> 16) & 0xFF));
+					unpackedPixels.put((byte) ((packedPixel >> 8) & 0xFF));
+					unpackedPixels.put((byte) ((packedPixel >> 0) & 0xFF));
+					if (storeAlphaChannel) {
+						unpackedPixels.put((byte) ((packedPixel >> 24) & 0xFF));
+					}
+				}
+			}
+
+			unpackedPixels.flip();
+
+			//create the texture
+			gl.glBindTexture(GL.GL_TEXTURE_2D, index);
+			gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, img.getWidth(), img.getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, unpackedPixels);
+	        
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+		
+	private BufferedImage readImage(String path, String name) throws IOException {
+		return ImageIO.read(new File(path,name));		
+	}
 	
+	
+	
+
 	private void setTextureLinear(){
 		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MAG_FILTER,GL.GL_LINEAR);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D,GL.GL_TEXTURE_MIN_FILTER,GL.GL_LINEAR);
