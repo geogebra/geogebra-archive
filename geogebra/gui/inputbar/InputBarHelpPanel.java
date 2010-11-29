@@ -1,9 +1,11 @@
 package geogebra.gui.inputbar;
 
+import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.main.Application;
 import geogebra.util.LowerCaseDictionary;
@@ -13,6 +15,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -24,6 +27,7 @@ import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -31,6 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
@@ -66,9 +71,10 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	private JButton btnOnlineHelp, btnCollapseTree;
 	private SelectionTable functionTable;
 	private JPanel tablePanel;
-	private JToggleButton btnShowSyntaxPanel;
-	private JScrollPane syntaxHelpPanel;
+	private JPanel syntaxHelpPanel;
 	private JSplitPane cmdSplitPane;
+	private JLabel titleLabel;
+	private JLabel syntaxLabel;
 
 	
 	
@@ -78,6 +84,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 		this.app = app;
 		thisPanel = this;
+		this.setOpaque(true);
+		this.setBackground(bgColor);	
 		
 		createFunctionPanel();
 		createCommandTree();
@@ -92,57 +100,83 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		JScrollPane scroller = new JScrollPane(commandPanel);
 		scroller.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
 		
+		
+		
+		JPanel titlePanel = new JPanel();
+		titlePanel.setBorder(
+			BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.controlShadow),
+				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
+		titlePanel.setLayout(new BorderLayout());
+		
+		titleLabel = new JLabel();
+		titleLabel.setForeground(Color.darkGray);
+		
+		titlePanel.add(titleLabel, BorderLayout.WEST);
+		titlePanel.add(createButtonPanel(), BorderLayout.EAST);
+		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(scroller, BorderLayout.CENTER);
-		mainPanel.add(createButtonPanel(), BorderLayout.NORTH);
+		mainPanel.add(titlePanel, BorderLayout.NORTH);
 
-
-		cmdSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainPanel, null);	
-		cmdSplitPane.setResizeWeight(.75);
-		cmdSplitPane.setMinimumSize(new Dimension((int) (1.2* cmdTree.getPreferredSize().width), 20));
+		cmdSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainPanel, syntaxHelpPanel);	
+		cmdSplitPane.setResizeWeight(1.0);
+		
 		
 		this.setLayout(new BorderLayout());
 		this.add(cmdSplitPane, BorderLayout.CENTER);		
-		this.setBorder(BorderFactory.createLoweredBevelBorder());
+	//	this.setBorder(BorderFactory.createLoweredBevelBorder());
 
 		setLabels();
-		this.setOpaque(true);
-		this.setBackground(bgColor);		
+		updateFonts();
+			
 		
 	}
 	
+	public int getPreferredWidth(){
+		return (int) (1.2* cmdTree.getPreferredSize().width);
+	}
 	
 
 	private void createSyntaxPanel(){
 	
 		helpTextArea = new JTextArea();
 		helpTextArea.setText("");
-		helpTextArea.setMinimumSize(new Dimension(200,300));
+		//helpTextArea.setMinimumSize(new Dimension(200,300));
 		helpTextArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(helpTextArea, BorderLayout.CENTER);
-		syntaxHelpPanel = new JScrollPane(helpTextArea);	
 		
+		
+		JPanel titlePanel = new JPanel();
+		titlePanel.setBorder(
+			BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.controlShadow),
+				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
+		titlePanel.setLayout(new BorderLayout());
+		syntaxLabel = new JLabel();
+		syntaxLabel.setForeground(Color.darkGray);
+		titlePanel.add(syntaxLabel, BorderLayout.WEST);
+		
+		syntaxHelpPanel = new JPanel(new BorderLayout());
+		syntaxHelpPanel.add(new JScrollPane(helpTextArea),BorderLayout.CENTER);
+		syntaxHelpPanel.add(titlePanel,BorderLayout.NORTH);
 	}
 	
-	private JPanel createButtonPanel(){
+	
+	
+	private JToolBar createButtonPanel(){
 
 		btnCollapseTree = new JButton(GeoGebraIcon.createTreeIcon());
 		btnCollapseTree.setSelectedIcon(GeoGebraIcon.createTreeIcon());
+		btnCollapseTree.setPreferredSize(new Dimension(16,16));
 		btnCollapseTree.setFocusable(false);
 		btnCollapseTree.setEnabled(false);
 		btnCollapseTree.addActionListener(this);
 
-		btnShowSyntaxPanel = new JToggleButton(app.getImageIcon("view-showtoolbar.png"));
-		btnShowSyntaxPanel.setSelectedIcon(app.getImageIcon("view-showtoolbar.png"));
-		btnShowSyntaxPanel.setFocusable(false);
-		btnShowSyntaxPanel.addActionListener(this);
-		btnShowSyntaxPanel.setPreferredSize(btnCollapseTree.getPreferredSize());
-		
-		
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JToolBar buttonPanel = new JToolBar();
 		buttonPanel.add(btnCollapseTree);
-		buttonPanel.add(btnShowSyntaxPanel);
+		buttonPanel.setFloatable(false);
 		buttonPanel.setBackground(bgColor);
 		
 		return buttonPanel;
@@ -231,7 +265,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		setCommands();
 		cmdTreeModel.setRoot(rootSubCommands);
 		cmdTreeModel.reload();
-
+		titleLabel.setText(app.getMenu("Input Help"));
+		syntaxLabel.setText(app.getMenu("Syntax"));
 	}
 
 
@@ -239,6 +274,11 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 		functionTable.updateFonts();
 		helpTextArea.setFont(app.getPlainFont());
+		titleLabel.setFont(app.getPlainFont());
+		syntaxLabel.setFont(app.getPlainFont());
+		
+		
+		cmdSplitPane.setDividerLocation(this.getHeight() - 10*app.getFontSize());
 
 	}
 
@@ -251,6 +291,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		cmdTreeModel = new DefaultTreeModel(rootSubCommands);
 		cmdTree = new MyJTree(cmdTreeModel);
 
+		cmdTree.setFocusable(false);
 		ToolTipManager.sharedInstance().registerComponent(cmdTree);
 
 		// add listener for selection changes.
@@ -263,7 +304,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 		cmdTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		cmdTree.setCellRenderer(new MyRenderer());
-		//tree.setLargeModel(true);
+		cmdTree.setLargeModel(true);
 		//tree.putClientProperty("JTree.lineStyle", "none");
 		cmdTree.setRootVisible(false);
 		cmdTree.setShowsRootHandles(false);
@@ -282,12 +323,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 					}
 				}
 		);
-		
-		
-		
+			
 	}
-
-
 
 
 	public void setCommands(){
@@ -339,7 +376,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		if(node.isLeaf()){
 			Object nodeInfo = node.getUserObject();
 			selectedCommand = (String)nodeInfo;
-			((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertCommand(selectedCommand);
+			insertInputBarString(selectedCommand);
 			if(functionTable.getSelectedIndex() != -1)
 				functionTable.clearSelection();
 		}
@@ -475,8 +512,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		private Color selectionColor, rollOverColor;
 
 		public MyRenderer() {
-			setOpenIcon(app.getImageIcon("tree-open.png"));
-			setClosedIcon(app.getImageIcon("tree-close.png"));
+			setOpenIcon(app.getImageIcon("tree-close.png"));
+			setClosedIcon(app.getImageIcon("tree-open.png"));
 			setLeafIcon(GeoGebraIcon.createEmptyIcon(5, 1));
 
 			selectionColor = MyTable.SELECTED_BACKGROUND_COLOR ;   
@@ -545,10 +582,6 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			btnCollapseTree.setEnabled(false);
 		}
 		
-		if(e.getSource() == btnShowSyntaxPanel) {
-			setShowInputHelpPanel(btnShowSyntaxPanel.isSelected());
-		}
-		
 
 		else if(e.getSource() == btnOnlineHelp){
 			app.getGuiManager().openHelp(rollOverCommand);
@@ -559,30 +592,19 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	
 	
 	
-	/**
-	 * Open/close the sidebar help panel for the input bar
-	 */
-	public void setShowInputHelpPanel(boolean isVisible){
-		
-		if(isVisible){
-			if(cmdSplitPane.getBottomComponent()==null)
-				cmdSplitPane.setBottomComponent(this.syntaxHelpPanel);
-
-			cmdSplitPane.setDividerLocation(cmdSplitPane.getLastDividerLocation());
-			cmdSplitPane.setDividerSize(8);
-
-		}else{
-			cmdSplitPane.setLastDividerLocation(cmdSplitPane.getDividerLocation());
-			cmdSplitPane.setBottomComponent(null);
-			cmdSplitPane.setDividerSize(0);
-		}
-	}
-	
 
 
 	private void insertInputBarString(String cmd){
 		//((AlgebraInput)app.getGuiManager().getAlgebraInput()).getInputPanel().insertString(cmd);
-		((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertString(cmd);
+		//((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertString(cmd);
+		//app.getGuiManager().insertStringIntoTextfield(cmd, false,false,false);
+		//((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertCommand(cmd);
+		if(app.getGuiManager().getCurrentKeyboardListener() != null){
+			VirtualKeyboardListener tf =  app.getGuiManager().getCurrentKeyboardListener();
+			tf.insertString(cmd);
+		}
+		
+		
 	}
 
 

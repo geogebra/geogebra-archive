@@ -124,6 +124,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		btnToggleInputPanel.setIcon(GeoGebraIcon.listLeftIcon());
 		btnToggleInputPanel.addActionListener(this);
 		btnToggleInputPanel.setFocusable(false);
+		btnToggleInputPanel.setBorderPainted(false);
 		
 		this.inputPanel.getSymbolButton().setDownwardPopup(false);
 		iconLabelPanel.add(inputLabel);
@@ -311,7 +312,11 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		
 		
 		if (source == btnToggleInputPanel) { 
-			app.setShowInputHelpPanel(btnToggleInputPanel.isSelected());
+			if(btnToggleInputPanel.isSelected()){
+				app.setShowInputHelpPanel(true, app.getInputHelpPanel().getPreferredWidth());
+			}else{
+				app.setShowInputHelpPanel(false);
+			}
 		}
 			
 		

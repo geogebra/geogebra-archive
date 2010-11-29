@@ -2707,6 +2707,10 @@ public class GuiManager {
 		
 		VirtualKeyboardListener currentKeyboardListener = null;
 
+		public VirtualKeyboardListener getCurrentKeyboardListener() {
+			return currentKeyboardListener;
+		}
+
 		private boolean ignoreNext = false;
 		
 		public void setCurrentTextfield(VirtualKeyboardListener keyboardListener, boolean autoClose) {
@@ -2724,6 +2728,8 @@ public class GuiManager {
 			
 			
 		}
+		
+		
 		
 		WindowsUnicodeKeyboard kb = null;
 
