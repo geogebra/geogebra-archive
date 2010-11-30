@@ -276,7 +276,7 @@ public class Application implements KeyEventDispatcher {
 	public static final String FILE_EXT_HTML = "html";
 	public static final String FILE_EXT_HTM = "htm";
 	public static final String FILE_EXT_TEX = "tex";
-
+	
 	protected File currentPath, currentImagePath, currentFile = null;
 
 	// page margin in cm

@@ -156,7 +156,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 		
 		File file =
 			app.getGuiManager().showSaveDialog(Application.FILE_EXT_GEOGEBRA_TOOL, null,
-	                	app.getPlain("ApplicationName") + " " + app.getMenu("Tools"), true);
+	                	app.getPlain("ApplicationName") + " " + app.getMenu("Tools"), true, false);
         if (file == null)
             return;
         

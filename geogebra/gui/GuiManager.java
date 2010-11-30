@@ -1554,7 +1554,7 @@ public class GuiManager {
 		// Modified for Intergeo File Format (Yves Kreis) -->
 				// Application.FILE_EXT_GEOGEBRA, currentFile,
 				// app.getPlain("ApplicationName") + " " + app.getMenu("Files"));
-				fileExtensions, app.getCurrentFile(), fileDescriptions, true);
+				fileExtensions, app.getCurrentFile(), fileDescriptions, true, false);
 		// <-- Modified for Intergeo File Format (Yves Kreis)
 		if (file == null)
 			return false;
@@ -1568,15 +1568,16 @@ public class GuiManager {
 	   
 
 	public File showSaveDialog(String fileExtension, File selectedFile,
-			String fileDescription, boolean promptOverwrite) {
+			String fileDescription, boolean promptOverwrite, boolean dirsOnly) {
 		// Added for Intergeo File Format (Yves Kreis) -->
 		String[] fileExtensions = { fileExtension };
 		String[] fileDescriptions = { fileDescription };
-		return showSaveDialog(fileExtensions, selectedFile, fileDescriptions, promptOverwrite);
+		return showSaveDialog(fileExtensions, selectedFile, fileDescriptions, promptOverwrite,
+				dirsOnly);
 	}
 
 	public File showSaveDialog(String[] fileExtensions, File selectedFile,
-			String[] fileDescriptions, boolean promptOverwrite) {
+			String[] fileDescriptions, boolean promptOverwrite, boolean dirsOnly) {
 		// <-- Added for Intergeo File Format (Yves Kreis)
 		boolean done = false;
 		File file = null;
@@ -1592,6 +1593,9 @@ public class GuiManager {
 		initFileChooser();
 		fileChooser.setCurrentDirectory(app.getCurrentPath());
 
+		if (dirsOnly)
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
 		// set selected file
 		// Modified for Intergeo File Format (Yves Kreis) -->
 		/*

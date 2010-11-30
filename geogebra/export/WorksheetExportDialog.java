@@ -724,7 +724,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		htmlFile = guiManager.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
 				.getPlain("html")
-				+ " " + app.getMenu("Files"), true);
+				+ " " + app.getMenu("Files"), true, false);
 		if (htmlFile == null)
 			return;
 		
@@ -791,7 +791,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		htmlFile = guiManager.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
 				.getPlain("html")
-				+ " " + app.getMenu("Files"), true);
+				+ " " + app.getMenu("Files"), true, false);
 		
 		if (htmlFile == null)
 			return;
@@ -916,7 +916,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		htmlFile = guiManager.showSaveDialog(Application.FILE_EXT_HTML, htmlFile, app
 				.getPlain("html")
-				+ " " + app.getMenu("Files"), false);
+				+ " " + app.getMenu("Files"), false, false);
 		
 		if (htmlFile == null)
 			return;

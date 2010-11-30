@@ -1245,14 +1245,14 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				BufferedImage img2 = toBufferedImage(img1);
 				
 				
-				File gifFile = new File(thisPath + "/GeoGebraToolbarIcons/" + gifFileName);
+				File gifFile = new File(thisPath + "/" + gifFileName);
 				try {
 					ImageIO.write(img2, "gif", gifFile);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return "<img src=\"GeoGebraToolbarIcons/" + gifFileName + "\">";
+				return "<img src=\"" + gifFileName + "\">";
 			}
 			}
 			return "";

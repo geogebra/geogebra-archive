@@ -133,7 +133,7 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 			mode = MODE_GEOGEBRA;
 		}
 		
-		// do not perform any unncessary actions
+		// do not perform any unnecessary actions
 		if(this.currentMode == mode)
 			return;
 	
