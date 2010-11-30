@@ -80,11 +80,8 @@ public class AlgoRotatePoint extends AlgoTransformation {
         else if(A.isGeoList()){
         	Ageo = A;
         	Bgeo = new GeoList(cons);
-        }
+        }        
         
-        // create output object
-        Bgeo = Ageo.copy();       
-        B = (PointRotateable) Bgeo;
         setInputOutput();
 
         cons.registerEuclidianViewAlgo(this);

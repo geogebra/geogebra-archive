@@ -3256,7 +3256,8 @@ class CmdMirror extends CommandProcessor {
 				GeoConic conic1 = (GeoConic) arg[1];
 
 				if (conic1.getType()==GeoConic.CONIC_CIRCLE && arg[0].isGeoConic() || arg[0].isGeoPoint() 
-						|| arg[0] instanceof GeoCurveCartesian || arg[0] instanceof GeoLine || arg[0] instanceof GeoFunction )
+						|| arg[0] instanceof GeoCurveCartesian || arg[0] instanceof GeoLine || arg[0] instanceof GeoFunction 
+						|| arg[0] instanceof GeoList)
 				{
 					ret = kernel.Mirror(label,arg[0], conic1);
 					return ret;
@@ -3280,37 +3281,12 @@ class CmdMirror extends CommandProcessor {
 				else if (ok[1] = (arg[1] .isGeoLine())) {
 					GeoLine line = (GeoLine) arg[1];
 
-					/**
-                    // if we are not in a nested command (suppress labels)
-                    // and no label is given and the input object is independent
-                    // we change the input object
-                    if (!cons.isSuppressLabelsActive() &&  
-                    	label == null && geo.isIndependent()) 
-                    {
-	                    p.mirror(line);
-	                    geo.updateRepaint();
-	                    ret[0] = geo;
-                    } else {
-                        ret = kernel.Mirror(label, p, line);
-                    }
-					 */
-
 					ret = kernel.Mirror(label, arg[0], line);
 					return ret;
 				}
 			}              
 
-			// mirror polygon
-			if (ok[0] = (arg[0] .isGeoPolygon())) {
-				GeoPolygon p = (GeoPolygon) arg[0];                	
-
-				// mirror at point
-				if (ok[1] = (arg[1] .isGeoPoint()))
-					return kernel.Mirror(label, p, (GeoPoint) arg[1]);
-				else if (ok[1] = (arg[1] .isGeoLine()))
-					return kernel.Mirror(label, p, (GeoLine) arg[1]);
-			}    
-
+			
 			// syntax error
 			else {
 				if (!ok[0])
