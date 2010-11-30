@@ -294,10 +294,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		add(btnTableTextLinesH);
 		add(btnTableTextBracket);
 		
-		add(btnPenEraser);
+	//	add(btnPenEraser);
 		//add(btnHideShowLabel);
 		add(btnCaptionStyle);
-		add(btnPenDelete);
+	//	add(btnPenDelete);
 			
 		popupBtnList = new PopupMenuButton[]{
 				btnColor, btnBgColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnTableTextJustify, btnTableTextBracket, btnCaptionStyle};
@@ -1196,7 +1196,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		else if (source == btnColor) {
 			if(btnColor.getSelectedIndex() >=0){
 				if(mode == EuclidianConstants.MODE_PEN){
-					ec.getPen().setPenColor((Color) btnColor.getSelectedValue());
+					ec.getPen().setPenColor((Color) btnColor.getSelectedColor());
 					//btnLineStyle.setFgColor((Color)btnColor.getSelectedValue());
 				} else {
 					applyColor(targetGeos);
@@ -1223,7 +1223,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		else if (source == btnLineStyle) {
 			if(btnLineStyle.getSelectedValue() != null){
 				if(mode == EuclidianConstants.MODE_PEN){
-					ec.getPen().setPenLineStyle((Integer) btnLineStyle.getSelectedValue());
+					ec.getPen().setPenLineStyle(lineStyleArray[btnLineStyle.getSelectedIndex()]);
 					ec.getPen().setPenSize(btnLineStyle.getSliderValue());
 				} else {
 					applyLineStyle(targetGeos);
