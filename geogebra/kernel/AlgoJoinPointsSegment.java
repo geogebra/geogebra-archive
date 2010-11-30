@@ -72,7 +72,7 @@ public class AlgoJoinPointsSegment extends AlgoElement {
     }
 
 	public int getRelatedModeID() {
-		return EuclidianConstants.MODE_SEGMENT;
+		return EuclidianConstants.MODE_SEGMENT_FIXED;
 	}
     
     // for AlgoElement
