@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.export;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GuiManager;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.main.Application;
@@ -250,10 +251,28 @@ public class ConstructionProtocolExportDialog extends JDialog implements
 			FileWriter fw = new FileWriter(file);
 			fw.write(prot.getHTML(pngFile, thisPath));
 			fw.close();
+			
+			// This code is mostly copy-pasted from geogebra/export/WorksheetExportDialog.java.
+	        // open browser
+			final File HTMLfile = file;
+	        Thread runner = new Thread() {
+	        public void run() {    
+	                try {
+	                        // open html file in browser
+	                        app.getGuiManager().showURLinBrowser(HTMLfile.toURL());
+	                } catch (Exception ex) {                        
+	                        app.showError("SaveFileFailed");
+	                        Application.debug(ex.toString());
+	                } 
+	        }
+	        };
+	        runner.start();
+			
 		} catch (IOException ex) {
 			app.showError("SaveFileFailed");
 			Application.debug(ex.toString());
 		}
+						
 	}
 
 	private BufferedImage getCenterPanelImage() {
