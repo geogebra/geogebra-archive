@@ -1432,11 +1432,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			DRAGGING_OCCURED = true;			
 
 			// Michael Borcherds 2007-10-07 allow right mouse button to drag points
-			// Mathieu Blossier - allow moving point already creating
 			if (Application.isRightClick(e) 
-					|| mode == EuclidianView.MODE_POINT 
-					|| mode == EuclidianView.MODE_POINT_IN_REGION
-					|| mode == EuclidianView.MODE_JOIN
 			){
 				view.setHits(mouseLoc);
 				if (!(view.getHits().isEmpty())) 
