@@ -19,6 +19,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
@@ -33,18 +34,18 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
 
  
 	private GeoPointND point; // input
-    private GeoCoordSys cs; // input
+    private GeoLineND line; // input
     private GeoPlane3D plane; // output       
 
 
-    public AlgoOrthoPlanePoint(Construction cons, String label, GeoPointND point, GeoCoordSys cs) {
+    public AlgoOrthoPlanePoint(Construction cons, String label, GeoPointND point, GeoLineND line) {
         super(cons);
         this.point = point;
-        this.cs = cs;
+        this.line = line;
         plane = new GeoPlane3D(cons);
         //g.setStartPoint(P);
         
-        setInputOutput(new GeoElement[] {(GeoElement) point, (GeoElement) cs}, new GeoElement[] {plane});
+        setInputOutput(new GeoElement[] {(GeoElement) point, (GeoElement) line}, new GeoElement[] {plane});
 
         // compute plane 
         compute();
@@ -70,23 +71,22 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
     	coordsys.resetCoordSys();
 		
 		//if cs has "no" direction vector, set undefined and return
-		if (cs.getCoordSys().getVx().equalsForKernel(0, Kernel.STANDARD_PRECISION)){
+    	GgbVector vz = ((GeoElement) line).getMainDirection();
+		if (vz.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
 			plane.setUndefined();
 			return;
 		}
 			
 		
-		//gets an ortho matrix with coord sys direction vector
-		GgbMatrix4x4 m = cs.getCoordSys().getMatrixOrthonormal();
 
 		//Application.debug(m.toString());
 
 		coordsys.addPoint(point.getCoordsInD(3));
-		//TODO addVectorToCoordSys
-		coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(m.getVy()));
-		coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(m.getVz()));
-		//cs direction for normal vector
-		coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(m.getVx()));
+		
+		//gets an ortho matrix with coord sys direction vector
+		GgbVector[] v = vz.completeOrthonormal();
+		coordsys.addVectorWithoutCheckMadeCoordSys(v[1]);
+		coordsys.addVectorWithoutCheckMadeCoordSys(v[0]);
 		
 		coordsys.makeOrthoMatrix(true);
 		
@@ -99,7 +99,7 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
     }
 
     final public String toString() {
-    	return app.getPlain("PlaneThroughAPerpendicularToB",point.getLabel(),((GeoElement) cs).getLabel());
+    	return app.getPlain("PlaneThroughAPerpendicularToB",point.getLabel(),((GeoElement) line).getLabel());
 
     }
 }

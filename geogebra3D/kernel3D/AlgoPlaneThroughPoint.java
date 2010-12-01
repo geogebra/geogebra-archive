@@ -17,6 +17,7 @@ import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 
 
@@ -30,26 +31,21 @@ import geogebra.kernel.kernelND.GeoPointND;
  * @author  matthieu
  * @version 
  */
-public class AlgoPlaneThroughPoint extends AlgoElement3D {
+public abstract class AlgoPlaneThroughPoint extends AlgoElement3D {
 
  
 	private GeoPointND point; // input
-    private GeoCoordSys cs; // input
+    private GeoElement cs; // input
+    
+    
     private GeoPlane3D plane; // output       
 
 
-    public AlgoPlaneThroughPoint(Construction cons, String label, GeoPointND point, GeoCoordSys cs) {
+    public AlgoPlaneThroughPoint(Construction cons, GeoPointND point) {
         super(cons);
         this.point = point;
-        this.cs = cs;
         plane = new GeoPlane3D(cons);
-        //g.setStartPoint(P);
         
-        setInputOutput(new GeoElement[] {(GeoElement) point, (GeoElement) cs}, new GeoElement[] {plane});
-
-        // compute plane 
-        compute();
-        plane.setLabel(label);
     }
 
     public String getClassName() {
@@ -62,36 +58,15 @@ public class AlgoPlaneThroughPoint extends AlgoElement3D {
     }
 
 
-  
-    protected final void compute() {
-    	
-    	GgbCoordSys coordsys = plane.getCoordSys();
-    	
-		//recompute the coord sys
-    	coordsys.resetCoordSys();
-		
-    	coordsys.addPoint(point.getCoordsInD(3));
-    	coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(cs.getCoordSys().getVx()));
-		
-		switch (cs.getCoordSys().getDimension()){
-		case 1: //line, segment, ...
-			coordsys.addPoint(cs.getCoordSys().getOrigin());
-			break;
-		case 2: //plane, polygon, ...
-			coordsys.addPoint((GgbVector) point.getCoordsInD(3).add(cs.getCoordSys().getVy()));
-			break;
-		}
-		
-		coordsys.makeOrthoMatrix(true);
-		
-		coordsys.makeEquationVector();
-		
-
-        
+    protected GeoPointND getPoint(){
+    	return point;
     }
+  
+    
+    abstract protected GeoElement getSecondInput();
 
     final public String toString() {
-    	return app.getPlain("PlaneThroughAParallelToB",point.getLabel(),((GeoElement) cs).getLabel());
+    	return app.getPlain("PlaneThroughAParallelToB",point.getLabel(),getSecondInput().getLabel());
 
     }
 }

@@ -3,8 +3,11 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
+import geogebra3D.kernel3D.GeoCoordSys2D;
+import geogebra3D.kernel3D.GeoPlane3D;
 
 /**
  * Interface for managing all 3D methods in Kernel.
@@ -137,11 +140,16 @@ public interface Manager3DInterface {
 			 * represented by trees.
 			 */
 			 public GeoElement DependentPlane3D(String label, Equation equ) ;
+			 
 			/** 
-			 * Plane named label through Point point parallel to plane pIn
+			 * Plane named label through point and line
 			 */
-			 public GeoElement Plane3D(String label, GeoPointND point, GeoElement cs) ;
-
+			 public GeoPlane3D Plane3D(String label, GeoPointND point, GeoLineND line);
+			 
+			 /** 
+			  * Plane named label through point parallel to plane
+			  */
+			 public GeoPlane3D Plane3D(String label, GeoPointND point, GeoCoordSys2D cs);
 
 			/** 
 			 * Line named label through Point P orthogonal to line l
@@ -149,7 +157,7 @@ public interface Manager3DInterface {
 			 public GeoElement OrthogonalPlane3D(
 					String label,
 					GeoPointND point,
-					GeoElement cs) ;
+					GeoLineND line) ;
 
 
 

@@ -4,6 +4,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CommandProcessor;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoCoordSys;
@@ -35,14 +36,14 @@ public class CmdOrthogonalPlane extends CommandProcessor {
 	    	arg = resArgs(c);
 	    	if (
 	    			(ok[0] = (arg[0] .isGeoPoint() ) )
-	    			&& (ok[1] = (arg[1] instanceof GeoCoordSys1D ))
+	    			&& (ok[1] = (arg[1] instanceof GeoLineND ))
 	    	) {
 	    		GeoElement[] ret =
 	    		{
 	    				kernel.getManager3D().OrthogonalPlane3D(
 	    						c.getLabel(),
 	    						(GeoPointND) arg[0],
-	    						(GeoElement) arg[1])};
+	    						(GeoLineND) arg[1])};
 	    		return ret;
 	    	}else{
 	    		if (!ok[0])

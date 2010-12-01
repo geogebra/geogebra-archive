@@ -239,7 +239,7 @@ public class GgbCoordSys {
 	 * @param v a vector (x,y,z,1)
 	 * 
 	 */
-	private void addVectorWithoutCheckMadeCoordSys(GgbVector v){
+	public void addVectorWithoutCheckMadeCoordSys(GgbVector v){
 			
 		
 		switch(getMadeCoordSys()){

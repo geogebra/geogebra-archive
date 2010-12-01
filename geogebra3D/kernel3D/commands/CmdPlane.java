@@ -4,9 +4,11 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CommandProcessor;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoCoordSys;
+import geogebra3D.kernel3D.GeoCoordSys2D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -32,16 +34,28 @@ public class CmdPlane extends CommandProcessor {
 	    case 2 :
 	    	arg = resArgs(c);
 	    	if (
-	    			(ok[0] = (arg[0] .isGeoPoint() && arg[0].isGeoElement3D()) )
-	    			&& (ok[1] = (arg[1] instanceof GeoCoordSys ))
+	    			(ok[0] = (arg[0] .isGeoPoint() ) )
+	    			&& (ok[1] = (arg[1] instanceof GeoLineND ))
 	    	) {
 	    		GeoElement[] ret =
 	    		{
 	    				kernel.getManager3D().Plane3D(
 	    						c.getLabel(),
-	    						(GeoPoint3D) arg[0],
-	    						(GeoElement) arg[1])};
+	    						(GeoPointND) arg[0],
+	    						(GeoLineND) arg[1])};
 	    		return ret;
+	    	}else if (
+	    			(ok[0] = (arg[0] .isGeoPoint() ) )
+	    			&& (ok[1] = (arg[1] instanceof GeoCoordSys2D ))
+	    	) {
+	    		GeoElement[] ret =
+	    		{
+	    				kernel.getManager3D().Plane3D(
+	    						c.getLabel(),
+	    						(GeoPointND) arg[0],
+	    						(GeoCoordSys2D) arg[1])};
+	    		return ret;
+	    		
 	    	}else{
 	    		if (!ok[0])
 	    			throw argErr(app, "Plane", arg[0]);

@@ -6106,7 +6106,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 
 	
-	final protected void getSelectedLinesInterface(GeoLineND[] lines) {
+	protected final void getSelectedLinesND(GeoLineND[] lines) {
 		int i = 0;
 		Iterator it = selectedLines.iterator();
 		while (it.hasNext()) {
@@ -6116,10 +6116,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		clearSelection(selectedLines);
 	}
 	
+	final protected GeoLineND[] getSelectedLinesND() {
+		GeoLineND[] lines = new GeoLineND[selectedLines.size()];
+		getSelectedLinesND(lines);
+
+		return lines;
+	}
 	
 	final protected GeoLine[] getSelectedLines() {
 		GeoLine[] lines = new GeoLine[selectedLines.size()];
-		getSelectedLinesInterface(lines);
+		getSelectedLinesND(lines);
 
 		return lines;
 	}

@@ -17,6 +17,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
@@ -785,7 +786,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 */
 	final protected GeoCoordSys1D[] getSelectedLines3D() {
 		GeoCoordSys1D[] lines = new GeoCoordSys1D[selectedLines.size()];
-		getSelectedLinesInterface(lines);
+		getSelectedLinesND(lines);
 
 		return lines;
 	}
@@ -828,7 +829,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected void orthogonal() {
 		// fetch selected point and line
 		GeoPointND[] points = getSelectedPointsND();
-		GeoCoordSys1D[] lines = getSelectedLines3D();
+		GeoLineND[] lines = getSelectedLinesND();
 		// create new line
 		getKernel().getManager3D().OrthogonalPlane3D(null, points[0], lines[0]);
 		
@@ -855,9 +856,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if (selLines() == 1) {
 				// fetch selected point and line
 				GeoPointND[] points = getSelectedPointsND();
-				GeoCoordSys1D[] lines = getSelectedLines3D();
+				GeoLineND[] lines = getSelectedLinesND();
 				// create new plane
-				getKernel().getManager3D().Plane3D(null, points[0], lines[0]);
+				getKernel().getManager3D().Plane3D(null, points[0], (GeoLineND) lines[0]);
 				return true;
 			}
 		}
@@ -889,7 +890,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				GeoPointND[] points = getSelectedPointsND();
 				GeoCoordSys2D[] cs = getSelectedCoordSys2D();
 				// create new plane
-				getKernel().getManager3D().Plane3D(null, points[0], (GeoElement) cs[0]);
+				getKernel().getManager3D().Plane3D(null, points[0], cs[0]);
 				return true;
 			}
 		}

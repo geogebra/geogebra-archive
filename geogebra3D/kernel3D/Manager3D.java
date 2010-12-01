@@ -14,6 +14,7 @@ import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
 
@@ -273,15 +274,16 @@ public class Manager3D implements Manager3DInterface {
 		return algo.getPlane();
 	}
 
-	/** 
-	 * Plane named label through Point point parallel to plane pIn
-	 */
-	final public GeoPlane3D Plane3D(String label, GeoPointND point, GeoElement cs) {
-		AlgoPlaneThroughPoint algo = new AlgoPlaneThroughPoint(cons, label, point, (GeoCoordSys) cs);
+
+	final public GeoPlane3D Plane3D(String label, GeoPointND point, GeoLineND line) {
+		AlgoPlaneThroughPointAndLine algo = new AlgoPlaneThroughPointAndLine(cons, label, point, line);
 		return algo.getPlane();
 	}
 
-
+	final public GeoPlane3D Plane3D(String label, GeoPointND point, GeoCoordSys2D cs) {
+		AlgoPlaneThroughPointAndPlane algo = new AlgoPlaneThroughPointAndPlane(cons, label, point, cs);
+		return algo.getPlane();
+	}
 
 	/** 
 	 * Line named label through Point P orthogonal to line l
@@ -289,9 +291,9 @@ public class Manager3D implements Manager3DInterface {
 	final public GeoPlane3D OrthogonalPlane3D(
 			String label,
 			GeoPointND point,
-			GeoElement cs) {
+			GeoLineND line) {
 
-		return new AlgoOrthoPlanePoint(cons, label, point, (GeoCoordSys) cs).getPlane();
+		return new AlgoOrthoPlanePoint(cons, label, point, line).getPlane();
 	}
 
 
