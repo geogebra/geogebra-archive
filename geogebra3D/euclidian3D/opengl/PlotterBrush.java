@@ -72,10 +72,18 @@ public class PlotterBrush {
 	static final public int ARROW_TYPE_NONE=0;
 	/** simple arrows */
 	static final public int ARROW_TYPE_SIMPLE=1;
+	/** simple handle */
+	static final public int ARROW_TYPE_HANDLE=2;
+	
+	
+	
 	private int arrowType=ARROW_TYPE_NONE;
-	/** length and width of the arrow */
+	/** length of the arrow */
 	static private float ARROW_LENGTH = 3f;
+	/** width of the arrow */	
 	static private float ARROW_WIDTH = ARROW_LENGTH/4f;
+	///** length of the arrow */
+	//static private float ARROW_HANDLE_LENGTH = ARROW_LENGTH;//ARROW_WIDTH;
 	
 	
 	// ticks	
@@ -255,6 +263,9 @@ public class PlotterBrush {
 		
 		down(p1);
 		
+		float factor, arrowPos;
+		GgbVector arrowBase;
+		
 		switch(arrowType){
 		case ARROW_TYPE_NONE:
 		default:
@@ -262,10 +273,10 @@ public class PlotterBrush {
 			moveTo(p2);
 			break;
 		case ARROW_TYPE_SIMPLE:
-			float factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
-			float arrowPos = ARROW_LENGTH/length * factor;
-			GgbVector arrowBase = (GgbVector) start.getCenter().mul(arrowPos).add(p2.mul(1-arrowPos));
-			
+			factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
+			arrowPos = ARROW_LENGTH/length * factor;
+			arrowBase = (GgbVector) start.getCenter().mul(arrowPos).add(p2.mul(1-arrowPos));
+
 			setTextureX(0);
 			if (hasTicks()){
 				GgbVector d = p2.sub(p1).normalized();
@@ -307,6 +318,32 @@ public class PlotterBrush {
 			setThickness(0);
 			moveTo(p2);
 			break;
+
+		case ARROW_TYPE_HANDLE:
+			//factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
+			arrowPos = 0.5f;//ARROW_HANDLE_LENGTH/length * factor;
+			arrowBase = (GgbVector) start.getCenter().mul(arrowPos).add(p2.mul(1-arrowPos));
+			
+			setTextureX(0);
+			
+			setTextureType(TEXTURE_AFFINE);
+			setTextureX(1-arrowPos);
+			float thickness = this.thickness;
+			setThickness(0);
+			moveTo(arrowBase);
+			
+			
+			textureTypeX = TEXTURE_ID;
+			setTextureX(0,0);
+			//setThickness(factor*ARROW_WIDTH);
+			setThickness(thickness);
+			moveTo(arrowBase);
+			//moveTo(p2);
+			setThickness(0);
+			moveTo(p2);
+			break;
+
+		
 		}
 	}
 	

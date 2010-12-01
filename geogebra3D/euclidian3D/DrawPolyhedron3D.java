@@ -118,8 +118,12 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		this.selectedPolygons = selectedPolygons;
 		
 		newHeight();
+		
+		//getView3D().setButtonHandleColor(ConstructionDefaults3D.colPolygon3D);
 
 		updatePreview();
+		
+		
 		
 	}	
 
@@ -156,9 +160,11 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 	
 	private void removeAlgo(){
 		algo.remove();
+		algo=null;
 		algoShown=false;
 	}
 	
+	/*
 	private void hideAlgo(){
 		algo.setOutputSegmentsAndPolygonsEuclidianVisible(false);
 		algo.notifyUpdateOutputSegmentsAndPolygons();
@@ -167,18 +173,19 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		
 			
 	}
-
+	 */
 
 	public void updatePreview() {
 		
 		//Application.debug(selectedPolygons.size());
 		
 		if (selectedPolygons.size()==0){
-			if (algo!=null && algoShown){
-				hideAlgo();
+			if (algo!=null){
+				removeAlgo();
 				getView3D().setButtonsVisible(false);
 			}
 		}else if (selectedPolygons.size()==1){
+			
 			if (algo==null){
 				basis = (GeoPolygon) selectedPolygons.get(0);
 				createAlgo();
@@ -189,6 +196,8 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 				createAlgo();
 				updateMainDirection();
 			}
+			
+			
 			algo.setOutputSegmentsAndPolygonsEuclidianVisible(true);
 			algo.notifyUpdateOutputSegmentsAndPolygons();
 			algoShown=true;
@@ -220,15 +229,18 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 	
 	public boolean handleOK(){
 		if (algoShown){
-			//height.setLabel(null);
+			removeAlgo();
+		
 			Hits hits = new Hits();
 			hits.add(height);
 			((EuclidianController3D) getView3D().getEuclidianController()).rightPrism(hits);
-			disposePreview();
-			getView3D().getEuclidianController().clearSelections();
-			algo=null;
+			
 			basis=null;
 			newHeight();
+
+			getView3D().getEuclidianController().clearSelections();
+			
+			disposePreview();
 			return true;
 		}else
 			return false;
@@ -236,8 +248,13 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 	
 	
 	public boolean handleCancel(){
-		if (algoShown){
-			hideAlgo();
+		
+		boolean shown = algoShown;
+		
+		if (algo!=null)
+			removeAlgo();
+		
+		if (shown){
 			getView3D().getEuclidianController().clearSelections();
 			getView3D().setButtonsVisible(false);
 			return true;

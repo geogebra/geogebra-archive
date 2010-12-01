@@ -943,12 +943,14 @@ public class Renderer implements GLEventListener {
     
     /**
      * draws the handle view button
+     * @param color 
      * @param removeBlending
      */
     public void drawButtonHandle(boolean removeBlending){
     	initMatrix();
     	if (removeBlending)
     		setBlending(false);
+    	//setColor(color, 0.5f);
     	geometryManager.draw(geometryManager.getViewButtons().getIndex(PlotterViewButtons.TYPE_HANDLE));
     	if (removeBlending)
     		setBlending(true);

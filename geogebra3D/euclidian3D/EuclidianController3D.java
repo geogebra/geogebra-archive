@@ -1281,7 +1281,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 		case EuclidianView3D.MODE_RIGHT_PRISM:
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
+			hits = view.getHits();//hits.removePolygons();
+			Application.debug(hits.toString());
 			break;
 			
 		default:

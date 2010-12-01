@@ -41,7 +41,7 @@ public class PlotterViewButtons {
 	static public float WIDTH = size+shift2;
 	
 	static private float handleSize = 60f;
-	static private float thickness = 3f;
+	static private float thickness = 6f;
 	
 	private int[] index;
 	
@@ -70,10 +70,10 @@ public class PlotterViewButtons {
 		//handle
 		PlotterBrush brush = manager.getBrush();
 
-		brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_HANDLE);
 
 		//sets the thickness for arrows
-		brush.setThickness(1,0.7f);
+		//brush.setThickness(1,0.7f);
 
 		brush.setAffineTexture(0.5f, 0.125f);
 

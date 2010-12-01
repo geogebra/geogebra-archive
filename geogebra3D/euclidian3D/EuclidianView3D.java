@@ -2473,6 +2473,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		renderer.resetMatrix();
 	}
 	
+	
+	
 	/**
 	 * draws handle button
 	 * @param renderer
@@ -2484,7 +2486,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		renderer.setMatrix(buttonHandleMatrix);
 		
-		renderer.drawButtonHandle((buttonPicked==BUTTON_PICKED_HANDLE) && !buttonHandleMoving);
+		renderer.drawButtonHandle(!buttonHandleMoving);
 	}
 	
 	
