@@ -2481,13 +2481,23 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void drawButtonHandle(Renderer renderer){
 		
-		if (!buttonsVisible)
+		if (!buttonsVisible || buttonHandleMoving)
 			return;
 		
 		renderer.setMatrix(buttonHandleMatrix);
 		
-		renderer.drawButtonHandle(!buttonHandleMoving);
+		renderer.drawButtonHandleAndArrows(buttonPicked!=BUTTON_PICKED_HANDLE);
 	}
+	
+	/**
+	 * draw handle button for picking
+	 * @param renderer
+	 */
+	public void drawButtonHandleForPicking(Renderer renderer){
+		renderer.setMatrix(buttonHandleMatrix);
+		renderer.drawButtonHandleForPicking();
+	}
+	
 	
 	
 	private GgbMatrix4x4 buttonHandleMatrix = GgbMatrix4x4.Identity();

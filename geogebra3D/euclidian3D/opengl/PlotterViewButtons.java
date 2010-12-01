@@ -21,10 +21,11 @@ public class PlotterViewButtons {
 	
 	final static public int TYPE_OK = 0;
 	final static public int TYPE_CANCEL = 1;
-	final static public int TYPE_HANDLE = 2;
+	final static public int TYPE_HANDLE_ARROWS = 2;
+	final static public int TYPE_HANDLE = 3;
 	
 	
-	final static public int TYPE_LENGTH = 3;
+	final static public int TYPE_LENGTH = 4;
 	
 	
 	static private float size = 32f;
@@ -40,9 +41,10 @@ public class PlotterViewButtons {
 	/** width of screen buttons value */
 	static public float WIDTH = size+shift2;
 	
-	static private float handleSize = 60f;
-	static private float thickness = 6f;
-	
+	static private float handleSize = 40f;
+	static private float thickness = 2.5f;
+	static private float handleSizeStart = 7f;
+
 	private int[] index;
 	
 	private Manager manager;
@@ -67,27 +69,38 @@ public class PlotterViewButtons {
 			manager.endList();
 		}
 
-		//handle
+		//handle arrows
 		PlotterBrush brush = manager.getBrush();
 
-		brush.setArrowType(PlotterBrush.ARROW_TYPE_HANDLE);
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_SIMPLE);
 
 		//sets the thickness for arrows
-		//brush.setThickness(1,0.7f);
+		brush.setThickness(1,1f);
 
 		brush.setAffineTexture(0.5f, 0.125f);
 
 		brush.start(16);
 		brush.setColor(Color.GRAY,0.5f);
 		brush.setThickness(thickness);//re sets the thickness
-		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(handleSize, 0, 0, 1));
+		brush.segment(new GgbVector(handleSizeStart, 0, 0, 1),new GgbVector(handleSize, 0, 0, 1));
 		brush.setThickness(thickness);//re sets the thickness
-		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(-handleSize, 0, 0, 1));
-		index[2] =brush.end();
+		brush.segment(new GgbVector(-handleSizeStart, 0, 0, 1),new GgbVector(-handleSize, 0, 0, 1));
+		index[TYPE_HANDLE_ARROWS] =brush.end();
+
+		
+		
+		
+		//handle picked
+		brush.setArrowType(PlotterBrush.ARROW_TYPE_CLOSED);
+		brush.start(16);
+		brush.setColor(Color.GRAY,0.5f);
+		brush.setThickness(thickness*3);//re sets the thickness
+		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(handleSizeStart/2, 0, 0, 1));
+		brush.setThickness(thickness*3);//re sets the thickness
+		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(-handleSizeStart/2, 0, 0, 1));
+		index[TYPE_HANDLE] =brush.end();
 
 		brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);
-		
-
 	}
 
 	

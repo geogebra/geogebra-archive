@@ -909,6 +909,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (hits.isEmpty())
 			return false;
 
+		
 		addSelectedPolygon(hits, 1, false);
 		addSelectedNumeric(hits, 1, false);
 
@@ -1211,9 +1212,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * @param hits
 	 */
 	protected void switchModeForRemovePolygons(Hits hits){
+		
 		switch (mode){
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
 			((Hits3D) hits).removePolygonsIfNotOnlyCS2D();
+			break;
+		case EuclidianView3D.MODE_RIGHT_PRISM:
 			break;
 		default:
 			super.switchModeForRemovePolygons(hits);
@@ -1280,9 +1284,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;	
 			
 		case EuclidianView3D.MODE_RIGHT_PRISM:
+			/*
 			view.setHits(mouseLoc);
 			hits = view.getHits();//hits.removePolygons();
 			Application.debug(hits.toString());
+			*/
 			break;
 			
 		default:
@@ -1300,6 +1306,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected boolean switchModeForMouseReleased(int mode, Hits hits, boolean changedKernel){
 		switch (mode) {
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
+		case EuclidianView3D.MODE_RIGHT_PRISM:
 			return changedKernel;
 		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
 			//Application.debug("hop");

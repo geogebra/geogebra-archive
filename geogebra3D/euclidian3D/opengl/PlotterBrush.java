@@ -72,8 +72,8 @@ public class PlotterBrush {
 	static final public int ARROW_TYPE_NONE=0;
 	/** simple arrows */
 	static final public int ARROW_TYPE_SIMPLE=1;
-	/** simple handle */
-	static final public int ARROW_TYPE_HANDLE=2;
+	/** closed segment */
+	static final public int ARROW_TYPE_CLOSED=2;
 	
 	
 	
@@ -260,7 +260,7 @@ public class PlotterBrush {
 		length = (float) p1.distance(p2);
 		if (Kernel.isEqual(length, 0, Kernel.STANDARD_PRECISION))
 			return;
-		
+
 		down(p1);
 		
 		float factor, arrowPos;
@@ -318,32 +318,12 @@ public class PlotterBrush {
 			setThickness(0);
 			moveTo(p2);
 			break;
-
-		case ARROW_TYPE_HANDLE:
-			//factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
-			arrowPos = 0.5f;//ARROW_HANDLE_LENGTH/length * factor;
-			arrowBase = (GgbVector) start.getCenter().mul(arrowPos).add(p2.mul(1-arrowPos));
-			
-			setTextureX(0);
-			
-			setTextureType(TEXTURE_AFFINE);
-			setTextureX(1-arrowPos);
-			float thickness = this.thickness;
-			setThickness(0);
-			moveTo(arrowBase);
-			
-			
-			textureTypeX = TEXTURE_ID;
-			setTextureX(0,0);
-			//setThickness(factor*ARROW_WIDTH);
-			setThickness(thickness);
-			moveTo(arrowBase);
-			//moveTo(p2);
+		}
+		
+		
+		if (arrowType==ARROW_TYPE_CLOSED){
 			setThickness(0);
 			moveTo(p2);
-			break;
-
-		
 		}
 	}
 	

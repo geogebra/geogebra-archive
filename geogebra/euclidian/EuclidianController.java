@@ -6237,6 +6237,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected int handleAddSelected(Hits hits, int max, boolean addMore, ArrayList list, Class geoClass) {	
 		
+		
 		if (selectionPreview)
 			return addToHighlightedList(list, hits.getHits(geoClass, handleAddSelectedArrayList) , max);
 		else
@@ -6371,7 +6372,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// without choosing
 	final protected int addToSelectionList(ArrayList selectionList,
 			ArrayList geos, int max, boolean addMoreThanOneAllowed) {
-		
+				
 		if (geos == null)
 			return 0;
 		//GeoElement geo;
@@ -6384,7 +6385,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// here nothing should be removed
 		//  too many objects -> choose one
 		if (!addMoreThanOneAllowed || geos.size() + selectionList.size() > max){
-			Application.printStacktrace(geos.toString());
+			//Application.printStacktrace(geos.toString());
 			return addToSelectionList(selectionList, chooseGeo(geos, true), max);
 		}
 

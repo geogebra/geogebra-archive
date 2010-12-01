@@ -944,23 +944,40 @@ public class Renderer implements GLEventListener {
     /**
      * draws the handle view button
      * @param color 
-     * @param removeBlending
+     * @param arrowsTransparent
      */
-    public void drawButtonHandle(boolean removeBlending){
+    public void drawButtonHandleAndArrows(boolean arrowsTransparent){
     	initMatrix();
-    	if (removeBlending)
-    		setBlending(false);
-    	//setColor(color, 0.5f);
+    	
+    	
+    	
+    	setBlending(false);
     	geometryManager.draw(geometryManager.getViewButtons().getIndex(PlotterViewButtons.TYPE_HANDLE));
-    	if (removeBlending)
+    	//setColor(color, 0.5f);
+    	
+    	if (arrowsTransparent){
     		setBlending(true);
+    		geometryManager.draw(geometryManager.getViewButtons().getIndex(PlotterViewButtons.TYPE_HANDLE_ARROWS));
+    	}else{
+    		geometryManager.draw(geometryManager.getViewButtons().getIndex(PlotterViewButtons.TYPE_HANDLE_ARROWS));
+     		setBlending(true);
+    	}
     	
     	resetMatrix();
     }
 
    
-    
-    
+    /**
+     * draw handle button for picking
+     */
+    public void drawButtonHandleForPicking(){
+    	initMatrix();
+
+    	geometryManager.draw(geometryManager.getViewButtons().getIndex(PlotterViewButtons.TYPE_HANDLE));
+    	  	
+    	resetMatrix();
+    }
+
     
     
     
@@ -1345,7 +1362,7 @@ public class Renderer implements GLEventListener {
         
         // picking handle button
         gl.glLoadName(pickingLoop);
-		view3D.drawButtonHandle(this);
+		view3D.drawButtonHandleForPicking(this);
 		pickingLoop++;
         
 		// picking objects
