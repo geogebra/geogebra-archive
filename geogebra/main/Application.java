@@ -2054,6 +2054,10 @@ public class Application implements KeyEventDispatcher {
 	public void showError(MyError e) {
 		String command = e.getcommandName();
 		
+		// make sure splash screen not showing (will be in front)
+		  if (GeoGebra.splashFrame != null) GeoGebra.splashFrame.setVisible(false);
+
+		
 		if (command == null) {
 			showErrorDialog(e.getLocalizedMessage());
 			return;
@@ -2076,6 +2080,9 @@ public class Application implements KeyEventDispatcher {
 	public void showErrorDialog(final String msg) {
 		if (!isErrorDialogsActive)
 			return;
+		
+		// make sure splash screen not showing (will be in front)
+		  if (GeoGebra.splashFrame != null) GeoGebra.splashFrame.setVisible(false);
 		
 		Application.printStacktrace("showErrorDialog: "+msg);
 		isErrorDialogShowing = true;

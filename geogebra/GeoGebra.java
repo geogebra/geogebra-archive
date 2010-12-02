@@ -44,11 +44,11 @@ public class GeoGebra extends Object {
 	// max possible heap space for applets in MB
 	public final static int MAX_HEAP_SPACE = 512;
 	
+	public static Frame splashFrame = null;
+	
     public static void main(String[] cmdArgs) {  
 		CommandLineArguments args = new CommandLineArguments(cmdArgs);
-		
-		Frame splashFrame = null;
-		
+				
     	boolean showSplash = true;
     	if(!args.getBooleanValue("showSplash", true)) {
     		showSplash = false;
