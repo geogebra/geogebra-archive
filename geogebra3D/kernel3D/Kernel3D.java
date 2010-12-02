@@ -159,6 +159,9 @@ public class Kernel3D
 		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:
 			return "Sphere2";
 			
+		case EuclidianView3D.MODE_ROTATEVIEW:
+			return "RotateView";
+			
 		default:
 			return super.getModeText(mode);
 		}

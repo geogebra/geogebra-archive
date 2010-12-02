@@ -1124,7 +1124,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	/** right-drag the mouse makes 3D rotation 
 	 * @return true*/
-	protected boolean processRightDragFor3D(){
+	protected boolean processRotate3DView(){
 
 		long time = System.currentTimeMillis();
 		int x = mouseLoc.x;
@@ -1288,12 +1288,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;	
 			
 		case EuclidianView3D.MODE_RIGHT_PRISM:
-			/*
-			view.setHits(mouseLoc);
-			hits = view.getHits();//hits.removePolygons();
-			Application.debug(hits.toString());
-			*/
 			break;
+			
+		case EuclidianView3D.MODE_ROTATEVIEW:
+			startLoc = mouseLoc; 
+			view.rememberOrigins();
+			moveMode = MOVE_ROTATE_VIEW;
+			break;
+			
 			
 		default:
 			super.switchModeForMousePressed(e);

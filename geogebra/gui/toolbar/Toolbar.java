@@ -566,6 +566,8 @@ public class Toolbar extends JToolBar {
 		+" "
 		+EuclidianView3D.MODE_SPHERE_POINT_RADIUS
 		+" || "
+		+EuclidianView3D.MODE_ROTATEVIEW
+		+" "
 		+EuclidianView3D.MODE_TRANSLATEVIEW
 		+" "
 		+EuclidianView3D.MODE_ZOOM_IN

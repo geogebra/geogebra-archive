@@ -171,6 +171,9 @@ public interface EuclidianConstants {
 	/** creates a prism with basis and first vertex of the second parallel face */
 	public static final int MODE_RIGHT_PRISM = 532;
 	
+	/** rotate the view */
+	public static final int MODE_ROTATEVIEW = 540;
+	
 	// CAS view modes
 	public static final int MODE_CAS_EVALUATE = 1001;
 	public static final int MODE_CAS_NUMERIC = 1002;

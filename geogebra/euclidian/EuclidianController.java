@@ -1466,13 +1466,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 		//ggb3D - only for 3D view
+		if (moveMode==MOVE_ROTATE_VIEW)
+			if (processRotate3DView())
+				return;
+		
+		
 		if (Application.isRightClick(e)){
 			// if there's no hit, or if first hit is not moveable, do 3D view rotation
 			if ((!TEMPORARY_MODE) || view.getHits().size() == 0 
 					|| !((GeoElement) view.getHits().get(0)).isMoveable()
 					|| ( !((GeoElement) view.getHits().get(0)).isGeoPoint() && ((GeoElement) view.getHits().get(0)).hasDrawable3D() )
 					)
-				if (processRightDragFor3D()){ //in 2D view, return false
+				if (processRotate3DView()){ //in 2D view, return false
 					if (TEMPORARY_MODE){
 						TEMPORARY_MODE = false;
 						mode = oldMode;
@@ -6790,7 +6795,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	/** right-drag the mouse makes 3D rotation 
 	 * @return false */
-	protected boolean processRightDragFor3D(){
+	protected boolean processRotate3DView(){
 		return false;
 	}
 
