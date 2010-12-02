@@ -49,7 +49,6 @@ import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -805,7 +804,7 @@ public class WorksheetExportDialog extends JDialog {
 	appendWithLineBreak(sb,"<html lang=\"en\">");
 	appendWithLineBreak(sb,"<head>");
 	appendWithLineBreak(sb,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">");
-	appendWithLineBreak(sb,"<title>Simple Tabber Example</title>");
+	appendWithLineBreak(sb,"<title>" + kernel.getConstruction().getTitle() + "</title>");
 	 
 	appendWithLineBreak(sb,"<script type=\"text/javascript\" src=\"tabber.js\"></script>");
 	appendWithLineBreak(sb,"<link rel=\"stylesheet\" href=\"ggb.css\" TYPE=\"text/css\" MEDIA=\"screen\">");
@@ -1053,7 +1052,7 @@ public class WorksheetExportDialog extends JDialog {
 //	    }
 //	}
 	
-	private boolean appendBase64(StringBuilder sb) {
+	private boolean appendBase64(Application app,StringBuilder sb) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			app.getXMLio().writeGeoGebraFile(baos, false);
@@ -1065,13 +1064,11 @@ public class WorksheetExportDialog extends JDialog {
 		return true;
 	}
 	
-	private void appendBase64Unzipped(StringBuilder sb) throws IOException {
-			sb.append(geogebra.util.Base64.encode(app.getXMLio().getFullXML().getBytes(), 0));
-	}
+	
 	
 	/*
 	 * returns string like this:
-	 * <ggb_applet width="585" height="470" ggbBase64="UEsDBBQACAAIAMWreDsAAAAAAAAAAAAAAAAMAAAAZ2VvZ2VicmEueG1srVM9b9swEJ2bX0FwbyzZFZAAkoMmU4C0Hdx26EaRZ4k1RQr8sOX++h5JyXYzdyLu3eO7d8dj/TQNihzBOml0Q8v7ghLQ3Aipu4YGv//4QJ+2d3UHpoPWMrI3dmC+oZv7NY14kNu7D7XrzYkwlSg/JZwaumfKASVutMCE6wH8PzgLk1SS2fO39jdw766JLPKqx4BVvA2I8UG8SbeEq1hwb7QnxMk/0NB1EbF6lbzUELiSQjId6yVvSCLkJIXvG1o9VJT0ILse5T6Vj1mNG2PF7uw8DGT6BdagaFnFWZxztMmR40xhwapIqdsoycBxB97j5BxhE7jFfmeluPQXg1f3bNQVGo3U/oWNPtg09c0M7fw56mMpG/1+1p2CGStxKD3wQ2umXZpBucnS389jupL8tN2LUcYSi+1U2Hc3n20+EycavbCKxCkSY9aIopd8+bhOjHS2+UwsJXW2NjdeLl2XxVJGOhKBOEVclmU2irWgGkpJ0NK/LYGX/HDtNPK/hqHFJb1dgYtk+Z8k69W73akPYDWovCEaHzaY4MiRqeXpkg8BXA4Y5sQ8EBYf6wcayKiAzsLiO294HlfKFrdb+A6uV4uJ6MGhV+7xq2I/PvYSf5LvDb7NF8l7Boo8G4urYYWjRDAfKVHk9m76K/N/3v4FUEsHCD5fkJDvAQAAAQQAAFBLAQIUABQACAAIAMWreDs+X5CQ7wEAAAEEAAAMAAAAAAAAAAAAAAAAAAAAAABnZW9nZWJyYS54bWxQSwUGAAAAAAEAAQA6AAAAKQIAAAAA" framePossible = "false" showResetIcon = "true" showAnimationButton = "true" enableRightClick = "false" errorDialogsActive = "true" enableLabelDrags = "false" showMenuBar = "false" showToolBar = "true" showToolBarHelp = "true" showAlgebraInput = "false" />
+	 * <ggb_applet width="585" height="470" ggbBase64="..." framePossible = "false" showResetIcon = "true" showAnimationButton = "true" enableRightClick = "false" errorDialogsActive = "true" enableLabelDrags = "false" showMenuBar = "false" showToolBar = "true" showToolBarHelp = "true" showAlgebraInput = "false" />
 	 * for insertion into MediaWiki
 	 */
 	private String getMediaWiki() throws IOException {
@@ -1090,7 +1087,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		// base64 encoding
 		sb.append("ggbBase64=\"");
-		appendBase64(sb);
+		appendBase64(app,sb);
 		/*
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
@@ -1448,7 +1445,7 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append(height);
 			appendWithLineBreak(sb, "px; border: 1px solid black;\">");
 			sb.append("<span id=\"ggbBase64\" style=\"display: none;\">");
-			appendBase64(sb);
+			appendBase64(app,sb);
 			appendWithLineBreak(sb, "</span></div>");			
 			appendWithLineBreak(sb, "<noscript id=\"ggbappletwrapper\">");			
 		}
@@ -1495,7 +1492,7 @@ public class WorksheetExportDialog extends JDialog {
 		{
 			// base64 encoding
 			sb.append("\t<param name=\"ggbBase64\" value=\"");
-			appendBase64(sb);
+			appendBase64(app,sb);
 			appendWithLineBreak(sb, "\"/>");
 		}
 		
