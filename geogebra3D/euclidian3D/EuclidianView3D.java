@@ -183,7 +183,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private static final int CURSOR_MOVE = 2;
 	private static final int CURSOR_HIT = 3;
 	private int cursor = CURSOR_DEFAULT;
-	private boolean cursor3DVisible = true;
 	
 
 	//mouse
@@ -415,7 +414,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/**
 	 * @return controller
 	 */
-	public EuclidianController getEuclidianController(){
+	public EuclidianController3D getEuclidianController(){
 		return euclidianController3D;
 	}
 	
@@ -2611,8 +2610,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		if (hasMouse 
 				&& !getEuclidianController().mouseIsOverLabel() 
-				&& cursor3DVisible
-				&& buttonPicked == BUTTON_PICKED_NONE
+				&& getEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())
 		){
 			
 			renderer.setMatrix(getCursor3D().getDrawingMatrix());
@@ -2639,19 +2637,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;
 
 				case PREVIEW_POINT_ALREADY:
-					/*
-					if (getCursor3D().hasPath())
-						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_Z);
-					else if (getCursor3D().hasRegion())
-						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_XY);
-					else{
-					 */
-					//if (((GeoPointND) getEuclidianController().getMovedGeoPoint()).getMoveMode()==GeoPointND.MOVE_MODE_XY)
 					if (getCursor3D().getMoveMode()==GeoPointND.MOVE_MODE_XY)
 						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_XY);
 					else
 						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_Z);
-					//}
 					break;
 				}
 				break;
@@ -2660,12 +2649,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	
-	/** sets the visibility of the 3D cursor
-	 * @param shown
-	 */
-	public void setShowCursor3D(boolean shown){
-		cursor3DVisible = shown;
-	}
+
 	
 	
 	public void setMoveCursor(){

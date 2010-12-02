@@ -1432,7 +1432,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			DRAGGING_OCCURED = true;			
 
 			// Michael Borcherds 2007-10-07 allow right mouse button to drag points
+			// mathieu : also if it's mode point, we can drag the point
 			if (Application.isRightClick(e) 
+					|| mode == EuclidianView.MODE_POINT 
+					|| mode == EuclidianView.MODE_POINT_IN_REGION
 			){
 				view.setHits(mouseLoc);
 				if (!(view.getHits().isEmpty())) 

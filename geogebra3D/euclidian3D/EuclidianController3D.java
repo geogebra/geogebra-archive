@@ -465,7 +465,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			ret = point3D;
 			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
 			view3D.updateMatrixForCursor3D();
-			freePointJustCreated = true;
+			if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_POINT_IN_REGION)
+				freePointJustCreated = true;
 			break;
 
 		case EuclidianView3D.PREVIEW_POINT_PATH:
@@ -947,19 +948,21 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		((EuclidianView3D) view).updatePointDecorations(null);
 		
 		
-		//Application.debug("movedGeoPointDragged="+movedGeoPointDragged);
-		
-		if(freePointJustCreated)
-			//avoid swith if the point is created by a click
-			freePointJustCreated=false;
-		else{
-			//switch the direction of move (xy or z)
-			if (!movedGeoPointDragged){
-				movedGeoPoint.switchMoveMode();
-				((EuclidianView3D) view).getCursor3D().setMoveMode(movedGeoPoint.getMoveMode());
+		if (mode==EuclidianView.MODE_POINT 
+				|| mode==EuclidianView.MODE_POINT_IN_REGION
+				|| mode==EuclidianView.MODE_MOVE
+		){
+			if(freePointJustCreated)
+				//avoid switch if the point is created by a click
+				freePointJustCreated=false;
+			else{
+				//switch the direction of move (xy or z)
+				if (!movedGeoPointDragged){
+					movedGeoPoint.switchMoveMode();
+					((EuclidianView3D) view).getCursor3D().setMoveMode(movedGeoPoint.getMoveMode());
+				}
 			}
 		}
-		
 		
 		super.processReleaseForMovedGeoPoint();
 		
@@ -1585,6 +1588,47 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return cs;
 	}
 	
+	
+	/////////////////////////////////////////////////////
+	// 
+	// CURSOR
+	//
+	/////////////////////////////////////////////////////
+
+	/**
+	 * @param cursorType type of the cursor
+	 * @return if the 3D cursor is visible for current mode
+	 */
+	public boolean cursor3DVisibleForCurrentMode(int cursorType){
+		
+		if (cursorType==EuclidianView3D.PREVIEW_POINT_ALREADY){
+			switch(mode){
+			case EuclidianView.MODE_MOVE:
+			case EuclidianView.MODE_POINT:
+			case EuclidianView.MODE_POINT_IN_REGION:
+				return true;
+			default:
+				return false;			
+			}		
+		}else{
+			switch(mode){
+			case EuclidianView.MODE_POINT:
+			case EuclidianView.MODE_POINT_IN_REGION:
+				
+			case EuclidianView.MODE_JOIN:
+			case EuclidianView.MODE_ORTHOGONAL:
+
+			case EuclidianView.MODE_POLYGON:
+				
+			case EuclidianView.MODE_PLANE_THREE_POINTS:
+			case EuclidianView.MODE_PLANE_POINT_LINE:
+			case EuclidianView.MODE_ORTHOGONAL_PLANE:
+				return true;
+			default:
+				return false;			
+			}
+		}
+	}
 	
 
 	/////////////////////////////////////////////////////

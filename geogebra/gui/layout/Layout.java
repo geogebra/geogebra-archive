@@ -101,54 +101,66 @@ public class Layout {
 	 * @param use3D says if the default uses 3D
 	 */
 	private void initializeDefaultPerspectives(boolean use3D) {
-		defaultPerspectives = new Perspective[4];
+		if (use3D)
+			defaultPerspectives = new Perspective[5];
+		else
+			defaultPerspectives = new Perspective[4];
 		
 		DockPanelXml[] dpInfo;
+		int dpInfoId = 0;
 		DockSplitPaneXml[] spInfo;
 		
 		String defToolbar;
+
+		
+
 		
 		// algebra & graphics (default settings of GeoGebra < 3.2)
-		if (!use3D){ //ggb2D
-			dpInfo = new DockPanelXml[4];
-			dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(100, 100, 600, 400), "1", 500);
-			dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, null, true, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
-			dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
-			dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
-			
-			spInfo = new DockSplitPaneXml[1];
-			spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
-			
-			defToolbar = Toolbar.getAllToolsNoMacros();
-		}else{ //ggb3D
+		dpInfo = new DockPanelXml[4];
+		dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(100, 100, 600, 400), "1", 500);
+		dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, null, true, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
+		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
+		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
+
+		spInfo = new DockSplitPaneXml[1];
+		spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
+
+		defToolbar = Toolbar.getAllToolsNoMacros();
+		defaultPerspectives[dpInfoId] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, true, false, true, true, true, false);
+		dpInfoId++;
+		
+		
+		// algebra & graphics 3D (only if GeoGebra > 5.0 beta)
+		if (use3D){			
 			dpInfo = new DockPanelXml[5];
 			dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(100, 100, 600, 400), "1,1", 500);
 			dpInfo[1] = new DockPanelXml(Application.VIEW_EUCLIDIAN3D, null, true, false, false, new Rectangle(100, 100, 600, 400), "1,3", 500);
 			dpInfo[2] = new DockPanelXml(Application.VIEW_ALGEBRA, null, true, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
 			dpInfo[3] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1,2", 300);
 			dpInfo[4] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1,2", 300);
-			
+
 			spInfo = new DockSplitPaneXml[2];
 			spInfo[0] = new DockSplitPaneXml("", 0.25, DockSplitPane.HORIZONTAL_SPLIT);
 			spInfo[1] = new DockSplitPaneXml("1", 0.5, DockSplitPane.HORIZONTAL_SPLIT);
-			
+
 			defToolbar = Toolbar.getAllToolsNoMacros3D();
+			defaultPerspectives[dpInfoId] = new Perspective("AlgebraAndGraphics3D", spInfo, dpInfo, defToolbar, true, false, true, true, true, false);
+			dpInfoId++;
 		}
 		
-		//String defToolbar = Toolbar.getAllToolsNoMacros();
-		defaultPerspectives[0] = new Perspective("AlgebraAndGraphics", spInfo, dpInfo, defToolbar, true, false, true, true, true, false);
-		
-		// basic geometry - just the euclidian view
+		// basic geometry - just the euclidian view		
 		dpInfo = new DockPanelXml[4];
 		dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, false, new Rectangle(100, 100, 600, 400), "1", 500);
 		dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, null, false, false, false, new Rectangle(100, 100, 250, 400), "3", 200);
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
 		
-		defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", true, false, false, false, true, false);
+		defaultPerspectives[dpInfoId] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", true, false, false, false, true, false);
+		dpInfoId++;
 		
 		// geometry - like basic geometry but with more toolbar entries
-		defaultPerspectives[2] = new Perspective("Geometry", spInfo, dpInfo, "0 | 40 | 1", true, true, true, true, false, true);
+		defaultPerspectives[dpInfoId] = new Perspective("Geometry", spInfo, dpInfo, "0 | 40 | 1", true, true, true, true, false, true);
+		dpInfoId++;
 		
 		// table & graphics - just the euclidian view
 		spInfo = new DockSplitPaneXml[1];
@@ -160,7 +172,8 @@ public class Layout {
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, true, false, false, new Rectangle(100, 100, 600, 400), "3", 300);
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "3,1", 300);
 		
-		defaultPerspectives[3] = new Perspective("TableAndGraphics", spInfo, dpInfo, "0 | 40 | 1", true, false, false, false, true, false);
+		defaultPerspectives[dpInfoId] = new Perspective("TableAndGraphics", spInfo, dpInfo, "0 | 40 | 1", true, false, false, false, true, false);
+		//dpInfoId++;
 	}
 	
 	/**
