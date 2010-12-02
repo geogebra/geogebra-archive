@@ -2781,6 +2781,9 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 				return evaluate(x0,y0)*evaluate(b.x+lines[0].x+lines[1].x,b.y+lines[0].y+lines[1].y) >= 0;
 		if(type == CONIC_HYPERBOLA)
 			return evaluate(x0,y0)*evaluate(b.x,b.y) <= 0;		
+		if(type == CONIC_PARABOLA)
+			return evaluate(x0,y0)*evaluate(b.x + p * eigenvec[0].x,
+                    b.y + p * eigenvec[0].y) >= 0;		
 		return evaluate(x0,y0)*evaluate(b.x,b.y) >= 0; 
 		
 	}
@@ -2805,8 +2808,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			rp.setIsOnPath(false);
 				
 			coordsRWtoEV(P);
+			if(type != CONIC_PARABOLA){
 			rp.setT1(P.x/this.halfAxes[0]);
 			rp.setT2(P.y/this.halfAxes[1]);
+			}
+			else{
+				rp.setT1(P.x);
+				rp.setT2(P.y/Math.sqrt(this.p));
+				
+			}
 			coordsEVtoRW(P);
 		}
 	}
@@ -2841,8 +2851,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			//pointChangedForRegion(P);
 			GeoPoint P=(GeoPoint)PI;
 			if(P.isDefined()){
+			if(type != CONIC_PARABOLA){
 			P.x=rp.getT1()*halfAxes[0];
 			P.y=rp.getT2()*halfAxes[1];
+			}
+			else{
+				P.x=rp.getT1();
+				P.y=rp.getT2()*Math.sqrt(this.p);
+				
+			}
 			P.z = 1.0;
 			coordsEVtoRW(P);
 			}
