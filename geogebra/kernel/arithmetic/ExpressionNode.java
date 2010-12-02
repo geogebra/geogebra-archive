@@ -1698,7 +1698,6 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                break;
                 
             case POWER:
-            	
             	/* support for sin�(x) for display, too slow and hacky
             	if (STRING_TYPE == STRING_TYPE_GEOGEBRA && leftStr.startsWith("sin(")) {
             		//&& rightStr.equals("2")) {
@@ -1742,6 +1741,13 @@ implements ExpressionValue, ExpressionNodeConstants {
             	}//*/
             	
             	switch (STRING_TYPE) {			
+					case STRING_TYPE_LATEX:
+						// check needed for FormulaText[e^x]
+						if (leftStr.equals(Unicode.EULER_STRING)) {
+		                    sb.append('e');		
+		                    break;
+						}
+						// else fall through
 					case STRING_TYPE_JASYMCA:
 					case STRING_TYPE_MATH_PIPER:
 					case STRING_TYPE_MAXIMA:
@@ -2277,6 +2283,7 @@ implements ExpressionValue, ExpressionNodeConstants {
                 break;
                
             case EXP:
+            	Application.debug("EXP");
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
 	        			sb.append("e^{");
@@ -2305,7 +2312,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	                	break;
         			
 	        		default:	      
-	        			sb.append(Kernel.EULER_STRING);
+	        			sb.append(Unicode.EULER_STRING);
 	        			if (left.isLeaf()) {
 	        				sb.append("^");  
 	        				sb.append(leftStr);

@@ -24,6 +24,11 @@ public class Unicode {
 	final public static char degreeChar = '\u00b0';
 	final public static String degree = degreeChar+"";
 	public static final Object oneDegree = "1"+degreeChar;
+	/** Unicode symbol for e */
+	final public static String EULER_STRING = "\u212f"; // "\u0435";
+	/** Unicode symbol for pi */
+	final public static String PI_STRING = "\u03c0";	
+
 	
 	/*
 	 * converts an integer to a unicode superscript string (including minus sign)

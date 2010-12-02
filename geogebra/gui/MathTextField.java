@@ -1,10 +1,9 @@
 package geogebra.gui;
 
 import geogebra.gui.virtualkeyboard.MyTextField;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
-import geogebra.gui.GuiManager;
+import geogebra.util.Unicode;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -184,7 +183,7 @@ public class MathTextField extends MyTextField implements KeyListener {
 						insertStr = "\u03b4"; // alt-d -> unicode delta
 					break;
 				case 'e' :
-					insertStr = Kernel.EULER_STRING; // alt-e -> unicode e
+					insertStr = Unicode.EULER_STRING; // alt-e -> unicode e
 					break;
 				case 'f' :
 					if (e.isShiftDown())

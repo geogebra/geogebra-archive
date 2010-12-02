@@ -41,6 +41,7 @@ import geogebra.kernel.MyPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -51,10 +52,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 /**
  * @author Le Coq loïc
  */
@@ -1032,7 +1029,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		}
 		
 		// for exponential in new Geogbra version.
-		renameFunc(sb,Kernel.EULER_STRING,"2.718281828");
+		renameFunc(sb,Unicode.EULER_STRING,"2.718281828");
 		renameFunc(sb,"\\pi","PI");
 		return new String(sb);
 	}

@@ -34,6 +34,7 @@ import geogebra.kernel.MyPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -1302,7 +1303,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			}
 		}
 		
-		renameFunc(sb,Kernel.EULER_STRING,"2.718281828");
+		renameFunc(sb,Unicode.EULER_STRING,"2.718281828");
 		renameFunc(sb,"\\pi","3.1415926535");
 		return new String(sb);
 	}

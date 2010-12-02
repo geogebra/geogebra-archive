@@ -9,6 +9,7 @@ import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -45,7 +46,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		"\u00b3",  // exponents ^3 
 		"\u00b0", // degree	
 		"\u03c0", // pi	
-		Kernel.EULER_STRING, // e
+		Unicode.EULER_STRING, // e
 		"\u221e", // infinity
 		ExpressionNode.strVECTORPRODUCT, //  "\u2297", // vector product (circled times)
 		"sqrt(x)",
@@ -118,7 +119,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	
 	public final static String [] symbols = { 	
 		"\u03c0", // pi	
-		Kernel.EULER_STRING, // e
+		Unicode.EULER_STRING, // e
 		
 		"\u00b2",  // exponents ^2 
 		"\u00b3",  // exponents ^3 
@@ -202,8 +203,8 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		"\u03a9",  // Omega
 		
 		
-		"\u03c0", // pi	
-		Kernel.EULER_STRING, // e
+		Unicode.PI_STRING, // pi	
+		Unicode.EULER_STRING, // e
 		
 		"\u00b2",  // exponents ^2 
 		"\u00b3",  // exponents ^3 
@@ -285,7 +286,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		this.createPopupButton();
 		
 		// make sure we use a font that can display special characters
-		cbSpecialChars.setFont(app.getFontCanDisplay(Kernel.EULER_STRING));
+		cbSpecialChars.setFont(app.getFontCanDisplay(Unicode.EULER_STRING));
 		cbGreekLetters.setFont(app.getFontCanDisplay("\u03b1")); // alpha
 			
 		textComponent.setFocusable(true);

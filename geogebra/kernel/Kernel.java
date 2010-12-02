@@ -166,10 +166,6 @@ public class Kernel {
 	final public static int COORD_CARTESIAN = 3;
 	final public static int COORD_POLAR = 4;	 
 	final public static int COORD_COMPLEX = 5;
-	/** Unicode symbol for e */
-	final public static String EULER_STRING = "\u212f"; // "\u0435";
-	/** Unicode symbol for pi */
-	final public static String PI_STRING = "\u03c0";	
 	final public static double PI_2 = 2.0 * Math.PI;
 	final public static double PI_HALF =  Math.PI / 2.0;
 	final public static double SQRT_2_HALF =  Math.sqrt(2.0) / 2.0;
@@ -719,7 +715,7 @@ public class Kernel {
 				break;
 		
 			default:
-				casPrintFormPI = PI_STRING;
+				casPrintFormPI = Unicode.PI_STRING;
 		}
 	}
 	

@@ -1578,12 +1578,12 @@ ExpressionValue myDouble():
 |
     <PI>
     {
-       	return new MySpecialDouble(kernel, Math.PI, Kernel.PI_STRING);
+       	return new MySpecialDouble(kernel, Math.PI, Unicode.PI_STRING);
     }
 |
     <E>
     {
-    	return new MySpecialDouble(kernel, Math.E, Kernel.EULER_STRING);
+    	return new MySpecialDouble(kernel, Math.E, Unicode.EULER_STRING);
     }
  |
     <INFINITY>

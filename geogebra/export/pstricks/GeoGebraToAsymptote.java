@@ -41,18 +41,21 @@ import geogebra.kernel.MyPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.geom.AffineTransform;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.StringTokenizer;
-import java.lang.Character; // isUpperCase
-import java.io.*; // InputStream
 /*
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -1236,7 +1239,7 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
         renameFunc(sb,"ATANH(","atanh(");
         
         // for exponential in new Geogebra version.
-        renameFunc(sb,Kernel.EULER_STRING,"2.718"); /*2.718281828*/
+        renameFunc(sb,Unicode.EULER_STRING,"2.718"); /*2.718281828*/
         
         /*
         // upper letter greek symbols
