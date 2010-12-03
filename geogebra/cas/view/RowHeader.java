@@ -1,5 +1,8 @@
 package geogebra.cas.view;
 
+import geogebra.gui.view.spreadsheet.MyTable;
+
+import javax.swing.BorderFactory;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 
@@ -13,6 +16,7 @@ public class RowHeader extends JList {
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setFixedCellWidth(ROW_HEADER_WIDTH);
 		setFocusable(true);
+		setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, MyTable.TABLE_GRID_COLOR));
 		
 		// renderer
 		setCellRenderer(new RowHeaderRenderer(table));

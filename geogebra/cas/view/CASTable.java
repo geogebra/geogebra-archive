@@ -9,6 +9,8 @@ import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -16,7 +18,10 @@ import java.awt.event.MouseListener;
 
 import javax.swing.CellEditor;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 
 /**
@@ -31,7 +36,7 @@ public class CASTable extends JTable {
 	protected Kernel kernel;
 	protected Application app;
 	private CASView view;
-	
+	private CASTable table; 
 	
 	private CASTableCellEditor editor;
 	private CASTableCellRenderer renderer;
@@ -42,7 +47,8 @@ public class CASTable extends JTable {
 	public CASTable(CASView view) {
 		this.view = view;
 		app = view.getApp();
-		kernel = app.getKernel();			
+		kernel = app.getKernel();
+		this.table = this;
 
 		setShowGrid(true);
 		setGridColor(MyTable.TABLE_GRID_COLOR);
@@ -94,6 +100,32 @@ public class CASTable extends JTable {
 			
 		});
 
+		// tableModel listener to resize the column width after row updates
+		// note: this only adjusts column 0
+		tableModel.addTableModelListener(new TableModelListener() {
+
+			public void tableChanged(TableModelEvent e) {
+				if(e.getType()==TableModelEvent.UPDATE){
+					TableCellRenderer renderer; 
+					int prefWidth = 0; 
+					// iterate through all rows and get max preferred width
+					for (int r=0; r < getRowCount(); r++) {
+						renderer =  getCellRenderer(r, 0);
+						int w = prepareRenderer(renderer, r, 0).getPreferredSize().width;
+						prefWidth = Math.max(prefWidth, w);
+					}
+
+					// adjust the width
+					if(prefWidth != table.getColumnModel().getColumn(0).getPreferredWidth()) {   	  
+						table.getColumnModel().getColumn(0).setPreferredWidth(prefWidth);
+						table.getColumnModel().getColumn(0).setMinWidth(prefWidth);
+					}
+				}
+			}
+		});
+		
+		
+		
 		// Set the width of the index column;
 		// this.getColumn(this.getColumnName(CASPara.indexCol)).setMinWidth(30);
 		// this.getColumn(this.getColumnName(CASPara.indexCol)).setMaxWidth(30);
@@ -141,7 +173,8 @@ public class CASTable extends JTable {
 		if (newValue == null)
 			newValue = new CASTableCellValue(view);
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
-		
+		// make sure the row is shown when at the bottom of the viewport
+		table.scrollRectToVisible(table.getCellRect(selectedRow+1, 0, false));
 		// update height of new row
 		if (startEditing)
 			startEditingRow(selectedRow  + 1);
@@ -321,6 +354,55 @@ public class CASTable extends JTable {
 	}
 
 
+	
+	//===============================================================
+	// Workaround for java horizontal scrolling bug, see:
+	// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4127936
+	
+	/**
+	 * When the viewport shrinks below the preferred size, stop tracking the
+	 * viewport width
+	 */
+	public boolean getScrollableTracksViewportWidth() {
+	    if (autoResizeMode != AUTO_RESIZE_OFF) {
+	        if (getParent() instanceof JViewport) {
+	            return (((JViewport)getParent()).getWidth() > getPreferredSize().width);
+	        }
+	    }
+	    return false;
+	}
+	
+	/**
+	 * When the viewport shrinks below the preferred size, return the minimum
+	 * size so that scrollbars will be shown
+	 */
+	public Dimension getPreferredSize() {
+	    if (getParent() instanceof JViewport) {
+	        if (((JViewport)getParent()).getWidth() < super.getPreferredSize().width) {
+	            return getMinimumSize();
+	        }
+	    }
+
+	    return super.getPreferredSize();
+	}
+
+	// End horizontal scrolling fix
+	//================================================================
+	
+	
+	
+	
+	/** When the table is smaller than the viewport fill this extra  
+	 * space with the same background color as the table.*/
+	@Override
+	protected void configureEnclosingScrollPane() {
+		super.configureEnclosingScrollPane();
+		Container p = getParent();
+		if (p instanceof JViewport) {
+			((JViewport) p).setBackground(getBackground());
+		}
+	}
+	
 
 
 }

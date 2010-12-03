@@ -4,6 +4,7 @@ import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.CasManager;
 import geogebra.gui.view.algebra.MyComboBoxListener;
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
@@ -15,6 +16,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
@@ -79,6 +82,13 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		scrollPane.setViewportView(consoleTable);
 		scrollPane.setBackground(Color.white);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		
+		//set the lower left corner so that the horizontal scroller looks good
+		JPanel p = new JPanel();
+		p.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 1, MyTable.TABLE_GRID_COLOR));
+		p.setBackground(Color.white);
+		scrollPane.setCorner(JScrollPane.LOWER_LEFT_CORNER, p);
+		
 
 		// put the scrollpanel in
 		setLayout(new BorderLayout());

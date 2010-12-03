@@ -23,7 +23,7 @@ public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
 		this.app = casTable.app;
 				
 		setOpaque(true);
-		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
+		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, MyTable.TABLE_GRID_COLOR));
 	}
 
 	public Component getListCellRendererComponent(JList list, Object value,	int index, boolean  isSelected, boolean cellHasFocus) {
