@@ -7741,6 +7741,12 @@ public class Kernel {
 		AlgoIsInRegion algo = new AlgoIsInRegion(cons,label,pi,region);
 		return algo.getResult();
 	}
+
+
+	public GeoElement[] Sequence(String label, GeoNumeric upTo) {
+		AlgoSequence algo = new AlgoSequence(cons,label,upTo);
+		return algo.getOutput();
+	}
 	
 	
 	

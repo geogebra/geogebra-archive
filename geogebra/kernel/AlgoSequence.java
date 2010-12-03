@@ -34,7 +34,9 @@ public class AlgoSequence extends AlgoElement {
 	private NumberValue  var_from, var_to, var_step;
 	private GeoElement var_from_geo, var_to_geo, var_step_geo;
     private GeoList list; // output
-        
+    
+    private boolean isSimple;
+    
     private double last_from = Double.MIN_VALUE, last_to = Double.MIN_VALUE, last_step = Double.MIN_VALUE;    
     private boolean expIsFunctionOrCurve,  isEmpty;
     private AlgoElement expressionParentAlgo;
@@ -85,7 +87,7 @@ public class AlgoSequence extends AlgoElement {
         	
     	expressionParentAlgo = expression.getParentAlgorithm();
     	expIsFunctionOrCurve = expression.isGeoFunction() || expression.isGeoCurveCartesian();    	      
-    	 	
+    	isSimple = false; 	
 //    	Application.debug("expression: " + expression);
 //   	Application.debug("  parent algo: " + expression.getParentAlgorithm());
 //    //	Application.debug("  parent algo input is var?: " + (expression.getParentAlgorithm().getInput()[0] == var));        
@@ -99,12 +101,33 @@ public class AlgoSequence extends AlgoElement {
     
     }
 
-    public String getClassName() {
+    /**
+     * Creates simple sequence 1..upTo
+     * @param cons construction
+     * @param label label
+     * @param upTo upper bound
+     */
+    public AlgoSequence(Construction cons, String label, NumberValue upTo) {
+		super(cons);
+		isSimple = true;
+		var_to = upTo;
+		var_to_geo = var_to.toGeoElement(); 
+		list = new GeoList(cons);       
+		setInputOutput();     
+        compute();
+        list.setLabel(label);
+	}
+
+	public String getClassName() {
         return "AlgoSequence";
     }
 
     // for AlgoElement
     protected void setInputOutput() {
+    	if(isSimple){
+    		input = new GeoElement[1];
+    		input[0]=var_to_geo;
+    	}else{
     	int len = var_step == null ? 4 : 5;
         input = new GeoElement[len];
         input[0] = expression;
@@ -113,7 +136,7 @@ public class AlgoSequence extends AlgoElement {
         input[3] = var_to_geo;
         if (len == 5)
         	input[4] = var_step_geo;  
-          
+    	}
         setOutputLength(1);
     	setOutput(0,list);	   
         
@@ -130,6 +153,8 @@ public class AlgoSequence extends AlgoElement {
      *  @version 2010-05-13
      */
     GeoElement[] getInputForUpdateSetPropagation() {
+    	if(isSimple)
+    		return input;
     	GeoElement[] realInput = new GeoElement[input.length-1];
     	realInput[0] = expression;
     	realInput[1] = var_from_geo;
@@ -150,6 +175,10 @@ public class AlgoSequence extends AlgoElement {
     }      
     
     protected final void compute() {
+    	if(isSimple){
+    		computeSimple();
+    		return;
+    	}
     	if(updateRunning)
     		return;    	
     	updateRunning = true;
@@ -196,7 +225,24 @@ public class AlgoSequence extends AlgoElement {
     	updateRunning = false;
     }         
     
-    private void createNewList(double from, double to, double step) {     
+    private void computeSimple() {
+    	double to = Math.floor(var_to.getDouble()); 
+    	
+		if(last_to <to)
+			for(int k = (int) last_to;k<to;k++)
+				if(k>=0) list.add(new GeoNumeric(cons, k+1));
+		if(last_to >to)
+			for(int k = (int) last_to;k>to;k--)
+				if(k >= 1){
+					GeoElement ge = list.get(k-1);
+					ge.remove();
+					list.remove(k-1);
+				}
+		last_to = to;
+		
+	}
+
+	private void createNewList(double from, double to, double step) {     
     	// clear list if defined  
     	int i=0;
     	int oldListSize = list.size();
