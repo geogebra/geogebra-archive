@@ -137,7 +137,9 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 		width = getWidth();
 		height = getHeight();
-
+		
+		// setClip causes the field to bleed out of a scrollpane
+		// do we need it? (G.Sturr 12/2/2010)
 		//g2.setClip(0, 0, w, h);
 
 		fontHeight = g2.getFontMetrics().getHeight();
@@ -145,7 +147,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
         //int x = this.getInsets().left;
         
 		g2.setColor(Color.white);
-		g2.setClip(0, 0, width, height);
+		//g2.setClip(0, 0, width, height);
 		g2.fillRect(0, 0, width, height);
 
 		frc = ((Graphics2D) g2).getFontRenderContext();
@@ -289,8 +291,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			//g2.fillRect((int)pos - scrollOffset + insets.left, insets.bottom + 2 , (int)advance, height - insets.bottom - insets.top - 4);
 			g2.fillRect((int)pos - scrollOffset + insets.left, textBottom - fontHeight + 4 , (int)advance, fontHeight);
 			g2.setColor(getSelectedTextColor());
-		} 
-		g2.setClip(0, 0, width, height);
+		}
+		
+		// setClip causes the field to bleed out of a scrollpane
+		// do we need it ? (G.Sturr 12/2/2010)
+		//g2.setClip(0, 0, width, height);
+		
 		if (pos - scrollOffset + advance + insets.left > 0 && pos - scrollOffset < width)
 			g2.drawString(str, pos - scrollOffset + insets.left, textBottom);
 			//g2.drawString(str, pos - scrollOffset + insets.left, height - insets.bottom - insets.top - 4);
