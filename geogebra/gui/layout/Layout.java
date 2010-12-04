@@ -8,6 +8,7 @@ import geogebra.io.layout.DockPanelXml;
 import geogebra.io.layout.DockSplitPaneXml;
 import geogebra.io.layout.Perspective;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -507,6 +508,7 @@ public class Layout {
 			
 			layout.addPerspective(layout.createPerspective(inputString));
 			layout.getApplication().updateMenubar();
+			GeoGebraPreferences.getPref().saveXMLPreferences(app);
 			
 			return true;
 		}
