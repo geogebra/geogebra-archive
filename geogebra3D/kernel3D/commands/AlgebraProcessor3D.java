@@ -87,11 +87,13 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 	}
 	
 	protected GeoElement[] processLine(Equation equ, boolean inequality) {
-		if (inequality)
+		
+		if (equ.isForcedLine() || inequality)
 			return super.processLine(equ, inequality); //TODO add inequalities in 3D
 		else{
-			//check if the 3D view has the focus
-			if (app.getGuiManager().getLayout().getDockManager().getFocusedEuclidianPanel() instanceof EuclidianDockPanel3D){
+			//check if the equ is forced plane or if the 3D view has the focus
+			if (equ.isForcedPlane() ||
+					app.getGuiManager().getLayout().getDockManager().getFocusedEuclidianPanel() instanceof EuclidianDockPanel3D){
 				return processPlane(equ);
 			}else
 				return super.processLine(equ, inequality);

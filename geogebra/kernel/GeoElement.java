@@ -4115,6 +4115,10 @@ public abstract class GeoElement
 		return false;
 	}
 	
+	public boolean isGeoPlane() {
+		return false;
+	}
+	
 	public boolean isGeoLocus() {
 		return false;
 	}

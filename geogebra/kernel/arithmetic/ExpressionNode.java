@@ -848,6 +848,9 @@ implements ExpressionValue, ExpressionNodeConstants {
     final public boolean isForcedPoint() {
     	return forcePoint;
     }
+ 
+    
+ 
     
     public void setForceFunction() {
         // this expression should be considered as a point, not a vector

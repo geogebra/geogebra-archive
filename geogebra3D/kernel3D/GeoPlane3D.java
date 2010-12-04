@@ -11,7 +11,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 public class GeoPlane3D extends GeoElement3D
-implements Functional2Var, GeoCoordSys2D{
+implements Functional2Var, GeoCoordSys2D, GeoCoords4D{
 	
 	
 	
@@ -68,6 +68,10 @@ implements Functional2Var, GeoCoordSys2D{
 		
 		setEquation(new double[] {a,b,c,d});
 	}
+	
+	public void setCoords(double x, double y, double z, double w){
+     	setEquation(x, y, z, w);
+    }
 	
 	private void setEquation(double[] v){
 		getCoordSys().makeCoordSys(v);
@@ -410,6 +414,25 @@ implements Functional2Var, GeoCoordSys2D{
 	
 	
 	
+	protected void getXMLtags(StringBuilder sb) {
+        super.getXMLtags(sb);
+        
+        GgbVector equation = getCoordSys().getEquationVector();
+        
+        sb.append("\t<coords");
+        sb.append(" x=\""); sb.append(equation.getX()); sb.append("\"");
+        sb.append(" y=\""); sb.append(equation.getY()); sb.append("\"");
+        sb.append(" z=\""); sb.append(equation.getZ()); sb.append("\"");        
+        sb.append(" w=\""); sb.append(equation.getW()); sb.append("\"");        
+        sb.append("/>\n");
+
+    }
+	
+	
+	public boolean isGeoPlane() {
+		return true;
+	}
+
 
 
 }

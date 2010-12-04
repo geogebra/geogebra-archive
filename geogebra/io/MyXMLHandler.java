@@ -52,6 +52,7 @@ import geogebra.kernel.PointProperties;
 import geogebra.kernel.TextProperties;
 import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
@@ -3885,16 +3886,20 @@ public class MyXMLHandler implements DocHandler {
 			if (label != null)
 				ve.setLabel(label);
 
-			// enforce point or vector type if it was given in attribute type
+			// enforce point or vector or line or plane type if it was given in attribute type
 			if (type != null) {
 				if (type.equals("point")) {
 					((ExpressionNode) ve).setForcePoint();
 				} else if (type.equals("vector")) {
 					((ExpressionNode) ve).setForceVector();
+				} else if (type.equals("line")) {
+					((Equation) ve).setForceLine();
+				} else if (type.equals("plane")) {
+					((Equation) ve).setForcePlane();
 				}
 			}
 			
-			Application.debug(""+kernel.getAlgebraProcessor());
+			//Application.debug(""+kernel.getAlgebraProcessor());
 
 			GeoElement[] result = kernel.getAlgebraProcessor()
 					.processValidExpression(ve);

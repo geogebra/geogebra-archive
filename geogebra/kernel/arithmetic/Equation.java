@@ -59,6 +59,29 @@ public class Equation extends ValidExpression {
     	return lhs;
     }
     
+    
+    
+    private boolean forcePlane = false, forceLine = false;
+ 
+
+    public void setForceLine() {
+        // this expression should be considered as a line, not a plane
+        forceLine = true;
+    }
+    
+    final public boolean isForcedLine() {
+    	return forceLine;
+    }    
+    
+    public void setForcePlane() {
+        // this expression should be considered as a plane, not a line
+        forcePlane = true;
+    }
+    
+    final public boolean isForcedPlane() {
+    	return forcePlane;
+    }
+    
     /**
      * Adds/subtracts/muliplies/divides ev to this equation to get lhs + ev = rhs = ev
      */

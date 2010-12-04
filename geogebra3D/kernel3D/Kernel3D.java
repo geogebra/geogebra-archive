@@ -287,12 +287,15 @@ public class Kernel3D
     	
      	
     	switch (type.charAt(0)) {
-   		case 'p': // point, polygon
+   		case 'p': // point, polygon, plane
 			if (type.equals("point3d")){
 				return new GeoPoint3D(cons);
 			}
 			else if (type.equals("polygon3D"))
 				return new GeoPolygon3D(cons, null);
+			else if (type.equals("plane3d")){
+				return new GeoPlane3D(cons);
+			}
 		case 's': // segment 
 			if (type.equals("segment3D"))
 				return new GeoSegment3D(cons, null, null);	 
@@ -319,13 +322,10 @@ public class Kernel3D
 		Application.debug("attrs(w) = "+attrs.get("w"));
 		*/
 		
-		if (!(geo instanceof GeoVec4D)) {
+		if (!(geo instanceof GeoCoords4D)) {
 			return super.handleCoords(geo, attrs);
 		}
 		
-		
-		GeoVec4D v = (GeoVec4D) geo;
-		//Application.debug("GeoVec4D : "+v.getLabel()+", type = "+geo.getGeoClassType());
 		
 
 		try {
@@ -333,7 +333,7 @@ public class Kernel3D
 			double y = Double.parseDouble((String) attrs.get("y"));
 			double z = Double.parseDouble((String) attrs.get("z"));
 			double w = Double.parseDouble((String) attrs.get("w"));
-			((GeoVec4D) geo).setCoords(x, y, z, w);
+			((GeoCoords4D) geo).setCoords(x, y, z, w);
 			//Application.debug(geo.getLabel()+": x="+x+", y="+y+", z="+z+", w="+w);
 			return true;
 		} catch (Exception e) {

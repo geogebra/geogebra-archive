@@ -1024,13 +1024,18 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         // make sure that a vector remains a vector and a point remains a point
         if (getOutputLength()>0)//(output != null)
         {
-	        if (getOutput(0).isGeoPoint()) {
-	            sb.append(" type=\"point\"");
-	        } else if (getOutput(0).isGeoVector()) {
-	            sb.append(" type=\"vector\"");
-	        }
+        	if (getOutput(0).isGeoPoint()) {
+        		sb.append(" type=\"point\"");
+        	} else if (getOutput(0).isGeoVector()) {
+        		sb.append(" type=\"vector\"");
+        	} else if (getOutput(0).isGeoLine()) {
+        		sb.append(" type=\"line\"");
+        	} else if (getOutput(0).isGeoPlane()) {
+        		sb.append(" type=\"plane\"");
+        	}
+
         }
-        
+
         // expression   
         sb.append(" />\n");
         
