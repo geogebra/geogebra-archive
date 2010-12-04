@@ -84,6 +84,8 @@ public class AlgebraProcessor3D extends AlgebraProcessor {
 
 	
 	protected void checkNoTermsInZ(Equation equ){
+		if (!equ.getNormalForm().isFreeOf('z'))
+			equ.setForcePlane();
 	}
 	
 	protected GeoElement[] processLine(Equation equ, boolean inequality) {
