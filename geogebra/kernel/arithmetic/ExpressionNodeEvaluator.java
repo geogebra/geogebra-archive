@@ -1400,7 +1400,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	if (lt.isVectorValue()) { 
 	             vec = ((VectorValue)lt).getVector();
 
-	             return new MyDouble(kernel, GeoVec2D.arg(vec));
+	             MyDouble ret = new MyDouble(kernel, GeoVec2D.arg(vec));
+	             ret.setAngle();
+	             return ret;
 	        } else if (lt.isNumberValue()){
 	        	  return new MyDouble(kernel, ((NumberValue)lt).getDouble() < 0 ? Math.PI : 0);
 	        } else {
