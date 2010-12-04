@@ -2,6 +2,7 @@ package geogebra.gui.util;
 
 
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -62,6 +63,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		if(myTable != null)
 			myTable.setFgColor(fgColor);
 		updateGUI();
+		
 	}
 
 	private SelectionTable myTable;
@@ -86,11 +88,11 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.isDownwardPopup = isDownwardPopup;
 	}
 
-	private boolean isStandardButton = false;
+	private boolean isStandardButton = true;
 	
 	
 	public void setStandardButton(boolean isStandardButton) {
-		this.isStandardButton = isStandardButton;
+		//this.isStandardButton = isStandardButton;
 	}
 
 	private boolean isIniting = true;
@@ -132,8 +134,6 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		setText(text);
 		setIcon(icon);
 	}
-	
-	
 	
 	
 	public PopupMenuButton(Application app, Object[] data, Integer rows, Integer columns, Dimension iconSize, Integer mode){
@@ -440,7 +440,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				// Strings are converted to icons. We don't use setText so that the button size can be controlled
 				// regardless of the layout manager.
 
-				icon = GeoGebraIcon.createStringIcon((String)data[getSelectedIndex()], app.getPlainFont(), 
+				icon = GeoGebraIcon.createStringIcon(Unicode.alphaBetaGamma, app.getPlainFont(), 
 						false, false, true, iconSize, Color.BLACK, null);
 
 				break;
