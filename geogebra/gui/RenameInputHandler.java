@@ -19,7 +19,7 @@ public class RenameInputHandler implements InputHandler {
 			"sgn", "sqrt", "exp", "log", "ln", "ld", "lg", "cos", "sin", "tan",
 			"acos", "arcos", "arccos", "asin", "arcsin", "atan", "arctan", 
 			"cosh", "sinh", "tanh", "acosh", "arcosh", "arccosh", "asinh",
-			"arcsinh", "atanh", "arctanh",
+			"arcsinh", "atanh", "arctanh", "atan2",
 			"floor", "ceil", "round", "random", "conjugate", "arg",
 			"sec", "csc", "cosec", "cot", "sech", "csch", "coth" };
 

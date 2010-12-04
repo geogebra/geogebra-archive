@@ -2159,6 +2159,29 @@ implements ExpressionValue, ExpressionNodeConstants {
                 sb.append(rightBracket(STRING_TYPE));
                 break;
 
+            case ARCTAN2:
+            	switch (STRING_TYPE) {
+	        		case STRING_TYPE_LATEX:
+	        			sb.append("\\arctan2 \\left( ");
+	        			break;
+	        			
+	        		case STRING_TYPE_MATH_PIPER:
+	        			sb.append("ArcTan2(");
+	        			break;
+	        			
+        			case STRING_TYPE_PSTRICKS:
+	        			sb.append("ATAN2(");  
+	                	break;
+	                	
+	        		default:
+	        			sb.append("atan2(");         		
+	        	}  	        	      
+                sb.append(leftStr);
+                sb.append(',');
+                sb.append(rightStr);
+                sb.append(rightBracket(STRING_TYPE));
+                break;
+
             case COSH:      
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:

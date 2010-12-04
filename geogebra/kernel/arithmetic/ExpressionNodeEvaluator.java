@@ -1021,6 +1021,16 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 throw new MyError(app, str);
             }
         
+        case ARCTAN2:
+            // arctan2(number, number)
+            if (lt.isNumberValue() && rt.isNumberValue()) {
+				return ((NumberValue)lt).getNumber().atan2((NumberValue)rt).getNumber();
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "arctan2", lt.toString() };
+                throw new MyError(app, str);
+            }
+        
         case COSH:            
             // cosh(number)
             if (lt.isNumberValue())
