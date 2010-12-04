@@ -112,6 +112,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		" acosh(x) ",
 		" atan(x) ",
 		" atanh(x) ",
+		" atan2(x, y) ", "",
 		" sec(x) ",
 		" sech(x) ",
 		" cosec(x) ",
