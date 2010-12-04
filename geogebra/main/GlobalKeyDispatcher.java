@@ -237,19 +237,43 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		
 			switch (event.getKeyCode()) {				
 			case KeyEvent.VK_1:
-				// Ctrl-1: set objects back to the default size (for font size 12)
-				changeFontsAndGeoElements(12, false);
+				if (event.isShiftDown()) {
+					app.getGuiManager().setShowView(
+							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN),
+							Application.VIEW_EUCLIDIAN);
+					consumed = true;
+					
+				} else {
+					// Ctrl-1: set objects back to the default size (for font size 12)
+					changeFontsAndGeoElements(12, false);
+				}
 				break;
 				
 			case KeyEvent.VK_2:
-				// Ctrl-2: large font size and thicker lines for projectors etc
-				int fontSize = Math.min(32, app.getFontSize() + 4);
-				changeFontsAndGeoElements(fontSize, false);
+				if (event.isShiftDown()) {
+					app.getGuiManager().setShowView(
+							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN2),
+							Application.VIEW_EUCLIDIAN2);
+					consumed = true;
+					
+				} else {
+					// Ctrl-2: large font size and thicker lines for projectors etc
+					int fontSize = Math.min(32, app.getFontSize() + 4);
+					changeFontsAndGeoElements(fontSize, false);
+				}
 				break;
 			
 			case KeyEvent.VK_3:
-				// Ctrl-3: set black/white mode printing and visually impaired users
-				changeFontsAndGeoElements(app.getFontSize(), true);
+				if (event.isShiftDown()) {
+					app.getGuiManager().setShowView(
+							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN3D),
+							Application.VIEW_EUCLIDIAN3D);
+					consumed = true;
+					
+				} else {
+					// Ctrl-3: set black/white mode printing and visually impaired users
+					changeFontsAndGeoElements(app.getFontSize(), true);
+				}
 				break;
 				
 			case KeyEvent.VK_C:

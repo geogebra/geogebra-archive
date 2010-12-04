@@ -27,7 +27,8 @@ public class EuclidianDockPanel3D extends EuclidianDockPanelAbstract {
 			"GraphicsView3D", 				// view title
 			null,						// toolbar string
 			false,						// style bar?
-			4							// menu order
+			4,							// menu order
+			'3' // ctrl-shift-3
 		);
 		
 		this.app = app;

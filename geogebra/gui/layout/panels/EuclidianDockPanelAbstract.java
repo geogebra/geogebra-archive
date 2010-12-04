@@ -1,6 +1,7 @@
 package geogebra.gui.layout.panels;
 
 import geogebra.gui.layout.DockPanel;
+import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -40,8 +41,8 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 	 * @param menuOrder
 	 */
 	public EuclidianDockPanelAbstract(int id, String title, String toolbar,
-			boolean hasStyleBar, int menuOrder) {
-		super(id, title, toolbar, hasStyleBar, menuOrder);
+			boolean hasStyleBar, int menuOrder, char shortcut) {
+		super(id, title, toolbar, hasStyleBar, menuOrder, shortcut);
 	}
 
 	public void mousePressed(MouseEvent arg0) {
