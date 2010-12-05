@@ -3,10 +3,10 @@ package geogebra.gui.view.algebra;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.inputbar.MyComboBox;
+import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
@@ -18,11 +18,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -240,19 +243,25 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	
 	
 	
-	
-	
+
 	private JTextComponent textComponent;	
 	private MyComboBox cbSpecialChars, cbGreekLetters;
 
-	private PopupMenuButton symbolButton;
+	private PopupMenuButton popupTableButton;
 
 	public PopupMenuButton getSymbolButton() {
-		return symbolButton;
+		return popupTableButton;
 	}
 
-	private PopupMenuButton functionButton;
 	
+
+	private JButton[] symbolButton;
+	private ArrayList<String> symbolList;
+	private int symbolButtonCount = 1;
+	public void setSymbolButtonCount(int symbolButtonCount) {
+		this.symbolButtonCount = symbolButtonCount;
+	}
+
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
 		this(initText, app, 1, columns, true, true, false, null);
 		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
@@ -292,7 +301,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		cbSpecialChars = new MyComboBox();
 		cbGreekLetters  = new MyComboBox();
 		
-		this.createPopupButton();
+		
 		
 		// make sure we use a font that can display special characters
 		cbSpecialChars.setFont(app.getFontCanDisplay(Unicode.EULER_STRING));
@@ -350,7 +359,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 			JPanel cbPanel = new JPanel(new BorderLayout(2,0));			
 			//cbPanel.add(cbSpecialChars, BorderLayout.WEST);
 			//cbPanel.add(cbGreekLetters, BorderLayout.EAST);
-			cbPanel.add(symbolButton,BorderLayout.WEST);
+			cbPanel.add(createPopupButton(),BorderLayout.WEST);
 			//cbPanel.add(functionButton,BorderLayout.EAST);
 			add(cbPanel, BorderLayout.EAST);	
 			
@@ -405,26 +414,50 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	}
 
 	
-	private void createPopupButton(){
+	private JToolBar createPopupButton(){
 		
-		symbolButton = new PopupMenuButton(app, tableSymbols, 5,11,new Dimension(-1,-1), SelectionTable.MODE_TEXT);
-		symbolButton.setFocusable(false);
-		symbolButton.setSelectedIndex(0);
-		symbolButton.setKeepVisible(false);
-		symbolButton.getMyTable().setShowGrid(true);
-		symbolButton.getMyTable().setBorder(BorderFactory.createLineBorder(symbolButton.getMyTable().getGridColor()));
-		symbolButton.getMyPopup().setBorder(BorderFactory.createEmptyBorder());
-		symbolButton.addActionListener(this);
+		popupTableButton = new PopupMenuButton(app, tableSymbols, 5,11,new Dimension(10,18), SelectionTable.MODE_TEXT);
+		popupTableButton.setStandardButton(true);
+		//popupTableButton.setBackground(Color.LIGHT_GRAY);
+		popupTableButton.setFocusable(false);
+		popupTableButton.setSelectedIndex(0);
+		popupTableButton.setKeepVisible(false);
+		popupTableButton.getMyTable().setShowGrid(true);
+		popupTableButton.getMyTable().setBorder(BorderFactory.createLineBorder(popupTableButton.getMyTable().getGridColor()));
+		popupTableButton.getMyPopup().setBorder(BorderFactory.createEmptyBorder());
+		popupTableButton.addActionListener(this);
+		popupTableButton.setSelected(true);
 		
-		functionButton = new PopupMenuButton(app, this.functions, -1,3,new Dimension(-1,16), SelectionTable.MODE_TEXT);
-		functionButton.setFocusable(false);
-		functionButton.setSelectedIndex(0);
-		functionButton.setKeepVisible(false);
-		functionButton.getMyTable().setShowGrid(true);
-		functionButton.addActionListener(this);
+		JToolBar p = new JToolBar();
+		p.setFloatable(false);
+		
+		symbolList = new ArrayList<String>();
+		symbolList.add(Unicode.EULER_STRING);
+		symbolList.add(Unicode.PI_STRING);
+		symbolList.add("\u03b1");
+		symbolButton = new JButton[symbolButtonCount];
+		for(int i=0; i < symbolButton.length; i++){
+			symbolButton[i] = new JButton();
+			symbolButton[i].setFocusable(false);
+			symbolButton[i].addActionListener(this);
+			if(i==symbolButtonCount-1 && symbolButtonCount > 1)
+				p.addSeparator();
+			p.add(symbolButton[i]);
+		}
+		p.add(popupTableButton);
+		setSymbolButtons();
+		
+		return p;
 		
 	}
 	
+	private void setSymbolButtons(){
+		int h = popupTableButton.getPreferredSize().height;
+		for(int i = 0; i< symbolButton.length; i++){
+			symbolButton[i].setIcon(
+					GeoGebraIcon.createStringIcon(symbolList.get(i), app.getPlainFont(), new Dimension(18,18)));
+		}
+	}
 	
 	
 	/**
@@ -446,8 +479,16 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == symbolButton){
-			insertString((String) symbolButton.getSelectedValue());		
+		if(e.getSource() == popupTableButton){
+			String s = (String) popupTableButton.getSelectedValue();
+			insertString(s);
+			symbolList.add(symbolButton.length-1, s);
+			setSymbolButtons();
+			
+		}
+		for(int i = 0; i<symbolButton.length; i++)
+		if(e.getSource() == symbolButton[i]){
+			insertString(symbolList.get(i));
 		}
 			
 		

@@ -2,7 +2,6 @@ package geogebra.gui.util;
 
 
 import geogebra.main.Application;
-import geogebra.util.Unicode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -41,6 +40,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	private Object[] data;
 	private int size;
 	private Application app;
+	private PopupMenuButton thisButton;
 	
 	private JPopupMenu myPopup;
 	public JPopupMenu getMyPopup() {
@@ -88,11 +88,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.isDownwardPopup = isDownwardPopup;
 	}
 
-	private boolean isStandardButton = true;
 	
-	
+	private boolean isStandardButton = false;
 	public void setStandardButton(boolean isStandardButton) {
-		//this.isStandardButton = isStandardButton;
+		this.isStandardButton = isStandardButton;
 	}
 
 	private boolean isIniting = true;
@@ -149,7 +148,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.hasSlider = hasSlider;
 		this.mode = mode;
 		this.iconSize = iconSize;
-		
+		this.thisButton = this;
 		// create the popup
 		myPopup = new JPopupMenu();
 		myPopup.setBackground(Color.WHITE);
@@ -186,7 +185,9 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 						myPopup.show(getParent(), locButton.x,locButton.y + getHeight());
 					else
 						// popup appears above the button
-						myPopup.show(getParent(), locButton.x,locButton.y - myPopup.getPreferredSize().height);
+						myPopup.show(getParent(), 
+								locButton.x - myPopup.getPreferredSize().width + thisButton.getWidth(),
+								locButton.y - myPopup.getPreferredSize().height - 2);
 				}
 				
 				popupIsVisible = myPopup.isShowing();
@@ -429,9 +430,11 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	
 
 	public ImageIcon getButtonIcon(){
-
+		
 		ImageIcon icon = (ImageIcon) this.getIcon();
-
+		
+		if(isStandardButton) return GeoGebraIcon.createDownTriangleIcon(iconSize.height);
+		
 		// draw the icon for the current table selection
 		if(hasTable){
 			switch (mode){
@@ -440,7 +443,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				// Strings are converted to icons. We don't use setText so that the button size can be controlled
 				// regardless of the layout manager.
 
-				icon = GeoGebraIcon.createStringIcon(Unicode.alphaBetaGamma, app.getPlainFont(), 
+				icon = GeoGebraIcon.createStringIcon((String)data[getSelectedIndex()], app.getPlainFont(), 
 						false, false, true, iconSize, Color.BLACK, null);
 
 				break;
@@ -477,7 +480,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				iconSize = new Dimension(1,1);
 
 		if(icon == null){
-			icon = GeoGebraIcon.createEmptyIcon(1, iconSize.height);
+			//icon = GeoGebraIcon.createEmptyIcon(1, iconSize.height);
 		}else{
 			icon = GeoGebraIcon.ensureIconSize((ImageIcon) icon, iconSize);
 		}
@@ -497,7 +500,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		Graphics2D g2 = image.createGraphics();
 
 		// draw the input icon
-		g2.drawImage(((ImageIcon) icon).getImage(), 0, 0, w, h, 0, 0, w, h, null);
+		if(icon != null)
+			g2.drawImage(((ImageIcon) icon).getImage(), 0, 0, w, h, 0, 0, w, h, null);
 
 		// draw a downward triangle on the right hand side
 		g2.setColor(Color.BLACK);

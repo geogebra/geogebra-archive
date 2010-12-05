@@ -213,6 +213,26 @@ public class GeoGebraIcon {
 	}
 	
 
+	public static ImageIcon createDownTriangleIcon(int height){
+	
+	BufferedImage image = new BufferedImage(8, height, BufferedImage.TYPE_INT_ARGB);
+	Graphics2D g2 = image.createGraphics();
+	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	
+	g2.setColor(Color.BLACK);
+	int x = 1;
+	int y = height/2-1;
+	g2.drawLine(x, y, x+6, y);
+	g2.drawLine(x+1, y+1, x+5, y+1);
+	g2.drawLine(x+2, y+2, x+4, y+2);
+	g2.drawLine(x+3, y+3, x+3, y+3);
+	
+	ImageIcon ic = new ImageIcon(image);
+	return ic;
+	}
+	
+	
+	
 
 	public static ImageIcon createColorSwatchIcon(float alpha, Dimension iconSize, Color fgColor, Color bgColor){
 
@@ -314,8 +334,12 @@ public class GeoGebraIcon {
 
 	}
 	
-
-	public static ImageIcon createStringIcon(String str, Font font, boolean isBold, boolean isItalic, boolean isCentered, Dimension iconSize, Color fgColor, Color bgColor){
+	public static ImageIcon createStringIcon(String str, Font font, Dimension iconSize){
+		return createStringIcon( str,  font, false, false, true, iconSize, Color.BLACK, null);
+	}
+	
+	public static ImageIcon createStringIcon(String str, Font font, boolean isBold, boolean isItalic, 
+			boolean isCentered, Dimension iconSize, Color fgColor, Color bgColor){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
