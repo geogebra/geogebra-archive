@@ -102,7 +102,7 @@ public class Layout {
 	 * @param use3D says if the default uses 3D
 	 */
 	private void initializeDefaultPerspectives(boolean use3D) {
-		defaultPerspectives = new Perspective[4];
+		defaultPerspectives = new Perspective[5];
 		
 		DockPanelXml[] dpInfo;
 		DockSplitPaneXml[] spInfo;
@@ -162,6 +162,18 @@ public class Layout {
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "3,1", 300);
 		
 		defaultPerspectives[3] = new Perspective("TableAndGraphics", spInfo, dpInfo, "0 | 40 | 1", true, false, false, false, true, false);
+
+		// primary
+		spInfo = new DockSplitPaneXml[1];
+		spInfo[0] = new DockSplitPaneXml("", 0.45, DockSplitPane.HORIZONTAL_SPLIT);
+		
+		dpInfo = new DockPanelXml[4];
+		dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, true, new Rectangle(100, 100, 600, 400), "1", 500);
+		dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, null, false, false, false, new Rectangle(100, 100, 250, 400), "3,3", 200);
+		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "3", 300);
+		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "3,1", 300);
+		
+		defaultPerspectives[4] = new Perspective("Primary", spInfo, dpInfo, "0 | 40 | 1 | | 29 15 | 2 | 10 | 3 | 4 | 5 | 16 | 51 | 17 | 36 | 30 | 32 ", true, false, false, false, false, false);
 	}
 	
 	/**

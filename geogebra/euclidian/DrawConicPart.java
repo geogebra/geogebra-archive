@@ -69,6 +69,7 @@ implements Previewable {
     
     public DrawConicPart(EuclidianView view, GeoConicPart conicPart) {
     	this.view = view;
+    	hitThreshold = view.getCapturingThreshold();
     	initConicPart(conicPart);
         update();
     }
@@ -378,9 +379,9 @@ implements Previewable {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
 				if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled())
-					return shape.intersects(x-3,y-3,6,6); 					
+					return shape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 					
 				else
-					return strokedShape.intersects(x-3,y-3,6,6); 
+					return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 
 				
 				/*
 				// sector: take shape for hit testing

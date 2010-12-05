@@ -76,7 +76,8 @@ public class DrawLine extends Drawable implements Previewable {
     
     /** Creates new DrawLine */
     public DrawLine(EuclidianView view, GeoLineND g) {      
-    	this.view = view;          
+    	this.view = view;   
+    	hitThreshold = view.getCapturingThreshold();
         this.g = g;
         geo = (GeoElement) g;              
         update();
@@ -556,7 +557,7 @@ public class DrawLine extends Drawable implements Previewable {
      * location (x,y) in screen coords)
      */
     final public boolean hit(int x, int y) {
-        return isVisible && line.intersects(x-3, y-3, 6, 6);
+        return isVisible && line.intersects(x - hitThreshold, y - hitThreshold, 2 * hitThreshold, 2 * hitThreshold);
     }
     
     final public boolean isInside(Rectangle rect) {  

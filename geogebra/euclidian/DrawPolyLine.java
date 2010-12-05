@@ -51,6 +51,7 @@ implements Previewable {
      */
 	DrawPolyLine(EuclidianView view, ArrayList points) {
 		this.view = view; 
+    	hitThreshold = view.getCapturingThreshold();
 		this.points = points;
 
 		updatePreview();
@@ -197,7 +198,7 @@ implements Previewable {
     		if (strokedShape == null) {
     			strokedShape = objStroke.createStrokedShape(gp);
     		}    		
-    		return strokedShape.intersects(x-3,y-3,6,6);
+    		return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);
     	} else
     		return false;
     }

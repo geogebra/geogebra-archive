@@ -245,7 +245,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					
 				} else {
 					// Ctrl-1: set objects back to the default size (for font size 12)
-					changeFontsAndGeoElements(12, false);
+					changeFontsAndGeoElements(app, 12, false);
 				}
 				break;
 				
@@ -259,7 +259,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				} else {
 					// Ctrl-2: large font size and thicker lines for projectors etc
 					int fontSize = Math.min(32, app.getFontSize() + 4);
-					changeFontsAndGeoElements(fontSize, false);
+					changeFontsAndGeoElements(app, fontSize, false);
 				}
 				break;
 			
@@ -272,7 +272,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					
 				} else {
 					// Ctrl-3: set black/white mode printing and visually impaired users
-					changeFontsAndGeoElements(app.getFontSize(), true);
+					changeFontsAndGeoElements(app, app.getFontSize(), true);
 				}
 				break;
 				
@@ -828,7 +828,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * @param blackWhiteMode whether only black should be used as a color
 	 * @return whether change was performed
 	 */	
-	private boolean changeFontsAndGeoElements(int fontSize, boolean blackWhiteMode) {
+	public static boolean changeFontsAndGeoElements(Application app, int fontSize, boolean blackWhiteMode) {
 		if (app.isApplet()) 
 			return false;
 		
@@ -875,7 +875,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		return true;
 	}
 	
-	private int getPointSizeInc(int oldFontSize, int newFontSize) {
+	private static int getPointSizeInc(int oldFontSize, int newFontSize) {
 		if (oldFontSize == newFontSize) return 0;
 		int step = newFontSize > oldFontSize ? 1 : -1;
 		
@@ -892,7 +892,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		return incr;
 	}
 	
-	private void setGeoProperties(GeoElement geo, int lineThicknessIncr, int pointSizeIncr, 
+	private static void setGeoProperties(GeoElement geo, int lineThicknessIncr, int pointSizeIncr, 
 			int angleSizeIncr, boolean blackWhiteMode) 
 	{
 		if (!geo.isGeoText() && !geo.isGeoImage() && !geo.isGeoPolygon()) { // affects bounding box

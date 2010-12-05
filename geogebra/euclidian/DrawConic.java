@@ -33,6 +33,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -125,6 +126,7 @@ final public class DrawConic extends Drawable implements Previewable {
      * @param c */
     public DrawConic(EuclidianView view, GeoConic c) {
     	this.view = view;
+    	hitThreshold = view.getCapturingThreshold();
         initConic(c);
         update();
     }
@@ -934,14 +936,14 @@ final public class DrawConic extends Drawable implements Previewable {
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(shape);
         		}    		
-    			return strokedShape.intersects(x-3,y-3,6,6);            	
+    			return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);            	
             	
             case GeoConic.CONIC_HYPERBOLA: 
             	if (strokedShape == null) {
         			strokedShape = objStroke.createStrokedShape(hypLeft);
         			strokedShape2 = objStroke.createStrokedShape(hypRight);
         		}    		
-    			return strokedShape.intersects(x-3,y-3,6,6) || strokedShape2.intersects(x-3,y-3,6,6);              	                                                                                                          
+    			return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold) || strokedShape2.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);              	                                                                                                          
         }        
         return false;
     }

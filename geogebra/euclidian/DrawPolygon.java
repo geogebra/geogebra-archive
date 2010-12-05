@@ -53,6 +53,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 	 */
 	public DrawPolygon(EuclidianView view, GeoPolygon poly) {
 		this.view = view;
+    	hitThreshold = view.getCapturingThreshold();
 		this.poly = poly;
 		geo = poly;
 
@@ -300,7 +301,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 
 	final public boolean hit(int x, int y) {
 		return gp != null
-				&& (gp.contains(x, y) || gp.intersects(x - 3, y - 3, 6, 6));
+				&& (gp.contains(x, y) || gp.intersects(x - hitThreshold, y - hitThreshold, 2*hitThreshold, 2*hitThreshold));
 	}
 
 	final public boolean isInside(Rectangle rect) {

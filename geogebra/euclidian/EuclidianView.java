@@ -4709,4 +4709,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public boolean handlePreviewableKeys(KeyEvent event){
 		return false;
 	}
+	
+	// object is hit if mouse is within this many pixels
+	// (more for points, see DrawPoint)
+	private int capturingThreshold = 3;
+
+	public void setCapturingThreshold(int i) {
+		capturingThreshold = i;		
+	}
+	public int getCapturingThreshold() {
+		return capturingThreshold;		
+	}
 }

@@ -63,6 +63,7 @@ implements Previewable {
 	 */
     public DrawSegment(EuclidianView view, GeoLineND s) {
     	this.view = view;
+    	hitThreshold = view.getCapturingThreshold();
     	this.s = s;
     	geo = (GeoElement) s;
     	        
@@ -425,7 +426,7 @@ implements Previewable {
 	}
     
 	final public boolean hit(int x,int y) {        
-        return line != null && line.intersects(x-3, y-3, 6, 6);        
+        return line != null && line.intersects(x-hitThreshold, y-hitThreshold, 2*hitThreshold, 2*hitThreshold);        
     }
 	
     final public boolean isInside(Rectangle rect) {

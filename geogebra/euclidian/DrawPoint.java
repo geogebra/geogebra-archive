@@ -51,7 +51,8 @@ public final class DrawPoint extends Drawable {
 	 	
 	private  int HIGHLIGHT_OFFSET, SELECTION_OFFSET;
 	
-	private static int SELECTION_DIAMETER_MIN = 20;
+	// used by getSelectionDiamaterMin()
+	private static int SELECTION_DIAMETER_MIN = 25;
 	       
     private GeoPointND P;    
     
@@ -118,8 +119,8 @@ public final class DrawPoint extends Drawable {
 			
 			selDiameter = hightlightDiameter;
 			
-			if (selDiameter < SELECTION_DIAMETER_MIN)
-				selDiameter = SELECTION_DIAMETER_MIN;
+			if (selDiameter < getSelectionDiamaterMin())
+				selDiameter = getSelectionDiamaterMin();
 			
 			SELECTION_OFFSET = (selDiameter - diameter) / 2;
 
@@ -475,6 +476,10 @@ public final class DrawPoint extends Drawable {
 		
 		return crossStrokes[pointSize];
 
+    }
+    
+    private int getSelectionDiamaterMin() {
+    	return view.getCapturingThreshold() +  SELECTION_DIAMETER_MIN;
     }
 
 }

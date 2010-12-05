@@ -28,6 +28,7 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.InputBarHelpPanel;
+import geogebra.gui.layout.Layout;
 
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyXMLio;
@@ -1038,6 +1039,18 @@ public class Application implements KeyEventDispatcher {
 		if(args.containsArg("showGrid")) {
 			boolean showGrid = args.getBooleanValue("showGrid", false);
 			this.showGrid = showGrid;
+		}
+		
+		if(args.containsArg("primary")) {
+			boolean primary = args.getBooleanValue("primary", false);
+			if (primary) {
+				
+				getGuiManager().getLayout().applyPerspective(Layout.defaultPerspectives[4]);
+				GlobalKeyDispatcher.changeFontsAndGeoElements(this, 20, false);
+				setLabelingStyle(ConstructionDefaults.LABEL_VISIBLE_ALWAYS_OFF);
+				getEuclidianView().setCapturingThreshold(10);
+				
+			}
 		}
 		
 		boolean antiAliasing = args.getBooleanValue("antiAliasing", true);

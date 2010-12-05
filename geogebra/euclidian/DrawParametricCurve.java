@@ -78,6 +78,7 @@ public class DrawParametricCurve extends Drawable {
 	 */
     public DrawParametricCurve(EuclidianView view, ParametricCurve curve) {
     	this.view = view;
+    	hitThreshold = view.getCapturingThreshold();
         this.curve = curve;
         geo = curve.toGeoElement();        
         update();
@@ -902,7 +903,7 @@ public class DrawParametricCurve extends Drawable {
     		if (strokedShape == null) {
     			strokedShape = objStroke.createStrokedShape(gp);
     		}    		
-    		return strokedShape.intersects(x-3,y-3,6,6);
+    		return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);
     	} else
     		return false;
     	/*

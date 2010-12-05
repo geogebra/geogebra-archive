@@ -41,6 +41,7 @@ public class DrawImplicitPoly extends Drawable {
 	public DrawImplicitPoly(EuclidianView view,GeoImplicitPoly implicitPoly) {
 //		Application.debug("DrawImplicitPoly, new object");
 		this.view=view;
+    	hitThreshold = view.getCapturingThreshold();
 		this.implicitPoly = implicitPoly;
 		this.geo=implicitPoly;
 		update();
@@ -80,7 +81,7 @@ public class DrawImplicitPoly extends Drawable {
 	public boolean hit(int x, int y) {
 		if (isVisible) {
 			for (GeneralPath gp:gps){
-				if (objStroke.createStrokedShape(gp).intersects(x-3,y-3,6,6))
+				if (objStroke.createStrokedShape(gp).intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold))
 					return true;
 			}
     	}

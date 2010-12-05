@@ -34,6 +34,7 @@ public class DrawInequality extends Drawable {
 	 */
 	public DrawInequality(EuclidianView view, FunctionalNVar function) {
 		this.view = view;
+    	hitThreshold = view.getCapturingThreshold();
 		this.function = function;
 		geo = (GeoElement)function;
 		update();
@@ -198,7 +199,7 @@ public class DrawInequality extends Drawable {
 
 		@Override
 		public boolean hit(int x, int y) {
-			return gp.contains(x, y) || gp.intersects(x - 3, y - 3, 6, 6);			
+			return gp.contains(x, y) || gp.intersects(x - hitThreshold, y - hitThreshold, 2*hitThreshold, 2*hitThreshold);			
 		}
 
 		@Override

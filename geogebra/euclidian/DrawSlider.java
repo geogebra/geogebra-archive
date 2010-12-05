@@ -43,6 +43,7 @@ public class DrawSlider extends Drawable {
     
     public DrawSlider(EuclidianView view, GeoNumeric number) {    	
         this.view = view;
+    	hitThreshold = view.getCapturingThreshold();
         this.number = number;
         geo = number;              
         

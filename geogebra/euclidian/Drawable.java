@@ -59,6 +59,7 @@ public abstract class Drawable extends DrawableND {
 	//final private static boolean useJLaTeXMath = true;
 	static TeXFormula initJLaTeXMath; 
 	
+	
 	BasicStroke objStroke = EuclidianView.getDefaultStroke();
 	BasicStroke selStroke = EuclidianView.getDefaultSelectionStroke();
 	BasicStroke decoStroke = EuclidianView.getDefaultStroke();
@@ -67,6 +68,7 @@ public abstract class Drawable extends DrawableND {
 	public int lineType = -1;
 
 	protected EuclidianView view;
+	protected int hitThreshold = 3;
 	protected GeoElement geo;
 	public int xLabel, yLabel;
 	/** for Previewables */
