@@ -165,6 +165,9 @@ public abstract class CASTableCell extends JPanel{
 		super.setFont(ft);
 		if (inputPanel != null)
 			inputPanel.setFont(ft);
+		if (inputLabel != null){
+			inputLabel.setFont(ft);
+		}
 		if (outputPanel != null)
 			outputPanel.setFont(ft);
 	}
