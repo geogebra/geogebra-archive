@@ -5,6 +5,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
@@ -227,12 +228,15 @@ public class CellRangeProcessor {
 		
 		String pointString = "";
 		String pointName = "";
-
+		boolean isPolar = false;
 		try {
 			if (xCoord != null && yCoord != null
 					&& (!xCoord.isGeoNumeric() || !yCoord.isGeoNumeric()))
 				isError = true;
-
+			
+			// test for polar point
+			isPolar = yCoord.isAngle();
+			
 			// if both cells are non-empty and numeric then make a point
 			if (xCoord != null && yCoord != null && xCoord.isGeoNumeric()
 					&& yCoord.isGeoNumeric()) {
@@ -247,6 +251,10 @@ public class CellRangeProcessor {
 					pointName = geos[0].getIndexLabel("P");
 					geos[0].setLabel(pointName);
 					geos[0].setAuxiliaryObject(true);
+					
+					//convert to polar mode
+					if(isPolar) 
+						((GeoPoint)geos[0]).setPolar();
 				}
 				
 				// add point to the list string
