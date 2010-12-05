@@ -29,7 +29,7 @@ public class DockSplitPane extends JSplitPane {
 	public DockSplitPane(int newOrientation) {
 		super(newOrientation);
 		
-		setResizeWeight(0);
+		setResizeWeight(0.5);
 		setBorder(BorderFactory.createEmptyBorder());
 		
 		updateUI();
