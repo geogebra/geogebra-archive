@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
@@ -16,9 +17,11 @@ public abstract class CASTableCell extends JPanel{
 
 	protected CASInputPanel inputPanel;
 	protected CASOutputPanel outputPanel;
+	protected JLabel inputLabel; // dummy label used to get preferred size;
 	private CASTable consoleTable;
 	protected Application app;
 	protected CASView view;
+	
 
 	public CASTableCell(CASView view) {
 		this.view = view;
@@ -30,12 +33,39 @@ public abstract class CASTableCell extends JPanel{
 		setBackground(Color.white);
 		
 		inputPanel = new CASInputPanel(app);
-		outputPanel = new CASOutputPanel(view.getApp());		
-		add(inputPanel, BorderLayout.NORTH);
+		inputLabel = new JLabel();
+		
+		// create BorderLayout JPanel with:
+		// 1) inputPanel is in WEST so that its width can be controlled.
+		// The cell editor will set the width to fit the viewport, the 
+		// cell renderer will set it to fill the table column.
+		// 2) inputLabel is in CENTER, but invisible since it is a dummy
+		// that is used only to get a preferred width.
+		JPanel northPanel = new JPanel(new BorderLayout());
+		northPanel.setBackground(this.getBackground());
+		northPanel.add(inputLabel, BorderLayout.CENTER);
+		northPanel.add(inputPanel, BorderLayout.WEST);	
+		inputLabel.setVisible(false);
+		
+		outputPanel = new CASOutputPanel(view.getApp());
+		
+		add(northPanel, BorderLayout.NORTH);
 		add(outputPanel, BorderLayout.CENTER);
 		return;
 	}
 
+	/**
+	 * Overrides getPreferredSize so that it reports the preferred size
+	 * when the input label is completely drawn, not clipped for the editor.
+	 */
+	@Override
+	public Dimension getPreferredSize(){
+		Dimension d = super.getPreferredSize();
+		d.width = Math.max(d.width, inputLabel.getPreferredSize().width);
+		return d;
+	}
+	
+	
 	public int getInputPanelHeight() {
 		return inputPanel.getHeight();
 	}
@@ -44,10 +74,31 @@ public abstract class CASTableCell extends JPanel{
 		return outputPanel.getHeight();
 	}
 	
+	/**
+	 * Sets the width of the input panel. 
+	 * If width = -1 it sets the width to the full input string.
+	 * This width is given by the preferred size of the dummy label.
+	 */
+	public void setInputPanelWidth(int width){
+		
+		Dimension d = inputPanel.getPreferredSize();
+		if(width == -1)
+			d.width = inputLabel.getPreferredSize().width;
+		else
+			d.width = width - 15;  // adjust 15 pixels for the empty border
+		
+		inputPanel.setPreferredSize(d);
+		//inputPanel.validate();
+	}
+
+	
+	
 	public void setValue(CASTableCellValue cellValue) {
 		// set input panel
 		String input = cellValue.getTranslatedInput();
 		inputPanel.setInput(input);
+		inputLabel.setText(inputPanel.getInputArea().getText());
+		
 		
 		// set output panel
 		boolean showOutput = cellValue.showOutput();

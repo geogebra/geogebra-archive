@@ -105,7 +105,7 @@ public class CASTable extends JTable {
 		tableModel.addTableModelListener(new TableModelListener() {
 
 			public void tableChanged(TableModelEvent e) {
-				if(e.getType()==TableModelEvent.UPDATE){
+				if(e.getType()==TableModelEvent.UPDATE || e.getType()==TableModelEvent.DELETE){
 					TableCellRenderer renderer; 
 					int prefWidth = 0; 
 					// iterate through all rows and get max preferred width

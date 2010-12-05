@@ -51,6 +51,11 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		
 			// update row height
 			updateTableRowHeight(table, row);
+			
+			// Set width of editor to the width of the table column.
+			// This will allow scrolling of strings that are wider than the cell. 
+			this.setInputPanelWidth(table.getParent().getWidth());	
+			
 		}
 		return this;
 	}	

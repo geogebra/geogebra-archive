@@ -17,6 +17,7 @@ public class CASTableCellRenderer extends CASTableCell implements
 
 		if (value instanceof CASTableCellValue) {
 			inputPanel.setFont(view.getFont());
+			inputLabel.setFont(view.getFont());
 			
 			CASTableCellValue tempV = (CASTableCellValue) value;	
 			tempV.setRow(row);
@@ -24,6 +25,12 @@ public class CASTableCellRenderer extends CASTableCell implements
 							
 			// update row height
 			updateTableRowHeight(table, row);	
+			
+			// set inputPanel width to match table column width
+			// -1 = set to table column width (even if larger than viewport)
+			setInputPanelWidth(-1);
+			
+			
 		}
 		return this;
 	}
