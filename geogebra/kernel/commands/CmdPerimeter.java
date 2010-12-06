@@ -54,9 +54,3 @@ public class CmdPerimeter extends CommandProcessor {
 	}
 
 }
-
-class CmdCircumference extends CmdPerimeter {
-	public CmdCircumference(Kernel kernel) {
-		super(kernel);
-	}
-}
