@@ -236,12 +236,13 @@ public class CellRangeProcessor {
 			
 			// test for polar point
 			isPolar = yCoord.isAngle();
+			String separator = isPolar? ";" : "'";
 			
 			// if both cells are non-empty and numeric then make a point
 			if (xCoord != null && yCoord != null && xCoord.isGeoNumeric()
 					&& yCoord.isGeoNumeric()) {
 
-				pointString = "(" + xCoord.getLabel() + "," + yCoord.getLabel() + ")";
+				pointString = "(" + xCoord.getLabel() + separator + yCoord.getLabel() + ")";
 
 				// create a GeoPoint from text	
 				if(!byValue){
