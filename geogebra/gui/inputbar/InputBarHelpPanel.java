@@ -197,7 +197,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		btnRefresh.setEnabled(false);
 		btnRefresh.addActionListener(this);
 
-		btnPaste = new JButton("Paste");
+		btnPaste = new JButton();
 		btnPaste.addActionListener(this);
 		btnPaste.setFocusable(false);
 		
@@ -320,6 +320,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		cmdTreeModel.reload();
 		titleLabel.setText(app.getMenu("Input Help"));
 		syntaxLabel.setText(app.getMenu("Syntax"));
+		btnPaste.setText(app.getMenu("Paste"));
 	}
 
 
