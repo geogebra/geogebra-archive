@@ -7,6 +7,7 @@ import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.SystemColor;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -221,6 +222,8 @@ public class GeoGebraMenuBar extends JMenuBar {
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		textArea.setEditable(false);
+		// not sure if Monospaced is installed everywhere:
+		textArea.setFont(new Font("Monospaced",Font.PLAIN,12));
 		textArea.setText(text);
 		textArea.setCaretPosition(0);
 
