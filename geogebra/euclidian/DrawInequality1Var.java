@@ -92,12 +92,12 @@ public class DrawInequality1Var extends Drawable {
 		if (varIsY) {
 			GeoPoint[] roots = ineq.getZeros();
 			double[] x = new double[roots.length + 2];
-			x[0] = -10;
+			x[0] = view.height + 10;
 			int numOfX = 1;
 			for (int i = 0; i < roots.length; i++)
 				if (roots[i].x < view.toRealWorldCoordY(-10) && roots[i].x > view.toRealWorldCoordY(view.height+10))
 					x[numOfX++] = view.toScreenCoordY(roots[i].x);
-			x[numOfX++] = view.height + 10;
+			x[numOfX++] = -10;
 
 			if (gp == null)
 				gp = new GeneralPathClipped[numOfX / 2];
