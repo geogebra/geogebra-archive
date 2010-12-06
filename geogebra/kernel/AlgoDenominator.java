@@ -39,6 +39,8 @@ public class AlgoDenominator extends AlgoNumerator {
     protected ExpressionValue getPart(ExpressionNode node) {
     	return node.right;
     }
-    
 
+    public String getClassName() {
+        return "AlgoDenominator";
+    }
 }
