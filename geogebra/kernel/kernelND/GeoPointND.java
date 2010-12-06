@@ -132,8 +132,9 @@ public interface GeoPointND {
 	/////////////////////////////////////////
 	
 	
-	public static boolean MOVE_MODE_XY = true;
-	public static boolean MOVE_MODE_Z = false;
+	public static int MOVE_MODE_NONE = 0; //for intersection points and fixed points
+	public static int MOVE_MODE_XY = 1;
+	public static int MOVE_MODE_Z = 2;
 	
 	/**
 	 * sets the move mode (along xOy or along Oz)
@@ -144,7 +145,7 @@ public interface GeoPointND {
 	 * 
 	 * @return the move mode (along xOy or along Oz)
 	 */
-	public boolean getMoveMode();
+	public int getMoveMode();
 
 	public boolean isDefined();
 

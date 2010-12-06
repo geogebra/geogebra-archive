@@ -986,19 +986,30 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	// MOVING THE POINT (3D)
 	/////////////////////////////////////////
 	
-	private boolean moveMode = MOVE_MODE_XY;
+	private int moveMode = MOVE_MODE_XY;
 
 	public void switchMoveMode(){
-		moveMode = !moveMode;
+		
+
+		switch (moveMode){
+		case MOVE_MODE_XY:
+			moveMode=MOVE_MODE_Z;
+			break;
+		case MOVE_MODE_Z:
+			moveMode=MOVE_MODE_XY;
+			break;			
+		}
 	}
 	
-	public void setMoveMode(boolean flag){
+	public void setMoveMode(int flag){
 		moveMode = flag;
 	}
 	
 
-	public boolean getMoveMode(){
-		if (hasPath())
+	public int getMoveMode(){
+		if (!isIndependent() || isFixed())
+			return MOVE_MODE_NONE;
+		else if (hasPath())
 			return MOVE_MODE_Z;
 		else if (hasRegion())
 			return MOVE_MODE_XY;

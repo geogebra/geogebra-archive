@@ -2637,10 +2637,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;
 
 				case PREVIEW_POINT_ALREADY:
-					if (getCursor3D().getMoveMode()==GeoPointND.MOVE_MODE_XY)
+					switch (getCursor3D().getMoveMode()){
+					case GeoPointND.MOVE_MODE_XY:
 						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_XY);
-					else
+						break;
+					case GeoPointND.MOVE_MODE_Z:
 						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_Z);
+						break;
+					}
 					break;
 				}
 				break;

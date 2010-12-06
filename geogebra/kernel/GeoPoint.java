@@ -1337,8 +1337,10 @@ GeoPointND, Animatable  {
 		}
 		
 
-		public boolean getMoveMode(){
-			if (hasPath())
+		public int getMoveMode(){
+			if (!isIndependent() || isFixed())
+				return MOVE_MODE_NONE;
+			else if (hasPath())
 				return MOVE_MODE_Z;
 			else
 				return MOVE_MODE_XY;
