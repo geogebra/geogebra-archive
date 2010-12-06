@@ -855,16 +855,16 @@ public class Application implements KeyEventDispatcher {
 	 * Open/close the sidebar help panel for the input bar
 	 */
 	public void setShowInputHelpPanel(boolean isVisible){
-		setShowInputHelpPanel(isVisible, -1);
-	}
-	public void setShowInputHelpPanel(boolean isVisible, int panelWidth){
 		if(isVisible){
-			if(applicationSplitPane.getRightComponent()==null)
-				applicationSplitPane.setRightComponent(inputHelpPanel);
-			applicationSplitPane.setDividerLocation(applicationSplitPane.getWidth() - panelWidth);
+			applicationSplitPane.setRightComponent(inputHelpPanel);
+			if(applicationSplitPane.getLastDividerLocation()<=0)
+				applicationSplitPane.setLastDividerLocation(
+						applicationSplitPane.getWidth() - inputHelpPanel.getMinimumSize().width);
+			applicationSplitPane.setDividerLocation(applicationSplitPane.getLastDividerLocation());
 			applicationSplitPane.setDividerSize(8);
 
 		}else{
+			applicationSplitPane.setLastDividerLocation(applicationSplitPane.getDividerLocation());
 			applicationSplitPane.setRightComponent(null);
 			applicationSplitPane.setDividerSize(0);
 		}

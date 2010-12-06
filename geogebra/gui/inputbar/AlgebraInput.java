@@ -313,7 +313,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		
 		if (source == btnToggleInputPanel) { 
 			if(btnToggleInputPanel.isSelected()){
-				app.setShowInputHelpPanel(true, app.getInputHelpPanel().getPreferredWidth());
+				app.getInputHelpPanel().updateFonts();
+				app.setShowInputHelpPanel(true);
 			}else{
 				app.setShowInputHelpPanel(false);
 			}

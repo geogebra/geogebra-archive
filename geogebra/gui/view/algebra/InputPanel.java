@@ -257,7 +257,7 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 
 	private JButton[] symbolButton;
 	private ArrayList<String> symbolList;
-	private int symbolButtonCount = 3;
+	private int symbolButtonCount = 1;
 	public void setSymbolButtonCount(int symbolButtonCount) {
 		this.symbolButtonCount = symbolButtonCount;
 	}

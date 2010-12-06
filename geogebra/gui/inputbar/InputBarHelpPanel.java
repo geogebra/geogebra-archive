@@ -37,6 +37,7 @@ import javax.swing.JTextArea;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.event.MouseInputAdapter;
@@ -57,6 +58,9 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	private InputBarHelpPanel thisPanel;
 	private Color bgColor = Color.WHITE;
 	
+	private Color titleColor;
+	
+	
 	private MyJTree cmdTree, fcnTree;
 	private DefaultMutableTreeNode functionRoot, rootSubCommands, rootAllCommands;;
 	private DefaultTreeModel cmdTreeModel;
@@ -65,16 +69,21 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	public String getSelectedCommand() {
 		return selectedCommand;
 	}
-
+	private String selectedFunction;
+	
+	
+	
+	
 	private JPopupMenu contextMenu;
 	private JTextArea helpTextArea;
-	private JButton btnOnlineHelp, btnCollapseTree;
+	private JButton btnOnlineHelp, btnRefresh;
 	private SelectionTable functionTable;
 	private JPanel tablePanel;
 	private JPanel syntaxHelpPanel;
 	private JSplitPane cmdSplitPane;
 	private JLabel titleLabel;
 	private JLabel syntaxLabel;
+	private JButton btnPaste;
 
 	
 	
@@ -85,7 +94,9 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		this.app = app;
 		thisPanel = this;
 		this.setOpaque(true);
-		this.setBackground(bgColor);	
+		//this.setBackground(Color.blue);	
+		titleColor = MyTable.BACKGROUND_COLOR_HEADER;
+		bgColor = this.getBackground().brighter();
 		
 		createFunctionPanel();
 		createCommandTree();
@@ -96,24 +107,24 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		JPanel commandPanel = new JPanel(new BorderLayout());
 		commandPanel.add(tablePanel,BorderLayout.NORTH);
 		commandPanel.add(cmdTree,BorderLayout.CENTER);
-		
+		commandPanel.setBorder(BorderFactory.createEmptyBorder());
 		JScrollPane scroller = new JScrollPane(commandPanel);
-		scroller.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-		
-		
+		//scroller.setBorder(BorderFactory.createEmptyBorder());
+		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		JPanel titlePanel = new JPanel();
 		titlePanel.setBorder(
 			BorderFactory.createCompoundBorder(
-				BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.controlShadow),
+				BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),
 				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
 		titlePanel.setLayout(new BorderLayout());
 		
+		//titlePanel.setBackground(titleColor);
 		titleLabel = new JLabel();
-		titleLabel.setForeground(Color.darkGray);
+	//	titleLabel.setForeground(Color.darkGray);
 		
 		titlePanel.add(titleLabel, BorderLayout.WEST);
-		titlePanel.add(createButtonPanel(), BorderLayout.EAST);
+		
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.add(scroller, BorderLayout.CENTER);
@@ -121,11 +132,12 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 		cmdSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, mainPanel, syntaxHelpPanel);	
 		cmdSplitPane.setResizeWeight(1.0);
-		
+		cmdSplitPane.setBorder(BorderFactory.createEmptyBorder());
 		
 		this.setLayout(new BorderLayout());
-		this.add(cmdSplitPane, BorderLayout.CENTER);		
-	//	this.setBorder(BorderFactory.createLoweredBevelBorder());
+		this.add(cmdSplitPane, BorderLayout.CENTER);	
+		this.add(createButtonPanel(), BorderLayout.SOUTH);
+	//	this.setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 4));
 
 		setLabels();
 		updateFonts();
@@ -141,43 +153,79 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	private void createSyntaxPanel(){
 	
 		helpTextArea = new JTextArea();
-		helpTextArea.setText("");
+		//helpTextArea.setText("");
+		helpTextArea.setEditable(false);
 		//helpTextArea.setMinimumSize(new Dimension(200,300));
-		helpTextArea.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));	
+		helpTextArea.setBorder(BorderFactory.createEmptyBorder(8, 5, 2, 5));
+		helpTextArea.setBackground(bgColor);
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(helpTextArea, BorderLayout.CENTER);
 		
-		
-		JPanel titlePanel = new JPanel();
+		p.setBorder(BorderFactory.createEmptyBorder());
+		JPanel titlePanel = new JPanel(new BorderLayout());
 		titlePanel.setBorder(
 			BorderFactory.createCompoundBorder(
-				BorderFactory.createMatteBorder(0, 0, 1, 0, SystemColor.controlShadow),
+				BorderFactory.createMatteBorder(1, 0, 1, 0, SystemColor.controlShadow),
 				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
-		titlePanel.setLayout(new BorderLayout());
 		syntaxLabel = new JLabel();
 		syntaxLabel.setForeground(Color.darkGray);
 		titlePanel.add(syntaxLabel, BorderLayout.WEST);
 		
 		syntaxHelpPanel = new JPanel(new BorderLayout());
-		syntaxHelpPanel.add(new JScrollPane(helpTextArea),BorderLayout.CENTER);
-		syntaxHelpPanel.add(titlePanel,BorderLayout.NORTH);
+		JScrollPane scroller = new JScrollPane(helpTextArea);
+		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		//scroller.setBorder(BorderFactory.createEmptyBorder());
+		
+		JPanel corner = new JPanel(new FlowLayout());
+		corner.setBackground(this.getBackground());
+		scroller.setCorner(JScrollPane.LOWER_RIGHT_CORNER, corner);
+			
+		
+		syntaxHelpPanel.add(scroller,BorderLayout.CENTER);
+		//syntaxHelpPanel.add(titlePanel,BorderLayout.NORTH);	
+		
 	}
 	
 	
-	
-	private JToolBar createButtonPanel(){
+	private JPanel createButtonPanel(){
 
-		btnCollapseTree = new JButton(GeoGebraIcon.createTreeIcon());
-		btnCollapseTree.setSelectedIcon(GeoGebraIcon.createTreeIcon());
-		btnCollapseTree.setPreferredSize(new Dimension(16,16));
-		btnCollapseTree.setFocusable(false);
-		btnCollapseTree.setEnabled(false);
-		btnCollapseTree.addActionListener(this);
+		btnRefresh = new JButton(app.getImageIcon("view-refresh.png"));
+		btnRefresh.setBorderPainted(false);
+		//btnCollapseTree.setPreferredSize(new Dimension(16,16));
+		btnRefresh.setFocusable(false);
+		btnRefresh.setEnabled(false);
+		btnRefresh.addActionListener(this);
 
-		JToolBar buttonPanel = new JToolBar();
-		buttonPanel.add(btnCollapseTree);
-		buttonPanel.setFloatable(false);
-		buttonPanel.setBackground(bgColor);
+		btnPaste = new JButton("Paste");
+		btnPaste.addActionListener(this);
+		btnPaste.setFocusable(false);
+		
+		btnOnlineHelp = new JButton(app.getImageIcon("help.png"));
+		btnOnlineHelp.setFocusable(false);
+		btnOnlineHelp.addActionListener(this);
+		btnOnlineHelp.setBorderPainted(false);
+		
+		
+		
+		JPanel leftPanel = new JPanel(new FlowLayout());
+		leftPanel.add(btnPaste);
+		
+		JPanel rightPanel = new JPanel(new FlowLayout());
+		rightPanel.add(btnOnlineHelp);
+		rightPanel.add(btnRefresh);
+		
+		
+		JPanel buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.add(leftPanel,BorderLayout.WEST);
+		buttonPanel.add(rightPanel,BorderLayout.EAST);
+		buttonPanel.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),
+				BorderFactory.createEmptyBorder(0, 2, 0, 2)));
+		
+	//	buttonPanel.setBackground(titleColor);
+	//	leftPanel.setBackground(titleColor);
+	//	rightPanel.setBackground(titleColor);
 		
 		return buttonPanel;
 		
@@ -191,7 +239,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		functionTable.setHorizontalAlignment(SwingConstants.LEFT);
 		functionTable.setBorder(BorderFactory.createLineBorder(functionTable.getGridColor()));
 		functionTable.addMouseListener(new TableSelectionListener());
-
+		functionTable.setBackground(bgColor);
 		functionTable.setVisible(false);
 
 		functionRoot = new DefaultMutableTreeNode();
@@ -208,7 +256,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 					public void treeExpanded(TreeExpansionEvent e) {
 						functionTable.setVisible(true);	
 						((MyJTree)e.getSource()).rollOverRow = -1;
-						thisPanel.btnCollapseTree.setEnabled(true);
+						thisPanel.btnRefresh.setEnabled(true);
 					}
 				}
 		);
@@ -248,12 +296,17 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	/** mouse listener to handle table selection */
 	public class TableSelectionListener extends MouseAdapter  {
 
-		public void mouseClicked(MouseEvent evt) {
+		
 
-			if(evt.getSource() == functionTable){
-				insertInputBarString((String) functionTable.getSelectedValue());
+		public void mouseClicked(MouseEvent e) {
+
+			if(e.getSource() == functionTable){
 				if(!cmdTree.getSelectionModel().isSelectionEmpty())
 					cmdTree.clearSelection();
+				selectedFunction = (String) functionTable.getSelectedValue();
+				selectedCommand = null;
+				if(e.getClickCount()==2)
+					doPaste();
 			}
 		}
 
@@ -277,13 +330,18 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		titleLabel.setFont(app.getPlainFont());
 		syntaxLabel.setFont(app.getPlainFont());
 		
+		Dimension d = syntaxHelpPanel.getMinimumSize();
+		d.height = 7*app.getFontSize();
+		syntaxHelpPanel.setMinimumSize(d);
 		
-		cmdSplitPane.setDividerLocation(this.getHeight() - 10*app.getFontSize());
-
+		d = this.getMinimumSize();
+		d.width = (int) (1.25* this.cmdSplitPane.getPreferredSize().width);
+		this.setMinimumSize(d);
+		
+		
 	}
 
-
-
+	
 	private void createCommandTree(){
 
 		setCommands();
@@ -319,7 +377,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 					public void treeCollapsed(TreeExpansionEvent e) {
 					}
 					public void treeExpanded(TreeExpansionEvent e) {
-						thisPanel.btnCollapseTree.setEnabled(true);
+						thisPanel.btnRefresh.setEnabled(true);
 					}
 				}
 		);
@@ -343,7 +401,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		for(int i=0; i<subDict.length; i++){
 			String name = app.getKernel().getAlgebraProcessor().getSubCommandSetName(i);
 			child = new DefaultMutableTreeNode(name);
-			rootSubCommands.add(child);
+			addNodeInSortedOrder(rootSubCommands,child);
+			//rootSubCommands.add(child);
 			Iterator<?> it = subDict[i].getLowerCaseIterator();
 			while (it.hasNext()) {
 				String cmdName = (String) subDict[i].get(it.next());
@@ -362,12 +421,34 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			}
 		}	
 
-		rootSubCommands.add(rootAllCommands);
+		rootSubCommands.insert(rootAllCommands,0);
 
 	}
 
 
 
+	private void addNodeInSortedOrder(DefaultMutableTreeNode parent,
+			DefaultMutableTreeNode child){
+		int n = parent.getChildCount();
+		if(n==0){
+			parent.add(child);
+			return;
+		}
+		DefaultMutableTreeNode node=null;
+		for(int i=0;i<n;i++){
+			node = (DefaultMutableTreeNode)parent.getChildAt(i);
+			if(node.toString().compareTo(child.toString())>0){
+				parent.insert(child, i);
+				return;
+			}
+		}
+		parent.add(child);
+		return;
+	}
+
+
+	
+	
 	public void valueChanged(TreeSelectionEvent e) {
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode)cmdTree.getLastSelectedPathComponent();
 
@@ -376,7 +457,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		if(node.isLeaf()){
 			Object nodeInfo = node.getUserObject();
 			selectedCommand = (String)nodeInfo;
-			insertInputBarCommand(selectedCommand);
+		//	insertInputBarCommand(selectedCommand);
+			showSelectedSyntax();
 			if(functionTable.getSelectedIndex() != -1)
 				functionTable.clearSelection();
 		}
@@ -434,11 +516,11 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
  				contextMenu.getSelectionModel().clearSelection();
  			}
      }
-     public void mousePressed(MouseEvent e) {
-    	 
-    	 
-    	 
+     public void mousePressed(MouseEvent e) { 
              if (e.isPopupTrigger()) myPopupEvent(e);
+             if(e.getClickCount()==2){
+            	 doPaste();
+             }
      }
      public void mouseReleased(MouseEvent e) {
              if (e.isPopupTrigger()) myPopupEvent(e);
@@ -478,13 +560,14 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 						rollOverCommand = cmd;
 						StringBuilder sb = new StringBuilder();
 						cmd = app.translateCommand(cmd); // internal name
-						CommandProcessor.getCommandSyntax(sb, app, cmd, -1);
-						helpTextArea.setText(sb.toString());
+						//CommandProcessor.getCommandSyntax(sb, app, cmd, -1);
+						sb.append(app.getCommandSyntax(cmd));
+						//helpTextArea.setText(sb.toString());
 
 					}else{
 						//clear the help text
-						rollOverCommand = null;
-						helpTextArea.setText("");			
+						//rollOverCommand = null;
+						//helpTextArea.setText("");			
 					}
 				}
 
@@ -494,13 +577,22 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 					helpTextArea.setText("");
 				}
 				
-				helpTextArea.setCaretPosition(0);
-				helpTextArea.repaint();	
+				
 				tree.repaint();
 			}
 		}
 	}
 
+	
+	private void showSelectedSyntax(){
+		
+		String cmd = app.translateCommand(selectedCommand); // internal name
+		//String s = "Syntax:\n" + app.getCommandSyntax(cmd);
+		helpTextArea.setText(app.getCommandSyntax(cmd));
+		helpTextArea.setCaretPosition(0);
+		helpTextArea.repaint();	
+	}
+	
 
 
 	// =============================================
@@ -516,7 +608,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			setClosedIcon(app.getImageIcon("tree-open.png"));
 			setLeafIcon(GeoGebraIcon.createEmptyIcon(5, 1));
 
-			selectionColor = MyTable.SELECTED_BACKGROUND_COLOR ;   
+			selectionColor = MyTable.SELECTED_BACKGROUND_COLOR;  // this.getBackgroundSelectionColor()     
 			rollOverColor =  Color.LIGHT_GRAY;
 
 			this.setTextSelectionColor(Color.black);
@@ -574,17 +666,24 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == btnCollapseTree) {
+		if(e.getSource() == btnRefresh) {
 			cmdTreeModel.setRoot(rootSubCommands);
 			cmdTreeModel.reload();
 			cmdTree.setRootVisible(false);
 			fcnTree.collapseRow(0);
-			btnCollapseTree.setEnabled(false);
+			btnRefresh.setEnabled(false);
+			helpTextArea.setText("");
+			selectedCommand = null;
+			selectedFunction = null;
 		}
 		
 
 		else if(e.getSource() == btnOnlineHelp){
-			app.getGuiManager().openHelp(rollOverCommand);
+			app.getGuiManager().openHelp(selectedCommand);
+		} 
+		
+		else if(e.getSource() == btnPaste){
+			 doPaste();
 		} 
 
 	}
@@ -592,24 +691,33 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	
 	
 	
-	private void insertInputBarString(String str){
-		((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertString(str);
+	private void doPaste(){
+		
+		if(selectedFunction != null){
+			((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertString(selectedFunction);	
+		}
+		
+		if(selectedCommand != null){
+			((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertCommand(selectedCommand);
+		}
+		
 	}
 
+	/*
 	private void insertInputBarCommand(String cmd){
 		//((AlgebraInput)app.getGuiManager().getAlgebraInput()).getInputPanel().insertString(cmd);
 		//((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertString(cmd);
 		//app.getGuiManager().insertStringIntoTextfield(cmd, false,false,false);
-		((AlgebraInput)app.getGuiManager().getAlgebraInput()).insertCommand(cmd);
-	/*
+		
+	
 		if(app.getGuiManager().getCurrentKeyboardListener() != null){
 			VirtualKeyboardListener tf =  app.getGuiManager().getCurrentKeyboardListener();
 			tf.insertString(cmd);
 		}
-		*/
+		
 		
 	}
-
+*/
 
 	public void focusGained(FocusEvent arg0) {
 		// TODO Auto-generated method stub
