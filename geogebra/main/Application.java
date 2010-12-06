@@ -1045,7 +1045,7 @@ public class Application implements KeyEventDispatcher {
 			boolean primary = args.getBooleanValue("primary", false);
 			if (primary) {
 				
-				getGuiManager().getLayout().applyPerspective(Layout.defaultPerspectives[4]);
+				getGuiManager().getLayout().applyPerspective("Primary");
 				GlobalKeyDispatcher.changeFontsAndGeoElements(this, 20, false);
 				setLabelingStyle(ConstructionDefaults.LABEL_VISIBLE_ALWAYS_OFF);
 				getEuclidianView().setCapturingThreshold(10);
