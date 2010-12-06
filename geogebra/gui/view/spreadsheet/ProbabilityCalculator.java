@@ -463,14 +463,14 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	
 	private void createXAxisPoints(){
 		
-		String text = "Point[xAxis]";
+		String text = "Point[y=0]";
 		lowPoint = (GeoPoint) statGeo.createGeoFromString(text);
 		plotGeoList.add(lowPoint);
 		lowPoint.setObjColor(COLOR_POINT);
 		lowPoint.setPointSize(4);
 		lowPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
 		
-		text = "Point[xAxis]";
+		text = "Point[y=0]";
 		highPoint = (GeoPoint) statGeo.createGeoFromString(text);
 		plotGeoList.add(highPoint);
 		highPoint.setObjColor(COLOR_POINT);
