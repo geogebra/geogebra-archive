@@ -21,6 +21,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.jar.Attributes.Name;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -234,6 +235,35 @@ public class Layout {
 			app.updateMenubar();
 			app.updateContentPane();
 		}
+	}
+	
+	/**
+	 * Apply a new perspective using its id. 
+	 * 
+	 * This is a wrapper for #applyPerspective(Perspective) to simplify the loading of default
+	 * perspectives by name. 
+	 * 
+	 * @param id The ID of the perspective. For default perspectives the hard-coded ID is used, ie
+	 * 			 the translation key, for all other perspectives the ID chosen by the user is
+	 * 			 used.
+	 * @throws IllegalArgumentException If no perspective with the given name could be found.
+	 */
+	public void applyPerspective(String id) throws IllegalArgumentException {
+		for(int i = 0; i < defaultPerspectives.length; ++i) {
+			if(id.equals(defaultPerspectives[i].getId())) {
+				applyPerspective(defaultPerspectives[i]);
+				return;
+			}
+		}
+		
+		for(Perspective perspective : perspectives) {
+			if(id.equals(perspective.getId())) {
+				applyPerspective(perspective);
+				return;
+			}
+		}
+		
+		throw new IllegalArgumentException("Could not find perspective with the given name.");
 	}
 	
 	/**
