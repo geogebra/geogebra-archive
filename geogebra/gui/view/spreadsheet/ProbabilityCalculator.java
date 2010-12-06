@@ -595,7 +595,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			double p = parms[1];
 			discreteProbabilities = new double[(int) n+1];
 			for (int k = 0; k <=n; ++k){
-				expr = "BinomialCoefficient[" + n + "," + k + "]*" + p + "^" + k + "*(1-" + p + ")^(" + (n - k) + ")";
+				expr = "Binomial[" + n + "," + k + "]*" + p + "^" + k + "*(1-" + p + ")^(" + (n - k) + ")";
 				//Application.debug(expr);
 				discreteProbabilities[k] = evaluateExpression(expr);
 			}
