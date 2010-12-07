@@ -164,16 +164,35 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		algoShown=false;
 	}
 	
-	/*
-	private void hideAlgo(){
-		algo.setOutputSegmentsAndPolygonsEuclidianVisible(false);
-		algo.notifyUpdateOutputSegmentsAndPolygons();
-		algoShown=false;
+	/**
+	 * sets the height regarding view
+	 */
+	private void setHeight(){
+		
+		
+		GgbVector o = getView3D().getToScreenMatrix().mul(bottomMiddlePoint);
+		GgbVector v = getView3D().getToScreenMatrix().mul(getMainDirection());
 
 		
-			
+		double[] minmax = 
+			getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+				o,v, false);
+		
+		double m = Math.max(Math.abs(minmax[0]), Math.abs(minmax[1]));
+		int exp = (int) Math.floor(Math.log(m) / Math.log(10));
+		double h = Math.pow(10, exp);
+		
+		//the height has the same number of digits than minmax, e.g. if minmax=[-0.5,3.7], then h=1
+		
+		//Application.debug("minmax="+minmax[0]+", "+minmax[1]+"\nexp="+exp+", h="+h);
+		
+		if (mainDirection.dotproduct(getView3D().getViewDirection())<0)
+			height.setValue(-h);
+		else
+			height.setValue(h);
 	}
-	 */
+	
 
 	public void updatePreview() {
 		
@@ -185,18 +204,35 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 				getView3D().setButtonsVisible(false);
 			}
 		}else if (selectedPolygons.size()==1){
-			
+
+
 			if (algo==null){
-				basis = (GeoPolygon) selectedPolygons.get(0);
+				updateBasis((GeoPolygon) selectedPolygons.get(0));
+				setHeight();
 				createAlgo();
-				updateMainDirection();
 			}else if (basis!=selectedPolygons.get(0)){
-				basis = (GeoPolygon) selectedPolygons.get(0);
-				removeAlgo();
+				updateBasis((GeoPolygon) selectedPolygons.get(0));
+				setHeight();
+				removeAlgo();			
 				createAlgo();
-				updateMainDirection();
 			}
-			
+			 
+
+			algo.setOutputSegmentsAndPolygonsEuclidianVisible(true);
+			algo.notifyUpdateOutputSegmentsAndPolygons();
+			algoShown=true;
+
+			getView3D().setButtonsVisible(true);
+
+			updateButtonsPosition();
+
+		
+			/*
+			basis = (GeoPolygon) selectedPolygons.get(0);
+
+			updateMainDirection();
+			setHeight();
+			createAlgo();
 			
 			algo.setOutputSegmentsAndPolygonsEuclidianVisible(true);
 			algo.notifyUpdateOutputSegmentsAndPolygons();
@@ -206,7 +242,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 			
 			updateButtonsPosition();
 			
-				
+				*/
 		}
 	}
 	
@@ -318,7 +354,17 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 	
 	private GgbVector mainDirection;
 	
-	private void updateMainDirection(){
+	private GgbVector bottomMiddlePoint;
+	
+	private void updateBasis(GeoPolygon basis){
+		this.basis = basis;
 		mainDirection = basis.getMainDirection().normalized();
+		
+		// bottom middle points
+		GgbVector ret = new GgbVector(4);
+		for (int i=0; i<basis.getPointsLength(); i++)
+			ret = ret.add(basis.getPointND(i).getCoordsInD(3));
+		bottomMiddlePoint =  ret.mul((double) 1/basis.getPointsLength());
+		
 	}
 }

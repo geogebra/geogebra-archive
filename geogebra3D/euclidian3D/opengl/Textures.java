@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.util.ImageManager;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
@@ -25,6 +26,8 @@ import com.sun.opengl.util.BufferUtil;
 public class Textures {
 	
 	private GL gl;
+	
+	private ImageManager imageManager;
 	
 	///////////////////
 	//dash	
@@ -97,7 +100,8 @@ public class Textures {
 	/** default constructor
 	 * @param gl
 	 */
-	public Textures(){
+	public Textures(ImageManager imageManager){
+		this.imageManager = imageManager;
 		
 		
 		
@@ -341,7 +345,7 @@ public class Textures {
 		
 		try {
 			//gets the image
-			BufferedImage img = readImage("geogebra3D/gui/images",name);
+			BufferedImage img = readImage("/geogebra3D/gui/images/"+name);
 
 			
 			//turn it into pixels for texture 2D
@@ -382,8 +386,9 @@ public class Textures {
 		
 	}
 		
-	private BufferedImage readImage(String path, String name) throws IOException {
-		return ImageIO.read(new File(path,name));		
+	private BufferedImage readImage(String name) throws IOException {
+		return ImageManager.toBufferedImage(imageManager.getImageResource(name));
+		//return ImageIO.read(new File(path,name));		
 	}
 	
 	

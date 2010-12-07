@@ -3,8 +3,10 @@ package geogebra3D.kernel3D.commands;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
+import geogebra.kernel.commands.CmdOrthogonalLine;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoCoordSys;
@@ -16,11 +18,11 @@ import geogebra3D.kernel3D.Kernel3D;
 /*
  * Orthogonal[ <GeoPoint3D>, <GeoCoordSys> ]
  */
-public class CmdOrthogonalPlane extends CommandProcessor {
+public class CmdOrthogonalLine3D extends CmdOrthogonalLine {
 	
 	
 	
-	public CmdOrthogonalPlane(Kernel kernel) {
+	public CmdOrthogonalLine3D(Kernel kernel) {
 		super(kernel);
 	}
 	
@@ -36,27 +38,21 @@ public class CmdOrthogonalPlane extends CommandProcessor {
 	    	arg = resArgs(c);
 	    	if (
 	    			(ok[0] = (arg[0] .isGeoPoint() ) )
-	    			&& (ok[1] = (arg[1] instanceof GeoLineND ))
+	    			&& (ok[1] = (arg[1] instanceof GeoPlaneND ))
 	    	) {
 	    		GeoElement[] ret =
 	    		{
-	    				(GeoElement) kernel.getManager3D().OrthogonalPlane3D(
+	    				(GeoElement) kernel.getManager3D().OrthogonalLine3D(
 	    						c.getLabel(),
 	    						(GeoPointND) arg[0],
-	    						(GeoLineND) arg[1])};
+	    						(GeoPlaneND) arg[1])};
 	    		return ret;
-	    	}else{
-	    		if (!ok[0])
-	    			throw argErr(app, "OrthogonalPlane", arg[0]);
-	    		else 
-	    			throw argErr(app, "OrthogonalPlane", arg[1]);
 	    	}
 	    	
-	    default :
-	    	throw argNumErr(app, "OrthogonalPlane", n);
 	    }
 	    
 
+	    return super.process(c);
 	}
 	
 }

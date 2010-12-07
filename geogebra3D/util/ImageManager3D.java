@@ -22,7 +22,7 @@ public class ImageManager3D extends ImageManager {
 	
 	
 	
-	protected Image getImageResourceGeoGebra(String name) {
+	public Image getImageResourceGeoGebra(String name) {
 		
 		Image img = getImageResource("/geogebra3D"+name);
 

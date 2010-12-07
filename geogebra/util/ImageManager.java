@@ -152,7 +152,7 @@ public class ImageManager {
 	 * @param name name of the image (without "/geogebra" prefix)
 	 * @return the image
 	 */
-	protected Image getImageResourceGeoGebra(String name) {
+	public Image getImageResourceGeoGebra(String name) {
 		
 		Image img = getImageResource("/geogebra"+name);
 		

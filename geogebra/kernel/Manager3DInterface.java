@@ -4,10 +4,9 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
-import geogebra3D.kernel3D.GeoCoordSys2D;
-import geogebra3D.kernel3D.GeoPlane3D;
 
 /**
  * Interface for managing all 3D methods in Kernel.
@@ -82,6 +81,12 @@ public interface Manager3DInterface {
 			 public GeoElement Ray3D(String label, GeoPointND P1, GeoPointND P2);
 
 
+		    /** Line3D through point orthogonal to plane   */	
+			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoPlaneND plane);
+
+
+			 
+			 
 
 
 			/** Polygon3D linking points P1, P2, ...  
@@ -129,7 +134,7 @@ public interface Manager3DInterface {
 
 
 			/** Line a x + b y + c z + d = 0 named label */
-			 public GeoElement Plane3D(
+			 public GeoPlaneND Plane3D(
 					String label,
 					double a,
 					double b,
@@ -139,22 +144,22 @@ public interface Manager3DInterface {
 			/** Line dependent on coefficients of arithmetic expressions with variables,
 			 * represented by trees.
 			 */
-			 public GeoElement DependentPlane3D(String label, Equation equ) ;
+			 public GeoPlaneND DependentPlane3D(String label, Equation equ) ;
 			 
 			/** 
 			 * Plane named label through point and line
 			 */
-			 public GeoPlane3D Plane3D(String label, GeoPointND point, GeoLineND line);
+			 public GeoPlaneND Plane3D(String label, GeoPointND point, GeoLineND line);
 			 
 			 /** 
 			  * Plane named label through point parallel to plane
 			  */
-			 public GeoPlane3D Plane3D(String label, GeoPointND point, GeoCoordSys2D cs);
+			 public GeoPlaneND Plane3D(String label, GeoPointND point, GeoPlaneND cs);
 
 			/** 
 			 * Line named label through Point P orthogonal to line l
 			 */
-			 public GeoElement OrthogonalPlane3D(
+			 public GeoPlaneND OrthogonalPlane3D(
 					String label,
 					GeoPointND point,
 					GeoLineND line) ;

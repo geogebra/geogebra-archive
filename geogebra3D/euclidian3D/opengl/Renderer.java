@@ -198,7 +198,7 @@ public class Renderer implements GLEventListener {
 		this.view3D=view;
 		
 		//textures
-		textures = new Textures();
+		textures = new Textures(view3D.getApplication().getImageManager());
 		
 		
 	}

@@ -18,6 +18,7 @@ import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
@@ -889,9 +890,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if (selCoordSys2D() == 1) {
 				// fetch selected point and vector
 				GeoPointND[] points = getSelectedPointsND();
-				GeoCoordSys2D[] cs = getSelectedCoordSys2D();
+				GeoCoordSys2D[] cs = getSelectedCoordSys2D();//TODO
 				// create new plane
-				getKernel().getManager3D().Plane3D(null, points[0], cs[0]);
+				getKernel().getManager3D().Plane3D(null, points[0], (GeoPlaneND) cs[0]);
 				return true;
 			}
 		}

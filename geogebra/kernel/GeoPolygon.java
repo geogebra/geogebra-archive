@@ -17,6 +17,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.util.MyMath;
@@ -29,7 +30,7 @@ import java.util.HashSet;
  * 
  * @author Markus Hohenwarter
  */
-public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable {
+public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable, GeoPlaneND {
 	
 	private static final long serialVersionUID = 1L;
 

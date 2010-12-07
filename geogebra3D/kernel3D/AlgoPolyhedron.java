@@ -702,6 +702,25 @@ implements AlgoElementWithResizeableOutput{
 			getKernel().notifyUpdate(outputPoints.getElement(i));
 	}
 
+	
+	/**
+	 * used for previewable of prism
+	 * @return the middle point of the bottom face (for prism)
+	 */
+	public GgbVector getBottomMiddlePoint(){
+		GgbVector ret = new GgbVector(4);
+		
+		int size;
+		if (inputHeight==null)
+			size=inputPoints.length-1;//use only input points of bottom face
+		else
+			size=inputPoints.length;		
+		
+		for (int i=0; i<size; i++)
+			ret = ret.add(inputPoints[i].getCoordsInD(3));
+		
+		return ret.mul((double) 1/size);
+	}
 
 	/**
 	 * used for previewable of prism
