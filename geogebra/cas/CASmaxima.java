@@ -337,9 +337,8 @@ public class CASmaxima extends CASgeneric {
 		// with this setting ev( a+a, simp ) is needed to get 2*a
 	    ggbMaxima.executeCall("simp:false;");
 	    
-	    // variable ordering: then factor(a^2-b^2) gives (a-b)*(b+a) instead of �(b-a)(b+a) 
-	    // see http://www.geogebra.org/trac/ticket/281
-	    ggbMaxima.executeCall("ordergreat(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,z);");
+	    // Variable Ordering. See Tickets #281 and #311 in trac
+	    ggbMaxima.executeCall("powerdisp:true;");
 	    
 		// set line length of "terminal"
 		// we don't want lines broken
