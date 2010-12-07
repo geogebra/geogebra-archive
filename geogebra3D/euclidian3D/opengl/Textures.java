@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D.opengl;
 import geogebra.euclidian.EuclidianView;
 import geogebra.util.ImageManager;
 
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
 import java.io.File;
@@ -387,8 +388,7 @@ public class Textures {
 	}
 		
 	private BufferedImage readImage(String name) throws IOException {
-		return ImageManager.toBufferedImage(imageManager.getImageResource(name));
-		//return ImageIO.read(new File(path,name));		
+		return ImageManager.toBufferedImage(imageManager.getImageResource(name),Transparency.TRANSLUCENT);
 	}
 	
 	

@@ -190,26 +190,31 @@ public class ImageManager {
 	}	  
 
 //	 This method returns a buffered image with the contents of an image
-    public static BufferedImage toBufferedImage(Image image) {
+	 public static BufferedImage toBufferedImage(Image image) {
+		 // Determine if the image has transparent pixels; for this method's
+	        // implementation, see e661 Determining If an Image Has Transparent Pixels
+	        boolean hasAlpha = hasAlpha(image);
+	        
+	        if (hasAlpha)
+	        	return toBufferedImage(image, Transparency.BITMASK);
+	        else
+	        	return toBufferedImage(image, Transparency.OPAQUE);
+		 
+	 }
+	
+    public static BufferedImage toBufferedImage(Image image, int transparency) {
         if (image instanceof BufferedImage)
 			return (BufferedImage)image;
     
         // This code ensures that all the pixels in the image are loaded
         image = new ImageIcon(image).getImage();
     
-        // Determine if the image has transparent pixels; for this method's
-        // implementation, see e661 Determining If an Image Has Transparent Pixels
-        boolean hasAlpha = hasAlpha(image);
+       
     
         // Create a buffered image with a format that's compatible with the screen
         BufferedImage bimage = null;
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         try {
-            // Determine the type of transparency of the new buffered image
-            int transparency = Transparency.OPAQUE;
-            if (hasAlpha) {
-                transparency = Transparency.BITMASK;
-            }
     
             // Create the buffered image
             GraphicsDevice gs = ge.getDefaultScreenDevice();
@@ -222,10 +227,12 @@ public class ImageManager {
     
         if (bimage == null) {
             // Create a buffered image using the default color model
-            int type = BufferedImage.TYPE_INT_RGB;
-            if (hasAlpha) {
+        	int type;
+        	if (transparency==Transparency.OPAQUE)
+        		type = BufferedImage.TYPE_INT_RGB;
+        	else
                 type = BufferedImage.TYPE_INT_ARGB;
-            }
+
             bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
         }
     
