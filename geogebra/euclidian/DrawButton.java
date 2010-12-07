@@ -207,6 +207,8 @@ public final class DrawButton extends Drawable {
 
 		if (isVisible) {		
 			button.setSelected(geo.doHighlighting());
+			// setSelected doesn't seem to do anything in Windows XP
+			button.setBackground(geo.doHighlighting() ? Color.blue : Color.white);
 		}
 
 	}
