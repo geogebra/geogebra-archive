@@ -7040,7 +7040,10 @@ public class Kernel {
 		switch (casPrintForm) {
 			// number formatting for XML string output
 			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
-				return Double.toString(x);		
+				if (Math.floor(x) == x)
+					return Integer.toString((int) x);
+				else
+					return Double.toString(x);		
 		
 			// number formatting for CAS
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:				
