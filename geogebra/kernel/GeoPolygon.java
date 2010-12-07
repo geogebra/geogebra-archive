@@ -19,7 +19,6 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -81,6 +80,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		setAlphaValue(ConstructionDefaults.DEFAULT_POLYGON_ALPHA);
 	}
 	
+	/**
+	 * Creates new GeoPolygon
+	 * @param cons construction
+	 */
 	public GeoPolygon(Construction cons) {
 		super(cons);
 	}
@@ -266,6 +269,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
     /**
      * Returns whether the method initLabels() was called for this polygon.
      * This is important to know whether the segments have gotten labels.
+     * @return true iff the method initLabels() was called for this polygon.
      */
     final public boolean wasInitLabelsCalled() {
     	return initLabelsCalled;
@@ -356,8 +360,11 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	  * remove an old segment
 	  * @param oldSegment the old segment 
 	  */
-	 public void removeSegment(GeoSegmentND oldSegment){
-		 ((AlgoJoinPointsSegment) ((GeoSegment) oldSegment).getParentAlgorithm()).removeSegmentOnly();
+	 public void removeSegment(GeoSegmentND oldSegment){		 
+		 AlgoElement parentAlgo = ((GeoSegment) oldSegment).getParentAlgorithm();
+		 //if this polygon is Polygon[<list of points>], we don't do anything
+		 if(parentAlgo instanceof AlgoJoinPointsSegment)
+			 ((AlgoJoinPointsSegment) parentAlgo).removeSegmentOnly();
 	 }
 	 
 	 
@@ -366,6 +373,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	  * return a segment joining startPoint and endPoint
 	  * @param startPoint the start point
 	  * @param endPoint the end point
+	  * @param euclidianVisible
 	  * @return the segment
 	  */
 	 public GeoSegmentND createSegment(GeoPointND startPoint, GeoPointND endPoint, boolean euclidianVisible){
@@ -402,6 +410,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		return ret;		
 	} 		
 	
+	/**
+	 * Returns new point in the same construction
+	 * @return new point
+	 */
 	protected GeoPointND newGeoPoint(){
 		return new GeoPoint(cons);
 	}
@@ -441,17 +453,28 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	}
 
 	/**
-	 * Returns the points of this polygon.
+	 * Returns the points of this polygon as GeoPoints.
 	 * Note that this array may change dynamically.
+	 * @return points of this polygon.
 	 */
 	public GeoPoint [] getPoints() {
 		return (GeoPoint []) points;
 	}
 	
+	/**
+	 * Returns the points of this polygon as GeoPointNDs.
+	 * Note that this array may change dynamically.
+	 * @return points of this polygon
+	 */
 	public GeoPointND [] getPointsND() {
 		return points;
 	}
 	
+	/**
+	 * Returns i-th vertex of this polygon
+	 * @param i
+	 * @return i-th pointt
+	 */
 	public GeoPointND getPointND(int i) {
 		return points[i];
 	}	
@@ -459,6 +482,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	/**
 	 * Returns the segments of this polygon.
 	 * Note that this array may change dynamically.
+	 * @return segments of this polygon.
 	 */
 	public GeoSegmentND [] getSegments() {
 		return segments;
@@ -485,14 +509,23 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		defined = !(Double.isNaN(area) || Double.isInfinite(area));
 	}
 	
+	/**
+	 * Returns undirected area
+	 * @return undirected area
+	 */
 	public double getArea() {
 		if (defined)
 			return Math.abs(area);				        
 		else 
 			return Double.NaN;			        	
 	}
-	
-	public double getDirection() { // clockwise=-1/anticlockwise=+1/no area=0
+	/**
+	 * clockwise=-1
+	 * anticlockwise=+1
+	 * no area=0
+	 * @return orientation of area 
+	 */
+	public double getDirection() { 
 		if (defined)
 			return MyMath.sgn(kernel, area);				        
 		else 
@@ -501,6 +534,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 
 	/**
 	 * Returns the area of a polygon given by points P
+	 * @param P vertices of polygon
+	 * @return undirected area
 	 */	
 	final static public double calcArea(GeoPoint [] P) {
 	    return Math.abs(calcAreaWithSign(P));
@@ -509,6 +544,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	 * Returns the area of a polygon given by points P, negative if clockwise
 	 * changed name from calcArea as we need the sign when calculating the centroid Michael Borcherds 2008-01-26
 	 * TODO Does not work if polygon is self-entrant
+	 * @param points2 
+	 * @return directed area
 	 */	
 	final static public double calcAreaWithSign(GeoPoint[] points2) {
 		if (points2 == null || points2.length < 2)
@@ -535,6 +572,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	 * the result to the given point.
 	 * algorithm at http://local.wasp.uwa.edu.au/~pbourke/geometry/polyarea/
 	 * TODO Does not work if polygon is self-entrant
+	 * @param centroid 
 	 */
 	public void calcCentroid(GeoPoint centroid) {
 		if (!defined) {
@@ -567,6 +605,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 			return getPointY(0); else return getPointY(i);
 	}
 	 	
+	/**
+	 * Returns directed area
+	 * @return directed area
+	 */
 	public double getAreaWithSign() {
 		if (defined)
 			return area;				        
@@ -581,7 +623,9 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	public boolean isDefined() {
 		return defined;
    }	
-   
+   /**
+    * Sets the polygon state to "defined"
+    */
    public void setDefined() {
    		defined = true;
    }
@@ -603,7 +647,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	// Michael Borcherds 2008-04-30
 	final public boolean isEqual(GeoElement geo) {
 		// return false if it's a different type
-		if (geo.isGeoPolygon()) return kernel.isEqual(getArea(), ((GeoPolygon)geo).getArea());
+		if (geo.isGeoPolygon()) return Kernel.isEqual(getArea(), ((GeoPolygon)geo).getArea());
 		else return false;
 	}
 
@@ -613,6 +657,11 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	
    }  
    
+   /**
+    * Switches visibility of this polygon
+    * @param visible visibility flag
+    * @param updateSegments if true, applies also to segments
+    */
    public void setEuclidianVisible(boolean visible, boolean updateSegments) {
 		super.setEuclidianVisible(visible);
 		if (updateSegments && segments != null) {
@@ -621,7 +670,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 				segments[i].update();
 			}
 		}		
-  }  
+   }  
 
 
    public void setObjColor(Color color) {
@@ -1093,7 +1142,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		return 0;
 	}
 
-   public boolean trace;
+   private boolean trace;
 
 
 	public boolean isTraceable() {

@@ -94,7 +94,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 				// offscreen points too
 			}
 			// draw trace
-			if (poly.trace) {
+			if (poly.getTrace()) {
 				isTracing = true;
 				Graphics2D g2 = view.getBackgroundGraphics();
 				if (g2 != null)
