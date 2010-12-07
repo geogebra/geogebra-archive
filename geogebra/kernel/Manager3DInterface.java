@@ -123,7 +123,7 @@ public interface Manager3DInterface {
 			  * @param height 
 			  * @return the polyhedron
 			  */	 
-			 public GeoElement [] Prism(String[] labels, GeoPolygon polygon, GeoNumeric height);
+			 public GeoElement [] Prism(String[] labels, GeoPolygon polygon, NumberValue height);
 
 			/** Pyramid with vertices (last one as apex)
 			 * @param label name

@@ -38,8 +38,7 @@ public class CmdPrism extends CommandProcessor {
 		arg = resArgs(c);
 
 
-		switch (n) {
-		case 2 :		
+		if(n==2){		
 			if ((ok[0] = (arg[0] .isGeoPolygon()))
 					&& (ok[1] = (arg[1] .isGeoPoint()))) {
 				return kernel.getManager3D().Prism(
@@ -47,11 +46,11 @@ public class CmdPrism extends CommandProcessor {
 								(GeoPolygon) arg[0],
 								(GeoPointND) arg[1]);
 			} else if ((ok[0] = (arg[0] .isGeoPolygon()))
-					&& (ok[1] = (arg[1] .isGeoNumeric()))) {
+					&& (ok[1] = (arg[1] .isNumberValue()))) {
 				return kernel.getManager3D().Prism(
 								c.getLabels(),
 								(GeoPolygon) arg[0],
-								(GeoNumeric) arg[1]);		
+								(NumberValue) arg[1]);		
 			} else {
                 if (!ok[0])
                     throw argErr(app, "Prism", arg[0]);
@@ -59,7 +58,7 @@ public class CmdPrism extends CommandProcessor {
                     throw argErr(app, "Prism", arg[1]);
             }
 
-		default:
+		}else if (n>2){
 
 			// polygon for given points
 			GeoPointND[] points = new GeoPointND[n];
@@ -74,6 +73,8 @@ public class CmdPrism extends CommandProcessor {
 			// everything ok
 			return kernel.getManager3D().Prism(c.getLabels(), points);
 
+		}else{
+			throw argNumErr(app, "Prism", n);
 		}
 
 	}

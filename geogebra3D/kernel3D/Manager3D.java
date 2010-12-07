@@ -236,7 +236,7 @@ public class Manager3D implements Manager3DInterface {
 
 	 }
 
-	 final public GeoElement [] Prism(String[] labels, GeoPolygon polygon, GeoNumeric height){
+	 final public GeoElement [] Prism(String[] labels, GeoPolygon polygon, NumberValue height){
 
 		 AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,polygon,height,GeoPolyhedron.TYPE_PRISM);
 

@@ -11,6 +11,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.AlgoElement.OutputHandler;
 import geogebra.kernel.AlgoElement.elementFactory;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
@@ -34,7 +35,7 @@ implements AlgoElementWithResizeableOutput{
 	
 	private GeoPolygon inputPolygon;
 	
-	private GeoNumeric inputHeight;
+	private NumberValue inputHeight;
 	
 	/** lists describing the faces (for polyhedron of TYPE_NONE) */
 	private GeoList faces = null;
@@ -339,7 +340,7 @@ implements AlgoElementWithResizeableOutput{
 	 * @param height 
 	 * @param type type of polyhedron
 	 */
-	public AlgoPolyhedron(Construction c, String[] labels, GeoPolygon polygon, GeoNumeric height, int type) {
+	public AlgoPolyhedron(Construction c, String[] labels, GeoPolygon polygon, NumberValue height, int type) {
 		this(c);
 		
 		this.type = type;
@@ -516,7 +517,7 @@ implements AlgoElementWithResizeableOutput{
 				if (inputHeight==null)
 					input[1] = (GeoElement) inputPoints[inputPoints.length-1];
 				else
-					input[1] = inputHeight;
+					input[1] = (GeoElement) inputHeight;
 			}
 		}else{
 			input = new GeoElement[1];
