@@ -992,15 +992,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		if (mouseMoved){
 			
-			if (view3D.getButtonPicked()==EuclidianView3D.BUTTON_PICKED_HANDLE){
-				handleMouseMovedForViewButtons();
-				return;
-			}
-			
 			mouseMoved = false;
 			((EuclidianView3D) view).updateCursor3D();
-			
-			//Application.debug(view.getHits().toString());
 			
 			super.processMouseMoved(mouseEvent);
 				
@@ -1009,7 +1002,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
-	
+	public void mouseDragged(MouseEvent e) {
+		
+		if (view3D.getButtonHandleMoving()){
+			setMouseLocation(e);
+			handleMouseDraggedForViewButtons();
+			return;
+		}
+		
+		super.mouseDragged(e);
+	}
 	
 	protected void initNewMode(int mode) {
 		super.initNewMode(mode);
@@ -1665,11 +1667,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/**
 	 * mouse is moved for view buttons (handle)
 	 */
-	protected void handleMouseMovedForViewButtons(){
-
-		if (!view3D.getButtonHandleMoving() || mouseLoc == null)
+	protected void handleMouseDraggedForViewButtons(){
+		
+		if (mouseLoc == null)
 			return;
-	
+
 		((HandleAction) view3D.getPreviewDrawable()).handlePosition(getCoordsForViewButtons());
 	}
 	
@@ -1686,6 +1688,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	public void mouseReleased(MouseEvent e) {
+		
 		
 		//check if it's "view buttons mode"
 		if (view3D.getButtonHandleMoving())

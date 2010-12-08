@@ -2401,10 +2401,22 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	/**
+	 * 
+	 * @return visibility of the buttons
+	 */
+	public boolean getButtonsVisible(){
+		return buttonsVisible;
+	}
+	
+	
+	/**
 	 * sets which button is picked
 	 * @param i
 	 */
 	public void setButtonPicked(int i){
+		if (getButtonHandleMoving())
+			return;
+		
 		buttonPicked = i;
 	}
 
@@ -2488,6 +2500,24 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		renderer.drawButtonHandleAndArrows(buttonPicked!=BUTTON_PICKED_HANDLE);
 	}
 	
+	/** drawable that can be handled */
+	private Drawable3D handledDrawable;
+	
+	/**
+	 * sets the geo that can be handled
+	 * @param geo
+	 */
+	public void setHandledDrawable(GeoElement geo){
+		handledDrawable = (Drawable3D) getDrawableND(geo);
+	}
+	
+	/**
+	 * remove the handleable geo
+	 */
+	public void removeHandledDrawable(){
+		handledDrawable = null;
+	}
+	
 	/**
 	 * draw handle button for picking
 	 * @param renderer
@@ -2497,6 +2527,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		if (!buttonsVisible || buttonHandleMoving)
 			return;
+		
+		if (handledDrawable!=null)
+			handledDrawable.drawForPicking(renderer,false);
 		
 		renderer.setMatrix(buttonHandleMatrix);
 		renderer.drawButtonHandleForPicking();

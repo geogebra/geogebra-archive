@@ -155,6 +155,9 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		algo.setOutputPointsEuclidianVisible(false);
 		algo.notifyUpdateOutputPoints();
 		
+		//tells the handled top
+		getView3D().setHandledDrawable(algo.getTopFace());
+		
 		
 	}
 	
@@ -162,6 +165,8 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 		algo.remove();
 		algo=null;
 		algoShown=false;
+		
+		getView3D().removeHandledDrawable();
 	}
 	
 	/**
@@ -359,6 +364,8 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable,
 	private void updateBasis(GeoPolygon basis){
 		this.basis = basis;
 		mainDirection = basis.getMainDirection().normalized();
+		
+		
 		
 		// bottom middle points
 		GgbVector ret = new GgbVector(4);

@@ -496,13 +496,24 @@ public abstract class Drawable3D extends DrawableND {
 	 */			
 	public Drawable3D drawForPicking(Renderer renderer) {
 		
+		return drawForPicking(renderer, true);
+	}
+	
+	/**
+	 * draw for picking, and verify (or not) if pickable
+	 * @param renderer
+	 * @param verifyIsPickable
+	 * @return this, or the DrawList that created it
+	 */
+	public Drawable3D drawForPicking(Renderer renderer, boolean verifyIsPickable) {
+		
 		Drawable3D ret;
 		if (createdByDrawList())//if it is part of a DrawList3D, the list is picked
 			ret = (Drawable3D) getDrawListCreator();
 		else
 			ret = this;
 
-		if (!getGeoElement().isPickable())
+		if (!getGeoElement().isPickable() && verifyIsPickable)
 			return ret;
 			
 		
@@ -513,7 +524,6 @@ public abstract class Drawable3D extends DrawableND {
 
 		return ret;
 	}
-
 	
 	/** draws the label (if any)
      * @param renderer 3D renderer

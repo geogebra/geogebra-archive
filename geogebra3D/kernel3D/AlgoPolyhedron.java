@@ -735,4 +735,9 @@ implements AlgoElementWithResizeableOutput{
 		return ret.mul((double) 1/outputPoints.size());
 	}
 	
+	
+	public GeoPolygon getTopFace(){
+		return outputPolygons.getElement(outputPolygons.size()-1);
+		
+	}
 }
