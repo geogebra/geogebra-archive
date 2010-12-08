@@ -3,7 +3,6 @@ package geogebra.kernel;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.GgbMat;
 
 /**
@@ -95,11 +94,11 @@ public abstract class Transform {
 	}
 
 	private GeoList[] transformList(String label, GeoList geo) {
-		GeoList ret = transformList(geo);
 		
-		ret.setVisualStyleForTransformations(geo);
+		GeoList ret = transformList(geo);	
 		AlgoElement algo = getTransformAlgo(geo);
 		ret.setParentAlgorithm(algo);
+		ret.setVisualStyleForTransformations(geo);
 		algo.setOutput(0, ret);
 		algo.input[0] = geo;
 		ret.setLabel(label);
@@ -112,9 +111,12 @@ public abstract class Transform {
 		boolean suppress = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 		for(int i = 0; i < geo.size(); i++){
-			Application.debug(ret.getElementType());
 			GeoElement current = geo.get(i);
-			if(current.isGeoList()){
+			if (current.isGeoPolygon()) {
+				GeoPolygon poly = (GeoPolygon) current;
+				GeoElement poly2 = cons.getKernel().Polygon(null, transformPoints(poly.getPoints()))[0];				
+				ret.add(poly2);
+			}else if(current.isGeoList()){
 				ret.add(transformList((GeoList)current));
 			}else if(current.isLimitedPath() ){
 				GeoElement[] geos = ((LimitedPath) current)
@@ -122,8 +124,7 @@ public abstract class Transform {
 				ret.add(geos[0]);
 				
 			}
-			else ret.add(doTransform(current));
-			Application.debug(ret.getElementType());
+			else ret.add(doTransform(current));			
 		}
 		cons.setSuppressLabelCreation(suppress);
 		return ret;
