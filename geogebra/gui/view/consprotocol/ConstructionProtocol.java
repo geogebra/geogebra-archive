@@ -739,7 +739,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		private static final long serialVersionUID = -9165858653728142643L;
 
 		private JCheckBox cbTemp = new JCheckBox();
-		// private ImageIcon icon = new ImageIcon();
 		private JLabel iTemp = new JLabel();
 		
 		public ConstructionTableCellRenderer() {
@@ -1175,12 +1174,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			return "";
 		}
 
-		/*
-		ImageIcon icon = app.getModeIcon(10);
-		Image img1 = icon.getImage();
-		pg.drawImage(img1, x[nCol], y, null);
-		*/
-		
 		// html code without <html> tags
 		public String getPlainHTMLAt(int nRow, int nCol, String thisPath) {
 			if (nRow < 0 || nRow >= getRowCount())
@@ -1526,17 +1519,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			if (nCol + 1 < nColumns)
 				x[nCol + 1] = x[nCol] + width;
 			title = (String) tk.getIdentifier();
-			/*
-			 * ((Graphics2D) pg);
-			 * 
-			 * Point2D pen = initialPosition; LineBreakMeasurer measurer = new
-			 * LineBreakMeasurer(styledText, myBreakIterator); while (true) {
-			 * TextLayout layout = measurer.nextLayout(wrappingWidth); if
-			 * (layout == null) break; pen.y += layout.getAscent(); float dx =
-			 * 0; if (layout.isLeftToRight()) dx = wrappingWidth -
-			 * layout.getAdvance(); layout.draw(graphics, pen.x + dx, pen.y);
-			 * pen.y += layout.getDescent() + layout.getLeading(); {
-			 */
 			pg.drawString(title, x[nCol], y);
 		}
 
