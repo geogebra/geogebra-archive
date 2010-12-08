@@ -123,8 +123,8 @@ abstract public class Manager {
 	 */
 	public void update(){
 		//color factor for highlighting
-		//colorFactor = (float) ((Math.sin(System.currentTimeMillis()/100.0)+1)/2);
-		colorFactor = (float) Math.sin(System.currentTimeMillis()/100.0)+1;
+		colorFactor = (float) Math.sin(System.currentTimeMillis()/200.0)+1;
+		//colorFactor = (float) Math.abs(Math.sin(System.currentTimeMillis()/300.0))*2;
 	}
 	
 	/////////////////////////////////////////////
@@ -327,21 +327,25 @@ abstract public class Manager {
 	 */
 	public Color getHigthlighting(Color c, int amplitude){
 		
-		/*
-		int r = (int) (c.getRed()*(1-colorFactor)+255*colorFactor);
-		int g = (int) (c.getGreen()*(1-colorFactor)+255*colorFactor);
-		int b = (int) (c.getBlue()*(1-colorFactor)+255*colorFactor);
-		*/
-		
 		float coeff = (float) (255-2*amplitude)/255;
 		int r = (int) (c.getRed()*coeff+amplitude*colorFactor);
 		int g = (int) (c.getGreen()*coeff+amplitude*colorFactor);
 		int b = (int) (c.getBlue()*coeff+amplitude*colorFactor);
 		
-		//Application.debug("COLOR_VARIATION="+COLOR_VARIATION+", COLOR_COEFF="+COLOR_COEFF +"\nr="+r+",g="+g+",b="+b);
-		
 		return new Color(r,g,b);
 	}
+	
+	public float getHigthlighting(float alpha, int amplitude){
+		
+		if (alpha==1f)
+			return 1f;
+		
+		float coeff = (float) (255-2*amplitude)/255;
+		
+		return alpha*coeff-((float) amplitude/255)*colorFactor;
+	}
+
+	
 	
 
 }

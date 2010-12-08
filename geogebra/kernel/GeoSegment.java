@@ -543,6 +543,19 @@ GeoSegmentND {
     	
     	return super.distance(p);
     }
+    
+    
+    
+    
+    private GeoElement highlightingAncestor;
+    
+    public void setHighlightingAncestor(GeoElement geo){
+    	highlightingAncestor=geo;
+    }
+    
+    public GeoElement getHighlightingAncestor(){
+    	return highlightingAncestor;
+    }
 
 	
 }

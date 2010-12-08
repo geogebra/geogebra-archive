@@ -62,7 +62,19 @@ public interface GeoSegmentND extends GeoLineND {
 
 	boolean isEuclidianVisible();
 
-
 	
+	// highlighting when segment of a polygon or polyhedron
+	/**
+	 * sets the highlighting ancestor
+	 * @param geo 
+	 * 
+	 */
+	public void setHighlightingAncestor(GeoElement geo);
+	
+	/**
+	 * 
+	 * @return the highlighting ancestor
+	 */
+	public GeoElement getHighlightingAncestor();
 
 }

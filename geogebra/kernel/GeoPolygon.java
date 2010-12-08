@@ -378,17 +378,27 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	  * @return the segment
 	  */
 	 public GeoSegmentND createSegment(GeoPointND startPoint, GeoPointND endPoint, boolean euclidianVisible){
-		 GeoSegmentND segment;
 
 		 AlgoJoinPointsSegment algoSegment = new AlgoJoinPointsSegment(cons, (GeoPoint) startPoint, (GeoPoint) endPoint, this);            
-		 cons.removeFromConstructionList(algoSegment);               
+		 cons.removeFromConstructionList(algoSegment);  
+		 
+		 return createSegment(algoSegment.getSegment(), euclidianVisible);
+	 }
 
-		 segment = algoSegment.getSegment(); 
+
+	 /**
+	  * ends the creation of the segment
+	  * @param segment
+	  * @param euclidianVisible
+	  * @return the segment modified
+	  */
+	 protected GeoSegmentND createSegment(GeoSegmentND segment, boolean euclidianVisible){
 		 // refresh color to ensure segments have same color as polygon:
 		 segment.setObjColor(getObjectColor()); 
-         segment.setLineThickness(getLineThickness()); 
-         segment.setEuclidianVisible(euclidianVisible);
-         //segment.setAuxiliaryObject(true);
+		 segment.setLineThickness(getLineThickness()); 
+		 segment.setEuclidianVisible(euclidianVisible);
+
+		 segment.setHighlightingAncestor(this);
 
 		 return segment;
 	 }

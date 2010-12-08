@@ -117,17 +117,12 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		 if (!((GeoElement) startPoint).isGeoElement3D() && !((GeoElement) endPoint).isGeoElement3D())
 			 return super.createSegment(startPoint, endPoint, euclidianVisible);
 			 
-		 GeoSegmentND segment;
 
 		 AlgoJoinPoints3D algoSegment = new AlgoJoinPoints3D(cons, 
 				startPoint, endPoint, this, GeoElement3D.GEO_CLASS_SEGMENT3D);            
 		 cons.removeFromConstructionList(algoSegment);               
 
-		 segment = (GeoSegmentND) algoSegment.getCS(); 
-		 // refresh color to ensure segments have same color as polygon:
-		 segment.setObjColor(getObjectColor()); 
-
-		 return segment;
+		 return createSegment((GeoSegmentND) algoSegment.getCS(), euclidianVisible);
 		 
 		 
 	 }

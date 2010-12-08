@@ -8,6 +8,7 @@ import geogebra.euclidian.DrawableND;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
+import geogebra3D.euclidian3D.opengl.Manager;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
@@ -684,11 +685,6 @@ public abstract class Drawable3D extends DrawableND {
 	 */
 	public boolean doHighlighting(){
 		
-		/*
-		if (getGeoElement().isSelected()
-				||
-				(getGeoElement().doHighlighting() && getView3D().hasMouse()))
-				*/
 		if (getGeoElement().doHighlighting())
 			return true;
 		if (createdByDrawList())
@@ -704,9 +700,12 @@ public abstract class Drawable3D extends DrawableND {
 	 * @param alpha
 	 */
 	protected void setHighlightingColor(int amplitude, float alpha){
-		if(doHighlighting())
-			getView3D().getRenderer().setColor(getView3D().getRenderer().getGeometryManager().getHigthlighting(getGeoElement().getObjectColor(),amplitude),alpha);
-		else
+		if(doHighlighting()){
+			Manager manager = getView3D().getRenderer().getGeometryManager();
+			getView3D().getRenderer().setColor(
+					manager.getHigthlighting(getGeoElement().getObjectColor(),amplitude),
+					manager.getHigthlighting(alpha,2*amplitude));
+		}else
 			getView3D().getRenderer().setColor(getGeoElement().getObjectColor(),alpha);
 	}
 	
