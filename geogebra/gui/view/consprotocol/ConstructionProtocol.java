@@ -30,6 +30,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.dnd.DragSource;
@@ -48,7 +49,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -141,6 +141,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		ConstructionTableCellRenderer renderer;
 		HeaderRenderer headerRend = new HeaderRenderer();
 		tableColumns = new TableColumn[data.columns.length];
+		
+		
+		
 		for (int k = 0; k < data.columns.length; k++) {
 			renderer = new ConstructionTableCellRenderer();
 			renderer.setHorizontalAlignment(data.columns[k].getAlignment());
@@ -411,8 +414,28 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 				Thread runner = new Thread() {
 					public void run() {
-						new geogebra.export.PrintPreview(app,
-								ConstructionProtocol.this, PageFormat.PORTRAIT);
+						
+						try {
+							// TODO: headerFormat and footerFormat should be filled in.
+							table.print(JTable.PrintMode.FIT_WIDTH, 
+									/*headerFormat*/ null, 
+									/*footerFormat*/ null, 
+									/*showPrintDialog*/ true, 
+									/*attr*/ null, 
+									/*interactive*/ true /*,*/ 
+									/*service*/ /*null*/);
+							// service must be omitted for Java version 1.5.0
+						} catch (HeadlessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (PrinterException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						// This is obsolete (used in GeoGebra 3.2):
+						// new geogebra.export.PrintPreview(app,
+						//		ConstructionProtocol.this, PageFormat.PORTRAIT);
 					}
 				};
 				runner.start();
@@ -716,7 +739,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		private static final long serialVersionUID = -9165858653728142643L;
 
 		private JCheckBox cbTemp = new JCheckBox();
-
+		// private ImageIcon icon = new ImageIcon();
+		private JLabel iTemp = new JLabel();
+		
 		public ConstructionTableCellRenderer() {
 			setOpaque(true);
 			setVerticalAlignment(TOP);
@@ -728,7 +753,18 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 			// Boolean value: show as checkbox
 			boolean isBoolean = value instanceof Boolean;
+			
+			boolean isImage = value instanceof ImageIcon;
+			
 			Component comp = isBoolean ? cbTemp : (Component) this;
+			
+			if (isBoolean)
+				comp = cbTemp;
+			else if (isImage)
+				comp = iTemp;
+			else
+				comp = (Component) this;
+			
 			int step = kernel.getConstructionStep();
 			RowData rd = data.getRow(row);
 			int index = rd.geo.getConstructionIndex();
@@ -761,10 +797,20 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				cbTemp.setSelected(((Boolean) value).booleanValue());
 				cbTemp.setEnabled(true);
 				return cbTemp;
-			} else {
-				setText((value == null) ? "" : value.toString());
-				return this;
 			}
+			if (isImage) {
+				// Scaling does not work yet. I wonder why.
+				Image miniImage = ((ImageIcon) value).getImage().getScaledInstance(16,16,0);
+				ImageIcon miniIcon = new ImageIcon();
+				miniIcon.setImage(miniImage);
+				iTemp.setIcon((ImageIcon) value);
+				iTemp.setHorizontalAlignment(JLabel.CENTER);
+				iTemp.setMaximumSize(new Dimension(16,16));
+				return iTemp;
+			}
+			
+			setText((value == null) ? "" : value.toString());
+			return this;
 
 		}
 	}
@@ -804,6 +850,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 					// to geo.getConstructionIndex() as not every
 					// geo is shown in the protocol
 		GeoElement geo;
+		// Integer toolbarIcon;
+		ImageIcon toolbarIcon;
 		String name, algebra, definition, command;
 		boolean includesIndex;
 		Boolean consProtocolVisible;
@@ -822,6 +870,28 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 
 		public void updateAll() {
+			// toolbarIcon = geo.getRelatedModeID();
+			
+				int m;
+				// Markus' idea to find the correct icon:
+				// 1) check if an object has a parent algorithm:
+				if (geo.getParentAlgorithm() != null) {
+					// 2) if it has a parent algorithm and its modeID returned
+					// is > -1, then use this one:
+					m = geo.getParentAlgorithm()
+							.getRelatedModeID();
+				}
+				// 3) otherwise use the modeID of the GeoElement itself:
+				else
+					m = geo.getRelatedModeID();
+
+				if (m != -1)
+				    toolbarIcon = app.getModeIcon(m);
+				else
+				    toolbarIcon = null;
+
+			
+			
 			// name = geo.getNameDescriptionHTML(true, true);
 			name = geo.getNameDescriptionTextOrHTML();
 			algebra = geo.getAlgebraDescriptionTextOrHTML();
@@ -897,7 +967,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				new ColumnData("Command", 150, 50, SwingConstants.LEFT, false),
 				new ColumnData("Value", 150, 50, SwingConstants.LEFT, true),
 				new ColumnData("Breakpoint", 70, 35, SwingConstants.CENTER,
-						false) };
+						false),
+				new ColumnData("ToolbarIcon", 35, 35, SwingConstants.CENTER,
+								false),						
+		};
 
 		private ArrayList rowList;
 		// map for (GeoElement, RowData) pairs
@@ -1069,6 +1142,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				return ((RowData) rowList.get(nRow)).algebra;
 			case 5:
 				return ((RowData) rowList.get(nRow)).consProtocolVisible;
+			case 6:
+				return ((RowData) rowList.get(nRow)).toolbarIcon;
 			}
 			return "";
 		}
@@ -1100,6 +1175,12 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			return "";
 		}
 
+		/*
+		ImageIcon icon = app.getModeIcon(10);
+		Image img1 = icon.getImage();
+		pg.drawImage(img1, x[nCol], y, null);
+		*/
+		
 		// html code without <html> tags
 		public String getPlainHTMLAt(int nRow, int nCol, String thisPath) {
 			if (nRow < 0 || nRow >= getRowCount())
@@ -1445,6 +1526,17 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			if (nCol + 1 < nColumns)
 				x[nCol + 1] = x[nCol] + width;
 			title = (String) tk.getIdentifier();
+			/*
+			 * ((Graphics2D) pg);
+			 * 
+			 * Point2D pen = initialPosition; LineBreakMeasurer measurer = new
+			 * LineBreakMeasurer(styledText, myBreakIterator); while (true) {
+			 * TextLayout layout = measurer.nextLayout(wrappingWidth); if
+			 * (layout == null) break; pen.y += layout.getAscent(); float dx =
+			 * 0; if (layout.isLeftToRight()) dx = wrappingWidth -
+			 * layout.getAdvance(); layout.draw(graphics, pen.x + dx, pen.y);
+			 * pen.y += layout.getDescent() + layout.getLeading(); {
+			 */
 			pg.drawString(title, x[nCol], y);
 		}
 
