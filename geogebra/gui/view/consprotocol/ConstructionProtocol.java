@@ -961,15 +961,14 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		final public ColumnData columns[] = {
 				new ColumnData("No.", 35, 35, SwingConstants.CENTER, true),
+				new ColumnData("ToolbarIcon", 35, 35, SwingConstants.CENTER,
+						false),
 				new ColumnData("Name", 80, 50, SwingConstants.LEFT, true),
 				new ColumnData("Definition", 150, 50, SwingConstants.LEFT, true),
 				new ColumnData("Command", 150, 50, SwingConstants.LEFT, false),
 				new ColumnData("Value", 150, 50, SwingConstants.LEFT, true),
 				new ColumnData("Breakpoint", 70, 35, SwingConstants.CENTER,
-						false),
-				new ColumnData("ToolbarIcon", 35, 35, SwingConstants.CENTER,
-								false),						
-		};
+						false), };
 
 		private ArrayList rowList;
 		// map for (GeoElement, RowData) pairs
@@ -1132,17 +1131,17 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			case 0:
 				return ((RowData) rowList.get(nRow)).index + "";
 			case 1:
-				return ((RowData) rowList.get(nRow)).name;
-			case 2:
-				return ((RowData) rowList.get(nRow)).definition;
-			case 3:
-				return ((RowData) rowList.get(nRow)).command;
-			case 4:
-				return ((RowData) rowList.get(nRow)).algebra;
-			case 5:
-				return ((RowData) rowList.get(nRow)).consProtocolVisible;
-			case 6:
 				return ((RowData) rowList.get(nRow)).toolbarIcon;
+			case 2:
+				return ((RowData) rowList.get(nRow)).name;
+			case 3:
+				return ((RowData) rowList.get(nRow)).definition;
+			case 4:
+				return ((RowData) rowList.get(nRow)).command;
+			case 5:
+				return ((RowData) rowList.get(nRow)).algebra;
+			case 6:
+				return ((RowData) rowList.get(nRow)).consProtocolVisible;
 			}
 			return "";
 		}
@@ -1157,17 +1156,19 @@ public class ConstructionProtocol extends JDialog implements Printable {
 						+ (((RowData) rowList.get(nRow)).geo
 								.getConstructionIndex() + 1);
 			case 1:
-				return ((RowData) rowList.get(nRow)).geo.getNameDescription();
+				return "";
 			case 2:
-				return ((RowData) rowList.get(nRow)).geo
-						.getDefinitionDescription();
+				return ((RowData) rowList.get(nRow)).geo.getNameDescription();
 			case 3:
 				return ((RowData) rowList.get(nRow)).geo
-						.getCommandDescription();
+						.getDefinitionDescription();
 			case 4:
 				return ((RowData) rowList.get(nRow)).geo
-						.getAlgebraDescription();
+						.getCommandDescription();
 			case 5:
+				return ((RowData) rowList.get(nRow)).geo
+						.getAlgebraDescription();
+			case 6:
 				return ((RowData) rowList.get(nRow)).consProtocolVisible
 						.toString();
 			}
@@ -1183,22 +1184,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				return ""
 						+ (((RowData) rowList.get(nRow)).geo
 								.getConstructionIndex() + 1);
-			case 1:
-				return ((RowData) rowList.get(nRow)).geo
-						.getNameDescriptionHTML(false, false);
-			case 2:
-				return ((RowData) rowList.get(nRow)).geo
-						.getDefinitionDescriptionHTML(false);
-			case 3:
-				return ((RowData) rowList.get(nRow)).geo
-						.getCommandDescriptionHTML(false);
-			case 4:
-				return ((RowData) rowList.get(nRow)).geo
-						.getAlgebraDescriptionHTML(false);
-			case 5:
-				return ((RowData) rowList.get(nRow)).consProtocolVisible
-						.toString();
-			case 6: { // Displaying toolbar icons in the list on demand.
+			case 1: { // Displaying toolbar icons in the list on demand.
 
 				int m;
 				// Markus' idea to find the correct icon:
@@ -1247,6 +1233,21 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				}
 				return "<img src=\"" + gifFileName + "\">";
 			}
+			case 2:
+				return ((RowData) rowList.get(nRow)).geo
+						.getNameDescriptionHTML(false, false);
+			case 3:
+				return ((RowData) rowList.get(nRow)).geo
+						.getDefinitionDescriptionHTML(false);
+			case 4:
+				return ((RowData) rowList.get(nRow)).geo
+						.getCommandDescriptionHTML(false);
+			case 5:
+				return ((RowData) rowList.get(nRow)).geo
+						.getAlgebraDescriptionHTML(false);
+			case 6:
+				return ((RowData) rowList.get(nRow)).consProtocolVisible
+						.toString();
 			}
 			return "";
 		}
@@ -1272,9 +1273,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			return b;
 		}
 
-		/* ************************
-		 * View Implementation ***********************
-		 */
+		/***********************
+		 * View Implementation *
+		 ***********************/
 
 		public void add(GeoElement geo) {
 			if (!geo.isLabelSet()
@@ -1440,9 +1441,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 	}
 
-	/* *******************
-	 * PRINTING ******************
-	 */
+	/************
+	 * PRINTING *
+	 ************/
 
 	public int print(Graphics pg, PageFormat pageFormat, int pageIndex)
 			throws PrinterException {
@@ -1561,9 +1562,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		return PAGE_EXISTS;
 	}
 
-	/* *******************
-	 * HTML export ******************
-	 */
+	/***************
+	 * HTML export *
+	 ***************/
 
 	/**
 	 * Returns a html representation of the construction protocol.
@@ -1649,16 +1650,13 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		int nColumns = colModel.getColumnCount();
 
 		for (int nCol = 0; nCol < nColumns; nCol++) {
-			TableColumn tk = colModel.getColumn(nCol);
-			title = (String) tk.getIdentifier();
-			sb.append("<th>");
-			sb.append(Util.toHTMLString(title));
-			sb.append("</th>\n");
+			// toolbar icon will only be inserted on request
 
-			// toolbar icon will be inserted between the 0th and the 1st column
-			if (nCol == 0 && addIcons) {
+			if ((nCol == 1 && addIcons) || nCol != 1) {
+				TableColumn tk = colModel.getColumn(nCol);
+				title = (String) tk.getIdentifier();
 				sb.append("<th>");
-				sb.append(app.getPlain("ToolbarIcon"));
+				sb.append(Util.toHTMLString(title));
 				sb.append("</th>\n");
 			}
 
@@ -1670,31 +1668,26 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		for (int nRow = 0; nRow < endRow; nRow++) {
 			sb.append("<tr  valign=\"baseline\">\n");
 			for (int nCol = 0; nCol < nColumns; nCol++) {
-				int col = table.getColumnModel().getColumn(nCol)
-						.getModelIndex();
-				String str = data.getPlainHTMLAt(nRow, col, thisPath);
-				sb.append("<td>");
-				if (str.equals(""))
-					sb.append("&nbsp;"); // space
-				else {
-					Color color = data.getColorAt(nRow, col);
-					if (color != Color.black) {
-						sb.append("<span style=\"color:#");
-						sb.append(Util.toHexString(color));
-						sb.append("\">");
-						sb.append(str);
-						sb.append("</span>");
-					} else
-						sb.append(str);
-				}
-				sb.append("</td>\n");
 
-				// toolbar icon will be inserted between the 0th and the 1st
-				// column
-				if (nCol == 0 && addIcons) {
+				// toolbar icon will only be inserted on request
+				if ((nCol == 1 && addIcons) || (nCol != 1)) {
+					int col = table.getColumnModel().getColumn(nCol)
+							.getModelIndex();
+					String str = data.getPlainHTMLAt(nRow, col, thisPath);
 					sb.append("<td>");
-					String imgFileName = data.getPlainHTMLAt(nRow, 6, thisPath);
-					sb.append(imgFileName);
+					if (str.equals(""))
+						sb.append("&nbsp;"); // space
+					else {
+						Color color = data.getColorAt(nRow, col);
+						if (color != Color.black) {
+							sb.append("<span style=\"color:#");
+							sb.append(Util.toHexString(color));
+							sb.append("\">");
+							sb.append(str);
+							sb.append("</span>");
+						} else
+							sb.append(str);
+					}
 					sb.append("</td>\n");
 				}
 
