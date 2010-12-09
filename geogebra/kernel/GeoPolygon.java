@@ -17,6 +17,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -30,7 +31,7 @@ import java.util.HashSet;
  * 
  * @author Markus Hohenwarter
  */
-public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable, GeoPlaneND {
+public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable, GeoCoordSys2D {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -869,12 +870,10 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 
 	public void pathChanged(GeoPointND PI) {		
 		
-		GeoPoint P = (GeoPoint) PI;
-		
 		// parameter is between 0 and segment.length,
 		// i.e. floor(parameter) gives the segment index
 		
-		PathParameter pp = P.getPathParameter();
+		PathParameter pp = PI.getPathParameter();
 		pp.t = pp.t % segments.length;
 		if (pp.t < 0) 
 			pp.t += segments.length;
@@ -883,48 +882,41 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		double segParameter = pp.t - index;
 		
 		// calc point for given parameter
-		/*
-		P.x = seg.startPoint.inhomX + segParameter * seg.y;
-		P.y = seg.startPoint.inhomY - segParameter * seg.x;
-		*/
-		P.x = seg.getPointX(segParameter);
-		P.y = seg.getPointY(segParameter);
-		P.z = 1.0;	
+		PI.setCoords2D(seg.getPointX(segParameter), seg.getPointY(segParameter), 1);
 	}
 
 	public void pointChanged(GeoPointND PI) {
 		
-		GeoPoint P = (GeoPoint) PI;
+		GgbVector coords = PI.getCoordsInD(2);
+		double qx = coords.getX()/coords.getZ();
+		double qy = coords.getY()/coords.getZ();
 		
-		double qx = P.x/P.z;
-		double qy = P.y/P.z;
 		double minDist = Double.POSITIVE_INFINITY;
 		double resx=0, resy=0, resz=0, param=0;
 		
 		// find closest point on each segment
-		PathParameter pp = P.getPathParameter();
+		PathParameter pp = PI.getPathParameter();
 		for (int i=0; i < segments.length; i++) {
-			P.x = qx;
-			P.y = qy;
-			P.z = 1;
-			segments[i].pointChanged(P);
+			PI.setCoords2D(qx, qy, 1);
+			segments[i].pointChanged(PI);
 			
-			double x = P.x/P.z - qx; 
-			double y = P.y/P.z - qy;
+			coords = PI.getCoordsInD(2);
+			double x = coords.getX()/coords.getZ() - qx; 
+			double y = coords.getY()/coords.getZ() - qy;
 			double dist = x*x + y*y;			
 			if (dist < minDist) {
 				minDist = dist;
 				// remember closest point
-				resx = P.x;
-				resy = P.y;
-				resz = P.z;
+				resx = coords.getX();
+				resy = coords.getY();
+				resz = coords.getZ();
 				param = i + pp.t;
 			}
 		}				
 			
-		P.x = resx;
-		P.y = resy;
-		P.z = resz;
+
+		PI.setCoords2D(resx, resy, resz);
+		
 		pp.t = param;	
 	}	
 	
@@ -946,11 +938,15 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	
 	public boolean isInRegion(GeoPointND PI){
 		
+		/*
 		GeoPoint P = (GeoPoint) PI;
 		double x0 = P.x/P.z;
 		double y0 = P.y/P.z;
+		*/
+		
+		GgbVector coords = PI.getCoordsInD(2);
 				
-		return isInRegion(x0,y0);
+		return isInRegion(coords.getX()/coords.getZ(),coords.getY()/coords.getZ());
 
 	}
 	
@@ -1209,6 +1205,28 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 			z+=coords.getZ();
 		}
 		return new GgbVector(x/getPointsLength(), y/getPointsLength(), z/getPointsLength(), 1);
+	}
+	
+	
+	
+	////////////////////////////////////////
+	// GEOCOORDSYS2D INTERFACE
+	////////////////////////////////////////
+
+	public GgbCoordSys getCoordSys() {
+		return GgbCoordSys.Identity3D();
+	}
+
+	public GgbVector getPoint(double x2d, double y2d) {		
+		return getCoordSys().getPoint(x2d, y2d);
+	}
+
+	public GgbVector[] getNormalProjection(GgbVector coords){
+		return getCoordSys().getNormalProjection(coords);
+	}
+
+	public GgbVector[] getProjection(GgbVector coords, GgbVector willingDirection){
+		return getCoordSys().getProjection(coords, willingDirection);
 	}
 
 }

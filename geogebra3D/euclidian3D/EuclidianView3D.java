@@ -2196,6 +2196,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		GgbMatrix4x4 matrix;
 		GgbMatrix4x4 m2;
+		GgbVector v;
+		GgbMatrix m;
 
 		switch(getCursor3DType()){
 		case PREVIEW_POINT_FREE:
@@ -2208,32 +2210,40 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		case PREVIEW_POINT_REGION:
 			// use region drawing directions for the cross
 			t = 1/getScale();
+			
+			/*
 			getCursor3D().getDrawingMatrix().setVx(
 					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx().mul(t));
 			getCursor3D().getDrawingMatrix().setVy(
 					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy().mul(t));
 			getCursor3D().getDrawingMatrix().setVz(
 					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz().mul(t));
+			*/
+			
+			v = ((GeoElement)getCursor3D().getRegion()).getMainDirection(); //vz
+			m = new GgbMatrix(4, 2);
+			m.set(v, 1);
+			m.set(4, 2, 1);
+			matrix = new GgbMatrix4x4(m);
+			
+			getCursor3D().getDrawingMatrix().setVx(
+					(GgbVector) matrix.getVy().normalized().mul(t));
+			getCursor3D().getDrawingMatrix().setVy(
+					(GgbVector) matrix.getVz().normalized().mul(t));
+			getCursor3D().getDrawingMatrix().setVz(
+					(GgbVector) matrix.getVx().normalized().mul(t));
+			
 			break;
 		case PREVIEW_POINT_PATH:
 			// use path drawing directions for the cross
 			t = 1/getScale();
 
-			GgbVector v = ((GeoElement)getCursor3D().getPath()).getMainDirection();
-			GgbMatrix m = new GgbMatrix(4, 2);
+			v = ((GeoElement)getCursor3D().getPath()).getMainDirection();
+			m = new GgbMatrix(4, 2);
 			m.set(v, 1);
 			m.set(4, 2, 1);
-			//GgbMatrix4x4 m2 = new GgbMatrix4x4(m);
-
 			matrix = new GgbMatrix4x4(m);
 			
-			/*
-			matrix = new GgbMatrix4x4();
-			matrix.setVx(m2.getVy());
-			matrix.setVy(m2.getVz());
-			matrix.setVz(m2.getVx());
-			matrix.setOrigin(m2.getOrigin());
-			*/
 
 			getCursor3D().getDrawingMatrix().setVx(
 					(GgbVector) matrix.getVx().normalized().mul(t));

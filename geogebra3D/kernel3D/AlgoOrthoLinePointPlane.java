@@ -19,6 +19,7 @@ import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
@@ -34,8 +35,8 @@ public class AlgoOrthoLinePointPlane extends AlgoOrtho {
 
  
 
-    public AlgoOrthoLinePointPlane(Construction cons, String label, GeoPointND point, GeoPlane3D plane) {
-        super(cons,label,point,plane);
+    public AlgoOrthoLinePointPlane(Construction cons, String label, GeoPointND point, GeoCoordSys2D cs) {
+        super(cons,label,point, (GeoElement) cs);
     }
 
     public String getClassName() {
@@ -43,14 +44,14 @@ public class AlgoOrthoLinePointPlane extends AlgoOrtho {
     }
 
 
-    private GeoPlane3D getPlane(){
-    	return (GeoPlane3D) getInputOrtho();
+    private GeoCoordSys2D getCS(){
+    	return (GeoCoordSys2D) getInputOrtho();
     }
 
   
     protected final void compute() {
     	
-    	GgbCoordSys coordsys = getPlane().getCoordSys();
+    	GgbCoordSys coordsys = getCS().getCoordSys();
     	
     	getLine().setCoord(getPoint().getCoordsInD(3), coordsys.getVz());
         

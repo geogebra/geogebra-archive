@@ -6,7 +6,6 @@ import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
 import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
-import geogebra3D.kernel3D.Region3D;
 
 
 

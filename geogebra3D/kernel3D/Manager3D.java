@@ -14,8 +14,8 @@ import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
-import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
 
@@ -179,8 +179,8 @@ public class Manager3D implements Manager3DInterface {
 		return l;
 	}	
 
-	 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoPlaneND plane){
-		 AlgoOrthoLinePointPlane algo = new AlgoOrthoLinePointPlane(cons, label, point, (GeoPlane3D) plane);
+	 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoCoordSys2D cs){
+		 AlgoOrthoLinePointPlane algo = new AlgoOrthoLinePointPlane(cons, label, point, cs);
 		 return algo.getLine();
 	 }
 
@@ -285,8 +285,8 @@ public class Manager3D implements Manager3DInterface {
 		return algo.getPlane();
 	}
 
-	final public GeoPlane3D Plane3D(String label, GeoPointND point, GeoPlaneND cs) {
-		AlgoPlaneThroughPointAndPlane algo = new AlgoPlaneThroughPointAndPlane(cons, label, point, (GeoPlane3D) cs);
+	final public GeoPlane3D Plane3D(String label, GeoPointND point, GeoCoordSys2D cs) {
+		AlgoPlaneThroughPointAndPlane algo = new AlgoPlaneThroughPointAndPlane(cons, label, point, (GeoCoordSys2D) cs);
 		return algo.getPlane();
 	}
 

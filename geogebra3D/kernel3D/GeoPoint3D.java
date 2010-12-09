@@ -46,6 +46,7 @@ import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra.util.Util;
 import geogebra3D.Application3D;

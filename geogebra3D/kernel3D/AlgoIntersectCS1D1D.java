@@ -22,6 +22,7 @@ import geogebra.Matrix.GgbMatrixUtil;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoCoordSys;
 
 
 

@@ -52,7 +52,16 @@ public class GgbCoordSys {
 		
 	}	
 	
-	
+
+	/**
+	 * @return "identity" coord sys
+	 */
+	public static final GgbCoordSys Identity3D(){
+		GgbCoordSys ret = new GgbCoordSys(2);
+		ret.makeCoordSys(new double[] {0,0,1,0}); //equation z=0
+		ret.makeOrthoMatrix(true);
+		return ret;
+	}
 
 	
 	public GgbMatrix getMatrix(){

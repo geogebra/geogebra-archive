@@ -1,4 +1,4 @@
-package geogebra3D.kernel3D;
+package geogebra.kernel.kernelND;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Region;

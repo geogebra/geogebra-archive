@@ -3,6 +3,7 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -82,7 +83,7 @@ public interface Manager3DInterface {
 
 
 		    /** Line3D through point orthogonal to plane   */	
-			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoPlaneND plane);
+			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoCoordSys2D plane);
 
 
 			 
@@ -154,7 +155,7 @@ public interface Manager3DInterface {
 			 /** 
 			  * Plane named label through point parallel to plane
 			  */
-			 public GeoPlaneND Plane3D(String label, GeoPointND point, GeoPlaneND cs);
+			 public GeoPlaneND Plane3D(String label, GeoPointND point, GeoCoordSys2D cs);
 
 			/** 
 			 * Line named label through Point P orthogonal to line l

@@ -4,10 +4,10 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdIntersect;
+import geogebra.kernel.kernelND.GeoCoordSys;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.GeoCoordSys;
-import geogebra3D.kernel3D.GeoCoordSys2D;
 import geogebra3D.kernel3D.Kernel3D;
 
 

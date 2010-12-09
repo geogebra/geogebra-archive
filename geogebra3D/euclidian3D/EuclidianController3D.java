@@ -17,17 +17,16 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
-import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoCoordSys2D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
-import geogebra3D.kernel3D.Region3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Point;
@@ -492,12 +491,18 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 		case EuclidianView3D.PREVIEW_POINT_REGION:
 			if (inRegionPossible){
-				point3D = (GeoPoint3D) getKernel().getManager3D().Point3DIn(null,point.getRegion());			
-				point3D.setWillingCoords(point.getCoords());
-				point3D.doRegion();
-				point3D.setWillingCoords(null);
-				point3D.setWillingDirection(null);
-				ret = point3D;
+				Region region = point.getRegion();
+				if (((GeoElement) region).isGeoElement3D()){
+					point3D = (GeoPoint3D) getKernel().getManager3D().Point3DIn(null,region);			
+					point3D.setWillingCoords(point.getCoords());
+					point3D.doRegion();
+					point3D.setWillingCoords(null);
+					point3D.setWillingDirection(null);
+					ret = point3D;
+				}else{
+					GgbVector coords = point.getCoordsInD(2);
+					return super.createNewPoint(false, region, coords.getX(), coords.getY()); 
+				}
 			}else
 				return null;
 			break;
@@ -892,7 +897,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				GeoPointND[] points = getSelectedPointsND();
 				GeoCoordSys2D[] cs = getSelectedCoordSys2D();//TODO
 				// create new plane
-				getKernel().getManager3D().Plane3D(null, points[0], (GeoPlaneND) cs[0]);
+				getKernel().getManager3D().Plane3D(null, points[0], (GeoCoordSys2D) cs[0]);
 				return true;
 			}
 		}

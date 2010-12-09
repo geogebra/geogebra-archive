@@ -17,6 +17,7 @@ import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 
@@ -51,10 +52,15 @@ public class AlgoPlaneThroughPointAndPlane extends AlgoPlaneThroughPoint {
   
     protected final void compute() {
     	
+    	
+    	
     	GgbCoordSys coordsys = getPlane().getCoordSys();
     	
 		//recompute the coord sys
     	coordsys.resetCoordSys();
+    	
+    	if (!cs.toGeoElement().isDefined())
+    		return;
 		
     	coordsys.addPoint(getPoint().getCoordsInD(3));
 

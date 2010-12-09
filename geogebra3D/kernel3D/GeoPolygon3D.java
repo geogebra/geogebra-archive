@@ -10,6 +10,7 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
@@ -499,34 +500,6 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		return isInRegion(PI,true);
 		
 	}
-	
-	public GgbVector getPoint(double x2d, double y2d){
-		return coordSys.getPoint(x2d,y2d);
-	}
-
-	
-	/** return the normal projection of the (coords) point on the region 
-	 * @param coords coords of the point
-	 * @return normal projection
-	 */
-	public GgbVector[] getNormalProjection(GgbVector coords){
-		//return coords.projectPlane(coordSys.getMatrix4x4());
-		return coordSys.getNormalProjection(coords);
-	}
-
-
-	/** return the willingDirection projection of the (coords) point on the region 
-	 * @param coords coords of the point
-	 * @param willingDirection direction of the projection
-	 * @return projection
-	 */
-	public GgbVector[] getProjection(GgbVector coords, GgbVector willingDirection){
-		//return coords.projectPlaneThruV(coordSys.getMatrix4x4(),willingDirection);
-		return coordSys.getProjection(coords, willingDirection);
-	}
-
-	
-	
 	
 	
 	public GeoElement copyInternal(Construction cons) {						

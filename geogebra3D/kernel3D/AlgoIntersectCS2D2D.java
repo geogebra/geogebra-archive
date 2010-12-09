@@ -21,6 +21,8 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
+import geogebra.kernel.kernelND.GeoCoordSys;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 
 
 
