@@ -288,9 +288,11 @@ GeoPointND, Animatable  {
 					try {
 						// try to get free number variables used in coords for this point
 						// don't allow expressions like "a + x(A)" for polar coords (r; phi)
-						GeoNumeric xvar = getCoordNumber(vn.getX(), !hasPolarParentNumbers);
-						GeoNumeric yvar = getCoordNumber(vn.getY(), !hasPolarParentNumbers);
-						if (xvar != yvar) { // avoid (a,a) 
+						ExpressionValue xcoord =vn.getX();
+						ExpressionValue ycoord =vn.getY();
+						GeoNumeric xvar = getCoordNumber(xcoord, !hasPolarParentNumbers);
+						GeoNumeric yvar = getCoordNumber(ycoord, !hasPolarParentNumbers);
+						if (!xcoord.contains(yvar) && !ycoord.contains(xvar)) { // avoid (a,a) 
 							changeableCoordNumbers.add(xvar);
 							changeableCoordNumbers.add(yvar);
 						}
@@ -345,7 +347,7 @@ GeoPointND, Animatable  {
 				Iterator it = rightVars.iterator();
 				while (it.hasNext()) {			
 					GeoElement var = (GeoElement) it.next(); 
-					if (!var.isIndependent()) 
+					if (var.isChildOrEqual(coordNumeric)) 
 						throw new Exception("dependent var: " + var);							
 				}
 			}
