@@ -18,7 +18,6 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
-import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.util.MyMath;
@@ -35,9 +34,11 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	
 	private static final long serialVersionUID = 1L;
 
+	/** maximal number of vertices for polygon tool */
 	public static final int POLYGON_MAX_POINTS = 100;
-	
+	/** polygon vertices */
 	protected GeoPointND [] points;
+	/** polygon edges */
 	protected GeoSegmentND [] segments;
 	
 	
@@ -51,7 +52,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	protected int numCS = 0;
 	
 
-	
+	/** directed area */
 	protected double area;
 	private boolean defined = false;		
 	private boolean initLabelsCalled = false;
@@ -212,7 +213,9 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
      * labels[n+1..2n-2] for points (only used for regular polygon)
      * @param labels
      */
-    void initLabels(String [] labels) {       	 
+    void initLabels(String [] labels) {    
+    	if(cons.isSuppressLabelsActive())
+    		return;
     	initLabelsCalled = true;
     	// Application.debug("INIT LABELS");
     	
@@ -788,8 +791,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
         return true;
     }
     
-    final public HashSet getVariables() {
-        HashSet varset = new HashSet();        
+    final public HashSet<GeoElement> getVariables() {
+        HashSet<GeoElement> varset = new HashSet<GeoElement>();        
         varset.add(this);        
         return varset;          
     }                   
