@@ -2099,7 +2099,7 @@ public class MyXMLHandler implements DocHandler {
 				geo.setLoadedLabel(label);
 			}
 			
-			
+			//Application.debug(label+", "+geo.isLabelSet());
 			
 			
 

@@ -951,6 +951,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		        for (int i = 0; i < getOutputLength(); i++) {
 		            geo = getOutput(i);
 		            // save only GeoElements that have a valid label
+		            //Application.debug(geo.toString()+"--"+geo.isLabelSet());
 		            if (geo.isLabelSet()) {
 		                geo.getXML(sb);
 		            }

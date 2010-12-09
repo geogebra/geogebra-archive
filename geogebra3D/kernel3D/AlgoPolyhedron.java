@@ -56,8 +56,23 @@ implements AlgoElementWithResizeableOutput{
 	// POLYHEDRON OF DETERMINED TYPE
 	////////////////////////////////////////////
 	
-	private AlgoPolyhedron(Construction c){
+	private AlgoPolyhedron(Construction c, String[] labels){
 		super(c);
+
+		/*
+		String s="";
+		for(int i=0;i<labels.length;i++)
+			s+=labels[i]+", ";
+		Application.printStacktrace(s);
+		 */
+
+
+        //set labels dependencies: will be used with Construction.resolveLabelDependency()
+        if (labels!=null && labels.length>1){
+        	for (int i=0; i<labels.length; i++){       		
+        		cons.setLabelDependsOn(labels[i], this);
+        	}
+        }
 
 		outputPolyhedron=new OutputHandler<GeoPolyhedron>(new elementFactory<GeoPolyhedron>() {
 			public GeoPolyhedron newElement() {
@@ -120,7 +135,9 @@ implements AlgoElementWithResizeableOutput{
 	 * @param type type of polyhedron
 	 */
 	public AlgoPolyhedron(Construction c, String[] labels, GeoPointND[] a_points, int type) {
-		this(c);
+		this(c,labels);
+		
+		
 		
 		this.type = type;
 		
@@ -204,12 +221,6 @@ implements AlgoElementWithResizeableOutput{
 		setOutput();
 		
 		
-        //set labels dependencies: will be used with Construction.resolveLabelDependency()
-        if (labels!=null && labels.length>1)
-        	for (int i=0; i<labels.length; i++){
-        		cons.setLabelDependsOn(labels[i], this);
-        	}
-		
         
         
         polyhedron.defaultLabels(labels);
@@ -226,7 +237,7 @@ implements AlgoElementWithResizeableOutput{
 	 * @param type type of polyhedron
 	 */
 	public AlgoPolyhedron(Construction c, String[] labels, GeoPolygon polygon, GeoPointND point, int type) {
-		this(c);
+		this(c,labels);
 		
 		this.type = type;
 		
@@ -341,7 +352,7 @@ implements AlgoElementWithResizeableOutput{
 	 * @param type type of polyhedron
 	 */
 	public AlgoPolyhedron(Construction c, String[] labels, GeoPolygon polygon, NumberValue height, int type) {
-		this(c);
+		this(c,labels);
 		
 		this.type = type;
 		
@@ -445,18 +456,7 @@ implements AlgoElementWithResizeableOutput{
 	 * @param faces faces description
 	 */
 	public AlgoPolyhedron(Construction c, String[] labels, GeoList faces) {
-		this(c,faces);
-
-		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
-		polyhedron.initLabels(labels);
-	}
-	
-	/** creates a polyhedron regarding vertices and faces description
-	 * @param c construction 
-	 * @param faces faces description
-	 */
-	public AlgoPolyhedron(Construction c, GeoList faces) {
-		this(c);
+		this(c,labels);
 		this.type = GeoPolyhedron.TYPE_NONE;
 		this.faces = faces;
 		setFaces();
@@ -466,7 +466,10 @@ implements AlgoElementWithResizeableOutput{
 		setInput();
 		setOutput();
 		
+		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
+		polyhedron.initLabels(labels);
 	}
+	
 	
 	
 	/** send GeoList description of faces to polyhedron
