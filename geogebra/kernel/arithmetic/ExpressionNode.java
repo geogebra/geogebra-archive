@@ -1772,9 +1772,9 @@ implements ExpressionValue, ExpressionNodeConstants {
             			}   //*/
             			
             	
-		                // left wing                   	
+		                // left wing                    	
 		                if (leftStr.charAt(0) != '-' && // no unary
-		                	(left.isLeaf() || opID(left) > POWER)) { // not +, -, *, /, ^                     
+		                	(left.isLeaf() || opID(left) > POWER && opID(left) != EXP)) { // not +, -, *, /, ^, e^x                     
 		                	sb.append(leftStr);                
 		                } else { 
 		                    sb.append(leftBracket(STRING_TYPE));
@@ -1805,8 +1805,7 @@ implements ExpressionValue, ExpressionNodeConstants {
 	
 	        			
 	        		default:
-	        			 if (right.isLeaf() || opID(right) > POWER) { // not +, -, *, /, ^  	                        
-
+	        			 if (right.isLeaf() || opID(right) > POWER && opID(right) != EXP) { // not +, -, *, /, ^, e^x	                        
 // Michael Borcherds 2008-05-14
 // display powers over 9 as unicode superscript
 	        				 try {
@@ -2309,7 +2308,7 @@ implements ExpressionValue, ExpressionNodeConstants {
                 break;
                
             case EXP:
-            	Application.debug("EXP");
+            	//Application.debug("EXP");
                	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
 	        			sb.append("e^{");
