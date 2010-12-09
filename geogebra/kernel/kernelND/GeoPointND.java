@@ -1,5 +1,6 @@
 package geogebra.kernel.kernelND;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.LocateableList;
 import geogebra.kernel.Path;
@@ -116,6 +117,12 @@ public interface GeoPointND {
 	 * @return the coords of the point in the given dimension (extended or projected)
 	 */
 	public GgbVector getCoordsInD(int dimension);
+	
+	/**
+	 * @param coordSys
+	 * @return the coords of the point in 2D (projected on coord sys)
+	 */
+	public GgbVector getCoordsInD2(GgbCoordSys coordSys);
 
 	public int getPointStyle();
 

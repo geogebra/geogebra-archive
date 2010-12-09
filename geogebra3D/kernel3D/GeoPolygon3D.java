@@ -479,12 +479,20 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	public void setRegionChanged(GeoPointND PI, double x, double y){
 		
 		
-		((GeoPoint3D) PI).setCoords2D(x, y, 1);
-		((GeoPoint3D) PI).updateCoordsFrom2D(false);
-		//Application.debug("x = "+x+", y = "+y+"\n"+((GeoPoint3D) PI).getCoords());
+		PI.setCoords2D(x, y, 1);
+		PI.updateCoordsFrom2D(false);
+		
 	}
 	
 	protected boolean isInRegion(GeoPointND PI, boolean update){
+		
+		/*
+		GgbVector coords = PI.getCoordsInD2(getCoordSys());
+		
+		return isInRegion(coords.getX()/coords.getZ(), coords.getY()/coords.getZ());
+		*/
+		
+		
 		GeoPoint3D P = (GeoPoint3D) PI;
 
 		if (update){
@@ -493,6 +501,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		}
 		
 		return isInRegion(P.getX2D(), P.getY2D());
+		
 	}
 	
 	public boolean isInRegion(GeoPointND PI){

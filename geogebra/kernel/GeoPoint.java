@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
@@ -1195,6 +1196,10 @@ GeoPointND, Animatable  {
 			default:
 				return null;
 			}
+		}
+		
+		public GgbVector getCoordsInD2(GgbCoordSys coordSys){ //TODO use coord sys ?
+			return new GgbVector(x,y,z);
 		}
 		
 		public GgbVector getCoordsInD(int dimension){

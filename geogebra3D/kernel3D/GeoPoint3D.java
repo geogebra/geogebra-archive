@@ -23,6 +23,7 @@ package geogebra3D.kernel3D;
 import java.awt.geom.Point2D;
 import java.util.TreeSet;
 
+import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
@@ -45,6 +46,7 @@ import geogebra.kernel.PointProperties;
 import geogebra.kernel.Region;
 import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
@@ -313,12 +315,39 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	}
     }
     
+    
+    public GgbVector getCoordsInD2(GgbCoordSys coordSys){
+    	   	
+    	GgbVector coords;
+		GgbVector[] project;
+		
+		if (getWillingCoords()!=null) //use willing coords
+			coords = getWillingCoords();
+		else //use real coords
+			coords = getCoords();
+
+		if (getWillingDirection()==null) //use normal direction for projection
+			project = coordSys.getNormalProjection(coords);
+		else //use willing direction for projection
+			project = coordSys.getProjection(coords,getWillingDirection());		
+		
+		GgbVector v = new GgbVector(3);
+		v.setX(project[0].getX());
+		v.setY(project[0].getY());
+   		v.setZ(project[0].getW());
+   		return v;
+		
+   		//return project[0];
+    	
+    }
+    
     public GgbVector getCoordsInD(int dimension){
     	switch(dimension){
     	case 3:
     		return getCoords();
     	case 2:
     		//Application.debug("willingCoords=\n"+willingCoords+"\nwillingDirection=\n"+willingDirection);
+    		/*
     		GgbVector coords;
     		if (getWillingCoords()!=null)
     			if (getWillingDirection()!=null){
@@ -333,6 +362,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
     		v.setY(coords.getY());
        		v.setZ(coords.getW());
        		return v;
+       		*/
+    		return getCoordsInD2(GgbCoordSys.Identity3D());
     	default:
     		return null;
     	}

@@ -482,7 +482,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					
 				}else{
 					GgbVector coords = point.getCoordsInD(2);
-					return super.createNewPoint(false, path, coords.getX(), coords.getY()); 
+					return super.createNewPoint2D(false, path, coords.getX(), coords.getY()); 
 				}
 	
 			}else
@@ -501,7 +501,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					ret = point3D;
 				}else{
 					GgbVector coords = point.getCoordsInD(2);
-					return super.createNewPoint(false, region, coords.getX(), coords.getY()); 
+					return super.createNewPoint2D(false, region, coords.getX(), coords.getY()); 
 				}
 			}else
 				return null;

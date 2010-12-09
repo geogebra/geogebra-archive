@@ -3464,23 +3464,36 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, double x, double y){
-		/*
-		GeoPointND ret;
-		if (((GeoElement) path).isGeoElement3D())
-			ret = (GeoPointND) kernel.getManager3D().Point3D(null, path, x, y, 0);
-		else
-			ret = kernel.Point(null, path, x, y, true);
-		return ret;
-		*/
 		
+		if (((GeoElement) path).isGeoElement3D()) //check if the path is not a 3D element
+			return (GeoPointND) kernel.getManager3D().Point3D(null, path, x, y, 0);
+		else
+			return createNewPoint2D(forPreviewable, path, x, y);
+
+	}
+	
+	protected GeoPointND createNewPoint2D(boolean forPreviewable, Path path, double x, double y){
 		return kernel.Point(null, path, x, y, true);
 	}
-
+	
+	
+	
 	protected GeoPointND createNewPoint(boolean forPreviewable, Region region){
 		return createNewPoint(forPreviewable, region, xRW, yRW);
 	}
+	
 
 	protected GeoPointND createNewPoint(boolean forPreviewable, Region region, double x, double y){
+		
+		if (((GeoElement) region).isGeoElement3D()) //check if the path is not a 3D element
+			return (GeoPointND) kernel.getManager3D().Point3DIn(null, region, x, y, 0);
+		else
+			return createNewPoint2D(forPreviewable, region, x, y);
+
+	}
+	
+
+	protected GeoPointND createNewPoint2D(boolean forPreviewable, Region region, double x, double y){
 		GeoPointND ret = kernel.PointIn(null, region, x, y, true);
 		return ret;
 	}
