@@ -7052,7 +7052,7 @@ public class Kernel {
 				if (Double.isNaN(x))
 					return " 1/0 ";	
 				else if (Double.isInfinite(x)) {
-					if (casPrintForm == ExpressionNode.STRING_TYPE_MAXIMA) return (x<0) ? "-infinity" : "infinity";
+					if (casPrintForm == ExpressionNode.STRING_TYPE_MAXIMA) return (x<0) ? "-inf" : "inf";
 					return Double.toString(x); // "Infinity" or "-Infinity"
  				}
 				else {			
