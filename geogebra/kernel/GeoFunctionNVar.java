@@ -527,6 +527,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				double bestDist = (bestY-myY)*(bestY-myY)+(bestX-myX)*(bestX-myX);
 				
 				if(ineqs==null){
+					getIneqs();
 					fun.initIneqs(getFunctionExpression(),isInverseFill(),this);
 				}
 				int size = ineqs.size();
