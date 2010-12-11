@@ -37,7 +37,7 @@ public class ConstructionDefaults {
 	
 	public static final int DEFAULT_LINE = 20;			
 	public static final int DEFAULT_INEQUALITY = 23; 
-	public static final int DEFAULT_INEQUALITY_1VAR = 24;//TODO: make this actually used
+	public static final int DEFAULT_INEQUALITY_1VAR = 24;
 	public static final int DEFAULT_VECTOR = 30;	
 	public static final int DEFAULT_CONIC = 40;
 	public static final int DEFAULT_CONIC_SECTOR = 41;
@@ -88,9 +88,7 @@ public class ConstructionDefaults {
 	// lists
 	private static final Color colList = new Color(0, 110, 0);
 
-	// numbers (slope, definite integral)
-	private static final Color colNumber = Color.black;	
-	
+		
 	/** preview color */
 	public static final Color colPreview = Color.darkGray;
 	/** preview fill color */
@@ -215,7 +213,7 @@ public class ConstructionDefaults {
 		//inequality.setLocalVariableLabel("Inequality");
 		inequality1var.setObjColor(colInequality);
 		inequality1var.setAlphaValue(DEFAULT_INEQUALITY_ALPHA);
-		defaultGeoElements.put(DEFAULT_INEQUALITY_1VAR, inequality1var); //TODO: Make this used
+		defaultGeoElements.put(DEFAULT_INEQUALITY_1VAR, inequality1var); 
 		
 		
 		
@@ -254,7 +252,6 @@ public class ConstructionDefaults {
 		GeoNumeric number = new GeoNumeric(cons);	
 //		number.setLocalVariableLabel(app.getPlain("Numeric"));
 		number.setLocalVariableLabel("Numeric");
-		number.setObjColor(colNumber);
 		number.setLabelMode(GeoElement.LABEL_NAME_VALUE);	
 		defaultGeoElements.put(DEFAULT_NUMBER, number);
 				
