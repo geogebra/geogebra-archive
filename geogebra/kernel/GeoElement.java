@@ -1143,7 +1143,7 @@ public abstract class GeoElement
 		fillColor = geo.fillColor;
 		alphaValue = geo.alphaValue;
 		bgColor = geo.bgColor;
-		
+		isColorSet = geo.isColorSet();
 		// line thickness and line type:	
 		// note: line thickness in Drawable is calculated as lineThickness / 2.0f
 		setLineThickness(geo.lineThickness);
