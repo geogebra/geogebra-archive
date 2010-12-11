@@ -403,12 +403,14 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			// Ctrl + D: toggles algebra style: value, definition, command
 			case KeyEvent.VK_D:
 			case KeyEvent.VK_BACK_QUOTE:
-				Kernel kernel = app.getKernel();
-				kernel.setAlgebraStyle((kernel.getAlgebraStyle() + 1) % 3);
-				kernel.updateConstruction();
-				app.setUnsaved();
-				consumed = true;
-				break;
+				if (!event.isShiftDown()) {
+					Kernel kernel = app.getKernel();
+					kernel.setAlgebraStyle((kernel.getAlgebraStyle() + 1) % 3);
+					kernel.updateConstruction();
+					app.setUnsaved();
+					consumed = true;
+					break;
+				}
 			}
 		}
 
