@@ -2513,13 +2513,12 @@ public class GuiManager {
 	   
 
 	    private URL getHelpURL(Locale locale, String intCommand) throws Exception {
-	    	Application.printStacktrace("");
 	    	// needed to turn internal command into English command
 	    	// eg CurveCartesian -> Curve
 	    	intCommand = app.getEnglishCommand(intCommand);
 	    	
 	    	 // try to get help for current locale (language + country + variant)
-	        URL helpURL = getHelpURL(locale.toString(), intCommand);
+	        URL helpURL = getHelpURL(locale.toString(), "cmd", intCommand);
 
 	        if (helpURL != null) {        	
 	        	return helpURL;
@@ -2527,7 +2526,7 @@ public class GuiManager {
 	    	       
 	        // try to get help for current language
 	        String  language = locale.getLanguage();     
-	        helpURL = getHelpURL(language, intCommand);
+	        helpURL = getHelpURL(language, "cmd", intCommand);
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
@@ -2536,7 +2535,7 @@ public class GuiManager {
 	        // Spanish help instead of the English one
 	        // won't work unless they share command name
 	        if (language.equals("eu") || language.equals("ca")) {        	
-	        	helpURL = getHelpURL("es", intCommand); // Spanish
+	        	helpURL = getHelpURL("es", "cmd", intCommand); // Spanish
 	        	if (helpURL != null) {            	
 	            	return helpURL;
 	            }
@@ -2544,7 +2543,7 @@ public class GuiManager {
 	        
 	                
 	        // last attempt: try to get English help 
-	        helpURL = getHelpURL("en", intCommand);
+	        helpURL = getHelpURL("en", "cmd", intCommand);
 	        if (helpURL != null) {        	
 	        	return helpURL;
 	        }
@@ -2553,11 +2552,11 @@ public class GuiManager {
 	        throw new Exception("HelpNotFound");
 	    }
 	    
-	    private URL getHelpURL(String languageISOcode, String ggbCommand)  {
+	    private URL getHelpURL(String languageISOcode, String type, String ggbCommand)  {
 	    	// try to get help for given language
 	    	// eg http://www.geogebra.org/help/en/FitLogistic
 	    	
-			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "help/" + languageISOcode + "/" + ggbCommand;
+			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "help/" + languageISOcode + "/" + type + "/" + ggbCommand;
 			
 			Application.debug(strURL);
 			
