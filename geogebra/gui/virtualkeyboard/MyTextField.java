@@ -1,30 +1,44 @@
 package geogebra.gui.virtualkeyboard;
 
+import geogebra.gui.GuiManager;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.gui.util.SymbolTable;
 import geogebra.main.Application;
-import geogebra.gui.GuiManager;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.SystemColor;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 
+import javax.swing.BorderFactory;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.text.BadLocationException;
 
 public class MyTextField extends JTextField implements FocusListener, VirtualKeyboardListener, CaretListener {
 
-	GuiManager guiManager;
-
+	private GuiManager guiManager;
+	
+	// fields for the symbol table popup 
+	private JPopupMenu popup;
+	private MyTextField thisField = this;
+	private SymbolTable symbolTable;
+	private int caretPosition; // restores caret position when popup is done 
+	
 	public MyTextField(GuiManager guiManager) {
 		super();
 		this.guiManager = guiManager;
@@ -104,6 +118,98 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 
 	}
+	
+	/** 
+	 * Creates an instance of JPopupMenu and adds a symbol table to it.
+	 */
+	private void createPopup(){
+		popup = new JPopupMenu();
+		popup.setFocusable(false);
+		symbolTable = new SymbolTable(guiManager.app, this);
+		popup.add(symbolTable);
+		popup.setBorder(BorderFactory.createLineBorder(SystemColor.controlShadow));
+	}
+	
+	
+	/** 
+	 * Gets the pixel location of the caret. Used to locate the popup. 
+	 * */
+	private Point getCaretPixelPosition(){
+		int width = thisField.getSize().width;  
+		int position = thisField.getCaretPosition();  
+		Rectangle r;
+		try {
+			r = thisField.modelToView(position);
+		} catch (BadLocationException e) {
+			r = null;
+		}  
+		return new Point(r.x, r.y - popup.getPreferredSize().height-10);
+	}
+	
+	/** 
+	 * Hides the popup and inserts selected symbol. (Called by symbol table
+	 * on Enter key press). 
+	 * */
+	public void handlePopupEnter(){	
+			popup.setVisible(false);
+			setCaretPosition(caretPosition);
+			insertString((String) symbolTable.getSelectedValue());
+	}
+	
+	/**
+	 * Overrides processKeyEvents so that the symbol table popup can be
+	 * triggered by ctrl-up.
+	 * */
+	public void processKeyEvent(KeyEvent e) {
+		
+		int keyCode = e.getKeyCode(); 
+		
+		if ((e.isControlDown()||Application.isControlDown(e)) && keyCode == KeyEvent.VK_UP){
+			caretPosition = thisField.getCaretPosition();
+			if(popup == null)
+				createPopup();
+			popup.show(thisField, getCaretPixelPosition().x, getCaretPixelPosition().y);
+			return;
+		}
+		
+		if(popup != null && popup.isShowing() && e.getID()==KeyEvent.KEY_PRESSED){
+			
+			switch(keyCode){
+			case KeyEvent.VK_ENTER:
+				popup.setVisible(false);
+				setCaretPosition(caretPosition);
+				insertString((String) symbolTable.getSelectedValue());
+				return;
+			case KeyEvent.VK_ESCAPE:
+				popup.setVisible(false);
+				return;
+			
+			case KeyEvent.VK_UP:
+			case KeyEvent.VK_DOWN:
+			case KeyEvent.VK_LEFT:
+			case KeyEvent.VK_RIGHT:
+
+				int row = symbolTable.getSelectedRow();
+				int column = symbolTable.getSelectedColumn();
+				if(keyCode == KeyEvent.VK_RIGHT && column != symbolTable.getColumnCount()-1) ++column;	
+				if(keyCode == KeyEvent.VK_LEFT && column >= 0) --column;	
+				if(keyCode == KeyEvent.VK_DOWN && row != symbolTable.getRowCount()-1) ++row;
+				if(keyCode == KeyEvent.VK_UP && row >= 0) --row; 
+
+				symbolTable.changeSelection(row, column, false, false);
+				return;	
+
+			default:
+				popup.setVisible(false);
+				return;
+			}
+		}
+		super.processKeyEvent(e);
+	}
+
+	
+	
+	
 	
 	private float pos = 0;
 	private int scrollOffset = 0;

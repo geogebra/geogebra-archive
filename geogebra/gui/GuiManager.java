@@ -103,7 +103,7 @@ public class GuiManager {
 	// Java user interface properties, for translation of JFileChooser
 	private ResourceBundle rbJavaUI;
 
-	protected Application app;
+	public Application app;
 	private Kernel kernel;
 	
 	private OptionsDialog optionsDialog;

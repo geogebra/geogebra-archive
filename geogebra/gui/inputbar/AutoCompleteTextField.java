@@ -1,6 +1,7 @@
 package geogebra.gui.inputbar;
 import geogebra.gui.MathTextField;
 import geogebra.gui.util.SelectionTable;
+import geogebra.gui.util.SymbolTable;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
@@ -38,12 +39,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private ArrayList history;  
 	private boolean handleEscapeKey = false;
 
-	// vars for the symbol table popup (G.Sturr 2010-11-15) 
-	private JPopupMenu popup;
-	private AutoCompleteTextField thisField = this;
-	private SelectionTable symbolTable;
-	
-	
 	
 	/**
 	 * Constructs a new AutoCompleteTextField that uses the dictionary of the
@@ -70,8 +65,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		//addKeyListener(this); now in MathTextField
 		setDictionary(app.getCommandDictionary());   
 		
-		//create popup with symbol table
-		createPopup();
 		
 	}   
 
@@ -130,33 +123,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	
 	
 	
-	/** Gets the pixel location of the caret. Used to locate the popup. */
-	private Point getCaretPixelPosition(){
-		int width = this.getSize().width;  
-		int position = this.getCaretPosition();  
-		Rectangle r;
-		try {
-			r = this.modelToView(position);
-		} catch (BadLocationException e) {
-			r = null;
-		}  
-		return new Point(r.x, r.y - popup.getPreferredSize().height-10);
-	}
-	
-	
-	/** 
-	 * Creates an instance of JPopupMenu and adds a symbol table to it.
-	 */
-	private void createPopup(){
-		popup = new JPopupMenu();
-		symbolTable = new SelectionTable(app, InputPanel.symbols, -1,6, new Dimension(20,16), SelectionTable.MODE_TEXT);
-		symbolTable.setShowGrid(true);
-		symbolTable.setHorizontalAlignment(SwingConstants.CENTER);
-		symbolTable.setBorder(BorderFactory.createEtchedBorder());
-		symbolTable.setSelectedIndex(1);
-		symbolTable.addKeyListener(this);
-		popup.add(symbolTable);
-	}
 	
 
 
@@ -169,7 +135,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	boolean ctrlC = false;
 
 	
-	private int caretPosition; // restores caret position when popup is done 
+	
 
 	public void keyPressed(KeyEvent e) {        
 		// we don't want to trap AltGr
@@ -184,38 +150,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		
 		int keyCode = e.getKeyCode(); 
-		
-		//=============================
-		// popup handling
-		
-		// show popup on ctrl-up_arrow
-		if ((e.isControlDown()||Application.isControlDown(e)) && keyCode == KeyEvent.VK_UP){
-			caretPosition = getCaretPosition();
-			popup.show(thisField, getCaretPixelPosition().x, getCaretPixelPosition().y);
-			symbolTable.requestFocus();
-			return;
-		}
-		
-		// handle key presses from the popup symbol table
-		if(e.getSource()==symbolTable){
-			
-			if(keyCode == KeyEvent.VK_ENTER){
-				e.consume();
-				setCaretPosition(caretPosition);
-				popup.setVisible(false);
-				insertString((String) symbolTable.getSelectedValue());
-				
-			}
-			if(keyCode == KeyEvent.VK_ESCAPE){
-				e.consume();
-				setCaretPosition(caretPosition);
-				popup.setVisible(false);
-			}
-				
-			return;
-		}
-		// END popup handling
-		//=============================
 		
 		
 		ctrlC = false;

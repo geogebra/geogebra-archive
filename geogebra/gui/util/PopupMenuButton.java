@@ -151,6 +151,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.thisButton = this;
 		// create the popup
 		myPopup = new JPopupMenu();
+		myPopup.setFocusable(false);
 		myPopup.setBackground(Color.WHITE);
 		myPopup.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY),
 				BorderFactory.createEmptyBorder(3,3,3,3)));

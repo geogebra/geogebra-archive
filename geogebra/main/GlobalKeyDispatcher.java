@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
 
@@ -48,8 +49,11 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 * allowing it to handle the key event and consume it. 
 	 */
 	public boolean dispatchKeyEvent(KeyEvent event) {
+		
+	
 		// ignore key events coming from text components (i.e. text fields and text areas)
-		if (event.isConsumed() || event.getSource() instanceof JTextComponent) {			
+		// or key events coming from popups (source class = JRootPane)
+		if (event.isConsumed() || event.getSource() instanceof JTextComponent || event.getSource() instanceof JRootPane) {			
 			return false;
 		} 	
 		 				 
