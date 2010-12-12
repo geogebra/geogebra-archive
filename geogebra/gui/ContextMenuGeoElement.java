@@ -823,7 +823,8 @@ public class ContextMenuGeoElement extends JPopupMenu {
 						time = 2 * 13000 / n;	
 						val = min;
 						break;
-						default: //GeoElement.ANIMATION_INCREASING:
+					default: //GeoElement.ANIMATION_INCREASING:
+							//GeoElement.ANIMATION_INCREASING_ONCE:
 						step = num.getAnimationStep();
 						n = (int) ((max - min) / step);
 						if (app.getKernel().isZero(((max - min) / step) - n)) n++;

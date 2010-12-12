@@ -5251,6 +5251,7 @@ class AnimationSpeedPanel
 		animationModeCB.addItem("\u21d4 "+app.getPlain("Oscillating")); // index 0
 		animationModeCB.addItem("\u21d2 "+app.getPlain("Increasing")); // index 1
 		animationModeCB.addItem("\u21d0 "+app.getPlain("Decreasing")); // index 2
+		animationModeCB.addItem("\u21d2 "+app.getPlain("IncreasingOnce")); // index 3
 		animationModeCB.addActionListener(this);
 		animationModeCB.setSelectedIndex(GeoElement.ANIMATION_OSCILLATING);
 		
@@ -5286,6 +5287,7 @@ class AnimationSpeedPanel
 		animationModeCB.addItem("\u21d4 "+app.getPlain("Oscillating")); // index 0
 		animationModeCB.addItem("\u21d2 "+app.getPlain("Increasing")); // index 1
 		animationModeCB.addItem("\u21d0 "+app.getPlain("Decreasing")); // index 2
+		animationModeCB.addItem("\u21d2 "+app.getPlain("IncreasingOnce")); // index 3
 		
 		animationModeCB.setSelectedIndex(selectedIndex);
 		animationModeCB.addActionListener(this);

@@ -364,6 +364,7 @@ public abstract class GeoElement
 	public final static int ANIMATION_OSCILLATING = 0;
 	public final static int ANIMATION_INCREASING = 1;
 	public final static int ANIMATION_DECREASING = 2;
+	public final static int ANIMATION_INCREASING_ONCE = 3;
 	private int animationType = ANIMATION_OSCILLATING;
 	private int animationDirection = 1;
 	
@@ -1727,7 +1728,8 @@ public abstract class GeoElement
 	
 	final public void setAnimationType(int type) {
 		switch (type) {
-			case ANIMATION_INCREASING:
+		case ANIMATION_INCREASING_ONCE:
+		case ANIMATION_INCREASING:
 			case ANIMATION_OSCILLATING:
 				animationType = type;
 				animationDirection = 1;

@@ -1306,7 +1306,18 @@ GeoPointND, Animatable  {
 						animationValue = animationValue + intervalWidth;		
 					break;
 				
-				case GeoElement.ANIMATION_OSCILLATING:
+				case GeoElement.ANIMATION_INCREASING_ONCE:
+					// stop if outside range
+					if (animationValue > 1) {
+						animationValue = 1;
+						setAnimating(false);
+					} else if (animationValue < 0) {
+						animationValue = 0;
+						setAnimating(false);
+					}
+					break;
+				
+			case GeoElement.ANIMATION_OSCILLATING:
 				default: 		
 					if (animationValue >= 1) {
 						animationValue = 1;

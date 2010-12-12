@@ -939,6 +939,19 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 					animationValue = animationValue + intervalWidth;		
 				break;
 			
+			case GeoElement.ANIMATION_INCREASING_ONCE:
+				// stop if outside range
+				if (animationValue > getIntervalMax()) {
+					setAnimating(false);
+					setValue(getIntervalMax(), false);
+					return true;
+				} else if (animationValue < getIntervalMin()) {
+					setAnimating(false);
+					setValue(getIntervalMin(), false);
+					return true;
+				}
+				break;
+			
 			case GeoElement.ANIMATION_OSCILLATING:
 			default: 		
 				if (animationValue >= getIntervalMax()) {
@@ -958,7 +971,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		// round animationValue to newValue using slider's increment setting	
 		double param = animationValue - getIntervalMin();
 		param = Kernel.roundToScale(param, getAnimationStep());		
-		newValue = getIntervalMin() + param;				
+		newValue = getIntervalMin() + param;	
 		
 		if (getAnimationStep() > Kernel.MIN_PRECISION) {
 			// round to decimal fraction, e.g. 2.800000000001 to 2.8
