@@ -5248,12 +5248,6 @@ class AnimationSpeedPanel
 			// combo box for 
 		animationModeCB = new JComboBox();
 		modeLabel = new JLabel();
-		animationModeCB.addItem("\u21d4 "+app.getPlain("Oscillating")); // index 0
-		animationModeCB.addItem("\u21d2 "+app.getPlain("Increasing")); // index 1
-		animationModeCB.addItem("\u21d0 "+app.getPlain("Decreasing")); // index 2
-		animationModeCB.addItem("\u21d2 "+app.getPlain("IncreasingOnce")); // index 3
-		animationModeCB.addActionListener(this);
-		animationModeCB.setSelectedIndex(GeoElement.ANIMATION_OSCILLATING);
 		
 		// text field for animation step
 		speedLabel = new JLabel();
