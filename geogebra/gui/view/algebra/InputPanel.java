@@ -21,6 +21,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -235,25 +236,17 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		ExpressionNode.strIS_ELEMENT_OF,
 		ExpressionNode.strCONTAINS,
 		ExpressionNode.strCONTAINS_STRICT,
-		
-		
-		
+				
 	};
 	
 	
-	
-	
-
 	private JTextComponent textComponent;	
-	private MyComboBox cbSpecialChars, cbGreekLetters;
 
 	private PopupMenuButton popupTableButton;
-
 	public PopupMenuButton getSymbolButton() {
 		return popupTableButton;
 	}
 
-	
 
 	private JButton[] symbolButton;
 	private ArrayList<String> symbolList;
@@ -261,6 +254,17 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 	public void setSymbolButtonCount(int symbolButtonCount) {
 		this.symbolButtonCount = symbolButtonCount;
 	}
+
+	private JButton historyButton;
+	private boolean showHistoryButton;
+	public void setShowHistoryButton(boolean showHistoryButton) {
+		historyButton.setVisible(showHistoryButton);
+	}
+	
+	//=====================================
+	//Constructors
+	
+	
 
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
 		this(initText, app, 1, columns, true, true, false, null);
@@ -287,95 +291,52 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		
 		this.app = app;
 		
+		//======================================
+		// set up the text component
 		if (rows > 1) 
 			textComponent = new JTextArea(rows, columns);
 		else
 			textComponent = new AutoCompleteTextField(columns, app);		
 		
 		textComponent.addFocusListener(this);
+		textComponent.setFocusable(true);	
 		
 		if (keyListener != null)
 		textComponent.addKeyListener(keyListener);
 		
 		if (initText != null) textComponent.setText(initText);		
-		cbSpecialChars = new MyComboBox();
-		cbGreekLetters  = new MyComboBox();
 		
-		
-		
-		// make sure we use a font that can display special characters
-		cbSpecialChars.setFont(app.getFontCanDisplay(Unicode.EULER_STRING));
-		cbGreekLetters.setFont(app.getFontCanDisplay("\u03b1")); // alpha
-			
-		textComponent.setFocusable(true);
-		cbGreekLetters.setFocusable(false);
-		cbSpecialChars.setFocusable(false);		
-		
-		for (int i=0; i < specialChars.length; i++) {
-			cbSpecialChars.addItem(specialChars[i]);
-		}
-		
-		if (showDisplayChars)
-			for (int i=0; i < displayChars.length; i++) {
-				cbSpecialChars.addItem(displayChars[i]);
-			}
 
-		// set up greek letter combo box
-		for (int i=0; i < greekLowerCase.length; i++) {
-			cbGreekLetters.addItem(greekLowerCase[i]);
-		}
-		for (int i=0; i < greekUpperCase.length; i++) {
-			cbGreekLetters.addItem(greekUpperCase[i]);
-		}
+		// make sure we use a font that can display special characters
+		//cbSpecialChars.setFont(app.getFontCanDisplay(Unicode.EULER_STRING));
 		
-		// set widths of combo boxes
-		cbSpecialChars.setPrototypeDisplayValue("Wa");
-		cbGreekLetters.setPrototypeDisplayValue("Wa");
+			
 		
-		ComboBoxListener cbl = new ComboBoxListener();
-		cbSpecialChars.addActionListener(cbl);			
-		cbSpecialChars.addMouseListener(cbl);
-		cbGreekLetters.addActionListener(cbl);	
-		cbGreekLetters.addMouseListener(cbl);	
+		//======================================
+		// layout the gui
 		
 		if (rows > 1) { // JTextArea
 			setLayout(new BorderLayout(5, 5));	
 			JScrollPane sp = new JScrollPane(textComponent); 
-			//sp.setPreferredSize(new Dimension(300, 200));
 			sp.setAutoscrolls(true);
 			add(sp, BorderLayout.CENTER);
-			
-			JPanel cbPanel = new JPanel(new BorderLayout());
-			JPanel tempPanel = new JPanel(new BorderLayout(0, 3));			
-			tempPanel.add(cbSpecialChars, BorderLayout.NORTH);						
-			tempPanel.add(cbGreekLetters, BorderLayout.SOUTH);		
-			cbPanel.add(tempPanel, BorderLayout.NORTH);						
-			add(cbPanel, BorderLayout.EAST);			
+			JPanel buttonPanel = new JPanel(new BorderLayout());
+			buttonPanel.add(createPopupButton(),BorderLayout.EAST);
+			add(buttonPanel, BorderLayout.EAST);			
 		} 
 		else { // JTextField
-			setLayout(new BorderLayout(5,5));
+			setLayout(new BorderLayout(0,0));
 			add(textComponent, BorderLayout.CENTER);
-			
-			JPanel cbPanel = new JPanel(new BorderLayout(2,0));			
-			//cbPanel.add(cbSpecialChars, BorderLayout.WEST);
-			//cbPanel.add(cbGreekLetters, BorderLayout.EAST);
-			cbPanel.add(createPopupButton(),BorderLayout.WEST);
-			//cbPanel.add(functionButton,BorderLayout.EAST);
-			add(cbPanel, BorderLayout.EAST);	
-			
+			JPanel buttonPanel = new JPanel(new BorderLayout(0,0));
+			buttonPanel.add(createPopupButton(),BorderLayout.EAST);
+			add(buttonPanel, BorderLayout.EAST);	
 		}		
 		
-		cbSpecialChars.setVisible(showSpecialChars);
-		cbGreekLetters.setVisible(showGreekLetters);
 	}
 	
-	public void showSpecialChars(boolean flag) {
-		cbSpecialChars.setVisible(flag);
-	}
 	
-	public void showGreekLetters(boolean flag) {
-		cbGreekLetters.setVisible(flag);
-	}
+	//====================================
+	// getters/setters
 	
 	public JTextComponent getTextComponent() {
 		return textComponent;
@@ -398,20 +359,6 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		textComponent.setText(text);
 	}
 	
-	private class ComboBoxListener extends MyComboBoxListener {
-		
-		public void doActionPerformed(Object source) {			
-			if (source == cbSpecialChars) {				
-				String str = cbSpecialChars.getSelectedItem().toString();
-				insertString(str);	
-				if (str.length() > 1)
-					cbSpecialChars.setSelectedIndex(0);
-			}
-			else if (source == cbGreekLetters) {
-				insertString(cbGreekLetters.getSelectedItem().toString());		
-			}
-		}
-	}
 
 	
 	private JToolBar createPopupButton(){
@@ -428,8 +375,10 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 		popupTableButton.addActionListener(this);
 		popupTableButton.setSelected(true);
 		
-		JToolBar p = new JToolBar();
-		p.setFloatable(false);
+		JToolBar tb = new JToolBar();
+		tb.setFloatable(false);
+		tb.add(createHistoryPanel());
+		tb.add(Box.createRigidArea(new Dimension(10,1)));
 		
 		symbolList = new ArrayList<String>();
 		symbolList.add(Unicode.EULER_STRING);
@@ -441,13 +390,13 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 			symbolButton[i].setFocusable(false);
 			symbolButton[i].addActionListener(this);
 			if(i==symbolButtonCount-1 && symbolButtonCount > 1)
-				p.addSeparator();
-			p.add(symbolButton[i]);
+				tb.addSeparator();
+			tb.add(symbolButton[i]);
 		}
-		p.add(popupTableButton);
+		tb.add(popupTableButton);
 		setSymbolButtons();
 		
-		return p;
+		return tb;
 		
 	}
 	
@@ -458,6 +407,24 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 					GeoGebraIcon.createStringIcon(symbolList.get(i), app.getPlainFont(), new Dimension(18,18)));
 		}
 	}
+	
+	
+	private JPanel createHistoryPanel(){
+		
+		JPanel historyPanel = new JPanel(new BorderLayout(0,0));
+		
+		historyButton = new PopupMenuButton(app, tableSymbols, 5,11,new Dimension(10,18), SelectionTable.MODE_TEXT);
+		
+	//	historyButton = new JButton(GeoGebraIcon.createUpDownTriangleIcon(16));
+		historyPanel.add(historyButton,BorderLayout.WEST);
+		historyButton.setFocusable(false);
+		historyButton.setVisible(false);
+		return historyPanel;
+		
+	}
+	
+	
+	
 	
 	
 	/**
@@ -491,6 +458,21 @@ public class InputPanel extends JPanel implements FocusListener, VirtualKeyboard
 			insertString(symbolList.get(i));
 		}
 			
+		
+	}
+
+	
+	
+	//TODO  Hide/show popup button options
+	public void showSpecialChars(boolean flag) {
+		popupTableButton.setVisible(flag);
+		for(int i=0; i < symbolButton.length; i++)
+			symbolButton[i].setVisible(false);
+		
+	}
+
+	public void showGreekLetters(boolean flag) {
+		// TODO Auto-generated method stub
 		
 	}
 

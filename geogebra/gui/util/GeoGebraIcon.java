@@ -13,6 +13,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
@@ -230,6 +231,52 @@ public class GeoGebraIcon {
 	ImageIcon ic = new ImageIcon(image);
 	return ic;
 	}
+	
+	
+	public static ImageIcon createUpDownTriangleIcon(int height){
+		
+		BufferedImage image = new BufferedImage(6, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
+		g2.setColor(Color.BLACK);
+		int midx = image.getWidth()/2;
+		int midy = image.getHeight()/2;
+
+		Polygon p = new Polygon();
+		// make a triangle.
+		p.addPoint(midx-3,midy-2);
+		p.addPoint(midx+3,midy-2);
+		p.addPoint(midx,midy-6);
+
+		g2.fillPolygon(p);  
+
+		// make a triangle.
+		p = new Polygon();
+		p.addPoint(midx-3,midy+2);
+		p.addPoint(midx+3,midy+2);
+		p.addPoint(midx,midy+6);
+
+		g2.fillPolygon(p);
+	      
+		
+		
+		/*
+		g2.drawLine(x, y, x+6, y);
+		g2.drawLine(x+1, y+1, x+5, y+1);
+		g2.drawLine(x+2, y+2, x+4, y+2);
+		g2.drawLine(x+3, y+3, x+3, y+3);
+		*/
+	      
+	      
+	      
+		ImageIcon ic = new ImageIcon(image);
+		return ic;
+		}
+		
+	
+	
+	
 	
 	
 	

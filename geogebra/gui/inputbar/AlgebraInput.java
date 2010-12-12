@@ -51,25 +51,20 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	private static final long serialVersionUID = 1L;
 	
 	
-	private boolean showCommandButton = true;	  //<=========== set this flag to test the command button
-	
-	
 	private Application app;
 
 	private JLabel inputLabel, helpIcon;
  	
-	private MyComboBox cmdCB; // for command list
-	
 	
 	// autocompletion text field
 	private AutoCompleteTextField inputField;
 
-	
 
 	private JToggleButton btnToggleInputPanel;
 	InputPanel inputPanel;
 
-	/**
+	
+	/***********************************************************
 	 * creates new AlgebraInput
 	 */
 	public AlgebraInput(Application app) {		
@@ -80,44 +75,26 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		//initGUI();
 	}
 	
+	
 	public void initGUI() {
 		removeAll();
-		//helpIcon = new JLabel(app.getImageIcon("help.png")); 
-		//helpIcon.addMouseListener(this);
 		inputLabel = new JLabel(); 
-		//inputLabel.addMouseListener(this);
-
-		
-		if(showCommandButton)
-			inputPanel = new InputPanel(null, app, 30);
-		else
-			inputPanel = new InputPanel(null, app, 30, true);
-		
+		inputPanel = new InputPanel(null, app, 30);
 		inputField = (AutoCompleteTextField) inputPanel.getTextComponent();		
 		
 		// set up input field		
 		inputField.setEditable(true);						
 		inputField.addKeyListener(this);
-		
-		// set up command combo box
-		cmdCB = new MyComboBox();
-		if (app.showCmdList()) {
-			cmdCB.setMaximumSize(new Dimension(200, 200));
-			// set to approx half screen height
-			//cmdCB.setMaximumRowCount(app.getScreenSize().height/app.getFontSize()/3);
-			cmdCB.addActionListener(this);
-		}
-		
-		
 		updateFonts();
 				
+		// set up history popup
+		//inputPanel.setShowHistoryButton(true);
+		
 		// add to panel				 		
 		setLayout(new BorderLayout(2, 2));	
 		JPanel iconLabelPanel = new JPanel();
-		//iconLabelPanel.add(helpIcon);
+		
 
-		
-		
 		// create toggle button to hide/show the input help panel
 		btnToggleInputPanel = new JToggleButton();
 		btnToggleInputPanel.setSelectedIcon(GeoGebraIcon.listRightIcon());
@@ -133,16 +110,11 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		add(inputPanel, BorderLayout.CENTER);
 		if (app.showCmdList()) {
 			JPanel p = new JPanel(new BorderLayout(5,5));
-			
-			if(showCommandButton)
-				p.add(btnToggleInputPanel, BorderLayout.WEST);
-			else
-				p.add(cmdCB, BorderLayout.CENTER);
-			
+			p.add(btnToggleInputPanel, BorderLayout.WEST);
 			p.add(Box.createRigidArea(new Dimension(10,1)), BorderLayout.EAST);
 			add(p, BorderLayout.EAST);
 		}
-		
+
 		setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),  
 			BorderFactory.createEmptyBorder(2,2,2,2) )
@@ -182,7 +154,6 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		if (helpIcon != null)
 			helpIcon.setToolTipText(app.getMenu("FastHelp"));	
 		
-		setCommandNames();	
 		// update the help panel
 		app.getInputHelpPanel().setLabels();
 		app.getInputHelpPanel().setCommands();
@@ -192,11 +163,6 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	public void updateFonts() {
 		inputField.setFont(app.getBoldFont());		
 		inputLabel.setFont(app.getPlainFont());
-		if (app.showCmdList()) {	
-			cmdCB.setFont(app.getPlainFont());
-			// set to approx half screen height
-			cmdCB.setMaximumRowCount(app.getScreenSize().height/app.getFontSize()/3);
-		}
 		//update the help panel
 		app.getInputHelpPanel().updateFonts();
 	}    
@@ -251,66 +217,14 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	}
 
 	
-	
-	/**
-	 * fill command list with command names of current locale
-	 */	
-	public void setCommandNames() {	
-		app.initTranslatedCommands();
-		LowerCaseDictionary dict = app.getCommandDictionary();
-		if (dict == null || cmdCB == null) return;
-		
-		ActionListener [] listeners = cmdCB.getActionListeners();
-		for (int i=0; i < listeners.length; i++) 
-			cmdCB.removeActionListener(listeners[i]);
-		
-		if (cmdCB.getItemCount() > 0) cmdCB.removeAllItems();		
-		String commandString = app.getCommand("Command") + " ...";
-		cmdCB.addItem(commandString);		
-		
-		Iterator<?> it = dict.getLowerCaseIterator();
-		while (it.hasNext()) {
-			// combobox
-			String cmdName = (String) dict.get(it.next());
-			if (cmdName != null && cmdName.length() > 0)
-				cmdCB.addItem(cmdName);
-		}	 
-		
-		// set width of combo box to fit "Command ..."
-		cmdCB.setPrototypeDisplayValue(commandString + "Wa");
-				
-		for (int i=0; i < listeners.length; i++) 
-			cmdCB.addActionListener(listeners[i]);
-	}
-	
 
-	
    
 	/**
 	* action listener implementation for command combobox
 	*/
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-	
-		// command combobox
-		if (source == cmdCB) { 			
-			if (cmdCB.getSelectedIndex() != 0) { // not title
-				String cmd = (String) cmdCB.getSelectedItem();
-				
-				// copy command into input bar
-				insertCommand(cmd);	
-				
-				// show command's syntax
-				StringBuilder sb = new StringBuilder();
-				cmd = app.translateCommand(cmd); // internal name
-				CommandProcessor.getCommandSyntax(sb, app, cmd, -1);
-				app.showError(new MyError(app, sb.toString(), cmd));
-				
-				//cmdCB.setSelectedIndex(0);
-			}					
-		}			
-		
-		
+			
 		if (source == btnToggleInputPanel) { 
 			if(btnToggleInputPanel.isSelected()){
 				app.getInputHelpPanel().updateFonts();
