@@ -36,6 +36,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
+import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
@@ -59,7 +60,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -149,6 +149,7 @@ public	class PropertiesPanel extends JPanel {
  		private AllowOutlyingIntersectionsPanel allowOutlyingIntersectionsPanel;
 		private AuxiliaryObjectPanel auxPanel;
 		private AnimationStepPanel animStepPanel;
+		private TextfieldSizePanel textFieldSizePanel;
 		private AnimationSpeedPanel animSpeedPanel;
 		private SliderPanel sliderPanel;
 		private SlopeTriangleSizePanel slopeTriangleSizePanel;
@@ -244,6 +245,7 @@ public	class PropertiesPanel extends JPanel {
 			absScreenLocPanel = new AbsoluteScreenLocationPanel();
 			auxPanel = new AuxiliaryObjectPanel();
 			animStepPanel = new AnimationStepPanel(app);
+			textFieldSizePanel = new TextfieldSizePanel(app);
 			animSpeedPanel = new AnimationSpeedPanel(app);
 			sliderPanel = new SliderPanel(app, this, false, true);
 			startPointPanel = new StartPointPanel();
@@ -351,6 +353,7 @@ public	class PropertiesPanel extends JPanel {
 			styleTabList.add(lineStylePanelHidden);	
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);
+			styleTabList.add(textFieldSizePanel);
 			styleTab = new TabPanel(styleTabList);
 			tabPanelList.add(styleTab);
 				
@@ -4746,6 +4749,7 @@ class SliderPanel
 	
 	private Application app;
 	private AnimationStepPanel stepPanel;
+	private TextfieldSizePanel textFieldSizePanel;
 	private AnimationSpeedPanel speedPanel;
 	private Kernel kernel;
 	private PropertiesPanel propPanel;
@@ -5210,6 +5214,122 @@ class AnimationStepPanel
 			for (int i = 0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				geo.setAnimationStep(newVal);
+				geo.updateRepaint();
+			}
+		}
+		update(geos);
+	}
+
+	public void focusGained(FocusEvent arg0) {
+	}
+
+	public void focusLost(FocusEvent e) {
+		doActionPerformed();
+	}
+}
+
+/**
+ * panel for textfield size
+ * @author Michael
+ */
+class TextfieldSizePanel
+	extends JPanel
+	implements ActionListener, FocusListener, UpdateablePanel {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private Object[] geos; // currently selected geos
+	private JLabel label;	
+	private MyTextField tfTextfieldSize;
+	
+	private Kernel kernel;
+
+	public TextfieldSizePanel(Application app) {
+		kernel = app.getKernel();
+		
+		// text field for textfield size
+		label = new JLabel();
+		tfTextfieldSize = new MyTextField(app.getGuiManager(), 5);
+		label.setLabelFor(tfTextfieldSize);
+		tfTextfieldSize.addActionListener(this);
+		tfTextfieldSize.addFocusListener(this);
+
+		// put it all together
+		JPanel animPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		animPanel.add(label);
+		animPanel.add(tfTextfieldSize);
+
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		add(animPanel);
+				
+		setLabels();
+	}
+	
+	public void setLabels() {
+		label.setText(kernel.getApplication().getPlain("TextfieldLength") + ": ");
+	}	
+	public JPanel update(Object[] geos) {		
+		this.geos = geos;
+		if (!checkGeos(geos))
+			return null;
+
+		tfTextfieldSize.removeActionListener(this);
+
+		// check if properties have same values
+		GeoTextField temp, geo0 = (GeoTextField) geos[0];
+		boolean equalSize = true;
+
+		for (int i = 0; i < geos.length; i++) {
+			temp = (GeoTextField) geos[i];
+			// same object visible value
+			if (geo0.getLength() != temp.getLength())
+				equalSize = false;
+		}
+
+
+        if (equalSize){
+			tfTextfieldSize.setText(geo0.getLength()+"");
+        }
+		else
+			tfTextfieldSize.setText("");
+        
+		tfTextfieldSize.addActionListener(this);
+		return this;
+	}
+
+	private boolean checkGeos(Object[] geos) {
+		boolean geosOK = true;
+		for (int i = 0; i < geos.length; i++) {
+			GeoElement geo = (GeoElement) geos[i];
+			if (!(geo instanceof GeoTextField)						
+			)  
+			{				
+				geosOK = false;
+				break;
+			}
+		}
+		
+		
+		return geosOK;
+	}
+
+	/**
+	 * handle textfield changes
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == tfTextfieldSize)
+			doActionPerformed();
+	}
+
+	private void doActionPerformed() {
+		NumberValue newVal =
+			kernel.getAlgebraProcessor().evaluateToNumeric(
+				tfTextfieldSize.getText(),true);
+		if (newVal != null && !Double.isNaN(newVal.getDouble())) {
+			for (int i = 0; i < geos.length; i++) {
+				GeoTextField geo = (GeoTextField) geos[i];
+				geo.setLength((int)newVal.getDouble());
 				geo.updateRepaint();
 			}
 		}

@@ -9,7 +9,9 @@ public class GeoTextField extends GeoButton {
 
 	private GeoElement linkedGeo = null;
 	
-	JTextField textField = new JTextField(20);
+	private static int defaultLength = 20;
+	
+	JTextField textField = new JTextField(defaultLength);
 	
 	public GeoTextField(Construction c) {
 		
@@ -46,14 +48,28 @@ public class GeoTextField extends GeoButton {
    	
 			sb.append("\t<linkedGeo exp=\"");
 			sb.append(Util.encodeXML(linkedGeo.getLabel()));
-				sb.append("\"");			    	
-	    	
+			sb.append("\"");			    		    	
 			sb.append("/>\n");
+		}
+		
+		if (getLength() != defaultLength) {
+			sb.append("\t<length val=\"");
+			sb.append(getLength());
+			sb.append("\"");			    		    	
+			sb.append("/>\n");			
 		}
 
 	}
 	public JTextField getTextField() {
 		return textField;
+	}
+	
+	public void setLength(int l) {
+		textField.setColumns(l);
+	}
+	
+	public int getLength() {
+		return textField.getColumns();
 	}
 	
 	public void setFocus(final String str) {
