@@ -384,6 +384,7 @@ public	class PropertiesPanel extends JPanel {
 			algebraTabList.add(lineEqnPanel);
 			algebraTabList.add(conicEqnPanel);
 			algebraTabList.add(animStepPanel);	
+			algebraTabList.add(animSpeedPanel);	
 			algebraTab = new TabPanel(algebraTabList);
 			tabPanelList.add(algebraTab);
 			
@@ -5115,7 +5116,7 @@ class AnimationStepPanel
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		animPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		add(animPanel);
-		
+				
 		setLabels();
 	}
 	
@@ -5346,6 +5347,7 @@ class AnimationSpeedPanel
 					|| geo.isGeoImage()
 					|| geo.isGeoList()
 					|| geo.isGeoBoolean()
+					|| (geo.isGeoPoint() && !geo.isPointOnPath())
 					|| !partOfSliderPanel && geo.isGeoNumeric() && geo.isIndependent() // slider						
 			)  
 			{				
