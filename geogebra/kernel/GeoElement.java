@@ -4320,7 +4320,7 @@ public abstract class GeoElement
 	 * (xPixel, yPixel) in screen coordinates. 
 	 * @param endPosition may be null
 	 */
-	public static boolean moveObjects(ArrayList geos, GgbVector rwTransVec, Point2D.Double endPosition) {	
+	public static boolean moveObjects(ArrayList geos, GgbVector rwTransVec, GgbVector endPosition) {	
 		if (moveObjectsUpdateList == null)
 			moveObjectsUpdateList = new ArrayList();
 		
@@ -4338,7 +4338,7 @@ public abstract class GeoElement
 			 * and stops grid-lock working properly
 			 * but is needed for eg dragging (a + x(A), b + x(B)) */
 			Application.debug((geo.getParentAlgorithm() == null)+" "+size+" "+geo.getClassName());
-			Point2D.Double position = (size == 1) && (geo.getParentAlgorithm() != null) ? endPosition : null;
+			GgbVector position = (size == 1) && (geo.getParentAlgorithm() != null) ? endPosition : null;
 			moved = geo.moveObject(rwTransVec, position, moveObjectsUpdateList) || moved;		
 		}					
 							
@@ -4369,13 +4369,13 @@ public abstract class GeoElement
 //	}
 
 	
-	protected boolean movePoint(GgbVector rwTransVec, Point2D.Double endPosition) {
+	protected boolean movePoint(GgbVector rwTransVec, GgbVector endPosition) {
 	
 		boolean movedGeo = false;
 		
 		GeoPoint point = (GeoPoint) this;
 		if (endPosition != null) {					
-			point.setCoords(endPosition.x, endPosition.y, 1);
+			point.setCoords(endPosition.getX(), endPosition.getY(), 1);
 			movedGeo = true;
 		} 
 		
@@ -4403,7 +4403,7 @@ public abstract class GeoElement
 	 * Moves geo by a vector in real world coordinates.
 	 * @return whether actual moving occurred 	 
 	 */
-	private boolean moveObject(GgbVector rwTransVec, Point2D.Double endPosition, ArrayList updateGeos) {
+	private boolean moveObject(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos) {
 		boolean movedGeo = false;
 		
 		// moveable geo
@@ -4457,68 +4457,25 @@ public abstract class GeoElement
 		
 		// non-moveable geo
 		else {
-			// point with changeable parent coordinates
-			if (isGeoPoint()) {
-				GeoPoint point = (GeoPoint) this;
-				if (point.hasChangeableCoordParentNumbers()) {
-					// translate x and y coordinates by changing the parent coords accordingly
-					ArrayList changeableCoordNumbers = point.getCoordParentNumbers();					
-					GeoNumeric xvar = (GeoNumeric) changeableCoordNumbers.get(0);
-					GeoNumeric yvar = (GeoNumeric) changeableCoordNumbers.get(1);
-							
-					// polar coords (r; phi)
-					if (point.hasPolarParentNumbers()) {
-						// radius
-						double radius = GeoVec2D.length(endPosition.x, endPosition.y);
-						xvar.setValue(radius);
-						
-						// angle
-						double angle = kernel.convertToAngleValue(Math.atan2(endPosition.y, endPosition.x));
-						// angle outsid of slider range
-						if (yvar.isIntervalMinActive() && yvar.isIntervalMaxActive() &&
-						    (angle < yvar.getIntervalMin() || angle > yvar.getIntervalMax())) 
-						{
-							// use angle value closest to closest border
-							double minDiff = Math.abs((angle - yvar.getIntervalMin())) ;
-							if (minDiff > Math.PI) minDiff = Kernel.PI_2 - minDiff;
-							double maxDiff = Math.abs((angle - yvar.getIntervalMax()));
-							if (maxDiff > Math.PI) maxDiff = Kernel.PI_2 - maxDiff;
-							
-							if (minDiff < maxDiff) 
-								angle = angle - Kernel.PI_2;
-							else
-								angle = angle + Kernel.PI_2;
-						}											
-						yvar.setValue(angle);
-					}
-					
-					// cartesian coords (xvar + constant, yvar + constant)
-					else {
-						
-						xvar.setValue( xvar.getValue() - point.inhomX + endPosition.x);
-						yvar.setValue( yvar.getValue() - point.inhomY + endPosition.y);
-					}
-					
-		    		if (updateGeos != null) {
-		    			// add both variables to update list
-		    			updateGeos.add(xvar);
-		    			updateGeos.add(yvar);
-		    		} else {
-		    			// update both variables right now
-		    			if (tempMoveObjectList == null)
-		    				tempMoveObjectList = new ArrayList();
-		    			tempMoveObjectList.add(xvar);
-		    			tempMoveObjectList.add(yvar);
-		    			updateCascade(tempMoveObjectList, getTempSet() );
-		    		}
-		    				    				    	
-		    		movedGeo = true;
-				}
-			}			
+			movedGeo = moveFromChangeableCoordParentNumbers(rwTransVec, endPosition, updateGeos, tempMoveObjectList);			
 		}
 					
 		return movedGeo;
 	}
+	
+	/**
+	 * try to move the geo with coord parent numbers (e.g. point defined by sliders)
+	 * @param rwTransVec
+	 * @param endPosition
+	 * @param updateGeos
+	 * @param tempMoveObjectList
+	 * @return false if not moveable this way
+	 */
+	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
+		return false;
+	}
+
+	
 	private ArrayList tempMoveObjectList;
 
 	/**

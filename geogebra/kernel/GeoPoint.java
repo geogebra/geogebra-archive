@@ -231,7 +231,90 @@ GeoPointND, Animatable  {
 		}
 		
 		return !isFixed() && (isIndependent() || isPointOnPath() || isPointInRegion()); 
-	}	 
+	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
+				
+		if (!hasChangeableCoordParentNumbers())
+			return false;
+		
+		
+		if (endPosition==null){
+			endPosition=getInhomCoords().add(rwTransVec);
+		}
+			
+
+		// translate x and y coordinates by changing the parent coords accordingly
+		ArrayList changeableCoordNumbers = getCoordParentNumbers();					
+		GeoNumeric xvar = (GeoNumeric) changeableCoordNumbers.get(0);
+		GeoNumeric yvar = (GeoNumeric) changeableCoordNumbers.get(1);
+
+		// polar coords (r; phi)
+		if (hasPolarParentNumbers()) {
+			// radius
+			double radius = GeoVec2D.length(endPosition.getX(), endPosition.getY());
+			xvar.setValue(radius);
+
+			// angle
+			double angle = kernel.convertToAngleValue(Math.atan2(endPosition.getY(), endPosition.getX()));
+			// angle outsid of slider range
+			if (yvar.isIntervalMinActive() && yvar.isIntervalMaxActive() &&
+					(angle < yvar.getIntervalMin() || angle > yvar.getIntervalMax())) 
+			{
+				// use angle value closest to closest border
+				double minDiff = Math.abs((angle - yvar.getIntervalMin())) ;
+				if (minDiff > Math.PI) minDiff = Kernel.PI_2 - minDiff;
+				double maxDiff = Math.abs((angle - yvar.getIntervalMax()));
+				if (maxDiff > Math.PI) maxDiff = Kernel.PI_2 - maxDiff;
+
+				if (minDiff < maxDiff) 
+					angle = angle - Kernel.PI_2;
+				else
+					angle = angle + Kernel.PI_2;
+			}											
+			yvar.setValue(angle);
+		}
+
+		// cartesian coords (xvar + constant, yvar + constant)
+		else {
+
+			xvar.setValue( xvar.getValue() - inhomX + endPosition.getX());
+			yvar.setValue( yvar.getValue() - inhomY + endPosition.getY());
+		}
+
+		if (updateGeos != null) {
+			// add both variables to update list
+			updateGeos.add(xvar);
+			updateGeos.add(yvar);
+		} else {
+			// update both variables right now
+			if (tempMoveObjectList == null)
+				tempMoveObjectList = new ArrayList();
+			tempMoveObjectList.add(xvar);
+			tempMoveObjectList.add(yvar);
+			updateCascade(tempMoveObjectList, getTempSet() );
+		}
+
+		return true;
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * Returns whether this point has two changeable numbers as coordinates, 

@@ -3020,7 +3020,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		startPoint.setLocation(xRW, yRW);
 
 		// we don't specify screen coords for translation as all objects are Translateables
-		GeoElement.moveObjects(translateableGeos, translationVec, startPoint);		
+		GeoElement.moveObjects(translateableGeos, translationVec, new GgbVector(xRW, yRW, 0));		
 		if (repaint)
 			kernel.notifyRepaint();						
 	}
@@ -3032,7 +3032,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		startLoc = mouseLoc;
 
 		// move all selected geos
-		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, startPoint);									
+		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, new GgbVector(xRW, yRW, 0));									
 
 		if (repaint)
 			kernel.notifyRepaint();					
