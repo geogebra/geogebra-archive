@@ -743,4 +743,8 @@ implements AlgoElementWithResizeableOutput{
 		return outputPolygons.getElement(outputPolygons.size()-1);
 		
 	}
+	
+	public NumberValue getHeight(){
+		return inputHeight;
+	}
 }

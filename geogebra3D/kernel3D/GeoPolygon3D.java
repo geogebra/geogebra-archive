@@ -1,15 +1,21 @@
 package geogebra3D.kernel3D;
 
+import java.util.ArrayList;
+
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -525,5 +531,58 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	protected GeoPointND newGeoPoint(){
 		return new GeoPoint3D(cons);
 	}
+	
+	
+	//////////////////////////////////////////////////////
+	// PARENT NUMBER (HEIGHT OF A PRISM, ...)
+	//////////////////////////////////////////////////////
+
+	private GeoNumeric changeableCoordNumber = null;
+	
+	
+	final private GeoNumeric getCoordParentNumber() {
+		
+		if (changeableCoordNumber==null){
+			AlgoElement parentAlgo = getParentAlgorithm();
+			if (parentAlgo instanceof AlgoPolygon){
+				GeoElement polyhedron = ((AlgoPolygon) parentAlgo).getPolyhedron();				
+				if (polyhedron!=null){
+					parentAlgo = polyhedron.getParentAlgorithm();
+					if (parentAlgo instanceof AlgoPolyhedron){
+						NumberValue height = ((AlgoPolyhedron) parentAlgo).getHeight();
+						if (height != null)
+							if (height instanceof GeoNumeric)
+								changeableCoordNumber = (GeoNumeric) height;
+					}
+				}
+			}
+		}
+		
+		return changeableCoordNumber;
+	}
+	
+	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
+		
+
+		
+		GeoNumeric var = getCoordParentNumber();
+				
+		if (var==null)
+			return false;
+		if (endPosition==null){ //comes from arrows keys -- all is added
+			var.setValue( var.getValue() +rwTransVec.getX()+rwTransVec.getY()+rwTransVec.getZ());
+			addChangeableCoordParentNumberToUpdateList(var, updateGeos, tempMoveObjectList);
+			return true;
+		}else{ //comes from mouse
+			Application.printStacktrace("todo");
+			return false;
+		}
+		
+		
+	}
+	
+	
+	
+	
 	
 }

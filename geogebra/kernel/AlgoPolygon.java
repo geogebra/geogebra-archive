@@ -216,7 +216,7 @@ public class AlgoPolygon extends AlgoElement {
     	return (GeoPoint[]) points;
     }
     
-    
+    public GeoElement getPolyhedron() { return polyhedron; }    
     
     public void remove() {
         super.remove();

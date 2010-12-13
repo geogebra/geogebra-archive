@@ -293,18 +293,8 @@ GeoPointND, Animatable  {
 			yvar.setValue( yvar.getValue() - inhomY + endPosition.getY());
 		}
 
-		if (updateGeos != null) {
-			// add both variables to update list
-			updateGeos.add(xvar);
-			updateGeos.add(yvar);
-		} else {
-			// update both variables right now
-			if (tempMoveObjectList == null)
-				tempMoveObjectList = new ArrayList();
-			tempMoveObjectList.add(xvar);
-			tempMoveObjectList.add(yvar);
-			updateCascade(tempMoveObjectList, getTempSet() );
-		}
+		addChangeableCoordParentNumberToUpdateList(xvar, updateGeos, tempMoveObjectList);
+		addChangeableCoordParentNumberToUpdateList(yvar, updateGeos, tempMoveObjectList);
 
 		return true;
 	}

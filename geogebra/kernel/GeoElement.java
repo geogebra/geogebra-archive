@@ -4475,6 +4475,24 @@ public abstract class GeoElement
 		return false;
 	}
 
+	/**
+	 * add changeable coord parent number to update list
+	 * @param number
+	 * @param updateGeos
+	 * @param tempMoveObjectList
+	 */
+	protected void addChangeableCoordParentNumberToUpdateList(GeoElement number, ArrayList updateGeos, ArrayList tempMoveObjectList){
+		if (updateGeos != null) {
+			// add number to update list
+			updateGeos.add(number);
+		} else {
+			// update number right now
+			if (tempMoveObjectList == null)
+				tempMoveObjectList = new ArrayList();
+			tempMoveObjectList.add(number);
+			updateCascade(tempMoveObjectList, getTempSet() );
+		}
+	}
 	
 	private ArrayList tempMoveObjectList;
 
