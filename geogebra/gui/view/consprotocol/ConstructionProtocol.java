@@ -359,6 +359,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			item.setSelected(isColumnInModel(column));
 			item.addActionListener(colKeeper);
 			mView.add(item);
+			
 		}
 		mView.addSeparator();
 
@@ -798,13 +799,16 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				return cbTemp;
 			}
 			if (isImage) {
-				// Scaling does not work yet. I wonder why.
+				/* Scaling does not work yet. I wonder why.
 				Image miniImage = ((ImageIcon) value).getImage().getScaledInstance(16,16,0);
 				ImageIcon miniIcon = new ImageIcon();
 				miniIcon.setImage(miniImage);
 				iTemp.setIcon((ImageIcon) value);
 				iTemp.setHorizontalAlignment(JLabel.CENTER);
 				iTemp.setMaximumSize(new Dimension(16,16));
+				return iTemp;
+				*/
+				iTemp.setIcon((ImageIcon) value);
 				return iTemp;
 			}
 			
@@ -849,7 +853,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 					// to geo.getConstructionIndex() as not every
 					// geo is shown in the protocol
 		GeoElement geo;
-		// Integer toolbarIcon;
 		ImageIcon toolbarIcon;
 		String name, algebra, definition, command;
 		boolean includesIndex;
@@ -869,28 +872,25 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 
 		public void updateAll() {
-			// toolbarIcon = geo.getRelatedModeID();
-			
-				int m;
-				// Markus' idea to find the correct icon:
-				// 1) check if an object has a parent algorithm:
-				if (geo.getParentAlgorithm() != null) {
-					// 2) if it has a parent algorithm and its modeID returned
-					// is > -1, then use this one:
-					m = geo.getParentAlgorithm()
-							.getRelatedModeID();
-				}
-				// 3) otherwise use the modeID of the GeoElement itself:
-				else
-					m = geo.getRelatedModeID();
 
-				if (m != -1)
-				    toolbarIcon = app.getModeIcon(m);
-				else
-				    toolbarIcon = null;
+			// TODO: This logic could be merged with the HTML export logic.
+			int m;
+			// Markus' idea to find the correct icon:
+			// 1) check if an object has a parent algorithm:
+			if (geo.getParentAlgorithm() != null) {
+				// 2) if it has a parent algorithm and its modeID returned
+				// is > -1, then use this one:
+				m = geo.getParentAlgorithm().getRelatedModeID();
+			}
+			// 3) otherwise use the modeID of the GeoElement itself:
+			else
+				m = geo.getRelatedModeID();
 
-			
-			
+			if (m != -1)
+				toolbarIcon = app.getModeIcon(m);
+			else
+				toolbarIcon = null;
+
 			// name = geo.getNameDescriptionHTML(true, true);
 			name = geo.getNameDescriptionTextOrHTML();
 			algebra = geo.getAlgebraDescriptionTextOrHTML();
@@ -1377,13 +1377,33 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		private void updateAll() {
 			int size = rowList.size();
+
+			int toolbarIconExtraHeight = 0;
+			// If displaying toolbarIcon is set, row height must be increased by 16:
+			if (isColumnInModel(tableColumns[1]))
+				toolbarIconExtraHeight = 16;
+			/*
+			 * TODO: This setting is OK for the current font size, but it should
+			 * also be tested with GeoGebraPrim which uses different default
+			 * font size. FIXME: The cell content is not aligned vertically
+			 * centered. I don't think it is possible to easily solve this
+			 * because JTable does not offer a convenient way for vertical
+			 * alignment of the cell content. Probably
+			 * http://articles.techrepublic.com.com/5100-10878_11-5032692.html
+			 * may help.
+			 */
+						
 			for (int i = 0; i < size; ++i) {
 				RowData row = (RowData) rowList.get(i);
 				row.updateAll();
 				if (row.includesIndex) {
-					table.setRowHeight(i, table.getFont().getSize() * 2);
+					table.setRowHeight(i, table.getFont().getSize() * 2
+							+ toolbarIconExtraHeight);
 				} else {
-					table.setRowHeight(i, (int) (table.getFont().getSize() + 8));
+					table
+							.setRowHeight(
+									i,
+									(int) (table.getFont().getSize() + 8 + toolbarIconExtraHeight));
 				}
 			}
 			fireTableRowsUpdated(0, size - 1);
