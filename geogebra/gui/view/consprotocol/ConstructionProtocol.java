@@ -1378,32 +1378,30 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		private void updateAll() {
 			int size = rowList.size();
 
-			int toolbarIconExtraHeight = 0;
-			// If displaying toolbarIcon is set, row height must be increased by 16:
+			int toolbarIconHeight = 0;
+			// If displaying toolbarIcon is set, row height must be at least 32
+			// + 1:
 			if (isColumnInModel(tableColumns[1]))
-				toolbarIconExtraHeight = 16;
+				toolbarIconHeight = 32 + 1;
 			/*
-			 * TODO: This setting is OK for the current font size, but it should
-			 * also be tested with GeoGebraPrim which uses different default
-			 * font size. FIXME: The cell content is not aligned vertically
-			 * centered. I don't think it is possible to easily solve this
-			 * because JTable does not offer a convenient way for vertical
-			 * alignment of the cell content. Probably
+			 * FIXME: The cell content is not aligned vertically centered. I
+			 * don't think it is possible to easily solve this because JTable
+			 * does not offer a convenient way for vertical alignment of the
+			 * cell content. Probably
 			 * http://articles.techrepublic.com.com/5100-10878_11-5032692.html
-			 * may help.
+			 * may help, or to use the same technique which is introduced in
+			 * GeoGebraCAS.
 			 */
-						
+
 			for (int i = 0; i < size; ++i) {
 				RowData row = (RowData) rowList.get(i);
 				row.updateAll();
 				if (row.includesIndex) {
-					table.setRowHeight(i, table.getFont().getSize() * 2
-							+ toolbarIconExtraHeight);
+					table.setRowHeight(i, Math.max(
+							table.getFont().getSize() * 2, toolbarIconHeight));
 				} else {
-					table
-							.setRowHeight(
-									i,
-									(int) (table.getFont().getSize() + 8 + toolbarIconExtraHeight));
+					table.setRowHeight(i, Math.max((int) (table.getFont()
+							.getSize() + 8), toolbarIconHeight));
 				}
 			}
 			fireTableRowsUpdated(0, size - 1);
