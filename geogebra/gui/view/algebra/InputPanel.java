@@ -484,7 +484,7 @@ ActionListener, ListSelectionListener {
 		// history popup
 		historyPopup = new JPopupMenu();
 		historyPopup.add(scroller);
-		historyPopup.setBorder(BorderFactory.createEmptyBorder());
+		//historyPopup.setBorder(BorderFactory.createEmptyBorder());
 			
 		// hide/show button
 		historyButton = new JButton();	
