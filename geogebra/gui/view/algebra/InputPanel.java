@@ -407,9 +407,10 @@ ActionListener, ListSelectionListener {
 
 	
 	private JToolBar createPopupButton(){
-		
-		popupTableButton = new PopupMenuButton(app, tableSymbols, 5,11,new Dimension(10,18), SelectionTable.MODE_TEXT);
+		int buttonHeight = 18;
+		popupTableButton = new PopupMenuButton(app, tableSymbols, 5,11,new Dimension(10,buttonHeight), SelectionTable.MODE_TEXT);
 		popupTableButton.setStandardButton(true);
+		popupTableButton.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(buttonHeight));
 		//popupTableButton.setBackground(Color.LIGHT_GRAY);
 		popupTableButton.setFocusable(false);
 		popupTableButton.setSelectedIndex(0);

@@ -94,6 +94,9 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.isStandardButton = isStandardButton;
 	}
 
+	private boolean isFixedIcon = false;
+	
+	
 	private boolean isIniting = true;
 	private JMenuItem component;
 	protected boolean popupIsVisible;
@@ -176,8 +179,9 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				Point locButton = getLocation();
 				int h = e.getX() - locButton.x;
 
-				// trigger popup if the mouse is over the right side of the button
-				// or the button is a standard button (pressing anywhere triggers the popup)
+				// trigger popup 
+				// default: trigger only when the mouse is over the right side of the button
+				// if isStandardButton: pressing anywhere triggers the popup
 				if( isStandardButton || e.getX() >= getWidth()-16 &&  e.getX() <= getWidth()) { 
 					if(hasTable)
 						myTable.updateFonts();
@@ -433,8 +437,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	public ImageIcon getButtonIcon(){
 		
 		ImageIcon icon = (ImageIcon) this.getIcon();
+		if(isFixedIcon) return icon;
 		
-		if(isStandardButton) return GeoGebraIcon.createDownTriangleIcon(iconSize.height);
 		
 		// draw the icon for the current table selection
 		if(hasTable){
@@ -469,7 +473,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	@Override
 	public void setIcon(Icon icon) {
 		
-		if(isStandardButton) {
+		if(isFixedIcon) {
 			super.setIcon(icon);
 			return;
 		}
@@ -517,6 +521,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 
 	
+	public void setFixedIcon(Icon icon){
+		isFixedIcon = true;
+		setIcon(icon);
+	}
 	
 	
 	

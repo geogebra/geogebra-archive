@@ -306,6 +306,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
 	            btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel, btnTableTextLinesV, btnTableTextLinesH};
 		
+		for(int i=0; i< popupBtnList.length; i++){
+			popupBtnList[i].setStandardButton(true);
+		}
+		
+		
 	}
 	
 	
