@@ -243,7 +243,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		functionTable.setVisible(false);
 
 		functionRoot = new DefaultMutableTreeNode();
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Functions");
+		
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Mathematical Functions");
 		node.add(new DefaultMutableTreeNode());
 		functionRoot.add(node);
 		fcnTree = new MyJTree(new DefaultTreeModel(functionRoot));

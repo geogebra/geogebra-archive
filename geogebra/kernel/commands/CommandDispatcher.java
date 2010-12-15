@@ -51,27 +51,29 @@ public class CommandDispatcher {
     public static final int TABLE_PROBABILITY = 11;
     public static final int TABLE_SPREADSHEET = 12;
     public static final int TABLE_SCRIPTING = 13;
-    public static final int TABLE_OTHER = 14;
+    public static final int TABLE_DISCRETE_MATH = 14;
+    public static final int TABLE_OTHER = 15;
     
-    private int tableCount = 15;
+    private int tableCount = 16;
     
     
     public String getSubCommandSetName(int index){
     	switch (index) {
-    	case TABLE_GEOMETRY: return app.getMenu("Geometry Commands");
-    	case TABLE_ALGEBRA: return app.getMenu("Algebra Commands");
-    	case TABLE_TEXT: return app.getMenu("Text Commands");
-    	case TABLE_LOGICAL: return app.getMenu("Logical Commands");
-    	case TABLE_FUNCTION: return app.getMenu("Function Commands");
-    	case TABLE_CONIC: return app.getMenu("Conic Commands");
-    	case TABLE_LIST: return app.getMenu("List Commands");
-    	case TABLE_VECTOR:return app.getMenu("Vector Commands");
-    	case TABLE_TRANSFORMATION: return app.getMenu("Transformation Commands");
-    	case TABLE_CHARTS: return app.getMenu("Chart Commands");
-    	case TABLE_STATISTICS: return app.getMenu("Statistics Commands");
-    	case TABLE_PROBABILITY: return app.getMenu("Probability Commands");
-    	case TABLE_SPREADSHEET: return app.getMenu("Spreadsheet Commands");
-    	case TABLE_SCRIPTING: return app.getMenu("Scripting Commands");
+    	case TABLE_GEOMETRY: return app.getMenu("Geometry");
+    	case TABLE_ALGEBRA: return app.getMenu("Algebra");
+    	case TABLE_TEXT: return app.getMenu("Text ");
+    	case TABLE_LOGICAL: return app.getMenu("Logic");
+    	case TABLE_FUNCTION: return app.getMenu("Functions & Calculus");
+    	case TABLE_CONIC: return app.getMenu("Conic");
+    	case TABLE_LIST: return app.getMenu("List");
+    	case TABLE_VECTOR:return app.getMenu("Vector & Matrix");
+    	case TABLE_TRANSFORMATION: return app.getMenu("Transformation");
+    	case TABLE_CHARTS: return app.getMenu("Chart");
+    	case TABLE_STATISTICS: return app.getMenu("Statistics");
+    	case TABLE_PROBABILITY: return app.getMenu("Probability");
+    	case TABLE_SPREADSHEET: return app.getMenu("Spreadsheet");
+    	case TABLE_SCRIPTING: return app.getMenu("Scripting");
+    	case TABLE_DISCRETE_MATH: return app.getMenu("Discrete Math");
     	case TABLE_OTHER: return app.getMenu("Other Commands");
     	default: return null;
     	}
@@ -219,7 +221,6 @@ public class CommandDispatcher {
        	cmdTable.put("Max", new CmdMax(kernel));
     	cmdTable.put("LCM", new CmdLCM(kernel));
     	cmdTable.put("GCD", new CmdGCD(kernel));
-    	cmdTable.put("Product", new CmdProduct(kernel));
     	cmdTable.put("Expand", new CmdExpand(kernel));
     	cmdTable.put("Factor", new CmdFactor(kernel));
     	cmdTable.put("Simplify", new CmdSimplify(kernel));   
@@ -345,6 +346,7 @@ public class CommandDispatcher {
     	cmdTable.put("Iteration", new CmdIteration(kernel));
     	cmdTable.put("IterationList", new CmdIterationList(kernel));
     	cmdTable.put("PathParameter", new CmdPathParameter(kernel));     
+    	cmdTable.put("Asymptote", new CmdAsymptote(kernel));
     	
     	cmdSubTable[TABLE_FUNCTION].putAll(cmdTable);
     	cmdTable.clear();
@@ -399,6 +401,7 @@ public class CommandDispatcher {
     	cmdTable.put("SelectedElement", new CmdSelectedElement(kernel));     	                  
     	cmdTable.put("SelectedIndex", new CmdSelectedIndex(kernel)); 
     	cmdTable.put("RandomElement", new CmdRandomElement(kernel));
+    	cmdTable.put("Product", new CmdProduct(kernel));
     	
     	cmdSubTable[TABLE_LIST].putAll(cmdTable);
     	cmdTable.clear();
@@ -508,6 +511,7 @@ public class CommandDispatcher {
     	//=============================================================
     	// vector & matrix
     	//=============================================================
+    	cmdTable.put("ApplyMatrix", new CmdApplyMatrix(kernel)); 
     	cmdTable.put("UnitVector", new CmdUnitVector(kernel));	   
     	cmdTable.put("Vector", new CmdVector(kernel));	
     	cmdTable.put("UnitOrthogonalVector", new CmdUnitOrthogonalVector(kernel));	
@@ -578,32 +582,49 @@ public class CommandDispatcher {
        	cmdTable.put("UpdateConstruction", new CmdUpdateConstruction(kernel));
        	cmdTable.put("SetValue", new CmdSetValue(kernel));
        	cmdTable.put("PlaySound", new CmdPlaySound(kernel));
+       	cmdTable.put("ParseToNumber", new CmdParseToNumber(kernel));
+       	cmdTable.put("ParseToFunction", new CmdParseToFunction(kernel)); 
        		
        	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);
     	cmdTable.clear();
        	
+
+    	//=============================================================	
+      	// discrete math
+    	//=============================================================
+    	
+    	cmdTable.put("Voronoi", new CmdVoronoi(kernel));     	                  
+    	cmdTable.put("Hull", new CmdHull(kernel));     	                  
+    	cmdTable.put("ConvexHull", new CmdConvexHull(kernel)); 
+    	cmdTable.put("MinimumSpanningTree", new CmdMinimumSpanningTree(kernel));     	                  
+    	cmdTable.put("DelauneyTriangulation", new CmdDelauneyTriangulation(kernel));     	                  
+    	cmdTable.put("TravelingSalesman", new CmdTravelingSalesman(kernel)); 
+    	cmdTable.put("ShortestDistance", new CmdShortestDistance(kernel));     	   
+ 	    	
+    	cmdSubTable[TABLE_DISCRETE_MATH].putAll(cmdTable);
+    	cmdTable.clear();
+    	
+    	
 
     	
     	//=================================================================
       	// Other ???
     	//=============================================================
     	
-    	// Victor Franco Espino 18-04-2007: New commands
     	cmdTable.put("AffineRatio", new CmdAffineRatio(kernel));
     	cmdTable.put("CrossRatio", new CmdCrossRatio(kernel));
     	cmdTable.put("CurvatureVector", new CmdCurvatureVector(kernel));
     	cmdTable.put("Curvature", new CmdCurvature(kernel));
     	cmdTable.put("OsculatingCircle", new CmdOsculatingCircle(kernel));
-    	// Victor Franco Espino 18-04-2007: End new commands
     	
     	cmdTable.put("ConstructionStep", new CmdConstructionStep(kernel));
     	cmdTable.put("Object", new CmdObject(kernel));  
     	cmdTable.put("Name", new CmdName(kernel));
-
+    	cmdTable.put("Delete", new CmdDelete(kernel));	
+    	
     	//cmdTable.put("Intersection", new CmdIntersection(kernel)); 
        	cmdTable.put("Intersection", new CmdIntersect(kernel)); 
-    	
-       	cmdTable.put("Delete", new CmdDelete(kernel));	
+    
        	cmdTable.put("Corner", new CmdCorner(kernel));
     	cmdTable.put("AxisStepX", new CmdAxisStepX(kernel));   
     	cmdTable.put("AxisStepY", new CmdAxisStepY(kernel));   
@@ -613,19 +634,9 @@ public class CommandDispatcher {
     	cmdTable.put("PointList", new CmdPointList(kernel)); 
     	cmdTable.put("RootList", new CmdRootList(kernel));   
     	
-    	cmdTable.put("ApplyMatrix", new CmdApplyMatrix(kernel)); 
     	cmdTable.put("SlowPlot", new CmdSlowPlot(kernel));	   
-    	cmdTable.put("ToolImage", new CmdToolImage(kernel));	   
-    	cmdTable.put("Voronoi", new CmdVoronoi(kernel));     	                  
-    	cmdTable.put("Hull", new CmdHull(kernel));     	                  
-    	cmdTable.put("ConvexHull", new CmdConvexHull(kernel));     	                  
-    	cmdTable.put("MinimumSpanningTree", new CmdMinimumSpanningTree(kernel));     	                  
-    	cmdTable.put("DelauneyTriangulation", new CmdDelauneyTriangulation(kernel));     	                  
-    	cmdTable.put("TravelingSalesman", new CmdTravelingSalesman(kernel)); 
-    	cmdTable.put("ShortestDistance", new CmdShortestDistance(kernel));     	                  
-     	 	  
-    	cmdTable.put("ParseToNumber", new CmdParseToNumber(kernel));
-       	cmdTable.put("ParseToFunction", new CmdParseToFunction(kernel)); 
+    	cmdTable.put("ToolImage", new CmdToolImage(kernel));
+    	
     	cmdTable.put("Slider", new CmdSlider(kernel));     
     	cmdTable.put("ClosestPoint", new CmdClosestPoint(kernel));     
     	
