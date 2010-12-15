@@ -1243,11 +1243,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		}
 		else if (source == btnBold) {
 			btnBold.toggle();
-			applyTextBold(targetGeos);			
+			applyFontStyle(targetGeos);			
 		}
 		else if (source == btnItalic) {
 			btnItalic.toggle();
-			applyTextItalic(targetGeos);			
+			applyFontStyle(targetGeos);			
 		}
 		else if (source == btnTextSize) {
 			applyTextSize(targetGeos);			
@@ -1391,25 +1391,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		}
 	}
 
-	private void applyTextItalic(ArrayList<GeoElement> geos) {
-
-		int fontStyle = 0;
-		if (btnItalic.isSelected()) fontStyle += 2;
-		for (int i = 0 ; i < geos.size() ; i++) {
-			GeoElement geo = geos.get(i);
-			if(geo instanceof TextProperties && ((TextProperties)geo).getFontStyle() != fontStyle){
-				((TextProperties)geo).setFontStyle(fontStyle);
-				geo.updateRepaint();
-				needUndo = true;
-			}
-		}
-	}
-
-
-	private void applyTextBold(ArrayList<GeoElement> geos) {
+	private void applyFontStyle(ArrayList<GeoElement> geos) {
 
 		int fontStyle = 0;
 		if (btnBold.isSelected()) fontStyle += 1;
+		if (btnItalic.isSelected()) fontStyle += 2;
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
 			if(geo instanceof TextProperties && ((TextProperties)geo).getFontStyle() != fontStyle){
@@ -1515,8 +1501,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		if(btnBgColor.isVisible()) applyBgColor(geos);
 		if(btnLineStyle.isVisible()) applyLineStyle(geos);
 		if(btnPointStyle.isVisible()) applyPointStyle(geos);
-		if(btnBold.isVisible()) applyTextBold(geos);
-		if(btnItalic.isVisible()) applyTextItalic(geos);
+		if(btnBold.isVisible()) applyFontStyle(geos);
+		if(btnItalic.isVisible()) applyFontStyle(geos);
 		if(btnTextColor.isVisible()) applyTextColor(geos);
 		if(btnTextSize.isVisible()) applyTextSize(geos);
 		if(btnHideShowLabel.isVisible()) applyHideShowLabel(geos);
