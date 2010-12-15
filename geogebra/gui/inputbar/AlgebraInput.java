@@ -20,10 +20,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
-import geogebra.kernel.commands.CommandProcessor;
 import geogebra.main.Application;
-import geogebra.main.MyError;
-import geogebra.util.LowerCaseDictionary;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -36,7 +33,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Iterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -85,16 +81,13 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		// set up input field		
 		inputField.setEditable(true);						
 		inputField.addKeyListener(this);
+		inputField.addFocusListener(this);
 		updateFonts();
 				
-		// set up history popup
-		//inputPanel.setShowHistoryButton(true);
+		// show the history popup
+		inputPanel.setShowHistoryButton(true);
+		inputPanel.getSymbolButton().setDownwardPopup(false);
 		
-		// add to panel				 		
-		setLayout(new BorderLayout(2, 2));	
-		JPanel iconLabelPanel = new JPanel();
-		
-
 		// create toggle button to hide/show the input help panel
 		btnToggleInputPanel = new JToggleButton();
 		btnToggleInputPanel.setSelectedIcon(GeoGebraIcon.listRightIcon());
@@ -102,12 +95,19 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		btnToggleInputPanel.addActionListener(this);
 		btnToggleInputPanel.setFocusable(false);
 		btnToggleInputPanel.setBorderPainted(false);
+				
 		
-		this.inputPanel.getSymbolButton().setDownwardPopup(false);
-		iconLabelPanel.add(inputLabel);
+		// add to panel				 		
+		setLayout(new BorderLayout(0, 0));	
+		
+		JPanel iconLabelPanel = new JPanel(new BorderLayout());
+		inputLabel.setBorder(BorderFactory.createEmptyBorder(0,10, 0,2));
+		iconLabelPanel.add(inputLabel, BorderLayout.CENTER);
+		
 		add(iconLabelPanel, BorderLayout.WEST);   
-		
 		add(inputPanel, BorderLayout.CENTER);
+		
+		
 		if (app.showCmdList()) {
 			JPanel p = new JPanel(new BorderLayout(5,5));
 			p.add(btnToggleInputPanel, BorderLayout.WEST);
@@ -117,11 +117,11 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
 		setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlShadow),  
-			BorderFactory.createEmptyBorder(2,2,2,2) )
+			BorderFactory.createEmptyBorder(2,2,4,2) )
 		);
 			
 		setLabels();
-		inputField.addFocusListener(this);
+		
 	}
 	
 	public boolean requestFocusInWindow() { 
@@ -165,6 +165,15 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputLabel.setFont(app.getPlainFont());
 		//update the help panel
 		app.getInputHelpPanel().updateFonts();
+		
+		// resize the input panel
+		// TODO: review the gui code for this panel and the nested child panels
+		// so that Swing layout managers handle resizing automatically
+		inputField.validate();
+		Dimension d = inputPanel.getPreferredSize();
+		d.height = (int) (1.2* d.height);
+		this.setPreferredSize(d);
+		
 	}    
 	
 //	/**
@@ -283,8 +292,9 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			  app.getGuiManager().setScrollToShow(false);
 
 			  if (success) {						   
-				 inputField.addToHistory(input);
-				inputField.setText(null);  							  			   
+				  inputField.addToHistory(input);
+				  inputPanel.updateHistoryPopup(input);
+				  inputField.setText(null);  							  			   
 			  }			  
 		} else app.getGlobalKeyDispatcher().handleGeneralKeys(e); // handle eg ctrl-tab
 	}

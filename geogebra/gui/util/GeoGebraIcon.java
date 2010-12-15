@@ -232,29 +232,31 @@ public class GeoGebraIcon {
 	return ic;
 	}
 	
-	
+	/**
+	 * Creates an icon for a popup list ---  two triangles pointing up and down 
+	 */
 	public static ImageIcon createUpDownTriangleIcon(int height){
 		
 		BufferedImage image = new BufferedImage(6, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		g2.setColor(Color.BLACK);
+		g2.setColor(Color.DARK_GRAY);
 		int midx = image.getWidth()/2;
 		int midy = image.getHeight()/2;
 
 		Polygon p = new Polygon();
 		// make a triangle.
-		p.addPoint(midx-3,midy-2);
-		p.addPoint(midx+3,midy-2);
+		p.addPoint(midx-3,midy-1);
+		p.addPoint(midx+3,midy-1);
 		p.addPoint(midx,midy-6);
 
 		g2.fillPolygon(p);  
 
 		// make a triangle.
 		p = new Polygon();
-		p.addPoint(midx-3,midy+2);
-		p.addPoint(midx+3,midy+2);
+		p.addPoint(midx-3,midy+1);
+		p.addPoint(midx+3,midy+1);
 		p.addPoint(midx,midy+6);
 
 		g2.fillPolygon(p);
