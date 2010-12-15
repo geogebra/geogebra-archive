@@ -486,8 +486,9 @@ ActionListener, ListSelectionListener {
 		// hide/show button
 		historyButton = new JButton();	
 		historyButton.setIcon(GeoGebraIcon.createUpDownTriangleIcon(12));
-		historyButton.setPreferredSize(new Dimension(14,14));
+		historyButton.setPreferredSize(new Dimension(16,14));
 		historyButton.setBorderPainted(false);	
+		historyButton.setContentAreaFilled(false);
 		historyButton.setFocusable(false);
 		historyButton.setVisible(false);
 		historyButton.setSelected(false);

@@ -196,6 +196,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		btnRefresh.setEnabled(false);
 		btnRefresh.addActionListener(this);
 		btnRefresh.setContentAreaFilled(false);
+		btnRefresh.setPreferredSize(new Dimension(24,20));
+		
 		
 		btnPaste = new JButton();
 		btnPaste.addActionListener(this);
@@ -206,7 +208,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		btnOnlineHelp.addActionListener(this);
 		btnOnlineHelp.setBorderPainted(false);
 		btnOnlineHelp.setContentAreaFilled(false);
-		
+		btnOnlineHelp.setPreferredSize(new Dimension(24,20));
 		
 		JPanel leftPanel = new JPanel(new FlowLayout());
 		leftPanel.add(btnPaste);
