@@ -281,9 +281,6 @@ ActionListener, ListSelectionListener {
 	/** history list model; strings entered into the input bar are stored here */
 	private DefaultListModel historyListModel;
 	
-	/** scrollpane for the popup; needs to be a global so its width can be set dynamically */
-	private JScrollPane scroller;
-	
 	/** panel to hold the text field; needs to be a global to set the popup width */
 	private JPanel tfPanel;  
 	
@@ -477,7 +474,7 @@ ActionListener, ListSelectionListener {
 		});
 		
 		// scrollpane for the list	
-		scroller = new JScrollPane(historyList);
+		JScrollPane scroller = new JScrollPane(historyList);
 		scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);		
 		scroller.setBorder(BorderFactory.createEmptyBorder());
 		
@@ -489,6 +486,7 @@ ActionListener, ListSelectionListener {
 		// hide/show button
 		historyButton = new JButton();	
 		historyButton.setIcon(GeoGebraIcon.createUpDownTriangleIcon(12));
+		historyButton.setPreferredSize(new Dimension(14,14));
 		historyButton.setBorderPainted(false);	
 		historyButton.setFocusable(false);
 		historyButton.setVisible(false);
@@ -523,8 +521,8 @@ ActionListener, ListSelectionListener {
 				historyList.setFont(app.getPlainFont());
 				
 				// adjust the popup size and location to fit over the input field
-				scroller.setPreferredSize(new Dimension(tfPanel.getWidth(), historyList.getPreferredScrollableViewportSize().height)  );
-				historyPopup.show(textComponent, 0,-historyPopup.getPreferredSize().height );
+				historyPopup.setPopupSize(new Dimension(tfPanel.getWidth()-1, historyList.getPreferredScrollableViewportSize().height)  );
+				historyPopup.show(textComponent, 0,-historyPopup.getPreferredSize().height-1 );
 				historyButton.setSelected(true);
 
 			}
@@ -638,7 +636,7 @@ ActionListener, ListSelectionListener {
 					// paint roll-over row 
 					Point point = list.getMousePosition();
 					int mouseOver = point==null ? -1 : list.locationToIndex(point);
-					if (index == mouseOver && !isSelected)
+					if (index == mouseOver)
 						bgColor = rolloverBackground;
 					else
 						bgColor = listBackground;

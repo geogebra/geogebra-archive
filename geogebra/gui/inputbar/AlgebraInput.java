@@ -94,6 +94,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		btnToggleInputPanel.setIcon(GeoGebraIcon.listLeftIcon());
 		btnToggleInputPanel.addActionListener(this);
 		btnToggleInputPanel.setFocusable(false);
+		btnToggleInputPanel.setContentAreaFilled(false);   
 		btnToggleInputPanel.setBorderPainted(false);
 				
 		
