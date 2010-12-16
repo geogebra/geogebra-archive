@@ -4320,7 +4320,7 @@ public abstract class GeoElement
 	 * (xPixel, yPixel) in screen coordinates. 
 	 * @param endPosition may be null
 	 */
-	public static boolean moveObjects(ArrayList geos, GgbVector rwTransVec, GgbVector endPosition) {	
+	public static boolean moveObjects(ArrayList geos, GgbVector rwTransVec, GgbVector endPosition, GgbVector viewDirection) {	
 		if (moveObjectsUpdateList == null)
 			moveObjectsUpdateList = new ArrayList();
 		
@@ -4339,7 +4339,7 @@ public abstract class GeoElement
 			 * but is needed for eg dragging (a + x(A), b + x(B)) */
 			Application.debug((geo.getParentAlgorithm() == null)+" "+size+" "+geo.getClassName());
 			GgbVector position = (size == 1) && (geo.getParentAlgorithm() != null) ? endPosition : null;
-			moved = geo.moveObject(rwTransVec, position, moveObjectsUpdateList) || moved;		
+			moved = geo.moveObject(rwTransVec, position, viewDirection, moveObjectsUpdateList) || moved;		
 		}					
 							
 		// take all independent input objects and build a common updateSet
@@ -4403,7 +4403,7 @@ public abstract class GeoElement
 	 * Moves geo by a vector in real world coordinates.
 	 * @return whether actual moving occurred 	 
 	 */
-	private boolean moveObject(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos) {
+	private boolean moveObject(GgbVector rwTransVec, GgbVector endPosition, GgbVector viewDirection, ArrayList updateGeos) {
 		boolean movedGeo = false;
 		
 		// moveable geo
@@ -4457,7 +4457,7 @@ public abstract class GeoElement
 		
 		// non-moveable geo
 		else {
-			movedGeo = moveFromChangeableCoordParentNumbers(rwTransVec, endPosition, updateGeos, tempMoveObjectList);			
+			movedGeo = moveFromChangeableCoordParentNumbers(rwTransVec, endPosition, viewDirection, updateGeos, tempMoveObjectList);			
 		}
 					
 		return movedGeo;
@@ -4471,8 +4471,23 @@ public abstract class GeoElement
 	 * @param tempMoveObjectList
 	 * @return false if not moveable this way
 	 */
-	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
+	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, GgbVector viewDirection,  ArrayList updateGeos, ArrayList tempMoveObjectList){
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @return true if has changeable coord parent numbers (e.g. point defined by sliders)
+	 */
+	public boolean hasChangeableCoordParentNumbers() {
+		return false;
+	}
+	
+	/**
+	 * record values when mouse pressed
+	 */
+	public void recordChangeableCoordParentNumbers() {
+		
 	}
 
 	/**

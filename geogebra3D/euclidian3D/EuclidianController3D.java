@@ -34,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -84,8 +85,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	private GgbVector positionOld = new GgbVector(4);
 	
 	
-	/** 3D location of the mouse */
-	protected GgbVector mouseLoc3D;	
 	
 	/** picking point */
 	protected GgbVector pickPoint;
@@ -1542,15 +1541,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	final protected void setMouseLocation(MouseEvent e) {
 
-		/*
-		if (mouseLoc!=null)
-			mouseLocOld = (Point) mouseLoc.clone();
-		*/
+		isShiftDown= e.isShiftDown();
 
-		isShiftDown= e.isShiftDown();//Application.isAltDown(e);
-		
-		//mouseLoc = e.getPoint();
 		super.setMouseLocation(e);
+		
 		
 		
 		
@@ -1701,4 +1695,49 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		else
 			super.mouseReleased(e);
 	}
+
+
+
+	////////////////////////////////////////
+	// MOVE OBJECTS
+	////////////////////////////////////////
+	
+	private GgbVector startPoint3D;
+
+	private GgbVector translationVec3D = new GgbVector(4);
+	
+	public void setStartPointLocation(){
+		startPoint3D = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+		view3D.toSceneCoords3D(startPoint3D);
+		
+		super.setStartPointLocation();
+	}
+
+	protected void moveDependent(boolean repaint) {
+
+		GgbVector point = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+		view3D.toSceneCoords3D(point);
+
+		translationVec3D = point.sub(startPoint3D);
+		
+		//Application.debug("ici:\ntranslationVec3D=\n"+translationVec3D);
+
+		// we don't specify screen coords for translation as all objects are Translateables
+		GeoElement.moveObjects(translateableGeos, translationVec3D, startPoint3D, view3D.getViewDirection());	
+	}
+	
+	protected void moveMultipleObjects(boolean repaint) {	
+		/*
+		translationVec.setX(xRW - startPoint.x);
+		translationVec.setY(yRW - startPoint.y);
+		startPoint.setLocation(xRW, yRW);
+		startLoc = mouseLoc;
+
+		// move all selected geos
+		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, new GgbVector(xRW, yRW, 0));									
+			*/
+		
+		Application.debug("TODO");
+	}		
+	
 }

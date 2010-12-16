@@ -561,7 +561,20 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		return changeableCoordNumber;
 	}
 	
-	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
+	public boolean hasChangeableCoordParentNumbers() {
+		return (getCoordParentNumber()!=null);
+	}
+	
+	private double startValue;
+	
+	private GgbVector direction;
+
+	public void recordChangeableCoordParentNumbers() {
+		startValue = getCoordParentNumber().getValue();
+		direction = getMainDirection().normalized();
+	}
+	
+	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition,  GgbVector viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
 		
 
 		
@@ -574,8 +587,15 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 			addChangeableCoordParentNumberToUpdateList(var, updateGeos, tempMoveObjectList);
 			return true;
 		}else{ //comes from mouse
-			Application.printStacktrace("todo");
-			return false;
+			GgbVector direction2=direction.sub(viewDirection.mul(viewDirection.dotproduct(direction)));
+			//Application.debug("direction2\n"+direction2+"trans=\n"+rwTransVec+"viewDirection=\n"+viewDirection);
+			double ld = direction2.dotproduct(direction2);
+			if (Kernel.isZero(ld))
+				return false;			
+			double val = direction2.dotproduct(rwTransVec);
+			var.setValue(startValue+val/ld);
+			addChangeableCoordParentNumberToUpdateList(var, updateGeos, tempMoveObjectList);
+			return true;
 		}
 		
 		

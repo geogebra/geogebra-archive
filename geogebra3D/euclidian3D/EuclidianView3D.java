@@ -673,6 +673,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		//update view direction
 		viewDirection = vz.copyVector();
 		toSceneCoords3D(viewDirection);	
+		viewDirection.normalize();
 		
 		setWaitForUpdate();
 		

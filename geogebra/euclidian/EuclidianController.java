@@ -1132,11 +1132,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// DEPENDENT object: changeable parents?
 		// move free parent points (e.g. for segments)
 		else if (!movedGeoElement.isMoveable()) {
+			
 			translateableGeos = null;
 
 			// point with changeable coord parent numbers
-			if (movedGeoElement.isGeoPoint() && 
-					((GeoPointND) movedGeoElement).hasChangeableCoordParentNumbers()) {
+			if (movedGeoElement.hasChangeableCoordParentNumbers()) {
+				movedGeoElement.recordChangeableCoordParentNumbers();
 				translateableGeos = new ArrayList();
 				translateableGeos.add(movedGeoElement);
 			}
@@ -1158,20 +1159,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (translateableGeos != null) {
 				moveMode = MOVE_DEPENDENT;
 
-				GeoPoint point = ((GeoPoint)translateableGeos.get(0));
-				if (point.getParentAlgorithm() != null) {
-					// make sure snap-to-grid works for dragging (a + x(A), b + x(B))
-					transformCoordsOffset[0] = 0;
-					transformCoordsOffset[1] = 0;
-					
-				} else {
-					// snap to grid when dragging polygons, segments, images etc
-					// use first point
-					point.getInhomCoords(transformCoordsOffset);
-					transformCoordsOffset[0]-=xRW;
-					transformCoordsOffset[1]-=yRW;
+				if (translateableGeos.get(0) instanceof GeoPoint){
+					GeoPoint point = ((GeoPoint)translateableGeos.get(0));
+					if (point.getParentAlgorithm() != null) {
+						// make sure snap-to-grid works for dragging (a + x(A), b + x(B))
+						transformCoordsOffset[0] = 0;
+						transformCoordsOffset[1] = 0;
+
+					} else {
+						// snap to grid when dragging polygons, segments, images etc
+						// use first point
+						point.getInhomCoords(transformCoordsOffset);
+						transformCoordsOffset[0]-=xRW;
+						transformCoordsOffset[1]-=yRW;
+					}
 				}
-				startPoint.setLocation(xRW, yRW);					
+				
+				setStartPointLocation();
+				
 				view.setDragCursor();
 				if (translationVec == null)
 					translationVec = new GgbVector(2);
@@ -1410,6 +1415,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		view.setShowMouseCoords(!app.isApplet()
 				&& !movedGeoPoint.hasPath());
 		view.setDragCursor();
+	}
+	
+
+	public void setStartPointLocation(){
+		startPoint.setLocation(xRW, yRW);	
 	}
 
 	public void resetMovedGeoPoint(){
@@ -3012,7 +3022,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			kernel.notifyRepaint();					
 	}
 
-	final protected void moveDependent(boolean repaint) {
+	protected void moveDependent(boolean repaint) {
 
 		translationVec.setX(xRW - startPoint.x);
 		translationVec.setY(yRW - startPoint.y);
@@ -3020,7 +3030,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		startPoint.setLocation(xRW, yRW);
 
 		// we don't specify screen coords for translation as all objects are Translateables
-		GeoElement.moveObjects(translateableGeos, translationVec, new GgbVector(xRW, yRW, 0));		
+		GeoElement.moveObjects(translateableGeos, translationVec, new GgbVector(xRW, yRW, 0), null);		
 		if (repaint)
 			kernel.notifyRepaint();						
 	}
@@ -3032,7 +3042,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		startLoc = mouseLoc;
 
 		// move all selected geos
-		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, new GgbVector(xRW, yRW, 0));									
+		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, new GgbVector(xRW, yRW, 0), null);									
 
 		if (repaint)
 			kernel.notifyRepaint();					

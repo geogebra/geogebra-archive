@@ -244,7 +244,7 @@ GeoPointND, Animatable  {
 	
 	
 	
-	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
+	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, GgbVector viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
 				
 		if (!hasChangeableCoordParentNumbers())
 			return false;

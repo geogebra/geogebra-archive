@@ -803,7 +803,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		tempVec.setX(xd);tempVec.setY(yd);;tempVec.setZ(zd);
 		
 		// move objects
-		boolean moved = GeoElement.moveObjects(geos, tempVec, null);
+		boolean moved = GeoElement.moveObjects(geos, tempVec, null, null);
 		
 		// nothing moved
 		if (!moved) {
