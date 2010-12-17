@@ -98,10 +98,8 @@ public class Relation extends java.lang.Object {
      * (equal, unequal)
      */
     final private String relation(GeoList a, GeoList b) {
-        kernel.setMinPrecision();
         String str = equalityString(a.toGeoElement(), b.toGeoElement(), 
         							a.isEqual(b));
-        kernel.resetPrecision();
         return str;
     }
 
@@ -110,10 +108,8 @@ public class Relation extends java.lang.Object {
      * (equal, unequal)
      */
     final private String relation(NumberValue a, NumberValue b) {
-        kernel.setMinPrecision();
         String str = equalityString(a.toGeoElement(), b.toGeoElement(), 
         							kernel.isEqual(a.getDouble(), b.getDouble()));
-        kernel.resetPrecision();
         return str;
     }
 
@@ -122,7 +118,6 @@ public class Relation extends java.lang.Object {
      * (equal, unequal)
      */
     final private String relation(GeoSegment a, GeoSegment b) {
-        kernel.setMinPrecision();
         StringBuilder sb = new StringBuilder();
         sb.append(equalityString(a, b, a.isEqual(b)));
         sb.append("\n");
@@ -133,7 +128,6 @@ public class Relation extends java.lang.Object {
     	    sb.append(getPlainNumerical("AhasTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));
     	else
         	sb.append(getPlainNumerical("AdoesNothaveTheSameLengthAsB",a.getNameDescription(),b.getNameDescription()));	        		  
-        kernel.resetPrecision();
         return sb.toString();
     }
 
@@ -142,9 +136,7 @@ public class Relation extends java.lang.Object {
      * (equal, unequal)
      */
     final private String relation(GeoPoint A, GeoPoint B) {
-        kernel.setMinPrecision();
         String str = equalityString(A, B, A.isEqual(B));
-        kernel.resetPrecision();
         return str;
     }
 
@@ -154,13 +146,11 @@ public class Relation extends java.lang.Object {
      */
     final private String relation(GeoVector a, GeoVector b) {
         String str;
-        kernel.setMinPrecision();
         if (a.isEqual(b)) {
             str = equalityString(a, b, true);
         } else {
             str = linDependencyString(a, b, a.linDep(b));
         }
-        kernel.resetPrecision();
         return str;
     }
 
@@ -169,7 +159,7 @@ public class Relation extends java.lang.Object {
      * ((not) on perimeter)
      */
     final private String relation(GeoPoint A, GeoPolygon p) {
-    	return incidencePerimeterString(A, p.toGeoElement(), p.isOnPath(A, Kernel.MIN_PRECISION));   
+    	return incidencePerimeterString(A, p.toGeoElement(), p.isOnPath(A, Kernel.STANDARD_PRECISION));   
     }
 
     /**
@@ -177,7 +167,7 @@ public class Relation extends java.lang.Object {
      * (incident, not incident)
      */
     final private String relation(GeoPoint A, Path path) {
-    	return incidenceString(A, path.toGeoElement(), path.isOnPath(A, Kernel.MIN_PRECISION));   
+    	return incidenceString(A, path.toGeoElement(), path.isOnPath(A, Kernel.STANDARD_PRECISION));   
     }
 
     /**
@@ -186,7 +176,6 @@ public class Relation extends java.lang.Object {
      */
     final private String relation(GeoLine g, GeoLine h) {
         String str;
-        kernel.setMinPrecision();
         // check for equality
         if (g.isEqual(h)) {
             str = equalityString(g, h, true);
@@ -199,13 +188,12 @@ public class Relation extends java.lang.Object {
             	// check if intersection point really lies on both objects (e.g. segments)
             	GeoPoint tempPoint = new GeoPoint(g.cons);
             	GeoVec3D.cross(g, h, tempPoint);
-            	boolean isIntersection = g.isIntersectionPointIncident(tempPoint, Kernel.MIN_PRECISION)
-					&& h.isIntersectionPointIncident(tempPoint, Kernel.MIN_PRECISION);
+            	boolean isIntersection = g.isIntersectionPointIncident(tempPoint, Kernel.STANDARD_PRECISION)
+					&& h.isIntersectionPointIncident(tempPoint, Kernel.STANDARD_PRECISION);
             	
                 str = intersectString(g, h, isIntersection);
             }
         }
-        kernel.resetPrecision();
         return str;
     }
 
@@ -256,12 +244,10 @@ public class Relation extends java.lang.Object {
                     AlgoIntersectLineConic.INTERSECTION_ASYMPTOTIC_LINE);
         } else {
             // intersect line and conic 
-            kernel.setMinPrecision();
             GeoPoint[] points = { new GeoPoint(cons), new GeoPoint(cons)};
             type = AlgoIntersectLineConic.intersectLineConic(g, c, points);           
             points = null;
             str = lineConicString(g, c, type);
-            kernel.resetPrecision();
         }
         return str;
     }
@@ -271,7 +257,6 @@ public class Relation extends java.lang.Object {
      * (equal, intersecting or not intersecting)
      */
     final private String relation(GeoConicPart a, GeoConicPart b) {
-    	kernel.setMinPrecision();
         StringBuilder sb = new StringBuilder();
         sb.append(equalityString(a, b, a.isEqual(b)));
                 
@@ -294,7 +279,6 @@ public class Relation extends java.lang.Object {
 	        //sb.append(relation((NumberValue) a, (NumberValue) b));
         }
         
-        kernel.resetPrecision();
         return sb.toString();
     }
 
