@@ -12,6 +12,9 @@ import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.cache.JLaTeXMathCache;
+
 public class GeoText extends GeoElement
 implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 
@@ -765,6 +768,22 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	
 	public boolean isRedefineable() {
 		return true;
+	}
+	
+	Object keyLaTeX = null;
+
+	public Object getCachedLaTeXKey(String latex, int fontSize) {
+		Object newKey = JLaTeXMathCache.getCachedTeXFormula(latex, TeXConstants.STYLE_DISPLAY, fontSize, 1 /* inset around the label*/);
+	
+		if (keyLaTeX != null && !keyLaTeX.equals(newKey)) {
+			// key has changed, removed old key from cache
+			JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			Application.debug("removing");
+		}
+		
+		keyLaTeX = newKey;
+		return keyLaTeX;
+	
 	}
 	
 	

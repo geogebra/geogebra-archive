@@ -3,6 +3,7 @@ package geogebra.gui.util;
 
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 import geogebra.util.ImageManager;
 
@@ -487,7 +488,7 @@ public class GeoGebraIcon {
 	 * the needed size of the image. Second draw renders the image with the correct
 	 * dimensions.
 	 */
-	public static ImageIcon createLatexIcon(Application app, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
+	public static ImageIcon createLatexIcon(Application app, GeoText geoText, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
 
 		// Create image with dummy size, then draw into it to get the correct size
 		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -500,7 +501,7 @@ public class GeoGebraIcon {
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
 		Dimension d = new Dimension();
-		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, serif, fgColor,
+		d = Drawable.drawEquation(app, geoText, g2image, 0, 0, latex, font, serif, fgColor,
 				bgColor);
 
 		// Now use this size and draw again to get the final image
@@ -512,7 +513,7 @@ public class GeoGebraIcon {
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		d = Drawable.drawEquation(app, g2image, 0, 0, latex, font, serif, fgColor,
+		d = Drawable.drawEquation(app, geoText, g2image, 0, 0, latex, font, serif, fgColor,
 				bgColor);
 
 		ImageIcon ic = new ImageIcon(image);

@@ -29,6 +29,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -46,6 +47,7 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import org.scilab.forge.jlatexmath.WebStartAlphabetRegistration;
+import org.scilab.forge.jlatexmath.cache.JLaTeXMathCache;
 import org.scilab.forge.jlatexmath.dynamic.DynamicAtom;
 
 /**
@@ -125,7 +127,7 @@ public abstract class Drawable extends DrawableND {
 		if (label.startsWith("$") && label.endsWith("$")) {
 			boolean serif = true; // nice "x"s
 			if (geo.isGeoText()) serif = ((GeoText)geo).isSerifFont();
-			Dimension dim = drawEquation(geo.getKernel().getApplication(), g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont().deriveFont(Font.ITALIC), serif, g2.getColor(), g2.getBackground());
+			Dimension dim = drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont().deriveFont(Font.ITALIC), serif, g2.getColor(), g2.getBackground());
 			labelRectangle.setBounds(xLabel, yLabel, (int)dim.getWidth(), (int)dim.getHeight());	
 			return;
 		}
@@ -354,7 +356,7 @@ public abstract class Drawable extends DrawableND {
 		for(int i = 0, currentLine = 0, currentElement = 0; i < elements.length; ++i) {			
 			if(isLaTeX) {
 				// save the height of this element by drawing it to a temporary buffer
-				int height = drawEquation(view.app, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).height;
+				int height = drawEquation(view.app, geo, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).height;
 				elementHeights.add(new Integer(height));
 				
 				// check if this element is taller than every else in the line
@@ -399,7 +401,7 @@ public abstract class Drawable extends DrawableND {
 				yOffset = (((Integer)(lineHeights.get(currentLine))).intValue() - ((Integer)(elementHeights.get(currentElement))).intValue()) / 2;
 				
 				// draw the equation and save the x offset
-				xOffset += drawEquation(view.app, g2, xLabel + xOffset, (int)(yLabel + height) + yOffset, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).width;
+				xOffset += drawEquation(view.app, geo, g2, xLabel + xOffset, (int)(yLabel + height) + yOffset, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).width;
 				
 				++currentElement;
 			} else {
@@ -444,10 +446,10 @@ public abstract class Drawable extends DrawableND {
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
 
-	final  public static Dimension drawEquation(Application app, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
+	final  public static Dimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
 	
 		//if (useJLaTeXMath) 
-			return drawEquationJLaTeXMath(app, g2, x, y, text, font, serif, fgColor, bgColor);
+			return drawEquationJLaTeXMath(app, (GeoText)geo, g2, x, y, text, font, serif, fgColor, bgColor);
 		//else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
 	}
 	
@@ -498,7 +500,6 @@ public abstract class Drawable extends DrawableND {
 	}//*/
 	
 	
-	private static HashMap<String, TeXIcon> equations;
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
 	
@@ -515,15 +516,20 @@ public abstract class Drawable extends DrawableND {
 	 * @param bgColor
 	 * @return dimension of rendered equation
 	 */
-	final  public static Dimension drawEquationJLaTeXMath(Application app, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
+	final  public static Dimension drawEquationJLaTeXMath(Application app, GeoText geoText, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
 	{
 		
-		if (equations == null) { // first call
+		if (eqnSB == null) { // first call
+			
+			eqnSB = new StringBuilder(20);
 			
 			// initialise definitions 
 			if (initJLaTeXMath == null) initJLaTeXMath = new TeXFormula("\\DeclareMathOperator{\\sech}{sech} \\DeclareMathOperator{\\csch}{csch}");
 			
-			equations = new HashMap<String, TeXIcon>();
+			// make sure cache doesn't get too big
+			JLaTeXMathCache.setMaxCachedObjects(100);
+			
+			//equations = new HashMap<String, TeXIcon>();
 			
 		   try{
 			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_GREEK);
@@ -536,10 +542,7 @@ public abstract class Drawable extends DrawableND {
 	       LatexConvertorFactory factory = new LatexConvertorFactory(app.getKernel());
 	       DynamicAtom.setExternalConverterFactory(factory);
 	       
-		}
-		
-		if (eqnSB == null) eqnSB = new StringBuilder(20);
-		else eqnSB.setLength(0);
+		} else eqnSB.setLength(0);
 		
 		if (!serif) eqnSB.append("\\mathsf{ ");
 		if (font.isItalic()) eqnSB.append("\\mathit{ "); //else eqnSB.append("\\mathrm{ ");
@@ -557,12 +560,14 @@ public abstract class Drawable extends DrawableND {
 		eqnSB.append(' ');
 		eqnSB.append(font.getSize()+"");
 		
-		TeXIcon icon = (TeXIcon)equations.get(eqnSB.toString());
-
 		
-		if (icon == null) {
+		// if it's a \jlmDynamic text, we don't want to add it to the cache
+		if (eqnSB.indexOf("\\jlmDynamic") > -1) {
+		
 			//Application.debug("creating new icon for: "+text);
 			TeXFormula formula;
+			TeXIcon icon;
+			
 			try {			
 				formula = new TeXFormula(eqnSB.substring(0, strLen));
 				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
@@ -580,20 +585,28 @@ public abstract class Drawable extends DrawableND {
 				return new Dimension(rec.width, rec.height);
 			} 
 			icon.setInsets(new Insets(1, 1, 1, 1));
-			
-			// Make sure the HashMap doesn't get too big
-			// eg with a dynamic text
-			if (equations.size() > 100) equations.clear();
-			
-			// cache equation only if it's not dynamic
-			if (eqnSB.indexOf("\\jlmDynamic") == -1)
-				equations.put(eqnSB.toString(), icon);
-			
-		}	//else Application.debug("using buffer for: "+text);
-
+						
 			jl.setForeground(fgColor);
 			icon.paintIcon(jl, g2, x, y);
 			return new Dimension(icon.getIconWidth(), icon.getIconHeight());
+			
+		}
+			
+			Object key;
+			
+			// if geoText != null then keep track of which key goes with the GeoText
+			// so that we can remove it from the cache if it changes
+			// eg for a (regular) dynamic LaTeX text eg "\sqrt{"+a+"}"
+			if (geoText == null)
+				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/);
+			else
+				key = geoText.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3);
+			
+			Image im = JLaTeXMathCache.getCachedTeXFormulaImage(key); 
+
+			g2.drawImage(im,x,y,null);
+			
+			return new Dimension(im.getWidth(null), im.getHeight(null));
 		}
 
 
