@@ -38,11 +38,11 @@ import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.JLabel;
 
 import org.scilab.forge.jlatexmath.AlphabetRegistration;
+import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
@@ -592,8 +592,8 @@ public abstract class Drawable extends DrawableND {
 			
 		}
 			
-			Object key;
-			
+			Object key = null;
+			try {
 			// if geoText != null then keep track of which key goes with the GeoText
 			// so that we can remove it from the cache if it changes
 			// eg for a (regular) dynamic LaTeX text eg "\sqrt{"+a+"}"
@@ -601,7 +601,11 @@ public abstract class Drawable extends DrawableND {
 				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/);
 			else
 				key = geoText.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3);
-			
+			} catch (ParseException e) {
+				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
+				return new Dimension(rec.width, rec.height);
+				
+			}
 			Image im = JLaTeXMathCache.getCachedTeXFormulaImage(key); 
 
 			g2.drawImage(im,x,y,null);
