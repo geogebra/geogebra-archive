@@ -21,6 +21,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
@@ -28,6 +29,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 /**
@@ -36,18 +41,19 @@ import javax.swing.text.JTextComponent;
  * 
  * @author hohenwarter
  */
-public class TextInputDialog extends InputDialog {
+public class TextInputDialog extends InputDialog implements DocumentListener {
 	
 	private static final long serialVersionUID = 1L;
 
 	private JCheckBox cbLaTeX;
 	private JComboBox cbLaTeXshortcuts;
 	private ComboBoxListener cbl;
-	private JPanel latexPanel;
+	private JPanel latexPanel, latexPreviewPanel;
 	private GeoText text;
 	private boolean isLaTeX;
 	private GeoPoint startPoint;
 	private boolean isTextMode = false;
+	private LaTeXPreviewerPanel latexPreviewer;
 	
 
 	/**
@@ -91,10 +97,17 @@ public class TextInputDialog extends InputDialog {
 		JPanel centerPanel = new JPanel(new BorderLayout());		
 		latexPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		latexPanel.add(cbLaTeX);
-		latexPanel.add(cbLaTeXshortcuts);							
+		latexPanel.add(cbLaTeXshortcuts);	
+		
+		latexPreviewPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		latexPreviewPanel.setPreferredSize(new Dimension(100,80));
+		
+		latexPreviewer = new LaTeXPreviewerPanel();
+		latexPreviewPanel.add(latexPreviewer);
 			
-		centerPanel.add(inputPanel, BorderLayout.CENTER);		
-		centerPanel.add(latexPanel, BorderLayout.SOUTH);	
+		centerPanel.add(inputPanel, BorderLayout.NORTH);		
+		centerPanel.add(latexPanel, BorderLayout.CENTER);	
+		centerPanel.add(latexPreviewPanel, BorderLayout.SOUTH);	
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
 		centerOnScreen();
 		
@@ -227,7 +240,10 @@ public class TextInputDialog extends InputDialog {
         }           
                 
         inputPanel.setText(initString);
-        cbLaTeX.setSelected(isLaTeX);
+        cbLaTeX.setSelected(false);
+        if (isLaTeX) {
+        	cbLaTeX.doClick();
+        }
         cbLaTeXshortcuts.setEnabled(isLaTeX);
 	}
 	
@@ -298,7 +314,15 @@ public class TextInputDialog extends InputDialog {
 			else if (source == cbLaTeX) {
 				isLaTeX = cbLaTeX.isSelected();
 				cbLaTeXshortcuts.setEnabled(isLaTeX);
-				
+				if (isLaTeX) {
+					inputPanel.getTextComponent().getDocument().addDocumentListener(this);
+					//latexPreviewer = new LaTeXPreviewerPanel();
+					//inputPanel.getTextComponent().add(latexPreviewer);
+					
+					latexPreviewer.setLaTeX(app, inputPanel.getText());
+				} else {
+					//latexPreviewer = null;	
+				}
 				if(isLaTeX && inputPanel.getText().length() == 0) {
 					insertString("$  $");
 					setRelativeCaretPosition(-2);
@@ -310,6 +334,35 @@ public class TextInputDialog extends InputDialog {
 		}			
 	}
 	
+	/**
+     * Nothing !
+     * @param e the event
+     */
+    public void changedUpdate(DocumentEvent e) { }
+
+    /**
+     * Called when an insertion is made in the textarea
+     * @param e the event
+     */
+    public void insertUpdate(DocumentEvent e) {
+        handleDocumentEvent(e);
+    }
+
+    /**
+     * Called when a remove is made in the textarea
+     * @param e the event
+     */
+    public void removeUpdate(DocumentEvent e) {
+        handleDocumentEvent(e);
+    }
+
+    protected void handleDocumentEvent(DocumentEvent e) {
+    	Document doc = e.getDocument();
+    	try {
+    		latexPreviewer.setLaTeX(app, doc.getText(0, doc.getLength()));
+    	} catch (BadLocationException ex) { }
+    }
+    
 	/**
 	 * Inserts geo into text and creates the string for a dynamic text, e.g.
 	 * "Length of a = " + a + "cm"
