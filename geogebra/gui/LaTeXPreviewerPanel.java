@@ -33,7 +33,7 @@ public class LaTeXPreviewerPanel extends JPanel {
 	private static final int INSET = 3;
     private static final Rectangle NULLRECT = new Rectangle(0, 0, 0, 0);
 
-    private static final int defaultSize = 25;
+    private static final int defaultSize = 15;
     
     private Icon icon;
     private int width;
@@ -73,8 +73,6 @@ public class LaTeXPreviewerPanel extends JPanel {
     	if (f.startsWith("$") && f.endsWith("$")) {
             f = f.substring(1, f.length() - 1);
         }
-    	
-    	Application.debug("Trying Partial LaTeX: "+f);
 
         icon = TeXFormula.getPartialTeXFormula(f).createTeXIcon(TeXConstants.STYLE_DISPLAY, defaultSize);
         if (icon == null) {
@@ -93,12 +91,10 @@ public class LaTeXPreviewerPanel extends JPanel {
      * {@inheritDoc}
      */
     public void paint(Graphics g) {
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, width + 2 * INSET, height + 2 * INSET);
-        if (icon != null)
+        if (icon != null) {
+	        g.setColor(Color.WHITE);
+	        g.fillRect(0, 0, width + 2 * INSET, height + 2 * INSET);
         	icon.paintIcon(this, g, INSET, INSET);
+        }
     }
 }
-
-
-    	
