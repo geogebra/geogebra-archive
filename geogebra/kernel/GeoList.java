@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
@@ -1314,6 +1315,59 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		public boolean justFontSize() {
 			return false;
 		}
+		
+		public boolean hasMoveableInputPoints() {
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+				
+				if (geo.isGeoPoint()) {
+					if(!geo.isMoveable()) return false;
+				} else {
+					// not point
+					if (!geo.hasMoveableInputPoints()) return false;
+				}
+			}
+			
+			
+			return true;
+		}
+		
+		/*
+		 * allow lists like this to be dragged
+		 * {Segment[A, B], Segment[B, C], (3.92, 4)}
+		 */
+		public ArrayList<GeoPoint> getFreeInputPoints() {
+			ArrayList<GeoPoint> al = new ArrayList<GeoPoint>();
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+				
+				if (geo.isGeoPoint()) {
+					GeoPoint p = (GeoPoint)geo;
+					if (p.isMoveable() && !al.contains(p)) al.add(p);
+					
+				} else {
+			    	ArrayList<GeoPoint> al2 = geo.getFreeInputPoints();
+			    	
+			    	if (al2 != null)
+				    	for (int j = 0 ; j < al2.size() ; j++) {
+				    		GeoPoint p = al2.get(j);
+					    	// make sure duplicates aren't added
+				    		if (!al.contains(p)) al.add(p);
+				    	}
+				}
+			}
+			return al;
+			
+		}
+		
+		
+		
+		public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
+			Application.debug("hghgh");
+			return false;
+		}
+
+
 	    
 
 }

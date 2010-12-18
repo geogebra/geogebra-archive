@@ -1596,7 +1596,7 @@ public abstract class GeoElement
 	/**
 	 * Returns all free parent points of this GeoElement.	 
 	 */
-	public ArrayList getFreeInputPoints() {		
+	public ArrayList<GeoPoint> getFreeInputPoints() {		
 		if (algoParent == null) 
 			return null;
 		else

@@ -1149,6 +1149,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						movedGeoElement.isGeoPolygon() ||					 
 						movedGeoElement.isGeoConic() || 
 						movedGeoElement.isGeoImage() || 
+						movedGeoElement.isGeoList() || 
 						movedGeoElement.isGeoVector()) 
 				{		
 					translateableGeos = movedGeoElement.getFreeInputPoints();
