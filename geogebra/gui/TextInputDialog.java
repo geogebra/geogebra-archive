@@ -142,7 +142,9 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				
 		
 		public void doActionPerformed(Object source) {			
-			if (source == cbLaTeXshortcuts) {		
+			if (source == cbLaTeX) {		
+				Application.debug("jkhkjhkjh");
+			} else if (source == cbLaTeXshortcuts) {		
 				String selText = inputPanel.getSelectedText();				
 				if (selText == null) selText = "";
 				
@@ -313,6 +315,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 					app.setMode(EuclidianConstants.MODE_TEXT);
 			}
 			else if (source == cbLaTeX) {
+				
+				
 				isLaTeX = cbLaTeX.isSelected();
 				cbLaTeXshortcuts.setEnabled(isLaTeX);
 				if (isLaTeX) {
@@ -329,6 +333,12 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 					insertString("$  $");
 					setRelativeCaretPosition(-2);
 				}
+				
+				if (latexPreviewer != null) {
+					latexPreviewer.setVisible(isLaTeX);
+				}
+
+
 			}			
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
