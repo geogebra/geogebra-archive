@@ -23,6 +23,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.Util;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -544,6 +545,10 @@ public abstract class Drawable extends DrawableND {
 	       
 		} else eqnSB.setLength(0);
 		
+		eqnSB.append("\\fgcolor{");
+		eqnSB.append(Util.toHexString(fgColor));
+		eqnSB.append("}{");
+		
 		if (!serif) eqnSB.append("\\mathsf{ ");
 		if (font.isItalic()) eqnSB.append("\\mathit{ "); //else eqnSB.append("\\mathrm{ ");
 		if (font.isBold()) eqnSB.append("\\boldsymbol{ ");
@@ -553,12 +558,14 @@ public abstract class Drawable extends DrawableND {
 		if (font.isBold()) eqnSB.append(" }");		
 		if (font.isItalic()) eqnSB.append(" }"); 
 		if (!serif) eqnSB.append(" }");
-
+		
+		eqnSB.append(" }"); // fgcolor
 		
 		int strLen = eqnSB.length();
 		
-		eqnSB.append(' ');
-		eqnSB.append(font.getSize()+"");
+		// removed - needed for old hashmap caching
+		//eqnSB.append(' ');
+		//eqnSB.append(font.getSize()+"");
 		
 		
 		// if it's a \jlmDynamic text, we don't want to add it to the cache
