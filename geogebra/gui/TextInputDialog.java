@@ -102,7 +102,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		latexPreviewPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		latexPreviewPanel.setPreferredSize(new Dimension(100,80));
 		
-		latexPreviewer = new LaTeXPreviewerPanel();
+		if (latexPreviewer == null) 
+			latexPreviewer = new LaTeXPreviewerPanel();
 		latexPreviewPanel.add(latexPreviewer);
 			
 		centerPanel.add(inputPanel, BorderLayout.NORTH);		
@@ -316,7 +317,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				cbLaTeXshortcuts.setEnabled(isLaTeX);
 				if (isLaTeX) {
 					inputPanel.getTextComponent().getDocument().addDocumentListener(this);
-					//latexPreviewer = new LaTeXPreviewerPanel();
+					if (latexPreviewer == null) 
+						latexPreviewer = new LaTeXPreviewerPanel();
 					//inputPanel.getTextComponent().add(latexPreviewer);
 					
 					latexPreviewer.setLaTeX(app, inputPanel.getText());
