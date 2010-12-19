@@ -352,8 +352,6 @@ public interface EuclidianViewInterface {
 
 
 	
-	//for previewable
-	public boolean handlePreviewableKeys(KeyEvent event);
 
 	
 }

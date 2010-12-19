@@ -6,7 +6,6 @@ import geogebra.Matrix.GgbMatrix4x4;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
-import geogebra.euclidian.HandleAction;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
@@ -53,11 +52,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	
 	
-	
-	
-	
-	/** says if the shift-key is down */
-	protected boolean isShiftDown = false;
 	
 	
 	
@@ -912,13 +906,32 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 */
 	final protected boolean rightPrism(Hits hits) {
 		
+		/*
+		String s=hits.toString();
+		s+="\nselectedPolygons=\n";
+		for (int i=0;i<selectedPolygons.size();i++)
+			s+=selectedPolygons.get(i)+"\n";
+		*/
 		
 		if (hits.isEmpty())
 			return false;
 
-		
+
 		addSelectedPolygon(hits, 1, false);
 		addSelectedNumeric(hits, 1, false);
+		
+		/*
+		s+="\nAprès=\n";
+		for (int i=0;i<selectedPolygons.size();i++)
+			s+=selectedPolygons.get(i)+"\n";
+		s+="\nNumeric=\n";
+		for (int i=0;i<selectedNumbers.size();i++)
+			s+=selectedNumbers.get(i)+"\n";
+		
+		if (!selectionPreview)
+			Application.debug(s);
+		*/
+
 
 		if (selPolygons() == 1) {
 			if (selNumbers() == 1) {
@@ -1006,16 +1019,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
-	public void mouseDragged(MouseEvent e) {
-		
-		if (view3D.getButtonHandleMoving()){
-			setMouseLocation(e);
-			handleMouseDraggedForViewButtons();
-			return;
-		}
-		
-		super.mouseDragged(e);
-	}
 	
 	protected void initNewMode(int mode) {
 		super.initNewMode(mode);
@@ -1229,6 +1232,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			((Hits3D) hits).removePolygonsIfNotOnlyCS2D();
 			break;
 		case EuclidianView3D.MODE_RIGHT_PRISM:
+			//String s = hits.toString();
+			hits.removeAllPolygonsButOne();
+			//s+="\nAprès:\n"+hits.toString();
+			//Application.debug(s);
 			break;
 		default:
 			super.switchModeForRemovePolygons(hits);
@@ -1295,6 +1302,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;	
 			
 		case EuclidianView3D.MODE_RIGHT_PRISM:
+			view.setHits(mouseLoc);
+			hits = view.getHits();
+			switchModeForRemovePolygons(hits);
+			//Application.debug(hits.toString());
+			rightPrism(hits);
+			view3D.updatePreviewable();
 			break;
 			
 		case EuclidianView3D.MODE_ROTATEVIEW:
@@ -1320,6 +1333,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		switch (mode) {
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
 		case EuclidianView3D.MODE_RIGHT_PRISM:
+			view3D.setPreview(null);//remove current previewable
+			view3D.setPreview(view3D.createPreviewRightPrism(selectedPolygons));//init new one	
 			return changedKernel;
 		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
 			//Application.debug("hop");
@@ -1539,17 +1554,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
-	final protected void setMouseLocation(MouseEvent e) {
-
-		isShiftDown= e.isShiftDown();
-
-		super.setMouseLocation(e);
-		
-		
-		
-		
-
-	}
 	
 	
 
@@ -1635,69 +1639,42 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 
-	/////////////////////////////////////////////////////
-	// 
-	// BUTTONS
-	//
-	/////////////////////////////////////////////////////
 
+
+
+
+	////////////////////////////////////////
+	// HANDLING PARTS OF PREVIEWABLES
+	////////////////////////////////////////
 	
-	public void mouseClicked(MouseEvent e) {
-		
-		// if a view button is clicked, do it and return
-		if (view3D.handleMouseClickedForButtons())
+	private GeoElement handledGeo;
+	
+	/**
+	 * sets the geo as an handled geo (for previewables)
+	 * @param geo
+	 */
+	public void setHandledGeo(GeoElement geo){		
+		handledGeo = geo;
+		if (handledGeo==null)
 			return;
-		
-		super.mouseClicked(e);
+		setStartPointLocation();
+		handledGeo.recordChangeableCoordParentNumbers();
 	}
 	
-	
-	protected boolean handleMousePressedForViewButtons(){
-		
-		if (view3D.getButtonPicked()==EuclidianView3D.BUTTON_PICKED_HANDLE){
-			view3D.setButtonHandleMoving(true);
-			((HandleAction) view3D.getPreviewDrawable()).handleStartPosition(getCoordsForViewButtons());
-			return true;
+	public void mouseDragged(MouseEvent e) {
+		if (handledGeo!=null){
+			setMouseLocation(e);
+			updateTranslationVector();
+			handledGeo.moveFromChangeableCoordParentNumbers(translationVec3D, startPoint3D, view3D.getViewDirection(), null, null);
+			//view3D.updatePreviewable();
+			kernel.notifyRepaint();
+			return;
 		}
 		
-		return false;
-	}
-
-	/**
-	 * mouse is moved for view buttons (handle)
-	 */
-	protected void handleMouseDraggedForViewButtons(){
-		
-		if (mouseLoc == null)
-			return;
-
-		((HandleAction) view3D.getPreviewDrawable()).handlePosition(getCoordsForViewButtons());
+		super.mouseDragged(e);
 	}
 	
-	private GgbVector getCoordsForViewButtons(){
-		
-		GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
-		view3D.toSceneCoords3D(o);
-
-
-		//getting new position of the handle button
-		return view3D.getButtonHandleMatrix().getOrigin().projectNearLine(o, view3D.getViewDirection(), 
-				((HandleAction) view3D.getPreviewDrawable()).getMainDirection());
-
-	}
 	
-	public void mouseReleased(MouseEvent e) {
-		
-		
-		//check if it's "view buttons mode"
-		if (view3D.getButtonHandleMoving())
-			view3D.setButtonHandleMoving(false);
-		else
-			super.mouseReleased(e);
-	}
-
-
-
 	////////////////////////////////////////
 	// MOVE OBJECTS
 	////////////////////////////////////////
@@ -1705,6 +1682,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	private GgbVector startPoint3D;
 
 	private GgbVector translationVec3D = new GgbVector(4);
+	
+	private void updateTranslationVector(){
+		GgbVector point = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+		view3D.toSceneCoords3D(point);
+		translationVec3D = point.sub(startPoint3D);
+	}
 	
 	public void setStartPointLocation(){
 		startPoint3D = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
@@ -1715,14 +1698,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	protected void moveDependent(boolean repaint) {
 
-		GgbVector point = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
-		view3D.toSceneCoords3D(point);
-
-		translationVec3D = point.sub(startPoint3D);
-		
-		//Application.debug("ici:\ntranslationVec3D=\n"+translationVec3D);
-
-		// we don't specify screen coords for translation as all objects are Translateables
+		updateTranslationVector();
 		GeoElement.moveObjects(translateableGeos, translationVec3D, startPoint3D, view3D.getViewDirection());	
 	}
 	

@@ -236,4 +236,13 @@ public class Hits3D extends Hits {
 		}
 	}
 	
+	
+	/**
+	 * remove all polygons but one
+	 */
+	public void removeAllPolygonsButOne(){
+		super.removeAllPolygonsButOne();
+		topHits.clear(); //getTopHits() return this
+	}
+	
 }

@@ -6,6 +6,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -111,23 +112,23 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 	protected boolean updateForItSelf(){
 		
-		
 		super.updateForItSelf();
 		
-		/*
-		if (renderer == null)
-			return;
-			*/
-		
-		Renderer renderer = getView3D().getRenderer();
 		
 		
 		//creates the polygon
 		GeoPolygon polygon = (GeoPolygon) getGeoElement();
+		int pointLength = polygon.getPointsLength();
 		
+		if (pointLength<3) //no polygon
+			return true;
+		
+		if (Kernel.isZero(polygon.getArea())) //no polygon
+			return true;
+		
+		
+		Renderer renderer = getView3D().getRenderer();
 		GgbVector v = polygon.getMainDirection();
-		//Application.debug("normal\n"+v.toString());
-		
 		int index = renderer.startPolygon((float) v.get(1),(float) v.get(2),(float) v.get(3));
 		
 		
@@ -136,22 +137,16 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		if (index==0)
 			return true;
 		
-		//Application.debug("udpate polygon index : "+polygonIndex+" >> "+index);
-		
 		setGeometryIndex(index);
-		
-		
-		
 				
-		for(int i=0;i<polygon.getPointsLength();i++){
+		for(int i=0;i<pointLength;i++){
 			v = polygon.getPoint3D(i);
 			renderer.addToPolygon(v.get(1),v.get(2),v.get(3));
 			//Application.debug("v["+i+"]=\n"+v);
 		}
 		
 		renderer.endPolygon();
-		
-		
+				
 		return true;
 		
 	}

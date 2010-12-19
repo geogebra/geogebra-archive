@@ -170,6 +170,20 @@ public class Hits extends ArrayList {
 		}
 	}
 	
+	/**
+	 * remove all polygons but one
+	 */
+	public void removeAllPolygonsButOne(){
+		int toRemove = polyCount-1;
+		for (int i = size() - 1 ; i >= 0 && toRemove>0; i-- ) {
+			GeoElement geo = (GeoElement) get(i);
+			if (geo.isGeoPolygon()){
+				remove(i);
+				toRemove--;
+			}
+		}
+	}
+	
 	final public void removeAllButImages(){
 
 		for (int i = size() - 1 ; i >= 0 ; i-- ) {
@@ -329,6 +343,22 @@ public class Hits extends ArrayList {
 		
 		return result;
 	}
+	
+	/**
+	 * return first hit of given class
+	 * @param geoclass
+	 * @return first hit of given class
+	 */
+	final public GeoElement getFirstHit(Class geoclass) {
+
+		for (int i = 0; i < size(); ++i) {
+			if(geoclass.isInstance(get(i)))
+				return (GeoElement) get(i);
+		}
+
+		return null;
+	}
+	
 
 	/**
 	 * Stores all GeoElements of type GeoPoint, GeoVector, GeoNumeric to result list.

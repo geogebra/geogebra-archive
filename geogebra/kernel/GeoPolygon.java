@@ -23,6 +23,7 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -454,6 +455,8 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		setCoordSys(null);
 		updateSegments();
 		defined = poly.defined;	
+		
+		setCoordParentNumber(poly.getCoordParentNumber());
 	}
 	
 	
@@ -1231,5 +1234,87 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	public GgbVector[] getProjection(GgbVector coords, GgbVector willingDirection){
 		return getCoordSys().getProjection(coords, willingDirection);
 	}
+	
+	
+	
+	//////////////////////////////////////////////////////
+	// PARENT NUMBER (HEIGHT OF A PRISM, ...)
+	//////////////////////////////////////////////////////
+
+	private GeoNumeric changeableCoordNumber = null;
+	
+	/**
+	 * sets the parent number for changing coords
+	 * @param geo
+	 */
+	final public void setCoordParentNumber(GeoNumeric geo) {
+		changeableCoordNumber=geo;
+	}
+	
+	final private GeoNumeric getCoordParentNumber() {
+		
+		/*
+		if (changeableCoordNumber==null){
+			AlgoElement parentAlgo = getParentAlgorithm();
+			if (parentAlgo instanceof AlgoPolygon){
+				GeoElement polyhedron = ((AlgoPolygon) parentAlgo).getPolyhedron();				
+				if (polyhedron!=null){
+					parentAlgo = polyhedron.getParentAlgorithm();
+					if (parentAlgo instanceof AlgoPolyhedron){
+						NumberValue height = ((AlgoPolyhedron) parentAlgo).getHeight();
+						if (height != null)
+							if (height instanceof GeoNumeric)
+								changeableCoordNumber = (GeoNumeric) height;
+					}
+				}
+			}
+		}
+		*/
+		
+		return changeableCoordNumber;
+	}
+	
+	public boolean hasChangeableCoordParentNumbers() {
+		return (getCoordParentNumber()!=null);
+	}
+	
+	private double startValue;
+	
+	private GgbVector direction;
+
+	public void recordChangeableCoordParentNumbers() {
+		startValue = getCoordParentNumber().getValue();
+		direction = getMainDirection().normalized();
+	}
+	
+	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition,  GgbVector viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
+		
+
+		
+		GeoNumeric var = getCoordParentNumber();
+				
+		if (var==null)
+			return false;
+		if (endPosition==null){ //comes from arrows keys -- all is added
+			var.setValue( var.getValue() +rwTransVec.getX()+rwTransVec.getY()+rwTransVec.getZ());
+			addChangeableCoordParentNumberToUpdateList(var, updateGeos, tempMoveObjectList);
+			return true;
+		}else{ //comes from mouse
+			GgbVector direction2=direction.sub(viewDirection.mul(viewDirection.dotproduct(direction)));
+			//Application.debug("direction2\n"+direction2+"trans=\n"+rwTransVec+"viewDirection=\n"+viewDirection);
+			double ld = direction2.dotproduct(direction2);
+			if (Kernel.isZero(ld))
+				return false;			
+			double val = direction2.dotproduct(rwTransVec);
+			var.setValue(startValue+val/ld);
+			addChangeableCoordParentNumberToUpdateList(var, updateGeos, tempMoveObjectList);
+			return true;
+		}
+		
+		
+	}
+	
+	
+	
 
 }

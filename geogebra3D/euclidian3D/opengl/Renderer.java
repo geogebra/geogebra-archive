@@ -391,7 +391,6 @@ public class Renderer implements GLEventListener {
         view3D.drawCursor(this);
         
          
-        view3D.drawButtonHandle(this);
         //drawWireFrame();
         
         
@@ -514,11 +513,6 @@ public class Renderer implements GLEventListener {
     	
     	*/
         
-        //gl.glDisable(GL.GL_BLEND);
-        gl.glEnable(GL.GL_TEXTURE_2D);
-        view3D.drawButtons(this);
-        gl.glDisable(GL.GL_TEXTURE_2D);
-        //gl.glEnable(GL.GL_BLEND);
    	
     	//drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
@@ -987,7 +981,10 @@ public class Renderer implements GLEventListener {
     
     /**
      * set the tesselator to start drawing a new polygon
-     * @param cullFace says if the faces have to be culled
+     * @param nx 
+     * @param ny 
+     * @param nz 
+     * @return geometry manager index
      */
     public int startPolygon(float nx, float ny, float nz){
     	
@@ -1019,7 +1016,6 @@ public class Renderer implements GLEventListener {
     
     /**
      * end of the current polygon
-     * @param cullFace says if the faces have been culled
      */
     public void endPolygon(){
     	
@@ -1292,8 +1288,7 @@ public class Renderer implements GLEventListener {
     	
     	//double pickTime = System.currentTimeMillis();
 
-    	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1
-    				+EuclidianView3D.BUTTON_LENGTH_WITH_HANDLE;
+    	BUFSIZE = (drawable3DLists.size()+EuclidianView3D.DRAWABLES_NB)*2+1;
     	selectBuffer = BufferUtil.newIntBuffer(BUFSIZE); // Set Up A Selection Buffer
         int hits; // The Number Of Objects That We Selected
         gl.glSelectBuffer(BUFSIZE, selectBuffer); // Tell OpenGL To Use Our Array For Selection
@@ -1347,23 +1342,15 @@ public class Renderer implements GLEventListener {
   
     	
     	
-    	// picking view buttons
+    	// picking 
     	pickingLoop = 0;
-    	for (int i=0; i<EuclidianView3D.BUTTON_LENGTH; i++){   		
-    		gl.glLoadName(pickingLoop);
-    		view3D.drawButton(this, i);
-    		pickingLoop++;
-    	}
+
     	
     	
         // set the scene matrix
     	gl.glPushMatrix();
         gl.glLoadMatrixd(view3D.getToScreenMatrix().get(),0);
         
-        // picking handle button
-        gl.glLoadName(pickingLoop);
-		view3D.drawButtonHandleForPicking(this);
-		pickingLoop++;
         
 		// picking objects
         drawable3DLists.drawForPicking(this);
@@ -1401,10 +1388,8 @@ public class Renderer implements GLEventListener {
         int names, ptr = 0;
         float zMax, zMin;
         int num;
-        boolean buttonPicked = false;
-        view3D.setButtonPicked(EuclidianView3D.BUTTON_PICKED_NONE);
         
-        for (int i = 0; i < hits && !buttonPicked; i++) { 
+        for (int i = 0; i < hits ; i++) { 
         	     
           names = selectBuffer.get(ptr);  
           ptr++; // min z    
@@ -1413,22 +1398,17 @@ public class Renderer implements GLEventListener {
           zMax = getDepth(ptr);           
           
           ptr++;
-          
-          
+
+
           for (int j = 0; j < names; j++){ 
-        	num = selectBuffer.get(ptr);
-        	
-        	if (num<EuclidianView3D.BUTTON_LENGTH_WITH_HANDLE){
-        		//Application.debug("button: "+num);
-        		view3D.setButtonPicked(num);
-        		buttonPicked=true;
-        	}else{
-        		hits3D.addDrawable3D(drawHits[num],num>=labelLoop);
-        		drawHits[num].zPickMin = zMin;
-        		drawHits[num].zPickMax = zMax;
-        	}
-        	
-        	ptr++;
+        	  num = selectBuffer.get(ptr);
+
+        	  hits3D.addDrawable3D(drawHits[num],num>=labelLoop);
+        	  drawHits[num].zPickMin = zMin;
+        	  drawHits[num].zPickMax = zMax;
+
+
+        	  ptr++;
           }
           
           

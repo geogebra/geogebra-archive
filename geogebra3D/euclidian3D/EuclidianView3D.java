@@ -11,7 +11,6 @@ import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianViewInterface;
-import geogebra.euclidian.HandleAction;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
@@ -849,9 +848,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			viewChangedOwnDrawables();
 			setWaitForUpdateOwnDrawables();
 			
-			//view buttons
-			if (buttonsVisible)
-				updateScreenButtonsPosition();
 			
 			
 			waitForUpdate = false;
@@ -2341,6 +2337,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 	}
+	
 
 	
 	
@@ -2381,261 +2378,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 
-	
-	/////////////////////////////////////////////////////
-	// 
-	// BUTTONS
-	//
-	/////////////////////////////////////////////////////
-
-	final static public int BUTTON_PICKED_NONE = -1;
-	final static public int BUTTON_PICKED_OK = 0;
-	final static public int BUTTON_PICKED_CANCEL = 1;
-	final static public int BUTTON_PICKED_HANDLE = 2;
-	final static public int BUTTON_LENGTH = 2;
-	final static public int BUTTON_LENGTH_WITH_HANDLE = 3;
-	
-	private int buttonPicked = BUTTON_PICKED_NONE;
-	
-	private boolean buttonsVisible = false;
-	
-	private boolean buttonHandleMoving = false;
-	
-	private GgbVector handlePos, handleDirection;
-	
-	/**
-	 * sets the visibility of the view buttons
-	 * @param visible
-	 */
-	public void setButtonsVisible(boolean visible){
-		buttonsVisible = visible;
-	}
-	
-	/**
-	 * 
-	 * @return visibility of the buttons
-	 */
-	public boolean getButtonsVisible(){
-		return buttonsVisible;
-	}
-	
-	
-	/**
-	 * sets which button is picked
-	 * @param i
-	 */
-	public void setButtonPicked(int i){
-		if (getButtonHandleMoving())
-			return;
-		
-		buttonPicked = i;
-	}
-
-	/**
-	 * set if the handle button is moving
-	 * @param move
-	 */
-	public void setButtonHandleMoving(boolean move){
-		buttonHandleMoving = move;		
-	}
-	
-	/**
-	 * say if the handle button is moving
-	 */
-	public boolean getButtonHandleMoving(){
-		return buttonHandleMoving;
-	}
-	
-	/**
-	 * 
-	 * @return picked button
-	 */
-	public int getButtonPicked(){
-		return buttonPicked;
-	}	
-	
-	/**
-	 * draws all buttons (but not handle)
-	 * @param renderer
-	 */
-	public void drawButtons(Renderer renderer){
-		
-		if (!buttonsVisible || buttonHandleMoving)
-			return;
-		
-		renderer.translate(getScreenButtonsPosition());
-		
-		if (buttonPicked==BUTTON_PICKED_OK)
-			renderer.getTextures().loadTextureLinear(Textures.BUTTON_OK_PICKED);
-		else
-			renderer.getTextures().loadTextureLinear(Textures.BUTTON_OK);
-		renderer.drawButton(PlotterViewButtons.TYPE_OK);
-		
-		if (buttonPicked==BUTTON_PICKED_CANCEL)
-			renderer.getTextures().loadTextureLinear(Textures.BUTTON_CANCEL_PICKED);
-		else
-			renderer.getTextures().loadTextureLinear(Textures.BUTTON_CANCEL);
-		renderer.drawButton(PlotterViewButtons.TYPE_CANCEL);
-		
-		renderer.resetMatrix();
-	}
-	
-	/**
-	 * draw the button regarding its type
-	 * @param renderer
-	 * @param type
-	 */
-	public void drawButton(Renderer renderer, int type){
-
-		if (!buttonsVisible)
-			return;
-		
-		renderer.translate(getScreenButtonsPosition());
-		renderer.drawButton(type);
-		renderer.resetMatrix();
-	}
-	
-	
-	
-	/**
-	 * draws handle button
-	 * @param renderer
-	 */
-	public void drawButtonHandle(Renderer renderer){
-		
-		if (!buttonsVisible || buttonHandleMoving)
-			return;
-		
-		renderer.setMatrix(buttonHandleMatrix);
-		
-		renderer.drawButtonHandleAndArrows(buttonPicked!=BUTTON_PICKED_HANDLE);
-	}
-	
-	/** drawable that can be handled */
-	private Drawable3D handledDrawable;
-	
-	/**
-	 * sets the geo that can be handled
-	 * @param geo
-	 */
-	public void setHandledDrawable(GeoElement geo){
-		handledDrawable = (Drawable3D) getDrawableND(geo);
-	}
-	
-	/**
-	 * remove the handleable geo
-	 */
-	public void removeHandledDrawable(){
-		handledDrawable = null;
-	}
-	
-	/**
-	 * draw handle button for picking
-	 * @param renderer
-	 */
-	public void drawButtonHandleForPicking(Renderer renderer){
-		
-
-		if (!buttonsVisible || buttonHandleMoving)
-			return;
-		
-		if (handledDrawable!=null)
-			handledDrawable.drawForPicking(renderer,false);
-		
-		renderer.setMatrix(buttonHandleMatrix);
-		renderer.drawButtonHandleForPicking();
-	}
-	
-	
-	
-	private GgbMatrix4x4 buttonHandleMatrix = GgbMatrix4x4.Identity();
-	private GgbVector screenButtonsPosition = new GgbVector(0,0,0,1);
-	
-	
-	/**
-	 * 
-	 * @return button handle matrix
-	 */
-	public GgbMatrix4x4 getButtonHandleMatrix(){
-		return buttonHandleMatrix;
-	}
-	
-	/**
-	 * update position of the buttons
-	 * @param pos
-	 * @param direction 
-	 */
-	public void updateButtonsPosition(GgbVector pos, GgbVector direction){	
-		
-		handlePos = pos; handleDirection = direction;
-		
-		GgbMatrix m = new GgbMatrix(4, 2);
-		m.set(new GgbVector[] {direction,pos});
-		
-		buttonHandleMatrix = new GgbMatrix4x4(m);
-		buttonHandleMatrix.mulAllButOrigin(1/getScale());
-		
-		updateScreenButtonsPosition();
-	}
-	
-	private void updateScreenButtonsPosition(){	
-		GgbVector screenPos = getToScreenMatrix().mul(handlePos);
-		GgbVector screenDirection = getToScreenMatrix().mul(handleDirection);
-		
-		double dy;
-		
-		//shift from handle button
-		if (screenDirection.getX()*screenDirection.getY()<=0){
-			dy = PlotterViewButtons.SHIFT;
-		}else{
-			dy = -PlotterViewButtons.SHIFT-PlotterViewButtons.HEIGHT;
-		}
-		
-		//stay in the screen
-		double x = screenPos.getX()+PlotterViewButtons.SHIFT;
-		if (x<getRenderer().getLeft())
-			x=getRenderer().getLeft();
-		else if (x+PlotterViewButtons.WIDTH>getRenderer().getRight())
-			x=getRenderer().getRight()-PlotterViewButtons.WIDTH;
-		
-		double y = screenPos.getY()+dy;
-		if (y<getRenderer().getBottom())
-			y=getRenderer().getBottom();
-		else if (y+PlotterViewButtons.HEIGHT>getRenderer().getTop())
-			y=getRenderer().getTop()-PlotterViewButtons.HEIGHT;
-		
-		screenButtonsPosition.setX(x);
-		screenButtonsPosition.setY(y);
-	}
-
-
-	/**
-	 *  
-	 * @return screen position of buttons
-	 */
-	public GgbVector getScreenButtonsPosition(){
-		return screenButtonsPosition;
-	}
-	
-
-	/**
-	 * handles click on a view button
-	 * @return true if a view button is clicked
-	 */
-	public boolean handleMouseClickedForButtons(){
-		switch(buttonPicked){
-		case BUTTON_PICKED_NONE:
-			return false;
-		case BUTTON_PICKED_OK:
-			return ((HandleAction) getPreviewDrawable()).handleOK();
-		case BUTTON_PICKED_CANCEL:
-			return ((HandleAction) getPreviewDrawable()).handleCancel();
-		default:
-			Application.debug("button clicked : "+buttonPicked);
-			return true;
-
-		}
-	}
 	
 
 	/////////////////////////////////////////////////////
@@ -3483,19 +3225,5 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 
-	//for previewable
-	public boolean handlePreviewableKeys(KeyEvent event){
-		if (getPreviewDrawable() instanceof HandleAction)
-			switch(event.getKeyCode()){
-			case KeyEvent.VK_ENTER: 
-				return ((HandleAction) getPreviewDrawable()).handleOK();
-			case KeyEvent.VK_ESCAPE: 
-				return ((HandleAction) getPreviewDrawable()).handleCancel();
-			default:
-				return ((HandleAction) getPreviewDrawable()).handleKey(event);
-			}
-			
-		return false;
-	}
 
 }

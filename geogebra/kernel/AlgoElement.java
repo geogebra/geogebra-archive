@@ -579,7 +579,8 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	update();
     }
        
-    public void remove() {      
+    public void remove() {  
+    	
         cons.removeFromConstructionList(this);        
         
         cons.removeFromAlgorithmList(this);

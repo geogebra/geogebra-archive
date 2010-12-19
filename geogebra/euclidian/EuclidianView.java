@@ -4705,10 +4705,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 	
 	
-	//for previewable
-	public boolean handlePreviewableKeys(KeyEvent event){
-		return false;
-	}
 	
 	// object is hit if mouse is within this many pixels
 	// (more for points, see DrawPoint)

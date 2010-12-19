@@ -532,77 +532,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		return new GeoPoint3D(cons);
 	}
 	
-	
-	//////////////////////////////////////////////////////
-	// PARENT NUMBER (HEIGHT OF A PRISM, ...)
-	//////////////////////////////////////////////////////
 
-	private GeoNumeric changeableCoordNumber = null;
-	
-	
-	final private GeoNumeric getCoordParentNumber() {
-		
-		if (changeableCoordNumber==null){
-			AlgoElement parentAlgo = getParentAlgorithm();
-			if (parentAlgo instanceof AlgoPolygon){
-				GeoElement polyhedron = ((AlgoPolygon) parentAlgo).getPolyhedron();				
-				if (polyhedron!=null){
-					parentAlgo = polyhedron.getParentAlgorithm();
-					if (parentAlgo instanceof AlgoPolyhedron){
-						NumberValue height = ((AlgoPolyhedron) parentAlgo).getHeight();
-						if (height != null)
-							if (height instanceof GeoNumeric)
-								changeableCoordNumber = (GeoNumeric) height;
-					}
-				}
-			}
-		}
-		
-		return changeableCoordNumber;
-	}
-	
-	public boolean hasChangeableCoordParentNumbers() {
-		return (getCoordParentNumber()!=null);
-	}
-	
-	private double startValue;
-	
-	private GgbVector direction;
-
-	public void recordChangeableCoordParentNumbers() {
-		startValue = getCoordParentNumber().getValue();
-		direction = getMainDirection().normalized();
-	}
-	
-	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition,  GgbVector viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
-		
-
-		
-		GeoNumeric var = getCoordParentNumber();
-				
-		if (var==null)
-			return false;
-		if (endPosition==null){ //comes from arrows keys -- all is added
-			var.setValue( var.getValue() +rwTransVec.getX()+rwTransVec.getY()+rwTransVec.getZ());
-			addChangeableCoordParentNumberToUpdateList(var, updateGeos, tempMoveObjectList);
-			return true;
-		}else{ //comes from mouse
-			GgbVector direction2=direction.sub(viewDirection.mul(viewDirection.dotproduct(direction)));
-			//Application.debug("direction2\n"+direction2+"trans=\n"+rwTransVec+"viewDirection=\n"+viewDirection);
-			double ld = direction2.dotproduct(direction2);
-			if (Kernel.isZero(ld))
-				return false;			
-			double val = direction2.dotproduct(rwTransVec);
-			var.setValue(startValue+val/ld);
-			addChangeableCoordParentNumberToUpdateList(var, updateGeos, tempMoveObjectList);
-			return true;
-		}
-		
-		
-	}
-	
-	
-	
 	
 	
 }

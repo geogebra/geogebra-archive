@@ -2303,7 +2303,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (hits.isEmpty()){
 			view.setHits(mouseLoc);
 			hits = view.getHits();switchModeForRemovePolygons(hits);
-
 		}
 
 		if (hits.isEmpty()) {
@@ -6295,7 +6294,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPoints, GeoPointND.class);
 	}
 
-	final protected int addSelectedNumeric(Hits hits, int max,
+	public final int addSelectedNumeric(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedNumbers, GeoNumeric.class);
 	}
@@ -6479,6 +6478,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// selectionList may only contain max objects
 	final protected int addToHighlightedList(ArrayList selectionList,
 			ArrayList geos, int max) {
+		
+		
 		if (geos == null)
 			return 0;
 

@@ -86,9 +86,6 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		}
 		
 		
-		// FOR PREVIEWABLES
-		if (app.getGuiManager().getActiveEuclidianView().handlePreviewableKeys(event))
-			return true;
 		
 				
 		// GENERAL KEYS: 

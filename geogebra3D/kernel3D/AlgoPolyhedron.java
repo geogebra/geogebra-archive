@@ -411,6 +411,10 @@ implements AlgoElementWithResizeableOutput{
 		polyhedron.updateFaces();
 		setOutput();
 		
+		//sets the height as coord parent of the top face
+		if (type == GeoPolyhedron.TYPE_PRISM && height instanceof GeoNumeric)
+			getTopFace().setCoordParentNumber((GeoNumeric) height);
+		
 		
         //set labels dependencies: will be used with Construction.resolveLabelDependency()
         if (labels!=null && labels.length>1)
@@ -705,6 +709,7 @@ implements AlgoElementWithResizeableOutput{
 		for (int i=0; i<outputPoints.size(); i++)
 			getKernel().notifyUpdate(outputPoints.getElement(i));
 	}
+	
 
 	
 	/**
