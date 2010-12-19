@@ -1,6 +1,8 @@
 package geogebra.gui.view.algebra;
 
 import geogebra.gui.VirtualKeyboardListener;
+import geogebra.gui.editor.GeoGebraEditorKit;
+import geogebra.gui.editor.GeoGebraEditorPane;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.PopupMenuButton;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.JEditorPane;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -319,9 +322,11 @@ ActionListener, ListSelectionListener {
 
 		// set up the text component: 
 		// either a textArea or a textfield
-		if (rows > 1) 
-			textComponent = new JTextArea(rows, columns);
-		else
+		if (rows > 1) {
+			//textComponent = new JTextArea(rows, columns);
+			textComponent = new GeoGebraEditorPane(rows, columns);
+			((JEditorPane) textComponent).setEditorKit(new GeoGebraEditorKit(app));
+		} else
 			textComponent = new AutoCompleteTextField(columns, app);		
 		
 		textComponent.addFocusListener(this);
