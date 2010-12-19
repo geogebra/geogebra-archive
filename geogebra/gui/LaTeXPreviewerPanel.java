@@ -15,6 +15,7 @@ import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -81,8 +82,10 @@ public class LaTeXPreviewerPanel extends JPanel {
 
         width = icon.getIconWidth();
         height = icon.getIconHeight();
-        setSize(width + 2 * INSET, height + 2 * INSET);
-        setLocation(20, 20);
+        Dimension dim = new Dimension(width + 2 * INSET, height + 2 * INSET);
+        setPreferredSize(dim);
+        setSize(dim);
+        setLocation(0, 0);
         setVisible(true);
         repaint();   
     }
@@ -94,6 +97,8 @@ public class LaTeXPreviewerPanel extends JPanel {
         if (icon != null) {
 	        g.setColor(Color.WHITE);
 	        g.fillRect(0, 0, width + 2 * INSET, height + 2 * INSET);
+	        g.setColor(Color.BLACK);
+	        g.drawRect(0, 0, width + 2 * INSET - 1, height + 2 * INSET - 1);
         	icon.paintIcon(this, g, INSET, INSET);
         }
     }
