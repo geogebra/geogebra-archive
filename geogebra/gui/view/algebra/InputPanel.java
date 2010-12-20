@@ -324,7 +324,7 @@ ActionListener, ListSelectionListener {
 		// either a textArea or a textfield
 		if (rows > 1) {
 			//textComponent = new JTextArea(rows, columns);
-			textComponent = new GeoGebraEditorPane(rows, columns);
+			textComponent = new GeoGebraEditorPane(app, rows, columns);
 			((JEditorPane) textComponent).setEditorKit(new GeoGebraEditorKit(app));
 		} else
 			textComponent = new AutoCompleteTextField(columns, app);		
