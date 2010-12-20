@@ -2368,9 +2368,34 @@ public class GuiManager {
 		id.setVisible(true);
 
 		cons.setSuppressLabelCreation(oldVal);
-		return handler.num;
+		return handler.getNum();
 	}
+	
+	
+	/**
+	 * Shows a modal dialog to enter a number or number variable name.
+	 */
+	public NumberValue showNumberInputDialog(String title, String message,
+			String initText, boolean changingSign, String checkBoxText) {
+		// avoid labeling of num
+		Construction cons = kernel.getConstruction();
+		boolean oldVal = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
 
+		NumberChangeSignInputHandler handler = new NumberChangeSignInputHandler();
+		NumberChangeSignInputDialog id = new NumberChangeSignInputDialog(app, message, title, initText, 
+				handler,changingSign,checkBoxText);
+		id.setVisible(true);
+
+		cons.setSuppressLabelCreation(oldVal);
+		
+		NumberValue num = handler.getNum();
+		
+
+		return handler.getNum();
+	}
+	
+	
 	public void showNumberInputDialogRegularPolygon(String title, GeoPoint geoPoint1, GeoPoint geoPoint2) {
 
 		NumberInputHandler handler = new NumberInputHandler();
@@ -2397,24 +2422,57 @@ public class GuiManager {
 		id.setVisible(true);
 
 		cons.setSuppressLabelCreation(oldVal);
-		Object[] ret = { handler.num, id };
+		Object[] ret = { handler.getNum(), id };
 		return ret;
 	}
 
 	public class NumberInputHandler implements InputHandler {
-		NumberValue num = null;
+		private NumberValue num = null;
 
 		public boolean processInput(String inputString) {
 			GeoElement[] result = kernel.getAlgebraProcessor()
 					.processAlgebraCommand(inputString, false);
 			boolean success = result != null && result[0].isNumberValue();
 			if (success) {
-				num = (NumberValue) result[0];
+				setNum((NumberValue) result[0]);
 			}
 			return success;
 		}
-	}
 
+		public void setNum(NumberValue num) {
+			this.num = num;
+		}
+
+		public NumberValue getNum() {
+			return num;
+		}
+	}
+	
+	/**
+	 * Handler of a number, with possibility of changing the sign
+	 * @author mathieu
+	 *
+	 */
+	public class NumberChangeSignInputHandler extends NumberInputHandler {
+		/**
+		 * If (changeSign==true), change sign of the number handled
+		 * @param inputString
+		 * @param changeSign
+		 * @return number handled
+		 */
+		public boolean processInput(String inputString, boolean changeSign) {
+			if (changeSign){
+				StringBuilder sb = new StringBuilder();
+				sb.append("-(");
+				sb.append(inputString);
+				sb.append(")");
+				return processInput(sb.toString());
+			}else
+				return processInput(inputString);
+			
+		}
+	}
+	
 	public Toolbar getGeneralToolbar() {
 		return toolbarPanel.getFirstToolbar();
 	}

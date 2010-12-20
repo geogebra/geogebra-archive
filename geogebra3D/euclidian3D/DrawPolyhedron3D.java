@@ -6,8 +6,11 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
+import geogebra.gui.GuiManager.NumberInputHandler;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.AlgoPolyhedron;
@@ -83,7 +86,6 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 	/** basis */
 	private ArrayList selectedPolygons;
 	
-	private GeoPolygon basis;
 	
 	/** segments of the polygon preview */
 	private ArrayList<DrawSegment3D> segments;
@@ -91,9 +93,11 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 	@SuppressWarnings("rawtypes")
 	private ArrayList<ArrayList> segmentsPoints;
 	
-	private AlgoPolyhedron algo;
+	private AlgoPolyhedronComputed algo;
 	
 	private GeoNumeric height;
+	
+	private GeoPolygon basis;
 	
 
 	/**
@@ -143,10 +147,13 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 			//create the height
 			height = new GeoNumeric(getView3D().getKernel().getConstruction(), 0.0001);
 			
+			//basis
+			basis = (GeoPolygon) selectedPolygons.get(0);
+			
 			//create the algo
-			algo = new AlgoPolyhedron(getView3D().getKernel().getConstruction(),
+			algo = new AlgoPolyhedronComputed(getView3D().getKernel().getConstruction(),
 					null, 
-					(GeoPolygon) selectedPolygons.get(0), 
+					basis, 
 					height, 
 					GeoPolyhedron.TYPE_PRISM);
 			algo.removeOutputFromAlgebraView();
@@ -173,23 +180,66 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 		
 		getView3D().getEuclidianController().setHandledGeo(null);
 		
-		if (algo!=null){
-
+		if (algo!=null){			
 			//remove the algo
-			algo.remove();
+			algo.remove();	
 			algo=null;
+		}
+	}
+	
+	public void createPolyhedron(){
+		getView3D().getEuclidianController().setHandledGeo(null);
+		
+		if (algo!=null){
 			
 			//clear current selections : remove basis polygon from selections
 			getView3D().getEuclidianController().clearSelections();
 			
 			//add current height to selected numeric (will be used on next EuclidianView3D::rightPrism() call)
-			Hits hits = new Hits();hits.add(height);
+			Hits hits = new Hits();
+			
+			if (algo.computed==1){//if height has not been set by dragging, ask one
+				Application app = getView3D().getApplication();
+				Boolean sign = new Boolean(false);
+				NumberValue num = 
+					app.getGuiManager().showNumberInputDialog(
+							app.getMenu(getView3D().getKernel().getModeText(EuclidianView3D.MODE_RIGHT_PRISM)),
+							app.getPlain("Altitude"), null, 
+							//check basis direction / view direction to say if the sign has to be forced
+							basis.getMainDirection().dotproduct(getView3D().getViewDirection())<0,
+							app.getPlain("PositiveValuesFollowTheView"));
+				//if (num==null)//button cancel
+				//	selectedPolygons.clear();
+				hits.add(num);
+			}else
+				hits.add(height);
+			
 			getView3D().getEuclidianController().addSelectedNumeric(hits, 1, false);
 
+			
+			//remove the algo
+			algo.remove();	
+			algo=null;
 		}
 	}
 	
 	
+	
+	private class AlgoPolyhedronComputed extends AlgoPolyhedron{
+
+		public AlgoPolyhedronComputed(Construction c, String[] labels,
+				GeoPolygon polygon, NumberValue height, int type) {
+			super(c, labels, polygon, height, type);
+		}
+		
+		private int computed;
+		
+		protected void compute() {
+			super.compute();
+			computed++;			
+		}
+		
+	}
 	
 
 }

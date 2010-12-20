@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -49,7 +50,11 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected JButton btApply, btCancel, btProperties, btOK;
 	protected JPanel optionPane;
 
-	private JPanel buttonsPanel, btPanel, btPanel2;
+	protected JPanel buttonsPanel;
+
+	protected JPanel btPanel;
+
+	private JPanel btPanel2;
 	protected GeoElementSelectionListener sl;
 	protected JLabel msgLabel; 
 		
@@ -58,6 +63,8 @@ public class InputDialog extends JDialog implements ActionListener,
 	protected InputHandler inputHandler;
 	
 	protected GeoElement geo;
+	
+	protected JCheckBox checkBox;
 	
 	/**
 	 * Creates a non-modal standard input dialog.
@@ -74,11 +81,17 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	public InputDialog(Application app,  String message, String title, String initString,
 			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText, GeoElement geo) {
+		this(app, message, title, initString, autoComplete, handler, modal, selectInitText, geo, null);
+	}
+	
+	public InputDialog(Application app,  String message, String title, String initString,
+			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText, GeoElement geo, JCheckBox checkBox) {
 		this(app.getFrame(), modal);
 		this.app = app;	
 		this.geo = geo;
 		inputHandler = handler;
-		this.initString = initString;		
+		this.initString = initString;	
+		this.checkBox=checkBox;
 
 		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, false, true, selectInitText, false, geo!=null, geo!=null);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
@@ -158,9 +171,8 @@ public class InputDialog extends JDialog implements ActionListener,
 			buttonsPanel.add(btPanel, BorderLayout.EAST);	
 		}
 		
-		btPanel.add(btOK);
-		btPanel.add(btCancel);		
-		if (showApply) btPanel.add(btApply);
+		createBtPanel(showApply);
+		
 		
 		optionPane.add(msgLabel, BorderLayout.NORTH);	
 		optionPane.add(buttonsPanel, BorderLayout.SOUTH);	
@@ -170,6 +182,12 @@ public class InputDialog extends JDialog implements ActionListener,
 		setContentPane(optionPane);
 		
 		setLabels(title);
+	}
+	
+	protected void createBtPanel(boolean showApply){
+		btPanel.add(btOK);
+		btPanel.add(btCancel);		
+		if (showApply) btPanel.add(btApply);
 	}
 	
 	/**
@@ -232,6 +250,10 @@ public class InputDialog extends JDialog implements ActionListener,
 		inputPanel.selectText(); 
 	}
 	
+	protected boolean processInputHandler(){
+		return inputHandler.processInput(inputText);
+	}
+	
 	/**
 	 * Handles button clicks for dialog.
 	 */
@@ -242,10 +264,10 @@ public class InputDialog extends JDialog implements ActionListener,
 		try {
 			if (source == btOK || source == inputPanel.getTextComponent()) {
 				inputText = inputPanel.getText();				
-				setVisible(!inputHandler.processInput(inputText));
+				setVisible(!processInputHandler());
 			} else if (source == btApply) {
 				inputText = inputPanel.getText();				
-				inputHandler.processInput(inputText);
+				processInputHandler();
 			} else if (source == btCancel) {
 				setVisible(false);
 			} else if (source == btProperties && geo != null) {

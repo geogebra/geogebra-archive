@@ -1333,8 +1333,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		switch (mode) {
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
 		case EuclidianView3D.MODE_RIGHT_PRISM:
-			view3D.setPreview(null);//remove current previewable
-			view3D.setPreview(view3D.createPreviewRightPrism(selectedPolygons));//init new one	
+			((DrawPolyhedron3D) view3D.getPreviewDrawable()).createPolyhedron();
+			//view3D.setPreview(null);//remove current previewable
+			//view3D.setPreview(view3D.createPreviewRightPrism(selectedPolygons));//init new one	
 			return changedKernel;
 		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
 			//Application.debug("hop");
@@ -1690,6 +1691,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	public void setStartPointLocation(){
+		if (mouseLoc==null)//case that it's algebra view calling
+			return;
 		startPoint3D = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
 		view3D.toSceneCoords3D(startPoint3D);
 		

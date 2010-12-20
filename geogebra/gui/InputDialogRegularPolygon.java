@@ -56,7 +56,7 @@ public class InputDialogRegularPolygon extends InputDialog{
 		cons.setSuppressLabelCreation(oldVal);
 		
 		if (ret) 
-			kernel.RegularPolygon(null, geoPoint1, geoPoint2, ((NumberInputHandler)inputHandler).num);
+			kernel.RegularPolygon(null, geoPoint1, geoPoint2, ((NumberInputHandler)inputHandler).getNum());
 		
 
 		return ret;
