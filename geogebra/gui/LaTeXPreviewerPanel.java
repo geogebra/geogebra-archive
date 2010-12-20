@@ -94,11 +94,12 @@ public class LaTeXPreviewerPanel extends JPanel {
      * {@inheritDoc}
      */
     public void paint(Graphics g) {
+    	
         if (icon != null) {
 	        g.setColor(Color.WHITE);
 	        g.fillRect(0, 0, width + 2 * INSET, height + 2 * INSET);
-	        g.setColor(Color.BLACK);
-	        g.drawRect(0, 0, width + 2 * INSET - 1, height + 2 * INSET - 1);
+	      //  g.setColor(Color.BLACK);
+	      //  g.drawRect(0, 0, width + 2 * INSET - 1, height + 2 * INSET - 1);
         	icon.paintIcon(this, g, INSET, INSET);
         }
     }

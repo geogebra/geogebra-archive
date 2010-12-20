@@ -12,6 +12,10 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.util.LatexTables;
+import geogebra.gui.util.PopupMenuButton;
+import geogebra.gui.util.SelectionTable;
 import geogebra.gui.view.algebra.MyComboBoxListener;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -21,14 +25,19 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -48,12 +57,15 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	private JCheckBox cbLaTeX;
 	private JComboBox cbLaTeXshortcuts;
 	private ComboBoxListener cbl;
-	private JPanel latexPanel, latexPreviewPanel;
+	JPanel latexPanel;
+
+	private JPanel latexPreviewPanel, editPanel;
 	private GeoText text;
 	private boolean isLaTeX;
 	private GeoPoint startPoint;
 	private boolean isTextMode = false;
 	private LaTeXPreviewerPanel latexPreviewer;
+
 	
 
 	/**
@@ -88,26 +100,50 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// items are added by setLabels() as they contain language strings
 		cbLaTeXshortcuts.addActionListener(cbl);
 		cbLaTeXshortcuts.addMouseListener(cbl);
-				
+			
+		
+		
+		ImageIcon[] miscSymbolIcons = new ImageIcon[LatexTables.miscSymbols.length];
+		for(int i=0; i < miscSymbolIcons.length; i++)
+			miscSymbolIcons[i] = GeoGebraIcon.createLatexIcon(app, LatexTables.miscSymbols[i], app.getPlainFont(), true, Color.black, this.getBackground());
+		// create button
+		PopupMenuButton btnMiscSymbols = new PopupMenuButton(app, miscSymbolIcons, 4,9,
+				new Dimension(20,20), SelectionTable.MODE_ICON);
+		
+		
+		
+		
+		
+		
 		createGUI(title, "", false, cols, rows, true, true, false, true, false, false);		
 		
 		// init dialog using text
 		setGeoText(text);
 		
-		JPanel centerPanel = new JPanel(new BorderLayout());		
+		// create latex control panel 
 		latexPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		latexPanel.add(cbLaTeX);
-		latexPanel.add(cbLaTeXshortcuts);	
+		latexPanel.add(cbLaTeXshortcuts);
 		
-		latexPreviewPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		latexPreviewPanel.setPreferredSize(new Dimension(100,80));
+		// create edit panel to contain both the input panel and latex control panel
+		editPanel = new JPanel(new BorderLayout());
+		editPanel.add(inputPanel, BorderLayout.NORTH);		
+		editPanel.add(latexPanel, BorderLayout.CENTER);	
+		editPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));	
 		
+		// create preview panel
+		latexPreviewPanel = new JPanel(new BorderLayout());
+		latexPreviewPanel.setPreferredSize(inputPanel.getPreferredSize());
+			
 		if (latexPreviewer == null) 
 			latexPreviewer = new LaTeXPreviewerPanel();
-		latexPreviewPanel.add(latexPreviewer);
+		latexPreviewPanel.add(new JScrollPane(latexPreviewer), BorderLayout.CENTER);
+		latexPreviewPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
+		
 			
-		centerPanel.add(inputPanel, BorderLayout.NORTH);		
-		centerPanel.add(latexPanel, BorderLayout.CENTER);	
+		// put all the sub-panels together
+		JPanel centerPanel = new JPanel(new BorderLayout());		
+		centerPanel.add(editPanel, BorderLayout.CENTER);		
 		centerPanel.add(latexPreviewPanel, BorderLayout.SOUTH);	
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
 		centerOnScreen();
@@ -117,6 +153,12 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	
 	public void setLabels(String title) {
 		super.setLabels(title);
+		
+		if(editPanel != null)
+			editPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
+		
+		if(latexPreviewPanel != null)
+			latexPreviewPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
 		
 		cbLaTeX.setText(app.getPlain("LaTeXFormula"));
 		
@@ -263,6 +305,16 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	public JPanel getInputPanel() {
 		return inputPanel;
 	}
+	
+	/**
+	 * @return panel with LaTeX preview panel
+	 */
+	public JPanel getLaTeXPreviewPanel() {
+		return latexPreviewPanel;
+	}
+	
+	
+	
 	
 	/**
 	 * @return apply button

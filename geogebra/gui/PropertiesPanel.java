@@ -2549,20 +2549,35 @@ public	class PropertiesPanel extends JPanel {
 		 */
 		private static final long serialVersionUID = 1L;	
 		private TextInputDialog td;
+		private JPanel editPanel;
 		
 		public TextEditPanel() {
 			td = new TextInputDialog(app, app.getPlain("Text"), null, null,
 										30, 5, false);
 			setLayout(new BorderLayout());
+			/*
 			add(td.getInputPanel(), BorderLayout.CENTER);
 			JPanel btPanel = new JPanel(new BorderLayout(0,0));
 			btPanel.add(td.getLaTeXPanel(), BorderLayout.WEST);
 			btPanel.add(td.getButtonPanel(), BorderLayout.EAST);
 			add(btPanel, BorderLayout.SOUTH);
+			*/
+			
+			
+			editPanel = new JPanel(new BorderLayout(0,0));
+			editPanel.add(td.getInputPanel(), BorderLayout.CENTER);
+			editPanel.add(td.getLaTeXPanel(), BorderLayout.SOUTH);
+			
+			add(editPanel, BorderLayout.NORTH);
+			add(td.getLaTeXPreviewPanel(), BorderLayout.CENTER);
+			add(td.getButtonPanel(), BorderLayout.SOUTH);
+			
+			
 		}
 		
 		public void setLabels() {
-			setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
+			editPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
+			td.getLaTeXPreviewPanel().setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
 			td.setLabels(app.getPlain("Text"));
 		}
 
