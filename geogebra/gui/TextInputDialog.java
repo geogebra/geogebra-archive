@@ -138,6 +138,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		if (latexPreviewer == null) 
 			latexPreviewer = new LaTeXPreviewerPanel();
 		latexPreviewPanel.add(new JScrollPane(latexPreviewer), BorderLayout.CENTER);
+		latexPreviewer.setOpaque(true);
+		latexPreviewer.setBackground(Color.WHITE);
 		latexPreviewPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
 		
 			
