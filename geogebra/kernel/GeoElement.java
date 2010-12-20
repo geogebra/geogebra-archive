@@ -1880,6 +1880,11 @@ public abstract class GeoElement
 		if (cons.isSuppressLabelsActive())
 			return;
 		
+		// don't want any '$'s in actual labels
+		if (newLabel!=null && newLabel.indexOf('$') > 0) {
+			newLabel = newLabel.replaceAll("\\$", "");
+		}
+		
 		labelWanted = true;
 
 		// had no label: try to set it
