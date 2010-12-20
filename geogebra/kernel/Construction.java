@@ -1453,8 +1453,10 @@ public class Construction {
 			return;
 
 		
-		/* removed, see ticket #379
-		 * http://www.geogebra.org/trac/ticket/379
+		// put back, breaks the Rigid polygon Tool, see #379
+		
+		///* removed, see ticket #379
+		// * http://www.geogebra.org/trac/ticket/379
 		
 		// if oldGeo does not have any children, we can simply
 		// delete oldGeo and give newGeo the name of oldGeo
@@ -1469,7 +1471,7 @@ public class Construction {
 			newGeo.setAllVisualProperties(oldGeo, false);			
 			newGeo.setLabel(oldGeoLabel);			
 			return;
-		}*/
+		}//*/
 		
 	    // check for circular definition
 	    if (newGeo.isChildOf(oldGeo)) {
