@@ -105,7 +105,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		
 		ImageIcon[] miscSymbolIcons = new ImageIcon[LatexTables.miscSymbols.length];
 		for(int i=0; i < miscSymbolIcons.length; i++)
-			miscSymbolIcons[i] = GeoGebraIcon.createLatexIcon(app, LatexTables.miscSymbols[i], app.getPlainFont(), true, Color.black, this.getBackground());
+			miscSymbolIcons[i] = GeoGebraIcon.createLatexIcon(app, null, LatexTables.miscSymbols[i], app.getPlainFont(), true, Color.black, this.getBackground());
 		// create button
 		PopupMenuButton btnMiscSymbols = new PopupMenuButton(app, miscSymbolIcons, 4,9,
 				new Dimension(20,20), SelectionTable.MODE_ICON);
