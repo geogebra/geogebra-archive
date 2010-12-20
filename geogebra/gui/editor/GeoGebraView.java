@@ -71,8 +71,8 @@ public class GeoGebraView extends WrappedPlainView {
 
     private static final String DESKTOPHINTS = "awt.font.desktophints";
 
-    private GeoGebraContext context;
-    private GeoGebraLexer lexer;
+    private ViewContext context;
+    private Lexer lexer;
     private boolean lexerValid;
     private Document doc;
     private Segment text = new Segment();
@@ -98,15 +98,17 @@ public class GeoGebraView extends WrappedPlainView {
     /**
      * The constructor to set this view for an element with a context (containing infos
      * such as colors or fonts of the keywords).
-     * @param app the Application where the viewx is used
+     * @param app the Application where the view is used
      * @param elem the element to view
+     * @param lexer the lexer to use
      * @param context used to view the element
      */
-    GeoGebraView(Application app, Element elem, GeoGebraContext context) {
+    GeoGebraView(Element elem, Lexer lexer, ViewContext context) {
         super(elem);
         this.context = context;
-        doc = getDocument();
-        lexer = new GeoGebraLexer(doc, app);
+        this.lexer = lexer;
+        this.doc = getDocument();
+        lexer.setDocument(doc);
         lexerValid = false;
         setTabRepresentation(TABVERTICAL);
     }
@@ -277,13 +279,13 @@ public class GeoGebraView extends WrappedPlainView {
                 }
 
                 switch (tok) {
-                case GeoGebraLexerConstants.WHITE :
+                case LexerConstants.WHITE :
                     if (isWhiteViewable) {
                         w = Utilities.getTabbedTextWidth(text, g.getFontMetrics(), x, this, mark);
                         g.drawLine(x + (w - 1) / 2, y - whiteHeight, x + (w + 1) / 2, y - whiteHeight);
                     }
                     break;
-                case GeoGebraLexerConstants.TAB :
+                case LexerConstants.TAB :
                     if (isTabViewable) {
                         paintTab(text, x, y, g, mark);
                     }

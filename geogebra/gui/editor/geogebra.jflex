@@ -32,7 +32,8 @@ import geogebra.main.Application;
 
 %public
 %class GeoGebraLexer
-%extends GeoGebraLexerConstants
+%extends Lexer
+%implements GeoGebraLexerConstants
 %final
 %unicode
 %char
@@ -48,9 +49,7 @@ import geogebra.main.Application;
     private Document doc;
     private Element elem;
 
-    public GeoGebraLexer(Document doc, Application app) {
-        this.doc = doc;
-        this.elem = doc.getDefaultRootElement();
+    public GeoGebraLexer(Application app) {
         variables = new HashSet<String>();
         Iterator<GeoElement> iter = app.getKernel().getConstruction().getGeoSetLabelOrder().iterator();
         while (iter.hasNext()) {
@@ -62,6 +61,16 @@ import geogebra.main.Application;
         commands = new HashSet();
         commands.addAll(app.getCommandDictionary().values());
     }
+
+    public GeoGebraLexer(Document doc, Application app) {
+		this(app);
+        setDocument(doc);
+    }
+
+	public void setDocument(Document doc) {
+		this.doc = doc;
+		this.elem = doc.getDefaultRootElement();
+	}
 
     public void setRange(int p0, int p1) {
         start = p0;
@@ -114,8 +123,6 @@ eol = [\r\n]+
 open = "[" | "(" | "{"
 close = "]" | ")" | "}"
 openclose = {open} | {close}
-
-quote = "'"
 
 undefined = "?" | "\ufffd" | "Undefined" | "NaN" | "und"
 constantes = "%pi" | "pi" | "Pi" | "\u03c0" | "%e" | "\u212f" | "inf" | "minf" | "Infinity" | "infinity" | "\u221e" | "true" | "True" | "false" | "False" | "rad" | {undefined}
@@ -228,8 +235,6 @@ builtin_functions = "x(" | "xcoord(" | "y(" | "ycoord(" | "y(" | "ycoord(" |
 functions = {label} "("
 commands = {label} "["
 //spreadsheet_commands = {spreadsheet_label} "("
-
-latex = "$"(([^$]*|"\\$")+)"$"
 
 %%
 

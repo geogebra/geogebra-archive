@@ -21,112 +21,70 @@ import java.util.HashMap;
  * @author Calixte DENIZET
  *
  */
-public class GeoGebraLexerConstants {
+public interface GeoGebraLexerConstants extends LexerConstants {
 	
     /**
      * Number of known tokens
      */
-    public static final int NUMBEROFTOKENS = 16;
-
-    /**
-     * DEFAULT : tokens which are not recognized
-     */
-    public static final int DEFAULT = 0;
+    public static final int NUMBEROFTOKENS = 15;
 
     /**
      * OPERATOR : tokens like '+', '-', ...
      */
-    public static final int OPERATOR = 1;
+    public static final int OPERATOR = 3;
 
     /**
      * CONSTANTES : Constantes like 'pi' or 'e'
      */
-    public static final int CONSTANTE = 2;
+    public static final int CONSTANTE = 4;
 
     /**
      * NUMBER : I don't know ;)
      */
-    public static final int NUMBER = 3;
+    public static final int NUMBER = 5;
 
     /**
      * OPENCLOSE : '(' or ']'
      */
-    public static final int OPENCLOSE = 4;
+    public static final int OPENCLOSE = 6;
 
     /**
      * STRING : "bla bla bla"
      */
-    public static final int STRING = 5;
+    public static final int STRING = 7;
 
     /**
      * BUILTINFUNCTION : commands such as cos, log, ...
      */
-    public static final int BUILTINFUNCTION = 6;
+    public static final int BUILTINFUNCTION = 8;
 
     /**
      * FUNCTION : commands such as myFun(...)
      */
-    public static final int FUNCTION = 7;
+    public static final int FUNCTION = 9;
     
     /**
      * COMMAND : commands such as Length[...], ...
      */
-    public static final int COMMAND = 8;    
+    public static final int COMMAND = 10;    
 
     /**
      * UNKNOWNCOMMAND : unknown commands
      */
-    public static final int UNKNOWNCOMMAND = 9;
+    public static final int UNKNOWNCOMMAND = 11;
     
     /**
      * VARIABLE: variable such as MyPointA
      */
-    public static final int VARIABLE = 10;    
+    public static final int VARIABLE = 12;    
 
     /**
      * UNKNOWNVARIABLE : unknown variable
      */
-    public static final int UNKNOWNVARIABLE = 11;
+    public static final int UNKNOWNVARIABLE = 13;
     
-    /**
-     * WHITE : A white char ' '
-     */
-    public static final int WHITE = 12;
-
-    /**
-     * TAB : A tabulation '\t'
-     */
-    public static final int TAB = 13;
-
-    /**
-     * LATEX : $\frac\pi\alpha$
-     */
-    public static final int LATEX = 14;
-
-    /**
+     /**
      * EOF : End Of File
      */
-    public static final int EOF = 15;
-    
-    /**
-     * TOKENS : A Map which contains the names of keywords (useful in scinotesConfiguration.xml)
-     */
-    public static final Map<String, Integer> TOKENS = new HashMap(15);
-
-    static {
-        TOKENS.put("Default", DEFAULT);
-        TOKENS.put("Operator", OPERATOR);
-        TOKENS.put("Constante", CONSTANTE);
-        TOKENS.put("Number", NUMBER);
-        TOKENS.put("OpenClose", OPENCLOSE);
-        TOKENS.put("String", STRING);
-        TOKENS.put("Built-in function", BUILTINFUNCTION);
-        TOKENS.put("Function", FUNCTION);
-        TOKENS.put("Command", COMMAND);
-        TOKENS.put("Unknown command", UNKNOWNCOMMAND);
-        TOKENS.put("Variable", VARIABLE);
-        TOKENS.put("Unknown variable", UNKNOWNVARIABLE);
-        TOKENS.put("White", WHITE);
-        TOKENS.put("Tabulation", TAB);        
-    }
+    public static final int EOF = 14;
 }

@@ -44,7 +44,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 	private Application app;
 	private int rows;
 	private int cols;
-    private GeoGebraLexer lexer;
+    private Lexer lexer;
 	private boolean matchingEnable;
 	private MatchingBlockManager matchLR;
 	private MatchingBlockManager matchRL;
@@ -65,36 +65,44 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
         addMouseMotionListener(this);
         addMouseListener(this);
         addKeyListener(new GeoGebraKeys());
-        enableMatchingKeywords(true);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setEditorKit(EditorKit kit) {
+		String str = getText();
 		super.setEditorKit(kit);
 		if (kit instanceof GeoGebraEditorKit) {
 			GeoGebraEditorKit ggbKit = (GeoGebraEditorKit) kit;
 			setFont(ggbKit.getStylePreferences().tokenFont);
-			// a "true" dimension is needed for modelToView 
-			Dimension dim = new Dimension(100, 100);
-			setPreferredSize(dim);
-			setSize(dim);
-			setText("W");
-			try {
-				Rectangle r = modelToView(1);
-				dim.width = r.x * cols;
-				dim.height = r.height * rows;
-			} catch (BadLocationException e) { }
-			setText("");
-			setPreferredSize(dim);
-			setSize(dim);
+	        lexer = new GeoGebraLexer(getDocument(), app);
+		} else if (kit instanceof LaTeXEditorKit) {
+			LaTeXEditorKit ltxKit = (LaTeXEditorKit) kit;
+			setFont(ltxKit.getStylePreferences().tokenFont);
+	        lexer = new LaTeXLexer(getDocument());
 		}
+		
+		// a "true" dimension is needed for modelToView 
+		Dimension dim = new Dimension(100, 100);
+		setPreferredSize(dim);
+		setSize(dim);
+		setText("W");
+		try {
+			Rectangle r = modelToView(1);
+			dim.width = r.x * cols;
+			dim.height = r.height * rows;
+		} catch (BadLocationException e) { }
+		setText("");
+		setPreferredSize(dim);
+		setSize(dim);
+			
 		matchLR = new MatchingBlockManager(getDocument(), this, true, getHighlighter());
         matchLR.setDefaults();
         matchRL = new MatchingBlockManager(getDocument(), this, false, getHighlighter());
         matchRL.setDefaults();
-        lexer = new GeoGebraLexer(getDocument(), app);
+        enableMatchingKeywords(true);
+        setText(str);
 	}
 	
     /**
