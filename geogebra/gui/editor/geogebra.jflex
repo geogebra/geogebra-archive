@@ -43,7 +43,7 @@ import geogebra.main.Application;
     public int start;
     public int end;
     public Set<String> commands;
-    public Set<GeoElement> variables;
+    public Set<String> variables;
 
     private Document doc;
     private Element elem;
@@ -51,7 +51,14 @@ import geogebra.main.Application;
     public GeoGebraLexer(Document doc, Application app) {
         this.doc = doc;
         this.elem = doc.getDefaultRootElement();
-        variables = app.getKernel().getConstruction().getGeoSetLabelOrder();
+        variables = new HashSet<String>();
+        Iterator<GeoElement> iter = app.getKernel().getConstruction().getGeoSetLabelOrder().iterator();
+        while (iter.hasNext()) {
+        	GeoElement g = iter.next();
+        	if (g.isLabelSet()) {
+        		variables.add(g.getLabel());
+        	}
+        }
         commands = new HashSet();
         commands.addAll(app.getCommandDictionary().values());
     }
@@ -61,7 +68,7 @@ import geogebra.main.Application;
         end = p1;
         String str = "";
         try {
-        	str = doc.getText(p0, p1 - p0 + 1);System.out.println(str);
+        	str = doc.getText(p0, p1 - p0);
         } catch (BadLocationException e) { }
         yyreset(new StringReader(str));
     }
@@ -74,10 +81,35 @@ import geogebra.main.Application;
         return yylex();
     }
 
+    public int getKeyword(int pos, boolean strict) {
+        Element line = elem.getElement(elem.getElementIndex(pos));
+        int end = line.getEndOffset();
+        int tok = -1;
+        start = line.getStartOffset();
+        int startL = start;
+        int s = -1;
+
+        try {
+           yyreset(new StringReader(doc.getText(start, end - start)));
+           if (!strict) {
+              pos++;
+           }
+
+           while (startL < pos && s != startL) {
+               s = startL;
+               tok = yylex();
+               startL = start + yychar + yylength();
+           }
+
+           return tok;
+        } catch (Exception e) {
+           return GeoGebraLexerConstants.DEFAULT;
+        }
+     }
 %}
 
 /* main character classes */
-eol = [\r\t\n]
+eol = [\r\n]+
 
 open = "[" | "(" | "{"
 close = "]" | ")" | "}"
@@ -180,11 +212,11 @@ index = "_" ( {char} | ("{" [^\}]+ "}"))
 //spreadsheet_label =  ("$")? [A-Za-z]+ ("$")? [0-9]+
 label = {letter} ({letter} | {digit} | "'")* {index}? ({letter} | {digit})*
 
-builtin_commands = "x(" | "xcoord(" | "y(" | "ycoord(" | "y(" | "ycoord(" |
-				   (("cos" | "Cos" |
-				     "sin" | "Sin" | "tan" | "Tan" | "csc" | "Csc" | "sec" | "Sec" |
-				     "cot" | "Cot" | "csch" | "Csch" | "sech" | "Sech" | "coth" | "Coth" |
-				     "cosh" | "Cosh" | "sinh" | "Sinh" | "tanh" | "Tanh") {powern}? "(") |
+builtin_functions = "x(" | "xcoord(" | "y(" | "ycoord(" | "y(" | "ycoord(" |
+				   	(("cos" | "Cos" |
+				      "sin" | "Sin" | "tan" | "Tan" | "csc" | "Csc" | "sec" | "Sec" |
+				      "cot" | "Cot" | "csch" | "Csch" | "sech" | "Sech" | "coth" | "Coth" |
+				      "cosh" | "Cosh" | "sinh" | "Sinh" | "tanh" | "Tanh") {powern}? "(") |
 				   "acos(" | "arccos(" | "arcos(" | "ArcCos(" | "asin(" | "arcsin(" | "ArcSin(" |
 				   "atan(" | "arctan(" | "ArcTan(" | "atan2(" | "arctan2(" | "ArcTan2(" |
 				   "acosh(" | "arccosh(" | "arcosh(" | "ArcCosh(" | "asinh(" | "arcsinh(" | "ArcSinh(" |
@@ -193,7 +225,8 @@ builtin_commands = "x(" | "xcoord(" | "y(" | "ycoord(" | "y(" | "ycoord(" |
 				   "floor(" | "Floor(" | "ceil(" | "Ceil(" | "conjugate(" | "Conjugate(" | "arg(" | "Arg(" |
 				   "round(" | "Round(" | "gamma(" | "Gamma(" | "random(" | "Exp(" | "Deriv("
 
-commands = {label} "("
+functions = {label} "("
+commands = {label} "["
 //spreadsheet_commands = {spreadsheet_label} "("
 
 latex = "$"(([^$]*|"\\$")+)"$"
@@ -214,12 +247,12 @@ latex = "$"(([^$]*|"\\$")+)"$"
                                  }
 
   {constantes}                   {
-                                   return GeoGebraLexerConstants.CONSTANTES;
+                                   return GeoGebraLexerConstants.CONSTANTE;
                                  }
 
-  {builtin_commands}             {
+  {builtin_functions}            {
   								   yypushback(1);
-                                   return GeoGebraLexerConstants.BUILTINCOMMANDS;
+                                   return GeoGebraLexerConstants.BUILTINFUNCTION;
                                  }
 
 /*  {spreadsheet_commands}       {
@@ -227,10 +260,20 @@ latex = "$"(([^$]*|"\\$")+)"$"
                                    return GeoGebraLexerConstants.SPREADSHEETCOMMANDS;
                                  } */
                                  
+  {functions}                    {
+  								   yypushback(1);
+  								   return GeoGebraLexerConstants.FUNCTION;
+                                 }
+
   {commands}                     {
   								   yypushback(1);
-                                   return GeoGebraLexerConstants.COMMANDS;
-                                 }                                 
+  								   String com = yytext();
+  								   if (commands.contains(com)) {
+  								   		return GeoGebraLexerConstants.COMMAND;
+  								   }
+  								   
+  								   return GeoGebraLexerConstants.UNKNOWNCOMMAND;
+                                 }                                                                 
 
   {string}                       {
                                    return GeoGebraLexerConstants.STRING;
@@ -238,7 +281,12 @@ latex = "$"(([^$]*|"\\$")+)"$"
 
 
   {label}                        {
-                                   return GeoGebraLexerConstants.LABEL;
+    							   String lab = yytext();
+  								   if (variables.contains(lab)) {
+  								   		return GeoGebraLexerConstants.VARIABLE;
+  								   }
+  								   
+  								   return GeoGebraLexerConstants.UNKNOWNVARIABLE;
                                  }
                                  
 /*  {spreadsheet_label}          {

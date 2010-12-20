@@ -195,7 +195,7 @@ public class GeoGebraView extends WrappedPlainView {
             /* This hint is used to have antialiased fonts in the view in using
                the same method (differents way to antialias with LCD screen) as the desktop. */
             desktopFontHints = (Map) Toolkit.getDefaultToolkit().getDesktopProperty(DESKTOPHINTS);
-            calculateHeight(((Graphics2D) g).getFontRenderContext(), context.tokenFonts[0]);
+            calculateHeight(((Graphics2D) g).getFontRenderContext(), context.tokenFont);
             enableDesktopFontHints = desktopFontHints != null;
         }
 
@@ -203,6 +203,8 @@ public class GeoGebraView extends WrappedPlainView {
             ((Graphics2D) g).addRenderingHints(desktopFontHints);
         }
 
+        g.setFont(context.tokenFont);
+        
         /* The lexer returns all tokens between the pos p0 and p1.
            The value of the returned token determinates the color and the font.
            The lines can be broken by the Pane so we must look at previous
@@ -257,7 +259,6 @@ public class GeoGebraView extends WrappedPlainView {
                     } else {
                         g.setColor(Color.WHITE);
                     }
-                    g.setFont(context.tokenFonts[tok]);
                     prevTok = tok;
                 }
 

@@ -26,7 +26,7 @@ public class GeoGebraLexerConstants {
     /**
      * Number of known tokens
      */
-    public static final int NUMBEROFTOKENS = 13;
+    public static final int NUMBEROFTOKENS = 16;
 
     /**
      * DEFAULT : tokens which are not recognized
@@ -41,7 +41,7 @@ public class GeoGebraLexerConstants {
     /**
      * CONSTANTES : Constantes like 'pi' or 'e'
      */
-    public static final int CONSTANTES = 2;
+    public static final int CONSTANTE = 2;
 
     /**
      * NUMBER : I don't know ;)
@@ -59,55 +59,73 @@ public class GeoGebraLexerConstants {
     public static final int STRING = 5;
 
     /**
-     * BUILTINCOMMANDS : commands such as cos, log, ...
+     * BUILTINFUNCTION : commands such as cos, log, ...
      */
-    public static final int BUILTINCOMMANDS = 6;
+    public static final int BUILTINFUNCTION = 6;
 
     /**
-     * COMMANDS : commands such as myFavoriteFun(...), ...
+     * FUNCTION : commands such as myFun(...)
      */
-    public static final int COMMANDS = 7;    
+    public static final int FUNCTION = 7;
+    
+    /**
+     * COMMAND : commands such as Length[...], ...
+     */
+    public static final int COMMAND = 8;    
 
     /**
-     * LABEL : label such as myPointA
+     * UNKNOWNCOMMAND : unknown commands
      */
-    public static final int LABEL = 8;
+    public static final int UNKNOWNCOMMAND = 9;
+    
+    /**
+     * VARIABLE: variable such as MyPointA
+     */
+    public static final int VARIABLE = 10;    
+
+    /**
+     * UNKNOWNVARIABLE : unknown variable
+     */
+    public static final int UNKNOWNVARIABLE = 11;
     
     /**
      * WHITE : A white char ' '
      */
-    public static final int WHITE = 9;
+    public static final int WHITE = 12;
 
     /**
      * TAB : A tabulation '\t'
      */
-    public static final int TAB = 10;
+    public static final int TAB = 13;
 
     /**
      * LATEX : $\frac\pi\alpha$
      */
-    public static final int LATEX = 11;
+    public static final int LATEX = 14;
 
     /**
      * EOF : End Of File
      */
-    public static final int EOF = 12;
+    public static final int EOF = 15;
     
     /**
      * TOKENS : A Map which contains the names of keywords (useful in scinotesConfiguration.xml)
      */
-    public static final Map<String, Integer> TOKENS = new HashMap(12);
+    public static final Map<String, Integer> TOKENS = new HashMap(15);
 
     static {
         TOKENS.put("Default", DEFAULT);
         TOKENS.put("Operator", OPERATOR);
-        TOKENS.put("Constante", CONSTANTES);
+        TOKENS.put("Constante", CONSTANTE);
         TOKENS.put("Number", NUMBER);
         TOKENS.put("OpenClose", OPENCLOSE);
         TOKENS.put("String", STRING);
-        TOKENS.put("Built-in commands", BUILTINCOMMANDS);
-        TOKENS.put("Commands", COMMANDS);
-        TOKENS.put("Label", LABEL);
+        TOKENS.put("Built-in function", BUILTINFUNCTION);
+        TOKENS.put("Function", FUNCTION);
+        TOKENS.put("Command", COMMAND);
+        TOKENS.put("Unknown command", UNKNOWNCOMMAND);
+        TOKENS.put("Variable", VARIABLE);
+        TOKENS.put("Unknown variable", UNKNOWNVARIABLE);
         TOKENS.put("White", WHITE);
         TOKENS.put("Tabulation", TAB);        
     }
