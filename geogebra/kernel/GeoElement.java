@@ -1881,7 +1881,7 @@ public abstract class GeoElement
 			return;
 		
 		// don't want any '$'s in actual labels
-		if (newLabel!=null && newLabel.indexOf('$') > 0) {
+		if (newLabel!=null && newLabel.indexOf('$') > -1) {
 			newLabel = newLabel.replaceAll("\\$", "");
 		}
 		
