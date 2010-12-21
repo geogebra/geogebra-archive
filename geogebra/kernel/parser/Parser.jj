@@ -236,9 +236,8 @@ TOKEN : {
         | <INTEGER> <DECIMAL_POINT>
         >
   |     < EFLOAT: <FLOAT> ( "E" | "e" ) (<PLUS> | <MINUS>)? <INTEGER> >
-  |     < BFLOAT: <FLOAT> "b" (<MINUS>)? <INTEGER> >
   |     < PERCENTAGE: <FLOAT> "%" >
-  |     < #INTEGER: ( <DIGIT> )+ >
+  |     < INTEGER: ( <DIGIT> )+ >
   |     < #DIGIT:                                     // unicode digits
        [
         "\u0030"-"\u0039", // Roman
@@ -271,7 +270,7 @@ TOKEN : {
 TOKEN : { 
  	// labels for cells in the spreadsheet
  	<SPREADSHEET_LABEL: ("$")?(["A"-"Z"]|["a"-"z"])+("$")?(["0"-"9"])+ > // e.g. B12
- |
+ | 
  	// standard case: labels for GeoElements and command names
    < LABEL:  
     <LETTER> ( <LETTER> | <DIGIT> | "'" )* (<INDEX>)? (<LETTER> | <DIGIT>)*>
@@ -529,13 +528,12 @@ ValidExpression buildMaximaExpression() :
 {
     ValidExpression ve;
     ExpressionNode lhs, rhs;
-    Token l = new Token();
-    Vector labels = new Vector();
+    Token start,sign = null,end;
 } 
 {         
-    (     
-		// try to parse Maxima string as standard GeoGebra expression 
-    	ve = expressionnode()     	     	   
+    (
+    	// try to parse Maxima string as standard GeoGebra expression 
+    	ve = expressionnode() 
 	)                     
     ( <EOL> | <EOF> )     
     {       	                         
@@ -1536,13 +1534,9 @@ ExpressionValue myDouble():
    (
      (c = <FLOAT> | c = <EFLOAT>)
     	{
+			// check if token includes "b"
+    	  
     	    c.image = c.image.replaceFirst("e", "E" );
-    		val = MyDouble.parseDouble( c.image );
-    	}
-    |
-      (c = <BFLOAT>) 
-  		{
-  		    c.image = c.image.replaceFirst("b", "E" );
     		val = MyDouble.parseDouble( c.image );
     	}
     |
@@ -1552,7 +1546,6 @@ ExpressionValue myDouble():
     	}
    )
   {
-    	
     	if (ExternalCASParsing || GeoGebraCASParsing) {
     		// preserve string from MathPiper: it may have higher
     		// precision than double
