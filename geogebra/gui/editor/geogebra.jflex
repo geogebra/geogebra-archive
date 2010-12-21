@@ -41,7 +41,6 @@ import geogebra.main.Application;
 %switch
 
 %{
-    public int start;
     public int end;
     public Set<String> commands;
     public Set<String> variables;
@@ -72,12 +71,14 @@ import geogebra.main.Application;
 		this.elem = doc.getDefaultRootElement();
 	}
 
+public int getStart() {return start;}
+
     public void setRange(int p0, int p1) {
-        start = p0;
-        end = p1;
+        this.start = p0;
+        this.end = p1;
         String str = "";
         try {
-        	str = doc.getText(p0, p1 - p0);
+        	str = doc.getText(start, end - start);
         } catch (BadLocationException e) { }
         yyreset(new StringReader(str));
     }

@@ -239,7 +239,7 @@ public class GeoGebraView extends WrappedPlainView {
         }
 
         if (!isBroken) {
-            lexer.setRange(start, endL);
+        	lexer.setRange(start, endL);
         }
 
         while (start < p1) {

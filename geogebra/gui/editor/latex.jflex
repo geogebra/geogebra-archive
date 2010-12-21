@@ -33,7 +33,6 @@ import javax.swing.text.Element;
 %switch
 
 %{
-    public int start;
     public int end;
 
     private Document doc;
@@ -97,7 +96,7 @@ import javax.swing.text.Element;
 %}
 
 /* main character classes */
-eol = [\r\n]+
+eol = [\r\n]
 
 open = "[" | "{"
 close = "]" | "}"
