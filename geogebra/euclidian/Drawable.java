@@ -568,8 +568,9 @@ public abstract class Drawable extends DrawableND {
 		//eqnSB.append(font.getSize()+"");
 		
 		
+		// if we're exporting, we want to draw it full resolution
 		// if it's a \jlmDynamic text, we don't want to add it to the cache
-		if (eqnSB.indexOf("\\jlmDynamic") > -1) {
+		if (EuclidianView.exporting || eqnSB.indexOf("\\jlmDynamic") > -1) {
 		
 			//Application.debug("creating new icon for: "+text);
 			TeXFormula formula;
