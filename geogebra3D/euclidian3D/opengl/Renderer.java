@@ -1461,14 +1461,54 @@ public class Renderer implements GLEventListener {
     	
     }
     
+
+    //////////////////////////////////
+    // LIGHTS
+    //////////////////////////////////
+
+    static final public int LIGHT_NONE = 0;
+    static final public int LIGHT_STANDARD = 1;
+    static final public int LIGHT_HIGHLIGHTED = 2;
+        
+    private int light = LIGHT_NONE;
     
+    /**
+     * turn off current light and
+     * turn on the light
+     * @param light
+     */
+    public void setLight(int light){
+    	if (this.light==light)
+    		return;
+    	
+    	disableLight(this.light);
+    	enableLight(light);
+    	this.light=light;
+    	
+    }
     
+    private void disableLight(int light){
+    	switch(light){
+    	case LIGHT_STANDARD:
+    		gl.glDisable(GL.GL_LIGHT0);
+    		break;
+    	case LIGHT_HIGHLIGHTED:
+    		gl.glDisable(GL.GL_LIGHT1);
+    		break;
+    	}
+    }
     
-    
-    
-    
-    
-    
+    private void enableLight(int light){
+    	switch(light){
+    	case LIGHT_STANDARD:
+    		gl.glEnable(GL.GL_LIGHT0);
+    		break;
+    	case LIGHT_HIGHLIGHTED:
+    		gl.glEnable(GL.GL_LIGHT1);
+    		break;
+    	}
+    }
+     
     
     //////////////////////////////////
     // initializations
@@ -1512,19 +1552,36 @@ public class Renderer implements GLEventListener {
         
         
         
+        float[] lightAmbient, lightDiffuse;
         
-        
-        float[] lightAmbient0 = {0.1f, 0.1f, 0.1f, 1.0f};
-        float[] lightDiffuse0 = {1.0f, 1.0f, 1.0f, 1.0f};
-        //float[] lightPosition0 = {1.0f, 1.0f, 1.0f, 0.0f};
-        float[] lightPosition0 = {-1.0f, 0.5f, 1.0f, 0.0f};
-        float[] lightSpecular0 = {0f, 0f, 0f, 1f};
+        //LIGHT_STANDARD
+        float ambiant = 0.4f;
+        lightAmbient = new float[] {ambiant, ambiant, ambiant, 1.0f};
+        float diffuse=1f-ambiant;
+        lightDiffuse = new float[] {diffuse, diffuse, diffuse, 1.0f};
+        float[] lightPosition = {-1.0f, 1f, 1.0f, 0.0f};
+        float specular = 0f;
+        float[] lightSpecular = {specular, specular, specular, 1f};
        
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient0, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse0, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition0, 0);
-        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightSpecular0, 0);
-        gl.glEnable(GL.GL_LIGHT0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_AMBIENT, lightAmbient, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
+        gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightSpecular, 0);
+        
+        //LIGHT_HIGHLIGHTED
+        ambiant = 1f;
+        lightAmbient = new float[] {ambiant, ambiant, ambiant, 1.0f};
+        diffuse=0f;//1f-ambiant;
+        lightDiffuse = new float[] {diffuse, diffuse, diffuse, 1.0f};  
+        specular = 0f;
+        lightSpecular = new float[] {specular, specular, specular, 1f};
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbient, 0);
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse, 0);
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, lightPosition, 0);
+        gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, lightSpecular, 0);
+       
+        
+        enableLight(LIGHT_STANDARD);
         
         
         

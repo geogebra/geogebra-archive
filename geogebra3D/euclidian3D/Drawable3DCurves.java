@@ -44,6 +44,9 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		
 		if(!isVisible())
 			return;	
+		
+		
+		setLight(renderer);
 			
 		setHighlightingColor(HIGHLIGHTING_AMPLITUDE, 1f);
 		
@@ -65,6 +68,8 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		if (getGeoElement().getLineTypeHidden()==EuclidianView.LINE_TYPE_HIDDEN_NONE)
 			return;
 		
+		setLight(renderer);
+
 		setHighlightingColor(HIGHLIGHTING_AMPLITUDE, 1f);
 		
 		if (getGeoElement().getLineTypeHidden()==EuclidianView.LINE_TYPE_HIDDEN_AS_NOT_HIDDEN)
