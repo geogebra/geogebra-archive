@@ -71,8 +71,6 @@ import geogebra.main.Application;
 		this.elem = doc.getDefaultRootElement();
 	}
 
-public int getStart() {return start;}
-
     public void setRange(int p0, int p1) {
         this.start = p0;
         this.end = p1;
@@ -190,19 +188,18 @@ digit = [\u0030-\u0039] | // Roman
         [\ua8d0-\ua8d9]   // Saurashtra      
 integer = {digit}+
 float = ({integer} ({decimal_point} {integer})?) | ({decimal_point} {integer}) | ({integer} {decimal_point})
-efloat = {float} [Ee] ({plus} | {minus})? {integer}
-bfloat = {float} "b" {minus}? {integer}
+efloat = {float} "E" ({plus} | {minus})? {integer}
 percentage = {float} "%"
 
-number = {integer} | {float} | {efloat} | {bfloat} | {percentage}
+number = {integer} | {float} | {efloat} | {percentage}
 
 letter = "$" |
-		 [\u0041-\u005a] |      //upper case (A-Z)
-         [\u0061-\u007a] |      //lower case (a-z)
-         "\u00b7" |   			// middle dot (for Catalan)
-         [\u00c0-\u00d6] |      //accentuated letters
-         [\u00d8-\u01bf] |		//accentuated letters
-         [\u01c4-\u02a8] |		//accentuated letters
+		 [\u0041-\u005a] |      // upper case (A-Z)
+         [\u0061-\u007a] |      // lower case (a-z)
+         "\u00b7"        |   	// middle dot (for Catalan)
+         [\u00c0-\u00d6] |      // accentuated letters
+         [\u00d8-\u01bf] |		// accentuated letters
+         [\u01c4-\u02a8] |		// accentuated letters
          [\u0391-\u03f3] | 		// Greek 
        	 [\u0401-\u0481] |		// Cyrillic
          [\u0490-\u04f9] |		// Cyrillic
@@ -216,7 +213,7 @@ letter = "$" |
          [\uffa1-\uffdc]
 char = [\u0000-\u0021\u0023-\uffff]        				    
 string = "\"" {char}* "\""
-index = "_" ( {char} | ("{" [^\}]+ "}"))
+index = "_" ({char} | ("{" [^\}]+ "}"))
 //spreadsheet_label =  ("$")? [A-Za-z]+ ("$")? [0-9]+
 label = {letter} ({letter} | {digit} | "'")* {index}? ({letter} | {digit})*
 
