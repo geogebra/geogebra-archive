@@ -23,6 +23,9 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+
 /**
  * Creates various ImageIcons for use in lists and tables.
  *   
@@ -489,9 +492,9 @@ public class GeoGebraIcon {
 	 * dimensions.
 	 */
 	public static ImageIcon createLatexIcon(Application app, GeoText geoText, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
-
+		return new ImageIcon(TeXFormula.createBufferedImage(latex, TeXConstants.STYLE_DISPLAY, font.getSize() + 3, fgColor, bgColor));
 		// Create image with dummy size, then draw into it to get the correct size
-		BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+		/*BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2image = image.createGraphics();
 		g2image.setBackground(bgColor);
 		g2image.clearRect(0, 0, image.getWidth(), image.getHeight());
@@ -519,7 +522,7 @@ public class GeoGebraIcon {
 		ImageIcon ic = new ImageIcon(image);
 		//ensureIconSize(ic, iconSize);
 		
-		return ic;
+		return ic;*/
 
 	}
 
