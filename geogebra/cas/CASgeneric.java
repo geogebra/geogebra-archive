@@ -62,5 +62,5 @@ public abstract class CASgeneric {
 	 * MathPiper is the currently used CAS.
 	 */
 	public abstract String getTranslatedCASCommand(String command);
-
+	
 }

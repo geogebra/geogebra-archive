@@ -235,25 +235,12 @@ public class CASmaxima extends CASgeneric {
 			// undo special character handling
 			result = casParser.insertSpecialChars(result);
 			
+			// convert Maxima's bfloat notation from e.g. 3.24b-4 to 3.2E-4
+			result = CASparser.convertScientificFloatNotation(result, 'b');
+			
 			// replace eg [x=0,x=1] with {x=0,x=1}
 			while (result.indexOf('[') > -1) result = result.replace('[','{');
 			while (result.indexOf(']') > -1) result = result.replace(']','}');
-			
-			// convert Maxima's bfloat notation from e.g. 3.24b-4 to 3.2E-4
-			if (result.indexOf('b') > -1) {
-				boolean prevDigit = false;
-				StringBuilder sb = new StringBuilder(result.length());
-				for (int i=0; i < result.length(); i++) {
-					char cur = result.charAt(i);
-					if (cur == 'b' && prevDigit) {
-						sb.append('E');
-					} else {
-						sb.append(cur);
-					}
-					prevDigit = Character.isDigit(cur);
-				}
-				result = sb.toString();
-			}
 			
 			// if the result consists of a list containing only 1 other list, flatten it
 			result = result.trim();

@@ -235,7 +235,7 @@ TOKEN : {
         | <DECIMAL_POINT> <INTEGER> 
         | <INTEGER> <DECIMAL_POINT>
         >
-  |     < EFLOAT: <FLOAT> ( "E" | "e" ) (<PLUS> | <MINUS>)? <INTEGER> >
+  |     < EFLOAT: <FLOAT> ("E") (<PLUS> | <MINUS>)? <INTEGER> >
   |     < PERCENTAGE: <FLOAT> "%" >
   |     < INTEGER: ( <DIGIT> )+ >
   |     < #DIGIT:                                     // unicode digits

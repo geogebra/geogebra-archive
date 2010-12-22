@@ -161,6 +161,9 @@ public class CASmathpiper extends CASgeneric {
 					
 			// undo special character handling
 			result = casParser.insertSpecialChars(result);
+			
+			// convert MathPiper's scientific notation from e.g. 3.24e-4 to 3.2E-4
+			result = CASparser.convertScientificFloatNotation(result, 'e');
 
 			return result;
 		} catch (Throwable th) {
