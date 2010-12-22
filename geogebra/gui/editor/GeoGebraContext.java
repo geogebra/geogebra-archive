@@ -49,9 +49,8 @@ public class GeoGebraContext extends ViewContext {
         TOKENS.put("Built-in function", GeoGebraLexerConstants.BUILTINFUNCTION);
         TOKENS.put("Function", GeoGebraLexerConstants.FUNCTION);
         TOKENS.put("Command", GeoGebraLexerConstants.COMMAND);
-        TOKENS.put("Unknown command", GeoGebraLexerConstants.UNKNOWNCOMMAND);
+        TOKENS.put("Unknown", GeoGebraLexerConstants.UNKNOWN);
         TOKENS.put("Variable", GeoGebraLexerConstants.VARIABLE);
-        TOKENS.put("Unknown variable", GeoGebraLexerConstants.UNKNOWNVARIABLE);
         TOKENS.put("White", GeoGebraLexerConstants.WHITE);
         TOKENS.put("Tabulation", GeoGebraLexerConstants.TAB);        
     }
@@ -65,15 +64,14 @@ public class GeoGebraContext extends ViewContext {
     	colorMap.put("Default", Color.decode("#000000"));
         colorMap.put("Operator", Color.decode("#01a801"));
         colorMap.put("Constante", Color.decode("#da70d6"));
-        colorMap.put("Number", Color.decode("#8b2252"));
+        colorMap.put("Number", Color.decode("#9f06ef"));
         colorMap.put("OpenClose", Color.decode("#4a55db"));
         colorMap.put("String", Color.decode("#bc8f8f"));
         colorMap.put("Built-in function", Color.decode("#32b9b9"));
         colorMap.put("Function", Color.decode("#ffb9b9"));
-        colorMap.put("Unknown command", Color.decode("#ef0000"));
+        colorMap.put("Unknown", Color.decode("#ff5409"));
         colorMap.put("Command", Color.decode("#ae5cb0"));
         colorMap.put("Variable", Color.decode("#834310"));
-        colorMap.put("Unknown variable", Color.decode("#ff0000"));        
         colorMap.put("White", Color.decode("#dcdcdc"));
         colorMap.put("Tabulation", Color.decode("#dcdcdc"));
     }
@@ -89,9 +87,8 @@ public class GeoGebraContext extends ViewContext {
         attribMap.put("Built-in function", 1);
         attribMap.put("Function", 1);
         attribMap.put("Command", 1);
-        attribMap.put("Unknown command", 0);
+        attribMap.put("Unknown", 0);
         attribMap.put("Variable", 0);
-        attribMap.put("Unknown variable", 0);
         attribMap.put("White", 0);
         attribMap.put("Tabulation", 0);
     }

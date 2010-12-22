@@ -216,6 +216,7 @@ string = "\"" {char}* "\""
 index = "_" ({char} | ("{" [^\}]+ "}"))
 //spreadsheet_label =  ("$")? [A-Za-z]+ ("$")? [0-9]+
 label = {letter} ({letter} | {digit} | "'")* {index}? ({letter} | {digit})*
+varfoo = [xyz]
 
 builtin_functions = "x(" | "xcoord(" | "y(" | "ycoord(" | "y(" | "ycoord(" |
 				   	(("cos" | "Cos" |
@@ -275,13 +276,16 @@ commands = {label} "["
   								   		return GeoGebraLexerConstants.COMMAND;
   								   }
   								   
-  								   return GeoGebraLexerConstants.UNKNOWNCOMMAND;
+  								   return GeoGebraLexerConstants.UNKNOWN;
                                  }                                                                 
 
   {string}                       {
                                    return GeoGebraLexerConstants.STRING;
                                  }
 
+  {varfoo}                       {
+    							   	return GeoGebraLexerConstants.VARIABLE;
+  								 }                              
 
   {label}                        {
     							   String lab = yytext();
@@ -289,7 +293,7 @@ commands = {label} "["
   								   		return GeoGebraLexerConstants.VARIABLE;
   								   }
   								   
-  								   return GeoGebraLexerConstants.UNKNOWNVARIABLE;
+  								   return GeoGebraLexerConstants.UNKNOWN;
                                  }
                                  
 /*  {spreadsheet_label}          {

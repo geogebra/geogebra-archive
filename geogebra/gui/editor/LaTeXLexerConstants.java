@@ -22,40 +22,40 @@ public interface LaTeXLexerConstants extends LexerConstants {
 	  /**
      * Number of known tokens
      */
-    public static final int NUMBEROFTOKENS = 10;
+    public static final int NUMBEROFTOKENS = 11;
 
     /**
      * AMP : token '&' in array env
      */
-    public static final int AMP = 3;
+    public static final int AMP = 4;
 
     /**
      * SUBSUP : '_' or '^'
      */
-    public static final int SUBSUP = 4;
+    public static final int SUBSUP = 5;
 
     /**
      * NUMBER : I don't know ;)
      */
-    public static final int NUMBER = 5;
+    public static final int NUMBER = 6;
 
     /**
      * OPENCLOSE : '{' or ']'
      */
-    public static final int OPENCLOSE = 6;
+    public static final int OPENCLOSE = 7;
 
     /**
      * COMMAND : commands such as \frac
      */
-    public static final int COMMAND = 7;  
+    public static final int COMMAND = 8;  
     
     /**
      * DOLLAR : '$'
      */
-    public static final int DOLLAR = 8;
+    public static final int DOLLAR = 9;
     
     /**
      * EOF : End Of File
      */
-    public static final int EOF = 8;	
+    public static final int EOF = 10;	
 }

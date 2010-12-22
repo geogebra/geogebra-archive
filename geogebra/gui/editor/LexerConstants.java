@@ -33,4 +33,9 @@ public interface LexerConstants {
      * TAB : A tabulation '\t'
      */
     public static final int TAB = 2;
+    
+    /**
+     * UNKNOWN : an unknown variables or command
+     */
+    public static final int UNKNOWN = 3;
 }
