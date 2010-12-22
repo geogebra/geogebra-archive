@@ -22,7 +22,7 @@ public interface LaTeXLexerConstants extends LexerConstants {
 	  /**
      * Number of known tokens
      */
-    public static final int NUMBEROFTOKENS = 11;
+    public static final int NUMBEROFTOKENS = 12;
 
     /**
      * AMP : token '&' in array env
@@ -55,7 +55,12 @@ public interface LaTeXLexerConstants extends LexerConstants {
     public static final int DOLLAR = 9;
     
     /**
+     * COMMAND : commands such as \frac
+     */
+    public static final int COMMENTS = 10;
+    
+    /**
      * EOF : End Of File
      */
-    public static final int EOF = 10;	
+    public static final int EOF = 11;	
 }

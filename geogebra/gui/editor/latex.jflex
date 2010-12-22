@@ -113,6 +113,8 @@ number = [0-9]+
 
 default = [^\[{\]}_\^&\$\\\r\n \t0-9]+
 
+comments = "%".*{eol}
+
 %%
 
 <YYINITIAL> {
@@ -143,6 +145,10 @@ default = [^\[{\]}_\^&\$\\\r\n \t0-9]+
 
   {command}                      {
                                    return LaTeXLexerConstants.COMMAND;
+                                 }
+
+  {comments}                     {
+                                   return LaTeXLexerConstants.COMMENTS;
                                  }
 
   " "                            {

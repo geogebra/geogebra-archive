@@ -27,6 +27,7 @@ public class LaTeXContext extends ViewContext {
         TOKENS.put("Number", LaTeXLexerConstants.NUMBER);
         TOKENS.put("OpenClose", LaTeXLexerConstants.OPENCLOSE);
         TOKENS.put("Command", LaTeXLexerConstants.COMMAND);
+        TOKENS.put("Comments", LaTeXLexerConstants.COMMENTS);
         TOKENS.put("White", LaTeXLexerConstants.WHITE);
         TOKENS.put("Tabulation", LaTeXLexerConstants.TAB);        
     }
@@ -38,12 +39,13 @@ public class LaTeXContext extends ViewContext {
     private static final Map<String, Color> colorMap = new HashMap<String, Color>();
     static {
     	colorMap.put("Default", Color.decode("#000000"));
-        colorMap.put("Ampersand", Color.decode("#01a801"));
+        colorMap.put("Ampersand", Color.decode("#fb24f8"));
         colorMap.put("SubSup", Color.decode("#01a801"));
         colorMap.put("Dollar", Color.decode("#ffaa00"));
-        colorMap.put("Number", Color.decode("#5f9ea0"));
+        colorMap.put("Number", Color.decode("#0b873d"));
         colorMap.put("OpenClose", Color.decode("#4a55db"));
-        colorMap.put("Command", Color.decode("#8b2252"));
+        colorMap.put("Command", Color.decode("#099ec3"));
+        colorMap.put("Comments", Color.decode("#c34209"));
         colorMap.put("White", Color.decode("#dcdcdc"));
         colorMap.put("Tabulation", Color.decode("#dcdcdc"));
     }
@@ -57,6 +59,7 @@ public class LaTeXContext extends ViewContext {
         attribMap.put("SubSup", 0);
         attribMap.put("Dollar", 0);
         attribMap.put("Command", 0);
+        attribMap.put("Comments", 0);
         attribMap.put("White", 0);
         attribMap.put("Tabulation", 0);
     }
