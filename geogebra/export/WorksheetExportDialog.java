@@ -1514,9 +1514,7 @@ public class WorksheetExportDialog extends JDialog {
 			appendWithLineBreak(sb, "\t<param name=\"bgcolor\" value=\"#FFFFFF\"  />");
 		}
 
-		sb.append("Sorry, the GeoGebra Applet could not be started. Please make sure that ");
-		sb.append("Java 1.5 (or later) is installed and active in your browser ");
-		appendWithLineBreak(sb, "(<a href=\"http://java.sun.com/getjava\">Click here to install Java now</a>)");
+		appendWithLineBreak(sb, app.getPlain("NoJavaMessage"));
 		sb.append("</applet>");
 		if (includeHTML5) {	
 			appendWithLineBreak(sb, "</noscript>");
