@@ -56,7 +56,6 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
 
 /**
  * Dialog which provides for exporting into an HTML page 
@@ -303,11 +302,11 @@ public class WorksheetExportDialog extends JDialog {
 	    			GeoGebraPreferences.EXPORT_WS_SHOW_TOOLBAR_HELP, "false")).booleanValue() );
 	    	cbShowToolBarHelp.setEnabled(cbShowToolBar.isSelected());	    	
 	    	cbShowInputField.setSelected( Boolean.valueOf(ggbPref.loadPreference(
-	    			ggbPref.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
+	    			GeoGebraPreferences.EXPORT_WS_SHOW_INPUT_FIELD, "false")).booleanValue() );
 	    	cbAllowRescaling.setSelected( Boolean.valueOf(ggbPref.loadPreference(
-	    			ggbPref.EXPORT_WS_ALLOW_RESCALING, "true")).booleanValue() );
+	    			GeoGebraPreferences.EXPORT_WS_ALLOW_RESCALING, "true")).booleanValue() );
 	    	cbRemoveLinebreaks.setSelected( Boolean.valueOf(ggbPref.loadPreference(
-	    			ggbPref.EXPORT_WS_REMOVE_LINEBREAKS, "false")).booleanValue() );
+	    			GeoGebraPreferences.EXPORT_WS_REMOVE_LINEBREAKS, "false")).booleanValue() );
 	    	removeLineBreaks = cbRemoveLinebreaks.isSelected();
 	    	//cbOfflineArchive.setSelected( Boolean.valueOf(ggbPref.loadPreference(
 	    	//		GeoGebraPreferences.EXPORT_WS_OFFLINE_ARCHIVE, "false")).booleanValue() );
@@ -383,14 +382,8 @@ public class WorksheetExportDialog extends JDialog {
 		p.add(textBelow, BorderLayout.CENTER);
 		centerPanel.add(p, BorderLayout.SOUTH);
 
-		// set line wrapping
-		JTextArea ta =  (JTextArea) textAbove.getTextComponent();
-		ta.setLineWrap(true);
-		ta.setWrapStyleWord(true);
+		// TODO set line wrapping
 		
-		ta =  (JTextArea) textBelow.getTextComponent();
-		ta.setLineWrap(true);
-		ta.setWrapStyleWord(true);
 
 		// init text areas
 		Construction cons = kernel.getConstruction();
@@ -580,12 +573,12 @@ public class WorksheetExportDialog extends JDialog {
 		    	
 		    	if (exportButton != null)
 			        if (cbFileType.getSelectedIndex() == TYPE_HTMLFILE) {
-			        	exportButton.setLabel(app.getMenu("Export"));
+			        	exportButton.setText(app.getMenu("Export"));
 			    		cbAllWorksheets.setEnabled(GeoGebraFrame.getInstanceCount() > 1);			        	
 			        }
 			        else
 			        {
-			        	exportButton.setLabel(app.getMenu("Clipboard"));
+			        	exportButton.setText(app.getMenu("Clipboard"));
 			        	cbAllWorksheets.setEnabled(false);
 			        	cbAllWorksheets.setSelectedIndex(TYPE_SINGLE_FILE);
 			        }
@@ -978,10 +971,10 @@ public class WorksheetExportDialog extends JDialog {
 	 * whether a signed or unsigned applet is needed for the options set.
 	 */
 	private URL getAppletCodebase() {
-		URL codebase = app.getCodeBase();
+		URL codebase = Application.getCodeBase();
 		if (!cbSavePrint.isSelected()) {
 			try {
-				codebase = new URL(app.getCodeBase(), "unsigned/");
+				codebase = new URL(Application.getCodeBase(), "unsigned/");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -1373,11 +1366,11 @@ public class WorksheetExportDialog extends JDialog {
 		sb.append(kernel.getLibraryJavaScript());
 
 		Construction cons = kernel.getConstruction();
-		TreeSet geoSet =  cons.getGeoSetConstructionOrder();
+		TreeSet<GeoElement> geoSet =  cons.getGeoSetConstructionOrder();
 				
-		Iterator it = geoSet.iterator();
+		Iterator<GeoElement> it = geoSet.iterator();
 		while (it.hasNext()) {
-			GeoElement geo = (GeoElement) it.next();
+			GeoElement geo = it.next();
 			
 			String script = geo.getJavaScript();
 			if (!script.equals("")) {
@@ -1597,7 +1590,7 @@ public class WorksheetExportDialog extends JDialog {
 		
 	}
 	
-	StringBuilder sb2 = new StringBuilder();
+	private StringBuilder sb2 = new StringBuilder();
 	
 	/**
 	 * Appends all selected applet parameters
