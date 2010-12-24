@@ -1745,10 +1745,12 @@ implements ExpressionValue, ExpressionNodeConstants {
             	
             	switch (STRING_TYPE) {			
 					case STRING_TYPE_LATEX:
-						// check needed for FormulaText[e^x]
-						if (leftStr.equals(Unicode.EULER_STRING)) {
-		                    sb.append('e');		
-		                    break;
+
+						//checks if the basis is leaf and if so
+						//omits the brackets
+						if (left.isLeaf()){							
+							sb.append(leftStr);
+							break;
 						}
 						// else fall through
 					case STRING_TYPE_JASYMCA:
