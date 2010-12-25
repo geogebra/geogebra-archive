@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.SurfaceMesh;
+import geogebra3D.euclidian3D.plots.SurfaceMesh;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.main.Application;
 

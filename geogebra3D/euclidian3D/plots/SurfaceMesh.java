@@ -1,35 +1,42 @@
-package geogebra3D.euclidian3D;
+package geogebra3D.euclidian3D.plots;
+
+import geogebra.kernel.GeoFunctionNVar;
+import geogebra3D.euclidian3D.BucketAssigner;
+import geogebra3D.euclidian3D.BucketPQ;
+import geogebra3D.euclidian3D.TriList;
+import geogebra3D.euclidian3D.TriListElem;
 
 import java.nio.FloatBuffer;
 import java.util.Date;
 
-import geogebra.kernel.GeoFunctionNVar;
-import geogebra3D.euclidian3D.TriList;
-
 /**
- * @author André Eriksson
+ * @author Andrï¿½ Eriksson
  */
 public class SurfaceMesh {
-	
-	//DETAIL SETTINGS 
-	
-	/**used in setRadius() to set the desired error per (visible) area unit according to
-	 * a second degree polynomial with erroCoeffs as coefficients*/
-	private final double[] errorCoeffs = {0.0015,0,0,0.00012};
-	
-	/** a proportionality constant used for setting the error of diamonds where one 
-	 * or more vertices are undefined */
+
+	// DETAIL SETTINGS
+
+	/**
+	 * used in setRadius() to set the desired error per (visible) area unit
+	 * according to a second degree polynomial with erroCoeffs as coefficients
+	 */
+	private final double[] errorCoeffs = { 0.0015, 0, 0, 0.00012 };
+
+	/**
+	 * a proportionality constant used for setting the error of diamonds where
+	 * one or more vertices are undefined
+	 */
 	public static final double undefErrorConst = 0.001;
 
 	/** the minimum triangle count */
 	private final int minTriCount = 5000;
-	
+
 	/** the desired triangle count */
 	private final int triGoal = 40000;
-	
+
 	/** the maximum triangle count */
 	private final int maxTriangles = 100000;
-	
+
 	/** buffer space for extra triangles */
 	private final int triBufMarigin = 10000;
 
@@ -38,38 +45,79 @@ public class SurfaceMesh {
 
 	/** the maximum level of refinement */
 	private static final int maxLevel = 20;
-	
+
 	/** x/y difference used when estimating normals */
 	public static final double normalDelta = 1e-8;
-	
-	//PRIVATE VARIABLES
-	
+
+	// PRIVATE VARIABLES
+
 	/** a reference to the function being drawn */
 	private GeoFunctionNVar function;
-	
+
 	/** the squared radius of the viewing sphere */
 	private double radSq;
-	
+
 	/** references to the priority queues used for splits/merges */
-	private SplitQueue splitQueue = new SplitQueue();
-	private MergeQueue mergeQueue = new MergeQueue();
+	private SurfaceMeshBucketPQ splitQueue = new SurfaceMeshBucketPQ(
+			new SplitBucketAssigner());
+	private SurfaceMeshBucketPQ mergeQueue = new SurfaceMeshBucketPQ(
+			new MergeBucketAssigner());
 
 	private SurfaceMeshDiamond baseDiamond;
 
-	private SurfTriList drawList;	
+	private SurfTriList drawList;
 
-	/**desired error per visible area unit */
+	/** desired error per visible area unit */
 	private double desiredErrorPerAreaUnit;
-	
+
 	/** if true error, triangle count and update time is printed each update */
 	private static final boolean printInfo = false;
-	
+
 	/** if false, no updates of the mesh are done */
 	private boolean doUpdates = true;
 	
 	/**
+	 * A bucket assigner used for split operations. Sorts based on
+	 * SurfaceMeshDiamond.error.
+	 * 
+	 * @author Andrï¿½ Eriksson
+	 */
+	class SplitBucketAssigner implements BucketAssigner<SurfaceMeshDiamond> {
+
+		public int getBucketIndex(Object o, int bucketAmt) {
+			SurfaceMeshDiamond d = (SurfaceMeshDiamond) o;
+			double e = d.errors[0] + d.errors[1];
+			int f = (int) (Math.exp(e + 1) * 200) + 3;
+			if (e == 0.0)
+				return 1;
+			return f > bucketAmt - 1 || f < 0 ? bucketAmt - 1 : f;
+		}
+	}
+
+	/**
+	 * A bucket assigner used for merge operations. Sorts based on
+	 * SurfaceMeshDiamond.error.
+	 * 
+	 * @author Andrï¿½ Eriksson
+	 */
+	class MergeBucketAssigner implements BucketAssigner<SurfaceMeshDiamond> {
+
+		public int getBucketIndex(Object o, int bucketAmt) {
+			SurfaceMeshDiamond d = (SurfaceMeshDiamond) o;
+			double e = d.errors[0] + d.errors[1];
+			int f = (int) (Math.exp(1 - e) * 200);
+			int ret = f > bucketAmt - 1 ? bucketAmt - 1 : f;
+			if (ret < 0)
+				ret = 0;
+			return ret;
+		}
+	}
+	
+
+	/**
 	 * An enum for describing the culling status of a diamond
-	 * @author André Eriksson
+	 * 
+	 * @author Andrï¿½ Eriksson
 	 */
 	public enum CullInfo {
 		/** the entire diamond is in the viewing sphere */
@@ -83,7 +131,7 @@ public class SurfaceMesh {
 	/**
 	 * @param function
 	 * @param radSq
-	 * @param unlimitedRange 
+	 * @param unlimitedRange
 	 */
 	public SurfaceMesh(GeoFunctionNVar function, double radSq,
 			boolean unlimitedRange) {
@@ -99,18 +147,20 @@ public class SurfaceMesh {
 	}
 
 	/**
-	 * @param r the bounding radius of the viewing volume
+	 * @param r
+	 *            the bounding radius of the viewing volume
 	 */
 	public void setRadius(double r) {
 		radSq = r * r;
-		desiredErrorPerAreaUnit = errorCoeffs[0] + errorCoeffs[1]*r + errorCoeffs[2]*radSq + Math.sqrt(r)*errorCoeffs[3];
+		desiredErrorPerAreaUnit = errorCoeffs[0] + errorCoeffs[1] * r
+				+ errorCoeffs[2] * radSq + Math.sqrt(r) * errorCoeffs[3];
 	}
-	
+
 	/**
 	 * forces the mesh to resume updates if it has stopped
 	 */
-	public void turnOnUpdates(){
-		doUpdates=true;
+	public void turnOnUpdates() {
+		doUpdates = true;
 	}
 
 	/**
@@ -129,7 +179,7 @@ public class SurfaceMesh {
 		int di, ix, jx;
 		double x, y;
 		SurfaceMeshDiamond t;
-		
+
 		// base diamonds at level 0
 		SurfaceMeshDiamond[][] base0 = new SurfaceMeshDiamond[4][4];
 		// base diamonds at lower levels
@@ -142,11 +192,11 @@ public class SurfaceMesh {
 			for (int j = 0; j < 4; j++) {
 				x = xMin + (i - 0.5) * dx;
 				y = yMin + (j - 0.5) * dy;
-				base0[j][i] = new SurfaceMeshDiamond(function, x, y, 0, splitQueue,
-						mergeQueue);
+				base0[j][i] = new SurfaceMeshDiamond(function, x, y, 0,
+						splitQueue, mergeQueue);
 				if (!(i == 1 && j == 1))
 					base0[j][i].isClipped = true;
-				
+
 				x = xMin + (i - 1) * dx;
 				y = yMin + (j - 1) * dy;
 				base1[j][i] = t = new SurfaceMeshDiamond(function, x, y,
@@ -213,7 +263,7 @@ public class SurfaceMesh {
 	 * Performs a set number (stepRefinement) of splits/merges
 	 */
 	public void optimize() {
-		if(doUpdates)
+		if (doUpdates)
 			optimizeSub(stepRefinement);
 	}
 
@@ -227,25 +277,25 @@ public class SurfaceMesh {
 		Side side = tooCoarse() ? Side.SPLIT : Side.MERGE;
 		while (side != Side.NONE && count < maxCount) {
 			if (side == Side.MERGE) {
-				merge(mergeQueue.pop());
+				merge(mergeQueue.poll());
 				if (tooCoarse())
 					side = Side.NONE;
 			} else {
-				split(splitQueue.pop());
+				split(splitQueue.poll());
 				if (!tooCoarse())
 					side = Side.NONE;
 			}
 			count++;
 		}
-		
-		if(count<maxCount)		//this only happens if the LoD
-			doUpdates=false;	//is at the desired level
-		
+
+		if (count < maxCount) // this only happens if the LoD
+			doUpdates = false; // is at the desired level
+
 		if (printInfo)
 			System.out.println(this.function + ":\tupdate time: "
 					+ (new Date().getTime() - t1) + "ms\ttriangles: "
 					+ drawList.getCount() + "\terror: "
-					+ (float) drawList.getError()+ "\tgoal:"
+					+ (float) drawList.getError() + "\tgoal:"
 					+ (float) (desiredErrorPerAreaUnit * drawList.getArea()));
 	}
 
@@ -392,7 +442,7 @@ public class SurfaceMesh {
 /**
  * A list of triangles representing the current mesh.
  * 
- * @author André Eriksson
+ * @author Andrï¿½ Eriksson
  */
 class SurfTriList extends TriList {
 
@@ -404,7 +454,7 @@ class SurfTriList extends TriList {
 	 * @param marigin
 	 */
 	SurfTriList(int capacity, int marigin) {
-		super(capacity, marigin);
+		super(capacity, marigin,1);
 	}
 
 	/**
@@ -424,12 +474,14 @@ class SurfTriList extends TriList {
 	/**
 	 * Adds a triangle to the list.
 	 * 
-	 * @param d The parent diamond of the triangle
-	 * @param j The index of the triangle within the diamond
+	 * @param d
+	 *            The parent diamond of the triangle
+	 * @param j
+	 *            The index of the triangle within the diamond
 	 */
 	public void add(SurfaceMeshDiamond d, int j) {
 		// handle clipping
-		if(d.isClipped || d.parents[j].isClipped)
+		if (d.isClipped || d.parents[j].isClipped)
 			return;
 
 		totalError += d.errors[j];
@@ -441,10 +493,10 @@ class SurfTriList extends TriList {
 		calcFloats(d, j, v, n);
 
 		TriListElem t = super.add(v, n);
-		
-		if(t==null)
+
+		if (t == null)
 			return;
-	
+
 		d.setTriangle(j, t);
 
 		if (d.cullInfo == SurfaceMesh.CullInfo.OUT)
@@ -462,12 +514,12 @@ class SurfTriList extends TriList {
 			t[2] = d.ancestors[1];
 		}
 		for (int i = 0, c = 0; i < 3; i++, c += 3) {
-			v[c] =	(float) t[i].v.getX();
-			v[c+1] =(float) t[i].v.getY();
-			v[c+2] =(float) t[i].v.getZ();
-			n[c] =	(float) t[i].normal.getX();
-			n[c+1] =(float) t[i].normal.getY();
-			n[c+2] =(float) t[i].normal.getZ();
+			v[c] = (float) t[i].v.getX();
+			v[c + 1] = (float) t[i].v.getY();
+			v[c + 2] = (float) t[i].v.getZ();
+			n[c] = (float) t[i].normal.getX();
+			n[c + 1] = (float) t[i].normal.getY();
+			n[c + 2] = (float) t[i].normal.getZ();
 		}
 	}
 
@@ -493,11 +545,13 @@ class SurfTriList extends TriList {
 	/**
 	 * removes a triangle from the list, but does not erase it
 	 * 
-	 * @param d the diamond
-	 * @param j the triangle index
+	 * @param d
+	 *            the diamond
+	 * @param j
+	 *            the triangle index
 	 */
 	public void hide(SurfaceMeshDiamond d, int j) {
-		if(super.hide(d.getTriangle(j))) {
+		if (super.hide(d.getTriangle(j))) {
 			totalError -= d.errors[j];
 			totalArea -= d.area;
 		}
@@ -506,47 +560,80 @@ class SurfTriList extends TriList {
 	/**
 	 * shows a triangle that has been hidden
 	 * 
-	 * @param d the diamond
-	 * @param j the index of the triangle
+	 * @param d
+	 *            the diamond
+	 * @param j
+	 *            the index of the triangle
 	 */
 	public void show(SurfaceMeshDiamond d, int j) {
-		if(super.show(d.getTriangle(j))) {
+		if (super.show(d.getTriangle(j))) {
 			totalError += d.errors[j];
 			totalArea += d.area;
 		}
 	}
 }
-/**
- * A priority queue used for split operations. Sorts based on
- * SurfaceMeshDiamond.error.
- * 
- * @author André Eriksson
- */
-class SplitQueue extends BucketPriorityQueue {
-
-	@Override
-	protected int clamp(double d) {
-		int f = (int) (Math.exp(d + 1) * 200) + 3;
-		if(d==0.0)
-			return 1;
-		return f > BUCKETAMT - 1 || f < 0 ? BUCKETAMT - 1 : f;
-	}
-}
 
 /**
- * A priority queue used for merge operations. Sorts based on
- * SurfaceMeshDiamond.error.
+ * A specific bucket priority queue for SurfaceMeshDiamond. Inserts culled
+ * diamonds into the zeroth bucket.
  * 
- * @author André Eriksson
+ * @author AndrÃ© Eriksson
  */
-class MergeQueue extends BucketPriorityQueue {
+class SurfaceMeshBucketPQ extends BucketPQ<SurfaceMeshDiamond> {
+
+	/**
+	 * @param ba
+	 *            the bucket assigner to use
+	 */
+	SurfaceMeshBucketPQ(BucketAssigner<SurfaceMeshDiamond> ba) {
+		super(ba);
+	}
 
 	@Override
-	protected int clamp(double d) {
-		int f = (int) (Math.exp(1 - d) * 200);
-		int ret = f > BUCKETAMT - 1 ? BUCKETAMT - 1 : f;
-		if (ret < 0)
-			ret = 0;
-		return ret;
+	public boolean add(SurfaceMeshDiamond object) {
+		if (findLink(object) != null) // already in queue
+			return false;
+
+		// put invisible diamonds in first bucket
+		if (object.cullInfo == SurfaceMesh.CullInfo.OUT)
+			return addToZeroBucket(object);
+
+		return super.add(object);
 	}
+
+	private boolean addToZeroBucket(SurfaceMeshDiamond object) {
+		if (null == object)
+			throw new NullPointerException();
+
+		Link<SurfaceMeshDiamond> elem = findLink(object);
+
+		// ignore element if already in queue
+		if (elem != null)
+			return false;
+
+		int bucketIndex = bucketAssigner.getBucketIndex(object, bucketAmt);
+
+		elem = new Link<SurfaceMeshDiamond>(object);
+
+		// update pointers
+		elem.prev = backs[bucketIndex];
+		if (backs[bucketIndex] != null)
+			backs[bucketIndex].next = elem;
+		backs[bucketIndex] = elem;
+		if (buckets[bucketIndex] == null)
+			buckets[bucketIndex] = elem;
+
+		// update max bucket index if needed
+		if (bucketIndex > maxBucket)
+			maxBucket = bucketIndex;
+
+		elem.bucketIndex = bucketIndex;
+
+		count++;
+
+		linkAssociations.put(object, elem);
+
+		return true;
+	}
+
 }

@@ -4,16 +4,19 @@ import java.nio.FloatBuffer;
 
 /**
  * A list of triangles representing a triangle mesh.
- * @author André Eriksson
+ * @author Andrï¿½ Eriksson
  */
 public class TriList {
-	/** the total amount of triangles available for allocation*/
-	private int capacity;
+	/** the total amount of chunks available for allocation*/
+	private final int capacity;
 	
-	/** current triangle amt */
+	/** the amount of triangles in each chunk */
+	private final int chunkSize;
+	
+	/** current chunk amt */
 	private int count = 0;
 	
-	private int marigin;
+	private final int margin;
 	
 	/** A buffer containing data for all the triangles. Each triangle is stored
 	 *  as 9 consecutive floats (representing x/y/z values for three points).
@@ -25,22 +28,25 @@ public class TriList {
 	
 	/** Pointers to the front and back of the queue */
 	private TriListElem front, back;
+	
 
 	/**
-	 * Empty constuctor. Allocates memory for vertexBuf.
 	 * @param capacity the maximum number of triangles
-	 * @param marigin free triangle amount before considered full
+	 * @param margin free triangle amount before considered full
+	 * @param trisInChunk amount of triangles in each chunk
 	 */
-	TriList(int capacity, int marigin){
+	public TriList(int capacity, int margin, int trisInChunk){
 		this.capacity=capacity;
-		vertexBuf=FloatBuffer.allocate((capacity+marigin)*9);
-		normalBuf = FloatBuffer.allocate((capacity+marigin)*9);
+		this.chunkSize=9*trisInChunk;
+		this.margin=margin;
+		vertexBuf=FloatBuffer.allocate((capacity+margin)*chunkSize);
+		normalBuf = FloatBuffer.allocate((capacity+margin)*chunkSize);
 	}
 	
 	/** 
 	 * @return the current amount of triangles
 	 */
-	public int getCount() { return count; }
+	public int getCount() { return count*(chunkSize/9); }
 	
 	/**
 	 * @return a reference to vertexBuf
@@ -55,7 +61,7 @@ public class TriList {
 	/**
 	 * @return true if count>=maxCount - otherwise false.
 	 */
-	public boolean isFull() { return count>=capacity-marigin; }
+	public boolean isFull() { return count>=capacity-margin; }
 	
 	/** sets elements in the float buffers to the provided values
 	 * @param vertices 9 floats representing 3 vertices
@@ -71,10 +77,10 @@ public class TriList {
 	
 	/**
 	 * @param index
-	 * @return float array of vertices (9 floats)
+	 * @return float array of vertices (chunkSize floats)
 	 */
 	protected float[] getVertices(int index) {
-		float[] vertices = new float[9];
+		float[] vertices = new float[chunkSize];
 		vertexBuf.position(index);
 		vertexBuf.get(vertices);
 		return vertices;
@@ -82,10 +88,10 @@ public class TriList {
 	
 	/**
 	 * @param index
-	 * @return float array of normals (9 floats)
+	 * @return float array of normals (chunkSize floats)
 	 */
 	protected float[] getNormals(int index) {
-		float[] normals = new float[9];
+		float[] normals = new float[chunkSize];
 		normalBuf.position(index);
 		normalBuf.get(normals);
 		return normals;
@@ -93,8 +99,8 @@ public class TriList {
 	
 	/**
 	 * Adds a triangle to the list.
-	 * @param vertices the tree vertices in the triangle stored as 9 floats
-	 * @param normals the normals of the vertices stored as 9 floats
+	 * @param vertices the tree vertices in the triangle stored as (chunkSize) floats
+	 * @param normals the normals of the vertices stored as (chunkSize) floats
 	 * @return a reference to the created triangle element
 	 */
 	public TriListElem add(float[] vertices, float[] normals) {
@@ -109,9 +115,11 @@ public class TriList {
 			back.setNext(t);
 		back=t;
 		
-		setFloats(vertices,normals,9*count);
+		int index = chunkSize*count;
 		
-		t.setIndex(9*count);
+		setFloats(vertices,normals,index);
+		
+		t.setIndex(index);
 
 		count++;
 		
@@ -119,7 +127,7 @@ public class TriList {
 	}
 	
 	private boolean inputValid(float[] vertices, float[] normals){
-		for(int i = 0; i < 9; i++)
+		for(int i = 0; i < chunkSize; i++)
 			if(Double.isInfinite(vertices[i]) || Double.isNaN(vertices[i]) ||
 				Double.isInfinite(normals[i]) || Double.isNaN(normals[i]))
 				return false;
@@ -133,8 +141,8 @@ public class TriList {
 	 * @param newIndex the new index of the first float
 	 */
 	protected void transferFloats(int oldIndex, int newIndex) {
-		float[] f = new float[9];
-		float[] g = new float[9];
+		float[] f = new float[chunkSize];
+		float[] g = new float[chunkSize];
 		
 		vertexBuf.position(oldIndex);
 		vertexBuf.get(f);
@@ -144,7 +152,7 @@ public class TriList {
 		normalBuf.get(g);
 		normalBuf.position(newIndex);
 		
-		for(int i=0;i<9;i++){
+		for(int i=0;i<chunkSize;i++){
 			vertexBuf.put(f[i]);
 			normalBuf.put(g[i]);
 		}
@@ -178,9 +186,9 @@ public class TriList {
 	}
 
 	/**
-	 * removes a triangle from the list, but does not erase it
-	 * @param t any triangle in the list
-	 * @return false if the triangle is null or already hidden, otherwise true
+	 * removes a chunk from the list, but does not erase it
+	 * @param t any chunk in the list
+	 * @return false if the chunk is null or already hidden, otherwise true
 	 */
 	public boolean hide(TriListElem t) {
 		if(t==null || t.getIndex()==-1)
@@ -254,101 +262,19 @@ public class TriList {
 			return false;
 		
 		if(front==null)
-			front=t;		
+			front=t;
 		if(back!=null){
 			back.setNext(t);
 			t.setPrev(back);
 		}
 		back=t;
 		
-		setFloats(t.popVertices(),t.popNormals(),9*count);
+		setFloats(t.popVertices(),t.popNormals(),chunkSize*count);
 		
-		t.setIndex(9*count);
+		t.setIndex(chunkSize*count);
 		
 		count++;
 		
 		return true;
 	}
-}
-
-/**
- * A class representing a triangle in TriList
- * @author André Eriksson
- */
-class TriListElem{
-	private int index;
-	private TriListElem next, prev;
-	
-	private float[] vertices;
-	private float[] normals;
-
-	/** 
-	 * @param prev the previous element in the queue
-	 */
-	TriListElem(TriListElem prev) {
-        this.prev=prev;
-	}
-	
-	/** saves the specified vertices
-	 * @param vertices 
-	 * 			9 floats representing the three vertices of a triangle
-	 */
-	public void pushVertices(float[] vertices){ this.vertices=vertices; }
-	
-	/** saves the specified normals
-	 * @param normals 
-	 * 			9 floats representing the normals of the three 
-	 * 			vertices of a triangle
-	 */
-	public void pushNormals(float[] normals)  { this.normals =normals;  }
-	
-	/** removes and returns any saved vertices
-	 * @return the contents of vertices (supposed to be 9 floats)
-	 */
-	public float[] popVertices(){ 
-		float[] temp = vertices;
-		vertices = null;
-		return temp;
-	}
-
-	/** removes and returns any saved normals
-	 * @return the contents of normals (supposed to be 9 floats)
-	 */
-	public float[] popNormals(){ 
-		float[] temp = normals;
-		normals = null;
-		return temp;
-	}
-
-	
-	/**
-	 * Sets the triangle's index in the float buffer.
-	 * @param i 
-	 */
-	public void setIndex(int i) { index = i; }
-	
-	/**
-	 * @return the triangle's index in the float buffer.
-	 */
-	public int getIndex() { return index; }
-	
-	/** 
-	 * @return a reference to the next triangle in the queue.
-	 */
-	public TriListElem getNext() { return next; }
-
-	/**
-	 * @param next a reference to the next triangle in the queue.
-	 */
-	public void setNext(TriListElem next) { this.next = next; }
-
-	/**
-	 * @return a reference to the previous triangle in the queue.
-	 */
-	public TriListElem getPrev() { return prev; }
-	
-	/**
-	 * @param prev a reference to the previous triangle in the queue.
-	 */
-	public void setPrev(TriListElem prev) { this.prev = prev; }
 }

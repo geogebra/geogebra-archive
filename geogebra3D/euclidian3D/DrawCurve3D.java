@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.GgbVector;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
+import geogebra3D.euclidian3D.plots.CurveMesh;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
 
 /**
@@ -12,7 +13,7 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
  *
  */
 public class DrawCurve3D extends Drawable3DCurves {
-	private CurveTree tree;
+	private CurveMesh mesh;
 	
 	
 	/** handle to the curve */
@@ -30,8 +31,10 @@ public class DrawCurve3D extends Drawable3DCurves {
 	 */
 	public DrawCurve3D(EuclidianView3D a_view3d, GeoCurveCartesian3D curve) {
 		super(a_view3d,curve);
-		tree = new CurveTree(curve, a_view3d);
 		this.curve=curve;
+		double rad = currentRadius();
+		savedRadius=rad;
+		mesh = new CurveMesh(curve, rad);
 	}
 	
 
@@ -43,7 +46,8 @@ public class DrawCurve3D extends Drawable3DCurves {
 		
 	}
 	
-	/** decides if the curve should be redrawn depending on how the view changes
+	/**
+	 * Decides if the curve should be redrawn or not depending on how the view changes
 	 * @return
 	 */
 	private boolean needRedraw(){
@@ -86,30 +90,40 @@ public class DrawCurve3D extends Drawable3DCurves {
 	}
 
 	
-	protected boolean updateForItSelf(){
+	@Override
+	protected void realtimeUpdate(){
 		Renderer renderer = getView3D().getRenderer();
+		mesh.setRadius(savedRadius);
+		mesh.optimize();
 		
+		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 		
-		if (!curve.isEuclidianVisible() || !curve.isDefined()){
-			setGeometryIndex(-1);
-			
-		//} else if(needRedraw()){
-		}else{
-			
-			needRedraw();
-			tree = new CurveTree(curve, getView3D());
-			
-			PlotterBrush brush = renderer.getGeometryManager().getBrush();
+		brush.draw(mesh,savedRadius);
 
-			brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
-
-			brush.start(8);
-			
-			brush.draw(tree,savedRadius);
-
-			setGeometryIndex(brush.end());
-		}
-		
+		setGeometryIndex(brush.end());
+	}
+	
+	protected boolean updateForItSelf(){
+//		Renderer renderer = getView3D().getRenderer();
+//		
+//		
+//		if (!curve.isEuclidianVisible() || !curve.isDefined()){
+//			setGeometryIndex(-1);
+//			
+//		//} else if(needRedraw()){
+//		}else{
+//			
+//			PlotterBrush brush = renderer.getGeometryManager().getBrush();
+//
+//			brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
+//
+//			brush.start(8);
+//			
+//			brush.draw(mesh,savedRadius);
+//
+//			setGeometryIndex(brush.end());
+//		}
+//		
 		return true;
 	}
 	

@@ -1,12 +1,13 @@
-package geogebra3D.euclidian3D;
+package geogebra3D.euclidian3D.plots;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoFunctionNVar;
+import geogebra3D.euclidian3D.TriListElem;
 
 /**
  * A class representing a diamond.
  * 
- * @author André Eriksson
+ * @author AndrÃ© Eriksson
  */
 public class SurfaceMeshDiamond {
 	
@@ -30,9 +31,9 @@ public class SurfaceMeshDiamond {
 
 	//QUEUE STUFF
 	/** a reference to the merge queue */
-	MergeQueue mergeQueue;
+	SurfaceMeshBucketPQ mergeQueue;
 	/** a reference to the split queue */
-	SplitQueue splitQueue;
+	SurfaceMeshBucketPQ splitQueue;
 	/** flag indicating if the diamond is in the merge queue */
 	boolean inMergeQueue = false;
 	/** flag indicating if the diamond is in the split queue */
@@ -88,7 +89,7 @@ public class SurfaceMeshDiamond {
 	 * 			a reference to the merge queue used for the mesh
 	 */
 	SurfaceMeshDiamond(GeoFunctionNVar func, double p1, double p2, int level,
-			SplitQueue spQ, MergeQueue merQ) {
+			SurfaceMeshBucketPQ spQ, SurfaceMeshBucketPQ merQ) {
 		this.level = level;
 		this.func = func;
 		v = func.evaluatePoint(p1, p2);
@@ -123,7 +124,7 @@ public class SurfaceMeshDiamond {
 	 */
 	SurfaceMeshDiamond(GeoFunctionNVar func, SurfaceMeshDiamond parent0, int index0,
 			SurfaceMeshDiamond parent1, int index1, SurfaceMeshDiamond a0,
-			SurfaceMeshDiamond a1, int level, SplitQueue spQ, MergeQueue merQ) {
+			SurfaceMeshDiamond a1, int level, SurfaceMeshBucketPQ spQ, SurfaceMeshBucketPQ merQ) {
 		splitQueue = spQ;
 		mergeQueue = merQ;
 		this.level = level;

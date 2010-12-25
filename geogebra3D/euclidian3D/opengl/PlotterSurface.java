@@ -5,7 +5,7 @@ import java.nio.FloatBuffer;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.GeoFunctionNVar;
-import geogebra3D.euclidian3D.SurfaceMesh;
+import geogebra3D.euclidian3D.plots.SurfaceMesh;
 
 /** Class for drawing surfaces.
  * @author matthieu
