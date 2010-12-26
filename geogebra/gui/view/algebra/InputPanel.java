@@ -1,7 +1,6 @@
 package geogebra.gui.view.algebra;
 
 import geogebra.gui.VirtualKeyboardListener;
-import geogebra.gui.editor.GeoGebraEditorKit;
 import geogebra.gui.editor.GeoGebraEditorPane;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.util.GeoGebraIcon;
@@ -325,7 +324,7 @@ ActionListener, ListSelectionListener {
 		if (rows > 1) {
 			//textComponent = new JTextArea(rows, columns);
 			textComponent = new GeoGebraEditorPane(app, rows, columns);
-			((JEditorPane) textComponent).setEditorKit(new GeoGebraEditorKit(app));
+			((GeoGebraEditorPane) textComponent).setEditorKit("geogebra");
 		} else
 			textComponent = new AutoCompleteTextField(columns, app);		
 		

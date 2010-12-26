@@ -13,7 +13,9 @@ the Free Software Foundation.
 
 package geogebra.gui.editor;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseListener;
@@ -24,10 +26,10 @@ import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.JEditorPane;
+import javax.swing.JToolTip;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.EditorKit;
 
 import geogebra.main.Application;
 import geogebra.gui.GeoGebraKeys;
@@ -41,15 +43,22 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 															   MouseListener,
 															   MouseMotionListener {
 
+	private static final int GEOGEBRA = 0;
+	private static final int LATEX = 1;
+	private static final int JAVASCRIPT = 2;
+	
 	private Application app;
 	private int rows;
 	private int cols;
+	private int rowHeight;
+	private int columnWidth;
     private Lexer lexer;
 	private boolean matchingEnable;
 	private MatchingBlockManager matchLR;
 	private MatchingBlockManager matchRL;
 	private Point mousePoint;
 	private List<KeywordListener> kwListeners = new ArrayList<KeywordListener>();
+	private int type;
 	
 	/**
 	 * Default Constructor
@@ -70,33 +79,29 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setEditorKit(EditorKit kit) {
+	public void setEditorKit(String kitString) {
 		String str = getText();
-		super.setEditorKit(kit);
-		if (kit instanceof GeoGebraEditorKit) {
-			GeoGebraEditorKit ggbKit = (GeoGebraEditorKit) kit;
+		if ("geogebra".equalsIgnoreCase(kitString)) {
+			GeoGebraEditorKit ggbKit = new GeoGebraEditorKit(app);
+			super.setEditorKit(ggbKit);
 			setFont(ggbKit.getStylePreferences().tokenFont);
 	        lexer = new GeoGebraLexer(getDocument(), app);
-		} else if (kit instanceof LaTeXEditorKit) {
-			LaTeXEditorKit ltxKit = (LaTeXEditorKit) kit;
+	        type = GEOGEBRA;
+		} else if ("latex".equalsIgnoreCase(kitString)) {
+			LaTeXEditorKit ltxKit = new LaTeXEditorKit(app);
+			super.setEditorKit(ltxKit);
 			setFont(ltxKit.getStylePreferences().tokenFont);
 	        lexer = new LaTeXLexer(getDocument());
+	        type = LATEX;
+		} else if ("javascript".equalsIgnoreCase(kitString)) {
+			JavascriptEditorKit javascriptKit = new JavascriptEditorKit(app);
+			super.setEditorKit(javascriptKit);
+			setFont(javascriptKit.getStylePreferences().tokenFont);
+	        lexer = new JavascriptLexer(getDocument());
+	        ((JavascriptEditorKit.JavascriptDocument) getDocument()).setTextComponent(this);
+	        type = JAVASCRIPT;
 		}
 		
-		// a "true" dimension is needed for modelToView 
-		Dimension dim = new Dimension(100, 100);
-		setPreferredSize(dim);
-		setSize(dim);
-		setText("W");
-		try {
-			Rectangle r = modelToView(1);
-			dim.width = r.x * cols;
-			dim.height = r.height * rows;
-		} catch (BadLocationException e) { }
-		setText("");
-		setPreferredSize(dim);
-		setSize(dim);
-			
 		matchLR = new MatchingBlockManager(getDocument(), this, true, getHighlighter());
         matchLR.setDefaults();
         matchRL = new MatchingBlockManager(getDocument(), this, false, getHighlighter());
@@ -104,6 +109,43 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
         enableMatchingKeywords(true);
         setText(str);
 	}
+		
+	/**
+	 * {@inheritDoc}
+	 */
+    public void setFont(Font f) {
+    	super.setFont(f);
+    	this.columnWidth = getFontMetrics(f).charWidth('m');
+    	this.rowHeight = getFontMetrics(getFont()).getHeight();
+    }
+	
+	/**
+	 * {@inheritDoc}
+	 */
+    public Dimension getPreferredSize() {
+    	Dimension dim = super.getPreferredSize();
+        dim = (dim == null) ? new Dimension(400,400) : dim;
+        if (cols != 0) {
+            dim.width = Math.max(dim.width, cols * columnWidth); 	
+        }
+    	if (rows != 0) {
+    	    dim.height = Math.max(dim.height, rows * rowHeight);
+    	}
+    	
+    	return dim;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Dimension getPreferredScrollableViewportSize() {
+        Dimension size = super.getPreferredScrollableViewportSize();
+        size = (size == null) ? new Dimension(400,400) : size;
+        size.width = cols * columnWidth;
+        size.height = rows * rowHeight;
+
+        return size;
+    }
 	
     /**
      * Add a new KeywordListener
@@ -158,14 +200,19 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
      * @param e event
      */
     public void caretUpdate(CaretEvent e) {
-        if (matchingEnable && lexer != null) {
-            int pos = getCaretPosition();
-            int tok = lexer.getKeyword(pos, false);
-            matchLR.searchMatchingBlock(tok, lexer.start + lexer.yychar());
-            tok = lexer.getKeyword(pos, true);
-            matchRL.searchMatchingBlock(tok, lexer.start + lexer.yychar() + lexer.yylength());
+        if (lexer != null) {
+        	int pos = getCaretPosition();
+        	int ltok = lexer.getKeyword(pos, false);
+        	int start = lexer.start + lexer.yychar();
+        	int length = lexer.yylength();
+        	if (matchingEnable) {
+        		matchLR.searchMatchingBlock(ltok, start);
+        		int tok = lexer.getKeyword(pos, true);
+        		matchRL.searchMatchingBlock(tok, lexer.start + lexer.yychar() + lexer.yylength());
+        	}
         }
     }
+    
     /**
      * Get a keyword at a position in the document.
      * @param position in the document

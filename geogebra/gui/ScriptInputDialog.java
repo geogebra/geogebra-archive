@@ -12,6 +12,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.editor.GeoGebraEditorPane;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.Kernel;
@@ -59,6 +60,11 @@ public class ScriptInputDialog extends InputDialog {
 		centerPanel.add(inputPanel, BorderLayout.CENTER);		
 
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
+		
+		if (javaScript) {
+			((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("javascript");
+		}
+		
 		centerOnScreen();		
 	}
 	

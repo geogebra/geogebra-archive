@@ -12,8 +12,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.gui.editor.GeoGebraEditorKit;
-import geogebra.gui.editor.LaTeXEditorKit;
+import geogebra.gui.editor.GeoGebraEditorPane;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.LatexTables;
 import geogebra.gui.util.PopupMenuButton;
@@ -377,7 +376,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				isLaTeX = cbLaTeX.isSelected();
 				cbLaTeXshortcuts.setEnabled(isLaTeX);
 				if (isLaTeX) {
-					((JEditorPane) inputPanel.getTextComponent()).setEditorKit(new LaTeXEditorKit(app));
+					((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("latex");
 					inputPanel.getTextComponent().getDocument().addDocumentListener(this);
 					if (latexPreviewer == null) 
 						latexPreviewer = new LaTeXPreviewerPanel();
@@ -385,7 +384,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 					
 					latexPreviewer.setLaTeX(app, inputPanel.getText());
 				} else {
-					((JEditorPane) inputPanel.getTextComponent()).setEditorKit(new GeoGebraEditorKit(app));
+					((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("geogebra");
 					//latexPreviewer = null;	
 				}
 				if(isLaTeX && inputPanel.getText().length() == 0) {
