@@ -175,6 +175,16 @@ public class CASTable extends JTable {
 		tableModel.insertRow(selectedRow + 1, new Object[] { newValue });
 		// make sure the row is shown when at the bottom of the viewport
 		table.scrollRectToVisible(table.getCellRect(selectedRow+1, 0, false));
+		
+		int rowCount = tableModel.getRowCount();
+		if (selectedRow + 2 < rowCount)
+		{
+			CASInputHandler h = view.getInputHandler();
+			for (int i=selectedRow+2; i < rowCount; i++) {
+				h.updateReferencesAfterRowInsertOrDelete(selectedRow, i, CASInputHandler.ROW_REFERENCE_DYNAMIC, true);
+				h.updateReferencesAfterRowInsertOrDelete(selectedRow, i, CASInputHandler.ROW_REFERENCE_STATIC, true);
+			}
+		}
 		// update height of new row
 		if (startEditing)
 			startEditingRow(selectedRow  + 1);
@@ -295,9 +305,19 @@ public class CASTable extends JTable {
 	public void deleteRow(int row) {
 		stopEditing();
 		tableModel.removeRow(row);
+
+		int rowCount = tableModel.getRowCount();
+		if (row < rowCount)
+		{
+			CASInputHandler h = view.getInputHandler();
+			for (int i= row; i < rowCount; i++) {
+				h.updateReferencesAfterRowInsertOrDelete(row, i, CASInputHandler.ROW_REFERENCE_DYNAMIC, false);
+				h.updateReferencesAfterRowInsertOrDelete(row, i, CASInputHandler.ROW_REFERENCE_STATIC, false);
+			}
+		}
+
 		this.repaint();
 		
-		int rowCount = tableModel.getRowCount();
 		if (rowCount == 0)
 			insertRow(null, true);
 		else 
