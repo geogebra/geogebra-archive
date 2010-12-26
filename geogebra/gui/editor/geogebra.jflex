@@ -1,14 +1,14 @@
 //CHECKSTYLE:OFF
 
-/* 
+/*
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
 
 This file is part of GeoGebra.
 This code has been written initially for Scilab (http://www.scilab.org/).
 
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
@@ -52,31 +52,31 @@ import geogebra.main.Application;
         variables = new HashSet<String>();
         Iterator<GeoElement> iter = app.getKernel().getConstruction().getGeoSetLabelOrder().iterator();
         while (iter.hasNext()) {
-        	GeoElement g = iter.next();
-        	if (g.isLabelSet()) {
-        		variables.add(g.getLabel());
-        	}
+                GeoElement g = iter.next();
+                if (g.isLabelSet()) {
+                        variables.add(g.getLabel());
+                }
         }
         commands = new HashSet();
         commands.addAll(app.getCommandDictionary().values());
     }
 
     public GeoGebraLexer(Document doc, Application app) {
-		this(app);
+                this(app);
         setDocument(doc);
     }
 
-	public void setDocument(Document doc) {
-		this.doc = doc;
-		this.elem = doc.getDefaultRootElement();
-	}
+        public void setDocument(Document doc) {
+                this.doc = doc;
+                this.elem = doc.getDefaultRootElement();
+        }
 
     public void setRange(int p0, int p1) {
         this.start = p0;
         this.end = p1;
         String str = "";
         try {
-        	str = doc.getText(start, end - start);
+                str = doc.getText(start, end - start);
         } catch (BadLocationException e) { }
         yyreset(new StringReader(str));
     }
@@ -158,10 +158,10 @@ powern = {superscript_minus}? {indexdigit}+
 degre = "\u00b0"
 
 operator = {assignement} | {vertical_bar} | {not} | {or} | {and} | {eq_bool} | {not_eq_bool} |
-		   {is_element_of} | {contains} | {contains_strict} | {set_diff} | {inequality} |
-		   {parallel} | {perpendicular} | {equal} | {plus} | {minus} | {multiply} |
-		   {vectorproduct} | {divide} | {power} | {factorial} | {powern} | {degre}
-		   
+                   {is_element_of} | {contains} | {contains_strict} | {set_diff} | {inequality} |
+                   {parallel} | {perpendicular} | {equal} | {plus} | {minus} | {multiply} |
+                   {vectorproduct} | {divide} | {power} | {factorial} | {powern} | {degre}
+
 decimal_point = "." | "\u066b"
 digit = [\u0030-\u0039] | // Roman
         [\u0660-\u0669] | // Arabic-Indic
@@ -185,7 +185,7 @@ digit = [\u0030-\u0039] | // Roman
         [\u1c50-\u1c59] | // Ol Chiki
         [\u17e0-\u17e9] | // Khmer
         [\u1810-\u1819] | // Mongolian
-        [\ua8d0-\ua8d9]   // Saurashtra      
+        [\ua8d0-\ua8d9]   // Saurashtra
 integer = {digit}+
 float = ({integer} ({decimal_point} {integer})?) | ({decimal_point} {integer}) | ({integer} {decimal_point})
 efloat = {float} "E" ({plus} | {minus})? {integer}
@@ -194,24 +194,24 @@ percentage = {float} "%"
 number = {integer} | {float} | {efloat} | {percentage}
 
 letter = "$" |
-		 [\u0041-\u005a] |      // upper case (A-Z)
+         [\u0041-\u005a] |      // upper case (A-Z)
          [\u0061-\u007a] |      // lower case (a-z)
-         "\u00b7"        |   	// middle dot (for Catalan)
+         "\u00b7"        |      // middle dot (for Catalan)
          [\u00c0-\u00d6] |      // accentuated letters
-         [\u00d8-\u01bf] |		// accentuated letters
-         [\u01c4-\u02a8] |		// accentuated letters
-         [\u0391-\u03f3] | 		// Greek 
-       	 [\u0401-\u0481] |		// Cyrillic
-         [\u0490-\u04f9] |		// Cyrillic
-         [\u0531-\u1ffc] | 	    // a lot of signs (Arabic, accentuated, ...)
-         [\u3041-\u3357] | 	 	// Asian letters	 
-         [\u4e00-\ud7a3] |		// Asian letters
-         [\uf71d-\ufa2d] |		// Asian letters
-         [\ufb13-\ufdfb] |		// Armenian, Hebrew, Arabic
-         [\ufe80-\ufefc] |		// Arabic
-         [\uff66-\uff9d] |		// Katakana
+         [\u00d8-\u01bf] |      // accentuated letters
+         [\u01c4-\u02a8] |      // accentuated letters
+         [\u0391-\u03f3] |      // Greek
+         [\u0401-\u0481] |      // Cyrillic
+         [\u0490-\u04f9] |      // Cyrillic
+         [\u0531-\u1ffc] |      // a lot of signs (Arabic, accentuated, ...)
+         [\u3041-\u3357] |      // Asian letters
+         [\u4e00-\ud7a3] |      // Asian letters
+         [\uf71d-\ufa2d] |      // Asian letters
+         [\ufb13-\ufdfb] |      // Armenian, Hebrew, Arabic
+         [\ufe80-\ufefc] |      // Arabic
+         [\uff66-\uff9d] |      // Katakana
          [\uffa1-\uffdc]
-char = [\u0000-\u0021\u0023-\uffff]        				    
+char = [\u0000-\u0021\u0023-\uffff]
 string = "\"" {char}* "\""
 index = "_" ({char} | ("{" [^\}]+ "}"))
 //spreadsheet_label =  ("$")? [A-Za-z]+ ("$")? [0-9]+
@@ -219,17 +219,16 @@ label = {letter} ({letter} | {digit} | "'")* {index}? ({letter} | {digit})*
 varfoo = [xyz]
 
 builtin_functions = "x(" | "xcoord(" | "y(" | "ycoord(" | "y(" | "ycoord(" |
-				   	(("cos" | "Cos" |
-				      "sin" | "Sin" | "tan" | "Tan" | "csc" | "Csc" | "sec" | "Sec" |
-				      "cot" | "Cot" | "csch" | "Csch" | "sech" | "Sech" | "coth" | "Coth" |
-				      "cosh" | "Cosh" | "sinh" | "Sinh" | "tanh" | "Tanh") {powern}? "(") |
-				   "acos(" | "arccos(" | "arcos(" | "ArcCos(" | "asin(" | "arcsin(" | "ArcSin(" |
-				   "atan(" | "arctan(" | "ArcTan(" | "atan2(" | "arctan2(" | "ArcTan2(" |
-				   "acosh(" | "arccosh(" | "arcosh(" | "ArcCosh(" | "asinh(" | "arcsinh(" | "ArcSinh(" |
-				   "atanh(" | "arctanh(" | "ArcTanh(" | "exp(" | "Exp(" | "log(" | "ln(" | "Ln(" |
-				   "ld(" | "lg(" | "sqrt(" | "Sqrt(" | "cbrt(" | "abs(" | "Abs(" | "sgn(" | "sign(" | "Sign(" |
-				   "floor(" | "Floor(" | "ceil(" | "Ceil(" | "conjugate(" | "Conjugate(" | "arg(" | "Arg(" |
-				   "round(" | "Round(" | "gamma(" | "Gamma(" | "random(" | "Exp(" | "Deriv("
+                    (("cos" | "Cos" | "sin" | "Sin" | "tan" | "Tan" | "csc" | "Csc" | "sec" | "Sec" |
+                      "cot" | "Cot" | "csch" | "Csch" | "sech" | "Sech" | "coth" | "Coth" |
+                      "cosh" | "Cosh" | "sinh" | "Sinh" | "tanh" | "Tanh") {powern}? "(") |
+                    "acos(" | "arccos(" | "arcos(" | "ArcCos(" | "asin(" | "arcsin(" | "ArcSin(" |
+                    "atan(" | "arctan(" | "ArcTan(" | "atan2(" | "arctan2(" | "ArcTan2(" |
+                    "acosh(" | "arccosh(" | "arcosh(" | "ArcCosh(" | "asinh(" | "arcsinh(" | "ArcSinh(" |
+                    "atanh(" | "arctanh(" | "ArcTanh(" | "exp(" | "Exp(" | "log(" | "ln(" | "Ln(" |
+                    "ld(" | "lg(" | "sqrt(" | "Sqrt(" | "cbrt(" | "abs(" | "Abs(" | "sgn(" | "sign(" | "Sign(" |
+                    "floor(" | "Floor(" | "ceil(" | "Ceil(" | "conjugate(" | "Conjugate(" | "arg(" | "Arg(" |
+                    "round(" | "Round(" | "gamma(" | "Gamma(" | "random(" | "Exp(" | "Deriv("
 
 functions = {label} "("
 commands = {label} "["
@@ -255,50 +254,50 @@ commands = {label} "["
                                  }
 
   {builtin_functions}            {
-  								   yypushback(1);
+                                   yypushback(1);
                                    return GeoGebraLexerConstants.BUILTINFUNCTION;
                                  }
 
 /*  {spreadsheet_commands}       {
-  								   yypushback(1);
+                                   yypushback(1);
                                    return GeoGebraLexerConstants.SPREADSHEETCOMMANDS;
                                  } */
-                                 
+
   {functions}                    {
-  								   yypushback(1);
-  								   return GeoGebraLexerConstants.FUNCTION;
+                                   yypushback(1);
+                                   return GeoGebraLexerConstants.FUNCTION;
                                  }
 
   {commands}                     {
-  								   yypushback(1);
-  								   String com = yytext();
-  								   if (commands.contains(com)) {
-  								   		return GeoGebraLexerConstants.COMMAND;
-  								   }
-  								   
-  								   return GeoGebraLexerConstants.UNKNOWN;
-                                 }                                                                 
+                                   yypushback(1);
+                                   String com = yytext();
+                                   if (commands.contains(com)) {
+                                      return GeoGebraLexerConstants.COMMAND;
+                                   }
+
+                                   return GeoGebraLexerConstants.UNKNOWN;
+                                 }
 
   {string}                       {
                                    return GeoGebraLexerConstants.STRING;
                                  }
 
   {varfoo}                       {
-    							   	return GeoGebraLexerConstants.VARIABLE;
-  								 }                              
+                                   return GeoGebraLexerConstants.VARIABLE;
+                                 }
 
   {label}                        {
-    							   String lab = yytext();
-  								   if (variables.contains(lab)) {
-  								   		return GeoGebraLexerConstants.VARIABLE;
-  								   }
-  								   
-  								   return GeoGebraLexerConstants.UNKNOWN;
+                                   String lab = yytext();
+                                   if (variables.contains(lab)) {
+                                      return GeoGebraLexerConstants.VARIABLE;
+                                   }
+
+                                   return GeoGebraLexerConstants.UNKNOWN;
                                  }
-                                 
+
 /*  {spreadsheet_label}          {
                                    return GeoGebraLexerConstants.SPREADSHEET_LABEL;
-                                 } */                                
+                                 } */
 
   " "                            {
                                    return GeoGebraLexerConstants.WHITE;

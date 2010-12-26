@@ -1,13 +1,13 @@
 //CHECKSTYLE:OFF
 
-/* 
+/*
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
 
 This file is part of GeoGebra.
 
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
@@ -38,12 +38,12 @@ import javax.swing.text.Element;
 
     private JavascriptEditorKit.JavascriptDocument doc;
     private Element elem;
-    
+
     public JavascriptLexer() { }
 
     public JavascriptLexer(Document doc) {
-		this();
-		setDocument(doc);
+                this();
+                setDocument(doc);
     }
 
     public void setDocument(Document doc) {
@@ -57,11 +57,11 @@ import javax.swing.text.Element;
         String str = "";
         int line = elem.getElementIndex(p0);
         try {
-        	str = doc.getText(p0, p1 - p0);
+                str = doc.getText(p0, p1 - p0);
         } catch (BadLocationException e) { }
         yyreset(new StringReader(str));
         if (doc.isCommented(line - 1)) {
-        	yybegin(COMMENTS);
+                yybegin(COMMENTS);
         }
     }
 
@@ -74,7 +74,7 @@ import javax.swing.text.Element;
     }
 
     public int getKeyword(int pos, boolean strict) {
-    	int index = elem.getElementIndex(pos);
+        int index = elem.getElementIndex(pos);
         Element line = elem.getElement(index);
         int end = line.getEndOffset();
         int tok = -1;
@@ -85,9 +85,9 @@ import javax.swing.text.Element;
         try {
            yyreset(new StringReader(doc.getText(start, end - start)));
            if (doc.isCommented(index - 1)) {
-        		 yybegin(COMMENTS);
+                         yybegin(COMMENTS);
            }
-           
+
            if (!strict) {
               pos++;
            }
@@ -127,7 +127,7 @@ builtin = "Array" | "Boolean" | "Date" | "Function" | "Math" | "Number" | "Objec
 fielddef = {id} ":"
 objectname = {id} "."
 
-operator = [=;,.><!~?:+-*/%&|\^] | [=<>!+-*/&\^~%] "=" | "&&" | "++" | "||" | "--" | "!==" | (("<<" | ">>" | ">>>" | "==") "="?) 
+operator = [=;,.><!~?:+-*/%&|\^] | [=<>!+-*/&\^~%] "=" | "&&" | "++" | "||" | "--" | "!==" | (("<<" | ">>" | ">>>" | "==") "="?)
 
 integer = "0" | ([1-9][0-9]*)
 dec = (([0-9]+ "." [0-9]*) | ("." [0-9]+) | {integer}) ([eE]? [+-]? [0-9]+)? [fF]?
@@ -138,11 +138,11 @@ number = {integer} | {dec} | {oct} | {hex}
 string = ("\"" ([^\r\n\\\"]* | "\\"[^\r\n])+ "\"") | ("'" "\\"? [^\r\n\t] "'")
 
 keywords = "break" | "case" | "catch" | "continue" | "default" | "delete" | "do" | "else" | "finally" | "for" | "function"
-		   | "if" | "in" | "instanceof" | "new" | "return" | "switch" | "this" | "throw" | "try" | "typeof"
-		   | "var" | "void" | "while" | "with"
+                   | "if" | "in" | "instanceof" | "new" | "return" | "switch" | "this" | "throw" | "try" | "typeof"
+                   | "var" | "void" | "while" | "with"
 
 function = {id} [ \t]* "("
-		   
+
 ggbspecial = "ggbApplet"
 
 %x FIELD, FUNCTION, COMMENTS
@@ -153,34 +153,34 @@ ggbspecial = "ggbApplet"
   {comments}                     {
                                    return JavascriptLexerConstants.COMMENTS;
                                  }
-                                 
+
   {begincomments}                {
-  								   yybegin(COMMENTS);
+                                   yybegin(COMMENTS);
                                    return JavascriptLexerConstants.COMMENTS;
-                                 }                               
+                                 }
 
   {constantes}                   {
                                    return JavascriptLexerConstants.CONSTANTE;
                                  }
-                                 
+
   {fieldafterclose}              {
-  								   yypushback(1);
-  								   return JavascriptLexerConstants.OPENCLOSE;
-  								 }
+                                   yypushback(1);
+                                   return JavascriptLexerConstants.OPENCLOSE;
+                                 }
 
   {openclose}                    {
                                    return JavascriptLexerConstants.OPENCLOSE;
                                  }
-                                 
+
   {number}                       {
                                    return JavascriptLexerConstants.NUMBER;
                                  }
 
-  {string}						 {
+  {string}                       {
                                    return JavascriptLexerConstants.STRING;
                                  }
-                                 
-  {keywords}					 {
+
+  {keywords}                     {
                                    return JavascriptLexerConstants.KEYWORD;
                                  }
 
@@ -191,48 +191,48 @@ ggbspecial = "ggbApplet"
   {operator}                     {
                                    return JavascriptLexerConstants.OPERATOR;
                                  }
-                                 
+
   {fielddef}                     {
                                    yypushback(1);
                                    return JavascriptLexerConstants.FIELDDEF;
                                  }
-                                 
+
   {ggbspecial} "."               {
                                    yypushback(1);
                                    yybegin(FIELD);
                                    return JavascriptLexerConstants.GGBSPECIAL;
                                  }
-                                 
+
   "this."                        {
                                    yypushback(1);
                                    yybegin(FIELD);
                                    return JavascriptLexerConstants.KEYWORD;
                                  }
-                                 
+
   {builtin}"."                   {
                                    yypushback(1);
                                    yybegin(FIELD);
                                    return JavascriptLexerConstants.BUILTINOBJECT;
-                                 }                                                                
+                                 }
 
   {objectname}                   {
                                    yypushback(1);
                                    yybegin(FIELD);
                                    return JavascriptLexerConstants.OBJECTNAME;
                                  }
-                                 
-  {ggbspecial}				     {
-  								   return JavascriptLexerConstants.GGBSPECIAL;
-  								 }  								                                 
-                                 
-  {id}						     {
-  								   return JavascriptLexerConstants.IDENTIFIER;
-  								 }
 
-  {function}				     {
-  								   yypushback(yylength());
-  								   yybegin(FUNCTION);
-  								 }
+  {ggbspecial}                   {
+                                   return JavascriptLexerConstants.GGBSPECIAL;
+                                 }
+
+  {id}                           {
+                                   return JavascriptLexerConstants.IDENTIFIER;
+                                 }
+
+  {function}                     {
+                                   yypushback(yylength());
+                                   yybegin(FUNCTION);
+                                 }
 
   " "                            {
                                    return JavascriptLexerConstants.WHITE;
@@ -249,69 +249,67 @@ ggbspecial = "ggbApplet"
 }
 
 <FIELD> {
-  "."							 {
+  "."                            {
                                    return JavascriptLexerConstants.OPERATOR;
-                                 } 
+                                 }
 
-  {ggbspecial} "."			     {
-  								   yypushback(1);
+  {ggbspecial} "."               {
+                                   yypushback(1);
                                    return JavascriptLexerConstants.GGBSPECIAL;
                                  }
 
-  {objectname}				     {
-  								   yypushback(1);
+  {objectname}                   {
+                                   yypushback(1);
                                    return JavascriptLexerConstants.OBJECTNAME;
                                  }
 
-  {ggbspecial}				     {
-  								   return JavascriptLexerConstants.GGBSPECIAL;
+  {ggbspecial}                   {
+                                   return JavascriptLexerConstants.GGBSPECIAL;
                                  }
 
-  {function}				     {
-  								   yypushback(yylength());
-  								   yybegin(FUNCTION);
-  								 }
-                                 
-  {id}				             {
-  								   return JavascriptLexerConstants.FIELD;
-                                 }                                 
+  {function}                     {
+                                   yypushback(yylength());
+                                   yybegin(FUNCTION);
+                                 }
+
+  {id}                           {
+                                   return JavascriptLexerConstants.FIELD;
+                                 }
 
   {eol}                          {
                                    return JavascriptLexerConstants.DEFAULT;
-                                 }                                  	
+                                 }
 
-  .								 {
-  								   yypushback(1);
-  								   yybegin(YYINITIAL);
-  								 }  								   
+  .                              {
+                                   yypushback(1);
+                                   yybegin(YYINITIAL);
+                                 }
 }
 
 <FUNCTION> {
-  {id}							 {
-  								   return JavascriptLexerConstants.FUNCTION;
-  								 }
-  								 
-  [ \t]*  						 { }
+  {id}                           {
+                                   return JavascriptLexerConstants.FUNCTION;
+                                 }
 
-  "("		   					 {
-  								   yybegin(YYINITIAL);
-  								   return JavascriptLexerConstants.OPENCLOSE;
-  								 }
+  [ \t]*                         { }
+
+  "("                            {
+                                   yybegin(YYINITIAL);
+                                   return JavascriptLexerConstants.OPENCLOSE;
+                                 }
 }
 
 <COMMENTS> {
   "*/"                           {
-  		                           yybegin(YYINITIAL);
-  			 					   return JavascriptLexerConstants.COMMENTS;
-  								 }
+                                   yybegin(YYINITIAL);
+                                   return JavascriptLexerConstants.COMMENTS;
+                                 }
 
   {insidecomments}               |
   {eol}                          |
   .                              {
-  			 					   return JavascriptLexerConstants.COMMENTS;
-  								 }
-  								 
-  								 
+                                   return JavascriptLexerConstants.COMMENTS;
+                                 }
 }
 
 <<EOF>>                          {

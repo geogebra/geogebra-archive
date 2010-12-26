@@ -1,13 +1,13 @@
 //CHECKSTYLE:OFF
 
-/* 
+/*
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
 
 This file is part of GeoGebra.
 
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
@@ -41,8 +41,8 @@ import javax.swing.text.Element;
     public LaTeXLexer() { }
 
     public LaTeXLexer(Document doc) {
-		this();
-		setDocument(doc);
+                this();
+                setDocument(doc);
     }
 
     public void setDocument(Document doc) {
@@ -55,7 +55,7 @@ import javax.swing.text.Element;
         end = p1;
         String str = "";
         try {
-        	str = doc.getText(p0, p1 - p0);
+                str = doc.getText(p0, p1 - p0);
         } catch (BadLocationException e) { }
         yyreset(new StringReader(str));
     }
@@ -129,17 +129,17 @@ comments = "%".*{eol}
   {openclose}                    {
                                    return LaTeXLexerConstants.OPENCLOSE;
                                  }
-                                 
+
   {number}                       {
                                    return LaTeXLexerConstants.NUMBER;
                                  }
 
   {sub}                          |
-  {sup}						     {
+  {sup}                          {
                                    return LaTeXLexerConstants.SUBSUP;
                                  }
-                                 
-  {dollar}					     {
+
+  {dollar}                       {
                                    return LaTeXLexerConstants.DOLLAR;
                                  }
 
