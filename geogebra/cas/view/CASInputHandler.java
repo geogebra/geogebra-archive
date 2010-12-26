@@ -482,6 +482,14 @@ public class CASInputHandler {
 		}
 	}
 	
+	/**
+	 * Goes through the input of a given row and updates all the Row-References.
+	 * @param changedRow the row that was changed. For Insertions, that is the row after 
+	 *                   which a new row was inserted, for deletions it's the deleted row
+	 * @param currentRow the row whose input should be updated
+	 * @param delimiter  the delimiter-char of the reference (i.e. $ or #)
+	 * @param isInsertion true for insertions, false for deletions
+	 */
 	public void updateReferencesAfterRowInsertOrDelete(int changedRow, int currentRow, char delimiter, boolean isInsertion) {	
 		
 		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
@@ -503,6 +511,8 @@ public class CASInputHandler {
 			sb.append(delimiter);
 			if (isInsertion && rowRef > changedRow)
 				sb.append(rowRef + 2);
+			else if (!isInsertion && rowRef == changedRow) // references deleted row
+				sb.append('?');
 			else if (!isInsertion && rowRef > changedRow)
 				sb.append(rowRef);
 			else
