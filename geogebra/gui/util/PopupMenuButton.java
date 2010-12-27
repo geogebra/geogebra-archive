@@ -172,6 +172,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			@Override
 			public void mousePressed(MouseEvent e) {
 	
+				if(!thisButton.isEnabled()) return;
 				if(popupIsVisible == true && !myPopup.isVisible()){
 					popupIsVisible = false;
 					return;
