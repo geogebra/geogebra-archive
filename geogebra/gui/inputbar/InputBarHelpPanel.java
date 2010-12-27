@@ -203,17 +203,17 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		btnPaste.addActionListener(this);
 		btnPaste.setFocusable(false);
 		
-		btnOnlineHelp = new JButton(app.getImageIcon("help.png"));
+		btnOnlineHelp = new JButton(app.getPlain("ShowOnlineHelp"));
 		btnOnlineHelp.setFocusable(false);
 		btnOnlineHelp.addActionListener(this);
-		btnOnlineHelp.setBorderPainted(false);
-		btnOnlineHelp.setContentAreaFilled(false);
-		btnOnlineHelp.setPreferredSize(new Dimension(24,20));
+		//btnOnlineHelp.setBorderPainted(false);
+		//btnOnlineHelp.setContentAreaFilled(false);
+		//btnOnlineHelp.setPreferredSize(new Dimension(24,20));
 		
 		JPanel leftPanel = new JPanel(new FlowLayout());
 		leftPanel.add(btnPaste);
 		
-		JPanel rightPanel = new JPanel(new FlowLayout());
+		JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		rightPanel.add(btnOnlineHelp);
 		rightPanel.add(btnRefresh);
 		
@@ -339,7 +339,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		syntaxHelpPanel.setMinimumSize(d);
 		
 		d = this.getMinimumSize();
-		d.width = (int) (1.25* this.cmdSplitPane.getPreferredSize().width);
+		d.width = Math.max( (int) (1.25* this.cmdSplitPane.getPreferredSize().width),
+				this.getPreferredSize().width);
 		this.setMinimumSize(d);
 		
 		
