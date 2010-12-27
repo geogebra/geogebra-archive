@@ -112,7 +112,7 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath">		
+			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-usb-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath">		
 	</target>
 	
 	<!-- compiles grammar -->
@@ -151,20 +151,20 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files3D" 
-			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath, ggb-copy-jogl">		
+			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-usb-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath, ggb-copy-jogl">		
 	</target>
 	
 	<manifest file="../manifest.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_algos.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_usb.jar geogebra_algos.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
 	<manifest file="../manifest3D.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra3D"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_algos.jar geogebra_3d.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar jogl.jar gluegen-rt.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_usb.jar geogebra_algos.jar geogebra_3d.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar jogl.jar gluegen-rt.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
@@ -270,6 +270,7 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 		    <arg value="geogebra_main.jar"/>
 			<arg value="geogebra_gui.jar"/>
 			<arg value="geogebra_cas.jar"/>
+			<arg value="geogebra_usb.jar"/>
 			<arg value="geogebra_algos.jar"/>
 			<arg value="geogebra_export.jar"/>
 			<arg value="geogebra_javascript.jar"/>
@@ -308,6 +309,7 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 		    <arg value="geogebra_main.jar"/>
 			<arg value="geogebra_gui.jar"/>
 			<arg value="geogebra_cas.jar"/>
+			<arg value="geogebra_usb.jar"/>
 			<arg value="geogebra_algos.jar"/>
 			<arg value="geogebra_3d.jar"/>
 			<arg value="geogebra_export.jar"/>
@@ -368,6 +370,16 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 		/>
 	</target>
 	
+	<target name="ggb-usb-jar" depends="clean" description="create unsigned geogebra_usb.jar">
+		<jar jarfile="${build.dir}/geogebra_usb.jar"
+			basedir="${src.dir}"
+			includes="org/concord/**,
+						ccsd/**,
+			geogebra/usb/**"
+			excludes="**/*.java" 
+		/>
+	</target>
+	
 	<target name="ggb-cas-jar" depends="clean" description="create unsigned geogebra_cas.jar">
 		<jar jarfile="${build.dir}/geogebra_cas.jar"
 			basedir="${src.dir}"
@@ -420,7 +432,8 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 	<!-- Define Proguard task -->
 	<taskdef 
 		resource="proguard/ant/task.properties" 
-		classpath="tools_proguard451.jar" />
+		classpath="tools_proguard451.jar"
+		 />
 	
 	<!-- Define pack200 task -->
 	<!-- bug in Java 6, see http://www.geogebra.org/forum/viewtopic.php?f=8&t=3972&st=0&sk=t&sd=a&start=15 -->
@@ -444,7 +457,8 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 		<antcall target="doObfuscate"/>
 	</target>
 	<target name="doObfuscate" if="java150-rt.present" description="obfuscate jar files">
-			<proguard configuration="build.pro"/>
+			<proguard configuration="build.pro"
+			/>
 			<move todir="${build.dir}">
 			    <fileset dir="${temp.dir}">
 			      <include name="*.jar"/>
