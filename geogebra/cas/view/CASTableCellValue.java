@@ -174,7 +174,6 @@ public class CASTableCellValue {
 	 * @return success
 	 */
 	public void setInput(String inValue) {
-System.out.println("SETVALUE: " + inValue);
 		if (input != null && input.equals(inValue)) return;
 		
 		input = inValue;
