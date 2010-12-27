@@ -2,7 +2,7 @@ These files are for automated server-side builds using Subversion via HTTP.
 
 Usage:
 
-1. Edit autobuild.conf.
+1. Copy autobuild.conf.dist to autobuild.conf and edit as needed.
 
 2. Run ./checkout to create a working copy of the repository (this step
    is needed only once).
