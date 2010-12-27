@@ -771,31 +771,6 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		return true;
 	}
 	
-	Object keyLaTeX = null;
-
-	public Object getCachedLaTeXKey(String latex, int fontSize) {
-		Object newKey;
-		try {
-		newKey = JLaTeXMathCache.getCachedTeXFormula(latex, TeXConstants.STYLE_DISPLAY, fontSize, 1 /* inset around the label*/);
-		} catch (ParseException e) {
-			if (keyLaTeX != null) {
-				// remove old key from cache
-				JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
-			}
-			throw e;
-		}
-		if (keyLaTeX != null && !keyLaTeX.equals(newKey)) {
-			// key has changed, remove old key from cache
-			JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
-			Application.debug("removing");
-		}
-		
-		keyLaTeX = newKey;
-		return keyLaTeX;
-	
-	}
-	
-	
 	
 
 

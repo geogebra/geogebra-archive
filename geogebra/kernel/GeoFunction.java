@@ -38,7 +38,7 @@ import java.util.Locale;
  * @author Markus Hohenwarter
  */
 public class GeoFunction extends GeoElement
-implements Path, Translateable, Traceable, Functional, FunctionalNVar, GeoFunctionable,Region,
+implements VarString, Path, Translateable, Traceable, Functional, FunctionalNVar, GeoFunctionable,Region,
 CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilateable {
 
 	private static final long serialVersionUID = 1L;

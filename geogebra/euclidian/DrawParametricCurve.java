@@ -16,7 +16,9 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
+import geogebra.kernel.VarString;
 import geogebra.kernel.roots.RealRootUtil;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -83,6 +85,8 @@ public class DrawParametricCurve extends Drawable {
         geo = curve.toGeoElement();        
         update();
     }
+    
+    StringBuilder labelSB = new StringBuilder();
 
     final public void update() {				   
         isVisible = geo.isEuclidianVisible();
@@ -120,7 +124,34 @@ public class DrawParametricCurve extends Drawable {
 		if (labelPoint != null) {
 			xLabel = labelPoint.x;
 			yLabel = labelPoint.y;
-			labelDesc = geo.getLabelDescription();
+			switch (geo.labelMode) {
+			case GeoElement.LABEL_NAME_VALUE :
+				labelSB.setLength(0);
+				labelSB.append('$');
+				labelSB.append(geo.getLabel());
+				labelSB.append('(');
+				labelSB.append(((VarString)geo).getVarString());
+				Application.debug(geo.getClassName());
+				labelSB.append(")\\;=\\;");
+				labelSB.append(geo.getLaTeXdescription());
+				labelSB.append('$');
+				
+				labelDesc = labelSB.toString();
+				break;
+
+			case GeoElement.LABEL_VALUE :
+				labelSB.setLength(0);
+				labelSB.append('$');
+				labelSB.append(geo.getLaTeXdescription());
+				labelSB.append('$');
+				
+				labelDesc = labelSB.toString();
+				break;
+				
+			case GeoElement.LABEL_CAPTION: 
+			default : // case LABEL_NAME:
+				labelDesc = geo.getLabelDescription();
+			}
 			addLabelOffset();
 		}
 		

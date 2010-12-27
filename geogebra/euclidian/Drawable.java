@@ -128,7 +128,7 @@ public abstract class Drawable extends DrawableND {
 		if (label.startsWith("$") && label.endsWith("$")) {
 			boolean serif = true; // nice "x"s
 			if (geo.isGeoText()) serif = ((GeoText)geo).isSerifFont();
-			Dimension dim = drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont().deriveFont(Font.ITALIC), serif, g2.getColor(), g2.getBackground());
+			Dimension dim = drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont(), serif, g2.getColor(), g2.getBackground());
 			labelRectangle.setBounds(xLabel, yLabel, (int)dim.getWidth(), (int)dim.getHeight());	
 			return;
 		}
@@ -450,7 +450,7 @@ public abstract class Drawable extends DrawableND {
 	final  public static Dimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
 	
 		//if (useJLaTeXMath) 
-			return drawEquationJLaTeXMath(app, (GeoText)geo, g2, x, y, text, font, serif, fgColor, bgColor);
+			return drawEquationJLaTeXMath(app, geo.isGeoText() ? (GeoText)geo : null, g2, x, y, text, font, serif, fgColor, bgColor);
 		//else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
 	}
 	
@@ -517,7 +517,7 @@ public abstract class Drawable extends DrawableND {
 	 * @param bgColor
 	 * @return dimension of rendered equation
 	 */
-	final  public static Dimension drawEquationJLaTeXMath(Application app, GeoText geoText, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
+	final  public static Dimension drawEquationJLaTeXMath(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
 	{
 		
 		if (eqnSB == null) { // first call
@@ -605,10 +605,10 @@ public abstract class Drawable extends DrawableND {
 			// if geoText != null then keep track of which key goes with the GeoText
 			// so that we can remove it from the cache if it changes
 			// eg for a (regular) dynamic LaTeX text eg "\sqrt{"+a+"}"
-			if (geoText == null)
+			if (geo == null)
 				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/);
 			else
-				key = geoText.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3);
+				key = geo.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3);
 			} catch (ParseException e) {
 				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				return new Dimension(rec.width, rec.height);

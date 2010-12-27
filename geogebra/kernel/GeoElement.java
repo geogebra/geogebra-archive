@@ -49,6 +49,10 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.scilab.forge.jlatexmath.ParseException;
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.cache.JLaTeXMathCache;
+
 
 /**
  *
@@ -348,7 +352,7 @@ public abstract class GeoElement
 	private boolean isConsProtBreakpoint; // in construction protocol
 	private boolean isAlgoMacroOutput; // is an output object of a macro construction
 	private boolean fixed = false;
-	private int labelMode = LABEL_NAME;
+	public int labelMode = LABEL_NAME;
 	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar	  
 	protected Color objColor = Color.black;
 	protected Color bgColor = null; // none by default
@@ -5199,6 +5203,34 @@ public abstract class GeoElement
 		else
 			return getXmax();
 	}
+	
+	// used by Captions, GeoText and DrawParametricCurve to cache LaTeX formulae
+	Object keyLaTeX = null;
+
+	public Object getCachedLaTeXKey(String latex, int fontSize) {
+		Object newKey;
+		try {
+		newKey = JLaTeXMathCache.getCachedTeXFormula(latex, TeXConstants.STYLE_DISPLAY, fontSize, 1 /* inset around the label*/);
+		} catch (ParseException e) {
+			if (keyLaTeX != null) {
+				// remove old key from cache
+				JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			}
+			throw e;
+		}
+		if (keyLaTeX != null && !keyLaTeX.equals(newKey)) {
+			// key has changed, remove old key from cache
+			JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+			Application.debug("removing");
+		}
+		
+		keyLaTeX = newKey;
+		return keyLaTeX;
+	
+	}
+	
+	
+
 	
 	
 
