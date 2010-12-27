@@ -242,23 +242,23 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertLaTeX.setEnabled(false);
 		
 		JMenu menu;
-		menu = new JMenu("roots & fractions");
+		menu = new JMenu(app.getMenu("RootsAndFractions"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.prefixOps, 1, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
-		menu = new JMenu("sums and inegrals");
+		menu = new JMenu(app.getMenu("SumsAndIntegrals"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.sums, 1, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
-		menu = new JMenu("accents");
+		menu = new JMenu(app.getMenu("Accents"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.accents, 2, -1, SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 
-		menu = new JMenu("accentsExt");
+		menu = new JMenu(app.getMenu("AccentsExt"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.accentsExtended, 2, -1, SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 
-		menu = new JMenu("brackets");
+		menu = new JMenu(app.getMenu("Brackets"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.brackets, 2, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		

@@ -59,22 +59,22 @@ public class CommandDispatcher {
     
     public String getSubCommandSetName(int index){
     	switch (index) {
-    	case TABLE_GEOMETRY: return app.getMenu("Geometry");
-    	case TABLE_ALGEBRA: return app.getMenu("Algebra");
-    	case TABLE_TEXT: return app.getMenu("Text ");
-    	case TABLE_LOGICAL: return app.getMenu("Logic");
-    	case TABLE_FUNCTION: return app.getMenu("Functions & Calculus");
-    	case TABLE_CONIC: return app.getMenu("Conic");
-    	case TABLE_LIST: return app.getMenu("List");
-    	case TABLE_VECTOR:return app.getMenu("Vector & Matrix");
-    	case TABLE_TRANSFORMATION: return app.getMenu("Transformation");
-    	case TABLE_CHARTS: return app.getMenu("Chart");
-    	case TABLE_STATISTICS: return app.getMenu("Statistics");
-    	case TABLE_PROBABILITY: return app.getMenu("Probability");
-    	case TABLE_SPREADSHEET: return app.getMenu("Spreadsheet");
-    	case TABLE_SCRIPTING: return app.getMenu("Scripting");
-    	case TABLE_DISCRETE_MATH: return app.getMenu("Discrete Math");
-    	case TABLE_OTHER: return app.getMenu("Other Commands");
+    	case TABLE_GEOMETRY: return app.getMenu("Type.Geometry");
+    	case TABLE_ALGEBRA: return app.getMenu("Type.Algebra");
+    	case TABLE_TEXT: return app.getMenu("Type.Text");
+    	case TABLE_LOGICAL: return app.getMenu("Type.Logic");
+    	case TABLE_FUNCTION: return app.getMenu("Type.FunctionsAndCalculus");
+    	case TABLE_CONIC: return app.getMenu("Type.Conic");
+    	case TABLE_LIST: return app.getMenu("Type.List");
+    	case TABLE_VECTOR:return app.getMenu("Type.VectorAndMatrix");
+    	case TABLE_TRANSFORMATION: return app.getMenu("Type.Transformation");
+    	case TABLE_CHARTS: return app.getMenu("Type.Chart");
+    	case TABLE_STATISTICS: return app.getMenu("Type.Statistics");
+    	case TABLE_PROBABILITY: return app.getMenu("Type.Probability");
+    	case TABLE_SPREADSHEET: return app.getMenu("Type.Spreadsheet");
+    	case TABLE_SCRIPTING: return app.getMenu("Type.Scripting");
+    	case TABLE_DISCRETE_MATH: return app.getMenu("Type.DiscreteMath");
+    	case TABLE_OTHER: return app.getMenu("Type.OtherCommands");
     	default: return null;
     	}
     }
