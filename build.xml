@@ -323,29 +323,31 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 	    
 	<!-- geogebra_main.jar includes all basic classes to run the application and applet  -->
 	<target name="ggb-main-jar" depends="clean" description="create unsigned geogebra_main.jar">		
-		<jar jarfile="${build.dir}/geogebra_main.jar"		
-			basedir="${src.dir}"		   
-			includes="**/*.class, 				
+		<jar jarfile="${build.dir}/geogebra_main.jar"
+			basedir="${src.dir}"
+			includes="**/*.class,
 					  geogebra/main/*.png,
-					  **/algo2command.properties,	
-					  **/algo2intergeo.properties"			
+					  **/algo2command.properties,
+					  **/algo2intergeo.properties"
 			excludes="geogebra/*,
 					geogebra/gui/**,
 					geogebra/export/**, 
 					geogebra/cas/**,
-			geogebra/kernel/discrete/**,
-			geogebra/kernel/statistics/**,
-					jasymca/**,		
-					geogebra3D/**,			
-					3D/**,			
+					geogebra/kernel/discrete/**,
+					geogebra/kernel/statistics/**,
+					jasymca/**,
+					geogebra3D/**,
+					3D/**,
+					org/**,
+					geogebra/usb/**,
 					org/mathpiper/**,
 					org/mozilla/**,
 					org/freehep/**, 
 					edu/**,
 					org/apache/**,
 					org/apache/log4j/**, 
-				    tutor/**,
-					meta-inf/**"		
+					tutor/**,
+					meta-inf/**"
 		/>
 	</target>
 	
