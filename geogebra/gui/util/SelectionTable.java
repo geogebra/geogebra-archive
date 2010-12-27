@@ -232,7 +232,7 @@ public class SelectionTable extends JTable{
 		int w;
 		for (int i = 0; i < getColumnCount(); ++ i) {	
 			// for mode=text, adjust column width to the maximum width in the column	
-			if(mode == MODE_TEXT){
+			if(mode == MODE_TEXT || mode == MODE_LATEX){
 				w = getMaxColumnWidth(this,i); 
 				getColumnModel().getColumn(i).setPreferredWidth(w);
 				columnWidth = Math.max(w, columnWidth);
