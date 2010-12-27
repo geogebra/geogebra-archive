@@ -1,6 +1,7 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.plots.CurveMesh;
@@ -92,38 +93,21 @@ public class DrawCurve3D extends Drawable3DCurves {
 	
 	@Override
 	protected void realtimeUpdate(){
+		
 		Renderer renderer = getView3D().getRenderer();
 		mesh.setRadius(savedRadius);
 		mesh.optimize();
 		
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
-		
+		brush.start(8);
 		brush.draw(mesh,savedRadius);
 
 		setGeometryIndex(brush.end());
+		
 	}
 	
 	protected boolean updateForItSelf(){
-//		Renderer renderer = getView3D().getRenderer();
-//		
-//		
-//		if (!curve.isEuclidianVisible() || !curve.isDefined()){
-//			setGeometryIndex(-1);
-//			
-//		//} else if(needRedraw()){
-//		}else{
-//			
-//			PlotterBrush brush = renderer.getGeometryManager().getBrush();
-//
-//			brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
-//
-//			brush.start(8);
-//			
-//			brush.draw(mesh,savedRadius);
-//
-//			setGeometryIndex(brush.end());
-//		}
-//		
+
 		return true;
 	}
 	

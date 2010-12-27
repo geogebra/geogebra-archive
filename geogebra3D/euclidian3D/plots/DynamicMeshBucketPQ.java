@@ -19,7 +19,6 @@ public class DynamicMeshBucketPQ extends BucketPQ<AbstractDynamicMeshElement> {
 		super(ba);
 	}
 
-	@Override
 	public boolean add(AbstractDynamicMeshElement object) {
 		if (findLink(object) != null) // already in queue
 			return false;

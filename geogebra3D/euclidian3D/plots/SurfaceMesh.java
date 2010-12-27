@@ -589,7 +589,7 @@ class SurfaceMeshBucketPQ extends BucketPQ<SurfaceMeshDiamond> {
 		super(ba);
 	}
 
-	@Override
+
 	public boolean add(SurfaceMeshDiamond object) {
 		if (findLink(object) != null) // already in queue
 			return false;
