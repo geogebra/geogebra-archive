@@ -2,7 +2,7 @@
 
 <!-- README: Building GeoGebra 
 
-This script builds unsigned GeoGebra jar files for testing purposes.
+This script builds GeoGebra jar files for testing purposes.
 This Ant script must be run using JDK 1.5 (NOT 1.6 or later).
 Note that GeoGebra itself needs to be compiled using Java 1.5 
 
@@ -26,6 +26,48 @@ office@geogebra.org
 
 -->
 
+<!-- Additional notes for compiling GeoGebra from command line
+(typically under Linux for automated builds)
+
+Edited by Zoltan Kovacs <zoltan@geogebra.org>
+
+I had to add the compile-grammar and compile-oe targets in the depends
+list of geogebra. Probably the same should be done for the other
+geogebra* targets as well (currently only the geogebra target has
+been extended).
+
+Prerequisities:
+
+* Sun Java 1.5 (see http://packages.ubuntu.com/jaunty-updates/sun-java5-jdk for details)
+
+  The easiest way to install it under Ubuntu/Debian systems is to add the following
+  lines to /etc/apt/sources.list and then enter 'apt-get update; apt-get install sun-java5-jdk':
+
+  deb http://hu.archive.ubuntu.com/ubuntu/ jaunty multiverse
+  deb-src http://hu.archive.ubuntu.com/ubuntu/ jaunty multiverse
+  deb http://hu.archive.ubuntu.com/ubuntu/ jaunty-updates multiverse
+  deb-src http://hu.archive.ubuntu.com/ubuntu/ jaunty-updates multiverse
+  
+* ant
+
+  Install it by entering 'apt-get install ant'.
+
+Compilation and packaging:
+
+To start the compilation process, first make sure you are using the correct Java version.
+Ensure it by typing 'export JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun'. Then enter
+'alias signjar=jarsigner' and 'ant'.
+
+The resulted .jar files will be put into the build/ directory.
+
+Testing:
+
+To run the compiled packages you need Sun Java. OpenJDK Java will not work due to
+some missing libraries:
+
+Exception in thread "main" java.lang.UnsatisfiedLinkError:
+Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
+-->
 
 <!--
    GeoGebra build script
@@ -42,7 +84,8 @@ office@geogebra.org
 	
 	<!-- build signed and unsigned GeoGebra jar files -->
 	<target name="geogebra" 
-		depends="clean, ggb-jar-files, copyDebug, signDebug, obfuscate, delete3D, ggb-jar-index, 
+		depends="clean, compile-grammar, compile-oe,
+		ggb-jar-files, copyDebug, signDebug, obfuscate, delete3D, ggb-jar-index, 
 					copyJars, sign, pack, preloadHtml, finish">	  
 	</target>
 	
@@ -66,11 +109,18 @@ office@geogebra.org
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files" 
-			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-usb-jar, ggb-copy-jlatexmath">		
+			depends="ggb-jar, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-usb-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath">		
 	</target>
 	
 	<!-- compiles grammar -->
+	<!-- FIXME: First it deletes all files which are generated (local clean). This may be time consuming. -->
 	<target name="compile-grammar">
+		<delete>
+		    <fileset dir="./geogebra/kernel" includes="**/*.class"/>
+		</delete>
+		<delete>
+		    <fileset dir="./geogebra/kernel/parser" includes="**/*.java"/>
+		</delete>
 		<javacc
 		   target="./geogebra/kernel/parser/Parser.jj"
 		   javacchome="./javacc"
@@ -79,7 +129,6 @@ office@geogebra.org
 	</target>
 
         <target name="compile-oe">
-                <mkdir dir="${build.dir}/classes"/>
                 <path id="build.class.path">
                         <fileset dir="${src.dir}">
                                 <include name="*.jar"/>
@@ -88,27 +137,31 @@ office@geogebra.org
                         </fileset>
                 </path>
                 <javac srcdir="${src.dir}"
-                       destdir="${build.dir}/classes">
+                       memoryInitialSize="1024m"
+                       memoryMaximumSize="1024m"
+                       fork="yes">
                         <classpath refid="build.class.path"/>
                 </javac>
         </target>
+
+        
 	
 	<!-- create all jar files -->
 	<target name="ggb-jar-files3D" 
-			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-usb-jar, ggb-copy-jlatexmath, ggb-copy-jogl">		
+			depends="ggb-jar3D, ggb-main-jar, ggb-export-jar, ggb-properties-jar, ggb-cas-jar, ggb-usb-jar, ggb-algos-jar, ggb-gui-jar, ggb-javascript-jar, ggb-3d-jar, ggb-copy-jlatexmath, ggb-copy-jogl">		
 	</target>
 	
 	<manifest file="../manifest.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_algos.jar geogebra_javascript.jar geogebra_usb.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_usb.jar geogebra_algos.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
 	<manifest file="../manifest3D.mf">	    
 		<attribute name="Main-Class" value="geogebra.GeoGebra3D"/>
 		<attribute name="Class-Path" 
-			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_algos.jar geogebra_3d.jar geogebra_javascript.jar geogebra_usb.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar jogl.jar gluegen-rt.jar"/>
+			value="geogebra.jar geogebra_main.jar geogebra_gui.jar geogebra_properties.jar geogebra_export.jar geogebra_cas.jar geogebra_usb.jar geogebra_algos.jar geogebra_3d.jar geogebra_javascript.jar jlatexmath.jar jlm_greek.jar jlm_cyrillic.jar jogl.jar gluegen-rt.jar"/>
 		<!--	<attribute name="SplashScreen-Image" value="geogebra/splash.gif"/>	-->
 	</manifest>	
 	
@@ -214,14 +267,12 @@ office@geogebra.org
 		    <arg value="geogebra_main.jar"/>
 			<arg value="geogebra_gui.jar"/>
 			<arg value="geogebra_cas.jar"/>
+			<arg value="geogebra_usb.jar"/>
 			<arg value="geogebra_algos.jar"/>
 			<arg value="geogebra_export.jar"/>
 			<arg value="geogebra_javascript.jar"/>
 			<arg value="geogebra_properties.jar"/>
-			<arg value="geogebra_usb.jar"/>
 			<arg value="jlatexmath.jar"/>
-			<arg value="jlm_cyrillic.jar"/>
-			<arg value="jlm_cyrillic.jar"/>
 		 </exec>
 	</target>
 	<!-- copies the jogl jars  -->
@@ -255,12 +306,12 @@ office@geogebra.org
 		    <arg value="geogebra_main.jar"/>
 			<arg value="geogebra_gui.jar"/>
 			<arg value="geogebra_cas.jar"/>
+			<arg value="geogebra_usb.jar"/>
 			<arg value="geogebra_algos.jar"/>
 			<arg value="geogebra_3d.jar"/>
 			<arg value="geogebra_export.jar"/>
 			<arg value="geogebra_javascript.jar"/>
 			<arg value="geogebra_properties.jar"/>
-			<arg value="geogebra_usb.jar"/>
 			<arg value="geogebra_jogl.jar"/>
 			<arg value="geogebra_gluegen-rt.jar"/>
 			<arg value="jlatexmath.jar"/>
@@ -282,18 +333,14 @@ office@geogebra.org
 					geogebra/gui/**,
 					geogebra/export/**, 
 					geogebra/cas/**,
-					geogebra/kernel/discrete/**,
-					geogebra/kernel/statistics/**,
+			geogebra/kernel/discrete/**,
+			geogebra/kernel/statistics/**,
 					jasymca/**,		
 					geogebra3D/**,			
-					3D/**,	
-					org/**,
+					3D/**,			
 					org/mathpiper/**,
 					org/mozilla/**,
 					org/freehep/**, 
-					org/concord/**,
-					ccsd/**,
-					geogebra/usb/**,
 					edu/**,
 					org/apache/**,
 					org/apache/log4j/**, 
@@ -312,20 +359,20 @@ office@geogebra.org
 		/>
 	</target>
 	
+	<target name="ggb-javascript-jar" depends="clean" description="create unsigned geogebra_javascript.jar">
+		<jar jarfile="${build.dir}/geogebra_javascript.jar"
+			basedir="${src.dir}"
+			includes="org/mozilla/**"
+			excludes="**/*.java" 
+		/>
+	</target>
+	
 	<target name="ggb-usb-jar" depends="clean" description="create unsigned geogebra_usb.jar">
 		<jar jarfile="${build.dir}/geogebra_usb.jar"
 			basedir="${src.dir}"
 			includes="org/concord/**,
 						ccsd/**,
 			geogebra/usb/**"
-			excludes="**/*.java" 
-		/>
-	</target>
-	
-	<target name="ggb-javascript-jar" depends="clean" description="create unsigned geogebra_javascript.jar">
-		<jar jarfile="${build.dir}/geogebra_javascript.jar"
-			basedir="${src.dir}"
-			includes="org/mozilla/**"
 			excludes="**/*.java" 
 		/>
 	</target>
@@ -382,7 +429,8 @@ office@geogebra.org
 	<!-- Define Proguard task -->
 	<taskdef 
 		resource="proguard/ant/task.properties" 
-		classpath="tools_proguard451.jar" />
+		classpath="tools_proguard451.jar"
+		 />
 	
 	<!-- Define pack200 task -->
 	<!-- bug in Java 6, see http://www.geogebra.org/forum/viewtopic.php?f=8&t=3972&st=0&sk=t&sd=a&start=15 -->
@@ -406,7 +454,8 @@ office@geogebra.org
 		<antcall target="doObfuscate"/>
 	</target>
 	<target name="doObfuscate" if="java150-rt.present" description="obfuscate jar files">
-			<proguard configuration="build.pro"/>
+			<proguard configuration="build.pro"
+			/>
 			<move todir="${build.dir}">
 			    <fileset dir="${temp.dir}">
 			      <include name="*.jar"/>
