@@ -68,7 +68,7 @@ public class LatexTable extends SelectionTable implements MenuElement{
 
 
 
-	public final static String [] prefixOps = {
+	public final static String [] roots_fractions = {
 
 		"\\frac{a}{b}",
 		"x^{a}",
@@ -82,12 +82,13 @@ public class LatexTable extends SelectionTable implements MenuElement{
 
 
 	public final static String [] sums = {
-
-		"\\sum_{a}^{b} ",
-		"\\int",
-		"\\int_{a}^{a}",
-		"\\oint" ,
-		"\\oint_{a}^{a}"
+		
+		"\\sum{ }",
+		"\\sum_{a}^{b}{ }",
+		"\\int{ }",
+		"\\int_{a}^{b}{ }",
+		"\\oint{ }" ,
+		"\\oint_{a}^{b}{ }"
 
 	};
 
@@ -331,7 +332,8 @@ public class LatexTable extends SelectionTable implements MenuElement{
 	private Application app;
 	private TextInputDialog inputDialog;
 	private String[] latexArray;
-	PopupMenuButton popupButton;
+	private PopupMenuButton popupButton;
+	private int caretPosition = 0;
 
 	public LatexTable(Application app, TextInputDialog textInputDialog, PopupMenuButton popupButton, 
 			String[] latexArray, int rows, int columns, int mode ){
@@ -351,7 +353,13 @@ public class LatexTable extends SelectionTable implements MenuElement{
 		//this.setBorder(BorderFactory.createEmptyBorder());
 	}
 
-
+	public void setCaretPosition(int caretPosition){
+		this.caretPosition = caretPosition;
+	}
+	 
+	
+	
+	// support for MenuElement interface
 
 	public Component getComponent() {
 		return this;
@@ -380,6 +388,7 @@ public class LatexTable extends SelectionTable implements MenuElement{
 			}
 
 			inputDialog.insertString(sb.toString());
+			//inputDialog.setRelativeCaretPosition(caretPosition);
 			popupButton.handlePopupActionEvent();
 		}	
 	}

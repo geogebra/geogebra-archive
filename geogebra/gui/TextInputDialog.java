@@ -209,7 +209,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.bullets,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.writing,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.geometricShapes,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.currency,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.weather_astrology,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.currency,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.games_music,0,1,2));
@@ -243,13 +242,16 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		
 		JMenu menu;
 		menu = new JMenu(app.getMenu("RootsAndFractions"));
-		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.prefixOps, 1, -1,SelectionTable.MODE_LATEX));
+		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.roots_fractions, 1, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
-		menu = new JMenu(app.getMenu("SumsAndIntegrals"));
-		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.sums, 1, -1,SelectionTable.MODE_LATEX));
+
+		menu = new JMenu(app.getMenu("SumsAndIntegrals"));	
+		LatexTable table = new LatexTable(app, this, btInsertLaTeX, LatexTable.sums, 1, -1,SelectionTable.MODE_LATEX);
+		//table.setCaretPosition(-3);
+		menu.add(table);
 		btInsertLaTeX.addPopupMenuItem(menu);
-		
+
 		menu = new JMenu(app.getMenu("Accents"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.accents, 2, -1, SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
