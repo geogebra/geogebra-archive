@@ -288,6 +288,7 @@ public class Application implements KeyEventDispatcher {
 	private static final String RB_COMMAND = "/geogebra/properties/command";
 	private static final String RB_ERROR = "/geogebra/properties/error";
 	private static final String RB_PLAIN = "/geogebra/properties/plain";
+	private static final String RB_SYMBOL = "/geogebra/properties/symbols";
 	public static final String RB_JAVA_UI = "/geogebra/properties/javaui";
 	public static final String RB_COLORS = "/geogebra/properties/colors";
 
@@ -336,7 +337,7 @@ public class Application implements KeyEventDispatcher {
 
 	// For language specific settings
 	private Locale currentLocale, englishLocale = null;
-	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld, rberror, rbcolors, rbplain, rbsettings;
+	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld, rberror, rbcolors, rbplain, rbsymbol, rbsettings;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -1842,6 +1843,18 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
+	final public String getSymbol(int key) {
+		if (rbsymbol == null) {
+			initSymbolResourceBundle();
+		}
+
+		try {
+			return rbsymbol.getString("S."+key);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 //	final public String reverseGetPlain(String str) {
 //		if (rbplain == null) {			
 //			initPlainResourceBundle();
@@ -1868,6 +1881,10 @@ public class Application implements KeyEventDispatcher {
 		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
 		if (rbplain != null)
 			kernel.updateLocalAxesNames();
+	}
+
+	private void initSymbolResourceBundle() {
+		rbsymbol = MyResourceBundle.createBundle(RB_SYMBOL, currentLocale);
 	}
 
 	private void initColorsResourceBundle() {
