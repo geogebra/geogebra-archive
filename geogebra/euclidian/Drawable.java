@@ -450,7 +450,7 @@ public abstract class Drawable extends DrawableND {
 	final  public static Dimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
 	
 		//if (useJLaTeXMath) 
-			return drawEquationJLaTeXMath(app, geo.isGeoText() ? (GeoText)geo : null, g2, x, y, text, font, serif, fgColor, bgColor);
+			return drawEquationJLaTeXMath(app, geo, g2, x, y, text, font, serif, fgColor, bgColor);
 		//else return drawEquationHotEqn(app, g2, x, y, text, font, fgColor, bgColor);
 	}
 	

@@ -131,7 +131,6 @@ public class DrawParametricCurve extends Drawable {
 				labelSB.append(geo.getLabel());
 				labelSB.append('(');
 				labelSB.append(((VarString)geo).getVarString());
-				Application.debug(geo.getClassName());
 				labelSB.append(")\\;=\\;");
 				labelSB.append(geo.getLaTeXdescription());
 				labelSB.append('$');
