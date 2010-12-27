@@ -263,7 +263,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
 		
-		menu = new JMenu("matrices");
+		menu = new JMenu(app.getMenu("Matrices"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.matrices, 1, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
