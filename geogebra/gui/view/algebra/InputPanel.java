@@ -286,7 +286,7 @@ ActionListener, ListSelectionListener {
 	/** panel to hold the text field; needs to be a global to set the popup width */
 	private JPanel tfPanel;  
 	
-	
+	private boolean showSpecialChars;
 	
 	//=====================================
 	//Constructors
@@ -317,7 +317,7 @@ ActionListener, ListSelectionListener {
 						boolean showGreekLetters, boolean showDisplayChars, KeyListener keyListener) {
 		
 		this.app = app;
-		
+		this.showSpecialChars = showSpecialChars || showGreekLetters || showDisplayChars;
 
 		// set up the text component: 
 		// either a textArea or a textfield
@@ -408,6 +408,7 @@ ActionListener, ListSelectionListener {
 
 	
 	private JToolBar createPopupButton(){
+		
 		int buttonHeight = 18;
 		popupTableButton = new PopupMenuButton(app, tableSymbols, 5,11,new Dimension(10,buttonHeight), SelectionTable.MODE_TEXT);
 		popupTableButton.setStandardButton(true);
@@ -441,7 +442,15 @@ ActionListener, ListSelectionListener {
 		tb.add(popupTableButton);
 		setSymbolButtons();
 		
-		return tb;
+		
+		JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(false);
+		toolBar.setOrientation(JToolBar.VERTICAL);
+		toolBar.add(tb);
+		
+	//	tb.setVisible(showSpecialChars);
+		
+		return toolBar;
 		
 	}
 	

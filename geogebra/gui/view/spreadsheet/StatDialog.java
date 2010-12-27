@@ -828,7 +828,7 @@ implements ActionListener, View, Printable   {
 		if(this.regressionMode == REG_NONE)
 			icon = null;
 		else
-			icon = GeoGebraIcon.createLatexIcon(app, null, eqn, this.getFont(), false, Color.black, this.getBackground());
+			icon = GeoGebraIcon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, this.getBackground());
 
 
 		// set the label icon with our equation string

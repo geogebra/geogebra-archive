@@ -100,10 +100,12 @@ public class SelectionTable extends JTable{
 	public SelectionTable(Application app, Object[] data, int rows, int columns, Dimension iconSize, int mode){
 		
 		this.app = app;	
-		this.data = data;
 		this.myTable = this;
 		this.mode = mode;
 		this.iconSize = iconSize;
+		if(mode == MODE_LATEX)
+			data = createLatexIconArray((String[]) data);
+		this.data = data;
 		
 		//=======================================
 		// determine the dimensions of the table
@@ -111,17 +113,17 @@ public class SelectionTable extends JTable{
 		// rows = -1, cols = -1  ==> square table to fit data
 		if(rows == -1 && columns == -1){
 			rows = (int) Math.floor(Math.sqrt(data.length));
-			columns = (int) Math.ceil(data.length / rows);
+			columns = (int) Math.ceil(1.0 * data.length / rows);
 		}
 		
 		// rows = -1  ==> fixed cols, rows added to fit data
 		else if(rows == -1){
-			rows = (int) (Math.ceil(data.length / columns));
+			rows = (int) (Math.ceil(1.0 *data.length / columns));
 		}
 		
 		// cols = -1 ==> fixed rows, cols added to fit data
 		else if(columns == -1){
-			columns = (int) (Math.ceil(data.length / rows));
+			columns = (int) (1.0 * Math.ceil(data.length / rows));
 		}
 		
 		
@@ -178,7 +180,7 @@ public class SelectionTable extends JTable{
 
 
 
-	/** loads a one dimensional array of data into the table model*/
+	/** load a one dimensional array of data into the table model*/
 	public void populateModel( Object [] data){
 
 		int r=0;
@@ -193,6 +195,22 @@ public class SelectionTable extends JTable{
 		}
 	}
 	
+	
+	public ImageIcon[] createLatexIconArray(String[] symbols){
+		ImageIcon[] iconArray = new ImageIcon[symbols.length];
+		for(int i= 0; i < symbols.length; i++){
+			iconArray[i] = GeoGebraIcon.createLatexIcon(app, symbols[i], app.getPlainFont(), true, Color.BLACK, null);
+		}
+		return iconArray;
+	}
+
+	
+	
+	
+	
+	
+	
+	
 	// set cell dimensions
 	private void setCellDimensions(){
 
@@ -200,7 +218,7 @@ public class SelectionTable extends JTable{
 
 		// match row height to specified icon height
 		// when mode=text then let font size adjust row height automatically  
-		if(mode != MODE_TEXT){		
+		if(!(mode == MODE_TEXT || mode == MODE_LATEX)){		
 			rowHeight = iconSize.height + padding;	
 		} else{
 			rowHeight = getMaxRowHeight(this) + padding;
@@ -307,7 +325,9 @@ public class SelectionTable extends JTable{
 	public ImageIcon getDataIcon(Object value){
 		
 		ImageIcon icon = null;
-		if(value == null) return GeoGebraIcon.createStringIcon("\u00D8", app.getPlainFont(), true, false, true, iconSize , Color.GRAY, null);
+		if(value == null) return 
+			GeoGebraIcon.createEmptyIcon(1, 1);
+			//GeoGebraIcon.createStringIcon("\u00D8", app.getPlainFont(), true, false, true, iconSize , Color.GRAY, null);
 		
 		switch (mode){
 
@@ -316,6 +336,7 @@ public class SelectionTable extends JTable{
 			break;
 
 		case MODE_ICON:
+		case MODE_LATEX:
 			icon = (ImageIcon) value;
 			break;
 						
@@ -343,9 +364,13 @@ public class SelectionTable extends JTable{
 			rollOverColor =  Color.LIGHT_GRAY;
 
 			paddingBorder = BorderFactory.createEmptyBorder(0,5,0,5);
-			selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 3);			
+			
 			rollOverBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
 			normalBorder = BorderFactory.createLineBorder(Color.GRAY, 1);
+			if(mode == MODE_LATEX)
+				selectedBorder = rollOverBorder;
+			else
+				selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 3);
 			
 			setOpaque(true);
 			setHorizontalAlignment(CENTER);

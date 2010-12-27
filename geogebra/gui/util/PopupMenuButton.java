@@ -17,6 +17,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
@@ -111,11 +112,6 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 	
 	
-	public PopupMenuButton(JComponent component){
-		this( null, null, -1, -1, null, -1,  false,  false);
-		this.component = (JMenuItem) component;
-		myPopup.add(component);
-	}
 	
 	public PopupMenuButton(ImageIcon icon, JComponent component){
 		this( null, null, -1, -1, null, -1,  false,  false);
@@ -152,6 +148,10 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		this.mode = mode;
 		this.iconSize = iconSize;
 		this.thisButton = this;
+		
+		this.setFocusable(false);
+		
+		
 		// create the popup
 		myPopup = new JPopupMenu();
 		myPopup.setFocusable(false);
@@ -159,6 +159,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		myPopup.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY),
 				BorderFactory.createEmptyBorder(3,3,3,3)));
 
+		
 
 		// add a mouse listener to our button that triggers the popup		
 		addMouseListener(new MouseAdapter() {
@@ -255,7 +256,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	}
 	
 	
-	public void addPopupComponent(JComponent component){
+	public void addPopupMenuItem(JComponent component){
 		myPopup.add(component);
 	}
 	
@@ -281,8 +282,6 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		super.processMouseEvent(e);
 	}
 	
-	
-
 	
 	 public void update(Object[] geos) {
 		 
@@ -346,6 +345,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 	 * must pass action events from the popup to the invoker
 	 */
 	public void handlePopupActionEvent(){
+		//System.out.println("handlepopup");
 		this.fireActionPerformed(new ActionEvent(this,
 				ActionEvent.ACTION_PERFORMED,getActionCommand())); 
 		updateGUI();
@@ -454,6 +454,7 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 				break;
 
 			case SelectionTable.MODE_ICON:
+			case SelectionTable.MODE_LATEX:
 				icon  = (ImageIcon) myTable.getSelectedValue();
 				break;
 
@@ -525,6 +526,12 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		isFixedIcon = true;
 		setIcon(icon);
 	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
