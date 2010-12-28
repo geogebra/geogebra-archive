@@ -117,7 +117,7 @@ public class SymbolTable extends SelectionTable {
 
 
 	public final static String [] symbols = {
-		
+
 		"\u03c0",                // pi	
 		Unicode.EULER_STRING,    // e
 		"\u00b2",                // exponents ^2 
@@ -137,7 +137,7 @@ public class SymbolTable extends SelectionTable {
 		ExpressionNode.strIS_ELEMENT_OF,
 		ExpressionNode.strCONTAINS,
 		ExpressionNode.strCONTAINS_STRICT,
-		
+
 	};
 
 
@@ -186,8 +186,8 @@ public class SymbolTable extends SelectionTable {
 
 
 	public final static String [] tableSymbols = {
-		
-		
+
+
 		"\u03B1" ,     //GREEK SMALL LETTER ALPHA
 		"\u03B2" ,     //GREEK SMALL LETTER BETA
 		"\u03B3" ,     //GREEK SMALL LETTER GAMMA
@@ -214,7 +214,7 @@ public class SymbolTable extends SelectionTable {
 		"\u03C8" ,     //GREEK SMALL LETTER PSI
 		"\u03C9" ,     //GREEK SMALL LETTER OMEGA
 
-		
+
 
 		"\u0393", // Gamma
 		"\u0394", // Delta
@@ -252,59 +252,15 @@ public class SymbolTable extends SelectionTable {
 	};
 
 
-	public final static String [] logical = {
-		"\u2200", //FOR ALL
-		"\u2203", //THERE EXISTS
-		"\u2261", //IDENTICAL TO
-		"\u2262", //NOT IDENTICAL TO
-		"\u2204", //THERE DOES NOT EXIST
-		"\u2201", //COMPLEMENT
-		//"\u220E", //END OF PROOF
-		"\u2234", //THEREFORE
-		"\u2235", //BECAUSE
-		"\u2227", //LOGICAL AND
-		"\u2228", //LOGICAL OR
-		"\u22BB", //XOR
-		"\u22BC", //NAND
-		"\u22BD", //NOR
-	};
-	
-	
-	public final static String [] sets = {
-		
-		"\u2205", //EMPTY SET
-		"\u2208", //ELEMENT OF
-		"\u2209", //NOT AN ELEMENT OF
-		"\u2229", //INTERSECTION
-		"\u222A", //UNION
-		
-		"\u2282", //SUBSET OF	
-		"\u2284", //NOT A SUBSET OF
-		"\u2286", //SUBSET OF OR EQUAL TO
-		"\u2288", //NEITHER A SUBSET OF NOR EQUAL TO
-		"\u228A", //SUBSET OF WITH NOT EQUAL TO
-		
-		
-		"\u2285", //NOT A SUPERSET OF
-		"\u2283", //SUPERSET OF
-		"\u2287", //SUPERSET OF OR EQUAL TO
-		"\u228B", //SUPERSET OF WITH NOT EQUAL TO
-		"\u2289", //NEITHER A SUPERSET OF NOR EQUAL TO
-		
-		
-	};
-	
-	
-	
-	public final static String [] math_ops = {
-		
+
+
+
+	public final static String [] operators = {
+
+		"\u221E", //INFINITY
 		"\u2202", //PARTIAL DIFFERENTIAL
 		"\u2206", //INCREMENT
-		"\u2207", //NABLA
-		"\u221E", //INFINITY
-		"\u221A", //SQUARE ROOT
-		"\u221B", //CUBE ROOT
-		"\u221C", //FOURTH ROOT
+		"\u2207", //NABLA	
 		"\u220F", //N-ARY PRODUCT
 		"\u2210", //N-ARY COPRODUCT
 		"\u2211", //N-ARY SUMMATION
@@ -312,290 +268,248 @@ public class SymbolTable extends SelectionTable {
 		"\u222C", //DOUBLE INTEGRAL
 		"\u222D", //TRIPLE INTEGRAL
 		"\u222E", //CONTOUR INTEGRAL
-		"\u222F", //SURFACE INTEGRAL
-		"\u2230", //VOLUME INTEGRAL
-		"\u2231", //CLOCKWISE INTEGRAL
-		"\u2232", //CLOCKWISE CONTOUR INTEGRAL
-		"\u2233", //ANTICLOCKWISE CONTOUR INTEGRAL
-		
-		
-		"\u00B1", //MINUS-OR-PLUS SIGN
-		"\u2213", //MINUS-OR-PLUS SIGN
-	
-		"\u224C", //ALL EQUAL TO
-		"\u2260", //NOT EQUAL TO
-		"\u2264", //LESS-THAN OR EQUAL TO
-		"\u2265", //GREATER-THAN OR EQUAL TO
-		"\u2248", //ALMOST EQUAL TO
-		"\u2249", //NOT ALMOST EQUAL TO
-		"\u221D", //PROPORTIONAL TO
-		
-		"\u2258", //CORRESPONDS TO
-		"\u2259", //ESTIMATES
-		"\u224D", //EQUIVALENT TO
-		"\u224E", //GEOMETRICALLY EQUIVALENT TO
-		
-			
-		
+		"\u2260",    //     \\neq
+		"\u2264",    //     \\leq
+		"\u2265",    //     \\geq	
+		"\u2248",    //     \\approx
+		"\u223C",    //     \\sim
+		"\u2241",    //     \\nsim
+		"\u2245",    //     \\cong
+		"\u2247",    //     \\ncong
+		"\u221D",    //     \\propto
+		"\u00B1",    //MINUS-OR-PLUS SIGN
+		"\u2213",   //MINUS-OR-PLUS SIGN
+		"\u221A",   //SQUARE ROOT
+		"\u2220", //ANGLE
+		"\u2221", //MEASURED ANGLE
+		"\u2222", //SPHERICAL ANGLE
+		"\u22a5",  //   \\perp
+		"\u2225", //PARALLEL TO
+		"\u2226", //NOT PARALLEL TO
+		//"\u223A", //GEOMETRIC PROPORTION
 
+
+	};
+
+
+	public final static String [] logical = {
+
+		"\u2200", //FOR ALL
+		"\u2203", //THERE EXISTS
+		"\u2204", //THERE DOES NOT EXIST
 		
+		"\u225f", //Boolean identity \\stackrel{?}{=}
+		"\u2261", //IDENTICAL TO
+		"\u2262", //NOT IDENTICAL TO
+		
+		"\u2227", //LOGICAL AND
+		"\u2228", //LOGICAL OR
+
+		/* unicode XOR, NAND, NOR not supported by JLatex
+		 "\u22BB", //XOR
+		 "\u22BC", //NAND
+		 "\u22BD", //NOR
+		 */	
+
+		// use these instead
+		"\u2295",    //     \\oplus (xor)
+		"\u2305",    //     \\barwedge (nand)	
+		"\u2A61",    //     \\veebar  (xor)
+
+		"\u22A4",    //     \\top (tautology)
+		"\u22A5",    //     \\bot (contradiction)
+		"\u2201", //COMPLEMENT
+		"\u2234", //THEREFORE
+		"\u2235", //BECAUSE
+
+	};
+
+
+	public final static String [] sets = {
+
+		"\u2205", //EMPTY SET
+		"\u2229", //INTERSECTION
+		"\u222A", //UNION
+		
+		"\u2208", //ELEMENT OF
+		"\u2209", //NOT AN ELEMENT OF
+	
+		"\u2282", //SUBSET OF	
+		"\u2284", //NOT A SUBSET OF
+		"\u2286", //SUBSET OF OR EQUAL TO
+		"\u2288", //NEITHER A SUBSET OF NOR EQUAL TO
+
+		"\u2283", //SUPERSET OF
+		"\u2285", //NOT A SUPERSET OF
+		"\u2287", //SUPERSET OF OR EQUAL TO
+		"\u2289", //NEITHER A SUPERSET OF NOR EQUAL TO
+
+		"\u2102" ,      //DOUBLE-STRUCK CAPITAL C
+		"\u2115" ,      //DOUBLE-STRUCK CAPITAL N
+		"\u211A" ,      //DOUBLE-STRUCK CAPITAL Q
+		"\u211D" ,      //DOUBLE-STRUCK CAPITAL R
+		"\u2124" ,      //DOUBLE-STRUCK CAPITAL Z
+
+		"\u2111",    //     \\Im
+		"\u211C",    //     \\Re
+		"\u2118",    //     \\wp  (power set) 
+		"\u2135",    //     \\aleph
+
+	};
+
+
+
+	public final static String [] geometric_relations = {
+
 		"\u221F", //RIGHT ANGLE
 		"\u2220", //ANGLE
 		"\u2221", //MEASURED ANGLE
 		"\u2222", //SPHERICAL ANGLE
-		"\u2223", //DIVIDES
-		"\u2224", //DOES NOT DIVIDE
+		//	"\u2223", //DIVIDES
+		//	"\u2224", //DOES NOT DIVIDE
+
+		"\u22a5",  //   \\perp
 		"\u2225", //PARALLEL TO
 		"\u2226", //NOT PARALLEL TO
 		"\u223A", //GEOMETRIC PROPORTION
-		
-		
-		
-	
-		
-		
-	
-	/*	
-		
-		"?","?","?","?",
-		
-	//=======================================
-		
-		"\u2238", //DOT MINUS
-		"\u2236", //RATIO
-		"\u2237", //PROPORTION
-		"\u2245", //APPROXIMATELY EQUAL TO
-		
-		
-		
-		
-		
-		"\u2212", //MINUS SIGN
-		"\u2214", //DOT PLUS
-		"\u2215", //DIVISION SLASH
-		"\u2216", //SET MINUS
-		"\u2266", //LESS-THAN OVER EQUAL TO
-		"\u22C0", //N-ARY LOGICAL AND
-		"\u22C1", //N-ARY LOGICAL OR
-		"\u22C2", //N-ARY INTERSECTION
-		"\u22C3", //N-ARY UNION
-		"\u2244", //NOT ASYMPTOTICALLY EQUAL TO
-		
-		"\u220B", //CONTAINS AS MEMBER
-		"\u220C", //DOES NOT CONTAIN AS MEMBER
-		
-		"\u220A", //SMALL ELEMENT OF
-		"\u220D", //SMALL CONTAINS AS MEMBER
-		"\u2217", //ASTERISK OPERATOR
-		"\u2218", //RING OPERATOR
-		"\u2219", //BULLET OPERATOR
-		
-		
-		"\u2239", //EXCESS
-		
-		"\u223B", //HOMOTHETIC
-		"\u223C", //TILDE OPERATOR
-		"\u223D", //REVERSED TILDE
-		"\u223E", //INVERTED LAZY S
-		"\u223F", //SINE WAVE
-		"\u2240", //WREATH PRODUCT
-		"\u2241", //NOT TILDE
-		"\u2242", //MINUS TILDE
-		"\u2243", //ASYMPTOTICALLY EQUAL TO
-		
-		
-		"\u2247", //NEITHER APPROXIMATELY NOR ACTUALLY EQUAL TO
-		
-		
-		"\u224A", //ALMOST EQUAL OR EQUAL TO
-		"\u224B", //TRIPLE TILDE
-		
-		
-		"\u224F", //DIFFERENCE BETWEEN
-		"\u2250", //APPROACHES THE LIMIT
-		"\u2251", //GEOMETRICALLY EQUAL TO
-		"\u2252", //APPROXIMATELY EQUAL TO OR THE IMAGE OF
-		"\u2253", //IMAGE OF OR APPROXIMATELY EQUAL TO
-		"\u2254", //COLON EQUALS
-		"\u2255", //EQUALS COLON
-		"\u2256", //RING IN EQUAL TO
-		"\u2257", //RING EQUAL TO
-	
-		"\u225A", //EQUIANGULAR TO
-		"\u225B", //STAR EQUALS
-		"\u225C", //DELTA EQUAL TO
-		"\u225D", //EQUAL TO BY DEFINITION
-		"\u225E", //MEASURED BY
-		"\u225F", //QUESTIONED EQUAL TO
-		
-		
-		"\u2263", //STRICTLY EQUIVALENT TO
-		"\u2246", //APPROXIMATELY BUT NOT ACTUALLY EQUAL TO
-		
-		"\u2267", //GREATER-THAN OVER EQUAL TO
-		"\u2268", //LESS-THAN BUT NOT EQUAL TO
-		"\u2269", //GREATER-THAN BUT NOT EQUAL TO
-		"\u226A", //MUCH LESS-THAN
-		"\u226B", //MUCH GREATER-THAN
-		"\u226C", //BETWEEN
-		"\u226D", //NOT EQUIVALENT TO
-		"\u226E", //NOT LESS-THAN
-		"\u226F", //NOT GREATER-THAN
-		"\u2270", //NEITHER LESS-THAN NOR EQUAL TO
-		"\u2271", //NEITHER GREATER-THAN NOR EQUAL TO
-		"\u2272", //LESS-THAN OR EQUIVALENT TO
-		"\u2273", //GREATER-THAN OR EQUIVALENT TO
-		"\u2274", //NEITHER LESS-THAN NOR EQUIVALENT TO
-		"\u2275", //NEITHER GREATER-THAN NOR EQUIVALENT TO
-		"\u2276", //LESS-THAN OR GREATER-THAN
-		"\u2277", //GREATER-THAN OR LESS-THAN
-		"\u2278", //NEITHER LESS-THAN NOR GREATER-THAN
-		"\u2279", //NEITHER GREATER-THAN NOR LESS-THAN
-		"\u227A", //PRECEDES
-		"\u227B", //SUCCEEDS
-		"\u227C", //PRECEDES OR EQUAL TO
-		"\u227D", //SUCCEEDS OR EQUAL TO
-		"\u227E", //PRECEDES OR EQUIVALENT TO
-		"\u227F", //SUCCEEDS OR EQUIVALENT TO
-		"\u2280", //DOES NOT PRECEDE
-		"\u2281", //DOES NOT SUCCEED
-		
-		"\u228C", //MULTISET
-		"\u228D", //MULTISET MULTIPLICATION
-		"\u228E", //MULTISET UNION
-		"\u228F", //SQUARE IMAGE OF
-		"\u2290", //SQUARE ORIGINAL OF
-		"\u2291", //SQUARE IMAGE OF OR EQUAL TO
-		"\u2292", //SQUARE ORIGINAL OF OR EQUAL TO
-		"\u2293", //SQUARE CAP
-		"\u2294", //SQUARE CUP
-		"\u2295", //CIRCLED PLUS
-		"\u2296", //CIRCLED MINUS
-		"\u2297", //CIRCLED TIMES
-		"\u2298", //CIRCLED DIVISION SLASH
-		"\u2299", //CIRCLED DOT OPERATOR
-		"\u229A", //CIRCLED RING OPERATOR
-		"\u229B", //CIRCLED ASTERISK OPERATOR
-		"\u229C", //CIRCLED EQUALS
-		"\u229D", //CIRCLED DASH
-		"\u229E", //SQUARED PLUS
-		"\u229F", //SQUARED MINUS
-		"\u22A0", //SQUARED TIMES
-		"\u22A1", //SQUARED DOT OPERATOR
-		"\u22A2", //RIGHT TACK
-		"\u22A3", //LEFT TACK
-		"\u22A4", //DOWN TACK
-		"\u22A5", //UP TACK
-		"\u22A6", //ASSERTION
-		"\u22A7", //MODELS
-		"\u22A8", //TRUE
-		"\u22A9", //FORCES
-		"\u22AA", //TRIPLE VERTICAL BAR RIGHT TURNSTILE
-		"\u22AB", //DOUBLE VERTICAL BAR DOUBLE RIGHT TURNSTILE
-		"\u22AC", //DOES NOT PROVE
-		"\u22AD", //NOT TRUE
-		"\u22AE", //DOES NOT FORCE
-		"\u22AF", //NEGATED DOUBLE VERTICAL BAR DOUBLE RIGHT TURNSTILE
-		"\u22B0", //PRECEDES UNDER RELATION
-		"\u22B1", //SUCCEEDS UNDER RELATION
-		"\u22B2", //NORMAL SUBGROUP OF
-		"\u22B3", //CONTAINS AS NORMAL SUBGROUP
-		"\u22B4", //NORMAL SUBGROUP OF OR EQUAL TO
-		"\u22B5", //CONTAINS AS NORMAL SUBGROUP OR EQUAL TO
-		"\u22B6", //ORIGINAL OF
-		"\u22B7", //IMAGE OF
-		"\u22B8", //MULTIMAP
-		"\u22B9", //HERMITIAN CONJUGATE MATRIX
-		"\u22BA", //INTERCALATE
-		
-		"\u22BE", //RIGHT ANGLE WITH ARC
-		"\u22BF", //RIGHT TRIANGLE
-		
-		"\u22C4", //DIAMOND OPERATOR
-		"\u22C5", //DOT OPERATOR
-		"\u22C6", //STAR OPERATOR
-		"\u22C7", //DIVISION TIMES
-		"\u22C8", //BOWTIE
-		"\u22C9", //LEFT NORMAL FACTOR SEMIDIRECT PRODUCT
-		"\u22CA", //RIGHT NORMAL FACTOR SEMIDIRECT PRODUCT
-		"\u22CB", //LEFT SEMIDIRECT PRODUCT
-		"\u22CC", //RIGHT SEMIDIRECT PRODUCT
-		"\u22CD", //REVERSED TILDE EQUALS
-		"\u22CE", //CURLY LOGICAL OR
-		"\u22CF", //CURLY LOGICAL AND
-		"\u22D0", //DOUBLE SUBSET
-		"\u22D1", //DOUBLE SUPERSET
-		"\u22D2", //DOUBLE INTERSECTION
-		"\u22D3", //DOUBLE UNION
-		"\u22D4", //PITCHFORK
-		"\u22D5", //EQUAL AND PARALLEL TO
-		"\u22D6", //LESS-THAN WITH DOT
-		"\u22D7", //GREATER-THAN WITH DOT
-		"\u22D8", //VERY MUCH LESS-THAN
-		"\u22D9", //VERY MUCH GREATER-THAN
-		"\u22DA", //LESS-THAN EQUAL TO OR GREATER-THAN
-		"\u22DB", //GREATER-THAN EQUAL TO OR LESS-THAN
-		"\u22DC", //EQUAL TO OR LESS-THAN
-		"\u22DD", //EQUAL TO OR GREATER-THAN
-		"\u22DE", //EQUAL TO OR PRECEDES
-		"\u22DF", //EQUAL TO OR SUCCEEDS
-		"\u22E0", //DOES NOT PRECEDE OR EQUAL
-		"\u22E1", //DOES NOT SUCCEED OR EQUAL
-		"\u22E2", //NOT SQUARE IMAGE OF OR EQUAL TO
-		"\u22E3", //NOT SQUARE ORIGINAL OF OR EQUAL TO
-		"\u22E4", //SQUARE IMAGE OF OR NOT EQUAL TO
-		"\u22E5", //SQUARE ORIGINAL OF OR NOT EQUAL TO
-		"\u22E6", //LESS-THAN BUT NOT EQUIVALENT TO
-		"\u22E7", //GREATER-THAN BUT NOT EQUIVALENT TO
-		"\u22E8", //PRECEDES BUT NOT EQUIVALENT TO
-		"\u22E9", //SUCCEEDS BUT NOT EQUIVALENT TO
-		"\u22EA", //NOT NORMAL SUBGROUP OF
-		"\u22EB", //DOES NOT CONTAIN AS NORMAL SUBGROUP
-		"\u22EC", //NOT NORMAL SUBGROUP OF OR EQUAL TO
-		"\u22ED", //DOES NOT CONTAIN AS NORMAL SUBGROUP OR EQUAL
-		
-		
-		
-		"\u22EE", //VERTICAL ELLIPSIS
-		"\u22EF", //MIDLINE HORIZONTAL ELLIPSIS
-		"\u22F0", //UP RIGHT DIAGONAL ELLIPSIS
-		"\u22F1", //DOWN RIGHT DIAGONAL ELLIPSIS
-*/
-};
-	
-	
 
-	public final static String [] basic_arrows = {
-
-		"\u2190",      //LEFTWARDS ARROW
-		"\u2192",      //RIGHTWARDS ARROW
-		"\u2194",      //LEFT RIGHT ARROW
-
-		"\u2191",      //UPWARDS ARROW
-		"\u2193",      //DOWNWARDS ARROW
-		"\u2195",      //UP DOWN ARROW
-
-		"\u2196",      //NORTH WEST ARROW
-		"\u2197",      //NORTH EAST ARROW
-		"\u2198",      //SOUTH EAST ARROW
-		"\u2199",      //SOUTH WEST ARROW
-
-		"\u21D0",      //LEFTWARDS DOUBLE ARROW
-		"\u21D1",      //UPWARDS DOUBLE ARROW
-		"\u21D2",      //RIGHTWARDS DOUBLE ARROW
-		"\u21D3",      //DOWNWARDS DOUBLE ARROW
-		"\u21D4",      //LEFT RIGHT DOUBLE ARROW
-		"\u21D5",      //UP DOWN DOUBLE ARROW
-		"\u21D6",      //NORTH WEST DOUBLE ARROW
-		"\u21D7",      //NORTH EAST DOUBLE ARROW
-		"\u21D8",      //SOUTH EAST DOUBLE ARROW
-		"\u21D9",      //SOUTH WEST DOUBLE ARROW
 	};
 
 
-	public final static String [] other_arrows = {	
+	public final static String [] basic_arrows = {
 
 
+		"\u2190",    //     \\leftarrow
+		"\u2191",    //     \\uparrow
+		"\u2192",    //     \\rightarrow
+		"\u2193",    //     \\downarrow
+		"\u2194",    //     \\leftrightarrow
+		"\u2195",    //     \\updownarrow
+		"\u2196",    //     \\nwarrow
+		"\u2197",    //     \\nearrow
+		"\u2198",    //     \\searrow
+		"\u2199",    //     \\swarrow
+		"\u21D0",    //     \\Leftarrow
+		"\u21D1",    //     \\Uparrow
+		"\u21D2",    //     \\Rightarrow
+		"\u21D3",    //     \\Downarrow
+		"\u21D4",    //     \\Leftrightarrow
+		"\u21D5",    //     \\Updownarrow
+
+	};
+
+
+
+	public final static String [] otherArrows = {	
+
+		"\u21A9",    //     \\hookleftarrow
+		"\u21AA",    //     \\hookrightarrow
+		"\u21AB",    //     \\looparrowleft
+		"\u21AC",    //     \\looparrowright
+		"\u219A",    //     \\nleftarrow
+		"\u219B",    //     \\nrightarrow
+		"\u219D",    //     \\rightsquigarrow
+		"\u219E",    //     \\twoheadleftarrow
+		"\u21A0",    //     \\twoheadrightarrow
+		"\u21A2",    //     \\leftarrowtail
+		"\u21A3",    //     \\rightarrowtail
+		"\u21A6",    //     \\mapsto
+		
+		"\u21AD",    //     \\leftrightsquigarrow
+		"\u21AE",    //     \\nleftrightarrow
+		"\u21B0",    //     \\Lsh
+		"\u21B1",    //     \\Rsh
+		"\u21B6",    //     \\curvearrowleft
+		"\u21B7",    //     \\curvearrowright
+		"\u21BC",    //     \\leftharpoonup
+		"\u21BD",    //     \\leftharpoondown
+		"\u21BE",    //     \\upharpoonright
+		"\u21BF",    //     \\upharpoonleft
+		"\u21C0",    //     \\rightharpoonup
+		"\u21C1",    //     \\rightharpoondown
+		"\u21C2",    //     \\downharpoonright
+		"\u21C3",    //     \\downharpoonleft
+		"\u21C4",    //     \\rightleftarrows
+		"\u21C6",    //     \\leftrightarrows
+		"\u21C7",    //     \\leftleftarrows
+		"\u21C8",    //     \\upuparrows
+		"\u21C9",    //     \\rightrightarrows
+		"\u21CA",    //     \\downdownarrows
+		"\u21CB",    //     \\leftrightharpoons
+		"\u21CC",    //     \\rightleftharpoons
+		"\u21CD",    //     \\nLeftarrow
+		"\u21CE",    //     \\nLeftrightarrow
+		"\u21CF",    //     \\nRightarrow
+		"\u21DA",    //     \\Lleftarrow
+		"\u21DB",    //     \\Rrightarrow
+		"\u27F5",    //     \\longleftarrow
+		"\u27F6",    //     \\longrightarrow
+		"\u27F7",    //     \\longleftrightarrow
+		"\u27F8",    //     \\Longleftarrow
+		"\u27F9",    //     \\Longrightarrow
+		"\u27FA",    //     \\Longleftrightarrow
+		"\u27FC",    //     \\longmapsto
+		"\u27FF",    //     \\leadsto
+
+	};
+
+
+
+
+	public final static String [] geometricShapes = {	
+
+		"\u25EF",    //     \\bigcirc
+		"\u2605",    //     \\bigstar
+
+		"\u25B3",    //     \\bigtriangleup
+		"\u25B4",    //     \\blacktriangle
+		"\u25B5",    //     \\triangle
+		"\u25B6",    //     \\blacktriangleright
+		"\u25B7",    //     \\triangleright
+		"\u25BD",    //     \\bigtriangledown
+		"\u25BE",    //     \\blacktriangledown
+		"\u25BF",    //     \\triangledown
+		"\u25C0",    //     \\blacktriangleleft
+		"\u25C1",    //     \\triangleleft
+
+		"\u25CA",    //     \\Diamond
+		//"\u25CA",    //     \\lozenge
+
+		"\u29EB",    //     \\blacklozenge
+
+		//"\u25A0",    //     \\qedsymbol
+		"\u25A1",    //     \\square
+		"\u25AA",    //     \\blacksquare
+
+
+
+	};
+
+
+	public final static String [] games_music = {
+
+		"\u2660",    //     \\spadesuit
+		"\u2661",    //     \\heartsuit
+		"\u2662",    //     \\diamondsuit
+		"\u2663",    //     \\clubsuit
+		"\u266D",    //     \\flat
+		"\u266E",    //     \\natural
+		"\u266F",    //     \\sharp
+
+
+	};
+
+
+
+
+
+
+
+
+
+	public final static String [] UNICODEotherarrows = {	
+
+		"\u00D7" ,
 		"\u219A",      //LEFTWARDS ARROW WITH STROKE
 		"\u219B",      //RIGHTWARDS ARROW WITH STROKE
 		"\u219C",      //LEFTWARDS WAVE ARROW
@@ -624,12 +538,17 @@ public class SymbolTable extends SelectionTable {
 		"\u21B3",      //DOWNWARDS ARROW WITH TIP RIGHTWARDS
 		"\u21B4",      //RIGHTWARDS ARROW WITH CORNER DOWNWARDS
 		"\u21B5",      //DOWNWARDS ARROW WITH CORNER LEFTWARDS
-		"\u21B6",      //ANTICLOCKWISE TOP SEMICIRCLE ARROW
-		"\u21B7",      //CLOCKWISE TOP SEMICIRCLE ARROW
+
+		//"\u21B6",      //ANTICLOCKWISE TOP SEMICIRCLE ARROW
+		//"\u21B7",      //CLOCKWISE TOP SEMICIRCLE ARROW
+
 		"\u21B8",      //NORTH WEST ARROW TO LONG BAR
 		"\u21B9",      //LEFTWARDS ARROW TO BAR OVER RIGHTWARDS ARROW TO BAR
-		"\u21BA",      //ANTICLOCKWISE OPEN CIRCLE ARROW
-		"\u21BB",      //CLOCKWISE OPEN CIRCLE ARROW
+
+		//	"\u21BA",      //ANTICLOCKWISE OPEN CIRCLE ARROW
+		//	"\u21BB",      //CLOCKWISE OPEN CIRCLE ARROW
+
+
 		"\u21BC",      //LEFTWARDS HARPOON WITH BARB UPWARDS
 		"\u21BD",      //LEFTWARDS HARPOON WITH BARB DOWNWARDS
 		"\u21BE",      //UPWARDS HARPOON WITH BARB RIGHTWARDS
@@ -650,7 +569,7 @@ public class SymbolTable extends SelectionTable {
 		"\u21CD",      //LEFTWARDS DOUBLE ARROW WITH STROKE
 		"\u21CE",      //LEFT RIGHT DOUBLE ARROW WITH STROKE
 		"\u21CF",      //RIGHTWARDS DOUBLE ARROW WITH STROKE
-		
+
 		"\u21DA",      //LEFTWARDS TRIPLE ARROW
 		"\u21DB",      //RIGHTWARDS TRIPLE ARROW
 		"\u21DC",      //LEFTWARDS SQUIGGLE ARROW
@@ -680,52 +599,48 @@ public class SymbolTable extends SelectionTable {
 
 	};
 
-	
-	
-	public final static String [] pointers = {
-	
-	"\u261A" ,    //BLACK LEFT POINTING INDEX
-	"\u261B" ,    //BLACK RIGHT POINTING INDEX
-	"\u261C" ,    //WHITE LEFT POINTING INDEX
-	"\u261D" ,    //WHITE UP POINTING INDEX
-	"\u261E" ,    //WHITE RIGHT POINTING INDEX
-	"\u261F" ,    //WHITE DOWN POINTING INDEX
-	
-	};
-	
-	
-	
-	
-	
-	
-	public final static String [] misc = {
 
-		
+
+	public final static String [] UNICODEpointers = {
+
+		"\u261A" ,    //BLACK LEFT POINTING INDEX
+		"\u261B" ,    //BLACK RIGHT POINTING INDEX
+		"\u261C" ,    //WHITE LEFT POINTING INDEX
+		"\u261D" ,    //WHITE UP POINTING INDEX
+		"\u261E" ,    //WHITE RIGHT POINTING INDEX
+		"\u261F" ,    //WHITE DOWN POINTING INDEX
+
+	};
+
+
+	public final static String [] UNICODEmisc = {
+
+
 		"\u2639" ,    //WHITE FROWNING FACE
 		"\u263A" ,    //WHITE SMILING FACE
 		"\u263B" ,    //BLACK SMILING FACE
-		
+
 		"\u260E" ,    //BLACK TELEPHONE
 		"\u260F" ,    //WHITE TELEPHONE
 		"\u2706",    //TELEPHONE LOCATION SIGN
-		
+
 		"\u2610" ,    //BALLOT BOX
 		"\u2611" ,    //BALLOT BOX WITH CHECK
 		"\u2612" ,    //BALLOT BOX WITH X
 		"\u2613" ,    //SALTIRE
 		"\u2619" ,    //REVERSED ROTATED FLORAL HEART BULLET
-	
-		
+
+
 		"\u2620" ,    //SKULL AND CROSSBONES
 		"\u2621" ,    //CAUTION SIGN
 		"\u2622" ,    //RADIOACTIVE SIGN
 		"\u2623" ,    //BIOHAZARD SIGN
 		"\u2624" ,    //CADUCEUS
 		"\u2625" ,    //ANKH
-		
+
 		"\u2670" ,    //WEST SYRIAC CROSS
 		"\u2671" ,     //EAST SYRIAC CROSS
-		
+
 		"\u2626" ,    //ORTHODOX CROSS
 		"\u2627" ,    //CHI RHO
 		"\u2628" ,    //CROSS OF LORRAINE
@@ -745,14 +660,10 @@ public class SymbolTable extends SelectionTable {
 		"\u2636" ,    //TRIGRAM FOR MOUNTAIN
 		"\u2637" ,    //TRIGRAM FOR EARTH
 		"\u2638" ,    //WHEEL OF DHARMA
-		
-	
-		
 	};
-	
-	
 
-	public final static String [] weather_astrology = {	
+
+	public final static String [] UNICODEweather_astrology = {	
 
 		"\u263C" ,    //WHITE SUN WITH RAYS
 		"\u2600" ,    //BLACK SUN WITH RAYS
@@ -797,8 +708,7 @@ public class SymbolTable extends SelectionTable {
 	};
 
 
-	public final static String [] games_music = {
-
+	public final static String [] UNICODEgames_music = {
 
 		"\u2654" ,    //WHITE CHESS KING
 		"\u2655" ,    //WHITE CHESS QUEEN
@@ -828,18 +738,18 @@ public class SymbolTable extends SelectionTable {
 		"\u266D" ,    //MUSIC FLAT SIGN
 		"\u266E" ,    //MUSIC NATURAL SIGN
 		"\u266F" ,    //MUSIC SHARP SIGN
-	
+
 
 	};
 
 
-	public final static String [] writing = {
+	public final static String [] UNICODEwriting = {
 
 		"\u2701",    //UPPER BLADE SCISSORS
 		"\u2702",    //BLACK SCISSORS
 		"\u2703",    //LOWER BLADE SCISSORS
 		"\u2704",    //WHITE SCISSORS
-		
+
 		"\u2707",    //TAPE DRIVE
 		"\u2708",    //AIRPLANE
 		"\u2709",    //ENVELOPE
@@ -854,7 +764,7 @@ public class SymbolTable extends SelectionTable {
 
 
 
-	public final static String [] bullets = {
+	public final static String [] UNICODEbullets = {
 		"\u2713",    //CHECK MARK
 		"\u2714",    //HEAVY CHECK MARK
 		"\u2715",    //MULTIPLICATION X
@@ -1010,7 +920,7 @@ public class SymbolTable extends SelectionTable {
 
 	};
 
-	public final static String [] geometricShapes = {	
+	public final static String [] UNICODEgeometricShapes = {	
 
 		"\u25A0" ,      //BLACK SQUARE
 		"\u25A1" ,      //WHITE SQUARE
@@ -1083,7 +993,7 @@ public class SymbolTable extends SelectionTable {
 		"\u25E4" ,      //BLACK UPPER LEFT TRIANGLE
 		"\u25E5" ,      //BLACK UPPER RIGHT TRIANGLE
 		"\u25E6" ,      //WHITE BULLET
-		
+
 		/*
 		"\u25E7" ,      //SQUARE WITH LEFT HALF BLACK
 		"\u25E8" ,      //SQUARE WITH RIGHT HALF BLACK
@@ -1102,32 +1012,44 @@ public class SymbolTable extends SelectionTable {
 		"\u25F5" ,      //WHITE CIRCLE WITH LOWER LEFT QUADRANT
 		"\u25F6" ,      //WHITE CIRCLE WITH LOWER RIGHT QUADRANT
 		"\u25F7" ,      //WHITE CIRCLE WITH UPPER RIGHT QUADRANT
-		*/
+		 */
 
 	};
 
 	public final static String [] letterLikeSymbols = {	
 
-		
-		
+
+		"\u20D7",    //     \\vec
+		"\u210F",    //     \\hbar
+		"\u2111",    //     \\Im
+		"\u2113",    //     \\ell
+		"\u2118",    //     \\wp
+		"\u211C",    //     \\Re
+		"\u2127",    //     \\mho
+		"\u212F",    //     e
+		"\u2132",    //     \\Finv
+		"\u2135",    //     \\aleph
+		"\u2136",    //     \\beth
+		"\u2137",    //     \\gimel
+		"\u2138",    //     \\daleth
+		"\u2141",    //     \\Game
+
+
+		/*		
+
 		"\u2103" ,      //DEGREE CELSIUS
 		"\u2109" ,      //DEGREE FAHRENHEIT
 		"\u212A" ,      //KELVIN SIGN
 		"\u212B" ,      //ANGSTROM SIGN
-		
+
 		"\u2107" ,      //EULER CONSTANT
 		"\u210E" ,      //PLANCK CONSTANT
 		"\u210F" ,      //PLANCK CONSTANT OVER TWO PI
-		
+
 		"\u2125" ,      //OUNCE SIGN
 		"\u2126" ,      //OHM SIGN
 		"\u2127" ,      //INVERTED OHM SIGN
-		
-		
 
-		
-		
-		
 		"\u2102" ,      //DOUBLE-STRUCK CAPITAL C
 		"\u210D" ,      //DOUBLE-STRUCK CAPITAL H
 		"\u2115" ,      //DOUBLE-STRUCK CAPITAL N
@@ -1135,21 +1057,18 @@ public class SymbolTable extends SelectionTable {
 		"\u211A" ,      //DOUBLE-STRUCK CAPITAL Q
 		"\u211D" ,      //DOUBLE-STRUCK CAPITAL R
 		"\u2124" ,      //DOUBLE-STRUCK CAPITAL Z
-		
-		
+
 		"\u212D" ,      //BLACK-LETTER CAPITAL C
 		"\u210C" ,      //BLACK-LETTER CAPITAL H
 		"\u2111" ,      //BLACK-LETTER CAPITAL I
 		"\u211C" ,      //BLACK-LETTER CAPITAL R
 		"\u2128" ,      //BLACK-LETTER CAPITAL Z
-		
-		
+
 		"\u212F" ,      //SCRIPT SMALL E
 		"\u2113" ,      //SCRIPT SMALL L
 		"\u2134" ,      //SCRIPT SMALL O
 		"\u210A" ,      //SCRIPT SMALL G
-		
-		
+
 		"\u212C" ,      //SCRIPT CAPITAL B	
 		"\u2130" ,      //SCRIPT CAPITAL E
 		"\u2131" ,      //SCRIPT CAPITAL F
@@ -1159,11 +1078,11 @@ public class SymbolTable extends SelectionTable {
 		"\u2133" ,      //SCRIPT CAPITAL M
 		"\u2118" ,      //SCRIPT CAPITAL P
 		"\u211B" ,      //SCRIPT CAPITAL R
-		
+
 		"\u2132" ,      //TURNED CAPITAL F
 		"\u2129" ,      //TURNED GREEK SMALL LETTER IOTA
 		"\u213A" ,      //ROTATED CAPITAL Q
-		
+
 		/*
 		"\u2114" ,      //L B BAR SYMBOL
 		"\u2116" ,      //NUMERO SIGN					
@@ -1180,14 +1099,17 @@ public class SymbolTable extends SelectionTable {
 		"\u2105" ,      //CARE OF
 		"\u2106" ,      //CADA UNA
 		"\u2108" ,      //SCRUPLE
-		*/
-		
+		 */
+
+		/*
 		"\u2135" ,      //ALEF SYMBOL
 		"\u2136" ,      //BET SYMBOL
 		"\u2137" ,      //GIMEL SYMBOL
 		"\u2138" ,      //DALET SYMBOL
 		"\u2139" ,      //INFORMATION SOURCE
 		"\u212E" ,      //ESTIMATED SYMBOL	
+		 */
+
 
 	};
 
@@ -1212,21 +1134,348 @@ public class SymbolTable extends SelectionTable {
 		"\u20AF" ,     //DRACHMA SIGN
 
 	};
-	
-	
-	
-	
+
+
+
+
+	public final static String [] JLatex = {	
+
+		"\u007D",    //     \\rbrace
+		"\u00AC",    //     \\lnot
+		"\u00B1",    //     \\pm
+		"\u2213",    //     \\mp
+		"\u00B7",    //     \\centerdot
+		"\u00D7",    //     \\times
+		"\u00F0",    //     \\eth
+		"\u00F7",    //     \\div
+
+		"\u221A",    //     \\surd
+		"\u2202",    //     \\partial
+		"\u2207",    //     \\nabla
+		"\u220F",    //     \\prod
+		"\u2210",    //     \\coprod
+		"\u2211",    //     \\sum
+
+		//	"\u222B",    //     \\int
+		"\u222B",    //     \\smallint
+		"\u222C",    //     \\iint
+		"\u222D",    //     \\iiint
+		"\u222E",    //     \\oint
+		"\u2A0C",    //     \\iiiint
+
+		"\u2205",    //     \\emptyset
+		//"\u2205",    //     \\varnothing
+
+
+
+		/****  accents
+		"\u02DA",    //     \\jlatexmathring
+		"\u02DA",    //     \\mathring
+		"\u0300",    //     \\grave
+		"\u0301",    //     \\acute
+		"\u0302",    //     \\hat
+		"\u0302",    //     \\widehat
+		"\u0303",    //     \\tilde
+		"\u0303",    //     \\widetilde
+		"\u0304",    //     \\bar
+		"\u0306",    //     \\breve
+		"\u0307",    //     \\dot
+		"\u0308",    //     \\ddot
+		"\u030B",    //     \\doubleacute
+		"\u030C",    //     \\check
+		 */
+
+		"\u03F5",    //     \\epsilon
+		"\u03F6",    //     \\backepsilon
+
+		/**** spaces
+		"\u2002",    //     \\;
+		"\u2002",    //     \\thickspace
+		"\u2003",    //     \\quad
+		"\u2004",    //     \\,
+		"\u2004",    //     \\thinspace
+		"\u2005",    //     \\:
+		"\u2005",    //     \\medspace
+		"\u200B",    //     \\!
+		"\u2016",    //     \\|
+		 */
+
+
+		"\u2016",    //     \\lVert
+		//"\u2016",    //     \\rVert
+
+		"\u2020",    //     \\dagger
+		"\u2021",    //     \\ddagger
+
+
+
+
+
+		"\u2032",    //     \\&apos;
+		"\u2032",    //     \\prime
+		"\u2035",    //     \\backprime
+		"\u20D7",    //     \\vec
+		//"\u210F",    //     \\hbar
+		"\u210F",    //     \\hslash
+
+
+		"\u2113",    //     \\ell
+		"\u2118",    //     \\wp
+
+		"\u2111",    //     \\Im
+		"\u211C",    //     \\Re
+		"\u2127",    //     \\mho
+		"\u212F",    //     e
+		"\u2132",    //     \\Finv
+		"\u2135",    //     \\aleph
+		"\u2136",    //     \\beth
+		"\u2137",    //     \\gimel
+		"\u2138",    //     \\daleth
+		"\u2141",    //     \\Game
+
+
+
+		"\u2212",    //     \\minus
+
+		"\u2214",    //     \\dotplus
+
+		"\u2215",    //     \\slash
+		"\u2216",    //     \\setminus
+		"\u2216",    //     \\smallsetminus
+		"\u2218",    //     \\circ
+
+		"\u2219",    //     \\bullet
+		"\u221E",    //     \\infty
+
+
+
+		"\u2220",    //     \\angle
+		//"\u2221",    //     \\measuredangle
+		"\u2222",    //     \\sphericalangle
+		//"\u2223",    //     \\arrowvert
+		//"\u2223",    //     \\mid
+		//"\u2223",    //     \\shortmid
+		"\u2223",    //     \\vert
+		//"\u2224",    //     \\nmid
+		"\u2224",    //     \\nshortmid
+		//"\u2225",    //     \\Arrowvert
+		"\u2225",    //     \\parallel
+		//"\u2225",    //     \\shortparallel
+		"\u2225",    //     \\Vert
+		"\u2226",    //     \\nparallel
+		//"\u2226",    //     \\nshortparallel
+
+
+		"\u2229",    //     \\cap
+		"\u222A",    //     \\cup
+
+
+
+
+
+
+
+
+		"\u224E",    //     \\Bumpeq
+		"\u224F",    //     \\bumpeq
+		"\u2250",    //     \\doteq
+		"\u2251",    //     \\doteqdot
+		"\u2252",    //     \\fallingdotseq
+		"\u2253",    //     \\risingdotseq
+		"\u2256",    //     \\eqcirc
+		"\u2257",    //     \\circeq
+		"\u225C",    //     \\triangleq
+		"\u225F",    //     \\stackrel{?}{=}
+
+
+
+
+
+
+
+
+
+
+		"\u2293",    //     \\sqcap
+		"\u2294",    //     \\sqcup
+		"\u2295",    //     \\oplus
+		"\u2296",    //     \\ominus
+		"\u2297",    //     \\otimes
+		"\u2298",    //     \\oslash
+		"\u2299",    //     \\odot
+		"\u229A",    //     \\circledcirc
+		"\u229B",    //     \\circledast
+		"\u229D",    //     \\circleddash
+		"\u229E",    //     \\boxplus
+		"\u229F",    //     \\boxminus
+		"\u22A0",    //     \\boxtimes
+		"\u22A1",    //     \\boxdot
+		"\u22A2",    //     \\vdash
+		"\u22A3",    //     \\dashv
+		"\u22A4",    //     \\top
+		"\u22A5",    //     \\bot
+		"\u22A5",    //     \\perp
+		"\u22A7",    //     \\models
+		"\u22A8",    //     \\vDash
+		"\u22A9",    //     \\Vdash
+		"\u22AA",    //     \\Vvdash
+		"\u22AC",    //     \\nvdash
+		"\u22AD",    //     \\nvDash
+		"\u22AE",    //     \\nVdash
+		"\u22AF",    //     \\nVDash
+		"\u22B2",    //     \\lhd
+		"\u22B2",    //     \\vartriangleleft
+		"\u22B3",    //     \\rhd
+		//"\u22B3",    //     \\vartriangleright
+		"\u22B4",    //     \\unlhd
+		//"\u22B4",    //     \\trianglelefteq
+		"\u22B5",    //     \\unrhd
+		//"\u22B5",    //     \\trianglerighteq
+		"\u22B8",    //     \\multimap
+		"\u22BA",    //     \\intercal
+		"\u22C0",    //     \\bigwedge
+		"\u22C1",    //     \\bigvee
+		"\u22C2",    //     \\bigcap
+		"\u22C3",    //     \\bigcup
+		"\u22C4",    //     \\diamond
+		"\u22C5",    //     \\cdot
+		"\u22C6",    //     \\star
+		"\u22C7",    //     \\divideontimes
+		"\u22C8",    //     \\bowtie
+		"\u22C9",    //     \\ltimes
+		"\u22CA",    //     \\rtimes
+		"\u22CB",    //     \\leftthreetimes
+		"\u22CC",    //     \\rightthreetimes
+		"\u22CD",    //     \\backsimeq
+		"\u22CE",    //     \\curlyvee
+		"\u22CF",    //     \\curlywedge
+
+
+
+
+		"\u22D2",    //     \\Cap
+		"\u22D2",    //     \\doublecap
+		"\u22D3",    //     \\Cup
+		"\u22D3",    //     \\doublecup
+		"\u22D4",    //     \\pitchfork
+		"\u22D6",    //     \\lessdot
+		"\u22D7",    //     \\gtrdot
+		"\u22D8",    //     \\llless
+		"\u22D9",    //     \\ggg
+		"\u22D9",    //     \\gggtr
+		"\u22DB",    //     \\gtreqless
+		"\u22DE",    //     \\curlyeqprec
+		"\u22DF",    //     \\curlyeqsucc
+		"\u22E6",    //     \\lnsim
+		"\u22E7",    //     \\gnsim
+		"\u22E8",    //     \\precnsim
+		"\u22E9",    //     \\succnsim
+		"\u22EA",    //     \\ntriangleleft
+		"\u22EB",    //     \\ntriangleright
+		"\u22EC",    //     \\ntrianglelefteq
+		"\u22ED",    //     \\ntrianglerighteq
+
+
+
+
+		"\u2305",    //     \\barwedge
+		"\u2306",    //     \\doublebarwedge
+		"\u2308",    //     \\lceil
+		"\u2309",    //     \\rceil
+		"\u230A",    //     \\lfloor
+		"\u230B",    //     \\rfloor
+
+
+		/*** brackets 
+		"\u2322",    //     \\smallfrown
+		//"\u2323",    //     \\frown
+		//"\u2323",    //     \\smallsmile
+		"\u2323",    //     \\smile
+
+
+		"\u2329",    //     \\langle
+		"\u232A",    //     \\rangle
+		"\u23B0",    //     \\lmoustache
+		"\u23B1",    //     \\rmoustache
+
+		 */
+
+		"\u24C8",    //     \\circledS
+
+		"\u2571",    //     \\diagup
+		"\u2572",    //     \\diagdown
+
+
+
+
+		"\u2026",    //     \\dots
+		//	"\u2026",    //     \\dotsc
+		//	"\u2026",    //     \\dotso
+		//	"\u2026",    //     \\hdots
+		//	"\u2026",    //     \\ldots
+
+		"\u22EE",    //     \\vdots
+		"\u22EF",    //     \\cdots
+		"\u22EF",    //     \\dotsb
+		"\u22F1",    //     \\ddots
+
+
+
+
+		"\u2A3F",    //     \\amalg
+		"\u2A61",    //     \\veebar
+		"\u2A7D",    //     \\leqslant
+		"\u2A7D",    //     \\nleqslant
+		"\u2A7E",    //     \\geqslant
+		"\u2A7E",    //     \\ngeqslant
+		"\u2A85",    //     \\lessapprox
+		"\u2A86",    //     \\gtrapprox
+		"\u2A87",    //     \\lneq
+		"\u2A88",    //     \\gneq
+		"\u2A89",    //     \\lnapprox
+		"\u2A8A",    //     \\gnapprox
+		"\u2A8B",    //     \\lesseqqgtr
+		"\u2A8C",    //     \\gtreqqless
+		"\u2A95",    //     \\eqslantless
+		"\u2A96",    //     \\eqslantgtr
+		"\u2AA2",    //     \\gg
+		"\u2AAF",    //     \\npreceq
+		"\u2AAF",    //     \\preceq
+		"\u2AB0",    //     \\nsucceq
+		"\u2AB0",    //     \\succeq
+		"\u2AB5",    //     \\precneqq
+		"\u2AB6",    //     \\succneqq
+		"\u2AB7",    //     \\precapprox
+		"\u2AB8",    //     \\succapprox
+		"\u2AB9",    //     \\precnapprox
+		"\u2ABA",    //     \\succnapprox
+		"\u2AC5",    //     \\nsubseteqq
+		"\u2AC5",    //     \\subseteqq
+		"\u2AC6",    //     \\supseteqq
+		"\u2ACB",    //     \\subsetneqq
+		"\u2ACB",    //     \\varsubsetneqq
+		"\u2ACC",    //     \\supsetneqq
+		"\u2ACC",    //     \\varsupsetneqq
+
+
+
+	};
+
+
+
+
+
 	private MyTextField inputField;
-	
-		
+
+
 	public SymbolTable(Application app, MyTextField inputField) {
 		super(app, symbols, -1,6, new Dimension(20,16), SelectionTable.MODE_TEXT);
 		setShowGrid(true);
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setSelectedIndex(1);
-		
+
 		this.inputField = inputField;
-		
+
 	}
 
 }

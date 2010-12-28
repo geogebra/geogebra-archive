@@ -198,11 +198,21 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		JMenu menu = new JMenu("Basic");
 		menu.add(new LatexTable(app, this, btInsertLaTeX, SymbolTable.tableSymbols, -1, 11,SelectionTable.MODE_TEXT));
 		btInsertUnicode.addPopupMenuItem(menu);
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.math_ops,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.letterLikeSymbols,0,1,2));
+		//btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.math_ops,0,1,2));
+		
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.operators,0,1,2));
+		
+		
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.sets,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.logical,0,1,2));
+		//btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.geometric_relations,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.basic_arrows,0,1,2));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.otherArrows,0,1,2));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.geometricShapes,0,1,2));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.games_music,0,1,2));
+		
+		/*
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.letterLikeSymbols,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.other_arrows,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.pointers,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.misc,0,1,2));
@@ -212,7 +222,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.weather_astrology,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.currency,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.games_music,0,1,2));
-	//	btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.otherdingbats,0,1,2));
+		
+		*/
+		menu = new JMenu("JLatex");
+		menu.add(new LatexTable(app, this, btInsertLaTeX, SymbolTable.JLatex, -1, 16,SelectionTable.MODE_TEXT));
+	//	btInsertUnicode.addPopupMenuItem(menu);
 		
 		
 	}
@@ -268,6 +282,27 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		menu = new JMenu(app.getMenu("Matrices"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.matrices, 1, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
+		
+		menu = new JMenu();
+		menu.setIcon(GeoGebraIcon.createLatexIcon(app, LatexTable.mathfrak()[0] + LatexTable.mathfrak()[1] + LatexTable.mathfrak()[2], 
+				app.getPlainFont(), true, Color.black, null));
+		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.mathfrak(), 4, -1,SelectionTable.MODE_LATEX));
+		btInsertLaTeX.addPopupMenuItem(menu);
+		
+		menu = new JMenu();
+		menu.setIcon(GeoGebraIcon.createLatexIcon(app, LatexTable.mathcal()[0] + LatexTable.mathcal()[1] + LatexTable.mathcal()[2], 
+				app.getPlainFont(), true, Color.black, null));
+		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.mathcal(), 2, -1,SelectionTable.MODE_LATEX));
+		btInsertLaTeX.addPopupMenuItem(menu);
+		
+		
+		menu = new JMenu();
+		menu.setIcon(GeoGebraIcon.createLatexIcon(app, LatexTable.mathbb()[0] + LatexTable.mathbb()[1] + LatexTable.mathbb()[2], 
+				app.getPlainFont(), true, Color.black, null));
+		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.mathbb(), 2, -1,SelectionTable.MODE_LATEX));
+		btInsertLaTeX.addPopupMenuItem(menu);
+		
+		
 		
 		/*
 		menu = new JMenu("misc");
