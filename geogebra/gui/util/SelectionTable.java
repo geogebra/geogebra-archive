@@ -48,8 +48,13 @@ public class SelectionTable extends JTable{
 
 	private int horizontalAlignment = SwingConstants.LEFT;
 	
-
-
+	private boolean showSelection = true;
+	
+	public void setShowSelection(boolean showSelection) {
+		this.showSelection = showSelection;
+	}
+	
+	
 	public void setHorizontalAlignment(int horizontalAlignment) {
 		this.horizontalAlignment = horizontalAlignment;
 	}
@@ -405,7 +410,7 @@ public class SelectionTable extends JTable{
 			
 			if(useColorSwatchBorder){
 				setBackground(table.getBackground());
-				if (isSelected) {
+				if (showSelection && isSelected) {
 					setBorder(selectedBorder);
 				} 
 				else if(row == rollOverRow && column == rollOverColumn) {
@@ -417,7 +422,7 @@ public class SelectionTable extends JTable{
 				
 			}else{
 
-				if (isSelected) {
+				if (showSelection && isSelected) {
 					setBackground(selectionColor);
 				} 
 				else if(row == rollOverRow && column == rollOverColumn) {

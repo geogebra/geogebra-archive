@@ -393,6 +393,7 @@ public class LatexTable extends SelectionTable implements MenuElement{
 		this.setGridColor(MyTable.TABLE_GRID_COLOR);
 		this.setBorder(BorderFactory.createLineBorder(MyTable.TABLE_GRID_COLOR));
 		//this.setBorder(BorderFactory.createEmptyBorder());
+		this.setShowSelection(false);
 	}
 
 	public void setCaretPosition(int caretPosition){
