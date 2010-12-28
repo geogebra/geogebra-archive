@@ -710,22 +710,24 @@ public abstract class Drawable3D extends DrawableND {
 	 * @param alpha
 	 */
 	protected void setHighlightingColor(int amplitude, float alpha){
-		/*
+		
 		if(doHighlighting()){
 			Manager manager = getView3D().getRenderer().getGeometryManager();
 			getView3D().getRenderer().setColor(
 					manager.getHigthlighting(getGeoElement().getObjectColor(),amplitude),
 					manager.getHigthlighting(alpha,2*amplitude));
 		}else
-		*/
 			getView3D().getRenderer().setColor(getGeoElement().getObjectColor(),alpha);
 	}
 	
 	protected void setLight(Renderer renderer){
+		
+		/*
 		if (doHighlighting())
 			renderer.setLight(Renderer.LIGHT_HIGHLIGHTED);
 		else
 			renderer.setLight(Renderer.LIGHT_STANDARD);
+		*/
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////

@@ -712,10 +712,11 @@ public class Renderer implements GLEventListener {
     	color = c;
     	this.alpha = alpha;
  
+    	
     	gl.glColor4f(((float) c.getRed())/256f,
-    							((float) c.getGreen())/256f,
-    							((float) c.getBlue())/256f,
-    							(float) alpha);
+				((float) c.getGreen())/256f,
+				((float) c.getBlue())/256f,
+				(float) alpha);
     	
     	
     	
@@ -1567,13 +1568,15 @@ public class Renderer implements GLEventListener {
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0);
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightSpecular, 0);
+ 
+ 
         
         //LIGHT_HIGHLIGHTED
         ambiant = 1f;
-        lightAmbient = new float[] {ambiant, ambiant, ambiant, 1.0f};
+        //lightAmbient = new float[] {ambiant, ambiant, ambiant, 1.0f};
         diffuse=0f;//1f-ambiant;
-        lightDiffuse = new float[] {diffuse, diffuse, diffuse, 1.0f};  
-        specular = 0f;
+        //lightDiffuse = new float[] {diffuse, diffuse, diffuse, 1.0f};  
+        specular = 1f;
         lightSpecular = new float[] {specular, specular, specular, 1f};
         gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbient, 0);
         gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuse, 0);
@@ -1584,6 +1587,18 @@ public class Renderer implements GLEventListener {
         enableLight(LIGHT_STANDARD);
         
         
+        
+        //material
+        /*
+        float[] mat_specular = { 1.0f, 1.0f, 1.0f, 1.0f };
+        float[] mat_shininess = { 10.0f };
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular,0);       
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess,0);
+        */
+        gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
+        //gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
+        gl.glEnable(GL.GL_COLOR_MATERIAL);
+
         
   
         gl.glShadeModel(GL.GL_SMOOTH);
@@ -1625,11 +1640,7 @@ public class Renderer implements GLEventListener {
         
         
         
-        //material
-        gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
-        //gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
-        gl.glEnable(GL.GL_COLOR_MATERIAL);
-
+ 
         
         //textures
         textures.init(gl);
