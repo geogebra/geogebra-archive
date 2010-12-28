@@ -199,13 +199,14 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		menu.add(new LatexTable(app, this, btInsertLaTeX, SymbolTable.tableSymbols, -1, 11,SelectionTable.MODE_TEXT));
 		btInsertUnicode.addPopupMenuItem(menu);
 		//btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.math_ops,0,1,2));
-		
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.operators,0,1,2));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.greekUpperCaseFull,0,1,2));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.analysis,0,1,2));
 		
 		
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.sets,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.logical,0,1,2));
-		//btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.geometric_relations,0,1,2));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.sub_superscripts,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.basic_arrows,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.otherArrows,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.geometricShapes,0,1,2));

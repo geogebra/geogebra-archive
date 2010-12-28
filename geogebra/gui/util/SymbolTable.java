@@ -165,6 +165,37 @@ public class SymbolTable extends SelectionTable {
 	};
 
 
+
+	public final static String [] greekUpperCaseFull = {
+
+		"\u0391",     // GREEK CAPITAL LETTER ALPHA
+		"\u0392",     // GREEK CAPITAL LETTER BETA
+		"\u0393",     // GREEK CAPITAL LETTER GAMMA
+		"\u0394",     // GREEK CAPITAL LETTER DELTA
+		"\u0395",     // GREEK CAPITAL LETTER EPSILON
+		"\u0396",     // GREEK CAPITAL LETTER ZETA
+		"\u0397",     // GREEK CAPITAL LETTER ETA
+		"\u0398",     // GREEK CAPITAL LETTER THETA
+		"\u0399",     // GREEK CAPITAL LETTER IOTA
+		"\u039A",     // GREEK CAPITAL LETTER KAPPA
+		"\u039B",     // GREEK CAPITAL LETTER LAMDA
+		"\u039C",     // GREEK CAPITAL LETTER MU
+		"\u039D",     // GREEK CAPITAL LETTER NU
+		"\u039E",     // GREEK CAPITAL LETTER XI
+		"\u039F",     // GREEK CAPITAL LETTER OMICRON
+		"\u03A0",     // GREEK CAPITAL LETTER PI
+		"\u03A1",     // GREEK CAPITAL LETTER RHO
+		"\u03A3",     // GREEK CAPITAL LETTER SIGMA
+		"\u03A4",     // GREEK CAPITAL LETTER TAU
+		"\u03A5",     // GREEK CAPITAL LETTER UPSILON
+		"\u03A6",     // GREEK CAPITAL LETTER PHI
+		"\u03A7",     // GREEK CAPITAL LETTER CHI
+		"\u03A8",     // GREEK CAPITAL LETTER PSI
+		"\u03A9",     // GREEK CAPITAL LETTER OMEGA
+
+	};
+
+
 	public final static String [] greek = {
 		"\u03b1", "\u03b2", "\u03b3", "\u03b4", "\u03b5", "\u03b6", "\u03b7", "\u03b8",
 		"\u03b9", "\u03ba", "\u03bb", "\u03bc", "\u03bd", "\u03be", "\u03bf", "\u03c0", 
@@ -255,38 +286,22 @@ public class SymbolTable extends SelectionTable {
 
 
 
-	public final static String [] operators = {
+	public final static String [] analysis = {
 
-		"\u221E", //INFINITY
+		"\u2211", //N-ARY SUMMATION
 		"\u2202", //PARTIAL DIFFERENTIAL
-		"\u2206", //INCREMENT
 		"\u2207", //NABLA	
+		"\u0394", //INCREMENT  (Greek Delta)
 		"\u220F", //N-ARY PRODUCT
 		"\u2210", //N-ARY COPRODUCT
-		"\u2211", //N-ARY SUMMATION
+
 		"\u222B", //INTEGRAL
 		"\u222C", //DOUBLE INTEGRAL
 		"\u222D", //TRIPLE INTEGRAL
 		"\u222E", //CONTOUR INTEGRAL
-		"\u2260",    //     \\neq
-		"\u2264",    //     \\leq
-		"\u2265",    //     \\geq	
-		"\u2248",    //     \\approx
-		"\u223C",    //     \\sim
-		"\u2241",    //     \\nsim
-		"\u2245",    //     \\cong
-		"\u2247",    //     \\ncong
-		"\u221D",    //     \\propto
-		"\u00B1",    //MINUS-OR-PLUS SIGN
-		"\u2213",   //MINUS-OR-PLUS SIGN
-		"\u221A",   //SQUARE ROOT
-		"\u2220", //ANGLE
-		"\u2221", //MEASURED ANGLE
-		"\u2222", //SPHERICAL ANGLE
-		"\u22a5",  //   \\perp
-		"\u2225", //PARALLEL TO
-		"\u2226", //NOT PARALLEL TO
-		//"\u223A", //GEOMETRIC PROPORTION
+		"\u221E", //INFINITY
+
+
 
 
 	};
@@ -297,11 +312,11 @@ public class SymbolTable extends SelectionTable {
 		"\u2200", //FOR ALL
 		"\u2203", //THERE EXISTS
 		"\u2204", //THERE DOES NOT EXIST
-		
+
 		"\u225f", //Boolean identity \\stackrel{?}{=}
 		"\u2261", //IDENTICAL TO
 		"\u2262", //NOT IDENTICAL TO
-		
+
 		"\u2227", //LOGICAL AND
 		"\u2228", //LOGICAL OR
 
@@ -330,10 +345,10 @@ public class SymbolTable extends SelectionTable {
 		"\u2205", //EMPTY SET
 		"\u2229", //INTERSECTION
 		"\u222A", //UNION
-		
+
 		"\u2208", //ELEMENT OF
 		"\u2209", //NOT AN ELEMENT OF
-	
+
 		"\u2282", //SUBSET OF	
 		"\u2284", //NOT A SUBSET OF
 		"\u2286", //SUBSET OF OR EQUAL TO
@@ -359,9 +374,32 @@ public class SymbolTable extends SelectionTable {
 
 
 
-	public final static String [] geometric_relations = {
+	public final static String [] operators = {
 
-		"\u221F", //RIGHT ANGLE
+		"\u00D7",    //     \\times
+		"\u00F7",    //     \\div
+		"\u2212",    //     \\minus
+		"\u00B7",    //     \\centerdot
+		"\u2218",    //     \\circ
+		"\u2219",    //     \\bullet
+
+		"\u00B1",    //MINUS-OR-PLUS SIGN
+		"\u2213",   //MINUS-OR-PLUS SIGN
+		"\u221A",   //SQUARE ROOT
+
+
+		"\u2260",    //     \\neq
+		"\u2264",    //     \\leq
+		"\u2265",    //     \\geq	
+		"\u2248",    //     \\approx
+		"\u223C",    //     \\sim
+		"\u2241",    //     \\nsim
+		"\u2245",    //     \\cong
+		"\u2247",    //     \\ncong
+		"\u221D",    //     \\propto
+
+
+		//"\u221F", //RIGHT ANGLE
 		"\u2220", //ANGLE
 		"\u2221", //MEASURED ANGLE
 		"\u2222", //SPHERICAL ANGLE
@@ -371,8 +409,50 @@ public class SymbolTable extends SelectionTable {
 		"\u22a5",  //   \\perp
 		"\u2225", //PARALLEL TO
 		"\u2226", //NOT PARALLEL TO
-		"\u223A", //GEOMETRIC PROPORTION
+		//"\u223A", //GEOMETRIC PROPORTION
+		"\u2295",    //     \\oplus
+		"\u2296",    //     \\ominus
+		"\u2297",    //     \\otimes
+		"\u2298",    //     \\oslash
+		"\u2299",    //     \\odot
 
+	};
+
+	public final static String [] sub_superscripts = {
+
+		"\u2070",     // SUPERSCRIPT ZERO
+		"\u00b9",     // SUPERSCRIPT ONE  
+		"\u00b2",     // SUPERSCRIPT TWO
+		"\u00b3",     // SUPERSCRIPT THREE
+		"\u2074",     // SUPERSCRIPT FOUR
+		"\u2075",     // SUPERSCRIPT FIVE
+		"\u2076",     // SUPERSCRIPT SIX
+		"\u2077",     // SUPERSCRIPT SEVEN
+		"\u2078",     // SUPERSCRIPT EIGHT
+		"\u2079",     // SUPERSCRIPT NINE
+		"\u207A",     // SUPERSCRIPT PLUS SIGN
+		"\u207B",     // SUPERSCRIPT MINUS
+		"\u207C",     // SUPERSCRIPT EQUALS SIGN
+		"\u207D",     // SUPERSCRIPT LEFT PARENTHESIS
+		"\u207E",     // SUPERSCRIPT RIGHT PARENTHESIS
+		"\u207F",     // SUPERSCRIPT LATIN SMALL LETTER N
+		"\u00b0",     // degree	
+
+		"\u2080",     // SUBSCRIPT ZERO
+		"\u2081",     // SUBSCRIPT ONE
+		"\u2082",     // SUBSCRIPT TWO
+		"\u2083",     // SUBSCRIPT THREE
+		"\u2084",     // SUBSCRIPT FOUR
+		"\u2085",     // SUBSCRIPT FIVE
+		"\u2086",     // SUBSCRIPT SIX
+		"\u2087",     // SUBSCRIPT SEVEN
+		"\u2088",     // SUBSCRIPT EIGHT
+		"\u2089",     // SUBSCRIPT NINE
+		"\u208A",     // SUBSCRIPT PLUS SIGN
+		"\u208B",     // SUBSCRIPT MINUS
+		"\u208C",     // SUBSCRIPT EQUALS SIGN
+		"\u208D",     // SUBSCRIPT LEFT PARENTHESIS
+		"\u208E",     // SUBSCRIPT RIGHT PARENTHESIS
 	};
 
 
@@ -414,7 +494,7 @@ public class SymbolTable extends SelectionTable {
 		"\u21A2",    //     \\leftarrowtail
 		"\u21A3",    //     \\rightarrowtail
 		"\u21A6",    //     \\mapsto
-		
+
 		"\u21AD",    //     \\leftrightsquigarrow
 		"\u21AE",    //     \\nleftrightarrow
 		"\u21B0",    //     \\Lsh
