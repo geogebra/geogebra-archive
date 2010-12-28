@@ -1,11 +1,11 @@
-/* 
+/*
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
 
 This file is part of GeoGebra.
 
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
  */
@@ -20,7 +20,6 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import javax.swing.Icon;
 import javax.swing.JPanel;
 
 import org.scilab.forge.jlatexmath.TeXConstants;
@@ -28,7 +27,7 @@ import org.scilab.forge.jlatexmath.TeXFormula;
 
 /**
  * A JPanel to preview LaTeX on typing !
- * 
+ *
  * @author Calixte DENIZET
  */
 public class LaTeXPreviewerPanel extends JPanel {
@@ -78,18 +77,8 @@ public class LaTeXPreviewerPanel extends JPanel {
 		if (f.length() >= 2 && f.startsWith("$") && f.endsWith("$")) {
 			f = f.substring(1, f.length() - 1);
 		}
-		
-        boolean validLaTeX = true;
 
-        // check if syntax is valid
-        try {
-                TeXFormula formula = new TeXFormula(f);
-        } catch (org.scilab.forge.jlatexmath.ParseException e) {
-                validLaTeX = false;
-        }
-
-        im = (BufferedImage)TeXFormula.getPartialTeXFormula(f).createBufferedImage(TeXConstants.STYLE_DISPLAY, defaultSize, validLaTeX ? Color.black :
-Color.red, Color.white);
+        im = (BufferedImage)TeXFormula.getPartialTeXFormula(f).createBufferedImage(TeXConstants.STYLE_DISPLAY, defaultSize, Color.black, Color.white);
 
 /*
 		icon = TeXFormula.getPartialTeXFormula(f).createTeXIcon(
