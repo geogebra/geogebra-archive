@@ -18,6 +18,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
@@ -36,7 +37,8 @@ public class LaTeXPreviewerPanel extends JPanel {
 
 	private static final int defaultSize = 15;
 
-	private Icon icon;
+	private BufferedImage im;
+	//private Icon icon;
 	private int width;
 	private int height;
 
@@ -76,7 +78,20 @@ public class LaTeXPreviewerPanel extends JPanel {
 		if (f.length() >= 2 && f.startsWith("$") && f.endsWith("$")) {
 			f = f.substring(1, f.length() - 1);
 		}
+		
+        boolean validLaTeX = true;
 
+        // check if syntax is valid
+        try {
+                TeXFormula formula = new TeXFormula(f);
+        } catch (org.scilab.forge.jlatexmath.ParseException e) {
+                validLaTeX = false;
+        }
+
+        im = (BufferedImage)TeXFormula.getPartialTeXFormula(f).createBufferedImage(TeXConstants.STYLE_DISPLAY, defaultSize, validLaTeX ? Color.black :
+Color.red, Color.white);
+
+/*
 		icon = TeXFormula.getPartialTeXFormula(f).createTeXIcon(
 				TeXConstants.STYLE_DISPLAY, defaultSize);
 		if (icon == null) {
@@ -85,7 +100,9 @@ public class LaTeXPreviewerPanel extends JPanel {
 		}
 
 		width = icon.getIconWidth();
-		height = icon.getIconHeight();
+		height = icon.getIconHeight();*/
+		width = im.getWidth();
+		height = im.getHeight();
 		Dimension dim = new Dimension(width + 2 * INSET, height + 2 * INSET);
 		setPreferredSize(dim);
 		setSize(dim);
@@ -99,12 +116,18 @@ public class LaTeXPreviewerPanel extends JPanel {
 	 */
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		/*
 		if (icon != null) {
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, width + 2 * INSET, height + 2 * INSET);
 			// g.setColor(Color.BLACK);
 			// g.drawRect(0, 0, width + 2 * INSET - 1, height + 2 * INSET - 1);
 			icon.paintIcon(this, g, INSET, INSET);
+		}*/
+		if (im != null) {
+			g.setColor(Color.WHITE);
+			g.fillRect(0, 0, width + 2 * INSET, height + 2 * INSET);
+			g.drawImage(im, 0, 0, null);
 		}
 	}
 }
