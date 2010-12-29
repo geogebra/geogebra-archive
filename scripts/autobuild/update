@@ -7,13 +7,17 @@ test -r autobuild.conf || {
 . ./autobuild.conf
 NOW=`date +%Y%m%d-%H%M`
 cd $SVNDIR/geogebra
+
 if [ "$1" != "--no-update" ]; then
     svn update --accept theirs-full | tail -1 | grep ^At && exit 0 # No updates found.
     fi
-export JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun
+
+export JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun # Not needed to set if only Java 1.5 is installed.
 export ANT_OPTS="-Xms1024m -Xmx1024m"
-alias signjar=jarsigner # Needed for ant version < 1.8.0 (the "executable" attribute is not supported yet).
-ant
+
+# alias signjar=jarsigner # May be needed for ant version < 1.8.0 (the "executable" attribute is not supported yet).
+
+ant -f build.xml geogebra-cl
 cd build
 COPYDIR=$WWWDIR/$NOW
 mkdir -p $COPYDIR
