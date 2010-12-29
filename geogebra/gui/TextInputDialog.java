@@ -31,18 +31,25 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
@@ -58,9 +65,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	private static final long serialVersionUID = 1L;
 
 	private JCheckBox cbLaTeX;
-	private JComboBox cbLaTeXshortcuts;
-	private ComboBoxListener cbl;
-	JPanel latexPanel;
+	private JPanel latexPanel;
 
 	private JPanel latexPreviewPanel, editPanel;
 	private GeoText text;
@@ -69,12 +74,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	private boolean isTextMode = false;
 	private LaTeXPreviewerPanel latexPreviewer;
 
-	
 
 	private JToolBar tb;
-
 	private PopupMenuButton btInsertLaTeX;
 	private PopupMenuButton btInsertUnicode;
+	private PopupMenuButton btInsertGeo;
 
 	
 	/**
@@ -99,23 +103,12 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		cbLaTeX = new JCheckBox();
 		cbLaTeX.setSelected(isLaTeX);
 		cbLaTeX.addActionListener(this);
-		
-		// add LaTeX shortcuts
-		cbLaTeXshortcuts = new JComboBox();
-		cbLaTeXshortcuts.setFocusable(false);		
-		cbLaTeXshortcuts.setEnabled(isLaTeX);
-		
-		cbl = new ComboBoxListener();
-		// items are added by setLabels() as they contain language strings
-		cbLaTeXshortcuts.addActionListener(cbl);
-		cbLaTeXshortcuts.addMouseListener(cbl);
-			
 
-		
-		buildLaTeXTables();
-		buildUnicodeTables();
-		
-		
+		// create insertion buttons
+		buildInsertLaTeXButton();
+		buildInsertUnicodeButton();		
+		buildInsertGeoButton();
+				
 		// build toolbar
 		tb = new JToolBar();
 		tb.add(btInsertLaTeX);
@@ -123,20 +116,23 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		tb.addSeparator();
 		tb.add(Box.createRigidArea(new Dimension(5,1)));
 		tb.add(btInsertUnicode);
+		tb.add(Box.createRigidArea(new Dimension(5,1)));
+		tb.addSeparator();
+		tb.add(Box.createRigidArea(new Dimension(5,1)));
+		tb.add(btInsertGeo);
 		tb.setFloatable(false);
 		
-		
-		
+				
 		// build input dialog GUI
 		createGUI(title, "", false, cols, rows, false, false, false, false, false, false);		
 		setGeoText(text);  // init dialog using text
 		this.showSpecialCharacters(false);
 		this.setResizable(true);
 		
-		//===============================================
+		
 		// create latex control panel 
 		
-		latexPanel = latexPanel = new JPanel(new BorderLayout());
+		latexPanel = new JPanel(new BorderLayout());
 		JPanel cbPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		cbPanel.add(cbLaTeX);
 		cbPanel.add(tb);
@@ -187,15 +183,15 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	/** 
 	 * builds unicode insertion button and drop down tables
 	 */
-	private void buildUnicodeTables(){
+	private void buildInsertUnicodeButton(){
 		
 		btInsertUnicode = new PopupMenuButton();
 		btInsertUnicode.setKeepVisible(false);
 		btInsertUnicode.setStandardButton(true);
 		btInsertUnicode.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
-		btInsertUnicode.setText("Symbols");
+		//btInsertUnicode.setText("Symbols");
 		
-		JMenu menu = new JMenu("Basic");
+		JMenu menu = new JMenu(app.getMenu("Properties.Basic"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, SymbolTable.tableSymbols, -1, 11,SelectionTable.MODE_TEXT));
 		btInsertUnicode.addPopupMenuItem(menu);
 		//btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.math_ops,0,1,2));
@@ -233,7 +229,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 	/**
-	 * creates a sub-menu for the insert button
+	 * creates a sub-menu for the unicode insert button
 	 */
 	private JMenu createMenuItem(String[] table, int s1, int s2, int s3 ){
 		JMenu menu = new JMenu(table[s1] + " " + table[s2] + " " + table[s3] + "  ");
@@ -246,7 +242,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	/** 
 	 * builds LaTeX insertion button and drop down tables
 	 */
-	private void buildLaTeXTables(){
+	private void buildInsertLaTeXButton(){
 
 		btInsertLaTeX = new PopupMenuButton();
 		btInsertLaTeX.setKeepVisible(false);
@@ -260,7 +256,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.roots_fractions, 1, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
-
 		menu = new JMenu(app.getMenu("SumsAndIntegrals"));	
 		LatexTable table = new LatexTable(app, this, btInsertLaTeX, LatexTable.sums, 1, -1,SelectionTable.MODE_LATEX);
 		//table.setCaretPosition(-3);
@@ -279,83 +274,67 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.brackets, 2, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
-		
 		menu = new JMenu(app.getMenu("Matrices"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.matrices, 1, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
-		menu = new JMenu();
-		menu.setIcon(GeoGebraIcon.createLatexIcon(app, LatexTable.mathfrak()[0] + LatexTable.mathfrak()[1] + LatexTable.mathfrak()[2], 
-				app.getPlainFont(), true, Color.black, null));
+		menu = new JMenu(app.getMenu("FrakturLetters"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.mathfrak(), 4, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
-		menu = new JMenu();
-		menu.setIcon(GeoGebraIcon.createLatexIcon(app, LatexTable.mathcal()[0] + LatexTable.mathcal()[1] + LatexTable.mathcal()[2], 
-				app.getPlainFont(), true, Color.black, null));
+		menu = new JMenu(app.getMenu("CalligraphicLetters"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.mathcal(), 2, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 		
-		
-		menu = new JMenu();
-		menu.setIcon(GeoGebraIcon.createLatexIcon(app, LatexTable.mathbb()[0] + LatexTable.mathbb()[1] + LatexTable.mathbb()[2], 
-				app.getPlainFont(), true, Color.black, null));
+		menu = new JMenu(app.getMenu("BlackboardLetters"));
 		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.mathbb(), 2, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
-		
-		
-		
-		/*
-		menu = new JMenu("misc");
-		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.miscSymbols, -1, 6,SelectionTable.MODE_LATEX));
-		btInsertLaTeX.addPopupMenuItem(menu);
-		
-		menu = new JMenu("operators");
-		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.operators, -1, 6,SelectionTable.MODE_LATEX));
-		btInsertLaTeX.addPopupMenuItem(menu);
-
-		menu = new JMenu("relations");
-		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.relations, -1, 6,SelectionTable.MODE_LATEX));
-		btInsertLaTeX.addPopupMenuItem(menu);
-		
-		menu = new JMenu("negations");
-		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.negations, -1, 6,SelectionTable.MODE_LATEX));
-		btInsertLaTeX.addPopupMenuItem(menu);
-		
-		menu = new JMenu("arrows");
-		menu.add(new LatexTable(app, this, btInsertLaTeX, LatexTable.arrows, -1, 8,SelectionTable.MODE_LATEX));
-		btInsertLaTeX.addPopupMenuItem(menu);
-		*/
 
 	}
 	
 	
+	/** 
+	 * builds GeoElement insertion button 
+	 */
+	private void buildInsertGeoButton(){
+		
+		TreeSet ts = app.getKernel().getConstruction().getGeoSetLabelOrder();
+		ArrayList<String> list = new ArrayList<String>(); 
+		Iterator<GeoElement> iter = ts.iterator();
+		while (iter.hasNext()) {
+			GeoElement g = iter.next();
+			if (g.isLabelSet()) {
+				list.add(g.getLabel());
+			}
+		}
+		
+		final JList geoList = new JList(list.toArray());
+		geoList.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+
+			public void valueChanged(ListSelectionEvent e) {
+				
+				if(!e.getValueIsAdjusting()){		
+					String label = (String) geoList.getSelectedValue();
+					insertGeoElement(app.getKernel().lookupLabel(label));
+					btInsertGeo.handlePopupActionEvent();
+					geoList.getSelectionModel().clearSelection();
+				}
+			}
+			
+		});
+		
+		geoList.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
+		JScrollPane scroller = new JScrollPane(geoList);
+		scroller.setBorder(BorderFactory.createEmptyBorder());
+		
+		btInsertGeo = new PopupMenuButton();
+		btInsertGeo.addPopupMenuItem(scroller);
+		btInsertGeo.setKeepVisible(false);
+		btInsertGeo.setStandardButton(true);
+		btInsertGeo.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
+		
 	
-
-	public PopupMenuButton createUnicodeButton(String[] symbols, String iconString, int rows, int columns){
-
-		PopupMenuButton btn = new PopupMenuButton(app, symbols, rows,columns, new Dimension(1,1), SelectionTable.MODE_TEXT);
-		btn.setStandardButton(true);
-		btn.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
-		//	btn.setFixedIcon(GeoGebraIcon.createLatexIcon(app, iconString, app.getPlainFont(), 
-		//		false, Color.BLACK, btn.getBackground()));
-		btn.setText(iconString);
-		btn.setFocusable(false);
-		btn.setSelectedIndex(0);
-		btn.setKeepVisible(false);
-		btn.getMyTable().setShowGrid(true);
-		btn.getMyTable().setBorder(BorderFactory.createLineBorder(btn.getMyTable().getGridColor()));
-		btn.getMyPopup().setBorder(BorderFactory.createEmptyBorder());
-		btn.addActionListener(this);
-		//btn.setSelected(true);
-
-		return btn;
-
-	}
-
-	
-	
-	
+	};
 	
 	
 	public void setLabels(String title) {
@@ -364,104 +343,18 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		if(editPanel != null)
 			editPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
 		
-	//	if(latexPreviewPanel != null)
-	//		latexPreviewPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
+		if(latexPreviewPanel != null)
+			latexPreviewPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
 		
 	//	cbLaTeX.setText(app.getPlain("LaTeXFormula"));
 		
+			
+		btInsertLaTeX.setText(app.getPlain("LaTeXFormula"));	
+		btInsertUnicode.setText(app.getMenu("Symbols"));
+		btInsertGeo.setText(app.getMenu("Objects"));	
 		
-		cbLaTeXshortcuts.removeActionListener(cbl);
-		
-		cbLaTeXshortcuts.removeAllItems();
-		cbLaTeXshortcuts.addItem("\u221a"); 											// 0 square root
-		cbLaTeXshortcuts.addItem("\u221b"); 											// 1 cubic root
-		cbLaTeXshortcuts.addItem("a / b");  											// 2 fraction
-		cbLaTeXshortcuts.addItem(app.getPlain("Vector")); 								// 3 vector
-		cbLaTeXshortcuts.addItem(app.getPlain("Segment") + " AB"); 						// 4 overline			
-		cbLaTeXshortcuts.addItem("\u2211"); 											// 5 sum		
-		cbLaTeXshortcuts.addItem("\u222b"); 											// 6 int
-		cbLaTeXshortcuts.addItem(" "); 													// 7 space
-		cbLaTeXshortcuts.addItem(app.getPlain("2x2Matrix")); 							// 8 2x2 matrix
-		cbLaTeXshortcuts.addItem(app.getPlain("3x3Matrix")); 							// 9 3x3 matrix
-		
-		cbLaTeXshortcuts.addActionListener(cbl);
 	}
 	
-	private class ComboBoxListener extends MyComboBoxListener {
-				
-		
-		public void doActionPerformed(Object source) {			
-			if (source == cbLaTeX) {		
-				Application.debug("jkhkjhkjh");
-			} else if (source == cbLaTeXshortcuts) {		
-				String selText = inputPanel.getSelectedText();				
-				if (selText == null) selText = "";
-				
-				switch (cbLaTeXshortcuts.getSelectedIndex()) {
-					case 0: // square root
-						insertString(" \\sqrt{ " + selText + " } ");
-						setRelativeCaretPosition(-3);
-						break;
-						
-					case 1: // cubic root
-						insertString(" \\sqrt[3]{ " + selText + " } ");
-						setRelativeCaretPosition(-3);
-						break;
-						
-					case 2: // fraction
-						insertString(" \\frac{ " + selText + " }{ } ");
-						setRelativeCaretPosition(-6);
-						break;
-						
-					case 3: // fraction
-						insertString(" \\vec{ " + selText + " } ");
-						setRelativeCaretPosition(-3);
-						break;
-						
-					case 4: // segment
-						String lang = app.getLocale().getLanguage();						
-						if (lang.equals("da")) {
-							// Danish uses |AB| notation for segments
-							insertString(" \\left| " + selText + " \\right| ");
-							setRelativeCaretPosition(-9);
-						} else {
-							// default: overline
-							insertString(" \\overline{ " + selText + " } ");
-							setRelativeCaretPosition(-3);
-						}															
-						break;
-						
-					case 5: // sum
-						insertString(" \\sum_{ }^{ } " + selText);
-						setRelativeCaretPosition(-7 - selText.length());
-						break;
-						
-					case 6: // integral
-						insertString(" \\int_{ }^{ } " + selText);
-						setRelativeCaretPosition(-7 - selText.length());
-						break;
-						
-					case 7: // space
-						insertString(" \\; ");						
-						break;
-						
-					case 8: // 2x2 matrix
-						insertString("\\left(\\begin{array}{} a & b \\\\ c & d \\\\ \\end{array}\\right)");						
-						break;
-						
-					case 9: // 3x3 matrix
-						insertString("\\left(\\begin{array}{} a & b & c \\\\ d & e & f \\\\ g & h & i \\\\ \\end{array}\\right)");						
-						break;
-						
-					default:
-				}
-				
-			}
-		}
-	}
-	
-	
-
 	
 	/**
 	 * Set content of the textarea and 
@@ -473,8 +366,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
         boolean createText = text == null;   
         isLaTeX = text == null ? false: text.isLaTeX();
         //String label = null;
-                
-        
+                       
         if (createText) {
             //initString = "\"\"";
         	initString = null;            
@@ -499,7 +391,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
         if (isLaTeX) {
         	cbLaTeX.doClick();
         }
-        cbLaTeXshortcuts.setEnabled(isLaTeX);
+        
 	}
 	
 	/**
@@ -524,8 +416,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 	
 	
-	
-	
 	/**
 	 * @return apply button
 	 */
@@ -546,6 +436,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		Object source = e.getSource();
 		
 		try {
+			
 			if (source == btOK || source == inputPanel.getTextComponent()) {
 				inputText = inputPanel.getText();
 				isLaTeX = cbLaTeX.isSelected();
@@ -566,6 +457,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 				}
 			} 
+			
 			else if (source == btCancel) {
 				if (isShowing())
 					setVisible(false);		
@@ -576,12 +468,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				if(isTextMode)
 					app.setMode(EuclidianConstants.MODE_TEXT);
 			}
+			
 			else if (source == cbLaTeX) {
 				
 				btInsertLaTeX.setEnabled(cbLaTeX.isSelected());
 				
 				isLaTeX = cbLaTeX.isSelected();
-				cbLaTeXshortcuts.setEnabled(isLaTeX);
+				
 				if (isLaTeX) {
 					((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("latex");
 					inputPanel.getTextComponent().getDocument().addDocumentListener(this);
@@ -602,9 +495,10 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				if (latexPreviewer != null) {
 					latexPreviewer.setVisible(isLaTeX);
 				}
-
-
-			}			
+			}	
+			
+			
+			
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
 			ex.printStackTrace();
