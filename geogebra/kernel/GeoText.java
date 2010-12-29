@@ -433,6 +433,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 
 		// store location of text (and possible labelOffset)
 		sb.append(getXMLlocation());			
+		getScriptTags(sb);
 
    	}
    	

@@ -3609,6 +3609,14 @@ public abstract class GeoElement
 		sb.append("\">\n");
 		getXMLtags(sb);
 		
+		sb.append(getCaptionXML());
+				
+		sb.append("</element>\n");
+		
+		kernel.setTranslateCommandName(oldValue);
+	}
+	
+	public void getScriptTags(StringBuilder sb) {
 		// JavaScript
 		if (javaScript.length() > 0) {
 			sb.append("\t<javascript val=\"");
@@ -3622,12 +3630,7 @@ public abstract class GeoElement
 			sb.append(getXMLScript());
 			sb.append("\"/>\n");				
 		}
-				
-		sb.append(getCaptionXML());
-				
-		sb.append("</element>\n");
-		
-		kernel.setTranslateCommandName(oldValue);
+					
 	}
 	
 	public String getCaptionXML() {
@@ -3959,6 +3962,7 @@ public abstract class GeoElement
 		getXMLfixedTag(sb);
 		getAuxiliaryXML(sb);
 		getBreakpointXML(sb);		
+		getScriptTags(sb);
 	}
 
 	/**

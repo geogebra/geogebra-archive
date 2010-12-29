@@ -1132,6 +1132,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	        super.getXMLtags(sb);
 	        
 			getLineStyleXML(sb);
+			getScriptTags(sb);
 
 	    }
 		

@@ -110,6 +110,7 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 	   	getXMLvisualTags(sb);		
 	   	getLineStyleXML(sb);
 		getAuxiliaryXML(sb); 
+		getScriptTags(sb);
    	}
 
 	public void setMode(int mode) {

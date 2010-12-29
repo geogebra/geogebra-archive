@@ -1138,6 +1138,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		getXMLfixedTag(sb);
 		getAuxiliaryXML(sb);
 		getBreakpointXML(sb);		
+		getScriptTags(sb);
 	}
 	
 	

@@ -344,6 +344,7 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 		getXMLfixedTag(sb);
 		getAuxiliaryXML(sb);
 		getBreakpointXML(sb);		
+		getScriptTags(sb);
 	}
 	
 	

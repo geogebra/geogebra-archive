@@ -376,6 +376,7 @@ public final class GeoAngle extends GeoNumeric {
 		getXMLfixedTag(sb);
 		getAuxiliaryXML(sb);
 		getBreakpointXML(sb);
+		getScriptTags(sb);
 	}
 
 	private void getXMLAllowReflexAngleTag(StringBuilder sb) {
