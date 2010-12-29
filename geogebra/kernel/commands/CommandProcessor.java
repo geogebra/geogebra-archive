@@ -3451,7 +3451,7 @@ class CmdDerivative extends CommandProcessor {
 				label = label + "'";
 		}
 
-		return label;
+		return geo.getFreeLabel(label);
 	}
 }
 
