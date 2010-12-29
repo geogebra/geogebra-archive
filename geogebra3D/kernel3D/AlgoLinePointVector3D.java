@@ -22,39 +22,33 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 
 
 /**
- * Compute a plane through a point and orthogonal to a line (or segment, ...)
+ * Compute a plane through a point and parallel to a vector
  *
  * @author  matthieu
  * @version 
  */
-public class AlgoOrthoLinePointPlane extends AlgoOrtho {
+public class AlgoLinePointVector3D extends AlgoLinePoint {
 
  
 
-    public AlgoOrthoLinePointPlane(Construction cons, String label, GeoPointND point, GeoCoordSys2D cs) {
-        super(cons,label,point, (GeoElement) cs);
+    public AlgoLinePointVector3D(Construction cons, String label, GeoPointND point, GeoVectorND v) {
+        super(cons,label,point, (GeoElement) v);
     }
 
     public String getClassName() {
-        return "AlgoOrthoLinePointPlane";
+        return "AlgoLinePointVector";
     }
 
 
-    private GeoCoordSys2D getCS(){
-    	return (GeoCoordSys2D) getInputOrtho();
-    }
+	protected GgbVector getDirection() {
+		return ((GeoVectorND) getInputParallel()).getCoordsInD(3);
+	}
 
-  
-    protected final void compute() {
-    	
-    	GgbCoordSys coordsys = getCS().getCoordSys();
-    	
-    	getLine().setCoord(getPoint().getCoordsInD(3), coordsys.getVz());
-        
-    }
+
 
 }

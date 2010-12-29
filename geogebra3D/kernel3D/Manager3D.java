@@ -1,11 +1,14 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.AlgoCircleThreePoints;
+import geogebra.kernel.AlgoLinePointLine;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Manager3DInterface;
@@ -167,7 +170,18 @@ public class Manager3D implements Manager3DInterface {
 		GeoLine3D l = (GeoLine3D) algo.getCS();
 		return l;
 	}	
+	
+	final public GeoLineND Line3D(String label, GeoPointND P, GeoLineND l) {
+		AlgoLinePointLine3D algo = new AlgoLinePointLine3D(cons, label, P, l);
+		GeoLineND g = algo.getLine();
+		return g;
+	}
 
+	final public GeoLineND Line3D(String label, GeoPointND P, GeoVectorND v) {
+		AlgoLinePointVector3D algo = new AlgoLinePointVector3D(cons, label, P, v);
+		GeoLineND g = algo.getLine();
+		return g;
+	}
 
 	/** Ray3D label linking points P1 and P2   */	
 	final public GeoRay3D Ray3D(String label, GeoPointND P1, GeoPointND P2){
@@ -184,6 +198,12 @@ public class Manager3D implements Manager3DInterface {
 		 return algo.getLine();
 	 }
 
+	 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoLineND line){
+		 AlgoOrthoLinePointLine3D algo = new AlgoOrthoLinePointLine3D(cons, label, point, line);
+		 return algo.getLine();
+	 }
+	 
+	 
 
 
 	/** Polygon3D linking points P1, P2, ...  

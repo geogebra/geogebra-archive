@@ -26,35 +26,28 @@ import geogebra.main.Application;
 
 
 /**
- * Compute a plane through a point and orthogonal to a line (or segment, ...)
+ * Compute a plane through a point and parallel to a line (or segment, ...)
  *
  * @author  matthieu
  * @version 
  */
-public class AlgoOrthoLinePointPlane extends AlgoOrtho {
+public class AlgoLinePointLine3D extends AlgoLinePoint {
 
  
 
-    public AlgoOrthoLinePointPlane(Construction cons, String label, GeoPointND point, GeoCoordSys2D cs) {
-        super(cons,label,point, (GeoElement) cs);
+    public AlgoLinePointLine3D(Construction cons, String label, GeoPointND point, GeoLineND line) {
+        super(cons,label,point, (GeoElement) line);
     }
 
     public String getClassName() {
-        return "AlgoOrthoLinePointPlane";
+        return "AlgoLinePointLine";
     }
 
 
-    private GeoCoordSys2D getCS(){
-    	return (GeoCoordSys2D) getInputOrtho();
-    }
+	protected GgbVector getDirection() {
+		return getInputParallel().getMainDirection();
+	}
 
-  
-    protected final void compute() {
-    	
-    	GgbCoordSys coordsys = getCS().getCoordSys();
-    	
-    	getLine().setCoord(getPoint().getCoordsInD(3), coordsys.getVz());
-        
-    }
+
 
 }

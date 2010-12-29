@@ -618,6 +618,17 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
     	sb.append("\\end{tabular} \\right)"); 
     	return sb.toString();
     }     
+    
+    
+	public GgbVector getCoordsInD(int dimension){
+		GgbVector ret = new GgbVector(dimension+1);
+
+		ret.setX(getX());
+		ret.setY(getY());
+		ret.setZ(getZ());
+
+		return ret;
+	}
 
 	
 }

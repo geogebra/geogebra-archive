@@ -1,5 +1,6 @@
 package geogebra.kernel.kernelND;
 
+import geogebra.Matrix.GgbVector;
 import geogebra.kernel.CircularDefinitionException;
 
 /**
@@ -19,5 +20,13 @@ public interface GeoVectorND {
 	void setUndefined();
 	
 	public void setCoords(double[] c);
+	
+	
+	/**
+	 * @param dimension
+	 * @return the coords of the vector in the given dimension (extended or projected)
+	 */
+	public GgbVector getCoordsInD(int dimension);
+
 
 }

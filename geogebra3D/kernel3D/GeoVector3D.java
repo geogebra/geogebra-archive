@@ -372,7 +372,18 @@ implements GeoVectorND, Locateable, Vector3DValue{
 		} 
 
 
-		
+		public GgbVector getCoordsInD(int dimension){
+			GgbVector ret = new GgbVector(dimension+1);
+			switch(dimension){
+			case 3:
+				ret.setW(getW());
+			case 2:
+				ret.setX(getX());
+				ret.setY(getY());
+				ret.setZ(getZ());
+			}
+			return ret;
+		}
 		
 		
 

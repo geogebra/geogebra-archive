@@ -31,29 +31,39 @@ import geogebra.main.Application;
  * @author  matthieu
  * @version 
  */
-public class AlgoOrthoLinePointPlane extends AlgoOrtho {
+public class AlgoOrthoLinePointLine3D extends AlgoOrtho {
 
  
 
-    public AlgoOrthoLinePointPlane(Construction cons, String label, GeoPointND point, GeoCoordSys2D cs) {
-        super(cons,label,point, (GeoElement) cs);
+    public AlgoOrthoLinePointLine3D(Construction cons, String label, GeoPointND point, GeoLineND line) {
+        super(cons,label,point, (GeoElement) line);
     }
 
     public String getClassName() {
-        return "AlgoOrthoLinePointPlane";
+        return "AlgoOrthoLinePointLine";
     }
 
 
-    private GeoCoordSys2D getCS(){
-    	return (GeoCoordSys2D) getInputOrtho();
+    private GeoLineND getInputLine(){
+    	return (GeoLineND) getInputOrtho();
     }
 
   
     protected final void compute() {
     	
-    	GgbCoordSys coordsys = getCS().getCoordSys();
+    	GeoLineND line = getInputLine();
+    	GgbVector o = line.getPointInD(3, 0);
+    	GgbVector v1 = line.getPointInD(3, 1).sub(o);
+    	GgbVector o2 = getPoint().getCoordsInD(3);
+    	GgbVector v2 = o2.sub(o);
     	
-    	getLine().setCoord(getPoint().getCoordsInD(3), coordsys.getVz());
+    	GgbVector v3 = v1.crossProduct(v2);
+    	GgbVector v = v3.crossProduct(v1);
+    	
+    	if (v.equalsForKernel(0, Kernel.STANDARD_PRECISION))
+    		getLine().setUndefined();
+    	else
+    		getLine().setCoord(getPoint().getCoordsInD(3), v.normalize());
         
     }
 

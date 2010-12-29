@@ -77,7 +77,13 @@ public interface Manager3DInterface {
 			/** Line3D label linking points P1 and P2   */	
 			 public GeoElement Line3D(String label, GeoPointND P1, GeoPointND P2);
 
+			 /** Line3D label through point P and parallel to line l  */
+			 public GeoLineND Line3D(String label, GeoPointND P, GeoLineND l);
+			 
+			 /** Line3D label through point P and parallel to vector v  */
+			 public GeoLineND Line3D(String label, GeoPointND P, GeoVectorND v);
 
+			 
 			/** Ray3D label linking points P1 and P2   */	
 			 public GeoElement Ray3D(String label, GeoPointND P1, GeoPointND P2);
 
@@ -86,7 +92,8 @@ public interface Manager3DInterface {
 			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoCoordSys2D plane);
 
 
-			 
+			 /** Line3D through point orthogonal to line   */	
+			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoLineND line);
 			 
 
 
