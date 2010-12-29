@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 
 /**
  * Derivative of a function
@@ -95,10 +96,21 @@ public class AlgoCasDerivative extends AlgoCasBase {
         	sb.append(super.toString());
         } else {
         	// 2. Derivative of a x^2
-	        if (order != null)
-	        	sb.append(app.getPlain("AthDerivativeOfB", order.toGeoElement().getLabel(),f.toGeoElement().getLabel()));
-	        else
+	        if (order != null) {
+	        	String orderStr = order.toGeoElement().getLabel();
+	        	char firstCh = orderStr.charAt(0);
+	        	if (firstCh >= '0' && firstCh <= '9') {
+	        		// numeric, convert 3 -> 3rd (in current locale)
+	        		orderStr = app.getOrdinalNumber((int)order.getDouble());
+	        	} else {
+	        		// symbolic, convert n -> nth (in current locale)
+	        		orderStr = app.getPlain("Ath", orderStr); 
+	        	}
+
+	        	sb.append(app.getPlain("ADerivativeOfB", orderStr, f.toGeoElement().getLabel()));
+	        } else {
 	        	sb.append(app.getPlain("DerivativeOfA",f.toGeoElement().getLabel()));
+	        }
         }
         
         
