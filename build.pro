@@ -2,6 +2,8 @@
 # Proguard config file for GeoGebra
 #
 #
+-ignorewarnings
+
 -injars build/geogebra.jar
 -injars build/geogebra_main.jar
 -injars build/geogebra_gui.jar
