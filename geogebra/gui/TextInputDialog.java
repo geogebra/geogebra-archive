@@ -81,6 +81,10 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	private PopupMenuButton btInsertGeo;
 
 	
+	
+	
+	
+	
 	/**
 	 * Input Dialog for a GeoText object
 	 * @param app 
@@ -207,17 +211,19 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.otherArrows,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.geometricShapes,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.games_music,0,1,2));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.currency,0,1,2));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.UNICODEpointers,0,1,2));
 		
 		/*
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.letterLikeSymbols,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.other_arrows,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.pointers,0,1,2));
+		
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.misc,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.bullets,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.writing,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.geometricShapes,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.weather_astrology,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.currency,0,1,2));
+		
 		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.games_music,0,1,2));
 		
 		*/
