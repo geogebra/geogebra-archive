@@ -384,6 +384,7 @@ public class GeoGebraCAS {
 					} else {
 						// failed
 						sbCASCommand.append(ch);
+						sbCASCommand.append(translation.charAt(i));
 					}
 				} else {
 					sbCASCommand.append(ch);
