@@ -2564,7 +2564,7 @@ implements ExpressionValue, ExpressionNodeConstants {
            case ARG:
             	switch (STRING_TYPE) {
 	        		case STRING_TYPE_LATEX:
-	        			sb.append("\\arg\\left(");
+	        			sb.append("\\arg \\left( ");
 	                     sb.append(leftStr);
 	                     sb.append("\\right)");
 	        			break;
@@ -2717,7 +2717,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
-	        				sb.append("\\mathrm{y} \\left(");
+	        				sb.append("\\mathrm{y} \\left( ");
 	        				sb.append(leftStr);
 	                		sb.append("\\right)");
 	        				break;
@@ -2749,7 +2749,7 @@ implements ExpressionValue, ExpressionNodeConstants {
             	} else {
             		switch (STRING_TYPE) {
 	        			case STRING_TYPE_LATEX:            		
-	        				sb.append("\\mathrm{z} \\left(");
+	        				sb.append("\\mathrm{z} \\left( ");
 	        				sb.append(leftStr);
 	                		sb.append("\\right)");
 	        				break;
@@ -3030,11 +3030,11 @@ implements ExpressionValue, ExpressionNodeConstants {
 	}
     
     private String leftBracket(int type) {
-    	return (type == STRING_TYPE_LATEX) ? "\\left(" : "(";
+    	return (type == STRING_TYPE_LATEX) ? " \\left( " : "(";
     }
 	
     private String rightBracket(int type) {
-    	return (type == STRING_TYPE_LATEX) ? "\\right)" : ")";
+    	return (type == STRING_TYPE_LATEX) ? " \\right) " : ")";
     }
     
     private String multiplicationSign(int type) {
