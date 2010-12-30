@@ -36,7 +36,7 @@ public class GuiManager3D extends GuiManager {
 	}
 	
 	protected void createLayout(){
-		setLayout(new Layout(true));
+		setLayout(new Layout());
 	}
 	
 	/**
@@ -69,14 +69,14 @@ public class GuiManager3D extends GuiManager {
 		getLayout().registerPanel(new EuclidianDockPanel3D(app));
 	}
 	
-	
+	/*
 	protected EuclidianDockPanel newEuclidianDockPanel(){
 		return new EuclidianDockPanel(app,Toolbar.getAllToolsNoMacros());
 	}
 	
 	protected Euclidian2DockPanel newEuclidian2DockPanel(){
 		return new Euclidian2DockPanel(app,Toolbar.getAllToolsNoMacros());
-	}
+	}*/
 	
 	//////////////////////////////
 	// ACTIONS

@@ -1,6 +1,7 @@
 package geogebra.gui.layout;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.layout.panels.ErrorDockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.toolbar.ToolbarContainer;
 import geogebra.io.layout.DockPanelXml;
@@ -171,7 +172,7 @@ public class DockManager implements AWTEventListener {
 				
 				//manages case where the panel is not found (e.g. 3D view)
 				if (panel==null)
-					return;
+					panel=getErrorPanel();
 				
 				// skip panels which will not be drawn in the main window
 				if(!dpInfo[i].isVisible())
@@ -999,6 +1000,10 @@ public class DockManager implements AWTEventListener {
 	        app.setDefaultCursor();
 			throw new IllegalArgumentException("viewId="+viewId+" not found");
 		}
+	}
+	
+	private DockPanel getErrorPanel(){
+		return new ErrorDockPanel(app);
 	}
 	
 	/**

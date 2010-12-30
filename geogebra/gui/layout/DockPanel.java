@@ -115,7 +115,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * The panel at the top where the title and the close button
 	 * is displayed normally.
 	 */
-	private JPanel titlePanel;
+	protected JPanel titlePanel;
 	
 	/**
 	 * The label with the view title.
@@ -125,12 +125,12 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * The panel which holds all buttons.
 	 */
-	private JPanel buttonPanel;
+	protected JPanel buttonPanel;
 	
 	/**
 	 * The close button.
 	 */
-	private JButton closeButton;
+	protected JButton closeButton;
 	
 	/**
 	 * Button which opens the panel in a new window.
@@ -189,7 +189,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * The component used for this view.
 	 */
-	private JComponent component;
+	protected JComponent component;
 	
 	/**
 	 * The location of this panel in the view menu. If -1 this panel won't appear there at all.

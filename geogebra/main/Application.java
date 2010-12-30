@@ -302,6 +302,7 @@ public class Application implements KeyEventDispatcher {
 	
 	private boolean hasGui = false;
 	
+	public static final int VIEW_ERROR = 0;
 	public static final int VIEW_EUCLIDIAN = 1;
 	public static final int VIEW_ALGEBRA = 2;
 	public static final int VIEW_SPREADSHEET = 4;

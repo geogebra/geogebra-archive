@@ -147,7 +147,7 @@ public class GuiManager {
 	}
 	
 	protected void createLayout(){
-		setLayout(new Layout(false));
+		setLayout(new Layout());
 	}
 	
 	protected void setLayout(Layout layout){
