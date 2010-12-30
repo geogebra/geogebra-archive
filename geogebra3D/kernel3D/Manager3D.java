@@ -432,17 +432,17 @@ public class Manager3D implements Manager3DInterface {
 
 		AlgoIntersectCoordSys algo = null;
 
-		if (cs1 instanceof GeoCoordSys1D){
-			if (cs2 instanceof GeoCoordSys1D)
+		if (cs1 instanceof GeoLineND){
+			if (cs2 instanceof GeoLineND)
 				algo = new AlgoIntersectCS1D1D(cons,label,
-						(GeoCoordSys1D) cs1,(GeoCoordSys1D) cs2);
+						(GeoLineND) cs1,(GeoLineND) cs2);
 			else if (cs2 instanceof GeoCoordSys2D)
 				algo = new AlgoIntersectCS1D2D(cons,label, 
-						(GeoCoordSys1D) cs1, (GeoCoordSys2D) cs2);
+						 cs1, cs2);
 		}else if (cs1 instanceof GeoCoordSys2D){
-			if (cs2 instanceof GeoCoordSys1D)
+			if (cs2 instanceof GeoLineND)
 				algo = new AlgoIntersectCS1D2D(cons,label, 
-						(GeoCoordSys2D) cs1, (GeoCoordSys1D) cs2);
+						cs1, cs2);
 			else
 				algo = new AlgoIntersectCS2D2D(cons,label, (GeoCoordSys2D) cs1, (GeoCoordSys2D) cs2);
 		}

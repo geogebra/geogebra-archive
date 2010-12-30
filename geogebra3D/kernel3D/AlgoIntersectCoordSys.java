@@ -38,9 +38,9 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
 	
 	//inputs
 	/** first coord sys */
-	private GeoCoordSys cs1;
+	private GeoElement cs1;
 	/** second coord sys */
-	private GeoCoordSys cs2;
+	private GeoElement cs2;
 	
 	//output
 	/** intersection */
@@ -53,7 +53,7 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param cs1 first coord sys
      * @param cs2 second coord sys
      */    
-    AlgoIntersectCoordSys(Construction cons, String label, GeoCoordSys cs1, GeoCoordSys cs2) {
+    AlgoIntersectCoordSys(Construction cons, String label, GeoElement cs1, GeoElement cs2) {
 
     	super(cons);
 
@@ -76,7 +76,7 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
      * @param cs1
      * @param cs2
      */
-    protected void setCoordSys(GeoCoordSys cs1, GeoCoordSys cs2){
+    protected void setCoordSys(GeoElement cs1, GeoElement cs2){
     	
     	this.cs1 = cs1;
     	this.cs2 = cs2;
@@ -103,7 +103,7 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
      * return the first coord sys
      * @return the first coord sys
      */
-    GeoCoordSys getCS1() {
+    GeoElement getCS1() {
         return cs1;
     }
     
@@ -111,7 +111,7 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
      * return the second coord sys
      * @return the second coord sys
      */   
-    GeoCoordSys getCS2() {
+    GeoElement getCS2() {
         return cs2;
     }
     

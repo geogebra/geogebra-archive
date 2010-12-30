@@ -6,6 +6,7 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdIntersect;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.Kernel3D;
@@ -32,40 +33,34 @@ public  GeoElement[] process(Command c) throws MyError {
 
     switch (n) {
         case 2 :
-            arg = resArgs(c);
-            // GeoCoordSys - GeoCoordSys
-            if ((ok[0] = (arg[0] instanceof GeoCoordSys))
-                && (ok[1] = (arg[1] instanceof GeoCoordSys))) {
-            	if ((arg[0] instanceof GeoCoordSys2D) && (arg[1] instanceof GeoCoordSys2D)){
-            		GeoElement[]ret =
-                    {
-            				kernel.getManager3D().Intersect(
-                            c.getLabel(),
-                            (GeoElement) arg[0],
-                            (GeoElement) arg[1])};
-            		return ret;
-            	}
+        	arg = resArgs(c);
 
-            	GeoElement[] ret =
-                    {
-            			kernel.getManager3D().Intersect(
-                            c.getLabel(),
-                            (GeoElement) arg[0],
-                            (GeoElement) arg[1])};
-                return ret;
-            }
+        	if (arg[0].isGeoElement3D() || arg[1].isGeoElement3D() ){
+        		if ((arg[0] instanceof GeoCoordSys2D) && (arg[1] instanceof GeoCoordSys2D)){
+        			GeoElement[]ret =
+        			{
+        					kernel.getManager3D().Intersect(
+        							c.getLabel(),
+        							(GeoElement) arg[0],
+        							(GeoElement) arg[1])};
+        			return ret;
+        		}else if ((arg[0] instanceof GeoLineND || arg[0] instanceof GeoCoordSys2D) 
+        				&& (arg[1] instanceof GeoLineND || arg[1] instanceof GeoCoordSys2D)){
 
-            else {
+        			GeoElement[] ret =
+        			{
+        					kernel.getManager3D().Intersect(
+        							c.getLabel(),
+        							(GeoElement) arg[0],
+        							(GeoElement) arg[1])};
+        			return ret;
+        		}
+        	}
 
-            	return super.process(c);
 
-            	/*
-                if (!ok[0])
-                    throw argErr(app, "Intersect", arg[0]);
-                else
-                    throw argErr(app, "Intersect", arg[1]);
-            	 */
-            }
+        	return super.process(c);
+
+            	
 
 
 

@@ -21,8 +21,10 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.kernel.kernelND.GeoLineND;
 
 
 
@@ -44,19 +46,19 @@ public class AlgoIntersectCS1D2D extends AlgoIntersectCoordSys {
      * @param cs1 first coord sys
      * @param cs2 second coord sys
      */    
-    public AlgoIntersectCS1D2D(Construction cons, String label, GeoCoordSys cs1, GeoCoordSys cs2) {
+    public AlgoIntersectCS1D2D(Construction cons, String label, GeoElement cs1, GeoElement cs2) {
 
-    	super(cons,label,cs1,cs2);
+    	super(cons,label, (GeoElement) cs1, (GeoElement) cs2);
  
     }
 
 	// sets the 1D coord sys as cs1
-    protected void setCoordSys(GeoCoordSys cs1, GeoCoordSys cs2){
+    protected void setCoordSys(GeoElement cs1, GeoElement cs2){
   
-    	if (cs1 instanceof GeoCoordSys1D)
-    		super.setCoordSys(cs1, cs2);
+    	if (cs1 instanceof GeoLineND)
+    		super.setCoordSys((GeoElement) cs1, (GeoElement) cs2);
     	else
-    		super.setCoordSys(cs2, cs1);
+    		super.setCoordSys((GeoElement) cs2, (GeoElement) cs1);
     	
     }
     
@@ -72,20 +74,22 @@ public class AlgoIntersectCS1D2D extends AlgoIntersectCoordSys {
 
 
 
-    	GeoCoordSys1D line = (GeoCoordSys1D) getCS1();
+    	GeoLineND line = (GeoLineND) getCS1();
     	GeoCoordSys2D cs2D = (GeoCoordSys2D) getCS2();
     	
-    	GgbCoordSys cs = line.getCoordSys();
+    	GgbVector o = line.getPointInD(3, 0);
+    	GgbVector d = line.getPointInD(3, 1).sub(o);
     	GgbVector[] project = 
-    		cs.getOrigin().projectPlaneThruV(cs2D.getCoordSys().getMatrixOrthonormal(), cs.getVx());
+    		o.projectPlaneThruV(cs2D.getCoordSys().getMatrixOrthonormal(), d);
     	
     	GeoPoint3D p = (GeoPoint3D) getIntersection();
     	
     	//check if the point is in the line (segment or half-line)
     	// and if the point is in the region (polygon, ...)
- 		if (
- 				line.isValidCoord(-project[1].get(3))
- 				&&
+    	if (
+    			-project[1].get(3) > line.getMinParameter()
+    			&& -project[1].get(3) < line.getMaxParameter() 	
+    			&&
  				cs2D.isInRegion(project[1].get(1),project[1].get(2))
  		){
 			p.setCoords(project[0]);

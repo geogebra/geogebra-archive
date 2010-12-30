@@ -21,6 +21,7 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.GgbCoordSys;
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 
@@ -46,7 +47,7 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
      */    
     public AlgoIntersectCS2D2D(Construction cons, String label, GeoCoordSys cs1, GeoCoordSys cs2) {
 
-    	super(cons,label,cs1,cs2);
+    	super(cons,label,(GeoElement) cs1, (GeoElement) cs2);
  
     }
 

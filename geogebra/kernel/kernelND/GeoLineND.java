@@ -41,5 +41,13 @@ public interface GeoLineND {
 	 * @return inhom coords of the end point
 	 */
 	public GgbVector getEndInhomCoords();
+	
+	/** see PathOrPoint 
+	 * @return min parameter */
+	public double getMinParameter();
+	
+	/** see PathOrPoint 
+	 * @return max parameter */
+	public double getMaxParameter();
 
 }
