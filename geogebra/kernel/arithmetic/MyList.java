@@ -454,7 +454,7 @@ public class MyList extends ValidExpression implements ListValue {
 
 	public String toLaTeXString(boolean symbolic) {
 		StringBuilder toLaTeXString = new StringBuilder();
-		toLaTeXString.append("\\{");
+		toLaTeXString.append(" \\{ ");
 
 		// first (n-1) elements
 		int lastIndex = listElements.size() - 1;
@@ -470,7 +470,7 @@ public class MyList extends ValidExpression implements ListValue {
 			toLaTeXString.append(exp.toLaTeXString(symbolic));
 		}
 
-		toLaTeXString.append("\\}");
+		toLaTeXString.append(" \\} ");
 		return toLaTeXString.toString();
 	}
 	
