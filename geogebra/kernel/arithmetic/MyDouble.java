@@ -177,6 +177,10 @@ implements NumberValue {
     /** c = a * b */
     final public static void mult(MyDouble a, MyDouble b, MyDouble c) {
         c.isAngle = a.isAngle || b.isAngle;
+        if(Kernel.isZero(a.val) || Kernel.isZero(b.val)){
+        	c.set(0);
+        	return;
+        }
     	c.set(a.val * b.val);
     }
     
