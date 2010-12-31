@@ -582,6 +582,13 @@ ActionListener, ListSelectionListener {
 	 */
 	public void insertString(String str) {	
 		textComponent.replaceSelection(str);	
+		
+		// make sure autocomplete works for the Virtual Keyboard
+		if (textComponent instanceof AutoCompleteTextField) {
+			((AutoCompleteTextField)textComponent).updateCurrentWord();
+			((AutoCompleteTextField)textComponent).updateAutoCompletion();
+		}
+		
 		textComponent.requestFocus();
 	}		
 	
