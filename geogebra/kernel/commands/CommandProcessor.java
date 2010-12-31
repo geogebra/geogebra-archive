@@ -3385,7 +3385,6 @@ class CmdDerivative extends CommandProcessor {
 			} catch (Throwable t) {
 			}
 			
-			arg = resArgs(c);
 			// Derivative[ f(x, y), x]
 			if (arg[0] instanceof CasEvaluableFunction && arg[1].isGeoFunction()) {
 				GeoNumeric var = new GeoNumeric(cons);
