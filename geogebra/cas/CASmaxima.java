@@ -195,6 +195,12 @@ public class CASmaxima extends CASgeneric {
 			
 			String res = executeRaw(exp);
 			
+			if (res.indexOf("Division by 0") > 0)
+			{
+				Application.debug("WARNING: caught division by 0");
+				return "?";
+			}
+			
 			while (res.indexOf('\n') > -1 ) res = res.replace('\n', ' ');
 			
 			String results[] = res.split("\\(%[oi]\\d+\\)\\s*");
