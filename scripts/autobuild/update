@@ -26,4 +26,4 @@ mkdir -p $WWWDIR
 cp -R * $WWWDIR
 
 # Copying static files:
-cp -R $SVNDIR/geogebra/webstart/4.0 $WWWDIR
+cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR
