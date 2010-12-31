@@ -1534,6 +1534,8 @@ public class Application implements KeyEventDispatcher {
 	StringBuilder sbOrdinal;
 	/*
 	 * given 1, return eg 1st, 1e, 1:e according to the language
+	 * 
+	 * http://en.wikipedia.org/wiki/Ordinal_indicator
 	 */
 	public String getOrdinalNumber(int n) {
 		String lang = getLocale().getLanguage();
@@ -1550,7 +1552,6 @@ public class Application implements KeyEventDispatcher {
 				|| "ms".equals(lang)
 				|| "nl".equals(lang)
 				|| "si".equals(lang)
-				|| "sv".equals(lang)
 				|| "th".equals(lang)
 				|| "vi".equals(lang)
 				|| "zh".equals(lang)
@@ -1617,6 +1618,12 @@ public class Application implements KeyEventDispatcher {
 				sbOrdinal.append("er"); // could also be "re" for feminine...
 			else
 				sbOrdinal.append("e"); // could also be "es" for plural...
+		} else if ("sv".equals(lang)) {
+			int unitsDigit = n % 10;
+			if (unitsDigit == 1 || unitsDigit == 2)
+				sbOrdinal.append(":a"); 
+			else
+				sbOrdinal.append(":e"); 
 		} else if ("en".equals(lang)) {
 
 					
