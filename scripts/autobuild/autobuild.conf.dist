@@ -1,14 +1,20 @@
 # Please edit below to fit your needs.
 
 # This directory will contain the working copy of GeoGebra:
-SVNDIR=/home/kovzol/svn
+SVNDIR=/Users/zoltan/svn/
+#SVNDIR=/home/kovzol/svn
 
 # This directory should point to the official webpage:
 WWWDIR=/home/kovzol/ggb/www/autobuild
+#WWWDIR=/Users/zoltan/www-autobuild
 
 # Signature file directory:
 P12DIR=/home/kovzol/igi-keystore
+#P12DIR=/Users/zoltan/igi-keystore
 
 # Repository:
 REPO=http://www.geogebra.org/svn/trunk/geogebra
 #REPO=file:///opt/repos/geogebra/trunk/geogebra
+
+# Java home setting:
+JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun # Not needed to set if only Java 1.5 is installed.
