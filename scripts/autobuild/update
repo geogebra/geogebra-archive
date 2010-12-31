@@ -3,11 +3,10 @@
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
 test -r autobuild.conf || {
- echo "Cannot find autobuild.conf (edit autobuild.conf.dist first)"
+ echo "Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
  exit 1
  }
 . ./autobuild.conf
-# NOW=`date +%Y%m%d-%H%M`
 cd $SVNDIR/geogebra
 
 if [ "$1" != "--no-update" ]; then
@@ -21,6 +20,10 @@ export ANT_OPTS="-Xmx1024m"
 
 ant -f build.xml geogebra-cl
 cd build
-COPYDIR=$WWWDIR #/$NOW
-mkdir -p $COPYDIR
-cp -R * $COPYDIR
+mkdir -p $WWWDIR
+
+# Copying dynamically generated files (autobuild):
+cp -R * $WWWDIR
+
+# Copying static files:
+cp -R $SVNDIR/geogebra/webstart/4.0 $WWWDIR
