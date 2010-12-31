@@ -5,7 +5,8 @@ Usage:
 1. Copy autobuild.conf.dist to autobuild.conf and edit as needed.
 
 2. Run ./checkout to create a working copy of the repository (this step
-   is needed only once).
+   is needed only once, but probably it is already done --- if yes,
+   make sure that all relevant step is run from that script).
 
 3. Run ./update every time you want to generate a fresh build.
 

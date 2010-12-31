@@ -1,7 +1,9 @@
 #!/bin/sh
+# Updates GeoGebra from SVN repository
+# @author Zoltan Kovacs <zoltan@geogebra.org>
 
 test -r autobuild.conf || {
- echo "Cannot find autobuild.conf"
+ echo "Cannot find autobuild.conf (edit autobuild.conf.dist first)"
  exit 1
  }
 . ./autobuild.conf
@@ -13,7 +15,7 @@ if [ "$1" != "--no-update" ]; then
     fi
 
 export JAVA_HOME
-export ANT_OPTS="-Xms1024m -Xmx1024m"
+export ANT_OPTS="-Xmx1024m"
 
 # alias signjar=jarsigner # May be needed for ant version < 1.8.0 (the "executable" attribute is not supported yet).
 
