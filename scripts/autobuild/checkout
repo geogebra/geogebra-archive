@@ -6,7 +6,7 @@ test -r autobuild.conf || {
  }
 . ./autobuild.conf
 cd $SVNDIR
-svn co http://www.geogebra.org/svn/trunk/geogebra
+svn co $REPO
 cd geogebra
 cp /usr/lib/jvm/java-1.5.0-sun/jre/lib/rt.jar ../java150-rt.jar
 cp $P12DIR/igi-keystore.p12 ..

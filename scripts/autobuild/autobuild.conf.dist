@@ -8,3 +8,7 @@ WWWDIR=/home/kovzol/ggb/www/autobuild
 
 # Signature file directory:
 P12DIR=/home/kovzol/igi-keystore
+
+# Repository:
+REPO=http://www.geogebra.org/svn/trunk/geogebra
+#REPO=file:///opt/repos/geogebra/trunk/geogebra
