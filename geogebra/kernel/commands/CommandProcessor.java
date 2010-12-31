@@ -3334,7 +3334,7 @@ class CmdDerivative extends CommandProcessor {
 	final public   GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
 		String label = c.getLabel();
-		GeoElement[] arg;
+		GeoElement[] arg, arg2;
 
 
 		switch (n) {
@@ -3351,16 +3351,35 @@ class CmdDerivative extends CommandProcessor {
 				throw argErr(app, "Derivative", arg[0]);
 
 		case 2 :        
-			// Derivative[ f(a,b), a ]
-			try {
-				arg = resArgsLocalNumVar(c, 1,1); 
-				if (arg[0] instanceof CasEvaluableFunction && arg[1].isGeoNumeric()) {			              	
+			arg = resArgs(c);
+			// Derivative[ f(x), 2]
+			if (arg[0].isGeoFunction() && arg[1] .isNumberValue()) {
+				double order = ((NumberValue) arg[1]).getDouble();
+                   
+					CasEvaluableFunction f = (CasEvaluableFunction) arg[0];
+					if (label == null) {
+						int iorder = (int) Math.round(order);
+						label = getDerivLabel(f.toGeoElement(), iorder);
+					}                    	
 					GeoElement[] ret =
 					{
 							kernel.Derivative(
 									label,
-									(CasEvaluableFunction) arg[0], // function
-									(GeoNumeric) arg[1], null)}; // var
+									f,
+									null, (NumberValue) arg[1])};
+					return ret;
+
+			}
+			// Derivative[ f(a,b), a ]
+			try {
+				arg2 = resArgsLocalNumVar(c, 1,1); 
+				if (arg2[0] instanceof CasEvaluableFunction && arg2[1].isGeoNumeric()) {			              	
+					GeoElement[] ret =
+					{
+							kernel.Derivative(
+									label,
+									(CasEvaluableFunction) arg2[0], // function
+									(GeoNumeric) arg2[1], null)}; // var
 					return ret;
 				} 
 			} catch (Throwable t) {
@@ -3379,25 +3398,7 @@ class CmdDerivative extends CommandProcessor {
 								(GeoNumeric) var, null)}; // var
 				return ret;
 			}
-			// Derivative[ f(x), 2]
-			else if (arg[0].isCasEvaluableFunction() && arg[1] .isNumberValue()) {
-				double order = ((NumberValue) arg[1]).getDouble();
-				if (order >= 0) {                    
-					CasEvaluableFunction f = (CasEvaluableFunction) arg[0];
-					if (label == null) {
-						int iorder = (int) Math.round(order);
-						label = getDerivLabel(f.toGeoElement(), iorder);
-					}                    	
-					GeoElement[] ret =
-					{
-							kernel.Derivative(
-									label,
-									f,
-									null, (NumberValue) arg[1])};
-					return ret;
-				} else
-					throw argErr(app, "Derivative", arg[1]);
-			}
+
 			
 			// if we get here, the first argument must have been wrong
 			throw argErr(app, "Derivative", arg[0]);
