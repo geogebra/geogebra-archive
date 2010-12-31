@@ -2463,6 +2463,17 @@ public class Kernel {
 	}
 	
 	/** 
+	 * Ordinal(list)
+	 */
+	final public GeoText Ordinal(
+		String label,
+		GeoNumeric geo) {
+		AlgoOrdinal algo = new AlgoOrdinal(cons, label, geo);
+		GeoText ret = algo.getResult();
+		return ret;
+	}
+	
+	/** 
 	 * returns the current x-axis step
 	 * Michael Borcherds 
 	 */

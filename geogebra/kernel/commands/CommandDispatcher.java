@@ -295,6 +295,7 @@ public class CommandDispatcher {
       	cmdTable.put("TableText", new CmdTableText(kernel)); 
       	cmdTable.put("VerticalText", new CmdVerticalText(kernel));	   
     	cmdTable.put("RotateText", new CmdRotateText(kernel));	   
+    	cmdTable.put("Ordinal", new CmdOrdinal(kernel));	   
       	
     	cmdSubTable[TABLE_TEXT].putAll(cmdTable);
     	cmdTable.clear();

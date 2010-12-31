@@ -49,7 +49,7 @@ public class AlgoUnicodeToText extends AlgoElement {
     protected GeoText getResult() { return text; }        
 
       
-    protected final void compute() {
+    protected void compute() {
     	
     	int size = list.size();
     	
