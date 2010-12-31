@@ -5,7 +5,7 @@ test -r autobuild.conf || {
  exit 1
  }
 . ./autobuild.conf
-NOW=`date +%Y%m%d-%H%M`
+# NOW=`date +%Y%m%d-%H%M`
 cd $SVNDIR/geogebra
 
 if [ "$1" != "--no-update" ]; then
@@ -19,6 +19,6 @@ export ANT_OPTS="-Xms1024m -Xmx1024m"
 
 ant -f build.xml geogebra-cl
 cd build
-COPYDIR=$WWWDIR/$NOW
+COPYDIR=$WWWDIR #/$NOW
 mkdir -p $COPYDIR
 cp -R * $COPYDIR
