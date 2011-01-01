@@ -6,6 +6,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 /**
@@ -172,6 +173,7 @@ public class TextPreviewPanel extends EuclidianView {
 			
 			// put the geo in the correct location (depends on LaTeX setting) 
 			locateTextGeo();
+			previewGeoText.setObjColor(Color.black);
 			previewGeoText.updateRepaint();
 
 			// make sure the geo is displayed in this view and not EV
@@ -185,8 +187,8 @@ public class TextPreviewPanel extends EuclidianView {
 
 		} catch (Exception e) {
 			// reset the preview geo to show an error message
-			// TODO: better, localized message
-			previewGeoText.setTextString("error");
+			previewGeoText.setTextString(app.getError("InvalidInput"));
+			previewGeoText.setObjColor(Color.red);
 			previewGeoText.updateRepaint();
 			//e.printStackTrace();
 		}                
