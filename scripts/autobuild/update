@@ -10,7 +10,7 @@ test -r autobuild.conf || {
 cd $SVNDIR/geogebra
 
 if [ "$1" != "--no-update" ]; then
-    $SVN_COMMAND update --accept theirs-full | tail -1 | grep ^At && exit 0 # No updates found.
+    $SVN_COMMAND update --accept theirs-full | tail -1 | grep ^At && exit 1 # No updates found.
     fi
 
 export JAVA_HOME
@@ -27,3 +27,22 @@ cp -R * $WWWDIR
 
 # Copying static files:
 cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR
+
+# Moving *.html and *.jnlp to unpacked/ and rewriting static URLs:
+# http://www.geogebra.org/webstart/4.0/unsigned -> http://www.geogebra.org/webstart/test40a/unsigned
+# http://www.geogebra.org/webstart/4.0/usb-gomotion.ggb -> http://www.geogebra.org/webstart/test40/usb-gomotion.ggb
+# http://www.geogebra.org/webstart/4.0/debug -> http://www.geogebra.org/webstart/test40/debug
+# http://www.geogebra.org/webstart/4.0/ -> http://www.geogebra.org/webstart/test40/unpacked/
+# </title> -> (autobuild) </title>
+
+cd $WWWDIR
+for i in *.html *.jnlp; do
+    cat $i | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/unsigned"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unsigned"/g \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/usb-gomotion"/"http:\/\/www.geogebra.org\/webstart\/test40a\/usb-gomotion.ggb"/g \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/debug"/"http:\/\/www.geogebra.org\/webstart\/test40a\/debug"/g \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unpacked"/g \
+     sed s/"<\/title>"/"(autobuild) <\/title>"/g \
+     > unpacked/$i
+    rm $i
+    done
