@@ -10,7 +10,7 @@ test -r autobuild.conf || {
 cd $SVNDIR/geogebra
 
 if [ "$1" != "--no-update" ]; then
-    svn update --accept theirs-full | tail -1 | grep ^At && exit 0 # No updates found.
+    $SVN_COMMAND update --accept theirs-full | tail -1 | grep ^At && exit 0 # No updates found.
     fi
 
 export JAVA_HOME
