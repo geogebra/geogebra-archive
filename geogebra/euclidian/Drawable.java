@@ -583,14 +583,22 @@ public abstract class Drawable extends DrawableND {
 				//e.printStackTrace();
 				//Application.debug("MyError LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
-				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
-				return new Dimension(rec.width, rec.height);
+				
+				formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
+				
+				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
+				//return new Dimension(rec.width, rec.height);
 			}  catch (Exception e) {
 				//e.printStackTrace();
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
-				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
-				return new Dimension(rec.width, rec.height);
+				
+				formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
+				
+				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
+				//return new Dimension(rec.width, rec.height);
 			} 
 			icon.setInsets(new Insets(1, 1, 1, 1));
 						
@@ -601,6 +609,7 @@ public abstract class Drawable extends DrawableND {
 		}
 			
 			Object key = null;
+			Image im = null;
 			try {
 			// if geoText != null then keep track of which key goes with the GeoText
 			// so that we can remove it from the cache if it changes
@@ -609,12 +618,19 @@ public abstract class Drawable extends DrawableND {
 				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/);
 			else
 				key = geo.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3);
+			
+			im = JLaTeXMathCache.getCachedTeXFormulaImage(key); 
 			} catch (ParseException e) {
-				Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
-				return new Dimension(rec.width, rec.height);
+				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
+				// Write error message to Graphics View
 				
-			}
-			Image im = JLaTeXMathCache.getCachedTeXFormulaImage(key); 
+				TeXFormula formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
+				im = formula.createBufferedImage(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, Color.black, Color.white);
+				
+				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
+				//return new Dimension(rec.width, rec.height);
+				
+			}			 
 
 			g2.drawImage(im,x,y,null);
 			
