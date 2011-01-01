@@ -59,7 +59,7 @@ for i in *.html *.jnlp; do
      sed s/"<\/title>"/" (autobuild)<\/title>"/g \
      > unpacked/$i
     rm $i
-    ln -s unpacked/$i # Some file in some subdirectories may still refer to the original file.
+    cp unpacked/$i $i # Some file in some subdirectories may still refer to the original file.
     echo "$0: $i is rewritten"
     done
 
