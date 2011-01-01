@@ -52,9 +52,7 @@ public class TextPreviewPanel extends EuclidianView {
 	private void createPreviewGeo(){
 
 		// create and label the preview geo
-		GeoElement [] ret = 
-			kernel.getAlgebraProcessor().processAlgebraCommand("\"\"", false);
-		previewGeoText = (GeoText) ret[0];
+		previewGeoText = new GeoText(kernel.getConstruction());
 		previewGeoText.setLabel(null);
 
 		// add the geo to this view and remove it from EV	
@@ -183,7 +181,6 @@ public class TextPreviewPanel extends EuclidianView {
 			this.add(previewGeoText);
 			previewGeoText.removeView(app.getEuclidianView());
 			app.getEuclidianView().remove(previewGeoText);
-
 
 		} catch (Exception e) {
 			// reset the preview geo to show an error message

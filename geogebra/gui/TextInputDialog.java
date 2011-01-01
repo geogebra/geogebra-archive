@@ -18,6 +18,7 @@ import geogebra.gui.util.LatexTable;
 import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.SymbolTable;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
@@ -155,8 +156,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		latexPreviewer.setBackground(Color.WHITE);
 		*/
 		
-		if (textPreviewer == null) 
-			textPreviewer = new TextPreviewPanel(app.getKernel());		
+		if (textPreviewer == null) {
+			Kernel kernel = new Kernel(app);
+			
+			textPreviewer = new TextPreviewPanel(kernel);
+		}
 		textPreviewer.updatePreviewText(text, inputPanel.getText(), isLaTeX);		
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(textPreviewer, BorderLayout.CENTER);
