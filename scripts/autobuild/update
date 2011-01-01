@@ -65,3 +65,6 @@ for i in *.html *.jnlp; do
 
 date
 echo "$0: end"
+
+# Copying vernier_ccsd-macintel-static.jar:
+cp $SVNDIR/vernier_ccsd-macintel-static.jar $WWWDIR
