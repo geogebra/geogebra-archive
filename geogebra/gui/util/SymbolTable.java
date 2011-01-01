@@ -420,6 +420,7 @@ public class SymbolTable extends SelectionTable {
 
 	public final static String [] sub_superscripts = {
 
+		// first row
 		"\u2070",     // SUPERSCRIPT ZERO
 		"\u00b9",     // SUPERSCRIPT ONE  
 		"\u00b2",     // SUPERSCRIPT TWO
@@ -430,6 +431,8 @@ public class SymbolTable extends SelectionTable {
 		"\u2077",     // SUPERSCRIPT SEVEN
 		"\u2078",     // SUPERSCRIPT EIGHT
 		"\u2079",     // SUPERSCRIPT NINE
+		
+		// second row
 		"\u207A",     // SUPERSCRIPT PLUS SIGN
 		"\u207B",     // SUPERSCRIPT MINUS
 		"\u207C",     // SUPERSCRIPT EQUALS SIGN
@@ -437,7 +440,11 @@ public class SymbolTable extends SelectionTable {
 		"\u207E",     // SUPERSCRIPT RIGHT PARENTHESIS
 		"\u207F",     // SUPERSCRIPT LATIN SMALL LETTER N
 		"\u00b0",     // degree	
+		"", 	//blank filler
+		"", 	//blank filler
+		"", 	//blank filler
 
+		// third row
 		"\u2080",     // SUBSCRIPT ZERO
 		"\u2081",     // SUBSCRIPT ONE
 		"\u2082",     // SUBSCRIPT TWO
@@ -448,6 +455,8 @@ public class SymbolTable extends SelectionTable {
 		"\u2087",     // SUBSCRIPT SEVEN
 		"\u2088",     // SUBSCRIPT EIGHT
 		"\u2089",     // SUBSCRIPT NINE
+		
+		// fourth row
 		"\u208A",     // SUBSCRIPT PLUS SIGN
 		"\u208B",     // SUBSCRIPT MINUS
 		"\u208C",     // SUBSCRIPT EQUALS SIGN
@@ -522,6 +531,8 @@ public class SymbolTable extends SelectionTable {
 		"\u21CF",    //     \\nRightarrow
 		"\u21DA",    //     \\Lleftarrow
 		"\u21DB",    //     \\Rrightarrow
+		
+		/* not supported in win7 
 		"\u27F5",    //     \\longleftarrow
 		"\u27F6",    //     \\longrightarrow
 		"\u27F7",    //     \\longleftrightarrow
@@ -530,6 +541,7 @@ public class SymbolTable extends SelectionTable {
 		"\u27FA",    //     \\Longleftrightarrow
 		"\u27FC",    //     \\longmapsto
 		"\u27FF",    //     \\leadsto
+		*/
 
 	};
 

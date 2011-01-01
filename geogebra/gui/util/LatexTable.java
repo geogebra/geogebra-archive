@@ -370,6 +370,20 @@ public class LatexTable extends SelectionTable implements MenuElement{
 	
 	
 	
+	public final static String[] mathscr() {
+		String [] mathscr = new String[26];
+		 char letter;
+		 int i = 0;
+		 for (letter='A'; letter <= 'Z'; letter++){
+			 mathscr[i] = "\\mathscr{" + letter + "}";
+			 i++;
+		 }
+		return mathscr;
+	};
+	
+	
+	
+	
 
 	private Application app;
 	private TextInputDialog inputDialog;

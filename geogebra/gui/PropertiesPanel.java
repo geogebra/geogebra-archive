@@ -91,6 +91,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -2555,29 +2556,28 @@ public	class PropertiesPanel extends JPanel {
 			td = new TextInputDialog(app, app.getPlain("Text"), null, null,
 										30, 5, false);
 			setLayout(new BorderLayout());
-			/*
-			add(td.getInputPanel(), BorderLayout.CENTER);
-			JPanel btPanel = new JPanel(new BorderLayout(0,0));
-			btPanel.add(td.getLaTeXPanel(), BorderLayout.WEST);
-			btPanel.add(td.getButtonPanel(), BorderLayout.EAST);
-			add(btPanel, BorderLayout.SOUTH);
-			*/
 			
 			
 			editPanel = new JPanel(new BorderLayout(0,0));
 			editPanel.add(td.getInputPanel(), BorderLayout.CENTER);
-			editPanel.add(td.getLaTeXPanel(), BorderLayout.SOUTH);
+			editPanel.add(td.getToolBar(), BorderLayout.SOUTH);
+			editPanel.setBorder(BorderFactory.createEtchedBorder());
 			
-			add(editPanel, BorderLayout.NORTH);
-			add(td.getLaTeXPreviewPanel(), BorderLayout.CENTER);
+			
+			JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, td.getPreviewPanel(), editPanel);
+			sp.setResizeWeight(0.5);
+			sp.setBorder(BorderFactory.createEmptyBorder());
+				
+			add(sp, BorderLayout.CENTER);
+			//add(td.getPreviewPanel(), BorderLayout.NORTH);
 			add(td.getButtonPanel(), BorderLayout.SOUTH);
 			
 			
 		}
 		
 		public void setLabels() {
-			editPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
-			td.getLaTeXPreviewPanel().setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
+			//editPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Edit")));
+			//td.getPreviewPanel().setBorder(BorderFactory.createTitledBorder(app.getMenu("Preview")));
 			td.setLabels(app.getPlain("Text"));
 		}
 
