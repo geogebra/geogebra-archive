@@ -2,6 +2,14 @@
 # Updates GeoGebra from SVN repository
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
+# Run this script with --no-update option if you want to force web content update
+# even if no new commit exists the repository.
+
+# FIXME: the directory "test40a" is hardcoded now.
+
+date
+echo "$0: start"
+
 test -r autobuild.conf || {
  echo "Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
  exit 1
@@ -11,6 +19,7 @@ cd $SVNDIR/geogebra
 
 if [ "$1" != "--no-update" ]; then
     $SVN_COMMAND update --accept theirs-full | tail -1 | grep ^At && exit 1 # No updates found.
+    echo "$0: new commit was found in repository"
     fi
 
 export JAVA_HOME
@@ -20,13 +29,18 @@ export ANT_OPTS="-Xmx1024m"
 
 ant -f build.xml geogebra-cl
 cd build
+rm -fR $WWWDIR # Be careful!
 mkdir -p $WWWDIR
+
+echo "$0: (re)creating $WWWDIR directory"
 
 # Copying dynamically generated files (autobuild):
 cp -R * $WWWDIR
+echo "$0: dynamically generated files copied"
 
 # Copying static files:
 cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR
+echo "$0: static files copied"
 
 # Moving *.html and *.jnlp to unpacked/ and rewriting static URLs:
 # http://www.geogebra.org/webstart/4.0/unsigned -> http://www.geogebra.org/webstart/test40a/unsigned
@@ -38,11 +52,15 @@ cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR
 cd $WWWDIR
 for i in *.html *.jnlp; do
     cat $i | \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/unsigned"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unsigned"/g \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/usb-gomotion"/"http:\/\/www.geogebra.org\/webstart\/test40a\/usb-gomotion.ggb"/g \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/debug"/"http:\/\/www.geogebra.org\/webstart\/test40a\/debug"/g \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unpacked"/g \
-     sed s/"<\/title>"/"(autobuild) <\/title>"/g \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/unsigned"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unsigned"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/usb-gomotion"/"http:\/\/www.geogebra.org\/webstart\/test40a\/usb-gomotion.ggb"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/debug"/"http:\/\/www.geogebra.org\/webstart\/test40a\/debug"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unpacked"/g | \
+     sed s/"<\/title>"/" (autobuild)<\/title>"/g \
      > unpacked/$i
     rm $i
+    echo "$0: $i is rewritten"
     done
+
+date
+echo "$0: end"
