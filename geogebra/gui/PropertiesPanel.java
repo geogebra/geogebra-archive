@@ -248,15 +248,8 @@ public	class PropertiesPanel extends JPanel {
 			animStepPanel = new AnimationStepPanel(app);
 			textFieldSizePanel = new TextfieldSizePanel(app);
 			animSpeedPanel = new AnimationSpeedPanel(app);
-			sliderPanel = new SliderPanel(app, this, false, true);
-			startPointPanel = new StartPointPanel();
-			cornerPointsPanel = new CornerPointsPanel();
-			textEditPanel = new TextEditPanel();
-			bgImagePanel = new BackgroundImagePanel();
 			allowReflexAnglePanel = new AllowReflexAnglePanel();
 			allowOutlyingIntersectionsPanel = new AllowOutlyingIntersectionsPanel();
-			showConditionPanel = new ShowConditionPanel(app, this); 
-			colorFunctionPanel = new ColorFunctionPanel(app, this);
 			
  			//tabbed pane for properties
 			tabs = new JTabbedPane();				
