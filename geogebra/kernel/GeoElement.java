@@ -5257,6 +5257,6 @@ public abstract class GeoElement
 	 * @return true if the object is pickable
 	 */
 	public boolean isPickable(){
-		return isPickable;
+		return isPickable && isSelectionAllowed();
 	}
 }
