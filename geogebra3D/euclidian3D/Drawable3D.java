@@ -14,6 +14,7 @@ import geogebra3D.kernel3D.GeoElement3D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.text.DecimalFormat;
 import java.util.Comparator;
@@ -165,7 +166,11 @@ public abstract class Drawable3D extends DrawableND {
 	/** max picking value, used for odering elements with openGL picking */
 	public float zPickMax; 
 	/** min picking value, used for odering elements with openGL picking */	
-	public float zPickMin; 
+	public float zPickMin;
+
+	/** (r,g,b,a) vector */
+	private GgbVector color, colorHighlighted; 
+	
 	private static final float EPSILON_Z = 0.0001f;//0.0001f;//10000000; //limit to consider two objects to be at the same place
 	
 	//constants for picking : have to be from 0 to DRAW_PICK_ORDER_MAX-1, regarding to picking order
@@ -529,22 +534,21 @@ public abstract class Drawable3D extends DrawableND {
      * @param renderer 3D renderer
      * */
 	public void drawLabel(Renderer renderer){
-		drawLabel(renderer, true, false);
+		drawLabel(renderer, false);
 	}
 	
 	/** draws the label for picking it 
      * @param renderer 3D renderer
      * */
 	public void drawLabelForPicking(Renderer renderer){
-		drawLabel(renderer, false, true);		
+		drawLabel(renderer, true);		
 	}
     
     /** draws the label (if any)
      * @param renderer 3D renderer
-     * @param colored says if the text has to be colored
      * @param forPicking says if this method is called for picking
      */
-    private void drawLabel(Renderer renderer, boolean colored, boolean forPicking){
+    private void drawLabel(Renderer renderer, boolean forPicking){
 
     	
     	if (forPicking) 
@@ -558,8 +562,6 @@ public abstract class Drawable3D extends DrawableND {
     		return;
     	
     	
-    	if (colored)
-    		renderer.setTextColor(getGeoElement().getObjectColor());
     	
     	label.draw(renderer);
 				
@@ -713,12 +715,51 @@ public abstract class Drawable3D extends DrawableND {
 		
 		if(doHighlighting()){
 			Manager manager = getView3D().getRenderer().getGeometryManager();
-			getView3D().getRenderer().setColor(
-					manager.getHigthlighting(getGeoElement().getObjectColor(),amplitude),
-					manager.getHigthlighting(alpha,2*amplitude));
+			getView3D().getRenderer().setColor(manager.getHigthlighting(color,colorHighlighted));
 		}else
-			getView3D().getRenderer().setColor(getGeoElement().getObjectColor(),alpha);
+			getView3D().getRenderer().setColor(color);
 	}
+	
+	protected void setColors(){
+		setColors(1);
+	}
+	
+	private static final double ALPHA_MIN_HIGHLIGHTING = 0.25;
+	private static final double LIGHT_COLOR = 3*0.5;
+	
+	protected void setColors(double alpha){
+		Color c = getGeoElement().getObjectColor();
+		color = new GgbVector((double) c.getRed()/255, (double) c.getGreen()/255, (double) c.getBlue()/255,alpha);
+
+		//creates corresponding color for highlighting
+		
+		double r = color.getX();
+		double g = color.getY();
+		double b = color.getZ();
+		double d = r+g+b;
+		
+		GgbVector color2;
+		double distance;
+		
+		if (d>LIGHT_COLOR){//color is closer to white : darken it
+			distance = Math.sqrt(r*r+g*g+b*b); //euclidian distance to black
+			color2 = new GgbVector(0, 0, 0, color.getW()); //black
+		}else{//color is closer to black : lighten it
+			r=1-r;g=1-g;b=1-b;
+			distance = Math.sqrt(r*r+g*g+b*b); //euclidian distance to white
+			color2 = new GgbVector(1, 1, 1, color.getW()); //white
+		}
+		
+		double s = getColorShift()/distance;
+		colorHighlighted = color.mul(1-s).add(color2.mul(s));
+
+		//sufficient alpha to be seen
+		if (colorHighlighted.getW()<ALPHA_MIN_HIGHLIGHTING)
+			colorHighlighted.setW(ALPHA_MIN_HIGHLIGHTING);
+	}
+	
+	abstract protected double getColorShift();
+	
 	
 	protected void setLight(Renderer renderer){
 		

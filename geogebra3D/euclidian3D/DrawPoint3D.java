@@ -73,6 +73,8 @@ implements Previewable, Functional2Var{
 
 	protected boolean updateForItSelf(){
 		
+		setColors();
+		
 		Renderer renderer = getView3D().getRenderer();
 		
 	
@@ -234,4 +236,8 @@ implements Previewable, Functional2Var{
 	
 	
 
+	
+	protected double getColorShift(){
+		return 0.86;//mostly sqrt(3)/2
+	}
 }

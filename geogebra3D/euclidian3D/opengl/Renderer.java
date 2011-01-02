@@ -110,18 +110,6 @@ public class Renderer implements GLEventListener {
 	
 	
 	
-	/////////////////////
-	// pencil attributes
-	
-	/** current drawing color {r,g,b} */
-	private Color color; 
-	/** current alpha blending */
-	private double alpha;
-	/** current text color {r,g,b} */
-	private Color textColor; 
-	
-	private double thickness;
-	
 	
 	
 	///////////////////
@@ -689,75 +677,27 @@ public class Renderer implements GLEventListener {
     
     
     
-    /** sets the color of the text
-     * @param c color of the text
-     */
-    public void setTextColor(Color c){
-    	
-    	textColor = c;
-    	
-	
-    }
-    
-    
     /**
      * sets the material used by the pencil
+     * @param color (r,g,b,a) vector
      * 
-     * @param c the color of the pencil
-     * @param alpha the alpha value for blending
      */
-    public void setColor(Color c, double alpha){
+    public void setColor(GgbVector color){
 
     	
-    	color = c;
-    	this.alpha = alpha;
- 
     	
-    	gl.glColor4f(((float) c.getRed())/256f,
-				((float) c.getGreen())/256f,
-				((float) c.getBlue())/256f,
-				(float) alpha);
+    	gl.glColor4f((float) color.getX(),
+    			(float) color.getY(),
+    			(float) color.getZ(),
+    			(float) color.getW());
     	
     	
     	
-    }
-    
-    
-    /** return (r,g,b) current color
-     * @return (r,g,b) current color
-     */
-    public Color getColor(){
-    	return color;
-    }
-    
-    /** return current alpha
-     * @return current alpha
-     */
-    public double getAlpha(){
-    	return alpha;
     }
     
     
 
-    
-    /**
-     * sets the thickness used by the pencil.
-     * 
-     * @param a_thickness the thickness
-     */
-    public void setThickness(double a_thickness){
-    	this.thickness = a_thickness;
-    }
-    
-    
-    /**
-     * gets the current thickness of the pencil.
-     * 
-     * @return the thickness
-     */
-    public double getThickness(){
-    	return thickness;
-    }
+   
     
     //arrows
     
@@ -1032,96 +972,6 @@ public class Renderer implements GLEventListener {
     }
     
      
-    /*
-    public void drawText(GgbVector v, 
-    		float xOffset, float yOffset,
-    		PlotterTextLabel label){
-    	
-    	view3D.toScreenCoords3D(v);
-    	
-    	drawText(
-    			(float) v.getX() + xOffset,
-    			(float) v.getY() + yOffset,
-    			(float) v.getZ(), 
-    			label);
-    	
-    	
-    }
-    */
-    /*
-    
-    public void drawText(//float x, float y, float z,
-    		PlotterTextLabel label){
-    
-    	
-    	label.draw3D(gl, view3D.getToScreenMatrix());
-    
-    }
-    */
-    
-    /*
-    private void drawText(float x, float y, float z,
-    		String s, boolean colored){
-    
-    	geometryManager.getText().create(s, 14);
-    	geometryManager.getText().draw3D(gl, x,y,z);
-    
-    }
-    */
-   
-    
-    private void drawText0(float x, float y, float z,
-    		String s, boolean colored){
-    
-
-    	gl.glMatrixMode(GL.GL_TEXTURE);
-    	gl.glLoadIdentity();
-
-    	
-    	gl.glMatrixMode(GL.GL_MODELVIEW);
-
-
-    	//initMatrix();
-    	/*
-    	initMatrix(view3D.getUndoRotationMatrix());
-    	*/
-
-
-    	textRenderer.begin3DRendering();
-
-    	if (colored)
-    		textRenderer.setColor(textColor);
-
-
-    	
-    	//float textScaleFactor = DEFAULT_TEXT_SCALE_FACTOR/((float) view3D.getScale());
-
-/*
-    	if (x<0)
-    		x=x-(s.length()-0.5f)*8; //TODO adapt to police size
-
-    	textRenderer.draw3D(s,
-    			x*textScaleFactor,//w / -2.0f * textScaleFactor,
-    			y*textScaleFactor,//h / -2.0f * textScaleFactor,
-    			0,
-    			textScaleFactor);
-    			*/
-    	
-    	textRenderer.draw3D(s,
-    			x,y,z,
-    			1f);
-
-    	textRenderer.end3DRendering();
-
-
-/*
-    	resetMatrix(); //initMatrix(m_view3D.getUndoRotationMatrix());
-    	*/
-    	//resetMatrix(); //initMatrix();
-    	
-    
-    }
-    
     /* draws the text s
      * @param x x-coord
      * @param y y-coord

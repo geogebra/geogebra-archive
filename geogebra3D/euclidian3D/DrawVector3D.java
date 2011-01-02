@@ -39,23 +39,14 @@ implements Previewable {
 	
 	
 	public void drawGeometry(Renderer renderer) {
-		double t = getGeoElement().getLineThickness();
-		renderer.setThickness(t);
-		renderer.setArrowType(Renderer.ARROW_TYPE_SIMPLE);
-		renderer.setArrowLength(10*t);
-		renderer.setArrowWidth(5*t);
-		
-
-		//renderer.drawSegment();
 		renderer.getGeometryManager().draw(getGeometryIndex());
-		
-		renderer.setArrowType(Renderer.ARROW_TYPE_NONE);		
 	}
 
 
 	
 	protected boolean updateForItSelf(){
 
+		setColors();
 		
 		GeoVector3D geo = ((GeoVector3D) getGeoElement());
 		

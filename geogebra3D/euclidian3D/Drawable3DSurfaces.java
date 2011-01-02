@@ -118,6 +118,8 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		//use 1-Math.sqrt(1-alpha) because transparent parts are drawn twice
 		alpha = (float) (1-Math.pow(1-getGeoElement().getAlphaValue(),1./3.));
 		
+		setColors(alpha);
+		
 		return true;
 	}
 	
@@ -136,6 +138,11 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 
 	public int getType(){
 		return DRAW_TYPE_SURFACES;
+	}
+	
+
+	protected double getColorShift(){
+		return 0.2;
 	}
 
 

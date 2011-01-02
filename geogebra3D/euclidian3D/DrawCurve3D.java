@@ -47,8 +47,6 @@ public class DrawCurve3D extends Drawable3DCurves {
 
 	public void drawGeometry(Renderer renderer) {
 		
-		renderer.setThickness(getGeoElement().getLineThickness());
-
 		renderer.getGeometryManager().draw(getGeometryIndex());
 		
 	}
@@ -144,6 +142,10 @@ public class DrawCurve3D extends Drawable3DCurves {
 	}
 	
 	protected boolean updateForItSelf(){
+
+		
+		setColors();
+
 		if(useOldCurves){
 			Renderer renderer = getView3D().getRenderer();
 		
@@ -184,5 +186,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 	public int getPickOrder() {
 		return DRAW_PICK_ORDER_1D;
 	}
+
+	
 
 }

@@ -26,7 +26,7 @@ public class DrawLabel3D {
 	/** text of the label */
     private String text;    
     /** color of the label */
-    private Color color;
+    private GgbVector color;
     /** origin of the label (left-bottom corner) */
     private GgbVector origin; 
     /** x and y offset */
@@ -87,7 +87,9 @@ public class DrawLabel3D {
 		this.origin = v;
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
-		this.color = color;
+		this.color = new GgbVector((double) color.getRed()/255, 
+				(double) color.getGreen()/255, (double) color.getBlue()/255,1);
+
 		
 		setIsVisible(true);
 		
@@ -174,7 +176,7 @@ public class DrawLabel3D {
 		int z = (int) v.getZ();
 		
 		
-		renderer.setColor(color, 1f);
+		renderer.setColor(color);
 		
 		//renderer.getTextures().setTextureNearest(textureIndex);
 		renderer.getTextures().setTextureLinear(textureIndex);

@@ -82,7 +82,7 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 	
 	public void draw(Renderer renderer) {
 		
-		renderer.setColor(Color.BLACK,1.0f);
+		renderer.setColor(new GgbVector(0, 0, 0, 1));//black
 		drawGeometry(renderer);
 
 	}
@@ -117,5 +117,8 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 	public boolean isTransparent() {return false;}
 
 
+	protected double getColorShift(){
+		return 0;
+	}
 
 }

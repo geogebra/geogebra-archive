@@ -80,6 +80,8 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	
 	protected boolean updateForItSelf(){
 		
+		setColors();
+		
 		GeoLineND cs = (GeoLineND) getGeoElement();
 		double[] minmax = getDrawMinMax(); 
 		updateForItSelf(cs.getPointInD(3,minmax[0]).getInhomCoords(),cs.getPointInD(3,minmax[1]).getInhomCoords());

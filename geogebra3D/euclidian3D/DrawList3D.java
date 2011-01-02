@@ -174,4 +174,9 @@ public class DrawList3D extends Drawable3D {
 		
 	}
 
+	
+
+	protected double getColorShift(){
+		return 0;
+	}
 }

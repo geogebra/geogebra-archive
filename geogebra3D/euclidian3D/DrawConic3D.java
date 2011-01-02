@@ -37,8 +37,6 @@ public class DrawConic3D extends Drawable3DCurves {
 
 	public void drawGeometry(Renderer renderer) {
 		
-		renderer.setThickness(getGeoElement().getLineThickness());			
-		
 		GeoConic3D conic = (GeoConic3D) getGeoElement();
 		
 		switch(conic.getType()){
@@ -61,7 +59,9 @@ public class DrawConic3D extends Drawable3DCurves {
 	protected boolean updateForItSelf(){
 		
 		
-		
+
+    	setColors();
+    	
 		Renderer renderer = getView3D().getRenderer();
 		
 		

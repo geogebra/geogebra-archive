@@ -167,6 +167,8 @@ public class DrawAxis3D extends DrawLine3D {
     
     protected boolean updateForItSelf(){
     	
+    	setColors();
+    	
     	setLabelWaitForUpdate();
     	
     	double[] minmax = getDrawMinMax(); 

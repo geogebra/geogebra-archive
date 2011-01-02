@@ -1332,11 +1332,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	protected boolean switchModeForMouseReleased(int mode, Hits hits, boolean changedKernel){
 		switch (mode) {
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
+			return true;
 		case EuclidianView3D.MODE_RIGHT_PRISM:
 			((DrawPolyhedron3D) view3D.getPreviewDrawable()).createPolyhedron();
 			//view3D.setPreview(null);//remove current previewable
 			//view3D.setPreview(view3D.createPreviewRightPrism(selectedPolygons));//init new one	
-			return changedKernel;
+			return true;
 		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
 			//Application.debug("hop");
 			//TODO implement choose geo

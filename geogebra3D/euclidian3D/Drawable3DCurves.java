@@ -119,4 +119,7 @@ public abstract class Drawable3DCurves extends Drawable3D {
 	
 	
 
+	protected double getColorShift(){
+		return 0.75;
+	}
 }
