@@ -5151,8 +5151,9 @@ public class Kernel {
 			// dummy point 
 			GeoPoint A = new GeoPoint(cons);
 			A.setZero();
-
-			AlgoIntersectFunctionsNewton algo = new AlgoIntersectFunctionsNewton(cons, labels[0], a, b, A);
+			//we must check that getLabels() didn't return null
+			String label = labels == null ? null : labels[0];						
+			AlgoIntersectFunctionsNewton algo = new AlgoIntersectFunctionsNewton(cons, label, a, b, A);
 			GeoPoint[] ret = {algo.getIntersectionPoint()};
 			return ret;
 		}
