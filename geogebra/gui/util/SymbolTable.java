@@ -21,7 +21,7 @@ import javax.swing.SwingConstants;
  * @author G Sturr
  *
  */
-public class SymbolTable extends SelectionTable {
+public class SymbolTable extends SelectionTable implements MenuElement{
 
 
 	public final static String [] displayChars = { 	
@@ -1561,13 +1561,38 @@ public class SymbolTable extends SelectionTable {
 
 
 	public SymbolTable(Application app, MyTextField inputField) {
-		super(app, symbols, -1,6, new Dimension(20,16), SelectionTable.MODE_TEXT);
+		super(app, tableSymbols, -1,11, new Dimension(24,24), SelectionTable.MODE_TEXT);
 		setShowGrid(true);
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setSelectedIndex(1);
-
+		setFocusable(false);
 		this.inputField = inputField;
 
 	}
+
+
+	public Component getComponent() {
+		return this;
+	}
+
+	public MenuElement[] getSubElements() {
+		return new MenuElement[0];
+	}
+
+	public void menuSelectionChanged(boolean arg0) {
+	}
+
+	public void processKeyEvent(KeyEvent arg0, MenuElement[] arg1, MenuSelectionManager arg2) {
+	}
+
+	public void processMouseEvent(MouseEvent arg0, MenuElement[] arg1, MenuSelectionManager arg2) {
+
+		if(this.getSelectedIndex() >= tableSymbols.length) return;
+
+		if (arg0.getID()==MouseEvent.MOUSE_RELEASED){
+			inputField.handlePopupSelection();
+		}	
+	}
+
 
 }

@@ -39,22 +39,22 @@ public class GeoGebraIcon {
 		super();
 	}
 
-	
+
 	public static ImageIcon createEmptyIcon(int width, int height){
 
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		ImageIcon ic = new ImageIcon(image);
 		return ic;
 	}
-	
-	
+
+
 	public static ImageIcon createNullSymbolIcon(int width, int height){
 
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		
+
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		g2.setPaint(Color.GRAY);
 		// draw a rectangle with an x inside
 		g2.drawRect(3, 3, width-6, height-6);
@@ -64,28 +64,28 @@ public class GeoGebraIcon {
 		ImageIcon ic = new ImageIcon(image);
 		return ic;
 	}
-	
-	
+
+
 	public static ImageIcon createFileImageIcon(Application app, String fileName, float alpha, Dimension iconSize){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);	 
 		image = ImageManager.toBufferedImage( app.getImageManager().getImageResource(fileName));
-		
+
 		ImageIcon ic = new ImageIcon(image);
 		//ensureIconSize(ic, iconSize);
-		
+
 		return ic;
 	}
 
-	
+
 	public static ImageIcon createHGridIcon(Dimension iconSize){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);	 
-		
+
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -97,17 +97,17 @@ public class GeoGebraIcon {
 
 		ImageIcon ic = new ImageIcon(image);
 		//ensureIconSize(ic, iconSize);
-		
+
 		return ic;
 	}
-	
-	
+
+
 	public static ImageIcon createVGridIcon(Dimension iconSize){
 
 		int h = iconSize.height;
 		int w = iconSize.width;
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);	 
-		
+
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -119,10 +119,10 @@ public class GeoGebraIcon {
 
 		ImageIcon ic = new ImageIcon(image);
 		//ensureIconSize(ic, iconSize);
-		
+
 		return ic;
 	}
-	
+
 
 	/**
 	 * Creates a 16x16 pixel icon representing a tree display of data
@@ -130,7 +130,7 @@ public class GeoGebraIcon {
 	public static ImageIcon createTreeIcon(){
 
 		BufferedImage image = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);	 
-		
+
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -138,28 +138,28 @@ public class GeoGebraIcon {
 
 		for(int i=3; i< 12; i = i+2){
 			g2.drawLine(6, i, 12, i);
-		
+
 			if(i % 3 == 0){
 				g2.fillRect(2, i-1, 3, 3);
 				g2.drawLine(2, i, 12, i);
 			}
 		}
-		
-			
-			
+
+
+
 		ImageIcon ic = new ImageIcon(image);
 		//ensureIconSize(ic, iconSize);
-		
+
 		return ic;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 	/**
 	 * Creates a 16x16 pixel icon to represent rightward opening/closing a list display of data 
 	 */
@@ -169,26 +169,26 @@ public class GeoGebraIcon {
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setPaint(Color.DARK_GRAY);
-	
+
 		for(int i=3; i<=12; i = i+2){
 			g2.drawLine(1, i, 6, i);
 		}
-		
+
 		g2.setPaint(Color.GRAY);
 		g2.drawLine(10, 5, 10, 9);
 		g2.drawLine(9, 5, 9, 9);
 		g2.drawLine(8, 5, 8, 9);
-		
+
 		for(int i=0; i<=4; i++){
 			g2.drawLine(11+i, 3+i , 11+i, 11-i);
 		}
-			
+
 		ImageIcon ic = new ImageIcon(image);
-		
+
 		return ic;
 	}
-	
-	
+
+
 
 	/**
 	 * Creates a 16x16 pixel icon to represent leftward opening/closing a list display of data 
@@ -199,53 +199,117 @@ public class GeoGebraIcon {
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setPaint(Color.DARK_GRAY);
-	
+
 		for(int i=3; i<=12; i = i+2){
 			g2.drawLine(10, i, 15, i);
 		}
-		
+
 		g2.setPaint(Color.GRAY);
 		g2.drawLine(8, 5, 8, 9);
 		g2.drawLine(7, 5, 7, 9);
 		g2.drawLine(6, 5, 6, 9);
-		
+
 		for(int i=0; i<=4; i++){
 			g2.drawLine(5-i, 11-i , 5-i, 3+i);
 		}
-			
+
 		ImageIcon ic = new ImageIcon(image);
+
+		return ic;
+	}
+
+
+	public static ImageIcon createDownTriangleIcon(int height){
+		int width = 8;
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g2.setColor(Color.BLACK);
+		int x = 1;
+		int y = height/2-1;
+		g2.drawLine(x, y, x+6, y);
+		g2.drawLine(x+1, y+1, x+5, y+1);
+		g2.drawLine(x+2, y+2, x+4, y+2);
+		g2.drawLine(x+3, y+3, x+3, y+3);
+
+		ImageIcon ic = new ImageIcon(image);
+		return ic;
+	}
+
+
+	public static ImageIcon createDownTriangleIconRollOver(int height){
+		int width = 8;
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g2.setColor(Color.LIGHT_GRAY);
+		g2.fillOval(0, 0, width, height);
 		
+		g2.setColor(Color.BLACK);
+		int x = 1;
+		int y = height/2-1;
+		g2.drawLine(x, y, x+6, y);
+		g2.drawLine(x+1, y+1, x+5, y+1);
+		g2.drawLine(x+2, y+2, x+4, y+2);
+		g2.drawLine(x+3, y+3, x+3, y+3);
+
+		ImageIcon ic = new ImageIcon(image);
+		return ic;
+	}
+
+	
+	
+
+	
+	public static ImageIcon createSymbolTableIcon(boolean isRollOver){
+
+		int height = 16;
+		int width = 16;
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g2.setColor(Color.LIGHT_GRAY);
+		if(isRollOver)
+			g2.fillOval(0, 0, width, height);
+		
+		g2.setColor(Color.GRAY);
+		// horizontal grid lines
+		g2.drawLine(4, 12, 12, 12);
+		g2.drawLine(4,  8, 12, 8);
+		
+		// vertical gridlines
+		g2.drawLine(4, 12, 4, 8);
+		g2.drawLine(8, 12, 8, 8);
+		g2.drawLine(12,12, 12, 8);
+		
+		g2.setColor(Color.DARK_GRAY);
+		// up triangle
+		g2.drawLine(4, 6, 12, 6);
+		g2.drawLine(5, 5, 11, 5);
+		g2.drawLine(6, 4, 10, 4);
+		g2.drawLine(7, 3, 9, 3);
+		g2.drawLine(8, 2, 8, 2);
+		
+		ImageIcon ic = new ImageIcon(image);
 		return ic;
 	}
 	
+	
+	
+	
 
-	public static ImageIcon createDownTriangleIcon(int height){
-	
-	BufferedImage image = new BufferedImage(8, height, BufferedImage.TYPE_INT_ARGB);
-	Graphics2D g2 = image.createGraphics();
-	g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	
-	g2.setColor(Color.BLACK);
-	int x = 1;
-	int y = height/2-1;
-	g2.drawLine(x, y, x+6, y);
-	g2.drawLine(x+1, y+1, x+5, y+1);
-	g2.drawLine(x+2, y+2, x+4, y+2);
-	g2.drawLine(x+3, y+3, x+3, y+3);
-	
-	ImageIcon ic = new ImageIcon(image);
-	return ic;
-	}
-	
 	/**
 	 * Creates an icon for a popup list ---  two triangles pointing up and down 
 	 */
 	public static ImageIcon createUpDownTriangleIcon(int height){
-		
+
 		BufferedImage image = new BufferedImage(6, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		g2.setColor(Color.DARK_GRAY);
 		int midx = image.getWidth()/2;
 		int midy = image.getHeight()/2;
@@ -265,28 +329,28 @@ public class GeoGebraIcon {
 		p.addPoint(midx,midy+6);
 
 		g2.fillPolygon(p);
-	      
-		
-		
+
+
+
 		/*
 		g2.drawLine(x, y, x+6, y);
 		g2.drawLine(x+1, y+1, x+5, y+1);
 		g2.drawLine(x+2, y+2, x+4, y+2);
 		g2.drawLine(x+3, y+3, x+3, y+3);
-		*/
-	      
-	      
-	      
+		 */
+
+
+
 		ImageIcon ic = new ImageIcon(image);
 		return ic;
-		}
-		
-	
-	
-	
-	
-	
-	
+	}
+
+
+
+
+
+
+
 
 	public static ImageIcon createColorSwatchIcon(float alpha, Dimension iconSize, Color fgColor, Color bgColor){
 
@@ -321,7 +385,7 @@ public class GeoGebraIcon {
 
 		ImageIcon ic = new ImageIcon(image);
 		//ensureIconSize(ic, iconSize);
-		
+
 		return ic;
 
 	}
@@ -350,14 +414,14 @@ public class GeoGebraIcon {
 
 		ImageIcon ic = new ImageIcon(image);
 		//ensureIconSize(ic, iconSize);
-		
+
 		return ic;
 
 	}
 
 
 	public static ImageIcon createTextSymbolIcon(String symbol,Font font, Dimension iconSize, Color fgColor, Color bgColor){
-		
+
 		int h = iconSize.height;
 		int w = iconSize.width;
 
@@ -367,31 +431,31 @@ public class GeoGebraIcon {
 
 		if(bgColor != null)
 			g2.setBackground(bgColor);
-		
-	    g2.setColor (fgColor);
-	    g2.setFont (new Font (font.getFamily(),Font.PLAIN,h-9));
-	    
-	    FontMetrics fm = g2.getFontMetrics ();
-	    int symbolWidth = fm.stringWidth (symbol);
-	    int ascent = fm.getMaxAscent ();
-	    int descent= fm.getMaxDescent ();
-	    int msg_x = w/2 - symbolWidth/2;
-	    int msg_y = h/2 - descent/2 + ascent/2;
 
-	    g2.drawString (symbol, msg_x, msg_y-2);
-	    g2.fillRect(1, h-5, w-1, 3);
-	    
-	    ImageIcon ic = new ImageIcon(image);
+		g2.setColor (fgColor);
+		g2.setFont (new Font (font.getFamily(),Font.PLAIN,h-9));
+
+		FontMetrics fm = g2.getFontMetrics ();
+		int symbolWidth = fm.stringWidth (symbol);
+		int ascent = fm.getMaxAscent ();
+		int descent= fm.getMaxDescent ();
+		int msg_x = w/2 - symbolWidth/2;
+		int msg_y = h/2 - descent/2 + ascent/2;
+
+		g2.drawString (symbol, msg_x, msg_y-2);
+		g2.fillRect(1, h-5, w-1, 3);
+
+		ImageIcon ic = new ImageIcon(image);
 		//ensureIconSize(ic, iconSize);
-		
+
 		return ic;
 
 	}
-	
+
 	public static ImageIcon createStringIcon(String str, Font font, Dimension iconSize){
 		return createStringIcon( str,  font, false, false, true, iconSize, Color.BLACK, null);
 	}
-	
+
 	public static ImageIcon createStringIcon(String str, Font font, boolean isBold, boolean isItalic, 
 			boolean isCentered, Dimension iconSize, Color fgColor, Color bgColor){
 
@@ -424,25 +488,25 @@ public class GeoGebraIcon {
 		g2.drawString (str, x, mid_y);
 
 		return new ImageIcon(image);
-		
+
 	}
 
 
 
 	public static ImageIcon createBracketIcon( String[] brackets,Font font, Dimension iconSize, Color fgColor, Color bgColor){
-/*
+		/*
 		String latex = "\\left" + brackets[0] + "\\equiv" + "\\right" + brackets[1]; 
 		ImageIcon icon = createLatexIcon(app, latex, font, false, fgColor, null);
 		icon = GeoGebraIcon.ensureIconSize(icon, iconSize);
-	*/	
-		
+		 */	
+
 		int h = iconSize.height;
 		int w = iconSize.width;
 
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				
+
 		if(bgColor != null)
 			g2.setBackground(bgColor);
 
@@ -460,13 +524,21 @@ public class GeoGebraIcon {
 
 		int x = 2;
 		g2.drawString (brackets[0] + "::" + brackets[1], x, mid_y);
-		
+
 		return new ImageIcon(image);
 
 	}
 
 
 
+
+	/**
+	 * Draw a LaTeX image in the icon.
+	 */
+	public static ImageIcon createLatexIcon(Application app, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
+		return new ImageIcon(TeXFormula.createBufferedImage(latex, TeXConstants.STYLE_DISPLAY, font.getSize() + 3, fgColor, bgColor));
+
+	}
 
 
 	public static ImageIcon createPointStyleIcon(int pointStyle, int pointSize, Dimension iconSize, Color fgColor, Color bgColor){
@@ -483,16 +555,6 @@ public class GeoGebraIcon {
 	}
 
 
-
-	/**
-	 * Draw a LaTeX image in the icon.
-	 */
-	public static ImageIcon createLatexIcon(Application app, String latex, Font font, boolean serif, Color fgColor, Color bgColor) {
-		return new ImageIcon(TeXFormula.createBufferedImage(latex, TeXConstants.STYLE_DISPLAY, font.getSize() + 3, fgColor, bgColor));
-		
-	}
-
-	
 
 	public class PointStyleImage extends BufferedImage {
 
@@ -736,10 +798,10 @@ public class GeoGebraIcon {
 		int w2 = icon.getIconWidth();
 		if(h2 == h && w2 == w) 
 			return icon;
-		
+
 		int wInset = (w - w2) > 0 ? (w-w2)/2 : 0;
 		int hInset = (h - h2) > 0 ? (h-h2)/2 : 0;
-		
+
 		BufferedImage newImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = newImage.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -754,7 +816,7 @@ public class GeoGebraIcon {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return icon;
 	}
 

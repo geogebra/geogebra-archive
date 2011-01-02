@@ -365,9 +365,9 @@ ActionListener, ListSelectionListener {
 				tfPanel.add(historyButton,BorderLayout.EAST);
 			}
 			
-			textComponent.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-			tfPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-			tfPanel.setBackground(Color.white);
+			//textComponent.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+			//tfPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+			//tfPanel.setBackground(Color.white);
 			
 			// create the symbol button panel
 			JPanel buttonPanel = new JPanel(new BorderLayout(5,0));
