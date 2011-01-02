@@ -21,7 +21,6 @@ package geogebra.kernel.arithmetic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 import geogebra.util.Unicode;
 
@@ -177,7 +176,7 @@ implements NumberValue {
     /** c = a * b */
     final public static void mult(MyDouble a, MyDouble b, MyDouble c) {
         c.isAngle = a.isAngle || b.isAngle;
-        if(Kernel.isZero(a.val) || Kernel.isZero(b.val)){
+        if(a.val == 0 || b.val == 0){
         	c.set(0);
         	return;
         }
@@ -187,6 +186,10 @@ implements NumberValue {
     /** c = a * b */
     final public static void mult(MyDouble a, double b, MyDouble c) {
         c.isAngle = a.isAngle;
+        if(a.val == 0 || b == 0){
+        	c.set(0);
+        	return;
+        }
     	c.set(a.val * b);
     }
     
@@ -482,7 +485,7 @@ implements NumberValue {
 		return parseDouble(str.substring(0, str.length() - 1)) / 100;
 	}
 	
-	static StringBuilder sb = new StringBuilder();
+	private static StringBuilder sb = new StringBuilder();
 	
 	/*
 	 * extension of Double.parseDouble() to cope with unicode digits eg Arabic
