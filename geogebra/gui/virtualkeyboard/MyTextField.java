@@ -105,6 +105,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 	public void focusLost(FocusEvent e) {
 		guiManager.setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
+		thisField.repaint();
 	}
 
 	/**
