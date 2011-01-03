@@ -125,6 +125,10 @@ public class CASTableCellValue {
 		return evalVE;
 	}
 	
+	public ValidExpression getInputVE(){
+		return inputVE;
+	}
+	
 	public String getPostfix() {
 		return postfix;
 	}

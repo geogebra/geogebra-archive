@@ -1,43 +1,60 @@
 package geogebra.cas.view;
 
-import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.gui.GuiManager;
+import geogebra.gui.MathTextField;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Vector;
 
+import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.TableCellEditor;
 
 /**
- * Dialog to substitude a string in a CAS input.
+ * Dialog to substitute expressions in CAS Input.
  * 
- * Quan Yuan
  */
 
 public class CASSubDialog extends JDialog implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	private JButton btSub, btEval, btNumeric; //, btCancel;
-	private JPanel optionPane, btPanel, cbPanel, captionPanel;
-	private JTextField valueTextField, subStrfield, lastFocusTF;
+	private JButton btSub, btEval, btNumeric;
+	private JPanel optionPane, btPanel, captionPanel;
+	private JTable replaceTable;
+	private Vector<Vector<String>> data;
 	
 	private CASView casView;
 	private Application app;
 	private int editRow;
-	private String prefix, evalText, postifx;
+	private String prefix, evalText, postfix;
 
 	/**
 	 * Substitute dialog for CAS.
+	 * @param casView
+	 * @param prefix before selection, not effected by the substitution
+	 * @param evalText the String which will be substituted
+	 * @param postfix after selection, not effected by the substitution
+	 * @param editRow
 	 */
 	public CASSubDialog(CASView casView, String prefix, String evalText, String postfix, int editRow) {
 		super(casView.getApp().getFrame());
@@ -47,7 +64,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		this.app = casView.getApp();
 		this.prefix = prefix;
 		this.evalText = evalText;
-		this.postifx = postfix;
+		this.postfix = postfix;
 		
 		this.editRow = editRow;
 	
@@ -56,49 +73,74 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		setLocationRelativeTo(null);
 	}
 
+	/**
+	 * 
+	 */
 	protected void createGUI() {
 		setTitle(app.getPlain("Substitute") + " - " + app.getCommand("Row") + " " + (editRow+1));
 		setResizable(false);
-
-		// create label panel
-		JPanel subTitlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
-		String temp = app.getPlain("SubstituteForAinB",
-				"ThisIsJustTheSplitString", evalText);
-		String[] strLabel = temp.split("ThisIsJustTheSplitString");
-		JLabel subLabel = new JLabel(strLabel[0]);
-		subStrfield = new MyTextField(app.getGuiManager(),4);
-		JLabel subLabel2 = new JLabel(strLabel[1]);
-		subTitlePanel.add(subLabel);
-		subTitlePanel.add(subStrfield);
-		subTitlePanel.add(subLabel2);		
-
-		// create caption panel
-		JLabel captionLabel = new JLabel(app.getPlain("NewExpression") + ":");
-		valueTextField = new JTextField();
-		valueTextField.setColumns(20);
-		captionLabel.setLabelFor(valueTextField);
+		CASTableCellValue cell=casView.getConsoleTable().getCASTableCellValue(editRow);
 		
-		JPanel subPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		subPanel.add(captionLabel);
-		subPanel.add(valueTextField);
-
-		captionPanel = new JPanel(new BorderLayout(5, 5));
-		captionPanel.add(subTitlePanel, BorderLayout.CENTER);
-		captionPanel.add(subPanel, BorderLayout.SOUTH);
-
-		// tf focus listener
-		FocusListener myFocusListener = new FocusListener() {
-			public void focusGained(FocusEvent e) {
-				if (e.getSource() instanceof JTextField)
-					lastFocusTF = (JTextField) e.getSource();
+		HashSet<?> vars=cell.getInputVE().getVariables();
+		Vector<String> row;
+		if (vars!=null){
+			data=new Vector<Vector<String>>(vars.size()+1);
+			Iterator<?> iter=vars.iterator();
+			while(iter.hasNext()){
+				row=new Vector<String>(2);
+				Object var=iter.next();
+				String nextVar=var.toString();
+				//TODO how to handle defined variable names?
+//				if (var instanceof GeoElement)
+//					nextVar=((GeoElement)var).getLabel();
+				int i=0;
+				for (i=0;i<data.size();i++){
+					if (data.get(i).firstElement().compareTo(nextVar)>=0){
+						break;
+					}
+				}
+				if (i==data.size()||!data.get(i).firstElement().equals(nextVar)){
+					row.add(nextVar);
+					row.add("");
+					data.insertElementAt(row, i);
+				}
 			}
+		}else{
+			data=new Vector<Vector<String>>(1);
+		}
+		row=new Vector<String>(2);
+		row.add("");
+		row.add("");
+		data.add(row);
+		
+		Vector<String> header=new Vector<String>();
+		header.add(app.getPlain("OldExpression"));
+		header.add(app.getPlain("NewExpression"));
+		replaceTable=new JTable(data,header);
+		replaceTable.setDefaultEditor(Object.class,new MathTextCellEditor(app.getGuiManager()));
+		replaceTable.getTableHeader().setReorderingAllowed(false);
+		
+		//TODO size of window should depend on what's available
+		replaceTable.setPreferredScrollableViewportSize(new Dimension(200,100));
+		JScrollPane scrollPane=new JScrollPane(replaceTable);
 
-			public void focusLost(FocusEvent e) {
+		captionPanel = new JPanel(new BorderLayout(5, 0));
+		
+		captionPanel.add(scrollPane, BorderLayout.CENTER);
+		
+		
+		replaceTable.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		replaceTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			
+			public void valueChanged(ListSelectionEvent e) {
+				if (replaceTable.getSelectedRow()+1==replaceTable.getRowCount()){
+					data.add(new Vector<String>(Arrays.asList(new String[]{"",""})));
+					replaceTable.revalidate();
+					CASSubDialog.this.pack();
+				}
 			}
-		};
-		valueTextField.addFocusListener(myFocusListener);
-		subStrfield.addFocusListener(myFocusListener);
+		});
 		
 
 		// buttons
@@ -117,15 +159,11 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		btSub.setActionCommand("Substitute");
 		btSub.addActionListener(this);
 
-//		btCancel = new JButton(app.getPlain("Cancel"));
-//		btCancel.setActionCommand("Cancel");
-//		btCancel.addActionListener(this);
 		btPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
 		btPanel.add(btEval);
 		btPanel.add(btNumeric);
 		btPanel.add(btSub);
-		//btPanel.add(btCancel);
 
 		// Create the JOptionPane.
 		optionPane = new JPanel(new BorderLayout(5, 5));
@@ -138,14 +176,17 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		
 		// Make this dialog display it.
 		setContentPane(optionPane);
+		
 	}
 
 	public void actionPerformed(ActionEvent ae) {
 		Object src = ae.getSource();
-
-//		if (src == btCancel) {
-//			setVisible(false);
-//		} else 
+		replaceTable.clearSelection();
+		if (replaceTable.isEditing())
+			replaceTable.getCellEditor().stopCellEditing();
+		if (src instanceof JComponent){
+			((JComponent) src).requestFocusInWindow();
+		}
 		if (src == btEval) {
 			if (apply(btEval.getActionCommand()))
 				setVisible(false);
@@ -163,31 +204,52 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		super.setVisible(flag);
 	}
 	
+	/**
+	 * if editing insert inStr at current caret position
+	 * @param inStr 
+	 */
 	public void insertText(String inStr) {
-		if (lastFocusTF == null || inStr == null) return;
-		
-		lastFocusTF.replaceSelection(inStr);	
-		lastFocusTF.requestFocus();
+		if (inStr == null) return;
+		TableCellEditor editor=replaceTable.getCellEditor();
+		if (editor!=null&&editor instanceof MathTextCellEditor){
+			((MathTextCellEditor)editor).insertString(inStr);
+		}
 	}
 
 	private boolean apply(String actionCommand) {
 		
 		CASTable table = casView.getConsoleTable();
-			
-		// substitute from
-		String	fromExp = subStrfield.getText().trim();
-		String toExp = valueTextField.getText().trim();
-		if (fromExp.length() == 0 || toExp.length() == 0) return false;	
 		
-		// resolve row references
-		fromExp = casView.resolveCASrowReferences(fromExp, editRow);
-		toExp = casView.resolveCASrowReferences(toExp, editRow);
+		//create substitution list
+		StringBuilder substList=new StringBuilder("{");
+		StringBuilder substComment=new StringBuilder();
+		for (int i=0;i<data.size();i++){
+			String	fromExpr = data.get(i).get(0).trim();
+			String toExpr = data.get(i).get(1).trim();
+			if (!fromExpr.equals("") && !toExpr.equals("")){
+				if (substList.length()>1){
+					substList.append(',');
+					substComment.append(',');
+				}
+				fromExpr=casView.resolveCASrowReferences(fromExpr, editRow);
+				toExpr=casView.resolveCASrowReferences(toExpr, editRow);
+				substList.append('{');
+				substList.append(fromExpr);
+				substList.append(',');
+				substList.append(toExpr);
+				substList.append('}');
+				substComment.append(fromExpr);
+				substComment.append('=');
+				substComment.append(toExpr);
+			}
+		}
+		substList.append('}');
 		
 		// make sure pure substitute is not evaluated 
 		boolean keepInput = true;
 		
 		// substitute command
-		String subCmd = "Substitute[" + evalText + "," + fromExp + ", " +  toExp + "]"; 
+		String subCmd = "SubstituteParallel[" + substList + "," +evalText +"]";
 		if (actionCommand.equals("Evaluate")) {
 			subCmd = "Simplify[" + subCmd + "]"; 
 			keepInput = false;
@@ -199,9 +261,9 @@ public class CASSubDialog extends JDialog implements ActionListener {
 	
 		try {
 			CASTableCellValue currCell = table.getCASTableCellValue(editRow);
-			currCell.setProcessingInformation("", subCmd, "");
+			currCell.setProcessingInformation(prefix, subCmd, postfix);
 			currCell.setEvalCommand("Substitute");
-			currCell.setEvalComment(fromExp + "=" + toExp);
+			currCell.setEvalComment(substComment.toString());
 			
 			// make sure pure substitute is not evaluated 
 			currCell.setKeepInputUsed(keepInput);
@@ -213,6 +275,53 @@ public class CASSubDialog extends JDialog implements ActionListener {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	private class MathTextCellEditor extends AbstractCellEditor implements TableCellEditor{
+
+		private static final long serialVersionUID = 1L;
+		boolean editing;
+		MathTextField delegate;
+		
+		public MathTextCellEditor(GuiManager guiManager) {
+			super();
+			delegate=new MathTextField(guiManager);
+			editing=false;
+			changeEvent=new ChangeEvent(delegate);
+		}
+
+		public Object getCellEditorValue() {
+			return delegate.getText();
+		}
+
+
+		public boolean stopCellEditing() {
+			if (editing)
+				fireEditingStopped();
+			editing=false;
+			return true;
+		}
+
+		public void cancelCellEditing() {
+			if (editing)
+				fireEditingCanceled();
+			editing=false;
+		}
+
+
+		public Component getTableCellEditorComponent(JTable table,
+				Object value, boolean isSelected, int row, int column) {
+			delegate.setText(value.toString());
+			editing=true;
+			return delegate;
+		}
+		
+		public void insertString(String text){
+			delegate.insertString(text);
+		}
+		
+		
+		
 	}
 
 	
