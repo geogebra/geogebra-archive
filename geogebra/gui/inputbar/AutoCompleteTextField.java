@@ -465,7 +465,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}
 	
 	private boolean isKoreanMultiChar(char c) {
-		if (c >= 0xac00 && c <= 0xb8b0) return true;
+		if (c >= 0xac00 && c <= 0xd7af) return true;
 		
 		return false;
 	}
