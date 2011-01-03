@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.main.Application;
 
 import java.awt.event.KeyEvent;
@@ -76,17 +77,36 @@ public class CASTableCellController implements KeyListener {
 	}
 	
 	/**
-	 * Handles pressing of Enter key after user input.
-	 * Enter checks the syntax of the input only. Shift+Enter evaluates the input 
+	 * Handles pressing of Enter key after user input. The behaviour depends
+	 * on the currently selected mode in the toolbar (Evaluate, Keep Input, Numeric).
 	 */
 	private synchronized void handleEnterKey(KeyEvent e) {
+		Application app = view.getApp();
+		int mode = app.getMode();
+		
+		// Ctrl + Enter toggles between the modes Evaluate and Keep Input
 		if (Application.isControlDown(e)) {
-			// don't evaluate, only parse by GeoGebra
-			view.processInput("KeepInput", null);	
-		} else {
-			// evaluate
-			view.processInput("Evaluate", null);
-		}		
+			if (mode == EuclidianConstants.MODE_CAS_KEEP_INPUT) {
+				app.setMode(EuclidianConstants.MODE_CAS_EVALUATE);
+			} else {
+				app.setMode(EuclidianConstants.MODE_CAS_KEEP_INPUT);
+			}
+			return;
+		}
+		
+		// Enter depends on current mode
+		switch (mode) {		
+			case EuclidianConstants.MODE_CAS_EVALUATE:
+			case EuclidianConstants.MODE_CAS_NUMERIC:
+			case EuclidianConstants.MODE_CAS_KEEP_INPUT:
+				// apply current tool again
+				app.setMode(mode);
+				break;
+			
+			default:
+				// switch back to Evaluate
+				app.setMode(EuclidianConstants.MODE_CAS_EVALUATE);
+		}	
 	}
 
 	public void keyReleased(KeyEvent arg0) {

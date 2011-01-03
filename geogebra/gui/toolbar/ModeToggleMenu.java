@@ -362,7 +362,8 @@ implements MouseListener, MouseMotionListener, ActionListener {
 			menu.setPopupVisible(false);
 		}	
 		
-		doClick();		
+		// 2011-01-03 Markus: this caused multiple setMode() calls in the CAS view
+		//doClick();		
 	}
 	
 	public void doClick() {

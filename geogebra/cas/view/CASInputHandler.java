@@ -50,6 +50,7 @@ public class CASInputHandler {
 		int selEnd = cellEditor.getInputSelectionEnd();
 		String selRowInput = cellEditor.getInput();
 		if (selRowInput == null || selRowInput.length() == 0) {
+			consoleTable.startEditingRow(consoleTable.getSelectedRow());
 			return;
 		}
 				

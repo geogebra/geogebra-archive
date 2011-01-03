@@ -355,7 +355,7 @@ public class CASTable extends JTable {
 	        scrollRectToVisible(getCellRect( editRow, COL_CAS_CELLS, true ) );	
 			editCellAt(editRow, COL_CAS_CELLS);			
 		}
-	}		
+	}
 	
 	public boolean editCellAt(int editRow, int editCol) {
 		boolean success = super.editCellAt(editRow, editCol);
