@@ -563,6 +563,11 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 */ 
 	public void updateAutoCompletion() { 
 		String text = getText();
+				
+		// Autocompletion for Korean enabled only for the Virtual Keyboard at present
+		if (app.getLocale().getLanguage().equals("ko") && !virtualKeyboardInUse)
+			return;
+		
 		//    start autocompletion only for words with at least two characters                
 		 if (curWord.length() < 2 && !isKoreanMultiChar(curWord.length() > 0 ? curWord.charAt(0) : ' '))  
 			 return;
@@ -595,7 +600,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// insert the command into current text   
 		sb.setLength(0);
 		sb.append(text.substring(0, curWordStart));
-		if (app.getLocale().getLanguage().equals("ko") && lastTyped == null) {
+		if (virtualKeyboardInUse && app.getLocale().getLanguage().equals("ko") && lastTyped == null) {
 			lastTyped = text.substring(curWordStart, caretPos);
 			//Application.debug("lastTyped="+lastTyped+" "+Util.toHexString(lastTyped));
 			//Application.debug("text="+text+" "+Util.toHexString(text));
@@ -761,6 +766,17 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		sb.append(syntax);
 		sb.append("</html>");
 		return sb.toString();
+	}
+	
+	private static boolean virtualKeyboardInUse = false;
+
+	/*
+	 * Autocompletion for Korean enabled only for the Virtual Keyboard at present
+	 */
+	public static void setVirtualKeyboardInUse(boolean b) {
+		virtualKeyboardInUse = b;
+		if (!b) lastTyped = null;		
+		//Application.debug("using VK:"+b);
 	}
 
 

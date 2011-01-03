@@ -14,6 +14,7 @@ the Free Software Foundation.
 
 package geogebra.gui.virtualkeyboard;
 
+import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
 
@@ -600,6 +601,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	 * @return void
 	 */
 	private void insertText(String addchar) {
+		
+		AutoCompleteTextField.setVirtualKeyboardInUse(true);
 
 		if (addchar.length() == 1) 
 			switch (addchar.charAt(0)) {

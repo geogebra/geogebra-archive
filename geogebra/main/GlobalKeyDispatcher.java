@@ -5,6 +5,7 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
@@ -50,6 +51,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 */
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		
+		AutoCompleteTextField.setVirtualKeyboardInUse(false);
 	
 		// ignore key events coming from text components (i.e. text fields and text areas)
 		// or key events coming from popups (source class = JRootPane)
