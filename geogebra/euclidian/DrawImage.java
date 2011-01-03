@@ -245,7 +245,7 @@ public final class DrawImage extends Drawable {
 							RenderingHints.VALUE_INTERPOLATION_BILINEAR);    	        			
         		}   
     			
-     			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);    	 
+     			//g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);    	 
             	
             	g2.drawImage(image, 0, 0, null); 
      			if (!isInBackground && geo.doHighlighting()) {
