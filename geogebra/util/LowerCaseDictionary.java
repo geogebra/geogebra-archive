@@ -43,7 +43,7 @@ public class LowerCaseDictionary extends Hashtable implements AutoCompleteDictio
     return treeSet.remove(lowerCase);
   }
   
-  public Iterator getLowerCaseIterator() {
+  public Iterator getIterator() {
 	  return treeSet.iterator();
   }
 

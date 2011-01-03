@@ -1691,7 +1691,7 @@ public class Application implements KeyEventDispatcher {
 		// Character.DIRECTIONALITY_RIGHT_TO_LEFT);
 		
 		// turn off auto-complete for Korean
-		isAutoCompletePossible = !"ko".equals(lang);
+		isAutoCompletePossible = true;//!"ko".equals(lang);
 		
 		// defaults
 		unicodeDecimalPoint = '.';

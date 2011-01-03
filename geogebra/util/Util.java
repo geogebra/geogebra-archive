@@ -110,6 +110,8 @@ public class Util extends Object {
 	    return false;
 	}
     }
+    
+    private static StringBuilder hexSB = null;
 
     /**
      * converts Color to hex String with RGB values
@@ -117,24 +119,47 @@ public class Util extends Object {
      * @return
      */
     final public static String toHexString(Color col) {
-	byte r = (byte) col.getRed();
-	byte g = (byte) col.getGreen();
-	byte b = (byte) col.getBlue();
+    	byte r = (byte) col.getRed();
+    	byte g = (byte) col.getGreen();
+    	byte b = (byte) col.getBlue();
 
-	StringBuilder sb = new StringBuilder(8);
-	// RED      
-	sb.append(hexChar[(r & 0xf0) >>> 4]);
-	// look up high nibble char             
-	sb.append(hexChar[r & 0x0f]); // look up low nibble char
-	// GREEN
-	sb.append(hexChar[(g & 0xf0) >>> 4]);
-	// look up high nibble char             
-	sb.append(hexChar[g & 0x0f]); // look up low nibble char
-	// BLUE     
-	sb.append(hexChar[(b & 0xf0) >>> 4]);
-	// look up high nibble char             
-	sb.append(hexChar[b & 0x0f]); // look up low nibble char
-	return sb.toString();
+    	if (hexSB == null) hexSB = new StringBuilder(8);
+    	else hexSB.setLength(0);
+    	// RED      
+    	hexSB.append(hexChar[(r & 0xf0) >>> 4]);
+    	// look up high nibble char             
+    	hexSB.append(hexChar[r & 0x0f]); // look up low nibble char
+    	// GREEN
+    	hexSB.append(hexChar[(g & 0xf0) >>> 4]);
+    	// look up high nibble char             
+    	hexSB.append(hexChar[g & 0x0f]); // look up low nibble char
+    	// BLUE     
+    	hexSB.append(hexChar[(b & 0xf0) >>> 4]);
+    	// look up high nibble char             
+    	hexSB.append(hexChar[b & 0x0f]); // look up low nibble char
+    	return hexSB.toString();
+        }
+
+    final public static String toHexString(char c) {
+    	int i = c + 0;
+
+    	if (hexSB == null) hexSB = new StringBuilder(8);
+    	else hexSB.setLength(0);
+    	hexSB.append("\\u");
+    	hexSB.append(hexChar[(i & 0xf000) >>> 12]);
+    	hexSB.append(hexChar[(i & 0x0f00) >> 8]); // look up low nibble char
+    	hexSB.append(hexChar[(i & 0xf0) >>> 4]);
+    	hexSB.append(hexChar[i & 0x0f]); // look up low nibble char
+    	return hexSB.toString();
+    }
+    
+    final public static String toHexString(String s) {
+    	StringBuilder sb = new StringBuilder(s.length() * 6);
+    	for (int i = 0 ; i < s.length() ; i++) {
+    		sb.append(toHexString(s.charAt(i)));
+    	}
+    	
+    	return sb.toString();
     }
 
     //     table to convert a nibble to a hex char.

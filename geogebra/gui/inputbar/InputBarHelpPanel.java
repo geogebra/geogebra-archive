@@ -408,7 +408,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			child = new DefaultMutableTreeNode(name);
 			addNodeInSortedOrder(rootSubCommands,child);
 			//rootSubCommands.add(child);
-			Iterator<?> it = subDict[i].getLowerCaseIterator();
+			Iterator<?> it = subDict[i].getIterator();
 			while (it.hasNext()) {
 				String cmdName = (String) subDict[i].get(it.next());
 				if (cmdName != null && cmdName.length() > 0){
@@ -418,7 +418,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		}
 
 		LowerCaseDictionary dict = app.getCommandDictionary(); 
-		Iterator<?> it = dict.getLowerCaseIterator();
+		Iterator<?> it = dict.getIterator();
 		while (it.hasNext()) {
 			String cmdName = (String) dict.get(it.next());
 			if (cmdName != null && cmdName.length() > 0){

@@ -1,28 +1,21 @@
 package geogebra.gui.inputbar;
 import geogebra.gui.MathTextField;
-import geogebra.gui.util.SelectionTable;
-import geogebra.gui.util.SymbolTable;
-import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 import geogebra.util.AutoCompleteDictionary;
+import geogebra.util.Util;
 
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import javax.swing.BorderFactory;
 import javax.swing.JDialog;
-import javax.swing.JPopupMenu;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.text.BadLocationException;
 
 public class AutoCompleteTextField extends MathTextField implements 
 AutoComplete, KeyListener, GeoElementSelectionListener {
@@ -138,6 +131,18 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	
 
 	public void keyPressed(KeyEvent e) {        
+		int keyCode = e.getKeyCode(); 
+				
+		// special processing for Korean
+		// don't check for language (may have changed & this still needs clearing!)
+		if (lastTyped != null) {
+			if (keyCode == KeyEvent.VK_ENTER || keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_BACK_SPACE) {
+				koreanRawText.setLength(0);
+				lastTyped = null;
+				Application.debug("clearing Korean buffer");
+			}
+		}
+		
 		// we don't want to trap AltGr
 		// as it is used eg for entering {[}] is some locales
 		// NB e.isAltGraphDown() doesn't work
@@ -148,8 +153,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if (Application.MAC_OS && e.isControlDown())
 			e.consume();
 
-		
-		int keyCode = e.getKeyCode(); 
 		
 		
 		ctrlC = false;
@@ -320,22 +323,27 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 	}
 	
+	private StringBuilder koreanRawText = new StringBuilder();;
+	
 	/**
 	 * Automatically closes parentheses (, {, [ when next sign
 	 * is a space or end of input text.
 	 * and ignores ] }, ) if the brackets already match (simple check)
 	 */
 	public void keyTyped(KeyEvent e) {
+		
 		// only handle parentheses
 		char ch = e.getKeyChar();
+				
 		if (!(ch == '(' || ch == '{' || ch == '[' || ch == '}' || ch == ')' || ch == ']')) {
 			super.keyTyped(e);
 			return;
 		}
 		
+		String text = getText();
+		
 		clearSelection();
 		int caretPos = getCaretPosition();
-		String text = getText();
 		
 		if (ch == '}' || ch == ')' || ch == ']') {
 			
@@ -388,9 +396,109 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 
 	protected String lookup(String s) {
+		
+		String sKorean = flattenKorean(s);
+		
+		Iterator<String> it = dict.getIterator();
+		while (it.hasNext()) {
+			String str = it.next();
+			
+			if (flattenKorean(str).startsWith(sKorean)){
+				return str;
+			}
+		}
+		
+		
 		if(dict != null)
 			return dict.lookup(s);
 		return null;
+	}
+	
+	StringBuilder koreanSB;
+	
+	HashMap<Character, Character> koreanLeadToTail = new HashMap<Character, Character>();
+	{
+		koreanLeadToTail.put(new Character('\u1100'), new Character('\u11a8'));
+		koreanLeadToTail.put(new Character('\u1101'), new Character('\u11a9'));
+		koreanLeadToTail.put(new Character('\u1102'), new Character('\u11ab'));
+		koreanLeadToTail.put(new Character('\u1103'), new Character('\u11ae'));
+		koreanLeadToTail.put(new Character('\u1104'), new Character('\u1104')); // map to itself
+		koreanLeadToTail.put(new Character('\u1105'), new Character('\u11af'));
+		koreanLeadToTail.put(new Character('\u1106'), new Character('\u11b7'));
+		koreanLeadToTail.put(new Character('\u1107'), new Character('\u11b8'));
+		koreanLeadToTail.put(new Character('\u1108'), new Character('\u1108')); // map to itself
+		koreanLeadToTail.put(new Character('\u1109'), new Character('\u11ba'));
+		koreanLeadToTail.put(new Character('\u110a'), new Character('\u11bb'));
+		koreanLeadToTail.put(new Character('\u110b'), new Character('\u11bc'));
+		koreanLeadToTail.put(new Character('\u110c'), new Character('\u11bd'));
+		koreanLeadToTail.put(new Character('\u110d'), new Character('\u110d')); // map to itself
+		koreanLeadToTail.put(new Character('\u110e'), new Character('\u11be'));
+		koreanLeadToTail.put(new Character('\u110f'), new Character('\u11bf'));
+		koreanLeadToTail.put(new Character('\u1110'), new Character('\u11c0'));
+		koreanLeadToTail.put(new Character('\u1111'), new Character('\u11c1'));
+		koreanLeadToTail.put(new Character('\u1112'), new Character('\u11c2'));
+	}
+	
+	/*
+	 * convert eg \uB458 to \u1103\u116e\u11af
+	 */
+	private String flattenKorean(String s) {
+		if (koreanSB == null) koreanSB = new StringBuilder();
+		else koreanSB.setLength(0);
+		
+		boolean lastWasVowel = false;
+		
+		for (int i = 0 ; i < s.length() ; i++) {
+			char c = s.charAt(i);
+			if (isKoreanMultiChar(c)) appendKoreanMultiChar(koreanSB, c);
+			else {
+				// if a "lead char" follows a vowel, turn into a "tail char"
+				if (lastWasVowel && isKoreanLeadChar(c))
+					koreanSB.append(koreanLeadToTail.get(new Character(c)).charValue());
+				else
+					koreanSB.append(c);
+			}
+			lastWasVowel = isKoreanVowelChar(koreanSB.charAt(koreanSB.length() - 1));
+		}
+		
+		return koreanSB.toString();
+	}
+	
+	private boolean isKoreanMultiChar(char c) {
+		if (c >= 0xac00 && c <= 0xb8b0) return true;
+		
+		return false;
+	}
+	
+	private boolean isKoreanLeadChar(char c) {
+		if (c >= 0x1100 && c <= 0x1112) return true;
+		
+		return false;
+	}
+	
+	private boolean isKoreanVowelChar(char c) {
+		if (c >= 0x1161 && c <= 0x1175) return true;
+		
+		return false;
+	}
+	
+	private boolean isKoreanTailChar(char c) {
+		if (c >= 0x11a8 && c <= 0x11c2) return true;
+		
+		return false;
+	}
+	
+	/*
+	 * 	http://www.kfunigraz.ac.at/~katzer/korean_hangul_unicode.html
+	 */
+	private void appendKoreanMultiChar(StringBuilder sb, char c) {
+		char tail = (char) (0x11a7 + (c - 44032) % 28) ;
+		char vowel = (char)(0x1161 + ( (c - 44032 - (tail - 0x11a7)) % 588) / 28 );
+		char lead = (char)(0x1100  + (c - 44032) / 588);
+		//Application.debug(Util.toHexString(c)+" decoded to "+Util.toHexString(lead)+Util.toHexString(vowel)+Util.toHexString(tail));
+		sb.append(lead);
+		sb.append(vowel);
+		sb.append(tail);
 	}
 
 	/**
@@ -447,15 +555,26 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			return Character.isLetterOrDigit(character);
 		}
 	}
+	
+	static String lastTyped = null;
 
 	/**
-	 * returns wheter the input field's text was changed due to auotcompletion
+	 * returns whether the input field's text was changed due to autocompletion
 	 */ 
 	public void updateAutoCompletion() { 
-		//    start autocompletion only for words with at least two characters                
-		if (curWord.length() < 2)  return;
-		int caretPos = getCaretPosition();
 		String text = getText();
+		//    start autocompletion only for words with at least two characters                
+		if (curWord.length() < 2 && !isKoreanMultiChar(curWord.charAt(0)))  return;
+		int caretPos = getCaretPosition();
+		
+		if (lastTyped != null) {
+			char lastCh = curWord.charAt(curWord.length() - 1);
+			curWord.setLength(0);
+			curWord.append(lastTyped);
+			curWord.append(lastCh);
+			//Application.debug(curWord.toString()+" "+Util.toHexString(curWord.toString()));
+			lastTyped += (lastCh+"");
+		}
 
 		// make first letter of word uppercase as every command starts
 		// with an upper case letter
@@ -474,9 +593,15 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		// insert the command into current text   
 		sb.setLength(0);
-		sb.append(text.substring(0, caretPos));
-		String cmdTail = cmd.substring(caretPos - curWordStart);
-		sb.append(cmdTail);
+		sb.append(text.substring(0, curWordStart));
+		if (app.getLocale().getLanguage().equals("ko") && lastTyped == null) {
+			lastTyped = text.substring(curWordStart, caretPos);
+			//Application.debug("lastTyped="+lastTyped+" "+Util.toHexString(lastTyped));
+			//Application.debug("text="+text+" "+Util.toHexString(text));
+		}
+		//Application.debug(Util.toHexString(lastTyped));
+		//String cmdTail = cmd.substring(caretPos - curWordStart);
+		sb.append(cmd);
 		String afterCaret = text.substring(caretPos);
 		if (afterCaret.startsWith("[]"))
 			sb.append(afterCaret.substring(2));
@@ -492,8 +617,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		//setSelectionStart(caretPos);    
 		//setCaretPosition(caretPos);
 
-		setCaretPosition(caretPos + cmdTail.length());
-		moveCaretPosition(caretPos);
+		if (lastTyped == null) {
+			setCaretPosition( cmd.length() + curWordStart);
+			// highlight auto-inserted text
+			moveCaretPosition(caretPos);
+		} else {
+			setCaretPosition(sb.toString().indexOf("[]", curWordStart) );
+		}
 
 
 		// change current word

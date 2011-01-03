@@ -1,5 +1,7 @@
 package geogebra.util;
 
+import java.util.Iterator;
+
 /**
  * This interface defines the API that dictionaries for autocomplete components
  * must implement. Note that implementations of this interface should perform
@@ -12,6 +14,8 @@ public interface AutoCompleteDictionary {
    * @param s The string to add to the dictionary.
    */
   public void addEntry(String s);
+  
+  public Iterator getIterator();
 
   /**
    * Removes an entry from the dictionary.
