@@ -1,7 +1,6 @@
 package geogebra.gui.virtualkeyboard;
 
 import geogebra.gui.GuiManager;
-
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.gui.util.GeoGebraIcon;
@@ -33,9 +32,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 
 /**
  * Extends JTextField to add these features:
@@ -46,7 +44,7 @@ import javax.swing.text.BadLocationException;
  *    The popup is triggered by either a mouse click or ctrl-up
  * 
  */
-public class MyTextField extends JTextField implements FocusListener, VirtualKeyboardListener, CaretListener {
+public class MyTextField extends JTextField implements FocusListener, VirtualKeyboardListener {
 
 	private GuiManager guiManager;
 
@@ -56,9 +54,6 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private SymbolTable symbolTable;
 	private int caretPosition; // restores caret position when popup is done 
 
-	// fields to handle caret updates
-	private boolean caretUpdated = true;
-	private boolean caretShowing = true;
 	
 	// fields to handle custom drawing
 	private boolean rollOver = false;
@@ -68,7 +63,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private ImageIcon rollOverIcon = GeoGebraIcon.createSymbolTableIcon(true);
 	private int iconOffset = 0;
 	private boolean showSymbolTableIcon = true;
-	
+	private DefaultCaret myCaret;
 	
 
 	public MyTextField(GuiManager guiManager) {
@@ -87,24 +82,26 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private void initField(){
 
 		addFocusListener(this);
-		addCaretListener(this);
 		addMouseMotionListener(new MyMouseMotionListener());
 		addMouseListener(new MyMouseListener());
-		this.setOpaque(true);
+		setOpaque(true);
+		
+		myCaret = (DefaultCaret) this.getCaret();
+		
 	}
 
 	
-	public void caretUpdate(CaretEvent e) {
-		caretUpdated = true;
-		repaint();
-	}
-
 	public void focusGained(FocusEvent e) {
+		// adjust the icon offset if we are going to have an icon (must do this first) 
+		iconOffset =  (showSymbolTableIcon && hasFocus()) ? 16 : 0;
+		thisField.repaint();
 		guiManager.setCurrentTextfield((VirtualKeyboardListener)this, false);
 	}
 
 	public void focusLost(FocusEvent e) {
 		guiManager.setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
+		// adjust the icon offset if we are going to have an icon (must do this first) 
+		iconOffset =  (showSymbolTableIcon && hasFocus()) ? 16 : 0;
 		thisField.repaint();
 	}
 
@@ -331,8 +328,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	 */
 	public void paintComponent(Graphics gr) {
 
-		// adjust the icon offset if we are going to have an icon (must do this first) 
-		iconOffset =  (showSymbolTableIcon && hasFocus()) ? 16 : 0;
+		
 
 		// hide the default text and caret by drawing them with the background color 
 		setForeground(getBackground());
@@ -527,13 +523,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		}
 
 
-		// set flag to flash caret if there's been no caret movement since last repaint
-		if (caretUpdated) caretShowing = false;
-		else caretShowing = !caretShowing;
-		caretUpdated = false;
-
 		// draw the caret
-		if (caretShowing && caretPos > -1 && hasFocus()) {
+		if (myCaret.isVisible() && caretPos > -1 && hasFocus()) {
 			tempG2.setColor(Color.black);
 			tempG2.fillRect((int)caretPos, textBottom - fontHeight + 4 , 1, fontHeight);
 			tempG2.setPaintMode();
