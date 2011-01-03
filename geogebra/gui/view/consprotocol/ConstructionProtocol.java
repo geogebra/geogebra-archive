@@ -14,6 +14,7 @@ package geogebra.gui.view.consprotocol;
 
 import geogebra.euclidian.Drawable;
 import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.gui.TitlePanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -47,9 +48,14 @@ import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
+import javax.print.attribute.standard.DateTimeAtProcessing;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -406,7 +412,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 	private void initActions() {
 
-		printPreviewAction = new AbstractAction(app.getMenu("PrintPreview")
+		printPreviewAction = new AbstractAction(app.getMenu("Print")
 				+ "...", app.getImageIcon("document-print-preview.png")) {
 			private static final long serialVersionUID = 1L;
 
@@ -417,10 +423,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
 					public void run() {
 						
 						try {
-							// TODO: headerFormat and footerFormat should be filled in.
+							Construction cons = app.getKernel().getConstruction();
 							table.print(JTable.PrintMode.FIT_WIDTH, 
-									/*headerFormat*/ null, 
-									/*footerFormat*/ null, 
+									new MessageFormat(tableHeader(cons)), 
+									new MessageFormat("{0}"), // page numbering 
 									/*showPrintDialog*/ true, 
 									/*attr*/ null, 
 									/*interactive*/ true /*,*/ 
@@ -437,6 +443,23 @@ public class ConstructionProtocol extends JDialog implements Printable {
 						// This is obsolete (used in GeoGebra 3.2):
 						// new geogebra.export.PrintPreview(app,
 						//		ConstructionProtocol.this, PageFormat.PORTRAIT);
+					}
+
+					// This may be too long. FIXME
+					private String tableHeader(Construction cons) {
+					
+						TitlePanel tp = new TitlePanel(app);
+						String author = tp.loadAuthor();
+						String title = cons.getTitle();
+						String date = tp.configureDate(cons.getDate());
+						
+						if (title.equals(""))
+							title = app.getPlain("UntitledConstruction");
+						if (author.equals(""))
+							return title + " (" + date + ")";
+						else
+							return author + ": " + title + " (" + date + ")";
+
 					}
 				};
 				runner.start();

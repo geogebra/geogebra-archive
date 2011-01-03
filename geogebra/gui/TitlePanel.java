@@ -115,7 +115,7 @@ public class TitlePanel extends JPanel {
 		dateField.addFocusListener(focusListener);
 	}
 
-	private String configureDate(String src) {
+	public String configureDate(String src) {
 		Calendar cal = Calendar.getInstance();
 		Date date = cal.getTime();
 
@@ -142,7 +142,7 @@ public class TitlePanel extends JPanel {
 
 	}
 
-	private String loadAuthor() {
+	public String loadAuthor() {
 		String author = cons.getAuthor();
 		if ("".equals(author)) {
 			author = 
