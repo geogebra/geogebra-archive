@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.GeoPointND;
+
 
 /**
  * Returns whether an object is defined
@@ -57,7 +59,7 @@ public class AlgoDefined extends AlgoElement {
     protected final void compute() {
 
     	if (inputGeo.isGeoPoint()) {
-    		GeoPoint p = (GeoPoint)inputGeo;
+    		GeoPointND p = (GeoPointND)inputGeo;
     		outputBoolean.setValue(inputGeo.isDefined() && !p.isInfinite());
     	}
     	else if (inputGeo.isGeoPoint()) {
