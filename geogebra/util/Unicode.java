@@ -29,7 +29,9 @@ public class Unicode {
 	/** Unicode symbol for pi */
 	final public static String PI_STRING = "\u03c0";
 	public static final String alphaBetaGamma = "\u03b1\u03b2\u03b3";	
-
+	
+	final public static char multiplicationDot = '\u22c5';
+	final public static String multiplicationDotStr = multiplicationDot+"";
 	
 	/*
 	 * converts an integer to a unicode superscript string (including minus sign)

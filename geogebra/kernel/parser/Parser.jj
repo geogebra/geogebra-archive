@@ -195,7 +195,8 @@ TOKEN :  {
   | < PLUS:     "+" >
   | < MINUS:    ("-"  | "\u2013" | "\u2212") >
   | < SUPERSCRIPT_MINUS: "\u207b" >
-  | < MULTIPLY: ("*" | "\u22c5") >
+    // dot operators for multiplication sign
+  | < MULTIPLY: ("*" | "\u22c5" | "\u2219") >
   | < VECTORPRODUCT: "\u2297" >
   | < DIVIDE:   "/" >
   | < POWER:    "^" >  

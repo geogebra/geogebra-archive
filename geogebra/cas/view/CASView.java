@@ -415,9 +415,6 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 * Handles toolbar mode changes
 	 */
 	public void setMode(int mode) {
-		// TODO: remove
-		Application.printStacktrace("CASView.setMode: " + mode);
-		
 		String command = kernel.getModeText(mode); // e.g. "Derivative"
 		
 		switch (mode) {		

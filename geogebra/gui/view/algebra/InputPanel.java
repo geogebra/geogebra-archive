@@ -251,7 +251,7 @@ ActionListener, ListSelectionListener {
 		ExpressionNode.strPERPENDICULAR,
 		ExpressionNode.strIS_ELEMENT_OF,
 		ExpressionNode.strCONTAINS,
-		ExpressionNode.strCONTAINS_STRICT,
+		ExpressionNode.strCONTAINS_STRICT
 				
 	};
 	

@@ -29,8 +29,6 @@ public class CASTableCellRenderer extends CASTableCell implements
 			// set inputPanel width to match table column width
 			// -1 = set to table column width (even if larger than viewport)
 			setInputPanelWidth(-1);
-			
-			
 		}
 		return this;
 	}

@@ -564,8 +564,9 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	public void updateAutoCompletion() { 
 		String text = getText();
 		//    start autocompletion only for words with at least two characters                
-		if (curWord.length() < 2 && !isKoreanMultiChar(curWord.charAt(0)))  return;
-		int caretPos = getCaretPosition();
+		 if (curWord.length() < 2 && !isKoreanMultiChar(curWord.length() > 0 ? curWord.charAt(0) : ' '))  
+			 return;
+		 int caretPos = getCaretPosition();
 		
 		if (lastTyped != null) {
 			char lastCh = curWord.charAt(curWord.length() - 1);

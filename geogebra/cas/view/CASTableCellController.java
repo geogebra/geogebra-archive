@@ -26,6 +26,8 @@ public class CASTableCellController implements KeyListener {
 	}
 
 	private void handleKeyPressedInputTextField(final KeyEvent e) {
+		if (e.isConsumed()) return;
+		
 		boolean consumeEvent = false;
 		boolean needUndo = false;
 		
