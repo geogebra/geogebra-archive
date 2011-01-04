@@ -156,10 +156,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		latexPreviewer.setBackground(Color.WHITE);
 		*/
 		
-		if (textPreviewer == null) {
-			Kernel kernel = new Kernel(app);
-			
-			textPreviewer = new TextPreviewPanel(kernel);
+		if (textPreviewer == null) {		
+			textPreviewer = new TextPreviewPanel(app.getKernel());
 		}
 		textPreviewer.updatePreviewText(text, inputPanel.getText(), isLaTeX);		
 		JPanel p = new JPanel(new BorderLayout());
