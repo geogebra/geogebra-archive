@@ -216,6 +216,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			caretPosition = thisField.getCaretPosition();
 			if(popup == null)
 				createPopup();
+			symbolTable.updateFonts();
 			popup.show(thisField, getCaretPixelPosition().x, getCaretPixelPosition().y);
 			return;
 		}
@@ -267,10 +268,11 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		if(rollOver && e.getID() == MouseEvent.MOUSE_PRESSED){
 			if(popup == null)
 				createPopup();
+			symbolTable.updateFonts();
 			caretPosition = thisField.getCaretPosition();
 			Dimension d  = popup.getPreferredSize();
 			popup.show(thisField, thisField.getX() + thisField.getWidth() - d.width, - d.height);
-
+			
 			return;
 		}
 
@@ -331,8 +333,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		
 
 		// hide the default text and caret by drawing them with the background color 
-		setForeground(getBackground());
-		setCaretColor(getBackground());
+		//setForeground(getBackground());
+		//setCaretColor(getBackground());
 
 		// call super .... moving caret doesn't work without this... why?
 		super.paintComponent(gr);
@@ -342,6 +344,14 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		g2.setBackground(getBackground());
 		Insets insets = getInsets();
 		int height = getHeight();
+		
+		
+		
+		/* *************************************************************
+		/* styled text code turned off until problems with font updates and carets are solved 
+		 * 
+		
+		
 		String text = getText();
 		
 		
@@ -355,6 +365,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		// draw our own, specially colored image of the text string
 		drawColoredText(text, tempG2);
 		
+	
+		
 		
 		// clip the string image so that it fits the current scrolled view 
 		// and then draw this into the component
@@ -366,7 +378,9 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
+		 */
+		
 		
 		// draw the icon
 		if(showSymbolTableIcon && thisField.hasFocus())
