@@ -59,8 +59,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private boolean rollOver = false;
 	private float pos = 0;
 
-	private ImageIcon icon = GeoGebraIcon.createSymbolTableIcon(false);
-	private ImageIcon rollOverIcon = GeoGebraIcon.createSymbolTableIcon(true);
+	private ImageIcon icon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), false);
+	private ImageIcon rollOverIcon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), true);
 	private int iconOffset = 0;
 	private boolean showSymbolTableIcon = true;
 	private DefaultCaret myCaret;
@@ -318,7 +318,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	public Insets getInsets(){
 		Insets insets = super.getInsets();
 		insets.right = insets.right + iconOffset;
-		insets.left = insets.left + 2 ; //left margin
+		insets.left = insets.left + 1 ; //left margin
 		return insets;
 	}
 

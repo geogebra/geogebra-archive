@@ -1,9 +1,8 @@
 package geogebra.gui.util;
 
 
-import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.GeoText;
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
 import geogebra.util.ImageManager;
 
@@ -13,7 +12,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.RenderingHints;
@@ -263,38 +261,38 @@ public class GeoGebraIcon {
 	
 
 	
-	public static ImageIcon createSymbolTableIcon(boolean isRollOver){
+	public static ImageIcon createSymbolTableIcon(Font font, boolean isRollOver){
 
-		int height = 16;
-		int width = 16;
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Color bgColor = MyTable.BACKGROUND_COLOR_HEADER;
+		font = font.deriveFont(Font.BOLD);
+		ImageIcon icon;
+		if(isRollOver)
+			icon = new ImageIcon(TeXFormula.createBufferedImage("\\mathbf{\u03B1}", TeXConstants.STYLE_DISPLAY, 
+				13, Color.black, bgColor.darker()));
+		else
+			icon = new ImageIcon(TeXFormula.createBufferedImage("\\mathbf{\u03B1}", TeXConstants.STYLE_DISPLAY, 
+					13, Color.black, bgColor));
+			
+		BufferedImage alphaImage = (BufferedImage) icon.getImage();
+		
+		int w = alphaImage.getWidth() + 1;
+		int h = alphaImage.getHeight() + 1;
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		g2.setColor(Color.LIGHT_GRAY);
-		if(isRollOver)
-			g2.fillOval(0, 0, width, height);
+		
+		g2.drawImage(alphaImage, null, 0, 0);
 		
 		g2.setColor(Color.GRAY);
-		// horizontal grid lines
-		g2.drawLine(4, 12, 12, 12);
-		g2.drawLine(4,  8, 12, 8);
-		
-		// vertical gridlines
-		g2.drawLine(4, 12, 4, 8);
-		g2.drawLine(8, 12, 8, 8);
-		g2.drawLine(12,12, 12, 8);
-		
-		g2.setColor(Color.DARK_GRAY);
-		// up triangle
-		g2.drawLine(4, 6, 12, 6);
-		g2.drawLine(5, 5, 11, 5);
-		g2.drawLine(6, 4, 10, 4);
-		g2.drawLine(7, 3, 9, 3);
-		g2.drawLine(8, 2, 8, 2);
-		
+		g2.drawRect(0, 0, w-2, h-2);
+		g2.setColor(Color.LIGHT_GRAY);
+		g2.drawLine(w-1,1, w-1, h-1);
+		g2.drawLine(1,h-1, w-1, h-1);
 		ImageIcon ic = new ImageIcon(image);
 		return ic;
+	
+		
 	}
 	
 	
