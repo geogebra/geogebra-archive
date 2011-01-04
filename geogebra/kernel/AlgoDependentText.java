@@ -46,6 +46,17 @@ public class AlgoDependentText extends AlgoElement {
         text.setLabel(label);
     }   
     
+    public AlgoDependentText(Construction cons, ExpressionNode root) {
+    	super(cons);
+        this.root = root;  
+        
+       text = new GeoText(cons);
+       setInputOutput(); // for AlgoElement
+        
+        // compute value of dependent number
+        compute();
+    }   
+    
 	public String getClassName() {
 		return "AlgoDependentText";
 	}
