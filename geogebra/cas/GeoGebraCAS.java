@@ -294,7 +294,7 @@ public class GeoGebraCAS {
 	
 	/**
 	 * Returns the CAS command for the currently set CAS using the given key and command arguments. 
-	 * For example, getCASCommand("Expand.0", {"3*(a+b)"}) returns "ExpandBrackets( 3*(a+b) )" when
+	 * For example, getCASCommand("Expand.1", {"3*(a+b)"}) returns "ExpandBrackets( 3*(a+b) )" when
 	 * MathPiper is the currently used CAS.
 	 */
 	final synchronized public String getCASCommand(String name, ArrayList args, boolean symbolic) {
