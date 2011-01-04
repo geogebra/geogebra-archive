@@ -8,8 +8,11 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,6 +42,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private JButton btSub, btEval, btNumeric;
+	private JScrollPane scrollPane;
 	private JPanel optionPane, btPanel, captionPanel;
 	private JTable replaceTable;
 	private Vector<Vector<String>> data;
@@ -47,6 +51,11 @@ public class CASSubDialog extends JDialog implements ActionListener {
 	private Application app;
 	private int editRow;
 	private String prefix, evalText, postfix;
+	
+	private static final int DEFAULT_TABLE_CELL_HEIGHT = 21;
+	private static final double DEFAULT_FONT_SIZE=12.;
+	private static final int DEFAULT_TABLE_WIDTH=200;
+	private static final int DEFAULT_TABLE_HEIGHT=150;
 
 	/**
 	 * Substitute dialog for CAS.
@@ -120,10 +129,12 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		replaceTable=new JTable(data,header);
 		replaceTable.setDefaultEditor(Object.class,new MathTextCellEditor(app.getGuiManager()));
 		replaceTable.getTableHeader().setReorderingAllowed(false);
+		double fontFactor=Math.max(1,app.getFontSize()/DEFAULT_FONT_SIZE);
+		replaceTable.setRowHeight((int) (DEFAULT_TABLE_CELL_HEIGHT*fontFactor));
 		
-		//TODO size of window should depend on what's available
-		replaceTable.setPreferredScrollableViewportSize(new Dimension(200,100));
-		JScrollPane scrollPane=new JScrollPane(replaceTable);
+		replaceTable.setPreferredScrollableViewportSize(
+				new Dimension((int)(DEFAULT_TABLE_WIDTH*fontFactor),(int)(DEFAULT_TABLE_HEIGHT*fontFactor)));
+		scrollPane=new JScrollPane(replaceTable);
 
 		captionPanel = new JPanel(new BorderLayout(5, 0));
 		
@@ -134,11 +145,14 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		replaceTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			
 			public void valueChanged(ListSelectionEvent e) {
-				if (replaceTable.getSelectedRow()+1==replaceTable.getRowCount()){
-					data.add(new Vector<String>(Arrays.asList(new String[]{"",""})));
-					replaceTable.revalidate();
-					CASSubDialog.this.pack();
-				}
+				addRow(false);
+			}
+		});
+		
+		replaceTable.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				if (e.getKeyChar()!=KeyEvent.CHAR_UNDEFINED&&e.getKeyChar()!='\t')
+					addRow(true);
 			}
 		});
 		
@@ -155,7 +169,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		btNumeric.addActionListener(this);
 		
 		btSub = new JButton(app.getPlain("\u2713"));
-		btNumeric.setToolTipText(app.getCommand("Substitute"));
+		btSub.setToolTipText(app.getCommand("Substitute"));
 		btSub.setActionCommand("Substitute");
 		btSub.addActionListener(this);
 
@@ -177,6 +191,37 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		// Make this dialog display it.
 		setContentPane(optionPane);
 		
+	}
+	
+	/**
+	 * tests if there should be an empty row appended
+	 * @param inserting is set: the selected cell will be filled but is not yet
+	 */
+	public void addRow(boolean inserting){
+		int col=0,row=replaceTable.getSelectedRow();
+		if (row+1==replaceTable.getRowCount()){
+			col=replaceTable.getSelectedColumn();
+			boolean[] colSet=new boolean[2];
+			colSet[0]=!data.lastElement().firstElement().equals("");
+			colSet[1]=!data.lastElement().lastElement().equals("");
+			colSet[col]=colSet[col]||inserting;
+			if (colSet[0]&&colSet[1]){
+				TableCellEditor editor=replaceTable.getCellEditor();
+				if (editor!=null){
+					row=replaceTable.getEditingRow();
+					col=replaceTable.getEditingColumn();
+					data.get(row).set(col, editor.getCellEditorValue().toString());
+				}
+				data.add(new Vector<String>(Arrays.asList(new String[]{"",""})));
+				replaceTable.revalidate();
+				CASSubDialog.this.pack();
+				Rectangle r=replaceTable.getCellRect(replaceTable.getRowCount()-1, col, false);
+				scrollPane.getViewport().scrollRectToVisible(r);
+				if (editor!=null){
+					replaceTable.editCellAt(row, col);
+				}
+			}
+		}
 	}
 
 	public void actionPerformed(ActionEvent ae) {
@@ -288,6 +333,11 @@ public class CASSubDialog extends JDialog implements ActionListener {
 			delegate=new MathTextField(guiManager);
 			editing=false;
 			changeEvent=new ChangeEvent(delegate);
+			delegate.addKeyListener(new KeyAdapter() {	
+				public void keyTyped(KeyEvent e) {
+					addRow(true);
+				}
+			});
 		}
 
 		public Object getCellEditorValue() {
@@ -312,6 +362,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		public Component getTableCellEditorComponent(JTable table,
 				Object value, boolean isSelected, int row, int column) {
 			delegate.setText(value.toString());
+			delegate.setFont(app.getPlainFont());
 			editing=true;
 			return delegate;
 		}
