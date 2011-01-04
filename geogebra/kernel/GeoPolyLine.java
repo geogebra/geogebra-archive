@@ -183,8 +183,8 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
         return true;
     }
     
-    final public HashSet getVariables() {
-        HashSet varset = new HashSet();        
+    final public HashSet<GeoElement> getVariables() {
+    	HashSet<GeoElement> varset = new HashSet<GeoElement>();        
         varset.add(this);        
         return varset;          
     }                   

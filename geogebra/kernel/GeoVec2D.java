@@ -604,7 +604,7 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
     
     final public ExpressionValue evaluate() { return this; }
     
-    final public HashSet getVariables() { return null; }
+    final public HashSet<GeoElement> getVariables() { return null; }
     
     final public void setMode(int mode) {
         this.mode = mode;

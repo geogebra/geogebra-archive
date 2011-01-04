@@ -420,8 +420,8 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
         return true;
     }
     
-    public HashSet getVariables() {
-        HashSet varset = new HashSet();        
+    public HashSet<GeoElement> getVariables() {
+    	HashSet<GeoElement> varset = new HashSet<GeoElement>();        
         varset.add(this);        
         return varset;          
     }

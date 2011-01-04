@@ -2,6 +2,7 @@ package geogebra.cas.view;
 
 import geogebra.gui.GuiManager;
 import geogebra.gui.MathTextField;
+import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -79,7 +80,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 	
 		createGUI();
 		pack();
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(casView);
 	}
 
 	/**
@@ -87,22 +88,19 @@ public class CASSubDialog extends JDialog implements ActionListener {
 	 */
 	protected void createGUI() {
 		setTitle(app.getPlain("Substitute") + " - " + app.getCommand("Row") + " " + (editRow+1));
-		setResizable(false);
+		setResizable(true);
 		
 		CASTableCellValue cell=casView.getConsoleTable().getCASTableCellValue(editRow);
 		
-		HashSet<?> vars=cell.getInputVE().getVariables();
+		HashSet<GeoElement> vars=cell.getInputVE().getVariables();
 		Vector<String> row;
 		if (vars!=null){
 			data=new Vector<Vector<String>>(vars.size()+1);
-			Iterator<?> iter=vars.iterator();
+			Iterator<GeoElement> iter=vars.iterator();
 			while(iter.hasNext()){
 				row=new Vector<String>(2);
-				Object var=iter.next();
-				String nextVar=var.toString();
-				//TODO how to handle defined variable names?
-//				if (var instanceof GeoElement)
-//					nextVar=((GeoElement)var).getLabel();
+				GeoElement var=iter.next();
+				String nextVar=var.getLabel();
 				int i=0;
 				for (i=0;i<data.size();i++){
 					if (data.get(i).firstElement().compareTo(nextVar)>=0){
@@ -183,7 +181,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		optionPane = new JPanel(new BorderLayout(5, 5));
 
 		// create object list
-		optionPane.add(captionPanel, BorderLayout.NORTH);
+		optionPane.add(captionPanel, BorderLayout.CENTER);
 		
 		optionPane.add(btPanel, BorderLayout.SOUTH);
 		optionPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -303,7 +301,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 			subCmd = "Numeric[" + subCmd + "]";
 			keepInput = false;
 		}
-	
+
 		try {
 			CASTableCellValue currCell = table.getCASTableCellValue(editRow);
 			currCell.setProcessingInformation(prefix, subCmd, postfix);

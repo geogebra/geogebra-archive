@@ -410,7 +410,7 @@ public class CASInputHandler {
 			// resolve dynamic row references
 			String eval = evalVE.toAssignmentString();
 			String rowRefEval = resolveCASrowReferences(eval, row, ROW_REFERENCE_DYNAMIC);
-			if (rowRefEval != eval) {
+			if (!rowRefEval.equals(eval)) {
 				eval = rowRefEval;
 				evalVE = casParser.parseGeoGebraCASInput(rowRefEval);
 			}

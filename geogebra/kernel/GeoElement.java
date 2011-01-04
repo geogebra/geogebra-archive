@@ -2859,8 +2859,8 @@ public abstract class GeoElement
 		return this;
 	}
 
-	public HashSet getVariables() {
-		HashSet ret = new HashSet();
+	public HashSet<GeoElement> getVariables() {
+		HashSet<GeoElement> ret = new HashSet<GeoElement>();
 		ret.add(this);
 		return ret;
 	}
