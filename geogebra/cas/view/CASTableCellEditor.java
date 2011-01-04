@@ -65,8 +65,8 @@ public class CASTableCellEditor extends CASTableCell implements TableCellEditor,
 		if (inputPanel != null){
 			inputPanel.setFont(ft.deriveFont(Font.BOLD));
 		}
-		if (inputLabel != null){
-			inputLabel.setFont(ft.deriveFont(Font.BOLD));
+		if (dummyField != null){
+			dummyField.setFont(ft.deriveFont(Font.BOLD));
 		}
 	}
 	

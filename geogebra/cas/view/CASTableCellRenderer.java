@@ -17,7 +17,7 @@ public class CASTableCellRenderer extends CASTableCell implements
 
 		if (value instanceof CASTableCellValue) {
 			inputPanel.setFont(view.getFont());
-			inputLabel.setFont(view.getFont());
+			dummyField.setFont(view.getFont());
 			
 			CASTableCellValue tempV = (CASTableCellValue) value;	
 			tempV.setRow(row);

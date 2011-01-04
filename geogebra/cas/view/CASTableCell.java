@@ -1,5 +1,6 @@
 package geogebra.cas.view;
 
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -8,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
@@ -17,7 +17,7 @@ public abstract class CASTableCell extends JPanel{
 
 	protected CASInputPanel inputPanel;
 	protected CASOutputPanel outputPanel;
-	protected JLabel inputLabel; // dummy label used to get preferred size;
+	protected MyTextField dummyField; // dummy label used to get preferred size;
 	private CASTable consoleTable;
 	protected Application app;
 	protected CASView view;
@@ -33,19 +33,26 @@ public abstract class CASTableCell extends JPanel{
 		setBackground(Color.white);
 		
 		inputPanel = new CASInputPanel(app);
-		inputLabel = new JLabel();
+		dummyField = new MyTextField(app.getGuiManager());
 		
-		// create BorderLayout JPanel with:
-		// 1) inputPanel is in WEST so that its width can be controlled.
-		// The cell editor will set the width to fit the viewport, the 
-		// cell renderer will set it to fill the table column.
-		// 2) inputLabel is in CENTER, but invisible since it is a dummy
-		// that is used only to get a preferred width.
+		// The inputPanel needs to have variable width so that it fits the JScrollPane
+		// viewport when in editing mode but also can grow to the size of its
+		// text content when not in editing mode. This way the horizontal scollbars
+		// can be used to view long non-editing fields but the current editor field can 
+		// be shown clipped and scrollable with arrow keys.
+		//
+		// Width is set with the setInputPanelWidth method. The cell editor calls this to adjust 
+		// the width to fit the viewport. The cell renderer calls it to expand it to its maximum
+		// width.
+		//
+		// To make this work, inputPanel is put in WEST where width can be controlled.
+		// and an invisible dummy field is put in CENTER to get a preferred size.
+		
 		JPanel northPanel = new JPanel(new BorderLayout());
 		northPanel.setBackground(this.getBackground());
-		northPanel.add(inputLabel, BorderLayout.CENTER);
+		northPanel.add(dummyField, BorderLayout.CENTER);
 		northPanel.add(inputPanel, BorderLayout.WEST);	
-		inputLabel.setVisible(false);
+		dummyField.setVisible(false);
 		
 		outputPanel = new CASOutputPanel(view.getApp());
 		
@@ -56,12 +63,12 @@ public abstract class CASTableCell extends JPanel{
 
 	/**
 	 * Overrides getPreferredSize so that it reports the preferred size
-	 * when the input label is completely drawn, not clipped for the editor.
+	 * if this input label was completely drawn and not clipped for the editor.
 	 */
 	@Override
 	public Dimension getPreferredSize(){
 		Dimension d = super.getPreferredSize();
-		d.width = Math.max(d.width, inputLabel.getPreferredSize().width);
+		d.width = Math.max(d.width, dummyField.getPreferredSize().width);
 		return d;
 	}
 	
@@ -76,19 +83,17 @@ public abstract class CASTableCell extends JPanel{
 	
 	/**
 	 * Sets the width of the input panel. 
-	 * If width = -1 it sets the width to the full input string.
-	 * This width is given by the preferred size of the dummy label.
+	 * Use width = -1 to set width to the full input string length.
 	 */
 	public void setInputPanelWidth(int width){
 		
-		Dimension d = inputPanel.getPreferredSize();
-		if(width == -1)
-			d.width = inputLabel.getPreferredSize().width;
-		else
-			d.width = width - 15;  // adjust 15 pixels for the empty border
+		Dimension d = dummyField.getPreferredSize();
+		// use the parameter width - 15 pixels to correct for border padding
+		if(width > 0)
+			d.width = width - 15;   
 		
 		inputPanel.setPreferredSize(d);
-		//inputPanel.validate();
+		
 	}
 
 	
@@ -97,7 +102,7 @@ public abstract class CASTableCell extends JPanel{
 		// set input panel
 		String input = cellValue.getTranslatedInput();
 		inputPanel.setInput(input);
-		inputLabel.setText(inputPanel.getInputArea().getText());
+		dummyField.setText(inputPanel.getInputArea().getText());
 		
 		
 		// set output panel
@@ -165,8 +170,8 @@ public abstract class CASTableCell extends JPanel{
 		super.setFont(ft);
 		if (inputPanel != null)
 			inputPanel.setFont(ft);
-		if (inputLabel != null){
-			inputLabel.setFont(ft);
+		if (dummyField != null){
+			dummyField.setFont(ft);
 		}
 		if (outputPanel != null)
 			outputPanel.setFont(ft);
