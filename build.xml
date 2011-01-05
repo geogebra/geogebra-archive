@@ -624,6 +624,11 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 		</copy>
 		<replace file="${build.dir}/unsigned/preload.html" 
 			token="VERSION_STRING" value="${fullversion}"/>
+		<copy file="${src.dir}/version.txt"
+		      tofile="${build.dir}/unpacked/version.txt">
+		</copy>
+		<replace file="${build.dir}/unpacked/version.txt" 
+			token="VERSION_STRING" value="${fullversion}"/>
 	</target>
 
 	<target name="installer" depends="installer-clean, installer-windows, installer-macosx"/>
