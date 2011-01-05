@@ -20,6 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 
 /**
  *
@@ -54,6 +55,10 @@ public class AlgoLinePointLine extends AlgoElement {
         return "AlgoLinePointLine";
     }
 
+	public int getRelatedModeID() {
+		return EuclidianConstants.MODE_PARALLEL;
+	}
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];

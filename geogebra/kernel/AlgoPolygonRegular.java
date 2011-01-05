@@ -94,7 +94,7 @@ public class AlgoPolygonRegular extends AlgoElement {
     }        
     
     public int getRelatedModeID() {
-    	return EuclidianConstants.MODE_POLYGON;
+    	return EuclidianConstants.MODE_REGULAR_POLYGON;
     }
     
     
