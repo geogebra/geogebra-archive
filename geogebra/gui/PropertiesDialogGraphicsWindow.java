@@ -15,7 +15,7 @@ package geogebra.gui;
 // TODO deprecated due to OptionsDefaults (F.S.)
 
 import geogebra.euclidian.EuclidianView;
-import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.util.TableSymbols;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -536,7 +536,7 @@ ItemListener, WindowListener {
 			
 			cbAxisLabel.addItem(null);
 			cbAxisLabel.addItem(axis == 0 ? "x" : "y");
-			String [] greeks = InputPanel.greekLowerCase;
+			String [] greeks = TableSymbols.greekLowerCase;
 			for (int i = 0; i < greeks.length; i++) {
 				cbAxisLabel.addItem(greeks[i]);		
 			}					

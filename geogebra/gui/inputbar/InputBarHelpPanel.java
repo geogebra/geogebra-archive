@@ -1,11 +1,9 @@
 package geogebra.gui.inputbar;
 
-import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.SelectionTable;
-import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.util.TableSymbols;
 import geogebra.gui.view.spreadsheet.MyTable;
-import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.main.Application;
 import geogebra.util.LowerCaseDictionary;
@@ -34,8 +32,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -236,7 +232,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	
 	private void createFunctionPanel(){
 
-		functionTable = new SelectionTable(app, InputPanel.functions, -1,2, new Dimension(20,16), SelectionTable.MODE_TEXT);
+		functionTable = new SelectionTable(app, TableSymbols.functions, -1,2, new Dimension(20,16), SelectionTable.MODE_TEXT);
 		functionTable.setShowGrid(true);
 		functionTable.setHorizontalAlignment(SwingConstants.LEFT);
 		functionTable.setBorder(BorderFactory.createLineBorder(functionTable.getGridColor()));

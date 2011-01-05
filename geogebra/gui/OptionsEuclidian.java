@@ -14,7 +14,7 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
-import geogebra.gui.view.algebra.InputPanel;
+import geogebra.gui.util.TableSymbols;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -805,7 +805,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 			
 			cbAxisLabel.addItem(null);
 			cbAxisLabel.addItem(axis == 0 ? "x" : "y");
-			String [] greeks = InputPanel.greekLowerCase;
+			String [] greeks = TableSymbols.greekLowerCase;
 			for (int i = 0; i < greeks.length; i++) {
 				cbAxisLabel.addItem(greeks[i]);		
 			}					
