@@ -1096,11 +1096,13 @@ public abstract class GeoElement
 		}
 				
 		// copy color function
+		if (!keepAdvanced) // done in setAdvancedVisualStyle()
 		if (geo.colFunction != null) {
 			setColorFunction(geo.colFunction);
 		}
 		
 		// copy ShowObjectCondition, unless it generates a CirclularDefinitionException
+		if (!keepAdvanced) // done in setAdvancedVisualStyle()
 		if (geo.condShowObject != null) {
 			try { setShowObjectCondition(geo.getShowObjectCondition());}
 			catch (Exception e) {}
