@@ -2671,7 +2671,7 @@ public	class PropertiesPanel extends JPanel {
 
 		private boolean checkGeos(Object[] geos) {
 			//return geos.length == 1 && geos[0] instanceof GeoJavaScriptButton;			
-			return geos.length == 1 && !(geos[0] instanceof GeoBoolean);			
+			return geos.length == 1 && (((GeoElement)geos[0]).canHaveScript());			
 		}
 
 		/**

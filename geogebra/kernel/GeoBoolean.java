@@ -351,5 +351,10 @@ AbsoluteScreenLocateable {
 	final public boolean isLabelValueShowable() {
 		return false;
 	}
+	
+	public boolean canHaveScript() {
+		return false;
+	}
+
 
 }

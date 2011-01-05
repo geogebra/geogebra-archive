@@ -4820,11 +4820,13 @@ public abstract class GeoElement
 	private String ggbScript = "";
 	
 	public void setJavaScript(String script) {
-		Application.debug(script);
+		if (!canHaveScript()) return;
+		//Application.debug(script);
 		this.javaScript = script;
 	}
 	
 	public void setScript(String script) {
+		if (!canHaveScript()) return;
 		Application.debug(script);
 		this.ggbScript = script;
 	}
@@ -4847,6 +4849,8 @@ public abstract class GeoElement
 	
 	private void runGgbScript(String arg) {
 
+		if (!canHaveScript()) return;
+		
 		AlgebraProcessor ab = kernel.getAlgebraProcessor();
 		String script[] = (arg == null) ? ggbScript.split("\n") :
 			ggbScript.replaceAll("%0", arg).split("\n");
@@ -4873,6 +4877,8 @@ public abstract class GeoElement
 
 	public void runJavaScript(String arg) {
 		
+		if (!canHaveScript()) return;
+
 		try {
 		if (app.isApplet() && app.useBrowserForJavaScript()) {
 			if (arg == null) {
@@ -5235,7 +5241,9 @@ public abstract class GeoElement
 	
 	}
 	
-	
+	public boolean canHaveScript() {
+		return true;
+	}
 
 	
 	

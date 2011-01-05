@@ -1086,5 +1086,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return intervalMax.toGeoElement();
 	}
 
+	public boolean canHaveScript() {
+		return false;
+	}
 
 }
