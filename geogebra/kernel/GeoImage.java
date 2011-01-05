@@ -39,6 +39,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	private int pixelWidth, pixelHeight;
 	private boolean inBackground;
 	private boolean hasAbsoluteLocation;
+	private boolean interpoled=true;
 	
 	// for absolute screen location
 	private int screenX, screenY;
@@ -131,6 +132,9 @@ implements Locateable, AbsoluteScreenLocateable,
 				}
 			}
 		}
+		
+		//interpolation settings
+		interpoled=img.interpoled;
 	}
 	
 	public void setVisualStyle(GeoElement geo) {
@@ -318,6 +322,22 @@ implements Locateable, AbsoluteScreenLocateable,
 	final public boolean hasAbsoluteLocation() {
 		return hasAbsoluteLocation;
 	}	
+
+	/**
+	 * 
+	 * @return true if the image wants to be interpoled
+	 */
+	final public boolean isInterpoled(){
+		return interpoled;
+	}
+	
+	/**
+	 * sets if the image want to be interpoled
+	 * @param flag
+	 */
+	final public void setInterpoled(boolean flag){
+		interpoled=flag;
+	}
 	
 	public void setWaitForStartPoint() {
 		// this can be ignored for an image 
@@ -431,7 +451,12 @@ implements Locateable, AbsoluteScreenLocateable,
 	 	// name of image file
 		sb.append("\t<inBackground val=\"");
 		sb.append(inBackground);
-		sb.append("\"/>\n");	
+		sb.append("\"/>\n");
+		
+		
+		// image has to be interpoled
+		if (!isInterpoled())
+    		sb.append("\t<interpoled val=\"false\"/>\n");
 
 		// locateion of image
 		if (hasAbsoluteScreenLocation) {
@@ -486,6 +511,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		sb.append("/>\n");
 		return sb.toString();
     }
+    
 
 	public void setAbsoluteScreenLoc(int x, int y) {
 		screenX = x;

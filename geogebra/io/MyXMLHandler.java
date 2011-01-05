@@ -2238,6 +2238,9 @@ public class MyXMLHandler implements DocHandler {
 			} else if (eName.equals("inBackground")) {
 				ok = handleInBackground(attrs);
 				break;
+			} else if (eName.equals("interpoled")) {
+				ok = handleInterpoled(attrs);
+				break;
 			}
 
 		case 'j':
@@ -3105,6 +3108,23 @@ public class MyXMLHandler implements DocHandler {
 			return false;
 		}
 	}
+	
+	private boolean handleInterpoled(LinkedHashMap<String, String> attrs) {
+		if (!(geo.isGeoImage())) {
+			System.err.println("wrong element type for <interpoled>: "
+					+ geo.getClass());
+			return false;
+		}
+
+		try {
+			((GeoImage) geo).setInterpoled(parseBoolean((String) attrs
+					.get("val")));
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
 
 	private boolean handleAuxiliary(LinkedHashMap<String, String> attrs) {
 		try {

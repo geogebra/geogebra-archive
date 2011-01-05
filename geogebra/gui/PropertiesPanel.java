@@ -142,6 +142,7 @@ public	class PropertiesPanel extends JPanel {
 		//END
 		
 		private FillingPanel fillingPanel;
+		private CheckBoxInterpoledImage checkBoxInterpoledImage;
 		private TracePanel tracePanel;
 		private AnimatingPanel animatingPanel;
 		private FixPanel fixPanel;
@@ -239,6 +240,7 @@ public	class PropertiesPanel extends JPanel {
 			rightAnglePanel=new RightAnglePanel();
 			//END
 			fillingPanel = new FillingPanel();
+			checkBoxInterpoledImage = new CheckBoxInterpoledImage();
 			tracePanel = new TracePanel();
 			animatingPanel = new AnimatingPanel();
 			fixPanel = new FixPanel();
@@ -347,6 +349,7 @@ public	class PropertiesPanel extends JPanel {
 			styleTabList.add(lineStylePanelHidden);	
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);
+			styleTabList.add(checkBoxInterpoledImage);
 			styleTabList.add(textFieldSizePanel);
 			styleTab = new TabPanel(styleTabList);
 			tabPanelList.add(styleTab);
@@ -462,6 +465,7 @@ public	class PropertiesPanel extends JPanel {
 			decoAnglePanel.setLabels();
 			rightAnglePanel.setLabels();
 			fillingPanel.setLabels();
+			checkBoxInterpoledImage.setLabels();
 			tracePanel.setLabels();
 			fixPanel.setLabels();
 			checkBoxFixPanel.setLabels();
@@ -1689,6 +1693,89 @@ public	class PropertiesPanel extends JPanel {
 			}
 		}
 	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * panel to say if an image is to be interpoled
+	 */
+	private class CheckBoxInterpoledImage extends JPanel implements ItemListener, UpdateablePanel {
+
+		private static final long serialVersionUID = 1L;
+		private Object[] geos; // currently selected geos
+		private JCheckBox checkbox;
+
+		public CheckBoxInterpoledImage() {
+			checkbox = new JCheckBox();
+			checkbox.addItemListener(this);			
+			add(checkbox);			
+		}
+		
+		public void setLabels() {
+			checkbox.setText(app.getPlain("Interpoled"));
+		}
+
+		public JPanel update(Object[] geos) {
+			this.geos = geos;
+			if (!checkGeos(geos))
+				return null;
+
+			checkbox.removeItemListener(this);
+
+			// check if properties have same values
+			GeoImage temp, geo0 = (GeoImage) geos[0];
+			boolean equalObjectVal = true;
+			
+			for (int i = 1; i < geos.length; i++) {
+				temp = (GeoImage) geos[i];
+				// same object visible value
+				if (geo0.isInterpoled() != temp.isInterpoled()) {
+					equalObjectVal = false;
+					break;
+				}								
+			}
+
+			// set object visible checkbox
+			if (equalObjectVal)
+				checkbox.setSelected(geo0.isInterpoled());
+			else
+				checkbox.setSelected(false);
+			
+			checkbox.addItemListener(this);
+			return this;
+		}
+
+		// only images
+		private boolean checkGeos(Object[] geos) {
+			for (int i = 0; i < geos.length; i++) {
+				if (!(geos[i] instanceof GeoImage)) 
+ 					return false;
+			}
+			return true;
+		}
+
+		/**
+		 * listens to checkboxes and sets object and label visible state
+		 */
+		public void itemStateChanged(ItemEvent e) {
+			Object source = e.getItemSelectable();
+
+			// show object value changed
+			if (source == checkbox) {
+				for (int i = 0; i < geos.length; i++) {
+					GeoImage image = (GeoImage) geos[i];
+					image.setInterpoled(checkbox.isSelected());
+					image.updateRepaint();
+				}
+			}
+			updateSelection(geos);
+		}
+
+	} // CheckBoxInterpoledImage
+
 
 	/**
 	 * panel for fixing an object
