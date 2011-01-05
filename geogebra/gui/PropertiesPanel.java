@@ -2557,7 +2557,7 @@ public	class PropertiesPanel extends JPanel {
 			editPanel.setBorder(BorderFactory.createEtchedBorder());
 			
 			
-			JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, td.getPreviewPanel(), editPanel);
+			JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editPanel, td.getPreviewPanel());
 			sp.setResizeWeight(0.5);
 			sp.setBorder(BorderFactory.createEmptyBorder());
 				
@@ -5711,10 +5711,10 @@ class ColorFunctionPanel
 		this.propPanel = propPanel;
 		
 		// non auto complete input panel
-		InputPanel inputPanelR = new InputPanel(null, app, 1, 20, false, false, false);
-		InputPanel inputPanelG = new InputPanel(null, app, 1, 20, false, false, false);
-		InputPanel inputPanelB = new InputPanel(null, app, 1, 20, false, false, false);
-		InputPanel inputPanelA = new InputPanel(null, app, 1, 20, false, false, false);
+		InputPanel inputPanelR = new InputPanel(null, app, 1, 20, true, false, false);
+		InputPanel inputPanelG = new InputPanel(null, app, 1, 20, true, false, false);
+		InputPanel inputPanelB = new InputPanel(null, app, 1, 20, true, false, false);
+		InputPanel inputPanelA = new InputPanel(null, app, 1, 20, true, false, false);
 		tfRed = (AutoCompleteTextField) inputPanelR.getTextComponent();				
 		tfGreen = (AutoCompleteTextField) inputPanelG.getTextComponent();				
 		tfBlue = (AutoCompleteTextField) inputPanelB.getTextComponent();				
@@ -6161,7 +6161,7 @@ class NamePanel
 		nameInputHandler = new RenameInputHandler(app, null, false);
 		
 		// non auto complete input panel
-		inputPanelName = new InputPanel(null, app, 1, 10, false, true, false);
+		inputPanelName = new InputPanel(null, app, 1, 10, true, true, false);
 		tfName = (AutoCompleteTextField) inputPanelName.getTextComponent();				
 		tfName.setAutoComplete(false);		
 		tfName.addActionListener(this);

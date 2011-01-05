@@ -205,13 +205,10 @@ public class InputDialog extends JDialog implements ActionListener,
 		btProperties.setText(app.getPlain("Properties")+"...");
 	}
 	
-	public void showSpecialCharacters(boolean flag) {
+	public void showSymbolTablePopup(boolean flag) {
 		inputPanel.showSpecialChars(flag);
 	}
 	
-	public void showGreekLetters(boolean flag) {
-		inputPanel.showGreekLetters(flag);
-	}
 	
 	public void insertGeoElement(GeoElement geo) {
 		if (geo != null)

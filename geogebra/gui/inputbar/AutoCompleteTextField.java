@@ -1,5 +1,6 @@
 package geogebra.gui.inputbar;
 import geogebra.gui.MathTextField;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
@@ -61,6 +62,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		
 	}   
 
+	
+	public void showPopupSymbolButton(boolean showPopupSymbolButton){
+		((MyTextField)this).setShowSymbolTableIcon(showPopupSymbolButton);
+	}
+	
+	
+	
 	/**
 	 * Set the dictionary that autocomplete lookup should be performed by.
 	 *

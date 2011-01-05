@@ -49,15 +49,12 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	
 	private Application app;
 
-	private JLabel inputLabel, helpIcon;
- 	
-	
 	// autocompletion text field
 	private AutoCompleteTextField inputField;
-
-
+	
+	private JLabel inputLabel;
 	private JToggleButton btnToggleInputPanel;
-	InputPanel inputPanel;
+	private InputPanel inputPanel;
 
 	
 	/***********************************************************
@@ -75,7 +72,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	public void initGUI() {
 		removeAll();
 		inputLabel = new JLabel(); 
-		inputPanel = new InputPanel(null, app, 30);
+		inputPanel = new InputPanel(null, app, 30, true);
 		inputField = (AutoCompleteTextField) inputPanel.getTextComponent();		
 		
 		// set up input field		
@@ -151,10 +148,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	public void setLabels() {
 		if (inputLabel != null)
 			inputLabel.setText( app.getPlain("InputLabel") + ":");
-		//inputButton.setToolTipText(app.getMenu("Mode") + " " + app.getMenu("InputField"));   
-		if (helpIcon != null)
-			helpIcon.setToolTipText(app.getMenu("FastHelp"));	
-		
+		 
 		// update the help panel
 		app.getInputHelpPanel().setLabels();
 		app.getInputHelpPanel().setCommands();
@@ -230,7 +224,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
    
 	/**
-	* action listener implementation for command combobox
+	* action listener implementation for input help panel toggle button
 	*/
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
@@ -319,12 +313,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 	}
 
 	public void mousePressed(MouseEvent e) {	
-		Object src = e.getSource();
-				
-		// click on help icon: open input bar help dialog
-		if (src == helpIcon || src == inputLabel) {
-			app.showHelp(app.getPlain("InputFieldHelp"));
-		}
+		
 	}
 
 	public void mouseReleased(MouseEvent arg0) {

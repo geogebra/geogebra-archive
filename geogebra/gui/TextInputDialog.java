@@ -113,7 +113,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// build input dialog GUI
 		createGUI(title, "", false, cols, rows, false, false, false, false, false, false);		
 		setGeoText(text);  // init dialog using text
-		this.showSpecialCharacters(false);
+		this.showSymbolTablePopup(false);
 		this.setResizable(true);
 		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
 		
@@ -172,7 +172,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		
 		// put the preview and edit panels into a split pane
 		// and make sure they are given equal weight
-		JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, previewPanel, editPanel);
+		JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editPanel, previewPanel );
 		previewPanel.setPreferredSize(editPanel.getPreferredSize());
 		sp.setResizeWeight(0.5);
 		sp.setBorder(BorderFactory.createEmptyBorder());

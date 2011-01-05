@@ -1084,7 +1084,7 @@ public class GuiManager {
 		 */
 
 		InputDialog id = new InputDialog(app, geo.getNameDescription(), app.getPlain("Redefine"), str, true, handler, geo);
-		id.showSpecialCharacters(true);
+		id.showSymbolTablePopup(true);
 		id.setVisible(true);
 		//id.selectText();
 	}

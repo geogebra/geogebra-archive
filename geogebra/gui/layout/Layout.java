@@ -514,8 +514,7 @@ public class Layout {
 	 */
 	public void showSaveDialog() {
 		InputDialog inputDialog = new InputDialog(app, app.getPlain("PerspectiveName"), app.getMenu("SaveCurrentPerspective"), "", false, new SaveInputHandler(this));
-		inputDialog.showSpecialCharacters(false);
-		inputDialog.showGreekLetters(false);
+		inputDialog.showSymbolTablePopup(false);
         inputDialog.setVisible(true);    
 	}
 	

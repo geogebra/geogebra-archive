@@ -129,7 +129,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener, Key
 		// create caption panel
 		JLabel freeTextLabel = new JLabel(app.getMenu("FreeText")+":");
 		String initString = geoText == null ? "" : geoText.getCaption();
-		InputPanel ip = new InputPanel(initString, app, 1, 15, true, true, true, this);				
+		InputPanel ip = new InputPanel(initString, app, 1, 15, true, false, this);				
 		tfFreeText = ip.getTextComponent();
 		if (tfFreeText instanceof AutoCompleteTextField) {
 			AutoCompleteTextField atf = (AutoCompleteTextField) tfFreeText;

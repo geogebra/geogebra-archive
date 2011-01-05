@@ -39,8 +39,8 @@ import javax.swing.text.DefaultCaret;
  * 
  * 1) Custom text drawing with dynamic coloring of bracket symbols 
  * 2) Support for in-line icons 
- * 3) Popup symbol table to insert special characters. 
- *    The popup is triggered by either a mouse click or ctrl-up
+ * 3) Popup symbol table to insert special characters where the popup 
+ *    is triggered by either a mouse click or ctrl-up
  * 
  */
 public class MyTextField extends JTextField implements FocusListener, VirtualKeyboardListener {
@@ -61,7 +61,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private ImageIcon icon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), false);
 	private ImageIcon rollOverIcon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), true);
 	private int iconOffset = 0;
-	private boolean showSymbolTableIcon = true;
+	private boolean showSymbolTableIcon = false;
 	private DefaultCaret myCaret;
 	
 
@@ -91,7 +91,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 	
 	public void focusGained(FocusEvent e) {
-		// adjust the icon offset if we are going to have an icon (must do this first) 
+		// adjust the icon offset if we are going to have an icon 
 		iconOffset =  (showSymbolTableIcon && hasFocus()) ? 16 : 0;
 		thisField.repaint();
 		guiManager.setCurrentTextfield((VirtualKeyboardListener)this, false);
@@ -99,7 +99,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 	public void focusLost(FocusEvent e) {
 		guiManager.setCurrentTextfield(null, !(e.getOppositeComponent() instanceof VirtualKeyboard));
-		// adjust the icon offset if we are going to have an icon (must do this first) 
+		// adjust the icon offset if we are going to have an icon 
 		iconOffset =  (showSymbolTableIcon && hasFocus()) ? 16 : 0;
 		thisField.repaint();
 	}
@@ -318,6 +318,8 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		Insets insets = super.getInsets();
 		insets.right = insets.right + iconOffset;
 		insets.left = insets.left + 1 ; //left margin
+		insets.top = insets.top + 2;
+		insets.bottom = insets.bottom + 2;
 		return insets;
 	}
 

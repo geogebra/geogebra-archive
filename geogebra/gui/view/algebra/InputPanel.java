@@ -8,8 +8,8 @@ import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.TableSymbols;
 import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 
@@ -31,15 +31,12 @@ import java.util.ArrayList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
-import javax.swing.JEditorPane;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JToolBar;
-import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -66,7 +63,7 @@ ActionListener, ListSelectionListener {
 
 	private JButton[] symbolButton;
 	private ArrayList<String> symbolList;
-	private int symbolButtonCount = 1;
+	private int symbolButtonCount = 0;
 	public void setSymbolButtonCount(int symbolButtonCount) {
 		this.symbolButtonCount = symbolButtonCount;
 	}
@@ -86,7 +83,7 @@ ActionListener, ListSelectionListener {
 	/** panel to hold the text field; needs to be a global to set the popup width */
 	private JPanel tfPanel;  
 	
-	private boolean showSpecialChars;
+	private boolean showSymbolPopup;
 	
 	//=====================================
 	//Constructors
@@ -94,30 +91,22 @@ ActionListener, ListSelectionListener {
 	
 
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
-		this(initText, app, 1, columns, true, true, false, null);
+		this(initText, app, 1, columns, true, true, null);
 		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
 		atf.setAutoComplete(autoComplete);
 	}		
 
-	public InputPanel(String initText, Application app, int columns) {
-		this(initText, app, 1, columns, false, false, false, null);
-		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
-		atf.setAutoComplete(true);
-	}		
 
-	
-	
-	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,
-			boolean showGreekLetters, boolean showDisplayChars) {
-		this(initText, app, rows, columns, showSpecialChars,
-			showGreekLetters, showDisplayChars, null);
+	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon,
+			boolean showSymbolButtons, boolean showDisplayChars) {
+		this(initText, app, rows, columns, showSymbolPopupIcon, false, null);
 	}
 	
-	public InputPanel(String initText, Application app, int rows, int columns, boolean showSpecialChars,
-						boolean showGreekLetters, boolean showDisplayChars, KeyListener keyListener) {
+	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon,
+						boolean showSymbolButtons, KeyListener keyListener) {
 		
 		this.app = app;
-		this.showSpecialChars = showSpecialChars || showGreekLetters || showDisplayChars;
+		this.showSymbolPopup = showSymbolPopupIcon;
 
 		// set up the text component: 
 		// either a textArea or a textfield
@@ -125,8 +114,10 @@ ActionListener, ListSelectionListener {
 			//textComponent = new JTextArea(rows, columns);
 			textComponent = new GeoGebraEditorPane(app, rows, columns);
 			((GeoGebraEditorPane) textComponent).setEditorKit("geogebra");
-		} else
-			textComponent = new AutoCompleteTextField(columns, app);		
+		} else{
+			textComponent = new AutoCompleteTextField(columns, app);	
+			((MyTextField)textComponent).setShowSymbolTableIcon(showSymbolPopup);
+		}
 		
 		textComponent.addFocusListener(this);
 		textComponent.setFocusable(true);	
@@ -148,9 +139,9 @@ ActionListener, ListSelectionListener {
 			JScrollPane sp = new JScrollPane(textComponent); 
 			sp.setAutoscrolls(true);
 			add(sp, BorderLayout.CENTER);
-			JPanel buttonPanel = new JPanel(new BorderLayout());
-			buttonPanel.add(createPopupButton(),BorderLayout.EAST);
-			add(buttonPanel, BorderLayout.EAST);			
+			//JPanel buttonPanel = new JPanel(new BorderLayout());
+			//buttonPanel.add(createPopupButton(),BorderLayout.EAST);
+			//add(buttonPanel, BorderLayout.EAST);			
 		} 
 		else { // JTextField
 			setLayout(new BorderLayout(0,0));
@@ -239,7 +230,7 @@ ActionListener, ListSelectionListener {
 				tb.addSeparator();
 			tb.add(symbolButton[i]);
 		}
-		tb.add(popupTableButton);
+	//	tb.add(popupTableButton);
 		setSymbolButtons();
 		
 		
@@ -419,14 +410,9 @@ ActionListener, ListSelectionListener {
 	
 	//TODO  Hide/show popup button options
 	public void showSpecialChars(boolean flag) {
-		popupTableButton.setVisible(flag);
-		for(int i=0; i < symbolButton.length; i++)
-			symbolButton[i].setVisible(false);	
-	}
-
-	public void showGreekLetters(boolean flag) {
-		// TODO Auto-generated method stub
-		
+		//popupTableButton.setVisible(flag);
+		//for(int i=0; i < symbolButton.length; i++)
+			//symbolButton[i].setVisible(false);	
 	}
 
 	
