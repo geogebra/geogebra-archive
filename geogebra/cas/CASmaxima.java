@@ -190,8 +190,12 @@ public class CASmaxima extends CASgeneric {
 			while (exp.indexOf('{') > -1 ) exp = exp.replace('{', '[');
 			while (exp.indexOf('}') > -1 ) exp = exp.replace('}', ']');
 			
+			// Sets of Sets ( {{...}} ) are considered Matrices
+			exp = exp.replaceAll("\\[\\s*(\\[.+\\])\\s*\\]", "matrix($1)");
+			
 			final boolean debug = true;
 			if (debug) Application.debug("Expression for Maxima: "+exp, 1);
+			
 			
 			String res = executeRaw(exp);
 			
@@ -201,6 +205,9 @@ public class CASmaxima extends CASgeneric {
 				return "?";
 			}
 			
+			// Matrix notation
+			res = res.replaceAll("matrix\\(([^)]+)\\)", "\\[$1\\]");
+		
 			while (res.indexOf('\n') > -1 ) res = res.replace('\n', ' ');
 			
 			String results[] = res.split("\\(%[oi]\\d+\\)\\s*");
@@ -371,6 +378,9 @@ public class CASmaxima extends CASgeneric {
 	       
 	    // needed for ???
 	    ggbMaxima.executeCall("load(format)$");
+	    
+	    // needed for unitvector (and possible also other algebra functions?)
+	    ggbMaxima.executeCall("load(eigen)$");
 	       
 	    // turn {x=3} into {3} etc
 	    ggbMaxima.executeCall("stripequals(ex):=block(" +
