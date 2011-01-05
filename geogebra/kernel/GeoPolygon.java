@@ -402,6 +402,11 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		 segment.setObjColor(getObjectColor()); 
 		 segment.setLineThickness(getLineThickness()); 
 		 segment.setEuclidianVisible(euclidianVisible);
+		 
+		if (condShowObject != null) {
+			try { ((GeoElement)segment).setShowObjectCondition(getShowObjectCondition());}
+			catch (Exception e) {}
+		}
 
 		 segment.setHighlightingAncestor(this);
 

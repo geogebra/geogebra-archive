@@ -296,6 +296,13 @@ public class AlgoPolygonRegular extends AlgoElement {
 			newPoint.setPointSize(A.pointSize);
 			newPoint.setEuclidianVisible(A.isEuclidianVisible() || B.isEuclidianVisible());
 			newPoint.setAuxiliaryObject(true);
+			GeoBoolean conditionToShow = A.getShowObjectCondition();
+			if (conditionToShow == null) conditionToShow = B.getShowObjectCondition();
+			if (conditionToShow != null) {
+				try { ((GeoElement)newPoint).setShowObjectCondition(conditionToShow);}
+				catch (Exception e) {}
+			}
+
 			points[i] = newPoint;						 	        	     
 		}    
     }

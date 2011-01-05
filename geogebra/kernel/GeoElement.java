@@ -412,7 +412,7 @@ public abstract class GeoElement
 	private int cellRangeUsers = 0; // number of AlgoCellRange using this cell: don't allow renaming when greater 0
 	
 	// condition to show object
-	private GeoBoolean condShowObject;
+	protected GeoBoolean condShowObject;
 	
 	// function to determine color
 	private GeoList colFunction; // { GeoNumeric red, GeoNumeric Green, GeoNumeric Blue }
