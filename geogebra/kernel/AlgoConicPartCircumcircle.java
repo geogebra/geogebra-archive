@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.main.Application;
 
 /**
@@ -63,6 +64,15 @@ public class AlgoConicPartCircumcircle extends AlgoConicPart {
 			default:
 				return "AlgoCircumcircleSector";
 		}		
+	}
+	
+	public int getRelatedModeID() {
+		switch (type) {
+			case GeoConicPart.CONIC_PART_ARC:
+				return EuclidianConstants.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS;
+			default:
+				return EuclidianConstants.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS;
+		}
 	}
 
     // for AlgoElement
