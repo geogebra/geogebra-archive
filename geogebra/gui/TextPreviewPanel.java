@@ -2,9 +2,11 @@ package geogebra.gui;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
-import geogebra.kernel.GeoElement;
+import geogebra.kernel.AlgoDependentText;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNode;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -23,12 +25,18 @@ public class TextPreviewPanel extends EuclidianView {
 	private static boolean showGrid = false;
 	private GeoText previewGeoText;
 	private boolean enableUpdateSize = true; // needed ?
+	
+	private AlgoDependentText textAlgo;
+	Construction cons ;
+	private boolean isIndependent;
 
 	
 	public TextPreviewPanel(Kernel kernel) {
 		
 		super(new EuclidianController(kernel), showAxes, showGrid);
 		this.ec = this.getEuclidianController();
+
+		this.cons = kernel.getConstruction();
 
 		// set display properties 
 		setAntialiasing(true);
@@ -77,6 +85,7 @@ public class TextPreviewPanel extends EuclidianView {
 	private void locateTextGeo() {
 		int xInset = 4;
 		int yInset = previewGeoText.isLaTeX() ? 4 : 4 + app.getFontSize();
+		previewGeoText.setAbsoluteScreenLocActive(true);
 		previewGeoText.setAbsoluteScreenLoc( xInset, yInset);
 	}
 	
@@ -101,6 +110,123 @@ public class TextPreviewPanel extends EuclidianView {
 	 * @param isLaTeX
 	 */
 	public void updatePreviewText(GeoText targetGeo, String inputValue, boolean isLaTeX) {
+
+		if(textAlgo != null)
+			textAlgo.remove();
+		
+		if(previewGeoText != null)
+			previewGeoText.remove();
+
+		String formattedInput = formatInputValue(inputValue);
+		
+
+		try {
+
+			if(isIndependent)
+			{
+				System.out.println("is independent");
+				previewGeoText = new GeoText(kernel.getConstruction());
+				previewGeoText.setTextString(formattedInput);
+			}
+			
+			else
+			{
+				System.out.println("is not independent");
+				ExpressionNode exp = (ExpressionNode) kernel.getParser().parseGeoGebraExpression(formattedInput);
+				textAlgo = new AlgoDependentText(cons, exp);
+				cons.removeFromConstructionList(textAlgo);
+				
+				previewGeoText = textAlgo.getGeoText();
+			}
+
+			// update the display style
+			if(targetGeo != null){
+				previewGeoText.setVisualStyle(targetGeo);
+			} else {
+				if (isLaTeX) previewGeoText.setSerifFont(true);
+				previewGeoText.setObjColor(Color.black);
+			}
+			previewGeoText.setLaTeX(isLaTeX, true);
+
+			locateTextGeo();
+			previewGeoText.setEuclidianVisible(true);
+			previewGeoText.addView(this);
+			add(previewGeoText);
+
+			
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+
+	}
+
+
+
+	private String formatInputValue(String inputValue){
+
+		isIndependent = true;
+
+		// Fit quote characters to the inputValue string so that the algebra processor 
+		// can use it to redefine the geo.
+
+		// if inputValue is null then use the current definition
+		if(inputValue == null){
+			if(previewGeoText.isIndependent()){ 
+				inputValue = previewGeoText.getTextString();
+				if(previewGeoText.getKernel().lookupLabel(inputValue) != null)
+					inputValue = "\"" + inputValue + "\"";            		 		
+			}
+			else{
+				inputValue = previewGeoText.getCommandDescription(); 
+				isIndependent = false;
+			}
+
+		// inputValue is not null (code copied from TextInputHandler ... inner class in TextInputDialog)		
+		} else {
+			System.out.println("process input: " + inputValue);
+			// no quotes?
+			if (inputValue.indexOf('"') < 0) {
+				// this should become either
+				// (1) a + "" where a is an object label or
+				// (2) "text", a plain text 
+
+				// ad (1) OBJECT LABEL 
+				// add empty string to end to make sure
+				// that this will become a text object
+				if (kernel.lookupLabel(inputValue.trim()) != null) {
+					inputValue = "(" + inputValue + ") + \"\"";
+					isIndependent = false;
+					System.out.println("lookpup label found" + inputValue);
+				} 
+
+				// ad (2) PLAIN TEXT
+				// add quotes to string
+				else {
+					//inputValue = "\"" + inputValue + "\"";
+				}        			
+			} 
+			else {
+				// replace \n\" by \"\n, this is useful for e.g.:
+				//    "a = " + a + 
+				//	"b = " + b 
+				inputValue = inputValue.replaceAll("\n\"", "\"\n");
+			}
+		}
+
+		return inputValue;
+	}
+
+
+
+
+
+
+	//=======================================================
+	// old code
+
+ 
+	public void updatePreviewTextOLD(GeoText targetGeo, String inputValue, boolean isLaTeX) {
 
 		// create a new preview geo if needed
 		if(previewGeoText == null)
