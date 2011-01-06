@@ -4689,7 +4689,7 @@ public abstract class GeoElement
 		}
 		// matrices
 		else if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && ((GeoList)this).isMatrix()) {
-			ret = toLaTeXString(substituteNumbers);
+			ret = matrixToLatex(toLaTeXString(substituteNumbers));
 		}
 		// vectors
 		else if (this.isGeoVector() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
@@ -5329,5 +5329,118 @@ public abstract class GeoElement
 	 */
 	public boolean isPickable(){
 		return isPickable && isSelectionAllowed();
+	}
+	/**
+	 * Searches for matrixes in the string and translates it to
+	 * the LaTeX syntax for matrices.
+	 * @param latex
+	 * @return
+	 */
+	private static String matrixToLatex(String latex){
+		int index=-1;
+		while ((index=latex.indexOf("\\{", index+1)) != -1){
+			
+			int depth=1;
+			int rows=0;
+			int columns=-1;
+			int columnstmp=0;
+			boolean stillHoping=true;
+			boolean isMatrix=false;
+			
+			//first we test if there is a Matrix 
+			for (int i=index+2;stillHoping && i<latex.length();i++){
+				char character=latex.charAt(i);
+				switch (character){
+				case ',':
+					if (depth==1){
+						if (columns==-1){
+							stillHoping=false;
+							break;
+						}
+						rows++;
+					} else if (depth==2){
+						columnstmp++;
+					}
+					break;
+				case '\\':
+					character=latex.charAt(++i);
+					switch (character) {
+					case '{':
+						depth++;
+						if (depth==2)
+							columnstmp++;
+						break;
+					case '}':
+						depth--;
+						if (depth==1){
+							if (columns==-1){
+								columns=columnstmp;
+							} else {
+								if (columnstmp != columns){
+									stillHoping=false;
+									break;
+								}
+							}
+							columnstmp=0;
+						} else if (depth==0){
+							stillHoping=false;
+							if (columns>0)
+								isMatrix=true;
+						}
+						break;
+					}
+				}
+			}
+			//now we change the syntax to LaTeX
+			if (isMatrix){
+				
+				StringBuilder latexTmp=new StringBuilder("\\left(\\begin{array}{");
+				for (int i=0;i<columns;i++)
+					latexTmp.append("c");
+				latexTmp.append("}");
+
+				depth=1;
+				stillHoping=true;
+
+				for (int i=index+2;stillHoping && i<latex.length();i++){
+					char character=latex.charAt(i);
+					switch (character){
+					case ',':
+						if (depth==2){
+							latexTmp.append(" &");
+						}
+						if (depth>2)
+							latexTmp.append(",");
+						break;
+					case '\\':
+						character=latex.charAt(++i);
+						switch (character) {
+						case '{':
+							depth++;
+							if (depth>2)
+								latexTmp.append("\\{");
+							break;
+						case '}':
+							depth--;
+							if (depth==1){
+								latexTmp.append("\\\\ ");
+							} else if (depth==0){
+								stillHoping=false;
+								latexTmp.append(latex.substring(i+1));
+								latexTmp.append("\\end{array} \\right)");
+							} else {
+								latexTmp.append("\\}");
+							}
+							break;
+						}
+						break;
+					default:
+						latexTmp.append(character);
+					}
+				}
+				latex=latex.substring(0, index)+latexTmp;
+			}
+		}
+		return latex;
 	}
 }

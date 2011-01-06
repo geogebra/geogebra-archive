@@ -503,6 +503,179 @@ public abstract class Drawable extends DrawableND {
 	
 	private static JLabel jl = new JLabel();
 	private static StringBuilder eqnSB;
+	/**
+	 * Adds \\- to positions where the line can
+	 * be broken. Now it only breaks at +, -, *
+	 * and spaces.
+	 * 
+	 * @param latex String
+	 * @return The LaTeX string with breaks
+	 */
+	private static String addPossibleBreaks(String latex){
+		StringBuilder latexTmp=new StringBuilder(latex);
+		int depth=0;
+		boolean no_addition=true;
+		for (int i=0; i<latexTmp.length()-2;i++){
+			char character=latexTmp.charAt(i);
+			switch (character){
+			case '(':
+			case '[':
+			case '{':
+				depth++;
+				break;
+			case ')':
+			case ']':
+			case '}':
+				depth--;
+				break;
+			case '\\':
+				if (latexTmp.charAt(i+1) != ';')
+					break;
+				i++;
+				latexTmp.insert(i+1, "\\?");
+				i=i+2;
+				break;
+			case ' ':
+				if (latexTmp.charAt(i+1)!=' ')
+					break;
+				i++;
+			case '*':
+				if (depth != 0)
+					break;
+				latexTmp.insert(i+1, "\\?");
+				i=i+2;
+				break;
+			case '+':
+			case '-':
+				if (depth != 0)
+					break;
+				latexTmp.insert(i+1, "\\-");
+				i=i+2;
+				no_addition=false;
+			}
+		}
+		//no addition happened at depth zero so it can be broken
+		//on * and space too.
+		if (no_addition){
+			return latexTmp.toString().replaceAll("\\?", "\\-");
+		} else {
+			return latexTmp.toString().replaceAll("\\?", "");
+		}
+	}
+	
+	/**
+	 * Searches for matrixes in the string and translates it to
+	 * the LaTeX syntax for matrices.
+	 * @param latex
+	 * @return
+	 */
+	private static String matrixToLatex(String latex){
+		int index=-1;
+		while ((index=latex.indexOf("\\{", index+1)) != -1){
+			
+			int depth=1;
+			int rows=0;
+			int columns=-1;
+			int columnstmp=0;
+			boolean stillHoping=true;
+			boolean isMatrix=false;
+			
+			//first we test if there is a Matrix 
+			for (int i=index+2;stillHoping && i<latex.length();i++){
+				char character=latex.charAt(i);
+				switch (character){
+				case ',':
+					if (depth==1){
+						if (columns==-1){
+							stillHoping=false;
+							break;
+						}
+						rows++;
+					} else if (depth==2){
+						columnstmp++;
+					}
+					break;
+				case '\\':
+					character=latex.charAt(++i);
+					switch (character) {
+					case '{':
+						depth++;
+						if (depth==2)
+							columnstmp++;
+						break;
+					case '}':
+						depth--;
+						if (depth==1){
+							if (columns==-1){
+								columns=columnstmp;
+							} else {
+								if (columnstmp != columns){
+									stillHoping=false;
+									break;
+								}
+							}
+							columnstmp=0;
+						} else if (depth==0){
+							stillHoping=false;
+							if (columns>0)
+								isMatrix=true;
+						}
+						break;
+					}
+				}
+			}
+			//now we change the syntax to LaTeX
+			if (isMatrix){
+				
+				StringBuilder latexTmp=new StringBuilder("\\left(\\begin{array}{");
+				for (int i=0;i<columns;i++)
+					latexTmp.append("c");
+				latexTmp.append("}");
+
+				depth=1;
+				stillHoping=true;
+
+				for (int i=index+2;stillHoping && i<latex.length();i++){
+					char character=latex.charAt(i);
+					switch (character){
+					case ',':
+						if (depth==2){
+							latexTmp.append(" &");
+						}
+						if (depth>2)
+							latexTmp.append(",");
+						break;
+					case '\\':
+						character=latex.charAt(++i);
+						switch (character) {
+						case '{':
+							depth++;
+							if (depth>2)
+								latexTmp.append("\\{");
+							break;
+						case '}':
+							depth--;
+							if (depth==1){
+								latexTmp.append("\\\\ ");
+							} else if (depth==0){
+								stillHoping=false;
+								latexTmp.append(latex.substring(i+1));
+								latexTmp.append("\\end{array} \\right)");
+							} else {
+								latexTmp.append("\\}");
+							}
+							break;
+						}
+						break;
+					default:
+						latexTmp.append(character);
+					}
+				}
+				latex=latex.substring(0, index)+latexTmp;
+			}
+		}
+		return latex;
+	}
 	
 	/**
 	 * Renders LaTeX equation using JLaTeXMath
@@ -519,6 +692,11 @@ public abstract class Drawable extends DrawableND {
 	 */
 	final  public static Dimension drawEquationJLaTeXMath(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
 	{
+		//TODO remove when method in GeoElement.getFormulaString() works
+		text=matrixToLatex(text);
+		//TODO uncomment when \- works
+		//text=addPossibleBreaks(text);
+		
 		
 		if (eqnSB == null) { // first call
 			
