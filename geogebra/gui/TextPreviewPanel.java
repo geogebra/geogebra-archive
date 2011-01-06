@@ -7,6 +7,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.parser.TokenMgrError;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -28,7 +29,7 @@ public class TextPreviewPanel extends EuclidianView {
 	
 	private AlgoDependentText textAlgo;
 	Construction cons ;
-	private boolean isIndependent;
+	//private boolean isIndependent;
 
 	
 	public TextPreviewPanel(Kernel kernel) {
@@ -121,23 +122,41 @@ public class TextPreviewPanel extends EuclidianView {
 		
 
 		try {
-
-			if(isIndependent)
+			
+			boolean independent = false;
+			
+			try
 			{
+				ExpressionNode exp = (ExpressionNode) kernel.getParser().parseGeoGebraExpression(formattedInput);
+				exp.resolveVariables();
+				
+				if (!exp.isConstant()) {
+					System.out.println("is not independent");
+					textAlgo = new AlgoDependentText(cons, exp);
+					cons.removeFromConstructionList(textAlgo);
+				} else {
+					independent = true;
+				}
+				
+				previewGeoText = textAlgo.getGeoText();
+			} catch (Exception e) {
+				independent = true;
+			} catch (Error e) {
+				independent = true;
+			}
+			
+			if (independent) {
+				// independent text
 				System.out.println("is independent");
-				previewGeoText = new GeoText(kernel.getConstruction());
+
+				
+				// reuse previewGeoText if we can
+				if (previewGeoText == null || !previewGeoText.isIndependent())
+					previewGeoText = new GeoText(kernel.getConstruction());
+				
 				previewGeoText.setTextString(formattedInput);
 			}
 			
-			else
-			{
-				System.out.println("is not independent");
-				ExpressionNode exp = (ExpressionNode) kernel.getParser().parseGeoGebraExpression(formattedInput);
-				textAlgo = new AlgoDependentText(cons, exp);
-				cons.removeFromConstructionList(textAlgo);
-				
-				previewGeoText = textAlgo.getGeoText();
-			}
 
 			// update the display style
 			if(targetGeo != null){
@@ -165,7 +184,7 @@ public class TextPreviewPanel extends EuclidianView {
 
 	private String formatInputValue(String inputValue){
 
-		isIndependent = true;
+		//isIndependent = true;
 
 		// Fit quote characters to the inputValue string so that the algebra processor 
 		// can use it to redefine the geo.
@@ -179,7 +198,7 @@ public class TextPreviewPanel extends EuclidianView {
 			}
 			else{
 				inputValue = previewGeoText.getCommandDescription(); 
-				isIndependent = false;
+				//isIndependent = false;
 			}
 
 		// inputValue is not null (code copied from TextInputHandler ... inner class in TextInputDialog)		
@@ -196,7 +215,7 @@ public class TextPreviewPanel extends EuclidianView {
 				// that this will become a text object
 				if (kernel.lookupLabel(inputValue.trim()) != null) {
 					inputValue = "(" + inputValue + ") + \"\"";
-					isIndependent = false;
+					//isIndependent = false;
 					System.out.println("lookpup label found" + inputValue);
 				} 
 
