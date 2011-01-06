@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.MyDouble;
 
 /**
@@ -129,6 +130,17 @@ public class AlgoMirror extends AlgoTransformation {
     
     public String getClassName() {
         return "AlgoMirror";
+    }
+    
+    public int getRelatedModeID() { 	   	
+		if (mirror.isGeoLine()) {
+			return EuclidianConstants.MODE_MIRROR_AT_LINE;
+		} else if (mirror.isGeoPoint()) {
+			return EuclidianConstants.MODE_MIRROR_AT_POINT;
+		} else {
+			return EuclidianConstants.MODE_MIRROR_AT_CIRCLE;
+		}
+    	
     }
     
     // for AlgoElement

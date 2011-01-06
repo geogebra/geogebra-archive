@@ -79,8 +79,7 @@ public class AlgoTranslate extends AlgoTransformation {
     }
     
     public int getRelatedModeID() {
-    	//return EuclidianConstants.MODE_TRANSLATEVIEW;
-    	return EuclidianConstants.MODE_VECTOR_FROM_POINT;
+    	return EuclidianConstants.MODE_TRANSLATE_BY_VECTOR;
     }
 
     

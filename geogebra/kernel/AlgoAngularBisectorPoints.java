@@ -18,6 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 /**
  *
@@ -66,6 +68,10 @@ public class AlgoAngularBisectorPoints extends AlgoElement {
         return "AlgoAngularBisectorPoints";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_ANGULAR_BISECTOR;
+    }
+    
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[3];
