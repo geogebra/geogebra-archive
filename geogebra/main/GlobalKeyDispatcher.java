@@ -81,14 +81,6 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 */
 	private boolean handleKeyPressed(KeyEvent event) {	
 		
-		//mathieu test key
-		if (event.getKeyCode()== KeyEvent.VK_T){
-			Application.debug("test");
-			app.test();			
-		}
-		
-		
-		
 				
 		// GENERAL KEYS: 
 		// handle ESC, function keys, zooming with Ctrl +, Ctlr -, etc.

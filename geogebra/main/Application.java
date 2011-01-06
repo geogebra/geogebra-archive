@@ -1596,7 +1596,7 @@ public class Application implements KeyEventDispatcher {
 				|| "it".equals(lang)
 				|| "pt".equals(lang)
 			) {
-			sbOrdinal.append("ª");
+			sbOrdinal.append("ï¿½");
 		} else if ("bs".equals(lang)
 				|| "sl".equals(lang)) {
 			sbOrdinal.append("-ti");
@@ -3830,14 +3830,6 @@ public class Application implements KeyEventDispatcher {
 
 	}
 	
-	/**
-	 * mathieu : 
-	 * simple test method used by GlobalKeyDispatcher
-	 */
-	public void test(){
-		
-	}
-
 	// check if we are on a mac
 	public static String OS = System.getProperty("os.name").toLowerCase(
 			Locale.US);

@@ -208,20 +208,4 @@ public class Application3D extends Application{
 	
 	
 	
-	
-	///////////////////////////////////////
-	// TEST
-	///////////////////////////////////////
-
-	private boolean testSw = true;
-	
-	public void test(){
-		Application.debug("test3D");
-		
-		loadXML(new File("geogebra3D/samples/test.ggb"), false);
-		
-		//euclidianView3D.setToFrozen(testSw); testSw=!testSw;
-		
-		euclidianView3D.resetAllDrawables();
-	}
 }
