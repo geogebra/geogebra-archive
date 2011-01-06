@@ -892,6 +892,29 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		public void updateAll() {
 
+			/* Only one toolbar should be displayed for each step,
+			 * even if multiple substeps are present in a step (i.e. more rows).
+			 * For that, we calculate the index for the current and the previous row
+			 * and check if they are equal.
+			 */
+			Integer index = null;
+			Integer prevIndex = null;
+
+			try {
+				index = (rowNumber < 0) ? -1 : data.getConstructionIndex(rowNumber);
+			}
+			catch (Exception e) {
+				index = -1;
+			}
+
+			try {
+				prevIndex = (rowNumber < 1) ? -1 : data.getConstructionIndex(rowNumber - 1);
+			}
+			catch (Exception e) {
+				prevIndex = -1;
+			}
+
+			
 			// TODO: This logic could be merged with the HTML export logic.
 			int m;
 			// Markus' idea to find the correct icon:
@@ -905,7 +928,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			else
 				m = geo.getRelatedModeID();
 
-			if (m != -1)
+			if (m != -1 && index != prevIndex)
 				toolbarIcon = app.getModeIcon(m);
 			else
 				toolbarIcon = null;
@@ -1275,7 +1298,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		 * The following code has been copy-pasted from
 		 * http://forums.sun.com/thread.jspa?threadID=5330345, posted by _Matt_.
 		 * Its purpose is to convert an icon to a format which can be copied to
-		 * the file system (for
+		 * the file system.
 		 */
 		public BufferedImage toBufferedImage(Image i) {
 			if (i instanceof BufferedImage) {
@@ -1332,7 +1355,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		public void remove(GeoElement geo) {
 			RowData row = (RowData) geoMap.get(geo);
-			// lookup row for GeoElemen
+			// lookup row for GeoElement
 			if (row != null) {
 				rowList.remove(row); // remove row
 				geoMap.remove(geo); // remove (geo, row) pair from map
