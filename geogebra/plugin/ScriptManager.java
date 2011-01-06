@@ -500,7 +500,8 @@ public class ScriptManager {
 		 * Calls all registered update and updateObject listeners.
 		 * @see registerUpdateListener()
 		 */
-		public synchronized void update(GeoElement geo) {						
+		public synchronized void update(GeoElement geo) {			
+			geo.runScripts(null, true);
 			if (!listenersEnabled) return;
 			// update listeners
 			if (updateListeners != null && geo.isLabelSet()) {
@@ -516,6 +517,7 @@ public class ScriptManager {
 					callJavaScript(jsFunction, args);
 				}
 			}
+			
 		}
 				
 		public void updateAuxiliaryObject(GeoElement geo) {
@@ -535,7 +537,7 @@ public class ScriptManager {
     	}    	    	
 	}
 		
-	private synchronized void initJavaScriptView() {
+	public synchronized void initJavaScriptView() {
 		if (javaToJavaScriptView == null) {
 			javaToJavaScriptView = new JavaToJavaScriptView();
 			app.getKernel().attach(javaToJavaScriptView); // register view

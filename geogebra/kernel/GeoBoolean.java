@@ -352,7 +352,7 @@ AbsoluteScreenLocateable {
 		return false;
 	}
 	
-	public boolean canHaveScript() {
+	public boolean canHaveClickScript() {
 		return false;
 	}
 

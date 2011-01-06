@@ -2694,55 +2694,42 @@ public	class PropertiesPanel extends JPanel {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;	
-		private ScriptInputDialog jsDialog, jsGlobalDialog, ggbScriptDialog;
-		
+		private ScriptInputDialog clickDialog, updateDialog, globalDialog;
+		private JTabbedPane tabbedPane;
+		private JPanel clickScriptPanel, updateScriptPanel, globalScriptPanel;
 		public ScriptEditPanel() {	
 			
-			JTabbedPane tabbedPane = new JTabbedPane();
-			JTabbedPane tabbedPane2 = new JTabbedPane();
+			tabbedPane = new JTabbedPane();
 			
-			JPanel panel1 = new JPanel();
-			JPanel panel2 = new JPanel();
-			
-			ggbScriptDialog = new ScriptInputDialog(app, app.getPlain("Script"), null,
-					35, 15, false);
-			jsDialog = new ScriptInputDialog(app, app.getPlain("JavaScript"), null,
-					35, 13, true);
-			jsGlobalDialog = new ScriptInputDialog(app, app.getPlain("GlobalJavaScript"), null,
-					35, 13, true);
+			clickDialog = new ScriptInputDialog(app, app.getPlain("Script"), null,
+					35, 15, false, false);
+			updateDialog = new ScriptInputDialog(app, app.getPlain("JavaScript"), null,
+					35, 15, true, false);
+			globalDialog = new ScriptInputDialog(app, app.getPlain("GlobalJavaScript"), null,
+					35, 15, false, true);
 			setLayout(new BorderLayout());
 			//add(td.getInputPanel(), BorderLayout.NORTH);
 			//add(td2.getInputPanel(), BorderLayout.CENTER);
-			JPanel ggbScriptPanel = new JPanel(new BorderLayout(0,0));
-			ggbScriptPanel.add(ggbScriptDialog.getInputPanel(), BorderLayout.NORTH);
-			ggbScriptPanel.add(ggbScriptDialog.getButtonPanel(), BorderLayout.EAST);
-			panel1.add(ggbScriptPanel, BorderLayout.NORTH);
+			clickScriptPanel = new JPanel(new BorderLayout(0,0));
+			clickScriptPanel.add(clickDialog.getInputPanel(), BorderLayout.NORTH);
+			clickScriptPanel.add(clickDialog.getButtonPanel(), BorderLayout.EAST);
 			
-			JPanel jsPanel = new JPanel(new BorderLayout(0,0));
-			jsPanel.add(jsDialog.getInputPanel(), BorderLayout.NORTH);
-			jsPanel.add(jsDialog.getButtonPanel(), BorderLayout.EAST);
-			panel1.add(jsPanel, BorderLayout.NORTH);
+			updateScriptPanel = new JPanel(new BorderLayout(0,0));
+			updateScriptPanel.add(updateDialog.getInputPanel(), BorderLayout.NORTH);
+			updateScriptPanel.add(updateDialog.getButtonPanel(), BorderLayout.EAST);
 			
-			JPanel jsGlobalPanel = new JPanel(new BorderLayout(0,0));
-			jsGlobalPanel.add(jsGlobalDialog.getInputPanel(), BorderLayout.NORTH);
-			jsGlobalPanel.add(jsGlobalDialog.getButtonPanel(), BorderLayout.EAST);
-			panel2.add(jsGlobalPanel, BorderLayout.SOUTH);
-			
-			tabbedPane2.addTab(app.getPlain("JavaScript"), panel1);
-			tabbedPane2.addTab(app.getPlain("GlobalJavaScript"), panel2);
-			
-			tabbedPane.addTab(app.getPlain("Script"), ggbScriptPanel);
-			tabbedPane.addTab(app.getPlain("JavaScript"), tabbedPane2);
-			
+			globalScriptPanel = new JPanel(new BorderLayout(0,0));
+			globalScriptPanel.add(globalDialog.getInputPanel(), BorderLayout.NORTH);
+			globalScriptPanel.add(globalDialog.getButtonPanel(), BorderLayout.EAST);
 			add(tabbedPane);
 			
 		}
 		
 		public void setLabels() {
 			//setBorder(BorderFactory.createTitledBorder(app.getPlain("JavaScript")));
-			jsDialog.setLabels(app.getPlain("JavaScript"));
-			jsGlobalDialog.setLabels(app.getPlain("GlobalJavaScript"));
-			ggbScriptDialog.setLabels(app.getPlain("Script"));
+			clickDialog.setLabels(app.getPlain("OnClick"));
+			updateDialog.setLabels(app.getPlain("OnUpdate"));
+			globalDialog.setLabels(app.getPlain("GlobalJavaScript"));
 		}
 
 		public JPanel update(Object[] geos) {			
@@ -2750,15 +2737,19 @@ public	class PropertiesPanel extends JPanel {
 				return null;			
 			
 			GeoElement button = (GeoElement) geos[0];	
-			ggbScriptDialog.setGeo(button);
-			jsDialog.setGeo(button);	
-			jsGlobalDialog.setGlobal();
+			clickDialog.setGeo(button);
+			updateDialog.setGeo(button);	
+			globalDialog.setGlobal();
+			tabbedPane.removeAll();
+			if(button.canHaveClickScript())tabbedPane.addTab(app.getPlain("OnClick"), clickScriptPanel);
+			if(button.canHaveUpdateScript())tabbedPane.addTab(app.getPlain("OnUpdate"), updateScriptPanel);
+			tabbedPane.addTab(app.getPlain("GlobalJavaScript"), globalScriptPanel);
 			return this;
 		}
 
 		private boolean checkGeos(Object[] geos) {
 			//return geos.length == 1 && geos[0] instanceof GeoJavaScriptButton;			
-			return geos.length == 1 && (((GeoElement)geos[0]).canHaveScript());			
+			return geos.length == 1;			
 		}
 
 		/**

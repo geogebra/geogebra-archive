@@ -11,10 +11,9 @@ the Free Software Foundation.
 */
 package geogebra.gui;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.gui.editor.GeoGebraEditorPane;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoButton;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -22,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 /**
@@ -34,18 +34,28 @@ public class ScriptInputDialog extends InputDialog {
 	
 	private static final long serialVersionUID = 1L;
 
-	private GeoElement button;
+	private GeoElement geo;
 	private boolean global = false;
 	private boolean javaScript = false;
+	private boolean updateScript = false;
+	private JComboBox languageSelector;
 	
 	/**
 	 * Input Dialog for a GeoButton object
+	 * @param app 
+	 * @param title 
+	 * @param button 
+	 * @param cols 
+	 * @param rows 
+	 * @param updateScript 
+	 * @param forceJavaScript 
 	 */
 	public ScriptInputDialog(Application app,  String title, GeoButton button,
-								int cols, int rows, boolean javaScript) {	
+								int cols, int rows, boolean updateScript, boolean forceJavaScript) {	
 		super(app.getFrame(), false);
 		this.app = app;
-		this.javaScript = javaScript;
+		
+		this.updateScript = updateScript;
 		inputHandler = new TextInputHandler();
 				
 				
@@ -55,36 +65,48 @@ public class ScriptInputDialog extends InputDialog {
 		setGeo(button);
 		
 		JPanel centerPanel = new JPanel(new BorderLayout());		
-							
+		
+		languageSelector = new JComboBox();
+		languageSelector.addItem(app.getPlain("Script"));
+		languageSelector.addItem(app.getPlain("JavaScript"));
+		languageSelector.addActionListener(this);
+		
+		if(forceJavaScript){
+			languageSelector.setSelectedIndex(1);
+			languageSelector.setEnabled(false);
+		}
+		setJSMode(forceJavaScript);
+		btPanel.add(languageSelector,0);
 			
 		centerPanel.add(inputPanel, BorderLayout.CENTER);		
 
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
 		
-		if (javaScript) {
-			((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("javascript");
-		}
+		
 		
 		centerOnScreen();		
 	}
 	
-	public void setGeo(GeoElement button) {
+	
+	public void setGeo(GeoElement geo) {
 		
 		if (global) {
 			setGlobal();
 			return;
 		}
-		this.button = button;
+		this.geo = geo;
 		
-		if (button != null)
-			inputPanel.setText(javaScript ? button.getJavaScript() : button.getScript());
+		if (geo != null){
+			inputPanel.setText(updateScript ? geo.getUpdateScript() : geo.getClickScript());
+			setJSMode(updateScript ? geo.isUpdateJavaScript():geo.isClickJavaScript());
+		}
 	}
 	
-	/*
+	/**
 	 * edit global javascript
 	 */
 	public void setGlobal() {
-		this.button = null;
+		geo = null;
 		global = true;
 
         inputPanel.setText(app.getKernel().getLibraryJavaScript());
@@ -114,20 +136,28 @@ public class ScriptInputDialog extends InputDialog {
 					setVisible(!finished);
 				} else {		
 					// text input field embedded in properties window
-					setGeo(button);
+					setGeo(getGeo());
 				}
 			} 
 			else if (source == btCancel) {
 				if (isShowing())
 					setVisible(false);		
 				else {
-					setGeo(button);
+					setGeo(getGeo());
 				}
+			}
+			else if(source == languageSelector){
+				setJSMode(languageSelector.getSelectedIndex()==1);				
 			}
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
 			ex.printStackTrace();
 		}			
+	}
+	
+	private void setJSMode(boolean flag){
+		javaScript = flag;
+		((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit(flag ? "javascript":"geogebra");
 	}
 	
 	/**
@@ -140,6 +170,14 @@ public class ScriptInputDialog extends InputDialog {
 	}
 	
 	
+	/**
+	 * @return the geo
+	 */
+	public GeoElement getGeo() {
+		return geo;
+	}
+
+
 	private class TextInputHandler implements InputHandler {
 		
 		private Kernel kernel;
@@ -157,16 +195,20 @@ public class ScriptInputDialog extends InputDialog {
             	return true;
             }
 
-            if (button == null) {
-            	button = new GeoButton(kernel.getConstruction());
+            if (getGeo() == null) {
+            	setGeo(new GeoButton(kernel.getConstruction()));
             
             }
                     
             // change existing text
-            	if (javaScript)
-            		button.setJavaScript(inputValue);
-            	else
-            		button.setScript(inputValue);
+            	if (updateScript){            		
+            		getGeo().setUpdateScript(inputValue);
+            		getGeo().setUpdateJavaScript(javaScript);
+            	}
+            	else{
+            		getGeo().setClickScript(inputValue);
+            		getGeo().setClickJavaScript(javaScript);
+            	}
             	
             	return true;
     }

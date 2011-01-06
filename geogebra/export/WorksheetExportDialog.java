@@ -1372,15 +1372,15 @@ public class WorksheetExportDialog extends JDialog {
 		while (it.hasNext()) {
 			GeoElement geo = it.next();
 			
-			String script = geo.getJavaScript();
-			if (!script.equals("")) {
+			String script = geo.getClickScript();
+			if (!script.equals("") && geo.isClickJavaScript()) {
 				// for each GeoElement with a JavaScript, create a function call
 				// with the same name as the geo's label (prefixed by ggb)
 				sb.append("function ggb");
 				sb.append(geo.getLabel());
 				appendWithLineBreak(sb, "() {");
 				appendWithLineBreak(sb, "var ggbApplet = document.ggbApplet;");
-				appendWithLineBreak(sb, geo.getJavaScript());
+				appendWithLineBreak(sb, script);
 				appendWithLineBreak(sb, "}");
 							
 			}

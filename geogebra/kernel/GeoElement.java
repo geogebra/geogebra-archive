@@ -64,6 +64,34 @@ public abstract class GeoElement
 	implements ExpressionValue {
 	
 	public static final int MAX_FONTSIZE = 4;
+	/**
+	 * @return the updateJavaScript
+	 */
+	public boolean isUpdateJavaScript() {
+		return updateJavaScript;
+	}
+
+	/**
+	 * @param updateJavaScript the updateJavaScript to set
+	 */
+	public void setUpdateJavaScript(boolean updateJavaScript) {
+		this.updateJavaScript = updateJavaScript;
+	}
+
+	/**
+	 * @return the clickJavaScript
+	 */
+	public boolean isClickJavaScript() {
+		return clickJavaScript;
+	}
+
+	/**
+	 * @param clickJavaScript the clickJavaScript to set
+	 */
+	public void setClickJavaScript(boolean clickJavaScript) {
+		this.clickJavaScript = clickJavaScript;
+	}
+
 	public static final int MIN_FONTSIZE = -4;
 	
 	/** min decimals or significant figures to use in editing string */
@@ -3528,6 +3556,8 @@ public abstract class GeoElement
 	}
 	private String strHasIndexLabel;
 	private boolean hasIndexLabel = false;
+	private boolean updateJavaScript;
+	private boolean clickJavaScript;
 	
 
 	/**
@@ -3620,17 +3650,36 @@ public abstract class GeoElement
 	
 	public void getScriptTags(StringBuilder sb) {
 		// JavaScript
-		if (javaScript.length() > 0) {
-			sb.append("\t<javascript val=\"");
-			sb.append(getXMLJavaScript());
-			sb.append("\"/>\n");				
+		if ((updateJavaScript && updateScript.length()>0)||(clickJavaScript && clickScript.length()>0)) {
+			sb.append("\t<javascript ");
+			if(clickJavaScript && clickScript.length()>0){
+				sb.append(" val=\"");
+				sb.append(getXMLClickScript());
+				sb.append("\"");
+			}
+			if(updateJavaScript && updateScript.length()>0){
+				sb.append(" onUpdate=\"");
+				sb.append(getXMLUpdateScript());
+				sb.append("\"");
+			}
+			sb.append("/>\n");				
 		}
 				
 		// Script
-		if (ggbScript.length() > 0) {
-			sb.append("\t<ggbscript val=\"");
-			sb.append(getXMLScript());
-			sb.append("\"/>\n");				
+		if ((!updateJavaScript && updateScript!= null && updateScript.length()>0)||
+				(!clickJavaScript && clickScript!=null && clickScript.length()>0)) {
+			sb.append("\t<ggbscript ");
+			if(!clickJavaScript && clickScript.length()>0){
+				sb.append(" val=\"");
+				sb.append(getXMLClickScript());
+				sb.append("\"");
+			}
+			if(!updateJavaScript && updateScript.length()>0){
+				sb.append(" onUpdate=\"");
+				sb.append(getXMLUpdateScript());
+				sb.append("\"");
+			}
+			sb.append("/>\n");				
 		}
 					
 	}
@@ -4816,40 +4865,46 @@ public abstract class GeoElement
 	
 	// JavaScript
 	
-	private String javaScript = "";
-	private String ggbScript = "";
+	private String clickScript = "";
+	private String updateScript = "";
 	
-	public void setJavaScript(String script) {
-		if (!canHaveScript()) return;
+	public void setClickScript(String script) {
+		if (!canHaveClickScript()) return;
 		//Application.debug(script);
-		this.javaScript = script;
+		this.clickScript = script;
 	}
 	
-	public void setScript(String script) {
-		if (!canHaveScript()) return;
+	public void setUpdateScript(String script) {
+		if (!canHaveUpdateScript()) return;
+		app.getScriptManager().initJavaScriptView();
 		Application.debug(script);
-		this.ggbScript = script;
+		this.updateScript = script;
 	}
 	
-	public String getJavaScript() {
-		return javaScript;
+	public boolean canHaveUpdateScript() {
+		return true;
 	}
-	
-	public String getScript() {
-		return ggbScript;
-	}
-	
-	public String getXMLJavaScript() {
-		return Util.encodeXML(javaScript);
-	}
-	
-	public String getXMLScript() {
-		return Util.encodeXML(ggbScript);
-	}
-	
-	private void runGgbScript(String arg) {
 
-		if (!canHaveScript()) return;
+	public String getUpdateScript() {
+		return updateScript;
+	}
+	
+	public String getClickScript() {
+		return clickScript;
+	}
+	
+	public String getXMLUpdateScript() {
+		return Util.encodeXML(updateScript);
+	}
+	
+	public String getXMLClickScript() {
+		return Util.encodeXML(clickScript);
+	}
+	
+	private void runGgbScript(String arg,boolean update) {
+		if ((update && (updateJavaScript || !canHaveUpdateScript())) || 
+				(!update && (clickJavaScript || !canHaveClickScript()))) return;
+		String ggbScript = update ? updateScript : clickScript;
 		
 		AlgebraProcessor ab = kernel.getAlgebraProcessor();
 		String script[] = (arg == null) ? ggbScript.split("\n") :
@@ -4875,9 +4930,10 @@ public abstract class GeoElement
 		if (success) app.storeUndoInfo();
 	}
 
-	public void runJavaScript(String arg) {
+	public void runJavaScript(String arg,boolean update) {
 		
-		if (!canHaveScript()) return;
+		if ((update && (!updateJavaScript || !canHaveUpdateScript())) || 
+				(!update && (!clickJavaScript || !canHaveClickScript()))) return;
 
 		try {
 		if (app.isApplet() && app.useBrowserForJavaScript()) {
@@ -4889,7 +4945,7 @@ public abstract class GeoElement
 				app.getApplet().callJavaScript("ggb"+getLabel(), args);
 			}
 		} else {
-			app.getScriptManager().evalScript(javaScript, arg);
+			app.getScriptManager().evalScript(update ? updateScript:clickScript, arg);
 		}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -4900,9 +4956,14 @@ public abstract class GeoElement
 	
 	public void runScripts(String arg) {
 		
-		runJavaScript(arg);
+		runScripts(arg,false);
 		
-		runGgbScript(arg);
+	}
+	public void runScripts(String arg,boolean update) {
+		
+		runJavaScript(arg,update);
+		
+		runGgbScript(arg,update);
 		
 	}
 	
@@ -5241,7 +5302,7 @@ public abstract class GeoElement
 	
 	}
 	
-	public boolean canHaveScript() {
+	public boolean canHaveClickScript() {
 		return true;
 	}
 

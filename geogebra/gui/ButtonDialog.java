@@ -180,7 +180,7 @@ public class ButtonDialog extends JDialog
 		
 		// create script panel
 		JLabel scriptLabel = new JLabel(app.getPlain("Script")+":");
-		initString = (button == null || button.getScript().equals("")) ? "A=(3,4)\n" : button.getScript();
+		initString = (button == null || button.getClickScript().equals("")) ? "A=(3,4)\n" : button.getClickScript();
 		InputPanel ip2 = new InputPanel(initString, app, 10, 40, false, false, false);				
 		tfScript = ip2.getTextComponent();
 		if (tfScript instanceof AutoCompleteTextField) {
@@ -263,7 +263,7 @@ public class ButtonDialog extends JDialog
 		if (source == btApply) {				
 			
 			button.setLabel(null);	
-			button.setScript(tfScript.getText());
+			button.setClickScript(tfScript.getText());
 			
 			// set caption text
 			String strCaption = tfCaption.getText().trim();

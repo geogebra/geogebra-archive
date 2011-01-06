@@ -2227,7 +2227,7 @@ public class MyXMLHandler implements DocHandler {
 
 		case 'g':
 			if (eName.equals("ggbscript")) {
-				ok = handleScript(attrs);
+				ok = handleScript(attrs,false);
 				break;
 			}
 
@@ -2245,7 +2245,7 @@ public class MyXMLHandler implements DocHandler {
 
 		case 'j':
 			if (eName.equals("javascript")) {
-				ok = handleJavaScript(attrs);
+				ok = handleScript(attrs,true);
 				break;
 			}
 
@@ -2613,23 +2613,25 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
-	private boolean handleJavaScript(LinkedHashMap<String, String> attrs) {
-		try {
-			geo.setJavaScript((String) attrs.get("val"));
+	private boolean handleScript(LinkedHashMap<String, String> attrs,boolean javaScript) {
+		try {			
+			String clickScript = (String) attrs.get("val");
+			if(clickScript != null && clickScript.length()>0){
+				geo.setClickScript(clickScript);
+				geo.setClickJavaScript(javaScript);
+			}
+			String updateScript = (String) attrs.get("onUpdate");			
+			if(updateScript != null && updateScript.length()>0){
+				geo.setUpdateScript(updateScript);
+				geo.setUpdateJavaScript(javaScript);
+			}
 			return true;
 		} catch (Exception e) {
 			return false;
 		}
 	}
 
-	private boolean handleScript(LinkedHashMap<String, String> attrs) {
-		try {
-			geo.setScript((String) attrs.get("val"));
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
+	
 
 	private boolean handleCondition(LinkedHashMap<String, String> attrs) {
 		try {
@@ -2690,7 +2692,8 @@ public class MyXMLHandler implements DocHandler {
 				bool.setValue(parseBoolean(strVal));
 			} else if (isButton) {
 				GeoButton button = (GeoButton)geo;
-				button.setJavaScript(strVal);
+				button.setClickScript(strVal);
+				button.setClickJavaScript(true);
 			}
 			return true;
 		} catch (Exception e) {
