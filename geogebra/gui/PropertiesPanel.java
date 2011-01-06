@@ -142,7 +142,7 @@ public	class PropertiesPanel extends JPanel {
 		//END
 		
 		private FillingPanel fillingPanel;
-		private CheckBoxInterpoledImage checkBoxInterpoledImage;
+		private CheckBoxInterpolateImage checkBoxInterpolateImage;
 		private TracePanel tracePanel;
 		private AnimatingPanel animatingPanel;
 		private FixPanel fixPanel;
@@ -240,7 +240,7 @@ public	class PropertiesPanel extends JPanel {
 			rightAnglePanel=new RightAnglePanel();
 			//END
 			fillingPanel = new FillingPanel();
-			checkBoxInterpoledImage = new CheckBoxInterpoledImage();
+			checkBoxInterpolateImage = new CheckBoxInterpolateImage();
 			tracePanel = new TracePanel();
 			animatingPanel = new AnimatingPanel();
 			fixPanel = new FixPanel();
@@ -349,7 +349,7 @@ public	class PropertiesPanel extends JPanel {
 			styleTabList.add(lineStylePanelHidden);	
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);
-			styleTabList.add(checkBoxInterpoledImage);
+			styleTabList.add(checkBoxInterpolateImage);
 			styleTabList.add(textFieldSizePanel);
 			styleTab = new TabPanel(styleTabList);
 			tabPanelList.add(styleTab);
@@ -465,7 +465,7 @@ public	class PropertiesPanel extends JPanel {
 			decoAnglePanel.setLabels();
 			rightAnglePanel.setLabels();
 			fillingPanel.setLabels();
-			checkBoxInterpoledImage.setLabels();
+			checkBoxInterpolateImage.setLabels();
 			tracePanel.setLabels();
 			fixPanel.setLabels();
 			checkBoxFixPanel.setLabels();
@@ -1700,22 +1700,22 @@ public	class PropertiesPanel extends JPanel {
 	
 	
 	/**
-	 * panel to say if an image is to be interpoled
+	 * panel to say if an image is to be interpolated
 	 */
-	private class CheckBoxInterpoledImage extends JPanel implements ItemListener, UpdateablePanel {
+	private class CheckBoxInterpolateImage extends JPanel implements ItemListener, UpdateablePanel {
 
 		private static final long serialVersionUID = 1L;
 		private Object[] geos; // currently selected geos
 		private JCheckBox checkbox;
 
-		public CheckBoxInterpoledImage() {
+		public CheckBoxInterpolateImage() {
 			checkbox = new JCheckBox();
 			checkbox.addItemListener(this);			
 			add(checkbox);			
 		}
 		
 		public void setLabels() {
-			checkbox.setText(app.getPlain("Interpoled"));
+			checkbox.setText(app.getPlain("Interpolate"));
 		}
 
 		public JPanel update(Object[] geos) {
@@ -1732,7 +1732,7 @@ public	class PropertiesPanel extends JPanel {
 			for (int i = 1; i < geos.length; i++) {
 				temp = (GeoImage) geos[i];
 				// same object visible value
-				if (geo0.isInterpoled() != temp.isInterpoled()) {
+				if (geo0.isInterpolate() != temp.isInterpolate()) {
 					equalObjectVal = false;
 					break;
 				}								
@@ -1740,7 +1740,7 @@ public	class PropertiesPanel extends JPanel {
 
 			// set object visible checkbox
 			if (equalObjectVal)
-				checkbox.setSelected(geo0.isInterpoled());
+				checkbox.setSelected(geo0.isInterpolate());
 			else
 				checkbox.setSelected(false);
 			
@@ -1767,14 +1767,14 @@ public	class PropertiesPanel extends JPanel {
 			if (source == checkbox) {
 				for (int i = 0; i < geos.length; i++) {
 					GeoImage image = (GeoImage) geos[i];
-					image.setInterpoled(checkbox.isSelected());
+					image.setInterpolate(checkbox.isSelected());
 					image.updateRepaint();
 				}
 			}
 			updateSelection(geos);
 		}
 
-	} // CheckBoxInterpoledImage
+	} // CheckBoxInterpolateImage
 
 
 	/**

@@ -193,7 +193,7 @@ public final class DrawImage extends Drawable {
 		    // improve rendering for sheared and scaled images (translations don't need this)
 		    // turns false if the image doen't want interpolation
 		    needsInterpolationRenderingHint = 
-		    	(geoImage.isInterpoled()) &&
+		    	(geoImage.isInterpolate()) &&
 		    	!(	Kernel.isEqual(at.getScaleX(), 1.0, Kernel.MAX_PRECISION) && 
 		    			Kernel.isEqual(at.getScaleY(), 1.0, Kernel.MAX_PRECISION) &&
 		    			Kernel.isEqual(at.getShearX(), 0.0, Kernel.MAX_PRECISION) &&

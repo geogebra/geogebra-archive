@@ -39,7 +39,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	private int pixelWidth, pixelHeight;
 	private boolean inBackground;
 	private boolean hasAbsoluteLocation;
-	private boolean interpoled=true;
+	private boolean interpolate=true;
 	
 	// for absolute screen location
 	private int screenX, screenY;
@@ -134,7 +134,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		}
 		
 		//interpolation settings
-		interpoled=img.interpoled;
+		interpolate=img.interpolate;
 	}
 	
 	public void setVisualStyle(GeoElement geo) {
@@ -325,18 +325,18 @@ implements Locateable, AbsoluteScreenLocateable,
 
 	/**
 	 * 
-	 * @return true if the image wants to be interpoled
+	 * @return true if the image wants to be interpolated
 	 */
-	final public boolean isInterpoled(){
-		return interpoled;
+	final public boolean isInterpolate(){
+		return interpolate;
 	}
 	
 	/**
-	 * sets if the image want to be interpoled
+	 * sets if the image want to be interpolated
 	 * @param flag
 	 */
-	final public void setInterpoled(boolean flag){
-		interpoled=flag;
+	final public void setInterpolate(boolean flag){
+		interpolate=flag;
 	}
 	
 	public void setWaitForStartPoint() {
@@ -454,9 +454,9 @@ implements Locateable, AbsoluteScreenLocateable,
 		sb.append("\"/>\n");
 		
 		
-		// image has to be interpoled
-		if (!isInterpoled())
-    		sb.append("\t<interpoled val=\"false\"/>\n");
+		// image has to be interpolated
+		if (!isInterpolate())
+    		sb.append("\t<interpolate val=\"false\"/>\n");
 
 		// locateion of image
 		if (hasAbsoluteScreenLocation) {
