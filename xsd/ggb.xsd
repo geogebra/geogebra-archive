@@ -188,6 +188,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<xs:element name="view">
 		<xs:complexType>
 			<xs:attribute name="id" type="positiveInt" use="required"/>
+			<xs:attribute name="toolbar" type="positiveInt"/>
 			<xs:attribute name="visible" type="xs:boolean"/>
 			<xs:attribute name="inframe" type="xs:boolean"/>
 			<xs:attribute name="stylebar" type="xs:boolean"/>
@@ -321,6 +322,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 			<xs:attribute name="unitLabel" type="xs:string"/>
 			<xs:attribute name="tickStyle" type="tickStyles"/>
 			<xs:attribute name="tickDistance" type="xs:double"/>
+			<xs:attribute name="axisCross" type="xs:double"/>
+			<xs:attribute name="positiveAxis" type="xs:boolean"/>
 			<xs:attribute name="showNumbers" type="xs:boolean"/>
 		</xs:complexType>
 	</xs:element>
