@@ -6567,7 +6567,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			int freePointCount = 0;
 			int pointOnPathCount = 0;
 			int segmentCount = 0;
-			int polygonCount = 0;
+			//int polygonCount = 0;
 			int maxIndex = -1;
 
 			// count no of points in top layer
@@ -6656,17 +6656,27 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					return (GeoElement)geos.get(0);
 			}
 			
-			int maxPolygonLayer = 0;
+			//int maxPolygonLayer = 0;
 			// count segments and polygons
 			for (int i = 0 ; i < geos.size() ; i++) {
 				GeoElement geo = (GeoElement)(geos.get(i));
 				
 				if (geo.isGeoSegment()) {
 					segmentCount++;
-					retSegment = geo;
-				} else if (geo.isGeoPolygon()) {
-					polygonCount++;
-					if (geo.getLayer() > maxPolygonLayer) maxPolygonLayer = geo.getLayer();
+					if (retSegment == null) {
+						retSegment = geo;
+					} else {
+						
+						// select Segment with lowest layer (& construction index)
+						if (retSegment.getLayer() < geo.getLayer()||
+						(retSegment.getLayer() == geo.getLayer() && retSegment.getConstructionIndex() > geo.getConstructionIndex())) {
+							retSegment = geo;
+							
+						}
+					}
+				//} else if (geo.isGeoPolygon()) {
+				//	polygonCount++;
+				//	if (geo.getLayer() > maxPolygonLayer) maxPolygonLayer = geo.getLayer();
 				}				
 			}
 			
