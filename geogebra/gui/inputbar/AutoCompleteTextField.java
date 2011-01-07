@@ -592,7 +592,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		// make first letter of word uppercase as every command starts
 		// with an upper case letter
-		curWord.setCharAt(0, Character.toUpperCase(curWord.charAt(0)));
+		//curWord.setCharAt(0, Character.toUpperCase(curWord.charAt(0)));
 
 		// lookup command that starts with current word
 		String cmd = lookup(curWord.toString());  
