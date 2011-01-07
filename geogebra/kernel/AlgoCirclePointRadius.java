@@ -21,6 +21,7 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoQuadricND;
+import geogebra.main.Application;
 
 /**
  *
@@ -78,7 +79,16 @@ public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius {
     }
 
     public int getRelatedModeID() {
-    	return EuclidianConstants.MODE_CIRCLE_POINT_RADIUS;
+    	int ret;
+    	switch (super.getType()){
+    	case AlgoSphereNDPointRadius.TYPE_RADIUS:
+    		ret = EuclidianConstants.MODE_CIRCLE_POINT_RADIUS;
+    		break;
+    	default:
+    		ret = EuclidianConstants.MODE_COMPASSES;
+    		break;
+    	}
+    	return ret;
     }
         
     public GeoConic getCircle() {

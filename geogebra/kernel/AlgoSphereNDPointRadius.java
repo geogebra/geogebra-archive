@@ -148,5 +148,7 @@ public abstract class AlgoSphereNDPointRadius extends AlgoElement {
         }
     }
     
-
+    protected int getType(){
+    	return this.type;
+    }
 }
