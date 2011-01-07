@@ -6671,9 +6671,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			
 			// check for edge of polygon being selected (priority over polygon itself)
-			if (segmentCount == 1 && (segmentCount + polygonCount == geos.size())) {
-				if (retSegment.getLayer() >= maxPolygonLayer) return retSegment;
-			}
+			//if (segmentCount == 1 && (segmentCount + polygonCount == geos.size())) {
+			//	if (retSegment.getLayer() >= maxPolygonLayer) return retSegment;
+			//}
+			
+			// give segments priority over eg Polygons, Lines
+			// that they might be drawn on top of
+			if (segmentCount > 0) return retSegment;
 			
 			// don't want a popup in this case
 			// eg multiple fixed images from Pen Tool
