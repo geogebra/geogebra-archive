@@ -5432,6 +5432,8 @@ public abstract class GeoElement
 								latexTmp.append("\\}");
 							}
 							break;
+						default:
+							latexTmp.append("\\"+character);
 						}
 						break;
 					default:

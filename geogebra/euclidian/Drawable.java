@@ -665,6 +665,8 @@ public abstract class Drawable extends DrawableND {
 								latexTmp.append("\\}");
 							}
 							break;
+						default:
+							latexTmp.append("\\"+character);
 						}
 						break;
 					default:
