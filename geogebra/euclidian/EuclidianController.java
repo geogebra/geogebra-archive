@@ -919,8 +919,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_COMPASSES:		// Michael Borcherds 2008-03-13	
 			//hits = view.getHits(mouseLoc);
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
-			createNewPoint(hits, false, true, true);
+			hits = view.getHits();
+			hits.removePolygons();
+			if (hits.isEmpty()) 
+				createNewPoint(hits, false, true, true);
 			break;		
 
 		case EuclidianView.MODE_ANGLE:
