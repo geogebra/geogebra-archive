@@ -263,6 +263,8 @@ public class GeoGebraIcon {
 	
 	public static ImageIcon createSymbolTableIcon(Font font, boolean isRollOver){
 
+		
+
 		Color bgColor = MyTable.BACKGROUND_COLOR_HEADER;
 		font = font.deriveFont(Font.BOLD);
 		ImageIcon icon;
@@ -292,6 +294,48 @@ public class GeoGebraIcon {
 		ImageIcon ic = new ImageIcon(image);
 		return ic;
 	
+		/*
+		
+		
+		Color bgColor = null;     //MyTable.BACKGROUND_COLOR_HEADER;
+		font = font.deriveFont(Font.BOLD);
+		ImageIcon icon;
+		if(isRollOver)
+			icon = new ImageIcon(TeXFormula.createBufferedImage("\\mathbf{\u03B1}", TeXConstants.STYLE_DISPLAY, 
+				13, Color.WHITE, bgColor));
+		else
+			icon = new ImageIcon(TeXFormula.createBufferedImage("\\mathbf{\u03B1}", TeXConstants.STYLE_DISPLAY, 
+					13, Color.DARK_GRAY, bgColor));
+			
+		BufferedImage alphaImage = (BufferedImage) icon.getImage();
+		
+		
+		int w = alphaImage.getWidth() + 1;
+		int h = alphaImage.getHeight() + 1;
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = image.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		if(isRollOver){
+		g2.setColor(Color.GRAY);
+		g2.fillOval(0, 0, w-1, h-1);
+		}else{
+			g2.setColor(Color.GRAY);
+			//g2.drawOval(0, 0, w-1, h-1);
+		}
+		
+		g2.drawImage(alphaImage, null, 0, 0);
+		
+		
+		g2.setColor(Color.GRAY);
+		g2.drawRect(0, 0, w-2, h-2);
+		g2.setColor(Color.LIGHT_GRAY);
+		g2.drawLine(w-1,1, w-1, h-1);
+		g2.drawLine(1,h-1, w-1, h-1);
+		
+		ImageIcon ic = new ImageIcon(image);
+		return ic;
+	*/
 		
 	}
 	
@@ -302,15 +346,38 @@ public class GeoGebraIcon {
 	/**
 	 * Creates an icon for a popup list ---  two triangles pointing up and down 
 	 */
-	public static ImageIcon createUpDownTriangleIcon(int height){
+	public static ImageIcon createUpDownTriangleIcon(boolean isRollOver, boolean isEnabled){
 
-		BufferedImage image = new BufferedImage(6, height, BufferedImage.TYPE_INT_ARGB);
+		int h = 18;
+		int w = 12;
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g2 = image.createGraphics();
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		g2.setColor(Color.DARK_GRAY);
-		int midx = image.getWidth()/2;
-		int midy = image.getHeight()/2;
+		if(!isEnabled) {
+			
+			ImageIcon ic = new ImageIcon(image);
+			return ic;
+		}
+		if(isRollOver){
+			g2.setColor(Color.LIGHT_GRAY);
+			g2.fillRect(0, 0, w-1, h-1);
+		}
+		
+		g2.setColor(Color.GRAY);
+	//	g2.drawRect(0, 0, w-1, h-1);
+		
+	//	g2.setColor(Color.LIGHT_GRAY);
+	//	g2.drawLine(w-1,1, w-1, h-1);
+	//	g2.drawLine(1,h-1, w-1, h-1);
+		
+		if(isRollOver)
+			g2.setColor(Color.BLACK);
+		else
+			g2.setColor(Color.DARK_GRAY);
+		
+		int midx = w/2;
+		int midy = h/2;
 
 		Polygon p = new Polygon();
 		// make a triangle.
