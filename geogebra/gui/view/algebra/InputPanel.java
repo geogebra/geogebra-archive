@@ -97,8 +97,7 @@ ActionListener, ListSelectionListener {
 	}		
 
 
-	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon,
-			boolean showSymbolButtons, boolean showDisplayChars) {
+	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon) {
 		this(initText, app, rows, columns, showSymbolPopupIcon, false, null);
 	}
 	
@@ -149,11 +148,15 @@ ActionListener, ListSelectionListener {
 			// put the textfield and history button together in a panel
 			// and adjust the borders to make the button appear to be 
 			// inside the field
-			tfPanel = new JPanel(new BorderLayout(5,5));
+			tfPanel = new JPanel(new BorderLayout(0,0));
+			
 			tfPanel.add(textComponent, BorderLayout.CENTER);
 			if(textComponent instanceof AutoCompleteTextField) {
 				createHistoryPopupGUI();
-				tfPanel.add(historyButton,BorderLayout.EAST);
+				JPanel hp = new JPanel(new BorderLayout(0,0));
+				hp.add(historyButton, BorderLayout.WEST);
+				//hp.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				tfPanel.add(hp,BorderLayout.EAST);
 			}
 			
 			//textComponent.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
@@ -161,7 +164,7 @@ ActionListener, ListSelectionListener {
 			//tfPanel.setBackground(Color.white);
 			
 			// create the symbol button panel
-			JPanel buttonPanel = new JPanel(new BorderLayout(5,0));
+			JPanel buttonPanel = new JPanel(new BorderLayout(0,0));
 			buttonPanel.add(createPopupButton(),BorderLayout.EAST);
 			
 			// put these sub-panels together to create the input panel
@@ -289,15 +292,17 @@ ActionListener, ListSelectionListener {
 			
 		// hide/show button
 		historyButton = new JButton();	
-		historyButton.setIcon(GeoGebraIcon.createUpDownTriangleIcon(12));
+		historyButton.setIcon(GeoGebraIcon.createUpDownTriangleIcon(false, false));
+		historyButton.setRolloverIcon(GeoGebraIcon.createUpDownTriangleIcon(true, false));
 		historyButton.setPreferredSize(new Dimension(16,14));
 		historyButton.setBorderPainted(false);	
 		historyButton.setContentAreaFilled(false);
 		historyButton.setFocusable(false);
-		historyButton.setVisible(false);
 		historyButton.setSelected(false);
 		historyButton.setOpaque(false);
 		historyButton.setEnabled(false);
+		historyButton.setVisible(false);
+		
 		
 		// add mouse listener to show/hide the popup
 		historyButton.addMouseListener(new MouseAdapter() {
@@ -326,7 +331,8 @@ ActionListener, ListSelectionListener {
 				historyList.setFont(app.getPlainFont());
 				
 				// adjust the popup size and location to fit over the input field
-				historyPopup.setPopupSize(new Dimension(tfPanel.getWidth()-1, historyList.getPreferredScrollableViewportSize().height)  );
+				historyPopup.setPopupSize(new Dimension(tfPanel.getWidth()-historyButton.getPreferredSize().width, 
+						historyList.getPreferredScrollableViewportSize().height)  );
 				historyPopup.show(textComponent, 0,-historyPopup.getPreferredSize().height-1 );
 				historyButton.setSelected(true);
 
@@ -359,8 +365,11 @@ ActionListener, ListSelectionListener {
 	public void updateHistoryPopup(String str){
 		if(str == "" || str == null) return;
 		historyListModel.addElement(str);
-		if(!historyButton.isEnabled())
+		if(!historyButton.isEnabled()){
 			historyButton.setEnabled(true);
+			historyButton.setIcon(GeoGebraIcon.createUpDownTriangleIcon(false, true));
+			historyButton.setRolloverIcon(GeoGebraIcon.createUpDownTriangleIcon(true, true));
+		}
 		
 	}
 	
