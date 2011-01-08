@@ -366,7 +366,7 @@ public class WorksheetExportDialog extends JDialog {
 		// text areas
 		JPanel centerPanel = new JPanel(new BorderLayout(5, 5));
 		JLabel label = new JLabel(app.getPlain("TextBeforeConstruction") + ":");
-		textAbove = new InputPanel(null, app, 5, 40, true, true, false);				
+		textAbove = new InputPanel(null, app, 5, 40, true);				
 		//JScrollPane scrollPane = new JScrollPane(textAbove);
 
 		JPanel p = new JPanel(new BorderLayout());
@@ -375,7 +375,7 @@ public class WorksheetExportDialog extends JDialog {
 		centerPanel.add(p, BorderLayout.NORTH);
 
 		label = new JLabel(app.getPlain("TextAfterConstruction") + ":");
-		textBelow = new InputPanel(null, app, 8, 40, true, true, false);	
+		textBelow = new InputPanel(null, app, 8, 40, true);	
 		//scrollPane = new JScrollPane(textBelow);
 		p = new JPanel(new BorderLayout());
 		p.add(label, BorderLayout.NORTH);

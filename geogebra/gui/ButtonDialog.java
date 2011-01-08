@@ -103,7 +103,7 @@ public class ButtonDialog extends JDialog
 		// create caption panel
 		JLabel captionLabel = new JLabel(app.getMenu("Button.Caption")+":");
 		String initString = button == null ? "" : button.getCaption();
-		InputPanel ip = new InputPanel(initString, app, 1, 15, true, true, false);				
+		InputPanel ip = new InputPanel(initString, app, 1, 15, true);				
 		tfCaption = ip.getTextComponent();
 		if (tfCaption instanceof AutoCompleteTextField) {
 			AutoCompleteTextField atf = (AutoCompleteTextField) tfCaption;
@@ -181,7 +181,7 @@ public class ButtonDialog extends JDialog
 		// create script panel
 		JLabel scriptLabel = new JLabel(app.getPlain("Script")+":");
 		initString = (button == null || button.getClickScript().equals("")) ? "A=(3,4)\n" : button.getClickScript();
-		InputPanel ip2 = new InputPanel(initString, app, 10, 40, false, false, false);				
+		InputPanel ip2 = new InputPanel(initString, app, 10, 40, false);				
 		tfScript = ip2.getTextComponent();
 		if (tfScript instanceof AutoCompleteTextField) {
 			AutoCompleteTextField atf = (AutoCompleteTextField) tfScript;

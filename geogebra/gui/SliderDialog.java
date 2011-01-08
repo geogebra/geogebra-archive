@@ -116,7 +116,7 @@ public class SliderDialog extends JDialog
 		radioPanel.add(rbInteger);			
 		
 		// label textfield
-		tfLabel = new InputPanel(number.getDefaultLabel(), app, 1, 10, false, true, false);				
+		tfLabel = new InputPanel(number.getDefaultLabel(), app, 1, 10, true);				
 		tfLabel.getTextComponent().addKeyListener(this);				
 		Border border =
 			BorderFactory.createCompoundBorder(

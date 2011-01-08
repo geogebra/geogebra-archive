@@ -29,6 +29,8 @@ import geogebra.main.MyError;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -117,8 +119,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		this.setResizable(true);
 		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
 		
+		// add key listener to the editor
+		inputPanel.getTextComponent().addKeyListener(new MyKeyListener());
 		
 		// build toolbar
+		
+		JPanel toolPanel = new JPanel(new BorderLayout());
+		
 		toolBar = new JToolBar();
 		toolBar.add(cbLaTeX);
 		toolBar.add(btInsertLaTeX);
@@ -131,7 +138,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		toolBar.add(Box.createRigidArea(new Dimension(5,1)));
 		toolBar.add(btInsertGeo);
 		toolBar.setFloatable(false);
-		
+		JToolBar tb = new JToolBar();
+		tb.add(new JButton("dummy"));
+		tb.setFloatable(false);
+		toolPanel.add(toolBar, BorderLayout.NORTH);
+		toolPanel.add(tb,BorderLayout.SOUTH);
 		
 		// create edit panel to contain both the input panel and toolbar
 		editHeader = new JLabel();
@@ -139,7 +150,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		editPanel = new JPanel(new BorderLayout(2,2));
 		editPanel.add(editHeader, BorderLayout.NORTH);
 		editPanel.add(inputPanel, BorderLayout.CENTER);
-		editPanel.add(toolBar, BorderLayout.SOUTH);		
+		editPanel.add(toolPanel, BorderLayout.SOUTH);		
 		editPanel.setBorder(BorderFactory.createEtchedBorder());
 		
 		
@@ -208,8 +219,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.operators,-1,8));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.greekUpperCaseFull,-1,8));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.analysis,-1,8));
-		
-		
+			
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.sets,-1,8));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.logical,-1,8));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.sub_superscripts,-1,10));
@@ -729,7 +739,14 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		super.setVisible(isVisible);
 	}
 	
-	
+	private class MyKeyListener extends KeyAdapter{
+		public void keyPressed(KeyEvent e){
+			if((e.isControlDown()||Application.isControlDown(e)) && e.getKeyCode() == KeyEvent.VK_SPACE){
+				if(isLaTeX)
+					inputPanel.insertString("\\:");
+			}
+		}
+	}
 	
 	
 	

@@ -93,10 +93,15 @@ public class InputDialog extends JDialog implements ActionListener,
 		this.initString = initString;	
 		this.checkBox=checkBox;
 
-		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, false, true, selectInitText, false, geo!=null, geo!=null);
-		optionPane.add(inputPanel, BorderLayout.CENTER);		
-		centerOnScreen();
+		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, true, true, selectInitText, false, geo!=null, geo!=null);
 		
+		// wrap inputPanel in a BorderLayout.NORTH component so keeps a single row height when resizing the dialog
+		JPanel p = new JPanel(new BorderLayout());
+		p.add(inputPanel, BorderLayout.NORTH);
+		
+		optionPane.add(p, BorderLayout.CENTER);		
+		centerOnScreen();
+		this.setResizable(true);
 		if (initString != null && selectInitText)
 			inputPanel.selectText();
 		else
@@ -123,7 +128,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		setResizable(false);		
 		
 		//Create components to be displayed
-		inputPanel = new InputPanel(initString, app, rows, columns, specialChars, greekLetters, showDisplayChars );	
+		inputPanel = new InputPanel(initString, app, rows, columns, greekLetters);	
 				
 		sl = new GeoElementSelectionListener() {
 			public void geoElementSelected(GeoElement geo, boolean addToSelection) {

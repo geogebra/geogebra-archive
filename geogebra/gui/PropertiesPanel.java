@@ -5789,10 +5789,10 @@ class ColorFunctionPanel
 		this.propPanel = propPanel;
 		
 		// non auto complete input panel
-		InputPanel inputPanelR = new InputPanel(null, app, 1, 20, true, false, false);
-		InputPanel inputPanelG = new InputPanel(null, app, 1, 20, true, false, false);
-		InputPanel inputPanelB = new InputPanel(null, app, 1, 20, true, false, false);
-		InputPanel inputPanelA = new InputPanel(null, app, 1, 20, true, false, false);
+		InputPanel inputPanelR = new InputPanel(null, app, 1, 20, true);
+		InputPanel inputPanelG = new InputPanel(null, app, 1, 20, true);
+		InputPanel inputPanelB = new InputPanel(null, app, 1, 20, true);
+		InputPanel inputPanelA = new InputPanel(null, app, 1, 20, true);
 		tfRed = (AutoCompleteTextField) inputPanelR.getTextComponent();				
 		tfGreen = (AutoCompleteTextField) inputPanelG.getTextComponent();				
 		tfBlue = (AutoCompleteTextField) inputPanelB.getTextComponent();				
@@ -6239,7 +6239,7 @@ class NamePanel
 		nameInputHandler = new RenameInputHandler(app, null, false);
 		
 		// non auto complete input panel
-		inputPanelName = new InputPanel(null, app, 1, 10, true, true, false);
+		inputPanelName = new InputPanel(null, app, 1, 10, true);
 		tfName = (AutoCompleteTextField) inputPanelName.getTextComponent();				
 		tfName.setAutoComplete(false);		
 		tfName.addActionListener(this);
@@ -6251,14 +6251,14 @@ class NamePanel
 //		 Michael Borcherds 2007-12-31 END
 	
 		// definition field: non auto complete input panel
-		inputPanelDef = new InputPanel(null, app, 1, 20, true, true, false);
+		inputPanelDef = new InputPanel(null, app, 1, 20, true);
 		tfDefinition = (AutoCompleteTextField) inputPanelDef.getTextComponent();
 		tfDefinition.setAutoComplete(false);		
 		tfDefinition.addActionListener(this);
 		tfDefinition.addFocusListener(this);
 
 		// caption field: non auto complete input panel
-		inputPanelCap = new InputPanel(null, app, 1, 20, true, true, false);
+		inputPanelCap = new InputPanel(null, app, 1, 20, true);
 		tfCaption = (AutoCompleteTextField) inputPanelCap.getTextComponent();
 		tfCaption.setAutoComplete(false);		
 		tfCaption.addActionListener(this);

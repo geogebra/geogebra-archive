@@ -123,7 +123,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 		// create caption panel
 		JLabel captionLabel = new JLabel(app.getMenu("Button.Caption")+":");
 		String initString = geoBoolean == null ? "" : geoBoolean.getCaption();
-		InputPanel ip = new InputPanel(initString, app, 1, 15, true, true, false);				
+		InputPanel ip = new InputPanel(initString, app, 1, 15, true);				
 		tfCaption = ip.getTextComponent();
 		if (tfCaption instanceof AutoCompleteTextField) {
 			AutoCompleteTextField atf = (AutoCompleteTextField) tfCaption;
