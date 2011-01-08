@@ -4689,11 +4689,11 @@ public abstract class GeoElement
 		}
 		// matrices
 		else if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && ((GeoList)this).isMatrix()) {
-			ret = matrixToLatex(toLaTeXString(substituteNumbers));
+			ret = matrixToLatex(toLaTeXString(!substituteNumbers));
 		}
 		// vectors
 		else if (this.isGeoVector() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
-			ret = toLaTeXString(substituteNumbers);
+			ret = toLaTeXString(!substituteNumbers);
 		}
 		else 
 		{
