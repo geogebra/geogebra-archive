@@ -4902,8 +4902,7 @@ public abstract class GeoElement
 	}
 	
 	private void runGgbScript(String arg,boolean update) {
-		if ((update && (updateJavaScript || !canHaveUpdateScript())) || 
-				(!update && (clickJavaScript || !canHaveClickScript()))) return;
+		
 		String ggbScript = update ? updateScript : clickScript;
 		
 		AlgebraProcessor ab = kernel.getAlgebraProcessor();
@@ -4918,53 +4917,63 @@ public abstract class GeoElement
 
 				if (!command.equals("") && command.charAt(0) != '#') {
 					System.out.println(script[i]);
-					ab.processAlgebraCommandNoExceptionHandling(command, false);
+					ab.processAlgebraCommandNoExceptionHandling(command, false,false,true);
 					success = true;
 				}
 			}
-		} catch (Exception e) {
+			//there have been no errors
+			if(update)app.setBlockUpdateScripts(false);
+		} catch (Throwable e) {
 			app.showError(app.getPlain("ErrorInScriptAtLineA",(i+1)+"")+"\n"+e);
 			success = false;
+			if(update)app.setBlockUpdateScripts(true);
 		}
-		
-		if (success) app.storeUndoInfo();
+		//storing undo info is expensive, so we don't want to do it on update
+		if (success && !update) app.storeUndoInfo();
 	}
 
-	public void runJavaScript(String arg,boolean update) {
-		
-		if ((update && (!updateJavaScript || !canHaveUpdateScript())) || 
-				(!update && (!clickJavaScript || !canHaveClickScript()))) return;
-
-		try {
-		if (app.isApplet() && app.useBrowserForJavaScript()) {
-			if (arg == null) {
-				Object [] args = { };
-				app.getApplet().callJavaScript("ggb"+getLabel(), args);				
+	private void runJavaScript(String arg,boolean update) {
+		//Possible TODO: make executing update scripts also possible via browser		
+		try {			
+			if (app.isApplet() && app.useBrowserForJavaScript() && !update) {
+				if (arg == null) {
+					Object [] args = { };
+					app.getApplet().callJavaScript("ggb"+getLabel(), args);				
+				} else {
+					Object [] args = { arg };
+					app.getApplet().callJavaScript("ggb"+getLabel(), args);
+				}
 			} else {
-				Object [] args = { arg };
-				app.getApplet().callJavaScript("ggb"+getLabel(), args);
+				app.getScriptManager().evalScript(update ? updateScript:clickScript, arg);		
 			}
-		} else {
-			app.getScriptManager().evalScript(update ? updateScript:clickScript, arg);
-		}
+			//there have been no errors
+			if(update)app.setBlockUpdateScripts(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			app.showError(app.getPlain("ErrorInJavaScript")+"\n"+e);
-
+			if(update) app.setBlockUpdateScripts(true);
 		}
 	}
 	
+	
 	public void runScripts(String arg) {
-		
-		runScripts(arg,false);
-		
+		if(!canHaveClickScript()||clickScript.length()==0)
+			return;
+		if(clickJavaScript)
+			runJavaScript(arg,false);
+		else
+			runGgbScript(arg,false);	
 	}
-	public void runScripts(String arg,boolean update) {
-		
-		runJavaScript(arg,update);
-		
-		runGgbScript(arg,update);
-		
+	
+	
+	public void runUpdateScripts() {
+		if(!canHaveUpdateScript() || updateScript.length()==0 || app.isBlockUpdateScripts())
+			return;		
+		app.setBlockUpdateScripts(true);
+		if(updateJavaScript)
+			runJavaScript(null,true);
+		else
+			runGgbScript(null,true);		
 	}
 	
 	boolean showTrimmedIntersectionLines = false;

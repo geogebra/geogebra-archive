@@ -246,6 +246,7 @@ AbsoluteScreenLocateable {
 			sb.append(checkboxFixed);
 			sb.append("\"/>\n");	
 		}
+		getScriptTags(sb);
 
 	}	
 

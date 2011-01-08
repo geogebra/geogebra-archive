@@ -4768,6 +4768,27 @@ public class Application implements KeyEventDispatcher {
 		return useBrowserForJavaScript;
 	}
 
+
+	/**
+	 * @return the blockUpdateScripts
+	 */
+	public boolean isBlockUpdateScripts() {
+		return blockUpdateScripts;
+	}
+
+
+	/**
+	 * @param blockUpdateScripts the blockUpdateScripts to set
+	 */
+	public void setBlockUpdateScripts(boolean blockUpdateScripts) {
+		this.blockUpdateScripts = blockUpdateScripts;
+	}
+
+
+
+
+	private boolean blockUpdateScripts=false;
+
 	
 		
 }

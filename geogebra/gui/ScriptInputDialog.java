@@ -204,12 +204,13 @@ public class ScriptInputDialog extends InputDialog {
             	if (updateScript){            		
             		getGeo().setUpdateScript(inputValue);
             		getGeo().setUpdateJavaScript(javaScript);
+            		//let's suppose fixing this script removed the reason why scripts were blocked
+                    app.setBlockUpdateScripts(false);	
             	}
             	else{
             		getGeo().setClickScript(inputValue);
             		getGeo().setClickJavaScript(javaScript);
-            	}
-            	
+            	}            
             	return true;
     }
 

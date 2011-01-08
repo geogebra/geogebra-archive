@@ -501,7 +501,7 @@ public class ScriptManager {
 		 * @see registerUpdateListener()
 		 */
 		public synchronized void update(GeoElement geo) {			
-			geo.runScripts(null, true);
+			geo.runUpdateScripts();
 			if (!listenersEnabled) return;
 			// update listeners
 			if (updateListeners != null && geo.isLabelSet()) {
