@@ -157,7 +157,7 @@ public class Layout {
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "3", 300);
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "3,1", 300);
 		
-		defaultPerspectives[4] = new Perspective("Primary", spInfo, dpInfo, "0 | 40 | 1 | | 29 15 | 2 | 10 | 3 | 4 | 5 | 16 | 51 | 17 | 36 | 30 | 32 ", true, false, false, false, false, false);
+		defaultPerspectives[4] = new Perspective("Primary", spInfo, dpInfo, "0 | 40 | 1 | 29 | 15 | 2 | 10 | 3 | 4 | 5 | 16 | 51 | 17 | 36 | 30 | 32 ", true, false, false, false, false, false);
 	}
 	
 	/**
