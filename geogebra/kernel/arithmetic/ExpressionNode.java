@@ -2339,7 +2339,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		case LOG:
 			switch (STRING_TYPE) {
 			case STRING_TYPE_LATEX:
-				sb.append("\\log \\left( ");
+				sb.append("\\ln \\left( ");
 				break;
 
 			case STRING_TYPE_MATH_PIPER:
