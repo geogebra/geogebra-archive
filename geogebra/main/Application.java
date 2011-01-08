@@ -28,13 +28,12 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.InputBarHelpPanel;
-import geogebra.gui.layout.Layout;
-
 import geogebra.gui.util.ImageSelection;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.ConstructionDefaults;
+import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
@@ -72,8 +71,6 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -124,7 +121,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 
@@ -1051,7 +1047,8 @@ public class Application implements KeyEventDispatcher {
 				GlobalKeyDispatcher.changeFontsAndGeoElements(this, 20, false);
 				setLabelingStyle(ConstructionDefaults.LABEL_VISIBLE_ALWAYS_OFF);
 				getEuclidianView().setCapturingThreshold(10);
-				
+				GeoAngle defaultAngle = (GeoAngle)getKernel().getConstruction().getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_ANGLE);
+				defaultAngle.setAllowReflexAngle(false);
 			}
 		}
 		
