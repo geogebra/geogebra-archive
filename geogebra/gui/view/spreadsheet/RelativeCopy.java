@@ -566,7 +566,7 @@ public class RelativeCopy {
 				// by providing the new cell name in the beginning
 				text = name + " = " + text;		
 				newValues = kernel.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptionHandling(text, false);
+					.processAlgebraCommandNoExceptions(text, false);
 			}
 			
 			// check if name was auto-created: if yes we could have a circular definition
@@ -610,7 +610,7 @@ public class RelativeCopy {
 			// create text if something went wrong
 			text = "\"" + text + "\"";
 			newValues = kernel.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptionHandling(text, false);
+					.processAlgebraCommandNoExceptions(text, false);
 			newValues[0].setLabel(name);
 			newValues[0].setEuclidianVisible(false);
 			newValues[0].update();

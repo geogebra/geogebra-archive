@@ -78,7 +78,7 @@ public class StatGeo   {
 				cons.setSuppressLabelCreation(true);
 			//Application.debug(text);
 			GeoElement[] geos = kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptionHandling(text, false);	
+			.processAlgebraCommandNoExceptions(text, false);	
 
 			if(label != null)
 				geos[0].setLabel(label);

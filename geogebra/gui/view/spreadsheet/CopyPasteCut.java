@@ -649,7 +649,7 @@ public class CopyPasteCut {
 				GeoElement v2 = values[i][1];
 				if (v1 != null && v2 != null && v1.isGeoNumeric() && v2.isGeoNumeric()) {	   	 			
 					String text = "(" + v1.getLabel() + "," + v2.getLabel() + ")";
-					GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+					GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
 
 					// set label P_1, P_2, etc.
 					String pointName = geos[0].getIndexLabel("P");
@@ -670,7 +670,7 @@ public class CopyPasteCut {
 			}
 			text += "}";
 
-			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
 
 			// set list name
 			String listName = geos[0].getIndexLabel("L");
@@ -705,7 +705,7 @@ public class CopyPasteCut {
 				if (i != points.length - 1) text += ",";
 			}
 			text += "}";
-			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+			GeoElement [] geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
 
 			// set list name
 			String listName = geos[0].getIndexLabel("L");

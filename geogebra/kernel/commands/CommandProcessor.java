@@ -6716,7 +6716,7 @@ class CmdStemPlot extends CommandProcessor {
 					 return ret;
 				 }
 				 
-					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(command, true);
+					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(command, true);
 
 					ret[0].setVisualStyle(arg[0]);
 			 

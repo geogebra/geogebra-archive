@@ -187,7 +187,7 @@ public class AlgebraProcessor {
 	public GeoElement[] processAlgebraCommand(String cmd, boolean storeUndo) {
 		
 		try {
-			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo);
+			return processAlgebraCommandNoExceptions(cmd, storeUndo);
 		} catch (Exception e) {
 			e.printStackTrace();
 			app.showError(e.getMessage());
@@ -197,7 +197,7 @@ public class AlgebraProcessor {
 	
 	// G.Sturr 2010-7-5
 	// normal usage ... default to show error dialog
-	public GeoElement[] processAlgebraCommandNoExceptionHandling(String cmd,
+	public GeoElement[] processAlgebraCommandNoExceptions(String cmd,
 			boolean storeUndo) {
 
 		try {

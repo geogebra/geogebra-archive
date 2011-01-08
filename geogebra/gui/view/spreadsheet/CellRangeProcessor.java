@@ -204,7 +204,7 @@ public class CellRangeProcessor {
 			
 			// convert the text to a GeoList
 			geos = table.kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptionHandling(list.toString(), false);
+			.processAlgebraCommandNoExceptions(list.toString(), false);
 			
 			if(doStoreUndo)
 				app.storeUndoInfo();
@@ -249,7 +249,7 @@ public class CellRangeProcessor {
 				// create a GeoPoint from text	
 				if(!byValue){
 					GeoElement[] geos = table.kernel.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptionHandling(pointString,false);
+					.processAlgebraCommandNoExceptions(pointString,false);
 
 					pointName = geos[0].getIndexLabel("P");
 					geos[0].setLabel(pointName);
@@ -425,7 +425,7 @@ public class CellRangeProcessor {
 			//System.out.println(listString);
 			// convert list string to geo
 			geos = table.kernel.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptionHandling(listString.toString(), false);
+					.processAlgebraCommandNoExceptions(listString.toString(), false);
 
 			// get geo name and set label
 		//	String listName = geos[0].getIndexLabel("L");
@@ -487,7 +487,7 @@ public class CellRangeProcessor {
 			text = removeComma(text)+ "}";
 
 			//Application.debug(text);
-			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text, false);
+			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text, false);
 			// set matrix label
 			// no longer needed
 			//String matrixName = geos[0].getIndexLabel("matrix");
@@ -536,7 +536,7 @@ public class CellRangeProcessor {
 			text.append("},\"|_\"]");
 
 			//Application.debug(text);
-			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(text.toString(), false);
+			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(text.toString(), false);
 
 			app.storeUndoInfo();
 		} 
@@ -732,7 +732,7 @@ public class CellRangeProcessor {
 				text += ")";
 				
 				geos = table.kernel.getAlgebraProcessor()
-				.processAlgebraCommandNoExceptionHandling(text,false);
+				.processAlgebraCommandNoExceptions(text,false);
 
 				//geos[0].setLabel(GeoElement.getSpreadsheetCellName(c, r));
 				geos[0].setAuxiliaryObject(true);
