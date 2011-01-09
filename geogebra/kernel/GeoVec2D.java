@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.main.Application;
+import geogebra3D.kernel3D.Geo3DVec;
 
 import java.util.HashSet;
 
@@ -556,7 +557,15 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
 
     final public static void inner(GeoVec2D a, GeoVec2D b, double c) {
         c = a.x * b.x + a.y * b.y;        
-    }       
+    }   
+
+    /*
+     * see also GeoVec3D.vectorProduct()
+     */
+    final public static void vectorProduct(GeoVec2D a, GeoVec2D b, MyDouble c) {
+        c.set(a.x * b.y - a.y * b.x);        
+    }           
+    
     
     final public static void inner(GeoVec2D a, GeoVec2D b, MyDouble c) {
         c.set(a.x * b.x + a.y * b.y);        

@@ -728,9 +728,16 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             }
             
         case VECTORPRODUCT:
-        	// TODO implement vector product (2d & 3d)
-                String [] str2 = { "IllegalMultiplication", lt.toString(), strVECTORPRODUCT, rt.toString() };
+        if (lt.isVectorValue() && rt.isVectorValue()) { 
+            vec = ((VectorValue)lt).getVector();
+            vec2 = ((VectorValue)rt).getVector();
+            num = new MyDouble(kernel);
+            GeoVec2D.vectorProduct(vec, vec2, num);                
+	        return num;   
+        } else {
+               String [] str2 = { "IllegalMultiplication", lt.toString(), strVECTORPRODUCT, rt.toString() };
                 throw new MyError(app, str2);
+        }
             
                                                
         case POWER:
