@@ -284,6 +284,7 @@ public class Application implements KeyEventDispatcher {
 	private static final String RB_COMMAND = "/geogebra/properties/command";
 	private static final String RB_ERROR = "/geogebra/properties/error";
 	private static final String RB_PLAIN = "/geogebra/properties/plain";
+	private static final String RB_WIKI = "/geogebra/properties/wiki";
 	private static final String RB_SYMBOL = "/geogebra/properties/symbols";
 	public static final String RB_JAVA_UI = "/geogebra/properties/javaui";
 	public static final String RB_COLORS = "/geogebra/properties/colors";
@@ -333,8 +334,8 @@ public class Application implements KeyEventDispatcher {
 	private GlobalKeyDispatcher globalKeyDispatcher;
 
 	// For language specific settings
-	private Locale currentLocale, englishLocale = null;
-	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld, rberror, rbcolors, rbplain, rbsymbol, rbsettings;
+	private Locale currentLocale, fallbackLocale = null;
+	private ResourceBundle rbmenu, rbcommand, rbcommandFallback, rbcommandOld, rberror, rbcolors, rbplain, rbplainFallback, rbsymbol, rbsettings,rbwiki;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -1796,6 +1797,11 @@ public class Application implements KeyEventDispatcher {
 		// so we take English
 		return Locale.ENGLISH;
 	}
+	
+	private static Locale getClosestWikiLocale(Locale locale) {
+		//TODO: change this once new wikis are available
+		return Locale.ENGLISH;
+	}
 
 	public ResourceBundle initAlgo2CommandBundle() {
 		return MyResourceBundle.loadSingleBundleFile(RB_ALGO2COMMAND);
@@ -1961,6 +1967,29 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
+	final public String getWiki(String key) {
+		if (rbwiki == null) {
+			initWikiResourceBundle();
+		}
+
+		try {
+			return rbwiki.getString(key);
+		} catch (Exception e) {
+			return key;
+		}
+	}
+	
+	final public String getWikiLocaleString(){
+		return getFallbackLocale().toString();
+	}
+	
+	final public String getWiki(String patternKey,String subst) {
+		String pattern = getWiki(patternKey);		
+		return pattern.replace("%0",subst);
+	}
+	
+
+	
 	final public String getPlain(String key) {
 		if (rbplain == null) {
 			initPlainResourceBundle();
@@ -2011,6 +2040,17 @@ public class Application implements KeyEventDispatcher {
 		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
 		if (rbplain != null)
 			kernel.updateLocalAxesNames();
+	}
+	
+	private Locale getFallbackLocale(){
+		if(fallbackLocale==null)
+			fallbackLocale = getClosestWikiLocale(currentLocale);
+		return fallbackLocale;
+	}
+	private void initWikiResourceBundle() {
+			
+		rbwiki = MyResourceBundle.createBundle(RB_WIKI, getFallbackLocale());		
+		debug(rbwiki.getLocale());
 	}
 
 	private void initSymbolResourceBundle() {
@@ -2136,17 +2176,27 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
-	final public String getEnglishCommand(String key) {
+	final public String getFallbackCommand(String key) {
 		
-		if (englishLocale == null) englishLocale = new Locale("en");
-		
-		if (rbcommandEnglish == null) 
-			rbcommandEnglish = MyResourceBundle
-					.createBundle(RB_COMMAND, englishLocale);
+		if (rbcommandFallback == null) 			
+			rbcommandFallback = MyResourceBundle
+					.createBundle(RB_COMMAND, getFallbackLocale());
 
 
 		try {
-			return rbcommandEnglish.getString(key);
+			return rbcommandFallback.getString(key);
+		} catch (Exception e) {
+			return key;
+		}
+	}
+	
+	final public String getFallbackPlain(String key) {
+						
+		if (rbplainFallback == null) 			
+			rbplainFallback = MyResourceBundle
+					.createBundle(RB_PLAIN, getFallbackLocale());
+		try {
+			return rbplainFallback.getString(key);
 		} catch (Exception e) {
 			return key;
 		}
@@ -2233,7 +2283,7 @@ public class Application implements KeyEventDispatcher {
 				options,  //the titles of buttons
 				options[0]); //default button title
 
-		if (n == 1) getGuiManager().openHelp(command);
+		if (n == 1) getGuiManager().openCommandHelp(command);
 
 	}
 

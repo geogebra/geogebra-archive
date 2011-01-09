@@ -507,7 +507,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
  				item.setIcon(app.getImageIcon("help.png"));
  				item.addActionListener(new ActionListener() {
  					public void actionPerformed(ActionEvent e) {
- 						app.getGuiManager().openHelp(rollOverCommand);
+ 						app.getGuiManager().openCommandHelp(rollOverCommand); 						
  					}
  				});	 
  				
@@ -680,7 +680,13 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		
 
 		else if(e.getSource() == btnOnlineHelp){
-			app.getGuiManager().openHelp(selectedCommand);
+			if(selectedCommand != null){
+				app.getGuiManager().openCommandHelp(selectedCommand);
+			}
+			else if(selectedFunction != null)
+				app.getGuiManager().openHelp("PredefinedFunctionsAndOperators");
+			else
+				app.getGuiManager().openHelp("InputBar");
 		} 
 		
 		else if(e.getSource() == btnPaste){

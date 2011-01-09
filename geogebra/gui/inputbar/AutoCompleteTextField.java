@@ -729,7 +729,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 		
 		if (goToWebManual) {
-			app.getGuiManager().openHelp(cmd); // TEST CODE
+			app.getGuiManager().openCommandHelp(cmd); // TEST CODE
 			return;
 		}
 
@@ -737,7 +737,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if (help != null) {
 			app.showHelp(help); // ORIGINAL CODE
 		} else {
-			app.getGuiManager().openHelp(null);
+			app.getGuiManager().openCommandHelp(null);
 		}
 	}
 

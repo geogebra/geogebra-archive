@@ -2536,19 +2536,28 @@ public class GuiManager {
 	    	
 	    }
 		
-	    public void openHelp(String command) {
+	    public void openCommandHelp(String command) {
 	    	String internalCmd = null;
 	    	if (command != null)
 	        try { // convert eg uppersum to UpperSum
-	         	internalCmd = app.translateCommand(command);
-	            String command2 = app.getCommand(internalCmd);
-	            if (command2 != null && command2 != "")
-	            	command = command2;
+	         	internalCmd = app.translateCommand(command);	          
 	        }
 	        catch (Exception e) {}
 	        
-	        try{   	
-	        	URL helpURL = getHelpURL(app.getLocale(), internalCmd);
+	        openHelp(internalCmd,HELP_COMMAND);	            
+	    }    
+	    
+	    public void openHelp(String page) {
+	    	openHelp(page,HELP_GENERIC);
+	    }
+	    
+	    public void openToolHelp(String page) {
+	    	openHelp(page,HELP_TOOL);
+	    }
+	    
+	    private void openHelp(String page,int type) {
+	    	try{   	
+	        	URL helpURL = getHelpURL(type,page);
 	            showURLinBrowser(helpURL);
 	        } catch (MyError e) {           
 	            app.showError(e);
@@ -2557,7 +2566,7 @@ public class GuiManager {
 	                "openHelp error: " + e.toString() + e.getMessage());
 	            app.showError(e.getMessage());
 	        }
-	    }    
+	    }
 	    
 	    public void showURLinBrowser(String strURL) {
 	    	try {
@@ -2570,62 +2579,44 @@ public class GuiManager {
 	    
 	   
 
-	    private URL getHelpURL(Locale locale, String intCommand) throws Exception {
-	    	// needed to turn internal command into English command
-	    	// eg CurveCartesian -> Curve
-	    	intCommand = app.getEnglishCommand(intCommand);
-	    	
-	    	 // try to get help for current locale (language + country + variant)
-	        URL helpURL = getHelpURL(locale.toString(), "cmd", intCommand);
-
-	        if (helpURL != null) {        	
-	        	return helpURL;
-	        }
-	    	       
-	        // try to get help for current language
-	        String  language = locale.getLanguage();     
-	        helpURL = getHelpURL(language, "cmd", intCommand);
-	        if (helpURL != null) {        	
-	        	return helpURL;
-	        }
-	                       
-	        // for Catalan and Basque we take the 
-	        // Spanish help instead of the English one
-	        // won't work unless they share command name
-	        if (language.equals("eu") || language.equals("ca")) {        	
-	        	helpURL = getHelpURL("es", "cmd", intCommand); // Spanish
-	        	if (helpURL != null) {            	
-	            	return helpURL;
-	            }
-	        } //*/
-	        
-	                
-	        // last attempt: try to get English help 
-	        helpURL = getHelpURL("en", "cmd", intCommand);
-	        if (helpURL != null) {        	
-	        	return helpURL;
-	        }
-	        
-	        // sorry, no help available
-	        throw new Exception("HelpNotFound");
-	    }
+	    private static final int HELP_COMMAND = 0;
+	    private static final int HELP_TOOL = 1;	  
+	    private static final int HELP_GENERIC = 2;
 	    
-	    private URL getHelpURL(String languageISOcode, String type, String ggbCommand)  {
+	    private URL getHelpURL(int type, String pageName)  {
 	    	// try to get help for given language
 	    	// eg http://www.geogebra.org/help/en/FitLogistic
-	    	
-			String strURL = GeoGebra.GEOGEBRA_WEBSITE + "help/" + languageISOcode + "/" + type + "/" + ggbCommand;
-			
-			Application.debug(strURL);
-			
-	        
-	        try {
-	            
-	                URL url =   new URL(strURL);
-	                //if (Util.existsHttpURL(url))
-	                	return url;
 
-	        } catch (Exception e) {        	
+	    	
+	    	String languageISOcode=app.getWikiLocaleString();
+	    	boolean needFallback = languageISOcode != app.getLocale().toString();
+	    	
+	    	String strURL = ""; 
+	    	switch(type){
+	    	case HELP_COMMAND:
+	    		strURL =  app.getWiki("CommandPattern", needFallback ? app.getFallbackCommand(pageName) 
+	    				: app.getCommand(pageName)); 
+	    		break;
+	    	case HELP_TOOL:
+	    		strURL =  app.getWiki("ToolPattern", needFallback? app.getFallbackPlain(pageName):
+	    			app.getPlain(pageName));	
+	    		break;
+	    	case HELP_GENERIC:
+	    		strURL =  app.getWiki(pageName);
+	    		break;
+	    	default:
+	    		Application.printStacktrace("Bad getHelpURL call");
+	    	}
+			try {
+			strURL = GeoGebra.GEOGEBRA_WEBSITE
+					+ "wiki_new/" + languageISOcode+"/" + 
+	        			java.net.URLEncoder.encode(strURL.replace(" ", "_"),"utf-8");
+	        		Application.debug(strURL);
+	                URL url =   new URL(strURL);
+                	return url;
+
+	        } catch (Exception e) {     
+	        	e.printStackTrace();
 	        }
 	        return null;
 	    }
