@@ -112,6 +112,7 @@ public class InputDialog extends JDialog implements ActionListener,
 	            	run() { inputPanel.getTextComponent().setSelectionStart(1);
 	            	inputPanel.getTextComponent().setSelectionEnd(1);} });
 
+		this.pack();
 	}	
 	
 	protected InputDialog(JFrame frame, boolean modal) {
