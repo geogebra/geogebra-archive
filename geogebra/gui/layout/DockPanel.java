@@ -202,6 +202,12 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	private char menuShortcut;
 	
 	/**
+	 * Indicator whether this panel is the last one in the main frame. In this case no title bar will be visible,
+	 * but just the stylebar.
+	 */
+	private boolean isAlone;
+	
+	/**
 	 * Prepare dock panel. DockPanel::register() has to be called to make this panel fully functional!
 	 * No shortcut is assigned to the view in this construtor.
 	 * 
@@ -232,6 +238,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		this.menuOrder = menuOrder;
 		this.menuShortcut = menuShortcut;
 		this.hasStyleBar = hasStyleBar;
+		this.isAlone = false;
 		this.setMinimumSize(new Dimension(5,5));
 		setLayout(new BorderLayout());
 	}
@@ -482,7 +489,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * Update all elements in the title bar.
 	 */
-	public void updateTitleBar() {		
+	public void updateTitleBar() {
 		// The view is in the main window
 		if(frame == null) {
 			closeButton.setVisible(true);
@@ -504,6 +511,33 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		}
 		
 		updateLabels();
+	}
+	
+	/**
+	 * A panel is 'alone' if no other panel is visible in the main frame. In this
+	 * case no title bar is displayed, but just the style bar. Changing the 
+	 * value of the 'alone' state will cause the GUI to update automatically if this
+	 * panel is visible. 
+	 * 
+	 * @param isAlone
+	 */
+	public void setAlone(boolean isAlone) {
+		if(this.isAlone == isAlone) {
+			return;
+		}
+		
+		this.isAlone = isAlone;
+		
+		if(isVisible()) {
+			updatePanel();
+		}
+	}
+	
+	/**
+	 * @return If this panel thinks it's the last visible one in the main frame.
+	 */
+	public boolean isAlone() {
+		return isAlone;
 	}
 	
 	/**
@@ -541,7 +575,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		// make panels visible if necessary
 		if(isVisible()) {
 			if(hasStyleBar) {
-				styleBarPanel.setVisible(showStyleBar);
+				styleBarPanel.setVisible(isAlone || showStyleBar);
 			} 
 			
 			// display toolbar panel if the dock panel is open in a frame
@@ -550,10 +584,12 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			}
 		}
 		
-		titlePanel.setVisible(dockManager.getLayout().isTitleBarVisible());
+		// if this is the last dock panel don't display the title bar, otherwise
+		// take the user's configuration into consideration
+		titlePanel.setVisible(!isAlone && dockManager.getLayout().isTitleBarVisible());
 		
 		// update the title bar if necessary
-		if(dockManager.getLayout().isTitleBarVisible()) {
+		if(titlePanel.isVisible()) {
 			updateTitleBar();
 		}
 	}

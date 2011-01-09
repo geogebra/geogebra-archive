@@ -20,7 +20,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  */
 public class DockSplitPane extends JSplitPane {	
 	private static final long serialVersionUID = 1L;
-	private boolean dividerVisible = true;
+	private boolean dividerVisible;
 	
 	public DockSplitPane() {
 		this(DockSplitPane.HORIZONTAL_SPLIT);
@@ -32,7 +32,7 @@ public class DockSplitPane extends JSplitPane {
 		setResizeWeight(0.5);
 		setBorder(BorderFactory.createEmptyBorder());
 		
-		updateUI();
+		dividerVisible = false;
 	}
 	
 	/**

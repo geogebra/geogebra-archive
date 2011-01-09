@@ -108,6 +108,8 @@ public class DockManager implements AWTEventListener {
 				if(panel.isOpenInFrame() && panel.isVisible()) {
 					hide(panel);
 				}
+				
+				panel.setAlone(false);
 			}
 			
 			// copy dock panel info settings
@@ -208,6 +210,7 @@ public class DockManager implements AWTEventListener {
 				}
 
 				panel.updatePanel();
+				rootPane.updateUI();
 				
 				// move toolbar to main container
 				if(panel.hasToolbar()) {
@@ -226,6 +229,8 @@ public class DockManager implements AWTEventListener {
 				else 
 					splitPanes[i].setDividerLocation((int)(spInfo[i].getDividerLocation() * windowWidth));			
 			}
+			
+			markAlonePanel();
 		}
 		
 		// update all labels at once
@@ -582,6 +587,9 @@ public class DockManager implements AWTEventListener {
 		// has to be called *after* the toolbar was added to the container
 		setFocusedPanel(panel);
 		
+		unmarkAlonePanels();
+		markAlonePanel();
+		
 		Application.debug(getDebugTree(0, rootPane));
 	}
 	
@@ -626,6 +634,7 @@ public class DockManager implements AWTEventListener {
 		if(panel.isOpenInFrame()) {
 			panel.removeFrame();
 			panel.setOpenInFrame(true); // open in frame the next time
+			markAlonePanel();
 		} else {
 			DockSplitPane parent = panel.getParentSplitPane();
 			
@@ -644,6 +653,7 @@ public class DockManager implements AWTEventListener {
 					rootPane = (DockSplitPane)parent.getOpposite(panel);
 				} else {
 					parent.replaceComponent(panel, null);
+					markAlonePanel();
 				}
 				app.updateCenterPanel(true);
 			} else {
@@ -821,6 +831,46 @@ public class DockManager implements AWTEventListener {
 						break;
 					}
 				}
+			}
+		}
+	}
+	
+	/**
+	 * If just one panel is visible in the main frame, mark him as 'alone'.
+	 */
+	private void markAlonePanel() {
+		// determine if such a panel exists
+		DockPanel singlePanel = null;
+		
+		if(rootPane.getRightComponent() == null) {
+			Component leftComponent = rootPane.getLeftComponent();
+			
+			if(leftComponent != null) {
+				singlePanel = (DockPanel)leftComponent;
+			}
+		}
+		
+		if(rootPane.getLeftComponent() == null) {
+			Component rightComponent = rootPane.getRightComponent();
+			
+			if(rightComponent != null) {
+				singlePanel = (DockPanel)rightComponent;
+			}
+		}
+		
+		// mark the found panel as 'alone'
+		if(singlePanel != null) {
+			singlePanel.setAlone(true);
+		}
+	}
+	
+	/**
+	 * Remove marks from any panel, that it might be alone.
+	 */
+	private void unmarkAlonePanels() {
+		for(DockPanel panel : dockPanels) {
+			if(panel.isAlone()) {
+				panel.setAlone(false);
 			}
 		}
 	}
