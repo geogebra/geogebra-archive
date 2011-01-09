@@ -14,29 +14,32 @@ public class AlgoCone extends AlgoElement3D {
 	private GeoQuadric3D cone;
 	private GeoPoint3D origin;
 	private GeoVector3D direction;
-	private NumberValue r;
+	private NumberValue angle;
 	
 	/**
 	 * create a cone, with label.
 	 * @param c construction
 	 * @param label 
+	 * @param origin 
+	 * @param direction 
+	 * @param angle 
 	 */
-	public AlgoCone(Construction c, String label, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {
-		this(c,origin, direction, r);
+	public AlgoCone(Construction c, String label, GeoPoint3D origin, GeoVector3D direction, NumberValue angle) {
+		this(c,origin, direction, angle);
 		cone.setLabel(label);
 	}
 	/**
 	 * create a cone
 	 * @param c construction
 	 */
-	public AlgoCone(Construction c, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {		
+	public AlgoCone(Construction c, GeoPoint3D origin, GeoVector3D direction, NumberValue angle) {		
 		super(c);
 		cone = new GeoQuadric3D(c);
 		this.origin = origin;
 		this.direction = direction;
-		this.r = r;
+		this.angle = angle;
 		
-		setInputOutput(new GeoElement[] {origin,direction,(GeoElement) r}, new GeoElement[] {cone});
+		setInputOutput(new GeoElement[] {origin,direction,(GeoElement) angle}, new GeoElement[] {cone});
 		compute();
 	}
 	
@@ -48,7 +51,7 @@ public class AlgoCone extends AlgoElement3D {
 
 	protected void compute() {
 
-		cone.setCone(origin,direction,r.getDouble());
+		cone.setCone(origin,direction,angle.getDouble());
 		
 	}
 	

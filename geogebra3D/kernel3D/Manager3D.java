@@ -350,8 +350,8 @@ public class Manager3D implements Manager3DInterface {
 	/** 
 	 * Cone
 	 */
-	final public GeoQuadric3D Cone(String label, GeoPointND origin, GeoVectorND direction, NumberValue r) {
-		AlgoCone algo = new AlgoCone(cons, label, (GeoPoint3D) origin, (GeoVector3D) direction, r);
+	final public GeoQuadric3D Cone(String label, GeoPointND origin, GeoVectorND direction, NumberValue angle) {
+		AlgoCone algo = new AlgoCone(cons, label, (GeoPoint3D) origin, (GeoVector3D) direction, angle);
 		return algo.getQuadric();
 	}
 
