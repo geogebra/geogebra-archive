@@ -93,7 +93,11 @@ public class GeoGebraKeys implements KeyListener {
 			
 			// support for alt codes
 			if (e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
-				altCodes.append(e.getKeyChar());
+				char c = e.getKeyChar();
+				
+				// make sure it's not eg alt-*
+				if (c >= '0' && c <= '9')
+					altCodes.append(e.getKeyChar());
 				//Application.debug("alt:"+altCodes);
 			}
 			
