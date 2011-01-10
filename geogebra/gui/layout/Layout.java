@@ -101,7 +101,7 @@ public class Layout {
 	 * 	 
 	 */
 	private void initializeDefaultPerspectives() {
-		defaultPerspectives = new Perspective[5];
+		defaultPerspectives = new Perspective[4];
 		
 		DockPanelXml[] dpInfo;
 		DockSplitPaneXml[] spInfo;
@@ -130,7 +130,8 @@ public class Layout {
 		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,1", 300);
 		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "1,3", 300);
 		
-		defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", true, false, false, false, true, false);
+		//defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "2", true, false, false, false, true, false);
+		defaultPerspectives[1] = new Perspective("BasicGeometry", spInfo, dpInfo, "0 | 40 | 1 | 29 | 15 | 2 | 10 | 3 | 4 | 5 | 16 | 51 | 17 | 36 | 30 | 32 ", true, false, false, false, false, false);
 		
 		// geometry - like basic geometry but with more toolbar entries
 		defaultPerspectives[2] = new Perspective("Geometry", spInfo, dpInfo, "0 | 40 | 1", true, true, true, true, false, true);
@@ -147,17 +148,6 @@ public class Layout {
 		
 		defaultPerspectives[3] = new Perspective("TableAndGraphics", spInfo, dpInfo, "0 | 40 | 1", true, false, false, false, true, false);
 
-		// primary
-		spInfo = new DockSplitPaneXml[1];
-		spInfo[0] = new DockSplitPaneXml("", 0.45, DockSplitPane.HORIZONTAL_SPLIT);
-		
-		dpInfo = new DockPanelXml[4];
-		dpInfo[0] = new DockPanelXml(Application.VIEW_EUCLIDIAN, null, true, false, true, new Rectangle(100, 100, 600, 400), "1", 500);
-		dpInfo[1] = new DockPanelXml(Application.VIEW_ALGEBRA, null, false, false, false, new Rectangle(100, 100, 250, 400), "3,3", 200);
-		dpInfo[2] = new DockPanelXml(Application.VIEW_SPREADSHEET, null, false, false, false, new Rectangle(100, 100, 600, 400), "3", 300);
-		dpInfo[3] = new DockPanelXml(Application.VIEW_CAS, null, false, false, false, new Rectangle(100, 100, 600, 400), "3,1", 300);
-		
-		defaultPerspectives[4] = new Perspective("Primary", spInfo, dpInfo, "0 | 40 | 1 | 29 | 15 | 2 | 10 | 3 | 4 | 5 | 16 | 51 | 17 | 36 | 30 | 32 ", true, false, false, false, false, false);
 	}
 	
 	/**
