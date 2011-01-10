@@ -30,6 +30,7 @@ import geogebra.main.MyError;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -45,6 +46,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -306,6 +308,16 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		menu.add(new LatexTable(app, this, btInsertLaTeX, TableSymbolsLaTeX.mathscr(), 2, -1,SelectionTable.MODE_LATEX));
 		btInsertLaTeX.addPopupMenuItem(menu);
 
+		JMenuItem menuItem = new JMenuItem(app.getMenu("Space"));
+		menuItem.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent arg0) {
+				insertString(" \\; ");
+			}
+			
+		});
+		btInsertLaTeX.addPopupMenuItem(menuItem);
+		
 	}
 	
 	
