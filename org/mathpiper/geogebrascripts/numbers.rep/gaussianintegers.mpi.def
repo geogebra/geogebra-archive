@@ -1,0 +1,12 @@
+AddGaussianFactor
+FactorGaussianInteger
+GaussianFactorPrime
+GaussianFactors
+GaussianGcd
+GaussianMod
+GaussianNorm
+IsGaussianInteger
+IsGaussianPrime
+IsGaussianUnit
+}
+
