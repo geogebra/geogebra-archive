@@ -368,6 +368,7 @@ public class CASmaxima extends CASgeneric {
 	    // define custom functions
 	    ggbMaxima.executeCall("log10(x) := log(x) / log(10);");
 	    ggbMaxima.executeCall("log2(x) := log(x) / log(2);");
+	    ggbMaxima.executeCall("logB(b, x) := log(x) / log(b);");
 	    ggbMaxima.executeCall("cbrt(x) := x^(1/3);");
 	    
 	    // needed to define lcm()

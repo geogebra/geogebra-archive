@@ -278,8 +278,9 @@ public class CASmathpiper extends CASgeneric {
 		ggbMathPiper.evaluate("BuiltinPrecisionSet(16);");
 		
 		// user defined function
-		ggbMathPiper.evaluate("log10(x) := log(x) / log(10);");
-		ggbMathPiper.evaluate("log2(x) := log(x) / log(2);");
+		ggbMathPiper.evaluate("log10(x) := Ln(x) / Ln(10);");
+		ggbMathPiper.evaluate("log2(x) := Ln(x) / Ln(2);");
+		ggbMathPiper.evaluate("logB(b, x) := Ln(x) / Ln(b);");
 		ggbMathPiper.evaluate("cbrt(x) := x^(1/3);");
 		
 		// Rules for equation manipulation

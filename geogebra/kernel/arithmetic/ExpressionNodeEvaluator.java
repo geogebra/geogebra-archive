@@ -1034,7 +1034,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 				return ((NumberValue)lt).getNumber().atan2((NumberValue)rt).getNumber();
             }     
             else { 
-                 String [] str = { "IllegalArgument", "arctan2", lt.toString() };
+                 String [] str = { "IllegalArgument", "arctan2", lt.toString(), rt.toString() };
                 throw new MyError(app, str);
             }
         
@@ -1307,6 +1307,16 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 	          }  
             else { 
                  String [] str = { "IllegalArgument", "log", lt.toString() };
+                throw new MyError(app, str);
+            }
+            
+        case LOGB:
+            // log(base, number)
+            if (lt.isNumberValue() && rt.isNumberValue()) {
+				return ((NumberValue)rt).getNumber().log((NumberValue) lt);
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "log", lt.toString(), rt.toString() };
                 throw new MyError(app, str);
             }
             

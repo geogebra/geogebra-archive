@@ -1714,8 +1714,12 @@ ExpressionNode numberFunction():
     <EXP_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.EXP, null); }  
 |
+	LOOKAHEAD (2147483647)
+    <LOG_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.LOGB, en2); }
+| 
     <LOG_FUNC> en = expressionOrEquation() ")"
-      { return new ExpressionNode(kernel, en, ExpressionNode.LOG, null); }   
+      { return new ExpressionNode(kernel, en, ExpressionNode.LOG, null); }
 |
  	<LG_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.LOG10, null); }  

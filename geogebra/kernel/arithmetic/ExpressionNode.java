@@ -2366,6 +2366,49 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			sb.append(leftStr);
 			sb.append(rightBracket(STRING_TYPE));
 			break;
+			
+			
+		case LOGB:
+			switch (STRING_TYPE) {
+			case STRING_TYPE_LATEX:
+				sb.append("\\log_{");
+				sb.append(leftStr);
+				sb.append('}');
+				sb.append(leftBracket(STRING_TYPE));
+				sb.append(rightStr);
+				sb.append(rightBracket(STRING_TYPE));
+				break;
+
+			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MATH_PIPER:
+				// user defined function
+				sb.append("logB(");
+				sb.append(leftStr);
+				sb.append(',');
+				sb.append(rightStr);
+				sb.append(')');
+				break;
+
+			case STRING_TYPE_PSTRICKS:
+			case STRING_TYPE_PGF:
+				// ln(x)/ln(b)
+				sb.append("ln(");
+				sb.append(rightStr);
+				sb.append(")/ln(");
+				sb.append(leftStr);
+				sb.append(')');
+				break;
+				
+			default:
+				sb.append("log(");
+				sb.append(leftStr);
+				sb.append(',');
+				sb.append(rightStr);
+				sb.append(')');
+				break;
+				
+			}
+			break;
 
 		case LOG10:
 			switch (STRING_TYPE) {

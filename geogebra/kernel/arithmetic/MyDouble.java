@@ -239,6 +239,7 @@ implements NumberValue {
     final public MyDouble atan2(NumberValue y) { isAngle = kernel.arcusFunctionCreatesAngle; set(Math.atan2(val, y.getDouble())); return this;  }
     
     final public MyDouble log() {  val = Math.log(val);  isAngle = false; return this; }
+    final public MyDouble log(NumberValue base) {  val = Math.log(val) / Math.log(base.getDouble());  isAngle = false; return this; }
     final public MyDouble log10() {  val = Math.log(val)/MyMath.LOG10;  isAngle = false; return this; }
     final public MyDouble log2() {  val = Math.log(val)/MyMath.LOG2;  isAngle = false; return this; }
     
