@@ -55,7 +55,7 @@ import org.mathpiper.lisp.printers.MathPiperPrinter;
 import org.mathpiper.lisp.localvariables.LocalVariable;
 import org.mathpiper.lisp.localvariables.LocalVariableFrame;
 
-public class Environment {
+public final class Environment {
 
     public Evaluator iLispExpressionEvaluator = new LispExpressionEvaluator();
     private int iPrecision = 10;
@@ -98,9 +98,9 @@ public class Environment {
     public MathPiperTokenizer iDefaultTokenizer = new MathPiperTokenizer();
     public MathPiperTokenizer iXmlTokenizer = new XmlTokenizer();
     public MathPiperMap iGlobalState = new MathPiperMap();
-    public MathPiperMap iUserFunctions = new MathPiperMap();
+    public MathPiperMap iUserRules = new MathPiperMap();
     MathPiperMap iBuiltinFunctions = new MathPiperMap();
-    public String iError = null;
+    public Throwable iException = null;
     public DefFileMap iDefFiles = new DefFileMap();
     public InputDirectories iInputDirectories = new InputDirectories();
     public String iPrettyReaderName = null;
@@ -112,24 +112,24 @@ public class Environment {
         iCurrentOutput = aCurrentOutput;
         iCurrentPrinter = new MathPiperPrinter(iPrefixOperators, iInfixOperators, iPostfixOperators, iBodiedOperators);
 
-        iTrueAtom = AtomCons.getInstance(this, -1,"True");
+        iTrueAtom = new AtomCons((String)getTokenHash().lookUp("True"));
         iTrueString = (String) iTrueAtom.car();
-        iFalseAtom = AtomCons.getInstance(this, -1,"False");
+        iFalseAtom = new AtomCons((String)getTokenHash().lookUp("False"));
         iFalseString = (String) iFalseAtom.car();
-        iEndOfFileAtom = AtomCons.getInstance(this, -1,"EndOfFile");
-        iEndStatementAtom = AtomCons.getInstance(this, -1,";");
-        iProgOpenAtom = AtomCons.getInstance(this, -1,"[");
-        iProgCloseAtom = AtomCons.getInstance(this, -1,"]");
-        iNthAtom = AtomCons.getInstance(this, -1,"Nth");
-        iComplexAtom = AtomCons.getInstance(this, -1,"Complex");
-        iBracketOpenAtom = AtomCons.getInstance(this, -1,"(");
-        iBracketCloseAtom = AtomCons.getInstance(this, -1,")");
-        iListOpenAtom = AtomCons.getInstance(this, -1,"{");
-        iListCloseAtom = AtomCons.getInstance(this, -1,"}");
-        iCommaAtom = AtomCons.getInstance(this, -1,",");
-        iListAtom = AtomCons.getInstance(this, -1,"List");
-        iSetAtom = AtomCons.getInstance(this, -1,"Set");
-        iProgAtom = AtomCons.getInstance(this, -1,"Prog");
+        iEndOfFileAtom = new AtomCons((String)getTokenHash().lookUp("EndOfFile"));
+        iEndStatementAtom = new AtomCons((String)getTokenHash().lookUp(";"));
+        iProgOpenAtom = new AtomCons((String)getTokenHash().lookUp("["));
+        iProgCloseAtom = new AtomCons((String)getTokenHash().lookUp("]"));
+        iNthAtom = new AtomCons((String)getTokenHash().lookUp("Nth"));
+        iComplexAtom = new AtomCons((String)getTokenHash().lookUp("Complex"));
+        iBracketOpenAtom = new AtomCons((String)getTokenHash().lookUp("("));
+        iBracketCloseAtom = new AtomCons((String)getTokenHash().lookUp(")"));
+        iListOpenAtom = new AtomCons((String)getTokenHash().lookUp("{"));
+        iListCloseAtom = new AtomCons((String)getTokenHash().lookUp("}"));
+        iCommaAtom = new AtomCons((String)getTokenHash().lookUp(","));
+        iListAtom = new AtomCons((String)getTokenHash().lookUp("List"));
+        iSetAtom = new AtomCons((String)getTokenHash().lookUp("Set"));
+        iProgAtom = new AtomCons((String)getTokenHash().lookUp("Prog"));
 
         iArgumentStack = new ArgumentStack(this, 50000 /*TODO FIXME*/);
         //org.mathpiper.builtin.Functions mc = new org.mathpiper.builtin.Functions();
@@ -137,14 +137,6 @@ public class Environment {
 
         //System.out.println("Classpath: " + System.getProperty("java.class.path"));
         
-        BuiltinFunction.addCoreFunctions(this);
-
-        if(! Utility.scriptsPath.contains("geogebra"))
-        {
-            List failList = BuiltinFunction.addOptionalFunctions(this, "org/mathpiper/builtin/functions/optional/");
-        }
-
-        pushLocalFrame(true, "<START>");
     }
 
     public TokenMap getTokenHash() {
@@ -156,7 +148,7 @@ public class Environment {
     }
 
     public MathPiperMap getUserFunctions() {
-        return iUserFunctions;
+        return iUserRules;
     }
 
     public MathPiperMap getBuiltinFunctions() {
@@ -212,7 +204,7 @@ public class Environment {
         LocalVariable localVariable = iLocalVariablesFrame.iFirst;
 
         while (localVariable != null) {
-            if (localVariable.iVariable == aVariable) {
+            if (localVariable.iVariable.equals(aVariable)) {
                 return localVariable.iValue;
             }
             localVariable = localVariable.iNext;
@@ -473,20 +465,20 @@ public class Environment {
     }
 
     public void holdArgument(int aStackTop, String aOperator, String aVariable, Environment aEnvironment) throws Exception {
-        MultipleArityRulebase multipleArityUserFunc = (MultipleArityRulebase) iUserFunctions.lookUp(aOperator);
+        MultipleArityRulebase multipleArityUserFunc = (MultipleArityRulebase) iUserRules.lookUp(aOperator);
         LispError.check(this, aStackTop, multipleArityUserFunc != null, LispError.INVALID_ARGUMENT, "INTERNAL");
         multipleArityUserFunc.holdArgument(aVariable, aStackTop, aEnvironment);
     }
 
     public void retractRule(String aOperator, int aArity, int aStackTop, Environment aEnvironment) throws Exception {
-        MultipleArityRulebase multipleArityUserFunc = (MultipleArityRulebase) iUserFunctions.lookUp(aOperator);
+        MultipleArityRulebase multipleArityUserFunc = (MultipleArityRulebase) iUserRules.lookUp(aOperator);
         if (multipleArityUserFunc != null) {
             multipleArityUserFunc.deleteRulebaseEntry(aArity, aStackTop, aEnvironment);
         }
     }
 
     public SingleArityRulebaseEvaluator getRulebase(int aStackTop, ConsPointer aArguments) throws Exception {
-        MultipleArityRulebase multipleArityUserFunc = (MultipleArityRulebase) iUserFunctions.lookUp( (String) aArguments.car());
+        MultipleArityRulebase multipleArityUserFunc = (MultipleArityRulebase) iUserRules.lookUp( (String) aArguments.car());
         if (multipleArityUserFunc != null) {
             int arity = Utility.listLength(this, aStackTop, aArguments) - 1;
             return multipleArityUserFunc.getUserFunction(arity, aStackTop, this);
@@ -495,7 +487,7 @@ public class Environment {
     }
 
     public SingleArityRulebaseEvaluator getRulebase(String aName, int aArity, int aStackTop) throws Exception {
-        MultipleArityRulebase multipleArityUserFunc = (MultipleArityRulebase) iUserFunctions.lookUp(aName);
+        MultipleArityRulebase multipleArityUserFunc = (MultipleArityRulebase) iUserRules.lookUp(aName);
         if (multipleArityUserFunc != null) {
             return multipleArityUserFunc.getUserFunction(aArity, aStackTop, this);
         }
@@ -503,7 +495,7 @@ public class Environment {
     }
 
     public void unfenceRule(int aStackTop, String aOperator, int aArity) throws Exception {
-        MultipleArityRulebase multiUserFunc = (MultipleArityRulebase) iUserFunctions.lookUp(aOperator);
+        MultipleArityRulebase multiUserFunc = (MultipleArityRulebase) iUserRules.lookUp(aOperator);
 
         LispError.check(this, aStackTop, multiUserFunc != null, LispError.INVALID_ARGUMENT, "INTERNAL");
         SingleArityRulebaseEvaluator userFunc = multiUserFunc.getUserFunction(aArity, aStackTop, this);
@@ -514,13 +506,13 @@ public class Environment {
     public MultipleArityRulebase getMultipleArityRulebase(int aStackTop, String aOperator, boolean create) throws Exception {
         // Find existing multiuser func.  Todo:tk:a user function name is added to the list even if a non-existing function
         // is being executed or looked for by FindFunction();
-        MultipleArityRulebase multipleArityUserFunction = (MultipleArityRulebase) iUserFunctions.lookUp(aOperator);
+        MultipleArityRulebase multipleArityUserFunction = (MultipleArityRulebase) iUserRules.lookUp(aOperator);
 
         // If none exists, add one to the user functions list
         if (multipleArityUserFunction == null && create == true) {
             MultipleArityRulebase newMultipleArityUserFunction = new MultipleArityRulebase();
-            iUserFunctions.setAssociation(newMultipleArityUserFunction, aOperator);
-            multipleArityUserFunction = (MultipleArityRulebase) iUserFunctions.lookUp(aOperator);
+            iUserRules.setAssociation(newMultipleArityUserFunction, aOperator);
+            multipleArityUserFunction = (MultipleArityRulebase) iUserRules.lookUp(aOperator);
             LispError.check(this, aStackTop, multipleArityUserFunction != null, LispError.CREATING_USER_FUNCTION, "INTERNAL");
         }
         return multipleArityUserFunction;
@@ -539,23 +531,21 @@ public class Environment {
         multipleArityUserFunction.addRulebaseEntry(this, aStackTop, newBranchingRulebase);
     }
 
-    public void defineRule(int aStackTop, String aOperator, int aArity,
-            int aPrecedence, ConsPointer aPredicate,
-            ConsPointer aBody) throws Exception {
-        // Find existing multiuser func.
-        MultipleArityRulebase multipleArityUserFunction = (MultipleArityRulebase) iUserFunctions.lookUp(aOperator);
-        LispError.check(this, aStackTop, multipleArityUserFunction != null, LispError.CREATING_RULE, "INTERNAL");
+    public void defineRule(int aStackTop, String aOperator, int aArity, int aPrecedence, ConsPointer aPredicate, ConsPointer aBody) throws Exception {
+        // Find existing multiuser rule.
+        MultipleArityRulebase multipleArityRulebase = (MultipleArityRulebase) iUserRules.lookUp(aOperator);
+        LispError.check(this, aStackTop, multipleArityRulebase != null, LispError.CREATING_RULE, "INTERNAL");
 
         // Get the specific user function with the right arity
-        SingleArityRulebaseEvaluator userFunction = (SingleArityRulebaseEvaluator) multipleArityUserFunction.getUserFunction(aArity, aStackTop, this);
-        LispError.check(this, aStackTop, userFunction != null, LispError.CREATING_RULE, "INTERNAL");
+        SingleArityRulebaseEvaluator rulebase = (SingleArityRulebaseEvaluator) multipleArityRulebase.getUserFunction(aArity, aStackTop, this);
+        LispError.check(this, aStackTop, rulebase != null, LispError.CREATING_RULE, "INTERNAL");
 
         // Declare a new evaluation rule
         if (Utility.isTrue(this, aPredicate, aStackTop)) {
             //        printf("FastPredicate on %s\n",aOperator->String());
-            userFunction.defineAlwaysTrueRule(aStackTop, aPrecedence, aBody);
+            rulebase.defineAlwaysTrueRule(aStackTop, aPrecedence, aBody);
         } else {
-            userFunction.defineSometimesTrueRule(aStackTop, aPrecedence, aPredicate, aBody);
+            rulebase.defineSometimesTrueRule(aStackTop, aPrecedence, aPredicate, aBody);
         }
     }
 
@@ -574,7 +564,7 @@ public class Environment {
 
     public void defineRulePattern(int aStackTop, String aOperator, int aArity, int aPrecedence, ConsPointer aPredicate, ConsPointer aBody) throws Exception {
         // Find existing multiuser rulebase.
-        MultipleArityRulebase multipleArityRulebase = (MultipleArityRulebase) iUserFunctions.lookUp(aOperator);
+        MultipleArityRulebase multipleArityRulebase = (MultipleArityRulebase) iUserRules.lookUp(aOperator);
         LispError.check(this, aStackTop, multipleArityRulebase != null, LispError.CREATING_RULE, "INTERNAL");
 
         // Get the specific user function with the right arity

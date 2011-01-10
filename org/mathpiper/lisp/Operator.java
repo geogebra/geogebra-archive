@@ -13,41 +13,37 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */ //}}}
-
 // :indentSize=4:lineSeparator=\n:noTabs=false:tabSize=4:folding=explicit:collapseFolds=0:
-
 package org.mathpiper.lisp;
 
+public class Operator {
 
-public class Operator
-{
-	public int iPrecedence;
-	public int iLeftPrecedence;
-	public int iRightPrecedence;
-	public int iRightAssociative;
+    public int iPrecedence;
+    public int iLeftPrecedence;
+    public int iRightPrecedence;
+    public int iRightAssociative;
 
-	public Operator(int aPrecedence)
-	{
-		iPrecedence = aPrecedence;
-		iLeftPrecedence = aPrecedence;
-		iRightPrecedence = aPrecedence;
-		iRightAssociative = 0;
-	}
 
-	public void setRightAssociative()
-	{
-		iRightAssociative = 1;
-	}
+    public Operator(int aPrecedence) {
+        iPrecedence = aPrecedence;
+        iLeftPrecedence = aPrecedence;
+        iRightPrecedence = aPrecedence;
+        iRightAssociative = 0;
+    }
 
-	public void setLeftPrecedence(int aPrecedence)
-	{
-		iLeftPrecedence = aPrecedence;
-	}
 
-	public void setRightPrecedence(int aPrecedence)
-	{
-		iRightPrecedence = aPrecedence;
-	}
+    public void setRightAssociative() {
+        iRightAssociative = 1;
+    }
+
+
+    public void setLeftPrecedence(int aPrecedence) {
+        iLeftPrecedence = aPrecedence;
+    }
+
+
+    public void setRightPrecedence(int aPrecedence) {
+        iRightPrecedence = aPrecedence;
+    }
 
 }
-

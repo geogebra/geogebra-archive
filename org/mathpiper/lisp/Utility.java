@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.mathpiper.io.MathPiperInputStream;
+import org.mathpiper.io.MathPiperOutputStream;
 import org.mathpiper.exceptions.EvaluationException;
 import org.mathpiper.io.InputStatus;
 import org.mathpiper.builtin.BigNumber;
@@ -310,7 +311,7 @@ public class Utility {
         LispError.lispAssert(aExpression.getCons() != null, aEnvironment, aStackTop);
 
         //return aExpression.car() == aEnvironment.iTrueAtom.car();
-        return aExpression.car() instanceof String && ((String) aExpression.car()) == aEnvironment.iTrueString;
+        return aExpression.car() instanceof String && ((String) aExpression.car()).equals(aEnvironment.iTrueString);
 
         /* Code which returns True for everything except False and {};
         String expressionString = aExpression.car();
@@ -335,7 +336,7 @@ public class Utility {
     }//end method.
     public static boolean isFalse(Environment aEnvironment, ConsPointer aExpression, int aStackTop) throws Exception {
         LispError.lispAssert(aExpression.getCons() != null, aEnvironment, aStackTop);
-        return aExpression.car() instanceof String && ((String) aExpression.car()) == aEnvironment.iFalseString;
+        return aExpression.car() instanceof String && ((String) aExpression.car()).equals(aEnvironment.iFalseString);
 
         /* Code which returns True for everything except False and {};
         return aExpression.car() == aEnvironment.iFalseString || (isSublist(aExpression) && (listLength(aExpression.car()) == 1));
@@ -423,14 +424,14 @@ public class Utility {
             optionPointer.goNext(aStackTop, aEnvironment);
             LispError.check(aEnvironment, aStackTop, optionPointer.type() == Utility.ATOM, LispError.INVALID_ARGUMENT, "INTERNAL");
             String key = (String) optionPointer.car();
-            key = Utility.stripEndQuotes(key);
+            key = Utility.stripEndQuotesIfPresent(aEnvironment, aStackTop, key);
 
             //Obtain value.
             optionPointer.goNext(aStackTop, aEnvironment);
             LispError.check(aEnvironment, aStackTop, optionPointer.type() == Utility.ATOM || optionPointer.type() == Utility.NUMBER, LispError.INVALID_ARGUMENT, "INTERNAL");
             if (optionPointer.type() == Utility.ATOM) {
                 String value = (String) optionPointer.car();
-                value = Utility.stripEndQuotes(value);
+                value = Utility.stripEndQuotesIfPresent(aEnvironment, aStackTop, value);
                 if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
                     userOptions.put(key, Boolean.parseBoolean(value));
                 } else {
@@ -470,16 +471,6 @@ public class Utility {
         }
         return false;
     }//end method
-
-    public static String stripEndQuotes(String aOriginal) throws Exception {
-        //If there are not quotes on both ends of the string then return without any changes.
-        if (aOriginal.startsWith("\"") && aOriginal.endsWith("\"")) {
-            aOriginal = aOriginal.substring(1, aOriginal.length());
-            aOriginal = aOriginal.substring(0, aOriginal.length() - 1);
-        }//end if.
-
-        return aOriginal;
-    }//end method.
 
 
     public static String stripEndDollarSigns(String aOriginal) throws Exception {
@@ -607,7 +598,20 @@ public class Utility {
         }//end matches if.
     }
 
-    public static String unstringify(Environment aEnvironment, int aStackTop, String aOriginal) throws Exception {
+
+    public static String stripEndQuotesIfPresent(Environment aEnvironment, int aStackTop, String aOriginal) throws Exception {
+        //If there are not quotes on both ends of the string then return without any changes.
+        if (aOriginal.startsWith("\"") && aOriginal.endsWith("\"")) {
+            aOriginal = aOriginal.substring(1, aOriginal.length());
+            aOriginal = aOriginal.substring(0, aOriginal.length() - 1);
+        }//end if.
+
+        return aOriginal;
+    }//end method.
+
+    
+
+    public static String toNormalString(Environment aEnvironment, int aStackTop, String aOriginal) throws Exception {
         LispError.check(aEnvironment, aStackTop, aOriginal != null, LispError.INVALID_ARGUMENT, "INTERNAL");
         LispError.check(aEnvironment, aStackTop, aOriginal.charAt(0) == '\"', LispError.INVALID_ARGUMENT, "INTERNAL");
         int nrc = aOriginal.length() - 1;
@@ -615,7 +619,7 @@ public class Utility {
         return aOriginal.substring(1, nrc);
     }
 
-    public static String stringify(Environment aEnvironment, int aStackTop, String aOriginal) throws Exception {
+    public static String toMathPiperString(Environment aEnvironment, int aStackTop, String aOriginal) throws Exception {
         LispError.check(aEnvironment, aStackTop, aOriginal != null, LispError.INVALID_ARGUMENT, "INTERNAL");
 
         return "\"" + aOriginal + "\"";
@@ -640,7 +644,7 @@ public class Utility {
 
                 LispError.check(aEnvironment, aStackTop, readIn.getCons() != null, LispError.READING_FILE, "INTERNAL");
                 // check for end of file
-                if (readIn.car() instanceof String && ((String) readIn.car()) == eof) {
+                if (readIn.car() instanceof String && ((String) readIn.car()).equals(eof)) {
                     endoffile = true;
                 } // Else evaluate
                 else {
@@ -669,7 +673,7 @@ public class Utility {
      * @throws java.lang.Exception
      */
     public static void loadScript(Environment aEnvironment, int aStackTop, String aFileName) throws Exception {
-        String oper = unstringify(aEnvironment, aStackTop, aFileName);
+        String oper = toNormalString(aEnvironment, aStackTop, aFileName);
 
         String hashedname = (String) aEnvironment.getTokenHash().lookUp(oper);
 
@@ -722,6 +726,37 @@ public class Utility {
         if (!def.isLoaded()) {
             def.setLoaded();
             loadScript(aEnvironment, aStackTop, aFileName);
+        }
+    }
+
+    public static void doPatchString(String unpatchedString, MathPiperOutputStream aOutput, Environment aEnvironment, int aStackTop) throws Exception
+    {
+        String[] tags = unpatchedString.split("\\?\\>");
+        if (tags.length > 1) {
+            for (int x = 0; x < tags.length; x++) {
+                String[] tag = tags[x].split("\\<\\?");
+                if (tag.length > 1) {
+                    aOutput.write(tag[0]);
+                    String scriptCode = tag[1].trim();
+                    StringBuffer scriptCodeBuffer = 
+                        new StringBuffer(scriptCode);
+                    StringInputStream scriptStream = 
+                        new StringInputStream(scriptCodeBuffer, aEnvironment.iInputStatus);
+                    MathPiperOutputStream previous = 
+                        aEnvironment.iCurrentOutput;
+                    try {
+                        aEnvironment.iCurrentOutput = aOutput;
+                        Utility.doInternalLoad(aEnvironment, aStackTop, scriptStream);
+                    } catch(Exception e) {
+                        throw e;
+                    } finally {
+                        aEnvironment.iCurrentOutput = previous;
+                    }
+                }
+            } // end for
+            aOutput.write(tags[tags.length - 1]);
+        } else {
+            aOutput.write(unpatchedString);
         }
     }
 
@@ -837,7 +872,7 @@ public class Utility {
                 String token = tok.nextToken(aEnvironment, aStackTop, aEnvironment.iCurrentInput, aEnvironment.getTokenHash());
 
                 // check for end of file
-                if (token == eof || token == end) {
+                if (token.equals(eof) || token.equals(end)) {
                     endoffile = true;
                 } // Else evaluate
                 else {
@@ -860,7 +895,7 @@ public class Utility {
     public static void loadDefFile(Environment aEnvironment, int aStackTop, String aFileName) throws Exception {
         LispError.lispAssert(aFileName != null, aEnvironment, aStackTop);
 
-        String flatfile = unstringify(aEnvironment, aStackTop, aFileName) + ".def";
+        String flatfile = toNormalString(aEnvironment, aStackTop, aFileName) + ".def";
         DefFile def = aEnvironment.iDefFiles.getFile(aFileName);
 
         String hashedname = (String) aEnvironment.getTokenHash().lookUp(flatfile);
@@ -1140,42 +1175,53 @@ public class Utility {
         Utility.putTrueInPointer(aEnvironment, BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop));
     }
 
-    public static void newRule(Environment aEnvironment, int aStackTop) throws Exception {
+    public static void newRule(Environment aEnvironment, int aStackTop, boolean aPattern) throws Exception {
 
         int arity;
         int precedence;
 
-        ConsPointer ar = new ConsPointer();
-        ConsPointer pr = new ConsPointer();
+        ConsPointer arityPointer = new ConsPointer();
+        ConsPointer precidencePointer = new ConsPointer();
         ConsPointer predicate = new ConsPointer();
-        ConsPointer body = new ConsPointer();
+        ConsPointer bodyPointer = new ConsPointer();
         String orig = null;
 
         // Get operator
         LispError.checkArgument(aEnvironment, aStackTop, BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1, "INTERNAL");
         orig = (String) BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 1).car();
         LispError.checkArgument(aEnvironment, aStackTop, orig != null, 1, "INTERNAL");
-        ar.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
-        pr.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 3).getCons());
+        arityPointer.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
+        precidencePointer.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 3).getCons());
         predicate.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 4).getCons());
-        body.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 5).getCons());
+        bodyPointer.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 5).getCons());
 
         // The arity
-        LispError.checkArgument(aEnvironment, aStackTop, ar.getCons() != null, 2, "INTERNAL");
-        LispError.checkArgument(aEnvironment, aStackTop, ar.car() instanceof String, 2, "INTERNAL");
-        arity = Integer.parseInt((String) ar.car(), 10);
+        LispError.checkArgument(aEnvironment, aStackTop, arityPointer.getCons() != null, 2, "INTERNAL");
+        LispError.checkArgument(aEnvironment, aStackTop, arityPointer.car() instanceof String, 2, "INTERNAL");
+        arity = Integer.parseInt((String) arityPointer.car(), 10);
 
         // The precedence
-        LispError.checkArgument(aEnvironment, aStackTop, pr.getCons() != null, 3, "INTERNAL");
-        LispError.checkArgument(aEnvironment, aStackTop, pr.car() instanceof String, 3, "INTERNAL");
-        precedence = Integer.parseInt((String) pr.car(), 10);
+        LispError.checkArgument(aEnvironment, aStackTop, precidencePointer.getCons() != null, 3, "INTERNAL");
+        LispError.checkArgument(aEnvironment, aStackTop, precidencePointer.car() instanceof String, 3, "INTERNAL");
+        precedence = Integer.parseInt((String) precidencePointer.car(), 10);
 
         // Finally define the rule base
-        aEnvironment.defineRule(aStackTop, Utility.getSymbolName(aEnvironment, orig),
+        if(aPattern == true)
+        {
+            aEnvironment.defineRulePattern(aStackTop, Utility.getSymbolName(aEnvironment, orig),
                 arity,
                 precedence,
                 predicate,
-                body);
+                bodyPointer);
+        }
+        else
+        {
+            aEnvironment.defineRule(aStackTop, Utility.getSymbolName(aEnvironment, orig),
+                arity,
+                precedence,
+                predicate,
+                bodyPointer);
+        }
 
         // Return true
         Utility.putTrueInPointer(aEnvironment, BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop));
@@ -1203,62 +1249,26 @@ public class Utility {
         Utility.putTrueInPointer(aEnvironment, BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop));
     }
 
-    public static void newRulePattern(Environment aEnvironment, int aStackTop, boolean aMacroMode) throws Exception {
-        int arity;
-        int precedence;
 
-        ConsPointer arityPointer = new ConsPointer();
-        ConsPointer precedencePointer = new ConsPointer();
-        ConsPointer predicatePointer = new ConsPointer();
-        ConsPointer bodyPointer = new ConsPointer();
-        String orig = null;
 
-        // Get operator
-        LispError.checkArgument(aEnvironment, aStackTop, BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 1).getCons() != null, 1, "INTERNAL");
-        orig = (String) BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 1).car();
-        LispError.checkArgument(aEnvironment, aStackTop, orig != null, 1, "INTERNAL");
-        arityPointer.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 2).getCons());
-        precedencePointer.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 3).getCons());
-        predicatePointer.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 4).getCons());
-        bodyPointer.setCons(BuiltinFunction.getArgumentPointer(aEnvironment, aStackTop, 5).getCons());
-
-        // The arity
-        LispError.checkArgument(aEnvironment, aStackTop, arityPointer.getCons() != null, 2, "INTERNAL");
-        LispError.checkArgument(aEnvironment, aStackTop, arityPointer.car() instanceof String, 2, "INTERNAL");
-        arity = Integer.parseInt((String) arityPointer.car(), 10);
-
-        // The precedence
-        LispError.checkArgument(aEnvironment, aStackTop, precedencePointer.getCons() != null, 3, "INTERNAL");
-        LispError.checkArgument(aEnvironment, aStackTop, precedencePointer.car() instanceof String, 3, "INTERNAL");
-        precedence = Integer.parseInt((String) precedencePointer.car(), 10);
-
-        // Finally define the rule base
-        aEnvironment.defineRulePattern(aStackTop, Utility.getSymbolName(aEnvironment, orig),
-                arity,
-                precedence,
-                predicatePointer,
-                bodyPointer);
-
-        // Return true
-        Utility.putTrueInPointer(aEnvironment, BuiltinFunction.getTopOfStackPointer(aEnvironment, aStackTop));
-    }
-
-    public static String dumpRule(int aStackTop, Rule branch, Environment aEnvironment, SingleArityRulebaseEvaluator userFunction) {
+    public static String dumpRule(int aStackTop, Rule rule, Environment aEnvironment, SingleArityRulebaseEvaluator userFunction) {
         StringBuilder dumpResult = new StringBuilder();
         try {
-            int precedence = branch.getPrecedence();
-            ConsPointer predicatePointer1 = branch.getPredicatePointer();
+            int precedence = rule.getPrecedence();
+
+            ConsPointer predicatePointer1 = rule.getPredicatePointer();
             String predicate = "";
             String predicatePointerString = predicatePointer1.toString();
+
             if (predicatePointerString == null || predicatePointerString.equalsIgnoreCase("Empty.")) {
                 predicate = "None.";
             } else {
                 predicate = Utility.printMathPiperExpression(aStackTop, predicatePointer1, aEnvironment, 0);
             }
 
-            if (branch instanceof PatternRule) {
+            if (rule instanceof PatternRule) {
                 predicate = "(Pattern) ";
-                PatternRule branchPattern = (PatternRule) branch;
+                PatternRule branchPattern = (PatternRule) rule;
                 ParametersPatternMatcher pattern = branchPattern.getPattern();
 
                 Iterator variablesIterator = pattern.getVariables().iterator();
@@ -1277,7 +1287,8 @@ public class Utility {
                 while (parameterMatchersIterator.hasNext()) {
                     PatternParameterMatcher parameter = (PatternParameterMatcher) parameterMatchersIterator.next();
                     String parameterType = (String) parameter.getType();
-                    parameterTypes += parameterType + ", ";
+                    parameterTypes += parameterType + ": " + parameter.toString();
+                    parameterTypes += "; ";
                 }
                 if (parameterTypes.contains(",")) {
                     parameterTypes = parameterTypes.substring(0, parameterTypes.lastIndexOf(","));
@@ -1297,7 +1308,6 @@ public class Utility {
                 predicate += "\n    Variables: " + patternVariables + ", ";
                 predicate += "\n    Types: " + parameterTypes;
 
-
             }//end if.
 
             Iterator paremetersIterator = userFunction.getParameters();
@@ -1313,7 +1323,7 @@ public class Utility {
                 parameters = parameters.substring(0, parameters.lastIndexOf(","));
             }
 
-            String body = Utility.printMathPiperExpression(aStackTop, branch.getBodyPointer(), aEnvironment, 0);
+            String body = Utility.printMathPiperExpression(aStackTop, rule.getBodyPointer(), aEnvironment, 0);
             body = body.replace(",", ", ");
             //System.out.println(data);
 
@@ -1322,11 +1332,13 @@ public class Utility {
             if (userFunction instanceof MacroRulebaseEvaluator) {
                 BackQuoteSubstitute backQuoteSubstitute = new BackQuoteSubstitute(aEnvironment);
                 ConsPointer substitutedBodyPointer = new ConsPointer();
-                Utility.substitute(aEnvironment, aStackTop, substitutedBodyPointer, branch.getBodyPointer(), backQuoteSubstitute);
+                Utility.substitute(aEnvironment, aStackTop, substitutedBodyPointer, rule.getBodyPointer(), backQuoteSubstitute);
                 substitutedMacroBody = Utility.printMathPiperExpression(aStackTop, substitutedBodyPointer, aEnvironment, 0);
             }
 
             dumpResult.append("Precedence: " + precedence + ", ");
+            dumpResult.append("\n" + "Rule Type: " + rule.getClass().getSimpleName() + ", ");
+            dumpResult.append("\n" + "Arity: " + userFunction.arity() + ", ");
             dumpResult.append("\n" + "Parameters: " + parameters + ", ");
             dumpResult.append("\n" + "Predicates: " + predicate + ",    ");
 

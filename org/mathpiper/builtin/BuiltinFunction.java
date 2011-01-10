@@ -95,7 +95,7 @@ import org.mathpiper.builtin.functions.core.LispForm;
 import org.mathpiper.builtin.functions.core.GarbageCollect;
 import org.mathpiper.builtin.functions.core.Gcd;
 import org.mathpiper.builtin.functions.core.GenericTypeName;
-import org.mathpiper.builtin.functions.core.GetCoreError;
+import org.mathpiper.builtin.functions.core.ExceptionGet;
 import org.mathpiper.builtin.functions.core.GetExactBits;
 import org.mathpiper.builtin.functions.core.IsGreaterThan;
 import org.mathpiper.builtin.functions.core.HistorySize;
@@ -195,7 +195,7 @@ import org.mathpiper.builtin.functions.core.PipeToStdout;
 import org.mathpiper.builtin.functions.core.PipeToString;
 import org.mathpiper.builtin.functions.core.TraceRule;
 import org.mathpiper.builtin.functions.core.TraceStack;
-import org.mathpiper.builtin.functions.core.TrapError;
+import org.mathpiper.builtin.functions.core.ExceptionCatch;
 import org.mathpiper.builtin.functions.core.UnFence;
 import org.mathpiper.builtin.functions.core.ListToFunction;
 import org.mathpiper.builtin.functions.core.LoadScriptOnce;
@@ -211,6 +211,11 @@ import org.mathpiper.lisp.printers.MathPiperPrinter;
 
 import java.io.*;
 import org.mathpiper.builtin.functions.core.Delay;
+import org.mathpiper.builtin.functions.core.FastArcCos;
+import org.mathpiper.builtin.functions.core.FastArcTan;
+import org.mathpiper.builtin.functions.core.FastCos;
+import org.mathpiper.builtin.functions.core.FastSin;
+import org.mathpiper.builtin.functions.core.FastTan;
 import org.mathpiper.builtin.functions.core.GlobalVariablesGet;
 import org.mathpiper.builtin.functions.core.JavaAccess;
 import org.mathpiper.builtin.functions.core.JavaCall;
@@ -459,14 +464,14 @@ public abstract class BuiltinFunction {
 		        new BuiltinFunctionEvaluator(new If(), 2, BuiltinFunctionEvaluator.Variable | BuiltinFunctionEvaluator.Macro),
 		        "If");
 		aEnvironment.getBuiltinFunctions().setAssociation(
-		        new BuiltinFunctionEvaluator(new Check(), 2, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Macro),
+		        new BuiltinFunctionEvaluator(new Check(), 3, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Macro),
 		        "Check");
 		aEnvironment.getBuiltinFunctions().setAssociation(
-		        new BuiltinFunctionEvaluator(new TrapError(), 2, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Macro),
-		        "TrapError");
+		        new BuiltinFunctionEvaluator(new ExceptionCatch(), 2, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Macro),
+		        "ExceptionCatch");
 		aEnvironment.getBuiltinFunctions().setAssociation(
-		        new BuiltinFunctionEvaluator(new GetCoreError(), 0, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
-		        "GetCoreError");
+		        new BuiltinFunctionEvaluator(new ExceptionGet(), 0, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+		        "ExceptionGet");
 		aEnvironment.getBuiltinFunctions().setAssociation(
 		        new BuiltinFunctionEvaluator(new Prefix(), 2, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
 		        "Prefix");
@@ -627,8 +632,23 @@ public abstract class BuiltinFunction {
 		        new BuiltinFunctionEvaluator(new SystemCall(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
 		        "SystemCall");
 		aEnvironment.getBuiltinFunctions().setAssociation(
+		        new BuiltinFunctionEvaluator(new FastSin(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+		        "FastSin");
+		aEnvironment.getBuiltinFunctions().setAssociation(
 		        new BuiltinFunctionEvaluator(new FastArcSin(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
 		        "FastArcSin");
+		aEnvironment.getBuiltinFunctions().setAssociation(
+		        new BuiltinFunctionEvaluator(new FastCos(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+		        "FastCos");
+		aEnvironment.getBuiltinFunctions().setAssociation(
+		        new BuiltinFunctionEvaluator(new FastArcCos(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+		        "FastArcCos");
+		aEnvironment.getBuiltinFunctions().setAssociation(
+		        new BuiltinFunctionEvaluator(new FastTan(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+		        "FastTan");
+		aEnvironment.getBuiltinFunctions().setAssociation(
+		        new BuiltinFunctionEvaluator(new FastArcTan(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
+		        "FastArcTan");
 		aEnvironment.getBuiltinFunctions().setAssociation(
 		        new BuiltinFunctionEvaluator(new FastLog(), 1, BuiltinFunctionEvaluator.Fixed | BuiltinFunctionEvaluator.Function),
 		        "FastLog");
