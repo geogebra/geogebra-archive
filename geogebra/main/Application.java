@@ -334,8 +334,8 @@ public class Application implements KeyEventDispatcher {
 	private GlobalKeyDispatcher globalKeyDispatcher;
 
 	// For language specific settings
-	private Locale currentLocale, fallbackLocale = null;
-	private ResourceBundle rbmenu, rbcommand, rbcommandFallback, rbcommandOld, rberror, rbcolors, rbplain, rbplainFallback, rbsymbol, rbsettings,rbwiki;
+	private Locale currentLocale, englishLocale = null;
+	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld, rberror, rbcolors, rbplain, rbplainEnglish, rbsymbol, rbsettings,rbwiki;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -1979,17 +1979,6 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 	
-	final public String getWikiLocaleString(){
-		return getFallbackLocale().toString();
-	}
-	
-	final public String getWiki(String patternKey,String subst) {
-		String pattern = getWiki(patternKey);		
-		return pattern.replace("%0",subst);
-	}
-	
-
-	
 	final public String getPlain(String key) {
 		if (rbplain == null) {
 			initPlainResourceBundle();
@@ -2042,14 +2031,10 @@ public class Application implements KeyEventDispatcher {
 			kernel.updateLocalAxesNames();
 	}
 	
-	private Locale getFallbackLocale(){
-		if(fallbackLocale==null)
-			fallbackLocale = getClosestWikiLocale(currentLocale);
-		return fallbackLocale;
-	}
+	
 	private void initWikiResourceBundle() {
 			
-		rbwiki = MyResourceBundle.createBundle(RB_WIKI, getFallbackLocale());		
+		rbwiki = MyResourceBundle.createBundle(RB_WIKI, Locale.ENGLISH);		
 		debug(rbwiki.getLocale());
 	}
 
@@ -2176,27 +2161,27 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
-	final public String getFallbackCommand(String key) {
+	final public String getEnglishCommand(String key) {
 		
-		if (rbcommandFallback == null) 			
-			rbcommandFallback = MyResourceBundle
-					.createBundle(RB_COMMAND, getFallbackLocale());
+		if (rbcommandEnglish == null) 			
+			rbcommandEnglish = MyResourceBundle
+					.createBundle(RB_COMMAND, Locale.ENGLISH);
 
 
 		try {
-			return rbcommandFallback.getString(key);
+			return rbcommandEnglish.getString(key);
 		} catch (Exception e) {
 			return key;
 		}
 	}
 	
-	final public String getFallbackPlain(String key) {
+	final public String getEnglishPlain(String key) {
 						
-		if (rbplainFallback == null) 			
-			rbplainFallback = MyResourceBundle
-					.createBundle(RB_PLAIN, getFallbackLocale());
+		if (rbplainEnglish == null) 			
+			rbplainEnglish = MyResourceBundle
+					.createBundle(RB_PLAIN, Locale.ENGLISH);
 		try {
-			return rbplainFallback.getString(key);
+			return rbplainEnglish.getString(key);
 		} catch (Exception e) {
 			return key;
 		}

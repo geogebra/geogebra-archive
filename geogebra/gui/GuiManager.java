@@ -2587,29 +2587,29 @@ public class GuiManager {
 	    	// try to get help for given language
 	    	// eg http://www.geogebra.org/help/en/FitLogistic
 
-	    	
-	    	String languageISOcode=app.getWikiLocaleString();
-	    	boolean needFallback = languageISOcode != app.getLocale().toString();
-	    	
-	    	String strURL = ""; 
+	    	String localeCode = app.getLocale().toString();
+	    		    	
+	    	String strURL = "";
+	    	String typeStr = "";
 	    	switch(type){
 	    	case HELP_COMMAND:
-	    		strURL =  app.getWiki("CommandPattern", needFallback ? app.getFallbackCommand(pageName) 
-	    				: app.getCommand(pageName)); 
+	    		strURL =  app.getEnglishCommand(pageName);
+	    		typeStr = "cmd";
 	    		break;
 	    	case HELP_TOOL:
-	    		strURL =  app.getWiki("ToolPattern", needFallback? app.getFallbackPlain(pageName):
-	    			app.getPlain(pageName));	
+	    		strURL =  app.getEnglishPlain(pageName);
+	    		typeStr = "tool";
 	    		break;
 	    	case HELP_GENERIC:
 	    		strURL =  app.getWiki(pageName);
+	    		typeStr = "article";
 	    		break;
 	    	default:
 	    		Application.printStacktrace("Bad getHelpURL call");
 	    	}
 			try {
 			strURL = GeoGebra.GEOGEBRA_WEBSITE
-					+ "wiki_new/" + languageISOcode+"/" + 
+					+ "help/" + localeCode+"/" + typeStr + "/" +
 	        			java.net.URLEncoder.encode(strURL.replace(" ", "_"),"utf-8");
 	        		Application.debug(strURL);
 	                URL url =   new URL(strURL);
