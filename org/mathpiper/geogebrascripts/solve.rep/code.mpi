@@ -594,7 +594,13 @@ LocalSymbols(res)
         [ Assert("Solve", "expression ":(PipeToString() Write(expr)):" does not depend on ":PipeToString() Write(var)) False; {}; ];
   50  # Solve(_expr, _var)_((res := Solve'Poly(expr, var)) != Failed) <-- res;
   60  # Solve(_e1 * _e2, _var) <-- Union(Solve(e1,var), Solve(e2,var));
-  70  # Solve(_e1 / _e2, _var) <-- Solve(e1, var);
+  70  # Solve(_e1 / _e2, _var) <-- [
+      Local(tn, t, s);
+      tn := Solve(e1, var);
+      t := {};
+      ForEach(s, tn) If(WithValue(var, s[2], e2) != 0, DestructiveAppend(t, s));
+      t;
+  ];
   80  # Solve(_e1 + _e2, _var)_(Not HasExpr(e2,var) And (res := Solve'Simple(e1,-e2,var)) != Failed) <-- res;
   80  # Solve(_e1 + _e2, _var)_(Not HasExpr(e1,var) And (res := Solve'Simple(e2,-e1,var)) != Failed) <-- res;
   80  # Solve(_e1 - _e2, _var)_(Not HasExpr(e2,var) And (res := Solve'Simple(e1,e2,var)) != Failed) <-- res;
