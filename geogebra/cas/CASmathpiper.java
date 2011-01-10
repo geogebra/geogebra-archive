@@ -277,6 +277,11 @@ public class CASmathpiper extends CASgeneric {
 		// set default numeric precision to 16 significant figures
 		ggbMathPiper.evaluate("BuiltinPrecisionSet(16);");
 		
+		// user defined function
+		ggbMathPiper.evaluate("log10(x) := log(x) / log(10);");
+		ggbMathPiper.evaluate("log2(x) := log(x) / log(2);");
+		ggbMathPiper.evaluate("cbrt(x) := x^(1/3);");
+		
 		// Rules for equation manipulation
 		// allow certain commands for equations
 		ggbMathPiper.evaluate("NotEqu(exp) := Not( IsEquation(exp));");

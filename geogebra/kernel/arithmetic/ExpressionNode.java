@@ -2382,22 +2382,11 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_PGF:
 				sb.append("log10("); // user-defined function in Maxima
 				sb.append(leftStr);
 				sb.append(')');
-				break;
-
-			case STRING_TYPE_MATH_PIPER:
-				sb.append("Ln(");
-				sb.append(leftStr);
-				sb.append(")/Ln(10)");
-				break;
-
-			case STRING_TYPE_JASYMCA:
-				sb.append("log(");
-				sb.append(leftStr);
-				sb.append(")/log(10)");
 				break;
 
 			default:
@@ -2417,21 +2406,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MATH_PIPER:
 				sb.append("log2("); // user-defined function in Maxima
 				sb.append(leftStr);
 				sb.append(')');
-				break;
-
-			case STRING_TYPE_MATH_PIPER:
-				sb.append("Ln(");
-				sb.append(leftStr);
-				sb.append(")/Ln(2)");
-				break;
-
-			case STRING_TYPE_JASYMCA:
-				sb.append("log(");
-				sb.append(leftStr);
-				sb.append(")/log(2)");
 				break;
 
 			default:
