@@ -8,6 +8,13 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.MyStringBuffer;
+import geogebra.kernel.arithmetic.TextValue;
+import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.parser.ParseException;
+import geogebra.main.Application;
+import geogebra.main.MyError;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -90,8 +97,8 @@ public class TextPreviewPanel extends EuclidianView {
 	public void updatePreviewText(GeoText targetGeo, String inputValue, boolean isLaTeX) {
 
 		// initialize variables
-		ExpressionNode exp = null;
-		String formattedInput = formatInputValue(inputValue);		
+		ValidExpression exp = null;
+		ExpressionValue eval = null;	
 		boolean hasParseError = false;
 		boolean showErrorMessage = false;
 		isIndependent = false;
@@ -104,18 +111,28 @@ public class TextPreviewPanel extends EuclidianView {
 		}
 
 
+		// prepare the input string for processing
+		String formattedInput = formatInputValue(inputValue);	
+
+
 		// parse the input text 
 		try{
-			exp = (ExpressionNode) kernel.getParser().parseGeoGebraExpression(formattedInput);
+			exp = kernel.getParser().parseGeoGebraExpression(formattedInput);
 		}
 
-		catch (Exception e) {
+		catch (ParseException e) {
 			isIndependent = true;
 			hasParseError = true;  	
 			if(formattedInput.length() > 0) // no error message if we have an empty string
 				showErrorMessage = true;
 			//Application.debug("parse exception");
 		} 
+		catch (MyError e) {
+			isIndependent = true;
+			hasParseError = true;  // odd numbers of quotes give parse errors 
+			showErrorMessage = true;
+			//Application.debug("parse error");
+		}
 		catch (Error e) {
 			isIndependent = true;
 			hasParseError = true;  // odd numbers of quotes give parse errors 
@@ -124,19 +141,19 @@ public class TextPreviewPanel extends EuclidianView {
 		}
 
 
-
-		// resolve variables
+		// resolve variables and evaluate the expression
 		if(!(hasParseError)){
 			try
 			{
 				exp.resolveVariables();
 				isIndependent = exp.isConstant();
+				eval = exp.evaluate();
 			} 
+
 			catch (Error e) {
-				// if an error is thrown here then we must have independent text
-				// this is not considered an error, so don't show an error message
 				isIndependent = true;
-				//Application.debug("resolve error");
+				showErrorMessage = true;
+				//Application.debug("resolve error:" + e.getCause());
 			} 
 			catch (Exception e) {
 				showErrorMessage = true;
@@ -146,21 +163,22 @@ public class TextPreviewPanel extends EuclidianView {
 		}
 
 
-		// create the previewGeoText
+		//=========================================
+		// create the preview Geo
+		//=========================================
 
 		// case1: independent text based on string only, including error messages
 		if (isIndependent) 
 		{
-			//System.out.println("is independent");
-
-			// remove quote characters
-			formattedInput = formattedInput. replaceAll("\"", "");
-
-			// set the text
-			if(showErrorMessage)
-				previewGeoIndependent.setTextString(app.getError("InvalidInput"));
-			else
-				previewGeoIndependent.setTextString(formattedInput);
+			// set the text string for the geo
+			String text = "";			
+			if(showErrorMessage){
+				text  = app.getError("InvalidInput");
+			} else if(eval != null){
+				MyStringBuffer eval2 = ((TextValue) eval).getText();
+				text = eval2.toValueString();
+			}				
+			previewGeoIndependent.setTextString(text);
 
 			// update the display style
 			updateVisualProperties(previewGeoIndependent, targetGeo, isLaTeX, showErrorMessage);
@@ -170,15 +188,13 @@ public class TextPreviewPanel extends EuclidianView {
 		// case 2: dependent GeoText, needs AlgoDependentText	
 		else
 		{
-			//System.out.println("is not independent");
-
 			if(previewGeoDependent != null){
 				previewGeoDependent.remove();
 				textAlgo.remove();
 			}
 
 			// create new  previewGeoDependent 
-			textAlgo = new AlgoDependentText(cons, exp);
+			textAlgo = new AlgoDependentText(cons, (ExpressionNode) exp);
 			cons.removeFromConstructionList(textAlgo);
 			previewGeoDependent = textAlgo.getGeoText();
 			previewGeoDependent.addView(this);
@@ -188,6 +204,8 @@ public class TextPreviewPanel extends EuclidianView {
 			updateVisualProperties(previewGeoDependent, targetGeo, isLaTeX, showErrorMessage);
 		}
 
+		
+		
 		// hide/show the preview geos  
 		previewGeoIndependent.setEuclidianVisible(isIndependent);
 		previewGeoIndependent.updateRepaint();
@@ -248,8 +266,6 @@ public class TextPreviewPanel extends EuclidianView {
 
 	/**
 	 * Prepares the inputValue string for the parser
-	 * 
-	 *  TODO: not sure this is really needed, review the code
 	 */
 	private String formatInputValue(String inputValue){
 
@@ -263,14 +279,15 @@ public class TextPreviewPanel extends EuclidianView {
 			}
 			else{
 				inputValue = previewGeoIndependent.getCommandDescription(); 
-			}
+			}				
+		} 
+		
+		// inputValue is not null, so process it as done in TextInputDialog ---> TextInputHandler 	
+		else {
 
-
-			// inputValue is not null (code copied from TextInputHandler ... inner class in TextInputDialog)		
-		} else {
-			//System.out.println("process input: " + inputValue);
 			// no quotes?
-			if (inputValue.indexOf('"') < 0) {
+			if (inputValue.indexOf('"') < 0) 
+			{	
 				// this should become either
 				// (1) a + "" where a is an object label or
 				// (2) "text", a plain text 
@@ -280,17 +297,17 @@ public class TextPreviewPanel extends EuclidianView {
 				// that this will become a text object
 				if (kernel.lookupLabel(inputValue.trim()) != null) {
 					inputValue = "(" + inputValue + ") + \"\"";
-					//isIndependent = false;
-					System.out.println("lookpup label found" + inputValue);
 				} 
 
 				// ad (2) PLAIN TEXT
 				// add quotes to string
 				else {
-					//inputValue = "\"" + inputValue + "\"";
+					inputValue = "\"" + inputValue + "\"";
 				}        			
 			} 
-			else {
+
+			else 
+			{
 				// replace \n\" by \"\n, this is useful for e.g.:
 				//    "a = " + a + 
 				//	"b = " + b 

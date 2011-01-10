@@ -653,7 +653,7 @@ public class AlgebraProcessor {
 		return ret;
 	}
 	
-	private GeoElement [] doProcessValidExpression(ValidExpression ve) throws MyError, Exception {
+	public GeoElement [] doProcessValidExpression(ValidExpression ve) throws MyError, Exception {
 		GeoElement [] ret = null;	
 		
 			if (ve instanceof ExpressionNode) {
