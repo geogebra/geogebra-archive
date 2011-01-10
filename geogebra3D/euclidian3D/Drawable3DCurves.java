@@ -113,10 +113,13 @@ public abstract class Drawable3DCurves extends Drawable3D {
 	}
 	
 	
-	public int getType(){
-		return DRAW_TYPE_CURVES;
+	public void addToDrawable3DLists(Drawable3DLists lists){
+		addToDrawable3DLists(lists,DRAW_TYPE_CURVES);
 	}
-	
+    
+    public void removeFromDrawable3DLists(Drawable3DLists lists){
+    	removeFromDrawable3DLists(lists,DRAW_TYPE_CURVES);
+    }
 	
 
 	protected double getColorShift(){

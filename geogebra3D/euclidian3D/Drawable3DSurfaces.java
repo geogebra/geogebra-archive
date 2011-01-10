@@ -136,9 +136,15 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	
 	
 
-	public int getType(){
-		return DRAW_TYPE_SURFACES;
+	
+
+	public void addToDrawable3DLists(Drawable3DLists lists){
+		addToDrawable3DLists(lists,DRAW_TYPE_SURFACES);
 	}
+    
+    public void removeFromDrawable3DLists(Drawable3DLists lists){
+    	removeFromDrawable3DLists(lists,DRAW_TYPE_SURFACES);
+    }
 	
 
 	protected double getColorShift(){

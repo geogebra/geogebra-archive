@@ -112,10 +112,16 @@ public class DrawList3D extends Drawable3D {
 	}
 
 
-	public int getType() {
-		return DRAW_TYPE_DEFAULT;
-	}
 
+	public void addToDrawable3DLists(Drawable3DLists lists){
+		addToDrawable3DLists(lists,DRAW_TYPE_DEFAULT);
+	}
+    
+    public void removeFromDrawable3DLists(Drawable3DLists lists){
+    	removeFromDrawable3DLists(lists,DRAW_TYPE_DEFAULT);
+    }
+    
+    
 	@Override
 	public boolean isTransparent() {
 		// TODO Auto-generated method stub

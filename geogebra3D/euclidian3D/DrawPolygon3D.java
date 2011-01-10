@@ -100,14 +100,20 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 	
 	
 
-	public int getType(){
-		if (((GeoPolygon) getGeoElement()).isPartOfClosedSurface())
-			return DRAW_TYPE_CLOSED_SURFACES;
-		else
-			return DRAW_TYPE_SURFACES;
-	}
 
-	
+	public void addToDrawable3DLists(Drawable3DLists lists){
+		if (((GeoPolygon) getGeoElement()).isPartOfClosedSurface())
+			addToDrawable3DLists(lists,DRAW_TYPE_CLOSED_SURFACES);
+		else
+			addToDrawable3DLists(lists,DRAW_TYPE_SURFACES);
+	}
+    
+    public void removeFromDrawable3DLists(Drawable3DLists lists){
+    	if (((GeoPolygon) getGeoElement()).isPartOfClosedSurface())
+    		removeFromDrawable3DLists(lists,DRAW_TYPE_CLOSED_SURFACES); 
+    	else
+    		removeFromDrawable3DLists(lists,DRAW_TYPE_SURFACES);
+    }
 	
 	
 	protected boolean updateForItSelf(){

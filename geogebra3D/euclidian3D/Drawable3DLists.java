@@ -19,7 +19,7 @@ import java.util.LinkedList;
 public class Drawable3DLists {
 	
 	
-	private class Drawable3DList extends LinkedList<Drawable3D>{
+	protected class Drawable3DList extends LinkedList<Drawable3D>{
 
 		/**
 		 * 
@@ -53,9 +53,8 @@ public class Drawable3DLists {
 	 */
 	private void add(Drawable3D drawable){
 		
-		lists[drawable.getType()].add(drawable);
-		
-		//Application.debug("drawables :\n"+toString());
+		//lists[drawable.getType()].add(drawable);
+		drawable.addToDrawable3DLists(this);
 		
 	}
 	
@@ -78,7 +77,8 @@ public class Drawable3DLists {
 	
 		//TODO fix it
 		if (drawable!=null)
-			lists[drawable.getType()].remove(drawable);
+			//lists[drawable.getType()].remove(drawable);
+			drawable.removeFromDrawable3DLists(this);
 		
 	}
 	
@@ -92,6 +92,10 @@ public class Drawable3DLists {
 			
 	}
 	
+	
+	Drawable3DList getList(int type){
+		return lists[type];
+	}
 	
 	/**
 	 *  return the size of the cummulated lists

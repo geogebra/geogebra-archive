@@ -113,7 +113,6 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 	
 	public void drawGeometryPicked(Renderer renderer) { }
 	public int getPickOrder() {return 0;}
-	public int getType() {return 0;}
 	public boolean isTransparent() {return false;}
 
 

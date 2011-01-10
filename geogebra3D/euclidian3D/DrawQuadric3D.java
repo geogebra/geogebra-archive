@@ -178,20 +178,34 @@ implements Previewable {
 		return DRAW_PICK_ORDER_2D;
 	}
 	
+	
+	
 
-	public int getType(){
+
+	public void addToDrawable3DLists(Drawable3DLists lists){
 		switch(((GeoQuadric3D) getGeoElement()).getType()){
 		case GeoQuadric3D.QUADRIC_SPHERE:
 		case GeoQuadric3D.QUADRIC_CONE:
 		case GeoQuadric3D.QUADRIC_CYLINDER:
-			return DRAW_TYPE_CLOSED_SURFACES;
+			addToDrawable3DLists(lists,DRAW_TYPE_CLOSED_SURFACES);
+			break;
 		default:
-			return DRAW_TYPE_SURFACES;
+			addToDrawable3DLists(lists,DRAW_TYPE_SURFACES);
 		}
 	}
-	
-	
-	
+    
+    public void removeFromDrawable3DLists(Drawable3DLists lists){
+    	switch(((GeoQuadric3D) getGeoElement()).getType()){
+		case GeoQuadric3D.QUADRIC_SPHERE:
+		case GeoQuadric3D.QUADRIC_CONE:
+		case GeoQuadric3D.QUADRIC_CYLINDER:
+			removeFromDrawable3DLists(lists,DRAW_TYPE_CLOSED_SURFACES);
+			break;
+		default:
+			removeFromDrawable3DLists(lists,DRAW_TYPE_SURFACES);
+		}
+    }
+
 	
 
 	////////////////////////////////

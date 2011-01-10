@@ -61,11 +61,17 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 	
 	
 
-	public int getType(){
-		return DRAW_TYPE_CLOSED_SURFACES;
-	}
 
-	
+
+
+	public void addToDrawable3DLists(Drawable3DLists lists){
+		addToDrawable3DLists(lists,DRAW_TYPE_CLOSED_SURFACES);
+	}
+    
+    public void removeFromDrawable3DLists(Drawable3DLists lists){
+    	removeFromDrawable3DLists(lists,DRAW_TYPE_CLOSED_SURFACES);
+    }
+
 	
 	
 	protected boolean updateForItSelf(){

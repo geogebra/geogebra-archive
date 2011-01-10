@@ -802,12 +802,26 @@ public abstract class Drawable3D extends DrawableND {
     /////////////////////////////
     // TYPE
     
-    /** return the type of the drawable
-     * @return the type of the drawable
+    
+    /**
+     * add this to the correct lists
+     * @param lists
      */
-    abstract public int getType();
+    abstract public void addToDrawable3DLists(Drawable3DLists lists);
     
+	protected void addToDrawable3DLists(Drawable3DLists lists, int type){
+		lists.getList(type).add(this);
+	}
+	
+    /**
+     * remove this from the correct lists
+     * @param lists
+     */
+    abstract public void removeFromDrawable3DLists(Drawable3DLists lists);
     
+    protected void removeFromDrawable3DLists(Drawable3DLists lists, int type){
+    	lists.getList(type).remove(this);
+    }
 
     //////////////////////////////
     // FOR PREVIEWABLE INTERFACE
