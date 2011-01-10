@@ -1561,21 +1561,27 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 						default:
 							// check if we need a multiplication sign, see #414
+							// digit-digit, e.g. 3 * 5
+							// digit-fraction, e.g. 3 * \frac{5}{2}
 							char lastLeft = sb.charAt(sb.length() - 1);
 							char firstRight = rightStr.charAt(0);
-							// digit-digit, e.g. 3 * 5
-							// letter-digit, e.g. a * 3
-							// letter-letter, e.g. x * y
-							// i.e. only skip sign for digit - letter
-							showMultiplicationSign = !(Character.isDigit(lastLeft) &&  Character.isLetter(firstRight)); 																
+							showMultiplicationSign = 
+								// left is digit or ends with }, e.g. exponent, fraction
+								( 	Character.isDigit(lastLeft) || 
+									STRING_TYPE == STRING_TYPE_LATEX && lastLeft == '}'
+								)
+										&&  
+								// right is digit or fraction
+								(	Character.isDigit(firstRight) ||
+									STRING_TYPE == STRING_TYPE_LATEX && rightStr.startsWith("\\frac")	
+								);
 						}
 
 						if (showMultiplicationSign) {
 							sb.append(multiplicationSign(STRING_TYPE));
 						} else {
 							// space instead of multiplication sign
-							//sb.append(multiplicationSpace(STRING_TYPE));
-							sb.append(" ");
+							sb.append(multiplicationSpace(STRING_TYPE));
 						}
 					}
 
@@ -1607,8 +1613,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 						default:
 							// space instead of multiplication sign
-							//sb.append(multiplicationSpace(STRING_TYPE));
-							sb.append(" ");
+							sb.append(multiplicationSpace(STRING_TYPE));
 						}
 					}
 					sb.append(leftBracket(STRING_TYPE));
@@ -3041,10 +3046,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		}
 	}
 
-//	private String multiplicationSpace(int type) {
-//	//	return (type == STRING_TYPE_LATEX) ? " \\; " : " ";
-//		return " ";
-//	}
+	private String multiplicationSpace(int type) {
+		// wide space for multiplicatoin space in LaTeX
+		return (type == STRING_TYPE_LATEX) ? " \\; " : " ";
+	}
 
 	/**
 	 * If the expression is linear in fv, returns the corresponding coefficient.
