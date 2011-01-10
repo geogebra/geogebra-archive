@@ -19,6 +19,7 @@ import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.util.SelectionTable;
 import geogebra.gui.util.TableSymbols;
 import geogebra.gui.util.TableSymbolsLaTeX;
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
@@ -31,6 +32,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -46,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -82,6 +86,12 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 	private JLabel previewHeader, editHeader;
 
+	
+	private SelectionTable recentSymbolTable;
+	private ArrayList<String> recentSymbolList;
+	
+	private JPanel toolPanel;
+	
 	
 	
 	/**
@@ -124,7 +134,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		
 		// build toolbar
 		
-		JPanel toolPanel = new JPanel(new BorderLayout());
+		 toolPanel = new JPanel(new BorderLayout());
 		
 		toolBar = new JToolBar();
 		toolBar.add(cbLaTeX);
@@ -138,11 +148,9 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		toolBar.add(Box.createRigidArea(new Dimension(5,1)));
 		toolBar.add(btInsertGeo);
 		toolBar.setFloatable(false);
-		JToolBar tb = new JToolBar();
-		tb.add(new JButton("dummy"));
-		tb.setFloatable(false);
+		
 		toolPanel.add(toolBar, BorderLayout.NORTH);
-		toolPanel.add(tb,BorderLayout.SOUTH);
+		toolPanel.add(createRecentSymbolTable(),BorderLayout.SOUTH);
 		
 		// create edit panel to contain both the input panel and toolbar
 		editHeader = new JLabel();
@@ -213,7 +221,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		//btInsertUnicode.setText("Symbols");
 		
 		JMenu menu = new JMenu(app.getMenu("Properties.Basic"));
-		menu.add(new LatexTable(app, this, btInsertLaTeX, TableSymbols.basicSymbols, -1, 11,SelectionTable.MODE_TEXT));
+		menu.add(new LatexTable(app, this, btInsertUnicode, TableSymbols.basicSymbols, -1, 11,SelectionTable.MODE_TEXT));
 		btInsertUnicode.addPopupMenuItem(menu);
 		//btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.math_ops,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.operators,-1,8));
@@ -230,25 +238,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.currency,-1,8));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.handPointers,-1,6));
 		
-		/*
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.letterLikeSymbols,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.other_arrows,0,1,2));
-		
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.misc,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.bullets,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.writing,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.geometricShapes,0,1,2));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.weather_astrology,0,1,2));
-		
-		btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.games_music,0,1,2));
-		
-		*/
-		
-		menu = new JMenu("JLatex");
-		menu.add(new LatexTable(app, this, btInsertLaTeX, TableSymbols.JLatex, -1, 16,SelectionTable.MODE_TEXT));
-	//	btInsertUnicode.addPopupMenuItem(menu);
-		
-		
 	}
 
 	/**
@@ -256,7 +245,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 */
 	private JMenu createMenuItem(String[] table, int rows, int columns ){
 		JMenu menu = new JMenu(table[0] + " " + table[1] + " " + table[2] + "  ");
-		menu.add(new LatexTable(app, this, btInsertLaTeX, table, rows, columns, SelectionTable.MODE_TEXT));
+		menu.add(new LatexTable(app, this, btInsertUnicode, table, rows, columns, SelectionTable.MODE_TEXT));
 		return menu;
 	}
 	
@@ -363,6 +352,75 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	};
 	
 	
+	public JToolBar createRecentSymbolTable(){
+		
+		
+		recentSymbolList = app.getGuiManager().getRecentSymbolList();
+		
+		recentSymbolTable = new SelectionTable(app, recentSymbolList.toArray(), 1, recentSymbolList.size(), 
+				new Dimension(24,24), SelectionTable.MODE_TEXT);
+		
+		recentSymbolTable.setHorizontalAlignment(SwingConstants.CENTER);
+		recentSymbolTable.setSelectedIndex(0);
+		//	this.setUseColorSwatchBorder(true);
+		recentSymbolTable.setShowGrid(true);
+		recentSymbolTable.setGridColor(MyTable.TABLE_GRID_COLOR);
+		recentSymbolTable.setBorder(BorderFactory.createLoweredBevelBorder());  
+		recentSymbolTable.setShowSelection(false);
+		
+		recentSymbolTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				insertString(recentSymbolList.get(recentSymbolTable.getSelectedIndex()));
+			}
+		});
+		
+		
+		
+		JToolBar p = new JToolBar();
+		p.setFloatable(false);
+		//p.add(new JLabel("Recent: "));
+		p.add(recentSymbolTable);
+		p.setAlignmentX(LEFT_ALIGNMENT);
+		p.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
+		return p;
+		
+		
+		
+		
+		/*
+		
+		
+		JToolBar tb = new JToolBar();
+		tb.setFloatable(false);
+		
+		
+		symbolButton = new JButton[symbolButtonCount];
+		for(int i=0; i < symbolButton.length; i++){
+			symbolButton[i] = new JButton();
+			symbolButton[i].setFocusable(false);
+			symbolButton[i].addActionListener(this);
+			symbolButton[i].setIcon(
+					GeoGebraIcon.createStringIcon(symbolList.get(i), app.getPlainFont(), new Dimension(18,18)));
+			tb.add(symbolButton[i]);
+		}
+		
+		*/
+		
+	}
+	
+	public void addRecentSymbol(String newSymbol){
+		
+		this.recentSymbolList.add(0,newSymbol);
+		this.recentSymbolList.remove(recentSymbolList.size()-1);
+		recentSymbolTable.populateModel(recentSymbolList.toArray());
+		
+	}
+	
+	
+	
+	
+	
+	
 	public void setLabels(String title) {
 		super.setLabels(title);
 		
@@ -419,8 +477,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	/**
 	 * @return toolbar with buttons for inserting text symbols and LaTeX formulas
 	 */
-	public JToolBar getToolBar() {
-		return toolBar;
+	public JPanel getToolBar() {
+		return toolPanel;
 	}
 	
 	/**
@@ -519,7 +577,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 					latexPreviewer.setVisible(isLaTeX);
 				}
 			}	
-			
 			
 			
 		} catch (Exception ex) {

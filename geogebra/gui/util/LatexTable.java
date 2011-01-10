@@ -25,6 +25,7 @@ public class LatexTable extends SelectionTable implements MenuElement{
 	private String[] latexArray;
 	private PopupMenuButton popupButton;
 	private int caretPosition = 0;
+	private int mode;
 
 	public LatexTable(Application app, TextInputDialog textInputDialog, PopupMenuButton popupButton, 
 			String[] latexArray, int rows, int columns, int mode ){
@@ -34,6 +35,7 @@ public class LatexTable extends SelectionTable implements MenuElement{
 		this.inputDialog = textInputDialog;
 		this.latexArray = latexArray;
 		this.popupButton = popupButton;
+		this.mode = mode;
 		//setShowGrid(true);
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setSelectedIndex(0);
@@ -80,6 +82,8 @@ public class LatexTable extends SelectionTable implements MenuElement{
 			}
 
 			inputDialog.insertString(sb.toString());
+			if(mode == SelectionTable.MODE_TEXT)
+				inputDialog.addRecentSymbol(sb.toString());
 			//inputDialog.setRelativeCaretPosition(caretPosition);
 			popupButton.handlePopupActionEvent();
 		}	

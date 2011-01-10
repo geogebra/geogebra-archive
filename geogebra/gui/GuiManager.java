@@ -42,6 +42,7 @@ import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.main.MyError;
 import geogebra.main.MyResourceBundle;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.Color;
@@ -2900,5 +2901,19 @@ public class GuiManager {
 			//Application.debug("no menus open");
 			return true;
 		}
+		
+		// TextInputDialog recent symbol list
+		private ArrayList<String> recentSymbolList;
+		public ArrayList<String> getRecentSymbolList(){
+			if(recentSymbolList == null){
+				recentSymbolList = new ArrayList<String>();
+				recentSymbolList.add(Unicode.PI_STRING);
+				for(int i=0; i < 9; i++){
+					recentSymbolList.add("");
+				}
+			}
+			return recentSymbolList;
+		}
+		
 
 }
