@@ -210,6 +210,8 @@ SumFunc(_sumvar,sumfrom_IsInteger,_sumto,_sumbody,_sum,_condition) <--
              ]);
 ];
 
+LocalSymbols(c,d,expr,from,k,n,r,var,x) [
+
 
 
 
@@ -256,6 +258,8 @@ SumFunc(_k,1,Infinity,1/(_k*BinomialCoefficient(2*_k,_k)), (Pi*Sqrt(3))/9 );
 SumFunc(_k,1,Infinity,1/(_k^2*BinomialCoefficient(2*_k,_k)), Zeta(2)/3 );
 SumFunc(_k,1,Infinity,1/(_k^3*BinomialCoefficient(2*_k,_k)), 17*Zeta(4)/36 );
 SumFunc(_k,1,Infinity,(-1)^(_k-1)/_k, Ln(2) );
+
+];
 
 
 
