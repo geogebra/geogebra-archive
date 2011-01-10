@@ -60,22 +60,23 @@ public class AlgoRotate extends AlgoTransformation {
         this.angle = angle;
 
         angleGeo = angle.toGeoElement();
-        
+        Ageo = A;
         
         
         // create output object
-        if(A instanceof Rotateable){
-	        Ageo = A.toGeoElement();
+        if(A instanceof GeoPolygon){
+	        Bgeo = ((GeoPolygon)Ageo).copyInternal(cons);
+	        B = (Rotateable) Bgeo;
+        }
+        else if(A instanceof Rotateable){
 	        Bgeo = Ageo.copy();
 	        B = (Rotateable) Bgeo;
         }
         else if(A instanceof GeoFunction){
-        	Ageo = A;
-            Bgeo = new GeoCurveCartesian(cons);
+        	Bgeo = new GeoCurveCartesian(cons);
             B = (Rotateable) Bgeo;	
         }
         else if(A.isGeoList()){
-        	Ageo = A;
         	Bgeo = new GeoList(cons);
         }
         setInputOutput();

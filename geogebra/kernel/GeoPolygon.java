@@ -31,7 +31,7 @@ import java.util.HashSet;
  * 
  * @author Markus Hohenwarter
  */
-public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable, GeoCoordSys2D {
+public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable,Rotateable,PointRotateable,MatrixTransformable,Translateable,Dilateable,GeoCoordSys2D {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -1319,6 +1319,55 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		
 		
 	}
+
+	public void rotate(NumberValue r) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).rotate(r);	
+	}
+
+	public void rotate(NumberValue r, GeoPoint S) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).rotate(r,S);	
+	}
+
+	public void matrixTransform(double a00, double a01, double a10, double a11) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).matrixTransform(a00, a01, a10, a11);		
+	}
+
+	public void translate(GgbVector v) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).translate(v);		
+	}
+
+	public void dilate(NumberValue r, GeoPoint S) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).dilate(r,S);		
+	}
+
+	/**
+	 * Returns true iff all vertices are labeled
+	 * @return true iff all vertices are labeled
+	 */
+	public boolean isAllVertexLabelsSet() {
+		for(int i=0;i<points.length;i++)
+			if(!((GeoPoint)points[i]).isLabelSet())return false;
+		return true;
+	}
+
+	/**
+	 * Returns true iff number of vertices is not volatile
+	 * @return true iff number of vertices is not volatile
+	 */
+	public boolean isVertexCountFixed() {
+		//regularPolygon[vertex,vertex,count]
+		if(getParentAlgorithm() instanceof AlgoPolygonRegular)return false;
+		//polygon[list]
+		if(getParentAlgorithm().getInput().length<3)return false;
+		return true;
+	}
+	
+	
 	
 	
 	

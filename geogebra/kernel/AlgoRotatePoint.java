@@ -66,19 +66,21 @@ public class AlgoRotatePoint extends AlgoTransformation {
         this.Q = Q;
 
         angleGeo = angle.toGeoElement();
+        Ageo = A;
         
-        if(A instanceof Rotateable){
-	        Ageo = A.toGeoElement();
+        if(A instanceof GeoPolygon){
+	        Bgeo = ((GeoPolygon)Ageo).copyInternal(cons);
+	        B = (PointRotateable) Bgeo;
+        }
+        else if(A instanceof Rotateable){	    
 	        Bgeo = Ageo.copy();
 	        B = (PointRotateable) Bgeo;
         }
-        else if(A instanceof GeoFunction){
-        	Ageo = A;
+        else if(A instanceof GeoFunction){        	
             Bgeo = new GeoCurveCartesian(cons);
             B = (PointRotateable) Bgeo;	
         }
-        else if(A.isGeoList()){
-        	Ageo = A;
+        else if(A.isGeoList()){        	
         	Bgeo = new GeoList(cons);
         }        
         

@@ -62,9 +62,11 @@ public abstract class Transform {
 	 * @return transformed geo
 	 */
 	public GeoElement[] transform(GeoElement geo, String label) {
+		//for polygons we transform
 		if (geo.isGeoPolygon()) {
 			GeoPolygon poly = (GeoPolygon) geo;
-			return transformPoly(label, poly, transformPoints(poly.getPoints()));
+			if(poly.isVertexCountFixed() && poly.isAllVertexLabelsSet())
+				return transformPoly(label, poly, transformPoints(poly.getPoints()));
 		}
 		if (label == null)
 			label = transformedGeoLabel(geo);
@@ -112,11 +114,7 @@ public abstract class Transform {
 		cons.setSuppressLabelCreation(true);
 		for(int i = 0; i < geo.size(); i++){
 			GeoElement current = geo.get(i);
-			if (current.isGeoPolygon()) {
-				GeoPolygon poly = (GeoPolygon) current;
-				GeoElement poly2 = cons.getKernel().Polygon(null, transformPoints(poly.getPoints()))[0];				
-				ret.add(poly2);
-			}else if(current.isGeoList()){
+			if(current.isGeoList()){
 				ret.add(transformList((GeoList)current));
 			}else if(current.isLimitedPath() ){
 				GeoElement[] geos = ((LimitedPath) current)

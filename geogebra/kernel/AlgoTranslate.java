@@ -61,7 +61,11 @@ public class AlgoTranslate extends AlgoTransformation {
         inGeo = in;
                 
         // create out
-        if(in.isGeoList()){
+        if(inGeo instanceof GeoPolygon){
+	        outGeo = ((GeoPolygon)inGeo).copyInternal(cons);
+	        out = (Translateable) outGeo;
+        }
+        else if(in.isGeoList()){
         	outGeo = new GeoList(cons);
         }else {
         outGeo = inGeo.copy();

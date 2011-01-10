@@ -65,8 +65,14 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 
               
         geoIn = in.toGeoElement();
-        
-        if(geoIn instanceof GeoFunction){
+        if(in instanceof GeoPolygon){
+	        geoOut = ((GeoPolygon)in).copyInternal(cons);
+	        out = (MatrixTransformable) geoOut;
+        }
+        else if(geoIn.isGeoList()){
+        	geoOut = new GeoList(cons);
+        }
+        else if(geoIn instanceof GeoFunction){
         	out = new GeoCurveCartesian(cons);
         	geoOut = (GeoElement)out;
         }
@@ -106,6 +112,8 @@ public class AlgoApplyMatrix extends AlgoTransformation {
    
 
     protected final void compute() {
+    	if(geoIn.isGeoList())
+    		return;
     	if(geoIn.isGeoFunction()){
     		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
     	}
