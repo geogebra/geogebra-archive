@@ -1,12 +1,12 @@
-/* 
+/*
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
 
 This file is part of GeoGebra.
 This code has been written initially for Scilab (http://www.scilab.org/).
 
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
@@ -18,7 +18,6 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
 
-import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
@@ -105,7 +104,7 @@ public class MatchingBlockManager {
      * The contents between the matchings is highlighted.
      **/
     public void setPainterForOpenClose() {
-        Parameters param = new Parameters(Color.decode("#999999"), false, false, true, GeoGebraKeywordsPainter.FILLED, true);
+        Parameters param = new Parameters(Color.decode("#40e0d0"), false, false, true, GeoGebraKeywordsPainter.FILLED, true);
         if (param.inside) {
             boolean b = param.type == GeoGebraKeywordsPainter.FILLED;
             setPainterForOpenClose(b, param.included, param.color);

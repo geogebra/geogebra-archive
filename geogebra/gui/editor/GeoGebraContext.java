@@ -1,12 +1,12 @@
-/* 
+/*
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
 
 This file is part of GeoGebra.
 This code has been written initially for Scilab (http://www.scilab.org/).
 
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
  */
@@ -26,9 +26,9 @@ import javax.swing.text.Element;
 import javax.swing.text.View;
 
 /**
- * 
+ *
  * @author Calixte DENIZET
- * 
+ *
  */
 public class GeoGebraContext extends ViewContext {
 
@@ -58,6 +58,8 @@ public class GeoGebraContext extends ViewContext {
 	private List<Integer> typeToDefault = new ArrayList<Integer>();
 
 	private static final Map<String, Color> colorMap = new HashMap<String, Color>();
+
+	/* Tokens color */
 	static {
 		colorMap.put("Default", Color.decode("#000000"));
 		colorMap.put("Operator", Color.decode("#01a801"));
@@ -75,6 +77,13 @@ public class GeoGebraContext extends ViewContext {
 	}
 
 	private static final Map<String, Integer> attribMap = new HashMap<String, Integer>();
+
+	/* 0 for nothing
+	 * 1 to underline
+	 * 2 to stroke
+	 * 4 to highlight
+	 * Just add 1,2 & 4 to combine
+	 */
 	static {
 		attribMap.put("Default", 0);
 		attribMap.put("Operator", 0);
@@ -84,7 +93,7 @@ public class GeoGebraContext extends ViewContext {
 		attribMap.put("String", 0);
 		attribMap.put("Built-in function", 0);
 		attribMap.put("Function", 0);
-		attribMap.put("Command", 0);
+		attribMap.put("Command", 4);
 		attribMap.put("Unknown", 0);
 		attribMap.put("Variable", 0);
 		attribMap.put("White", 0);
@@ -93,7 +102,7 @@ public class GeoGebraContext extends ViewContext {
 
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param app
 	 *            the Application where this context is needed
 	 */
@@ -107,7 +116,7 @@ public class GeoGebraContext extends ViewContext {
 
 	/**
 	 * Generate an attribute for a type of keyword
-	 * 
+	 *
 	 * @param keyword
 	 *            the name can be found in scinotesConfiguration.xml
 	 * @param type
@@ -162,7 +171,7 @@ public class GeoGebraContext extends ViewContext {
 
 	/**
 	 * Generate a color for a type of keyword
-	 * 
+	 *
 	 * @param name
 	 *            the name can be found in scinotesConfiguration.xml
 	 * @param color

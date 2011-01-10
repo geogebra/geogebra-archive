@@ -1,29 +1,29 @@
-/* 
+/*
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
 
 This file is part of GeoGebra.
 This code has been written initially for Scilab (http://www.scilab.org/).
 
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
 */
 
 package geogebra.gui.editor;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
-import java.awt.Shape;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.Map;
 
@@ -35,10 +35,8 @@ import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 import javax.swing.text.WrappedPlainView;
 
-import geogebra.main.Application;
-
 /**
- * 
+ *
  * @author Calixte DENIZET
  *
  */
@@ -206,7 +204,7 @@ public class GeoGebraView extends WrappedPlainView {
         }
 
         g.setFont(context.tokenFont);
-        
+
         /* The lexer returns all tokens between the pos p0 and p1.
            The value of the returned token determinates the color and the font.
            The lines can be broken by the Pane so we must look at previous
@@ -276,6 +274,15 @@ public class GeoGebraView extends WrappedPlainView {
                 if ((context.tokenAttrib[tok] & 2) != 0) {
                     w = Utilities.getTabbedTextWidth(text, g.getFontMetrics(), x, this, mark);
                     g.drawLine(x, y - whiteHeight, x + w, y - whiteHeight);
+                }
+
+                if ((context.tokenAttrib[tok] & 4) != 0) {
+                    w = Utilities.getTabbedTextWidth(text, g.getFontMetrics(), x, this, mark);
+                    FontMetrics fm = g.getFontMetrics();
+                    int hgt = fm.getHeight();
+                    int desc = fm.getDescent();
+                    g.fillRect(x, y - hgt - 1, w, hgt + desc + 2);
+                    g.setColor(context.tokenColors[LexerConstants.DEFAULT]);
                 }
 
                 switch (tok) {
@@ -390,5 +397,5 @@ public class GeoGebraView extends WrappedPlainView {
         layout = new TextLayout("w", f, frc);
         rectangle = layout.getBounds();
         whiteWidth = (int) Math.round(rectangle.getWidth());
-    }	
+    }
 }
