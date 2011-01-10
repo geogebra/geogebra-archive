@@ -281,7 +281,7 @@ public class GeoGebraView extends WrappedPlainView {
                     FontMetrics fm = g.getFontMetrics();
                     int hgt = fm.getHeight();
                     int desc = fm.getDescent();
-                    g.fillRect(x, y - hgt - 1, w, hgt + desc + 2);
+                    g.fillRect(x, y - hgt, w, hgt + desc);
                     g.setColor(context.tokenColors[LexerConstants.DEFAULT]);
                 }
 
