@@ -999,8 +999,10 @@ public abstract class GeoElement
 		case  GEO_CLASS_AXIS:
 			typePriority = 10; break;
 		case  GEO_CLASS_IMAGE:
+		case GEO_CLASS_TEXTFIELD:
+		case GEO_CLASS_BUTTON:			
 		case  GEO_CLASS_BOOLEAN:
-			typePriority = 20; break;
+			typePriority = 20; break;					
 		case  GEO_CLASS_LIST:
 			typePriority = 40; break;
 		case  GEO_CLASS_POLYGON :
