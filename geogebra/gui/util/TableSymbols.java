@@ -1,6 +1,7 @@
 package geogebra.gui.util;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.main.Application;
 import geogebra.util.Unicode;
 
 /**
@@ -34,7 +35,7 @@ public class TableSymbols {
 		"\u03BF" ,     //GREEK SMALL LETTER OMICRON
 		"\u03C0" ,     //GREEK SMALL LETTER PI
 		"\u03C1" ,     //GREEK SMALL LETTER RHO
-	//	"\u03C2" ,     //GREEK SMALL LETTER FINAL SIGMA
+		//	"\u03C2" ,     //GREEK SMALL LETTER FINAL SIGMA
 		"\u03C3" ,     //GREEK SMALL LETTER SIGMA
 		"\u03C4" ,     //GREEK SMALL LETTER TAU
 		"\u03C5" ,     //GREEK SMALL LETTER UPSILON
@@ -72,18 +73,104 @@ public class TableSymbols {
 
 		"\u2220", //ANGLE
 		"\u2221", //MEASURED ANGLE
-		
+
 		"\u00b2",  // exponents ^2 
 		"\u00b3",  // exponents ^3 
 		"\u00b0", // degree		
-		
+
 		Unicode.PI_STRING, // pi	
 		Unicode.EULER_STRING, // e
 
 	};
 
 
-	
+
+	public final static String[][] basicSymbolsMap(Application app) {
+
+		String[][] array = {
+				{ "\u03B1" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B1"},  //lowercaseGreekALPHA
+				{ "\u03B2" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B2"},  //lowercaseGreekBETA
+				{ "\u03B3" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B3"},  //lowercaseGreekGAMMA
+				{ "\u03B4" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B4"},  //lowercaseGreekDELTA
+				{ "\u03B5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B5"},  //lowercaseGreekEPSILON
+				{ "\u03B6" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B6"},  //lowercaseGreekZETA
+				{ "\u03B7" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B7"},  //lowercaseGreekETA
+				{ "\u03B8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B8"},  //lowercaseGreekTHETA
+		    //	{ "\u03B9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B9"},  //lowercaseGreekIOTA
+				{ "\u03BA" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BA"},  //lowercaseGreekKAPPA
+				{ "\u03BB" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BB"},  //lowercaseGreekLAMDA
+				{ "\u03BC" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BC"},  //lowercaseGreekMU
+		    //	{ "\u03BD" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BD"},  //lowercaseGreekNU
+				{ "\u03BE" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BE"},  //lowercaseGreekXI
+		    //	{ "\u03BF" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BF"},  //lowercaseGreekOMICRON
+			//	{ "\u03C0" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C0"},  //lowercaseGreekPI
+				{ "\u03C1" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C1"},  //lowercaseGreekRHO
+		    //	{ "\u03C2" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C2"},  //lowercaseGreekFINALSIGMA
+				{ "\u03C3" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C3"},  //lowercaseGreekSIGMA
+				{ "\u03C4" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C4"},  //lowercaseGreekTAU
+			//	{ "\u03C5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C5"},  //lowercaseGreekUPSILON
+				{ "\u03C6" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C6"},  //lowercaseGreekPHI
+				{ "\u03C7" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C7"},  //lowercaseGreekCHI
+				{ "\u03C8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C8"},  //lowercaseGreekPSI
+				{ "\u03C9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C9"},  //lowercaseGreekOMEGA
+				{ "\u0393" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u0393"},  //uppercaseGreekGAMMA
+				{ "\u0394" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u0394"},  //uppercaseGreekDELTA
+				{ "\u0398" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u0398"},  //uppercaseGreekTHETA
+				{ "\u039b" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u039b"},  //uppercaseGreekLAMBDA
+				{ "\u039e" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u039e"},  //uppercaseGreekXI
+				{ "\u03a0" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a0"},  //uppercaseGreekPI
+				{ "\u03a3" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a3"},  //uppercaseGreekSIGMA
+				{ "\u03a6" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a6"},  //uppercaseGreekPHI
+				{ "\u03a8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a8"},  //uppercaseGreekPSI
+				{ "\u03a9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a9"},  //uppercaseGreekOMEGA
+				{ "\u221e" , app.getMenu("Symbol.Infinity" )},   
+				{ ExpressionNode.strVECTORPRODUCT , app.getMenu("Symbol.VectorProduct" )},   
+				{ ExpressionNode.strEQUAL_BOOLEAN , app.getMenu("Symbol.BooleanEqual" )},   
+				{ ExpressionNode.strNOT_EQUAL , app.getMenu("Symbol.NotEqual" )},   
+				{ ExpressionNode.strLESS_EQUAL , app.getMenu("Symbol.LessThanEqualTo" )},   
+				{ ExpressionNode.strGREATER_EQUAL , app.getMenu("Symbol.GreaterThanEqualTo" )},   
+				{ ExpressionNode.strNOT , app.getMenu("Symbol.Negation" )},   
+				{ ExpressionNode.strAND , app.getMenu("Symbol.And" )},   
+				{ ExpressionNode.strOR , app.getMenu("Symbol.Or" )},   
+				{ ExpressionNode.strPARALLEL , app.getMenu("Symbol.Parallel" )},   
+				{ ExpressionNode.strPERPENDICULAR , app.getMenu("Symbol.Perpendicular" )},   
+				{ ExpressionNode.strIS_ELEMENT_OF , app.getMenu("Symbol.ElementOf" )},   
+				{ ExpressionNode.strCONTAINS , app.getMenu("Symbol.Contains" )},   
+				{ ExpressionNode.strCONTAINS_STRICT , app.getMenu("Symbol.StrictContains" )},   
+				{ "\u2220" , app.getMenu("Symbol.Angle" )},   
+				{ "\u2221" , app.getMenu("Symbol.AngleMeasure" )},   
+				{ "\u00b2" , app.getMenu("Symbol.Square" )},   //exponents^2
+				{ "\u00b3" , app.getMenu("Symbol.Cube" )},   //exponents^3
+				{ "\u00b0" , app.getMenu("Symbol.Degree" )},   //degree
+				{ Unicode.PI_STRING , Unicode.PI_STRING },   //pi
+				{ Unicode.EULER_STRING , Unicode.EULER_STRING },   //e
+		};
+
+		return array;
+
+	};
+
+	public final static String[] basicSymbols(Application app){
+
+		String[] array = new String[basicSymbolsMap(app).length];
+		for(int i=0; i< array.length; i++){
+			array[i] = basicSymbolsMap(app)[i][0];
+		}
+		return array;
+	};
+
+
+	public final static String[] basicSymbolsToolTips(Application app){
+
+		String[] array = new String[basicSymbolsMap(app).length];
+		for(int i=0; i< array.length; i++){
+			array[i] = basicSymbolsMap(app)[i][1];
+		}
+		return array;
+	};
+
+
+
 	// spaces either side (for multiply when inserted into the input bar)
 	public final static String [] functions = { 	
 		" sqrt(x) ",
@@ -121,9 +208,9 @@ public class TableSymbols {
 		" gamma(x) ",
 		" random() ",
 	};
-	
-	
-	
+
+
+
 
 	public final static String [] greekLowerCase = {
 		"\u03b1", "\u03b2", "\u03b3", "\u03b4", "\u03b5", "\u03b6", "\u03b7", "\u03b8",
@@ -320,7 +407,7 @@ public class TableSymbols {
 		"\u2077",     // SUPERSCRIPT SEVEN
 		"\u2078",     // SUPERSCRIPT EIGHT
 		"\u2079",     // SUPERSCRIPT NINE
-		
+
 		// second row
 		"\u207A",     // SUPERSCRIPT PLUS SIGN
 		"\u207B",     // SUPERSCRIPT MINUS
@@ -344,7 +431,7 @@ public class TableSymbols {
 		"\u2087",     // SUBSCRIPT SEVEN
 		"\u2088",     // SUBSCRIPT EIGHT
 		"\u2089",     // SUBSCRIPT NINE
-		
+
 		// fourth row
 		"\u208A",     // SUBSCRIPT PLUS SIGN
 		"\u208B",     // SUBSCRIPT MINUS
@@ -420,7 +507,7 @@ public class TableSymbols {
 		"\u21CF",    //     \\nRightarrow
 		"\u21DA",    //     \\Lleftarrow
 		"\u21DB",    //     \\Rrightarrow
-		
+
 		/* not supported in win7 
 		"\u27F5",    //     \\longleftarrow
 		"\u27F6",    //     \\longrightarrow
@@ -430,7 +517,7 @@ public class TableSymbols {
 		"\u27FA",    //     \\Longleftrightarrow
 		"\u27FC",    //     \\longmapsto
 		"\u27FF",    //     \\leadsto
-		*/
+		 */
 
 	};
 
@@ -476,7 +563,7 @@ public class TableSymbols {
 		"\u266F",    //     \\sharp
 	};
 
-	
+
 	public final static String [] handPointers = {
 
 		"\u261A" ,    //BLACK LEFT POINTING INDEX
@@ -487,10 +574,10 @@ public class TableSymbols {
 		"\u261F" ,    //WHITE DOWN POINTING INDEX
 
 	};
-	
 
-// other symbols --- not currently used
-	
+
+	// other symbols --- not currently used
+
 	public final static String [] UNICODEotherarrows = {	
 
 		"\u00D7" ,
@@ -1433,9 +1520,9 @@ public class TableSymbols {
 
 	};
 
-	
 
-	
+
+
 	public final static String [] displayChars = { 	
 		"\u2245", // congruent	
 		"\u2261",  // equivalent
@@ -1515,6 +1602,6 @@ public class TableSymbols {
 
 	};
 
-	
+
 
 }

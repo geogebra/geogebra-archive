@@ -8,6 +8,7 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
@@ -39,22 +40,22 @@ public class SelectionTable extends JTable{
 	private MyCellRenderer renderer;
 	private DefaultTableModel model;
 	private SelectionTable myTable;
-	
+
 	private int rollOverRow = -1;
 	private int rollOverColumn = -1;
-	
-	
+
+
 	private int sliderValue;	
 
 	private int horizontalAlignment = SwingConstants.LEFT;
-	
+
 	private boolean showSelection = true;
-	
+
 	public void setShowSelection(boolean showSelection) {
 		this.showSelection = showSelection;
 	}
-	
-	
+
+
 	public void setHorizontalAlignment(int horizontalAlignment) {
 		this.horizontalAlignment = horizontalAlignment;
 	}
@@ -69,12 +70,12 @@ public class SelectionTable extends JTable{
 
 
 	private Dimension iconSize;
-	
+
 	private int mode;
-	
+
 	private Color fgColor, bgColor;
 	private float alpha;
-	
+
 	public void setAlpha(float alpha) {
 		this.alpha = alpha;
 	}
@@ -87,23 +88,35 @@ public class SelectionTable extends JTable{
 	}
 
 
-	
 	public static final int MODE_TEXT = 0;
 	public static final int MODE_ICON = 1;
 	public static final int MODE_IMAGE = 2;
 	public static final int MODE_LATEX = 3;
-	
-	
-	
+
+
 	boolean useColorSwatchBorder = false;
 	public void setUseColorSwatchBorder(boolean useColorSwatchBorder) {
 		this.useColorSwatchBorder = useColorSwatchBorder;
 		setCellDimensions();
 	}
 
+	private String[] toolTipArray = null;
+	public void setToolTipArray(String[] toolTipArray) {
+		this.toolTipArray = toolTipArray;
+	}
 
+
+	/********************************************************
+	 * Constructor
+	 * @param app
+	 * @param data
+	 * @param rows
+	 * @param columns
+	 * @param iconSize
+	 * @param mode
+	 */
 	public SelectionTable(Application app, Object[] data, int rows, int columns, Dimension iconSize, int mode){
-		
+
 		this.app = app;	
 		this.myTable = this;
 		this.mode = mode;
@@ -111,45 +124,45 @@ public class SelectionTable extends JTable{
 		if(mode == MODE_LATEX)
 			data = createLatexIconArray((String[]) data);
 		this.data = data;
-		
+
 		//=======================================
 		// determine the dimensions of the table
-		
+
 		// rows = -1, cols = -1  ==> square table to fit data
 		if(rows == -1 && columns == -1){
 			rows = (int) Math.floor(Math.sqrt(data.length));
 			columns = (int) Math.ceil(1.0 * data.length / rows);
 		}
-		
+
 		// rows = -1  ==> fixed cols, rows added to fit data
 		else if(rows == -1){
 			rows = (int) (Math.ceil(1.0 *data.length / columns));
 		}
-		
+
 		// cols = -1 ==> fixed rows, cols added to fit data
 		else if(columns == -1){
 			columns = (int) (1.0 * Math.ceil(data.length / rows));
 		}
-		
-		
+
+
 		//=======================================
 		// create the table model and load the data
 		numRows = rows;
 		numColumns = columns;
 		model = new DefaultTableModel(rows, columns);
-		
+
 		populateModel(data);
-		
+
 		// add the model to the table
 		this.setModel(model);
-		
-		
+
+
 		//=======================================	
 		// set cell renderer
 		renderer = new MyCellRenderer();
 		this.setDefaultRenderer(Object.class, renderer);
-		
-		
+
+
 		//=======================================
 		// set various display properties
 		this.setAutoResizeMode(AUTO_RESIZE_OFF);
@@ -161,22 +174,22 @@ public class SelectionTable extends JTable{
 		setCellDimensions();
 		setFont(app.getPlainFont());
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
+
 		// set cell selection properties
 		setCellSelectionEnabled(true);
 		setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				
+
 		//=======================================
 		// add listener for mouse roll over
 		RollOverListener rollOverListener = new RollOverListener();
 		addMouseMotionListener(rollOverListener);
 		addMouseListener(rollOverListener);
-		
+
 	}
-	
 
 
-	/** Disable cell editing */
+
+	/** Disables cell editing */
 	@Override
 	public boolean isCellEditable(int rowIndex, int vColIndex) { 
 		return false; 
@@ -185,7 +198,7 @@ public class SelectionTable extends JTable{
 
 
 
-	/** load a one dimensional array of data into the table model*/
+	/** Loads a one dimensional array of data into the table model*/
 	public void populateModel( Object [] data){
 
 		int r=0;
@@ -199,8 +212,8 @@ public class SelectionTable extends JTable{
 			}
 		}
 	}
-	
-	
+
+
 	public ImageIcon[] createLatexIconArray(String[] symbols){
 		ImageIcon[] iconArray = new ImageIcon[symbols.length];
 		for(int i= 0; i < symbols.length; i++){
@@ -209,13 +222,13 @@ public class SelectionTable extends JTable{
 		return iconArray;
 	}
 
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 	// set cell dimensions
 	private void setCellDimensions(){
 
@@ -230,8 +243,8 @@ public class SelectionTable extends JTable{
 		}
 
 		setRowHeight(rowHeight);
-		
-		
+
+
 		// set the column widths
 		columnWidth = iconSize.width + padding;
 		int w;
@@ -248,92 +261,101 @@ public class SelectionTable extends JTable{
 		}
 		repaint();
 	}
-	
-	
+
+
 	public void updateFonts(){
 		setFont(app.getPlainFont());
 		setCellDimensions();
 	}
-	
-	
-	 //==============================================
-	 //    Listeners
-	 //==============================================
-
-	
-	 private class RollOverListener extends MouseInputAdapter {
-		 
-	        public void mouseExited(MouseEvent e) {
-	            rollOverRow = -1;
-	            rollOverColumn = -1;
-	            repaint();
-	        }
-	 
-	        public void mouseMoved(MouseEvent e) {
-	            int row = rowAtPoint(e.getPoint());
-	            int column = columnAtPoint(e.getPoint());
-	            if( row != rollOverRow || column != rollOverColumn ) {
-	                rollOverRow = row;
-	                rollOverColumn = column;
-	                repaint();
-	            }
-	        }
-	    }
-	
-	
-	 //==============================================
-	 //    Getters/Setters
-	 //==============================================
 
 
-	 public int getSelectedIndex(){
-		 int index = this.getColumnCount() * this.getSelectedRow()  + this.getSelectedColumn();
-		 if(index <-1) index = -1;
-		 return index;
-	 }
+	//==============================================
+	//    Listeners
+	//==============================================
 
-	 public void setSelectedIndex(int index){
-		 if(index == -1){
-			 this.clearSelection();
-			 return;
-		 }
-			 
-		 int row = (int) Math.floor(index / getColumnCount()) ;
-		 int column = index - (row * getColumnCount());
-		 this.changeSelection(row, column, false, false);
+
+	private class RollOverListener extends MouseInputAdapter {
+
+		public void mouseExited(MouseEvent e) {
+			rollOverRow = -1;
+			rollOverColumn = -1;
+			repaint();
+		}
+
+		public void mouseMoved(MouseEvent e) {
+			int row = rowAtPoint(e.getPoint());
+			int column = columnAtPoint(e.getPoint());
+			if( row != rollOverRow || column != rollOverColumn ) {
+				rollOverRow = row;
+				rollOverColumn = column;
+
+				if(toolTipArray!=null){
+					int index = getColumnCount() * row  + column;
+					if(index < data.length)
+						setToolTipText(toolTipArray[index]);  
+				}
+				repaint();
+			}
+		}
+	}
+
+
+
+
+
+	//==============================================
+	//    Getters/Setters
+	//==============================================
+
+
+	public int getSelectedIndex(){
+		int index = this.getColumnCount() * this.getSelectedRow()  + this.getSelectedColumn();
+		if(index <-1) index = -1;
+		return index;
+	}
+
+	public void setSelectedIndex(int index){
+		if(index == -1){
+			this.clearSelection();
+			return;
+		}
+
+		int row = (int) Math.floor(index / getColumnCount()) ;
+		int column = index - (row * getColumnCount());
+		this.changeSelection(row, column, false, false);
 		// Application.debug("=======SET SELECTED INDEX: " + index + "," + row + ", " + column );
 
-	 }
+	}
 
-	 public Object getSelectedValue(){
-		 if(getSelectedRow() != -1 && getSelectedColumn() != -1)
-			 return model.getValueAt(getSelectedRow(), getSelectedColumn());
-		 else 
-			 return null;
-	 }
-	 
-	 public int getSliderValue() {
-		 return sliderValue;
-	 }
+	public Object getSelectedValue(){
+		if(getSelectedRow() != -1 && getSelectedColumn() != -1)
+			return model.getValueAt(getSelectedRow(), getSelectedColumn());
+		else 
+			return null;
+	}
 
-	 public void setSliderValue(int sliderValue) {
-		 this.sliderValue = sliderValue;
-	 }
+	public int getSliderValue() {
+		return sliderValue;
+	}
 
-	
+	public void setSliderValue(int sliderValue) {
+		this.sliderValue = sliderValue;
+	}
+
+
 	public Object[] getData(){
 		return data;
 	}
-	
-	
+
+
 
 	public ImageIcon getDataIcon(Object value){
-		
+
 		ImageIcon icon = null;
 		if(value == null) return 
-			GeoGebraIcon.createEmptyIcon(1, 1);
-			//GeoGebraIcon.createStringIcon("\u00D8", app.getPlainFont(), true, false, true, iconSize , Color.GRAY, null);
-		
+		GeoGebraIcon.createEmptyIcon(1, 1);
+		//GeoGebraIcon.createStringIcon("\u00D8", app.getPlainFont(), true, false, true, iconSize , Color.GRAY, null);
+
 		switch (mode){
 
 		case MODE_IMAGE:
@@ -344,49 +366,50 @@ public class SelectionTable extends JTable{
 		case MODE_LATEX:
 			icon = (ImageIcon) value;
 			break;
-						
+
 		}
-			
+
 		return icon;
 	}
-	
-	
-	 //==============================================
-	 //    Cell Renderer
-	 //==============================================
 
-	
+
+	//==============================================
+	//    Cell Renderer
+	//==============================================
+
+
 	class MyCellRenderer extends JLabel implements TableCellRenderer {
 
 		private Border normalBorder, selectedBorder, rollOverBorder, paddingBorder;
 		private Color selectionColor, rollOverColor;
-		
+		private int index;
+
 		public MyCellRenderer() {
-			
+
 			//TODO --- selection color should be centralized, not from spreadsheet
 
 			selectionColor =  MyTable.SELECTED_BACKGROUND_COLOR ;
 			rollOverColor =  Color.LIGHT_GRAY;
 
 			paddingBorder = BorderFactory.createEmptyBorder(0,5,0,5);
-			
+
 			rollOverBorder = BorderFactory.createLineBorder(Color.GRAY, 3);
 			normalBorder = BorderFactory.createLineBorder(Color.GRAY, 1);
 			if(mode == MODE_LATEX)
 				selectedBorder = rollOverBorder;
 			else
 				selectedBorder = BorderFactory.createLineBorder(Color.BLACK, 3);
-			
+
 			setOpaque(true);
 			setHorizontalAlignment(CENTER);
-			setVerticalAlignment(CENTER);			
-			
+			setVerticalAlignment(CENTER);		
+
 		}
-		
-		
+
+
 		public Component getTableCellRendererComponent(JTable table, Object value,
-														boolean isSelected,boolean hasFocus, int row,int column) 
-	    {
+				boolean isSelected,boolean hasFocus, int row,int column) 
+		{
 			setFont(app.getPlainFont());
 			setAlignmentX(CENTER_ALIGNMENT);
 			setAlignmentY(CENTER_ALIGNMENT);
@@ -399,15 +422,15 @@ public class SelectionTable extends JTable{
 				//if(isSelected){
 				//	setIcon(GeoGebraIcon.createPointStyleIcon( 0,  2,  new Dimension(8,8),  Color.BLACK,  null));
 				//}else{
-					//setIcon(GeoGebraIcon.createEmptyIcon(8,8));
+				//setIcon(GeoGebraIcon.createEmptyIcon(8,8));
 				//}
-							
+
 			}else{		
 				setText("");
 				setIcon(getDataIcon(value));
 			}
-			
-			
+
+
 			if(useColorSwatchBorder){
 				setBackground(table.getBackground());
 				if (showSelection && isSelected) {
@@ -419,7 +442,7 @@ public class SelectionTable extends JTable{
 				else{			
 					setBorder(normalBorder);
 				}
-				
+
 			}else{
 
 				if (showSelection && isSelected) {
@@ -432,38 +455,38 @@ public class SelectionTable extends JTable{
 					setBackground(table.getBackground());
 				}
 			}
-		
-	        return this;
-	    }
+
+			return this;
+		}
 	}
 
-	
 
-	
+
+
 	/**
 	 * Finds the maximum preferred width of a column.
 	 */
 	public int getMaxColumnWidth(JTable table, int column){
-		
+
 		TableColumn tableColumn = table.getColumnModel().getColumn(column); 
-		
+
 		// iterate through the rows and find the preferred width
 		int maxPrefWidth = 0;
 		int colPrefWidth = 0;
 		for (int row = 0; row < table.getRowCount(); row++) {
 			if(table.getValueAt(row, column)!=null){
-			colPrefWidth = (int) table.getCellRenderer(row, column)
-					.getTableCellRendererComponent(table,
-							table.getValueAt(row, column), false, false,
-							row, column).getPreferredSize().getWidth();
-			maxPrefWidth = Math.max(maxPrefWidth, colPrefWidth);
+				colPrefWidth = (int) table.getCellRenderer(row, column)
+				.getTableCellRendererComponent(table,
+						table.getValueAt(row, column), false, false,
+						row, column).getPreferredSize().getWidth();
+				maxPrefWidth = Math.max(maxPrefWidth, colPrefWidth);
 			}
 		}
-		
+
 		return maxPrefWidth + table.getIntercellSpacing().width;
 	}
-	
-	
+
+
 	/**
 	 * Finds the maximum preferred height of all cells.
 	 */
@@ -488,9 +511,4 @@ public class SelectionTable extends JTable{
 		return maxPrefHeight + table.getIntercellSpacing().height;
 	}
 
-	
-	
-	
-	
-	
 }

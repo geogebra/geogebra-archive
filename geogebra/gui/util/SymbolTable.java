@@ -28,11 +28,12 @@ public class SymbolTable extends SelectionTable implements MenuElement{
 
 
 	public SymbolTable(Application app, MyTextField inputField) {
-		super(app, TableSymbols.basicSymbols, -1,11, new Dimension(24,24), SelectionTable.MODE_TEXT);
+		super(app, TableSymbols.basicSymbols(app), -1,10, new Dimension(24,24), SelectionTable.MODE_TEXT);
 		setShowGrid(true);
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setSelectedIndex(1);
 		setFocusable(false);
+		setToolTipArray(TableSymbols.basicSymbolsToolTips(app));
 		this.inputField = inputField;
 
 	}
