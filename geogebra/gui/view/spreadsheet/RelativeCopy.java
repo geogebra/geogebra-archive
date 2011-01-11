@@ -279,6 +279,11 @@ public class RelativeCopy {
 			text = value.getCommandDescription(); 
 		}
 		
+		// enclose in quotes if we are copying a GeoText
+		if(value.isGeoText()){
+			text = "\"" + text + "\"";
+		}
+		
 		
 		// for E1 = Polynomial[D1] we need value.getCommandDescription(); 
 		// even though it's a GeoFunction
