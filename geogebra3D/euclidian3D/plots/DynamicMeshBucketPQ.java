@@ -24,7 +24,7 @@ public class DynamicMeshBucketPQ extends BucketPQ<AbstractDynamicMeshElement> {
 			return false;
 
 		// put invisible diamonds in first bucket
-		if (object.cullInfo == SurfaceMesh.CullInfo.OUT)
+		if (object.cullInfo == CullInfo.OUT)
 			return addToZeroBucket(object);
 
 		return super.add(object);

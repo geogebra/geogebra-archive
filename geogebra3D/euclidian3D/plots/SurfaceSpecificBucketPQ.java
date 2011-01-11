@@ -43,7 +43,7 @@ abstract public class SurfaceSpecificBucketPQ {
 		int n = clamp(d.errors[0] + d.errors[1]);
 
 		// put invisible diamonds in first bucket
-		if (d.cullInfo == SurfaceMesh.CullInfo.OUT)
+		if (d.cullInfo == CullInfo.OUT)
 			n = 0;
 
 		// update pointers

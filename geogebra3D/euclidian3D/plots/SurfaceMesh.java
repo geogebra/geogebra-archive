@@ -112,21 +112,6 @@ public class SurfaceMesh {
 			return ret;
 		}
 	}
-	
-
-	/**
-	 * An enum for describing the culling status of a diamond
-	 * 
-	 * @author Andr� Eriksson
-	 */
-	public enum CullInfo {
-		/** the entire diamond is in the viewing sphere */
-		ALLIN,
-		/** part of the diamond is in the viewing sphere */
-		SOMEIN,
-		/** the entire diamond is outside the viewing sphere */
-		OUT;
-	};
 
 	/**
 	 * @param function
@@ -499,7 +484,7 @@ class SurfTriList extends TriList {
 
 		d.setTriangle(j, t);
 
-		if (d.cullInfo == SurfaceMesh.CullInfo.OUT)
+		if (d.cullInfo == CullInfo.OUT)
 			hide(d, j);
 	}
 
@@ -595,7 +580,7 @@ class SurfaceMeshBucketPQ extends BucketPQ<SurfaceMeshDiamond> {
 			return false;
 
 		// put invisible diamonds in first bucket
-		if (object.cullInfo == SurfaceMesh.CullInfo.OUT)
+		if (object.cullInfo == CullInfo.OUT)
 			return addToZeroBucket(object);
 
 		return super.add(object);

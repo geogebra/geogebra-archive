@@ -103,7 +103,8 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		setGeometryIndex(surface.end());
 	}
 	
-	/** gets the viewing radius based on the viewing frustum 
+	/** 
+	 * gets the viewing radius based on the viewing frustum 
 	 */
 	private void updateRadius() {
 		EuclidianView3D view = getView3D();

@@ -2,10 +2,22 @@ package geogebra3D.euclidian3D.plots;
 
 
 import geogebra3D.euclidian3D.BucketPQ;
-import geogebra3D.euclidian3D.plots.SurfaceMesh.CullInfo;
-
 import java.nio.FloatBuffer;
 import java.util.Date;
+
+/**
+ * An enum for describing the culling status of a diamond
+ * 
+ * @author Andr� Eriksson
+ */
+enum CullInfo {
+	/** the entire diamond is in the viewing sphere */
+	ALLIN,
+	/** part of the diamond is in the viewing sphere */
+	SOMEIN,
+	/** the entire diamond is outside the viewing sphere */
+	OUT;
+};
 
 /**
  * Abstract class representing an element to be used in a dynamic mesh.
@@ -23,7 +35,14 @@ abstract class AbstractDynamicMeshElement {
 	/** relative level of the element */
 	protected final int level;
 	
+	/** squared distances from the origin of the two endpoints - used for culling */
+	double minRadSq, maxRadSq;
+	
+	/** Culling status of the element */
 	public CullInfo cullInfo;
+
+	/** true if any evaluated point of the segment is singular */
+	protected boolean isSingular;
 	
 	/**
 	 * @param nChildren the amount of children the element has
@@ -85,6 +104,87 @@ abstract class AbstractDynamicMeshElement {
 	}
 	
 	/**
+	 * Sets the culling flags of the element, based on the bounding box radius
+	 * @param radSq
+	 * @param drawList
+	 */
+	public void updateCullInfo(double radSq, DynamicMeshTriList drawList) {
+		
+		if(ignoreCull())
+			return;
+		
+		CullInfo parentCull = getParentCull();
+		CullInfo prev = cullInfo;
+
+		//update cull flag
+		if (parentCull == CullInfo.SOMEIN || parentCull==null){
+			if (maxRadSq < radSq)
+				cullInfo = CullInfo.ALLIN;
+			else if (minRadSq < radSq)
+				cullInfo = CullInfo.SOMEIN;
+			else
+				cullInfo = CullInfo.OUT;
+		}else
+			cullInfo = parentCull;
+
+		//special case for singular segments - make sure
+		//children are always checked
+		if(isSingular)
+			cullInfo=CullInfo.SOMEIN;
+		
+		//handle new culling info
+		if (prev != cullInfo || cullInfo == CullInfo.SOMEIN) {
+			//hide/show the element
+			setHidden(drawList, cullInfo==CullInfo.OUT);
+			
+			// reinsert into priority queue
+			if (prev == CullInfo.OUT || cullInfo == CullInfo.OUT)
+				reinsertInQueue();
+
+			//update children
+			cullChildren(radSq,drawList);
+		}
+	}
+	
+	/**
+	 * Override if culling is to be ignored in certain cases.
+	 * Always returns false by default.
+	 * @return whether culling should be ignored or not
+	 */
+	protected boolean ignoreCull(){
+		return false;
+	}
+	
+	/**
+	 * @return true if any vertex in the segment is singular, otherwise false.
+	 */
+	public boolean isSingular(){
+		return isSingular;
+	}
+	
+	/**
+	 * @return the culling info of the relevant parent
+	 */
+	abstract protected CullInfo getParentCull();
+	/**
+	 * Hides/shows the element based on val
+	 * @param drawList
+	 * @param val
+	 */
+	abstract protected void setHidden(DynamicMeshTriList drawList, boolean val);
+	
+	/**
+	 * Reinsert the element into whatever queue it's in
+	 */
+	abstract protected void reinsertInQueue();
+	
+	/**
+	 * @param radSq
+	 * @param drawList
+	 */
+	abstract protected void cullChildren(double radSq,DynamicMeshTriList drawList);
+	
+	/**
 	 * @return true if all children have been split
 	 */
 	public boolean childrenSplit(){
@@ -93,13 +193,6 @@ abstract class AbstractDynamicMeshElement {
 			ret = ret || (children[i] != null ? children[i].isSplit() : false);
 		return ret;
 	}
-	
-	/**
-	 * Sets the culling flags of the element, based on the bounding box radius
-	 * @param radSq
-	 * @param drawList
-	 */
-	public abstract void updateCullInfo(double radSq, DynamicMeshTriList drawList);
 }
 
 /**
@@ -109,8 +202,6 @@ abstract class AbstractDynamicMeshElement {
  * handles split operations.
  * 
  * @author André Eriksson
- *
- * @param <T> The basic element used in the mesh. 
  */
 public abstract class AbstractDynamicMesh {
 	
@@ -149,7 +240,7 @@ public abstract class AbstractDynamicMesh {
 	/**
 	 * @param mergeQueue the PQ used for merge operations
 	 * @param splitQueue the PQ used for split operations
-	 * @param drawList the list used for drawing
+	 * @param drawList the list used fo)r drawing
 	 * @param nParents 
 	 * @param nChildren 
 	 * @param maxLevel 
@@ -230,8 +321,8 @@ public abstract class AbstractDynamicMesh {
 			count++;
 		}
 
-		if (count < maxCount) // this only happens if the LoD
-			doUpdates = false; // is at the desired level
+//		if (count < maxCount) // this only happens if the LoD
+//			doUpdates = false; // is at the desired level
 
 		if (printInfo)
 			System.out.println(getDebugInfo(new Date().getTime()-t1));
@@ -338,13 +429,14 @@ public abstract class AbstractDynamicMesh {
 			
 			//TODO: diff here
 			
+			// add child to drawing list
+			drawList.add(c); //TODO: diff here
+
 			c.updateCullInfo(radSq, drawList);
 
 			if (t.getLevel() <= maxLevel && !c.isSplit())
 				splitQueue.add(c);
 
-			// add child to drawing list
-			drawList.add(c); //TODO: diff here
 		}
 
 		// remove from drawing list

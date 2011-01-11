@@ -51,7 +51,7 @@ public class SurfaceMeshDiamond {
 	/** (approximately) the maximum distance from the origin to the diamond */
 	double maxRadSq;
 	/** culling info for the diamond */
-	SurfaceMesh.CullInfo cullInfo;
+	CullInfo cullInfo;
 	
 	//FLAGS
 	/** flag indicating if the diamond has been split */
@@ -412,36 +412,36 @@ public class SurfaceMeshDiamond {
 		// ignore clipped diamonds
 		if (isClipped)
 			return;
-		SurfaceMesh.CullInfo parentCull = ancestors[1].cullInfo;
-		SurfaceMesh.CullInfo oldCull = cullInfo;
+		CullInfo parentCull = ancestors[1].cullInfo;
+		CullInfo oldCull = cullInfo;
 
-		if (parentCull == SurfaceMesh.CullInfo.ALLIN || parentCull == SurfaceMesh.CullInfo.OUT)
+		if (parentCull == CullInfo.ALLIN || parentCull == CullInfo.OUT)
 			cullInfo = parentCull;
 		else {
 			if (maxRadSq < radSq)
-				cullInfo = SurfaceMesh.CullInfo.ALLIN;
+				cullInfo = CullInfo.ALLIN;
 			else if (minRadSq < radSq)
-				cullInfo = SurfaceMesh.CullInfo.SOMEIN;
+				cullInfo = CullInfo.SOMEIN;
 			else
-				cullInfo = SurfaceMesh.CullInfo.OUT;
+				cullInfo = CullInfo.OUT;
 		}
 
-		if (oldCull != cullInfo || cullInfo == SurfaceMesh.CullInfo.SOMEIN) {
-			if (cullInfo == SurfaceMesh.CullInfo.OUT) {
+		if (oldCull != cullInfo || cullInfo == CullInfo.SOMEIN) {
+			if (cullInfo == CullInfo.OUT) {
 				if (triangles[0] != null && triangles[0].getIndex() != -1)
 					drawList.hide(this, 0);
 				if (triangles[1] != null && triangles[1].getIndex() != -1)
 					drawList.hide(this, 1);
-			} else if (cullInfo == SurfaceMesh.CullInfo.ALLIN
-					|| cullInfo == SurfaceMesh.CullInfo.SOMEIN) {
+			} else if (cullInfo == CullInfo.ALLIN
+					|| cullInfo == CullInfo.SOMEIN) {
 				if (triangles[0] != null && triangles[0].getIndex() == -1)
 					drawList.show(this, 0);
 				if (triangles[1] != null && triangles[1].getIndex() == -1)
 					drawList.show(this, 1);
 			}
 			// reinsert into priority queue
-			if (oldCull == SurfaceMesh.CullInfo.OUT && cullInfo != SurfaceMesh.CullInfo.OUT
-			||  oldCull != SurfaceMesh.CullInfo.OUT && cullInfo == SurfaceMesh.CullInfo.OUT) {
+			if (oldCull == CullInfo.OUT && cullInfo != CullInfo.OUT
+			||  oldCull != CullInfo.OUT && cullInfo == CullInfo.OUT) {
 				if (inMergeQueue) {
 					mergeQueue.remove(this);
 					mergeQueue.add(this);
