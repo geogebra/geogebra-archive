@@ -2664,6 +2664,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void drawObjectsPre(Graphics2D g2) {
 		
 		// TODO layers for Buttons and Textfields
+		
+		//for cross-platform UI the stroke must  be reset to show buttons properly, see #442
+		g2.setStroke(getDefaultStroke());
 		paintChildren(g2);  // draws Buttons and Textfields
 		
 	}
@@ -2673,7 +2676,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		
 		drawGeometricObjects(g2);
-		
+		//for cross-platform UI the stroke must  be reset to show buttons properly, see #442
+		g2.setStroke(getDefaultStroke());		
 		// TODO layers for Buttons and Textfields
 		paintChildren(g2);  // draws Buttons and Textfields
 
