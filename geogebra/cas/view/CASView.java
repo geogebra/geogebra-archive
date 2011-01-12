@@ -56,6 +56,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	private JPanel btPanel;
 	private HashMap<String, CASTableCellValue> assignmentCellMap;
 	private HashSet<String> ignoreUpdateVars;
+	private final RowHeader rowHeader;
 
 	public CASView(Application app) {
 		kernel = app.getKernel();
@@ -72,8 +73,9 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		ignoreUpdateVars = new HashSet<String>();
 
 		// row header
-		final JList rowHeader = new RowHeader(consoleTable);
-
+		//final JList rowHeader = new RowHeader(consoleTable);
+		rowHeader = new RowHeader(consoleTable, true);
+		
 		// init the scroll panel
 		JScrollPane scrollPane = new JScrollPane(
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -310,6 +312,9 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	public JComponent getCASViewComponent() {
 		return this;
 	}
+	public RowHeader getRowHeader(){
+		return rowHeader;
+	}
 
 	
 
@@ -434,7 +439,6 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 				// use first variable in expression as parameter
 				processInput(command, new String[] {"%0"});
 				break;
-				
 			default:
 				// ignore other modes
 		}				

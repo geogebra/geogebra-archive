@@ -190,6 +190,8 @@ public class CASmaxima extends CASgeneric {
 			while (exp.indexOf('{') > -1 ) exp = exp.replace('{', '[');
 			while (exp.indexOf('}') > -1 ) exp = exp.replace('}', ']');
 			
+			exp=exp.replaceAll("ℯ", "%e");
+			
 			// Sets of Sets ( {{...}} ) are considered Matrices
 			exp = exp.replaceAll("\\[\\s*(\\[.+\\])\\s*\\]", "matrix($1)");
 			
@@ -364,10 +366,18 @@ public class CASmaxima extends CASgeneric {
 	    // When true, r some rational number, and x some expression, %e^(r*log(x)) will be simplified into x^r . It should be noted that the radcan command also does this transformation, and more complicated transformations of this ilk as well. The logcontract command "contracts" expressions containing log. 
 	    ggbMaxima.executeCall("%e_to_numlog:true;");
 	    
+	    // Define e as the euler constant
+	    ggbMaxima.executeCall("e:%e;");
 	    
 	    // define custom functions
-	    ggbMaxima.executeCall("log10(x) := log(x) / log(10);");
-	    ggbMaxima.executeCall("log2(x) := log(x) / log(2);");
+	    ggbMaxima.executeCall("log_a(x,a) := block([oldLE, ret], " +
+	    		"oldLE:logexpand, logexpand:super, " +
+	    		"ret: (log((a)^dummy*x)/log(a))-dummy, " +
+	    		"logexpand:oldLE, logcontract(ret));");
+	    //ggbMaxima.executeCall("log10(x) := log(x) / log(10);");
+	    //ggbMaxima.executeCall("log2(x) := log(x) / log(2);");
+	    ggbMaxima.executeCall("log10(x) := log_a(x,10);");
+	    ggbMaxima.executeCall("log2(x) := log_a(x,2);");
 	    ggbMaxima.executeCall("logB(b, x) := log(x) / log(b);");
 	    ggbMaxima.executeCall("cbrt(x) := x^(1/3);");
 	    

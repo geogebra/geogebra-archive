@@ -9,20 +9,22 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
 
+import java.awt.Color;
+import java.awt.List;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class CASInputHandler {
-	
+
 	public static char ROW_REFERENCE_STATIC = '#';
 	public static char ROW_REFERENCE_DYNAMIC = '$';
 	private static int REPLACE_INSTEAD_OF_UPDATING = 0; // needed in updateCASrowreferences
-	
+
 	private CASView casView;
 	private Kernel kernel;
 	private CASTable consoleTable;
 	private CASparser casParser;
-	
+
 	private ArrayList<String> changedVars;
 	private boolean assignToFreeGeoOnly = false;
 
@@ -31,10 +33,10 @@ public class CASInputHandler {
 		kernel = view.getApp().getKernel();
 		casParser = casView.getCAS().getCASparser();
 		consoleTable = view.getConsoleTable();
-		
+
 		changedVars = new ArrayList<String>();
 	}
-	
+
 	/** 
 	 * Process input of current row.
 	 * @param ggbcmd: command like "Factor" or "Integral"
@@ -42,8 +44,38 @@ public class CASInputHandler {
 	 */	
 	public void processCurrentRow(String ggbcmd, String[] params){
 		// get editor 
-		CASTableCellEditor cellEditor = consoleTable.getEditor();		
-
+		CASTableCellEditor cellEditor = consoleTable.getEditor();
+		
+		if (ggbcmd.equalsIgnoreCase("Solve")){
+			if (casView.getRowHeader().getSelectedIndices().length>1){
+				processMultipleRows(ggbcmd, params);
+				return;
+			} else {
+				String cellText=cellEditor.getInput();
+				int depth=0;
+				boolean mSolveNecessary=false;
+				for (int j=0;j<cellText.length();j++){
+					switch (cellText.charAt(j)){
+					case '{':
+						depth++;
+						break;
+					case '}':
+						depth--;
+						break;
+					case ',':
+						if (depth==1)
+							mSolveNecessary=true;
+						break;
+					}
+				}
+				if (mSolveNecessary) {
+					processMultipleRows(ggbcmd, params);
+					return;
+				}
+			}
+		}
+		
+		
 		// get possibly selected text
 		String selectedText = cellEditor == null ? null : cellEditor.getInputSelectedText();
 		int selStart = cellEditor.getInputSelectionStart();
@@ -53,7 +85,7 @@ public class CASInputHandler {
 			consoleTable.startEditingRow(consoleTable.getSelectedRow());
 			return;
 		}
-				
+
 		// save the edited value into the table model
 		consoleTable.stopEditing();
 		
@@ -61,7 +93,8 @@ public class CASInputHandler {
 		int selRow = consoleTable.getSelectedRow();	
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
-		
+
+
 		// DIRECT MathPiper use: line starts with "MathPiper:"
 		if (selRowInput.startsWith("MathPiper:")) {
 			String evalText = selRowInput.substring(10);
@@ -71,7 +104,7 @@ public class CASInputHandler {
 			setCellOutput(cellValue, "", result, "");
 			return;
 		}
-		
+
 		// STANDARD CASE: GeoGebraCAS input
 		// break text into prefix, evalText, postfix
 		String prefix, evalText, postfix;			
@@ -94,7 +127,7 @@ public class CASInputHandler {
 			evalText = selRowInput;
 			postfix = "";	
 		}
-		
+
 		// resolve static row references and change input field accordingly
 		boolean staticReferenceFound = false;
 		String newPrefix = resolveCASrowReferences(prefix, selRow, ROW_REFERENCE_STATIC);
@@ -116,7 +149,7 @@ public class CASInputHandler {
 			// change input if necessary
 			cellValue.setInput(newPrefix + newEvalText + newPostfix);
 		}
-		
+
 		// FIX common INPUT ERRORS in evalText
 		if (!hasSelectedText && (ggbcmd.equals("Evaluate") || ggbcmd.equals("KeepInput"))) {
 			String fixedInput = fixInputErrors(selRowInput);
@@ -125,7 +158,7 @@ public class CASInputHandler {
 				evalText = fixedInput;
 			}
 		}
-		
+
 		// remember input selection information for future calls of processRow()
 		// check if structure of selection is ok
 		boolean structureOK = cellValue.isStructurallyEqualToLocalizedInput(prefix + evalText + postfix);
@@ -137,21 +170,21 @@ public class CASInputHandler {
 			cellEditor.setInputSelectionEnd(selEnd);
 			return;
 		}
-		
+
 		boolean isAssignment = cellValue.getAssignmentVariable() != null;
 		boolean isEvaluate = ggbcmd.equals("Evaluate");
 		boolean isKeepInput = ggbcmd.equals("KeepInput");
-		
+
 		// assignments are processed immediately, the ggbcmd creates a new row below
 		if (isAssignment) {
 			// tell row that KeepInput was used
 			if (isKeepInput)
 				cellValue.setEvalCommand("KeepInput");
-			
+
 			// evaluate assignment row
 			boolean needInsertRow = !isEvaluate && !isKeepInput;
 			boolean success = processRowsBelowThenEdit(selRow, !needInsertRow);
-			
+
 			// insert a new row below with the assignment label and process it using the current command
 			if (success && needInsertRow) {
 				String assignmentLabel = cellValue.getEvalVE().getLabelForAssignment();
@@ -160,17 +193,17 @@ public class CASInputHandler {
 				consoleTable.insertRow(newRowValue, true);
 				processCurrentRow(ggbcmd, params);
 			}
-			
+
 			return;
 		}
-		
+
 		// Substitute dialog
 		if (ggbcmd.equals("Substitute")) {
 			// show substitute dialog
 			casView.showSubstituteDialog(prefix, evalText, postfix, selRow);
 			return;
 		}
-		
+
 		// standard case: build eval command
 		String paramString = null;
 		if (!isEvaluate) {
@@ -191,15 +224,234 @@ public class CASInputHandler {
 			sb.append("]");
 			evalText = sb.toString();	
 		}
-		
+
 		// remember evalText and selection for future calls of processRow()
 		cellValue.setProcessingInformation(prefix, evalText, postfix);
 		cellValue.setEvalComment(paramString);
-		
+
 		// process given row and below, then start editing
 		processRowsBelowThenEdit(selRow, true);
 	}
-	
+	/**
+	 * Determines the selected rows and tries to solve (solve is
+	 * the only implemented function up to now) the equations
+	 * or lists of equations found in the selected rows.
+	 * The result is written into the active cell.
+	 * 
+	 * @param ggbcmd is the given command (just Solve is supported)
+	 * @param params the list of parameters
+	 */
+	public void processMultipleRows(String ggbcmd, String[] params){
+
+		int [] selectedIndices = casView.getRowHeader().getSelectedIndices();
+		if (ggbcmd.equalsIgnoreCase("Solve"))
+			ggbcmd="MSolve";
+		// get current row and input text		
+		int selRow = consoleTable.getSelectedRow();	
+		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
+		CASTableCellValue cellValue= consoleTable.getCASTableCellValue(selRow);
+
+		/*boolean isSelected=false;
+		for (int i=0;i<selectedIndices.length;i++)
+			if (selectedIndices[i]==selRow)
+				isSelected=true;*/
+		
+		if ((cellValue=consoleTable.getCASTableCellValue(selRow))==null)
+			cellValue=consoleTable.createRow();
+
+		int nrEquations=selectedIndices.length;
+		for (int i=0;i<selectedIndices.length;i++){
+			String cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getInternalInput();
+			/*if (selectedIndices[i]==selRow)
+				cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getInternalInput();
+			else
+				cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getOutput();*/
+			int depth=0;
+			for (int j=0;j<cellText.length();j++){
+				switch (cellText.charAt(j)){
+				case '{':
+					depth++;
+					break;
+				case '}':
+					depth--;
+					break;
+				case ',':
+					if (depth==1)
+						nrEquations++;
+					break;
+				}
+			}
+		}
+		int counter=0;
+		String[] equations=new String[nrEquations];
+		for (int i=0;i<selectedIndices.length;i++){
+			String cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getInternalInput();
+			/*if (selectedIndices[i]==selRow)
+				cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getInternalInput();
+			else
+				cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getOutput();*/
+			
+			if (cellText.charAt(0)!='{')
+				equations[counter++]=cellText;
+			else {
+				int depth=0;
+				int leftIndex=1;
+				for (int j=0;j<cellText.length();j++){
+					switch (cellText.charAt(j)){
+					case '{':
+						depth++;
+						break;
+					case '}':
+						depth--;
+						if (depth==0){
+							equations[counter++]=cellText.substring(leftIndex, j);
+						}
+						break;
+					case ',':
+						if (depth==1){
+							equations[counter++]=cellText.substring(leftIndex, j);
+							leftIndex=j+2;
+						}
+						break;
+					}
+				}
+			}
+		}
+		
+		
+		StringBuilder cellText=new StringBuilder("{");
+		for (int i=0;i<nrEquations;i++){
+			cellText.append(", ");
+			cellText.append(equations[i]);
+		}
+		cellText.append("}");
+		String cellTexts=cellText.toString();
+		cellTexts=cellTexts.replaceFirst(", ", "");
+
+		if (params.length==1){
+			if (params[0].indexOf("%0")!=-1){
+				String[] b=new String[nrEquations];
+				for (int i=0;i<nrEquations;i++){
+					b[i]=("%"+i);
+				}
+				params= b;
+			}
+		}
+		
+		// save the edited value into the table model
+		consoleTable.stopEditing();
+
+		// STANDARD CASE: GeoGebraCAS input
+		// break text into prefix, evalText, postfix
+		String prefix, evalText, postfix;			
+
+		// no selected text: evaluate input using current cell
+		prefix = "";
+		evalText = cellTexts;
+		postfix = "";	
+
+		// resolve static row references and change input field accordingly
+		boolean staticReferenceFound = false;
+		String newPrefix = resolveCASrowReferences(prefix, selRow, ROW_REFERENCE_STATIC);
+		if (!newPrefix.equals(prefix)) {
+			staticReferenceFound = true;
+			prefix = newPrefix;
+		}
+		String newEvalText = resolveCASrowReferences(evalText, selRow, ROW_REFERENCE_STATIC);
+		if (!newEvalText.equals(evalText)) {
+			staticReferenceFound = true;
+			evalText = newEvalText;
+		}
+		String newPostfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_STATIC);
+		if (!newPostfix.equals(postfix)) {
+			staticReferenceFound = true;
+			postfix = newPostfix;
+		}
+		if (staticReferenceFound) {
+			// change input if necessary
+			cellValue.setInput(newPrefix + newEvalText + newPostfix);
+		}
+
+		// FIX common INPUT ERRORS in evalText
+		if ((ggbcmd.equals("Evaluate") || ggbcmd.equals("KeepInput"))) {
+			String fixedInput = fixInputErrors(cellTexts);
+			if (!fixedInput.equals(cellTexts)) {
+				evalText = fixedInput;
+			}
+		}
+
+		// remember input selection information for future calls of processRow()
+		// check if structure of selection is ok
+		// multipleLines doesn't work with the cell value
+		/*boolean structureOK = multipleLines || cellValue.isStructurallyEqualToLocalizedInput(prefix + evalText + postfix);
+		if (!structureOK) {
+			// show current selection again
+			consoleTable.startEditingRow(selRow);
+			cellEditor = consoleTable.getEditor();
+			cellEditor.setInputSelectionStart(selStart);
+			cellEditor.setInputSelectionEnd(selEnd);
+			return;
+		}*/
+
+		boolean isAssignment = cellValue.getAssignmentVariable() != null;
+		boolean isEvaluate = ggbcmd.equals("Evaluate");
+		boolean isKeepInput = ggbcmd.equals("KeepInput");
+
+		// assignments are processed immediately, the ggbcmd creates a new row below
+		if (isAssignment) {
+			// tell row that KeepInput was used
+			if (isKeepInput)
+				cellValue.setEvalCommand("KeepInput");
+
+			// evaluate assignment row
+			boolean needInsertRow = !isEvaluate && !isKeepInput;
+			boolean success = processRowsBelowThenEdit(selRow, !needInsertRow);
+
+			// insert a new row below with the assignment label and process it using the current command
+			if (success && needInsertRow) {
+				String assignmentLabel = cellValue.getEvalVE().getLabelForAssignment();
+				CASTableCellValue newRowValue = new CASTableCellValue(casView);
+				newRowValue.setInput(assignmentLabel);
+				consoleTable.insertRow(newRowValue, true);
+				processCurrentRow(ggbcmd, params);
+			}
+
+			return;
+		}
+
+		// standard case: build eval command
+		String paramString = null;
+		//CASTableCellValue cellValueTmp=cellValue;
+		cellValue.setInput(cellTexts);
+		if (!isEvaluate) {
+			// prepare evalText as ggbcmd[ evalText, parameters ... ]
+			StringBuilder sb = new StringBuilder();
+			sb.append(ggbcmd);
+			sb.append("[");
+			sb.append(evalText);
+			sb.append(", {");
+			if (params != null) {
+				StringBuilder paramSB = new StringBuilder();
+				for (int i=0; i < params.length; i++) {
+					paramSB.append(", ");
+					paramSB.append(resolveButtonParameter(params[i], cellValue));
+				}
+				paramString = paramSB.substring(2);
+				sb.append(paramSB.substring(2));
+				sb.append("}");
+			}
+			sb.append("]");
+			evalText = sb.toString();	
+		}
+
+		// remember evalText and selection for future calls of processRow()
+		cellValue.setProcessingInformation(prefix, evalText, postfix);
+		cellValue.setEvalComment(paramString);
+
+		// process given row and below, then start editing
+		processRowsBelowThenEdit(selRow, true);
+	}
+
 	/**
 	 * Replaces %0, %1, %2 etc. by input variables of cellValue. Note
 	 * that x, y, z are used if possible.
@@ -211,19 +463,25 @@ public class CASInputHandler {
 		if (param.charAt(0) == '%') {
 			int n = Integer.parseInt(param.substring(1));
 			
+			//to make sure that for an input like x+y+z the
+			//parameters are not resolved to %0=x %1=x %2=x
+			
 			// try x, y, z first
 			String[] vars = {"x", "y", "z"};
 			for (int i=0; i < vars.length; i++) {
 				if (cellValue.isFunctionVariable(vars[i]) || cellValue.isInputVariable(vars[i])) {
-					return vars[i];
-				} 
+					if (0==n)
+						return vars[i];
+					else
+						n--;
+				}
 			}
-			
+
 			// try function variable like m in f(m) := 2m + b
 			String resolvedParam = cellValue.getFunctionVariable();
 			if (resolvedParam != null)
 				return resolvedParam;
-			
+
 			// try input variables like a in c := a + b
 			resolvedParam = cellValue.getInVar(n);
 			if (resolvedParam != null)
@@ -231,14 +489,14 @@ public class CASInputHandler {
 			else
 				return "x";
 		}
-		
+
 		// standard case
 		return param;
 	}
-	
+
 	private boolean processRowsBelowThenEdit(int selRow, boolean startEditing) {
 		boolean success = processRow(selRow);
-		
+
 		// process dependent rows below
 		if (success) {
 			CASTableCellValue cellValue = consoleTable.getCASTableCellValue(selRow);
@@ -247,16 +505,16 @@ public class CASInputHandler {
 			// process all dependent rows below
 			success = processDependentRows(var, selRow+1);
 		}
-		
+
 		if (startEditing || !success) {
 			// start editing row below successful evaluation
 			boolean isLastRow = consoleTable.getRowCount() == selRow+1;
 			boolean goDown = success && 
-				// we are in last row or next row is empty
-				(isLastRow || consoleTable.isRowEmpty(selRow+1));
+			// we are in last row or next row is empty
+			(isLastRow || consoleTable.isRowEmpty(selRow+1));
 			consoleTable.startEditingRow(goDown ? selRow+1 : selRow);
 		}
-		
+
 		return success;
 	}
 
@@ -268,7 +526,7 @@ public class CASInputHandler {
 	 */
 	public boolean processDependentRows(String var, int startRow) {
 		boolean success = true;
-		
+
 		// PROCESS DEPENDENT ROWS BELOW
 		// we need to collect all assignment variables that are changed
 		// due to dependencies on var, e.g.
@@ -285,14 +543,14 @@ public class CASInputHandler {
 		// only allow assignments to free geos when they already exist
 		// in order to avoid redefinitions
 		assignToFreeGeoOnly = true;
-		
+
 		// process all rows below that have one of vars as inputVariable
 		for (int i = startRow; i < consoleTable.getRowCount(); i++) {
 			CASTableCellValue cellValue = consoleTable.getCASTableCellValue(i);
-			
+
 			// check for row references like $2
 			boolean needsProcessing = cellValue.includesRowReferences();
-			
+
 			if (!needsProcessing) {
 				// check if row i depends on at least one of the changedVars
 				for (int k=0; k < changedVars.size(); k++) {
@@ -303,24 +561,24 @@ public class CASInputHandler {
 					}
 				}
 			}
-			
+
 			if (needsProcessing) {
 				// process row i
 				success = processRow(i) && success;
-				
+
 				// add assignment variable of row i to changedVars
 				var = cellValue.getAssignmentVariable();
 				if (var != null) changedVars.add(var);
 			}
 		}
-		
+
 		// revert back to allow redefinitions
 		assignToFreeGeoOnly = false;
-		
+
 		// successfully processed all rows
 		return success;
 	}
-	
+
 	/**
 	 * Returns whether it's allowed to change var in GeoGebra at the moment.
 	 * This is important to avoid unnecessary redefinitions.
@@ -338,10 +596,10 @@ public class CASInputHandler {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Processes the input of the given row and updates the row's output.
 	 * @param row number
@@ -349,12 +607,12 @@ public class CASInputHandler {
 	 */
 	final public boolean processRow(int row) {
 		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(row);
-		
+
 		// resolve dynamic references for prefix and postfix
 		// dynamic references for evalText is handled in evaluateGeoGebraCAS()
 		String prefix = resolveCASrowReferences(cellValue.getPrefix(), row, ROW_REFERENCE_DYNAMIC);
 		String postfix = resolveCASrowReferences(cellValue.getPostfix(), row, ROW_REFERENCE_DYNAMIC);
-			
+
 		// process evalText
 		String result = null;
 		try {
@@ -365,16 +623,16 @@ public class CASInputHandler {
 			//th.printStackTrace();
 			System.err.println("GeoGebraCAS.processRow " + row + ": " + th.getMessage());
 		}
-		
+
 		// update cell
 		setCellOutput(cellValue, prefix, result, postfix);
-		
+
 		// update table
 		consoleTable.updateRow(row);
-		
+
 		return result != null;
 	} //apply(String,String[]
-	
+
 	/**
 	 * Sets output of cellValue according to the given strings.
 	 * @param cellValue
@@ -397,16 +655,16 @@ public class CASInputHandler {
 			System.err.println("GeoGebraCAS.evaluateRow: " + casView.getCAS().getGeoGebraCASError());
 		}
 	}
-	
+
 	/**
 	 * Evaluates eval as GeoGebraCAS input. Dynamic references are
 	 * resolved according to the given row number.
 	 */
 	private String evaluateGeoGebraCAS(ValidExpression evalVE, int row) throws Throwable {
 		boolean oldValue = kernel.isTranslateCommandName();
-        kernel.setTranslateCommandName(false);
-       
-        try {
+		kernel.setTranslateCommandName(false);
+
+		try {
 			// resolve dynamic row references
 			String eval = evalVE.toAssignmentString();
 			String rowRefEval = resolveCASrowReferences(eval, row, ROW_REFERENCE_DYNAMIC);
@@ -417,12 +675,12 @@ public class CASInputHandler {
 
 			// process this input
 			return processCASviewInput(evalVE, rowRefEval);
-        }
-        finally {
-        	kernel.setTranslateCommandName(oldValue); 
-        }
+		}
+		finally {
+			kernel.setTranslateCommandName(oldValue); 
+		}
 	}
-	
+
 	/**
 	 * Replaces references to other rows (e.g. #3, %3) in input string by
 	 * the values from those rows.
@@ -431,7 +689,7 @@ public class CASInputHandler {
 		if (inputExp == null || inputExp.length() == 0) {
 			return inputExp;
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
 		int startPos = 0;
 		int[] delimInfo = getNextDelimiter(inputExp, selectedRow, startPos, delimiter);
@@ -439,7 +697,7 @@ public class CASInputHandler {
 		{
 			int rowRef = delimInfo[1];
 			char endCharacter = (char)delimInfo[2];
-			
+
 			sb.append(inputExp.substring(startPos, delimInfo[0]-1));
 			if (rowRef == selectedRow) {
 				// reference to selected row: insert blank
@@ -450,14 +708,14 @@ public class CASInputHandler {
 				// insert referenced row
 				String rowStr = endCharacter == delimiter ?
 						casView.getRowInputValue(rowRef) :
-						casView.getRowOutputValue(rowRef);
-				if (isNumberOrVariable(rowStr))
-					sb.append(rowStr);
-				else {
-					sb.append('(');
-					sb.append(rowStr);
-					sb.append(')');
-				}
+							casView.getRowOutputValue(rowRef);
+						if (isNumberOrVariable(rowStr))
+							sb.append(rowStr);
+						else {
+							sb.append('(');
+							sb.append(rowStr);
+							sb.append(')');
+						}
 			}
 
 			int len = (int) Math.ceil(Math.log(delimInfo[1] + 1.1)); // in the String, row-refs aren't 0-based!
@@ -482,7 +740,7 @@ public class CASInputHandler {
 			return resolveCASrowReferences(result, selectedRow, delimiter);
 		}
 	}
-	
+
 	/**
 	 * Goes through the input of a given row and updates all the Row-References.
 	 * @param changedRow the row that was changed. For Insertions, that is the row after 
@@ -492,7 +750,7 @@ public class CASInputHandler {
 	 * @param isInsertion true for insertions, false for deletions
 	 */
 	public void updateReferencesAfterRowInsertOrDelete(int changedRow, int currentRow, char delimiter, boolean isInsertion) {	
-		
+
 		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
 		String inputExp = v.getInternalInput();
 		if (inputExp == null || inputExp.length() == 0) {
@@ -507,7 +765,7 @@ public class CASInputHandler {
 			int rowRef = delimInfo[1];
 			char endCharacter = (char)delimInfo[2];
 			sb.append(inputExp.substring(startPos, delimInfo[0]-1));
-			
+
 			// note: the references in input strings start at 1, but rowRef is 0-based!
 			sb.append(delimiter);
 			if (isInsertion && rowRef > changedRow)
@@ -518,9 +776,9 @@ public class CASInputHandler {
 				sb.append(rowRef);
 			else
 				sb.append(rowRef+1);
-			
+
 			int len = (int) Math.ceil(Math.log(delimInfo[1] + 1.1));
-			
+
 			// keep end character after reference
 			if (!Character.isDigit(endCharacter))
 			{
@@ -536,7 +794,7 @@ public class CASInputHandler {
 		v.setInput(result);
 	}
 
-	
+
 	/**
 	 * Returns whether str is a number or variable
 	 */
@@ -548,9 +806,9 @@ public class CASInputHandler {
 		}
 		return true;
 	}
-	
 
-	
+
+
 	/**
 	 * Fixes common input errors and returns the corrected input String.
 	 * @param input
@@ -558,42 +816,42 @@ public class CASInputHandler {
 	 */
 	private String fixInputErrors(String input) {
 		input = input.trim();
-		
+
 		// replace a :=  with  Delete[a]
 		if (input.endsWith(":=")) {
 			input = casView.getApp().getCommand("Delete") + "[" + input.substring(0, input.length()-2).trim() + "];";
 		}
-		
+
 		// remove trailing = 
 		else if (input.endsWith("=")) {
 			input = input.substring(0, input.length()-1);
 		}
-		
+
 		// replace f(x) = x^2 by f(x) := x^2
 		else if (functionDefinition.matcher(input).matches()) 
 		{
 			input = input.replaceFirst("=", ":=");
 		}
-		
+
 		return input;
 	}
-	
+
 	// f(x) = x^2
 	// should be changed to f(x) := x^2
 	private static Pattern functionDefinition = Pattern.compile("(\\p{L})*\\([\\p{L}&&[^\\)]]*\\)(\\s)*[=].*");
-	
-	
+
+
 	/**
 	 * Processes the CASview input and returns an evaluation result. Note that this method
 	 * can have side-effects on the GeoGebra kernel by creating new objects or deleting an existing object.
 	 * 
 	 * @return result as String in GeoGebra syntax
 	 */
-	 private synchronized String processCASviewInput(ValidExpression evalVE, String eval) throws Throwable {		 	
+	private synchronized String processCASviewInput(ValidExpression evalVE, String eval) throws Throwable {		 	
 		// check for assignment
 		String assignmentVar = evalVE.getLabel();
 		boolean assignment = assignmentVar != null;
-		
+
 		// EVALUATE input expression with current CAS
 		String CASResult = null;
 		Throwable throwable = null;
@@ -606,7 +864,7 @@ public class CASInputHandler {
 				// build Simplify[inVE]
 				Command simplifyCommand = new Command(kernel, "Simplify", false);
 				ExpressionNode inEN = evalVE.isExpressionNode() ? (ExpressionNode) evalVE :
-										new ExpressionNode(kernel, evalVE);
+					new ExpressionNode(kernel, evalVE);
 				simplifyCommand.addArgument(inEN);
 				simplifyCommand.setLabel(evalVE.getLabel());
 				// evaluate Simplify[inVE] in CAS and convert result back to GeoGebra expression
@@ -617,7 +875,7 @@ public class CASInputHandler {
 			System.err.println("CAS evaluation failed: " + eval + "\n error: " + th1.toString());
 		}
 		boolean CASSuccessful = CASResult != null;
-		
+
 		// GeoGebra Evaluation needed?
 		boolean evalInGeoGebra = false;
 		boolean isDeleteCommand = false;
@@ -643,7 +901,7 @@ public class CASInputHandler {
 			// we have just set this variable in the CAS, so ignore the update fired back by the
 			// GeoGebra kernel when we call evalInGeoGebra
 			casView.addToIgnoreUpdates(assignmentVar);
-			
+
 			// EVALUATE inputExp in GeoGebra
 			try {
 				// process inputExp in GeoGebra
@@ -653,7 +911,7 @@ public class CASInputHandler {
 				if (throwable == null) throwable = th2;
 				System.err.println("GeoGebra evaluation failed: " + eval + "\n error: " + th2.toString());
 			}
-			
+
 			// inputExp failed with GeoGebra
 			// try to evaluate result of MathPiper
 			if (ggbResult == null && !isDeleteCommand && CASSuccessful) {	
@@ -663,7 +921,7 @@ public class CASInputHandler {
 					assignmentResult = getAssignmentResult(evalVE);
 					ggbEval = assignmentResult;
 				} 
-				
+
 				try {	
 					// process mathPiperResult in GeoGebra
 					ggbResult = evalInGeoGebra(ggbEval);
@@ -672,11 +930,11 @@ public class CASInputHandler {
 					System.err.println("GeoGebra evaluation failed: " + ggbEval + "\n error: " + th2.toString());
 				}
 			}
-			
+
 			// handle future updates of assignmentVar again
 			casView.removeFromIgnoreUpdates(assignmentVar);
 		}
-		
+
 		// return result string:
 		// use MathPiper if that worked, otherwise GeoGebra
 		if (CASSuccessful) {
@@ -686,78 +944,78 @@ public class CASInputHandler {
 					assignmentResult = getAssignmentResult(evalVE);
 				return assignmentResult;
 			} 
-			
+
 			// no assignment: return CAS result
 			else {
 				return CASResult;
 			}	
 		} 
-		
+
 		else if (ggbResult != null) {
 			// GeoGebra evaluation worked
 			return ggbResult;
 		}
-		
+
 		else {
 			// nothing worked
 			throw throwable;
 		}
 	}
-	 
-	 /**
-	  * Returns evalVE when isKeepInputUsed() is set and otherwise the value of evalVE.getLabel() in the underlying CAS.
-	  * @param evalVE
-	  * @return
-	  */
-	 private String getAssignmentResult(ValidExpression evalVE) {
-		 StringBuilder assignmentResult = new StringBuilder();
-			assignmentResult.append(evalVE.getLabelForAssignment());
-			assignmentResult.append(evalVE.getAssignmentOperator());
 
-			if (evalVE.isKeepInputUsed()) {
-				// keep input
-				assignmentResult.append(evalVE.toString());
-			} else {
-				// return value of assigned variable
-				try {
-					// evaluate assignment variable like a or f(x)
-					assignmentResult.append(casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(evalVE.getLabelForAssignment(), false));
-				} catch (Throwable th1) {
-					return evalVE.getLabelForAssignment();
-				}
-			}
-			
-			return assignmentResult.toString();
-	 }
-	 
-	 private boolean isDeleteCommand(String inputExp) {
-		 return inputExp.startsWith("Delete");	
-	 }
-	 
-	 private boolean containsCommand(String CASResult) {
-		 return  CASResult != null && CASResult.indexOf('[') > -1;
-	 }
-	 
-		/**
-		 * Evaluates expression with GeoGebra and returns the resulting string.
-		 */
-		private synchronized String evalInGeoGebra(String casInput) throws Throwable {
-			GeoElement [] ggbEval = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(casInput, false, false, true);
+	/**
+	 * Returns evalVE when isKeepInputUsed() is set and otherwise the value of evalVE.getLabel() in the underlying CAS.
+	 * @param evalVE
+	 * @return
+	 */
+	private String getAssignmentResult(ValidExpression evalVE) {
+		StringBuilder assignmentResult = new StringBuilder();
+		assignmentResult.append(evalVE.getLabelForAssignment());
+		assignmentResult.append(evalVE.getAssignmentOperator());
 
-			if (ggbEval.length == 1) {
-				return ggbEval[0].toValueString();
-			} else {
-				StringBuilder sb = new StringBuilder('{');
-				for (int i=0; i<ggbEval.length; i++) {
-					sb.append(ggbEval[i].toValueString());
-					if (i < ggbEval.length - 1)
-						sb.append(", ");
-				}
-				sb.append('}');
-				return sb.toString();
+		if (evalVE.isKeepInputUsed()) {
+			// keep input
+			assignmentResult.append(evalVE.toString());
+		} else {
+			// return value of assigned variable
+			try {
+				// evaluate assignment variable like a or f(x)
+				assignmentResult.append(casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(evalVE.getLabelForAssignment(), false));
+			} catch (Throwable th1) {
+				return evalVE.getLabelForAssignment();
 			}
 		}
-	
+
+		return assignmentResult.toString();
+	}
+
+	private boolean isDeleteCommand(String inputExp) {
+		return inputExp.startsWith("Delete");	
+	}
+
+	private boolean containsCommand(String CASResult) {
+		return  CASResult != null && CASResult.indexOf('[') > -1;
+	}
+
+	/**
+	 * Evaluates expression with GeoGebra and returns the resulting string.
+	 */
+	private synchronized String evalInGeoGebra(String casInput) throws Throwable {
+		GeoElement [] ggbEval = kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(casInput, false, false, true);
+
+		if (ggbEval.length == 1) {
+			return ggbEval[0].toValueString();
+		} else {
+			StringBuilder sb = new StringBuilder('{');
+			for (int i=0; i<ggbEval.length; i++) {
+				sb.append(ggbEval[i].toValueString());
+				if (i < ggbEval.length - 1)
+					sb.append(", ");
+			}
+			sb.append('}');
+			return sb.toString();
+		}
+	}
+
 	/**
 	 * Looks at the Input Expression of a given row, and looks for the 
 	 * next delimiter ($ or #) in it.
@@ -770,7 +1028,7 @@ public class CASInputHandler {
 		int length = inputExpression.length();
 		if (startPos >= length)
 			return null;
-		
+
 		int[] retval = new int[3];
 		for (int i = startPos; i < length; i++) {
 			char ch = inputExpression.charAt(i);
@@ -778,13 +1036,13 @@ public class CASInputHandler {
 				int start = i+1;
 				int end = start;
 				char endCharacter = end < length ? inputExpression.charAt(end) : ' ';
-				
+
 				// get digits after #
 				while (end < length && Character.isDigit(endCharacter = inputExpression.charAt(end))) {
 					end++;
 				}
 				i = end;
-				
+
 				int rowRef;
 				if (start == end || end == ' ') {
 					// # references previous row
@@ -794,7 +1052,7 @@ public class CASInputHandler {
 					// #n references n-th row
 					rowRef = Integer.parseInt(inputExpression.substring(start, end)) - 1;
 				}
-				
+
 				retval[0] = start;
 				retval[1] = rowRef;
 				retval[2] = (int)endCharacter;

@@ -1,5 +1,7 @@
 package geogebra.cas.view;
 
+import java.awt.Color;
+
 import geogebra.gui.view.spreadsheet.MyTable;
 
 import javax.swing.BorderFactory;
@@ -10,14 +12,22 @@ public class RowHeader extends JList {
 	
 	public static final int ROW_HEADER_WIDTH = 30;
 	
-	public RowHeader(CASTable table) {
+	public RowHeader(CASTable table){
+		this(table, false);
+	}
+	
+	
+	public RowHeader(CASTable table, boolean multipleIntervalSelection) {
 		setModel(new RowHeaderListModel(table));
 		
-		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		if (multipleIntervalSelection)
+			setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		else {
+			setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		}
 		setFixedCellWidth(ROW_HEADER_WIDTH);
 		setFocusable(true);
 		setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, MyTable.TABLE_GRID_COLOR));
-		
 		// renderer
 		setCellRenderer(new RowHeaderRenderer(table));
 			
