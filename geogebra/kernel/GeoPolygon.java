@@ -807,15 +807,6 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
     
     final public ExpressionValue evaluate() { return this; }	
 
-	public void setMode(int mode) {
-		// dummy		
-	}
-
-	public int getMode() {
-		// dummy
-		return 0;
-	}
-
 	protected boolean showInEuclidianView() {
 		return defined;
 	}    
@@ -1333,6 +1324,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	public void matrixTransform(double a00, double a01, double a10, double a11) {
 		for(int i=0;i<points.length;i++)
 			((GeoPoint)points[i]).matrixTransform(a00, a01, a10, a11);		
+		this.calcArea();
 	}
 
 	public void translate(Coords v) {
@@ -1343,6 +1335,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	public void dilate(NumberValue r, GeoPoint S) {
 		for(int i=0;i<points.length;i++)
 			((GeoPoint)points[i]).dilate(r,S);		
+		this.calcArea();
 	}
 
 	/**
