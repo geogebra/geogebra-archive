@@ -1,6 +1,6 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoElementWithResizeableOutput;
 import geogebra.kernel.AlgoSimpleRootsPolynomial;
 import geogebra.kernel.Construction;
@@ -589,17 +589,17 @@ implements AlgoElementWithResizeableOutput{
 		switch(type){
 		case GeoPolyhedron.TYPE_PYRAMID:
 			//TODO remove this and replace with tesselation
-			GgbVector interiorPoint = new GgbVector(4);
+			Coords interiorPoint = new Coords(4);
 			for (int i=0;i<inputPoints.length;i++){
-				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoordsInD(3));
+				interiorPoint = (Coords) interiorPoint.add(inputPoints[i].getCoordsInD(3));
 			}
-			interiorPoint = (GgbVector) interiorPoint.mul((double) 1/(inputPoints.length));
+			interiorPoint = (Coords) interiorPoint.mul((double) 1/(inputPoints.length));
 			polyhedron.setInteriorPoint(interiorPoint);
 			//Application.debug("interior\n"+interiorPoint);
 			break;
 		case GeoPolyhedron.TYPE_PRISM:
 			//translation from bottom to top
-			GgbVector v;
+			Coords v;
 			int shift;
 			if (inputHeight==null){
 				v = inputPoints[inputPoints.length-1].getCoordsInD(3).sub(inputPoints[0].getCoordsInD(3));
@@ -622,12 +622,12 @@ implements AlgoElementWithResizeableOutput{
 			//polyhedron.update();			
 			
 			//TODO remove this and replace with tesselation
-			interiorPoint = new GgbVector(4);
+			interiorPoint = new Coords(4);
 			for (int i=0;i<inputPoints.length-shift;i++){
-				interiorPoint = (GgbVector) interiorPoint.add(inputPoints[i].getCoordsInD(3));
+				interiorPoint = (Coords) interiorPoint.add(inputPoints[i].getCoordsInD(3));
 			}
-			interiorPoint = (GgbVector) interiorPoint.mul((double) 1/(inputPoints.length-shift));
-			polyhedron.setInteriorPoint((GgbVector) interiorPoint.add(v.mul(0.5)));
+			interiorPoint = (Coords) interiorPoint.mul((double) 1/(inputPoints.length-shift));
+			polyhedron.setInteriorPoint((Coords) interiorPoint.add(v.mul(0.5)));
 			
 			break;
 		case GeoPolyhedron.TYPE_NONE:
@@ -716,8 +716,8 @@ implements AlgoElementWithResizeableOutput{
 	 * used for previewable of prism
 	 * @return the middle point of the bottom face (for prism)
 	 */
-	public GgbVector getBottomMiddlePoint(){
-		GgbVector ret = new GgbVector(4);
+	public Coords getBottomMiddlePoint(){
+		Coords ret = new Coords(4);
 		
 		int size;
 		if (inputHeight==null)
@@ -735,8 +735,8 @@ implements AlgoElementWithResizeableOutput{
 	 * used for previewable of prism
 	 * @return the middle point of the top face (for prism)
 	 */
-	public GgbVector getTopMiddlePoint(){
-		GgbVector ret = new GgbVector(4);
+	public Coords getTopMiddlePoint(){
+		Coords ret = new Coords(4);
 		for (int i=0; i<outputPoints.size(); i++)
 			ret = ret.add(outputPoints.getElement(i).getCoordsInD(3));
 		

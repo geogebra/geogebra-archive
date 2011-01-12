@@ -3,9 +3,9 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;

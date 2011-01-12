@@ -2,7 +2,7 @@ package geogebra3D.euclidian3D;
 
 import java.util.ArrayList;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -73,8 +73,8 @@ implements Previewable {
 		
 
 		GeoQuadric3D quadric = (GeoQuadric3D) getGeoElement();
-		GgbVector o;
-		GgbVector v;
+		Coords o;
+		Coords v;
 							
 		double[] minmax;
 		float min, max;

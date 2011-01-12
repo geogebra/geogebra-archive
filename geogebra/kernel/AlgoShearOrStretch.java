@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.NumberValue;
 
 
@@ -150,13 +150,13 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         }
         double n=num.getDouble();
         // translate -Q
-        tranOut.translate(new GgbVector(qx, qy,0));
+        tranOut.translate(new Coords(qx, qy,0));
         
         if(shear)
         	out.matrixTransform(1-c*s*n,c*c*n,-s*s*n,1+s*c*n);
         else
         	out.matrixTransform(c*c+s*s*n,c*s*(1-n),c*s*(1-n),s*s+c*c*n);        
-        tranOut.translate(new GgbVector(-qx, -qy,0));        
+        tranOut.translate(new Coords(-qx, -qy,0));        
     }       
     
 

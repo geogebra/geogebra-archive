@@ -1,8 +1,8 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoLine;
@@ -64,8 +64,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	 * @param i
 	 * @return eigen vector in native dimension of the conic
 	 * 	 */
-	protected GgbVector getEigenvec(int i){
-		return new GgbVector(eigenvec[i].getCoords());
+	protected Coords getEigenvec(int i){
+		return new Coords(eigenvec[i].getCoords());
 	}
 	
 	/**
@@ -73,13 +73,13 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	 * @param i
 	 * @return eigen vector in dimension 3
 	 */
-	 abstract public GgbVector getEigenvec3D(int i);
+	 abstract public Coords getEigenvec3D(int i);
 
 	 /**
 	  * If 2D conic, return null (xOy plane)
 	  * @return coord sys where the conic lies
 	  */
-	 public GgbCoordSys getCoordSys(){
+	 public CoordSys getCoordSys(){
 		 return null;
 	 }
 
@@ -97,7 +97,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	/**
 	 * @return the matrix representation of the conic in its 2D sub space
 	 */
-	protected GgbMatrix getGgbMatrix(double[] vals){
+	protected CoordMatrix getGgbMatrix(double[] vals){
 		//TODO
 		return null;
 	}
@@ -107,7 +107,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	 * sets the matrix values from the symmetric matrix m
 	 * @param m
 	 */
-	protected void setMatrix(GgbMatrix m){
+	protected void setMatrix(CoordMatrix m){
 		//TODO
 	}
 	
@@ -158,7 +158,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 
 	public void pointChanged(GeoPointND P) {
 
-		GgbVector coords = P.getCoordsInD2(getCoordSys());
+		Coords coords = P.getCoordsInD2(getCoordSys());
 		PathParameter pp = P.getPathParameter();
 
 		pointChanged(coords, pp);
@@ -169,7 +169,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	
 	
 	
-	public void pointChanged(GgbVector P, PathParameter pp) {
+	public void pointChanged(Coords P, PathParameter pp) {
 		
 		double px, py;	
 		pp.setPathType(type);
@@ -294,7 +294,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	
 	
 	public void pathChanged(GeoPointND P) {
-		GgbVector coords = P.getCoordsInD2(getCoordSys());
+		Coords coords = P.getCoordsInD2(getCoordSys());
 		PathParameter pp = P.getPathParameter();
 
 		pathChanged(coords, pp);
@@ -304,7 +304,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	}
 	
 
-	public void pathChanged(GgbVector P, PathParameter pp) {
+	public void pathChanged(Coords P, PathParameter pp) {
 		
 		
 		// if type of path changed (other conic) then we
@@ -515,10 +515,10 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	}
 	
 	
-	final boolean isOnFullConic(GgbVector P, double eps) {						
+	final boolean isOnFullConic(Coords P, double eps) {						
 		switch (type) {	
 			 case GeoConic.CONIC_SINGLE_POINT:  
-				GgbVector singlePointCoords = new GgbVector(singlePoint.x,singlePoint.y,singlePoint.z);
+				Coords singlePointCoords = new Coords(singlePoint.x,singlePoint.y,singlePoint.z);
 	            return P.distance(singlePointCoords) < eps;                             
 	            
 	        case GeoConic.CONIC_INTERSECTING_LINES:  
@@ -584,16 +584,16 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	 * Transforms coords of point P from Eigenvector space to real world space.
 	 * @param P 2D point in EV coords
 	 */
-	final void coordsEVtoRW(GgbVector P) {
+	final void coordsEVtoRW(Coords P) {
 		// rotate by alpha
 		double px = P.getX();
-		GgbVector eigenvec0 = getEigenvec(0);
-		GgbVector eigenvec1 = getEigenvec(1);
+		Coords eigenvec0 = getEigenvec(0);
+		Coords eigenvec1 = getEigenvec(1);
 		P.setX(px * eigenvec0.getX() + P.getY() * eigenvec1.getX());
 		P.setY(px * eigenvec0.getY() + P.getY() * eigenvec1.getY()); 
 	
 		// translate by b
-		GgbVector b = getMidpoint();
+		Coords b = getMidpoint();
 		P.setX(P.getX() + P.getZ() * b.getX());
 		P.setY(P.getY() + P.getZ() * b.getY());
 	}
@@ -602,9 +602,9 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	 * Transforms coords of point P from real world space to Eigenvector space. 
 	 * @param P 2D point in EV coords
 	 */
-	private void coordsRWtoEV(GgbVector P) {
+	private void coordsRWtoEV(Coords P) {
 		
-		GgbVector b = getMidpoint();
+		Coords b = getMidpoint();
 		
 		// translate by -b
 		P.setX(P.getX() - P.getZ() * b.getX());
@@ -612,8 +612,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 		
 		// rotate by -alpha
 		double px = P.getX();	
-		GgbVector eigenvec0 = getEigenvec(0);
-		GgbVector eigenvec1 = getEigenvec(1);
+		Coords eigenvec0 = getEigenvec(0);
+		Coords eigenvec1 = getEigenvec(1);
 		P.setX(px * eigenvec0.getX() + P.getY() * eigenvec0.getY());
 		P.setY(px * eigenvec1.getX() + P.getY() * eigenvec1.getY());
 	}

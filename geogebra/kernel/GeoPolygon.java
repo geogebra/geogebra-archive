@@ -12,8 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -75,7 +75,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	 * @param cs for 3D stuff : 2D coord sys
 	 * @param createSegments says if the polygon has to creates its edges
 	 */	
-	public GeoPolygon(Construction c, GeoPointND[] points, GgbCoordSys cs, boolean createSegments) {
+	public GeoPolygon(Construction c, GeoPointND[] points, CoordSys cs, boolean createSegments) {
 		this(c);
 		//Application.printStacktrace("poly");
 		this.createSegments=createSegments;
@@ -95,7 +95,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	/** for 3D stuff (unused here)
 	 * @param cs GeoCoordSys2D
 	 */
-	public void setCoordSys(GgbCoordSys cs) {
+	public void setCoordSys(CoordSys cs) {
 		
 	}
 	
@@ -150,7 +150,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
      * @param cs used for 3D stuff
      * @param createSegments says if the polygon has to creates its edges
      */
-    public void setPoints(GeoPointND [] points, GgbCoordSys cs, boolean createSegments) {
+    public void setPoints(GeoPointND [] points, CoordSys cs, boolean createSegments) {
 		this.points = points;
 		setCoordSys(cs);
 		
@@ -898,7 +898,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 
 	public void pointChanged(GeoPointND PI) {
 		
-		GgbVector coords = PI.getCoordsInD(2);
+		Coords coords = PI.getCoordsInD(2);
 		double qx = coords.getX()/coords.getZ();
 		double qy = coords.getY()/coords.getZ();
 		
@@ -955,7 +955,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		double y0 = P.y/P.z;
 		*/
 		
-		GgbVector coords = PI.getCoordsInD(2);
+		Coords coords = PI.getCoordsInD(2);
 				
 		return isInRegion(coords.getX()/coords.getZ(),coords.getY()/coords.getZ());
 
@@ -1189,7 +1189,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	 * @param i number of point
 	 * @return the i-th point
 	 */	 
-	public GgbVector getPoint3D(int i){
+	public Coords getPoint3D(int i){
 		return getPoint(i).getCoordsInD(3);
 	}
 	
@@ -1206,17 +1206,17 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		return true;
 	}	
 	
-	public GgbVector getLabelPosition(){
+	public Coords getLabelPosition(){
 		double x = 0;
 		double y = 0;
 		double z = 0;
 		for (int i=0; i<getPointsLength(); i++){
-			GgbVector coords = getPoint3D(i);
+			Coords coords = getPoint3D(i);
 			x+=coords.getX();
 			y+=coords.getY();
 			z+=coords.getZ();
 		}
-		return new GgbVector(x/getPointsLength(), y/getPointsLength(), z/getPointsLength(), 1);
+		return new Coords(x/getPointsLength(), y/getPointsLength(), z/getPointsLength(), 1);
 	}
 	
 	
@@ -1225,19 +1225,19 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	// GEOCOORDSYS2D INTERFACE
 	////////////////////////////////////////
 
-	public GgbCoordSys getCoordSys() {
-		return GgbCoordSys.Identity3D();
+	public CoordSys getCoordSys() {
+		return CoordSys.Identity3D();
 	}
 
-	public GgbVector getPoint(double x2d, double y2d) {		
+	public Coords getPoint(double x2d, double y2d) {		
 		return getCoordSys().getPoint(x2d, y2d);
 	}
 
-	public GgbVector[] getNormalProjection(GgbVector coords){
+	public Coords[] getNormalProjection(Coords coords){
 		return getCoordSys().getNormalProjection(coords);
 	}
 
-	public GgbVector[] getProjection(GgbVector coords, GgbVector willingDirection){
+	public Coords[] getProjection(Coords coords, Coords willingDirection){
 		return getCoordSys().getProjection(coords, willingDirection);
 	}
 	
@@ -1286,14 +1286,14 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 	
 	private double startValue;
 	
-	private GgbVector direction;
+	private Coords direction;
 
 	public void recordChangeableCoordParentNumbers() {
 		startValue = getCoordParentNumber().getValue();
 		direction = getMainDirection().normalized();
 	}
 	
-	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition,  GgbVector viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
+	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition,  Coords viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
 		
 
 		
@@ -1306,7 +1306,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 			addChangeableCoordParentNumberToUpdateList(var, updateGeos, tempMoveObjectList);
 			return true;
 		}else{ //comes from mouse
-			GgbVector direction2=direction.sub(viewDirection.mul(viewDirection.dotproduct(direction)));
+			Coords direction2=direction.sub(viewDirection.mul(viewDirection.dotproduct(direction)));
 			//Application.debug("direction2\n"+direction2+"trans=\n"+rwTransVec+"viewDirection=\n"+viewDirection);
 			double ld = direction2.dotproduct(direction2);
 			if (Kernel.isZero(ld))
@@ -1335,7 +1335,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 			((GeoPoint)points[i]).matrixTransform(a00, a01, a10, a11);		
 	}
 
-	public void translate(GgbVector v) {
+	public void translate(Coords v) {
 		for(int i=0;i<points.length;i++)
 			((GeoPoint)points[i]).translate(v);		
 	}

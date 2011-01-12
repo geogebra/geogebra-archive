@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ListValue;
@@ -1363,7 +1363,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 		
 		
 		
-		public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
+		public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition, ArrayList updateGeos, ArrayList tempMoveObjectList){
 			Application.debug("hghgh");
 			return false;
 		}

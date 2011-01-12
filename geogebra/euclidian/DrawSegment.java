@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipLine;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
@@ -88,8 +88,8 @@ implements Previewable {
         labelVisible = geo.isLabelVisible();       
 		updateStrokes(geo);
 		
-        GgbVector A = s.getStartInhomCoords();
-        GgbVector B = s.getEndInhomCoords();
+        Coords A = s.getStartInhomCoords();
+        Coords B = s.getEndInhomCoords();
 		
 		if (geo.isGeoElement3D() && (!Kernel.isZero(A.getZ()) || !Kernel.isZero(B.getZ())) ){
 			//TODO generalize

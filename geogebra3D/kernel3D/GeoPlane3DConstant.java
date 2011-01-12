@@ -1,6 +1,6 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra3D.euclidian3D.EuclidianView3D;
 

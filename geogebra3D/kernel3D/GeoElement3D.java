@@ -20,8 +20,8 @@ package geogebra3D.kernel3D;
 
 
 
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra3D.Test3D;
@@ -135,7 +135,7 @@ public abstract class GeoElement3D
 	
 	
 	/** matrix used as orientation by the {@link Drawable3D} */
-	private GgbMatrix4x4 m_drawingMatrix = null;
+	private CoordMatrix4x4 m_drawingMatrix = null;
 	
 
 	
@@ -173,17 +173,17 @@ public abstract class GeoElement3D
 	
 	/** returns a 4x4 matrix for drawing the {@link Drawable3D} 
 	 * @return the drawing matrix*/
-	public GgbMatrix4x4 getDrawingMatrix(){
+	public CoordMatrix4x4 getDrawingMatrix(){
 		return m_drawingMatrix;
 	}
 	
 	
 
-	abstract public GgbVector getLabelPosition();
+	abstract public Coords getLabelPosition();
 	
 	/** sets the 4x4 matrix for drawing the {@link Drawable3D} and the label
 	 * @param a_drawingMatrix the drawing matrix*/
-	public void setDrawingMatrix(GgbMatrix4x4 a_drawingMatrix){
+	public void setDrawingMatrix(CoordMatrix4x4 a_drawingMatrix){
 		this.m_drawingMatrix = a_drawingMatrix;
 	}	
 	
@@ -230,7 +230,7 @@ public abstract class GeoElement3D
 	
 	
 	//TODO remove this
-	public GgbVector getMainDirection(){ return null;};
+	public Coords getMainDirection(){ return null;};
 
 
 

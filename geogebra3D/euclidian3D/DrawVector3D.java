@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 
 import java.util.ArrayList;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -55,13 +55,13 @@ implements Previewable {
 		Renderer renderer = getView3D().getRenderer();
 
 		
-		GgbVector p1;
+		Coords p1;
 		if (geo.getStartPoint()==null){
-			p1 = new GgbVector(4);
+			p1 = new Coords(4);
 			p1.setW(1);
 		}else
 			p1 = geo.getStartPoint().getCoordsInD(3);
-		GgbVector p2 = (GgbVector) p1.add(geo.getCoords());
+		Coords p2 = (Coords) p1.add(geo.getCoords());
 		
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 

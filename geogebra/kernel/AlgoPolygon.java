@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbCoordSys;
+import geogebra.Matrix.CoordSys;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -34,7 +34,7 @@ public class AlgoPolygon extends AlgoElement {
     protected GeoPolygon poly;     // output
     
     /** /2D coord sys used for 3D */
-    protected GgbCoordSys cs2D; 
+    protected CoordSys cs2D; 
     
     /** polyhedron (when segment is part of), used for 3D */
     protected GeoElement polyhedron; 
@@ -62,7 +62,7 @@ public class AlgoPolygon extends AlgoElement {
      * @param polyhedron polyhedron (when segment is part of), used for 3D
      */
     protected AlgoPolygon(Construction cons, String [] labels, 
-    		GeoPointND [] points, GeoList geoList, GgbCoordSys cs2D, 
+    		GeoPointND [] points, GeoList geoList, CoordSys cs2D, 
     		boolean createSegments, GeoElement polyhedron) {
         super(cons);
         this.points = points;           

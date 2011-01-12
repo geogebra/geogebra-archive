@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D.plots;
 
-import geogebra.Matrix.GgbVector3D;
+import geogebra.Matrix.Coords3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
@@ -108,7 +108,7 @@ public class CurveTree {
 	 * 				a reference to the calling brush
 	 */
 	public void drawStartPointIfVisible(PlotterBrush brush){
-		GgbVector3D pos = start.getPos();
+		Coords3D pos = start.getPos();
 		if(pos.isDefined() && pos.isFinite() 
 				&& pointVisible(pos)){
 			brush.addPointToCurve3D(pos,start.getTangent());
@@ -124,7 +124,7 @@ public class CurveTree {
 	 * 				a reference to the calling brush
 	 */
 	public void drawEndPointIfVisible(PlotterBrush brush){
-		GgbVector3D pos = end.getPos();
+		Coords3D pos = end.getPos();
 		if(pos.isDefined() && pos.isFinite() 
 				&& pointVisible(pos))
 			brush.addPointToCurve3D(pos,end.getTangent());
@@ -147,9 +147,9 @@ public class CurveTree {
 	 */
 	public void refine(PlotterBrush brush, CurveTreeNode n1, CurveTreeNode n2, 
 						 CurveTreeNode n3, int level){
-		GgbVector3D p1 = n1.getPos();
-		GgbVector3D p2 = n2.getPos();
-		GgbVector3D p3 = n3.getPos();
+		Coords3D p1 = n1.getPos();
+		Coords3D p2 = n2.getPos();
+		Coords3D p3 = n3.getPos();
 		if(level <= forcedLevels || angleTooSharp(p1, p2, p3)){
 			//if the left segment is visible and passes the distance test, refine it
 			if(segmentVisible(p1,p2))
@@ -214,7 +214,7 @@ public class CurveTree {
 	 * @param n2 
 	 * 				end of segment
 	 */
-	private boolean segmentVisible(GgbVector3D n1, GgbVector3D n2) {
+	private boolean segmentVisible(Coords3D n1, Coords3D n2) {
 		if(n1.norm() < radius)
 			return true;
 		if(n2.norm() < radius)
@@ -246,7 +246,7 @@ public class CurveTree {
 	 * 				the point tested
 	 * @return
 	 */
-	private boolean pointVisible(GgbVector3D pos){
+	private boolean pointVisible(Coords3D pos){
 		return pos.norm()<radius;
 	}
 	
@@ -262,7 +262,7 @@ public class CurveTree {
 	 * 			the "rightmost" node
 	 * @return false if the values are nearly continuous, otherwise true
 	 */
-	private boolean angleTooSharp(GgbVector3D p1, GgbVector3D p2, GgbVector3D p3){
+	private boolean angleTooSharp(Coords3D p1, Coords3D p2, Coords3D p3){
 		double x1 = p2.getX()-p1.getX(); double x2 = p3.getX()-p2.getX();
 		double y1 = p2.getY()-p1.getY(); double y2 = p3.getY()-p2.getY();
 		double z1 = p2.getZ()-p1.getZ(); double z2 = p3.getZ()-p2.getZ();
@@ -305,8 +305,8 @@ public class CurveTree {
 		if(Math.abs(n1.getParam()-n2.getParam())<minParamDist)
 			return false;
 		
-		GgbVector3D p1 = n1.getPos();
-		GgbVector3D p2 = n2.getPos();
+		Coords3D p1 = n1.getPos();
+		Coords3D p2 = n2.getPos();
 		double scale = view.getScale();
 		double diff = p1.sub(p2).norm();
 		if(diff>distanceFactor/scale)
@@ -324,7 +324,7 @@ public class CurveTree {
 	 * @param param 
 	 * 				node parameter value
 	 */
-	private void insert(GgbVector3D pos, double param) {root.insert(pos,param);}
+	private void insert(Coords3D pos, double param) {root.insert(pos,param);}
 }
 
 
@@ -336,8 +336,8 @@ public class CurveTree {
  */
 class CurveTreeNode{
 
-	private GgbVector3D pos;
-	private GgbVector3D tangent;
+	private Coords3D pos;
+	private Coords3D tangent;
 	private double param;
 	
 	private final int level;
@@ -359,7 +359,7 @@ class CurveTreeNode{
 	 * 				a reference to the curve
 	 * @param parent 
 	 */
-	CurveTreeNode(GgbVector3D pos, double param, double diff, int level, 
+	CurveTreeNode(Coords3D pos, double param, double diff, int level, 
 					GeoCurveCartesian3D curve, CurveTreeNode parent){
 		this.pos = pos.copyVector();
 		this.param = param;
@@ -374,7 +374,7 @@ class CurveTreeNode{
 	/**
 	 * @return the spatial position of the node
 	 */
-	public GgbVector3D getPos(){return pos;}
+	public Coords3D getPos(){return pos;}
 	
 	/**
 	 * @return the parameter value at the point
@@ -384,7 +384,7 @@ class CurveTreeNode{
 	/**
 	 * @return the node tangent
 	 */
-	public GgbVector3D getTangent(){return tangent;}
+	public Coords3D getTangent(){return tangent;}
 	
 	@Override
 	public String toString() {
@@ -397,7 +397,7 @@ class CurveTreeNode{
 	public CurveTreeNode getLeftChild(){
 		if(children[0]==null){
 			double childParam = param-diff/Math.pow(2,level+1);
-			GgbVector3D childPos = curve.evaluateCurve3D(childParam);
+			Coords3D childPos = curve.evaluateCurve3D(childParam);
 			children[0] = new CurveTreeNode(childPos,childParam, diff, level+1, curve, this);
 		}
 		return children[0];
@@ -409,7 +409,7 @@ class CurveTreeNode{
 	public CurveTreeNode getRightChild(){
 		if(children[1]==null){
 			double childParam = param+diff/Math.pow(2,level+1);
-			GgbVector3D childPos = curve.evaluateCurve3D(childParam);
+			Coords3D childPos = curve.evaluateCurve3D(childParam);
 			children[1] = new CurveTreeNode(childPos,childParam, diff, level+1, curve, this);
 		}
 		return children[1];
@@ -421,7 +421,7 @@ class CurveTreeNode{
 	 * @param param 
 	 * 				the node parameter value
 	 */
-	public void insert(GgbVector3D pos, double param){
+	public void insert(Coords3D pos, double param){
 		int i = 0;
 		
 		if(param>this.param)
@@ -438,7 +438,7 @@ class CurveTreeNode{
 	 * Should only be called in the constructor.
 	 */
 	private void approxTangent(){
-		GgbVector3D d = curve.evaluateCurve3D(param+CurveTree.deltaParam);
+		Coords3D d = curve.evaluateCurve3D(param+CurveTree.deltaParam);
 		tangent = d.sub(pos).normalized();
 	}
 }

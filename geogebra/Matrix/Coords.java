@@ -26,8 +26,8 @@ import geogebra.main.Application;
  * @author  ggb3D
  * 
  */
-public class GgbVector
-	extends GgbMatrix{
+public class Coords
+	extends CoordMatrix{
 
 	private double norm, sqNorm;
 	private boolean calcNorm = true;
@@ -39,7 +39,7 @@ public class GgbVector
 	/** creates a vector of the dimension specified by rows.  
 	 * @param rows number of rows
 	 */
-	public GgbVector(int rows){
+	public Coords(int rows){
 		
 		super(rows,1);
 		
@@ -47,7 +47,7 @@ public class GgbVector
 	
 	/** creates a vector with values vals   
 	 * @param vals values {x1, x2, ...} */
-	public GgbVector(double[] vals){
+	public Coords(double[] vals){
 		
 		super(vals.length,1);
 		
@@ -62,7 +62,7 @@ public class GgbVector
 	 * @param z
 	 * @param w
 	 */
-	public GgbVector(double x, double y, double z){
+	public Coords(double x, double y, double z){
 		super(4,1);
 		val[0]=x;
 		val[1]=y;
@@ -75,7 +75,7 @@ public class GgbVector
 	 * @param z
 	 * @param w
 	 */
-	public GgbVector(double x, double y, double z, double w){
+	public Coords(double x, double y, double z, double w){
 		super(4,1);
 		val[0]=x;
 		val[1]=y;
@@ -187,9 +187,9 @@ public class GgbVector
 	/** returns a copy of the vector 
 	 * @return a copy of the vector
 	 */
-	public GgbVector copyVector(){ 
+	public Coords copyVector(){ 
 		
-		GgbVector result = new GgbVector(rows);
+		Coords result = new Coords(rows);
 		for(int i=0;i<rows;i++)
 			result.val[i]=val[i];
 		
@@ -202,9 +202,9 @@ public class GgbVector
 	 * @param end number of end row
 	 * @return vector with rows between start and end 
 	 */
-	public GgbVector subVector(int start, int end){ 
+	public Coords subVector(int start, int end){ 
 		int r = end-start+1;
-		GgbVector result = new GgbVector(r); 
+		Coords result = new Coords(r); 
 
 		for(int i=0;i<r;i++)
 			result.val[i]=val[start+i-1];
@@ -217,9 +217,9 @@ public class GgbVector
 	 * @param row number of the row to remove
 	 * @return vector composed of this without the row number row  
 	 */
-	public GgbVector subVector(int row){ 
+	public Coords subVector(int row){ 
 		int r = rows;
-		GgbVector result = new GgbVector(r-1); 
+		Coords result = new Coords(r-1); 
 
 		int shift = 0;
 		for(int i=0;i<r;i++){
@@ -241,7 +241,7 @@ public class GgbVector
 	 * If this={x1,x2,...} and v={x'1,x'2,...}, the dot product is x1*x'1+x2*x'2+...
 	 * @param v vector multiplied with
 	 * @return value of the dot product*/
-	public double dotproduct(GgbVector v){
+	public double dotproduct(Coords v){
 		int len = getLength();
 		double res = 0;
 		for(int i=0;i<len; i++)
@@ -256,9 +256,9 @@ public class GgbVector
 	 * @param v vector multiplied with
 	 * @return vector resulting of the cross product
 	 */
-	public GgbVector crossProduct(GgbVector v){
+	public Coords crossProduct(Coords v){
 		
-		GgbVector ret = new GgbVector(3);
+		Coords ret = new Coords(3);
 		
 		ret.val[0] = val[1]*v.val[2]-val[2]*v.val[1];
 		ret.val[1] = val[2]*v.val[0]-val[0]*v.val[2];
@@ -297,9 +297,9 @@ public class GgbVector
 	/** returns this normalized 
 	 * @return this/this.norm() 
 	 */
-	public GgbVector normalized(){
+	public Coords normalized(){
 		
-		GgbVector ret = new GgbVector(getLength());
+		Coords ret = new Coords(getLength());
 		double normInv = 1/this.norm();
 		int len = getLength();
 		for (int i=0; i<len; i++)
@@ -310,7 +310,7 @@ public class GgbVector
 	
 	
 	/** normalize this */
-	public GgbVector normalize(){
+	public Coords normalize(){
 		
 		double normInv = 1/this.norm();
 		int len = getLength();
@@ -329,7 +329,7 @@ public class GgbVector
 	 * @param v second vector
 	 * @return (this-v).norm()
 	 */
-	public double distance(GgbVector v){
+	public double distance(Coords v){
 		
 		return this.sub(v).norm();
 	}
@@ -338,12 +338,12 @@ public class GgbVector
 	 * @param O origin of the line
 	 * @param V direction of the line
 	 * @return distance between this and the line*/
-	public double distLine(GgbVector O, GgbVector V){
+	public double distLine(Coords O, Coords V){
 		
-		GgbVector OM = this.sub(O);
-		GgbVector N = V.normalized();
-		GgbVector OH = (GgbVector) N.mul(OM.dotproduct(N)); //TODO optimize
-		GgbVector HM = OM.sub(OH);
+		Coords OM = this.sub(O);
+		Coords N = V.normalized();
+		Coords OH = (Coords) N.mul(OM.dotproduct(N)); //TODO optimize
+		Coords HM = OM.sub(OH);
 		
 		return HM.norm();
 	}
@@ -355,24 +355,24 @@ public class GgbVector
 	 * @param m matrix {v1 v2 v3 o} where (o,v1,v2) is a coord sys fo the plane, and v3 the direction used for projection
 	 * @return two vectors {globalCoords,inPlaneCoords}: the point projected, and the original point in plane coords
 	 */
-	public GgbVector[] projectPlane(GgbMatrix m){
-		GgbVector inPlaneCoords, globalCoords;
+	public Coords[] projectPlane(CoordMatrix m){
+		Coords inPlaneCoords, globalCoords;
 		
 		
 		if  (Kernel.isEqual((m.getVx().crossProduct(m.getVy())).dotproduct(m.getVz()),0,Kernel.STANDARD_PRECISION)){
 			//direction of projection is parallel to the plane : point is infinite
 			//Application.printStacktrace("infinity");
-			inPlaneCoords = new GgbVector(new double[] {0,0,-1,0});
+			inPlaneCoords = new Coords(new double[] {0,0,-1,0});
 			globalCoords = m.getVz().copyVector();
 		}else{
 			//m*inPlaneCoords=this
 			inPlaneCoords = m.solve(this);
 
 			//globalCoords=this-inPlaneCoords_z*plane_vz
-			globalCoords = (GgbVector) this.add(m.getColumn(3).mul(-inPlaneCoords.get(3)));
+			globalCoords = (Coords) this.add(m.getColumn(3).mul(-inPlaneCoords.get(3)));
 		}
 		
-		return new GgbVector[] {globalCoords,inPlaneCoords};
+		return new Coords[] {globalCoords,inPlaneCoords};
 		
 	}
 	
@@ -383,10 +383,10 @@ public class GgbVector
 	 * @param v the direction used for projection
 	 * @return two vectors {globalCoords,inPlaneCoords}: the point projected, and the original point in plane coords
 	 */	
-	public GgbVector[] projectPlaneThruV(GgbMatrix m, GgbVector v){
+	public Coords[] projectPlaneThruV(CoordMatrix m, Coords v){
 		
-		GgbMatrix m1 = new GgbMatrix(4,4);
-		m1.set(new GgbVector[] {m.getColumn(1), m.getColumn(2), v, m.getColumn(4)});
+		CoordMatrix m1 = new CoordMatrix(4,4);
+		m1.set(new Coords[] {m.getColumn(1), m.getColumn(2), v, m.getColumn(4)});
 		
 		return projectPlane(m1);
 		
@@ -399,16 +399,16 @@ public class GgbVector
 	 * @param v the direction used for projection (v3 is used instead if v is parallel to the plane)
 	 * @return two vectors {globalCoords,inPlaneCoords}: the point projected, and the original point in plane coords
 	 */	
-	public GgbVector[] projectPlaneThruVIfPossible(GgbMatrix m, GgbVector v){
+	public Coords[] projectPlaneThruVIfPossible(CoordMatrix m, Coords v){
 		
 		// check if v is parallel to plane
-		GgbVector v3 = m.getColumn(3);
+		Coords v3 = m.getColumn(3);
 		if (Kernel.isEqual(v3.dotproduct(v), 0.0, Kernel.STANDARD_PRECISION))
 			return projectPlane(m);
 		
 		// if not, use v for direction
-		GgbMatrix m1 = new GgbMatrix(4,4);
-		m1.set(new GgbVector[] {m.getColumn(1), m.getColumn(2), v, m.getColumn(4)});
+		CoordMatrix m1 = new CoordMatrix(4,4);
+		m1.set(new Coords[] {m.getColumn(1), m.getColumn(2), v, m.getColumn(4)});
 		
 		return projectPlane(m1);
 		
@@ -422,15 +422,15 @@ public class GgbVector
 	 * @param O origin of the line
 	 * @param V direction of the line
 	 * @return {point projected, {parameter on the line, normalized parameter} } */
-	public GgbVector[] projectLine(GgbVector O, GgbVector V){
+	public Coords[] projectLine(Coords O, Coords V){
 		
-		GgbVector OM = this.sub(O);
-		GgbVector N = V.normalized();
+		Coords OM = this.sub(O);
+		Coords N = V.normalized();
 		double parameter = OM.dotproduct(N);
-		GgbMatrix OH = N.mul(parameter);
-		GgbVector H = O.add(OH).getColumn(1); //TODO optimize
+		CoordMatrix OH = N.mul(parameter);
+		Coords H = O.add(OH).getColumn(1); //TODO optimize
 		
-		return new GgbVector[] {H,new GgbVector(new double[] {parameter/V.norm(), parameter})};
+		return new Coords[] {H,new Coords(new double[] {parameter/V.norm(), parameter})};
 		
 	}
 	
@@ -442,15 +442,15 @@ public class GgbVector
 	 * @param V direction of the line
 	 * @param V2 direction of projection
 	 * @return point projected*/
-	public GgbVector projectNearLine(GgbVector O, GgbVector V, GgbVector V2){
+	public Coords projectNearLine(Coords O, Coords V, Coords V2){
 		
-		GgbVector V3 = V.crossProduct(V2);
+		Coords V3 = V.crossProduct(V2);
 		
 		if (Kernel.isEqual(V3.norm(), 0.0, Kernel.STANDARD_PRECISION)){
 			return this.copyVector();
 		}else{
-			GgbMatrix m = new GgbMatrix(4,4);
-			m.set(new GgbVector[] {V, V3, V2, O});
+			CoordMatrix m = new CoordMatrix(4,4);
+			m.set(new Coords[] {V, V3, V2, O});
 			return this.projectPlane(m)[0];
 		}
 		
@@ -467,18 +467,18 @@ public class GgbVector
 	 * @param V2 direction of projection
 	 * @return {point projected, {coord of the proj. point on the line, distance between this and the proj. point}}
 	 */
-	public GgbVector[] projectOnLineWithDirection(GgbVector O, GgbVector V, GgbVector V2){
+	public Coords[] projectOnLineWithDirection(Coords O, Coords V, Coords V2){
 		
-		GgbVector V3 = V.crossProduct(V2);
+		Coords V3 = V.crossProduct(V2);
 		
 		if (Kernel.isEqual(V3.norm(), 0.0, Kernel.STANDARD_PRECISION)){
-			return new GgbVector[] {O, new GgbVector(new double[] {0,this.sub(O).norm()})};
+			return new Coords[] {O, new Coords(new double[] {0,this.sub(O).norm()})};
 		}else{
-			GgbMatrix m = new GgbMatrix(4,4);
-			m.set(new GgbVector[] {V2, V3, V, this});
-			GgbVector[] result = O.projectPlane(m);
-			return new GgbVector[] {result[0], 
-					new GgbVector(new double[] {-result[1].get(3),this.sub(result[0]).norm()})};
+			CoordMatrix m = new CoordMatrix(4,4);
+			m.set(new Coords[] {V2, V3, V, this});
+			Coords[] result = O.projectPlane(m);
+			return new Coords[] {result[0], 
+					new Coords(new double[] {-result[1].get(3),this.sub(result[0]).norm()})};
 		}
 		
 	}	
@@ -487,9 +487,9 @@ public class GgbVector
 	 * @param v vector subtracted
 	 * @return this-v 
 	 */
-	public GgbVector sub(GgbVector v){
+	public Coords sub(Coords v){
 		int i;
-		GgbVector result=new GgbVector(rows);
+		Coords result=new Coords(rows);
 		for (i=0;i<rows;i++)
 			result.val[i]=val[i]-v.val[i];
 
@@ -501,9 +501,9 @@ public class GgbVector
 	 * If this={x1,x2,xn}, it returns {x1/xn,x2/xn,...,x(n-1)}
 	 * @return {x1/xn,x2/xn,...,x(n-1)/xn}
 	 */
-	public GgbVector getInhomCoords(){
+	public Coords getInhomCoords(){
 		int r = rows;
-		GgbVector result=new GgbVector(r-1);
+		Coords result=new Coords(r-1);
 
 		double wdiv = 1/val[r-1];
 		for (int i=0;i<r-1;i++)
@@ -516,9 +516,9 @@ public class GgbVector
 	 * <p>
 	 * If this={x1,x2,xn}, it returns {x1/xn,x2/xn,...,1}
 	 * @return {x1/xn,x2/xn,...,1}*/
-	public GgbVector getCoordsLast1(){
+	public Coords getCoordsLast1(){
 		int len = getLength();
-		GgbVector result=new GgbVector(len);
+		Coords result=new Coords(len);
 		double lastCoord = val[len-1];
 		if (lastCoord!=0.0){
 			double lastCoordInv=1/lastCoord;
@@ -535,7 +535,7 @@ public class GgbVector
 	 * @param precision 
 	 * @return true if the vectors are equal
 	 */
-	public boolean equalsForKernel(GgbVector v, double precision){
+	public boolean equalsForKernel(Coords v, double precision){
 		int len = getLength();
 		for(int i=0;i<len;i++)
 			if (!Kernel.isEqual(val[i], v.val[i], precision))
@@ -560,9 +560,9 @@ public class GgbVector
 		
 	}
 	
-	public GgbVector[] completeOrthonormal() {
-		GgbVector vn1 = new GgbVector(4);
-		GgbVector vn2 = new GgbVector(4);
+	public Coords[] completeOrthonormal() {
+		Coords vn1 = new Coords(4);
+		Coords vn2 = new Coords(4);
 
 		if (val[0] != 0) {
 			vn1.val[0] = -val[1];
@@ -575,7 +575,7 @@ public class GgbVector
 		vn2 = this.crossProduct(vn1);
 		vn2.normalize();
 
-		return new GgbVector[] { vn1, vn2 };
+		return new Coords[] { vn1, vn2 };
 	}
 
 	
@@ -583,15 +583,15 @@ public class GgbVector
 	// BASIC OPERATIONS
 	/////////////////////////////////////////////////////
 	
-	public GgbVector add(GgbVector v){
+	public Coords add(Coords v){
 		
-		return (GgbVector) super.add(v);
+		return (Coords) super.add(v);
 		
 	}
 	
-	public GgbVector mul(double val0){
+	public Coords mul(double val0){
 		
-		return (GgbVector) super.mul(val0);
+		return (Coords) super.mul(val0);
 	}
 	
 	
@@ -599,7 +599,7 @@ public class GgbVector
 	/** for testing the package */
 	public static synchronized void main(String[] args) {	
 		
-		GgbVector v1 = new GgbVector(2);
+		Coords v1 = new Coords(2);
 		v1.val[0]=3.0;
 		v1.val[1]=4.0;
 		

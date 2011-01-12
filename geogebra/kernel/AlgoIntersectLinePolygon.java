@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
@@ -170,7 +170,7 @@ implements AlgoElementWithResizeableOutput{
     	for (GeoPointND point : pointsTree.values()){
     		if (startPoint!=null){
     			
-    			GgbVector middle = (GgbVector) startPoint.getInhomCoords().add(point.getInhomCoords()).mul(0.5);
+    			Coords middle = (Coords) startPoint.getInhomCoords().add(point.getInhomCoords()).mul(0.5);
     			if (p.isInRegion(middle.getX(),middle.getY())){
 
     				GeoSegment segment;

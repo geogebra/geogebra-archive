@@ -20,8 +20,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -244,7 +244,7 @@ GeoPointND, Animatable  {
 	
 	
 	
-	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, GgbVector viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
+	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition, Coords viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
 				
 		if (!hasChangeableCoordParentNumbers())
 			return false;
@@ -553,7 +553,7 @@ GeoPointND, Animatable  {
 		
 	}  
 	
-	public void setCoords(GgbVector v, boolean doPathOrRegion){
+	public void setCoords(Coords v, boolean doPathOrRegion){
 		
 		if (doPathOrRegion)
 			setCoords(v.getX(),v.getY(),v.getLast());
@@ -762,7 +762,7 @@ GeoPointND, Animatable  {
     /**
      * translate by vector v
      */
-    final public void translate(GgbVector v) { 
+    final public void translate(Coords v) { 
     		setCoords(x + v.getX() * z, y + v.getY() * z, z); 
     }        
     
@@ -1249,19 +1249,19 @@ GeoPointND, Animatable  {
 		}
 		
 		//only used for 3D stuff
-		public void updateCoordsFrom2D(boolean doPathOrRegion, GgbCoordSys coordsys){
+		public void updateCoordsFrom2D(boolean doPathOrRegion, CoordSys coordsys){
 		}
 		
-		public GgbVector getInhomCoords(){
-			return new GgbVector(new double[] {inhomX, inhomY});
+		public Coords getInhomCoords(){
+			return new Coords(new double[] {inhomX, inhomY});
 		}
 
-		public GgbVector getInhomCoordsInD(int dimension){
+		public Coords getInhomCoordsInD(int dimension){
 			switch(dimension){
 			case 2:
 				return getInhomCoords();
 			case 3:
-				GgbVector v = new GgbVector(3);
+				Coords v = new Coords(3);
 				v.setX(inhomX);
 				v.setY(inhomY);
 				v.setZ(0);
@@ -1271,16 +1271,16 @@ GeoPointND, Animatable  {
 			}
 		}
 		
-		public GgbVector getCoordsInD2(GgbCoordSys coordSys){ //TODO use coord sys ?
-			return new GgbVector(x,y,z);
+		public Coords getCoordsInD2(CoordSys coordSys){ //TODO use coord sys ?
+			return new Coords(x,y,z);
 		}
 		
-		public GgbVector getCoordsInD(int dimension){
+		public Coords getCoordsInD(int dimension){
 			switch(dimension){
 			case 2:
-				return new GgbVector(x,y,z);
+				return new Coords(x,y,z);
 			case 3:
-				return new GgbVector(x,y,0,z);
+				return new Coords(x,y,0,z);
 			default:
 				return null;
 			}
@@ -1307,7 +1307,7 @@ GeoPointND, Animatable  {
 			return true;
 		}
 	    
-	  	public GgbVector getLabelPosition(){
+	  	public Coords getLabelPosition(){
 			return getCoordsInD(3);
 		}
 

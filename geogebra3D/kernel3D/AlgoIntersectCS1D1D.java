@@ -18,8 +18,8 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbMatrixUtil;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrixUtil;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -72,13 +72,13 @@ public class AlgoIntersectCS1D1D extends AlgoIntersectCoordSys {
     	GeoLineND line1 = (GeoLineND) getCS1();
     	GeoLineND line2 = (GeoLineND) getCS2();
     	
-    	GgbVector o1 = line1.getPointInD(3, 0);
-    	GgbVector d1 = line1.getPointInD(3, 1).sub(o1);
-    	GgbVector o2 = line2.getPointInD(3, 0);
-       	GgbVector d2 = line2.getPointInD(3, 1).sub(o2);
+    	Coords o1 = line1.getPointInD(3, 0);
+    	Coords d1 = line1.getPointInD(3, 1).sub(o1);
+    	Coords o2 = line2.getPointInD(3, 0);
+       	Coords d2 = line2.getPointInD(3, 1).sub(o2);
            	
 
-    	GgbVector[] project = GgbMatrixUtil.nearestPointsFromTwoLines(
+    	Coords[] project = CoordMatrixUtil.nearestPointsFromTwoLines(
     			o1,d1,o2,d2
     	);
     	

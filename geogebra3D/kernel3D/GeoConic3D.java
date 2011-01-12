@@ -1,8 +1,8 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
@@ -21,7 +21,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 	
 	/** 2D coord sys where the polygon exists */
-	private GgbCoordSys coordSys; 
+	private CoordSys coordSys; 
 
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
@@ -32,7 +32,7 @@ extends GeoConicND implements GeoElement3DInterface{
 	 * @param c construction
 	 * @param cs 2D coord sys
 	 */
-	public GeoConic3D(Construction c, GgbCoordSys cs) {
+	public GeoConic3D(Construction c, CoordSys cs) {
 		this(c);
 		setCoordSys(cs);
 	}	
@@ -56,13 +56,13 @@ extends GeoConicND implements GeoElement3DInterface{
 	/** set the 2D coordinate system
 	 * @param cs the 2D coordinate system
 	 */
-	 public void setCoordSys(GgbCoordSys cs){
+	 public void setCoordSys(CoordSys cs){
 		 		 
 		 this.coordSys = cs;
 
 	 }
 
-	 public GgbCoordSys getCoordSys(){
+	 public CoordSys getCoordSys(){
 		 return coordSys;
 	 }
 
@@ -86,7 +86,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 		
 
-	 public GgbMatrix4x4 getDrawingMatrix() {
+	 public CoordMatrix4x4 getDrawingMatrix() {
 		 if (coordSys!=null)
 			 return coordSys.getMatrixOrthonormal();
 		 else
@@ -94,15 +94,15 @@ extends GeoConicND implements GeoElement3DInterface{
 	 }
 
 
-	 public void setDrawingMatrix(GgbMatrix4x4 matrix) {
+	 public void setDrawingMatrix(CoordMatrix4x4 matrix) {
 		 //coordSys.setDrawingMatrix(matrix);
 
 	 }
 	 
 
 
-	 public GgbVector getLabelPosition(){
-		 return new GgbVector(4); //TODO
+	 public Coords getLabelPosition(){
+		 return new Coords(4); //TODO
 	 }
 
 
@@ -127,24 +127,24 @@ extends GeoConicND implements GeoElement3DInterface{
 	 }
 	 
 
-	 public GgbVector getMainDirection(){ 
+	 public Coords getMainDirection(){ 
 		 return coordSys.getNormal();
 	 };
 
 	 /////////////////////////////////////////
 	 // GeoConicND
 	 
-	 public GgbVector getMidpoint(){
+	 public Coords getMidpoint(){
 		 return coordSys.getPoint(super.getMidpoint());
 		 
 	 }
 
 
-	 public GgbVector getEigenvec3D(int i){
+	 public Coords getEigenvec3D(int i){
 		 return coordSys.getVector(super.getEigenvec(i));
 	 }
 
-	 public GgbVector getMidpoint3D(){
+	 public Coords getMidpoint3D(){
 		 return getMidpoint();
 	 }
 

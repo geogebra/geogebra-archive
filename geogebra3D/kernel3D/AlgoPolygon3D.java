@@ -1,6 +1,6 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
+import geogebra.Matrix.CoordSys;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -31,7 +31,7 @@ public class AlgoPolygon3D extends AlgoPolygon {
 	 * @param polyhedron polyhedron (when segment is part of)
 	 */    
 	public AlgoPolygon3D(Construction cons, String[] label, 
-			GgbCoordSys cs, GeoPoint[] points, GeoElement polyhedron) {
+			CoordSys cs, GeoPoint[] points, GeoElement polyhedron) {
 		super(cons, label, points, null,cs,true, polyhedron);
 
 	}
@@ -70,7 +70,7 @@ public class AlgoPolygon3D extends AlgoPolygon {
      * @param createSegments says if the polygon has to creates its edges (3D only)
      */
     protected void createPolygon(boolean createSegments){
-    	poly = new GeoPolygon3D(cons, points, (GgbCoordSys) cs2D, createSegments);
+    	poly = new GeoPolygon3D(cons, points, (CoordSys) cs2D, createSegments);
     	if (polyhedron!=null)
     		((GeoPolygon3D) poly).setIsPartOfClosedSurface(true);
     }

@@ -1,7 +1,7 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.PathMover;
@@ -45,7 +45,7 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 	 * @param v1 start point
 	 * @param v2 end point
 	 */
-	private GeoSegment3D(Construction c, GgbVector v1, GgbVector v2){
+	private GeoSegment3D(Construction c, Coords v1, Coords v2){
 		super(c,v1,v2.sub(v1));
 	}
 	

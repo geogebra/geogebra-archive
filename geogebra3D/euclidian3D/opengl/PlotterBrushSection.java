@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D.opengl;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Kernel;
 
 
@@ -14,13 +14,13 @@ public class PlotterBrushSection {
 
 
 	/** center and clock vectors */
-	private GgbVector center, clockU, clockV;
+	private Coords center, clockU, clockV;
 	
 	/** direction from last point */
-	private GgbVector direction;
+	private Coords direction;
 	
 	/** normal (for caps) */
-	private GgbVector normal = null;
+	private Coords normal = null;
 	
 	/** normal deviation along direction */
 	private double normalDevD = 0;
@@ -34,7 +34,7 @@ public class PlotterBrushSection {
 	 * @param point
 	 * @param thickness
 	 */
-	public PlotterBrushSection(GgbVector point, float thickness){
+	public PlotterBrushSection(Coords point, float thickness){
 		this(point, thickness, null, null);
 	}
 	
@@ -45,7 +45,7 @@ public class PlotterBrushSection {
 	 * @param clockU 
 	 * @param clockV 
 	 */
-	public PlotterBrushSection(GgbVector point, float thickness, GgbVector clockU, GgbVector clockV){
+	public PlotterBrushSection(Coords point, float thickness, Coords clockU, Coords clockV){
 		this.center = point;
 		this.thickness = thickness;
 		this.clockU = clockU;
@@ -59,7 +59,7 @@ public class PlotterBrushSection {
 	 * @param thickness
 	 * @param updateClock 
 	 */
-	public PlotterBrushSection(PlotterBrushSection s, GgbVector point, float thickness, boolean updateClock){
+	public PlotterBrushSection(PlotterBrushSection s, Coords point, float thickness, boolean updateClock){
 		this(point,thickness);
 		
 		direction = center.sub(s.center);
@@ -68,7 +68,7 @@ public class PlotterBrushSection {
 			if (this.thickness<s.thickness)
 				normal = s.direction;
 			else 
-				normal = (GgbVector) s.direction.mul(-1);
+				normal = (Coords) s.direction.mul(-1);
 			s.normal = normal;
 			//keep last direction
 			direction = s.direction;
@@ -95,7 +95,7 @@ public class PlotterBrushSection {
 			
 			//calc new clocks				
 			if (updateClock){
-				GgbVector[] vn = direction.completeOrthonormal();
+				Coords[] vn = direction.completeOrthonormal();
 				s.clockU = vn[0]; s.clockV = vn[1];
 			}
 
@@ -113,25 +113,25 @@ public class PlotterBrushSection {
 	 * @param v
 	 * @return the normal vector
 	 */
-	public GgbVector[] getNormalAndPosition(double u, double v){
-		GgbVector vn = (GgbVector) clockV.mul(v).add(clockU.mul(u));
-		GgbVector pos = (GgbVector) vn.mul(thickness).add(center);
+	public Coords[] getNormalAndPosition(double u, double v){
+		Coords vn = (Coords) clockV.mul(v).add(clockU.mul(u));
+		Coords pos = (Coords) vn.mul(thickness).add(center);
 		if (normal!=null)
-			return new GgbVector[] {normal,pos};
+			return new Coords[] {normal,pos};
 		else
 			if (normalDevD!=0){
 				//Application.debug("normalDev="+normalDevD+","+normalDevN);
 				//return new GgbVector[] {vn,pos};
-				return new GgbVector[] {(GgbVector) vn.mul(normalDevN).add(direction.mul(normalDevD)),pos};
+				return new Coords[] {(Coords) vn.mul(normalDevN).add(direction.mul(normalDevD)),pos};
 			}else
-				return new GgbVector[] {vn,pos};
+				return new Coords[] {vn,pos};
 	}
 	
 	
 	/**
 	 * @return the center of the section
 	 */
-	public GgbVector getCenter(){
+	public Coords getCenter(){
 		return center;
 	}
 	
@@ -147,11 +147,11 @@ public class PlotterBrushSection {
 	 * @param thickness
 	 * @param direction
 	 */
-	public PlotterBrushSection(GgbVector point, GgbVector direction, float thickness){
+	public PlotterBrushSection(Coords point, Coords direction, float thickness){
 		this.center = point;
 		this.thickness = thickness;
 		this.direction = direction;
-		GgbVector[] vn = direction.completeOrthonormal();
+		Coords[] vn = direction.completeOrthonormal();
 		clockU = vn[0]; clockV = vn[1];
 		
 	}
@@ -162,7 +162,7 @@ public class PlotterBrushSection {
 	 * @param point
 	 * @param thickness
 	 */
-	public PlotterBrushSection(PlotterBrushSection s, GgbVector point, float thickness){
+	public PlotterBrushSection(PlotterBrushSection s, Coords point, float thickness){
 		this.center = point;
 		this.thickness = thickness;
 		this.direction=this.center.sub(s.getCenter()).normalized();
@@ -179,7 +179,7 @@ public class PlotterBrushSection {
 	 * @param thickness
 	 * @param direction
 	 */
-	public PlotterBrushSection(PlotterBrushSection s, GgbVector point, GgbVector direction, float thickness){
+	public PlotterBrushSection(PlotterBrushSection s, Coords point, Coords direction, float thickness){
 		
 		this.center = point;
 		this.thickness = thickness;

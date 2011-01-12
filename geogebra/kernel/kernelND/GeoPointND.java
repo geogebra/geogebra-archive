@@ -1,7 +1,7 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.LocateableList;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
@@ -46,7 +46,7 @@ public interface GeoPointND {
 	
 	public double getY2D();
 
-	public void updateCoordsFrom2D(boolean b, GgbCoordSys coordsys);
+	public void updateCoordsFrom2D(boolean b, CoordSys coordsys);
 
 	public boolean isPointOnPath();
 
@@ -66,7 +66,7 @@ public interface GeoPointND {
 	public double[] vectorTo(GeoPointND Q);
 	
 	
-	public GgbVector getInhomCoords();
+	public Coords getInhomCoords();
 	
 	public void getInhomCoords(double[] coords);
 	
@@ -97,7 +97,7 @@ public interface GeoPointND {
 	 * @param v coords
 	 * @param doPathOrRegion says if path (or region) calculations have to be done
 	 */    
-	public void setCoords(GgbVector v, boolean doPathOrRegion);
+	public void setCoords(Coords v, boolean doPathOrRegion);
 
     /** set 2D coords
      * @param x x-coord
@@ -110,19 +110,19 @@ public interface GeoPointND {
 	 * @param dimension
 	 * @return the coords of the point in the given dimension (extended or projected)
 	 */
-	public GgbVector getInhomCoordsInD(int dimension);
+	public Coords getInhomCoordsInD(int dimension);
 	
 	/**
 	 * @param dimension
 	 * @return the coords of the point in the given dimension (extended or projected)
 	 */
-	public GgbVector getCoordsInD(int dimension);
+	public Coords getCoordsInD(int dimension);
 	
 	/**
 	 * @param coordSys
 	 * @return the coords of the point in 2D (projected on coord sys)
 	 */
-	public GgbVector getCoordsInD2(GgbCoordSys coordSys);
+	public Coords getCoordsInD2(CoordSys coordSys);
 
 	public int getPointStyle();
 

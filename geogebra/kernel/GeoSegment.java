@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -488,17 +488,17 @@ GeoSegmentND {
 		return true;
 	}
     
-  	public GgbVector getLabelPosition(){
-		return new GgbVector(getPointX(0.5), getPointY(0.5), 0, 1);
+  	public Coords getLabelPosition(){
+		return new Coords(getPointX(0.5), getPointY(0.5), 0, 1);
 	}
   	
-  	public GgbVector getPointInD(int dimension, double lambda){
+  	public Coords getPointInD(int dimension, double lambda){
 
 		switch(dimension){
 		case 3:
-			return new GgbVector(getPointX(lambda), getPointY(lambda), 0, 1);
+			return new Coords(getPointX(lambda), getPointY(lambda), 0, 1);
 		case 2:
-			return new GgbVector(getPointX(lambda), getPointY(lambda), 1);
+			return new Coords(getPointX(lambda), getPointY(lambda), 1);
 		default:
 			return null;
 		}

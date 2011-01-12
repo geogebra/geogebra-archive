@@ -1,8 +1,8 @@
 package geogebra.Matrix;
 
-import geogebra.Matrix.GgbMatrix;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
@@ -12,19 +12,19 @@ import geogebra.main.Application;
  * @author ggb3D
  *
  */
-public class GgbCoordSys {
+public class CoordSys {
 
 	//matrix for the coord sys
-	private GgbMatrix matrix;
+	private CoordMatrix matrix;
 	private int dimension;
 	private int madeCoordSys;
-	private GgbMatrix4x4 matrixOrthonormal;
+	private CoordMatrix4x4 matrixOrthonormal;
 	
 	/** vector used for equation of hyperplanes, like ax+by+cz+d=0 for planes */
-	private GgbVector equationVector;
+	private Coords equationVector;
 	
-	private GgbVector origin;
-	private GgbVector[] vectors;
+	private Coords origin;
+	private Coords[] vectors;
 	
 	/** dimension of the space (2 for 2D, 3 for 3D, ...) */
 	private int spaceDimension = 3;
@@ -34,19 +34,19 @@ public class GgbCoordSys {
 	/** create a coord sys  
 	 * @param dimension number of vectors of the coord sys
 	 */
-	public GgbCoordSys(int dimension) {
-		matrix=new GgbMatrix(4,4);
-		matrixOrthonormal = new GgbMatrix4x4();
+	public CoordSys(int dimension) {
+		matrix=new CoordMatrix(4,4);
+		matrixOrthonormal = new CoordMatrix4x4();
 		this.dimension = dimension;
 		
-		origin = new GgbVector(spaceDimension+1); 
+		origin = new Coords(spaceDimension+1); 
 		origin.set(spaceDimension+1, 1);
-		vectors = new GgbVector[spaceDimension];
+		vectors = new Coords[spaceDimension];
 		for(int i=0;i<spaceDimension;i++){
-			vectors[i] = new GgbVector(spaceDimension+1); 
+			vectors[i] = new Coords(spaceDimension+1); 
 		}
 		
-		equationVector = new GgbVector(spaceDimension+1);
+		equationVector = new Coords(spaceDimension+1);
 	
 		resetCoordSys();
 		
@@ -56,15 +56,15 @@ public class GgbCoordSys {
 	/**
 	 * @return "identity" coord sys
 	 */
-	public static final GgbCoordSys Identity3D(){
-		GgbCoordSys ret = new GgbCoordSys(2);
+	public static final CoordSys Identity3D(){
+		CoordSys ret = new CoordSys(2);
 		ret.makeCoordSys(new double[] {0,0,1,0}); //equation z=0
 		ret.makeOrthoMatrix(true);
 		return ret;
 	}
 
 	
-	public GgbMatrix getMatrix(){
+	public CoordMatrix getMatrix(){
 		return matrix;
 	}
 	
@@ -77,69 +77,69 @@ public class GgbCoordSys {
 	////////////////////////////
 	// setters
 	
-	public void setOrigin(GgbVector o){
+	public void setOrigin(Coords o){
 		origin.set(o);
 	}
 	
-	public void setVx(GgbVector v){
+	public void setVx(Coords v){
 		setV(v,0);
 	}
 	
-	public void setVy(GgbVector v){
+	public void setVy(Coords v){
 		setV(v,1);
 	}
 	
-	public void setVz(GgbVector v){
+	public void setVz(Coords v){
 		setV(v,2);
 	}
 	
-	public void setV(GgbVector v, int i){
+	public void setV(Coords v, int i){
 		vectors[i].set(v);
 	}
 	
-	public GgbVector getV(int i){
+	public Coords getV(int i){
 		return vectors[i];
 	}
 	
-	public GgbVector getOrigin(){
+	public Coords getOrigin(){
 		return origin;
 	}
 	
-	public GgbVector getVx(){
+	public Coords getVx(){
 		return getV(0);
 	}
 	
-	public GgbVector getVy(){
+	public Coords getVy(){
 		return getV(1);
 	}
 	
-	public GgbVector getVz(){
+	public Coords getVz(){
 		return getV(2);
 	}
 	
 	
-	public GgbVector getPoint(GgbVector coords2D){
+	public Coords getPoint(Coords coords2D){
 		return getPoint(coords2D.getX(), coords2D.getY());
 	}
 	
-	public GgbVector getPoint(double x, double y){
-		return (GgbVector) matrixOrthonormal.getOrigin().add(getVector(x,y));
+	public Coords getPoint(double x, double y){
+		return (Coords) matrixOrthonormal.getOrigin().add(getVector(x,y));
 	}
 	
-	public GgbVector getPoint(double x){
-		return (GgbVector) getOrigin().add(getVx().mul(x));
+	public Coords getPoint(double x){
+		return (Coords) getOrigin().add(getVx().mul(x));
 	}
 	
-	public GgbVector getVector(GgbVector coords2D){
+	public Coords getVector(Coords coords2D){
 		return getVector(coords2D.getX(), coords2D.getY());
 	}	
 	
-	public GgbVector getVector(double x, double y){
-		return (GgbVector) matrixOrthonormal.getVx().mul(x).add(matrixOrthonormal.getVy().mul(y));
+	public Coords getVector(double x, double y){
+		return (Coords) matrixOrthonormal.getVx().mul(x).add(matrixOrthonormal.getVy().mul(y));
 	}
 	
 	
-	public GgbVector getNormal(){
+	public Coords getNormal(){
 		return matrixOrthonormal.getVz();//getVx().crossProduct(getVy()).normalized();
 	}
 	
@@ -150,12 +150,12 @@ public class GgbCoordSys {
 	/////////////////////////////////////
 	
 	
-	public GgbVector[] getNormalProjection(GgbVector coords) {
+	public Coords[] getNormalProjection(Coords coords) {
 		return coords.projectPlane(this.getMatrixOrthonormal());
 	}
 
-	public GgbVector[] getProjection(GgbVector coords,
-			GgbVector willingDirection) {
+	public Coords[] getProjection(Coords coords,
+			Coords willingDirection) {
 		return coords.projectPlaneThruV(this.getMatrixOrthonormal(),willingDirection);
 	}
 	
@@ -208,7 +208,7 @@ public class GgbCoordSys {
 	 * @param p a point (x,y,z,1)
 	 * 
 	 */
-	public void addPoint(GgbVector p){
+	public void addPoint(Coords p){
 		
 		if (isMadeCoordSys())
 			return;
@@ -233,7 +233,7 @@ public class GgbCoordSys {
 	 * @param v a vector (x,y,z,1)
 	 * 
 	 */
-	public void addVector(GgbVector v){
+	public void addVector(Coords v){
 		
 		if (isMadeCoordSys())
 			return;
@@ -248,7 +248,7 @@ public class GgbCoordSys {
 	 * @param v a vector (x,y,z,1)
 	 * 
 	 */
-	public void addVectorWithoutCheckMadeCoordSys(GgbVector v){
+	public void addVectorWithoutCheckMadeCoordSys(Coords v){
 			
 		
 		switch(getMadeCoordSys()){
@@ -261,7 +261,7 @@ public class GgbCoordSys {
 			break;
 		case 1: //add second vector
 			//calculate normal vector to check if v1 depends to vx
-			GgbVector vn = getVx().crossProduct(v);
+			Coords vn = getVx().crossProduct(v);
 			//check if vn==0
 			if (!Kernel.isEqual(vn.norm(), 0, Kernel.STANDARD_PRECISION)){	
 				setVy(v);
@@ -293,7 +293,7 @@ public class GgbCoordSys {
 	/**
 	 * @return the equation vector
 	 */
-	public GgbVector getEquationVector(){
+	public Coords getEquationVector(){
 		return equationVector;
 	}
 	
@@ -318,7 +318,7 @@ public class GgbCoordSys {
 		equationVector.set(vals);
 		
 		//sets the origin : first non-zero value sets the coord ( - const value / coeff value)
-		GgbVector o = new GgbVector(4);
+		Coords o = new Coords(4);
 		boolean originSet = false;
 		for (int i=0;i<vals.length-1;i++){
 			if (!originSet)
@@ -335,7 +335,7 @@ public class GgbCoordSys {
 		addPoint(o);
 		
 		//creates the coordsys vectors
-		GgbVector[] v = equationVector.completeOrthonormal();
+		Coords[] v = equationVector.completeOrthonormal();
 		addVectorWithoutCheckMadeCoordSys(v[1]);
 		addVectorWithoutCheckMadeCoordSys(v[0]);
 		
@@ -356,18 +356,18 @@ public class GgbCoordSys {
 
 		if (dimension==1){ 
 			//compute Vy and Vz
-			GgbVector vy = (new GgbVector(new double[] {0,0,1,0})).crossProduct(getVx());
+			Coords vy = (new Coords(new double[] {0,0,1,0})).crossProduct(getVx());
 			// check if vy=0 (if so, vx is parallel to Oz)
 			if (vy.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
-				setVy(new GgbVector(new double[] {1,0,0,0}));
-				setVz(new GgbVector(new double[] {0,1,0,0}));
+				setVy(new Coords(new double[] {1,0,0,0}));
+				setVz(new Coords(new double[] {0,1,0,0}));
 			}else{
 				setVy(vy);
 				setVz(getVx().crossProduct(getVy()));
 			}
 			
 			//sets orthonormal matrix
-			matrixOrthonormal.set(new GgbVector[] {
+			matrixOrthonormal.set(new Coords[] {
 					getVx().normalized(),
 					getVy().normalized(),
 					getVz().normalized(),
@@ -383,9 +383,9 @@ public class GgbCoordSys {
 		if (dimension==2){ //vy and Vz are computed
 
 			// vector Vx parallel to xOy plane
-			GgbVector vz = new GgbVector(new double[] {0,0,1,0});
-			GgbVector vx = getVz().crossProduct(vz);
-			GgbVector vy;
+			Coords vz = new Coords(new double[] {0,0,1,0});
+			Coords vx = getVz().crossProduct(vz);
+			Coords vy;
 			//if (!Kernel.isEqual(vx.norm(), 0, Kernel.STANDARD_PRECISION)){
 			if (!vx.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
 				vx.normalize();
@@ -393,13 +393,13 @@ public class GgbCoordSys {
 				vy.normalize();
 				vz = getVz().normalized();
 			} else {
-				vx = new GgbVector(new double[] {1,0,0,0});
-				vy = new GgbVector(new double[] {0,1,0,0});
+				vx = new Coords(new double[] {1,0,0,0});
+				vy = new Coords(new double[] {0,1,0,0});
 			}
 
 			
-			GgbVector o = getOrigin();
-			matrixOrthonormal.set(new GgbVector[] {vx,vy,vz,o});
+			Coords o = getOrigin();
+			matrixOrthonormal.set(new Coords[] {vx,vy,vz,o});
 			
 			if (projectOrigin)
 				projectOrigin();
@@ -419,7 +419,7 @@ public class GgbCoordSys {
 	 * project 0 for origin
 	 */
 	private void projectOrigin(){
-		GgbVector o = (new GgbVector(new double[] {0,0,0,1})).projectPlane(getMatrixOrthonormal())[0];
+		Coords o = (new Coords(new double[] {0,0,0,1})).projectPlane(getMatrixOrthonormal())[0];
 		matrixOrthonormal.set(o, 4);
 	}
 	
@@ -438,7 +438,7 @@ public class GgbCoordSys {
 	
 	
 	/** returns orthonormal matrix   */
-	public GgbMatrix4x4 getMatrixOrthonormal(){
+	public CoordMatrix4x4 getMatrixOrthonormal(){
 		return matrixOrthonormal;
 	}
 

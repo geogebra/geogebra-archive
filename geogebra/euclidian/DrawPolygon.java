@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
@@ -117,7 +117,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 			gp.reset();
 
 		// first point
-		GgbVector v = points[0].getInhomCoordsInD(3);
+		Coords v = points[0].getInhomCoordsInD(3);
 		if (!Kernel.isZero(v.getZ())) // TODO generalize
 			return false;
 		coords[0] = v.getX();

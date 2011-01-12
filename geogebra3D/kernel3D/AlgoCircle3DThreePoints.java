@@ -1,7 +1,7 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -19,7 +19,7 @@ import geogebra.main.Application;
 public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 
 	/** coord sys defined by the three points where the 3D circle lies */
-	private GgbCoordSys coordSys;
+	private CoordSys coordSys;
 	
 	/** 2D projection of the 3D points in the coord sys */
 	private GeoPoint[] points2D;
@@ -56,7 +56,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
        	points[2] = C;
             	
 
-    	coordSys = new GgbCoordSys(2);
+    	coordSys = new CoordSys(2);
     	
     	
     	points2D = new GeoPoint[3];
@@ -118,7 +118,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     	
     	 for(int i=0;i<3;i++){
 			 //project the point on the coord sys
-			 GgbVector[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
+			 Coords[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
 
 			 //check if the vertex lies on the coord sys
 			 if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){

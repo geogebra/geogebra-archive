@@ -13,9 +13,9 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -52,13 +52,13 @@ public class AlgoOrthoLinePointLine3D extends AlgoOrtho {
     protected final void compute() {
     	
     	GeoLineND line = getInputLine();
-    	GgbVector o = line.getPointInD(3, 0);
-    	GgbVector v1 = line.getPointInD(3, 1).sub(o);
-    	GgbVector o2 = getPoint().getCoordsInD(3);
-    	GgbVector v2 = o2.sub(o);
+    	Coords o = line.getPointInD(3, 0);
+    	Coords v1 = line.getPointInD(3, 1).sub(o);
+    	Coords o2 = getPoint().getCoordsInD(3);
+    	Coords v2 = o2.sub(o);
     	
-    	GgbVector v3 = v1.crossProduct(v2);
-    	GgbVector v = v3.crossProduct(v1);
+    	Coords v3 = v1.crossProduct(v2);
+    	Coords v = v3.crossProduct(v1);
     	
     	if (v.equalsForKernel(0, Kernel.STANDARD_PRECISION))
     		getLine().setUndefined();

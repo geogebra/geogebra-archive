@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
@@ -134,7 +134,7 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		
 		
 		Renderer renderer = getView3D().getRenderer();
-		GgbVector v = polygon.getMainDirection();
+		Coords v = polygon.getMainDirection();
 		int index = renderer.startPolygon((float) v.get(1),(float) v.get(2),(float) v.get(3));
 		
 		

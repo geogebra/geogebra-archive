@@ -15,7 +15,7 @@ package geogebra3D.kernel3D;
 
 
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.AlgoCirclePointRadius;

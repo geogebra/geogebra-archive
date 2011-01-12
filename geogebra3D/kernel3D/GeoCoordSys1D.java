@@ -1,9 +1,9 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -18,7 +18,7 @@ import geogebra3D.Application3D;
 public abstract class GeoCoordSys1D extends GeoElement3D implements Path,
 GeoLineND, GeoCoordSys{
 	
-	protected GgbCoordSys coordsys;
+	protected CoordSys coordsys;
 	
 	protected GeoPointND startPoint;
 
@@ -26,10 +26,10 @@ GeoLineND, GeoCoordSys{
 
 	public GeoCoordSys1D(Construction c){
 		super(c);
-		coordsys = new GgbCoordSys(1);
+		coordsys = new CoordSys(1);
 	}
 	
-	public GeoCoordSys1D(Construction c, GgbVector O, GgbVector V){
+	public GeoCoordSys1D(Construction c, Coords O, Coords V){
 		this(c);
 		setCoord(O,V);
 	}
@@ -56,12 +56,12 @@ GeoLineND, GeoCoordSys{
 	
 	
 	/** set the matrix to [V O] */
-	public void setCoordFromPoints(GgbVector a_O, GgbVector a_I){
+	public void setCoordFromPoints(Coords a_O, Coords a_I){
 		 setCoord(a_O,a_I.sub(a_O));
 	}
 	
 	/** set the matrix to [V O] */
-	public void setCoord(GgbVector o, GgbVector v){
+	public void setCoord(Coords o, Coords v){
 		coordsys.resetCoordSys();
 		coordsys.addPoint(o);
 		coordsys.addVector(v);
@@ -138,7 +138,7 @@ GeoLineND, GeoCoordSys{
 	/** returns the point at position lambda on the coord sys 
 	 * @param lambda 
 	 * @return the point at position lambda on the coord sys  */
-	public GgbVector getPoint(double lambda){
+	public Coords getPoint(double lambda){
 		return coordsys.getPoint(lambda);
 		
 	}
@@ -151,14 +151,14 @@ GeoLineND, GeoCoordSys{
 	 * @param lambda 
 	 * @return the point at position lambda on the coord sys  
 	 * */
-	public GgbVector getPointInD(int dimension, double lambda){
+	public Coords getPointInD(int dimension, double lambda){
 
-		GgbVector v = getPoint(lambda);
+		Coords v = getPoint(lambda);
 		switch(dimension){
 		case 3:
 			return v;
 		case 2:
-			return new GgbVector(v.getX(), v.getY(), v.getW());
+			return new Coords(v.getX(), v.getY(), v.getW());
 		default:
 			return null;
 		}
@@ -179,7 +179,7 @@ GeoLineND, GeoCoordSys{
 	}
 
 	
-	public GgbVector getMainDirection(){ 
+	public Coords getMainDirection(){ 
 		return getCoordSys().getMatrixOrthonormal().getVx();
 	};
 
@@ -204,7 +204,7 @@ GeoLineND, GeoCoordSys{
 					//project willing location using willing direction
 					//GgbVector[] project = coordsys.getProjection(P.getWillingCoords(), P.getWillingDirection());
 
-					GgbVector[] project = ((GeoPoint3D) P).getWillingCoords().projectOnLineWithDirection(
+					Coords[] project = ((GeoPoint3D) P).getWillingCoords().projectOnLineWithDirection(
 							coordsys.getOrigin(),
 							coordsys.getVx(),
 							((GeoPoint3D) P).getWillingDirection());
@@ -214,11 +214,11 @@ GeoLineND, GeoCoordSys{
 				}else{
 					//project current point coordinates
 					//Application.debug("ici\n getWillingCoords=\n"+P.getWillingCoords()+"\n matrix=\n"+getMatrix().toString());
-					GgbVector preDirection = ((GeoPoint3D) P).getWillingCoords().sub(coordsys.getOrigin()).crossProduct(coordsys.getVx());
+					Coords preDirection = ((GeoPoint3D) P).getWillingCoords().sub(coordsys.getOrigin()).crossProduct(coordsys.getVx());
 					if(preDirection.equalsForKernel(0, Kernel.STANDARD_PRECISION))
 						preDirection = coordsys.getVy();
 
-					GgbVector[] project = ((GeoPoint3D) P).getWillingCoords().projectOnLineWithDirection(
+					Coords[] project = ((GeoPoint3D) P).getWillingCoords().projectOnLineWithDirection(
 							coordsys.getOrigin(),
 							coordsys.getVx(),
 							preDirection.crossProduct(coordsys.getVx()));
@@ -232,11 +232,11 @@ GeoLineND, GeoCoordSys{
 		if(!done){
 			//project current point coordinates
 			//Application.debug("project current point coordinates");
-			GgbVector preDirection = P.getCoordsInD(3).sub(coordsys.getOrigin()).crossProduct(coordsys.getVx());
+			Coords preDirection = P.getCoordsInD(3).sub(coordsys.getOrigin()).crossProduct(coordsys.getVx());
 			if(preDirection.equalsForKernel(0, Kernel.STANDARD_PRECISION))
 				preDirection = coordsys.getVy();
 			
-			GgbVector[] project = P.getCoordsInD(3).projectOnLineWithDirection(
+			Coords[] project = P.getCoordsInD(3).projectOnLineWithDirection(
 					coordsys.getOrigin(),
 					coordsys.getVx(),
 					preDirection.crossProduct(coordsys.getVx()));
@@ -313,18 +313,18 @@ GeoLineND, GeoCoordSys{
 	
 
 	
-	public GgbCoordSys getCoordSys() {
+	public CoordSys getCoordSys() {
 		return coordsys;
 	}
 	
 	
-	public GgbMatrix4x4 getDrawingMatrix(){
+	public CoordMatrix4x4 getDrawingMatrix(){
 		return getCoordSys().getMatrixOrthonormal();
 	}
 
 	
 
-	public GgbVector getLabelPosition(){
+	public Coords getLabelPosition(){
 		return coordsys.getPoint(0.5);
 	}
 
@@ -335,9 +335,9 @@ GeoLineND, GeoCoordSys{
 	}
 	
 
-	public GgbVector getCartesianEquationVector(GgbMatrix m){
-		GgbVector origin = getCoordSys().getOrigin();
-		GgbVector direction = getCoordSys().getVx();
+	public Coords getCartesianEquationVector(CoordMatrix m){
+		Coords origin = getCoordSys().getOrigin();
+		Coords direction = getCoordSys().getVx();
 		
 		//TODO generalize it to other planes than xOy
 		
@@ -349,18 +349,18 @@ GeoLineND, GeoCoordSys{
 		double y = direction.getX();
 		double z = -x*origin.getX()-y*origin.getY();
 		
-		return new GgbVector(x, y, z);
+		return new Coords(x, y, z);
 	}
 	
 	
-	public GgbVector getStartInhomCoords(){
+	public Coords getStartInhomCoords(){
 		return getCoordSys().getOrigin().getInhomCoords();
 	}
 	
 	/**
 	 * @return inhom coords of the end point
 	 */
-	public GgbVector getEndInhomCoords(){
+	public Coords getEndInhomCoords(){
 		return getCoordSys().getPoint(1).getInhomCoords();
 	}
 	

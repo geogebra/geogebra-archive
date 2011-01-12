@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
@@ -581,8 +581,8 @@ public abstract class GeoElement
 	 * return the label position (2D or 3D vector)
 	 * @return the label position (2D or 3D vector)
 	 */
-	public GgbVector getLabelPosition(){
-		return new GgbVector(0, 0, 0, 1);
+	public Coords getLabelPosition(){
+		return new Coords(0, 0, 0, 1);
 	}
 	
 	/** 
@@ -4386,7 +4386,7 @@ public abstract class GeoElement
 	 * (xPixel, yPixel) in screen coordinates. 
 	 * @param endPosition may be null
 	 */
-	public static boolean moveObjects(ArrayList geos, GgbVector rwTransVec, GgbVector endPosition, GgbVector viewDirection) {	
+	public static boolean moveObjects(ArrayList geos, Coords rwTransVec, Coords endPosition, Coords viewDirection) {	
 		if (moveObjectsUpdateList == null)
 			moveObjectsUpdateList = new ArrayList();
 		
@@ -4404,7 +4404,7 @@ public abstract class GeoElement
 			 * and stops grid-lock working properly
 			 * but is needed for eg dragging (a + x(A), b + x(B)) */
 			Application.debug((geo.getParentAlgorithm() == null)+" "+size+" "+geo.getClassName());
-			GgbVector position = (size == 1) && (geo.getParentAlgorithm() != null) ? endPosition : null;
+			Coords position = (size == 1) && (geo.getParentAlgorithm() != null) ? endPosition : null;
 			moved = geo.moveObject(rwTransVec, position, viewDirection, moveObjectsUpdateList) || moved;		
 		}					
 							
@@ -4435,7 +4435,7 @@ public abstract class GeoElement
 //	}
 
 	
-	protected boolean movePoint(GgbVector rwTransVec, GgbVector endPosition) {
+	protected boolean movePoint(Coords rwTransVec, Coords endPosition) {
 	
 		boolean movedGeo = false;
 		
@@ -4469,7 +4469,7 @@ public abstract class GeoElement
 	 * Moves geo by a vector in real world coordinates.
 	 * @return whether actual moving occurred 	 
 	 */
-	private boolean moveObject(GgbVector rwTransVec, GgbVector endPosition, GgbVector viewDirection, ArrayList updateGeos) {
+	private boolean moveObject(Coords rwTransVec, Coords endPosition, Coords viewDirection, ArrayList updateGeos) {
 		boolean movedGeo = false;
 		
 		// moveable geo
@@ -4537,7 +4537,7 @@ public abstract class GeoElement
 	 * @param tempMoveObjectList
 	 * @return false if not moveable this way
 	 */
-	public boolean moveFromChangeableCoordParentNumbers(GgbVector rwTransVec, GgbVector endPosition, GgbVector viewDirection,  ArrayList updateGeos, ArrayList tempMoveObjectList){
+	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition, Coords viewDirection,  ArrayList updateGeos, ArrayList tempMoveObjectList){
 		return false;
 	}
 	
@@ -5181,14 +5181,14 @@ public abstract class GeoElement
 	}
 	
 	
-	private GgbVector mainDirection = new GgbVector(0, 0, 1, 0);
+	private Coords mainDirection = new Coords(0, 0, 1, 0);
 	
 	/**
 	 * 
 	 * @return "main" direction of the element, e.g. for seeing it in a "standard" view (for 3D).
 	 * E.g. orthogonal to a plane, along a line, ...
 	 */
-	public GgbVector getMainDirection(){
+	public Coords getMainDirection(){
 		return mainDirection;
 	}
 	
@@ -5196,7 +5196,7 @@ public abstract class GeoElement
 	 * set the main direction
 	 * @param direction
 	 */
-	public void setMainDirection(GgbVector direction){
+	public void setMainDirection(Coords direction){
 		mainDirection = direction;
 	}
 	

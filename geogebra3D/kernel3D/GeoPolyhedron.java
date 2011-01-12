@@ -1,6 +1,6 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.ConstructionElementCycle;
@@ -473,7 +473,7 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 
 
 	 //TODO remove this and replace with tessellation
-	 public void setInteriorPoint(GgbVector point){
+	 public void setInteriorPoint(Coords point){
 		 for (GeoPolygon3D polygon : polygons.values()){
 			 polygon.setInteriorPoint(point);
 		 }
@@ -772,8 +772,8 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	///////////////////////////////////////////
 	// GeoElement3DInterface
 
-	public GgbVector getLabelPosition(){
-		return new GgbVector(4); //TODO
+	public Coords getLabelPosition(){
+		return new Coords(4); //TODO
 	}
 
 	

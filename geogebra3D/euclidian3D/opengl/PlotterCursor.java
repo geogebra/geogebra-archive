@@ -2,7 +2,7 @@ package geogebra3D.euclidian3D.opengl;
 
 import java.awt.Color;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 
 import javax.media.opengl.GL;
 
@@ -80,13 +80,13 @@ public class PlotterCursor {
 		brush.start(8);
 		brush.setColor(Color.GRAY);
 		brush.setThickness(thickness3);//re sets the thickness
-		brush.segment(new GgbVector(size_start_move, 0, 0, 1),new GgbVector(size_move, 0, 0, 1));
+		brush.segment(new Coords(size_start_move, 0, 0, 1),new Coords(size_move, 0, 0, 1));
 		brush.setThickness(thickness3);//re sets the thickness
-		brush.segment(new GgbVector(-size_start_move, 0, 0, 1),new GgbVector(-size_move, 0, 0, 1));
+		brush.segment(new Coords(-size_start_move, 0, 0, 1),new Coords(-size_move, 0, 0, 1));
 		brush.setThickness(thickness3);//re sets the thickness
-		brush.segment(new GgbVector(0, size_start_move, 0, 1),new GgbVector(0, size_move, 0, 1));
+		brush.segment(new Coords(0, size_start_move, 0, 1),new Coords(0, size_move, 0, 1));
 		brush.setThickness(thickness3);//re sets the thickness
-		brush.segment(new GgbVector(0, -size_start_move, 0, 1),new GgbVector(0, -size_move, 0, 1));
+		brush.segment(new Coords(0, -size_start_move, 0, 1),new Coords(0, -size_move, 0, 1));
 		index[4] =brush.end();
 
 
@@ -94,9 +94,9 @@ public class PlotterCursor {
 		brush.start(8);
 		brush.setColor(Color.GRAY);
 		brush.setThickness(thickness3);//re sets the thickness
-		brush.segment(new GgbVector(0, 0, size_start_move, 1),new GgbVector(0, 0, size_move, 1));
+		brush.segment(new Coords(0, 0, size_start_move, 1),new Coords(0, 0, size_move, 1));
 		brush.setThickness(thickness3);//re sets the thickness
-		brush.segment(new GgbVector(0, 0, -size_start_move, 1),new GgbVector(0, 0, -size_move, 1));
+		brush.segment(new Coords(0, 0, -size_start_move, 1),new Coords(0, 0, -size_move, 1));
 		index[5] =brush.end();
 
 		brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);

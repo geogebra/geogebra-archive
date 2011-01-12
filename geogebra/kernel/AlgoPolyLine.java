@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbCoordSys;
+import geogebra.Matrix.CoordSys;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.kernelND.GeoPointND;
 
@@ -54,7 +54,7 @@ public class AlgoPolyLine extends AlgoElement {
      * @param polyhedron polyhedron (when segment is part of), used for 3D
      */
     protected AlgoPolyLine(Construction cons, String [] labels, 
-    		GeoPointND [] points, GeoList geoList, GgbCoordSys cs2D, 
+    		GeoPointND [] points, GeoList geoList, CoordSys cs2D, 
     		boolean createSegments, GeoElement polyhedron) {
         super(cons);
         this.points = points;           

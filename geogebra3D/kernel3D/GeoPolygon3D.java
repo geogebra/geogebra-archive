@@ -2,9 +2,9 @@ package geogebra3D.kernel3D;
 
 import java.util.ArrayList;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Construction;
@@ -34,7 +34,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 	
 	/** 2D coord sys where the polygon exists */
-	private GgbCoordSys coordSys; 
+	private CoordSys coordSys; 
 	
 	/** link with drawable3D */
 	private Drawable3D drawable3D = null;
@@ -59,7 +59,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	 * @param cs2D 2D coord sys where the polygon is drawn
 	 * @param createSegments says if the polygon has to creates its edges
 	 */
-	public GeoPolygon3D(Construction c, GeoPointND[] points, GgbCoordSys cs2D, boolean createSegments) {
+	public GeoPolygon3D(Construction c, GeoPointND[] points, CoordSys cs2D, boolean createSegments) {
 		super(c, points, cs2D, createSegments);
 
 		this.createSegments = createSegments;
@@ -150,7 +150,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	  * @param i number of point
 	  * @return the i-th point
 	  */	 
-	 public GgbVector getPoint3D(int i){
+	 public Coords getPoint3D(int i){
 		 return coordSys.getPoint(getPointX(i), getPointY(i));
 	 }
 	 
@@ -158,18 +158,18 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	 /** return the normal of the polygon's plane
 	 * @return the normal of the polygon's plane
 	 */
-	public GgbVector getMainDirection(){
+	public Coords getMainDirection(){
 		
 		
 		if (interiorPoint==null)
 			return coordSys.getNormal();
 		
-		GgbVector vn = coordSys.getNormal();
+		Coords vn = coordSys.getNormal();
 		
 		//Application.debug("polygon("+getLabel()+") : "+vn.dotproduct(interiorPoint.sub(getPoint3D(0))));
 
 		if (vn.dotproduct(interiorPoint.sub(getPoint3D(0)))>0)
-			return (GgbVector) vn.mul(-1); //vn is oriented to interior
+			return (Coords) vn.mul(-1); //vn is oriented to interior
 		else
 			return vn; 
 	 }
@@ -177,9 +177,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 	/** interior point for oriented surfaces */
 	//TODO remove this and replace with tesselation
-	private GgbVector interiorPoint = null;
+	private Coords interiorPoint = null;
 	
-	public void setInteriorPoint(GgbVector point){
+	public void setInteriorPoint(Coords point){
 		interiorPoint = point;
 	}
 	 
@@ -214,7 +214,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	/** set the 2D coordinate system
 	 * @param cs the 2D coordinate system
 	 */
-	 public void setCoordSys(GgbCoordSys cs){
+	 public void setCoordSys(CoordSys cs){
 		 
 		 if (points==null)
 			 return;
@@ -230,7 +230,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		 
 		// if there's no coord sys, create it with points
 		 if (coordSys==null){
-			 coordSys = new GgbCoordSys(2);
+			 coordSys = new CoordSys(2);
 			 updateCoordSys();
 			
 		 }
@@ -247,7 +247,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		 if (coordSys.makeOrthoMatrix(true)){
 			 for(int i=0;i<points.length;i++){
 				 //project the point on the coord sys
-				 GgbVector[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
+				 Coords[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
 
 				 //Application.debug("project["+i+"]="+project[1]);
 				 
@@ -285,7 +285,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	/** return the 2D coordinate system
 	 * @return the 2D coordinate system
 	 */
-	public GgbCoordSys getCoordSys(){
+	public CoordSys getCoordSys(){
 		return coordSys;
 	}
 	
@@ -323,7 +323,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 	
 	
-	public GgbMatrix4x4 getDrawingMatrix() {
+	public CoordMatrix4x4 getDrawingMatrix() {
 		
 		//Application.debug("coordSys="+coordSys);
 		/*
@@ -339,7 +339,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 
 	
-	public void setDrawingMatrix(GgbMatrix4x4 matrix) {
+	public void setDrawingMatrix(CoordMatrix4x4 matrix) {
 		//coordSys.setDrawingMatrix(matrix);
 
 	}
@@ -431,10 +431,10 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 		
-		GgbVector coordsOld = P.getInhomCoords();
+		Coords coordsOld = P.getInhomCoords();
 		
 		double minDist = Double.POSITIVE_INFINITY;
-		GgbVector res = null;
+		Coords res = null;
 		double param=0;
 		
 		// find closest point on each segment

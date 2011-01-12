@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 
 /**
@@ -106,7 +106,7 @@ public class AlgoTranslate extends AlgoTransformation {
     		return;
     	}
         outGeo.set(inGeo);
-        out.translate(new GgbVector(new double[] {v.x,v.y,v.z}));
+        out.translate(new Coords(new double[] {v.x,v.y,v.z}));
     }       
 
     

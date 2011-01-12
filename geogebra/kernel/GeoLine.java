@@ -18,8 +18,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbMatrix;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.Evaluatable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
@@ -123,7 +123,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 		return isOnFullLine(P.getCoordsInD(2), eps);
 	}	
 	
-	public final boolean isOnFullLine(GgbVector P, double eps) {						
+	public final boolean isOnFullLine(Coords P, double eps) {						
 			
 			
 		double simplelength =  Math.abs(x) + Math.abs(y);
@@ -269,7 +269,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	 * @param p
 	 * @return the euclidian distance between this GeoLine and 2D point p.
 	 */
-	final public double distanceHom(GgbVector p) {                        
+	final public double distanceHom(Coords p) {                        
 		return Math.abs( (x * p.getX() / p.getZ() + y * p.getY() / p.getZ() + z) / 
 							GeoVec2D.length(x, y) );
 	}
@@ -447,7 +447,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
     /**
      * translate by vector v
      */
-    final public void translate(GgbVector v) {        
+    final public void translate(Coords v) {        
         z -= x * v.getX() + y * v.getY();
     }  
     
@@ -712,7 +712,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	
 	private void doPointChanged(GeoPointND P) {
 		
-		GgbVector coords = P.getCoordsInD(2);
+		Coords coords = P.getCoordsInD(2);
 		PathParameter pp = P.getPathParameter();
 		
 		doPointChanged(coords, pp);
@@ -721,7 +721,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 		P.updateCoordsFrom2D(false,null);
 	}
 		
-	public void doPointChanged(GgbVector coords, PathParameter pp) {
+	public void doPointChanged(Coords coords, PathParameter pp) {
 	
 		// project P on line
 		double px = coords.getX()/coords.getZ();
@@ -761,7 +761,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 
 	public void pathChanged(GeoPointND P) {
 		
-		GgbVector coords = P.getCoordsInD(2);
+		Coords coords = P.getCoordsInD(2);
 		PathParameter pp = P.getPathParameter();
 		
 		pathChanged(coords, pp);
@@ -771,7 +771,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	}
 	
 	
-	public void pathChanged(GgbVector P, PathParameter pp) {
+	public void pathChanged(Coords P, PathParameter pp) {
 		
 		
 		// calc point for given parameter
@@ -1058,16 +1058,16 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 		return true;
 	}
     
-  	public GgbVector getLabelPosition(){
+  	public Coords getLabelPosition(){
 		return getPointInD(3, 0.5);
 	}
  	
-  	public GgbVector getPointInD(int dimension, double lambda){
+  	public Coords getPointInD(int dimension, double lambda){
 
   		if (dimension<2 || dimension>3)
   			return null;
   		
-  		GgbVector startCoords;
+  		Coords startCoords;
   		 
   		//TODO merge with getPointOnLine
 		// point defined by parent algorithm
@@ -1076,7 +1076,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 		} 
 		// point on axis
 		else {
-			startCoords = new GgbVector(dimension+1);
+			startCoords = new Coords(dimension+1);
 			if (Math.abs(x) > Math.abs(y)) {
 				startCoords.setX(-z / x);
 			} else {
@@ -1085,26 +1085,26 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 			startCoords.set(dimension+1, 1); //last homogeneous coord
 		}  
 		
-		GgbVector direction = new GgbVector(dimension+1);
+		Coords direction = new Coords(dimension+1);
 		direction.setX(y*lambda);direction.setY(-x*lambda);
 		
   		return startCoords.add(direction);
 	}
   	
-	public GgbVector getMainDirection(){
+	public Coords getMainDirection(){
 		return getPointInD(3, 1).sub(getPointInD(3, 0));
 	}
 	
-	public GgbVector getCartesianEquationVector(GgbMatrix m){
-		return new GgbVector(x, y, z);
+	public Coords getCartesianEquationVector(CoordMatrix m){
+		return new Coords(x, y, z);
 	}
 	
-	public GgbVector getStartInhomCoords(){
+	public Coords getStartInhomCoords(){
 		return startPoint.getInhomCoords();
 	}
 	
 
-	public GgbVector getEndInhomCoords(){
+	public Coords getEndInhomCoords(){
 		return getEndPoint().getInhomCoords();
 	}
 	

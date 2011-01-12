@@ -1,8 +1,8 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbMatrix;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -25,16 +25,16 @@ implements GeoVectorND, Locateable, Vector3DValue{
 	
 	private GeoPointND startPoint;
 	
-	private GgbMatrix matrix;
+	private CoordMatrix matrix;
 	
-	private GgbVector labelPosition;
+	private Coords labelPosition;
 
 	/** simple constructor
 	 * @param c
 	 */
 	public GeoVector3D(Construction c) {
 		super(c);
-		matrix = new GgbMatrix(4,2);
+		matrix = new CoordMatrix(4,2);
 	}
 
 	/** simple constructor with (x,y,z) coords
@@ -45,14 +45,14 @@ implements GeoVectorND, Locateable, Vector3DValue{
 	 */
 	public GeoVector3D(Construction c, double x, double y, double z) {
 		super(c,x,y,z,0);
-		matrix = new GgbMatrix(4,2);
+		matrix = new CoordMatrix(4,2);
 	}
 	
 	
 	public void setCoords(double[] vals){
 		super.setCoords(vals);
 		
-		if (matrix == null) matrix = new GgbMatrix(4,2);
+		if (matrix == null) matrix = new CoordMatrix(4,2);
 		
 		//sets the drawing matrix 
 		matrix.set(getCoords(), 1);
@@ -61,7 +61,7 @@ implements GeoVectorND, Locateable, Vector3DValue{
 
 		
 		
-		setDrawingMatrix(new GgbMatrix4x4(matrix));
+		setDrawingMatrix(new CoordMatrix4x4(matrix));
 		
 	}
 	
@@ -79,12 +79,12 @@ implements GeoVectorND, Locateable, Vector3DValue{
 			matrix.set(4, 2, 1.0);
 		}
 		
-		setDrawingMatrix(new GgbMatrix4x4(matrix));
+		setDrawingMatrix(new CoordMatrix4x4(matrix));
 		labelPosition = matrix.getOrigin().add(matrix.getVx().mul(0.5));
 	}
 
 	
-	public GgbVector getLabelPosition(){
+	public Coords getLabelPosition(){
 		return labelPosition;
 	}
 
@@ -372,8 +372,8 @@ implements GeoVectorND, Locateable, Vector3DValue{
 		} 
 
 
-		public GgbVector getCoordsInD(int dimension){
-			GgbVector ret = new GgbVector(dimension+1);
+		public Coords getCoordsInD(int dimension){
+			Coords ret = new Coords(dimension+1);
 			switch(dimension){
 			case 3:
 				ret.setW(getW());

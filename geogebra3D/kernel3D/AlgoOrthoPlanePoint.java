@@ -13,9 +13,9 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -65,13 +65,13 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
   
     protected final void compute() {
     	
-    	GgbCoordSys coordsys = plane.getCoordSys();
+    	CoordSys coordsys = plane.getCoordSys();
     	
 		//recompute the coord sys
     	coordsys.resetCoordSys();
 		
 		//if cs has "no" direction vector, set undefined and return
-    	GgbVector vz = ((GeoElement) line).getMainDirection();
+    	Coords vz = ((GeoElement) line).getMainDirection();
 		if (vz.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
 			plane.setUndefined();
 			return;
@@ -84,7 +84,7 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
 		coordsys.addPoint(point.getCoordsInD(3));
 		
 		//gets an ortho matrix with coord sys direction vector
-		GgbVector[] v = vz.completeOrthonormal();
+		Coords[] v = vz.completeOrthonormal();
 		coordsys.addVectorWithoutCheckMadeCoordSys(v[1]);
 		coordsys.addVectorWithoutCheckMadeCoordSys(v[0]);
 		

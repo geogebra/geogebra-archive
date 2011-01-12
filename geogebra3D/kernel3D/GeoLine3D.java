@@ -1,7 +1,7 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -21,7 +21,7 @@ public class GeoLine3D extends GeoCoordSys1D {
 		super(c);
 	}
 
-	protected GeoLine3D(Construction c, GgbVector o, GgbVector v) {
+	protected GeoLine3D(Construction c, Coords o, Coords v) {
 		super(c,o,v);
 	}
 
@@ -84,8 +84,8 @@ public class GeoLine3D extends GeoCoordSys1D {
 
 	private StringBuilder buildValueString() {	
 		String parameter = "\u03bb";
-		GgbVector O = coordsys.getOrigin();//TODO inhom coords
-		GgbVector V = coordsys.getVx();
+		Coords O = coordsys.getOrigin();//TODO inhom coords
+		Coords V = coordsys.getVx();
 
 		StringBuilder sbToString = getSbBuildValueString();
 		sbToString.setLength(0);

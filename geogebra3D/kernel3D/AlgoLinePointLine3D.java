@@ -13,9 +13,9 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -44,7 +44,7 @@ public class AlgoLinePointLine3D extends AlgoLinePoint {
     }
 
 
-	protected GgbVector getDirection() {
+	protected Coords getDirection() {
 		return getInputParallel().getMainDirection();
 	}
 

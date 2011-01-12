@@ -1,6 +1,6 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 
 
 /**
@@ -15,14 +15,14 @@ public interface GeoCurveCartesian3DInterface {
 	 * @param t
 	 * @return point at parameter t
 	 */
-	public GgbVector evaluateCurve(double t);
+	public Coords evaluateCurve(double t);
 	
 	
 	/** return tangent at parameter t
 	 * @param t
 	 * @return tangent at parameter t
 	 */
-	public GgbVector evaluateTangent(double t);
+	public Coords evaluateTangent(double t);
 	
 	/** return curvature at parameter t
 	 * @param t

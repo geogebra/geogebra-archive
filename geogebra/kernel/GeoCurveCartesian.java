@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
@@ -229,7 +229,7 @@ implements VarString, Path, Translateable, Rotateable, PointRotateable, Mirrorab
 	/**
 	 * translate function by vector v
 	 */
-	final public void translate(GgbVector v) {
+	final public void translate(Coords v) {
 		funX.translateY(v.getX());
 		funY.translateY(v.getY());
 	}

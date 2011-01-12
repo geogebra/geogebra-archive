@@ -26,7 +26,7 @@ import geogebra.main.Application;
  * @author  ggb3D
  * 
  */
-public class GgbMatrix
+public class CoordMatrix
 	{
 	
 	/** 
@@ -69,11 +69,11 @@ public class GgbMatrix
 	 * @param a_rows number of rows
 	 * @param a_columns number of columns 
 	 * @return a_rows*a_columns matrix (or vector) */
-	static final public GgbMatrix GgbMatrixOrVector(int a_rows, int a_columns){
+	static final public CoordMatrix GgbMatrixOrVector(int a_rows, int a_columns){
 		if (a_columns==1)
-			return new GgbVector(a_rows);
+			return new Coords(a_rows);
 		else
-			return new GgbMatrix(a_rows,a_columns);
+			return new CoordMatrix(a_rows,a_columns);
 	}
 	
 	
@@ -84,7 +84,7 @@ public class GgbMatrix
 	 * @param columns number of columns
 	 * @param val values
 	 */
-	public GgbMatrix(int rows, int columns, double[] val){
+	public CoordMatrix(int rows, int columns, double[] val){
 		this.rows = rows;
 		this.columns = columns;
 		this.val = val;
@@ -95,7 +95,7 @@ public class GgbMatrix
 	 * @param rows number of rows
 	 * @param columns number of values 
 	 */
-	public GgbMatrix(int rows, int columns){
+	public CoordMatrix(int rows, int columns){
 		
 		initialise(rows, columns);
 		
@@ -123,7 +123,7 @@ public class GgbMatrix
 	 * TODO doc
 	 * @param inputList
 	 */
-	public GgbMatrix(GeoList inputList) {
+	public CoordMatrix(GeoList inputList) {
 
     	int cols = inputList.size();
     	if (!inputList.isDefined() || cols == 0) {
@@ -178,9 +178,9 @@ public class GgbMatrix
 	/** returns n*n identity matrix  
 	 * @param n dimension
 	 * @return the identity matrix*/
-	public static final GgbMatrix Identity(int n){
+	public static final CoordMatrix Identity(int n){
 		
-		GgbMatrix m = new GgbMatrix(n,n);
+		CoordMatrix m = new CoordMatrix(n,n);
 		
 		for (int i=1;i<=n;i++){
 			m.set(i,i,1.0);
@@ -193,19 +193,19 @@ public class GgbMatrix
 	/** returns scale homogenic matrix, dim v.length+1  
 	 * @param v scaling vector
 	 * @return scale matrix*/
-	public static final GgbMatrix ScaleMatrix(double[] v){
+	public static final CoordMatrix ScaleMatrix(double[] v){
 		
-		return ScaleMatrix(new GgbVector(v));
+		return ScaleMatrix(new Coords(v));
 		
 	}
 	
 	/** returns scale homogenic matrix, dim v.length+1  
 	 * @param v scaling vector
 	 * @return scale matrix*/
-	public static final GgbMatrix ScaleMatrix(GgbVector v){
+	public static final CoordMatrix ScaleMatrix(Coords v){
 		
 		int n = v.getLength();
-		GgbMatrix m = new GgbMatrix(n+1,n+1);
+		CoordMatrix m = new CoordMatrix(n+1,n+1);
 		
 		for (int i=1;i<=n;i++){
 			m.set(i,i,v.get(i));
@@ -221,10 +221,10 @@ public class GgbMatrix
 	/** returns diagonal matrix 
 	 * @param vals
 	 * @return diagonal matrix*/
-	public static final GgbMatrix DiagonalMatrix(double vals[]){
+	public static final CoordMatrix DiagonalMatrix(double vals[]){
 		
 		int n = vals.length;
-		GgbMatrix m = new GgbMatrix(n,n);
+		CoordMatrix m = new CoordMatrix(n,n);
 		
 		for (int i=1;i<=n;i++){
 			m.set(i,i,vals[i-1]);
@@ -238,19 +238,19 @@ public class GgbMatrix
 	/** returns translation homogenic matrix, dim v.length+1  
 	 * @param v translation vector
 	 * @return traslation matrix*/
-	public static final GgbMatrix TranslationMatrix(double[] v){
+	public static final CoordMatrix TranslationMatrix(double[] v){
 		
-		return TranslationMatrix(new GgbVector(v));
+		return TranslationMatrix(new Coords(v));
 		
 	}
 
 	/** returns translation homogenic matrix, dim v.length+1  
 	 * @param v translation vector
 	 * @return traslation matrix*/
-	public static final GgbMatrix TranslationMatrix(GgbVector v){
+	public static final CoordMatrix TranslationMatrix(Coords v){
 		
 		int n = v.getLength();
-		GgbMatrix m = new GgbMatrix(n+1,n+1);
+		CoordMatrix m = new CoordMatrix(n+1,n+1);
 		
 		for (int i=1;i<=n;i++){
 			m.set(i,i,1.0);
@@ -268,9 +268,9 @@ public class GgbMatrix
 	 * @param angle angle of rotation
 	 * @return rotation matrix
 	 */
-	public static final GgbMatrix Rotation3DMatrix(int axe, double angle){
+	public static final CoordMatrix Rotation3DMatrix(int axe, double angle){
 		
-		GgbMatrix m = new GgbMatrix(4,4);
+		CoordMatrix m = new CoordMatrix(4,4);
 		
 		switch(axe){
 		
@@ -326,8 +326,8 @@ public class GgbMatrix
 	 * @param i row to remove
 	 * @param j column to remove
 	 * @return sub-matrix*/
-	public GgbMatrix subMatrix(int i, int j){
-		GgbMatrix ret = new GgbMatrix(getRows()-1, getColumns()-1);
+	public CoordMatrix subMatrix(int i, int j){
+		CoordMatrix ret = new CoordMatrix(getRows()-1, getColumns()-1);
 		
 		for (int i1=1; i1<i; i1++){
 			for (int j1=1; j1<j; j1++){
@@ -353,9 +353,9 @@ public class GgbMatrix
 	/** returns the column number j 
 	 * @param j number of column
 	 * @return the column*/
-	public GgbVector getColumn(int j){
+	public Coords getColumn(int j){
 		
-		GgbVector ret = new GgbVector(getRows());
+		Coords ret = new Coords(getRows());
 		for (int i=1;i<=getRows();i++){
 			ret.set(i,get(i,j));
 		}
@@ -369,28 +369,28 @@ public class GgbMatrix
 	/** return first column (vector for x)
 	 * @return first column (vector for x)
 	 */
-	public GgbVector getVx(){
+	public Coords getVx(){
 		return getColumn(1);
 	}
 	
 	/** return second column (vector for y)
 	 * @return second column (vector for y)
 	 */	
-	public GgbVector getVy(){
+	public Coords getVy(){
 		return getColumn(2);
 	}
 	
 	/** return third column (vector for z)
 	 * @return third column (vector for z)
 	 */	
-	public GgbVector getVz(){
+	public Coords getVz(){
 		return getColumn(3);
 	}
 	
 	/** return last column (vector for origin)
 	 * @return last column (vector for origin)
 	 */	
-	public GgbVector getOrigin(){
+	public Coords getOrigin(){
 		return getColumn(getColumns());
 	}
 	
@@ -425,7 +425,7 @@ public class GgbMatrix
 	/** sets V to column j of m, rows=V.getLength() 
 	 * @param V the new column
 	 * @param j number of the column*/
-	public void set(GgbVector V, int j){
+	public void set(Coords V, int j){
 		int i;
 		for (i=1;i<=V.getLength();i++){
 			set(i,j,V.get(i));
@@ -434,7 +434,7 @@ public class GgbMatrix
 	
 	/** sets m(V[]), all V[j].getLength equal rows and V.Length=columns 
 	 * @param V the vectors*/
-	public void set(GgbVector[] V){
+	public void set(Coords[] V){
 		int j;
 		for (j=0;j<V.length;j++){
 			set(V[j],j+1);
@@ -466,7 +466,7 @@ public class GgbMatrix
 
 	/** copies all values of m 
 	 * @param m source matrix*/
-	public void set(GgbMatrix m){
+	public void set(CoordMatrix m){
 
 		for(int i=1;i<=m.getRows();i++){
 			for(int j=1;j<=m.getColumns();j++){
@@ -507,9 +507,9 @@ public class GgbMatrix
 	
 	/** returns a copy of the matrix 
 	 * @return copy of the matrix*/
-	public GgbMatrix copy(){
+	public CoordMatrix copy(){
 		
-		GgbMatrix result = new GgbMatrix(getRows(),getColumns()); 
+		CoordMatrix result = new CoordMatrix(getRows(),getColumns()); 
 
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){
@@ -523,10 +523,10 @@ public class GgbMatrix
 	
 	/** returns a transposed copy of the matrix 
 	 * @return transposed copy of the matrix */
-	public GgbMatrix transposeCopy(){
+	public CoordMatrix transposeCopy(){
 		
 		this.transpose();		
-		GgbMatrix result = this.copy(); 
+		CoordMatrix result = this.copy(); 
 		this.transpose();
 
 		return result;
@@ -597,9 +597,9 @@ public class GgbMatrix
 	/** returns this * val0 
 	 * @param val0 value
 	 * @return this*val0 */
-	public GgbMatrix mul(double val0){
+	public CoordMatrix mul(double val0){
 		
-		GgbMatrix result = GgbMatrixOrVector(getRows(),getColumns()); 
+		CoordMatrix result = GgbMatrixOrVector(getRows(),getColumns()); 
 
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){
@@ -616,9 +616,9 @@ public class GgbMatrix
 	/** returns this + m 
 	 * @param m a matrix
 	 * @return sum matrix (or vector)*/
-	public GgbMatrix add(GgbMatrix m){
+	public CoordMatrix add(CoordMatrix m){
 		
-		GgbMatrix result = GgbMatrixOrVector(getRows(),getColumns());
+		CoordMatrix result = GgbMatrixOrVector(getRows(),getColumns());
 		//resulting matrix has the same dimension than this
 		//and is a GgbVector if this has 1 column
 		
@@ -637,9 +637,9 @@ public class GgbMatrix
 	/** returns this * v 
 	 * @param v vector
 	 * @return resulting vector*/
-	public GgbVector mul(GgbVector v){
+	public Coords mul(Coords v){
 
-		GgbVector result = new GgbVector(getRows());
+		Coords result = new Coords(getRows());
 		
 		for(int i=1;i<=result.getRows();i++){
 			
@@ -658,9 +658,9 @@ public class GgbMatrix
 	/** returns this * m 
 	 * @param m matrix
 	 * @return resulting matrix*/
-	public GgbMatrix mul(GgbMatrix m){
+	public CoordMatrix mul(CoordMatrix m){
 		
-		GgbMatrix result = new GgbMatrix(getRows(),m.getColumns()); 
+		CoordMatrix result = new CoordMatrix(getRows(),m.getColumns()); 
 		
 		/*
 		for(int i=1;i<=result.getRows();i++){
@@ -687,7 +687,7 @@ public class GgbMatrix
 	 * @param m matrix
 	 * @param result resulting matrix
 	 */
-	protected void mul(GgbMatrix m, GgbMatrix result){
+	protected void mul(CoordMatrix m, CoordMatrix result){
 		
 		for(int i=1;i<=result.getRows();i++){
 			for(int j=1;j<=result.getColumns();j++){
@@ -734,9 +734,9 @@ public class GgbMatrix
 	 * You must check with isSquare() before calling this
 	 * @return inverse matrix
 	 * */
-	public GgbMatrix inverse(){
+	public CoordMatrix inverse(){
 		
-		GgbMatrix ret = new GgbMatrix(getRows(),getColumns());
+		CoordMatrix ret = new CoordMatrix(getRows(),getColumns());
 
 		double d = this.det();
 		
@@ -765,9 +765,9 @@ public class GgbMatrix
 	/** returns ret that makes this * ret = v 
 	 * @param v vector
 	 * @return solving vector*/
-	public GgbVector solve(GgbVector v){
+	public Coords solve(Coords v){
 		//GgbVector ret;
-		GgbMatrix mInv = this.inverse(); //TODO: use gauss pivot to optimize
+		CoordMatrix mInv = this.inverse(); //TODO: use gauss pivot to optimize
 		if (mInv==null)
 			return null;
 		return mInv.mul(v);		
@@ -802,7 +802,7 @@ public class GgbMatrix
 	 */
 	public static synchronized void main(String[] args) {		
 		
-		GgbMatrix m1 = GgbMatrix.Identity(3);
+		CoordMatrix m1 = CoordMatrix.Identity(3);
 		m1.set(1, 2, 5.0);
 		m1.set(3, 1, 4.0);
 		m1.set(3, 2, 3.0);
@@ -810,7 +810,7 @@ public class GgbMatrix
 		Application.debug("m1");
 		m1.SystemPrint();
 		
-		GgbMatrix m2 = new GgbMatrix(3,4);
+		CoordMatrix m2 = new CoordMatrix(3,4);
 		m2.set(1, 1, 1.0);
 		m2.set(2, 2, 2.0);
 		m2.set(3, 3, 3.0);
@@ -822,11 +822,11 @@ public class GgbMatrix
 		m2.SystemPrint();
 		
 
-		GgbMatrix m4 = m1.add(m2);
+		CoordMatrix m4 = m1.add(m2);
 		Application.debug("m4");
 		m4.SystemPrint();
 
-		GgbMatrix m5 = m1.mul(m2);
+		CoordMatrix m5 = m1.mul(m2);
 		Application.debug("m5");
 		m5.SystemPrint();
 		
@@ -840,7 +840,7 @@ public class GgbMatrix
 		
 		
 		Application.debug("inverse");
-		GgbMatrix m4inv = m4.inverse();
+		CoordMatrix m4inv = m4.inverse();
 		m4inv.SystemPrint();
 		m4.mul(m4inv).SystemPrint();
 		m4inv.mul(m4).SystemPrint();

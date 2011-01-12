@@ -1,7 +1,7 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoRayND;
@@ -63,8 +63,8 @@ public class DrawRay3D extends DrawCoordSys1D {
 		
 		GeoLineND line = (GeoLineND) getGeoElement();
 		
-		GgbVector o = getView3D().getToScreenMatrix().mul(line.getPointInD(3, 0));
-		GgbVector v = getView3D().getToScreenMatrix().mul(line.getPointInD(3, 1)).sub(o);
+		Coords o = getView3D().getToScreenMatrix().mul(line.getPointInD(3, 0));
+		Coords v = getView3D().getToScreenMatrix().mul(line.getPointInD(3, 1)).sub(o);
 		
 				
 		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(

@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.gui.GuiManager.NumberInputHandler;

@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 
@@ -26,9 +26,9 @@ public class DrawLabel3D {
 	/** text of the label */
     private String text;    
     /** color of the label */
-    private GgbVector color;
+    private Coords color;
     /** origin of the label (left-bottom corner) */
-    private GgbVector origin; 
+    private Coords origin; 
     /** x and y offset */
     private float xOffset, yOffset;   
     /** says if there's an anchor to do */
@@ -79,7 +79,7 @@ public class DrawLabel3D {
 	 * @param yOffset
 	 */
 	public void update(String text, int fontsize, Color color,
-			GgbVector v, float xOffset, float yOffset){
+			Coords v, float xOffset, float yOffset){
 		
 		if (text.length()==0)
 			return;
@@ -87,7 +87,7 @@ public class DrawLabel3D {
 		this.origin = v;
 		this.xOffset = xOffset;
 		this.yOffset = yOffset;
-		this.color = new GgbVector((double) color.getRed()/255, 
+		this.color = new Coords((double) color.getRed()/255, 
 				(double) color.getGreen()/255, (double) color.getBlue()/255,1);
 
 		
@@ -164,7 +164,7 @@ public class DrawLabel3D {
 		if (textureIndex==0)
     		return;
 		
-		GgbVector v = view.getToScreenMatrix().mul(origin);
+		Coords v = view.getToScreenMatrix().mul(origin);
 		int x = (int) (v.getX()+xOffset);
 		if (anchor && xOffset<0) x-=width;
 			

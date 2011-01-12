@@ -13,9 +13,9 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -66,7 +66,7 @@ public abstract class AlgoLinePoint extends AlgoElement3D {
     
     protected final void compute() {
     	
-    	GgbVector v = getDirection();
+    	Coords v = getDirection();
     	
     	if (v.equalsForKernel(0, Kernel.STANDARD_PRECISION))
     		getLine().setUndefined();
@@ -75,7 +75,7 @@ public abstract class AlgoLinePoint extends AlgoElement3D {
     }
 
 
-    abstract protected GgbVector getDirection();
+    abstract protected Coords getDirection();
     
     final public String toString() {
     	return app.getPlain("LineThroughAParallelToB",point.getLabel(),inputParallel.getLabel());

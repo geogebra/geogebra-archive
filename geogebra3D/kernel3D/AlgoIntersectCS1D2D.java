@@ -18,8 +18,8 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys;
@@ -77,9 +77,9 @@ public class AlgoIntersectCS1D2D extends AlgoIntersectCoordSys {
     	GeoLineND line = (GeoLineND) getCS1();
     	GeoCoordSys2D cs2D = (GeoCoordSys2D) getCS2();
     	
-    	GgbVector o = line.getPointInD(3, 0);
-    	GgbVector d = line.getPointInD(3, 1).sub(o);
-    	GgbVector[] project = 
+    	Coords o = line.getPointInD(3, 0);
+    	Coords d = line.getPointInD(3, 1).sub(o);
+    	Coords[] project = 
     		o.projectPlaneThruV(cs2D.getCoordSys().getMatrixOrthonormal(), d);
     	
     	GeoPoint3D p = (GeoPoint3D) getIntersection();

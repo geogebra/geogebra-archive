@@ -1,8 +1,8 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbMatrix;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -40,9 +40,9 @@ implements GeoElement3DInterface, Functional2Var{
 		super(c,3);
 		
 		//TODO merge with 2D eigenvec
-		eigenvecND = new GgbVector[3];
+		eigenvecND = new Coords[3];
 		for (int i=0;i<3;i++){
-			eigenvecND[i] = new GgbVector(4);
+			eigenvecND[i] = new Coords(4);
 			eigenvecND[i].set(i+1,1);
 		}
 		
@@ -60,9 +60,9 @@ implements GeoElement3DInterface, Functional2Var{
 	/**
 	 * @return the matrix representation of the quadric in its dimension
 	 */
-	protected GgbMatrix getGgbMatrix(double[] vals){
+	protected CoordMatrix getGgbMatrix(double[] vals){
 		
-		GgbMatrix ret = new GgbMatrix(4, 4);
+		CoordMatrix ret = new CoordMatrix(4, 4);
 		
 		ret.set(1, 1, vals[0]);
 		ret.set(2, 2, vals[1]);
@@ -80,7 +80,7 @@ implements GeoElement3DInterface, Functional2Var{
 		return ret;
 	}
 		
-	protected void setMatrix(GgbMatrix m){
+	protected void setMatrix(CoordMatrix m){
 		
 		matrix[0] = m.get(1, 1);
 		matrix[1] = m.get(2, 2);
@@ -103,7 +103,7 @@ implements GeoElement3DInterface, Functional2Var{
 	////////////////////////////////
 	// EIGENVECTORS
 	
-	public GgbVector getEigenvec3D(int i){
+	public Coords getEigenvec3D(int i){
 		return eigenvecND[i];
 	}
 	
@@ -154,7 +154,7 @@ implements GeoElement3DInterface, Functional2Var{
 
 	}
 	
-	private void setCone(double[] coords, GgbVector direction, double r){
+	private void setCone(double[] coords, Coords direction, double r){
 		 
 		// set center
 		setMidpoint(coords);
@@ -163,7 +163,7 @@ implements GeoElement3DInterface, Functional2Var{
 		eigenvecND[2] = direction;
 		
 		// set others eigen vecs
-		GgbVector[] ee = direction.completeOrthonormal();
+		Coords[] ee = direction.completeOrthonormal();
 		eigenvecND[0] = ee[0];
 		eigenvecND[1] = ee[1];
 		
@@ -214,7 +214,7 @@ implements GeoElement3DInterface, Functional2Var{
 
 	}
 	
-	private void setCylinder(double[] coords, GgbVector direction, double r){
+	private void setCylinder(double[] coords, Coords direction, double r){
 		 
 		// set center
 		setMidpoint(coords);
@@ -224,7 +224,7 @@ implements GeoElement3DInterface, Functional2Var{
 		
 
 		// set others eigen vecs
-		GgbVector[] ee = direction.completeOrthonormal();
+		Coords[] ee = direction.completeOrthonormal();
 		eigenvecND[0] = ee[0];
 		eigenvecND[1] = ee[1];
 		
@@ -372,42 +372,42 @@ implements GeoElement3DInterface, Functional2Var{
 	// SURFACE (u,v)->(x,y,z) INTERFACE
 	/////////////////////////////////////////
 	
-	public GgbVector evaluatePoint(double u, double v){
+	public Coords evaluatePoint(double u, double v){
 		
-		GgbVector p;
+		Coords p;
 		
 		switch (type){
 		case QUADRIC_SPHERE :
 			
-			GgbVector n = new GgbVector(new double[] {
+			Coords n = new Coords(new double[] {
 					Math.cos(u)*Math.cos(v)*getHalfAxis(0),
 					Math.sin(u)*Math.cos(v)*getHalfAxis(0),
 					Math.sin(v)*getHalfAxis(0)});
 			
-			return (GgbVector) n.add(getMidpoint());
+			return (Coords) n.add(getMidpoint());
 			
 		case QUADRIC_CONE :
 
 			double v2 = Math.abs(v);
-			p = (GgbVector) 
+			p = (Coords) 
 			getEigenvec3D(1).mul(Math.sin(u)*getHalfAxis(1)*v2).add(
 					getEigenvec3D(0).mul(Math.cos(u)*getHalfAxis(0)*v2).add(
 							getEigenvec3D(2).mul(v)
 					)
 			);
 			
-			return (GgbVector) p.add(getMidpoint());		
+			return (Coords) p.add(getMidpoint());		
 			
 		case QUADRIC_CYLINDER :
 
-			p = (GgbVector) 
+			p = (Coords) 
 			getEigenvec3D(1).mul(Math.sin(u)*getHalfAxis(1)).add(
 					getEigenvec3D(0).mul(Math.cos(u)*getHalfAxis(0)).add(
 							getEigenvec3D(2).mul(v)
 					)
 			);
 			
-			return (GgbVector) p.add(getMidpoint());					
+			return (Coords) p.add(getMidpoint());					
 			
 		default:
 			return null;
@@ -416,13 +416,13 @@ implements GeoElement3DInterface, Functional2Var{
 	}
 	
 
-	public GgbVector evaluateNormal(double u, double v){
+	public Coords evaluateNormal(double u, double v){
 				
-		GgbVector n;
+		Coords n;
 		
 		switch (type){
 		case QUADRIC_SPHERE :
-			return new GgbVector(new double[] {
+			return new Coords(new double[] {
 					Math.cos(u)*Math.cos(v),
 					Math.sin(u)*Math.cos(v),
 					Math.sin(v)});
@@ -434,7 +434,7 @@ implements GeoElement3DInterface, Functional2Var{
 			if (v<0)
 				r=-r;
 			
-			n = (GgbVector) 
+			n = (Coords) 
 			getEigenvec3D(1).mul(Math.sin(u)/r2).add(
 					getEigenvec3D(0).mul(Math.cos(u)/r2).add(
 							getEigenvec3D(2).mul(-r/r2)
@@ -446,7 +446,7 @@ implements GeoElement3DInterface, Functional2Var{
 			
 		case QUADRIC_CYLINDER :
 			
-			n = (GgbVector) 
+			n = (Coords) 
 			getEigenvec3D(1).mul(Math.sin(u)).add(
 					getEigenvec3D(0).mul(Math.cos(u))
 			);
@@ -545,7 +545,7 @@ implements GeoElement3DInterface, Functional2Var{
 
 
 
-	public GgbMatrix4x4 getDrawingMatrix() {
+	public CoordMatrix4x4 getDrawingMatrix() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -564,15 +564,15 @@ implements GeoElement3DInterface, Functional2Var{
 
 	
 
-	public GgbVector getLabelPosition(){
-		return new GgbVector(4); //TODO
+	public Coords getLabelPosition(){
+		return new Coords(4); //TODO
 	}
 
 
 
 
 
-	public GgbVector getMainDirection() {
+	public Coords getMainDirection() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -598,7 +598,7 @@ implements GeoElement3DInterface, Functional2Var{
 
 
 
-	public void setDrawingMatrix(GgbMatrix4x4 aDrawingMatrix) {
+	public void setDrawingMatrix(CoordMatrix4x4 aDrawingMatrix) {
 		// TODO Auto-generated method stub
 		
 	}

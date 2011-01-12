@@ -20,7 +20,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -303,7 +303,7 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
     /** 
      * Called when transforming Ray[point,direction] -- doesn't do anything.
      */
-    public void translate(GgbVector v) {
+    public void translate(Coords v) {
     	
     }
 
@@ -620,8 +620,8 @@ implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirror
     }     
     
     
-	public GgbVector getCoordsInD(int dimension){
-		GgbVector ret = new GgbVector(dimension+1);
+	public Coords getCoordsInD(int dimension){
+		Coords ret = new Coords(dimension+1);
 
 		ret.setX(getX());
 		ret.setY(getY());

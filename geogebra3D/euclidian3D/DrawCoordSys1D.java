@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoLineND;
@@ -94,7 +94,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 	 * @param p1
 	 * @param p2
 	 */
-	protected void updateForItSelf(GgbVector p1, GgbVector p2){
+	protected void updateForItSelf(Coords p1, Coords p2){
 
 		//TODO prevent too large values
 		

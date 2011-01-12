@@ -18,8 +18,8 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys;
@@ -71,14 +71,14 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
     	GeoCoordSys2D cs2 = (GeoCoordSys2D) getCS2();
     	
     	// compute direction vector
-    	GgbVector vn1 = cs1.getCoordSys().getNormal();
-    	GgbVector vn2 = cs2.getCoordSys().getNormal();
-    	GgbVector v = vn1.crossProduct(vn2);
+    	Coords vn1 = cs1.getCoordSys().getNormal();
+    	Coords vn2 = cs2.getCoordSys().getNormal();
+    	Coords v = vn1.crossProduct(vn2);
     	
     	// compute origin:
     	// projection of first plane origin on second plane
     	// direction orthogonal to v and colinear to first plane
-    	GgbVector[] project = 
+    	Coords[] project = 
     		cs1.getCoordSys().getOrigin().projectPlaneThruV(
     				cs2.getCoordSys().getMatrixOrthonormal(), 
     			vn1.crossProduct(v));

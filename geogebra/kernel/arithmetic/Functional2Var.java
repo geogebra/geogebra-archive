@@ -1,6 +1,6 @@
 package geogebra.kernel.arithmetic;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 
 /** interface for all classes that can be evaluated as (u,v) -> (x,y,z) surfaces
  * 
@@ -17,7 +17,7 @@ public interface Functional2Var {
 	 * @param v
 	 * @return point for parameters (u,v)
 	 */
-	public GgbVector evaluatePoint(double u, double v);
+	public Coords evaluatePoint(double u, double v);
 	
 	
 	/** return normal vector at parameters (u,v)
@@ -26,7 +26,7 @@ public interface Functional2Var {
 	 * @param v
 	 * @return normal vector at parameters (u,v)
 	 */
-	public GgbVector evaluateNormal(double u, double v);
+	public Coords evaluateNormal(double u, double v);
 	
 	
 

@@ -7,7 +7,7 @@ import geogebra.kernel.Kernel;
  *
  * Class for algebra utilities
  */
-public final class GgbMatrixUtil {
+public final class CoordMatrixUtil {
 
 	
 	/** Return points p1 from line1 and p2 from line2 that are the nearest possible.
@@ -18,17 +18,17 @@ public final class GgbMatrixUtil {
 	 * @param v2 direction of line2
 	 * @return {p1,p2,{p1 coord on l1,p2 coord on l2}}
 	 */
-	static final public GgbVector[] nearestPointsFromTwoLines(
-			GgbVector o1, GgbVector v1, 
-			GgbVector o2, GgbVector v2
+	static final public Coords[] nearestPointsFromTwoLines(
+			Coords o1, Coords v1, 
+			Coords o2, Coords v2
 			){
 		
 		
 		// if v1 and v2 are parallel, return infinite points v1 and v2
-		GgbVector vn = v1.crossProduct(v2);
+		Coords vn = v1.crossProduct(v2);
 		if (vn.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
 			//Application.debug("v1="+v1.toString()+"\nv2="+v2.toString());
-			return  new GgbVector[] {v1,v2, new GgbVector(new double[] {Double.NaN,Double.NaN})};
+			return  new Coords[] {v1,v2, new Coords(new double[] {Double.NaN,Double.NaN})};
 		}
 		//return null;
 		
@@ -36,13 +36,13 @@ public final class GgbMatrixUtil {
 		
 		
 		// plane containing o1, v1, vn, with v2 direction
-		GgbMatrix plane = new GgbMatrix(4,4);
+		CoordMatrix plane = new CoordMatrix(4,4);
 		plane.set(v1, 1);
 		plane.set(vn, 2);
 		plane.set(v2, 3);
 		plane.set(o1, 4);		
 		//projection of o2 on this plane
-		GgbVector[] project2 = o2.projectPlane(plane);
+		Coords[] project2 = o2.projectPlane(plane);
 		
 		// plane containing o2, v2, vn, with v1 direction
 		plane.set(v2, 1);
@@ -50,12 +50,12 @@ public final class GgbMatrixUtil {
 		plane.set(v1, 3);
 		plane.set(o2, 4);		
 		//projection of o2 on this plane
-		GgbVector[] project1 = o1.projectPlane(plane);
+		Coords[] project1 = o1.projectPlane(plane);
 		
 		//points in lines coords
-		GgbVector lineCoords = new GgbVector(new double[] {-project1[1].get(3),-project2[1].get(3)});
+		Coords lineCoords = new Coords(new double[] {-project1[1].get(3),-project2[1].get(3)});
 		
-		return new GgbVector[] {project1[0],project2[0], lineCoords};
+		return new Coords[] {project1[0],project2[0], lineCoords};
 	}
 	
 	
@@ -67,10 +67,10 @@ public final class GgbMatrixUtil {
 	 * the point p intersection of the line and the plane,
 	 * and the original point in (plane.vx, plane.vy, line direction, line origin) coords  
 	 */
-	static final public GgbVector[] intersectLinePlane(GgbMatrix line, GgbMatrix plane){
+	static final public Coords[] intersectLinePlane(CoordMatrix line, CoordMatrix plane){
 		
 		
-		GgbVector v = line.getColumn(1);
+		Coords v = line.getColumn(1);
 		
 		
 		// if v is orthogonal to vn, v is parallel to the plane and so the line is
@@ -78,7 +78,7 @@ public final class GgbMatrixUtil {
 		//		return null;
 		
 		// project the origin of the line on the plane (along v direction)
-		GgbVector o = line.getColumn(2);
+		Coords o = line.getColumn(2);
 		return o.projectPlaneThruV(plane, v);
 	}
 	
@@ -87,7 +87,7 @@ public final class GgbMatrixUtil {
 	 * @param v 3D vector in cartesian coords
 	 * @return the spherical coords of v
 	 */
-	static final public GgbVector sphericalCoords(GgbVector v){
+	static final public Coords sphericalCoords(Coords v){
 		
 		double x = v.get(1);
 		double y = v.get(2);
@@ -118,7 +118,7 @@ public final class GgbMatrixUtil {
 		}
 		
 		
-		return new GgbVector(new double[] {norm, a, b});
+		return new Coords(new double[] {norm, a, b});
 
 	}
 	
@@ -127,7 +127,7 @@ public final class GgbMatrixUtil {
 	 * @param v 3D vector in spherical coords
 	 * @return the cartesian coords of v
 	 */
-	static final public GgbVector cartesianCoords(GgbVector v){
+	static final public Coords cartesianCoords(Coords v){
 
 		return cartesianCoords(v.get(1), v.get(2), v.get(3));
 
@@ -141,14 +141,14 @@ public final class GgbMatrixUtil {
 	 * @param phi (xOy) angle
 	 * @return the cartesian coords of (r,theta,phi)
 	 */
-	static final public GgbVector cartesianCoords(double r, double theta, double phi){
+	static final public Coords cartesianCoords(double r, double theta, double phi){
 
 		double z = r*Math.sin(phi);
 		double n2 = r*Math.cos(phi);
 		double x = n2*Math.cos(theta);
 		double y = n2*Math.sin(theta);
 
-		return new GgbVector(new double[] {x, y, z, 0});
+		return new Coords(new double[] {x, y, z, 0});
 
 		
 	}

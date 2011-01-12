@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D.plots;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra3D.euclidian3D.TriListElem;
 
@@ -15,9 +15,9 @@ public class SurfaceMeshDiamond {
 	/** the parameters values of the vertex */
 	private double param1, param2;
 	/** vertex position */
-	GgbVector v;
+	Coords v;
 	/** vertex normal */
-	GgbVector normal;
+	Coords normal;
 	
 	//OTHER DIAMONDS
 	/** diamond's parents (two of its corners) */
@@ -220,8 +220,8 @@ public class SurfaceMeshDiamond {
 	 *            the function to be evaluated
 	 */
 	private void estimateNormal(GeoFunctionNVar func) {
-		GgbVector dx = func.evaluatePoint(param1 + SurfaceMesh.normalDelta, param2);
-		GgbVector dy = func.evaluatePoint(param1, param2 + SurfaceMesh.normalDelta);
+		Coords dx = func.evaluatePoint(param1 + SurfaceMesh.normalDelta, param2);
+		Coords dy = func.evaluatePoint(param1, param2 + SurfaceMesh.normalDelta);
 		normal = dx.sub(v).crossProduct(dy.sub(v)).normalized();
 	}
 
@@ -229,13 +229,13 @@ public class SurfaceMeshDiamond {
 	 * Computes the error for the diamond.
 	 */
 	public void setError() {
-		GgbVector v0 = ancestors[1].v.sub(parents[0].v);
-		GgbVector v1 = ancestors[0].v.sub(parents[0].v);
-		GgbVector v2 = ancestors[0].v.sub(parents[1].v);
-		GgbVector v3 = ancestors[1].v.sub(parents[1].v);
+		Coords v0 = ancestors[1].v.sub(parents[0].v);
+		Coords v1 = ancestors[0].v.sub(parents[0].v);
+		Coords v2 = ancestors[0].v.sub(parents[1].v);
+		Coords v3 = ancestors[1].v.sub(parents[1].v);
 
-		GgbVector n0 = v0.crossProduct(v1);
-		GgbVector n1 = v2.crossProduct(v3);
+		Coords n0 = v0.crossProduct(v1);
+		Coords n1 = v2.crossProduct(v3);
 
 		double a0 = n0.norm(); // proportional to area
 		double a1 = n1.norm();
@@ -243,8 +243,8 @@ public class SurfaceMeshDiamond {
 		n0.normalize();
 		n1.normalize();
 
-		GgbVector o0 = v.sub(parents[0].v);
-		GgbVector o1 = v.sub(parents[1].v);
+		Coords o0 = v.sub(parents[0].v);
+		Coords o1 = v.sub(parents[1].v);
 
 		double d0 = Math.abs(n0.dotproduct(o0));
 		double d1 = Math.abs(n1.dotproduct(o1));

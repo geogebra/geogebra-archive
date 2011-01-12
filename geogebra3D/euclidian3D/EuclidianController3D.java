@@ -2,8 +2,8 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
@@ -67,7 +67,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	private double[] xMinMax, yMinMax, zMinMax;
 	
 	/** current plane where the movedGeoPoint3D lies */
-	protected GgbMatrix4x4 currentPlane = null;
+	protected CoordMatrix4x4 currentPlane = null;
 	
 	
 	/** 3D view controlled by this */
@@ -76,12 +76,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	private Point mouseLocOld = new Point();
-	private GgbVector positionOld = new GgbVector(4);
+	private Coords positionOld = new Coords(4);
 	
 	
 	
 	/** picking point */
-	protected GgbVector pickPoint;
+	protected Coords pickPoint;
 	
 	
 	
@@ -163,7 +163,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	public void setMovedGeoPoint(GeoElement geo){
 		
 		movedGeoPoint = (GeoPointND) geo;
-		GgbVector coords = movedGeoPoint.getInhomCoordsInD(3);
+		Coords coords = movedGeoPoint.getInhomCoordsInD(3);
 		
 		// sets the min/max values
 		double[] minmax;
@@ -179,7 +179,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		if (!movedGeoPoint.hasPath() && !movedGeoPoint.hasRegion() ){
 			
-			GgbMatrix4x4 plane = GgbMatrix4x4.Identity(); 
+			CoordMatrix4x4 plane = CoordMatrix4x4.Identity(); 
 			setCurrentPlane(plane);
 			//update the moving plane altitude
 			getCurrentPlane().set(coords, 4);
@@ -201,7 +201,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * return the current plane for moving
 	 * @return the current plane
 	 */
-	private GgbMatrix4x4 getCurrentPlane(){
+	private CoordMatrix4x4 getCurrentPlane(){
 		return currentPlane;
 	}
 
@@ -209,7 +209,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * set the current plane for moving
 	 * @param plane a plane
 	 */
-	private void setCurrentPlane(GgbMatrix4x4 plane){
+	private void setCurrentPlane(CoordMatrix4x4 plane){
 		currentPlane = plane;
 	}
 
@@ -238,7 +238,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (mouseLoc == null) return;
 		
 		//getting current pick point and direction v 
-		GgbVector o;
+		Coords o;
 		if (useOldMouse){
 			//if (movePointMode != MOVE_POINT_MODE_XY){
 				mouseLocOld = (Point) mouseLoc.clone();
@@ -253,8 +253,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 		//getting new position of the point
-		GgbVector[] projects = o.projectPlaneThruVIfPossible(getCurrentPlane(), view3D.getViewDirection());
-		GgbVector project = projects[0];
+		Coords[] projects = o.projectPlaneThruVIfPossible(getCurrentPlane(), view3D.getViewDirection());
+		Coords project = projects[0];
 		
 		
 		//min-max x and y values
@@ -265,7 +265,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
-	private void checkXYMinMax(GgbVector v){
+	private void checkXYMinMax(Coords v){
 		//min-max x value
 		if (v.getX()>xMinMax[1])
 			v.setX(xMinMax[1]);
@@ -290,7 +290,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		// move mouse fast, sometimes get mouseLoc = null
 		if (mouseLoc == null) return;
 		
-		GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+		Coords o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 		view3D.toSceneCoords3D(o);
 		
 		
@@ -328,7 +328,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					setMouseInformation(movedGeoPoint3D);			
 					movedGeoPoint3D.doRegion();
 					if (movedGeoPoint3D.getRegion()==view3D.getxOyPlane()){
-						GgbVector coords = movedGeoPoint3D.getCoords();
+						Coords coords = movedGeoPoint3D.getCoords();
 						checkXYMinMax(coords);
 						movedGeoPoint3D.setWillingCoords(coords);
 						movedGeoPoint3D.setWillingDirection(null);
@@ -351,7 +351,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 						movePointMode = MOVE_POINT_MODE_Z;
 					}
 					*/
-					GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+					Coords o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 					view3D.toSceneCoords3D(o);
 					//GgbVector o = view3D.getPickFromScenePoint(positionOld,mouseLoc.x-mouseLocOld.x,mouseLoc.y-mouseLocOld.y);
 					//view3D.toSceneCoords3D(o);
@@ -359,7 +359,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 
 					//getting new position of the point
-					GgbVector project = movedGeoPoint3D.getCoords().projectNearLine(o, view3D.getViewDirection(), EuclidianView3D.vz);
+					Coords project = movedGeoPoint3D.getCoords().projectNearLine(o, view3D.getViewDirection(), EuclidianView3D.vz);
 
 
 					//max z value
@@ -407,12 +407,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			movedGeoPointDragged = true;
 			
 		}else{
-			GgbVector o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
+			Coords o = view3D.getPickPoint(mouseLoc.x,mouseLoc.y); 
 			view3D.toSceneCoords3D(o);
 			//TODO do this once
 			//GgbVector v = new GgbVector(new double[] {0,0,1,0});
 			//view3D.toSceneCoords3D(view3D.getViewDirection());		
-			GgbVector coords = o.projectPlaneThruVIfPossible(GgbMatrix4x4.Identity(), view3D.getViewDirection())[1]; //TODO use current region instead of identity
+			Coords coords = o.projectPlaneThruVIfPossible(CoordMatrix4x4.Identity(), view3D.getViewDirection())[1]; //TODO use current region instead of identity
 			xRW = coords.getX(); yRW = coords.getY();
 			super.movePoint(repaint);
 			
@@ -474,7 +474,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					ret = point3D;
 					
 				}else{
-					GgbVector coords = point.getCoordsInD(2);
+					Coords coords = point.getCoordsInD(2);
 					return super.createNewPoint2D(false, path, coords.getX(), coords.getY()); 
 				}
 	
@@ -493,7 +493,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 					point3D.setWillingDirection(null);
 					ret = point3D;
 				}else{
-					GgbVector coords = point.getCoordsInD(2);
+					Coords coords = point.getCoordsInD(2);
 					return super.createNewPoint2D(false, region, coords.getX(), coords.getY()); 
 				}
 			}else
@@ -588,7 +588,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			return point3D;
 		}
 		
-		setCurrentPlane(GgbMatrix4x4.Identity());
+		setCurrentPlane(CoordMatrix4x4.Identity());
 		movePointOnCurrentPlane(point3D, false);	
 		
 		return point3D;
@@ -668,7 +668,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		point3D.doRegion();
 		
 		if (region==view3D.getxOyPlane()){
-			GgbVector coords = point3D.getInhomCoords();
+			Coords coords = point3D.getInhomCoords();
 			if (
 					coords.getX()<view3D.getxOyPlane().getXmin()
 					||
@@ -1085,7 +1085,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			Hits hits = view.getHits().getTopHits();
 			if(!hits.isEmpty()){
 				GeoElement geo = (GeoElement) view.getHits().getTopHits().get(0);
-				GgbVector vn = geo.getMainDirection();
+				Coords vn = geo.getMainDirection();
 				if (vn!=null){
 					view3D.setRotAnimation(vn);
 				}
@@ -1681,12 +1681,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	// MOVE OBJECTS
 	////////////////////////////////////////
 	
-	private GgbVector startPoint3D;
+	private Coords startPoint3D;
 
-	private GgbVector translationVec3D = new GgbVector(4);
+	private Coords translationVec3D = new Coords(4);
 	
 	private void updateTranslationVector(){
-		GgbVector point = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
+		Coords point = view3D.getPickPoint(mouseLoc.x, mouseLoc.y);
 		view3D.toSceneCoords3D(point);
 		translationVec3D = point.sub(startPoint3D);
 	}

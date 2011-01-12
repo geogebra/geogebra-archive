@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D.plots;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra3D.euclidian3D.BucketAssigner;
 import geogebra3D.euclidian3D.TriListElem;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
@@ -28,10 +28,10 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	double[] params = new double[3];
 
 	/** positions at the start/end of the sement */
-	GgbVector[] vertices = new GgbVector[3];
+	Coords[] vertices = new Coords[3];
 
 	/** tangents at start and end positions */
-	public GgbVector[] tangents = new GgbVector[3];
+	public Coords[] tangents = new Coords[3];
 	
 	/** triangle list element */
 	public TriListElem triListElem;
@@ -59,10 +59,10 @@ class CurveSegment extends AbstractDynamicMeshElement {
 		
 		this.curve=curve;
 		
-		GgbVector v1 = curve.evaluateCurve(pa1);
-		GgbVector v2 = curve.evaluateCurve(pa2);
-		GgbVector t1 = approxTangent(pa1,v1);
-		GgbVector t2 = approxTangent(pa2,v2);
+		Coords v1 = curve.evaluateCurve(pa1);
+		Coords v2 = curve.evaluateCurve(pa2);
+		Coords t1 = approxTangent(pa1,v1);
+		Coords t2 = approxTangent(pa2,v2);
 
 		//generate p1,p2,n1,n2
 		float[][] p1 = new float[CurveMesh.nVerts][3];
@@ -80,7 +80,7 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	}
 
 	private CurveSegment(GeoCurveCartesian3D curve, int level, double pa1,
-			double pa2, GgbVector v1, GgbVector v2, GgbVector t1, GgbVector t2,
+			double pa2, Coords v1, Coords v2, Coords t1, Coords t2,
 			float[][] p1, float[][] p2, float[][] n1, float[][] n2,
 			float[] cosines, float[] sines, CurveSegment parent) {
 		super(CurveMesh.nChildren, CurveMesh.nParents, level);
@@ -91,7 +91,7 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	}
 	
 	private void init(GeoCurveCartesian3D curve, int level, double pa1,
-			double pa2, GgbVector v1, GgbVector v2, GgbVector t1, GgbVector t2,
+			double pa2, Coords v1, Coords v2, Coords t1, Coords t2,
 			float[][] p1, float[][] p2, float[][] n1, float[][] n2){
 		this.curve = curve;
 		
@@ -152,8 +152,8 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	 * Approximates the tangent by a simple forward difference quotient.
 	 * Should only be called in the constructor.
 	 */
-	private GgbVector approxTangent(double param, GgbVector v){
-		GgbVector d = curve.evaluateCurve(param+CurveMesh.deltaParam);
+	private Coords approxTangent(double param, Coords v){
+		Coords d = curve.evaluateCurve(param+CurveMesh.deltaParam);
 		return d.sub(v).normalized();
 	}
 
@@ -168,17 +168,17 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	 * @param nrms
 	 * 			  reference to a 2D array with dimension [nVerts][3]	
 	 */
-	private void genPoints(GgbVector vertex, GgbVector tangent, float[][] pts,
+	private void genPoints(Coords vertex, Coords tangent, float[][] pts,
 			float[][] nrms) {
 
-		GgbVector[] v = tangent.completeOrthonormal();
-		GgbVector c = vertex;
+		Coords[] v = tangent.completeOrthonormal();
+		Coords c = vertex;
 
 		// create midpoints
 		for (int j = 0; j < CurveMesh.nVerts; j++) {
-			GgbVector point = c.add(v[0].mul(cosines[j])).add(
+			Coords point = c.add(v[0].mul(cosines[j])).add(
 					v[1].mul(sines[j]));
-			GgbVector normal = point.sub(c).normalized();
+			Coords normal = point.sub(c).normalized();
 
 			pts[j][0] = (float) point.getX();
 			pts[j][1] = (float) point.getY();
@@ -241,14 +241,14 @@ class CurveSegment extends AbstractDynamicMeshElement {
 		float[][] midPoints = new float[CurveMesh.nVerts][3];
 		float[][] midNormals = new float[CurveMesh.nVerts][3];
 
-		GgbVector[] v = tangents[1].completeOrthonormal();
-		GgbVector c = vertices[1];
+		Coords[] v = tangents[1].completeOrthonormal();
+		Coords c = vertices[1];
 
 		// create midpoints
 		for (int j = 0; j < CurveMesh.nVerts; j++) {
-			GgbVector point = c.add(v[0].mul(cosines[j])).add(
+			Coords point = c.add(v[0].mul(cosines[j])).add(
 					v[1].mul(sines[j]));
-			GgbVector normal = point.sub(c).normalized();
+			Coords normal = point.sub(c).normalized();
 
 			midPoints[j][0] = (float) point.getX();
 			midPoints[j][1] = (float) point.getY();

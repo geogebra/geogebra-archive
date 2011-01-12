@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 /**
  * Represents geos that can be translated 
  *
@@ -22,7 +22,7 @@ public interface Translateable {
 	 * Translate by vector
 	 * @param v translation vector
 	 */
-	public void translate(GgbVector v);
+	public void translate(Coords v);
 	/**
 	 * Return the geo
 	 * @return geo element

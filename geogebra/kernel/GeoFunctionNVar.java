@@ -12,7 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -458,9 +458,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	 * @param u 
 	 * @param v 
 	 * @return coords of the point (u,v,f(u,v)) */
-		 public GgbVector evaluatePoint(double u, double v){
+		 public Coords evaluatePoint(double u, double v){
 
-			 GgbVector p = new GgbVector(3);
+			 Coords p = new Coords(3);
 			 double val = fun.evaluate(new double[] {u,v});
 			 p.set(1, u);
 			 p.set(2, v);
@@ -479,8 +479,8 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		}
 	  	
 	  	
-		public GgbVector getLabelPosition(){
-			return new GgbVector(0, 0, 0, 1); //TODO
+		public Coords getLabelPosition(){
+			return new Coords(0, 0, 0, 1); //TODO
 		}
 
 	    

@@ -1,6 +1,6 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoElement;
 
 import java.awt.Color;

@@ -1,8 +1,8 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -32,7 +32,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	double dy = 1.0; 
 	
 	/** coord sys */
-	protected GgbCoordSys coordsys;
+	protected CoordSys coordsys;
 
 	//string
 	protected static final String[] VAR_STRING = {"x","y","z"};
@@ -45,7 +45,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	public GeoPlane3D(Construction c){
 		super(c);
 		
-		coordsys = new GgbCoordSys(2);
+		coordsys = new CoordSys(2);
 
 		this.xmin = -2.5; this.xmax = 2.5;
 		this.ymin = -2.5; this.ymax = 2.5;	
@@ -93,17 +93,17 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	
 	
 	
-	public GgbVector[] getNormalProjection(GgbVector coords) {
+	public Coords[] getNormalProjection(Coords coords) {
 		return coords.projectPlane(getCoordSys().getMatrixOrthonormal());
 	}
 
-	public GgbVector[] getProjection(GgbVector coords,
-			GgbVector willingDirection) {
+	public Coords[] getProjection(Coords coords,
+			Coords willingDirection) {
 		return coords.projectPlaneThruV(getCoordSys().getMatrixOrthonormal(),willingDirection);
 	}
 
 	public boolean isInRegion(GeoPointND PI) {
-		GgbVector planeCoords = getNormalProjection(PI.getInhomCoords())[1];
+		Coords planeCoords = getNormalProjection(PI.getInhomCoords())[1];
 		return Kernel.isEqual(planeCoords.get(3),0,Kernel.STANDARD_PRECISION);
 	}
 	
@@ -124,7 +124,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		
 	}
 	
-	public GgbVector getPoint(double x2d, double y2d){
+	public Coords getPoint(double x2d, double y2d){
 		return getCoordSys().getPoint(x2d,y2d);
 	}
 	
@@ -236,17 +236,17 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	
 	
 	
-	public GgbMatrix4x4 getDrawingMatrix(){
+	public CoordMatrix4x4 getDrawingMatrix(){
 		return getCoordSys().getMatrixOrthonormal();
 	}
 	
-	public GgbVector getMainDirection(){
+	public Coords getMainDirection(){
 		
 		return getCoordSys().getNormal();
 	}
 	
 
-	public GgbVector getLabelPosition(){
+	public Coords getLabelPosition(){
 		return getCoordSys().getPoint(0.5, 0.5);
 	}
 	
@@ -275,7 +275,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		GeoPlane3D p = new GeoPlane3D(cons);
 		
 		//TODO move this elsewhere
-		GgbCoordSys cs = p.getCoordSys();
+		CoordSys cs = p.getCoordSys();
 		cs.addPoint(getCoordSys().getOrigin());
 		cs.addVector(getCoordSys().getVx());
 	    cs.addVector(getCoordSys().getVy());
@@ -362,12 +362,12 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	// 2 VAR FUNCTION INTERFACE
 	////////////////////////////////////////////
 
-	public GgbVector evaluateNormal(double u, double v) {
+	public Coords evaluateNormal(double u, double v) {
 		
 		return coordsys.getNormal();
 	}
 
-	public GgbVector evaluatePoint(double u, double v) {
+	public Coords evaluatePoint(double u, double v) {
 		return coordsys.getPoint(u, v);
 		/*
 		GgbMatrix4x4 m = coordsys.getMatrixOrthonormal();
@@ -394,7 +394,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	
 	
 	
-	public GgbCoordSys getCoordSys() {
+	public CoordSys getCoordSys() {
 		return coordsys;
 	}
 	
@@ -419,7 +419,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	protected void getXMLtags(StringBuilder sb) {
         super.getXMLtags(sb);
         
-        GgbVector equation = getCoordSys().getEquationVector();
+        Coords equation = getCoordSys().getEquationVector();
         
         sb.append("\t<coords");
         sb.append(" x=\""); sb.append(equation.getX()); sb.append("\"");

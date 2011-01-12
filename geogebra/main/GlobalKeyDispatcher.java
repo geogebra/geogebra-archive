@@ -1,6 +1,6 @@
 package geogebra.main;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
@@ -787,7 +787,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	
 		// set translation vector
 		if (tempVec == null)
-			tempVec = new GgbVector(4); // 4 coords for 3D
+			tempVec = new Coords(4); // 4 coords for 3D
 		double xd = geo.getAnimationStep() * xdiff;
 		double yd = geo.getAnimationStep() * ydiff;						
 		double zd = geo.getAnimationStep() * zdiff;						
@@ -816,7 +816,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 
 		return moved;
 	}
-	private GgbVector tempVec;
+	private Coords tempVec;
 
 	/**
 	 * Changes the font size of the user interface and construction element styles (thickness,

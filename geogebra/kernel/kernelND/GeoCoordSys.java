@@ -1,6 +1,6 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.GgbCoordSys;
+import geogebra.Matrix.CoordSys;
 
 /** Simple interface for elements that have a coord sys
  * @author matthieu
@@ -16,6 +16,6 @@ public interface GeoCoordSys {
 	/** return the coordinate system
 	 * @return the coordinate system
 	 */
-	public GgbCoordSys getCoordSys();
+	public CoordSys getCoordSys();
 
 }

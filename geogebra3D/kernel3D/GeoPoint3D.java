@@ -23,9 +23,9 @@ package geogebra3D.kernel3D;
 import java.awt.geom.Point2D;
 import java.util.TreeSet;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.kernel.AlgoDynamicCoordinates;
@@ -73,8 +73,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	
 	
 	//mouse moving
-	private GgbVector willingCoords = null; //= new Ggb3DVector( new double[] {0,0,0,1.0});
-	private GgbVector willingDirection = null; //new Ggb3DVector( new double[] {0,0,1,0.0});
+	private Coords willingCoords = null; //= new Ggb3DVector( new double[] {0,0,0,1.0});
+	private Coords willingDirection = null; //new Ggb3DVector( new double[] {0,0,1,0.0});
 	
 	//paths
 	private Path path;
@@ -93,7 +93,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	private double z2D = 0;
         
     // temp
-    public GgbVector inhom = new GgbVector(3);
+    public Coords inhom = new Coords(3);
 
 
     // list of Locateables (GeoElements) that this point is start point of
@@ -115,7 +115,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
         
     }
     
-    public GeoPoint3D(Construction c, String label, GgbVector v){
+    public GeoPoint3D(Construction c, String label, Coords v){
     	this(c,label,v.get(1),v.get(2),v.get(3),v.get(4));
     }
     
@@ -184,7 +184,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	 * @param v coords
 	 * @param doPathOrRegion says if path (or region) calculations have to be done
 	 */    
-	final public void setCoords(GgbVector v, boolean doPathOrRegion) {
+	final public void setCoords(Coords v, boolean doPathOrRegion) {
 		
 		
 		
@@ -220,7 +220,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	
 	
 	
-	final public void setCoords(GgbVector v) {
+	final public void setCoords(Coords v) {
 		setCoords(v,true);
 	}
 	
@@ -228,7 +228,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	final public void setCoords(double x, double y, double z, double w) {
 		
 		setWillingCoords(null);
-		setCoords(new GgbVector(x,y,z,w));
+		setCoords(new Coords(x,y,z,w));
 		
 	}  	
 
@@ -297,16 +297,16 @@ implements GeoPointND, PointProperties, Vector3DValue{
     /** 
      * Returns (x/w, y/w, z/w) GgbVector.
      */
-    final public GgbVector getInhomCoords() {
+    final public Coords getInhomCoords() {
     	return inhom.copyVector();
     }   
 
-    public GgbVector getInhomCoordsInD(int dimension){
+    public Coords getInhomCoordsInD(int dimension){
     	switch(dimension){
     	case 3:
     		return getInhomCoords();
     	case 2:
-    		GgbVector v = new GgbVector(2);
+    		Coords v = new Coords(2);
     		v.setX(inhom.getX());
     		v.setY(inhom.getY());
     		return v;
@@ -316,10 +316,10 @@ implements GeoPointND, PointProperties, Vector3DValue{
     }
     
     
-    public GgbVector getCoordsInD2(GgbCoordSys coordSys){
+    public Coords getCoordsInD2(CoordSys coordSys){
     	   	
-    	GgbVector coords;
-		GgbVector[] project;
+    	Coords coords;
+		Coords[] project;
 		
 		if (getWillingCoords()!=null) //use willing coords
 			coords = getWillingCoords();
@@ -327,7 +327,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 			coords = getCoords();
 
 		if (coordSys==null){ //project on plane xOy
-			GgbVector v = new GgbVector(3);
+			Coords v = new Coords(3);
 			v.setX(coords.getX());
 			v.setY(coords.getY());
 			v.setZ(coords.getW());
@@ -338,7 +338,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 			else //use willing direction for projection
 				project = coordSys.getProjection(coords,getWillingDirection());		
 
-			GgbVector v = new GgbVector(3);
+			Coords v = new Coords(3);
 			v.setX(project[0].getX());
 			v.setY(project[0].getY());
 			v.setZ(project[0].getW());
@@ -348,7 +348,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	
     }
     
-    public GgbVector getCoordsInD(int dimension){
+    public Coords getCoordsInD(int dimension){
     	switch(dimension){
     	case 3:
     		return getCoords();
@@ -370,7 +370,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
        		v.setZ(coords.getW());
        		return v;
        		*/
-    		return getCoordsInD2(GgbCoordSys.Identity3D());
+    		return getCoordsInD2(CoordSys.Identity3D());
     	default:
     		return null;
     	}
@@ -413,7 +413,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
     
     
 
-	protected boolean movePoint(GgbVector rwTransVec, Point2D.Double endPosition) {
+	protected boolean movePoint(Coords rwTransVec, Point2D.Double endPosition) {
 	
 		boolean movedGeo = false;
 		
@@ -455,7 +455,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 				getParentAlgorithm().update();
 				*/
 			}else{
-				GgbVector coords = (GgbVector) getInhomCoords().add(rwTransVec);
+				Coords coords = (Coords) getInhomCoords().add(rwTransVec);
 				setCoords(coords);	
 			}
 			
@@ -578,8 +578,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
      */
     public void updateCoords2D(Region region){
     	
-    	GgbVector coords;
-		GgbVector[] project;
+    	Coords coords;
+		Coords[] project;
 		
 		if (getWillingCoords()!=null) //use willing coords
 			coords = getWillingCoords();
@@ -632,36 +632,36 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	 * (if coordsys!=null, use it; else if region!=null, use its coord sys; else project on xOy plane)
 	 * @param doPathOrRegion says if the path or the region calculations have to be done
 	 */
-	public void updateCoordsFrom2D(boolean doPathOrRegion, GgbCoordSys coordsys){
+	public void updateCoordsFrom2D(boolean doPathOrRegion, CoordSys coordsys){
 		if (coordsys!=null)
 			setCoords(coordsys.getPoint(getX2D(), getY2D()), doPathOrRegion);
 		else if (region!=null)
 			setCoords(((Region3D) region).getPoint(getX2D(), getY2D()), doPathOrRegion);
 		else 
-			setCoords(new GgbVector(getX2D(), getY2D(), 0, 1), doPathOrRegion);
+			setCoords(new Coords(getX2D(), getY2D(), 0, 1), doPathOrRegion);
 	}
 	
 	
     ///////////////////////////////////////////////////////////
     // WILLING COORDS
 	
-	public void setWillingCoords(GgbVector willingCoords){
+	public void setWillingCoords(Coords willingCoords){
 		this.willingCoords = willingCoords;
 	}
 	
 	public void setWillingCoords(double x, double y, double z, double w){
-		setWillingCoords(new GgbVector(new double[] {x,y,z,w}));
+		setWillingCoords(new Coords(new double[] {x,y,z,w}));
 	}	
 	
-	public void setWillingDirection(GgbVector willingDirection){
+	public void setWillingDirection(Coords willingDirection){
 		this.willingDirection = willingDirection;
 	}
 	
-	public GgbVector getWillingCoords(){
+	public Coords getWillingCoords(){
 		return willingCoords;
 	}
 	
-	public GgbVector getWillingDirection(){
+	public Coords getWillingDirection(){
 		return willingDirection;
 	}
 	
@@ -1016,7 +1016,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	//////////////////////////////////
 	// GeoElement3DInterface interface
 
-	public GgbVector getLabelPosition(){
+	public Coords getLabelPosition(){
 		//Application.debug(inhom.toString());
 		return getCoords();
 	}

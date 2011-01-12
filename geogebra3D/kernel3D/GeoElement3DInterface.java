@@ -1,7 +1,7 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoElement;
 import geogebra3D.euclidian3D.Drawable3D;
 
@@ -20,12 +20,12 @@ public interface GeoElement3DInterface {
 	
 	/** returns a 4x4 matrix for drawing the {@link Drawable3D} 
 	 * @return the drawing matrix*/
-	public GgbMatrix4x4 getDrawingMatrix();
+	public CoordMatrix4x4 getDrawingMatrix();
 	
 	
 	/** sets the 4x4 matrix for drawing the {@link Drawable3D} 
 	 * @param a_drawingMatrix the drawing matrix*/
-	public void setDrawingMatrix(GgbMatrix4x4 a_drawingMatrix);
+	public void setDrawingMatrix(CoordMatrix4x4 a_drawingMatrix);
 	
 
 	
@@ -55,7 +55,7 @@ public interface GeoElement3DInterface {
      * (null if none)
      * @return a direction for view 
      */
-	public GgbVector getMainDirection();
+	public Coords getMainDirection();
 
 
 	

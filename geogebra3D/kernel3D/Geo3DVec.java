@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
@@ -590,7 +590,7 @@ implements Vector3DValue {
 			return null;
 		}
 
-		public GgbVector get3DVector() {
+		public Coords get3DVector() {
 			// TODO Auto-generated method stub
 			return null;
 		}

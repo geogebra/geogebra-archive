@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
@@ -122,7 +122,7 @@ public class DrawAxis3D extends DrawLine3D {
     	
     	for(int i=iMin;i<=iMax;i++){
     		double val = i*distance;
-    		GgbVector origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
+    		Coords origin = ((GeoCoordSys1D) getGeoElement()).getPoint(val);
     		
     		//draw numbers
     		String strNum = getView3D().getKernel().formatPiE(val,numberFormat);
@@ -203,7 +203,7 @@ public class DrawAxis3D extends DrawLine3D {
 		
 
     	//gets the direction vector of the axis as it is drawn on screen
-    	GgbVector v = axis.getCoordSys().getVx().copyVector();
+    	Coords v = axis.getCoordSys().getVx().copyVector();
     	getView3D().toScreenCoords3D(v);
     	v.set(3, 0); //set z-coord to 0
     	//double vScale = v.norm(); //axis scale, used for ticks distance

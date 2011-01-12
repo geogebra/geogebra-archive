@@ -2,17 +2,17 @@ package geogebra.Matrix;
 
 import geogebra.kernel.Kernel;
 
-public class GgbVector3D{
+public class Coords3D{
 	double[] val = new double[4];
 	private double norm, sqNorm;
 	private boolean calcNorm = true;
 	private boolean calcSqNorm = true;
 	
-	public GgbVector3D(double x, double y, double z, double w) {
+	public Coords3D(double x, double y, double z, double w) {
 		val[0]=x; val[1]=y; val[2]=z; val[3]=w;
 	}
 
-	public GgbVector3D(int i) {
+	public Coords3D(int i) {
 		val[0]=val[1]=val[2]=val[3]=0;
 	}
 
@@ -95,7 +95,7 @@ public class GgbVector3D{
 	 * If this={x1,x2,...} and v={val[0]'1,val[0]'2,...}, the dot product is x1*val[0]'1+x2*val[0]'2+...
 	 * @param v vector multiplied with
 	 * @return value of the dot product*/
-	public double dotproduct(GgbVector3D a){
+	public double dotproduct(Coords3D a){
 		return val[0]*a.val[0]+val[1]*a.val[1]+val[2]*a.val[2];
 	}
 	
@@ -106,8 +106,8 @@ public class GgbVector3D{
 	 * @param v vector multiplied with
 	 * @return vector resulting of the cross product
 	 */
-	public GgbVector3D crossProduct(GgbVector3D a){
-		return new GgbVector3D(val[1]*a.val[2]-val[2]*a.val[1],val[2]*a.val[0]-val[0]*a.val[2],
+	public Coords3D crossProduct(Coords3D a){
+		return new Coords3D(val[1]*a.val[2]-val[2]*a.val[1],val[2]*a.val[0]-val[0]*a.val[2],
 							   val[0]*a.val[1]-val[1]*a.val[0],0);
 	}
 	
@@ -142,19 +142,19 @@ public class GgbVector3D{
 	/** returns this normalized 
 	 * @return this/this.norm() 
 	 */
-	public GgbVector3D normalized(){
+	public Coords3D normalized(){
 		
 		double inv;
 		if(calcNorm)
 			inv=1/Math.sqrt(val[0]*val[0]+val[1]*val[1]+val[2]*val[2]);
 		else
 			inv=1/norm;
-		return new GgbVector3D(val[0]*inv, val[1]*inv, val[2]*inv, val[3]*inv);
+		return new Coords3D(val[0]*inv, val[1]*inv, val[2]*inv, val[3]*inv);
 	}
 	
 	
 	/** normalize this */
-	public GgbVector3D normalize(){
+	public Coords3D normalize(){
 		double inv;
 		if(calcNorm)
 			inv=1/Math.sqrt(val[0]*val[0]+val[1]*val[1]+val[2]*val[2]);
@@ -171,16 +171,16 @@ public class GgbVector3D{
 	 * @param v vector subtracted
 	 * @return this-v 
 	 */
-	public GgbVector3D sub(GgbVector3D v){
-		return new GgbVector3D(val[0]-v.val[0],val[1]-v.val[1],val[2]-v.val[2],0);
+	public Coords3D sub(Coords3D v){
+		return new Coords3D(val[0]-v.val[0],val[1]-v.val[1],val[2]-v.val[2],0);
 	}
 	
 	/** returns this-v 
 	 * @param v vector subtracted
 	 * @return this-v 
 	 */
-	public GgbVector3D add(GgbVector3D v){
-		return new GgbVector3D(val[0]+v.val[0],val[1]+v.val[1],val[2]+v.val[2],0);
+	public Coords3D add(Coords3D v){
+		return new Coords3D(val[0]+v.val[0],val[1]+v.val[1],val[2]+v.val[2],0);
 	}
 
 	/**
@@ -193,8 +193,8 @@ public class GgbVector3D{
 	/** returns a copy of the vector 
 	 * @return a copy of the vector
 	 */
-	public GgbVector3D copyVector(){ 
-		return new GgbVector3D(val[0],val[1],val[2],val[3]);
+	public Coords3D copyVector(){ 
+		return new Coords3D(val[0],val[1],val[2],val[3]);
 				
 	}
 

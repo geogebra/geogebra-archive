@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
@@ -1038,7 +1038,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	/**
 	 * translate conic by vector v
 	 */
-	final public void translate(GgbVector v) {
+	final public void translate(Coords v) {
 		doTranslate(v.getX(), v.getY());
 
 		//classifyConic();
@@ -1072,7 +1072,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		matrix[5] = matrix[5] - matrix[3] * vx - matrix[1] * vy;
 		
 		// avoid classification and set changes by hand:   
-		setMidpoint(getMidpoint().add(new GgbVector(new double[] {vx,vy,0})).get());
+		setMidpoint(getMidpoint().add(new Coords(new double[] {vx,vy,0})).get());
 		/*
 		b.x += vx;
 		b.y += vy;
@@ -2614,8 +2614,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
     // FOR DRAWING IN 3D
     ////////////////////////////////////////
 
-    public GgbVector getEigenvec3D(int i){
-    	GgbVector ret = new GgbVector(4);
+    public Coords getEigenvec3D(int i){
+    	Coords ret = new Coords(4);
     	ret.set(getEigenvec(i));
     	return ret;
     }
@@ -2625,8 +2625,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
     }
 
 
-	public GgbVector getLabelPosition(){
-		return new GgbVector(0, 0, 0, 1);
+	public Coords getLabelPosition(){
+		return new Coords(0, 0, 0, 1);
 	}
 
 }

@@ -1,7 +1,7 @@
 package geogebra3D.euclidian3D.opengl;
 
-import geogebra.Matrix.GgbVector;
-import geogebra.Matrix.GgbVector3D;
+import geogebra.Matrix.Coords;
+import geogebra.Matrix.Coords3D;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra3D.euclidian3D.plots.CurveMesh;
@@ -149,7 +149,7 @@ public class PlotterBrush {
 	/** start new curve part
 	 * @param point
 	 */
-	public void down(GgbVector point){
+	public void down(Coords point){
 		
 		down(point,null,null);
 	}
@@ -157,7 +157,7 @@ public class PlotterBrush {
 	/** start new curve part
 	 * @param point
 	 */
-	private void down(GgbVector point, GgbVector clockU, GgbVector clockV){
+	private void down(Coords point, Coords clockU, Coords clockV){
 		
 		start = new PlotterBrushSection(point,thickness, clockU, clockV);
 		end = null;
@@ -166,7 +166,7 @@ public class PlotterBrush {
 	/** move to point and draw curve part
 	 * @param point
 	 */
-	public void moveTo(GgbVector point){
+	public void moveTo(Coords point){
 		// update start and end sections
 		if (end==null){
 			end = new PlotterBrushSection(start, point, thickness,true);
@@ -182,7 +182,7 @@ public class PlotterBrush {
 	/** move to point and draw curve part
 	 * @param point
 	 */
-	private void moveTo(GgbVector point, GgbVector clockU, GgbVector clockV){
+	private void moveTo(Coords point, Coords clockU, Coords clockV){
 
 		if (end!=null)
 			start = end;
@@ -224,7 +224,7 @@ public class PlotterBrush {
 	 */
 	private void draw(PlotterBrushSection s, double u, double v, int texture){
 		
-		GgbVector[] vectors = s.getNormalAndPosition(u, v);
+		Coords[] vectors = s.getNormalAndPosition(u, v);
 		
 		//Application.debug(vectors[0].toString());
 		
@@ -257,7 +257,7 @@ public class PlotterBrush {
 	 * @param p1 
 	 * @param p2
 	 */
-	public void segment(GgbVector p1, GgbVector p2){
+	public void segment(Coords p1, Coords p2){
 		
 		length = (float) p1.distance(p2);
 		if (Kernel.isEqual(length, 0, Kernel.STANDARD_PRECISION))
@@ -266,7 +266,7 @@ public class PlotterBrush {
 		down(p1);
 		
 		float factor, arrowPos;
-		GgbVector arrowBase;
+		Coords arrowBase;
 		
 		switch(arrowType){
 		case ARROW_TYPE_NONE:
@@ -277,11 +277,11 @@ public class PlotterBrush {
 		case ARROW_TYPE_SIMPLE:
 			factor = (12+lineThickness)*LINE3D_THICKNESS/scale;
 			arrowPos = ARROW_LENGTH/length * factor;
-			arrowBase = (GgbVector) start.getCenter().mul(arrowPos).add(p2.mul(1-arrowPos));
+			arrowBase = (Coords) start.getCenter().mul(arrowPos).add(p2.mul(1-arrowPos));
 
 			setTextureX(0);
 			if (hasTicks()){
-				GgbVector d = p2.sub(p1).normalized();
+				Coords d = p2.sub(p1).normalized();
 				float thickness = this.thickness;
 				
 				float i = ticksOffset*length-((int) (ticksOffset*length/ticksDistance))*ticksDistance;
@@ -292,8 +292,8 @@ public class PlotterBrush {
 
 				for(;i<=length*(1-arrowPos);i+=ticksDistance){
 					
-					GgbVector p1b=(GgbVector) p1.add(d.mul(i-ticksDelta));
-					GgbVector p2b=(GgbVector) p1.add(d.mul(i+ticksDelta));
+					Coords p1b=(Coords) p1.add(d.mul(i-ticksDelta));
+					Coords p2b=(Coords) p1.add(d.mul(i+ticksDelta));
 					
 					setTextureType(TEXTURE_AFFINE);
 					setTextureX(i/length);
@@ -336,7 +336,7 @@ public class PlotterBrush {
 	 * @param v2
 	 * @param radius
 	 */
-	public void circle(GgbVector center, GgbVector v1, GgbVector v2, double radius){
+	public void circle(Coords center, Coords v1, Coords v2, double radius){
 		
 		
 		length=(float) (2*Math.PI*radius); //TODO use integer to avoid bad dash cycle connection
@@ -344,24 +344,24 @@ public class PlotterBrush {
 		int longitude = 60;
 
 		
-		GgbVector vn1;
-		GgbVector vn2 = v1.crossProduct(v2);
+		Coords vn1;
+		Coords vn2 = v1.crossProduct(v2);
 		
     	float dt = (float) 1/longitude;
     	float da = (float) (2*Math.PI *dt) ; 
     	float u=0, v=1;
     	
     	setTextureX(0);
-		vn1 = (GgbVector) v1.mul(u).add(v2.mul(v));
-		down((GgbVector) center.add(vn1.mul(radius)),vn1,vn2);  	
+		vn1 = (Coords) v1.mul(u).add(v2.mul(v));
+		down((Coords) center.add(vn1.mul(radius)),vn1,vn2);  	
     	
     	for( int i = 1; i <= longitude  ; i++ ) { 
     		u = (float) Math.sin ( i * da ); 
     		v = (float) Math.cos ( i * da ); 
     		
     		setTextureX(i*dt);
-    		vn1 = (GgbVector) v1.mul(u).add(v2.mul(v));
-    		moveTo((GgbVector) center.add(vn1.mul(radius)),vn1,vn2);
+    		vn1 = (Coords) v1.mul(u).add(v2.mul(v));
+    		moveTo((Coords) center.add(vn1.mul(radius)),vn1,vn2);
     	} 
     	
 	}
@@ -372,8 +372,8 @@ public class PlotterBrush {
 	////////////////////////////////////
 	
 	private boolean firstCurvePoint = false;
-	private GgbVector previousPosition;
-	private GgbVector previousTangent;
+	private Coords previousPosition;
+	private Coords previousTangent;
 	
 	/**
 	 * Starts drawing a curve
@@ -386,7 +386,7 @@ public class PlotterBrush {
 	 * @param position
 	 * @param tangent
 	 */
-	public void addPointToCurve(GgbVector position, GgbVector tangent){
+	public void addPointToCurve(Coords position, Coords tangent){
 		if(firstCurvePoint){
 			end = new PlotterBrushSection(position, tangent, thickness);
 			firstCurvePoint=false;
@@ -412,9 +412,9 @@ public class PlotterBrush {
 	 * @param p the point's position vector
 	 * @param t the tangent at the point
 	 */
-	public void addPointToCurve3D(GgbVector3D p, GgbVector3D t){
-		GgbVector position = new GgbVector(p.getX(),p.getY(),p.getZ(),0);
-		GgbVector tangent = new GgbVector(t.getX(),t.getY(),t.getZ(),0);
+	public void addPointToCurve3D(Coords3D p, Coords3D t){
+		Coords position = new Coords(p.getX(),p.getY(),p.getZ(),0);
+		Coords tangent = new Coords(t.getX(),t.getY(),t.getZ(),0);
 		if(firstCurvePoint){
 			end = new PlotterBrushSection(position, tangent, thickness);
 			firstCurvePoint=false;
@@ -441,8 +441,8 @@ public class PlotterBrush {
 	 * @param position the position of the new point (pos2)
 	 * @return true iff (pos2-pos1)/||pos2-pos1|| . tangent1 < CurveTree.discontinuityThreshold
 	 */
-	private boolean discontinuityPassed(GgbVector position) {
-		GgbVector dir = position.sub(previousPosition).normalized();
+	private boolean discontinuityPassed(Coords position) {
+		Coords dir = position.sub(previousPosition).normalized();
 		
 		if(dir.dotproduct(previousTangent)<CurveTree.discontinuityThreshold)
 			return true;

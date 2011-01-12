@@ -12,7 +12,7 @@
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
@@ -201,7 +201,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected MyDouble tempNum;
 	protected double rotStartAngle;
 	protected ArrayList translateableGeos;
-	protected GgbVector translationVec;
+	protected Coords translationVec;
 
 	protected Hits tempArrayList = new Hits();
 	protected Hits tempArrayList2 = new Hits();
@@ -1128,7 +1128,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			startLoc = mouseLoc;
 			view.setDragCursor();
 			if (translationVec == null)
-				translationVec = new GgbVector(2);
+				translationVec = new Coords(2);
 		}	
 
 		// DEPENDENT object: changeable parents?
@@ -1182,7 +1182,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				
 				view.setDragCursor();
 				if (translationVec == null)
-					translationVec = new GgbVector(2);
+					translationVec = new Coords(2);
 			} else {
 				moveMode = MOVE_NONE;
 			}				
@@ -2743,7 +2743,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				xRW = p.inhomX;
 				yRW = p.inhomY;
 			} else if (geo.isGeoPoint()) {
-				GgbVector coords = ((GeoPointND) geo).getInhomCoordsInD(2);
+				Coords coords = ((GeoPointND) geo).getInhomCoordsInD(2);
 				xRW = coords.getX();
 				yRW = coords.getY();
 			} else transformCoords(); // grid lock
@@ -3032,7 +3032,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		startPoint.setLocation(xRW, yRW);
 
 		// we don't specify screen coords for translation as all objects are Translateables
-		GeoElement.moveObjects(translateableGeos, translationVec, new GgbVector(xRW, yRW, 0), null);		
+		GeoElement.moveObjects(translateableGeos, translationVec, new Coords(xRW, yRW, 0), null);		
 		if (repaint)
 			kernel.notifyRepaint();						
 	}
@@ -3044,7 +3044,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		startLoc = mouseLoc;
 
 		// move all selected geos
-		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, new GgbVector(xRW, yRW, 0), null);									
+		GeoElement.moveObjects(app.getSelectedGeos(), translationVec, new Coords(xRW, yRW, 0), null);									
 
 		if (repaint)
 			kernel.notifyRepaint();					

@@ -2,7 +2,7 @@ package geogebra3D.euclidian3D.opengl;
 
 import java.awt.Color;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 
 import javax.media.opengl.GL;
 
@@ -82,9 +82,9 @@ public class PlotterViewButtons {
 		brush.start(16);
 		brush.setColor(Color.GRAY,0.5f);
 		brush.setThickness(thickness);//re sets the thickness
-		brush.segment(new GgbVector(handleSizeStart, 0, 0, 1),new GgbVector(handleSize, 0, 0, 1));
+		brush.segment(new Coords(handleSizeStart, 0, 0, 1),new Coords(handleSize, 0, 0, 1));
 		brush.setThickness(thickness);//re sets the thickness
-		brush.segment(new GgbVector(-handleSizeStart, 0, 0, 1),new GgbVector(-handleSize, 0, 0, 1));
+		brush.segment(new Coords(-handleSizeStart, 0, 0, 1),new Coords(-handleSize, 0, 0, 1));
 		index[TYPE_HANDLE_ARROWS] =brush.end();
 
 		
@@ -95,9 +95,9 @@ public class PlotterViewButtons {
 		brush.start(16);
 		brush.setColor(Color.GRAY,0.5f);
 		brush.setThickness(thickness*3);//re sets the thickness
-		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(handleSizeStart/2, 0, 0, 1));
+		brush.segment(new Coords(0, 0, 0, 1),new Coords(handleSizeStart/2, 0, 0, 1));
 		brush.setThickness(thickness*3);//re sets the thickness
-		brush.segment(new GgbVector(0, 0, 0, 1),new GgbVector(-handleSizeStart/2, 0, 0, 1));
+		brush.segment(new Coords(0, 0, 0, 1),new Coords(-handleSizeStart/2, 0, 0, 1));
 		index[TYPE_HANDLE] =brush.end();
 
 		brush.setArrowType(PlotterBrush.ARROW_TYPE_NONE);

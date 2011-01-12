@@ -2,8 +2,8 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.DrawableND;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -169,7 +169,7 @@ public abstract class Drawable3D extends DrawableND {
 	public float zPickMin;
 
 	/** (r,g,b,a) vector */
-	private GgbVector color, colorHighlighted; 
+	private Coords color, colorHighlighted; 
 	
 	private static final float EPSILON_Z = 0.0001f;//0.0001f;//10000000; //limit to consider two objects to be at the same place
 	
@@ -392,7 +392,7 @@ public abstract class Drawable3D extends DrawableND {
 	 * 
 	 * @return the drawing matrix
 	 */
-	public GgbMatrix4x4 getMatrix(){
+	public CoordMatrix4x4 getMatrix(){
 		return ((GeoElement3DInterface) getGeoElement()).getDrawingMatrix();
 	}
 	
@@ -401,7 +401,7 @@ public abstract class Drawable3D extends DrawableND {
 	 * 
 	 * @return the label position
 	 */
-	public GgbVector getLabelPosition(){
+	public Coords getLabelPosition(){
 		return getGeoElement().getLabelPosition();
 	}
 	
@@ -729,7 +729,7 @@ public abstract class Drawable3D extends DrawableND {
 	
 	protected void setColors(double alpha){
 		Color c = getGeoElement().getObjectColor();
-		color = new GgbVector((double) c.getRed()/255, (double) c.getGreen()/255, (double) c.getBlue()/255,alpha);
+		color = new Coords((double) c.getRed()/255, (double) c.getGreen()/255, (double) c.getBlue()/255,alpha);
 
 		//creates corresponding color for highlighting
 		
@@ -738,16 +738,16 @@ public abstract class Drawable3D extends DrawableND {
 		double b = color.getZ();
 		double d = r+g+b;
 		
-		GgbVector color2;
+		Coords color2;
 		double distance;
 		
 		if (d>LIGHT_COLOR){//color is closer to white : darken it
 			distance = Math.sqrt(r*r+g*g+b*b); //euclidian distance to black
-			color2 = new GgbVector(0, 0, 0, color.getW()); //black
+			color2 = new Coords(0, 0, 0, color.getW()); //black
 		}else{//color is closer to black : lighten it
 			r=1-r;g=1-g;b=1-b;
 			distance = Math.sqrt(r*r+g*g+b*b); //euclidian distance to white
-			color2 = new GgbVector(1, 1, 1, color.getW()); //white
+			color2 = new Coords(1, 1, 1, color.getW()); //white
 		}
 		
 		double s = getColorShift()/distance;

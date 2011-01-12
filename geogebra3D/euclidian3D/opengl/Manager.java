@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D.opengl;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
@@ -53,10 +53,10 @@ abstract public class Manager {
 	
 	//coords stuff
 	/** when drawing a cylinder, clock vectors to describe a circle */
-	private GgbVector clockU = null;
-	private GgbVector clockV = null;
-	private GgbVector cylinderStart = null;
-	private GgbVector cylinderEnd = null;
+	private Coords clockU = null;
+	private Coords clockV = null;
+	private Coords cylinderStart = null;
+	private Coords cylinderEnd = null;
 	private double cylinderThickness;
 	private float textureStart, textureEnd;
 	
@@ -194,7 +194,7 @@ abstract public class Manager {
 	/** creates a vertex at coordinates v
 	 * @param v
 	 */
-	protected void vertex(GgbVector v){
+	protected void vertex(Coords v){
 		vertex((float) v.getX(),(float) v.getY(),(float) v.getZ());
 	}
 
@@ -214,7 +214,7 @@ abstract public class Manager {
 	/** creates a normal at coordinates n
 	 * @param n
 	 */
-	protected void normal(GgbVector n){
+	protected void normal(Coords n){
 		normal((float) n.getX(),(float) n.getY(),(float) n.getZ());
 	}
 	
@@ -256,7 +256,7 @@ abstract public class Manager {
 	 * @param textureStart 
 	 * @param textureEnd 
 	 */
-	public void setCylinder(GgbVector p1, GgbVector p2, 
+	public void setCylinder(Coords p1, Coords p2, 
 			double thickness,
 			float textureStart, float textureEnd){
 		cylinderStart = p1;
@@ -264,7 +264,7 @@ abstract public class Manager {
 		cylinderThickness = thickness;
 		this.textureStart = textureStart;
 		this.textureEnd = textureEnd;
-		GgbVector[] vn = p2.sub(p1).completeOrthonormal();
+		Coords[] vn = p2.sub(p1).completeOrthonormal();
 		clockU = vn[0]; clockV = vn[1];
 	}
 	
@@ -272,9 +272,9 @@ abstract public class Manager {
 	/** translate the current cylinder
 	 * @param v
 	 */
-	public void translateCylinder(GgbVector v){
-		cylinderStart = (GgbVector) cylinderStart.add(v);
-		cylinderEnd = (GgbVector) cylinderEnd.add(v);
+	public void translateCylinder(Coords v){
+		cylinderStart = (Coords) cylinderStart.add(v);
+		cylinderEnd = (Coords) cylinderEnd.add(v);
 	}
 	
 	
@@ -286,7 +286,7 @@ abstract public class Manager {
 	public void cylinderRule(double u, double v, double texturePos){
 		
 		//normal vector
-		GgbVector vn = (GgbVector) clockV.mul(v).add(clockU.mul(u));
+		Coords vn = (Coords) clockV.mul(v).add(clockU.mul(u));
 		normal((float) vn.getX(), (float) vn.getY(), (float) vn.getZ());
 		
 		//bottom vertex
@@ -325,7 +325,7 @@ abstract public class Manager {
 	 * @param amplitude amplitude of the variation of color
 	 * @return the color for highlighting object
 	 */
-	public GgbVector getHigthlighting(GgbVector color, GgbVector colorHighlighted){
+	public Coords getHigthlighting(Coords color, Coords colorHighlighted){
 				
 		return color.mul(colorFactor).add(colorHighlighted.mul(1-colorFactor));
 	}

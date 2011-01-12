@@ -2,7 +2,7 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.Functional2Var;
@@ -172,24 +172,24 @@ implements Previewable, Functional2Var{
 
 
 
-	public GgbVector evaluatePoint(double u, double v) {
+	public Coords evaluatePoint(double u, double v) {
 		
 		GeoPointND point = (GeoPointND) getGeoElement(); 
 		
 		double r = point.getPointSize()/getView3D().getScale()*1.5;
-		GgbVector n = new GgbVector(new double[] {
+		Coords n = new Coords(new double[] {
 				Math.cos(u)*Math.cos(v)*r,
 				Math.sin(u)*Math.cos(v)*r,
 				Math.sin(v)*r});
 		
-		return (GgbVector) n.add(point.getInhomCoordsInD(3));
+		return (Coords) n.add(point.getInhomCoordsInD(3));
 	}
 
 
 	
 
-	public GgbVector evaluateNormal(double u, double v) {
-		return new GgbVector(new double[] {
+	public Coords evaluateNormal(double u, double v) {
+		return new Coords(new double[] {
 				Math.cos(u)*Math.cos(v),
 				Math.sin(u)*Math.cos(v),
 				Math.sin(v)});

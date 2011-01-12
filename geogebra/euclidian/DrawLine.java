@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -121,7 +121,7 @@ public class DrawLine extends Drawable implements Previewable {
 			labelVisible = geo.isLabelVisible();
 			updateStrokes(geo);
 			
-			GgbVector equation = g.getCartesianEquationVector(null);//TODO
+			Coords equation = g.getCartesianEquationVector(null);//TODO
 			if (equation==null){
 				isVisible = false;
 				return;
@@ -405,7 +405,7 @@ public class DrawLine extends Drawable implements Previewable {
 	public void updateMousePos(double xRW, double yRW) {	
 		if (isVisible) { 	
 			
-			GgbVector coords;
+			Coords coords;
 			
 			switch (previewMode) {
 			case PREVIEW_LINE:
@@ -432,7 +432,7 @@ public class DrawLine extends Drawable implements Previewable {
 					view.getEuclidianController().setLineEndPoint(null);
 				
 				// line through first point and mouse position	
-				coords = startPoint.getCoordsInD(2).crossProduct(new GgbVector(xRW, yRW, 1));
+				coords = startPoint.getCoordsInD(2).crossProduct(new Coords(xRW, yRW, 1));
 				((GeoLine) g).setCoords(coords.getX(), coords.getY(), coords.getZ());
 				//GeoVec3D.cross(startPoint, xRW, yRW, 1.0, g);
     
@@ -467,7 +467,7 @@ public class DrawLine extends Drawable implements Previewable {
 		        
 		        coords = previewPoint2.getCoordsInD(2).crossProduct(startPoint.getCoordsInD(2));
 		        g1.setCoords(coords.getX(), coords.getY(), coords.getZ());
-		        coords = previewPoint2.getCoordsInD(2).crossProduct(new GgbVector(xRW, yRW, 1));
+		        coords = previewPoint2.getCoordsInD(2).crossProduct(new Coords(xRW, yRW, 1));
 				h.setCoords(coords.getX(), coords.getY(), coords.getZ());
 		        
 		        

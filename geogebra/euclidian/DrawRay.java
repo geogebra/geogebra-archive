@@ -18,7 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipLine;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
@@ -91,7 +91,7 @@ implements Previewable {
 
 			// calc direction vector of ray in screen coords
 			
-			GgbVector equation = ray.getCartesianEquationVector(null);//TODO
+			Coords equation = ray.getCartesianEquationVector(null);//TODO
 			if (equation==null){
 				isVisible = false;
 				return;
@@ -215,7 +215,7 @@ implements Previewable {
 		isVisible = points.size() == 1;
 		if (isVisible) { 
 			//	start point
-			GgbVector coords = ((GeoPointND) points.get(0)).getInhomCoordsInD(2);						   			
+			Coords coords = ((GeoPointND) points.get(0)).getInhomCoordsInD(2);						   			
 			a = coords.get();			                        
 			view.toScreenCoords(a);						
 			line.setLine(a[0], a[1], a[0], a[1]);                                   			                                            

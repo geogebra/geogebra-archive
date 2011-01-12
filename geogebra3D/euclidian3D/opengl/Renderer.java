@@ -4,9 +4,9 @@ package geogebra3D.euclidian3D.opengl;
 
 
 
-import geogebra.Matrix.GgbMatrix;
-import geogebra.Matrix.GgbMatrix4x4;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3DLists;
@@ -91,7 +91,7 @@ public class Renderer implements GLEventListener {
 	private EuclidianView3D view3D;
 	
 	// for drawing
-	private GgbMatrix4x4 m_drawingMatrix; //matrix for drawing
+	private CoordMatrix4x4 m_drawingMatrix; //matrix for drawing
 	
 	
 	///////////////////
@@ -682,7 +682,7 @@ public class Renderer implements GLEventListener {
      * @param color (r,g,b,a) vector
      * 
      */
-    public void setColor(GgbVector color){
+    public void setColor(Coords color){
 
     	
     	
@@ -756,7 +756,7 @@ public class Renderer implements GLEventListener {
      * 
      * @param a_matrix the matrix
      */
-    public void setMatrix(GgbMatrix4x4 a_matrix){
+    public void setMatrix(CoordMatrix4x4 a_matrix){
     	m_drawingMatrix=a_matrix;
     }
     
@@ -766,7 +766,7 @@ public class Renderer implements GLEventListener {
      * 
      * @return the matrix
      */
-    public GgbMatrix4x4 getMatrix(){
+    public CoordMatrix4x4 getMatrix(){
     	return m_drawingMatrix;
     }
     
@@ -783,7 +783,7 @@ public class Renderer implements GLEventListener {
      * sets a_drawingMatrix to openGL.
      * @param a_drawingMatrix the matrix
      */
-    private void initMatrix(GgbMatrix a_drawingMatrix){
+    private void initMatrix(CoordMatrix a_drawingMatrix){
     	initMatrix(a_drawingMatrix.get());
     }   
     
@@ -797,7 +797,7 @@ public class Renderer implements GLEventListener {
 		gl.glMultMatrixd(a_drawingMatrix,0);
     }     
 
-    public void translate(GgbVector v){
+    public void translate(Coords v){
     	gl.glPushMatrix();
     	gl.glTranslated(v.getX(), v.getY(), v.getZ());
     }
@@ -1547,7 +1547,7 @@ public class Renderer implements GLEventListener {
 	 * @return interval to draw the line
 	 */
 	public double[] getIntervalInFrustum(double[] minmax, 
-			GgbVector o, GgbVector v,
+			Coords o, Coords v,
 			boolean extendedDepth){
 		
 		

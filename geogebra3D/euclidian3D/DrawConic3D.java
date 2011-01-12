@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
@@ -78,7 +78,7 @@ public class DrawConic3D extends Drawable3DCurves {
 			brush.start(8);
 			//brush.setAffineTexture(0.5f, 0.125f);
 			
-			GgbVector center = conic.getMidpoint3D();
+			Coords center = conic.getMidpoint3D();
 			
 
 			

@@ -13,8 +13,8 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoLineND;
@@ -53,7 +53,7 @@ public class AlgoPlaneThroughPointAndLine extends AlgoPlaneThroughPoint {
   
     protected final void compute() {
     	
-    	GgbCoordSys coordsys = getPlane().getCoordSys();
+    	CoordSys coordsys = getPlane().getCoordSys();
     	
 		//recompute the coord sys
     	coordsys.resetCoordSys();

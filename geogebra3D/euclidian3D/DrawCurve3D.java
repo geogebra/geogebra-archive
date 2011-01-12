@@ -1,6 +1,6 @@
 package geogebra3D.euclidian3D;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.plots.CurveMesh;
@@ -75,15 +75,15 @@ public class DrawCurve3D extends Drawable3DCurves {
 		double y2 = temp.getBottom();
 		double z1 = temp.getFront(true);
 		double z2 = temp.getBack(true);
-		GgbVector [] v = new GgbVector[8];
-		v[0] = new GgbVector(x1,y1,z1);
-		v[1] = new GgbVector(x1,y2,z1);
-		v[2] = new GgbVector(x1,y1,z2);
-		v[3] = new GgbVector(x1,y2,z2);
-		v[4] = new GgbVector(x2,y1,z1);
-		v[5] = new GgbVector(x2,y2,z1);
-		v[6] = new GgbVector(x2,y1,z2);
-		v[7] = new GgbVector(x2,y2,z2);
+		Coords [] v = new Coords[8];
+		v[0] = new Coords(x1,y1,z1);
+		v[1] = new Coords(x1,y2,z1);
+		v[2] = new Coords(x1,y1,z2);
+		v[3] = new Coords(x1,y2,z2);
+		v[4] = new Coords(x2,y1,z1);
+		v[5] = new Coords(x2,y2,z1);
+		v[6] = new Coords(x2,y1,z2);
+		v[7] = new Coords(x2,y2,z2);
 
 		savedRadius=0;
 		double norm;
@@ -106,15 +106,15 @@ public class DrawCurve3D extends Drawable3DCurves {
 		double y2 = temp.getBottom();
 		double z1 = temp.getFront(true);
 		double z2 = temp.getBack(true);
-		GgbVector [] v = new GgbVector[8];
-		v[0] = new GgbVector(x1,y1,z1,1);
-		v[1] = new GgbVector(x1,y2,z1,1);
-		v[2] = new GgbVector(x1,y1,z2,1);
-		v[3] = new GgbVector(x1,y2,z2,1);
-		v[4] = new GgbVector(x2,y1,z1,1);
-		v[5] = new GgbVector(x2,y2,z1,1);
-		v[6] = new GgbVector(x2,y1,z2,1);
-		v[7] = new GgbVector(x2,y2,z2,1);
+		Coords [] v = new Coords[8];
+		v[0] = new Coords(x1,y1,z1,1);
+		v[1] = new Coords(x1,y2,z1,1);
+		v[2] = new Coords(x1,y1,z2,1);
+		v[3] = new Coords(x1,y2,z2,1);
+		v[4] = new Coords(x2,y1,z1,1);
+		v[5] = new Coords(x2,y2,z1,1);
+		v[6] = new Coords(x2,y1,z2,1);
+		v[7] = new Coords(x2,y2,z2,1);
 		
 		double radius=0;
 		for(int i = 0; i < 8; i++){

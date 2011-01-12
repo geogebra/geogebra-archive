@@ -2,8 +2,8 @@ package geogebra.kernel.kernelND;
 
 import java.awt.geom.AffineTransform;
 
-import geogebra.Matrix.GgbMatrix;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
@@ -64,9 +64,9 @@ public abstract class GeoQuadricND extends GeoElement {
 	protected boolean defined = true;
 	
 	
-	protected GgbVector midpoint;
+	protected Coords midpoint;
 	//TODO merge with 2D eigenvec
-	protected GgbVector[] eigenvecND;
+	protected Coords[] eigenvecND;
 
 
 	protected double[] diagonal;
@@ -86,7 +86,7 @@ public abstract class GeoQuadricND extends GeoElement {
 		matrixDim = (dimension+1)*(dimension+2)/2;
 		matrix = new double[matrixDim];
 		halfAxes = new double[dimension];
-		midpoint = new GgbVector(dimension+1);
+		midpoint = new Coords(dimension+1);
 		midpoint.set(dimension+1, 1);
 	}
 	
@@ -100,12 +100,12 @@ public abstract class GeoQuadricND extends GeoElement {
 	 * @return the matrix representation of the quadric in its dimension
 	 * regarding vals
 	 */
-	abstract protected GgbMatrix getGgbMatrix(double[] vals);
+	abstract protected CoordMatrix getGgbMatrix(double[] vals);
 		
 	/**
 	 * @return the matrix representation of the quadric in its dimension
 	 */
-	protected GgbMatrix getGgbMatrix(){
+	protected CoordMatrix getGgbMatrix(){
 		return getGgbMatrix(matrix);
 	}
 	
@@ -115,15 +115,15 @@ public abstract class GeoQuadricND extends GeoElement {
 	 */
 	protected void setMatrixFromEigen(){
 		
-		GgbMatrix diagonalizedMatrix = GgbMatrix.DiagonalMatrix(diagonal);
+		CoordMatrix diagonalizedMatrix = CoordMatrix.DiagonalMatrix(diagonal);
 		
-		GgbMatrix eigenMatrix = new GgbMatrix(4, 4);
+		CoordMatrix eigenMatrix = new CoordMatrix(4, 4);
 		eigenMatrix.set(eigenvecND);
 		eigenMatrix.set(getMidpoint(),4);
 		
-		GgbMatrix eigenMatrixInv = eigenMatrix.inverse();
+		CoordMatrix eigenMatrixInv = eigenMatrix.inverse();
 		
-		GgbMatrix finalMatrix = eigenMatrixInv.transposeCopy().mul(diagonalizedMatrix).mul(eigenMatrixInv);
+		CoordMatrix finalMatrix = eigenMatrixInv.transposeCopy().mul(diagonalizedMatrix).mul(eigenMatrixInv);
 		
 		setMatrix(finalMatrix);
 	}
@@ -132,7 +132,7 @@ public abstract class GeoQuadricND extends GeoElement {
 	 * sets the matrix values from the symmetric matrix m
 	 * @param m
 	 */
-	abstract protected void setMatrix(GgbMatrix m);
+	abstract protected void setMatrix(CoordMatrix m);
 	
 	/////////////////////////////////
 	// SPECIAL CASES SETTERS
@@ -252,13 +252,13 @@ public abstract class GeoQuadricND extends GeoElement {
 		
 	}
 
-	public GgbVector getMidpoint(){
+	public Coords getMidpoint(){
 		return midpoint;
 	}
 	
 
-	public GgbVector getMidpoint3D(){
-		GgbVector ret = new GgbVector(4);
+	public Coords getMidpoint3D(){
+		Coords ret = new Coords(4);
 		for (int i=1; i<midpoint.getLength();i++)
 			ret.set(i, midpoint.get(i));
 		ret.setW(midpoint.getLast());

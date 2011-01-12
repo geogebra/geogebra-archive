@@ -1,6 +1,6 @@
 package geogebra.kernel.kernelND;
 
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Region;
 
 /**
@@ -16,14 +16,14 @@ public interface Region3D extends Region {
 	 * @param y2d y-coord
 	 * @return the 3D point
 	 */
-	public GgbVector getPoint(double x2d, double y2d);
+	public Coords getPoint(double x2d, double y2d);
 
 	
 	/** return the normal projection of the (coords) point on the region 
 	 * @param coords coords of the point
 	 * @return normal projection
 	 */
-	public GgbVector[] getNormalProjection(GgbVector coords);
+	public Coords[] getNormalProjection(Coords coords);
 
 
 	/** return the willingDirection projection of the (coords) point on the region 
@@ -31,7 +31,7 @@ public interface Region3D extends Region {
 	 * @param willingDirection direction of the projection
 	 * @return projection
 	 */
-	public GgbVector[] getProjection(GgbVector coords, GgbVector willingDirection);
+	public Coords[] getProjection(Coords coords, Coords willingDirection);
 	
 	
 

@@ -1,7 +1,7 @@
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.GgbCoordSys;
-import geogebra.Matrix.GgbVector;
+import geogebra.Matrix.CoordSys;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
@@ -99,7 +99,7 @@ public abstract class AlgoCoordSys2D extends AlgoElement3D {
 	
 	protected void compute() {
 				
-		GgbCoordSys coordsys = cs.getCoordSys();
+		CoordSys coordsys = cs.getCoordSys();
 		
 		for(int j=0;j<points.length;j++)
 			if (!points[j].isDefined()){
@@ -119,7 +119,7 @@ public abstract class AlgoCoordSys2D extends AlgoElement3D {
 			// check if other points lie on the coord sys
 			for(;(i<points.length)&&(coordsys.isDefined());i++){
 				//project the point on the coord sys
-				GgbVector[] project=points[i].getCoordsInD(3).projectPlane(coordsys.getMatrixOrthonormal());
+				Coords[] project=points[i].getCoordsInD(3).projectPlane(coordsys.getMatrixOrthonormal());
 
 				//check if the vertex lies on the coord sys
 				if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION))
