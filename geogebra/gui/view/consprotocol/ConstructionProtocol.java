@@ -867,7 +867,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	}
 
 	class RowData {
-		int rowNumber;
+		int rowNumber=-1;
 		int index; // construction index of line: may be different
 					// to geo.getConstructionIndex() as not every
 					// geo is shown in the protocol
@@ -900,6 +900,9 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			Integer index = null;
 			Integer prevIndex = null;
 
+			index = (rowNumber < 0) ? -1 : data.getConstructionIndex(rowNumber);
+			prevIndex = (rowNumber < 1) ? -1 : data.getConstructionIndex(rowNumber - 1);
+			/*
 			try {
 				index = (rowNumber < 0) ? -1 : data.getConstructionIndex(rowNumber);
 			}
@@ -913,7 +916,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			catch (Exception e) {
 				prevIndex = -1;
 			}
-
+*/
 			
 			// TODO: This logic could be merged with the HTML export logic.
 			int m;

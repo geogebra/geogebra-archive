@@ -79,16 +79,12 @@ public class AlgoCirclePointRadius extends AlgoSphereNDPointRadius {
     }
 
     public int getRelatedModeID() {
-    	int ret;
     	switch (super.getType()){
     	case AlgoSphereNDPointRadius.TYPE_RADIUS:
-    		ret = EuclidianConstants.MODE_CIRCLE_POINT_RADIUS;
-    		break;
+    		return EuclidianConstants.MODE_CIRCLE_POINT_RADIUS;
     	default:
-    		ret = EuclidianConstants.MODE_COMPASSES;
-    		break;
+    		return EuclidianConstants.MODE_COMPASSES;
     	}
-    	return ret;
     }
         
     public GeoConic getCircle() {
