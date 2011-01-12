@@ -19,6 +19,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
@@ -524,8 +525,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				d = new DrawRay3D(this, (GeoRayND) geo);					
 				break;	
 
+			case GeoElement3D.GEO_CLASS_CONIC:					
 			case GeoElement3D.GEO_CLASS_CONIC3D:					
-				d = new DrawConic3D(this, (GeoConic3D) geo);
+				d = new DrawConic3D(this, (GeoConicND) geo);
 				break;	
 
 			case GeoElement3D.GEO_CLASS_AXIS3D:	

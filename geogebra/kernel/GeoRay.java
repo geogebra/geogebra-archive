@@ -96,7 +96,7 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 		PathParameter pp = P.getPathParameter();
 		if (pp.t < 0.0) {
 			P.setCoords2D(startPoint.x, startPoint.y,startPoint.z);
-			P.updateCoordsFrom2D(false);
+			P.updateCoordsFrom2D(false,null);
 			pp.t = 0.0;
 		} 
 	}

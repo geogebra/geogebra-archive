@@ -326,17 +326,24 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		else //use real coords
 			coords = getCoords();
 
-		if (getWillingDirection()==null) //use normal direction for projection
-			project = coordSys.getNormalProjection(coords);
-		else //use willing direction for projection
-			project = coordSys.getProjection(coords,getWillingDirection());		
-		
-		GgbVector v = new GgbVector(3);
-		v.setX(project[0].getX());
-		v.setY(project[0].getY());
-   		v.setZ(project[0].getW());
-   		return v;
-		
+		if (coordSys==null){ //project on plane xOy
+			GgbVector v = new GgbVector(3);
+			v.setX(coords.getX());
+			v.setY(coords.getY());
+			v.setZ(coords.getW());
+			return v;			
+		}else{
+			if (getWillingDirection()==null) //use normal direction for projection
+				project = coordSys.getNormalProjection(coords);
+			else //use willing direction for projection
+				project = coordSys.getProjection(coords,getWillingDirection());		
+
+			GgbVector v = new GgbVector(3);
+			v.setX(project[0].getX());
+			v.setY(project[0].getY());
+			v.setZ(project[0].getW());
+			return v;
+		}
    		//return project[0];
     	
     }
@@ -495,7 +502,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		path.pointChanged(this);
 		//check if the path is a 2D path : in this case, 2D coords have been modified
 		if (!((GeoElement) path).isGeoElement3D())
-			updateCoordsFrom2D(false);
+			updateCoordsFrom2D(false,null);
 		updateCoords(); 
 	}
 	
@@ -621,14 +628,17 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	
 	
 	/**
-	 * update 3D coords regarding 2D coords on region coord sys
+	 * update 3D coords regarding 2D coords 
+	 * (if coordsys!=null, use it; else if region!=null, use its coord sys; else project on xOy plane)
 	 * @param doPathOrRegion says if the path or the region calculations have to be done
 	 */
-	public void updateCoordsFrom2D(boolean doPathOrRegion){
-		if (region==null)
-			setCoords(new GgbVector(getX2D(), getY2D(), 0, 1), doPathOrRegion);
-		else
+	public void updateCoordsFrom2D(boolean doPathOrRegion, GgbCoordSys coordsys){
+		if (coordsys!=null)
+			setCoords(coordsys.getPoint(getX2D(), getY2D()), doPathOrRegion);
+		else if (region!=null)
 			setCoords(((Region3D) region).getPoint(getX2D(), getY2D()), doPathOrRegion);
+		else 
+			setCoords(new GgbVector(getX2D(), getY2D(), 0, 1), doPathOrRegion);
 	}
 	
 	

@@ -1055,7 +1055,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 				rp.setT1((xv*y-x*yv)/(xv*yu-xu*yv));
 				rp.setT2((x*yu-xu*y)/(xv*yu-xu*yv));
 				
-				P.updateCoordsFrom2D(false);
+				P.updateCoordsFrom2D(false,null);
 			}
 		}
 	}

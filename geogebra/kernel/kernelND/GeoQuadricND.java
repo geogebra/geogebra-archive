@@ -257,6 +257,13 @@ public abstract class GeoQuadricND extends GeoElement {
 	}
 	
 
+	public GgbVector getMidpoint3D(){
+		GgbVector ret = new GgbVector(4);
+		for (int i=1; i<midpoint.getLength();i++)
+			ret.set(i, midpoint.get(i));
+		ret.setW(midpoint.getLast());
+		return ret;
+	}
 
 	
 	public double getHalfAxis(int i){

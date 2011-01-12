@@ -321,7 +321,7 @@ GeoSegmentND {
 		// special case: segment of length 0
 		if (length == 0) {
 			P.setCoords2D(startPoint.inhomX, startPoint.inhomY,1);
-			P.updateCoordsFrom2D(false);
+			P.updateCoordsFrom2D(false,null);
 			if (!(pp.t >= 0 && pp.t <= 1)) {
 				pp.t = 0.0;
 			}
@@ -335,11 +335,11 @@ GeoSegmentND {
 		// i.e. ensure 0 <= t <= 1 
 		if (pp.t < 0.0) {
 			P.setCoords2D(startPoint.x, startPoint.y,startPoint.z);
-			P.updateCoordsFrom2D(false);				
+			P.updateCoordsFrom2D(false,null);				
 			pp.t = 0.0;
 		} else if  (pp.t > 1.0) {
 			P.setCoords2D(endPoint.x, endPoint.y,endPoint.z);
-			P.updateCoordsFrom2D(false);
+			P.updateCoordsFrom2D(false,null);
 			pp.t = 1.0;
 		}
 	}
@@ -351,7 +351,7 @@ GeoSegmentND {
 		// special case: segment of length 0
 		if (length == 0) {
 			P.setCoords2D(startPoint.inhomX, startPoint.inhomY,1);
-			P.updateCoordsFrom2D(false);
+			P.updateCoordsFrom2D(false,null);
 			if (!(pp.t >= 0 && pp.t <= 1)) {
 				pp.t = 0.0;
 			}
@@ -367,7 +367,7 @@ GeoSegmentND {
 		
 		// calc point for given parameter
 		P.setCoords2D(startPoint.inhomX + pp.t * y, startPoint.inhomY - pp.t * x,1);
-		P.updateCoordsFrom2D(false);
+		P.updateCoordsFrom2D(false,null);
 	}
 	
 	/**

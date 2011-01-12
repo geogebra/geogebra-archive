@@ -58,27 +58,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	// enable negative sign of first coefficient in implicit equations
 	private static boolean KEEP_LEADING_SIGN = false;
 
-	/** single point type*/    
-	public static final int CONIC_SINGLE_POINT = QUADRIC_SINGLE_POINT;
-	/** intersecting lines type*/
-	public static final int CONIC_INTERSECTING_LINES = QUADRIC_INTERSECTING_LINES;
-	/** ellipse type*/
-	public static final int CONIC_ELLIPSE = QUADRIC_ELLIPSOID;
-	/** circle type*/
-	public static final int CONIC_CIRCLE = QUADRIC_SPHERE;
-	/** hyperbola type*/
-	public static final int CONIC_HYPERBOLA = QUADRIC_HYPERBOLOID;
-	/** empty conic type*/
-	public static final int CONIC_EMPTY = QUADRIC_EMPTY;
-	/** double line type*/
-	public static final int CONIC_DOUBLE_LINE = QUADRIC_DOUBLE_LINE;
-	/** parallel lines type */
-	public static final int CONIC_PARALLEL_LINES = QUADRIC_PARALLEL_LINES;
-	/** parabola type */
-	public static final int CONIC_PARABOLA = QUADRIC_PARABOLOID;
-	/** line type */
-	public static final int CONIC_LINE = QUADRIC_LINE;
-
 	/* 
 	 *               ( A[0]  A[3]    A[4] )
 	 *      matrix = ( A[3]  A[1]    A[5] )
@@ -101,9 +80,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
 	/** translation vector (midpoint, vertex) */    
 	GeoVec2D b = new GeoVec2D(kernel);
-	/** lines of which this conic consists in case it's degenerate */
-	GeoLine[] lines;
-	private GeoPoint singlePoint;
 	private GeoPoint [] startPoints;
 	//private boolean defined = true;
 	private ArrayList<GeoPoint> pointsOnConic;
@@ -2131,72 +2107,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		return isOnFullConic(P, eps);
 	 }
 	 
-	 /** 
-	 * states wheter P lies on this conic or not. Note: this method
-	 * is not overwritten by subclasses like isIntersectionPointIncident()
-	 * @return true P lies on this conic
-	 * @param P
-	 * @param eps precision
-	 */
-	final boolean isOnFullConic(GeoPoint P, double eps) {						
-		switch (type) {	
-			 case GeoConic.CONIC_SINGLE_POINT:                         
-	            return P.distance(singlePoint) < eps;                             
-	            
-	        case GeoConic.CONIC_INTERSECTING_LINES:  
-	        case GeoConic.CONIC_DOUBLE_LINE: 
-	        case GeoConic.CONIC_PARALLEL_LINES:                
-	            return lines[0].isOnFullLine(P, eps) || lines[1].isOnFullLine(P, eps);	
-	            
-	        case GeoConic.CONIC_LINE:                
-	            return lines[0].isOnFullLine(P, eps);	    
-	        
-	        case GeoConic.CONIC_EMPTY:
-	        	return false;
-		}        
-		
-		// if we get here let's handle the remaining cases
-				
-     	// remember coords of P
-		double Px = P.x;
-		double Py = P.y;
-		double Pz = P.z;
-														
-		// convert P to eigenvector coord system
-		coordsRWtoEV(P);	
-		double px = P.x / P.z;
-		double py = P.y / P.z;
-		
-		boolean result = false;			
-		switch (type) {	
-			case GeoConic.CONIC_CIRCLE:
-			  	// x^2 + y^2 = r^2
-				double radius2 = halfAxes[0]*halfAxes[0];
-			  	result = Kernel.isEqual(px*px/radius2 + py*py/radius2, 1, eps);
-				break;		   					
-		  	
-			case GeoConic.CONIC_ELLIPSE:
-          		// x^2/a^2 + y^2/b^2 = 1
-			  	result = Kernel.isEqual(px*px / (halfAxes[0]*halfAxes[0]) + py*py / (halfAxes[1]*halfAxes[1]), 1, eps);
-				break;	
-				
-			case GeoConic.CONIC_HYPERBOLA:   
-	          	// 	x^2/a^2 - y^2/b^2 = 1
-			  	result = Kernel.isEqual(px*px / (halfAxes[0]*halfAxes[0]), 1 + py*py / (halfAxes[1]*halfAxes[1]), eps);
-				break;	
-				
-			case GeoConic.CONIC_PARABOLA: 
-          		// y^2 = 2 p x								               
-                result = Kernel.isEqual(py*py, 2*p*px, eps);
-				break;	
-		}
-			
-		// restore coords of P
-		P.x = Px; 
-		P.y = Py; 
-		P.z = Pz;
-		return result;				
-	}
+
 
 	/**
 	 * return wheter this conic represents the same conic as c 
@@ -2392,320 +2303,15 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * Path interface
 	 */
 	 
-	public void pointChanged(GeoPointND PI) {
-		
-		GeoPoint P = (GeoPoint) PI;
-		
-		double px, py;		
-		PathParameter pp = P.getPathParameter();
-		pp.setPathType(type);
-			
-		switch (type) {
-			case CONIC_EMPTY:
-				P.x = Double.NaN;
-				P.y = Double.NaN;
-				P.z = Double.NaN;
-			break;
-			
-			case CONIC_SINGLE_POINT:
-				P.x = singlePoint.x;
-				P.y = singlePoint.y;
-				P.z = singlePoint.z;
-			break;
-			
-			case CONIC_INTERSECTING_LINES:
-			case CONIC_PARALLEL_LINES:
-				/* 
-				 * For line conics, we use the parameter ranges 
-				 *   first line: t = (-1, 1)
-				 *   second line: t = (1, 3)
-				 * and convert this to s = (-inf, inf) using		
-				 *   first line: s = t /(1 - abs(t)) 
-				 *   second line:  s = (t-2) /(1 - abs(t-2))
-				 * which allows us to use the line's path parameter s
-				 */
-				
-				// choose closest line
-				boolean firstLine = lines[0].distanceHom(P) <= lines[1].distanceHom(P);
-				GeoLine line = firstLine ? lines[0] : lines[1];
-				
-				// compute line path parameter
-				line.pointChanged(P);
-							
-				// convert line parameter to (-1,1)
-				pp.t = PathNormalizer.inverseInfFunction(pp.t);
-				if (!firstLine) {
-					pp.t = pp.t + 2;// convert from (-1,1) to (1,3)									
-				}				
-			break;
-			
-			case CONIC_LINE:
-			case CONIC_DOUBLE_LINE:
-				lines[0].pointChanged(P);
-			break;
-			
-			case CONIC_CIRCLE:
-			case CONIC_ELLIPSE:			
-				//	transform to eigenvector coord-system
-				coordsRWtoEV(P);				
 
-				// calc parameter 
-				px = P.x / P.z;
-				py = P.y / P.z;		
-				
-				// relation between the internal parameter t and the angle theta:
-				// t = atan(a/b tan(theta)) where tan(theta) = py / px
-				pp.t = Math.atan2(halfAxes[0]*py, halfAxes[1]*px);											
-				
-				// calc Point on conic using this parameter
-				P.x = halfAxes[0] * Math.cos(pp.t);	
-				P.y = halfAxes[1] * Math.sin(pp.t);												
-				P.z = 1.0;
-				
-				//	transform back to real world coord system
-				coordsEVtoRW(P);				
-			break;			
-			
-			case CONIC_HYPERBOLA:
-				/* 
-				 * For hyperbolas, we use the parameter ranges 
-				 *   right branch: t = (-1, 1)
-				 *   left branch: t = (1, 3)
-				 * and get this from  s = (-inf, inf) using		
-				 *   right branch: s = t /(1 - abs(t)) 
-				 * where we use the parameter form
-				 *   (a*cosh(s), b*sinh(s))
-				 * for the right branch of the hyperbola.
-				 */ 
-				
-				// transform to eigenvector coord-system
-				coordsRWtoEV(P);
-				px = P.x / P.z;
-				py = P.y / P.z;
-				
-				// calculate s in (-inf, inf) and keep py				
-				double s = MyMath.asinh(py / halfAxes[1]);
-				P.x = halfAxes[0] * MyMath.cosh(s);	
-				P.y = py;
-				P.z = 1.0;
-
-				// compute t in (-1,1) from s in (-inf, inf)
-				pp.t = PathNormalizer.inverseInfFunction(s);	
-				if (px < 0) { // left branch									
-					pp.t = pp.t + 2; // convert (-1,1) to (1,3)
-					P.x = -P.x;
-				}		
-
-				// transform back to real world coord system
-				coordsEVtoRW(P);													
-			break;																			
-			
-			case CONIC_PARABOLA:
-				//	transform to eigenvector coord-system
-				coordsRWtoEV(P);
-				
-				// keep py
-				py = P.y / P.z;
-				pp.t = py / p;
-				P.x = p * pp.t  * pp.t  / 2.0;
-				P.y = py;
-				P.z = 1.0; 									
-				
-				// transform back to real world coord system
-				coordsEVtoRW(P);		
-			break;
-		}		
-	}
-	
-	public void pathChanged(GeoPointND PI) {
-		
-		GeoPoint P = (GeoPoint) PI;
-		
-		// if type of path changed (other conic) then we
-		// have to recalc the parameter with pointChanged()
-		PathParameter pp = P.getPathParameter();		
-		if (pp.getPathType() != type || Double.isNaN(pp.t)) {		
-			pointChanged(P);
-			return;
-		}
-		
-		switch (type) {
-			case CONIC_EMPTY:
-				P.x = Double.NaN;
-				P.y = Double.NaN;
-				P.z = Double.NaN;
-				break;
-			
-			case CONIC_SINGLE_POINT:
-				P.x = singlePoint.x;
-				P.y = singlePoint.y;
-				P.z = singlePoint.z;
-				break;
-			
-			case CONIC_INTERSECTING_LINES:
-			case CONIC_PARALLEL_LINES:
-				/* 
-				 * For line conics, we use the parameter ranges 
-				 *   first line: t = (-1, 1)
-				 *   second line: t = (1, 3)
-				 * and convert this to s = (-inf, inf) using		
-				 *   first line: s = t /(1 - abs(t)) 
-				 *   second line:  s = (t-2) /(1 - abs(t-2))
-				 * which allows us to use the line's path parameter s
-				 */ 
-				double pathParam = pp.t;
-				boolean leftBranch = pathParam > 1;
-				pp.t = leftBranch ? pathParam - 2 : pathParam;
-				// convert from (-1,1) to (-inf, inf) line path parameter
-				pp.t = pp.t /(1 - Math.abs(pp.t));
-				if (leftBranch) {
-					lines[1].pathChanged(P);					 
-				} else {
-					lines[0].pathChanged(P);										
-				}
-						
-				// set our path parameter again
-				pp.t = pathParam;
-				break;
-				
-			case CONIC_LINE:
-			case CONIC_DOUBLE_LINE:
-				lines[0].pathChanged(P);	
-				break;
-			
-			case CONIC_CIRCLE:
-			case CONIC_ELLIPSE:						
-				// calc Point on conic using this parameter (in eigenvector space)
-				P.x = halfAxes[0] * Math.cos(pp.t);	
-				P.y = halfAxes[1] * Math.sin(pp.t);
-				P.z = 1.0;		
-				
-				// transform back to real world coord system
-				coordsEVtoRW(P);
-				break;			
-			
-			case CONIC_HYPERBOLA:			
-				/* 
-				 * For hyperbolas, we use the parameter ranges 
-				 *   right branch: t = (-1, 1)
-				 *   left branch: t = (1, 3)
-				 * and convert this to s = (-inf, inf) using		
-				 *   right branch: s = t /(1 - abs(t)) 
-				 *   left branch:  s = (t-2) /(1 - abs(t-2))
-				 * which allows us to use the parameter form
-				 *   (a*cosh(s), b*sinh(s))
-				 * for the right branch of the hyperbola.
-				 */ 
-				leftBranch = pp.t > 1;
-				double t = leftBranch ? pp.t - 2 : pp.t;
-				double s = t /(1 - Math.abs(t));
-				
-				P.x = halfAxes[0] * MyMath.cosh(s);
-				P.y = halfAxes[1] * MyMath.sinh(s);
-				P.z = 1.0;				
-				if (leftBranch) P.x = -P.x;
-				
-				// transform back to real world coord system
-				coordsEVtoRW(P);
-				break;																			
-			
-			case CONIC_PARABOLA:
-				P.y = p * pp.t;				
-				P.x = P.y * pp.t  / 2.0;				
-				P.z = 1.0;	
-				
-				// transform back to real world coord system
-				coordsEVtoRW(P);
-				break;
-		}
-	}
-	
-	public boolean isOnPath(GeoPointND PI, double eps) {
-		
-		GeoPoint P = (GeoPoint) PI;
-		
-		if (P.getPath() == this)
-			return true;
-		
-		return isOnFullConic(P, eps);
-	}
-	
-	/**
-	 * Returns the smallest possible parameter value for this path
-	 * @return the smallest possible parameter value for this
-	 * path (may be Double.NEGATIVE_INFINITY)
-	 */
-	public double getMinParameter() {
-		switch (type) {		
-			case CONIC_PARABOLA:
-			case CONIC_DOUBLE_LINE:
-			case CONIC_LINE:
-				return Double.NEGATIVE_INFINITY;
-				
-			case CONIC_HYPERBOLA:
-			case CONIC_INTERSECTING_LINES:
-			case CONIC_PARALLEL_LINES:
-				// For hyperbolas and line conics, we use the parameter ranges 
-				//   right branch: t = (-1, 1)
-				//   left branch: t = (1, 3)
-				return -1;
-															
-			case CONIC_CIRCLE:
-			case CONIC_ELLIPSE:
-				return -Math.PI;
-				
-			case CONIC_EMPTY:										
-			case CONIC_SINGLE_POINT:
-			default:
-				return 0;		
-		}		
-	}
-	
-	/**
-	 * Returns the largest possible parameter value for this path
-	 * @return the largest possible parameter value for this
-	 * path (may be Double.POSITIVE_INFINITY)
-	 */
-	public double getMaxParameter() {
-		switch (type) {
-			case CONIC_DOUBLE_LINE:			
-			case CONIC_PARABOLA:
-			case CONIC_LINE:
-				return Double.POSITIVE_INFINITY;
-									
-			case CONIC_CIRCLE:
-			case CONIC_ELLIPSE:
-				return Math.PI;
-				
-			case CONIC_HYPERBOLA:
-			case CONIC_INTERSECTING_LINES:
-			case CONIC_PARALLEL_LINES:
-				// For hyperbolas and line conics, we use the parameter ranges 
-				//   right branch: t = (-1, 1)
-				//   left branch: t = (1, 3)
-				return 3;
-				
-			case CONIC_EMPTY:										
-			case CONIC_SINGLE_POINT:
-			default:
-				return 0;		
-		}		
-	}
-	
 	public PathMover createPathMover() {
 		return new PathMoverGeneric(this);
 	}		
 	
-	public boolean isClosedPath() {
-		switch (type) {			
-			case CONIC_CIRCLE:
-			case CONIC_ELLIPSE:
-				return true;
 	
-			default:
-				return false;		
-		}		
-	}
+
+	
+
 	
 	public boolean isNumberValue() {
 		return false;
@@ -3003,5 +2609,24 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
     }
     
 
+
+    ////////////////////////////////////////
+    // FOR DRAWING IN 3D
+    ////////////////////////////////////////
+
+    public GgbVector getEigenvec3D(int i){
+    	GgbVector ret = new GgbVector(4);
+    	ret.set(getEigenvec(i));
+    	return ret;
+    }
+
+    public boolean hasDrawable3D() {
+    	return true;
+    }
+
+
+	public GgbVector getLabelPosition(){
+		return new GgbVector(0, 0, 0, 1);
+	}
 
 }

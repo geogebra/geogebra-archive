@@ -25,7 +25,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 	private GeoPoint[] points2D;
 	
 	/** 3D points  */
-	private GeoPoint3D[] points3D;
+	private GeoPointND[] points;
 	
 	/** helper algo for 2D coord sys */
 	private AlgoCoordSys2D algo;
@@ -49,11 +49,11 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     protected void setPoints(GeoPointND A, GeoPointND B, GeoPointND C){
     	
     	
-    	points3D = new GeoPoint3D[3];
+    	points = new GeoPointND[3];
     	
-    	points3D[0] = (GeoPoint3D) A;
-    	points3D[1] = (GeoPoint3D) B;
-       	points3D[2] = (GeoPoint3D) C;
+    	points[0] = A;
+    	points[1] = B;
+       	points[2] = C;
             	
 
     	coordSys = new GgbCoordSys(2);
@@ -67,16 +67,6 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     	
     	
     	
-
-    	
-    	//this.getKernel().setSilentMode(true);
-    	/*
-    	algo = new AlgoCoordSys2D(this.getConstruction(),
-    			new GeoPoint3D[] {(GeoPoint3D) A, (GeoPoint3D) B, (GeoPoint3D) C},true,false,false);    	
-    	coordSys = algo.getCoordSys();
-    	points2D = algo.getPoints2D();
-    	this.getKernel().setSilentMode(false);
-    	*/
     }
 
     
@@ -87,7 +77,9 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     
     
     protected void setInput() {
-        input = points3D;
+    	input = new GeoElement[3];
+    	for (int i=0; i<3; i++)
+    		input[i] = (GeoElement) points[i];
 
     }
     
@@ -116,7 +108,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 
     	coordSys.resetCoordSys();
     	for(int i=0;i<3;i++)
-    		coordSys.addPoint(points3D[i].getCoords());
+    		coordSys.addPoint(points[i].getCoordsInD(3));
     	
   
     	if (!coordSys.makeOrthoMatrix(true)){
@@ -126,7 +118,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     	
     	 for(int i=0;i<3;i++){
 			 //project the point on the coord sys
-			 GgbVector[] project=points3D[i].getCoords().projectPlane(coordSys.getMatrixOrthonormal());
+			 GgbVector[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
 
 			 //check if the vertex lies on the coord sys
 			 if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){

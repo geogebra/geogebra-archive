@@ -120,15 +120,21 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	final boolean isOnFullLine(GeoPoint P, double eps) {						
 		if (!P.isDefined()) return false;		
 			
+		return isOnFullLine(P.getCoordsInD(2), eps);
+	}	
+	
+	public final boolean isOnFullLine(GgbVector P, double eps) {						
+			
+			
 		double simplelength =  Math.abs(x) + Math.abs(y);
-		if (P.isInfinite()) {		
-			return Math.abs(x * P.x + y * P.y) < eps * simplelength;
+		if (Kernel.isZero(P.getZ())) { //infiinite point		
+			return Math.abs(x * P.getX() + y * P.getY()) < eps * simplelength;
 		}
 		else {
 			// STANDARD CASE: finite point			
-			return Math.abs(x * P.inhomX + y * P.inhomY + z) < eps * simplelength;
+			return Math.abs(x * P.getX()/P.getZ() + y * P.getY()/getZ() + z) < eps * simplelength;
 		}
-	}		  
+	}
 	
     /**
      * Returns whether this point lies on this line, segment or ray.     
@@ -255,6 +261,16 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	 */
 	final public double distanceHom(GeoPoint p) {                        
 		return Math.abs( (x * p.x / p.z + y * p.y / p.z + z) / 
+							GeoVec2D.length(x, y) );
+	}
+	
+	/**
+	 * 
+	 * @param p
+	 * @return the euclidian distance between this GeoLine and 2D point p.
+	 */
+	final public double distanceHom(GgbVector p) {                        
+		return Math.abs( (x * p.getX() / p.getZ() + y * p.getY() / p.getZ() + z) / 
 							GeoVec2D.length(x, y) );
 	}
     
@@ -692,14 +708,20 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	public void pointChanged(GeoPointND P) {
 		doPointChanged(P);
 	}
-		
 	
 	
 	private void doPointChanged(GeoPointND P) {
 		
 		GgbVector coords = P.getCoordsInD(2);
+		PathParameter pp = P.getPathParameter();
 		
+		doPointChanged(coords, pp);
+
+		P.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
+		P.updateCoordsFrom2D(false,null);
+	}
 		
+	public void doPointChanged(GgbVector coords, PathParameter pp) {
 	
 		// project P on line
 		double px = coords.getX()/coords.getZ();
@@ -709,19 +731,22 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 		// calculate projection point using perpendicular line
 		px += t * x;
 		py += t * y;
-		P.setCoords2D(px, py, 1);
-		P.updateCoordsFrom2D(false);
+		
+		coords.setX(px);
+		coords.setY(py);
+		coords.setZ(1);
 						
 		// set path parameter
 		if (startPoint != null) {
-			PathParameter pp = P.getPathParameter();
 			if (Math.abs(x) <= Math.abs(y)) {	
 				pp.t = (startPoint.z * px - startPoint.x) / (y * startPoint.z);								
 			} 
 			else {		
 				pp.t = (startPoint.y - startPoint.z * py) / (x * startPoint.z);			
 			}
-		}		
+		}	
+		
+		
 	}			
 	
 	public Point2D.Double getNearestPoint(GeoPoint p) {
@@ -734,20 +759,31 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 
 	}
 
-	public void pathChanged(GeoPointND PI) {
+	public void pathChanged(GeoPointND P) {
 		
-		GeoPoint P = (GeoPoint) PI;
+		GgbVector coords = P.getCoordsInD(2);
+		PathParameter pp = P.getPathParameter();
+		
+		pathChanged(coords, pp);
+
+		P.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
+		P.updateCoordsFrom2D(false,null);
+	}
+	
+	
+	public void pathChanged(GgbVector P, PathParameter pp) {
+		
 		
 		// calc point for given parameter
 		if (startPoint != null) {
-			PathParameter pp = P.getPathParameter();
-			P.x = startPoint.inhomX + pp.t * y;
-			P.y = startPoint.inhomY - pp.t * x;
-			P.z = 1.0;		
+			P.setX( startPoint.inhomX + pp.t * y);
+			P.setY( startPoint.inhomY - pp.t * x);
+			P.setZ( 1.0);		
 		} else  {
-			pointChanged(P);		
+			doPointChanged(P,pp);		
 		}
 	}
+	
     
 	public boolean isPath() {
 		return true;

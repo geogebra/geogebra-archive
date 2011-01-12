@@ -1249,7 +1249,7 @@ GeoPointND, Animatable  {
 		}
 		
 		//only used for 3D stuff
-		public void updateCoordsFrom2D(boolean doPathOrRegion){
+		public void updateCoordsFrom2D(boolean doPathOrRegion, GgbCoordSys coordsys){
 		}
 		
 		public GgbVector getInhomCoords(){

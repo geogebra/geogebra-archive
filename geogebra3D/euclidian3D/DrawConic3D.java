@@ -2,6 +2,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.GgbVector;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoConic3D;
@@ -23,11 +24,11 @@ public class DrawConic3D extends Drawable3DCurves {
 	
 	
 	/**
-	 * @param a_view3d the 3D view where the conic is drawn
-	 * @param a_conic the 3D conic to draw
+	 * @param view3d the 3D view where the conic is drawn
+	 * @param conic the conic to draw
 	 */
-	public DrawConic3D(EuclidianView3D a_view3d, GeoConic3D a_conic) {
-		super(a_view3d,a_conic);
+	public DrawConic3D(EuclidianView3D view3d, GeoConicND conic) {
+		super(view3d,conic);
 	}
 
 	
@@ -37,11 +38,10 @@ public class DrawConic3D extends Drawable3DCurves {
 
 	public void drawGeometry(Renderer renderer) {
 		
-		GeoConic3D conic = (GeoConic3D) getGeoElement();
+		GeoConicND conic = (GeoConicND) getGeoElement();
 		
 		switch(conic.getType()){
 		case GeoConic.CONIC_CIRCLE:
-			//renderer.drawCircle(xc,yc,r);
 			renderer.getGeometryManager().draw(getGeometryIndex());
 			break;
 		default:
@@ -66,7 +66,7 @@ public class DrawConic3D extends Drawable3DCurves {
 		
 		
 		
-		GeoConic3D conic = (GeoConic3D) getGeoElement();
+		GeoConicND conic = (GeoConicND) getGeoElement();
 		
 		switch(conic.getType()){
 		case GeoConic.CONIC_CIRCLE:
@@ -78,7 +78,7 @@ public class DrawConic3D extends Drawable3DCurves {
 			brush.start(8);
 			//brush.setAffineTexture(0.5f, 0.125f);
 			
-			GgbVector center = conic.getMidpoint();
+			GgbVector center = conic.getMidpoint3D();
 			
 
 			

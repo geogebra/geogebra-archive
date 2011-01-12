@@ -62,7 +62,9 @@ extends GeoConicND implements GeoElement3DInterface{
 
 	 }
 
-	 
+	 public GgbCoordSys getCoordSys(){
+		 return coordSys;
+	 }
 
 	 /////////////////////////////////////////
 	 // link with Drawable3D
@@ -142,12 +144,12 @@ extends GeoConicND implements GeoElement3DInterface{
 		 return coordSys.getVector(super.getEigenvec(i));
 	 }
 
-	 /////////////////////////////////////////
-	 // PATH
-	 
-	 public boolean isPath(){
-		 return true;
+	 public GgbVector getMidpoint3D(){
+		 return getMidpoint();
 	 }
+
+	 
+
 		
 		
 

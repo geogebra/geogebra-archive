@@ -486,7 +486,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		
 		
 		PI.setCoords2D(x, y, 1);
-		PI.updateCoordsFrom2D(false);
+		PI.updateCoordsFrom2D(false,null);
 		
 	}
 	

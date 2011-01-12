@@ -4,6 +4,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdCircle;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.Kernel3D;
@@ -28,7 +29,7 @@ public class CmdCircle3D extends CmdCircle {
 	    switch (n) {
 	    case 3 :
 	    	arg = resArgs(c);
-	    	if (arg[0].isGeoElement3D() && arg[1].isGeoElement3D() && arg[2].isGeoElement3D()){
+	    	if (arg[0].isGeoElement3D() || arg[1].isGeoElement3D() || arg[2].isGeoElement3D()){
 	    		if ((ok[0] = (arg[0] .isGeoPoint()))
 	    				&& (ok[1] = (arg[1] .isGeoPoint()))
 	    				&& (ok[2] = (arg[2] .isGeoPoint()))) {
@@ -36,9 +37,9 @@ public class CmdCircle3D extends CmdCircle {
 	    			{
 	    					kernel.getManager3D().Circle3D(
 	    							c.getLabel(),
-	    							(GeoPoint3D) arg[0],
-	    							(GeoPoint3D) arg[1],
-	    							(GeoPoint3D) arg[2])};
+	    							(GeoPointND) arg[0],
+	    							(GeoPointND) arg[1],
+	    							(GeoPointND) arg[2])};
 	    			return ret;
 	    		}
 	    	}

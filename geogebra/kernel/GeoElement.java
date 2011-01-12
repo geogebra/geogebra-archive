@@ -582,7 +582,7 @@ public abstract class GeoElement
 	 * @return the label position (2D or 3D vector)
 	 */
 	public GgbVector getLabelPosition(){
-		return null;
+		return new GgbVector(0, 0, 0, 1);
 	}
 	
 	/** 

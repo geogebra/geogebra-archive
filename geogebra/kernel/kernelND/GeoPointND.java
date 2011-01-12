@@ -46,7 +46,7 @@ public interface GeoPointND {
 	
 	public double getY2D();
 
-	public void updateCoordsFrom2D(boolean b);
+	public void updateCoordsFrom2D(boolean b, GgbCoordSys coordsys);
 
 	public boolean isPointOnPath();
 

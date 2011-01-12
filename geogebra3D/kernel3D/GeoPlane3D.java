@@ -114,7 +114,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	public void pointChangedForRegion(GeoPointND P) {
 		
 		P.updateCoords2D();
-		P.updateCoordsFrom2D(false);
+		P.updateCoordsFrom2D(false,null);
 		
 		
 	}
