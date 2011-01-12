@@ -213,20 +213,34 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	}
 	
 	
-	public String toString() {
+	/**
+	 * @return function description as f(x)=...
+	 */
+	private String toXMLString(){
 		sbToString.setLength(0);
-		if (isLabelSet() && !this.isBooleanFunction()) {
-			sbToString.append(label);
-			sbToString.append("(");
-			sbToString.append(getVarString());
-			sbToString.append(") = ");
-		}else if(isLabelSet()) {
+		sbToString.append(label);
+		sbToString.append("(");
+		sbToString.append(getVarString());
+		sbToString.append(") = ");
+		sbToString.append(toValueString());
+		return sbToString.toString();
+	}
+	
+	/**
+	 * @return function description as f(x,y)=... for real and e.g. f:x>4*y for bool
+	 */
+	public String toString() {
+		if (isLabelSet() && !isBooleanFunction())
+			return toXMLString();
+		sbToString.setLength(0);
+		if(isLabelSet()) {
 			sbToString.append(label);
 			sbToString.append(": ");
 		}
 		sbToString.append(toValueString());
 		return sbToString.toString();
 	}
+	
 	private StringBuilder sbToString = new StringBuilder(80);
 	public String toValueString() {	
 		if (isDefined())
@@ -249,29 +263,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			return app.getPlain("undefined");
 	}
 	
-	/*
-	public final String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(label);
-		sb.append("(x) = ");
-		if (fun != null)
-			sb.append(fun.toValueString());
-		else
-			sb.append(app.getPlain("undefined"));		
-		return sb.toString();
-	}
-	
-	// function names should not be expanded 
-	public final String toValueString() {
-		if (label == null) { 
-			// this is a special case that will only occur
-			// for functions without label that are directly
-			// used as command arguments
-			return fun.toString();
-		}
-		return label;
-	}*/
-	
+		
 	/**
 	   * save object in xml format
 	   */ 
@@ -285,7 +277,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				sb.append(" label =\"");
 				sb.append(label);
 				sb.append("\" exp=\"");
-				sb.append(toValueString());
+				sb.append(toXMLString());
 				// expression   
 			sb.append("\"/>\n");
 		 }
