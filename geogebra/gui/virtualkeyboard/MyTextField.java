@@ -15,7 +15,6 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.SystemColor;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -31,6 +30,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 
@@ -43,7 +44,7 @@ import javax.swing.text.DefaultCaret;
  *    is triggered by either a mouse click or ctrl-up
  * 
  */
-public class MyTextField extends JTextField implements FocusListener, VirtualKeyboardListener {
+public class MyTextField extends JTextField implements FocusListener, VirtualKeyboardListener, CaretListener {
 
 	private GuiManager guiManager;
 
@@ -53,7 +54,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private SymbolTable symbolTable;
 	private int caretPosition; // restores caret position when popup is done 
 
-	
+
 	// fields to handle custom drawing
 	private boolean rollOver = false;
 	private float pos = 0;
@@ -63,7 +64,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private int iconOffset = 0;
 	private boolean showSymbolTableIcon = false;
 	private DefaultCaret myCaret;
-	
+
+
+	private int bracket1pos;
+	private int bracket2pos;
+	private Color bracketColor;
+
 
 	public MyTextField(GuiManager guiManager) {
 		super();
@@ -77,16 +83,24 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		initField();
 	}
 
-	
+
 	private void initField(){
 
 		addFocusListener(this);
 		addMouseMotionListener(new MyMouseMotionListener());
 		addMouseListener(new MyMouseListener());
 		setOpaque(true);
+		addCaretListener(this);
 		
-		myCaret = (DefaultCaret) this.getCaret();
 		
+	}
+
+
+	/**
+	 * Repaints the field on caret changes. This is needed for the custom colored text drawing. 
+	 */
+	public void caretUpdate(CaretEvent arg0) {
+		repaint();
 	}
 
 	
@@ -111,10 +125,10 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	public void setShowSymbolTableIcon(boolean showSymbolTableIcon) {
 		this.showSymbolTableIcon = showSymbolTableIcon;
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Inserts a string into the text at the current caret position
 	 */
@@ -122,7 +136,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 		int start = getSelectionStart();
 		int end = getSelectionEnd();      
-		
+
 		//    clear selection if there is one
 		if (start != end) {
 			int pos = getCaretPosition();
@@ -192,7 +206,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		return new Point(r.x, r.y - popup.getPreferredSize().height-10);
 	}
 
-	
+
 	/** 
 	 * Hides the popup and inserts selected symbol. (Called by symbol table
 	 * on Enter key press). 
@@ -271,7 +285,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			caretPosition = thisField.getCaretPosition();
 			Dimension d  = popup.getPreferredSize();
 			popup.show(thisField, thisField.getX() + thisField.getWidth() - d.width, - d.height);
-			
+
 			return;
 		}
 
@@ -317,27 +331,21 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	public Insets getInsets(){
 		Insets insets = super.getInsets();
 		insets.right = insets.right + iconOffset;
-		insets.left = insets.left + 1 ; //left margin
+		insets.left = insets.left ; //left margin
 		insets.top = insets.top + 2;
 		insets.bottom = insets.bottom + 2;
 		return insets;
 	}
 
-	
 
-	
+
+
 	/**
-	 * Draws a custom text string and an optional icon on the far right of the field.
+	 * Draws a text string with colored caret brackets and an optional icon on
+	 * the far right of the field.
 	 */
 	public void paintComponent(Graphics gr) {
 
-		
-
-		// hide the default text and caret by drawing them with the background color 
-		//setForeground(getBackground());
-		//setCaretColor(getBackground());
-
-		// call super .... moving caret doesn't work without this... why?
 		super.paintComponent(gr);
 
 		// prepare for custom drawing
@@ -345,43 +353,15 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		g2.setBackground(getBackground());
 		Insets insets = getInsets();
 		int height = getHeight();
-		
-		
-		
-		/* *************************************************************
-		/* styled text code turned off until problems with font updates and carets are solved 
-		 * 
-		
-		
-		String text = getText();
-		
-		
-		// create a temporary buffer to store our custom text string drawing 
-		BufferedImage im = (BufferedImage)(this.createImage(getHorizontalVisibility().getMaximum(),getHeight()));
-		Graphics2D tempG2 = im.createGraphics();
-		tempG2.setBackground(this.getBackground());
-		tempG2.clearRect(0, insets.top, im.getWidth(), im.getHeight() - insets.top - insets.bottom + 2);
 
 		
-		// draw our own, specially colored image of the text string
-		drawColoredText(text, tempG2);
-		
+		// color the caret brackets
+		this.updateCaretBrackets();
+		if(this.bracket1pos >=0)
+			drawColoredChar(g2,bracket1pos, bracketColor);
+		if(this.bracket2pos >=0)
+			drawColoredChar(g2,bracket2pos, bracketColor);
 	
-		
-		
-		// clip the string image so that it fits the current scrolled view 
-		// and then draw this into the component
-		try {
-			if(im != null && getHorizontalVisibility().getExtent() >0)
-				g2.drawImage(im.getSubimage(getHorizontalVisibility().getValue() , 0, 
-						getHorizontalVisibility().getExtent(), im.getHeight()),
-						null, insets.left, 0);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		 */
-		
 		
 		// draw the icon
 		if(showSymbolTableIcon && thisField.hasFocus())
@@ -393,46 +373,64 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 						(height - icon.getIconHeight())/2);
 	}
 
+
 	
 	
 	/**
-	 * Draws colored text and caret into a temporary image buffer. The
-	 * paintComponent method clips a sub-image to match the scrolled view and
-	 * draws it to the screen.
-	 * 
-	 * @param text
-	 * @param tempG2 context for temporary buffer
+	 * Overwrites a character at a given position in the text string and
+	 * draws it in the specified color
 	 */
-	private void drawColoredText(String text, Graphics2D tempG2){
-		
-		// use anti-aliasing
-		tempG2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
-				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		tempG2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
-				RenderingHints.VALUE_ANTIALIAS_ON);
+	private void drawColoredChar(Graphics2D g2, int position, Color c){
 		
 		// set font variables
-		FontRenderContext frc = ((Graphics2D) tempG2).getFontRenderContext();
-		Font font = tempG2.getFont();
-		int fontHeight = tempG2.getFontMetrics().getHeight();
-		int textBottom = (this.getHeight() - fontHeight) / 2 + fontHeight - 4;
-		
-		
-		int caret = getCaretPosition();
+		FontRenderContext frc = ((Graphics2D) g2).getFontRenderContext();
+		Font font = g2.getFont();
+		Rectangle r = null;
+		try {
+			r = thisField.modelToView(position);
+			if(r !=null){
+				String s = this.getDocument().getText(position,1);
+				if(s!=null){
+					TextLayout layout = new TextLayout(s, font, frc);
+					g2.setFont(font);
+					float advance = layout.getAdvance();
+					
+					g2.setColor(Color.white);
+					g2.setFont(font.deriveFont(Font.BOLD));
+					g2.drawString(s, r.x, r.y + g2.getFontMetrics().getMaxAscent());
+					
+					
+				//	g2.fillRect(r.x, r.y,(int) advance , r.height);
+					
+					g2.setFont(font);
+					g2.setColor(c);				
+					g2.drawString(s, r.x, r.y + g2.getFontMetrics().getMaxAscent());
+				}
+			}
 
-		pos = 0;   // pos stores the current horizontal drawing location 			
-		// adjust if right-aligned
-		if (getHorizontalAlignment() == JTextField.RIGHT && text != null && text.length() > 0) {
-			TextLayout layout = new TextLayout(text, font, frc);
-			pos = Math.max(0,getHorizontalVisibility().getExtent() - layout.getAdvance());
+		} catch (BadLocationException e) {
+			//e.printStackTrace();
 		}
-		
-		// bracket coloring:  
-		// if the caret is next to a bracket character then this bracket and 
-		// its match (if it exists) will be colored according to bracket type
 
-		int bracket1pos = -1;
-		int bracket2pos = -1;
+	}
+	
+	
+	
+	
+
+	/**
+	 * Updates the caret brackets and their color.
+	 */
+	private void updateCaretBrackets(){
+
+		int caret = getCaretPosition();
+		String text = getText();
+		 
+		// if the caret is to the immediate left of a bracket character then this 
+		// bracket and its match (if it exists) will be colored
+
+		bracket1pos = -1;
+		bracket2pos = -1;
 
 		int searchDirection = 0;
 		int searchEnd = 0;
@@ -491,7 +489,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 				}
 			}
 
-		
+
 		//Lines containing  textMode by Zbynek Konecny, 2010-05-09
 		boolean textMode = false;
 
@@ -509,70 +507,26 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			}
 		}
 
-
-		// prepare to draw colored text 
-		int selStart = getSelectionStart();
-		int selEnd = getSelectionEnd();
-		float caretPos = -1;
-		if (caret == 0) caretPos = pos;	
+ 		
+		// iterate through the text chars to get bracket color
+		
 		textMode = false;
-
-
-		// draw text character-by-character
 		for (int i = 0 ; i < text.length() ; i++) {
 
 			if(text.charAt(i) == '\"') textMode = !textMode;
 
-			// set character color
 			if (i == bracket1pos || i == bracket2pos) {
-				if (bracket2pos > -1) tempG2.setColor(Color.RED); // matched
-				else tempG2.setColor(Color.GREEN); // unmatched
+				if (bracket2pos > -1) 
+					bracketColor = Color.GREEN; // matched
+				else 
+					bracketColor = Color.RED; // unmatched
 			}
-			else tempG2.setColor(Color.BLACK);
-			if(textMode || text.charAt(i) == '\"')tempG2.setColor(Color.GRAY);
 
-			// draw character and update position
-			drawText(tempG2, text.charAt(i) + "", i >= selStart && i < selEnd, 
-					font, frc, fontHeight, textBottom);
-			if (i + 1 == caret) caretPos = pos;
-		}
-
-
-		// draw the caret
-		if (myCaret.isVisible() && caretPos > -1 && hasFocus()) {
-			tempG2.setColor(Color.black);
-			tempG2.fillRect((int)caretPos, textBottom - fontHeight + 4 , 1, fontHeight);
-			tempG2.setPaintMode();
+			if(textMode || text.charAt(i) == '\"')
+				bracketColor = Color.GRAY;   // text mode
 		}
 
 	}
+
 	
-	
-
-	/**
-	 * Draws a single character and paints the background color for selected text
-	 */
-	private void drawText(Graphics2D g2, String str, boolean selected, 
-			Font font, FontRenderContext frc, int fontHeight, int textBottom) {
-
-		if ("".equals(str)) return;
-
-		TextLayout layout = new TextLayout(str, font, frc);
-		g2.setFont(font);
-		float advance = layout.getAdvance();
-
-		// draw background for selected text
-		if (selected) {
-			g2.setColor(getSelectionColor());
-			g2.fillRect((int)pos, textBottom - fontHeight + 4 , (int)advance, fontHeight);
-			g2.setColor(getSelectedTextColor());
-		}
-
-		// draw the text and update the drawing position
-		g2.drawString(str, pos, textBottom);
-		pos += layout.getAdvance();
-
-	}
-
-
 }
