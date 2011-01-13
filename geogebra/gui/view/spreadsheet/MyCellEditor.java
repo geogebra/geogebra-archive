@@ -281,6 +281,10 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		public void keyReleased(KeyEvent e) {
 		}
 		
+		// keep track of when <tab> was first pressed
+		// so can return to that column when <enter> pressed
+		private int tabReturnCol = -1;
+		
 		public void checkCursorKeys(KeyEvent e) {
 			
 			String text = (String) delegate.getCellEditorValue();
@@ -294,6 +298,7 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 				stopCellEditing(0,-1);		
 				editing = false;
 				e.consume();
+				tabReturnCol = -1;
 				break;
 				
 				
@@ -301,6 +306,7 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 				//Application.debug("RIGHT");
 				// shift-tab moves left
 				// tab moves right
+				if (tabReturnCol == -1) tabReturnCol = column;
 				stopCellEditing(e.isShiftDown() ? -1 : 1,0);		
 				editing = false;
 				
@@ -310,18 +316,25 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 				// if incomplete command entered, want to move the cursor to between []
 				int bracketsIndex = text.indexOf("[]");
 				if (bracketsIndex == -1) {
-					//stopCellEditing(0,1);		
-					//editing = false;
+					
+					if (tabReturnCol != -1) {
+						int colOffset = tabReturnCol - column;
+						stopCellEditing(colOffset,1);		
+						editing = false;
+					}
 				} else {
 					textField.setCaretPosition(bracketsIndex + 1);
 					e.consume();
 				}				
+				
+				tabReturnCol = -1;
 				break;
 				
 			case KeyEvent.VK_DOWN:
 				//Application.debug("DOWN");
 				stopCellEditing(0,1);		
 				editing = false;
+				tabReturnCol = -1;
 				break;
 				
 			case KeyEvent.VK_LEFT:
@@ -330,6 +343,7 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 					stopCellEditing(-1,0);	
 				}
 				editing = false;
+				tabReturnCol = -1;
 				break;
 				
 			// Allow left/right keys to exit when the editor is 
@@ -341,11 +355,13 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 					stopCellEditing(1,0);	
 				}
 				editing = false;	
+				tabReturnCol = -1;
 				break;
 				
 			case KeyEvent.VK_PAGE_DOWN:
 			case KeyEvent.VK_PAGE_UP:
 				e.consume();
+				tabReturnCol = -1;
 				break;
 			
 			// An F1 keypress causes the focus to be lost, so we
