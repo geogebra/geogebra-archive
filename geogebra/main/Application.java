@@ -1112,6 +1112,8 @@ public class Application implements KeyEventDispatcher {
 						}
 					} else {
 						File f = new File(fileArgument);
+						Application.debug(Util.toHexString(fileArgument.charAt(0)),1);
+						showMessage(f.getName());
 						f = f.getCanonicalFile();
 						success = getGuiManager().loadFile(f, isMacroFile);
 					}

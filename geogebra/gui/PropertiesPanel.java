@@ -3496,7 +3496,7 @@ public	class PropertiesPanel extends JPanel {
 		}
 		
 		public void setLabels() {
-			String[] fontSizes = new String[] { app.getPlain("ExtraSmall"), app.getPlain("Small"), app.getPlain("Medium"), app.getPlain("Large"), app.getPlain("ExtraLarge") };
+			String[] fontSizes = app.getGuiManager().getFontSizeStrings();
 			
 			int selectedIndex = cbSize.getSelectedIndex();
 			cbSize.removeActionListener(this);
@@ -3564,7 +3564,7 @@ public	class PropertiesPanel extends JPanel {
 			//	set value to first text's size and style
 			TextProperties geo0 = (TextProperties) geos[0];		
 			
-			cbSize.setSelectedIndex(geo0.getFontSize() / 2 + 2); // font size ranges from -4 to 4, transform this to 0,1,..,4
+			cbSize.setSelectedIndex((geo0.getFontSize() + GeoElement.MAX_FONTSIZE ) / 2 ); // font size ranges from -6 to 6, transform this to 0,1,..,6
 			cbFont.setSelectedIndex(geo0.isSerifFont() ? 1 : 0);
 			int selItem = -1;
 			
@@ -3633,7 +3633,7 @@ public	class PropertiesPanel extends JPanel {
 				TextProperties text;
 				for (int i = 0; i < geos.length; i++) {
 					text = (TextProperties) geos[i];
-					text.setFontSize(cbSize.getSelectedIndex() * 2 - 4); // transform indices to the range -4, .. , 4
+					text.setFontSize(cbSize.getSelectedIndex() * 2 - GeoElement.MAX_FONTSIZE); // transform indices to the range -6, .. , 6
 					((GeoElement)text).updateRepaint();
 				}
 			} 

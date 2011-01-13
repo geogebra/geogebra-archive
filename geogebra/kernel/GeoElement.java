@@ -63,7 +63,6 @@ public abstract class GeoElement
 	extends ConstructionElement
 	implements ExpressionValue {
 	
-	public static final int MAX_FONTSIZE = 4;
 	/**
 	 * @return the updateJavaScript
 	 */
@@ -92,7 +91,8 @@ public abstract class GeoElement
 		this.clickJavaScript = clickJavaScript;
 	}
 
-	public static final int MIN_FONTSIZE = -4;
+	public static final int MAX_FONTSIZE = 6;
+	//public static final int MIN_FONTSIZE = -6;
 	
 	/** min decimals or significant figures to use in editing string */
 	public static final int MIN_EDITING_PRINT_PRECISION = 5;
