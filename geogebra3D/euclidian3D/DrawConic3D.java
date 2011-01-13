@@ -76,11 +76,8 @@ public class DrawConic3D extends Drawable3DCurves {
 			brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
 			
 			brush.start(8);
-			//brush.setAffineTexture(0.5f, 0.125f);
 			
 			Coords center = conic.getMidpoint3D();
-			
-
 			
 			brush.circle(center, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
 			

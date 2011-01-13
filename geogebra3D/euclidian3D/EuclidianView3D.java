@@ -2210,15 +2210,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			// use region drawing directions for the cross
 			t = 1/getScale();
 			
-			/*
-			getCursor3D().getDrawingMatrix().setVx(
-					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVx().mul(t));
-			getCursor3D().getDrawingMatrix().setVy(
-					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVy().mul(t));
-			getCursor3D().getDrawingMatrix().setVz(
-					(GgbVector) ((GeoElement3DInterface) getCursor3D().getRegion()).getDrawingMatrix().getVz().mul(t));
-			*/
-			
 			v = ((GeoElement)getCursor3D().getRegion()).getMainDirection(); //vz
 			m = new CoordMatrix(4, 2);
 			m.set(v, 1);
@@ -2251,6 +2242,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					(Coords) matrix.getVy().mul(t));
 			getCursor3D().getDrawingMatrix().setVz(
 					(Coords) matrix.getVz().mul(t));
+					
+					
 			break;
 		case PREVIEW_POINT_DEPENDENT:
 			//use size of intersection

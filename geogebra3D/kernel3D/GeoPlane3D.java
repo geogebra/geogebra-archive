@@ -77,7 +77,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	
 	private void setEquation(double[] v){
 		getCoordSys().makeCoordSys(v);
-		getCoordSys().makeOrthoMatrix(true);
+		getCoordSys().makeOrthoMatrix(true,true);
 	}
 	
 	
@@ -279,7 +279,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		cs.addPoint(getCoordSys().getOrigin());
 		cs.addVector(getCoordSys().getVx());
 	    cs.addVector(getCoordSys().getVy());
-	    cs.makeOrthoMatrix(true);
+	    cs.makeOrthoMatrix(false,false);
 	    cs.makeEquationVector();
 	    
 	    

@@ -114,7 +114,7 @@ public abstract class AlgoCoordSys2D extends AlgoElement3D {
 		for(i=0;(!coordsys.isMadeCoordSys())&&(i<points.length);i++)
 			coordsys.addPoint(points[i].getCoordsInD(3));
 		
-		if (coordsys.makeOrthoMatrix(true)){
+		if (coordsys.makeOrthoMatrix(true,true)){
 
 			// check if other points lie on the coord sys
 			for(;(i<points.length)&&(coordsys.isDefined());i++){

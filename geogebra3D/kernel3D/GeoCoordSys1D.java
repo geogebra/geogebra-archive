@@ -65,7 +65,7 @@ GeoLineND, GeoCoordSys{
 		coordsys.resetCoordSys();
 		coordsys.addPoint(o);
 		coordsys.addVector(v);
-		coordsys.makeOrthoMatrix(false);
+		coordsys.makeOrthoMatrix(false,false);
 	}
 	
 	

@@ -59,7 +59,7 @@ public class CoordSys {
 	public static final CoordSys Identity3D(){
 		CoordSys ret = new CoordSys(2);
 		ret.makeCoordSys(new double[] {0,0,1,0}); //equation z=0
-		ret.makeOrthoMatrix(true);
+		ret.makeOrthoMatrix(true,true);
 		return ret;
 	}
 
@@ -159,6 +159,10 @@ public class CoordSys {
 		return coords.projectPlaneThruV(this.getMatrixOrthonormal(),willingDirection);
 	}
 	
+	public Coords[] getProjectionThruVIfPossible(Coords coords,
+			Coords willingDirection) {
+		return coords.projectPlaneThruVIfPossible(this.getMatrixOrthonormal(),willingDirection);
+	}	
 	
 	///////////////////////////////////////
 	// creating a coord sys
@@ -344,9 +348,10 @@ public class CoordSys {
 	
 	/** makes an orthonormal matrix describing this coord sys
 	 * @param projectOrigin if true, origin of the coord sys is the projection of 0
+	 * @param firstVectorParallelToXOY says if the first vector has to be parallel to xOy
 	 * @return true if it's possible
 	 */
-	public boolean makeOrthoMatrix(boolean projectOrigin){
+	public boolean makeOrthoMatrix(boolean projectOrigin, boolean firstVectorParallelToXOY){
 		
 		
 		//if the coord sys is made, the drawing matrix is updated
@@ -381,22 +386,29 @@ public class CoordSys {
 		}
 		
 		if (dimension==2){ //vy and Vz are computed
-
-			// vector Vx parallel to xOy plane
-			Coords vz = new Coords(new double[] {0,0,1,0});
-			Coords vx = getVz().crossProduct(vz);
-			Coords vy;
-			//if (!Kernel.isEqual(vx.norm(), 0, Kernel.STANDARD_PRECISION)){
-			if (!vx.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
-				vx.normalize();
-				vy = getVz().crossProduct(vx);
-				vy.normalize();
-				vz = getVz().normalized();
-			} else {
-				vx = new Coords(new double[] {1,0,0,0});
-				vy = new Coords(new double[] {0,1,0,0});
+			Coords vx,vy,vz;
+			
+			if (firstVectorParallelToXOY){
+				// vector Vx parallel to xOy plane
+				vz = new Coords(0,0,1,0);
+				vx = getVz().crossProduct(vz);
+				//if (!Kernel.isEqual(vx.norm(), 0, Kernel.STANDARD_PRECISION)){
+				if (!vx.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
+					vx.normalize();
+					vy = getVz().crossProduct(vx);
+					vy.normalize();
+					vz = getVz().normalized();
+				} else {
+					vx = new Coords(1,0,0,0);
+					vy = new Coords(0,1,0,0);
+				}
+			}else{
+				vx=getVx().normalized();
+				//vz is computed and vy recomputed to make orthonormal matrix
+				vz = vx.crossProduct(getVy()).normalized();
+				vy = vz.crossProduct(vx);				
 			}
-
+			
 			
 			Coords o = getOrigin();
 			matrixOrthonormal.set(new Coords[] {vx,vy,vz,o});
@@ -413,6 +425,7 @@ public class CoordSys {
 		return false;
 		
 	}
+	
 	
 	
 	/**
@@ -444,6 +457,8 @@ public class CoordSys {
 
 	
 
+	
+	
 	
 
 	

@@ -244,7 +244,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		 for(int i=0;(!coordSys.isMadeCoordSys())&&(i<points.length);i++)
 			 coordSys.addPoint(points[i].getCoordsInD(3));
 
-		 if (coordSys.makeOrthoMatrix(true)){
+		 if (coordSys.makeOrthoMatrix(true,false)){
 			 for(int i=0;i<points.length;i++){
 				 //project the point on the coord sys
 				 Coords[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());

@@ -52,6 +52,11 @@ implements GeoElement3DInterface, Functional2Var{
 	}
 	
 	
+
+	 public Coords getMidpointND(){
+		 return getMidpoint3D();
+	 }
+
 	
 	/////////////////////////////////
 	// MATRIX REPRESENTATION

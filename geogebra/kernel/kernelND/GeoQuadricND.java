@@ -252,8 +252,12 @@ public abstract class GeoQuadricND extends GeoElement {
 		
 	}
 
-	public Coords getMidpoint(){
+	public Coords getMidpoint2D(){
 		return midpoint;
+	}
+	
+	public Coords getMidpoint(){
+		return getMidpoint2D();
 	}
 	
 

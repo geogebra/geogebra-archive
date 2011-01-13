@@ -64,7 +64,7 @@ public class AlgoPlaneThroughPointAndLine extends AlgoPlaneThroughPoint {
 
 
 		
-		coordsys.makeOrthoMatrix(true);
+		coordsys.makeOrthoMatrix(true,false);
 		
 		coordsys.makeEquationVector();
 		

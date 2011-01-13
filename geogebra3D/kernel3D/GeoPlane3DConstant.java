@@ -24,7 +24,7 @@ public class GeoPlane3DConstant extends GeoPlane3D {
 			coordsys.addPoint(EuclidianView3D.o);
 			coordsys.addVector(EuclidianView3D.vx);
 			coordsys.addVector(EuclidianView3D.vy);
-			coordsys.makeOrthoMatrix(false);
+			coordsys.makeOrthoMatrix(false,false);
 			//setCoord(EuclidianView3D.o,EuclidianView3D.vx,EuclidianView3D.vy);
 			label = "xOyPlane";
 			setObjColor(new Color(0.5f,0.5f,0.5f));

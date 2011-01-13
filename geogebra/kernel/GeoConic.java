@@ -2299,14 +2299,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 
    
 
-	/* 
-	 * Path interface
-	 */
-	 
 
-	public PathMover createPathMover() {
-		return new PathMoverGeneric(this);
-	}		
 	
 	
 
@@ -2609,6 +2602,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
     }
     
 
+    /*
+    public Coords getMidpoint2D(){
+		return getMidpoint();
+	}
+	*/	
 
     ////////////////////////////////////////
     // FOR DRAWING IN 3D

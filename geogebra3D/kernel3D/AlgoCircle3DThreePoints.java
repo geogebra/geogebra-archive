@@ -111,29 +111,37 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     		coordSys.addPoint(points[i].getCoordsInD(3));
     	
   
-    	if (!coordSys.makeOrthoMatrix(true)){
+    	if (!coordSys.makeOrthoMatrix(false,false)){
     		circle.setUndefined();
     		return;
     	}
     	
-    	 for(int i=0;i<3;i++){
-			 //project the point on the coord sys
-			 Coords[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
+    	//Application.debug("coordSys=\n"+coordSys.getMatrixOrthonormal().toString());
 
-			 //check if the vertex lies on the coord sys
-			 if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){
-				 coordSys.setUndefined();
-				 break;
-			 }
-
-			 //Application.debug("i="+i+",project="+project);
-			 
-			 //set the 2D points
-			 points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
-			 
-		 }
+   
     	
+    	for(int i=0;i<3;i++){
+    		//project the point on the coord sys
+    		Coords[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
+
+    		/*
+    		//check if the vertex lies on the coord sys
+    		if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){
+    			coordSys.setUndefined();
+    			break;
+    		}
+    		*/
+    		
+    		
+    		//Application.debug("i="+i+",project="+project);
+
+    		//set the 2D points
+    		points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
+
+    	}
+
     	super.compute();
+    	
     }
     
     

@@ -65,6 +65,22 @@ extends GeoConicND implements GeoElement3DInterface{
 	 public CoordSys getCoordSys(){
 		 return coordSys;
 	 }
+	 
+	 /*
+	 private Coords midpoint2D;
+	 
+	 /**
+	  * sets the coords of the 2D midpoint
+	  * @param coords
+	  *
+	 public void setMidpoint2D(Coords coords){
+		 midpoint2D=coords;
+	 }
+
+	 public Coords getMidpoint2D(){
+		 return midpoint2D;
+	 }	
+	 */
 
 	 /////////////////////////////////////////
 	 // link with Drawable3D
@@ -134,18 +150,25 @@ extends GeoConicND implements GeoElement3DInterface{
 	 /////////////////////////////////////////
 	 // GeoConicND
 	 
-	 public Coords getMidpoint(){
-		 return coordSys.getPoint(super.getMidpoint());
+	 /*
+	 public Coords getMidpoint2D(){
+		 return coordSys.getPoint(super.getMidpoint2D());
 		 
 	 }
+	 */
+	 
 
 
 	 public Coords getEigenvec3D(int i){
 		 return coordSys.getVector(super.getEigenvec(i));
 	 }
 
+	 public Coords getMidpointND(){
+		 return getMidpoint3D();
+	 }
+
 	 public Coords getMidpoint3D(){
-		 return getMidpoint();
+		 return coordSys.getPoint(super.getMidpoint2D());
 	 }
 
 	 

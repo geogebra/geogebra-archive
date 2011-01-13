@@ -365,35 +365,7 @@ public class CoordMatrix
 	}
 	
 	
-	
-	/** return first column (vector for x)
-	 * @return first column (vector for x)
-	 */
-	public Coords getVx(){
-		return getColumn(1);
-	}
-	
-	/** return second column (vector for y)
-	 * @return second column (vector for y)
-	 */	
-	public Coords getVy(){
-		return getColumn(2);
-	}
-	
-	/** return third column (vector for z)
-	 * @return third column (vector for z)
-	 */	
-	public Coords getVz(){
-		return getColumn(3);
-	}
-	
-	/** return last column (vector for origin)
-	 * @return last column (vector for origin)
-	 */	
-	public Coords getOrigin(){
-		return getColumn(getColumns());
-	}
-	
+
 	/**
 	 * returns GgbMatrix as a GeoList eg { {1,2}, {3,4} }
 	 * @param outputList 
@@ -449,6 +421,7 @@ public class CoordMatrix
 		if (transpose){
 			val[(i-1)*rows+(j-1)]=val0;
 		}else{
+			//Application.debug("i="+i+",j="+j+",rows="+rows);
 			val[(j-1)*rows+(i-1)]=val0;
 		}
 	}
@@ -548,7 +521,10 @@ public class CoordMatrix
 		for(int i=1;i<=getRows();i++){
 			
 			for(int j=1;j<=getColumns();j++){
-				s+="  "+get(i,j);
+				double v = get(i,j);
+				if (Kernel.isZero(v))
+					v=0;
+				s+="  "+v;
 			}
 			s+="\n";
 		}
@@ -791,6 +767,51 @@ public class CoordMatrix
 	public void setIsSingular(boolean isSingular) {
 		this.isSingular = isSingular;
 	}
+	
+	
+
+	///////////////////////////////////////////////////
+	// SETTERS AND GETTERS
+	
+	/** return origin of the matrix
+	 * @return origin
+	 */	
+	public Coords getOrigin(){ return getColumn(getColumns()); }	
+	
+	/** return "x-axis" vector
+	 * @return "x-axis" vector
+	 */
+	public Coords getVx(){ return getColumn(1); }	
+	
+	/** return "y-axis" vector
+	 * @return "y-axis" vector
+	 */
+	public Coords getVy(){ return getColumn(2); }	
+	
+	/** return "z-axis" vector
+	 * @return "z-axis" vector
+	 */
+	public Coords getVz(){ return getColumn(3); }	
+	
+	/** set origin of the matrix
+	 * @param v origin
+	 */	
+	public void setOrigin(Coords v){ set(v,getColumns()); }	
+	
+	/** return "x-axis" vector
+	 * @param v "x-axis" vector
+	 */
+	public void setVx(Coords v){ set(v,1); }	
+	
+	/** return "y-axis" vector
+	 * @param v "y-axis" vector
+	 */
+	public void setVy(Coords v){ set(v,2); }	
+	
+	/** return "z-axis" vector
+	 * @param v "z-axis" vector
+	 */
+	public void setVz(Coords v){ set(v,3); }
 	
 	
 	

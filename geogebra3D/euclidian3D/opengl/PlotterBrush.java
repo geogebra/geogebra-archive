@@ -342,7 +342,6 @@ public class PlotterBrush {
 		length=(float) (2*Math.PI*radius); //TODO use integer to avoid bad dash cycle connection
 		
 		int longitude = 60;
-
 		
 		Coords vn1;
 		Coords vn2 = v1.crossProduct(v2);

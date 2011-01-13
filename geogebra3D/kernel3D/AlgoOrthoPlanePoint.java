@@ -88,7 +88,7 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
 		coordsys.addVectorWithoutCheckMadeCoordSys(v[1]);
 		coordsys.addVectorWithoutCheckMadeCoordSys(v[0]);
 		
-		coordsys.makeOrthoMatrix(true);
+		coordsys.makeOrthoMatrix(true,true);
 		
 		coordsys.makeEquationVector();
 		

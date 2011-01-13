@@ -1,5 +1,7 @@
 package geogebra.Matrix;
 
+import geogebra3D.euclidian3D.Drawable3D.setComparator;
+
 /**
  * 4x4 matrix for 3D transformations, planes descriptions, lines, etc.
  * 
@@ -10,7 +12,9 @@ public class CoordMatrix4x4 extends CoordMatrix {
 
 	
 	
-	
+	final static public int VX = 0;
+	final static public int VY = 1;
+	final static public int VZ = 2;
 	
 	
 	
@@ -51,21 +55,9 @@ public class CoordMatrix4x4 extends CoordMatrix {
 			Coords V = a_matrix.getColumn(1);
 			l_O = a_matrix.getColumn(2);
 			
-			Coords Vn1 = new Coords(4);
-			Coords Vn2 = new Coords(4);
+			Coords[] n = CoordMatrix4x4.getOrthoVectors(V);
 			
-			if (V.get(1)!=0){
-				Vn1.set(1,-V.get(2));
-				Vn1.set(2,V.get(1));
-				Vn1.normalize();
-			}else{
-				Vn1.set(1, 1.0);
-			}
-			
-			Vn2 = V.crossProduct(Vn1);
-			Vn2.normalize();
-			
-			set(new Coords[] {V,Vn1,Vn2,l_O});
+			set(new Coords[] {V,n[0],n[1],l_O});
 			break;
 		case 3:
 			Coords V1 = a_matrix.getColumn(1);
@@ -83,6 +75,56 @@ public class CoordMatrix4x4 extends CoordMatrix {
 		}
 		
 		
+	}
+	
+	
+	/** complete a given origin and direction to a 4 x 4 matrix, orthogonal method 
+	 * @param origin 
+	 * @param direction 
+	 * @param type says which place takes the direction given (VX, VY or VZ)
+	 */
+	public CoordMatrix4x4(Coords origin, Coords direction, int type){
+		
+		this();		
+		Coords[] n = CoordMatrix4x4.getOrthoVectors(direction);
+		
+		switch(type){
+		case VX:
+			set(new Coords[] {direction,n[0],n[1],origin});	
+			break;
+		case VY:
+			set(new Coords[] {n[1],direction,n[0],origin});	
+			break;
+		case VZ:
+			set(new Coords[] {n[0],n[1],direction,origin});	
+			break;
+		}
+		
+		
+	}
+	
+	
+	private static final Coords[] getOrthoVectors(Coords V){
+		Coords[] ret = new Coords[2];
+		
+		Coords Vn1 = new Coords(4);
+		Coords Vn2 = new Coords(4);
+		
+		if (V.get(1)!=0){
+			Vn1.set(1,-V.get(2));
+			Vn1.set(2,V.get(1));
+			Vn1.normalize();
+		}else{
+			Vn1.set(1, 1.0);
+		}
+		
+		Vn2 = V.crossProduct(Vn1);
+		Vn2.normalize();
+		
+		ret[0]=Vn1;
+		ret[1]=Vn2;
+		
+		return ret;
 	}
 	
 	
@@ -112,49 +154,7 @@ public class CoordMatrix4x4 extends CoordMatrix {
 			
 	}
 	
-	
-	///////////////////////////////////////////////////
-	// SETTERS AND GETTERS
-	
-	/** return origin of the matrix
-	 * @return origin
-	 */	
-	public Coords getOrigin(){ return getColumn(4); }	
-	
-	/** return "x-axis" vector
-	 * @return "x-axis" vector
-	 */
-	public Coords getVx(){ return getColumn(1); }	
-	
-	/** return "y-axis" vector
-	 * @return "y-axis" vector
-	 */
-	public Coords getVy(){ return getColumn(2); }	
-	
-	/** return "z-axis" vector
-	 * @return "z-axis" vector
-	 */
-	public Coords getVz(){ return getColumn(3); }	
-	
-	/** set origin of the matrix
-	 * @param v origin
-	 */	
-	public void setOrigin(Coords v){ set(v,4); }	
-	
-	/** return "x-axis" vector
-	 * @param v "x-axis" vector
-	 */
-	public void setVx(Coords v){ set(v,1); }	
-	
-	/** return "y-axis" vector
-	 * @param v "y-axis" vector
-	 */
-	public void setVy(Coords v){ set(v,2); }	
-	
-	/** return "z-axis" vector
-	 * @param v "z-axis" vector
-	 */
-	public void setVz(Coords v){ set(v,3); }	
+		
 	
 	
 	

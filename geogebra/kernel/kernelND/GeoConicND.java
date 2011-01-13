@@ -1,10 +1,12 @@
 package geogebra.kernel.kernelND;
 
+import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
@@ -15,7 +17,9 @@ import geogebra.kernel.PathMover;
 import geogebra.kernel.PathMoverGeneric;
 import geogebra.kernel.PathNormalizer;
 import geogebra.kernel.PathParameter;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 
 /** Class for conic in any dimension.
@@ -23,7 +27,7 @@ import geogebra.util.MyMath;
  * @author matthieu
  *
  */
-public abstract class GeoConicND extends GeoQuadricND implements LineProperties {
+public abstract class GeoConicND extends GeoQuadricND implements LineProperties, Path {
 	
 	
 
@@ -82,6 +86,21 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	 public CoordSys getCoordSys(){
 		 return null;
 	 }
+	 
+	 /*
+	 private CoordMatrix eigenMatrix2D = new CoordMatrix(3,3);
+	 
+	 /*
+	  * update the 2D eigen matrix
+	  * (should be called each
+	  *
+	 public void updateEigenMatrix2D(){
+		 
+		 eigenMatrix2D.setOrigin(getMidpoint());
+		 eigenMatrix2D.setVx(getEigenvec(0));
+		 eigenMatrix2D.setVy(getEigenvec(1));
+	 }
+	 */
 
 	/** default constructor
 	 * @param c
@@ -155,21 +174,29 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	 public boolean isPath(){
 		 return true;
 	 }
+	 
+	 /*
+	 private Coords eigenvec0ForPath, eigenvec1ForPath, midpointForPath;
+	 
+	 private CoordMatrix matrixForPath;
 
-	public void pointChanged(GeoPointND P) {
+	 private double[] halfAxesForPath = new double[2];
+	 */
 
-		Coords coords = P.getCoordsInD2(getCoordSys());
-		PathParameter pp = P.getPathParameter();
+	 public void pointChanged(GeoPointND P) {
 
-		pointChanged(coords, pp);
+		 Coords coords = P.getCoordsInD2(getCoordSys());
+		 PathParameter pp = P.getPathParameter();
 
-		P.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
-		P.updateCoordsFrom2D(false,getCoordSys());
-	}
+		 pointChanged(coords, pp);
+
+		 P.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
+		 P.updateCoordsFrom2D(false,getCoordSys());
+	 }
+
 	
 	
-	
-	public void pointChanged(Coords P, PathParameter pp) {
+	private void pointChanged(Coords P, PathParameter pp) {
 		
 		double px, py;	
 		pp.setPathType(type);
@@ -225,10 +252,13 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 
 				// calc parameter 
 				px = P.getX() / P.getZ();
-				py = P.getY() / P.getZ();		
+				py = P.getY() / P.getZ();	
+				
+				//Application.debug("px,py="+px+","+py);
 				
 				// relation between the internal parameter t and the angle theta:
 				// t = atan(a/b tan(theta)) where tan(theta) = py / px
+				//pp.setT( Math.atan2(halfAxesForPath[0]*py, halfAxesForPath[1]*px));											
 				pp.setT( Math.atan2(halfAxes[0]*py, halfAxes[1]*px));											
 				
 				// calc Point on conic using this parameter
@@ -296,7 +326,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	public void pathChanged(GeoPointND P) {
 		Coords coords = P.getCoordsInD2(getCoordSys());
 		PathParameter pp = P.getPathParameter();
-
+		
 		pathChanged(coords, pp);
 
 		P.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
@@ -304,7 +334,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	}
 	
 
-	public void pathChanged(Coords P, PathParameter pp) {
+	private void pathChanged(Coords P, PathParameter pp) {
 		
 		
 		// if type of path changed (other conic) then we
@@ -367,6 +397,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 				
 				// transform back to real world coord system
 				coordsEVtoRW(P);
+				
 				break;			
 			
 			case CONIC_HYPERBOLA:			
@@ -577,7 +608,10 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	}
 	
 	
-	
+
+	public PathMover createPathMover() {
+		return new PathMoverGeneric(this);
+	}		
 	
 	
 	/**
@@ -603,13 +637,13 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties 
 	 * @param P 2D point in EV coords
 	 */
 	private void coordsRWtoEV(Coords P) {
-		
+
 		Coords b = getMidpoint();
-		
+
 		// translate by -b
 		P.setX(P.getX() - P.getZ() * b.getX());
 		P.setY(P.getY() - P.getZ() * b.getY());
-		
+
 		// rotate by -alpha
 		double px = P.getX();	
 		Coords eigenvec0 = getEigenvec(0);

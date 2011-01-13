@@ -325,26 +325,25 @@ implements GeoPointND, PointProperties, Vector3DValue{
 			coords = getWillingCoords();
 		else //use real coords
 			coords = getCoords();
+		
+		CoordMatrix4x4 matrix; //matrix for projection
 
 		if (coordSys==null){ //project on plane xOy
-			Coords v = new Coords(3);
-			v.setX(coords.getX());
-			v.setY(coords.getY());
-			v.setZ(coords.getW());
-			return v;			
+			matrix = CoordMatrix4x4.Identity();
 		}else{
-			if (getWillingDirection()==null) //use normal direction for projection
-				project = coordSys.getNormalProjection(coords);
-			else //use willing direction for projection
-				project = coordSys.getProjection(coords,getWillingDirection());		
-
-			Coords v = new Coords(3);
-			v.setX(project[0].getX());
-			v.setY(project[0].getY());
-			v.setZ(project[0].getW());
-			return v;
+			matrix = coordSys.getMatrixOrthonormal();
 		}
-   		//return project[0];
+		
+		if (getWillingDirection()==null) //use normal direction for projection
+			project = coords.projectPlane(matrix);
+		else //use willing direction for projection
+			project = coords.projectPlaneThruVIfPossible(matrix,getWillingDirection());		
+
+		Coords v = new Coords(3);
+		v.setX(project[1].getX());
+		v.setY(project[1].getY());
+		v.setZ(project[1].getW());
+		return v;
     	
     }
     
@@ -1052,7 +1051,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		if (!isIndependent() || isFixed())
 			return MOVE_MODE_NONE;
 		else if (hasPath())
-			return MOVE_MODE_Z;
+			return MOVE_MODE_NONE; // too complicated to use MOVE_MODE_Z when not lines
 		else if (hasRegion())
 			return MOVE_MODE_XY;
 		else

@@ -275,9 +275,24 @@ public class Coords
 	 * @return the scalar norm*/
 	public double norm(){
 		if(calcNorm){
-			norm=Math.sqrt(this.dotproduct(this));
+			calcNorm();
 			calcNorm=false;
 		}
+		return norm;
+	}
+	
+	/**
+	 * calc the norm
+	 */
+	public void calcNorm(){
+		norm=Math.sqrt(this.dotproduct(this));
+	}
+	
+	/**
+	 * The norm must be already calculated by calcNorm()
+	 * @return the norm
+	 */
+	public double getNorm(){
 		return norm;
 	}
 	
@@ -295,12 +310,13 @@ public class Coords
 	}
 	
 	/** returns this normalized 
-	 * @return this/this.norm() 
+	 * WARNING : recalc the norm
+	 * @return this normalized 
 	 */
 	public Coords normalized(){
-		
 		Coords ret = new Coords(getLength());
-		double normInv = 1/this.norm();
+		calcNorm();
+		double normInv = 1/getNorm();
 		int len = getLength();
 		for (int i=0; i<len; i++)
 			ret.val[i]=val[i]*normInv;
@@ -309,10 +325,28 @@ public class Coords
 	}
 	
 	
-	/** normalize this */
+	/**
+	 * WARNING : recalc the norm
+	 * set this to norm=1
+	 * @return  this normalized
+	 */
 	public Coords normalize(){
 		
-		double normInv = 1/this.norm();
+		normalize(true);
+		
+		return this;
+	}
+	
+	/**
+	 * 
+	 * @param recalcNorm says if the norm has to be recalculated
+	 * @return this normalized
+	 */
+	public Coords normalize(boolean recalcNorm){
+		
+		if(recalcNorm)
+			calcNorm();
+		double normInv = 1/getNorm();
 		int len = getLength();
 		for (int i=0; i<len; i++)
 			val[i]*=normInv;
@@ -320,9 +354,7 @@ public class Coords
 		norm=sqNorm=1.0;
 		
 		return this;
-	}
-	
-	
+	}	
 	
 	
 	/** returns the distance between this and v 
