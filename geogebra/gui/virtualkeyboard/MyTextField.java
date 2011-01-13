@@ -395,13 +395,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 					g2.setFont(font);
 					float advance = layout.getAdvance();
 					
+					//erase the character by drawing it in white
 					g2.setColor(Color.white);
 					g2.setFont(font.deriveFont(Font.BOLD));
 					g2.drawString(s, r.x, r.y + g2.getFontMetrics().getMaxAscent());
 					
-					
-				//	g2.fillRect(r.x, r.y,(int) advance , r.height);
-					
+					// now draw it in the given color
 					g2.setFont(font);
 					g2.setColor(c);				
 					g2.drawString(s, r.x, r.y + g2.getFontMetrics().getMaxAscent());
@@ -517,9 +516,9 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 			if (i == bracket1pos || i == bracket2pos) {
 				if (bracket2pos > -1) 
-					bracketColor = Color.GREEN; // matched
+					bracketColor = Color.RED; // matched
 				else 
-					bracketColor = Color.RED; // unmatched
+					bracketColor = Color.GREEN; // unmatched
 			}
 
 			if(textMode || text.charAt(i) == '\"')
