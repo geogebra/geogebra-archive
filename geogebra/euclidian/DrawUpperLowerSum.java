@@ -36,7 +36,7 @@ public class DrawUpperLowerSum extends Drawable {
     private double [] coords = new double[2];
     private boolean trapeziums;
     private boolean histogram;
-    private boolean boxplot, barchartFreqs;
+    private boolean boxplot, barchartFreqs, barchartFreqsWidth;
    
     /**
      * Creates graphical representation of the sum / barchart /...
@@ -60,6 +60,7 @@ public class DrawUpperLowerSum extends Drawable {
 		this.histogram = algo.isHistogram();
 		this.boxplot = algo.isBoxPlot();
 		this.barchartFreqs = algo.getType() == AlgoFunctionAreaSums.TYPE_BARCHART_FREQUENCY_TABLE;
+		this.barchartFreqsWidth = algo.getType() == AlgoFunctionAreaSums.TYPE_BARCHART_FREQUENCY_TABLE_WIDTH;
         a = algo.getA();
         b = algo.getB();  
     }
@@ -137,13 +138,13 @@ public class DrawUpperLowerSum extends Drawable {
 			view.toScreenCoords(coords);
 			gp.lineTo(bx, (double) coords[1]); // last bar: top
 		}
-		else
+		else if (!barchartFreqsWidth)
 		{
 			gp.lineTo(bx, y); // last bar: top
 		}
 		
 		if (histogram) gp.moveTo(bx, y0);
-		else gp.lineTo(bx, y0);// last bar: right
+		else if (!barchartFreqsWidth) gp.lineTo(bx, y0);// last bar: right
 		
 		gp.lineTo(ax, y0);// all bars, along bottom		
 		
