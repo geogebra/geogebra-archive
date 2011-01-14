@@ -118,16 +118,24 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	 * States wheter P lies on this line or not.
 	 */
 	final boolean isOnFullLine(GeoPoint P, double eps) {						
-		if (!P.isDefined()) return false;		
-			
-		return isOnFullLine(P.getCoordsInD(2), eps);
+		if (!P.isDefined()) return false;	
+		
+				double simplelength =  Math.abs(x) + Math.abs(y);
+		if (P.isInfinite()) {		
+			return Math.abs(x * P.x + y * P.y) < eps * simplelength;
+		}
+		else {
+			// STANDARD CASE: finite point			
+			return Math.abs(x * P.inhomX + y * P.inhomY + z) < eps * simplelength;
+		}
 	}	
+	
 	
 	public final boolean isOnFullLine(Coords P, double eps) {						
 			
 			
 		double simplelength =  Math.abs(x) + Math.abs(y);
-		if (Kernel.isZero(P.getZ())) { //infiinite point		
+		if (Kernel.isZero(P.getZ())) { //infinite point		
 			return Math.abs(x * P.getX() + y * P.getY()) < eps * simplelength;
 		}
 		else {
