@@ -1344,7 +1344,13 @@ class CmdVertex extends CommandProcessor {
 			// Corner[ <Image>, <number> ]
 		case 2 :
 			arg = resArgs(c);
-			if ((ok[0] = (arg[0].isGeoImage())) &&
+			if ((ok[0] = (arg[0].isGeoPolygon())) &&
+					(ok[1] = (arg[1].isNumberValue()))) {
+				GeoElement[] ret =
+				{ kernel.Vertex(c.getLabel(), (GeoPolygon) arg[0], (NumberValue) arg[1])};
+				return ret;
+			}
+			else if ((ok[0] = (arg[0].isGeoImage())) &&
 					(ok[1] = (arg[1].isNumberValue()))) {
 				GeoElement[] ret =
 				{ kernel.Corner(c.getLabel(), (GeoImage) arg[0], (NumberValue) arg[1])};
