@@ -3961,9 +3961,13 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	private static boolean fakeRightClick = false;
+	
+	public static boolean isMiddleClick(MouseEvent e) {
+		return e.getButton() == 2 && e.getClickCount() == 1;
+	}
 
 	public static boolean isRightClick(MouseEvent e) {
-
+		
 		// right-click returns isMetaDown on MAC_OS
 		// so we want to return true for isMetaDown
 		// if it occurred first at the same time as
@@ -3973,6 +3977,8 @@ public class Application implements KeyEventDispatcher {
 
 		if (MAC_OS && e.isPopupTrigger() && e.isMetaDown())
 			fakeRightClick = true;
+		
+		
 
 		/*
 		 * debug("isMetaDown = "+e.isMetaDown()); debug("isControlDown =

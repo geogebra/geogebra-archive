@@ -830,6 +830,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						(e.isShiftDown() && !Application.isControlDown(e)) // All Platforms: Shift key
 						|| 
 						e.isControlDown() && Application.WINDOWS // old Windows key: Ctrl key 
+						||
+						Application.isMiddleClick(e)
 				)) 
 		{
 			// Michael Borcherds 2007-12-08 BEGIN
