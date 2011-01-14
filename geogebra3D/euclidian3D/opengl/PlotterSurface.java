@@ -254,6 +254,7 @@ public class PlotterSurface {
     	
 
     	manager.texture(0, 0);
+    	manager.normal(v1.crossProduct(v2));
     	manager.vertex(center);  
     	
     	float u=1, v=0;
@@ -292,6 +293,7 @@ public class PlotterSurface {
     	float da = (float) (2*Math.PI *dt) ; 
     	
     	manager.texture(0, 0);
+    	manager.normal(v1.crossProduct(v2));
     	manager.vertex(center);  
     	
     	float u=1, v=0;

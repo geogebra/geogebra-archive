@@ -2691,8 +2691,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		for(int i=0;i<3;i++)
 			axisDrawable[i].drawOutline(renderer);
 		
+		/*
 		if (decorationVisible)
 			pointDecorations.drawOutline(renderer);
+			*/
 	}
 	
 	/** draw hidden parts of view's drawables (axis)
@@ -2704,8 +2706,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		xOyPlaneDrawable.drawHidden(renderer);
 		
+		
 		if (decorationVisible)
 			pointDecorations.drawHidden(renderer);
+			
 		
 	}
 	

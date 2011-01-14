@@ -653,4 +653,12 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	}
 	
 	
+	
+	
+	
+	
+	public boolean isFillable() {
+		return true;
+	}
+	
 }

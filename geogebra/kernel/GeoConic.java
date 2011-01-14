@@ -170,9 +170,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		return new GeoConic(this);
 	}
 	
-	public boolean isFillable() {
-		return true;
-	}
+
 	
 	public boolean isTraceable() {
 		return true;
