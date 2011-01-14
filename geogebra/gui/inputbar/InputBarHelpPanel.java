@@ -304,6 +304,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 					cmdTree.clearSelection();
 				selectedFunction = (String) functionTable.getSelectedValue();
 				selectedCommand = null;
+				helpTextArea.setText("");
 				if(e.getClickCount()==2)
 					doPaste();
 			}
@@ -458,6 +459,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		if(node.isLeaf()){
 			Object nodeInfo = node.getUserObject();
 			selectedCommand = (String)nodeInfo;
+			selectedFunction = null;
 		//	insertInputBarCommand(selectedCommand);
 			showSelectedSyntax();
 			if(functionTable.getSelectedIndex() != -1)
@@ -541,6 +543,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 		public void mouseMoved(MouseEvent e) {
 
+		// TODO most of this code can be removed now that roll over no longer changes the help text	
 			MyJTree tree;
 			if(e.getSource() instanceof MyJTree)
 				tree = (MyJTree) e.getSource();
@@ -575,7 +578,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 				if(tree.equals(fcnTree)){
 					//clear the help text
 					rollOverCommand = null;
-					helpTextArea.setText("");
+					//helpTextArea.setText("");
 				}
 				
 				
