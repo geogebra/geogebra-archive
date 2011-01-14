@@ -483,10 +483,16 @@ public abstract class Drawable3D extends DrawableND {
 	abstract public void drawGeometryHidden(Renderer renderer); 
 	
 	/**
-	 * draw the geometry for hidden parts
+	 * draw the outline for hidden parts
 	 * @param renderer the 3D renderer where to draw
 	 */
-	abstract public void draw(Renderer renderer); 
+	abstract public void drawOutline(Renderer renderer); 
+	
+	/**
+	 * draw the surface for hidden parts (when not transparent)
+	 * @param renderer the 3D renderer where to draw
+	 */
+	abstract public void drawNotTransparentSurface(Renderer renderer); 
 	
 	/**
 	 * sets the matrix, the pencil and draw the geometry for hidden parts

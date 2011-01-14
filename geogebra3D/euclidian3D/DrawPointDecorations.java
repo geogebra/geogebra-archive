@@ -76,11 +76,11 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 	public void drawHidden(Renderer renderer){
 		
 		renderer.getTextures().setDashFromLineType(EuclidianView.LINE_TYPE_DASHED_LONG);
-		draw(renderer);		
+		drawOutline(renderer);		
 
 	} 
 	
-	public void draw(Renderer renderer) {
+	public void drawOutline(Renderer renderer) {
 		
 		renderer.setColor(new Coords(0, 0, 0, 1));//black
 		drawGeometry(renderer);

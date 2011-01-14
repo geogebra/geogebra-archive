@@ -80,13 +80,13 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 	}
 	
 	
+	public void drawOutline(Renderer renderer) {}
 	
 	
-	// method not used for transparent drawables
-	public void draw(Renderer renderer){
+	// method used only if surface is not transparent
+	public void drawNotTransparentSurface(Renderer renderer){
 		
 		if(!isVisible()){
-			//Application.debug("not visible "+getGeoElement().isEuclidianVisible()+",");
 			return;
 		}
 		
@@ -95,11 +95,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 			return;
 		
 		setLight(renderer);
-
 		setHighlightingColor(alpha);
-			
-		
-		//renderer.setMatrix(getMatrix());
 		drawGeometry(renderer);
 		
 	}

@@ -40,7 +40,12 @@ public class DrawList3D extends Drawable3D {
     }
 
 	@Override
-	public void draw(Renderer renderer) {
+	public void drawOutline(Renderer renderer) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void drawNotTransparentSurface(Renderer renderer) {
 		// TODO Auto-generated method stub
 		
 	}

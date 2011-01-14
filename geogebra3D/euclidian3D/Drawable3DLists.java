@@ -191,7 +191,7 @@ public class Drawable3DLists {
 		
 
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_SURFACES].iterator(); d.hasNext();) 
-			d.next().draw(renderer);		
+			d.next().drawNotTransparentSurface(renderer);		
 
 		
 	}
@@ -204,7 +204,7 @@ public class Drawable3DLists {
 		
 	
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CLOSED_SURFACES].iterator(); d.hasNext();) 
-			d.next().draw(renderer);	
+			d.next().drawNotTransparentSurface(renderer);	
 
 		
 	}
@@ -267,7 +267,7 @@ public class Drawable3DLists {
 		
 		// curves
 		for (Iterator<Drawable3D> d = lists[Drawable3D.DRAW_TYPE_CURVES].iterator(); d.hasNext();) 
-			d.next().draw(renderer);
+			d.next().drawOutline(renderer);
 		
 		view3D.draw(renderer);
 		

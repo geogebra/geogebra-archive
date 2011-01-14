@@ -2689,10 +2689,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void draw(Renderer renderer){
 		for(int i=0;i<3;i++)
-			axisDrawable[i].draw(renderer);
+			axisDrawable[i].drawOutline(renderer);
 		
 		if (decorationVisible)
-			pointDecorations.draw(renderer);
+			pointDecorations.drawOutline(renderer);
 	}
 	
 	/** draw hidden parts of view's drawables (axis)

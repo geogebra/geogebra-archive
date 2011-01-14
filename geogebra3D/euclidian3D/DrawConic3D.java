@@ -47,8 +47,6 @@ public class DrawConic3D extends Drawable3DCurves {
 		case GeoConic.CONIC_CIRCLE:
 		case GeoConic.CONIC_ELLIPSE:
 			renderer.getGeometryManager().draw(getGeometryIndex());
-			if (alpha>=1)
-				renderer.getGeometryManager().draw(getSurfaceIndex());
 			break;
 		default:
 			break;
@@ -58,6 +56,34 @@ public class DrawConic3D extends Drawable3DCurves {
 	}
 
 
+	// method used only if surface is not transparent
+	public void drawNotTransparentSurface(Renderer renderer){
+		
+		if(!isVisible()){
+			return;
+		}
+		
+
+		if (alpha<1)
+			return;
+
+		GeoConicND conic = (GeoConicND) getGeoElement();
+
+		switch(conic.getType()){
+		case GeoConic.CONIC_CIRCLE:
+		case GeoConic.CONIC_ELLIPSE:
+			setLight(renderer);
+			setSurfaceHighlightingColor(alpha);
+			renderer.getGeometryManager().draw(getSurfaceIndex());
+			break;
+		default:
+			break;
+
+		}
+		
+
+		
+	}
 
 
 	

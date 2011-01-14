@@ -264,7 +264,8 @@ public class Renderer implements GLEventListener {
 		getTextures().loadTextureLinear(Textures.FADING);
 
         gl.glEnable(GL.GL_BLEND);
-		
+        
+        //gl.glCullFace(GL.GL_BACK);gl.glEnable(GL.GL_CULL_FACE);
 		gl.glDisable(GL.GL_CULL_FACE);
         drawable3DLists.drawNotTransparentSurfaces(this);
 
@@ -273,7 +274,6 @@ public class Renderer implements GLEventListener {
 		gl.glEnable(GL.GL_CULL_FACE);
 		gl.glCullFace(GL.GL_FRONT); drawable3DLists.drawNotTransparentSurfacesClosed(this);//draws inside parts  
 		gl.glCullFace(GL.GL_BACK); drawable3DLists.drawNotTransparentSurfacesClosed(this);//draws outside parts 
-		
 		
 		
 		
@@ -291,7 +291,7 @@ public class Renderer implements GLEventListener {
 	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to draw transparent objects (planes, spheres, ...) </li>
 	 * <li> {@link Drawable3D#drawSurfacesForHiding(EuclidianRenderer3D)} to draw in the z-buffer objects that hides others (planes, spheres, ...) </li>
 	 * <li> {@link Drawable3D#drawTransp(EuclidianRenderer3D)} to re-draw transparent objects for a better alpha-blending </li>
-	 * <li> {@link Drawable3D#draw(EuclidianRenderer3D)} to draw not hidden parts (dash-less segments, lines, ...) </li>
+	 * <li> {@link Drawable3D#drawOutline(EuclidianRenderer3D)} to draw not hidden parts (dash-less segments, lines, ...) </li>
 	 * </ul>
 	 */
     public void display(GLAutoDrawable gLDrawable) {
@@ -390,8 +390,10 @@ public class Renderer implements GLEventListener {
         //gl.glDisable(GL.GL_BLEND);
         drawable3DLists.drawHiddenNotTextured(this);
         gl.glEnable(GL.GL_TEXTURE_2D);
+        //gl.glColorMask(false,false,false,false); //no writing in color buffer		
         drawable3DLists.drawHiddenTextured(this);
         drawNotTransp();
+        //gl.glColorMask(true,true,true,true);
         gl.glDisable(GL.GL_TEXTURE_2D);
         //gl.glDisable(GL.GL_TEXTURE_2D);
         gl.glDisable(GL.GL_ALPHA_TEST);       
