@@ -10,8 +10,6 @@ import geogebra3D.euclidian3D.opengl.Renderer;
  */
 public abstract class Drawable3DSurfaces extends Drawable3D {
 	
-	/** amplitude for blinking highlighting */
-	private static int HIGHLIGHTING_AMPLITUDE = 12;
 	
 	/** alpha value for rendering transparency */
 	protected float alpha;
@@ -63,7 +61,6 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 
 	public void drawTransp(Renderer renderer){
 		if(!isVisible()){
-			//Application.debug("not visible "+getGeoElement().isEuclidianVisible()+",");
 			return;
 		}
 		
@@ -73,7 +70,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		
 		setLight(renderer);
 
-		setHighlightingColor(HIGHLIGHTING_AMPLITUDE, alpha);
+		setHighlightingColor(alpha);
 			
 		
 		//renderer.setMatrix(getMatrix());
@@ -99,7 +96,7 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		
 		setLight(renderer);
 
-		setHighlightingColor(HIGHLIGHTING_AMPLITUDE, alpha);
+		setHighlightingColor(alpha);
 			
 		
 		//renderer.setMatrix(getMatrix());

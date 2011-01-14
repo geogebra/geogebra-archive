@@ -57,6 +57,13 @@ public class PlotterSurface {
 	
 	/**
 	 * start new surface
+	 */
+	public void start(){
+		index = manager.startNewList();
+	}
+	
+	/**
+	 * start new surface
 	 * @param function 
 	 */
 	public void start(Functional2Var function){
@@ -225,6 +232,82 @@ public class PlotterSurface {
 			manager.vertex(f[6],f[7],f[8]);
 		}
 		manager.endGeometry();
+	}
+	
+	
+	/** draws a disc
+	 * @param center
+	 * @param v1
+	 * @param v2
+	 * @param radius
+	 */
+	public void disc(Coords center, Coords v1, Coords v2, double radius){
+		manager.startGeometry(Manager.TRIANGLE_FAN);
+
+		int longitude = 60;
+		
+		Coords vn;
+		
+    	float dt = (float) 1/longitude;
+    	float da = (float) (2*Math.PI *dt) ; 
+    	
+    	
+
+    	manager.texture(0, 0);
+    	manager.vertex(center);  
+    	
+    	float u=1, v=0;
+		vn = (Coords) v1.mul(u).add(v2.mul(v));
+		manager.vertex(center.add(vn.mul(radius)));  	
+    	
+    	for( int i = 1; i <= longitude  ; i++ ) { 
+    		u = (float) Math.cos ( i * da ); 
+    		v = (float) Math.sin ( i * da ); 
+
+    		vn = (Coords) v1.mul(u).add(v2.mul(v));
+    		manager.vertex(center.add(vn.mul(radius)));
+    	} 		
+		
+
+		manager.endGeometry();
+	}
+	
+	
+	
+	/** draws an ellipse
+	 * @param center
+	 * @param v1
+	 * @param v2
+	 * @param a 
+	 * @param b 
+	 */
+	public void ellipse(Coords center, Coords v1, Coords v2, double a, double b){
+		manager.startGeometry(Manager.TRIANGLE_FAN);
+		
+		int longitude = 60;
+		
+		Coords m;
+		
+    	float dt = (float) 1/longitude;
+    	float da = (float) (2*Math.PI *dt) ; 
+    	
+    	manager.texture(0, 0);
+    	manager.vertex(center);  
+    	
+    	float u=1, v=0;
+		m = v1.mul(a*u).add(v2.mul(b*v));
+		manager.vertex(center.add(m));  	
+    	
+    	for( int i = 1; i <= longitude  ; i++ ) { 
+    		u = (float) Math.cos ( i * da ); 
+    		v = (float) Math.sin ( i * da ); 
+    		
+     		m = v1.mul(a*u).add(v2.mul(b*v));
+    		manager.vertex(center.add(m));
+    	} 
+    	
+    	manager.endGeometry();
+    	
 	}
 	
 	private Coords calcNormal(float x, float y, float z){

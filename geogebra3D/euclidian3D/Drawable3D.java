@@ -155,6 +155,9 @@ public abstract class Drawable3D extends DrawableND {
 	/** gl index of the geometry */
 	private int geomIndex = -1;
 	
+	/** gl index of the surface geometry (used for elements that have outline and surface) */
+	private int surfaceIndex = -1;
+	
 	//links to the GeoElement
 	private GeoElement geo; 
 	
@@ -169,7 +172,11 @@ public abstract class Drawable3D extends DrawableND {
 	public float zPickMin;
 
 	/** (r,g,b,a) vector */
-	private Coords color, colorHighlighted; 
+	private Coords 
+	color = new Coords(4), 
+	colorHighlighted = new Coords(4), 
+	surfaceColor = new Coords(4), 
+	surfaceColorHighlighted = new Coords(4); 
 	
 	private static final float EPSILON_Z = 0.0001f;//0.0001f;//10000000; //limit to consider two objects to be at the same place
 	
@@ -383,7 +390,15 @@ public abstract class Drawable3D extends DrawableND {
 		return geomIndex;
 	}
 	
+	protected void setSurfaceIndex(int index){
+		removeGeometryIndex(surfaceIndex);
+		surfaceIndex = index;
+	}
 	
+	
+	protected int getSurfaceIndex(){
+		return surfaceIndex;
+	}	
 
 	
 	
@@ -706,12 +721,11 @@ public abstract class Drawable3D extends DrawableND {
 	
 
 	/**
-	 * sets the color (for drawing) regarding geo's color, amplitude for blinking highlighting, 
+	 * sets the color for drawing
 	 * and alpha value
-	 * @param amplitude
 	 * @param alpha
 	 */
-	protected void setHighlightingColor(int amplitude, float alpha){
+	protected void setHighlightingColor(float alpha){
 		
 		if(doHighlighting()){
 			Manager manager = getView3D().getRenderer().getGeometryManager();
@@ -719,6 +733,20 @@ public abstract class Drawable3D extends DrawableND {
 		}else
 			getView3D().getRenderer().setColor(color);
 	}
+	
+	/**
+	 * sets the color of surface for drawing
+	 * and alpha value
+	 * @param alpha
+	 */
+	protected void setSurfaceHighlightingColor(float alpha){
+		
+		if(doHighlighting()){
+			Manager manager = getView3D().getRenderer().getGeometryManager();
+			getView3D().getRenderer().setColor(manager.getHigthlighting(surfaceColor,surfaceColorHighlighted));
+		}else
+			getView3D().getRenderer().setColor(surfaceColor);
+	}	
 	
 	protected void setColors(){
 		setColors(1);
@@ -728,8 +756,17 @@ public abstract class Drawable3D extends DrawableND {
 	private static final double LIGHT_COLOR = 3*0.5;
 	
 	protected void setColors(double alpha){
+		setColors(alpha,color,colorHighlighted);
+	}
+	
+	protected void setColorsOutlined(double alpha){
+		setColors(1);//for outline
+		setColors(alpha,surfaceColor,surfaceColorHighlighted);
+	}
+	
+	protected void setColors(double alpha, Coords color, Coords colorHighlighted){
 		Color c = getGeoElement().getObjectColor();
-		color = new Coords((double) c.getRed()/255, (double) c.getGreen()/255, (double) c.getBlue()/255,alpha);
+		color.set(new Coords((double) c.getRed()/255, (double) c.getGreen()/255, (double) c.getBlue()/255,alpha));
 
 		//creates corresponding color for highlighting
 		
@@ -751,7 +788,7 @@ public abstract class Drawable3D extends DrawableND {
 		}
 		
 		double s = getColorShift()/distance;
-		colorHighlighted = color.mul(1-s).add(color2.mul(s));
+		colorHighlighted.set(color.mul(1-s).add(color2.mul(s)));
 
 		//sufficient alpha to be seen
 		if (colorHighlighted.getW()<ALPHA_MIN_HIGHLIGHTING)

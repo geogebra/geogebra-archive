@@ -350,7 +350,7 @@ public class PlotterBrush {
     	float da = (float) (2*Math.PI *dt) ; 
     	float u=0, v=1;
     	
-    	setTextureX(0);
+    	setTextureX(0,0);
 		vn1 = (Coords) v1.mul(u).add(v2.mul(v));
 		down((Coords) center.add(vn1.mul(radius)),vn1,vn2);  	
     	
@@ -366,6 +366,50 @@ public class PlotterBrush {
 	}
 
 	
+	/** draws an ellipse
+	 * @param center
+	 * @param v1
+	 * @param v2
+	 * @param a 
+	 * @param b 
+	 */
+	public void ellipse(Coords center, Coords v1, Coords v2, double a, double b){
+		
+		//Ramanujan approximation
+		length=(float) (Math.PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)))); //TODO use integer to avoid bad dash cycle connection
+		
+		//foci
+		double f = Math.sqrt(a*a-b*b);
+		Coords f1 = v1.mul(f);
+		Coords f2 = v1.mul(-f);
+
+		
+		int longitude = 60;
+		
+		Coords m,vn1;
+		Coords vn2 = v1.crossProduct(v2);
+		
+    	float dt = (float) 1/longitude;
+    	float da = (float) (2*Math.PI *dt) ; 
+    	float u=0, v=1;
+    	
+    	setTextureX(0);
+		m = v1.mul(a*u).add(v2.mul(b*v));
+		vn1 = (m.sub(f1).normalized()).add((m.sub(f2).normalized())).normalized(); //bissector
+		down(center.add(m),vn1,vn2);  	
+    	
+    	for( int i = 1; i <= longitude  ; i++ ) { 
+    		u = (float) Math.sin ( i * da ); 
+    		v = (float) Math.cos ( i * da ); 
+    		
+    		setTextureX(i*dt);
+    		m = v1.mul(a*u).add(v2.mul(b*v));
+    		vn1 = (m.sub(f1).normalized()).add((m.sub(f2).normalized())).normalized(); //bissector
+    		moveTo(center.add(m),vn1,vn2);
+    	} 
+    	
+	}
+
 	////////////////////////////////////
 	// 3D CURVE DRAWING METHODS
 	////////////////////////////////////

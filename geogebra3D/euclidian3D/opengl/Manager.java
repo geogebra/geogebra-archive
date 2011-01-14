@@ -23,6 +23,7 @@ abstract public class Manager {
 	
 	/** geometries types */
 	static final int TRIANGLE_STRIP = GL.GL_TRIANGLE_STRIP;
+	static final int TRIANGLE_FAN = GL.GL_TRIANGLE_FAN;
 	static final int QUAD_STRIP = GL.GL_QUAD_STRIP;
 	static final int QUADS = GL.GL_QUADS;
 	static final int TRIANGLES = GL.GL_TRIANGLES;
