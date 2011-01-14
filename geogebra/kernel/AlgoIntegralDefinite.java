@@ -12,12 +12,14 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
-
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootFunction;
+
+import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
+import org.apache.commons.math.analysis.integration.RombergIntegrator;
+import org.apache.commons.math.analysis.integration.TrapezoidIntegrator;
 
 /**
  * Integral of a function (GeoFunction)
@@ -35,10 +37,9 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
     // for symbolic integration
     private GeoFunction symbIntegral;
     
-    // for numerical adaptive GaussQuad integration  
-    private static final int ORDER = 5;
-    private static final int MAX_ITER = 100;
-    private static LegendreGaussIntegrator gauss;   
+    private static final int MAX_ITER = 12; // max 2^MAX_ITER function evaluations
+    private static RombergIntegrator romberg;
+    
 
     /**
      * Creates new labeled integral
@@ -195,7 +196,7 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
        // max_error = ACCURACY; // current maximum error
         //maxstep = 0;           
         
-        double integral = adaptiveGaussQuad(f, lowerLimit, upperLimit);
+        double integral = numericIntegration(f, lowerLimit, upperLimit);
         n.setValue(integral);
               
         /*
@@ -206,22 +207,34 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
     //  private int maxstep;
     
     /**
-     * Computes integral of function fun in interval a, b using an adaptive Gauss 
-     * quadrature approach.
+     * Computes numeric integral of function fun in interval a, b.
      * @return Integral value
      * @param fun function to be integrated
      * @param a lower bound
      * @param b upper bound
      */
-    public static double adaptiveGaussQuad(RealRootFunction fun, double a, double b) {
-    	// init GaussQuad classes for numerical integration
-        if (gauss == null) {
-            gauss = new LegendreGaussIntegrator(ORDER, MAX_ITER);
+    public static double numericIntegration(RealRootFunction fun, double a, double b) {
+//    	// init GaussQuad classes for numerical integration
+//        if (gauss == null) {
+//            gauss = new LegendreGaussIntegrator(ORDER, MAX_ITER);
+//        }
+//    	 // integrate using adaptive gauss quadrature
+//		try {
+//			return gauss.integrate(new RealRootAdapter(fun), a, b);
+//		} catch (Exception e) {
+//			return Double.NaN;
+//		}
+		
+	 	// Romberg integration using trapezoid rule
+    	// the max number of function evaluations is here limited
+    	// to 2^MAX_ITER
+        if (romberg == null) {
+        	romberg = new RombergIntegrator();
+        	romberg.setMaximalIterationCount(MAX_ITER);
         }
-    	
-        // integrate using adaptive gauss quadrature
+    	 // integrate using adaptive gauss quadrature
 		try {
-			return gauss.integrate(new RealRootAdapter(fun), a, b);
+			return romberg.integrate(new RealRootAdapter(fun), a, b);
 		} catch (Exception e) {
 			return Double.NaN;
 		}

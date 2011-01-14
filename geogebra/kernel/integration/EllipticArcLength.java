@@ -37,10 +37,10 @@ public class EllipticArcLength {
 	 */
 	public double compute(double a, double b) {
 		if (a <= b)
-			return AlgoIntegralDefinite.adaptiveGaussQuad(arcLengthFunction, a, b);
+			return AlgoIntegralDefinite.numericIntegration(arcLengthFunction, a, b);
 		else
-			return AlgoIntegralDefinite.adaptiveGaussQuad(arcLengthFunction, 0, Kernel.PI_2)
-				 - AlgoIntegralDefinite.adaptiveGaussQuad(arcLengthFunction, b, a);
+			return AlgoIntegralDefinite.numericIntegration(arcLengthFunction, 0, Kernel.PI_2)
+				 - AlgoIntegralDefinite.numericIntegration(arcLengthFunction, b, a);
 		
 	}
 	

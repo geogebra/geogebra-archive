@@ -64,7 +64,7 @@ public class AlgoLengthFunction extends AlgoElement {
     	double a = A.value;
     	double b = B.value;
     	
-    	double lenVal = Math.abs(AlgoIntegralDefinite.adaptiveGaussQuad(lengthFunction, a, b));
+    	double lenVal = Math.abs(AlgoIntegralDefinite.numericIntegration(lengthFunction, a, b));
 		length.setValue(lenVal);	
 	}
     

@@ -59,7 +59,7 @@ public class AlgoLengthFunction2Points extends AlgoElement {
     	double a = A.inhomX;
     	double b = B.inhomX;
 
-    	double lenVal = Math.abs(AlgoIntegralDefinite.adaptiveGaussQuad(lengthFunction, a, b));
+    	double lenVal = Math.abs(AlgoIntegralDefinite.numericIntegration(lengthFunction, a, b));
 		length.setValue(lenVal);	
     }
     

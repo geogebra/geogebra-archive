@@ -59,7 +59,7 @@ public class AlgoLengthCurve extends AlgoElement {
     	double a = t0.getValue();
     	double b = t1.getValue();
 
-    	double lenVal = Math.abs(AlgoIntegralDefinite.adaptiveGaussQuad(lengthCurve, a, b));
+    	double lenVal = Math.abs(AlgoIntegralDefinite.numericIntegration(lengthCurve, a, b));
 		length.setValue(lenVal);		
     }
 
