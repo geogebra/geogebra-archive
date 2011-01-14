@@ -12,7 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.arithmetic.MyDouble;
 
 
 /**
@@ -66,7 +69,7 @@ public class AlgoAnglePolygon extends AlgoElement {
     }
 
     private void createAngles() {
-        GeoPoint[] points = poly.getPoints();
+        GeoPoint[] points = getPoints(poly);
         angles = new GeoAngle[points.length];
         algos = new AlgoAnglePoints[points.length];
 
@@ -90,7 +93,19 @@ public class AlgoAnglePolygon extends AlgoElement {
         	}
         }
     }
-
+    
+    private GeoPoint[] getPoints(GeoPolygon poly) {    	
+    	boolean sup = cons.isSuppressLabelsActive();
+		cons.setSuppressLabelCreation(true);
+    	GeoPoint[] points = poly.getPoints();
+    	for(int i=0;i<poly.getPointsLength();i++)
+		if(!points[i].isLabelSet() && points[i].isIndependent()){		
+			points[i]=kernel.Vertex(null, poly, new MyDouble(kernel,i+1));
+		}			
+		cons.setSuppressLabelCreation(sup);
+		return points;
+	}
+		
     // calc all angles of the polygon
     // this is done by the algorithms created in createAngles()
     // so nothing has to be done here
