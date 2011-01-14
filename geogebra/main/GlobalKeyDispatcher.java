@@ -290,6 +290,12 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				consumed = true;								
 				break;
 				
+				// Ctrl + E: open object properties (needed here for spreadsheet)
+			case KeyEvent.VK_E:
+				app.getGuiManager().showPropertiesDialog();
+				consumed = true;								
+				break;
+				
 				// Ctrl + F: refresh views
 			case KeyEvent.VK_F:
 				app.refreshViews();
