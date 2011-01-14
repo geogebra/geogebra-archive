@@ -76,6 +76,9 @@ public class AlgoFrequencyTable extends AlgoElement {
 	protected final void compute() {
 		int size = geoList.size();
 
+		if(table != null)
+			table.clear();
+		
 		if (!geoList.isDefined() ||  size == 0) {
 			table.setUndefined();
 			// return empty list
@@ -126,10 +129,6 @@ public class AlgoFrequencyTable extends AlgoElement {
 		}
 		//	System.out.println(f.toString());
 
-
-		for (int i=0 ; i<geoList.size() ; i++){
-			//table.add(geoList.get(i).copyInternal(cons));
-		}
 	}
 
 }
