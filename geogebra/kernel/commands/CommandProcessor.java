@@ -8900,3 +8900,74 @@ class CmdStemPlot extends CommandProcessor {
  		}
 
  	}
+
+
+
+	/**
+	* FrequencyTable
+	*/
+	class CmdFrequencyTable extends CommandProcessor {
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
+		public CmdFrequencyTable(Kernel kernel) {
+			 super(kernel);
+		 }
+	
+		 public GeoElement[] process(Command c) throws MyError {
+			 int n = c.getArgumentNumber();
+			 boolean[] ok = new boolean[n];
+			 GeoElement[] arg;
+			 arg = resArgs(c);
+	
+			 switch (n) {
+	
+			 case 1 :
+				 if ( (ok[0] = (arg[0].isGeoList()) ) ){
+					 GeoList list = (GeoList)arg[0];
+	
+						 GeoElement[] ret =
+						 {
+							 kernel.FrequencyTable(
+									 c.getLabel(),
+									 list)};
+					 return ret;
+				 } else {
+					 throw argErr(app, c.getName(), arg[0]);
+				 }
+	
+	
+			 case 2 :
+				 if (!arg[0].isGeoList()){
+					 throw argErr(app, c.getName(), arg[0]);
+				 }
+				 if (!arg[1].isGeoBoolean()){
+					 throw argErr(app, c.getName(), arg[1]);
+				 }
+					 GeoList list = (GeoList)arg[0];
+	
+						 GeoElement[] ret =
+						 {
+							 kernel.FrequencyTable(
+									 c.getLabel(),
+									 (GeoList) arg[0], (GeoBoolean) arg[1])};
+					 return ret;
+	
+	
+	
+			 case 0:
+				 throw argNumErr(app, c.getName(), n);
+	
+			 default :
+	
+				 list = wrapInList(kernel, arg, arg.length, -1);
+				 if (list != null) {
+					 GeoElement[] ret2 = { kernel.FrequencyTable(c.getLabel(), list)};
+					 return ret2;             	     	 
+				 } 
+			 
+			 throw argErr(app, c.getName(), arg[0]);
+			 }
+		 }
+	}

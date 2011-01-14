@@ -4180,6 +4180,29 @@ public class Kernel {
 		return text;
 	}
 	
+	
+	/** 
+	 * FrequencyTable[list]
+	 * G. Sturr
+	 */
+	final public GeoList FrequencyTable(String label, GeoList list) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, list, null);
+		GeoList table = algo.getResult();
+		return table;
+	}
+	
+	/** 
+	 * FrequencyTable[list, showRelative]
+	 * G. Sturr
+	 */
+	final public GeoList FrequencyTable(String label, GeoList list, GeoBoolean showRelative) {
+		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, list, showRelative);
+		GeoList table = algo.getResult();
+		return table;
+	}
+	
+	
+	
 	/** 
 	 * ToFraction[number]
 	 * Michael Borcherds
