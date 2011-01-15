@@ -92,8 +92,8 @@ public class AlgoIntegralDefinite extends AlgoElement {
         input[1] = ageo;
         input[2] = bgeo;
 
-        output = new GeoElement[1];
-        output[0] = n;
+        setOutputLength(1); 
+        setOutput(0,n);
         setDependencies(); // done by AlgoElement
     }
 
