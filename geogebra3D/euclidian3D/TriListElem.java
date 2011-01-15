@@ -15,7 +15,7 @@ public class TriListElem{
 	/** 
 	 * @param prev the previous element in the queue
 	 */
-	TriListElem(TriListElem prev) {
+	public TriListElem(TriListElem prev) {
         this.prev=prev;
 	}
 	

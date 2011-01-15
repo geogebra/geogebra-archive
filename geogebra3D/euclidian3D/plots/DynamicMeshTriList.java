@@ -24,6 +24,8 @@ abstract class DynamicMeshTriList extends TriList {
 	 */
 	abstract public TriListElem add(AbstractDynamicMeshElement e);
 	
+	abstract public double getError();
+	
 	/**
 	 * @param e
 	 * @return

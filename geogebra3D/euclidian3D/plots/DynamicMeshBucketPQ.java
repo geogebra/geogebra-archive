@@ -40,7 +40,7 @@ public class DynamicMeshBucketPQ extends BucketPQ<AbstractDynamicMeshElement> {
 		if (elem != null)
 			return false;
 
-		int bucketIndex = bucketAssigner.getBucketIndex(object, bucketAmt);
+		int bucketIndex = 0;
 
 		elem = new Link<AbstractDynamicMeshElement>(object);
 
