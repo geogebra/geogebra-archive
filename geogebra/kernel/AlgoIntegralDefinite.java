@@ -12,21 +12,21 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootFunction;
 
+import org.apache.commons.math.ConvergenceException;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
-import org.apache.commons.math.analysis.integration.RombergIntegrator;
-import org.apache.commons.math.analysis.integration.TrapezoidIntegrator;
 
 /**
  * Integral of a function (GeoFunction)
  * 
  * @author Markus Hohenwarter
  */
-public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInformation{
+public class AlgoIntegralDefinite extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
@@ -37,18 +37,14 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
     // for symbolic integration
     private GeoFunction symbIntegral;
     
-    private static final int MAX_ITER = 12; // max 2^MAX_ITER function evaluations
-    private static RombergIntegrator romberg;
-    
+    // for numerical adaptive GaussQuad integration  
+    private static final int FIRST_ORDER = 3;
+    private static final int SECOND_ORDER = 5;   
+    private static final int MAX_ITER = 5;   
+    private static LegendreGaussIntegrator firstGauss, secondGauss;
+    private static int adaptiveGaussQuadCounter = 0;
+    private static final int MAX_GAUSS_QUAD_CALLS = 500;     
 
-    /**
-     * Creates new labeled integral
-     * @param cons
-     * @param label
-     * @param f
-     * @param a
-     * @param b
-     */
     public AlgoIntegralDefinite(
         Construction cons,
         String label,
@@ -59,13 +55,6 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
         n.setLabel(label);
     }
 
-    /**
-     * Creates new unlabeled integral
-     * @param cons
-     * @param f
-     * @param a
-     * @param b
-     */
     AlgoIntegralDefinite(
         Construction cons,
         GeoFunction f,
@@ -82,9 +71,9 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
         // create helper algorithm for symbolic integral
         // don't use symbolic integral for conditional functions
         if (!f.isGeoFunctionConditional()) {
-	        AlgoCasIntegral algoInt = new AlgoCasIntegral(cons, f, null);
-	        symbIntegral = (GeoFunction) algoInt.getResult();
-	        cons.removeFromConstructionList(algoInt);     
+            AlgoCasIntegral algoInt = new AlgoCasIntegral(cons, f, null);
+            symbIntegral = (GeoFunction) algoInt.getResult();
+            cons.removeFromConstructionList(algoInt);     
         }
         
         setInputOutput(); // for AlgoElement        
@@ -92,13 +81,6 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
         n.setDrawable(true);
     }
 
-    public AlgoIntegralDefinite copy(){
-    	return new AlgoIntegralDefinite(cons, (GeoFunction)f.copy(), 
-    			new MyDouble(kernel,a.getDouble()), new MyDouble(kernel,b.getDouble()));
-
-    }
-    
-    
     public String getClassName() {
         return "AlgoIntegralDefinite";
     }
@@ -110,47 +92,27 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
         input[1] = ageo;
         input[2] = bgeo;
 
-        setOutputLength(1);
-        setOutput(0,n);
+        output = new GeoElement[1];
+        output[0] = n;
         setDependencies(); // done by AlgoElement
     }
 
-    /**
-     * Returns the integral as GeoNumeric object
-     * @return the integral
-     */
     public GeoNumeric getIntegral() {
         return n;
     }
 
-    /**
-     * Returns the integral value without recomputing
-     * @return integral value 
-     */
     double getIntegralValue() {
         return n.value;
     }
 
-    /**
-     * Returns the function
-     * @return function to be integrated
-     */
     public GeoFunction getFunction() {
         return f;
     }
 
-    /**
-     * Returns the lower bound
-     * @return lower bound
-     */
     public NumberValue getA() {
         return a;
     }
 
-    /**
-     * Returns the upper bound
-     * @return upper bound
-     */
     public NumberValue getB() {
         return b;
     }
@@ -207,37 +169,70 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
     //  private int maxstep;
     
     /**
-     * Computes numeric integral of function fun in interval a, b.
-     * @return Integral value
-     * @param fun function to be integrated
-     * @param a lower bound
-     * @param b upper bound
+     * Computes integral of function fun in interval a, b using an adaptive Gauss 
+     * quadrature approach.
      */
     public static double numericIntegration(RealRootFunction fun, double a, double b) {
-//    	// init GaussQuad classes for numerical integration
-//        if (gauss == null) {
-//            gauss = new LegendreGaussIntegrator(ORDER, MAX_ITER);
-//        }
-//    	 // integrate using adaptive gauss quadrature
-//		try {
-//			return gauss.integrate(new RealRootAdapter(fun), a, b);
-//		} catch (Exception e) {
-//			return Double.NaN;
-//		}
-		
-	 	// Romberg integration using trapezoid rule
-    	// the max number of function evaluations is here limited
-    	// to 2^MAX_ITER
-        if (romberg == null) {
-        	romberg = new RombergIntegrator();
-        	romberg.setMaximalIterationCount(MAX_ITER);
+    	adaptiveGaussQuadCounter = 0;
+    	if (a > b) {
+    		return -doAdaptiveGaussQuad(fun, b, a);
+    	} else {
+    		return doAdaptiveGaussQuad(fun, a, b);    		
+    	}
+    	
+    	//System.out.println("calls: " + adaptiveGaussQuadCounter);  
+
+    }
+    
+    private static double doAdaptiveGaussQuad(RealRootFunction fun, double a, double b) {    		   	
+    	if (++adaptiveGaussQuadCounter > MAX_GAUSS_QUAD_CALLS) {
+    		return Double.NaN;
+    	}
+    	
+    	// init GaussQuad classes for numerical integration
+        if (firstGauss == null) {
+            firstGauss = new LegendreGaussIntegrator(FIRST_ORDER, MAX_ITER);
+            secondGauss = new LegendreGaussIntegrator(SECOND_ORDER, MAX_ITER);
         }
-    	 // integrate using adaptive gauss quadrature
-		try {
-			return romberg.integrate(new RealRootAdapter(fun), a, b);
-		} catch (Exception e) {
+        
+        double firstSum = 0;
+        double secondSum = 0;
+        
+        boolean error = false;
+        
+        // integrate using gauss quadrature
+        try {
+	        firstSum = firstGauss.integrate(new RealRootAdapter(fun), a, b);
+	        if (Double.isNaN(firstSum)) return Double.NaN;        
+	        secondSum = secondGauss.integrate(new RealRootAdapter(fun), a, b);
+	        if (Double.isNaN(secondSum)) return Double.NaN;
+        } catch (MaxIterationsExceededException e) {
+        	error = true;
+        } catch (ConvergenceException e) {
+        	error = true;
+		} catch (FunctionEvaluationException e) {
+			return Double.NaN;
+		} catch (IllegalArgumentException e) {
 			return Double.NaN;
 		}
+		
+		//if (!error) Application.debug(a+" "+b+" "+(firstSum - secondSum), Kernel.isEqual(firstSum, secondSum, Kernel.STANDARD_PRECISION) ? 1 : 0);
+		//else Application.debug(a+" "+b+" error",1);
+		
+        // check if both results are equal
+        boolean equal = !error && Kernel.isEqual(firstSum, secondSum, Kernel.STANDARD_PRECISION);
+       
+        if (equal) { 
+        	// success              
+            return secondSum;
+        } else {           
+            double mid = (a + b) / 2;                             
+            double left = doAdaptiveGaussQuad(fun, a, mid);
+            if (Double.isNaN(left))
+                return Double.NaN;
+            else
+                return left + doAdaptiveGaussQuad(fun, mid, b);           
+        }
     }
 
     final public String toString() {
@@ -245,4 +240,5 @@ public class AlgoIntegralDefinite extends AlgoElement  implements AlgoDrawInform
         // simplified to allow better Chinese translation
         return app.getPlain("IntegralOfAfromBtoC",f.getLabel(),ageo.getLabel(),bgeo.getLabel());
     }
+
 }
