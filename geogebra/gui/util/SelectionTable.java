@@ -8,6 +8,7 @@ import geogebra.main.Application;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
@@ -410,7 +411,7 @@ public class SelectionTable extends JTable{
 		public Component getTableCellRendererComponent(JTable table, Object value,
 				boolean isSelected,boolean hasFocus, int row,int column) 
 		{
-			setFont(app.getPlainFont());
+			
 			setAlignmentX(CENTER_ALIGNMENT);
 			setAlignmentY(CENTER_ALIGNMENT);
 
@@ -418,12 +419,8 @@ public class SelectionTable extends JTable{
 				this.setHorizontalAlignment(horizontalAlignment);
 				this.setVerticalAlignment(SwingConstants.CENTER);
 				setText((String)value);
+				setFont(app.getFontCanDisplay((String)value, Font.PLAIN));
 				setBorder(paddingBorder);
-				//if(isSelected){
-				//	setIcon(GeoGebraIcon.createPointStyleIcon( 0,  2,  new Dimension(8,8),  Color.BLACK,  null));
-				//}else{
-				//setIcon(GeoGebraIcon.createEmptyIcon(8,8));
-				//}
 
 			}else{		
 				setText("");
