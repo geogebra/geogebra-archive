@@ -2666,7 +2666,9 @@ public	class PropertiesPanel extends JPanel {
 				return null;			
 			
 			GeoText text = (GeoText) geos[0];			
-			td.setGeoText(text);					
+			td.setGeoText(text);
+			td.updateRecentSymbolTable();
+			
 			return this;
 		}
 
