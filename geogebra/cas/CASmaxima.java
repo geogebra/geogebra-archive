@@ -26,6 +26,10 @@ public class CASmaxima extends CASgeneric {
 	
 	final public String RB_GGB_TO_Maxima = "/geogebra/cas/ggb2maxima";
 	
+	// 5.22.0 needed by #295
+	// 5.23.0 needed by #314
+	final public int[] MINIMAL_REQUIRED_VERSION = {5, 23};
+	
 	private MaximaInteractiveProcess ggbMaxima;
 	private ResourceBundle ggb2Maxima;
 	
@@ -195,7 +199,7 @@ public class CASmaxima extends CASgeneric {
 			// Sets of Sets ( {{...}} ) are considered Matrices
 			exp = exp.replaceAll("\\[\\s*(\\[.+\\])\\s*\\]", "matrix($1)");
 			
-			final boolean debug = true;
+			final boolean debug = false;
 			if (debug) Application.debug("Expression for Maxima: "+exp, 1);
 			
 			
@@ -310,8 +314,8 @@ public class CASmaxima extends CASgeneric {
 			}
 			Application.setCASVersionString(v.toString());
 			
-			// There are problems with Maxima versions < 5.22. See ticket #295
-			if (version[0] < 5 || (version[0] == 5 && version[1] < 22))
+			if (version[0] < MINIMAL_REQUIRED_VERSION[0] ||
+					(version[0] == MINIMAL_REQUIRED_VERSION[0] && version[1] < MINIMAL_REQUIRED_VERSION[1]))
 					throw new MaximaVersionUnsupportedExecption(version);
 
 		} catch (MaximaTimeoutException e) {
@@ -331,8 +335,18 @@ public class CASmaxima extends CASgeneric {
 	 * Resets the cas and unbinds all variable and function definitions.
 	 */
 	public void reset() {
-		ggbMaxima = null;
-		getMaxima();
+
+		try {
+			ggbMaxima.executeCall("kill(all);");
+			initMyMaximaFunctions();
+		} catch (MaximaTimeoutException e) {
+			e.printStackTrace();
+			
+			// completely re-initialize!
+			ggbMaxima = null;
+			getMaxima();
+		}
+
 	}
 	
 	private void initMyMaximaFunctions() throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {

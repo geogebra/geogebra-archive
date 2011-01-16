@@ -76,7 +76,7 @@ public class GeoGebraCAS {
 	 * Resets the cas and unbinds all variable and function definitions.
 	 */
 	public void reset() {
-		setCurrentCAS(currentCAS);
+		cas.reset();
 	}
 	
 	private CASmathpiper getMathPiper() {
