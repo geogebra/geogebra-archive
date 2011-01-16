@@ -1112,8 +1112,6 @@ public class Application implements KeyEventDispatcher {
 						}
 					} else {
 						File f = new File(fileArgument);
-						Application.debug(Util.toHexString(fileArgument.charAt(0)),1);
-						showMessage(f.getName());
 						f = f.getCanonicalFile();
 						success = getGuiManager().loadFile(f, isMacroFile);
 					}
@@ -1596,7 +1594,7 @@ public class Application implements KeyEventDispatcher {
 				|| "it".equals(lang)
 				|| "pt".equals(lang)
 			) {
-			sbOrdinal.append("ï¿½");
+			sbOrdinal.append("ª");
 		} else if ("bs".equals(lang)
 				|| "sl".equals(lang)) {
 			sbOrdinal.append("-ti");
@@ -2301,7 +2299,7 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	public void showMessage(final String message) {		
-		//Application.debug("showMessage: "+message);
+		Application.printStacktrace("showMessage: "+message);
 		
 		// use SwingUtilities to make sure this gets executed in the correct (=GUI) thread.
 		SwingUtilities.invokeLater(new Runnable() {
