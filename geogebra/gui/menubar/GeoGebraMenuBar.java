@@ -238,9 +238,14 @@ public class GeoGebraMenuBar extends JMenuBar {
 				systemInfo.append(vsb);
 				systemInfo.append(" (");
 				systemInfo.append(GeoGebra.BUILD_DATE);
-				systemInfo.append(")\nJava: "+ System.getProperty("java.version") + ", " +(app.getHeapSize()/1024/1024)+"MB");
+				systemInfo.append(")\nJava: ");
+				systemInfo.append(System.getProperty("java.version"));
 				systemInfo.append("\nOS: ");
 				systemInfo.append(System.getProperty("os.name"));
+				systemInfo.append("\nHeap: ");
+				systemInfo.append(app.getHeapSize()/1024/1024);
+				systemInfo.append("MB\nCAS: ");
+				systemInfo.append(Application.getCASVersionString());
 				systemInfo.append("\n\n");
 				
 				
