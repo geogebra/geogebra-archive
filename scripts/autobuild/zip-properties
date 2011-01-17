@@ -1,0 +1,32 @@
+#!/bin/sh
+# Creates zip files from geogebra.properties from SVN repository
+# @author Zoltan Kovacs <zoltan@geogebra.org>
+
+# FIXME: $ZIPDIR is hardcoded.
+
+ZIPDIR=/Users/zoltan/source/translation/gui
+DATE=`date +%Y%m%d`
+ZIPFILE=geogebra_prop_40_$DATE.zip
+
+date
+echo "$0: start"
+
+test -r autobuild.conf || {
+ echo "Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
+ exit 1
+ }
+. ./autobuild.conf
+
+cd $SVNDIR/geogebra/geogebra/properties
+$SVN_COMMAND update --accept theirs-full
+cd ..
+
+mkdir -p $ZIPDIR/old
+mv $ZIPDIR/*.zip $ZIPDIR/old
+
+zip -r $ZIPFILE properties
+
+mv $ZIPFILE $ZIPDIR
+
+date
+echo "$0: end"
