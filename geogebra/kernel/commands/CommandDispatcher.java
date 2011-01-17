@@ -403,6 +403,8 @@ public class CommandDispatcher {
     	cmdTable.put("SelectedIndex", new CmdSelectedIndex(kernel)); 
     	cmdTable.put("RandomElement", new CmdRandomElement(kernel));
     	cmdTable.put("Product", new CmdProduct(kernel));
+    	cmdTable.put("Frequency", new CmdFrequency(kernel));
+    	cmdTable.put("Unique", new CmdUnique(kernel));
     	
     	cmdSubTable[TABLE_LIST].putAll(cmdTable);
     	cmdTable.clear();

@@ -4224,6 +4224,15 @@ public class Kernel {
 	}
 	
 	
+	/** 
+	 * Unique[dataList]
+	 * G. Sturr
+	 */
+	final public GeoList Unique(String label, GeoList dataList) {
+		AlgoUnique algo = new AlgoUnique(cons, label, dataList);
+		GeoList table = algo.getResult();
+		return table;
+	}
 	
 	
 	

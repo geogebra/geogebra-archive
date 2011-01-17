@@ -32,8 +32,8 @@ public class AlgoFrequency extends AlgoElement {
 
 	// for compute
 	private GeoList value = new GeoList(cons);
-	
-	
+
+
 
 
 	AlgoFrequency(Construction cons, String label, GeoList dataList, GeoList classList, GeoBoolean isRelative ) {
@@ -88,24 +88,20 @@ public class AlgoFrequency extends AlgoElement {
 
 	protected final void compute() {
 
-		
-		if(frequency != null) frequency.clear();
-		if(value != null) value.clear();
-		
-		int size = dataList.size();
-		double numMax = 0, numMin = 0;
 
-		
+
+
+
 		//=======================================================
 		// Validate input arguments
 		//=======================================================
-		
-		if (!dataList.isDefined() || size == 0) {
+
+		if (!dataList.isDefined() || dataList.size() == 0) {
 			frequency.setUndefined();		
 			return; 		
 		}
 
-		if( !( dataList.getElementType() != GeoElement.GEO_CLASS_TEXT 
+		if( !( dataList.getElementType() == GeoElement.GEO_CLASS_TEXT 
 				|| dataList.getElementType() == GeoElement.GEO_CLASS_NUMERIC )){
 			frequency.setUndefined();		
 			return;
@@ -118,14 +114,20 @@ public class AlgoFrequency extends AlgoElement {
 			}
 		}
 
-
 		
+		frequency.setDefined(true);
+		frequency.clear();
+		if(value != null) value.clear();
+
+		double numMax = 0, numMin = 0;
+
+
 		//=======================================================
 		// Load the data into f, an instance of Frequency class 
 		//=======================================================
-		
+
 		Frequency f = new Frequency();
-		for (int i=0 ; i < size ; i++){
+		for (int i=0 ; i < dataList.size() ; i++){
 			if(dataList.getElementType() == GeoElement.GEO_CLASS_TEXT)
 				f.addValue(((GeoText)dataList.get(i)).toValueString());
 			if(dataList.getElementType() == GeoElement.GEO_CLASS_NUMERIC)
@@ -138,7 +140,7 @@ public class AlgoFrequency extends AlgoElement {
 		// Get the unique value list and compute frequencies for  
 		// each value if classList does not exist   
 		//=======================================================
-		
+
 		// handle string data
 		if(dataList.getElementType() == GeoElement.GEO_CLASS_TEXT){
 
@@ -189,7 +191,7 @@ public class AlgoFrequency extends AlgoElement {
 		//=======================================================
 		// Compute frequencies for the classes (if needed)
 		//=======================================================
-		
+
 		if(classList != null){
 
 			double lowerClassBound = 0 ;
