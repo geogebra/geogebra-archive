@@ -46,6 +46,7 @@ import geogebra.sound.MidiManager;
 import geogebra.util.DownloadManager;
 import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.AWTKeyStroke;
@@ -1594,7 +1595,7 @@ public class Application implements KeyEventDispatcher {
 				|| "it".equals(lang)
 				|| "pt".equals(lang)
 			) {
-			sbOrdinal.append("ª");
+			sbOrdinal.append(Unicode.FEMININE_ORDINAL_INDICATOR);
 		} else if ("bs".equals(lang)
 				|| "sl".equals(lang)) {
 			sbOrdinal.append("-ti");

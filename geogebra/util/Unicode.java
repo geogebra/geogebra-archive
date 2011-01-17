@@ -32,6 +32,7 @@ public class Unicode {
 	
 	final public static char multiplicationDot =  '\u2219'; // bullet
 	final public static String multiplicationDotStr = multiplicationDot+"";
+	final public static char FEMININE_ORDINAL_INDICATOR = '\u00aa';
 	
 	/*
 	 * converts an integer to a unicode superscript string (including minus sign)
