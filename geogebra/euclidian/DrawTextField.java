@@ -219,7 +219,7 @@ public final class DrawTextField extends Drawable {
 		
 		GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
 		if (linkedGeo != null)
-			textField.setText(linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false));
+			textField.setText(linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true));
 	}
 
 
