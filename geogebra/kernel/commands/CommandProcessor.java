@@ -8910,14 +8910,14 @@ class CmdStemPlot extends CommandProcessor {
 
 
 	/**
-	* FrequencyTable
+	* Frequency
 	*/
-	class CmdFrequencyTable extends CommandProcessor {
+	class CmdFrequency extends CommandProcessor {
 		/**
 		* Create new command processor
 		* @param kernel kernel
 		*/
-		public CmdFrequencyTable(Kernel kernel) {
+		public CmdFrequency(Kernel kernel) {
 			 super(kernel);
 		 }
 	
@@ -8928,52 +8928,63 @@ class CmdStemPlot extends CommandProcessor {
 			 arg = resArgs(c);
 	
 			 switch (n) {
-	
+
 			 case 1 :
-				 if ( (ok[0] = (arg[0].isGeoList()) ) ){
-					 GeoList list = (GeoList)arg[0];
-	
-						 GeoElement[] ret =
-						 {
-							 kernel.FrequencyTable(
-									 c.getLabel(),
-									 list)};
+				 if (ok[0] = arg[0].isGeoList()){
+					 GeoElement[] ret = { kernel.Frequency(c.getLabel(),(GeoList)arg[0])};
 					 return ret;
+
 				 } else {
 					 throw argErr(app, c.getName(), arg[0]);
 				 }
-	
-	
+
+
 			 case 2 :
-				 if (!arg[0].isGeoList()){
-					 throw argErr(app, c.getName(), arg[0]);
+				 
+				// arg[0] = data list, arg[1] = show relative
+				if ((arg[0].isGeoList()) &&  (arg[1].isGeoBoolean()) ){
+						 GeoElement[] ret = { kernel.Frequency(c.getLabel(),
+								 (GeoList) arg[0], 
+								 (GeoBoolean) arg[1])};
+						 return ret;
+					 }
+				
+				 	 
+				// arg[0] = datA list, arg[1] = bin list			 
+				 else if ((arg[0].isGeoList()) &&  (arg[1].isGeoList()) ){
+					 if (arg[1].isGeoList()){
+						 GeoElement[] ret = { kernel.Frequency(c.getLabel(),
+								 (GeoList) arg[0], 
+								 (GeoList) arg[1])};
+						 return ret;
+					 }
 				 }
-				 if (!arg[1].isGeoBoolean()){
-					 throw argErr(app, c.getName(), arg[1]);
+				 
+				 else
+				 {
+					 throw argErr(app, c.getName(), arg[1]); 
 				 }
-					 GeoList list = (GeoList)arg[0];
-	
-						 GeoElement[] ret =
-						 {
-							 kernel.FrequencyTable(
-									 c.getLabel(),
-									 (GeoList) arg[0], (GeoBoolean) arg[1])};
+				 
+			 case 3 :
+				 
+				// arg[0] = data list, arg[1] = bin list, arg[2] = show relative
+				 if( (ok[0] = arg[0].isGeoList())  
+						 &&  (ok[1] = arg[1].isGeoList()) 
+						 &&  (ok[2] = arg[2].isGeoBoolean()) ) {
+					 GeoElement[] ret = { kernel.Frequency(c.getLabel(),
+							 (GeoList) arg[0],
+							 (GeoList) arg[1], 
+							 (GeoBoolean) arg[2])};
 					 return ret;
-	
-	
-	
-			 case 0:
-				 throw argNumErr(app, c.getName(), n);
-	
+					 
+				 }
+				 
+				 else {
+					 throw argErr(app, c.getName(), arg[2]);
+				 }
+
 			 default :
-	
-				 list = wrapInList(kernel, arg, arg.length, -1);
-				 if (list != null) {
-					 GeoElement[] ret2 = { kernel.FrequencyTable(c.getLabel(), list)};
-					 return ret2;             	     	 
-				 } 
-			 
-			 throw argErr(app, c.getName(), arg[0]);
+				 throw argErr(app, c.getName(), arg[0]);
 			 }
 		 }
 	}

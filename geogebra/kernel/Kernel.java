@@ -4182,24 +4182,49 @@ public class Kernel {
 	
 	
 	/** 
-	 * FrequencyTable[list]
+	 * Frequency[dataList]
 	 * G. Sturr
 	 */
-	final public GeoList FrequencyTable(String label, GeoList list) {
-		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, list, null);
+	final public GeoList Frequency(String label, GeoList dataList) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, null, null);
 		GeoList table = algo.getResult();
 		return table;
 	}
 	
 	/** 
-	 * FrequencyTable[list, showRelative]
+	 * Frequency[dataList, isRelative]
 	 * G. Sturr
 	 */
-	final public GeoList FrequencyTable(String label, GeoList list, GeoBoolean showRelative) {
-		AlgoFrequencyTable algo = new AlgoFrequencyTable(cons, label, list, showRelative);
+	final public GeoList Frequency(String label, GeoList dataList, GeoBoolean isRelative) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, null, isRelative);
 		GeoList table = algo.getResult();
 		return table;
 	}
+	
+	
+	/** 
+	 * Frequency[dataList, classList]
+	 * G. Sturr
+	 */
+	final public GeoList Frequency(String label, GeoList dataList, GeoList classList ) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, classList, null);
+		GeoList table = algo.getResult();
+		return table;
+	}
+	
+	
+	/** 
+	 * Frequency[dataList, classList, isRelative]
+	 * G. Sturr
+	 */
+	final public GeoList Frequency(String label, GeoList dataList, GeoList classList, GeoBoolean isRelative) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, classList, isRelative);
+		GeoList table = algo.getResult();
+		return table;
+	}
+	
+	
+	
 	
 	
 	
