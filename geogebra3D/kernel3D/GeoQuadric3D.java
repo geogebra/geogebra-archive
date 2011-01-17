@@ -65,7 +65,7 @@ implements GeoElement3DInterface, Functional2Var{
 	/**
 	 * @return the matrix representation of the quadric in its dimension
 	 */
-	protected CoordMatrix getGgbMatrix(double[] vals){
+	protected CoordMatrix getSymetricMatrix(double[] vals){
 		
 		CoordMatrix ret = new CoordMatrix(4, 4);
 		

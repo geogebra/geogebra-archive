@@ -19,7 +19,9 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoVectorND;
 
 /**
@@ -451,6 +453,18 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 
+	
+	public GeoConic3D Intersect(
+			 String label,
+			 GeoPlaneND plane,
+			 GeoQuadricND quadric){
+		
+		
+		AlgoIntersectPlaneQuadric algo = new AlgoIntersectPlaneQuadric(cons, label, (GeoPlane3D) plane, (GeoQuadric3D) quadric);
+		
+		return algo.getConic();
+	}
+			
 	////////////////////////////////////////////////
 	// FUNCTIONS (2 VARS)
 

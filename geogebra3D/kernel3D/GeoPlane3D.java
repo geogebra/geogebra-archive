@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
@@ -238,6 +239,20 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	
 	public CoordMatrix4x4 getDrawingMatrix(){
 		return getCoordSys().getMatrixOrthonormal();
+	}
+	
+	/**
+	 * return the (v1, v2, o) parametric matrix of this plane,
+	 * ie each point of the plane is (v1, v2, o)*(a,b,1) for some a, b value
+	 * @return the (v1, v2, o) parametric matrix of this plane
+	 */
+	public CoordMatrix getParametricMatrix(){
+		CoordMatrix4x4 m4 = getCoordSys().getMatrixOrthonormal();
+		CoordMatrix ret = new CoordMatrix(4,3);
+		ret.setVx(m4.getVx());
+		ret.setVy(m4.getVy());
+		ret.setOrigin(m4.getOrigin());
+		return ret;
 	}
 	
 	public Coords getMainDirection(){

@@ -353,7 +353,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 		}  
 	}
    
-    final void setStartPoint(GeoPoint P) {        	
+    public final void setStartPoint(GeoPoint P) {        	
     	startPoint = P;	    	
     }
     

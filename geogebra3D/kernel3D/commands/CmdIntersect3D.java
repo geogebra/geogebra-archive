@@ -7,6 +7,8 @@ import geogebra.kernel.commands.CmdIntersect;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.Kernel3D;
@@ -53,6 +55,22 @@ public  GeoElement[] process(Command c) throws MyError {
         							c.getLabel(),
         							(GeoElement) arg[0],
         							(GeoElement) arg[1])};
+        			return ret;
+        		}else if ((arg[0] instanceof GeoPlaneND) && (arg[1] instanceof GeoQuadricND)){
+        			GeoElement[] ret =
+        			{
+        					kernel.getManager3D().Intersect(
+        							c.getLabel(),
+        							(GeoPlaneND) arg[0],
+        							(GeoQuadricND) arg[1])};
+        			return ret;
+        		}else if ((arg[0] instanceof GeoQuadricND) && (arg[1] instanceof GeoPlaneND)){
+        			GeoElement[] ret =
+        			{
+        					kernel.getManager3D().Intersect(
+        							c.getLabel(),
+        							(GeoPlaneND) arg[1],
+        							(GeoQuadricND) arg[0])};
         			return ret;
         		}
         	}

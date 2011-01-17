@@ -3,10 +3,12 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoVectorND;
 
 /**
@@ -258,7 +260,16 @@ public interface Manager3DInterface {
 					GeoElement cs2) ;
 
 
-
+			 /** Calculate the intersection of plane and quadric
+			  * @param label name of the point
+			  * @param plane
+			  * @param quadric
+			  * @return conic intersection
+			  */
+			 public GeoConicND Intersect(
+					 String label,
+					 GeoPlaneND plane,
+					 GeoQuadricND quadric) ;
 
 			////////////////////////////////////////////////
 			// FUNCTIONS (2 VARS)

@@ -450,7 +450,7 @@ GeoPointND, Animatable  {
 		return path;
 	}
 	
-	void setPath(Path p) {
+	public void setPath(Path p) {
 		path = p;
 		
 		// tell conic that this point is on it, that's needed to handle reflections

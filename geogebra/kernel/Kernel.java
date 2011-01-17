@@ -6835,7 +6835,7 @@ public class Kernel {
 	private StringBuilder sbBuildLHS = new StringBuilder(80);
 
 	// form: y� = f(x) (coeff of y = 0)
-	final StringBuilder buildExplicitConicEquation(
+	public final StringBuilder buildExplicitConicEquation(
 		double[] numbers,
 		String[] vars,
 		int pos,

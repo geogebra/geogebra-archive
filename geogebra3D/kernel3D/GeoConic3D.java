@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
@@ -44,6 +45,7 @@ extends GeoConicND implements GeoElement3DInterface{
 	 */
 	public GeoConic3D(Construction c) {
 		super(c,2);
+		
 	}	
 	
 	
@@ -247,7 +249,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 
-		//TODO move to GeoConicND
+		/*
 		   protected String getTypeString() {
 				switch (type) {
 				case GeoConic.CONIC_CIRCLE: 
@@ -258,7 +260,7 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 		    }
-
+*/
 
 		@Override
 		public boolean isEqual(GeoElement Geo) {
@@ -278,15 +280,8 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 
-		public boolean showInAlgebraView() {
-			return true;
-		}
 
 
-
-		protected boolean showInEuclidianView() {
-			return true;
-		}
 
 
 
@@ -306,12 +301,6 @@ extends GeoConicND implements GeoElement3DInterface{
 
 
 
-
-		@Override
-		public void addPointOnConic(GeoPointND p) {
-			// TODO Auto-generated method stub
-			
-		}
 
 
 
@@ -341,6 +330,7 @@ extends GeoConicND implements GeoElement3DInterface{
 			getLineStyleXML(sb);
 			
 		}
+		
 		
 	 
 }

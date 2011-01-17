@@ -368,11 +368,11 @@ public class PlotterBrush {
 	
 	/** draws an ellipse
 	 * @param center
-	 * @param v1
-	 * @param v2
-	 * @param a 
-	 * @param b 
-	 */
+	 * @param v1 1st eigenvector
+	 * @param v2 2nd eigenvector
+	 * @param a  1st eigenvalue
+	 * @param b  2nd eigenvalue
+	 *  	 */
 	public void ellipse(Coords center, Coords v1, Coords v2, double a, double b){
 		
 		//Ramanujan approximation
@@ -402,9 +402,130 @@ public class PlotterBrush {
     		u = (float) Math.sin ( i * da ); 
     		v = (float) Math.cos ( i * da ); 
     		
-    		setTextureX(i*dt);
+    		setTextureX(i*dt); //TODO check this
     		m = v1.mul(a*u).add(v2.mul(b*v));
     		vn1 = (m.sub(f1).normalized()).add((m.sub(f2).normalized())).normalized(); //bissector
+    		moveTo(center.add(m),vn1,vn2);
+    	} 
+    	
+	}
+	
+	
+	
+	/** draws half an hyperbola
+	 * @param center
+	 * @param v1 1st eigenvector
+	 * @param v2 2nd eigenvector
+	 * @param a  1st eigenvalue
+	 * @param b  2nd eigenvalue
+	 * @param tMin t min
+	 * @param tMax t max
+	 */
+	public void halfHyperbola(Coords center, Coords v1, Coords v2, double a, double b,
+			double tMin, double tMax){
+		
+		
+		//foci
+		double f = Math.sqrt(a*a+b*b);
+		Coords f1 = v1.mul(f);
+		Coords f2 = v1.mul(-f);
+		
+		//excentricity
+		//double e = f/a;
+		//double e2 = e*e;
+
+		//asymptotic approximation
+		length=(float) (tMax-tMin);//(float) (f*(Math.cosh(tMin)+Math.cosh(tMax))/200);
+	
+		int longitude = 60;
+		
+		Coords m,vn1;
+		Coords vn2 = v1.crossProduct(v2);
+		
+    	float dt = (float) (tMax-tMin)/longitude;
+    	
+    	float u, v;
+ 		u = (float) Math.cosh ( tMin ); 
+		v = (float) Math.sinh ( tMin ); 
+		
+		//double s=f*u; //curve coord   	
+		double s=tMin; //curve coord   	
+		setTextureX((float) s);
+
+		
+		m = v1.mul(a*u).add(v2.mul(b*v));
+		vn1 = (m.sub(f1).normalized()).sub((m.sub(f2).normalized())).normalized(); //bissector
+		down(center.add(m),vn1,vn2);  	
+    	
+    	for( int i = 1; i <= longitude  ; i++ ) { 
+    		u = (float) Math.cosh ( tMin + i * dt ); 
+    		v = (float) Math.sinh ( tMin + i * dt ); 
+    		
+    		//double c2 = 1-(v*v)/(u*u);
+    		//s+=a*Math.sqrt(e2/c2-1);
+    		//s=f*u;
+    		s=tMin+i*dt;
+    		setTextureX((float) s);
+    		m = v1.mul(a*u).add(v2.mul(b*v));
+    		vn1 = (m.sub(f1).normalized()).sub((m.sub(f2).normalized())).normalized(); //bissector
+    		moveTo(center.add(m),vn1,vn2);
+    	} 
+    	
+	}
+
+	private double parabolaS(double t){
+		return (Math.log(t + Math.sqrt(t*t + 1)) + t*Math.sqrt(t*t+1))/2;
+	}
+	
+	/** draws a parabola
+	 * @param center
+	 * @param v1 1st eigenvector
+	 * @param v2 2nd eigenvector
+	 * @param p eigenvalue
+	 * @param tMin t min
+	 * @param tMax t max
+	 */
+	public void parabola(Coords center, Coords v1, Coords v2, double p,
+			double tMin, double tMax){
+		
+		
+		//focus
+		Coords f1 = v1.mul(p/2);
+
+		length=(float) (tMax-tMin)/10;
+	
+		int longitude = 60;
+		
+		Coords m,vn1;
+		Coords vn2 = v1.crossProduct(v2);
+		
+    	float dt = (float) (tMax-tMin)/longitude;
+    	
+    	float u, v; 
+    	double t;
+    	t=tMin;
+ 		u = (float) ( p*t*t/2 ); 
+		v = (float) ( p*t); 
+		
+	
+		double s=t;
+		setTextureX((float) s);
+
+		
+		m = v1.mul(u).add(v2.mul(v));
+		vn1 = (m.sub(f1).normalized()).sub(v1).normalized(); //bissector
+		down(center.add(m),vn1,vn2);  	
+    	
+    	for( int i = 1; i <= longitude  ; i++ ) { 
+
+        	t=tMin + i * dt;
+     		u = (float) ( p*t*t/2 ); 
+    		v = (float) ( p*t);     		
+
+    		s=t;
+    		setTextureX((float) s);
+    		m = v1.mul(u).add(v2.mul(v));
+    		vn1 = (m.sub(f1).normalized()).sub(v1).normalized(); //bissector
     		moveTo(center.add(m),vn1,vn2);
     	} 
     	

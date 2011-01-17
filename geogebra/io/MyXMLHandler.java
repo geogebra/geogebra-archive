@@ -57,6 +57,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
@@ -2555,7 +2556,7 @@ public class MyXMLHandler implements DocHandler {
 		}
 		// conic
 		else if (geo.isGeoConic()) {
-			GeoConic conic = (GeoConic) geo;
+			GeoConicND conic = (GeoConicND) geo;
 			String style = (String) attrs.get("style");
 			if (style.equals("implicit")) {
 				conic.setToImplicit();

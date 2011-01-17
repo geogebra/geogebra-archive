@@ -100,13 +100,13 @@ public abstract class GeoQuadricND extends GeoElement {
 	 * @return the matrix representation of the quadric in its dimension
 	 * regarding vals
 	 */
-	abstract protected CoordMatrix getGgbMatrix(double[] vals);
+	abstract protected CoordMatrix getSymetricMatrix(double[] vals);
 		
 	/**
 	 * @return the matrix representation of the quadric in its dimension
 	 */
-	protected CoordMatrix getGgbMatrix(){
-		return getGgbMatrix(matrix);
+	public CoordMatrix getSymetricMatrix(){
+		return getSymetricMatrix(matrix);
 	}
 	
 	
