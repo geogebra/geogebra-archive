@@ -12,10 +12,6 @@ import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 import java.util.Comparator;
 
-import org.scilab.forge.jlatexmath.ParseException;
-import org.scilab.forge.jlatexmath.TeXConstants;
-import org.scilab.forge.jlatexmath.cache.JLaTeXMathCache;
-
 public class GeoText extends GeoElement
 implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 
@@ -33,10 +29,10 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	private int fontSize; // size relative to default font size
 	private int printDecimals = -1;
 	private int printFigures = -1;
-	public boolean useSignificantFigures = false;
+	private boolean useSignificantFigures = false;
 	
 	// for absolute screen location
-	boolean hasAbsoluteScreenLocation = false;
+	private boolean hasAbsoluteScreenLocation = false;
 	
 	public GeoText(Construction c) {
 		super(c);
@@ -64,13 +60,22 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}
 
 	public void set(GeoElement geo) {
-		GeoText gt = (GeoText) geo;				
-		str = gt.str;
-		isLaTeX = gt.isLaTeX;		
-		
+		GeoText gt = (GeoText) geo;	
 		// macro output: don't set start point
-		if (cons != geo.cons && isAlgoMacroOutput()) 
+		// but update to desired number format
+		if (cons != geo.cons && isAlgoMacroOutput()){
+			if(!useSignificantFigures)
+				gt.setPrintDecimals(printDecimals, true);	
+			else
+				gt.setPrintFigures(printFigures,true);				
+			str = gt.str;
+			isLaTeX = gt.isLaTeX;		
 			return;
+		}
+		
+		str = gt.str;
+		isLaTeX = gt.isLaTeX;
+			
 		
 		// needed for Corner[Element[text
 		setBoundingBox(gt.getBoundingBox());
@@ -149,8 +154,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 			
 	public void setStartPoint(GeoPointND p) throws CircularDefinitionException { 
 		// don't allow this if it's eg Text["hello",(2,3)]
-		if (alwaysFixed) return;		
-		
+		if (alwaysFixed) return;				
 		// macro output uses initStartPoint() only
 		//if (isAlgoMacroOutput()) return; 
 		
@@ -210,13 +214,7 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		// as the position of its startpoint
 		// is irrelevant for the rest of the construction
 	}
-	
-	public void setMode(int mode) {
-	}
-
-	public int getMode() {
-		return 0;
-	}
+		
 	
 	public void update() {
 
@@ -302,8 +300,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		return !isFixed();
 	}
 	
-	// used for eg Text["text",(1,2)]
-	// to stop it being editable
+	/** used for eg Text["text",(1,2)]
+	* to stop it being editable */
 	boolean isTextCommand = false;
 	
 	public void setIsTextCommand(boolean isCommand) {
@@ -319,8 +317,8 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		setIsTextCommand(true);
 	}
 	
-	// used for eg Text["text",(1,2)]
-	// to stop it being draggable
+	/** used for eg Text["text",(1,2)]
+	 * to stop it being draggable */
 	boolean alwaysFixed = false;
 	
 	public void setAlwaysFixed(boolean alwaysFixed) {
@@ -696,20 +694,6 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		str="";
 	}
 	
-	public static Comparator compare = new Comparator() {
-	      public int compare(Object a, Object b) {
-	        GeoText itemA = (GeoText) a;
-	        GeoText itemB = (GeoText) b;
-	        int comp = itemA.getTextString().compareTo(itemB.getTextString());
-	        
-	        
-	        if (comp == 0) 
-	        	// if we return 0 for equal strings, the TreeSet deletes the equal one
-	        	return itemA.getConstructionIndex() > itemB.getConstructionIndex() ? -1 : 1;
-	        else
-	        	return comp;
-	      }
-	};
 	
 	/**
 	 * Returns a comparator for GeoText objects.
