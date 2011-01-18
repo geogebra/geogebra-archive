@@ -244,8 +244,6 @@ public class CASInputHandler {
 	public void processMultipleRows(String ggbcmd, String[] params){
 
 		int [] selectedIndices = casView.getRowHeader().getSelectedIndices();
-		if (ggbcmd.equalsIgnoreCase("Solve"))
-			ggbcmd="MSolve";
 		// get current row and input text		
 		int selRow = consoleTable.getSelectedRow();	
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
