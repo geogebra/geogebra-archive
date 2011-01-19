@@ -50,7 +50,9 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 		case GeoConic.CONIC_ELLIPSE:
 		case GeoConic.CONIC_HYPERBOLA:
 		case GeoConic.CONIC_PARABOLA:
-		//case GeoConic.CONIC_DOUBLE_LINE:
+		case GeoConic.CONIC_DOUBLE_LINE:
+		case GeoConic.CONIC_INTERSECTING_LINES:
+		case GeoConic.CONIC_PARALLEL_LINES:
 		case GeoConic.CONIC_SINGLE_POINT:
 			renderer.getGeometryManager().draw(getGeometryIndex());
 			break;
@@ -94,6 +96,14 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 
 	
 	
+
+	private double acosh(double x){
+		if (x<=1)
+			return 0;
+		else
+			return Math.log(x+Math.sqrt(x*x-1));
+	}
+
 	protected boolean updateForItSelf(){
 		
 
@@ -137,24 +147,94 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 			brush.setAffineTexture(0f,0f);
 			double tMin, tMax;
 			
+
+			Coords m;
+			Coords d;
+			Coords ev1, ev2;
+			double e1, e2;
+			double[] minmax;
+			
 			switch(conic.getType()){
 			case GeoConic.CONIC_CIRCLE:
-				brush.circle(conic.getMidpoint3D(), conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
+				m = conic.getMidpoint3D();
+				brush.circle(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
 				break;
 			case GeoConic.CONIC_ELLIPSE:
-				brush.ellipse(conic.getMidpoint3D(), conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0), conic.getHalfAxis(1));
+				m = conic.getMidpoint3D();
+				brush.ellipse(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0), conic.getHalfAxis(1));
 				break;
 			case GeoConic.CONIC_HYPERBOLA:
-				tMin = -4; tMax = 4; //TODO
-				brush.halfHyperbola(conic.getMidpoint3D(), conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0), conic.getHalfAxis(1),tMin,tMax);
-				brush.halfHyperbola(conic.getMidpoint3D(), conic.getEigenvec3D(0).mul(-1), conic.getEigenvec3D(1), conic.getHalfAxis(0), conic.getHalfAxis(1),tMin,tMax);					
+				m = conic.getMidpoint3D();
+				ev1 = conic.getEigenvec3D(0);
+				ev2 = conic.getEigenvec3D(1);
+				e1 = conic.getHalfAxis(0);
+				e2 = conic.getHalfAxis(1);
+				minmax = getView3D().getRenderer().getIntervalInFrustum(
+						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+						m, ev1.mul(e1).add(ev2.mul(e2)), true);				
+				double[] minmax2 = getView3D().getRenderer().getIntervalInFrustum(
+						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+						m, ev1.mul(e1).add(ev2.mul(-e2)), true);
+
+				tMax=acosh(minmax2[1]);
+				brush.quarterHyperbola(m, ev1, ev2.mul(-1), e1, e2,tMax);
+				tMax=acosh(minmax[1]);
+				brush.quarterHyperbola(m, ev1, ev2, e1, e2,tMax);
+				tMax=acosh(-minmax2[0]);
+				brush.quarterHyperbola(m, ev1.mul(-1), ev2.mul(-1), e1, e2,tMax);
+				tMax=acosh(-minmax[0]);
+				brush.quarterHyperbola(m, ev1.mul(-1), ev2, e1, e2,tMax);
 				break;
 			case GeoConic.CONIC_PARABOLA:
 				tMin = -4; tMax = 4; //TODO
-				brush.parabola(conic.getMidpoint3D(), conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.p,tMin,tMax);
+				m = conic.getMidpoint3D();
+				ev1 = conic.getEigenvec3D(0);
+				ev2 = conic.getEigenvec3D(1);
+				double p = conic.p;
+				minmax = getView3D().getRenderer().getIntervalInFrustum(
+						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+						m, ev1, true);	
+				tMax=Math.sqrt(2*minmax[1]/p);
+				tMax=4;
+				brush.parabola(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), p,-tMax,tMax);
 				break;
 			case GeoConic.CONIC_DOUBLE_LINE:
+				d = conic.getDirection3D(0);
+				m = conic.getMidpoint3D();
+				minmax = getView3D().getRenderer().getIntervalInFrustum(
+						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+						m, d, true);
+				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+				break;
+			case GeoConic.CONIC_INTERSECTING_LINES:
+				m = conic.getMidpoint3D();
 				
+				d = conic.getDirection3D(0);
+				minmax = getView3D().getRenderer().getIntervalInFrustum(
+						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+						m, d, true);
+				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+
+				d = conic.getDirection3D(1);
+				minmax = getView3D().getRenderer().getIntervalInFrustum(
+						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+						m, d, true);
+				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+				break;
+			case GeoConic.CONIC_PARALLEL_LINES:
+				m = conic.getOrigin3D(0);
+				d = conic.getDirection3D(0);
+				minmax = getView3D().getRenderer().getIntervalInFrustum(
+						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+						m, d, true);
+				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+
+				m = conic.getOrigin3D(1);
+				d = conic.getDirection3D(1);
+				minmax = getView3D().getRenderer().getIntervalInFrustum(
+						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+						m, d, true);
+				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
 				break;
 			default:
 				break;

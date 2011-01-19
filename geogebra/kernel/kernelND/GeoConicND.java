@@ -158,6 +158,20 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		 return null;
 	 }
 	 
+	 /**
+	  * 
+	  * @param i
+	  * @return the direction in case of line(s)
+	  */
+	 abstract public Coords getDirection3D(int i);
+
+	 /**
+	  * 
+	  * @param i
+	  * @return the origin of lines in case of parallel lines
+	  */
+	 abstract public Coords getOrigin3D(int i);
+
 	 /*
 	 private CoordMatrix eigenMatrix2D = new CoordMatrix(3,3);
 	 

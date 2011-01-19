@@ -175,6 +175,18 @@ extends GeoConicND implements GeoElement3DInterface{
 
 	 
 
+	 public Coords getDirection3D(int i){
+		 return getCoordSys().getVector(lines[i].y, -lines[i].x);
+		 
+	 }
+	 
+
+	 public Coords getOrigin3D(int i){
+		 
+		 return getCoordSys().getPoint(startPoints[i].x, startPoints[i].y);
+		 
+	 }
+
 		
 		
 

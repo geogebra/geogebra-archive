@@ -376,7 +376,12 @@ public class PlotterBrush {
 	public void ellipse(Coords center, Coords v1, Coords v2, double a, double b){
 		
 		//Ramanujan approximation
-		length=(float) (Math.PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)))); //TODO use integer to avoid bad dash cycle connection
+		//length=(float) (Math.PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)))); //TODO use integer to avoid bad dash cycle connection
+		length=1;
+		
+
+		setCurvePos(0);
+		setTextureType(PlotterBrush.TEXTURE_LINEAR);
 		
 		//foci
 		double f = Math.sqrt(a*a-b*b);
@@ -386,14 +391,13 @@ public class PlotterBrush {
 		
 		int longitude = 60;
 		
-		Coords m,vn1;
+		Coords m,mold,vn1;
 		Coords vn2 = v1.crossProduct(v2);
 		
     	float dt = (float) 1/longitude;
     	float da = (float) (2*Math.PI *dt) ; 
     	float u=0, v=1;
     	
-    	setTextureX(0);
 		m = v1.mul(a*u).add(v2.mul(b*v));
 		vn1 = (m.sub(f1).normalized()).add((m.sub(f2).normalized())).normalized(); //bissector
 		down(center.add(m),vn1,vn2);  	
@@ -402,8 +406,10 @@ public class PlotterBrush {
     		u = (float) Math.sin ( i * da ); 
     		v = (float) Math.cos ( i * da ); 
     		
-    		setTextureX(i*dt); //TODO check this
+    		mold=m;
     		m = v1.mul(a*u).add(v2.mul(b*v));
+    		addCurvePos((float) m.sub(mold).norm());
+    		
     		vn1 = (m.sub(f1).normalized()).add((m.sub(f2).normalized())).normalized(); //bissector
     		moveTo(center.add(m),vn1,vn2);
     	} 
@@ -412,17 +418,16 @@ public class PlotterBrush {
 	
 	
 	
-	/** draws half an hyperbola
+	/** draws quarter of an hyperbola
 	 * @param center
 	 * @param v1 1st eigenvector
 	 * @param v2 2nd eigenvector
 	 * @param a  1st eigenvalue
 	 * @param b  2nd eigenvalue
-	 * @param tMin t min
 	 * @param tMax t max
 	 */
-	public void halfHyperbola(Coords center, Coords v1, Coords v2, double a, double b,
-			double tMin, double tMax){
+	public void quarterHyperbola(Coords center, Coords v1, Coords v2, double a, double b,
+		double tMax){
 		
 		
 		//foci
@@ -430,27 +435,23 @@ public class PlotterBrush {
 		Coords f1 = v1.mul(f);
 		Coords f2 = v1.mul(-f);
 		
-		//excentricity
-		//double e = f/a;
-		//double e2 = e*e;
-
-		//asymptotic approximation
-		length=(float) (tMax-tMin);//(float) (f*(Math.cosh(tMin)+Math.cosh(tMax))/200);
-	
+		//dash
+		length=1;
+		setTextureType(PlotterBrush.TEXTURE_LINEAR);
+		setCurvePos(0.75f/(TEXTURE_AFFINE_FACTOR*scale)); //midpoint is middle of an empty dash
+		
 		int longitude = 60;
 		
-		Coords m,vn1;
+		Coords m,mold,vn1;
 		Coords vn2 = v1.crossProduct(v2);
 		
-    	float dt = (float) (tMax-tMin)/longitude;
+		
+    	float dt = (float) (tMax)/longitude;
     	
     	float u, v;
- 		u = (float) Math.cosh ( tMin ); 
-		v = (float) Math.sinh ( tMin ); 
+ 		u = (float) 1; 
+		v = (float) 0; 
 		
-		//double s=f*u; //curve coord   	
-		double s=tMin; //curve coord   	
-		setTextureX((float) s);
 
 		
 		m = v1.mul(a*u).add(v2.mul(b*v));
@@ -458,24 +459,19 @@ public class PlotterBrush {
 		down(center.add(m),vn1,vn2);  	
     	
     	for( int i = 1; i <= longitude  ; i++ ) { 
-    		u = (float) Math.cosh ( tMin + i * dt ); 
-    		v = (float) Math.sinh ( tMin + i * dt ); 
+    		u = (float) Math.cosh ( i * dt ); 
+    		v = (float) Math.sinh ( i * dt ); 
     		
-    		//double c2 = 1-(v*v)/(u*u);
-    		//s+=a*Math.sqrt(e2/c2-1);
-    		//s=f*u;
-    		s=tMin+i*dt;
-    		setTextureX((float) s);
-    		m = v1.mul(a*u).add(v2.mul(b*v));
+       		mold=m;
+       		m = v1.mul(a*u).add(v2.mul(b*v));
+    		addCurvePos((float) m.sub(mold).norm());
+
     		vn1 = (m.sub(f1).normalized()).sub((m.sub(f2).normalized())).normalized(); //bissector
     		moveTo(center.add(m),vn1,vn2);
     	} 
     	
 	}
 
-	private double parabolaS(double t){
-		return (Math.log(t + Math.sqrt(t*t + 1)) + t*Math.sqrt(t*t+1))/2;
-	}
 	
 	/** draws a parabola
 	 * @param center
@@ -492,43 +488,54 @@ public class PlotterBrush {
 		//focus
 		Coords f1 = v1.mul(p/2);
 
-		length=(float) (tMax-tMin)/10;
-	
-		int longitude = 60;
-		
-		Coords m,vn1;
 		Coords vn2 = v1.crossProduct(v2);
 		
-    	float dt = (float) (tMax-tMin)/longitude;
-    	
-    	float u, v; 
-    	double t;
-    	t=tMin;
- 		u = (float) ( p*t*t/2 ); 
-		v = (float) ( p*t); 
+		parabola(center, v1, v2.mul(-1), vn2.mul(-1), f1, p, -tMin);
+		parabola(center, v1, v2, vn2, f1, p, tMax);
 		
-	
-		double s=t;
-		setTextureX((float) s);
+     	
+	}
 
-		
+	private void parabola(Coords center, Coords v1,Coords v2, Coords vn2, Coords f1, double p, double tMax){
+
+		int longitude = 60;
+
+		//dash
+		length=1;
+		setTextureType(PlotterBrush.TEXTURE_LINEAR);
+		setCurvePos(0.75f/(TEXTURE_AFFINE_FACTOR*scale)); //midpoint is middle of an empty dash
+
+		Coords m,vn1,mold;
+
+
+		float dt = (float) (tMax)/longitude;
+
+		float u, v; 
+		double t;
+		t=0;
+		u = (float) ( p*t*t/2 ); 
+		v = (float) ( p*t); 
+
+
+
 		m = v1.mul(u).add(v2.mul(v));
 		vn1 = (m.sub(f1).normalized()).sub(v1).normalized(); //bissector
 		down(center.add(m),vn1,vn2);  	
-    	
-    	for( int i = 1; i <= longitude  ; i++ ) { 
 
-        	t=tMin + i * dt;
-     		u = (float) ( p*t*t/2 ); 
-    		v = (float) ( p*t);     		
+		for( int i = 1; i <= longitude  ; i++ ) { 
 
-    		s=t;
-    		setTextureX((float) s);
-    		m = v1.mul(u).add(v2.mul(v));
-    		vn1 = (m.sub(f1).normalized()).sub(v1).normalized(); //bissector
-    		moveTo(center.add(m),vn1,vn2);
-    	} 
-    	
+			t= i * dt;
+			u = (float) ( p*t*t/2 ); 
+			v = (float) ( p*t);     		
+
+			mold=m;
+			m = v1.mul(u).add(v2.mul(v));    		
+			addCurvePos((float) m.sub(mold).norm());
+
+			vn1 = (m.sub(f1).normalized()).sub(v1).normalized(); //bissector
+			moveTo(center.add(m),vn1,vn2);
+		} 
+
 	}
 
 	////////////////////////////////////

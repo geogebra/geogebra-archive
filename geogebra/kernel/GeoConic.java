@@ -382,5 +382,17 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	public Coords getLabelPosition(){
 		return new Coords(0, 0, 0, 1);
 	}
+	
+
+	 public Coords getDirection3D(int i){
+		 return new Coords(lines[i].y, -lines[i].x,0,0);
+		 
+	 }
+	 
+	 public Coords getOrigin3D(int i){
+		 
+		 return new Coords(startPoints[i].x, startPoints[i].y, 0, 1);
+		 
+	 }
 
 }
