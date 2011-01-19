@@ -588,6 +588,9 @@ public class CommandDispatcher {
        	cmdTable.put("PlaySound", new CmdPlaySound(kernel));
        	cmdTable.put("ParseToNumber", new CmdParseToNumber(kernel));
        	cmdTable.put("ParseToFunction", new CmdParseToFunction(kernel)); 
+       	cmdTable.put("StartAnimation", new CmdStartAnimation(kernel)); 
+    	cmdTable.put("Delete", new CmdDelete(kernel));	
+    	cmdTable.put("Slider", new CmdSlider(kernel));     
        		
        	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);
     	cmdTable.clear();
@@ -624,7 +627,6 @@ public class CommandDispatcher {
     	cmdTable.put("ConstructionStep", new CmdConstructionStep(kernel));
     	cmdTable.put("Object", new CmdObject(kernel));  
     	cmdTable.put("Name", new CmdName(kernel));
-    	cmdTable.put("Delete", new CmdDelete(kernel));	
     	
     	//cmdTable.put("Intersection", new CmdIntersection(kernel)); 
        	cmdTable.put("Intersection", new CmdIntersect(kernel)); 
@@ -641,7 +643,6 @@ public class CommandDispatcher {
     	cmdTable.put("SlowPlot", new CmdSlowPlot(kernel));	   
     	cmdTable.put("ToolImage", new CmdToolImage(kernel));
     	
-    	cmdTable.put("Slider", new CmdSlider(kernel));     
     	cmdTable.put("ClosestPoint", new CmdClosestPoint(kernel));     
     	
     	

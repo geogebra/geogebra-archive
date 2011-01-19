@@ -232,7 +232,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return count;
 	}
 	
-	private boolean isSlider() {
+	public boolean isSlider() {
 		return isIndependent() && isEuclidianVisible();			
 	}
 

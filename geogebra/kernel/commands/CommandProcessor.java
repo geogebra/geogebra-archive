@@ -24,6 +24,7 @@ import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
+import geogebra.kernel.GeoDummyVariable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
@@ -8215,43 +8216,98 @@ class CmdStemPlot extends CommandProcessor {
 	}
 
  /**
- *SetCaption 
- */
- class CmdSetCaption  extends CommandProcessor {
+  *SetCaption 
+  */
+  class CmdSetCaption  extends CommandProcessor {
 
 
-		/**
-		* Create new command processor
-		* @param kernel kernel
-		*/
-		public CmdSetCaption (Kernel kernel) {
-			super(kernel);
-		}
+ 		/**
+ 		* Create new command processor
+ 		* @param kernel kernel
+ 		*/
+ 		public CmdSetCaption (Kernel kernel) {
+ 			super(kernel);
+ 		}
 
-		final public    GeoElement[] process(Command c) throws MyError {
-			int n = c.getArgumentNumber();
-			GeoElement[] arg;
+ 		final public    GeoElement[] process(Command c) throws MyError {
+ 			int n = c.getArgumentNumber();
+ 			GeoElement[] arg;
 
-			switch (n) {
-			case 2 :
-				arg = resArgs(c);
-				if ( arg[1].isGeoText()) {
+ 			switch (n) {
+ 			case 2 :
+ 				arg = resArgs(c);
+ 				if ( arg[1].isGeoText()) {
 
-							GeoElement geo = (GeoElement) arg[0];
-														
-							geo.setCaption(((GeoText)arg[1]).getTextString());
-							geo.updateRepaint();
+ 							GeoElement geo = (GeoElement) arg[0];
+ 														
+ 							geo.setCaption(((GeoText)arg[1]).getTextString());
+ 							geo.updateRepaint();
+ 							
+ 							GeoElement[] ret = { geo };
+ 							return ret;
+ 				} else
+ 					throw argErr(app, c.getName(), arg[1]);
+
+ 			default :
+ 				throw argNumErr(app, c.getName(), n);
+ 			}
+ 		}
+ 	}
+
+  /**
+   *StartAnimation 
+   */
+   class CmdStartAnimation  extends CommandProcessor {
+
+
+  		/**
+  		* Create new command processor
+  		* @param kernel kernel
+  		*/
+  		public CmdStartAnimation (Kernel kernel) {
+  			super(kernel);
+  		}
+
+  		final public    GeoElement[] process(Command c) throws MyError {
+  			int n = c.getArgumentNumber();
+  			GeoElement[] arg;
+  			
+  			// dummy
+			GeoElement[] ret = { new GeoNumeric(cons) };
+
+  			switch (n) {
+  			case 0 :
+  				
+  				app.getKernel().getAnimatonManager().startAnimation();
+  				return ret;
+  				
+  			case 1 :
+  				arg = resArgs(c);
+  				if ( arg[0].isGeoNumeric() && ((GeoNumeric)arg[0]).isSlider()) {
+
+  							GeoNumeric geo = (GeoNumeric) arg[0];
+  							
+  							geo.setAnimating(true);
+  							return ret;
+  				} else if ( arg[0].isGeoBoolean()) {
+
+  					GeoBoolean geo = (GeoBoolean) arg[0];
+						
+						if (geo.getBoolean()) {
+			  				app.getKernel().getAnimatonManager().startAnimation();
 							
-							GeoElement[] ret = { geo };
-							return ret;
-				} else
-					throw argErr(app, c.getName(), arg[1]);
+						} else {
+			  				app.getKernel().getAnimatonManager().stopAnimation();						
+						}
+						return ret;
+			} else
+  					throw argErr(app, c.getName(), arg[1]);
 
-			default :
-				throw argNumErr(app, c.getName(), n);
-			}
-		}
-	}
+  			default :
+  				throw argNumErr(app, c.getName(), n);
+  			}
+  		}
+  	}
 
  /**
  *SelectObjects 
