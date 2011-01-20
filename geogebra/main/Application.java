@@ -1518,7 +1518,7 @@ public class Application implements KeyEventDispatcher {
 	// For eg Hebrew and Arabic. 
 	public static char unicodeZero = '0';
 	public static char unicodeDecimalPoint = '.';
-	public static char unicodeComma = '.'; // \u060c for Arabic comma
+	public static char unicodeComma = ','; // \u060c for Arabic comma
 	//public static char unicodeThousandsSeparator = ','; // \u066c for Arabic
 
 	// for Basque and Hungarian you have to say "A point" instead of "point A"

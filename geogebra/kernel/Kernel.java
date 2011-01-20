@@ -7073,10 +7073,16 @@ public class Kernel {
 		
 	}
 	
+	// needed so that can be turned off 
+	public static boolean internationalizeDigits = true;
+	
 	/*
 	 * swaps the digits in num to the current locale's
 	 */
 	public String internationalizeDigits(String num) {
+		
+		if (!internationalizeDigits) return num;
+		
 		if (formatSB == null) formatSB = new StringBuilder(17);
 		else formatSB.setLength(0);
 		
