@@ -405,6 +405,7 @@ public class CommandDispatcher {
     	cmdTable.put("Product", new CmdProduct(kernel));
     	cmdTable.put("Frequency", new CmdFrequency(kernel));
     	cmdTable.put("Unique", new CmdUnique(kernel));
+    	cmdTable.put("Zip", new CmdZip(kernel));
     	
     	cmdSubTable[TABLE_LIST].putAll(cmdTable);
     	cmdTable.clear();

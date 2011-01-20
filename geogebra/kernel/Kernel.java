@@ -7829,12 +7829,13 @@ public class Kernel {
 		AlgoSequence algo = new AlgoSequence(cons,label,upTo);
 		return algo.getOutput();
 	}
-	
-	
-	
-	
-	
-	
 
-	
+
+	public GeoElement[] Zip(String label, GeoElement expression,
+			GeoElement[] vars, GeoList[] over) {
+		Application.debug("expr:"+expression+"label:"+label+"var:"+vars+"over:"+over);
+		AlgoZip algo = new AlgoZip(cons,label,expression,vars,over);
+		return algo.getOutput();
+	}
 }
+	
