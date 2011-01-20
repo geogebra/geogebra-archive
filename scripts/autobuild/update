@@ -18,7 +18,7 @@ test -r autobuild.conf || {
 cd $SVNDIR/geogebra
 
 if [ "$1" != "--no-update" ]; then
-    $SVN_COMMAND update --accept theirs-full | tail -1 | grep ^At && exit 1 # No updates found.
+    $SVN_COMMAND update --accept theirs-full --force | tail -1 | grep ^At && exit 1 # No updates found.
     echo "$0: new commit was found in repository"
     fi
 
