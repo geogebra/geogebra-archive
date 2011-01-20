@@ -7102,9 +7102,7 @@ public class Kernel {
 
 			// make sure the minus is treated as part of the number in eg Arabic
 			if ( reverseOrder && c=='-'){
-				formatSB.append(Unicode.RightToLeftMark);
-				formatSB.append(c);
-				formatSB.append(Unicode.RightToLeftMark);				
+				formatSB.append(Unicode.RightToLeftUnaryMinusSign);
 			} 
 			else
 				formatSB.append(c);

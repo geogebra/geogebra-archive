@@ -27,6 +27,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
+import geogebra.util.Util;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1471,6 +1472,9 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					if (rightStr.charAt(0) == '-') { // convert - - to +
 						sb.append(" + ");
 						sb.append(rightStr.substring(1));
+					} else if (rightStr.startsWith(Unicode.RightToLeftUnaryMinusSign)) { // Arabic convert - - to +
+						sb.append(" + ");
+						sb.append(rightStr.substring(3));
 					} else {
 						sb.append(" - ");
 						sb.append(rightStr);

@@ -19,6 +19,7 @@ public class Unicode {
 	final public static char Superscript_8 = '\u2078';
 	final public static char Superscript_9 = '\u2079';
 	final public static char RightToLeftMark = '\u200f';
+	final public static String RightToLeftUnaryMinusSign = "\u200f-\u200f";
 	final public static char LeftToRightMark = '\u200e';
 	final public static String superscriptMinusOneBracket = "\u207b\u00b9(";
 	final public static char degreeChar = '\u00b0';
