@@ -1090,5 +1090,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public boolean canHaveClickScript() {
 		return false;
 	}
+	
+	final public boolean isCasEvaluableObject() {
+		return true;
+	}
 
 }

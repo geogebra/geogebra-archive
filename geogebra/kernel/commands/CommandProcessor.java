@@ -5704,7 +5704,7 @@ class CmdStemPlot extends CommandProcessor {
 
 		 switch (n) {
 		 case 1 :             
-			 if ((arg[0].isCasEvaluableFunction())) {
+			 if ((arg[0].isCasEvaluableObject())) {
 				 GeoElement[] ret =
 				 { kernel.Simplify(c.getLabel(), (CasEvaluableFunction) arg[0] )};
 				 return ret;                
@@ -8497,7 +8497,7 @@ class CmdStemPlot extends CommandProcessor {
 	     
 	     switch (n) {
 		 case 1 :             
-			 if ((arg[0].isCasEvaluableFunction())) {
+			 if ((arg[0].isCasEvaluableObject())) {
 				 GeoElement[] ret =
 				 { kernel.SolveODE(c.getLabel(), (CasEvaluableFunction) arg[0] )};
 				 return ret;    

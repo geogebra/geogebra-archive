@@ -207,9 +207,9 @@ public class CASmathpiper extends CASgeneric {
 	public synchronized String toMathPiperString(ValidExpression ve, boolean resolveVariables) {
 		
 		// resolve global variables
-		if (resolveVariables) {			
-			casParser.resolveVariablesForCAS(ve);
-		}	
+//		if (resolveVariables) {			
+//			casParser.resolveVariablesForCAS(ve);
+//		}	
 		
 		// convert to MathPiper String
 		String MathPiperStr = doToMathPiperString(ve, resolveVariables);

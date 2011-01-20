@@ -4233,7 +4233,7 @@ public abstract class GeoElement
 		return false;
 	}	
 	
-	public boolean isCasEvaluableFunction() {
+	public boolean isCasEvaluableObject() {
 		return false;
 	}
 	

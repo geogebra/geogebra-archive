@@ -124,9 +124,9 @@ public class CASmaxima extends CASgeneric {
 	public synchronized String toMaximaString(ValidExpression ve, boolean resolveVariables) {
 		
 		// resolve global variables
-		if (resolveVariables) {			
-			casParser.resolveVariablesForCAS(ve);
-		}	
+//		if (resolveVariables) {			
+//			casParser.resolveVariablesForCAS(ve);
+//		}	
 		
 		// convert to Maxima String
 		String MaximaStr = doToMaximaString(ve, resolveVariables);

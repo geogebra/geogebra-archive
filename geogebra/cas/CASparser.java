@@ -19,6 +19,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
@@ -60,14 +61,17 @@ public class CASparser {
 	 */
 	public synchronized void resolveVariablesForCAS(ExpressionValue ev) {
 		
-		// add local variables to kernel
+		// add local variables to kernel, 
+		// e.g. f(a,b) := 3*a+c*b has local variables a, b
 		boolean isFunction = ev instanceof Function;
-		String localVar = null;
+		FunctionVariable [] funVars;
 		if (isFunction) {
 			Construction cmdCons = kernel.getConstruction();  
-			localVar = ((Function) ev).getFunctionVariables().toString();
-			GeoElement localVarGeo = new GeoDummyVariable(cmdCons, localVar);
-			cmdCons.addLocalVariable(localVar, localVarGeo);
+			funVars = ((Function) ev).getFunctionVariables();
+			for (FunctionVariable funVar : funVars) {
+				GeoElement localVarGeo = new GeoDummyVariable(cmdCons, funVar.toString());
+				cmdCons.addLocalVariable(funVar.toString(), localVarGeo);
+			}
 		}
 		
 		// resolve variables of valid expression
@@ -77,9 +81,13 @@ public class CASparser {
 		
 		// remove local variables from kernel
 		if (isFunction) {
-			Construction cmdCons = kernel.getConstruction();    		
-			cmdCons.removeLocalVariable(localVar);
-		}				
+			Construction cmdCons = kernel.getConstruction();  
+			funVars = ((Function) ev).getFunctionVariables();
+			for (FunctionVariable funVar : funVars) {
+				GeoElement localVarGeo = new GeoDummyVariable(cmdCons, funVar.toString());
+				cmdCons.removeLocalVariable(funVar.toString());
+			}
+		}
 	}
 	
 	

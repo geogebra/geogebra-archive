@@ -293,7 +293,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 
 	  }
 
-	final public boolean isCasEvaluableFunction() {
+	final public boolean isCasEvaluableObject() {
 		return true;
 	}
 

@@ -623,7 +623,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return false;
 	}
 
-	final public boolean isCasEvaluableFunction() {
+	final public boolean isCasEvaluableObject() {
 		return true;
 	}
 	

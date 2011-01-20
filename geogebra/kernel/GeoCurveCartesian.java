@@ -642,7 +642,7 @@ implements VarString, Path, Translateable, Rotateable, PointRotateable, Mirrorab
 		return true;
 	}
 	
-	public boolean isCasEvaluableFunction() {
+	public boolean isCasEvaluableObject() {
 		return true;
 	}
 
