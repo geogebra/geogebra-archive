@@ -19,6 +19,9 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,6 +33,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
+import javax.swing.JSpinner.NumberEditor;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -66,10 +70,14 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 				
 		SpinnerModel model =
 	        new SpinnerNumberModel(2, //initial value
-	                               1, //min
+	                               0.25, //min
 	                               10, //max
-	                               1); //step
+	                               0.25); //step
 		spDelay = new JSpinner(model);	
+		NumberEditor numEdit = new JSpinner.NumberEditor(spDelay, "#.##");
+		DecimalFormat format = numEdit.getFormat();
+		format.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ENGLISH));
+		
 		lbSteps = new JLabel();
 		
 		initGUI();			
