@@ -17,12 +17,15 @@ test -r autobuild.conf || {
 
 cd $SVNDIR/geogebra/geogebra/properties
 $SVN_COMMAND update --accept theirs-full
+cd ../gui
+$SVN_COMMAND update --accept theirs-full
+cp _license.txt ..
 cd ..
 
 mkdir -p $ZIPDIR/old
 mv $ZIPDIR/*.zip $ZIPDIR/old
 
-zip -r $ZIPFILE properties gui/_license.txt -x properties/.svn/\*
+zip -r $ZIPFILE properties _license.txt -x properties/.svn/\*
 
 mv $ZIPFILE $ZIPDIR
 
