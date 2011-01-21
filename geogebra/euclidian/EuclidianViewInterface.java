@@ -293,6 +293,14 @@ public interface EuclidianViewInterface {
 	 */		
 	public Previewable createPreviewPolyLine(ArrayList selectedPoints);
 	
+	/**
+	 * create a previewable for conic construction
+	 * @param mode 
+	 * @param selectedPoints points
+	 * @return the conic previewable
+	 */		
+	public Previewable createPreviewConic(int mode, ArrayList selectedPoints);
+	
 
 
 	public void updatePreviewable();

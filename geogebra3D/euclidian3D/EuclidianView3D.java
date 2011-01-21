@@ -6,6 +6,7 @@ import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.DrawConic;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
@@ -433,7 +434,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */	
 	public void add(GeoElement geo) {
 		
-		if (geo.hasDrawable3D()){
+		
+		if (geo.isGeoElement3D() || (geo.hasDrawable3D() && geo.isVisibleInView(this))){
 			Drawable3D d = null;
 			d = createDrawable(geo);
 			if (d != null) {
@@ -2137,6 +2139,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public Previewable createPreviewPolygon(ArrayList selectedPoints){
 		return new DrawPolygon3D(this, selectedPoints);
 	}	
+	
+	public Previewable createPreviewConic(int mode, ArrayList selectedPoints){
+		return null;
+	}
 
 	/**
 	 * @param selectedPoints

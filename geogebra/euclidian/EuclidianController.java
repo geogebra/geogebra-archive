@@ -487,7 +487,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
 		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
 		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:		
-			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints);
+			previewDrawable = view.createPreviewConic(mode, selectedPoints);
 			break;
 
 			// preview for compass: radius first
