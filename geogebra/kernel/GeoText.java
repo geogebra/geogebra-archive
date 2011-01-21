@@ -65,9 +65,9 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		// but update to desired number format
 		if (cons != geo.cons && isAlgoMacroOutput()){
 			if(!useSignificantFigures)
-				gt.setPrintDecimals(printDecimals, true);	
+				gt.setPrintDecimals(printDecimals > -1 ? printDecimals :  kernel.getPrintDecimals(), true);	
 			else
-				gt.setPrintFigures(printFigures,true);				
+				gt.setPrintFigures(printFigures > -1 ? printFigures :  kernel.getPrintFigures(),true);				
 			str = gt.str;
 			isLaTeX = gt.isLaTeX;		
 			return;
