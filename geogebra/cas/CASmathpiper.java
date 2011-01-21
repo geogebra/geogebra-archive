@@ -156,7 +156,7 @@ public class CASmathpiper extends CASgeneric {
 				return "?";
 			}
 			result = response.getResult();
-			
+	
 			//if (debug) System.out.println("Result: "+result);
 					
 			// undo special character handling
@@ -320,6 +320,10 @@ public class CASmathpiper extends CASgeneric {
 		
 		//ggbMathPiper.evaluate("KeepInput(x_IsAtom)  <-- Simplify(x) == Simplify(y);");
 		
+		// access functions for elements of a vector
+		ggbMathPiper.evaluate("x(a) := Nth(a, 1);");
+		ggbMathPiper.evaluate("y(a) := Nth(a, 2);");
+		ggbMathPiper.evaluate("z(a) := Nth(a, 3);");
 		
 		return true;
 	}

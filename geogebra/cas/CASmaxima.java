@@ -454,7 +454,11 @@ public class CASmaxima extends CASgeneric {
 	    
 	    // define Degree
 	    ggbMaxima.executeCall("Degree:180/%pi;");
-
+	    
+	    // access functions for elements of a vector
+	    ggbMaxima.executeCall("x(a) := part(a, 1);");
+	    ggbMaxima.executeCall("y(a) := part(a, 2);");
+	    ggbMaxima.executeCall("z(a) := part(a, 3);");
 	}
 
 	private String executeRaw(String maximaInput) throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
