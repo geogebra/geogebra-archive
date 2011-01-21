@@ -2056,9 +2056,16 @@ public class MyTable extends JTable implements FocusListener
 				e.consume();
 				break;	
 				
+			case KeyEvent.VK_ENTER:	
+				
+				if (MyCellEditor.tabReturnCol > -1) {
+					changeSelection(row , MyCellEditor.tabReturnCol, false, false);
+					MyCellEditor.tabReturnCol = -1;
+				}
+				
+				// fall through
 			case KeyEvent.VK_PAGE_DOWN:	
 			case KeyEvent.VK_PAGE_UP:	
-			case KeyEvent.VK_ENTER:	
 				// stop cell being erased before moving
 				break;
 				

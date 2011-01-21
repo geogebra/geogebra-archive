@@ -242,6 +242,9 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	
 	
 	
+	// keep track of when <tab> was first pressed
+	// so can return to that column when <enter> pressed
+	public static int tabReturnCol = -1;
 	
 	//=======================================================
 	//             Key and Focus Listeners
@@ -281,9 +284,6 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		public void keyReleased(KeyEvent e) {
 		}
 		
-		// keep track of when <tab> was first pressed
-		// so can return to that column when <enter> pressed
-		private int tabReturnCol = -1;
 		
 		public void checkCursorKeys(KeyEvent e) {
 			
