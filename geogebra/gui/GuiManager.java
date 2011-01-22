@@ -2598,7 +2598,7 @@ public class GuiManager {
 	    		typeStr = "cmd";
 	    		break;
 	    	case HELP_TOOL:
-	    		strURL =  app.getEnglishPlain(pageName);
+	    		strURL =  app.getEnglishMenu(pageName);
 	    		typeStr = "tool";
 	    		break;
 	    	case HELP_GENERIC:

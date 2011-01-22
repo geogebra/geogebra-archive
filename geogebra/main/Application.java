@@ -336,7 +336,7 @@ public class Application implements KeyEventDispatcher {
 
 	// For language specific settings
 	private Locale currentLocale, englishLocale = null;
-	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld, rberror, rbcolors, rbplain, rbplainEnglish, rbsymbol, rbsettings,rbwiki;
+	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld, rberror, rbcolors, rbplain, rbmenuEnglish, rbsymbol, rbsettings,rbwiki;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -2176,13 +2176,13 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 	
-	final public String getEnglishPlain(String key) {
+	final public String getEnglishMenu(String key) {
 						
-		if (rbplainEnglish == null) 			
-			rbplainEnglish = MyResourceBundle
-					.createBundle(RB_PLAIN, Locale.ENGLISH);
+		if (rbmenuEnglish == null) 			
+			rbmenuEnglish = MyResourceBundle
+					.createBundle(RB_MENU, Locale.ENGLISH);
 		try {
-			return rbplainEnglish.getString(key);
+			return rbmenuEnglish.getString(key);
 		} catch (Exception e) {
 			return key;
 		}

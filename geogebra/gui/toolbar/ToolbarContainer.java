@@ -1,11 +1,14 @@
 package geogebra.gui.toolbar;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.FontMetrics;
 import java.awt.SystemColor;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 
@@ -280,6 +283,8 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		}
 	}
 
+	
+	private MouseAdapter helpMouseAdapter;
 	/**
 	 * Update the help text.
 	 */
@@ -295,12 +300,45 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
         String wrappedText = wrappedModeText(toolName, helpText, toolbarHelpPanel);    	
     	modeNameLabel.setText(wrappedText);
     	
+    	resolveMouseListener(mode);
+    	
     	// tooltip
     	modeNameLabel.setToolTipText(app.getToolTooltipHTML(mode));
     	toolbarHelpPanel.validate();
     }
     
-    /** 
+    /**
+     * Add mouse listener to open help if clicked + change cursor.
+     * Only removes old listener for custom tools.
+     * @param mode
+     */
+    private void resolveMouseListener(int mode) {
+    	final String modeName = app.getKernel().getModeText(mode);
+    	if(modeNameLabel.getMouseListeners().length>0)
+    		modeNameLabel.removeMouseListener(helpMouseAdapter);
+    	if(modeName != ""){
+    	helpMouseAdapter = new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+            	if(e.getClickCount()>=1){            		
+            		app.getGuiManager().openToolHelp(modeName);
+            	}
+            }
+            public void mouseEntered(MouseEvent e) {
+            	Cursor c = new Cursor ( Cursor.HAND_CURSOR );
+
+            	// Create a frame to demonstrate use of setCursor method
+            	modeNameLabel.setCursor (c);
+
+            }
+            public void mouseExited(MouseEvent e) {
+                //setText(text,true);
+            }
+    	};
+    	modeNameLabel.addMouseListener(helpMouseAdapter);
+    	}		
+	}
+
+	/** 
      * Returns mode text and toolbar help as html text with line breaks
      * to fit in the given panel.     
      */
@@ -323,43 +361,42 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
     	sbToolName.append("<html><b>");
     	
     	// check if mode name itself fits
-    	if (fm.stringWidth(modeName) >  panelWidth)
-    		return "";
     	
     	// mode name
     	BreakIterator iterator = BreakIterator.getWordInstance(app.getLocale());
 		iterator.setText(modeName);
 		int start = iterator.first();
 		int end = iterator.next();
+		int nextEnd = iterator.next();
 		int line = 1;
 		
 		int len = 0;
 		while (end != BreakIterator.DONE)
 		{
 			String word = modeName.substring(start,end);
-			if( len + fm.stringWidth(word) > panelWidth )
+			int spaceForDots = fm.stringWidth(" ...");			
+			if( len + fm.stringWidth(word) + (line != maxLines ? 0:spaceForDots) > panelWidth )
 			{
-				if (++line > maxLines) {
-					// if the tool name doesn't fit: return an empty string
-					return "";
-					
-					//sbToolName.append("...");
-					//sbToolName.append("</b></html>");
-					//return sbToolName.toString();
+				if (++line > maxLines || fm.stringWidth(word) + spaceForDots > panelWidth) {
+					sbToolName.append(" ...");
+					sbToolName.append("</b></html>");						
+					return sbToolName.toString();
 				}
 				sbToolName.append("<br>");
 				len = fm.stringWidth(word);	
 			}
 			else
-			{
+			{			
 				len += fm.stringWidth(word);
 			}
  
 			sbToolName.append(Util.toHTMLString(word));
 			start = end;
-			end = iterator.next();
+			end = nextEnd;
+			nextEnd = iterator.next();
 		}		
 		sbToolName.append("</b>");
+
     	
 		
 		// mode help text
