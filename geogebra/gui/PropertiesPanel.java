@@ -6179,11 +6179,13 @@ class GraphicsViewLocationPanel
 			for (int i=0; i < geos.length; i++) {
 				GeoElement geo = (GeoElement) geos[i];
 				if(cbGraphicsView.isSelected()){
-					geo.addView(ev);
-					ev.add(geo);
+					//geo.addView(ev);
+					//ev.add(geo);
+					app.addToEuclidianView(geo);
 				}else{
-					geo.removeView(ev);
-					ev.remove(geo);
+					//geo.removeView(ev);
+					//ev.remove(geo);
+					app.removeFromEuclidianView(geo);
 				}
 			}
 		}

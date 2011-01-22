@@ -21,6 +21,7 @@ package geogebra.kernel;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.gui.GuiManager;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -974,9 +975,12 @@ public abstract class GeoElement
 			) return;
 		if (layer > EuclidianView.MAX_LAYERS) layer = EuclidianView.MAX_LAYERS;
 		else if (layer < 0) layer = 0;
-		EuclidianView ev =app.getEuclidianView();
-		if (ev != null) 
-			ev.changeLayer(this,this.layer,layer);
+		GuiManager guiManager = app.getGuiManager();
+		if (guiManager!=null){
+			EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();//app.getEuclidianView();
+			if (ev != null) 
+				ev.changeLayer(this,this.layer,layer);
+		}
 		this.layer=layer;
 	}
 	
@@ -5047,18 +5051,17 @@ public abstract class GeoElement
 			// if ev is a 3D view, then also add 1st 2D euclidian view
 			if (!(ev instanceof EuclidianView))
 				viewSet.add(app.getEuclidianView());
-			/*
-			viewSet.add(app.getEuclidianView());
-			
-			GuiManager gui = app.getGuiManager();
-			if (gui != null) {
-				EuclidianView ev2 = (EuclidianView)app.getGuiManager().getEuclidianView2();
-				if (ev2 != null) viewSet.add(ev2);
-			}
-			*/
 			
 		}
 		return viewSet.contains(view);
+	}
+	
+	/**
+	 * 
+	 * @return true if visible in 3D view
+	 */
+	public boolean isVisibleInView3D(){
+		return hasDrawable3D() && (isGeoElement3D() || isVisibleInView(app.getEuclidianView()));
 	}
 
 	

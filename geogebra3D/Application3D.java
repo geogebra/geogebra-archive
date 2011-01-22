@@ -20,6 +20,7 @@ package geogebra3D;
 import geogebra.CommandLineArguments;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.kernel.GeoElement;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
@@ -206,6 +207,21 @@ public class Application3D extends Application{
 		return super.getCommandSyntax(key);
 	}
 	
+	
+	
+	
+	
+	public void addToEuclidianView(GeoElement geo){
+		super.addToEuclidianView(geo);
+		geo.addView(getEuclidianView3D());
+		getEuclidianView3D().add(geo);
+	}
+
+	public void removeFromEuclidianView(GeoElement geo){
+		super.removeFromEuclidianView(geo);
+		geo.removeView(getEuclidianView3D());
+		getEuclidianView3D().remove(geo);
+	}	
 	
 	
 }

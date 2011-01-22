@@ -11,6 +11,7 @@ import geogebra.euclidian.Drawable;
 import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianController;
+import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
@@ -435,7 +436,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void add(GeoElement geo) {
 		
 		
-		if (geo.isGeoElement3D() || (geo.hasDrawable3D() && geo.isVisibleInView(this))){
+		//if (geo.isGeoElement3D() || (geo.hasDrawable3D() && geo.isVisibleInView(this))){
+		if (geo.isVisibleInView3D()){
 			Drawable3D d = null;
 			d = createDrawable(geo);
 			if (d != null) {
@@ -3229,6 +3231,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
+	
+	public void changeLayer(GeoElement geo, int oldlayer, int newlayer){
+		getApplication().getEuclidianView().changeLayer(geo, oldlayer, newlayer);
+	}
 
 
 }

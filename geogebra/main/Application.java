@@ -4827,8 +4827,17 @@ public class Application implements KeyEventDispatcher {
 
 
 	private boolean blockUpdateScripts=false;
-
 	
+	
+	public void addToEuclidianView(GeoElement geo){
+		geo.addView(getEuclidianView());
+		getEuclidianView().add(geo);
+	}
+
+	public void removeFromEuclidianView(GeoElement geo){
+		geo.removeView(getEuclidianView());
+		getEuclidianView().remove(geo);
+	}	
 		
 }
 

@@ -360,6 +360,8 @@ public interface EuclidianViewInterface {
 
 
 	
+	public void changeLayer(GeoElement geo, int oldlayer, int newlayer);
+	
 
 	
 }

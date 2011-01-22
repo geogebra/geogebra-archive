@@ -3249,6 +3249,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 */
 	public void add(GeoElement geo) {
 		
+		//Application.printStacktrace(""+geo.isVisibleInView(this));
+		
 		
 		//G.Sturr 2010-6-30
 		// filter out any geo not marked for this view
@@ -3260,7 +3262,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		Drawable d = getDrawable(geo);
 		if (d != null)
 			return;
-
+		
 		d = createDrawable(geo);
 		if (d != null) {
 			addToDrawableLists(d);
