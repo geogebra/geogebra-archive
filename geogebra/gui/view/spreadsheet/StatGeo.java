@@ -338,7 +338,10 @@ public class StatGeo   {
 		ps.xMax = xMaxData + buffer;
 		ps.yMin = -1.0;
 		ps.yMax = 1.1 * freqMax;
-		ps.showYAxis = false;
+		ps.showYAxis = true;
+		ps.isEdgeAxis[0] = false;
+		ps.isEdgeAxis[1] = true;
+		ps.isPositiveOnly[1] = true;
 		ps.forceXAxisBuffer = true;
 
 		return ps;

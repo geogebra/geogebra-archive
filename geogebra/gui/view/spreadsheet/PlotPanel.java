@@ -134,6 +134,7 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 		}
 		
 		setDrawBorderAxes(plotSettings.isEdgeAxis);
+		setPositiveAxes(plotSettings.isPositiveOnly);
 		
 		
 		if(plotSettings.forceXAxisBuffer){
