@@ -171,32 +171,32 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 				e2 = conic.getHalfAxis(1);
 				minmax = getView3D().getRenderer().getIntervalInFrustum(
 						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-						m, ev1.mul(e1).add(ev2.mul(e2)), true);				
+						getView3D().getToScreenMatrix().mul(m), getView3D().getToScreenMatrix().mul(ev1.mul(e1).add(ev2.mul(e2))), true);				
 				double[] minmax2 = getView3D().getRenderer().getIntervalInFrustum(
 						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-						m, ev1.mul(e1).add(ev2.mul(-e2)), true);
+						getView3D().getToScreenMatrix().mul(m), getView3D().getToScreenMatrix().mul(ev1.mul(e1).add(ev2.mul(-e2))), true);
 
-				tMax=acosh(minmax2[1]);
+				tMax=acosh(minmax2[1])*1.1; //extends a little
 				brush.quarterHyperbola(m, ev1, ev2.mul(-1), e1, e2,tMax);
-				tMax=acosh(minmax[1]);
+				tMax=acosh(minmax[1])*1.1;
 				brush.quarterHyperbola(m, ev1, ev2, e1, e2,tMax);
-				tMax=acosh(-minmax2[0]);
+				tMax=acosh(-minmax[0])*1.1;
 				brush.quarterHyperbola(m, ev1.mul(-1), ev2.mul(-1), e1, e2,tMax);
-				tMax=acosh(-minmax[0]);
+				tMax=acosh(-minmax2[0])*1.1;
 				brush.quarterHyperbola(m, ev1.mul(-1), ev2, e1, e2,tMax);
 				break;
 			case GeoConic.CONIC_PARABOLA:
-				tMin = -4; tMax = 4; //TODO
 				m = conic.getMidpoint3D();
 				ev1 = conic.getEigenvec3D(0);
 				ev2 = conic.getEigenvec3D(1);
 				double p = conic.p;
 				minmax = getView3D().getRenderer().getIntervalInFrustum(
 						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-						m, ev1, true);	
+						getView3D().getToScreenMatrix().mul(m), getView3D().getToScreenMatrix().mul(ev1), true);	
 				tMax=Math.sqrt(2*minmax[1]/p);
-				tMax=4;
-				brush.parabola(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), p,-tMax,tMax);
+				//Application.debug("max="+minmax[1]+", tMax="+tMax);
+				//tMax=4;
+				brush.parabola(m, ev1, ev2, p,-2*tMax,2*tMax);
 				break;
 			case GeoConic.CONIC_DOUBLE_LINE:
 				d = conic.getDirection3D(0);
@@ -204,7 +204,7 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 				minmax = getView3D().getRenderer().getIntervalInFrustum(
 						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 						m, d, true);
-				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+				brush.segment(m.add(d.mul(minmax[0])), m.add(d.mul(minmax[1])));
 				break;
 			case GeoConic.CONIC_INTERSECTING_LINES:
 				m = conic.getMidpoint3D();
@@ -212,29 +212,29 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 				d = conic.getDirection3D(0);
 				minmax = getView3D().getRenderer().getIntervalInFrustum(
 						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-						m, d, true);
-				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+						getView3D().getToScreenMatrix().mul(m), getView3D().getToScreenMatrix().mul(d), true);
+				brush.segment(m.add(d.mul(minmax[0])), m.add(d.mul(minmax[1])));
 
 				d = conic.getDirection3D(1);
 				minmax = getView3D().getRenderer().getIntervalInFrustum(
 						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-						m, d, true);
-				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+						getView3D().getToScreenMatrix().mul(m), getView3D().getToScreenMatrix().mul(d), true);
+				brush.segment(m.add(d.mul(minmax[0])), m.add(d.mul(minmax[1])));
 				break;
 			case GeoConic.CONIC_PARALLEL_LINES:
 				m = conic.getOrigin3D(0);
 				d = conic.getDirection3D(0);
 				minmax = getView3D().getRenderer().getIntervalInFrustum(
 						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-						m, d, true);
-				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+						getView3D().getToScreenMatrix().mul(m), getView3D().getToScreenMatrix().mul(d), true);
+				brush.segment(m.add(d.mul(minmax[0])), m.add(d.mul(minmax[1])));
 
 				m = conic.getOrigin3D(1);
 				d = conic.getDirection3D(1);
 				minmax = getView3D().getRenderer().getIntervalInFrustum(
 						new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-						m, d, true);
-				brush.segment(m.sub(d.mul(minmax[0])), m.sub(d.mul(minmax[1])));
+						getView3D().getToScreenMatrix().mul(m), getView3D().getToScreenMatrix().mul(d), true);
+				brush.segment(m.add(d.mul(minmax[0])), m.add(d.mul(minmax[1])));
 				break;
 			default:
 				break;
