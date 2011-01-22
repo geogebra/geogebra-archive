@@ -9058,7 +9058,7 @@ class CmdStemPlot extends CommandProcessor {
 				 }
 
 			 default :
-				 throw argErr(app, c.getName(), arg[0]);
+				 throw argNumErr(app, c.getName(), n);
 			 }
 		 }
 	}
@@ -9095,7 +9095,7 @@ class CmdStemPlot extends CommandProcessor {
 				}
 
 			default :
-				throw argErr(app, c.getName(), arg[0]);
+				throw argNumErr(app, c.getName(), n);
 			}
 		}
 	}
