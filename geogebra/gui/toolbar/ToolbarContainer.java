@@ -372,7 +372,7 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
 		while (end != BreakIterator.DONE)
 		{
 			String word = modeName.substring(start,end);
-			int spaceForDots = fm.stringWidth(" ...");			
+			int spaceForDots = nextEnd == BreakIterator.DONE ? 0:fm.stringWidth(" ...");			
 			if( len + fm.stringWidth(word) + (line != maxLines ? 0:spaceForDots) > panelWidth )
 			{
 				if (++line > maxLines || fm.stringWidth(word) + spaceForDots > panelWidth) {
