@@ -57,23 +57,29 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	public static final int TYPE_BARCHART_FREQUENCY_TABLE = 4;
 	/** Barchart from (values,frequencies) with given width**/
 	public static final int TYPE_BARCHART_FREQUENCY_TABLE_WIDTH = 5;
-	/** Histogram**/
+	
+	/** Histogram from(class boundaries, raw data) with default density = 1 
+	* or Histogram from(class boundaries, frequencies) no density required **/
 	public static final int TYPE_HISTOGRAM = 6;
+	/** Histogram from(class boundaries, raw data) with given density **/
+	public static final int TYPE_HISTOGRAM_DENSITY = 7;
+	
 	/** Trapezoidal sum**/
-	public static final int TYPE_TRAPEZOIDALSUM = 7;
+	public static final int TYPE_TRAPEZOIDALSUM = 8;
 	/** Boxplot**/
-	public static final int TYPE_BOXPLOT = 8;
+	public static final int TYPE_BOXPLOT = 9;
 	/** Boxplot from raw data**/
-	public static final int TYPE_BOXPLOT_RAWDATA = 9;
+	public static final int TYPE_BOXPLOT_RAWDATA = 10;
+	
 	
 	// tolerance for parabolic interpolation
 	private static final double TOLERANCE = 1E-7;
 
 	private GeoFunction f; // input	   
-	private NumberValue a, b, n, width; // input
+	private NumberValue a, b, n, width, density; // input
 	private GeoList list1, list2; // input
 	private GeoList tempList;
-	private GeoElement ageo, bgeo, ngeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, widthgeo;
+	private GeoElement ageo, bgeo, ngeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, widthgeo, densitygeo;
 	private GeoNumeric  sum; // output sum    
 	
 	
@@ -209,6 +215,10 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		sum.setDrawable(true);
 	}
 	
+	
+	
+	
+	
 	/**
 	 *  BarChart [<list of data>, <width>]
 	 * @param cons
@@ -258,7 +268,40 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		sum.setLabel(label);
 		sum.setDrawable(true);
 	}
-			
+		
+	
+	
+	/**
+	 *  Histogram [<list of data without repetition>, <frequency of each of these data>, <density>]
+	 * @param cons
+	 * @param label
+	 * @param list1
+	 * @param list2
+	 * @param density
+	 */
+	public AlgoFunctionAreaSums(Construction cons, String label,  
+			   GeoList list1, GeoList list2, GeoNumeric density, boolean dummy) {
+
+		super(cons);
+		
+		type = TYPE_HISTOGRAM_DENSITY;
+		
+		this.list1 = list1;
+		this.list2 = list2;
+		this.density = density;
+		densitygeo = density.toGeoElement();
+
+		
+		sum = new GeoNumeric(cons); // output
+		setInputOutput(); // for AlgoElement	
+		compute();
+		sum.setLabel(label);
+		sum.setDrawable(true);
+	}
+	
+	
+	
+	
 			
 	/**
 	 *  BOXPLOT
@@ -376,6 +419,12 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			input = new GeoElement[2];
 			input[0] = list1;		
 			input[1] = list2;		
+			break;
+		case TYPE_HISTOGRAM_DENSITY:
+			input = new GeoElement[3];
+			input[0] = list1;		
+			input[1] = list2;
+			input[2] = densitygeo;
 			break;
 		case TYPE_BOXPLOT:
 			input = new GeoElement[7];
@@ -1039,6 +1088,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			break;
 			
 		case TYPE_HISTOGRAM:
+		case TYPE_HISTOGRAM_DENSITY:
 			if (!list1.isDefined() || !list2.isDefined()) 
 			{
 				sum.setUndefined();
@@ -1052,7 +1102,17 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				sum.setUndefined();
 				return;
 			}
-							
+			
+			// set the density scale factor
+			// default is 1; densityFactor == -1 means do not convert from frequency to density
+			double densityFactor = density != null ? density.getDouble() : 1;
+			if(densityFactor <=0 && densityFactor != -1)
+			{
+				sum.setUndefined();
+				return;
+			}
+			
+			
 			if (N-1 != list2.size())
 			{ // list2 contains raw data
 				// eg Histogram[{1,1.5,2,4},{1.0,1.1,1.1,1.2,1.7,1.7,1.8,2.2,2.5,4.0}]
@@ -1115,7 +1175,12 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				
 			
 				// turn frequencies into frequency densities
-				for (int i=1; i < N; i++) yval[i-1] /= (leftBorder[i] - leftBorder[i-1]);
+				// if densityFactor = -1 then do not convert frequency to density
+				if(densityFactor != -1)
+					for (int i=1; i < N; i++)  
+						yval[i-1] = densityFactor * yval[i-1] / (leftBorder[i] - leftBorder[i-1]);
+
+				
 				
 				// area of rectangles = total frequency				
 				sum.setValue(list2.size());	
@@ -1161,6 +1226,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			
 
 			break;
+			
 		case TYPE_BOXPLOT_RAWDATA:
 			
 			// list1 = rawData
@@ -1256,6 +1322,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		switch (type)
 		{
 		case TYPE_HISTOGRAM:
+		case TYPE_HISTOGRAM_DENSITY:
 			return true;
 		default :
 			return false;

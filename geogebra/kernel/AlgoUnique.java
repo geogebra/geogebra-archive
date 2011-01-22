@@ -25,6 +25,8 @@ public class AlgoUnique extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoList dataList; //input
 	private GeoList uniqueList; //output	
+	
+	private Frequency f;
 
 
 	AlgoUnique(Construction cons, String label, GeoList dataList ) {
@@ -82,7 +84,9 @@ public class AlgoUnique extends AlgoElement {
 
 
 		// Load the data into f, an instance of Frequency class 
-		Frequency f = new Frequency();
+		if(f == null)
+		 f = new Frequency();
+		f.clear();
 		for (int i=0 ; i < dataList.size(); i++){
 			if(dataList.getElementType() == GeoElement.GEO_CLASS_TEXT)
 				f.addValue(((GeoText)dataList.get(i)).toValueString());

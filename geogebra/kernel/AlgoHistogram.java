@@ -12,10 +12,12 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.NumberValue;
+
 /**
  * Histogram algorithm. See AlgoFunctionAreaSums for implementation.
  * 
- * @author George Sturr
+ * @author M. Borcherds
  *
  */
 public class AlgoHistogram extends AlgoFunctionAreaSums {
@@ -36,6 +38,22 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 								   GeoList list1, GeoList list2) {
 		super(cons, label, list1, list2);		
 	}
+	
+
+	/**
+	 * Creates histogram with density scaling factor 
+	 * @param cons construction
+	 * @param label label for the histogram
+	 * @param list1 list of boundaries
+	 * @param list2 list of heights or raw data
+	 * @param density density scaling factor 
+	 */
+	public AlgoHistogram(Construction cons, String label,
+								   GeoList list1, GeoList list2, GeoNumeric density, Boolean dummy) {
+		super(cons, label, list1, list2, density, dummy);		
+	}
+	
+	
 	
 	public String getClassName() {
 		return "AlgoHistogram";

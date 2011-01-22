@@ -71,7 +71,6 @@ public class AlgoFrequency extends AlgoElement {
 			tempList.add(showRelative);
 
 
-		tempList.toString();
 		input = new GeoElement[tempList.size()];
 		input = tempList.toArray(input);
 
@@ -90,9 +89,6 @@ public class AlgoFrequency extends AlgoElement {
 
 
 
-
-
-		//=======================================================
 		// Validate input arguments
 		//=======================================================
 
@@ -122,7 +118,7 @@ public class AlgoFrequency extends AlgoElement {
 		double numMax = 0, numMin = 0;
 
 
-		//=======================================================
+		
 		// Load the data into f, an instance of Frequency class 
 		//=======================================================
 
@@ -136,7 +132,7 @@ public class AlgoFrequency extends AlgoElement {
 
 
 
-		//=======================================================
+		
 		// Get the unique value list and compute frequencies for  
 		// each value if classList does not exist   
 		//=======================================================
@@ -188,7 +184,7 @@ public class AlgoFrequency extends AlgoElement {
 
 
 
-		//=======================================================
+		
 		// Compute frequencies for the classes (if needed)
 		//=======================================================
 
@@ -220,12 +216,21 @@ public class AlgoFrequency extends AlgoElement {
 
 			}
 
-			// handle the last class specially
-			// it contains all values equal to or larger than the next to last class bound  
+			// handle the last (highest) class frequency specially
+			// it must also counts values equal to the highest class bound  	
+			lowerClassBound = ((GeoNumeric)classList.get(classList.size()-2)).getDouble();
+			upperClassBound = ((GeoNumeric)classList.get(classList.size()-1)).getDouble();
+			classFreq = f.getCumFreq((Comparable)upperClassBound) 
+			- f.getCumFreq((Comparable)lowerClassBound) 
+			+ f.getCount((Comparable)lowerClassBound);
+			
+			/*
 			lowerClassBound = ((GeoNumeric)classList.get(classList.size()-2)).getDouble();
 			classFreq = f.getSumFreq()
 			- f.getCumFreq((Comparable)lowerClassBound) 
 			+ f.getCount((Comparable)lowerClassBound);
+			*/
+			
 			frequency.add(new GeoNumeric(cons, classFreq));
 
 		}

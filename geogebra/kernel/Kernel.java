@@ -2938,6 +2938,16 @@ public class Kernel {
 		return sum;
 	}
 	
+	/** 
+	 * Histogram with density scale factor
+	 */
+	final public GeoNumeric Histogram(String label, 
+					GeoList list1, GeoList list2, GeoNumeric density) {
+		AlgoHistogram algo = new AlgoHistogram(cons, label, list1, list2, density, true);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}
+	
 	
 	/** 
 	 * DotPlot
@@ -4187,8 +4197,8 @@ public class Kernel {
 	 */
 	final public GeoList Frequency(String label, GeoList dataList) {
 		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, null, null);
-		GeoList table = algo.getResult();
-		return table;
+		GeoList list = algo.getResult();
+		return list;
 	}
 	
 	/** 
@@ -4197,8 +4207,8 @@ public class Kernel {
 	 */
 	final public GeoList Frequency(String label, GeoList dataList, GeoBoolean isRelative) {
 		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, null, isRelative);
-		GeoList table = algo.getResult();
-		return table;
+		GeoList list = algo.getResult();
+		return list;
 	}
 	
 	
@@ -4208,8 +4218,8 @@ public class Kernel {
 	 */
 	final public GeoList Frequency(String label, GeoList dataList, GeoList classList ) {
 		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, classList, null);
-		GeoList table = algo.getResult();
-		return table;
+		GeoList list = algo.getResult();
+		return list;
 	}
 	
 	
@@ -4219,8 +4229,8 @@ public class Kernel {
 	 */
 	final public GeoList Frequency(String label, GeoList dataList, GeoList classList, GeoBoolean isRelative) {
 		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, classList, isRelative);
-		GeoList table = algo.getResult();
-		return table;
+		GeoList list = algo.getResult();
+		return list;
 	}
 	
 	
@@ -4230,10 +4240,32 @@ public class Kernel {
 	 */
 	final public GeoList Unique(String label, GeoList dataList) {
 		AlgoUnique algo = new AlgoUnique(cons, label, dataList);
-		GeoList table = algo.getResult();
-		return table;
+		GeoList list = algo.getResult();
+		return list;
 	}
 	
+	
+
+	/** 
+	 * Classes[dataList, number of classes]
+	 * G. Sturr
+	 */
+	final public GeoList Classes(String label, GeoList dataList, GeoNumeric numClasses) {
+		AlgoClasses algo = new AlgoClasses(cons, label, dataList, null, null, numClasses);
+		GeoList list = algo.getResult();
+		return list;
+	}
+	
+	
+	/** 
+	 * Classes[dataList, start, width]
+	 * G. Sturr
+	 */
+	final public GeoList Classes(String label, GeoList dataList, GeoNumeric start, GeoNumeric width ) {
+		AlgoClasses algo = new AlgoClasses(cons, label, dataList, start, width, null);
+		GeoList list = algo.getResult();
+		return list;
+	}
 	
 	
 	
