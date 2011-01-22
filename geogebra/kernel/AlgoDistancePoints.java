@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.kernelND.GeoPointND;
 
 
 /**
@@ -32,14 +33,14 @@ public class AlgoDistancePoints extends AlgoElement {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoPoint P, Q; // input
+	private GeoPointND P, Q; // input
     private GeoNumeric dist; // output       
 
     AlgoDistancePoints(
         Construction cons,
         String label,
-        GeoPoint P,
-        GeoPoint Q) {
+        GeoPointND P,
+        GeoPointND Q) {
         super(cons);
         this.P = P;
         this.Q = Q;
@@ -63,8 +64,8 @@ public class AlgoDistancePoints extends AlgoElement {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];
-        input[0] = P;
-        input[1] = Q;
+        input[0] = (GeoElement) P;
+        input[1] = (GeoElement) Q;
 
         output = new GeoElement[1];
         output[0] = dist;
@@ -74,12 +75,14 @@ public class AlgoDistancePoints extends AlgoElement {
     GeoNumeric getDistance() {
         return dist;
     }
+    /*
     GeoPoint getP() {
         return P;
     }
     GeoPoint getQ() {
         return Q;
     }
+    */
 
     // calc length of vector v   
     protected final void compute() {

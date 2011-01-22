@@ -952,8 +952,8 @@ class CmdDistance extends CommandProcessor {
 				{
 						kernel.Distance(
 								c.getLabel(),
-								(GeoPoint) arg[0],
-								(GeoPoint) arg[1])};
+								(GeoPointND) arg[0],
+								(GeoPointND) arg[1])};
 				return ret;
 			}
 

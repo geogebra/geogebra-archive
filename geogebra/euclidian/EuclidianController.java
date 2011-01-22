@@ -4658,7 +4658,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (selPoints() == 2) {			
 			// length
 			GeoPoint[] points = getSelectedPoints();
-			GeoNumeric length = kernel.Distance(null, points[0], points[1]);								
+			GeoNumeric length = kernel.Distance(null, (GeoPointND) points[0], (GeoPointND) points[1]);								
 
 			// set startpoint of text to midpoint of two points
 			GeoPoint midPoint = kernel.Midpoint(points[0], points[1]);

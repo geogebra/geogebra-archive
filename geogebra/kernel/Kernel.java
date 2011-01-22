@@ -3083,8 +3083,8 @@ public class Kernel {
 	 */
 	final public GeoNumeric Distance(
 		String label,
-		GeoPoint P,
-		GeoPoint Q) {
+		GeoPointND P,
+		GeoPointND Q) {
 		AlgoDistancePoints algo = new AlgoDistancePoints(cons, label, P, Q);
 		GeoNumeric num = algo.getDistance();
 		return num;
