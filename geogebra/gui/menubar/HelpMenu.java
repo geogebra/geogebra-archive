@@ -5,9 +5,13 @@ import geogebra.gui.util.BrowserLauncher;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 
 /**
  * The "Help" menu.
@@ -36,7 +40,11 @@ class HelpMenu extends BaseMenu {
 	 */
 	private void initItems()
 	{
-		add(helpAction);
+		JMenuItem mi = add(helpAction);
+		KeyStroke ks = KeyStroke.getKeyStroke(KeyEvent.VK_F1,
+				0);
+		mi.setAccelerator(ks);
+
 		add(forumAction);
 		
 		addSeparator();

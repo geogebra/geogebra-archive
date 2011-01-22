@@ -2529,11 +2529,13 @@ public class GuiManager {
 	}
 
 	    public void openHelp() {
+	    	showURLinBrowser(app.getGuiManager().getHelpURL(0,""));
+	    	/*
 	    	try {
 				showURLinBrowser(new URL(GeoGebra.HELP_URL));
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
-			}
+			}*/
 	    	
 	    }
 		
