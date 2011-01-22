@@ -9236,7 +9236,7 @@ class CmdZip extends CommandProcessor {
 				
 				
 			default :
-				throw argErr(app, c.getName(), arg[0]);
+				throw argErr(app, c.getName(), n);
 			}
 		}
 	}
