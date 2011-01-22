@@ -325,13 +325,11 @@ public class ToolbarContainer extends JPanel implements ComponentListener {
             }
             public void mouseEntered(MouseEvent e) {
             	Cursor c = new Cursor ( Cursor.HAND_CURSOR );
-
-            	// Create a frame to demonstrate use of setCursor method
             	modeNameLabel.setCursor (c);
 
             }
             public void mouseExited(MouseEvent e) {
-                //setText(text,true);
+            	modeNameLabel.setCursor (Cursor.getDefaultCursor());
             }
     	};
     	modeNameLabel.addMouseListener(helpMouseAdapter);
