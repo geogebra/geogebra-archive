@@ -106,6 +106,7 @@ import geogebra.kernel.statistics.AlgoSampleStandardDeviation;
 import geogebra.kernel.statistics.AlgoSampleVariance;
 import geogebra.kernel.statistics.AlgoShuffle;
 import geogebra.kernel.statistics.AlgoSigmaXX;
+import geogebra.kernel.statistics.AlgoSpearman;
 import geogebra.kernel.statistics.AlgoStandardDeviation;
 import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoSumSquaredErrors;
@@ -3273,6 +3274,31 @@ public class Kernel {
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+	
+	/** 
+	 * Spearman[list]
+	 * G. Sturr
+	 */
+	final public GeoNumeric Spearman(String label, GeoList list) {
+		AlgoSpearman algo = new AlgoSpearman(cons, label, list);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	/** 
+	 * Spearman[list, list]
+	 * G. Sturr
+	 */
+	final public GeoNumeric Spearman(String label, GeoList list, GeoList list2) {
+		AlgoSpearman algo = new AlgoSpearman(cons, label, list, list2);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	
+	
+	
 	
 	/** 
 	 * SXX[list]

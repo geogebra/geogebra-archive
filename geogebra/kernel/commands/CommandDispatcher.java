@@ -474,6 +474,7 @@ public class CommandDispatcher {
     	cmdTable.put("Shuffle", new CmdShuffle(kernel));
     	
     	cmdTable.put("Frequency", new CmdFrequency(kernel));
+    	cmdTable.put("Spearman", new CmdSpearman(kernel));
     	
     	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);
     	cmdTable.clear();
