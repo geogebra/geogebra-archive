@@ -364,7 +364,7 @@ public class Application implements KeyEventDispatcher {
 	private boolean showGrid = false;
 	private boolean antialiasing = true;
 	private boolean printScaleString = false;
-	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC;
+	private int labelingStyle = ConstructionDefaults.LABEL_VISIBLE_POINTS_ONLY;
 	private boolean allowToolTips = true;
 
 
@@ -3197,12 +3197,13 @@ public class Application implements KeyEventDispatcher {
 		getGuiManager().getLayout().getXml(sb, asPreference);
 
 		// labeling style
-		if (labelingStyle != ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC) {
+		// default changed so we need to always save this now
+		//if (labelingStyle != ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC) {
 			sb.append("\t<labelingStyle ");
 			sb.append(" val=\"");
 			sb.append(labelingStyle);
 			sb.append("\"/>\n");
-		}
+		//}
 
 		// just save font size as preference
 		if(asPreference) {
