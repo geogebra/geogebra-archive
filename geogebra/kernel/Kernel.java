@@ -4202,11 +4202,11 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Frequency[dataList, isRelative]
+	 * Frequency[dataList, isCumulative]
 	 * G. Sturr
 	 */
-	final public GeoList Frequency(String label, GeoList dataList, GeoBoolean isRelative) {
-		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, null, isRelative);
+	final public GeoList Frequency(String label, GeoList dataList, GeoBoolean isCumulative) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, null, isCumulative);
 		GeoList list = algo.getResult();
 		return list;
 	}
@@ -4224,11 +4224,11 @@ public class Kernel {
 	
 	
 	/** 
-	 * Frequency[dataList, classList, isRelative]
+	 * Frequency[dataList, classList, isCumulative]
 	 * G. Sturr
 	 */
-	final public GeoList Frequency(String label, GeoList dataList, GeoList classList, GeoBoolean isRelative) {
-		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, classList, isRelative);
+	final public GeoList Frequency(String label, GeoList dataList, GeoList classList, GeoBoolean isCumulative) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, dataList, classList, isCumulative);
 		GeoList list = algo.getResult();
 		return list;
 	}

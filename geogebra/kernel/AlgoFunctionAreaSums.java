@@ -1182,8 +1182,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 
 				
 				
-				// area of rectangles = total frequency				
-				sum.setValue(list2.size());	
+				// area of rectangles = total frequency	* densityFactor			
+				sum.setValue(list2.size() * densityFactor);	
 
 			}
 			else

@@ -26,7 +26,7 @@ public class AlgoFrequency extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoList dataList; //input
 	private GeoList classList; //input
-	private GeoBoolean showRelative; //input
+	private GeoBoolean isCumulative; //input
 
 	private GeoList frequency; //output	
 
@@ -36,16 +36,16 @@ public class AlgoFrequency extends AlgoElement {
 
 
 
-	AlgoFrequency(Construction cons, String label, GeoList dataList, GeoList classList, GeoBoolean isRelative ) {
-		this(cons, dataList, classList, isRelative);
+	AlgoFrequency(Construction cons, String label, GeoList dataList, GeoList classList, GeoBoolean isCumulative ) {
+		this(cons, dataList, classList, isCumulative);
 		frequency.setLabel(label);
 	}
 
-	AlgoFrequency(Construction cons, GeoList dataList, GeoList classList, GeoBoolean showRelative ) {
+	AlgoFrequency(Construction cons, GeoList dataList, GeoList classList, GeoBoolean isCumulative ) {
 		super(cons);
 		this.classList = classList;
 		this.dataList = dataList;
-		this.showRelative = showRelative;
+		this.isCumulative = isCumulative;
 
 		frequency = new GeoList(cons);
 
@@ -67,8 +67,8 @@ public class AlgoFrequency extends AlgoElement {
 		if(classList !=null)
 			tempList.add(classList);
 
-		if(showRelative !=null)
-			tempList.add(showRelative);
+		if(isCumulative !=null)
+			tempList.add(isCumulative);
 
 
 		input = new GeoElement[tempList.size()];
@@ -116,7 +116,7 @@ public class AlgoFrequency extends AlgoElement {
 		if(value != null) value.clear();
 
 		double numMax = 0, numMin = 0;
-
+		boolean doCumulative = isCumulative != null && isCumulative.getBoolean();
 
 		
 		// Load the data into f, an instance of Frequency class 
@@ -153,8 +153,8 @@ public class AlgoFrequency extends AlgoElement {
 				text.setTextString(s);
 				value.add(text);
 				if(classList == null)
-					if( showRelative != null && showRelative.getBoolean())
-						frequency.add(new GeoNumeric(cons,f.getPct((Comparable)s )));
+					if( doCumulative)
+						frequency.add(new GeoNumeric(cons,f.getCumFreq((Comparable)s )));
 					else
 						frequency.add(new GeoNumeric(cons,f.getCount((Comparable)s )));
 			}
@@ -175,8 +175,8 @@ public class AlgoFrequency extends AlgoElement {
 				value.add(new GeoNumeric(cons,n));
 
 				if(classList == null)
-					if( showRelative != null && showRelative.getBoolean())
-						frequency.add(new GeoNumeric(cons,f.getPct((Comparable)n )));
+					if( doCumulative)
+						frequency.add(new GeoNumeric(cons,f.getCumFreq((Comparable)n )));
 					else
 						frequency.add(new GeoNumeric(cons,f.getCount((Comparable)n )));
 			}
@@ -185,7 +185,7 @@ public class AlgoFrequency extends AlgoElement {
 
 
 		
-		// Compute frequencies for the classes (if needed)
+		// Compute frequencies using the classList (if provided)
 		//=======================================================
 
 		if(classList != null){
@@ -198,10 +198,15 @@ public class AlgoFrequency extends AlgoElement {
 
 				lowerClassBound = ((GeoNumeric)classList.get(i-1)).getDouble();
 				upperClassBound = ((GeoNumeric)classList.get(i)).getDouble();
-				classFreq = f.getCumFreq((Comparable)upperClassBound) 
-				- f.getCumFreq((Comparable)lowerClassBound) 
-				+ f.getCount((Comparable)lowerClassBound)
-				- f.getCount((Comparable)upperClassBound);
+				
+				if( doCumulative){
+					classFreq = f.getCumFreq((Comparable)upperClassBound); 
+				}else{
+					classFreq = f.getCumFreq((Comparable)upperClassBound) 
+					- f.getCumFreq((Comparable)lowerClassBound) 
+					+ f.getCount((Comparable)lowerClassBound)
+					- f.getCount((Comparable)upperClassBound);
+				}
 
 				frequency.add(new GeoNumeric(cons, classFreq));
 
@@ -217,19 +222,14 @@ public class AlgoFrequency extends AlgoElement {
 			}
 
 			// handle the last (highest) class frequency specially
-			// it must also counts values equal to the highest class bound  	
-			lowerClassBound = ((GeoNumeric)classList.get(classList.size()-2)).getDouble();
-			upperClassBound = ((GeoNumeric)classList.get(classList.size()-1)).getDouble();
-			classFreq = f.getCumFreq((Comparable)upperClassBound) 
-			- f.getCumFreq((Comparable)lowerClassBound) 
-			+ f.getCount((Comparable)lowerClassBound);
-			
-			/*
-			lowerClassBound = ((GeoNumeric)classList.get(classList.size()-2)).getDouble();
-			classFreq = f.getSumFreq()
-			- f.getCumFreq((Comparable)lowerClassBound) 
-			+ f.getCount((Comparable)lowerClassBound);
-			*/
+			// it must also count values equal to the highest class bound  
+			if( !doCumulative){
+				lowerClassBound = ((GeoNumeric)classList.get(classList.size()-2)).getDouble();
+				upperClassBound = ((GeoNumeric)classList.get(classList.size()-1)).getDouble();
+				classFreq = f.getCumFreq((Comparable)upperClassBound) 
+				- f.getCumFreq((Comparable)lowerClassBound) 
+				+ f.getCount((Comparable)lowerClassBound);
+			}
 			
 			frequency.add(new GeoNumeric(cons, classFreq));
 

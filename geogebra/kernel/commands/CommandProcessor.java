@@ -8969,7 +8969,7 @@ class CmdStemPlot extends CommandProcessor {
 
 			 case 2 :
 				 
-				// arg[0] = data list, arg[1] = show relative
+				// arg[0] = data list, arg[1] = is cumulative
 				if ((arg[0].isGeoList()) &&  (arg[1].isGeoBoolean()) ){
 						 GeoElement[] ret = { kernel.Frequency(c.getLabel(),
 								 (GeoList) arg[0], 
@@ -8995,7 +8995,7 @@ class CmdStemPlot extends CommandProcessor {
 				 
 			 case 3 :
 				 
-				// arg[0] = data list, arg[1] = bin list, arg[2] = show relative
+				// arg[0] = data list, arg[1] = bin list, arg[2] = is cumulative
 				 if( (ok[0] = arg[0].isGeoList())  
 						 &&  (ok[1] = arg[1].isGeoList()) 
 						 &&  (ok[2] = arg[2].isGeoBoolean()) ) {
