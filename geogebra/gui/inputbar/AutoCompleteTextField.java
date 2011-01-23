@@ -249,6 +249,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
             case KeyEvent.VK_F1:
                 updateCurrentWord();
                 showCommandHelp(true);
+                e.consume();
                 break;          
 			 
 		default:                                
