@@ -13,6 +13,8 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
+import geogebra.util.MyMath;
 
 /**
  * Computes LCM[a, b]
@@ -33,6 +35,22 @@ public class AlgoLCM extends AlgoTwoNumFunction {
       
     protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
+    		
+    		// use algorithm in ints first
+    		boolean success = false;
+    		int aInt = (int)Math.abs(a.getDouble());
+    		int bInt = (int)Math.abs(b.getDouble());
+    		if (aInt < 32768 &&  bInt < 32768) { // ensure answer will fit in an int
+    			try {
+    				num.setValue(MyMath.lcm(aInt, bInt));
+    	    		success = true;
+    			} catch (ArithmeticException e) {
+    				e.printStackTrace();
+    			}
+    			if (success) return;
+    		}
+    		
+    		// for larger numbers, use CAS
     		if (a.getDouble()==Math.floor(a.getDouble()) && b.getDouble()==Math.floor(b.getDouble()))
     		{       // TODO what shall we do with numbers larger than 2^57?
     				// Lcm[2^58+1,2] and Lcm[2^58,2] currently give the same answer
