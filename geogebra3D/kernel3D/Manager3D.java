@@ -205,6 +205,10 @@ public class Manager3D implements Manager3DInterface {
 		 return algo.getLine();
 	 }
 	 
+	 public GeoVectorND OrthogonalVector3D(String label, GeoCoordSys2D plane){
+		 AlgoOrthoVectorPlane algo = new AlgoOrthoVectorPlane(cons, label, plane);
+		 return algo.getVector();
+	 }
 	 
 
 

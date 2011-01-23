@@ -3,8 +3,6 @@ package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.CommandDispatcher;
-import geogebra.main.Application;
-import geogebra3D.kernel3D.Kernel3D;
 
 public class CommandDispatcher3D extends CommandDispatcher {
 	
@@ -26,6 +24,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		
 		
 		cmdTable.put("OrthogonalLine", new CmdOrthogonalLine3D(kernel));
+    	cmdTable.put("OrthogonalVector", new CmdOrthogonalVector3D(kernel));
 		
 		
 		

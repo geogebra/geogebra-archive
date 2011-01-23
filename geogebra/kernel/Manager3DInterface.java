@@ -96,7 +96,10 @@ public interface Manager3DInterface {
 
 			 /** Line3D through point orthogonal to line   */	
 			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoLineND line);
-			 
+
+			 /** Vector3D orthogonal to plane   */	
+			 public GeoVectorND OrthogonalVector3D(String label, GeoCoordSys2D plane);
+
 
 
 			/** Polygon3D linking points P1, P2, ...  
