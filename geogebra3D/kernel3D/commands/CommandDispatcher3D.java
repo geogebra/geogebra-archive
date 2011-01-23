@@ -2,6 +2,7 @@ package geogebra3D.kernel3D.commands;
 
 
 import geogebra.kernel.Kernel;
+import geogebra.kernel.commands.CmdIntersect;
 import geogebra.kernel.commands.CommandDispatcher;
 
 public class CommandDispatcher3D extends CommandDispatcher {
@@ -45,7 +46,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		  
 		
     	cmdTable.put("Intersect", new CmdIntersect3D(kernel));	
-    	
+    	cmdTable.put("Intersection", new CmdIntersect3D(kernel)); 
     	
     	cmdTable.put("Sphere", new CmdSphere3D(kernel));	
     	cmdTable.put("Cone", new CmdCone(kernel));	
