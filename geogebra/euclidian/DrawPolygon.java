@@ -23,6 +23,7 @@ import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -305,6 +306,8 @@ public class DrawPolygon extends Drawable implements Previewable {
 	}
 
 	final public boolean isInside(Rectangle rect) {
+		Application.debug(gp.getBounds());
+		Application.debug(rect);
 		return gp != null && rect.contains(gp.getBounds());
 	}
 

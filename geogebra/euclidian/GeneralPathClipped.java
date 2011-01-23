@@ -36,14 +36,15 @@ public class GeneralPathClipped implements Shape {
 		this.view = view;
 		pathPoints = new ArrayList();
 		gp = new GeneralPath();
-		bounds = new Rectangle();
+		//bounds = new Rectangle();
 		reset();
 	}
 
 	final public void reset() {
 		pathPoints.clear();
 		gp.reset();
-		bounds.setBounds(0,0,0,0);
+		//bounds.setBounds(0,0,0,0);
+		bounds = null;
 		largestCoord = 0;
 		needClosePath = false;
 	}
@@ -221,6 +222,12 @@ public class GeneralPathClipped implements Shape {
 	}
 	
 	private void updateBounds(PathPoint p) {
+		
+		if (bounds == null) {
+			bounds = new Rectangle();
+			bounds.setBounds((int)p.x, (int)p.y, 0, 0);
+		}
+		
 		if (Math.abs(p.x) > largestCoord)
 			largestCoord = Math.abs(p.x);
 		if (Math.abs(p.y) > largestCoord)

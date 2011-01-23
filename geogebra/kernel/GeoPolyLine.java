@@ -356,8 +356,8 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 	}
 
 
-	public GeoPointND[] getPoints() {
-		return points;
+	public GeoPoint[] getPoints() {
+		return (GeoPoint[])points;
 	}
 
 	public void calcLength() {

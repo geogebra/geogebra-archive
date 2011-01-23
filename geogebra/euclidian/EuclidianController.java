@@ -729,7 +729,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// check if axis is hit
 		//hits = view.getHits(mouseLoc);
 		view.setHits(mouseLoc);
-		hits = view.getHits();hits.removePolygons();
+		hits = view.getHits();
+		hits.removePolygons();
 		//Application.debug("MODE_TRANSLATEVIEW - "+hits.toString());
 
 		/*
@@ -989,7 +990,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 		else {	
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
+			hits = view.getHits();
+			hits.removePolygons();
 			//hits = view.getHits(mouseLoc);
 			// got rotation center again: deselect
 			if (!hits.isEmpty() && hits.contains(rotationCenter)) {
@@ -2064,7 +2066,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
 		case EuclidianView.MODE_ROTATE_BY_ANGLE:
 			view.setHits(mouseLoc);
-			hits = view.getHits();hits.removePolygons();
+			hits = view.getHits();
+			hits.removePolygons();
 			//hits = view.getHits(mouseLoc);
 			if (hits.isEmpty()) { 
 				POINT_CREATED = createNewPoint(hits, false, false, true);					
@@ -2219,7 +2222,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void processSelectionRectangleForTransformations(Hits hits, Class transformationInterface) {
 		for (int i=0; i < hits.size(); i++) {
 			GeoElement geo = (GeoElement) hits.get(i);
-			if (!(transformationInterface.isInstance(geo) || geo.isGeoPolygon())) {
+			if (!(transformationInterface.isInstance(geo) 
+				//	|| geo.isGeoPolygon()
+					)) {
 				hits.remove(i);
 			}
 		}	
@@ -2306,7 +2311,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (hits.isEmpty()){
 			view.setHits(mouseLoc);
-			hits = view.getHits();switchModeForRemovePolygons(hits);
+			hits = view.getHits();
+			switchModeForRemovePolygons(hits);
 		}
 
 		if (hits.isEmpty()) {
@@ -5244,7 +5250,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void removeParentPoints(ArrayList selGeos) {
 		tempArrayList.clear();	
 		tempArrayList.addAll(selGeos);
-
+		
 		// remove parent points
 		for (int i=0; i < selGeos.size(); i++) {
 			GeoElement geo = (GeoElement) selGeos.get(i);
@@ -5274,6 +5280,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoSegmentND [] segs = poly.getSegments();
 				for (int k=0; k < segs.length; k++) {
 					tempArrayList.remove(segs[k]);
+				}
+				break;					
+
+			case GeoElement.GEO_CLASS_POLYLINE:
+				// remove points and segments of poly
+				GeoPolyLine polyl = (GeoPolyLine) geo;
+				points = polyl.getPoints();
+				for (int k=0; k < points.length; k++) {
+					tempArrayList.remove(points[k]);
 				}
 				break;					
 			}				

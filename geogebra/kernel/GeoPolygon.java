@@ -31,7 +31,7 @@ import java.util.HashSet;
  * 
  * @author Markus Hohenwarter
  */
-public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable,Rotateable,PointRotateable,MatrixTransformable,Translateable,Dilateable,GeoCoordSys2D {
+public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable,Rotateable,PointRotateable,MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -1337,6 +1337,19 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 			((GeoPoint)points[i]).dilate(r,S);		
 		this.calcArea();
 	}
+	
+	public void mirror(GeoPoint Q) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).mirror(Q);		
+		this.calcArea();
+	}
+
+	public void mirror(GeoLine g) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).mirror(g);		
+		this.calcArea();
+	}
+
 
 	/**
 	 * Returns true iff all vertices are labeled
@@ -1359,6 +1372,7 @@ public class GeoPolygon extends GeoElement implements NumberValue, Path, Region,
 		if(getParentAlgorithm().getInput().length<3)return false;
 		return true;
 	}
+
 	
 	
 	
