@@ -21,11 +21,15 @@ class HelpMenu extends BaseMenu {
 
 	private AbstractAction
 		helpAction,
+		tutorialAction,
 		websiteAction,
 		forumAction,
 		infoAction
 	;
-	
+	/**
+	 * Creates new help menu
+	 * @param app
+	 */
 	public HelpMenu(Application app) {
 		super(app, app.getMenu("Help"));
 		
@@ -45,6 +49,7 @@ class HelpMenu extends BaseMenu {
 				0);
 		mi.setAccelerator(ks);
 
+		add(tutorialAction);
 		add(forumAction);
 		
 		addSeparator();
@@ -66,7 +71,20 @@ class HelpMenu extends BaseMenu {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.getGuiManager().openHelp();
+						app.getGuiManager().openHelp("");
+					}
+				};
+				runner.start();
+			}
+		};
+		
+		tutorialAction = new AbstractAction(app.getMenu("Tutorials")) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				Thread runner = new Thread() {
+					public void run() {
+						app.getGuiManager().openHelp("Tutorial");
 					}
 				};
 				runner.start();
@@ -78,8 +96,8 @@ class HelpMenu extends BaseMenu {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				BrowserLauncher
-						.openURL(GeoGebra.GEOGEBRA_WEBSITE + "forum/");
+				app.getGuiManager().showURLinBrowser(
+						GeoGebra.GEOGEBRA_WEBSITE + "forum/");
 			}
 		};
 		

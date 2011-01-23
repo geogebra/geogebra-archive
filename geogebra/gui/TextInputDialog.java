@@ -28,6 +28,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,7 +107,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 * @param rows 
 	 * @param isTextMode 
 	 */
-	public TextInputDialog(Application app,  String title, GeoText text, GeoPoint startPoint,
+	public TextInputDialog(final Application app,  String title, GeoText text, GeoPoint startPoint,
 			int cols, int rows, boolean isTextMode) {	
 		super(app.getFrame(), false);
 		this.app = app;
@@ -204,6 +205,24 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
 		centerOnScreen();
+		final JLabel latexHelp = new JLabel(app.getPlain("LaTeXHelp"));
+		MouseAdapter helpMouseAdapter = new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+            	if(e.getClickCount()>=1){            		
+            		app.getGuiManager().openHelp("LaTeX");
+            	}
+            }
+            public void mouseEntered(MouseEvent e) {
+            	Cursor c = new Cursor ( Cursor.HAND_CURSOR );
+            	latexHelp.setCursor (c);
+
+            }
+            public void mouseExited(MouseEvent e) {
+            	latexHelp.setCursor (Cursor.getDefaultCursor());
+            }
+    	};
+		latexHelp.addMouseListener(helpMouseAdapter);
+		btPanel.add(latexHelp,0);
 
 		// update the labels
 		setLabels(title);
