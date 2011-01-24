@@ -204,6 +204,12 @@ public class CASmaxima extends CASgeneric {
 				return "?";
 			}
 			
+			if (res.indexOf("~M has been generated") > 0)
+			{
+				Application.debug("WARNING: Maxima error");
+				return "?";				
+			}
+			
 			// Matrix notation
 			res = res.replaceAll("matrix\\(([^)]+)\\)", "\\[$1\\]");
 		
