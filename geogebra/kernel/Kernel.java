@@ -2943,8 +2943,8 @@ public class Kernel {
 	 * Histogram with density scale factor
 	 */
 	final public GeoNumeric Histogram(String label, 
-					GeoList list1, GeoList list2, GeoNumeric density) {
-		AlgoHistogram algo = new AlgoHistogram(cons, label, list1, list2, density, true);
+					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
+		AlgoHistogram algo = new AlgoHistogram(cons, label, list1, list2, useDensity, density);
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}

@@ -3766,20 +3766,37 @@ class CmdHistogram extends CommandProcessor {
 			} else
 				throw argErr(app, c.getName(), null);
 
-
-
 		case 3 :
 			arg = resArgs(c);
 			if ((ok[0] = (arg[0] .isGeoList()))
 					&& (ok[1] = (arg[1] .isGeoList()))
-					&& (ok[2] = (arg[2] .isGeoNumeric()))) {
+					&& (ok[2] = (arg[2] .isGeoBoolean()))) {
 				GeoElement[] ret =
 				{
 						kernel.Histogram(
 								c.getLabel(),                      
 								(GeoList)arg[0],
 								(GeoList)arg[1],
-								(GeoNumeric)arg[2])};
+								(GeoBoolean)arg[2],
+								null)};
+				return ret;
+			} else
+				throw argErr(app, c.getName(), null);
+
+		case 4 :
+			arg = resArgs(c);
+			if ((ok[0] = (arg[0] .isGeoList()))
+					&& (ok[1] = (arg[1] .isGeoList()))
+					&& (ok[2] = (arg[2] .isGeoBoolean()))
+					&& (ok[3] = (arg[3] .isGeoNumeric()))) {
+				GeoElement[] ret =
+				{
+						kernel.Histogram(
+								c.getLabel(),                      
+								(GeoList)arg[0],
+								(GeoList)arg[1],
+								(GeoBoolean)arg[2],
+								(GeoNumeric)arg[3])};
 				return ret;
 			} else
 				throw argErr(app, c.getName(), null);

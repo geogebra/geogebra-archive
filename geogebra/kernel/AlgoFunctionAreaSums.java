@@ -79,7 +79,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	private NumberValue a, b, n, width, density; // input
 	private GeoList list1, list2; // input
 	private GeoList tempList;
-	private GeoElement ageo, bgeo, ngeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, widthgeo, densitygeo;
+	private GeoElement ageo, bgeo, ngeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, widthGeo, densityGeo, useDensityGeo;
 	private GeoNumeric  sum; // output sum    
 	
 	
@@ -94,6 +94,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	// maximum frequency of bar chart
 	// this is used by stat dialogs when setting window dimensions
 	private double freqMax;
+
 	public double getFreqMax() {
 		return freqMax;
 	}
@@ -205,7 +206,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		this.list1 = list1;
 		this.list2 = list2;
 		this.width = width;
-		widthgeo = width.toGeoElement();
+		widthGeo = width.toGeoElement();
 
 		
 		sum = new GeoNumeric(cons); // output
@@ -246,7 +247,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	}
 		
 	/**
-	 *  HISTOGRAM
+	 *  HISTOGRAM[ <list of class boundaries>, <list of heights> ]
 	 * @param cons
 	 * @param label
 	 * @param list1
@@ -272,7 +273,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	
 	
 	/**
-	 *  Histogram [<list of data without repetition>, <frequency of each of these data>, <density>]
+	 *  Histogram [<list of class boundaries>, <list of raw data>, <useDensity>, <densityFactor>]
 	 * @param cons
 	 * @param label
 	 * @param list1
@@ -280,7 +281,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 * @param density
 	 */
 	public AlgoFunctionAreaSums(Construction cons, String label,  
-			   GeoList list1, GeoList list2, GeoNumeric density, boolean dummy) {
+			   GeoList list1, GeoList list2,  GeoBoolean useDensity, GeoNumeric density) {
 
 		super(cons);
 		
@@ -289,8 +290,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		this.list1 = list1;
 		this.list2 = list2;
 		this.density = density;
-		densitygeo = density.toGeoElement();
-
+		densityGeo = density.toGeoElement();
+		this.useDensityGeo = useDensity;
 		
 		sum = new GeoNumeric(cons); // output
 		setInputOutput(); // for AlgoElement	
@@ -408,7 +409,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			input = new GeoElement[3];
 			input[0] = list1;
 			input[1] = list2;
-			input[2] = widthgeo;
+			input[2] = widthGeo;
 			break;
 		case TYPE_BARCHART_RAWDATA:
 			input = new GeoElement[2];
@@ -424,7 +425,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			input = new GeoElement[3];
 			input[0] = list1;		
 			input[1] = list2;
-			input[2] = densitygeo;
+			input[2] = densityGeo;
 			break;
 		case TYPE_BOXPLOT:
 			input = new GeoElement[7];
@@ -1096,27 +1097,38 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			}
 			
 			N = list1.size();
-			
+
 			if (N < 2)
 			{
 				sum.setUndefined();
 				return;
 			}
-			
+
 			// set the density scale factor
 			// default is 1; densityFactor == -1 means do not convert from frequency to density
-			double densityFactor = density != null ? density.getDouble() : 1;
-			if(densityFactor <=0 && densityFactor != -1)
+			double densityFactor;
+			
+			if(useDensityGeo == null){
+				densityFactor = 1;
+			} 
+			else if(!((GeoBoolean)useDensityGeo).getBoolean() )
 			{
-				sum.setUndefined();
-				return;
+				densityFactor = -1;
+			} 
+			else 
+			{
+				densityFactor = (density != null) ? density.getDouble() : 1;
+				if(densityFactor <=0 && densityFactor != -1)
+				{
+					sum.setUndefined();
+					return;
+				}
 			}
-			
-			
+
 			if (N-1 != list2.size())
 			{ // list2 contains raw data
 				// eg Histogram[{1,1.5,2,4},{1.0,1.1,1.1,1.2,1.7,1.7,1.8,2.2,2.5,4.0}]
-				
+
 				if (yval == null || yval.length < N) {
 					yval = new double[N];
 					leftBorder = new double[N];
@@ -1145,32 +1157,59 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	
 				// work out frequencies in each class
 				
+				//TODO: finish right histogram option for 2nd case below
+				boolean isHistogramRight = false;
+				
 				for (int i=0; i < list2.size() ; i++) {
 					geo = list2.get(i);
 					if (geo.isGeoNumeric())	datum = ((GeoNumeric)geo).getDouble(); 
 					else { sum.setUndefined(); return; }
-					
+
 					// if datum is outside the range, set undefined
 					if (datum < leftBorder[0] || datum > leftBorder[N-1] ) { sum.setUndefined(); return; }
-					
-					// fudge to make the last boundary eg 10 <= x <= 20
-					// all others are 10 <= x < 20
-					double oldMaxBorder = leftBorder[N-1];
-					leftBorder[N-1] += Math.abs(leftBorder[N-1] / 100000000);
-					
-					// check which class this datum is in
-					for (int j=1; j < N; j++) {
-						//System.out.println("checking "+leftBorder[j]);
-						if (datum < leftBorder[j]) 
-						{
-							//System.out.println(datum+" "+j);
-							yval[j-1]++;
-							break;
+
+					if(!isHistogramRight){
+						// fudge to make the last boundary eg 10 <= x <= 20
+						// all others are 10 <= x < 20
+						double oldMaxBorder = leftBorder[N-1];
+						leftBorder[N-1] += Math.abs(leftBorder[N-1] / 100000000);
+
+						// check which class this datum is in
+						for (int j=1; j < N; j++) {
+							//System.out.println("checking "+leftBorder[j]);
+							if (datum < leftBorder[j]) 
+							{
+								//System.out.println(datum+" "+j);
+								yval[j-1]++;
+								break;
+							}
 						}
+
+						leftBorder[N-1] = oldMaxBorder;
+
 					}
-					
-					leftBorder[N-1] = oldMaxBorder;
-					
+
+					else
+					{
+						// fudge to make the first boundary eg 10 <= x <= 20
+						// all others are 10 < x <= 20 (HistogramRight)
+						double oldMinBorder = leftBorder[0];
+						leftBorder[0] += Math.abs(leftBorder[0] / 100000000);
+
+						// check which class this datum is in
+						for (int j=1; j <= N; j++) {
+							//System.out.println("checking "+leftBorder[j]);
+							if (datum < leftBorder[j]) 
+							{
+								//System.out.println(datum+" "+j);
+								yval[j-1]++;
+								break;
+							}
+						}
+						leftBorder[N-1] = oldMinBorder;
+					}
+
+
 				}
 				
 			
@@ -1181,9 +1220,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 						yval[i-1] = densityFactor * yval[i-1] / (leftBorder[i] - leftBorder[i-1]);
 
 				
-				
 				// area of rectangles = total frequency	* densityFactor			
-				sum.setValue(list2.size() * densityFactor);	
+				sum.setValue(Math.abs( list2.size() * densityFactor ));	
 
 			}
 			else

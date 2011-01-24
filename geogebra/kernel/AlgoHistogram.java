@@ -46,11 +46,12 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 	 * @param label label for the histogram
 	 * @param list1 list of boundaries
 	 * @param list2 list of heights or raw data
+	 * @param useDensity flag  
 	 * @param density density scaling factor 
 	 */
 	public AlgoHistogram(Construction cons, String label,
-								   GeoList list1, GeoList list2, GeoNumeric density, Boolean dummy) {
-		super(cons, label, list1, list2, density, dummy);		
+								   GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
+		super(cons, label, list1, list2, useDensity, density);		
 	}
 	
 	
