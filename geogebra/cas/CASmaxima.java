@@ -74,9 +74,9 @@ public class CASmaxima extends CASgeneric {
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
-	public String evaluateGeoGebraCAS(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
+	public String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to Maxima string
-		String MaximaString = toMaximaString(casInput, useGeoGebraVariables);
+		String MaximaString = toMaximaString(casInput);
 		
 		// Maxima simplification is turned off by default using simp:false;
 		// We turn it on here using ev(command, simp) when KeepInput is not used
@@ -118,19 +118,11 @@ public class CASmaxima extends CASgeneric {
 	
 	/**
 	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
-	 * 
-	 * @param resolveVariables: states whether variables from the GeoGebra kernel 
-	 *    should be used. Note that this changes the given ExpressionValue. 
 	 */
-	public synchronized String toMaximaString(ValidExpression ve, boolean resolveVariables) {
-		
-		// resolve global variables
-//		if (resolveVariables) {			
-//			casParser.resolveVariablesForCAS(ve);
-//		}	
+	public synchronized String toMaximaString(ValidExpression ve) {
 		
 		// convert to Maxima String
-		String MaximaStr = doToMaximaString(ve, resolveVariables);
+		String MaximaStr = doToMaximaString(ve);
 
 		// handle assignments
 		String veLabel = ve.getLabel();
@@ -152,8 +144,8 @@ public class CASmaxima extends CASgeneric {
 				//sb.append(")");
 				MaximaStr = sb.toString();
 			} else {	
-				// assignment, e.g. a := 5
-				MaximaStr = veLabel + " := " + MaximaStr;
+				// assignment, e.g. a : 5
+				MaximaStr = veLabel + " : " + MaximaStr;
 			}
 		}
 		
@@ -165,14 +157,14 @@ public class CASmaxima extends CASgeneric {
 	/**
 	 * Returns the given expression as a string in Maxima syntax.
 	 */
-	private String doToMaximaString(ExpressionValue ev, boolean substituteVariables) {
+	private String doToMaximaString(ExpressionValue ev) {
 		String MathPiperString;
 		
 		if (!ev.isExpressionNode()) {
 			ev = new ExpressionNode(casParser.getKernel(), ev);			
 		}
 		
-		MathPiperString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MAXIMA, !substituteVariables);		
+		MathPiperString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MAXIMA, true);		
 				
 		return MathPiperString;
 	}

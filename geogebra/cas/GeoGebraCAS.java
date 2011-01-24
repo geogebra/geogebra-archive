@@ -90,12 +90,11 @@ public class GeoGebraCAS {
 	/**
 	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
 	 * @param casInput: in GeoGebraCAS syntax
-	 * @param useGeoGebraVariables: whether GeoGebra objects should be substituted before evaluation
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
-	public String evaluateGeoGebraCAS(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
-		return cas.evaluateGeoGebraCAS(casInput, useGeoGebraVariables);
+	public String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
+		return cas.evaluateGeoGebraCAS(casInput);
 	}
 	
 	
@@ -116,24 +115,13 @@ public class GeoGebraCAS {
 	}
 	
 	/** 
-	 * Evaluates an expression in GeoGebraCAS syntax with the currently active CAS.
-	 * 
+	 * Evaluates an expression in GeoGebraCAS syntax with the currently active CAS
+	 * (MathPiper or Maxima).
      * @return result string (null possible)
 	 * @throws Throwable 
      */
 	final public String evaluateGeoGebraCAS(String exp) throws Throwable {
-		return cas.evaluateGeoGebraCAS(exp, false);
-	}
-	
-	/** 
-	 * Evaluates an expression in GeoGebraCAS syntax with the currently active CAS
-	 * (MathPiper or Maxima).
-     * @return result string (null possible)
-     * @param useGeoGebraVariables: whether GeoGebra objects should be substituted before evaluation
-	 * @throws Throwable 
-     */
-	final public String evaluateGeoGebraCAS(String exp, boolean useGeoGebraVariables) throws Throwable {
-		return cas.evaluateGeoGebraCAS(exp, useGeoGebraVariables);
+		return cas.evaluateGeoGebraCAS(exp);
 	}
 	
 	/**

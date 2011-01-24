@@ -82,13 +82,12 @@ public class CASmathpiper extends CASgeneric {
 	/**
 	 * Evaluates a valid expression in GeoGebraCAS syntax and returns the resulting String in GeoGebra notation.
 	 * @param casInput: in GeoGebraCAS syntax
-	 * @param useGeoGebraVariables: whether GeoGebra objects should be substituted before evaluation
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
-	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable {
+	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
-		String MathPiperString = toMathPiperString(casInput, useGeoGebraVariables);
+		String MathPiperString = toMathPiperString(casInput);
 			
 		// EVALUATE input in MathPiper 
 		String result = evaluateMathPiper(MathPiperString);
@@ -200,19 +199,10 @@ public class CASmathpiper extends CASgeneric {
 	
 	/**
 	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
-	 * 
-	 * @param resolveVariables: states whether variables from the GeoGebra kernel 
-	 *    should be used. Note that this changes the given ExpressionValue. 
 	 */
-	public synchronized String toMathPiperString(ValidExpression ve, boolean resolveVariables) {
-		
-		// resolve global variables
-//		if (resolveVariables) {			
-//			casParser.resolveVariablesForCAS(ve);
-//		}	
-		
+	public synchronized String toMathPiperString(ValidExpression ve) {
 		// convert to MathPiper String
-		String MathPiperStr = doToMathPiperString(ve, resolveVariables);
+		String MathPiperStr = doToMathPiperString(ve);
 
 		// handle assignments
 		String veLabel = ve.getLabel();
@@ -243,13 +233,13 @@ public class CASmathpiper extends CASgeneric {
 	/**
 	 * Returns the given expression as a string in MathPiper syntax.
 	 */
-	private String doToMathPiperString(ExpressionValue ev, boolean substituteVariables) {
+	private String doToMathPiperString(ExpressionValue ev) {
 		String MathPiperString;
 		if (!ev.isExpressionNode()) {
 			ev = new ExpressionNode(casParser.getKernel(), ev);			
 		}
 		
-		MathPiperString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, !substituteVariables);			
+		MathPiperString = ((ExpressionNode) ev).getCASstring(ExpressionNode.STRING_TYPE_MATH_PIPER, true);			
 		return MathPiperString;
 	}
 

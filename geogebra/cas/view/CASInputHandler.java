@@ -856,7 +856,7 @@ public class CASInputHandler {
 		try {
 			if (assignment || evalVE.isTopLevelCommand()) {
 				// evaluate inVE in CAS and convert result back to GeoGebra expression
-				CASResult = casView.getCAS().evaluateGeoGebraCAS(evalVE, casView.getUseGeoGebraVariableValues());
+				CASResult = casView.getCAS().evaluateGeoGebraCAS(evalVE);
 			} 
 			else {
 				// build Simplify[inVE]
@@ -866,7 +866,7 @@ public class CASInputHandler {
 				simplifyCommand.addArgument(inEN);
 				simplifyCommand.setLabel(evalVE.getLabel());
 				// evaluate Simplify[inVE] in CAS and convert result back to GeoGebra expression
-				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(simplifyCommand, casView.getUseGeoGebraVariableValues());
+				CASResult = casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(simplifyCommand);
 			}
 		} catch (Throwable th1) {
 			throwable = th1;
@@ -877,20 +877,19 @@ public class CASInputHandler {
 		// GeoGebra Evaluation needed?
 		boolean evalInGeoGebra = false;
 		boolean isDeleteCommand = false;
-		if (casView.getUseGeoGebraVariableValues()) {
-			// check if assignment is allowed
-			if (assignment) {
-				// assignment (e.g. a := 5, f(x) := x^2)
-				evalInGeoGebra = isGeoGebraAssignmentAllowed(assignmentVar);
-			}		
-			else {
-				// evaluate input expression in GeoGebra if we have
-				// - or Delete, e.g. Delete[a]
-				// - or CAS was not successful
-				// - or CAS result contains commands
-				isDeleteCommand = isDeleteCommand(eval);
-				evalInGeoGebra = !CASSuccessful || isDeleteCommand || containsCommand(CASResult);
-			}
+		
+		// check if assignment is allowed
+		if (assignment) {
+			// assignment (e.g. a := 5, f(x) := x^2)
+			evalInGeoGebra = isGeoGebraAssignmentAllowed(assignmentVar);
+		}		
+		else {
+			// evaluate input expression in GeoGebra if we have
+			// - or Delete, e.g. Delete[a]
+			// - or CAS was not successful
+			// - or CAS result contains commands
+			isDeleteCommand = isDeleteCommand(eval);
+			evalInGeoGebra = !CASSuccessful || isDeleteCommand || containsCommand(CASResult);
 		}
 
 		String ggbResult = null;
@@ -977,7 +976,7 @@ public class CASInputHandler {
 			// return value of assigned variable
 			try {
 				// evaluate assignment variable like a or f(x)
-				assignmentResult.append(casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(evalVE.getLabelForAssignment(), false));
+				assignmentResult.append(casView.getCAS().getCurrentCAS().evaluateGeoGebraCAS(evalVE.getLabelForAssignment()));
 			} catch (Throwable th1) {
 				return evalVE.getLabelForAssignment();
 			}

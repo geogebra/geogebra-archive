@@ -45,8 +45,6 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 
 	private Kernel kernel;
 
-	private boolean useGeoGebraVariableValues = true;
-
 	private CASTable consoleTable;
 	private CASInputHandler casInputHandler;
 	private CASSubDialog subDialog;
@@ -216,10 +214,6 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		
 	}
 
-	public boolean getUseGeoGebraVariableValues() {
-		return useGeoGebraVariableValues;
-	}
-
 	final public GeoGebraCAS getCAS() {
 		if (cas == null) {
 			cas = (geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS();
@@ -322,15 +316,6 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		return app;
 	}
 
-	public final boolean isUseGeoGebraVariableValues() {
-		return useGeoGebraVariableValues;
-	}
-
-	public final void setUseGeoGebraVariableValues(
-			boolean useGeoGebraVariableValues) {
-		this.useGeoGebraVariableValues = useGeoGebraVariableValues;
-	}
-
 	public void focusGained(FocusEvent arg0) {
 		// start editing last row
 		int lastRow = consoleTable.getRowCount() - 1;
@@ -373,6 +358,10 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 			System.out.println("IGNORE update: " + geo.getLabel());
 			return;
 		}
+		
+		// make sure the value of geo is updated in the CAS
+		// e.g. a was 7 and is updated to 8
+		add(geo);
 
 		boolean updateHandled = false;
 		int updateStartRow = 0;
@@ -402,10 +391,6 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		// update all dependent rows
 		if (geo.isLabelSet())
 			casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
-
-		if (!updateHandled) {
-			add(geo);
-		}
 	}
 
 	void addToIgnoreUpdates(String var) {

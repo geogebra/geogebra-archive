@@ -11,6 +11,7 @@ import geogebra.main.Application;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,17 +77,21 @@ public final class JacomaxAutoConfigurator {
             logger.debug("Found Maxima with highest version number at {}", maximaFolder);
             findWindowsMaximaExecutable(result, maximaFolder);
         } else if (osName!=null && osName.startsWith("Windows")) {
-            File programFilesFolder = findWindowsProgramFiles();
-            if (programFilesFolder!=null) {
-                logger.debug("Looking in Windows Program Files Folder ({}) for Maxima installs", programFilesFolder);
-                maximaFolder = chooseBestWindowsMaximaFolder(programFilesFolder);
-                if (maximaFolder!=null) {
-                    logger.debug("Found Maxima with highest version number at {}", maximaFolder);
-                    findWindowsMaximaExecutable(result, maximaFolder);
-                }
-                else {
-                    logger.debug("Did not find any folders of the form Maxima-n.n.n, so giving up.");
-                }
+        	// Markus Hohenwarter, 2011-01-24
+        	// make sure we look at ALL program files folders as there can be more than one
+            File [] programFilesFolders = findWindowsProgramFiles();
+            for (File programFilesFolder : programFilesFolders) {
+	            if (programFilesFolder!=null) {
+	                logger.debug("Looking in Windows Program Files Folder ({}) for Maxima installs", programFilesFolder);
+	                maximaFolder = chooseBestWindowsMaximaFolder(programFilesFolder);
+	                if (maximaFolder!=null) {
+	                    logger.debug("Found Maxima with highest version number at {}", maximaFolder);
+	                    findWindowsMaximaExecutable(result, maximaFolder);
+	                }
+	                else {
+	                    logger.debug("Did not find any folders of the form Maxima-n.n.n, so giving up.");
+	                }
+	            }
             }
         }
         else if ("Mac OS X".equals(osName)) {
@@ -123,7 +128,9 @@ public final class JacomaxAutoConfigurator {
         return null;
     }
     
-    private static File findWindowsProgramFiles() {
+    // Markus Hohenwarter, 2011-01-24
+	// make sure we return ALL possible program files folders as there can be more than one
+    private static File [] findWindowsProgramFiles() {
     	
         String[] searchLocations = new String[] {
         		//Application.getCodeBaseFolder(),
@@ -132,18 +139,25 @@ public final class JacomaxAutoConfigurator {
                 System.getenv("ProgramW6432"),
                 "C:\\Program Files",
                 "C:\\Program Files (x86)",
-                "C:"
+                "C:\\"
         };
+        
         File locationFile;
+        TreeSet<File> set = new TreeSet<File>();
         for (String location : searchLocations) {
             if (location!=null) {
                 locationFile = new File(location);
                 if (locationFile.isDirectory()) {
-                    return locationFile;
+                	set.add(locationFile);
                 }
             }
         }
-        return null;
+        if (set.size() == 0)
+        	return null;
+        else {
+        	File [] ret = new File[set.size()];
+        	return set.toArray(ret);
+        }
     }
     
     private static final String WINDOWS_MAXIMA_FOLDER_PREFIX = "Maxima-";

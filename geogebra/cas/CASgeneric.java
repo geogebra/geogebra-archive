@@ -19,19 +19,18 @@ public abstract class CASgeneric {
      * @return result string (null possible)
 	 * @throws Throwable 
      */
-	final public String evaluateGeoGebraCAS(String exp, boolean useGeoGebraVariables) throws Throwable {
+	final public String evaluateGeoGebraCAS(String exp) throws Throwable {
 		ValidExpression inVE = casParser.parseGeoGebraCASInput(exp);
-		return evaluateGeoGebraCAS(inVE, useGeoGebraVariables);
+		return evaluateGeoGebraCAS(inVE);
 	}
 	
 	/**
 	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
 	 * @param casInput: in GeoGebraCAS syntax
-	 * @param useGeoGebraVariables: whether GeoGebra objects should be substituted before evaluation
 	 * @return evaluation result
 	 * @throws Throwable
 	 */
-	public abstract String evaluateGeoGebraCAS(ValidExpression casInput, boolean useGeoGebraVariables) throws Throwable;
+	public abstract String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable;
 	
 	/**
 	 * Returns the error message of the last call of evaluateGeoGebraCAS().
