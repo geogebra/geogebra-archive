@@ -6858,14 +6858,13 @@ public class Kernel {
 
 		sbBuildImplicitEquation.setLength(0);
 		sbBuildImplicitEquation.append(buildImplicitVarPart(numbers, vars, KEEP_LEADING_SIGN || (op == '='), CANCEL_DOWN));
-		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) {
-			sbBuildImplicitEquation.append(" == ");
-		}
-		else
-		{
-			sbBuildImplicitEquation.append(' ');
-			sbBuildImplicitEquation.append(op);
-			sbBuildImplicitEquation.append(' ');
+		
+		if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER && op == '=') {
+				sbBuildImplicitEquation.append(" == ");
+		} else {
+				sbBuildImplicitEquation.append(' ');
+				sbBuildImplicitEquation.append(op);
+				sbBuildImplicitEquation.append(' ');
 		}
 		
 		// temp is set by buildImplicitVarPart
@@ -7067,11 +7066,14 @@ public class Kernel {
 				return "-";
 		} else {
 			String numberStr = format(x);
-			if (casPrintForm == ExpressionNode.STRING_TYPE_MATH_PIPER) 
-				return numberStr + "*";
-			else {
-				// standard case
-				return numberStr;
+			switch (casPrintForm) {
+				case ExpressionNode.STRING_TYPE_MATH_PIPER:
+				case ExpressionNode.STRING_TYPE_MAXIMA:
+					return numberStr + "*";
+					
+				default:
+					// standard case
+					return numberStr;
 			}
 		}
 	}

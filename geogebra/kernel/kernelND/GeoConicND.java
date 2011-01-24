@@ -86,6 +86,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 	protected static String[] vars = { "x\u00b2", "x y", "y\u00b2", "x", "y" };
 	protected static String[] varsLateX = { "x^{2}", "x y", "y^{2}", "x", "y" };
+	protected static String[] varsCAS = { "x^2", "x*y", "y^2", "x", "y" };
 	
 	// enable negative sign of first coefficient in implicit equations
 	protected static boolean KEEP_LEADING_SIGN = false;
@@ -98,8 +99,6 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	
 	// two Eigenvectors (unit vectors), set by setEigenvectors()
 	public GeoVec2D[] eigenvec = { new GeoVec2D(kernel, 1, 0), new GeoVec2D(kernel, 0, 1)};
-	
-	
 	
 	/**
 	 * (eigenvecX, eigenvecY) are coords of currently calculated first eigenvector
@@ -1099,11 +1098,30 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 			sbToValueString.append(" = 0");
 			return sbToValueString;
 		}
-		String squared = (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? "^{2}" : "\u00b2";
+		
+		String squared;
+		String [] myVars;
+		switch (kernel.getCASPrintForm()) {
+			case ExpressionNode.STRING_TYPE_LATEX:
+				squared = "^{2}";
+				myVars = varsLateX;
+				break;
+				
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+			case ExpressionNode.STRING_TYPE_MAXIMA:
+				squared = "^2";
+				myVars = varsCAS;
+				break;
+				
+			default:
+				squared = "\u00b2";
+				myVars = vars;
+		}
+		
 		switch (toStringMode) {
 			case EQUATION_SPECIFIC :
 				if (!isSpecificPossible())
-					return kernel.buildImplicitEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, KEEP_LEADING_SIGN, true, '=');						
+					return kernel.buildImplicitEquation(coeffs, myVars, KEEP_LEADING_SIGN, true, '=');						
 				
 				switch (type) {					
 					case CONIC_CIRCLE :		
@@ -1152,7 +1170,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 						} else
 							return kernel.buildImplicitEquation(								
 								coeffs,
-								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, 
+								myVars, 
 								KEEP_LEADING_SIGN, true, '=');
 
 					case CONIC_HYPERBOLA :
@@ -1206,7 +1224,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 						} else
 							return kernel.buildImplicitEquation(
 								coeffs,
-								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
+								myVars,
 								KEEP_LEADING_SIGN,
 								true, '=');
 
@@ -1214,19 +1232,19 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 						if (!Kernel.isZero(coeffs[2]))
 							return kernel.buildExplicitConicEquation(
 								coeffs,
-								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
+								myVars,
 								2,
 								KEEP_LEADING_SIGN);
 						else if (!Kernel.isZero(coeffs[0]))
 							return kernel.buildExplicitConicEquation(
 								coeffs,
-								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
+								myVars,
 								0,
 								KEEP_LEADING_SIGN);
 						else
 							return kernel.buildImplicitEquation(
 								coeffs,
-								(kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars,
+								myVars,
 								KEEP_LEADING_SIGN,
 								true, '=');
 
@@ -1251,10 +1269,10 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				
 			case EQUATION_EXPLICIT:
 				if (isExplicitPossible())
-					return kernel.buildExplicitConicEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, 4, KEEP_LEADING_SIGN); 
+					return kernel.buildExplicitConicEquation(coeffs, myVars, 4, KEEP_LEADING_SIGN); 
 
 			default : //implicit
-				return kernel.buildImplicitEquation(coeffs, (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? varsLateX : vars, KEEP_LEADING_SIGN, true, '=');
+				return kernel.buildImplicitEquation(coeffs, myVars, KEEP_LEADING_SIGN, true, '=');
 		}
 	}
 	

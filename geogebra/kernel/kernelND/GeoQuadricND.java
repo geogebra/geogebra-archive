@@ -335,8 +335,21 @@ public abstract class GeoQuadricND extends GeoElement {
 	
 	
 	protected void buildSphereNDString(){
-		String squared = (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) ? "^{2}" : "\u00b2";
+		String squared;
+		switch (kernel.getCASPrintForm()) {
+			case ExpressionNode.STRING_TYPE_LATEX:
+				squared = "^{2}";
+				break;
 				
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+			case ExpressionNode.STRING_TYPE_MAXIMA:
+				squared = "^2";
+				break;
+				
+			default:
+				squared = "\u00b2";
+		}
+		
 		for (int i=0; i<dimension; i++){
 			if (kernel.isZero(getMidpoint().get(i+1))) {
 				sbToValueString.append(VAR_STRING[i]);

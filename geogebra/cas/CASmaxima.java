@@ -251,7 +251,7 @@ public class CASmaxima extends CASgeneric {
 			
 			if (result.indexOf(" =") > -1) { // y = not :=
 				result = result.replaceAll(" =","==");
-				Application.debug("WARNING: replacing = by ==",1);
+				//Application.debug("WARNING: replacing = by ==",1);
 			}
 			
 			if (debug) {

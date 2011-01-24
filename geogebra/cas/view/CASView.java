@@ -345,6 +345,8 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 				String funStr = geo.toCasAssignment(cas.getCurrentCASstringType());
 				if (funStr != null) {
 					cas.evaluateRaw(funStr);
+					// TODO: remove
+					System.out.println("updateInCAS: " + funStr);
 					return true;
 				}
 			}
