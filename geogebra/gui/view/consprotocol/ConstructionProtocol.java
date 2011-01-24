@@ -902,21 +902,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 			index = (rowNumber < 0) ? -1 : data.getConstructionIndex(rowNumber);
 			prevIndex = (rowNumber < 1) ? -1 : data.getConstructionIndex(rowNumber - 1);
-			/*
-			try {
-				index = (rowNumber < 0) ? -1 : data.getConstructionIndex(rowNumber);
-			}
-			catch (Exception e) {
-				index = -1;
-			}
 
-			try {
-				prevIndex = (rowNumber < 1) ? -1 : data.getConstructionIndex(rowNumber - 1);
-			}
-			catch (Exception e) {
-				prevIndex = -1;
-			}
-*/
 			
 			// TODO: This logic could be merged with the HTML export logic.
 			int m;
@@ -1222,6 +1208,19 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		// html code without <html> tags
 		public String getPlainHTMLAt(int nRow, int nCol, String thisPath) {
+			
+			/* Only one toolbar should be displayed for each step,
+			 * even if multiple substeps are present in a step (i.e. more rows).
+			 * For that, we calculate the index for the current and the previous row
+			 * and check if they are equal.
+			 */
+			Integer index = null;
+			Integer prevIndex = null;
+
+			index = (nRow < 0) ? -1 : data.getConstructionIndex(nRow);
+			prevIndex = (nRow < 1) ? -1 : data.getConstructionIndex(nRow - 1);
+
+			
 			if (nRow < 0 || nRow >= getRowCount())
 				return "";
 			switch (nCol) {
@@ -1244,7 +1243,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				else
 					m = ((RowData) rowList.get(nRow)).geo.getRelatedModeID();
 
-				if (m == -1)
+				if (m == -1 || index == prevIndex)
 					return "";
 
 				/*
