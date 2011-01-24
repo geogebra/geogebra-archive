@@ -103,6 +103,16 @@ public class CASmaxima extends CASgeneric {
 		return ggbString;
 	}
 	
+	/** 
+	 * Evaluates an expression in the syntax of Maxima.
+	 * 
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	public String evaluateRaw(String exp) throws Throwable {
+		return evaluateMaxima(exp);
+	}
+	
 	final synchronized public String getEvaluateGeoGebraCASerror() {
 		// TODO: implement for Maxima
 		return null;

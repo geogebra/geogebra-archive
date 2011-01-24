@@ -1209,17 +1209,11 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     }
 	
     /**
-	 * Returns a symbolic representation of geo in GeoGebraCAS syntax.
-	 * For example, "f(x) := a x^2", "a := 20" or "g: 3x + 4y = 7"
+	 * Returns a representation of geo in currently used CAS syntax.
+	 * For example, "a*x^2"
 	 */
-	public String toGeoGebraCASString() {
-		if (!isDefined()) return null;
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(getLabelForAssignment());
-		sb.append(getAssignmentOperator());
-		sb.append(fun.getExpression().getCASstring(true));
-		return sb.toString();
+	public String getCASString(boolean symbolic) {
+		return fun.getExpression().getCASstring(symbolic);
 	}
     
 	 public String getLabelForAssignment() {
@@ -1230,7 +1224,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		sb.append(")");
 		return sb.toString();
 	 }
-	 private Function varFun;
 	 
 	 /**
 	  * Converts this function to cartesian curve and stores result to given curve
@@ -1238,7 +1231,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	  */
 	 public void toGeoCurveCartesian(GeoCurveCartesian curve) {
 		 curve.setFunctionY((Function)fun.deepCopy(kernel));
-		 varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
+		 Function varFun = new Function(new ExpressionNode(kernel,fun.getFunctionVariable()),fun.getFunctionVariable());
 		 curve.setFunctionX(varFun);
 		 double min = app.getEuclidianView().getXminForFunctions();
 		 double max = app.getEuclidianView().getXmaxForFunctions();

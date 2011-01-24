@@ -331,14 +331,27 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	 * Defines new functions in the CAS
 	 */
 	public void add(GeoElement geo) {
+		updateInCAS(geo);
+	}
+	
+	/**
+	 * Updates geo's value in the current CAS, e.g. a := 5;
+	 * @param geo
+	 * @return whether an assignment was evaluated
+	 */
+	private boolean updateInCAS(GeoElement geo) {
 		try {
 			if (geo.isCasEvaluableObject()) {
-				String funStr = geo.toGeoGebraCASString();
-				getCAS().evaluateGeoGebraCAS(funStr);
+				String funStr = geo.toCasAssignment(cas.getCurrentCASstringType());
+				if (funStr != null) {
+					cas.evaluateRaw(funStr);
+					return true;
+				}
 			}
 		} catch (Throwable e) {
 			System.err.println("CASView.add: " + geo + ", " + e.getMessage());
 		}
+		return false;
 	}
 
 	/**
@@ -361,9 +374,8 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		
 		// make sure the value of geo is updated in the CAS
 		// e.g. a was 7 and is updated to 8
-		add(geo);
+		boolean didCASupdate = updateInCAS(geo);
 
-		boolean updateHandled = false;
 		int updateStartRow = 0;
 
 		// TODO: remove
@@ -374,22 +386,21 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 
 		// check if we have a cell with an assignment for geo
 		CASTableCellValue cellValue = assignmentCellMap.get(geo.getLabel());
-		if (cellValue != null && cellValue.isIndependent()) {
+		
+		if (cellValue != null && geo.isIndependent()) {
 			int row = cellValue.getRow();
 			updateStartRow = row + 1;
 
-			// process row if geo is independent
-			// set input of assignment row, e.g. a := 2;
-			String assignmentStr = geo.toGeoGebraCASString();
+			// set input of assignment row, e.g. a := 2;			
+			String assignmentStr = geo.toCasAssignment(ExpressionNode.STRING_TYPE_GEOGEBRA);
 			cellValue.setInput(assignmentStr);
+			//cellValue.setOutput(geo.toValueString());
 			casInputHandler.processRow(row);
-			consoleTable.repaint();
-			
-			updateHandled = true;
+			//consoleTable.repaint();
 		}
 
 		// update all dependent rows
-		if (geo.isLabelSet())
+		if (didCASupdate)
 			casInputHandler.processDependentRows(geo.getLabel(), updateStartRow);
 	}
 

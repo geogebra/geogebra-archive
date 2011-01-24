@@ -46,6 +46,17 @@ public class GeoGebraCAS {
 		return cas;
 	}
 	
+	public int getCurrentCASstringType() {
+		switch (currentCAS) {
+			case Application.CAS_MAXIMA:
+				return ExpressionNode.STRING_TYPE_MAXIMA;
+				
+			default:
+			case Application.CAS_MATHPIPER:
+				return ExpressionNode.STRING_TYPE_MATH_PIPER;	
+		}
+	}
+	
 	/**
 	 * Sets the currently used CAS for evaluateGeoGebraCAS().
 	 * @param CAS: use CAS_MATHPIPER or CAS_MAXIMA
@@ -88,17 +99,6 @@ public class GeoGebraCAS {
 	}
 	
 	/**
-	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
-	 * @param casInput: in GeoGebraCAS syntax
-	 * @return evaluation result
-	 * @throws Throwable
-	 */
-	public String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
-		return cas.evaluateGeoGebraCAS(casInput);
-	}
-	
-	
-	/**
 	 * Returns whether var is a defined variable.
 	 */
 	public boolean isVariableBound(String var) {
@@ -114,6 +114,16 @@ public class GeoGebraCAS {
 		cas.unbindVariable(var);
 	}
 	
+	/**
+	 * Evaluates a valid expression and returns the resulting String in GeoGebra notation.
+	 * @param casInput: in GeoGebraCAS syntax
+	 * @return evaluation result
+	 * @throws Throwable
+	 */
+	public String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
+		return cas.evaluateGeoGebraCAS(casInput);
+	}
+	
 	/** 
 	 * Evaluates an expression in GeoGebraCAS syntax with the currently active CAS
 	 * (MathPiper or Maxima).
@@ -122,6 +132,16 @@ public class GeoGebraCAS {
      */
 	final public String evaluateGeoGebraCAS(String exp) throws Throwable {
 		return cas.evaluateGeoGebraCAS(exp);
+	}
+	
+	/** 
+	 * Evaluates an expression in the syntax of the currently active CAS
+	 * (MathPiper or Maxima).
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	final public String evaluateRaw(String exp) throws Throwable {
+		return cas.evaluateRaw(exp);
 	}
 	
 	/**

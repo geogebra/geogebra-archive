@@ -32,6 +32,14 @@ public abstract class CASgeneric {
 	 */
 	public abstract String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable;
 	
+	/** 
+	 * Evaluates an expression in the syntax of the currently active CAS
+	 * (MathPiper or Maxima).
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	public abstract String evaluateRaw(String exp) throws Throwable;
+	
 	/**
 	 * Returns the error message of the last call of evaluateGeoGebraCAS().
 	 * @return null if last evaluation was successful.

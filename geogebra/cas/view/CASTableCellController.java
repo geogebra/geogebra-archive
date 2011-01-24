@@ -86,8 +86,18 @@ public class CASTableCellController implements KeyListener {
 		Application app = view.getApp();
 		int mode = app.getMode();
 		
-		// Ctrl + Enter toggles between the modes Evaluate and Keep Input
+		// Ctrl + Enter toggles between the modes Evaluate and Numeric
 		if (Application.isControlDown(e)) {
+			if (mode == EuclidianConstants.MODE_CAS_NUMERIC) {
+				app.setMode(EuclidianConstants.MODE_CAS_EVALUATE);
+			} else {
+				app.setMode(EuclidianConstants.MODE_CAS_NUMERIC);
+			}
+			return;
+		}
+		
+		// Alt + Enter toggles between the modes Evaluate and Keep Input
+		if (Application.isAltDown(e)) {
 			if (mode == EuclidianConstants.MODE_CAS_KEEP_INPUT) {
 				app.setMode(EuclidianConstants.MODE_CAS_EVALUATE);
 			} else {

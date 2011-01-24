@@ -910,11 +910,32 @@ GeoPointND, Animatable  {
     
 	private StringBuilder buildValueString() { 
 		sbBuildValueString.setLength(0);
+		
+		switch (kernel.getCASPrintForm()) {
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+				sbBuildValueString.append("{");
+				sbBuildValueString.append(getInhomX());
+				sbBuildValueString.append(", ");
+				sbBuildValueString.append(getInhomY());
+				sbBuildValueString.append("}");
+				return sbBuildValueString;
+		
+			case ExpressionNode.STRING_TYPE_MAXIMA:
+				sbBuildValueString.append("[");
+				sbBuildValueString.append(getInhomX());
+				sbBuildValueString.append(", ");
+				sbBuildValueString.append(getInhomY());
+				sbBuildValueString.append("]");
+				return sbBuildValueString;
+				
+			default: // continue below
+		}
+		
     	if (isInfinite()) {
 			sbBuildValueString.append(app.getPlain("undefined"));
 			return sbBuildValueString;
     	}
-    				
+			
         switch (toStringMode) {
         case Kernel.COORD_POLAR:                                            
     		sbBuildValueString.append('(');    
@@ -1435,6 +1456,11 @@ GeoPointND, Animatable  {
 				return MOVE_MODE_Z;
 			else
 				return MOVE_MODE_XY;
+		}
+		
+
+		final public boolean isCasEvaluableObject() {
+			return true;
 		}
 
 }

@@ -358,4 +358,7 @@ AbsoluteScreenLocateable {
 	}
 
 
+	final public boolean isCasEvaluableObject() {
+		return true;
+	}
 }

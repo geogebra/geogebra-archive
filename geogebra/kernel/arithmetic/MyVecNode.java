@@ -20,6 +20,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.main.MyParseError;
 
 import java.util.HashSet;
@@ -110,17 +111,16 @@ public class MyVecNode extends ValidExpression implements VectorValue {
       
             
     final public String toString() {         
-        StringBuilder sb = new StringBuilder();
-        
-        sb.append('(');
-        sb.append(x.toString());
-        if (mode == Kernel.COORD_CARTESIAN) 
-        	sb.append(", ");
-        else 
-        	sb.append("; ");   
-        sb.append(y.toString());
-        sb.append(')');
-        return sb.toString();
+        StringBuilder sb = new StringBuilder();  
+			  sb.append('(');
+		        sb.append(x.toString());
+		        if (mode == Kernel.COORD_CARTESIAN) 
+		        	sb.append(", ");
+		        else 
+		        	sb.append("; ");   
+		        sb.append(y.toString());
+		        sb.append(')'); 
+		 return sb.toString();      
     }    
     
     public String toValueString() {

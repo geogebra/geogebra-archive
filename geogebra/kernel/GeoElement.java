@@ -1827,19 +1827,45 @@ public abstract class GeoElement
     }     
     
     /**
-	 * Returns a symbolic representation of geo in GeoGebraCAS syntax.
-	 * For example, "f(x) := a x^2", "a := 20" or "g: 3x + 4y = 7"
+	 * Returns a String that can be used to define geo in the currently used CAS.
+	 * For example, "f(x) := a*x^2", "a := 20", "g := 3x + 4y = 7" in MathPiper 
+	 * or "f(x) := a*x^2", "a:20", "g: 3x + 4y == 7" in Maxima 
+	 * 
+	 * @param type ExpressionNode.STRING_TYPE_MAXIMA, STRING_TYPE_MATHPIPER
 	 */
-	public String toGeoGebraCASString() {
-		if (!isDefined()) return null;
+	public String toCasAssignment(int type) {
+		if (!labelSet) return null;
 		
+		// change cas print form
+		int oldType = kernel.getCASPrintForm();
+		kernel.setCASPrintForm(type);
 		StringBuilder sb = new StringBuilder();
-		sb.append(getLabelForAssignment());
-		sb.append(getAssignmentOperator());
-		if (isIndependent())
-			sb.append(toValueString());
-		else 
-			sb.append(getCommandDescription());
+		
+		// label of variable, functions overwrite this method
+		String labelStr = getLabelForAssignment();
+		sb.append(labelStr);
+		
+		// assignment String depends on CAS type and object type
+		switch (type) {
+		 	case ExpressionNode.STRING_TYPE_MAXIMA:
+		 		// function label ends with ) like e.g. f(x)
+		 		if (labelStr.charAt(labelStr.length()-1) == ')')
+		 			sb.append(" := "); 
+		 		else
+		 			sb.append(" : ");
+		 		break;
+		 	
+		 	default:
+		 	//case ExpressionNode.STRING_TYPE_MATH_PIPER:
+		 	//case ExpressionNode.STRING_TYPE_GEOGEBRA:
+		 		sb.append(" := ");
+		}
+		
+		// value string of object, e.g. "2*x^2"
+		sb.append(getCASString(false));
+		
+		// reset cas print form
+		kernel.setCASPrintForm(oldType);
 		return sb.toString();
 	}
 	
@@ -1847,8 +1873,12 @@ public abstract class GeoElement
 		 return getLabel();
 	 }
 	 
-	 public String getAssignmentOperator() {
-		 return " := ";
+	/**
+	 * Returns a representation of geo in currently used CAS syntax.
+	 * For example, "a*x^2"
+	 */
+	 String getCASString(boolean symbolic) {
+		return symbolic && !isIndependent() ?  getCommandDescription() : toValueString();
 	 }
 
 	/* *******************************************************

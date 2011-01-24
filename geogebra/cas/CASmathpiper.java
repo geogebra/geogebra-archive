@@ -103,6 +103,16 @@ public class CASmathpiper extends CASgeneric {
 		return ggbString;
 	}
 	
+	/** 
+	 * Evaluates an expression in the syntax of MathPiper.
+	 * 
+     * @return result string (null possible)
+	 * @throws Throwable 
+     */
+	public String evaluateRaw(String exp) throws Throwable {
+		return evaluateMathPiper(exp);
+	}
+	
 	/**
 	 * Tries to parse a given MathPiper string and returns a String in GeoGebra syntax.
 	 */

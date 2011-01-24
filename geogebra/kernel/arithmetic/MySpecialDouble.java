@@ -36,8 +36,10 @@ public class MySpecialDouble extends MyDouble {
 		// e.g. 8.571428571428571E-1 to 0.8571428571428571
 		if (strToString.indexOf('E') > -1) {
 			strToString = new BigDecimal(strToString).toPlainString();
-			
-			// remove trailing 0s
+		}
+		
+		// remove trailing 0s after decimal point
+		if (strToString.indexOf('.') > 0) {
 			int pos = strToString.length();
 			while (strToString.charAt(--pos) == '0');
 			if (pos < strToString.length() -1)

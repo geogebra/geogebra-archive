@@ -395,4 +395,8 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		 
 	 }
 
+
+		final public boolean isCasEvaluableObject() {
+			return true;
+		}
 }

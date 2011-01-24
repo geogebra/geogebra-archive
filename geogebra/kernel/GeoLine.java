@@ -607,7 +607,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
     
     private StringBuilder buildValueString() {		
         double [] P = new double[2];                       			 
-        double [] g = new double[3];	
+        double [] g = new double[3];
     	
        	switch (toStringMode) {     
             case EQUATION_EXPLICIT:   ///EQUATION    
@@ -1117,4 +1117,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
 	}
 	
 
+	final public boolean isCasEvaluableObject() {
+		return true;
+	}
 }

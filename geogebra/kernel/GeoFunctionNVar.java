@@ -363,17 +363,11 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	}
 	
     /**
-	 * Returns a symbolic representation of geo in GeoGebraCAS syntax.
-	 * For example, "f(x, y) := a x^2 + b y"
+	 * Returns a representation of geo in currently used CAS syntax.
+	 * For example, "a*x^2 + b*y"
 	 */
-	public String toGeoGebraCASString() {
-		if (!isDefined()) return null;
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(getLabelForAssignment());
-		sb.append(getAssignmentOperator());
-		sb.append(fun.getExpression().getCASstring(true));
-		return sb.toString();
+	public String getCASString(boolean symbolic) {
+		return fun.getExpression().getCASstring(symbolic);
 	}
     
 	 public String getLabelForAssignment() {

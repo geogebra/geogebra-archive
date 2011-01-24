@@ -1368,7 +1368,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 			return false;
 		}
 
-
-	    
-
+		final public boolean isCasEvaluableObject() {
+			return true;
+		}
 }
