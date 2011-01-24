@@ -94,7 +94,7 @@ public class AlgoSpearman extends AlgoElement {
 		if(input.length == 1){
 			// input is single list of points
 			int size= geoListPts.size();
-			if(!geoListPts.isDefined() || size < 3){
+			if(!geoListPts.isDefined() || size < 2){
 				result.setUndefined();	
 				return;			
 			}
@@ -121,7 +121,7 @@ public class AlgoSpearman extends AlgoElement {
 			// input is two lists
 			int sizeX = geoListX.size();
         	int sizeY = geoListY.size();
-        	if (!geoListX.isDefined() || !geoListY.isDefined() ||  sizeX < 3 || sizeX != sizeY) {
+        	if (!geoListX.isDefined() || !geoListY.isDefined() ||  sizeX < 2 || sizeX != sizeY) {
         		result.setUndefined();
         		return;
         	}
