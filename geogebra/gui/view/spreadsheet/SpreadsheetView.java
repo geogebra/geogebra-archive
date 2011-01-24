@@ -1618,7 +1618,20 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		return allowSpecialEditor;
 	}
 	
-
+	/**
+	 * sets requirement that commands entered into cells must start with "="
+	 */	
+	public void setEqualsRequired(boolean isEqualsRequired){
+		table.setEqualsRequired(isEqualsRequired);
+	}
+	
+	/**
+	 * gets requirement that commands entered into cells must start with "="
+	 */
+	public boolean isEqualsRequired(){
+		return table.isEqualsRequired();
+	}
+	
 	
 	
 	//================================================

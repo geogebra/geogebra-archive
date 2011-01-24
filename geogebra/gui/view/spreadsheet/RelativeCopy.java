@@ -686,12 +686,31 @@ public class RelativeCopy {
 	}
 
 	
-	// 
+	/**
+	 * Prepares a spreadsheet cell editor string for processing in the kernel and 
+	 * returns either a new GeoElement for the cell or null.
+	 * 
+	 * @param kernel
+	 * @param table
+	 * @param text
+	 *            -- string to be processed
+	 * @param oldValue
+	 *            -- current cell GeoElement
+	 * @param column
+	 *            -- cell column
+	 * @param row
+	 *            -- cell row
+	 * @return
+	 * @throws Exception
+	 */
 	public static GeoElement prepareAddingValueToTableNoStoringUndoInfo(
 			Kernel kernel, MyTable table, String text, GeoElement oldValue,
 			int column, int row) throws Exception {
-		// column = table.convertColumnIndexToModel(column);
+		
+		// get the cell name
 		String name = table.getModel().getColumnName(column) + (row + 1);
+		
+		// trim the text
 		if (text != null) {
 			text = text.trim();
 			if (text.length() == 0) {
@@ -699,36 +718,53 @@ public class RelativeCopy {
 			}
 		}
 		
-		// make sure that text can be changed to something else
+		// If "=" is required before commands and text is not a number 
+		// or does not begin with "=" then surround it with quotes. 
+		// This will force the cell to become GeoText. 
+		if(table.isEqualsRequired()){
+			
+			boolean isNumber = true;
+			try {
+				Double.parseDouble(text);
+			} catch (Exception e) {
+				isNumber = false;
+			}
+
+			if (text != null && !(text.startsWith("=") || isNumber)){ 
+				text = "\"" + text + "\"";
+			}
+			
+		}
+
+		
+		// if the cell is currently GeoText then prepare it for changes
+		// make sure it can be changed to something else
 		// eg (2,3 can be overwritten as (2,3)
 		if (oldValue != null && oldValue.isGeoText() && !oldValue.hasChildren()) {
 			oldValue.remove();
 			oldValue = null;
 		}
 
+		// if null text then remove the current cell geo and return null
 		if (text == null) {
 			if (oldValue != null) {
 				oldValue.remove();
 			}
 			return null;
+			
+		// if not null, try to convert it to a GeoElement for the cell
 		} else if (oldValue == null) {
 			try {
+				// this will be a new geo
 				return prepareNewValue(kernel, name, text);
 			} catch (Throwable t) {
 				return prepareNewValue(kernel, name, "");
 			}
 		} else { // value != null;
+			// this will be a redefined geo
 			return updateOldValue(kernel, oldValue, name, text);
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	

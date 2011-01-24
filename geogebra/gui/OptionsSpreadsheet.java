@@ -56,7 +56,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 	
 	private JCheckBox cbShowGrid, cbShowRowHeader, 
 	cbShowColumnHeader, cbShowHScrollbar,  cbShowVScrollbar, 
-	cbShowBrowser, cbAllowSpecialEditor, cbAllowToolTips;
+	cbShowBrowser, cbAllowSpecialEditor, cbAllowToolTips, cbPrependCommands;
 	
 	private JTextField dirField, urlField;
 	private JButton browseButton, restoreButton, setCurrentButton;
@@ -138,6 +138,10 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbAllowToolTips = new JCheckBox();
         cbAllowToolTips.addActionListener(this);        
         layoutOptions.add(cbAllowToolTips);
+        
+        cbPrependCommands = new JCheckBox();
+        cbPrependCommands.addActionListener(this);        
+        layoutOptions.add(cbPrependCommands);
         
         return layoutOptions;
 	}
@@ -259,6 +263,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		cbShowBrowser.setText(app.getMenu("ShowFileBrowser"));  
 		cbAllowSpecialEditor.setText(app.getMenu("UseButtonsAndCheckboxes"));
 		cbAllowToolTips.setText(app.getMenu("AllowToolTips"));
+		cbPrependCommands.setText(app.getMenu("RequireEquals"));
 
 		locationPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("HomeDirectory")));
 		dirRadioButton.setText(app.getMenu("FileSystem") + ":");
@@ -312,6 +317,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
         cbAllowToolTips.setSelected(view.getAllowToolTips()); 
         cbAllowToolTips.addActionListener(this);
         
+        cbPrependCommands.removeActionListener(this);
+        cbPrependCommands.setSelected(view.isEqualsRequired()); 
+        cbPrependCommands.addActionListener(this);
         
         //======================================
         // browser tab GUI
@@ -386,6 +394,10 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		
 		else if (source == cbAllowToolTips) {
 			view.setAllowToolTips(cbAllowToolTips.isSelected());
+		}
+		
+		else if (source == cbPrependCommands) {
+			view.setEqualsRequired(cbPrependCommands.isSelected());
 		}
 		
 		//========================================

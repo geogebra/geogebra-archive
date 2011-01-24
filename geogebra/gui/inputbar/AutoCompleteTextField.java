@@ -32,8 +32,15 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private int historyIndex;
 	private ArrayList history;  
 	private boolean handleEscapeKey = false;
-
 	
+	
+	/**
+	 * Flag to determine if text must start with "=" to activate autoComplete;
+	 * used with spreadsheet cells
+	 */
+	private boolean isEqualsRequired = false; 
+	
+
 	/**
 	 * Constructs a new AutoCompleteTextField that uses the dictionary of the
 	 * given Application for autocomplete look up.
@@ -122,7 +129,15 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}
 
 	
+	/** returns if text must start with "=" to activate autocomplete */
+	public boolean isEqualsRequired() {
+		return isEqualsRequired;
+	}
 	
+	/** sets flag to require text starts with "=" to activate autocomplete */
+	public void setEqualsRequired(boolean isEqualsRequired) {
+		this.isEqualsRequired = isEqualsRequired;
+	}
 	
 	
 
@@ -572,7 +587,10 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	 */ 
 	public void updateAutoCompletion() { 
 		String text = getText();
-				
+		
+		if(isEqualsRequired && !text.startsWith("="))
+			return;
+		
 		// Autocompletion for Korean enabled only for the Virtual Keyboard at present
 		if (app.getLocale().getLanguage().equals("ko") && !virtualKeyboardInUse)
 			return;

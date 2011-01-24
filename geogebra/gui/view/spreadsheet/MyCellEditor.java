@@ -97,6 +97,22 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		return component;
 	}
 	
+	/**
+	 * set flag to require text start with "="
+	 * to activate autocomplete
+	 */
+	public void setEqualsRequired(boolean equalsRequired){
+		textField.setEqualsRequired(equalsRequired);
+	}
+	
+	/**
+	 * returns flag that requires text start with "="
+	 * to activate autocomplete
+	 */
+	public boolean isEqualsRequired(){
+			return textField.isEqualsRequired();
+	}
+	
 	
 	
 

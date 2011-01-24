@@ -157,6 +157,9 @@ public class MyTable extends JTable implements FocusListener
 	// e.g. booleans, buttons, lists
 	protected HashMap<Point,GeoElement> oneClickEditMap = new HashMap<Point,GeoElement>();
 
+	// flag to set option for requiring that commands are prepended with "="
+	private boolean isEqualsRequired;
+
 	
 	
 	//============================================================
@@ -287,7 +290,7 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	/**
-	 * Return parent SpreadsheetView for this table
+	 * Returns parent SpreadsheetView for this table
 	 */
 	public SpreadsheetView getView() {
 		return view;		
@@ -295,7 +298,7 @@ public class MyTable extends JTable implements FocusListener
 
 	
 	/**
-	 * Return CellRangeProcessor for this table.
+	 * Returns CellRangeProcessor for this table.
 	 * If none exists, a new one is created.
 	 */
 	public CellRangeProcessor getCellRangeProcessor() {
@@ -306,7 +309,7 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	/**
-	 * Return CellFormat helper class for this table.
+	 * Returns CellFormat helper class for this table.
 	 * If none exist, a new one is created.
 	 */
 	public CellFormat getCellFormatHandler(){
@@ -319,7 +322,7 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	/**
-	 * Append columns to the table if newColumnCount is larger than 
+	 * Appends columns to the table if newColumnCount is larger than 
 	 * current number of columns. 
 	 */
 	public void setMyColumnCount(int newColumnCount) {	
@@ -362,6 +365,20 @@ public class MyTable extends JTable implements FocusListener
 	}
 	
 	
+	/**
+	 * sets requirement that commands entered into cells must start with "="
+	 */
+	public void setEqualsRequired(boolean isEqualsRequired){
+		this.isEqualsRequired = isEqualsRequired;
+		editor.setEqualsRequired(isEqualsRequired);
+	}
+	
+	/**
+	 * gets flag for requirement that commands entered into cells must start with "="
+	 */
+	public boolean isEqualsRequired(){
+		return this.isEqualsRequired;
+	}
 	
 	
 	
