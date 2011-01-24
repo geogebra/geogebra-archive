@@ -20,13 +20,11 @@ package geogebra.euclidian;
 
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntersectAbstract;
-import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -57,18 +55,20 @@ public final class DrawPoint extends Drawable {
     private GeoPointND P;    
     
 	private int diameter, hightlightDiameter, selDiameter, pointSize;
-    boolean isVisible, labelVisible;   
+    private boolean isVisible, labelVisible;   
     // for dot and selection
 	private Ellipse2D.Double circle = new Ellipse2D.Double();
 	private Ellipse2D.Double circleHighlight = new Ellipse2D.Double();
 	private Ellipse2D.Double circleSel = new Ellipse2D.Double();
 	private Line2D.Double line1, line2, line3, line4;// for cross
-	GeneralPath gp = null;
+	private GeneralPath gp = null;
     
     private static BasicStroke borderStroke = EuclidianView.getDefaultStroke();
     private static BasicStroke [] crossStrokes = new BasicStroke[10];
     
-    /** Creates new DrawPoint */
+    /** Creates new DrawPoint 
+     * @param view 
+     * @param P */
     public DrawPoint(EuclidianView view, GeoPointND P) {      
     	this.view = view;          
         this.P = P;
@@ -413,6 +413,10 @@ public final class DrawPoint extends Drawable {
         }
     }
     
+    /**
+     * Draw trace of point
+     * @param g2 graphics to be used
+     */
     final void drawTrace(Graphics2D g2) {
     	g2.setPaint(geo.getObjectColor());
     	
@@ -441,7 +445,7 @@ public final class DrawPoint extends Drawable {
     }
     
     final public boolean isInside(Rectangle rect) {
-    	return rect.contains(circleSel.getBounds());  
+    	return rect.contains(circle.getBounds());  
     }
     
     /**

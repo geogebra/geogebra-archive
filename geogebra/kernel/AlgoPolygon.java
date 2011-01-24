@@ -86,7 +86,8 @@ public class AlgoPolygon extends AlgoElement {
         if(geoList == null){
         	poly.initLabels(labels);
         }else{
-        	poly.setLabel(labels[0]);
+        	if(labels!=null)
+        		poly.setLabel(labels[0]);
         }
         
         //END G.Sturr

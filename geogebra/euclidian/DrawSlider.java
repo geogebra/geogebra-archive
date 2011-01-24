@@ -33,7 +33,7 @@ public class DrawSlider extends Drawable {
    
     private GeoNumeric number;
      
-    boolean isVisible, labelVisible;
+    private boolean isVisible, labelVisible;
     
     private double [] coordsRW = new double[2];
     private double [] coordsScreen = new double[2];
@@ -41,6 +41,11 @@ public class DrawSlider extends Drawable {
     private GeoPoint geoPoint;
     private DrawPoint drawPoint;
     
+    /**
+     * Creates new drawable for slider
+     * @param view
+     * @param number
+     */
     public DrawSlider(EuclidianView view, GeoNumeric number) {    	
         this.view = view;
     	hitThreshold = view.getCapturingThreshold();
@@ -147,7 +152,12 @@ public class DrawSlider extends Drawable {
     final public boolean isInside(Rectangle rect) {
     	return drawPoint.isInside(rect); 
     }
-    
+    /**
+     * Returns true iff the movable point was hit
+     * @param x
+     * @param y
+     * @return true iff the movable point was hit
+     */
     final public boolean hitPoint(int x,int y) {        
         return drawPoint.hit(x, y);      
     }
@@ -155,7 +165,12 @@ public class DrawSlider extends Drawable {
     public boolean hitLabel(int x, int y) {
     	return drawPoint.hitLabel(x, y);    	
     }
-    
+    /**
+     * Returns true if the slider line was hit, false for fixed sliders
+     * @param x
+     * @param y
+     * @return true if the slider line was hit, false for fixed sliders
+     */
     public boolean hitSlider(int x, int y) {
     	return !number.isSliderFixed() && line.intersects(x-2, y-2, 4,4);    	
     }

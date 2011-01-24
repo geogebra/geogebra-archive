@@ -68,9 +68,8 @@ public class DrawUpperLowerSum extends Drawable {
     final public void update() {				   
         isVisible = geo.isEuclidianVisible();
         if (!isVisible) return;
-        if(geo.isAlgoMacroOutput()){
+        if(!geo.getDrawAlgorithm().equals(geo.getParentAlgorithm()))
         	init();
-        }
 		labelVisible = geo.isLabelVisible();            
 		updateStrokes(sum);
 		

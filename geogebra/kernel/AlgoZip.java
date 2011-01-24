@@ -182,9 +182,7 @@ public class AlgoZip extends AlgoElement {
     	int i=0;
     	int oldListSize = list.size();
     	list.clear();
-    	Application.debug("creating list");
     	if (!isEmpty) {    	
-    		Application.debug("not empty");
     		//  needed capacity
         	int n = minOverSize();
         	list.ensureCapacity(n);
@@ -323,6 +321,10 @@ public class AlgoZip extends AlgoElement {
 				listElement.set(expression);
 			else
 				listElement.setUndefined();
+			if(listElement instanceof GeoNumeric && listElement.getDrawAlgorithm() instanceof AlgoDrawInformation){
+				listElement.setDrawAlgorithm(((AlgoDrawInformation)expression.getDrawAlgorithm()).copy());
+				listElement.setEuclidianVisible(true);
+			}
 			listElement.update();
 			
 			currentVal += 1;

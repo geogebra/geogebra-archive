@@ -155,7 +155,7 @@ public class DrawAngle extends Drawable {
 	}
 	
 	final public void update() {
-		if(geo.isAlgoMacroOutput())
+		if(!geo.getDrawAlgorithm().equals(geo.getParentAlgorithm()))
 			init();
 		
 		isVisible = geo.isEuclidianVisible();

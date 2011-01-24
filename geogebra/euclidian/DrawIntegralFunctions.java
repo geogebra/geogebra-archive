@@ -12,7 +12,6 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
-import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
@@ -33,8 +32,13 @@ public class DrawIntegralFunctions extends Drawable {
     private NumberValue a, b;
     	
 	private GeneralPathClipped gp;
-    boolean isVisible, labelVisible;
+    private boolean isVisible, labelVisible;
    
+    /**
+     * Creates drawable for integral between two functions
+     * @param view
+     * @param n
+     */
     public DrawIntegralFunctions(EuclidianView view, GeoNumeric n) {
     	this.view = view; 	
     	this.n = n;

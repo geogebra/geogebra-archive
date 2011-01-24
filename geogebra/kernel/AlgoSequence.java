@@ -389,6 +389,10 @@ public class AlgoSequence extends AlgoElement {
 				listElement.set(expression);
 			else
 				listElement.setUndefined();
+			if(listElement instanceof GeoNumeric && listElement.getDrawAlgorithm() instanceof AlgoDrawInformation){				
+        		listElement.setDrawAlgorithm(((AlgoDrawInformation)expression.getDrawAlgorithm()).copy());
+				listElement.setEuclidianVisible(true);
+			}
 			listElement.update();
 			
 			currentVal += step;

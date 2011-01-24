@@ -31,8 +31,13 @@ public class DrawIntegral extends Drawable {
     private GeoFunction f;
     private NumberValue a, b;
     private GeneralPathClipped gp;
-    boolean isVisible, labelVisible;
+    private boolean isVisible, labelVisible;
    
+    /**
+     * Creates new drawable for integral
+     * @param view
+     * @param n
+     */
     public DrawIntegral(EuclidianView view, GeoNumeric n) {
     	this.view = view; 	
     	this.n = n;
@@ -56,7 +61,7 @@ public class DrawIntegral extends Drawable {
         if (!isVisible) return;
 		labelVisible = geo.isLabelVisible();            
 		updateStrokes(n);
-		if(n.isAlgoMacroOutput())
+		if(!geo.getDrawAlgorithm().equals(geo.getParentAlgorithm()))
 			init();
         
 		// init gp

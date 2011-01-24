@@ -26,7 +26,7 @@ import geogebra.euclidian.EuclidianConstants;
  * @author  Markus
  * @version 
  */
-public class AlgoSlope extends AlgoElement {
+public class AlgoSlope extends AlgoElement implements AlgoDrawInformation{
 
     /**
 	 * 
@@ -35,7 +35,11 @@ public class AlgoSlope extends AlgoElement {
 	private GeoLine g; // input
     private GeoNumeric slope; // output       
 
-    /** Creates new AlgoDirection */
+    /** Creates new AlgoDirection 
+     * @param cons construction
+     * @param label label for result
+     * @param g line
+     */
     AlgoSlope(Construction cons, String label, GeoLine g) {
         super(cons);
         this.g = g;
@@ -46,6 +50,16 @@ public class AlgoSlope extends AlgoElement {
         slope.setLabel(label);
         slope.setDrawable(true);
     }
+    /**
+     * For dummy copy only
+     * @param cons
+     * @param g
+     */
+    AlgoSlope(Construction cons, GeoLine g) {
+        super(cons);
+        this.g = g;
+    }
+    
 
     public String getClassName() {
         return "AlgoSlope";
@@ -61,14 +75,21 @@ public class AlgoSlope extends AlgoElement {
         input = new GeoElement[1];
         input[0] = g;
 
-        output = new GeoElement[1];
-        output[0] = slope;
+        setOutputLength(1);
+        setOutput(0,slope);
         setDependencies(); // done by AlgoElement
     }
 
+    /**
+     * @return resulting slope
+     */
     GeoNumeric getSlope() {
         return slope;
     }
+    
+    /**
+     * @return the line
+     */
     public GeoLine getg() {
         return g;
     }
@@ -86,4 +107,8 @@ public class AlgoSlope extends AlgoElement {
         // simplified to allow better Chinese translation
     	return app.getPlain("SlopeOfA",g.getLabel());
     }
+
+	public AlgoDrawInformation copy() {		
+		return new AlgoSlope(cons,(GeoLine)g.copy());
+	}
 }

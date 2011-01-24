@@ -22,13 +22,11 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipLine;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;

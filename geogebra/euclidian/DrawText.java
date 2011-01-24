@@ -35,7 +35,7 @@ public final class DrawText extends Drawable {
 	//private static final int SELECTION_OFFSET = SELECTION_DIAMETER_ADD / 2;
 	       
     private GeoText text;    
-    boolean isVisible, isLaTeX;     
+    private boolean isVisible, isLaTeX;     
     private int fontSize = -1;
     private int fontStyle = -1;
     private boolean serifFont;
@@ -46,7 +46,9 @@ public final class DrawText extends Drawable {
     private int oldXpos, oldYpos;
     private boolean needsBoundingBoxOld;
     
-    /** Creates new DrawText */
+    /** Creates new DrawText 
+     * @param view 
+     * @param text */
     public DrawText(EuclidianView view, GeoText text) {      
     	this.view = view;          
         this.text = text;

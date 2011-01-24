@@ -35,14 +35,19 @@ public class DrawSlope extends Drawable {
     private GeoNumeric slope;
     private GeoLine g;
      
-    boolean isVisible, labelVisible;
-    int xLabelHor, yLabelHor;
-    String horLabel; // horizontal label, i.e. triangleSize    
+    private boolean isVisible, labelVisible;
+    private int xLabelHor, yLabelHor;
+    private String horLabel; // horizontal label, i.e. triangleSize    
     
     private double [] coords = new double[2];
     private GeneralPathClipped gp;  
     private Kernel kernel;             
     
+    /**
+     * Creates new drawable for slope
+     * @param view
+     * @param slope
+     */
     public DrawSlope(EuclidianView view, GeoNumeric slope) {
         this.view = view;
         kernel = view.getKernel();
@@ -52,13 +57,20 @@ public class DrawSlope extends Drawable {
         slope.setDrawable(true);
         
         // get parent line
-        g = ((AlgoSlope)slope.getParentAlgorithm()).getg();
+        init();
         update();
     }
 
-    final public void update() {
+    private void init() {
+    	g = ((AlgoSlope)slope.getDrawAlgorithm()).getg();
+		
+	}
+
+	final public void update() {
         isVisible = geo.isEuclidianVisible();
         if (isVisible) {   
+        	if(!geo.getDrawAlgorithm().equals(geo.getParentAlgorithm()))
+    			init();
         	int slopeTriangleSize = slope.getSlopeTriangleSize();
             double rwHeight = slope.getValue() * slopeTriangleSize;
             double height =  view.yscale * rwHeight;

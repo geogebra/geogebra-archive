@@ -26,7 +26,7 @@ import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
  * 
  * @author Markus Hohenwarter
  */
-public class AlgoIntegralDefinite extends AlgoElement {
+public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInformation{
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
@@ -240,5 +240,10 @@ public class AlgoIntegralDefinite extends AlgoElement {
         // simplified to allow better Chinese translation
         return app.getPlain("IntegralOfAfromBtoC",f.getLabel(),ageo.getLabel(),bgeo.getLabel());
     }
+    
+    public AlgoDrawInformation copy(){
+    	return new AlgoIntegralDefinite(cons,(GeoFunction)f.copy(),(NumberValue)a.deepCopy(kernel),(NumberValue)b.deepCopy(kernel));
+    }
+    
 
 }
