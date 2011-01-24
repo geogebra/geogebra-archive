@@ -659,8 +659,8 @@ public abstract class Drawable extends DrawableND {
 								latexTmp.append("\\\\ ");
 							} else if (depth==0){
 								stillHoping=false;
-								latexTmp.append(latex.substring(i+1));
 								latexTmp.append("\\end{array} \\right)");
+								latexTmp.append(latex.substring(i+1));
 							} else {
 								latexTmp.append("\\}");
 							}
