@@ -337,23 +337,29 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 				tabReturnCol = -1;
 				break;
 				
+				
 			case KeyEvent.VK_LEFT:
 				//Application.debug("LEFT");
-				if(!text.startsWith("=")){
-					stopCellEditing(-1,0);	
+				// Allow left/right keys to exit cell for easier data entry
+				if(getCaretPosition()==0)
+				{
+					stopCellEditing(-1, 0);
+					editing=false;
 				}
 				editing = false;
 				tabReturnCol = -1;
 				break;
 				
-			// Allow left/right keys to exit when the editor is 
-			// not entering a command (i.e. text starts with '='). 
-			// Data entry is much easier this way.
+			
 			case KeyEvent.VK_RIGHT:
 				//Application.debug("RIGHT");	
-				if(!text.startsWith("=")){
-					stopCellEditing(1,0);	
+				// Allow left/right keys to exit cell for easier data entry
+				if(getCaretPosition()==text.length())
+				{
+					stopCellEditing(1, 0);
+					editing=false;
 				}
+	
 				editing = false;	
 				tabReturnCol = -1;
 				break;
