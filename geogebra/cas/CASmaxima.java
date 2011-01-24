@@ -90,7 +90,8 @@ public class CASmaxima extends CASgeneric {
 		
 		// EVALUATE input in Maxima 
 		String result = evaluateMaxima(MaximaString);
-
+		// TODO: replace by an adequate 
+		result=result.replaceAll("%i", "\u0131");
 		// convert Maxima result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
 		
@@ -413,7 +414,14 @@ public class CASmaxima extends CASgeneric {
 	    		 "else if op(ex)=\"=\" then return(stripequals(rhs(ex)))" +
 	    		 "else apply(op(ex),map(stripequals,args(ex)))" +
 	    		")$");
-	    
+	    // gets all solutions in x of eq
+	    ggbMaxima.executeCall("csolve(eq,x):=block(" +
+	    		"[s, realonlytemp:realonly]," +
+	    		" realonly:false, s:solve(eq,x)," +
+	    		" realonly:realonlytemp," +
+	    		" for i : 1 thru length (%rnum\\_list) do " +
+	    		"s : subst (simplode([t, i]), %rnum\\_list[i], s)," +
+	    		" return (if (length(s) = 1) then flatten(s) else (s)))$");
 	    /* This function takes an expression ex and returns a list of coefficients of v */
 	    ggbMaxima.executeCall("coefflist(ex,v):= block([deg,kloop,cl]," +
 	    		"cl:[]," +
