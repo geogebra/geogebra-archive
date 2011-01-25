@@ -723,6 +723,7 @@ public class RelativeCopy {
 		// This will force the cell to become GeoText. 
 		if(table.isEqualsRequired()){
 			
+			//boolean isNumber = kernel.getAlgebraProcessor().evaluateToNumeric(text, true) != null;
 			boolean isNumber = true;
 			try {
 				Double.parseDouble(text);

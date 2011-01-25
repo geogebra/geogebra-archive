@@ -110,6 +110,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean isColumnSelect = false; //TODO: do we need forced column select?
 	private boolean allowSpecialEditor = false;
 	private boolean allowToolTips = true;
+	// flag to set option for requiring that commands are prepended with "="
+	private boolean equalsRequired;
 	
 	private StatDialog oneVarStatDialog;
 	private StatDialog twoVarStatDialog;
@@ -1128,8 +1130,18 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		sb.append(allowSpecialEditor  ? "true" : "false" );
 		sb.append("\"");
 		
+		sb.append(" allowToolTips=\"");
+		sb.append(allowToolTips  ? "true" : "false" );
+		sb.append("\"");
+		
+		sb.append(" equalsRequired=\"");
+		sb.append(equalsRequired  ? "true" : "false" );
+		sb.append("\"");
+		
 		sb.append("/>\n");
+		
 		//---- end layout
+		
 		
 		
 		// file browser
@@ -1622,6 +1634,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	 * sets requirement that commands entered into cells must start with "="
 	 */	
 	public void setEqualsRequired(boolean isEqualsRequired){
+		this.equalsRequired = isEqualsRequired;
 		table.setEqualsRequired(isEqualsRequired);
 	}
 	
@@ -1629,7 +1642,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	 * gets requirement that commands entered into cells must start with "="
 	 */
 	public boolean isEqualsRequired(){
-		return table.isEqualsRequired();
+		return equalsRequired;
 	}
 	
 	

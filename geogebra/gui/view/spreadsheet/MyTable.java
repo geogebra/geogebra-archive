@@ -157,8 +157,7 @@ public class MyTable extends JTable implements FocusListener
 	// e.g. booleans, buttons, lists
 	protected HashMap<Point,GeoElement> oneClickEditMap = new HashMap<Point,GeoElement>();
 
-	// flag to set option for requiring that commands are prepended with "="
-	private boolean isEqualsRequired;
+	
 
 	
 	
@@ -369,7 +368,6 @@ public class MyTable extends JTable implements FocusListener
 	 * sets requirement that commands entered into cells must start with "="
 	 */
 	public void setEqualsRequired(boolean isEqualsRequired){
-		this.isEqualsRequired = isEqualsRequired;
 		editor.setEqualsRequired(isEqualsRequired);
 	}
 	
@@ -377,7 +375,7 @@ public class MyTable extends JTable implements FocusListener
 	 * gets flag for requirement that commands entered into cells must start with "="
 	 */
 	public boolean isEqualsRequired(){
-		return this.isEqualsRequired;
+		return view.isEqualsRequired();
 	}
 	
 	
@@ -1149,7 +1147,8 @@ public class MyTable extends JTable implements FocusListener
 	
 	/**
 	 * Starts in-cell editing for cells with short editing strings. For strings longer
-	 * than MAX_CELL_EDIT_STRING_LENGTH, the redefine dialog is shown.
+	 * than MAX_CELL_EDIT_STRING_LENGTH, the redefine dialog is shown. 
+	 * Also prevents fixed cells from being edited. 
 	 */
 	@Override
 	public boolean editCellAt(int row, int col) {

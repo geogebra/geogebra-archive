@@ -887,7 +887,9 @@ public class MyXMLHandler implements DocHandler {
 			sv.setShowRowHeader(parseBoolean((String) attrs.get("showRowHeader")));	
 			sv.setShowHScrollBar(parseBoolean((String) attrs.get("showHScrollBar")));	
 			sv.setShowVScrollBar(parseBoolean((String) attrs.get("showVScrollBar")));
-			sv.setAllowSpecialEditor(parseBoolean((String) attrs.get("allowSpecialEditor")));	
+			sv.setAllowSpecialEditor(parseBoolean((String) attrs.get("allowSpecialEditor")));
+			sv.setAllowToolTips(parseBoolean((String) attrs.get("allowToolTips")));
+			sv.setEqualsRequired(parseBoolean((String) attrs.get("equalsRequired")));
 			return true;
 			
 		} catch (Exception e) {
