@@ -475,6 +475,68 @@ public class CASmaxima extends CASgeneric {
 	    ggbMaxima.executeCall("x(a) := part(a, 1);");
 	    ggbMaxima.executeCall("y(a) := part(a, 2);");
 	    ggbMaxima.executeCall("z(a) := part(a, 3);");
+	    
+	    //the rref function implemented by Antoine Chambert-Loir
+	    ggbMaxima.executeCall("request_rational_matrix(m, pos, fn) :=  " +
+	    		"if every('identity, map(lambda([s], every('ratnump,s)), " +
+	    		"args(m))) then true else " +
+	    		"print(\"Some entries in the matrix are not rational numbers. " +
+	    		"The result might be wrong.\")$");
+	    ggbMaxima.executeCall("rowswap(m,i,j) := block([n, p, r]," +
+	    		"  require_matrix(m, \"first\", \"rowswap\")," +
+	    		"  require_integer(i, \"second\", \"rowswap\")," +
+	    		"  require_integer(j, \"third\", \"rowswap\")," +
+	    		"  n : length(m)," +
+	    		"  if (i < 1) or (i > n) or (j < 1) or (j > n)" +
+	    		"     then error(\"Array index out of bounds\")," +
+	    		"  p : copymatrix(m)," +
+	    		"  r : p[i]," +
+	    		"  p[i] : p[j]," +
+	    		"  p[j] : r," +
+	    		"  p)$");
+	    ggbMaxima.executeCall("addrow(m,i,j,k) := block([n,p]," +
+	    		"  require_matrix(m, \"first\", \"addrow\")," +
+	    		"  require_integer(i, \"second\", \"addrow\")," +
+	    		"  require_integer(j, \"third\", \"addrow\")," +
+	    		"  require_rational(k, \"fourth\", \"addrow\")," +
+	    		"  n : length(m)," +
+	    		"  if (i < 1) or (i > n) or (j < 1) or (j > n) " +
+	    		"      then error(\"Array index out of bounds\")," +
+	    		"  p : copymatrix(m)," +
+	    		"  p [i] : p[i] + k * p[j]," +
+	    		"  p)$");
+	    ggbMaxima.executeCall("rowmul(m,i,k) := block([n,p]," +
+	    		"  require_matrix(m, \"first\", \"addrow\")," +
+	    		"  require_integer(i, \"second\", \"addrow\")," +
+	    		"  require_rational(k, \"fourth\", \"addrow\")," +
+	    		"  n : length(m)," +
+	    		"  if (i < 1) or (i > n) then error(\"Array index out of bounds\")," +
+	    		"  p : copymatrix(m)," +
+	    		"  p [i] : k * p[i]," +
+	    		"  p)$");
+	    ggbMaxima.executeCall("rref(m):= block([p,nr,nc,i,j,k,pivot,pivot_row]," +
+	    		"  request_rational_matrix(m,\" \",\"rref\")," +
+	    		"  nc: length(first(m))," +
+	    		"  nr: length(m)," +
+	    		"  if nc = 0 or nr = 0 then" +
+	    		"    error (\"The argument to 'rref' must be a matrix with one or more rows and columns\")," +
+	    		"  p:copymatrix(m)," +
+	    		"  ci : 1, cj : 1," +
+	    		"  while (ci<=nr) and (cj<=nc) do " +
+	    		"  (" +
+	    		"    pivot_row : 0, pivot : 0," +
+	    		"    for k : ci thru nr do (" +
+	    		"       if ( abs(p[k,cj]) > pivot ) then (" +
+	    		"         pivot_row : k," +
+	    		"         pivot : abs(p[k,cj])))," +
+	    		"    if (pivot = 0) then (cj : cj +1)" +
+	    		"    else (" +
+	    		"      p : rowswap(p,ci,pivot_row)," +
+	    		"      p : rowmul(p,ci,1/p[ci,cj]),        " +
+	    		"      for k : 1 thru nr do (" +
+	    		"         if not (k=ci) then (p : addrow (p,k,ci,-p[k,cj])))," +
+	    		"      ci : ci+1, cj : cj+1))," +
+	    		"  p)$");
 	}
 
 	private String executeRaw(String maximaInput) throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
