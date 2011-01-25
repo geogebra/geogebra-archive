@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -47,6 +48,10 @@ public class AlgoFitLineY extends AlgoElement {
         return "AlgoFitLineY";
     }
 
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_FITLINE;
+    }
+    
     protected void setInputOutput(){
         input = new GeoElement[1];
         input[0] = geoList;
