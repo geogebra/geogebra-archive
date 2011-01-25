@@ -154,7 +154,7 @@ public abstract class ValidExpression implements ExpressionValue {
 	 }
 	 
 	 public String getAssignmentOperatorLaTeX() {
-		 return " \\, : \\! =  \\, ";
+		 return " \\, :=  \\, ";
 	 }
 	 
 	  public void addCommandNames(Set cmdNames) {
