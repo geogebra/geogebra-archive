@@ -422,7 +422,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	private boolean handleSelectedGeosKeys(KeyEvent event, ArrayList<GeoElement> geos) {
 		
 		int keyCode = event.getKeyCode();
-		
+
 		// SPECIAL KEYS
 		double changeVal = 0; // later: changeVal = base or -base
 		// Shift : base = 0.1
@@ -649,6 +649,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		
 		if (moved)
 			return true;
+		
+		boolean vertical = true;
 
 		// F2, PLUS, MINUS keys
 		switch (keyCode) {
@@ -661,18 +663,26 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				break;
 				
 			case KeyEvent.VK_PLUS:
-			case KeyEvent.VK_ADD:
-			case KeyEvent.VK_EQUALS:
+			case KeyEvent.VK_ADD: // can be own key on some keyboard
+			case KeyEvent.VK_EQUALS: // same key as plus (on most keyboards)
 			case KeyEvent.VK_UP:
+				changeVal = base;
+				vertical = true;
+				break;
 			case KeyEvent.VK_RIGHT:
 				changeVal = base;
+				vertical = false;
 				break;
 	
 			case KeyEvent.VK_MINUS:
 			case KeyEvent.VK_SUBTRACT:
 			case KeyEvent.VK_DOWN:
+				changeVal = -base;
+				vertical = true;
+				break;
 			case KeyEvent.VK_LEFT:
 				changeVal = -base;
+				vertical = false;
 				break;
 		}
 
@@ -686,12 +696,17 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 
 		// change all geoelements
 		if (changeVal != 0) {
-			for (int i=geos.size()-1; i>=0; i--) {
+
+			boolean twoSliders = geos.size() == 2 && geos.get(0).isGeoNumeric() && geos.get(1).isGeoNumeric();
+
+			for (int i = geos.size() - 1; i >= 0; i--) {
+
 				GeoElement geo = geos.get(i);								
 
 				if (geo.isChangeable()) {
+					
 					// update number
-					if (geo.isGeoNumeric()) {
+					if (geo.isGeoNumeric() && (!twoSliders || ((vertical && i == 0) || (!vertical && i == 1)))) {
 						GeoNumeric num = (GeoNumeric) geo;
 						double newValue = num.getValue() + changeVal * num.getAnimationStep();
 						if (num.getAnimationStep() > Kernel.MIN_PRECISION) {
@@ -786,8 +801,17 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	private boolean handleArrowKeyMovement(ArrayList<GeoElement> geos, double xdiff, double ydiff, double zdiff) {	
 		GeoElement geo = geos.get(0);
 		
-		// don't move slider, they will be handled later
-		if (geos.size() == 1 && geo.isGeoNumeric() && geo.isChangeable()) {
+		boolean allSliders = true;
+		for (int i = 0 ; i < geos.size() ; i++) {
+			GeoElement geoi = geos.get(i);
+			if (!geoi.isGeoNumeric() || !geoi.isChangeable()) {
+				allSliders = false;
+				continue;
+			}
+		}
+		
+		// don't move sliders, they will be handled later
+		if (allSliders) {
 			return false;
 		}
 	
