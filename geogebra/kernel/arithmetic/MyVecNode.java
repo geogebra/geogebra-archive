@@ -112,6 +112,28 @@ public class MyVecNode extends ValidExpression implements VectorValue {
             
     final public String toString() {         
         StringBuilder sb = new StringBuilder();  
+        double[] coords;
+        
+    	switch (kernel.getCASPrintForm()) {
+			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+				coords = getCoords();
+				sb.append("{");
+				sb.append(coords[0]);
+				sb.append(", ");
+				sb.append(coords[1]);
+				sb.append("}");
+				break;
+		
+			case ExpressionNode.STRING_TYPE_MAXIMA:
+				coords = getCoords();
+				sb.append("[");
+				sb.append(coords[0]);
+				sb.append(", ");
+				sb.append(coords[1]);
+				sb.append("]");
+				break;
+				
+			default: // continue below
 			  sb.append('(');
 		        sb.append(x.toString());
 		        if (mode == Kernel.COORD_CARTESIAN) 
@@ -120,6 +142,9 @@ public class MyVecNode extends ValidExpression implements VectorValue {
 		        	sb.append("; ");   
 		        sb.append(y.toString());
 		        sb.append(')'); 
+		        break;
+    	}
+		        
 		 return sb.toString();      
     }    
     

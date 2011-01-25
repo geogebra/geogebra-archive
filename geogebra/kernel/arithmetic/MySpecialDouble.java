@@ -42,8 +42,10 @@ public class MySpecialDouble extends MyDouble {
 		if (strToString.indexOf('.') > 0) {
 			int pos = strToString.length();
 			while (strToString.charAt(--pos) == '0');
-			if (pos < strToString.length() -1)
+			if (pos < strToString.length() -1) {
+				if (strToString.charAt(pos) == '.') pos--; // remove decimal point too 
 				strToString = strToString.substring(0, pos+1);
+			}
 		}
 		
 		this.strToString = strToString;
