@@ -92,12 +92,13 @@ SUPPORT
       2002-2009: hosting the GeoGebra website   
   
 SOFTWARE
-  * MathPiper, https://mathrider.dev.java.net
+  * MathPiper, http://www.mathpiper.org/
   * The Apache Commons Mathematics Library, http://commons.apache.org/math/
   * FreeHEP Java Libraries, http://java.freehep.org
   * EPS Graphics, http://epsgraphics.sf.net
-  * HotEqn, http://www.atp.rub.de/VCLab/software/HotEqn/HotEqn.html
+  * JAS, http://krum.rz.uni-mannheim.de/jas/
   * JLaTeXMath, http://forge.scilab.org/index.php/p/jlatexmath/
+  * JUNG, http://jung.sourceforge.net
   * Tango Icon Gallery, http://tango.freedesktop.org
   * Maxima, http://maxima.sourceforge.net/
   
