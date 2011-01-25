@@ -31,15 +31,15 @@ public  GeoElement[] process(Command c) throws MyError {
     switch (n) {
         case 1 :
             arg = resArgs(c);
-            if (ok[0] = (arg[0].isPath())) {
-                GeoElement[] ret =
-                    { kernel.Point(c.getLabel(), (Path) arg[0])};
-                return ret;
-            } else if (ok[0] = (arg[0].isGeoList())) {
+            if (ok[0] = (arg[0].isGeoList() && ((GeoList)arg[0]).getGeoElementForPropertiesDialog().isGeoNumeric())) {
                 GeoElement[] ret = kernel.PointsFromList(c.getLabels(), (GeoList) arg[0]);
             
                 return ret;
-        } else
+            } else if (ok[0] = (arg[0].isPath())) {
+                GeoElement[] ret =
+                    { kernel.Point(c.getLabel(), (Path) arg[0])};
+                return ret;
+            } else 
 				throw argErr(app, "Point", arg[0]);
 
         case 2 :
