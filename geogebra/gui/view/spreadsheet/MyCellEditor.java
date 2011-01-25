@@ -128,7 +128,7 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 	 * @param geo
 	 */
 	public String getEditorInitString(GeoElement geo) {
-		return geo.getRedefineString(true, true);
+		return geo.getRedefineString(true, false);
 	}
 	
 	
