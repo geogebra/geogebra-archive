@@ -31,6 +31,7 @@ public  GeoElement[] process(Command c) throws MyError {
     switch (n) {
         case 1 :
             arg = resArgs(c);
+            // need to check isGeoList first as {1,2} can be a Path but we want Point[{1,2}] to create a point
             if (ok[0] = (arg[0].isGeoList() && ((GeoList)arg[0]).getGeoElementForPropertiesDialog().isGeoNumeric())) {
                 GeoElement[] ret = kernel.PointsFromList(c.getLabels(), (GeoList) arg[0]);
             
