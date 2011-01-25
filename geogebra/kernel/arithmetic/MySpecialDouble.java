@@ -27,24 +27,31 @@ public class MySpecialDouble extends MyDouble {
 	
 	private String strToString;
 	private Kernel kernel;
+	private int precision; // number of significant digits
 	
 	public MySpecialDouble(Kernel kernel, double val, String strToString) {
 		super(kernel, val);
-		this.kernel = kernel;
+		this.kernel = kernel;	
 		
-		// convert scientific notation to plain decimal
-		// e.g. 8.571428571428571E-1 to 0.8571428571428571
+		// determine precision of strToString
+		
 		if (strToString.indexOf('E') > -1) {
-			strToString = new BigDecimal(strToString).toPlainString();
-		}
-		
-		// remove trailing 0s after decimal point
-		if (strToString.indexOf('.') > 0) {
-			int pos = strToString.length();
-			while (strToString.charAt(--pos) == '0');
-			if (pos < strToString.length() -1) {
-				if (strToString.charAt(pos) == '.') pos--; // remove decimal point too 
-				strToString = strToString.substring(0, pos+1);
+			// convert scientific notation to plain decimal
+			// e.g. 8.571428571428571E-1 to 0.8571428571428571
+			BigDecimal bd = new BigDecimal(strToString);
+			precision = bd.precision();
+			strToString = bd.toPlainString();
+		} else {
+			precision = strToString.length(); 
+			if (strToString.indexOf('.') > -1) {
+				precision--; // don't count decimal point
+				if (strToString.startsWith("0.")) {
+					precision--; // don't count leading zero
+					int pos = 2; // don't count zeros after decimal point
+					while (strToString.charAt(pos++) == '0') {
+						precision--;
+					}
+				}
 			}
 		}
 		
@@ -79,7 +86,12 @@ public class MySpecialDouble extends MyDouble {
 			//default:
 			//	return strToString;		
 		}
-		return strToString;	
+		
+		if (precision > 16)		
+			return strToString;
+		else 
+			// kernel.format(val);
+			return super.toString();	
 	}
 
 }
