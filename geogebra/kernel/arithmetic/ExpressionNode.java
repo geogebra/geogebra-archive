@@ -1545,7 +1545,14 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						nounary = false;
 						sb.append('-');
 					} else {
-						sb.append(leftStr);
+						if (leftStr.startsWith(Unicode.RightToLeftUnaryMinusSign)) {
+							// brackets needed for eg Arabic digits
+							sb.append(leftBracket(STRING_TYPE));
+							sb.append(leftStr);
+							sb.append(rightBracket(STRING_TYPE));							
+						} else {
+							sb.append(leftStr);
+						}
 					}
 				} else {
 					sb.append(leftBracket(STRING_TYPE));
