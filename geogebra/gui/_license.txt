@@ -52,6 +52,7 @@ TRANSLATIONS
   * Korean: Kyeong-Sik Choi (Korea)
   * Lithuanian: Rokas Tamosiunas (Lithuania)
   * Macedonian: Linda Fahlberg-Stojanovska, OIKT, Faculty of Technical Sciences, UKLO (FYR Macedonia)
+  * Marathi: Smita Patil (India)
   * Norwegian: Sigbjorn Hals (Norway)
   * Persian: Saeed Aminorroaya, Ali SafarNavadeh, Azam Zabihi (Iran)
   * Polish: Ania Borkowska, Marzanna Miasko, Malgorzata Paliga, Ewa Piwek, Edyta Pobiega, Kasia Winkowska-Nowak (Poland)
