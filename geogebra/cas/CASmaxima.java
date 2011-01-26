@@ -226,6 +226,12 @@ public class CASmaxima extends CASgeneric {
 				return "?";				
 			}
 			
+			if (res.indexOf("?merror") > 0)
+			{
+				Application.debug("WARNING: maxima error: " + res);
+				return "?";
+			}
+			
 			// Matrix notation
 			res = res.replaceAll("matrix\\(([^)]+)\\)", "\\[$1\\]");
 		
