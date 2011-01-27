@@ -72,7 +72,7 @@ public final class JacomaxAutoConfigurator {
         // check codebase folder first, then check OS etc
         String codebase = Application.getCodeBaseFolder();
         if (codebase != null) file = new File(codebase);
-        if (file != null) maximaFolder = chooseBestWindowsMaximaFolder(file);
+        if (file != null&& !"Mac OS X".equals(osName)) maximaFolder = chooseBestWindowsMaximaFolder(file);
         if (maximaFolder!=null) {
             logger.debug("Found Maxima with highest version number at {}", maximaFolder);
             findWindowsMaximaExecutable(result, maximaFolder);
