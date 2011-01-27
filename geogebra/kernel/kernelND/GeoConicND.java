@@ -1574,7 +1574,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		classifyConic();
 		
 		// check if we got an ellipse or hyperbola
-		if (!(type == CONIC_HYPERBOLA || type == CONIC_ELLIPSE || type == CONIC_CIRCLE))
+		if (!(type == CONIC_HYPERBOLA || type == CONIC_ELLIPSE || type == CONIC_CIRCLE || type == CONIC_DOUBLE_LINE))
 		{
 			defined = false;
 		}
