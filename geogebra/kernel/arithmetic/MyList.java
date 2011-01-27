@@ -318,6 +318,7 @@ public class MyList extends ValidExpression implements ListValue {
 			try {				
 				// singleValue to apply to i-th element of this list
 				//since evaluate() might change the value of left operand, we need a deep copy here
+				// see #460
 				ExpressionValue singleValue = valueList == null ? value.deepCopy(kernel) : valueList.getListElement(i);								
 				
 				// apply operation using singleValue
