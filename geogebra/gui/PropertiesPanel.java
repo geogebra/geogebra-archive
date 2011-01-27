@@ -26,6 +26,7 @@ import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
+import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
@@ -5553,6 +5554,8 @@ class AnimationSpeedPanel
 			if (!geo.isChangeable() 
 					|| geo.isGeoText() 
 					|| geo.isGeoImage()
+					|| (geo instanceof GeoTextField)
+					|| (geo instanceof GeoButton)
 					|| geo.isGeoList()
 					|| geo.isGeoBoolean()
 					|| (geo.isGeoPoint() && !geo.isPointOnPath())
