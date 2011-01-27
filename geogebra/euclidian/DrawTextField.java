@@ -172,9 +172,24 @@ public final class DrawTextField extends Drawable {
 			
 			GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
 			
+			
 			if (linkedGeo != null) {
+
+				String defineText = textField.getText();			
+				
+				if (linkedGeo.isGeoLine()) {
+					String prefix = linkedGeo.getLabel() + ":";
+					// need a: in front of 
+					// X = (-0.69, 0) + \lambda (1, -2)
+					if (!defineText.startsWith(prefix))
+						defineText = prefix + defineText;
+				} else if (linkedGeo.isGeoText()) {
+					defineText = "\"" +  defineText + "\"";
+				}
+				
+
 				try {
-					linkedGeo = geo.getKernel().getAlgebraProcessor().changeGeoElementNoExceptionHandling(linkedGeo, textField.getText(), false, true);
+					linkedGeo = geo.getKernel().getAlgebraProcessor().changeGeoElementNoExceptionHandling(linkedGeo, defineText, false, true);
 				} catch (Exception e1) {
 					geo.getKernel().getApplication().showError(e1.getMessage());
 					updateText();
@@ -218,8 +233,15 @@ public final class DrawTextField extends Drawable {
 	private void updateText() {
 		
 		GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
-		if (linkedGeo != null)
-			textField.setText(linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true));
+		if (linkedGeo != null) {
+			String text = linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
+			if (linkedGeo.isGeoText() && text.indexOf("\n") > -1) {
+				// replace linefeed with \\n
+				while (text.indexOf("\n") > -1)
+					text = text.replaceAll("\n", "\\\\\\\\n");
+			}
+			textField.setText(text);
+		}
 	}
 
 
