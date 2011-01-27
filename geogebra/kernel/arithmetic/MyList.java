@@ -290,7 +290,8 @@ public class MyList extends ValidExpression implements ListValue {
 		for (int i = 0; i < size; i++) {	
 			try {				
 				// singleValue to apply to i-th element of this list
-				ExpressionValue singleValue = valueList == null ? value : valueList.getListElement(i);								
+				//since evaluate() might change the value of left operand, we need a deep copy here
+				ExpressionValue singleValue = valueList == null ? value.deepCopy(kernel) : valueList.getListElement(i);								
 				
 				// apply operation using singleValue
 				if (right) {
