@@ -185,7 +185,7 @@ public class GeoInterval extends GeoFunction {
 		
 		// eg x<3 && x>10
 		//Application.debug("fall through");
-		return super.toValueString();		
+		return symbolic ? super.toSymbolicString() : super.toValueString();		
 			
 	}	
 	
