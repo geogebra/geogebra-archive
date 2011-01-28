@@ -734,7 +734,7 @@ public class MyXMLio {
 		if (app.hasFullGui() && app.getGuiManager().hasCasView()) {
 			app.getGuiManager().getCasView().getSessionXML(sb);
 		}
-
+		
 		sb.append("</geogebra>");
 		return sb.toString();
 	}
@@ -837,6 +837,10 @@ public class MyXMLio {
 		// save spreadsheetView settings
 		app.getGuiManager().getSpreadsheetViewXML(sb);
 		
+		//save euclidian view 2 settings
+		if(app.getGuiManager().hasEuclidianView2()){
+			app.getGuiManager().getEuclidianView2().getXML(sb);
+		}
 
 		sb.append("</geogebra>");
 

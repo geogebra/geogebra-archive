@@ -405,7 +405,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected Cursor defaultCursor;
 	
-	
+	//to identify the second EuclidianView
+	private boolean isEV2=false;
 	
 	// ggb3D 2009-02-05
 	private Hits hits;
@@ -3581,12 +3582,24 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
     	getXML(sb);
     	return sb.toString();
     }
+	
+	/***
+	 * returns true is this the second EuclidianView
+	 * @param isSEV
+	 */
+	public void isSecondEuclidianView(boolean isSEV){
+		this.isEV2=isSEV;
+	}
     	
 	/**
 	 * returns settings in XML format
 	 */
 	public void getXML(StringBuilder sb) {
-		sb.append("<euclidianView>\n");
+		if(isEV2){
+			sb.append("<euclidianView2>\n");
+		}else{
+			sb.append("<euclidianView>\n");
+		}
 		
 		if (width > MIN_WIDTH && height > MIN_HEIGHT) {
 			sb.append("\t<size ");
@@ -3716,7 +3729,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			sb.append("\"/>\n");
 		}
 
-		sb.append("</euclidianView>\n");
+		if(isEV2){
+			sb.append("</euclidianView2>\n");
+		}else{
+			sb.append("</euclidianView>\n");
+		}
 	}
 
 	/***************************************************************************

@@ -3228,6 +3228,11 @@ public class Application implements KeyEventDispatcher {
 
 		// save euclidianView settings
 		getEuclidianView().getXML(sb);
+		
+		//save euclidian view 2 settings
+		if(getGuiManager().hasEuclidianView2()){
+			getGuiManager().getEuclidianView2().getXML(sb);
+		}
 
 		// save spreadsheetView settings
 		if (getGuiManager().hasSpreadsheetView()){
