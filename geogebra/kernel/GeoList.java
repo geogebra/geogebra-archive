@@ -1111,7 +1111,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	    	
 	    	if (isMatrix()) {
 	    		StringBuilder sb = new StringBuilder();
-	    		sb.append("\\begin{array}{ll}");
+	    		sb.append("\\left(\\begin{array}{ll}");
 	    		for (int i = 0 ; i < size() ; i++) {
 	    			GeoList geo = (GeoList)get(i);
 	    			for (int j = 0 ; j < geo.size() ; j++) {
@@ -1120,7 +1120,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties, Po
 	    			}
 	    			sb.append("\\\\");
 	    		}
-	    		sb.append(" \\end{array}");
+	    		sb.append(" \\end{array}\\right)");
 	    		return sb.toString();
 		    	//return "\\begin{array}{ll}1&2 \\\\ 3&4 \\\\ \\end{array}";
 	    	}
