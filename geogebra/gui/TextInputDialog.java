@@ -665,14 +665,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		String rightText = text.substring(caretPos).trim();		
 
 		StringBuilder insertedText = new StringBuilder();
-		int leftQuotesAdded = 0;
-		int rightQuotesAdded = 0;
-
+		
+		boolean simpleTextWithoutQuotes = !text.contains("\"") 
+			&& app.getKernel().lookupLabel(text) == null;  		
 		// check left side for quote at its end
 		if (leftText.length() > 0) {
-			if (!leftText.endsWith("\"")) {
-				insertedText.append('"');
-				leftQuotesAdded = 1;			
+			if (simpleTextWithoutQuotes || countChar('"',leftText)%2 ==1) {
+				insertedText.append('"');					
 			}
 			insertedText.append(" + ");
 		}				
@@ -683,9 +682,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// 	check right side for quote at its beginning
 		if (rightText.length() > 0) {			
 			insertedText.append(" + ");
-			if (!rightText.startsWith("\"")) {
-				insertedText.append('"');
-				rightQuotesAdded = 1;
+			if (simpleTextWithoutQuotes || countChar('"',rightText)%2 ==1) {
+				insertedText.append('"');		
 			}
 		}	
 
@@ -695,17 +693,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// make a simple check if the quotes are ok:
 		// there should be an even number of quotes to the left and to the right of the inserted label	
 		text = inputPanel.getText();
-		int leftQuotes = leftQuotesAdded + countChar('"', text.substring(0,caretPos));		
+		
 
 		caretPos += insertedText.length();
-		int rightQuotes = rightQuotesAdded + countChar('"', text.substring(caretPos));
-
-		if (leftQuotes % 2 == 1) {// try to fix the number of quotes by adding one at the beginning of text
-			text = "\"" + text;
-			caretPos++;
-		}		
-		if (rightQuotes % 2 == 1) // try to fix the number of quotes by adding one at the end of text
-			text =  text + "\"";								
+		if(simpleTextWithoutQuotes){
+			if(leftText.length()>0)text =  "\"" + text;
+			if(rightText.length()>0)text = text + "\"";
+		}
 		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
 		textComp.setText(text);
 		if (caretPos <= text.length())
