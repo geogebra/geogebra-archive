@@ -15,6 +15,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.MyPoint;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -94,15 +95,21 @@ public final class DrawLocus extends Drawable {
     	int size = pointList.size();
 		for (int i=0; i < size; i++) {
 			MyPoint p = (MyPoint) pointList.get(i);    		
-    		coords[0] = p.x;
-    		coords[1] = p.y;
-    		view.toScreenCoords(coords);      		    		
     		
-    		if (p.lineTo) {
-				gp.lineTo(coords[0], coords[1]);					
-			} else {					
-				gp.moveTo(coords[0], coords[1]);	   						
-			}           	 	    		
+    		// don't add infinite points
+    		// otherwise hit-testing doesn't work
+    		if (!Double.isInfinite(p.x) && !Double.isInfinite(p.y)
+    				&& !Double.isNaN(p.x) && !Double.isNaN(p.y)) {
+        		coords[0] = p.x;
+        		coords[1] = p.y;
+	    		view.toScreenCoords(coords);      		    		
+	    		
+	    		if (p.lineTo) {
+					gp.lineTo(coords[0], coords[1]);					
+				} else {					
+					gp.moveTo(coords[0], coords[1]);	   						
+				}           	 	    		
+    		}
         }
     	
     	lastPointCoords = coords;    	
