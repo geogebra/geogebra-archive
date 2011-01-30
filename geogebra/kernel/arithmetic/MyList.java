@@ -383,6 +383,12 @@ public class MyList extends ValidExpression implements ListValue {
 		
 		// check LHlist is a matrix
 		ExpressionValue singleValue=((ExpressionValue)LHlist.getListElement(0)).evaluate();
+		if (singleValue == null)
+		{
+			matrixRows = matrixCols = 0;
+			return false;
+		}
+		
 		if ( singleValue.isListValue() ){
 			LHcols=((ListValue)singleValue).getMyList().size();
 			//Application.debug("LHrows"+LHrows);
