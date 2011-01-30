@@ -28,14 +28,18 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -51,8 +55,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -60,6 +67,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.parser.ParserDelegator;
 
 /**
  * Input dialog for GeoText objects with additional option
@@ -67,7 +78,7 @@ import javax.swing.text.JTextComponent;
  * 
  * @author hohenwarter
  */
-public class TextInputDialog extends InputDialog implements DocumentListener {
+public class TextInputDialog extends InputDialog implements DocumentListener, CaretListener, KeyListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -107,7 +118,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 * @param rows 
 	 * @param isTextMode 
 	 */
-	public TextInputDialog(final Application app,  String title, GeoText text, GeoPoint startPoint,
+	public TextInputDialog(Application app,  String title, GeoText text, GeoPoint startPoint,
 			int cols, int rows, boolean isTextMode) {	
 		super(app.getFrame(), false);
 		this.app = app;
@@ -126,11 +137,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		buildInsertGeoButton();	
 
 		// build input dialog GUI
-		createGUI(title, "", false, cols, rows, false, false, false, false, false, false);		
+		createGUI(title, "", false, cols, rows, false, false, false, false, false, false, true);		
 		setGeoText(text);  // init dialog using text
 		this.showSymbolTablePopup(false);
 		this.setResizable(true);
 		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
+		inputPanel.getTextComponent().addCaretListener(this);
+		inputPanel.getTextComponent().addKeyListener(this);
 
 		// add key listener to the editor
 		inputPanel.getTextComponent().addKeyListener(new MyKeyListener());
@@ -205,24 +218,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		centerPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
 		centerOnScreen();
-		final JLabel latexHelp = new JLabel(app.getPlain("LaTeXHelp"));
-		MouseAdapter helpMouseAdapter = new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-            	if(e.getClickCount()>=1){            		
-            		app.getGuiManager().openHelp("LaTeX");
-            	}
-            }
-            public void mouseEntered(MouseEvent e) {
-            	Cursor c = new Cursor ( Cursor.HAND_CURSOR );
-            	latexHelp.setCursor (c);
-
-            }
-            public void mouseExited(MouseEvent e) {
-            	latexHelp.setCursor (Cursor.getDefaultCursor());
-            }
-    	};
-		latexHelp.addMouseListener(helpMouseAdapter);
-		btPanel.add(latexHelp,0);
 
 		// update the labels
 		setLabels(title);
@@ -551,10 +546,16 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		try {
 
 			if (source == btOK || source == inputPanel.getTextComponent()) {
-				inputText = inputPanel.getText();
+				//inputText = inputPanel.getText();
 				isLaTeX = cbLaTeX.isSelected();
 
-				boolean finished = inputHandler.processInput(inputText);	
+				JTextComponent textComp = inputPanel.getTextComponent();
+					
+				String html = textComp.getText();
+				
+				dth.parseHTMLString(html);
+				
+				boolean finished = inputHandler.processInput(dth.toGeoGebraString());	
 				if (isShowing()) {	
 					// text dialog window is used and open
 					setVisible(!finished);
@@ -589,7 +590,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				textPreviewer.updatePreviewText(text, inputPanel.getText(), isLaTeX);
 
 				if (isLaTeX) {
-					((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("latex");
+					//((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("latex");
 					inputPanel.getTextComponent().getDocument().addDocumentListener(this);
 					if (latexPreviewer == null) 
 						latexPreviewer = new LaTeXPreviewerPanel();
@@ -597,7 +598,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 					latexPreviewer.setLaTeX(app, inputPanel.getText());
 				} else {
-					((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("geogebra");
+					//((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("geogebra");
 					inputPanel.getTextComponent().getDocument().addDocumentListener(this);
 					//latexPreviewer = null;	
 				}
@@ -642,11 +643,75 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 	protected void handleDocumentEvent(DocumentEvent e) {
 		Document doc = e.getDocument();
-		try {
+		//try {
 			//inputHandler.processInput(inputPanel.getText());
 			//latexPreviewer.setLaTeX(app, doc.getText(0, doc.getLength()));
-			textPreviewer.updatePreviewText(text, doc.getText(0, doc.getLength()), isLaTeX);
-		} catch (BadLocationException ex) { }
+			
+			JTextComponent textComp = inputPanel.getTextComponent();
+			String html = textComp.getText();
+				
+			dth.parseHTMLString(html);
+
+			
+			//textPreviewer.updatePreviewText(text, doc.getText(0, doc.getLength()), isLaTeX);
+			textPreviewer.updatePreviewText(text, dth.toGeoGebraString(), isLaTeX);
+		//} catch (BadLocationException ex) { }
+	}
+	
+	public void insertGeoElement(GeoElement geo) {
+		if (geo == null) return;
+		inputPanel.getTextComponent().getDocument().removeDocumentListener(this);
+		inputPanel.getTextComponent().removeCaretListener(this);
+		
+		JTextComponent textComp = inputPanel.getTextComponent();
+		int caretPos = textComp.getCaretPosition();	
+		
+		
+		JTextPane tp = (JTextPane)inputPanel.getTextComponent();
+		HTMLEditorKit kit = (HTMLEditorKit)tp.getEditorKit();
+		try {
+			
+			String html = textComp.getText();
+			textComp.setText("");
+			
+			dth.parseHTMLString(html);
+			
+			dth.insertGeoElement(geo.getLabel(), caretPos);
+					
+			kit.read(((Reader)(new StringReader(dth.toHTMLString()))), tp.getDocument(), 0);
+			
+
+			
+			/*
+			textComp.setText("");
+			
+			text = text.substring(0,caretPos) + " <font color=\"red\">&nbsp;"+geo.getLabel()+"&nbsp;</font> " + text.substring(caretPos);
+
+			text = text.replaceAll("<head>", "");
+			text = text.replaceAll("</head>", "");
+			text = text.replaceAll("<html>", "");
+			text = text.replaceAll("</html>", "");
+			text = text.replaceAll("<body>", "");
+			text = text.replaceAll("</body>", "");*/
+			
+		
+			//kit.insertHTML((HTMLDocument)tp.getDocument(),0,text,0,0, null);
+			//kit.insertHTML((HTMLDocument)tp.getDocument(),caretPos," <font color=\"red\">"+geo.getLabel()+"</font> ",0,0, HTML.Tag.P);
+		} catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Application.debug(textComp.getText());
+		//Application.debug(kit.get);
+
+		
+		
+		inputPanel.getTextComponent().addCaretListener(this);
+		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
 	}
 
 	/**
@@ -654,7 +719,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 * "Length of a = " + a + "cm"
 	 * @param geo
 	 */
-	public void insertGeoElement(GeoElement geo) {
+	public void insertGeoElementx(GeoElement geo) {
 		if (geo == null) return;		
 		inputPanel.getTextComponent().getDocument().removeDocumentListener(this);
 		JTextComponent textComp = inputPanel.getTextComponent();	
@@ -665,13 +730,14 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		String rightText = text.substring(caretPos).trim();		
 
 		StringBuilder insertedText = new StringBuilder();
-		
-		boolean simpleTextWithoutQuotes = !text.contains("\"") 
-			&& app.getKernel().lookupLabel(text) == null;  		
+		int leftQuotesAdded = 0;
+		int rightQuotesAdded = 0;
+
 		// check left side for quote at its end
 		if (leftText.length() > 0) {
-			if (simpleTextWithoutQuotes || countChar('"',leftText)%2 ==1) {
-				insertedText.append('"');					
+			if (!leftText.endsWith("\"")) {
+				insertedText.append('"');
+				leftQuotesAdded = 1;			
 			}
 			insertedText.append(" + ");
 		}				
@@ -682,8 +748,9 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// 	check right side for quote at its beginning
 		if (rightText.length() > 0) {			
 			insertedText.append(" + ");
-			if (simpleTextWithoutQuotes || countChar('"',rightText)%2 ==1) {
-				insertedText.append('"');		
+			if (!rightText.startsWith("\"")) {
+				insertedText.append('"');
+				rightQuotesAdded = 1;
 			}
 		}	
 
@@ -693,13 +760,17 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// make a simple check if the quotes are ok:
 		// there should be an even number of quotes to the left and to the right of the inserted label	
 		text = inputPanel.getText();
-		
+		int leftQuotes = leftQuotesAdded + countChar('"', text.substring(0,caretPos));		
 
 		caretPos += insertedText.length();
-		if(simpleTextWithoutQuotes){
-			if(leftText.length()>0)text =  "\"" + text;
-			if(rightText.length()>0)text = text + "\"";
-		}
+		int rightQuotes = rightQuotesAdded + countChar('"', text.substring(caretPos));
+
+		if (leftQuotes % 2 == 1) {// try to fix the number of quotes by adding one at the beginning of text
+			text = "\"" + text;
+			caretPos++;
+		}		
+		if (rightQuotes % 2 == 1) // try to fix the number of quotes by adding one at the end of text
+			text =  text + "\"";								
 		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
 		textComp.setText(text);
 		if (caretPos <= text.length())
@@ -830,6 +901,172 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 					inputPanel.insertString("\\:");
 			}
 		}
+	}
+
+
+	int lastCaretPos = -1;
+	
+	public void caretUpdate(CaretEvent e) {
+		inputPanel.getTextComponent().removeCaretListener(this);
+		
+		String html = inputPanel.getTextComponent().getText();
+		//int caretPos = inputPanel.getTextComponent().getCaretPosition();
+
+		dth.parseHTMLString(html);
+		int caretPos = e.getDot();
+		
+		inputPanel.getTextComponent().setCaretPosition(dth.moveCaret(caretPos, lastCaretPos));
+		
+		
+		JTextPane tp = (JTextPane)inputPanel.getTextComponent();
+		HTMLEditorKit kit = (HTMLEditorKit)tp.getEditorKit();
+		
+		StringWriter sw = new StringWriter();
+		
+		try {
+			kit.write(sw, inputPanel.getTextComponent().getDocument(), 0, 100);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (BadLocationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		//Application.debug(sw.getBuffer().toString());
+		
+		lastCaretPos = e.getDot();
+		inputPanel.getTextComponent().addCaretListener(this);
+
+		
+	}
+	
+	private static void parseHTMLx(String str, final StringBuilder sbHTML, final StringBuilder dataSB) {
+
+		sbHTML.setLength(0);
+		dataSB.setLength(0);
+		
+		HTMLEditorKit.ParserCallback callback = 
+			new HTMLEditorKit.ParserCallback () {
+			boolean dynamic = false;
+			boolean changeNextChar = false;
+			public void handleText(char[] data, int pos) {
+
+				sbHTML.append(data);
+				
+				char c = dynamic ? ' ' : 'x';
+				for (int i = 0 ; i < data.length ; i++) {
+					dataSB.append(changeNextChar ? ' ' : c);
+					changeNextChar = false;
+				}
+				
+
+				//System.err.println(data);
+			}
+			public void handleStartTag(HTML.Tag tag, 
+					MutableAttributeSet attrSet, int pos) {
+				if (tag == HTML.Tag.FONT) {
+					dynamic = true;
+					//Application.debug("XXX DIV");
+				}  
+					
+
+			}
+
+			public void handleEndTag(HTML.Tag tag, int pos) {
+				if (tag == HTML.Tag.FONT) {
+					dynamic = false;
+					changeNextChar = true;
+					//Application.debug("YYY DIV");
+				} else if (tag == HTML.Tag.P) {
+					sbHTML.append('\n');
+					dataSB.append(' ');
+					
+				}
+					
+
+			}
+
+		};
+		Reader reader = new StringReader(str);
+		try {
+			new ParserDelegator().parse(reader, callback, true);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			sbHTML.setLength(0);
+			dataSB.setLength(0);
+			return;
+		}
+		
+		//Application.debug(sbHTML);
+		//Application.debug(dataSB);
+
+	}
+
+
+
+	public void keyTyped(KeyEvent e) {
+		Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
+		
+	}
+
+
+	DynamicTextHolder dth = new DynamicTextHolder();
+
+	public void keyPressed(KeyEvent e) {
+		inputPanel.getTextComponent().removeCaretListener(this);
+
+		Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
+		
+		if (e.getKeyCode() != KeyEvent.VK_BACK_SPACE && e.getKeyCode() != KeyEvent.VK_DELETE) return;
+		
+		String html = inputPanel.getTextComponent().getText();
+		int caretPos = inputPanel.getTextComponent().getCaretPosition();
+
+		inputPanel.getTextComponent().setText("");
+
+		
+		
+
+		dth.parseHTMLString(html);
+		
+		switch (e.getKeyCode()) {
+		case KeyEvent.VK_BACK_SPACE:
+			caretPos = dth.backSpacePressed(caretPos);
+			e.consume();
+			break;
+		case KeyEvent.VK_DELETE:
+			caretPos = dth.deletePressed(e, caretPos);
+			//e.consume();
+			break;
+		}
+		
+		
+		JTextPane tp = (JTextPane)inputPanel.getTextComponent();
+		HTMLEditorKit kit = (HTMLEditorKit)tp.getEditorKit();
+
+		try {
+			kit.read(((Reader)(new StringReader(dth.toHTMLString()))), tp.getDocument(), 0);
+			inputPanel.getTextComponent().setCaretPosition(caretPos);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (BadLocationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+
+		inputPanel.getTextComponent().addCaretListener(this);
+
+	}
+
+
+
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

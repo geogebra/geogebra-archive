@@ -1,3 +1,5 @@
+
+
 package geogebra.gui.view.algebra;
 
 import geogebra.gui.VirtualKeyboardListener;
@@ -16,6 +18,7 @@ import geogebra.util.Unicode;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -36,11 +39,15 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 /**
  * @author Markus Hohenwarter
@@ -91,28 +98,80 @@ ActionListener, ListSelectionListener {
 	
 
 	public InputPanel(String initText, Application app, int columns, boolean autoComplete) {
-		this(initText, app, 1, columns, true, true, null);
+		this(initText, app, 1, columns, true, true, null, false);
 		AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
 		atf.setAutoComplete(autoComplete);
 	}		
 
 
 	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon) {
-		this(initText, app, rows, columns, showSymbolPopupIcon, false, null);
+		this(initText, app, rows, columns, showSymbolPopupIcon, false, null, false);
+	}
+	
+	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon, boolean dynamic) {
+		this(initText, app, rows, columns, showSymbolPopupIcon, false, null, dynamic);
 	}
 	
 	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon,
-						boolean showSymbolButtons, KeyListener keyListener) {
+						boolean showSymbolButtons, KeyListener keyListener, boolean dynamic) {
 		
 		this.app = app;
 		this.showSymbolPopup = showSymbolPopupIcon;
 
 		// set up the text component: 
-		// either a textArea or a textfield
+		// either a textArea, textfield or HTML textpane
 		if (rows > 1) {
-			//textComponent = new JTextArea(rows, columns);
-			textComponent = new GeoGebraEditorPane(app, rows, columns);
-			((GeoGebraEditorPane) textComponent).setEditorKit("geogebra");
+			
+			if (!dynamic) {
+				textComponent = new JTextArea(rows, columns);
+				textComponent = new GeoGebraEditorPane(app, rows, columns);
+				((GeoGebraEditorPane) textComponent).setEditorKit("geogebra");
+			} else {
+				textComponent = new JTextPane();
+				JTextPane editor = (JTextPane)textComponent;
+				HTMLEditorKit kit;
+				HTMLDocument doc;
+	
+	
+				kit = new HTMLEditorKit();
+				doc = (HTMLDocument)(kit.createDefaultDocument());
+				editor.setContentType("html/text");
+				kit.setDefaultCursor(new Cursor(Cursor.TEXT_CURSOR)); 
+	
+				editor.setEditorKit(kit);
+				editor.setDocument(doc);
+			}
+			//editor.setText("<html><body>test text<body></html>");
+			//editor.setCaretPosition(0);
+			/*
+			try {
+				kit.insertHTML(doc,0,"<html><body><b>This is bold</b><i>this is italics</i></html></body>",0,0, HTML.Tag.BODY);
+			} catch (BadLocationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}*/
+
+
+			//getContentPane().setLayout(new BorderLayout());
+
+			//JButton cmdInsert = new JButton("Insert HTML");
+
+			//cmdInsert.addActionListener((Action)(
+			//new HTMLEditorKit.InsertHTMLTextAction("BoldAction",
+			//"<B>test string</B>", HTML.Tag.BODY, HTML.Tag.B)));
+
+			//cmdInsert.setPreferredSize(new Dimension(400,20));
+
+			//getContentPane().add(cmdInsert, BorderLayout.NORTH);
+
+			//JScrollPane seditor = new JScrollPane(editor);
+
+			//seditor.setPreferredSize(new Dimension(400,280));
+
+			//getContentPane().add(seditor, BorderLayout.CENTER);
 		} else{
 			textComponent = new AutoCompleteTextField(columns, app);	
 			((MyTextField)textComponent).setShowSymbolTableIcon(showSymbolPopup);
@@ -465,3 +524,4 @@ ActionListener, ListSelectionListener {
 	/** end history list cell renderer **/
 		
 }
+

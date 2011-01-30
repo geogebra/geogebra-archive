@@ -112,18 +112,18 @@ public class TextPreviewPanel extends EuclidianView {
 
 
 		// prepare the input string for processing
-		String formattedInput = formatInputValue(inputValue);	
+		//String formattedInput = formatInputValue(inputValue);	
 
 
 		// parse the input text 
 		try{
-			exp = kernel.getParser().parseGeoGebraExpression(formattedInput);
+			exp = kernel.getParser().parseGeoGebraExpression(inputValue);
 		}
 
 		catch (ParseException e) {
 			isIndependent = true;
 			hasParseError = true;  	
-			if(formattedInput.length() > 0) // no error message if we have an empty string
+			if(inputValue.length() > 0) // no error message if we have an empty string
 				showErrorMessage = true;
 			//Application.debug("parse exception");
 		} 

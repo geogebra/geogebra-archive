@@ -29,7 +29,7 @@ public class InputDialogOpenDataFolderURL extends InputDialog{
 		String title = app.getMenu("OpenFromWebpage");
 		String message =  app.getMenu("EnterWebAddress"); 
 		boolean showApply = false;
-		createGUI(title, message, false, DEFAULT_COLUMNS, 1, false, false, true, false, false, showApply);
+		createGUI(title, message, false, DEFAULT_COLUMNS, 1, false, false, true, false, false, showApply, false);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
 		centerOnScreen();
 		

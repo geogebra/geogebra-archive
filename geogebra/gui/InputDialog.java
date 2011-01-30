@@ -81,11 +81,11 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	public InputDialog(Application app,  String message, String title, String initString,
 			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText, GeoElement geo) {
-		this(app, message, title, initString, autoComplete, handler, modal, selectInitText, geo, null);
+		this(app, message, title, initString, autoComplete, handler, modal, selectInitText, geo, null, false);
 	}
 	
 	public InputDialog(Application app,  String message, String title, String initString,
-			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText, GeoElement geo, JCheckBox checkBox) {
+			boolean autoComplete, InputHandler handler, boolean modal, boolean selectInitText, GeoElement geo, JCheckBox checkBox, boolean dynamic) {
 		this(app.getFrame(), modal);
 		this.app = app;	
 		this.geo = geo;
@@ -93,7 +93,7 @@ public class InputDialog extends JDialog implements ActionListener,
 		this.initString = initString;	
 		this.checkBox=checkBox;
 
-		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, true, true, selectInitText, false, geo!=null, geo!=null);
+		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, true, true, selectInitText, false, geo!=null, geo!=null, dynamic);
 		
 		// wrap inputPanel in a BorderLayout.NORTH component so keeps a single row height when resizing the dialog
 		JPanel p = new JPanel(new BorderLayout());
@@ -125,11 +125,11 @@ public class InputDialog extends JDialog implements ActionListener,
 	
 	protected void createGUI(String title, String message, boolean autoComplete, int columns, int rows,
 			boolean specialChars, boolean greekLetters, boolean selectInitText, boolean showDisplayChars,
-			boolean showProperties, boolean showApply) {
+			boolean showProperties, boolean showApply, boolean dynamic) {
 		setResizable(false);		
 		
 		//Create components to be displayed
-		inputPanel = new InputPanel(initString, app, rows, columns, greekLetters);	
+		inputPanel = new InputPanel(initString, app, rows, columns, greekLetters, dynamic);	
 				
 		sl = new GeoElementSelectionListener() {
 			public void geoElementSelected(GeoElement geo, boolean addToSelection) {

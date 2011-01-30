@@ -38,7 +38,7 @@ public class NumberChangeSignInputDialog extends InputDialog {
 		super(app, message, title, initString, false, 
 				handler, true,
 				false, null,
-				new JCheckBox(checkBoxText,true));
+				new JCheckBox(checkBoxText,true), false);
 		
 		this.changingSign=changingSign;
 		

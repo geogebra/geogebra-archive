@@ -57,7 +57,7 @@ public class AngleInputDialog extends InputDialog {
 		rbPanel.add(rbClockWise, BorderLayout.SOUTH);
 		rbPanel.setBorder(BorderFactory.createEmptyBorder(5,5,0,0));
 		
-		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, true, true, false, false, false, false);		
+		createGUI(title, message, autoComplete, DEFAULT_COLUMNS, 1, true, true, false, false, false, false, false);		
 		JPanel centerPanel = new JPanel(new BorderLayout());
 		centerPanel.add(inputPanel, BorderLayout.CENTER);
 		centerPanel.add(rbPanel, BorderLayout.SOUTH);								

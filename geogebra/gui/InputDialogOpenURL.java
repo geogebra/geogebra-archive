@@ -28,7 +28,7 @@ public class InputDialogOpenURL extends InputDialog{
 		if (clipboardString != null && clipboardString.startsWith("http://"))
 			initString = clipboardString;
 
-		createGUI(app.getMenu("LoadURL"), app.getMenu("EnterAppletAddress"), false, DEFAULT_COLUMNS, 1, false, false, true, false, false, false);
+		createGUI(app.getMenu("LoadURL"), app.getMenu("EnterAppletAddress"), false, DEFAULT_COLUMNS, 1, false, false, true, false, false, false, false);
 		optionPane.add(inputPanel, BorderLayout.CENTER);		
 		centerOnScreen();
 		

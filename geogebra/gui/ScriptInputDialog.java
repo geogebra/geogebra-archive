@@ -59,7 +59,7 @@ public class ScriptInputDialog extends InputDialog {
 		inputHandler = new TextInputHandler();
 				
 				
-		createGUI(title, "", false, cols, rows, true, true, false, true, false, false);		
+		createGUI(title, "", false, cols, rows, true, true, false, true, false, false, false);		
 		
 		// init dialog using text
 		setGeo(button);
