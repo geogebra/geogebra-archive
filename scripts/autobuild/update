@@ -43,7 +43,7 @@ cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR
 echo "$0: static files copied"
 
 # Moving *.html and *.jnlp to unpacked/ and rewriting static URLs:
-# http://www.geogebra.org/webstart/4.0/unsigned -> http://www.geogebra.org/webstart/test40a/unsigned
+# http://www.geogebra.org/webstart/4.0/unsigned -> http://www.geogebra.org/webstart/test40a/unsigned/unpacked
 # http://www.geogebra.org/webstart/4.0/usb-gomotion.ggb -> http://www.geogebra.org/webstart/test40/usb-gomotion.ggb
 # http://www.geogebra.org/webstart/4.0/debug -> http://www.geogebra.org/webstart/test40/debug
 # http://www.geogebra.org/webstart/4.0/ -> http://www.geogebra.org/webstart/test40/unpacked/
@@ -52,7 +52,7 @@ echo "$0: static files copied"
 cd $WWWDIR
 for i in *.html *.jnlp; do
     cat $i | \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/unsigned"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unsigned"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/unsigned"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unsigned\/unpacked"/g | \
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/usb-gomotion"/"http:\/\/www.geogebra.org\/webstart\/test40a\/usb-gomotion.ggb"/g | \
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/debug"/"http:\/\/www.geogebra.org\/webstart\/test40a\/debug"/g | \
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unpacked"/g | \
