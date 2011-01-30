@@ -144,7 +144,7 @@ public class CASTableCellValue {
 			try {
 				latex = view.getCAS().convertGeoGebraToLaTeXString(outputVE);
 			} catch (Throwable th) {
-				System.err.println("no latex for: " + getOutput());
+				Application.debug("no latex for: " + getOutput());
 				latex = "";
 			}
 		}
