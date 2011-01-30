@@ -261,7 +261,8 @@ public class DynamicTextHolder{
 	public int moveCaret(int caretPos, int lastCaretPos) {
 
 		Application.debug(dynamic.size()+" "+caretPos+" "+lastCaretPos);
-
+		Application.debug(caretPos < dynamic.size() && caretPos > 1 && caretPos > lastCaretPos && dynamic.get(caretPos - 2));
+		Application.debug(caretPos > 1 && caretPos - 1 < dynamic.size() && caretPos < lastCaretPos && dynamic.get(caretPos - 1));
 		if (caretPos < dynamic.size() && caretPos > 1 && caretPos > lastCaretPos && dynamic.get(caretPos - 2)) {
 			return Math.min(caretPos + 2, dynamic.size() + 1);
 		}

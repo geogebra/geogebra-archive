@@ -1015,7 +1015,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 	DynamicTextHolder dth = new DynamicTextHolder();
 
 	public void keyPressed(KeyEvent e) {
-		inputPanel.getTextComponent().removeCaretListener(this);
 
 		Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
 		
@@ -1037,28 +1036,34 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 			e.consume();
 			break;
 		case KeyEvent.VK_DELETE:
-			caretPos = dth.deletePressed(e, caretPos);
+			//caretPos = dth.deletePressed(e, caretPos);
 			//e.consume();
 			break;
 		}
 		
+		// only try to change caret position if necessary
+		if (e.isConsumed()) {
 		
-		JTextPane tp = (JTextPane)inputPanel.getTextComponent();
-		HTMLEditorKit kit = (HTMLEditorKit)tp.getEditorKit();
-
-		try {
-			kit.read(((Reader)(new StringReader(dth.toHTMLString()))), tp.getDocument(), 0);
-			inputPanel.getTextComponent().setCaretPosition(caretPos);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (BadLocationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			JTextPane tp = (JTextPane)inputPanel.getTextComponent();
+			HTMLEditorKit kit = (HTMLEditorKit)tp.getEditorKit();
+	
+			try {
+				kit.read(((Reader)(new StringReader(dth.toHTMLString()))), tp.getDocument(), 0);
+				inputPanel.getTextComponent().removeCaretListener(this);
+				inputPanel.getTextComponent().setCaretPosition(caretPos);
+				inputPanel.getTextComponent().addCaretListener(this);
+	
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (BadLocationException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		
 		}
 		
 
-		inputPanel.getTextComponent().addCaretListener(this);
 
 	}
 
