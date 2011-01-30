@@ -3915,6 +3915,38 @@ public class Kernel {
 		GeoList list2 = algo.getResult();
 		return list2;
 	}
+	/** 
+	 * IndexOf[text,text]
+	 */
+	final public GeoNumeric IndexOf(String label, GeoText needle, GeoText haystack) {
+		AlgoIndexOf algo = new AlgoIndexOf(cons, label, needle, haystack);
+		GeoNumeric index = algo.getResult();
+		return index;
+	}
+	/** 
+	 * IndexOf[text,text,start]
+	 */
+	final public GeoNumeric IndexOf(String label, GeoText needle, GeoText haystack,NumberValue start) {
+		AlgoIndexOf algo = new AlgoIndexOf(cons, label, needle, haystack,start);
+		GeoNumeric index = algo.getResult();
+		return index;
+	}
+	/** 
+	 * IndexOf[object,list]
+	 */
+	final public GeoNumeric IndexOf(String label, GeoElement geo, GeoList list) {
+		AlgoIndexOf algo = new AlgoIndexOf(cons, label, geo, list);
+		GeoNumeric index = algo.getResult();
+		return index;
+	}
+	/** 
+	 * IndexOf[object,list,start]
+	 */
+	final public GeoNumeric IndexOf(String label, GeoElement geo, GeoList list,NumberValue nv) {
+		AlgoIndexOf algo = new AlgoIndexOf(cons, label, geo, list,nv);
+		GeoNumeric index = algo.getResult();
+		return index;
+	}
 	
 	/** 
 	 * Append[object,list]
@@ -4022,6 +4054,12 @@ public class Kernel {
 	 */
 	final public GeoList PrimeFactors(String label, NumberValue num) {
 		AlgoPrimeFactors algo = new AlgoPrimeFactors(cons, label, num);
+		GeoList list2 = algo.getResult();
+		return list2;
+	}
+	
+	final public GeoList PrimeFactorisation(String label, NumberValue num) {
+		AlgoPrimeFactorization algo = new AlgoPrimeFactorization(cons, label, num);
 		GeoList list2 = algo.getResult();
 		return list2;
 	}

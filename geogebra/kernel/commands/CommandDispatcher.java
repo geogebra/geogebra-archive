@@ -224,7 +224,8 @@ public class CommandDispatcher {
     	cmdTable.put("Expand", new CmdExpand(kernel));
     	cmdTable.put("Factor", new CmdFactor(kernel));
     	cmdTable.put("Simplify", new CmdSimplify(kernel));   
-    	cmdTable.put("PrimeFactors", new CmdPrimeFactors(kernel));     	    
+    	cmdTable.put("PrimeFactors", new CmdPrimeFactors(kernel));
+    	cmdTable.put("PrimeFactorization", new CmdPrimeFactorization(kernel));
     	
     	cmdSubTable[TABLE_ALGEBRA].putAll(cmdTable);
     	cmdTable.clear();
@@ -394,6 +395,7 @@ public class CommandDispatcher {
     	cmdTable.put("RemoveUndefined", new CmdRemoveUndefined(kernel));
     	cmdTable.put("Reverse", new CmdReverse(kernel));
     	cmdTable.put("Element", new CmdElement(kernel));
+    	cmdTable.put("IndexOf", new CmdIndexOf(kernel));
     	cmdTable.put("Append", new CmdAppend(kernel));   
     	cmdTable.put("Join", new CmdJoin(kernel));   
     	cmdTable.put("Insert", new CmdInsert(kernel));   
