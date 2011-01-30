@@ -549,6 +549,18 @@ public class CASmaxima extends CASgeneric {
 	    		"         if not (k=ci) then (p : addrow (p,k,ci,-p[k,cj])))," +
 	    		"      ci : ci+1, cj : cj+1))," +
 	    		"  p)$");
+	    
+	    // Function providing lexical scoping for variables. See Ticket #496
+	    ggbMaxima.executeCall(":lisp (defmspec $ggblexicalblock (x)" +
+	    		 "(let*" +
+	    		   "((args (cdr x))" +
+	    		    "(vars (cdr (car args)))" +
+	    		    "(exprs (cdr args))" +
+	    		    "(gensym-vars (mapcar #'(lambda (s) (let ((s1 (gensym))) (setf (get" +
+	    		    "		s1 'reversealias) (or (get s 'reversealias) s)) s1)) vars))" +
+	    		    "(subst-eqns (mapcar #'(lambda (x y) `((mequal) ,x ,y)) vars gensym-vars))" +
+	    		    "(gensym-mprogn ($psubstitute `((mlist) ,@subst-eqns) `((mprogn) ,@exprs))))" +
+	    		   "(meval gensym-mprogn)))");
 	}
 
 	private String executeRaw(String maximaInput) throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
