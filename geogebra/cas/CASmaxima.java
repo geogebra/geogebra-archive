@@ -355,7 +355,7 @@ public class CASmaxima extends CASgeneric {
 	/**
 	 * Resets the cas and unbinds all variable and function definitions.
 	 */
-	public void reset() {
+	public synchronized void reset() {
 
 		try {
 			ggbMaxima.executeCall("kill(all);");
