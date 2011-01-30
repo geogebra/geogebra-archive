@@ -91,7 +91,6 @@ public class MyXMLHandler implements DocHandler {
 	private static final int MODE_EUCLIDIAN_VIEW = 100;
 	/** currently parsing tags for Euclidian3D view */
 	protected static final int MODE_EUCLIDIAN_VIEW3D = 101; //only for 3D
-	private static final int MODE_EUCLIDIAN_VIEW2 = 102;
 	private static final int MODE_SPREADSHEET_VIEW = 150;
 	private static final int MODE_CAS_VIEW = 160;
 	private static final int MODE_CAS_SESSION = 161;
@@ -159,6 +158,7 @@ public class MyXMLHandler implements DocHandler {
 	private LinkedList<GeoExpPair> animationStepList = new LinkedList<GeoExpPair>();
 	private LinkedList<GeoElement> animatingList = new LinkedList<GeoElement>();
 	private LinkedList<GeoExpPair> minMaxList = new LinkedList<GeoExpPair>();
+	
 
 	private class GeoExpPair {
 		GeoElement geo;
@@ -228,7 +228,8 @@ public class MyXMLHandler implements DocHandler {
 	 */
 	private boolean tmp_showAlgebra, tmp_showSpreadsheet;
 
-	
+	//indicate the view no currently parsing
+	private int viewNo=0;
 
 	
 
@@ -306,9 +307,6 @@ public class MyXMLHandler implements DocHandler {
 			startEuclidianViewElement(eName, attrs);
 			break;
 			
-		case MODE_EUCLIDIAN_VIEW2:
-			startEuclidianViewElement(eName, attrs);
-			break;
 			
 		case MODE_EUCLIDIAN_VIEW3D:
 			startEuclidianView3DElement(eName, attrs);
@@ -409,12 +407,12 @@ public class MyXMLHandler implements DocHandler {
 		// String eName = qName;
 		switch (mode) {
 		case MODE_EUCLIDIAN_VIEW:
-			if (eName.equals("euclidianView"))
+			if (eName.equals("euclidianView")){
+				if(viewNo==2){
+					viewNo=0;
+				}
 				mode = MODE_GEOGEBRA;
-			break;
-		case MODE_EUCLIDIAN_VIEW2:
-			if (eName.equals("euclidianView2"))
-				mode = MODE_GEOGEBRA;
+			}
 			break;
 		case MODE_EUCLIDIAN_VIEW3D:
 			if (eName.equals("euclidianView3D"))
@@ -535,8 +533,6 @@ public class MyXMLHandler implements DocHandler {
 	private void startGeoGebraElement(String eName, LinkedHashMap<String, String> attrs) {
 		if (eName.equals("euclidianView")) {
 			mode = MODE_EUCLIDIAN_VIEW;
-		}else if (eName.equals("euclidianView2")) {
-			mode = MODE_EUCLIDIAN_VIEW2; 
 		}else if (eName.equals("euclidianView3D")) {
 			mode = MODE_EUCLIDIAN_VIEW3D;
 		} else if (eName.equals("kernel")) {
@@ -597,13 +593,15 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 	// <euclidianView>
 	// ====================================
+	
 	private void startEuclidianViewElement(String eName, LinkedHashMap<String, String> attrs) {
 		boolean ok = true;
 		EuclidianView ev=null;
-		if(mode==102){
+		if(viewNo==2){
 			ev=app.getGuiManager().getEuclidianView2();
-		}else{
-			ev = app.getEuclidianView();
+		}
+		else{
+			ev=app.getEuclidianView();
 		}
 		
 		switch (eName.charAt(0)) {
@@ -651,6 +649,14 @@ public class MyXMLHandler implements DocHandler {
 		case 's':
 			if (eName.equals("size")) {
 				ok = handleEvSize(ev, attrs);
+				break;
+			}
+		case 'v':
+			if(eName.equals("viewNumber")){
+				int number = Integer.parseInt((String) attrs.get("viewNo"));
+				if(number==2){
+					viewNo=number;
+				}
 				break;
 			}
 

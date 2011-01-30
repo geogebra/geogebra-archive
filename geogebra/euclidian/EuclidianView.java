@@ -405,11 +405,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected Cursor defaultCursor;
 	
-	//to identify the second EuclidianView
-	private boolean isEV2=false;
-	
 	// ggb3D 2009-02-05
 	private Hits hits;
+	
+	//set EuclidianView no - 2 for 2nd EulidianView, 0 for 1st EuclidianView and Applet
+	private int evNo=0;
 	
 	
 
@@ -3583,22 +3583,29 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
     	return sb.toString();
     }
 	
-	/***
-	 * returns true is this the second EuclidianView
-	 * @param isSEV
+	/**
+	 * This is only needed for second or above euclidian views
 	 */
-	public void isSecondEuclidianView(boolean isSEV){
-		this.isEV2=isSEV;
+	public void setEuclidianViewNo(int evNo)
+	{
+		if(evNo>=2){
+			this.evNo=evNo;
+		}
 	}
+	
     	
 	/**
 	 * returns settings in XML format
 	 */
 	public void getXML(StringBuilder sb) {
-		if(isEV2){
-			sb.append("<euclidianView2>\n");
-		}else{
-			sb.append("<euclidianView>\n");
+		sb.append("<euclidianView>\n");
+		if(evNo>=2)
+		{
+			sb.append("\t<viewNumber ");
+			sb.append("viewNo=\"");
+			sb.append(evNo);
+			sb.append("\"");
+			sb.append("/>\n");
 		}
 		
 		if (width > MIN_WIDTH && height > MIN_HEIGHT) {
@@ -3729,11 +3736,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			sb.append("\"/>\n");
 		}
 
-		if(isEV2){
-			sb.append("</euclidianView2>\n");
-		}else{
-			sb.append("</euclidianView>\n");
-		}
+
+		sb.append("</euclidianView>\n");
 	}
 
 	/***************************************************************************
