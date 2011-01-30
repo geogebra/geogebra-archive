@@ -21,7 +21,7 @@ import java.util.HashMap;
 public class GeoGebraCAS {
 	
 
-	public static final int CAS_TIMEOUT = 3; // timeout in seconds
+	public static final int CAS_TIMEOUT = 5; // timeout in seconds
 
 	private StringBuilder sbPolyCoeffs;
 	private Application app;
