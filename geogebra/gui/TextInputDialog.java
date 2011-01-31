@@ -171,8 +171,18 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		// create edit panel to contain both the input panel and toolbar
 		editHeader = new JLabel();
 		editHeader.setBorder(BorderFactory.createEmptyBorder(2, 2, 0, 2));
+		
 		editPanel = new JPanel(new BorderLayout(2,2));
+		
 		editPanel.add(editHeader, BorderLayout.NORTH);
+		
+		
+		// testing dynamic input panel
+		/*
+		DynamicTextInputPanel d = new DynamicTextInputPanel(app);
+		editPanel.add(d, BorderLayout.NORTH);
+		*/
+		
 		editPanel.add(inputPanel, BorderLayout.CENTER);
 		editPanel.add(toolPanel, BorderLayout.SOUTH);		
 		editPanel.setBorder(BorderFactory.createEtchedBorder());
@@ -809,87 +819,90 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 			if (inputValue == null) return false;                        
 
 			// no quotes?
-					if (inputValue.indexOf('"') < 0) {
-						// this should become either
-						// (1) a + "" where a is an object label or
-						// (2) "text", a plain text 
+			if (inputValue.indexOf('"') < 0) {
+				// this should become either
+				// (1) a + "" where a is an object label or
+				// (2) "text", a plain text 
 
-						// ad (1) OBJECT LABEL 
-						// add empty string to end to make sure
-						// that this will become a text object
-						if (kernel.lookupLabel(inputValue.trim()) != null) {
-							inputValue = "(" + inputValue + ") + \"\"";
-						} 
-						// ad (2) PLAIN TEXT
-						// add quotes to string
-						else {
-							inputValue = "\"" + inputValue + "\"";
-						}        			
-					} 
-					else {
-						// replace \n\" by \"\n, this is useful for e.g.:
-						//    "a = " + a + 
-						//	"b = " + b 
-						inputValue = inputValue.replaceAll("\n\"", "\"\n");
+				// ad (1) OBJECT LABEL 
+				// add empty string to end to make sure
+				// that this will become a text object
+				if (kernel.lookupLabel(inputValue.trim()) != null) {
+					inputValue = "(" + inputValue + ") + \"\"";
+				} 
+				// ad (2) PLAIN TEXT
+				// add quotes to string
+				else {
+					inputValue = "\"" + inputValue + "\"";
+				}        			
+			} 
+			else {
+				// replace \n\" by \"\n, this is useful for e.g.:
+				//    "a = " + a + 
+				//	"b = " + b 
+				inputValue = inputValue.replaceAll("\n\"", "\"\n");
+			}
+
+			if (inputValue.equals("\"\"")) return false;
+
+			// create new text
+			boolean createText = text == null;
+			if (createText) {
+				GeoElement [] ret = 
+					kernel.getAlgebraProcessor().processAlgebraCommand(inputValue, false);
+				if (ret != null && ret[0].isTextValue()) {
+					GeoText t = (GeoText) ret[0];
+					t.setLaTeX(isLaTeX, true);  
+
+					// make sure for new LaTeX texts we get nice "x"s
+					if (isLaTeX) t.setSerifFont(true);
+
+					if (startPoint.isLabelSet()) {
+						try { t.setStartPoint(startPoint); }catch(Exception e){};                          
+					} else {
+
+						//                    	// Michael Borcherds 2008-04-27 changed to RealWorld not absolute
+						// startpoint contains mouse coords
+						//t.setAbsoluteScreenLoc(euclidianView.toScreenCoordX(startPoint.inhomX), 
+						//		euclidianView.toScreenCoordY(startPoint.inhomY));
+						//t.setAbsoluteScreenLocActive(true); 
+						t.setRealWorldLoc(startPoint.inhomX, startPoint.inhomY);
+						t.setAbsoluteScreenLocActive(false); 
 					}
+					t.updateRepaint();
+					app.storeUndoInfo();                    
+					return true;                
+				}
+				return false;
+			}
 
-					if (inputValue.equals("\"\"")) return false;
+			// change existing text
+			try {           
+				GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);                         
 
-					// create new text
-					boolean createText = text == null;
-					if (createText) {
-						GeoElement [] ret = 
-							kernel.getAlgebraProcessor().processAlgebraCommand(inputValue, false);
-						if (ret != null && ret[0].isTextValue()) {
-							GeoText t = (GeoText) ret[0];
-							t.setLaTeX(isLaTeX, true);  
+				// make sure newText is using correct LaTeX setting
+				newText.setLaTeX(isLaTeX, true);
+				newText.updateRepaint();
 
-							// make sure for new LaTeX texts we get nice "x"s
-							if (isLaTeX) t.setSerifFont(true);
-
-							if (startPoint.isLabelSet()) {
-								try { t.setStartPoint(startPoint); }catch(Exception e){};                          
-							} else {
-
-								//                    	// Michael Borcherds 2008-04-27 changed to RealWorld not absolute
-								// startpoint contains mouse coords
-								//t.setAbsoluteScreenLoc(euclidianView.toScreenCoordX(startPoint.inhomX), 
-								//		euclidianView.toScreenCoordY(startPoint.inhomY));
-								//t.setAbsoluteScreenLocActive(true); 
-								t.setRealWorldLoc(startPoint.inhomX, startPoint.inhomY);
-								t.setAbsoluteScreenLocActive(false); 
-							}
-							t.updateRepaint();
-							app.storeUndoInfo();                    
-							return true;                
-						}
-						return false;
-					}
-
-					// change existing text
-					try {           
-						GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);                         
-
-						// make sure newText is using correct LaTeX setting
-						newText.setLaTeX(isLaTeX, true);
-						newText.updateRepaint();
-
-						app.doAfterRedefine(newText);                                
-						return newText != null;
-					} catch (Exception e) {
-						app.showError("ReplaceFailed");
-						return false;
-					} catch (MyError err) {
-						app.showError(err);
-						return false;
-					} 
+				app.doAfterRedefine(newText);                                
+				return newText != null;
+			} catch (Exception e) {
+				app.showError("ReplaceFailed");
+				return false;
+			} catch (MyError err) {
+				app.showError(err);
+				return false;
+			} 
 		}   
 	}
 
 
 	public void setVisible(boolean isVisible) {	
 		if(!isVisible ){
-			textPreviewer.removePreviewGeoText();
+			if(textPreviewer != null){
+				textPreviewer.removePreviewGeoText();
+				textPreviewer.detachView();
+			}
 		}
 		super.setVisible(isVisible);
 	}
