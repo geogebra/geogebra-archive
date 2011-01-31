@@ -561,6 +561,9 @@ public class CASmaxima extends CASgeneric {
 	    		    "(subst-eqns (mapcar #'(lambda (x y) `((mequal) ,x ,y)) vars gensym-vars))" +
 	    		    "(gensym-mprogn ($psubstitute `((mlist) ,@subst-eqns) `((mprogn) ,@exprs))))" +
 	    		   "(meval gensym-mprogn)))");
+	    
+	    // for intfudu
+	    ggbMaxima.executeCall("load(\"partition\");");
 	}
 
 	private String executeRaw(String maximaInput) throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
