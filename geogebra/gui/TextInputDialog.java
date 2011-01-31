@@ -901,7 +901,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		if(!isVisible ){
 			if(textPreviewer != null){
 				textPreviewer.removePreviewGeoText();
-				textPreviewer.detachView();
+				//textPreviewer.detachView();
 			}
 		}
 		super.setVisible(isVisible);
