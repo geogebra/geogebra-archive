@@ -117,6 +117,19 @@ public class DynamicTextHolder{
 			dynamic.clear();
 			return;
 		}
+		
+		// remove \n and spaces at end
+		// because extra \n is added for last </p>
+		int pos;
+		if (text.length() > 0)
+			while ( (pos=text.length()) > 0 && (text.charAt(pos - 1) == '\n' || text.charAt(pos - 1) == 'X')) {
+				dynamic.remove(pos - 1);
+				text.deleteCharAt(pos - 1);
+			}
+		
+		
+		
+		
 
 	}
 	public String toHTMLString() {
@@ -153,7 +166,8 @@ public class DynamicTextHolder{
 		// check if we're ending with dynamic or not
 		if (dynamic.get(length - 1)) sb.append(HTML_DYNAMIC_END);
 
-		sb.append("</p> ");
+		sb.append("</p>");
+		//Application.debug(sb.toString());
 		return sb.toString();
 
 	}
@@ -233,52 +247,18 @@ public class DynamicTextHolder{
 	}
 	public int deletePressed(KeyEvent e, int pos) {
 		
-		//Application.debug(pos+" "+dynamic.size());
-		
-		if (dynamic.size() == 0 || pos > dynamic.size()) return pos;
-		
-		if (pos > 0 && pos < dynamic.size() && dynamic.get(pos - 1)) {
-			e.consume();
-			//Application.debug("DYNAMIC");
-			int charsToDelete = 1;
-			int origPos = pos;
-			
-			while (pos < dynamic.size() && dynamic.get(pos - 1)) {
-				pos++;
-				charsToDelete++;
-			}
-			
-			for (int i = 0 ; i < charsToDelete ; i++) {
-				dynamic.remove(origPos);
-				text.deleteCharAt(origPos);
-			}
-			return pos;
-		} else return pos;
-		
-		/*
-		int origPos = pos;
-		
-		int charsToDelete = 1;
-		
-		if (pos > 0 && pos < dynamic.size() && dynamic.get(pos - 1)) {
-			while (pos < dynamic.size() && dynamic.get(pos - 1)) {
-				pos++;
-				charsToDelete++;
-			}
-			charsToDelete--;
-		}
-		
-		for (int i = 0 ; i < charsToDelete ; i++) {
-			dynamic.remove(origPos);
-			text.deleteCharAt(origPos);
-		}
-		
-		
-		return Math.min(origPos + 1, dynamic.size());*/
+		dynamic.remove(pos - 1);
+		text.deleteCharAt(pos - 1);
+
+		return pos;
 		
 	}
 
 	public int moveCaret(int caretPos, int lastCaretPos) {
+		
+		// can't go right to end
+		//if (caretPos > dynamic.size()) return caretPos - 1;
+		
 
 		//Application.debug(dynamic.size()+" "+caretPos+" "+lastCaretPos);
 
@@ -291,7 +271,7 @@ public class DynamicTextHolder{
 		
 		if (caretPos > 1 && caretPos - 1 < dynamic.size() && caretPos < lastCaretPos && dynamic.get(caretPos - 1)) {
 			int count = 0;
-			while (caretPos - 1 - count < dynamic.size() && dynamic.get(caretPos - 1 - count)) count ++;	
+			while (caretPos - 1 - count > 0 && caretPos - 1 - count < dynamic.size() && dynamic.get(caretPos - 1 - count)) count ++;	
 			
 			return caretPos - count + 1;
 		}

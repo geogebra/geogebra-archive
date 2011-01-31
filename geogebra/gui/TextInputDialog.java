@@ -928,7 +928,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		dth.parseHTMLString(html);
 		int caretPos = e.getDot();
 		
-		inputPanel.getTextComponent().setCaretPosition(dth.moveCaret(caretPos, lastCaretPos));
+		caretPos = dth.moveCaret(caretPos, lastCaretPos);
+		
+		try {
+			inputPanel.getTextComponent().setCaretPosition(caretPos);
+		} catch (Exception ee) {ee.printStackTrace();}
 		
 		
 		JTextPane tp = (JTextPane)inputPanel.getTextComponent();
@@ -1049,8 +1053,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 			e.consume();
 			break;
 		case KeyEvent.VK_DELETE:
-			//caretPos = dth.deletePressed(e, caretPos);
-			//e.consume();
+			caretPos = dth.deletePressed(e, caretPos);
+			e.consume();
 			break;
 		}
 		
@@ -1063,7 +1067,9 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 			try {
 				kit.read(((Reader)(new StringReader(dth.toHTMLString()))), tp.getDocument(), 0);
 				inputPanel.getTextComponent().removeCaretListener(this);
+				try {
 				inputPanel.getTextComponent().setCaretPosition(caretPos);
+				} catch (Exception ee) { ee.printStackTrace(); }
 				inputPanel.getTextComponent().addCaretListener(this);
 	
 			} catch (IOException e1) {
