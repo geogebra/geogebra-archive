@@ -7,10 +7,12 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
@@ -26,14 +28,14 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoQuadric3D extends GeoQuadricND
-implements GeoElement3DInterface, Functional2Var{
+implements GeoElement3DInterface, Functional2Var, Region3D{
 	
 	
 
 	
 	private static String[] vars3D = { "x\u00b2", "y\u00b2",  "z\u00b2", "x y", "x z", "y z", "x", "y" , "z" };
 	
-	
+	private CoordMatrix4x4 eigenMatrix;
 	
 
 	public GeoQuadric3D(Construction c) {
@@ -116,7 +118,17 @@ implements GeoElement3DInterface, Functional2Var{
 	////////////////////////////////
 	// SPHERE
 	
-
+	protected void setSphereNDMatrix(GeoPointND M, double r){
+		super.setSphereNDMatrix(M, r);
+		
+		
+		//eigen matrix
+		eigenMatrix = new CoordMatrix4x4();
+		eigenMatrix.setOrigin(getMidpoint3D());
+		eigenMatrix.setVx(new Coords(getHalfAxis(0),0,0,0));
+		eigenMatrix.setVy(new Coords(0,getHalfAxis(1),0,0));
+		eigenMatrix.setVz(new Coords(0,0,getHalfAxis(2),0));
+	}
 	
 	public void setSphereND(GeoPointND M, GeoSegmentND segment){
 		//TODO
@@ -253,6 +265,7 @@ implements GeoElement3DInterface, Functional2Var{
 
 	
 	
+
 	
 	
 	
@@ -578,8 +591,8 @@ implements GeoElement3DInterface, Functional2Var{
 
 
 	public Coords getMainDirection() {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO create with parameter coord where is looked at
+		return new Coords(0,0,1,0);
 	}
 
 
@@ -617,6 +630,159 @@ implements GeoElement3DInterface, Functional2Var{
 		
 	}
 
+	
+	
+	///////////////////////////////////////////////////
+	// REGION 3D INTERFACE
+	///////////////////////////////////////////////////
+	
+	
+	public boolean isRegion(){
+		return true;
+	}
+
+
+	public Coords[] getNormalProjection(Coords coords) {
+		switch(getType()){
+		case QUADRIC_SPHERE:
+
+			Coords eigenCoords = eigenMatrix.solve(coords);
+			double x = eigenCoords.getX();
+			double y = eigenCoords.getY();
+			double z = eigenCoords.getZ();
+			double u = Math.atan2(y, x);
+			double r = Math.sqrt(x*x+y*y);
+			double v = Math.atan2(z, r);
+
+			Coords parameters = new Coords(u,v);
+			return new Coords[]{getPoint(u,v), parameters};
+
+		default:
+			Application.debug("TODO -- type: "+getType());
+			return null;
+		}
+	}
+
+
+
+	public Coords getPoint(double u, double v) {
+		switch(getType()){
+		case QUADRIC_SPHERE:
+			Coords eigenRet = new Coords(Math.cos(u)*Math.cos(v),Math.sin(u)*Math.cos(v),Math.sin(v),1);
+			return eigenMatrix.mul(eigenRet);
+			
+		default:
+			Application.debug("TODO -- type: "+getType());
+			return null;
+		}
+	}
+	
+	public Coords getNormal(double u, double v) {
+		switch(getType()){
+		case QUADRIC_SPHERE:
+			return new Coords(Math.cos(u)*Math.cos(v),Math.sin(u)*Math.cos(v),Math.sin(v),0);
+			
+		default:
+			Application.debug("TODO -- type: "+getType());
+			return null;
+		}
+	}
+
+
+
+	public Coords[] getProjection(Coords coords, Coords willingDirection) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	public boolean isInRegion(GeoPointND P) {
+		
+		Coords coords = P.getCoordsInD(3);
+		//calc tP.S.P
+		return Kernel.isZero(coords.transposeCopy().mul(getSymetricMatrix().mul(coords)).get(1,1));
+	}
+
+
+
+	public boolean isInRegion(double x0, double y0) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+
+	public void pointChangedForRegion(GeoPointND P) {
+		
+		GeoPoint3D p = (GeoPoint3D) P;
+		
+		Coords willingCoords = p.getWillingCoords();
+		if (willingCoords==null)
+			willingCoords = P.getCoordsInD(3);
+
+		Coords willingDirection = p.getWillingDirection();
+		if (willingDirection==null)
+			willingDirection = getMidpoint3D().sub(willingCoords);
+		else
+			willingDirection = willingDirection.mul(-1); //to get the point closest to the eye
+
+		//Application.debug("direction=\n"+willingDirection+"\ncoords=\n"+willingCoords);
+		
+		//compute intersection
+		CoordMatrix qm = getSymetricMatrix();
+    	CoordMatrix pm = new CoordMatrix(4,2);
+    	pm.setVx(willingDirection);
+    	pm.setOrigin(willingCoords);
+    	CoordMatrix pmt = pm.transposeCopy();
+    	
+    	//sets the solution matrix from line and quadric matrix
+    	CoordMatrix sm = pmt.mul(qm).mul(pm);
+    	
+    	//Application.debug("sm=\n"+sm);
+    	double a=sm.get(1, 1);
+    	double b=sm.get(1, 2);
+    	double c=sm.get(2,2);
+    	double Delta=b*b-a*c;
+    	
+    	double t;
+    	if (Delta>=0){
+       		double t1=(-b-Math.sqrt(Delta))/a;
+       		double t2=(-b+Math.sqrt(Delta))/a;
+       		t=Math.min(t1, t2);//gets the point closer to the willing coords
+       		
+    	}else{
+    		t=-b/a; //get closer point (in some "eigen coord sys")
+    	}
+    		
+    	Coords[] coords = getNormalProjection(willingCoords.add(willingDirection.mul(t)));
+    	
+		RegionParameters rp = p.getRegionParameters();
+    	rp.setT1(coords[1].get(1));rp.setT2(coords[1].get(2));
+    	rp.setNormal(getNormal(coords[1].get(1),coords[1].get(2)));
+    	p.setCoords(coords[0], false);
+		p.updateCoords();
+		
+	}
+
+
+	
+	
+	
+
+	public void regionChanged(GeoPointND P) {
+		
+		GeoPoint3D p = (GeoPoint3D) P;
+		RegionParameters rp = p.getRegionParameters();
+    	Coords coords = getPoint(rp.getT1(),rp.getT2());
+    	p.setCoords(coords, false);
+		p.updateCoords();
+		
+		
+		
+	}
+
+	
 
 
 

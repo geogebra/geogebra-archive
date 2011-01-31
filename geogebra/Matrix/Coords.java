@@ -56,6 +56,16 @@ public class Coords
 		
 	}
 	
+	/** creates a 2D vector with the specified values
+	 * @param u
+	 * @param v
+	 */
+	public Coords(double u, double v){
+		super(2,1);
+		val[0]=u;
+		val[1]=v;
+	}
+	
 	/** creates a 3D vector with the specified values
 	 * @param x
 	 * @param y

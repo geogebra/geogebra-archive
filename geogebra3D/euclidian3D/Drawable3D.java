@@ -654,9 +654,9 @@ public abstract class Drawable3D extends DrawableND {
 		}
 
 		//finally check if one is before the other
-		if (this.zPickMax<d.zPickMax)
+		if (this.zPickMin<d.zPickMin)
 			return -1;
-		if (this.zPickMax>d.zPickMax)
+		if (this.zPickMin>d.zPickMin)
 			return 1;
 
 		//says that the two objects are equal for the comparator

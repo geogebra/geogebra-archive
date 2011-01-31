@@ -2218,7 +2218,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			// use region drawing directions for the cross
 			t = 1/getScale();
 			
-			v = ((GeoElement)getCursor3D().getRegion()).getMainDirection(); //vz
+			//v = ((GeoElement)getCursor3D().getRegion()).getMainDirection(); //vz
+			v = getCursor3D().getRegionParameters().getNormal();
 			m = new CoordMatrix(4, 2);
 			m.set(v, 1);
 			m.set(4, 2, 1);

@@ -12,12 +12,16 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.Coords;
+
 /**
  * @author Mathieu Blossier
  */
 public class RegionParameters {
 	
 	private double t1, t2;
+	
+	private Coords normal; //normal on the region at this place
 	
 	/** says if the point is on the path defined by the frontier of the region */
 	private boolean isOnPath = false;
@@ -30,6 +34,8 @@ public class RegionParameters {
 		
 		setT1(t1);
 		setT2(t2);
+		
+		normal = new Coords(0,0,1,0); //z-direction by default
 
 	}
 	
@@ -72,6 +78,15 @@ public class RegionParameters {
 	}
 	
 	
+	public void setNormal(Coords normal){
+		this.normal = normal;
+	}
+
+	public Coords getNormal(){
+		return this.normal;
+	}
+	
+
 	////////////////////////////////////
 	// POINT ON PATH
 	
@@ -88,4 +103,9 @@ public class RegionParameters {
 	public final boolean isOnPath(){
 		return isOnPath;
 	}
+	
+	
+	
+	
+	
 }

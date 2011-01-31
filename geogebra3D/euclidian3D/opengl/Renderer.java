@@ -1259,6 +1259,8 @@ public class Renderer implements GLEventListener {
         	  hits3D.addDrawable3D(drawHits[num],num>=labelLoop);
         	  drawHits[num].zPickMin = zMin;
         	  drawHits[num].zPickMax = zMax;
+        	  
+        	  //Application.debug(drawHits[num]+"\nzMin="+zMin+", zMax="+zMax);
 
 
         	  ptr++;

@@ -630,35 +630,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		GeoPoint3D point3D;
 		
-		/*
-		if (!forPreviewable)
-			point3D = getKernel().getManager3D().Point3DIn(null,region);
-		else{
-			point3D = view3D.getCursor3D();			
-			point3D.setPath(null);
-			point3D.setRegion(region);
-			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_REGION);
-		}
-		
-		setMouseInformation(point3D);
-		point3D.doRegion();
-		
-		if (region==view3D.getxOyPlane()){
-			GgbVector coords = point3D.getInhomCoords();
-			if (
-					coords.getX()<view3D.getxOyPlane().getXmin()
-					||
-					coords.getX()>view3D.getxOyPlane().getXmax()
-					||
-					coords.getY()<view3D.getxOyPlane().getYmin()
-					||
-					coords.getY()>view3D.getxOyPlane().getYmax()
-			){
-				view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_NONE);
-				return null;
-			}
-		}
-		*/
 		
 		point3D = view3D.getCursor3D();			
 		point3D.setPath(null);

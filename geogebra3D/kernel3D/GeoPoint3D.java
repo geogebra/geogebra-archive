@@ -596,6 +596,11 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		x2D = project[1].get(1);
 		y2D = project[1].get(2);
 		z2D = project[1].get(3);
+		
+		RegionParameters rp = getRegionParameters();
+    	rp.setT1(project[1].get(1));rp.setT2(project[1].get(2));
+    	rp.setNormal(((GeoElement) region).getMainDirection());
+ 
     }
     
     
