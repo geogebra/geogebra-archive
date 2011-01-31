@@ -715,7 +715,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 			e.printStackTrace();
 		}
 		
-		Application.debug(textComp.getText());
+		//Application.debug(textComp.getText());
 		//Application.debug(kit.get);
 
 		
@@ -1020,7 +1020,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 
 
 	public void keyTyped(KeyEvent e) {
-		Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
+		//Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
 		
 	}
 
@@ -1029,7 +1029,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 
 	public void keyPressed(KeyEvent e) {
 
-		Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
+		//Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
 		
 		if (e.getKeyCode() != KeyEvent.VK_BACK_SPACE && e.getKeyCode() != KeyEvent.VK_DELETE) return;
 		
