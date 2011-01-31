@@ -41,6 +41,7 @@ import geogebra.kernel.discrete.AlgoVoronoi;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
+import geogebra.kernel.statistics.AlgoBinomialDist;
 import geogebra.kernel.statistics.AlgoCauchy;
 import geogebra.kernel.statistics.AlgoChiSquared;
 import geogebra.kernel.statistics.AlgoDoubleListCovariance;
@@ -3784,6 +3785,14 @@ public class Kernel {
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
+	
+	final public GeoNumeric BinomialDist(String label, NumberValue a, NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+		AlgoBinomialDist algo = new AlgoBinomialDist(cons, label, a, b, c, isCumulative);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	
 	
 	
 	/** 

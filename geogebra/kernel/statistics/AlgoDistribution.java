@@ -14,10 +14,13 @@ package geogebra.kernel.statistics;
 
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.arithmetic.NumberValue;
 
+import org.apache.commons.math.distribution.BinomialDistribution;
+import org.apache.commons.math.distribution.BinomialDistributionImpl;
 import org.apache.commons.math.distribution.CauchyDistribution;
 import org.apache.commons.math.distribution.CauchyDistributionImpl;
 import org.apache.commons.math.distribution.ChiSquaredDistribution;
@@ -51,6 +54,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	protected NumberValue a,b,c,d; //input
+	protected GeoBoolean isCumulative; //input
 	protected GeoNumeric num; //output	
 	private TDistribution t = null;
 	private ChiSquaredDistribution chisquared = null;
@@ -60,6 +64,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 	private ExponentialDistribution exponential = null;
 	private HypergeometricDistribution hypergeometric = null;
 	private PascalDistribution pascal = null;
+	private BinomialDistribution binomial = null;
 	private WeibullDistribution weibull = null;
 	private ZipfDistribution zipf = null;
 	private NormalDistribution normal = null;
@@ -78,14 +83,34 @@ public abstract class AlgoDistribution extends AlgoElement {
 		num.setLabel(label);
 	}
 
+	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+		super(cons);
+		this.a = a;
+		this.b = b;
+		this.c = c;
+		this.isCumulative = isCumulative;
+
+		num = new GeoNumeric(cons);
+
+		setInputOutput();
+		compute();
+		num.setLabel(label);
+	}
+	
 	public abstract String getClassName();
 
 	protected void setInputOutput(){
-		
-		if (d != null) {
+
+		if (isCumulative != null) {
 			input = new GeoElement[4];
 			input[2] = c.toGeoElement();
-			input[3] = d.toGeoElement();		
+			input[3] = isCumulative.toGeoElement();
+			
+		} else if (d != null) {
+			input = new GeoElement[4];
+			input[2] = c.toGeoElement();
+			input[3] = d.toGeoElement();
+
 		} else if (c != null) {
 			input = new GeoElement[3];
 			input[2] = c.toGeoElement();
@@ -184,6 +209,17 @@ public abstract class AlgoDistribution extends AlgoElement {
 		}
 		return pascal;
 	}
+	
+	BinomialDistribution getBinomialDistribution(int param, double param2) {
+		if (binomial == null) 
+			binomial = new BinomialDistributionImpl(param, param2);
+		else {
+			binomial.setNumberOfTrials(param);
+			binomial.setProbabilityOfSuccess(param2);
+		}
+		return binomial;
+	}
+	
 
 	WeibullDistribution getWeibullDistribution(double param, double param2) {
 		if (weibull == null) 

@@ -494,6 +494,7 @@ public class CommandDispatcher {
     	cmdTable.put("Normal", new CmdNormal(kernel));
     	cmdTable.put("InverseNormal", new CmdInverseNormal(kernel));
     	cmdTable.put("Binomial", new CmdBinomial(kernel));
+    	cmdTable.put("BinomialDist", new CmdBinomialDist(kernel));
     	cmdTable.put("TDistribution", new CmdTDistribution(kernel));  
     	cmdTable.put("InverseTDistribution", new CmdInverseTDistribution(kernel));  
     	cmdTable.put("FDistribution", new CmdFDistribution(kernel));  
