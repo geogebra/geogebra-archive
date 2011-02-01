@@ -3,6 +3,7 @@ package geogebra.kernel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.util.Util;
 
 public class GeoTextField extends GeoButton {
@@ -20,6 +21,10 @@ public class GeoTextField extends GeoButton {
 	public String getClassName() {
 		return "GeoTextField";
 	}
+	
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TEXTFIELD_ACTION;
+    }
 	
     protected String getTypeString() {
 		return "TextField";

@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
@@ -56,6 +57,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	 */
 	public GeoImage(Construction c) {
 		super(c);
+
 		setAlphaValue(1f);
 		//setAlgebraVisible(false); // don't show in algebra view		
 		setAuxiliaryObject(true);
@@ -90,6 +92,17 @@ implements Locateable, AbsoluteScreenLocateable,
 	public GeoElement copy() {
 		return new GeoImage(this);
 	}
+	
+    public int getRelatedModeID() {
+    	switch (this.image.getType()){
+    	case 5:
+    		return EuclidianConstants.MODE_IMAGE;
+    	case 6:
+    		return EuclidianConstants.MODE_PEN;
+    	default:
+    		return -1;	
+    	}
+    }
 	
 	private void initTempPoints() {
 		if (tempPoints == null) {

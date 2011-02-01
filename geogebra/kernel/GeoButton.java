@@ -13,6 +13,7 @@
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.main.Application;
 
 
@@ -40,6 +41,10 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable, T
 	public String getClassName() {
 		return "GeoButton";
 	}
+	
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_BUTTON_ACTION;
+    }
 	
     protected String getTypeString() {
 		return "Button";

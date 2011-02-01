@@ -18,6 +18,7 @@
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -90,6 +91,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	public String getClassName() {
 		return "GeoNumeric";
 	}
+	
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_SLIDER;
+    }	
 	
     protected String getTypeString() {
 		return "Numeric";
