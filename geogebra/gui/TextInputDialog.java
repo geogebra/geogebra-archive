@@ -932,7 +932,10 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		
 		try {
 			inputPanel.getTextComponent().setCaretPosition(caretPos);
-		} catch (Exception ee) {ee.printStackTrace();}
+		} catch (Exception ee) {
+			ee.printStackTrace();
+			Application.debug("exception"+inputPanel.getTextComponent().getText().length());
+		}
 		
 		
 		JTextPane tp = (JTextPane)inputPanel.getTextComponent();
@@ -958,69 +961,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		
 	}
 	
-	private static void parseHTMLx(String str, final StringBuilder sbHTML, final StringBuilder dataSB) {
-
-		sbHTML.setLength(0);
-		dataSB.setLength(0);
-		
-		HTMLEditorKit.ParserCallback callback = 
-			new HTMLEditorKit.ParserCallback () {
-			boolean dynamic = false;
-			boolean changeNextChar = false;
-			public void handleText(char[] data, int pos) {
-
-				sbHTML.append(data);
-				
-				char c = dynamic ? ' ' : 'x';
-				for (int i = 0 ; i < data.length ; i++) {
-					dataSB.append(changeNextChar ? ' ' : c);
-					changeNextChar = false;
-				}
-				
-
-				//System.err.println(data);
-			}
-			public void handleStartTag(HTML.Tag tag, 
-					MutableAttributeSet attrSet, int pos) {
-				if (tag == HTML.Tag.FONT) {
-					dynamic = true;
-					//Application.debug("XXX DIV");
-				}  
-					
-
-			}
-
-			public void handleEndTag(HTML.Tag tag, int pos) {
-				if (tag == HTML.Tag.FONT) {
-					dynamic = false;
-					changeNextChar = true;
-					//Application.debug("YYY DIV");
-				} else if (tag == HTML.Tag.P) {
-					sbHTML.append('\n');
-					dataSB.append(' ');
-					
-				}
-					
-
-			}
-
-		};
-		Reader reader = new StringReader(str);
-		try {
-			new ParserDelegator().parse(reader, callback, true);
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-			sbHTML.setLength(0);
-			dataSB.setLength(0);
-			return;
-		}
-		
-		//Application.debug(sbHTML);
-		//Application.debug(dataSB);
-
-	}
-
 
 
 	public void keyTyped(KeyEvent e) {

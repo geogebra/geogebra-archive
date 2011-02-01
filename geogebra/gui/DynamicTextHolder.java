@@ -22,6 +22,8 @@ public class DynamicTextHolder{
 
 	private static String HTML_DYNAMIC_START = "<font color=\"red\">";//&nbsp;";
 	private static String HTML_DYNAMIC_END = "</font>";
+	private static String HTML_STATIC_START = "";//"<pre>";
+	private static String HTML_STATIC_END = "";//"</pre>";
 	
 	public static void mainxx(String[] args) {
 		DynamicTextHolder dth = new DynamicTextHolder();
@@ -142,13 +144,16 @@ public class DynamicTextHolder{
 		
 		// check if we're starting with dynamic or not
 		if (dynamic.get(0)) sb.append(HTML_DYNAMIC_START);
+		else  sb.append(HTML_STATIC_START);
 
 		for (int i = 0 ; i < length ; i++) {
 			
 			char ch = text.charAt(i);
 			if (ch == '\n') {
 				sb.append("</p><p style=\"margin-top: 0\">");
-			} else {
+			} else if (ch == ' '){
+				sb.append("&nbsp;");
+			}else {
 				sb.append(ch);
 			}
 
@@ -156,8 +161,10 @@ public class DynamicTextHolder{
 				if (dynamic.get(i) && !dynamic.get(i+1)) {
 					// changing from dynamic to not dynamic
 					sb.append(HTML_DYNAMIC_END); 
+					sb.append(HTML_STATIC_START); 
 				} else if (!dynamic.get(i) && dynamic.get(i+1)) {
 					// changing from not dynamic to dynamic
+					sb.append(HTML_STATIC_END);						
 					sb.append(HTML_DYNAMIC_START);						
 				}
 			}
@@ -165,6 +172,7 @@ public class DynamicTextHolder{
 
 		// check if we're ending with dynamic or not
 		if (dynamic.get(length - 1)) sb.append(HTML_DYNAMIC_END);
+		else sb.append(HTML_STATIC_END);	
 
 		sb.append("</p>");
 		//Application.debug(sb.toString());
@@ -229,11 +237,13 @@ public class DynamicTextHolder{
 		
 		int charsToDelete = 1;
 		
-		if (pos < dynamic.size() && dynamic.get(pos)) {
+		if (pos - 1 < dynamic.size() && dynamic.get(pos - 1)) {
+			charsToDelete = 2;
 			while (pos > 0 && dynamic.get(pos - 1)) {
 				pos--;
 				charsToDelete++;
 			}
+			pos -= 1;
 		}
 		
 		for (int i = 0 ; i < charsToDelete ; i++) {
@@ -262,18 +272,18 @@ public class DynamicTextHolder{
 
 		//Application.debug(dynamic.size()+" "+caretPos+" "+lastCaretPos);
 
-		if (caretPos < dynamic.size() && caretPos > 1 && caretPos > lastCaretPos && dynamic.get(caretPos - 2)) {
+		if (caretPos - 1 < dynamic.size() && caretPos > 1 && caretPos > lastCaretPos && dynamic.get(caretPos - 1)) {
 			int count = 0;
-			while (caretPos - 2 + count < dynamic.size() && dynamic.get(caretPos - 2 + count)) count ++;	
+			while (caretPos - 1 + count < dynamic.size() && dynamic.get(caretPos - 1 + count)) count ++;	
 			
-			return caretPos + count - 1;
+			return caretPos + count + 1;
 		}
 		
-		if (caretPos > 1 && caretPos - 1 < dynamic.size() && caretPos < lastCaretPos && dynamic.get(caretPos - 1)) {
+		if (caretPos > 1 && caretPos - 2 < dynamic.size() && caretPos < lastCaretPos && dynamic.get(caretPos - 2)) {
 			int count = 0;
-			while (caretPos - 1 - count > 0 && caretPos - 1 - count < dynamic.size() && dynamic.get(caretPos - 1 - count)) count ++;	
+			while (caretPos - 1 - count > 0 && caretPos - 2 - count < dynamic.size() && dynamic.get(caretPos - 2 - count)) count ++;	
 			
-			return caretPos - count + 1;
+			return caretPos - count - 1;
 		}
 		
 		return caretPos;
@@ -290,12 +300,20 @@ public class DynamicTextHolder{
 			}
 			
 		} else {
+			
+			caretPos--;
+			
 			text.insert(caretPos, ' ');
 			text.insert(caretPos, label);
 			text.insert(caretPos, ' ');
-			for (int i = 0 ; i < label.length() + 2 ; i++) {
+			
+			dynamic.add(caretPos, false); // space at END 
+
+			for (int i = 0 ; i < label.length() ; i++) {
 				dynamic.add(caretPos, true);
 			}
+			
+			dynamic.add(caretPos, false); // space at START
 			
 		}
 		
