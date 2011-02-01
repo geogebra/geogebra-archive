@@ -295,9 +295,11 @@ public class DynamicTextHolder{
 			text.append(' ');
 			text.append(label);
 			text.append(' ');
-			for (int i = 0 ; i < label.length() + 2 ; i++) {
+			dynamic.add(false); // space at START 
+			for (int i = 0 ; i < label.length() ; i++) {
 				dynamic.add(true);
 			}
+			dynamic.add(false); // space at END 
 			
 		} else {
 			
