@@ -8999,7 +8999,9 @@ class CmdStemPlot extends CommandProcessor {
 
 	}    
  }
- 
+ /**
+  * Execute[<list of commands>] 
+  */
  class CmdExecute  extends CommandProcessor {
 		
 
@@ -9017,7 +9019,7 @@ class CmdStemPlot extends CommandProcessor {
 		arg = resArgs(c);
 		if (n > 1)
 			throw argNumErr(app, c.getName(), n);
-		if((!arg[0].isGeoList()) || (((GeoList)arg[0]).getElementType() !=GeoElement.GEO_CLASS_TEXT))
+		 if((!arg[0].isGeoList()) || (!((GeoList)arg[0]).getGeoElementForPropertiesDialog().isGeoText()))
 				throw argErr(app, c.getName(), arg[0]);
 		GeoList list = (GeoList)arg[0];
 		for(int i=0;i<list.size();i++){
