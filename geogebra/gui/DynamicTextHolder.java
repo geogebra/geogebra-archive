@@ -257,10 +257,35 @@ public class DynamicTextHolder{
 	}
 	public int deletePressed(KeyEvent e, int pos) {
 		
-		dynamic.remove(pos - 1);
-		text.deleteCharAt(pos - 1);
-
-		return pos;
+		if (dynamic.size() == 0 || pos > dynamic.size()) return pos;
+		
+		int oPos = pos - 1;
+	
+		int charsToDelete = 1;
+		
+		if (pos < dynamic.size() && dynamic.get(pos)) {
+			charsToDelete = 2;
+			while (pos > 0 && dynamic.get(pos)) {
+				pos++;
+				charsToDelete++;
+			}
+			//oPos -= 1;
+		}
+		
+		//oPos -= charsToDelete;
+		
+		if (oPos < 0) {
+			Application.debug("oPos = "+oPos);
+			oPos = 0;
+		}
+		
+		for (int i = 0 ; i < charsToDelete ; i++) {
+			dynamic.remove(oPos);
+			text.deleteCharAt(oPos);
+		}
+		
+		
+		return oPos + 1;
 		
 	}
 

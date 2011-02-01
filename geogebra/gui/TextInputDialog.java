@@ -1008,7 +1008,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 				kit.read(((Reader)(new StringReader(dth.toHTMLString()))), tp.getDocument(), 0);
 				inputPanel.getTextComponent().removeCaretListener(this);
 				try {
-				inputPanel.getTextComponent().setCaretPosition(caretPos);
+					inputPanel.getTextComponent().setCaretPosition(caretPos);
 				} catch (Exception ee) { ee.printStackTrace(); }
 				inputPanel.getTextComponent().addCaretListener(this);
 	
