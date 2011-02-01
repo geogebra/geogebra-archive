@@ -9000,6 +9000,45 @@ class CmdStemPlot extends CommandProcessor {
 	}    
  }
  
+ class CmdExecute  extends CommandProcessor {
+		
+
+		/**
+		* Create new command processor
+		* @param kernel kernel
+		*/
+		public CmdExecute (Kernel kernel) {
+			super(kernel);
+		}
+		
+	final public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+		arg = resArgs(c);
+		if (n > 1)
+			throw argNumErr(app, c.getName(), n);
+		if((!arg[0].isGeoList()) || (((GeoList)arg[0]).getElementType() !=GeoElement.GEO_CLASS_TEXT))
+				throw argErr(app, c.getName(), arg[0]);
+		GeoList list = (GeoList)arg[0];
+		for(int i=0;i<list.size();i++){
+			try{
+			kernel.getAlgebraProcessor().processAlgebraCommandNoExceptionHandling(
+					((GeoText)list.get(i)).getTextString(), false,false,true);
+			}catch(MyError e){
+				app.showError(e);
+				break;
+			} catch (Exception e) {
+				app.showError(e.getLocalizedMessage());
+				e.printStackTrace();
+				break;
+			}
+		}
+		app.storeUndoInfo();
+		return new GeoElement[] {};
+
+	}    
+}
+ 
  /**
   * IsInRegion[<Point>,<Region>]
   */

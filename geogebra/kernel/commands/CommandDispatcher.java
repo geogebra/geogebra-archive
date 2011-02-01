@@ -36,7 +36,7 @@ public class CommandDispatcher {
     /** stores public (String name, CommandProcessor cmdProc) pairs*/   
     protected HashMap<String,CommandProcessor> cmdTable;
     
-    protected HashMap[] cmdSubTable;
+    protected HashMap<String,CommandProcessor>[] cmdSubTable;
     public static final int TABLE_GEOMETRY = 0;
     public static final int TABLE_ALGEBRA = 1;
     public static final int TABLE_TEXT = 2;
@@ -598,7 +598,8 @@ public class CommandDispatcher {
        	cmdTable.put("ParseToFunction", new CmdParseToFunction(kernel)); 
        	cmdTable.put("StartAnimation", new CmdStartAnimation(kernel)); 
     	cmdTable.put("Delete", new CmdDelete(kernel));	
-    	cmdTable.put("Slider", new CmdSlider(kernel));     
+    	cmdTable.put("Slider", new CmdSlider(kernel));
+    	cmdTable.put("Execute", new CmdExecute(kernel));     
        		
        	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);
     	cmdTable.clear();

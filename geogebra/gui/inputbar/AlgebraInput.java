@@ -262,7 +262,8 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			  boolean success = null != geos;
 			  
 			  // create texts in the middle of the visible view
-			  if (success && geos[0].isGeoText()) {
+			  // we must check that size of geos is not 0 (ZoomIn, ZoomOut, ...)
+			  if (success && geos.length > 0 && geos[0].isGeoText()) {
 				  GeoText text = (GeoText)geos[0];
 				  if (!text.isTextCommand() && text.getStartPoint() == null) {
 					  
