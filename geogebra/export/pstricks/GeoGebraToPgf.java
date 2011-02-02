@@ -12,6 +12,7 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
+import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
@@ -1397,24 +1398,26 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		endBeamer(code);
 	}
 	private void drawCircle(GeoConic geo){
+		StringBuilder build=new StringBuilder();
 		if (xunit==yunit){
 	// draw a circle
 	//	 command:  \draw[options](x_center,y_center) circle (R cm)
 			double x=geo.getTranslationVector().getX();
 			double y=geo.getTranslationVector().getY();
 			double r=geo.getHalfAxes()[0];
-			startBeamer(code);
-			code.append("\\draw");
+
+			startBeamer(build);
+			build.append("\\draw");
 			String s=LineOptionCode(geo,true);
 			if (s.length()!=0) s=" ["+s+"] ";
-			code.append(s);
-			writePoint(x,y,code);
-			code.append(" circle (");
+			build.append(s);
+			writePoint(x,y,build);
+			build.append(" circle (");
 			String tmpr=kernel.format(r*xunit);
-			if (Double.parseDouble(tmpr)!=0) code.append(tmpr);
-			else code.append(r);
-			code.append("cm);\n");
-			endBeamer(code);
+			if (Double.parseDouble(tmpr)!=0) build.append(tmpr);
+			else build.append(r);
+			build.append("cm);\n");
+			endBeamer(build);
 		}
 		else {
 		// draw an ellipse
@@ -1423,19 +1426,21 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			double y1=geo.getTranslationVector().getY();
 			double r1=geo.getHalfAxes()[0];
 			double r2=geo.getHalfAxes()[1];
-			startBeamer(code);
-			code.append("\\draw");
+			startBeamer(build);
+			build.append("\\draw");
 			String s=LineOptionCode(geo,true);
 			if (s.length()!=0) s=" ["+s+"] ";
-			code.append(s);
-			writePoint(x1,y1,code);
-			code.append(" ellipse (");
-			code.append(kernel.format(r1*xunit));
-			code.append("cm and ");
-			code.append(kernel.format(r2*yunit));
-			code.append("cm);\n");
-			endBeamer(code);
+			build.append(s);
+			writePoint(x1,y1,build);
+			build.append(" ellipse (");
+			build.append(kernel.format(r1*xunit));
+			build.append("cm and ");
+			build.append(kernel.format(r2*yunit));
+			build.append("cm);\n");
+			endBeamer(build);
 		}
+		if (geo.getAlphaValue()>0.0f) codeFilledObject.append(build);
+		else code.append(build);
 	}
 	protected void drawGeoConic(GeoConic geo){	
 		switch(geo.getType()){
@@ -1820,6 +1825,80 @@ public class GeoGebraToPgf extends GeoGebraExport {
 			}
 			endBeamer(codePoint);
 		}
+		// In case of trimmed intersection
+		if (gp.getShowTrimmedIntersectionLines()){
+        	AlgoElement algo = gp.getParentAlgorithm();
+        	
+        	if ( algo instanceof AlgoIntersectAbstract ){
+        		GeoElement[] geos = algo.getInput();
+        		
+        		double x1=euclidianView.toScreenCoordXd(gp.getInhomX());
+        		double y1=euclidianView.toScreenCoordYd(gp.getInhomY());
+        		double x2=euclidianView.toScreenCoordXd(gp.getInhomX())+30;
+        		double y2=euclidianView.toScreenCoordYd(gp.getInhomY())+30;
+        		x1=euclidianView.toRealWorldCoordX(x1);
+        		x2=euclidianView.toRealWorldCoordX(x2);
+        		y1=euclidianView.toRealWorldCoordY(y1);
+        		y2=euclidianView.toRealWorldCoordY(y2);
+        		double r1=Math.abs(x2-x1);
+        		double r2=Math.abs(y2-y1);
+        		StringBuilder s=new StringBuilder();
+        		if (format==GeoGebraToPgf.FORMAT_LATEX) s.append("\\begin{scope}\n");
+        		else if(format==GeoGebraToPgf.FORMAT_CONTEXT) s.append("\\startscope\n");
+        		else if(format==GeoGebraToPgf.FORMAT_PLAIN_TEX) s.append("\\scope\n");
+        		s.append("\\clip (");
+    			s.append(kernel.format(x1));
+    			s.append(",");
+    			s.append(kernel.format(y1));
+    			s.append(") ellipse (");
+    			s.append(kernel.format(r1));
+    			s.append("cm and ");
+    			s.append(kernel.format(r2));
+    			s.append("cm);\n");
+    			// Latex format
+    			String end="\\end{scope}\n";
+        		if(format==GeoGebraToPgf.FORMAT_CONTEXT) end="\\stopscope\n";
+        		else if(format==GeoGebraToPgf.FORMAT_PLAIN_TEX) end="\\endscope\n";
+    			boolean fill1=false;
+    			boolean draw=!geos[0].isEuclidianVisible();
+    			if (draw){
+    				fill1=geos[0].isFillable()&&geos[0].getAlphaValue()>0.0f;
+    				if (fill1) 	codeFilledObject.append(s);
+    				else code.append(s);
+    				drawGeoElement(geos[0],false,true);
+    			}
+    			if (geos.length > 1&& !geos[1].isEuclidianVisible()){
+           			boolean fill2=geos[1].isFillable()&&(geos[1].getAlphaValue()>0.0f);
+           			if (draw){
+           				if (fill1==fill2){
+           			   		drawGeoElement(geos[1],false,true);
+           			   		if (fill1) 	codeFilledObject.append(end);
+           			   		else code.append(end);
+           				}
+           				else {
+           					if (fill1) 	codeFilledObject.append(end);
+           					else code.append(end);
+           					if (fill2) 	codeFilledObject.append(s);
+            				else code.append(s);
+           					drawGeoElement(geos[1],false,true);
+           					if (fill2) 	codeFilledObject.append(end);
+           					else code.append(end);
+           				}
+           			}
+           			else {
+        				if (fill2) 	codeFilledObject.append(s);
+        				else code.append(s);
+       					drawGeoElement(geos[1],false,true);
+       					if (fill2) 	codeFilledObject.append(end);
+       					else code.append(end);
+           			}
+           		}
+           		else if (draw){
+            		if (fill1) 	codeFilledObject.append(end);
+            		else code.append(end);
+           		}
+        	}
+        }
 	}
 	
 	/**

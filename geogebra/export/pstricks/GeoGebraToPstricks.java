@@ -1294,6 +1294,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			codePoint.append(")\n");
 			endBeamer(codePoint);
 		}
+		// In case of trimmed intersection
 		if (gp.getShowTrimmedIntersectionLines()){
         	AlgoElement algo = gp.getParentAlgorithm();
         	
