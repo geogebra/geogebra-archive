@@ -80,6 +80,9 @@ import javax.swing.text.html.parser.ParserDelegator;
  */
 public class TextInputDialog extends InputDialog implements DocumentListener, CaretListener, KeyListener {
 
+	private boolean useAlternateEditor = false; // <========= flag to test alternate editor
+	
+	
 	private static final long serialVersionUID = 1L;
 
 	private JCheckBox cbLaTeX;
@@ -105,6 +108,10 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 	private ArrayList<String> recentSymbolList;
 
 	private JPanel toolPanel;
+
+	private DynamicTextInputPanel altEditor;
+
+	
 
 
 
@@ -177,14 +184,15 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		editPanel.add(editHeader, BorderLayout.NORTH);
 		
 		
-		// testing dynamic input panel
-		/*
-		DynamicTextInputPanel d = new DynamicTextInputPanel(app);
-		editPanel.add(d, BorderLayout.NORTH);
-		*/
+		if(useAlternateEditor){
+			altEditor = new DynamicTextInputPanel(app);
+			altEditor.getDocument().addDocumentListener(this);
+			editPanel.add(new JScrollPane(altEditor), BorderLayout.CENTER);
+		}else{
+			editPanel.add(inputPanel, BorderLayout.CENTER);	
+		}
 		
-		editPanel.add(inputPanel, BorderLayout.CENTER);
-		editPanel.add(toolPanel, BorderLayout.SOUTH);		
+		editPanel.add(toolPanel, BorderLayout.SOUTH);	
 		editPanel.setBorder(BorderFactory.createEtchedBorder());
 
 
@@ -559,13 +567,20 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 				//inputText = inputPanel.getText();
 				isLaTeX = cbLaTeX.isSelected();
 
-				JTextComponent textComp = inputPanel.getTextComponent();
-					
-				String html = textComp.getText();
+				boolean finished;
+				if(!useAlternateEditor){
+					JTextComponent textComp = inputPanel.getTextComponent();
+
+					String html = textComp.getText();
+
+					dth.parseHTMLString(html);
+
+					 finished = inputHandler.processInput(dth.toGeoGebraString());
+				}
+				else{
+					 finished = inputHandler.processInput(this.altEditor.buildGeoGebraString());
+				}
 				
-				dth.parseHTMLString(html);
-				
-				boolean finished = inputHandler.processInput(dth.toGeoGebraString());	
 				if (isShowing()) {	
 					// text dialog window is used and open
 					setVisible(!finished);
@@ -654,9 +669,12 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 	protected void handleDocumentEvent(DocumentEvent e) {
 		Document doc = e.getDocument();
 		//try {
-			//inputHandler.processInput(inputPanel.getText());
-			//latexPreviewer.setLaTeX(app, doc.getText(0, doc.getLength()));
-			
+		//inputHandler.processInput(inputPanel.getText());
+		//latexPreviewer.setLaTeX(app, doc.getText(0, doc.getLength()));
+
+		if(useAlternateEditor)
+			textPreviewer.updatePreviewText(text, altEditor.buildGeoGebraString(), isLaTeX);
+		else{
 			JTextComponent textComp = inputPanel.getTextComponent();
 			String html = textComp.getText();
 				
@@ -665,11 +683,22 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 			
 			//textPreviewer.updatePreviewText(text, doc.getText(0, doc.getLength()), isLaTeX);
 			textPreviewer.updatePreviewText(text, dth.toGeoGebraString(), isLaTeX);
+		}
+
+
 		//} catch (BadLocationException ex) { }
 	}
 	
 	public void insertGeoElement(GeoElement geo) {
 		if (geo == null) return;
+
+		if(useAlternateEditor){
+			Document d = altEditor.insertDynamicText(geo.getLabel());
+			d.addDocumentListener(this);
+			return;
+		}
+
+
 		inputPanel.getTextComponent().getDocument().removeDocumentListener(this);
 		inputPanel.getTextComponent().removeCaretListener(this);
 		
