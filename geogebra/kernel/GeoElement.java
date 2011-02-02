@@ -4918,7 +4918,7 @@ public abstract class GeoElement
 	public void setUpdateScript(String script) {		
 		if (!canHaveUpdateScript()) return;		
 		this.updateScript = script;
-		app.getScriptManager().initJavaScriptView();		
+		app.getScriptManager().initJavaScriptViewWithoutJavascript();		
 	}
 	
 	public boolean canHaveUpdateScript() {

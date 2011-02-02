@@ -545,6 +545,13 @@ public class ScriptManager {
 		}
 	}
 	
+	public synchronized void initJavaScriptViewWithoutJavascript() {
+		if (javaToJavaScriptView == null) {
+			javaToJavaScriptView = new JavaToJavaScriptView();
+			app.getKernel().attach(javaToJavaScriptView); // register view			
+		}
+	}
+	
 	public synchronized void initJavaScript() {
 		
 		if (app.isApplet()) {
