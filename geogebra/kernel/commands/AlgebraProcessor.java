@@ -187,7 +187,7 @@ public class AlgebraProcessor {
 	public GeoElement[] processAlgebraCommand(String cmd, boolean storeUndo) {
 		
 		try {
-			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo,true,false);
+			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo,false,false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			app.showError(e.getMessage());
