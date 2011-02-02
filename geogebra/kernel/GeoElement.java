@@ -4915,11 +4915,10 @@ public abstract class GeoElement
 		this.clickScript = script;
 	}
 	
-	public void setUpdateScript(String script) {
-		if (!canHaveUpdateScript()) return;
-		app.getScriptManager().initJavaScriptView();
-		Application.debug(script);
+	public void setUpdateScript(String script) {		
+		if (!canHaveUpdateScript()) return;		
 		this.updateScript = script;
+		app.getScriptManager().initJavaScriptView();		
 	}
 	
 	public boolean canHaveUpdateScript() {
