@@ -212,15 +212,16 @@ public abstract class GeoGebraExport implements ActionListener{
 	/**
 	 * This method is generic method to generate code according to GeoElement nature
 	 * @param g GeoElement g
+	 * @param fromGeoList if GeoElement comes from a GeoList object
 	 */
-    protected void drawGeoElement(GeoElement g,boolean fromGeoList){
+    protected void drawGeoElement(GeoElement g,boolean fromGeoList,boolean trimmedInter){
     	if (g.isGeoList()){
     		GeoList geo=((GeoList)g);
     		for (int i=0;i<geo.size();i++){
-    			drawGeoElement(geo.get(i),true);
+    			drawGeoElement(geo.get(i),true,false);
     		}
     	}
-    	else if (g.isEuclidianVisible()) {
+    	else if (g.isEuclidianVisible()||trimmedInter) {
     		if (g.isGeoPoint()){
 				drawGeoPoint((GeoPoint)g);
 				drawLabel(g,null);
@@ -351,6 +352,7 @@ public abstract class GeoGebraExport implements ActionListener{
         	drawLocus((GeoLocus)g);
         }
 	}
+    	
     }
     protected boolean isSinglePointConic(GeoElement geo){
 		if (geo.isGeoConic()){
@@ -748,7 +750,7 @@ public abstract class GeoGebraExport implements ActionListener{
     		GeoElement[] geos=construction.getConstructionElement(step).getGeoElements();
     		for (int j=0;j<geos.length;j++){
             	GeoElement g = (GeoElement)(geos[j]);
-               	drawGeoElement(g,false);    
+               	drawGeoElement(g,false,false);    
     		}
     	}
     	

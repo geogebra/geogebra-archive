@@ -19,6 +19,7 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
+import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoConic;
@@ -1096,25 +1097,26 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		endBeamer(code);
 	}
 	private void drawCircle(GeoConic geo){
+		StringBuilder s=new StringBuilder();
 		if (xunit==yunit){
 	// draw a circle
 	//	 command:  \pscircle[options](x_center,y_center){Radius)}
 			double x=geo.getTranslationVector().getX();
 			double y=geo.getTranslationVector().getY();
 			double r=geo.getHalfAxes()[0];
-			startBeamer(code);
-			code.append("\\pscircle");
-			code.append(LineOptionCode(geo,true));
-			code.append("(");
-			code.append(kernel.format(x));
-			code.append(",");
-			code.append(kernel.format(y));
-			code.append("){");
+			startBeamer(s);
+			s.append("\\pscircle");
+			s.append(LineOptionCode(geo,true));
+			s.append("(");
+			s.append(kernel.format(x));
+			s.append(",");
+			s.append(kernel.format(y));
+			s.append("){");
 			String tmpr=kernel.format(r*xunit);
-			if (Double.parseDouble(tmpr)!=0) code.append(tmpr);
-			else code.append(r);
-			code.append("}\n");
-			endBeamer(code);
+			if (Double.parseDouble(tmpr)!=0) s.append(tmpr);
+			else s.append(r);
+			s.append("}\n");
+			endBeamer(s);
 		}
 		else {
 		// draw an ellipse
@@ -1123,20 +1125,22 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			double y1=geo.getTranslationVector().getY();
 			double r1=geo.getHalfAxes()[0];
 			double r2=geo.getHalfAxes()[1];
-			startBeamer(code);
-			code.append("\\psellipse");
-			code.append(LineOptionCode(geo,true));
-			code.append("(");
-			code.append(kernel.format(x1));
-			code.append(",");
-			code.append(kernel.format(y1));
-			code.append(")(");
-			code.append(kernel.format(r1));
-			code.append(",");
-			code.append(kernel.format(r2));
-			code.append(")\n");
-			endBeamer(code);
+			startBeamer(s);
+			s.append("\\psellipse");
+			s.append(LineOptionCode(geo,true));
+			s.append("(");
+			s.append(kernel.format(x1));
+			s.append(",");
+			s.append(kernel.format(y1));
+			s.append(")(");
+			s.append(kernel.format(r1));
+			s.append(",");
+			s.append(kernel.format(r2));
+			s.append(")\n");
+			endBeamer(s);
 		}
+		if (geo.getAlphaValue()>0.0f) codeFilledObject.append(s);
+		else code.append(s);
 	}
 	protected void drawGeoConic(GeoConic geo){	
 		switch(geo.getType()){
@@ -1290,6 +1294,73 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			codePoint.append(")\n");
 			endBeamer(codePoint);
 		}
+		if (gp.getShowTrimmedIntersectionLines()){
+        	AlgoElement algo = gp.getParentAlgorithm();
+        	
+        	if ( algo instanceof AlgoIntersectAbstract ){
+        		GeoElement[] geos = algo.getInput();
+        		
+        		double x1=euclidianView.toScreenCoordXd(gp.getInhomX());
+        		double y1=euclidianView.toScreenCoordYd(gp.getInhomY());
+        		double x2=euclidianView.toScreenCoordXd(gp.getInhomX())+30;
+        		double y2=euclidianView.toScreenCoordYd(gp.getInhomY())+30;
+        		x1=euclidianView.toRealWorldCoordX(x1);
+        		x2=euclidianView.toRealWorldCoordX(x2);
+        		y1=euclidianView.toRealWorldCoordY(y1);
+        		y2=euclidianView.toRealWorldCoordY(y2);
+        		double r1=Math.abs(x2-x1);
+        		double r2=Math.abs(y2-y1);
+        		StringBuilder s=new StringBuilder("\\psclip{\\psellipse[linestyle=none](");
+    			s.append(kernel.format(x1));
+    			s.append(",");
+    			s.append(kernel.format(y1));
+    			s.append(")(");
+    			s.append(kernel.format(r1));
+    			s.append(",");
+    			s.append(kernel.format(r2));
+    			s.append(")}\n");
+        		
+    			String end="\\endpsclip\n";
+    			boolean fill1=false;
+    			boolean draw=!geos[0].isEuclidianVisible();
+    			if (draw){
+    				fill1=geos[0].isFillable()&&geos[0].getAlphaValue()>0.0f;
+    				if (fill1) 	codeFilledObject.append(s);
+    				else code.append(s);
+    				drawGeoElement(geos[0],false,true);
+    			}
+    			if (geos.length > 1&& !geos[1].isEuclidianVisible()){
+           			boolean fill2=geos[1].isFillable()&&(geos[1].getAlphaValue()>0.0f);
+           			if (draw){
+           				if (fill1==fill2){
+           			   		drawGeoElement(geos[1],false,true);
+           			   		if (fill1) 	codeFilledObject.append(end);
+           			   		else code.append(end);
+           				}
+           				else {
+           					if (fill1) 	codeFilledObject.append(end);
+           					else code.append(end);
+           					if (fill2) 	codeFilledObject.append(s);
+            				else code.append(s);
+           					drawGeoElement(geos[1],false,true);
+           					if (fill2) 	codeFilledObject.append(end);
+           					else code.append(end);
+           				}
+           			}
+           			else {
+        				if (fill2) 	codeFilledObject.append(s);
+        				else code.append(s);
+       					drawGeoElement(geos[1],false,true);
+       					if (fill2) 	codeFilledObject.append(end);
+       					else code.append(end);
+           			}
+           		}
+           		else if (draw){
+            		if (fill1) 	codeFilledObject.append(end);
+            		else code.append(end);
+           		}
+        	}
+        }
 	}
 	protected void drawGeoLine(GeoLine geo){
 		double x=geo.getX();
