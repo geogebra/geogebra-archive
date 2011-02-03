@@ -28,28 +28,41 @@ public class AlgoIntegralFunctions extends AlgoElement  implements AlgoDrawInfor
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f, g; // input
 	private NumberValue a, b; //input
+	private GeoBoolean evaluate; //input
 	private GeoElement ageo, bgeo;
 	private GeoNumeric n; // output n = integral(f(x) - g(x), x, a, b)   
 
 	private GeoNumeric intF, intG;						
 
+	
+	public AlgoIntegralFunctions(Construction cons, String label, 
+			GeoFunction f, GeoFunction g,
+			NumberValue a, NumberValue b) {
+		this(cons, label,f, g, a, b, null);
+        n.setLabel(label);
+	}
+	
+	
 	public AlgoIntegralFunctions(Construction cons, String label, 
 							GeoFunction f, GeoFunction g,
-							NumberValue a, NumberValue b) {
+							NumberValue a, NumberValue b, 
+							GeoBoolean evaluate) {
 		super(cons);
 		this.f = f;
 		this.g = g;		
 		this.a = a;
 		this.b = b;
+		this.evaluate = evaluate;
 		ageo = a.toGeoElement();		
 		bgeo = b.toGeoElement();
 		
+		
 		// helper algorithms for integral f and g		
-		AlgoIntegralDefinite algoInt = new AlgoIntegralDefinite(cons, f, a, b);
+		AlgoIntegralDefinite algoInt = new AlgoIntegralDefinite(cons, f, a, b, evaluate);
 		cons.removeFromConstructionList(algoInt);
 		intF = algoInt.getIntegral();
 		
-		algoInt = new AlgoIntegralDefinite(cons, g, a, b);
+		algoInt = new AlgoIntegralDefinite(cons, g, a, b, evaluate);
 		cons.removeFromConstructionList(algoInt);
 		intG = algoInt.getIntegral();
 		
@@ -66,19 +79,32 @@ public class AlgoIntegralFunctions extends AlgoElement  implements AlgoDrawInfor
 	}
 	
     public AlgoIntegralFunctions copy(){
-    	return new AlgoIntegralFunctions(cons, null, (GeoFunction)f.copy(),(GeoFunction)g.copy(), 
-    			new MyDouble(kernel,a.getDouble()), new MyDouble(kernel,b.getDouble()));
+    	return new AlgoIntegralFunctions(cons, null, (GeoFunction)f.copy(),
+    			(GeoFunction)g.copy(), 
+    			new MyDouble(kernel,a.getDouble()), 
+    			new MyDouble(kernel,b.getDouble()), 
+    			(GeoBoolean)evaluate.copy());
 
     }
 
 	// for AlgoElement
 	protected void setInputOutput() {
+		if(evaluate == null){
 		input = new GeoElement[4];
 		input[0] = f;
 		input[1] = g;
 		input[2] = ageo;
 		input[3] = bgeo;
-
+		}
+		else
+		{
+		input = new GeoElement[5];
+		input[0] = f;
+		input[1] = g;
+		input[2] = ageo;
+		input[3] = bgeo;
+		input[4] = evaluate;
+		}
 		output = new GeoElement[1];
 		output[0] = n;
 		setDependencies(); // done by AlgoElement
@@ -109,6 +135,13 @@ public class AlgoIntegralFunctions extends AlgoElement  implements AlgoDrawInfor
 			n.setUndefined();
 			return;
 		}
+		
+		 // return if it should not be evaluated (i.e. is shade-only)
+        if(evaluate !=null && !evaluate.getBoolean()){
+        	n.setValue(0);
+        	return;
+        }
+		
 		
 		// Integral[f(x) - g(x), a, b] = Integral[f(x), a, b] - Integral[g(x), a, b]
 		n.setValue(intF.getValue() - intG.getValue());		

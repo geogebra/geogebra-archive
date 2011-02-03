@@ -31,6 +31,7 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
     private NumberValue a, b; //input
+    private GeoBoolean evaluate; //input
     private GeoElement ageo, bgeo;
     private GeoNumeric n; // output g = integral(f(x), x, a, b)   
 
@@ -51,15 +52,28 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
         GeoFunction f,
         NumberValue a,
         NumberValue b) {
-        this(cons, f, a, b);
+        this(cons, f, a, b,null);
         n.setLabel(label);
     }
 
+    public AlgoIntegralDefinite(
+            Construction cons,
+            String label,
+            GeoFunction f,
+            NumberValue a,
+            NumberValue b,
+            GeoBoolean evaluate) {
+            this(cons, f, a, b, evaluate);
+            n.setLabel(label);
+        }
+
+    
     AlgoIntegralDefinite(
         Construction cons,
         GeoFunction f,
         NumberValue a,
-        NumberValue b) {
+        NumberValue b,
+        GeoBoolean evaluate) {
         super(cons);
         this.f = f;
         n = new GeoNumeric(cons); // output
@@ -67,10 +81,13 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
         this.b = b;
         ageo = a.toGeoElement();
         bgeo = b.toGeoElement();
-                
+        this.evaluate = evaluate;   
+        
+               
         // create helper algorithm for symbolic integral
         // don't use symbolic integral for conditional functions
-        if (!f.isGeoFunctionConditional()) {
+        // or if it should not be evaluated (i.e. a shade-only integral)
+        if ((evaluate != null && !evaluate.getBoolean()) && !f.isGeoFunctionConditional()) {
             AlgoCasIntegral algoInt = new AlgoCasIntegral(cons, f, null);
             symbIntegral = (GeoFunction) algoInt.getResult();
             cons.removeFromConstructionList(algoInt);     
@@ -87,10 +104,20 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
 
     // for AlgoElement
     protected void setInputOutput() {
-        input = new GeoElement[3];
-        input[0] = f;
-        input[1] = ageo;
-        input[2] = bgeo;
+    	if(evaluate == null){
+    		input = new GeoElement[3];
+    		input[0] = f;
+    		input[1] = ageo;
+    		input[2] = bgeo;
+    	}
+    	else
+    	{
+    		input = new GeoElement[4];
+    		input[0] = f;
+    		input[1] = ageo;
+    		input[2] = bgeo;
+    		input[3] = evaluate;
+    	}
 
         setOutputLength(1); 
         setOutput(0,n);
@@ -123,6 +150,7 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
             return;
         }
 
+       
         // check for equal bounds
         double lowerLimit = a.getDouble();
         double upperLimit = b.getDouble();
@@ -140,6 +168,12 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
         	return;
         }
 
+        // return if it should not be evaluated (i.e. is shade-only)
+        if(evaluate !=null && !evaluate.getBoolean()){
+        	n.setValue(0);
+        	return;
+        }
+        
         /* 
          * Try to use symbolic integral
          *
@@ -242,7 +276,10 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
     }
     
     public AlgoDrawInformation copy(){
-    	return new AlgoIntegralDefinite(cons,(GeoFunction)f.copy(),(NumberValue)a.deepCopy(kernel),(NumberValue)b.deepCopy(kernel));
+    	return new AlgoIntegralDefinite(cons,(GeoFunction)f.copy(),
+    			(NumberValue)a.deepCopy(kernel),
+    			(NumberValue)b.deepCopy(kernel),
+    			(GeoBoolean)evaluate.copy());
     }
     
 

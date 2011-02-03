@@ -3483,10 +3483,11 @@ class CmdIntegral extends CommandProcessor {
 
 		case 4 :
 			arg = resArgs(c);
+			// difference of two functions
 			if ((ok[0] = (arg[0] .isGeoFunctionable()))
 					&& (ok[1] = (arg[1] .isGeoFunctionable()))
 					&& (ok[2] = (arg[2] .isNumberValue()))
-					&& (ok[3] = (arg[3] .isNumberValue()))) {
+					&& (ok[3] = (arg[3] .isNumberValue() && !arg[3].isBooleanValue()  ))) {
 				GeoElement[] ret =
 				{
 						kernel.Integral(
@@ -3496,6 +3497,23 @@ class CmdIntegral extends CommandProcessor {
 								(NumberValue) arg[2],
 								(NumberValue) arg[3])};
 				return ret;
+
+			}	
+			// single function integral with evaluate option
+			else if ((ok[0] = (arg[0] .isGeoFunctionable()))
+					&& (ok[1] = (arg[1] .isNumberValue()))
+					&& (ok[2] = (arg[2] .isNumberValue()))
+					&& (ok[3] = (arg[3] .isGeoBoolean()))) {
+				GeoElement[] ret =
+				{
+						kernel.Integral(
+								c.getLabel(),
+								((GeoFunctionable) arg[0]).getGeoFunction(),
+								(NumberValue) arg[1],
+								(NumberValue) arg[2],
+								(GeoBoolean) arg[3])};
+				return ret; 		
+
 			} else {
 				if (!ok[0])
 					throw argErr(app, "Integral", arg[0]);
@@ -3506,6 +3524,39 @@ class CmdIntegral extends CommandProcessor {
 				else
 					throw argErr(app, "Integral", arg[3]);
 			}
+			
+			
+		case 5 :
+			arg = resArgs(c);
+			// difference of two functions with evaluate option
+			if ((ok[0] = (arg[0] .isGeoFunctionable()))
+					&& (ok[1] = (arg[1] .isGeoFunctionable()))
+					&& (ok[2] = (arg[2] .isNumberValue()))
+					&& (ok[3] = (arg[3] .isNumberValue())
+					&& (ok[4] = (arg[4] .isGeoBoolean())))) {
+				GeoElement[] ret =
+				{
+						kernel.Integral(
+								c.getLabel(),
+								((GeoFunctionable) arg[0]).getGeoFunction(),
+								((GeoFunctionable) arg[1]).getGeoFunction(),
+								(NumberValue) arg[2],
+								(NumberValue) arg[3],
+								(GeoBoolean) arg[4])};
+				return ret;
+			} else {
+				if (!ok[0])
+					throw argErr(app, "Integral", arg[0]);
+				else if (!ok[1])
+					throw argErr(app, "Integral", arg[1]);
+				else if (!ok[2])
+					throw argErr(app, "Integral", arg[2]);
+				else if (!ok[3])
+					throw argErr(app, "Integral", arg[3]);
+				else
+					throw argErr(app, "Integral", arg[4]);
+			}
+			
 		default :
 			throw argNumErr(app, "Integral", n);
 		}

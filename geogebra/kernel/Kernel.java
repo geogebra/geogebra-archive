@@ -6399,6 +6399,17 @@ public class Kernel {
 		return n;
 	}
 
+	/**
+	 * definite Integral of function f from x=a to x=b 
+	 * with option to evaluate  (evaluate == false allows shade-only drawing)
+	 */
+	final public GeoNumeric Integral(String label, GeoFunction f, NumberValue a, NumberValue b, GeoBoolean evaluate) {
+		AlgoIntegralDefinite algo = new AlgoIntegralDefinite(cons, label, f, a, b, evaluate);
+		GeoNumeric n = algo.getIntegral();
+		return n;
+	}
+	
+	
 	/** 
 	 * definite integral of function (f - g) in interval [a, b]
 	 */
@@ -6408,6 +6419,21 @@ public class Kernel {
 		GeoNumeric num = algo.getIntegral();
 		return num;
 	}		
+	
+	
+	/** 
+	 * definite integral of function (f - g) in interval [a, b]
+	 * with option to not evaluate  (evaluate == false allows shade-only drawing)
+	 */
+	final public GeoNumeric Integral(String label, GeoFunction f, GeoFunction g,
+												NumberValue a, NumberValue b, GeoBoolean evaluate) {
+		AlgoIntegralFunctions algo = new AlgoIntegralFunctions(cons, label, f, g, a, b,evaluate);
+		GeoNumeric num = algo.getIntegral();
+		return num;
+	}		
+	
+	
+	
 	
 	/**
 	 * 
