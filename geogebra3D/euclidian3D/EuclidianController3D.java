@@ -552,9 +552,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** put intersectionPoint coordinates in point */
 	protected void createNewPointIntersection(GeoPointND intersectionPoint){
 		GeoPoint3D point3D = view3D.getCursor3D();
-		point3D.setCoords(intersectionPoint);
-		//point3D.setParentAlgorithm(((GeoPoint3D) intersectionPoint).getParentAlgorithm());
-		point3D.updateCoords();
+		point3D.setCoords(intersectionPoint.getCoordsInD(3),false);
 		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_DEPENDENT);
 		
 	}
