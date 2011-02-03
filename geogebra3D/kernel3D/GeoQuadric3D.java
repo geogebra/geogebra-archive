@@ -197,6 +197,13 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		// set matrix
 		setMatrixFromEigen();
 		
+		//eigen matrix
+		eigenMatrix = new CoordMatrix4x4();
+		eigenMatrix.setOrigin(getMidpoint3D());
+
+		eigenMatrix.setVx(eigenvecND[0].mul(getHalfAxis(0)));
+		eigenMatrix.setVy(eigenvecND[1].mul(getHalfAxis(1)));
+		eigenMatrix.setVz(eigenvecND[2]);
 			
 		// set type
 		type = QUADRIC_CONE;
@@ -257,6 +264,14 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		
 		// set matrix
 		setMatrixFromEigen();
+		
+		//eigen matrix
+		eigenMatrix = new CoordMatrix4x4();
+		eigenMatrix.setOrigin(getMidpoint3D());
+
+		eigenMatrix.setVx(eigenvecND[0].mul(getHalfAxis(0)));
+		eigenMatrix.setVy(eigenvecND[1].mul(getHalfAxis(1)));
+		eigenMatrix.setVz(eigenvecND[2]);
 		
 		
 		// set type
@@ -392,45 +407,25 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	
 	public Coords evaluatePoint(double u, double v){
 		
-		Coords p;
+		Coords eigenRet;
 		
 		switch (type){
 		case QUADRIC_SPHERE :
-			
-			Coords n = new Coords(new double[] {
-					Math.cos(u)*Math.cos(v)*getHalfAxis(0),
-					Math.sin(u)*Math.cos(v)*getHalfAxis(0),
-					Math.sin(v)*getHalfAxis(0)});
-			
-			return (Coords) n.add(getMidpoint());
-			
+			eigenRet = new Coords(Math.cos(u)*Math.cos(v),Math.sin(u)*Math.cos(v),Math.sin(v),1);
+			break;
 		case QUADRIC_CONE :
-
 			double v2 = Math.abs(v);
-			p = (Coords) 
-			getEigenvec3D(1).mul(Math.sin(u)*getHalfAxis(1)*v2).add(
-					getEigenvec3D(0).mul(Math.cos(u)*getHalfAxis(0)*v2).add(
-							getEigenvec3D(2).mul(v)
-					)
-			);
-			
-			return (Coords) p.add(getMidpoint());		
-			
+			eigenRet = new Coords(Math.cos(u)*v2,Math.sin(u)*v2,v,1);
+			break;
 		case QUADRIC_CYLINDER :
-
-			p = (Coords) 
-			getEigenvec3D(1).mul(Math.sin(u)*getHalfAxis(1)).add(
-					getEigenvec3D(0).mul(Math.cos(u)*getHalfAxis(0)).add(
-							getEigenvec3D(2).mul(v)
-					)
-			);
-			
-			return (Coords) p.add(getMidpoint());					
-			
+			eigenRet = new Coords(Math.cos(u),Math.sin(u),v,1);
+			break;
 		default:
-			return null;
+			eigenRet = null;
+			break;
 		}
-
+		
+		return eigenMatrix.mul(eigenRet);
 	}
 	
 
@@ -440,10 +435,10 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		
 		switch (type){
 		case QUADRIC_SPHERE :
-			return new Coords(new double[] {
+			return new Coords(
 					Math.cos(u)*Math.cos(v),
 					Math.sin(u)*Math.cos(v),
-					Math.sin(v)});
+					Math.sin(v),0);
 			
 		case QUADRIC_CONE :
 
@@ -643,22 +638,32 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 
 
 	public Coords[] getNormalProjection(Coords coords) {
+		
+		Coords eigenCoords = eigenMatrix.solve(coords);
+		double x = eigenCoords.getX();
+		double y = eigenCoords.getY();
+		double z = eigenCoords.getZ();
+		
+		double u,v,r;
+		Coords parameters;
+		
 		switch(getType()){
 		case QUADRIC_SPHERE:
+			u = Math.atan2(y, x);
+			r = Math.sqrt(x*x+y*y);
+			v = Math.atan2(z, r);
 
-			Coords eigenCoords = eigenMatrix.solve(coords);
-			double x = eigenCoords.getX();
-			double y = eigenCoords.getY();
-			double z = eigenCoords.getZ();
-			double u = Math.atan2(y, x);
-			double r = Math.sqrt(x*x+y*y);
-			double v = Math.atan2(z, r);
-
-			Coords parameters = new Coords(u,v);
+			parameters = new Coords(u,v);
 			return new Coords[]{getPoint(u,v), parameters};
 
+		case QUADRIC_CONE:	
+		case QUADRIC_CYLINDER:
+			u = Math.atan2(y, x);
+			parameters = new Coords(u,z);
+			return new Coords[]{getPoint(u,z), parameters};
+			
 		default:
-			Application.debug("TODO -- type: "+getType());
+			Application.printStacktrace("TODO -- type: "+getType());
 			return null;
 		}
 	}
@@ -666,27 +671,9 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 
 
 	public Coords getPoint(double u, double v) {
-		switch(getType()){
-		case QUADRIC_SPHERE:
-			Coords eigenRet = new Coords(Math.cos(u)*Math.cos(v),Math.sin(u)*Math.cos(v),Math.sin(v),1);
-			return eigenMatrix.mul(eigenRet);
-			
-		default:
-			Application.debug("TODO -- type: "+getType());
-			return null;
-		}
+		return evaluatePoint(u,v);
 	}
 	
-	public Coords getNormal(double u, double v) {
-		switch(getType()){
-		case QUADRIC_SPHERE:
-			return new Coords(Math.cos(u)*Math.cos(v),Math.sin(u)*Math.cos(v),Math.sin(v),0);
-			
-		default:
-			Application.debug("TODO -- type: "+getType());
-			return null;
-		}
-	}
 
 
 
@@ -710,6 +697,26 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	/**
+	 * 
+	 * @param p
+	 * @return direction from p to center (midpoint, or axis for cone, cylinder...)
+	 */
+	private Coords getDirectionToCenter(Coords p){
+		switch (getType()){
+		case QUADRIC_SPHERE:
+			return getMidpoint3D().sub(p);
+		case QUADRIC_CONE:
+		case QUADRIC_CYLINDER:
+			Coords eigenCoords = eigenMatrix.solve(p);
+			//project on eigen xOy plane
+			Coords eigenDir = new Coords(eigenCoords.getX(),eigenCoords.getY(),0,0);
+			return eigenMatrix.mul(eigenDir).normalized().mul(-1);
+		default:
+			return null;
+		}
+	}
 
 
 
@@ -720,13 +727,16 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		Coords willingCoords = p.getWillingCoords();
 		if (willingCoords==null)
 			willingCoords = P.getCoordsInD(3);
+		else
+			p.setWillingCoords(null);
 
 		Coords willingDirection = p.getWillingDirection();
 		if (willingDirection==null)
-			willingDirection = getMidpoint3D().sub(willingCoords);
-		else
+			willingDirection = getDirectionToCenter(willingCoords);
+		else{
 			willingDirection = willingDirection.mul(-1); //to get the point closest to the eye
-
+			p.setWillingDirection(null);
+		}
 		//Application.debug("direction=\n"+willingDirection+"\ncoords=\n"+willingCoords);
 		
 		//compute intersection
@@ -759,7 +769,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
     	
 		RegionParameters rp = p.getRegionParameters();
     	rp.setT1(coords[1].get(1));rp.setT2(coords[1].get(2));
-    	rp.setNormal(getNormal(coords[1].get(1),coords[1].get(2)));
+    	rp.setNormal(evaluateNormal(coords[1].get(1),coords[1].get(2)));
     	p.setCoords(coords[0], false);
 		p.updateCoords();
 		

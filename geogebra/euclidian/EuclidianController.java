@@ -1183,7 +1183,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				}
 				
 				setStartPointLocation();
-				
+
 				view.setDragCursor();
 				if (translationVec == null)
 					translationVec = new Coords(2);

@@ -2284,7 +2284,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 			}else if (getCursor3D().hasRegion()){
-				v = ((GeoElement)getCursor3D().getRegion()).getMainDirection();
+				//v = ((GeoElement)getCursor3D().getRegion()).getMainDirection();
+				v = getCursor3D().getRegionParameters().getNormal();
+				
+				/*
 				m = new CoordMatrix(4, 2);
 				m.set(v, 1);
 				m.set(4, 2, 1);
@@ -2295,6 +2298,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				matrix.setVy(m2.getVz());
 				matrix.setVz(m2.getVx());
 				matrix.setOrigin(m2.getOrigin());
+				*/
+				matrix = new CoordMatrix4x4(getCursor3D().getCoordsInD(3), v, CoordMatrix4x4.VZ);
 			}else
 				matrix = CoordMatrix4x4.Identity();
 
@@ -2398,6 +2403,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void drawCursor(Renderer renderer){
 
+		
+		//Application.debug("cursor="+cursor);
+		
 		if (hasMouse 
 				&& !getEuclidianController().mouseIsOverLabel() 
 				&& getEuclidianController().cursor3DVisibleForCurrentMode(getCursor3DType())
@@ -2409,7 +2417,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			case CURSOR_DEFAULT:
 				//if(getCursor3DType()!=PREVIEW_POINT_ALREADY)
 				//renderer.drawCursorCross3D();
-				//break;
+				break;
 			case CURSOR_HIT:
 				//Application.debug("getCursor3DType()="+getCursor3DType());				
 				switch(getCursor3DType()){
@@ -2450,6 +2458,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		// 3D cursor
 		cursor = CURSOR_MOVE;
+		
 	}
 	
 	public void setDragCursor(){
@@ -2459,9 +2468,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		// 3D cursor
 		cursor = CURSOR_DRAG;
+		//Application.printStacktrace("setDragCursor");
+		
 	}
 	
 	public void setDefaultCursor(){
+		//Application.printStacktrace("setDefaultCursor");
 		
 		// 2D cursor
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

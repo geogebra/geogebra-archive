@@ -538,18 +538,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** put sourcePoint coordinates in point */
 	protected void createNewPoint(GeoPointND sourcePoint){
 		GeoPoint3D point3D = view3D.getCursor3D();
-		/*
+
+		//point3D.set(sourcePoint);
 		point3D.setCoords(sourcePoint.getCoordsInD(3),false);
-		point3D.setPointSize(sourcePoint.getPointSize());
-		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
-		*/
-		point3D.set(sourcePoint);
 		point3D.setPath(sourcePoint.getPath());
 		point3D.setRegion(sourcePoint.getRegion());
 		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
-		view3D.getCursor3D().setMoveMode(sourcePoint.getMoveMode());
+		point3D.setMoveMode(sourcePoint.getMoveMode());
 		
-		//Application.debug("sourcePoint:\n"+sourcePoint.getCoordsInD(3)+"\ncursor:\n"+view3D.getCursor3D().getCoords());
+		//Application.debug("sourcePoint:\n"+sourcePoint.getCoordsInD(3)+"\ncursor:\n"+view3D.getCursor3D().getCoordsInD(3));
 	}
 	
 	/** put intersectionPoint coordinates in point */
@@ -972,6 +969,18 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		mouseMoved = true;
 		
 	}
+	
+	public void mousePressed(MouseEvent e) {
+		mouseMoved = false;
+		super.mousePressed(e);
+	}
+	
+	/*
+	public void mouseReleased(MouseEvent e) {	
+		
+		super.mouseReleased(e);
+	}
+	*/
 	
 	/**
 	 * tells to proceed mouseMoved() (for synchronization with 3D renderer)
