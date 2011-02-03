@@ -109,7 +109,14 @@ public class AlgoDependentFunction extends AlgoElement {
             ExpressionValue ev = null;
             
             try { // needed for eg f(x)=floor(x) f'(x)
+            	
+        		boolean internationalizeDigits = kernel.internationalizeDigits;
+        		kernel.internationalizeDigits = false;
+       	
             	ev = expandFunctionDerivativeNodes(expression.deepCopy(kernel));
+
+        		kernel.internationalizeDigits = internationalizeDigits;
+
             } catch (Exception e) {
             	e.printStackTrace();
             	Application.debug("derivative failed");

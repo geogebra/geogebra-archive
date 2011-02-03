@@ -1547,9 +1547,11 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					} else {
 						if (leftStr.startsWith(Unicode.RightToLeftUnaryMinusSign)) {
 							// brackets needed for eg Arabic digits
+							sb.append(Unicode.RightToLeftMark);
 							sb.append(leftBracket(STRING_TYPE));
 							sb.append(leftStr);
 							sb.append(rightBracket(STRING_TYPE));							
+							sb.append(Unicode.RightToLeftMark);
 						} else {
 							sb.append(leftStr);
 						}
@@ -1635,6 +1637,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					sb.append(rightBracket(STRING_TYPE));
 				}
 			}
+			
 			break;
 
 		case DIVIDE:

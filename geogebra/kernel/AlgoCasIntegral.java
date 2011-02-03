@@ -64,11 +64,19 @@ public class AlgoCasIntegral extends AlgoCasBase {
     
     @Override
 	protected void applyCasCommand() {
+    	
+		// var.getLabel() can return a number in wrong alphabet (need ASCII)
+		boolean internationalizeDigits = kernel.internationalizeDigits;
+		kernel.internationalizeDigits = false;
+
 		 sb.setLength(0);
 		 sb.append("Integral(%");
 		 sb.append(",");
 		 sb.append(var != null ? var.getLabel() : f.getVarString());
 		 sb.append(")");
+		 
+		kernel.internationalizeDigits = internationalizeDigits;
+
 		 
 		 // find symbolic derivative of f
 		 g.setUsingCasCommand(sb.toString(), f, true);	

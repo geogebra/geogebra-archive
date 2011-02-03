@@ -76,6 +76,11 @@ public class AlgoCasDerivative extends AlgoCasBase {
     
 	@Override
 	protected void applyCasCommand() {
+		
+		// var.getLabel() can return a number in wrong alphabet (need ASCII)
+		boolean internationalizeDigits = kernel.internationalizeDigits;
+		kernel.internationalizeDigits = false;
+		
 		 sb.setLength(0);
 		 sb.append("Derivative(%");
 		 sb.append(",");
@@ -83,6 +88,8 @@ public class AlgoCasDerivative extends AlgoCasBase {
 		 sb.append(",");
 		 sb.append(order == null ? 1 : (int) Math.round(order.getDouble()));
 		 sb.append(")");
+		 
+		 kernel.internationalizeDigits = internationalizeDigits;
 		 
 		 // find symbolic derivative of f
 		 g.setUsingCasCommand(sb.toString(), f, true);	
