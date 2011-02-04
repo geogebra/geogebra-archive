@@ -2101,21 +2101,16 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	}
 
 	final private void ellipse(double[] mu) {
-		if (mu[0] > mu[1]) {
-			// swap eigenvectors and mu            
-			temp = mu[0];
-			mu[0] = mu[1];
-			mu[1] = temp;
 
-			// rotate eigenvector 90�
-			temp = eigenvecX;
-			eigenvecX = -eigenvecY;
-			eigenvecY = temp;
-		}
-		setEigenvectors();
 
 		// circle 
 		if (Kernel.isEqual(mu[0], mu[1])) {
+			
+			//sets eigen vecs parallel to Ox and Oy
+			eigenvecX = 1;
+			eigenvecY = 0;
+			setEigenvectors();
+			
 			type = GeoConic.CONIC_CIRCLE;
 			halfAxes[0] = Math.sqrt(1.0d / mu[0]);
 			halfAxes[1] = halfAxes[0];
@@ -2123,6 +2118,21 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 			eccentricity = 0.0d;
 			//Application.debug("circle: M = " + b + ", r = " + halfAxes[0]);    
 		} else { // elipse
+			
+			if (mu[0] > mu[1]) {
+				// swap eigenvectors and mu            
+				temp = mu[0];
+				mu[0] = mu[1];
+				mu[1] = temp;
+
+				// rotate eigenvector 90�
+				temp = eigenvecX;
+				eigenvecX = -eigenvecY;
+				eigenvecY = temp;
+			}
+			setEigenvectors();
+			
+			
 			type = GeoConic.CONIC_ELLIPSE;
 			mu[0] = 1.0d / mu[0];
 			mu[1] = 1.0d / mu[1];
