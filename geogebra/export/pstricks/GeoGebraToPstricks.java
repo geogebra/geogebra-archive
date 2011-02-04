@@ -27,6 +27,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
@@ -1031,6 +1032,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		
 		// for exponential in new Geogbra version.
 		renameFunc(sb,Unicode.EULER_STRING,"2.718281828");
+
 		renameFunc(sb,"\\pi","PI");
 		return new String(sb);
 	}
@@ -1973,6 +1975,25 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		}
 		if (isLatex)code.append("$");
 	}
-	
-
+	/**
+	 * Export PSTricks code for implicit polynom (degree greater than 2)
+	 */
+	protected void drawImplicitPoly(GeoImplicitPoly geo) {
+		if (codePreamble.indexOf("pst-func")==-1){
+			codePreamble.append("\\usepackage{pst-func}\n");
+		}
+		code.append("\\psplotImp");
+		code.append(LineOptionCode(geo,true));
+		code.append("(");
+		code.append(Math.floor(xmin)-1);
+		code.append(",");
+		code.append(Math.floor(ymin)-1);
+		code.append(")(");
+		code.append(Math.floor(xmax)+1);
+		code.append(",");
+		code.append(Math.floor(ymax)+1);
+		code.append("){");
+		code.append(getImplicitExpr(geo));
+		code.append("}\n");
+	}
 }

@@ -23,6 +23,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -251,7 +252,10 @@ public abstract class GeoGebraExport implements ActionListener{
 //        		String label="$"+Util.toLaTeXString(g.getLabelDescription(),true)+"$";
         		drawLabel(g,euclidianView.getDrawableFor((GeoAngle)g));
         	}        	                                  
-     }  
+		}
+		else if(g.isGeoImplicitPoly()){
+			drawImplicitPoly((GeoImplicitPoly)g);
+		}
         else if (g.isGeoNumeric()) {
             AlgoElement algo = g.getParentAlgorithm();
             if (algo == null) {
@@ -405,6 +409,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void drawGeoConicPart(GeoConicPart geo);
 	abstract protected void drawLabel(GeoElement geo,Drawable drawGeo);
 	abstract protected void drawFunction(GeoFunction geo);
+	abstract protected void drawImplicitPoly(GeoImplicitPoly geo);
 	abstract protected void drawCurveCartesian (GeoCurveCartesian geo);
 	abstract protected void drawText(GeoText geo);
 	abstract protected void drawLocus(GeoLocus geo);
@@ -415,6 +420,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void createFrame();
 	abstract protected void generateAllCode();
 	abstract protected void ColorCode(Color color, StringBuilder sb);
+	
 	/**
 	 * @return the xmin
 	 */
@@ -816,5 +822,37 @@ public abstract class GeoGebraExport implements ActionListener{
 			else if (sizept<=25) sb.append("\\huge{");
 			else sb.append("\\Huge{");
 		}
+	}
+	protected String getImplicitExpr(GeoImplicitPoly geo){
+		StringBuilder sb=new StringBuilder();
+		double[][] coeff=geo.getCoeff();
+		boolean first=true;
+		for (int i=0;i<coeff.length;i++){
+			for (int j=0;j<coeff[i].length;j++){
+				double tmp=coeff[i][j];
+				if (tmp!=0){
+					if (tmp>0) {
+						if (!first) sb.append("+");
+					}
+					sb.append(tmp);
+					if (i==0){
+						if (j!=0) {
+							sb.append("*y^");
+							sb.append(j);
+						}
+					}
+					else {
+						sb.append("*x^");
+						sb.append(i);
+						if (j!=0) {
+							sb.append("*y^");
+							sb.append(j);
+						}
+					}
+				first=false;
+				}
+			}
+		}
+		return new String(sb);
 	}
 }

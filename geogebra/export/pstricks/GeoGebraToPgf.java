@@ -20,6 +20,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
@@ -2426,5 +2427,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
 
 protected void createFrame() {
 	frame=new PgfFrame(this);
+}
+
+/**
+ * Export Implicit plot for polynom degree greater than 2
+ */
+protected void drawImplicitPoly(GeoImplicitPoly geo) {
+	System.out.println("Implicit plot not supported yet");
+	
 }
 }

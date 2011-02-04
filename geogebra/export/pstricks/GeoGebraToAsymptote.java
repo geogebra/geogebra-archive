@@ -26,6 +26,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
@@ -3130,4 +3131,9 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
         // Unicode?
         return killSpace(Util.toLaTeXString(s,true));
     }
+	@Override
+	protected void drawImplicitPoly(GeoImplicitPoly geo) {
+		// TODO Auto-generated method stub
+		
+	}
 }
