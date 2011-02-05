@@ -112,7 +112,13 @@ public class DynamicTextInputPane extends JTextPane {
 				elem = doc.getCharacterElement(i);
 				if(elem.getName().equals("component")){
 					MyTextField tf = (MyTextField) StyleConstants.getComponent(elem.getAttributes());		
-					sb.append( "\"+" + tf.getText() + "+\"" );
+					
+					// brackets needed for eg "hello"+(a+3)
+					
+					sb.append("\"+(");
+					sb.append(tf.getText());
+					sb.append(")+\"");
+
 				}else if(elem.getName().equals("content")){
 					sb.append(doc.getText(i, 1));
 				}
