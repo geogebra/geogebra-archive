@@ -1446,6 +1446,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		if (!DRAGGING_OCCURED) {
+			
 			DRAGGING_OCCURED = true;			
 
 			// Michael Borcherds 2007-10-07 allow right mouse button to drag points
@@ -1505,7 +1506,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 
-
+		// dragging eg a fixed point shouldn't start the selection rectangle
+		if (view.getHits().isEmpty())
 
 		// zoom rectangle (right drag) or selection rectangle (left drag)
 		// Michael Borcherds 2007-10-07 allow dragging with right mouse button
@@ -2148,7 +2150,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// select all geos in selection rectangle 
-	protected void processSelectionRectangle(MouseEvent e) {		
+	protected void processSelectionRectangle(MouseEvent e) {
 		clearSelections();
 		view.setHits(view.getSelectionRectangle());
 		Hits hits = view.getHits();		
