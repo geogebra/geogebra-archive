@@ -6497,6 +6497,17 @@ public class Kernel {
 		GeoPoint [] g = algo.getRootPoints();
 		return g;
 	}	
+	/**
+	 * Numeric search for extremum of function f in interval [left,right]
+	 * Ulven 2011-2-5
+	 */
+	final public GeoPoint[] Extremum(String label,GeoFunction f,NumberValue left,NumberValue right) {
+		AlgoExtremumNumerical algo=new AlgoExtremumNumerical(cons,label,f,left,right);
+		GeoPoint g=algo.getNumericalExtremum();	//All variants return array...
+		GeoPoint[] result=new GeoPoint[1];
+		result[0]=g;
+		return result;
+	}//Extremum(label,geofunction,numbervalue,numbervalue)
 	
 	/**
 	 * all Turning points of function f (works only for polynomials)
