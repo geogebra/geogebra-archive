@@ -4211,6 +4211,19 @@ class CmdExtremum extends CommandProcessor {
 						((GeoFunctionable) arg[0]).getGeoFunction());
 			else
 				throw argErr(app, "Extremum", arg[0]);
+		case 3:  //Ulven 04.02.2011 for Extremum[f,start-x,end-x]
+			arg=resArgs(c);
+			if ( 
+				 (ok[0]=(arg[0].isGeoFunctionable()) )&&
+				 (ok[1]=(arg[1].isNumberValue())     )&&
+				 (ok[2]=(arg[2].isNumberValue())     )
+					
+			)
+				return kernel.Extremum(c.getLabel(), 
+									   ((GeoFunctionable) arg[0]).getGeoFunction(),(NumberValue)arg[1],(NumberValue)arg[2]);
+			else
+				throw argErr(app,"Extremum",n);
+									  
 
 		default :
 			throw argNumErr(app, "Extremum", n);
