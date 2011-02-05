@@ -63,13 +63,14 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private JButton btnPenDelete, btnDeleteGeo;
 	
 	
-	// vars for setting/unsetting default geos 
+	// fields for setting/unsetting default geos 
 	private HashMap<Integer,Integer> defaultGeoMap;
 	private ArrayList<GeoElement> defaultGeos;
 	private GeoElement oldDefaultGeo, currentDefaultGeo;
 	
 	// flags and constants
-	private int iconHeight = 18;		
+	private int iconHeight = 18;
+	private Dimension iconDimension = new Dimension(16, iconHeight);
 	private int mode = -1;
 	private boolean isIniting;
 	private boolean needUndo = false;
@@ -271,6 +272,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	//=====================================================
 	
 	private void initGUI() {
+		
+		removeAll();
 		
 		createButtons();
 		createColorButton();
@@ -824,8 +827,6 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	
 	private void createTextButtons() {	
 
-		Dimension iconDimension = new Dimension(16, iconHeight);
-		
 		
 		//========================
 		// text color  button
@@ -1555,8 +1556,14 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 	}
 
-	
-	
-	
+	/**
+	 * Set labels with localized strings.
+	 */
+	public void setLabels(){
+		
+		initGUI();
+		updateStyleBar();
+		
+	}	
 
 }

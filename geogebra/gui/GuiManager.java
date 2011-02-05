@@ -772,6 +772,12 @@ public class GuiManager {
 		if (algebraInput != null)
 			algebraInput.setLabels();
 
+		if(app.getEuclidianView() != null)
+			app.getEuclidianView().getStyleBar().setLabels();
+			
+		if(getEuclidianView2() != null)
+			getEuclidianView2().getStyleBar().setLabels();
+		
 		if (toolbarPanel != null) {
 			toolbarPanel.buildGui();
 			toolbarPanel.updateHelpText();
