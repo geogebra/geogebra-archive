@@ -132,11 +132,11 @@ public class DynamicTextInputPane extends JTextPane {
 	 * @param geo
 	 * @param text
 	 */
-	public void setText(GeoText geo, String text){
+	public void setText(GeoText geo){
 
 		super.setText("");
 		
-		if(text == null) return;
+		if(geo == null) return;
 
 		if(geo.isIndependent()){
 			super.setText(geo.getTextString());

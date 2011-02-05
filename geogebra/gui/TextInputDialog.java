@@ -80,7 +80,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	private String title;
 
 	// text handling fields
-	private GeoText text;
+	private GeoText editGeo;
 	private boolean isLaTeX;
 	private GeoPoint startPoint;
 	private boolean isTextMode = false;
@@ -96,13 +96,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 * Input Dialog for a GeoText object
 	 * @param app 
 	 * @param title 
-	 * @param text 
+	 * @param editGeo 
 	 * @param startPoint 
 	 * @param cols 
 	 * @param rows 
 	 * @param isTextMode 
 	 */
-	public TextInputDialog(Application app,  String title, GeoText text, GeoPoint startPoint,
+	public TextInputDialog(Application app,  String title, GeoText editGeo, GeoPoint startPoint,
 			int cols, int rows, boolean isTextMode) {	
 
 		super(app.getFrame(), false);
@@ -110,6 +110,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		this.startPoint = startPoint;
 		this.isTextMode = isTextMode;
 		this.title = title;
+		this.editGeo = editGeo;
 		inputHandler = new TextInputHandler();
 
 		isIniting = true;
@@ -123,8 +124,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		createAdditionalGUI();
 
 		// init editor with GeoText text
-		setGeoText(text);  
-		textPreviewer.updatePreviewText(text, editor.buildGeoGebraString(), isLaTeX);
+		setGeoText(editGeo);  
+		textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(), isLaTeX);
 		editor.getDocument().addDocumentListener(this);
 
 		// add key listener to the editor 
@@ -187,15 +188,15 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// create preview panel	
 		previewHeader = new JLabel();
 		previewHeader.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		
+
 		JPanel p = new JPanel(new BorderLayout());
 		p.add(textPreviewer, BorderLayout.CENTER);
-		
+
 		previewPanel = new JPanel(new BorderLayout());
 		previewPanel.add(previewHeader, BorderLayout.NORTH);	
 		previewPanel.add(new JScrollPane(p), BorderLayout.CENTER);		
-		
-		
+
+
 		// set sizes
 		Dimension d = inputPanel.getPreferredSize();
 		d.height = 60;  //this.getFont().getSize()*10;
@@ -203,7 +204,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		previewPanel.setPreferredSize(inputPanel.getPreferredSize());
 		//textPreviewer.setPreferredSize(editor.getPreferredSize());
 
-		
+
 
 		// put the preview and edit panels into a split pane
 		// and make sure they are given equal weight
@@ -344,7 +345,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		Iterator<GeoElement> iter = ts.iterator();
 		while (iter.hasNext()) {
 			GeoElement g = iter.next();
-			if (g.isLabelSet()) {
+			if (g.isLabelSet() && !g.equals(editGeo)) {
 				list.add(g.getLabel());
 			}
 		}
@@ -459,37 +460,37 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 
 	/**
-	 * Set content of the editor and the LaTeX check box from the input GeoText.
-	 * @param text
+	 * Sets the GeoText element to be edited.
+	 * Also sets the editor content to fit the new GeoText string and sets the LaTeX flag.
+	 * @param geo
 	 *            GeoText element to be edited
 	 */
-	public void setGeoText(GeoText text) {
+	public void setGeoText(GeoText geo) {
 
-		this.text = text;
-		boolean createText = text == null;   
-		isLaTeX = text == null ? false: text.isLaTeX();
-		//String label = null;
+		this.editGeo = geo;
+		boolean createText = geo == null;   
+		isLaTeX = geo == null ? false: geo.isLaTeX();
 
+		//TODO: not sure if this old code is needed anymore
 		if (createText) {
 			//initString = " \"\" ";
 			initString = null;            
 			isLaTeX = false;
 		}           
-		else {                                
-			//label = text.getLabel();
-
+		else {                                			
 			initString = "";
-			if(text.isIndependent()){ 
-				initString = text.getTextString();
-				if(text.getKernel().lookupLabel(initString) != null)
+			if(geo.isIndependent()){ 
+				initString = geo.getTextString();
+				if(geo.getKernel().lookupLabel(initString) != null)
 					initString = "\"" + initString + "\"";            		 		
 			}
 			else
-				initString = text.getCommandDescription();            
-			isLaTeX = text.isLaTeX();
+				initString = geo.getCommandDescription();            
+			isLaTeX = geo.isLaTeX();
 		}           
-
-		editor.setText(text, initString);
+		//----------------------------------------------
+		
+		editor.setText(geo);
 		editor.setCaretPosition(0);
 		cbLaTeX.setSelected(false);
 		if (isLaTeX) {
@@ -569,7 +570,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				if (isShowing())
 					setVisible(false);		
 				else {
-					setGeoText(text);
+					setGeoText(editGeo);
 				}
 				if(isTextMode)
 					app.setMode(EuclidianConstants.MODE_TEXT);
@@ -579,7 +580,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 				btInsertLaTeX.setEnabled(cbLaTeX.isSelected());
 				isLaTeX = cbLaTeX.isSelected();
-				textPreviewer.updatePreviewText(text, inputPanel.getText(), isLaTeX);
+				textPreviewer.updatePreviewText(editGeo, inputPanel.getText(), isLaTeX);
 
 				if(isLaTeX && inputPanel.getText().length() == 0) {
 					insertString("$  $");
@@ -639,7 +640,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 	protected void handleDocumentEvent(DocumentEvent e) {
-		textPreviewer.updatePreviewText(text, editor.buildGeoGebraString(), isLaTeX);
+		textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(), isLaTeX);
 	}
 
 
@@ -653,10 +654,10 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 
-	
-	
-	
-	
+
+
+
+
 	//=============================================================
 	//      TextInputHandler
 	//=============================================================
@@ -704,7 +705,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 			if (inputValue.equals("\"\"")) return false;
 
 			// create new text
-			boolean createText = text == null;
+			boolean createText = editGeo == null;
 			if (createText) {
 				GeoElement [] ret = 
 					kernel.getAlgebraProcessor().processAlgebraCommand(inputValue, false);
@@ -736,7 +737,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 			// change existing text
 			try {           
-				GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(text, inputValue, true);                         
+				GeoText newText = (GeoText) kernel.getAlgebraProcessor().changeGeoElement(editGeo, inputValue, true);                         
 
 				// make sure newText is using correct LaTeX setting
 				newText.setLaTeX(isLaTeX, true);
