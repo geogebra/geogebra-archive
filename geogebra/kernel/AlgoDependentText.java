@@ -63,7 +63,7 @@ public class AlgoDependentText extends AlgoElement {
 	}
     
     public int getRelatedModeID() {
-    	return EuclidianConstants.MODE_DYNAMIC_TEXT;
+    	return EuclidianConstants.MODE_TEXT;
     }
 	
     public ExpressionNode getRoot(){

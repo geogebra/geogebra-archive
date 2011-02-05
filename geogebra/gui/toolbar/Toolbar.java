@@ -489,8 +489,6 @@ public class Toolbar extends JToolBar {
         sb.append(" , ");  
         sb.append(EuclidianView.MODE_TEXT );
         sb.append(" ");
-        sb.append(EuclidianView.MODE_DYNAMIC_TEXT );
-        sb.append(" ");
         sb.append(EuclidianView.MODE_IMAGE);        
         sb.append(" ");
         sb.append(EuclidianView.MODE_PEN);        

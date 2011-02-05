@@ -2603,7 +2603,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			//  new text or image
 		case EuclidianView.MODE_TEXT:
-		case EuclidianView.MODE_DYNAMIC_TEXT:
 		case EuclidianView.MODE_IMAGE:
 			changedKernel = textImage(hits.getOtherHits(GeoImage.class, tempArrayList), mode, altDown); //e.isAltDown());
 			break;
@@ -6037,10 +6036,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			switch (mode) {
 			case EuclidianView.MODE_TEXT:				
 				app.getGuiManager().showTextCreationDialog(loc);
-				break;
-
-			case EuclidianView.MODE_DYNAMIC_TEXT:				
-				app.getGuiManager().showDynamicTextCreationDialog(loc);
 				break;
 
 			case EuclidianView.MODE_IMAGE:	

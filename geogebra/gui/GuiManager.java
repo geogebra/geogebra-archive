@@ -2347,14 +2347,6 @@ public class GuiManager {
 	}
 
 	/**
-	 * Creates a new dynamic text at given startPoint
-	 */
-	public void showDynamicTextCreationDialog(GeoPoint loc) {
-		DynamicTextCreationDialog d = new DynamicTextCreationDialog(app, loc);
-		d.setVisible(true);
-	}
-
-	/**
 	 * Shows a modal dialog to enter a number or number variable name.
 	 */
 	public NumberValue showNumberInputDialog(String title, String message,
