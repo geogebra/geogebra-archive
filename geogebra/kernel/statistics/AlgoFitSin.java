@@ -202,7 +202,7 @@ public class AlgoFitSin extends AlgoElement{
             if(y<min){min=y;xmin_abs=i;}
         }//for
         a=sum/size;                                    
-        b=(max-min)/2.0d;                             System.out.println("a= "+a+" b= "+b+" max= "+max+" min= "+min);
+        b=(max-min)/2.0d;                             //System.out.println("a= "+a+" b= "+b+" max= "+max+" min= "+min);
        
         //Find c:
         //This time first and second local max/min, between rise and fall and vv
@@ -387,7 +387,7 @@ public class AlgoFitSin extends AlgoElement{
                     multfaktor*=2;              //LM drives hard...
                 }//if going the right way                
             }//if(error)-else
-            System.out.println( ""+da+"\t"+db+"\t"+dc+"\t"+dd+"\n"+  ""+a+"\t"+b+"\t"+c+"\t"+d+"\n" );//out
+            //System.out.println( ""+da+"\t"+db+"\t"+dc+"\t"+dd+"\n"+  ""+a+"\t"+b+"\t"+c+"\t"+d+"\n" );//out
         }//while(da+db+dc>eps)
         
         //Reduce d to interval <-pi,pi>
