@@ -70,7 +70,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         this.num = num;
          
         geoIn = in;
-        if(in instanceof GeoPolygon){
+        if(in instanceof GeoPolygon || in instanceof GeoPolyLine){
 	        geoOut = ((GeoPolygon)in).copyInternal(cons);
 	        out = (MatrixTransformable) geoOut;
         }

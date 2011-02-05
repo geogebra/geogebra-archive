@@ -111,6 +111,11 @@ public class AlgoMirror extends AlgoTransformation {
         	out = new GeoCurveCartesian(cons);
         	geoOut = (GeoElement)out;
         }
+        else if(geoIn instanceof GeoPolygon || geoIn instanceof GeoPolyLine){
+        	out = (Mirrorable) geoIn.copyInternal(cons);               
+        	geoOut = out.toGeoElement();
+        	
+        }
         else if(geoIn instanceof Mirrorable){
         	out = (Mirrorable) geoIn.copy();               
         	geoOut = out.toGeoElement();

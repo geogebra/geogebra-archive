@@ -68,7 +68,7 @@ public class AlgoRotatePoint extends AlgoTransformation {
         angleGeo = angle.toGeoElement();
         Ageo = A;
         
-        if(A instanceof GeoPolygon){
+        if(A instanceof GeoPolygon || A instanceof GeoPolyLine){
 	        Bgeo = ((GeoPolygon)Ageo).copyInternal(cons);
 	        B = (PointRotateable) Bgeo;
         }

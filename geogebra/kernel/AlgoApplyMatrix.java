@@ -65,7 +65,7 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 
               
         geoIn = in.toGeoElement();
-        if(in instanceof GeoPolygon){
+        if(in instanceof GeoPolygon|| geoIn instanceof GeoPolyLine){
 	        geoOut = ((GeoPolygon)in).copyInternal(cons);
 	        out = (MatrixTransformable) geoOut;
         }

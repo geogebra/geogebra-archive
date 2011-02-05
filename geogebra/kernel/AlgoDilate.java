@@ -67,8 +67,11 @@ public class AlgoDilate extends AlgoTransformation {
 
         Ageo = A;
         rgeo = r.toGeoElement();
-        
-        if(!A.isGeoList()){
+        if(A instanceof GeoPolygon || A instanceof GeoPolyLine){
+        	Bgeo = Ageo.copyInternal(cons);
+        	B = (Dilateable) Bgeo;
+        }
+        else if(!A.isGeoList()){
         // create output object
         	Bgeo = Ageo.copy();
         	B = (Dilateable) Bgeo;                    

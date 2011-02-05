@@ -61,7 +61,7 @@ public class AlgoTranslate extends AlgoTransformation {
         inGeo = in;
                 
         // create out
-        if(inGeo instanceof GeoPolygon){
+        if(inGeo instanceof GeoPolygon || inGeo instanceof GeoPolyLine){
 	        outGeo = ((GeoPolygon)inGeo).copyInternal(cons);
 	        out = (Translateable) outGeo;
         }

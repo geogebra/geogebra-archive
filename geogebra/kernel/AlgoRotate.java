@@ -64,7 +64,7 @@ public class AlgoRotate extends AlgoTransformation {
         
         
         // create output object
-        if(A instanceof GeoPolygon){
+        if(A instanceof GeoPolygon || A instanceof GeoPolyLine){
 	        Bgeo = ((GeoPolygon)Ageo).copyInternal(cons);
 	        B = (Rotateable) Bgeo;
         }

@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -25,7 +26,8 @@ import java.util.HashSet;
  * 
  * @author Michael Borcherds, adapted from GeoPolygon
  */
-public class GeoPolyLine extends GeoElement implements NumberValue, Path, LineProperties {
+public class GeoPolyLine extends GeoElement implements NumberValue, Path, LineProperties,
+Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dilateable{
 	
 	private static final long serialVersionUID = 1L;
 
@@ -390,6 +392,44 @@ public class GeoPolyLine extends GeoElement implements NumberValue, Path, LinePr
 	}
 
 
+
+	public void rotate(NumberValue r) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).rotate(r);	
+	}
+
+	public void rotate(NumberValue r, GeoPoint S) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).rotate(r,S);	
+	}
+
+	public void matrixTransform(double a00, double a01, double a10, double a11) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).matrixTransform(a00, a01, a10, a11);		
+		
+	}
+
+	public void translate(Coords v) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).translate(v);		
+	}
+
+	public void dilate(NumberValue r, GeoPoint S) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).dilate(r,S);		
+		
+	}
+	
+	public void mirror(GeoPoint Q) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).mirror(Q);		
+		
+	}
+
+	public void mirror(GeoLine g) {
+		for(int i=0;i<points.length;i++)
+			((GeoPoint)points[i]).mirror(g);				
+	}
 	
 	
 
