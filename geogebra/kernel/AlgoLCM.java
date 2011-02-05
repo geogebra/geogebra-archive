@@ -38,41 +38,31 @@ public class AlgoLCM extends AlgoTwoNumFunction {
     protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		
-    		// use algorithm in ints first
-    		boolean success = false;
-    		int aInt = (int)Math.abs(a.getDouble());
-    		int bInt = (int)Math.abs(b.getDouble());
-    		if (aInt < 32768 &&  bInt < 32768) { // ensure answer will fit in an int
-    			try {
-    				num.setValue(MyMath.lcm(aInt, bInt));
-    	    		success = true;
-    			} catch (ArithmeticException e) {
-    				e.printStackTrace();
-    			}
-    			if (success) return;
-    		}
-    		
-    		if (a.getDouble() > Integer.MAX_VALUE || b.getDouble() > Integer.MAX_VALUE) {
+    		if (a.getDouble() > Long.MAX_VALUE || b.getDouble() > Long.MAX_VALUE || 
+    				a.getDouble() < -Long.MAX_VALUE || b.getDouble() < -Long.MAX_VALUE) {
     			num.setUndefined();
     			return;
     		}
-
     		
-    		// for larger numbers, use BigInteger
-    		if (a.getDouble()==Math.floor(a.getDouble()) && b.getDouble()==Math.floor(b.getDouble()))
-    		{   
+    		if (a.getDouble() == Math.floor(a.getDouble()) && b.getDouble() == Math.floor(b.getDouble()))
+    		{  
     			BigInteger i1 = BigInteger.valueOf((long)a.getDouble());
     			BigInteger i2 = BigInteger.valueOf((long)b.getDouble());
     			
     			BigInteger gcd = i1.gcd(i2);
     			
     			i1 = i1.divide(gcd);
-    			i2 = i2.multiply(i1); // this is LCM
     			
-    			num.setValue(i2.doubleValue());
-    		}
-    		else
-    		{ // not integers
+    			double result = Math.abs(i1.multiply(i2).doubleValue());
+    			
+    	    	// can't store integers greater than this in a double accurately
+    	    	if (result > 1e15) {
+    	    		num.setUndefined();
+    	    		return;
+    	    	}
+   			
+    			num.setValue(result);
+    		} else {
     			num.setUndefined();
     		}
     	} else

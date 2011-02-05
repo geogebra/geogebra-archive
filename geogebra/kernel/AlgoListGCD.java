@@ -12,6 +12,11 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+import geogebra.util.MyMath;
+
+import java.math.BigInteger;
+
 /**
  * GCD of a list.
  * adapted from AlgoListMax
@@ -60,17 +65,29 @@ public class AlgoListGCD extends AlgoElement {
     		return;
     	}
     	
-    	String MathPiperList=geoList.toValueString();
-    	String MathPiperCommand="Gcd("+MathPiperList+")";    	
-		String result=kernel.evaluateMathPiper(MathPiperCommand);
-		try {
-			double gcd = Double.valueOf(result).doubleValue();
-			num.setValue(gcd);
-			
-		}
-		catch (Exception e) {
-			num.setUndefined();	
-		}
+    	if (!geoList.getGeoElementForPropertiesDialog().isGeoNumeric()) {
+    		num.setUndefined();
+    		return;   		
+    	}
+    	
+    	BigInteger gcd = BigInteger.valueOf((long)((GeoNumeric)(geoList.get(0))).getDouble());
+    	
+    	for (int i = 1 ; i < geoList.size() ; i++) {
+        	BigInteger n = BigInteger.valueOf((long)((GeoNumeric)(geoList.get(i))).getDouble());
+    		gcd = gcd.gcd(n);
+    	}
+    	
+    	double result = Math.abs(gcd.doubleValue());
+    	
+    	// can't store integers greater than this in a double accurately
+    	if (result > 1e15) {
+    		num.setUndefined();
+    		return;
+    	}
+    	
+    	num.setValue(result);
+    	
+    	
     }
     
 }

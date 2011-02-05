@@ -37,27 +37,12 @@ public class AlgoGCD extends AlgoTwoNumFunction {
     protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		
-    		// 2^52
-    		if (a.getDouble() > 4503599627370496d || b.getDouble() > 4503599627370496d) {
+    		if (a.getDouble() > Long.MAX_VALUE || b.getDouble() > Long.MAX_VALUE || 
+    				a.getDouble() < -Long.MAX_VALUE || b.getDouble() < -Long.MAX_VALUE) {
     			num.setUndefined();
     			return;
     		}
     		
-    		// use algorithm in ints first
-    		boolean success = false;
-    		int aInt = (int)Math.abs(a.getDouble());
-    		int bInt = (int)Math.abs(b.getDouble());
-    		if (aInt < Integer.MAX_VALUE &&  bInt < Integer.MAX_VALUE) { // ensure answer will fit in an int
-    			try {
-    				num.setValue(MyMath.gcd(aInt, bInt));
-    				success = true;
-    			} catch (ArithmeticException e) {
-    				e.printStackTrace();
-    			}
-    			if (success) return;
-    		}
-    		
-    		// for larger numbers, use BigInteger
     		if (a.getDouble() == Math.floor(a.getDouble()) && b.getDouble() == Math.floor(b.getDouble()))
     		{  
     			BigInteger i1 = BigInteger.valueOf((long)a.getDouble());
@@ -65,7 +50,15 @@ public class AlgoGCD extends AlgoTwoNumFunction {
     			
     			i1 = i1.gcd(i2);
     			
-    			num.setValue(i1.doubleValue());
+    			double result = Math.abs(i1.doubleValue());
+    			
+    	    	// can't store integers greater than this in a double accurately
+    	    	if (result > 1e15) {
+    	    		num.setUndefined();
+    	    		return;
+    	    	}
+   			
+    			num.setValue(result);
     		} else {
     			num.setUndefined();
     		}
