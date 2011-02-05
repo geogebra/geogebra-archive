@@ -13,12 +13,12 @@ import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.kernel.arithmetic.TextValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.parser.ParseException;
+import geogebra.kernel.parser.TokenMgrError;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 
 /**
  * 
@@ -127,6 +127,7 @@ public class TextPreviewPanel extends EuclidianView {
 
 		// parse the input text 
 		try{
+			//Application.debug("parsing: "+inputValue);
 			exp = kernel.getParser().parseGeoGebraExpression(inputValue);
 		}
 
@@ -142,6 +143,11 @@ public class TextPreviewPanel extends EuclidianView {
 			hasParseError = true;  // odd numbers of quotes give parse errors 
 			showErrorMessage = true;
 			//Application.debug("parse error");
+		} catch (TokenMgrError e) {
+			//Application.debug("parse error");
+			isIndependent = true;
+			hasParseError = true;  // odd numbers of quotes give parse errors 
+			showErrorMessage = true;
 		}
 		
 

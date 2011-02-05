@@ -2,6 +2,7 @@ package geogebra.gui;
 
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoDependentText;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -104,13 +105,14 @@ public class DynamicTextInputPane extends JTextPane {
 	public String buildGeoGebraString(){
 
 		StringBuilder sb = new StringBuilder();
+		sb.append('"');
 		Element elem;
 		for(int i = 0; i < doc.getLength(); i++){
 			try {
 				elem = doc.getCharacterElement(i);
 				if(elem.getName().equals("component")){
 					MyTextField tf = (MyTextField) StyleConstants.getComponent(elem.getAttributes());		
-					sb.append( "\" + " + tf.getText() + " + \"" );
+					sb.append( "\"+" + tf.getText() + "+\"" );
 				}else if(elem.getName().equals("content")){
 					sb.append(doc.getText(i, 1));
 				}
@@ -119,9 +121,14 @@ public class DynamicTextInputPane extends JTextPane {
 				e.printStackTrace();
 			}
 		}
-
-		sb.insert(0, "\"");
-		sb.append("\"");
+		
+		if (app.getKernel().lookupLabel(sb.toString()) != null) {
+			sb.append("+\"\""); // add +"" to end
+		} 
+		else
+		{
+			sb.append('"');
+		}
 
 		return sb.toString();
 
@@ -153,14 +160,20 @@ public class DynamicTextInputPane extends JTextPane {
 				
 				if(en.getRight() instanceof MyStringBuffer){
 					doc.insertString(0, right.toString().replaceAll("\"", ""), null);
+				}else if (en.getRight() instanceof GeoElement){
+					insertDynamicText(((GeoElement)(en.getRight())).getLabel(), 0);
 				}else{
+					Application.debug(right.getClass()+" "+right.toString());
 					insertDynamicText(right.toString(), 0);
 				}
 			}
 
 			if(left instanceof MyStringBuffer){
 				doc.insertString(0, left.toString().replaceAll("\"", ""), null);
+			}else if (left instanceof GeoElement){
+				insertDynamicText(((GeoElement)left).getLabel(), 0);
 			}else{
+				Application.debug(left.getClass()+" "+left.toString());
 				this.insertDynamicText(left.toString(), 0);
 			}
 			
