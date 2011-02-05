@@ -18,6 +18,7 @@ import geogebra.main.MyError;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 
 /**
  * 
@@ -69,7 +70,7 @@ public class TextPreviewPanel extends EuclidianView {
 
 	}
 
-
+	
 
 
 	/**
@@ -84,6 +85,14 @@ public class TextPreviewPanel extends EuclidianView {
 		}
 	}
 
+	/**
+	 * Detach this view from the kernel
+	 */
+	public void detachView() {
+		removePreviewGeoText();
+		kernel.detach(this);
+	}
+	
 
 
 	/**
@@ -96,6 +105,7 @@ public class TextPreviewPanel extends EuclidianView {
 	 */
 	public void updatePreviewText(GeoText targetGeo, String inputValue, boolean isLaTeX) {
 
+		//Application.printStacktrace("inputValue: " + inputValue);
 		// initialize variables
 		ValidExpression exp = null;
 		ExpressionValue eval = null;	
@@ -133,12 +143,7 @@ public class TextPreviewPanel extends EuclidianView {
 			showErrorMessage = true;
 			//Application.debug("parse error");
 		}
-		catch (Error e) {
-			isIndependent = true;
-			hasParseError = true;  // odd numbers of quotes give parse errors 
-			showErrorMessage = true;
-			//Application.debug("parse error");
-		}
+		
 
 
 		// resolve variables and evaluate the expression

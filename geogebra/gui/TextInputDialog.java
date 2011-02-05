@@ -12,7 +12,6 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.gui.editor.GeoGebraEditorPane;
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.util.LatexTable;
 import geogebra.gui.util.PopupMenuButton;
@@ -33,13 +32,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -55,22 +49,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.html.HTML;
-import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.parser.ParserDelegator;
 
 /**
  * Input dialog for GeoText objects with additional option
@@ -78,42 +63,34 @@ import javax.swing.text.html.parser.ParserDelegator;
  * 
  * @author hohenwarter
  */
-public class TextInputDialog extends InputDialog implements DocumentListener, CaretListener, KeyListener {
+public class TextInputDialog extends InputDialog implements DocumentListener {
 
-	private boolean useAlternateEditor = false; // <========= flag to test alternate editor
-	
-	
 	private static final long serialVersionUID = 1L;
 
+	// editor and preview panels
+	private DynamicTextInputPane editor;
+	private TextPreviewPanel textPreviewer;
+
+	//GUI
 	private JCheckBox cbLaTeX;
 	private JToolBar toolBar;
+	private JPanel previewPanel, editPanel, toolPanel;
+	private PopupMenuButton btInsertLaTeX, btInsertUnicode, btInsertGeo;
+	private JLabel previewHeader, editHeader;
+	private String title;
 
-	private JPanel previewPanel, editPanel;
+	// text handling fields
 	private GeoText text;
 	private boolean isLaTeX;
 	private GeoPoint startPoint;
 	private boolean isTextMode = false;
-	private LaTeXPreviewerPanel latexPreviewer;
-	private TextPreviewPanel textPreviewer;
 
-	//private JToolBar tb;
-	private PopupMenuButton btInsertLaTeX;
-	private PopupMenuButton btInsertUnicode;
-	private PopupMenuButton btInsertGeo;
-
-	private JLabel previewHeader, editHeader;
-
-
+	// recent symbol fields
 	private SelectionTable recentSymbolTable;
 	private ArrayList<String> recentSymbolList;
 
-	private JPanel toolPanel;
 
-	private DynamicTextInputPanel altEditor;
-
-	
-
-
+	boolean isIniting;
 
 	/**
 	 * Input Dialog for a GeoText object
@@ -127,11 +104,45 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 	 */
 	public TextInputDialog(Application app,  String title, GeoText text, GeoPoint startPoint,
 			int cols, int rows, boolean isTextMode) {	
+
 		super(app.getFrame(), false);
 		this.app = app;
 		this.startPoint = startPoint;
 		this.isTextMode = isTextMode;
+		this.title = title;
 		inputHandler = new TextInputHandler();
+
+		isIniting = true;
+
+		// build input dialog GUI
+		createGUI(title, "", false, cols, rows, false, false, false, false, false, false, true);	
+		editor = (DynamicTextInputPane) inputPanel.getTextComponent();
+		textPreviewer = new TextPreviewPanel(app.getKernel());
+
+		// build the rest of the GUI
+		createAdditionalGUI();
+
+		// init editor with GeoText text
+		setGeoText(text);  
+		textPreviewer.updatePreviewText(text, editor.buildGeoGebraString(), isLaTeX);
+		editor.getDocument().addDocumentListener(this);
+
+		// add key listener to the editor 
+		editor.addKeyListener(new MyKeyListener());
+
+		this.setResizable(true);
+
+		isIniting = false;
+		setLabels(title);
+
+		this.pack();
+
+	}
+
+
+	private void createAdditionalGUI(){
+
+		showSymbolTablePopup(false);
 
 		// create LaTeX checkbox
 		cbLaTeX = new JCheckBox();
@@ -143,20 +154,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		buildInsertUnicodeButton();		
 		buildInsertGeoButton();	
 
-		// build input dialog GUI
-		createGUI(title, "", false, cols, rows, false, false, false, false, false, false, true);		
-		setGeoText(text);  // init dialog using text
-		this.showSymbolTablePopup(false);
-		this.setResizable(true);
-		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
-		inputPanel.getTextComponent().addCaretListener(this);
-		inputPanel.getTextComponent().addKeyListener(this);
-
-		// add key listener to the editor
-		inputPanel.getTextComponent().addKeyListener(new MyKeyListener());
-
 		// build toolbar
-
 		toolPanel = new JPanel(new BorderLayout());
 
 		toolBar = new JToolBar();
@@ -178,56 +176,40 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		// create edit panel to contain both the input panel and toolbar
 		editHeader = new JLabel();
 		editHeader.setBorder(BorderFactory.createEmptyBorder(2, 2, 0, 2));
-		
+
 		editPanel = new JPanel(new BorderLayout(2,2));
-		
 		editPanel.add(editHeader, BorderLayout.NORTH);
-		
-		
-		if(useAlternateEditor){
-			altEditor = new DynamicTextInputPanel(app);
-			altEditor.getDocument().addDocumentListener(this);
-			editPanel.add(new JScrollPane(altEditor), BorderLayout.CENTER);
-		}else{
-			editPanel.add(inputPanel, BorderLayout.CENTER);	
-		}
-		
+		editPanel.add(inputPanel, BorderLayout.CENTER);	
 		editPanel.add(toolPanel, BorderLayout.SOUTH);	
 		editPanel.setBorder(BorderFactory.createEtchedBorder());
 
 
-		// create preview panel
-		previewPanel = new JPanel(new BorderLayout());
-		previewPanel.setPreferredSize(inputPanel.getPreferredSize());
-
-		/*
-		if (latexPreviewer == null) 
-			latexPreviewer = new LaTeXPreviewerPanel();
-		latexPreviewer.setOpaque(true);
-		latexPreviewer.setBackground(Color.WHITE);
-		latexPreviewer.setOpaque(true);
-		latexPreviewer.setBackground(Color.WHITE);
-		 */
-
-		if (textPreviewer == null) {		
-			textPreviewer = new TextPreviewPanel(app.getKernel());
-		}
-		textPreviewer.updatePreviewText(text, inputPanel.getText(), isLaTeX);		
-		JPanel p = new JPanel(new BorderLayout());
-		p.add(textPreviewer, BorderLayout.CENTER);
-		JScrollPane scroller = new JScrollPane(p);
+		// create preview panel	
 		previewHeader = new JLabel();
 		previewHeader.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		
+		JPanel p = new JPanel(new BorderLayout());
+		p.add(textPreviewer, BorderLayout.CENTER);
+		
+		previewPanel = new JPanel(new BorderLayout());
 		previewPanel.add(previewHeader, BorderLayout.NORTH);	
-		previewPanel.add(scroller, BorderLayout.CENTER);		
-		textPreviewer.setPreferredSize(p.getPreferredSize());
+		previewPanel.add(new JScrollPane(p), BorderLayout.CENTER);		
+		
+		
+		// set sizes
+		Dimension d = inputPanel.getPreferredSize();
+		d.height = 60;  //this.getFont().getSize()*10;
+		inputPanel.setPreferredSize(d);
+		previewPanel.setPreferredSize(inputPanel.getPreferredSize());
+		//textPreviewer.setPreferredSize(editor.getPreferredSize());
 
+		
 
 		// put the preview and edit panels into a split pane
 		// and make sure they are given equal weight
 		JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editPanel, previewPanel );
 		previewPanel.setPreferredSize(editPanel.getPreferredSize());
-		sp.setResizeWeight(0.5);
+		sp.setResizeWeight(0.75);
 		sp.setBorder(BorderFactory.createEmptyBorder());
 
 		// put all the sub-panels together
@@ -237,14 +219,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		getContentPane().add(centerPanel, BorderLayout.CENTER);
 		centerOnScreen();
 
-		// update the labels
-		setLabels(title);
 	}
 
 
 
+
 	/** 
-	 * builds unicode insertion button and drop down tables
+	 * Builds unicode insertion button and drop down tables.
 	 */
 	private void buildInsertUnicodeButton(){
 
@@ -275,7 +256,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 	}
 
 	/**
-	 * creates a sub-menu for the unicode insert button
+	 * Creates a sub-menu for the unicode insert button.
 	 */
 	private JMenu createMenuItem(String[] table, int rows, int columns ){
 		JMenu menu = new JMenu(table[0] + " " + table[1] + " " + table[2] + "  ");
@@ -286,7 +267,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 
 
 	/** 
-	 * builds LaTeX insertion button and drop down tables
+	 * Builds LaTeX insertion button and drop down tables.
 	 */
 	private void buildInsertLaTeXButton(){
 
@@ -354,7 +335,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 
 
 	/** 
-	 * builds GeoElement insertion button 
+	 * Builds GeoElement insertion button. 
 	 */
 	private void buildInsertGeoButton(){
 
@@ -396,6 +377,14 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 	};
 
 
+
+
+
+	//=============================================================
+	//      Recent symbol buttons
+	//=============================================================
+
+
 	public JToolBar createRecentSymbolTable(){
 
 
@@ -419,7 +408,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		});
 
 
-
 		JToolBar p = new JToolBar();
 		p.setFloatable(false);
 		//p.add(new JLabel("Recent: "));
@@ -427,30 +415,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		p.setAlignmentX(LEFT_ALIGNMENT);
 		p.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
 		return p;
-
-
-
-
-		/*
-
-
-		JToolBar tb = new JToolBar();
-		tb.setFloatable(false);
-
-
-		symbolButton = new JButton[symbolButtonCount];
-		for(int i=0; i < symbolButton.length; i++){
-			symbolButton[i] = new JButton();
-			symbolButton[i].setFocusable(false);
-			symbolButton[i].addActionListener(this);
-			symbolButton[i].setIcon(
-					GeoGebraIcon.createStringIcon(symbolList.get(i), app.getPlainFont(), new Dimension(18,18)));
-			tb.add(symbolButton[i]);
-		}
-
-		 */
-
 	}
+
 
 	public void addRecentSymbol(String newSymbol){
 
@@ -467,7 +433,17 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 
 
 
+
+
+	//=============================================================
+	//      Getters/Setters
+	//=============================================================
+
+
 	public void setLabels(String title) {
+
+		if(isIniting) return;
+
 		super.setLabels(title);
 
 		if(editHeader != null)
@@ -483,18 +459,19 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 
 
 	/**
-	 * Set content of the textarea and 
-	 * LaTex checkbox from the text
-	 * @param text GeoText text to be edited
+	 * Set content of the editor and the LaTeX check box from the input GeoText.
+	 * @param text
+	 *            GeoText element to be edited
 	 */
 	public void setGeoText(GeoText text) {
+
 		this.text = text;
 		boolean createText = text == null;   
 		isLaTeX = text == null ? false: text.isLaTeX();
 		//String label = null;
 
 		if (createText) {
-			//initString = "\"\"";
+			//initString = " \"\" ";
 			initString = null;            
 			isLaTeX = false;
 		}           
@@ -512,13 +489,16 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 			isLaTeX = text.isLaTeX();
 		}           
 
-		inputPanel.setText(initString);
+		editor.setText(text, initString);
+		editor.setCaretPosition(0);
 		cbLaTeX.setSelected(false);
 		if (isLaTeX) {
 			cbLaTeX.doClick();
 		}
 
 	}
+
+
 
 	/**
 	 * @return toolbar with buttons for inserting text symbols and LaTeX formulas
@@ -558,43 +538,31 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		return cbLaTeX.isSelected();		
 	}
 
+
+
+
+
+	//=============================================================
+	//      Event handlers
+	//=============================================================
+
+
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 
 		try {
-
 			if (source == btOK || source == inputPanel.getTextComponent()) {
-				//inputText = inputPanel.getText();
 				isLaTeX = cbLaTeX.isSelected();
-
 				boolean finished;
-				if(!useAlternateEditor){
-					JTextComponent textComp = inputPanel.getTextComponent();
+				finished = inputHandler.processInput(editor.buildGeoGebraString());
 
-					String html = textComp.getText();
-
-					dth.parseHTMLString(html);
-
-					 finished = inputHandler.processInput(dth.toGeoGebraString());
-				}
-				else{
-					 finished = inputHandler.processInput(this.altEditor.buildGeoGebraString());
-				}
-				
 				if (isShowing()) {	
 					// text dialog window is used and open
 					setVisible(!finished);
 					if(isTextMode)
 						app.setMode(EuclidianConstants.MODE_TEXT);
-				} else {		
-					// text input field embedded in properties window
+				} 
 
-					// removed - causes text to be erased on an error
-					// (and not needed)
-					//text.setLaTeX(isLaTeX, true);
-					//setGeoText(text);
-
-				}
 			} 
 
 			else if (source == btCancel) {
@@ -603,7 +571,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 				else {
 					setGeoText(text);
 				}
-
 				if(isTextMode)
 					app.setMode(EuclidianConstants.MODE_TEXT);
 			}
@@ -614,29 +581,12 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 				isLaTeX = cbLaTeX.isSelected();
 				textPreviewer.updatePreviewText(text, inputPanel.getText(), isLaTeX);
 
-				if (isLaTeX) {
-					//((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("latex");
-					inputPanel.getTextComponent().getDocument().addDocumentListener(this);
-					if (latexPreviewer == null) 
-						latexPreviewer = new LaTeXPreviewerPanel();
-					//inputPanel.getTextComponent().add(latexPreviewer);
-
-					latexPreviewer.setLaTeX(app, inputPanel.getText());
-				} else {
-					//((GeoGebraEditorPane) inputPanel.getTextComponent()).setEditorKit("geogebra");
-					inputPanel.getTextComponent().getDocument().addDocumentListener(this);
-					//latexPreviewer = null;	
-				}
 				if(isLaTeX && inputPanel.getText().length() == 0) {
 					insertString("$  $");
 					setRelativeCaretPosition(-2);
 				}
 
-				if (latexPreviewer != null) {
-					latexPreviewer.setVisible(isLaTeX);
-				}
 			}	
-
 
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
@@ -644,10 +594,32 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 		}			
 	}
 
-	/**
-	 * Nothing !
-	 * @param e the event
-	 */
+
+	public void setVisible(boolean isVisible) {	
+		if(!isVisible ){
+			if(textPreviewer != null){
+				textPreviewer.removePreviewGeoText();
+				//textPreviewer.detachView();
+			}
+		}
+		super.setVisible(isVisible);
+	}
+
+	private class MyKeyListener extends KeyAdapter{
+		public void keyPressed(KeyEvent e){
+			if((e.isControlDown()||Application.isControlDown(e)) && e.getKeyCode() == KeyEvent.VK_SPACE){
+				if(isLaTeX)
+					inputPanel.insertString("\\:");
+			}
+		}
+	}
+
+
+
+	//=============================================================
+	//      Document listener
+	//=============================================================
+
 	public void changedUpdate(DocumentEvent e) { }
 
 	/**
@@ -667,175 +639,32 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 	}
 
 	protected void handleDocumentEvent(DocumentEvent e) {
-		Document doc = e.getDocument();
-		//try {
-		//inputHandler.processInput(inputPanel.getText());
-		//latexPreviewer.setLaTeX(app, doc.getText(0, doc.getLength()));
-
-		if(useAlternateEditor)
-			textPreviewer.updatePreviewText(text, altEditor.buildGeoGebraString(), isLaTeX);
-		else{
-			JTextComponent textComp = inputPanel.getTextComponent();
-			String html = textComp.getText();
-				
-			dth.parseHTMLString(html);
-
-			
-			//textPreviewer.updatePreviewText(text, doc.getText(0, doc.getLength()), isLaTeX);
-			textPreviewer.updatePreviewText(text, dth.toGeoGebraString(), isLaTeX);
-		}
-
-
-		//} catch (BadLocationException ex) { }
+		textPreviewer.updatePreviewText(text, editor.buildGeoGebraString(), isLaTeX);
 	}
-	
+
+
 	public void insertGeoElement(GeoElement geo) {
+
 		if (geo == null) return;
 
-		if(useAlternateEditor){
-			Document d = altEditor.insertDynamicText(geo.getLabel());
-			d.addDocumentListener(this);
-			return;
-		}
-
-
-		inputPanel.getTextComponent().getDocument().removeDocumentListener(this);
-		inputPanel.getTextComponent().removeCaretListener(this);
-		
-		JTextComponent textComp = inputPanel.getTextComponent();
-		int caretPos = textComp.getCaretPosition();	
-		
-		
-		JTextPane tp = (JTextPane)inputPanel.getTextComponent();
-		HTMLEditorKit kit = (HTMLEditorKit)tp.getEditorKit();
-		try {
-			
-			String html = textComp.getText();
-			textComp.setText("");
-			
-			dth.parseHTMLString(html);
-			
-			dth.insertGeoElement(geo.getLabel(), caretPos);
-					
-			kit.read(((Reader)(new StringReader(dth.toHTMLString()))), tp.getDocument(), 0);
-			
-
-			
-			/*
-			textComp.setText("");
-			
-			text = text.substring(0,caretPos) + " <font color=\"red\">&nbsp;"+geo.getLabel()+"&nbsp;</font> " + text.substring(caretPos);
-
-			text = text.replaceAll("<head>", "");
-			text = text.replaceAll("</head>", "");
-			text = text.replaceAll("<html>", "");
-			text = text.replaceAll("</html>", "");
-			text = text.replaceAll("<body>", "");
-			text = text.replaceAll("</body>", "");*/
-			
-		
-			//kit.insertHTML((HTMLDocument)tp.getDocument(),0,text,0,0, null);
-			//kit.insertHTML((HTMLDocument)tp.getDocument(),caretPos," <font color=\"red\">"+geo.getLabel()+"</font> ",0,0, HTML.Tag.P);
-		} catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//Application.debug(textComp.getText());
-		//Application.debug(kit.get);
-
-		
-		
-		inputPanel.getTextComponent().addCaretListener(this);
-		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
+		Document d = editor.insertDynamicText(geo.getLabel());
+		d.addDocumentListener(this);
+		return;
 	}
+
+
+	
+	
+	
+	
+	//=============================================================
+	//      TextInputHandler
+	//=============================================================
 
 	/**
-	 * Inserts geo into text and creates the string for a dynamic text, e.g.
-	 * "Length of a = " + a + "cm"
-	 * @param geo
+	 * Handles creating or redefining GeoText using the current editor string.
+	 *
 	 */
-	public void insertGeoElementx(GeoElement geo) {
-		if (geo == null) return;		
-		inputPanel.getTextComponent().getDocument().removeDocumentListener(this);
-		JTextComponent textComp = inputPanel.getTextComponent();	
-		textComp.replaceSelection(""); // insert empty string to get rid of a possible selection
-		String text = inputPanel.getText();
-		int caretPos = textComp.getCaretPosition();		
-		String leftText = text.substring(0, caretPos).trim();				
-		String rightText = text.substring(caretPos).trim();		
-
-		StringBuilder insertedText = new StringBuilder();
-		int leftQuotesAdded = 0;
-		int rightQuotesAdded = 0;
-
-		// check left side for quote at its end
-		if (leftText.length() > 0) {
-			if (!leftText.endsWith("\"")) {
-				insertedText.append('"');
-				leftQuotesAdded = 1;			
-			}
-			insertedText.append(" + ");
-		}				
-
-		// insert GeoElement's label
-		insertedText.append(geo.getLabel());
-
-		// 	check right side for quote at its beginning
-		if (rightText.length() > 0) {			
-			insertedText.append(" + ");
-			if (!rightText.startsWith("\"")) {
-				insertedText.append('"');
-				rightQuotesAdded = 1;
-			}
-		}	
-
-		// now really do the insertion
-		textComp.replaceSelection(insertedText.toString());		
-
-		// make a simple check if the quotes are ok:
-		// there should be an even number of quotes to the left and to the right of the inserted label	
-		text = inputPanel.getText();
-		int leftQuotes = leftQuotesAdded + countChar('"', text.substring(0,caretPos));		
-
-		caretPos += insertedText.length();
-		int rightQuotes = rightQuotesAdded + countChar('"', text.substring(caretPos));
-
-		if (leftQuotes % 2 == 1) {// try to fix the number of quotes by adding one at the beginning of text
-			text = "\"" + text;
-			caretPos++;
-		}		
-		if (rightQuotes % 2 == 1) // try to fix the number of quotes by adding one at the end of text
-			text =  text + "\"";								
-		inputPanel.getTextComponent().getDocument().addDocumentListener(this);
-		textComp.setText(text);
-		if (caretPos <= text.length())
-			textComp.setCaretPosition(caretPos);
-		textComp.requestFocusInWindow();
-	}
-
-	/**
-	 * Returns how often the given char is in the given String
-	 * @param str
-	 * @param ch
-	 * @return
-	 */
-	private int countChar(char ch, String str) {
-		if (str == null) return 0;
-
-		int count = 0;
-		for (int i=0; i < str.length(); i++) {
-			if (str.charAt(i) == ch) {
-
-				count ++;
-			}
-		}
-		return count;		
-	}
-
 	private class TextInputHandler implements InputHandler {
 
 		private Kernel kernel;		
@@ -926,141 +755,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener, Ca
 	}
 
 
-	public void setVisible(boolean isVisible) {	
-		if(!isVisible ){
-			if(textPreviewer != null){
-				textPreviewer.removePreviewGeoText();
-				//textPreviewer.detachView();
-			}
-		}
-		super.setVisible(isVisible);
-	}
-
-	private class MyKeyListener extends KeyAdapter{
-		public void keyPressed(KeyEvent e){
-			if((e.isControlDown()||Application.isControlDown(e)) && e.getKeyCode() == KeyEvent.VK_SPACE){
-				if(isLaTeX)
-					inputPanel.insertString("\\:");
-			}
-		}
-	}
-
-
-	int lastCaretPos = -1;
-	
-	public void caretUpdate(CaretEvent e) {
-		inputPanel.getTextComponent().removeCaretListener(this);
-		
-		String html = inputPanel.getTextComponent().getText();
-		//int caretPos = inputPanel.getTextComponent().getCaretPosition();
-
-		dth.parseHTMLString(html);
-		int caretPos = e.getDot();
-		
-		caretPos = dth.moveCaret(caretPos, lastCaretPos);
-		
-		try {
-			inputPanel.getTextComponent().setCaretPosition(caretPos);
-		} catch (Exception ee) {
-			ee.printStackTrace();
-			Application.debug("exception"+inputPanel.getTextComponent().getText().length());
-		}
-		
-		
-		JTextPane tp = (JTextPane)inputPanel.getTextComponent();
-		HTMLEditorKit kit = (HTMLEditorKit)tp.getEditorKit();
-		
-		StringWriter sw = new StringWriter();
-		
-		try {
-			kit.write(sw, inputPanel.getTextComponent().getDocument(), 0, 100);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (BadLocationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		//Application.debug(sw.getBuffer().toString());
-		
-		lastCaretPos = e.getDot();
-		inputPanel.getTextComponent().addCaretListener(this);
-
-		
-	}
-	
-
-
-	public void keyTyped(KeyEvent e) {
-		//Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
-		
-	}
-
-
-	DynamicTextHolder dth = new DynamicTextHolder();
-
-	public void keyPressed(KeyEvent e) {
-
-		//Application.debug(e.getKeyCode()==KeyEvent.VK_BACK_SPACE);
-		
-		if (e.getKeyCode() != KeyEvent.VK_BACK_SPACE && e.getKeyCode() != KeyEvent.VK_DELETE) return;
-		
-		String html = inputPanel.getTextComponent().getText();
-		int caretPos = inputPanel.getTextComponent().getCaretPosition();
-
-		inputPanel.getTextComponent().setText("");
-
-		
-		
-
-		dth.parseHTMLString(html);
-		
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_BACK_SPACE:
-			caretPos = dth.backSpacePressed(caretPos);
-			e.consume();
-			break;
-		case KeyEvent.VK_DELETE:
-			caretPos = dth.deletePressed(e, caretPos);
-			e.consume();
-			break;
-		}
-		
-		// only try to change caret position if necessary
-		if (e.isConsumed()) {
-		
-			JTextPane tp = (JTextPane)inputPanel.getTextComponent();
-			HTMLEditorKit kit = (HTMLEditorKit)tp.getEditorKit();
-	
-			try {
-				kit.read(((Reader)(new StringReader(dth.toHTMLString()))), tp.getDocument(), 0);
-				inputPanel.getTextComponent().removeCaretListener(this);
-				try {
-					inputPanel.getTextComponent().setCaretPosition(caretPos);
-				} catch (Exception ee) { ee.printStackTrace(); }
-				inputPanel.getTextComponent().addCaretListener(this);
-	
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (BadLocationException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		
-		}
-		
-
-
-	}
-
-
-
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 

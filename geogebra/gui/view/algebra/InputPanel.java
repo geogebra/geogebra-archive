@@ -2,6 +2,7 @@
 
 package geogebra.gui.view.algebra;
 
+import geogebra.gui.DynamicTextInputPane;
 import geogebra.gui.VirtualKeyboardListener;
 import geogebra.gui.editor.GeoGebraEditorPane;
 import geogebra.gui.inputbar.AutoCompleteTextField;
@@ -92,6 +93,7 @@ ActionListener, ListSelectionListener {
 	
 	private boolean showSymbolPopup;
 	
+	
 	//=====================================
 	//Constructors
 	
@@ -123,56 +125,19 @@ ActionListener, ListSelectionListener {
 		if (rows > 1) {
 			
 			if (!dynamic) {
+				
 				textComponent = new JTextArea(rows, columns);
 				textComponent = new GeoGebraEditorPane(app, rows, columns);
 				((GeoGebraEditorPane) textComponent).setEditorKit("geogebra");
+				
 			} else {
-				textComponent = new JTextPane();
-				JTextPane editor = (JTextPane)textComponent;
-				HTMLEditorKit kit;
-				HTMLDocument doc;
-	
-	
-				kit = new HTMLEditorKit();
-				doc = (HTMLDocument)(kit.createDefaultDocument());
-				editor.setContentType("html/text");
-				kit.setDefaultCursor(new Cursor(Cursor.TEXT_CURSOR)); 
-	
-				editor.setEditorKit(kit);
-				editor.setDocument(doc);
+				
+				textComponent = new DynamicTextInputPane(app);
 			}
-			//editor.setText("<html><body>test text<body></html>");
-			//editor.setCaretPosition(0);
-			/*
-			try {
-				kit.insertHTML(doc,0,"<html><body><b>This is bold</b><i>this is italics</i></html></body>",0,0, HTML.Tag.BODY);
-			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}*/
-
-
-			//getContentPane().setLayout(new BorderLayout());
-
-			//JButton cmdInsert = new JButton("Insert HTML");
-
-			//cmdInsert.addActionListener((Action)(
-			//new HTMLEditorKit.InsertHTMLTextAction("BoldAction",
-			//"<B>test string</B>", HTML.Tag.BODY, HTML.Tag.B)));
-
-			//cmdInsert.setPreferredSize(new Dimension(400,20));
-
-			//getContentPane().add(cmdInsert, BorderLayout.NORTH);
-
-			//JScrollPane seditor = new JScrollPane(editor);
-
-			//seditor.setPreferredSize(new Dimension(400,280));
-
-			//getContentPane().add(seditor, BorderLayout.CENTER);
+			
+			
 		} else{
+			
 			textComponent = new AutoCompleteTextField(columns, app);	
 			((MyTextField)textComponent).setShowSymbolTableIcon(showSymbolPopup);
 		}
@@ -190,17 +155,16 @@ ActionListener, ListSelectionListener {
 		//cbSpecialChars.setFont(app.getFontCanDisplay(Unicode.EULER_STRING));
 		
 		
-		// create the gui
+		// create the GUI
 		
 		if (rows > 1) { // JTextArea
 			setLayout(new BorderLayout(5, 5));	
 			JScrollPane sp = new JScrollPane(textComponent); 
 			sp.setAutoscrolls(true);
 			add(sp, BorderLayout.CENTER);
-			//JPanel buttonPanel = new JPanel(new BorderLayout());
-			//buttonPanel.add(createPopupButton(),BorderLayout.EAST);
-			//add(buttonPanel, BorderLayout.EAST);			
+				
 		} 
+		
 		else { // JTextField
 			setLayout(new BorderLayout(0,0));
 			

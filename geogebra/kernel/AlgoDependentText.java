@@ -66,6 +66,11 @@ public class AlgoDependentText extends AlgoElement {
     	return EuclidianConstants.MODE_DYNAMIC_TEXT;
     }
 	
+    public ExpressionNode getRoot(){
+    	return root;
+    }
+    
+    
     // for AlgoElement
 	protected void setInputOutput() {
         input = root.getGeoElementVariables();
