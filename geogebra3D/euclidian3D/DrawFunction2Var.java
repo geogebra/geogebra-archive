@@ -1,11 +1,10 @@
 package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.Coords;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.plots.SurfaceMesh;
-import geogebra.kernel.GeoFunctionNVar;
-import geogebra.main.Application;
+import geogebra3D.euclidian3D.plots.SurfaceMesh2;
 
 /**
  * Class for drawing a 2-var function
@@ -14,7 +13,7 @@ import geogebra.main.Application;
  */
 public class DrawFunction2Var extends Drawable3DSurfaces {
 	
-	private SurfaceMesh mesh;
+	private SurfaceMesh2 mesh;
 	
 	private GeoFunctionNVar function;
 	
@@ -139,9 +138,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		updateRadius();
 		if(unlimitedRange){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
-			mesh = new SurfaceMesh(function, lastBaseRadius, true);
+			mesh = new SurfaceMesh2(function, lastBaseRadius, true);
 		} else
-			mesh = new SurfaceMesh(function, savedRadius, false);
+			mesh = new SurfaceMesh2(function, savedRadius, false);
 
 		return super.updateForItSelf();
 	}
@@ -153,14 +152,15 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
-			mesh = new SurfaceMesh(function, lastBaseRadius, true);
+			mesh = new SurfaceMesh2(function, lastBaseRadius, true);
 		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
 			lastBaseRadius=savedRadius/unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
-			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-		} else if(oldRadius!=savedRadius && mesh != null)
-			mesh.turnOnUpdates();
+			mesh = new SurfaceMesh2(function, lastBaseRadius, true);
+		} 
+//		else if(oldRadius!=savedRadius && mesh != null)
+//			mesh.turnOnUpdates();
 	}
 
 	public int getPickOrder() {

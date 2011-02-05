@@ -6,24 +6,35 @@ package geogebra3D.euclidian3D;
  * @author Andr� Eriksson
  */
 public class TriListElem{
-	private int index;
+	private  int index;
 	private TriListElem next, prev;
 	
-	private float[] vertices;
+	private  float[] vertices;
 	private float[] normals;
-
-	/** 
-	 * @param prev the previous element in the queue
-	 */
-	public TriListElem(TriListElem prev) {
-        this.prev=prev;
-	}
+	
+	/** an (optional) reference to the object associated with the element*/
+	private Object owner;
 	
 	/** saves the specified vertices
 	 * @param vertices 
 	 * 			floats representing the vertices of the chunk
 	 */
 	public void pushVertices(float[] vertices){ this.vertices=vertices; }
+	
+	/**
+	 * sets the owner associated with the element
+	 * @param owner
+	 */
+	public void setOwner(Object owner){
+		this.owner=owner;
+	}
+	
+	/**
+	 * @return the owner associated with the element
+	 */
+	public Object getOwner(){
+		return owner;
+	}
 	
 	/** saves the specified normals
 	 * @param normals 

@@ -645,25 +645,45 @@ public class PlotterBrush {
 	}
 	
 	public void draw(CurveMesh mesh, double radius){
-		FloatBuffer b1 = mesh.getVertices();
+//		FloatBuffer b1 = mesh.getVertices();
+//		FloatBuffer b2 = mesh.getNormals();
+//		int cnt = mesh.getTriangleCount();
+//		manager.startGeometry(Manager.TRIANGLE_STRIP);
+//		
+//		manager.texture(0, 0);
+//		
+//		float[] f = new float[9]; float[] n = new float[9];
+//		b1.rewind(); b2.rewind();
+//		for(int i = 0; i < cnt; i++) {
+//			b1.get(f);b2.get(n);
+//			manager.normal(n[0],n[1],n[2]);
+//			manager.vertex(f[0],f[1],f[2]);
+//			manager.normal(n[3],n[4],n[5]);
+//			manager.vertex(f[3],f[4],f[5]);
+//			manager.normal(n[6],n[7],n[8]);
+//			manager.vertex(f[6],f[7],f[8]);
+//		}
+//		manager.endGeometry();
+		
+ 		FloatBuffer b1 = mesh.getVertices();
 		FloatBuffer b2 = mesh.getNormals();
-		int cnt = mesh.getTriangleCount();
-		manager.startGeometry(Manager.TRIANGLES);
+		int cnt = mesh.getVisibleChunks();
+		int vps = mesh.getVerticesPerChunk();
 		
 		manager.texture(0, 0);
 		
-		float[] f = new float[9]; float[] n = new float[9];
+		float[] f = new float[3]; float[] n = new float[3];
 		b1.rewind(); b2.rewind();
 		for(int i = 0; i < cnt; i++) {
-			b1.get(f);b2.get(n);
-			manager.normal(n[0],n[1],n[2]);
-			manager.vertex(f[0],f[1],f[2]);
-			manager.normal(n[3],n[4],n[5]);
-			manager.vertex(f[3],f[4],f[5]);
-			manager.normal(n[6],n[7],n[8]);
-			manager.vertex(f[6],f[7],f[8]);
+			manager.startGeometry(Manager.TRIANGLE_STRIP);
+			
+			for(int j = 0; j < vps; j++){
+				b1.get(f);b2.get(n);
+				manager.normal(n[0],n[1],n[2]);
+				manager.vertex(f[0],f[1],f[2]);
+			}
+			manager.endGeometry();
 		}
-		manager.endGeometry();
 	}
 	
 	////////////////////////////////////

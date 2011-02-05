@@ -279,7 +279,7 @@ public class SurfaceMesh {
 		if (printInfo)
 			System.out.println(this.function + ":\tupdate time: "
 					+ (new Date().getTime() - t1) + "ms\ttriangles: "
-					+ drawList.getCount() + "\terror: "
+					+ drawList.getTriAmt() + "\terror: "
 					+ (float) drawList.getError() + "\tgoal:"
 					+ (float) (desiredErrorPerAreaUnit * drawList.getArea()));
 	}
@@ -290,7 +290,7 @@ public class SurfaceMesh {
 	private boolean tooCoarse() {
 		double areaGoal = desiredErrorPerAreaUnit * drawList.getArea();
 		double error = drawList.getError();
-		int count = drawList.getCount();
+		int count = drawList.getTriAmt();
 		if (count < minTriCount)
 			return true;
 		if (drawList.isFull())
@@ -420,7 +420,7 @@ public class SurfaceMesh {
 	 * @return the amount of triangles in the current mesh.
 	 */
 	public int getTriangleCount() {
-		return drawList.getCount();
+		return drawList.getTriAmt();
 	}
 }
 
@@ -439,7 +439,7 @@ class SurfTriList extends TriList {
 	 * @param marigin
 	 */
 	SurfTriList(int capacity, int marigin) {
-		super(capacity, marigin,1);
+		super(capacity, marigin,9,true);
 	}
 
 	/**

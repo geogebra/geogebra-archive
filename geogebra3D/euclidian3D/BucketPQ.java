@@ -33,6 +33,12 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 
 	/** the current highest bucket */
 	protected int maxBucket = 0;
+	
+	
+	//TODO: actually implement reverse PQs
+	
+	/** indicates the direction of the PQ */
+	final protected boolean reverse = false;
 
 	/**
 	 * Class that holds data for elements inserted into the queue
@@ -94,7 +100,9 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 	 * @return false if the element is already in the queue. Otherwise true.
 	 */
 	public boolean add(Object ob) {
+		@SuppressWarnings("unchecked")
 		E object = (E) ob;
+		
 		if (null == object)
 			throw new NullPointerException();
 

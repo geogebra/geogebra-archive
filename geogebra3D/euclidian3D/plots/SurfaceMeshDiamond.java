@@ -10,16 +10,16 @@ import geogebra3D.euclidian3D.TriListElem;
  * @author André Eriksson
  */
 public class SurfaceMeshDiamond {
-	
-	//VERTEX
+
+	// VERTEX
 	/** the parameters values of the vertex */
 	private double param1, param2;
 	/** vertex position */
 	Coords v;
 	/** vertex normal */
 	Coords normal;
-	
-	//OTHER DIAMONDS
+
+	// OTHER DIAMONDS
 	/** diamond's parents (two of its corners) */
 	SurfaceMeshDiamond[] parents = new SurfaceMeshDiamond[2];
 	/** the other two corners */
@@ -29,7 +29,7 @@ public class SurfaceMeshDiamond {
 	/** the index of this diamond within each of its parents */
 	int[] indices = new int[2];
 
-	//QUEUE STUFF
+	// QUEUE STUFF
 	/** a reference to the merge queue */
 	SurfaceMeshBucketPQ mergeQueue;
 	/** a reference to the split queue */
@@ -44,22 +44,22 @@ public class SurfaceMeshDiamond {
 	SurfaceMeshDiamond prevInQueue;
 	/** index of bucket in priority queue, set to -1 if not a member of a queue */
 	int bucketIndex = -1;
-	
-	//CULLING
+
+	// CULLING
 	/** (approximately) the minimum distance from the origin to the diamond */
 	double minRadSq;
 	/** (approximately) the maximum distance from the origin to the diamond */
 	double maxRadSq;
 	/** culling info for the diamond */
 	CullInfo cullInfo;
-	
-	//FLAGS
+
+	// FLAGS
 	/** flag indicating if the diamond has been split */
 	private boolean split = false;
 	/** flag used to discern triangles outside domain of defininition */
 	boolean isClipped = false;
-	
-	//MISC
+
+	// MISC
 	/** error measure */
 	double[] errors = new double[2];
 	/** level of resolution */
@@ -68,25 +68,25 @@ public class SurfaceMeshDiamond {
 	public double area;
 	/** a reference to the function used */
 	GeoFunctionNVar func;
-	/** the triangles associated with the diamond*/
+	/** the triangles associated with the diamond */
 	private TriListElem[] triangles = new TriListElem[2];
 
-	//CONSTRUCTORS
+	// CONSTRUCTORS
 	/**
 	 * A simple constructor. Use only when bootstrapping a mesh.
 	 * 
-	 * @param func 
-	 * 			a reference to the function being drawn
-	 * @param p1 
-	 * 			the first parameter value at which to evaluate the function
-	 * @param p2 
-	 * 			the second parameter value at which to evaluate the function
-	 * @param level 
-	 * 			the level of the diamond
-	 * @param spQ 
-	 * 			a reference to the split queue used for the mesh
-	 * @param merQ 
-	 * 			a reference to the merge queue used for the mesh
+	 * @param func
+	 *            a reference to the function being drawn
+	 * @param p1
+	 *            the first parameter value at which to evaluate the function
+	 * @param p2
+	 *            the second parameter value at which to evaluate the function
+	 * @param level
+	 *            the level of the diamond
+	 * @param spQ
+	 *            a reference to the split queue used for the mesh
+	 * @param merQ
+	 *            a reference to the merge queue used for the mesh
 	 */
 	SurfaceMeshDiamond(GeoFunctionNVar func, double p1, double p2, int level,
 			SurfaceMeshBucketPQ spQ, SurfaceMeshBucketPQ merQ) {
@@ -99,32 +99,33 @@ public class SurfaceMeshDiamond {
 		splitQueue = spQ;
 		mergeQueue = merQ;
 	}
-	
+
 	/**
-	 * @param func 
-	 * 				a reference to the function being drawn
-	 * @param parent0 
-	 * 				a reference to the diamond's first parent
-	 * @param index0 
-	 * 				the index of this diamond in the first parents children
-	 * @param parent1 
-	 * 				a reference to the diamond's second parent
-	 * @param index1 
-	 * 				the index of this diamond in the second parents children
-	 * @param a0 
-	 * 				a reference to the first ancestor
-	 * @param a1 
-	 * 				a reference to the second ancestor
-	 * @param level 
-	 * 				the diamond's level
-	 * @param spQ 
-	 * 				a reference to the split queue used for the mesh
-	 * @param merQ 
-	 * 				a reference to the merge queue used for the mesh
+	 * @param func
+	 *            a reference to the function being drawn
+	 * @param parent0
+	 *            a reference to the diamond's first parent
+	 * @param index0
+	 *            the index of this diamond in the first parents children
+	 * @param parent1
+	 *            a reference to the diamond's second parent
+	 * @param index1
+	 *            the index of this diamond in the second parents children
+	 * @param a0
+	 *            a reference to the first ancestor
+	 * @param a1
+	 *            a reference to the second ancestor
+	 * @param level
+	 *            the diamond's level
+	 * @param spQ
+	 *            a reference to the split queue used for the mesh
+	 * @param merQ
+	 *            a reference to the merge queue used for the mesh
 	 */
-	SurfaceMeshDiamond(GeoFunctionNVar func, SurfaceMeshDiamond parent0, int index0,
-			SurfaceMeshDiamond parent1, int index1, SurfaceMeshDiamond a0,
-			SurfaceMeshDiamond a1, int level, SurfaceMeshBucketPQ spQ, SurfaceMeshBucketPQ merQ) {
+	SurfaceMeshDiamond(GeoFunctionNVar func, SurfaceMeshDiamond parent0,
+			int index0, SurfaceMeshDiamond parent1, int index1,
+			SurfaceMeshDiamond a0, SurfaceMeshDiamond a1, int level,
+			SurfaceMeshBucketPQ spQ, SurfaceMeshBucketPQ merQ) {
 		splitQueue = spQ;
 		mergeQueue = merQ;
 		this.level = level;
@@ -147,11 +148,13 @@ public class SurfaceMeshDiamond {
 		if (a0.isClipped || (parent0.isClipped && parent1.isClipped))
 			isClipped = true;
 	}
-	
+
 	/**
 	 * @return true if the diamond is split, otherwise false
 	 */
-	public boolean isSplit() {return split;}
+	public boolean isSplit() {
+		return split;
+	}
 
 	/**
 	 * @return true iff at least one child is split
@@ -185,7 +188,8 @@ public class SurfaceMeshDiamond {
 	/**
 	 * sets triangles[j] to t.
 	 * 
-	 * @param j either 0 or 1.
+	 * @param j
+	 *            either 0 or 1.
 	 * @param t
 	 */
 	public void setTriangle(int j, TriListElem t) {
@@ -195,7 +199,8 @@ public class SurfaceMeshDiamond {
 	/**
 	 * releases the triangle with index j
 	 * 
-	 * @param j either 0 or 1.
+	 * @param j
+	 *            either 0 or 1.
 	 */
 	public void freeTriangle(int j) {
 		triangles[j] = null;
@@ -205,11 +210,13 @@ public class SurfaceMeshDiamond {
 	 * sets area to the base area of the diamond (parameter wise)
 	 */
 	public void setArea() {
-		if(ancestors[0].param1 - param1!=0)
-			area = Math.abs((ancestors[0].param1 - param1) * (parents[0].param2 - param2));
+		if (ancestors[0].param1 - param1 != 0)
+			area = Math.abs((ancestors[0].param1 - param1)
+					* (parents[0].param2 - param2));
 		else
-			area = Math.abs((parents[1].param1 - param1) * (ancestors[0].param2 - param2));
-			
+			area = Math.abs((parents[1].param1 - param1)
+					* (ancestors[0].param2 - param2));
+
 	}
 
 	/**
@@ -220,8 +227,10 @@ public class SurfaceMeshDiamond {
 	 *            the function to be evaluated
 	 */
 	private void estimateNormal(GeoFunctionNVar func) {
-		Coords dx = func.evaluatePoint(param1 + SurfaceMesh.normalDelta, param2);
-		Coords dy = func.evaluatePoint(param1, param2 + SurfaceMesh.normalDelta);
+		Coords dx = func
+				.evaluatePoint(param1 + SurfaceMesh.normalDelta, param2);
+		Coords dy = func
+				.evaluatePoint(param1, param2 + SurfaceMesh.normalDelta);
 		normal = dx.sub(v).crossProduct(dy.sub(v)).normalized();
 	}
 
@@ -265,14 +274,19 @@ public class SurfaceMeshDiamond {
 			errors[1] = vol2;
 
 		int fac = 0;
-		if (!parents[0].v.isDefined())fac++;
-		if (!parents[1].v.isDefined())fac++;
-		if (!ancestors[0].v.isDefined())fac++;
-		if (!ancestors[1].v.isDefined())fac++;
-		if(fac==4)
+		if (!parents[0].v.isDefined())
+			fac++;
+		if (!parents[1].v.isDefined())
+			fac++;
+		if (!ancestors[0].v.isDefined())
+			fac++;
+		if (!ancestors[1].v.isDefined())
+			fac++;
+		if (fac == 4)
 			errors[0] = errors[1] = 0;
 		else if (fac > 2)
-			errors[0]*=2.0; errors[1]*=2.0;
+			errors[0] *= 2.0;
+		errors[1] *= 2.0;
 	}
 
 	/**
@@ -282,38 +296,38 @@ public class SurfaceMeshDiamond {
 	public void setBoundingRadii() {
 		minRadSq = maxRadSq = ancestors[0].v.squareNorm();
 		boolean isNaN = Double.isNaN(minRadSq);
-		
+
 		double r = ancestors[1].v.squareNorm();
-		if (r > maxRadSq) 
-			maxRadSq = r;
-		else if (r < minRadSq) 
-			minRadSq = r;
-		isNaN |= Double.isNaN(r);
-		
-		r = parents[0].v.squareNorm();
-		if (r > maxRadSq) 
-			maxRadSq = r;
-		else if (r < minRadSq) 
-			minRadSq = r;
-		isNaN |= Double.isNaN(r);
-		
-		r = parents[1].v.squareNorm();
-		if (r > maxRadSq) 
+		if (r > maxRadSq)
 			maxRadSq = r;
 		else if (r < minRadSq)
 			minRadSq = r;
 		isNaN |= Double.isNaN(r);
-		
-		r = v.squareNorm();
-		if (r > maxRadSq) 
+
+		r = parents[0].v.squareNorm();
+		if (r > maxRadSq)
 			maxRadSq = r;
-		else if (r < minRadSq) 
+		else if (r < minRadSq)
+			minRadSq = r;
+		isNaN |= Double.isNaN(r);
+
+		r = parents[1].v.squareNorm();
+		if (r > maxRadSq)
+			maxRadSq = r;
+		else if (r < minRadSq)
+			minRadSq = r;
+		isNaN |= Double.isNaN(r);
+
+		r = v.squareNorm();
+		if (r > maxRadSq)
+			maxRadSq = r;
+		else if (r < minRadSq)
 			minRadSq = r;
 		isNaN |= Double.isNaN(r);
 
 		if (Double.isInfinite(minRadSq))
 			minRadSq = 0;
-		if (isNaN || Double.isInfinite(maxRadSq)){
+		if (isNaN || Double.isInfinite(maxRadSq)) {
 			maxRadSq = Double.POSITIVE_INFINITY;
 			minRadSq = 0;
 		}
@@ -341,11 +355,13 @@ public class SurfaceMeshDiamond {
 			return parents[1];
 		return parents[0];
 	}
-	
-	/** A function for getting a reference to a specific child. If the child doesn't already
-	 * 	exist, it is created.
-	 * @param i 
-	 * 			the index of the child
+
+	/**
+	 * A function for getting a reference to a specific child. If the child
+	 * doesn't already exist, it is created.
+	 * 
+	 * @param i
+	 *            the index of the child
 	 * @return a reference to the child
 	 */
 	public SurfaceMeshDiamond getChild(int i) {
@@ -355,40 +371,42 @@ public class SurfaceMeshDiamond {
 			SurfaceMeshDiamond otherParent = null;
 
 			int index;
-			if(i<2){
+			if (i < 2) {
 				parent = parents[0];
-				if(i==0)
-					index = indices[0]+1;
+				if (i == 0)
+					index = indices[0] + 1;
 				else
-					index = indices[0]-1;
+					index = indices[0] - 1;
 			} else {
 				parent = parents[1];
-				if(i==2)
-					index = indices[1]+1;
+				if (i == 2)
+					index = indices[1] + 1;
 				else
-					index = indices[1]-1;
+					index = indices[1] - 1;
 			}
-			
-			if(parent!=null)
-				otherParent = parent.getChild(index&3);
-			
-			int parentIndex = i/2;
-			int ancestorIndex = i==1 || i==2 ? 1:0;
+
+			if (parent != null)
+				otherParent = parent.getChild(index & 3);
+
+			int parentIndex = i / 2;
+			int ancestorIndex = i == 1 || i == 2 ? 1 : 0;
 			SurfaceMeshDiamond a0 = parents[parentIndex];
 			SurfaceMeshDiamond a1 = ancestors[ancestorIndex];
 
-			int otherIndex = i==0 || i==2 ? 1 : 0;
+			int otherIndex = i == 0 || i == 2 ? 1 : 0;
 			if (otherParent != null && otherParent.parents[1] == parent)
 				otherIndex |= 2;
 			if (i == 1 || i == 3)
-				children[i] = new SurfaceMeshDiamond(func, otherParent, otherIndex, this,
-						i, a0, a1, level + 1, splitQueue, mergeQueue);
+				children[i] = new SurfaceMeshDiamond(func, otherParent,
+						otherIndex, this, i, a0, a1, level + 1, splitQueue,
+						mergeQueue);
 			else
-				children[i] = new SurfaceMeshDiamond(func, this, i, otherParent,
-						otherIndex, a0, a1, level + 1, splitQueue, mergeQueue);
+				children[i] = new SurfaceMeshDiamond(func, this, i,
+						otherParent, otherIndex, a0, a1, level + 1, splitQueue,
+						mergeQueue);
 
 			if (otherParent != null)
-				otherParent.setChild(otherIndex,children[i]);
+				otherParent.setChild(otherIndex, children[i]);
 		}
 		return children[i];
 	}
@@ -441,7 +459,7 @@ public class SurfaceMeshDiamond {
 			}
 			// reinsert into priority queue
 			if (oldCull == CullInfo.OUT && cullInfo != CullInfo.OUT
-			||  oldCull != CullInfo.OUT && cullInfo == CullInfo.OUT) {
+					|| oldCull != CullInfo.OUT && cullInfo == CullInfo.OUT) {
 				if (inMergeQueue) {
 					mergeQueue.remove(this);
 					mergeQueue.add(this);
@@ -454,7 +472,7 @@ public class SurfaceMeshDiamond {
 
 		if (split)
 			for (int i = 0; i < 4; i += 2)
-				if (childCreated(i)){
+				if (childCreated(i)) {
 					SurfaceMeshDiamond c = children[i];
 					if (c.parents[0] == this) {
 						if (c.childCreated(0))

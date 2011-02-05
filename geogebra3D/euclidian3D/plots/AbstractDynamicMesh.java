@@ -34,10 +34,16 @@ abstract class AbstractDynamicMeshElement {
 	/** relative level of the element */
 	protected final int level;
 
+	/** set to true if the element should be ignored when drawing/updating */
+	final boolean ignoreFlag;
+
 	/**
-	 * squared distances from the origin of the two endpoints - used for culling
+	 * squared min/max distances from the origin of the two endpoints - used for
+	 * culling
 	 */
-	double minRadSq, maxRadSq;
+	double minRadSq;
+	/** ditto */
+	double maxRadSq;
 
 	/** Culling status of the element */
 	public CullInfo cullInfo;
@@ -52,10 +58,14 @@ abstract class AbstractDynamicMeshElement {
 	 *            the amount of parents the element has
 	 * @param level
 	 *            the relative level of the element
+	 * @param ignoreFlag
+	 *            true if the element shouldn't be updated or drawn
 	 */
-	public AbstractDynamicMeshElement(int nChildren, int nParents, int level) {
+	public AbstractDynamicMeshElement(int nChildren, int nParents, int level,
+			boolean ignoreFlag) {
 		this.nChildren = nChildren;
 		this.level = level;
+		this.ignoreFlag = ignoreFlag;
 		children = new AbstractDynamicMeshElement[nChildren];
 		parents = new AbstractDynamicMeshElement[nParents];
 	}
@@ -102,7 +112,10 @@ abstract class AbstractDynamicMeshElement {
 	 *            the child needed
 	 */
 	protected abstract void createChild(int i);
-	
+
+	/**
+	 * @return the error value associated with the segment
+	 */
 	protected abstract double getError();
 
 	/**
@@ -122,8 +135,7 @@ abstract class AbstractDynamicMeshElement {
 	 * @param mergeQueue
 	 */
 	public void updateCullInfo(double radSq, DynamicMeshTriList drawList,
-			DynamicMeshBucketPQ splitQueue,
-			DynamicMeshBucketPQ mergeQueue) {
+			DynamicMeshBucketPQ splitQueue, DynamicMeshBucketPQ mergeQueue) {
 
 		if (ignoreCull())
 			return;
@@ -142,10 +154,10 @@ abstract class AbstractDynamicMeshElement {
 		} else
 			cullInfo = parentCull;
 
-		// special case for singular segments - make sure
-		// children are always checked
-		if (isSingular)
-			cullInfo = CullInfo.SOMEIN;
+		// // special case for singular segments - make sure
+		// // children are always checked
+		// if (isSingular)
+		// cullInfo = CullInfo.SOMEIN;
 
 		// handle new culling info
 		if (prev != cullInfo || cullInfo == CullInfo.SOMEIN) {
@@ -157,7 +169,7 @@ abstract class AbstractDynamicMeshElement {
 				reinsertInQueue(splitQueue, mergeQueue);
 
 			// update children
-			cullChildren(radSq, drawList,splitQueue, mergeQueue);
+			cullChildren(radSq, drawList, splitQueue, mergeQueue);
 		}
 	}
 
@@ -187,24 +199,35 @@ abstract class AbstractDynamicMeshElement {
 	 * Hides/shows the element based on val
 	 * 
 	 * @param drawList
+	 *            a reference to the drawing list
 	 * @param val
+	 *            true if the element should be hidden, otherwise false
 	 */
 	abstract protected void setHidden(DynamicMeshTriList drawList, boolean val);
 
 	/**
 	 * Reinsert the element into whatever queue it's in
+	 * 
+	 * @param splitQueue
+	 *            a reference to the split queue
+	 * @param mergeQueue
+	 *            a reference to the merge queue
 	 */
-	abstract protected void reinsertInQueue(
-			DynamicMeshBucketPQ splitQueue,
+	abstract protected void reinsertInQueue(DynamicMeshBucketPQ splitQueue,
 			DynamicMeshBucketPQ mergeQueue);
 
 	/**
 	 * @param radSq
+	 *            squared radius of viewing volume
 	 * @param drawList
+	 *            a reference to the draw list in use
+	 * @param splitQueue
+	 *            a reference to the split queue
+	 * @param mergeQueue
+	 *            a reference to the merge queue
 	 */
 	abstract protected void cullChildren(double radSq,
-			DynamicMeshTriList drawList,
-			DynamicMeshBucketPQ splitQueue,
+			DynamicMeshTriList drawList, DynamicMeshBucketPQ splitQueue,
 			DynamicMeshBucketPQ mergeQueue);
 
 	/**
@@ -215,6 +238,15 @@ abstract class AbstractDynamicMeshElement {
 		for (int i = 0; i < nChildren; i++)
 			ret = ret || (children[i] != null ? children[i].isSplit() : false);
 		return ret;
+	}
+
+	/**
+	 * Checks if the element is ready to be moved from the split to the merge queue.
+	 * @param activeParent the parent that is trying to initiate the move
+	 * @return true if the element can be moved, otherwise false
+	 */
+	public boolean readyForMerge(AbstractDynamicMeshElement activeParent) {
+		return true;
 	}
 }
 
@@ -236,12 +268,6 @@ public abstract class AbstractDynamicMesh {
 	/** controls if debug info is displayed or not */
 	protected boolean printInfo = true;
 
-	/**
-	 * switch that controls if the mesh should be updated or not - typically set
-	 * to false when the mesh is sufficiently refined
-	 */
-	private boolean doUpdates = true;
-
 	/** the squared radius of the bounding volume */
 	protected double radSq;
 
@@ -258,8 +284,13 @@ public abstract class AbstractDynamicMesh {
 	private final int nParents;
 
 	/** used in optimizeSub() */
-	private enum Side {
-		MERGE, SPLIT, NONE
+	protected enum Side {
+		/** indicates that elements should be merged*/
+		MERGE, 
+		/** indicates that elements should be split*/
+		SPLIT,
+		/** indicates that no action should be taken*/
+		NONE
 	};
 
 	/**
@@ -274,9 +305,8 @@ public abstract class AbstractDynamicMesh {
 	 * @param maxLevel
 	 */
 	AbstractDynamicMesh(DynamicMeshBucketPQ mergeQueue,
-			DynamicMeshBucketPQ splitQueue,
-			DynamicMeshTriList drawList, int nParents, int nChildren,
-			int maxLevel) {
+			DynamicMeshBucketPQ splitQueue, DynamicMeshTriList drawList,
+			int nParents, int nChildren, int maxLevel) {
 		this.mergeQueue = mergeQueue;
 		this.splitQueue = splitQueue;
 		this.drawList = drawList;
@@ -287,10 +317,11 @@ public abstract class AbstractDynamicMesh {
 
 	/**
 	 * Performs a set number (stepRefinement) of splits/merges
+	 * 
+	 * @return false if no more updates are needed
 	 */
-	public void optimize() {
-		if (doUpdates)
-			optimizeSub(stepRefinement);
+	public boolean optimize() {
+		return optimizeSub(stepRefinement);
 	}
 
 	/**
@@ -324,7 +355,7 @@ public abstract class AbstractDynamicMesh {
 	 * @return the amount of triangles in the current mesh.
 	 */
 	public int getTriangleCount() {
-		return drawList.getCount();
+		return drawList.getTriAmt();
 	}
 
 	/**
@@ -333,32 +364,33 @@ public abstract class AbstractDynamicMesh {
 	 * @param maxCount
 	 *            maximum amount of operations to be performed
 	 */
-	private void optimizeSub(int maxCount) {
+	private boolean optimizeSub(int maxCount) {
 		int count = 0;
 
 		updateCullingInfo();
 
 		long t1 = new Date().getTime();
-
-		Side side = tooCoarse() ? Side.SPLIT : Side.MERGE;
-		while (side != Side.NONE && count < maxCount) {
-			if (side == Side.MERGE) {
+		
+		Side side = tooCoarse();
+		Side prevSide;
+		
+		do{
+			if (side == Side.MERGE)
 				merge(mergeQueue.poll());
-				if (tooCoarse())
-					side = Side.SPLIT;
-			} else {
+			else
 				split(splitQueue.poll());
-				if (!tooCoarse())
-					side = Side.MERGE;
-			}
+			prevSide = side;
+			side = tooCoarse();
 			count++;
-		}
-
-		// if (count < maxCount) // this only happens if the LoD
-		// doUpdates = false; // is at the desired level
+		}while (side != Side.NONE && count < maxCount && prevSide==side);
 
 		if (printInfo)
 			System.out.println(getDebugInfo(new Date().getTime() - t1));
+
+		if (side==Side.NONE) // this only happens if the LoD
+			return false; // is at the desired level
+
+		return true;
 	}
 
 	/**
@@ -376,7 +408,7 @@ public abstract class AbstractDynamicMesh {
 	/**
 	 * @return true if the mesh should be refined, otherwise false
 	 */
-	protected abstract boolean tooCoarse();
+	protected abstract Side tooCoarse();
 
 	/**
 	 * Perform a merge operation on the target element.
@@ -389,23 +421,32 @@ public abstract class AbstractDynamicMesh {
 		if (t == null)
 			return;
 
-		AbstractDynamicMeshElement temp;
-
 		// if already merged, skip
 		if (!t.isSplit())
 			return;
-		t.setSplit(false); // mark as not split
 
-		// handle kids
+		// switch queues
+		mergeQueue.remove(t);
+		splitQueue.add(t);
+
+		// mark as merged
+		t.setSplit(false);
+
+		// handle children
 		for (int i = 0; i < nChildren; i++) {
-			temp = t.getChild(i);
-			splitQueue.remove(temp);
+			AbstractDynamicMeshElement c = t.getChild(i);
 
-			if (temp.isSplit())
-				mergeQueue.add(temp);
+			// TODO: difference here
+			if(c.readyForMerge(t)){
+
+				splitQueue.remove(c);
+				
+				if (c.isSplit())
+					mergeQueue.add(c);
+			}
 
 			// remove children from draw list
-			drawList.remove(temp);
+			drawList.remove(c, (c.parents[0] == t ? 0 : 1));
 		}
 
 		// handle parents
@@ -416,10 +457,6 @@ public abstract class AbstractDynamicMesh {
 				mergeQueue.add(p);
 			}
 		}
-
-		mergeQueue.remove(t);
-
-		splitQueue.add(t); // add to split queue
 
 		// add to draw list
 		drawList.add(t);
@@ -440,40 +477,41 @@ public abstract class AbstractDynamicMesh {
 		if (t.isSplit())
 			return;
 
+		// switch queues
 		splitQueue.remove(t);
+		mergeQueue.add(t);
 
-		mergeQueue.add(t); // add to merge queue
+		// mark as split
+		t.setSplit(true);
 
-		t.setSplit(true); // mark as split
-
-		// remove parent from merge queue
+		// handle parents
 		for (int i = 0; i < nParents; i++) {
 			AbstractDynamicMeshElement p = t.getParent(i);
 			if (p != null) {
 
-				// TODO: diff here
+				split(p);
 
 				mergeQueue.remove(p);
 			}
 		}
 
-		// get kids, insert into priority queue
+		// handle children
 		for (int i = 0; i < nChildren; i++) {
 			AbstractDynamicMeshElement c = t.getChild(i);
 
-			// TODO: diff here
-
-			// add child to drawing list
-			drawList.add(c); // TODO: diff here
-
-			c.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
-
-			if (t.getLevel() <= maxLevel && !c.isSplit())
-				splitQueue.add(c);
+			if (!c.ignoreFlag){
+				c.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
+	
+				// add child to drawing list
+				drawList.add(c, (c.parents[0] == t ? 0 : 1));
+	
+				if (t.getLevel() <= maxLevel && !c.isSplit())
+					splitQueue.add(c);
+			}
 
 		}
-		
+
 		// remove from drawing list
-		drawList.remove(t); // TODO: diff here
+		drawList.remove(t);
 	}
 }

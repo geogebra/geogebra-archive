@@ -14,7 +14,7 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
  *
  */
 public class DrawCurve3D extends Drawable3DCurves {
-	private final boolean useOldCurves = true;
+	private final boolean useOldCurves = false;
 
 	private CurveMesh mesh;
 	private CurveTree tree;
@@ -40,7 +40,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 			tree = new CurveTree(curve, a_view3d);
 		else {
 			updateRadius();
-			mesh = new CurveMesh(curve, savedRadius);
+			mesh = new CurveMesh(curve, savedRadius,(float)a_view3d.getScale());
 		}
 	}
 	
@@ -124,25 +124,10 @@ public class DrawCurve3D extends Drawable3DCurves {
 		}
 		return radius;
 	}
-
-	
-	@Override
-	protected void realtimeUpdate(){
-		if(!useOldCurves){		
-			Renderer renderer = getView3D().getRenderer();
-			mesh.setRadius(savedRadius);
-			mesh.optimize();
-		
-			PlotterBrush brush = renderer.getGeometryManager().getBrush();
-			brush.start(8);
-			brush.draw(mesh,savedRadius);
-
-			setGeometryIndex(brush.end());
-		}
-	}
 	
 	protected boolean updateForItSelf(){
 
+		boolean ret = true;
 		
 		setColors();
 
@@ -169,16 +154,30 @@ public class DrawCurve3D extends Drawable3DCurves {
 				setGeometryIndex(brush.end());
 			}
 		} else {
-			updateRadius();
+			Renderer renderer = getView3D().getRenderer();
+			mesh.setRadius(savedRadius);
+			ret = mesh.optimize();
+				
+		
+			PlotterBrush brush = renderer.getGeometryManager().getBrush();
+			brush.start(8);
+			brush.draw(mesh,savedRadius);
+
+			setGeometryIndex(brush.end());
 		}
-		return true;
+		return false;
 	}
 	
 	
 	protected void updateForView(){
+		if(!useOldCurves){
+			EuclidianView3D view = getView3D();
+			mesh.updateScale((float)view.getScale());
+		}
 		
-		updateForItSelf();
-		
+		if(needRedraw()){
+			updateForItSelf();
+		}
 	}
 	
 	

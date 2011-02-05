@@ -5,6 +5,8 @@ import geogebra3D.euclidian3D.BucketAssigner;
 import geogebra3D.euclidian3D.TriListElem;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
 
+//TODO: Investigate how/why the error of Curve[t,0,t*t,t,-10,10] converges to ~31.75
+
 /**
  * An element in a CurveMesh.
  * 
@@ -13,7 +15,9 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
 class CurveSegment extends AbstractDynamicMeshElement {
 
 	/** points evaluated on a circle - used for generating points[] */
-	public final float[] sines, cosines;
+	public final float[] sines;
+	/** same */
+	public final float[] cosines;
 
 	/** a reference to the curve being drawn */
 	private GeoCurveCartesian3D curve;
@@ -23,6 +27,8 @@ class CurveSegment extends AbstractDynamicMeshElement {
 
 	/** length of the segment */
 	double length;
+
+	private float scale;
 
 	/** parameter values at the start and end of the segment */
 	double[] params = new double[3];
@@ -56,7 +62,7 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	 */
 	public CurveSegment(GeoCurveCartesian3D curve, int level, double pa1,
 			double pa2, float[] cosines, float[] sines) {
-		super(CurveMesh.nChildren, CurveMesh.nParents, level);
+		super(2, 1, level, false);
 
 		this.curve = curve;
 
@@ -84,7 +90,7 @@ class CurveSegment extends AbstractDynamicMeshElement {
 			double pa2, Coords v1, Coords v2, Coords t1, Coords t2,
 			float[][] p1, float[][] p2, float[][] n1, float[][] n2,
 			float[] cosines, float[] sines, CurveSegment parent) {
-		super(CurveMesh.nChildren, CurveMesh.nParents, level);
+		super(2, 1, level, false);
 		this.cosines = cosines;
 		this.sines = sines;
 		parents[0] = parent;
@@ -123,6 +129,7 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	}
 
 	private void setBoundingRadii() {
+
 		minRadSq = maxRadSq = vertices[0].squareNorm();
 		boolean isNaN = Double.isNaN(minRadSq);
 
@@ -143,8 +150,10 @@ class CurveSegment extends AbstractDynamicMeshElement {
 
 		if (isNaN || Double.isInfinite(maxRadSq)) {
 			maxRadSq = Double.POSITIVE_INFINITY;
-			minRadSq = 0;
 			isSingular = true;
+
+			if (Double.isNaN(minRadSq))
+				minRadSq = 0;
 		}
 	}
 
@@ -200,16 +209,16 @@ class CurveSegment extends AbstractDynamicMeshElement {
 
 		double s = 0.5 * (a + b + c);
 		error = Math.sqrt(s * (s - a) * (s - b) * (s - c)) + d;
-		
-		//alternative error measure for singular segments
-		if(Double.isNaN(error) || Double.isInfinite(error)){
-			//TODO: investigate whether it would be a good idea to 
-			//      attempt to calculate an error from any non-singular
-			//      dimensions
-			d = params[1]-params[0];
-			d/=2;
-			d*=d;
-			error=d;
+
+		// alternative error measure for singular segments
+		if (Double.isNaN(error) || Double.isInfinite(error)) {
+			// TODO: investigate whether it would be a good idea to
+			// attempt to calculate an error from any non-singular
+			// dimensions
+			d = params[1] - params[0];
+			d /= 2;
+			d *= d;
+			error = d * 1.5;
 		}
 	}
 
@@ -229,19 +238,17 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	}
 
 	@Override
-	protected void reinsertInQueue(
-			DynamicMeshBucketPQ splitQueue,
+	protected void reinsertInQueue(DynamicMeshBucketPQ splitQueue,
 			DynamicMeshBucketPQ mergeQueue) {
-		if(mergeQueue.remove(this))
+		if (mergeQueue.remove(this))
 			mergeQueue.add(this);
-		else if(splitQueue.remove(this))
+		else if (splitQueue.remove(this))
 			splitQueue.add(this);
 	}
 
 	@Override
 	protected void cullChildren(double radSq, DynamicMeshTriList drawList,
-			DynamicMeshBucketPQ splitQueue,
-			DynamicMeshBucketPQ mergeQueue) {
+			DynamicMeshBucketPQ splitQueue, DynamicMeshBucketPQ mergeQueue) {
 		if (!isSplit())
 			return;
 
@@ -288,6 +295,23 @@ class CurveSegment extends AbstractDynamicMeshElement {
 	protected double getError() {
 		return error;
 	}
+
+	/**
+	 * sets the scale of the segment
+	 * 
+	 * @param newScale
+	 *            the scale to use
+	 */
+	public void setScale(float newScale) {
+		scale = newScale;
+	}
+
+	/**
+	 * @return the scale last associated with the segment
+	 */
+	public float getScale() {
+		return scale;
+	}
 }
 
 /**
@@ -299,14 +323,19 @@ class CurveTriList extends DynamicMeshTriList {
 	private double totalError = 0;
 	private double totalLength = 0;
 
+	private float currScale;
+
 	/**
 	 * @param capacity
 	 *            the goal amount of triangles available
 	 * @param marigin
 	 *            extra triangle amount
+	 * @param scale
+	 *            the scale for the segment
 	 */
-	CurveTriList(int capacity, int marigin) {
-		super(capacity, marigin, CurveMesh.nVerts * 2);
+	CurveTriList(int capacity, int marigin, float scale) {
+		super(capacity, marigin, (CurveMesh.nVerts + 1) * 2 * 3);
+		currScale = scale;
 	}
 
 	/**
@@ -327,94 +356,95 @@ class CurveTriList extends DynamicMeshTriList {
 	 * Adds a segment to the curve. If the segment vertices are unspecified,
 	 * these are created.
 	 * 
-	 * @param s
+	 * @param e
 	 *            the segment to add
-	 * @return the triangle list element created
 	 */
-	public TriListElem add(AbstractDynamicMeshElement e) {
+	public void add(AbstractDynamicMeshElement e) {
 		CurveSegment s = (CurveSegment) e;
 
 		totalError += s.error;
 
-		if (e.isSingular()){
-			//create an empty TriListElem to show that
-			//the element has been 'added' to the list
-			
-			s.triListElem = new TriListElem(null);
-			return null;
+		if (e.isSingular()) {
+			// create an empty TriListElem to show that
+			// the element has been 'added' to the list
+
+			s.triListElem = new TriListElem();
+			s.triListElem.setOwner(s);
+			return;
 		}
 
 		totalLength += s.length;
 
-		float[] vertices = new float[2 * CurveMesh.nVerts * 9];
-		float[] normals = new float[2 * CurveMesh.nVerts * 9];
-		// create our polygons
-		for (int i = 0; i < CurveMesh.nVerts; i++) {
-			int j = (i + 1) % CurveMesh.nVerts;
-			int k = (2 * i) * 9;
-			int l = (2 * i + 1) * 9;
+		float[] vertices = getVertices(s);
+		float[] normals = getNormals(s);
 
-			// TODO: convert to triangle strips
+		TriListElem lm = add(vertices, normals);
+		lm.setOwner(s);
+		s.triListElem = lm;
+		return;
+	}
 
-			// triangle 1
-			vertices[k] = s.points[0][i][0];
-			vertices[k + 1] = s.points[0][i][1];
-			vertices[k + 2] = s.points[0][i][2];
-			vertices[k + 3] = s.points[0][j][0];
-			vertices[k + 4] = s.points[0][j][1];
-			vertices[k + 5] = s.points[0][j][2];
-			vertices[k + 6] = s.points[1][i][0];
-			vertices[k + 7] = s.points[1][i][1];
-			vertices[k + 8] = s.points[1][i][2];
+	private float[] getVertices(CurveSegment s) {
+		float[] v = new float[2 * (CurveMesh.nVerts + 1) * 3];
 
-			normals[k] = s.normals[0][i][0];
-			normals[k + 1] = s.normals[0][i][1];
-			normals[k + 2] = s.normals[0][i][2];
+		Coords v0 = s.vertices[0];
+		Coords v1 = s.vertices[2];
+
+		for (int i = 0; i <= CurveMesh.nVerts; i++) {
+			int j = i % CurveMesh.nVerts;
+			int k = i * 6;
+
+			v[k] = s.points[1][j][0];
+			v[k + 1] = s.points[1][j][1];
+			v[k + 2] = s.points[1][j][2];
+			v[k + 3] = s.points[0][j][0];
+			v[k + 4] = s.points[0][j][1];
+			v[k + 5] = s.points[0][j][2];
+
+			// scale vertices
+			float sf = 1 / currScale;
+			v[k] = v[k] * sf + (float) v1.getX() * (1 - sf);
+			v[k + 1] = v[k + 1] * sf + (float) v1.getY() * (1 - sf);
+			v[k + 2] = v[k + 2] * sf + (float) v1.getZ() * (1 - sf);
+			v[k + 3] = v[k + 3] * sf + (float) v0.getX() * (1 - sf);
+			v[k + 4] = v[k + 4] * sf + (float) v0.getY() * (1 - sf);
+			v[k + 5] = v[k + 5] * sf + (float) v0.getZ() * (1 - sf);
+
+			s.setScale(currScale);
+		}
+
+		return v;
+	}
+
+	private float[] getNormals(CurveSegment s) {
+		float[] normals = new float[2 * (CurveMesh.nVerts + 1) * 3];
+
+		for (int i = 0; i <= CurveMesh.nVerts; i++) {
+			int j = i % CurveMesh.nVerts;
+			int k = i * 6;
+
+			normals[k] = s.normals[1][j][0];
+			normals[k + 1] = s.normals[1][j][1];
+			normals[k + 2] = s.normals[1][j][2];
 			normals[k + 3] = s.normals[0][j][0];
 			normals[k + 4] = s.normals[0][j][1];
 			normals[k + 5] = s.normals[0][j][2];
-			normals[k + 6] = s.normals[1][i][0];
-			normals[k + 7] = s.normals[1][i][1];
-			normals[k + 8] = s.normals[1][i][2];
-
-			// triangle 2
-			vertices[l] = s.points[0][j][0];
-			vertices[l + 1] = s.points[0][j][1];
-			vertices[l + 2] = s.points[0][j][2];
-			vertices[l + 3] = s.points[1][j][0];
-			vertices[l + 4] = s.points[1][j][1];
-			vertices[l + 5] = s.points[1][j][2];
-			vertices[l + 6] = s.points[1][i][0];
-			vertices[l + 7] = s.points[1][i][1];
-			vertices[l + 8] = s.points[1][i][2];
-
-			normals[l] = s.normals[0][j][0];
-			normals[l + 1] = s.normals[0][j][1];
-			normals[l + 2] = s.normals[0][j][2];
-			normals[l + 3] = s.normals[1][j][0];
-			normals[l + 4] = s.normals[1][j][1];
-			normals[l + 5] = s.normals[1][j][2];
-			normals[l + 6] = s.normals[1][i][0];
-			normals[l + 7] = s.normals[1][i][1];
-			normals[l + 8] = s.normals[1][i][2];
 		}
 
-		TriListElem lm = add(vertices, normals);
-		s.triListElem = lm;
-		return lm;
+		return normals;
 	}
 
 	/**
 	 * Removes a segment if it is part of the curve.
 	 * 
-	 * @param s
+	 * @param e
 	 *            the segment to remove
 	 * @return true if the segment was removed, false if it wasn't in the curve
 	 *         in the first place
 	 */
 	public boolean remove(AbstractDynamicMeshElement e) {
 		CurveSegment s = (CurveSegment) e;
-		
+
 		boolean ret = hide(s);
 
 		// free triangle
@@ -425,9 +455,10 @@ class CurveTriList extends DynamicMeshTriList {
 	@Override
 	public boolean hide(AbstractDynamicMeshElement t) {
 		CurveSegment s = (CurveSegment) t;
-		
-		if(s.isSingular() && s.triListElem!=null && s.triListElem.getIndex()!=-1){
-			totalError-=s.error;
+
+		if (s.isSingular() && s.triListElem != null
+				&& s.triListElem.getIndex() != -1) {
+			totalError -= s.error;
 			return true;
 		} else if (hide(s.triListElem)) {
 			totalError -= s.error;
@@ -442,8 +473,9 @@ class CurveTriList extends DynamicMeshTriList {
 	public boolean show(AbstractDynamicMeshElement t) {
 		CurveSegment s = (CurveSegment) t;
 
-		if(s.isSingular() && s.triListElem!=null && s.triListElem.getIndex()==-1){
-			totalError+=s.error;
+		if (s.isSingular() && s.triListElem != null
+				&& s.triListElem.getIndex() == -1) {
+			totalError += s.error;
 			return true;
 		} else if (show(s.triListElem)) {
 			totalError += s.error;
@@ -453,7 +485,55 @@ class CurveTriList extends DynamicMeshTriList {
 
 		return false;
 	}
+
+	/**
+	 * rescales all visible elements to the given scale
+	 * 
+	 * @param newScale
+	 */
+	public void rescale(float newScale) {
+		TriListElem t = front;
+		while (t != null) {
+
+			float[] v = getVertices(t);
+
+			CurveSegment owner = (CurveSegment) t.getOwner();
+
+			Coords v0 = owner.vertices[0];
+			Coords v1 = owner.vertices[2];
+
+			float sf = owner.getScale() / (newScale); // scale factor
+
+			for (int i = 0; i <= CurveMesh.nVerts; i++) {
+				int k = i * 6;
+
+				v[k] = v[k] * sf + (float) v1.getX() * (1 - sf);
+				v[k + 1] = v[k + 1] * sf + (float) v1.getY() * (1 - sf);
+				v[k + 2] = v[k + 2] * sf + (float) v1.getZ() * (1 - sf);
+				v[k + 3] = v[k + 3] * sf + (float) v0.getX() * (1 - sf);
+				v[k + 4] = v[k + 4] * sf + (float) v0.getY() * (1 - sf);
+				v[k + 5] = v[k + 5] * sf + (float) v0.getZ() * (1 - sf);
+			}
+
+			setVertices(t, v);
+			t = t.getNext();
+			owner.setScale(newScale);
+		}
+		currScale = newScale;
+	}
+
+	@Override
+	public void add(AbstractDynamicMeshElement e, int i) {
+		add(e);
+	}
+
+	@Override
+	public boolean remove(AbstractDynamicMeshElement e, int i) {
+		return remove(e);
+	}
 }
+
+// TODO: only use one bucket assigner
 
 /**
  * A bucket assigner used for split operations. Sorts based on
@@ -461,7 +541,8 @@ class CurveTriList extends DynamicMeshTriList {
  * 
  * @author André Eriksson
  */
-class SplitBucketAssigner implements BucketAssigner<AbstractDynamicMeshElement> {
+class CurveSplitBucketAssigner implements
+		BucketAssigner<AbstractDynamicMeshElement> {
 
 	public int getBucketIndex(Object o, int bucketAmt) {
 		CurveSegment d = (CurveSegment) o;
@@ -481,7 +562,8 @@ class SplitBucketAssigner implements BucketAssigner<AbstractDynamicMeshElement> 
  * 
  * @author André Eriksson
  */
-class MergeBucketAssigner implements BucketAssigner<AbstractDynamicMeshElement> {
+class CurveMergeBucketAssigner implements
+		BucketAssigner<AbstractDynamicMeshElement> {
 
 	public int getBucketIndex(Object o, int bucketAmt) {
 		CurveSegment d = (CurveSegment) o;
@@ -500,17 +582,18 @@ class MergeBucketAssigner implements BucketAssigner<AbstractDynamicMeshElement> 
  */
 public class CurveMesh extends AbstractDynamicMesh {
 
-	private static final int maxSegments = 3000;
-	public static final int nParents = 1;
-	public static final int nChildren = 2;
 	private static final int maxLevel = 20;
+
+	/** the parameter difference used to approximate tangents */
 	public static double deltaParam = 1e-3;
 
-	/** the amount of vertices at the end of each segment */
-	static public final int nVerts = 4;
+	private static final float scalingFactor = .8f;
 
-	/** radius of the segments */
-	static public final float radius = 0.1f;
+	/** the amount of vertices at the end of each segment */
+	static public final int nVerts = 8;
+
+	/** relative radius of the segments */
+	static public final float radiusFac = 0.1f;
 
 	private CurveSegment root;
 
@@ -519,12 +602,12 @@ public class CurveMesh extends AbstractDynamicMesh {
 	/**
 	 * @param curve
 	 * @param rad
+	 * @param scale
 	 */
-	public CurveMesh(GeoCurveCartesian3D curve, double rad) {
-		super(new DynamicMeshBucketPQ(new MergeBucketAssigner()),
-				new DynamicMeshBucketPQ(new SplitBucketAssigner()),
-				new CurveTriList(maxSegments, 1000), nParents, nChildren,
-				maxLevel);
+	public CurveMesh(GeoCurveCartesian3D curve, double rad, float scale) {
+		super(new DynamicMeshBucketPQ(new CurveMergeBucketAssigner()),
+				new DynamicMeshBucketPQ(new CurveSplitBucketAssigner()),
+				new CurveTriList(100, 0, scale * scalingFactor), 1, 2, maxLevel);
 
 		setRadius(rad);
 
@@ -534,29 +617,29 @@ public class CurveMesh extends AbstractDynamicMesh {
 	}
 
 	/**
-	 * generates the first segment
+	 * generates the first few segments
 	 */
 	private void initCurve() {
 		float[] cosines = new float[nVerts];
 		float[] sines = new float[nVerts];
 		double fac = 2 * Math.PI / nVerts;
 		for (int i = 0; i < nVerts; i++) {
-			cosines[i] = radius * (float) Math.cos(i * fac);
-			sines[i] = radius * (float) Math.sin(i * fac);
+			cosines[i] = (float) Math.cos(i * fac);
+			sines[i] = (float) Math.sin(i * fac);
 		}
-		root = new CurveSegment(curve, 0, curve.getMinParameter(),
-				curve.getMaxParameter(), cosines, sines);
+		root = new CurveSegment(curve, 0, curve.getMinParameter(), curve
+				.getMaxParameter(), cosines, sines);
 
 		root.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
 
 		splitQueue.add(root);
 		drawList.add(root);
-		
-		//split the first few elements in order to avoid problems
-		//with periodic funtions
-		for(int i = 0; i < 10; i++)
+
+		// split the first few elements in order to avoid problems
+		// with periodic funtions
+		for (int i = 0; i < 30; i++)
 			split(splitQueue.poll());
-		
+
 	}
 
 	protected void updateCullingInfo() {
@@ -564,23 +647,51 @@ public class CurveMesh extends AbstractDynamicMesh {
 	}
 
 	@Override
-	protected boolean tooCoarse() {
+	protected Side tooCoarse() {
 		CurveTriList d = (CurveTriList) drawList;
 
 		double error = d.getError();
-		double errorGoal = 0.1;
-		int count = drawList.getCount();
-		if (drawList.isFull())
-			return false;
+		double errorGoal = 0.001 * d.getLength();
+		
+		//avoid problems with straigt lines etc
+		if(Math.abs(error)<1e-10)
+			return Side.NONE;
+		
 		if (error < errorGoal)
-			return false;
-		return true;
+			return Side.MERGE;
+		
+		return Side.SPLIT;
 	}
 
 	@Override
 	protected String getDebugInfo(long time) {
 		return curve + ":\tupdate time: " + time + "ms\ttriangles: "
-				+ drawList.getCount() + "\terror: "
-				+ (float) ((CurveTriList) drawList).getError();
+				+ drawList.getTriAmt() + "\terror: "
+				+ (float) ((CurveTriList) drawList).getError() + "\tlength: "
+				+ (float) ((CurveTriList) drawList).getLength();
+	}
+
+	/**
+	 * @return the amount of visible segments
+	 */
+	public int getVisibleChunks() {
+		return drawList.getChunkAmt();
+	}
+
+	/**
+	 * @return the amount of vertices per segment
+	 */
+	public int getVerticesPerChunk() {
+		return 2 * (nVerts + 1);
+	}
+
+	/**
+	 * rescales the mesh
+	 * 
+	 * @param scale
+	 *            the desired scale
+	 */
+	public void updateScale(float scale) {
+		((CurveTriList) drawList).rescale(scale * scalingFactor);
 	}
 }
