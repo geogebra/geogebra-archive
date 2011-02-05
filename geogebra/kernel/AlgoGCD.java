@@ -15,6 +15,8 @@ package geogebra.kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.MyMath;
 
+import java.math.BigInteger;
+
 /**
  * Computes GCD[a, b]
  * @author  Michael Borcherds
@@ -35,6 +37,12 @@ public class AlgoGCD extends AlgoTwoNumFunction {
     protected final void compute() {
     	if (input[0].isDefined() && input[1].isDefined()) {
     		
+    		// 2^52
+    		if (a.getDouble() > 4503599627370496d || b.getDouble() > 4503599627370496d) {
+    			num.setUndefined();
+    			return;
+    		}
+    		
     		// use algorithm in ints first
     		boolean success = false;
     		int aInt = (int)Math.abs(a.getDouble());
@@ -49,36 +57,19 @@ public class AlgoGCD extends AlgoTwoNumFunction {
     			if (success) return;
     		}
     		
-    		// for larger numbers, use CAS
+    		// for larger numbers, use BigInteger
     		if (a.getDouble() == Math.floor(a.getDouble()) && b.getDouble() == Math.floor(b.getDouble()))
-    		{       // TODO what shall we do with numbers larger than 2^57?
-    				// Gcd[2^58+1,2] and Gcd[2^58,2] currently give the same answer
-
-    			if (sb == null)
-    				sb = new StringBuilder();
+    		{  
+    			BigInteger i1 = BigInteger.valueOf((long)a.getDouble());
+    			BigInteger i2 = BigInteger.valueOf((long)b.getDouble());
     			
-    			// build MathPiper command
-    			sb.setLength(0);
-    			sb.append("Gcd(Round(");
-    			sb.append(a.getDouble());
-    			sb.append("),Round(");
-    			sb.append(b.getDouble());
-    			sb.append("))");
+    			i1 = i1.gcd(i2);
     			
-        		String result=kernel.evaluateMathPiper(sb.toString());
-        		try {
-            		double gcd = Double.valueOf(result).doubleValue();
-            		num.setValue(gcd);
-        			
-        		}
-        		catch (Exception e) {
-        			num.setUndefined();        			
-        		}
-    		}
-    		else
-    		{ // not integers
+    			num.setValue(i1.doubleValue());
+    		} else {
     			num.setUndefined();
     		}
+    			
     	} else
     		num.setUndefined();
     }       

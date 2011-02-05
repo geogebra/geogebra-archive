@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.math.BigInteger;
+
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
@@ -50,31 +52,24 @@ public class AlgoLCM extends AlgoTwoNumFunction {
     			if (success) return;
     		}
     		
-    		// for larger numbers, use CAS
+    		if (a.getDouble() > Integer.MAX_VALUE || b.getDouble() > Integer.MAX_VALUE) {
+    			num.setUndefined();
+    			return;
+    		}
+
+    		
+    		// for larger numbers, use BigInteger
     		if (a.getDouble()==Math.floor(a.getDouble()) && b.getDouble()==Math.floor(b.getDouble()))
-    		{       // TODO what shall we do with numbers larger than 2^57?
-    				// Lcm[2^58+1,2] and Lcm[2^58,2] currently give the same answer
-	
-    			if (sb == null)
-    				sb = new StringBuilder();
+    		{   
+    			BigInteger i1 = BigInteger.valueOf((long)a.getDouble());
+    			BigInteger i2 = BigInteger.valueOf((long)b.getDouble());
     			
-    			// build MathPiper command
-    			sb.setLength(0);
-    			sb.append("Lcm(Round(");
-    			sb.append(a.getDouble());
-    			sb.append("),Round(");
-    			sb.append(b.getDouble());
-    			sb.append("))");
+    			BigInteger gcd = i1.gcd(i2);
     			
-        		String result=kernel.evaluateMathPiper(sb.toString());
-        		try {
-            		double lcm = Double.valueOf(result).doubleValue();
-            		num.setValue(lcm);
-        			
-        		}
-        		catch (Exception e) {
-        			num.setUndefined();        			
-        		}
+    			i1 = i1.divide(gcd);
+    			i2 = i2.multiply(i1); // this is LCM
+    			
+    			num.setValue(i2.doubleValue());
     		}
     		else
     		{ // not integers
