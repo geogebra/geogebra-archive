@@ -87,7 +87,7 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
         // create helper algorithm for symbolic integral
         // don't use symbolic integral for conditional functions
         // or if it should not be evaluated (i.e. a shade-only integral)
-        if ((evaluate != null && !evaluate.getBoolean()) && !f.isGeoFunctionConditional()) {
+        if ((evaluate != null && evaluate.getBoolean()) && !f.isGeoFunctionConditional()) {
             AlgoCasIntegral algoInt = new AlgoCasIntegral(cons, f, null);
             symbIntegral = (GeoFunction) algoInt.getResult();
             cons.removeFromConstructionList(algoInt);     
