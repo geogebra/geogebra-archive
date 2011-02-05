@@ -187,7 +187,7 @@ public class AlgebraProcessor {
 	public GeoElement[] processAlgebraCommand(String cmd, boolean storeUndo) {
 		
 		try {
-			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo,false,false);
+			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo,true,false);
 		} catch (Exception e) {
 			e.printStackTrace();
 			app.showError(e.getMessage());
@@ -221,16 +221,15 @@ public class AlgebraProcessor {
 			ve = parser.parseGeoGebraExpression(cmd);
 		} catch (ParseException e) {
 			//e.printStackTrace();
-			if (allowErrorDialog) app.showError(app.getError("InvalidInput") + ":\n" + cmd);
-
-			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
+			if (allowErrorDialog) {app.showError(app.getError("InvalidInput") + ":\n" + cmd);return null;}
+			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);						
 		} catch (MyError e) {
 			//e.printStackTrace();
-			if (allowErrorDialog) app.showError(e.getLocalizedMessage());
+			if (allowErrorDialog) {app.showError(e.getLocalizedMessage());return null;}
 			throw new Exception(e.getLocalizedMessage());
 		} catch (Error e) {
 			//e.printStackTrace();
-			if (allowErrorDialog) app.showError(app.getError("InvalidInput") + ":\n" + cmd);
+			if (allowErrorDialog) {app.showError(app.getError("InvalidInput") + ":\n" + cmd);return null;}
 			throw new Exception(app.getError("InvalidInput") + ":\n" + cmd);
 		}
 
