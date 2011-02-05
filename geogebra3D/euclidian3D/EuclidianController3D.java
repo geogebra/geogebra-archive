@@ -458,7 +458,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			ret = point3D;
 			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
 			view3D.updateMatrixForCursor3D();
-			if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_POINT_IN_REGION)
+			if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_POINT_ON_OBJECT)
 				freePointJustCreated = true;
 			break;
 
@@ -933,7 +933,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 		if (mode==EuclidianView.MODE_POINT 
-				|| mode==EuclidianView.MODE_POINT_IN_REGION
+				|| mode==EuclidianView.MODE_POINT_ON_OBJECT
 				|| mode==EuclidianView.MODE_MOVE
 		){
 			if(freePointJustCreated)
@@ -1593,7 +1593,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			switch(mode){
 			case EuclidianView.MODE_MOVE:
 			case EuclidianView.MODE_POINT:
-			case EuclidianView.MODE_POINT_IN_REGION:
+			case EuclidianView.MODE_POINT_ON_OBJECT:
 				return true;
 			default:
 				return false;			
@@ -1601,7 +1601,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		}else{
 			switch(mode){
 			case EuclidianView.MODE_POINT:
-			case EuclidianView.MODE_POINT_IN_REGION:
+			case EuclidianView.MODE_POINT_ON_OBJECT:
 				
 			case EuclidianView.MODE_JOIN:
 			case EuclidianView.MODE_ORTHOGONAL:

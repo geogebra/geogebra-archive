@@ -1045,8 +1045,8 @@ public class Kernel {
 		case EuclidianConstants.MODE_POINT:
 			return "Point";
 			
-		case EuclidianConstants.MODE_POINT_IN_REGION:
-			return "PointInRegion";
+		case EuclidianConstants.MODE_POINT_ON_OBJECT:
+			return "PointOnObject";
 			
 		case EuclidianConstants.MODE_JOIN:
 			return "Join";

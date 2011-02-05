@@ -139,7 +139,7 @@ public interface EuclidianConstants {
 	public static final int MODE_ATTACH_DETACH = 67;
 	// ggb3D start
 	/** special mode that allows to create point inside a region (polygon, etc.) */
-	public static final int MODE_POINT_IN_REGION = 501;
+	public static final int MODE_POINT_ON_OBJECT = 501;
 	
 	/** mode that change the view to be in front of selected plane */
 	public static final int MODE_VIEW_IN_FRONT_OF = 502;

@@ -56,7 +56,7 @@ public class AlgoPointInRegion extends AlgoElement {
     }
     
     public int getRelatedModeID() {
-    	return EuclidianConstants.MODE_POINT_IN_REGION;
+    	return EuclidianConstants.MODE_POINT_ON_OBJECT;
     }
 
     // for AlgoElement

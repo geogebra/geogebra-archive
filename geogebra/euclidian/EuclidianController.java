@@ -864,11 +864,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// create new point at mouse location
 		// this point can be dragged: see mouseDragged() and mouseReleased()
 		case EuclidianView.MODE_POINT:
-		case EuclidianView.MODE_POINT_IN_REGION:				
+		case EuclidianView.MODE_POINT_ON_OBJECT:				
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			// if mode==EuclidianView.MODE_POINT_IN_REGION, point can be in a region
-			createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_IN_REGION, true, true); 
+			createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_ON_OBJECT, true, true); 
 			break;
 
 		case EuclidianView.MODE_SEGMENT:
@@ -1453,7 +1453,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			// mathieu : also if it's mode point, we can drag the point
 			if (Application.isRightClick(e) 
 					|| mode == EuclidianView.MODE_POINT 
-					|| mode == EuclidianView.MODE_POINT_IN_REGION
+					|| mode == EuclidianView.MODE_POINT_ON_OBJECT
 			){
 				view.setHits(mouseLoc);
 				if (!(view.getHits().isEmpty())) 
@@ -2305,7 +2305,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				hits = tempArrayList;						
 			}
 		}
-		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_IN_REGION) {
+		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_ON_OBJECT) {
 			// include polygons in hits
 			view.setHits(mouseLoc);
 			hits = view.getHits();
@@ -2446,7 +2446,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		break;
 
 		case EuclidianView.MODE_POINT:
-		case EuclidianView.MODE_POINT_IN_REGION:
+		case EuclidianView.MODE_POINT_ON_OBJECT:
 			// point() is dummy function for highlighting only
 			if (selectionPreview) {
 				if (mode==EuclidianView.MODE_POINT)
@@ -3294,7 +3294,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	private boolean allowPointCreation() {
 		return  mode == EuclidianView.MODE_POINT || 
-		mode == EuclidianView.MODE_POINT_IN_REGION ||
+		mode == EuclidianView.MODE_POINT_ON_OBJECT ||
 		app.isOnTheFlyPointCreationActive(); 
 	}
 

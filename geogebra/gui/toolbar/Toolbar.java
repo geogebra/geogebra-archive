@@ -377,7 +377,7 @@ public class Toolbar extends JToolBar {
         sb.append(" || ");
         sb.append(EuclidianView.MODE_POINT);
         sb.append(" ");        
-        sb.append(EuclidianView.MODE_POINT_IN_REGION);
+        sb.append(EuclidianView.MODE_POINT_ON_OBJECT);
         sb.append(" ");
         sb.append(EuclidianView.MODE_INTERSECT);
         sb.append(" ");
@@ -532,7 +532,7 @@ public class Toolbar extends JToolBar {
     public static String getAllToolsNoMacros3D() {
 		return EuclidianView3D.MODE_MOVE
 		+" || "
-		+EuclidianView3D.MODE_POINT_IN_REGION
+		+EuclidianView3D.MODE_POINT_ON_OBJECT
 		+" "
 		+EuclidianView3D.MODE_INTERSECT
 		+" | "
