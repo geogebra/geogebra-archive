@@ -38,6 +38,7 @@ import geogebra.kernel.arithmetic.MyDouble;
  * 			17.01:  Changed to minimum 4 datapoints to give fewer undefined,
  *                  even if this might not be very useful
  *          14.02.09: Small bug in linje 256. Undefined if many iterations
+ *          04.05.11: Bug/weakness in handling more than one period
  * Fits a+b*sin(c*x+d)  to a list of points.
  * Adapted from:
  *    	Nonlinear regression algorithms are well known, see:
@@ -95,7 +96,6 @@ public class AlgoFitSin extends AlgoElement{
 	private final static double EPSSING			=	1E-20d;
 	private final static double PI				=	Math.PI;
 	private final static double TWO_PI			=	PI*2;	
-	//private final static boolean DEBUG			=	false;		//Set false when finished
 	
 	// Properties
 	private static geogebra.main.Application app=	null;
@@ -202,7 +202,7 @@ public class AlgoFitSin extends AlgoElement{
             if(y<min){min=y;xmin_abs=i;}
         }//for
         a=sum/size;                                    
-        b=(max-min)/2.0d;                             //debug("a= "+a+" b= "+b+" max= "+max+" min= "+min);
+        b=(max-min)/2.0d;                             System.out.println("a= "+a+" b= "+b+" max= "+max+" min= "+min);
        
         //Find c:
         //This time first and second local max/min, between rise and fall and vv
@@ -230,8 +230,8 @@ public class AlgoFitSin extends AlgoElement{
 
                 //Two changes enough. (Must check before updating extremums.)
                 if(changes>=2){                             //debug("Two changes on "+i);
-                    break;                      
-                }//if changes>=2
+                    // go on counting changes!break;                      
+                }else{				//if changes>=2 
             
                 //Update extremums so far                
                 if(current==1){         //Steady up
@@ -239,6 +239,7 @@ public class AlgoFitSin extends AlgoElement{
                 }else if(current==-1){  //Steady down
                     min=y;xmin=i;       	//Last is min so far
                 }//update extremums
+                }//if changes<2
             }else{	//Not steady, nothing to do...
                 
             }//if steady up or down
@@ -255,6 +256,11 @@ public class AlgoFitSin extends AlgoElement{
         	numberofhalfperiods=findNumberOfHalfPeriods(size/4,xmin,xmax);	//At least 6 (14.02.09:4) points in a period, hopefully
         }//if too few extrema
         c=PI*numberofhalfperiods/min_max_distance;			//debug("Final c: "+c);
+        //System.out.println("c="+c);	//**************
+        double c2=2*Math.PI/((xd[size-1]-xd[0])*2/changes);
+        //System.out.println("or..."+c2);  System.out.println("changes: "+changes);
+        if(changes>2) c=(c+c2)/2;	//compromise?
+        //System.out.println("final c: "+c);
      
         //Find d  
         // (d=0 might go well, but to be on the safe side...100 iterations should be enough?
@@ -366,8 +372,8 @@ public class AlgoFitSin extends AlgoElement{
                         m11,m12,m13,b1,
                         m21,m22,m23,b2,
                         m31,m32,m33,b3,
-                        m41,m42,m43,b4)/n;
-                
+                        m41,m42,m43,b4)/n;	
+
                 newa=a+da;newb=b+db;newc=c+dc;newd=d+dd;        //Remember this, in case we have to go back...
                 residual=beta2(xd,yd,newa,newb,newc,newd);      //debug("ChiSqError: +"+residual);
                 //diff=residual-old_residual;                   //debug("Residual difference: "+diff+"    lambda: "+lambda);
@@ -381,7 +387,7 @@ public class AlgoFitSin extends AlgoElement{
                     multfaktor*=2;              //LM drives hard...
                 }//if going the right way                
             }//if(error)-else
-            //debug( ""+da+"\t"+db+"\t"+dc+"\t"+dd+"\n"+  ""+a+"\t"+b+"\t"+c+"\t"+d+"\n" );//out
+            System.out.println( ""+da+"\t"+db+"\t"+dc+"\t"+dd+"\n"+  ""+a+"\t"+b+"\t"+c+"\t"+d+"\n" );//out
         }//while(da+db+dc>eps)
         
         //Reduce d to interval <-pi,pi>
@@ -547,7 +553,7 @@ public class AlgoFitSin extends AlgoElement{
   /// =============== To comment out when final =============================================== ///
     
 /*    //SNIP START---------------------------------
-    
+    private final static boolean DEBUG=true;
     private final static void debug(String s) {
         if(DEBUG) {
             System.out.print("\nFitSin:   ");
