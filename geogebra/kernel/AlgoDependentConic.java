@@ -105,5 +105,9 @@ public class AlgoDependentConic extends AlgoElement {
 
     public final String toString() {
         return equation.toString();
+    }
+    
+    public final String toRealString() {
+        return equation.toRealString();
     }           
 }

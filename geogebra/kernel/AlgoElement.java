@@ -845,11 +845,14 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     }    
         
     public String getCommandDescription() {
+    	return  getCommandDescription(false); 
+    }
+    public String getCommandDescription(boolean real) {
         String cmdname = getCommandName();          
         
         //      command name
         if (cmdname.equals("Expression"))
-			return toString();
+			return toRealString();
 		else {
 			 sb.setLength(0);
             if (kernel.isTranslateCommandName()) {
@@ -862,17 +865,23 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
                   
             sb.append("[");
             // input
-            if (length>0) sb.append(input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]
+            if (length>0) sb.append(real?input[0].getRealLabel():input[0].getLabel()); // Michael Borcherds 2008-05-15 added input.length>0 for Step[]
             for (int i = 1; i < length; ++i) {
                 sb.append(", ");
-                sb.append(input[i].getLabel());
+                sb.append(real? input[i].getRealLabel():input[i].getLabel());
             }
             sb.append("]");
             return sb.toString();           
         }       
     }
+    
+    
 
-    /**
+    public String toRealString() {
+		return toString();
+	}
+
+	/**
      * translate class name to internal command name
      * GeoGebra File Format
      */

@@ -26,6 +26,9 @@ public abstract class ValidExpression implements ExpressionValue {
     private boolean inTree; // used by ExpressionNode
     private boolean keepInputUsed; // flag used by GeoGebraCAS
 
+    public String toRealString(){
+    	return toString();
+    }
 	public void addLabel(String label) {  
     	initLabels();
         labels.add(label);

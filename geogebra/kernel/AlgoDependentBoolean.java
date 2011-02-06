@@ -75,4 +75,9 @@ public class AlgoDependentBoolean extends AlgoElement {
         // was defined as e.g.  c = a & b
         return root.toString();
     }
+    
+    final public String toRealString() {
+        // was defined as e.g.  c = a & b
+        return root.toRealString();
+    }
 }

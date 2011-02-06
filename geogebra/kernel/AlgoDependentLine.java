@@ -166,6 +166,13 @@ public class AlgoDependentLine extends AlgoElement {
     		return equation.toString();
     	else
     		return root.toString();
+    }
+    
+    final public String toRealString() { 
+    	if (mode == MODE_EQUATION)
+    		return equation.toRealString();
+    	else
+    		return root.toRealString();
     } 
     
 }

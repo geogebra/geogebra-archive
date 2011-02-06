@@ -110,4 +110,9 @@ public class AlgoDependentText extends AlgoElement {
         // was defined as e.g.  text0 = "Radius: " + r
         return root.toString();
     }
+    
+    final public String toRealString() {
+        // was defined as e.g.  text0 = "Radius: " + r
+        return root.toRealString();
+    }
 }

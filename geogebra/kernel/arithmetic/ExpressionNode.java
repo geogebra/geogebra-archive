@@ -3185,4 +3185,30 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 	}
 
+	public String toRealString() {
+		if (leaf) { // leaf is GeoElement or not
+			if (left.isGeoElement())
+				return ((GeoElement) left).getRealLabel();
+			else
+				return left.toRealString();
+		}
+
+		// expression node
+		String leftStr = null, rightStr = null;
+		if (left.isGeoElement()) {
+			leftStr = ((GeoElement) left).getRealLabel();
+		} else {
+			leftStr = left.toRealString();
+		}
+
+		if (right != null) {
+			if (right.isGeoElement()) {
+				rightStr = ((GeoElement) right).getRealLabel();
+			} else {
+				rightStr = right.toRealString();
+			}
+		}
+		return operationToString(leftStr, rightStr, false);
+	}
+
 }

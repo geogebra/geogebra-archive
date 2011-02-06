@@ -50,5 +50,6 @@ public interface ExpressionValue {
     public String toValueString();
     public String toLaTeXString(boolean symbolic);   
     public void resolveVariables();
+	public String toRealString();
 }
 

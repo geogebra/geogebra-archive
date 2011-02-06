@@ -65,8 +65,8 @@ public class AlgoDependentPoint extends AlgoElement {
 	protected void setInputOutput() {
         input = root.getGeoElementVariables();  
         
-        output = new GeoElement[1];        
-        output[0] = P;        
+        setOutputLength(1);        
+        setOutput(0,P);        
         setDependencies(); // done by AlgoElement
     }    
     
@@ -95,5 +95,9 @@ public class AlgoDependentPoint extends AlgoElement {
     
     final public String toString() {              
         return root.toString();
+    }
+    
+    final public String toRealString() {              
+        return root.toRealString();
     }
 }

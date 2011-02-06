@@ -63,8 +63,8 @@ public class AlgoDependentNumber extends AlgoElement {
 	protected void setInputOutput() {
         input = root.getGeoElementVariables();
         
-        output = new GeoElement[1];        
-        output[0] = number;        
+        setOutputLength(1);        
+        setOutput(0,number);        
         setDependencies(); // done by AlgoElement
     }    
     
@@ -86,5 +86,8 @@ public class AlgoDependentNumber extends AlgoElement {
         // was defined as e.g.  r = 5a - 3b
         // return 5a - 3b
         return root.toString();
+    }
+    final public String toRealString() {        
+        return root.toRealString();
     }
 }

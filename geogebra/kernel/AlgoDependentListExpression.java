@@ -237,4 +237,8 @@ public class AlgoDependentListExpression extends AlgoElement {
         // was defined as e.g.  L = 3 * {a, b, c}  
         return root.toString();
     }
+    final public String toRealString() {
+        // was defined as e.g.  L = 3 * {a, b, c}  
+        return root.toRealString();
+    }
 }

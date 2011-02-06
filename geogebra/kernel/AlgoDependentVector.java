@@ -80,4 +80,8 @@ public class AlgoDependentVector extends AlgoElement {
     final public String toString() {         
             return root.toString();
     }
+    
+    final public String toRealString() {         
+        return root.toRealString();
+}
 }

@@ -106,4 +106,17 @@ public class AlgoDependentFunctionNVar extends AlgoElement {
         return sb.toString();
     }
     
+    public String toRealString() {
+        if (sb == null) sb = new StringBuilder();
+        else sb.setLength(0);
+        if (f.isLabelSet()) {
+            sb.append(f.label);
+            sb.append("(");
+			sb.append(f.getVarString());
+			sb.append(") = ");
+        }  
+        sb.append(fun.getExpression().toRealString());
+        return sb.toString();
+    }
+    
 }

@@ -2912,6 +2912,10 @@ public abstract class GeoElement
 	public String toString() {
 		return label;
 	}
+	
+	public String toRealString() {
+		return getRealLabel();
+	}
 
 	/*
 	 * implementation of interface ExpressionValue
@@ -4761,6 +4765,48 @@ public abstract class GeoElement
 			else if ((Unicode.Infinity+"").equals(ret)) ret = app.getPlain("\\infty");
 			else if ((Unicode.MinusInfinity+"").equals(ret)) ret = app.getPlain("-\\infty");
 		}
+		
+		return ret;
+		
+	}
+
+	public String getRealFormulaString(int ExpressionNodeType, boolean substituteNumbers)
+	{
+		
+		
+		
+		String ret="";
+		if (this.isGeoFunction()) {
+			GeoFunction geoFun = (GeoFunction)this;
+	 				   
+	 		if (geoFun.isIndependent()) {
+	 			ret = geoFun.toValueString();
+	 		} else {
+	 			ret = substituteNumbers ?
+	 					geoFun.getFunction().toValueString():
+	 					geoFun.getFunction().toString(); 
+	 		}
+		}
+		// matrices
+		
+		else 
+		{
+			if(getParentAlgorithm()!=null)
+			ret =  getParentAlgorithm().getCommandDescription(true);
+		}
+		
+		// GeoNumeric eg a=1
+		if ("".equals(ret) && this.isGeoNumeric() && !substituteNumbers && label != null) {
+			ret = label;
+		}
+		if ("".equals(ret) && !this.isGeoText()) {
+			// eg Text[ (1,2), false]
+			ret = toOutputValueString();
+		}
+		
+		
+		
+		
 		
 		return ret;
 		
