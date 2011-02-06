@@ -402,14 +402,6 @@ public abstract class Drawable3D extends DrawableND {
 
 	
 	
-	/**
-	 * get the drawing matrix
-	 * 
-	 * @return the drawing matrix
-	 */
-	public CoordMatrix4x4 getMatrix(){
-		return ((GeoElement3DInterface) getGeoElement()).getDrawingMatrix();
-	}
 	
 	/**
 	 * get the label position

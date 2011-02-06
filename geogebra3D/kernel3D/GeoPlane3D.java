@@ -67,18 +67,27 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		
 	}
 	
+	private void setEquation(double a, double b, double c, double d, boolean makeCoordSys){
+
+		setEquation(new double[] {a,b,c,d},makeCoordSys);
+		
+	}
+	
 	public void setEquation(double a, double b, double c, double d){
 		
-		setEquation(new double[] {a,b,c,d});
+		setEquation(a,b,c,d,true);
 	}
 	
 	public void setCoords(double x, double y, double z, double w){
-     	setEquation(x, y, z, w);
+     	setEquation(x, y, z, w,false);
     }
 	
-	private void setEquation(double[] v){
-		getCoordSys().makeCoordSys(v);
-		getCoordSys().makeOrthoMatrix(true,true);
+	private void setEquation(double[] v, boolean makeCoordSys){
+
+		if (makeCoordSys || !getCoordSys().isDefined()){
+			getCoordSys().makeCoordSys(v);
+			getCoordSys().makeOrthoMatrix(true,true);
+		}
 	}
 	
 	
@@ -237,10 +246,6 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	
 	
 	
-	public CoordMatrix4x4 getDrawingMatrix(){
-		return getCoordSys().getMatrixOrthonormal();
-	}
-	
 	/**
 	 * return the (v1, v2, o) parametric matrix of this plane,
 	 * ie each point of the plane is (v1, v2, o)*(a,b,1) for some a, b value
@@ -314,7 +319,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		
 		if (geo instanceof GeoPlane3D){
 			GeoPlane3D plane = (GeoPlane3D) geo;
-			setEquation(plane.getCoordSys().getEquationVector().get());
+			setEquation(plane.getCoordSys().getEquationVector().get(),true);
 			
 		}
 		
@@ -383,11 +388,10 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	}
 
 	public Coords evaluatePoint(double u, double v) {
-		return coordsys.getPoint(u, v);
-		/*
-		GgbMatrix4x4 m = coordsys.getMatrixOrthonormal();
-		return (GgbVector) m.getOrigin().add(m.getVx().mul(u)).add(m.getVy().mul(v));
-		*/
+		
+		return coordsys.getPointForDrawing(u, v);
+		//return coordsys.getPoint(u, v);
+
 	}
 	
 

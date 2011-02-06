@@ -151,7 +151,8 @@ abstract public class AlgoElement3D extends AlgoElement{
 		    
 		if (setDependencies)
 			setDependencies();
-        compute();
+        
+		compute();
        
 	}
 

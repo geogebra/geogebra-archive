@@ -23,6 +23,7 @@ import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoVectorND;
+import geogebra.main.Application;
 
 /**
  * Class that for manage all 3D methods in Kernel.
@@ -118,8 +119,6 @@ public class Manager3D implements Manager3DInterface {
 	final public GeoPoint3D Point3D(String label, Path path, double x, double y, double z) {
 		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, x, y, z);
 		GeoPoint3D p = algo.getP();		
-		//p.setLabel(label);
-		//p.setObjColor(ConstructionDefaults.colPathPoint);
 		return p;
 	}	
 
@@ -401,7 +400,17 @@ public class Manager3D implements Manager3DInterface {
 		return circle;
 	}
 
-
+	public GeoConic3D Circle3D(
+			String label,
+			GeoLineND axis,
+			GeoPointND A) {
+		AlgoCircle3DAxisPoint algo = new AlgoCircle3DAxisPoint(cons, label, axis, A);
+		GeoConic3D circle = algo.getCircle();
+		//circle.setToSpecific();
+		circle.update();
+		kernel.notifyUpdate(circle);
+		return circle;
+	}
 
 	/** 
 	 * plane through points A, B, C

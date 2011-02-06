@@ -224,15 +224,22 @@ public interface Manager3DInterface {
 
 
 
-			/** 
-			 * circle through points A, B, C
-			 */
-			 public GeoElement Circle3D(
-					String label,
-					GeoPointND A,
-					GeoPointND B,
-					GeoPointND C) ;
+			 /** 
+			  * circle through points A, B, C
+			  */
+			 public GeoConicND Circle3D(
+					 String label,
+					 GeoPointND A,
+					 GeoPointND B,
+					 GeoPointND C) ;
 
+			 /** 
+			  * circle with axis through point 
+			  */
+			 public GeoConicND Circle3D(
+					 String label,
+					 GeoLineND axis,
+					 GeoPointND A) ;
 
 
 			/** 

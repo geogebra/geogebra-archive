@@ -118,7 +118,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	////////////////////////////////
 	// SPHERE
 	
-	protected void setSphereNDMatrix(GeoPointND M, double r){
+	protected void setSphereNDMatrix(Coords M, double r){
 		super.setSphereNDMatrix(M, r);
 		
 		
@@ -136,7 +136,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	
 	public void setSphereND(GeoPointND M, GeoPointND P){
 		//TODO do this in GeoQuadricND, implement degenerate cases
-		setSphereNDMatrix(M, M.distance(P));
+		setSphereNDMatrix(M.getCoordsInD(3), M.distance(P));
 	}
 	
 	

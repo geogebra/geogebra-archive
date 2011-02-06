@@ -256,14 +256,24 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 */
 
 	 public void pointChanged(GeoPointND P) {
+		 
+		 //Application.printStacktrace("ici");
+		 
 
 		 Coords coords = P.getCoordsInD2(getCoordSys());
+		 
+		 //Application.debug(P.getCoordsInD(3)+"\n2D:\n"+coords);
+		 
 		 PathParameter pp = P.getPathParameter();
 
 		 pointChanged(coords, pp);
 
 		 P.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
 		 P.updateCoordsFrom2D(false,getCoordSys());
+		 P.updateCoords();
+		 
+		 //Application.debug("pp="+pp.getT()+"\ncoordsys=\n"+getCoordSys().getMatrixOrthonormal());
+		 //Application.debug("after:\n"+P.getCoordsInD(3)+"\n2D:\n"+coords+"\npp="+pp.getT());
 	 }
 
 	
@@ -330,7 +340,6 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				
 				// relation between the internal parameter t and the angle theta:
 				// t = atan(a/b tan(theta)) where tan(theta) = py / px
-				//pp.setT( Math.atan2(halfAxesForPath[0]*py, halfAxesForPath[1]*px));											
 				pp.setT( Math.atan2(halfAxes[0]*py, halfAxes[1]*px));											
 				
 				// calc Point on conic using this parameter
@@ -396,13 +405,23 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	
 	
 	public void pathChanged(GeoPointND P) {
+		
+		
+		
+		//Application.debug(getEigenvec(0));
+		
 		Coords coords = P.getCoordsInD2(getCoordSys());
 		PathParameter pp = P.getPathParameter();
+		
+		//Application.debug(P.getCoordsInD(3)+"\n2D:\n"+coords+"\npp="+pp.getT());
 		
 		pathChanged(coords, pp);
 
 		P.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
 		P.updateCoordsFrom2D(false,getCoordSys());
+		
+		//Application.debug("after:\n"+P.getCoordsInD(3)+"\n2D:\n"+coords);
+		
 	}
 	
 
@@ -693,10 +712,11 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	final void coordsEVtoRW(Coords P) {
 		// rotate by alpha
 		double px = P.getX();
+		double py = P.getY();
 		Coords eigenvec0 = getEigenvec(0);
 		Coords eigenvec1 = getEigenvec(1);
-		P.setX(px * eigenvec0.getX() + P.getY() * eigenvec1.getX());
-		P.setY(px * eigenvec0.getY() + P.getY() * eigenvec1.getY()); 
+		P.setX(px * eigenvec0.getX() + py * eigenvec1.getX());
+		P.setY(px * eigenvec0.getY() + py * eigenvec1.getY()); 
 	
 		// translate by b
 		Coords b = getMidpoint();
@@ -718,10 +738,11 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 		// rotate by -alpha
 		double px = P.getX();	
+		double py = P.getY();	
 		Coords eigenvec0 = getEigenvec(0);
 		Coords eigenvec1 = getEigenvec(1);
-		P.setX(px * eigenvec0.getX() + P.getY() * eigenvec0.getY());
-		P.setY(px * eigenvec1.getX() + P.getY() * eigenvec1.getY());
+		P.setX(px * eigenvec0.getX() + py * eigenvec0.getY());
+		P.setY(px * eigenvec1.getX() + py * eigenvec1.getY());
 	}
 	
 	
@@ -1492,7 +1513,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 	protected final void setCircleMatrix(GeoPoint M, double r) {
 		
-		setSphereNDMatrix(M, r);
+		setSphereNDMatrix(M.getCoordsInD(3), r);
 	}
 
 	/**

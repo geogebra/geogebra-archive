@@ -18,7 +18,7 @@ public class CoordSys {
 	private CoordMatrix matrix;
 	private int dimension;
 	private int madeCoordSys;
-	private CoordMatrix4x4 matrixOrthonormal;
+	private CoordMatrix4x4 matrixOrthonormal, drawingMatrix;
 	
 	/** vector used for equation of hyperplanes, like ax+by+cz+d=0 for planes */
 	private Coords equationVector;
@@ -123,8 +123,12 @@ public class CoordSys {
 	}
 	
 	public Coords getPoint(double x, double y){
-		return (Coords) matrixOrthonormal.getOrigin().add(getVector(x,y));
+		return matrixOrthonormal.getOrigin().add(getVector(x,y));
 	}
+	public Coords getPointForDrawing(double x, double y){
+		return drawingMatrix.mul(new Coords(x,y,0,1));
+	}
+	
 	
 	public Coords getPoint(double x){
 		return (Coords) getOrigin().add(getVx().mul(x));
@@ -415,6 +419,10 @@ public class CoordSys {
 			
 			if (projectOrigin)
 				projectOrigin();
+			else //recompute origin for drawing matrix
+				o = (new Coords(0,0,0,1)).projectPlane(getMatrixOrthonormal())[0];
+			
+			drawingMatrix = new CoordMatrix4x4(o,vz,CoordMatrix4x4.VZ);
 			
 			
 			//Application.debug("matrix ortho=\n"+getMatrixOrthonormal());
@@ -432,7 +440,7 @@ public class CoordSys {
 	 * project 0 for origin
 	 */
 	private void projectOrigin(){
-		Coords o = (new Coords(new double[] {0,0,0,1})).projectPlane(getMatrixOrthonormal())[0];
+		Coords o = (new Coords(0,0,0,1)).projectPlane(getMatrixOrthonormal())[0];
 		matrixOrthonormal.set(o, 4);
 	}
 	

@@ -152,6 +152,13 @@ public abstract class GeoQuadricND extends GeoElement {
 	 */
 	public void setSphereND(GeoPointND M, double r) {
 		defined = ((GeoElement) M).isDefined() && !M.isInfinite(); // check midpoint
+		setSphereND(M.getCoordsInD(3), r);
+	}
+	
+	/**
+	 * makes this quadric a sphere with midpoint M and radius r
+	 */
+	public void setSphereND(Coords M, double r) {
 		
 		// check radius
 		if (kernel.isZero(r)) {
@@ -165,16 +172,15 @@ public abstract class GeoQuadricND extends GeoElement {
 			setSphereNDMatrix(M, r);
 			setAffineTransform();
 		} 		
-	}
-	
+	}	
 	
 	abstract public void setSphereND(GeoPointND M, GeoPointND P);
 	
 	
-	protected void setSphereNDMatrix(GeoPointND M, double r){
+	protected void setSphereNDMatrix(Coords M, double r){
 				
 		
-		double[] coords = M.getInhomCoordsInD(3).get();
+		double[] coords = M.get();
 		
 		// set midpoint
 		setMidpoint(coords);

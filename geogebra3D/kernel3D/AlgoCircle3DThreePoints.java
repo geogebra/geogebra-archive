@@ -6,9 +6,7 @@ import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
-import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 /**
  * @author ggb3D
@@ -27,8 +25,6 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 	/** 3D points  */
 	private GeoPointND[] points;
 	
-	/** helper algo for 2D coord sys */
-	private AlgoCoordSys2D algo;
 	
 	/**
 	 * Basic constructor

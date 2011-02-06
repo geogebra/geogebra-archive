@@ -68,6 +68,8 @@ public class AlgoIntersectPlaneQuadric extends AlgoElement3D {
     	setInputOutput(new GeoElement[] {plane,quadric}, new GeoElement[] {conic});
 
     	conic.setLabel(label);
+    	
+ 
  
     }
     

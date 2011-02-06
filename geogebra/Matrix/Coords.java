@@ -108,7 +108,7 @@ public class Coords
 	 * @param vals0 values {x1, x2, ...}
 	 */
 	public void set(double[] vals0){
-		//Application.debug("-------------vals0.length = "+vals0.length);
+		//Application.debug("-------------val.length = "+val.length+"\n-------------vals0.length = "+vals0.length);
 		for (int i=0;i<vals0.length;i++)
 			val[i]=vals0[i];
 		

@@ -246,6 +246,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	final public void updateCoords() {
 		
 		
+		//Application.printStacktrace(getLabel());
+		
 		
 		// infinite point
 		if (kernel.isZero(v.get(4))) {

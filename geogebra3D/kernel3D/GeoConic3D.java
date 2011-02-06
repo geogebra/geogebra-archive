@@ -11,6 +11,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**
@@ -59,7 +60,8 @@ extends GeoConicND implements GeoElement3DInterface{
 	 * @param cs the 2D coordinate system
 	 */
 	 public void setCoordSys(CoordSys cs){
-		 		 
+		 	
+		 //Application.printStacktrace(cs.getMatrixOrthonormal().toString());
 		 this.coordSys = cs;
 
 	 }
