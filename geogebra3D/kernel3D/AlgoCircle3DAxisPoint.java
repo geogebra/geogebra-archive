@@ -44,7 +44,7 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
         this.axis = axis;
         this.point = point;
         circle = new GeoConic3D(cons);
-        coordsys = new CoordSys(3);
+        coordsys = new CoordSys(2);
 		circle.setCoordSys(coordsys);
 		
         setInputOutput(new GeoElement[] {(GeoElement) axis, (GeoElement) point}, new GeoElement[] {circle});
@@ -81,7 +81,8 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
 		coordsys.addVector(v1);
 		coordsys.addVector(d.crossProduct(v1));
 		
-		coordsys.makeOrthoMatrix(true,false);
+		coordsys.makeOrthoMatrix(false,false);
+		
     	
 		//set the circle
 		v1.calcNorm();

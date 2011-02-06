@@ -9,6 +9,7 @@ import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
@@ -19,7 +20,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoConic3D 
-extends GeoConicND implements GeoElement3DInterface{
+extends GeoConicND implements GeoElement3DInterface, GeoCoordSys2D{
 
 	
 	/** 2D coord sys where the polygon exists */
@@ -344,7 +345,41 @@ extends GeoConicND implements GeoElement3DInterface{
 			getLineStyleXML(sb);
 			
 		}
+
+
+		
+		////////////////////////////////////
+		// GeoCoordSys2D
+		////////////////////////////////////
+	
+		
+		public Coords getPoint(double x2d, double y2d){
+			return getCoordSys().getPoint(x2d,y2d);
+		}
+
+
+
+		public Coords[] getNormalProjection(Coords coords) {
+			return coords.projectPlane(getCoordSys().getMatrixOrthonormal());
+		}
+
+		public Coords[] getProjection(Coords coords,
+				Coords willingDirection) {
+			return coords.projectPlaneThruV(getCoordSys().getMatrixOrthonormal(),willingDirection);
+		}
 		
 		
-	 
+		////////////////////////////////////
+		// GeoCoordSys2D
+		////////////////////////////////////
+
+		
+		public void pointChangedForRegion(GeoPointND PI) {
+			//TODO
+		}
+		
+		public void regionChanged(GeoPointND PI) {
+			//TODO
+		}
+
 }
