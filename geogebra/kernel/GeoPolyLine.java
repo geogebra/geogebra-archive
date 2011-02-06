@@ -17,7 +17,6 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 import java.util.HashSet;
 
@@ -26,20 +25,21 @@ import java.util.HashSet;
  * 
  * @author Michael Borcherds, adapted from GeoPolygon
  */
-public class GeoPolyLine extends GeoElement implements NumberValue, Path, LineProperties,
-Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dilateable{
+public class GeoPolyLine extends GeoElement implements NumberValue, Path, LineProperties,Transformable,
+Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dilateable,GeoPolyLineInterface{
 	
 	private static final long serialVersionUID = 1L;
-
+	/** maximum number of points when created by tool */
 	public static final int POLYLINE_MAX_POINTS = 500;
-	
+	/** array of vertices */
 	protected GeoPointND [] points;
-	
+	/** length of the line */
 	protected double length;
 	private boolean defined = false;		
 	
 	/** common constructor for 2D.
-	 * @param c the construction
+	 * @param cons the construction
+	 * @param label
 	 * @param points vertices 
 	 */
 	public GeoPolyLine(Construction cons, String label, GeoPointND[] points) {
@@ -49,6 +49,10 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	}
 	
 
+	/**
+	 * @param cons
+	 * @param points
+	 */
 	public GeoPolyLine(Construction cons, GeoPointND[] points) {
 		super(cons);
 		this.points = points;
@@ -125,7 +129,10 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 		return defined;
    }	
    
-   public void setDefined() {
+   /**
+    * Make the polyline defined 
+ 	*/
+	public void setDefined() {
    		defined = true;
    }
    
@@ -168,7 +175,9 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
     public MyDouble getNumber() {    	
         return new MyDouble(kernel,  getLength() );
     }     
-    
+    /**
+     * @return length of the polyline
+     */
     final public double getLength() {
         return length;
     }   
@@ -243,7 +252,7 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	
 
 	// dummy segment to use in calculations
-	GeoSegment seg = new GeoSegment(cons);
+	private GeoSegment seg = new GeoSegment(cons);
 
 	public boolean isOnPath(GeoPointND PI, double eps) {
 
@@ -348,20 +357,15 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 		getBreakpointXML(sb);		
 		getScriptTags(sb);
 	}
-	
-	
-	
-
-	public boolean isVector3DValue() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 
 	public GeoPoint[] getPoints() {
 		return (GeoPoint[])points;
 	}
 
+	/**
+	 * Recompute length of this polyline
+	 */
 	public void calcLength() {
 		
 		// last point not checked in loop
@@ -386,6 +390,10 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	}
 
 
+	/**
+	 * Set vertices of the polyline
+	 * @param points new vertices
+	 */
 	public void setPoints(GeoPointND[] points) {
 		this.points = points;
 		
@@ -406,6 +414,7 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	public void matrixTransform(double a00, double a01, double a10, double a11) {
 		for(int i=0;i<points.length;i++)
 			((GeoPoint)points[i]).matrixTransform(a00, a01, a10, a11);		
+		calcLength();
 		
 	}
 
@@ -417,7 +426,7 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	public void dilate(NumberValue r, GeoPoint S) {
 		for(int i=0;i<points.length;i++)
 			((GeoPoint)points[i]).dilate(r,S);		
-		
+		calcLength();
 	}
 	
 	public void mirror(GeoPoint Q) {
@@ -429,6 +438,19 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	public void mirror(GeoLine g) {
 		for(int i=0;i<points.length;i++)
 			((GeoPoint)points[i]).mirror(g);				
+	}
+
+
+	public boolean isAllVertexLabelsSet() {
+		for(int i=0;i<points.length;i++)
+			if(!((GeoPoint)points[i]).isLabelSet())return false;
+		return true;
+	}
+
+
+	public boolean isVertexCountFixed() {		
+		if(getParentAlgorithm().getInput().length<3)return false;
+		return true;
 	}
 	
 	

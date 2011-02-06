@@ -64,6 +64,9 @@ public abstract class GeoElement
 	extends ConstructionElement
 	implements ExpressionValue {
 	
+	public boolean isVector3DValue() {
+			return false;
+	}
 	/**
 	 * @return the updateJavaScript
 	 */

@@ -63,16 +63,11 @@ public abstract class Transform {
 	 */
 	public GeoElement[] transform(GeoElement geo, String label) {
 		//for polygons we transform
-		if (geo.isGeoPolygon()) {
-			GeoPolygon poly = (GeoPolygon) geo;
+		if (geo instanceof GeoPolyLineInterface) {
+			GeoPolyLineInterface poly = (GeoPolyLineInterface) geo;
 			if(poly.isVertexCountFixed() && poly.isAllVertexLabelsSet())
 				return transformPoly(label, poly, transformPoints(poly.getPoints()));
-		}
-		else if (geo instanceof GeoPolyLine) {
-			GeoPolyLine poly = (GeoPolyLine) geo;
-			if(poly.getPoints()[0].isLabelSet())
-				return transformPolyLine(label, poly, transformPoints(poly.getPoints()));
-		}
+		}		
 		if (label == null)
 			label = transformedGeoLabel(geo);
 
@@ -139,14 +134,14 @@ public abstract class Transform {
 	 */
 	protected abstract AlgoTransformation getTransformAlgo(GeoElement geo);
 	
-	private GeoElement[] transformPoly(String label, GeoPolygon oldPoly,
+	private GeoElement[] transformPoly(String label, GeoPolyLineInterface oldPoly,
 			GeoPoint[] transformedPoints) {
 		// get label for polygon
 		String[] polyLabel = null;
 		if (label == null) {
-			if (oldPoly.isLabelSet()) {
+			if (((GeoElement)oldPoly).isLabelSet()) {
 				polyLabel = new String[1];
-				polyLabel[0] = transformedGeoLabel(oldPoly);
+				polyLabel[0] = transformedGeoLabel((GeoElement)oldPoly);
 			}
 		} else {
 			polyLabel = new String[1];
@@ -163,36 +158,13 @@ public abstract class Transform {
 		}
 
 		// build the polygon from the transformed points
-		return cons.getKernel().Polygon(polyLabel, transformedPoints);
+		if(oldPoly instanceof GeoPolygon)
+			return cons.getKernel().Polygon(polyLabel, transformedPoints);
+		else
+			return cons.getKernel().PolyLine(polyLabel, transformedPoints);
 	}
 	
-	private GeoElement[] transformPolyLine(String label, GeoPolyLine oldPoly,
-			GeoPoint[] transformedPoints) {
-		// get label for polygon
-		String[] polyLabel = null;
-		if (label == null) {
-			if (oldPoly.isLabelSet()) {
-				polyLabel = new String[1];
-				polyLabel[0] = transformedGeoLabel(oldPoly);
-			}
-		} else {
-			polyLabel = new String[1];
-			polyLabel[0] = label;
-		}
-
-		// use visibility of points for transformed points
-		GeoPoint[] oldPoints = oldPoly.getPoints();
-		for (int i = 0; i < oldPoints.length; i++) {
-			transformedPoints[i].setEuclidianVisible(oldPoints[i]
-					.isSetEuclidianVisible());
-			transformedPoints[i].setVisualStyleForTransformations(oldPoints[i]);
-			cons.getKernel().notifyUpdate(transformedPoints[i]);
-		}
-
-		// build the polygon from the transformed points
-		return cons.getKernel().PolyLine(polyLabel, transformedPoints);
-	}
-
+	
 	/**
 	 * Applies the transform to all points
 	 * @param points

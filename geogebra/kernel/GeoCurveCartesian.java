@@ -30,7 +30,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * @author Markus Hohenwarter
  */
 public class GeoCurveCartesian extends GeoCurveCartesianND
-implements VarString, Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable,Traceable, CasEvaluableFunction, ParametricCurve, LineProperties, ConicMirrorable {
+implements Transformable, VarString, Path, Translateable, Rotateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable,Traceable, CasEvaluableFunction, ParametricCurve, LineProperties, ConicMirrorable {
 
 	private static final long serialVersionUID = 1L;
 	

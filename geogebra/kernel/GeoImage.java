@@ -28,7 +28,7 @@ import java.util.Vector;
  */
 public class GeoImage extends GeoElement 
 implements Locateable, AbsoluteScreenLocateable,
-		   PointRotateable, Mirrorable, Translateable, Dilateable, MatrixTransformable {
+		   PointRotateable, Mirrorable, Translateable, Dilateable, MatrixTransformable,Transformable {
 	 	
 	/**
 	 * 

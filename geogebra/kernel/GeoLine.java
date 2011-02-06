@@ -35,7 +35,7 @@ import java.awt.geom.Point2D;
 public class GeoLine extends GeoVec3D 
 implements Path, 
 Translateable,PointRotateable, Mirrorable, Dilateable, LineProperties,
-GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable {
+GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	
 	private static final long serialVersionUID = 1L;
 	// modes

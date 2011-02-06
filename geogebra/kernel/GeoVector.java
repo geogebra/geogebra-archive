@@ -21,7 +21,6 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
@@ -38,7 +37,8 @@ import java.util.Iterator;
  * @version 
  */
 final public class GeoVector extends GeoVec3D
-implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, GeoVectorND {
+implements Path, VectorValue, Locateable, Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, 
+Transformable, GeoVectorND {
 
 	/**
 	 * 

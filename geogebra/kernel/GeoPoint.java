@@ -48,7 +48,7 @@ import java.util.TreeSet;
 final public class GeoPoint extends GeoVec3D 
 implements VectorValue, PathOrPoint,
 Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, ConicMirrorable, PointProperties,
-GeoPointND, Animatable  {   	
+GeoPointND, Animatable, Transformable  {   	
 	
 	private static final long serialVersionUID = 1L;
 

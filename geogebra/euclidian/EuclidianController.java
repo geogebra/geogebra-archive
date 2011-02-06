@@ -46,12 +46,11 @@ import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
-import geogebra.kernel.Mirrorable;
 import geogebra.kernel.Path;
 import geogebra.kernel.PointProperties;
 import geogebra.kernel.PointRotateable;
 import geogebra.kernel.Region;
-import geogebra.kernel.Translateable;
+import geogebra.kernel.Transformable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
@@ -2173,15 +2172,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_MIRROR_AT_POINT:	
 		case EuclidianView.MODE_MIRROR_AT_LINE:
 		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
-			processSelectionRectangleForTransformations(hits, Mirrorable.class);									
+			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;
 
 		case EuclidianView.MODE_ROTATE_BY_ANGLE:
-			processSelectionRectangleForTransformations(hits, PointRotateable.class);									
+			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;		
 
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
-			processSelectionRectangleForTransformations(hits, Translateable.class);									
+			processSelectionRectangleForTransformations(hits, Transformable.class);									
 			break;	
 
 		case EuclidianView.MODE_DILATE_FROM_POINT:
@@ -3040,7 +3039,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		startPoint.setLocation(xRW, yRW);
 
-		// we don't specify screen coords for translation as all objects are Translateables
+		// we don't specify screen coords for translation as all objects are Transformables
 		GeoElement.moveObjects(translateableGeos, translationVec, new Coords(xRW, yRW, 0), null);		
 		if (repaint)
 			kernel.notifyRepaint();						
@@ -5197,15 +5196,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 
-	// get mirrorables and point
+	// get Transformables and point
 	final protected boolean mirrorAtPoint(Hits hits) {	
 		if (hits.isEmpty())
 			return false;
 
-		// try to get one mirrorable	
+		// try to get one Transformable	
 		int count = 0;
 		if (selGeos() == 0) {
-			Hits mirAbles = hits.getHits(Mirrorable.class, tempArrayList);		
+			Hits mirAbles = hits.getHits(Transformable.class, tempArrayList);		
 			count = addSelectedGeo(mirAbles, 1, false);	
 		}
 
@@ -5233,7 +5232,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoPoint point = getSelectedPoints()[0];						
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != point) {
-						if (geos[i] instanceof Mirrorable)
+						if (geos[i] instanceof Transformable)
 							kernel.Mirror(null,  geos[i], point);
 						else if (geos[i].isGeoPolygon()) {
 							kernel.Mirror(null, (GeoPolygon) geos[i], point);
@@ -5301,15 +5300,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		selGeos.addAll(tempArrayList);						
 	}
 
-	// get mirrorable and line
+	// get Transformable and line
 	final protected boolean mirrorAtLine(Hits hits) {
 		if (hits.isEmpty())
 			return false;
 
-		// mirrorable	
+		// Transformable	
 		int count = 0;
 		if (selGeos() == 0) {
-			Hits mirAbles = hits.getHits(Mirrorable.class, tempArrayList);
+			Hits mirAbles = hits.getHits(Transformable.class, tempArrayList);
 			count =addSelectedGeo(mirAbles, 1, false);
 		}
 
@@ -5337,7 +5336,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoLine line = getSelectedLines()[0];						
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != line) {
-						if (geos[i] instanceof Mirrorable)
+						if (geos[i] instanceof Transformable)
 							kernel.Mirror(null,  geos[i], line);
 						else if (geos[i].isGeoPolygon()) {
 							kernel.Mirror(null, (GeoPolygon) geos[i], line);
@@ -5468,15 +5467,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return false;
 	}
 
-	// get translateable and vector
+	// get Transformable and vector
 	final protected boolean translateByVector(Hits hits) {
 		if (hits.isEmpty())
 			return false;
 
-		// translateable
+		// Transformable
 		int count = 0;
 		if (selGeos() == 0) {
-			Hits transAbles = hits.getHits(Translateable.class, tempArrayList);
+			Hits transAbles = hits.getHits(Transformable.class, tempArrayList);
 			count = addSelectedGeo(transAbles, 1, false);
 		}
 
@@ -5504,7 +5503,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoVector vec = getSelectedVectors()[0];						
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != vec) {
-						if (geos[i] instanceof Translateable || geos[i].isGeoPolygon())
+						if (geos[i] instanceof Transformable || geos[i].isGeoPolygon())
 							kernel.Translate(null,   geos[i], vec);
 					}
 				}		
@@ -5519,10 +5518,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (hits.isEmpty())
 			return false;
 
-		// translateable
+		// Transformable
 		int count = 0;
 		if (selGeos() == 0) {
-			Hits rotAbles = hits.getHits(PointRotateable.class, tempArrayList);
+			Hits rotAbles = hits.getHits(Transformable.class, tempArrayList);
 			count = addSelectedGeo(rotAbles, 1, false);
 		}
 
@@ -5563,7 +5562,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoPoint point = getSelectedPoints()[0];						
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != point) {
-						if (geos[i] instanceof PointRotateable)
+						if (geos[i] instanceof Transformable)
 							kernel.Rotate(null,   geos[i], num, point);
 						else if (geos[i].isGeoPolygon()) {
 							kernel.Rotate(null, (GeoPolygon) geos[i], num, point);

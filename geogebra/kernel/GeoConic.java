@@ -19,24 +19,13 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
-import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.MyDouble;
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
-import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.util.MyMath;
-
-import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
 
 /**
  * Conics in 2D
  */
 public class GeoConic extends GeoConicND
-implements Path, Region, Traceable, ConicMirrorable,
+implements Path, Region, Traceable, ConicMirrorable, Transformable, 
 Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTransformable
 {
 	
