@@ -242,7 +242,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 		functionRoot = new DefaultMutableTreeNode();
 		
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode("Mathematical Functions");
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode(app.getMenu("MathematicalFunctions"));
 		node.add(new DefaultMutableTreeNode());
 		functionRoot.add(node);
 		fcnTree = new MyJTree(new DefaultTreeModel(functionRoot));
@@ -318,8 +318,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		setCommands();
 		cmdTreeModel.setRoot(rootSubCommands);
 		cmdTreeModel.reload();
-		titleLabel.setText(app.getMenu("Input Help"));
-		syntaxLabel.setText(app.getMenu("Syntax"));
+		titleLabel.setText(app.getMenu("InputHelp"));
+		syntaxLabel.setText(app.getPlain("Syntax"));
 		btnPaste.setText(app.getMenu("Paste"));
 	}
 
@@ -392,10 +392,10 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		if(rootSubCommands == null)
 			rootSubCommands = new DefaultMutableTreeNode();
 		if(rootAllCommands == null)
-			rootAllCommands = new DefaultMutableTreeNode(app.getCommand("All Commands") );
+			rootAllCommands = new DefaultMutableTreeNode(app.getMenu("AllCommands") );
 		rootSubCommands.removeAllChildren();
 		rootAllCommands.removeAllChildren();
-
+		
 		DefaultMutableTreeNode child;
 		
 		LowerCaseDictionary[] subDict = app.getSubCommandDictionary();

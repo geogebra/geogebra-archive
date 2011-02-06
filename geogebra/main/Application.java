@@ -4251,6 +4251,10 @@ public class Application implements KeyEventDispatcher {
 	 * sub command sets created in CommandDispatcher.  
 	 */
 	public final LowerCaseDictionary[] getSubCommandDictionary() {
+		
+		if (subCommandDict == null)
+			initTranslatedCommands();
+
 		return subCommandDict;
 	}
 	

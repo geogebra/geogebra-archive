@@ -1044,7 +1044,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	private void setLabels(){
 
-		setTitle(app.getPlain("Probability Calculator"));	
+		setTitle(app.getMenu("ProbabilityCalculator"));	
 		distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
 		probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
 		setLabelArrays();

@@ -333,9 +333,9 @@ public class DynamicTextInputPane extends JTextPane {
 
 
 
-	public void insertString(int i, String replaceAll, AttributeSet object) {
+	public void insertString(int offs, String str, AttributeSet a) {
 		try {
-			doc.insertString(i, replaceAll, object);
+			doc.insertString(offs, str, a);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
