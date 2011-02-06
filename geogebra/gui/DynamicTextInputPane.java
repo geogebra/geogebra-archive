@@ -13,7 +13,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextPane;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -41,60 +48,26 @@ public class DynamicTextInputPane extends JTextPane {
 	}
 
 	/**
-	 * Insert dynamic text field at current caret position
+	 * Inserts dynamic text field at the current caret position and returns the text
+	 * field's document
 	 */
 	public Document insertDynamicText(String text) {
 		return insertDynamicText(text, this.getCaretPosition());
 	}
 
 	/**
-	 * Insert dynamic text field at specified position
+	 * Inserts dynamic text field at a specified position and returns the text
+	 * field's document
 	 */
 	public Document insertDynamicText(String text, int pos) {
 
-		MyTextField tf = new MyTextField(app.getGuiManager()) {
-
-			public Dimension getMaximumSize() {
-				return this.getPreferredSize();
-			}
-
-		};
+		DynamicTextField tf = new DynamicTextField(app.getGuiManager()); 
 		Document tfDoc = tf.getDocument();
-
-		//tf.setForeground(Color.red);
-
-		tf.setBorder( (Border) new CompoundBorder(new LineBorder(new Color(0, 0, 0, 0), 2), tf.getBorder()));
-
-		// make sure the field is aligned nicely in the text pane
-		Font f = this.getFont();
 		tf.setText(text);
-		tf.setFont(f);
-		FontMetrics fm = tf.getFontMetrics(f);
-		int maxAscent = fm.getMaxAscent();
-		int height = (int)tf.getPreferredSize().getHeight();
-		int borderHeight = tf.getBorder().getBorderInsets(tf).top;
-		int aboveBaseline = maxAscent + borderHeight;
-		float alignmentY = (float)(aboveBaseline)/((float)(height));
-		tf.setAlignmentY(alignmentY);
-
-		// document listener updates the text pane when this field is edited
-		tf.getDocument().addDocumentListener(new DocumentListener(){
-
-			public void changedUpdate(DocumentEvent arg0) {}
-
-			public void insertUpdate(DocumentEvent arg0) {
-				thisPane.repaint();
-			}
-
-			public void removeUpdate(DocumentEvent arg0) {
-				thisPane.repaint();
-
-			}
-		});
 
 		// insert the text field into the text pane
-		this.setCaretPosition(pos);
-		this.insertComponent(tf);
+		setCaretPosition(pos);
+		insertComponent(tf);
 
 		return tfDoc;
 	}
@@ -111,13 +84,27 @@ public class DynamicTextInputPane extends JTextPane {
 			try {
 				elem = doc.getCharacterElement(i);
 				if(elem.getName().equals("component")){
-					MyTextField tf = (MyTextField) StyleConstants.getComponent(elem.getAttributes());		
+
+					DynamicTextField tf = (DynamicTextField) StyleConstants.getComponent(elem.getAttributes());
+
+					if (tf.getMode() == DynamicTextField.MODE_VALUE){
+						
+						// brackets needed for eg "hello"+(a+3)
+						sb.append("\"+(");
+						sb.append(tf.getText());
+						sb.append(")+\"");
+						
+					}
+					else if (tf.getMode() == DynamicTextField.MODE_DEFINITION){
+						// replace with code to insert definition string
+						sb.append( "\"+" + tf.getText() + "+\"" );
+					}
+					else if (tf.getMode() == DynamicTextField.MODE_FORMULATEXT){
+						// replace with code to insert formula text
+						sb.append( "\"+" + tf.getText() + "+\"" );
+					}
+				
 					
-					// brackets needed for eg "hello"+(a+3)
-					
-					sb.append("\"+(");
-					sb.append(tf.getText());
-					sb.append(")+\"");
 
 				}else if(elem.getName().equals("content")){
 					sb.append(doc.getText(i, 1));
@@ -127,7 +114,7 @@ public class DynamicTextInputPane extends JTextPane {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (app.getKernel().lookupLabel(sb.toString()) != null) {
 			sb.append("+\"\""); // add +"" to end
 		} 
@@ -145,17 +132,17 @@ public class DynamicTextInputPane extends JTextPane {
 	 * @param geo
 	 * @param text
 	 */
-	public void setText(GeoText geo){
+	public void setText(GeoText geo, TextInputDialog id){
 
 		super.setText("");
-		
+
 		if(geo == null) return;
 
 		if(geo.isIndependent()){
 			super.setText(geo.getTextString());
 			return;
 		}
-	
+
 		ExpressionNode root = ((AlgoDependentText)geo.getParentAlgorithm()).getRoot(); 
 		ExpressionValue left = root;
 		try {
@@ -163,11 +150,12 @@ public class DynamicTextInputPane extends JTextPane {
 				ExpressionNode en = (ExpressionNode)left;
 				ExpressionNode right = en.getRightTree();
 				left = en.getLeft();
-				
+
 				if(en.getRight() instanceof MyStringBuffer){
 					doc.insertString(0, right.toString().replaceAll("\"", ""), null);
 				}else if (en.getRight() instanceof GeoElement){
-					insertDynamicText(((GeoElement)(en.getRight())).getLabel(), 0);
+					Document d = insertDynamicText(((GeoElement)(en.getRight())).getLabel(), 0);
+					d.addDocumentListener(id);
 				}else{
 					Application.debug(right.getClass()+" "+right.toString());
 					insertDynamicText(right.toString(), 0);
@@ -182,13 +170,128 @@ public class DynamicTextInputPane extends JTextPane {
 				Application.debug(left.getClass()+" "+left.toString());
 				this.insertDynamicText(left.toString(), 0);
 			}
-			
+
 
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
 
 	}
+
+
+
+
+	/**
+	 * Class for the dynamic text container.
+	 * 
+	 */
+	private class DynamicTextField extends MyTextField{
+
+		public static final int MODE_VALUE = 0;
+		public static final int MODE_DEFINITION = 1;
+		public static final int MODE_FORMULATEXT = 2;
+		private int mode = MODE_VALUE;
+
+		private JPopupMenu contextMenu;
+
+		public DynamicTextField(GuiManager guiManager) {
+			super(guiManager);
+
+			// add a mouse listener to trigger the context menu
+			addMouseListener(new MouseAdapter() {
+				public void mousePressed(MouseEvent evt) {
+					if (evt.isPopupTrigger()) {
+						createContextMenu();
+						contextMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+					}
+				}
+				public void mouseReleased(MouseEvent evt) {
+					if (evt.isPopupTrigger()) {
+						createContextMenu();
+						contextMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+					}
+				}
+			});
+
+
+			//TODO: special border to show caret when near the edge --- not working yet
+			setBorder( (Border) new CompoundBorder(new LineBorder(new Color(0, 0, 0, 0), 2), getBorder()));
+
+			// make sure the field is aligned nicely in the text pane
+			Font f = thisPane.getFont();
+
+			setFont(f);
+			FontMetrics fm = getFontMetrics(f);
+			int maxAscent = fm.getMaxAscent();
+			int height = (int)getPreferredSize().getHeight();
+			int borderHeight = getBorder().getBorderInsets(this).top;
+			int aboveBaseline = maxAscent + borderHeight;
+			float alignmentY = (float)(aboveBaseline)/((float)(height));
+			setAlignmentY(alignmentY);
+
+			// add document listener that will update the text pane when this field is edited
+			getDocument().addDocumentListener(new DocumentListener(){
+
+				public void changedUpdate(DocumentEvent arg0) {}
+
+				public void insertUpdate(DocumentEvent arg0) {
+					thisPane.repaint();
+				}
+				public void removeUpdate(DocumentEvent arg0) {
+					thisPane.repaint();
+
+				}
+			});
+
+		}
+
+		public Dimension getMaximumSize() {
+			return this.getPreferredSize();
+		}
+
+		public int getMode() {
+			return MODE_VALUE;
+		}
+
+		public void setMode(int mode) {
+			this.mode = mode;
+		}
+
+		private void createContextMenu(){
+			contextMenu = new JPopupMenu();
+
+			JCheckBoxMenuItem item = new JCheckBoxMenuItem(app.getMenu("Value"));
+			item.setSelected(mode == MODE_VALUE);
+			item.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					mode = MODE_VALUE;	
+				}
+			});
+			contextMenu.add(item);
+
+			item = new JCheckBoxMenuItem(app.getMenu("Definition"));
+			item.setSelected(mode == MODE_DEFINITION);
+			item.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					mode = MODE_DEFINITION;	
+				}
+			});
+			contextMenu.add(item);
+
+			item = new JCheckBoxMenuItem(app.getMenu("FormulaText"));
+			item.setSelected(mode == MODE_FORMULATEXT);
+			item.addActionListener(new ActionListener(){
+				public void actionPerformed(ActionEvent arg0) {
+					mode = MODE_FORMULATEXT;	
+				}
+			});
+			contextMenu.add(item);
+		}
+
+
+	}
+
+
 
 }
 

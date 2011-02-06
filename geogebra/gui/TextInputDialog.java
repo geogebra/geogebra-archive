@@ -490,7 +490,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		}           
 		//----------------------------------------------
 		
-		editor.setText(geo);
+		editor.setText(geo, this);
 		editor.setCaretPosition(0);
 		cbLaTeX.setSelected(false);
 		if (isLaTeX) {
@@ -640,6 +640,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 	protected void handleDocumentEvent(DocumentEvent e) {
+		
 		textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(), isLaTeX);
 	}
 
