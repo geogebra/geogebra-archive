@@ -46,7 +46,10 @@ import geogebra.main.Application;
  *  
  * ToDo: 
  * 		-If this is to slow, an adaptive divider is the first candidate for optimization.
- * 		-Finetune numerical accuracy, use
+ * 		-Finetune numerical accuracy. (After I have read Volume 2 of The Art of Computer Programming, Donald Knuth...)
+ * 
+ * 2011-02-06:  Got rid of some consequences (fake extremum point) of wrong userinput. 
+ * 				(extremums>1, no extremums, discontinuous,...)
  * 
  * @author 	Hans-Petter Ulven
  * @version 2011-02.05
@@ -140,7 +143,7 @@ public class AlgoExtremumNumerical extends AlgoElement {
             isgoingup=false;
         }//if
         
-        if(isgoingup){debug("Finding maximum...");}else{debug("Finding minimum...");}
+        //if(isgoingup){debug("Finding maximum...");}else{debug("Finding minimum...");}
         
         while( (diff>epsilon) && (iterations<MAXITERATIONS) ){
             iterations++;                                           //debug(info(iterations,l,max,r));
@@ -166,39 +169,50 @@ public class AlgoExtremumNumerical extends AlgoElement {
             max=(l+r)/2;
             diff=Math.abs(r-l);
         }//while not finished
-        xres=max;
-        double y=f.evaluate(max);
-        E.setCoords(max,y,1.0);
-        if(Double.isNaN(y)){E.setUndefined();}
-        if( max<=(left.getDouble()+epsilon) ){E.setUndefined();}
-        if( (right.getDouble()-epsilon)<=max ){E.setUndefined();}
-        /*
-        if( Double.isNaN(y) 						|| 
-        	(max<=(left.getDouble()+epsilon))		|| 
-        	  (right.getDouble()-epsilon)<=max))  	||	
-        	  (r<=(l+epsilon))						
-        ) {
-        	E.setUndefined();
-        }// check discontinuity, l<x<r
-        */
-
+        xres=max;					//use middle value in last interval
         
-        debug("iterations: "+iterations+
-        	   "point: ("+max+","+y+")"+
-        	   "in intervall: <"+left.getDouble()+","+right.getDouble()+">");
+        //Save some repetitive calculations:
+        double y=f.evaluate(max);
+        double ld=left.getDouble();
+        double rd=right.getDouble();
+        double fl=f.evaluate(ld);
+        double fr=f.evaluate(rd);
+        
+        E.setCoords(max,y,1.0);
+        
+        //Final checks:
+        if(Double.isNaN(y)){E.setUndefined();}					//Check infinity, discontinuity
+        if( max<=(ld/*+epsilon*/) ){E.setUndefined();}				//Check not on left endpoint of interval
+        if( (rd/*-epsilon*/)<=max ){E.setUndefined();}				//Check not on right endpoint of interval
+        
+		//Check if extremum is not extremum after all...(No extremums in interval? Asymptotes=>algorithm went astray?)
+        //ToDo: Problem: Also covers more than one extremum if f(l)<f(extremum)<f(r),
+        //      but not if extremum is larger/smaller than l and r...
+        //      Problem: Endpoints might be extremums, if no extremum in open interall, because of rounding error...
+        if(isgoingup) {
+        	if(	(y<fl) || (y<fr)	){
+        		E.setUndefined();
+        	}//if not really a maximum
+        }else{
+        	if( (y>fl) || (y>fr)   ){
+        		E.setUndefined();
+        	}//if not really a minimum
+        }//if not extremum
+        
+        //debug("iterations: "+iterations+"point: ("+max+","+y+")"+"in intervall: <"+left.getDouble()+","+right.getDouble()+">");
     }//compute()
     
     
     
 
-//* --- SNIP (after debugging and testing) -------------------------   
+// * //--- SNIP (after debugging and testing) -------------------------   
     /// --- Test interface --- ///
     //  Running testcases from external testscript Test_Extremum.bsh from plugin scriptrunner.
     public final static double getX(){
     	return xres;
     }//getX()
     
-	private static final boolean DEBUG	= false;
+	private static final boolean DEBUG	= true;
 	
     private final static void debug(String s) {
         if(DEBUG) {
@@ -212,7 +226,7 @@ public class AlgoExtremumNumerical extends AlgoElement {
     
     
     
-//*/--- SNIP end ---------------------------------------    
+// */ //--- SNIP end ---------------------------------------    
     
 }//class AlgoExtremumNumerical
 
