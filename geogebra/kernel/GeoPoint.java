@@ -321,7 +321,7 @@ GeoPointND, Animatable, Transformable  {
 		GeoNumeric num1 = coords.get(0);
 		GeoNumeric num2 = coords.get(1);
 		
-		if (num1 == null || num2 == null) return false;
+		if (num1 == null || num2 == null || num1.getIntervalMaxObject() == null || num1.getIntervalMinObject() == null) return false;
 		
 		if(num1.getIntervalMaxObject().isChildOrEqual(num2))return false;
 		if(num2.getIntervalMaxObject().isChildOrEqual(num1))return false;
