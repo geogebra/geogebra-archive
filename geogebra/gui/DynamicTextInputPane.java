@@ -62,6 +62,8 @@ public class DynamicTextInputPane extends JTextPane {
 	 */
 	public Document insertDynamicText(String text, int pos, TextInputDialog inputDialog) {
 
+		if (pos == -1) pos = getDocument().getLength(); // insert at end
+		
 		int mode = DynamicTextField.MODE_VALUE;
 		String s;
 
@@ -335,6 +337,9 @@ public class DynamicTextInputPane extends JTextPane {
 
 	public void insertString(int offs, String str, AttributeSet a) {
 		try {
+			
+			if (offs == -1) offs = doc.getLength(); // insert at end
+			
 			doc.insertString(offs, str, a);
 		} catch (BadLocationException e) {
 			e.printStackTrace();

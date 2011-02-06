@@ -947,15 +947,15 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		if (leaf) { 
 
 			if (left.isGeoElement()) {
-				Document d = dt.insertDynamicText(((GeoElement) left).getLabel(), 0, id);
+				Document d = dt.insertDynamicText(((GeoElement) left).getLabel(), -1, id);
 				d.addDocumentListener(id);
 			}
 			else if (left.isExpressionNode())
 				((ExpressionNode) left).splitString(dt, id);
 			else if (left instanceof MyStringBuffer) {
-				dt.insertString(0, left.toString().replaceAll("\"", ""), null);				
+				dt.insertString(-1, left.toString().replaceAll("\"", ""), null);				
 			} else {
-				dt.insertDynamicText(left.toString(), 0, id);
+				dt.insertDynamicText(left.toString(), -1, id);
 			}
 
 		}
@@ -966,35 +966,35 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			if (right != null && !containsMyStringBuffer()) {
 				// neither left nor right are free texts, eg a+3 in (a+3)+"hello"
 				// so no splitting needed
-				dt.insertDynamicText(toString(), 0, id);
+				dt.insertDynamicText(toString(), -1, id);
 				return;
 			}
 			
 			
 			// expression node
 			if (left.isGeoElement()) {
-				Document d = dt.insertDynamicText(((GeoElement) left).getLabel(), 0, id);
+				Document d = dt.insertDynamicText(((GeoElement) left).getLabel(), -1, id);
 				d.addDocumentListener(id);
 			}
 			else if (left.isExpressionNode())
 				((ExpressionNode) left).splitString(dt, id);
 			else if (left instanceof MyStringBuffer) {
-				dt.insertString(0, left.toString().replaceAll("\"", ""), null);				
+				dt.insertString(-1, left.toString().replaceAll("\"", ""), null);				
 			} else {
-				dt.insertDynamicText(left.toString(), 0, id);
+				dt.insertDynamicText(left.toString(), -1, id);
 			}
 
 			if (right != null) {
 				if (right.isGeoElement()) {
-					Document d = dt.insertDynamicText(((GeoElement) right).getLabel(), 0, id);
+					Document d = dt.insertDynamicText(((GeoElement) right).getLabel(), -1, id);
 					d.addDocumentListener(id);
 				}
 				else if (right.isExpressionNode())
 					((ExpressionNode) right).splitString(dt, id);
 				else if (right instanceof MyStringBuffer) {
-					dt.insertString(0, right.toString().replaceAll("\"", ""), null);				
+					dt.insertString(-1, right.toString().replaceAll("\"", ""), null);				
 				} else {
-					dt.insertDynamicText(right.toString(), 0, id);
+					dt.insertDynamicText(right.toString(), -1, id);
 				}
 			}
 		}
