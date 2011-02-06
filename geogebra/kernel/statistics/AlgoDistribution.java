@@ -39,6 +39,8 @@ import org.apache.commons.math.distribution.NormalDistribution;
 import org.apache.commons.math.distribution.NormalDistributionImpl;
 import org.apache.commons.math.distribution.PascalDistribution;
 import org.apache.commons.math.distribution.PascalDistributionImpl;
+import org.apache.commons.math.distribution.PoissonDistribution;
+import org.apache.commons.math.distribution.PoissonDistributionImpl;
 import org.apache.commons.math.distribution.TDistribution;
 import org.apache.commons.math.distribution.TDistributionImpl;
 import org.apache.commons.math.distribution.WeibullDistribution;
@@ -70,6 +72,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 	private WeibullDistribution weibull = null;
 	private ZipfDistribution zipf = null;
 	private NormalDistribution normal = null;
+	private PoissonDistribution poisson = null;
 
 	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d) {
 		super(cons);
@@ -126,6 +129,7 @@ public abstract class AlgoDistribution extends AlgoElement {
 		ArrayList<GeoElement> inputList = new ArrayList<GeoElement>();
 		inputList.add(a.toGeoElement());
 		inputList.add(b.toGeoElement());
+		if(c!=null)
 		inputList.add(c.toGeoElement());
 		if(d!=null)
 			inputList.add(d.toGeoElement());		
@@ -226,6 +230,16 @@ public abstract class AlgoDistribution extends AlgoElement {
 		return pascal;
 	}
 	
+	PoissonDistribution getPoissonDistribution(int param) {
+		if (poisson == null) 
+			poisson = new PoissonDistributionImpl(param);
+		else {
+			poisson.setMean(param);
+		}
+		return poisson;
+	}
+	
+	
 	BinomialDistribution getBinomialDistribution(int param, double param2) {
 		if (binomial == null) 
 			binomial = new BinomialDistributionImpl(param, param2);
@@ -266,6 +280,8 @@ public abstract class AlgoDistribution extends AlgoElement {
 		}
 		return zipf;
 	}
+	
+	
 
 }
 

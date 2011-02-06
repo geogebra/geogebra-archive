@@ -495,6 +495,7 @@ public class CommandDispatcher {
     	cmdTable.put("InverseNormal", new CmdInverseNormal(kernel));
     	cmdTable.put("Binomial", new CmdBinomial(kernel));
     	cmdTable.put("BinomialDist", new CmdBinomialDist(kernel));
+    	cmdTable.put("InverseBinomial", new CmdInverseBinomial(kernel)); 
     	cmdTable.put("TDistribution", new CmdTDistribution(kernel));  
     	cmdTable.put("InverseTDistribution", new CmdInverseTDistribution(kernel));  
     	cmdTable.put("FDistribution", new CmdFDistribution(kernel));  
@@ -510,7 +511,9 @@ public class CommandDispatcher {
     	cmdTable.put("HyperGeometric", new CmdHyperGeometric(kernel));  
     	cmdTable.put("InverseHyperGeometric", new CmdInverseHyperGeometric(kernel));  
     	cmdTable.put("Pascal", new CmdPascal(kernel));  
-    	cmdTable.put("InversePascal", new CmdInversePascal(kernel));  
+    	cmdTable.put("InversePascal", new CmdInversePascal(kernel)); 
+    	cmdTable.put("Poisson", new CmdPoisson(kernel));  
+    	cmdTable.put("InversePoisson", new CmdInversePoisson(kernel)); 
     	cmdTable.put("Weibull", new CmdWeibull(kernel));  
     	cmdTable.put("InverseWeibull", new CmdInverseWeibull(kernel));
     	cmdTable.put("Zipf", new CmdZipf(kernel));  

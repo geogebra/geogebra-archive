@@ -65,6 +65,7 @@ import geogebra.kernel.statistics.AlgoFitPow;
 import geogebra.kernel.statistics.AlgoFitSin;
 import geogebra.kernel.statistics.AlgoGamma;
 import geogebra.kernel.statistics.AlgoHyperGeometric;
+import geogebra.kernel.statistics.AlgoInverseBinomial;
 import geogebra.kernel.statistics.AlgoInverseCauchy;
 import geogebra.kernel.statistics.AlgoInverseChiSquared;
 import geogebra.kernel.statistics.AlgoInverseExponential;
@@ -73,6 +74,7 @@ import geogebra.kernel.statistics.AlgoInverseGamma;
 import geogebra.kernel.statistics.AlgoInverseHyperGeometric;
 import geogebra.kernel.statistics.AlgoInverseNormal;
 import geogebra.kernel.statistics.AlgoInversePascal;
+import geogebra.kernel.statistics.AlgoInversePoisson;
 import geogebra.kernel.statistics.AlgoInverseTDistribution;
 import geogebra.kernel.statistics.AlgoInverseWeibull;
 import geogebra.kernel.statistics.AlgoInverseZipf;
@@ -91,6 +93,7 @@ import geogebra.kernel.statistics.AlgoMedian;
 import geogebra.kernel.statistics.AlgoMode;
 import geogebra.kernel.statistics.AlgoNormal;
 import geogebra.kernel.statistics.AlgoPascal;
+import geogebra.kernel.statistics.AlgoPoisson;
 import geogebra.kernel.statistics.AlgoProduct;
 import geogebra.kernel.statistics.AlgoQ1;
 import geogebra.kernel.statistics.AlgoQ3;
@@ -3771,6 +3774,20 @@ public class Kernel {
 		return num;
 	}
 	
+	
+	final public GeoNumeric Poisson(String label, NumberValue a, NumberValue b, GeoBoolean isCumulative) {
+		AlgoPoisson algo = new AlgoPoisson(cons, label, a, b, isCumulative);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	final public GeoNumeric InversePoisson(String label, NumberValue a, NumberValue b) {
+		AlgoInversePoisson algo = new AlgoInversePoisson(cons, label, a, b);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
+	
+	
 	final public GeoNumeric HyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d,
 			GeoBoolean isCumulative) {
 		AlgoHyperGeometric algo = new AlgoHyperGeometric(cons, label, a, b, c, d, isCumulative);
@@ -3790,7 +3807,11 @@ public class Kernel {
 		return num;
 	}
 	
-	
+	final public GeoNumeric InverseBinomial(String label, NumberValue a, NumberValue b, NumberValue c) {
+		AlgoInverseBinomial algo = new AlgoInverseBinomial(cons, label, a, b, c);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
 	
 	
 	/** 
