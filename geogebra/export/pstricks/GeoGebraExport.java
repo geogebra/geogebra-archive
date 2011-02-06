@@ -23,6 +23,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
@@ -256,6 +257,11 @@ public abstract class GeoGebraExport implements ActionListener{
 		else if(g.isGeoImplicitPoly()){
 			drawImplicitPoly((GeoImplicitPoly)g);
 		}
+  		// To draw Inequalities
+		else if (g.getObjectType().equals("FunctionNvar")){
+			drawGeoInequalities((GeoFunctionNVar)g);
+		}
+    	
         else if (g.isGeoNumeric()) {
             AlgoElement algo = g.getParentAlgorithm();
             if (algo == null) {
@@ -420,7 +426,11 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void createFrame();
 	abstract protected void generateAllCode();
 	abstract protected void ColorCode(Color color, StringBuilder sb);
-	
+	/**
+	 *  Export inequalities as PSTricks or PGF
+	 * @param g The inequality function
+	 */
+	abstract protected void drawGeoInequalities(GeoFunctionNVar g);
 	/**
 	 * @return the xmin
 	 */

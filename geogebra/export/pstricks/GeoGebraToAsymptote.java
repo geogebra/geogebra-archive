@@ -26,6 +26,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
@@ -3133,6 +3134,11 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
     }
 	@Override
 	protected void drawImplicitPoly(GeoImplicitPoly geo) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	protected void drawGeoInequalities(GeoFunctionNVar g) {
 		// TODO Auto-generated method stub
 		
 	}

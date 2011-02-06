@@ -7,6 +7,9 @@ the Free Software Foundation.
  */
 
 package geogebra.export.pstricks;
+import geogebra.euclidian.DrawConic;
+import geogebra.euclidian.DrawImplicitPoly;
+import geogebra.euclidian.DrawInequality1Var;
 import geogebra.euclidian.DrawPoint;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
@@ -27,6 +30,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
@@ -42,6 +46,8 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.MyPoint;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.kernel.arithmetic.Inequality;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
@@ -1756,15 +1762,37 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		sb.append("linecolor=");
 		ColorCode(linecolor,sb);
 	}
-	if (transparency&&geo.isFillable()&&geo.getAlphaValue()>0.0f){
-		if (coma) sb.append(",");
-		else coma=true;
-		if (!bracket) sb.append("[");
-		bracket=true;
-		sb.append("fillcolor=");
-		ColorCode(linecolor,sb);
-		sb.append(",fillstyle=solid,opacity=");
-		sb.append(geo.getAlphaValue());
+	if (transparency&&geo.isFillable()){
+		int id=geo.getFillType();
+		switch(id){
+			case GeoElement.FILL_STANDARD:
+				if (geo.getAlphaValue()>0.0f){
+					if (coma) sb.append(",");
+					else coma=true;
+					if (!bracket) sb.append("[");
+					bracket=true;
+					sb.append("fillcolor=");
+					ColorCode(linecolor,sb);
+					sb.append(",fillstyle=solid,opacity=");
+					sb.append(geo.getAlphaValue());
+				}	
+				break;
+			case GeoElement.FILL_HATCH:
+				if (coma) sb.append(",");
+				else coma=true;
+				if (!bracket) sb.append("[");
+				bracket=true;
+				sb.append("fillcolor=");
+				ColorCode(linecolor,sb);
+				sb.append(",fillstyle=hlines,hatchangle=");
+				sb.append(geo.getHatchingAngle());
+				sb.append(",hatchsep=");
+//				double x0=euclidianView.toRealWorldCoordX(0);
+				double y0=euclidianView.toRealWorldCoordY(0);
+				double y=euclidianView.toRealWorldCoordY(geo.getHatchingDistance());
+				sb.append(kernel.format(Math.abs((y-y0))));
+				break;
+		}
 	}
 	if (bracket) sb.append("]");
 	return new String(sb);
@@ -1995,5 +2023,58 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append("){");
 		code.append(getImplicitExpr(geo));
 		code.append("}\n");
+	}
+	@Override
+	protected void drawGeoInequalities(GeoFunctionNVar geo) {
+/*		FunctionNVar function=geo.getFunction();
+		// take line g here, not geo this object may be used for conics too
+		boolean isVisible = geo.isEuclidianVisible();
+		if (!isVisible)
+			return;
+		boolean labelVisible = geo.isLabelVisible();
+		
+		int ineqCount = function.getIneqs().size();
+			
+		for (int i = 0; i < ineqCount; i++) {
+			Inequality ineq = function.getIneqs().get(i);			
+			if(drawables.size() <= i || !matchBorder(ineq.getBorder(),i)){
+				Drawable draw;
+				switch (ineq.getType()){
+					case Inequality.INEQUALITY_PARAMETRIC_Y: 
+						draw = new DrawParametricInequality(ineq, view, geo);
+						break;
+					case Inequality.INEQUALITY_PARAMETRIC_X: 
+						draw = new DrawParametricInequality(ineq, view, geo);
+						break;
+					case Inequality.INEQUALITY_1VAR_X: 
+						draw = new DrawInequality1Var(ineq, view, geo, false);
+						break;
+					case Inequality.INEQUALITY_1VAR_Y: 
+						draw = new DrawInequality1Var(ineq, view, geo, true);
+						break;	
+					case Inequality.INEQUALITY_CONIC: 
+						draw = new DrawConic(view, ineq.getConicBorder());					
+						ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
+						break;	
+					case Inequality.INEQUALITY_IMPLICIT: 
+						draw = new DrawImplicitPoly(view, ineq.getImpBorder());
+						break;
+					default: draw = null;
+				}
+			
+				draw.setGeoElement((GeoElement)function);
+				draw.update();
+				if(drawables.size() <= i)
+					drawables.add(draw);
+				else
+					drawables.set(i,draw);
+			}
+			else {
+				if(ineq.getType() == Inequality.INEQUALITY_CONIC) {					
+					ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());
+				}
+				drawables.get(i).update();
+			}
+	*/	
 	}
 }

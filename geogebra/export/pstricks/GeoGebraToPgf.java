@@ -20,6 +20,7 @@ import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
@@ -62,6 +63,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	private int functionIdentifier=0;
 	private boolean forceGnuplot=false;
 	private boolean gnuplotWarning=false;
+	private boolean hatchWarning=false;
 	public GeoGebraToPgf(Application app) {
     	super(app);
     }
@@ -1323,6 +1325,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		}
 		return false;
 	}
+	
 	private void addWarningGnuplot(){
 		if (gnuplotWarning) return;
 		gnuplotWarning=true;
@@ -1335,7 +1338,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		codePreamble.append("% shell-escape    OR    enable-write18 \n");
 		codePreamble.append("% Example: pdflatex --shell-escape file.tex \n\n");
 	}
-	
+	private void addWarningHatch(){
+		if (hatchWarning) return;
+		hatchWarning=true;
+		codePreamble.append(" \n\n%<<<<<<<WARNING>>>>>>>\n");
+		codePreamble.append("% PGF/Tikz doesn't support very well hatch filling\n");
+		codePreamble.append("% Use PStricks for a perfect hatching export\n\n");
+	}
 	private void renameFunc(StringBuilder sb,String nameFunc,String nameNew){
 		int ind=sb.indexOf(nameFunc);
 		while(ind>-1){
@@ -2295,13 +2304,42 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		sb.append("color=");
 		ColorCode(linecolor,sb);
 	}
-	if (transparency&&geo.isFillable()&&geo.getAlphaValue()>0.0f){
-		if (coma) sb.append(",");
-		else coma=true;
-		sb.append("fill=");
-		ColorCode(linecolor,sb);
-		sb.append(",fill opacity=");
-		sb.append(geo.getAlphaValue());
+	if (transparency&&geo.isFillable()){
+		int id=geo.getFillType();
+		switch(id){
+			case GeoElement.FILL_STANDARD:
+				if (geo.getAlphaValue()>0.0f){
+					if (coma) sb.append(",");
+					else coma=true;
+					sb.append("fill=");
+					ColorCode(linecolor,sb);
+					sb.append(",fill opacity=");
+					sb.append(geo.getAlphaValue());
+				}
+				break;
+			case GeoElement.FILL_HATCH:
+				addWarningHatch();
+				if (coma) sb.append(",");
+				else coma=true;
+				sb.append("fill=");
+				ColorCode(linecolor,sb);
+				sb.append(",pattern=");
+				if (format==GeoGebraToPgf.FORMAT_CONTEXT){
+					if (codePreamble.indexOf("usetikzlibrary{patterns}")==-1)
+						codePreamble.append("\\usetikzlibrary{patterns}\n");
+				}
+				else {
+					if (codePreamble.indexOf("usetikzlibrary[patterns]")==-1)
+						codePreamble.append("\\usetikzlibrary[patterns]\n");
+				}
+				double angle=geo.getHatchingAngle();
+				if (angle<20) sb.append("horizontal lines");
+				else if (angle<70) sb.append("north east lines");
+				else if (angle<110) sb.append("vertical lines");
+				else if (angle<160) sb.append("north west lines");
+				else  sb.append("horizontal lines");
+				break;
+		}
 	}
 	return new String(sb);
 	}
@@ -2434,6 +2472,12 @@ protected void createFrame() {
  */
 protected void drawImplicitPoly(GeoImplicitPoly geo) {
 	System.out.println("Implicit plot not supported yet");
+	
+}
+
+@Override
+protected void drawGeoInequalities(GeoFunctionNVar g) {
+	// TODO Auto-generated method stub
 	
 }
 }
