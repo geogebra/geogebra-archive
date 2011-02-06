@@ -1249,10 +1249,10 @@ public class Application implements KeyEventDispatcher {
 
 	public void toggleAxis(){
 		
-		boolean bothAxesShown = getEuclidianView().getShowXaxis()
-			&& getEuclidianView().getShowYaxis();
+		boolean bothAxesShown = ((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowXaxis()
+			&& ((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowYaxis();
 		//getEuclidianView().showAxes(!bothAxesShown, !bothAxesShown);
-		getEuclidianView().setShowAxes(!bothAxesShown, true);
+		((EuclidianView)getGuiManager().getActiveEuclidianView()).setShowAxes(!bothAxesShown, true);
 		/*
 		getEuclidianView().repaint();
 		storeUndoInfo();
@@ -1266,7 +1266,7 @@ public class Application implements KeyEventDispatcher {
 	
 	public void toggleGrid(){
 		
-		getEuclidianView().showGrid(!getEuclidianView().getShowGrid());
+		((EuclidianView)getGuiManager().getActiveEuclidianView()).showGrid(!((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowGrid());
 
 	}
 	
@@ -1400,7 +1400,7 @@ public class Application implements KeyEventDispatcher {
 	// }
 
 	public final void zoom(double px, double py, double zoomFactor) {
-		euclidianView.zoom(px, py, zoomFactor, 15, true);
+		((EuclidianView)getGuiManager().getActiveEuclidianView()).zoom(px, py, zoomFactor, 15, true);
 	}
 
 	/**
@@ -1410,15 +1410,15 @@ public class Application implements KeyEventDispatcher {
 	 * @param zoomFactor
 	 */
 	public final void zoomAxesRatio(double axesratio) {
-		euclidianView.zoomAxesRatio(axesratio, true);
+		((EuclidianView)getGuiManager().getActiveEuclidianView()).zoomAxesRatio(axesratio, true);
 	}
 
 	public final void setStandardView() {
-		euclidianView.setStandardView(true);
+		((EuclidianView)getGuiManager().getActiveEuclidianView()).setStandardView(true);
 	}
 
 	public final void setViewShowAllObjects() {
-		euclidianView.setViewShowAllObjects(true);
+		((EuclidianView)getGuiManager().getActiveEuclidianView()).setViewShowAllObjects(true);
 	}
 
 	/***************************************************************************
@@ -4286,8 +4286,8 @@ public class Application implements KeyEventDispatcher {
 			public void run() {		
 				setWaitCursor();
 				
-				// copy drawing pad to the system clipboard
-				Image img = getEuclidianView().getExportImage(2d);
+				//copy the active euclidian view to the system clipboard
+				Image img=((EuclidianView)getGuiManager().getActiveEuclidianView()).getExportImage(2d);
 				ImageSelection imgSel = new ImageSelection(img);
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(imgSel, null);	
 
