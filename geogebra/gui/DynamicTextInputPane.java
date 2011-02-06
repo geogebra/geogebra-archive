@@ -51,26 +51,26 @@ public class DynamicTextInputPane extends JTextPane {
 	 * Inserts dynamic text field at the current caret position and returns the text
 	 * field's document
 	 */
-	public Document insertDynamicText(String text) {
-		return insertDynamicText(text, this.getCaretPosition());
+	public Document insertDynamicText(String text, TextInputDialog inputDialog) {
+		return insertDynamicText(text, this.getCaretPosition(), inputDialog);
 	}
 
 	/**
 	 * Inserts dynamic text field at a specified position and returns the text
 	 * field's document
 	 */
-	public Document insertDynamicText(String text, int pos) {
-		
+	public Document insertDynamicText(String text, int pos, TextInputDialog inputDialog) {
+
 		int mode = DynamicTextField.MODE_VALUE;
 		String s;
 
 		if (text.endsWith("]")) {
 			if (text.startsWith(s = app.getCommand("LaTeX")+"[")){
-				
+
 				// strip off outer command
 				text = text.substring(s.length(), text.length() - 1);
 				mode = DynamicTextField.MODE_FORMULATEXT;
-				
+
 			} else if (text.startsWith(s = app.getCommand("Name")+"[")) {
 
 				// strip off outer command
@@ -79,7 +79,7 @@ public class DynamicTextInputPane extends JTextPane {
 			}
 		}
 
-		DynamicTextField tf = new DynamicTextField(app.getGuiManager()); 
+		DynamicTextField tf = new DynamicTextField(app.getGuiManager(), inputDialog); 
 		Document tfDoc = tf.getDocument();
 		tf.setText(text);
 		tf.setMode(mode);
@@ -121,14 +121,14 @@ public class DynamicTextInputPane extends JTextPane {
 						sb.append("+\"");
 					} else {
 						//tf.getMode() == DynamicTextField.MODE_VALUE
-						
+
 						// brackets needed for eg "hello"+(a+3)
 						sb.append("\"+(");
 						sb.append(tf.getText());
 						sb.append(")+\"");
 					}
-				
-					
+
+
 
 				}else if(elem.getName().equals("content")){
 					sb.append(doc.getText(i, 1));
@@ -178,21 +178,21 @@ public class DynamicTextInputPane extends JTextPane {
 				if(en.getRight() instanceof MyStringBuffer){
 					doc.insertString(0, right.toString().replaceAll("\"", ""), null);
 				}else if (en.getRight() instanceof GeoElement){
-					Document d = insertDynamicText(((GeoElement)(en.getRight())).getLabel(), 0);
+					Document d = insertDynamicText(((GeoElement)(en.getRight())).getLabel(), 0, id);
 					d.addDocumentListener(id);
 				}else{
 					//Application.debug(right.getClass()+" "+right.toString());
-					insertDynamicText(right.toString(), 0);
+					insertDynamicText(right.toString(), 0, id);
 				}
 			}
 
 			if(left instanceof MyStringBuffer){
 				doc.insertString(0, left.toString().replaceAll("\"", ""), null);
 			}else if (left instanceof GeoElement){
-				insertDynamicText(((GeoElement)left).getLabel(), 0);
+				insertDynamicText(((GeoElement)left).getLabel(), 0, id);
 			}else{
 				//Application.debug(left.getClass()+" "+left.toString());
-				this.insertDynamicText(left.toString(), 0);
+				this.insertDynamicText(left.toString(), 0, id);
 			}
 
 
@@ -215,12 +215,14 @@ public class DynamicTextInputPane extends JTextPane {
 		public static final int MODE_DEFINITION = 1;
 		public static final int MODE_FORMULATEXT = 2;
 		private int mode = MODE_VALUE;
+		TextInputDialog id;
 
 		private JPopupMenu contextMenu;
 
-		public DynamicTextField(GuiManager guiManager) {
+		public DynamicTextField(GuiManager guiManager, TextInputDialog id) {
 			super(guiManager);
-
+			this.id = id;
+			
 			// add a mouse listener to trigger the context menu
 			addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent evt) {
@@ -288,7 +290,9 @@ public class DynamicTextInputPane extends JTextPane {
 			item.setSelected(mode == MODE_VALUE);
 			item.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
-					mode = MODE_VALUE;	
+					mode = MODE_VALUE;
+					id.handleDocumentEvent(null);
+
 				}
 			});
 			contextMenu.add(item);
@@ -297,11 +301,13 @@ public class DynamicTextInputPane extends JTextPane {
 			item.setSelected(mode == MODE_DEFINITION);
 			item.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
-					mode = MODE_DEFINITION;	
+					mode = MODE_DEFINITION;
+					id.handleDocumentEvent(null);
+
 				}
 			});
 			contextMenu.add(item);
-/*
+			/*
 			item = new JCheckBoxMenuItem(app.getMenu("Formula"));
 			item.setSelected(mode == MODE_FORMULATEXT);
 			item.addActionListener(new ActionListener(){

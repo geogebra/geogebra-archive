@@ -649,7 +649,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 		if (geo == null) return;
 
-		Document d = editor.insertDynamicText(geo.getLabel());
+		Document d = editor.insertDynamicText(geo.getLabel(), this);
 		d.addDocumentListener(this);
 		return;
 	}
