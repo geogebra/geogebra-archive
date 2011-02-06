@@ -94,7 +94,7 @@ public class DynamicTextInputPane extends JTextPane {
 	/**
 	 * Converts the current editor content into a GeoText string.  
 	 */
-	public String buildGeoGebraString(){
+	public String buildGeoGebraString(boolean latex){
 
 		StringBuilder sb = new StringBuilder();
 		sb.append('"');
@@ -106,29 +106,26 @@ public class DynamicTextInputPane extends JTextPane {
 
 					DynamicTextField tf = (DynamicTextField) StyleConstants.getComponent(elem.getAttributes());
 
-					if (tf.getMode() == DynamicTextField.MODE_VALUE){
-						
-						// brackets needed for eg "hello"+(a+3)
-						sb.append("\"+(");
-						sb.append(tf.getText());
-						sb.append(")+\"");
-						
-					}
-					else if (tf.getMode() == DynamicTextField.MODE_DEFINITION){
-						// replace with code to insert definition string
+					if (tf.getMode() == DynamicTextField.MODE_DEFINITION){
 						sb.append("\"+");
 						sb.append("Name[");
 						sb.append(tf.getText());
 						sb.append("]");
 						sb.append("+\"");
 					}
-					else if (tf.getMode() == DynamicTextField.MODE_FORMULATEXT){
-						// replace with code to insert formula text
+					else if (latex || tf.getMode() == DynamicTextField.MODE_FORMULATEXT){
 						sb.append("\"+");
 						sb.append("LaTeX["); // internal name for FormulaText[ ]
 						sb.append(tf.getText());
 						sb.append("]");
 						sb.append("+\"");
+					} else {
+						//tf.getMode() == DynamicTextField.MODE_VALUE
+						
+						// brackets needed for eg "hello"+(a+3)
+						sb.append("\"+(");
+						sb.append(tf.getText());
+						sb.append(")+\"");
 					}
 				
 					
@@ -304,14 +301,14 @@ public class DynamicTextInputPane extends JTextPane {
 				}
 			});
 			contextMenu.add(item);
-
+/*
 			item = new JCheckBoxMenuItem(app.getMenu("Formula"));
 			item.setSelected(mode == MODE_FORMULATEXT);
 			item.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
 					mode = MODE_FORMULATEXT;	
 				}
-			});
+			}); */
 			contextMenu.add(item);
 		}
 

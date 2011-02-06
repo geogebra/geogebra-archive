@@ -125,7 +125,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 		// init editor with GeoText text
 		setGeoText(editGeo);  
-		textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(), isLaTeX);
+		textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(isLaTeX), isLaTeX);
 		editor.getDocument().addDocumentListener(this);
 
 		// add key listener to the editor 
@@ -555,7 +555,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 			if (source == btOK || source == inputPanel.getTextComponent()) {
 				isLaTeX = cbLaTeX.isSelected();
 				boolean finished;
-				finished = inputHandler.processInput(editor.buildGeoGebraString());
+				finished = inputHandler.processInput(editor.buildGeoGebraString(isLaTeX));
 
 				if (isShowing()) {	
 					// text dialog window is used and open
@@ -641,7 +641,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 	protected void handleDocumentEvent(DocumentEvent e) {
 		
-		textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(), isLaTeX);
+		textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(isLaTeX), isLaTeX);
 	}
 
 
