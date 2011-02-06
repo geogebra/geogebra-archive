@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel.statistics;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.arithmetic.NumberValue;
 
 import org.apache.commons.math.distribution.PascalDistribution;
@@ -26,8 +27,8 @@ public class AlgoPascal extends AlgoDistribution {
 
 	private static final long serialVersionUID = 1L;
     
-    public AlgoPascal(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c) {
-        super(cons, label, a, b, c, null);
+    public AlgoPascal(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+        super(cons, label, a, b, c, isCumulative);
     }
 
     public String getClassName() {
@@ -38,13 +39,16 @@ public class AlgoPascal extends AlgoDistribution {
 	protected final void compute() {
     	
     	
-    	if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()) {
+    	if (input[0].isDefined() && input[1].isDefined() && input[2].isDefined()  && input[3].isDefined()) {
 		    int param = (int)Math.round(a.getDouble());
 		    double param2 = b.getDouble();
     		    double val = c.getDouble();
         		try {
         			PascalDistribution dist = getPascalDistribution(param, param2);
-        			num.setValue(dist.cumulativeProbability(val));     // P(T <= val)
+        			if(isCumulative.getBoolean())
+    					num.setValue(dist.cumulativeProbability(val));  // P(X <= val)
+    				else
+    					num.setValue(dist.probability(val));   // P(X = val)
         			
         		}
         		catch (Exception e) {

@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel.statistics;
 
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.arithmetic.NumberValue;
 
 import org.apache.commons.math.distribution.HypergeometricDistribution;
@@ -26,7 +27,8 @@ public class AlgoHyperGeometric extends AlgoDistribution {
 
 	private static final long serialVersionUID = 1L;
     
-    public AlgoHyperGeometric(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c, NumberValue d) {
+    public AlgoHyperGeometric(Construction cons, String label, NumberValue a,NumberValue b, NumberValue c, NumberValue d,
+    		GeoBoolean isCumulative) {
         super(cons, label, a, b, c, d);
     }
 
@@ -45,7 +47,10 @@ public class AlgoHyperGeometric extends AlgoDistribution {
     		    double val = d.getDouble();
         		try {
         			HypergeometricDistribution dist = getHypergeometricDistribution(param, param2, param3);
-        			num.setValue(dist.cumulativeProbability(val));     // P(T <= val)
+        			if(isCumulative.getBoolean())
+    					num.setValue(dist.cumulativeProbability(val));  // P(X <= val)
+    				else
+    					num.setValue(dist.probability(val));   // P(X = val)
         			
         		}
         		catch (Exception e) {

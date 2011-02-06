@@ -6441,31 +6441,35 @@ class CmdStemPlot extends CommandProcessor {
 		 GeoElement[] arg;
 
 		 switch (n) {
-		 case 3:			
-			 arg = resArgs(c);
-			 if ((ok[0] = arg[0].isNumberValue()) &&
-					 (ok[1] = arg[1].isNumberValue()) &&
-					 (ok[2] = arg[2].isNumberValue())) 
-			 {
-				 GeoElement[] ret = { 
-						 kernel.Pascal(c.getLabel(),
-								 (NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2]) };
-				 return ret;
+ 		 case 4:			
+ 			 arg = resArgs(c);
+ 			 if ((ok[0] = arg[0].isNumberValue()) &&
+ 					 (ok[1] = arg[1].isNumberValue()) &&
+ 					 (ok[2] = arg[2].isNumberValue()) &&
+ 					 (ok[2] = arg[3].isGeoBoolean())) 
+ 			 {
+ 				 GeoElement[] ret = { 
+ 						 kernel.Pascal(c.getLabel(),
+ 								 (NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2], (GeoBoolean) arg[3] ) };
+ 				 return ret;
 
-			 }  else
-				 if (!ok[0])
-					 throw argErr(app, c.getName(), arg[0]);
-				 else if (!ok[1])
-					 throw argErr(app, c.getName(), arg[1]);
-				 else
+ 			 }  else
+ 				 if (!ok[0])
+ 					 throw argErr(app, c.getName(), arg[0]);
+ 				 else if (!ok[1])
+ 					 throw argErr(app, c.getName(), arg[1]);
+ 				else if (!ok[2])
 					 throw argErr(app, c.getName(), arg[2]);
+ 				 else
+ 					 throw argErr(app, c.getName(), arg[3]);
 
-		 default:
-			 throw argNumErr(app, c.getName(), n);
-		 }
-	 }
- }
+ 		 default:
+ 			 throw argNumErr(app, c.getName(), n);
+ 		 }
+ 	 }
+  }
 
+ 
  /**
  *InversePascal 
  */
@@ -6818,16 +6822,18 @@ class CmdStemPlot extends CommandProcessor {
 		 GeoElement[] arg;
 
 		 switch (n) {
-		 case 4:			
+		 case 5:			
 			 arg = resArgs(c);
 			 if ((ok[0] = arg[0].isNumberValue()) &&
 					 (ok[1] = arg[1].isNumberValue()) &&
 					 (ok[2] = arg[2].isNumberValue()) &&
-					 (ok[3] = arg[3].isNumberValue())) 
+					 (ok[3] = arg[3].isNumberValue()) &&
+					 (ok[4] = arg[4].isGeoBoolean())) 
 			 {
 				 GeoElement[] ret = { 
 						 kernel.HyperGeometric(c.getLabel(),
-								 (NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2], (NumberValue) arg[3]) };
+								 (NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2], (NumberValue) arg[3],
+								 (GeoBoolean)arg[4])};
 				 return ret;
 
 			 }  else
@@ -6837,8 +6843,10 @@ class CmdStemPlot extends CommandProcessor {
 					 throw argErr(app, c.getName(), arg[1]);
 				 else if (!ok[2])
 					 throw argErr(app, c.getName(), arg[2]);
-				 else
+				 else if (!ok[3])
 					 throw argErr(app, c.getName(), arg[3]);
+				 else
+					 throw argErr(app, c.getName(), arg[4]);
 
 		 default:
 			 throw argNumErr(app, c.getName(), n);

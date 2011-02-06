@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
+import java.util.ArrayList;
+
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoBoolean;
@@ -83,7 +85,8 @@ public abstract class AlgoDistribution extends AlgoElement {
 		num.setLabel(label);
 	}
 
-	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, 
+			GeoBoolean isCumulative) {
 		super(cons);
 		this.a = a;
 		this.b = b;
@@ -97,28 +100,41 @@ public abstract class AlgoDistribution extends AlgoElement {
 		num.setLabel(label);
 	}
 	
+	
+	public AlgoDistribution(Construction cons, String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d,
+			GeoBoolean isCumulative) {
+		super(cons);
+		this.a = a;
+		this.b = b;
+		this.c = c;
+		this.d = d;
+		this.isCumulative = isCumulative;
+
+		num = new GeoNumeric(cons);
+
+		setInputOutput();
+		compute();
+		num.setLabel(label);
+	}
+	
+	
 	public abstract String getClassName();
 
 	protected void setInputOutput(){
 
-		if (isCumulative != null) {
-			input = new GeoElement[4];
-			input[2] = c.toGeoElement();
-			input[3] = isCumulative.toGeoElement();
-			
-		} else if (d != null) {
-			input = new GeoElement[4];
-			input[2] = c.toGeoElement();
-			input[3] = d.toGeoElement();
+		// build array list of possible arguments
+		ArrayList<GeoElement> inputList = new ArrayList<GeoElement>();
+		inputList.add(a.toGeoElement());
+		inputList.add(b.toGeoElement());
+		inputList.add(c.toGeoElement());
+		if(d!=null)
+			inputList.add(d.toGeoElement());		
+		if (isCumulative != null) 
+			inputList.add(isCumulative.toGeoElement());
 
-		} else if (c != null) {
-			input = new GeoElement[3];
-			input[2] = c.toGeoElement();
-		} else {
-			input = new GeoElement[2];
-		} 
-		input[0] = a.toGeoElement();
-		input[1] = b.toGeoElement();
+		// convert to array	
+		input = new GeoElement[inputList.size()];
+		inputList.toArray(input);
 
 		output = new GeoElement[1];
 		output[0] = num;

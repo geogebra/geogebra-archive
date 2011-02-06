@@ -3759,8 +3759,8 @@ public class Kernel {
 		return num;
 	}
 	
-	final public GeoNumeric Pascal(String label, NumberValue a, NumberValue b, NumberValue c) {
-		AlgoPascal algo = new AlgoPascal(cons, label, a, b, c);
+	final public GeoNumeric Pascal(String label, NumberValue a, NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+		AlgoPascal algo = new AlgoPascal(cons, label, a, b, c, isCumulative);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
@@ -3771,8 +3771,9 @@ public class Kernel {
 		return num;
 	}
 	
-	final public GeoNumeric HyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d) {
-		AlgoHyperGeometric algo = new AlgoHyperGeometric(cons, label, a, b, c, d);
+	final public GeoNumeric HyperGeometric(String label, NumberValue a, NumberValue b, NumberValue c, NumberValue d,
+			GeoBoolean isCumulative) {
+		AlgoHyperGeometric algo = new AlgoHyperGeometric(cons, label, a, b, c, d, isCumulative);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
