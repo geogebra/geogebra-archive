@@ -60,10 +60,29 @@ public class DynamicTextInputPane extends JTextPane {
 	 * field's document
 	 */
 	public Document insertDynamicText(String text, int pos) {
+		
+		int mode = DynamicTextField.MODE_VALUE;
+		String s;
+
+		if (text.endsWith("]")) {
+			if (text.startsWith(s = app.getCommand("LaTeX")+"[")){
+				
+				// strip off outer command
+				text = text.substring(s.length(), text.length() - 1);
+				mode = DynamicTextField.MODE_FORMULATEXT;
+				
+			} else if (text.startsWith(s = app.getCommand("Name")+"[")) {
+
+				// strip off outer command
+				text = text.substring(s.length(), text.length() - 1);
+				mode = DynamicTextField.MODE_DEFINITION;
+			}
+		}
 
 		DynamicTextField tf = new DynamicTextField(app.getGuiManager()); 
 		Document tfDoc = tf.getDocument();
 		tf.setText(text);
+		tf.setMode(mode);
 
 		// insert the text field into the text pane
 		setCaretPosition(pos);
@@ -97,11 +116,19 @@ public class DynamicTextInputPane extends JTextPane {
 					}
 					else if (tf.getMode() == DynamicTextField.MODE_DEFINITION){
 						// replace with code to insert definition string
-						sb.append( "\"+" + tf.getText() + "+\"" );
+						sb.append("\"+");
+						sb.append("Name[");
+						sb.append(tf.getText());
+						sb.append("]");
+						sb.append("+\"");
 					}
 					else if (tf.getMode() == DynamicTextField.MODE_FORMULATEXT){
 						// replace with code to insert formula text
-						sb.append( "\"+" + tf.getText() + "+\"" );
+						sb.append("\"+");
+						sb.append("LaTeX["); // internal name for FormulaText[ ]
+						sb.append(tf.getText());
+						sb.append("]");
+						sb.append("+\"");
 					}
 				
 					
@@ -157,7 +184,7 @@ public class DynamicTextInputPane extends JTextPane {
 					Document d = insertDynamicText(((GeoElement)(en.getRight())).getLabel(), 0);
 					d.addDocumentListener(id);
 				}else{
-					Application.debug(right.getClass()+" "+right.toString());
+					//Application.debug(right.getClass()+" "+right.toString());
 					insertDynamicText(right.toString(), 0);
 				}
 			}
@@ -167,7 +194,7 @@ public class DynamicTextInputPane extends JTextPane {
 			}else if (left instanceof GeoElement){
 				insertDynamicText(((GeoElement)left).getLabel(), 0);
 			}else{
-				Application.debug(left.getClass()+" "+left.toString());
+				//Application.debug(left.getClass()+" "+left.toString());
 				this.insertDynamicText(left.toString(), 0);
 			}
 
@@ -250,7 +277,7 @@ public class DynamicTextInputPane extends JTextPane {
 		}
 
 		public int getMode() {
-			return MODE_VALUE;
+			return mode;
 		}
 
 		public void setMode(int mode) {
@@ -269,7 +296,7 @@ public class DynamicTextInputPane extends JTextPane {
 			});
 			contextMenu.add(item);
 
-			item = new JCheckBoxMenuItem(app.getMenu("Definition"));
+			item = new JCheckBoxMenuItem(app.getPlain("Definition"));
 			item.setSelected(mode == MODE_DEFINITION);
 			item.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
@@ -278,7 +305,7 @@ public class DynamicTextInputPane extends JTextPane {
 			});
 			contextMenu.add(item);
 
-			item = new JCheckBoxMenuItem(app.getMenu("FormulaText"));
+			item = new JCheckBoxMenuItem(app.getMenu("Formula"));
 			item.setSelected(mode == MODE_FORMULATEXT);
 			item.addActionListener(new ActionListener(){
 				public void actionPerformed(ActionEvent arg0) {
