@@ -1,7 +1,5 @@
 package geogebra.gui.view.spreadsheet;
 
-
-
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
@@ -12,6 +10,7 @@ import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
@@ -40,7 +39,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
-
 /**
  * Dialog that displays the graphs of various probability density functions with
  * interactive controls for calculating interval probabilities.
@@ -57,35 +55,40 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private Application app;
 	private Construction cons;
 	private Kernel kernel; 
-	private StatGeo statGeo;
+	//	private StatGeo statGeo;
 	private ProbabilityCalculator probDialog;
 
-	// continuous distributions
+	// continuous distribution identifiers
 	private static final int DIST_NORMAL = 0;
 	private static final int DIST_STUDENT = 1;
 	private static final int DIST_CHISQUARE = 2;
-	private static final int continuousDistCount = 3;
+	private static final int DIST_F = 3;
+	private static final int DIST_CAUCHY = 4;
+	private static final int DIST_EXPONENTIAL = 5;
+	private static final int DIST_GAMMA = 6;
+	private static final int DIST_WEIBULL = 7;
+	private static final int continuousDistCount = 8;
 
-	// discrete distributions
-	private static final int DIST_BINOMIAL = 3;
-	private static final int totalDistCount = 4;
+	// discrete distribution identifiers
+	private static final int DIST_BINOMIAL = 8;
+	private static final int DIST_PASCAL = 9;
+	private static final int DIST_HYPERGEOMETRIC = 10;
+	private static final int DIST_POISSON = 11;
+	private static final int totalDistCount = 12;
 
-
-	// distribution modes and labels
+	// selected distribution modes
 	private int selectedDiscreteDist = DIST_BINOMIAL;  
 	private int selectedContinuousDist = DIST_NORMAL; 
 	private int selectedDist = DIST_NORMAL;  // default: startup with normal distribution
 	private boolean isContinuous = true;
 
-
-	// strings for labels
+	// distribution constants 
 	private String[] distLabels; 
 	private String[][] parameterLabels;
-
-	// default parameter values
+	private String[] inverseCmd, cmd;
+	private int[] parmCount;
 	private HashMap<Integer, double[]> defaultParameterMap;
 	private int maxParameterCount; // initialized with defaultParameterMap
-
 
 
 	// GUI 
@@ -110,11 +113,9 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private GeoList discreteValueList, discreteProbList, intervalProbList, intervalValueList;
 	private GeoList parmList;
 
-
 	// initing
 	private boolean isIniting;
 	private boolean isSettingAxisPoints = false;
-
 
 	// probability modes
 	private static final int PROB_INTERVAL = 0;
@@ -140,11 +141,11 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		this.app = app;	
 		kernel = app.getKernel();
 		cons = kernel.getConstruction();
-		statGeo = new StatGeo(app);
+
 		probDialog = this;
 
 		// init variables
-		createDefaultParameterMap();
+		initDistributionConstants();
 		plotGeoList = new ArrayList<GeoElement>();
 
 		initGUI();
@@ -153,13 +154,14 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		// before adding geos into it
 		SwingUtilities.invokeLater(new Runnable(){ 
 			public void run() { 
-				createGeoElements();
-				updateAll(); 
+
+
 			}
 		});
-
+		//	createGeoElements();
 		attachView();
 		isIniting = false;
+		//	updateAll(); 
 
 	} 
 	/**************** end constructor ****************/
@@ -184,6 +186,13 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			hideGeoFromViews(geo);
 		}
 	}
+
+	private void labelAllGeos(){
+		for(int i= 0; i < plotGeoList.size(); i++ ){
+			plotGeoList.get(i).setLabel("xPrb" + i);
+		}
+	}
+
 
 	private void hideGeoFromViews(GeoElement geo){
 		// add the geo to our view and remove it from EV		
@@ -235,12 +244,10 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			// END button panel
 
 
-
 			// create the control panel 
 			//======================================================
 			distPanel = this.createDistributionPanel();	
 			probPanel = this.createProbabilityPanel();
-
 
 			JPanel controlPanel = new JPanel();
 			controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.Y_AXIS));
@@ -248,7 +255,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			controlPanel.add(probPanel);
 			controlPanel.add(buttonPanel);
 			controlPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-
 
 
 			// create the plot panel (extension of EuclidianView)
@@ -262,7 +268,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 					BorderFactory.createBevelBorder(BevelBorder.LOWERED))); 
 
 			plotPanel.setPreferredSize(new Dimension(350,300));
-
 
 
 			// put the sub-panels together into the main panel
@@ -289,6 +294,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		setLabelArrays();
 		comboDistribution = new JComboBox(distLabels);
+		comboDistribution.setMaximumRowCount(totalDistCount);
 		comboDistribution.setSelectedIndex(selectedDist);
 		comboDistribution.addActionListener(this);
 
@@ -372,41 +378,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	}
 
 
-	private void setLabels(){
-
-		setTitle(app.getPlain("Probability Calculator"));	
-		distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
-		probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
-		setLabelArrays();
-
-		comboProbType.removeAllItems();
-		comboProbType.addItem(app.getMenu("IntervalProb"));
-		comboProbType.addItem(app.getMenu("LeftProb"));
-		comboProbType.addItem(app.getMenu("RightProb"));
-	}
-
-
-	private void setLabelArrays(){
-
-		parameterLabels = new String[totalDistCount][totalDistCount];
-		distLabels = new String[totalDistCount];
-
-		distLabels[DIST_NORMAL] = app.getMenu("Distribution.Normal");
-		parameterLabels[DIST_NORMAL][0] = app.getMenu("Mean");
-		parameterLabels[DIST_NORMAL][1] = app.getMenu("StandardDeviation.short");
-
-		distLabels[DIST_STUDENT] = app.getMenu("Distribution.StudentT");
-		parameterLabels[DIST_STUDENT][0] = app.getMenu("DegreesOfFreedom.short");
-
-		distLabels[DIST_CHISQUARE] = app.getMenu("Distribution.ChiSquare");	
-		parameterLabels[DIST_CHISQUARE][0] = app.getMenu("DegreesOfFreedom.short");
-
-		distLabels[DIST_BINOMIAL] = app.getMenu("Distribution.Binomial");
-		parameterLabels[DIST_BINOMIAL][0] = app.getMenu("Binomial.number");
-		parameterLabels[DIST_BINOMIAL][1] = app.getMenu("Binomial.probability");
-
-	}
-
 
 
 
@@ -415,68 +386,64 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	//=================================================
 
 	private void createGeoElements(){
+		//Application.printStacktrace("createGEOS==================");
+		this.removeGeos();
 
 		String expr;
 
 		// create list of parameters
-		parmList = (GeoList) statGeo.createGeoFromString("{}");
+		parmList = (GeoList) createGeoFromString("{}");
 		double[] parms = defaultParameterMap.get(selectedDist);
 		for(int i=0; i < parms.length; i++){
 			parmList.add(new GeoNumeric(cons,parms[i]));
 			//System.out.println("parms:" + i + " " + selectedParameters[i]);
 		}
-		plotGeoList.add(parmList);		
 
-		// create density curve
-		expr = buildDensityCurveExpression(selectedContinuousDist);
-		densityCurve = statGeo.createGeoFromString(expr);
-		densityCurve.setObjColor(COLOR_PDF);
-		densityCurve.setLineThickness(3);
-		densityCurve.setFixed(true);
-		plotGeoList.add(densityCurve);
-
-
-		// create discrete bar graph and associated lists
-		createDiscreteLists();
-		expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
-		discreteGraph = statGeo.createGeoFromString(expr);
-		discreteGraph.setObjColor(COLOR_PDF);
-		discreteGraph.setAlphaValue(0.0f);
-		discreteGraph.setLineThickness(2);
-		discreteGraph.setFixed(true);
-		plotGeoList.add(discreteGraph);
 
 
 		//create low point
-		String text = "Point[y=0]";
-		lowPoint = (GeoPoint) statGeo.createGeoFromString(text);
-		plotGeoList.add(lowPoint);
+		expr = "Point[xAxis]";
+		lowPoint = (GeoPoint) createGeoFromString(expr);
 		lowPoint.setObjColor(COLOR_POINT);
 		lowPoint.setPointSize(4);
 		lowPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
 
 
 		//create high point
-		text = "Point[y=0]";
-		highPoint = (GeoPoint) statGeo.createGeoFromString(text);
-		plotGeoList.add(highPoint);
+		expr = "Point[xAxis]";
+		highPoint = (GeoPoint) createGeoFromString(expr);
 		highPoint.setObjColor(COLOR_POINT);
 		highPoint.setPointSize(4);
 		highPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
 
 
+		// create density curve
+		expr = buildDensityCurveExpression(selectedContinuousDist);
+		densityCurve = createGeoFromString(expr);
+		densityCurve.setObjColor(COLOR_PDF);
+		densityCurve.setLineThickness(3);
+		densityCurve.setFixed(true);
+
+
+
+		// create discrete bar graph and associated lists
+		createDiscreteLists();
+		expr = "BarChart[" + discreteValueList.getLabel() + "," + discreteProbList.getLabel() + "]";
+		discreteGraph = createGeoFromString(expr);
+		discreteGraph.setObjColor(COLOR_PDF);
+		discreteGraph.setAlphaValue(0.0f);
+		discreteGraph.setLineThickness(2);
+		discreteGraph.setFixed(true);
+
+
 		// create integral
-		text = "Integral[" + densityCurve.getLabel() + ", x(" + lowPoint.getLabel() 
-		+ "), x(" + highPoint.getLabel() + ")]";
-
-		//text = "Integral[" + densityCurve.getLabel() + ",1,2]";
+		expr = "Integral[" + densityCurve.getLabel() + ", x(" + lowPoint.getLabel() 
+		+ "), x(" + highPoint.getLabel() + ") , false ]";
 
 
-		//System.out.println(text);
 
 		if(hasIntegral ){
-			integral  = statGeo.createGeoFromString(text);
-			plotGeoList.add(integral);
+			integral  = createGeoFromString(expr);
 			integral.setObjColor(COLOR_PDF);
 			integral.setAlphaValue(0.25f);
 		}
@@ -485,30 +452,31 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		// create discrete interval bar graph and associated lists
 		expr = "Take[" + discreteProbList.getLabel()  + ", x(" 
 		+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
-		intervalProbList  = (GeoList) statGeo.createGeoFromString(expr);
+		intervalProbList  = (GeoList) createGeoFromString(expr);
+
 
 		expr = "Take[" + discreteValueList.getLabel()  + ", x(" 
 		+ lowPoint.getLabel() + ")+1, x(" + highPoint.getLabel() + ")+1]";
-		intervalValueList  = (GeoList) statGeo.createGeoFromString(expr);
+		intervalValueList  = (GeoList) createGeoFromString(expr);
 
-		text = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
+		expr = "BarChart[" + intervalValueList.getLabel() + "," + intervalProbList.getLabel() + "]";
 
 		//System.out.println(text);
-		discreteIntervalGraph  = statGeo.createGeoFromString(text);
-		plotGeoList.add(discreteIntervalGraph);
+		discreteIntervalGraph  = createGeoFromString(expr);
 		discreteIntervalGraph.setObjColor(Color.blue);
 		discreteIntervalGraph.setAlphaValue(0.5f);
 		discreteIntervalGraph.updateCascade();
 
 		hideAllGeosFromViews();
+		//labelAllGeos();
 		hideToolTips();
 
 	}
 
 
 	/**
-	 * Calculates and sets the plot dimensions, axes intervals and point capture style for the
-	 * the currently selected distribution. 
+	 * Calculates and sets the plot dimensions, the axes intervals and the point
+	 * capture style for the the currently selected distribution.
 	 */
 	private void updatePlotSettings(){
 
@@ -530,28 +498,24 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		plotSettings.xMax = xMax;
 		plotSettings.yMin = yMin;
 		plotSettings.yMax = yMax;
-		plotSettings.showYAxis = false;
+		plotSettings.showYAxis = true;
 		plotSettings.isEdgeAxis[0] = false;
-		plotSettings.isEdgeAxis[1] = false;
+		plotSettings.isEdgeAxis[1] = true;
 		plotSettings.forceXAxisBuffer = true;
 
-		switch(selectedDist){
-
-		case DIST_NORMAL:
-		case DIST_STUDENT:
-		case DIST_CHISQUARE:
+		if(isContinuous){
 			plotSettings.pointCaptureStyle = EuclidianView.POINT_CAPTURING_OFF;
 			plotSettings.xAxesIntervalAuto = true;
 			plotPanel.setPlotSettings(plotSettings);
-			break;
-
-		case DIST_BINOMIAL:
+		}
+		else
+		{	// discrete axis points should jump from point to point 
 			plotSettings.pointCaptureStyle = EuclidianView.POINT_CAPTURING_ON_GRID;
+			//TODO --- need an adaptive setting here for when we have too many intervals
 			plotSettings.xAxesInterval = 1;
 			plotSettings.xAxesIntervalAuto = false;
-			break;
-
 		}	
+
 		plotPanel.setPlotSettings(plotSettings);
 
 	}
@@ -585,170 +549,11 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		return parms;
 	}
 
-	/**
-	 * Builds a string that can be used by the algebra processor to
-	 * create a GeoFunction representation of a given density curve.
-	 * 
-	 * @param distType
-	 * @param parms
-	 * @return
-	 */
-	private String buildDensityCurveExpression(int type){
-		String expr = "";
-
-		// retrieve the parameter values from the parmList geo
-		double [] parms = getCurrentParameters();
-
-		switch(type){
-
-		case DIST_NORMAL:
-			//double mean = parms[0];
-			//double sigma = parms[1];
-
-			String mean = "Element[" + parmList.getLabel() + ",1]";
-			String sigma = "Element[" + parmList.getLabel() + ",2]";
-
-			expr = "Normal[" + mean + "," + sigma + ", x]";
-
-			//expr =  "1 / sqrt(2 Pi " + sigma + "^2) exp(-((x - " + mu + ")^2 / 2 " + sigma + "^2))";
-			break;
-
-		case DIST_STUDENT:
-			//double v = parms[0];
-			String v = "Element[" + parmList.getLabel() + ",1]";
-			expr =  "gamma((" + v + " + 1) / 2) / (sqrt(" + v + " Pi) gamma(" + v + " / 2)) (1 + x^2 / " + v + ")^(-((" + v + " + 1) / 2))";
-			break;
-
-		case DIST_CHISQUARE:
-			//double k = parms[0];
-			String k = "Element[" + parmList.getLabel() + ",1]";
-			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
-			break;
-
-		}
-
-		return expr;
-	}
-
-
-
-	/**
-	 * Creates two GeoLists, discreteProbList and discreteValueList, that store
-	 * the probabilities and values of the currently selected discrete
-	 * distribution.
-	 */
-	private String createDiscreteLists(){
-
-		String expr = "";
-
-		switch(selectedDiscreteDist){
-
-		case DIST_BINOMIAL:	
-			String n = "Element[" + parmList.getLabel() + ",1]";
-			String p = "Element[" + parmList.getLabel() + ",2]";
-
-			expr = "Sequence[k,k,0," + n + "]";
-			discreteValueList = (GeoList) statGeo.createGeoFromString(expr);
-			expr = "Sequence[Binomial[" + n + ",k ]*" + p + "^k *(1-" + p + ")^(" + n + "- k), k, 1," + n + "+ 1 ]";
-			//expr = "Sequence[Pascal[" + n + "," + p + ",Element[" + discreteValueList.getLabel() + ",k]],k,1," + n + "+ 1 ]";
-			discreteProbList = (GeoList) statGeo.createGeoFromString(expr);
-
-			break;
-
-		}
-
-		return expr;
-	}
-
 
 
 	private double getDiscreteMax(){
 		return evaluateExpression("Max[" + discreteProbList.getLabel() + "]");
 	}
-
-
-
-
-
-
-	/**
-	 * Returns the appropriate plot dimensions for a given distribution and parameter set. 
-	 * Plot dimensions are returned as an array of double: {xMin, xMax, yMin, yMax} 	 
-	 *   
-	 * @param distType
-	 * @param parms
-	 * @return
-	 */
-	private double[] getPlotDimensions(){
-
-		double xMin = 0, xMax = 0, yMin = 0, yMax = 0;
-
-		// retrieve the parameter values from the parmList geo
-		double [] parms = getCurrentParameters();
-
-		switch(selectedDist){
-
-		case DIST_NORMAL:
-			double mean = parms[0];
-			double sigma = parms[1];
-			xMin = mean - 5*sigma;
-			xMax = mean + 5*sigma;
-			yMin = 0;
-			yMax = 1.2* ((GeoFunction)densityCurve).evaluate(mean);	
-			break;
-
-		case DIST_STUDENT:
-			double v = parms[0];
-			xMin = -5;
-			xMax = 5;
-			yMin = 0;
-			yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
-			break;
-
-		case DIST_CHISQUARE:
-			double k = parms[0];		
-			xMin = 0;
-			xMax = 4*k;
-			yMin = 0;
-			if(k>2)
-				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(k-2);	
-			else
-				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
-			break;
-
-		case DIST_BINOMIAL:
-			double n = parms[0];
-			double p = parms[1];
-			xMin = -1;
-			xMax = n + 1;
-			yMin = 0;	
-			yMax = 1.2* getDiscreteMax();
-			break;
-		}
-
-		double[] d = {xMin, xMax, yMin, yMax};
-		return d;
-	}
-
-
-
-	/**
-	 * Creates the default parameter map. This provides default parameter values
-	 * for each distribution type.
-	 */
-	private void createDefaultParameterMap(){
-
-		defaultParameterMap = new HashMap<Integer,double[]>();
-
-		defaultParameterMap.put(DIST_NORMAL, new double[] {0, 1}); // mean = 0, sigma = 1
-		defaultParameterMap.put(DIST_STUDENT, new double[] {10}); // df = 10
-		defaultParameterMap.put(DIST_CHISQUARE, new double[] {6}); // df = 6
-		defaultParameterMap.put(DIST_BINOMIAL, new double[] {20, 0.5}); // n = 20, p = 0.5
-
-		this.maxParameterCount = 2;
-	}
-
-
 
 
 	/**
@@ -767,42 +572,39 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		double [] parms = getCurrentParameters();
 
 		try {
-			switch(selectedDist){
 
-			case DIST_NORMAL:
-				exprHigh = "Normal[" + parms[0] + "," + parms[1] + "," + high + "]";
-				exprLow = "Normal[" + parms[0] + "," + parms[1] + "," + low + "]";		
-				break;
+			if(isContinuous){	
 
-			case DIST_STUDENT:
-				exprHigh = "TDistribution[" + parms[0] + "," + high + "]";
-				exprLow = "TDistribution[" + parms[0]  + "," + low + "]";
-				break;
+				// build gegebra strings for high and low probabilities
+				// e.g. "Normal[ parms[0] , parms[1] , high ]"
 
-			case DIST_CHISQUARE:
-				exprHigh = "ChiSquared[" + parms[0] + "," + high + "]";
-				exprLow = "ChiSquared[" + parms[0]  + "," + low + "]";
-				break;
+				StringBuilder partialExpr = new StringBuilder();
+				partialExpr.append(cmd[selectedDist]);
+				partialExpr.append("[");
+				for(int i=0; i < parmCount[selectedDist]; i++){
+					partialExpr.append(parms[i]);
+					partialExpr.append(",");
+				}
+				StringBuilder highExpr = new StringBuilder(partialExpr.toString());
+				highExpr.append(high + "]");
+				StringBuilder lowExpr = partialExpr.append(low + "]");
 
-			case DIST_BINOMIAL:
-				prob = evaluateExpression("Sum[" + intervalProbList.getLabel() + "]");
-				break;
+				//System.out.println(highExpr.toString());
+				//System.out.println(lowExpr.toString());
 
-			}
-
-			if(isContinuous){
+				// calculate the probability
 				if(probMode == PROB_LEFT)
-					prob = evaluateExpression(exprHigh);	
+					prob = evaluateExpression(highExpr.toString());	
 				else if(probMode == PROB_RIGHT)
-					prob = 1 - evaluateExpression(exprLow);
+					prob = 1 - evaluateExpression(lowExpr.toString());
 				else
-					prob = evaluateExpression(exprHigh) - evaluateExpression(exprLow);
+					prob = evaluateExpression(highExpr.toString()) - evaluateExpression(lowExpr.toString());
 
 			}else{
-
+				//TODO --- handle discrete cases with functions rather than direct sums?
+				if(selectedDist == DIST_BINOMIAL)
+					prob = evaluateExpression("Sum[" + intervalProbList.getLabel() + "]");
 			}
-
-
 
 		} catch (Exception e) {		
 			e.printStackTrace();
@@ -811,6 +613,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		return prob;
 	}
 
+
 	/**
 	 * Returns an inverse probability for a selected continuous distribution.
 	 * @param prob
@@ -818,7 +621,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	 */
 	private double inverseProbability(double prob){
 
-		String expr = "";
 		double result = 0;
 
 		// retrieve the parameter values from the parmList geo
@@ -827,29 +629,23 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			parms[i] = ((GeoNumeric)parmList.get(i)).getDouble();
 		}
 
-
 		try {
-			switch(selectedDist){
-
-			case DIST_NORMAL:
-				expr = "InverseNormal[" + parms[0] + "," + parms[1] + "," + prob + "]";
-				result = evaluateExpression(expr);
-				break;
-
-			case DIST_STUDENT:
-				expr = "InverseTDistribution[" + parms[0] + "," + prob + "]";
-				result = evaluateExpression(expr);
-				break;
-
-			case DIST_CHISQUARE:
-				expr = "InverseChiSquared[" + parms[0] + "," + prob + "]";
-				result = evaluateExpression(expr);
-				break;
-
+			// build geogebra string for calculating inverse prob 
+			// e.g. "InverseNormal[ parms[0] , parms[1] , prob ]"
+			StringBuilder sb = new StringBuilder();
+			sb.append(inverseCmd[selectedDist]);
+			sb.append("[");
+			for(int i=0; i < parmCount[selectedDist]; i++){
+				sb.append(parms[i]);
+				sb.append(",");
 			}
+			sb.append(prob);
+			sb.append("]");
 
+			// evaluate the expression
+			result = evaluateExpression(sb.toString());
 
-		} catch (Exception e) {		
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -915,7 +711,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	}
 
 
-	// TODO: control fonts are not updated yet
+	// TODO: fonts for controls are not updated yet
 	public void updateFonts() {
 
 		Font font = app.getPlainFont();
@@ -929,7 +725,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
+		if(isIniting) return;
 		Object source = e.getSource();	
 		if(source == btnClose){
 			setVisible(false);
@@ -956,7 +752,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 
 	private void doTextFieldActionPerformed(JTextField source) {
-
+		if(isIniting) return;
 		try {
 			String inputText = source.getText().trim();
 			//Double value = Double.parseDouble(source.getText());
@@ -1024,7 +820,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		updateProbabilityType();
 		updateGUI();
 		btnClose.requestFocus();
-		isIniting = false;
+
 	}
 
 
@@ -1111,7 +907,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			fldHigh.setVisible(false);
 			intervalLabel.setText(" \u2264 X ");
 			if(isContinuous)
-			high = plotSettings.xMax + 1; // move offscreen so the integral looks complete
+				high = plotSettings.xMax + 1; // move offscreen so the integral looks complete
 			else
 				high = ((GeoNumeric)discreteValueList.get(discreteValueList.size()-1)).getDouble();
 			low = plotSettings.xMin + 0.6*(plotSettings.xMax -plotSettings.xMin);
@@ -1183,12 +979,11 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private void resetDensityCurve(){
 
 		densityCurve.remove();
-		densityCurve = statGeo.createGeoFromString(buildDensityCurveExpression(selectedDist));
+		densityCurve = createGeoFromString(buildDensityCurveExpression(selectedDist));
 
 		densityCurve.setObjColor(COLOR_PDF);
 		densityCurve.setLineThickness(3);
 		densityCurve.setFixed(true);
-		plotGeoList.add(densityCurve);
 		hideGeoFromViews(densityCurve);
 
 	}
@@ -1242,6 +1037,512 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		//plotPanel.detachView();
 		//clearView();
 		//kernel.notifyRemoveAll(this);		
+	}
+
+
+
+
+	private void setLabels(){
+
+		setTitle(app.getPlain("Probability Calculator"));	
+		distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
+		probPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Probability")));
+		setLabelArrays();
+
+		comboProbType.removeAllItems();
+		comboProbType.addItem(app.getMenu("IntervalProb"));
+		comboProbType.addItem(app.getMenu("LeftProb"));
+		comboProbType.addItem(app.getMenu("RightProb"));
+	}
+
+
+	private void setLabelArrays(){
+
+		parameterLabels = new String[totalDistCount][4];
+		distLabels = new String[totalDistCount];
+
+		distLabels[DIST_NORMAL] = app.getMenu("Distribution.Normal");
+		parameterLabels[DIST_NORMAL][0] = app.getMenu("Mean");
+		parameterLabels[DIST_NORMAL][1] = app.getMenu("StandardDeviation.short");
+
+		distLabels[DIST_STUDENT] = app.getMenu("Distribution.StudentT");
+		parameterLabels[DIST_STUDENT][0] = app.getMenu("DegreesOfFreedom.short");
+
+		distLabels[DIST_CHISQUARE] = app.getMenu("Distribution.ChiSquare");	
+		parameterLabels[DIST_CHISQUARE][0] = app.getMenu("DegreesOfFreedom.short");
+
+		distLabels[DIST_F] = app.getMenu("Distribution.F");
+		parameterLabels[DIST_F][0] = app.getMenu("DegreesOfFreedom1.short");
+		parameterLabels[DIST_F][1] = app.getMenu("DegreesOfFreedom2.short");
+
+		distLabels[DIST_EXPONENTIAL] = app.getMenu("Distribution.Exponential");
+		parameterLabels[DIST_EXPONENTIAL][0] = app.getMenu("Mean");
+
+		distLabels[DIST_CAUCHY] = app.getMenu("Distribution.Cauchy");
+		parameterLabels[DIST_CAUCHY][0] = app.getMenu("Median");
+		parameterLabels[DIST_CAUCHY][1] = app.getMenu("Scale");
+
+		distLabels[DIST_WEIBULL] = app.getMenu("Distribution.Weibull");
+		parameterLabels[DIST_WEIBULL][0] = app.getMenu("Shape");
+		parameterLabels[DIST_WEIBULL][1] = app.getMenu("Scale");
+
+		distLabels[DIST_GAMMA] = app.getMenu("Distribution.Gamma");
+		parameterLabels[DIST_GAMMA][0] = app.getMenu("Alpha.short");
+		parameterLabels[DIST_GAMMA][1] = app.getMenu("Beta.short");
+
+
+		distLabels[DIST_BINOMIAL] = app.getMenu("Distribution.Binomial");
+		parameterLabels[DIST_BINOMIAL][0] = app.getMenu("Binomial.number");
+		parameterLabels[DIST_BINOMIAL][1] = app.getMenu("Binomial.probability");
+		
+		distLabels[DIST_PASCAL] = app.getMenu("Distribution.Pascal");
+		parameterLabels[DIST_PASCAL][0] = app.getMenu("Binomial.number");
+		parameterLabels[DIST_PASCAL][1] = app.getMenu("Binomial.probability");
+
+		distLabels[DIST_POISSON] = app.getMenu("Distribution.Poisson");
+		parameterLabels[DIST_POISSON][0] = app.getMenu("Mean");
+		
+		distLabels[DIST_HYPERGEOMETRIC] = app.getMenu("Distribution.Hypergeometric");
+		parameterLabels[DIST_HYPERGEOMETRIC][0] = app.getMenu("Hypergeometric.population");
+		parameterLabels[DIST_HYPERGEOMETRIC][1] = app.getMenu("Hypergeometric.number");
+		parameterLabels[DIST_HYPERGEOMETRIC][2] = app.getMenu("Hypergeometric.sample");
+
+		
+	}
+
+
+
+	private void initDistributionConstants(){
+
+		cmd = new String[continuousDistCount];
+		cmd[DIST_NORMAL] = "Normal";
+		cmd[DIST_STUDENT] = "TDistribution";
+		cmd[DIST_CHISQUARE] = "ChiSquared";
+		cmd[DIST_F] = "FDistribution";
+		cmd[DIST_CAUCHY] = "Cauchy";
+		cmd[DIST_EXPONENTIAL] = "Exponential";
+		cmd[DIST_GAMMA] = "Gamma";
+		cmd[DIST_WEIBULL] = "Weibull";
+
+		inverseCmd = new String[continuousDistCount];
+		inverseCmd[DIST_NORMAL] = "InverseNormal";
+		inverseCmd[DIST_STUDENT] = "InverseTDistribution";
+		inverseCmd[DIST_CHISQUARE] = "InverseChiSquare";
+		inverseCmd[DIST_F] = "InverseFDistribution";
+		inverseCmd[DIST_CAUCHY] = "InverseCauchy";
+		inverseCmd[DIST_EXPONENTIAL] = "InverseExponential";
+		inverseCmd[DIST_GAMMA] = "InverseGamma";
+		inverseCmd[DIST_WEIBULL] = "InverseWeibull";
+
+		parmCount = new int[continuousDistCount];
+		parmCount[DIST_NORMAL] = 2;
+		parmCount[DIST_STUDENT] = 1;
+		parmCount[DIST_CHISQUARE] = 1;
+		parmCount[DIST_F] = 2;
+		parmCount[DIST_CAUCHY] = 2;
+		parmCount[DIST_EXPONENTIAL] = 1;
+		parmCount[DIST_GAMMA] = 2;
+		parmCount[DIST_WEIBULL] = 2;
+
+
+		// Create the default parameter map that provides default parameter values
+		// for each distribution type. 
+		defaultParameterMap = new HashMap<Integer,double[]>();
+
+		defaultParameterMap.put(DIST_NORMAL, new double[] {0, 1}); // mean = 0, sigma = 1
+		defaultParameterMap.put(DIST_STUDENT, new double[] {10}); // df = 10
+		defaultParameterMap.put(DIST_CHISQUARE, new double[] {6}); // df = 6
+
+		defaultParameterMap.put(DIST_F, new double[] {6,6}); // df = 6
+		defaultParameterMap.put(DIST_EXPONENTIAL, new double[] {6}); // df = 6
+		defaultParameterMap.put(DIST_GAMMA, new double[] {6,6}); // df = 6
+		defaultParameterMap.put(DIST_CAUCHY, new double[] {0,1}); // median = 0, scale = 1
+		defaultParameterMap.put(DIST_WEIBULL, new double[] {5,1}); // shape = 5, scale = 1
+
+		defaultParameterMap.put(DIST_BINOMIAL, new double[] {20, 0.5}); // n = 20, p = 0.5
+		defaultParameterMap.put(DIST_PASCAL, new double[] {20, 0.5}); // n = 20, p = 0.5
+		defaultParameterMap.put(DIST_POISSON, new double[] {4}); // mean = 4
+		defaultParameterMap.put(DIST_HYPERGEOMETRIC, new double[] {60, 10, 20}); // pop = 60, n = 10, sample = 20
+		
+		this.maxParameterCount = 3;
+
+	}
+
+
+	/**
+	 * Builds a string that can be used by the algebra processor to
+	 * create a GeoFunction representation of a given density curve.
+	 * 
+	 * @param distType
+	 * @param parms
+	 * @return
+	 */
+	private String buildDensityCurveExpression(int type){
+		String expr = "";
+		String k, mean, sigma, v, v2, median, scale, shape;
+		// retrieve the parameter values from the parmList geo
+		double [] parms = getCurrentParameters();
+
+		switch(type){
+
+		case DIST_NORMAL:
+			//double mean = parms[0];
+			//double sigma = parms[1];
+
+			mean = "Element[" + parmList.getLabel() + ",1]";
+			sigma = "Element[" + parmList.getLabel() + ",2]";
+
+			expr = "Normal[" + mean + "," + sigma + ", x]";
+
+			//expr =  "1 / sqrt(2 Pi " + sigma + "^2) exp(-((x - " + mu + ")^2 / 2 " + sigma + "^2))";
+			break;
+
+		case DIST_STUDENT:
+			//double v = parms[0];
+			v = "Element[" + parmList.getLabel() + ",1]";
+			expr =  "gamma((" + v + " + 1) / 2) / (sqrt(" + v + " Pi) gamma(" + v + " / 2)) (1 + x^2 / " + v + ")^(-((" + v + " + 1) / 2))";
+			break;
+
+		case DIST_CHISQUARE:
+			//double k = parms[0];
+			k = "Element[" + parmList.getLabel() + ",1]";
+			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
+			break;
+
+		case DIST_F:
+			//double k = parms[0];
+			k = "Element[" + parmList.getLabel() + ",1]";
+			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
+			break;
+
+		case DIST_CAUCHY:			
+			// CauchyPDF =  1 / (¹ scale (1 + ((x - med) / scale)^2))
+			median = "Element[" + parmList.getLabel() + ",1]";
+			scale = "Element[" + parmList.getLabel() + ",2]";
+			expr = "1 / (¹ * " + scale + "*(1 + ((x - " + median + ") / " + scale + ")^2))";
+			break;
+
+		case DIST_EXPONENTIAL:
+			//double k = parms[0];
+			k = "Element[" + parmList.getLabel() + ",1]";
+			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
+			break;
+
+		case DIST_GAMMA:
+			//double k = parms[0];
+			k = "Element[" + parmList.getLabel() + ",1]";
+			expr = "1 / (2^(" + k + " / 2) gamma(" + k + " / 2)) x^(" + k + " / 2 - 1) exp(-(x / 2))";
+			break;
+
+		case DIST_WEIBULL:
+			// weibullPDF(x) = shape / scale (x / scale)^(shape - 1) e^(-(x / scale)^shape)
+			shape = "Element[" + parmList.getLabel() + ",1]";
+			scale = "Element[" + parmList.getLabel() + ",2]";
+			expr = shape + "/"  +  scale + " * (x /" + scale + ")^( " + shape + "- 1) e^(-(x /" + scale + ")^ " + shape + ")";
+			break;
+
+
+		}
+
+		return expr;
+	}
+
+
+
+	/**
+	 * Creates two GeoLists, discreteProbList and discreteValueList, that store
+	 * the probabilities and values of the currently selected discrete
+	 * distribution.
+	 */
+	private String createDiscreteLists(){
+
+		String expr = "";
+		String n, p, s, mean;
+
+		switch(selectedDiscreteDist){
+
+		case DIST_BINOMIAL:	
+			n = "Element[" + parmList.getLabel() + ",1]";
+			p = "Element[" + parmList.getLabel() + ",2]";
+
+			expr = "Sequence[k,k,0," + n + "]";
+			discreteValueList = (GeoList) createGeoFromString(expr);
+
+			expr = "Sequence[Binomial[" + n + "," + p + ",";
+			expr += "Element[" + discreteValueList.getLabel() + ",k], false ";
+			expr +=	"],k,1," + n + "+ 1 ]";
+					
+			//System.out.println(expr);
+			discreteProbList = (GeoList) createGeoFromString(expr);
+
+			break;
+
+		case DIST_PASCAL:	
+			n = "Element[" + parmList.getLabel() + ",1]";
+			p = "Element[" + parmList.getLabel() + ",2]";
+
+			expr = "Sequence[k,k,0," + n + "]";
+			discreteValueList = (GeoList) createGeoFromString(expr);
+
+			expr = "Sequence[Pascal[" + n + "," + p + ",";
+			expr += "Element[" + discreteValueList.getLabel() + ",k], false";
+			expr +=	"],k,1," + n + "+ 1 ]";
+					
+			//System.out.println(expr);
+			discreteProbList = (GeoList) createGeoFromString(expr);
+
+			break;
+
+
+		case DIST_POISSON:	
+			mean = "Element[" + parmList.getLabel() + ",1]";
+			
+			n = "Element[" + parmList.getLabel() + ",1] + 4*sqrt(" +  "Element[" + parmList.getLabel() + ",1]"  + ")";
+			
+			expr = "Sequence[k,k,0," + n + "]";
+			discreteValueList = (GeoList) createGeoFromString(expr);
+
+			expr = "Sequence[Poisson[" + mean + ",";
+			expr += "Element[" + discreteValueList.getLabel() + ",k], false";
+			expr +=	"],k,1," + n + "+ 1 ]";
+					
+			//System.out.println(expr);
+			discreteProbList = (GeoList) createGeoFromString(expr);
+
+			break;
+
+			
+		case DIST_HYPERGEOMETRIC:	
+			p = "Element[" + parmList.getLabel() + ",1]";  // population size
+			n = "Element[" + parmList.getLabel() + ",2]";  // n
+			s = "Element[" + parmList.getLabel() + ",3]";  // sample size
+			
+			expr = "Sequence[k,k,0," + n + "]";
+			discreteValueList = (GeoList) createGeoFromString(expr);
+
+			expr = "Sequence[HyperGeometric[" + p + "," + n + "," + s + ",";
+			expr += "Element[" + discreteValueList.getLabel() + ",k], false" ;
+			expr +=	"],k,1," + n + "+ 1 ]";
+			
+			//System.out.println(expr);
+			discreteProbList = (GeoList) createGeoFromString(expr);
+
+			break;
+
+
+		}
+
+		return expr;
+	}
+
+
+	/**
+	 * Returns the appropriate plot dimensions for a given distribution and parameter set. 
+	 * Plot dimensions are returned as an array of double: {xMin, xMax, yMin, yMax} 	 
+	 *   
+	 * @param distType
+	 * @param parms
+	 * @return
+	 */
+	private double[] getPlotDimensions(){
+
+		double xMin = 0, xMax = 0, yMin = 0, yMax = 0;
+
+		// retrieve the parameter values from the parmList geo
+		double [] parms = getCurrentParameters();
+		double mean, sigma, v, v2, k, median, scale, shape, mode, n, p, pop, sample;	
+
+		switch(selectedDist){
+
+		case DIST_NORMAL:
+			mean = parms[0];
+			sigma = parms[1];
+			xMin = mean - 5*sigma;
+			xMax = mean + 5*sigma;
+			yMin = 0;
+			yMax = 1.2* ((GeoFunction)densityCurve).evaluate(mean);	
+			break;
+
+		case DIST_STUDENT:
+			v = parms[0];
+			xMin = -5;
+			xMax = 5;
+			yMin = 0;
+			yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
+			break;
+
+		case DIST_CHISQUARE:
+			k = parms[0];		
+			xMin = 0;
+			xMax = 4*k;
+			yMin = 0;
+			if(k>2)
+				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(k-2);	
+			else
+				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
+			break;
+
+		case DIST_F:
+			k = parms[0];		
+			xMin = 0;
+			xMax = 4*k;
+			yMin = 0;
+			if(k>2)
+				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(k-2);	
+			else
+				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
+			break;
+
+		case DIST_CAUCHY:
+			median = parms[0];
+			scale = parms[1];	
+			// TODO --- better estimates
+			xMin = median - 6*scale;
+			xMax = median + 6*scale;
+			yMin = 0;
+			yMax = 1.2* (1/(Math.PI*scale)); // Cauchy amplitude = 1/(pi*scale)
+
+			break;
+
+
+		case DIST_EXPONENTIAL:
+			k = parms[0];		
+			xMin = 0;
+			xMax = 4*k;
+			yMin = 0;
+			if(k>2)
+				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(k-2);	
+			else
+				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
+			break;
+
+
+		case DIST_GAMMA:
+			k = parms[0];		
+			xMin = 0;
+			xMax = 4*k;
+			yMin = 0;
+			if(k>2)
+				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(k-2);	
+			else
+				yMax = 1.2* ((GeoFunction)densityCurve).evaluate(0);	
+			break;
+
+
+		case DIST_WEIBULL:
+			shape = parms[0];	
+			scale = parms[1];	
+			median = scale*Math.pow(Math.log(2), 1/shape);
+			xMin = 0;
+			xMax = 2*median;
+			yMin = 0;
+			// mode for shape >1
+			if(shape > 1){
+				mode = scale*Math.pow(1 - 1/shape,1/shape);
+				yMax = 1.2*((GeoFunction)densityCurve).evaluate(mode);
+			}else{
+				yMax = 4;
+			}
+
+			break;
+
+
+		case DIST_BINOMIAL:
+			n = parms[0];
+			p = parms[1];
+			xMin = -1;
+			xMax = n + 1;
+			yMin = 0;	
+			yMax = 1.2* getDiscreteMax();
+			break;
+
+
+		case DIST_PASCAL:
+			n = parms[0];
+			p = parms[1];
+			xMin = -1;
+			xMax = n + 1;
+			yMin = 0;	
+			yMax = 1.2* getDiscreteMax();
+			break;
+			
+		case DIST_POISSON:
+			mean = parms[0];
+			xMin = -1;
+			xMax = mean + 4*Math.sqrt(mean) ;
+			yMin = 0;	
+			yMax = 1.2* getDiscreteMax();
+			break;
+			
+		case DIST_HYPERGEOMETRIC:
+			pop = parms[0];
+			n = parms[1];
+			sample = parms[2];
+
+			xMin = -1;
+			xMax = n + 1;
+			yMin = 0;	
+			yMax = 1.2* getDiscreteMax();
+			break;
+			
+		}
+
+
+
+		double[] d = {xMin, xMax, yMin, yMax};
+		return d;
+	}
+
+
+
+
+	//=================================================
+	//       Create GeoElement
+	//=================================================
+
+
+	private GeoElement createGeoFromString(String text ){
+		return createGeoFromString(text, null, false);
+	}
+	private GeoElement createGeoFromString(String text, String label){
+		return createGeoFromString(text, null, false);
+	}
+	private GeoElement createGeoFromString(String text, String label, boolean suppressLabelCreation ){
+
+		try {
+
+			boolean oldSuppressLabelMode = cons.isSuppressLabelsActive();
+
+			if(suppressLabelCreation)
+				cons.setSuppressLabelCreation(true);
+			//	Application.debug(text);
+			GeoElement[] geos = kernel.getAlgebraProcessor()
+			.processAlgebraCommandNoExceptions(text, false);	
+
+			if(label != null)
+				geos[0].setLabel(label);
+
+			// set visibility
+			geos[0].setEuclidianVisible(true);	
+			geos[0].setAuxiliaryObject(true);
+			geos[0].setLabelVisible(false);
+
+			if(suppressLabelCreation)
+				cons.setSuppressLabelCreation(oldSuppressLabelMode);
+
+			plotGeoList.add(geos[0]);
+		//	geos[0].setLabel("xPrb" + plotGeoList.size());
+		//	System.out.println(geos[0].getLabel() + " : " + geos[0].getCommandDescription());
+			return geos[0];
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private String getGeoString(GeoElement geo){
+		return geo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 	}
 
 
