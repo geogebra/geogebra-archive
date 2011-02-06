@@ -262,7 +262,7 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		cbShowVScrollbar.setText(app.getMenu("ShowVerticalScrollbars"));        
 		cbShowBrowser.setText(app.getMenu("ShowFileBrowser"));  
 		cbAllowSpecialEditor.setText(app.getMenu("UseButtonsAndCheckboxes"));
-		cbAllowToolTips.setText(app.getMenu("AllowToolTips"));
+		cbAllowToolTips.setText(app.getMenu("AllowTooltips"));
 		cbPrependCommands.setText(app.getMenu("RequireEquals"));
 
 		locationPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("HomeDirectory")));
