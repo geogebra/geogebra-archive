@@ -20,20 +20,21 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import geogebra.cas.GeoGebraCAS;
+import geogebra.gui.DynamicTextInputPane;
+import geogebra.gui.TextInputDialog;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
-import geogebra.util.Util;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.swing.text.Document;
 
 /**
  * Tree node for expressions like "3*a - b/5"
@@ -922,6 +923,82 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	 */
 	final public String getCASstring(boolean symbolic) {
 		return getCASstring(STRING_TYPE_GEOGEBRA, symbolic);
+	}
+	
+	private boolean containsMyStringBuffer() {
+				
+		if (left instanceof MyStringBuffer || right instanceof MyStringBuffer) return true;
+		
+		boolean ret = false;
+		
+		if (left.isExpressionNode()) ret = ret || ((ExpressionNode)left).containsMyStringBuffer();
+		if (right != null && right.isExpressionNode()) ret = ret || ((ExpressionNode)right).containsMyStringBuffer();
+
+		return ret;
+	
+	}
+	
+	/*
+	 * splits a string up for editing with the Text Tool
+	 * adapted from printCASstring()
+	 */
+	public void splitString(DynamicTextInputPane dt,TextInputDialog id) {
+		
+		if (leaf) { 
+
+			if (left.isGeoElement()) {
+				Document d = dt.insertDynamicText(((GeoElement) left).getLabel(), 0, id);
+				d.addDocumentListener(id);
+			}
+			else if (left.isExpressionNode())
+				((ExpressionNode) left).splitString(dt, id);
+			else if (left instanceof MyStringBuffer) {
+				dt.insertString(0, left.toString().replaceAll("\"", ""), null);				
+			} else {
+				dt.insertDynamicText(left.toString(), 0, id);
+			}
+
+		}
+
+		// STANDARD case: no leaf
+		else {
+			
+			if (right != null && !containsMyStringBuffer()) {
+				// neither left nor right are free texts, eg a+3 in (a+3)+"hello"
+				// so no splitting needed
+				dt.insertDynamicText(toString(), 0, id);
+				return;
+			}
+			
+			
+			// expression node
+			if (left.isGeoElement()) {
+				Document d = dt.insertDynamicText(((GeoElement) left).getLabel(), 0, id);
+				d.addDocumentListener(id);
+			}
+			else if (left.isExpressionNode())
+				((ExpressionNode) left).splitString(dt, id);
+			else if (left instanceof MyStringBuffer) {
+				dt.insertString(0, left.toString().replaceAll("\"", ""), null);				
+			} else {
+				dt.insertDynamicText(left.toString(), 0, id);
+			}
+
+			if (right != null) {
+				if (right.isGeoElement()) {
+					Document d = dt.insertDynamicText(((GeoElement) right).getLabel(), 0, id);
+					d.addDocumentListener(id);
+				}
+				else if (right.isExpressionNode())
+					((ExpressionNode) right).splitString(dt, id);
+				else if (right instanceof MyStringBuffer) {
+					dt.insertString(0, right.toString().replaceAll("\"", ""), null);				
+				} else {
+					dt.insertDynamicText(right.toString(), 0, id);
+				}
+			}
+		}
+		
 	}
 
 	private String printCASstring(boolean symbolic) {

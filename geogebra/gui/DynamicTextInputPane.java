@@ -27,6 +27,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
@@ -37,7 +38,7 @@ public class DynamicTextInputPane extends JTextPane {
 
 	private Application app;
 	private DynamicTextInputPane thisPane;
-	private DefaultStyledDocument doc;
+	public DefaultStyledDocument doc;
 
 	public DynamicTextInputPane(Application app) {
 		super();
@@ -166,9 +167,17 @@ public class DynamicTextInputPane extends JTextPane {
 			super.setText(geo.getTextString());
 			return;
 		}
-
+		
 		ExpressionNode root = ((AlgoDependentText)geo.getParentAlgorithm()).getRoot(); 
+		
+		root.splitString(this, id);
+		
+		
+		/*
+		
+		
 		ExpressionValue left = root;
+		
 		try {
 			while (left.isExpressionNode()) {
 				ExpressionNode en = (ExpressionNode)left;
@@ -198,7 +207,7 @@ public class DynamicTextInputPane extends JTextPane {
 
 		} catch (BadLocationException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 	}
 
@@ -319,6 +328,18 @@ public class DynamicTextInputPane extends JTextPane {
 		}
 
 
+	}
+
+
+
+
+	public void insertString(int i, String replaceAll, AttributeSet object) {
+		try {
+			doc.insertString(i, replaceAll, object);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 
