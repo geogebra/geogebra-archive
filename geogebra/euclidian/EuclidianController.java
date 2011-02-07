@@ -618,6 +618,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (!hits.isEmpty()) {
 				view.setMode(EuclidianView.MODE_MOVE);
 				GeoElement geo0 = (GeoElement)hits.get(0);
+				
+				if (geo0.isGeoNumeric() && ((GeoNumeric)geo0).isSlider()) {
+					// double-click slider -> Object Properties
+					app.getGuiManager().showPropertiesDialog(hits);
+				} else
 				if (!geo0.isFixed() && !(geo0.isGeoBoolean() && geo0.isIndependent()) &&
 						!(geo0.isGeoImage() && geo0.isIndependent())
 						&& !geo0.isGeoButton())
