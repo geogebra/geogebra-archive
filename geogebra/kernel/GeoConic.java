@@ -377,15 +377,20 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		 return new Coords(lines[i].y, -lines[i].x,0,0);
 		 
 	 }
-	 
+
 	 public Coords getOrigin3D(int i){
-		 
+
 		 return new Coords(startPoints[i].x, startPoints[i].y, 0, 1);
-		 
+
 	 }
 
 
-		final public boolean isCasEvaluableObject() {
-			return true;
-		}
+	 final public boolean isCasEvaluableObject() {
+		 return true;
+	 }
+
+
+
+
+
 }

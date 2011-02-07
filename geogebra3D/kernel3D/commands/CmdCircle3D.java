@@ -42,6 +42,7 @@ public class CmdCircle3D extends CmdCircle {
 	    			return ret;
 	    		}
 	    	}
+	    	break;
 	    
 	    
 	    case 3 :
@@ -60,6 +61,8 @@ public class CmdCircle3D extends CmdCircle {
 	    			return ret;
 	    		}
 	    	}
+	    	
+	    	break;
 	    }
 	    
 	    return super.process(c);
