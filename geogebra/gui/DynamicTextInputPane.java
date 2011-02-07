@@ -77,8 +77,20 @@ public class DynamicTextInputPane extends JTextPane {
 			if (text.startsWith(s = app.getCommand("LaTeX")+"[")){
 
 				// strip off outer command
-				text = text.substring(s.length(), text.length() - 1);
-				mode = DynamicTextField.MODE_FORMULATEXT;
+				String temp = text.substring(s.length(), text.length() - 1);
+				
+				// check for second argument in LaTeX[str, false]
+				int commaIndex = temp.lastIndexOf(',');
+				int bracketCount = 0;
+				for (int i = commaIndex + 1 ; i < temp.length() ; i++) {
+					if (temp.charAt(i) == '[') bracketCount ++;
+					else if (temp.charAt(i) == ']') bracketCount --;
+				}
+				if (bracketCount != 0 || commaIndex == -1) {
+					// no second argument
+					text = temp;
+					mode = DynamicTextField.MODE_FORMULATEXT;
+				}
 
 			} else if (text.startsWith(s = app.getCommand("Name")+"[")) {
 
@@ -100,13 +112,15 @@ public class DynamicTextInputPane extends JTextPane {
 		return tfDoc;
 	}
 
+	StringBuilder sb = new StringBuilder();
+
 	/**
 	 * Converts the current editor content into a GeoText string.  
 	 */
 	public String buildGeoGebraString(boolean latex){
 
-		StringBuilder sb = new StringBuilder();
-		sb.append('"');
+		sb.setLength(0);
+		boolean containsQuotes = false;
 		Element elem;
 		for(int i = 0; i < doc.getLength(); i++){
 			try {
@@ -140,7 +154,11 @@ public class DynamicTextInputPane extends JTextPane {
 
 
 				}else if(elem.getName().equals("content")){
-					sb.append(doc.getText(i, 1));
+					
+					String content = doc.getText(i, 1);
+					sb.append(content);
+					
+					if (content.indexOf("\"") > -1) containsQuotes = true;
 				}
 
 			} catch (BadLocationException e) {
@@ -148,11 +166,16 @@ public class DynamicTextInputPane extends JTextPane {
 			}
 		}
 
-		if (app.getKernel().lookupLabel(sb.toString()) != null) {
+		// removed - if just text is typed, we want to make a string, not dynamic text
+		/*if (app.getKernel().lookupLabel(sb.toString()) != null) {
 			sb.append("+\"\""); // add +"" to end
 		} 
-		else
+		else */
+		if (!containsQuotes)
 		{
+			// add quotes at start and end unless it's an "old-style" dynamic text
+			// eg "length = "+length
+			sb.insert(0, '"');
 			sb.append('"');
 		}
 
