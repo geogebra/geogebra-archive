@@ -35,7 +35,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	
 	private static String[] vars3D = { "x\u00b2", "y\u00b2",  "z\u00b2", "x y", "x z", "y z", "x", "y" , "z" };
 	
-	private CoordMatrix4x4 eigenMatrix;
+	private CoordMatrix4x4 eigenMatrix = CoordMatrix4x4.Identity();
 	
 
 	public GeoQuadric3D(Construction c) {

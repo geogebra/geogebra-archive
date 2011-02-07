@@ -230,7 +230,7 @@ implements Previewable {
 		setGeoElement(q);
 		q.setIsPickable(false);
 		q.setType(type);
-		setGeoElement(q);
+		//setGeoElement(q);
 		
 		this.selectedPoints = selectedPoints;
 		
