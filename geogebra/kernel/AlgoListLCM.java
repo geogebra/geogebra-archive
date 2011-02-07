@@ -76,7 +76,7 @@ public class AlgoListLCM extends AlgoElement {
     	
     	BigInteger result = BigInteger.valueOf(1);
     	
-    	for (int i = 1 ; i < geoList.size() ; i++) {
+    	for (int i = 0 ; i < geoList.size() ; i++) {
         	BigInteger n = BigInteger.valueOf((long)((GeoNumeric)(geoList.get(i))).getDouble());
     		n = n.divide(gcd);
     		result = result.multiply(n);
