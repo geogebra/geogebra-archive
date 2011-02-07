@@ -4178,7 +4178,7 @@ public class Kernel {
 	
 	/** 
 	 * Product[list,n]
-	 * Michael Borcherds
+	 * Zbynek Konecny
 	 */
 	final public GeoNumeric Product(String label, GeoList list,GeoNumeric n) {
 		AlgoProduct algo = new AlgoProduct(cons, label, list,n);
