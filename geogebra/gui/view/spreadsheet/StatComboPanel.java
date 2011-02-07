@@ -284,6 +284,7 @@ public class StatComboPanel extends JPanel{
 			plotPanel.setPlotSettings(statGeo.updateBoxPlot( dataListSelected));
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
+			
 		case PLOT_DOTPLOT:
 			if(doCreate)
 				plotGeoList.add(statGeo.createDotPlot( dataListSelected));
@@ -304,6 +305,15 @@ public class StatComboPanel extends JPanel{
 			}
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
+			
+			
+		case PLOT_RESIDUAL:
+			if(doCreate)
+				plotGeoList.add(statGeo.createResidualPlot(dataListSelected, statDialog.getRegressionMode(), statDialog.getRegressionOrder()));
+			plotPanel.setPlotSettings(statGeo.updateScatterPlot(dataListSelected));
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			break;
+			
 			
 		case PLOT_REGRESSION_ANALYSIS:
 			regressionAnalysisList = statGeo.createRegressionAnalysisList(dataListSelected, statDialog.getRegressionModel() );

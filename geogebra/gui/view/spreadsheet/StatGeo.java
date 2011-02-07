@@ -76,7 +76,7 @@ public class StatGeo   {
 
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(true);
-			//Application.debug(text);
+		//	Application.debug(text);
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(text, false);	
 
@@ -447,7 +447,8 @@ public class StatGeo   {
 
 		ps.showYAxis = true;
 		ps.forceXAxisBuffer = false;
-
+		ps.isEdgeAxis[0] = true;
+		ps.isEdgeAxis[1] = true;
 		return ps;		
 	}
 
@@ -492,5 +493,51 @@ public class StatGeo   {
 		ps.forceXAxisBuffer = false;
 
 	}
+	
+	public GeoElement createResidualPlot(GeoList dataList, int regType, int order){
+
+		GeoElement geo = null;
+
+		if (regType == StatDialog.REG_NONE){
+			return createGeoFromString("{}");
+		}
+		
+		String label = dataList.getLabel();	
+
+		String regFcn = regCmd[regType] + "[" + label + "]";
+		if(regType == StatDialog.REG_POLY)
+			regFcn = regCmd[regType] + "[" + label + "," + order + "]";
+		
+		String text = "ResidualPlot[" + label + "," + regFcn + "]";
+		geo  = createGeoFromString(text);
+		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
+		geo.setAlphaValue(0.25f);
+		
+		return geo;
+
+	}
+	
+	public void updateResidualPlot(PlotSettings ps, GeoList dataList){
+
+		getDataBounds(dataList, true);
+
+		double xBuffer = .25*(xMaxData - xMinData);
+		ps.xMin = xMinData - xBuffer;
+		ps.xMax = xMaxData + xBuffer;
+
+		double yBuffer = .25*(yMaxData - yMinData);
+		ps.yMin = yMinData - yBuffer;
+		ps.yMax = yMaxData + yBuffer;
+
+		ps.showYAxis = true;
+		ps.forceXAxisBuffer = false;
+		
+		ps.isEdgeAxis[0] = true;
+		ps.isEdgeAxis[1] = true;
+		
+
+	}
+	
+	
 
 }

@@ -189,7 +189,7 @@ implements ActionListener, View, Printable   {
 
 		case MODE_TWOVAR:
 			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_RESIDUAL, dataListSelected, mode);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode);
 			break;		
 		}
 
