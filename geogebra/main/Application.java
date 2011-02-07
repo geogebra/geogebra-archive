@@ -249,7 +249,9 @@ public class Application implements KeyEventDispatcher {
 		specialLanguageNames.put("si", "Sinhala"); // better than Sinhalese
 	}
 
-	public static final Color COLOR_SELECTION = new Color(230, 230, 245);
+	// made a little darker in ggb40
+	// (problem showing on some projectors)
+	public static final Color COLOR_SELECTION = new Color(210, 210, 225);
 
 	// Font settings
 	public static final int MIN_FONT_SIZE = 10;
