@@ -2461,6 +2461,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 	}
 	
+	private boolean defaultCursorWillBeHitCursor = false;
+	
+	/**
+	 * next call to setDefaultCursor() will call setHitCursor() instead
+	 */
+	public void setDefaultCursorWillBeHitCursor(){
+		defaultCursorWillBeHitCursor = true;
+	}
+	
 	public void setDragCursor(){
 
 		// 2D cursor is invisible
@@ -2473,7 +2482,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 	
 	public void setDefaultCursor(){
-		//Application.printStacktrace("setDefaultCursor");
+		//Application.printStacktrace("setDefaultCursor:"+defaultCursorWillBeHitCursor);
+		
+		if (defaultCursorWillBeHitCursor){
+			defaultCursorWillBeHitCursor=false;
+			setHitCursor();
+			return;
+		}
 		
 		// 2D cursor
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

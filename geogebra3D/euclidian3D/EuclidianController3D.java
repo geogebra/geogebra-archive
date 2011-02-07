@@ -944,6 +944,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				if (!movedGeoPointDragged){
 					movedGeoPoint.switchMoveMode();
 					((EuclidianView3D) view).getCursor3D().setMoveMode(movedGeoPoint.getMoveMode());
+					((EuclidianView3D) view).setDefaultCursorWillBeHitCursor();
 				}
 			}
 		}
