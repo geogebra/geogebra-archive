@@ -2,36 +2,39 @@ package geogebra.gui;
 
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.AlgoDependentText;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
+import javax.swing.text.JTextComponent;
 import javax.swing.text.StyleConstants;
 
 public class DynamicTextInputPane extends JTextPane {
@@ -46,7 +49,9 @@ public class DynamicTextInputPane extends JTextPane {
 		thisPane = this;
 		setBackground(Color.white);
 		doc = (DefaultStyledDocument) this.getDocument();
+		//this.setCaret(new MyCaret());
 	}
+
 
 	/**
 	 * Inserts dynamic text field at the current caret position and returns the text
@@ -56,6 +61,7 @@ public class DynamicTextInputPane extends JTextPane {
 		return insertDynamicText(text, this.getCaretPosition(), inputDialog);
 	}
 
+
 	/**
 	 * Inserts dynamic text field at a specified position and returns the text
 	 * field's document
@@ -63,7 +69,7 @@ public class DynamicTextInputPane extends JTextPane {
 	public Document insertDynamicText(String text, int pos, TextInputDialog inputDialog) {
 
 		if (pos == -1) pos = getDocument().getLength(); // insert at end
-		
+
 		int mode = DynamicTextField.MODE_VALUE;
 		String s;
 
@@ -169,54 +175,55 @@ public class DynamicTextInputPane extends JTextPane {
 			super.setText(geo.getTextString());
 			return;
 		}
-		
+
+		// if dependent text then get the root 
 		ExpressionNode root = ((AlgoDependentText)geo.getParentAlgorithm()).getRoot(); 
-		
+
+		// parse the root and set the text content
 		root.splitString(this, id);
-		
-		
-		/*
-		
-		
-		ExpressionValue left = root;
-		
-		try {
-			while (left.isExpressionNode()) {
-				ExpressionNode en = (ExpressionNode)left;
-				ExpressionNode right = en.getRightTree();
-				left = en.getLeft();
-
-				if(en.getRight() instanceof MyStringBuffer){
-					doc.insertString(0, right.toString().replaceAll("\"", ""), null);
-				}else if (en.getRight() instanceof GeoElement){
-					Document d = insertDynamicText(((GeoElement)(en.getRight())).getLabel(), 0, id);
-					d.addDocumentListener(id);
-				}else{
-					//Application.debug(right.getClass()+" "+right.toString());
-					insertDynamicText(right.toString(), 0, id);
-				}
-			}
-
-			if(left instanceof MyStringBuffer){
-				doc.insertString(0, left.toString().replaceAll("\"", ""), null);
-			}else if (left instanceof GeoElement){
-				insertDynamicText(((GeoElement)left).getLabel(), 0, id);
-			}else{
-				//Application.debug(left.getClass()+" "+left.toString());
-				this.insertDynamicText(left.toString(), 0, id);
-			}
-
-
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}*/
 
 	}
 
 
 
+	/**
+	 * Overrides insertString to allow option offs = -1 for inserting at end.
+	 */
+	public void insertString(int offs, String str, AttributeSet a) {
+		try {
+			if (offs == -1) offs = doc.getLength(); // insert at end
+			doc.insertString(offs, str, a);
+
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 
 	/**
+	 * Custom caret with damage area set to a thin width. This allows the caret
+	 * to appear next to a DynamicTextField with destroying the field's border.
+	 */
+	class MyCaret extends DefaultCaret {
+
+		public MyCaret(){
+			super();
+			this.setBlinkRate(500);
+		}
+		protected synchronized void damage(Rectangle r){
+			if (r == null) return;
+			x = r.x;
+			y = r.y;
+			width = 4;
+			height = r.height;
+			repaint();
+
+		}
+	}
+
+
+	/*********************************************************************
 	 * Class for the dynamic text container.
 	 * 
 	 */
@@ -226,14 +233,14 @@ public class DynamicTextInputPane extends JTextPane {
 		public static final int MODE_DEFINITION = 1;
 		public static final int MODE_FORMULATEXT = 2;
 		private int mode = MODE_VALUE;
-		TextInputDialog id;
+		private TextInputDialog id;
 
 		private JPopupMenu contextMenu;
 
 		public DynamicTextField(GuiManager guiManager, TextInputDialog id) {
 			super(guiManager);
 			this.id = id;
-			
+
 			// add a mouse listener to trigger the context menu
 			addMouseListener(new MouseAdapter() {
 				public void mousePressed(MouseEvent evt) {
@@ -251,8 +258,9 @@ public class DynamicTextInputPane extends JTextPane {
 			});
 
 
-			//TODO: special border to show caret when near the edge --- not working yet
-			setBorder( (Border) new CompoundBorder(new LineBorder(new Color(0, 0, 0, 0), 2), getBorder()));
+			// special transparent border to show caret when next to the component
+			setOpaque(false);
+			setBorder( (Border) new CompoundBorder(new LineBorder(new Color(0, 0, 0, 0), 1), getBorder()));
 
 			// make sure the field is aligned nicely in the text pane
 			Font f = thisPane.getFont();
@@ -329,24 +337,7 @@ public class DynamicTextInputPane extends JTextPane {
 			contextMenu.add(item);
 		}
 
-
 	}
-
-
-
-
-	public void insertString(int offs, String str, AttributeSet a) {
-		try {
-			
-			if (offs == -1) offs = doc.getLength(); // insert at end
-			
-			doc.insertString(offs, str, a);
-		} catch (BadLocationException e) {
-			e.printStackTrace();
-		}
-		
-	}
-
 
 
 }

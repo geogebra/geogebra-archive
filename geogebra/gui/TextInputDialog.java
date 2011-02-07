@@ -581,6 +581,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				btInsertLaTeX.setEnabled(cbLaTeX.isSelected());
 				isLaTeX = cbLaTeX.isSelected();
 				textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(isLaTeX), isLaTeX);
+				
 
 				if(isLaTeX && inputPanel.getText().length() == 0) {
 					insertString("$  $");

@@ -159,7 +159,10 @@ ActionListener, ListSelectionListener {
 		
 		if (rows > 1) { // JTextArea
 			setLayout(new BorderLayout(5, 5));	
-			JScrollPane sp = new JScrollPane(textComponent); 
+			// put the text pane in a border layout to prevent JTextPane's auto word wrap
+			JPanel noWrapPanel = new JPanel(new BorderLayout());
+			noWrapPanel.add(textComponent);
+			JScrollPane sp = new JScrollPane(noWrapPanel); 
 			sp.setAutoscrolls(true);
 			add(sp, BorderLayout.CENTER);
 				
