@@ -2963,6 +2963,18 @@ public class Kernel {
 	
 	
 	/** 
+	 * ResidualPlot
+	 * G.Sturr 2011-2-5
+	 */
+	final public GeoList ResidualPlot(String label, GeoList list, GeoFunction function) {
+		AlgoResidualPlot algo = new AlgoResidualPlot(cons, label, list, function);
+		GeoList result = algo.getResult();
+		return result;
+	}
+	
+	
+	
+	/** 
 	 * UpperSum of function f 
 	 */
 	final public GeoNumeric UpperSum(String label, GeoFunction f, 
@@ -3011,6 +3023,18 @@ public class Kernel {
 		return r2;
 	}	
 
+	
+	/**
+	 * ResidualPlot[<List of Points>,<Function>]
+	 */
+	final public GeoList ResidualPlot(String label, GeoList list, GeoFunctionable function) {
+		AlgoResidualPlot algo = new AlgoResidualPlot(cons, label, list, function);
+		GeoList result = algo.getResult();
+		return result;
+	}	
+
+	
+	
 	
 	/** 
 	 * unit vector of line g

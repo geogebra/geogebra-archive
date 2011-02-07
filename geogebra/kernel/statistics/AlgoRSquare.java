@@ -25,9 +25,9 @@ import geogebra.kernel.GeoPoint;
 
 /**
  * Command: RSquare[<list>,<function>]
- * Calculates Sum[(y(<list>)-f(x(<list>))^2] for a function f(x) fitted to the list.
- * @author 	Hans-Petter Ulven
- * @version 2010-02-21
+ * Calculates coefficient of determination, R^2, for a function f(x) fitted to the list.
+ * @author 	G.Sturr
+
  */
 
 public class AlgoRSquare extends AlgoElement {
@@ -113,5 +113,5 @@ public class AlgoRSquare extends AlgoElement {
         r2.setValue(1-errorsum/syy);
       
     }//compute()
-}//class AlgoSumSquaredErrors
+}//class AlgoRSquare
 
