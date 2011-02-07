@@ -6812,15 +6812,16 @@ class CmdStemPlot extends CommandProcessor {
 		 GeoElement[] arg;
 
 		 switch (n) {
-		 case 3:			
+		 case 4:			
 			 arg = resArgs(c);
 			 if ((ok[0] = arg[0].isNumberValue()) &&
 					 (ok[1] = arg[1].isNumberValue()) &&
-					 (ok[2] = arg[2].isNumberValue())) 
+					 (ok[2] = arg[2].isNumberValue()) &&
+					 (ok[2] = arg[3].isGeoBoolean())) 
 			 {
 				 GeoElement[] ret = { 
 						 kernel.Zipf(c.getLabel(),
-								 (NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2]) };
+								 (NumberValue) arg[0], (NumberValue) arg[1], (NumberValue) arg[2], (GeoBoolean)arg[3]) };
 				 return ret;
 
 			 }  else
@@ -6828,8 +6829,10 @@ class CmdStemPlot extends CommandProcessor {
 					 throw argErr(app, c.getName(), arg[0]);
 				 else if (!ok[1])
 					 throw argErr(app, c.getName(), arg[1]);
-				 else
+				 else if (!ok[2])
 					 throw argErr(app, c.getName(), arg[2]);
+				 else
+					 throw argErr(app, c.getName(), arg[3]);
 
 		 default:
 			 throw argNumErr(app, c.getName(), n);

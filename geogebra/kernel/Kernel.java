@@ -3750,8 +3750,8 @@ public class Kernel {
 		return num;
 	}
 	
-	final public GeoNumeric Zipf(String label, NumberValue a, NumberValue b, NumberValue c) {
-		AlgoZipf algo = new AlgoZipf(cons, label, a, b, c);
+	final public GeoNumeric Zipf(String label, NumberValue a, NumberValue b, NumberValue c, GeoBoolean isCumulative) {
+		AlgoZipf algo = new AlgoZipf(cons, label, a, b, c, isCumulative);
 		GeoNumeric num = algo.getResult();
 		return num;
 	}
