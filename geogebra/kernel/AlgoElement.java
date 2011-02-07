@@ -852,7 +852,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         
         //      command name
         if (cmdname.equals("Expression"))
-			return toRealString();
+			return real ? toRealString():toString();
 		else {
 			 sb.setLength(0);
             if (kernel.isTranslateCommandName()) {
