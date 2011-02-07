@@ -276,10 +276,14 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
     }
     
     public AlgoDrawInformation copy(){
+    	if(evaluate!= null)
     	return new AlgoIntegralDefinite(cons,(GeoFunction)f.copy(),
     			(NumberValue)a.deepCopy(kernel),
     			(NumberValue)b.deepCopy(kernel),
     			(GeoBoolean)evaluate.copy());
+    	return new AlgoIntegralDefinite(cons,(GeoFunction)f.copy(),
+    			(NumberValue)a.deepCopy(kernel),
+    			(NumberValue)b.deepCopy(kernel),null);
     }
     
 
