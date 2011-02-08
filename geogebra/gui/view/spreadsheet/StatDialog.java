@@ -36,6 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 
@@ -647,17 +648,19 @@ implements ActionListener, View, Printable   {
 		//tfRegression.setColumns(30);
 		
 		JPanel eqnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		eqnPanel.add(lblRegression);
 		eqnPanel.add(lblRegEquation);
+		eqnPanel.setBackground(Color.white);
 		
 		JPanel regressionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		regressionPanel.add(lblRegression);
+		
 		regressionPanel.add(cbRegression);
 		regressionPanel.add(cbPolyOrder);
 		//regressionPanel.add(tfRegression);
 		//regressionPanel.add(lblRegEquation);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(eqnPanel,BorderLayout.CENTER);
+		mainPanel.add(new JScrollPane(eqnPanel),BorderLayout.CENTER);
 		mainPanel.add(regressionPanel,BorderLayout.SOUTH);
 		
 		return mainPanel;
