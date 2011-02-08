@@ -8635,7 +8635,7 @@ class CmdStemPlot extends CommandProcessor {
   				
   			case 1 :
   				arg = resArgs(c);
-  				if ( arg[0].isGeoNumeric() && ((GeoNumeric)arg[0]).isSlider()) {
+  				if ( arg[0].isGeoNumeric() && ((GeoNumeric)arg[0]).isIndependent()) {
 
   							GeoNumeric geo = (GeoNumeric) arg[0];
   							
@@ -8653,7 +8653,19 @@ class CmdStemPlot extends CommandProcessor {
 						}
 						return ret;
 			} else
+  					throw argErr(app, c.getName(), arg[0]);
+  			case 2 :
+  				arg = resArgs(c);
+  				if ( !arg[1].isGeoBoolean())
   					throw argErr(app, c.getName(), arg[1]);
+  				
+  				if ( arg[0].isGeoNumeric() && ((GeoNumeric)arg[0]).isIndependent()) {
+
+  							GeoNumeric geo = (GeoNumeric) arg[0];  							
+  							geo.setAnimating(((GeoBoolean)arg[1]).getBoolean());  							
+  							return ret;
+  				} else
+  					throw argErr(app, c.getName(), arg[0]);
 
   			default :
   				throw argNumErr(app, c.getName(), n);
