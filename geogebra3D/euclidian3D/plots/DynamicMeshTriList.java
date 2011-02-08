@@ -1,6 +1,10 @@
 package geogebra3D.euclidian3D.plots;
 
 import geogebra3D.euclidian3D.TriList;
+import geogebra3D.euclidian3D.TriListElem;
+
+import java.util.Iterator;
+import java.util.LinkedList;
 
 /**
  * A triangle list for dynamic meshes
@@ -25,14 +29,14 @@ abstract class DynamicMeshTriList extends TriList {
 	 * @param e
 	 *            the element to add
 	 */
-	abstract public void add(AbstractDynamicMeshElement e);
+	abstract public void add(DynamicMeshElement e);
 
 	/**
 	 * @param e
 	 *            the element to remove
 	 * @param i
 	 */
-	abstract public void add(AbstractDynamicMeshElement e, int i);
+	abstract public void add(DynamicMeshElement e, int i);
 
 	/**
 	 * @return the total visible error
@@ -44,7 +48,7 @@ abstract class DynamicMeshTriList extends TriList {
 	 *            the element to remove
 	 * @return true if the element was removed, otherwise false
 	 */
-	abstract public boolean remove(AbstractDynamicMeshElement e);
+	abstract public boolean remove(DynamicMeshElement e);
 
 	/**
 	 * @param e
@@ -52,20 +56,43 @@ abstract class DynamicMeshTriList extends TriList {
 	 * @param i
 	 * @return true if the element was removed, otherwise false
 	 */
-	abstract public boolean remove(AbstractDynamicMeshElement e, int i);
+	abstract public boolean remove(DynamicMeshElement e, int i);
 
 	/**
 	 * @param t
 	 *            the element to attempt to hide
 	 * @return true if the element was hidden, otherwise false
 	 */
-	abstract public boolean hide(AbstractDynamicMeshElement t);
+	abstract public boolean hide(DynamicMeshElement t);
 
 	/**
 	 * @param t
 	 *            the elemet to attempt to show
 	 * @return true if the element was shown, otherwise false
 	 */
-	abstract public boolean show(AbstractDynamicMeshElement t);
+	abstract public boolean show(DynamicMeshElement t);
 
+	public void recalculate(int currentVersion) {
+		TriListElem e = front;
+		LinkedList<DynamicMeshElement> list = new LinkedList<DynamicMeshElement>();
+		DynamicMeshElement el;
+		int j = 0;
+		while (e != null) {
+			el = (DynamicMeshElement) e.getOwner();
+			if(el.recalculate(currentVersion));
+				list.add(el);
+			e=e.getNext();
+		}
+		Iterator<DynamicMeshElement> it = list.iterator();
+		while(it.hasNext()){
+			DynamicMeshElement a = it.next();
+			reinsert(a);
+		}
+	}
+
+	private void reinsert(DynamicMeshElement a) {
+		//TODO: speed this up
+		remove(a);
+		add(a);
+	}
 }

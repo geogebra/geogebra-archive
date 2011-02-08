@@ -3,7 +3,7 @@ package geogebra3D.euclidian3D.opengl;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.arithmetic.Functional2Var;
-import geogebra3D.euclidian3D.plots.SurfaceMesh2;
+import geogebra3D.euclidian3D.plots.SurfaceMesh;
 
 import java.nio.FloatBuffer;
 
@@ -206,7 +206,7 @@ public class PlotterSurface {
 	/** 
 	 * draw part of the surface
 	 */
-	public void draw(SurfaceMesh2 tree){
+	public void draw(SurfaceMesh tree){
 		
 		FloatBuffer b1 = tree.getVertices();
 		FloatBuffer b2 = tree.getNormals();

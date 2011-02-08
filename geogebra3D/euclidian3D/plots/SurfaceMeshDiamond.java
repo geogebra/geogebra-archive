@@ -228,9 +228,9 @@ public class SurfaceMeshDiamond {
 	 */
 	private void estimateNormal(GeoFunctionNVar func) {
 		Coords dx = func
-				.evaluatePoint(param1 + SurfaceMesh.normalDelta, param2);
+				.evaluatePoint(param1 + OldSurfaceMesh.normalDelta, param2);
 		Coords dy = func
-				.evaluatePoint(param1, param2 + SurfaceMesh.normalDelta);
+				.evaluatePoint(param1, param2 + OldSurfaceMesh.normalDelta);
 		normal = dx.sub(v).crossProduct(dy.sub(v)).normalized();
 	}
 
@@ -265,11 +265,11 @@ public class SurfaceMeshDiamond {
 		if (Double.isNaN(vol1) || Double.isInfinite(vol1))
 			// use a different error measure for infinite points
 			// namely the base area times some constant
-			errors[0] = area * SurfaceMesh.undefErrorConst;
+			errors[0] = area * OldSurfaceMesh.undefErrorConst;
 		else
 			errors[0] = vol1;
 		if (Double.isNaN(vol2) || Double.isInfinite(vol1))
-			errors[1] = area * SurfaceMesh.undefErrorConst;
+			errors[1] = area * OldSurfaceMesh.undefErrorConst;
 		else
 			errors[1] = vol2;
 

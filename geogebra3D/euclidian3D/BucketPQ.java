@@ -33,12 +33,9 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 
 	/** the current highest bucket */
 	protected int maxBucket = 0;
-	
-	
-	//TODO: actually implement reverse PQs
-	
+
 	/** indicates the direction of the PQ */
-	final protected boolean reverse = false;
+	protected final boolean reverse;
 
 	/**
 	 * Class that holds data for elements inserted into the queue
@@ -71,9 +68,10 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 	/**
 	 * @param ba
 	 *            the bucket assigner to use
+	 * @param reverse 
 	 */
-	protected BucketPQ(BucketAssigner<E> ba) {
-		this(DEFAULT_BUCKET_AMT, ba);
+	protected BucketPQ(BucketAssigner<E> ba, boolean reverse) {
+		this(DEFAULT_BUCKET_AMT, ba, reverse);
 	}
 
 	/**
@@ -81,15 +79,22 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 	 *            the number of buckets to use
 	 * @param ba
 	 *            the bucket assigner to use
+	 * @param reverse 
 	 */
 	@SuppressWarnings("unchecked")
-	public BucketPQ(int bucketAmt, BucketAssigner<E> ba) {
+	public BucketPQ(int bucketAmt, BucketAssigner<E> ba, boolean reverse) {
 		this.bucketAmt = bucketAmt;
 		buckets = (Link<E>[]) new Link[bucketAmt];
 		backs = (Link<E>[]) new Link[bucketAmt];
 		this.bucketAssigner = ba;
-
+		this.reverse = reverse;
+		
 		linkAssociations = new HashMap<E, BucketPQ.Link<E>>();
+	}
+	
+	private int getIndex(E el){
+		int i = bucketAssigner.getBucketIndex(el, bucketAmt);
+		return reverse?bucketAmt-1-i:i;
 	}
 
 	/**
@@ -112,7 +117,7 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 		if (elem != null)
 			return false;
 
-		int bucketIndex = bucketAssigner.getBucketIndex(object, bucketAmt);
+		int bucketIndex = getIndex(object);
 
 		elem = new Link<E>(object);
 

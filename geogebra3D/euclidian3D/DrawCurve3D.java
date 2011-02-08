@@ -129,6 +129,11 @@ public class DrawCurve3D extends Drawable3DCurves {
 
 		boolean ret = true;
 		
+		if(elementHasChanged){
+			elementHasChanged = false;
+			mesh.updateParameters();
+		}
+		
 		setColors();
 
 		if(useOldCurves){
@@ -165,7 +170,7 @@ public class DrawCurve3D extends Drawable3DCurves {
 
 			setGeometryIndex(brush.end());
 		}
-		return false;
+		return ret;
 	}
 	
 	

@@ -3,23 +3,27 @@ package geogebra3D.euclidian3D.plots;
 import geogebra3D.euclidian3D.BucketAssigner;
 import geogebra3D.euclidian3D.BucketPQ;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 /**
- * A bucket priority queue designed specifically for dynamic meshes.
- * Inserts culled diamonds into the zeroth bucket.
+ * A bucket priority queue designed specifically for dynamic meshes. Inserts
+ * culled diamonds into the zeroth bucket.
  * 
  * @author André Eriksson
  */
-public class DynamicMeshBucketPQ extends BucketPQ<AbstractDynamicMeshElement> {
+public class DynamicMeshBucketPQ extends BucketPQ<DynamicMeshElement> {
 
 	/**
 	 * @param ba
 	 *            the bucket assigner to use
 	 */
-	DynamicMeshBucketPQ(BucketAssigner<AbstractDynamicMeshElement> ba) {
-		super(ba);
+	DynamicMeshBucketPQ(BucketAssigner<DynamicMeshElement> ba,
+			boolean reverse) {
+		super(ba, reverse);
 	}
 
-	public boolean add(AbstractDynamicMeshElement object) {
+	public boolean add(DynamicMeshElement object) {
 		if (findLink(object) != null) // already in queue
 			return false;
 
@@ -30,11 +34,11 @@ public class DynamicMeshBucketPQ extends BucketPQ<AbstractDynamicMeshElement> {
 		return super.add(object);
 	}
 
-	private boolean addToZeroBucket(AbstractDynamicMeshElement object) {
+	private boolean addToZeroBucket(DynamicMeshElement object) {
 		if (null == object)
 			throw new NullPointerException();
 
-		Link<AbstractDynamicMeshElement> elem = findLink(object);
+		Link<DynamicMeshElement> elem = findLink(object);
 
 		// ignore element if already in queue
 		if (elem != null)
@@ -42,7 +46,7 @@ public class DynamicMeshBucketPQ extends BucketPQ<AbstractDynamicMeshElement> {
 
 		int bucketIndex = 0;
 
-		elem = new Link<AbstractDynamicMeshElement>(object);
+		elem = new Link<DynamicMeshElement>(object);
 
 		// update pointers
 		elem.prev = backs[bucketIndex];
@@ -63,6 +67,30 @@ public class DynamicMeshBucketPQ extends BucketPQ<AbstractDynamicMeshElement> {
 		linkAssociations.put(object, elem);
 
 		return true;
+	}
+
+	public void recalculate(int currentVersion) {
+		LinkedList<DynamicMeshElement> list = new LinkedList<DynamicMeshElement>();
+		for (int i = 0; i <= maxBucket; i++) {
+			Link<DynamicMeshElement> el = buckets[i];
+			while (el != null) {
+				DynamicMeshElement d = el.data;
+				if(d.recalculate(currentVersion))
+					list.add(d);
+				el = el.next;
+			}
+		}
+		
+		Iterator<DynamicMeshElement> it = list.iterator();
+		while(it.hasNext()){
+			DynamicMeshElement a = it.next();
+			reinsert(a);
+		}
+	}
+
+	private void reinsert(DynamicMeshElement a) {
+		remove(a);
+		add(a);
 	}
 
 }

@@ -4,7 +4,7 @@ import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.euclidian3D.plots.SurfaceMesh2;
+import geogebra3D.euclidian3D.plots.SurfaceMesh;
 
 /**
  * Class for drawing a 2-var function
@@ -13,7 +13,7 @@ import geogebra3D.euclidian3D.plots.SurfaceMesh2;
  */
 public class DrawFunction2Var extends Drawable3DSurfaces {
 	
-	private SurfaceMesh2 mesh;
+	private SurfaceMesh mesh;
 	
 	private GeoFunctionNVar function;
 	
@@ -138,9 +138,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		updateRadius();
 		if(unlimitedRange){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
-			mesh = new SurfaceMesh2(function, lastBaseRadius, true);
+			mesh = new SurfaceMesh(function, lastBaseRadius, true);
 		} else
-			mesh = new SurfaceMesh2(function, savedRadius, false);
+			mesh = new SurfaceMesh(function, savedRadius, false);
 
 		return super.updateForItSelf();
 	}
@@ -152,12 +152,12 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
-			mesh = new SurfaceMesh2(function, lastBaseRadius, true);
+			mesh = new SurfaceMesh(function, lastBaseRadius, true);
 		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
 			lastBaseRadius=savedRadius/unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
-			mesh = new SurfaceMesh2(function, lastBaseRadius, true);
+			mesh = new SurfaceMesh(function, lastBaseRadius, true);
 		} 
 //		else if(oldRadius!=savedRadius && mesh != null)
 //			mesh.turnOnUpdates();

@@ -3,10 +3,18 @@ package geogebra3D.euclidian3D.plots;
 import java.nio.FloatBuffer;
 import java.util.Date;
 
+//TODO: make culling refresh the tree upwards?
+//TODO: modify the parameter by a small value when the vertex is at infinity
+//TODO: implement a minimum error for each element?
+//TODO: ensure optimality by comparing error in merge and split queues
+//TODO: improve speed
+//TODO: a = Curve[t, 0, gamma(t), t, -40, 40] crashes
+//TODO: the error of Curve[t,0,t*t,t,-10,10] does not converge to 0
+
 /**
  * An enum for describing the culling status of a diamond
  * 
- * @author Andr� Eriksson
+ * @author André Eriksson
  */
 enum CullInfo {
 	/** the entire diamond is in the viewing sphere */
@@ -22,12 +30,12 @@ enum CullInfo {
  * 
  * @author André Eriksson
  */
-abstract class AbstractDynamicMeshElement {
+abstract class DynamicMeshElement {
 	private boolean isSplit;
 	/** children of the element */
-	protected AbstractDynamicMeshElement[] children;
+	protected DynamicMeshElement[] children;
 	/** parents of the element */
-	protected AbstractDynamicMeshElement[] parents;
+	protected DynamicMeshElement[] parents;
 
 	private final int nChildren;
 
@@ -50,6 +58,8 @@ abstract class AbstractDynamicMeshElement {
 
 	/** true if any evaluated point of the segment is singular */
 	protected boolean isSingular;
+	
+	protected int lastVersion;
 
 	/**
 	 * @param nChildren
@@ -61,13 +71,14 @@ abstract class AbstractDynamicMeshElement {
 	 * @param ignoreFlag
 	 *            true if the element shouldn't be updated or drawn
 	 */
-	public AbstractDynamicMeshElement(int nChildren, int nParents, int level,
-			boolean ignoreFlag) {
+	public DynamicMeshElement(int nChildren, int nParents, int level,
+			boolean ignoreFlag, int version) {
 		this.nChildren = nChildren;
 		this.level = level;
 		this.ignoreFlag = ignoreFlag;
-		children = new AbstractDynamicMeshElement[nChildren];
-		parents = new AbstractDynamicMeshElement[nParents];
+		this.lastVersion = version;
+		children = new DynamicMeshElement[nChildren];
+		parents = new DynamicMeshElement[nParents];
 	}
 
 	/**
@@ -97,11 +108,17 @@ abstract class AbstractDynamicMeshElement {
 	 * @param i
 	 * @return the child at index i
 	 */
-	public AbstractDynamicMeshElement getChild(int i) {
+	public DynamicMeshElement getChild(int i) {
 		if (i >= nChildren)
 			throw new IndexOutOfBoundsException();
 		if (children[i] == null)
 			createChild(i);
+		
+		//TODO: this might be risky, perhaps the current version should be 
+		// passed to getChild. same goes for getParent()
+		if(children[i].lastVersion!=lastVersion)
+			children[i].recalculate(lastVersion);
+			
 		return children[i];
 	}
 
@@ -122,7 +139,11 @@ abstract class AbstractDynamicMeshElement {
 	 * @param i
 	 * @return the parent at index i
 	 */
-	public AbstractDynamicMeshElement getParent(int i) {
+	public DynamicMeshElement getParent(int i) {
+		
+		if(parents[i] != null && parents[i].lastVersion!=lastVersion)
+			parents[i].recalculate(lastVersion);
+		
 		return parents[i];
 	}
 
@@ -245,9 +266,11 @@ abstract class AbstractDynamicMeshElement {
 	 * @param activeParent the parent that is trying to initiate the move
 	 * @return true if the element can be moved, otherwise false
 	 */
-	public boolean readyForMerge(AbstractDynamicMeshElement activeParent) {
+	public boolean readyForMerge(DynamicMeshElement activeParent) {
 		return true;
 	}
+
+	public abstract boolean recalculate(int currentVersion);
 }
 
 /**
@@ -258,7 +281,7 @@ abstract class AbstractDynamicMeshElement {
  * 
  * @author André Eriksson
  */
-public abstract class AbstractDynamicMesh {
+public abstract class DynamicMesh {
 
 	/** the queue used for merge operations */
 	protected DynamicMeshBucketPQ mergeQueue;
@@ -282,6 +305,8 @@ public abstract class AbstractDynamicMesh {
 
 	private final int nChildren;
 	private final int nParents;
+	
+	protected int currentVersion = 0;
 
 	/** used in optimizeSub() */
 	protected enum Side {
@@ -304,7 +329,7 @@ public abstract class AbstractDynamicMesh {
 	 * @param nChildren
 	 * @param maxLevel
 	 */
-	AbstractDynamicMesh(DynamicMeshBucketPQ mergeQueue,
+	DynamicMesh(DynamicMeshBucketPQ mergeQueue,
 			DynamicMeshBucketPQ splitQueue, DynamicMeshTriList drawList,
 			int nParents, int nChildren, int maxLevel) {
 		this.mergeQueue = mergeQueue;
@@ -416,7 +441,7 @@ public abstract class AbstractDynamicMesh {
 	 * @param t
 	 *            the target element
 	 */
-	protected void merge(AbstractDynamicMeshElement t) {
+	protected void merge(DynamicMeshElement t) {
 
 		if (t == null)
 			return;
@@ -434,9 +459,8 @@ public abstract class AbstractDynamicMesh {
 
 		// handle children
 		for (int i = 0; i < nChildren; i++) {
-			AbstractDynamicMeshElement c = t.getChild(i);
+			DynamicMeshElement c = t.getChild(i);
 
-			// TODO: difference here
 			if(c.readyForMerge(t)){
 
 				splitQueue.remove(c);
@@ -451,7 +475,7 @@ public abstract class AbstractDynamicMesh {
 
 		// handle parents
 		for (int i = 0; i < nParents; i++) {
-			AbstractDynamicMeshElement p = t.getParent(i);
+			DynamicMeshElement p = t.getParent(i);
 			if (!p.childrenSplit()) {
 				p.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
 				mergeQueue.add(p);
@@ -468,7 +492,7 @@ public abstract class AbstractDynamicMesh {
 	 * @param t
 	 *            the target element
 	 */
-	protected void split(AbstractDynamicMeshElement t) {
+	protected void split(DynamicMeshElement t) {
 
 		if (t == null)
 			return;
@@ -486,7 +510,7 @@ public abstract class AbstractDynamicMesh {
 
 		// handle parents
 		for (int i = 0; i < nParents; i++) {
-			AbstractDynamicMeshElement p = t.getParent(i);
+			DynamicMeshElement p = t.getParent(i);
 			if (p != null) {
 
 				split(p);
@@ -497,7 +521,7 @@ public abstract class AbstractDynamicMesh {
 
 		// handle children
 		for (int i = 0; i < nChildren; i++) {
-			AbstractDynamicMeshElement c = t.getChild(i);
+			DynamicMeshElement c = t.getChild(i);
 
 			if (!c.ignoreFlag){
 				c.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
@@ -513,5 +537,18 @@ public abstract class AbstractDynamicMesh {
 
 		// remove from drawing list
 		drawList.remove(t);
+	}
+	
+	public void updateParameters(){
+		currentVersion++;
+		
+		//update all elements currently in draw list
+		drawList.recalculate(currentVersion);
+		
+		//update elements in queues
+		splitQueue.recalculate(currentVersion);
+		mergeQueue.recalculate(currentVersion);
+		
+		updateCullingInfo();
 	}
 }
