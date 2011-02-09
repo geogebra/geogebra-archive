@@ -38,7 +38,11 @@ public final class MyMath {
 	
 	
 	final public static double sgn(Kernel kernel, double a) {
-		if (kernel.isZero(a)) 
+		
+		// bugfix for graph f(x) = sgn(sqrt(1 - x)) 
+    	if (Double.isNaN(a)) return Double.NaN;
+    	
+		if (Kernel.isZero(a)) 
 			return 0.0;
 	    else if (a > 0.0)    
 	    	return  1.0;
