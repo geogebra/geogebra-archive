@@ -3003,6 +3003,28 @@ public class Kernel {
 		GeoNumeric sum = algo.getSum();
 		return sum;
 	}	
+	/** 
+	 * LeftSum of function f 
+	 * Ulven 09.02.11
+	 */
+	final public GeoNumeric LeftSum(String label, GeoFunction f, 
+					NumberValue a, NumberValue b, NumberValue n) {
+		AlgoSumLeft algo = new AlgoSumLeft(cons, label, f, a, b, n);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}	
+	
+	/** 
+	 * RectangleSum of function f 
+	 * Ulven 09.02.11
+	 */
+	final public GeoNumeric RectangleSum(String label, GeoFunction f, 
+					NumberValue a, NumberValue b, NumberValue n,NumberValue d) {
+		AlgoSumRectangle algo = new AlgoSumRectangle(cons, label, f, a, b, n,d);
+		GeoNumeric sum = algo.getSum();
+		return sum;
+	}	
+	
 	/**
 	 * SumSquaredErrors[<List of Points>,<Function>]
 	 * Hans-Petter Ulven
