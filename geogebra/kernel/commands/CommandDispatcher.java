@@ -331,6 +331,8 @@ public class CommandDispatcher {
     	cmdTable.put("Derivative", new CmdDerivative(kernel));	
     	cmdTable.put("Integral", new CmdIntegral(kernel));	   
     	cmdTable.put("LowerSum", new CmdLowerSum(kernel));
+    	cmdTable.put("LeftSum",  new CmdLeftSum(kernel));
+    	cmdTable.put("RectangleSum", new CmdRectangleSum(kernel));    	
     	cmdTable.put("TaylorSeries", new CmdTaylorSeries(kernel));	 
     	cmdTable.put("UpperSum", new CmdUpperSum(kernel));  
     	cmdTable.put("TrapezoidalSum", new CmdTrapezoidalSum(kernel)); 
