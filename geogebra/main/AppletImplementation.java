@@ -649,6 +649,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 */
 	public synchronized void setXML(String xml) {
 		app.setXML(xml, true);
+		reinitGUI(); 
 	}
 
 	/**
