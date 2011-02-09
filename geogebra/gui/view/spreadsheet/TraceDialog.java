@@ -283,7 +283,7 @@ implements
 	private JPanel buildLocationPanel() {
 		
 		// start row panel
-		JLabel lblStartRow = new JLabel("Start Row: ");
+		JLabel lblStartRow = new JLabel(app.getMenu("StartRow"+": "));
 		firstRowField = new MyTextField(app.getGuiManager());
 		firstRowField.setColumns(3);
 		firstRowField.addActionListener(this);
@@ -296,7 +296,7 @@ implements
 		
 		
         // row limit panel
-		cbRowLimit = new JCheckBox(app.getMenu("Row Limit:"));  
+		cbRowLimit = new JCheckBox(app.getMenu("RowLimit"+": "));  
 		cbRowLimit.addActionListener(this);
 
 		numRowsField = new MyTextField(app.getGuiManager());
@@ -338,16 +338,16 @@ implements
         cbShowLabel.addActionListener(this);        
         optionsPanel.add(cbShowLabel);
              
-        cbTraceList = new JCheckBox(app.getMenu("Trace To List"));  
+        cbTraceList = new JCheckBox(app.getMenu("TraceToList"));  
         cbTraceList.addActionListener(this);        
         optionsPanel.add(cbTraceList);
         
-        cbTraceGeoCopy = new JCheckBox(app.getMenu("Trace Copy"));  
+        cbTraceGeoCopy = new JCheckBox(app.getMenu("TraceCopy"));  
         cbTraceGeoCopy.addActionListener(this);        
         optionsPanel.add(cbTraceGeoCopy);
         
      
-		cbResetColumns = new JCheckBox(app.getMenu("Column Reset"));  
+		cbResetColumns = new JCheckBox(app.getMenu("ColumnReset"));  
 		cbResetColumns.addActionListener(this);   
 		optionsPanel.add(cbResetColumns);
     
@@ -390,7 +390,7 @@ implements
 		
 		
 		promptPanel = new JPanel(new BorderLayout());			
-		JLabel prompt = new JLabel("Select an Object to Trace");
+		JLabel prompt = new JLabel(app.getMenu("SelectAnObjectToTrace"));
 		prompt.setHorizontalAlignment(JLabel.CENTER);
 		prompt.setVerticalAlignment(JLabel.CENTER);
 		promptPanel.add(prompt, BorderLayout.CENTER);
