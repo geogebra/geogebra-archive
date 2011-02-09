@@ -49,6 +49,10 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	public static final int TYPE_UPPERSUM = 0;
 	/** Lower Rieman sum **/
 	public static final int TYPE_LOWERSUM = 1;
+	/** Left Rieman sum (Ulven: 09.02.11) **/
+	public static final int TYPE_LEFTSUM=11;
+	/** Rectangle sum with divider for step interval (Ulven: 09.02.11) **/
+	public static final int TYPE_RECTANGLESUM=12;	
 	/** Barchart from expression**/
 	public static final int TYPE_BARCHART = 2;
 	/** Barchart from raw data **/
@@ -77,9 +81,10 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 
 	private GeoFunction f; // input	   
 	private NumberValue a, b, n, width, density; // input
+	private NumberValue d;  // input: divider for Rectangle sum, 0..1
 	private GeoList list1, list2; // input
 	private GeoList tempList;
-	private GeoElement ageo, bgeo, ngeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, widthGeo, densityGeo, useDensityGeo;
+	private GeoElement ageo, bgeo, ngeo, dgeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, widthGeo, densityGeo, useDensityGeo;
 	private GeoNumeric  sum; // output sum    
 	
 	
@@ -99,6 +104,43 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		return freqMax;
 	}
 
+
+	/**
+	 * Rectangle sum
+	 * @param cons
+	 * @param label
+	 * @param f
+	 * @param a
+	 * @param b
+	 * @param n
+	 * @param d
+	 * @param type
+	 */
+	public AlgoFunctionAreaSums(Construction cons, String label, GeoFunction f, 
+								   NumberValue a, NumberValue b, NumberValue n, NumberValue d,
+								   int type) {
+		
+		super(cons);
+		
+		this.type = type;
+		
+		
+		this.f = f;
+		this.a = a;
+		this.b = b;			
+		this.n = n;
+		this.d = d;
+		ageo = a.toGeoElement();
+		bgeo = b.toGeoElement();
+		ngeo = n.toGeoElement();
+		dgeo = d.toGeoElement();
+			
+		sum = new GeoNumeric(cons); // output
+		setInputOutput(); // for AlgoElement	
+		compute();
+		sum.setLabel(label);
+		sum.setDrawable(true);
+	}//AlgoFunctionAreaSums(cons,label,func,a,b,n,d,type)
 	
 	
 	/**
@@ -388,12 +430,21 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		case TYPE_UPPERSUM:
 		case TYPE_LOWERSUM:
 		case TYPE_TRAPEZOIDALSUM:
+		case TYPE_LEFTSUM:           //Ulven: 09.02.11			
 			input = new GeoElement[4];
 			input[0] = f;
 			input[1] = ageo;
 			input[2] = bgeo;
 			input[3] = ngeo;		
 			break;
+		case TYPE_RECTANGLESUM:      //Ulven: 09.02.11
+			input = new GeoElement[5];
+			input[0] = f;
+			input[1] = ageo;
+			input[2] = bgeo;
+			input[3] = ngeo;
+			input[4] = dgeo;
+			break;			
 		case TYPE_BARCHART:
 			input = new GeoElement[3];
 			input[0] = ageo;
@@ -520,6 +571,14 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 */
 	public GeoNumeric getN() {
 		return (GeoNumeric)ngeo;
+	}
+	
+	/**
+	 * Returns d
+	 * @return d
+	 */
+	public GeoNumeric getD() {
+		return (GeoNumeric)dgeo;
 	}
 	
 	/**
@@ -688,11 +747,18 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			break;
 
 		case TYPE_TRAPEZOIDALSUM:
+		case TYPE_RECTANGLESUM:
+		case TYPE_LEFTSUM:			
 
 			if (!(f.isDefined() && ageo.isDefined() && bgeo.isDefined() 
 					&& ngeo.isDefined())) 
 				sum.setUndefined();
-					
+			
+			/* Rectanglesum needs extra treatment */
+			if( ( type==TYPE_RECTANGLESUM) && (!dgeo.isDefined()) ){	//extra parameter
+				sum.setUndefined();
+			}//if d parameter for rectanglesum
+			
 			fun = f.getRealRootFunctionY();				
 			ad = a.getDouble();
 			bd = b.getDouble();		 
@@ -722,15 +788,31 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			for (int i=0; i < N+1 ; i++) { // N+1 for trapezoids
 				leftBorder[i] = ad + i * STEP;	
 				
+				/* Extra treatment for RectangleSum */
+				if(type==TYPE_RECTANGLESUM){
+					double dd=d.getDouble();
+					if( (0.0<=dd) && (dd<=1.0) ){ 
+						yval[i] = fun.evaluate(leftBorder[i]+dd*STEP);  //divider into step-interval
+					}else{
+						sum.setUndefined();
+						return;
+					}// if divider ok
+				}else{
+					yval[i] = fun.evaluate(leftBorder[i]);
+				}//if 
 
-				yval[i] = fun.evaluate(leftBorder[i]);
 	
 				cumSum += yval[i];	
 			}							
 			
-			// calc area of rectangles	
+			// calc area of rectangles	or trapezoids
+			if( (type==TYPE_RECTANGLESUM) || (type==TYPE_LEFTSUM) ){
+				cumSum-=yval[N];		//Last right value not needed
+			}else{
+				cumSum-=(yval[0] + yval[N])/2;
+			}//if rectangles or trapezoids			
 			
-			cumSum-=(yval[0] + yval[N])/2;
+
 			//for (int i=0; i < N+1 ; i++) cumSum += yval[i];
 			sum.setValue(cumSum * STEP);	
 			break;
