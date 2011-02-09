@@ -1548,6 +1548,7 @@ public class Renderer implements GLEventListener {
 	 * @param minmax initial interval
 	 * @param o origin of the line
 	 * @param v direction of the line
+	 * @param extendedDepth says if it looks to real depth bounds, or working depth bounds
 	 * @return interval to draw the line
 	 */
 	public double[] getIntervalInFrustum(double[] minmax, 
@@ -1570,6 +1571,80 @@ public class Renderer implements GLEventListener {
 		
 		return minmax;
 	}
+	
+	/** for a line described by (o,v), return the min and max parameters to draw the line,
+	 * checking it for parallel parameters
+	 * @param minmax initial interval
+	 * @param o origin of the line
+	 * @param v direction of the line
+	 * @param extendedDepth says if it looks to real depth bounds, or working depth bounds
+	 * @return interval to draw the line
+	 */
+	public double[] getParallelIntervalInFrustum(double[] minmax, 
+			Coords o, Coords v,
+			boolean extendedDepth){
+		
+		
+		
+		double left = (getLeft() - o.get(1))/v.get(1);
+		double right = (getRight() - o.get(1))/v.get(1);		
+		updateIntervalInFrustum(minmax, left, right);
+		
+		double top = (getTop() - o.get(2))/v.get(2);
+		double bottom = (getBottom() - o.get(2))/v.get(2);
+		updateIntervalInFrustum(minmax, top, bottom);
+		
+		double front = (getFront(extendedDepth) - o.get(3))/v.get(3);
+		double back = (getBack(extendedDepth) - o.get(3))/v.get(3);
+		updateIntervalInFrustum(minmax, front, back);
+		
+		return minmax;
+	}
+	/*
+	public double[] getParallelIntervalInFrustum(double[] minmax, 
+			Coords o, Coords v,
+			boolean extendedDepth){
+		
+		//find the mean direction
+		int direction;
+		Coords vabs = new Coords(3);
+		for (int i=1; i<=3; i++)
+			vabs.set(i,Math.abs(v.get(i)));
+		if (vabs.get(1)>vabs.get(2)){
+			if (vabs.get(1)>vabs.get(3))
+				direction=1;
+			else
+				direction=3;
+		}else
+			if (vabs.get(2)>vabs.get(3))
+				direction=2;
+			else
+				direction=3;
+		
+		//get min and max value
+		double min, max;
+		switch(direction){
+		case 1:
+			min=(getLeft() - o.get(1))/v.get(1);
+			max=(getRight()- o.get(1))/v.get(1);
+			break;
+		case 2:
+			min=(getTop()- o.get(2))/v.get(2);
+			max=(getBottom()- o.get(2))/v.get(2);
+			break;	
+		case 3:
+		default:
+			min=(getFront(extendedDepth)- o.get(3))/v.get(3);
+			max=(getBack(extendedDepth)- o.get(3))/v.get(3);
+			break;	
+		}
+		
+		updateIntervalInFrustum(minmax, min, max);
+		
+		return minmax;
+		
+	}
+	*/
 	
 	/** return the intersection of intervals [minmax] and [v1,v2]
 	 * @param minmax initial interval

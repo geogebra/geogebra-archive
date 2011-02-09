@@ -58,8 +58,8 @@ public class DrawPlaneConstant3D extends DrawPlane3D {
 				xAxis.getNumbersDistance(), 
 				yAxis.getNumbersDistance()
 				);
-
-		super.updateForItSelf();
+		
+		super.updateForItSelf(false);
 		
 		return !(xAxis.waitForUpdate() || yAxis.waitForUpdate());
 	}
@@ -67,6 +67,8 @@ public class DrawPlaneConstant3D extends DrawPlane3D {
 	protected void updateForView(){
 		
 	}
+	
+	
 	
 	
 

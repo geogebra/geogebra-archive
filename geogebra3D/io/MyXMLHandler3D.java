@@ -4,6 +4,7 @@ import geogebra.io.MyXMLHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
@@ -72,8 +73,6 @@ public class MyXMLHandler3D extends MyXMLHandler {
 				break;
 			}
 
-
-
 		case 'g':
 			if (eName.equals("grid")) {
 				ok = handleGrid(ev, attrs);
@@ -84,7 +83,7 @@ public class MyXMLHandler3D extends MyXMLHandler {
 				ok = handleGridColor(ev, attrs);
 				break;
 			}
-			*/
+			 */
 			
 		case 'p':
 			if (eName.equals("plate")) {
@@ -114,6 +113,32 @@ public class MyXMLHandler3D extends MyXMLHandler {
 	
 	
 	
+	protected void startGeoElement(String eName, LinkedHashMap<String, String> attrs) {
+		if (geo == null) {
+			System.err.println("no element set for <" + eName + ">");
+			return;
+		}
+
+		boolean ok = true;
+		switch (eName.charAt(0)) {
+		case 'f':
+			if (eName.equals("fading")) {
+				ok = handleFading(attrs);
+				break;
+			}
+		
+		default:
+			super.startGeoElement(eName, attrs);
+		}
+
+		if (!ok) {
+			System.err.println("error in <element>: " + eName);
+		}
+	}
+	
+	
+	
+	
 	private boolean handleCoordSystem3D(EuclidianView3D ev, LinkedHashMap<String, String> attrs) {
 		try {
 			double xZero = Double.parseDouble((String) attrs.get("xZero"));
@@ -138,7 +163,16 @@ public class MyXMLHandler3D extends MyXMLHandler {
 	}
 	
 	
-	
+	private boolean handleFading(LinkedHashMap<String, String> attrs) {
+		try {
+			float fading = Float.parseFloat((String) attrs.get("val"));			
+			((GeoPlaneND) geo).setFading(fading);			
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	
 	
 	/** handles plane attributes for EuclidianView3D

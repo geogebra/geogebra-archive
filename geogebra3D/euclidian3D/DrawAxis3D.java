@@ -28,15 +28,7 @@ public class DrawAxis3D extends DrawLine3D {
     //private double distance = 1;
     
 
-    /** time the last update of min/max occured */
-	private long time;
 
-	/** delay to wait before doing the update */
-	private static final int TIME_WAIT = 500;
-	/** delay for the update to have ended */
-	private static final int TIME_END = TIME_WAIT+500;
-	/** time factor for min/max calculation */
-	private static final float TIME_FACTOR = 1f/((float) (TIME_END-TIME_WAIT));
 	/** min/max when the update is finished */
 	private double drawMinFinal, drawMaxFinal;
 	
@@ -183,7 +175,7 @@ public class DrawAxis3D extends DrawLine3D {
        	brush.setTicks(PlotterBrush.TICKS_OFF);
        	
        	
-       	return (System.currentTimeMillis()>time+TIME_END);
+       	return timesUpForUpdate();
        	
     }
     
@@ -274,21 +266,22 @@ public class DrawAxis3D extends DrawLine3D {
 	
 	
 	public void setDrawMinMax(double drawMin, double drawMax){
-		time = System.currentTimeMillis();
+		setTime();
 		drawMinFinal = drawMin;
 		drawMaxFinal = drawMax;
 	}
 
 	
 	public double[] getDrawMinMax(){
-		double dt = (System.currentTimeMillis()-(time+TIME_WAIT))*TIME_FACTOR;
+		long deltaT = getDeltaT();
 
-		if (dt>0){
-			if (dt>1){
+		if (deltaT>0){
+			if (deltaT>TIME_DURATION){
 				super.setDrawMinMax(drawMinFinal, drawMaxFinal);
 			}else{
 				double[] minmaxIni = super.getDrawMinMax();
 				double[] minmax = new double[2];
+				double dt = (double) deltaT*TIME_FACTOR;
 				minmax[0]=drawMinFinal*dt+minmaxIni[0]*(1-dt);
 				minmax[1]=drawMaxFinal*dt+minmaxIni[1]*(1-dt);
 				return minmax;

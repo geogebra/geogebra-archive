@@ -116,7 +116,7 @@ public class MyXMLHandler implements DocHandler {
 	// file
 	private Object casTableCellValueElement;
 
-	private GeoElement geo;
+	protected GeoElement geo;
 	private Command cmd;
 	private Macro macro;
 	/** application */
@@ -2155,7 +2155,7 @@ public class MyXMLHandler implements DocHandler {
 		return geo;
 	}
 
-	private void startGeoElement(String eName, LinkedHashMap<String, String> attrs) {
+	protected void startGeoElement(String eName, LinkedHashMap<String, String> attrs) {
 		if (geo == null) {
 			System.err.println("no element set for <" + eName + ">");
 			return;

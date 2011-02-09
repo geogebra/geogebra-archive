@@ -169,6 +169,9 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 			this.ymax = y1;
 		}
 		
+		
+		//Application.printStacktrace(xmin+","+xmax+"\n"+ymin+","+ymax);
+		
 
 	
 	}
@@ -440,12 +443,19 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
         
         Coords equation = getCoordSys().getEquationVector();
         
+        //equation
         sb.append("\t<coords");
         sb.append(" x=\""); sb.append(equation.getX()); sb.append("\"");
         sb.append(" y=\""); sb.append(equation.getY()); sb.append("\"");
         sb.append(" z=\""); sb.append(equation.getZ()); sb.append("\"");        
         sb.append(" w=\""); sb.append(equation.getW()); sb.append("\"");        
         sb.append("/>\n");
+        
+        
+		// fading
+		sb.append("\t<fading val=\"");
+		sb.append(getFading());
+		sb.append("\"/>\n");
 
     }
 	
@@ -453,6 +463,22 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	public boolean isGeoPlane() {
 		return true;
 	}
+
+	//////////////////////////////////
+	// FADING
+
+	
+	private float fading = 0.25f;
+	
+	public void setFading(float fading){
+		this.fading = fading;
+	}
+	
+	public float getFading(){
+		return fading;
+	}
+	
+	
 
 
 

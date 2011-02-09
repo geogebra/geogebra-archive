@@ -3,6 +3,7 @@ package geogebra.main;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AutoCompleteTextField;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.JTable;
 import javax.swing.text.JTextComponent;
@@ -451,7 +453,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			}
 			
 		// Get the EuclidianView which has the focus
-			EuclidianView ev=((EuclidianView)app.getGuiManager().getActiveEuclidianView());
+			EuclidianViewInterface ev=app.getGuiManager().getActiveEuclidianView();
 			int width = ev.getWidth();
 			int height = ev.getHeight();
 			if (ev.hasFocus())

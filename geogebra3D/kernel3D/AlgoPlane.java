@@ -70,7 +70,7 @@ public class AlgoPlane extends AlgoElement3D {
 				coordsys.makeEquationVector();
 		}
 		
-		//Application.printStacktrace(cs.getCoordSys().getMatrixOrthonormal().toString());
+		//Application.debug(cs.getCoordSys().getMatrixOrthonormal().toString());
 		
 	}
 

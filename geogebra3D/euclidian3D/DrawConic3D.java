@@ -157,6 +157,7 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 			switch(conic.getType()){
 			case GeoConic.CONIC_CIRCLE:
 				m = conic.getMidpoint3D();
+				//Application.debug(m.toString()+"\n2D:\n"+conic.getMidpoint2D().toString());
 				brush.circle(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
 				break;
 			case GeoConic.CONIC_ELLIPSE:

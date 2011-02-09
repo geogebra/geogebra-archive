@@ -7,6 +7,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 /**
  * @author ggb3D
@@ -87,17 +88,6 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     }
     
     
-    /*
-    public GeoPoint getA() {
-        return points2D[0];
-    }
-    public GeoPoint getB() {
-        return points2D[1];
-    }
-    public GeoPoint getC() {
-        return points2D[2];
-    }
-    */
   
     public void compute(){
     	
@@ -118,20 +108,8 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     	
     	for(int i=0;i<3;i++){
     		//project the point on the coord sys
-    		Coords[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
-
-    		/*
-    		//check if the vertex lies on the coord sys
-    		if(!Kernel.isEqual(project[1].get(3), 0, Kernel.STANDARD_PRECISION)){
-    			coordSys.setUndefined();
-    			break;
-    		}
-    		*/
-    		
-    		
-    		//Application.debug("i="+i+",project="+project);
-
-    		//set the 2D points
+    		//Coords[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
+    		Coords[] project=coordSys.getNormalProjection(points[i].getCoordsInD(3));
     		points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
 
     	}

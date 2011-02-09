@@ -49,6 +49,7 @@ import geogebra.kernel.Traceable;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
@@ -143,6 +144,7 @@ public	class PropertiesPanel extends JPanel {
 		//END
 		
 		private FillingPanel fillingPanel;
+		private FadingPanel fadingPanel;
 		private CheckBoxInterpolateImage checkBoxInterpolateImage;
 		private TracePanel tracePanel;
 		private AnimatingPanel animatingPanel;
@@ -241,6 +243,7 @@ public	class PropertiesPanel extends JPanel {
 			rightAnglePanel=new RightAnglePanel();
 			//END
 			fillingPanel = new FillingPanel();
+			fadingPanel = new FadingPanel();
 			checkBoxInterpolateImage = new CheckBoxInterpolateImage();
 			tracePanel = new TracePanel();
 			animatingPanel = new AnimatingPanel();
@@ -350,6 +353,7 @@ public	class PropertiesPanel extends JPanel {
 			styleTabList.add(lineStylePanelHidden);	
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);
+			styleTabList.add(fadingPanel);
 			styleTabList.add(checkBoxInterpolateImage);
 			styleTabList.add(textFieldSizePanel);
 			styleTab = new TabPanel(styleTabList);
@@ -466,6 +470,7 @@ public	class PropertiesPanel extends JPanel {
 			decoAnglePanel.setLabels();
 			rightAnglePanel.setLabels();
 			fillingPanel.setLabels();
+			fadingPanel.setLabels();
 			checkBoxInterpolateImage.setLabels();
 			tracePanel.setLabels();
 			fixPanel.setLabels();
@@ -4590,6 +4595,93 @@ public	class PropertiesPanel extends JPanel {
 				geo = (GeoElement) geos[i];
 				geo.setLineTypeHidden(type);
 				geo.updateRepaint();
+			}
+		}
+	}
+	
+	
+	
+	/**
+	 * panel to select the fading for endings of a surface
+	 * @author mathieu
+	 */
+	private class FadingPanel extends JPanel implements ChangeListener, UpdateablePanel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private Object[] geos;
+		private JSlider slider;
+
+		public FadingPanel() {			
+		
+			slider = new JSlider(0, 50);
+			slider.setMajorTickSpacing(25);
+			slider.setMinorTickSpacing(5);
+			slider.setPaintTicks(true);
+			slider.setPaintLabels(true);
+			slider.setSnapToTicks(true);
+
+			// set label font
+			Dictionary labelTable = slider.getLabelTable();
+			Enumeration en = labelTable.elements();
+			JLabel label;
+			while (en.hasMoreElements()) {
+				label = (JLabel) en.nextElement();
+				label.setFont(app.getSmallFont());
+			}
+
+			slider.setFont(app.getSmallFont());	
+			slider.addChangeListener(this);			
+			
+			add(slider);			
+		}
+		
+		public void setLabels() {
+			setBorder(BorderFactory.createTitledBorder(app.getPlain("Fading")));
+		}
+
+		public JPanel update(Object[] geos) {
+			// check geos
+			if (!checkGeos(geos))
+				return null;
+
+			this.geos = geos;
+			slider.removeChangeListener(this);
+
+			//	set value to first point's size 
+			GeoPlaneND geo0 = (GeoPlaneND) geos[0];
+			slider.setValue((int) (100*geo0.getFading()));
+
+			slider.addChangeListener(this);
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
+			boolean geosOK = true;
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement)geos[i];
+				if (!(geo.isGeoPlane())) {
+					geosOK = false;
+					break;
+				}
+			}
+			return geosOK;
+		}
+
+		/**
+		* change listener implementation for slider
+		*/
+		public void stateChanged(ChangeEvent e) {
+			if (!slider.getValueIsAdjusting()) {
+				int size = slider.getValue();
+				GeoPlaneND plane;
+				for (int i = 0; i < geos.length; i++) {
+					plane = (GeoPlaneND) geos[i];
+					plane.setFading((float) size/100);
+					((GeoElement) plane).updateRepaint();
+				}
 			}
 		}
 	}

@@ -1293,13 +1293,13 @@ GeoPointND, Animatable, Transformable  {
 		}
 		
 		public Coords getCoordsInD2(CoordSys coordSys){ //TODO use coord sys ?
-			return new Coords(x,y,z);
+			return new Coords(new double[] {x,y,z});
 		}
 		
 		public Coords getCoordsInD(int dimension){
 			switch(dimension){
 			case 2:
-				return new Coords(x,y,z);
+				return new Coords(new double[] {x,y,z});
 			case 3:
 				return new Coords(x,y,0,z);
 			default:

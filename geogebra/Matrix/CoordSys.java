@@ -407,9 +407,9 @@ public class CoordSys {
 					vy = new Coords(0,1,0,0);
 				}
 			}else{
-				vx=getVx().normalized();
+				vx=getVx().normalized(true);
 				//vz is computed and vy recomputed to make orthonormal matrix
-				vz = vx.crossProduct(getVy()).normalized();
+				vz = vx.crossProduct(getVy()).normalized(true);
 				vy = vz.crossProduct(vx);				
 			}
 			

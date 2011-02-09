@@ -319,17 +319,42 @@ public class Coords
 		return sqNorm;
 	}
 	
+	
+	
 	/** returns this normalized 
 	 * WARNING : recalc the norm
 	 * @return this normalized 
 	 */
 	public Coords normalized(){
+		return normalized(false);
+	}
+	
+	/** returns this normalized 
+	 * WARNING : recalc the norm
+	 * @param checkOneDirection check if one of the result coord is near to 1 (for Kernel)
+	 * @return this normalized 
+	 */
+	public Coords normalized(boolean checkOneDirection){
 		Coords ret = new Coords(getLength());
 		calcNorm();
 		double normInv = 1/getNorm();
 		int len = getLength();
-		for (int i=0; i<len; i++)
-			ret.val[i]=val[i]*normInv;
+		for (int i=0; i<len; i++){
+			double v=val[i]*normInv;
+			//check if v is near to be one direction vector
+			if (checkOneDirection && Kernel.isEqual(Math.abs(v), 1)){
+				if (v<0)
+					ret.val[i]=-1;
+				else
+					ret.val[i]=1;
+				for (int j=0; j<i; j++)
+					ret.val[j]=0;
+				for (int j=i+1; j<len; j++)
+					ret.val[j]=0;
+				break;
+			}else
+				ret.val[i]=v;
+		}
 		
 		return ret;
 	}

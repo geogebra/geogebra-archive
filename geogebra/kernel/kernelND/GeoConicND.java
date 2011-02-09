@@ -234,7 +234,11 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	
 	
 	
-	
+	public void setSphereND(GeoPointND M, double r) {
+		defined = ((GeoElement) M).isDefined() && !M.isInfinite(); // check midpoint
+		setSphereND(M.getCoordsInD(2).getInhomCoords(), r);
+		//TODO call this with inhom coords
+	}
 	
 	
 	
@@ -1513,7 +1517,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 	protected void setCircleMatrix(GeoPoint M, double r) {
 		
-		setSphereNDMatrix(M.getCoordsInD(3), r);
+		setSphereNDMatrix(M.getInhomCoordsInD(2), r);
 	}
 
 	/**

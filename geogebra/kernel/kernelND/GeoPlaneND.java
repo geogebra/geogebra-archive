@@ -6,5 +6,17 @@ package geogebra.kernel.kernelND;
  *
  */
 public interface GeoPlaneND {
+	
+	/**
+	 * sets the fading for the "ends" of the plane 
+	 * @param fading
+	 */
+	public void setFading(float fading);
+	
+	/**
+	 * 
+	 * @return the fading for the "ends" of the plane 
+	 */
+	public float getFading();
 
 }
