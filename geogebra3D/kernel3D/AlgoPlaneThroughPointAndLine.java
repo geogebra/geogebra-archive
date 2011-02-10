@@ -58,7 +58,7 @@ public class AlgoPlaneThroughPointAndLine extends AlgoPlaneThroughPoint {
 		//recompute the coord sys
     	coordsys.resetCoordSys();
 		
-    	coordsys.addPoint(getPoint().getCoordsInD(3));
+    	coordsys.addPoint(getPoint().getInhomCoordsInD(3));
 		coordsys.addPoint(line.getPointInD(3, 0));
 		coordsys.addPoint(line.getPointInD(3, 1));
 

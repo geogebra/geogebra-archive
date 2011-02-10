@@ -81,7 +81,7 @@ public class AlgoOrthoPlanePoint extends AlgoElement3D {
 
 		//Application.debug(m.toString());
 
-		coordsys.addPoint(point.getCoordsInD(3));
+		coordsys.addPoint(point.getInhomCoordsInD(3));
 		
 		//gets an ortho matrix with coord sys direction vector
 		Coords[] v = vz.completeOrthonormal();

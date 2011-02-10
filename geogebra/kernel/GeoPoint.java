@@ -1282,11 +1282,14 @@ GeoPointND, Animatable, Transformable  {
 			case 2:
 				return getInhomCoords();
 			case 3:
+			/*
 				Coords v = new Coords(3);
 				v.setX(inhomX);
 				v.setY(inhomY);
 				v.setZ(0);
 				return v;
+			*/
+				return new Coords(inhomX,inhomY,0,1);
 			default:
 				return null;
 			}
@@ -1301,6 +1304,7 @@ GeoPointND, Animatable, Transformable  {
 			case 2:
 				return new Coords(new double[] {x,y,z});
 			case 3:
+				//Application.debug(getLabel()+": "+x+","+y+","+z);
 				return new Coords(x,y,0,z);
 			default:
 				return null;
@@ -1329,7 +1333,12 @@ GeoPointND, Animatable, Transformable  {
 		}
 	    
 	  	public Coords getLabelPosition(){
-			return getCoordsInD(3);
+	  		/*
+	  		Coords v = new Coords(4);
+	  		v.set(getInhomCoordsInD(3));
+	  		v.setW(1);
+	  		*/
+	  		return getInhomCoordsInD(3);
 		}
 
 		public void pointChanged(GeoPointND p) {

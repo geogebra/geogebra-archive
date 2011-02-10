@@ -94,8 +94,8 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
 
     	coordSys.resetCoordSys();
     	for(int i=0;i<3;i++)
-    		coordSys.addPoint(points[i].getCoordsInD(3));
-    	
+			 coordSys.addPoint(points[i].getInhomCoordsInD(3));
+   	
   
     	if (!coordSys.makeOrthoMatrix(false,false)){
     		circle.setUndefined();
@@ -110,7 +110,8 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     		//project the point on the coord sys
     		//Coords[] project=points[i].getCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
     		Coords[] project=coordSys.getNormalProjection(points[i].getCoordsInD(3));
-    		points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
+			 //set the 2D points
+			 points2D[i].setCoords(project[1].getX(), project[1].getY(), project[1].getW());
 
     	}
 

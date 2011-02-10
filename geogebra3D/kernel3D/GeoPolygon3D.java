@@ -151,7 +151,9 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	  * @return the i-th point
 	  */	 
 	 public Coords getPoint3D(int i){
-		 return coordSys.getPoint(getPointX(i), getPointY(i));
+		 Coords v = super.getPoint3D(i);
+		 //return coordSys.getPoint(getPointX(i), getPointY(i));
+		 return coordSys.getPoint(v.getX(),v.getY());
 	 }
 	 
 	 
@@ -241,8 +243,10 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	 public void updateCoordSys(){
 
 		 coordSys.resetCoordSys();
-		 for(int i=0;(!coordSys.isMadeCoordSys())&&(i<points.length);i++)
-			 coordSys.addPoint(points[i].getCoordsInD(3));
+		 for(int i=0;(!coordSys.isMadeCoordSys())&&(i<points.length);i++){
+			 //Application.debug(points[i].getLabel()+"=\n"+points[i].getCoordsInD(3));
+			 coordSys.addPoint(points[i].getInhomCoordsInD(3));
+		 }
 
 		 if (coordSys.makeOrthoMatrix(true,false)){
 			 for(int i=0;i<points.length;i++){
@@ -260,7 +264,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 				 
 				 
 				 //set the 2D points
-				 points2D[i].setCoords(project[1].get(1), project[1].get(2), 1);
+				 points2D[i].setCoords(project[1].getX(), project[1].getY(), project[1].getW());
 			 }
 		 }
 		 

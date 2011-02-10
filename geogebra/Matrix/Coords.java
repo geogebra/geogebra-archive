@@ -578,6 +578,28 @@ public class Coords
 
 		return result;
 	}
+	
+	/** returns n length vector, all coordinates divided by the n-th.
+	 * 
+	 * @return {x1/xn,x2/xn,...,x(n-1)/xn,1}
+	 */
+	public Coords getInhomCoordsInSameDimension(){
+		
+		int r = rows;
+		
+		if (Kernel.isEqual(val[r-1], 1))
+			return this;
+				
+		Coords result=new Coords(r);
+
+		double wdiv = 1/val[r-1];
+		for (int i=0;i<r-1;i++)
+			result.val[i]=val[i]*wdiv;
+		
+		result.val[r-1]=1;
+
+		return result;
+	}
 
 	/** returns n length vector, all coordinates divided by the n-th.
 	 * <p>

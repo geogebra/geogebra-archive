@@ -146,9 +146,14 @@ public class DrawPolygon3D extends Drawable3DSurfaces implements Previewable {
 		setGeometryIndex(index);
 				
 		for(int i=0;i<pointLength;i++){
+			//v = polygon.getPoint3D(i);
 			v = polygon.getPoint3D(i);
 			renderer.addToPolygon(v.get(1),v.get(2),v.get(3));
-			//Application.debug("v["+i+"]=\n"+v);
+			/*
+			Coords vInhom=v.getInhomCoordsInSameDimension();			
+			renderer.addToPolygon(vInhom.get(1),vInhom.get(2),vInhom.get(3));
+			Application.debug("v["+i+"]=\n"+v+"\ninhom=\n"+vInhom);
+			*/
 		}
 		
 		renderer.endPolygon();

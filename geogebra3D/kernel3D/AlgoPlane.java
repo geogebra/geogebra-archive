@@ -61,9 +61,9 @@ public class AlgoPlane extends AlgoElement3D {
 		//recompute the coord sys
 		coordsys.resetCoordSys();
 		
-		coordsys.addPoint(A.getCoordsInD(3));
-		coordsys.addPoint(B.getCoordsInD(3));
-		coordsys.addPoint(C.getCoordsInD(3));
+		coordsys.addPoint(A.getInhomCoordsInD(3));
+		coordsys.addPoint(B.getInhomCoordsInD(3));
+		coordsys.addPoint(C.getInhomCoordsInD(3));
 		
 		if (coordsys.makeOrthoMatrix(false,false)){
 			if (coordsys.isDefined())
