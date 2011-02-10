@@ -157,6 +157,10 @@ public class CoordSys {
 	public Coords[] getNormalProjection(Coords coords) {
 		return coords.projectPlane(this.getMatrixOrthonormal());
 	}
+	
+	public Coords[] getNormalProjectionForDrawing(Coords coords) {
+		return coords.projectPlane(drawingMatrix);
+	}
 
 	public Coords[] getProjection(Coords coords,
 			Coords willingDirection) {

@@ -1559,92 +1559,53 @@ public class Renderer implements GLEventListener {
 		
 		double left = (getLeft() - o.get(1))/v.get(1);
 		double right = (getRight() - o.get(1))/v.get(1);		
-		updateIntervalInFrustum(minmax, left, right);
+		updateIntervalInFrustum(minmax, left, right, null, 0);
 		
 		double top = (getTop() - o.get(2))/v.get(2);
 		double bottom = (getBottom() - o.get(2))/v.get(2);
-		updateIntervalInFrustum(minmax, top, bottom);
+		updateIntervalInFrustum(minmax, top, bottom, null, 0);
 		
 		double front = (getFront(extendedDepth) - o.get(3))/v.get(3);
 		double back = (getBack(extendedDepth) - o.get(3))/v.get(3);
-		updateIntervalInFrustum(minmax, front, back);
+		updateIntervalInFrustum(minmax, front, back, null, 0);
 		
 		return minmax;
 	}
 	
 	/** for a line described by (o,v), return the min and max parameters to draw the line,
-	 * checking it for parallel parameters
+	 * with center of the view port for origin of the line
 	 * @param minmax initial interval
 	 * @param o origin of the line
 	 * @param v direction of the line
 	 * @param extendedDepth says if it looks to real depth bounds, or working depth bounds
 	 * @return interval to draw the line
 	 */
-	public double[] getParallelIntervalInFrustum(double[] minmax, 
+	public double[] getIntervalInFrustumWithCenterForOrigin(double[] minmax, 
 			Coords o, Coords v,
 			boolean extendedDepth){
 		
+		double[] origins = new double[] {0,0};
 		
+		double left = (getLeft())/v.get(1);
+		double right = (getRight())/v.get(1);		
+		updateIntervalInFrustum(minmax, left, right, origins, - o.get(1)/v.get(1));
 		
-		double left = (getLeft() - o.get(1))/v.get(1);
-		double right = (getRight() - o.get(1))/v.get(1);		
-		updateIntervalInFrustum(minmax, left, right);
+		double top = (getTop())/v.get(2);
+		double bottom = (getBottom())/v.get(2);
+		updateIntervalInFrustum(minmax, top, bottom, origins, - o.get(2)/v.get(2));
 		
-		double top = (getTop() - o.get(2))/v.get(2);
-		double bottom = (getBottom() - o.get(2))/v.get(2);
-		updateIntervalInFrustum(minmax, top, bottom);
+		double front = (getFront(extendedDepth))/v.get(3);
+		double back = (getBack(extendedDepth))/v.get(3);
+		updateIntervalInFrustum(minmax, front, back, origins, - o.get(3)/v.get(3));
 		
-		double front = (getFront(extendedDepth) - o.get(3))/v.get(3);
-		double back = (getBack(extendedDepth) - o.get(3))/v.get(3);
-		updateIntervalInFrustum(minmax, front, back);
+		Application.debug(origins[0]+","+origins[1]+"\nminmax="+minmax[0]+","+minmax[1]);
+		
+		for (int i=0;i<2;i++)
+			minmax[i]+=origins[i];
+		
 		
 		return minmax;
 	}
-	/*
-	public double[] getParallelIntervalInFrustum(double[] minmax, 
-			Coords o, Coords v,
-			boolean extendedDepth){
-		
-		//find the mean direction
-		int direction;
-		Coords vabs = new Coords(3);
-		for (int i=1; i<=3; i++)
-			vabs.set(i,Math.abs(v.get(i)));
-		if (vabs.get(1)>vabs.get(2)){
-			if (vabs.get(1)>vabs.get(3))
-				direction=1;
-			else
-				direction=3;
-		}else
-			if (vabs.get(2)>vabs.get(3))
-				direction=2;
-			else
-				direction=3;
-		
-		//get min and max value
-		double min, max;
-		switch(direction){
-		case 1:
-			min=(getLeft() - o.get(1))/v.get(1);
-			max=(getRight()- o.get(1))/v.get(1);
-			break;
-		case 2:
-			min=(getTop()- o.get(2))/v.get(2);
-			max=(getBottom()- o.get(2))/v.get(2);
-			break;	
-		case 3:
-		default:
-			min=(getFront(extendedDepth)- o.get(3))/v.get(3);
-			max=(getBack(extendedDepth)- o.get(3))/v.get(3);
-			break;	
-		}
-		
-		updateIntervalInFrustum(minmax, min, max);
-		
-		return minmax;
-		
-	}
-	*/
 	
 	/** return the intersection of intervals [minmax] and [v1,v2]
 	 * @param minmax initial interval
@@ -1652,17 +1613,27 @@ public class Renderer implements GLEventListener {
 	 * @param v2 second value
 	 * @return intersection interval
 	 */
-	private double[] updateIntervalInFrustum(double[] minmax, double v1, double v2){
+	private double[] updateIntervalInFrustum(double[] minmax, double v1, double v2,
+			double[] origins, double origin){
 		
 		if (v1>v2){
 			double v = v1;
 			v1 = v2; v2 = v;
 		}
 		
-		if (v1>minmax[0])
+		if (v1>minmax[0]){
 			minmax[0] = v1;
-		if (v2<minmax[1])
+			if (origins!=null)
+				origins[0]=origin;
+		}
+		
+		if (v2<minmax[1]){
 			minmax[1] = v2;
+			if (origins!=null)
+				origins[1]=origin;
+		}
+		
+		
 		
 		return minmax;
 	}

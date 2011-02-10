@@ -190,13 +190,31 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		Coords vx = geo.evaluatePoint(1, 0).sub(origin);
 		Coords vy = geo.evaluatePoint(0, 1).sub(origin);
 		
-		minmaxXFinal = getView3D().getRenderer().getParallelIntervalInFrustum(
-				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-				getView3D().getToScreenMatrix().mul(origin), getView3D().getToScreenMatrix().mul(vx), false);				
-		minmaxYFinal = getView3D().getRenderer().getParallelIntervalInFrustum(
-				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-				getView3D().getToScreenMatrix().mul(origin), getView3D().getToScreenMatrix().mul(vy), false);				
+		Coords screenOrigin = getView3D().getToSceneMatrix().getOrigin();
+		Coords[] project = geo.getCoordSys().getNormalProjectionForDrawing(screenOrigin);
 		
+		
+		//Coords o = getView3D().getToScreenMatrix().mul(origin);
+		Coords o = getView3D().getToScreenMatrix().mul(project[0]);
+		
+		//Application.debug("screenOrigin=\n"+screenOrigin+"\nproject[0]=\n"+project[0]+"\nScreenMatrix()=\n"+getView3D().getToScreenMatrix()+"\no=\n"+o);
+
+		minmaxXFinal = getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+				o, getView3D().getToScreenMatrix().mul(vx), false);	
+
+		minmaxYFinal = getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+				o, getView3D().getToScreenMatrix().mul(vy), false);		
+		
+		
+		for (int i=0;i<2;i++){
+			minmaxXFinal[i]+=project[1].getX();
+			minmaxYFinal[i]+=project[1].getY();
+		}
+		
+			
+			
 		reduceBounds(minmaxXFinal);
 		reduceBounds(minmaxYFinal);
 	}
