@@ -5013,7 +5013,8 @@ public abstract class GeoElement
 			//there have been no errors
 			if(update)app.setBlockUpdateScripts(false);
 		} catch (Throwable e) {
-			app.showError(app.getPlain("ErrorInScriptAtLineA",(i+1)+"")+"\n"+e);
+			app.showError(app.getPlain(update ? "OnUpdate":"OnClick")+" "+getLabel()+":\n"+
+					app.getPlain("ErrorInScriptAtLineA",(i+1)+"")+"\n"+e.getLocalizedMessage());
 			success = false;
 			if(update)app.setBlockUpdateScripts(true);
 		}
@@ -5039,7 +5040,8 @@ public abstract class GeoElement
 			if(update)app.setBlockUpdateScripts(false);
 		} catch (Exception e) {
 			e.printStackTrace();
-			app.showError(app.getPlain("ErrorInJavaScript")+"\n"+e);
+			app.showError(app.getPlain(update ? "OnUpdate":"OnClick")+" "+getLabel()+":\n"+
+					app.getPlain("ErrorInJavaScript")+"\n"+e.getLocalizedMessage());
 			if(update) app.setBlockUpdateScripts(true);
 		}
 	}
