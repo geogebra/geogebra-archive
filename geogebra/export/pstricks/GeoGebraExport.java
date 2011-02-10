@@ -30,6 +30,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
@@ -236,6 +237,9 @@ public abstract class GeoGebraExport implements ActionListener{
 			drawGeoRay((GeoRay)g);
 			drawLabel(g,null);
 		}
+		else if (g.getObjectType().equals("PolyLine")){
+			drawPolyLine((GeoPolyLine)g);			
+		} 
 		else if (g.isGeoLine()){
 			drawGeoLine((GeoLine)g);
 			drawLabel(g,null);
@@ -426,6 +430,7 @@ public abstract class GeoGebraExport implements ActionListener{
 	abstract protected void createFrame();
 	abstract protected void generateAllCode();
 	abstract protected void ColorCode(Color color, StringBuilder sb);
+	abstract protected void drawPolyLine(GeoPolyLine geo);
 	/**
 	 *  Export inequalities as PSTricks or PGF
 	 * @param g The inequality function

@@ -36,6 +36,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
@@ -2023,6 +2024,25 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append("){");
 		code.append(getImplicitExpr(geo));
 		code.append("}\n");
+	}
+	protected void drawPolyLine(GeoPolyLine geo){
+		GeoPoint[] path=geo.getPoints();
+		if (path.length<2) return;
+		startBeamer(code);
+		code.append("\\psline");
+		code.append(LineOptionCode(geo,true));
+
+		for(int i=0;i<path.length;i++){
+			String x1=kernel.format(path[i].getInhomX());
+			String y1=kernel.format(path[i].getInhomY());			
+			code.append("(");
+			code.append(x1);
+			code.append(",");
+			code.append(y1);
+			code.append(")");			
+		}
+		code.append("\n");
+		endBeamer(code);
 	}
 	@Override
 	protected void drawGeoInequalities(GeoFunctionNVar geo) {

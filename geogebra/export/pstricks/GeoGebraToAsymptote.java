@@ -32,6 +32,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
@@ -3142,4 +3143,6 @@ public class GeoGebraToAsymptote extends GeoGebraExport {
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	protected void drawPolyLine(GeoPolyLine geo){}
 }

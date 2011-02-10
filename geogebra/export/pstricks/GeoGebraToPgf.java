@@ -26,6 +26,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoRay;
 import geogebra.kernel.GeoSegment;
@@ -1182,7 +1183,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 				sb.append(xrangemax);
 				sb.append("] plot");
 				sb.append("(\\x,{");
-				value=replaceX(value,"\\x");
+				value=replaceX(value,"(\\x)");
 				sb.append(value);
 				sb.append("});\n");
 			}
@@ -2474,7 +2475,23 @@ protected void drawImplicitPoly(GeoImplicitPoly geo) {
 	System.out.println("Implicit plot not supported yet");
 	
 }
-
+protected void drawPolyLine(GeoPolyLine geo){
+	GeoPoint[] path=geo.getPoints();
+	if (path.length<2) return;
+	startBeamer(code);
+	code.append("\\draw ");
+	String s=LineOptionCode(geo,true);
+	if (s.length()!=0) s="["+s+"] ";
+	code.append(s);
+	for(int i=0;i<path.length;i++){
+		double x1=path[i].getInhomX();
+		double y1=path[i].getInhomY();			
+		writePoint(x1,y1,code);
+		if (i!=path.length-1) 	code.append("-- ");
+	}
+	code.append(";\n");
+	endBeamer(code);
+}
 @Override
 protected void drawGeoInequalities(GeoFunctionNVar g) {
 	// TODO Auto-generated method stub
