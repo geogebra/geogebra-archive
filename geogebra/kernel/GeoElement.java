@@ -5013,8 +5013,7 @@ public abstract class GeoElement
 			//there have been no errors
 			if(update)app.setBlockUpdateScripts(false);
 		} catch (Throwable e) {
-			app.showError(app.getPlain(update ? "OnUpdate":"OnClick")+" "+getLabel()+":\n"+
-					app.getPlain("ErrorInScriptAtLineA",(i+1)+"")+"\n"+e.getLocalizedMessage());
+			app.showError(app.getPlain("ErrorInScriptAtLineAFromObjectB",(i+1)+"", getLabel())+"\n"+e.getLocalizedMessage());
 			success = false;
 			if(update)app.setBlockUpdateScripts(true);
 		}
