@@ -142,6 +142,15 @@ AbsoluteScreenLocateable {
 	public boolean showInEuclidianView() {
 		return isIndependent();
 	}
+	private static int lastLocY = 5;
+	
+	/**
+	 * Set initial absolue screen location
+	 */
+	public void initLocation(){		
+		setAbsoluteScreenLoc(5,lastLocY);
+		lastLocY += 30;
+	}
 
 	public final boolean showInAlgebraView() {		
 		return true;
