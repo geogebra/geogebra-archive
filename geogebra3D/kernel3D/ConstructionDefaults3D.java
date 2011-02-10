@@ -93,6 +93,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final float DEFAULT_PLANE3D_ALPHA = 0.5f;
 	/** default grid thickness for 3D planes*/
 	public static final int DEFAULT_PLANE3D_GRID_THICKNESS = 1;
+	/** default fading for 3D planes*/
+	public static final float DEFAULT_PLANE3D_FADING = 0.10f;
 	
 	// polyhedrons	
 	/** default color for polyhedrons */
@@ -227,6 +229,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		plane.setObjColor(colPlane3D);
 		plane.setAlphaValue(DEFAULT_PLANE3D_ALPHA);
 		plane.setLineThickness(DEFAULT_PLANE3D_GRID_THICKNESS);
+		plane.setFading(DEFAULT_PLANE3D_FADING);
 		//plane.setLineType(EuclidianView.LINE_TYPE_DASHED_SHORT);
 		defaultGeoElements.put(DEFAULT_PLANE3D, plane);
 		

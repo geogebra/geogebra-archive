@@ -7,6 +7,7 @@ import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.PointProperties;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
@@ -327,6 +328,14 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		}
 		
 	}
+	
+	
+	public void setVisualStyle(GeoElement geo) {
+		super.setVisualStyle(geo);
+		if (geo.isGeoPlane()) {
+			setFading(((GeoPlaneND) geo).getFading());
+		}	
+	}
 
 
 	public void setUndefined() {
@@ -468,7 +477,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	// FADING
 
 	
-	private float fading = 0.25f;
+	private float fading;
 	
 	public void setFading(float fading){
 		this.fading = fading;
