@@ -38,7 +38,7 @@ export ANT_OPTS="-Xmx1024m"
 
 # 4. Building
 # alias signjar=jarsigner # May be needed for ant version < 1.8.0 (the "executable" attribute is not supported yet).
-ant -f build.xml geogebra-cl
+ant -f build.xml geogebra-cl || exit 3
 
 # 5. Setting local variables
 MYVER=`cat build/unpacked/version.txt`
@@ -60,18 +60,19 @@ if [ "$MYDIR" = "" -o "$WWWDIR" = "" ]; then
 
 # 6. Copying and text replacing
 cd build
-rm -fR $WWWDIR/$MYDIR # Be careful!
-mkdir -p $WWWDIR/$MYDIR
+rm -fR $WWWDIR/$MYDIR || exit 4 # Be careful!
+mkdir -p $WWWDIR/$MYDIR || exit 4
+chmod g+rwx $WWWDIR/$MYDIR || exit 4
 
 echo "$0: (re)creating $WWWDIR/$MYDIR directory"
 
 # 6/1. Copying dynamically generated files (autobuild):
-cp -R * $WWWDIR/$MYDIR
+cp -R * $WWWDIR/$MYDIR || exit 4
 echo "$0: dynamically generated files copied"
 
 # 6/2. Copying static files:
-cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR/$MYDIR
-cp $SVNDIR/geogebra/vernier_ccsd-macintel-static.jar $WWWDIR/$MYDIR
+cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR/$MYDIR || exit 4
+cp $SVNDIR/geogebra/vernier_ccsd-macintel-static.jar $WWWDIR/$MYDIR || exit 4
 echo "$0: static files copied"
 
 # 6/3. Moving *.html and *.jnlp to unpacked/ and rewriting static URLs:
@@ -90,16 +91,17 @@ for i in *.html *.jnlp; do
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
      sed s/"<\/title>"/" ($MYVER)<\/title>"/g \
      > unpacked/$i
-    rm $i
-    cp unpacked/$i $i # Some file in some subdirectories may still refer to the original file.
+    rm $i || exit 4
+    cp unpacked/$i $i || exit 4 # Some file in some subdirectories may still refer to the original file.
     echo "$0: $i is rewritten"
     done
 
 if [ "$0" = "./deployggb40" ]; then
  # Copy the entire 4.0 directory to history/$MYVER as well:
- rm -fR $WWWDIR/history/$MYVER
- mkdir -p $WWWDIR/history/$MYVER
- cp -R $WWWDIR/$MYDIR/* $WWWDIR/history/$MYVER
+ rm -fR $WWWDIR/history/$MYVER || exit 5
+ mkdir -p $WWWDIR/history/$MYVER || exit 5
+ chmod g+rwx $WWWDIR/history/$MYVER || exit 5
+ cp -R $WWWDIR/$MYDIR/* $WWWDIR/history/$MYVER || exit 5
  # Sending an email to geogebra-dev:
  echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com
  fi
