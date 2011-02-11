@@ -1559,53 +1559,19 @@ public class Renderer implements GLEventListener {
 		
 		double left = (getLeft() - o.get(1))/v.get(1);
 		double right = (getRight() - o.get(1))/v.get(1);		
-		updateIntervalInFrustum(minmax, left, right, null, 0);
+		updateIntervalInFrustum(minmax, left, right);
 		
 		double top = (getTop() - o.get(2))/v.get(2);
 		double bottom = (getBottom() - o.get(2))/v.get(2);
-		updateIntervalInFrustum(minmax, top, bottom, null, 0);
+		updateIntervalInFrustum(minmax, top, bottom);
 		
 		double front = (getFront(extendedDepth) - o.get(3))/v.get(3);
 		double back = (getBack(extendedDepth) - o.get(3))/v.get(3);
-		updateIntervalInFrustum(minmax, front, back, null, 0);
+		updateIntervalInFrustum(minmax, front, back);
 		
 		return minmax;
 	}
 	
-	/** for a line described by (o,v), return the min and max parameters to draw the line,
-	 * with center of the view port for origin of the line
-	 * @param minmax initial interval
-	 * @param o origin of the line
-	 * @param v direction of the line
-	 * @param extendedDepth says if it looks to real depth bounds, or working depth bounds
-	 * @return interval to draw the line
-	 */
-	public double[] getIntervalInFrustumWithCenterForOrigin(double[] minmax, 
-			Coords o, Coords v,
-			boolean extendedDepth){
-		
-		double[] origins = new double[] {0,0};
-		
-		double left = (getLeft())/v.get(1);
-		double right = (getRight())/v.get(1);		
-		updateIntervalInFrustum(minmax, left, right, origins, - o.get(1)/v.get(1));
-		
-		double top = (getTop())/v.get(2);
-		double bottom = (getBottom())/v.get(2);
-		updateIntervalInFrustum(minmax, top, bottom, origins, - o.get(2)/v.get(2));
-		
-		double front = (getFront(extendedDepth))/v.get(3);
-		double back = (getBack(extendedDepth))/v.get(3);
-		updateIntervalInFrustum(minmax, front, back, origins, - o.get(3)/v.get(3));
-		
-		Application.debug(origins[0]+","+origins[1]+"\nminmax="+minmax[0]+","+minmax[1]);
-		
-		for (int i=0;i<2;i++)
-			minmax[i]+=origins[i];
-		
-		
-		return minmax;
-	}
 	
 	/** return the intersection of intervals [minmax] and [v1,v2]
 	 * @param minmax initial interval
@@ -1613,25 +1579,20 @@ public class Renderer implements GLEventListener {
 	 * @param v2 second value
 	 * @return intersection interval
 	 */
-	private double[] updateIntervalInFrustum(double[] minmax, double v1, double v2,
-			double[] origins, double origin){
+	private double[] updateIntervalInFrustum(double[] minmax, double v1, double v2){
 		
 		if (v1>v2){
 			double v = v1;
 			v1 = v2; v2 = v;
 		}
 		
-		if (v1>minmax[0]){
+		if (v1>minmax[0])
 			minmax[0] = v1;
-			if (origins!=null)
-				origins[0]=origin;
-		}
 		
-		if (v2<minmax[1]){
+		
+		if (v2<minmax[1])
 			minmax[1] = v2;
-			if (origins!=null)
-				origins[1]=origin;
-		}
+		
 		
 		
 		

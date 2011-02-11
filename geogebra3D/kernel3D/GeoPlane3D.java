@@ -477,7 +477,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	// FADING
 
 	
-	private float fading;
+	private float fading = 0.10f;
 	
 	public void setFading(float fading){
 		this.fading = fading;
