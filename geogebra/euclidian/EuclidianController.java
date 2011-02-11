@@ -321,6 +321,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	public void setMode(int newMode) {
+		
+		if(newMode == EuclidianConstants.MODE_SPREADSHEET_ONEVARSTATS
+				|| newMode == EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS)
+			return;
+		
+		
 		endOfMode(mode);
 
 		if (EuclidianView.usesSelectionRectangleAsInput(newMode))

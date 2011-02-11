@@ -1272,7 +1272,16 @@ public class Kernel {
 			return "Integral";											
 			
 		case EuclidianConstants.MODE_ATTACH_DETACH:
-			return "AttachDetachPoint";											
+			return "AttachDetachPoint";				
+			
+			
+		// Spreadsheet	
+		case EuclidianConstants.MODE_SPREADSHEET_ONEVARSTATS:
+			return "OneVarStats";				
+			
+		case EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS:
+			return "TwoVarStats";				
+			
 			
 		default:
 			return "";

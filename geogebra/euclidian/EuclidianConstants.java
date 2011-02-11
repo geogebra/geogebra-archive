@@ -183,6 +183,25 @@ public interface EuclidianConstants {
 	public static final int MODE_CAS_INTEGRAL = 1009;
 
 	
+	// SpreadsheetView modes
+	public static final int MODE_SPREADSHEET_CREATE_LIST = 2001;
+	public static final int MODE_SPREADSHEET_CREATE_MATRIX = 2002;
+	public static final int MODE_SPREADSHEET_CREATE_LISTOFPOINTS = 2003;
+	public static final int MODE_SPREADSHEET_CREATE_TABLETEXT = 2004;
+	public static final int MODE_SPREADSHEET_CREATE_POLYLINE = 2005;
+	
+	public static final int MODE_SPREADSHEET_ONEVARSTATS = 2020;
+	public static final int MODE_SPREADSHEET_TWOVARSTATS = 2021;
+	
+	public static final int MODE_SPREADSHEET_SORT = 2030;
+	public static final int MODE_SPREADSHEET_SORT_AZ = 2031;
+	public static final int MODE_SPREADSHEET_SORT_ZA = 2032;
+	
+	public static final int MODE_SPREADSHEET_SUM = 2040;
+	public static final int MODE_SPREADSHEET_AVERAGE = 2041;
+	public static final int MODE_SPREADSHEET_COUNT = 2042;
+	
+	
 	// macro tools ID offset
 	public static final int MACRO_MODE_ID_OFFSET = 100001;
 

@@ -1011,7 +1011,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	public void update(GeoElement geo) {
 		double[] coords = new double[2];;
-		if(!isSettingAxisPoints){
+		if(!isSettingAxisPoints && !isIniting){
 			if(geo.equals(lowPoint)){	
 				low = lowPoint.getInhomX();
 				updateIntervalProbability();

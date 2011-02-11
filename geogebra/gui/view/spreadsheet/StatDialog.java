@@ -172,8 +172,15 @@ implements ActionListener, View, Printable   {
 		//===========================================
 		//load data from the data source (based on currently selected geos)
 		
-		setDataSource();
-		loadDataLists();
+		boolean dataOK = setDataSource();
+		if(dataOK){
+			loadDataLists();
+		}else{
+			
+			//TODO is this needed ?
+			//dispose();
+			return;  
+		}
 
 
 		//================================================
@@ -256,15 +263,24 @@ implements ActionListener, View, Printable   {
 	/** 
 	 * Determines if the data source is from GeoList or a cell range.
 	 */
-	private void setDataSource(){
+	private boolean setDataSource(){
 		
-		GeoElement geo = app.getSelectedGeos().get(0);
-		if(geo.isGeoList()){
-			dataSource = geo;
-		} else {
-			ArrayList<CellRange> cr = spreadsheetTable.selectedCellRanges;
-			dataSource = (ArrayList<CellRange>) cr.clone();		
+		boolean success = true;
+		
+		try {
+			GeoElement geo = app.getSelectedGeos().get(0);
+			if(geo.isGeoList()){
+				dataSource = geo;
+			} else {
+				ArrayList<CellRange> cr = spreadsheetTable.selectedCellRanges;
+				dataSource = (ArrayList<CellRange>) cr.clone();		
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			success = false;
 		}
+		
+		return success;
 	}
 	
 	
