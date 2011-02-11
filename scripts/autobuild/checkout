@@ -13,7 +13,7 @@ test -r autobuild.conf || {
  }
 . ./autobuild.conf
 cd $SVNDIR
-svn co $REPO
+svn co --force $REPO
 cd geogebra
 
 test -r $UNIX_RT_JAR && cp $UNIX_RT_JAR ../java150-rt.jar
@@ -21,3 +21,4 @@ test -r $MACOSX_RT_JAR && cp $MACOSX_RT_JAR ../java150-rt.jar
 
 # This is needed for signjar:
 cp $P12DIR/igi-keystore.p12 ..
+chmod o-rwx ../igi-keystore.p12

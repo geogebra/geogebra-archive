@@ -8,7 +8,11 @@ Usage:
    is needed only once, but probably it is already done --- if yes,
    make sure that all relevant steps are run from that script).
 
-3. Run ./update every time you want to generate a fresh build.
+3. Run ./update every time you want to generate a fresh autobuild (it will
+   puts the output to the test40a directory).
+   
+   Alternatively, run ./buildggb40 or ./deployggb40 to create a fresh
+   numbered version build into the test40 or 4.0 directory, respectively.
 
 4. (Optional.) Create a cronjob (using 'crontab -e') to periodically
    create a build (currently not suggested). Make sure you are 'cd'ing
