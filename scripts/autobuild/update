@@ -2,11 +2,18 @@
 # Updates GeoGebra from SVN repository
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
-# Run this script with --no-update option if you want to force web content update
+# Run "./update --no-update" option for autobuild if you want to force web content update
 # even if no new commit exists the repository.
 
-# FIXME: the directory "test40a" is hardcoded now.
+if [ "$0" != "./update" -a "$0" != "./buildggb40" -a "$0" != "./deployggb40" ]; then
+ echo "Usage:
+  ./buildggb40             Compiles and installs numbered version into test40
+  ./deployggb40            Compiles and deploys numbered version into 4.0
+  ./update [--no-update]   Compiles and installs autobuild into test40a"
+  exit 1
+  fi
 
+# 1. Start and loading configuration
 date
 echo "$0: start"
 
@@ -17,54 +24,85 @@ test -r autobuild.conf || {
 . ./autobuild.conf
 cd $SVNDIR/geogebra
 
-if [ "$1" != "--no-update" ]; then
-    $SVN_COMMAND update --accept theirs-full --force | tail -1 | grep ^At && exit 1 # No updates found.
-    echo "$0: new commit was found in repository"
-    fi
+# 2. Updating source files
+if [ "$0" = "./update" -a "$1" != "--no-update" ]; then
+ $SVN_COMMAND update --accept theirs-full --force | tail -1 | grep ^At && exit 1 # No updates found.
+ echo "$0: new commit was found in repository"
+else
+ $SVN_COMMAND update --accept theirs-full --force
+ fi
 
+# 3. Setting global variables
 export JAVA_HOME
 export ANT_OPTS="-Xmx1024m"
 
+# 4. Building
 # alias signjar=jarsigner # May be needed for ant version < 1.8.0 (the "executable" attribute is not supported yet).
-
 ant -f build.xml geogebra-cl
+
+# 5. Setting local variables
+MYVER=`cat ../../build/version.txt`
+if [ "$0" = "./update" ]; then
+ MYDIR=test40a
+ MYVER=autobuild
+ fi
+if [ "$0" = "./buildggb40" ]; then
+ MYDIR=test40
+ fi
+if [ "$0" = "./deployggb40" ]; then
+ MYDIR=4.0
+ fi
+
+if [ "$MYDIR" = "" -o "$WWWDIR" = "" ]; then
+ echo "Fatal error, MYDIR=$MYDIR, WWWDIR=$WWWDIR, exiting for safety reasons"
+ exit 2
+ fi
+
+# 6. Copying and text replacing
 cd build
-rm -fR $WWWDIR # Be careful!
-mkdir -p $WWWDIR
+rm -fR $WWWDIR/$MYDIR # Be careful!
+mkdir -p $WWWDIR/$MYDIR
 
-echo "$0: (re)creating $WWWDIR directory"
+echo "$0: (re)creating $WWWDIR/$MYDIR directory"
 
-# Copying dynamically generated files (autobuild):
-cp -R * $WWWDIR
+# 6/1. Copying dynamically generated files (autobuild):
+cp -R * $WWWDIR/$MYDIR
 echo "$0: dynamically generated files copied"
 
-# Copying static files:
-cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR
+# 6/2. Copying static files:
+cp -R $SVNDIR/geogebra/webstart/4.0/* $WWWDIR/$MYDIR
+cp $SVNDIR/geogebra/vernier_ccsd-macintel-static.jar $WWWDIR/$MYDIR
 echo "$0: static files copied"
 
-# Moving *.html and *.jnlp to unpacked/ and rewriting static URLs:
-# http://www.geogebra.org/webstart/4.0/unsigned -> http://www.geogebra.org/webstart/test40a/unsigned/unpacked
-# http://www.geogebra.org/webstart/4.0/usb-gomotion.ggb -> http://www.geogebra.org/webstart/test40/usb-gomotion.ggb
-# http://www.geogebra.org/webstart/4.0/debug -> http://www.geogebra.org/webstart/test40/debug
-# http://www.geogebra.org/webstart/4.0/ -> http://www.geogebra.org/webstart/test40/unpacked/
-# </title> -> (autobuild) </title>
+# 6/3. Moving *.html and *.jnlp to unpacked/ and rewriting static URLs:
+# http://www.geogebra.org/webstart/4.0/unsigned -> http://www.geogebra.org/webstart/$MYDIR/unsigned/unpacked
+# http://www.geogebra.org/webstart/4.0/usb-gomotion.ggb -> http://www.geogebra.org/webstart/$MYDIR/usb-gomotion.ggb
+# http://www.geogebra.org/webstart/4.0/debug -> http://www.geogebra.org/webstart/$MYDIR/debug
+# http://www.geogebra.org/webstart/4.0/ -> http://www.geogebra.org/webstart/$MYDIR/unpacked/
+# </title> -> ($MYVER) </title>
 
-cd $WWWDIR
+cd $WWWDIR/$MYDIR
 for i in *.html *.jnlp; do
     cat $i | \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/unsigned"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unsigned\/unpacked"/g | \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/usb-gomotion"/"http:\/\/www.geogebra.org\/webstart\/test40a\/usb-gomotion.ggb"/g | \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/debug"/"http:\/\/www.geogebra.org\/webstart\/test40a\/debug"/g | \
-     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/test40a\/unpacked"/g | \
-     sed s/"<\/title>"/" (autobuild)<\/title>"/g \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/unsigned"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/unsigned\/unpacked"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/usb-gomotion"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/debug"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
+     sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
+     sed s/"<\/title>"/" ($MYVER)<\/title>"/g \
      > unpacked/$i
     rm $i
     cp unpacked/$i $i # Some file in some subdirectories may still refer to the original file.
     echo "$0: $i is rewritten"
     done
 
+if [ "$0" = "./deployggb40" ]; then
+ # Copy the entire 4.0 directory to history/$MYVER as well:
+ rm -fR $WWWDIR/history/$MYVER
+ mkdir -p $WWWDIR/history/$MYVER
+ cp -R $WWWDIR/$MYDIR/* $WWWDIR/history/$MYVER
+ # Sending an email to geogebra-dev:
+ echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" kovzol@gmail.com # geogebra-dev@googlegroups.com
+ fi
+
 date
 echo "$0: end"
-
-# Copying vernier_ccsd-macintel-static.jar:
-cp $SVNDIR/geogebra/vernier_ccsd-macintel-static.jar $WWWDIR

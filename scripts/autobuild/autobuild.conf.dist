@@ -22,3 +22,4 @@ JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun # Not needed to set if only Java 1.5 is in
 # "svn" command path (it should be quite recent, 1.4.4 is too old)
 SVN_COMMAND=/opt/subversion/bin/svn
 #SVN_COMMAND=`which svn`
+
