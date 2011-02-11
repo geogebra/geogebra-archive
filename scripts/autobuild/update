@@ -41,7 +41,7 @@ export ANT_OPTS="-Xmx1024m"
 ant -f build.xml geogebra-cl
 
 # 5. Setting local variables
-MYVER=`cat ../../build/unpacked/version.txt`
+MYVER=`cat build/unpacked/version.txt`
 if [ "$0" = "./update" ]; then
  MYDIR=test40a
  MYVER=autobuild
