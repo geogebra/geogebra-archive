@@ -101,7 +101,7 @@ if [ "$0" = "./deployggb40" ]; then
  mkdir -p $WWWDIR/history/$MYVER
  cp -R $WWWDIR/$MYDIR/* $WWWDIR/history/$MYVER
  # Sending an email to geogebra-dev:
- echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" kovzol@gmail.com # geogebra-dev@googlegroups.com
+ echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com
  fi
 
 date
