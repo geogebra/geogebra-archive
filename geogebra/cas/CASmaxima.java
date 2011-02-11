@@ -47,8 +47,7 @@ public class CASmaxima extends CASgeneric {
 		sb.append("issymbolbound('");
 		sb.append(var);
 		sb.append(");");
-		
-		return "true".equals(evaluateMaxima(sb.toString()));
+		return "true".equals(evaluateMaxima(sb.toString()).replaceAll(" ", ""));
 	}
 	
 	/**

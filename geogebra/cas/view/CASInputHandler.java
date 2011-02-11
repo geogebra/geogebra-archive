@@ -8,6 +8,7 @@ import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.ValidExpression;
+import geogebra.kernel.arithmetic.Variable;
 
 import java.awt.Color;
 import java.awt.List;
@@ -241,29 +242,31 @@ public class CASInputHandler {
 	 * @param ggbcmd is the given command (just Solve is supported)
 	 * @param params the list of parameters
 	 */
-	public void processMultipleRows(String ggbcmd, String[] params){
+	private void processMultipleRows(String ggbcmd, String[] params){
 
-		int [] selectedIndices = casView.getRowHeader().getSelectedIndices();
-		// get current row and input text		
+		// get current row and input text
 		int selRow = consoleTable.getSelectedRow();	
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
 		CASTableCellValue cellValue= consoleTable.getCASTableCellValue(selRow);
 
-		/*boolean isSelected=false;
-		for (int i=0;i<selectedIndices.length;i++)
-			if (selectedIndices[i]==selRow)
-				isSelected=true;*/
-		
+		int [] selectedIndices = casView.getRowHeader().getSelectedIndices();
+		if (selectedIndices.length<=1){
+			selectedIndices=new int[1];
+			selectedIndices[0]=selRow;				
+		}
+
 		if ((cellValue=consoleTable.getCASTableCellValue(selRow))==null)
 			cellValue=consoleTable.createRow();
 
 		int nrEquations=selectedIndices.length;
 		for (int i=0;i<selectedIndices.length;i++){
-			String cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getInternalInput();
-			/*if (selectedIndices[i]==selRow)
-				cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getInternalInput();
-			else
-				cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getOutput();*/
+			String cellText;
+			if (selRow==selectedIndices[i]){
+				cellText=consoleTable.getEditor().getInput();
+			} else {
+				CASTableCellValue selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
+				cellText=selCellValue.getInputVE().toString();
+			}
 			int depth=0;
 			for (int j=0;j<cellText.length();j++){
 				switch (cellText.charAt(j)){
@@ -280,43 +283,68 @@ public class CASInputHandler {
 				}
 			}
 		}
+
 		int counter=0;
 		String[] equations=new String[nrEquations];
 		for (int i=0;i<selectedIndices.length;i++){
-			String cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getInternalInput();
-			/*if (selectedIndices[i]==selRow)
-				cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getInternalInput();
-			else
-				cellText=consoleTable.getCASTableCellValue(selectedIndices[i]).getOutput();*/
-			
-			if (cellText.charAt(0)!='{')
-				equations[counter++]=cellText;
-			else {
-				int depth=0;
-				int leftIndex=1;
-				for (int j=0;j<cellText.length();j++){
-					switch (cellText.charAt(j)){
-					case '{':
-						depth++;
-						break;
-					case '}':
-						depth--;
-						if (depth==0){
-							equations[counter++]=cellText.substring(leftIndex, j);
+			CASTableCellValue selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
+			String cellText;
+			String assignedVariable=selCellValue.getAssignmentVariable();
+			if (assignedVariable!=null){
+				equations[counter++]=assignedVariable;
+			}
+			else{
+				if (selRow==selectedIndices[i]){
+					cellText=consoleTable.getEditor().getInput();
+				} else {
+					cellText=selCellValue.getInputVE().toString();
+				}
+
+				if (cellText.charAt(0)!='{')
+					equations[counter++]=cellText;
+				else {
+					int depth=0;
+					int leftIndex=1;
+					for (int j=0;j<cellText.length();j++){
+						switch (cellText.charAt(j)){
+						case '{':
+							depth++;
+							break;
+						case '}':
+							depth--;
+							if (depth==0){
+								equations[counter++]=cellText.substring(leftIndex, j).replaceAll(" ", "");
+
+							}
+							break;
+						case ',':
+							if (depth==1){
+								equations[counter++]=cellText.substring(leftIndex, j).replaceAll(" ", "");
+								leftIndex=j+1;
+							}
+							break;
 						}
-						break;
-					case ',':
-						if (depth==1){
-							equations[counter++]=cellText.substring(leftIndex, j);
-							leftIndex=j+2;
-						}
-						break;
 					}
 				}
 			}
 		}
-		
-		
+
+		//the equation with the variables resolved 
+		StringBuilder equationsVariablesResolved=new StringBuilder("{");
+		for (int i=0; i<equations.length; i++){
+			Boolean isVariable=kernel.isCASVariableBound(equations[i]);
+			if (isVariable) {
+				Variable var=new Variable(kernel, equations[i]);
+				equationsVariablesResolved.append(","+var.resolveAsExpressionValue().toValueString());
+			} else {
+				equationsVariablesResolved.append(","+equations[i]);
+			}
+		}
+
+		equationsVariablesResolved.append("}");
+		CASTableCellValue cellToObtainParameters=new CASTableCellValue(casView);
+		cellToObtainParameters.setInput(equationsVariablesResolved.toString().replaceFirst(",", ""));
+
 		StringBuilder cellText=new StringBuilder("{");
 		for (int i=0;i<nrEquations;i++){
 			cellText.append(", ");
@@ -335,7 +363,7 @@ public class CASInputHandler {
 				params= b;
 			}
 		}
-		
+
 		// save the edited value into the table model
 		consoleTable.stopEditing();
 
@@ -378,19 +406,6 @@ public class CASInputHandler {
 			}
 		}
 
-		// remember input selection information for future calls of processRow()
-		// check if structure of selection is ok
-		// multipleLines doesn't work with the cell value
-		/*boolean structureOK = multipleLines || cellValue.isStructurallyEqualToLocalizedInput(prefix + evalText + postfix);
-		if (!structureOK) {
-			// show current selection again
-			consoleTable.startEditingRow(selRow);
-			cellEditor = consoleTable.getEditor();
-			cellEditor.setInputSelectionStart(selStart);
-			cellEditor.setInputSelectionEnd(selEnd);
-			return;
-		}*/
-
 		boolean isAssignment = cellValue.getAssignmentVariable() != null;
 		boolean isEvaluate = ggbcmd.equals("Evaluate");
 		boolean isKeepInput = ggbcmd.equals("KeepInput");
@@ -432,7 +447,7 @@ public class CASInputHandler {
 				StringBuilder paramSB = new StringBuilder();
 				for (int i=0; i < params.length; i++) {
 					paramSB.append(", ");
-					paramSB.append(resolveButtonParameter(params[i], cellValue));
+					paramSB.append(resolveButtonParameter(params[i], cellToObtainParameters));
 				}
 				paramString = paramSB.substring(2);
 				sb.append(paramSB.substring(2));
