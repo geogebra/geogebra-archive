@@ -1263,7 +1263,7 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	public void setShowAxesSelected(JCheckBoxMenuItem cb){
-		cb.setSelected(getEuclidianView().getShowXaxis() && getEuclidianView().getShowYaxis());
+		cb.setSelected(((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowXaxis() && ((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowYaxis());
 	}
 	
 	public void toggleGrid(){
@@ -1273,7 +1273,7 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	public void setShowGridSelected(JCheckBoxMenuItem cb){
-		cb.setSelected(getEuclidianView().getShowGrid());
+		cb.setSelected(((EuclidianView)getGuiManager().getActiveEuclidianView()).getShowGrid());
 	}
 	
 	

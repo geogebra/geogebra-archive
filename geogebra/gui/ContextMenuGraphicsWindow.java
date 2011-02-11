@@ -202,7 +202,7 @@ implements ActionListener {
         };  
   	    
         // get current axes ratio
-        double scaleRatio = app.getEuclidianView().getScaleRatio();
+        double scaleRatio = ((EuclidianView)app.getGuiManager().getActiveEuclidianView()).getScaleRatio();
         Kernel kernel = app.getKernel();
         
         JMenuItem mi;		
