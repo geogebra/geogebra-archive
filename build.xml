@@ -35,13 +35,17 @@ Prerequisities:
 
 * Sun Java 1.5 (see http://packages.ubuntu.com/jaunty-updates/sun-java5-jdk for details)
 
-  The easiest way to install it under Ubuntu/Debian systems is to add the following
-  lines to /etc/apt/sources.list and then enter 'apt-get update; apt-get install sun-java5-jdk':
+  The easiest way to install it under Ubuntu/Debian systems is to add
+  the following lines to /etc/apt/sources.list and then enter 'apt-get
+  update; apt-get install sun-java5-jdk':
 
   deb http://hu.archive.ubuntu.com/ubuntu/ jaunty multiverse
   deb-src http://hu.archive.ubuntu.com/ubuntu/ jaunty multiverse
   deb http://hu.archive.ubuntu.com/ubuntu/ jaunty-updates multiverse
   deb-src http://hu.archive.ubuntu.com/ubuntu/ jaunty-updates multiverse
+  
+  You may also try Sun Java 1.6, but some features may not work in the
+  autobuild process.
   
 * ant
 
@@ -49,19 +53,26 @@ Prerequisities:
 
 Compilation and packaging:
 
-To start the compilation process, first make sure you are using the correct Java version.
-Ensure it by typing 'export JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun'. Then enter
-'export ANT_OPTS='-Xms1024m -Xmx1024m"', 'alias signjar=jarsigner' and 'ant'.
+To start the compilation process, first make sure you are using the
+correct Java version. Ensure it by typing 'export
+JAVA_HOME=/usr/lib/jvm/java-1.5.0-sun'. Then enter 'export
+ANT_OPTS='-Xmx1024m' and 'ant geogebra-cl'.
 
 The resulted .jar files will be put into the build/ directory.
 
 Testing:
 
-To run the compiled packages you need Sun Java. OpenJDK Java will not work due to
-some missing libraries:
+To run the compiled packages you need Sun Java. OpenJDK Java will not
+work due to some missing libraries:
 
 Exception in thread "main" java.lang.UnsatisfiedLinkError:
 Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
+
+In the build/unpacked directory you should enter 'java -jar
+geogebra.jar' to start GeoGebra from command line.
+
+For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandLine.
+
 -->
 
 <!--
@@ -462,6 +473,7 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 	    classname="de.matthiasmann.p200ant.P200AntTask"
 	    classpath="tools_p200ant_java5only.jar"/>
 
+
 	<!-- Obfuscate jar files without signing -->
 	<target name="obfuscate" depends="ggb-jar-files">
 		<!-- check if java150-rt.jar file present -->
@@ -546,8 +558,19 @@ Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 		</p200ant>
 	</target>
 
+
 	<!-- pack jars -->
-	<target name="pack" description="pack jar files">
+	<!-- This should prevent running the pack target on Java 1.6
+	     http://www.java-tips.org/other-api-tips/ant/how-can-i-test-for-jvm-versions.html -->
+  	<target name="get-jvm">
+      		<condition property="jvm.buggy">
+			<or>
+      				<equals arg1="${ant.java.version}" arg2="1.6"/>
+      			</or>
+      		</condition>
+      	</target>
+
+	<target name="pack" description="pack jar files" depends="get-jvm" unless="jvm.buggy">
 		<fileset id="unsignedJars" dir="${build.dir}/unsigned/unpacked">
 			<include name="*.jar"/>
 		</fileset>
