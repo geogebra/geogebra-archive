@@ -68,7 +68,7 @@ work due to some missing libraries:
 Exception in thread "main" java.lang.UnsatisfiedLinkError:
 Can't load library: /usr/lib/jvm/java-6-openjdk/jre/lib/i386/xawt/libmawt.so
 
-In the build/unpacked directory you should enter 'java -jar
+In the build/debug directory now you could enter 'java -jar
 geogebra.jar' to start GeoGebra from command line.
 
 For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandLine.
