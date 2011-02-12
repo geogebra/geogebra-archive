@@ -52,7 +52,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private ColorPopupMenuButton btnColor,btnBgColor, btnTextColor;
 	
 	private PopupMenuButton   btnLineStyle, btnPointStyle, btnTextSize, btnMode, 
-		btnTableTextJustify, btnTableTextBracket, btnCaptionStyle;
+		btnTableTextJustify, btnTableTextBracket, btnCaptionStyle, btnPointCapture;
 	
 	private MyToggleButton btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
     		btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel, 
@@ -156,7 +156,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		}
 		
 		updateStyleBar();
-		updateGUI();
+		
 	}
 	
 	
@@ -205,14 +205,14 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 		
 		// update the buttons
-		
+		updateTableText(geos.toArray());
 		for(int i = 0; i < popupBtnList.length; i++){
 			popupBtnList[i].update(geos.toArray());
 		}
 		for(int i = 0; i < toggleBtnList.length; i++){
 			toggleBtnList[i].update(geos.toArray());
 		}
-		updateTableText(geos.toArray());
+		
 		
 		btnPenDelete.setVisible((mode == EuclidianConstants.MODE_PEN));
 
@@ -221,7 +221,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private void updateTableText(Object[] geos){
 
 		tableText = null;
-		if (geos == null || geos.length == 0) return;
+		if (geos == null || geos.length == 0 || mode == EuclidianConstants.MODE_PEN) return;
 
 		boolean geosOK = true;
 		AlgoElement algo;
@@ -300,10 +300,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	//	add(btnPenEraser);
 		//add(btnHideShowLabel);
 		add(btnCaptionStyle);
+		add(btnPointCapture);
 	//	add(btnPenDelete);
 			
 		popupBtnList = new PopupMenuButton[]{
-				btnColor, btnBgColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, btnTableTextJustify, btnTableTextBracket, btnCaptionStyle};
+				btnColor, btnBgColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, 
+				btnTableTextJustify, btnTableTextBracket, btnCaptionStyle, btnPointCapture};
 		
 		toggleBtnList = new MyToggleButton[]{
 				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
@@ -652,6 +654,40 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 		
 		
+
+		//========================================
+		// point capture button
+
+		String[] strPointCapturing = { 
+				app.getMenu("Labeling.automatic"), 
+				app.getMenu("on"),
+				app.getMenu("Labeling.OnGrid"), 
+				app.getMenu("off") };
+
+		btnPointCapture = new PopupMenuButton(app, strPointCapturing, -1, 1, 
+				new Dimension(0, iconHeight), SelectionTable.MODE_TEXT){
+			
+			@Override
+			public void update(Object[] geos) {
+				// show when nothing else is selected
+				
+				this.setVisible(geos.length == 0 && mode != EuclidianConstants.MODE_PEN);
+				
+			}	
+					
+			public ImageIcon getButtonIcon(){
+				return (ImageIcon) this.getIcon();
+			}
+
+		};	
+		ImageIcon ptCaptureIcon = app.getImageIcon("magnet.gif");
+		btnPointCapture.setIconSize(new Dimension(ptCaptureIcon.getIconWidth(),iconHeight));
+		btnPointCapture.setIcon(ptCaptureIcon);
+		btnPointCapture.addActionListener(this);
+		btnPointCapture.setKeepVisible(false);
+		
+		
+		
 		
 		
 		
@@ -669,6 +705,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 	}
 
+	
+	
+	
+	
 	
 	
 	//========================================
@@ -1193,6 +1233,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			ev.repaint();
 		}
 		
+		else if (source == btnPointCapture) {
+			ev.setPointCapturing(btnPointCapture.getSelectedIndex());	
+		}
+		
 		else if (source == btnColor) {
 			if(btnColor.getSelectedIndex() >=0){
 				if(mode == EuclidianConstants.MODE_PEN){
@@ -1256,6 +1300,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		else if (source == btnCaptionStyle) {
 			applyCaptionStyle(targetGeos);			
 		}
+		
 		else if (source == btnTableTextJustify ) {
 			applyTableTextFormat(targetGeos);			
 		}
@@ -1445,6 +1490,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	
+	
 	private void applyTableTextFormat(ArrayList<GeoElement> geos) {
 
 		AlgoElement algo = null;
@@ -1560,9 +1606,36 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	 * Set labels with localized strings.
 	 */
 	public void setLabels(){
-		
+
 		initGUI();
 		updateStyleBar();
+		
+		btnShowGrid.setToolTipText(app.getPlain("stylebar.Grid"));
+		btnShowAxes.setToolTipText(app.getPlain("stylebar.Axes"));
+		btnPointCapture.setToolTipText(app.getPlain("stylebar.Capture"));
+		
+		btnCaptionStyle.setToolTipText(app.getPlain("stylebar.Caption"));
+		btnLabel.setToolTipText(app.getPlain("stylebar.Label"));
+		
+		btnColor.setToolTipText(app.getPlain("stylebar.Color"));
+		btnBgColor.setToolTipText(app.getPlain("stylebar.BgColor"));
+		
+		btnLineStyle.setToolTipText(app.getPlain("stylebar.LineStyle"));
+		btnPointStyle.setToolTipText(app.getPlain("stylebar.PointStyle"));
+		
+		btnTextColor.setToolTipText(app.getPlain("stylebar.TextColor"));
+		btnTextSize.setToolTipText(app.getPlain("stylebar.TextSize"));
+		btnBold.setToolTipText(app.getPlain("stylebar.Bold")); 
+		btnItalic.setToolTipText(app.getPlain("stylebar.Italic")); 
+		btnTableTextJustify.setToolTipText(app.getPlain("stylebar.Align"));
+		btnTableTextBracket.setToolTipText(app.getPlain("stylebar.Bracket"));
+		btnTableTextLinesV.setToolTipText(app.getPlain("stylebar.HorizontalLine"));
+		btnTableTextLinesH.setToolTipText(app.getPlain("stylebar.VerticalLine"));
+
+		btnPen.setToolTipText(app.getPlain("stylebar.Pen"));
+		btnPenEraser.setToolTipText(app.getPlain("stylebar.Eraser"));
+		
+		btnCopyVisualStyle.setToolTipText(app.getPlain("stylebar.CopyVisualStyle"));		
 		
 	}	
 
