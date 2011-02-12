@@ -657,11 +657,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 		//========================================
 		// point capture button
-
+		
 		String[] strPointCapturing = { 
 				app.getMenu("Labeling.automatic"), 
-				app.getMenu("on"),
-				app.getMenu("Labeling.OnGrid"), 
+				app.getMenu("SnapToGrid"),
+				app.getMenu("FixedToGrid"), 
 				app.getMenu("off") };
 
 		btnPointCapture = new PopupMenuButton(app, strPointCapturing, -1, 1, 
@@ -1234,7 +1234,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		}
 		
 		else if (source == btnPointCapture) {
-			ev.setPointCapturing(btnPointCapture.getSelectedIndex());	
+			int mode = btnPointCapture.getSelectedIndex();
+			if (mode == 3 || mode ==0) mode = 3 - mode; // swap 0 and 3
+			ev.setPointCapturing(mode);	
 		}
 		
 		else if (source == btnColor) {
