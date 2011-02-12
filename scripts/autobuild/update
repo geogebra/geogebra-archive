@@ -31,6 +31,7 @@ if [ "$0" = "./update" -a "$1" != "--no-update" ]; then
 else
  $SVN_COMMAND update --accept theirs-full --force
  fi
+chmod -R g+rw $SVNDIR/geogebra
 
 # 3. Setting global variables
 export JAVA_HOME
@@ -60,7 +61,9 @@ if [ "$MYDIR" = "" -o "$WWWDIR" = "" ]; then
 
 # 6. Copying and text replacing
 cd build
-rm -fR $WWWDIR/$MYDIR || exit 4 # Be careful!
+if [ "$MYDIR" != "4.0" ]; then
+ rm -fR $WWWDIR/$MYDIR || exit 4 # Be careful!
+ fi
 mkdir -p $WWWDIR/$MYDIR || exit 4
 chmod g+rwx $WWWDIR/$MYDIR || exit 4
 
