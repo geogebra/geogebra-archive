@@ -40,7 +40,7 @@ public class AlgoSearchMaximum {
 	private static 	Kernel						kernel		=	null;
 	private 	 	ExtremumFinder				extrFinder	=	null;		//Uses ExtremumFinder for the dirty work
 	private 	   	RealRootFunctionVariable	i_am_not_a_real_function=null;	
-	private			GeoNumeric					dep			=	null;
+	private			GeoElement					dep			=	null;
 	private			GeoNumeric					indep		=	null;
 	
 	public  double findMax(double l,double r){
@@ -71,15 +71,13 @@ public class AlgoSearchMaximum {
     
 	//  Running tests from external testscripts.
     
-    /* Needs a constructor */
+    /** Needs a constructor */
     public AlgoSearchMaximum(Construction cons,String depstr,String indepstr){
     	this.cons=cons;
     	kernel=cons.getKernel();
     	GeoElement geo = kernel.lookupLabel(depstr);
-    	if( (geo!=null) && (geo.isGeoNumeric()) ){
-    			dep=(GeoNumeric)geo;
-    		}else{
-    			dep=null;
+    	if( (geo!=null)&& (geo.isGeoElement())){
+    		dep=(GeoElement)geo;
     	}//if dep ok
     	geo=kernel.lookupLabel(indepstr);
     	if( (geo!=null) && (geo.isGeoNumeric()) ){
