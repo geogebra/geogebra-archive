@@ -5,10 +5,9 @@
 # Run "./update --no-update" option for autobuild if you want to force web content update
 # even if no new commit exists the repository.
 
-if [ "$0" != "./update" -a "$0" != "./buildggb40" -a "$0" != "./deployggb40" ]; then
+if [ "$0" != "./update" -a "$0" != "./buildggb40" ]; then
  echo "Usage:
   ./buildggb40             Compiles and installs numbered version into test40
-  ./deployggb40            Compiles and deploys numbered version into 4.0
   ./update [--no-update]   Compiles and installs autobuild into test40a"
   exit 1
   fi
@@ -49,9 +48,6 @@ if [ "$0" = "./update" ]; then
  fi
 if [ "$0" = "./buildggb40" ]; then
  MYDIR=test40
- fi
-if [ "$0" = "./deployggb40" ]; then
- MYDIR=4.0
  fi
 
 if [ "$MYDIR" = "" -o "$WWWDIR" = "" ]; then
@@ -98,16 +94,6 @@ for i in *.html *.jnlp; do
     cp unpacked/$i $i || exit 4 # Some file in some subdirectories may still refer to the original file.
     echo "$0: $i is rewritten"
     done
-
-if [ "$0" = "./deployggb40" ]; then
- # Copy the entire 4.0 directory to history/$MYVER as well:
- rm -fR $WWWDIR/history/$MYVER || exit 5
- mkdir -p $WWWDIR/history/$MYVER || exit 5
- chmod g+rwx $WWWDIR/history/$MYVER || exit 5
- cp -R $WWWDIR/$MYDIR/* $WWWDIR/history/$MYVER || exit 5
- # Sending an email to geogebra-dev:
- echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com
- fi
 
 date
 echo "$0: end"

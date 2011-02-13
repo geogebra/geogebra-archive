@@ -1,0 +1,45 @@
+#!/bin/sh
+# Deploys numbered version of GeoGebra into directory 4.0
+# @author Zoltan Kovacs <zoltan@geogebra.org>
+
+# 1. Start and loading configuration
+date
+echo "$0: start"
+
+test -r autobuild.conf || {
+ echo "Cannot find autobuild.conf (make sure you edit autobuild.conf.dist first)"
+ exit 1
+ }
+. ./autobuild.conf
+cd $SVNDIR/geogebra
+
+# 2. Setting local variables
+MYVER=`cat build/unpacked/version.txt`
+MYDIR=4.0
+
+# 3. (Re)creating $WWWDIR/$MYDIR directory
+if [ "$WWWDIR" = "" ]; then
+ echo "Fatal error, WWWDIR=$WWWDIR, exiting for safety reasons"
+ exit 2
+ fi
+cd build
+echo "$0: (re)creating $WWWDIR/$MYDIR directory"
+mkdir -p $WWWDIR/$MYDIR || exit 4
+chmod g+rwx $WWWDIR/$MYDIR || exit 4
+
+# 4. Copying dynamically generated files:
+cp -R *.jar $WWWDIR/$MYDIR || exit 4
+echo "$0: dynamically generated files copied"
+
+# 5. Copy the entire 4.0 directory to history/$MYVER as well:
+rm -fR $WWWDIR/history/$MYVER || exit 5
+mkdir -p $WWWDIR/history/$MYVER || exit 5
+chmod g+rwx $WWWDIR/history/$MYVER || exit 5
+cp -R $WWWDIR/$MYDIR/* $WWWDIR/history/$MYVER || exit 5
+
+# 6. Sending an email to geogebra-dev:
+echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" kovzol@gmail.com # geogebra-dev@googlegroups.com
+fi
+
+date
+echo "$0: end"
