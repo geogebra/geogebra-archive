@@ -460,7 +460,7 @@ public class CellRangeProcessor {
 	
 	
 
-	public GeoElement CreateMatrix(int column1, int column2, int row1, int row2){
+	public GeoElement createMatrix(int column1, int column2, int row1, int row2, boolean copyByValue){
 		
 		GeoElement[] geos = null;
 		
@@ -473,7 +473,11 @@ public class CellRangeProcessor {
 				for (int i = column1; i <= column2; ++ i) {
 					GeoElement v2 = RelativeCopy.getValue(table, i, j);
 					if (v2 != null) {
-						row += v2.getLabel() + ",";
+						if(copyByValue){
+							row += v2.toDefinedValueString() + ",";
+						}else{
+							row += v2.getLabel() + ",";
+						}
 					}
 					else {
 						app.showErrorDialog(app.getPlain("CellAisNotDefined",GeoElement.getSpreadsheetCellName(i,j)));
@@ -506,7 +510,7 @@ public class CellRangeProcessor {
 			return null;
 	}
 
-	public GeoElement CreateTableText(int column1, int column2, int row1, int row2){
+	public GeoElement createTableText(int column1, int column2, int row1, int row2, boolean copyByValue){
 
 		GeoElement[] geos = null;
 
@@ -519,7 +523,11 @@ public class CellRangeProcessor {
 				for (int i = column1; i <= column2; ++ i) {
 					GeoElement v2 = RelativeCopy.getValue(table, i, j);
 					if (v2 != null) {
-						text.append(v2.getLabel());
+						if(copyByValue){
+							text.append(v2.toDefinedValueString());
+						}else{
+							text.append(v2.getLabel());
+						}
 						if (i < column2) text.append(',');
 					}
 					else {

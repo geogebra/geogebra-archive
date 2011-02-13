@@ -1282,6 +1282,18 @@ public class Kernel {
 		case EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS:
 			return "TwoVarStats";				
 			
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
+			return "CreateList";		
+			
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LISTOFPOINTS:
+			return "CreateListOfPoints";		
+			
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_MATRIX:
+			return "CreateMatrix";
+			
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_TABLETEXT:
+			return "CreateTableText";
+				
 			
 		default:
 			return "";

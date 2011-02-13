@@ -217,6 +217,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		//  DEBUG
 
 		//this.showProbabilityCalculator();
+		
+		//InspectorView id = new InspectorView(app); id.setVisible(true);
+		
 
 
 	}
@@ -401,18 +404,48 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			traceDialog.toolbarModeChanged(mode);
 		}
 
+		CreateObjectDialog id;
 
 		String command = kernel.getModeText(mode); // e.g. "Derivative"
 
 		switch (mode) {	
-		
+
 		case EuclidianConstants.MODE_SPREADSHEET_ONEVARSTATS:
 			showStatDialog(StatDialog.MODE_ONEVAR);
 			break;
-			
+
 		case EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS:
 			showStatDialog(StatDialog.MODE_TWOVAR);
 			break;
+
+
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
+			id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LIST);
+			id.setVisible(true);
+			break;
+
+
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LISTOFPOINTS:
+			id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LISTOFPOINTS);
+			id.setVisible(true);
+			break;
+
+
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_MATRIX:
+			id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_MATRIX);
+			id.setVisible(true);
+			break;
+
+
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_TABLETEXT:
+			id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_TABLETEXT);
+			id.setVisible(true);
+			break;
+			
+			
+			
+			
+
 
 		default:
 			// ignore other modes

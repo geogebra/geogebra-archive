@@ -73,6 +73,12 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		setBackground(bgColor);
 
 		this.isShiftDown = isShiftDown;
+		
+		if(isShiftDown){
+				InspectorView id = new InspectorView(app);
+				id.setVisible(true);
+		}
+		
 		initMenu();
 	}
 
@@ -236,7 +242,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			item = new JMenuItem(app.getMenu("Matrix"));
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					cp.CreateMatrix(column1, column2, row1, row2);
+					cp.createMatrix(column1, column2, row1, row2,false);
 				}
 			});	 
 			addSubItem(subMenu,item);	
@@ -246,7 +252,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			item = new JMenuItem(app.getMenu("Table"));
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					cp.CreateTableText(column1, column2, row1, row2);
+					cp.createTableText(column1, column2, row1, row2,false);
 				}
 			});	 
 			addSubItem(subMenu,item);	
