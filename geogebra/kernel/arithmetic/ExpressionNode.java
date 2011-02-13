@@ -411,6 +411,18 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		doResolveVariables();
 		simplifyAndEvalCommands();
 		simplifyLeafs();
+		
+		if (operation == POWER && left.isNumberValue() && ((NumberValue)left).getDouble() == Math.E) {
+			GeoElement geo = kernel.lookupLabel("e");
+			if (geo.needsReplacingInExpressionNode()) {
+				
+				// replace e^x with exp(x)
+				// if e was autocreated
+				operation = EXP;
+				left = right;
+				kernel.getConstruction().removeLabel(geo);
+			}
+		}
 	}
 
 	private void doResolveVariables() {

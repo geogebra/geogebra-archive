@@ -1002,9 +1002,11 @@ public class Construction {
 		}
 
 		// if referring to variable "e" (Euler no) that is undefined, create it
+		// this is then changed into exp(x) in ExpressionNode.resolveVariables()
 		else if (label.equals("e")) {
 			GeoNumeric number = new GeoNumeric(this);
 			number.setValue(Math.E);
+			number.setNeedsReplacingInExpressionNode();
 			createdGeo = number;			
 		}
 		

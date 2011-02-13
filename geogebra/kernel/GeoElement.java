@@ -5414,6 +5414,7 @@ public abstract class GeoElement
 
 	/** says if it's a pickable object */
 	private boolean isPickable = true;
+	private boolean needsReplacingInExpressionNode = false;
 
 	/** sets the pickability of the object
 	 * @param v pickability
@@ -5427,6 +5428,13 @@ public abstract class GeoElement
 	 */
 	public boolean isPickable(){
 		return isPickable && isSelectionAllowed();
+	}
+	public boolean needsReplacingInExpressionNode() {
+		return needsReplacingInExpressionNode;
+	}
+	
+	public void setNeedsReplacingInExpressionNode() {
+		needsReplacingInExpressionNode = true;
 	}
 	
 }

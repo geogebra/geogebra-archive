@@ -48,7 +48,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         GeoVec2D vec, vec2;
         MyStringBuffer msb;
         Polynomial poly;
-                        
+
         lt = left.evaluate(); // left tree
         rt = right.evaluate(); // right tree      
 
