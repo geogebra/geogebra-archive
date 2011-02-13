@@ -81,6 +81,8 @@ echo "$0: static files copied"
 # http://www.geogebra.org/webstart/4.0/ -> http://www.geogebra.org/webstart/$MYDIR/unpacked/
 # </title> -> ($MYVER) </title>
 
+# In addition, removing those lines which have the "association mime-type" text.
+
 cd $WWWDIR/$MYDIR
 for i in *.html *.jnlp; do
     cat $i | \
@@ -89,9 +91,10 @@ for i in *.html *.jnlp; do
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/debug"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
      sed s/"<\/title>"/" ($MYVER)<\/title>"/g \
+     grep -v "association mime-type" \
      > unpacked/$i
     rm $i || exit 4
-    cp unpacked/$i $i || exit 4 # Some file in some subdirectories may still refer to the original file.
+    cp unpacked/$i $i || exit 4 # Some files in some subdirectories may still refer to the original file.
     echo "$0: $i is rewritten"
     done
 
