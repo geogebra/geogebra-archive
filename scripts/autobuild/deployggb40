@@ -24,22 +24,24 @@ if [ "$WWWDIR" = "" ]; then
  fi
 cd build
 echo "$0: (re)creating $WWWDIR/$MYDIR directory"
-mkdir -p $WWWDIR/$MYDIR || exit 4
-chmod g+rwx $WWWDIR/$MYDIR || exit 4
+mkdir -p $WWWDIR/$MYDIR || exit 3
+chmod g+rwx $WWWDIR/$MYDIR || exit 3
 
-# 4. Copying dynamically generated files:
-cp -R *.jar $WWWDIR/$MYDIR || exit 4
-echo "$0: dynamically generated files copied"
+# 4. Copying JAR files to 4.0 and history/$MYVER:
+rm -fR $WWWDIR/history/$MYVER || exit 4
+mkdir -p $WWWDIR/history/$MYVER || exit 4
+chmod g+rwx $WWWDIR/history/$MYVER || exit 4
+find . -name '*.jar' -or -name '*.jar.pack.gz' | while read filename; do
+ directory=`dirname $filename`
+ mkdir -p $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
+ chmod g+rwx $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
+ cp $filename $WWWDIR/$MYDIR/$filename || exit 6
+ cp $filename $WWWDIR/history/$MYVER/$filename || exit 6
+ done
+echo "$0: JAR files copied to 4.0 and history/$MYVER"
 
-# 5. Copy the entire 4.0 directory to history/$MYVER as well:
-rm -fR $WWWDIR/history/$MYVER || exit 5
-mkdir -p $WWWDIR/history/$MYVER || exit 5
-chmod g+rwx $WWWDIR/history/$MYVER || exit 5
-cp -R $WWWDIR/$MYDIR/* $WWWDIR/history/$MYVER || exit 5
-
-# 6. Sending an email to geogebra-dev:
-echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" kovzol@gmail.com # geogebra-dev@googlegroups.com
-fi
+# 5. Sending an email to geogebra-dev:
+echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || exit 7
 
 date
 echo "$0: end"
