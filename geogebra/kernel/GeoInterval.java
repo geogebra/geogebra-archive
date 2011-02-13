@@ -72,116 +72,119 @@ public class GeoInterval extends GeoFunction {
 	
 	public String toString(boolean symbolic) {		
 		
-		/* TODO put back in when parser understands 3 < x < 5 syntax
+		// TODO remove this check when parser understands 3 < x < 5 syntax
 		
-		if (!isDefined()) return app.getPlain("undefined");
-		
-		//return "3 < x < 5";//fun.toValueString();
-		
-		ExpressionNode en = fun.getExpression();
-		if (en.operation == en.AND) {
-			ExpressionValue left = en.left;
-			ExpressionValue right = en.right;
+		if (!symbolic && !isIndependent()) { // output as nice string eg 3 < x < 5
 			
-			if (left.isExpressionNode() && right.isExpressionNode()) {
-				ExpressionNode enLeft = (ExpressionNode)left;
-				ExpressionNode enRight = (ExpressionNode)right;
+			if (!isDefined()) return app.getPlain("undefined");
+			
+			//return "3 < x < 5";//fun.toValueString();
+			
+			ExpressionNode en = fun.getExpression();
+			if (en.operation == en.AND) {
+				ExpressionValue left = en.left;
+				ExpressionValue right = en.right;
 				
-				int opLeft = enLeft.operation;
-				int opRight = enRight.operation;
-				
-				ExpressionValue leftLeft = enLeft.left;
-				ExpressionValue leftRight = enLeft.right;
-				ExpressionValue rightLeft = enRight.left;
-				ExpressionValue rightRight = enRight.right;
-				
-				double rightBound = Double.NaN;
-				double leftBound = Double.NaN;
-				
-				String rightStr = "", leftStr = "";
-				// directions of inequalities, need one + and one - for an interval
-				int leftDir = 0;
-				int rightDir = 0;
-				char rightInequality = ' ';
-				char leftInequality = ' ';
-				
-	
-				if ((opLeft == en.LESS || opLeft == en.LESS_EQUAL)) {
-					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
-						leftDir = -1;
-						rightInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
-						rightBound = ((NumberValue)leftRight).getDouble();
-						rightStr = leftRight.toLaTeXString(true);
-					}
-					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
-						leftDir = +1;
-						leftInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
-						leftBound = ((NumberValue)leftLeft).getDouble();
-						leftStr = leftLeft.toLaTeXString(true);
+				if (left.isExpressionNode() && right.isExpressionNode()) {
+					ExpressionNode enLeft = (ExpressionNode)left;
+					ExpressionNode enRight = (ExpressionNode)right;
+					
+					int opLeft = enLeft.operation;
+					int opRight = enRight.operation;
+					
+					ExpressionValue leftLeft = enLeft.left;
+					ExpressionValue leftRight = enLeft.right;
+					ExpressionValue rightLeft = enRight.left;
+					ExpressionValue rightRight = enRight.right;
+					
+					double rightBound = Double.NaN;
+					double leftBound = Double.NaN;
+					
+					String rightStr = "", leftStr = "";
+					// directions of inequalities, need one + and one - for an interval
+					int leftDir = 0;
+					int rightDir = 0;
+					char rightInequality = ' ';
+					char leftInequality = ' ';
+					
+		
+					if ((opLeft == en.LESS || opLeft == en.LESS_EQUAL)) {
+						if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
+							leftDir = -1;
+							rightInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
+							rightBound = ((NumberValue)leftRight).getDouble();
+							rightStr = leftRight.toLaTeXString(true);
+						}
+						else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
+							leftDir = +1;
+							leftInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
+							leftBound = ((NumberValue)leftLeft).getDouble();
+							leftStr = leftLeft.toLaTeXString(true);
+						}
+						
+					} else
+					if ((opLeft == en.GREATER || opLeft == en.GREATER_EQUAL)) {
+						if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
+							leftDir = +1;
+							leftInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+							leftBound = ((NumberValue)leftRight.evaluate()).getDouble();
+							leftStr = leftRight.toLaTeXString(true);
+						}
+						else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
+							leftDir = -1;
+							rightInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+							rightBound = ((NumberValue)leftLeft.evaluate()).getDouble();
+							rightStr = leftLeft.toLaTeXString(true);
+						}
+						
 					}
 					
-				} else
-				if ((opLeft == en.GREATER || opLeft == en.GREATER_EQUAL)) {
-					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
-						leftDir = +1;
-						leftInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
-						leftBound = ((NumberValue)leftRight.evaluate()).getDouble();
-						leftStr = leftRight.toLaTeXString(true);
-					}
-					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
-						leftDir = -1;
-						rightInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
-						rightBound = ((NumberValue)leftLeft.evaluate()).getDouble();
-						rightStr = leftLeft.toLaTeXString(true);
+					if ((opRight == en.LESS || opRight == en.LESS_EQUAL)) {
+						if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
+							rightDir = -1;
+							rightInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
+							rightBound = ((NumberValue)rightRight.evaluate()).getDouble();
+							rightStr = rightRight.toLaTeXString(true);
+						}
+						else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
+							rightDir = +1;
+							leftInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
+							leftBound = ((NumberValue)rightLeft.evaluate()).getDouble();
+							leftStr = rightLeft.toLaTeXString(true);
+						}
+						
+					} else
+					if ((opRight == en.GREATER || opRight == en.GREATER_EQUAL)) {
+						if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
+							rightDir = +1;
+							leftInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+							leftBound = ((NumberValue)rightRight.evaluate()).getDouble();
+							leftStr = rightRight.toLaTeXString(true);
+						}
+						else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
+							rightDir = -1;
+							rightInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+							rightBound = ((NumberValue)rightLeft.evaluate()).getDouble();
+							rightStr = rightLeft.toLaTeXString(true);
+						}
+						
 					}
 					
+					if (!Double.isNaN(rightBound) && !Double.isNaN(leftBound) && leftBound <= rightBound) {
+						sbToString.setLength(0);
+						sbToString.append(symbolic ? leftStr : kernel.format(leftBound));
+						sbToString.append(' ');
+						sbToString.append(leftInequality);
+						sbToString.append(" x ");
+						sbToString.append(rightInequality);
+						sbToString.append(' ');
+						sbToString.append(symbolic ? rightStr : kernel.format(rightBound));
+						return sbToString.toString();
+						//return kernel.format(leftBound) +leftInequality+" x "+rightInequality+kernel.format(rightBound);
+					}
 				}
-				
-				if ((opRight == en.LESS || opRight == en.LESS_EQUAL)) {
-					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
-						rightDir = -1;
-						rightInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
-						rightBound = ((NumberValue)rightRight.evaluate()).getDouble();
-						rightStr = rightRight.toLaTeXString(true);
-					}
-					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
-						rightDir = +1;
-						leftInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
-						leftBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-						leftStr = rightLeft.toLaTeXString(true);
-					}
-					
-				} else
-				if ((opRight == en.GREATER || opRight == en.GREATER_EQUAL)) {
-					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
-						rightDir = +1;
-						leftInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
-						leftBound = ((NumberValue)rightRight.evaluate()).getDouble();
-						leftStr = rightRight.toLaTeXString(true);
-					}
-					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
-						rightDir = -1;
-						rightInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
-						rightBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-						rightStr = rightLeft.toLaTeXString(true);
-					}
-					
-				}
-				
-				if (!Double.isNaN(rightBound) && !Double.isNaN(leftBound) && leftBound <= rightBound) {
-					sbToString.setLength(0);
-					sbToString.append(symbolic ? leftStr : kernel.format(leftBound));
-					sbToString.append(' ');
-					sbToString.append(leftInequality);
-					sbToString.append(" x ");
-					sbToString.append(rightInequality);
-					sbToString.append(' ');
-					sbToString.append(symbolic ? rightStr : kernel.format(rightBound));
-					return sbToString.toString();
-					//return kernel.format(leftBound) +leftInequality+" x "+rightInequality+kernel.format(rightBound);
-				}
-			}
-		} */
+			} 
+		}
 		
 		// eg x<3 && x>10
 		//Application.debug("fall through");
