@@ -41,7 +41,8 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' | while read filename; do
 echo "$0: JAR files copied to 4.0 and history/$MYVER"
 
 # 5. Sending an email to geogebra-dev:
-echo "$0 has finished deploying $MYVER" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || exit 7
+echo "New version of GeoGebra 4.0 has just been uploaded: $MYVER
+Automatic message, do not reply" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || exit 7
 
 date
 echo "$0: end"
