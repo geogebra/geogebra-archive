@@ -90,7 +90,7 @@ for i in *.html *.jnlp; do
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/usb-gomotion"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/usb-gomotion.ggb"/g | \
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/debug"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/debug"/g | \
      sed s/"http:\/\/www.geogebra.org\/webstart\/4.0\/"/"http:\/\/www.geogebra.org\/webstart\/$MYDIR\/unpacked"/g | \
-     sed s/"<\/title>"/" ($MYVER)<\/title>"/g \
+     sed s/"<\/title>"/" ($MYVER)<\/title>"/g | \
      grep -v "association mime-type" \
      > unpacked/$i
     rm $i || exit 4
