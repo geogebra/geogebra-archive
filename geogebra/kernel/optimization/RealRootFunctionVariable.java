@@ -12,7 +12,10 @@ the Free Software Foundation.
 package geogebra.kernel.optimization;
 
 import geogebra.kernel.roots.RealRootFunction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoSegment;
 
 
 /**
@@ -31,7 +34,7 @@ import geogebra.kernel.GeoNumeric;
  */
 public class RealRootFunctionVariable implements RealRootFunction {
 	
-	private GeoNumeric geodep	=	null;				//dependent variable
+	private GeoElement geodep	=	null;				//dependent variable
 	private GeoNumeric geoindep	=	null;				//independent variable
 	
 	/**
@@ -39,7 +42,7 @@ public class RealRootFunctionVariable implements RealRootFunction {
 	 * @param		geodep
 	 * @param		geoindep
 	 */
-	public RealRootFunctionVariable(GeoNumeric geodep,GeoNumeric geoindep) {
+	public RealRootFunctionVariable(GeoElement geodep,GeoNumeric geoindep) {
 		this.geodep=geodep;
 		this.geoindep=geoindep;
 	}//Constructor
@@ -49,7 +52,15 @@ public class RealRootFunctionVariable implements RealRootFunction {
 		if( (geodep!=null) && (geoindep!=null) ){
 			geoindep.setValue(x);
 			geoindep.updateCascade();
-			return geodep.getValue();
+			if(geodep.isGeoNumeric()){
+				return ((GeoNumeric)geodep).getDouble();
+			}else if(geodep.isGeoPolygon()){
+				return ((GeoPolygon)geodep).getDouble();
+			}else if(geodep.isGeoSegment()){
+				return ((GeoSegment) geodep).getDouble();
+			}else{
+				return Double.NaN;
+			}//if type
 		}else{
 			return Double.NaN;
 		}//if variables are ok
