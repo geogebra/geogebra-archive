@@ -1066,7 +1066,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				GeoElement geo = (GeoElement) view.getHits().getTopHits().get(0);
 				Coords vn = geo.getMainDirection();
 				if (vn!=null){
-					view3D.setRotAnimation(vn);
+					view3D.setRotAnimation(view3D.getCursor3D().getDrawingMatrix().getVz());
 				}
 			}
 			
@@ -1589,7 +1589,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * @return if the 3D cursor is visible for current mode
 	 */
 	public boolean cursor3DVisibleForCurrentMode(int cursorType){
-		
+				
 		if (cursorType==EuclidianView3D.PREVIEW_POINT_ALREADY){
 			switch(mode){
 			case EuclidianView.MODE_MOVE:
@@ -1612,6 +1612,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			case EuclidianView.MODE_PLANE_THREE_POINTS:
 			case EuclidianView.MODE_PLANE_POINT_LINE:
 			case EuclidianView.MODE_ORTHOGONAL_PLANE:
+				//return true;
+			case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
 				return true;
 			default:
 				return false;			

@@ -75,4 +75,11 @@ public class AlgoPlaneThroughPointAndLine extends AlgoPlaneThroughPoint {
     protected GeoElement getSecondInput(){
     	return (GeoElement) line;
     }
+    
+    
+    final public String toString() {
+    	return app.getPlain("PlaneThroughAB",getPoint().getLabel(),getSecondInput().getLabel());
+
+    }
+
 }

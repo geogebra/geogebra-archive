@@ -88,5 +88,10 @@ public class AlgoPlane extends AlgoElement3D {
 	public String getClassName() {
 		return "AlgoPlane";
 	}
+	
+    final public String toString() {
+    	return app.getPlain("PlaneThroughABC",A.getLabel(),B.getLabel(),C.getLabel());
+
+    }
 
 }

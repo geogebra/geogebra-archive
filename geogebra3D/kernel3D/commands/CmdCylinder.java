@@ -6,6 +6,9 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.CommandProcessor;
 import geogebra.kernel.kernelND.GeoCoordSys;
+import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -28,20 +31,54 @@ public class CmdCylinder extends CommandProcessor {
 	    boolean[] ok = new boolean[n];
 	    GeoElement[] arg;
 
-	    switch (n) {	    	
+	    switch (n) {	
+	    
+	    case 2 :
+	    	arg = resArgs(c);
+	    	if (
+	    			(ok[0] = (arg[0] instanceof GeoLineND ) )
+	    			&& (ok[1] = (arg[1] .isNumberValue() )) 
+	    	) {
+	    		GeoElement[] ret =
+	    		{
+	    				kernel.getManager3D().Cylinder(
+	    						c.getLabel(),
+	    						(GeoLineND) arg[0],
+	    						(NumberValue) arg[1])};
+	    		return ret;
+	    	}else{
+	    		if (!ok[0])
+	    			throw argErr(app, "Cylinder", arg[0]);
+	    		else 
+	    			throw argErr(app, "Cylinder", arg[1]);
+	    	}
+	    
 	    case 3 :
 	    	arg = resArgs(c);
 	    	if (
-	    			(ok[0] = (arg[0] .isGeoPoint() && arg[0].isGeoElement3D()) )
-	    			&& (ok[1] = (arg[1] .isGeoVector() && arg[1].isGeoElement3D()))
+	    			(ok[0] = (arg[0] .isGeoPoint() ) )
+	    			&& (ok[1] = (arg[1] .isGeoVector() ))
 	    			&& (ok[2] = (arg[2] .isNumberValue() )) 
 	    	) {
 	    		GeoElement[] ret =
 	    		{
 	    				kernel.getManager3D().Cylinder(
 	    						c.getLabel(),
-	    						(GeoPoint3D) arg[0],
-	    						(GeoVector3D) arg[1],
+	    						(GeoPointND) arg[0],
+	    						(GeoVectorND) arg[1],
+	    						(NumberValue) arg[2])};
+	    		return ret;
+	    	}else if (
+	    			(ok[0] = (arg[0] .isGeoPoint() ) )
+	    			&& (ok[1] = (arg[1] .isGeoPoint()))
+	    			&& (ok[2] = (arg[2] .isNumberValue() )) 
+	    	) {
+	    		GeoElement[] ret =
+	    		{
+	    				kernel.getManager3D().Cylinder(
+	    						c.getLabel(),
+	    						(GeoPointND) arg[0],
+	    						(GeoPointND) arg[1],
 	    						(NumberValue) arg[2])};
 	    		return ret;
 	    	}else{

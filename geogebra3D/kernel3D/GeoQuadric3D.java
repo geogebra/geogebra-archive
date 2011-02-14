@@ -12,6 +12,7 @@ import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
@@ -143,7 +144,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	////////////////////////////////
 	// CONE
 	
-	public void setCone(GeoPoint3D origin, GeoVector3D direction, double angle){
+	public void setCone(GeoPointND origin, GeoVectorND direction, double angle){
 		
 		// check midpoint
 		defined = ((GeoElement) origin).isDefined() && !origin.isInfinite(); 
@@ -165,16 +166,16 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 			defined = false;//TODO if s=0 then draws a line
 		else{
 			r=s/c;
-			setCone(origin.getCoords().get(), direction.getCoords().normalized(), r);
+			setCone(origin.getCoordsInD(3), direction.getCoordsInD(3), r);
 		} 
 		
 
 	}
 	
-	private void setCone(double[] coords, Coords direction, double r){
+	public void setCone(Coords origin, Coords direction, double r){
 		 
 		// set center
-		setMidpoint(coords);
+		setMidpoint(origin.get());
 		
 		// set direction
 		eigenvecND[2] = direction;
@@ -214,7 +215,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	////////////////////////////////
 	// CONE
 	
-	public void setCylinder(GeoPoint3D origin, GeoVector3D direction, double r){
+	public void setCylinder(GeoPointND origin, Coords direction, double r){
 		
 		// check midpoint
 		defined = ((GeoElement) origin).isDefined() && !origin.isInfinite(); 
@@ -232,16 +233,16 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		}					
 
 		if (defined) {
-			setCylinder(origin.getCoords().get(), direction.getCoords().normalized(), r);
+			setCylinder(origin.getCoordsInD(3), direction, r);
 		} 
 		
 
 	}
 	
-	private void setCylinder(double[] coords, Coords direction, double r){
+	public void setCylinder(Coords origin, Coords direction, double r){
 		 
 		// set center
-		setMidpoint(coords);
+		setMidpoint(origin.get());
 		
 		// set direction
 		eigenvecND[2] = direction;
@@ -308,6 +309,10 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		switch (type) {
 		case GeoQuadric3D.QUADRIC_SPHERE: 
 			return "Sphere";
+		case GeoQuadric3D.QUADRIC_CYLINDER: 
+			return "Cylinder";
+		case GeoQuadric3D.QUADRIC_CONE: 
+			return "Cone";
  		default:
 			return "Quadric";
 		}                       
@@ -325,9 +330,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 
     }
 
-    public void setUndefined() {
 
-    }
 
     public boolean showInAlgebraView() {
 

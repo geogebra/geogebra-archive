@@ -869,6 +869,18 @@ public class Renderer implements GLEventListener {
    	
     } 
     
+    /**
+     * draws a view button
+     * @param type
+     */
+    public void drawViewInFrontOf(){
+    	initMatrix();
+    	setBlending(false);
+    	geometryManager.draw(geometryManager.getViewInFrontOf().getIndex());
+    	setBlending(true);
+		resetMatrix();
+    	
+    }
     
     /**
      * draws a view button

@@ -20,7 +20,7 @@ import geogebra3D.euclidian3D.Drawable3D;
  *
  */
 public class GeoConic3D 
-extends GeoConicND implements GeoElement3DInterface, GeoCoordSys2D{
+extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 
 	
 	/** 2D coord sys where the polygon exists */
@@ -380,6 +380,10 @@ extends GeoConicND implements GeoElement3DInterface, GeoCoordSys2D{
 		
 		public void regionChanged(GeoPointND PI) {
 			//TODO
+		}
+		
+		public boolean isRegion() {
+			return false; //TODO
 		}
 
 }

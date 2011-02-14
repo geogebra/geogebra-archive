@@ -356,24 +356,39 @@ public class Manager3D implements Manager3DInterface {
 	 * Cone
 	 */
 	final public GeoQuadric3D Cone(String label, GeoPointND origin, GeoVectorND direction, NumberValue angle) {
-		AlgoCone algo = new AlgoCone(cons, label, (GeoPoint3D) origin, (GeoVector3D) direction, angle);
+		AlgoConePointVectorAngle algo = new AlgoConePointVectorAngle(cons, label, origin, direction, angle);
 		return algo.getQuadric();
 	}
 
-
-
+	final public GeoQuadric3D Cone(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue angle) {
+		AlgoConePointPointAngle algo = new AlgoConePointPointAngle(cons, label, origin, secondPoint, angle);
+		return algo.getQuadric();
+	}
+	
+	final public GeoElement Cone(String label, GeoPointND origin, GeoLineND axis, NumberValue angle){
+		AlgoConePointLineAngle algo = new AlgoConePointLineAngle(cons, label, origin, axis, angle);
+		return algo.getQuadric();
+	}
+	
 	/** 
 	 * Cylinder
 	 */
 	final public GeoQuadric3D Cylinder(String label, GeoPointND origin, GeoVectorND direction, NumberValue r) {
-		AlgoCylinder algo = new AlgoCylinder(cons, label, (GeoPoint3D) origin, (GeoVector3D) direction, r);
+		AlgoCylinderPointVectorRadius algo = new AlgoCylinderPointVectorRadius(cons, label, origin, direction, r);
 		return algo.getQuadric();
 	}
 
 
+	final public GeoQuadric3D Cylinder(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r) {
+		AlgoCylinderPointPointRadius algo = new AlgoCylinderPointPointRadius(cons, label, origin, secondPoint, r);
+		return algo.getQuadric();
+	}
 
 
-
+	final public GeoQuadric3D Cylinder(String label, GeoLineND axis, NumberValue r) {
+		AlgoCylinderAxisRadius algo = new AlgoCylinderAxisRadius(cons, label, axis, r);
+		return algo.getQuadric();
+	}
 
 
 

@@ -65,7 +65,7 @@ public abstract class AlgoPlaneThroughPoint extends AlgoElement3D {
     
     abstract protected GeoElement getSecondInput();
 
-    final public String toString() {
+    public String toString() {
     	return app.getPlain("PlaneThroughAParallelToB",point.getLabel(),getSecondInput().getLabel());
 
     }

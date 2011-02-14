@@ -231,7 +231,7 @@ public abstract class GeoQuadricND extends GeoElement {
 	/**
 	 * turn type of quadric to empty
 	 */
-	final protected void empty() {
+	protected void empty() {
 		type = QUADRIC_EMPTY;
 	}
 	

@@ -1,0 +1,40 @@
+package geogebra3D.kernel3D;
+
+import geogebra.Matrix.Coords;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPointND;
+
+/**
+ * @author ggb3D
+ *
+ */
+public class AlgoConePointLineAngle extends AlgoConePointAngle {
+	
+	/**
+	 * @param c construction
+	 * @param label 
+	 * @param origin 
+	 * @param axis 
+	 * @param angle 
+	 */
+	public AlgoConePointLineAngle(Construction c, String label, GeoPointND origin, GeoLineND axis, NumberValue angle) {
+		super(c,label,origin,(GeoElement) axis,angle);
+	}
+	
+	protected Coords getDirection(){
+		GeoLineND axis = (GeoLineND) getSecondInput();
+		return axis.getPointInD(3, 1).sub(axis.getPointInD(3, 0));
+	}
+	
+    final public String toString() {
+    	return app.getPlain("ConeWithCenterAAxisParallelToBAngleC",getOrigin().getLabel(),getSecondInput().getLabel(),getAngle().getLabel());
+
+    }
+    
+    
+	
+
+}

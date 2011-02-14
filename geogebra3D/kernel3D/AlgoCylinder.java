@@ -1,43 +1,34 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoPointND;
 
 /**
  * @author ggb3D
  *
  */
-public class AlgoCylinder extends AlgoElement3D {
+public abstract class AlgoCylinder extends AlgoElement3D {
 	
 	
 	private GeoQuadric3D cylinder;
-	private GeoPoint3D origin;
-	private GeoVector3D direction;
+	private GeoElement secondInput;
 	private NumberValue r;
 	
+
 	/**
-	 * create a cone, with label.
-	 * @param c construction
-	 * @param label 
-	 */
-	public AlgoCylinder(Construction c, String label, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {
-		this(c,origin, direction, r);
-		cylinder.setLabel(label);
-	}
-	/**
-	 * create a cone
 	 * @param c construction
 	 */
-	public AlgoCylinder(Construction c, GeoPoint3D origin, GeoVector3D direction, NumberValue r) {		
+	public AlgoCylinder(Construction c, GeoElement secondInput, NumberValue r) {		
 		super(c);
 		cylinder = new GeoQuadric3D(c);
-		this.origin = origin;
-		this.direction = direction;
 		this.r = r;
 		
-		setInputOutput(new GeoElement[] {origin,direction,(GeoElement) r}, new GeoElement[] {cylinder});
-		compute();
+		this.secondInput = secondInput;
+		
+
 	}
 	
 	
@@ -45,12 +36,31 @@ public class AlgoCylinder extends AlgoElement3D {
 	public String getClassName() {
 		return "AlgoCylinder";
 	}
+	
 
-	protected void compute() {
 
-		cylinder.setCylinder(origin,direction,r.getDouble());
-		
+	
+	
+	/**
+	 * 
+	 * @return second input
+	 */
+	protected GeoElement getSecondInput(){
+		return secondInput;
 	}
+	
+	/**
+	 * 
+	 * @return radius
+	 */
+	protected GeoElement getRadius(){
+		return (GeoElement) r;
+	}	
+	/**
+	 * 
+	 * @return direction of the axis
+	 */
+	protected abstract Coords getDirection();
 	
 	
 	/**
