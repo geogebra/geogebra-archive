@@ -14,6 +14,8 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.InputDialog;
 import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.util.PopupMenuButton;
+import geogebra.gui.util.SelectionTable;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -28,9 +30,11 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -44,8 +48,11 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -54,7 +61,9 @@ import javax.swing.JToolBar;
 import javax.swing.JViewport;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 
@@ -66,6 +75,10 @@ import javax.swing.table.TableColumn;
  */
 
 public class InspectorView extends InputDialog implements View, MouseListener, ListSelectionListener, KeyListener, ActionListener{
+
+	private static final Color EVEN_ROW_COLOR = new Color(241, 245, 250);
+	private static final Color TABLE_GRID_COLOR = new Color(0xd9d9d9);
+	private static final int minRows = 10;
 
 	// column types
 	private static final int COL_DERIVATIVE = 0;
@@ -102,6 +115,10 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 	private double step = 0.1;
 	private JLabel lblShow;
 	private ArrayList<GeoElement> geoList;
+	private PopupMenuButton btnAddColumn;
+	private ArrayList<GeoElement> showGeo;
+	private ArrayList<String> showName;
+	private PopupMenuButton btnShow;
 
 
 
@@ -125,7 +142,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		geoList = new ArrayList<GeoElement>();
 		createTable();
 		createGUIElements();
-		
+
 
 		// put additional GUI together
 		JPanel cp1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -133,6 +150,8 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		cp1.add(fldStart);
 		cp1.add(lblStep);
 		cp1.add(fldStep);
+		cp1.add(btnAddColumn);
+		cp1.add(btnRemove);
 
 		JPanel cp2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		cp2.add(lblShow);
@@ -140,43 +159,42 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		cp2.add(ckShowX);
 		cp2.add(ckShowY);
 		cp2.add(ckShowOscCircle);
-		
-		
-		
-		//cp2.add(cbShow);
+		//cp2.add(btnShow);
 
-		JPanel cp3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		cp3.add(btnAdd);
-		cp3.add(cbAdd);
-		cp3.add(btnRemove);
 
 
 		controlPanel = new JPanel();
 		controlPanel.setLayout(new BoxLayout(controlPanel,BoxLayout.Y_AXIS));
 		controlPanel.add(cp1);
 		controlPanel.add(cp2);
-		controlPanel.add(cp3);
-
-		
+		//controlPanel.add(cp3);
 		controlPanel.setVisible(false);
-		
+
+		JPanel southPanel = new JPanel(new BorderLayout());
+		southPanel.add(controlPanel,BorderLayout.SOUTH);
+		southPanel.setMinimumSize(controlPanel.getPreferredSize());
+
+//System.out.println();
+
 		JScrollPane scroller = new JScrollPane(table);
-		scroller.setPreferredSize(new Dimension(350,400));
+		scroller.setPreferredSize(table.getPreferredSize());
 
 		JPanel headerPanel = new JPanel(new BorderLayout());
 		headerPanel.add(lblGeoName, BorderLayout.CENTER);
+		headerPanel.setBorder(BorderFactory.createEmptyBorder(2,5,2,2));
 
-
-		JPanel centerPanel = new JPanel(new BorderLayout());
+		JPanel centerPanel = new JPanel(new BorderLayout(5,5));
 		centerPanel.add(headerPanel,BorderLayout.NORTH);
 		centerPanel.add(scroller,BorderLayout.CENTER);
-		centerPanel.add(controlPanel,BorderLayout.SOUTH);
+		centerPanel.add(southPanel,BorderLayout.SOUTH);
 
 		getContentPane().add(centerPanel,BorderLayout.CENTER);
 
+
 		centerOnScreen();
 		setResizable(true);
+		updateFont();
 		app.getKernel().attach(this);
 	}
 
@@ -188,12 +206,14 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 	private void createGUIElements(){
 
 		columnNames = new String[4];
-		columnNames[COL_DERIVATIVE] =	app.getPlain("f'");
-		columnNames[COL_DERIVATIVE2] =	app.getPlain("f''");
+		columnNames[COL_DERIVATIVE] =	app.getPlain("derivative");
+		columnNames[COL_DERIVATIVE2] =	app.getPlain("derivative2");
 		columnNames[COL_CURVATURE] =	app.getPlain("curvature");
 		columnNames[COL_DIFFERENCE] =	app.getPlain("difference");
 
-		lblGeoName = new JLabel();
+		lblGeoName = new JLabel(getTitleString());
+		lblGeoName.setFont(app.getBoldFont());
+
 		lblStep = new JLabel(app.getMenu("Step") + ":");
 		lblStart = new JLabel(app.getMenu("Start") + ":");
 		lblShow = new JLabel(app.getMenu("Show") + ":");
@@ -209,19 +229,15 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		ckShowOscCircle = new JCheckBox(app.getMenu("OsculatingCircle"));
 		ckShowX = new JCheckBox(app.getMenu("Xseg"));
 		ckShowY = new JCheckBox(app.getMenu("Yseg"));
+		ckShowX.setSelected(true);
+		ckShowY.setSelected(true);
+		
+		
 		ckShowTangent.addActionListener(this);
 		ckShowOscCircle.addActionListener(this);
 		ckShowX.addActionListener(this);
 		ckShowY.addActionListener(this);
-				
 
-		cbShow = new JComboBox();
-		cbShow.addItem(app.getMenu("Tangent"));
-		cbShow.addItem(app.getMenu("XLine"));
-		cbShow.addItem(app.getMenu("YLine"));
-		cbShow.addItem(app.getMenu("OsculatingCircle"));
-
-		cbAdd = new JComboBox(columnNames);
 
 		btnAdd = new JButton("\u271A");
 		btnAdd.addActionListener(this);
@@ -229,17 +245,78 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		btnRemove = new JButton("\u2718");
 		btnRemove.addActionListener(this);
 
+		
+		
+		btnAddColumn = new PopupMenuButton(app, columnNames, -1, 1, 
+				new Dimension(0, 12), SelectionTable.MODE_TEXT);
+		
+		btnAddColumn.setKeepVisible(false);
+		btnAddColumn.setStandardButton(true);
+		btnAddColumn.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
+		btnAddColumn.setText("Add Column");
+		btnAddColumn.addActionListener(this);
+
+		buildShowButton();
+
 	}
 
-	
-	
-	
+
+	/** 
+	 * Builds popup button with checkbox menu items to hide/show display geos
+	 */
+	private void buildShowButton(){
+
+		btnShow = new PopupMenuButton();
+		btnShow.setKeepVisible(true);
+		btnShow.setStandardButton(true);
+		btnShow.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
+		btnShow.setText("Show" + "...");
+
+		JCheckBoxMenuItem menuItem;
+		menuItem = new JCheckBoxMenuItem(app.getMenu("XLine"));
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				xSegment.setEuclidianVisible(!xSegment.isEuclidianVisible());
+			}
+		});
+		btnShow.addPopupMenuItem(menuItem);
+		
+		menuItem = new JCheckBoxMenuItem(app.getMenu("YLine"));
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				ySegment.setEuclidianVisible(!ySegment.isEuclidianVisible());
+			}
+		});
+		btnShow.addPopupMenuItem(menuItem);
+		
+		menuItem = new JCheckBoxMenuItem(app.getMenu("Tangent"));
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				tangentLine.setEuclidianVisible(!tangentLine.isEuclidianVisible());
+			}
+		});
+		btnShow.addPopupMenuItem(menuItem);
+		
+		menuItem = new JCheckBoxMenuItem(app.getMenu("OsculatingCircle"));
+		menuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				tangentLine.setEuclidianVisible(!tangentLine.isEuclidianVisible());
+			}
+		});
+		btnShow.addPopupMenuItem(menuItem);
+
+		
+
+	}
+
+
 	//  Create/Setup Table 
 	// =====================================
 
 	private void createTable(){
 
-		table = new JTable(1,2){
+		table = new JTable(minRows,2){
+
 			// disable cell editing
 			@Override
 			public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -255,20 +332,64 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 					((JViewport) p).setBackground(getBackground());
 				}
 			}
+
+			// shade alternate rows
+			private Color rowColor(int row){
+				Color c;
+				if (row % 2 == 0) 
+					c = EVEN_ROW_COLOR;
+				else 
+					c = this.getBackground();
+				return c;
+			}
+
+
+			public Component prepareRenderer(TableCellRenderer renderer,int row, int column) {
+				Component c = super.prepareRenderer(renderer, row, column);
+
+				if (isCellSelected(row, column)) {
+					c.setBackground(getSelectionBackground());
+					c.setForeground(getSelectionForeground());
+				} else {
+					c.setBackground(rowColor(row));
+					c.setForeground(getForeground());
+				}
+				setFont(app.getPlainFont());
+				return c;
+			}
 		};
 
+		int vColIndex = 0;
+		TableColumn col = table.getColumnModel().getColumn(vColIndex);
+		col.setCellRenderer(new MyCellRenderer());
+
 		table.setShowGrid(true);
-		table.setGridColor(MyTable.TABLE_GRID_COLOR);
+		table.setGridColor(TABLE_GRID_COLOR);
 		//table.setAutoCreateColumnsFromModel(false);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-		table.setPreferredScrollableViewportSize(table.getPreferredSize());
+		//table.setPreferredScrollableViewportSize(table.getPreferredSize());
 		table.setBorder(null);
 		table.getSelectionModel().addListSelectionListener(this);
 		table.addKeyListener(this);
 
+		// create list to store column types of dynamically appended columns 
 		extraColumnList = new ArrayList<Integer>();
 
 	}
+
+	public class MyCellRenderer extends DefaultTableCellRenderer  {
+
+		public Component getTableCellRendererComponent(JTable table, Object value, 
+				boolean isSelected, boolean hasFocus, final int row, int column) {
+
+			setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+			setText((String) value);
+			return this;
+
+		}
+
+	}
+
 
 
 	//     Table Update
@@ -369,9 +490,11 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 
 		boolean isFunction = selectedGeo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTION;
 
+		int rowCount = Math.max(minRows, property.size());
 		int columnCount = isFunction ?  2 + extraColumnList.size() : 2;
 
-		model = new DefaultTableModel(property.size(), columnCount);
+		model = new DefaultTableModel(rowCount, columnCount);
+
 		for(int i=0; i < property.size(); i++){
 			model.setValueAt(property.get(i),i,0);
 			model.setValueAt(evaluateToText("\"\"" + value.get(i)),i,1);
@@ -383,28 +506,25 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 
 		table.setModel(model);
 
-		setColumnWidths();
-
 
 		if(isFunction){
-			if(table.getColumnCount() > 0){
-				table.getColumnModel().getColumn(0).setHeaderValue("x");
-				table.getColumnModel().getColumn(1).setHeaderValue("y");
-				for(int i = 0; i < extraColumnList.size() ; i++){				
-					table.getColumnModel().getColumn(i+2).setHeaderValue(columnNames[extraColumnList.get(i)]);
-				}
+
+			table.getColumnModel().getColumn(0).setHeaderValue("x");
+			table.getColumnModel().getColumn(1).setHeaderValue("y");
+			for(int i = 0; i < extraColumnList.size() ; i++){				
+				table.getColumnModel().getColumn(i+2).setHeaderValue(columnNames[extraColumnList.get(i)]);
 
 			}
 			controlPanel.setVisible(true);
 
 		}else{
-			if(table.getColumnCount() > 0){
-				table.getColumnModel().getColumn(0).setHeaderValue(app.getPlain("Property"));
-				table.getColumnModel().getColumn(1).setHeaderValue(app.getPlain("Value"));
-			}
+			table.getColumnModel().getColumn(0).setHeaderValue(app.getPlain("Property"));
+			table.getColumnModel().getColumn(1).setHeaderValue(app.getPlain("Value"));
+
 			controlPanel.setVisible(false);
 		}
 
+		//setColumnWidths();
 	}
 
 
@@ -467,9 +587,13 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 			case COL_DIFFERENCE:
 
 				for(int row=1; row < table.getRowCount(); row++){
-					double prev = Double.parseDouble((String) model.getValueAt(row-1, column -1));
-					double x = Double.parseDouble((String) model.getValueAt(row, column-1));
-					model.setValueAt("" + (x - prev),row,column);
+					if(model.getValueAt(row-1, column -1) != null){
+						double prev = Double.parseDouble((String) model.getValueAt(row-1, column -1));
+						double x = Double.parseDouble((String) model.getValueAt(row, column-1));
+						model.setValueAt("" + (x - prev),row,column);
+					}else{
+						model.setValueAt(null,row,column);
+					}
 				}	
 				break;
 
@@ -481,14 +605,18 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 
 
 
-
-
 	private String getTitleString(){
 
-		String title = selectedGeo.getLongDescriptionHTML(false, true);
-		if (title.length() > 80)
-			title = selectedGeo.getNameDescriptionHTML(false, true);          
+		String title;
 
+		if(selectedGeo == null){
+			title = app.getMenu("SelectObject");
+
+		}else{
+			//	title = selectedGeo.getLongDescriptionHTML(false, true);
+			//	if (title.length() > 80)
+			title = selectedGeo.getNameDescriptionHTML(false, true);          
+		}
 		return title;
 	}
 
@@ -498,8 +626,16 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 
 		int w;
 		for (int i = 0; i < table.getColumnCount(); ++ i) {	
-			w = getMaxColumnWidth(table,i); 
+			w = getMaxColumnWidth(table,i) + 5; 
 			table.getColumnModel().getColumn(i).setPreferredWidth(w);
+		}
+
+		int gap = table.getParent().getPreferredSize().width - table.getPreferredSize().width;
+		System.out.println(table.getParent().getPreferredSize().width);
+		if(gap > 0){
+			w = table.getColumnCount() - 1;
+			int newWidth = gap + table.getColumnModel().getColumn(table.getColumnCount() - 1).getWidth() ;
+			table.getColumnModel().getColumn(w).setPreferredWidth(newWidth);
 		}
 	}
 
@@ -512,7 +648,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		TableColumn tableColumn = table.getColumnModel().getColumn(column); 
 
 		// iterate through the rows and find the preferred width
-		int maxPrefWidth = 0;
+		int maxPrefWidth = tableColumn.getPreferredWidth();
 		int colPrefWidth = 0;
 		for (int row = 0; row < table.getRowCount(); row++) {
 			if(table.getValueAt(row, column)!=null){
@@ -541,6 +677,13 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 			doTextFieldActionPerformed((JTextField)source);
 		}
 
+		
+		else if (source == btnAddColumn) {
+			System.out.println(btnAddColumn.getSelectedIndex() + "=============");
+			addColumn(btnAddColumn.getSelectedIndex());
+		}	
+
+		
 		else if (source == btnAdd) {
 			addColumn(cbAdd.getSelectedIndex());
 		}	
@@ -548,30 +691,30 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		else if (source == btnRemove) {
 			removeColumn();
 		}	
-		
+
 		else if (source == ckShowTangent) {
 			tangentLine.setEuclidianVisible(ckShowTangent.isSelected());
 			tangentLine.updateRepaint();
 		}	
-		
+
 		else if (source == ckShowOscCircle) {
 			oscCircle.setEuclidianVisible(ckShowOscCircle.isSelected());
 			oscCircle.updateRepaint();
 		}	
-		
+
 		else if (source == ckShowX) {
 			xSegment.setEuclidianVisible(ckShowX.isSelected());
 			xSegment.updateRepaint();
 		}	
-		
+
 		else if (source == ckShowY) {
 			ySegment.setEuclidianVisible(ckShowY.isSelected());
 			ySegment.updateRepaint();
 		}	
-		
-		
-		
-		
+
+
+
+
 
 	}	
 
@@ -660,7 +803,9 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		lblGeoName.setText(getTitleString());
 
 		if(selectedGeo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTION){
-			start = -1;
+			
+			start = 0.5* (kernel.getApplication().getEuclidianView().getXmin()-
+			kernel.getApplication().getEuclidianView().getXmin());
 			step = 0.25 * kernel.getApplication().getEuclidianView().getGridDistances()[0];
 			fldStart.removeActionListener(this);
 			fldStep.removeActionListener(this);
@@ -673,9 +818,10 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		}
 
 		populateTableModel();
+		this.pack();
 		//table.changeSelection(0,0, false, false);
-		
-		
+
+
 	}
 
 
@@ -741,6 +887,8 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 			testPoint.remove();
 		String expr = "Point[" + selectedGeo.getLabel() + "]";
 		testPoint = (GeoPoint) createGeoFromString(expr, null, true);
+		testPoint.setObjColor(Color.red);
+		testPoint.setPointSize(4);
 		testPoint.setLabel("testPoint");
 
 		// X segment
@@ -750,7 +898,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		expr = "Segment[" + testPoint.getLabel() + ", (x(" + testPoint.getLabel() + "),0) ]";
 		//Application.debug(expr);
 		xSegment = createGeoFromString(expr, null, true);
-		xSegment.setEuclidianVisible(false);
+		xSegment.setEuclidianVisible(true);
 		xSegment.setObjColor(Color.red);
 		xSegment.setLabel("xSegment");
 
@@ -762,7 +910,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		//Application.debug(expr);
 		ySegment = createGeoFromString(expr, null, true);
 		ySegment.setObjColor(Color.red);
-		ySegment.setEuclidianVisible(false);
+		ySegment.setEuclidianVisible(true);
 		ySegment.setLabel("ySegment");
 
 
@@ -882,7 +1030,7 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 	}
 
 
-	
+
 	private void clearGeoList(){
 		for(GeoElement geo : geoList){
 			if(geo != null)
@@ -891,6 +1039,9 @@ public class InspectorView extends InputDialog implements View, MouseListener, L
 		geoList.clear();
 	}
 
+	public void updateFont(){
+		this.setFont(app.getPlainFont());
+	}
 
 
 }
