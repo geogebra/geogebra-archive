@@ -412,7 +412,9 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		simplifyAndEvalCommands();
 		simplifyLeafs();
 		
-		if (operation == POWER && left.isNumberValue() && ((NumberValue)left).getDouble() == Math.E) {
+		//left instanceof NumberValue needed rather than left.isNumberValue() as left can be an
+		//ExpressionNode, eg Normal[0,1,x]
+		if (operation == POWER && left instanceof NumberValue && ((NumberValue)left).getDouble() == Math.E) {
 			GeoElement geo = kernel.lookupLabel("e");
 			if (geo.needsReplacingInExpressionNode()) {
 				
