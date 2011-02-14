@@ -2684,6 +2684,39 @@ public class Kernel {
 	}
 
 	/** 
+	 * Midpoint of interval
+	 */
+	final public GeoNumeric Midpoint(
+		String label,
+		GeoInterval s) {
+		AlgoIntervalMidpoint algo = new AlgoIntervalMidpoint(cons, label, s);
+		GeoNumeric n = algo.getResult();
+		return n;
+	}
+
+	/** 
+	 * Min of interval
+	 */
+	final public GeoNumeric Min(
+		String label,
+		GeoInterval s) {
+		AlgoIntervalMin algo = new AlgoIntervalMin(cons, label, s);
+		GeoNumeric n = algo.getResult();
+		return n;
+	}
+
+	/** 
+	 * Max of interval
+	 */
+	final public GeoNumeric Max(
+		String label,
+		GeoInterval s) {
+		AlgoIntervalMax algo = new AlgoIntervalMax(cons, label, s);
+		GeoNumeric n = algo.getResult();
+		return n;
+	}
+
+	/** 
 		* LineSegment named label from Point P to Point Q
 		*/
 	final public GeoSegment Segment(

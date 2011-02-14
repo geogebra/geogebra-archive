@@ -1,6 +1,7 @@
 package geogebra.kernel.commands;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoInterval;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
@@ -28,6 +29,11 @@ public class CmdMin extends CommandProcessor {
 				GeoElement[] ret = { 
 						kernel.Min(c.getLabel(),
 						(GeoList) arg[0]) };
+				return ret;
+			} else if (arg[0].isGeoInterval()) {
+				GeoElement[] ret = { 
+						kernel.Min(c.getLabel(),
+						(GeoInterval) arg[0]) };
 				return ret;
 			} else
 				throw argErr(app, c.getName(), arg[0]);

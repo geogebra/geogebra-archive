@@ -70,6 +70,17 @@ public class GeoInterval extends GeoFunction {
 		return toString(false);
 	}
 	
+	double rightBound = Double.NaN;
+	double leftBound = Double.NaN;
+	
+	String rightStr = "", leftStr = "";
+	// directions of inequalities, need one + and one - for an interval
+	int leftDir = 0;
+	int rightDir = 0;
+	char rightInequality = ' ';
+	char leftInequality = ' ';
+
+	
 	public String toString(boolean symbolic) {		
 		
 		// TODO remove this check when parser understands 3 < x < 5 syntax
@@ -86,89 +97,8 @@ public class GeoInterval extends GeoFunction {
 				ExpressionValue right = en.right;
 				
 				if (left.isExpressionNode() && right.isExpressionNode()) {
-					ExpressionNode enLeft = (ExpressionNode)left;
-					ExpressionNode enRight = (ExpressionNode)right;
 					
-					int opLeft = enLeft.operation;
-					int opRight = enRight.operation;
-					
-					ExpressionValue leftLeft = enLeft.left;
-					ExpressionValue leftRight = enLeft.right;
-					ExpressionValue rightLeft = enRight.left;
-					ExpressionValue rightRight = enRight.right;
-					
-					double rightBound = Double.NaN;
-					double leftBound = Double.NaN;
-					
-					String rightStr = "", leftStr = "";
-					// directions of inequalities, need one + and one - for an interval
-					int leftDir = 0;
-					int rightDir = 0;
-					char rightInequality = ' ';
-					char leftInequality = ' ';
-					
-		
-					if ((opLeft == en.LESS || opLeft == en.LESS_EQUAL)) {
-						if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
-							leftDir = -1;
-							rightInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
-							rightBound = ((NumberValue)leftRight).getDouble();
-							rightStr = leftRight.toLaTeXString(true);
-						}
-						else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
-							leftDir = +1;
-							leftInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
-							leftBound = ((NumberValue)leftLeft).getDouble();
-							leftStr = leftLeft.toLaTeXString(true);
-						}
-						
-					} else
-					if ((opLeft == en.GREATER || opLeft == en.GREATER_EQUAL)) {
-						if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
-							leftDir = +1;
-							leftInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
-							leftBound = ((NumberValue)leftRight.evaluate()).getDouble();
-							leftStr = leftRight.toLaTeXString(true);
-						}
-						else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
-							leftDir = -1;
-							rightInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
-							rightBound = ((NumberValue)leftLeft.evaluate()).getDouble();
-							rightStr = leftLeft.toLaTeXString(true);
-						}
-						
-					}
-					
-					if ((opRight == en.LESS || opRight == en.LESS_EQUAL)) {
-						if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
-							rightDir = -1;
-							rightInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
-							rightBound = ((NumberValue)rightRight.evaluate()).getDouble();
-							rightStr = rightRight.toLaTeXString(true);
-						}
-						else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
-							rightDir = +1;
-							leftInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
-							leftBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-							leftStr = rightLeft.toLaTeXString(true);
-						}
-						
-					} else
-					if ((opRight == en.GREATER || opRight == en.GREATER_EQUAL)) {
-						if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
-							rightDir = +1;
-							leftInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
-							leftBound = ((NumberValue)rightRight.evaluate()).getDouble();
-							leftStr = rightRight.toLaTeXString(true);
-						}
-						else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
-							rightDir = -1;
-							rightInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
-							rightBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-							rightStr = rightLeft.toLaTeXString(true);
-						}
-						
-					}
+					updateBoundaries();
 					
 					if (!Double.isNaN(rightBound) && !Double.isNaN(leftBound) && leftBound <= rightBound) {
 						sbToString.setLength(0);
@@ -209,6 +139,118 @@ public class GeoInterval extends GeoFunction {
 	public boolean isEqual(GeoElement geo) {
 		return false;
 	}
+	
+	private void updateBoundaries() {
+		ExpressionNode en = fun.getExpression();
+		if (en.operation == en.AND) {
+			ExpressionValue left = en.left;
+			ExpressionValue right = en.right;
+			ExpressionNode enLeft = (ExpressionNode)left;
+			ExpressionNode enRight = (ExpressionNode)right;
+			
+			int opLeft = enLeft.operation;
+			int opRight = enRight.operation;
+			
+			ExpressionValue leftLeft = enLeft.left;
+			ExpressionValue leftRight = enLeft.right;
+			ExpressionValue rightLeft = enRight.left;
+			ExpressionValue rightRight = enRight.right;
+	
+			if ((opLeft == en.LESS || opLeft == en.LESS_EQUAL)) {
+				if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
+					leftDir = -1;
+					rightInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
+					rightBound = ((NumberValue)leftRight).getDouble();
+					rightStr = leftRight.toLaTeXString(true);
+				}
+				else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
+					leftDir = +1;
+					leftInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
+					leftBound = ((NumberValue)leftLeft).getDouble();
+					leftStr = leftLeft.toLaTeXString(true);
+				}
+				
+			} else
+			if ((opLeft == en.GREATER || opLeft == en.GREATER_EQUAL)) {
+				if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
+					leftDir = +1;
+					leftInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+					leftBound = ((NumberValue)leftRight.evaluate()).getDouble();
+					leftStr = leftRight.toLaTeXString(true);
+				}
+				else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
+					leftDir = -1;
+					rightInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+					rightBound = ((NumberValue)leftLeft.evaluate()).getDouble();
+					rightStr = leftLeft.toLaTeXString(true);
+				}
+				
+			}
+			
+			if ((opRight == en.LESS || opRight == en.LESS_EQUAL)) {
+				if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
+					rightDir = -1;
+					rightInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
+					rightBound = ((NumberValue)rightRight.evaluate()).getDouble();
+					rightStr = rightRight.toLaTeXString(true);
+				}
+				else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
+					rightDir = +1;
+					leftInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
+					leftBound = ((NumberValue)rightLeft.evaluate()).getDouble();
+					leftStr = rightLeft.toLaTeXString(true);
+				}
+				
+			} else
+			if ((opRight == en.GREATER || opRight == en.GREATER_EQUAL)) {
+				if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
+					rightDir = +1;
+					leftInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+					leftBound = ((NumberValue)rightRight.evaluate()).getDouble();
+					leftStr = rightRight.toLaTeXString(true);
+				}
+				else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
+					rightDir = -1;
+					rightInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
+					rightBound = ((NumberValue)rightLeft.evaluate()).getDouble();
+					rightStr = rightLeft.toLaTeXString(true);
+				}
+				
+			}
+		} else {
+			rightBound = Double.NaN;
+			leftBound = Double.NaN;
+		}
+		
+		if (rightBound < leftBound) {
+			rightBound = Double.NaN;
+			leftBound = Double.NaN;			
+		}
+
+	}
+	
+	public double getMin() {
+		updateBoundaries();
+		return leftBound;
+		
+	}
+
+	public double getMax() {
+		updateBoundaries();
+		return rightBound;
+		
+	}
+
+	public double getMidPoint() {
+		updateBoundaries();
+		return (rightBound + leftBound) / 2;
+		
+	}
+	
+	public boolean isGeoInterval() {
+		return true;
+	}
+
 
 
 }

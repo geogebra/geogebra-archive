@@ -5437,4 +5437,8 @@ public abstract class GeoElement
 		needsReplacingInExpressionNode = true;
 	}
 	
+	public boolean isGeoInterval() {
+		return false;
+	}
+	
 }

@@ -30,6 +30,7 @@ import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
+import geogebra.kernel.GeoInterval;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
@@ -452,6 +453,10 @@ class CmdMidpoint extends CommandProcessor {
 			} else if (arg[0].isGeoSegment()) {
 				GeoElement[] ret = { kernel.Midpoint(c.getLabel(),
 						(GeoSegment) arg[0]) };
+				return ret;
+			} else if (arg[0].isGeoInterval()) {
+				GeoElement[] ret = { kernel.Midpoint(c.getLabel(),
+						(GeoInterval) arg[0]) };
 				return ret;
 			} else
 				throw argErr(app, c.getName(), arg[0]);
