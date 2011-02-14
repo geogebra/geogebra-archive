@@ -414,7 +414,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
     
     
 
-	protected boolean movePoint(Coords rwTransVec, Point2D.Double endPosition) {
+	protected boolean movePoint(Coords rwTransVec, Coords endPosition) {
 	
 		boolean movedGeo = false;
 		
