@@ -234,7 +234,7 @@ public final class DrawTextField extends Drawable {
 		
 		GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
 		if (linkedGeo != null) {
-			String text = linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, true);
+			String text = linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 			if (linkedGeo.isGeoText() && text.indexOf("\n") > -1) {
 				// replace linefeed with \\n
 				while (text.indexOf("\n") > -1)
