@@ -12,9 +12,10 @@ the Free Software Foundation.
 
 package geogebra.kernel.arithmetic;
 
-import java.math.BigDecimal;
-
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
+
+import java.math.BigDecimal;
 
 /**
  * MyDouble that returns a certain string in toString(). 
@@ -33,6 +34,8 @@ public class MySpecialDouble extends MyDouble {
 		super(kernel, val);
 		this.kernel = kernel;	
 		
+		Application.debug(strToString+" "+val);
+		
 		// determine precision of strToString
 		
 		if (strToString.indexOf('E') > -1) {
@@ -48,7 +51,7 @@ public class MySpecialDouble extends MyDouble {
 				if (strToString.startsWith("0.")) {
 					precision--; // don't count leading zero
 					int pos = 2; // don't count zeros after decimal point
-					while (strToString.charAt(pos++) == '0') {
+					while (pos < strToString.length() && strToString.charAt(pos++) == '0') {
 						precision--;
 					}
 				}
