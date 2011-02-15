@@ -167,8 +167,14 @@ GeoSegmentND {
 	 */
 	public void calcLength() {			
 		defined = startPoint.isFinite() && endPoint.isFinite();
-		if (defined) length = startPoint.distance(endPoint);
-		else length = Double.NaN;	
+		if (defined) {
+			length = startPoint.distance(endPoint);
+			
+			if (kernel.isZero(length)) length = 0;
+		}
+		else {
+			length = Double.NaN;	
+		}
 	}
 	
 	public double getLength() {
