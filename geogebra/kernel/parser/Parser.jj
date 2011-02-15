@@ -188,7 +188,7 @@ TOKEN :  {
   | < GREATER:	">" >
   | < LESS_EQUAL: ("<=" | "\u2264") >
   | < GREATER_EQUAL: (">=" | "\u2265") >
-  | < INEQUALITY: ( < LESS > | < LESS_EQUAL > | < GREATER_EQUAL > | < GREATER > ) >
+ // | < INEQUALITY: ( < LESS > | < LESS_EQUAL > | < GREATER_EQUAL > | < GREATER > ) >
   | < PARALLEL: "\u2225" >
   | < PERPENDICULAR: "\u22a5" >
   | < EQUAL:    "=" >
@@ -1061,88 +1061,106 @@ ExpressionValue ANDterm():
  */
 ExpressionValue COMPAREterm():
 {
-    ExpressionValue ret, f;
-    Token x;    
+    ExpressionValue left, right;
+    ExpressionNode result;   
+    Vector<ExpressionNode> andList = null; // support multiple comparisons like 3 < x < 7
 }
 {
-    ret = plusminusnode()  
+    left = plusminusnode()  
     (         
-       (<EQUAL_BOOLEAN>  f = plusminusnode()
+       (         (<EQUAL_BOOLEAN>  right = plusminusnode()
     	 {            
     	   if (ExternalCASParsing)
-    	       ret = new ExpressionNode(kernel, new Equation(kernel, ret, f));
+    	       result = new ExpressionNode(kernel, new Equation(kernel, left, right));
     	   else
-           		ret = new ExpressionNode(kernel, ret, ExpressionNode.EQUAL_BOOLEAN, f);  
+           	   result = new ExpressionNode(kernel, left, ExpressionNode.EQUAL_BOOLEAN, right);  
          }
        )   
      |   
-       (<NOT_EQUAL>  f = plusminusnode()
+       (<NOT_EQUAL>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.NOT_EQUAL, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.NOT_EQUAL, right);  
          }
        )   
      |   
-       (<IS_ELEMENT_OF>  f = plusminusnode()
+       (<IS_ELEMENT_OF>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.IS_ELEMENT_OF, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.IS_ELEMENT_OF, right);  
          }
        )   
      |   
-       (<CONTAINS>  f = plusminusnode()
+       (<CONTAINS>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.CONTAINS, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.CONTAINS, right);  
          }
        )   
      |   
-       (<CONTAINS_STRICT>  f = plusminusnode()
+       (<CONTAINS_STRICT>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.CONTAINS_STRICT, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.CONTAINS_STRICT, right);  
          }
        )   
      |   
-       (<SET_DIFFERENCE>  f = plusminusnode()
+       (<SET_DIFFERENCE>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.SET_DIFFERENCE, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.SET_DIFFERENCE, right);  
          }
        )   
      |   
-       (<LESS>  f = plusminusnode()
+       (<LESS>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.LESS, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.LESS, right);  
          }
        ) 
      |
-       (<GREATER>  f = plusminusnode()
+       (<GREATER>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.GREATER, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.GREATER, right);  
          }
        ) 
      |
-       (<LESS_EQUAL>  f = plusminusnode()
+       (<LESS_EQUAL>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.LESS_EQUAL, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.LESS_EQUAL, right);  
          }
        ) 
      |
-       (<GREATER_EQUAL>  f = plusminusnode()
+       (<GREATER_EQUAL>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.GREATER_EQUAL, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.GREATER_EQUAL, right);  
          }
        ) 
       |
-   	    (<PARALLEL>  f = plusminusnode()
+   	    (<PARALLEL>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.PARALLEL, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.PARALLEL, right);  
          }
          ) 
       |
-   	    (<PERPENDICULAR>  f = plusminusnode()
+   	    (<PERPENDICULAR>  right = plusminusnode()
     	 {            
-           ret = new ExpressionNode(kernel, ret, ExpressionNode.PERPENDICULAR, f);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.PERPENDICULAR, right);  
          }
-        )                       
-    )? 
-    { return ret; }  
+        )
+     )                    
+     {
+        // store all AND parts
+        // e.g. 3 < x < 7 should get stored as 3 < x && x < 7
+      	if (andList == null)
+			andList = new Vector<ExpressionNode>();
+		andList.add(result);
+		left = right;
+     }
+    )* 
+    {
+      if (andList != null) {
+  		// build AND ExpressionNode tree, e.g. 3 < x && x < 7
+        left = andList.get(0);
+        for (int i=1; i < andList.size(); i++) {			left = new ExpressionNode(kernel, left, ExpressionNode.AND, andList.get(i));
+        }   
+      }
+      return left;
+    }  
 }
 
 /**
