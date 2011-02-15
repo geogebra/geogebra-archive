@@ -451,7 +451,9 @@ implements GeoPointND, PointProperties, Vector3DValue{
 					;
 				//TODO use path unit and direction
 				getPathParameter().setT(t);
-				getParentAlgorithm().update();
+				getPath().pathChanged(this);
+				getPath().pointChanged(this);
+				//getParentAlgorithm().update();
 			}else if (hasRegion()){
 				/* TODO make this work :)
 				double x = getRegionParameters().getT1() +rwTransVec.getX();
