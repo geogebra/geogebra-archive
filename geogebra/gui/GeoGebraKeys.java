@@ -197,7 +197,7 @@ public class GeoGebraKeys implements KeyListener {
 						insertStr = "\u03b3"; // alt-g -> unicode gamma
 					break;
 				case 'i' :
-					insertStr = "\u221e"; // alt-i -> infinity
+					insertStr = Unicode.IMAGINARY; // alt-i -> infinity
 					break;
 				case 'l' :
 					if (e.isShiftDown())
@@ -231,6 +231,9 @@ public class GeoGebraKeys implements KeyListener {
 						insertStr = "\u0398"; // alt-T -> unicode theta (upper case)
 					else
 						insertStr = "\u03b8"; // alt-t -> unicode theta
+					break;
+				case 'u' :
+					insertStr = Unicode.Infinity+""; // alt-u -> infinity
 					break;
 				case 'w' :
 					if (e.isShiftDown())

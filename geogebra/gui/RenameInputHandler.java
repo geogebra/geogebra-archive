@@ -5,6 +5,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.Unicode;
 
 import java.util.Locale;
 
@@ -21,7 +22,7 @@ public class RenameInputHandler implements InputHandler {
 			"cosh", "sinh", "tanh", "acosh", "arcosh", "arccosh", "asinh",
 			"arcsinh", "atanh", "arctanh", "atan2",
 			"floor", "ceil", "round", "random", "conjugate", "arg",
-			"sec", "csc", "cosec", "cot", "sech", "csch", "coth" };
+			"sec", "csc", "cosec", "cot", "sech", "csch", "coth", Unicode.IMAGINARY };
 
 	public RenameInputHandler(Application app, GeoElement geo, boolean storeUndo) {
 		this.app = app;

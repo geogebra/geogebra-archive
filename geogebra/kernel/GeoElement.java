@@ -383,7 +383,7 @@ public abstract class GeoElement
 	private boolean labelVisible = true;
 	private boolean isConsProtBreakpoint; // in construction protocol
 	private boolean isAlgoMacroOutput; // is an output object of a macro construction
-	private boolean fixed = false;
+	protected boolean fixed = false;
 	public int labelMode = LABEL_NAME;
 	protected int toStringMode = Kernel.COORD_CARTESIAN; // cartesian or polar	  
 	protected Color objColor = Color.black;

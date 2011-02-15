@@ -19,6 +19,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 import geogebra3D.kernel3D.GeoPoint3D;
 
@@ -993,12 +994,24 @@ public class Construction {
 		boolean auxilliary = true;
 		
 		// if referring to variable "i" (complex) that is undefined, create it
-		if (label.equals("i")) {
-			GeoPoint point = new GeoPoint(this);
-			point.setCoords(0.0d, 1.0d, 1.0d);
-			point.setEuclidianVisible(false);
-			point.setComplex();
-			createdGeo = point;
+		if (label.equals("i") || label.equals(Unicode.IMAGINARY)) {
+			
+			GeoElement geo = kernel.lookupLabel(Unicode.IMAGINARY);
+			
+			if (geo != null && geo.isGeoPoint() && ((GeoPoint)geo).isI()) {
+				createdGeo = (GeoPoint)geo;
+			} else {			
+			
+				GeoPoint point = new GeoPoint(this);
+				point.setCoords(0.0d, 1.0d, 1.0d);
+				point.setEuclidianVisible(false);
+				point.setComplex();
+				point.setIsI();
+				createdGeo = point;
+				
+				if (geo == null) label = Unicode.IMAGINARY; // else just leave as "i" if label not free
+				
+			}
 		}
 
 		// if referring to variable "e" (Euler no) that is undefined, create it

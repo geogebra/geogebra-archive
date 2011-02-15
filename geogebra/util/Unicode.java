@@ -33,6 +33,8 @@ public class Unicode {
 	
 	final public static char FEMININE_ORDINAL_INDICATOR = '\u00aa';
 	
+	final public static String IMAGINARY = "\u03af"; // GREEK SMALL LETTER IOTA WITH TONOS
+	
 	/*
 	 * converts an integer to a unicode superscript string (including minus sign)
 	 * eg for use as a power

@@ -31,6 +31,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.geom.Point2D;
@@ -493,7 +494,7 @@ GeoPointND, Animatable, Transformable  {
     
     public final boolean showInAlgebraView() {
         // intersection points
-        return isDefined || showUndefinedInAlgebraView;
+        return (isDefined || showUndefinedInAlgebraView) && !isI;
     }   
     
 	final public boolean isDefined() { 
@@ -949,7 +950,7 @@ GeoPointND, Animatable, Transformable  {
 			sbBuildValueString.append(kernel.format(getInhomX()));
 			sbBuildValueString.append(" ");
 			sbBuildValueString.append(kernel.formatSigned(getInhomY()));
-			sbBuildValueString.append("i");
+			sbBuildValueString.append(Unicode.IMAGINARY);
             break;                                
                         
            default: // CARTESIAN                
@@ -1471,5 +1472,22 @@ GeoPointND, Animatable, Transformable  {
 		final public boolean isCasEvaluableObject() {
 			return true;
 		}
+		
+		// reserved for the constant sqrt(-1)
+		boolean isI = false;
+
+		public boolean isI() {
+			// TODO Auto-generated method stub
+			return isI;
+		}
+		
+		public void setIsI() {
+			isI = true;
+		}
+		
+		public boolean isFixed() {
+			return fixed && !isI;
+		}
+
 
 }
