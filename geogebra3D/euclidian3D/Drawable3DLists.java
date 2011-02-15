@@ -77,7 +77,7 @@ public class Drawable3DLists {
 	
 		//TODO fix it
 		if (drawable!=null)
-			//lists[drawable.getType()].remove(drawable);
+			//Application.debug(drawable.getGeoElement());
 			drawable.removeFromDrawable3DLists(this);
 		
 	}

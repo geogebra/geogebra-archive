@@ -847,6 +847,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		if (waitForUpdate){
 			//drawList3D.updateAll();
 			drawable3DLists.remove(drawable3DListToBeRemoved);
+			drawable3DListToBeRemoved.clear();
 			drawable3DLists.add(drawable3DListToBeAdded);
 			drawable3DListToBeAdded.clear();
 			drawable3DLists.viewChanged();
@@ -1009,6 +1010,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * remove a GeoElement3D from this view
 	 */	
 	public void remove(GeoElement geo) {
+		
+		//Application.printStacktrace("geo:"+geo.getLabel());
 
 		if (geo.hasDrawable3D()){
 			//Drawable3D d = ((GeoElement3DInterface) geo).getDrawable3D();
@@ -1041,6 +1044,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void rename(GeoElement geo) {
 		// TODO Raccord de méthode auto-généré
+
 		
 	}
 
