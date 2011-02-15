@@ -1656,8 +1656,8 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				// right wing
 				int opIDright = opID(right);
 				if (right.isLeaf() || opIDright >= MULTIPLY) { // not +, -
+					boolean showMultiplicationSign = false;
 					if (nounary) {
-						boolean showMultiplicationSign;
 						switch (STRING_TYPE) {
 						case STRING_TYPE_GEOGEBRA_XML:
 						case STRING_TYPE_JASYMCA:
@@ -1665,8 +1665,8 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						case STRING_TYPE_MAXIMA:
 							showMultiplicationSign = true;
 							break;
-
-						default:
+							
+						case STRING_TYPE_LATEX:
 							// check if we need a multiplication sign, see #414
 							// digit-digit, e.g. 3 * 5
 							// digit-fraction, e.g. 3 * \frac{5}{2}
@@ -1674,14 +1674,18 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 							char firstRight = rightStr.charAt(0);
 							showMultiplicationSign = 
 								// left is digit or ends with }, e.g. exponent, fraction
-								( 	Character.isDigit(lastLeft) || 
-									STRING_TYPE == STRING_TYPE_LATEX && lastLeft == '}'
-								)
+								( 	Character.isDigit(lastLeft) || lastLeft == '}' )
 										&&  
 								// right is digit or fraction
-								(	Character.isDigit(firstRight) ||
-									STRING_TYPE == STRING_TYPE_LATEX && rightStr.startsWith("\\frac")	
-								);
+								(	Character.isDigit(firstRight) || rightStr.startsWith("\\frac"));
+							break;
+
+						default: // GeoGebra syntax
+							// check if we need a multiplication sign, see #414
+							// digit-digit, e.g. 3 * 5
+							lastLeft = sb.charAt(sb.length() - 1);
+							firstRight = rightStr.charAt(0);
+							showMultiplicationSign = Character.isDigit(lastLeft) &&  Character.isDigit(firstRight);
 						}
 
 						if (showMultiplicationSign) {
@@ -1695,8 +1699,9 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					// show parentheses around these cases
 					if (rightStr.charAt(0) == '-' // 2 (-5) or -(-5)
 							|| !nounary
-							&& !right.isLeaf()
-							&& opIDright <= DIVIDE) // -(x * a) or -(x / a)
+								&& !right.isLeaf()
+								&& opIDright <= DIVIDE // -(x * a) or -(x / a)
+							|| showMultiplicationSign && STRING_TYPE == STRING_TYPE_GEOGEBRA) // 3 (5)
 					{
 						sb.append(leftBracket(STRING_TYPE));
 						sb.append(rightStr);
@@ -3129,7 +3134,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				return " \\cdot ";
 			
 			case STRING_TYPE_GEOGEBRA:
-				return Unicode.multiplicationDotStr;
+				return " "; // space for multiplication
 				
 			default: 
 				return " * ";

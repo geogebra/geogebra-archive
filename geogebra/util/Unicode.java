@@ -31,8 +31,6 @@ public class Unicode {
 	final public static String PI_STRING = "\u03c0";
 	public static final String alphaBetaGamma = "\u03b1\u03b2\u03b3";	
 	
-	final public static char multiplicationDot =  '\u2219'; // bullet
-	final public static String multiplicationDotStr = multiplicationDot+"";
 	final public static char FEMININE_ORDINAL_INDICATOR = '\u00aa';
 	
 	/*
