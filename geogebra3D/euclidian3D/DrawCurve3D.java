@@ -14,7 +14,7 @@ import geogebra3D.kernel3D.GeoCurveCartesian3D;
  *
  */
 public class DrawCurve3D extends Drawable3DCurves {
-	private final boolean useOldCurves = false;
+	private final boolean useOldCurves = true;
 
 	private CurveMesh mesh;
 	private CurveTree tree;
@@ -129,10 +129,8 @@ public class DrawCurve3D extends Drawable3DCurves {
 
 		boolean ret = true;
 		
-		if(elementHasChanged){
-			elementHasChanged = false;
-			mesh.updateParameters();
-		}
+
+
 		
 		setColors();
 
@@ -144,6 +142,8 @@ public class DrawCurve3D extends Drawable3DCurves {
 			
 			//} else if(needRedraw()){
 			}else{
+				
+
 			
 				needRedraw();
 				tree = new CurveTree(curve, getView3D());
@@ -159,6 +159,12 @@ public class DrawCurve3D extends Drawable3DCurves {
 				setGeometryIndex(brush.end());
 			}
 		} else {
+			
+			if(elementHasChanged){
+				elementHasChanged = false;
+				mesh.updateParameters();
+			}
+			
 			Renderer renderer = getView3D().getRenderer();
 			mesh.setRadius(savedRadius);
 			ret = mesh.optimize();

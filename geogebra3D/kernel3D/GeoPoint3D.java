@@ -304,11 +304,17 @@ implements GeoPointND, PointProperties, Vector3DValue{
     }   
 
     public Coords getInhomCoordsInD(int dimension){
+    	Coords v;
     	switch(dimension){
     	case 3:
-    		return getInhomCoords();
+    		v = new Coords(4);
+    		v.setX(inhom.getX());
+    		v.setY(inhom.getY());
+    		v.setZ(inhom.getZ());
+    		v.setW(1);
+    		return v;
     	case 2:
-    		Coords v = new Coords(2);
+    		v = new Coords(2);
     		v.setX(inhom.getX());
     		v.setY(inhom.getY());
     		return v;
