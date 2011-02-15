@@ -2638,8 +2638,8 @@ public class GuiManager {
 	        if (ret.toLowerCase().indexOf("geogebra") == -1)
 	        	ret="Created with GeoGebra";
 	        
-	        ret = ret.replaceAll("[Gg]eo[Gg]ebra", "<a href=\""+GeoGebra.GEOGEBRA_WEBSITE+"\" target=\"_blank\" >GeoGebra<a/>");
-	        ret = ret.replaceAll("JSXGraph", "<a href=\"http://jsxgraph.org/\" target=\"_blank\" >JSXGraph<a/>");
+	        ret = ret.replaceAll("[Gg]eo[Gg]ebra", "<a href=\""+GeoGebra.GEOGEBRA_WEBSITE+"\" target=\"_blank\" >GeoGebra</a>");
+	        ret = ret.replaceAll("JSXGraph", "<a href=\"http://jsxgraph.org/\" target=\"_blank\" >JSXGraph</a>");
 	        
 	        return ret;
 	    }
