@@ -39,7 +39,7 @@ public class TableSymbols {
 		"\u03C3" ,     //GREEK SMALL LETTER SIGMA
 		"\u03C4" ,     //GREEK SMALL LETTER TAU
 		"\u03C5" ,     //GREEK SMALL LETTER UPSILON
-		"\u03C6" ,     //GREEK SMALL LETTER PHI
+		"\u03D5" ,     //GREEK PHI (TECHNICAL)
 		"\u03C7" ,     //GREEK SMALL LETTER CHI
 		"\u03C8" ,     //GREEK SMALL LETTER PSI
 		"\u03C9" ,     //GREEK SMALL LETTER OMEGA
@@ -109,7 +109,7 @@ public class TableSymbols {
 				{ "\u03C3" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C3"},  //lowercaseGreekSIGMA
 				{ "\u03C4" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C4"},  //lowercaseGreekTAU
 			//	{ "\u03C5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C5"},  //lowercaseGreekUPSILON
-				{ "\u03C6" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C6"},  //lowercaseGreekPHI
+				{ "\u03D5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03D5"},  //lowercaseGreekPHI
 				{ "\u03C7" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C7"},  //lowercaseGreekCHI
 				{ "\u03C8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C8"},  //lowercaseGreekPSI
 				{ "\u03C9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C9"},  //lowercaseGreekOMEGA
@@ -215,7 +215,7 @@ public class TableSymbols {
 	public final static String [] greekLowerCase = {
 		"\u03b1", "\u03b2", "\u03b3", "\u03b4", "\u03b5", "\u03b6", "\u03b7", "\u03b8",
 		"\u03b9", "\u03ba", "\u03bb", "\u03bc", "\u03bd", "\u03be", "\u03bf", "\u03c0", 
-		"\u03c1", "\u03c3", "\u03c4", "\u03c5", "\u03c6", "\u03c7", "\u03c8",
+		"\u03c1", "\u03c3", "\u03c4", "\u03c5", "\u03d5", "\u03c7", "\u03c8",
 		"\u03c9"
 	};
 

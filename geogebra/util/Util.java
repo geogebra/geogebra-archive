@@ -520,8 +520,12 @@ public class Util extends Object {
 			break;
 
 		    case '\u03c6':
-			sbReplaceExp.append("\\phi");
-			break;
+				sbReplaceExp.append("\\phi");
+				break;
+
+		    case '\u03d5':
+				sbReplaceExp.append("\\varphi");
+				break;
 
 		    case '\u03c7':
 			sbReplaceExp.append("\\chi");

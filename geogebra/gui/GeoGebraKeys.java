@@ -188,7 +188,7 @@ public class GeoGebraKeys implements KeyListener {
 					if (e.isShiftDown())
 						insertStr = "\u03a6"; // alt-F -> unicode phi (upper case)
 					else
-						insertStr = "\u03c6"; // alt-f -> unicode phi
+						insertStr = "\u03d5"; // alt-f -> unicode phi
 					break;
 				case 'g' :
 					if (e.isShiftDown())

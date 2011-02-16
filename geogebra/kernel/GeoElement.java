@@ -248,7 +248,7 @@ public abstract class GeoElement
 			'\u03c3',
 			'\u03c4',
 			'\u03c5',
-			'\u03c6',
+			'\u03d5',
 			'\u03c7',
 			'\u03c8',
 			'\u03c9' };
