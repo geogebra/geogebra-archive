@@ -1611,13 +1611,15 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				// break;
 				// }
 
-				// check for degree sign at right
-				else if (rightStr.length() == 2 && rightStr.charAt(1) == Unicode.degreeChar && rightStr.charAt(0) == (app.unicodeZero +1)
+				// check for degree sign or 1degree or degree1 (eg for Arabic)
+				else if ((rightStr.length() == 2 && ((rightStr.charAt(0) == Unicode.degreeChar && rightStr.charAt(1) == (Application.unicodeZero +1)) || (rightStr.charAt(0) == Unicode.degreeChar && rightStr.charAt(1) == (Application.unicodeZero +1))))
 						|| rightStr.equals(Unicode.degree)) {
 					
 					boolean rtl = app.isRightToLeftDigits();
 					
-					if (rtl) sb.append(Unicode.degree);
+					if (rtl) {
+						sb.append(Unicode.degree);
+					}
 					
 					if (!left.isLeaf())
 						sb.append('('); // needed for eg (a+b)\u00b0
@@ -1626,6 +1628,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						sb.append(')'); // needed for eg (a+b)\u00b0
 					
 					if (!rtl) sb.append(Unicode.degree);
+					
 					break;
 				}
 

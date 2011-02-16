@@ -34,8 +34,6 @@ public class MySpecialDouble extends MyDouble {
 		super(kernel, val);
 		this.kernel = kernel;	
 		
-		Application.debug(strToString+" "+val);
-		
 		// determine precision of strToString
 		
 		if (strToString.indexOf('E') > -1) {
