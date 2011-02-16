@@ -24,7 +24,6 @@ public class Unicode {
 	final public static String superscriptMinusOneBracket = "\u207b\u00b9(";
 	final public static char degreeChar = '\u00b0';
 	final public static String degree = degreeChar+"";
-	public static final Object oneDegree = "1"+degreeChar;
 	/** Unicode symbol for e */
 	final public static String EULER_STRING = "\u212f"; // "\u0435";
 	/** Unicode symbol for pi */

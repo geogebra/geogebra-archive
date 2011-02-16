@@ -1510,11 +1510,11 @@ public class Application implements KeyEventDispatcher {
 		return rightToLeftReadingOrder;
 	}
 
-	// For Hebrew and Arabic. 
+	// For Persian and Arabic. 
 	private boolean rightToLeftDigits = false;
 
 	final public boolean isRightToLeftDigits() {
-		return true;//rightToLeftDigits;
+		return rightToLeftDigits;
 	}
 
 	// For eg Hebrew and Arabic. 

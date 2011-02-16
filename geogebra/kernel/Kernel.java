@@ -7671,6 +7671,9 @@ public class Kernel {
 				}		
 				
 				if (angleUnit == ANGLE_DEGREE) {
+					boolean rtl = app.isRightToLeftDigits();
+					if (rtl) sbFormatAngle.append('\u00b0');
+					
 					phi = Math.toDegrees(phi);
 					if (phi < 0) 
 						phi += 360;	
@@ -7682,7 +7685,7 @@ public class Kernel {
 					if (casPrintForm == ExpressionNode.STRING_TYPE_GEOGEBRA_XML) {
 						sbFormatAngle.append("*");
 					}
-					sbFormatAngle.append('\u00b0');
+					if (!rtl) sbFormatAngle.append('\u00b0');
 					return sbFormatAngle;
 				} 
 				else {
