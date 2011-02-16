@@ -411,9 +411,10 @@ ValidExpression buildValidExpression() :
         (l = <SPREADSHEET_LABEL> | l = <LABEL>)  (":" | <ASSIGNMENT> )  ve = equation()        
     |          
         // special case "A: (3,2)" should become a point  
-        // CAS assignment "a := 5" should be supported too                                     
+        // CAS assignment "a := 5" should be supported too
+        // inequalities "a: 3x + 4y < 7" and intervalls "b: 3 < x < 7" can be named too                                  
 	  	LOOKAHEAD(2147483647)  
-	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = expression()   
+	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = cmdexpression()   
 	 |     
         // distingiush <LABEL> = expressionnode()               and  
         //             expressionnode() = expressionnode()      (Equation)
@@ -440,7 +441,7 @@ ValidExpression buildValidExpression() :
         ve = cmdexpression()     
      |	     
         LOOKAHEAD(2147483647)
-        labels = labellist() "=" ve = command()    	  	                                       	                       	 	 
+        labels = labellist() ("=" | <ASSIGNMENT>) ve = command()    	  	                                       	                       	 	 
    	 |
         LOOKAHEAD(2147483647)                               
 	  	ve = cartesianvector_special()

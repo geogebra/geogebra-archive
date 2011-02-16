@@ -1009,21 +1009,25 @@ public class AlgebraProcessor {
 		if (n.isLeaf()) {
 			 ExpressionValue leaf =  n.getLeft();
 			 if (leaf instanceof Command) {			
-				Command c = (Command) n.getLeft();
+				Command c = (Command) leaf;
 				c.setLabels(n.getLabels());
 				return cmdDispatcher.processCommand(c, true);
 			 }
 			 else if (leaf instanceof Equation) {
-				 Equation eqn = (Equation) n.getLeft();
+				 Equation eqn = (Equation) leaf;
 				 eqn.setLabels(n.getLabels());
 				 return processEquation(eqn);
 			 }
 			 else if (leaf instanceof Function) {
-				return processFunction(n, (Function) leaf);			
+				Function fun = (Function) leaf;
+				fun.setLabels(n.getLabels());
+				return processFunction(n, fun);			
 			} 
 			 else if (leaf instanceof FunctionNVar) {
-					return processFunctionNVar(n, (FunctionNVar) leaf);			
-				} 
+				FunctionNVar fun = (FunctionNVar) leaf;
+				fun.setLabels(n.getLabels());
+				return processFunctionNVar(n, fun);			
+			} 
 		}											
 		
 		// ELSE:  resolve variables and evaluate expressionnode		
