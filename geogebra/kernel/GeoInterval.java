@@ -61,9 +61,18 @@ public class GeoInterval extends GeoFunction {
 	public int getGeoClassType() {
 		return GEO_CLASS_INTERVAL;
 	}
+	
+	StringBuilder sbToString2;
 
 	public String toString() {
-		return toString(false);
+		if (sbToString2 == null) sbToString2 = new StringBuilder();
+		else sbToString2.setLength(0);
+		if(isLabelSet()) {
+			sbToString2.append(label);
+			sbToString2.append(": ");
+		}
+		sbToString2.append(toValueString());
+		return sbToString2.toString();
 	}
 
 	public String toValueString() {
