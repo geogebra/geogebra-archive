@@ -629,6 +629,18 @@ Transformable, GeoVectorND {
 
 		return ret;
 	}
+	
+	
+	public boolean hasDrawable3D(){
+		return true;
+	}
+
+	
+	//only used for 3D
+	public void updateStartPointPosition() {
+		
+		
+	}
 
 	
 }

@@ -269,6 +269,20 @@ implements Vector3DValue {
         c.z = a.z + b.z;
     }
     
+    /** c = a + b */
+    final public static void add(Geo3DVec a, GeoVec2D b, Geo3DVec c) {                                       
+        c.x = a.x + b.x;
+        c.y = a.y + b.y;
+        c.z = a.z;
+    } 
+    
+    /** c = a + b */
+    final public static void add(GeoVec2D a, Geo3DVec b, Geo3DVec c) {                                       
+        c.x = a.x + b.x;
+        c.y = a.y + b.y;
+        c.z = b.z;
+    } 
+    
     /** c = Vector (Cross) Product of a and b */
     final public static void vectorProduct(Geo3DVec a, Geo3DVec b, Geo3DVec c) {    
     	// tempX/Y needed because a and c can be the same variable
@@ -386,7 +400,21 @@ implements Vector3DValue {
         c.x = a.x - b.x;
         c.y = a.y - b.y;
         c.z = a.z - b.z;
-    }       
+    }  
+    
+    /** c = a - b */
+    final public static void sub(Geo3DVec a, GeoVec2D b, Geo3DVec c) {
+        c.x = a.x - b.x;
+        c.y = a.y - b.y;
+        c.z = a.z;
+    }   
+    
+    /** c = a - b */
+    final public static void sub(GeoVec2D a, Geo3DVec b, Geo3DVec c) {
+        c.x = a.x - b.x;
+        c.y = a.y - b.y;
+        c.z = -b.z;
+    }    
         
     final public void mult(double b) {
         x = b*x;

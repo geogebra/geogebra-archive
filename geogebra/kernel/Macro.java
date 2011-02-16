@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import geogebra.GeoGebra;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Util;
@@ -195,11 +196,11 @@ public class Macro {
 			 //       these points must be part of the macro construction
 			 if (output[i] instanceof Locateable) {
 				 Locateable loc = (Locateable) output[i];
-				 GeoPoint [] points = (GeoPoint[]) loc.getStartPoints();
+				 GeoPointND [] points = (GeoPointND[]) loc.getStartPoints();
 				 if (points != null) {
 					 for (int k=0; k < points.length; k++) {
-						 outputParents.add(points[k]);
-						 points[k].addPredecessorsToSet(outputParents, false);
+						 outputParents.add((GeoElement) points[k]);
+						 ((GeoElement) points[k]).addPredecessorsToSet(outputParents, false);
 					 }
 				 }
 			 }
@@ -228,7 +229,7 @@ public class Macro {
     	boolean [] isOutputLabeled = new boolean[output.length];
     	String [] inputLabels = new String[input.length];
     	String [] outputLabels = new String[output.length];
-    	GeoPoint[] startPoints = new GeoPoint[input.length];
+    	GeoPointND[] startPoints = new GeoPointND[input.length];
     	for (int i=0; i < input.length; i++) {
     		isInputLabeled[i] = input[i].isLabelSet();
     		if (!isInputLabeled[i]) {

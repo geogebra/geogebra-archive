@@ -28,5 +28,7 @@ public interface GeoVectorND {
 	 */
 	public Coords getCoordsInD(int dimension);
 
+	void updateStartPointPosition();
+
 
 }

@@ -8,6 +8,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Locateable;
+import geogebra.kernel.PathParameter;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
@@ -91,8 +92,9 @@ implements GeoVectorND, Locateable, Vector3DValue{
 
 
 	public GeoElement copy() {
-		// TODO Auto-generated method stub
-		return null;
+		GeoVector3D ret = new GeoVector3D(getConstruction());
+		ret.set(this);
+		return ret;
 	}
 
 
@@ -118,7 +120,16 @@ implements GeoVectorND, Locateable, Vector3DValue{
 
 
 	public void set(GeoElement geo) {
-		// TODO Auto-generated method stub
+		if (geo.isGeoVector()) {
+	    	GeoVectorND v = (GeoVectorND) geo;  
+	    	setCoords(v.getCoordsInD(3).get());
+	    	try {//TODO see GeoVector
+				setStartPoint(v.getStartPoint());
+			} catch (CircularDefinitionException e) {
+				e.printStackTrace();
+			}
+			
+    	}
 
 	}
 

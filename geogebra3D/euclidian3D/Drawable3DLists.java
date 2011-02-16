@@ -25,6 +25,18 @@ public class Drawable3DLists {
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
+		
+		public String toString(){
+			StringBuilder sb = new StringBuilder();
+			for (Drawable3D d: this){
+				sb.append(d);
+				sb.append(" -- ");
+				sb.append(d.getGeoElement().getLabel());
+				sb.append("\n");
+			}
+			return sb.toString();
+				
+		}
 	}
 	
 	/** lists of Drawable3D */
@@ -110,13 +122,16 @@ public class Drawable3DLists {
 	
 	
 	public String toString(){
-		String s="";
+		StringBuilder sb = new StringBuilder();
+
 		for(int i=0; i<Drawable3D.DRAW_TYPE_MAX; i++){
-			for (Iterator<Drawable3D> d = lists[i].iterator(); d.hasNext();) 
-				s+=d.next().getGeoElement()+"\n";	
+			sb.append("list #");
+			sb.append(i);
+			sb.append(":\n");
+			sb.append(lists[i].toString());
 		}
 		
-		return s;
+		return sb.toString();
 	}
 	
 	

@@ -1,18 +1,17 @@
 package geogebra3D.euclidian3D;
 
 
-import java.util.ArrayList;
-
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.CircularDefinitionException;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.GeoSegment3D;
 import geogebra3D.kernel3D.GeoVector3D;
+
+import java.util.ArrayList;
 
 /**
  * Class for drawing vectors
@@ -25,13 +24,13 @@ implements Previewable {
 	
 	/**
 	 * Common constructor
-	 * @param a_view3D
-	 * @param a_vector3D
+	 * @param view3D
+	 * @param vector
 	 */
-	public DrawVector3D(EuclidianView3D a_view3D, GeoVector3D a_vector3D)
+	public DrawVector3D(EuclidianView3D view3D, GeoVectorND vector)
 	{
 		
-		super(a_view3D, a_vector3D);
+		super(view3D, (GeoElement) vector);
 	}
 	
 	/////////////////////////////////////////
@@ -48,7 +47,7 @@ implements Previewable {
 
 		setColors();
 		
-		GeoVector3D geo = ((GeoVector3D) getGeoElement());
+		GeoVectorND geo = ((GeoVectorND) getGeoElement());
 		
 		geo.updateStartPointPosition();
 
@@ -60,8 +59,8 @@ implements Previewable {
 			p1 = new Coords(4);
 			p1.setW(1);
 		}else
-			p1 = geo.getStartPoint().getCoordsInD(3);
-		Coords p2 = (Coords) p1.add(geo.getCoords());
+			p1 = geo.getStartPoint().getInhomCoordsInD(3);
+		Coords p2 = (Coords) p1.add(geo.getCoordsInD(3));
 		
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 

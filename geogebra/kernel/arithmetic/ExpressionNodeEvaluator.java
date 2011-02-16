@@ -323,16 +323,6 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 GeoVec2D.add(vec, ((VectorValue)rt).getVector(), vec);                                         
                 return vec;
             }     
-            // 3D vector + 3D vector
-            /*
-            else if (lt.isVector3DValue() && rt.isVector3DValue()) { 
-                Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
-                Geo3DVec.add(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);
-                
-                Application.printStacktrace("+");
-                return vec3D;
-            }     
-            */
             // vector + number (for complex addition)
             else if (lt.isVectorValue() && rt.isNumberValue()) { 
                 vec = ((VectorValue)lt).getVector();               

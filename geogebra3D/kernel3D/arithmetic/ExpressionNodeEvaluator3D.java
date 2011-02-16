@@ -7,6 +7,7 @@ import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.VectorValue;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra3D.kernel3D.Geo3DVec;
@@ -54,21 +55,41 @@ public class ExpressionNodeEvaluator3D extends ExpressionNodeEvaluator {
          * ARITHMETIC operations
          */ 
         case PLUS:                             
-        	// 3D vector + 3D vector
-        	if (lt.isVector3DValue() && rt.isVector3DValue()) { 
-        		Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
-        		Geo3DVec.add(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);
+        	// 3D vector + 3D vector 
+        	if (lt.isVector3DValue()) { 
+        		if (rt.isVector3DValue()){
+        			Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+        			Geo3DVec.add(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);
+        			return vec3D;
+        		}else if (rt.isVectorValue()){
+        			Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+        			Geo3DVec.add(vec3D, ((VectorValue)rt).getVector(), vec3D);
+        			return vec3D;
+        		}
+        	} else if  (lt.isVectorValue() && rt.isVector3DValue()) { 
+        		Geo3DVec vec3D = ((Vector3DValue)rt).get3DVec();
+        		Geo3DVec.add(((VectorValue)lt).getVector(), vec3D, vec3D);
         		return vec3D;
-	    	}    
+        	}  
         	break;
         	
         case MINUS:
         	// 3D vector - 3D vector
-        	if (lt.isVector3DValue() && rt.isVector3DValue()) { 
-        		Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
-        		Geo3DVec.sub(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);
+        	if (lt.isVector3DValue()) { 
+        		if (rt.isVector3DValue()){
+        			Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+        			Geo3DVec.sub(vec3D, ((Vector3DValue)rt).get3DVec(), vec3D);
+        			return vec3D;
+        		}else if (rt.isVectorValue()){
+        			Geo3DVec vec3D = ((Vector3DValue)lt).get3DVec();
+        			Geo3DVec.sub(vec3D, ((VectorValue)rt).getVector(), vec3D);
+        			return vec3D;
+        		}
+        	} else if  (lt.isVectorValue() && rt.isVector3DValue()) { 
+        		Geo3DVec vec3D = ((Vector3DValue)rt).get3DVec();
+        		Geo3DVec.sub(((VectorValue)lt).getVector(), vec3D, vec3D);
         		return vec3D;
-	    	}    
+        	}  
         	break;
         	
         case MULTIPLY: 

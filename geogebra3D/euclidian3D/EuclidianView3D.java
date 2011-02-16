@@ -24,6 +24,7 @@ import geogebra.kernel.View;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -493,8 +494,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				d = new DrawPoint3D(this, (GeoPointND) geo);
 				break;									
 
+			case GeoElement3D.GEO_CLASS_VECTOR:
 			case GeoElement3D.GEO_CLASS_VECTOR3D:
-				d = new DrawVector3D(this, (GeoVector3D) geo);
+				d = new DrawVector3D(this, (GeoVectorND) geo);
 				break;									
 
 			case GeoElement.GEO_CLASS_SEGMENT:
@@ -846,10 +848,51 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		if (waitForUpdate){
 			//drawList3D.updateAll();
-			drawable3DLists.remove(drawable3DListToBeRemoved);
-			drawable3DListToBeRemoved.clear();
+
+
+			/*
+			if (!drawable3DListToBeAdded.isEmpty()){
+				Application.debug("before add:\n"+drawable3DLists.toString());	
+				StringBuilder sb = new StringBuilder("add:\n");
+				for (Drawable3D d: drawable3DListToBeAdded){
+					sb.append(d);
+					sb.append(" -- ");
+					sb.append(d.getGeoElement().getLabel());
+					sb.append("\n");
+				}
+				Application.debug(sb.toString());
+			}		
+			*/	
 			drawable3DLists.add(drawable3DListToBeAdded);
+			/*
+			if (!drawable3DListToBeAdded.isEmpty())
+				Application.debug("after add:\n"+drawable3DLists.toString());	
+			 */		
 			drawable3DListToBeAdded.clear();
+
+			
+			/*
+			if (!drawable3DListToBeRemoved.isEmpty()){
+				Application.debug("before remove:\n"+drawable3DLists.toString());
+				StringBuilder sb = new StringBuilder("remove:\n");
+				for (Drawable3D d: drawable3DListToBeRemoved){
+					sb.append(d);
+					sb.append(" -- ");
+					sb.append(d.getGeoElement().getLabel());
+					sb.append("\n");
+				}
+				Application.debug(sb.toString());
+			}
+			*/
+			drawable3DLists.remove(drawable3DListToBeRemoved);
+			/*
+			if (!drawable3DListToBeRemoved.isEmpty())
+				Application.debug("after remove:\n"+drawable3DLists.toString());
+			 */
+			drawable3DListToBeRemoved.clear();
+			
+			
+			
 			drawable3DLists.viewChanged();
 			
 			viewChangedOwnDrawables();
