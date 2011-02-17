@@ -77,12 +77,6 @@ public class CASmaxima extends CASgeneric {
 		// convert parsed input to Maxima string
 		String MaximaString = toMaximaString(casInput);
 		
-		// ratsimp() converts decimals into fractions,
-		// remove ratsimp when a decimal is used
-		if (MaximaString.startsWith("ratsimp") && MaximaString.indexOf('.') > -1) {
-			MaximaString = MaximaString.substring(8, MaximaString.length()-1);
-		}
-		
 		// Maxima simplification is turned off by default using simp:false;
 		// We turn it on here using ev(command, simp) when KeepInput is not used
 		if (!casInput.isKeepInputUsed()) {
