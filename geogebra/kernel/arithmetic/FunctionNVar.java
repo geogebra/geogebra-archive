@@ -15,6 +15,7 @@ package geogebra.kernel.arithmetic;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.util.ArrayList;
@@ -556,7 +557,8 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 * @param inverseFill
 	 * @param functional function to which ineqs are associated
 	 */
-	public void initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {
+	public boolean initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {
+		Application.printStacktrace("");
 		if (fe == getExpression())
 			ineqs = new ArrayList<Inequality>();
 		int op = fe.getOperation();
@@ -573,11 +575,14 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 							newIneq.isAboveBorder() ^ inverseFill);
 				ineqs.add(newIneq);
 			}
+			return true;
 		}
-		if (op == ExpressionNode.AND || op == ExpressionNode.OR) {
+		else if (op == ExpressionNode.AND || op == ExpressionNode.OR) {
 			initIneqs(leftTree, inverseFill,functional);
 			initIneqs(rightTree, inverseFill,functional);
+			return true;
 		}
+		else return false;
 
 	}
 

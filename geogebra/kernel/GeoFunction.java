@@ -63,7 +63,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
    // private GeoFunctionConditional parentCondFun = null;
 
 	private List<Inequality> ineqs;
-    
+	private boolean isInequality;    
 	
 	/**
 	 * Creates new function
@@ -93,7 +93,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 	
 	protected String getTypeString() {
-		return "Function";
+		return isInequality?"Inequality":"Function";
 	}
 	
     public int getGeoClassType() {
@@ -110,7 +110,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public GeoElement copy() {
 		return new GeoFunction(this);
 	}
-
+	
 	public void set(GeoElement geo) {
 		Function geoFun = ((GeoFunction) geo).getFunction();
 			
@@ -132,7 +132,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
-		fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
+		isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
 		ineqs = fun.getIneqs();
 	}
 	
@@ -1274,7 +1274,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 */
 	public List<Inequality> getIneqs() {
 		if(ineqs == null){
-			fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
+			isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
 			ineqs = fun.getIneqs();
 		}
 		return ineqs;

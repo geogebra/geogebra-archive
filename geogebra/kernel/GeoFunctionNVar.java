@@ -37,6 +37,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	private static final int SEEK_DENSITY = 30;
 	private FunctionNVar fun;
 	private List<Inequality> ineqs;	
+	private boolean isInequality;
 	private boolean isDefined = true;
 	
 	/** intervals for plotting, may be null (then interval is R) */
@@ -76,7 +77,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	}
 	
 	protected String getTypeString() {
-		return "FunctionNVar";
+		return isInequality ? "Inequality":"FunctionNVar";
 	}
 	
     public int getGeoClassType() {
@@ -93,7 +94,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	public GeoElement copy() {
 		return new GeoFunctionNVar(this);
 	}
-
+	
 	public void set(GeoElement geo) {
 		GeoFunctionNVar geoFun = (GeoFunctionNVar) geo;				
 						
@@ -115,7 +116,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
-		fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
+		isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
 		ineqs = fun.getIneqs();
 	}
 	
@@ -481,7 +482,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		 */
 		public List<Inequality> getIneqs(){
 			if(ineqs == null){
-				fun.initIneqs(fun.getExpression(),isInverseFill(),this);
+				isInequality = fun.initIneqs(fun.getExpression(),isInverseFill(),this);
 				ineqs = fun.getIneqs();
 			}
 			return ineqs;
