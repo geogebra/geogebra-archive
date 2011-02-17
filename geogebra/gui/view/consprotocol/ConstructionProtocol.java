@@ -34,9 +34,6 @@ import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -101,7 +98,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	private TableColumn[] tableColumns;
 	private JDialog thisDialog;
 
-	private AbstractAction printPreviewAction, exportHtmlAction, executeToClipboardAction;
+	private AbstractAction printPreviewAction, exportHtmlAction;
 
 	private boolean useColors, addIcons;
 
@@ -339,7 +336,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		JMenu mFile = new JMenu(app.getMenu("File"));
 		mFile.add(printPreviewAction);
 		mFile.add(exportHtmlAction);
-		mFile.add(executeToClipboardAction);
 
 		mFile.addSeparator();
 
@@ -409,7 +405,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		setJMenuBar(menuBar);
 		updateMenubar();
 	}
-	private StringBuilder sb = new StringBuilder();
+
 	private void initActions() {
 
 		printPreviewAction = new AbstractAction(app.getMenu("Print")
@@ -484,19 +480,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				};
 				runner.start();
 
-				app.setDefaultCursor();
-			}
-		};
-		executeToClipboardAction = new AbstractAction(app.getPlain("ExecuteToClipboard")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				app.setWaitCursor();
-				
-				app.getKernel().getConstruction().toExecuteCommand(sb);
-				Toolkit toolkit = Toolkit.getDefaultToolkit();
-				Clipboard clipboard = toolkit.getSystemClipboard();
-				clipboard.setContents(new StringSelection(sb.toString()), null);
 				app.setDefaultCursor();
 			}
 		};
