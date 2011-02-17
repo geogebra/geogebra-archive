@@ -68,8 +68,14 @@ implements ActionListener {
         // zoom point
         this.px = px;
         this.py = py;
-
-        setTitle("<html>" + app.getPlain("DrawingPad") + "</html>");                                              
+        
+        EuclidianView ev=((EuclidianView)app.getGuiManager().getActiveEuclidianView());
+        if(ev.getEuclidianViewNo()==2){
+        	 setTitle("<html>" + app.getPlain("DrawingPad2") + "</html>");
+        }
+        else{
+        	setTitle("<html>" + app.getPlain("DrawingPad") + "</html>");
+        }
         
         
         addAxesAndGridCheckBoxes();

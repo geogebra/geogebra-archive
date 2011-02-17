@@ -3593,6 +3593,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		}
 	}
 	
+	public int getEuclidianViewNo(){
+		return evNo;
+	}
+	
     	
 	/**
 	 * returns settings in XML format
