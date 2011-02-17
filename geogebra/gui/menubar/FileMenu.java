@@ -1,5 +1,6 @@
 package geogebra.gui.menubar;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.export.GeoGebraTubeExport;
 import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
@@ -295,7 +296,7 @@ class FileMenu extends BaseMenu {
 					public void run() {
 						app.setWaitCursor();
 						// copy drawing pad to the system clipboard
-						Image img = app.getEuclidianView().getExportImage(1d);
+						Image img = ((EuclidianView)app.getGuiManager().getActiveEuclidianView()).getExportImage(1d);
 						ImageSelection imgSel = new ImageSelection(img);
 						Toolkit.getDefaultToolkit().getSystemClipboard()
 								.setContents(imgSel, null);

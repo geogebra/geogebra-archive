@@ -70,7 +70,7 @@ public abstract class GeoGebraExport implements ActionListener{
     	this.app = app;
     	this.kernel = app.getKernel();
     	this.construction = kernel.getConstruction();
-    	this.euclidianView = app.getEuclidianView();
+    	this.euclidianView = ((EuclidianView)this.app.getGuiManager().getActiveEuclidianView());
     	initGui();
     }
 
