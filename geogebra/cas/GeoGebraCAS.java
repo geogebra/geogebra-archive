@@ -276,18 +276,12 @@ public class GeoGebraCAS {
 			return null;
 		
 		String latex = ggbExp.toAssignmentLaTeXString();
-					
-		for (int i=0; i < latex.length(); i++) {
-			char ch = latex.charAt(i);
-			switch (ch) {
-				case '\\':
-				case '^':
-					return latex;
-			}
-		}
 		
-		// no real latex string: return null
-		return null;
+		// render in latex if necessary
+		// eg if contains ^2 or \frac
+		if (Application.isLaTeXneeded(latex)) return latex;
+		else return null;
+					
 	}
 	
 	

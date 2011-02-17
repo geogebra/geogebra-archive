@@ -279,7 +279,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 				// check for \ in LaTeX string (eg \frac)
 				// to decide whether to use LaTeX renderer or not
 				// bit hacky, but easy
-				if ( latexStr.indexOf('\\') > -1 && !(geo.isGeoText() && !((GeoText) geo).isLaTeX())) {
+				if ( Application.isLaTeXneeded(latexStr) && !(geo.isGeoText() && !((GeoText) geo).isLaTeX())) {
 					try {
 						if(geo.isGeoText())
 							isSerif = ((GeoText)geo).isSerifFont();
