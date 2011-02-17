@@ -461,7 +461,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 
 
 	 //will be drawn as a surface if can be interpreted as (x,y)->z function
-	  	public boolean hasDrawable3D() {
+	  	public boolean hasDrawable3D() {  		
 			return fun.getVarNumber()==2;
 		}
 	  	
@@ -473,6 +473,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	    
 		/** to be able to fill it with an alpha value */
 		public boolean isFillable() {
+			if(fun==null)return true;
 			return hasDrawable3D();
 		}
 		

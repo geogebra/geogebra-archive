@@ -1184,8 +1184,14 @@ public abstract class GeoElement
 		objColor = geo.objColor;
 		selColor = geo.selColor;
 		labelColor = geo.labelColor;
-		fillColor = geo.fillColor;
-		alphaValue = geo.alphaValue;
+		if(geo.isFillable()){
+			fillColor = geo.fillColor;
+			alphaValue = geo.alphaValue;
+		}
+		else{
+			fillColor = geo.objColor;			
+			this.setAlphaValue(alphaValue);
+		}
 		bgColor = geo.bgColor;
 		isColorSet = geo.isColorSet();
 		// line thickness and line type:	

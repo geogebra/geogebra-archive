@@ -557,8 +557,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 * @param inverseFill
 	 * @param functional function to which ineqs are associated
 	 */
-	public boolean initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {
-		Application.printStacktrace("");
+	public boolean initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {		
 		if (fe == getExpression())
 			ineqs = new ArrayList<Inequality>();
 		int op = fe.getOperation();
