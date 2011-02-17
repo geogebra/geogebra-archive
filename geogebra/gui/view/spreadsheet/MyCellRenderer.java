@@ -271,12 +271,16 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		}else{
 
 			boolean isSerif = false;
+
 			if (geo.isDefined() && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE) {
 
-				if ( !(geo.isGeoText() && !((GeoText) geo).isLaTeX())
-						&& !geo.isGeoNumeric() && !geo.isGeoList() && !geo.isGeoPoint()) {
+				latexStr = geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
+
+				// check for \ in LaTeX string (eg \frac)
+				// to decide whether to use LaTeX renderer or not
+				// bit hacky, but easy
+				if ( latexStr.indexOf('\\') > -1 && !(geo.isGeoText() && !((GeoText) geo).isLaTeX())) {
 					try {
-						latexStr = geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
 						if(geo.isGeoText())
 							isSerif = ((GeoText)geo).isSerifFont();
 						//System.out.println(latexStr);
