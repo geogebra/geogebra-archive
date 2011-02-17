@@ -482,10 +482,10 @@ public class CASmaxima extends CASgeneric {
 	    // define Degree
 	    ggbMaxima.executeCall("Degree:180/%pi;");
 	    
-	    // access functions for elements of a vector
-	    ggbMaxima.executeCall("x(a) := part(a, 1);");
-	    ggbMaxima.executeCall("y(a) := part(a, 2);");
-	    ggbMaxima.executeCall("z(a) := part(a, 3);");
+	    // access functions for elements of a vector (for the "if" part, see #556)
+	    ggbMaxima.executeCall("x(a) := if listp(a) then part(a, 1) else x*a;");
+	    ggbMaxima.executeCall("y(a) := if listp(a) then part(a, 2) else y*a;");
+	    ggbMaxima.executeCall("z(a) := if listp(a) then part(a, 3) else z*a;");
 	    
 	    //the rref function implemented by Antoine Chambert-Loir
 	    ggbMaxima.executeCall("request_rational_matrix(m, pos, fn) :=  " +
