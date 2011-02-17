@@ -1895,6 +1895,27 @@ public class Construction {
 		kernel.setTranslateCommandName(oldValue);                          
 		
 	}
+	
+	/**
+	 * Returns Execute command that can recreate this construction
+	 * @param sb
+	 */
+	public void toExecuteCommand(StringBuilder sb){
+		int size = ceList.size();
+		sb.setLength(0);
+		sb.append("Execute[{");
+		ConstructionElement ce;
+		for (int i = 0; i < size; ++i) {
+			sb.append(i==0?'"':",\"");
+			ce = (ConstructionElement) ceList.get(i);
+			if(ce.isIndependent()){
+				sb.append(ce.toString().replace("\"", "\"+UnicodeToLetter[34]+\""));
+			}
+			else sb.append(ce.getCommandDescription().replace("\"", "\"+UnicodeToLetter[34]+\""));
+			sb.append('"');
+		}
+		sb.append("}]");
+	}
 
 	/**
 	 * Returns this construction in I2G format. Intergeo File Format.
