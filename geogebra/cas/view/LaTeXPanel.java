@@ -53,7 +53,7 @@ public class LaTeXPanel extends JPanel {
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 							RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		return Drawable.drawEquation(app, null, g2image, 0, 0, latex, getFont(), true, getForeground(), getBackground());	
+		return Drawable.drawEquation(app, null, g2image, 0, 0, latex, getFont(), false, getForeground(), getBackground());	
 	}
 	
 	private boolean ensureImageSize(int width, int height) {
