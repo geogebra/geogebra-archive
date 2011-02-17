@@ -36,7 +36,7 @@ public class GeoGebraTubeExport {
 	/**
 	 * URL of the webpage to call if a file should be uploaded.
 	 */
-	private static final String uploadURL = "http://geogebra-tube/upload";
+	private static final String uploadURL = "http://geogebra-tube/tube/upload";
 	
 	/**
 	 * Application instance.
@@ -62,11 +62,6 @@ public class GeoGebraTubeExport {
 	 * Abort button.
 	 */
 	private JButton abortButton;
-	
-	/**
-	 * Button for opening GeoGebraTube in order to fill in material information.
-	 */
-	private JButton openButton;
 	
 	/**
 	 * Constructs a new instance of the GeoGebraTube exporter.
@@ -179,35 +174,27 @@ public class GeoGebraTubeExport {
 						
 						Application.debug("Upload failed. Response: " + output.toString());
 					} else {
-						statusLabel.setText(app.getPlain("UploadOk"));
-						openButton.setVisible(true);
-						
-						openButton.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent arg0) {
-								app.getGuiManager().showURLinBrowser(uploadURL + "/" + results.getUID());
-								hideDialog();
-							} 
-						});
+						app.getGuiManager().showURLinBrowser(uploadURL + "/" + results.getUID());
+						hideDialog();
 					}
 					
 					progressDialog.pack();
 				} else {
 					Application.debug("Upload failed. Response: #" + responseCode + " - " + responseMessage);
 					
-					statusLabel.setText(app.getPlain("UploadError"));
+					statusLabel.setText(app.getPlain("UploadError", Integer.toString(responseCode)));
 					progressBar.setEnabled(false);
 					progressDialog.pack();
 				}
 			} catch (IOException e) {
-				// TODO take care that this message is just showed in appropriate cases
-				statusLabel.setText(app.getPlain("UploadErrorConnection"));
+				statusLabel.setText(app.getPlain("UploadError", Integer.toString(500)));
 				progressBar.setEnabled(false);
 				progressDialog.pack();
 				
 				Application.debug(e.getMessage());
 			}
 		} catch (IOException e) {
-			statusLabel.setText(app.getPlain("UploadError"));
+			statusLabel.setText(app.getPlain("UploadError", Integer.toString(400)));
 			progressBar.setEnabled(false);
 			progressDialog.pack();
 			
@@ -242,12 +229,8 @@ public class GeoGebraTubeExport {
 			}
 		});
 		
-		openButton = new JButton(app.getPlain("UploadOpen"));
-		openButton.setVisible(false);
-		
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
 		buttonPanel.add(abortButton);
-		buttonPanel.add(openButton);
 		
 		// main panel
 		JPanel panel = new JPanel(new BorderLayout(10, 10));

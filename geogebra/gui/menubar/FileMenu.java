@@ -115,9 +115,9 @@ class FileMenu extends BaseMenu {
 
 		mi = submenu.add(exportPgfAction);
 		mi = submenu.add(exportAsymptoteAction);
-		// End Export SubMenu
 		
-		//mi = submenu.add(exportGeoGebraTubeAction);
+		mi = submenu.add(exportGeoGebraTubeAction);
+		// End Export SubMenu
 
 		// DONE HERE WHEN APPLET
 		if (app.isApplet())
@@ -452,7 +452,7 @@ class FileMenu extends BaseMenu {
 		};
 		
 		exportGeoGebraTubeAction = new AbstractAction(
-				app.getPlain("UploadGeoGebraTube") + " ...", 
+				app.getMenu("UploadGeoGebraTube") + " ...", 
 				app.getEmptyIcon()
 		) {
 			private static final long serialVersionUID = 1L;
