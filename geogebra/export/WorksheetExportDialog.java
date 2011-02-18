@@ -1045,7 +1045,7 @@ public class WorksheetExportDialog extends JDialog {
 //	    }
 //	}
 	
-	private boolean appendBase64(Application app,StringBuilder sb) {
+	public static boolean appendBase64(Application app,StringBuilder sb) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try {
 			app.getXMLio().writeGeoGebraFile(baos, false);

@@ -13,8 +13,9 @@ the Free Software Foundation.
 package geogebra.gui.view.consprotocol;
 
 import geogebra.euclidian.Drawable;
-import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.TitlePanel;
+import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -22,6 +23,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
 import geogebra.util.Util;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -51,6 +53,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -1761,9 +1764,17 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		// footer
 		sb.append(app.getGuiManager().getCreatedWithHTML(false));
+		
+		// append base64 string so that file can be reloaded with File -> Open
+		sb.append("\n<!-- Base64 string so that this file can be opened in GeoGebra with File -> Open -->");
+		sb.append("\n<applet>");
+		sb.append("\n<param name=\"ggbBase64\" value=\"");
+		WorksheetExportDialog.appendBase64(app,sb);
+		sb.append("\">\n<applet>");
 
-		sb.append("</body>\n");
-		sb.append("</html>");
+
+		sb.append("\n</body>");
+		sb.append("\n</html>");
 
 		return sb.toString();
 	}
