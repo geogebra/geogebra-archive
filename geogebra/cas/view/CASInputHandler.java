@@ -840,19 +840,8 @@ public class CASInputHandler {
 			input = input.substring(0, input.length()-1);
 		}
 
-		// replace f(x) = x^2 by f(x) := x^2
-		else if (functionDefinition.matcher(input).matches()) 
-		{
-			input = input.replaceFirst("=", ":=");
-		}
-
 		return input;
 	}
-
-	// f(x) = x^2
-	// should be changed to f(x) := x^2
-	private static Pattern functionDefinition = Pattern.compile("(\\p{L})*\\([\\p{L}&&[^\\)]]*\\)(\\s)*[=].*");
-
 
 	/**
 	 * Processes the CASview input and returns an evaluation result. Note that this method

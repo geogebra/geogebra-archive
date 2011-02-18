@@ -1666,6 +1666,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				int opIDright = opID(right);
 				if (right.isLeaf() || opIDright >= MULTIPLY) { // not +, -
 					boolean showMultiplicationSign = false;
+					boolean multiplicationSpaceNeeded = true;
 					if (nounary) {
 						switch (STRING_TYPE) {
 						case STRING_TYPE_GEOGEBRA_XML:
@@ -1690,16 +1691,21 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 							break;
 
 						default: // GeoGebra syntax
-							// check if we need a multiplication sign, see #414
-							// digit-digit, e.g. 3 * 5
 							lastLeft = sb.charAt(sb.length() - 1);
 							firstRight = rightStr.charAt(0);
+							// check if we need a multiplication sign, see #414
+							// digit-digit, e.g. 3 * 5
 							showMultiplicationSign = Character.isDigit(lastLeft) &&  Character.isDigit(firstRight);
+							// check if we need a multiplication space:
+							// all cases except digit - character, e.g. 3x
+							multiplicationSpaceNeeded = showMultiplicationSign ||
+								!(Character.isDigit(lastLeft) && !Character.isDigit(firstRight));
 						}
 
 						if (showMultiplicationSign) {
 							sb.append(multiplicationSign(STRING_TYPE));
-						} else {
+						} 
+						else if (multiplicationSpaceNeeded) {
 							// space instead of multiplication sign
 							sb.append(multiplicationSpace(STRING_TYPE));
 						}
@@ -1773,7 +1779,8 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				}
 
 				// left wing
-				append(sb, leftStr, left, MULTIPLY, STRING_TYPE); // not +, -
+				// put parantheses around +, -, *
+				append(sb, leftStr, left, DIVIDE, STRING_TYPE); 
 				sb.append(" / ");
 
 				// right wing
@@ -3198,7 +3205,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	}
 
 	/*
-	 * appends a string to sb brackets are put it if the order of operation
+	 * appends a string to sb, brackets are put around it if the order of operation
 	 * dictates
 	 */
 	private void append(StringBuilder sb, String str, ExpressionValue ev,

@@ -515,7 +515,7 @@ ValidExpression buildMathPiperExpression() :
 {         
     (     
 		// try to parse MathPiper string as standard GeoGebra expression 
-    	ve = expressionnode()     	     	   
+    	ve = buildCASExpression()     	     	   
 	)                     
     ( <EOL> | <EOF> )     
     {       	                         
@@ -535,7 +535,7 @@ ValidExpression buildMaximaExpression() :
 {         
     (
     	// try to parse Maxima string as standard GeoGebra expression 
-    	ve = expressionnode() 
+    	ve = buildCASExpression() 
 	)                     
     ( <EOL> | <EOF> )     
     {       	                         
