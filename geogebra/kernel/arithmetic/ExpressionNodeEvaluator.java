@@ -1,7 +1,8 @@
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.AlgoListElement;
+import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoVec2D;
@@ -1641,15 +1642,28 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         * list1(3) to get 3rd element
         */
         case ELEMENT_OF:      
+        	//Application.debug(rt.getClass()+" "+rt.getClass());
             if (rt.isListValue() && lt instanceof GeoList) { 
+            	
+            	Construction cons = kernel.getConstruction();
             	GeoElement subList = ((GeoList)lt);
             	ListValue lv = (ListValue)rt;
-            	for(int i = 0; i < lv.size(); i++){
+            	AlgoListElement[] algos = new AlgoListElement[lv.size()];
+            	GeoElement[] geos = new GeoElement[lv.size()];
+            	
+            	boolean oldLabelStatus = cons.isSuppressLabelsActive();
+            	cons.setSuppressLabelCreation(true);
+            	int i;
+            	// convert list1(1,2) into Element[Element[list1,1],2]
+            	for(i = 0; i < lv.size(); i++){
+            		if (i == lv.size() - 1)	kernel.getConstruction().setSuppressLabelCreation(oldLabelStatus);
+
             		ExpressionValue ev = lv.getMyList().getListElement(i).evaluate();
-            		subList = ((GeoList)subList).get(-1 + (int)((NumberValue)ev).getDouble());
-            		if(!(subList instanceof GeoList)) break;
+            		algos[i] = new AlgoListElement(kernel.getConstruction(), null, i==0 ? (GeoList)subList: (GeoList)geos[i-1], ((NumberValue)ev));
+            		geos[i] = algos[i].getElement();
+            		if(!(geos[i] instanceof GeoList)) break;
             	}
-            	return subList; 
+            	return geos[i]; 
             	
            }else
             

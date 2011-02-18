@@ -42,7 +42,7 @@ public class AlgoListElement extends AlgoElement {
      * @param geoList
      * @param num
      */
-    AlgoListElement(Construction cons, String label, GeoList geoList, NumberValue num) {
+    public AlgoListElement(Construction cons, String label, GeoList geoList, NumberValue num) {
         super(cons);
         this.geoList = geoList;
         this.num = num;
@@ -147,7 +147,7 @@ public class AlgoListElement extends AlgoElement {
      * Returns chosen element
      * @return chosen element
      */
-    GeoElement getElement() {
+    public GeoElement getElement() {
         return element;
     }
 

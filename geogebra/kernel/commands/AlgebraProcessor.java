@@ -1,5 +1,6 @@
 package geogebra.kernel.commands;
 
+import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoAngle;
@@ -26,7 +27,6 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
-import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.MyStringBuffer;
@@ -244,8 +244,10 @@ public class AlgebraProcessor {
 			//throw new Exception(e.getLocalizedMessage());
 			
 			// show error with nice "Show Online Help" box
-			if(allowErrorDialog) // G.Sturr 2010-7-5
+			if(allowErrorDialog) {// G.Sturr 2010-7-5
 				app.showError(e);
+				e.printStackTrace();
+			}
 			else if (throwMyError) throw new MyError(app, e.getLocalizedMessage());
 
 			return null;
@@ -1038,7 +1040,7 @@ public class AlgebraProcessor {
 		ExpressionNode myNode = n;
 		if (myNode.isLeaf()) myNode = myNode.getLeftTree();
 		// leaf (no new label specified): just return the existing GeoElement
-		if (myNode.getOperation() != ExpressionNode.ELEMENT_OF && eval.isGeoElement() &&  n.getLabel() == null) 
+		if (eval.isGeoElement() &&  n.getLabel() == null) 
 		{
 			// take care of spreadsheet $ names: don't loose the wrapper ExpressionNode here
 			// check if we have a Variable 
@@ -1074,7 +1076,15 @@ public class AlgebraProcessor {
 		//we have to process list in case list=matrix1(1), but not when list=list2 
 		else if (eval instanceof GeoList  && myNode.hasOperations()) {
 			return processList(n, ((GeoList) eval).getMyList());
-		}
+		} else if (eval.isGeoElement()) {	
+
+			// e.g. B1 = A1 where A1 is a GeoElement and B1 does not exist yet
+			// create a copy of A1
+				if (n.getLabel() != null || dollarLabelFound) {
+					return processGeoCopy(n.getLabel(), n);	
+				}									
+			} 	
+
 		
 		// REMOVED due to issue 131: http://code.google.com/p/geogebra/issues/detail?id=131
 //		// expressions like 2 a (where a:x + y = 1)
@@ -1086,14 +1096,7 @@ public class AlgebraProcessor {
 //			}
 // 
 //		}
-		
-		// e.g. B1 = A1 where A1 is a GeoElement and B1 does not exist yet
-		// create a copy of A1
-		else if (eval.isGeoElement()) {
-			if (n.getLabel() != null || dollarLabelFound) {
-				return processGeoCopy(n.getLabel(), n);	
-			}									
-		}		
+		 
 		
 		// if we get here, nothing worked
 		Application.debug(
