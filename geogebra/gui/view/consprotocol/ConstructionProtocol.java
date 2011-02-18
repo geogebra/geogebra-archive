@@ -1767,7 +1767,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		
 		// append base64 string so that file can be reloaded with File -> Open
 		sb.append("\n<!-- Base64 string so that this file can be opened in GeoGebra with File -> Open -->");
-		sb.append("\n<applet>");
+		sb.append("\n<applet style=\"display:none\">");
 		sb.append("\n<param name=\"ggbBase64\" value=\"");
 		WorksheetExportDialog.appendBase64(app,sb);
 		sb.append("\">\n<applet>");
