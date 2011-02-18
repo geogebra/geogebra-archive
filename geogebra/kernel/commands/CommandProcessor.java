@@ -9471,7 +9471,7 @@ class CmdZip extends CommandProcessor {
 			cons.setSuppressLabelCreation(true);
 			GeoList gl = (GeoList) resArg(c.getArgument(varPos + 1))[0];
 			cons.setSuppressLabelCreation(oldval);
-			num = gl.get(0).copy();
+			num = gl.get(0).copyInternal(cons);
 
 			cmdCons.addLocalVariable(localVarName, num);
 			// set local variable as our varPos argument
