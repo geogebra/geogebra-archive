@@ -85,7 +85,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements
 				app.getPlain("InsertPictureOfConstruction"));
 		cbDrawingPadPicture.setSelected(true);
 		cbScreenshotPicture = new JCheckBox(
-				app.getPlain("InsertPictureOfAlgebraAndConstruction"));
+				app.getPlain("InsertPictureOfAllOpenViews"));
 		cbScreenshotPicture.setSelected(false);
 
 		picPanel.add(cbDrawingPadPicture, BorderLayout.WEST);
