@@ -333,10 +333,10 @@ KeyListener, ActionListener{
 		btnRemoveColumn.addActionListener(this);
 
 		columnNames = new String[4];
-		columnNames[COL_DERIVATIVE] =	app.getPlain("derivative");
-		columnNames[COL_DERIVATIVE2] =	app.getPlain("derivative2");
-		columnNames[COL_CURVATURE] =	app.getPlain("curvature");
-		columnNames[COL_DIFFERENCE] =	app.getPlain("difference");
+		columnNames[COL_DERIVATIVE] =	app.getPlain("fncInspector.Derivative");
+		columnNames[COL_DERIVATIVE2] =	app.getPlain("fncInspector.Derivative2");
+		columnNames[COL_CURVATURE] =	app.getPlain("fncInspector.Curvature");
+		columnNames[COL_DIFFERENCE] =	app.getPlain("fncInspector.Difference");
 
 		btnAddColumn = new PopupMenuButton(app, columnNames, -1, 1, 
 				new Dimension(0, 18), SelectionTable.MODE_TEXT);
@@ -350,7 +350,7 @@ KeyListener, ActionListener{
 
 	public void setLabels() {
 
-		String[] intervalColumnNames = {app.getPlain("Property"), app.getPlain("Value")};
+		String[] intervalColumnNames = {app.getPlain("fncInspector.Property"), app.getPlain("fncInspector.Value")};
 		modelInterval.setColumnIdentifiers(intervalColumnNames);
 
 		lblStep.setText(app.getMenu("Step") + ":");		
@@ -359,13 +359,18 @@ KeyListener, ActionListener{
 		btnRemoveColumn.setText("\u2718");
 		//btnAddColumn.setText("\u271A");
 
-		tabPanel.setTitleAt(0, app.getMenu("Point"));
-		tabPanel.setTitleAt(1, app.getMenu("Interval"));
+		tabPanel.setTitleAt(0, app.getPlain("fncInspector.Points"));
+		tabPanel.setTitleAt(1, app.getPlain("fncInspector.Interval"));
 
+		//tool tips
 		btnOscCircle.setToolTipText(app.getPlain("fncInspector.showOscCircle"));
 		btnXYSegments.setToolTipText(app.getPlain("fncInspector.showXYLines"));
 		btnTable.setToolTipText(app.getPlain("fncInspector.showTable"));
 		btnTangent.setToolTipText(app.getPlain("fncInspector.showTangent"));
+		btnAddColumn.setToolTipText(app.getPlain("fncInspector.addColumn"));
+		btnRemoveColumn.setToolTipText(app.getPlain("fncInspector.removeColumn"));
+		fldStep.setToolTipText(app.getPlain("fncInspector.step"));
+		lblStep.setToolTipText(app.getPlain("fncInspector.step"));
 
 	}
 
@@ -480,8 +485,7 @@ KeyListener, ActionListener{
 		value.add(nf.format(length));
 
 		property.add(app.getCommand("Root"));
-
-		value.add("Root[" + lbl + "," + xMin + "," + xMax + "]");
+		value.add(evaluateToText("\"\"" + "Root[" + lbl + "," + xMin + "," + xMax + "]"));
 
 
 		int rowCount = Math.max(minRows, property.size());
@@ -489,7 +493,7 @@ KeyListener, ActionListener{
 
 		for(int i=0; i < property.size(); i++){
 			modelInterval.setValueAt(property.get(i),i,0);
-			modelInterval.setValueAt(evaluateToText("\"\"" + value.get(i)),i,1);
+			modelInterval.setValueAt(value.get(i),i,1);
 		}
 
 		//tableInterval.setColumnWidths();
@@ -1002,6 +1006,11 @@ KeyListener, ActionListener{
 		functionInterval.setObjColor(DISPLAY_GEO_COLOR);
 		functionInterval.setLabel("fiFunctionInterval");
 
+		// hide tooltips for these geos
+		for(int i=0; i<geoList.size(); i++){
+			geoList.get(i).setTooltipMode(GeoElement.TOOLTIP_OFF);
+		}	
+		
 		updateTestPoint();
 
 	}
