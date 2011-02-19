@@ -63,7 +63,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	private ImageIcon rollOverIcon = GeoGebraIcon.createSymbolTableIcon(this.getFont(), true);
 	private int iconOffset = 0;
 	private boolean showSymbolTableIcon = false;
-	private DefaultCaret myCaret;
+	private MyCaret myCaret;
 
 
 	private int bracket1pos;
@@ -85,14 +85,13 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 
 	private void initField(){
-
+		myCaret = new MyCaret();
+		setCaret(myCaret);
 		addFocusListener(this);
 		addMouseMotionListener(new MyMouseMotionListener());
 		addMouseListener(new MyMouseListener());
 		setOpaque(true);
-		addCaretListener(this);
-		
-		
+		addCaretListener(this);	
 	}
 
 
@@ -103,10 +102,15 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		repaint();
 	}
 
-	
+
 	public void focusGained(FocusEvent e) {
 		// adjust the icon offset if we are going to have an icon 
 		iconOffset =  (showSymbolTableIcon && hasFocus()) ? 16 : 0;
+		
+		//	TODO: can't remember why the caret position was reset like this,
+		// a trick to keep the Mac OS from selecting the field?
+		thisField.setCaretPosition(thisField.getCaretPosition());
+		
 		thisField.repaint();
 		guiManager.setCurrentTextfield((VirtualKeyboardListener)this, false);
 	}
@@ -173,7 +177,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			public void run() {  
 				setCaretPosition(newPos); 
 			}   
-		});  
+		}); 
+
+		//TODO: tried to keep the Mac OS from auto-selecting the field by resetting the
+		// caret, but not working yet
+		//	setCaret(new DefaultCaret());
+		//	setCaretPosition(newPos); 
 
 	}
 
@@ -338,7 +347,25 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	}
 
 
+	/**
+	 * Custom caret with damage area set to a thin width. 
+	 */
+	class MyCaret extends DefaultCaret {
 
+		public MyCaret(){
+			super();
+			this.setBlinkRate(500);
+		}
+		protected synchronized void damage(Rectangle r){
+			if (r == null) return;
+			x = r.x;
+			y = r.y;
+			width = 4;
+			height = r.height;
+			repaint();
+
+		}
+	}
 
 	/**
 	 * Draws a text string with colored caret brackets and an optional icon on
@@ -346,6 +373,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	 */
 	public void paintComponent(Graphics gr) {
 
+		// draw the text
 		super.paintComponent(gr);
 
 		// prepare for custom drawing
@@ -354,15 +382,16 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		Insets insets = getInsets();
 		int height = getHeight();
 
-		
-		// color the caret brackets
-		this.updateCaretBrackets();
-		if(this.bracket1pos >=0)
-			drawColoredChar(g2,bracket1pos, bracketColor);
-		if(this.bracket2pos >=0)
-			drawColoredChar(g2,bracket2pos, bracketColor);
-	
-		
+
+		// overwrite the caret brackets with colored text 
+		if(thisField.hasFocus()){
+			this.updateCaretBrackets();
+			if(this.bracket1pos >=0)
+				drawColoredChar(g2,bracket1pos, bracketColor);
+			if(this.bracket2pos >=0)
+				drawColoredChar(g2,bracket2pos, bracketColor);
+		}
+
 		// draw the icon
 		if(showSymbolTableIcon && thisField.hasFocus())
 			if(rollOver)
@@ -374,14 +403,14 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	}
 
 
-	
-	
+
+
 	/**
 	 * Overwrites a character at a given position in the text string and
 	 * draws it in the specified color
 	 */
 	private void drawColoredChar(Graphics2D g2, int position, Color c){
-		
+
 		// set font variables
 		FontRenderContext frc = ((Graphics2D) g2).getFontRenderContext();
 		Font font = g2.getFont();
@@ -394,12 +423,12 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 					TextLayout layout = new TextLayout(s, font, frc);
 					g2.setFont(font);
 					float advance = layout.getAdvance();
-					
+
 					//erase the character by drawing it in white
 					g2.setColor(Color.white);
 					g2.setFont(font.deriveFont(Font.BOLD));
 					g2.drawString(s, r.x, r.y + g2.getFontMetrics().getMaxAscent());
-					
+
 					// now draw it in the given color
 					g2.setFont(font);
 					g2.setColor(c);				
@@ -412,10 +441,10 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 		}
 
 	}
-	
-	
-	
-	
+
+
+
+
 
 	/**
 	 * Updates the caret brackets and their color.
@@ -424,7 +453,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 		int caret = getCaretPosition();
 		String text = getText();
-		 
+
 		// if the caret is to the immediate left of a bracket character then this 
 		// bracket and its match (if it exists) will be colored
 
@@ -506,9 +535,9 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 			}
 		}
 
- 		
+
 		// iterate through the text chars to get bracket color
-		
+
 		textMode = false;
 		for (int i = 0 ; i < text.length() ; i++) {
 
@@ -518,7 +547,7 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 				if (bracket2pos > -1) 
 					bracketColor = Color.RED; // matched
 				else 
-					bracketColor = Color.GREEN; // unmatched
+					bracketColor = Color.GREEN.darker();; // unmatched
 			}
 
 			if(textMode || text.charAt(i) == '\"')
@@ -527,5 +556,5 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 
 	}
 
-	
+
 }
