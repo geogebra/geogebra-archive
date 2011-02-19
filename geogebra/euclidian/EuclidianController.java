@@ -15,6 +15,7 @@ package geogebra.euclidian;
 import geogebra.Matrix.Coords;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
+import geogebra.gui.view.spreadsheet.InspectorView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
@@ -2709,6 +2710,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_COMPASSES:
 			changedKernel = compasses(hits);
 			break;
+			
+			
+		case EuclidianView.MODE_FUNCTION_INSPECTOR:
+			changedKernel = functionInspector(hits);
+			break;
 
 		default:
 			// do nothing
@@ -4372,6 +4378,28 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return false;
 	}
 
+	
+	
+	// get a function and open the function inspector
+	final protected boolean functionInspector(Hits hits) {
+		if (hits.isEmpty())
+			return false;
+
+		boolean hitFunction = (addSelectedFunction(hits, 1, false) != 0);
+
+		if(selFunctions() == 1){
+			GeoFunction[] functions = getSelectedFunctions();
+			
+			app.getGuiManager().showFunctionInspector(functions[0]);
+			app.setMoveMode();
+		}
+		
+		
+		return false;
+	}
+	
+	
+	
 	// get two points and create line bisector for them
 	// or get line segment and create line bisector for it
 	final protected boolean lineBisector(Hits hits) {

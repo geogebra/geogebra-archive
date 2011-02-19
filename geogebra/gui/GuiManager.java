@@ -26,6 +26,7 @@ import geogebra.gui.view.algebra.AlgebraController;
 import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
+import geogebra.gui.view.spreadsheet.InspectorView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
@@ -130,6 +131,8 @@ public class GuiManager {
 
 	private Layout layout;
 
+	private InspectorView functionInspector;
+	
 	// Actions
 	private AbstractAction showAxesAction, showGridAction, undoAction,
 			redoAction;	
@@ -748,6 +751,9 @@ public class GuiManager {
 		
 		if(layout.getDockManager() != null)
 			layout.getDockManager().updateFonts();
+		
+		if(functionInspector != null)
+			functionInspector.updateFonts();
 			
 		SwingUtilities.updateComponentTreeUI(app.getMainComponent());			
 	}
@@ -799,6 +805,9 @@ public class GuiManager {
 		if (virtualKeyboard != null)
 			virtualKeyboard.setLabels();
 			
+		if(functionInspector != null)
+			functionInspector.setLabels();
+		
 		layout.getDockManager().setLabels();			
 	}
 
@@ -1172,6 +1181,30 @@ public class GuiManager {
 		
 		app.setDefaultCursor();
 		return ret;
+	}
+	
+	
+	/**
+	 * Shows the function inspector dialog. If none exists, a new inspector is
+	 * created.
+	 */
+	public boolean showFunctionInspector(GeoElement function){
+		boolean success = true;
+
+		try {
+			if(functionInspector == null){
+				 functionInspector = new InspectorView(app,function);
+			}else{
+				functionInspector.insertGeoElement(function);
+			}
+			functionInspector.setVisible(true);
+			 
+		} catch (Exception e) {
+			success = false;
+			e.printStackTrace();
+		}
+		return success;
+
 	}
 
 	public Color showColorChooser(Color currentColor) {

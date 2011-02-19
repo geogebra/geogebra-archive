@@ -496,6 +496,8 @@ public class Toolbar extends JToolBar {
         sb.append(EuclidianView.MODE_RELATION);
         sb.append(" ");
         sb.append(EuclidianView.MODE_PROBABILITY_CALCULATOR);
+        sb.append(" ");
+        sb.append(EuclidianView.MODE_FUNCTION_INSPECTOR);
  
         // objects with actions
         sb.append(" | ");

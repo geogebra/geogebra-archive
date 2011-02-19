@@ -1240,6 +1240,9 @@ public class Kernel {
 			
 		case EuclidianConstants.MODE_PROBABILITY_CALCULATOR:
 			return "ProbabilityCalculator";
+		
+		case EuclidianConstants.MODE_FUNCTION_INSPECTOR:
+			return "FunctionInspector";
 												
 			
 			

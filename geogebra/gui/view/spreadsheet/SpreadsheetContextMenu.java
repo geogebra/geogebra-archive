@@ -75,8 +75,8 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		this.isShiftDown = isShiftDown;
 		
 		if(isShiftDown){
-				InspectorView id = new InspectorView(app);
-				id.setVisible(true);
+			//	InspectorView id = new InspectorView(app);
+			//	id.setVisible(true);
 		}
 		
 		initMenu();
