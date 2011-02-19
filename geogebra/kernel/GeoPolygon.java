@@ -181,6 +181,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * @return number for points
 	 */
 	public int getPointsLength(){
+		if (points==null) //TODO remove this (preview bug)
+			return 0;
 		return points.length;
 	}
 	
