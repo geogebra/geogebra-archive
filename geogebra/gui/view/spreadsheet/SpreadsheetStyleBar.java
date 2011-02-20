@@ -63,10 +63,20 @@ public class SpreadsheetStyleBar extends JToolBar implements ActionListener{
 		btnBgColor.addActionListener(this);
 		add(btnBgColor);
 
+		setLabels();
 
 	}
 
 
+	public void setLabels(){
+		
+		btnBgColor.setToolTipText(app.getPlain("stylebar.BgColor"));
+		leftJustifyBtn.setToolTipText(app.getPlain("stylebar.AlignLeft"));
+		centerJustifyBtn.setToolTipText(app.getPlain("stylebar.AlignCenter"));
+		rightJustifyBtn.setToolTipText(app.getPlain("stylebar.AlignRight"));
+		
+		
+	}
 
 	public void actionPerformed(ActionEvent e) {
 

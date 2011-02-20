@@ -52,7 +52,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private ColorPopupMenuButton btnColor,btnBgColor, btnTextColor;
 	
 	private PopupMenuButton   btnLineStyle, btnPointStyle, btnTextSize, btnMode, 
-		btnTableTextJustify, btnTableTextBracket, btnCaptionStyle, btnPointCapture;
+		btnTableTextJustify, btnTableTextBracket, btnLabelStyle, btnPointCapture;
 	
 	private MyToggleButton btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
     		btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel, 
@@ -299,13 +299,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		
 	//	add(btnPenEraser);
 		//add(btnHideShowLabel);
-		add(btnCaptionStyle);
+		add(btnLabelStyle);
 		add(btnPointCapture);
 	//	add(btnPenDelete);
 			
 		popupBtnList = new PopupMenuButton[]{
 				btnColor, btnBgColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, 
-				btnTableTextJustify, btnTableTextBracket, btnCaptionStyle, btnPointCapture};
+				btnTableTextJustify, btnTableTextBracket, btnLabelStyle, btnPointCapture};
 		
 		toggleBtnList = new MyToggleButton[]{
 				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
@@ -600,7 +600,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		// caption style button
 
 		String[] captionArray = new String[] {
-				app.getPlain("\u00D8"), // index 4
+				app.getPlain("styleBar.Hidden"), // index 4
 				app.getPlain("Name"), // index 0
 				app.getPlain("NameAndValue"), // index 1
 				app.getPlain("Value"), // index 2
@@ -609,7 +609,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		};
 
 
-		btnCaptionStyle = new PopupMenuButton(app, captionArray, -1, 1, 
+		btnLabelStyle = new PopupMenuButton(app, captionArray, -1, 1, 
 				new Dimension(0, iconHeight), SelectionTable.MODE_TEXT){
 
 			@Override
@@ -647,10 +647,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			
 		};	
 		ImageIcon ic = app.getImageIcon("mode_showhidelabel_16.gif");
-		btnCaptionStyle.setIconSize(new Dimension(ic.getIconWidth(),iconHeight));
-		btnCaptionStyle.setIcon(ic);
-		btnCaptionStyle.addActionListener(this);
-		btnCaptionStyle.setKeepVisible(false);
+		btnLabelStyle.setIconSize(new Dimension(ic.getIconWidth(),iconHeight));
+		btnLabelStyle.setIcon(ic);
+		btnLabelStyle.addActionListener(this);
+		btnLabelStyle.setKeepVisible(false);
 		
 		
 		
@@ -757,6 +757,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 								break;
 							}
 						}
+						
+						if(hasFillable)
+							setToolTipText(app.getPlain("stylebar.ColorTransparency"));
+						else
+							setToolTipText(app.getPlain("stylebar.Color"));
+						
 						getMySlider().setVisible(hasFillable);	
 						setSliderValue(Math.round(alpha * 100));
 						
@@ -1299,7 +1305,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			applyHideShowLabel(targetGeos);	
 			updateStyleBar();
 		}
-		else if (source == btnCaptionStyle) {
+		else if (source == btnLabelStyle) {
 			applyCaptionStyle(targetGeos);			
 		}
 		
@@ -1480,11 +1486,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private void applyCaptionStyle(ArrayList<GeoElement> geos) {
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
-			if(btnCaptionStyle.getSelectedIndex() == 0){
+			if(btnLabelStyle.getSelectedIndex() == 0){
 				geo.setLabelVisible(false);
 			}else{
 				geo.setLabelVisible(true);
-				geo.setLabelMode(btnCaptionStyle.getSelectedIndex()-1);
+				geo.setLabelMode(btnLabelStyle.getSelectedIndex()-1);
 			}
 			geo.updateRepaint();
 			needUndo = true;
@@ -1616,8 +1622,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnShowAxes.setToolTipText(app.getPlain("stylebar.Axes"));
 		btnPointCapture.setToolTipText(app.getPlain("stylebar.Capture"));
 		
-		btnCaptionStyle.setToolTipText(app.getPlain("stylebar.Caption"));
-		btnLabel.setToolTipText(app.getPlain("stylebar.Label"));
+		btnLabelStyle.setToolTipText(app.getPlain("stylebar.Label"));
 		
 		btnColor.setToolTipText(app.getPlain("stylebar.Color"));
 		btnBgColor.setToolTipText(app.getPlain("stylebar.BgColor"));
