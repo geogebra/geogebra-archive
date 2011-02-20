@@ -373,9 +373,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	protected DrawableList allDrawableList = new DrawableList();
 	
-	// Michael Borcherds 2008-03-01
 	public static final int MAX_LAYERS = 9;
-	private int MAX_LAYER_USED = 0;
+	
+	// static so the same value is used across multiple EVs 
+	private static int MAX_LAYER_USED = 0;
+	
 	public DrawableList drawLayers[]; 
 
 	// on add: change resetLists()
