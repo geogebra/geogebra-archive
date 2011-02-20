@@ -6,6 +6,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.GeoFunction;
 import geogebra.main.MyError;
 
 /*
@@ -50,6 +51,23 @@ public class CmdMin extends CommandProcessor {
 				
 			}  else
 				throw argErr(app, c.getName(), arg[0]);
+		
+		case 3:		//Min[f,a,b]
+			arg=resArgs(c);
+			if( (ok[0]=arg[0].isGeoFunction()) &&
+			    (ok[1]=arg[1].isNumberValue())     &&
+			    (ok[2]=arg[2].isNumberValue())  )
+			{
+				GeoElement[] ret= {
+						kernel.Min(c.getLabel(),
+						(GeoFunction) arg[0],
+						(NumberValue) arg[1],
+						(NumberValue) arg[2])
+				};//array
+				return ret;
+			}else{
+				throw argErr(app,c.getName(),arg[0]);
+			}//if
 
 		default:
 			throw argNumErr(app, c.getName(), n);
