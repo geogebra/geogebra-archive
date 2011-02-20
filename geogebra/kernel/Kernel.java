@@ -3293,6 +3293,17 @@ public class Kernel {
 		GeoNumeric num = algo.getMin();
 		return num;
 	}
+
+	/**
+	 *  Min[function,left,right]
+	 *  Ulven 20.02.11
+	 *  4.0: Numerical minimum of function in open interval <a,b>
+	 */
+	final public GeoPoint Min(String label, GeoFunction f, NumberValue a, NumberValue b){
+		AlgoFunctionMin algo = new AlgoFunctionMin(cons, label, f, a, b);
+		GeoPoint minpoint = algo.getPoint();
+		return minpoint;
+	}//Min(GeoFunction,a,b)
 	
 	/** 
 	 * Max[a, b]
@@ -3311,6 +3322,17 @@ public class Kernel {
 		GeoNumeric num = algo.getMax();
 		return num;
 	}
+
+	/**
+	 *  Max[function,left,right]
+	 *  Ulven 20.02.11
+	 *  4.0: Numerical maximum of function in open interval <a,b>
+	 */
+	final public GeoPoint Max(String label, GeoFunction f, NumberValue a, NumberValue b){
+		AlgoFunctionMax algo = new AlgoFunctionMax(cons, label, f, a, b);
+		GeoPoint maxpoint = algo.getPoint();
+		return maxpoint;
+	}//Max(GeoFunction,a,b)
 	
 	/** 
 	 * LCM[a, b]
@@ -6646,6 +6668,35 @@ public class Kernel {
 		result[0]=g;
 		return result;
 	}//Extremum(label,geofunction,numbervalue,numbervalue)
+
+	/**
+	* Trying to maximize dependent variable with respect to independen variable
+	* Ulven 2011-2-13
+	*
+	*/
+	final public GeoElement Maximize(String label, GeoElement dep, GeoNumeric indep) {
+		AlgoMaximize algo=new AlgoMaximize(cons,label,dep,indep);
+		/*
+		GeoElement[] geo=new GeoElement[1];
+		geo[0]=algo.getMaximized();	//All variants return array...
+		*/
+		return algo.getResult();//geo;
+	}//Maximize(lbl,dep,indep);	
+	
+	/**
+	* Trying to minimize dependent variable with respect to independen variable
+	* Ulven 2011-2-13
+	*
+	*/
+	final public GeoElement Minimize(String label, GeoElement dep, GeoNumeric indep) {
+		AlgoMinimize algo=new AlgoMinimize(cons,label,dep,indep);	//	true: minimize
+		/*GeoElement geo=algo.getMaximized();	//All variants return array...
+		 * 
+		 */
+		return algo.getResult();
+	}//Minimize(lbl,dep,indep,minimize);
+	
+	
 	
 	/**
 	 * all Turning points of function f (works only for polynomials)
