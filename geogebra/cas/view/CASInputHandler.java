@@ -247,26 +247,44 @@ public class CASInputHandler {
 		// get current row and input text
 		int selRow = consoleTable.getSelectedRow();	
 		if (selRow < 0) selRow = consoleTable.getRowCount() - 1;
-		CASTableCellValue cellValue= consoleTable.getCASTableCellValue(selRow);
+		boolean oneRowOnly=false;
+		int currentRow=selRow;
 
 		int [] selectedIndices = casView.getRowHeader().getSelectedIndices();
+		int nrEquations;
+		int lastRowSelected;
 		if (selectedIndices.length<=1){
 			selectedIndices=new int[1];
-			selectedIndices[0]=selRow;				
+			selectedIndices[0]=selRow;
+			oneRowOnly=true;
+			nrEquations=1;
+			lastRowSelected=selectedIndices[nrEquations-1];
+		} else {
+			nrEquations=selectedIndices.length;
+			currentRow=1+(lastRowSelected=selectedIndices[nrEquations-1]);;
 		}
 
-		if ((cellValue=consoleTable.getCASTableCellValue(selRow))==null)
-			cellValue=consoleTable.createRow();
+		CASTableCellValue cellValue = consoleTable.getCASTableCellValue(currentRow);
+		if (cellValue!=null){
+			if (!cellValue.isEmpty() && !oneRowOnly){
+				cellValue= new CASTableCellValue(casView);
+				consoleTable.insertRowAfter(lastRowSelected, cellValue, true);
+			} 
+		} else {
+			cellValue= new CASTableCellValue(casView);
+			consoleTable.insertRowAfter(lastRowSelected, cellValue, true);
+		}
 
-		int nrEquations=selectedIndices.length;
+		//gets the number of equations
 		for (int i=0;i<selectedIndices.length;i++){
 			String cellText;
-			if (selRow==selectedIndices[i]){
+			CASTableCellValue selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
+			if (selectedIndices[i]==selRow){
 				cellText=consoleTable.getEditor().getInput();
 			} else {
-				CASTableCellValue selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
 				cellText=selCellValue.getInputVE().toString();
 			}
+			cellText=resolveCASrowReferences(cellText, selectedIndices[i], ROW_REFERENCE_STATIC);
 			int depth=0;
 			for (int j=0;j<cellText.length();j++){
 				switch (cellText.charAt(j)){
@@ -284,24 +302,32 @@ public class CASInputHandler {
 			}
 		}
 
+		//generates an array of references (e.g. $1,a,...) and
+		//an array of equations
 		int counter=0;
+		String[] references=new String[nrEquations];
 		String[] equations=new String[nrEquations];
 		for (int i=0;i<selectedIndices.length;i++){
 			CASTableCellValue selCellValue=consoleTable.getCASTableCellValue(selectedIndices[i]);
 			String cellText;
 			String assignedVariable=selCellValue.getAssignmentVariable();
+			boolean inTheSelectedRow= currentRow==selectedIndices[i];
 			if (assignedVariable!=null){
-				equations[counter++]=assignedVariable;
+				references[counter]=assignedVariable;
+				equations[counter++]=resolveCASrowReferences(selCellValue.getInputVE().toString(), selectedIndices[i], ROW_REFERENCE_STATIC);
 			}
 			else{
-				if (selRow==selectedIndices[i]){
+				if (selectedIndices[i]==selRow){
 					cellText=consoleTable.getEditor().getInput();
 				} else {
 					cellText=selCellValue.getInputVE().toString();
 				}
-
-				if (cellText.charAt(0)!='{')
+				cellText=resolveCASrowReferences(cellText, selectedIndices[i], ROW_REFERENCE_STATIC);
+				if (!inTheSelectedRow) references[counter]="$"+(selectedIndices[i]+1);
+				if (!cellText.startsWith("{")){
+					if (inTheSelectedRow) references[counter]=cellText;
 					equations[counter++]=cellText;
+				}
 				else {
 					int depth=0;
 					int leftIndex=1;
@@ -313,12 +339,13 @@ public class CASInputHandler {
 						case '}':
 							depth--;
 							if (depth==0){
+								if (inTheSelectedRow) references[counter]=cellText.substring(leftIndex, j).replaceAll(" ", "");
 								equations[counter++]=cellText.substring(leftIndex, j).replaceAll(" ", "");
-
 							}
 							break;
 						case ',':
 							if (depth==1){
+								if (inTheSelectedRow) references[counter]=cellText.substring(leftIndex, j).replaceAll(" ", "");
 								equations[counter++]=cellText.substring(leftIndex, j).replaceAll(" ", "");
 								leftIndex=j+1;
 							}
@@ -329,30 +356,48 @@ public class CASInputHandler {
 			}
 		}
 
-		//the equation with the variables resolved 
+		//The equations have to be dereferenced further and a CASTableCellValue 
+		//is generated to obtain the parameters (the variables) for the solve function.
 		StringBuilder equationsVariablesResolved=new StringBuilder("{");
 		for (int i=0; i<equations.length; i++){
+			equations[i]=resolveCASrowReferences(equations[i], currentRow, ROW_REFERENCE_DYNAMIC);
+			equations[i]=resolveCASrowReferences(equations[i], currentRow, ROW_REFERENCE_STATIC);
+			CASTableCellValue v=new CASTableCellValue(casView);
+			if (equations[i].startsWith("(")){
+				equations[i]=equations[i].substring(1,equations[i].lastIndexOf(")"));
+			}
+			v.setInput(equations[i]);
+			if (v.getAssignmentVariable()!=null){
+				references[i]=v.getAssignmentVariable();
+			}
+			equations[i]=v.getInputVE().toString();
 			Boolean isVariable=kernel.isCASVariableBound(equations[i]);
 			if (isVariable) {
 				Variable var=new Variable(kernel, equations[i]);
-				equationsVariablesResolved.append(","+var.resolveAsExpressionValue().toValueString());
+				equationsVariablesResolved.append(", "+var.resolveAsExpressionValue().toValueString());
 			} else {
-				equationsVariablesResolved.append(","+equations[i]);
+				equationsVariablesResolved.append(", "+equations[i]);
 			}
 		}
 
 		equationsVariablesResolved.append("}");
 		CASTableCellValue cellToObtainParameters=new CASTableCellValue(casView);
-		cellToObtainParameters.setInput(equationsVariablesResolved.toString().replaceFirst(",", ""));
+
+		String prefix, evalText, postfix;			
+
+		prefix = "";
+		postfix = "";
+
+		cellToObtainParameters.setInput(evalText=equationsVariablesResolved.toString().replaceFirst(", ", ""));
 
 		StringBuilder cellText=new StringBuilder("{");
 		for (int i=0;i<nrEquations;i++){
 			cellText.append(", ");
-			cellText.append(equations[i]);
+			cellText.append(references[i]);
 		}
 		cellText.append("}");
-		String cellTexts=cellText.toString();
-		cellTexts=cellTexts.replaceFirst(", ", "");
+		String cellTextS=cellText.toString();
+		cellTextS=cellTextS.replaceFirst(", ", "");		
 
 		if (params.length==1){
 			if (params[0].indexOf("%0")!=-1){
@@ -367,102 +412,44 @@ public class CASInputHandler {
 		// save the edited value into the table model
 		consoleTable.stopEditing();
 
-		// STANDARD CASE: GeoGebraCAS input
-		// break text into prefix, evalText, postfix
-		String prefix, evalText, postfix;			
-
-		// no selected text: evaluate input using current cell
-		prefix = "";
-		evalText = cellTexts;
-		postfix = "";	
-
-		// resolve static row references and change input field accordingly
-		boolean staticReferenceFound = false;
-		String newPrefix = resolveCASrowReferences(prefix, selRow, ROW_REFERENCE_STATIC);
-		if (!newPrefix.equals(prefix)) {
-			staticReferenceFound = true;
-			prefix = newPrefix;
-		}
-		String newEvalText = resolveCASrowReferences(evalText, selRow, ROW_REFERENCE_STATIC);
-		if (!newEvalText.equals(evalText)) {
-			staticReferenceFound = true;
-			evalText = newEvalText;
-		}
-		String newPostfix = resolveCASrowReferences(postfix, selRow, ROW_REFERENCE_STATIC);
-		if (!newPostfix.equals(postfix)) {
-			staticReferenceFound = true;
-			postfix = newPostfix;
-		}
-		if (staticReferenceFound) {
-			// change input if necessary
-			cellValue.setInput(newPrefix + newEvalText + newPostfix);
-		}
-
 		// FIX common INPUT ERRORS in evalText
 		if ((ggbcmd.equals("Evaluate") || ggbcmd.equals("KeepInput"))) {
-			String fixedInput = fixInputErrors(cellTexts);
-			if (!fixedInput.equals(cellTexts)) {
+			String fixedInput = fixInputErrors(cellTextS);
+			if (!fixedInput.equals(cellTextS)) {
 				evalText = fixedInput;
 			}
-		}
-
-		boolean isAssignment = cellValue.getAssignmentVariable() != null;
-		boolean isEvaluate = ggbcmd.equals("Evaluate");
-		boolean isKeepInput = ggbcmd.equals("KeepInput");
-
-		// assignments are processed immediately, the ggbcmd creates a new row below
-		if (isAssignment) {
-			// tell row that KeepInput was used
-			if (isKeepInput)
-				cellValue.setEvalCommand("KeepInput");
-
-			// evaluate assignment row
-			boolean needInsertRow = !isEvaluate && !isKeepInput;
-			boolean success = processRowsBelowThenEdit(selRow, !needInsertRow);
-
-			// insert a new row below with the assignment label and process it using the current command
-			if (success && needInsertRow) {
-				String assignmentLabel = cellValue.getEvalVE().getLabelForAssignment();
-				CASTableCellValue newRowValue = new CASTableCellValue(casView);
-				newRowValue.setInput(assignmentLabel);
-				consoleTable.insertRow(newRowValue, true);
-				processCurrentRow(ggbcmd, params);
-			}
-
-			return;
 		}
 
 		// standard case: build eval command
 		String paramString = null;
 		//CASTableCellValue cellValueTmp=cellValue;
-		cellValue.setInput(cellTexts);
-		if (!isEvaluate) {
-			// prepare evalText as ggbcmd[ evalText, parameters ... ]
-			StringBuilder sb = new StringBuilder();
-			sb.append(ggbcmd);
-			sb.append("[");
-			sb.append(evalText);
-			sb.append(", {");
-			if (params != null) {
-				StringBuilder paramSB = new StringBuilder();
-				for (int i=0; i < params.length; i++) {
-					paramSB.append(", ");
-					paramSB.append(resolveButtonParameter(params[i], cellToObtainParameters));
-				}
-				paramString = paramSB.substring(2);
-				sb.append(paramSB.substring(2));
-				sb.append("}");
+		cellValue.setInput(cellTextS);
+
+		// prepare evalText as ggbcmd[ evalText, parameters ... ]
+		StringBuilder sb = new StringBuilder();
+		sb.append(ggbcmd);
+		sb.append("[");
+		sb.append(cellTextS);
+		sb.append(", {");
+		if (params != null) {
+			StringBuilder paramSB = new StringBuilder();
+			for (int i=0; i < params.length; i++) {
+				paramSB.append(", ");
+				paramSB.append(resolveButtonParameter(params[i], cellToObtainParameters));
 			}
-			sb.append("]");
-			evalText = sb.toString();	
+			paramString = paramSB.substring(2);
+			sb.append(paramSB.substring(2));
+			sb.append("}");
 		}
+		sb.append("]");
+		evalText = sb.toString();	
 
 		// remember evalText and selection for future calls of processRow()
 		cellValue.setProcessingInformation(prefix, evalText, postfix);
 		cellValue.setEvalComment(paramString);
 
 		// process given row and below, then start editing
-		processRowsBelowThenEdit(selRow, true);
+		processRowsBelowThenEdit(currentRow, true);
 	}
 
 	/**
@@ -730,8 +717,7 @@ public class CASInputHandler {
 							sb.append(')');
 						}
 			}
-
-			int len = (int) Math.ceil(Math.log(delimInfo[1] + 1.1)); // in the String, row-refs aren't 0-based!
+			int len = (int) Math.ceil(Math.log10(delimInfo[1] + 1.1)); // in the String, row-refs aren't 0-based!
 
 			// keep end character after reference
 			if (!Character.isDigit(endCharacter) && endCharacter != delimiter)
@@ -766,18 +752,23 @@ public class CASInputHandler {
 
 		CASTableCellValue v = (CASTableCellValue) consoleTable.getValueAt(currentRow, CASTable.COL_CAS_CELLS);
 		String inputExp = v.getInternalInput();
-		if (inputExp == null || inputExp.length() == 0) {
-			return;
+		String evalText = v.getEvalText();
+		String evalComm = v.getEvalComment();
+		String [] toUpdate={inputExp,evalText,evalComm};
+		
+		for (int i=0;i<toUpdate.length;i++){
+		if (toUpdate[i] == null || toUpdate[i].length() == 0) {
+			continue;
 		}
 
 		StringBuilder sb = new StringBuilder();
 		int startPos = 0;
-		int[] delimInfo = getNextDelimiter(inputExp, currentRow, startPos, delimiter);
+		int[] delimInfo = getNextDelimiter(toUpdate[i], currentRow, startPos, delimiter);
 		while (delimInfo != null)
 		{
 			int rowRef = delimInfo[1];
 			char endCharacter = (char)delimInfo[2];
-			sb.append(inputExp.substring(startPos, delimInfo[0]-1));
+			sb.append(toUpdate[i].substring(startPos, delimInfo[0]-1));
 
 			// note: the references in input strings start at 1, but rowRef is 0-based!
 			sb.append(delimiter);
@@ -790,7 +781,7 @@ public class CASInputHandler {
 			else
 				sb.append(rowRef+1);
 
-			int len = (int) Math.ceil(Math.log(delimInfo[1] + 1.1));
+			int len = (int) Math.ceil(Math.log10(delimInfo[1] + 1.1));
 
 			// keep end character after reference
 			if (!Character.isDigit(endCharacter))
@@ -799,12 +790,19 @@ public class CASInputHandler {
 				++len;
 			}
 			startPos = delimInfo[0] + len;
-			delimInfo = getNextDelimiter(inputExp, currentRow, startPos, delimiter);
+			delimInfo = getNextDelimiter(toUpdate[i], currentRow, startPos, delimiter);
 		}
-		if (startPos < inputExp.length())
-			sb.append(inputExp.substring(startPos));
+		if (startPos < toUpdate[i].length())
+			sb.append(toUpdate[i].substring(startPos));
 		String result = sb.toString();
-		v.setInput(result);
+		switch  (i){
+		case 0:		v.setInput(result);
+		break;
+		case 1: v.setProcessingInformation("", result, "");
+		break;
+		case 2: v.setEvalComment(result);
+		}
+		}
 	}
 
 
