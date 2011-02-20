@@ -128,6 +128,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private String initialFilePath; 
 	private int initialBrowserMode = DEFAULT_MODE;
 
+	private int prevMode = -1;
+
 
 	/**
 	 * Construct spreadsheet view as a split panel. 
@@ -401,6 +403,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	/** Respond to changes in Euclidean mode sent by GUI manager */
 	public void setMode(int mode){
 
+		
 		if(isTraceDialogVisible()){
 			traceDialog.toolbarModeChanged(mode);
 		}
@@ -422,15 +425,16 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
 
-			if(!app.getSelectedGeos().isEmpty()){
+			if(!app.getSelectedGeos().isEmpty() && prevMode == mode){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LIST);
 				id.setVisible(true);
+				
 			}
 			break;
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LISTOFPOINTS:
-			if(table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
+			if(prevMode == mode && table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LISTOFPOINTS);
 				id.setVisible(true);}
 
@@ -438,7 +442,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_MATRIX:
-			if(table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
+			if (prevMode == mode && table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_MATRIX);
 				id.setVisible(true);
 			}
@@ -446,21 +450,24 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_TABLETEXT:
-			if(table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
+			if(prevMode == mode && table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
 				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_TABLETEXT);
 				id.setVisible(true);
 			}
 			break;
-
-
-
-
-
+			
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_POLYLINE:
+			if(prevMode == mode && table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
+				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_POLYLINE);
+				id.setVisible(true);
+			}
+			break;
 
 		default:
 			// ignore other modes
 		}				
 
+		prevMode  = mode;
 
 	}
 

@@ -2,24 +2,21 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.InputDialog;
 import geogebra.gui.TextPreviewPanel;
-import geogebra.gui.util.SpringUtilities;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoList;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
+import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -28,8 +25,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -50,8 +45,8 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 	private MyTable table;
 
 	public static final int TYPE_LIST = 0;
-	public static final int TYPE_LISTOFPOINTS = 1;
-	public static final int TYPE_MATRIX = 2;
+	public static final int TYPE_MATRIX = 1;
+	public static final int TYPE_LISTOFPOINTS = 2;
 	public static final int TYPE_TABLETEXT = 3;
 	public static final int TYPE_POLYLINE = 4;
 	private int objectType = TYPE_LIST;
@@ -62,7 +57,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 	private JCheckBox ckValue, ckObject, ckSort, ckTranspose;
 	private JRadioButton rbOrderNone, rbOrderRow,rbOrderCol, rbOrderSortAZ, rbOrderSortZA;
-	private JComboBox cbOrder, cbTake;
+	private JComboBox cbScanOrder, cbTake;
 
 	private boolean isIniting = true;
 	private JPanel optionsPanel;
@@ -76,6 +71,10 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 	private JTextField fldType;
 
 	private String title;
+
+	private boolean keepNewGeo = false;
+	private JComboBox cbLeftRightOrder;
+	private JPanel cards;
 
 
 
@@ -98,18 +97,19 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 		createAdditionalGUI();
 
-		isIniting = false;
 		updateGUI();
+
+		isIniting = false;
 		setLabels(null);
 		setTitle((String) model.getElementAt(objectType));
 
 		//optionPane.add(inputPanel, BorderLayout.CENTER);	
 		typeList.setSelectedIndex(objectType);
 		//setResizable(true);
-		centerOnScreen();
-
-
+		centerOnScreen();	
+		btCancel.requestFocus();
 	}
+
 
 	private void createAdditionalGUI(){
 
@@ -131,10 +131,16 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		});
 
 
+
+
 		lblTake = new JLabel();
-		cbOrder = new JComboBox();
+		cbScanOrder = new JComboBox();
+		cbScanOrder.addActionListener(this);
 		lblOrder = new JLabel();
 		cbTake = new JComboBox();
+
+		cbLeftRightOrder = new JComboBox();
+		cbLeftRightOrder.addActionListener(this);
 
 
 		ckObject = new JCheckBox();
@@ -142,115 +148,129 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		ckObject.setSelected(true);
 
 		lblXYOrder = new JLabel();
-		
+
 		ckSort = new JCheckBox();	
 		ckSort.setSelected(false);
 
 		ckTranspose = new JCheckBox();
 		ckTranspose.setSelected(false);
+		ckTranspose.addActionListener(this);
 
-		typePanel = new JPanel(new BorderLayout());
-		//typePanel.add(typeList, BorderLayout.WEST);	
-		typeList.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-		typePanel.setBorder(BorderFactory.createEtchedBorder());
+		// show the object list only if an object type is not given
+		if(objectType <0){
+			objectType = TYPE_LIST;
+			typePanel = new JPanel(new BorderLayout());
+			typePanel.add(typeList, BorderLayout.WEST);	
+			typeList.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
+			typePanel.setBorder(BorderFactory.createEtchedBorder());		
+			optionPane.add(typePanel, BorderLayout.WEST);
+		}
 
-		//optionPane.add(typePanel, BorderLayout.WEST);
-		
 		JPanel op = new JPanel(new BorderLayout());
 		op.add(buildOptionsPanel(), BorderLayout.NORTH);
 		optionPane.add(op, BorderLayout.CENTER);
-		
-		
-		
-		
+
 	}
 
 
 	private JPanel buildOptionsPanel() {
-		JPanel p = new JPanel();
-		int rows = 1;
-		p.removeAll();
 
-		p.add(lblName);		
-		p.add(fldName);
+		JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		namePanel.add(lblName);		
+		namePanel.add(fldName);	
+		//p.add(lblTake);
 
-		// showCopyType
-		rows++;
-		p.add(lblTake);
 		JPanel copyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		copyPanel.add(ckObject);
 		copyPanel.add(ckValue);
 		//copyPanel.add(cbTake);
-		p.add(copyPanel);
 
-		if(objectType == TYPE_LIST){
-			rows++;
-			p.add(lblOrder);
-			JPanel orderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			orderPanel.add(cbOrder);
-			orderPanel.add(ckSort);
-			orderPanel.add(ckTranspose);
-			p.add(orderPanel);
-		}
+		JPanel northPanel = new JPanel(new BorderLayout());
+		northPanel.add(namePanel,BorderLayout.NORTH);
+		northPanel.add(Box.createRigidArea(new Dimension(50,10)), BorderLayout.WEST);
+		northPanel.add(copyPanel,BorderLayout.CENTER);
 
-		//Lay out the panel
-		p.setLayout(new SpringLayout());
-		SpringUtilities.makeCompactGrid(p,
-				rows, 2, 	// rows, cols
-				5, 5,   //initX, initY
-				2, 5);  //xPad, yPad	
+		JPanel orderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		orderPanel.add(cbScanOrder);
 
-		p.setBorder(BorderFactory.createEmptyBorder(2,2,2,2));
-		return p;
+		JPanel transposePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		transposePanel.add(ckTranspose);
+
+		JPanel xySwitchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		xySwitchPanel.add(cbLeftRightOrder);
+
+		JPanel pointListPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		pointListPanel.add(Box.createRigidArea(lblName.getSize()));
+
+
+		cards = new JPanel(new CardLayout());
+		cards.add("c0", orderPanel);
+		cards.add("c1", transposePanel);
+		cards.add("c2", xySwitchPanel);
+		cards.add("c3", pointListPanel);
+
+
+		JPanel optionsPanel = new JPanel(new BorderLayout());
+		optionsPanel.add(northPanel, BorderLayout.NORTH);
+		optionsPanel.add(Box.createRigidArea(new Dimension(50,10)), BorderLayout.WEST);
+		optionsPanel.add(cards, BorderLayout.CENTER);
+
+		return optionsPanel;
 	}
 
 
 
 	public void setLabels(String title) {
 
-		setTitle(title);
 
 		if (isIniting) return;
 
+		// TODO: using buttons incorrectly for now
+		// btnOK = cancel, cancel = create
 		btOK.setText(app.getPlain("Cancel"));
 		btApply.setText(app.getPlain("Apply"));
 		btCancel.setText(app.getPlain("Create"));
 
-		cbTake.removeAllItems();
-		cbTake.addItem(app.getMenu("Objects"));
-		cbTake.addItem(app.getMenu("Values"));
+		// object/value checkboxes
 		ckObject.setText(app.getMenu("Objects"));
 		ckObject.addActionListener(this);
 		ckValue.setText(app.getMenu("Values"));
 		ckValue.addActionListener(this);
+
+		// transpose checkbox
 		ckTranspose.setText(app.getMenu("Transpose"));
 		ckSort.setText(app.getMenu("Sort"));
 		ckSort.addActionListener(this);
 
 		lblName.setText(app.getMenu("Name") + ": ");
+
+		/*
 		lblTake.setText(app.getMenu("Take") + ": ");
 		lblOrder.setText(app.getMenu("Order") + ":");
 		lblXYOrder.setText(app.getMenu("Order") + ": ");
+		 */
 
+		cbScanOrder.removeAllItems();
+		cbScanOrder.addItem(app.getMenu("Row Order"));
+		cbScanOrder.addItem(app.getMenu("Column Order"));
 
-		cbOrder.removeAllItems();
-		if(objectType == TYPE_LIST){
-			cbOrder.addItem(app.getMenu("Row"));
-			cbOrder.addItem(app.getMenu("Column"));
-		}else if(objectType == TYPE_LISTOFPOINTS){
-			cbOrder.addItem(app.getMenu("X->Y"));
-			cbOrder.addItem(app.getMenu("Y->X"));
-		}
+		cbLeftRightOrder.removeAllItems();
+		cbLeftRightOrder.addItem(app.getMenu("X->Y"));
+		cbLeftRightOrder.addItem(app.getMenu("Y<-X"));
 
 		model.clear();
 		model.addElement(app.getMenu("List"));
-		model.addElement(app.getMenu("ListOfPoints"));
 		model.addElement(app.getMenu("Matrix"));
+		model.addElement(app.getMenu("ListOfPoints"));
 		model.addElement(app.getMenu("Table"));
-
+		model.addElement(app.getMenu("PolyLine"));
 
 		//	optionsPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Options")));
-		typePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Object")));
+		if(typePanel!=null)
+			typePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Object")));
+
+		setTitle((String) model.getElementAt(objectType));
+
 
 	}
 
@@ -263,6 +283,11 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		else 
 			fldName.setText(newGeo.getLabel());
 
+		CardLayout cl = (CardLayout)(cards.getLayout());
+		cl.show(cards, "c" + typeList.getSelectedIndex());
+
+
+		/*
 		cbOrder.removeAllItems();
 		if(objectType == TYPE_LIST){
 			cbOrder.addItem(app.getMenu("Row"));
@@ -279,10 +304,11 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 			cbOrder.setVisible(true);
 			ckTranspose.setVisible(false);
 		}
-		
+		 */
 		ckSort.setVisible(objectType == TYPE_POLYLINE);
 
 	}
+
 
 
 
@@ -297,19 +323,31 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 			ckValue.removeActionListener(this);
 			ckObject.removeActionListener(this);
 
-			if (source == btOK ) {
-				setVisible(!processInput());
+			// btCancel acts as create for now
+			if (source == btCancel ) {
+				keepNewGeo = true;
+				setVisible(false);
+
 			} else if (source == btApply) {
-				processInput();
-			} else if (source == btCancel) {
+				//processInput();
+
+
+				// btOK acts as cancel for now
+			} else if (source == btOK) {
+				newGeo.remove();
 				setVisible(false);
 			} 
+
 			else if (source == ckObject) {
 				ckValue.setSelected(!ckObject.isSelected());
 				createNewGeo();
 			} 
 			else if (source == ckValue) {
 				ckObject.setSelected(!ckValue.isSelected());
+				createNewGeo();
+			}
+
+			else if (source == cbScanOrder || source == cbLeftRightOrder || source == ckTranspose) {
 				createNewGeo();
 			} 
 
@@ -323,7 +361,24 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 	}
 
 
+	public void setVisible(boolean isVisible) {	
+		if (!isModal()) {
+			if (isVisible) { // set old mode again			
+				addWindowFocusListener(this);			
+			} else {		
+				removeWindowFocusListener(this);
+				app.setSelectionListenerMode(null);
+			}
+		}
 
+		if(!isVisible){
+			if(!keepNewGeo)
+				newGeo.remove();
+		}
+		super.setVisible(isVisible);
+	}
+
+	/*
 	private boolean processInput() {
 		boolean succ = true;
 
@@ -356,11 +411,17 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 
 	}
 
+	 */
+
+
 
 	public void createNewGeo(){
 
-		if(newGeo != null)
+		boolean nullGeo = newGeo == null;
+
+		if(!nullGeo)
 			newGeo.remove();
+
 
 		int column1 = table.selectedCellRanges.get(0).getMinColumn();
 		int column2 = table.selectedCellRanges.get(0).getMaxColumn();
@@ -368,28 +429,37 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		int row2 = table.selectedCellRanges.get(0).getMaxRow();	
 
 		boolean copyByValue = ckValue.isSelected();
-
+		boolean scanByColumn = cbScanOrder.getSelectedIndex() == 1;
+		boolean leftToRight = cbLeftRightOrder.getSelectedIndex() == 0;
+		boolean transpose = ckTranspose.isSelected();
 
 		try {
 			switch (objectType){
 
 			case TYPE_LIST:	
-				newGeo = cp.createList(selectedCellRanges, true, copyByValue);
+				newGeo = cp.createList(selectedCellRanges, scanByColumn, copyByValue);
 				break;
 
 			case TYPE_LISTOFPOINTS:	
-				newGeo = cp.createPointList(selectedCellRanges, true, copyByValue);
+				newGeo = cp.createPointList(selectedCellRanges, copyByValue, leftToRight);
 				break;
 
 			case TYPE_MATRIX:	
-				newGeo = cp.createMatrix(column1, column2, row1, row2, copyByValue);
+				newGeo = cp.createMatrix(column1, column2, row1, row2, copyByValue,transpose);
 				break;
 
 			case TYPE_TABLETEXT:	
 				newGeo = cp.createTableText(column1, column2, row1, row2, copyByValue);		
 				break;
+
+			case TYPE_POLYLINE:	
+				newGeo = cp.createPolyLine(selectedCellRanges, copyByValue, leftToRight);
+				break;
+
 			}
 
+			if(!nullGeo)
+				newGeo.setLabel(fldName.getText());
 			updateGUI();
 
 		} catch (Exception e) {

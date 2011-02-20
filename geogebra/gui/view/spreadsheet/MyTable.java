@@ -100,6 +100,11 @@ public class MyTable extends JTable implements FocusListener
 	public ArrayList<CellRange> selectedCellRanges;
 	
 	
+	public ArrayList<CellRange> getSelectedCellRanges() {
+		return selectedCellRanges;
+	}
+
+
 	// These keep track of internal selection using actual ranges and do not 
 	// use -1 flags for row and column.
 	// Note: selectedCellRanges.get(0) gives the same selection but uses -1 flags

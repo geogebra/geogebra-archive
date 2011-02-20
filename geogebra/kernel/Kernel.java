@@ -1295,7 +1295,10 @@ public class Kernel {
 			return "CreateMatrix";
 			
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_TABLETEXT:
-			return "CreateTableText";
+			return "CreateTable";
+			
+		case EuclidianConstants.MODE_SPREADSHEET_CREATE_POLYLINE:
+			return "CreatePolyLine";
 				
 			
 		default:
