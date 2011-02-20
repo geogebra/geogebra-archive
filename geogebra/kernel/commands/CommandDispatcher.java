@@ -351,8 +351,7 @@ public class CommandDispatcher {
     	cmdTable.put("IterationList", new CmdIterationList(kernel));
     	cmdTable.put("PathParameter", new CmdPathParameter(kernel));     
     	cmdTable.put("Asymptote", new CmdAsymptote(kernel));
-    	cmdTable.put("Maximize",new CmdMaximize(kernel));
-    	cmdTable.put("Minimize",new CmdMinimize(kernel));
+
     	
     	cmdSubTable[TABLE_FUNCTION].putAll(cmdTable);
     	cmdTable.clear();
