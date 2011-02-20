@@ -234,7 +234,9 @@ public final class DrawTextField extends Drawable {
 		
 		GeoElement linkedGeo = ((GeoTextField)geo).getLinkedGeo();
 		if (linkedGeo != null) {
-			String text = linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
+			// want just a number for eg a=3 but we want variables for eg y=m x + c
+			boolean substituteNos = linkedGeo.isGeoNumeric() && linkedGeo.isIndependent();
+			String text = linkedGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, substituteNos);
 			if (linkedGeo.isGeoText() && text.indexOf("\n") > -1) {
 				// replace linefeed with \\n
 				while (text.indexOf("\n") > -1)
