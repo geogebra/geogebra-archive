@@ -351,6 +351,8 @@ public class CommandDispatcher {
     	cmdTable.put("IterationList", new CmdIterationList(kernel));
     	cmdTable.put("PathParameter", new CmdPathParameter(kernel));     
     	cmdTable.put("Asymptote", new CmdAsymptote(kernel));
+    	cmdTable.put("Maximize",new CmdMaximize(kernel));
+    	cmdTable.put("Minimize",new CmdMinimize(kernel));
     	
     	cmdSubTable[TABLE_FUNCTION].putAll(cmdTable);
     	cmdTable.clear();
@@ -660,6 +662,9 @@ public class CommandDispatcher {
     	cmdTable.put("ToolImage", new CmdToolImage(kernel));
     	
     	cmdTable.put("ClosestPoint", new CmdClosestPoint(kernel));     
+
+    	cmdTable.put("Maximize",new CmdMaximize(kernel));  //Definitely "other": Trying to optimize result of a whole construction...
+    	cmdTable.put("Minimize",new CmdMinimize(kernel));
     	
     	
     	cmdSubTable[TABLE_OTHER].putAll(cmdTable);
