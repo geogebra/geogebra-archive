@@ -784,6 +784,10 @@ public class GuiManager {
 		if(getEuclidianView2() != null)
 			getEuclidianView2().getStyleBar().setLabels();
 		
+		
+		if (spreadsheetView != null)
+			spreadsheetView.setLabels();
+		
 		if (toolbarPanel != null) {
 			toolbarPanel.buildGui();
 			toolbarPanel.updateHelpText();

@@ -217,9 +217,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		//  DEBUG
 
 		//this.showProbabilityCalculator();
-		
+
 		//InspectorView id = new InspectorView(app); id.setVisible(true);
-		
+
 
 
 	}
@@ -400,6 +400,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	/** Respond to changes in Euclidean mode sent by GUI manager */
 	public void setMode(int mode){
+
 		if(isTraceDialogVisible()){
 			traceDialog.toolbarModeChanged(mode);
 		}
@@ -420,31 +421,40 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
-			id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LIST);
-			id.setVisible(true);
+
+			if(!app.getSelectedGeos().isEmpty()){
+				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LIST);
+				id.setVisible(true);
+			}
 			break;
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LISTOFPOINTS:
-			id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LISTOFPOINTS);
-			id.setVisible(true);
+			if(table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges)){
+				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_LISTOFPOINTS);
+				id.setVisible(true);}
+
 			break;
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_MATRIX:
-			id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_MATRIX);
-			id.setVisible(true);
+			if(table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
+				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_MATRIX);
+				id.setVisible(true);
+			}
 			break;
 
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_TABLETEXT:
-			id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_TABLETEXT);
-			id.setVisible(true);
+			if(table.getCellRangeProcessor().isCreateMatrixPossible(table.selectedCellRanges)){
+				id = new CreateObjectDialog(app,view, CreateObjectDialog.TYPE_TABLETEXT);
+				id.setVisible(true);
+			}
 			break;
-			
-			
-			
-			
+
+
+
+
 
 
 		default:
@@ -564,9 +574,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 
 	public void showStatDialog(int mode){
-		
+
 		if(app.getSelectedGeos().size() == 0) return;
-		
+
 		switch(mode){
 		case StatDialog.MODE_ONEVAR:
 			if(oneVarStatDialog == null){
@@ -1251,6 +1261,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	//===============================================================
 
 
+	public void setLabels(){
+		if(traceDialog !=null)
+			traceDialog.setLabels();
+		
+	}
 
 	public void updateFonts() {
 

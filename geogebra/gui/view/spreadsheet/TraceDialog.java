@@ -76,24 +76,14 @@ implements
 	// other GUI objects
 	private JSplitPane splitPane;
 	private JTabbedPane tabbedPane;	
-	private JPanel optionsPanel;
-	private JPanel listPanel;
-	private JPanel promptPanel;
-	private JPanel buttonPanel;
-	private JPanel locationPanel;
-	private JPanel leftButtonPanel;
-	private JPanel statPanel;
-	
+	private JPanel optionsPanel, listPanel, promptPanel, buttonPanel, 
+		locationPanel, leftButtonPanel, statPanel;
+
 	private JTextField firstRowField, numRowsField;
 	private JCheckBox cbResetColumns, cbRowLimit, 
 		cbShowLabel, cbTraceList, cbTraceGeoCopy;
-	private JButton btRemove;
-	private JButton btAdd;
-	private JButton btClose;
-	private JButton btCancel;
-	private JButton btChangeLocation;
-	private JButton btErase;
-	
+	private JButton btRemove, btAdd, btClose, btCancel, btChangeLocation, btErase;
+	private JLabel prompt;
 	
 	// modes
 	private static final int MODE_NORMAL = 0;
@@ -104,6 +94,8 @@ implements
 	//misc
 	private CellRange newTraceLocation;
 	private boolean isIniting = false;
+	private JLabel lblStartRow;
+	
 	
 	
 	
@@ -119,6 +111,7 @@ implements
 		initGUI();
 		setTraceDialogSelection(selectedGeo, traceCell);				
 		updateGUI();
+		setLabels();
 		
 	}
 	
@@ -253,6 +246,8 @@ implements
 	}
 	
 	
+
+	
 	
 	private JPanel buildListPanel() {
 		
@@ -283,7 +278,7 @@ implements
 	private JPanel buildLocationPanel() {
 		
 		// start row panel
-		JLabel lblStartRow = new JLabel(app.getMenu("StartRow"+": "));
+		lblStartRow = new JLabel(app.getMenu("StartRow"+": "));
 		firstRowField = new MyTextField(app.getGuiManager());
 		firstRowField.setColumns(3);
 		firstRowField.addActionListener(this);
@@ -324,6 +319,8 @@ implements
         
         return locationPanel;
 	}
+	
+	
 	
 	
 	private JPanel buildOptionsPanel() {
@@ -390,7 +387,7 @@ implements
 		
 		
 		promptPanel = new JPanel(new BorderLayout());			
-		JLabel prompt = new JLabel(app.getMenu("SelectAnObjectToTrace"));
+		prompt = new JLabel(app.getMenu("SelectAnObjectToTrace"));
 		prompt.setHorizontalAlignment(JLabel.CENTER);
 		prompt.setVerticalAlignment(JLabel.CENTER);
 		promptPanel.add(prompt, BorderLayout.CENTER);
@@ -407,7 +404,27 @@ implements
 	}
 	
 
-	
+
+	public void setLabels(){
+		
+		setTitle(app.getPlain("TraceToSpreadsheet"));
+		tabbedPane.setTitleAt(0, app.getMenu("Location"));
+		tabbedPane.setTitleAt(1, app.getMenu("Options"));
+		lblStartRow.setText(app.getMenu("StartRow") + ": ");
+		cbRowLimit.setText(app.getMenu("RowLimit") + ": ");  
+		cbShowLabel.setText(app.getPlain("ShowLabel"));  
+		cbTraceList.setText(app.getMenu("TraceToList"));  
+		cbTraceGeoCopy.setText(app.getMenu("TraceCopy"));  
+		cbResetColumns.setText(app.getMenu("ColumnReset"));  
+		btClose.setText(app.getMenu("Close"));
+		btCancel.setText(app.getPlain("Cancel"));
+		prompt.setText(app.getMenu("SelectAnObjectToTrace"));
+		
+		btRemove.setToolTipText(app.getMenu("RemoveTrace"));
+		btAdd.setToolTipText(app.getMenu("AddTrace"));
+		btErase.setToolTipText(app.getMenu("ClearTrace"));
+		
+	}
 	
 
 
