@@ -24,6 +24,7 @@ public abstract class CmdOneOrTwoListsFunction extends CommandProcessor {
 		GeoElement[] arg;
 		arg = resArgs(c);
 		switch (n) {
+		case 0:throw argNumErr(app, c.getName(), n);
 		case 1:
 			arg = resArgs(c);
 			if (arg[0].isGeoList()) {
