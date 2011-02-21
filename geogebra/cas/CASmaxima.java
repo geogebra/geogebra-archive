@@ -192,15 +192,6 @@ public class CASmaxima extends CASgeneric {
 			// MathPiper has problems with indices like a_3, b_{12}
 			exp = casParser.replaceIndices(exp);
 			
-			// Maxima uses [] for lists
-			while (exp.indexOf('{') > -1 ) exp = exp.replace('{', '[');
-			while (exp.indexOf('}') > -1 ) exp = exp.replace('}', ']');
-			
-			exp=exp.replaceAll("ℯ", "%e");
-			
-			// Sets of Sets ( {{...}} ) are considered Matrices
-			exp = exp.replaceAll("\\[\\s*(\\[.+\\])\\s*\\]", "matrix($1)");
-			
 			final boolean debug = false;
 			if (debug) Application.debug("Expression for Maxima: "+exp, 1);
 			
@@ -227,7 +218,6 @@ public class CASmaxima extends CASgeneric {
 			
 			// Matrix notation
 			res = res.replaceAll("matrix\\(([^)]+)\\)", "\\[$1\\]");
-		
 			while (res.indexOf('\n') > -1 ) res = res.replace('\n', ' ');
 			
 			String results[] = res.split("\\(%[oi]\\d+\\)\\s*");
@@ -250,8 +240,8 @@ public class CASmaxima extends CASgeneric {
 			}
 			
 			if (result.indexOf("%e") > -1) {
-				result = result.replaceAll("%e","e");
-				Application.debug("WARNING: replacing %e by e",1);
+				result = result.replaceAll("%e","ℯ");
+				Application.debug("WARNING: replacing %e by ℯ",1);
 			}
 			
 			if (result.indexOf(" =") > -1) { // y = not :=

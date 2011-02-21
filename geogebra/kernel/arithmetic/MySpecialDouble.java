@@ -80,6 +80,9 @@ public class MySpecialDouble extends MyDouble {
 				case '\u03c0':	return "%pi";
 				// degree
 				case '\u00b0':	return "180/%pi";
+				
+				// e
+				case 'ℯ': return "%e";
 			} 	
 			
 			break;

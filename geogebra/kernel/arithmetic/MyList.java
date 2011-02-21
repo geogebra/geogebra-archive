@@ -498,25 +498,42 @@ public class MyList extends ValidExpression implements ListValue {
 	// Michael Borcherds 2008-02-04
 	// adapted from GeoList
 	public String toString() {
-		StringBuilder sbBuildValueString = new StringBuilder();
-		sbBuildValueString.append("{");
+		
+		StringBuilder sb = new StringBuilder();
+		 if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MAXIMA)
+		 {
+			 if (isMatrix())
+				 sb.append("matrix(");
+			 else
+				 sb.append("[");
+		 }
+		 else
+			 sb.append("{");
 
 		// first (n-1) elements
 		int lastIndex = listElements.size() - 1;
 		if (lastIndex > -1) {
 			for (int i = 0; i < lastIndex; i++) {
 				ExpressionValue exp = (ExpressionValue) listElements.get(i);
-				sbBuildValueString.append(exp.toString()); // .toOutputValueString());
-				sbBuildValueString.append(", ");
+				sb.append(exp.toString()); // .toOutputValueString());
+				sb.append(", ");
 			}
 
 			// last element
 			ExpressionValue exp = (ExpressionValue) listElements.get(lastIndex);
-			sbBuildValueString.append(exp.toString());
+			sb.append(exp.toString());
 		}
 
-		sbBuildValueString.append("}");
-		return sbBuildValueString.toString();
+		 if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MAXIMA)
+		 {
+			 if (isMatrix())
+				 sb.append(")");
+			 else
+				 sb.append("]");
+		 }
+		 else
+			 sb.append("}");
+		return sb.toString();
 	}
 
 	public int size() {
