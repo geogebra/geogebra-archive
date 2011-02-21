@@ -20,12 +20,15 @@ import geogebra.gui.util.SelectionTable;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.optimization.ExtremumFinder;
+import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -78,7 +81,7 @@ import javax.swing.table.TableColumn;
  * 
  */
 
-public class InspectorView extends InputDialog 
+public class FunctionInspector extends InputDialog 
 implements View, MouseListener, ListSelectionListener, 
 KeyListener, ActionListener{
 
@@ -139,7 +142,7 @@ KeyListener, ActionListener{
 
 
 	/** Constructor */
-	public InspectorView(Application app, GeoElement selectedGeo) {
+	public FunctionInspector(Application app, GeoElement selectedGeo) {
 
 		super(app.getFrame(), false);
 		this.app = app;	
@@ -243,8 +246,9 @@ KeyListener, ActionListener{
 		tabPanel.addTab("Interval", intervalTabPanel);
 		tabPanel.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent evt) {
-				updateGUI();
+				handleTabChange();
 			}
+
 		});
 
 
@@ -380,32 +384,30 @@ KeyListener, ActionListener{
 	// =====================================
 	private void updateGUI(){
 
+		System.out.println("updateGUI  fi");
 
-		// set visibility of all geos to false
-		for(int i=0; i<geoList.size(); i++){
-			geoList.get(i).setEuclidianVisible(false);
-		}	
 
 		if(tabPanel.getSelectedComponent()==intervalTabPanel){
 
-			double[] coords = new double[3];
-			lowPoint.getCoords(coords);
-			fldLow.setText("" + coords[0]);
-			highPoint.getCoords(coords);
-			fldHigh.setText("" + coords[0]);
-
-
 			updateIntervalTable();
-			lowPoint.setEuclidianVisible(true);
-			highPoint.setEuclidianVisible(true);
-			functionInterval.setEuclidianVisible(true);
 
 		}else{
 
+			tangentLine.setEuclidianVisible(btnTangent.isSelected());
+			tangentLine.update();
+			oscCircle.setEuclidianVisible(btnOscCircle.isSelected());
+			oscCircle.update();
+			xSegment.setEuclidianVisible(btnXYSegments.isSelected());
+			xSegment.update();
+			ySegment.setEuclidianVisible(btnXYSegments.isSelected());
+			ySegment.update();
+			lblStep.setVisible(btnTable.isSelected());
+			fldStep.setVisible(btnTable.isSelected());
+			pts.setEuclidianVisible(btnTable.isSelected());
+			pts.updateRepaint();
+
 			tableXY.getSelectionModel().removeListSelectionListener(this);
 			// reset table model and update the XYtable
-
-
 			tableXY.setCellEditable(-1, -1);
 			if(btnTable.isSelected()){
 				modelXY.setRowCount(pointCount);
@@ -425,24 +427,53 @@ KeyListener, ActionListener{
 			updateTestPoint();
 			tableXY.getSelectionModel().addListSelectionListener(this);
 
-			//set visibility of the display geos	
-			testPoint.setEuclidianVisible(true);
-			tangentLine.setEuclidianVisible(btnTangent.isSelected());
-			oscCircle.setEuclidianVisible(btnOscCircle.isSelected());
-			xSegment.setEuclidianVisible(btnXYSegments.isSelected());
-			ySegment.setEuclidianVisible(btnXYSegments.isSelected());
-			lblStep.setVisible(btnTable.isSelected());
-			fldStep.setVisible(btnTable.isSelected());
-			pts.setEuclidianVisible(btnTable.isSelected());
 		} 
 
-		// update the geos
-		for(int i=0; i<geoList.size(); i++){
-			isChangingValue = true;
-			geoList.get(i).updateRepaint();
-			isChangingValue = false;
-		}	
+	}
 
+	private void handleTabChange(){
+
+		boolean isInterval = tabPanel.getSelectedComponent()==intervalTabPanel;
+
+		lowPoint.setEuclidianVisible(isInterval);
+		lowPoint.update();
+		highPoint.setEuclidianVisible(isInterval);
+		highPoint.update();
+		functionInterval.setEuclidianVisible(isInterval);
+		functionInterval.update();
+		
+		testPoint.setEuclidianVisible(!isInterval);	
+		testPoint.update();
+		pts.setEuclidianVisible(!isInterval);	
+		pts.update();
+		tangentLine.setEuclidianVisible(!isInterval);
+		tangentLine.update();
+		oscCircle.setEuclidianVisible(!isInterval);
+		oscCircle.update();
+		xSegment.setEuclidianVisible(!isInterval);
+		xSegment.update();
+		ySegment.setEuclidianVisible(!isInterval);
+		ySegment.updateRepaint();
+		
+		
+		updateGUI();
+
+	}
+
+
+
+	private void updateIntervalFields(){
+
+		if(tabPanel.getSelectedComponent()==intervalTabPanel){
+
+			double[] coords = new double[3];
+			lowPoint.getCoords(coords);
+			fldLow.setText(nf.format(coords[0]));
+			highPoint.getCoords(coords);
+			fldHigh.setText(nf.format(coords[1]));
+			
+			updateIntervalTable();
+		}
 	}
 
 
@@ -451,7 +482,8 @@ KeyListener, ActionListener{
 	// =====================================
 
 	private void updateIntervalTable(){
-
+		
+		isChangingValue = true;
 
 		boolean isFunction = selectedGeo.getGeoClassType() == GeoElement.GEO_CLASS_FUNCTION;
 		String lbl = selectedGeo.getLabel();
@@ -468,12 +500,46 @@ KeyListener, ActionListener{
 		double mean = integral/(xMax - xMin);
 		double length = evaluateExpression("Length[" + lbl + "," + xMin + "," + xMax + "]");
 
+		GeoFunction f = (GeoFunction) selectedGeo;
+		ExtremumFinder ef=new ExtremumFinder();
+		RealRootFunction fun=f.getRealRootFunctionY();    
 
-		property.add(app.getCommand("Maximum"));
-		value.add("  ");
 
-		property.add(app.getCommand("Minimum"));
-		value.add("  ");
+		double yMin = evaluateExpression(lbl + "(" + xMin + ")");
+		double yMax = evaluateExpression(lbl + "(" + xMax + ")");
+
+		double xMinInt = ef.findMinimum(xMin,xMax,fun,5.0E-8);
+		double xMaxInt = ef.findMaximum(xMin,xMax,fun,5.0E-8);
+		double yMinInt = evaluateExpression(lbl + "(" + xMinInt + ")");
+		double yMaxInt = evaluateExpression(lbl + "(" + xMaxInt + ")");
+
+		if(yMin < yMinInt){
+			yMinInt = yMin;
+			xMinInt = xMin;
+		}
+
+		if(yMax > yMaxInt){
+			yMaxInt = yMax;
+			xMaxInt = xMax;
+		}
+
+
+		property.add(app.getCommand("Min"));
+		value.add(nf.format(xMinInt) + "," + nf.format(yMinInt) );
+
+		property.add(app.getCommand("Max"));
+		value.add(nf.format(xMaxInt) + "," + nf.format(yMaxInt) );
+
+
+		property.add(null);
+		value.add(null );
+
+		property.add(app.getCommand("Root"));
+		value.add(evaluateToText("\"\"" + "Root[" + lbl + "," + xMin + "," + xMax + "]"));
+
+
+		property.add(null);
+		value.add(null );
 
 		property.add(app.getCommand("Area"));
 		value.add(nf.format(integral));
@@ -483,9 +549,6 @@ KeyListener, ActionListener{
 
 		property.add(app.getCommand("Length"));
 		value.add(nf.format(length));
-
-		property.add(app.getCommand("Root"));
-		value.add(evaluateToText("\"\"" + "Root[" + lbl + "," + xMin + "," + xMax + "]"));
 
 
 		int rowCount = Math.max(minRows, property.size());
@@ -497,6 +560,7 @@ KeyListener, ActionListener{
 		}
 
 		//tableInterval.setColumnWidths();
+		isChangingValue = false;
 	}
 
 
@@ -514,7 +578,7 @@ KeyListener, ActionListener{
 
 		//columnCount = isFunction ?  2 + extraColumnList.size() : 2;
 
-		
+
 		if(btnTable.isSelected())
 		{
 			double x = start - step*(pointCount-1)/2;
@@ -531,8 +595,7 @@ KeyListener, ActionListener{
 		}
 		else{
 			double x = start;
-			double y;
-			y = evaluateExpression(lbl + "(" + x + ")");
+			double y = evaluateExpression(lbl + "(" + x + ")");
 			modelXY.setValueAt(nf.format(x),0,0);
 			modelXY.setValueAt(nf.format(y),0,1);
 
@@ -652,10 +715,6 @@ KeyListener, ActionListener{
 
 
 
-
-
-
-
 	//  Action and Other Event Handlers
 	// =====================================
 
@@ -667,30 +726,55 @@ KeyListener, ActionListener{
 		}
 		else if (source == btnAddColumn) {
 			addColumn(btnAddColumn.getSelectedIndex());
-			System.out.println("======================> add colun");
+			//System.out.println("======================> add colun");
 		}	
 
 		else if (source == btnRemoveColumn) {
 			removeColumn();
 		}	
 
-		updateGUI();
+		else if (source == btnOscCircle 
+				|| source == btnTangent 
+				|| source == btnTable
+				|| source == btnXYSegments) {
+			updateGUI();
+		}
 
 
 	}	
 
 	private void doTextFieldActionPerformed(JTextField source) {
 		try {
-
+				
 			Double value = Double.parseDouble( source.getText().trim());
-
-			if (value != null) {
+			if (value == null) return;
+			
+			
 				if (source == fldStep){ 
 					step = value;	
 					updateXYTable();		
 				}	
-			}
-
+				else if (source == fldLow){ 
+					isChangingValue = true;
+					double y = evaluateExpression(selectedGeo.getLabel() + "(" + value + ")");
+					lowPoint.setCoords(value, y, 1);
+					lowPoint.updateCascade();
+					lowPoint.updateRepaint();
+					isChangingValue = false;
+					updateIntervalTable();	
+				}	
+				else if (source == fldHigh){ 
+					isChangingValue = true;
+					double y = evaluateExpression(selectedGeo.getLabel() + "(" + value + ")");
+					highPoint.setCoords(value, y, 1);
+					highPoint.updateCascade();
+					highPoint.updateRepaint();
+					isChangingValue = false;
+					updateIntervalTable();	
+				}	
+			
+			
+			
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
@@ -722,7 +806,8 @@ KeyListener, ActionListener{
 				|| lowPoint == null 
 				|| highPoint == null 
 				|| isChangingValue 
-				|| isIniting ) return;
+				|| isIniting ) 
+			return;
 
 
 		if(selectedGeo.equals(geo)){
@@ -739,11 +824,9 @@ KeyListener, ActionListener{
 
 		else if(tabPanel.getSelectedComponent() == intervalTabPanel 
 				&& (lowPoint.equals(geo) || highPoint.equals(geo)) ){
-			updateGUI();
+			updateIntervalFields();
 			return;
 		}
-
-
 
 	}
 
@@ -810,7 +893,9 @@ KeyListener, ActionListener{
 			x = initialX + 4*step; 
 			y = evaluateExpression(selectedGeo.getLabel() + "(" + x + ")");
 			highPoint.setCoords(x, y, 1);
-
+			
+			lowPoint.updateCascade();
+			highPoint.updateCascade();
 
 			updateGUI();
 		}
@@ -1010,7 +1095,7 @@ KeyListener, ActionListener{
 		for(int i=0; i<geoList.size(); i++){
 			geoList.get(i).setTooltipMode(GeoElement.TOOLTIP_OFF);
 		}	
-		
+
 		updateTestPoint();
 
 	}

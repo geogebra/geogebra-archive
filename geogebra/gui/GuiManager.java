@@ -26,7 +26,7 @@ import geogebra.gui.view.algebra.AlgebraController;
 import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.consprotocol.ConstructionProtocol;
 import geogebra.gui.view.consprotocol.ConstructionProtocolNavigation;
-import geogebra.gui.view.spreadsheet.InspectorView;
+import geogebra.gui.view.spreadsheet.FunctionInspector;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.gui.virtualkeyboard.WindowsUnicodeKeyboard;
@@ -67,7 +67,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -131,7 +130,7 @@ public class GuiManager {
 
 	private Layout layout;
 
-	private InspectorView functionInspector;
+	private FunctionInspector functionInspector;
 	
 	// Actions
 	private AbstractAction showAxesAction, showGridAction, undoAction,
@@ -1197,7 +1196,7 @@ public class GuiManager {
 
 		try {
 			if(functionInspector == null){
-				 functionInspector = new InspectorView(app,function);
+				 functionInspector = new FunctionInspector(app,function);
 			}else{
 				functionInspector.insertGeoElement(function);
 			}

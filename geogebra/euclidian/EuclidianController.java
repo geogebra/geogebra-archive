@@ -13,9 +13,7 @@
 package geogebra.euclidian;
 
 import geogebra.Matrix.Coords;
-import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
-import geogebra.gui.view.spreadsheet.InspectorView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
