@@ -332,7 +332,9 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 		this.list1 = list1;
 		this.list2 = list2;
 		this.density = density;
+		if(density!=null)
 		densityGeo = density.toGeoElement();
+
 		this.useDensityGeo = useDensity;
 		
 		sum = new GeoNumeric(cons); // output
@@ -473,10 +475,18 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			input[1] = list2;		
 			break;
 		case TYPE_HISTOGRAM_DENSITY:
-			input = new GeoElement[3];
-			input[0] = list1;		
-			input[1] = list2;
-			input[2] = densityGeo;
+			if(densityGeo == null){
+				input = new GeoElement[3];
+				input[0] = list1;		
+				input[1] = list2;
+				input[2] = useDensityGeo;
+			}else{
+				input = new GeoElement[4];
+				input[0] = list1;		
+				input[1] = list2;
+				input[2] = useDensityGeo;
+				input[3] = densityGeo;
+			}
 			break;
 		case TYPE_BOXPLOT:
 			input = new GeoElement[7];
@@ -1345,6 +1355,14 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			}	
 			
 
+			// find maximum frequency
+			// this is used by the stat dialogs
+			freqMax = 0.0;
+			for(int k = 0; k < yval.length; ++k){
+				if(yval[k] > freqMax)
+					freqMax = yval[k];
+			}
+			
 			break;
 			
 		case TYPE_BOXPLOT_RAWDATA:
