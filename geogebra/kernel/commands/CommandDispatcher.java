@@ -537,7 +537,7 @@ public class CommandDispatcher {
     	cmdTable.put("OrthogonalVector", new CmdOrthogonalVector(kernel));
     	cmdTable.put("Invert", new CmdInvert(kernel));   
     	cmdTable.put("Transpose", new CmdTranspose(kernel));   
-    	cmdTable.put("rref", new CmdReducedRowEchelonForm(kernel));   
+    	cmdTable.put("ReducedRowEchelonForm", new CmdReducedRowEchelonForm(kernel));   
     	cmdTable.put("Determinant", new CmdDeterminant(kernel));   
     	
     	cmdSubTable[TABLE_VECTOR].putAll(cmdTable);
