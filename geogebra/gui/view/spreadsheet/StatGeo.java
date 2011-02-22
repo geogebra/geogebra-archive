@@ -160,6 +160,7 @@ public class StatGeo   {
 					{app.getMenu("StandardDeviation.short") ,"SD"},
 					{app.getMenu("SampleStandardDeviation.short") ,"SampleSD"},
 					{app.getMenu("Sum") ,"Sum"},
+					{app.getMenu("Sum2") ,"SigmaXX"},
 					{null , null},
 					{app.getMenu("Minimum.short") ,"Min"},
 					{app.getMenu("LowerQuartile.short") ,"Q1"},
@@ -305,16 +306,18 @@ public class StatGeo   {
 
 
 
-
-
-
 	public GeoElement createHistogram(GeoList dataList, int numClasses){
 
 		GeoElement geo;
 		String label = dataList.getLabel();	
-		double barWidth = (xMaxData - xMinData)/(numClasses - 1); 
+		//double barWidth = (xMaxData - xMinData)/(numClasses - 1); 
 
-		String text = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
+		//String text = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
+		
+		String classes = "Classes[" + label + "," + numClasses + "]";
+		String freq = "Frequency[" + label + "," + classes + ", false]";
+		String text = "Histogram[" + classes + "," + freq + "]";
+			
 		geo = createGeoFromString(text);
 		geo.setObjColor(StatDialog.HISTOGRAM_COLOR);
 		geo.setAlphaValue(0.25f);
@@ -348,6 +351,14 @@ public class StatGeo   {
 
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public GeoElement createBoxPlot(GeoList dataList){
 
@@ -457,9 +468,10 @@ public class StatGeo   {
 	public GeoElement createRegressionPlot(GeoList dataList, int regType, int order){
 
 		GeoElement geo = null;
-
-		if (regType == StatDialog.REG_NONE) return geo;
-
+		
+		boolean regNone = regType == StatDialog.REG_NONE;
+		if(regNone) regType = StatDialog.REG_LINEAR;
+		
 		String label = dataList.getLabel();	
 
 		String text = regCmd[regType] + "[" + label + "]";
@@ -472,6 +484,8 @@ public class StatGeo   {
 		if(regType == StatDialog.REG_LINEAR)	
 			((GeoLine)geo).setToExplicit();	
 
+		if(regNone) geo.setEuclidianVisible(false);
+		
 		return geo;
 
 	}
@@ -538,6 +552,15 @@ public class StatGeo   {
 
 	}
 	
-	
+	public String getStemPlotLatex(GeoList dataList, int adjustment){
+
+		String label = dataList.getLabel();	
+		GeoElement geo;
+
+		String	text = "StemPlot[" + label + "," + adjustment + "]";
+		geo  = createGeoFromString(text);
+		
+		return geo.getLaTeXdescription();		
+	}
 
 }

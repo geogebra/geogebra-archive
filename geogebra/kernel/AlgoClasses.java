@@ -142,7 +142,7 @@ public class AlgoClasses extends AlgoElement {
 		}
 
 		
-		// Create class list using start and width 
+		// Create class list using number of classes	
 		//=======================================================
 	
 		if(input.length == 2){
@@ -157,7 +157,7 @@ public class AlgoClasses extends AlgoElement {
 		}
 
 		
-		// Create class list using number of classes
+		// Create class list using start and width 	
 		//=======================================================
 		if(input.length == 3){
 			double value = start.getDouble();

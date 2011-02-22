@@ -2,6 +2,8 @@ package geogebra.gui.view.spreadsheet;
 
 
 import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.util.PopupMenuButton;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -26,8 +28,11 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,36 +47,37 @@ import javax.swing.JTextField;
 
 public class StatDialog extends JDialog 
 implements ActionListener, View, Printable   {
-	
-	
+
+
 	// ggb 
 	private Application app;
 	private Kernel kernel; 
 	private Construction cons;
 	private SpreadsheetView spView;
 	private MyTable spreadsheetTable;
-	
-	
+
+
 	private StatDialog statDialog;	
 	private StatGeo statGeo;
-	
+
 	public StatGeo getStatGeo() {
 		if(statGeo == null)
 			statGeo = new StatGeo(app);
 		return statGeo;
 	}
-	
-	
+
+
 	// modes
-	public static final int MODE_ONEVAR =  0;
-	public static final int MODE_TWOVAR =  1;
+	public static final int MODE_ONEVAR = 0;
+	public static final int MODE_TWOVAR = 1;
+	public static final int MODE_MULTIVAR = 2;
 	private int mode;
-	
-	
+
+
 	// data collections
 	private GeoList statList;
 	private GeoElement regressionModel;
-	
+
 	public GeoElement getRegressionModel() {
 		return regressionModel;
 	}
@@ -83,13 +89,13 @@ implements ActionListener, View, Printable   {
 	private GeoList dataListAll, dataListSelected;
 	ArrayList<String> dataTitles ;
 	private Object dataSource;
-	
-	
+
+
 	// GUI objects
 	private JLabel lblRegression, lblRegEquation;
 	private JTextField tfRegression;
 	private JButton btnClose, btnOptions, btnExport, btnDisplay, btnPrint;
-	private JCheckBox cbShowData, cbShowCombo2;
+
 	private JComboBox cbRegression, cbPolyOrder;
 	private StatComboPanel comboStatPanel, comboStatPanel2;;
 	private StatDataPanel dataPanel;
@@ -98,14 +104,14 @@ implements ActionListener, View, Printable   {
 	private JSplitPane displayPanel;	
 	private JSplitPane comboPanelSplit;
 	private JPanel cardPanel, buttonPanel;
-		
-	
+
+
 	// flags
 	private boolean showDataPanel = false;
 	private boolean showComboPanel2 = false;
 	private boolean isIniting;
 	private Dimension defaultDialogDimension;
-		
+
 	// colors
 	public static final Color TABLE_GRID_COLOR = Color.GRAY;
 	public static final Color TABLE_HEADER_COLOR = new Color(240,240,240);   
@@ -123,14 +129,22 @@ implements ActionListener, View, Printable   {
 	public static final int REG_EXP = 5;
 	public static final int REG_SIN = 6;
 	public static final int REG_LOGISTIC = 7;
-	
+
 	public static final int regressionTypes = 8;
 	private int regressionMode = REG_NONE;
 	private int regressionOrder;
 	private String[] regressionLabels;
 	private String [] regCmd;
 	private String regEquation;
-	
+	private JLabel lblEqn;
+	private JLabel lblTitleX, lblTitleY;
+	private MyTextField fldTitleX, fldTitleY;
+	private JLabel lblOutputY;
+	private PopupMenuButton optionsButton;
+	private StatDialogOptionsPanel dialogOptionsPanel;
+	private JLabel lblOneVarTitle;
+	private MyTextField fldOneVarTitle;
+
 
 	public String getRegEquation() {
 		return regEquation;
@@ -145,7 +159,7 @@ implements ActionListener, View, Printable   {
 	public String[] getRegCmd() {
 		return regCmd;
 	}
-	
+
 	public Application getApp() {
 		return app;
 	}
@@ -165,18 +179,18 @@ implements ActionListener, View, Printable   {
 		kernel = app.getKernel();
 		cons = kernel.getConstruction();
 		statDialog = this;
-			
+
 		defaultDialogDimension = new Dimension(600,500);
-	
-	
+
+
 		//===========================================
 		//load data from the data source (based on currently selected geos)
-		
+
 		boolean dataOK = setDataSource();
 		if(dataOK){
 			loadDataLists();
 		}else{
-			
+
 			//TODO is this needed ?
 			//dispose();
 			return;  
@@ -187,42 +201,50 @@ implements ActionListener, View, Printable   {
 		// Create two StatCombo panels with default plots.
 		// StatCombo panels display various plots and tables
 		// selected by a comboBox.
-		
+
 		switch(mode){
 
 		case MODE_ONEVAR:
-			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_HISTOGRAM, dataListSelected, mode);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_BOXPLOT, dataListSelected, mode);
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_HISTOGRAM, dataListSelected, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_BOXPLOT, dataListSelected, mode, true);
 			break;
 
 		case MODE_TWOVAR:
-			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode);
+			//showComboPanel2 = true;
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_REGRESSION_ANALYSIS, dataListSelected, mode, true);
+			break;
+
+		case MODE_MULTIVAR:
+			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_MULTIBOXPLOT, dataListSelected, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_MULTIVARSTATS, dataListSelected, mode, true);
 			break;		
+
 		}
 
-		
+
+
 		//================================================
 		// Create a statList and StatPanel.
 		// StatPanels display basic statistics for the current data set
 		statList = getStatGeo().createBasicStatList(dataListSelected,mode);
 		statTable = new StatTable(app, statList, mode);
-		
-		
-		
+
+
+
 		//================================================
 		// Create a DataPanel.
 		// Data panels display the current data set(s) and allow temporary editing. 
 		// Edited data is used by the statTable and statCombo panels. 
-		
+
 		dataPanel = new StatDataPanel(app, this, dataListAll, mode);
 		dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-	
-		
-		
+
+
+
 		//================================================
 		// Init the GUI and attach this view to the kernel
-		
+
 		initGUI();
 		updateFonts();
 		btnClose.requestFocus();
@@ -230,6 +252,7 @@ implements ActionListener, View, Printable   {
 		isIniting = false;
 		setLabels();
 		updateGUI();
+		pack();
 
 	} 
 	// END StatDialog constructor
@@ -239,34 +262,34 @@ implements ActionListener, View, Printable   {
 
 
 	public void removeGeos(){
-		
+
 		if(dataListAll != null)
 			dataListAll.remove();
-		
+
 		if(dataListSelected != null)
 			dataListSelected.remove();
-		
+
 		statList.remove();
-		
+
 		statTable.removeGeos();
 		dataPanel.removeGeos();
 		comboStatPanel.removeGeos();
 		comboStatPanel2.removeGeos();
 	}
-	
-	
-	
+
+
+
 	//=================================================
 	//       Load Data
 	//=================================================
-	
+
 	/** 
 	 * Determines if the data source is from GeoList or a cell range.
 	 */
 	private boolean setDataSource(){
-		
+
 		boolean success = true;
-		
+
 		try {
 			GeoElement geo = app.getSelectedGeos().get(0);
 			if(geo.isGeoList()){
@@ -279,12 +302,12 @@ implements ActionListener, View, Printable   {
 			e.printStackTrace();
 			success = false;
 		}
-		
+
 		return success;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Loads two GeoLists: (1) all data (2) selected data
 	 * Data can come from either a GeoList or a range of spreadsheet cells. 
@@ -293,16 +316,16 @@ implements ActionListener, View, Printable   {
 
 		CellRangeProcessor cr = spreadsheetTable.getCellRangeProcessor();
 		String text = "";
-		
+
 		boolean isSorted = true;
 		boolean copyByValue = false;
 		boolean scanByColumn = true;
 		boolean doStoreUndo = false;
-		
-		
+
+
 		//=======================================
 		// create a string to represent the data 
-		
+
 		if(dataSource instanceof GeoList){
 			//dataListAll = dataSource;
 			text = ((GeoList)dataSource).getLabel();
@@ -326,7 +349,7 @@ implements ActionListener, View, Printable   {
 				break;
 
 			case MODE_TWOVAR:
-				
+
 				tempGeo = (GeoList) cr.createPointList(
 						(ArrayList<CellRange>) dataSource, 
 						scanByColumn,
@@ -335,27 +358,27 @@ implements ActionListener, View, Printable   {
 						doStoreUndo);
 				break;
 			}
-			
+
 			//text = tempGeo.toDefinedValueString();
 			text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
 			tempGeo.remove();
-			
-			
+
+
 		}	
 		//System.out.println(text);		
-		
-		
-		
+
+
+
 		//===================================
 		// create the data lists
-		
+
 		if(dataListAll == null){
 			dataListAll = new GeoList(cons);
 			dataListAll.setAuxiliaryObject(true);
 			//dataListAll.setLabel("dataListAll");
 			dataListAll.setLabel(null);	
 		}
-		
+
 		if(dataListSelected == null){
 			dataListSelected = new GeoList(cons);
 			dataListSelected.setAuxiliaryObject(true);
@@ -363,11 +386,11 @@ implements ActionListener, View, Printable   {
 			dataListSelected.setLabel(null);
 		}
 
-		
-		
+
+
 		//===================================
 		// load data into the lists
-				
+
 		try {			
 			dataListAll = (GeoList) kernel.getAlgebraProcessor()
 			.changeGeoElementNoExceptionHandling((GeoElement)dataListAll, text, true, false);
@@ -384,11 +407,11 @@ implements ActionListener, View, Printable   {
 		if(!isIniting){
 			dataPanel.updateDataTable(this.dataListAll);
 		}
-	
+
 	}
 
-	
-	
+
+
 	/**
 	 * Add/remove elements from the selected data list. 
 	 * Called by the data panel on checkbox click.
@@ -396,23 +419,23 @@ implements ActionListener, View, Printable   {
 	public void updateSelectedDataList(int index, boolean doAdd) {
 
 		GeoElement geo = dataListAll.get(index);
-		
+
 		if(doAdd){
 			dataListSelected.add(geo);
 		}else{
 			dataListSelected.remove(geo);
 		}
-		
+
 		dataListSelected.updateCascade();
 		updateAllComboPanels(false);
 		//Application.debug("updateSelectedList: " + index + doAdd);
-		
+
 	}
 
 
 
 	public String[] getDataTitles(){
-		
+
 		String[] title = null;
 
 		switch(mode){
@@ -422,7 +445,7 @@ implements ActionListener, View, Printable   {
 			title = new String[1];		
 
 			if(dataSource instanceof GeoList){
-				title[0] = app.getPlain("untitled");
+				title[0] = ((GeoList) dataSource).getLabel();
 
 			}else{
 
@@ -439,14 +462,14 @@ implements ActionListener, View, Printable   {
 					title[0] = app.getPlain("untitled");
 				}
 			}
-			
+
 			break;
 
 		case MODE_TWOVAR:
 			//TODO -- get actual titles, handling ctrl-select
 			title = new String[2];	
-			title[0] = app.getMenu("Column.X");
-			title[1] = app.getMenu("Column.Y");
+			title[0] = app.getMenu("Column.X") + ": " + app.getPlain("untitled");
+			title[1] = app.getMenu("Column.Y") + ": " + app.getPlain("untitled");
 			break;
 
 		}
@@ -455,149 +478,147 @@ implements ActionListener, View, Printable   {
 	}
 
 
-	
+
 	//=================================================
 	//       GUI
 	//=================================================
-	
-	
+
+
 	private void initGUI() {
 
-		
-			//===========================================
-			// button panel
-	
-			btnClose = new JButton();
-			btnClose.addActionListener(this);
-			
-			btnOptions = new JButton();
-			btnOptions.addActionListener(this);
-			
-			btnExport = new JButton();
-			btnExport.addActionListener(this);
-			
-			btnDisplay = new JButton();
-			btnDisplay.addActionListener(this);
-			
-			btnPrint = new JButton();
-			btnPrint.addActionListener(this);
-			
-			cbShowData = new JCheckBox();
-			cbShowData.setSelected(showDataPanel);
-			cbShowData.addActionListener(this);
-			
-			cbShowCombo2 = new JCheckBox();
-			cbShowCombo2.setSelected(showComboPanel2);
-			cbShowCombo2.addActionListener(this);
-			
-			
-			JPanel rightButtonPanel = new JPanel(new FlowLayout());
-			rightButtonPanel.add(btnPrint);
-			rightButtonPanel.add(btnClose);
-			
-			JPanel centerButtonPanel = new JPanel(new FlowLayout());
-			//centerButtonPanel.add(btnOptions);
-			//centerButtonPanel.add(btnDisplay);
-			//centerButtonPanel.add(btnExport);
-			
-			
-			JPanel leftButtonPanel = new JPanel(new FlowLayout());
-			leftButtonPanel.add(cbShowData);
-			leftButtonPanel.add(cbShowCombo2);
-			
-			
-			buttonPanel = new JPanel(new BorderLayout());
-			buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
-			buttonPanel.add(centerButtonPanel, BorderLayout.CENTER);
-			buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
-			// END button panel
-			
-			
-			
 
-			//===========================================
-			// statData panel
-					
-			JLabel header = new JLabel(app.getMenu("Statistics"));
-			header.setHorizontalAlignment(JLabel.LEFT);		
-			header.setBorder(BorderFactory.createCompoundBorder(
-					BorderFactory.createEtchedBorder(),	
-					BorderFactory.createEmptyBorder(2,5,2,2)));
-			
-			// put it all into the stat panel
-			JPanel statPanel = new JPanel(new BorderLayout());
-			
-			statPanel.add(header, BorderLayout.NORTH);
-			statPanel.add(statTable, BorderLayout.CENTER);
-			statTable.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-			
-			statPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-			dataPanel.setBorder(statPanel.getBorder());
-			
-			statDataPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, statPanel, dataPanel);
-			
-			//statDataPanel.setLayout(new BoxLayout(statDataPanel, BoxLayout.Y_AXIS));
-			//statDataPanel.add(new JLabel(""), BorderLayout.NORTH);
-			//statDataPanel.add(statPanel, BorderLayout.NORTH);
-			//statDataPanel.add(dataPanel, BorderLayout.SOUTH);
-			
-			
-			
-			// create a plotComboPanel		
-			comboPanelSplit = new JSplitPane(
-					JSplitPane.VERTICAL_SPLIT, comboStatPanel, comboStatPanel2);
-			
-			JPanel regressionPanel = createRegressionPanel();
-			
-			JPanel plotComboPanel = new JPanel(new BorderLayout());
-			plotComboPanel.add(comboPanelSplit, BorderLayout.CENTER);	
-			if(mode == MODE_TWOVAR)
-				plotComboPanel.add(regressionPanel, BorderLayout.SOUTH);
-			
-			
-			
-			// display panel
-			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-					statDataPanel, plotComboPanel);
-			displayPanel.setDividerLocation(150);
-			
-			
-			// export panel
-			JPanel exportPanel = new JPanel();
-			exportPanel.add(new JLabel("export panel"));
-			
-			
-			// options panel
-			JPanel optionsPanel = new JPanel();
-			optionsPanel.add(new JLabel("options panel"));
-			
-			
-			cardPanel = new JPanel(new CardLayout());
-			cardPanel.add("displayPanel", displayPanel);
-			cardPanel.add("optionsPanel", optionsPanel);
-			cardPanel.add("exportPanel", exportPanel);
-			
-			
-			
-			//============================================
-			// main panel
-			
-			JPanel mainPanel = new JPanel(new BorderLayout());
-			mainPanel.add(cardPanel, BorderLayout.CENTER);
-			mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-			((CardLayout)cardPanel.getLayout()).show(cardPanel, "displayPanel");
-			
-			
-			getContentPane().add(mainPanel);
-			getContentPane().setPreferredSize(defaultDialogDimension);
-			setResizable(true);
-			pack();
-			
-			comboPanelSplit.setDividerLocation(0.5);
-			setShowComboPanel2(showComboPanel2);
-			setShowDataPanel(showDataPanel);
-			
-			setLocationRelativeTo(app.getFrame());
+		//===========================================
+		// button panel
+
+		btnClose = new JButton();
+		btnClose.addActionListener(this);
+
+		btnOptions = new JButton();
+		btnOptions.addActionListener(this);
+
+		btnExport = new JButton();
+		btnExport.addActionListener(this);
+
+		btnDisplay = new JButton();
+		btnDisplay.addActionListener(this);
+
+		btnPrint = new JButton();
+		btnPrint.addActionListener(this);
+
+
+
+
+		JPanel rightButtonPanel = new JPanel(new FlowLayout());
+		rightButtonPanel.add(btnPrint);
+		rightButtonPanel.add(btnClose);
+
+		JPanel centerButtonPanel = new JPanel(new FlowLayout());
+		//centerButtonPanel.add(btnOptions);
+		//centerButtonPanel.add(btnDisplay);
+		//centerButtonPanel.add(btnExport);
+
+
+		JPanel leftButtonPanel = new JPanel(new FlowLayout());
+		createOptionsButton();
+		//leftButtonPanel.add(cbShowData);
+		//leftButtonPanel.add(cbShowCombo2);
+		leftButtonPanel.add(optionsButton);
+
+		buttonPanel = new JPanel(new BorderLayout());
+		buttonPanel.add(leftButtonPanel, BorderLayout.WEST);
+		buttonPanel.add(centerButtonPanel, BorderLayout.CENTER);
+		buttonPanel.add(rightButtonPanel, BorderLayout.EAST);
+		// END button panel
+
+
+
+
+		//===========================================
+		// statData panel
+
+		JLabel header = new JLabel(app.getMenu("Statistics"));
+		header.setHorizontalAlignment(JLabel.LEFT);		
+		header.setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createEtchedBorder(),	
+				BorderFactory.createEmptyBorder(2,5,2,2)));
+
+		// put it all into the stat panel
+		JPanel statPanel = new JPanel(new BorderLayout());
+
+		statPanel.add(header, BorderLayout.NORTH);
+		statPanel.add(statTable, BorderLayout.CENTER);
+		statTable.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+		statPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+		dataPanel.setBorder(statPanel.getBorder());
+
+		statDataPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, statPanel, dataPanel);
+
+		//statDataPanel.setLayout(new BoxLayout(statDataPanel, BoxLayout.Y_AXIS));
+		//statDataPanel.add(new JLabel(""), BorderLayout.NORTH);
+		//statDataPanel.add(statPanel, BorderLayout.NORTH);
+		//statDataPanel.add(dataPanel, BorderLayout.SOUTH);
+
+
+
+		// create a plotComboPanel		
+		comboPanelSplit = new JSplitPane(
+				JSplitPane.VERTICAL_SPLIT, comboStatPanel, comboStatPanel2);
+
+		JPanel regressionPanel = createRegressionPanel();
+		JPanel oneVarTitlePanel = createOneVarTitlePanel();
+
+		JPanel plotComboPanel = new JPanel(new BorderLayout());
+		plotComboPanel.add(comboPanelSplit, BorderLayout.CENTER);
+		if(mode == MODE_ONEVAR)
+			plotComboPanel.add(oneVarTitlePanel, BorderLayout.SOUTH);
+		if(mode == MODE_TWOVAR)
+			plotComboPanel.add(regressionPanel, BorderLayout.SOUTH);
+
+
+
+		// display panel
+		displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				statDataPanel, plotComboPanel);
+		displayPanel.setDividerLocation(150);
+
+
+		// export panel
+		JPanel exportPanel = new JPanel();
+		exportPanel.add(new JLabel("export panel"));
+
+
+		// options panel
+		JPanel optionsPanel = new JPanel();
+		optionsPanel.add(new JLabel("options panel"));
+
+
+		cardPanel = new JPanel(new CardLayout());
+		cardPanel.add("displayPanel", displayPanel);
+		cardPanel.add("optionsPanel", optionsPanel);
+		cardPanel.add("exportPanel", exportPanel);
+
+
+
+		//============================================
+		// main panel
+
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		mainPanel.add(cardPanel, BorderLayout.CENTER);
+		mainPanel.add(buttonPanel, BorderLayout.SOUTH);
+		((CardLayout)cardPanel.getLayout()).show(cardPanel, "displayPanel");
+
+
+		getContentPane().add(mainPanel);
+		getContentPane().setPreferredSize(defaultDialogDimension);
+		setResizable(true);
+		pack();
+
+		comboPanelSplit.setDividerLocation(0.5);
+		setShowComboPanel2(showComboPanel2);
+		setShowDataPanel(showDataPanel);
+
+		setLocationRelativeTo(app.getFrame());
 
 	}
 
@@ -623,6 +644,10 @@ implements ActionListener, View, Printable   {
 		case MODE_TWOVAR:
 			setTitle(app.getMenu("TwoVariableStatistics"));	
 			break;
+
+		case MODE_MULTIVAR:
+			setTitle(app.getMenu("MultiVariableStatistics"));	
+			break;
 		}
 
 
@@ -631,63 +656,170 @@ implements ActionListener, View, Printable   {
 		btnExport.setText(app.getMenu("Export"));
 		btnDisplay.setText(app.getMenu("Plots"));
 		btnPrint.setText(app.getMenu("Print"));
-		
-		cbShowData.setText(app.getMenu("ShowData"));
-		cbShowCombo2.setText(app.getMenu("ShowPlot2"));
 
+
+		lblOneVarTitle.setText(app.getMenu("Source") + ": ");
 
 		regressionLabels = new String[regressionTypes];
 		setRegressionLabels();
 		lblRegression.setText(app.getMenu("Regression Model")+ ":");
+		lblEqn.setText(app.getMenu("Equation")+ ":");
+
 	}
 
 
 
 
 	private JPanel createRegressionPanel(){
-		
+
+		// components
 		String[] orders = {"2","3","4","5","6","7","8","9"};
 		cbPolyOrder = new JComboBox(orders);
 		cbPolyOrder.setSelectedIndex(0);
 		regressionOrder = 2;
 		cbPolyOrder.addActionListener(this);
-		
+
 		regressionLabels = new String[regressionTypes];
 		setRegressionLabels();
 		cbRegression = new JComboBox(regressionLabels);
 		cbRegression.addActionListener(this);
-		
+
+		lblTitleX = new JLabel("x: ");
+		lblTitleY = new JLabel("y: ");
+		fldTitleX = new MyTextField(app.getGuiManager());
+		fldTitleY = new MyTextField(app.getGuiManager());
+		fldTitleX.setColumns(30);
+		fldTitleY.setColumns(30);
+
 		lblRegression = new JLabel();
 		lblRegEquation = new JLabel();
-		
-		tfRegression = new JTextField();
+		lblEqn = new JLabel();
+		//tfRegression = new JTextField();
 		//tfRegression.setColumns(30);
-		
+
+
+
+		// panels
+		JPanel titleXPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		titleXPanel.add(lblTitleX);
+		titleXPanel.add(fldTitleX);
+
+		JPanel titleYPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		titleYPanel.add(lblTitleY);
+		titleYPanel.add(fldTitleY);
+
+		JPanel titlePanel = new JPanel(new BorderLayout());
+		titlePanel.add(titleXPanel, BorderLayout.CENTER);
+		titlePanel.add(titleYPanel, BorderLayout.SOUTH);
+
+		JPanel modelTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		modelTypePanel.add(lblRegression);
+		modelTypePanel.add(cbRegression);
+		modelTypePanel.add(cbPolyOrder);
+		//regressionPanel.setBackground(Color.white);
+
 		JPanel eqnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		eqnPanel.add(lblRegression);
+		eqnPanel.add(lblEqn);
 		eqnPanel.add(lblRegEquation);
-		eqnPanel.setBackground(Color.white);
-		
-		JPanel regressionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		
-		regressionPanel.add(cbRegression);
-		regressionPanel.add(cbPolyOrder);
-		//regressionPanel.add(tfRegression);
-		//regressionPanel.add(lblRegEquation);
-		
+		//eqnPanel.setBackground(Color.white);
+
+
+		//evalPanel.add(lblRegEquation);
+		JPanel eqnEvalPanel = new JPanel(new BorderLayout());
+		eqnEvalPanel.add(eqnPanel, BorderLayout.NORTH);
+
+
+		JScrollPane eqnScroller = new JScrollPane(eqnEvalPanel);
+		eqnScroller.setBorder(BorderFactory.createEmptyBorder());
+		JPanel regressionPanel = new JPanel(new BorderLayout());
+		regressionPanel.add(modelTypePanel,BorderLayout.NORTH);
+		regressionPanel.add(eqnScroller,BorderLayout.SOUTH);
+
+
 		JPanel mainPanel = new JPanel(new BorderLayout());
-		mainPanel.add(new JScrollPane(eqnPanel),BorderLayout.CENTER);
-		mainPanel.add(regressionPanel,BorderLayout.SOUTH);
-		
+		mainPanel.add(titlePanel, BorderLayout.NORTH);
+		mainPanel.add(regressionPanel, BorderLayout.CENTER);
+		//mainPanel.add(evalPanel, BorderLayout.SOUTH);
+		//mainPanel.setBackground(Color.white);
+		mainPanel.setBorder(BorderFactory.createEtchedBorder());
+
+
 		return mainPanel;
-		
+
 	}
-	
+
+
+	private JPanel createOneVarTitlePanel(){
+
+		// components
+		lblOneVarTitle = new JLabel();
+		fldOneVarTitle = new MyTextField(app.getGuiManager());
+		fldOneVarTitle.setColumns(30);
+
+		// panels
+		JPanel OneVarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		OneVarPanel.add(lblOneVarTitle);
+		OneVarPanel.add(fldOneVarTitle);
+
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		mainPanel.add(OneVarPanel, BorderLayout.CENTER);
+		mainPanel.setBorder(BorderFactory.createEtchedBorder());
+
+		return mainPanel;
+	}
+
+
+
+
+
+
+	private void createOptionsButton(){
+
+		// create options drop down button
+		dialogOptionsPanel= new StatDialogOptionsPanel(app);
+
+		optionsButton = new PopupMenuButton();
+		optionsButton.setKeepVisible(true);
+		optionsButton.setStandardButton(true);
+		optionsButton.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
+		optionsButton.setText(app.getMenu("Options"));
+		optionsButton.addPopupMenuItem(dialogOptionsPanel);
+		optionsButton.setDownwardPopup(false);
+		//ImageIcon ptCaptureIcon = app.getImageIcon("tool.png");
+		//	optionsButton.setIconSize(new Dimension(ptCaptureIcon.getIconWidth(),18));
+		//	optionsButton.setIcon(ptCaptureIcon);
+
+
+
+		dialogOptionsPanel.setShowStats(true);
+
+		dialogOptionsPanel.addPropertyChangeListener("cbShowData", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				setShowDataPanel((Boolean) evt.getNewValue());
+			}
+		});
+
+		dialogOptionsPanel.addPropertyChangeListener("cbShowCombo2", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				setShowComboPanel2((Boolean) evt.getNewValue());
+			}
+		});
+
+		dialogOptionsPanel.addPropertyChangeListener("cbShowStats", new PropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent evt) {
+				//TODO	setShowStats((Boolean) evt.getNewValue());
+			}
+		});
+
+	}
+
+
+
 
 	private void setShowComboPanel2(boolean showComboPanel2){
-		
+
 		this.showComboPanel2 = showComboPanel2;
-		
+
 		if (showComboPanel2) {
 			if(comboPanelSplit == null){
 				Application.debug("splitpane null");
@@ -704,11 +836,11 @@ implements ActionListener, View, Printable   {
 
 	}
 
-	
+
 	private void setShowDataPanel(boolean showDataPanel){
-		
+
 		this.showDataPanel = showDataPanel;
-		
+
 		if (showDataPanel) {
 			if(statDataPanel == null){
 				Application.debug("splitpane null");
@@ -724,16 +856,16 @@ implements ActionListener, View, Printable   {
 		}
 
 	}
-	
 
 
-	
-	
+
+
+
 	public int getMode(){
 		return mode;
 	}
 
-	
+
 	//=================================================
 	//      Event Handlers and Updates
 	//=================================================
@@ -741,24 +873,17 @@ implements ActionListener, View, Printable   {
 	public void actionPerformed(ActionEvent e) {
 
 		Object source = e.getSource();
-		
-		if(source == cbShowData){
-			setShowDataPanel(cbShowData.isSelected());
-		}
-		
-		else if(source == cbShowCombo2){
-			setShowComboPanel2(cbShowCombo2.isSelected());
-		}
-		
-		
-		else if(source == btnClose){
+
+
+
+		if(source == btnClose){
 			setVisible(false);
 		}
 
 		else if(source == btnExport){
 			((CardLayout)cardPanel.getLayout()).show(cardPanel, "exportPanel");
 		}
-		
+
 		else if(source == btnPrint){
 			new geogebra.export.PrintPreview(app, this, PageFormat.LANDSCAPE);
 		}
@@ -779,8 +904,8 @@ implements ActionListener, View, Printable   {
 			regressionOrder = cbPolyOrder.getSelectedIndex() + 2;
 			setRegressionModel();
 		}
-		
-		
+
+
 		btnClose.requestFocus();
 	}
 
@@ -797,7 +922,7 @@ implements ActionListener, View, Printable   {
 			this.attachView();
 			if(!isIniting)
 				updateDialog();
-			
+
 		}else{
 			//Application.debug("statDialog not visible");
 			//spView.setColumnSelect(false);
@@ -806,38 +931,39 @@ implements ActionListener, View, Printable   {
 		}
 	}
 
-	
+
 	private void setRegressionModel(){
+
 		if(regressionModel != null)
 			regressionModel.remove();
-		
+
 		regressionModel = statGeo.createRegressionPlot(dataListSelected, regressionMode, regressionOrder);
 		regressionModel.removeView(app.getEuclidianView());
 		app.getEuclidianView().remove(regressionModel);
 		setRegEquation();
 		this.updateAllComboPanels(true);
 	}
-	
-	
+
+
 	public void setRegEquation(){
-		
+
 		// get the LaTeX string for the regression equation 
 		String eqn;
-		
+
 		if(regressionMode == StatDialog.REG_NONE){
 			eqn = "";}
-		
+
 
 		else if(regressionMode == REG_LINEAR){
-			
+
 			((GeoLine)regressionModel).setToExplicit();	
 			eqn = regressionModel.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
 
 		}else{
-			
+
 			eqn = "y = " + regressionModel.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);		
 		}
-		
+
 		// create an icon with the LaTeX string	
 		ImageIcon icon = (ImageIcon) lblRegEquation.getIcon();
 
@@ -847,27 +973,27 @@ implements ActionListener, View, Printable   {
 		if(this.regressionMode == REG_NONE)
 			icon = null;
 		else
-			icon = GeoGebraIcon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, this.getBackground());
+			icon = GeoGebraIcon.createLatexIcon(app, eqn, this.getFont(), false, Color.black, null);
 
 
 		// set the label icon with our equation string
 		lblRegEquation.setIcon(icon);
 		lblRegEquation.revalidate();
-		
+
 		updateGUI();
 	}
-	
-	
+
+
 	private void updateGUI(){
-		
+
 		if(isIniting) return;
 		cbPolyOrder.setVisible(regressionMode == REG_POLY);	
-		
+
 		repaint();		
 	}
-	
-	
-	
+
+
+
 	public void updateDialog(){
 
 		//selectedColumns = spreadsheetTable.getSelectedColumnsList();
@@ -875,6 +1001,13 @@ implements ActionListener, View, Printable   {
 		setDataSource();
 		loadDataLists();
 		updateAllComboPanels(true);
+		if(mode == MODE_ONEVAR){
+			fldOneVarTitle.setText(getDataTitles()[0]);
+		}
+		if(mode == MODE_TWOVAR){
+			fldTitleX.setText(getDataTitles()[0]);
+			fldTitleY.setText(getDataTitles()[1]);
+		}
 
 	}
 
@@ -884,11 +1017,11 @@ implements ActionListener, View, Printable   {
 		comboStatPanel2.updateData(dataListSelected);
 		comboStatPanel.updatePlot(doCreateGeo);
 		comboStatPanel2.updatePlot(doCreateGeo);
-		
+
 		statList.remove();
 		statList = statGeo.createBasicStatList(dataListSelected, mode);
 		statTable.updateData(statList);
-		
+
 	}
 
 
@@ -911,40 +1044,40 @@ implements ActionListener, View, Printable   {
 
 	public boolean isInDataSource(GeoElement geo){
 		// TODO handle case of GeoList data source
-			if(dataSource instanceof GeoList){
-				return geo.equals(((GeoList)dataSource));
-			}else{
-		
+		if(dataSource instanceof GeoList){
+			return geo.equals(((GeoList)dataSource));
+		}else{
+
 			Point location = geo.getSpreadsheetCoords();
 			boolean isCell = (location != null && location.x < SpreadsheetView.MAX_COLUMNS && location.y < SpreadsheetView.MAX_ROWS);
-			
+
 			if(isCell){	
 				//Application.debug("---------> is cell:" + geo.toString());
 				for(CellRange cr: (ArrayList<CellRange>)dataSource)
 					if(cr.contains(geo)) return true;		
-		
+
 				//Application.debug("---------> is not in data source:" + geo.toString());
 			}
-			}
-			
-			return false;
 		}
-	
-	
+
+		return false;
+	}
+
+
 
 
 
 	//=================================================
 	//      View Implementation
 	//=================================================
-	
+
 	public void add(GeoElement geo) {
 		//System.out.println("add: " + geo.toString());
-	//	if (!isIniting && isInDataColumn(geo)) {	
-			//loadDataLists();
-			//comboStatPanel.updatePlot();
-			//comboStatPanel2.updatePlot();
-	//	}
+		//	if (!isIniting && isInDataColumn(geo)) {	
+		//loadDataLists();
+		//comboStatPanel.updatePlot();
+		//comboStatPanel2.updatePlot();
+		//	}
 	}
 
 	public void clearView() {
@@ -952,11 +1085,11 @@ implements ActionListener, View, Printable   {
 
 	public void remove(GeoElement geo) {
 		//System.out.println("removed: " + geo.toString());
-	//	if (!isIniting && isInDataColumn(geo)) {	
-			//loadDataLists();
-			//comboStatPanel.updatePlot();
-			//comboStatPanel2.updatePlot();
-	//	}
+		//	if (!isIniting && isInDataColumn(geo)) {	
+		//loadDataLists();
+		//comboStatPanel.updatePlot();
+		//comboStatPanel2.updatePlot();
+		//	}
 	}
 
 	public void rename(GeoElement geo) {
@@ -968,7 +1101,7 @@ implements ActionListener, View, Printable   {
 	public void reset() {
 		//removeGeos();
 	}
-	
+
 	public void setMode(int mode) {
 		// ignore..
 	}
@@ -981,9 +1114,9 @@ implements ActionListener, View, Printable   {
 			//removeGeos();
 			//this.loadDataLists();
 			updateAllComboPanels(true);	
-			
+
 		}
-			
+
 	}
 
 	public void updateAuxiliaryObject(GeoElement geo) {
@@ -1004,7 +1137,7 @@ implements ActionListener, View, Printable   {
 		//clearView();
 		//kernel.notifyRemoveAll(this);		
 	}
-	
+
 
 
 	public int print(Graphics g, PageFormat pageFormat, int pageIndex) {		

@@ -194,6 +194,11 @@ public class AlgoFrequency extends AlgoElement {
 			double upperClassBound = 0 ;
 			double classFreq = 0;
 
+			
+			//TODO  testing density condition
+			boolean hasDensity = false;
+			double density = 1.0 / f.getSumFreq();
+			
 			for(int i=1; i < classList.size()-1; i++){
 
 				lowerClassBound = ((GeoNumeric)classList.get(i-1)).getDouble();
@@ -208,6 +213,14 @@ public class AlgoFrequency extends AlgoElement {
 					- f.getCount((Comparable)upperClassBound);
 				}
 
+			//	System.out.println(" =================================");
+			//	System.out.println("class freq: " + classFreq + "   " + density);
+				if(hasDensity){
+					classFreq = density *classFreq/(upperClassBound - lowerClassBound );
+				}
+			//	System.out.println("class freq: " + classFreq);
+				
+				// add the frequency to the output GeoList
 				frequency.add(new GeoNumeric(cons, classFreq));
 
 				/*
@@ -230,7 +243,12 @@ public class AlgoFrequency extends AlgoElement {
 				- f.getCumFreq((Comparable)lowerClassBound) 
 				+ f.getCount((Comparable)lowerClassBound);
 			}
+			if(hasDensity){
+				classFreq = density *classFreq/(upperClassBound - lowerClassBound );
+			}
 			
+				
+			// add the last frequency to the output GeoList
 			frequency.add(new GeoNumeric(cons, classFreq));
 
 		}
