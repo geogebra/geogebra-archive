@@ -74,7 +74,7 @@ public class ButtonDialog extends JDialog
 	private GeoButton button = null;
 	
 	InputPanel inputPanel, inputPanel2;
-	
+	private int x,y;
 	/**
 	 * Creates a dialog to create a new GeoNumeric for a slider.
 	 * @param x, y: location of slider in screen coords
@@ -84,12 +84,13 @@ public class ButtonDialog extends JDialog
 		this.app = app;		
 		this.textField = textField;
 		addWindowListener(this);
-		
+		this.x=x;
+		this.y=y;
 		// create temp geos that may be returned as result
-		Construction cons = app.getKernel().getConstruction();
-		button = textField ? new GeoTextField(cons) : new GeoButton(cons);
-		button.setEuclidianVisible(true);
-		button.setAbsoluteScreenLoc(x, y);
+		//Construction cons = app.getKernel().getConstruction();
+		//button = textField ? new GeoTextField(cons) : new GeoButton(cons);
+		//button.setEuclidianVisible(true);
+		//button.setAbsoluteScreenLoc(x, y);
 		
 		createGUI();	
 		pack();
@@ -162,7 +163,7 @@ public class ButtonDialog extends JDialog
 						//}
 						
 						linkedGeo = geo;	
-						((GeoTextField)button).setLinkedGeo(geo);
+						//((GeoTextField)button).setLinkedGeo(geo);
 						
 						cbAdd.removeActionListener(this);		
 						
@@ -260,7 +261,12 @@ public class ButtonDialog extends JDialog
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		Application.debug(tfScript.getText());				
-		if (source == btApply) {				
+		if (source == btApply) {		
+			Construction cons = app.getKernel().getConstruction();
+			button = textField ? app.getKernel().textfield(null, linkedGeo) : new GeoButton(cons);
+			button.setEuclidianVisible(true);
+			button.setAbsoluteScreenLoc(x, y);
+
 			
 			button.setLabel(null);	
 			button.setClickScript(tfScript.getText());

@@ -6431,7 +6431,7 @@ class NamePanel
 		// DEFINITION
 		//boolean showDefinition = !(currentGeo.isGeoText() || currentGeo.isGeoImage());
 		boolean showDefinition = currentGeo.isGeoText() ? ((GeoText)currentGeo).isTextCommand() :
-			! ((currentGeo.isGeoImage() && currentGeo.isIndependent()) || currentGeo.isGeoButton());
+			! (((currentGeo.isGeoImage()|| currentGeo.isGeoButton()) && currentGeo.isIndependent()));
 		if (showDefinition) {			
 			tfDefinition.removeActionListener(this);
 			defInputHandler.setGeoElement(currentGeo);
