@@ -811,12 +811,12 @@ public class AlgebraProcessor {
 	}
 
 	public GeoElement[] processEquation(Equation equ) throws MyError {		
-		Application.debug("EQUATION: " + equ);        
-		Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
+//		Application.debug("EQUATION: " + equ);        
+//		Application.debug("NORMALFORM POLYNOMIAL: " + equ.getNormalForm());        		
 		
 		try {
 			equ.initEquation();	
-			Application.debug("EQUATION: " + equ.getNormalForm());    	
+			//Application.debug("EQUATION: " + equ.getNormalForm());    	
 			// check no terms in z
 			checkNoTermsInZ(equ);
 

@@ -153,7 +153,7 @@ public class Parser {
     public String parseLabel(String parseString) 
     throws ParseException {    
         myReInit(parseString );                           
-        return label();      
+        return label().image;      
     }    
 }
 PARSER_END(Parser)
@@ -355,22 +355,14 @@ TOKEN: {
 |	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
 |	< RANDOM_FUNC:  "random()"  >
 |	< DERIV_MP:  "Deriv()"  >  // may be returned by MathPiper
-| 	< FUNCTION_LABEL: ( <SPREADSHEET_LABEL> | <LABEL> ) "(" >
+| 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL> ) "(" >
 }
 
  TOKEN : {
  < TEXT: "\""  (<CHAR>)* "\"" > |
  < #CHAR: ["\u0000"-"\u0021", "\u0023"-"\uffff"]  >    
 }
-                          
-String label():
-{     
-    Token t;
-}
-{         	  
-       ( t = <SPREADSHEET_LABEL> |  t = <LABEL> )
-        {  return t.image;   }
-}
+                         
      
 
 /**
@@ -391,9 +383,7 @@ ValidExpression buildValidExpression() :
     Vector labels = new Vector();
 } 
 {         
-     (  
-             
-              
+     (       
         // f(x) =  x^2 + 3	
         LOOKAHEAD(2147483647)
         ve = functionExpressionnode()          
@@ -404,17 +394,17 @@ ValidExpression buildValidExpression() :
      |     
         // h: X = (3,2) + t (5,1)
       	LOOKAHEAD(2147483647) 
-      	(l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = parametric()      
+      	l = label() (":" | <ASSIGNMENT> )  ve = parametric()      
      |     
         // g: 3x + y = 7 
         LOOKAHEAD(2147483647)      
-        (l = <SPREADSHEET_LABEL> | l = <LABEL>)  (":" | <ASSIGNMENT> )  ve = equation()        
+        l = label()  (":" | <ASSIGNMENT> )  ve = equation()        
     |          
         // special case "A: (3,2)" should become a point  
         // CAS assignment "a := 5" should be supported too
         // inequalities "a: 3x + 4y < 7" and intervalls "b: 3 < x < 7" can be named too                                  
 	  	LOOKAHEAD(2147483647)  
-	    (l = <SPREADSHEET_LABEL> | l = <LABEL>) (":" | <ASSIGNMENT> )  ve = cmdexpression()   
+	    l = label() (":" | <ASSIGNMENT> )  ve = cmdexpression()   
 	 |     
         // distingiush <LABEL> = expressionnode()               and  
         //             expressionnode() = expressionnode()      (Equation)
@@ -432,8 +422,18 @@ ValidExpression buildValidExpression() :
                 ve = rhs;
                 ve.setLabel(((Variable)lhs.evaluate()).getName());                         
             } else {
-                // it's a polynomial
-                ve = new Equation(kernel, lhs, rhs); 
+				// special case: z = 2 should be an assignment when 3D view is not present
+ 				// TODO: improve check if 3D view is showing
+				if (kernel.getManager3D() == null &&
+					"z".equals(lhs.toString()) &&
+					!rhs.includesPolynomial())				{
+				  ve = rhs;
+                  ve.setLabel("z");  
+				}
+				else				{
+	                // it's an equation in x, y, and possibly z
+	                ve = new Equation(kernel, lhs, rhs);
+	            }
             }
         }
      |
@@ -476,12 +476,14 @@ ValidExpression buildCASExpression() :
     |	   
        	// labeled equation, e.g. g: 3x + y = 7
        	LOOKAHEAD(2147483647)   
-       	l = casLabel() ( ":" | <ASSIGNMENT>) ve = equation()  
+       	l = label() ( ":" | <ASSIGNMENT>) ve = equation()  
     |
         // assignment         
         // b := 27 + c
+        // don't allow x, y as labels to avoid e.g. the following:
+        // assume x := 1, then a: y = x + 2 creates line but output is y = 3
         LOOKAHEAD(2147483647)
-		l = casLabel() <ASSIGNMENT> ve = expressionnode()  
+		l = label() <ASSIGNMENT> ve = expressionnode()  
  	|	   
        	// equation, e.g. 3x + y = 7
        	LOOKAHEAD(2147483647)   
@@ -581,18 +583,31 @@ ValidExpression MathPiperSolveResult() :
 */
 
 /**
- * (<VARX> | <VARY> | <LABEL> | <SPREADSHEET_LABEL>) 
+ * (<VARZ> | <LABEL> | <SPREADSHEET_LABEL>) 
  */
-Token casLabel():
+Token label():
+{     
+    Token t;
+}
+{         	  
+       ( t = <VARZ> | t = <SPREADSHEET_LABEL> |  t = <LABEL> )
+        {  return t;   }
+}
+
+/**
+ * (<VARX> | <VARY> | <VARZ> | <LABEL> | <SPREADSHEET_LABEL>) 
+ */
+Token casVar():
 {
-  Token l;
+  Token t;
 }
 {
-	(l = <VARX> | l = <VARY> | l = <LABEL> | l = <SPREADSHEET_LABEL>)
+	(t = <VARX> | t = <VARY> | t = <VARZ> | t = <LABEL> | t = <SPREADSHEET_LABEL>)
 	{
-	  return l;
+	  return t;
 	}
 }
+
 
 /**
  * command =     <LABEL> [ argument (, argument)* ]  
@@ -632,20 +647,20 @@ Vector labellist():
 }
 {
 (( 
-    "{" (t=<SPREADSHEET_LABEL> | t=<LABEL>) 
+    "{" (t=label()) 
         {   
             labels = new Vector(); labels.add(t.image);  
         }
-     ( <COMMA> (t=<SPREADSHEET_LABEL> | t=<LABEL>)   { labels.add(t.image); } )*
+     ( <COMMA> (t=label())   { labels.add(t.image); } )*
     "}" 
 )
     |    
 ( 
-    (t=<SPREADSHEET_LABEL> | t=<LABEL>)   
+    (t=label())   
         {   
             labels = new Vector(); labels.add(t.image);  
         }
-     ( <COMMA> (t=<SPREADSHEET_LABEL> | t=<LABEL>)   { labels.add(t.image); } )*
+     ( <COMMA> (t=label())   { labels.add(t.image); } )*
 ))
      { return labels; }
 }
@@ -869,10 +884,12 @@ ExpressionNode functionExpressionnode():
   		// single or multi-variable function definition
 	   // f(a) =  a^2 + 3
 	   // g(x,y) := x * y
-	   funName = <FUNCTION_LABEL> // includes "(" at end	   
-	   		// local variables	   		(( varName =  <VARX> | varName =  <SPREADSHEET_LABEL> | varName = <LABEL> )
+	   (	     funName = <FUNCTION_LABEL> |  // includes "(" at end
+	     funName = <Z_FUNC> // includes "(" at end
+	   ) 
+	   		// local variables, no function of y	   		(( varName =  <VARX> | varName = label() )
 	   		  { localVars = new ArrayList<String>(); localVars.add(varName.image); } )
-			// optional second variable						 (<COMMA> ( varName =  <VARX> |  varName =  <VARY> | varName =  <SPREADSHEET_LABEL> | varName = <LABEL> )
+			// optional second variable						 (<COMMA> ( varName = casVar() )
 			 { localVars.add(varName.image); } )* 
 			// closing ) and assignment with expressionnode
 	   		 ")" ( <EQUAL > | <ASSIGNMENT> ) rhs = expressionnode()
@@ -929,12 +946,15 @@ FunctionNVar casFunction():
   		// single or multi-variable function definition
 	   // f(a) =  a^2 + 3
 	   // g(x,y) := x * y
-	   funName = <FUNCTION_LABEL> // includes "(" at end	   
+	   (
+	     funName = <FUNCTION_LABEL> |  // includes "(" at end
+	     funName = <Z_FUNC> // includes "(" at end
+	   )    
 	   		// local variables
-	   		(( varName =  <VARX> | varName =  <VARY> | varName =  <SPREADSHEET_LABEL> | varName = <LABEL> )
+	   		(( varName =  casVar() )
 	   		  { localVars = new ArrayList<String>(); localVars.add(varName.image); } )
 			// optional second variable			
-			 (<COMMA> ( varName =  <VARX> | varName =  <VARY> | varName =  <SPREADSHEET_LABEL> | varName = <LABEL> )
+			 (<COMMA> ( varName =  casVar() )
 			 { localVars.add(varName.image); } )* 
 			// closing ) and assignment with expressionnode
 	   		 ")" ( <ASSIGNMENT> ) rhs = expressionnode()
@@ -1498,10 +1518,12 @@ ExpressionValue numVecVariable():
 |
     c = <VARZ>  
     {
-        if (GeoGebraCASParsing)
+        // check for CAS parsing or if z is defined in kernel
+        if (GeoGebraCASParsing || kernel.lookupLabel("z") != null) {
  			return new ExpressionNode(kernel, new Variable(kernel, c.image));
-		else
-        	return new Polynomial(kernel, c.image);
+		} else {	 		// z is not defined: treat as equation variable for 3D view
+    		return new Polynomial(kernel, c.image);
+       }
     }
 |
 	// spreadsheet range like A1:B2
@@ -1635,7 +1657,16 @@ ExpressionNode numberFunction():
       { return new ExpressionNode(kernel, en, ExpressionNode.YCOORD, null); }  
 |
      <Z_FUNC> en = expressionOrEquation() ")"
-      { return new ExpressionNode(kernel, en, ExpressionNode.ZCOORD, null); }  
+      {
+         GeoElement userFun = kernel.lookupLabel("z");
+		 if (userFun instanceof Evaluatable) {
+		    // user defined function z
+			return new ExpressionNode(kernel, userFun, ExpressionNode.FUNCTION, en);
+       	 } else {
+			 // internal function z
+			return new ExpressionNode(kernel, en, ExpressionNode.ZCOORD, null);
+         }
+       }  
 |
      <COS_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COS, null); }   

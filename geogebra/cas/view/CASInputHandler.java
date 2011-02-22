@@ -174,6 +174,7 @@ public class CASInputHandler {
 
 		boolean isAssignment = cellValue.getAssignmentVariable() != null;
 		boolean isEvaluate = ggbcmd.equals("Evaluate");
+		boolean isNumeric = ggbcmd.equals("Numeric");
 		boolean isKeepInput = ggbcmd.equals("KeepInput");
 
 		// assignments are processed immediately, the ggbcmd creates a new row below
@@ -207,7 +208,18 @@ public class CASInputHandler {
 
 		// standard case: build eval command
 		String paramString = null;
-		if (!isEvaluate) {
+		
+		// don't wrap Numeric[pi, 20] with a second Numeric command
+		// as this would remove precision
+		boolean wrapEvalText = !isEvaluate &&
+		            !(isNumeric && 
+		            		(evalText.startsWith("N[") || 
+		            		evalText.startsWith("N(") || 
+		            		evalText.startsWith("Numeric[") ||
+		            		evalText.startsWith("Numeric("))
+		            );
+		
+		if (wrapEvalText) {	
 			// prepare evalText as ggbcmd[ evalText, parameters ... ]
 			StringBuilder sb = new StringBuilder();
 			sb.append(ggbcmd);
@@ -912,7 +924,7 @@ public class CASInputHandler {
 			}
 
 			// inputExp failed with GeoGebra
-			// try to evaluate result of MathPiper
+			// try to evaluate result of CAS
 			if (ggbResult == null && !isDeleteCommand && CASSuccessful) {	
 				// EVALUATE result of MathPiper
 				String ggbEval = CASResult;

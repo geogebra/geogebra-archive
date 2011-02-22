@@ -936,7 +936,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	 * @return GeoGebra CAS string representation of this node
 	 */
 	final public String getCASstring(boolean symbolic) {
-		return getCASstring(STRING_TYPE_GEOGEBRA, symbolic);
+		return getCASstring(kernel.getCASPrintForm(), symbolic);
 	}
 	
 	private boolean containsMyStringBuffer() {
