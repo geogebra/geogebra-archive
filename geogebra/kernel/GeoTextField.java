@@ -21,7 +21,9 @@ public class GeoTextField extends GeoButton {
 	public String getClassName() {
 		return "GeoTextField";
 	}
-	
+	public boolean isChangeable(){
+		return true;
+	}
     public int getRelatedModeID() {
     	return EuclidianConstants.MODE_TEXTFIELD_ACTION;
     }

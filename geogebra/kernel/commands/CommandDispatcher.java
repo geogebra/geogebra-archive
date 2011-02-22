@@ -607,6 +607,8 @@ public class CommandDispatcher {
     	cmdTable.put("Delete", new CmdDelete(kernel));	
     	cmdTable.put("Slider", new CmdSlider(kernel));
     	cmdTable.put("Checkbox", new CmdCheckbox(kernel));
+    	cmdTable.put("Textfield", new CmdTextfield(kernel));
+    	cmdTable.put("Button", new CmdButton(kernel));
     	cmdTable.put("Execute", new CmdExecute(kernel));     
        		
        	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);

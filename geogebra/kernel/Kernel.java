@@ -8178,5 +8178,13 @@ public class Kernel {
 		AlgoZip algo = new AlgoZip(cons,label,expression,vars,over);
 		return algo.getOutput();
 	}
+
+
+	public GeoTextField textfield(String label,GeoElement geoElement) {
+		AlgoTextfield at = new AlgoTextfield(cons,label,geoElement);
+		return  at.getResult();		
+		
+		
+	}
 }
 	
