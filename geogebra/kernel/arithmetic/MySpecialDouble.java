@@ -14,6 +14,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
+import geogebra.util.Unicode;
 
 import java.math.BigDecimal;
 
@@ -82,7 +83,7 @@ public class MySpecialDouble extends MyDouble {
 				case '\u00b0':	return "180/%pi";
 				
 				// e
-				case 'ℯ': return "%e";
+				case Unicode.eulerChar: return "%e";
 			} 	
 			
 			break;
