@@ -156,6 +156,11 @@ public class GeoGebraToPstricks extends GeoGebraExport {
      	}*/
 		
         // add code for Points and Labels
+		if (codePoint.length()!=0){
+			codePoint.insert(0, "\\begin{scriptsize}\n");
+			codePoint.append("\\end{scriptsize}\n");
+			
+		}
         code.append(codePoint);
         // Close Environment pspicture
 		code.append("\\end{pspicture*}\n");

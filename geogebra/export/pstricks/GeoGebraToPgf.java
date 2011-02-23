@@ -2472,8 +2472,11 @@ protected void createFrame() {
  * Export Implicit plot for polynom degree greater than 2
  */
 protected void drawImplicitPoly(GeoImplicitPoly geo) {
-	System.out.println("Implicit plot not supported yet");
-	
+	code.append("\n%WARNING: PGF/Tikz and Gnuplot don't support implicit curves\n");
+	code.append("%Rather try PSTricks export\n");
+	code.append("%Cannot draw ");
+	code.append(getImplicitExpr(geo));
+	code.append("\n\n");
 }
 protected void drawPolyLine(GeoPolyLine geo){
 	GeoPoint[] path=geo.getPoints();

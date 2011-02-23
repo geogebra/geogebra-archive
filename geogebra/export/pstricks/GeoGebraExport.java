@@ -237,7 +237,7 @@ public abstract class GeoGebraExport implements ActionListener{
 			drawGeoRay((GeoRay)g);
 			drawLabel(g,null);
 		}
-		else if (g.getObjectType().equals("PolyLine")){
+		else if (g instanceof GeoPolyLine){
 			drawPolyLine((GeoPolyLine)g);			
 		} 
 		else if (g.isGeoLine()){
