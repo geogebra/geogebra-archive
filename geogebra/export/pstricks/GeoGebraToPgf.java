@@ -206,6 +206,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
 		if (s.length()!=0) s="["+s+"] ";
 		code.append(s);
     	boolean first=true;
+		boolean out=false;
     	while(it.hasNext()){
     		MyPoint mp=(MyPoint)it.next();
     		double x=mp.x;
@@ -215,8 +216,18 @@ public class GeoGebraToPgf extends GeoGebraExport {
     			if (b&&!first) code.append(" -- ");
     			else if (first) first=false;
     			writePoint(x,y,code);
+    			out=false;
     		}
-    		else first=true;
+    		else if (!first&&mp.lineTo&&!out){
+    			out=true;
+    			code.append(" -- ");
+    			writePoint(x,y,code);
+    		}
+    		
+    		else {
+    			first=true;
+    			out=false;
+    		}
     	}
 		code.append(";\n");
 		endBeamer(code);

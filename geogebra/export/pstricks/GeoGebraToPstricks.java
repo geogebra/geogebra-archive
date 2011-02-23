@@ -69,6 +69,10 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 	private boolean eurosym=false;
 	private static final int FORMAT_BEAMER=1;
 	private StringBuilder codeBeginPic;
+	/**
+	 * Constructor for GeoGeBra export
+	 * @param app GeoGeBra Application 
+	 */
 	public GeoGebraToPstricks(Application app) {
     	super(app);
 
@@ -192,6 +196,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append(LineOptionCode(g,true));
     	code.append("{");
     	boolean first=true;
+		boolean out=false;
     	while(it.hasNext()){
     		MyPoint mp=(MyPoint)it.next();
     		if (mp.x>xmin&&mp.x<xmax&&mp.y>ymin&&mp.y<ymax){
@@ -208,8 +213,22 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     			code.append(",");
     			code.append(y);
     			code.append(")\n");
+    			out=false;
     		}
-    		else first=true;
+    		else if (!first&&mp.lineTo&&!out){
+    			out=true;
+        		String x=kernel.format(mp.x);
+        		String y=kernel.format(mp.y);
+        		code.append("\\lineto(");
+    			code.append(x);
+    			code.append(",");
+    			code.append(y);
+    			code.append(")\n");
+    		}
+    		else {
+    			first=true;
+    			out=false;
+    		}
     	}
 		code.append("}\n");
 		endBeamer(code);
@@ -1789,7 +1808,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 				else coma=true;
 				if (!bracket) sb.append("[");
 				bracket=true;
-				sb.append("fillcolor=");
+				sb.append("hatchcolor=");
 				ColorCode(linecolor,sb);
 				sb.append(",fillstyle=hlines,hatchangle=");
 				sb.append(geo.getHatchingAngle());
