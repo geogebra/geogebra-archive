@@ -23,14 +23,15 @@ public class Unicode {
 	final public static char LeftToRightMark = '\u200e';
 	final public static String superscriptMinusOneBracket = "\u207b\u00b9(";
 	final public static char degreeChar = '\u00b0';
-	final public static String degree = degreeChar+"";
+	final public static String degree = Character.toString(degreeChar);
 	/** Unicode symbol for e */
 	
 	final public static char eulerChar = '\u212f'; // "\u0435";
 	final public static String EULER_STRING = eulerChar + ""; // "\u0435";
 	
 	/** Unicode symbol for pi */
-	final public static String PI_STRING = "\u03c0";
+	final public static char piChar = '\u03c0'; // "\u0435";
+	final public static String PI_STRING = Character.toString(piChar);
 	public static final String alphaBetaGamma = "\u03b1\u03b2\u03b3";	
 	
 	final public static char FEMININE_ORDINAL_INDICATOR = '\u00aa';
