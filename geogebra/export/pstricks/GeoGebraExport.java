@@ -13,7 +13,9 @@ import geogebra.kernel.AlgoHistogram;
 import geogebra.kernel.AlgoIntegralDefinite;
 import geogebra.kernel.AlgoIntegralFunctions;
 import geogebra.kernel.AlgoSlope;
+import geogebra.kernel.AlgoSumLeft;
 import geogebra.kernel.AlgoSumLower;
+import geogebra.kernel.AlgoSumRectangle;
 import geogebra.kernel.AlgoSumTrapezoidal;
 import geogebra.kernel.AlgoSumUpper;
 import geogebra.kernel.Construction;
@@ -297,8 +299,9 @@ public abstract class GeoGebraExport implements ActionListener{
             	// Bar Chart
             	else if (algo instanceof AlgoBarChart)
             		drawHistogram((GeoNumeric)g);
-            	// Lower or Upper Sum
-            	else if (algo instanceof AlgoSumUpper || algo instanceof AlgoSumLower) 
+            	// Lower or Upper Sum, Left Sum or Rectangle Sum
+            	else if (algo instanceof AlgoSumUpper || algo instanceof AlgoSumLower
+            			||algo instanceof AlgoSumLeft||algo instanceof AlgoSumRectangle) 
             				drawSumUpperLower((GeoNumeric)g);
               drawLabel(g,null);
             }
@@ -400,37 +403,216 @@ public abstract class GeoGebraExport implements ActionListener{
 		if (tmp!=0) return tmp;
 		else return 1;
 	}
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ GeoPoint
+	 * @param geo The point to export
+	 */
+	
 	abstract protected void drawGeoPoint(GeoPoint geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ GeoLine
+	 * line[A,B]
+	 * @param geo The line to export
+	 */
+	
 	abstract protected void drawGeoLine(GeoLine geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ GeoRay
+	 * ray[A,B]
+	 * @param geo The ray to export
+	 */
 	abstract protected void drawGeoRay(GeoRay geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ GeoSegment
+	 * segment[A,B]
+	 * @param geo The segment to export
+	 */
 	abstract protected void drawGeoSegment(GeoSegment geo);
+
+	/**
+	 * Export as PSTricks or PGF/TikZ Objects created by command:
+	 * polygon[A,B,C]
+	 * @param geo The polygon to export
+	 */
+	
 	abstract protected void drawPolygon(GeoPolygon geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ Objects created by command:
+	 * slider[1,2,0.1]
+	 * @param geo The slider to export
+	 */
+	
 	abstract protected void drawSlider(GeoNumeric geo);
+	
+	
 	abstract protected void drawSlope(GeoNumeric geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ Objects created by command:
+	 * integral(f(x),a,b)
+	 * @param geo The object to export
+	 */
 	abstract protected void drawIntegral(GeoNumeric geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ Objects created by command:
+	 * integral(f(x),g(x),a,b)
+	 * @param geo The object to export
+	 */
+	
 	abstract protected void drawIntegralFunctions(GeoNumeric geo);
+
+	/**
+	 * Export as PSTricks or PGF/TikZ Objects created by following commands
+	 * leftSum, rectangleSum, lowerSum upperSum
+	 * @param geo The object to export
+	 */
 	abstract protected void drawSumUpperLower(GeoNumeric geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ Objects created by command trapezoidalsum
+	 * @param geo The object to export
+	 */
 	abstract protected void drawSumTrapezoidal(GeoNumeric geo);
+
+	/**
+	 * Export as PSTricks or PGF/TikZ Objects created by command:
+	 * BoxPlot[0, 1, {2,2,3,4,5,5,6,7,7,8,8,8,9}]
+	 * @param geo The boxplot to export
+	 */
+	
 	abstract protected void drawBoxPlot(GeoNumeric geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ Objects created by command:
+	 * Histogram[{0, 1, 2, 3, 4, 5}, {2, 6, 8, 3, 1}]
+	 * @param geo The histogram to export
+	 */
 	abstract protected void drawHistogram(GeoNumeric geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ GeoAngle objects
+	 * angle[A,B,C]
+	 * @param geo The angle to export
+	 */
 	abstract protected void drawAngle(GeoAngle geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ GeoVector objects
+	 * vector[A,B]
+	 * @param geo The vector to export
+	 */
+	
 	abstract protected void drawGeoVector(GeoVector geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ GeoConic objects
+	 * conic[A,B,C,D,E]
+	 * @param geo The conic to export
+	 */
+	
 	abstract protected void drawGeoConic(GeoConic geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ GeoConicPart objects (sectors...)
+	 * @param geo The conic part to export
+	 */
 	abstract protected void drawGeoConicPart(GeoConicPart geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ the object's label
+	 * @param geo The label to export
+	 * @param drawGeo Drawable object attached to geo
+	 */
 	abstract protected void drawLabel(GeoElement geo,Drawable drawGeo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ the GeoFunction object
+	 * @param geo The function to export
+	 */
 	abstract protected void drawFunction(GeoFunction geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ implicit functions
+	 * @param geo The function to export
+	 */
 	abstract protected void drawImplicitPoly(GeoImplicitPoly geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ parametric functions
+	 * @param geo The function to export
+	 */
 	abstract protected void drawCurveCartesian (GeoCurveCartesian geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ Text on euclidian view
+	 * @param geo The text to export
+	 */
+	
 	abstract protected void drawText(GeoText geo);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ locus
+	 * @param geo The locus to export
+	 */
+	
 	abstract protected void drawLocus(GeoLocus geo);
+	
+	/**
+	 * Exports as PStricks or PGF a line defined by all its parameter
+	 * @param x1 x start
+	 * @param y1 y start
+	 * @param x2 x end
+	 * @param y2 y end 
+	 * @param geo geo Object
+	 */
+	
 	abstract protected void drawLine(double x1,double y1,double x2,double y2,GeoElement geo);
+	
+	/**
+	 * Export as PStricks or PGF arc mark for angle
+	 * @param geo geo Object
+	 * @param vertex center
+	 * @param angSt angle start
+	 * @param angEnd angle end
+	 * @param r radius
+	 */
 	abstract protected void drawArc(GeoAngle geo,double[] vertex,double angSt,double angEnd,double r);
+	
+	/**
+	 * Export as PStricks or PGF segment mark
+	 * @param geo geo Object
+	 * @param vertex 
+	 * @param angletick angle 
+	 */
 	abstract protected void drawTick(GeoAngle geo,double[] vertex, double angleTick);
+	
+	
     abstract protected void drawArrowArc(GeoAngle geo,double[] vertex,double angSt, double angEnd,double r, boolean clockwise);
 	abstract protected void createFrame();
 	abstract protected void generateAllCode();
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ color's code
+	 * @param color The color
+	 * @param The StringBuilder to complete
+	 */
+	
 	abstract protected void ColorCode(Color color, StringBuilder sb);
+	
+	/**
+	 * Export as PSTricks or PGF/TikZ PolyLine objects
+	 * polyline[A,B,C,D,E]
+	 * @param geo The Polyline objects
+	 */
 	abstract protected void drawPolyLine(GeoPolyLine geo);
+	
+	
 	/**
 	 *  Export inequalities as PSTricks or PGF
 	 * @param g The inequality function
@@ -771,7 +953,7 @@ public abstract class GeoGebraExport implements ActionListener{
     		GeoElement[] geos=construction.getConstructionElement(step).getGeoElements();
     		for (int j=0;j<geos.length;j++){
             	GeoElement g = (GeoElement)(geos[j]);
-               	drawGeoElement(g,false,false);    
+            	drawGeoElement(g,false,false);    
     		}
     	}
     	

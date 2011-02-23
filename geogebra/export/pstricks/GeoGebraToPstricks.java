@@ -299,6 +299,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		endBeamer(codeFilledObject);
     }
     
+
     protected void drawSumUpperLower(GeoNumeric geo){
     	AlgoFunctionAreaSums algo = (AlgoFunctionAreaSums)geo.getParentAlgorithm();
     	int n=algo.getIntervals();
@@ -321,7 +322,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		endBeamer(codeFilledObject);
     }
     protected void drawIntegralFunctions(GeoNumeric geo){
-// command: \pscutom[option]{\pstplot{a}{b}{f(x)}\lineto(b,g(b))\pstplot{b}{a}{g(x)} \lineto(a,f(a))\closepath} 
+// command: \pscustom[option]{\pstplot{a}{b}{f(x)}\lineto(b,g(b))\pstplot{b}{a}{g(x)} \lineto(a,f(a))\closepath} 
    	AlgoIntegralFunctions algo = (AlgoIntegralFunctions) geo.getParentAlgorithm();
 	// function f
 	GeoFunction f = algo.getF();
@@ -556,7 +557,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		angExt+=angSt;
 		double r = arcSize /euclidianView.getXscale();
 		// if angle=90� and decoration=little square
-        if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
+        if (Kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_SQUARE){
         	r=r/Math.sqrt(2);
         	double[] x=new double[8];
         	x[0]=m[0]+r*Math.cos(angSt);
@@ -608,7 +609,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		code.append(")\\closepath}\n");
 		endBeamer(code);
 		// draw the dot if angle= 90 and decoration=dot
-		if (kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT){
+		if (Kernel.isEqual(geo.getValue(),Kernel.PI_HALF)&&geo.isEmphasizeRightAngle()&&euclidianView.getRightAngleStyle()==EuclidianView.RIGHT_ANGLE_STYLE_DOT){
 			double diameter = geo.lineThickness/euclidianView.getXscale();
 			double radius = arcSize/euclidianView.getXscale()/1.7;
 			double labelAngle = (angSt+angExt) / 2.0;
@@ -2102,4 +2103,5 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 			}
 	*/	
 	}
+
 }
