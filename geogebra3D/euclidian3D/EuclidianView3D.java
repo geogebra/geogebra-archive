@@ -18,6 +18,7 @@ import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
@@ -3346,6 +3347,36 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	public void changeLayer(GeoElement geo, int oldlayer, int newlayer){
 		getApplication().getEuclidianView().changeLayer(geo, oldlayer, newlayer);
+	}
+
+
+	public boolean isZoomable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	public GeoNumeric getXminObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public GeoNumeric getXmaxObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public GeoNumeric getYminObject() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public GeoNumeric getYmaxObject() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

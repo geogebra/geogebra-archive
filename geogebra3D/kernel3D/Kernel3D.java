@@ -299,6 +299,9 @@ public class Kernel3D
 		case 's': // segment 
 			if (type.equals("segment3D"))
 				return new GeoSegment3D(cons, null, null);	 
+		case 'v': // vector 
+			if (type.equals("vector3d"))
+				return new GeoVector3D(cons);	 
 			
     	}
     	
