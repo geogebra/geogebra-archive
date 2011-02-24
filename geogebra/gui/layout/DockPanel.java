@@ -623,7 +623,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			toolbarContainer.buildGui();
 			toolbarContainer.updateHelpText();
 			
-			if(isOpenInFrame()) {
+			if(isVisible() && isOpenInFrame()) {
 				frame.validate();
 			}
 		}

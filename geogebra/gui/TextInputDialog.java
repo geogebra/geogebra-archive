@@ -137,7 +137,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		setLabels(title);
 
 		this.pack();
-
 	}
 
 
@@ -183,6 +182,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		editPanel.add(inputPanel, BorderLayout.CENTER);	
 		editPanel.add(toolPanel, BorderLayout.SOUTH);	
 		editPanel.setBorder(BorderFactory.createEtchedBorder());
+		editPanel.setMinimumSize(new Dimension(200, 120));
 
 
 		// create preview panel	
@@ -195,6 +195,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		previewPanel = new JPanel(new BorderLayout());
 		previewPanel.add(previewHeader, BorderLayout.NORTH);	
 		previewPanel.add(new JScrollPane(p), BorderLayout.CENTER);		
+		previewPanel.setMinimumSize(new Dimension(200, 50));
 
 
 		// set sizes
@@ -207,7 +208,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 
 		// put the preview and edit panels into a split pane
-		// and make sure they are given equal weight
 		JSplitPane sp = new JSplitPane(JSplitPane.VERTICAL_SPLIT, editPanel, previewPanel );
 		previewPanel.setPreferredSize(editPanel.getPreferredSize());
 		sp.setResizeWeight(0.75);

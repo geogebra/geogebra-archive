@@ -19,9 +19,10 @@ import java.util.HashMap;
  * @author Markus Hohenwarter
  */
 public class GeoGebraCAS {
-	
-
-	public static final int CAS_TIMEOUT = 5; // timeout in seconds
+	/**
+	 * Timeout for CAS in seconds.
+	 */
+	private static int timeout;
 
 	private StringBuilder sbPolyCoeffs;
 	private Application app;
@@ -34,6 +35,8 @@ public class GeoGebraCAS {
 		casParser = new CASparser(kernel);
 		
 		//app.setDefaultCAS(Application.CAS_MAXIMA);
+		
+		timeout = 5;
 		
 		setCurrentCAS(Kernel.DEFAULT_CAS);
 	}
@@ -419,6 +422,20 @@ public class GeoGebraCAS {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * @return CAS timeout in seconds
+	 */
+	public static int getTimeout() {
+		return GeoGebraCAS.timeout;
+	}
+	
+	/**
+	 * @param timeout Timeout in seconds
+	 */
+	public static void setTimeout(int timeout) {
+		GeoGebraCAS.timeout = timeout;
 	}
 	
 }

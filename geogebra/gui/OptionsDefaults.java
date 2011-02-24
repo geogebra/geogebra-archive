@@ -22,8 +22,6 @@ import javax.swing.tree.DefaultTreeModel;
 
 /**
  * Options with the default settings of objects.
- * 
- * @author Florian Sonner
  */
 public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 	/** */

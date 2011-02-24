@@ -2,6 +2,7 @@ package geogebra.gui;
 
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.main.Application;
+import geogebra.main.GeoGebraPreferences;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -17,11 +18,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -33,38 +37,35 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 /**
  * A central dialog with all important options.
- * 
- * @author Florian Sonner
- * TODO Re-enable font tab (F.S.) 
  */
 public class OptionsDialog extends JDialog implements WindowListener {
 	/** */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Index of the general tab. 
-	 */
-	public static final int TAB_GENERAL = 0;
-
-	/**
 	 * Index of the defaults tab. 
 	 */
-	public static final int TAB_DEFAULTS = 1;
+	public static final int TAB_DEFAULTS = 0;
 	
 	/**
 	 * Index of the euclidian tab.
-	 * TODO: Change back to 3 (F.S.) 
 	 */
-	public static final int TAB_EUCLIDIAN = 2;
-
-
+	public static final int TAB_EUCLIDIAN = 1;
+	
 	/**
 	 * Index of the spreadsheet tab.
-	 * TODO: Change back to 4 (G.S.) 
 	 */
-	public static final int TAB_SPREADSHEET = 3;
+	public static final int TAB_SPREADSHEET = 2;
 
-	
+	/**
+	 * Index of the CAS tab.
+	 */
+	public static final int TAB_CAS = 3; 
+
+	/**
+	 * Index of the advanced tab. 
+	 */
+	public static final int TAB_ADVANCED = 4;
 	
 	/**
 	 * An instance of the Application object of this window.
@@ -76,22 +77,12 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * of the options menu.
 	 */
 	private JTabbedPane tabbedPane;
-
-	/**
-	 * The panel with general options.
-	 */
-	private OptionsGeneral generalPanel;
 	
 	/**
 	 * The panel where the user can select new default values for
 	 * certain objects.
 	 */
 	private OptionsDefaults defaultsPanel;
-
-	/**
-	 * The panel with all settings regarding font sizes & the current language.
-	 */
-	//private OptionsFont fontPanel;
 	
 	/**
 	 * The panel with all settings for the euclidian view. The "Drawing Pad Properties" dialog
@@ -103,11 +94,21 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * The panel with all settings for the spreadsheet view. 
 	 */
 	private OptionsSpreadsheet spreadsheetPanel;
+	
+	/**
+	 * The panel with all settings for the CAS view.
+	 */
+	private OptionsCAS casPanel;
+
+	/**
+	 * The panel with general options.
+	 */
+	private OptionsAdvanced advancedPanel;
 
 	/**
 	 * The button to apply settings without closing the window.
 	 */
-	private JButton applyButton;
+	private JButton saveButton;
 	
 	/**
 	 * The button which closes the window and stores all changes. 
@@ -137,11 +138,11 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * Update the GUI.
 	 */
 	public void updateGUI() {
-		generalPanel.updateGUI();
 		defaultsPanel.updateGUI();
-		//fontPanel.updateGUI();
 		euclidianPanel.updateGUI();
 		spreadsheetPanel.updateGUI();
+		casPanel.updateGUI();
+		advancedPanel.updateGUI();
 	}
 
 	/**
@@ -163,50 +164,42 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		setLayout(new BorderLayout());
 
 		// init tabs
-		generalPanel = new OptionsGeneral(app);
 		defaultsPanel = new OptionsDefaults(app);
-		//fontPanel = new OptionsFont(app);
 		euclidianPanel = new OptionsEuclidian(app, app.getEuclidianView());
-		
-		//G.Sturr 2010-3-20: add spreadsheet panel
 		spreadsheetPanel = new OptionsSpreadsheet(app, (SpreadsheetView)app.getGuiManager().getSpreadsheetView());
+		casPanel = new OptionsCAS(app);
+		advancedPanel = new OptionsAdvanced(app);
 		
 		// init scroll panes for tabs (show no extra borders)
-		//JScrollPane fontsAndLangPanelScroll = new JScrollPane(fontPanel);
-		//fontsAndLangPanelScroll.setBorder(BorderFactory.createEmptyBorder());
 		JScrollPane euclidianPanelScroll = new JScrollPane(euclidianPanel);
 		euclidianPanelScroll.setBorder(BorderFactory.createEmptyBorder());
 
 		// init tabbing pane
 		tabbedPane = new OptionsTabbedPane();
 		
-		// general
-		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), generalPanel);
-		
 		// defaults
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
 				Color.RED), defaultsPanel);
-		
-		// fonts & language
-		/*tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
-				Color.RED), fontsAndLangPanelScroll);*/
 		
 		// euclidian properties
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
 				Color.RED), euclidianPanelScroll);
 		
-		// G.Sturr 2010-3-20
 		// spreadsheet properties
 		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
 				Color.RED), spreadsheetPanel);
 		
+		// CAS properties
+		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
+				Color.RED), casPanel);
+		
+		// advanced
+		tabbedPane.addTab("", app.getToolBarImage("mode_delete_32.gif",
+				Color.RED), advancedPanel);
+		
 		// disable some tabs for applets
 		if(app.isApplet()) {
-			tabbedPane.setEnabledAt(1, false); // general
-			tabbedPane.setEnabledAt(2, false); // default values
-			
-			// TODO: hide euclidian options in applets in certain cases
+			tabbedPane.setEnabledAt(TAB_DEFAULTS, false);
 		}
 
 		add(tabbedPane, BorderLayout.CENTER);
@@ -216,13 +209,13 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		buttonPanel.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, SystemColor.controlDkShadow));
 		buttonPanel.setBackground(Color.white);
 		
-		applyButton = new JButton();
-		applyButton.addActionListener(new ActionListener() {
+		saveButton = new JButton();
+		saveButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				apply();
+				GeoGebraPreferences.getPref().saveXMLPreferences(app);
 			}
 		});
-		buttonPanel.add(applyButton);
+		buttonPanel.add(saveButton);
 		closeButton = new JButton();
 		closeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -250,42 +243,25 @@ public class OptionsDialog extends JDialog implements WindowListener {
 		setTitle(app.getMenu("Options"));
 
 		closeButton.setText(app.getMenu("Close"));
-		applyButton.setText(app.getPlain("Apply"));
+		saveButton.setText(app.getMenu("Settings.Save"));
 
-		tabbedPane.setTitleAt(0, app.getMenu("General"));
-		tabbedPane.setTitleAt(1, app.getPlain("Defaults"));
-		//tabbedPane.setTitleAt(2, app.getPlain("FontsAndLanguage"));
-		tabbedPane.setTitleAt(2, app.getPlain("DrawingPad")); // TODO change back to 3 (F.S.)
+		tabbedPane.setTitleAt(TAB_DEFAULTS, app.getPlain("Defaults"));
+		tabbedPane.setTitleAt(TAB_EUCLIDIAN, app.getPlain("DrawingPad"));
+		tabbedPane.setTitleAt(TAB_SPREADSHEET, app.getPlain("Spreadsheet")); 
+		tabbedPane.setTitleAt(TAB_CAS, app.getMenu("CAS")); 
+		tabbedPane.setTitleAt(TAB_ADVANCED, app.getMenu("Advanced"));
 		
-		//G.Sturr 2010-3-20
-		tabbedPane.setTitleAt(3, app.getPlain("Spreadsheet")); 
-		
-		generalPanel.setLabels();
 		euclidianPanel.setLabels();
-		//fontPanel.setLabels();
 		defaultsPanel.setLabels();
-		
-		//G.Sturr 2010-3-20
 		spreadsheetPanel.setLabels();
-	}
-
-	/**
-	 * Apply settings which are not applied directly after changing a value.
-	 * 
-	 * TODO Save permanent settings
-	 */
-	private void apply() {
-		generalPanel.apply();
-		//fontPanel.apply();
-		defaultsPanel.apply();
+		casPanel.setLabels();
+		advancedPanel.setLabels();
 	}
 
 	/**
 	 * Close the dialog.
 	 */
 	private void closeDialog() {
-		apply();
-
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		app.storeUndoInfo();
 		setCursor(Cursor.getDefaultCursor());
