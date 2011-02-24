@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import geogebra.cas.GeoGebraCAS;
+import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.CasManager;
 import geogebra.gui.view.algebra.MyComboBoxListener;
@@ -16,6 +17,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
@@ -23,6 +25,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -32,6 +36,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable.PrintMode;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -502,5 +507,14 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 	public CASInputHandler getInputHandler()
 	{
 		return casInputHandler;
+	}
+
+
+	public int print(Graphics graphics, PageFormat pageFormat, int pageIndex)
+			throws PrinterException {
+		Drawable.exporting=true;
+		int r=consoleTable.getPrintable(PrintMode.FIT_WIDTH, null, null).print(graphics, pageFormat, pageIndex);
+		Drawable.exporting=false;
+		return r;
 	}
 }

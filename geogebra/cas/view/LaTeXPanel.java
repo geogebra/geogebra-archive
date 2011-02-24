@@ -66,10 +66,15 @@ public class LaTeXPanel extends JPanel {
 	}
 	
 	public void paint(Graphics g) {
-		// draw part of image that contains equation
-		if (image != null && equSize != null)
-			g.drawImage(image, 0, 0, equSize.width, equSize.height, 
-								0, 0, equSize.width, equSize.height, null);	
+		if (Drawable.exporting){
+			//draw full resolution image directly on g
+			Drawable.drawEquation(app, null, (Graphics2D) g, 0, 0, latex, getFont(), false, getForeground(), getBackground());
+		}else{
+			// draw part of image that contains equation
+			if (image != null && equSize != null)
+				g.drawImage(image, 0, 0, equSize.width, equSize.height, 
+									0, 0, equSize.width, equSize.height, null);	
+		}
 	}
 
 }

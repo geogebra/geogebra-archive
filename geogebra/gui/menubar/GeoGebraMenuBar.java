@@ -1,6 +1,7 @@
 package geogebra.gui.menubar;
 
 import geogebra.GeoGebra;
+import geogebra.gui.layout.DockManager;
 import geogebra.gui.layout.Layout;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
@@ -27,6 +28,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
 
 public class GeoGebraMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1736020764918189176L;
@@ -172,7 +176,17 @@ public class GeoGebraMenuBar extends JMenuBar {
 						// Constructor constructor =
 						// classObject.getDeclaredConstructor(types);
 						// constructor.newInstance(args);
-						new geogebra.export.PrintPreview(app, app
+						boolean printCAS=false;
+						if (app.getGuiManager().hasCasView()){	
+							DockManager dm=app.getGuiManager().getLayout().getDockManager();
+							//if CAS-view has Focus, print CAS
+							if (dm.getFocusedPanel()==dm.getPanel(Application.VIEW_CAS)){
+								new geogebra.export.PrintPreview(app, app.getGuiManager().getCasView(), PageFormat.LANDSCAPE);
+								printCAS=true;
+							}
+						}
+						if (!printCAS)
+							new geogebra.export.PrintPreview(app, app
 								.getEuclidianView(), PageFormat.LANDSCAPE);
 					} catch (Exception e) {
 						Application.debug("Print preview not available");

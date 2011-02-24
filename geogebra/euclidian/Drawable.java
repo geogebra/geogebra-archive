@@ -91,6 +91,9 @@ public abstract class Drawable extends DrawableND {
 	/** tracing */	
 	protected boolean isTracing = false;
 	
+	/** flag to test whether to draw Equations full resolution */
+	public static boolean exporting = false;
+	
 	//boolean createdByDrawList = false;	
 
 	public abstract void update();
@@ -633,7 +636,7 @@ public abstract class Drawable extends DrawableND {
 		
 		// if we're exporting, we want to draw it full resolution
 		// if it's a \jlmDynamic text, we don't want to add it to the cache
-		if (EuclidianView.exporting || eqnSB.indexOf("\\jlmDynamic") > -1) {
+		if (exporting || eqnSB.indexOf("\\jlmDynamic") > -1) {
 		
 			//Application.debug("creating new icon for: "+text);
 			TeXFormula formula;

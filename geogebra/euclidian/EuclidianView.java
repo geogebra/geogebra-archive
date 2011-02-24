@@ -1727,9 +1727,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			return (PAGE_EXISTS);
 		}
 	}
-	
-	// flag to test whether to eg draw Equations full resolution
-	public static boolean exporting = false;
 
 	/**
 	 * Scales construction and draws it to g2d.
@@ -1743,10 +1740,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		exportPaint(g2d, scale, false);
 	}
 	public void exportPaint(Graphics2D g2d, double scale, boolean transparency) {
-		exporting = true;
+		Drawable.exporting = true;
 		exportPaintPre(g2d,scale, transparency);
 		drawObjects(g2d);
-		exporting = false;
+		Drawable.exporting = false;
 	}
 	
 	public void exportPaintPre(Graphics2D g2d, double scale) {
