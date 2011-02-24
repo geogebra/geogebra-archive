@@ -16,7 +16,9 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.util.TableSymbols;
 import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -414,7 +416,9 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	}
 	
 	
-	
+	private void updateMinMaxInput(JTextField tf, GeoNumeric minMaxObject, double minMax){
+		tf.setText(minMaxObject==null?kernel.format(minMax):minMaxObject.getLabel());
+	}
 	
 	public void updateGUI() {
 		
@@ -452,10 +456,10 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	 	tfMaxX.removeActionListener(this);
         tfMinY.removeActionListener(this);
 	 	tfMaxY.removeActionListener(this);		 		
-	 		tfMinX.setText(kernel.format(view.getXmin()));
-			tfMaxX.setText(kernel.format(view.getXmax()));
-	 		tfMinY.setText(kernel.format(view.getYmin()));
-			tfMaxY.setText(kernel.format(view.getYmax()));
+	 		updateMinMaxInput(tfMinX,((EuclidianView)view).getXminObject(),view.getXmin());
+	 		updateMinMaxInput(tfMaxX,((EuclidianView)view).getXmaxObject(),view.getXmax());
+	 		updateMinMaxInput(tfMinY,((EuclidianView)view).getYminObject(),view.getYmin());
+	 		updateMinMaxInput(tfMaxY,((EuclidianView)view).getYmaxObject(),view.getYmax());			
 	 	tfMinX.addActionListener(this);
 	 	tfMaxX.addActionListener(this);
 	 	tfMinY.addActionListener(this);
@@ -652,34 +656,46 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 
 		
 		else if (source == tfMinX) {
-			double min = kernel.getAlgebraProcessor().evaluateToDouble(tfMinX.getText());
+			NumberValue min = kernel.getAlgebraProcessor().evaluateToNumeric(tfMinX.getText(), true);
+			double minv = min.getDouble(); 
 			double max =  view.getXmax();
-			if (min  + Kernel.MIN_PRECISION < max) {							
-				view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
+			if (minv  + Kernel.MIN_PRECISION < max) {							
+				view.setRealWorldCoordSystem(minv, max, view.getYmin(), view.getYmax());
+				((EuclidianView)view).setXminObject(min);
+				((GeoNumeric)min).addEVSizeListener(GeoNumeric.LISTENER_XMIN);
 			}
 		}
 
 		else if (source == tfMaxX) {
 			double min = view.getXmin();
-			double max = kernel.getAlgebraProcessor().evaluateToDouble(tfMaxX.getText());
-			if (min + Kernel.MIN_PRECISION < max) {	
-				view.setRealWorldCoordSystem(min, max, view.getYmin(), view.getYmax());
+			NumberValue max = kernel.getAlgebraProcessor().evaluateToNumeric(tfMaxX.getText(),true);
+			double maxv = max.getDouble();
+			if (min + Kernel.MIN_PRECISION < maxv) {	
+				((EuclidianView)view).setXmaxObject(max);
+				view.setRealWorldCoordSystem(min, maxv, view.getYmin(), view.getYmax());
+				((GeoNumeric)max).addEVSizeListener(GeoNumeric.LISTENER_XMAX);
 			}
 		}
 
 		else if (source == tfMinY) {
-			double min = kernel.getAlgebraProcessor().evaluateToDouble(tfMinY.getText());
+			NumberValue min = kernel.getAlgebraProcessor().evaluateToNumeric(tfMinY.getText(), true);
+			double minv = min.getDouble(); 
 			double max =  view.getYmax();
-			if (min  + Kernel.MIN_PRECISION < max) {							
-				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
+			if (minv  + Kernel.MIN_PRECISION < max) {							
+				view.setRealWorldCoordSystem(view.getYmin(), view.getYmax(),minv, max);
+				((EuclidianView)view).setYminObject(min);
+				((GeoNumeric)min).addEVSizeListener(GeoNumeric.LISTENER_YMIN);
 			}
 		}
 
 		else if (source == tfMaxY) {
 			double min = view.getYmin();
-			double max = kernel.getAlgebraProcessor().evaluateToDouble(tfMaxY.getText());
-			if (min + Kernel.MIN_PRECISION < max) {	
-				view.setRealWorldCoordSystem(view.getXmin(), view.getXmax(), min, max );
+			NumberValue max = kernel.getAlgebraProcessor().evaluateToNumeric(tfMaxY.getText(),true);
+			double maxv = max.getDouble();
+			if (min + Kernel.MIN_PRECISION < maxv) {	
+				((EuclidianView)view).setYmaxObject(max);
+				view.setRealWorldCoordSystem(view.getYmin(), view.getYmax(),min, maxv);
+				((GeoNumeric)max).addEVSizeListener(GeoNumeric.LISTENER_YMAX);
 			}
 		}
 

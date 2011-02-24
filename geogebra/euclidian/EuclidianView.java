@@ -31,15 +31,12 @@ import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
-import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolygon;
-import geogebra.kernel.GeoRay;
-import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.GeoVec2D;
@@ -48,6 +45,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.FunctionalNVar;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoRayND;
@@ -74,7 +72,6 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
@@ -297,6 +294,62 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	protected NumberFormat[] axesNumberFormat;
 
 	protected NumberFormat printScaleNF;
+	NumberValue xminObject, xmaxObject, yminObject, ymaxObject;
+	/**
+	 * @return the xminObject
+	 */
+	public GeoNumeric getXminObject() {
+		return (GeoNumeric) xminObject;
+	}
+
+	/**
+	 * @param xminObject the xminObject to set
+	 */
+	public void setXminObject(NumberValue xminObject) {
+		this.xminObject = xminObject;
+	}
+
+	/**
+	 * @return the xmaxObject
+	 */
+	public GeoNumeric getXmaxObject() {
+		return (GeoNumeric) xmaxObject;
+	}
+
+	/**
+	 * @param xmaxObject the xmaxObject to set
+	 */
+	public void setXmaxObject(NumberValue xmaxObject) {
+		this.xmaxObject = xmaxObject;
+	}
+
+	/**
+	 * @return the yminObject
+	 */
+	public GeoNumeric getYminObject() {
+		return (GeoNumeric) yminObject;
+	}
+
+	/**
+	 * @param yminObject the yminObject to set
+	 */
+	public void setYminObject(NumberValue yminObject) {
+		this.yminObject = yminObject;
+	}
+
+	/**
+	 * @return the ymaxObject
+	 */
+	public GeoNumeric getYmaxObject() {
+		return (GeoNumeric) ymaxObject;
+	}
+
+	/**
+	 * @param ymaxObject the ymaxObject to set
+	 */
+	public void setYmaxObject(NumberValue ymaxObject) {
+		this.ymaxObject = ymaxObject;
+	}
 
 	double xmin, xmax, ymin, ymax, invXscale, invYscale, xZero, yZero, xscale,
 			yscale, scaleRatio = 1.0; // ratio yscale / xscale

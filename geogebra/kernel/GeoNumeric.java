@@ -43,7 +43,13 @@ import java.util.TreeSet;
 public class GeoNumeric extends GeoElement 
 implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {	
 	
+	private static final int LISTENER_NONE = 0;
+	public static int LISTENER_XMIN = 1;
+	public static int LISTENER_XMAX = 2;
+	public static int LISTENER_YMIN = 4;
+	public static int LISTENER_YMAX = 8;
 	private static final long serialVersionUID = 1L;
+	
 	private static int DEFAULT_SLIDER_WIDTH_RW = 4;
 	private static int DEFAULT_SLIDER_WIDTH_PIXEL = 100;	
 	private static int DEFAULT_SLIDER_WIDTH_PIXEL_ANGLE = 72;
@@ -855,7 +861,16 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				GeoNumeric geo = minMaxListeners.get(i);
 				geo.resolveMinMax();								
 			}					
-		}    	
+		}
+		if(evListenerType == LISTENER_NONE)
+			return;
+		double xmin = ((evListenerType & LISTENER_XMIN) != 0) ? value : view.getXmin();
+		double xmax = ((evListenerType & LISTENER_XMAX) != 0) ? value : view.getXmax();
+		double ymin = ((evListenerType & LISTENER_YMIN) != 0) ? value : view.getYmin();
+		double ymax = ((evListenerType & LISTENER_YMAX) != 0) ? value : view.getYmax();
+		if((xmax-xmin>Kernel.MIN_PRECISION) && (ymax-ymin>Kernel.MIN_PRECISION)){
+			view.setRealWorldCoordSystem(xmin,xmax,ymin,ymax);
+		}
     }	
 	
 	private void resolveMinMax() {
@@ -1108,5 +1123,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	final public boolean isCasEvaluableObject() {
 		return true;
 	}
-
+	private int evListenerType = LISTENER_NONE;
+	public void addEVSizeListener(int type){
+		evListenerType |= type;
+	}
 }
