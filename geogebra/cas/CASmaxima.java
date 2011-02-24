@@ -399,6 +399,10 @@ public class CASmaxima extends CASgeneric {
 	    ggbMaxima.executeCall("logB(b, x) := log(x) / log(b);");
 	    ggbMaxima.executeCall("cbrt(x) := x^(1/3);");
 	    
+	    //necessary because parser doesn't like _
+	    ggbMaxima.executeCall("prevprime(x):=prev_prime(x);");
+	    ggbMaxima.executeCall("nextprime(x):=next_prime(x);");
+	    
 	    // needed to define lcm()
 	    ggbMaxima.executeCall("load(functs)$");
 	    

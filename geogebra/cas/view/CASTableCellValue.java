@@ -447,7 +447,7 @@ public class CASTableCellValue {
 	
 	final public void setEvalCommand(String cmd) {
 		evalCmd = cmd;
-		setKeepInputUsed(evalCmd != null && evalCmd.equals("KeepInput"));
+		setKeepInputUsed(evalCmd != null && (evalCmd.equals("KeepInput") || evalCmd.equals("ProperFraction") || evalCmd.equals("Substitute") || evalCmd.equals("ToPolar")));
 	}
 	
 	public void setKeepInputUsed(boolean keepInputUsed) {
