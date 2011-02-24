@@ -26,7 +26,6 @@ import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -237,6 +236,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return count;
 	}
 	
+	/**
+	 * @return true if displayed as slider
+	 */
 	public boolean isSlider() {
 		return isIndependent() && isEuclidianVisible();			
 	}
@@ -799,20 +801,27 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return minMaxListeners;
 	}
 	
+	/**
+	 * @param random true for random slider
+	 */
 	public void setRandom(boolean random) {
 		randomSlider = random;
 		if (random) cons.addRandomGeo(this);
 		else cons.removeRandomGeo(this);
 	}
 	
-	/*
+	/**
 	 * returns true for random sliders
 	 * (can be hidden to make random numbers which still use intervalMin, Max, interval)
+	 * @return true for random sliders 
 	 */
 	public boolean isRandom() {
 		return randomSlider;
 	}
-	
+	 
+	/**
+	 * Updates random slider
+	 */
 	public void updateRandom() {
 		if (randomSlider && isIntervalMaxActive() && isIntervalMinActive()) {
 			// update all algorithms in the algorithm set of this GeoElement    
@@ -852,16 +861,16 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	private void resolveMinMax() {
 		if(intervalMin == null || intervalMax == null)
 			return;
-		boolean ok =  (getIntervalMin() < getIntervalMax());
+		boolean ok =  (getIntervalMin() <= getIntervalMax());
 		intervalMinActive = ok;
 		intervalMaxActive = ok;
 			
 		if(ok)
-			setValue(isDefined() ? value : 1.0);
+			setValue(isDefined() ? value : 1.0);		
 		else 
 			setUndefined();
 		
-		update();
+		updateCascade();
 	}
 
 	/**
