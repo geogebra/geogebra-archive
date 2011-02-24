@@ -52,9 +52,10 @@ public class CommandDispatcher {
     public static final int TABLE_SPREADSHEET = 12;
     public static final int TABLE_SCRIPTING = 13;
     public static final int TABLE_DISCRETE_MATH = 14;
-    public static final int TABLE_OTHER = 15;
+    public static final int TABLE_GEOGEBRA = 15;
+    public static final int TABLE_OTHER = 16;
     
-    private int tableCount = 16;
+    private int tableCount = 17;
     
     
     public String getSubCommandSetName(int index){
@@ -74,6 +75,7 @@ public class CommandDispatcher {
     	case TABLE_SPREADSHEET: return app.getMenu("Type.Spreadsheet");
     	case TABLE_SCRIPTING: return app.getMenu("Type.Scripting");
     	case TABLE_DISCRETE_MATH: return app.getMenu("Type.DiscreteMath");
+    	case TABLE_GEOGEBRA: return app.getMenu("Type.GeoGebra");
     	case TABLE_OTHER: return app.getMenu("Type.OtherCommands");
     	default: return null;
     	}
@@ -278,6 +280,12 @@ public class CommandDispatcher {
     	//Mathieu Blossier
     	cmdTable.put("PointIn", new CmdPointIn(kernel));   
     	
+    	cmdTable.put("AffineRatio", new CmdAffineRatio(kernel));
+    	cmdTable.put("CrossRatio", new CmdCrossRatio(kernel));
+    	
+    	cmdTable.put("ClosestPoint", new CmdClosestPoint(kernel));     
+
+    	
     	cmdSubTable[TABLE_GEOMETRY].putAll(cmdTable);
     	cmdTable.clear();
     	
@@ -348,10 +356,17 @@ public class CommandDispatcher {
     	cmdTable.put("ComplexRoot", new CmdComplexRoot(kernel));	   
     	cmdTable.put("SolveODE", new CmdSolveODE(kernel));	   
     	cmdTable.put("Iteration", new CmdIteration(kernel));
-    	cmdTable.put("IterationList", new CmdIterationList(kernel));
+    	
     	cmdTable.put("PathParameter", new CmdPathParameter(kernel));     
     	cmdTable.put("Asymptote", new CmdAsymptote(kernel));
 
+    	cmdTable.put("CurvatureVector", new CmdCurvatureVector(kernel));
+    	cmdTable.put("Curvature", new CmdCurvature(kernel));
+    	cmdTable.put("OsculatingCircle", new CmdOsculatingCircle(kernel));
+    	
+    	cmdTable.put("IterationList", new CmdIterationList(kernel));
+    	cmdTable.put("RootList", new CmdRootList(kernel));   
+    	cmdTable.put("Intersect", new CmdIntersect(kernel));
     	
     	cmdSubTable[TABLE_FUNCTION].putAll(cmdTable);
     	cmdTable.clear();
@@ -414,6 +429,10 @@ public class CommandDispatcher {
     	cmdTable.put("Classes", new CmdClasses(kernel));
 
     	cmdTable.put("Zip", new CmdZip(kernel));
+    	cmdTable.put("Intersect", new CmdIntersect(kernel));
+    	cmdTable.put("IterationList", new CmdIterationList(kernel));
+    	cmdTable.put("RootList", new CmdRootList(kernel));   
+    	cmdTable.put("PointList", new CmdPointList(kernel)); 
     	
     	cmdSubTable[TABLE_LIST].putAll(cmdTable);
     	cmdTable.clear();
@@ -481,6 +500,8 @@ public class CommandDispatcher {
     	
     	cmdTable.put("Frequency", new CmdFrequency(kernel));
     	cmdTable.put("Spearman", new CmdSpearman(kernel));
+    	cmdTable.put("Classes", new CmdClasses(kernel));
+
     	
     	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);
     	cmdTable.clear();
@@ -539,6 +560,8 @@ public class CommandDispatcher {
     	cmdTable.put("Transpose", new CmdTranspose(kernel));   
     	cmdTable.put("ReducedRowEchelonForm", new CmdReducedRowEchelonForm(kernel));   
     	cmdTable.put("Determinant", new CmdDeterminant(kernel));   
+    	
+    	cmdTable.put("CurvatureVector", new CmdCurvatureVector(kernel));
     	
     	cmdSubTable[TABLE_VECTOR].putAll(cmdTable);
     	cmdTable.clear();
@@ -630,40 +653,38 @@ public class CommandDispatcher {
     	cmdSubTable[TABLE_DISCRETE_MATH].putAll(cmdTable);
     	cmdTable.clear();
     	
-    	
 
-    	
     	//=================================================================
-      	// Other ???
+      	// GeoGebra
     	//=============================================================
     	
-    	cmdTable.put("AffineRatio", new CmdAffineRatio(kernel));
-    	cmdTable.put("CrossRatio", new CmdCrossRatio(kernel));
-    	cmdTable.put("CurvatureVector", new CmdCurvatureVector(kernel));
-    	cmdTable.put("Curvature", new CmdCurvature(kernel));
-    	cmdTable.put("OsculatingCircle", new CmdOsculatingCircle(kernel));
+    	cmdTable.put("Corner", new CmdCorner(kernel));
+    	cmdTable.put("AxisStepX", new CmdAxisStepX(kernel));   
+    	cmdTable.put("AxisStepY", new CmdAxisStepY(kernel));   
     	
     	cmdTable.put("ConstructionStep", new CmdConstructionStep(kernel));
     	cmdTable.put("Object", new CmdObject(kernel));  
     	cmdTable.put("Name", new CmdName(kernel));
     	
-    	//cmdTable.put("Intersection", new CmdIntersection(kernel)); 
-       	cmdTable.put("Intersection", new CmdIntersect(kernel)); 
-    
-       	cmdTable.put("Corner", new CmdCorner(kernel));
-    	cmdTable.put("AxisStepX", new CmdAxisStepX(kernel));   
-    	cmdTable.put("AxisStepY", new CmdAxisStepY(kernel));   
-    	
-    	cmdTable.put("DynamicCoordinates", new CmdDynamicCoordinates(kernel));  
-       	
-    	cmdTable.put("PointList", new CmdPointList(kernel)); 
-    	cmdTable.put("RootList", new CmdRootList(kernel));   
-    	
     	cmdTable.put("SlowPlot", new CmdSlowPlot(kernel));	   
     	cmdTable.put("ToolImage", new CmdToolImage(kernel));
+    	cmdTable.put("DynamicCoordinates", new CmdDynamicCoordinates(kernel));  
+    	
     	
     	cmdTable.put("ClosestPoint", new CmdClosestPoint(kernel));     
 
+    	
+    	cmdSubTable[TABLE_GEOGEBRA].putAll(cmdTable);
+    	cmdTable.clear();
+    	
+    	
+    	//=================================================================
+      	// Other ???
+    	//=============================================================
+    			
+    	//cmdTable.put("Intersection", new CmdIntersection(kernel)); 
+       	cmdTable.put("Intersection", new CmdIntersect(kernel)); 
+    
     	cmdTable.put("Maximize",new CmdMaximize(kernel));  //Definitely "other": Trying to optimize result of a whole construction...
     	cmdTable.put("Minimize",new CmdMinimize(kernel));
     	
@@ -687,3 +708,4 @@ public class CommandDispatcher {
 
 
 }
+
