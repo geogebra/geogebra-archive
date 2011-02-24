@@ -862,15 +862,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				geo.resolveMinMax();								
 			}					
 		}
-		if(evListenerType == LISTENER_NONE)
-			return;
-		double xmin = ((evListenerType & LISTENER_XMIN) != 0) ? value : view.getXmin();
-		double xmax = ((evListenerType & LISTENER_XMAX) != 0) ? value : view.getXmax();
-		double ymin = ((evListenerType & LISTENER_YMIN) != 0) ? value : view.getYmin();
-		double ymax = ((evListenerType & LISTENER_YMAX) != 0) ? value : view.getYmax();
-		if((xmax-xmin>Kernel.MIN_PRECISION) && (ymax-ymin>Kernel.MIN_PRECISION)){
-			view.setRealWorldCoordSystem(xmin,xmax,ymin,ymax);
-		}
+		if(evListenerType != LISTENER_NONE)
+			view.updateBounds();
+			return;				
     }	
 	
 	private void resolveMinMax() {
@@ -1126,5 +1120,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	private int evListenerType = LISTENER_NONE;
 	public void addEVSizeListener(int type){
 		evListenerType |= type;
+	}
+
+	public void removeEVSizeListener(int type) {
+		evListenerType &= ~type;	
 	}
 }

@@ -68,6 +68,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -741,8 +742,12 @@ public class MyXMLHandler implements DocHandler {
 //
 //	}
 
+	private HashMap<EuclidianView,String>xmin=new HashMap(),xmax=new HashMap(),
+		ymin=new HashMap(),ymax=new HashMap();
 	private boolean handleCoordSystem(EuclidianView ev, LinkedHashMap<String, String> attrs) {
-		try {
+		if(attrs.get("xZero")!=null) 
+			try {
+			
 			double xZero = Double.parseDouble((String) attrs.get("xZero"));
 			double yZero = Double.parseDouble((String) attrs.get("yZero"));
 			double scale = Double.parseDouble((String) attrs.get("scale"));
@@ -758,6 +763,15 @@ public class MyXMLHandler implements DocHandler {
 		} catch (Exception e) {
 			return false;
 		}
+		else try {
+			xmin.put(ev, attrs.get("xMin"));
+			xmax.put(ev, attrs.get("xMax"));
+			ymin.put(ev, attrs.get("yMin"));
+			ymax.put(ev, attrs.get("yMax"));
+			return true;
+		} catch (Exception e) {
+		return false;
+	}
 	}
 
 	private boolean handleEvSettings(EuclidianView ev, LinkedHashMap<String, String> attrs) {
@@ -2067,6 +2081,7 @@ public class MyXMLHandler implements DocHandler {
 				processAnimationSpeedList();
 				processAnimationStepList();
 				processMinMaxList();
+				processEvSizes();
 				processAnimatingList(); // must be after min/maxList otherwise GeoElement.setAnimating doesn't work
 
 				if (kernel == origKernel) {
@@ -2097,6 +2112,26 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 	// <element>
 	// ====================================
+
+	private void processEvSizes() {
+		for(EuclidianView ev:xmin.keySet()){
+			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmin.get(ev),true);			
+			ev.setXminObject(n);			
+		}
+		for(EuclidianView ev:xmax.keySet()){
+			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmax.get(ev),true);			
+			ev.setXmaxObject(n);			
+		}
+		for(EuclidianView ev:ymin.keySet()){
+			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymin.get(ev),true);
+			ev.setYminObject(n);			
+		}
+		for(EuclidianView ev:ymax.keySet()){
+			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymax.get(ev),true);
+			ev.setYmaxObject(n);			
+		}
+		
+	}
 
 	// called when <element> is encountered
 	// e.g. for <element type="point" label="P">

@@ -1,6 +1,7 @@
 package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoNumeric;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -364,6 +365,11 @@ public interface EuclidianViewInterface {
 	public int getWidth();
 	public int getHeight();
 	public boolean hasFocus();
+	public boolean isZoomable();
+	public GeoNumeric getXminObject();
+	public GeoNumeric getXmaxObject();
+	public GeoNumeric getYminObject();
+	public GeoNumeric getYmaxObject();
 	
 
 	
