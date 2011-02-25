@@ -29,7 +29,7 @@ public class OptionsCAS  extends JPanel implements ActionListener {
 	private JLabel timeoutLabel;
 	
 	/** */
-	private JComboBox timeoutCb;
+	private JComboBox cbTimeout;
 
 	/**
 	 * Construct CAS option panel.
@@ -54,14 +54,14 @@ public class OptionsCAS  extends JPanel implements ActionListener {
 	private void initGUI() {
 		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
-		timeoutCb = new JComboBox(new Integer[] { 5, 10, 20, 30, 60 });
-		timeoutCb.addActionListener(this);
+		cbTimeout = new JComboBox(new Integer[] { 5, 10, 20, 30, 60 });
+		cbTimeout.addActionListener(this);
 		
 		timeoutLabel = new JLabel();
-		timeoutLabel.setLabelFor(timeoutCb);
+		timeoutLabel.setLabelFor(cbTimeout);
 		
 		panel.add(timeoutLabel);
-		panel.add(timeoutCb);
+		panel.add(cbTimeout);
 		
 		add(panel, BorderLayout.CENTER);
 	}
@@ -73,7 +73,7 @@ public class OptionsCAS  extends JPanel implements ActionListener {
 	 */
 	public void updateGUI() {
 		int timeout = GeoGebraCAS.getTimeout();
-		timeoutCb.setSelectedItem(timeout);
+		cbTimeout.setSelectedItem(timeout);
 	}
 
 	/**
@@ -81,8 +81,8 @@ public class OptionsCAS  extends JPanel implements ActionListener {
 	 */
 	public void actionPerformed(ActionEvent e) {
 		// change timeout
-		if(e.getSource() == timeoutCb) {
-			GeoGebraCAS.setTimeout((Integer)timeoutCb.getSelectedItem());
+		if(e.getSource() == cbTimeout) {
+			GeoGebraCAS.setTimeout((Integer)cbTimeout.getSelectedItem());
 		}
 	}
 

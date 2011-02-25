@@ -69,7 +69,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 	
 	private JButton btBackgroundColor, btAxesColor, btGridColor;
 	private JCheckBox cbShowAxes, cbShowGrid, cbBoldGrid, cbGridManualTick, cbShowMouseCoords;
-	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle, cbView;
+	private JComboBox cbAxesStyle, cbGridType, cbGridStyle, cbGridTickAngle, cbView, cbTooltips;
 	private JTextField tfAxesRatioX, tfAxesRatioY;
 	private NumberFormat nfAxesRatio;
 	private NumberComboBox ncbGridTickX, ncbGridTickY; 
@@ -267,11 +267,21 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		bgPanel.add(btBackgroundColor);
 		label.setLabelFor(btBackgroundColor);
 		
+		bgPanel.add(Box.createHorizontalStrut(5));
+		
 		cbShowMouseCoords = new JCheckBox();
 		cbShowMouseCoords.addActionListener(this);
 		bgPanel.add(cbShowMouseCoords);
 		
-    
+		bgPanel.add(Box.createHorizontalStrut(5));
+		
+		label = new JLabel(app.getPlain("Tooltips")+":");
+		bgPanel.add(label);
+		
+		// TODO implement
+		cbTooltips = new JComboBox(new String[] { app.getPlain("On"), app.getPlain("Automatic"), app.getPlain("Off") });
+		bgPanel.add(cbTooltips);
+		
 		
 		
 		//==========================================

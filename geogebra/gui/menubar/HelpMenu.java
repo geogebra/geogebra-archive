@@ -24,6 +24,7 @@ class HelpMenu extends BaseMenu {
 		tutorialAction,
 		websiteAction,
 		forumAction,
+		geogebratubeAction,
 		infoAction
 	;
 	/**
@@ -51,6 +52,7 @@ class HelpMenu extends BaseMenu {
 
 		add(tutorialAction);
 		add(forumAction);
+		add(geogebratubeAction);
 		
 		addSeparator();
 
@@ -108,6 +110,15 @@ class HelpMenu extends BaseMenu {
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().showURLinBrowser(
 						GeoGebra.GEOGEBRA_WEBSITE);
+			}
+		};
+
+		geogebratubeAction = new AbstractAction("GeoGebraTube") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				app.getGuiManager().showURLinBrowser(
+						GeoGebra.GEOGEBRATUBE_WEBSITE);
 			}
 		};
 		
