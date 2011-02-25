@@ -1069,6 +1069,52 @@ Transformable{
 			}
 		}
 		
+		public void setHatchingAngle(int angle) {
+			super.setHatchingAngle(angle);
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (!geo.isLabelSet())
+					geo.setHatchingAngle(angle);
+			}
+		}
+		
+		public void setHatchingDistance(int distance) {
+			super.setHatchingDistance(distance);
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (!geo.isLabelSet())
+					geo.setHatchingDistance(distance);
+			}
+		}
+
+		public void setFillType(int type) {
+			super.setFillType(type);
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (!geo.isLabelSet())
+					geo.setFillType(type);
+			}
+		}
+		
+		public void setFillImage(String filename) {
+			super.setFillImage(filename);
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (!geo.isLabelSet())
+					geo.setFillImage(filename);
+			}
+		}
+		
+		public void setImageFileName(String filename) {
+			super.setImageFileName(filename);
+			for (int i=0 ; i < geoList.size() ; i++) {
+				GeoElement geo = (GeoElement)geoList.get(i);
+		    	if (!geo.isLabelSet())
+					geo.setImageFileName(filename);
+			}
+		}
+		
+		
 	
 		/*
 		 * for a list like this:

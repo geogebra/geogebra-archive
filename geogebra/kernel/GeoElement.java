@@ -416,7 +416,7 @@ public abstract class GeoElement
 	public static final int FILL_STANDARD = 0;
 	public static final int FILL_HATCH = 1;
 	public static final int FILL_IMAGE = 2;
-	private int fillType = FILL_STANDARD;
+	protected int fillType = FILL_STANDARD;
 	public  int numberOfFillTypes = 3;
 	
 	//=================================
@@ -5190,10 +5190,6 @@ public abstract class GeoElement
 	
 	public boolean isHatchingEnabled() {
 		return fillType == FILL_HATCH;
-	}
-	
-	public void setFillingType(int type) {
-		fillType = type;
 	}
 	
 	public void setHatchingAngle(int angle) {
