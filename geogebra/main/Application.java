@@ -1908,7 +1908,7 @@ public class Application implements KeyEventDispatcher {
 
 	private String scriptingLanguage;
 	private void fillCommandDictScripting() {
-		if(scriptingLanguage==oldScriptLanguage)
+		if(scriptingLanguage==oldScriptLanguage || scriptingLanguage == null || scriptingLanguage == "null")
 			return;
 		rbcommandScripting =MyResourceBundle.createBundle(RB_COMMAND, 
 				new Locale(scriptingLanguage));		
@@ -2279,7 +2279,8 @@ public class Application implements KeyEventDispatcher {
 		Object value = translateCommandTable.get(localname.toLowerCase());		
 		if (value == null){
 			fillCommandDictScripting();
-			value = translateCommandTableScripting.get(localname.toLowerCase());
+			if(translateCommandTableScripting != null)
+				value = translateCommandTableScripting.get(localname.toLowerCase());
 		}
 		if (value == null)
 			return localname;
