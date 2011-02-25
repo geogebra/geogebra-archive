@@ -323,7 +323,7 @@ public class MyXMLHandler implements DocHandler {
 
 		case MODE_CAS_SESSION:
 			startCASSessionElement(eName, attrs);
-			break;
+			break;		
 
 		case MODE_KERNEL:
 			startKernelElement(eName, attrs);
@@ -401,6 +401,18 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
+	private void startScriptingElement(String eName,
+			LinkedHashMap<String, String> attrs) {
+		try{
+			String scriptingLanguage = attrs.get("language");
+			app.setScriptingLanguage(scriptingLanguage);
+			boolean blockScripting = "true".equals(attrs.get("blocked"));
+			app.setBlockUpdateScripts(blockScripting);
+		}catch(Exception e){
+			System.err.println("error in element <scripting>");
+		}
+	}
+
 	// set mode back to geogebra mode
 	final public void endElement(String eName)
 	// public void endElement(String namespaceURI, String sName, String qName)
@@ -424,7 +436,6 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("spreadsheetView"))
 				mode = MODE_GEOGEBRA;
 			break;
-
 		case MODE_CAS_VIEW:
 			if (eName.equals("casView"))
 				mode = MODE_GEOGEBRA;
@@ -541,7 +552,9 @@ public class MyXMLHandler implements DocHandler {
 		} else if (eName.equals("spreadsheetView")) {
 			mode = MODE_SPREADSHEET_VIEW;
 		} else if (eName.equals("casView")) {
-			mode = MODE_CAS_VIEW;
+			mode = MODE_CAS_VIEW;		
+		} else if (eName.equals("scripting")) {
+			startScriptingElement(eName,attrs);
 		} 
 		else if (eName.equals("casSession")) {
 			mode = MODE_CAS_SESSION;

@@ -125,6 +125,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
 
+import org.mathpiper.lisp.cons.Cons;
+
 public class Application implements KeyEventDispatcher {
 	
 	// disabled parts
@@ -338,14 +340,14 @@ public class Application implements KeyEventDispatcher {
 
 	// For language specific settings
 	private Locale currentLocale, englishLocale = null;
-	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld, rberror, rbcolors, rbplain, rbmenuEnglish, rbsymbol, rbsettings,rbwiki;
+	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld,rbcommandScripting, rberror, rbcolors, rbplain, rbmenuEnglish, rbsymbol, rbsettings,rbwiki;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
 	// Hashtable for translation of commands from
 	// local language to internal name
 	// key = local name, value = internal name
-	private Hashtable translateCommandTable;
+	private Hashtable<String,String> translateCommandTable,translateCommandTableScripting;
 	// command dictionary
 	private LowerCaseDictionary commandDict;
 	
@@ -1902,8 +1904,61 @@ public class Application implements KeyEventDispatcher {
 
 		addMacroCommands();
 	}
-	
+	private String oldScriptLanguage = null;
 
+	private String scriptingLanguage;
+	private void fillCommandDictScripting() {
+		if(scriptingLanguage==oldScriptLanguage)
+			return;
+		rbcommandScripting =MyResourceBundle.createBundle(RB_COMMAND, 
+				new Locale(scriptingLanguage));		
+		debug(rbcommandScripting.getLocale());
+
+		// translation table for all command names in command.properties
+		if (translateCommandTableScripting == null) 
+			translateCommandTableScripting = new Hashtable();
+
+		// command dictionary for all public command names available in
+		// GeoGebra's input field
+				
+		translateCommandTableScripting.clear();
+		
+
+		Enumeration e = rbcommandScripting.getKeys();
+	
+		while (e.hasMoreElements()) {
+			String internal = (String) e.nextElement();
+			// Application.debug(internal);
+			if (!internal.endsWith("Syntax") && !internal.endsWith("Syntax3D") && !internal.endsWith("SyntaxCAS") && !internal.equals("Command")) {
+				String local = rbcommandScripting.getString((String) internal);
+				if (local != null) {
+					local = local.trim();
+					// case is ignored in translating local command names to
+					// internal names!
+					translateCommandTableScripting.put(local.toLowerCase(), internal);
+				
+					
+				}
+			}
+		}
+
+		
+	}
+
+	/**
+	 * @param scriptingLanguage the scriptingLanguage to set
+	 */
+	public void setScriptingLanguage(String scriptingLanguage) {		
+		this.scriptingLanguage = scriptingLanguage;
+	}
+
+	/**
+	 * @return the scriptingLanguage
+	 */
+	public String getScriptingLanguage() {
+		return scriptingLanguage;
+	}    
+	
 	private void addMacroCommands() {
 		if (commandDict == null || kernel == null || !kernel.hasMacros())
 			return;
@@ -2222,6 +2277,10 @@ public class Application implements KeyEventDispatcher {
 
 		// note: lookup lower case of command name!
 		Object value = translateCommandTable.get(localname.toLowerCase());		
+		if (value == null){
+			fillCommandDictScripting();
+			value = translateCommandTableScripting.get(localname.toLowerCase());
+		}
 		if (value == null)
 			return localname;
 		else
@@ -3243,7 +3302,7 @@ public class Application implements KeyEventDispatcher {
 		
 		// coord style, decimal places settings etc
 		kernel.getKernelXML(sb);
-
+		getScriptingXML(sb);
 		// save cas view seeting and cas session
 //		if (casView != null) {
 //			sb.append(((geogebra.cas.view.CASView) casView).getGUIXML());
@@ -3252,6 +3311,15 @@ public class Application implements KeyEventDispatcher {
 
 		return sb.toString();
 	}
+
+	private void getScriptingXML(StringBuilder sb) {
+		sb.append("<scripting language=\"");
+		sb.append(getScriptingLanguage());
+		sb.append("\" blocked=\"");
+		sb.append(isBlockUpdateScripts());
+		sb.append("\"/>\n");		
+	}
+
 
 	public String getConsProtocolXML() {
 		if (guiManager == null)

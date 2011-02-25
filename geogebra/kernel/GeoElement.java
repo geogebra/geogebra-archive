@@ -4967,11 +4967,17 @@ public abstract class GeoElement
 	public void setClickScript(String script) {
 		if (!canHaveClickScript()) return;
 		//Application.debug(script);
+		if(app.getScriptingLanguage()==null){
+			app.setScriptingLanguage(app.getLocale().getLanguage());
+		}
 		this.clickScript = script;
 	}
 	
 	public void setUpdateScript(String script) {		
 		if (!canHaveUpdateScript()) return;		
+		if(app.getScriptingLanguage()==null){
+			app.setScriptingLanguage(app.getLocale().getLanguage());
+		}
 		this.updateScript = script;
 		app.getScriptManager().initJavaScriptViewWithoutJavascript();		
 	}
