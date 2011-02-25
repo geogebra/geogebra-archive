@@ -250,7 +250,9 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 
 	public boolean showInEuclidianView() {
-		return isDrawable() && isDefined() && !isInfinite();
+		return isDrawable() && isDefined() && !isInfinite() && 
+			(intervalMin == null || intervalMax == null || 
+					intervalMin.getDouble()<intervalMax.getDouble());
 	}
 
 	public final boolean showInAlgebraView() {
