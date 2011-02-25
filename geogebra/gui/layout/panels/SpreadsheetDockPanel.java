@@ -53,6 +53,8 @@ public class SpreadsheetDockPanel extends DockPanel {
 		sb.append(EuclidianView.MODE_SPREADSHEET_ONEVARSTATS);
 		sb.append(" || ");
 		sb.append(EuclidianView.MODE_SPREADSHEET_TWOVARSTATS);
+		sb.append(" || ");
+		sb.append(EuclidianView.MODE_SPREADSHEET_MULTIVARSTATS);
 		
 		sb.append(" || ");
 		sb.append(EuclidianView.MODE_SPREADSHEET_CREATE_LIST);

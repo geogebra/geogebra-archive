@@ -196,6 +196,7 @@ public interface EuclidianConstants {
 	
 	public static final int MODE_SPREADSHEET_ONEVARSTATS = 2020;
 	public static final int MODE_SPREADSHEET_TWOVARSTATS = 2021;
+	public static final int MODE_SPREADSHEET_MULTIVARSTATS = 2022;
 	
 	public static final int MODE_SPREADSHEET_SORT = 2030;
 	public static final int MODE_SPREADSHEET_SORT_AZ = 2031;

@@ -498,8 +498,8 @@ public class CellRangeProcessor {
 
 	}
 
-	/** Create a list from the cells in a spreadsheet column */
-	public GeoElement createListFromColumn(int column,  boolean scanByColumn, boolean copyByValue, boolean isSorted,
+	/** Creates a list from all cells in a spreadsheet column */
+	public GeoElement createListFromColumn(int column, boolean copyByValue, boolean isSorted,
 			boolean storeUndoInfo, Integer geoTypeFilter) {
 
 		ArrayList<CellRange> rangeList = new ArrayList<CellRange>();
@@ -507,11 +507,52 @@ public class CellRangeProcessor {
 		cr.setActualRange();
 		rangeList.add(cr);
 
-		return  createList(rangeList,  scanByColumn, copyByValue, isSorted, storeUndoInfo, geoTypeFilter) ;
+		return  createList(rangeList,  true, copyByValue, isSorted, storeUndoInfo, geoTypeFilter) ;
 	}
 
+	/** Returns true if all cell ranges in the list are columns */
+	public boolean isAllColumns(ArrayList<CellRange> rangeList){
+		boolean isAllColumns = true;
+		for(CellRange cr : rangeList){
+			if(!cr.isColumn()) isAllColumns = false;
+		}
+		return isAllColumns;
+	}
 
+	
+	/**
+	 * Creates an string expression for a matrix where each sub-list is a list
+	 * of cells in the columns spanned by the range list
+	 */
+	public String createColumnMatrixExpression(ArrayList<CellRange> rangeList) {
+		GeoElement tempGeo;
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for(CellRange cr : rangeList){
+			for(int col=cr.getMinColumn(); col<=cr.getMaxColumn(); col++){
+				tempGeo = createListFromColumn(col, false, false, false, GeoElement.GEO_CLASS_NUMERIC);
+				sb.append(tempGeo.getCommandDescription());
+				sb.append(",");
+				tempGeo.remove();
+			}
+		}
+		sb.deleteCharAt(sb.length()-1);
+		sb.append("}");
 
+		return sb.toString();
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	public GeoElement createMatrix(int column1, int column2, int row1, int row2, boolean copyByValue){
 		return createMatrix( column1,  column2,  row1,  row2,  copyByValue, false);

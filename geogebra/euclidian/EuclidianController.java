@@ -323,6 +323,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		if(newMode == EuclidianConstants.MODE_SPREADSHEET_ONEVARSTATS
 				|| newMode == EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS
+				|| newMode == EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS
 				|| newMode == EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST)
 			return;
 		

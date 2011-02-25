@@ -227,8 +227,10 @@ implements ActionListener, View, Printable   {
 		//================================================
 		// Create a statList and StatPanel.
 		// StatPanels display basic statistics for the current data set
-		statList = getStatGeo().createBasicStatList(dataListSelected,mode);
-		statTable = new StatTable(app, statList, mode);
+		if(mode != statDialog.MODE_MULTIVAR){
+			statList = getStatGeo().createBasicStatList(dataListSelected,mode);
+			statTable = new StatTable(app, statList, mode);
+		}
 
 
 
@@ -236,10 +238,10 @@ implements ActionListener, View, Printable   {
 		// Create a DataPanel.
 		// Data panels display the current data set(s) and allow temporary editing. 
 		// Edited data is used by the statTable and statCombo panels. 
-
-		dataPanel = new StatDataPanel(app, this, dataListAll, mode);
-		dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-
+		if(mode != statDialog.MODE_MULTIVAR){
+			dataPanel = new StatDataPanel(app, this, dataListAll, mode);
+			dataPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		}
 
 
 		//================================================
@@ -269,12 +271,21 @@ implements ActionListener, View, Printable   {
 		if(dataListSelected != null)
 			dataListSelected.remove();
 
-		statList.remove();
+		if(statList != null)
+			statList.remove();
 
-		statTable.removeGeos();
-		dataPanel.removeGeos();
-		comboStatPanel.removeGeos();
-		comboStatPanel2.removeGeos();
+		if(statTable != null)
+			statTable.removeGeos();
+
+		if(dataPanel != null)
+			dataPanel.removeGeos();
+
+		if(comboStatPanel != null)
+			comboStatPanel.removeGeos();
+
+		if(comboStatPanel2 != null)
+			comboStatPanel2.removeGeos();
+
 	}
 
 
@@ -357,15 +368,26 @@ implements ActionListener, View, Printable   {
 						isSorted, 
 						doStoreUndo);
 				break;
+
+
+			case MODE_MULTIVAR:
+
+				text = cr.createColumnMatrixExpression((ArrayList<CellRange>) dataSource); 				
+				//System.out.println(expr);
+				break;
+
+
 			}
 
 			//text = tempGeo.toDefinedValueString();
-			text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
-			tempGeo.remove();
+			if(mode != MODE_MULTIVAR){
+				text = tempGeo.getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);
+				tempGeo.remove();
+			}
 
 
 		}	
-		//System.out.println(text);		
+	//	System.out.println(text);		
 
 
 
@@ -375,15 +397,15 @@ implements ActionListener, View, Printable   {
 		if(dataListAll == null){
 			dataListAll = new GeoList(cons);
 			dataListAll.setAuxiliaryObject(true);
-			//dataListAll.setLabel("dataListAll");
-			dataListAll.setLabel(null);	
+			dataListAll.setLabel("dataListAll");
+			//dataListAll.setLabel(null);	
 		}
 
 		if(dataListSelected == null){
 			dataListSelected = new GeoList(cons);
 			dataListSelected.setAuxiliaryObject(true);
-			//dataListSelected.setLabel("dataListSelected");
-			dataListSelected.setLabel(null);
+			dataListSelected.setLabel("dataListSelected");
+			//dataListSelected.setLabel(null);
 		}
 
 
@@ -405,7 +427,8 @@ implements ActionListener, View, Printable   {
 		}
 
 		if(!isIniting){
-			dataPanel.updateDataTable(this.dataListAll);
+			if(dataPanel != null)
+				dataPanel.updateDataTable(this.dataListAll);
 		}
 
 	}
@@ -536,52 +559,58 @@ implements ActionListener, View, Printable   {
 		//===========================================
 		// statData panel
 
-		JLabel header = new JLabel(app.getMenu("Statistics"));
-		header.setHorizontalAlignment(JLabel.LEFT);		
-		header.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createEtchedBorder(),	
-				BorderFactory.createEmptyBorder(2,5,2,2)));
+		if(mode != statDialog.MODE_MULTIVAR){
+			JLabel header = new JLabel(app.getMenu("Statistics"));
+			header.setHorizontalAlignment(JLabel.LEFT);		
+			header.setBorder(BorderFactory.createCompoundBorder(
+					BorderFactory.createEtchedBorder(),	
+					BorderFactory.createEmptyBorder(2,5,2,2)));
 
-		// put it all into the stat panel
-		JPanel statPanel = new JPanel(new BorderLayout());
+			// put it all into the stat panel
+			JPanel statPanel = new JPanel(new BorderLayout());
 
-		statPanel.add(header, BorderLayout.NORTH);
-		statPanel.add(statTable, BorderLayout.CENTER);
-		statTable.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+			statPanel.add(header, BorderLayout.NORTH);
+			statPanel.add(statTable, BorderLayout.CENTER);
+			statTable.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-		statPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-		dataPanel.setBorder(statPanel.getBorder());
+			statPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+			dataPanel.setBorder(statPanel.getBorder());
 
-		statDataPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, statPanel, dataPanel);
+			statDataPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, statPanel, dataPanel);
 
-		//statDataPanel.setLayout(new BoxLayout(statDataPanel, BoxLayout.Y_AXIS));
-		//statDataPanel.add(new JLabel(""), BorderLayout.NORTH);
-		//statDataPanel.add(statPanel, BorderLayout.NORTH);
-		//statDataPanel.add(dataPanel, BorderLayout.SOUTH);
-
+			//statDataPanel.setLayout(new BoxLayout(statDataPanel, BoxLayout.Y_AXIS));
+			//statDataPanel.add(new JLabel(""), BorderLayout.NORTH);
+			//statDataPanel.add(statPanel, BorderLayout.NORTH);
+			//statDataPanel.add(dataPanel, BorderLayout.SOUTH);
+		}
 
 
 		// create a plotComboPanel		
 		comboPanelSplit = new JSplitPane(
 				JSplitPane.VERTICAL_SPLIT, comboStatPanel, comboStatPanel2);
 
-		JPanel regressionPanel = createRegressionPanel();
-		JPanel oneVarTitlePanel = createOneVarTitlePanel();
 
 		JPanel plotComboPanel = new JPanel(new BorderLayout());
 		plotComboPanel.add(comboPanelSplit, BorderLayout.CENTER);
-		if(mode == MODE_ONEVAR)
+		if(mode == MODE_ONEVAR){
+			JPanel oneVarTitlePanel = createOneVarTitlePanel();
 			plotComboPanel.add(oneVarTitlePanel, BorderLayout.SOUTH);
-		if(mode == MODE_TWOVAR)
+		}
+		if(mode == MODE_TWOVAR){
+			JPanel regressionPanel = createRegressionPanel();
 			plotComboPanel.add(regressionPanel, BorderLayout.SOUTH);
-
+		}
 
 
 		// display panel
-		displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				statDataPanel, plotComboPanel);
-		displayPanel.setDividerLocation(150);
-
+		if(mode != MODE_MULTIVAR){
+			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+					statDataPanel, plotComboPanel);
+			displayPanel.setDividerLocation(150);
+		}else{
+			displayPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+					null, plotComboPanel);
+		}
 
 		// export panel
 		JPanel exportPanel = new JPanel();
@@ -640,9 +669,15 @@ implements ActionListener, View, Printable   {
 		switch(mode){
 		case MODE_ONEVAR:
 			setTitle(app.getMenu("OneVariableStatistics"));	
+			lblOneVarTitle.setText(app.getMenu("Source") + ": ");
+
 			break;
 		case MODE_TWOVAR:
 			setTitle(app.getMenu("TwoVariableStatistics"));	
+			regressionLabels = new String[regressionTypes];
+			setRegressionLabels();
+			lblRegression.setText(app.getMenu("Regression Model")+ ":");
+			lblEqn.setText(app.getMenu("Equation")+ ":");
 			break;
 
 		case MODE_MULTIVAR:
@@ -658,12 +693,9 @@ implements ActionListener, View, Printable   {
 		btnPrint.setText(app.getMenu("Print"));
 
 
-		lblOneVarTitle.setText(app.getMenu("Source") + ": ");
 
-		regressionLabels = new String[regressionTypes];
-		setRegressionLabels();
-		lblRegression.setText(app.getMenu("Regression Model")+ ":");
-		lblEqn.setText(app.getMenu("Equation")+ ":");
+
+
 
 	}
 
@@ -839,6 +871,8 @@ implements ActionListener, View, Printable   {
 
 	private void setShowDataPanel(boolean showDataPanel){
 
+		if(mode == MODE_MULTIVAR) return;
+
 		this.showDataPanel = showDataPanel;
 
 		if (showDataPanel) {
@@ -987,7 +1021,9 @@ implements ActionListener, View, Printable   {
 	private void updateGUI(){
 
 		if(isIniting) return;
-		cbPolyOrder.setVisible(regressionMode == REG_POLY);	
+
+		if(mode == MODE_TWOVAR)
+			cbPolyOrder.setVisible(regressionMode == REG_POLY);	
 
 		repaint();		
 	}
@@ -1018,10 +1054,11 @@ implements ActionListener, View, Printable   {
 		comboStatPanel.updatePlot(doCreateGeo);
 		comboStatPanel2.updatePlot(doCreateGeo);
 
-		statList.remove();
-		statList = statGeo.createBasicStatList(dataListSelected, mode);
-		statTable.updateData(statList);
-
+		if(mode != MODE_MULTIVAR){
+			statList.remove();
+			statList = statGeo.createBasicStatList(dataListSelected, mode);
+			statTable.updateData(statList);
+		}
 	}
 
 
@@ -1037,8 +1074,10 @@ implements ActionListener, View, Printable   {
 
 		comboStatPanel.updateStatTableFonts(font);
 		comboStatPanel2.updateStatTableFonts(font);
-		dataPanel.updateFonts(font);
-		statTable.updateFonts(font);
+		if(mode != MODE_MULTIVAR){
+			dataPanel.updateFonts(font);
+			statTable.updateFonts(font);
+		}
 	}
 
 

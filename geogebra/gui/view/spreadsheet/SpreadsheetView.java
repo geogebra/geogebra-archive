@@ -116,6 +116,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	private StatDialog oneVarStatDialog;
 	private StatDialog twoVarStatDialog;
+	private StatDialog multiVarStatDialog;
+	
 	private ProbabilityCalculator probCalculator;
 
 	// file browser default constants
@@ -422,6 +424,9 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			showStatDialog(StatDialog.MODE_TWOVAR);
 			break;
 
+		case EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS:
+			showStatDialog(StatDialog.MODE_MULTIVAR);
+			break;
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
 
@@ -568,6 +573,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 	private boolean scrollToShow = false;
 
+	
+
 	public void setScrollToShow(boolean scrollToShow) {
 		this.scrollToShow = scrollToShow;
 	}
@@ -602,6 +609,17 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			}
 			twoVarStatDialog.setVisible(true);	
 			break;
+			
+		case StatDialog.MODE_MULTIVAR:
+			if(multiVarStatDialog == null){
+				multiVarStatDialog = new StatDialog(view, app, mode);
+			}else{
+				multiVarStatDialog.updateDialog();
+			}
+			multiVarStatDialog.setVisible(true);	
+			break;
+			
+			
 		}
 
 	}

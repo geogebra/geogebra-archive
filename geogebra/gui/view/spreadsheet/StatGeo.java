@@ -26,9 +26,9 @@ public class StatGeo   {
 
 	private double xMinData, xMaxData, yMinData, yMaxData;		
 	private double[] dataBounds;
-	
+
 	private String[] regCmd = new String[StatDialog.regressionTypes];
-	
+
 
 	public static final int TABLE_ONE_VAR = 0;
 	public static final int TABLE_TWO_VAR = 1;
@@ -76,7 +76,7 @@ public class StatGeo   {
 
 			if(suppressLabelCreation)
 				cons.setSuppressLabelCreation(true);
-		//	Application.debug(text);
+			//	Application.debug(text);
 			GeoElement[] geos = kernel.getAlgebraProcessor()
 			.processAlgebraCommandNoExceptions(text, false);	
 
@@ -100,7 +100,7 @@ public class StatGeo   {
 	}
 
 
-	
+
 	public GeoElement redefineGeoFromString(GeoElement geo, String newValue){
 
 		try {
@@ -122,7 +122,7 @@ public class StatGeo   {
 
 
 
-	
+
 
 	private double evaluateExpression(String expr){
 
@@ -134,23 +134,23 @@ public class StatGeo   {
 
 
 	//==========================================================
-	
+
 	public GeoText createXTitle(String titleString){
 		GeoText geo = null;
 		String	text = '\"' + titleString + '\"';
 		geo  = (GeoText) createGeoFromString(text);
 		return geo;		
 	}
-	
-	
-	
+
+
+
 
 	public GeoList  createBasicStatList(GeoList dataList, int mode){
 
 		GeoList statList = null;
 		String label = dataList.getLabel();	      //getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);  
 		String text = "";
-		
+
 		switch(mode){
 		case TABLE_ONE_VAR:
 
@@ -187,7 +187,7 @@ public class StatGeo   {
 
 			text = createStatListString(statMap2, label);	
 			break;
-	
+
 
 		}
 
@@ -212,10 +212,10 @@ public class StatGeo   {
 		String q = "\"";
 		String expr = "";
 		String args = "";
-		
+
 		if(regressionModel == null)
 			expr = "{{" + q + q + "," + q + q + "}}";
-		
+
 		else
 		{
 			args = dataList.getLabel() + "," + regressionModel.getLabel();	
@@ -280,14 +280,33 @@ public class StatGeo   {
 	//=================================================
 
 	private void getDataBounds(GeoList dataList){
-		getDataBounds( dataList, false);
+		getDataBounds( dataList, false, false);
 	}
 	private void getDataBounds(GeoList dataList, boolean isPointList){
+		getDataBounds( dataList, true, false);
+	}
+	private void getDataBounds(GeoList dataList, boolean isPointList, boolean isMatrix){
 
 		String label = dataList.getLabel();
 		dataBounds = new double[4];
 
-		if(isPointList){
+		if(isMatrix){
+			String s = dataList.get(0).getCommandDescription();
+			dataBounds[0] = this.evaluateExpression("Min[" + s + "]");
+			dataBounds[1] = this.evaluateExpression("Max[" + s + "]");
+			//System.out.println(s + ":  " + dataBounds[0] + "--------" + dataBounds[0] );
+			double min, max;
+			for(int i = 1; i < dataList.size(); i++){
+				s = dataList.get(i).getCommandDescription();
+				min = this.evaluateExpression("Min[" + s + "]");
+				max = this.evaluateExpression("Max[" + s + "]");
+				dataBounds[0] = Math.min(dataBounds[0], min);
+				dataBounds[1] = Math.max(dataBounds[1], max);
+			}
+		}
+
+
+		else if(isPointList){
 			dataBounds[0] = this.evaluateExpression("Min[x(" + label + ")]");
 			dataBounds[1] = this.evaluateExpression("Max[x(" + label + ")]");
 			dataBounds[2] = this.evaluateExpression("Min[y(" + label + ")]");
@@ -301,7 +320,7 @@ public class StatGeo   {
 		xMaxData = dataBounds[1];
 		yMinData = dataBounds[2];
 		yMaxData = dataBounds[3];
-		
+
 	}
 
 
@@ -313,11 +332,11 @@ public class StatGeo   {
 		//double barWidth = (xMaxData - xMinData)/(numClasses - 1); 
 
 		//String text = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
-		
+
 		String classes = "Classes[" + label + "," + numClasses + "]";
 		String freq = "Frequency[" + label + "," + classes + ", false]";
 		String text = "Histogram[" + classes + "," + freq + "]";
-			
+
 		geo = createGeoFromString(text);
 		geo.setObjColor(StatDialog.HISTOGRAM_COLOR);
 		geo.setAlphaValue(0.25f);
@@ -332,10 +351,10 @@ public class StatGeo   {
 
 		//double barWidth = (xMaxData - xMinData)/(numClasses - 1);  
 		//double freqMax = getFrequencyTableMax(dataList, barWidth);
-		
+
 		double freqMax = ((AlgoFunctionAreaSums)histogram.getParentAlgorithm()).getFreqMax();
-		
-		
+
+
 		double buffer = .25*(xMaxData - xMinData);
 		ps.xMin = xMinData - buffer;  
 		ps.xMax = xMaxData + buffer;
@@ -351,14 +370,6 @@ public class StatGeo   {
 
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
 
 	public GeoElement createBoxPlot(GeoList dataList){
 
@@ -388,6 +399,39 @@ public class StatGeo   {
 		return ps;
 
 	}
+
+	public GeoElement createMultipleBoxPlot(GeoList dataList){
+
+		String label = dataList.getLabel();	
+		GeoElement geo;
+
+		// Sequence[BoxPlot[k, 0.33333, Element[mm, k]], k, 1, Length[mm]]
+
+		String	text = "Sequence[BoxPlot[k, 1/3, Element[" + label + ", k]], k, 1, Length[" + label + "]]";
+		geo  = createGeoFromString(text);
+		geo.setObjColor(StatDialog.BOXPLOT_COLOR);
+		geo.setAlphaValue(0.25f);
+		return geo;		
+	}
+
+	public PlotSettings updateMultipleBoxPlot(GeoList dataList){
+
+		PlotSettings ps = new PlotSettings();
+
+		getDataBounds(dataList, false,true);		
+		double buffer = .25*(xMaxData - xMinData);
+		ps.xMin = xMinData - buffer;
+		ps.xMax = xMaxData + buffer;
+		ps.yMin = -1.0;
+		ps.yMax = dataList.size()+1;
+		ps.showYAxis = false;
+		ps.forceXAxisBuffer = true;
+
+		return ps;
+
+	}
+
+
 
 
 	public GeoElement createDotPlot(GeoList dataList){
@@ -468,10 +512,10 @@ public class StatGeo   {
 	public GeoElement createRegressionPlot(GeoList dataList, int regType, int order){
 
 		GeoElement geo = null;
-		
+
 		boolean regNone = regType == StatDialog.REG_NONE;
 		if(regNone) regType = StatDialog.REG_LINEAR;
-		
+
 		String label = dataList.getLabel();	
 
 		String text = regCmd[regType] + "[" + label + "]";
@@ -485,7 +529,7 @@ public class StatGeo   {
 			((GeoLine)geo).setToExplicit();	
 
 		if(regNone) geo.setEuclidianVisible(false);
-		
+
 		return geo;
 
 	}
@@ -507,7 +551,7 @@ public class StatGeo   {
 		ps.forceXAxisBuffer = false;
 
 	}
-	
+
 	public GeoElement createResidualPlot(GeoList dataList, int regType, int order){
 
 		GeoElement geo = null;
@@ -515,22 +559,22 @@ public class StatGeo   {
 		if (regType == StatDialog.REG_NONE){
 			return createGeoFromString("{}");
 		}
-		
+
 		String label = dataList.getLabel();	
 
 		String regFcn = regCmd[regType] + "[" + label + "]";
 		if(regType == StatDialog.REG_POLY)
 			regFcn = regCmd[regType] + "[" + label + "," + order + "]";
-		
+
 		String text = "ResidualPlot[" + label + "," + regFcn + "]";
 		geo  = createGeoFromString(text);
 		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
-		
+
 		return geo;
 
 	}
-	
+
 	public void updateResidualPlot(PlotSettings ps, GeoList dataList){
 
 		getDataBounds(dataList, true);
@@ -545,13 +589,13 @@ public class StatGeo   {
 
 		ps.showYAxis = true;
 		ps.forceXAxisBuffer = false;
-		
+
 		ps.isEdgeAxis[0] = true;
 		ps.isEdgeAxis[1] = true;
-		
+
 
 	}
-	
+
 	public String getStemPlotLatex(GeoList dataList, int adjustment){
 
 		String label = dataList.getLabel();	
@@ -559,7 +603,7 @@ public class StatGeo   {
 
 		String	text = "StemPlot[" + label + "," + adjustment + "]";
 		geo  = createGeoFromString(text);
-		
+
 		return geo.getLaTeXdescription();		
 	}
 

@@ -61,8 +61,8 @@ public class StatComboPanel extends JPanel{
 	public static final int PLOT_MULTIBOXPLOT = 10;
 	public static final int PLOT_MULTIVARSTATS = 11;
 	public static final int PLOT_ANOVA= 12;
-	
-	
+
+
 	// plot reference vars
 	private HashMap<Integer, String> plotMap;
 	private HashMap<String, Integer> plotMapReverse;
@@ -107,7 +107,8 @@ public class StatComboPanel extends JPanel{
 	private MyTextField fldStart;
 	private MyTextField fldWidth;
 	private JLabel lblNumClasses;
-	private boolean doManualClasses;
+
+
 	private StatPanelSettings settings;
 	private JLabel lblEvaluate;
 	private MyTextField fldInputX;
@@ -192,7 +193,8 @@ public class StatComboPanel extends JPanel{
 
 		// =======================================
 		//create regression analysis panel
-		createRegressionAnalysisPanel();
+		if(mode == statDialog.MODE_TWOVAR)
+			createRegressionAnalysisPanel();
 
 		// =======================================
 		//create image panel
@@ -211,7 +213,8 @@ public class StatComboPanel extends JPanel{
 		// put these panels in a card layout
 		statDisplayPanel = new JPanel(new CardLayout());
 		statDisplayPanel.add("plotPanel", plotPanel);
-		statDisplayPanel.add("regressionPanel", regressionPanel);
+		if(mode == statDialog.MODE_TWOVAR)
+			statDisplayPanel.add("regressionPanel", regressionPanel);
 		statDisplayPanel.add("imagePanel", new JScrollPane(imagePanel));
 		statDisplayPanel.setBackground(plotPanel.getBackground());
 
@@ -282,13 +285,13 @@ public class StatComboPanel extends JPanel{
 			cbPlotTypes.addItem(plotMap.get(PLOT_RESIDUAL));
 			cbPlotTypes.addItem(plotMap.get(PLOT_REGRESSION_ANALYSIS));
 			break;
-			
+
 		case StatDialog.MODE_MULTIVAR:
 			cbPlotTypes.addItem(plotMap.get(PLOT_MULTIBOXPLOT));
 			cbPlotTypes.addItem(plotMap.get(PLOT_MULTIVARSTATS));
-			cbPlotTypes.addItem(plotMap.get(this.PLOT_ANOVA));
+			cbPlotTypes.addItem(plotMap.get(PLOT_ANOVA));
 			break;
-			
+
 
 		}
 
@@ -348,8 +351,9 @@ public class StatComboPanel extends JPanel{
 		lblNumClasses.setText(app.getMenu("Classes" + ": "));
 		lblStart.setText(app.getMenu("Start") + ": ");
 		lblWidth.setText(app.getMenu("Width") + ": ");
-
-		lblEvaluate.setText(app.getMenu("Evaluate")+ ": ");
+		if(mode == statDialog.MODE_TWOVAR){
+			lblEvaluate.setText(app.getMenu("Evaluate")+ ": ");
+		}
 		lblAdjust.setText(app.getMenu("Adjustment")+ ": ");
 	}
 
@@ -455,6 +459,10 @@ public class StatComboPanel extends JPanel{
 		plotMap.put(PLOT_SCATTERPLOT, app.getMenu("Scatterplot"));
 		plotMap.put(PLOT_RESIDUAL, app.getMenu("ResidualPlot"));
 		plotMap.put(PLOT_REGRESSION_ANALYSIS, app.getMenu("Regression Analysis"));
+		
+		plotMap.put(PLOT_MULTIBOXPLOT, app.getMenu("BoxPlots"));
+		plotMap.put(PLOT_MULTIVARSTATS, app.getMenu("Statistics"));
+		plotMap.put(PLOT_ANOVA, app.getMenu("ANOVA"));
 
 		plotMapReverse = new HashMap<String, Integer>();
 		for(Integer key: plotMap.keySet()){
@@ -477,7 +485,7 @@ public class StatComboPanel extends JPanel{
 
 		if(doCreate)
 			clearPlotGeoList();
-		
+
 		optionsButton.setVisible(true);
 
 		switch(plotIndex){
@@ -562,6 +570,26 @@ public class StatComboPanel extends JPanel{
 
 			break;
 
+		case PLOT_MULTIBOXPLOT:
+			if(doCreate)
+				plotGeoList.add(statGeo.createMultipleBoxPlot( dataListSelected));
+			plotPanel.setPlotSettings(statGeo.updateMultipleBoxPlot( dataListSelected));
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
+			optionsButton.setVisible(false);
+			break;
+
+		case PLOT_MULTIVARSTATS:
+			imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
+			optionsButton.setVisible(false);
+			break;
+
+		case PLOT_ANOVA:
+			imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
+			optionsButton.setVisible(false);
+			break;
+
 		default:
 			//System.out.println(plotMap.get(plotIndex));
 		}
@@ -576,7 +604,6 @@ public class StatComboPanel extends JPanel{
 				app.getEuclidianView().remove(listGeo);
 			}
 		}
-
 
 
 	}

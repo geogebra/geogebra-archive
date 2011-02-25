@@ -1285,6 +1285,9 @@ public class Kernel {
 		case EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS:
 			return "TwoVarStats";				
 			
+		case EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS:
+			return "MultiVarStats";
+	
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
 			return "CreateList";		
 			
