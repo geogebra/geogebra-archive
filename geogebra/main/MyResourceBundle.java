@@ -92,7 +92,7 @@ public class MyResourceBundle extends PropertyResourceBundle {
 			return ret;
     	}
 		catch (Exception e) {	
-			System.err.println("Exception: could not load bundle: " + fileName);
+			System.err.println("Warning: could not load bundle: " + fileName);
 			//e.printStackTrace();
 			return null;
 		}
