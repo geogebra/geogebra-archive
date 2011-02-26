@@ -431,6 +431,9 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 	private void addNodeInSortedOrder(DefaultMutableTreeNode parent,
 			DefaultMutableTreeNode child){
+		
+		if (child.toString() == null) return;
+		
 		int n = parent.getChildCount();
 		if(n==0){
 			parent.add(child);

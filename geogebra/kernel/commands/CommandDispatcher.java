@@ -54,8 +54,9 @@ public class CommandDispatcher {
     public static final int TABLE_DISCRETE_MATH = 14;
     public static final int TABLE_GEOGEBRA = 15;
     public static final int TABLE_OTHER = 16;
+    public static final int TABLE_ENGLISH = 17;
     
-    private int tableCount = 17;
+    private int tableCount = 18;
     
     
     public String getSubCommandSetName(int index){
@@ -77,6 +78,7 @@ public class CommandDispatcher {
     	case TABLE_DISCRETE_MATH: return app.getMenu("Type.DiscreteMath");
     	case TABLE_GEOGEBRA: return app.getMenu("Type.GeoGebra");
     	case TABLE_OTHER: return app.getMenu("Type.OtherCommands");
+    	// TABLE_ENGLISH:
     	default: return null;
     	}
     }
@@ -690,6 +692,32 @@ public class CommandDispatcher {
     	
     	
     	cmdSubTable[TABLE_OTHER].putAll(cmdTable);
+    	cmdTable.clear();
+    	
+    	//=================================================================
+      	// commands that have been renamed so we want the new name to work
+    	// in other languages eg Curve used to be CurveCartesian
+    	//=============================================================
+    			
+    	cmdTable.put("Curve",new CmdCurveCartesian(kernel));
+    	cmdTable.put("FormulaText",new CmdLaTeX(kernel));
+    	cmdTable.put("IsDefined",new CmdDefined(kernel));
+    	cmdTable.put("ConjugateDiameter",new CmdDiameter(kernel));
+    	cmdTable.put("LinearEccentricity",new CmdExcentricity(kernel));
+    	cmdTable.put("MajorAxis",new CmdFirstAxis(kernel));
+    	cmdTable.put("SemiMajorAxisLength",new CmdFirstAxisLength(kernel));
+    	cmdTable.put("PerpendicularBisector",new CmdLineBisector(kernel));
+    	cmdTable.put("PerpendicularLine",new CmdOrthogonalLine(kernel));
+    	cmdTable.put("PerpendicularVector",new CmdOrthogonalVector(kernel));
+    	cmdTable.put("MinorAxis",new CmdSecondAxis(kernel));
+    	cmdTable.put("SemiMinorAxisLength",new CmdSecondAxisLength(kernel));
+    	cmdTable.put("UnitPerpendicularVector",new CmdUnitOrthogonalVector(kernel));
+    	cmdTable.put("CorrelationCoefficient",new CmdPMCC(kernel));
+    	cmdTable.put("FitLine",new CmdFitLineY(kernel));
+    	cmdTable.put("BinomialCoefficient",new CmdBinomial(kernel));
+    	cmdTable.put("RandomBetween",new CmdRandom(kernel));  	
+    	
+    	cmdSubTable[TABLE_ENGLISH].putAll(cmdTable);
     	cmdTable.clear();
     	
     	
