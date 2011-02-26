@@ -11,7 +11,7 @@ import geogebra.kernel.kernelND.GeoPointND;
  * @author ggb3D
  *
  */
-public class AlgoConePointLineAngle extends AlgoConePointAngle {
+public class AlgoConePointLineAngle extends AlgoQuadricPointNumber {
 	
 	/**
 	 * @param c construction
@@ -21,7 +21,7 @@ public class AlgoConePointLineAngle extends AlgoConePointAngle {
 	 * @param angle 
 	 */
 	public AlgoConePointLineAngle(Construction c, String label, GeoPointND origin, GeoLineND axis, NumberValue angle) {
-		super(c,label,origin,(GeoElement) axis,angle);
+		super(c,label,origin,(GeoElement) axis,angle,new AlgoQuadricComputerCone());
 	}
 	
 	protected Coords getDirection(){
@@ -30,7 +30,7 @@ public class AlgoConePointLineAngle extends AlgoConePointAngle {
 	}
 	
     final public String toString() {
-    	return app.getPlain("ConeWithCenterAAxisParallelToBAngleC",getOrigin().getLabel(),getSecondInput().getLabel(),getAngle().getLabel());
+    	return app.getPlain("ConeWithCenterAAxisParallelToBAngleC",getOrigin().getLabel(),getSecondInput().getLabel(),getNumber().getLabel());
 
     }
     

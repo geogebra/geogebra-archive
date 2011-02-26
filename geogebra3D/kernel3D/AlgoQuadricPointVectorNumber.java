@@ -11,7 +11,7 @@ import geogebra.kernel.kernelND.GeoVectorND;
  * @author ggb3D
  *
  */
-public class AlgoCylinderPointVectorRadius extends AlgoCylinderPointRadius {
+public class AlgoQuadricPointVectorNumber extends AlgoQuadricPointNumber {
 	
 	/**
 	 * @param c construction
@@ -20,8 +20,8 @@ public class AlgoCylinderPointVectorRadius extends AlgoCylinderPointRadius {
 	 * @param direction 
 	 * @param r 
 	 */
-	public AlgoCylinderPointVectorRadius(Construction c, String label, GeoPointND origin, GeoVectorND direction, NumberValue r) {
-		super(c,label,origin,(GeoElement) direction, r);
+	public AlgoQuadricPointVectorNumber(Construction c, String label, GeoPointND origin, GeoVectorND direction, NumberValue r, AlgoQuadricComputer computer) {
+		super(c,label,origin,(GeoElement) direction, r,computer);
 	}
 	
 	protected Coords getDirection(){
@@ -29,7 +29,7 @@ public class AlgoCylinderPointVectorRadius extends AlgoCylinderPointRadius {
 	}
 	
     final public String toString() {
-    	return app.getPlain("CylinderWithAxisThroughAParallelToBRadiusC",getOrigin().getLabel(),getSecondInput().getLabel(),getRadius().getLabel());
+    	return app.getPlain(getQuadric().getTypeString()+"FromQuadricPointAVectorBNumberC",getOrigin().getLabel(),getSecondInput().getLabel(),getNumber().getLabel());
 
     }
 

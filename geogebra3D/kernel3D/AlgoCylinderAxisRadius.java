@@ -13,7 +13,7 @@ import geogebra.main.Application;
  * @author ggb3D
  *
  */
-public class AlgoCylinderAxisRadius extends AlgoCylinder {
+public class AlgoCylinderAxisRadius extends AlgoQuadric {
 	
 	
 	private GeoLineND axis;
@@ -23,7 +23,7 @@ public class AlgoCylinderAxisRadius extends AlgoCylinder {
 	 * @param c construction
 	 */
 	public AlgoCylinderAxisRadius(Construction c, String label, GeoLineND axis, NumberValue r) {		
-		super(c,(GeoElement) axis,r);
+		super(c,(GeoElement) axis,r,new AlgoQuadricComputerCylinder());
 		
 		this.axis=axis;
 		
@@ -53,11 +53,20 @@ public class AlgoCylinderAxisRadius extends AlgoCylinder {
 			return;
 		}
 		
+		// check number
+		double r = getComputer().getNumber(((NumberValue) getNumber()).getDouble());	
+		if (Double.isNaN(r)){
+			getQuadric().setUndefined();
+			return;
+		}
+		
+		
+		//compute the quadric
 		d.normalize();
 		
 		getQuadric().setDefined();
 		
-		getQuadric().setCylinder(o,d,((NumberValue) getRadius()).getDouble());
+		getQuadric().setCylinder(o,d,r);
 		
 	}
 	
@@ -68,7 +77,7 @@ public class AlgoCylinderAxisRadius extends AlgoCylinder {
 	}
 
 	final public String toString() {
-		return app.getPlain("CylinderWithAxisARadiusB",((GeoElement) axis).getLabel(),getRadius().getLabel());
+		return app.getPlain("CylinderWithAxisARadiusB",((GeoElement) axis).getLabel(),getNumber().getLabel());
 
 	}
 	

@@ -8,33 +8,41 @@ import geogebra.kernel.kernelND.GeoPointND;
 
 /**
  * @author ggb3D
+ * @param <Computer> 
  *
  */
-public abstract class AlgoCylinder extends AlgoElement3D {
+public abstract class AlgoQuadric extends AlgoElement3D {
 	
 	
-	private GeoQuadric3D cylinder;
+	private GeoQuadric3D quadric;
 	private GeoElement secondInput;
-	private NumberValue r;
+	private NumberValue number;
+	
+	private AlgoQuadricComputer computer;
 	
 
 	/**
 	 * @param c construction
 	 */
-	public AlgoCylinder(Construction c, GeoElement secondInput, NumberValue r) {		
+	public AlgoQuadric(Construction c, GeoElement secondInput, NumberValue number,
+			AlgoQuadricComputer computer){		
 		super(c);
-		cylinder = new GeoQuadric3D(c);
-		this.r = r;
+		quadric = new GeoQuadric3D(c);
+		this.number = number;
 		
 		this.secondInput = secondInput;
 		
+		this.computer=computer;
 
 	}
 	
+	protected AlgoQuadricComputer getComputer(){
+		return computer;
+	}
 	
 	
-	public String getClassName() {
-		return "AlgoCylinderInfinite";
+	public String getClassName(){
+		return computer.getClassName();
 	}
 	
 
@@ -51,10 +59,10 @@ public abstract class AlgoCylinder extends AlgoElement3D {
 	
 	/**
 	 * 
-	 * @return radius
+	 * @return radius or angle
 	 */
-	protected GeoElement getRadius(){
-		return (GeoElement) r;
+	protected GeoElement getNumber(){
+		return (GeoElement) number;
 	}	
 	/**
 	 * 
@@ -67,7 +75,7 @@ public abstract class AlgoCylinder extends AlgoElement3D {
 	 * @return the cone
 	 */
 	public GeoQuadric3D getQuadric(){
-		return cylinder;
+		return quadric;
 	}
 
 }

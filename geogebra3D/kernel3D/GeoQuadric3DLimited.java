@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import java.awt.Color;
 
+import geogebra.Matrix.CoordSys;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPolygon;
@@ -27,6 +28,10 @@ public class GeoQuadric3DLimited extends GeoElement {
 	 */
 	public GeoQuadric3DLimited(Construction c) {
 		super(c);
+		
+		side=new GeoQuadric3DPart(c);
+		bottom=new GeoConic3D(c);
+		top=new GeoConic3D(c);
 	}
 	
 	
@@ -35,18 +40,19 @@ public class GeoQuadric3DLimited extends GeoElement {
 		set(quadric);
 	}
 	
-	/**
-	 * sets the parts of the quadric
-	 * @param bottom
-	 * @param top
-	 * @param side
-	 */
-	public void setParts(GeoConic3D bottom, GeoConic3D top, GeoQuadric3DPart side){
-		this.bottom=bottom;
-		this.top=top;
-		this.side=side;
+	
+	
+	public GeoConic3D getBottom(){
+		return bottom;
 	}
 	
+	public GeoConic3D getTop(){
+		return top;
+	}
+	
+	public GeoQuadric3DPart getSide(){
+		return side;
+	}
 	
 	public void updatePartsVisualStyle(){
 		 setObjColor(getObjectColor()); 
@@ -205,8 +211,12 @@ public class GeoQuadric3DLimited extends GeoElement {
 		
 		if (geo instanceof GeoQuadric3DLimited){
 			GeoQuadric3DLimited quadric = (GeoQuadric3DLimited) geo;
-			setParts((GeoConic3D) quadric.bottom.copy(), (GeoConic3D) quadric.top.copy(), (GeoQuadric3DPart) quadric.side.copy()); 
-			//setParts((GeoConic3D) quadric.bottom, (GeoConic3D) quadric.top, (GeoQuadric3DPart) quadric.side); 
+			//setParts((GeoConic3D) quadric.bottom.copy(), (GeoConic3D) quadric.top.copy(), (GeoQuadric3DPart) quadric.side.copy()); 
+
+			bottom.set(quadric.bottom);
+			top.set(quadric.top);
+			side.set(quadric.side);
+		
 		}
 		
 	}

@@ -10,17 +10,17 @@ import geogebra.kernel.kernelND.GeoPointND;
  * @author ggb3D
  *
  */
-public class AlgoConePointPointAngle extends AlgoConePointAngle {
+public class AlgoQuadricPointPointNumber extends AlgoQuadricPointNumber {
 	
 	/**
 	 * @param c construction
 	 * @param label 
 	 * @param origin 
 	 * @param secondPoint 
-	 * @param angle 
+	 * @param r 
 	 */
-	public AlgoConePointPointAngle(Construction c, String label, GeoPointND origin, GeoPointND secondPoint, NumberValue angle) {
-		super(c,label,origin,(GeoElement) secondPoint,angle);
+	public AlgoQuadricPointPointNumber(Construction c, String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r, AlgoQuadricComputer computer) {
+		super(c,label,origin,(GeoElement) secondPoint,r,computer);
 	}
 	
 	protected Coords getDirection(){
@@ -28,7 +28,7 @@ public class AlgoConePointPointAngle extends AlgoConePointAngle {
 	}
 	
     final public String toString() {
-    	return app.getPlain("ConeWithCenterAAxisThroughBAngleC",getOrigin().getLabel(),getSecondInput().getLabel(),getAngle().getLabel());
+    	return app.getPlain(getQuadric().getTypeString()+"FromQuadricPointsABNumberC",getOrigin().getLabel(),getSecondInput().getLabel(),getNumber().getLabel());
 
     }
 	

@@ -42,16 +42,17 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 		this.secondPoint=secondPoint;
 		this.radius=r;
 		
-		side=new GeoQuadric3DPart(c);
 		
 		bottomCoordsys = new CoordSys(2);
-		bottom=new GeoConic3D(c,bottomCoordsys);
-
 		topCoordsys = new CoordSys(2);
-		top=new GeoConic3D(c,topCoordsys);
 		
 		quadric=new GeoQuadric3DLimited(c);
-		quadric.setParts(bottom, top, side);
+
+		side=quadric.getSide();
+		bottom=quadric.getBottom();
+		top=quadric.getTop();
+		bottom.setCoordSys(bottomCoordsys);
+		top.setCoordSys(topCoordsys);
 		
 		setInputOutput(new GeoElement[] {(GeoElement) origin,(GeoElement) secondPoint,(GeoElement) r}, new GeoElement[] {quadric,bottom,top,side});
 		//compute();

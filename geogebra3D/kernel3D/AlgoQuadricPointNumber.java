@@ -11,7 +11,7 @@ import geogebra.kernel.kernelND.GeoPointND;
  * @author ggb3D
  *
  */
-public abstract class AlgoCylinderPointRadius extends AlgoCylinder {
+public abstract class AlgoQuadricPointNumber extends AlgoQuadric {
 	
 	
 	private GeoPointND origin;
@@ -20,8 +20,8 @@ public abstract class AlgoCylinderPointRadius extends AlgoCylinder {
 	/**
 	 * @param c construction
 	 */
-	public AlgoCylinderPointRadius(Construction c, String label, GeoPointND origin, GeoElement secondInput, NumberValue r) {		
-		super(c,secondInput,r);
+	public AlgoQuadricPointNumber(Construction c, String label, GeoPointND origin, GeoElement secondInput, NumberValue r, AlgoQuadricComputer computer) {		
+		super(c,secondInput,r,computer);
 		
 		this.origin=origin;
 		
@@ -50,20 +50,18 @@ public abstract class AlgoCylinderPointRadius extends AlgoCylinder {
 			return;
 		}
 		
-		// check radius
-		double r = ((NumberValue) getRadius()).getDouble();
-		if (Kernel.isZero(r)) {
-			r = 0;
-		}else if (r < 0) {
+		// check number
+		double r = getComputer().getNumber(((NumberValue) getNumber()).getDouble());	
+		if (Double.isNaN(r)){
 			getQuadric().setUndefined();
 			return;
-		}		
+		}	
 		
+		
+		//compute the quadric
 		d.normalize();
-		
 		getQuadric().setDefined();
-
-		getQuadric().setCylinder(origin.getInhomCoordsInD(3),getDirection(),r);
+		getComputer().setQuadric(getQuadric(), origin.getInhomCoordsInD(3), d, r);
 		
 	}
 	
