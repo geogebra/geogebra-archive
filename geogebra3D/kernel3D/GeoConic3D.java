@@ -40,6 +40,10 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 		setCoordSys(cs);
 	}	
 	
+	public GeoConic3D(GeoConic3D conic) {
+		this(conic.getConstruction());
+		set(conic);
+	}
 	
 	/**
 	 * Creates an empty 3D conic with 2D coord sys
@@ -258,8 +262,7 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 
 		@Override
 		public GeoElement copy() {
-			// TODO Auto-generated method stub
-			return null;
+			return new GeoConic3D(this);
 		}
 
 
@@ -285,9 +288,13 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 
 
 
-		@Override
 		public void set(GeoElement geo) {
-			// TODO Auto-generated method stub
+			
+			
+			if (geo instanceof GeoConic3D){
+				super.set(geo);
+				setCoordSys(((GeoConic3D) geo).getCoordSys());
+			}
 			
 		}
 

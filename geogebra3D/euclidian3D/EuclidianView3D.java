@@ -1,17 +1,13 @@
 package geogebra3D.euclidian3D;
 
 
-import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.Coords;
-import geogebra.euclidian.DrawConic;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.DrawableND;
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.euclidian.EuclidianController;
-import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
@@ -25,30 +21,22 @@ import geogebra.kernel.View;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterCursor;
-import geogebra3D.euclidian3D.opengl.PlotterViewButtons;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.opengl.RendererFreezingPanel;
-import geogebra3D.euclidian3D.opengl.Textures;
 import geogebra3D.kernel3D.GeoAxis3D;
-import geogebra3D.kernel3D.GeoConic3D;
 import geogebra3D.kernel3D.GeoCurveCartesian3D;
 import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoElement3DInterface;
-import geogebra3D.kernel3D.GeoLine3D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPlane3DConstant;
 import geogebra3D.kernel3D.GeoPoint3D;
-import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.GeoQuadric3D;
-import geogebra3D.kernel3D.GeoRay3D;
-import geogebra3D.kernel3D.GeoSegment3D;
-import geogebra3D.kernel3D.GeoVector3D;
+import geogebra3D.kernel3D.GeoQuadric3DPart;
 import geogebra3D.kernel3D.Kernel3D;
 
 import java.awt.BorderLayout;
@@ -59,7 +47,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -67,6 +54,7 @@ import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.JPanel;
 
@@ -107,6 +95,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private LinkedList<Drawable3D> drawable3DListToBeAdded;// = new DrawList3D();
 	/** list for drawables that will be removed on next frame */
 	private LinkedList<Drawable3D> drawable3DListToBeRemoved;// = new DrawList3D();
+	/** list for Geos to that will be added on next frame */
+	private TreeMap<String,GeoElement> geosToBeAdded;
+	
 	
 	// Map (geo, drawable) for GeoElements and Drawables
 	private TreeMap<GeoElement,Drawable3D> drawable3DMap = new TreeMap<GeoElement,Drawable3D>();
@@ -259,6 +250,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		drawable3DListToBeAdded = new LinkedList<Drawable3D>();
 		drawable3DListToBeRemoved = new LinkedList<Drawable3D>();
 		
+		geosToBeAdded = new TreeMap<String,GeoElement>();
 		
 		//TODO replace canvas3D with GLDisplay
 		renderer = new Renderer(this);
@@ -437,15 +429,27 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */	
 	public void add(GeoElement geo) {
 		
-		
-		//if (geo.isGeoElement3D() || (geo.hasDrawable3D() && geo.isVisibleInView(this))){
 		if (geo.isVisibleInView3D()){
-			Drawable3D d = null;
-			d = createDrawable(geo);
-			if (d != null) {
-				addToDrawable3DLists(d);//drawable3DLists.add(d);
-				//repaint();			
-			}
+			setWaitForUpdate();
+			geosToBeAdded.put(geo.getLabel(),geo);
+		}
+	}
+	
+	/**
+	 * add the geo now
+	 * @param geo
+	 */
+	private void addNow(GeoElement geo){
+		
+		//check if geo has been already added
+		if (getDrawableND(geo)!=null)
+			return;
+		
+		//create the drawable
+		Drawable3D d = null;
+		d = createDrawable(geo);
+		if (d != null) {
+			drawable3DLists.add(d);
 		}
 	}
 	
@@ -455,8 +459,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param d
 	 */
 	public void addToDrawable3DLists(Drawable3D d){
+		
+		if (d.getGeoElement().getLabel().equals("a")){
+			Application.debug("d="+d);
+		}
+		
 		setWaitForUpdate();
-		//drawable3DLists.add(d);
 		drawable3DListToBeAdded.add(d);
 	}
 
@@ -552,6 +560,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				d = new DrawQuadric3D(this, (GeoQuadric3D) geo);
 				break;									
 
+			case GeoElement3D.GEO_CLASS_QUADRIC_PART:					
+				d = new DrawQuadric3DPart(this, (GeoQuadric3DPart) geo);
+				break;	
+				
 			case GeoElement.GEO_CLASS_FUNCTION_NVAR:					
 				d = new DrawFunction2Var(this, (GeoFunctionNVar) geo);
 				break;									
@@ -864,12 +876,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				Application.debug(sb.toString());
 			}		
 			*/	
+			
+			//add drawables (for preview)
 			drawable3DLists.add(drawable3DListToBeAdded);
 			/*
 			if (!drawable3DListToBeAdded.isEmpty())
 				Application.debug("after add:\n"+drawable3DLists.toString());	
 			 */		
 			drawable3DListToBeAdded.clear();
+			
+			//add geos
+			for (GeoElement geo : geosToBeAdded.values())
+				addNow(geo);
+			geosToBeAdded.clear();
 
 			
 			/*

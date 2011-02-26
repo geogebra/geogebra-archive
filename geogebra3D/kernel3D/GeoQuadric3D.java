@@ -1,10 +1,13 @@
 package geogebra3D.kernel3D;
 
+import java.awt.geom.AffineTransform;
+
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.RegionParameters;
@@ -52,6 +55,11 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		//diagonal (diagonalized matrix)
 		diagonal = new double[4];
 		
+	}
+	
+	public GeoQuadric3D(GeoQuadric3D quadric){
+		this(quadric.getConstruction());
+		set(quadric);
 	}
 	
 	
@@ -292,7 +300,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	
     public GeoElement copy() {
 
-        return null;
+        return new GeoQuadric3D(this);
 
     }
 
@@ -328,6 +336,26 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 
     public void set(GeoElement geo) {
 
+    	GeoQuadric3D quadric = (GeoQuadric3D) geo;
+    	
+    	// copy everything
+		toStringMode = quadric.toStringMode;
+		type = quadric.type;
+		for (int i = 0; i < 10; i++)
+			matrix[i] = quadric.matrix[i]; // flat matrix A   
+		
+		for (int i=0; i<3; i++){
+			eigenvecND[i].set(quadric.eigenvecND[i]);
+			halfAxes[i] = quadric.halfAxes[i];
+		}
+
+		setMidpoint(quadric.getMidpoint().get());
+		
+		eigenMatrix = new CoordMatrix4x4();
+		eigenMatrix.set(quadric.eigenMatrix);
+
+		defined = quadric.defined;		
+    	
     }
 
 

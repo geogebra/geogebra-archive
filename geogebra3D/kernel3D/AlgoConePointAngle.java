@@ -44,7 +44,7 @@ public abstract class AlgoConePointAngle extends AlgoElement3D {
 	
 	
 	public String getClassName() {
-		return "AlgoCone";
+		return "AlgoConeInfinite";
 	}
 	
 

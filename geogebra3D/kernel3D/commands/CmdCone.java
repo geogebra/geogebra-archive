@@ -54,14 +54,11 @@ public class CmdCone extends CommandProcessor {
 	    			&& (ok[1] = (arg[1] .isGeoPoint() ))
 	    			&& (ok[2] = (arg[2] .isNumberValue() )) 
 	    	) {
-	    		GeoElement[] ret =
-	    		{
-	    				kernel.getManager3D().Cone(
-	    						c.getLabel(),
+	    		return conePointPointRadius(
+	    						c,
 	    						(GeoPointND) arg[0],
 	    						(GeoPointND) arg[1],
-	    						(NumberValue) arg[2])};
-	    		return ret;
+	    						(NumberValue) arg[2]);
 	    	}else if(
 	    			(ok[0] = (arg[0] .isGeoPoint() ) )
 	    			&& (ok[1] = (arg[1] instanceof GeoLineND ))
@@ -77,18 +74,35 @@ public class CmdCone extends CommandProcessor {
 	    		return ret;
 	    	}else{
 	    		if (!ok[0])
-	    			throw argErr(app, "Cone", arg[0]);
+	    			throw argErr(arg[0]);
 	    		else if (!ok[1])
-	    			throw argErr(app, "Cone", arg[1]);
+	    			throw argErr(arg[1]);
 	    		else
-	    			throw argErr(app, "Cone", arg[2]);
+	    			throw argErr(arg[2]);
 	    	}
 
 	    default :
-	    	throw argNumErr(app, "Cone", n);
+	    	throw argNumErr(n);
 	    }
 	    
 
+	}
+	
+	
+
+	//overridded by CmdConeInfinite
+	
+	protected GeoElement[] conePointPointRadius(Command c, GeoPointND p1, GeoPointND p2, NumberValue r){
+		return new GeoElement[] {kernel.getManager3D().Cone(
+				c.getLabel(),p1,p2,r)};
+	}
+	
+	protected MyError argErr(GeoElement geo){
+		return argErr(app,"Cone",geo);
+	}
+	
+	protected MyError argNumErr(int n){
+		return argNumErr(app,"Cone",n);
 	}
 	
 }

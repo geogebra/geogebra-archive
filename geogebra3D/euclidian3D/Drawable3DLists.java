@@ -63,9 +63,8 @@ public class Drawable3DLists {
 	/** add the drawable to the correct list
 	 * @param drawable drawable to add
 	 */
-	private void add(Drawable3D drawable){
+	public void add(Drawable3D drawable){
 		
-		//lists[drawable.getType()].add(drawable);
 		drawable.addToDrawable3DLists(this);
 		
 	}

@@ -34,7 +34,7 @@ public abstract class AlgoCylinder extends AlgoElement3D {
 	
 	
 	public String getClassName() {
-		return "AlgoCylinder";
+		return "AlgoCylinderInfinite";
 	}
 	
 

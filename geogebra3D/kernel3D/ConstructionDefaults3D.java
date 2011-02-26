@@ -59,6 +59,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final int DEFAULT_QUADRIC = 3301;
 	/** default function 2 var type */
 	public static final int DEFAULT_FUNCTION_NVAR = 3302;
+	/** default quadric type */
+	public static final int DEFAULT_QUADRIC_LIMITED = 3303;
 
 	
 	
@@ -105,6 +107,8 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 	public static final float DEFAULT_QUADRIC_ALPHA = 0.75f;
 	/** default color for quadrics */
 	private static final Color colQuadric = new Color(255, 0, 0);
+	/** default alpha for quadrics*/
+	public static final float DEFAULT_QUADRIC_LIMITED_ALPHA = 0.5f;
 	
 	
 	// axes TODO use gui
@@ -258,6 +262,14 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		quadric.setAlphaValue(DEFAULT_QUADRIC_ALPHA);
 		defaultGeoElements.put(DEFAULT_QUADRIC, quadric);
 		
+		// limited quadric
+		GeoQuadric3DLimited limitedQuadric = new GeoQuadric3DLimited(cons);	
+		limitedQuadric.setLocalVariableLabel("QuadricLimited");
+		limitedQuadric.setObjColor(colPolyhedron);
+		limitedQuadric.setAlphaValue(DEFAULT_QUADRIC_LIMITED_ALPHA);
+		defaultGeoElements.put(DEFAULT_QUADRIC_LIMITED, limitedQuadric);
+
+		
 		// function n var
 		GeoFunctionNVar function = new GeoFunctionNVar(cons);	
 		function.setLocalVariableLabel("function");
@@ -316,7 +328,10 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		case GeoElement3D.GEO_CLASS_POLYHEDRON:
 			return DEFAULT_POLYHEDRON;
 		case GeoElement3D.GEO_CLASS_QUADRIC:
+		case GeoElement3D.GEO_CLASS_QUADRIC_PART:
 			return DEFAULT_QUADRIC;
+		case GeoElement3D.GEO_CLASS_QUADRIC_LIMITED:
+			return DEFAULT_QUADRIC_LIMITED;
 		case GeoElement.GEO_CLASS_FUNCTION_NVAR:
 			return DEFAULT_FUNCTION_NVAR;
 			

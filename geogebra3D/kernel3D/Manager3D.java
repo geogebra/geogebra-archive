@@ -365,7 +365,7 @@ public class Manager3D implements Manager3DInterface {
 		return algo.getQuadric();
 	}
 	
-	final public GeoElement Cone(String label, GeoPointND origin, GeoLineND axis, NumberValue angle){
+	final public GeoQuadric3D Cone(String label, GeoPointND origin, GeoLineND axis, NumberValue angle){
 		AlgoConePointLineAngle algo = new AlgoConePointLineAngle(cons, label, origin, axis, angle);
 		return algo.getQuadric();
 	}
@@ -391,9 +391,10 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 
-
-
-
+	final public GeoElement[] CylinderLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) {
+		AlgoCylinderLimitedPointPointRadius algo = new AlgoCylinderLimitedPointPointRadius(cons, labels, origin, secondPoint, r);
+		return algo.getOutput();
+	}
 
 
 

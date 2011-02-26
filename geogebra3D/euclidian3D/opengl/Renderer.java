@@ -1434,6 +1434,7 @@ public class Renderer implements GLEventListener {
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuse, 0);
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, lightPosition, 0);
         gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, lightSpecular, 0);
+        //gl.glLightfv(GL.GL_LIGHT0, GL.GL_SHININESS, lightDiffuse, 0);
  
  
         
@@ -1461,6 +1462,7 @@ public class Renderer implements GLEventListener {
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, mat_specular,0);       
         gl.glMaterialfv(GL.GL_FRONT, GL.GL_SHININESS, mat_shininess,0);
         */
+        
         gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
         //gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
         gl.glEnable(GL.GL_COLOR_MATERIAL);

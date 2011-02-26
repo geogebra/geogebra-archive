@@ -126,12 +126,16 @@ implements Previewable {
 			
 		case GeoQuadric3D.QUADRIC_CYLINDER:
 			
+			/*
 			o = getView3D().getToScreenMatrix().mul(quadric.getMidpoint());
 			v = getView3D().getToScreenMatrix().mul(quadric.getEigenvec3D(2));
-								
+			
 			minmax = getView3D().getRenderer().getIntervalInFrustum(
 					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
 					o, v, true);
+					*/
+			
+			minmax = getMinMax();
 			
 			
 			
@@ -144,8 +148,14 @@ implements Previewable {
 			
 			//Application.debug("min, max ="+min+", "+max);
 			
+			/*
 			fade = (max-min)/10f;
-			surface.setV(min,max);surface.setNbV(3);surface.setVFading(fade, fade);surface.draw();
+			surface.setV(min,max);surface.setNbV(3);
+			surface.setVFading(fade, fade);
+			*/
+			setSurfaceV(min, max, surface);
+			
+			surface.draw();
 			
 			setGeometryIndex(surface.end());
 			
@@ -157,7 +167,31 @@ implements Previewable {
 		return true;
 	}
 
+
+	/**
+	 * 
+	 * @return min and max value along the axis of the quadric
+	 */
+	protected double[] getMinMax(){
+		
+		GeoQuadric3D quadric = (GeoQuadric3D) getGeoElement();
+		
+		Coords o = getView3D().getToScreenMatrix().mul(quadric.getMidpoint());
+		Coords v = getView3D().getToScreenMatrix().mul(quadric.getEigenvec3D(2));
+		
+		double[] minmax = getView3D().getRenderer().getIntervalInFrustum(
+				new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
+				o, v, true);
+
+		return minmax;
+	}
 	
+	
+	protected void setSurfaceV(float min, float max, PlotterSurface surface){
+		float fade = (max-min)/10f;
+		surface.setV(min,max);surface.setNbV(3);
+		surface.setVFading(fade, fade);
+	}
 	
 	
 	

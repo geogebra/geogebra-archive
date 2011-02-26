@@ -10,7 +10,6 @@ import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoVectorND;
-import geogebra3D.kernel3D.GeoQuadric3D;
 
 /**
  * Interface for managing all 3D methods in Kernel.
@@ -202,21 +201,23 @@ public interface Manager3DInterface {
 			/** 
 			 * Cone
 			 */
-			 public GeoElement Cone(String label, GeoPointND origin, GeoVectorND direction, NumberValue angle) ;
+			 public GeoQuadricND Cone(String label, GeoPointND origin, GeoVectorND direction, NumberValue angle) ;
 
-			 public GeoElement Cone(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue angle);
+			 public GeoQuadricND Cone(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue angle);
 	
-			 public GeoElement Cone(String label, GeoPointND origin, GeoLineND axis, NumberValue angle);
+			 public GeoQuadricND Cone(String label, GeoPointND origin, GeoLineND axis, NumberValue angle);
 
 			/** 
 			 * Cylinder
 			 */
-			 public GeoElement Cylinder(String label, GeoPointND origin, GeoVectorND direction, NumberValue r) ;
+			 public GeoQuadricND Cylinder(String label, GeoPointND origin, GeoVectorND direction, NumberValue r) ;
 
-			 public GeoElement Cylinder(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
+			 public GeoQuadricND Cylinder(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
 
 
-			 public GeoQuadric3D Cylinder(String label, GeoLineND axis, NumberValue r);
+			 public GeoQuadricND Cylinder(String label, GeoLineND axis, NumberValue r);
+
+			 public GeoElement[] CylinderLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
 
 
 

@@ -827,7 +827,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 * member vars of geo.
 	 */
 	public void set(GeoElement geo) {
-		GeoConic co =(GeoConic) geo;
+		GeoConicND co =(GeoConicND) geo;
 	
 		// copy everything
 		toStringMode = co.toStringMode;
