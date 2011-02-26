@@ -369,7 +369,7 @@ class FileMenu extends BaseMenu {
 		};
 		
 		// export slider as animation
-		exportAnimationAction = new AbstractAction(app.getPlain("ExportAnimation")+" ...") {	
+		exportAnimationAction = new AbstractAction(app.getPlain("ExportAnimatedGIF")+" ...") {	
 			private static final long serialVersionUID = 1L;
 			
 			public void actionPerformed(ActionEvent e) {

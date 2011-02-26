@@ -266,9 +266,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		Util.registerForDisposeOnEscape(this);
 
-		setTitle(app.getMenu("Export") + ": "
-				+ app.getPlain("DynamicWorksheet") + " ("
-				+ Application.FILE_EXT_HTML + ")");
+		setTitle(app.getPlain("DynamicWorksheetExport"));
 		setResizable(false);
 		centerOnScreen();
 	}

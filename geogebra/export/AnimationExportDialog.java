@@ -157,7 +157,7 @@ public class AnimationExportDialog extends JDialog {
 		
 		contentPane.add(panel, BorderLayout.SOUTH);
 		
-		setTitle(app.getMenu("Export")+": "+app.getPlain("ExportAnimation"));
+		setTitle(app.getPlain("AnimatedGIFExport"));
 		pack();				
 		setLocationRelativeTo(app.getMainComponent());
 		setVisible(true);

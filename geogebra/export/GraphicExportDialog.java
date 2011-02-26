@@ -108,7 +108,7 @@ public class GraphicExportDialog extends JDialog implements KeyListener {
 
 	private void initGUI() {
 		setResizable(false);		
-		setTitle(app.getMenu("Export") + ": " + app.getPlain("DrawingPad"));
+		setTitle(app.getPlain("ExportAsPicture"));
 
 		JPanel cp = new JPanel(new BorderLayout(5, 5));
 		cp.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
