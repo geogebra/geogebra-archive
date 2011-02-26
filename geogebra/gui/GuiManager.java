@@ -1351,7 +1351,7 @@ public class GuiManager {
 		
 		// load javaui properties file for specific locale
 		//next two lines edited by Zbynek Konecny 2010-04-23 to avoid false exception message
-		String underscoreLocale = currentLocale.getLanguage()=="en"?"":"_"+currentLocale;
+		String underscoreLocale = "en".equals(currentLocale.getLanguage()) ? "" : "_"+currentLocale;
 		rbJavaUI = MyResourceBundle.loadSingleBundleFile(Application.RB_JAVA_UI + underscoreLocale);		
 		boolean foundLocaleFile = rbJavaUI != null;
 		if (!foundLocaleFile) 

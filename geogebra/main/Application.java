@@ -176,14 +176,13 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("fi")); // Finnish
 		supportedLocales.add(new Locale("fr")); // French
 		supportedLocales.add(new Locale("gl")); // Galician
-		supportedLocales.add(new Locale("hi")); // Hindi
 		supportedLocales.add(new Locale("ka")); // Georgian
 		supportedLocales.add(new Locale("de")); // German
 		supportedLocales.add(new Locale("de", "AT")); // German (Austria)
 		supportedLocales.add(new Locale("el")); // Greek
 		// supportedLocales.add(new Locale("gu")); // Gujarati
 		supportedLocales.add(new Locale("iw")); // Hebrew
-		// supportedLocales.add(new Locale("hi")); // Hindi
+		supportedLocales.add(new Locale("hi")); // Hindi
 		supportedLocales.add(new Locale("hu")); // Hungarian
 		supportedLocales.add(new Locale("is")); // Icelandic
 		supportedLocales.add(new Locale("in")); // Indonesian
@@ -1907,7 +1906,7 @@ public class Application implements KeyEventDispatcher {
 
 	private String scriptingLanguage;
 	private void fillCommandDictScripting() {
-		if(scriptingLanguage==oldScriptLanguage || scriptingLanguage == null || scriptingLanguage == "null")
+		if(scriptingLanguage==oldScriptLanguage || scriptingLanguage == null || "null".equals(scriptingLanguage))
 			return;
 		rbcommandScripting =MyResourceBundle.createBundle(RB_COMMAND, 
 				new Locale(scriptingLanguage));		
