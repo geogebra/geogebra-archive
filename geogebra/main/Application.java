@@ -1906,8 +1906,9 @@ public class Application implements KeyEventDispatcher {
 
 	private String scriptingLanguage;
 	private void fillCommandDictScripting() {
-		if(scriptingLanguage==oldScriptLanguage || scriptingLanguage == null || "null".equals(scriptingLanguage))
+		if(scriptingLanguage.equals(oldScriptLanguage) || scriptingLanguage == null || "null".equals(scriptingLanguage))
 			return;
+		oldScriptLanguage = scriptingLanguage;
 		rbcommandScripting =MyResourceBundle.createBundle(RB_COMMAND, 
 				new Locale(scriptingLanguage));		
 		debug(rbcommandScripting.getLocale());
