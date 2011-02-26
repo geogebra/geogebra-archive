@@ -38,6 +38,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.font.FontRenderContext;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -60,11 +61,34 @@ import javax.swing.UIManager;
  */
 public class VirtualKeyboard extends JFrame implements ActionListener {
 
+	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * List with supported languages.
+	 */
+	public static ArrayList<Locale> supportedLocales = new ArrayList<Locale>();
+	static {
+		supportedLocales.add(new Locale("ar")); // Arabic
+		supportedLocales.add(new Locale("cs")); // Czech
+		supportedLocales.add(new Locale("de")); // German
+		supportedLocales.add(new Locale("el")); // Greek
+		supportedLocales.add(new Locale("en", "GB")); // English (UK)
+		supportedLocales.add(new Locale("es")); // Spanish
+		supportedLocales.add(new Locale("fa")); // Persian
+		supportedLocales.add(new Locale("fr")); // French
+		supportedLocales.add(new Locale("hi")); // Hindi
+		supportedLocales.add(new Locale("hr")); // Croatian
+		supportedLocales.add(new Locale("hu")); // Hungarian
+		supportedLocales.add(new Locale("iw")); // Hebrew
+		supportedLocales.add(new Locale("ko")); // Korean
+		supportedLocales.add(new Locale("ml")); // Malayalam
+		supportedLocales.add(new Locale("no")); // Norwegian
+		supportedLocales.add(new Locale("sk")); // Slovakian
+	}
 
 	private Robot robot;
 
 
-	private static final long serialVersionUID = 1L;
 	//   private static Boolean Upper     = false;
 
 	//private JPanel jContentPane      = null;

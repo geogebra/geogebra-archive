@@ -39,6 +39,7 @@ class FileMenu extends BaseMenu {
 		recent,
 		exportLMSAction,
 		exportGraphicAction,
+		exportAnimationAction,
 		exportPgfAction,
 		exportPSTricksAction,
 		exportAsymptoteAction,
@@ -105,6 +106,8 @@ class FileMenu extends BaseMenu {
 
 		mi = submenu.add(exportGraphicAction);
 		setMenuShortCutShiftAccelerator(mi, 'P');
+		
+		mi = submenu.add(exportAnimationAction);
 
 		mi = submenu.add(drawingPadToClipboardAction);
 		setMenuShortCutShiftAccelerator(mi, 'C');
@@ -115,6 +118,8 @@ class FileMenu extends BaseMenu {
 
 		mi = submenu.add(exportPgfAction);
 		mi = submenu.add(exportAsymptoteAction);
+		
+		submenu.addSeparator();
 		
 		mi = submenu.add(exportGeoGebraTubeAction);
 		// End Export SubMenu
@@ -357,6 +362,22 @@ class FileMenu extends BaseMenu {
 				}
 
 				catch (java.lang.NoClassDefFoundError ee) {
+					app.showError("ExportJarMissing");
+					ee.printStackTrace();
+				}
+			}
+		};
+		
+		// export slider as animation
+		exportAnimationAction = new AbstractAction(app.getPlain("ExportAnimation")+" ...") {	
+			private static final long serialVersionUID = 1L;
+			
+			public void actionPerformed(ActionEvent e) {
+				try {
+					new geogebra.export.AnimationExportDialog(app);
+				} catch (Exception ex) {
+					Application.debug("AnimationExportDialog not available");
+				} catch (java.lang.NoClassDefFoundError ee) {
 					app.showError("ExportJarMissing");
 					ee.printStackTrace();
 				}

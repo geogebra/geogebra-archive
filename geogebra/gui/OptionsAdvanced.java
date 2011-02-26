@@ -1,16 +1,20 @@
 package geogebra.gui;
 
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -21,7 +25,7 @@ import javax.swing.JTextField;
 /**
  * Advanced options for the options dialog.
  */
-public class OptionsAdvanced  extends JPanel{
+public class OptionsAdvanced  extends JPanel implements ActionListener {
 	/** */
 	private static final long serialVersionUID = 1L;
 	
@@ -44,6 +48,17 @@ public class OptionsAdvanced  extends JPanel{
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
+	
+	private String[] tooltipTimeouts = new String[] {
+		"1",
+		"3",
+		"5",
+		"10",
+		"20",
+		"30",
+		"60",
+		""
+	};
 
 	/**
 	 * Construct advanced option panel.
@@ -72,14 +87,17 @@ public class OptionsAdvanced  extends JPanel{
 		initScriptingPanel();
 
 		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.setLayout(new FullWidthLayout());
 		panel.add(virtualKeyboardPanel);
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
 		panel.add(scriptingPanel);
 		panel.add(Box.createVerticalGlue());
 		
-		add(panel, BorderLayout.CENTER);
+		JScrollPane scrollPane = new JScrollPane(panel);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		
+		add(scrollPane, BorderLayout.CENTER);
 	}
 	
 	/**
@@ -94,7 +112,6 @@ public class OptionsAdvanced  extends JPanel{
 		keyboardLanguageLabel = new JLabel();
 		panel.add(keyboardLanguageLabel);
 		
-		// TODO gather keyboard languages
 		cbKeyboardLanguage = new JComboBox();
 		panel.add(cbKeyboardLanguage);
 		
@@ -150,29 +167,12 @@ public class OptionsAdvanced  extends JPanel{
 		tooltipLanguageLabel = new JLabel();
 		tooltipPanel.add(tooltipLanguageLabel);
 		
-		// tooltip language		
-		String[] languages = new String[Application.supportedLocales.size()];
-		String ggbLangCode;
-
-		for (int i = 0; i < Application.supportedLocales.size(); i++) {
-			Locale loc = (Locale) Application.supportedLocales.get(i);
-			ggbLangCode = loc.getLanguage() + loc.getCountry()
-					+ loc.getVariant();
-
-			// enforce to show specialLanguageNames first
-			// because here getDisplayLanguage doesn't return a good result
-			languages[i] = (String) Application.specialLanguageNames.get(ggbLangCode);
-			if (languages[i] == null)
-				languages[i] = loc.getDisplayLanguage(Locale.ENGLISH);
-		}
-		
-		cbTooltipLanguage = new JComboBox(languages);
+		cbTooltipLanguage = new JComboBox();
 		tooltipPanel.add(cbTooltipLanguage);
 		
 		tooltipTimeoutLabel = new JLabel();
 		tooltipPanel.add(tooltipTimeoutLabel);
 		
-		// TODO construct timeouts
 		cbTooltipTimeout = new JComboBox();
 		tooltipPanel.add(cbTooltipTimeout);
 	}
@@ -219,13 +219,78 @@ public class OptionsAdvanced  extends JPanel{
 		
 		cbEnableScripting.setText(app.getPlain("EnableScripting"));
 		
-		// TODO translate special combo box fields (languages: default, tooltip timeout: off)
+		updateKeyboardLanguages();
+		updateTooltipLanguages();
+		updateTooltipTimeouts();
+	}
+	
+	/**
+	 * Updates the keyboard languages, this is just necessary if the language 
+	 * changed (or at startup). As we use an immutable list model we have to
+	 * recreate the list all the time, even if we just change the label of the
+	 * first item in the list.
+	 */
+	private void updateKeyboardLanguages() {
+		String[] languages = new String[VirtualKeyboard.supportedLocales.size()+1];
+		languages[0] = app.getPlain("Default");
+		String ggbLangCode;
+
+		for (int i = 0; i < VirtualKeyboard.supportedLocales.size(); i++) {
+			Locale loc = (Locale) VirtualKeyboard.supportedLocales.get(i);
+			ggbLangCode = loc.getLanguage() + loc.getCountry()
+					+ loc.getVariant();
+
+			languages[i+1] = (String) Application.specialLanguageNames.get(ggbLangCode);
+			if (languages[i+1] == null)
+				languages[i+1] = loc.getDisplayLanguage(Locale.ENGLISH);
+		}
+		
+		// take care that this doesn't fire events by accident 
+		cbKeyboardLanguage.removeActionListener(this);
+		cbKeyboardLanguage.setModel(new DefaultComboBoxModel(languages));
+		cbKeyboardLanguage.addActionListener(this);
+	}
+	
+	/**
+	 * @see #updateKeyboardLanguages()
+	 */
+	private void updateTooltipLanguages() {
+		String[] languages = new String[Application.supportedLocales.size()+1];
+		languages[0] = app.getPlain("Default");
+		String ggbLangCode;
+
+		for (int i = 0; i < Application.supportedLocales.size(); i++) {
+			Locale loc = (Locale) Application.supportedLocales.get(i);
+			ggbLangCode = loc.getLanguage() + loc.getCountry()
+					+ loc.getVariant();
+			
+			languages[i+1] = (String) Application.specialLanguageNames.get(ggbLangCode);
+			if (languages[i+1] == null)
+				languages[i+1] = loc.getDisplayLanguage(Locale.ENGLISH);
+		}
+		
+		// take care that this doesn't fire events by accident 
+		cbTooltipLanguage.removeActionListener(this);
+		cbTooltipLanguage.setModel(new DefaultComboBoxModel(languages));
+		cbTooltipLanguage.addActionListener(this);
+	}
+	
+	/**
+	 * @see #updateKeyboardLanguages() 
+	 */
+	private void updateTooltipTimeouts() {
+		tooltipTimeouts[tooltipTimeouts.length-1] = app.getPlain("off");
+
+		// take care that this doesn't fire events by accident 
+		cbTooltipTimeout.removeActionListener(this);
+		cbTooltipTimeout.setModel(new DefaultComboBoxModel(tooltipTimeouts));
+		cbTooltipTimeout.addActionListener(this);
 	}
 
 	/**
-	 * Apply changes
+	 * Values changed.
 	 */
-	public void apply() {
-		// TODO Auto-generated method stub
+	public void actionPerformed(ActionEvent e) {
+		// TODO implement
 	}
 }
