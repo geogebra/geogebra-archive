@@ -289,7 +289,7 @@ public class MyList extends ValidExpression implements ListValue {
 		
 		
 		for (int i = 0; i < size; i++) {	
-			try {				
+			//try {				
 				// singleValue to apply to i-th element of this list
 				ExpressionValue singleValue = valueList == null ? value : valueList.getListElement(i);								
 				
@@ -316,15 +316,15 @@ public class MyList extends ValidExpression implements ListValue {
 					operationResult = new ExpressionNode(kernel, operationResult); 
 				}
 				listElements.set(i, (ExpressionValue) operationResult);
-			} 
-			catch (MyError err) {
-				// TODO: remove
-				Application.debug(err.getLocalizedMessage());
+			//} 
+			//catch (MyError err) {
+			//	err.printStackTrace();
+			//	Application.debug(err.getLocalizedMessage());
 				
 				// return empty list if any of the elements aren't numbers			
-				listElements.clear();
-				return;
-			}							
+			//	listElements.clear();
+			//	return;
+			//}							
 		}
 		
 		
