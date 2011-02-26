@@ -195,7 +195,7 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("mk")); // Macedonian
 		supportedLocales.add(new Locale("mr")); // Marati
 		supportedLocales.add(new Locale("ms")); // Malay
-		// supportedLocales.add(new Locale("ne")); // Nepalese
+		supportedLocales.add(new Locale("ne")); // Nepalese
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)
 		supportedLocales.add(new Locale("no", "NO", "NY")); // Norwegian(Nynorsk)
 		// supportedLocales.add(new Locale("oc")); // Occitan
@@ -207,7 +207,6 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("ro")); // Romanian
 		supportedLocales.add(new Locale("ru")); // Russian
 		supportedLocales.add(new Locale("sr")); // Serbian
-		// TODO: remove IS_PRE_RELEASE
 		supportedLocales.add(new Locale("si")); // Sinhala (Sri Lanka)
 		
 		supportedLocales.add(new Locale("sk")); // Slovakian

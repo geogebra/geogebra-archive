@@ -360,10 +360,14 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		// String label;
 		String ggbLangCode;
 
-		JMenu submenu1 = new JMenu("A - G");
-		JMenu submenu2 = new JMenu("H - Z");
+		JMenu submenu1 = new JMenu("A - D");
+		JMenu submenu2 = new JMenu("E - H");
+		JMenu submenu3 = new JMenu("I - Q");
+		JMenu submenu4 = new JMenu("R - Z");
 		menu.add(submenu1);
 		menu.add(submenu2);
+		menu.add(submenu3);
+		menu.add(submenu4);
 
 		for (int i = 0; i < Application.supportedLocales.size(); i++) {
 			Locale loc = (Locale) Application.supportedLocales.get(i);
@@ -384,10 +388,15 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			mi.addActionListener(al);
 			bg.add(mi);
 
-			if (text.charAt(0) <= 'G')
+			char ch = text.charAt(0);
+			if (ch <= 'D')
 				submenu1.add(mi);
-			else
+			else if (ch <= 'H')
 				submenu2.add(mi);
+			else if (ch <= 'Q')
+				submenu3.add(mi);
+			else
+				submenu4.add(mi);
 		}
 	}
 	
