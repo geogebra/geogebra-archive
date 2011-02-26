@@ -215,7 +215,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		if(!isEmptySelection()){
 
 
-			subMenu = new JMenu(app.getMenu("Create") + " ...");
+			subMenu = new JMenu(app.getMenu("Create"));
 			subMenu.setIcon(app.getEmptyIcon()); 	 	
 			addItem(subMenu);   	 	
 
@@ -384,7 +384,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			this.addSeparator();
 
 		if(!isEmptySelection()){   // && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
-			subMenu = new JMenu(app.getMenu("DataAnalysis") + " ...");
+			subMenu = new JMenu(app.getMenu("DataAnalysis"));
 			subMenu.setIcon(app.getEmptyIcon()); 	 	
 			addItem(subMenu);   	 	
 
@@ -436,7 +436,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 		addSeparator();
 
-		subMenu = new JMenu(app.getPlain("Show") + " ...");
+		subMenu = new JMenu(app.getPlain("Show"));
 		subMenu.setIcon(app.getEmptyIcon());
 		addItem(subMenu);
 
