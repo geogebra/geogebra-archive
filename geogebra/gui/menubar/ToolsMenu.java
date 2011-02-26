@@ -90,7 +90,11 @@ class ToolsMenu extends BaseMenu {
 														// app.getModeIcon(mode));
 							item.setActionCommand(Integer.toString(mode));
 							item.addActionListener(modeChangeAction);
+							
+							app.setTooltipFlag();
 							item.setToolTipText(app.getToolHelp(mode));
+							app.clearTooltipFlag();
+							
 							modeMenus[menuIndex].add(item);
 						}
 					} else {

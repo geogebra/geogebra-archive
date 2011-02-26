@@ -420,9 +420,9 @@ implements
 		btCancel.setText(app.getPlain("Cancel"));
 		prompt.setText(app.getMenu("SelectAnObjectToTrace"));
 		
-		btRemove.setToolTipText(app.getMenu("RemoveTrace"));
-		btAdd.setToolTipText(app.getMenu("AddTrace"));
-		btErase.setToolTipText(app.getMenu("ClearTrace"));
+		btRemove.setToolTipText(app.getMenuTooltip("RemoveTrace"));
+		btAdd.setToolTipText(app.getMenuTooltip("AddTrace"));
+		btErase.setToolTipText(app.getMenuTooltip("ClearTrace"));
 		
 	}
 	

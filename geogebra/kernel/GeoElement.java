@@ -1478,8 +1478,13 @@ public abstract class GeoElement
 				return "";
 			}
 			// else fall through:
-		case TOOLTIP_ON:		
-			return getLongDescriptionHTML(colored, false); // old behaviour
+		case TOOLTIP_ON:
+			
+			app.setTooltipFlag();
+			String ret = getLongDescriptionHTML(colored, false); // old behaviour
+			app.clearTooltipFlag();
+			
+			return ret;
 		case TOOLTIP_OFF:
 			return "";
 		case TOOLTIP_CAPTION:

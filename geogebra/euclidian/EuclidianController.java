@@ -2278,7 +2278,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// reset icon
 		if (hitResetIcon()) {
-			view.setToolTipText(app.getPlain("resetConstruction"));
+			view.setToolTipText(app.getPlainTooltip("resetConstruction"));
 			view.setHitCursor();
 			return;
 		} 
@@ -2288,9 +2288,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		repaintNeeded = view.setAnimationButtonsHighlighted(hitAnimationButton);
 		if (hitAnimationButton) {
 			if (kernel.isAnimationPaused())
-				view.setToolTipText(app.getPlain("Play"));
+				view.setToolTipText(app.getPlainTooltip("Play"));
 			else 
-				view.setToolTipText(app.getPlain("Pause"));		
+				view.setToolTipText(app.getPlainTooltip("Pause"));		
 			view.setHitCursor();
 			view.repaintEuclidianView();
 			return;

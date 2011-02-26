@@ -337,8 +337,8 @@ public class Application implements KeyEventDispatcher {
 	private GlobalKeyDispatcher globalKeyDispatcher;
 
 	// For language specific settings
-	private Locale currentLocale, englishLocale = null;
-	private ResourceBundle rbmenu, rbcommand, rbcommandEnglish, rbcommandOld,rbcommandScripting, rberror, rbcolors, rbplain, rbmenuEnglish, rbsymbol, rbsettings,rbwiki;
+	private Locale currentLocale, englishLocale = null, tooltipLocale = null;
+	private ResourceBundle rbmenu, rbmenuTT, rbcommand, rbcommandTT, rbcommandEnglish, rbcommandOld, rbcommandScripting, rberror, rbcolors, rbplain, rbplainTT, rbmenuEnglish, rbsymbol, rbsettings, rbwiki;
 	protected ImageManager imageManager;
 	private int maxIconSize = DEFAULT_ICON_SIZE;
 
@@ -1454,6 +1454,38 @@ public class Application implements KeyEventDispatcher {
 		}
 		return loc;
 	}
+	
+	/*
+	 * used to force properties to be read from secondary (tooltip) language
+	 * if one has been selected
+	 */
+	public void setTooltipFlag() {
+		if (tooltipLocale != null) tooltipFlag = true;		
+	}
+
+	public void clearTooltipFlag() {
+		tooltipFlag = false;		
+	}
+
+	/*
+	 * sets secondary language
+	 */
+	public void setTooltipLanguage(Locale locale) {
+		
+		boolean updateNeeded = rbplainTT != null || rbmenuTT != null;
+		
+		rbplainTT = null;
+		rbmenuTT = null;
+		
+		if (currentLocale.toString().equals(locale.toString())) tooltipLocale = null;
+		else tooltipLocale = locale;
+		
+		updateNeeded = updateNeeded || tooltipLocale != null;
+		
+		if (updateNeeded) setLabels(); // update eg Tooltips for Toolbar
+		
+	}	
+
 
 	/**
 	 * set language via iso language string
@@ -2036,13 +2068,34 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 	
+	// used when a secondary language is being used for tooltips
+	private boolean tooltipFlag = false;
+	
 	final public String getPlain(String key) {
+		
+		if (tooltipFlag) return getPlainTooltip(key);
+		
 		if (rbplain == null) {
 			initPlainResourceBundle();
 		}
 
 		try {
 			return rbplain.getString(key);
+		} catch (Exception e) {
+			return key;
+		}
+	}
+
+	final public String getPlainTooltip(String key) {
+
+		if (tooltipLocale == null) return getPlain(key);
+
+		if (rbplainTT == null) {
+			initPlainTTResourceBundle();
+		}
+
+		try {
+			return rbplainTT.getString(key);
 		} catch (Exception e) {
 			return key;
 		}
@@ -2086,6 +2139,10 @@ public class Application implements KeyEventDispatcher {
 		rbplain = MyResourceBundle.createBundle(RB_PLAIN, currentLocale);
 		if (rbplain != null)
 			kernel.updateLocalAxesNames();
+	}
+	
+	private void initPlainTTResourceBundle() {
+		rbplainTT = MyResourceBundle.createBundle(RB_PLAIN, tooltipLocale);
 	}
 	
 	
@@ -2172,12 +2229,30 @@ public class Application implements KeyEventDispatcher {
 	private StringBuilder sbPlain = new StringBuilder();
 
 	final public String getMenu(String key) {
+		
+		if (tooltipFlag) return getMenuTooltip(key);
+		
 		if (rbmenu == null) {
 			rbmenu = MyResourceBundle.createBundle(RB_MENU, currentLocale);
 		}
 
 		try {
 			return rbmenu.getString(key);
+		} catch (Exception e) {
+			return key;
+		}
+	}
+
+	final public String getMenuTooltip(String key) {
+		
+		if (tooltipLocale == null) return getMenu(key);
+		
+		if (rbmenuTT == null) {
+			rbmenuTT = MyResourceBundle.createBundle(RB_MENU, tooltipLocale);
+		}
+
+		try {
+			return rbmenuTT.getString(key);
 		} catch (Exception e) {
 			return key;
 		}
@@ -2209,10 +2284,27 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	final public String getCommand(String key) {
+		
+		if (tooltipFlag) return getCommandTooltip(key);
+		
 		initTranslatedCommands();		
 
 		try {
 			return rbcommand.getString(key);
+		} catch (Exception e) {
+			return key;
+		}
+	}
+
+	final public String getCommandTooltip(String key) {
+		
+		if (tooltipLocale == null) return getCommand(key);
+		if (rbcommandTT == null) 
+			rbcommandTT = MyResourceBundle
+					.createBundle(RB_COMMAND, tooltipLocale);
+
+		try {
+			return rbcommandTT.getString(key);
 		} catch (Exception e) {
 			return key;
 		}
@@ -2538,13 +2630,22 @@ public class Application implements KeyEventDispatcher {
      * @param mode: tool ID
      */
     public String getToolTooltipHTML(int mode) {
+    	
+    	if (tooltipLocale != null) {
+    		tooltipFlag = true;
+    	}
+    	
     	StringBuilder sbTooltip = new StringBuilder();
 		sbTooltip.append("<html><b>");
 		sbTooltip.append(Util.toHTMLString(getToolName(mode)));
 		sbTooltip.append("</b><br>");		
 		sbTooltip.append(Util.toHTMLString(getToolHelp(mode)));
 		sbTooltip.append("</html>");
+		
+		tooltipFlag = false;
+
 		return sbTooltip.toString();
+		
     }
     
     private String getToolNameOrHelp(int mode, boolean toolName) {
@@ -4940,7 +5041,10 @@ public class Application implements KeyEventDispatcher {
 		
 		// no real latex string
 		return false;
-	}	
+	}
+
+
+
 		
 }
 

@@ -187,7 +187,7 @@ public class ConstructionProtocolNavigation extends JPanel implements ActionList
 		if (btPlay != null)
 			btPlay.setText(app.getPlain("Play"));
 		if (btOpenWindow != null)
-			btOpenWindow.setToolTipText(app.getPlain("ConstructionProtocol"));
+			btOpenWindow.setToolTipText(app.getPlainTooltip("ConstructionProtocol"));
 	}
 	
 	/**

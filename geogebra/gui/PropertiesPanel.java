@@ -5994,7 +5994,7 @@ class ColorFunctionPanel
 		
 		nameLabelA.setText(app.getMenu("Opacity") + ":");
 		
-		btRemove.setToolTipText(app.getPlain("Remove"));
+		btRemove.setToolTipText(app.getPlainTooltip("Remove"));
 	}
 
 	public JPanel update(Object[] geos) {

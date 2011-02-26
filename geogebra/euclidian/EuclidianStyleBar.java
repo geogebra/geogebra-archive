@@ -1618,31 +1618,31 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		initGUI();
 		updateStyleBar();
 		
-		btnShowGrid.setToolTipText(app.getPlain("stylebar.Grid"));
-		btnShowAxes.setToolTipText(app.getPlain("stylebar.Axes"));
-		btnPointCapture.setToolTipText(app.getPlain("stylebar.Capture"));
+		btnShowGrid.setToolTipText(app.getPlainTooltip("stylebar.Grid"));
+		btnShowAxes.setToolTipText(app.getPlainTooltip("stylebar.Axes"));
+		btnPointCapture.setToolTipText(app.getPlainTooltip("stylebar.Capture"));
 		
-		btnLabelStyle.setToolTipText(app.getPlain("stylebar.Label"));
+		btnLabelStyle.setToolTipText(app.getPlainTooltip("stylebar.Label"));
 		
-		btnColor.setToolTipText(app.getPlain("stylebar.Color"));
-		btnBgColor.setToolTipText(app.getPlain("stylebar.BgColor"));
+		btnColor.setToolTipText(app.getPlainTooltip("stylebar.Color"));
+		btnBgColor.setToolTipText(app.getPlainTooltip("stylebar.BgColor"));
 		
-		btnLineStyle.setToolTipText(app.getPlain("stylebar.LineStyle"));
-		btnPointStyle.setToolTipText(app.getPlain("stylebar.PointStyle"));
+		btnLineStyle.setToolTipText(app.getPlainTooltip("stylebar.LineStyle"));
+		btnPointStyle.setToolTipText(app.getPlainTooltip("stylebar.PointStyle"));
 		
-		btnTextColor.setToolTipText(app.getPlain("stylebar.TextColor"));
-		btnTextSize.setToolTipText(app.getPlain("stylebar.TextSize"));
-		btnBold.setToolTipText(app.getPlain("stylebar.Bold")); 
-		btnItalic.setToolTipText(app.getPlain("stylebar.Italic")); 
-		btnTableTextJustify.setToolTipText(app.getPlain("stylebar.Align"));
-		btnTableTextBracket.setToolTipText(app.getPlain("stylebar.Bracket"));
-		btnTableTextLinesV.setToolTipText(app.getPlain("stylebar.HorizontalLine"));
-		btnTableTextLinesH.setToolTipText(app.getPlain("stylebar.VerticalLine"));
+		btnTextColor.setToolTipText(app.getPlainTooltip("stylebar.TextColor"));
+		btnTextSize.setToolTipText(app.getPlainTooltip("stylebar.TextSize"));
+		btnBold.setToolTipText(app.getPlainTooltip("stylebar.Bold")); 
+		btnItalic.setToolTipText(app.getPlainTooltip("stylebar.Italic")); 
+		btnTableTextJustify.setToolTipText(app.getPlainTooltip("stylebar.Align"));
+		btnTableTextBracket.setToolTipText(app.getPlainTooltip("stylebar.Bracket"));
+		btnTableTextLinesV.setToolTipText(app.getPlainTooltip("stylebar.HorizontalLine"));
+		btnTableTextLinesH.setToolTipText(app.getPlainTooltip("stylebar.VerticalLine"));
 
-		btnPen.setToolTipText(app.getPlain("stylebar.Pen"));
-		btnPenEraser.setToolTipText(app.getPlain("stylebar.Eraser"));
+		btnPen.setToolTipText(app.getPlainTooltip("stylebar.Pen"));
+		btnPenEraser.setToolTipText(app.getPlainTooltip("stylebar.Eraser"));
 		
-		btnCopyVisualStyle.setToolTipText(app.getPlain("stylebar.CopyVisualStyle"));		
+		btnCopyVisualStyle.setToolTipText(app.getPlainTooltip("stylebar.CopyVisualStyle"));		
 		
 	}	
 

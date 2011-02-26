@@ -76,12 +76,12 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	 * Update the tool tip texts (used for language change).
 	 */
 	public void updateLabels() {
-		toggleAuxiliary.setToolTipText(app.getPlain("AuxiliaryObjects"));
+		toggleAuxiliary.setToolTipText(app.getPlainTooltip("AuxiliaryObjects"));
 		
 		if(algebraView.getTreeMode() == algebraView.MODE_TYPE) {
-			toggleTypeTreeMode.setToolTipText(app.getPlain("TreeModeDependency"));
+			toggleTypeTreeMode.setToolTipText(app.getPlainTooltip("TreeModeDependency"));
 		} else {
-			toggleTypeTreeMode.setToolTipText(app.getPlain("TreeModeType"));
+			toggleTypeTreeMode.setToolTipText(app.getPlainTooltip("TreeModeType"));
 		}
 	}
 

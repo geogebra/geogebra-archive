@@ -4,9 +4,7 @@ import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
@@ -21,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ToolTipManager;
 
 /**
  * Advanced options for the options dialog.
@@ -291,6 +290,19 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	 * Values changed.
 	 */
 	public void actionPerformed(ActionEvent e) {
-		// TODO implement
+		if (e.getSource() == cbTooltipTimeout) {
+			int index = cbTooltipTimeout.getSelectedIndex();
+			int delay = Integer.MAX_VALUE;
+			if (index < tooltipTimeouts.length - 1) {
+				delay = 1000 * Integer.parseInt(tooltipTimeouts[index]);
+			}
+			ToolTipManager.sharedInstance().setDismissDelay(delay);
+			Application.debug(delay);
+
+		} else if (e.getSource() == cbTooltipLanguage) {
+			int index = cbTooltipLanguage.getSelectedIndex() - 1;
+			if (index == -1) app.setTooltipLanguage(null);
+			else app.setTooltipLanguage(Application.supportedLocales.get(index));
+		}
 	}
 }

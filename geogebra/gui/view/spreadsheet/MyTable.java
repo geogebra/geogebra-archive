@@ -1724,7 +1724,9 @@ public class MyTable extends JTable implements FocusListener
 
 			// set tooltip with geo's description
 			if (geo != null & view.getAllowToolTips()) {
-				setToolTipText(geo.getLongDescriptionHTML(true, true));				
+				app.setTooltipFlag();
+				setToolTipText(geo.getLongDescriptionHTML(true, true));	
+				app.clearTooltipFlag();
 			} else
 				setToolTipText(null);	
 			

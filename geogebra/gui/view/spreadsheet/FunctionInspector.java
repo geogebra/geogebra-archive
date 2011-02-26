@@ -367,14 +367,14 @@ KeyListener, ActionListener{
 		tabPanel.setTitleAt(1, app.getPlain("fncInspector.Interval"));
 
 		//tool tips
-		btnOscCircle.setToolTipText(app.getPlain("fncInspector.showOscCircle"));
-		btnXYSegments.setToolTipText(app.getPlain("fncInspector.showXYLines"));
-		btnTable.setToolTipText(app.getPlain("fncInspector.showTable"));
-		btnTangent.setToolTipText(app.getPlain("fncInspector.showTangent"));
-		btnAddColumn.setToolTipText(app.getPlain("fncInspector.addColumn"));
-		btnRemoveColumn.setToolTipText(app.getPlain("fncInspector.removeColumn"));
-		fldStep.setToolTipText(app.getPlain("fncInspector.step"));
-		lblStep.setToolTipText(app.getPlain("fncInspector.step"));
+		btnOscCircle.setToolTipText(app.getPlainTooltip("fncInspector.showOscCircle"));
+		btnXYSegments.setToolTipText(app.getPlainTooltip("fncInspector.showXYLines"));
+		btnTable.setToolTipText(app.getPlainTooltip("fncInspector.showTable"));
+		btnTangent.setToolTipText(app.getPlainTooltip("fncInspector.showTangent"));
+		btnAddColumn.setToolTipText(app.getPlainTooltip("fncInspector.addColumn"));
+		btnRemoveColumn.setToolTipText(app.getPlainTooltip("fncInspector.removeColumn"));
+		fldStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));
+		lblStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));
 
 	}
 

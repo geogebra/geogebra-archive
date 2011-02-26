@@ -833,10 +833,13 @@ public class PropertiesDialog
 
 			// tell EuclidianView to handle mouse over
 			ev.mouseMovedOver(geo);								
-			if (geo != null)
+			if (geo != null) {
+				app.setTooltipFlag();
 				setToolTipText(geo.getLongDescriptionHTML(true, true));
-			else
+				app.clearTooltipFlag();
+			} else {
 				setToolTipText(null);
+			}
 		}
 
 		/**

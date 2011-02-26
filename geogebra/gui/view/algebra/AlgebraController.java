@@ -247,7 +247,9 @@ public class AlgebraController
 		ev.mouseMovedOver(geo);								
 		
 		if (geo != null) {
-			view.setToolTipText(geo.getLongDescriptionHTML(true, true));				
+			app.setTooltipFlag();
+			view.setToolTipText(geo.getLongDescriptionHTML(true, true));
+			app.clearTooltipFlag();
 		} else
 			view.setToolTipText(null);						
 	}
