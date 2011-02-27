@@ -4094,9 +4094,11 @@ class CmdExtremum extends CommandProcessor {
 					&& (ok[2] = (arg[2].isNumberValue()))
 
 			)
-				return kernel.Extremum(c.getLabel(), ((GeoFunctionable) arg[0])
-						.getGeoFunction(), (NumberValue) arg[1],
-						(NumberValue) arg[2]);
+				return kernel.Extremum(c.getLabels(), 
+						((GeoFunctionable) arg[0]).getGeoFunction(),
+						(NumberValue) arg[1],
+						(NumberValue) arg[2]
+						);
 			else
 				throw argErr(app, "Extremum", n);
 
