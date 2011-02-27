@@ -48,8 +48,7 @@ public class HistogramOptionsPanel extends JPanel implements PropertyChangeListe
 		lblFreqType = new JLabel();
 		cbType = new JComboBox();
 		cbType.addActionListener(this);
-		
-		
+				
 		ckFreq = new JRadioButton();
 		ckFreq.addActionListener(this);
 		
@@ -63,8 +62,7 @@ public class HistogramOptionsPanel extends JPanel implements PropertyChangeListe
 		g.add(ckFreq);
 		g.add(ckNormalized);
 		g.add(ckRelative);
-		
-		
+				
 		ckOverlayNormal = new JCheckBox();
 		ckOverlayNormal.addActionListener(this);
 		
@@ -98,8 +96,8 @@ public class HistogramOptionsPanel extends JPanel implements PropertyChangeListe
 		plotPanel.add(new JLabel("dsd"));
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
-		tabbedPane.addTab("Basic", basicPanel);
-		tabbedPane.addTab("Plot", plotPanel);
+		tabbedPane.addTab(app.getMenu("Properties.Basic"), basicPanel);
+		tabbedPane.addTab(app.getMenu("Graph"), plotPanel);
 		
 		
 		setLayout(new BorderLayout());
@@ -118,23 +116,16 @@ public class HistogramOptionsPanel extends JPanel implements PropertyChangeListe
 
 	private void setLabels(){
 
-		ckManual.setText(app.getPlain("Set classses manually"));		
-		lblFreqType.setText(app.getPlain("Frequency type" + ":"));
-		/*
-		String[] types = { 
-				app.getPlain("Count"),
-				app.getPlain("Relative"),
-				app.getPlain("Normalized")
-		};
-		cbType = new JComboBox(types);
-		*/
-		ckFreq.setText(app.getPlain("Count"));
-		ckNormalized.setText(app.getPlain("Normalized"));
-		ckRelative.setText(app.getPlain("Relative"));
+		ckManual.setText(app.getMenu("SetClasssesManually"));		
+		lblFreqType.setText(app.getMenu("FrequencyType") + ":");
 		
-		ckCumulative.setText(app.getPlain("Cumulative"));
-		ckOverlayNormal.setText(app.getPlain("Overlay normal curve"));
-		ckOverlayPolygon.setText(app.getPlain("Overlay frequency polygon"));
+		ckFreq.setText(app.getMenu("Count"));
+		ckNormalized.setText(app.getMenu("Normalized"));
+		ckRelative.setText(app.getMenu("Relative"));
+		
+		ckCumulative.setText(app.getMenu("Cumulative"));
+		ckOverlayNormal.setText(app.getMenu("OverlayNormalCurve"));
+		ckOverlayPolygon.setText(app.getMenu("OverlayFrequencyPolygon"));
 
 	}
 

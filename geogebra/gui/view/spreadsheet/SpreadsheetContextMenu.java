@@ -400,7 +400,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 			item = new JMenuItem(app.getMenu(app.getMenu("TwoVariable")),app.getEmptyIcon());		
 			item.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					view.showStatDialog(StatDialog.MODE_TWOVAR);
+					view.showStatDialog(StatDialog.MODE_REGRESSION);
 				}
 			});	 
 			addSubItem(subMenu,item);	

@@ -421,7 +421,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			break;
 
 		case EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS:
-			showStatDialog(StatDialog.MODE_TWOVAR);
+			showStatDialog(StatDialog.MODE_REGRESSION);
 			break;
 
 		case EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS:
@@ -601,7 +601,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			oneVarStatDialog.setVisible(true);	
 			break;
 
-		case StatDialog.MODE_TWOVAR:
+		case StatDialog.MODE_REGRESSION:
 			if(twoVarStatDialog == null){
 				twoVarStatDialog = new StatDialog(view, app, mode);
 			}else{

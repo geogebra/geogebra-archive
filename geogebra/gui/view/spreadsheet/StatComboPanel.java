@@ -21,9 +21,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -61,6 +63,7 @@ public class StatComboPanel extends JPanel{
 	public static final int PLOT_MULTIBOXPLOT = 10;
 	public static final int PLOT_MULTIVARSTATS = 11;
 	public static final int PLOT_ANOVA= 12;
+	public static final int PLOT_TWOVAR_INFERENCE= 13;
 
 
 	// plot reference vars
@@ -75,6 +78,7 @@ public class StatComboPanel extends JPanel{
 
 	private JComboBox cbPlotTypes;
 	private JPanel statDisplayPanel;
+	private TwoVarInferencePanel twoVarInferencePanel;
 	private PlotPanel plotPanel;
 	private StatTable statTable;
 	private JLabel lblRegCmd;
@@ -118,6 +122,17 @@ public class StatComboPanel extends JPanel{
 	private JButton minus;
 	private JButton none;
 	private JButton plus;
+	private MultiVarStatPanel multiVarStatPanel;
+
+
+	private DefaultComboBoxModel modelInference;
+	private JComboBox cbInferenceType;
+	private JPanel twoVarOptionsPanel;
+	private ANOVAPanel anovaPanel;
+
+
+
+
 
 
 	/***************************************** 
@@ -161,7 +176,7 @@ public class StatComboPanel extends JPanel{
 			createManualClassesPanel();
 			createPlotTypeComboBox();
 			createStemPlotAdjustmentPanel();
-
+			createTwoVarOptionsPanel();
 			// put the bar control panels in a card layout
 			JPanel blank = new JPanel(new BorderLayout());
 			blank.add(new JLabel("  "));
@@ -169,6 +184,7 @@ public class StatComboPanel extends JPanel{
 			controlCards.add("numClassesPanel", numClassesPanel);
 			controlCards.add("manualClassesPanel", manualClassesPanel);
 			controlCards.add("stemAdjustPanel", stemAdjustPanel);
+			//	controlCards.add("twoVarOptionsPanel", twoVarOptionsPanel);
 			controlCards.add("blankPanel", blank);
 
 			JPanel plotTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -193,7 +209,7 @@ public class StatComboPanel extends JPanel{
 
 		// =======================================
 		//create regression analysis panel
-		if(mode == statDialog.MODE_TWOVAR)
+		if(mode == statDialog.MODE_REGRESSION)
 			createRegressionAnalysisPanel();
 
 		// =======================================
@@ -211,11 +227,29 @@ public class StatComboPanel extends JPanel{
 
 		// =======================================
 		// put these panels in a card layout
+		
 		statDisplayPanel = new JPanel(new CardLayout());
+		
 		statDisplayPanel.add("plotPanel", plotPanel);
-		if(mode == statDialog.MODE_TWOVAR)
-			statDisplayPanel.add("regressionPanel", regressionPanel);
 		statDisplayPanel.add("imagePanel", new JScrollPane(imagePanel));
+		
+		if(mode == statDialog.MODE_REGRESSION)
+
+			statDisplayPanel.add("regressionPanel", regressionPanel);
+		
+
+		if(mode == statDialog.MODE_MULTIVAR){
+
+			twoVarInferencePanel =new TwoVarInferencePanel(app, dataListSelected, statDialog);
+			JScrollPane scroller = new JScrollPane(twoVarInferencePanel);
+			statDisplayPanel.add("twoVarInferencePanel", scroller);
+
+			multiVarStatPanel = new MultiVarStatPanel(app, dataListSelected, statDialog);
+			statDisplayPanel.add("multiVarStatPanel", multiVarStatPanel);
+
+			anovaPanel = new ANOVAPanel(app, dataListSelected, statDialog);
+			statDisplayPanel.add("anovaPanel", anovaPanel);
+		}
 		statDisplayPanel.setBackground(plotPanel.getBackground());
 
 
@@ -250,20 +284,18 @@ public class StatComboPanel extends JPanel{
 		evalPanel.add(new JLabel("y = "));
 		evalPanel.add(lblOutputY);
 
-
 		//regressionAnalysisList = statDialog.getStatGeo().createRegressionAnalysisList(dataListSelected, null);
 		regressionAnalysisList = statDialog.getStatGeo().createBasicStatList(dataListSelected,mode);		
 		regressionAnalysisTable = new StatTable(app, regressionAnalysisList, mode);
-
 
 		regressionPanel = new JPanel(new BorderLayout());
 		regressionPanel.add(evalPanel, BorderLayout.NORTH);
 		regressionPanel.add(regressionAnalysisTable, BorderLayout.CENTER);
 		regressionPanel.setBorder(BorderFactory.createEmptyBorder());
 
-
 	}
 
+	
 	private void createPlotTypeComboBox(){
 
 		cbPlotTypes = new JComboBox();
@@ -280,7 +312,7 @@ public class StatComboPanel extends JPanel{
 
 			break;
 
-		case StatDialog.MODE_TWOVAR:
+		case StatDialog.MODE_REGRESSION:
 			cbPlotTypes.addItem(plotMap.get(PLOT_SCATTERPLOT));
 			cbPlotTypes.addItem(plotMap.get(PLOT_RESIDUAL));
 			cbPlotTypes.addItem(plotMap.get(PLOT_REGRESSION_ANALYSIS));
@@ -290,6 +322,7 @@ public class StatComboPanel extends JPanel{
 			cbPlotTypes.addItem(plotMap.get(PLOT_MULTIBOXPLOT));
 			cbPlotTypes.addItem(plotMap.get(PLOT_MULTIVARSTATS));
 			cbPlotTypes.addItem(plotMap.get(PLOT_ANOVA));
+			cbPlotTypes.addItem(plotMap.get(PLOT_TWOVAR_INFERENCE));
 			break;
 
 
@@ -351,10 +384,18 @@ public class StatComboPanel extends JPanel{
 		lblNumClasses.setText(app.getMenu("Classes" + ": "));
 		lblStart.setText(app.getMenu("Start") + ": ");
 		lblWidth.setText(app.getMenu("Width") + ": ");
-		if(mode == statDialog.MODE_TWOVAR){
+		if(mode == statDialog.MODE_REGRESSION){
 			lblEvaluate.setText(app.getMenu("Evaluate")+ ": ");
 		}
 		lblAdjust.setText(app.getMenu("Adjustment")+ ": ");
+
+
+		modelInference.removeAllElements();
+		modelInference.addElement(app.getMenu("Difference of Means T Test"));	
+		modelInference.addElement(app.getMenu("Difference of Means T Estimate"));
+		modelInference.addElement(app.getMenu("Paired T Test"));
+
+
 	}
 
 
@@ -418,6 +459,22 @@ public class StatComboPanel extends JPanel{
 
 	}
 
+	private void createTwoVarOptionsPanel(){
+
+		modelInference = new DefaultComboBoxModel();
+		cbInferenceType = new JComboBox(modelInference);
+		twoVarOptionsPanel = flowPanel(cbInferenceType);
+
+	}
+
+	private JPanel flowPanel(JComponent... comp){
+		JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		for(int i = 0; i<comp.length; i++){
+			p.add(comp[i]);
+		}
+		p.setBackground(Color.white);
+		return p;
+	}
 
 
 	private void createOptionsButton(){
@@ -446,6 +503,8 @@ public class StatComboPanel extends JPanel{
 	}
 
 
+
+
 	private void createPlotMap(){
 		plotMap = new HashMap<Integer,String>();
 
@@ -458,11 +517,12 @@ public class StatComboPanel extends JPanel{
 
 		plotMap.put(PLOT_SCATTERPLOT, app.getMenu("Scatterplot"));
 		plotMap.put(PLOT_RESIDUAL, app.getMenu("ResidualPlot"));
-		plotMap.put(PLOT_REGRESSION_ANALYSIS, app.getMenu("Regression Analysis"));
-		
-		plotMap.put(PLOT_MULTIBOXPLOT, app.getMenu("BoxPlots"));
+		plotMap.put(PLOT_REGRESSION_ANALYSIS, app.getMenu("RegressionAnalysis"));
+
+		plotMap.put(PLOT_MULTIBOXPLOT, app.getMenu("StackedBoxPlots"));
 		plotMap.put(PLOT_MULTIVARSTATS, app.getMenu("Statistics"));
 		plotMap.put(PLOT_ANOVA, app.getMenu("ANOVA"));
+		plotMap.put(PLOT_TWOVAR_INFERENCE, app.getMenu("TwoVariableInference"));
 
 		plotMapReverse = new HashMap<String, Integer>();
 		for(Integer key: plotMap.keySet()){
@@ -579,15 +639,27 @@ public class StatComboPanel extends JPanel{
 			break;
 
 		case PLOT_MULTIVARSTATS:
-			imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
+			multiVarStatPanel.updateMultiVarStatPanel();
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "multiVarStatPanel");
 			optionsButton.setVisible(false);
 			break;
 
 		case PLOT_ANOVA:
-			imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
-			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
+			//imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, underConstruction, app.getPlainFont(), true, Color.BLACK, null));
+			//((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "imagePanel");
+
+			anovaPanel.updateANOVAPanel();
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "anovaPanel");
+			
 			optionsButton.setVisible(false);
+			break;
+
+		case PLOT_TWOVAR_INFERENCE:
+			twoVarInferencePanel.updateTwoVarPanel();
+			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "twoVarInferencePanel");
+			optionsButton.setVisible(false);
+			//if(hasControlPanel)
+			//((CardLayout)controlCards.getLayout()).show(controlCards, "twoVarOptionsPanel");
 			break;
 
 		default:
@@ -604,8 +676,6 @@ public class StatComboPanel extends JPanel{
 				app.getEuclidianView().remove(listGeo);
 			}
 		}
-
-
 	}
 
 
@@ -650,8 +720,6 @@ public class StatComboPanel extends JPanel{
 
 
 
-
-
-} // END class ComboStatPanel 
+} 
 
 

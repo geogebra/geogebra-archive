@@ -233,7 +233,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 			}
 			break;
 
-		case StatDialog.MODE_TWOVAR:
+		case StatDialog.MODE_REGRESSION:
 
 			dataModel = new DefaultTableModel(dataList.size(),2);
 			for (int row = 0; row < dataList.size(); ++row){

@@ -179,7 +179,11 @@ public class StatGeo   {
 					{app.getMenu("Length.short") ,"Length"},
 					{app.getMenu("MeanX") ,"MeanX"},
 					{app.getMenu("MeanY") ,"MeanY"},
+					//TODO add SDX etc cmds
+					//{app.getMenu("Sx") ,"SampleSDx"},
+					//{app.getMenu("Sy") ,"SampleSDY"},
 					{app.getMenu("CorrelationCoefficient.short") ,"PMCC"},
+					{app.getMenu("Spearman.short") ,"Spearman"},
 					{app.getMenu("Sxx") ,"Sxx"},
 					{app.getMenu("Syy") ,"Syy"},
 					{app.getMenu("Sxy") ,"Sxy"},
