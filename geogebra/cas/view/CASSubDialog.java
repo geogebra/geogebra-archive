@@ -196,9 +196,9 @@ public class CASSubDialog extends JDialog implements ActionListener {
 	 * @param inserting is set: the selected cell will be filled but is not yet
 	 */
 	public void addRow(boolean inserting){
-		int col=0,row=replaceTable.getSelectedRow();
-		if (row+1==replaceTable.getRowCount()){
-			col=replaceTable.getSelectedColumn();
+		int row=replaceTable.getSelectedRow();
+		int col=replaceTable.getSelectedColumn();
+		if (row+1==replaceTable.getRowCount()&&col>=0){
 			boolean[] colSet=new boolean[2];
 			colSet[0]=!data.lastElement().firstElement().equals("");
 			colSet[1]=!data.lastElement().lastElement().equals("");
@@ -245,7 +245,13 @@ public class CASSubDialog extends JDialog implements ActionListener {
 	public void setVisible(boolean flag) {
 		casView.setSubstituteDialog(flag ? this : null);
 		super.setVisible(flag);
+		if (flag){
+			//focus top right cell
+			replaceTable.setRowSelectionInterval(0, 0);
+			replaceTable.setColumnSelectionInterval(1, 1);
+		}
 	}
+
 	
 	/**
 	 * if editing insert inStr at current caret position
