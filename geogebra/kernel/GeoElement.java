@@ -2473,10 +2473,17 @@ public abstract class GeoElement
 			if (isGeoPoint()) {
 				// Michael Borcherds 2008-02-23
 				// use Greek upper case for labeling points if lenguage is Greek (el)
-				// TODO decide if we want this as an option, or:
-				if (app.languageIs(app.getLocale(), "el")) chars=greekUpperCase; else
-					if (app.languageIs(app.getLocale(), "ar")) chars=arabic; else
+				if(app.isUsingLocalizedLabels()) {
+					if (app.languageIs(app.getLocale(), "el")) {
+						chars=greekUpperCase; 
+					} else if(app.languageIs(app.getLocale(), "ar")) { 
+						chars=arabic;
+					} else {
 						chars = pointLabels;
+					}
+				} else {
+					chars = pointLabels;
+				}
 
 				GeoPointND point = (GeoPointND)this;
 				if (point.getMode() == Kernel.COORD_COMPLEX)

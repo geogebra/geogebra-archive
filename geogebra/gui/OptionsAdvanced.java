@@ -43,7 +43,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout;
 	
 	/**	 */
-	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalPointNames, cbEnableScripting;
+	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbEnableScripting;
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
@@ -112,6 +112,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		panel.add(keyboardLanguageLabel);
 		
 		cbKeyboardLanguage = new JComboBox();
+		// listener to this combo box is added in setLabels()
 		panel.add(cbKeyboardLanguage);
 		
 		virtualKeyboardPanel.add(panel, BorderLayout.NORTH);
@@ -151,10 +152,12 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		languagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		cbUseLocalDigits = new JCheckBox();
+		cbUseLocalDigits.addActionListener(this);
 		languagePanel.add(cbUseLocalDigits);
 		
-		cbUseLocalPointNames = new JCheckBox();
-		languagePanel.add(cbUseLocalPointNames);
+		cbUseLocalLabels = new JCheckBox();
+		cbUseLocalLabels.addActionListener(this);
+		languagePanel.add(cbUseLocalLabels);
 	}
 	
 	/**
@@ -167,6 +170,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		tooltipPanel.add(tooltipLanguageLabel);
 		
 		cbTooltipLanguage = new JComboBox();
+		// listener to this combo box is added in setLabels()
 		tooltipPanel.add(cbTooltipLanguage);
 		
 		tooltipTimeoutLabel = new JLabel();
@@ -193,7 +197,10 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	 * @remark Do not call setLabels() here
 	 */
 	public void updateGUI() {
+		cbUseLocalDigits.setSelected(app.isUsingLocalizedDigits());
+		cbUseLocalLabels.setSelected(app.isUsingLocalizedLabels());
 		
+		// TODO update tooltip language and timeout
 	}
 
 	/**
@@ -214,13 +221,13 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		tooltipTimeoutLabel.setText(app.getPlain("TooltipTimeout")+":");
 		
 		cbUseLocalDigits.setText(app.getPlain("LocalizedDigits"));
-		cbUseLocalPointNames.setText(app.getPlain("LocalizedPointNames"));
+		cbUseLocalLabels.setText(app.getPlain("LocalizedLabels"));
 		
 		cbEnableScripting.setText(app.getPlain("EnableScripting"));
 		
-		updateKeyboardLanguages();
-		updateTooltipLanguages();
-		updateTooltipTimeouts();
+		setLabelsKeyboardLanguage();
+		setLabelsTooltipLanguages();
+		setLabelsTooltipTimeouts();
 	}
 	
 	/**
@@ -229,7 +236,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	 * recreate the list all the time, even if we just change the label of the
 	 * first item in the list.
 	 */
-	private void updateKeyboardLanguages() {
+	private void setLabelsKeyboardLanguage() {
 		String[] languages = new String[VirtualKeyboard.supportedLocales.size()+1];
 		languages[0] = app.getPlain("Default");
 		String ggbLangCode;
@@ -251,9 +258,9 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * @see #updateKeyboardLanguages()
+	 * @see #setLabelsKeyboardLanguage()
 	 */
-	private void updateTooltipLanguages() {
+	private void setLabelsTooltipLanguages() {
 		String[] languages = new String[Application.supportedLocales.size()+1];
 		languages[0] = app.getPlain("Default");
 		String ggbLangCode;
@@ -275,9 +282,9 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * @see #updateKeyboardLanguages() 
+	 * @see #setLabelsKeyboardLanguage() 
 	 */
-	private void updateTooltipTimeouts() {
+	private void setLabelsTooltipTimeouts() {
 		tooltipTimeouts[tooltipTimeouts.length-1] = app.getPlain("off");
 
 		// take care that this doesn't fire events by accident 
@@ -303,6 +310,10 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 			int index = cbTooltipLanguage.getSelectedIndex() - 1;
 			if (index == -1) app.setTooltipLanguage(null);
 			else app.setTooltipLanguage(Application.supportedLocales.get(index));
-		}
+		} else if(e.getSource() == cbUseLocalDigits) {
+			app.setUseLocalizedDigits(cbUseLocalDigits.isSelected());
+		} else if(e.getSource() == cbUseLocalLabels) {
+			app.setUseLocalizedLabels(cbUseLocalLabels.isSelected());
+		} 
 	}
 }

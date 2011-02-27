@@ -1534,6 +1534,58 @@ public class Application implements KeyEventDispatcher {
 			return false;
 		return true;
 	}
+	
+	/**
+	 * Use localized digits.
+	 */
+	private boolean useLocalizedDigits = true;
+	
+	/**
+	 * @return If localized digits are used for certain languages (Arabic, Hebrew, etc).
+	 */
+	public boolean isUsingLocalizedDigits() {
+		return useLocalizedDigits;
+	}
+	
+	/**
+	 * Use localized digits for certain languages (Arabic, Hebrew, etc).
+	 * 
+	 * Calls {@link #updateReverseLanguage(Locale)} to apply the change, but just
+	 * if the new flag differs from the current.
+	 */
+	public void setUseLocalizedDigits(boolean useLocalizedDigits) {
+		if(this.useLocalizedDigits == useLocalizedDigits) {
+			return;
+		}
+		
+		this.useLocalizedDigits = useLocalizedDigits;
+		updateReverseLanguage(currentLocale);
+		getKernel().updateConstruction();
+		setUnsaved();
+		
+		if(euclidianView != null) {
+			euclidianView.updateBackground();
+		}
+	}
+	
+	/**
+	 * Use localized labels.
+	 */
+	private boolean useLocalizedLabels = true;
+	
+	/**
+	 * @return If localized labels are used for certain languages.
+	 */
+	public boolean isUsingLocalizedLabels() {
+		return useLocalizedLabels;
+	}
+	
+	/**
+	 * Use localized labels for certain languages.
+	 */
+	public void setUseLocalizedLabels(boolean useLocalizedLabels) {
+		this.useLocalizedLabels = useLocalizedLabels;
+	}
 
 	// For Hebrew and Arabic. Guy Hed, 25.8.2008
 	private boolean rightToLeftReadingOrder = false;
@@ -1731,30 +1783,34 @@ public class Application implements KeyEventDispatcher {
 		unicodeComma = ',';
 		// unicodeThousandsSeparator=',';
 		
-		if (lang.startsWith("ar")) { // Arabic
-			unicodeZero = '\u0660'; // Arabic-Indic digit 0
-			unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
-			unicodeComma = '\u060c'; // Arabic comma
-			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separator
-		} else if (lang.startsWith("fa")) { // Persian
-			unicodeZero = '\u06f0'; // Persian digit 0 (Extended Arabic-Indic)
-			unicodeDecimalPoint = '\u066b'; // Arabic comma
-			unicodeComma = '\u060c'; // Arabic-Indic decimal point
-			//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separators
-		} else if (lang.startsWith("ml")) {
-			unicodeZero = '\u0d66'; // Malayalam digit 0
-		} else if (lang.startsWith("th")) {
-			unicodeZero = '\u0e50'; // Thai digit 0
-		} else if (lang.startsWith("ta")) {
-			unicodeZero = '\u0be6'; // Tamil digit 0
-		} else if (lang.startsWith("sd")) {
-			unicodeZero = '\u1bb0'; // Sudanese digit 0
-		} else if (lang.startsWith("kh")) {
-			unicodeZero = '\u17e0'; // Khmer digit 0
-		} else if (lang.startsWith("mn")) {
-			unicodeZero = '\u1810'; // Mongolian digit 0
-		} else if (lang.startsWith("mm")) {
-			unicodeZero = '\u1040'; // Mayanmar digit 0
+		if(isUsingLocalizedDigits()) {		
+			if (lang.startsWith("ar")) { // Arabic
+				unicodeZero = '\u0660'; // Arabic-Indic digit 0
+				unicodeDecimalPoint = '\u066b'; // Arabic-Indic decimal point
+				unicodeComma = '\u060c'; // Arabic comma
+				//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separator
+			} else if (lang.startsWith("fa")) { // Persian
+				unicodeZero = '\u06f0'; // Persian digit 0 (Extended Arabic-Indic)
+				unicodeDecimalPoint = '\u066b'; // Arabic comma
+				unicodeComma = '\u060c'; // Arabic-Indic decimal point
+				//unicodeThousandsSeparator = '\u066c'; // Arabic Thousands separators
+			} else if (lang.startsWith("ml")) {
+				unicodeZero = '\u0d66'; // Malayalam digit 0
+			} else if (lang.startsWith("th")) {
+				unicodeZero = '\u0e50'; // Thai digit 0
+			} else if (lang.startsWith("ta")) {
+				unicodeZero = '\u0be6'; // Tamil digit 0
+			} else if (lang.startsWith("sd")) {
+				unicodeZero = '\u1bb0'; // Sudanese digit 0
+			} else if (lang.startsWith("kh")) {
+				unicodeZero = '\u17e0'; // Khmer digit 0
+			} else if (lang.startsWith("mn")) {
+				unicodeZero = '\u1810'; // Mongolian digit 0
+			} else if (lang.startsWith("mm")) {
+				unicodeZero = '\u1040'; // Mayanmar digit 0
+			} else {
+				unicodeZero = '0';
+			}
 		} else {
 			unicodeZero = '0';
 		}
