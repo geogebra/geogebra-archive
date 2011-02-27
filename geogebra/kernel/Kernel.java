@@ -6682,7 +6682,7 @@ public class Kernel {
 	/**
 	 * Numeric search for extremum of function f in interval [left,right]
 	 * Ulven 2011-2-5
-	 */
+	 
 	final public GeoPoint[] Extremum(String label,GeoFunction f,NumberValue left,NumberValue right) {
 		AlgoExtremumNumerical algo=new AlgoExtremumNumerical(cons,label,f,left,right);
 		GeoPoint g=algo.getNumericalExtremum();	//All variants return array...
@@ -6690,6 +6690,13 @@ public class Kernel {
 		result[0]=g;
 		return result;
 	}//Extremum(label,geofunction,numbervalue,numbervalue)
+	*/
+	final public GeoPoint[] Extremum(String[] labels,GeoFunction f,NumberValue left,NumberValue right) {
+		AlgoExtremumMulti algo=new AlgoExtremumMulti(cons,labels,f,left,right);
+		GeoPoint[] gpts=algo.getExtremumPoints();	//All variants return array...
+		return gpts;
+	}//Extremum(label,geofunction,numbervalue,numbervalue)
+	
 
 	/**
 	* Trying to maximize dependent variable with respect to independen variable
