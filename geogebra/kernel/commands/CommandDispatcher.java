@@ -504,6 +504,8 @@ public class CommandDispatcher {
     	cmdTable.put("Spearman", new CmdSpearman(kernel));
     	cmdTable.put("Classes", new CmdClasses(kernel));
 
+    	cmdTable.put("TTest", new CmdTTest(kernel));
+
     	
     	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);
     	cmdTable.clear();
