@@ -251,8 +251,8 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		 */
 
 		cbScanOrder.removeAllItems();
-		cbScanOrder.addItem(app.getMenu("Row Order"));
-		cbScanOrder.addItem(app.getMenu("Column Order"));
+		cbScanOrder.addItem(app.getMenu("RowOrder"));
+		cbScanOrder.addItem(app.getMenu("ColumnOrder"));
 
 		cbLeftRightOrder.removeAllItems();
 		cbLeftRightOrder.addItem(app.getMenu("X->Y"));

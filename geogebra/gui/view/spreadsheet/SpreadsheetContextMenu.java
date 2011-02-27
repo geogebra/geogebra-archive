@@ -190,22 +190,6 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		}
 
 
-		// ===============================================
-		//        Trace to spreadsheet	
-		// ===============================================
-
-		if(selectionType != MyTable.ROW_SELECT){
-			//addSeparator();
-			cbItem = new JCheckBoxMenuItem(app.getPlain("TraceToSpreadsheet")+" ...");
-			cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
-			cbItem.setSelected(view.getTraceManager().isTraceColumn(table.minSelectionColumn));
-			cbItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					view.showTraceDialog(null, selectedCellRanges.get(0));
-				}
-			});	  		 	
-			addItem(cbItem);
-		}
 
 
 		// ===============================================
@@ -281,13 +265,29 @@ public class SpreadsheetContextMenu extends JPopupMenu
 					cp.createOperationTable(selectedCellRanges.get(0), null);
 				}
 			});	 
-			//addSubItem(subMenu,item);	
+			addSubItem(subMenu,item);	
 			item.setEnabled(cp.isCreateMatrixPossible(selectedCellRanges));
 
 
 		}
 
 
+		// ===============================================
+		//        Trace to spreadsheet	
+		// ===============================================
+
+		if(selectionType != MyTable.ROW_SELECT){
+			//addSeparator();
+			cbItem = new JCheckBoxMenuItem(app.getPlain("TraceToSpreadsheet")+" ...");
+			cbItem.setIcon(app.getImageIcon("spreadsheettrace.gif"));
+			cbItem.setSelected(view.getTraceManager().isTraceColumn(table.minSelectionColumn));
+			cbItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					view.showTraceDialog(null, selectedCellRanges.get(0));
+				}
+			});	  		 	
+			addItem(cbItem);
+		}
 
 
 
@@ -380,13 +380,13 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		//     Data analysis
 		// ===============================================
 
-		if(!isEmptySelection())
-			this.addSeparator();
+		//if(!isEmptySelection())
+			//this.addSeparator();
 
 		if(!isEmptySelection()){   // && selectionType == MyTable.COLUMN_SELECT){ // && isShiftDown){
 			subMenu = new JMenu(app.getMenu("DataAnalysis"));
 			subMenu.setIcon(app.getEmptyIcon()); 	 	
-			addItem(subMenu);   	 	
+		//	addItem(subMenu);   	 	
 
 			item = new JMenuItem(app.getMenu(app.getMenu("OneVariable")),app.getEmptyIcon());		
 			item.addActionListener(new ActionListener() {
@@ -438,7 +438,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 
 		subMenu = new JMenu(app.getPlain("Show"));
 		subMenu.setIcon(app.getEmptyIcon());
-		addItem(subMenu);
+		//addItem(subMenu);
 
 		cbItem = new JCheckBoxMenuItem(app.getMenu("FileBrowser"));
 		//cbItem.setIcon(app.getEmptyIcon());

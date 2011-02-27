@@ -661,7 +661,7 @@ implements ActionListener, View, Printable   {
 		switch(mode){
 		case MODE_ONEVAR:
 			setTitle(app.getMenu("OneVariableStatistics"));	
-			lblOneVarTitle.setText(app.getMenu("Source") + ": ");
+			lblOneVarTitle.setText(app.getMenu("Name") + ": ");
 
 			break;
 		case MODE_REGRESSION:
@@ -670,6 +670,8 @@ implements ActionListener, View, Printable   {
 			setRegressionLabels();
 			lblRegression.setText(app.getMenu("RegressionModel")+ ":");
 			lblEqn.setText(app.getMenu("Equation")+ ":");
+			lblTitleX.setText("x: ");
+			lblTitleY.setText("y: ");
 			break;
 
 		case MODE_MULTIVAR:
@@ -703,8 +705,7 @@ implements ActionListener, View, Printable   {
 
 		lblTitleX = new JLabel();
 		lblTitleY = new JLabel();
-		lblTitleX.setText("x: ");
-		lblTitleY.setText("y: ");
+		
 		fldTitleX = new MyTextField(app.getGuiManager());
 		fldTitleY = new MyTextField(app.getGuiManager());
 		fldTitleX.setColumns(30);
