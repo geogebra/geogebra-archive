@@ -1558,7 +1558,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				}
 
 				// check for 0 at right
-				if (valueForm && rightStr.equals("0")) {
+				if (valueForm && rightStr.equals(Application.unicodeZero+"")) {
 					break;
 				}
 
@@ -1711,16 +1711,19 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						}
 					}
 
+					boolean rtlMinus;
 					// show parentheses around these cases
-					if (rightStr.charAt(0) == '-' // 2 (-5) or -(-5)
+					if (((rtlMinus = rightStr.startsWith(Unicode.RightToLeftUnaryMinusSign)) || rightStr.charAt(0) == '-') // 2 (-5) or -(-5)
 							|| !nounary
 								&& !right.isLeaf()
 								&& opIDright <= DIVIDE // -(x * a) or -(x / a)
 							|| showMultiplicationSign && STRING_TYPE == STRING_TYPE_GEOGEBRA) // 3 (5)
 					{
+						if (rtlMinus) sb.append(Unicode.RightToLeftMark);
 						sb.append(leftBracket(STRING_TYPE));
 						sb.append(rightStr);
 						sb.append(rightBracket(STRING_TYPE));
+						if (rtlMinus) sb.append(Unicode.RightToLeftMark);
 					} else {
 						// -1.0 * 5 becomes "-5"
 						sb.append(rightStr);
