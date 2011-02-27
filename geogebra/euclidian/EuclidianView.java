@@ -303,13 +303,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	/**
-	 * @param xminObject the xminObject to set
+	 * @param xminObjectNew the xminObject to set
 	 */
-	public void setXminObject(NumberValue xminObject) {
+	public void setXminObject(NumberValue xminObjectNew) {
 		if(xminObject !=null)
 		((GeoNumeric)xminObject).removeEVSizeListener(GeoNumeric.LISTENER_XMIN);
-		this.xminObject = xminObject;
-		((GeoNumeric)xminObject).addEVSizeListener(GeoNumeric.LISTENER_XMIN);
+		this.xminObject = xminObjectNew;
+		((GeoNumeric)xminObjectNew).addEVSizeListener(GeoNumeric.LISTENER_XMIN);
+		updateBounds();
 	}
 
 	/**
@@ -320,13 +321,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	/**
-	 * @param xmaxObject the xmaxObject to set
+	 * @param xmaxObjectNew the xmaxObject to set
 	 */
-	public void setXmaxObject(NumberValue xmaxObject) {
+	public void setXmaxObject(NumberValue xmaxObjectNew) {
 		if(xmaxObject !=null)
 		((GeoNumeric)xmaxObject).removeEVSizeListener(GeoNumeric.LISTENER_XMAX);
-		this.xmaxObject = xmaxObject;
-		((GeoNumeric)xmaxObject).addEVSizeListener(GeoNumeric.LISTENER_XMAX);
+		this.xmaxObject = xmaxObjectNew;
+		((GeoNumeric)xmaxObjectNew).addEVSizeListener(GeoNumeric.LISTENER_XMAX);
+		updateBounds();
 	}
 
 	/**
@@ -337,13 +339,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	/**
-	 * @param yminObject the yminObject to set
+	 * @param yminObjectNew the yminObject to set
 	 */
-	public void setYminObject(NumberValue yminObject) {
+	public void setYminObject(NumberValue yminObjectNew) {
 		if(yminObject !=null)
 		((GeoNumeric)yminObject).removeEVSizeListener(GeoNumeric.LISTENER_YMIN);
-		this.yminObject = yminObject;
-		((GeoNumeric)yminObject).addEVSizeListener(GeoNumeric.LISTENER_YMIN);
+		this.yminObject = yminObjectNew;
+		((GeoNumeric)yminObjectNew).addEVSizeListener(GeoNumeric.LISTENER_YMIN);
+		updateBounds();
 	}
 
 	/**
@@ -354,13 +357,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	}
 
 	/**
-	 * @param ymaxObject the ymaxObject to set
+	 * @param ymaxObjectNew the ymaxObject to set
 	 */
-	public void setYmaxObject(NumberValue ymaxObject) {
+	public void setYmaxObject(NumberValue ymaxObjectNew) {
 		if(ymaxObject !=null)
 			((GeoNumeric)ymaxObject).removeEVSizeListener(GeoNumeric.LISTENER_YMAX);
-		this.ymaxObject = ymaxObject;
-		((GeoNumeric)yminObject).addEVSizeListener(GeoNumeric.LISTENER_YMAX);
+		this.ymaxObject = ymaxObjectNew;
+		((GeoNumeric)ymaxObjectNew).addEVSizeListener(GeoNumeric.LISTENER_YMAX);
+		updateBounds();
 	}
 
 	double xmin, xmax, ymin, ymax, invXscale, invYscale, xZero, yZero, xscale,

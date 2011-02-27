@@ -683,8 +683,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 					((EuclidianView)view).setYminObject(minMax);				
 				}else if(source== tfMaxY){
 					((EuclidianView)view).setYmaxObject(minMax);					
-				}
-				((GeoNumeric)minMax).update();
+				}				
 				tfAxesRatioX.setEnabled(view.isZoomable());
 				tfAxesRatioY.setEnabled(view.isZoomable());
 			}
