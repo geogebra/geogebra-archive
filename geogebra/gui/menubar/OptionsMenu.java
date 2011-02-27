@@ -28,8 +28,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	
 	private AbstractAction
 		drawingPadPropAction,
-		ignoreDocumentPerspectiveAction,
-		showViewTitlebarAction,
 		savePreferencesAction,
 		clearPreferencesAction,
 		showOptionsAction
@@ -230,6 +228,8 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		addRadioButtonMenuItems(menuLabeling, (ActionListener) this, lstr,
 				lastr, 0);
 		add(menuLabeling);
+		
+		add(drawingPadPropAction);	
 
 		/*
 		 * // Graphics quality submenu = new
@@ -281,31 +281,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 		addSeparator();
 
-		// drawing pad properteis
-		add(drawingPadPropAction);
-
-		if (!app.isApplet()) {
-			// perspectives submenu
-			submenu = new JMenu(app.getMenu("Perspectives"));
-			submenu.setIcon(app.getImageIcon("perspective.gif"));
-
-			cbShowViewTitlebar = new JCheckBoxMenuItem(showViewTitlebarAction);
-			app.setEmptyIcon(cbShowViewTitlebar);
-			cbShowViewTitlebar.setSelected(layout.isTitleBarVisible());
-
-			cbIgnoreDocumentPerspective = new JCheckBoxMenuItem(
-					ignoreDocumentPerspectiveAction);
-			app.setEmptyIcon(cbIgnoreDocumentPerspective);
-			cbIgnoreDocumentPerspective.setSelected(layout.isIgnoringDocument());
-
-			submenu.add(cbShowViewTitlebar);
-			submenu.add(cbIgnoreDocumentPerspective);
-			add(submenu);
-
-			// Preferences
-			addSeparator();
-		}
-		
+		// drawing pad properteis	
 		add(showOptionsAction);
 		
 		if(!app.isApplet() && Application.hasFullPermissions()) {
@@ -412,26 +388,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().showOptionsDialog(-1);
-			}
-		};
-		
-		// option to hide title bar of views
-		showViewTitlebarAction = new AbstractAction(app
-				.getMenu("ShowViewTitlebar")) {
-			public static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				layout.setTitlebarVisible(!layout.isTitleBarVisible());
-			}
-		};
-
-		// option to ignore the perspective stored in documents
-		ignoreDocumentPerspectiveAction = new AbstractAction(app
-				.getMenu("IgnoreDocumentPerspective")) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				layout.setIgnoreDocument(!layout.isIgnoringDocument());
 			}
 		};
 

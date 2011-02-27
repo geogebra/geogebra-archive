@@ -1,6 +1,7 @@
 package geogebra.gui;
 
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
+import geogebra.gui.layout.Layout;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -9,10 +10,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Locale;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -34,7 +37,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	private Application app;
 
 	/** */
-	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel, scriptingPanel;
+	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel, perspectivesPanel, scriptingPanel;
 	
 	/**	*/
 	private JLabel keyboardLanguageLabel, widthLabel, heightLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
@@ -43,11 +46,17 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout;
 	
 	/**	 */
-	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbEnableScripting;
+	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting;
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
 	
+	/** */
+	private JButton managePerspectivesButton;
+	
+	/**
+	 * Timeout values of tooltips (last entry reserved for "Off", but that has to be translated)
+	 */
 	private String[] tooltipTimeouts = new String[] {
 		"1",
 		"3",
@@ -83,6 +92,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		initVirtualKeyboardPanel();
 		initTooltipPanel();
 		initLanguagePanel();
+		initPerspectivesPanel();
 		initScriptingPanel();
 
 		JPanel panel = new JPanel();
@@ -90,8 +100,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		panel.add(virtualKeyboardPanel);
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
+		panel.add(perspectivesPanel);
 		panel.add(scriptingPanel);
-		panel.add(Box.createVerticalGlue());
 		
 		JScrollPane scrollPane = new JScrollPane(panel);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -181,6 +191,25 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * Initialize the perspectives panel.
+	 */
+	private void initPerspectivesPanel() {
+		perspectivesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		
+		cbShowTitleBar = new JCheckBox();
+		cbShowTitleBar.addActionListener(this);
+		perspectivesPanel.add(cbShowTitleBar);
+
+		cbIgnoreDocumentLayout = new JCheckBox();
+		cbIgnoreDocumentLayout.addActionListener(this);
+		perspectivesPanel.add(cbIgnoreDocumentLayout);
+		
+		managePerspectivesButton = new JButton();
+		managePerspectivesButton.addActionListener(this);
+		perspectivesPanel.add(managePerspectivesButton);
+	}
+	
+	/**
 	 * Initialize the scripting panel.
 	 */
 	private void initScriptingPanel() {
@@ -200,29 +229,67 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		cbUseLocalDigits.setSelected(app.isUsingLocalizedDigits());
 		cbUseLocalLabels.setSelected(app.isUsingLocalizedLabels());
 		
+		Layout layout = app.getGuiManager().getLayout();
+		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
+		cbShowTitleBar.setSelected(layout.isTitleBarVisible());
+		
 		// TODO update tooltip language and timeout
+	}
+
+	/**
+	 * Values changed.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == cbTooltipTimeout) {
+			int index = cbTooltipTimeout.getSelectedIndex();
+			int delay = Integer.MAX_VALUE;
+			if (index < tooltipTimeouts.length - 1) {
+				delay = 1000 * Integer.parseInt(tooltipTimeouts[index]);
+			}
+			ToolTipManager.sharedInstance().setDismissDelay(delay);
+			Application.debug(delay);
+
+		} else if (e.getSource() == cbTooltipLanguage) {
+			int index = cbTooltipLanguage.getSelectedIndex() - 1;
+			if (index == -1) app.setTooltipLanguage(null);
+			else app.setTooltipLanguage(Application.supportedLocales.get(index));
+		} else if(e.getSource() == cbUseLocalDigits) {
+			app.setUseLocalizedDigits(cbUseLocalDigits.isSelected());
+		} else if(e.getSource() == cbUseLocalLabels) {
+			app.setUseLocalizedLabels(cbUseLocalLabels.isSelected());
+		} else if(e.getSource() == cbShowTitleBar) {
+			app.getGuiManager().getLayout().setTitlebarVisible(cbShowTitleBar.isSelected());
+		} else if(e.getSource() == cbIgnoreDocumentLayout) {
+			app.getGuiManager().getLayout().setIgnoreDocument(cbIgnoreDocumentLayout.isSelected());
+		} else if(e.getSource() == managePerspectivesButton) {
+			app.getGuiManager().getLayout().showManageDialog();
+		}
 	}
 
 	/**
 	 * Update the language of the user interface.
 	 */
 	public void setLabels() {
-		virtualKeyboardPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("VirtualKeyboard")));
-		tooltipPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Tooltips")));
-		languagePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Language")));
-		scriptingPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Scripting")));
-		
+		virtualKeyboardPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("VirtualKeyboard")));		
 		keyboardLanguageLabel.setText(app.getPlain("VirtualKeyboardLanguage")+":");
 		widthLabel.setText(app.getPlain("Width")+":");
 		heightLabel.setText(app.getPlain("Height")+":");
 		cbKeyboardShowAutomatic.setText(app.getPlain("ShowAutomatically"));
 
+		tooltipPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Tooltips")));
 		tooltipLanguageLabel.setText(app.getPlain("TooltipLanguage")+":");
 		tooltipTimeoutLabel.setText(app.getPlain("TooltipTimeout")+":");
 		
+		languagePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Language")));
 		cbUseLocalDigits.setText(app.getPlain("LocalizedDigits"));
 		cbUseLocalLabels.setText(app.getPlain("LocalizedLabels"));
 		
+		perspectivesPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Perspectives")));
+		cbIgnoreDocumentLayout.setText(app.getPlain("IgnoreDocumentLayout"));
+		cbShowTitleBar.setText(app.getPlain("ShowTitleBar"));
+		managePerspectivesButton.setText(app.getMenu("ManagePerspectives"));
+		
+		scriptingPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Scripting")));
 		cbEnableScripting.setText(app.getPlain("EnableScripting"));
 		
 		setLabelsKeyboardLanguage();
@@ -291,29 +358,5 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		cbTooltipTimeout.removeActionListener(this);
 		cbTooltipTimeout.setModel(new DefaultComboBoxModel(tooltipTimeouts));
 		cbTooltipTimeout.addActionListener(this);
-	}
-
-	/**
-	 * Values changed.
-	 */
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == cbTooltipTimeout) {
-			int index = cbTooltipTimeout.getSelectedIndex();
-			int delay = Integer.MAX_VALUE;
-			if (index < tooltipTimeouts.length - 1) {
-				delay = 1000 * Integer.parseInt(tooltipTimeouts[index]);
-			}
-			ToolTipManager.sharedInstance().setDismissDelay(delay);
-			Application.debug(delay);
-
-		} else if (e.getSource() == cbTooltipLanguage) {
-			int index = cbTooltipLanguage.getSelectedIndex() - 1;
-			if (index == -1) app.setTooltipLanguage(null);
-			else app.setTooltipLanguage(Application.supportedLocales.get(index));
-		} else if(e.getSource() == cbUseLocalDigits) {
-			app.setUseLocalizedDigits(cbUseLocalDigits.isSelected());
-		} else if(e.getSource() == cbUseLocalLabels) {
-			app.setUseLocalizedLabels(cbUseLocalLabels.isSelected());
-		} 
 	}
 }
