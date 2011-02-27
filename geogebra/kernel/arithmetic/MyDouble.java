@@ -208,13 +208,22 @@ implements NumberValue {
     final public MyDouble cos() {
     	val = Math.cos(val);
     	isAngle = false;
+    	checkZero();
     	return this; 
     }
     
     final public MyDouble sin() {  
     	val = Math.sin(val);
     	isAngle = false; 
+    	checkZero();
     	return this; 
+    }
+    
+    /*
+     * make sure cos(2790 degrees) gives zero
+     */
+    private void checkZero() {
+    	if (Kernel.isZero(val)) val = 0;
     }
   
     /**
@@ -228,6 +237,7 @@ implements NumberValue {
    			val = Double.NaN;
    		} else {
    			val = Math.tan(val);
+   			checkZero();
    		}  		 
   		isAngle = false;  
   		return this; 
