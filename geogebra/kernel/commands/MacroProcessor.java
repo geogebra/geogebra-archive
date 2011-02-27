@@ -41,7 +41,7 @@ public class MacroProcessor extends CommandProcessor {
 			
 			// check if we have a polygon in the arguments
 			// if yes, let's use its points
-			if (arg[0].isGeoPolygon()) {
+			if (arg.length > 0 && arg[0].isGeoPolygon()) {
 				arg = ((GeoPolygon) arg[0]).getPoints();
 				lengthOk = arg.length == macroInputTypes.length;
 			}
