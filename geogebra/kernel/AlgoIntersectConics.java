@@ -58,6 +58,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     private PointPairList pointList = new PointPairList();
     
     private EquationSolver eqnSolver;
+    private SystemOfEquationsSolver sysSolver;
         
 	public String getClassName() {
 		return "AlgoIntersectConics";
@@ -72,6 +73,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	super(cons);     
     	
 		eqnSolver = cons.getEquationSolver();
+		sysSolver = new SystemOfEquationsSolver(eqnSolver);
     	
         this.A = A;
         this.B = B;   
@@ -749,7 +751,41 @@ public class AlgoIntersectConics extends AlgoIntersect {
         	if (testPoints(A, B, points, Kernel.MIN_PRECISION))
         		return true;			   	               
  	   }
-            
+ 	   
+ 	    // If intersection points not found
+ 	    // try with another algorithm - solving system of algebraic equations of conics
+ 	    /* Author ddrakulic */
+ 	    
+ 	    double [] param1 = new double[6];
+ 	    param1[0] = A.matrix[0]; //x^2
+ 	    param1[1] = 2*A.matrix[3]; //xy
+ 	    param1[2] = A.matrix[1]; //y^2
+ 	    param1[3] = 2*A.matrix[4]; //x
+	    param1[4] = 2*A.matrix[5]; //y
+	    param1[5] = A.matrix[2]; //constant
+
+ 	    double [] param2 = new double[6];
+ 	    param2[0] = B.matrix[0]; //x^2
+ 	    param2[1] = 2*B.matrix[3]; //xy
+ 	    param2[2] = B.matrix[1]; //y^2
+ 	    param2[3] = 2*B.matrix[4]; //x
+	    param2[4] = 2*B.matrix[5]; //y
+	    param2[5] = B.matrix[2]; //constant
+	    
+	    double [][] res = new double[4][2];
+	    
+	    // Solving system of equations 
+	    solnr = sysSolver.solveSystemOfQuadraticEquations(param1, param2, res);
+	    
+	    for(int i=0; i<solnr; i++)
+	    	points[i].setCoords(res[i][0], res[i][1], 1.0d);
+	    	
+	    for(i=solnr; i<4; i++)
+	    	points[i].setUndefined();
+	    
+	    if (testPoints(A, B, points, Kernel.MIN_PRECISION))
+    		return true;
+		
         //Application.debug("no solutions found");
         //degConic.setUndefined();
         return false;
