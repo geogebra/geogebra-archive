@@ -306,6 +306,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * @param xminObjectNew the xminObject to set
 	 */
 	public void setXminObject(NumberValue xminObjectNew) {
+		if(xminObjectNew == null) return;
 		if(xminObject !=null)
 		((GeoNumeric)xminObject).removeEVSizeListener(GeoNumeric.LISTENER_XMIN);
 		this.xminObject = xminObjectNew;
@@ -324,6 +325,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * @param xmaxObjectNew the xmaxObject to set
 	 */
 	public void setXmaxObject(NumberValue xmaxObjectNew) {
+		if(xmaxObjectNew == null) return;
 		if(xmaxObject !=null)
 		((GeoNumeric)xmaxObject).removeEVSizeListener(GeoNumeric.LISTENER_XMAX);
 		this.xmaxObject = xmaxObjectNew;
@@ -342,6 +344,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * @param yminObjectNew the yminObject to set
 	 */
 	public void setYminObject(NumberValue yminObjectNew) {
+		if(yminObjectNew == null) return;
 		if(yminObject !=null)
 		((GeoNumeric)yminObject).removeEVSizeListener(GeoNumeric.LISTENER_YMIN);
 		this.yminObject = yminObjectNew;
@@ -360,6 +363,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * @param ymaxObjectNew the ymaxObject to set
 	 */
 	public void setYmaxObject(NumberValue ymaxObjectNew) {
+		if(ymaxObjectNew == null) return;
 		if(ymaxObject !=null)
 			((GeoNumeric)ymaxObject).removeEVSizeListener(GeoNumeric.LISTENER_YMAX);
 		this.ymaxObject = ymaxObjectNew;
