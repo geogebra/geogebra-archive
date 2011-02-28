@@ -7587,7 +7587,7 @@ public class Kernel {
 			//    x = x * ROUND_HALF_UP_FACTOR;
 			// We don't do this for large numbers as 
 				double abs = Math.abs(x);
-				if (abs < 10E7) {
+				if ((abs < 10E7 && nf.getMaximumFractionDigits()<10)||abs < 1000) {
 					// increase abs(x) slightly to round up
 					x = x * ROUND_HALF_UP_FACTOR;
 				}
