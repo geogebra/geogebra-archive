@@ -84,7 +84,8 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	private NumberValue d;  // input: divider for Rectangle sum, 0..1
 	private GeoList list1, list2; // input
 	private GeoList tempList;
-	private GeoElement ageo, bgeo, ngeo, dgeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, widthGeo, densityGeo, useDensityGeo;
+	private GeoElement ageo, bgeo, ngeo, dgeo, minGeo, maxGeo, Q1geo, Q3geo, medianGeo, 
+	                   widthGeo, densityGeo, useDensityGeo, isCumulative;
 	private GeoNumeric  sum; // output sum    
 	
 	
@@ -295,8 +296,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 * @param list1
 	 * @param list2
 	 */
-	public AlgoFunctionAreaSums(Construction cons, String label,  
-			GeoList list1, GeoList list2) {
+	public AlgoFunctionAreaSums(Construction cons, String label, GeoList list1, GeoList list2) {
 		
 		super(cons);
 		
@@ -322,13 +322,14 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	 * @param list2
 	 * @param density
 	 */
-	public AlgoFunctionAreaSums(Construction cons, String label,  
+	public AlgoFunctionAreaSums(Construction cons, String label, GeoBoolean isCumulative,  
 			   GeoList list1, GeoList list2,  GeoBoolean useDensity, GeoNumeric density) {
 
 		super(cons);
 		
 		type = TYPE_HISTOGRAM_DENSITY;
 		
+		this.isCumulative = isCumulative;
 		this.list1 = list1;
 		this.list2 = list2;
 		this.density = density;
@@ -475,17 +476,34 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			input[1] = list2;		
 			break;
 		case TYPE_HISTOGRAM_DENSITY:
-			if(densityGeo == null){
-				input = new GeoElement[3];
-				input[0] = list1;		
-				input[1] = list2;
-				input[2] = useDensityGeo;
+			if(isCumulative == null){
+				if(densityGeo == null){
+					input = new GeoElement[3];
+					input[0] = list1;		
+					input[1] = list2;
+					input[2] = useDensityGeo;
+				}else{
+					input = new GeoElement[4];
+					input[0] = list1;		
+					input[1] = list2;
+					input[2] = useDensityGeo;
+					input[3] = densityGeo;
+				}
 			}else{
-				input = new GeoElement[4];
-				input[0] = list1;		
-				input[1] = list2;
-				input[2] = useDensityGeo;
-				input[3] = densityGeo;
+				if(densityGeo == null){
+					input = new GeoElement[4];
+					input[0] = isCumulative;
+					input[1] = list1;		
+					input[2] = list2;
+					input[3] = useDensityGeo;
+				}else{
+					input = new GeoElement[5];
+					input[0] = isCumulative;
+					input[1] = list1;		
+					input[2] = list2;
+					input[3] = useDensityGeo;
+					input[4] = densityGeo;
+				}
 			}
 			break;
 		case TYPE_BOXPLOT:
@@ -1217,9 +1235,13 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				}
 			}
 
-			if (N-1 != list2.size())
-			{ // list2 contains raw data
-				// eg Histogram[{1,1.5,2,4},{1.0,1.1,1.1,1.2,1.7,1.7,1.8,2.2,2.5,4.0}]
+			
+			// list2 contains raw data
+			// eg Histogram[{1,1.5,2,4},{1.0,1.1,1.1,1.2,1.7,1.7,1.8,2.2,2.5,4.0}]
+			// problem: if N-1 = list2.size() then raw data is not assumed
+			// fix for now is to check if other parameters are present, then it must be raw data
+			if (N-1 != list2.size() || useDensityGeo != null || isCumulative !=null)
+			{ 
 
 				if (yval == null || yval.length < N) {
 					yval = new double[N];
@@ -1304,7 +1326,13 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 
 				}
 				
-			
+				//convert to cumulative frequencies if cumulative option is set
+				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean()){
+					for (int i=1; i < N; i++)  
+						yval[i] += yval[i-1];
+				}
+				
+				
 				// turn frequencies into frequency densities
 				// if densityFactor = -1 then do not convert frequency to density
 				if(densityFactor != -1)
@@ -1314,6 +1342,15 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				
 				// area of rectangles = total frequency	* densityFactor			
 				sum.setValue(Math.abs( list2.size() * densityFactor ));	
+				
+				// find maximum frequency
+				// this is used by the stat dialogs
+				freqMax = 0.0;
+				for(int k = 0; k < yval.length; ++k){
+					if(yval[k] > freqMax)
+						freqMax = yval[k];
+				}
+				
 
 			}
 			else

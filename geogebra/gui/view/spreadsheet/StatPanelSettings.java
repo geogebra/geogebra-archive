@@ -12,6 +12,9 @@ public class StatPanelSettings {
 		public boolean hasOverlayNormal = false;
 		public boolean hasOverlayPolygon = false;
 		
+		public double classStart = 0;
+		public double classWidth = 5;
+		
 		public int stemAdjust = 0;
 
 		public StatPanelSettings clone(StatPanelSettings settings){

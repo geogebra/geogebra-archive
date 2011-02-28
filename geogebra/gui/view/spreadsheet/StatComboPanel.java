@@ -44,7 +44,7 @@ import javax.swing.event.ChangeListener;
 //=====================================================
 
 
-public class StatComboPanel extends JPanel{
+public class StatComboPanel extends JPanel implements ActionListener{
 
 	// one variable plot types
 	public static final int PLOT_HISTOGRAM = 0;
@@ -227,16 +227,16 @@ public class StatComboPanel extends JPanel{
 
 		// =======================================
 		// put these panels in a card layout
-		
+
 		statDisplayPanel = new JPanel(new CardLayout());
-		
+
 		statDisplayPanel.add("plotPanel", plotPanel);
 		statDisplayPanel.add("imagePanel", new JScrollPane(imagePanel));
-		
+
 		if(mode == statDialog.MODE_REGRESSION)
 
 			statDisplayPanel.add("regressionPanel", regressionPanel);
-		
+
 
 		if(mode == statDialog.MODE_MULTIVAR){
 
@@ -295,7 +295,7 @@ public class StatComboPanel extends JPanel{
 
 	}
 
-	
+
 	private void createPlotTypeComboBox(){
 
 		cbPlotTypes = new JComboBox();
@@ -402,14 +402,13 @@ public class StatComboPanel extends JPanel{
 
 	private void createStemPlotAdjustmentPanel(){
 
-		StemAdjustListener listener = new StemAdjustListener();
 		lblAdjust = new JLabel();
 		minus = new JButton("-1");
 		none = new JButton("0");
 		plus = new JButton("+1");
-		minus.addActionListener(listener);
-		none.addActionListener(listener);
-		plus.addActionListener(listener);
+		minus.addActionListener(this);
+		none.addActionListener(this);
+		plus.addActionListener(this);
 		none.setSelected(true);
 		stemAdjustPanel = new JToolBar();
 		stemAdjustPanel.setFloatable(false);
@@ -419,37 +418,25 @@ public class StatComboPanel extends JPanel{
 
 	}
 
-	class StemAdjustListener implements ActionListener{
-
-		public void actionPerformed(ActionEvent e) {
-			Object source = e.getSource();
-			minus.setSelected(source == minus);
-			none.setSelected(source == none);
-			plus.setSelected(source == plus);
-			if(source == minus) settings.stemAdjust=-1;
-			if(source == none) settings.stemAdjust=0;
-			if(source == plus) settings.stemAdjust=1;
-			updatePlot(true);
-		}
-
-
-	}
-
 
 
 	private void createManualClassesPanel(){
 
 		lblStart = new JLabel();
 		lblWidth = new JLabel();
+		
 		fldStart = new MyTextField(app.getGuiManager());
 		Dimension d = fldStart.getMaximumSize();
 		d.height = fldStart.getPreferredSize().height;
 		fldStart.setMaximumSize(d);
+		fldStart.addActionListener(this);
+		
 		fldWidth = new MyTextField(app.getGuiManager());
 		fldWidth.setMaximumSize(d);
 		fldStart.setColumns(4);
 		fldWidth.setColumns(4);
-
+		fldWidth.addActionListener(this);
+		
 		manualClassesPanel = new JToolBar();
 		manualClassesPanel.setFloatable(false);
 		manualClassesPanel.add(lblStart);
@@ -459,6 +446,7 @@ public class StatComboPanel extends JPanel{
 
 	}
 
+
 	private void createTwoVarOptionsPanel(){
 
 		modelInference = new DefaultComboBoxModel();
@@ -467,6 +455,7 @@ public class StatComboPanel extends JPanel{
 
 	}
 
+	
 	private JPanel flowPanel(JComponent... comp){
 		JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		for(int i = 0; i<comp.length; i++){
@@ -552,8 +541,8 @@ public class StatComboPanel extends JPanel{
 
 		case PLOT_HISTOGRAM:			
 			if(doCreate)
-				plotGeoList.add(statGeo.createHistogram( dataListSelected, numClasses));
-			plotPanel.setPlotSettings(statGeo.updateHistogram( dataListSelected, plotGeoList.get(plotGeoList.size()-1)));
+				plotGeoList.add(statGeo.createHistogram( dataListSelected, numClasses, settings));
+			plotPanel.setPlotSettings(statGeo.updateHistogram( dataListSelected, plotGeoList.get(plotGeoList.size()-1), settings));
 
 			if(hasControlPanel)
 				if(settings.useManualClasses)
@@ -650,7 +639,7 @@ public class StatComboPanel extends JPanel{
 
 			anovaPanel.updateANOVAPanel();
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "anovaPanel");
-			
+
 			optionsButton.setVisible(false);
 			break;
 
@@ -717,6 +706,43 @@ public class StatComboPanel extends JPanel{
 		plotPanel.attachView();
 
 	}
+
+
+
+	public void actionPerformed(ActionEvent e) {
+
+		Object source = e.getSource();
+
+		if(source instanceof JTextField)
+			doTextFieldActionPerformed(source);
+
+		if(source == minus || source == plus || source == none){
+			minus.setSelected(source == minus);
+			none.setSelected(source == none);
+			plus.setSelected(source == plus);
+			if(source == minus) settings.stemAdjust=-1;
+			if(source == none) settings.stemAdjust=0;
+			if(source == plus) settings.stemAdjust=1;
+			updatePlot(true);
+		}
+
+	}
+
+	private void doTextFieldActionPerformed(Object source){
+		
+		if(source == fldStart){
+			double val = Double.parseDouble(fldStart.getText());
+			settings.classStart = val;
+		}
+		else if(source == fldWidth){
+			double val = Double.parseDouble(fldWidth.getText());
+			settings.classWidth = val;
+		}
+		updatePlot(true);
+	}
+
+
+
 
 
 

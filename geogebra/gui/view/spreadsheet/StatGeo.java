@@ -329,18 +329,30 @@ public class StatGeo   {
 
 
 
-	public GeoElement createHistogram(GeoList dataList, int numClasses){
+	public GeoElement createHistogram(GeoList dataList, int numClasses, StatPanelSettings settings){
 
 		GeoElement geo;
 		String label = dataList.getLabel();	
-		//double barWidth = (xMaxData - xMinData)/(numClasses - 1); 
-
-		//String text = "BarChart[" + label + "," + Double.toString(barWidth) + "]";
-
-		String classes = "Classes[" + label + "," + numClasses + "]";
-		String freq = "Frequency[" + label + "," + classes + ", false]";
-		String text = "Histogram[" + classes + "," + freq + "]";
-
+		String classes;
+		getDataBounds(dataList);
+		double classWidth = (xMaxData - xMinData)/(numClasses); 
+		
+		if(settings.useManualClasses){
+			classWidth = settings.classWidth;
+			classes = "Classes[" + label + "," + settings.classStart + "," + settings.classWidth + "]";
+		}else{
+			classes = "Classes[" + label + "," + numClasses + "]";
+		}
+		//Application.debug(classWidth);
+		
+		double density = -1;
+		if(settings.type == StatPanelSettings.TYPE_RELATIVE)
+			density = 1.0*classWidth/dataList.size();
+		if(settings.type == StatPanelSettings.TYPE_NORMALIZED)
+			density = 1.0/dataList.size();
+		
+		String text = "Histogram[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
+		//Application.debug(text);
 		geo = createGeoFromString(text);
 		geo.setObjColor(StatDialog.HISTOGRAM_COLOR);
 		geo.setAlphaValue(0.25f);
@@ -348,7 +360,7 @@ public class StatGeo   {
 	}
 
 
-	public PlotSettings updateHistogram(GeoList dataList, GeoElement histogram){	
+	public PlotSettings updateHistogram(GeoList dataList, GeoElement histogram, StatPanelSettings settings){	
 
 		PlotSettings ps = new PlotSettings();	
 		getDataBounds(dataList);	
@@ -357,7 +369,8 @@ public class StatGeo   {
 		//double freqMax = getFrequencyTableMax(dataList, barWidth);
 
 		double freqMax = ((AlgoFunctionAreaSums)histogram.getParentAlgorithm()).getFreqMax();
-
+		if(settings.type == StatPanelSettings.TYPE_RELATIVE)
+			freqMax = 1.0;
 
 		double buffer = .25*(xMaxData - xMinData);
 		ps.xMin = xMinData - buffer;  

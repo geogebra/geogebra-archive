@@ -50,10 +50,13 @@ public class AlgoHistogram extends AlgoFunctionAreaSums {
 	 * @param density density scaling factor 
 	 */
 	public AlgoHistogram(Construction cons, String label,
-								   GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
-		super(cons, label, list1, list2, useDensity, density);		
+			GeoBoolean isCumulative,					   
+			GeoList list1, 
+			GeoList list2, 
+			GeoBoolean useDensity, 
+			GeoNumeric density) {
+		super(cons, label, isCumulative, list1, list2, useDensity, density);		
 	}
-	
 	
 	
 	public String getClassName() {

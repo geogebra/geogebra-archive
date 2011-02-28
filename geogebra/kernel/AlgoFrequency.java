@@ -27,6 +27,8 @@ public class AlgoFrequency extends AlgoElement {
 	private GeoList dataList; //input
 	private GeoList classList; //input
 	private GeoBoolean isCumulative; //input
+	private GeoBoolean useDensity; //input
+	private GeoNumeric density; //input
 
 	private GeoList frequency; //output	
 
@@ -36,24 +38,29 @@ public class AlgoFrequency extends AlgoElement {
 
 
 
-	AlgoFrequency(Construction cons, String label, GeoList dataList, GeoList classList, GeoBoolean isCumulative ) {
-		this(cons, dataList, classList, isCumulative);
-		frequency.setLabel(label);
+	AlgoFrequency(Construction cons, String label, GeoBoolean isCumulative, GeoList classList, GeoList dataList) {
+		this(cons, label, isCumulative, classList, dataList, null, null);	
 	}
 
-	AlgoFrequency(Construction cons, GeoList dataList, GeoList classList, GeoBoolean isCumulative ) {
+	AlgoFrequency(Construction cons, String label, GeoBoolean isCumulative, GeoList classList, GeoList dataList, 
+			GeoBoolean useDensity, GeoNumeric density) {
 		super(cons);
 		this.classList = classList;
 		this.dataList = dataList;
 		this.isCumulative = isCumulative;
 
 		frequency = new GeoList(cons);
-
+		frequency.setLabel(label);
 		setInputOutput();
 		compute();
 
 	}
 
+	
+	
+	
+	
+	
 	public String getClassName() {
 		return "AlgoFrequency";
 	}
@@ -62,18 +69,24 @@ public class AlgoFrequency extends AlgoElement {
 
 		ArrayList<GeoElement> tempList = new ArrayList<GeoElement>();
 
-		tempList.add(dataList);
-
+		if(isCumulative !=null)
+			tempList.add(isCumulative);
+		
 		if(classList !=null)
 			tempList.add(classList);
 
-		if(isCumulative !=null)
-			tempList.add(isCumulative);
-
-
+		tempList.add(dataList);
+		
+		if(useDensity !=null)
+			tempList.add(useDensity);
+		
+		if(density !=null)
+			tempList.add(density);
+		
 		input = new GeoElement[tempList.size()];
 		input = tempList.toArray(input);
 
+		
 		output = new GeoElement[1];
 		output[0] = frequency;
 		setDependencies(); // done by AlgoElement
@@ -110,6 +123,15 @@ public class AlgoFrequency extends AlgoElement {
 			}
 		}
 
+		if(density != null){
+			if(density.getDouble() <=0 ){
+				frequency.setUndefined();		
+				return; 		
+			}
+		}
+
+		
+		
 		
 		frequency.setDefined(true);
 		frequency.clear();

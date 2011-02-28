@@ -157,8 +157,20 @@ public class HistogramOptionsPanel extends JPanel implements PropertyChangeListe
 			prefs.useManualClasses = ckManual.isSelected();
 			firePropertyChange("settings", true, false);
 		}
-		else if(source == cbType){
-			prefs.type = cbType.getSelectedIndex();
+		else if(source == ckCumulative){
+			prefs.isCumulative = ckCumulative.isSelected();
+			firePropertyChange("settings", true, false);
+		}
+		else if(source == ckFreq){
+			prefs.type = StatPanelSettings.TYPE_COUNT;
+			firePropertyChange("settings", true, false);
+		}
+		else if(source == ckRelative){
+			prefs.type = StatPanelSettings.TYPE_RELATIVE;
+			firePropertyChange("settings", true, false);
+		}
+		else if(source == ckNormalized){
+			prefs.type = StatPanelSettings.TYPE_NORMALIZED;
 			firePropertyChange("settings", true, false);
 		}
 		else if(source == ckOverlayNormal){
