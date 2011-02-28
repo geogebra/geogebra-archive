@@ -330,6 +330,7 @@ TOKEN: {
 |	< ASIN_FUNC: ( "asin(" | "arcsin(" | "ArcSin(" ) > 
 |	< ATAN_FUNC: ( "atan(" | "arctan(" | "ArcTan(" )> 
 |	< ATAN2_FUNC: ( "atan2(" | "arctan2(" | "ArcTan2(" )> 
+|	< ERF_FUNC: ( "erf(" )> 
 |	< COSH_FUNC: ( "cosh(" | "Cosh(" ) > 
 |	< COSHN_FUNC: ( "cosh" | "Cosh" ) (< POWERN > ) + "(" > 
 |	< SINH_FUNC: ( "sinh(" | "Sinh(" ) > 
@@ -1644,7 +1645,7 @@ ExpressionValue myDouble():
  */
 ExpressionNode numberFunction():
 {
-    ExpressionNode en, en2;
+    ExpressionNode en, en2, en3;
     ExpressionValue ev;
     MyList myList;
     Token c;
@@ -1733,6 +1734,9 @@ ExpressionNode numberFunction():
 |
     <ATAN2_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.ARCTAN2, en2); }  
+|
+    <ERF_FUNC> en = expressionOrEquation() ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.ERF, null ); }  
 |
     <COSH_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.COSH, null); }   

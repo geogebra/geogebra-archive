@@ -11,6 +11,7 @@ import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.MyMath;
 
 /**
  * @author ggb3D
@@ -1308,6 +1309,16 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             }     
             else { 
                  String [] str = { "IllegalArgument", "log", lt.toString(), rt.toString() };
+                throw new MyError(app, str);
+            }
+            
+        case ERF:
+            // log(base, number)
+            if (lt.isNumberValue()) {
+				return ((NumberValue)lt).getNumber().erf();
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "erf", lt.toString() };
                 throw new MyError(app, str);
             }
             

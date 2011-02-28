@@ -591,7 +591,7 @@ public abstract class Drawable extends DrawableND {
 			eqnSB = new StringBuilder(20);
 			
 			// initialise definitions 
-			if (initJLaTeXMath == null) initJLaTeXMath = new TeXFormula("\\DeclareMathOperator{\\sech}{sech} \\DeclareMathOperator{\\csch}{csch}");
+			if (initJLaTeXMath == null) initJLaTeXMath = new TeXFormula("\\DeclareMathOperator{\\sech}{sech} \\DeclareMathOperator{\\csch}{csch} \\DeclareMathOperator{\\erf}{erf}");
 			
 			// make sure cache doesn't get too big
 			JLaTeXMathCache.setMaxCachedObjects(100);

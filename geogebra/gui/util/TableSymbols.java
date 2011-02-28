@@ -207,6 +207,7 @@ public class TableSymbols {
 		" round(x) ",
 		" gamma(x) ",
 		" random() ",
+		" erf(x) "
 	};
 
 

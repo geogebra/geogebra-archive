@@ -416,7 +416,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		//ExpressionNode, eg Normal[0,1,x]
 		if (operation == POWER && left instanceof NumberValue && ((NumberValue)left).getDouble() == Math.E) {
 			GeoElement geo = kernel.lookupLabel("e");
-			if (geo.needsReplacingInExpressionNode()) {
+			if (geo != null && geo.needsReplacingInExpressionNode()) {
 				
 				// replace e^x with exp(x)
 				// if e was autocreated
@@ -2534,8 +2534,33 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			default:
 				sb.append("log(");
 				sb.append(leftStr);
-				sb.append(',');
+				sb.append(", ");
 				sb.append(rightStr);
+				sb.append(')');
+				break;
+				
+			}
+			break;
+
+		case ERF:
+			switch (STRING_TYPE) {
+			case STRING_TYPE_LATEX:
+				sb.append("\\erf");
+				sb.append(leftBracket(STRING_TYPE));
+				sb.append(leftStr);
+				sb.append(rightBracket(STRING_TYPE));
+				break;
+
+			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MATH_PIPER:
+				sb.append("erf(");
+				sb.append(leftStr);
+				sb.append(')');
+				break;
+
+			default:
+				sb.append("erf(");
+				sb.append(leftStr);
 				sb.append(')');
 				break;
 				

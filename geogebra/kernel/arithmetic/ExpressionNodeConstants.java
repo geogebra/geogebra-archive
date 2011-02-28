@@ -95,25 +95,26 @@ public interface ExpressionNodeConstants {
     public static final int FACTORIAL = 34;
     public static final int ROUND = 35;  
     public static final int GAMMA = 36;    
-    public static final int LOG10 = 37;  
-    public static final int LOG2 = 38; 
-    public static final int CBRT = 39;   
-    public static final int RANDOM = 40;
-    public static final int VECTORPRODUCT = 41;
-    public static final int CONJUGATE = 42;
-    public static final int ARG = 43; 
+    public static final int ERF = 37;     // error function [aka phi(x)]
+    public static final int LOG10 = 38;  
+    public static final int LOG2 = 39; 
+    public static final int CBRT = 40;   
+    public static final int RANDOM = 41;
+    public static final int VECTORPRODUCT = 42;
+    public static final int CONJUGATE = 43;
+    public static final int ARG = 44; 
      
-    public static final int FUNCTION = 44;
-    public static final int FUNCTION_NVAR = 45;
-    public static final int VEC_FUNCTION = 46;
-    public static final int DERIVATIVE = 47;  
-    public static final int ELEMENT_OF = 48;  
+    public static final int FUNCTION = 45;
+    public static final int FUNCTION_NVAR = 46;
+    public static final int VEC_FUNCTION = 47;
+    public static final int DERIVATIVE = 48;  
+    public static final int ELEMENT_OF = 49;  
     
     // spreadsheet absolute reference using $ signs
-    public static final int $VAR_ROW = 49;
-    public static final int $VAR_COL = 50;
-    public static final int $VAR_ROW_COL = 51;
+    public static final int $VAR_ROW = 50;
+    public static final int $VAR_COL = 51;
+    public static final int $VAR_ROW_COL = 52;
 	
     // logarithm for arbitrary base log(b, x)
-    public static final int LOGB = 52;
+    public static final int LOGB = 53;
 }

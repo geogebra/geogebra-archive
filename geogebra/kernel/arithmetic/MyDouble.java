@@ -26,6 +26,10 @@ import geogebra.util.Unicode;
 
 import java.util.HashSet;
 
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.special.Erf;
+
 /**
  *
  * @author  Markus Hohenwarter
@@ -250,6 +254,7 @@ implements NumberValue {
     
     final public MyDouble log() {  val = Math.log(val);  isAngle = false; return this; }
     final public MyDouble log(NumberValue base) {  val = Math.log(val) / Math.log(base.getDouble());  isAngle = false; return this; }
+    final public MyDouble erf() {  val = MyMath.erf(0.0, 1.0, val);  isAngle = false; return this; }
     final public MyDouble log10() {  val = Math.log(val)/MyMath.LOG10;  isAngle = false; return this; }
     final public MyDouble log2() {  val = Math.log(val)/MyMath.LOG2;  isAngle = false; return this; }
     

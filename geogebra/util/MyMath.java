@@ -16,6 +16,10 @@ import geogebra.kernel.Kernel;
 
 import java.math.BigDecimal;
 
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.special.Erf;
+
 /**
  * @author Markus Hohenwarter
  */
@@ -170,5 +174,21 @@ public final class MyMath {
 		return bd.doubleValue();
 	}
 	
+    final public static double erf(double mean, double standardDeviation, double x) {
+        try {
+            return 0.5 * (1.0 + Erf.erf((x - mean) /
+                    (standardDeviation * Math.sqrt(2.0))));
+        } catch (Exception ex) {
+            if (x < (mean - 20 * standardDeviation)) { // JDK 1.5 blows at 38
+                return 0.0d;
+            } else if (x > (mean + 20 * standardDeviation)) {
+                return 1.0d;
+            } else {
+                return Double.NaN;
+            }
+        }
+    }
+
+
 
 }
