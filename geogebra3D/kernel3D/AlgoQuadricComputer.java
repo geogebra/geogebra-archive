@@ -1,6 +1,7 @@
 package geogebra3D.kernel3D;
 
 import geogebra.Matrix.Coords;
+import geogebra.kernel.Construction;
 
 /**
  * Computer for quadric algos, saying if it's a cone, cylinder, etc.
@@ -9,6 +10,15 @@ import geogebra.Matrix.Coords;
  *
  */
 public abstract class AlgoQuadricComputer {
+	
+	/**
+	 * 
+	 * @param c
+	 * @return a new quadric
+	 */
+	public GeoQuadric3D newQuadric(Construction c){
+		return new GeoQuadric3D(c);
+	}
 	
 
 	/**

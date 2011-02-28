@@ -18,17 +18,19 @@ public class AlgoQuadricPointPointNumber extends AlgoQuadricPointNumber {
 	 * @param origin 
 	 * @param secondPoint 
 	 * @param r 
+	 * @param computer 
 	 */
 	public AlgoQuadricPointPointNumber(Construction c, String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r, AlgoQuadricComputer computer) {
 		super(c,label,origin,(GeoElement) secondPoint,r,computer);
 	}
+	
 	
 	protected Coords getDirection(){
 		return ((GeoPointND) getSecondInput()).getCoordsInD(3).sub(getOrigin().getCoordsInD(3));
 	}
 	
     final public String toString() {
-    	return app.getPlain(getQuadric().getTypeString()+"FromQuadricPointsABNumberC",getOrigin().getLabel(),getSecondInput().getLabel(),getNumber().getLabel());
+    	return app.getPlain(getClassName()+"FromQuadricPointsABNumberC",getOrigin().getLabel(),getSecondInput().getLabel(),getNumber().getLabel());
 
     }
 	

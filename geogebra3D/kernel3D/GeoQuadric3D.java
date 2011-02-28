@@ -116,12 +116,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 
 	
 	
-	////////////////////////////////
-	// EIGENVECTORS
-	
-	public Coords getEigenvec3D(int i){
-		return eigenvecND[i];
-	}
+
 	
 	
 	////////////////////////////////

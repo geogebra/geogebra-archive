@@ -24,8 +24,9 @@ public abstract class AlgoQuadricPointNumber extends AlgoQuadric {
 		super(c,secondInput,r,computer);
 		
 		this.origin=origin;
-		
+
 		setInputOutput(new GeoElement[] {(GeoElement) origin,secondInput,(GeoElement) r}, new GeoElement[] {getQuadric()});
+		
 		compute();
 		
 		getQuadric().setLabel(label);
@@ -59,7 +60,6 @@ public abstract class AlgoQuadricPointNumber extends AlgoQuadric {
 		
 		
 		//compute the quadric
-		d.normalize();
 		getQuadric().setDefined();
 		getComputer().setQuadric(getQuadric(), origin.getInhomCoordsInD(3), d, r);
 		

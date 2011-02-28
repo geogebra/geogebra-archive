@@ -27,7 +27,7 @@ public abstract class AlgoQuadric extends AlgoElement3D {
 	public AlgoQuadric(Construction c, GeoElement secondInput, NumberValue number,
 			AlgoQuadricComputer computer){		
 		super(c);
-		quadric = new GeoQuadric3D(c);
+		quadric = computer.newQuadric(c);
 		this.number = number;
 		
 		this.secondInput = secondInput;

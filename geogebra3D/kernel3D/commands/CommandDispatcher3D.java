@@ -55,7 +55,10 @@ public class CommandDispatcher3D extends CommandDispatcher {
     	
      	cmdTable.put("Cylinder", new CmdCylinder(kernel));	
      	cmdTable.put("CylinderInfinite", new CmdCylinderInfinite(kernel));	
-     	       	
+     	cmdTable.put("CylinderOpen", new CmdCylinderOpen(kernel));	
+	       	
+     	cmdTable.put("QuadricSide", new CmdQuadricSide(kernel));	
+	       	
 
 		cmdTable.put("Function", new CmdFunction2Var(kernel));
     	    	

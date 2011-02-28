@@ -90,6 +90,13 @@ public abstract class GeoQuadricND extends GeoElement {
 		midpoint.set(dimension+1, 1);
 	}
 	
+	////////////////////////////////
+	// EIGENVECTORS
+	
+	public Coords getEigenvec3D(int i){
+		return eigenvecND[i];
+	}
+	
 	
 	
 	/////////////////////////////////

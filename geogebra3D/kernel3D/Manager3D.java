@@ -397,7 +397,15 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 
+	final public GeoQuadric3DPart CylinderOpen(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r) {
+		AlgoQuadric algo = new AlgoQuadricPointPointNumber(cons, label, origin, secondPoint, r, new AlgoQuadricComputerCylinderOpen());
+		return (GeoQuadric3DPart) algo.getQuadric();
+	}
 
+	final public GeoQuadric3DPart  QuadricSide(String label, GeoQuadricND quadric){
+		AlgoQuadric algo = new AlgoQuadricSide(cons, label, (GeoQuadric3DLimited) quadric);
+		return (GeoQuadric3DPart) algo.getQuadric();
+	}
 
 
 	/** 

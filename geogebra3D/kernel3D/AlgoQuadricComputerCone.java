@@ -18,7 +18,7 @@ public class AlgoQuadricComputerCone extends AlgoQuadricComputer {
 
 	public void setQuadric(GeoQuadric3D quadric, Coords origin,
 			Coords direction, double number) {
-		quadric.setCone(origin, direction, number);
+		quadric.setCone(origin, direction.normalize(), number);
 		
 	}
 

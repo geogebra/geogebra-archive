@@ -29,7 +29,7 @@ public class AlgoQuadricPointVectorNumber extends AlgoQuadricPointNumber {
 	}
 	
     final public String toString() {
-    	return app.getPlain(getQuadric().getTypeString()+"FromQuadricPointAVectorBNumberC",getOrigin().getLabel(),getSecondInput().getLabel(),getNumber().getLabel());
+    	return app.getPlain(getClassName()+"FromQuadricPointAVectorBNumberC",getOrigin().getLabel(),getSecondInput().getLabel(),getNumber().getLabel());
 
     }
 

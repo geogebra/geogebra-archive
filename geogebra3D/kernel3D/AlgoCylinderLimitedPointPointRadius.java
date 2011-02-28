@@ -76,6 +76,8 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 		d.calcNorm();
 		double altitude = d.getNorm();
 		
+		quadric.setCylinder(o,d.mul(1/altitude),r,0, altitude);
+		
 		side.setLimits(0, altitude);
 		side.setCylinder(o,d.mul(1/altitude),r);
 

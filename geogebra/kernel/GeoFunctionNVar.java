@@ -459,12 +459,20 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		 }
 	 
 
+		 /**
+		  * 
+		  * @return number of vars
+		  */
+		 public int getVarNumber(){
+			 return fun.getVarNumber();
+		 }
 
-	 //will be drawn as a surface if can be interpreted as (x,y)->z function
-	  	public boolean hasDrawable3D() {  		
-			return fun.getVarNumber()==2;
-		}
-	  	
+		 //will be drawn as a surface if can be interpreted as (x,y)->z function
+		 //or implicit f(x,y,z)=0 function
+		 public boolean hasDrawable3D() {  		
+			 return getVarNumber()==2 || getVarNumber()==3;
+		 }
+
 	  	
 		public Coords getLabelPosition(){
 			return new Coords(0, 0, 0, 1); //TODO

@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 
@@ -60,6 +61,14 @@ public class GeoQuadric3DPart extends GeoQuadric3D {
 			return max;
 		else
 			return super.getMaxParameter(index);
+	}
+	
+	
+	public void set(Coords origin, Coords direction, double r){
+		switch(type){
+		case QUADRIC_CYLINDER:
+			setCylinder(origin, direction, r);
+		}
 	}
 	
 	

@@ -563,9 +563,17 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			case GeoElement3D.GEO_CLASS_QUADRIC_PART:					
 				d = new DrawQuadric3DPart(this, (GeoQuadric3DPart) geo);
 				break;	
-				
-			case GeoElement.GEO_CLASS_FUNCTION_NVAR:					
-				d = new DrawFunction2Var(this, (GeoFunctionNVar) geo);
+
+			case GeoElement.GEO_CLASS_FUNCTION_NVAR:
+				GeoFunctionNVar geoFun = (GeoFunctionNVar) geo;
+				switch(geoFun.getVarNumber()){
+				case 2:
+					d = new DrawFunction2Var(this, geoFun);
+					break;
+				case 3:
+					d = new DrawImplicitFunction3Var(this, geoFun);
+					break;
+				}
 				break;									
 
 			}

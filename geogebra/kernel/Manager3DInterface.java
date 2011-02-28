@@ -219,6 +219,9 @@ public interface Manager3DInterface {
 
 			 public GeoElement[] CylinderLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
 
+			 public GeoQuadricND CylinderOpen(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
+
+			 public GeoQuadricND QuadricSide(String label, GeoQuadricND quadric) ;
 
 
 
