@@ -8897,6 +8897,10 @@ class CmdFactors extends CommandProcessor {
 				GeoElement[] ret = { kernel.Factors(c.getLabel(),
 						(GeoFunction) arg[0]) };
 				return ret;
+			} else	if (ok[0] = (arg[0].isGeoNumeric())) {
+					GeoElement[] ret = { kernel.PrimeFactorisation(c.getLabel(),
+							(GeoNumeric) arg[0]) };
+					return ret;
 			} else
 				throw argErr(app, c.getName(), arg[0]);
 

@@ -47,7 +47,7 @@ public class AlgoPrimeFactorization extends AlgoElement {
     }
 
     public String getClassName() {
-        return "AlgoPrimeFactorization";
+        return "AlgoFactors";
     }
 
     protected void setInputOutput(){
@@ -108,20 +108,26 @@ public class AlgoPrimeFactorization extends AlgoElement {
     // copied from AlgoInterationList.java
     // TODO should it be centralised?
     private void setListElement(int index, double value, double exp) {
-    	GeoPoint listElement;
+    	GeoList listElement;
     	if (index < outputList.getCacheSize()) {
     		// use existing list element
-    		listElement = (GeoPoint) outputList.getCached(index);    	
+    		listElement = (GeoList) outputList.getCached(index);  
+    		listElement.clear();
     	} else {
     		// create a new list element
-    		listElement = new GeoPoint(cons);
+    		listElement = new GeoList(cons);
     		listElement.setParentAlgorithm(this);
     		listElement.setConstructionDefaults();
     		listElement.setUseVisualDefaults(false);	    		
     	}
     	
     	outputList.add(listElement);
-    	listElement.setCoords(value, exp,1);
+    	GeoNumeric prime = new GeoNumeric(cons);
+    	prime.setValue(value);
+    	GeoNumeric exponent = new GeoNumeric(cons);
+    	exponent.setValue(exp);
+    	listElement.add(prime);
+    	listElement.add(exponent);
     }    
 
 }
