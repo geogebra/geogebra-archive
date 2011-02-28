@@ -228,8 +228,7 @@ public class CommandDispatcher {
     	cmdTable.put("Expand", new CmdExpand(kernel));
     	cmdTable.put("Factor", new CmdFactor(kernel));
     	cmdTable.put("Simplify", new CmdSimplify(kernel));   
-    	cmdTable.put("PrimeFactors", new CmdPrimeFactors(kernel));
-    	cmdTable.put("PrimeFactorization", new CmdPrimeFactorization(kernel));
+    	cmdTable.put("PrimeFactors", new CmdPrimeFactors(kernel));    	
     	
     	cmdSubTable[TABLE_ALGEBRA].putAll(cmdTable);
     	cmdTable.clear();
