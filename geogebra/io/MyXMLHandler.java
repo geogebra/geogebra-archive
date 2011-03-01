@@ -1052,7 +1052,7 @@ public class MyXMLHandler implements DocHandler {
 	private boolean handleGrid(EuclidianView ev, LinkedHashMap<String, String> attrs) {
 		// <grid distX="2.0" distY="4.0"/>
 		try {
-			double[] dists = new double[2];
+			double[] dists = new double[3];
 			dists[0] = Double.parseDouble((String) attrs.get("distX"));
 			dists[1] = Double.parseDouble((String) attrs.get("distY"));
 			
@@ -1063,6 +1063,7 @@ public class MyXMLHandler implements DocHandler {
 
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
