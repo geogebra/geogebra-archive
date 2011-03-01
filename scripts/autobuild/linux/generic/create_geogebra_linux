@@ -2,11 +2,11 @@
 
 # Creates a general Linux version of GeoGebra.
 # Requires python3.
-# The result .tar.gz will be put into ../../../build/.
+# The result .tar.gz will be put into ../../../../build/.
 
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
-VERSION_STRING=`cat ../../../build/unpacked/version.txt`
+VERSION_STRING=`cat ../../../../build/unpacked/version.txt`
 if [ "$VERSION_STRING" = "" ]; then
  echo "Please build GeoGebra first."
  exit 1
@@ -19,10 +19,10 @@ which python3 2>&1 >/dev/null || {
 
 python3 ./create_geogebra_linux.py \
  $VERSION_STRING \
- ../../../build/unpacked \
- ../../../build/unsigned \
+ ../../../../build/unpacked \
+ ../../../../build/unsigned \
  geogebra \
- ../../../_LICENSE.txt \
+ ../../../../_LICENSE.txt \
  geogebra.xml \
  geogebra.desktop \
- ../../../build
+ ../../../../build
