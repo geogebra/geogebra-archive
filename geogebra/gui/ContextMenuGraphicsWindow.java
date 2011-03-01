@@ -88,7 +88,7 @@ implements ActionListener {
         zoomMenu.setBackground(getBackground());           
         addZoomItems(zoomMenu);
         add(zoomMenu);
-        
+                
         // zoom for y-axis
         JMenu yaxisMenu = new JMenu(app.getPlain("xAxis") + " : " 
         							+ app.getPlain("yAxis"));
@@ -115,7 +115,12 @@ implements ActionListener {
         add(miStandardView);
         
         addSeparator();          
-        
+        if(!ev.isZoomable()){
+        	zoomMenu.setEnabled(false);
+        	yaxisMenu.setEnabled(false);
+        	miShowAllObjectsView.setEnabled(false);
+        	miStandardView.setEnabled(false);
+        }
         JMenuItem miProperties = new JMenuItem(app.getPlain("DrawingPad") + " ...");
         miProperties.setIcon(app.getImageIcon("document-properties.png"));
         miProperties.setActionCommand("properties");

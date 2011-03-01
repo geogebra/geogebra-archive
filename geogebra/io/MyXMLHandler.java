@@ -758,10 +758,11 @@ public class MyXMLHandler implements DocHandler {
 	private HashMap<EuclidianView,String>xmin=new HashMap(),xmax=new HashMap(),
 		ymin=new HashMap(),ymax=new HashMap();
 	private boolean handleCoordSystem(EuclidianView ev, LinkedHashMap<String, String> attrs) {
+		if(xmin.keySet().size()>1){
 		xmin.clear();
 		xmax.clear();
 		ymin.clear();
-		ymax.clear();
+		ymax.clear();}
 		if(attrs.get("xZero")!=null) 
 			try {
 			
@@ -2132,7 +2133,7 @@ public class MyXMLHandler implements DocHandler {
 	// ====================================
 
 	private void processEvSizes() {
-		for(EuclidianView ev:xmin.keySet()){
+		for(EuclidianView ev:xmin.keySet()){			
 			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(xmin.get(ev),true);			
 			ev.setXminObject(n);			
 		}
@@ -2147,6 +2148,7 @@ public class MyXMLHandler implements DocHandler {
 		for(EuclidianView ev:ymax.keySet()){
 			NumberValue n = kernel.getAlgebraProcessor().evaluateToNumeric(ymax.get(ev),true);
 			ev.setYmaxObject(n);			
+			ev.updateBounds();
 		}
 		
 		

@@ -43,11 +43,6 @@ import java.util.TreeSet;
 public class GeoNumeric extends GeoElement 
 implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {	
 	
-	private static final int LISTENER_NONE = 0;
-	public static int LISTENER_XMIN = 1;
-	public static int LISTENER_XMAX = 2;
-	public static int LISTENER_YMIN = 4;
-	public static int LISTENER_YMAX = 8;
 	private static final long serialVersionUID = 1L;
 	
 	private static int DEFAULT_SLIDER_WIDTH_RW = 4;
@@ -864,9 +859,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 				geo.resolveMinMax();								
 			}					
 		}
-		if(evListenerType != LISTENER_NONE)
-			view.updateBounds();
-			return;				
+		if(evListeners != null)
+			for(EuclidianView ev:evListeners)ev.updateBounds();			
     }	
 	
 	private void resolveMinMax() {
@@ -1119,12 +1113,22 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	final public boolean isCasEvaluableObject() {
 		return true;
 	}
-	private int evListenerType = LISTENER_NONE;
-	public void addEVSizeListener(int type){
-		evListenerType |= type;
+	private List<EuclidianView> evListeners = null;
+	
+	/**
+	 * @param ev
+	 */
+	public void addEVSizeListener(EuclidianView ev){
+		if(evListeners==null)
+			evListeners = new ArrayList<EuclidianView>();
+		evListeners.add(ev);
 	}
 
-	public void removeEVSizeListener(int type) {
-		evListenerType &= ~type;	
+	/**
+	 * @param ev
+	 */
+	public void removeEVSizeListener(EuclidianView ev) {
+		if(evListeners!=null)
+			evListeners.remove(ev);	
 	}
 }

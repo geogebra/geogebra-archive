@@ -123,6 +123,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		nfAxesRatio.setGroupingUsed(false);
 		
 		
+		
 		// create panels for the axes
         xAxisPanel = new AxisPanel(0);
         yAxisPanel = new AxisPanel(1);
@@ -460,12 +461,14 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		else
 			cbView.setSelectedIndex(1);
     	cbView.addActionListener(this);
-        
+    	tfAxesRatioX.setEnabled(view.isZoomable());
+		tfAxesRatioY.setEnabled(view.isZoomable());
         
         tfMinX.removeActionListener(this);
 	 	tfMaxX.removeActionListener(this);
         tfMinY.removeActionListener(this);
-	 	tfMaxY.removeActionListener(this);		 		
+	 	tfMaxY.removeActionListener(this);	
+	 		((EuclidianView)view).updateBoundObjects();
 	 		tfMinX.setText(view.getXminObject().getLabel());
 	 		tfMaxX.setText(view.getXmaxObject().getLabel());
 	 		tfMinY.setText(view.getYminObject().getLabel());
@@ -668,6 +671,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		else if (source == tfMinX || source == tfMaxX || source == tfMaxY || source == tfMinY) {
 			
 			NumberValue minMax = kernel.getAlgebraProcessor().evaluateToNumeric(((JTextField)source).getText(), false);
+			//not parsed to number => return all
 			if(minMax == null){
 				tfMinX.setText(view.getXminObject().getLabel());
 		 		tfMaxX.setText(view.getXmaxObject().getLabel());
@@ -683,9 +687,11 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 					((EuclidianView)view).setYminObject(minMax);				
 				}else if(source== tfMaxY){
 					((EuclidianView)view).setYmaxObject(minMax);					
-				}				
+				}	
+				((EuclidianView)view).setXminObject(view.getXminObject());
 				tfAxesRatioX.setEnabled(view.isZoomable());
 				tfAxesRatioY.setEnabled(view.isZoomable());
+				((EuclidianView)view).updateBounds();
 			}
 		}
 

@@ -309,10 +309,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void setXminObject(NumberValue xminObjectNew) {
 		if(xminObjectNew == null) return;
 		if(xminObject !=null)
-		((GeoNumeric)xminObject).removeEVSizeListener(GeoNumeric.LISTENER_XMIN);
+		((GeoNumeric)xminObject).removeEVSizeListener(this);
 		this.xminObject = xminObjectNew;
-		((GeoNumeric)xminObjectNew).addEVSizeListener(GeoNumeric.LISTENER_XMIN);
-		updateBounds();
+		setSizeListeners();	
 	}
 
 	/**
@@ -328,10 +327,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void setXmaxObject(NumberValue xmaxObjectNew) {
 		if(xmaxObjectNew == null) return;
 		if(xmaxObject !=null)
-		((GeoNumeric)xmaxObject).removeEVSizeListener(GeoNumeric.LISTENER_XMAX);
+		((GeoNumeric)xmaxObject).removeEVSizeListener(this);
 		this.xmaxObject = xmaxObjectNew;
-		((GeoNumeric)xmaxObjectNew).addEVSizeListener(GeoNumeric.LISTENER_XMAX);
-		updateBounds();
+		setSizeListeners();	
 	}
 
 	/**
@@ -347,10 +345,16 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void setYminObject(NumberValue yminObjectNew) {
 		if(yminObjectNew == null) return;
 		if(yminObject !=null)
-		((GeoNumeric)yminObject).removeEVSizeListener(GeoNumeric.LISTENER_YMIN);
+		((GeoNumeric)yminObject).removeEVSizeListener(this);
 		this.yminObject = yminObjectNew;
-		((GeoNumeric)yminObjectNew).addEVSizeListener(GeoNumeric.LISTENER_YMIN);
-		updateBounds();
+		setSizeListeners();		
+	}
+
+	private void setSizeListeners() {		
+		((GeoNumeric)xminObject).addEVSizeListener(this);
+		((GeoNumeric)yminObject).addEVSizeListener(this);
+		((GeoNumeric)xmaxObject).addEVSizeListener(this);
+		((GeoNumeric)ymaxObject).addEVSizeListener(this);
 	}
 
 	/**
@@ -366,10 +370,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	public void setYmaxObject(NumberValue ymaxObjectNew) {
 		if(ymaxObjectNew == null) return;
 		if(ymaxObject !=null)
-			((GeoNumeric)ymaxObject).removeEVSizeListener(GeoNumeric.LISTENER_YMAX);
+			((GeoNumeric)ymaxObject).removeEVSizeListener(this);
 		this.ymaxObject = ymaxObjectNew;
-		((GeoNumeric)ymaxObjectNew).addEVSizeListener(GeoNumeric.LISTENER_YMAX);
-		updateBounds();
+		setSizeListeners();
 	}
 
 	double xmin, xmax, ymin, ymax, invXscale, invYscale, xZero, yZero, xscale,
@@ -537,12 +540,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		addComponentListener(euclidianController);
 			
 		// no repaint
+		xminObject = new GeoNumeric(kernel.getConstruction());
+		xmaxObject = new GeoNumeric(kernel.getConstruction());
+		yminObject = new GeoNumeric(kernel.getConstruction());
+		ymaxObject = new GeoNumeric(kernel.getConstruction());
 		initView(false);
 		
 		updateRightAngleStyle(app.getLocale());
 		
 		// ggb3D 2009-02-05
 		hits=new Hits();
+		
 		
 	}
 	
@@ -1356,14 +1364,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		xmax = (width - xZero) * invXscale;
 		ymax = yZero * invYscale;
 		ymin = (yZero - height) * invYscale;
-		if(xminObject==null)
-		xminObject = new GeoNumeric(kernel.getConstruction(),xmin);
-		if(xmaxObject==null)
-		xmaxObject = new GeoNumeric(kernel.getConstruction(),xmax);
-		if(yminObject==null)
-		yminObject = new GeoNumeric(kernel.getConstruction(),ymin);
-		if(ymaxObject==null)
-		ymaxObject = new GeoNumeric(kernel.getConstruction(),ymax);
+		updateBoundObjects();
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
 		calcPrintingScale();
@@ -1371,6 +1372,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// tell kernel
 		kernel.setEuclidianViewBounds(xmin, xmax, ymin, ymax, xscale, yscale);
 		
+	}
+
+	public void updateBoundObjects() {
+		if(isZoomable()){
+			((GeoNumeric)xminObject).setValue(xmin);
+			((GeoNumeric)xmaxObject).setValue(xmax);
+			((GeoNumeric)yminObject).setValue(ymin);
+			((GeoNumeric)ymaxObject).setValue(ymax);
+		}
 	}
 
 	protected void calcPrintingScale() {
@@ -3710,22 +3720,37 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			sb.append("\"");
 			sb.append("/>\n");
 		}
-
-		sb.append("\t<coordSystem");
-		sb.append(" xMin=\"");
-		sb.append(((GeoNumeric)xminObject).getLabel());
-		sb.append("\"");
-		sb.append(" xMax=\"");
-		sb.append(((GeoNumeric)xmaxObject).getLabel());
-		sb.append("\"");
-		sb.append(" yMin=\"");
-		sb.append(((GeoNumeric)yminObject).getLabel());
-		sb.append("\"");
-		sb.append(" yMax=\"");
-		sb.append(((GeoNumeric)ymaxObject).getLabel());
-		sb.append("\"");
-		sb.append("/>\n");
-
+		if(!isZoomable()){
+			sb.append("\t<coordSystem");
+			sb.append(" xzero=\"");
+			sb.append(((GeoNumeric)xminObject).getLabel());
+			sb.append("\"");
+			sb.append(" xMax=\"");
+			sb.append(((GeoNumeric)xmaxObject).getLabel());
+			sb.append("\"");
+			sb.append(" yMin=\"");
+			sb.append(((GeoNumeric)yminObject).getLabel());
+			sb.append("\"");
+			sb.append(" yMax=\"");
+			sb.append(((GeoNumeric)ymaxObject).getLabel());
+			sb.append("\"");
+			sb.append("/>\n");
+		}else{
+			sb.append("\t<coordSystem");
+			sb.append(" xZero=\"");
+			sb.append(xZero);
+			sb.append("\"");
+			sb.append(" yZero=\"");
+			sb.append(yZero);
+			sb.append("\"");
+			sb.append(" scale=\"");
+			sb.append(xscale);
+			sb.append("\"");
+			sb.append(" yscale=\"");
+			sb.append(yscale);
+			sb.append("\"");
+			sb.append("/>\n");
+		}
 		// NOTE: the attribute "axes" for the visibility state of
 		//  both axes is no longer needed since V3.0.
 		//  Now there are special axis tags, see below.
@@ -4867,13 +4892,6 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return true;
 	}
 	
-	public String getXminString(){
-		return xminObject==null?kernel.format(xmin):((GeoNumeric)xminObject).getLabel();
-	}
-	public String getXmaxString(){
-		return xmaxObject==null?kernel.format(xmax):((GeoNumeric)xmaxObject).getLabel();
-	}
-
 	public void updateBounds() {
 		double xmin2 = xminObject.getDouble();
 		double xmax2 = xmaxObject.getDouble();
