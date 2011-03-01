@@ -17,12 +17,12 @@ which python3 2>&1 >/dev/null || {
     exit 1
     }
 
-python3 ./create_geogebra_portable.py \
+python3 ./create_geogebra_linux.py \
  $VERSION_STRING \
- ../../../../build/unpacked \
- ../../../../build/unsigned \
- . \
- ../../../../_LICENCE.txt \
- . \
- . \
- ../../../../build
+ ../../../build/unpacked \
+ ../../../build/unsigned \
+ geogebra \
+ ../../../_LICENSE.txt \
+ geogebra.xml \
+ geogebra.desktop \
+ ../../../build
