@@ -129,7 +129,17 @@ public final class DrawLocus extends Drawable {
             g2.setStroke(objStroke);
             Drawable.drawWithValueStrokePure(gp, g2);
                         
-            // label
+        	if ((geo.getAlphaValue() > 0 || geo.isHatchingEnabled())) {
+				try {
+					
+					fill(g2, gp, false); // fill using default/hatching/image as appropriate
+
+				} catch (Exception e) {
+					System.err.println(e.getMessage());
+				}   
+        	}
+
+        	// label
             if (labelVisible) {
 				g2.setFont(view.fontLine);
 				g2.setColor(geo.getLabelColor());

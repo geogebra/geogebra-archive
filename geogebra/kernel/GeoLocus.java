@@ -369,6 +369,10 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 		return true;
 	}
     
+	public boolean isFillable() {
+		return true;
+	}
+
 
 
 }
