@@ -232,7 +232,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		btCancel.setText(app.getPlain("Create"));
 
 		// object/value checkboxes
-		ckObject.setText(app.getMenu("Objects"));
+		ckObject.setText(app.getMenu("Formulas"));
 		ckObject.addActionListener(this);
 		ckValue.setText(app.getMenu("Values"));
 		ckValue.addActionListener(this);
