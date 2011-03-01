@@ -1375,9 +1375,21 @@ class CmdLocus extends CommandProcessor {
 			arg = resArgs(c);
 			if ((ok[0] = (arg[0].isGeoPoint()))
 					&& (ok[1] = (arg[1].isGeoPoint()))) {
+				
+				GeoPoint p1 = (GeoPoint) arg[0];
+				GeoPoint p2 = (GeoPoint) arg[1];
+				
+				if (p2.isPointOnPath()) {
+				
 				GeoElement[] ret = { kernel.Locus(c.getLabel(),
-						(GeoPoint) arg[0], (GeoPoint) arg[1]) };
+						p1, p2) };
 				return ret;
+				} else {
+					GeoElement[] ret = { kernel.Locus(c.getLabel(),
+							p2, p1) };
+					return ret;
+					
+				}
 			} else {
 				if (!ok[0])
 					throw argErr(app, "Locus", arg[0]);
