@@ -26,7 +26,7 @@ public class GeoGebra extends Object {
 	public static final String SHORT_VERSION_STRING = "4.0"; // used for online archive
 
 	// File format versions
-	public static final String XML_FILE_FORMAT = "3.3";
+	public static final String XML_FILE_FORMAT = "4.0";
 	public static final String GGB_XSD_FILENAME = "ggb.xsd"; // for ggb files
 	public static final String GGT_XSD_FILENAME = "ggt.xsd"; // for macro files 
 	public static final String I2G_FILE_FORMAT = "0.1.20080731";
