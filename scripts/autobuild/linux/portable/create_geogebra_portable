@@ -2,12 +2,12 @@
 
 # Creates all needed portable versions of GeoGebra.
 # Requires python3 with zlib support and ImageMagick convert.
-# Please put all Java Runtime Environments to ../.. (jre*.bin).
-# The result .tar.gz will be put into ../../build/.
+# Please put all Java Runtime Environments to ../../../.. (jre*.bin).
+# The result .tar.gz will be put into ../../../../build/.
 
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
-VERSION_STRING=`cat ../../build/unpacked/version.txt`
+VERSION_STRING=`cat ../../../../build/unpacked/version.txt`
 if [ "$VERSION_STRING" = "" ]; then
  echo "Please build GeoGebra first."
  exit 1
@@ -18,19 +18,19 @@ which python3 2>&1 >/dev/null || {
     exit 1
     }
 
-IMAGE_DIR=../../geogebra/gui/images/
+IMAGE_DIR=../../../../geogebra/gui/images/
 convert $IMAGE_DIR/geogebra32.gif png:$IMAGE_DIR/geogebra.png || {
     echo ImageMagick convert is required to run this script.
     exit 1
     }
 
-for i in ../../../jre*.bin; do
+for i in ../../../../../jre*.bin; do
     chmod a+x $i
     python3 ./create_geogebra_portable.py \
      $VERSION_STRING \
      $i \
-      ../../build/unpacked \
-      ../../build/unsigned \
+      ../../../../build/unpacked \
+      ../../../../build/unsigned \
       $IMAGE_DIR/geogebra.png \
-      ../../build
+      ../../../../build
      done
