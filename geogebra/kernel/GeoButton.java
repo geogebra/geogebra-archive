@@ -36,6 +36,7 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable, T
 	public GeoButton(Construction c) {
 		super(c);			
 		setEuclidianVisible(true);
+		setAuxiliaryObject(true);
 	}
 
 	public String getClassName() {
@@ -103,20 +104,9 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable, T
 	}
 	
 	final public String toString() {
-		StringBuilder sbToString = getSbToString();
-		sbToString.setLength(0);
-		sbToString.append(label);
-		return sbToString.toString();
+		return label;
 	}
 	
-	private StringBuilder sbToString;
-
-	private StringBuilder getSbToString() {
-		if (sbToString == null)
-			sbToString = new StringBuilder();
-		return sbToString;
-	}
-
 	public boolean isVectorValue() {
 		return false;
 	}
