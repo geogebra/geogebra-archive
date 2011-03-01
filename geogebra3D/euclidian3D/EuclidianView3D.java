@@ -11,6 +11,7 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
@@ -3404,6 +3405,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public GeoNumeric getYmaxObject() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	public void setResizeXAxisCursor() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	public void setResizeYAxisCursor() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

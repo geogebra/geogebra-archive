@@ -21,6 +21,7 @@ import geogebra.kernel.AlgoSlope;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
+import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
@@ -870,6 +871,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	public void setMoveCursor() {
 		setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+	}
+	
+	public void setResizeXAxisCursor() {
+		app.setResizeHorizontalCursor();
+	}
+
+	public void setResizeYAxisCursor() {
+		app.setResizeVerticalCursor();
 	}
 
 	public void setHitCursor() {

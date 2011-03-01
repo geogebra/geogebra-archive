@@ -2550,6 +2550,16 @@ public class Application implements KeyEventDispatcher {
 			euclidianView.setCursor(Cursor.getDefaultCursor());
 	}
 
+	public void setResizeHorizontalCursor() {
+		if (euclidianView != null )
+			euclidianView.setCursor(Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR));
+	}
+
+	public void setResizeVerticalCursor() {
+		if (euclidianView != null )
+			euclidianView.setCursor(Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR));
+	}
+
 	public void doAfterRedefine(GeoElement geo) {
 		if (guiManager != null)
 			getGuiManager().doAfterRedefine(geo);

@@ -1,5 +1,6 @@
 package geogebra.euclidian;
 
+import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 
@@ -370,6 +371,8 @@ public interface EuclidianViewInterface {
 	public GeoNumeric getXmaxObject();
 	public GeoNumeric getYminObject();
 	public GeoNumeric getYmaxObject();
+	public void setResizeXAxisCursor();
+	public void setResizeYAxisCursor();
 	
 
 	

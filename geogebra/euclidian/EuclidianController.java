@@ -1724,7 +1724,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		case MOVE_X_AXIS:
 			if (repaint) {
-				if (TEMPORARY_MODE) view.setDragCursor();
+				if (TEMPORARY_MODE) view.setResizeXAxisCursor();
 
 				// take care when we get close to the origin
 				if (Math.abs(mouseLoc.x - view.getXZero()) < 2) {
@@ -1737,7 +1737,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		case MOVE_Y_AXIS:
 			if (repaint) {
-				if (TEMPORARY_MODE) view.setDragCursor();
+				if (TEMPORARY_MODE) view.setResizeYAxisCursor();
 				// take care when we get close to the origin
 				if (Math.abs(mouseLoc.y - view.getYZero()) < 2) {
 					mouseLoc.y = (int) Math.round(mouseLoc.y > view.getYZero() ?  view.getYZero() + 2 : view.getYZero() - 2);						
@@ -2332,8 +2332,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setToolTipText(null);
 			view.setDefaultCursor();	
 		}			
-		else
-			view.setHitCursor();
+		else {
+			if (e.isShiftDown() && hits.size() == 1 && hits.get(0) instanceof GeoAxis)
+				if (((GeoAxis)hits.get(0)).getType() == GeoAxis.X_AXIS)
+					view.setResizeXAxisCursor();
+				else view.setResizeYAxisCursor();
+			else
+				view.setHitCursor();
+		}
 
 
 
