@@ -636,6 +636,7 @@ public class CommandDispatcher {
     	cmdTable.put("Textfield", new CmdTextfield(kernel));
     	cmdTable.put("Button", new CmdButton(kernel));
     	cmdTable.put("Execute", new CmdExecute(kernel));     
+    	cmdTable.put("GetTime", new CmdGetTime(kernel));     
        		
        	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);
     	cmdTable.clear();
