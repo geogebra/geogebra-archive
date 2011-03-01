@@ -7,7 +7,11 @@
 
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
-VERSION_STRING=40beta
+VERSION_STRING=`cat ../../build/unpacked/version.txt`
+if [ "$VERSION_STRING" = "" ]; then
+ echo "Please build GeoGebra first."
+ exit 1
+ fi
 
 which python3 2>&1 >/dev/null || {
     echo Python3 is required to run this script.
