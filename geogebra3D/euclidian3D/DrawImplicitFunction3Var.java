@@ -93,6 +93,8 @@ public class DrawImplicitFunction3Var extends Drawable3DSurfaces {
 
 		surface.draw(mc);
 		setGeometryIndex(surface.end());
+		
+		super.updateForItSelf();
 
 		return false;
 	}
