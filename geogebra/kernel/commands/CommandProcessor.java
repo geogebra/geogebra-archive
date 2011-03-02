@@ -7362,13 +7362,14 @@ class CmdGetTime extends CommandProcessor {
 			GeoNumeric mins = new GeoNumeric(cons, cal.get(Calendar.MINUTE));
 			GeoNumeric hours = new GeoNumeric(cons, cal.get(Calendar.HOUR_OF_DAY));
 			GeoNumeric date = new GeoNumeric(cons, cal.get(Calendar.DAY_OF_MONTH));
+			int d = cal.get(Calendar.DAY_OF_WEEK);
+			GeoNumeric day = new GeoNumeric(cons, d);
 			int m = cal.get(Calendar.MONTH) + 1;
 			GeoNumeric month = new GeoNumeric(cons, m);
 			GeoNumeric year = new GeoNumeric(cons, cal.get(Calendar.YEAR));
 			GeoText monthStr = new GeoText(cons);
 			monthStr.setTextString(app.getPlain("Month."+m));
 			
-			int d = cal.get(Calendar.DAY_OF_WEEK);
 			GeoText dayStr = new GeoText(cons);
 			dayStr.setTextString(app.getPlain("Day."+d));
 
@@ -7384,6 +7385,7 @@ class CmdGetTime extends CommandProcessor {
 			list.add(year);
 			list.add(monthStr);
 			list.add(dayStr);
+			list.add(day);
 			list.update();
 
 			GeoElement[] ret = { list };
