@@ -64,7 +64,9 @@ class ViewMenu extends BaseMenu {
 		cbShowHandwritingAutoAdd,
 		cbShowHandwritingTimedAdd,
 		cbShowHandwritingTimedRecognise,
-		cbShowCmdList;
+		cbShowCmdList,
+		cbShowAxes,
+		cbShowGrid;
 	
 	private AbstractAction[] showViews;
 	private JCheckBoxMenuItem[] cbViews;
@@ -96,6 +98,16 @@ class ViewMenu extends BaseMenu {
 	{
 		// views
 		//menuViews = new JMenu(app.getMenu("Views")+" ...");
+		cbShowAxes = new JCheckBoxMenuItem(app.getGuiManager().getShowAxesAction());		
+		cbShowAxes.setSelected(app.getEuclidianView().getShowXaxis()
+				&& app.getEuclidianView().getShowYaxis());
+		add(cbShowAxes);
+
+		cbShowGrid = new JCheckBoxMenuItem(app.getGuiManager().getShowGridAction());
+		cbShowGrid.setSelected(app.getEuclidianView().getShowGrid());
+		add(cbShowGrid);
+		addSeparator();
+
 		initViewItems(this);
 		add(this);
 		addSeparator();
