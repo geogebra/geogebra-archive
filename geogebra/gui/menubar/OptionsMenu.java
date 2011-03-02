@@ -73,7 +73,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		
 		//G.Sturr 2009-10-18
 		// Algebra description: show value or definition of objects
-		menuAlgebraStyle = new JMenu(app.getPlain("Algebra"));
+		menuAlgebraStyle = new JMenu(app.getMenu("AlgebraDescriptions"));
 		menuAlgebraStyle.setIcon(app.getEmptyIcon());
 		String[] strDescription = { app.getPlain("Value"), 
 				app.getPlain("Definition"), 
