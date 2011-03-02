@@ -4891,15 +4891,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			return false;
 		return true;
 	}
-	
+	private boolean updatingBounds = false;
 	public void updateBounds() {
+		if (updatingBounds) return;
+		updatingBounds = true;
 		double xmin2 = xminObject.getDouble();
 		double xmax2 = xmaxObject.getDouble();
 		double ymin2 = yminObject.getDouble();
 		double ymax2 = ymaxObject.getDouble();
 		if((xmax2-xmin2 > kernel.MIN_PRECISION)&&(ymax2-ymin2 > kernel.MIN_PRECISION))
 			setRealWorldCoordSystem(xmin2,xmax2,ymin2,ymax2);
-		
+		updatingBounds = false;
 	}
 	
 }
