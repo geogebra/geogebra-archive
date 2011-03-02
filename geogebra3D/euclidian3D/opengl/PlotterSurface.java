@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D.opengl;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.arithmetic.Functional2Var;
+import geogebra3D.euclidian3D.plots.MarchingCubes;
 import geogebra3D.euclidian3D.plots.SurfaceMesh;
 
 import java.nio.FloatBuffer;
@@ -229,6 +230,29 @@ public class PlotterSurface {
 			manager.normal(n[3],n[4],n[5]);
 			manager.vertex(f[3],f[4],f[5]);
 			manager.normal(n[6],n[7],n[8]);
+			manager.vertex(f[6],f[7],f[8]);
+		}
+		manager.endGeometry();
+	}
+	
+
+	
+	public void draw(MarchingCubes mc) {
+ 		FloatBuffer b1 = mc.getVertices();
+		int cnt = mc.getVisibleChunks();
+
+		manager.startGeometry(Manager.TRIANGLES);
+		manager.texture(0, 0);
+		
+		float[] f = new float[9];
+		b1.rewind();
+		for(int i = 0; i < cnt; i++) {
+			b1.get(f);
+			manager.normal(0,0,1);
+			manager.vertex(f[0],f[1],f[2]);
+			manager.normal(0,0,1);
+			manager.vertex(f[3],f[4],f[5]);
+			manager.normal(0,0,1);
 			manager.vertex(f[6],f[7],f[8]);
 		}
 		manager.endGeometry();
