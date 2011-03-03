@@ -37,7 +37,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	private Application app;
 
 	/** */
-	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel, perspectivesPanel, scriptingPanel;
+	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel, anglePanel,  perspectivesPanel, scriptingPanel;
 	
 	/**	*/
 	private JLabel keyboardLanguageLabel, widthLabel, heightLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
@@ -46,7 +46,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout;
 	
 	/**	 */
-	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting;
+	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting;
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
@@ -92,6 +92,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		initVirtualKeyboardPanel();
 		initTooltipPanel();
 		initLanguagePanel();
+		initAnglePanel();
 		initPerspectivesPanel();
 		initScriptingPanel();
 
@@ -100,10 +101,12 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		panel.add(virtualKeyboardPanel);
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
+		panel.add(anglePanel);
 		panel.add(perspectivesPanel);
 		panel.add(scriptingPanel);
 		
 		JScrollPane scrollPane = new JScrollPane(panel);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(20);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		
 		add(scrollPane, BorderLayout.CENTER);
@@ -191,6 +194,17 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	}
 	
 	/**
+	 * Initialize the angle panel.
+	 */
+	private void initAnglePanel() {
+		anglePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		
+		cbReturnAngleInverseTrig = new JCheckBox();
+		cbReturnAngleInverseTrig.addActionListener(this);
+		anglePanel.add(cbReturnAngleInverseTrig);
+	}
+	
+	/**
 	 * Initialize the perspectives panel.
 	 */
 	private void initPerspectivesPanel() {
@@ -232,6 +246,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		Layout layout = app.getGuiManager().getLayout();
 		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
 		cbShowTitleBar.setSelected(layout.isTitleBarVisible());
+		
 		
 		// TODO update tooltip language and timeout
 	}
@@ -283,6 +298,9 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		languagePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Language")));
 		cbUseLocalDigits.setText(app.getPlain("LocalizedDigits"));
 		cbUseLocalLabels.setText(app.getPlain("LocalizedLabels"));
+		
+		anglePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Angle")));
+		cbReturnAngleInverseTrig.setText(app.getMenu("ReturnAngleInverseTrig"));
 		
 		perspectivesPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Perspectives")));
 		cbIgnoreDocumentLayout.setText(app.getPlain("IgnoreDocumentLayout"));
