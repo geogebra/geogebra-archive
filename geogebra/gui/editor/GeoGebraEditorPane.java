@@ -149,12 +149,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 	 * {@inheritDoc}
 	 */
 	public Dimension getPreferredScrollableViewportSize() {
-		Dimension size = super.getPreferredScrollableViewportSize();
-		size = (size == null) ? new Dimension(400, 400) : size;
-		size.width = cols * columnWidth;
-		size.height = rows * rowHeight;
-
-		return size;
+		return new Dimension(cols * columnWidth, rows * rowHeight);
 	}
 
 	/**

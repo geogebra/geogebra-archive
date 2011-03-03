@@ -95,6 +95,7 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListCellRenderer;
@@ -577,35 +578,24 @@ public	class PropertiesPanel extends JPanel {
 			private ArrayList panelList;
 			private boolean makeVisible = true;			
 			
-		public TabPanel(ArrayList pVec) {
-			panelList = pVec;
+			public TabPanel(ArrayList pVec) {
+				panelList = pVec;
+					
+				setLayout(new BorderLayout());
 				
-			setLayout(new BorderLayout());
-			JPanel panel = new JPanel();
-			panel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
-			JScrollPane scrollPane = new JScrollPane(panel);
-			scrollPane.setBorder(BorderFactory.createEmptyBorder());
-			//setPreferredSize(new Dimension(450, 110));
-			add(scrollPane, BorderLayout.CENTER);
-						
-			// create grid with one column
-			panel.setLayout(new GridBagLayout());
-			GridBagConstraints c = new GridBagConstraints();
-			c.fill = GridBagConstraints.NONE;
-			c.anchor = GridBagConstraints.NORTHWEST;
-			c.weightx = 1.0;
-			c.weighty = 1E-12;
-			
-			for (int i = 0; i < pVec.size(); i++) {
-				JPanel p = (JPanel) pVec.get(i);
-				c.gridx = 0;
-				c.gridy = i;
-									
-				panel.add(p, c);
-			}			
-			c.weighty = 1.0;
-			panel.add(Box.createVerticalGlue(), c);
-		}
+				JPanel panel = new JPanel();
+				panel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
+				
+				panel.setLayout(new FullWidthLayout());
+				
+				for (int i = 0; i < pVec.size(); i++) {		
+					panel.add((JPanel)pVec.get(i));
+				}
+				
+				JScrollPane scrollPane = new JScrollPane(panel);
+				scrollPane.setBorder(BorderFactory.createEmptyBorder());
+				add(scrollPane, BorderLayout.CENTER);
+			}
 		
 			public void setTitle(String title) {
 				this.title = title;
@@ -633,6 +623,8 @@ public	class PropertiesPanel extends JPanel {
 			private JCheckBox showObjectCB;
 
 			public ShowObjectPanel() {
+				setLayout(new FlowLayout(FlowLayout.LEFT));
+				
 				// check box for show object
 				showObjectCB = new JCheckBox();
 				showObjectCB.addItemListener(this);			
@@ -726,6 +718,8 @@ public	class PropertiesPanel extends JPanel {
 			private JCheckBox selectionAllowedCB;
 
 			public SelectionAllowedPanel() {
+				setLayout(new FlowLayout(FlowLayout.LEFT));
+				
 				// check box for show object
 				selectionAllowedCB = new JCheckBox();
 				selectionAllowedCB.addItemListener(this);			
@@ -805,6 +799,8 @@ public	class PropertiesPanel extends JPanel {
 			private JCheckBox showTrimmedLinesCB;
 
 			public ShowTrimmedIntersectionLines() {
+				setLayout(new FlowLayout(FlowLayout.LEFT));
+				
 				// check box for show object
 				showTrimmedLinesCB = new JCheckBox();
 				showTrimmedLinesCB.addItemListener(this);			
@@ -891,6 +887,8 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox checkboxFixCB;
 
 		public CheckBoxFixPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			checkboxFixCB = new JCheckBox();
 			checkboxFixCB.addItemListener(this);			
 			add(checkboxFixCB);			
@@ -1022,8 +1020,11 @@ public	class PropertiesPanel extends JPanel {
 		*/
 	
 		
-			setLayout(new BorderLayout());			
-			add(tabs[0], BorderLayout.NORTH);		
+			setLayout(new BorderLayout());
+			
+			JPanel colorPalette = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			colorPalette.add(tabs[0]);
+			add(colorPalette, BorderLayout.NORTH);		
 			
 			JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			p.add(previewLabel);
@@ -1171,6 +1172,8 @@ public	class PropertiesPanel extends JPanel {
 		private boolean showNameValueComboBox;
 
 		public LabelPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			// check boxes for show object, show label
 			showLabelCB = new JCheckBox();
 			showLabelCB.addItemListener(this);
@@ -1549,6 +1552,8 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox showTraceCB;
 
 		public TracePanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			// check boxes for show trace
 			showTraceCB = new JCheckBox();
 			showTraceCB.addItemListener(this);
@@ -1628,6 +1633,8 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox showAnimatingCB;
 
 		public AnimatingPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			// check boxes for animating
 			showAnimatingCB = new JCheckBox();
 			showAnimatingCB.addItemListener(this);
@@ -1715,6 +1722,8 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox checkbox;
 
 		public CheckBoxInterpolateImage() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			checkbox = new JCheckBox();
 			checkbox.addItemListener(this);			
 			add(checkbox);			
@@ -1796,6 +1805,8 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox showFixCB;
 
 		public FixPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			// check boxes for show trace
 			showFixCB = new JCheckBox();
 			showFixCB.addItemListener(this);
@@ -1876,8 +1887,9 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox cbAbsScreenLoc;
 
 		public AbsoluteScreenLocationPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			// check boxes for show trace
-			setLayout(new FlowLayout(FlowLayout.LEFT));
 			cbAbsScreenLoc = new JCheckBox();
 			cbAbsScreenLoc.addItemListener(this);
 
@@ -1980,6 +1992,8 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox forceReflexAngleCB;
 
 		public AllowReflexAnglePanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 //			 Michael Borcherds 2007-11-19
 			reflexAngleCB = new JCheckBox();
 			reflexAngleCB.addItemListener(this);
@@ -1988,9 +2002,7 @@ public	class PropertiesPanel extends JPanel {
 			add(reflexAngleCB);	
 
 			// TODO make sure this line is commented out for 3.0 release, then reinstated
-			add(forceReflexAngleCB);			
-
-			setLayout(new FlowLayout(FlowLayout.LEFT));
+			add(forceReflexAngleCB);
 		}
 		
 		public void setLabels() {
@@ -2104,11 +2116,12 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox outlyingIntersectionsCB;
 
 		public AllowOutlyingIntersectionsPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			// check boxes for show trace			
 			outlyingIntersectionsCB = new JCheckBox();
 			outlyingIntersectionsCB.addItemListener(this);
 			
-			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(outlyingIntersectionsCB);			
 		}
 		
@@ -2185,10 +2198,11 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox isBGimage;
 
 		public BackgroundImagePanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			// check boxes for show trace
 			isBGimage = new JCheckBox();
 			isBGimage.addItemListener(this);
-			setLayout(new FlowLayout(FlowLayout.LEFT));
 			add(isBGimage);
 		}
 		
@@ -2263,8 +2277,9 @@ public	class PropertiesPanel extends JPanel {
 		private JCheckBox auxCB;
 
 		public AuxiliaryObjectPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			// check boxes for show trace
-			setLayout(new FlowLayout(FlowLayout.LEFT));
 			auxCB = new JCheckBox();
 			auxCB.addItemListener(this);
 			add(auxCB);			
@@ -2706,8 +2721,10 @@ public	class PropertiesPanel extends JPanel {
 		private JTabbedPane tabbedPane;
 		private JPanel clickScriptPanel, updateScriptPanel, globalScriptPanel;
 		public ScriptEditPanel() {	
+			super(new BorderLayout());
 			
 			tabbedPane = new JTabbedPane();
+			
 			
 			clickDialog = new ScriptInputDialog(app, app.getPlain("Script"), null,
 					35, 15, false, false);
@@ -2729,7 +2746,8 @@ public	class PropertiesPanel extends JPanel {
 			globalScriptPanel = new JPanel(new BorderLayout(0,0));
 			globalScriptPanel.add(globalDialog.getInputPanel(), BorderLayout.NORTH);
 			globalScriptPanel.add(globalDialog.getButtonPanel(), BorderLayout.EAST);
-			add(tabbedPane);
+			
+			add(tabbedPane, BorderLayout.CENTER);
 			
 		}
 		
@@ -3199,7 +3217,9 @@ public	class PropertiesPanel extends JPanel {
 		private Object[] geos;
 		private JSlider slider;
 
-		public PointSizePanel() {			
+		public PointSizePanel() {	
+			super(new FlowLayout(FlowLayout.LEFT));
+					
 			//setBorder(BorderFactory.createTitledBorder(app.getPlain("Size")));
 			//JLabel sizeLabel = new JLabel(app.getPlain("Size") + ":");		
 		
@@ -3293,6 +3313,8 @@ public	class PropertiesPanel extends JPanel {
 		private JComboBox cbStyle;  //G.Sturr 2010-1-24
 		
 		public PointStylePanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 
 			//G.STURR 2010-1-24 
 			// Point styles were previously displayed with fonts,
@@ -3705,6 +3727,8 @@ public	class PropertiesPanel extends JPanel {
 		private JSlider slider;
 
 		public SlopeTriangleSizePanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			//JLabel sizeLabel = new JLabel(app.getPlain("Size") + ":");		
 			slider = new JSlider(1, 10);
 			slider.setMajorTickSpacing(2);
@@ -3807,6 +3831,8 @@ public	class PropertiesPanel extends JPanel {
 		private JSlider slider;
 
 		public ArcSizePanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 			//JLabel sizeLabel = new JLabel(app.getPlain("Size") + ":");		
 			slider = new JSlider(10, 100);
 			slider.setMajorTickSpacing(10);
@@ -4367,7 +4393,7 @@ public	class PropertiesPanel extends JPanel {
 			dashPanel.add(dashCB);
 
 			// thickness panel
-			thicknessPanel = new JPanel();
+			thicknessPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			/*
 			JLabel thicknessLabel = new JLabel(app.getPlain("Thickness") + ":");
 			thicknessPanel.setLayout(new BoxLayout(thicknessPanel, BoxLayout.X_AXIS));	
@@ -4512,6 +4538,8 @@ public	class PropertiesPanel extends JPanel {
 		private JRadioButton[] buttons;
 
 		public LineStyleHiddenPanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
 
 			PointStyleListRenderer renderer = new PointStyleListRenderer();
 			renderer.setPreferredSize(new Dimension(18,18));		
@@ -4614,7 +4642,9 @@ public	class PropertiesPanel extends JPanel {
 		private Object[] geos;
 		private JSlider slider;
 
-		public FadingPanel() {			
+		public FadingPanel() {		
+			super(new FlowLayout(FlowLayout.LEFT));
+				
 		
 			slider = new JSlider(0, 50);
 			slider.setMajorTickSpacing(25);
@@ -5740,8 +5770,8 @@ class ShowConditionPanel
 		tfCondition.addFocusListener(this);
 
 		// put it all together
-		setLayout(new FlowLayout(FlowLayout.LEFT));
-		add(inputPanel);
+		setLayout(new BorderLayout());
+		add(inputPanel, BorderLayout.CENTER);
 		
 		setLabels();
 	}
