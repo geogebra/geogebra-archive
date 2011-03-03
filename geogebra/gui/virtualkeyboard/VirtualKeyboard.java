@@ -267,15 +267,17 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	}
 
 	final private void windowResized() {
+		windowWidth = getWidth();
+		windowHeight = getHeight();
+		
+		int cpWidth = getContentPane().getWidth();
+		int cpHeight = getContentPane().getHeight();
+		
+		if(cpWidth == 0) cpWidth = windowWidth;
+		if(cpHeight == 0) cpHeight = windowHeight;
 
-		windowWidth = getContentPane().getWidth();
-		windowHeight = getContentPane().getHeight();
-
-		if (windowWidth == 0) windowWidth = getWidth();
-		if (windowHeight == 0) windowHeight = getHeight();
-
-		buttonSizeX = 0.15 +(double)windowWidth / (double)(buttonCols );
-		buttonSizeY = 0.25 + (double)windowHeight / (double)(buttonRows + 1);
+		buttonSizeX = 0.15 +(double)cpWidth / (double)(buttonCols );
+		buttonSizeY = 0.25 + (double)cpHeight / (double)(buttonRows + 1);
 		//if (buttonSize < 20) buttonSize = 20;
 
 		updateButtons();
@@ -1181,7 +1183,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	
 	public void setWindowWidth(int windowWidth) {
 		this.windowWidth = windowWidth;
-		// TODO update frame
+		setSize(windowWidth, windowHeight);
 	}
 	
 	public int getWindowHeight() {
@@ -1190,7 +1192,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	
 	public void setWindowHeight(int windowHeight) {
 		this.windowHeight = windowHeight;
-		// TODO update frame
+		setSize(windowWidth, windowHeight);
 	}
 	
 	public float getOpacity() {

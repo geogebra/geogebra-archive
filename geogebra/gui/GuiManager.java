@@ -2856,6 +2856,7 @@ public class GuiManager {
 		 */
 		public VirtualKeyboard getVirtualKeyboard() {
 			if (virtualKeyboard == null) {
+				// TODO use config values
 				virtualKeyboard = new VirtualKeyboard(app, 400, 235, 0.7f);
 			}
 			

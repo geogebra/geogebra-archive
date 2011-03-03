@@ -9,9 +9,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Locale;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -28,12 +29,10 @@ import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
-
 /**
  * Advanced options for the options dialog.
  */
-public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeListener {
+public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeListener, FocusListener {
 	/** */
 	private static final long serialVersionUID = 1L;
 	
@@ -145,6 +144,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		panel.add(widthLabel);
 		
 		tfKeyboardWidth = new JTextField(3);
+		tfKeyboardWidth.addFocusListener(this);
 		panel.add(tfKeyboardWidth);
 		
 		panel.add(new JLabel("px"));
@@ -155,6 +155,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		panel.add(heightLabel);
 		
 		tfKeyboardHeight = new JTextField(3);
+		tfKeyboardHeight.addFocusListener(this);
 		panel.add(tfKeyboardHeight);
 		
 		panel.add(new JLabel("px"));
@@ -333,6 +334,36 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	public void stateChanged(ChangeEvent e) {
 		if(e.getSource() == slOpacity) {
 			app.getGuiManager().getVirtualKeyboard().setOpacity(slOpacity.getValue() / 100.0f);
+		}
+	}
+
+	/**
+	 * Not implemented.
+	 */
+	public void focusGained(FocusEvent e) {}
+
+	/**
+	 * Apply textfield changes.
+	 */
+	public void focusLost(FocusEvent e) {
+		VirtualKeyboard virtualKeyboard = app.getGuiManager().getVirtualKeyboard();
+		
+		if(e.getSource() == tfKeyboardHeight) {
+			try {
+				int windowHeight = Integer.parseInt(tfKeyboardHeight.getText());
+				virtualKeyboard.setWindowHeight(windowHeight);
+			} catch(NumberFormatException ex) {
+				app.showError("InvalidInput");
+				tfKeyboardHeight.setText(Integer.toString(virtualKeyboard.getHeight()));
+			}
+		} else if(e.getSource() == tfKeyboardWidth) {
+			try {
+				int windowWidth = Integer.parseInt(tfKeyboardWidth.getText());
+				virtualKeyboard.setWindowWidth(windowWidth);
+			} catch(NumberFormatException ex) {
+				app.showError("InvalidInput");
+				tfKeyboardWidth.setText(Integer.toString(virtualKeyboard.getWidth()));
+			}
 		}
 	}
 
