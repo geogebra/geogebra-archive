@@ -16,6 +16,7 @@ import geogebra.main.Application;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -36,6 +37,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JToggleButton;
+import javax.swing.SwingUtilities;
 
 /**
  * JToggle button combined with popup menu for mode selction
@@ -198,13 +200,15 @@ public class ModeToggleMenu extends JPanel {
 			bg.setActivePopupMenu(popMenu);	
 			if (popMenu.isShowing()) return;
 			Point locButton = tbutton.getLocationOnScreen();			
-			Point locApp = toolbar.getMainComponent().getLocationOnScreen();
-			popMenu.show(toolbar.getMainComponent(), locButton.x - locApp.x, 
-											locButton.y - locApp.y + tbutton.getHeight());
-		} else {
-			popMenu.setVisible(false);			
-		}
-		
+			Component component = SwingUtilities.getRootPane(tbutton);
+			if(component == null)
+				component = app.getMainComponent(); // if geogebrapanel is inside an awt window
+				Point locApp = component.getLocationOnScreen();
+				popMenu.show(component, locButton.x - locApp.x,
+						locButton.y - locApp.y + tbutton.getHeight());		} else {
+							popMenu.setVisible(false);			
+						}
+
 		tbutton.repaint();
 	}		
 	
