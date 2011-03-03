@@ -2848,12 +2848,18 @@ public class GuiManager {
 		VirtualKeyboard virtualKeyboard = null;
 		
 		public void toggleKeyboard(boolean show) {
-			
+			getVirtualKeyboard().setVisible(show);
+		}
+		
+		/**
+		 * @return The virtual keyboard (initializes it if necessary)
+		 */
+		public VirtualKeyboard getVirtualKeyboard() {
 			if (virtualKeyboard == null) {
 				virtualKeyboard = new VirtualKeyboard(app, 400, 235, 0.7f);
 			}
-			virtualKeyboard.setVisible(show);
-
+			
+			return virtualKeyboard;
 		}
 		
 		/*

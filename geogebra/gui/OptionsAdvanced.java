@@ -5,6 +5,7 @@ import geogebra.gui.layout.Layout;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,13 +22,18 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.ToolTipManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import com.sun.org.apache.xalan.internal.xsltc.runtime.Hashtable;
 
 /**
  * Advanced options for the options dialog.
  */
-public class OptionsAdvanced  extends JPanel implements ActionListener {
+public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeListener {
 	/** */
 	private static final long serialVersionUID = 1L;
 	
@@ -40,7 +46,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel, anglePanel,  perspectivesPanel, scriptingPanel;
 	
 	/**	*/
-	private JLabel keyboardLanguageLabel, widthLabel, heightLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
+	private JLabel keyboardLanguageLabel, widthLabel, heightLabel, opacityLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
 	
 	/** */
 	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout;
@@ -50,6 +56,9 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
+	
+	/** */
+	private JSlider slOpacity;
 	
 	/** */
 	private JButton managePerspectivesButton;
@@ -65,7 +74,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		"20",
 		"30",
 		"60",
-		""
+		"-"
 	};
 
 	/**
@@ -155,6 +164,16 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		cbKeyboardShowAutomatic = new JCheckBox();
 		panel.add(cbKeyboardShowAutomatic);
 		
+		opacityLabel = new JLabel();
+		panel.add(opacityLabel);
+		
+		slOpacity = new JSlider(25, 100);
+		slOpacity.setPreferredSize(new Dimension(100, (int)slOpacity.getPreferredSize().getHeight()));
+		// listener added in updateGUI()
+		panel.add(slOpacity);
+		
+		opacityLabel.setLabelFor(slOpacity);
+		
 		virtualKeyboardPanel.add(panel, BorderLayout.CENTER);
 	}
 	
@@ -189,7 +208,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		tooltipTimeoutLabel = new JLabel();
 		tooltipPanel.add(tooltipTimeoutLabel);
 		
-		cbTooltipTimeout = new JComboBox();
+		cbTooltipTimeout = new JComboBox(tooltipTimeouts);
 		tooltipPanel.add(cbTooltipTimeout);
 	}
 	
@@ -247,8 +266,35 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
 		cbShowTitleBar.setSelected(layout.isTitleBarVisible());
 		
+		VirtualKeyboard virtualKeyboard = app.getGuiManager().getVirtualKeyboard();
+		tfKeyboardWidth.setText(Integer.toString(virtualKeyboard.getWidth()));
+		tfKeyboardHeight.setText(Integer.toString(virtualKeyboard.getHeight()));
 		
-		// TODO update tooltip language and timeout
+		slOpacity.removeChangeListener(this);
+		slOpacity.setValue((int)(virtualKeyboard.getOpacity() * 100));
+		slOpacity.addChangeListener(this);
+		
+		// tooltip timeout
+		int timeoutIndex = -1;
+		int currentTimeout = ToolTipManager.sharedInstance().getDismissDelay();
+		
+		// search for combobox index
+		for(int i = 0; i < tooltipTimeouts.length-1; ++i) {
+			if(Integer.parseInt(tooltipTimeouts[i]) == currentTimeout) {
+				timeoutIndex = i;
+			}
+		}
+		
+		// no index found, must be "off"
+		if(timeoutIndex == -1) {
+			timeoutIndex = tooltipTimeouts.length-1;
+		}
+		
+		cbTooltipTimeout.removeActionListener(this);
+		cbTooltipTimeout.setSelectedIndex(timeoutIndex);
+		cbTooltipTimeout.addActionListener(this);
+		
+		// TODO update tooltip language 
 	}
 
 	/**
@@ -282,6 +328,15 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	}
 
 	/**
+	 * Slider changed.
+	 */
+	public void stateChanged(ChangeEvent e) {
+		if(e.getSource() == slOpacity) {
+			app.getGuiManager().getVirtualKeyboard().setOpacity(slOpacity.getValue() / 100.0f);
+		}
+	}
+
+	/**
 	 * Update the language of the user interface.
 	 */
 	public void setLabels() {
@@ -290,6 +345,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 		widthLabel.setText(app.getPlain("Width")+":");
 		heightLabel.setText(app.getPlain("Height")+":");
 		cbKeyboardShowAutomatic.setText(app.getPlain("ShowAutomatically"));
+		opacityLabel.setText(app.getMenu("Opacity")+":");
 
 		tooltipPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Tooltips")));
 		tooltipLanguageLabel.setText(app.getPlain("TooltipLanguage")+":");
@@ -336,16 +392,19 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 				languages[i+1] = loc.getDisplayLanguage(Locale.ENGLISH);
 		}
 		
+		int selectedIndex = cbKeyboardLanguage.getSelectedIndex();
+		
 		// take care that this doesn't fire events by accident 
 		cbKeyboardLanguage.removeActionListener(this);
 		cbKeyboardLanguage.setModel(new DefaultComboBoxModel(languages));
+		cbKeyboardLanguage.setSelectedIndex(selectedIndex);
 		cbKeyboardLanguage.addActionListener(this);
 	}
 	
 	/**
 	 * @see #setLabelsKeyboardLanguage()
 	 */
-	private void setLabelsTooltipLanguages() {
+	private void setLabelsTooltipLanguages() {	
 		String[] languages = new String[Application.supportedLocales.size()+1];
 		languages[0] = app.getPlain("Default");
 		String ggbLangCode;
@@ -360,9 +419,12 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 				languages[i+1] = loc.getDisplayLanguage(Locale.ENGLISH);
 		}
 		
+		int selectedIndex = cbTooltipLanguage.getSelectedIndex();
+		
 		// take care that this doesn't fire events by accident 
 		cbTooltipLanguage.removeActionListener(this);
 		cbTooltipLanguage.setModel(new DefaultComboBoxModel(languages));
+		cbTooltipLanguage.setSelectedIndex(selectedIndex);
 		cbTooltipLanguage.addActionListener(this);
 	}
 	
@@ -371,10 +433,13 @@ public class OptionsAdvanced  extends JPanel implements ActionListener {
 	 */
 	private void setLabelsTooltipTimeouts() {
 		tooltipTimeouts[tooltipTimeouts.length-1] = app.getPlain("off");
+		
+		int selectedIndex = cbTooltipTimeout.getSelectedIndex();
 
 		// take care that this doesn't fire events by accident 
 		cbTooltipTimeout.removeActionListener(this);
 		cbTooltipTimeout.setModel(new DefaultComboBoxModel(tooltipTimeouts));
+		cbTooltipTimeout.setSelectedIndex(selectedIndex);
 		cbTooltipTimeout.addActionListener(this);
 	}
 }

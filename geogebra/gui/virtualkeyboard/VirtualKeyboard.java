@@ -126,7 +126,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	private JButton[][] Buttons = new JButton[buttonRows + 1][buttonCols];
 
-	private int windowX, windowY;
+	private int windowWidth, windowHeight;
+	private float opacity;
 
 	private Font currentFont;
 
@@ -147,8 +148,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 
 	}
 
-	public VirtualKeyboard(int sizeX, int sizeY) {
-		this(null, sizeX, sizeY, 0.7f);
+	public VirtualKeyboard(int windowX, int windowY) {
+		this(null, windowX, windowY, 0.7f);
 	}
 
 
@@ -156,14 +157,16 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	/**
 	 * This is the default constructor
 	 */
-	public VirtualKeyboard(final Application app, int sizeX, int sizeY, float transparency) {
+	public VirtualKeyboard(final Application app, int windowWidth, int windowHeight, float opacity) {
 
 		super();
 
 		readConf(app, null, false);
 
-		windowX = sizeX;
-		windowY = sizeY;
+		this.windowWidth = windowWidth;
+		this.windowHeight = windowHeight;
+		this.opacity = opacity;
+		
 		this.app = app;
 		this.setFocusableWindowState(false);
 		this.setAlwaysOnTop(true);
@@ -231,7 +234,6 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		{
 			public void componentResized(ComponentEvent e)
 			{
-				//Application.debug("resize");	
 				windowResized();
 			}
 		});
@@ -240,17 +242,7 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 		// http://java.sun.com/developer/technicalArticles/GUI/translucent_shaped_windows/#Setting-the-Opacity-Level-of-a-Window
 		//AWTUtilities.setWindowOpacity
 
-		try { // Java 6u10+ only
-			Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
-			Method mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
-			mSetWindowOpacity.invoke(null, this, Float.valueOf(transparency));
-		} catch (Exception ex) {
-
-			// fallback for OSX Leopard pre-6u10
-			this.getRootPane().putClientProperty("Window.alpha", Float.valueOf(transparency));
-
-		} 
-
+		updateOpacity();
 
 		// TODO: fix
 		// force resizing of contentPane
@@ -258,17 +250,32 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 			run() { windowResized();} });
 
 	}
+	
+	/**
+	 * Updates the opacity.
+	 */
+	private void updateOpacity() {
+		try { // Java 6u10+ only
+			Class<?> awtUtilitiesClass = Class.forName("com.sun.awt.AWTUtilities");
+			Method mSetWindowOpacity = awtUtilitiesClass.getMethod("setWindowOpacity", Window.class, float.class);
+			mSetWindowOpacity.invoke(null, this, Float.valueOf(opacity));
+		} catch (Exception ex) {
+
+			// fallback for OSX Leopard pre-6u10
+			this.getRootPane().putClientProperty("Window.alpha", Float.valueOf(opacity));
+		} 
+	}
 
 	final private void windowResized() {
 
-		int sizeX = getContentPane().getWidth();
-		int sizeY = getContentPane().getHeight();
+		windowWidth = getContentPane().getWidth();
+		windowHeight = getContentPane().getHeight();
 
-		if (sizeX == 0) sizeX = getWidth();
-		if (sizeY == 0) sizeY = getHeight();
+		if (windowWidth == 0) windowWidth = getWidth();
+		if (windowHeight == 0) windowHeight = getHeight();
 
-		buttonSizeX = 0.15 +(double)sizeX / (double)(buttonCols );
-		buttonSizeY = 0.25 + (double)sizeY / (double)(buttonRows + 1);
+		buttonSizeX = 0.15 +(double)windowWidth / (double)(buttonCols );
+		buttonSizeY = 0.25 + (double)windowHeight / (double)(buttonRows + 1);
 		//if (buttonSize < 20) buttonSize = 20;
 
 		updateButtons();
@@ -281,8 +288,8 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	 * @return void
 	 */
 	private void initialize() {
-		setSize(windowX, windowY);
-		setPreferredSize(new Dimension(windowX, windowY));
+		setSize(windowWidth, windowHeight);
+		setPreferredSize(new Dimension(windowWidth, windowHeight));
 		populateContentPane();
 	}
 
@@ -1166,6 +1173,33 @@ public class VirtualKeyboard extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// timer event
 		insertAutoRepeatString();
+	}
+	
+	public int getWindowWidth() {
+		return windowWidth;
+	}
+	
+	public void setWindowWidth(int windowWidth) {
+		this.windowWidth = windowWidth;
+		// TODO update frame
+	}
+	
+	public int getWindowHeight() {
+		return windowHeight;
+	}
+	
+	public void setWindowHeight(int windowHeight) {
+		this.windowHeight = windowHeight;
+		// TODO update frame
+	}
+	
+	public float getOpacity() {
+		return opacity;
+	}
+	
+	public void setOpacity(float opacity) {
+		this.opacity = opacity;
+		updateOpacity();
 	}
 
 }
