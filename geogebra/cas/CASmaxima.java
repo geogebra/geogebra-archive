@@ -406,6 +406,10 @@ public class CASmaxima extends CASgeneric {
 	    // needed to define lcm()
 	    ggbMaxima.executeCall("load(functs)$");
 	    
+	    // needed for eg pdf_exp (Exponential.2)
+	    // TODO: doesn't seem to work
+	    ggbMaxima.executeCall("load(distrib)$");
+	    
 	    // needed for degree()
 	    ggbMaxima.executeCall("load(powers)$");
 	       
