@@ -8583,13 +8583,13 @@ class CmdStartAnimation extends CommandProcessor {
 
 		case 1:
 			arg = resArgs(c);
-			if (arg[0].isGeoNumeric() && ((GeoNumeric) arg[0]).isIndependent()) {
-
-				GeoNumeric geo = (GeoNumeric) arg[0];
-
-				geo.setAnimating(true);
+			if ((arg[0].isGeoNumeric() && ((GeoNumeric) arg[0]).isIndependent()) ||
+					arg[0].isPointOnPath()) {				
+				arg[0].setAnimating(true);
+				app.getKernel().getAnimatonManager().startAnimation();
 				return ret;
-			} else if (arg[0].isGeoBoolean()) {
+			}			
+			else if (arg[0].isGeoBoolean()) {
 
 				GeoBoolean geo = (GeoBoolean) arg[0];
 
@@ -8602,21 +8602,28 @@ class CmdStartAnimation extends CommandProcessor {
 				return ret;
 			} else
 				throw argErr(app, c.getName(), arg[0]);
-		case 2:
-			arg = resArgs(c);
-			if (!arg[1].isGeoBoolean())
-				throw argErr(app, c.getName(), arg[1]);
-
-			if (arg[0].isGeoNumeric() && ((GeoNumeric) arg[0]).isIndependent()) {
-
-				GeoNumeric geo = (GeoNumeric) arg[0];
-				geo.setAnimating(((GeoBoolean) arg[1]).getBoolean());
-				return ret;
-			} else
-				throw argErr(app, c.getName(), arg[0]);
-
 		default:
-			throw argNumErr(app, c.getName(), n);
+			arg = resArgs(c);
+			boolean start = true;
+			int sliderCount = n;
+			if (arg[n-1].isGeoBoolean()){
+				start = ((GeoBoolean) arg[n-1]).getBoolean();
+				sliderCount = n-1;
+			}
+			for(int i = 0; i < sliderCount; i++)
+				if(!arg[i].isGeoNumeric() && !arg[i].isPointOnPath())
+					throw argErr(app,c.getName(),arg[i]);
+			
+			for(int i = 0; i < sliderCount; i++){
+				if(arg[i].isGeoNumeric())
+					((GeoNumeric) arg[0]).setAnimating(start);
+				else
+					((GeoPoint) arg[0]).setAnimating(start);
+				if(start)
+					app.getKernel().getAnimatonManager().startAnimation();
+			} 
+			
+			return ret;		
 		}
 	}
 }
