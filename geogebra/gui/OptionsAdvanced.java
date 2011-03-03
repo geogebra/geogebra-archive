@@ -317,6 +317,14 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			else app.setTooltipLanguage(Application.supportedLocales.get(index));
 		} else if(e.getSource() == cbUseLocalDigits) {
 			app.setUseLocalizedDigits(cbUseLocalDigits.isSelected());
+		} else if(e.getSource() == cbReturnAngleInverseTrig) {
+			app.getKernel().setInverseTrigReturnsAngle(cbReturnAngleInverseTrig.isSelected());
+			
+			// make sure all calculations fully updated
+			//app.getKernel().updateConstruction(); doesn't do what we want
+			app.getKernel().storeUndoInfo();
+			app.getKernel().undo();
+		
 		} else if(e.getSource() == cbUseLocalLabels) {
 			app.setUseLocalizedLabels(cbUseLocalLabels.isSelected());
 		} else if(e.getSource() == cbShowTitleBar) {
@@ -388,6 +396,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		
 		anglePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Angle")));
 		cbReturnAngleInverseTrig.setText(app.getMenu("ReturnAngleInverseTrig"));
+		cbReturnAngleInverseTrig.setSelected(app.getKernel().getInverseTrigReturnsAngle());
 		
 		perspectivesPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Perspectives")));
 		cbIgnoreDocumentLayout.setText(app.getPlain("IgnoreDocumentLayout"));
