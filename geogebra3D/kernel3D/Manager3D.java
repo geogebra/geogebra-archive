@@ -17,6 +17,7 @@ import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
@@ -501,6 +502,8 @@ public class Manager3D implements Manager3DInterface {
 		
 		return algo.getConic();
 	}
+	
+	
 			
 	////////////////////////////////////////////////
 	// FUNCTIONS (2 VARS)

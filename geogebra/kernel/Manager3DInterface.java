@@ -289,6 +289,8 @@ public interface Manager3DInterface {
 					 GeoPlaneND plane,
 					 GeoQuadricND quadric) ;
 
+			
+
 			////////////////////////////////////////////////
 			// FUNCTIONS (2 VARS)
 

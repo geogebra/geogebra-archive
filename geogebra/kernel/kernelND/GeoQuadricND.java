@@ -107,8 +107,26 @@ public abstract class GeoQuadricND extends GeoElement {
 	 * @return the matrix representation of the quadric in its dimension
 	 * regarding vals
 	 */
-	abstract protected CoordMatrix getSymetricMatrix(double[] vals);
+	protected CoordMatrix getSymetricMatrix(double[] vals){
 		
+		CoordMatrix ret = new CoordMatrix(4, 4);
+		
+		ret.set(1, 1, vals[0]);
+		ret.set(2, 2, vals[1]);
+		ret.set(3, 3, vals[2]);
+		ret.set(4, 4, vals[3]);
+		
+		ret.set(1, 2, vals[4]); ret.set(2, 1, vals[4]);
+		ret.set(1, 3, vals[5]); ret.set(3, 1, vals[5]);
+		ret.set(2, 3, vals[6]); ret.set(3, 2, vals[6]);
+		
+		ret.set(1, 4, vals[7]); ret.set(4, 1, vals[7]);
+		ret.set(2, 4, vals[8]); ret.set(4, 2, vals[8]);
+		ret.set(3, 4, vals[9]); ret.set(4, 3, vals[9]);
+		
+		return ret;
+	}
+	
 	/**
 	 * @return the matrix representation of the quadric in its dimension
 	 */
@@ -139,7 +157,23 @@ public abstract class GeoQuadricND extends GeoElement {
 	 * sets the matrix values from the symmetric matrix m
 	 * @param m
 	 */
-	abstract protected void setMatrix(CoordMatrix m);
+	protected void setMatrix(CoordMatrix m){
+		
+		matrix[0] = m.get(1, 1);
+		matrix[1] = m.get(2, 2);
+		matrix[2] = m.get(3, 3);
+		matrix[3] = m.get(4, 4);
+		
+		matrix[4] = m.get(1, 2);
+		matrix[5] = m.get(1, 3); 
+		matrix[6] = m.get(2, 3); 
+		
+		matrix[7] = m.get(1, 4); 
+		matrix[8] = m.get(2, 4); 
+		matrix[9] = m.get(3, 4);
+		
+	}
+	
 	
 	/////////////////////////////////
 	// SPECIAL CASES SETTERS

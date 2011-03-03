@@ -5,8 +5,10 @@ import java.awt.Color;
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
+import geogebra.kernel.AlgoJoinPointsSegment;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
@@ -25,6 +27,7 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	/** bottom and top of the quadric */
 	private GeoConic3D bottom, top;
 	
+	private GeoPointND bottomPoint, topPoint;
 	
 	private double min, max;
 	
@@ -34,7 +37,15 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	 * @param c
 	 */
 	public GeoQuadric3DLimited(Construction c) {
+		this(c,null,null);
+	}
+	
+
+	public GeoQuadric3DLimited(Construction c, GeoPointND bottomPoint, GeoPointND topPoint) {
+
 		super(c,3);
+
+		setPoints(bottomPoint, topPoint);
 		
 		
 		//TODO merge with GeoQuadricND
@@ -44,10 +55,31 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 			eigenvecND[i].set(i+1,1);
 		}
 		
+		//diagonal (diagonalized matrix)
+		diagonal = new double[4];
 		
-		side=new GeoQuadric3DPart(c);
-		bottom=new GeoConic3D(c);
-		top=new GeoConic3D(c);
+		
+		
+		
+	}
+	
+	public void setPoints(GeoPointND bottomPoint, GeoPointND topPoint){
+		this.bottomPoint=bottomPoint;
+		this.topPoint=topPoint;
+	}
+	
+	
+	public void setParts(){
+				
+		AlgoQuadricSide algo = new AlgoQuadricSide(cons, bottomPoint, topPoint, this);            
+		cons.removeFromConstructionList(algo);
+		side = (GeoQuadric3DPart) algo.getQuadric();
+		
+		AlgoQuadricEnds algo2 = new AlgoQuadricEnds(cons, this, bottomPoint, topPoint);
+		cons.removeFromConstructionList(algo2);
+		bottom = algo2.getSection1();
+		top = algo2.getSection2();
+	
 	}
 	
 	
@@ -150,10 +182,22 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		this.min=min;
 		this.max=max;
 		
+		// set the diagonal values
+		diagonal[0] = 1;
+		diagonal[1] = 1;
+		diagonal[2] = 0;
+		diagonal[3] = -r*r;
+		
+		// set matrix
+		setMatrixFromEigen();
+		
 		//set type
 		setType(QUADRIC_CYLINDER);
 		
 	}
+	
+	
+	
 	
 	
 	/////////////////////////
@@ -259,7 +303,7 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	}
 
 	public boolean isDefined() {
-		return side.isDefined();
+		return true;//side.isDefined();
 	}
 
 	@Override
@@ -304,24 +348,46 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	/////////////////////////////////////
 	// GEOQUADRICND
 	/////////////////////////////////////
-
-	protected StringBuilder buildValueString() {
-		return new StringBuilder("todo-GeoQuadric3DLimited");
+	
+	
+	private double volume;
+	
+	public void calcVolume(){
+		
+		//Application.debug("ici");
+		
+		switch(type){
+		case QUADRIC_CYLINDER:
+			volume=bottom.getHalfAxis(0)*bottom.getHalfAxis(0)*Math.PI*(max-min);
+		//default:
+		//	volume=Double.NaN;
+		}
 	}
+	
+	public double getVolume(){
+		if (defined)
+			return volume;				        
+		else 
+			return Double.NaN;			        	
+	}	
 
-
-	@Override
-	protected CoordMatrix getSymetricMatrix(double[] vals) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	protected void setMatrix(CoordMatrix m) {
-		// TODO Auto-generated method stub
+	public String toValueString() {
+		switch(type){
+		case QUADRIC_CYLINDER:
+			return kernel.format(volume);
+		
+		}
+		
+		return "todo-GeoQuadric3DLimited";
 		
 	}
+	
+	protected StringBuilder buildValueString() {
+		return new StringBuilder(toValueString());
+	}
+
+
+
 
 
 	@Override
@@ -336,6 +402,8 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 
 }

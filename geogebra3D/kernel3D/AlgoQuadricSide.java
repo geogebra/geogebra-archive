@@ -6,6 +6,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 /**
  * @author ggb3D
@@ -14,17 +15,33 @@ import geogebra.kernel.kernelND.GeoPointND;
 public class AlgoQuadricSide extends AlgoQuadric {
 	
 	
-	/**
-	 * @param c construction
-	 */
-	public AlgoQuadricSide(Construction c, String label, GeoQuadric3DLimited inputQuadric) {		
+	
+	
+	
+	public AlgoQuadricSide(Construction c, GeoPointND bottomPoint, GeoPointND topPoint, GeoQuadric3DLimited inputQuadric) {		
 		super(c,inputQuadric,null,new AlgoQuadricComputerSide());
 		
+		setInputOutput(new GeoElement[] {inputQuadric, (GeoElement) bottomPoint,  (GeoElement) topPoint}, new GeoElement[] {(GeoElement) bottomPoint,  (GeoElement) topPoint}, new GeoElement[] {getQuadric()});
+		
+	}
+	
+	
+	/**
+	 * @param c construction
+	 * @param inputQuadric 
+	 */
+	public AlgoQuadricSide(Construction c, GeoQuadric3DLimited inputQuadric) {		
+		super(c,inputQuadric,null,new AlgoQuadricComputerSide());
 
+		
 		setInputOutput(new GeoElement[] {inputQuadric}, new GeoElement[] {getQuadric()});
 		
-		compute();
-		
+		//compute();
+	}
+
+	public AlgoQuadricSide(Construction c, String label, GeoQuadric3DLimited inputQuadric) {		
+
+		this(c,inputQuadric);
 		getQuadric().setLabel(label);
 	}
 	
@@ -36,7 +53,7 @@ public class AlgoQuadricSide extends AlgoQuadric {
 	
 
 	protected void compute() {
-		
+				
 		//check origin
 		if (!getInputQuadric().isDefined()){
 			getQuadric().setUndefined();
@@ -48,6 +65,8 @@ public class AlgoQuadricSide extends AlgoQuadric {
 		getQuadric().setType(getInputQuadric().getType());
 		getComputer().setQuadric(getQuadric(), getInputQuadric().getMidpoint3D(), getInputQuadric().getEigenvec3D(2), getInputQuadric().getHalfAxis(0));
 		((GeoQuadric3DPart) getQuadric()).setLimits(getInputQuadric().getMin(), getInputQuadric().getMax());
+	
+	
 	}
 	
 
@@ -57,7 +76,11 @@ public class AlgoQuadricSide extends AlgoQuadric {
 		return null;
 	}
 	
-
+	/*
+    final public String toString() {
+    	return app.getPlain("SideOfABetweenBC",((GeoElement) getInputQuadric()).getLabel(),point.getLabel(),pointThrough.getLabel());
+    }
+	 */
 	
 	
 

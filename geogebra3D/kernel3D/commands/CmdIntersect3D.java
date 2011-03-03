@@ -8,6 +8,7 @@ import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -74,13 +75,30 @@ public  GeoElement[] process(Command c) throws MyError {
         			return ret;
         		}
         	}
+        	
+        	
 
 
         	return super.process(c);
 
             	
 
-
+        	/*
+        case 3 :
+        	arg = resArgs(c);
+        	if ((arg[0] instanceof GeoQuadricND) && (arg[1] instanceof GeoPointND) && (arg[2] instanceof GeoPointND)){
+    			GeoElement[] ret =
+    			{
+    					kernel.getManager3D().Intersect(
+    							c.getLabel(),
+    							(GeoQuadricND) arg[0],
+    							(GeoPointND) arg[1],
+    							(GeoPointND) arg[2])};
+    			return ret;
+    		} 
+        	
+        	return super.process(c);
+        	*/
 
         default :
             return super.process(c);

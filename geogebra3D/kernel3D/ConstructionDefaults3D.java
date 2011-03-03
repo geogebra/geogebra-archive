@@ -263,7 +263,7 @@ public class ConstructionDefaults3D extends ConstructionDefaults {
 		defaultGeoElements.put(DEFAULT_QUADRIC, quadric);
 		
 		// limited quadric
-		GeoQuadric3DLimited limitedQuadric = new GeoQuadric3DLimited(cons);	
+		GeoQuadric3D limitedQuadric = new GeoQuadric3D(cons);	
 		limitedQuadric.setLocalVariableLabel("QuadricLimited");
 		limitedQuadric.setObjColor(colPolyhedron);
 		limitedQuadric.setAlphaValue(DEFAULT_QUADRIC_LIMITED_ALPHA);

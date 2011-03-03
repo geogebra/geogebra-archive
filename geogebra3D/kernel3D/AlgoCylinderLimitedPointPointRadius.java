@@ -6,6 +6,7 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 
 /**
@@ -43,24 +44,47 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 		this.radius=r;
 		
 		
-		bottomCoordsys = new CoordSys(2);
-		topCoordsys = new CoordSys(2);
+		//bottomCoordsys = new CoordSys(2);
+		//topCoordsys = new CoordSys(2);
 		
-		quadric=new GeoQuadric3DLimited(c);
+		quadric=new GeoQuadric3DLimited(c,origin,secondPoint);
 
+
+		//bottom.setCoordSys(bottomCoordsys);
+		//top.setCoordSys(topCoordsys);
+		
+		//setInputOutput(new GeoElement[] {(GeoElement) origin,(GeoElement) secondPoint,(GeoElement) r}, new GeoElement[] {quadric,bottom,top,side},false);
+
+		input = new GeoElement[] {(GeoElement) origin,(GeoElement) secondPoint,(GeoElement) r};
+
+		
+		((GeoElement) origin).addAlgorithm(this);
+		((GeoElement) secondPoint).addAlgorithm(this);
+		
+		
+		
+    	// parent of output
+        quadric.setParentAlgorithm(this);       
+        cons.addToAlgorithmList(this); 
+        
+		//compute();
+        
+        quadric.setParts();
+		
 		side=quadric.getSide();
 		bottom=quadric.getBottom();
 		top=quadric.getTop();
-		bottom.setCoordSys(bottomCoordsys);
-		top.setCoordSys(topCoordsys);
+
+		output = new GeoElement[] {quadric,bottom,top,side};
+	
+
+
+		compute();
 		
-		setInputOutput(new GeoElement[] {(GeoElement) origin,(GeoElement) secondPoint,(GeoElement) r}, new GeoElement[] {quadric,bottom,top,side});
-		//compute();
 		
 		quadric.initLabels(labels);
 		quadric.updatePartsVisualStyle();
 		
-
 
 		
 	}
@@ -77,34 +101,20 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 		double altitude = d.getNorm();
 		
 		quadric.setCylinder(o,d.mul(1/altitude),r,0, altitude);
-		
-		side.setLimits(0, altitude);
-		side.setCylinder(o,d.mul(1/altitude),r);
 
+		quadric.calcVolume();
 
-		
-		//vectors ortho to direction
-		Coords[] v = d.completeOrthonormal();
-		
-		//bottom
-		bottomCoordsys.resetCoordSys();
-		bottomCoordsys.addPoint(o);
-		bottomCoordsys.addVector(v[1]);
-		bottomCoordsys.addVector(v[0]);
-		bottomCoordsys.makeOrthoMatrix(false,false);
-		bottom.setSphereND(new Coords(0,0), radius.getDouble());
-		
-		//top
-		topCoordsys.resetCoordSys();
-		topCoordsys.addPoint(o2);
-		topCoordsys.addVector(v[1]);
-		topCoordsys.addVector(v[0]);
-		topCoordsys.makeOrthoMatrix(false,false);
-		top.setSphereND(new Coords(0,0), radius.getDouble());
-		
-		
 	}
 
+	
+
+	
+	//compute and update quadric (for helper algos)
+	public void update() {
+        compute();
+        quadric.update();
+    }
+    
 
 	public String getClassName() {
 		return "AlgoCylinder";
@@ -115,11 +125,5 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 
     }
     
-    /**
-     * @return the quadric part
-     */
-    public GeoQuadric3DPart getQuadric(){
-    	return side;
-    }
 
 }
