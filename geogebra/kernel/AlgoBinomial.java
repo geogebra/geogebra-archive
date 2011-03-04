@@ -18,6 +18,8 @@ import geogebra.util.MyMath;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.apache.commons.math.special.Gamma;
+
 //from http://www.javajungle.de/math/primes/PrimeNumberSieve.html
 //import de.luschny.math.primes.PrimeSieve;
 //import de.luschny.math.primes.IPrimeIteration;
@@ -145,7 +147,7 @@ public class AlgoBinomial extends AlgoTwoNumFunction {
 		// exact for n<=37
 		// also  if r<2.8+Math.exp((250-n)/100) && n<59000
 		// eg Binom2(38,19) is wrong
-		return Math.floor(0.5+Math.exp(MyMath.gammln(n+1d)-MyMath.gammln(r+1)-MyMath.gammln((n-r)+1)));
+		return Math.floor(0.5+Math.exp(Gamma.logGamma(n+1d)-Gamma.logGamma(r+1)-Gamma.logGamma((n-r)+1)));
 	}
 	
     AlgoBinomial(Construction cons, String label, NumberValue a, NumberValue b) {       

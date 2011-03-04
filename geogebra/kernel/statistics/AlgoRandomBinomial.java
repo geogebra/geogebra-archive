@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel.statistics;
 
+import org.apache.commons.math.special.Gamma;
+
 import geogebra.kernel.AlgoTwoNumFunction;
 import geogebra.kernel.Construction;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -122,7 +124,7 @@ public class AlgoRandomBinomial extends AlgoTwoNumFunction {
 
 	private double logOfKFactorial(int k) {
 		if (k<10) {
-			if (logtable[k] == 0) logtable[k] = Math.log(MyMath.gammln(k+1d));
+			if (logtable[k] == 0) logtable[k] = Math.log(MyMath.factorial(k+1d));
 			return logtable[k];
 		}
 

@@ -135,7 +135,7 @@ public class AlgoRandomPoisson extends AlgoElement {
 	
 	private double logOfKFactorial(int k) {
 		if (k<10) {
-			if (logtable[k] == 0) logtable[k] = Math.log(MyMath.gammln(k+1d));
+			if (logtable[k] == 0) logtable[k] = Math.log(MyMath.factorial(k));
 			return logtable[k];
 		}
 	

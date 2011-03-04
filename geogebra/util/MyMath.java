@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.special.Erf;
+import org.apache.commons.math.special.Gamma;
 
 /**
  * @author Markus Hohenwarter
@@ -111,7 +112,7 @@ public final class MyMath {
 
 		 //		 Michael Borcherds 2007-10-15 BEGIN added case for x<0 otherwise no results in 3rd quadrant
 		if (x>=0) 
-			return Math.exp(gammln(x));
+			return Math.exp(Gamma.logGamma(x));
 		else
 			return -Math.PI/(x*gamma(-x, kernel)*Math.sin(Math.PI*x));
 // Michael Borcherds 2007-10-15 END
@@ -129,7 +130,7 @@ public final class MyMath {
 		  // big x or floating point x is computed using gamma function
 		if (x < 0 || x > 32 || x - Math.floor(x) > 1E-10) 
 			// exp of log(gamma(x+1)) 
-			return Math.exp(gammln(x+1.0));				
+			return Math.exp(Gamma.logGamma(x+1.0));				
 		
 		int n = (int) x;		
 		int j;				
@@ -147,7 +148,7 @@ public final class MyMath {
 				factorialTable[2] = 2.0; 
 				factorialTable[3] = 6.0; 
 				factorialTable[4] = 24.0; }						
-
+/* replaced with Gamma.logGamma from Apache Commons Math
 	// logarithm of gamma function of xx
 	public static double gammln(double xx) {
 		double x,y,tmp,ser;
@@ -163,7 +164,7 @@ public final class MyMath {
 	// coefficients for gammln
 	private static double [] cof = {76.18009172947146,-86.50532032941677,
 					24.01409824083091,-1.231739572450155,
-					0.1208650973866179e-2,-0.5395239384953e-5};
+					0.1208650973866179e-2,-0.5395239384953e-5}; */
 	
 	/**
 	 * Round a double to the given number of digits
