@@ -201,9 +201,9 @@ public abstract class AlgoDistribution extends AlgoElement {
 
 	ExponentialDistribution getExponentialDistribution(double param) {
 		if (exponential == null) 
-			exponential = new ExponentialDistributionImpl(param);
+			exponential = new ExponentialDistributionImpl(1.0 / param);
 		else {
-				exponential.setMean(param);
+				exponential.setMean(1.0 / param);
 		}
 		return exponential;
 	}
