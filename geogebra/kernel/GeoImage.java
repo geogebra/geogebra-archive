@@ -38,7 +38,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	private GeoPoint [] corners; // corners of the image
 	//private BufferedImage image;	
 	private int pixelWidth, pixelHeight;
-	private boolean inBackground;
+	private boolean inBackground, defined;
 	private boolean hasAbsoluteLocation;
 	private boolean interpolate=true;
 	
@@ -65,7 +65,8 @@ implements Locateable, AbsoluteScreenLocateable,
 		// three corners of the image: first, second and fourth
 		corners = new GeoPoint[3]; 			
 				
-		instances.add(this);						
+		instances.add(this);	
+		defined = true;
 	}  
 
 	/**
@@ -148,6 +149,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		
 		//interpolation settings
 		interpolate=img.interpolate;
+		defined = img.defined;
 	}
 	
 	public void setVisualStyle(GeoElement geo) {
@@ -360,6 +362,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	
 	
 	final public boolean isDefined() {
+		if(!defined) return false;
 		for (int i=0; i < corners.length; i++) {
 			if (corners[i] != null  && !corners[i].isDefined())
 					return false;
@@ -372,7 +375,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	 * needed for Sequence's cached images
  	*/
 	public void setUndefined() {
-		setEuclidianVisible(false);
+		defined = false;		
 	}
 
 	public String toValueString() {
