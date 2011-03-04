@@ -1668,7 +1668,9 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					boolean showMultiplicationSign = false;
 					boolean multiplicationSpaceNeeded = true;
 					if (nounary) {
-						switch (STRING_TYPE) {
+						switch (STRING_TYPE) {						
+						case STRING_TYPE_PGF:
+						case STRING_TYPE_PSTRICKS:
 						case STRING_TYPE_GEOGEBRA_XML:
 						case STRING_TYPE_JASYMCA:
 						case STRING_TYPE_MATH_PIPER:
