@@ -383,7 +383,7 @@ implements Locateable, AbsoluteScreenLocateable,
 	}
 	
 	public String toString() {				
-		return label;
+		return label == null ? app.getPlain("Image") : label;
 	}	
 
 	public boolean showInAlgebraView() {
