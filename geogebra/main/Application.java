@@ -3455,11 +3455,11 @@ public class Application implements KeyEventDispatcher {
 		sb.append(getGuiXML(asPreference));
 
 		// save euclidianView settings
-		getEuclidianView().getXML(sb);
+		getEuclidianView().getXML(sb,asPreference);
 		
 		//save euclidian view 2 settings
 		if(getGuiManager().hasEuclidianView2()){
-			getGuiManager().getEuclidianView2().getXML(sb);
+			getGuiManager().getEuclidianView2().getXML(sb,asPreference);
 		}
 
 		// save spreadsheetView settings

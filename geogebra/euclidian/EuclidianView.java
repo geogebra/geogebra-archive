@@ -3677,7 +3677,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	public String getXML() {
 		StringBuilder sb = new StringBuilder();
-    	getXML(sb);
+    	getXML(sb,false);
     	return sb.toString();
     }
 	
@@ -3699,7 +3699,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	/**
 	 * returns settings in XML format
 	 */
-	public void getXML(StringBuilder sb) {
+	public void getXML(StringBuilder sb,boolean asPreference) {
 		sb.append("<euclidianView>\n");
 		if(evNo>=2)
 		{
@@ -3720,9 +3720,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			sb.append("\"");
 			sb.append("/>\n");
 		}
-		if(!isZoomable()){
+		if(!isZoomable() && !asPreference){
 			sb.append("\t<coordSystem");
-			sb.append(" xzero=\"");
+			sb.append(" xMin=\"");
 			sb.append(((GeoNumeric)xminObject).getLabel());
 			sb.append("\"");
 			sb.append(" xMax=\"");

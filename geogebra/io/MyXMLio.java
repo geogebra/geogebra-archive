@@ -821,7 +821,7 @@ public class MyXMLio {
 		//sb.append("<geogebra format=\"" + GeoGebra.XML_FILE_FORMAT + "\">\n");
 
 		// save euclidianView settings
-		app.getEuclidianView().getXML(sb);
+		app.getEuclidianView().getXML(sb,false);
 		
 		// save kernel settings
 		c.getKernel().getKernelXML(sb);
@@ -839,7 +839,7 @@ public class MyXMLio {
 		
 		//save euclidian view 2 settings
 		if(app.getGuiManager().hasEuclidianView2()){
-			app.getGuiManager().getEuclidianView2().getXML(sb);
+			app.getGuiManager().getEuclidianView2().getXML(sb,false);
 		}
 
 		sb.append("</geogebra>");
