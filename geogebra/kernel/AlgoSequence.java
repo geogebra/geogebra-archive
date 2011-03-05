@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
@@ -415,7 +416,16 @@ public class AlgoSequence extends AlgoElement {
     	if (expressionParentAlgo != null) {    	    		
     		// update all dependent algorithms of the local variable var    		
     		this.setStopUpdateCascade(true);
+
+    		
+    		
+    		// needed for eg Sequence[If[liste1(i) < a
+    		boolean oldLabelStatus = cons.isSuppressLabelsActive();
+    		kernel.getConstruction().setSuppressLabelCreation(true);
+    		
     		var.getAlgoUpdateSet().updateAllUntil(expressionParentAlgo);
+    		kernel.getConstruction().setSuppressLabelCreation(oldLabelStatus);
+    		
     		this.setStopUpdateCascade(false);   
     		expressionParentAlgo.update();
 		}

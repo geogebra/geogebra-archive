@@ -61,7 +61,13 @@ public class AlgoDependentBoolean extends AlgoElement {
     protected final void compute() {	
     	try {
     		
+    		// needed for eg Sequence[If[liste1(i) < a
+    		boolean oldLabelStatus = cons.isSuppressLabelsActive();
+    		kernel.getConstruction().setSuppressLabelCreation(true);
+    		
     		ExpressionValue ev = root.evaluate();
+    		kernel.getConstruction().setSuppressLabelCreation(oldLabelStatus);
+    		
     		if (ev.isGeoElement())
         		bool.setValue(((GeoBoolean) ev).getBoolean());
     		else
