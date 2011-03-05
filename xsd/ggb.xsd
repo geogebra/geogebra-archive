@@ -23,15 +23,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<xs:include schemaLocation="common.xsd"/>
 	<xs:element name="geogebra">
 		<xs:complexType>
-			<xs:all>
+			<xs:sequence>
 				<xs:element ref="gui"/>
-				<xs:element ref="euclidianView" minOccurs="0"/>
+				<xs:element ref="euclidianView" minOccurs="0" maxOccurs="2"/>
 				<xs:element ref="euclidianView3D" minOccurs="0"/>
 				<xs:element ref="spreadsheetView" minOccurs="0"/>
 				<xs:element ref="kernel"/>
-				<xs:element ref="construction"/>
+				<xs:element ref="construction" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>
+					This element is required except for the preferences file. 
+					</xs:documentation>
+				</xs:annotation>
+				</xs:element>
 				<xs:element ref="casSession" minOccurs="0"/>
-			</xs:all>
+			</xs:sequence>
 			<xs:attribute name="format" type="xs:double" use="required"/>
 		</xs:complexType>
 	</xs:element>
@@ -50,6 +56,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 						<xs:sequence>
 							<xs:element ref="perspective" maxOccurs="unbounded" minOccurs="1"/>
 						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="settings">
+					<xs:complexType>
+						<xs:attribute name="ignoreDocument" type="xs:boolean"/>
+						<xs:attribute name="showTitleBar" type="xs:boolean"/>
 					</xs:complexType>
 				</xs:element>
 				<xs:element name="labelingStyle" type="intVal" minOccurs="0"/>
@@ -188,7 +200,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<xs:element name="view">
 		<xs:complexType>
 			<xs:attribute name="id" type="positiveInt" use="required"/>
-			<xs:attribute name="toolbar" type="positiveInt"/>
+			<xs:attribute name="toolbar" type="xs:string"/>
 			<xs:attribute name="visible" type="xs:boolean"/>
 			<xs:attribute name="inframe" type="xs:boolean"/>
 			<xs:attribute name="stylebar" type="xs:boolean"/>
@@ -244,6 +256,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 	<xs:element name="euclidianView">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element name="viewNumber" minOccurs="0">
+					<xs:complexType>
+						<xs:attribute name="viewNo" type="positiveInt"/>
+					</xs:complexType>
+				</xs:element>
 				<xs:element ref="size"/>
 				<xs:element name="coordSystem">
 					<xs:complexType>
