@@ -8227,7 +8227,7 @@ class CmdPan extends CommandProcessor {
 
 				GeoNumeric x = (GeoNumeric) arg[0];
 				GeoNumeric y = (GeoNumeric) arg[1];
-				EuclidianView ev = app.getEuclidianView();
+				EuclidianView ev = (EuclidianView)app.getActiveEuclidianView();
 				ev.rememberOrigins();
 				ev.setCoordSystemFromMouseMove((int) x.getDouble(), -(int) y
 						.getDouble(), EuclidianController.MOVE_VIEW);
@@ -8270,7 +8270,7 @@ class CmdZoomIn extends CommandProcessor {
 			if (arg[0].isGeoNumeric()) {
 				GeoNumeric numGeo = (GeoNumeric) arg[0];
 
-				EuclidianView ev = app.getEuclidianView();
+				EuclidianView ev = (EuclidianView)app.getActiveEuclidianView();
 				double px = ev.getWidth() / 2; // mouseLoc.x;
 				double py = ev.getHeight() / 2; // mouseLoc.y;
 
@@ -8294,7 +8294,7 @@ class CmdZoomIn extends CommandProcessor {
 				GeoNumeric numGeo = (GeoNumeric) arg[0];
 				GeoPoint p = (GeoPoint) arg[1];
 
-				EuclidianView ev = app.getEuclidianView();
+				EuclidianView ev = (EuclidianView)app.getActiveEuclidianView();
 				double px = ev.toScreenCoordXd(p.inhomX); // mouseLoc.x;
 				double py = ev.toScreenCoordYd(p.inhomY); // mouseLoc.y;
 
@@ -8343,7 +8343,7 @@ class CmdZoomOut extends CommandProcessor {
 			if (arg[0].isGeoNumeric()) {
 				GeoNumeric numGeo = (GeoNumeric) arg[0];
 
-				EuclidianView ev = app.getEuclidianView();
+				EuclidianView ev = (EuclidianView)app.getActiveEuclidianView();
 				double px = ev.getWidth() / 2; // mouseLoc.x;
 				double py = ev.getHeight() / 2; // mouseLoc.y;
 
@@ -8369,7 +8369,7 @@ class CmdZoomOut extends CommandProcessor {
 				GeoNumeric numGeo = (GeoNumeric) arg[0];
 				GeoPoint p = (GeoPoint) arg[1];
 
-				EuclidianView ev = app.getEuclidianView();
+				EuclidianView ev = (EuclidianView)app.getActiveEuclidianView();
 				double px = ev.toScreenCoordXd(p.inhomX); // mouseLoc.x;
 				double py = ev.toScreenCoordYd(p.inhomY); // mouseLoc.y;
 

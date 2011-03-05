@@ -23,6 +23,7 @@ import geogebra.cas.jacomax.JacomaxAutoConfigurator;
 import geogebra.cas.jacomax.MaximaConfiguration;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
@@ -1238,6 +1239,10 @@ public class Application implements KeyEventDispatcher {
 
 	public EuclidianView getEuclidianView() {
 		return euclidianView;
+	}
+	
+	public EuclidianViewInterface getActiveEuclidianView() {
+		return getGuiManager().getActiveEuclidianView();
 	}
 	
 	public BufferedImage getExportImage(double maxX, double maxY) throws OutOfMemoryError {
