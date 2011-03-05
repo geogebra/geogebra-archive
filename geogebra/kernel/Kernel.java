@@ -4740,8 +4740,8 @@ public class Kernel {
 	/** 
 	 * Element[list, number, number]
 	 */
-	final public GeoElement Element(String label, GeoList list, NumberValue n, NumberValue m) {
-		AlgoListElement algo = new AlgoListElement(cons, label, list, n, m);
+	final public GeoElement Element(String label, GeoList list, NumberValue[] n) {
+		AlgoListElement algo = new AlgoListElement(cons, label, list, n, false);
 		GeoElement geo = algo.getElement();
 		return geo;
 	}		

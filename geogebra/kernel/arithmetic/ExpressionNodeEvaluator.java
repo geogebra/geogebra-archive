@@ -1659,22 +1659,19 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             	Construction cons = kernel.getConstruction();
             	GeoElement subList = ((GeoList)lt);
             	ListValue lv = (ListValue)rt;
-            	AlgoListElement[] algos = new AlgoListElement[lv.size()];
-            	GeoElement[] geos = new GeoElement[lv.size()];
             	
-            	boolean oldLabelStatus = cons.isSuppressLabelsActive();
-            	cons.setSuppressLabelCreation(true);
-            	int i;
+            	
+            	
+            	NumberValue[] nvs = new NumberValue[lv.size()];
             	// convert list1(1,2) into Element[Element[list1,1],2]
-            	for(i = 0; i < lv.size(); i++){
-            		if (i == lv.size() - 1)	kernel.getConstruction().setSuppressLabelCreation(oldLabelStatus);
+            	for(int i = 0; i < lv.size(); i++)
+            		nvs[i]=(NumberValue) lv.getMyList().getListElement(i).evaluate();
 
-            		ExpressionValue ev = lv.getMyList().getListElement(i).evaluate();
-            		algos[i] = new AlgoListElement(kernel.getConstruction(), null, i==0 ? (GeoList)subList: (GeoList)geos[i-1], ((NumberValue)ev));
-            		geos[i] = algos[i].getElement();
-            		if(!(geos[i] instanceof GeoList)) break;
-            	}
-            	return geos[i]; 
+          		AlgoListElement algo = new AlgoListElement(kernel.getConstruction(), null, (GeoList)subList, nvs,true);
+           		return algo.getElement();
+
+
+            	
             	
            }else
             
