@@ -747,6 +747,26 @@ public class DockManager implements AWTEventListener {
 	}
 	
 	/**
+	 * Changes the focused panel to the dock panel with ID viewId. 
+	 * Uses {@link DockManager#setFocusedPanel(DockPanel)} internally 
+	 * but adds some validation checks. 
+	 * 
+	 * @param viewId 
+	 * @return true if focus was changed, false if the requested dock panel does 
+	 * 			not exist or is invisible at the moment  
+	 */
+	public boolean setFocusedPanel(int viewId) {
+		DockPanel dockPanel = getPanel(viewId);
+		
+		if(dockPanel != null && dockPanel.isVisible()) {
+			setFocusedPanel(dockPanel);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
 	 * @return The dock panel which has focus at the moment.
 	 */
 	public DockPanel getFocusedPanel() {
