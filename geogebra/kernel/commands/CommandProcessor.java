@@ -14,6 +14,7 @@ package geogebra.kernel.commands;
 
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.GuiManager;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoCellRange;
 import geogebra.kernel.CasEvaluableFunction;
@@ -64,7 +65,6 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -8264,8 +8264,29 @@ class CmdSetActiveView extends CommandProcessor {
 			if (arg[0].isGeoNumeric()) {
 				GeoNumeric numGeo = (GeoNumeric) arg[0];
 
-				// TODO: implement
-				//app.SetActiveView(numGeo.getDouble());
+				int view = (int)numGeo.getDouble();
+				
+				// ignore all errors (eg when a view is not available etc)
+				switch (view) {
+				case 1:
+					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN);
+					 break;
+				case 2:
+					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN2);
+					 break;
+				case 3:
+					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN3D);
+					 break;
+				case 4:
+					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
+					 break;
+				case 5:
+					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_ALGEBRA);
+					 break;
+				case 6:
+					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_CAS);
+					 break;
+				}
 				
 				GeoElement[] ret = {};
 				return ret;
