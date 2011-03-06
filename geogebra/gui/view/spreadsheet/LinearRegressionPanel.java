@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
@@ -27,7 +28,7 @@ import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-public class ANOVAPanel extends JPanel{
+public class LinearRegressionPanel extends JPanel{
 
 	private Application app;
 	private Kernel kernel;
@@ -38,7 +39,7 @@ public class ANOVAPanel extends JPanel{
 	private DefaultListModel headerModel;
 	
 
-	public ANOVAPanel(Application app, GeoList dataList, StatDialog statDialog){
+	public LinearRegressionPanel(Application app, GeoList dataList, StatDialog statDialog){
 
 		this.app = app;
 		kernel = app.getKernel();
@@ -49,47 +50,53 @@ public class ANOVAPanel extends JPanel{
 		this.setBackground(Color.WHITE);
 		this.setLayout(new BorderLayout());
 
+		// north panel with regression equation
+		Box northPanel = Box.createVerticalBox();
+		northPanel.add(new JLabel(" ---- regresion equation ----"));
+		northPanel.add(new JLabel(" ----------------------------"));
 		
-		headerModel = new DefaultListModel();
-		
+		// south panel with additional statistics
+		Box southPanel = Box.createVerticalBox();
+		southPanel.add(new JLabel(" ---- regresion equation ----"));
+		southPanel.add(new JLabel(" ----------------------------"));
 		
 		// set up table
 		model = new DefaultTableModel();
+		headerModel = new DefaultListModel();	
 		JTable table = new JTable(model);
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table.setGridColor(MyTable.TABLE_GRID_COLOR);
 		table.setShowGrid(true);
 
-		// set up row header
+		// table row header
 		JList rowHeader = new JList(headerModel);
 		rowHeader.setFixedCellWidth(50);
 		rowHeader.setFixedCellHeight(table.getRowHeight() + table.getRowMargin()); 
 		rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 
-		
 		// add table to scroll pane
 		JScrollPane scroll = new JScrollPane(table);
 		scroll.setRowHeaderView(rowHeader);
+		
+		
 		
 		this.add(scroll, BorderLayout.CENTER);
 
 	}
 
 
-	public void updateANOVAPanel(){
+	public void updateRegressionPanel(){
 		
 		String[] columnLabels = { 
-				app.getMenu("DegreesOfFreedom.short"),
-				app.getMenu("SumSquares.short"),
-				app.getMenu("MeanSquare.short"),
-				app.getMenu("FStatistic"),
-				app.getMenu("PValue"),
+				app.getMenu("Coefficient"),
+				app.getMenu("StandardError.short"),
+				app.getMenu("TStatistic"),
+				app.getMenu("Pvalue"),
 		};
 		
 		String[] rowLabels = { 
-				app.getMenu("BetweenGroups"),
-				app.getMenu("WithinGroups"),
-				app.getMenu("Total"),
+				app.getMenu("Intercept"),
+				app.getMenu("Slope"),
 		};
 		
 		

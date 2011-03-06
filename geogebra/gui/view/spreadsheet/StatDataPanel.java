@@ -222,6 +222,7 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 		
 		TableModel dataModel = null;
 		GeoPoint geo = null;
+		String[] titles = statDialog.getDataTitles();
 		
 		switch(mode){
 
@@ -231,6 +232,12 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 			for (int row = 0; row < dataList.size(); ++row){
 				dataModel.setValueAt(dataList.get(row).toDefinedValueString(),row,0);
 			}
+			
+			dataTable.setModel(dataModel);
+			
+			dataTable.getColumnModel().getColumn(0).setHeaderValue(titles[0]);
+			
+			
 			break;
 
 		case StatDialog.MODE_REGRESSION:
@@ -240,14 +247,22 @@ public class StatDataPanel extends JPanel implements ActionListener  {
 				dataModel.setValueAt(((GeoPoint)(dataList.get(row))).getInhomX(),row,0);
 				dataModel.setValueAt(((GeoPoint)(dataList.get(row))).getInhomY(),row,1);
 			}
+			
+			dataTable.setModel(dataModel);
+			
+			dataTable.getColumnModel().getColumn(0).setHeaderValue(
+					app.getMenu("Column.X") + ": " + titles[0]);
+			dataTable.getColumnModel().getColumn(1).setHeaderValue(
+					app.getMenu("Column.Y") + ": " + titles[1]);
+			
 			break;
 		}
 
-		dataTable.setModel(dataModel);
 		
-		String[] titles = statDialog.getDataTitles();
-		for(int i = 0; i < titles.length; ++i)
-			dataTable.getColumnModel().getColumn(i).setHeaderValue(titles[i]);
+		
+		
+		
+		
 		
 
 	}

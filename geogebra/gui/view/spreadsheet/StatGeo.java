@@ -143,9 +143,11 @@ public class StatGeo   {
 	}
 
 
-
-
 	public GeoList  createBasicStatList(GeoList dataList, int mode){
+		return createBasicStatList(dataList, mode, null);
+	}
+
+	public GeoList  createBasicStatList(GeoList dataList, int mode, GeoElement regFunction){
 
 		GeoList statList = null;
 		String label = dataList.getLabel();	      //getFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA, false);  
@@ -166,7 +168,8 @@ public class StatGeo   {
 					{app.getMenu("LowerQuartile.short") ,"Q1"},
 					{app.getMenu("Median") ,"Median"},
 					{app.getMenu("UpperQuartile.short") ,"Q3"},
-					{app.getMenu("Maximum.short") ,"Max"}
+					{app.getMenu("Maximum.short") ,"Max"},
+
 			};
 
 			text = createStatListString(statMap1, label);			
@@ -187,9 +190,17 @@ public class StatGeo   {
 					{app.getMenu("Sxx") ,"Sxx"},
 					{app.getMenu("Syy") ,"Syy"},
 					{app.getMenu("Sxy") ,"Sxy"},
+					{null , null},
+					//TODO --- these cmds won't work, why?
+					//{app.getMenu("RSquare") ,"RSquare"}
+					//{app.getMenu("SSE") ,"SumSquaredErrors"}
 			};
 
-			text = createStatListString(statMap2, label);	
+			if(regFunction != null)
+				text = createStatListString(statMap2, label, regFunction.getLabel());
+			else
+				text = createStatListString(statMap2, label);
+			
 			break;
 
 
@@ -239,8 +250,12 @@ public class StatGeo   {
 
 
 
-
 	private String createStatListString(String[][] statMap, String geoLabel){
+		return createStatListString(statMap, geoLabel, null);
+	}
+	private String createStatListString(String[][] statMap, String geoLabel, String regFunctionLabel){
+
+		//TODO use stringbuilder
 
 		String text = "";
 		String nameStr = "";
@@ -262,7 +277,15 @@ public class StatGeo   {
 			}else{
 				text += "{";
 				text += "\"" + nameStr + "\",";
-				text += cmdStr + "[" + geoLabel + "]";
+
+				if(cmdStr.equals("RSquare") || cmdStr.equals("SumSquaredErrors")){
+					if(regFunctionLabel != null)
+						text += cmdStr + "[" + geoLabel + "," + regFunctionLabel + "]";
+					text += cmdStr + "[" + geoLabel + "]";
+				}else{
+					text += cmdStr + "[" + geoLabel + "]";
+				}
+
 				text += "}";
 			}
 
@@ -336,7 +359,7 @@ public class StatGeo   {
 		String classes;
 		getDataBounds(dataList);
 		double classWidth = (xMaxData - xMinData)/(numClasses); 
-		
+
 		if(settings.useManualClasses){
 			classWidth = settings.classWidth;
 			classes = "Classes[" + label + "," + settings.classStart + "," + settings.classWidth + "]";
@@ -344,13 +367,13 @@ public class StatGeo   {
 			classes = "Classes[" + label + "," + numClasses + "]";
 		}
 		//Application.debug(classWidth);
-		
+
 		double density = -1;
 		if(settings.type == StatPanelSettings.TYPE_RELATIVE)
 			density = 1.0*classWidth/dataList.size();
 		if(settings.type == StatPanelSettings.TYPE_NORMALIZED)
 			density = 1.0/dataList.size();
-		
+
 		String text = "Histogram[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
 		//Application.debug(text);
 		geo = createGeoFromString(text);

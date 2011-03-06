@@ -181,7 +181,7 @@ implements ActionListener, View, Printable   {
 		cons = kernel.getConstruction();
 		statDialog = this;
 
-		defaultDialogDimension = new Dimension(600,500);
+		defaultDialogDimension = new Dimension(700,500);
 
 
 		//===========================================
@@ -213,13 +213,13 @@ implements ActionListener, View, Printable   {
 		case MODE_REGRESSION:
 			//showComboPanel2 = true;
 			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_SCATTERPLOT, dataListSelected, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_REGRESSION_ANALYSIS, dataListSelected, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_RESIDUAL, dataListSelected, mode, true);
 			break;
 
 		case MODE_MULTIVAR:
 			showComboPanel2 = true;
 			comboStatPanel = new StatComboPanel(this, StatComboPanel.PLOT_MULTIBOXPLOT, dataListSelected, mode, true);
-			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_TWOVAR_INFERENCE, dataListSelected, mode, true);
+			comboStatPanel2 = new StatComboPanel(this, StatComboPanel.PLOT_MULTIVARSTATS, dataListSelected, mode, true);
 			break;		
 
 		}
@@ -229,8 +229,12 @@ implements ActionListener, View, Printable   {
 		//================================================
 		// Create a statList and StatPanel.
 		// StatPanels display basic statistics for the current data set
-		if(mode != statDialog.MODE_MULTIVAR){
+		if(mode == statDialog.MODE_ONEVAR){
 			statList = getStatGeo().createBasicStatList(dataListSelected,mode);
+			statTable = new StatTable(app, statList, mode);
+		}
+		else if(mode == statDialog.MODE_REGRESSION){
+			statList = getStatGeo().createBasicStatList(dataListSelected,mode,regressionModel);
 			statTable = new StatTable(app, statList, mode);
 		}
 
@@ -493,8 +497,8 @@ implements ActionListener, View, Printable   {
 		case MODE_REGRESSION:
 			//TODO -- get actual titles, handling ctrl-select
 			title = new String[2];	
-			title[0] = app.getMenu("Column.X") + ": " + app.getMenu("Untitled");
-			title[1] = app.getMenu("Column.Y") + ": " + app.getMenu("Untitled");
+			title[0] = app.getMenu("Untitled");
+			title[1] = app.getMenu("Untitled");
 			break;
 
 
@@ -502,8 +506,8 @@ implements ActionListener, View, Printable   {
 		case MODE_MULTIVAR:
 			//TODO -- get actual titles, handling ctrl-select
 			title = new String[2];	
-			title[0] = app.getMenu("Column.X") + ": " + app.getMenu("Untitled");
-			title[1] = app.getMenu("Column.Y") + ": " + app.getMenu("Untitled");
+			title[0] = app.getMenu("Untitled");
+			title[1] = app.getMenu("Untitled");
 			break;
 
 		}
@@ -528,12 +532,8 @@ implements ActionListener, View, Printable   {
 		btnClose = new JButton();
 		btnClose.addActionListener(this);
 
-		
 		btnPrint = new JButton();
 		btnPrint.addActionListener(this);
-
-
-
 
 		JPanel rightButtonPanel = new JPanel(new FlowLayout());
 		rightButtonPanel.add(btnPrint);
@@ -598,11 +598,13 @@ implements ActionListener, View, Printable   {
 		plotComboPanel.add(comboPanelSplit, BorderLayout.CENTER);
 		if(mode == MODE_ONEVAR){
 			JPanel oneVarTitlePanel = createOneVarTitlePanel();
-			plotComboPanel.add(oneVarTitlePanel, BorderLayout.SOUTH);
+			//plotComboPanel.add(oneVarTitlePanel, BorderLayout.SOUTH);
+			buttonPanel.add(oneVarTitlePanel, BorderLayout.NORTH);
 		}
 		if(mode == MODE_REGRESSION){
 			JPanel regressionPanel = createRegressionPanel();
-			plotComboPanel.add(regressionPanel, BorderLayout.SOUTH);
+			//plotComboPanel.add(regressionPanel, BorderLayout.SOUTH);
+			buttonPanel.add(regressionPanel, BorderLayout.NORTH);
 		}
 
 
@@ -616,10 +618,10 @@ implements ActionListener, View, Printable   {
 					null, plotComboPanel);
 		}
 
-		
+
 		cardPanel = new JPanel(new CardLayout());
 		cardPanel.add("displayPanel", displayPanel);
-		
+
 
 		//============================================
 		// main panel
@@ -643,7 +645,7 @@ implements ActionListener, View, Printable   {
 
 	}
 
-	
+
 	private void setRegressionLabels(){	
 		regressionLabels[REG_NONE] = app.getMenu("None");
 		regressionLabels[REG_LINEAR] = app.getMenu("Linear");
@@ -657,12 +659,12 @@ implements ActionListener, View, Printable   {
 
 	public void setLabels(){
 
-		statisticsHeader.setText(app.getMenu("Statistics"));
+
 		switch(mode){
 		case MODE_ONEVAR:
 			setTitle(app.getMenu("OneVariableStatistics"));	
 			lblOneVarTitle.setText(app.getMenu("Name") + ": ");
-
+			statisticsHeader.setText(app.getMenu("Statistics"));
 			break;
 		case MODE_REGRESSION:
 			setTitle(app.getMenu("RegressionAnalysis"));	
@@ -670,8 +672,9 @@ implements ActionListener, View, Printable   {
 			setRegressionLabels();
 			lblRegression.setText(app.getMenu("RegressionModel")+ ":");
 			lblEqn.setText(app.getMenu("Equation")+ ":");
-			lblTitleX.setText("x: ");
-			lblTitleY.setText("y: ");
+			lblTitleX.setText(app.getMenu("Column.X") + ": ");
+			lblTitleY.setText(app.getMenu("Column.Y") + ": ");
+			statisticsHeader.setText(app.getMenu("Statistics"));
 			break;
 
 		case MODE_MULTIVAR:
@@ -682,8 +685,8 @@ implements ActionListener, View, Printable   {
 		btnClose.setText(app.getMenu("Close"));
 		btnPrint.setText(app.getMenu("Print"));	
 		btnOptions.setText(app.getMenu("Options"));
-		
-		
+
+
 	}
 
 
@@ -705,11 +708,11 @@ implements ActionListener, View, Printable   {
 
 		lblTitleX = new JLabel();
 		lblTitleY = new JLabel();
-		
+
 		fldTitleX = new MyTextField(app.getGuiManager());
 		fldTitleY = new MyTextField(app.getGuiManager());
-		fldTitleX.setColumns(30);
-		fldTitleY.setColumns(30);
+		fldTitleX.setColumns(15);
+		fldTitleY.setColumns(15);
 
 		lblRegression = new JLabel();
 		lblRegEquation = new JLabel();
@@ -724,35 +727,36 @@ implements ActionListener, View, Printable   {
 		titleXPanel.add(lblTitleX);
 		titleXPanel.add(fldTitleX);
 
-		JPanel titleYPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		titleYPanel.add(lblTitleY);
-		titleYPanel.add(fldTitleY);
+		//JPanel titleYPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		titleXPanel.add(lblTitleY);
+		titleXPanel.add(fldTitleY);
 
 		JPanel titlePanel = new JPanel(new BorderLayout());
 		titlePanel.add(titleXPanel, BorderLayout.CENTER);
-		titlePanel.add(titleYPanel, BorderLayout.SOUTH);
+		//titlePanel.add(titleYPanel, BorderLayout.SOUTH);
 
 		JPanel modelTypePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		modelTypePanel.add(lblRegression);
 		modelTypePanel.add(cbRegression);
 		modelTypePanel.add(cbPolyOrder);
+		modelTypePanel.add(lblRegEquation);
 		//regressionPanel.setBackground(Color.white);
 
 		JPanel eqnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		eqnPanel.add(lblEqn);
-		eqnPanel.add(lblRegEquation);
+	//	eqnPanel.add(lblRegEquation);
 		//eqnPanel.setBackground(Color.white);
 
 
 		//evalPanel.add(lblRegEquation);
-		JPanel eqnEvalPanel = new JPanel(new BorderLayout());
-		eqnEvalPanel.add(eqnPanel, BorderLayout.NORTH);
+	//	JPanel eqnEvalPanel = new JPanel(new BorderLayout());
+	//	eqnEvalPanel.add(eqnPanel, BorderLayout.NORTH);
 
 
-		JScrollPane eqnScroller = new JScrollPane(eqnEvalPanel);
+		JScrollPane eqnScroller = new JScrollPane(modelTypePanel);
 		eqnScroller.setBorder(BorderFactory.createEmptyBorder());
 		JPanel regressionPanel = new JPanel(new BorderLayout());
-		regressionPanel.add(modelTypePanel,BorderLayout.NORTH);
+		//regressionPanel.add(modelTypePanel,BorderLayout.NORTH);
 		regressionPanel.add(eqnScroller,BorderLayout.SOUTH);
 
 
@@ -904,7 +908,7 @@ implements ActionListener, View, Printable   {
 		else if(source == btnPrint){
 			new geogebra.export.PrintPreview(app, this, PageFormat.LANDSCAPE);
 		}
-		
+
 		else if(source == cbRegression){
 			regressionMode = cbRegression.getSelectedIndex();
 			setRegressionModel();
@@ -1028,11 +1032,17 @@ implements ActionListener, View, Printable   {
 		comboStatPanel2.updateData(dataListSelected);
 		comboStatPanel.updatePlot(doCreateGeo);
 		comboStatPanel2.updatePlot(doCreateGeo);
-
-		if(mode != MODE_MULTIVAR){
+	
+		if(mode == statDialog.MODE_ONEVAR){
 			statList.remove();
 			statList = statGeo.createBasicStatList(dataListSelected, mode);
 			statTable.updateData(statList);
+		}
+		else if(mode == statDialog.MODE_REGRESSION){
+			statList.remove();
+			statList = statGeo.createBasicStatList(dataListSelected, mode,regressionModel);
+			statTable.updateData(statList);
+			
 		}
 	}
 

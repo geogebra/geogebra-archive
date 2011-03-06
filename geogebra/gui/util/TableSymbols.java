@@ -360,7 +360,7 @@ public class TableSymbols {
 		"\u2218",    //     \\circ
 		"\u2219",    //     \\bullet
 
-		"\u00B1",    //MINUS-OR-PLUS SIGN
+		"\u00B1",    //PLUs-OR-MINUS SIGN
 		"\u2213",   //MINUS-OR-PLUS SIGN
 		"\u221A",   //SQUARE ROOT
 
