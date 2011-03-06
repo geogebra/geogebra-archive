@@ -18,6 +18,7 @@ import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.main.Application;
+import geogebra.main.MyParseError;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -169,13 +170,31 @@ public class SliderDialog extends JDialog
 		if (geoResult != null) {		
 			// set label of geoResult
 			String strLabel;
+			String text = tfLabel.getText();
 			try {								
 				strLabel = app.getKernel().getAlgebraProcessor().
-								parseLabel(tfLabel.getText());
+								parseLabel(text);
 			} catch (Exception e) {
 				strLabel = null;
 			}			
 			geoResult.setLabel(strLabel);
+			
+			// allow eg a=2 in the Name dialog to set the initial value
+			if (strLabel != null && text.indexOf('=') > -1 && text.indexOf('=') == text.lastIndexOf('=')) {
+				
+				try {
+					double val = Double.parseDouble(text.substring(text.indexOf('=')+1));
+					
+					GeoNumeric geoNum = ((GeoNumeric)geoResult);
+					
+					if (val > geoNum.getIntervalMax()) geoNum.setIntervalMax(val);
+					else if (val < geoNum.getIntervalMin()) geoNum.setIntervalMin(val);
+					
+					geoNum.setValue(val);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		return geoResult;
