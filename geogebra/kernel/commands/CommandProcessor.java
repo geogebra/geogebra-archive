@@ -8366,10 +8366,10 @@ class CmdZoomIn extends CommandProcessor {
 			for(int i=0;i<3;i++)
 					if(!arg[i].isNumberValue())
 						throw argErr(app, c.getName(),arg[i]);
-			EuclidianView ev = app.getEuclidianView();
+			EuclidianView ev = (EuclidianView)app.getActiveEuclidianView();
 			ev.setXminObject((NumberValue)arg[0]);
-			ev.setXmaxObject((NumberValue)arg[1]);
-			ev.setYminObject((NumberValue)arg[2]);
+			ev.setXmaxObject((NumberValue)arg[2]);
+			ev.setYminObject((NumberValue)arg[1]);
 			ev.setYmaxObject((NumberValue)arg[3]);
 			ev.updateBounds();
 			GeoElement[] ret = {};
