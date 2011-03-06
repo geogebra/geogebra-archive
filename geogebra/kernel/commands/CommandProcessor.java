@@ -8361,7 +8361,20 @@ class CmdZoomIn extends CommandProcessor {
 
 			} else
 				throw argErr(app, c.getName(), ok0 ? arg[1] : arg[0]);
-
+		case 4:
+			arg = resArgs(c);
+			for(int i=0;i<3;i++)
+					if(!arg[i].isNumberValue())
+						throw argErr(app, c.getName(),arg[i]);
+			EuclidianView ev = app.getEuclidianView();
+			ev.setXminObject((NumberValue)arg[0]);
+			ev.setXmaxObject((NumberValue)arg[1]);
+			ev.setYminObject((NumberValue)arg[2]);
+			ev.setYmaxObject((NumberValue)arg[3]);
+			ev.updateBounds();
+			GeoElement[] ret = {};
+			return ret;
+						
 		default:
 			throw argNumErr(app, c.getName(), n);
 		}
@@ -9397,7 +9410,7 @@ class CmdExecute extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 		arg = resArgs(c);
-		if (n > 1)
+		if (n > 11)
 			throw argNumErr(app, c.getName(), n);
 		if ((!arg[0].isGeoList())
 				|| (!((GeoList) arg[0]).getGeoElementForPropertiesDialog()
@@ -9406,9 +9419,12 @@ class CmdExecute extends CommandProcessor {
 		GeoList list = (GeoList) arg[0];
 		for (int i = 0; i < list.size(); i++) {
 			try {
+				String cmdText = ((GeoText) list.get(i)).getTextString();
+				for(int k=1;k<n;k++)
+					cmdText = cmdText.replace("%"+(k-1), arg[k].getLabel());
 				kernel.getAlgebraProcessor()
-						.processAlgebraCommandNoExceptionHandling(
-								((GeoText) list.get(i)).getTextString(), false,
+						.processAlgebraCommandNoExceptionHandling(cmdText
+								, false,
 								false, true);
 			} catch (MyError e) {
 				app.showError(e);

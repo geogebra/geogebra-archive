@@ -74,7 +74,11 @@ public class AlgoName extends AlgoElement {
     // calc the current value of the arithmetic tree
     protected final void compute() {    	
     	if(geo.getParentAlgorithm() == null) {
-    		text.setTextString(geo.getRealLabel());}	    
+    		String returnLabel = geo.getRealLabel();
+    		if(returnLabel==null)
+    			geo.setLabel(returnLabel);
+    		text.setTextString(geo.getRealLabel());
+    		}	    
     	else {
     		// eg Name[a+3]
     		text.setTextString(geo.getRealFormulaString(ExpressionNode.STRING_TYPE_GEOGEBRA	, false));
