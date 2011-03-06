@@ -44,7 +44,7 @@ public class SliderDialog extends JDialog
 {
 	
 	/**
-	 * 
+	 *  
 	 */
 	private static final long serialVersionUID = 1L;
 	private JButton btApply, btCancel;
