@@ -8277,15 +8277,16 @@ class CmdSetActiveView extends CommandProcessor {
 				case 3:
 					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_EUCLIDIAN3D);
 					 break;
-				case 4:
+				case -1:
 					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_SPREADSHEET);
 					 break;
-				case 5:
+				case -2:
 					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_ALGEBRA);
 					 break;
-				case 6:
+				case -3:
 					 app.getGuiManager().getLayout().getDockManager().setFocusedPanel(Application.VIEW_CAS);
 					 break;
+				// default: // might be needed when support for more than 2 Eucldian Views added 
 				}
 				
 				GeoElement[] ret = {};
