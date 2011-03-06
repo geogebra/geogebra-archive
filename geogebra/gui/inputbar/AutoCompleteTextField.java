@@ -307,7 +307,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		char charPressed = e.getKeyChar();  
 
-		if ( (!Character.isLetterOrDigit(charPressed) && !modifierKeyPressed) || 
+		if ( (!isLetterOrDigit(charPressed) && !modifierKeyPressed) || 
 				(ctrlC && Application.MAC_OS) // don't want selection cleared
 		) return;        
 
@@ -537,14 +537,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// search to the left
 		curWordStart = caretPos - 1;
 		while (  curWordStart >= 0 &&
-				Character.isLetterOrDigit( text.charAt(curWordStart))) --curWordStart;     
+				isLetterOrDigit( text.charAt(curWordStart))) --curWordStart;     
 		curWordStart++;
 
 		// search to the right
 		int curWordEnd = caretPos;
 		int length = text.length();
 		while ( curWordEnd <  length &&
-				Character.isLetterOrDigit( text.charAt(curWordEnd) )) ++curWordEnd;        
+				isLetterOrDigit( text.charAt(curWordEnd) )) ++curWordEnd;        
 
 		curWord.setLength(0);
 		curWord.append(text.substring(curWordStart, curWordEnd));
