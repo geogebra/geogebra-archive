@@ -231,8 +231,7 @@ public class AlgoPolygonRegular extends AlgoElement {
 
 		boolean pointsSegmentsShowLabel = labelPointsAndSegments && 
 				(A.isEuclidianVisible() && A.isLabelVisible() || 
-				 B.isEuclidianVisible() && B.isLabelVisible())
-				 && segments[0].isLabelVisible();
+				 B.isEuclidianVisible() && B.isLabelVisible());
 		
 		// set labels for points only if the original points had labels
 		if (labelPointsAndSegments) {
@@ -251,7 +250,8 @@ public class AlgoPolygonRegular extends AlgoElement {
             	if (!seg.isLabelSet()) {
             		seg.setLabel(null);
             		seg.setAuxiliaryObject(true);
-            		seg.setLabelVisible(pointsSegmentsShowLabel);
+            		// show segment label only if label showing for first segment
+            		seg.setLabelVisible(pointsSegmentsShowLabel && segments[0].isLabelVisible());
             	} 
             	else {
             		pointsSegmentsShowLabel = pointsSegmentsShowLabel || seg.isLabelVisible();
