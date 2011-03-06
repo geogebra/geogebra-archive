@@ -77,4 +77,7 @@ public interface GeoSegmentND extends GeoLineND {
 	 */
 	public GeoElement getHighlightingAncestor();
 
+
+	boolean isLabelVisible();
+
 }

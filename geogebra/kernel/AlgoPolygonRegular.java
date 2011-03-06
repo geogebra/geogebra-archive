@@ -227,9 +227,12 @@ public class AlgoPolygonRegular extends AlgoElement {
     	// set labels only when points have labels
 		labelPointsAndSegments = labelPointsAndSegments || A.isLabelSet() || B.isLabelSet();
 		
+		GeoSegmentND[] segments = poly.getSegments();    	           
+
 		boolean pointsSegmentsShowLabel = labelPointsAndSegments && 
 				(A.isEuclidianVisible() && A.isLabelVisible() || 
-				 B.isEuclidianVisible() && B.isLabelVisible());
+				 B.isEuclidianVisible() && B.isLabelVisible())
+				 && segments[0].isLabelVisible();
 		
 		// set labels for points only if the original points had labels
 		if (labelPointsAndSegments) {
@@ -242,7 +245,6 @@ public class AlgoPolygonRegular extends AlgoElement {
 		}
 		
 		// update all segments and set labels for new segments
-		GeoSegmentND[] segments = poly.getSegments();    	           
 		for (int i=0; i < segments.length; i++) {   
 			GeoElement seg = (GeoElement) segments[i];
 			if (labelPointsAndSegments) {				
