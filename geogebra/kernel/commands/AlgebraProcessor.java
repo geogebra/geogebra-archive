@@ -209,6 +209,19 @@ public class AlgebraProcessor {
 		}
 	}
 	
+	public GeoElement[] processAlgebraCommandNoExceptionsOrErrors(String cmd,
+			boolean storeUndo) {
+
+		try {
+			return processAlgebraCommandNoExceptionHandling(cmd, storeUndo,
+					false, false);
+		} catch (Exception e) {
+			return null;
+		} catch (MyError e) {
+			return null;
+		}
+	}
+	
 	// G.Sturr 2010-7-5
 	// added 'allowErrorDialog' flag to handle the case of unquoted text 
 	// entries in the spreadsheet

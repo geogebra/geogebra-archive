@@ -619,6 +619,7 @@ public class CommandDispatcher {
        	cmdTable.put("Pan", new CmdPan(kernel));
        	cmdTable.put("ZoomIn", new CmdZoomIn(kernel));
        	cmdTable.put("ZoomOut", new CmdZoomOut(kernel));
+       	cmdTable.put("SetActiveView", new CmdSetActiveView(kernel));
        	cmdTable.put("SelectObjects", new CmdSelectObjects(kernel));
        	cmdTable.put("SetLayer", new CmdSetLayer(kernel));
        	cmdTable.put("SetCaption", new CmdSetCaption(kernel));
