@@ -125,7 +125,7 @@ public class SliderDialog extends JDialog
 				BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		tfLabel.setBorder(border);
 		
-		cbRandom = new JCheckBox("Random");
+		cbRandom = new JCheckBox(app.getPlain("Random"));
 		
 		// put together label textfield and radioPanel
 		JPanel topPanel = new JPanel();
