@@ -216,7 +216,7 @@ class FileMenu extends BaseMenu {
 			}
 		};
 
-		exportLMSAction = new AbstractAction(app.getMenu("Share"+"..."), app
+		exportLMSAction = new AbstractAction(app.getMenu("Share")+"...", app
 				.getEmptyIcon()) {
 			private static final long serialVersionUID = 1L;
 
@@ -253,7 +253,7 @@ class FileMenu extends BaseMenu {
 			}
 		};
 
-		exitAction = new AbstractAction(app.getMenu("Close"), app
+		exitAction = new AbstractAction(app.getPlain("Close"), app
 				.getImageIcon("exit.png")) {
 			private static final long serialVersionUID = 1L;
 
