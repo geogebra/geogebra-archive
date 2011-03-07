@@ -305,10 +305,14 @@ implements NumberValue {
 	 * Java quirk/bug Round(NaN) = 0
 	 */
 	final public static double round(double x) {
-		if (!(Double.isInfinite(x) || Double.isNaN(x)))		
-			return Math.round(x);
-		else
-			return x;
+		//if (!(Double.isInfinite(x) || Double.isNaN(x)))		
+		
+		// changed from Math.round(x) as it uses (long) so fails for large numbers
+		// also means the check for Infinity / NaN not needed
+			return Math.floor(x + 0.5d);
+		
+		//else
+		//	return x;
 		
 	}	
 	
