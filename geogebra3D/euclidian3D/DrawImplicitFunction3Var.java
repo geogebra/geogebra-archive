@@ -87,9 +87,9 @@ public class DrawImplicitFunction3Var extends Drawable3DSurfaces {
 		float uMin, uMax, vMin, vMax;
 		uMin = -1; uMax = 1; vMin = -1; vMax = 1;
 		surface.setU(uMin,uMax);
-		surface.setNbU((int) (uMax-uMin)*10);
 		surface.setV(vMin, vMax);
 		surface.setNbV((int) (vMax-vMin)*10);
+		surface.setNbU((int) (uMax-uMin)*10);
 
 		surface.draw(mc);
 		setGeometryIndex(surface.end());

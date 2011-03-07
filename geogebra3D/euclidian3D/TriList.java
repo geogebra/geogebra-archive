@@ -1,6 +1,10 @@
 package geogebra3D.euclidian3D;
 
+import geogebra3D.euclidian3D.BucketPQ.Link;
+
 import java.nio.FloatBuffer;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * A list of triangles representing a triangle mesh.
@@ -339,6 +343,20 @@ public class TriList {
 
 		count--;
 		return true;
+	}
+	
+	public Iterator<TriListElem> iterator() {
+		
+		return new Iterator<TriListElem>() {
+			private TriListElem el = back;
+			private int bucket;
+			
+			public boolean hasNext() { return back.getNext()!=null; }
+
+			public TriListElem next() { return back.getNext(); }
+
+			public void remove() {}
+		};
 	}
 
 	/**
