@@ -5962,25 +5962,40 @@ class ColorFunctionPanel
 		cbColorSpace = new JComboBox();
 		cbColorSpace.addActionListener(this);
 		
-		setLayout(new SpringLayout());
-		add(nameLabelR);		
-		add(inputPanelR);
-		add(nameLabelG);		
-		add(inputPanelG);
-		add(nameLabelB);		
-		add(inputPanelB);
-		add(nameLabelA);		
-		add(inputPanelA);
+		setLayout(new BorderLayout());
+		
+		JPanel colorsPanel = new JPanel(new SpringLayout());
+		colorsPanel.add(nameLabelR);		
+		colorsPanel.add(inputPanelR);
+		colorsPanel.add(nameLabelG);		
+		colorsPanel.add(inputPanelG);
+		colorsPanel.add(nameLabelB);		
+		colorsPanel.add(inputPanelB);
+		colorsPanel.add(nameLabelA);		
+		colorsPanel.add(inputPanelA);
+		
+		SpringUtilities.makeCompactGrid(colorsPanel,
+                4, 2, 		//rows, cols
+                6, 6,        //initX, initY
+                6, 6);       //xPad, yPad
+		
+		add(colorsPanel, BorderLayout.CENTER);
+		
+		JPanel buttonsPanel = new JPanel(new SpringLayout());
+		
 		JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		leftPanel.add(cbColorSpace);
 		JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		rightPanel.add(btRemove);
-		add(leftPanel);
-		add(rightPanel);
-		SpringUtilities.makeCompactGrid(this,
-                5, 2, //rows, cols
+		buttonsPanel.add(leftPanel);
+		buttonsPanel.add(rightPanel);
+		
+		SpringUtilities.makeCompactGrid(buttonsPanel,
+                1, 2, 		//rows, cols
                 6, 6,        //initX, initY
                 6, 6);       //xPad, yPad
+		
+		add(buttonsPanel, BorderLayout.SOUTH);
 		
 		setLabels();
 	}
