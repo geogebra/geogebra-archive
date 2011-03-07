@@ -261,7 +261,7 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     	while(Math.abs(lefty=f.evaluate(left)) < delta && count++ < 100)left=left-delta;
     	count=0;
     	while(Math.abs(righty=f.evaluate(right))< delta && count++ < 100) right=right+delta;
-    	signChanged=lefty*righty>0.0d;
+    	signChanged=lefty*righty<0.0d;
     	return signChanged;
     }//signChanged(f,x,deltax)
 
