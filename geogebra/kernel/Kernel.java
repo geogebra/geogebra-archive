@@ -6705,6 +6705,15 @@ public class Kernel {
 		return p;
 	}	
 
+	/**
+	 * Roots of a function f in given interval [a, b]
+	 * Numerical version
+	 */
+	final public GeoPoint[] Roots(String[] labels, GeoFunction f, NumberValue a, NumberValue b) {			 
+		AlgoRoots algo = new AlgoRoots(cons, labels, f, a, b);
+		GeoPoint[] pts = algo.getRootPoints();
+		return pts;
+	}//Roots(label,f,a,b)
 	
 	/**
 	 * all Extrema of function f (works only for polynomials)
