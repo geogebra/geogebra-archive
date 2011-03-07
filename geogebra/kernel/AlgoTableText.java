@@ -317,7 +317,7 @@ public class AlgoTableText extends AlgoElement {
 				text = "\\;"; // problem with JLaTeXMath, was "\u00a0";	
 			// Modify by Loïc Le Coq 2009/12/15
 			if (geo1.isTextValue()){
-				sb.append("\\mathrm{");
+				sb.append("\\text{"); // preserve spaces
 				sb.append(text);
 				sb.append("}");
 			}
