@@ -332,6 +332,7 @@ public class CommandDispatcher {
     	// functions & calculus
     	//=============================================================
     	cmdTable.put("Root", new CmdRoot(kernel));	
+    	cmdTable.put("Roots",new CmdRoots(kernel));
     	cmdTable.put("TurningPoint", new CmdTurningPoint(kernel));
     	cmdTable.put("Polynomial", new CmdPolynomial(kernel));	
     	cmdTable.put("Function", new CmdFunction(kernel));	   
