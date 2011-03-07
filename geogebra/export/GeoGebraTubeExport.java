@@ -222,7 +222,7 @@ public class GeoGebraTubeExport {
 		statusLabel = new JLabel(app.getPlain("UploadPrepare") + " ...");
 		
 		// setup buttons
-		abortButton = new JButton(app.getPlain("Close"));
+		abortButton = new JButton(app.getMenu("Close"));
 		abortButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				hideDialog();

@@ -634,7 +634,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * the language was changed.
 	 */
 	public void updateLabels() {		
-		closeButton.setToolTipText(app.getPlainTooltip("Close"));
+		closeButton.setToolTipText(app.getMenuTooltip("Close"));
 		windowButton.setToolTipText(app.getPlainTooltip("ViewOpenExtraWindow"));
 		unwindowButton.setToolTipText(app.getPlainTooltip("ViewCloseExtraWindow"));
 		

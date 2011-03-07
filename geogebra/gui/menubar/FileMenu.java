@@ -253,7 +253,7 @@ class FileMenu extends BaseMenu {
 			}
 		};
 
-		exitAction = new AbstractAction(app.getPlain("Close"), app
+		exitAction = new AbstractAction(app.getMenu("Close"), app
 				.getImageIcon("exit.png")) {
 			private static final long serialVersionUID = 1L;
 
