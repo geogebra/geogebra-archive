@@ -22,6 +22,7 @@ import geogebra.main.MyError;
  * Intersect[ <GeoFunction>, <GeoFunction> ] Intersect[ <GeoFunction>, <GeoLine> ]
  * Intersect[ <GeoImplicitPoly>, <GeoImplicitPoly> ] Intersect[ <GeoImplicitPoly>, <GeoLine> ]
  * Intersect[ <GeoImplicitPoly>, <GeoFunction(Polynomial)> ]
+ * Intersect[ <GeoFunction>, <GeoFunction>, <NumberValue>, <NumberValue> ]
  */
 public class CmdIntersect extends CommandProcessor {
 	
@@ -393,6 +394,39 @@ public  GeoElement[] process(Command c) throws MyError {
                 else
                     throw argErr(app, "Intersect", arg[2]);
             }
+            
+        case 4:
+            arg = resArgs(c);
+            // Function - Function in interval [a,b]
+            // Polynomial - Polynomial with index of point
+            if (
+                (ok[0] = (arg[0] .isGeoFunction()))
+                    && (ok[1] = (arg[1] .isGeoFunction()))
+                    && (ok[2] = (arg[2] .isNumberValue()))
+                    && (ok[3] = (arg[3] .isNumberValue()))
+                    ) {
+                GeoElement[] ret =
+                         kernel.IntersectFunctions(
+                            c.getLabels(),
+                            (GeoFunction) arg[0],
+                            (GeoFunction) arg[1],
+                            (NumberValue) arg[2],
+                            (NumberValue) arg[3]
+                         );
+                return ret;
+            }
+            // Syntax Error
+            else {
+                if (!ok[0])
+                    throw argErr(app, "Intersect", arg[0]);
+                else if (!ok[1])
+                    throw argErr(app, "Intersect", arg[1]);
+                else if (!ok[2])
+                    throw argErr(app, "Intersect", arg[2]);
+                else
+                	throw argErr(app, "Intersect",  arg[3]);
+            }//if
+     	
 
         default :
             throw argNumErr(app, "Intersect", n);
