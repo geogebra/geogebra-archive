@@ -12,14 +12,14 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.AlgoElement;
+//import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.arithmetic.Function;
-import geogebra.kernel.roots.RealRootFunction;
+//import geogebra.kernel.roots.RealRootFunction;
 import geogebra.kernel.roots.RealRootAdapter;
 import geogebra.kernel.roots.RealRootUtil;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
@@ -31,11 +31,14 @@ import geogebra.euclidian.EuclidianView;
 import java.util.ArrayList;
 //import java.util.Iterator;
 
-import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
+//import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
 
 
 /**
- * Command:	Roots[ <function>, left-x, right-x]
+ * Command:	Roots[ <function>, <left-x>, <right-x>]				      (TYPE 0)
+ * and
+ * Command: Intersect[ <function>, <function>, <left-x>, <right-x>]   (TYPE 1)
+ * 			(just uses difference-function instead of one function)
  * 
  * Can be used elsewhere:
  *    public static final double[] findRoots(GeoFunction f,double l,double r,int samples)
@@ -45,49 +48,74 @@ import org.apache.commons.math.analysis.solvers.UnivariateRealSolverFactory;
  * which again extens AlgoElement.
  * 
  * @author 	Hans-Petter Ulven
- * @version 2011-03-06
+ * @version 2011-03-08
  */
 
 public class AlgoRoots extends AlgoGeoPointsFunction {
 	
 	// Constants
 	private static final long 	serialVersionUID 		= 	1L;
+	private static final int	TYPE_ROOTS				=	0;
+	private static final int 	TYPE_INTERSECTIONS		=	1;
 	private static final int	PIXELS_BETWEEN_SAMPLES	=	  5;		// Open for empirical adjustments
     private static final int   	MAX_SAMPLES				=	400;		// -"- (covers a screen up to 2000 pxs if 5-pix-convention)
     private static final int	MIN_SAMPLES				=	 50;		// -"- (covers up to 50 in a 250 pxs interval if 5-pix-convention)
     
     //Input-Output
 //   	private GeoFunctionable 	function; 			// input
-	private GeoFunction			f;
+	private GeoFunction			f,f1,f2,diff;
 	private NumberValue     	left;	  			// input
 	private GeoElement			geoleft;
 	private NumberValue			right;				// input
 	private GeoElement			georight;
+	
+	// Vars
+	private int					type	=	TYPE_ROOTS;
 
-    /** Computes "all" Roots of f in <l,r> */
+    /** 
+     * Computes "all" Roots of f in <l,r>
+     * TYPE_ROOTS 
+     */
     public AlgoRoots(Construction cons, String[] labels, GeoFunction function,NumberValue left,NumberValue right) {
-    	super(cons,labels,!cons.isSuppressLabelsActive(),function);			//set f,g,l null
+    	super(cons,labels,!cons.isSuppressLabelsActive(),function);			//Ancestor gets first function for points!
     	this.f=function;
     	this.left=left;
     	this.geoleft=left.toGeoElement();
     	this.right=right;
     	this.georight=right.toGeoElement();
+    	
+    	type=TYPE_ROOTS;
     	    	
     	setInputOutput();
     	
     	compute();
     	
-    	// Show at least one root point in algebra view
-    	// Copied from AlgoRootsPolynomial...
-    	GeoPoint[] gpt=getPoints();					//Ancestor
-    	if(!gpt[0].isDefined() ) {
-    		gpt[0].setCoords(0,0,1);
-    		gpt[0].update();
-    		gpt[0].setUndefined();
-    		gpt[0].update();
-    	}//if list not defined
+    	showOneRootInAlgebraView();    	// Show at least one root point in algebra view
     	
-    }//constructor  
+    }//Constructor TYPE_ROOTS
+    
+    /** 
+     * Computes "all" Roots of f in <l,r>
+     * TYPE_INTERSECTIONS
+     */
+    public AlgoRoots(Construction cons, String[] labels, GeoFunction function,GeoFunction function2, NumberValue left, NumberValue right) {
+    	super(cons,labels,!cons.isSuppressLabelsActive(),function);			//Ancestor gets first function for points!
+    	this.f1=function;
+    	this.f2=function2;
+    	this.left=left;
+    	this.geoleft=left.toGeoElement();
+    	this.right=right;
+    	this.georight=right.toGeoElement();
+    	
+    	type=TYPE_INTERSECTIONS;
+    	    	
+    	setInputOutput();
+    	
+    	compute();
+    	
+    	showOneRootInAlgebraView();    	// Show at least one root point in algebra view
+    	
+    }//Constructor TYPE_INTERSECTIONS    
     
     public String getClassName() {
         return "AlgoRoots";
@@ -98,36 +126,66 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     }//getRootPoints()
 
     protected void setInputOutput(){
-        input = new GeoElement[3];
-        input[0] = f.toGeoElement();
-        input[1] = geoleft;
-        input[2] = georight;
-        
-        //setOutputLength(1);
-        //setOutput(0, E);
+    	switch(type){
+    		case TYPE_ROOTS:
+    			input 	 = new GeoElement[3];
+    			input[0] = f.toGeoElement();
+    			input[1] = geoleft;
+    			input[2] = georight;
+    			break;
+    		case TYPE_INTERSECTIONS:
+    			input 	= new GeoElement[4];
+    			input[0]=f1.toGeoElement();
+    			input[1]=f2.toGeoElement();
+    			input[2]=geoleft;
+    			input[3]=georight;
+    	}//switch
         
         output=getPoints();					//Points in ancestor
 
-        //noUndefinedPointsInAlgebraView();	//Not in this inheritage, explicit:
         noUndefinedPointsInAlgebraView(getPoints()); 
-
         
         setDependencies(); // done by AlgoElement
     }//setInputOutput()
     
+    protected final void compute(){
+    	boolean ok=false;
+    	switch(type){
+    		case TYPE_ROOTS:
+    			ok= f.toGeoElement().isDefined() && geoleft.isDefined() && georight.isDefined();
+    			break;
+    		case TYPE_INTERSECTIONS:
+    			ok=f1.toGeoElement().isDefined() && f2.toGeoElement().isDefined() && geoleft.isDefined() && georight.isDefined();
+    			break;
+    	}//switch
+    	if(!ok){
+    		setPoints(new double[1],0);					//debug("error in args");
+    	}else{
+    		if(type==TYPE_INTERSECTIONS){
+    			diff=new GeoFunction(cons);
+    			diff=GeoFunction.subtract(diff,f1,f2); //Make a difference geofunction for intersections
+    			compute2(diff);
+    		}else{
+    			compute2(f);
+    		}//if type
+    	}//if ok input
+    }//compute()
 
-    protected final void compute() {      
+    private  final void compute2(GeoFunction f) {      
 
         double		l				=	left.getDouble();
         double		r				=	right.getDouble();
 		double[] roots=new double[0];
 		int      numberofroots=0;
-
+		
+		
+		/*
     	if (    !f.toGeoElement().isDefined() || !geoleft.isDefined()    ||   
     		    !georight.isDefined() 				// || (right.getDouble()<=left.getDouble() )    
     	) {
     		setPoints(new double[1],0);		//0 flags no root=>undefined
     	}else {  	 
+    	*/
 
     		if(l>r){double tmp=l;l=r;r=tmp;}		//Correct user input
     	    	
@@ -137,7 +195,9 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     		try{	//To catch eventual wrong indexes in arrays...
     			//Adjust samples. Some research needed to find best factor in if(numberofroots<m*factor...
     			do{																			//debug("doing samples: "+m);
-    				roots=findRoots(f,l,r,m);
+   					roots=findRoots(f,l,r,m);
+
+
     				if(roots==null){numberofroots=0;}else{numberofroots=roots.length;}		//debug("found xvalues: "+roots);
     				if(numberofroots<m/2) {
     					break;
@@ -149,7 +209,9 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     		}catch(Exception e){
     			Application.debug("Exception in compute() "+e.toString());
     		}//try-catch    
-    	}//if
+    	
+    	//}//if
+    	
     	if(numberofroots==0){
     		setPoints(new double[1],0);			//0 flags no root=>undefined
     	}else{
@@ -197,6 +259,7 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
 			for(int i=0;i<xlist.size();i++) {
 				res[i]=xlist.get(i);
 			}//for all x in xlist
+			removeDuplicates(res);			//new 08.03.11 to avoid (1,0.00000x) and (1,-0.00000x) ...
 			return res;
 		}else{
 			return null;
@@ -288,7 +351,7 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
         }//if()
     }//debug()       
     
-    private final static void listArray(double[] a){
+    public final static void listArray(double[] a){
     	if(a!=null){
     	int l=a.length;
     	System.out.println("Length: "+l);
@@ -300,7 +363,7 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     	}//if not null
     }//listArray(a)
     
-    private final static void listLabels(String[] a){
+    public final static void listLabels(String[] a){
     	if(a!=null){
     	int l=a.length;
     	System.out.println("Length: "+l);
@@ -312,7 +375,7 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     	}//if not null
     }//listLabels(a)
     
-    private final static void listPoints(GeoPoint[] gpts) {
+    public final static void listPoints(GeoPoint[] gpts) {
     	if (gpts!=null) {
     	int n=gpts.length;
     	System.out.println("Length: "+n);
@@ -324,14 +387,16 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     	}//if not null
     }//listPoints(GeoPoint[])
  
-	/* test:
-	  java.util.Random R=new java.util.Random();
-	int number=R.nextInt(5);
-	double[] roots=new double[number];
-	for(int i=0;i<number;i++){roots[i]=R.nextDouble();}
-	*/
-
-    
+    public final  static String testGeoPointX(GeoPoint geo,double answer){
+    	double  value;
+    	boolean ok=false;
+   		value=geo.getX();
+    	if(Math.abs(value-answer)<Kernel.MIN_PRECISION){
+    		return " === GOOD ===";
+    	} else {
+    		return " ****************** WRONG *******************";
+    	}//if near enough...
+    }//test(label,answer)
     
 // */ //--- SNIP end ---------------------------------------    
     
