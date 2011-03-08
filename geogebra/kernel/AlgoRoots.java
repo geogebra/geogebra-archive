@@ -395,7 +395,7 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     		return " === GOOD ===";
     	} else {
     		return " ****************** WRONG *******************\n"+
-    			   " ERROR: "+Math.abs(value-answer)+"\n"+
+    			   " ERROR: "+Math.abs(value-answer)+"  for: "+geo.getNameDescription()+"\n"+
     		       " ********************************************\n";
     	}//if near enough...
     }//test(label,answer)
