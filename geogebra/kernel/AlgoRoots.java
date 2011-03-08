@@ -394,7 +394,9 @@ public class AlgoRoots extends AlgoGeoPointsFunction {
     	if(Math.abs(value-answer)<Kernel.MIN_PRECISION){
     		return " === GOOD ===";
     	} else {
-    		return " ****************** WRONG *******************";
+    		return " ****************** WRONG *******************\n"+
+    			   " ERROR: "+Math.abs(value-answer)+"\n"+
+    		       " ********************************************\n";
     	}//if near enough...
     }//test(label,answer)
     
