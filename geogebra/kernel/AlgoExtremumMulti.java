@@ -152,7 +152,7 @@ public class AlgoExtremumMulti extends AlgoGeoPointsFunction {
     		int n = findNumberOfSamples(l,r);
     		int m = n;
     		try{	//To catch eventual wrong indexes in arrays...
-    			do{																debug("doing samples: "+m);
+    			do{																//debug("doing samples: "+m);
     				extremums=findExtremums(rrfunc,l,r,m);
     				if(extremums==null){numberOfExtremums=0;}else{ numberOfExtremums=extremums.length;}
     				
@@ -208,13 +208,13 @@ public class AlgoExtremumMulti extends AlgoGeoPointsFunction {
     			double curright=curleft+2*deltax;
     			if( 	(grad[i-2]) && (!grad[i-1]) ) {		//max 
     				//if( ((y[i-1]-y[i-2])/deltax)<MAX_GRADIENT) {
-    					xval=extrfinder.findMaximum(curleft,curright,rrfunc,3.0E-8);      			debug("Gradient for "+xval+": "+gradient(rrfunc,xval,curleft,curright));
+    					xval=extrfinder.findMaximum(curleft,curright,rrfunc,3.0E-8);      			//debug("Gradient for "+xval+": "+gradient(rrfunc,xval,curleft,curright));
     				if(gradient(rrfunc,xval,curleft,curright)<1.0E-4){
     					xlist.add(new Double(xval));	
     				}//If not too large gradient
     			}else if (   (!grad[i-2]) && (grad[i-1]) ){	    //min
     				//if( ((y[i-2]-y[i-1])/deltax) < MAX_GRADIENT ) {
-    					xval=extrfinder.findMinimum(curleft,curright,rrfunc,3.0E-8);    			debug("Gradient for "+xval+": "+gradient(rrfunc,xval,curleft,curright));
+    					xval=extrfinder.findMinimum(curleft,curright,rrfunc,3.0E-8);    			//debug("Gradient for "+xval+": "+gradient(rrfunc,xval,curleft,curright));
     				if(gradient(rrfunc,xval,curleft,curright)<1.0E-4) {
     					xlist.add(new Double(xval));					
     																
