@@ -2,14 +2,11 @@ package geogebra3D.euclidian3D.plots;
 
 import java.nio.FloatBuffer;
 import java.util.Date;
+import java.util.Iterator;
 
 //TODO: make culling refresh the tree upwards?
-//TODO: modify the parameter by a small value when the vertex is at infinity
-//TODO: implement a minimum error for each element?
 //TODO: ensure optimality by comparing error in merge and split queues
 //TODO: improve speed
-//TODO: a = Curve[t, 0, gamma(t), t, -40, 40] crashes
-//TODO: the error of Curve[t,0,t*t,t,-10,10] does not converge to 0
 
 /**
  * An enum for describing the culling status of a diamond
@@ -165,15 +162,15 @@ abstract class DynamicMeshElement {
 		CullInfo prev = cullInfo;
 
 		// update cull flag
-		if (parentCull == CullInfo.SOMEIN || parentCull == null) {
+//		if (parentCull == CullInfo.SOMEIN || parentCull == null) {
 			if (maxRadSq < radSq)
 				cullInfo = CullInfo.ALLIN;
 			else if (minRadSq < radSq)
 				cullInfo = CullInfo.SOMEIN;
 			else
 				cullInfo = CullInfo.OUT;
-		} else
-			cullInfo = parentCull;
+//		} else
+//			cullInfo = parentCull;
 
 		// // special case for singular segments - make sure
 		// // children are always checked
@@ -182,9 +179,18 @@ abstract class DynamicMeshElement {
 
 		// handle new culling info
 		if (prev != cullInfo || cullInfo == CullInfo.SOMEIN) {
+			
+			if(isSingular())
+				System.out.print("");
+			
+			double err = drawList.getError();
+			
 			// hide/show the element
 			setHidden(drawList, cullInfo == CullInfo.OUT);
 
+			if(drawList.getError()-err>10)
+				System.out.print("");
+			
 			// reinsert into priority queue
 			if (prev == CullInfo.OUT || cullInfo == CullInfo.OUT)
 				reinsertInQueue(splitQueue, mergeQueue);
@@ -298,7 +304,7 @@ public abstract class DynamicMesh {
 	protected DynamicMeshTriList drawList;
 
 	/** the maximum amount of operations to perform in one update */
-	private int stepRefinement = 1000;
+	private int stepRefinement = 100;
 
 	/** the maximum level of refinement */
 	private final int maxLevel;
@@ -393,7 +399,7 @@ public abstract class DynamicMesh {
 		int count = 0;
 
 		updateCullingInfo();
-
+		
 		long t1 = new Date().getTime();
 		
 		Side side = tooCoarse();
@@ -413,9 +419,9 @@ public abstract class DynamicMesh {
 			System.out.println(getDebugInfo(new Date().getTime() - t1));
 
 		if (side==Side.NONE) // this only happens if the LoD
-			return false; // is at the desired level
+			return true; // is at the desired level
 
-		return true;
+		return false;
 	}
 
 	/**
@@ -527,16 +533,29 @@ public abstract class DynamicMesh {
 				c.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
 	
 				// add child to drawing list
-				drawList.add(c, (c.parents[0] == t ? 0 : 1));
 	
-				if (t.getLevel() <= maxLevel && !c.isSplit())
+				if (!c.isSplit()){
+					drawList.add(c, (c.parents[0] == t ? 0 : 1));
 					splitQueue.add(c);
+				}
 			}
 
 		}
 
 		// remove from drawing list
 		drawList.remove(t);
+	}
+	
+	protected double totalError(){
+		Iterator<DynamicMeshElement> it = splitQueue.iterator();
+		double totErr = 0;
+		DynamicMeshElement e;
+		while(it.hasNext()){
+			e=it.next();
+			if(e.cullInfo!=CullInfo.OUT)
+				totErr+=e.getError();
+		}
+		return totErr;
 	}
 	
 	public void updateParameters(){
@@ -552,3 +571,4 @@ public abstract class DynamicMesh {
 		updateCullingInfo();
 	}
 }
+

@@ -152,6 +152,33 @@ class CurveSegment extends DynamicMeshElement {
 
 			if (Double.isNaN(minRadSq))
 				minRadSq = 0;
+		} else if(maxRadSq > 1e4)
+			maxRadSq = Double.POSITIVE_INFINITY;
+	}
+
+	private void generateError() {
+		// Heron's formula:
+		double a = vertices[2].distance(vertices[0]);
+		double b = vertices[1].distance(vertices[0]);
+		double c = vertices[2].distance(vertices[1]);
+
+		// coefficient based on endpoint tangent difference
+		double d = a * (1 - tangents[0].dotproduct(tangents[2]));
+
+		double s = 0.5 * (a + b + c);
+		error = Math.sqrt(s * (s - a) * (s - b) * (s - c)) + d;
+
+		// alternative error measure for singular segments
+		if(Double.isInfinite(maxRadSq))
+			error= 1e10;
+		else if (Double.isNaN(error)) {
+			// TODO: investigate whether it would be a good idea to
+			// attempt to calculate an error from any non-singular
+			// dimensions
+			d = params[1] - params[0];
+			d /= 2;
+			d *= d;
+			error = d * 1.5;
 		}
 	}
 
@@ -193,30 +220,6 @@ class CurveSegment extends DynamicMeshElement {
 			nrms[j][0] = (float) normal.getX();
 			nrms[j][1] = (float) normal.getY();
 			nrms[j][2] = (float) normal.getZ();
-		}
-	}
-
-	private void generateError() {
-		// Heron's formula:
-		double a = vertices[2].distance(vertices[0]);
-		double b = vertices[1].distance(vertices[0]);
-		double c = vertices[2].distance(vertices[1]);
-
-		// coefficient based on endpoint tangent difference
-		double d = a * (1 - tangents[0].dotproduct(tangents[2]));
-
-		double s = 0.5 * (a + b + c);
-		error = Math.sqrt(s * (s - a) * (s - b) * (s - c)) + d;
-
-		// alternative error measure for singular segments
-		if (Double.isNaN(error) || Double.isInfinite(error)) {
-			// TODO: investigate whether it would be a good idea to
-			// attempt to calculate an error from any non-singular
-			// dimensions
-			d = params[1] - params[0];
-			d /= 2;
-			d *= d;
-			error = d * 1.5;
 		}
 	}
 
@@ -396,6 +399,11 @@ class CurveTriList extends DynamicMeshTriList {
 
 			s.triListElem = new TriListElem();
 			s.triListElem.setOwner(s);
+			s.triListElem.setIndex(1);
+			
+			if (s.cullInfo == CullInfo.OUT)
+				hide(s);
+			
 			return;
 		}
 
@@ -409,6 +417,10 @@ class CurveTriList extends DynamicMeshTriList {
 			System.err.print("");
 		lm.setOwner(s);
 		s.triListElem = lm;
+		
+		if (s.cullInfo == CullInfo.OUT)
+			hide(s);
+		
 		return;
 	}
 
@@ -487,6 +499,7 @@ class CurveTriList extends DynamicMeshTriList {
 		if (s.isSingular() && s.triListElem != null
 				&& s.triListElem.getIndex() != -1) {
 			totalError -= s.error;
+			s.triListElem.setIndex(-1);
 			return true;
 		} else if (hide(s.triListElem)) {
 			totalError -= s.error;
@@ -503,6 +516,7 @@ class CurveTriList extends DynamicMeshTriList {
 
 		if (s.isSingular() && s.triListElem != null
 				&& s.triListElem.getIndex() == -1) {
+			s.triListElem.setIndex(1);
 			totalError += s.error;
 			return true;
 		} else if (show(s.triListElem)) {
@@ -559,6 +573,32 @@ class CurveTriList extends DynamicMeshTriList {
 	@Override
 	public boolean remove(DynamicMeshElement e, int i) {
 		return remove(e);
+	}
+
+	@Override
+	protected void reinsert(DynamicMeshElement a, int currentVersion) {
+		CurveSegment s = (CurveSegment)a;
+		boolean visible = (s.cullInfo==CullInfo.ALLIN || s.cullInfo==CullInfo.SOMEIN);
+		
+		if(visible){
+			totalError -= s.error;
+			totalLength -= s.length;
+		}
+		
+		s.recalculate(currentVersion);
+		
+		if(visible){
+			totalError += s.error;
+			totalLength += s.length;
+		}
+		
+		float[] vertices = getVertices(s);
+		float[] normals = getNormals(s);
+		
+		TriListElem e = s.triListElem;
+		
+		setVertices(e, vertices);
+		setNormals(e, normals);
 	}
 }
 
@@ -664,8 +704,8 @@ public class CurveMesh extends DynamicMesh {
 
 //		 split the first few elements in order to avoid problems
 //		 with periodic funtions
-//		 for (int i = 0; i < 30; i++)
-		 split(splitQueue.poll());
+		for (int i = 0; i < 30; i++)
+			split(splitQueue.poll());
 
 	}
 
@@ -676,15 +716,23 @@ public class CurveMesh extends DynamicMesh {
 	@Override
 	protected Side tooCoarse() {
 		CurveTriList d = (CurveTriList) drawList;
-
+		
 		double error = d.getError();
-		double errorGoal = 0.001 * d.getLength();
+		double totalError = totalError();
+		if(Math.abs(error-totalError)>1e-5)
+			System.err.println("mismatch!");
+		
+		double errorGoal = 0.01 * d.getLength();
 
+		double minError = 1e-3;
+		if(splitQueue.peek().getError()>minError)
+			return Side.SPLIT;
+		
 		// avoid problems with straigt lines etc
 		if (Math.abs(error) < 1e-10)
 			return Side.NONE;
-
-		if (error < errorGoal)
+		
+		if (totalError < errorGoal)
 			return Side.MERGE;
 
 		return Side.SPLIT;

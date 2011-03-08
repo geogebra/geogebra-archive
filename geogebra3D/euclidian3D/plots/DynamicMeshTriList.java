@@ -79,20 +79,16 @@ abstract class DynamicMeshTriList extends TriList {
 		int j = 0;
 		while (e != null) {
 			el = (DynamicMeshElement) e.getOwner();
-			if(el.recalculate(currentVersion));
+			if(el.lastVersion!=currentVersion)
 				list.add(el);
 			e=e.getNext();
 		}
 		Iterator<DynamicMeshElement> it = list.iterator();
 		while(it.hasNext()){
 			DynamicMeshElement a = it.next();
-			reinsert(a);
+			reinsert(a,currentVersion);
 		}
 	}
 
-	private void reinsert(DynamicMeshElement a) {
-		//TODO: speed this up
-		remove(a);
-		add(a);
-	}
+	abstract protected void reinsert(DynamicMeshElement a, int currentVersion);
 }

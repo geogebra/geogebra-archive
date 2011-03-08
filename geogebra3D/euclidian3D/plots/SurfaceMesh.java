@@ -628,6 +628,12 @@ class SurfaceTriList extends DynamicMeshTriList {
 	public boolean show(DynamicMeshElement t) {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	protected void reinsert(DynamicMeshElement a, int currentVersion) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 /**
@@ -689,6 +695,7 @@ public class SurfaceMesh extends DynamicMesh {
 	 * according to a second degree polynomial with erroCoeffs as coefficients
 	 */
 	private final double[] errorCoeffs = { 0.0015, 0, 0, 0.00012 };
+	private double maxErrorCoeff = 4.4e-6;
 
 	/**
 	 * a proportionality constant used for setting the error of diamonds where
@@ -711,10 +718,14 @@ public class SurfaceMesh extends DynamicMesh {
 
 	/** desired error per visible area unit */
 	private double desiredErrorPerAreaUnit;
+	
+	/** desired maximum error */
+	private double desiredMaxError;
 
 	@Override
 	public void setRadius(double r) {
 		radSq = r * r;
+		desiredMaxError = maxErrorCoeff*r;
 		desiredErrorPerAreaUnit = errorCoeffs[0] + errorCoeffs[1] * r
 				+ errorCoeffs[2] * radSq + Math.sqrt(r) * errorCoeffs[3];
 	}
@@ -841,11 +852,14 @@ public class SurfaceMesh extends DynamicMesh {
 	protected Side tooCoarse() {
 		SurfaceTriList d = (SurfaceTriList) drawList;
 
-		double error = d.getError();
-		double areaGoal = desiredErrorPerAreaUnit * d.getArea();
-		if (error < areaGoal)
+//		double error = d.getError();
+//		double areaGoal = desiredErrorPerAreaUnit * d.getArea();
+
+		double maxError = splitQueue.peek().getError();
+		if(maxError>desiredMaxError)
 			return Side.SPLIT;
-		return Side.SPLIT;
+		
+		return Side.MERGE;
 	}
 
 	@Override

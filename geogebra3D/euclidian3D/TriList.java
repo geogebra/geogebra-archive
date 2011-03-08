@@ -156,6 +156,16 @@ public class TriList {
 		vertexBuf.position(el.getIndex());
 		vertexBuf.put(vertices);
 	}
+	
+	/**
+	 * sets the normals of the specified element
+	 * @param el 	the element to set
+	 * @param normals 	the new normals
+	 */
+	protected void setNormals(TriListElem el, float[] normals) {
+		normalBuf.position(el.getIndex());
+		normalBuf.put(normals);
+	}
 
 	/**
 	 * @param index

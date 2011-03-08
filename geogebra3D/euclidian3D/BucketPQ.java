@@ -3,6 +3,7 @@ package geogebra3D.euclidian3D;
 import java.util.AbstractQueue;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * An approximate priority queue using buckets and linked lists. Insertion and
@@ -68,7 +69,7 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 	/**
 	 * @param ba
 	 *            the bucket assigner to use
-	 * @param reverse 
+	 * @param reverse
 	 */
 	protected BucketPQ(BucketAssigner<E> ba, boolean reverse) {
 		this(DEFAULT_BUCKET_AMT, ba, reverse);
@@ -79,7 +80,7 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 	 *            the number of buckets to use
 	 * @param ba
 	 *            the bucket assigner to use
-	 * @param reverse 
+	 * @param reverse
 	 */
 	@SuppressWarnings("unchecked")
 	public BucketPQ(int bucketAmt, BucketAssigner<E> ba, boolean reverse) {
@@ -88,13 +89,13 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 		backs = (Link<E>[]) new Link[bucketAmt];
 		this.bucketAssigner = ba;
 		this.reverse = reverse;
-		
+
 		linkAssociations = new HashMap<E, BucketPQ.Link<E>>();
 	}
-	
-	private int getIndex(E el){
+
+	private int getIndex(E el) {
 		int i = bucketAssigner.getBucketIndex(el, bucketAmt);
-		return reverse?bucketAmt-1-i:i;
+		return reverse ? bucketAmt - 1 - i : i;
 	}
 
 	/**
@@ -107,7 +108,7 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 	public boolean add(Object ob) {
 		@SuppressWarnings("unchecked")
 		E object = (E) ob;
-		
+
 		if (null == object)
 			throw new NullPointerException();
 
@@ -215,10 +216,40 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 		return elem.data;
 	}
 
-	@Override
 	public Iterator<E> iterator() {
-		// TODO actually implement an iterator
-		return null;
+		
+		return new Iterator<E>() {
+			private Link<E> el = buckets[0];
+			private int bucket;
+			
+			public boolean hasNext() {
+				Link<E> a = el==null?null:el.next;
+				int b2 = bucket;
+				while (a==null){
+					b2++;
+					if(b2>BucketPQ.this.maxBucket)
+						return false;
+					a=buckets[b2];
+				}
+				return true;
+			}
+
+			public E next() {
+				el = el==null?null:el.next;
+				while (el==null){
+					bucket++;
+					if(bucket>BucketPQ.this.maxBucket)
+						throw new NoSuchElementException();
+					el=buckets[bucket];
+				}
+				return el.data;
+			}
+
+			public void remove() {
+				BucketPQ.this.remove(el);
+				el=el.next;
+			}
+		};
 	}
 
 	@Override

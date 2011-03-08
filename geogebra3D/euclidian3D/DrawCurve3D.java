@@ -140,7 +140,6 @@ public class DrawCurve3D extends Drawable3DCurves {
 			if (!curve.isEuclidianVisible() || !curve.isDefined()){
 				setGeometryIndex(-1);
 			
-			//} else if(needRedraw()){
 			}else{
 				
 
