@@ -5143,6 +5143,21 @@ public class Kernel {
 		return S;
 	}
 	
+	/** 
+	 * Intersects f and g using starting point A (with Newton's root finding)
+	 */
+	final public GeoPoint[] IntersectFunctions(
+			String[] labels,
+			GeoFunction f,
+			GeoFunction g, 
+			NumberValue left,
+			NumberValue right) {
+		AlgoRoots algo = new AlgoRoots(cons, labels, f, g, left, right);
+		GeoPoint[] S = algo.getRootPoints();
+		return S;
+	}//IntersectFunctions(label,f,g,left,right)
+	
+	
 	/*********************************************
 	 * CONIC PART
 	 *********************************************/
