@@ -282,6 +282,7 @@ public class CASmathpiper extends CASgeneric {
 		ggbMathPiper.evaluate("log2(x) := Ln(x) / Ln(2);");
 		ggbMathPiper.evaluate("logB(b, x) := Ln(x) / Ln(b);");
 		ggbMathPiper.evaluate("cbrt(x) := x^(1/3);");
+		ggbMathPiper.evaluate("RandomNormal(mu,sigma) := N(Cos(2*Pi*Random())*Sqrt(-2*LogN(Random()))*Sqrt(sigma)+mu);");
 		
 		// Rules for equation manipulation
 		// allow certain commands for equations

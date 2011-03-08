@@ -412,7 +412,13 @@ public class CASmaxima extends CASgeneric {
 	    
 	    // needed for degree()
 	    ggbMaxima.executeCall("load(powers)$");
-	       
+	    
+	    // needed for mean, variance, ...
+	    ggbMaxima.executeCall("load(descriptive)$");
+	    
+	    //needed for random_distrib
+	    ggbMaxima.executeCall("load(distrib)$");
+	    
 	    // needed for ???
 	    ggbMaxima.executeCall("load(format)$");
 	    
