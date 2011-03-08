@@ -130,21 +130,22 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         
         //matrix.add
         Translateable tranOut = (Translateable) out;
-        double qx, qy,s,c;
+        double qx=0.0d, qy=0.0d,s,c;
         if(l instanceof GeoLine){
         if (Math.abs(l.x) > Math.abs(l.y)) {
-            qx = l.z / l.x;
-            qy = 0.0d;
-        } else {
-            qx = 0.0d;
+            qx = l.z / l.x;            
+        } else {            
             qy = l.z / l.y;
         }
         s=-l.x/Math.sqrt(l.x*l.x+l.y*l.y);
         c=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
         }
         else{
+        	GeoPoint sp = ((GeoVector)l).getStartPoint();
+        	if(sp!=null){
         	 qx = -((GeoVector)l).getStartPoint().x;
         	 qy = -((GeoVector)l).getStartPoint().y;
+        	}        	
         	 s=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
              c=l.x/Math.sqrt(l.x*l.x+l.y*l.y);
         }
