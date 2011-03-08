@@ -470,6 +470,9 @@ public class SpreadsheetTraceManager {
 	 */
 	public void traceToSpreadsheet(GeoElement geo) {
 
+		// stop spurious numbers after undo
+		if (kernel.isViewReiniting()) return;
+
 		if(!traceGeoCollection.containsKey(geo)) return;				
 		TraceSettings t = traceGeoCollection.get(geo);
 		Construction cons = app.getKernel().getConstruction();

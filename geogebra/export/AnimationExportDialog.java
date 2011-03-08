@@ -178,7 +178,7 @@ public class AnimationExportDialog extends JDialog {
 				throw new NumberFormatException();
 			}
 		} catch(NumberFormatException e) {
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", tfTimeBetweenFrames.getText());
 			return;
 		}
 		

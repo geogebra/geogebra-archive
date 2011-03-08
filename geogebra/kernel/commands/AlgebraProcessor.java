@@ -270,7 +270,7 @@ public class AlgebraProcessor {
 		} catch (Exception ex) {
 			Application.debug("Exception");
 			ex.printStackTrace();
-			throw new Exception("InvalidInput");
+			throw new Exception("InvalidInput" + ":\n" + ex.getLocalizedMessage());
 		}
 		return geoElements;
 	}
@@ -288,7 +288,7 @@ public class AlgebraProcessor {
 			return nv.getDouble();
 		} catch (Exception e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 			return Double.NaN;
 		} catch (MyError e) {
 			e.printStackTrace();
@@ -296,7 +296,7 @@ public class AlgebraProcessor {
 			return Double.NaN;
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 			return Double.NaN;
 		}
 	}
@@ -319,13 +319,13 @@ public class AlgebraProcessor {
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 		} catch (MyError e) {
 			e.printStackTrace();
 			app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
@@ -351,13 +351,13 @@ public class AlgebraProcessor {
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 		} catch (MyError e) {
 			e.printStackTrace();
 			app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
@@ -383,20 +383,20 @@ public class AlgebraProcessor {
 				func = f.getGeoFunction();
 			}						
 			else 
-				if (!suppressErrors) app.showError("InvalidInput");
+				if (!suppressErrors) app.showError("InvalidInput", str);
 			
 		} catch (CircularDefinitionException e) {
 			Application.debug("CircularDefinition");
 			if (!suppressErrors) app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			if (!suppressErrors) app.showError("InvalidInput");
+			if (!suppressErrors) app.showError("InvalidInput", str);
 		} catch (MyError e) {
 			e.printStackTrace();
 			if (!suppressErrors) app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			if (!suppressErrors) app.showError("InvalidInput");
+			if (!suppressErrors) app.showError("InvalidInput", str);
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
@@ -422,13 +422,13 @@ public class AlgebraProcessor {
 			if (!suppressErrors) app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			if (!suppressErrors) app.showError("InvalidInput");
+			if (!suppressErrors) app.showError("InvalidInput", str);
 		} catch (MyError e) {
 			e.printStackTrace();
 			if (!suppressErrors) app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			if (!suppressErrors) app.showError("InvalidInput");
+			if (!suppressErrors) app.showError("InvalidInput", str);
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
@@ -459,13 +459,13 @@ public class AlgebraProcessor {
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 		} catch (MyError e) {
 			e.printStackTrace();
 			app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
@@ -491,13 +491,13 @@ public class AlgebraProcessor {
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 		} catch (MyError e) {
 			e.printStackTrace();
 			app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			app.showError("InvalidInput");
+			app.showError("InvalidInput", str);
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);
@@ -525,13 +525,13 @@ public class AlgebraProcessor {
 			app.showError("CircularDefinition");
 		} catch (Exception e) {		
 			e.printStackTrace();
-			if(showErrors)app.showError("InvalidInput");			
+			if(showErrors)app.showError("InvalidInput", str);			
 		} catch (MyError e) {
 			e.printStackTrace();
 			if(showErrors)app.showError(e);
 		} catch (Error e) {
 			e.printStackTrace();
-			if(showErrors)app.showError("InvalidInput");			 
+			if(showErrors)app.showError("InvalidInput", str);			 
 		} 
 		
 		cons.setSuppressLabelCreation(oldMacroMode);

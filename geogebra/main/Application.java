@@ -2461,6 +2461,10 @@ public class Application implements KeyEventDispatcher {
 		showErrorDialog(getError(key));
 	}
 
+	public void showError(String key, String error) {
+		showErrorDialog(getError(key)+":\n"+error);
+	}
+
 	public void showError(MyError e) {
 		String command = e.getcommandName();
 		

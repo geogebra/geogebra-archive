@@ -41,7 +41,7 @@ public class RenameInputHandler implements InputHandler {
 			return false;
 		
 		if (!checkName(geo, inputValue)) {
-			app.showError(app.getError("InvalidInput") + ":\n" + inputValue);
+			app.showError("InvalidInput", inputValue);
 			return false;
 		}
 
@@ -66,9 +66,9 @@ public class RenameInputHandler implements InputHandler {
 
 			return true;
 		} catch (Exception e) {
-			app.showError(app.getError("InvalidInput") + ":\n" + inputValue);
+			app.showError("InvalidInput", inputValue);
 		} catch (MyError err) {
-			app.showError(app.getError("InvalidInput") + ":\n" + inputValue);
+			app.showError("InvalidInput", inputValue);
 		}
 		return false;
 	}

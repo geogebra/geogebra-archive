@@ -361,7 +361,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 				int windowHeight = Integer.parseInt(tfKeyboardHeight.getText());
 				virtualKeyboard.setWindowHeight(windowHeight);
 			} catch(NumberFormatException ex) {
-				app.showError("InvalidInput");
+				app.showError("InvalidInput", tfKeyboardHeight.getText());
 				tfKeyboardHeight.setText(Integer.toString(virtualKeyboard.getHeight()));
 			}
 		} else if(e.getSource() == tfKeyboardWidth) {
@@ -369,7 +369,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 				int windowWidth = Integer.parseInt(tfKeyboardWidth.getText());
 				virtualKeyboard.setWindowWidth(windowWidth);
 			} catch(NumberFormatException ex) {
-				app.showError("InvalidInput");
+				app.showError("InvalidInput", tfKeyboardWidth.getText());
 				tfKeyboardWidth.setText(Integer.toString(virtualKeyboard.getWidth()));
 			}
 		}
