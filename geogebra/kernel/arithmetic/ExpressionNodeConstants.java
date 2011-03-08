@@ -31,8 +31,8 @@ public interface ExpressionNodeConstants {
     public static final int PARALLEL = -6;  
     public static final int PERPENDICULAR = -5;
     public static final int IS_ELEMENT_OF = -4;
-    public static final int CONTAINS = -3;
-    public static final int CONTAINS_STRICT = -2;
+    public static final int IS_SUBSET_OF = -3;
+    public static final int IS_SUBSET_OF_STRICT = -2;
     public static final int SET_DIFFERENCE = -1;
     
     public static final String strNOT = "\u00ac";
@@ -46,8 +46,8 @@ public interface ExpressionNodeConstants {
     public static final String strPERPENDICULAR = "\u22a5";
     public static final String strVECTORPRODUCT = "\u2297";
     public static final String strIS_ELEMENT_OF = "\u2208";
-    public static final String strCONTAINS = "\u2286";
-    public static final String strCONTAINS_STRICT = "\u2282";
+    public static final String strIS_SUBSET_OF = "\u2286";
+    public static final String strIS_SUBSET_OF_STRICT = "\u2282";
     public static final String strSET_DIFFERENCE = "\\";
         
     // arithmetic

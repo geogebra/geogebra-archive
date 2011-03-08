@@ -67,8 +67,8 @@ public class TableSymbols {
 		ExpressionNode.strPARALLEL,
 		ExpressionNode.strPERPENDICULAR,
 		ExpressionNode.strIS_ELEMENT_OF,
-		ExpressionNode.strCONTAINS,
-		ExpressionNode.strCONTAINS_STRICT,
+		ExpressionNode.strIS_SUBSET_OF,
+		ExpressionNode.strIS_SUBSET_OF_STRICT,
 		
 
 		"\u2220", //ANGLE
@@ -135,8 +135,8 @@ public class TableSymbols {
 				{ ExpressionNode.strPARALLEL , app.getMenu("Symbol.Parallel" )},   
 				{ ExpressionNode.strPERPENDICULAR , app.getMenu("Symbol.Perpendicular" )},   
 				{ ExpressionNode.strIS_ELEMENT_OF , app.getMenu("Symbol.ElementOf" )},   
-				{ ExpressionNode.strCONTAINS , app.getMenu("Symbol.Contains" )},   
-				{ ExpressionNode.strCONTAINS_STRICT , app.getMenu("Symbol.StrictContains" )},   
+				{ ExpressionNode.strIS_SUBSET_OF , app.getMenu("Symbol.Contains" )},   
+				{ ExpressionNode.strIS_SUBSET_OF_STRICT , app.getMenu("Symbol.StrictContains" )},   
 				{ "\u2220" , app.getMenu("Symbol.Angle" )},   
 				{ "\u2221" , app.getMenu("Symbol.AngleMeasure" )},   
 				{ "\u00b2" , app.getMenu("Symbol.Square" )},   //exponents^2
@@ -1573,8 +1573,8 @@ public class TableSymbols {
 		ExpressionNode.strPARALLEL,
 		ExpressionNode.strPERPENDICULAR,
 		ExpressionNode.strIS_ELEMENT_OF,
-		ExpressionNode.strCONTAINS,
-		ExpressionNode.strCONTAINS_STRICT,
+		ExpressionNode.strIS_SUBSET_OF,
+		ExpressionNode.strIS_SUBSET_OF_STRICT,
 	};
 
 
@@ -1598,8 +1598,8 @@ public class TableSymbols {
 		ExpressionNode.strPARALLEL,
 		ExpressionNode.strPERPENDICULAR,
 		ExpressionNode.strIS_ELEMENT_OF,
-		ExpressionNode.strCONTAINS,
-		ExpressionNode.strCONTAINS_STRICT,
+		ExpressionNode.strIS_SUBSET_OF,
+		ExpressionNode.strIS_SUBSET_OF_STRICT,
 
 	};
 

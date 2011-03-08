@@ -82,8 +82,8 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 	        }
         	else if (operation != EQUAL_BOOLEAN  // added EQUAL_BOOLEAN Michael Borcherds 2008-04-12	
 	            	&& operation != NOT_EQUAL // ditto	
-	            	&& operation != CONTAINS // ditto	
-	            	&& operation != CONTAINS_STRICT // ditto		            	
+	            	&& operation != IS_SUBSET_OF // ditto	
+	            	&& operation != IS_SUBSET_OF_STRICT // ditto		            	
 	            	&& operation != SET_DIFFERENCE // ditto	
 	            	&& operation != ELEMENT_OF // list1(1) to get first element	
 	            	&& !rt.isVectorValue() // eg {1,2} + (1,2)
@@ -205,22 +205,22 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             }
         }         	
             	
-        case CONTAINS:
+        case IS_SUBSET_OF:
         {       	
         	if (lt.isListValue() && rt.isListValue()) {
-        		return new MyBoolean(MyList.listContains(((ListValue)lt).getMyList(), ((ListValue)rt).getMyList()));
+        		return new MyBoolean(MyList.listContains(((ListValue)rt).getMyList(), ((ListValue)lt).getMyList()));
         	} else {    
-                String [] str = { "IllegalListOperation", lt.toString(), strCONTAINS,  rt.toString() };
+                String [] str = { "IllegalListOperation", lt.toString(), strIS_SUBSET_OF,  rt.toString() };
                 throw new MyError(app, str);
             }
         }         	
             	
-        case CONTAINS_STRICT:
+        case IS_SUBSET_OF_STRICT:
         {       	
         	if (lt.isListValue() && rt.isListValue()) {
-        		return new MyBoolean(MyList.listContainsStrict(((ListValue)lt).getMyList(), ((ListValue)rt).getMyList()));
+        		return new MyBoolean(MyList.listContainsStrict(((ListValue)rt).getMyList(), ((ListValue)lt).getMyList()));
         	} else {    
-                String [] str = { "IllegalListOperation", lt.toString(), strCONTAINS_STRICT,  rt.toString() };
+                String [] str = { "IllegalListOperation", lt.toString(), strIS_SUBSET_OF_STRICT,  rt.toString() };
                 throw new MyError(app, str);
             }
         }         	

@@ -1317,7 +1317,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			// sb.append(rightStr);
 			break;
 
-		case CONTAINS:
+		case IS_SUBSET_OF:
 			append(sb, leftStr, left, operation, STRING_TYPE);
 			// sb.append(leftStr);
 			sb.append(' ');
@@ -1327,14 +1327,14 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			default:
-				sb.append(strCONTAINS);
+				sb.append(strIS_SUBSET_OF);
 			}
 			sb.append(' ');
 			append(sb, rightStr, right, operation, STRING_TYPE);
 			// sb.append(rightStr);
 			break;
 
-		case CONTAINS_STRICT:
+		case IS_SUBSET_OF_STRICT:
 			append(sb, leftStr, left, operation, STRING_TYPE);
 			// sb.append(leftStr);
 			sb.append(' ');
@@ -1344,7 +1344,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			default:
-				sb.append(strCONTAINS_STRICT);
+				sb.append(strIS_SUBSET_OF_STRICT);
 			}
 			sb.append(' ');
 			append(sb, rightStr, right, operation, STRING_TYPE);

@@ -181,8 +181,8 @@ TOKEN :  {
   | < EQUAL_BOOLEAN: ("==" | "\u225f" ) >
   | < NOT_EQUAL: ("!=" | "\u2260" ) >
   | < IS_ELEMENT_OF: "\u2208" >
-  | < CONTAINS: "\u2286" >
-  | < CONTAINS_STRICT: "\u2282" >
+  | < IS_SUBSET_OF: "\u2286" >
+  | < IS_SUBSET_OF_STRICT: "\u2282" >
   | < SET_DIFFERENCE: "\\" >
   | < LESS:		"<" >
   | < GREATER:	">" >
@@ -1111,15 +1111,15 @@ ExpressionValue COMPAREterm():
          }
        )   
      |   
-       (<CONTAINS>  right = plusminusnode()
+       (<IS_SUBSET_OF>  right = plusminusnode()
     	 {            
-           result = new ExpressionNode(kernel, left, ExpressionNode.CONTAINS, right);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.IS_SUBSET_OF, right);  
          }
        )   
      |   
-       (<CONTAINS_STRICT>  right = plusminusnode()
+       (<IS_SUBSET_OF_STRICT>  right = plusminusnode()
     	 {            
-           result = new ExpressionNode(kernel, left, ExpressionNode.CONTAINS_STRICT, right);  
+           result = new ExpressionNode(kernel, left, ExpressionNode.IS_SUBSET_OF_STRICT, right);  
          }
        )   
      |   
