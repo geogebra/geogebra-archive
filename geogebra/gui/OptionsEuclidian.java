@@ -235,7 +235,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		axesOptionsPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Axes")));
 		
 		// show axes
-		cbShowAxes = new JCheckBox(app.getMenu(app.getPlain("Show") + " " + "Axes")); 						
+		cbShowAxes = new JCheckBox(app.getPlain("ShowAxes")); 						
 		axesOptionsPanel.add(cbShowAxes);  
 		axesOptionsPanel.add(Box.createRigidArea(new Dimension(10,0)));
 		
@@ -319,7 +319,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		//-------------------------------------
 		// show grid panel            
 		JPanel showGridPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, hgap,vgap));
-        cbShowGrid = new JCheckBox(app.getPlain("Show") + " " + app.getMenu("Grid"));  
+        cbShowGrid = new JCheckBox(app.getPlain("ShowGrid"));  
         cbShowGrid.addActionListener(this);        
         showGridPanel.add(cbShowGrid, BorderLayout.NORTH); 
        
