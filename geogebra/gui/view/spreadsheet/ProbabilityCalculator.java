@@ -339,21 +339,21 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		// create panel to hold the entry fields
 		JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		JLabel lbl1 = new JLabel("P( ");
+		JLabel lbl1 = new JLabel(app.getPlain("ProbabilityOf"));
 
 		fldLow = new MyTextField(app.getGuiManager());
 		fldLow.setColumns(6);
 		fldLow.addActionListener(this);
 		fldLow.addFocusListener(this);
 
-		intervalLabel = new JLabel(" \u2264 X \u2264 ");   // <= X <=
+		intervalLabel = new JLabel(app.getPlain("XBetween"));   // <= X <=
 
 		fldHigh = new MyTextField(app.getGuiManager());
 		fldHigh.setColumns(6);
 		fldHigh.addActionListener(this);
 		fldHigh.addFocusListener(this);
 
-		JLabel lbl3 = new JLabel(" ) = ");
+		JLabel lbl3 = new JLabel(app.getPlain("EndProbabilityOf"));
 
 		fldResult = new MyTextField(app.getGuiManager());
 		fldResult.setColumns(6);
@@ -880,7 +880,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			highPoint.setEuclidianVisible(true);			
 			fldLow.setVisible(true);
 			fldHigh.setVisible(true);
-			intervalLabel.setText(" \u2264 X \u2264 ");
+			intervalLabel.setText(app.getPlain("XBetween"));
 
 			low = plotSettings.xMin + 0.4*(plotSettings.xMax -plotSettings.xMin);
 			high = plotSettings.xMin + 0.6*(plotSettings.xMax -plotSettings.xMin);
@@ -892,7 +892,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			highPoint.setEuclidianVisible(true);
 			fldLow.setVisible(false);
 			fldHigh.setVisible(true);
-			intervalLabel.setText(" X \u2264 ");
+			intervalLabel.setText(app.getPlain("XLessThanOrEqual"));
 			if(isContinuous)
 				low = plotSettings.xMin - 1; // move offscreen so the integral looks complete
 			else
@@ -905,7 +905,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			highPoint.setEuclidianVisible(false);
 			fldLow.setVisible(true);
 			fldHigh.setVisible(false);
-			intervalLabel.setText(" \u2264 X ");
+			intervalLabel.setText(app.getPlain("LessThanOrEqualToX"));
 			if(isContinuous)
 				high = plotSettings.xMax + 1; // move offscreen so the integral looks complete
 			else
