@@ -39,13 +39,13 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
 	
     protected GeoFunction f;			 // For calculation of y-values 
     
-    protected GeoPoint[] Points;		// output in subcclass  
+    protected GeoPoint[] points;		// output in subcclass  
 
     private String[] labels;
     private boolean initLabels;
 	protected boolean setLabels;
 	
-    double[] 		curXValues = new double[30]; // current x-values
+    //remove? double[] 		curXValues = new double[30]; // current x-values
     int 			numberOfXValues;
 
     //Function yValFunction;
@@ -70,7 +70,7 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
         
         //  make sure root points is not null
         int number = labels == null ? 1 : Math.max(1, labels.length);
-        Points = new GeoPoint[0];
+        points = new GeoPoint[0];
         initPoints(number);
         initLabels = true;  
         // setInputOutput, compute(), show at least one point: must be done in subclass.
@@ -99,17 +99,41 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
 
 
     public GeoPoint[] getPoints() {
-        return Points;
+        return points;
     }//getPoints()
 
 
-
+    //delete?
     final private void removeX(int pos) {    
     	for (int i = pos+1; i < numberOfXValues; i++) {
-    		curXValues[i-1] = curXValues[i];
+    		//curXValues[i-1] = curXValues[i];
     	}    
         numberOfXValues--;
     }//removeX(pos)
+    
+	// Show at least one root point in algebra view
+	// Copied from AlgoRootsPolynomial...
+    protected final void showOneRootInAlgebraView(){	
+    	if(!points[0].isDefined() ) {
+    		points[0].setCoords(0,0,1);
+    		points[0].update();
+    		points[0].setUndefined();
+    		points[0].update();
+    	}//if list not defined
+    }//showOneRootInAlgebraView()
+    
+    protected final static void removeDuplicates(double[] tab){
+    	Arrays.sort(tab);
+    	int maxIndex=0;
+    	double max=tab[0];
+    	for(int i=1; i<tab.length;i++) {
+    		if((tab[i]-max) > Kernel.MIN_PRECISION){
+    			max=tab[i];
+    			maxIndex++;
+    			tab[maxIndex]=max;
+    		}//if greater
+    	}//for
+    }//removeDuplicates(double[])
 
     // roots array and number of roots
     protected final void setPoints(double[] curXValues, int number) {
@@ -118,7 +142,7 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
         // now set the new values of the roots
         for (int i = 0; i < number; i++) {
 
-                Points[i].setCoords(
+                points[i].setCoords(
                     curXValues[i],
                     f.evaluate(curXValues[i]),							//yValFunction.evaluate(curXValues[i]),
                     1.0);
@@ -128,33 +152,34 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
         }//for
 
         // all other roots are undefined
-        for (int i = number; i < Points.length; i++) {
-            Points[i].setUndefined();
+        for (int i = number; i < points.length; i++) {
+            points[i].setUndefined();
         }//
 
         if (setLabels)
             updateLabels(number);
+        noUndefinedPointsInAlgebraView(points);			//**** experiment****
     }//setPoints(double[],n)
 
     // number is the number of current roots
     protected void updateLabels(int number) {  
     	if (initLabels) {
-    		GeoElement.setLabels(labels, Points);
+    		GeoElement.setLabels(labels, points);
     		initLabels = false;
     	} else {	    
 	        for (int i = 0; i < number; i++) {
 	            //  check labeling      
-	            if (!Points[i].isLabelSet()) {
+	            if (!points[i].isLabelSet()) {
 	            	// use user specified label if we have one
 	            	String newLabel = (labels != null && i < labels.length) ? labels[i] : null;	            	
-	                Points[i].setLabel(newLabel);	                
+	                points[i].setLabel(newLabel);	                
 	            }//if
 	        }//for
     	}//if
         
         // all other roots are undefined
-        for (int i = number; i < Points.length; i++) {
-        	Points[i].setUndefined();						//Points[i].setAlgebraVisible(false);
+        for (int i = number; i < points.length; i++) {
+        	points[i].setUndefined();						//Points[i].setAlgebraVisible(false);
         }//for
     }//updateLabels(n)
     
@@ -171,8 +196,8 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
      */
     void remove(GeoElement output) {
     	// only single undefined points may be removed       
-        for (int i = 0; i < Points.length; i++) {
-        	if (Points[i] == output && !Points[i].isDefined()) {
+        for (int i = 0; i < points.length; i++) {
+        	if (points[i] == output && !points[i].isDefined()) {
         		removePoint(i);      		
         		return;
         	}//if            
@@ -185,33 +210,33 @@ public abstract class AlgoGeoPointsFunction extends AlgoElement{
 
     protected void initPoints(int number) {
         // make sure that there are enough points   
-        if (Points.length < number) {
+        if (points.length < number) {
             GeoPoint[] temp = new GeoPoint[number];
-            for (int i = 0; i < Points.length; i++) {
-                temp[i] = Points[i];
+            for (int i = 0; i < points.length; i++) {
+                temp[i] = points[i];
                 temp[i].setCoords(0, 0, 1); // init as defined
             }
-            for (int i = Points.length; i < temp.length; i++) {
+            for (int i = points.length; i < temp.length; i++) {
                 temp[i] = new GeoPoint(cons);
                 temp[i].setCoords(0, 0, 1); // init as defined
                 temp[i].setParentAlgorithm(this);
             }
-            Points = temp;
-            output = Points;
+            points = temp;
+            output = points;
         }//if
     }//initPoints(n)
     
     private void removePoint(int pos) {
-    	Points[pos].doRemove();
+    	points[pos].doRemove();
     	
     	// build new rootPoints array without the removed point
-    	GeoPoint[] temp = new GeoPoint[Points.length - 1];
+    	GeoPoint[] temp = new GeoPoint[points.length - 1];
     	int i;
     	for (i=0; i < pos; i++) 
-    		temp[i] = Points[i];        		
-    	for (i=pos+1; i < Points.length; i++) 
-    		temp[i-1] = Points[i];
-    	Points = temp;
+    		temp[i] = points[i];        		
+    	for (i=pos+1; i < points.length; i++) 
+    		temp[i-1] = points[i];
+    	points = temp;
     }//removePoint(int pos)
 
  // * //--- SNIP (after debugging and testing) -------------------------   
