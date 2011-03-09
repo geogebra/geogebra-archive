@@ -87,9 +87,9 @@ class OptionsSpreadsheet extends JPanel  implements ActionListener, FocusListene
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		
-		tabbedPane.addTab("Layout",null, new JScrollPane(buildLayoutOptionsPanel()));
+		tabbedPane.addTab(app.getMenu("Layout"),null, new JScrollPane(buildLayoutOptionsPanel()));
 		if(app.hasFullPermissions())
-			tabbedPane.addTab("Browser",null, new JScrollPane(buildBrowserOptionsPanel()));
+			tabbedPane.addTab(app.getMenu("Browser"),null, new JScrollPane(buildBrowserOptionsPanel()));
 		add(tabbedPane);
 		
 		

@@ -146,7 +146,7 @@ public class SpreadsheetContextMenu extends JPopupMenu
 		//        Insert (new row or new column)
 		// ===============================================
 		if(selectionType == MyTable.COLUMN_SELECT || selectionType == MyTable.ROW_SELECT){
-			subMenu = new JMenu(app.getMenu("Insert") + " ...");
+			subMenu = new JMenu(app.getPlain("Insert") + " ...");
 			subMenu.setIcon(app.getEmptyIcon()); 	 	
 			addItem(subMenu);   	 	
 
