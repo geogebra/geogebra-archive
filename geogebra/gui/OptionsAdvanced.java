@@ -390,7 +390,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		tooltipLanguageLabel.setText(app.getPlain("TooltipLanguage")+":");
 		tooltipTimeoutLabel.setText(app.getPlain("TooltipTimeout")+":");
 		
-		languagePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Language")));
+		languagePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Language")));
 		cbUseLocalDigits.setText(app.getPlain("LocalizedDigits"));
 		cbUseLocalLabels.setText(app.getPlain("LocalizedLabels"));
 		
