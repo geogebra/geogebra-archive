@@ -285,30 +285,19 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 	
 	public void addToDrawable3DLists(Drawable3DLists lists){
 		super.addToDrawable3DLists(lists);
-		addToDrawable3DLists(lists,DRAW_TYPE_SURFACES);
-		
-		/*
-		switch(((GeoConicND) getGeoElement()).getType()){
-		case GeoConic.CONIC_CIRCLE:
-		case GeoConic.CONIC_ELLIPSE:
+		if (((GeoConicND) getGeoElement()).isEndOfQuadric())
+			addToDrawable3DLists(lists,DRAW_TYPE_CLOSED_SURFACES);
+		else
 			addToDrawable3DLists(lists,DRAW_TYPE_SURFACES);
-			break;
-		}
-		*/
 	}
     
     public void removeFromDrawable3DLists(Drawable3DLists lists){
     	super.removeFromDrawable3DLists(lists);
-    	removeFromDrawable3DLists(lists,DRAW_TYPE_SURFACES);
-    	/*
-    	switch(((GeoConicND) getGeoElement()).getType()){
-		case GeoConic.CONIC_CIRCLE:
-		case GeoConic.CONIC_ELLIPSE:
-			removeFromDrawable3DLists(lists,DRAW_TYPE_SURFACES);
-			break;
-		}
-		*/
-    	
+		if (((GeoConicND) getGeoElement()).isEndOfQuadric())
+	    	removeFromDrawable3DLists(lists,DRAW_TYPE_CLOSED_SURFACES);
+		else
+	    	removeFromDrawable3DLists(lists,DRAW_TYPE_SURFACES);
+   	
     }
     
     
@@ -421,6 +410,8 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 		}
 		
 	}
+	
+	
 
 
 }

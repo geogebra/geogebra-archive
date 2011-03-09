@@ -124,7 +124,6 @@ public abstract class Drawable3DCurves extends Drawable3D {
 		return false;
 	}
 	
-	
 	public void addToDrawable3DLists(Drawable3DLists lists){
 		addToDrawable3DLists(lists,DRAW_TYPE_CURVES);
 	}

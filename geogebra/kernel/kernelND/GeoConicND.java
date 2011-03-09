@@ -133,6 +133,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	
 	
 	
+	
+	
 	/**
 	 * 
 	 * @param i
@@ -3021,6 +3023,61 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	} 
 
 	
+	
+	
+	//////////////////////////
+    // AREA
+    //////////////////////////
+    
+    private double area;
+
+    public void calcArea(){
+
+    	switch(type){
+    	case CONIC_CIRCLE:
+    		area=getHalfAxis(0)*getHalfAxis(0)*Math.PI;
+    		break;
+    	case CONIC_SINGLE_POINT:
+    		area=0;
+    		break;
+    	default:
+    		Application.printStacktrace("TODO (type="+type+")");
+    	}
+    }
+    
+    public void setArea(double area){
+    	this.area=area;
+    }
+
+    public double getArea(){
+    	if (defined)
+    		return area;				        
+    	else{
+    		Application.printStacktrace("TODO");
+    		return Double.NaN;	
+    	}
+    }	
+
+    
+
+	// for 3D
+	private boolean isEndOfQuadric = false;
+	
+	/**
+	 * set if this is end of a quadric
+	 * @param flag
+	 */
+	public void setIsEndOfQuadric(boolean flag){
+		isEndOfQuadric = flag;
+	}
+	
+	/**
+	 * 
+	 * @return true if this is end of a quadric
+	 */
+	public boolean isEndOfQuadric(){
+		return isEndOfQuadric;
+	}
 	
 		
 	

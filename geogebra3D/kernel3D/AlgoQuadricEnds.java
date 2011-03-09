@@ -35,30 +35,27 @@ import geogebra.main.Application;
 public class AlgoQuadricEnds extends AlgoElement3D {
 
  
-    private GeoQuadricND quadric; // input
-	private GeoPointND point; // input
-	private GeoPointND pointThrough; // input
+    private GeoQuadric3DLimited quadric; // input
     private GeoConic3D section1, section2; // output       
     private CoordSys coordsys1, coordsys2;
 
-    public AlgoQuadricEnds(Construction cons, GeoQuadricND quadric, GeoPointND point, GeoPointND pointThrough) {
+    
+    public AlgoQuadricEnds(Construction cons, GeoQuadric3DLimited quadric) {
         super(cons);
         
         this.quadric = quadric;
-        this.point = point;
-        this.pointThrough = pointThrough;
         section1 = new GeoConic3D(cons);
         coordsys1 = new CoordSys(2);
 		section1.setCoordSys(coordsys1);
+		section1.setIsEndOfQuadric(true);
         section2 = new GeoConic3D(cons);
         coordsys2 = new CoordSys(2);
 		section2.setCoordSys(coordsys2);
+		section2.setIsEndOfQuadric(true);
 		
-		//setUpdateAfterAlgo(quadric.getParentAlgorithm());
-		
-		setInputOutput(new GeoElement[] {(GeoElement) quadric, (GeoElement) point, (GeoElement) pointThrough}, new GeoElement[] {(GeoElement) point, (GeoElement) pointThrough}, new GeoElement[] {section1, section2});
+		setInputOutput(new GeoElement[] {(GeoElement) quadric},  new GeoElement[] {section1, section2});
 
-		
+		compute();
 
     }
 
@@ -76,7 +73,7 @@ public class AlgoQuadricEnds extends AlgoElement3D {
     protected final void compute() {
     	
     	
-    	if (!point.isDefined() || point.isInfinite() || !pointThrough.isDefined() || pointThrough.isInfinite() || !quadric.isDefined()){
+    	if (!quadric.isDefined()){
     		section1.setUndefined();
     		section2.setUndefined();
     		return;
@@ -87,8 +84,8 @@ public class AlgoQuadricEnds extends AlgoElement3D {
     	
     	CoordMatrix qm = quadric.getSymetricMatrix();
     	CoordMatrix pm = new CoordMatrix(4,3);
-    	Coords o1 = point.getInhomCoordsInD(3);
-    	Coords o2 = pointThrough.getInhomCoordsInD(3);
+    	Coords o1 = quadric.getMidpoint3D().add(quadric.getEigenvec3D(2).mul(quadric.getMin()));//point.getInhomCoordsInD(3);
+    	Coords o2 = quadric.getMidpoint3D().add(quadric.getEigenvec3D(2).mul(quadric.getMax()));//pointThrough.getInhomCoordsInD(3);
     	pm.setOrigin(o1);
     	Coords[] v = o2.sub(o1).completeOrthonormal();  	
     	pm.setVx(v[0]);
@@ -98,10 +95,12 @@ public class AlgoQuadricEnds extends AlgoElement3D {
     	//sets the conic matrix from plane and quadric matrix
     	CoordMatrix cm = pmt.mul(qm).mul(pm);
     	
+    	//Application.debug("pm=\n"+pm+"\nqm=\n"+qm+"\ncm=\n"+cm);
+    	
     	coordsys1.resetCoordSys();
       	coordsys1.addPoint(o1);
        	coordsys1.addVector(v[0]);
-       	coordsys1.addVector(v[1]);
+       	coordsys1.addVector(v[1].mul(-1)); //orientation out of the quadric
        	coordsys1.makeOrthoMatrix(false, false);
         	
     	section1.setMatrix(cm);
@@ -120,12 +119,24 @@ public class AlgoQuadricEnds extends AlgoElement3D {
         	
     	section2.setMatrix(cm);
     	
+    	
+    	//areas
+    	section1.calcArea();
+    	section2.setArea(section1.getArea());
 
     }
-
+    
+    
     public String getClassName() {
         return "AlgoQuadricEnds";
     }
+    
+
+
+	public void remove() {
+		super.remove();
+		quadric.remove();
+	}       
     
     /*
     final public String toString() {

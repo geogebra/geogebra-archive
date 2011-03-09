@@ -14,7 +14,7 @@ import geogebra.main.Application;
  * @author mathieu
  *
  */
-public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
+public abstract class AlgoQuadricLimitedPointPointRadius extends AlgoElement3D {
 
 	//input
 	private GeoPointND origin, secondPoint;
@@ -25,8 +25,6 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 	private GeoConic3D bottom, top;
 	private GeoQuadric3DLimited quadric;
 	
-	//coordsys
-	private CoordSys bottomCoordsys, topCoordsys; 
 
 	/**
 	 * 
@@ -36,7 +34,7 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 	 * @param secondPoint
 	 * @param r
 	 */
-	public AlgoCylinderLimitedPointPointRadius(Construction c, String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) {
+	public AlgoQuadricLimitedPointPointRadius(Construction c, String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r, int type) {
 		super(c);
 		
 		this.origin=origin;
@@ -48,6 +46,7 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 		//topCoordsys = new CoordSys(2);
 		
 		quadric=new GeoQuadric3DLimited(c,origin,secondPoint);
+		quadric.setType(type);
 
 
 		//bottom.setCoordSys(bottomCoordsys);
@@ -60,6 +59,7 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 		
 		((GeoElement) origin).addAlgorithm(this);
 		((GeoElement) secondPoint).addAlgorithm(this);
+		((GeoElement) r).addAlgorithm(this);
 		
 		
 		
@@ -67,19 +67,29 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
         quadric.setParentAlgorithm(this);       
         cons.addToAlgorithmList(this); 
         
-		//compute();
+		compute();
         
-        quadric.setParts();
+        //quadric.setParts();
+        
+		//AlgoQuadricSide algo = new AlgoQuadricSide(cons, quadric, origin, secondPoint);            
+		AlgoQuadricSide algo = new AlgoQuadricSide(cons, quadric,true);            
+		cons.removeFromConstructionList(algo);
+		side = (GeoQuadric3DPart) algo.getQuadric();
 		
-		side=quadric.getSide();
-		bottom=quadric.getBottom();
-		top=quadric.getTop();
+		//AlgoQuadricEnds algo2 = new AlgoQuadricEnds(cons, quadric, origin, secondPoint);
+		AlgoQuadricEnds algo2 = new AlgoQuadricEnds(cons, quadric);
+		cons.removeFromConstructionList(algo2);
+		bottom = algo2.getSection1();
+		top = algo2.getSection2();
+		
+
+		quadric.setParts(side,bottom,top);
 
 		output = new GeoElement[] {quadric,bottom,top,side};
 	
 
 
-		compute();
+		//compute();
 		
 		
 		quadric.initLabels(labels);
@@ -100,14 +110,18 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
 		d.calcNorm();
 		double altitude = d.getNorm();
 		
-		quadric.setCylinder(o,d.mul(1/altitude),r,0, altitude);
+		setQuadric(o,o2,d.mul(1/altitude),r, 0, altitude);
 
 		quadric.calcVolume();
 
 	}
 
-	
+	abstract protected void setQuadric(Coords o1, Coords o2, Coords d, double r, double min, double max);
 
+	
+	public GeoQuadric3DLimited getQuadric(){
+		return quadric;
+	}
 	
 	//compute and update quadric (for helper algos)
 	public void update() {
@@ -116,14 +130,6 @@ public class AlgoCylinderLimitedPointPointRadius extends AlgoElement3D {
     }
     
 
-	public String getClassName() {
-		return "AlgoCylinder";
-	}
 	
-    final public String toString() {
-    	return app.getPlain("CylinderBetweenABRadiusC",origin.getLabel(),secondPoint.getLabel(),((GeoElement) radius).getLabel());
-
-    }
-    
 
 }

@@ -371,6 +371,14 @@ public class Manager3D implements Manager3DInterface {
 		return algo.getQuadric();
 	}
 	
+
+	final public GeoElement[] ConeLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) {
+		AlgoQuadricLimitedPointPointRadius algo = new AlgoQuadricLimitedPointPointRadiusCone(cons, labels, origin, secondPoint, r);
+		return algo.getOutput();
+	}
+
+
+	
 	/** 
 	 * Cylinder
 	 */
@@ -393,15 +401,11 @@ public class Manager3D implements Manager3DInterface {
 
 
 	final public GeoElement[] CylinderLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) {
-		AlgoCylinderLimitedPointPointRadius algo = new AlgoCylinderLimitedPointPointRadius(cons, labels, origin, secondPoint, r);
+		AlgoQuadricLimitedPointPointRadius algo = new AlgoQuadricLimitedPointPointRadiusCylinder(cons, labels, origin, secondPoint, r);
 		return algo.getOutput();
 	}
 
 
-	final public GeoQuadric3DPart CylinderOpen(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r) {
-		AlgoQuadric algo = new AlgoQuadricPointPointNumber(cons, label, origin, secondPoint, r, new AlgoQuadricComputerCylinderOpen());
-		return (GeoQuadric3DPart) algo.getQuadric();
-	}
 
 	final public GeoQuadric3DPart  QuadricSide(String label, GeoQuadricND quadric){
 		AlgoQuadric algo = new AlgoQuadricSide(cons, label, (GeoQuadric3DLimited) quadric);

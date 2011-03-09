@@ -207,6 +207,9 @@ public interface Manager3DInterface {
 	
 			 public GeoQuadricND Cone(String label, GeoPointND origin, GeoLineND axis, NumberValue angle);
 
+			 public GeoElement[] ConeLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
+
+			 
 			/** 
 			 * Cylinder
 			 */
@@ -217,12 +220,11 @@ public interface Manager3DInterface {
 
 			 public GeoQuadricND Cylinder(String label, GeoLineND axis, NumberValue r);
 
+
 			 public GeoElement[] CylinderLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
 
-			 public GeoQuadricND CylinderOpen(String label, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
-
+			 
 			 public GeoQuadricND QuadricSide(String label, GeoQuadricND quadric) ;
-
 
 
 

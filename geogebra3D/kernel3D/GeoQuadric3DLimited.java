@@ -3,6 +3,7 @@ package geogebra3D.kernel3D;
 import java.awt.Color;
 
 import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoJoinPointsSegment;
@@ -69,6 +70,8 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	}
 	
 	
+	/*
+	
 	public void setParts(){
 				
 		AlgoQuadricSide algo = new AlgoQuadricSide(cons, bottomPoint, topPoint, this);            
@@ -80,6 +83,15 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		bottom = algo2.getSection1();
 		top = algo2.getSection2();
 	
+	}
+	
+	*/
+	
+	
+	public void setParts(GeoQuadric3DPart side, GeoConic3D bottom, GeoConic3D top){
+		this.side=side;
+		this.bottom=bottom;
+		this.top=top;
 	}
 	
 	
@@ -162,6 +174,10 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	 */
 	public void setCylinder(Coords origin, Coords direction, double r, double min, double max){
 
+		//limites
+		this.min=min;
+		this.max=max;
+		
 		// set center
 		setMidpoint(origin.get());
 		
@@ -178,9 +194,7 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		for (int i=0;i<2;i++)
 			halfAxes[i] = r;
 		
-		//limites
-		this.min=min;
-		this.max=max;
+		
 		
 		// set the diagonal values
 		diagonal[0] = 1;
@@ -197,6 +211,55 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	}
 	
 	
+
+	public void setCone(Coords origin, Coords direction, double r, double min, double max){
+		
+		//limites
+		this.min=min;
+		this.max=max;
+		
+		// set center
+		setMidpoint(origin.get());
+		
+		// set direction
+		eigenvecND[2] = direction;
+		
+		// set others eigen vecs
+		Coords[] ee = direction.completeOrthonormal();
+		eigenvecND[0] = ee[0];
+		eigenvecND[1] = ee[1];
+		
+		// set halfAxes = radius	
+		for (int i=0;i<2;i++)
+			halfAxes[i] = r;
+		
+		// set the diagonal values
+		diagonal[0] = 1;
+		diagonal[1] = 1;
+		diagonal[2] = -r*r;
+		diagonal[3] = 0;
+		
+		// set matrix
+		setMatrixFromEigen();
+		
+			
+		// set type
+		type = QUADRIC_CONE;
+	}
+	
+	
+	
+	public void set(Coords origin, Coords direction, double r, double min, double max){
+
+		switch(type){
+		case QUADRIC_CYLINDER:
+			setCylinder(origin, direction, r, min, max);
+			break;
+		case QUADRIC_CONE:
+			setCone(origin, direction, r, min, max);
+			break;
+		}
+	}
 	
 	
 	
@@ -355,10 +418,18 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	public void calcVolume(){
 		
 		//Application.debug("ici");
+		if (bottom==null){
+			volume=Double.NaN;
+			return;
+		}
 		
 		switch(type){
 		case QUADRIC_CYLINDER:
-			volume=bottom.getHalfAxis(0)*bottom.getHalfAxis(0)*Math.PI*(max-min);
+			volume=bottom.getArea()*(max-min);
+			break;
+		case QUADRIC_CONE:
+			volume=bottom.getArea()*(max-min)/3;
+			break;
 		//default:
 		//	volume=Double.NaN;
 		}
@@ -374,6 +445,7 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	public String toValueString() {
 		switch(type){
 		case QUADRIC_CYLINDER:
+		case QUADRIC_CONE:
 			return kernel.format(volume);
 		
 		}

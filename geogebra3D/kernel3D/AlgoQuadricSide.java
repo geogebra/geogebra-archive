@@ -15,33 +15,27 @@ import geogebra.main.Application;
 public class AlgoQuadricSide extends AlgoQuadric {
 	
 	
+	private boolean isHelperAlgo;
 	
-	
-	
-	public AlgoQuadricSide(Construction c, GeoPointND bottomPoint, GeoPointND topPoint, GeoQuadric3DLimited inputQuadric) {		
-		super(c,inputQuadric,null,new AlgoQuadricComputerSide());
-		
-		setInputOutput(new GeoElement[] {inputQuadric, (GeoElement) bottomPoint,  (GeoElement) topPoint}, new GeoElement[] {(GeoElement) bottomPoint,  (GeoElement) topPoint}, new GeoElement[] {getQuadric()});
-		
-	}
-	
+
 	
 	/**
 	 * @param c construction
 	 * @param inputQuadric 
 	 */
-	public AlgoQuadricSide(Construction c, GeoQuadric3DLimited inputQuadric) {		
+	public AlgoQuadricSide(Construction c, GeoQuadric3DLimited inputQuadric, boolean isHelperAlgo) {		
 		super(c,inputQuadric,null,new AlgoQuadricComputerSide());
 
+		this.isHelperAlgo=isHelperAlgo;
 		
 		setInputOutput(new GeoElement[] {inputQuadric}, new GeoElement[] {getQuadric()});
 		
-		//compute();
+		compute();
 	}
 
 	public AlgoQuadricSide(Construction c, String label, GeoQuadric3DLimited inputQuadric) {		
 
-		this(c,inputQuadric);
+		this(c,inputQuadric,false);
 		getQuadric().setLabel(label);
 	}
 	
@@ -66,10 +60,17 @@ public class AlgoQuadricSide extends AlgoQuadric {
 		getComputer().setQuadric(getQuadric(), getInputQuadric().getMidpoint3D(), getInputQuadric().getEigenvec3D(2), getInputQuadric().getHalfAxis(0));
 		((GeoQuadric3DPart) getQuadric()).setLimits(getInputQuadric().getMin(), getInputQuadric().getMax());
 	
+		((GeoQuadric3DPart) getQuadric()).calcArea();
+		
 	
 	}
-	
 
+
+	public void remove() {
+		super.remove();
+		if (isHelperAlgo)
+			getInputQuadric().remove();
+	}       
 
 
 	protected Coords getDirection() {

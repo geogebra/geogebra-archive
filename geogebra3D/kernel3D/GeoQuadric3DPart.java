@@ -3,6 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 
 /**
  * Class for part of a quadric (e.g. side of a limited cone, cylinder, ...)
@@ -32,6 +33,7 @@ public class GeoQuadric3DPart extends GeoQuadric3D {
 		super.set(geo);
 		GeoQuadric3DPart quadric = (GeoQuadric3DPart) geo;
 		setLimits(quadric.min, quadric.max);
+		area=quadric.getArea();
 	}
 
 	
@@ -63,11 +65,16 @@ public class GeoQuadric3DPart extends GeoQuadric3D {
 			return super.getMaxParameter(index);
 	}
 	
-	
+
 	public void set(Coords origin, Coords direction, double r){
 		switch(type){
 		case QUADRIC_CYLINDER:
 			setCylinder(origin, direction, r);
+			break;
+
+		case QUADRIC_CONE:
+			setCone(origin, direction, r);
+			break;
 		}
 	}
 	
@@ -78,14 +85,53 @@ public class GeoQuadric3DPart extends GeoQuadric3D {
 
     }
 
-    protected StringBuilder buildValueString(){
-    	return new StringBuilder("todo-GeoQuadric3DPart");
-    }
-    
+    public String toValueString() {
+		switch(type){
+		case QUADRIC_CYLINDER:
+			return kernel.format(area);
+		
+		}
+		
+		return "todo-GeoQuadric3DPart";
+		
+	}
+	
+	protected StringBuilder buildValueString() {
+		return new StringBuilder(toValueString());
+	}
+	
+	
+	
     public GeoElement copy() {
 
         return new GeoQuadric3DPart(this);
 
     }
+
+
+    //////////////////////////
+    // AREA
+    //////////////////////////
     
+    private double area;
+
+    public void calcArea(){
+
+
+    	//Application.debug("geo="+getLabel()+", half="+getHalfAxis(0)+", min="+min+", max="+max+", type="+type);
+    	
+    	switch(type){
+    	case QUADRIC_CYLINDER:
+    		area=2*getHalfAxis(0)*Math.PI*(max-min);
+    		break;
+    	}
+    }
+
+    public double getArea(){
+    	if (defined)
+    		return area;				        
+    	else 
+    		return Double.NaN;			        	
+    }	
+
 }
