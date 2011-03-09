@@ -325,7 +325,7 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	 */
 	private void setLabels(){
 
-		lblNumClasses.setText(app.getMenu("Classes" + ": "));
+		lblNumClasses.setText(app.getMenu("Classes") + ": ");
 		lblStart.setText(app.getMenu("Start") + ": ");
 		lblWidth.setText(app.getMenu("Width") + ": ");
 		if(mode == statDialog.MODE_REGRESSION){
