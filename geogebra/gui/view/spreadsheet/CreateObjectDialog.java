@@ -229,7 +229,7 @@ public class CreateObjectDialog extends InputDialog implements ListSelectionList
 		// btnOK = cancel, cancel = create
 		btOK.setText(app.getPlain("Cancel"));
 		btApply.setText(app.getPlain("Apply"));
-		btCancel.setText(app.getPlain("Create"));
+		btCancel.setText(app.getMenu("Create"));
 
 		// object/value checkboxes
 		ckObject.setText(app.getMenu("Formulas"));
