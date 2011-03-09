@@ -488,7 +488,7 @@ implements ActionListener, View, Printable   {
 						GeoElement.getSpreadsheetColumnName(cr.getMinColumn());		
 
 				}else{
-					title[0] = app.getPlain("untitled");
+					title[0] = app.getMenu("Untitled");
 				}
 			}
 
