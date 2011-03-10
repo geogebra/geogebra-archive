@@ -135,8 +135,8 @@ public class TableSymbols {
 				{ ExpressionNode.strPARALLEL , app.getMenu("Symbol.Parallel" )},   
 				{ ExpressionNode.strPERPENDICULAR , app.getMenu("Symbol.Perpendicular" )},   
 				{ ExpressionNode.strIS_ELEMENT_OF , app.getMenu("Symbol.ElementOf" )},   
-				{ ExpressionNode.strIS_SUBSET_OF , app.getMenu("Symbol.Contains" )},   
-				{ ExpressionNode.strIS_SUBSET_OF_STRICT , app.getMenu("Symbol.StrictContains" )},   
+				{ ExpressionNode.strIS_SUBSET_OF , app.getMenu("Symbol.Subset" )},   
+				{ ExpressionNode.strIS_SUBSET_OF_STRICT , app.getMenu("Symbol.StrictSubset" )},   
 				{ "\u2220" , app.getMenu("Symbol.Angle" )},   
 				{ "\u2221" , app.getMenu("Symbol.AngleMeasure" )},   
 				{ "\u00b2" , app.getMenu("Symbol.Square" )},   //exponents^2
