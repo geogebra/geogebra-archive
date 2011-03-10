@@ -600,7 +600,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		// caption style button
 
 		String[] captionArray = new String[] {
-				app.getPlain("styleBar.Hidden"), // index 4
+				app.getPlain("stylebar.Hidden"), // index 4
 				app.getPlain("Name"), // index 0
 				app.getPlain("NameAndValue"), // index 1
 				app.getPlain("Value"), // index 2
