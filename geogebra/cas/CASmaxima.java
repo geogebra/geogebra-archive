@@ -14,6 +14,7 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.main.Application;
 import geogebra.main.MyResourceBundle;
+import geogebra.util.Unicode;
 
 import java.util.Arrays;
 import java.util.MissingResourceException;
@@ -240,8 +241,8 @@ public class CASmaxima extends CASgeneric {
 			}
 			
 			if (result.indexOf("%e") > -1) {
-				result = result.replaceAll("%e","ℯ");
-				Application.debug("WARNING: replacing %e by ℯ",1);
+				result = result.replaceAll("%e",Unicode.EULER_STRING);
+				Application.debug("WARNING: replacing %e by Euler e",1);
 			}
 			
 			if (result.indexOf(" =") > -1) { // y = not :=
