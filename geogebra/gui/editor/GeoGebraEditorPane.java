@@ -1,12 +1,12 @@
-/* 
+/*
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
 
 This file is part of GeoGebra.
 This code has been written initially for Scilab (http://www.scilab.org/).
 
-This program is free software; you can redistribute it and/or modify it 
-under the terms of the GNU General Public License as published by 
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
 the Free Software Foundation.
 
  */
@@ -37,9 +37,9 @@ import javax.swing.event.CaretListener;
 import javax.swing.text.BadLocationException;
 
 /**
- * 
+ *
  * @author Calixte DENIZET
- * 
+ *
  */
 public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 		MouseListener, MouseMotionListener, FocusListener {
@@ -65,7 +65,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Default Constructor
-	 * 
+	 *
 	 * @param rows
 	 *            the number of rows to use
 	 * @param cols
@@ -136,10 +136,10 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 		Dimension dim = super.getPreferredSize();
 		dim = (dim == null) ? new Dimension(400, 400) : dim;
 		if (cols != 0) {
-			dim.width = Math.max(dim.width, cols * columnWidth);
+			dim.width = cols * columnWidth;
 		}
 		if (rows != 0) {
-			dim.height = Math.max(dim.height, rows * rowHeight);
+			dim.height = rows * rowHeight;
 		}
 
 		return dim;
@@ -154,7 +154,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Add a new KeywordListener
-	 * 
+	 *
 	 * @param kw
 	 *            a KeywordListener
 	 */
@@ -166,7 +166,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Remove a new KeywordListener
-	 * 
+	 *
 	 * @param kw
 	 *            a KeywordListener
 	 */
@@ -185,7 +185,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Enable (active true) or disable (active false) the matching keywords.
-	 * 
+	 *
 	 * @param active
 	 *            true or false
 	 */
@@ -195,7 +195,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Get a matching manager
-	 * 
+	 *
 	 * @param lr
 	 *            true if the LR matcher must be returned
 	 * @return the MatchingBlockManager
@@ -210,7 +210,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * This class listens to the caret event
-	 * 
+	 *
 	 * @param e
 	 *            event
 	 */
@@ -274,7 +274,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Get a keyword at a position in the document.
-	 * 
+	 *
 	 * @param position
 	 *            in the document
 	 * @return the KeywordEvent containing infos about keyword.
@@ -287,7 +287,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Get a keyword at the current position in the document.
-	 * 
+	 *
 	 * @return the KeywordEvent containing infos about keyword.
 	 */
 	public KeywordEvent getKeywordEvent() {
@@ -296,7 +296,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Get a keyword at the current position in the document.
-	 * 
+	 *
 	 * @param caret
 	 *            if true the position is the current caret position in the doc
 	 *            else the position is the mouse pointer position projected in
@@ -318,7 +318,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Prevents the different KeywordListener that a MouseEvent occured
-	 * 
+	 *
 	 * @param position
 	 *            of the mouse
 	 * @param ev
@@ -341,7 +341,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Implements mouseClicked in MouseListener
-	 * 
+	 *
 	 * @param e
 	 *            event
 	 */
@@ -352,7 +352,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Implements mouseEntered in MouseListener
-	 * 
+	 *
 	 * @param e
 	 *            event
 	 */
@@ -362,7 +362,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Implements mouseExited in MouseListener
-	 * 
+	 *
 	 * @param e
 	 *            event
 	 */
@@ -371,7 +371,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Implements mousePressed in MouseListener
-	 * 
+	 *
 	 * @param e
 	 *            event
 	 */
@@ -380,7 +380,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Implements mouseReleseaed in MouseListener
-	 * 
+	 *
 	 * @param e
 	 *            event
 	 */
@@ -389,7 +389,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Implements mouseMoved in MouseMotionListener
-	 * 
+	 *
 	 * @param e
 	 *            event
 	 */
@@ -401,7 +401,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 
 	/**
 	 * Implements mouseDragged in MouseMotionListener
-	 * 
+	 *
 	 * @param e
 	 *            event
 	 */
