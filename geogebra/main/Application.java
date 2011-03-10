@@ -1151,6 +1151,12 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 	
+	public void setStyleBarAllowed(boolean flag) {
+		if(hasGui) {
+			getGuiManager().getLayout().setStyleBarAllowed(flag);
+		}
+	}
+	
 	final public boolean showResetIcon() {
 		return showResetIcon && !runningInFrame;
 	}

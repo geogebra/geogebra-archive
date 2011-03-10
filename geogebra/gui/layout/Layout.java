@@ -56,12 +56,17 @@ public class Layout {
 	private boolean ignoreDocument = false; 
 	
 	/**
+	 * Are style bars allowed to be visible?
+	 */
+	private boolean allowStyleBar = true;
+	
+	/**
 	 * An array with the default perspectives.
 	 */
 	public static Perspective[] defaultPerspectives;
 	
 	/**
-	 * {@link initialize()} has to be called once in order to use this class.
+	 * {@link #initialize()} has to be called once in order to use this class.
 	 */
 	public Layout() {
 		initializeDefaultPerspectives();
@@ -458,6 +463,9 @@ public class Layout {
 	 * @param titleBarVisible
 	 */
 	public void setTitlebarVisible(boolean titleBarVisible) {
+		if(this.titleBarVisible != titleBarVisible)
+			return;
+		
 		this.titleBarVisible = titleBarVisible;
 		dockManager.updatePanels();
 	}
@@ -467,6 +475,25 @@ public class Layout {
 	 */
 	public boolean isTitleBarVisible() {
 		return !app.isApplet() && titleBarVisible;
+	}
+	
+	/**
+	 * @param allowStyleBar If style bars are allowed
+	 */
+	public void setStyleBarAllowed(boolean allowStyleBar) {
+		if(this.allowStyleBar == allowStyleBar) {
+			return;
+		}
+		
+		this.allowStyleBar = allowStyleBar;
+		getDockManager().updatePanels();
+	}
+
+	/**
+	 * @return If style bars are allowed (to be visible)
+	 */
+	public boolean isStyleBarAllowed() {
+		return allowStyleBar;
 	}
 	
 	public boolean isIgnoringDocument() {
@@ -535,7 +562,7 @@ public class Layout {
 		ManagePerspectivesDialog dialog = new ManagePerspectivesDialog(app, this);
 		dialog.setVisible(true);
 	}
-	
+
 	/**
 	 * Dialog which is used to manage (delete) the custom perspectives.
 	 * 

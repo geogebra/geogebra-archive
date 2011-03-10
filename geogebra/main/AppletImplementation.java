@@ -66,7 +66,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	private DoubleClickListener dcListener;
 	private EuclidianView ev;
 	public boolean showOpenButton, undoActive;
-	public boolean showToolBar, showToolBarHelp, showAlgebraInput;
+	public boolean showToolBar, showToolBarHelp, showAlgebraInput, allowStyleBar;
 	public boolean enableRightClick = true;
 	public boolean useBrowserForJavaScript = true;
 	public boolean enableChooserPopups = true;
@@ -250,6 +250,9 @@ public class AppletImplementation implements AppletImplementationInterface {
 		// to open the application frame by double clicking on the drawing pad
 		// !false is used for downward compatibility	
 		showFrame = !"false".equals(applet.getParameter("framePossible"));
+		
+		// show style bar of views, default is false
+		allowStyleBar = "true".equals(applet.getParameter("allowStyleBar"));
 
 		// rightClickActive, default is "true"
 		enableRightClick = !"false".equals(applet.getParameter("enableRightClick"));
@@ -466,6 +469,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 		if (customToolBar != null && customToolBar.length() > 0 && showToolBar)
 			app.getGuiManager().setToolBarDefinition(customToolBar);
 		app.setShowResetIcon(showResetIcon);
+		app.setStyleBarAllowed(allowStyleBar);
 		app.setMaxIconSize(maxIconSize);
 
 		appletPanel.add(app.buildApplicationPanel(), BorderLayout.CENTER);		

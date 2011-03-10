@@ -575,7 +575,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		// make panels visible if necessary
 		if(isVisible()) {
 			if(hasStyleBar) {
-				styleBarPanel.setVisible(isAlone || showStyleBar);
+				styleBarPanel.setVisible((isAlone || showStyleBar) && dockManager.getLayout().isStyleBarAllowed());
 			} 
 			
 			// display toolbar panel if the dock panel is open in a frame
