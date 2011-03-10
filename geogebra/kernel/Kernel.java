@@ -5144,7 +5144,7 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Intersects f and g using starting point A (with Newton's root finding)
+	 * Intersects f and g in interfal [left,right] numerically
 	 */
 	final public GeoPoint[] IntersectFunctions(
 			String[] labels,
@@ -5152,8 +5152,8 @@ public class Kernel {
 			GeoFunction g, 
 			NumberValue left,
 			NumberValue right) {
-		AlgoRoots algo = new AlgoRoots(cons, labels, f, g, left, right);
-		GeoPoint[] S = algo.getRootPoints();
+		AlgoIntersectFunctions algo = new AlgoIntersectFunctions(cons, labels, f, g, left, right);
+		GeoPoint[] S = algo.getIntersectionPoints();
 		return S;
 	}//IntersectFunctions(label,f,g,left,right)
 	
