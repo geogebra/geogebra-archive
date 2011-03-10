@@ -1188,6 +1188,10 @@ public abstract class GeoElement
 		labelColor = geo.labelColor;
 		if(geo.isFillable()){
 			fillColor = geo.fillColor;
+			fillType = geo.fillType;
+			hatchingAngle = geo.hatchingAngle;
+			hatchingDistance = geo.hatchingDistance;		
+			imageFileName = geo.imageFileName;
 			alphaValue = geo.alphaValue;
 		}
 		else{
