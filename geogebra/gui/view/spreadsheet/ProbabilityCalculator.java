@@ -402,7 +402,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 
 		//create low point
-		expr = "Point[xAxis]";
+		expr = "Point[" + app.getPlain("xAxis") + "]";
 		lowPoint = (GeoPoint) createGeoFromString(expr);
 		lowPoint.setObjColor(COLOR_POINT);
 		lowPoint.setPointSize(4);
@@ -410,7 +410,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 
 		//create high point
-		expr = "Point[xAxis]";
 		highPoint = (GeoPoint) createGeoFromString(expr);
 		highPoint.setObjColor(COLOR_POINT);
 		highPoint.setPointSize(4);
