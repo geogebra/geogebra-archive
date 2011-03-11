@@ -2005,7 +2005,7 @@ public class Application implements KeyEventDispatcher {
 
 	private String scriptingLanguage;
 	private void fillCommandDictScripting() {
-		if(scriptingLanguage.equals(oldScriptLanguage) || scriptingLanguage == null || "null".equals(scriptingLanguage))
+		if(scriptingLanguage == null || scriptingLanguage.equals(oldScriptLanguage) || "null".equals(scriptingLanguage))
 			return;
 		oldScriptLanguage = scriptingLanguage;
 		rbcommandScripting =MyResourceBundle.createBundle(RB_COMMAND, 
