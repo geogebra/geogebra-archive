@@ -589,7 +589,7 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	public void updatePlot(boolean doCreate){
 
 		GeoElement geo;
-		String underConstruction = "not\\;available";
+		String underConstruction = "\\text{" + app.getPlain("NotAvailable") + "}";
 		if(hasControlPanel)
 			((CardLayout)controlCards.getLayout()).show(controlCards, "blankPanel");	
 
