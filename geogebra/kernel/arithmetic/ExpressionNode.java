@@ -1693,6 +1693,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 							break;
 
 						default: // GeoGebra syntax
+							char firstLeft = sb.charAt(0);
 							lastLeft = sb.charAt(sb.length() - 1);
 							firstRight = rightStr.charAt(0);
 							// check if we need a multiplication sign, see #414
@@ -1700,14 +1701,18 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 							showMultiplicationSign = Character.isDigit(lastLeft) &&  Character.isDigit(firstRight);
 							// check if we need a multiplication space:
 							// all cases except digit - character, e.g. 3x
+							
+							// need to check start and end for eg A1 * A2
+							boolean leftIsDigit=Character.isDigit(lastLeft) && Character.isDigit(firstLeft);
 							multiplicationSpaceNeeded = showMultiplicationSign ||
-								!(Character.isDigit(lastLeft) && !Character.isDigit(firstRight));
+								!(leftIsDigit && !Character.isDigit(firstRight));
 						}
 
 						if (showMultiplicationSign) {
 							sb.append(multiplicationSign(STRING_TYPE));
 						} 
-						else if (multiplicationSpaceNeeded) {
+						else if (multiplicationSpaceNeeded)
+						{
 							// space instead of multiplication sign
 							sb.append(multiplicationSpace(STRING_TYPE));
 						}
