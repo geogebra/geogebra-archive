@@ -365,9 +365,6 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		return side.getTypeString();
 	}
 
-	public boolean isDefined() {
-		return true;//side.isDefined();
-	}
 
 	@Override
 	public boolean isEqual(GeoElement Geo) {
@@ -387,10 +384,6 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 			side.set(quadric.side);
 		
 		}
-		
-	}
-
-	public void setUndefined() {
 		
 	}
 
@@ -442,12 +435,14 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 			return Double.NaN;			        	
 	}	
 
+	
 	public String toValueString() {
 		switch(type){
 		case QUADRIC_CYLINDER:
 		case QUADRIC_CONE:
 			return kernel.format(volume);
-		
+		case QUADRIC_EMPTY:
+			return kernel.format(0);
 		}
 		
 		return "todo-GeoQuadric3DLimited";
@@ -457,7 +452,6 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	protected StringBuilder buildValueString() {
 		return new StringBuilder(toValueString());
 	}
-
 
 
 

@@ -4,6 +4,7 @@ import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
@@ -102,13 +103,29 @@ public abstract class AlgoQuadricLimitedPointPointRadius extends AlgoElement3D {
 	
 	protected void compute() {
 		
+		//check end points
+		if (!((GeoElement) origin).isDefined() || origin.isInfinite()
+				||	!((GeoElement) secondPoint).isDefined() || secondPoint.isInfinite()
+		){
+			getQuadric().setUndefined();
+			return;
+		}
+		
 		Coords o = origin.getInhomCoordsInD(3);
 		Coords o2 = secondPoint.getInhomCoordsInD(3);
 		Coords d = o2.sub(o);
+		
+		if (d.equalsForKernel(0, Kernel.STANDARD_PRECISION)){
+			getQuadric().setUndefined();
+			return;
+		}
+		
 		double r = radius.getDouble();
 		
 		d.calcNorm();
 		double altitude = d.getNorm();
+		
+		quadric.setDefined();
 		
 		setQuadric(o,o2,d.mul(1/altitude),r, 0, altitude);
 

@@ -3053,7 +3053,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
     	if (defined)
     		return area;				        
     	else{
-    		Application.printStacktrace("TODO");
+    		Application.printStacktrace("TODO ? (type="+type+")");
     		return Double.NaN;	
     	}
     }	
