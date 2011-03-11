@@ -946,10 +946,12 @@ GeoPointND, Animatable, Transformable  {
 			sbBuildValueString.append(')');
             break;                                
                         
-        case Kernel.COORD_COMPLEX:                                            
-			sbBuildValueString.append(kernel.format(getInhomX()));
-			sbBuildValueString.append(" ");
-			sbBuildValueString.append(kernel.formatSigned(getInhomY()));
+        case Kernel.COORD_COMPLEX:                    
+        	if (!isI) { // return just "i" for special i
+				sbBuildValueString.append(kernel.format(getInhomX()));
+				sbBuildValueString.append(" ");
+				sbBuildValueString.append(kernel.formatSigned(getInhomY()));
+        	}
 			sbBuildValueString.append(Unicode.IMAGINARY);
             break;                                
                         
