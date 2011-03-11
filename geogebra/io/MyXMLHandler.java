@@ -2521,9 +2521,10 @@ public class MyXMLHandler implements DocHandler {
 
 					// need to to this at end of construction (dependencies!)
 					dynamicColorList.add(new GeoExpPair(geo, sb.toString()));
-					geo.setColorSpace(Integer.parseInt(colorSpace));
+					geo.setColorSpace(colorSpace == null ? GeoElement.COLORSPACE_RGB : Integer.parseInt(colorSpace));
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.err.println("Error loading Dynamic Colors");
 			}
 			
