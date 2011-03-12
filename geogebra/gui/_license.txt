@@ -51,7 +51,8 @@ TRANSLATIONS
   * Japanese: Akihito Wachi, Kazuhiro Hasegawa (Japan)
   * Korean: Kyeong-Sik Choi (Korea)
   * Lithuanian: Rokas Tamosiunas (Lithuania)
-  * Macedonian: Linda Fahlberg-Stojanovska, OIKT, Faculty of Technical Sciences, UKLO (FYR Macedonia)
+  * Macedonian: Linda Fahlberg-Stojanovska, OIKT, Faculty of Technical Sciences, UKLO,
+      Jasmina Markoska (FYR Macedonia)
   * Marathi: Smita Patil (India)
   * Norwegian: Sigbjorn Hals (Norway)
   * Persian: Saeed Aminorroaya, Ali SafarNavadeh, Azam Zabihi (Iran)
