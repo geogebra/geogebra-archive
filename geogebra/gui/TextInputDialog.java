@@ -140,9 +140,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 
-	public void setStartPoint(GeoPoint startPoint) {
+	public void reInitEditor(GeoText text, GeoPoint startPoint) {
+		
 		this.startPoint = startPoint;
-		editor.setText("");
+		setGeoText(text);  
+		textPreviewer.updatePreviewText(text, editor.buildGeoGebraString(isLaTeX), isLaTeX);
 		editor.requestFocus();
 	}
 

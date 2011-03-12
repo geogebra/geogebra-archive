@@ -1063,7 +1063,7 @@ public class GuiManager {
 		if(textInputDialog == null)
 			textInputDialog = createTextDialog(text, startPoint);
 		else
-			((TextInputDialog)textInputDialog).setStartPoint(startPoint);
+			((TextInputDialog)textInputDialog).reInitEditor(text,startPoint);
 
 		textInputDialog.setVisible(true);
 		app.setDefaultCursor();

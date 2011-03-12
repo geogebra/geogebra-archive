@@ -71,20 +71,22 @@ public class TextPreviewPanel extends EuclidianView {
 	}
 
 	
-
-
 	/**
 	 * Removes the preview geos
 	 */
 	public void removePreviewGeoText() {
-		if(previewGeoIndependent != null)
+		if(previewGeoIndependent != null){
 			previewGeoIndependent.remove();
+			previewGeoIndependent = null;
+		}
 		if(previewGeoDependent != null){
 			previewGeoDependent.remove();
+			previewGeoIndependent = null;
 			textAlgo.remove();
 		}
 	}
 
+	
 	/**
 	 * Detach this view from the kernel
 	 */
@@ -282,7 +284,7 @@ public class TextPreviewPanel extends EuclidianView {
 
 		// if inputValue is null then use the current definition
 		if(inputValue == null){
-			System.out.println("=== null input === ");
+			//System.out.println("=== null input === ");
 			if(previewGeoIndependent.isIndependent()){ 
 				inputValue = previewGeoIndependent.getTextString();
 				if(previewGeoIndependent.getKernel().lookupLabel(inputValue) != null)
