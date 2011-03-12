@@ -53,7 +53,7 @@ public class CommandDispatcher {
     public static final int TABLE_SCRIPTING = 13;
     public static final int TABLE_DISCRETE_MATH = 14;
     public static final int TABLE_GEOGEBRA = 15;
-    public static final int TABLE_OTHER = 16;
+    public static final int TABLE_OPTIMIZATION = 16;
     public static final int TABLE_ENGLISH = 17;
     
     private int tableCount = 18;
@@ -77,7 +77,7 @@ public class CommandDispatcher {
     	case TABLE_SCRIPTING: return app.getMenu("Type.Scripting");
     	case TABLE_DISCRETE_MATH: return app.getMenu("Type.DiscreteMath");
     	case TABLE_GEOGEBRA: return app.getMenu("Type.GeoGebra");
-    	case TABLE_OTHER: return app.getMenu("Type.OtherCommands");
+    	case TABLE_OPTIMIZATION: return app.getMenu("Type.OptimizationCommands");
     	// TABLE_ENGLISH:
     	default: return null;
     	}
@@ -688,14 +688,12 @@ public class CommandDispatcher {
       	// Other ???
     	//=============================================================
     			
-    	//cmdTable.put("Intersection", new CmdIntersection(kernel)); 
-       	cmdTable.put("Intersection", new CmdIntersect(kernel)); 
-    
+    	    
     	cmdTable.put("Maximize",new CmdMaximize(kernel));  //Definitely "other": Trying to optimize result of a whole construction...
     	cmdTable.put("Minimize",new CmdMinimize(kernel));
     	
     	
-    	cmdSubTable[TABLE_OTHER].putAll(cmdTable);
+    	cmdSubTable[TABLE_OPTIMIZATION].putAll(cmdTable);
     	cmdTable.clear();
     	
     	//=================================================================

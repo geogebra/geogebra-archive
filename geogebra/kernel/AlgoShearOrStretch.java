@@ -44,20 +44,6 @@ public class AlgoShearOrStretch extends AlgoTransformation {
     /**
      * Creates new shear or stretch algorithm
      * @param cons
-     * @param label
-     * @param in
-     * @param l
-     * @param num
-     * @param shear shear if true, stretch otherwise
-     */
-    public AlgoShearOrStretch(Construction cons, String label, GeoElement in, GeoVec3D l,NumberValue num,boolean shear) {
-        this(cons,in,l,num,shear);    
-        geoOut.setLabel(label);
-    }    
-    
-    /**
-     * Creates new shear or stretch algorithm
-     * @param cons
      * @param in
      * @param l
      * @param num
@@ -100,10 +86,11 @@ public class AlgoShearOrStretch extends AlgoTransformation {
     
     // for AlgoElement
     protected void setInputOutput() {
-        input = new GeoElement[3];
+        input = new GeoElement[num == null?2:3];
         input[0] = geoIn; 
         input[1] = l;
-        input[2] = num.toGeoElement();
+        if(num!=null)
+        	input[2] = num.toGeoElement();
         
         setOutputLength(1);        
         setOutput(0,geoOut);        
@@ -131,14 +118,16 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         //matrix.add
         Translateable tranOut = (Translateable) out;
         double qx=0.0d, qy=0.0d,s,c;
+        double n=Math.sqrt(l.x*l.x+l.y*l.y);
         if(l instanceof GeoLine){
         if (Math.abs(l.x) > Math.abs(l.y)) {
             qx = l.z / l.x;            
         } else {            
             qy = l.z / l.y;
         }
-        s=-l.x/Math.sqrt(l.x*l.x+l.y*l.y);
-        c=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
+        s=-l.x/n;
+        c=l.y/n;
+        n=num.getDouble();
         }
         else{
         	GeoPoint sp = ((GeoVector)l).getStartPoint();
@@ -146,10 +135,10 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         	 qx = -((GeoVector)l).getStartPoint().x;
         	 qy = -((GeoVector)l).getStartPoint().y;
         	}        	
-        	 s=l.y/Math.sqrt(l.x*l.x+l.y*l.y);
-             c=l.x/Math.sqrt(l.x*l.x+l.y*l.y);
-        }
-        double n=num.getDouble();
+        	 c=-l.y/n;
+             s=l.x/n;             
+        }        
+        	
         // translate -Q
         tranOut.translate(new Coords(qx, qy,0));
         

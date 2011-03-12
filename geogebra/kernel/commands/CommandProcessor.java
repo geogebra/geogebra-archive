@@ -2977,10 +2977,27 @@ class CmdStretch extends CommandProcessor {
 		GeoElement[] ret = new GeoElement[1];
 
 		switch (n) {
+		case 2:
+			arg = resArgs(c);
+
+			if (arg[1] instanceof GeoVector) {
+
+				if (arg[0].isMatrixTransformable() || arg[0].isGeoFunction()
+						|| arg[0].isGeoPolygon() || arg[0].isGeoList()) {
+
+					ret = kernel.Stretch(label, arg[0], (GeoVec3D) arg[1],
+							null);
+					return ret;
+
+				} else
+					throw argErr(app, c.getName(), arg[0]);
+			}
+			else
+				throw argErr(app, c.getName(), arg[1]);
 		case 3:
 			arg = resArgs(c);
 
-			if ((arg[1] instanceof GeoVec3D) && arg[2].isGeoNumeric()) {
+			if ((arg[1] instanceof GeoLine) && arg[2].isGeoNumeric()) {
 
 				if (arg[0].isMatrixTransformable() || arg[0].isGeoFunction()
 						|| arg[0].isGeoPolygon() || arg[0].isGeoList()) {
