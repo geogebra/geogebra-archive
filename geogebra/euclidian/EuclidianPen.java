@@ -361,7 +361,7 @@ public class EuclidianPen {
 
 		penPoints.clear();
 
-		EuclidianView ev = app.getEuclidianView();
+		EuclidianView ev=(EuclidianView)app.getActiveEuclidianView();
 
 		app.refreshViews(); // clear trace
 		ev.getGraphics().drawImage(penImage, penOffsetX, penOffsetY, null);
