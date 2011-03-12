@@ -166,6 +166,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
            	drawGeoElement(g,false);     		
      	}*/
         // add code for Points and Labels
+		if (codePoint.length()!=0&&format==GeoGebraToPgf.FORMAT_LATEX){
+			codePoint.insert(0, "\\begin{scriptsize}\n");
+			codePoint.append("\\end{scriptsize}\n");
+			
+		}
+     	
+        // add code for Points and Labels
         code.append(codePoint);
         // Close Environment tikzpicture
  		if (format==GeoGebraToPgf.FORMAT_LATEX){
@@ -2313,10 +2320,13 @@ public class GeoGebraToPgf extends GeoGebraExport {
 	if (!linecolor.equals(Color.BLACK)){
 		if (coma) sb.append(",");
 		else coma=true;
+		if (transparency&&geo.isFillable()&&geo.getFillType()==GeoElement.FILL_HATCH)
+			sb.append("pattern ");
 		sb.append("color=");
 		ColorCode(linecolor,sb);
 	}
 	if (transparency&&geo.isFillable()){
+
 		int id=geo.getFillType();
 		switch(id){
 			case GeoElement.FILL_STANDARD:

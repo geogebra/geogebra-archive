@@ -793,11 +793,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     	float alpha=geo.getAlphaValue();
     	if (alpha==0.0f) return;
 		startBeamer(codeFilledObject);
-    	codeFilledObject.append("\\pspolygon[linestyle=none,fillstyle=solid,fillcolor=");
-    	ColorCode(geo.getObjectColor(),codeFilledObject);
-    	codeFilledObject.append(",opacity=");
-    	codeFilledObject.append(geo.getAlphaValue());
-    	codeFilledObject.append("]");
+    	codeFilledObject.append("\\pspolygon");
+    	codeFilledObject.append(LineOptionCode(geo, true));
     	GeoPoint [] points = geo.getPoints();	
     	for (int i=0;i<points.length;i++){
     		double x=points[i].getX();
