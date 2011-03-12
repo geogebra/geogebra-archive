@@ -140,6 +140,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 
+	public void setStartPoint(GeoPoint startPoint) {
+		this.startPoint = startPoint;
+		editor.setText("");
+		editor.requestFocus();
+	}
+
+
 	private void createAdditionalGUI(){
 
 		showSymbolTablePopup(false);

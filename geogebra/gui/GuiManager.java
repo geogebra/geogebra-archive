@@ -1055,10 +1055,17 @@ public class GuiManager {
 		showTextDialog(null, startPoint);
 	}
 
+	private JDialog textInputDialog;
+
 	private void showTextDialog(GeoText text, GeoPoint startPoint) {
 		app.setWaitCursor();
-		JDialog dialog = createTextDialog(text, startPoint);
-		dialog.setVisible(true);
+
+		if(textInputDialog == null)
+			textInputDialog = createTextDialog(text, startPoint);
+		else
+			((TextInputDialog)textInputDialog).setStartPoint(startPoint);
+
+		textInputDialog.setVisible(true);
 		app.setDefaultCursor();
 	}
 
