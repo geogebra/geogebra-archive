@@ -17,8 +17,8 @@
 
 package org.apache.commons.math.optimization;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
+import org.apache.commons.math.FunctionEvaluationException;
 
 /**
  * This interface represents an optimization algorithm for {@link DifferentiableMultivariateVectorialFunction
@@ -27,7 +27,7 @@ import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunct
  * maximize or minimize} an objective function.</p>
  * @see MultivariateRealOptimizer
  * @see DifferentiableMultivariateRealOptimizer
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  */
 public interface DifferentiableMultivariateVectorialOptimizer {

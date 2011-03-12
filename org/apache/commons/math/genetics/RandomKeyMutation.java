@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Mutation operator for {@link RandomKey}s. Changes a randomly chosen element
  * of the array representation to a random value uniformly distributed in [0,1].
  *
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public class RandomKeyMutation implements MutationPolicy {
 
@@ -39,7 +40,7 @@ public class RandomKeyMutation implements MutationPolicy {
     public Chromosome mutate(Chromosome original) {
         if (!(original instanceof RandomKey<?>)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "RandomKeyMutation works only with RandomKeys, got " +
+                    LocalizedFormats.RANDOMKEY_MUTATION_WRONG_CLASS,
                     original.getClass().getSimpleName());
         }
 

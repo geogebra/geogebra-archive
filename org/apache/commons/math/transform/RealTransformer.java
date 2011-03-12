@@ -28,7 +28,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * interface since it produces {@link org.apache.commons.math.complex.Complex complex}
  * results instead of real ones.
  * </p>
- * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @since 2.0
  */
 public interface RealTransformer  {
@@ -49,8 +49,7 @@ public interface RealTransformer  {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
-     * at some point
+     * @throws FunctionEvaluationException if function cannot be evaluated at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     double[] transform(UnivariateRealFunction f, double min, double max, int n)
@@ -72,8 +71,7 @@ public interface RealTransformer  {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
-     * at some point
+     * @throws FunctionEvaluationException if function cannot be evaluated at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     double[] inversetransform(UnivariateRealFunction f, double min, double max, int n)

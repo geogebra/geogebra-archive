@@ -21,13 +21,15 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
 
 /**
- * This interface represents an optimization algorithm for {@link DifferentiableMultivariateRealFunction
- * scalar differentiable objective functions}.
- * <p>Optimization algorithms find the input point set that either {@link GoalType
- * maximize or minimize} an objective function.</p>
+ * This interface represents an optimization algorithm for
+ * {@link DifferentiableMultivariateRealFunction scalar differentiable objective
+ * functions}.
+ * Optimization algorithms find the input point set that either {@link GoalType
+ * maximize or minimize} an objective function.
+ *
  * @see MultivariateRealOptimizer
  * @see DifferentiableMultivariateVectorialOptimizer
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1065484 $ $Date: 2011-01-31 06:45:14 +0100 (lun. 31 janv. 2011) $
  * @since 2.0
  */
 public interface DifferentiableMultivariateRealOptimizer {
@@ -45,8 +47,7 @@ public interface DifferentiableMultivariateRealOptimizer {
     /** Get the number of iterations realized by the algorithm.
      * <p>
      * The number of evaluations corresponds to the last call to the
-     * {@link #optimize(DifferentiableMultivariateRealFunction, GoalType, double[]) optimize}
-     * method. It is 0 if the method has not been called yet.
+     * {@code optimize} method. It is 0 if the method has not been called yet.
      * </p>
      * @return number of iterations
      */

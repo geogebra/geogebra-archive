@@ -19,6 +19,9 @@ package org.apache.commons.math.estimation;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
+
 
 /**
  * This class solves a least squares problem.
@@ -94,7 +97,7 @@ import java.util.Arrays;
  * <ol></td></tr>
  * </table>
 
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -248,7 +251,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
     initializeEstimate(problem);
 
     // arrays shared with the other private methods
-    solvedCols  = Math.min(rows, cols);
+    solvedCols  = FastMath.min(rows, cols);
     diagR       = new double[cols];
     jacNorm     = new double[cols];
     beta        = new double[cols];
@@ -301,7 +304,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           xNorm  += xk * xk;
           diag[k] = dk;
         }
-        xNorm = Math.sqrt(xNorm);
+        xNorm = FastMath.sqrt(xNorm);
 
         // initialize the step bound delta
         delta = (xNorm == 0) ? initialStepBoundFactor : (initialStepBoundFactor * xNorm);
@@ -321,7 +324,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
               sum += jacobian[index] * residuals[i];
               index += cols;
             }
-            maxCosine = Math.max(maxCosine, Math.abs(sum) / (s * cost));
+            maxCosine = FastMath.max(maxCosine, FastMath.abs(sum) / (s * cost));
           }
         }
       }
@@ -331,7 +334,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
       // rescale if necessary
       for (int j = 0; j < cols; ++j) {
-        diag[j] = Math.max(diag[j], jacNorm[j]);
+        diag[j] = FastMath.max(diag[j], jacNorm[j]);
       }
 
       // inner loop
@@ -359,11 +362,11 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           double s = diag[pj] * lmDir[pj];
           lmNorm  += s * s;
         }
-        lmNorm = Math.sqrt(lmNorm);
+        lmNorm = FastMath.sqrt(lmNorm);
 
         // on the first iteration, adjust the initial step bound.
         if (firstIteration) {
-          delta = Math.min(delta, lmNorm);
+          delta = FastMath.min(delta, lmNorm);
         }
 
         // evaluate the function at x + p and calculate its norm
@@ -408,7 +411,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           if ((0.1 * cost >= previousCost) || (tmp < 0.1)) {
             tmp = 0.1;
           }
-          delta = tmp * Math.min(delta, 10.0 * lmNorm);
+          delta = tmp * FastMath.min(delta, 10.0 * lmNorm);
           lmPar /= tmp;
         } else if ((lmPar == 0) || (ratio >= 0.75)) {
           delta = 2 * lmNorm;
@@ -424,7 +427,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
             double xK = diag[k] * parameters[k].getEstimate();
             xNorm    += xK * xK;
           }
-          xNorm = Math.sqrt(xNorm);
+          xNorm = FastMath.sqrt(xNorm);
         } else {
           // failed iteration, reset the previous values
           cost = previousCost;
@@ -438,7 +441,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
         }
 
         // tests for convergence.
-        if (((Math.abs(actRed) <= costRelativeTolerance) &&
+        if (((FastMath.abs(actRed) <= costRelativeTolerance) &&
              (preRed <= costRelativeTolerance) &&
              (ratio <= 2.0)) ||
              (delta <= parRelativeTolerance * xNorm)) {
@@ -447,7 +450,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
         // tests for termination and stringent tolerances
         // (2.2204e-16 is the machine epsilon for IEEE754)
-        if ((Math.abs(actRed) <= 2.2204e-16) && (preRed <= 2.2204e-16) && (ratio <= 2.0)) {
+        if ((FastMath.abs(actRed) <= 2.2204e-16) && (preRed <= 2.2204e-16) && (ratio <= 2.0)) {
           throw new EstimationException("cost relative tolerance is too small ({0})," +
                                         " no further reduction in the" +
                                         " sum of squares is possible",
@@ -522,7 +525,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
       work1[pj] = s;
       dxNorm += s * s;
     }
-    dxNorm = Math.sqrt(dxNorm);
+    dxNorm = FastMath.sqrt(dxNorm);
     double fp = dxNorm - delta;
     if (fp <= 0.1 * delta) {
       lmPar = 0;
@@ -568,16 +571,16 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
       sum /= diag[pj];
       sum2 += sum * sum;
     }
-    double gNorm = Math.sqrt(sum2);
+    double gNorm = FastMath.sqrt(sum2);
     double paru = gNorm / delta;
     if (paru == 0) {
       // 2.2251e-308 is the smallest positive real for IEE754
-      paru = 2.2251e-308 / Math.min(delta, 0.1);
+      paru = 2.2251e-308 / FastMath.min(delta, 0.1);
     }
 
     // if the input par lies outside of the interval (parl,paru),
     // set par to the closer endpoint
-    lmPar = Math.min(paru, Math.max(lmPar, parl));
+    lmPar = FastMath.min(paru, FastMath.max(lmPar, parl));
     if (lmPar == 0) {
       lmPar = gNorm / dxNorm;
     }
@@ -586,9 +589,9 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
       // evaluate the function at the current value of lmPar
       if (lmPar == 0) {
-        lmPar = Math.max(2.2251e-308, 0.001 * paru);
+        lmPar = FastMath.max(2.2251e-308, 0.001 * paru);
       }
-      double sPar = Math.sqrt(lmPar);
+      double sPar = FastMath.sqrt(lmPar);
       for (int j = 0; j < solvedCols; ++j) {
         int pj = permutation[j];
         work1[pj] = sPar * diag[pj];
@@ -602,13 +605,13 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
         work3[pj] = s;
         dxNorm += s * s;
       }
-      dxNorm = Math.sqrt(dxNorm);
+      dxNorm = FastMath.sqrt(dxNorm);
       double previousFP = fp;
       fp = dxNorm - delta;
 
       // if the function is small enough, accept the current value
       // of lmPar, also test for the exceptional cases where parl is zero
-      if ((Math.abs(fp) <= 0.1 * delta) ||
+      if ((FastMath.abs(fp) <= 0.1 * delta) ||
           ((parl == 0) && (fp <= previousFP) && (previousFP < 0))) {
         return;
       }
@@ -635,13 +638,13 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
 
       // depending on the sign of the function, update parl or paru.
       if (fp > 0) {
-        parl = Math.max(parl, lmPar);
+        parl = FastMath.max(parl, lmPar);
       } else if (fp < 0) {
-        paru = Math.min(paru, lmPar);
+        paru = FastMath.min(paru, lmPar);
       }
 
       // compute an improved estimate for lmPar
-      lmPar = Math.max(parl, lmPar + correction);
+      lmPar = FastMath.max(parl, lmPar + correction);
 
     }
   }
@@ -706,13 +709,13 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
           final double sin;
           final double cos;
           double rkk = jacobian[k * cols + pk];
-          if (Math.abs(rkk) < Math.abs(lmDiag[k])) {
+          if (FastMath.abs(rkk) < FastMath.abs(lmDiag[k])) {
             final double cotan = rkk / lmDiag[k];
-            sin   = 1.0 / Math.sqrt(1.0 + cotan * cotan);
+            sin   = 1.0 / FastMath.sqrt(1.0 + cotan * cotan);
             cos   = sin * cotan;
           } else {
             final double tan = lmDiag[k] / rkk;
-            cos = 1.0 / Math.sqrt(1.0 + tan * tan);
+            cos = 1.0 / FastMath.sqrt(1.0 + tan * tan);
             sin = cos * tan;
           }
 
@@ -803,7 +806,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
         double akk = jacobian[index];
         norm2 += akk * akk;
       }
-      jacNorm[k] = Math.sqrt(norm2);
+      jacNorm[k] = FastMath.sqrt(norm2);
     }
 
     // transform the matrix column after column
@@ -821,7 +824,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
         }
         if (Double.isInfinite(norm2) || Double.isNaN(norm2)) {
             throw new EstimationException(
-                    "unable to perform Q.R decomposition on the {0}x{1} jacobian matrix",
+                    LocalizedFormats.UNABLE_TO_PERFORM_QR_DECOMPOSITION_ON_JACOBIAN,
                     rows, cols);
         }
         if (norm2 > ak2) {
@@ -840,7 +843,7 @@ public class LevenbergMarquardtEstimator extends AbstractEstimator implements Se
       // choose alpha such that Hk.u = alpha ek
       int    kDiag = k * cols + pk;
       double akk   = jacobian[kDiag];
-      double alpha = (akk > 0) ? -Math.sqrt(ak2) : Math.sqrt(ak2);
+      double alpha = (akk > 0) ? -FastMath.sqrt(ak2) : FastMath.sqrt(ak2);
       double betak = 1.0 / (ak2 - akk * alpha);
       beta[pk]     = betak;
 

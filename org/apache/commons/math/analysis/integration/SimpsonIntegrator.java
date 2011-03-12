@@ -20,6 +20,8 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/SimpsonsRule.html">
@@ -30,7 +32,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * This implementation employs basic trapezoid rule as building blocks to
  * calculate the Simpson's rule of alternating 2/3 and 4/3.</p>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @since 1.2
  */
 public class SimpsonIntegrator extends UnivariateRealIntegratorImpl {
@@ -62,8 +64,7 @@ public class SimpsonIntegrator extends UnivariateRealIntegratorImpl {
     }
 
     /** {@inheritDoc} */
-    public double integrate(final UnivariateRealFunction f,
-                            final double min, final double max)
+    public double integrate(final UnivariateRealFunction f, final double min, final double max)
         throws MaxIterationsExceededException, FunctionEvaluationException, IllegalArgumentException {
 
         clearResult();
@@ -83,9 +84,9 @@ public class SimpsonIntegrator extends UnivariateRealIntegratorImpl {
             final double t = qtrap.stage(f, min, max, i);
             final double s = (4 * t - oldt) / 3.0;
             if (i >= minimalIterationCount) {
-                final double delta = Math.abs(s - olds);
+                final double delta = FastMath.abs(s - olds);
                 final double rLimit =
-                    relativeAccuracy * (Math.abs(olds) + Math.abs(s)) * 0.5;
+                    relativeAccuracy * (FastMath.abs(olds) + FastMath.abs(s)) * 0.5;
                 if ((delta <= rLimit) || (delta <= absoluteAccuracy)) {
                     setResult(s, i);
                     return result;
@@ -104,7 +105,7 @@ public class SimpsonIntegrator extends UnivariateRealIntegratorImpl {
         // at most 64 bisection refinements
         if (maximalIterationCount > 64) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "invalid iteration limits: min={0}, max={1}",
+                    LocalizedFormats.INVALID_ITERATIONS_LIMITS,
                     0, 64);
         }
     }

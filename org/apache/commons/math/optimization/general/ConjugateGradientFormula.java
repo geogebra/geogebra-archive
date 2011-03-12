@@ -35,7 +35,7 @@ package org.apache.commons.math.optimization.general;
  * does converge. Polak-Ribi&egrave;re is often used.
  * <p>
  * @see NonLinearConjugateGradientOptimizer
- * @version $Revision: 758059 $ $Date: 2009-03-24 18:16:21 -0400 (Tue, 24 Mar 2009) $
+ * @version $Revision: 758059 $ $Date: 2009-03-24 23:16:21 +0100 (mar. 24 mars 2009) $
  * @since 2.0
  */
 public enum ConjugateGradientFormula {

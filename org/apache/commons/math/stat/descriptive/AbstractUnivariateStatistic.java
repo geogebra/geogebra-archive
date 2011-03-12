@@ -17,6 +17,10 @@
 package org.apache.commons.math.stat.descriptive;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.DimensionMismatchException;
+import org.apache.commons.math.exception.NotPositiveException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Abstract base class for all implementations of the
@@ -29,10 +33,64 @@ import org.apache.commons.math.MathRuntimeException;
  * Also includes a <code>test</code> method that performs generic parameter
  * validation for the <code>evaluate</code> methods.</p>
  *
- * @version $Revision: 894705 $ $Date: 2009-12-30 15:24:54 -0500 (Wed, 30 Dec 2009) $
+ * @version $Revision: 1006299 $ $Date: 2010-10-10 16:47:17 +0200 (dim. 10 oct. 2010) $
  */
 public abstract class AbstractUnivariateStatistic
     implements UnivariateStatistic {
+
+    /** Stored data. */
+    private double[] storedData;
+
+    /**
+     * Set the data array.
+     * <p>
+     * The stored value is a copy of the parameter array, not the array itself
+     * </p>
+     * @param values data array to store (may be null to remove stored data)
+     * @see #evaluate()
+     */
+    public void setData(final double[] values) {
+        storedData = (values == null) ? null : values.clone();
+    }
+
+    /**
+     * Get a copy of the stored data array.
+     * @return copy of the stored data array (may be null)
+     */
+    public double[] getData() {
+        return (storedData == null) ? null : storedData.clone();
+    }
+
+    /**
+     * Get a reference to the stored data array.
+     * @return reference to the stored data array (may be null)
+     */
+    protected double[] getDataRef() {
+        return storedData;
+    }
+
+    /**
+     * Set the data array.
+     * @param values data array to store
+     * @param begin the index of the first element to include
+     * @param length the number of elements to include
+     * @see #evaluate()
+     */
+    public void setData(final double[] values, final int begin, final int length) {
+        storedData = new double[length];
+        System.arraycopy(values, begin, storedData, 0, length);
+    }
+
+    /**
+     * Returns the result of evaluating the statistic over the stored data.
+     * <p>
+     * The stored array is the one which was set by previous calls to
+     * </p>
+     * @return the value of the statistic applied to the stored data
+     */
+    public double evaluate() {
+        return evaluate(storedData);
+    }
 
     /**
      * {@inheritDoc}
@@ -77,22 +135,20 @@ public abstract class AbstractUnivariateStatistic
         final int length) {
 
         if (values == null) {
-            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
+            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
         }
 
         if (begin < 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "start position cannot be negative ({0})", begin);
+            throw new NotPositiveException(LocalizedFormats.START_POSITION, begin);
         }
 
         if (length < 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "length cannot be negative ({0})", length);
+            throw new NotPositiveException(LocalizedFormats.LENGTH, length);
         }
 
         if (begin + length > values.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "subarray ends after array end");
+                  LocalizedFormats.SUBARRAY_ENDS_AFTER_ARRAY_END);
         }
 
         if (length == 0) {
@@ -139,27 +195,26 @@ public abstract class AbstractUnivariateStatistic
         final int length) {
 
         if (weights == null) {
-            throw MathRuntimeException.createIllegalArgumentException("input weights array is null");
+            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
         }
 
-        if (weights.length !=  values.length) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "Different number of weights and values");
+        if (weights.length != values.length) {
+            throw new DimensionMismatchException(weights.length, values.length);
         }
 
         boolean containsPositiveWeight = false;
         for (int i = begin; i < begin + length; i++) {
             if (Double.isNaN(weights[i])) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "NaN weight at index {0}", i);
+                        LocalizedFormats.NAN_ELEMENT_AT_INDEX, i);
             }
             if (Double.isInfinite(weights[i])) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "Infinite weight at index {0}", i);
+                        LocalizedFormats.INFINITE_ARRAY_ELEMENT, weights[i], i);
             }
             if (weights[i] < 0) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                      "negative weight {0} at index {1} ", weights[i], i);
+                      LocalizedFormats.NEGATIVE_ELEMENT_AT_INDEX, i, weights[i]);
             }
             if (!containsPositiveWeight && weights[i] > 0.0) {
                 containsPositiveWeight = true;
@@ -168,7 +223,7 @@ public abstract class AbstractUnivariateStatistic
 
         if (!containsPositiveWeight) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "weight array must contain at least one non-zero value");
+                    LocalizedFormats.WEIGHT_AT_LEAST_ONE_NON_ZERO);
         }
 
         return test(values, begin, length);

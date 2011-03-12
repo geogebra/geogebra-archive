@@ -18,9 +18,10 @@
 package org.apache.commons.math.optimization.fitting;
 
 import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 import org.apache.commons.math.optimization.OptimizationException;
+import org.apache.commons.math.util.FastMath;
 
 /** This class implements a curve fitting specialized for sinusoids.
  * <p>Harmonic fitting is a very simple case of curve fitting. The
@@ -28,7 +29,7 @@ import org.apache.commons.math.optimization.OptimizationException;
  * the phase &phi;: <code>f (t) = a cos (&omega; t + &phi;)</code>. They are
  * searched by a least square estimator initialized with a rough guess
  * based on integrals.</p>
- * @version $Revision: 786479 $ $Date: 2009-06-19 08:36:16 -0400 (Fri, 19 Jun 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  */
 public class HarmonicFitter {
@@ -76,33 +77,33 @@ public class HarmonicFitter {
      * the first guess cannot be computed
      */
     public HarmonicFunction fit() throws OptimizationException {
-        try {
 
-            // shall we compute the first guess of the parameters ourselves ?
-            if (parameters == null) {
-                final WeightedObservedPoint[] observations = fitter.getObservations();
-                if (observations.length < 4) {
-                    throw new OptimizationException("sample contains {0} observed points, at least {1} are required",
-                                                    observations.length, 4);
-                }
-
-                HarmonicCoefficientsGuesser guesser = new HarmonicCoefficientsGuesser(observations);
-                guesser.guess();
-                parameters = new double[] {
-                                 guesser.getGuessedAmplitude(),
-                                 guesser.getGuessedPulsation(),
-                                 guesser.getGuessedPhase()
-                            };
-
+        // shall we compute the first guess of the parameters ourselves ?
+        if (parameters == null) {
+            final WeightedObservedPoint[] observations = fitter.getObservations();
+            if (observations.length < 4) {
+                throw new OptimizationException(LocalizedFormats.INSUFFICIENT_OBSERVED_POINTS_IN_SAMPLE,
+                                                observations.length, 4);
             }
 
+            HarmonicCoefficientsGuesser guesser = new HarmonicCoefficientsGuesser(observations);
+            guesser.guess();
+            parameters = new double[] {
+                guesser.getGuessedAmplitude(),
+                guesser.getGuessedPulsation(),
+                guesser.getGuessedPhase()
+            };
+
+        }
+
+        try {
             double[] fitted = fitter.fit(new ParametricHarmonicFunction(), parameters);
             return new HarmonicFunction(fitted[0], fitted[1], fitted[2]);
-
         } catch (FunctionEvaluationException fee) {
-            // this should never happen
-            throw MathRuntimeException.createInternalError(fee);
+            // should never happen
+            throw new RuntimeException(fee);
         }
+
     }
 
     /** Parametric harmonic function. */
@@ -113,7 +114,7 @@ public class HarmonicFitter {
             final double a     = parameters[0];
             final double omega = parameters[1];
             final double phi   = parameters[2];
-            return a * Math.cos(omega * x + phi);
+            return a * FastMath.cos(omega * x + phi);
         }
 
         /** {@inheritDoc} */
@@ -122,8 +123,8 @@ public class HarmonicFitter {
             final double omega = parameters[1];
             final double phi   = parameters[2];
             final double alpha = omega * x + phi;
-            final double cosAlpha = Math.cos(alpha);
-            final double sinAlpha = Math.sin(alpha);
+            final double cosAlpha = FastMath.cos(alpha);
+            final double sinAlpha = FastMath.sin(alpha);
             return new double[] { cosAlpha, -a * x * sinAlpha, -a * sinAlpha };
         }
 

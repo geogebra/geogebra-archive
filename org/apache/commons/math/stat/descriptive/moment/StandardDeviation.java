@@ -19,6 +19,7 @@ package org.apache.commons.math.stat.descriptive.moment;
 import java.io.Serializable;
 
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Computes the sample standard deviation.  The standard deviation
@@ -35,7 +36,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1006299 $ $Date: 2010-10-10 16:47:17 +0200 (dim. 10 oct. 2010) $
  */
 public class StandardDeviation extends AbstractStorelessUnivariateStatistic
     implements Serializable {
@@ -122,7 +123,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      */
     @Override
     public double getResult() {
-        return Math.sqrt(variance.getResult());
+        return FastMath.sqrt(variance.getResult());
     }
 
     /**
@@ -149,7 +150,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      */
     @Override
     public double evaluate(final double[] values)  {
-        return Math.sqrt(variance.evaluate(values));
+        return FastMath.sqrt(variance.evaluate(values));
     }
 
     /**
@@ -172,7 +173,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      */
     @Override
     public double evaluate(final double[] values, final int begin, final int length)  {
-       return Math.sqrt(variance.evaluate(values, begin, length));
+       return FastMath.sqrt(variance.evaluate(values, begin, length));
     }
 
     /**
@@ -201,7 +202,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      */
     public double evaluate(final double[] values, final double mean,
             final int begin, final int length)  {
-        return Math.sqrt(variance.evaluate(values, mean, begin, length));
+        return FastMath.sqrt(variance.evaluate(values, mean, begin, length));
     }
 
     /**
@@ -226,7 +227,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      * @throws IllegalArgumentException if the array is null
      */
     public double evaluate(final double[] values, final double mean)  {
-        return Math.sqrt(variance.evaluate(values, mean));
+        return FastMath.sqrt(variance.evaluate(values, mean));
     }
 
     /**
@@ -263,6 +264,7 @@ public class StandardDeviation extends AbstractStorelessUnivariateStatistic
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(StandardDeviation source, StandardDeviation dest) {
+        dest.setData(source.getDataRef());
         dest.variance = source.variance.copy();
     }
 

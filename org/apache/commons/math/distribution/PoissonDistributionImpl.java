@@ -20,13 +20,15 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Gamma;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implementation for the {@link PoissonDistribution}.
  *
- * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
+ * @version $Revision: 1054524 $ $Date: 2011-01-03 05:59:18 +0100 (lun. 03 janv. 2011) $
  */
 public class PoissonDistributionImpl extends AbstractIntegerDistribution
         implements PoissonDistribution, Serializable {
@@ -168,12 +170,12 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
                                           double p) {
         if (p <= 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "the Poisson mean must be positive ({0})", p);
+                    LocalizedFormats.NOT_POSITIVE_POISSON_MEAN, p);
         }
         mean = p;
         normal = z;
         normal.setMean(p);
-        normal.setStandardDeviation(Math.sqrt(p));
+        normal.setStandardDeviation(FastMath.sqrt(p));
     }
 
     /**
@@ -188,11 +190,11 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
         if (x < 0 || x == Integer.MAX_VALUE) {
             ret = 0.0;
         } else if (x == 0) {
-            ret = Math.exp(-mean);
+            ret = FastMath.exp(-mean);
         } else {
-            ret = Math.exp(-SaddlePointExpansion.getStirlingError(x) -
+            ret = FastMath.exp(-SaddlePointExpansion.getStirlingError(x) -
                   SaddlePointExpansion.getDeviancePart(x, mean)) /
-                  Math.sqrt(MathUtils.TWO_PI * x);
+                  FastMath.sqrt(MathUtils.TWO_PI * x);
         }
         return ret;
     }
@@ -238,6 +240,28 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
     }
 
     /**
+     * Generates a random value sampled from this distribution.
+     *
+     * <p><strong>Algorithm Description</strong>:
+     * <ul><li> For small means, uses simulation of a Poisson process
+     * using Uniform deviates, as described
+     * <a href="http://irmi.epfl.ch/cmos/Pmmi/interactive/rng7.htm"> here.</a>
+     * The Poisson process (and hence value returned) is bounded by 1000 * mean.</li><
+     *
+     * <li> For large means, uses the rejection algorithm described in <br/>
+     * Devroye, Luc. (1981).<i>The Computer Generation of Poisson Random Variables</i>
+     * <strong>Computing</strong> vol. 26 pp. 197-207.</li></ul></p>
+     *
+     * @return random value
+     * @since 2.2
+     * @throws MathException if an error occurs generating the random value
+     */
+    @Override
+    public int sample() throws MathException {
+        return (int) FastMath.min(randomData.nextPoisson(mean), Integer.MAX_VALUE);
+    }
+
+    /**
      * Access the domain value lower bound, based on <code>p</code>, used to
      * bracket a CDF root. This method is used by
      * {@link #inverseCumulativeProbability(double)} to find critical values.
@@ -276,4 +300,44 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
     public void setNormal(NormalDistribution value) {
         setNormalAndMeanInternal(value, mean);
     }
+
+    /**
+     * Returns the lower bound of the support for the distribution.
+     *
+     * The lower bound of the support is always 0 no matter the mean parameter.
+     *
+     * @return lower bound of the support (always 0)
+     * @since 2.2
+     */
+    public int getSupportLowerBound() {
+        return 0;
+    }
+
+    /**
+     * Returns the upper bound of the support for the distribution.
+     *
+     * The upper bound of the support is positive infinity,
+     * regardless of the parameter values. There is no integer infinity,
+     * so this method returns <code>Integer.MAX_VALUE</code> and
+     * {@link #isSupportUpperBoundInclusive()} returns <code>true</code>.
+     *
+     * @return upper bound of the support (always <code>Integer.MAX_VALUE</code> for positive infinity)
+     * @since 2.2
+     */
+    public int getSupportUpperBound() {
+        return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Returns the variance of the distribution.
+     *
+     * For mean parameter <code>p</code>, the variance is <code>p</code>
+     *
+     * @return the variance
+     * @since 2.2
+     */
+    public double getNumericalVariance() {
+        return getMean();
+    }
+
 }

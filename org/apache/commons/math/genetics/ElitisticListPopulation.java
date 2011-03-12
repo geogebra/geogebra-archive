@@ -19,11 +19,13 @@ package org.apache.commons.math.genetics;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.math.util.FastMath;
+
 /**
  * Population of chromosomes which uses elitism (certain percentace of the best
  * chromosomes is directly copied to the next generation).
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
  */
 public class ElitisticListPopulation extends ListPopulation {
@@ -76,7 +78,7 @@ public class ElitisticListPopulation extends ListPopulation {
         Collections.sort(oldChromosomes);
 
         // index of the last "not good enough" chromosome
-        int boundIndex = (int) Math.ceil((1.0 - this.getElitismRate()) * oldChromosomes.size());
+        int boundIndex = (int) FastMath.ceil((1.0 - this.getElitismRate()) * oldChromosomes.size());
         for (int i=boundIndex; i<oldChromosomes.size(); i++) {
             nextGeneration.addChromosome(oldChromosomes.get(i));
         }

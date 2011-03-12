@@ -19,7 +19,9 @@ package org.apache.commons.math.stat.descriptive.moment;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
@@ -40,7 +42,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1006299 $ $Date: 2010-10-10 16:47:17 +0200 (dim. 10 oct. 2010) $
  */
 public class Kurtosis extends AbstractStorelessUnivariateStatistic  implements Serializable {
 
@@ -95,7 +97,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  implements S
             moment.increment(d);
         }  else  {
             throw MathRuntimeException.createIllegalStateException(
-                    "statistics constructed from external moments cannot be incremented");
+                    LocalizedFormats.CANNOT_INCREMENT_STATISTIC_CONSTRUCTED_FROM_EXTERNAL_MOMENTS);
         }
     }
 
@@ -129,7 +131,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  implements S
             moment.clear();
         } else  {
             throw MathRuntimeException.createIllegalStateException(
-                    "statistics constructed from external moments cannot be cleared");
+                    LocalizedFormats.CANNOT_CLEAR_STATISTIC_CONSTRUCTED_FROM_EXTERNAL_MOMENTS);
         }
     }
 
@@ -169,15 +171,15 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  implements S
             Variance variance = new Variance();
             variance.incrementAll(values, begin, length);
             double mean = variance.moment.m1;
-            double stdDev = Math.sqrt(variance.getResult());
+            double stdDev = FastMath.sqrt(variance.getResult());
 
             // Sum the ^4 of the distance from the mean divided by the
             // standard deviation
             double accum3 = 0.0;
             for (int i = begin; i < begin + length; i++) {
-                accum3 += Math.pow(values[i] - mean, 4.0);
+                accum3 += FastMath.pow(values[i] - mean, 4.0);
             }
-            accum3 /= Math.pow(stdDev, 4.0d);
+            accum3 /= FastMath.pow(stdDev, 4.0d);
 
             // Get N
             double n0 = length;
@@ -185,7 +187,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  implements S
             double coefficientOne =
                 (n0 * (n0 + 1)) / ((n0 - 1) * (n0 - 2) * (n0 - 3));
             double termTwo =
-                (3 * Math.pow(n0 - 1, 2.0)) / ((n0 - 2) * (n0 - 3));
+                (3 * FastMath.pow(n0 - 1, 2.0)) / ((n0 - 2) * (n0 - 3));
 
             // Calculate kurtosis
             kurt = (coefficientOne * accum3) - termTwo;
@@ -212,6 +214,7 @@ public class Kurtosis extends AbstractStorelessUnivariateStatistic  implements S
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(Kurtosis source, Kurtosis dest) {
+        dest.setData(source.getDataRef());
         dest.moment = source.moment.copy();
         dest.incMoment = source.incMoment;
     }

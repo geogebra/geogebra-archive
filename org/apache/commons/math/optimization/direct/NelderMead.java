@@ -26,7 +26,7 @@ import org.apache.commons.math.optimization.RealPointValuePair;
 /**
  * This class implements the Nelder-Mead direct search method.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @see MultiDirectional
  * @since 1.2
  */

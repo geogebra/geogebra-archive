@@ -18,12 +18,13 @@
 package org.apache.commons.math.fraction;
 
 import org.apache.commons.math.ConvergenceException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Error thrown when a double value cannot be converted to a fraction
  * in the allowed number of iterations.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 1.2
  */
 public class FractionConversionException extends ConvergenceException {
@@ -38,7 +39,7 @@ public class FractionConversionException extends ConvergenceException {
      * @param maxIterations maximal number of iterations allowed
      */
     public FractionConversionException(double value, int maxIterations) {
-        super("Unable to convert {0} to fraction after {1} iterations", value, maxIterations);
+        super(LocalizedFormats.FAILED_FRACTION_CONVERSION, value, maxIterations);
     }
 
     /**
@@ -49,7 +50,7 @@ public class FractionConversionException extends ConvergenceException {
      * @param q current denominator
      */
     public FractionConversionException(double value, long p, long q) {
-        super("Overflow trying to convert {0} to fraction ({1}/{2})", value, p, q);
+        super(LocalizedFormats.FRACTION_CONVERSION_OVERFLOW, value, p, q);
     }
 
 }

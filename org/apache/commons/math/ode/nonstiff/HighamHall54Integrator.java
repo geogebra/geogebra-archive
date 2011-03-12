@@ -17,6 +17,8 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
+import org.apache.commons.math.util.FastMath;
+
 
 /**
  * This class implements the 5(4) Higham and Hall integrator for
@@ -28,7 +30,7 @@ package org.apache.commons.math.ode.nonstiff;
  * (and automatic step initialization) and continuous output. This
  * method uses 7 functions evaluations per step.</p>
  *
- * @version $Revision: 810196 $ $Date: 2009-09-01 15:47:46 -0400 (Tue, 01 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 1.2
  */
 
@@ -108,13 +110,13 @@ public class HighamHall54Integrator extends EmbeddedRungeKuttaIntegrator {
 
     double error = 0;
 
-    for (int j = 0; j < y0.length; ++j) {
+    for (int j = 0; j < mainSetDimension; ++j) {
       double errSum = STATIC_E[0] * yDotK[0][j];
       for (int l = 1; l < STATIC_E.length; ++l) {
         errSum += STATIC_E[l] * yDotK[l][j];
       }
 
-      final double yScale = Math.max(Math.abs(y0[j]), Math.abs(y1[j]));
+      final double yScale = FastMath.max(FastMath.abs(y0[j]), FastMath.abs(y1[j]));
       final double tol = (vecAbsoluteTolerance == null) ?
                          (scalAbsoluteTolerance + scalRelativeTolerance * yScale) :
                          (vecAbsoluteTolerance[j] + vecRelativeTolerance[j] * yScale);
@@ -123,7 +125,7 @@ public class HighamHall54Integrator extends EmbeddedRungeKuttaIntegrator {
 
     }
 
-    return Math.sqrt(error / y0.length);
+    return FastMath.sqrt(error / mainSetDimension);
 
   }
 

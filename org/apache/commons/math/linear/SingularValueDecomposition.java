@@ -47,7 +47,7 @@ package org.apache.commons.math.linear;
  * </ul>
  * @see <a href="http://mathworld.wolfram.com/SingularValueDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Singular_value_decomposition">Wikipedia</a>
- * @version $Revision: 928081 $ $Date: 2010-03-26 18:36:38 -0400 (Fri, 26 Mar 2010) $
+ * @version $Revision: 928081 $ $Date: 2010-03-26 23:36:38 +0100 (ven. 26 mars 2010) $
  * @since 2.0
  */
 public interface SingularValueDecomposition {

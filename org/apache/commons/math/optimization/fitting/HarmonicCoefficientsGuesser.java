@@ -17,7 +17,9 @@
 
 package org.apache.commons.math.optimization.fitting;
 
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.OptimizationException;
+import org.apache.commons.math.util.FastMath;
 
 /** This class guesses harmonic coefficients from a sample.
 
@@ -118,7 +120,7 @@ import org.apache.commons.math.optimization.OptimizationException;
  * estimations, these operations run in O(n) time, where n is the
  * number of measurements.</p>
 
- * @version $Revision: 786479 $ $Date: 2009-06-19 08:36:16 -0400 (Fri, 19 Jun 2009) $
+ * @version $Revision: 1056034 $ $Date: 2011-01-06 20:41:43 +0100 (jeu. 06 janv. 2011) $
  * @since 2.0
 
  */
@@ -175,8 +177,6 @@ public class HarmonicCoefficientsGuesser {
                     observations[i + 1] = mI;
                     if (i-- != 0) {
                         mI = observations[i];
-                    } else {
-                        mI = null;
                     }
                 }
                 observations[i + 1] = curr;
@@ -238,10 +238,10 @@ public class HarmonicCoefficientsGuesser {
         double c2 = sxy * sxz - sx2 * syz;
         double c3 = sx2 * sy2 - sxy * sxy;
         if ((c1 / c2 < 0.0) || (c2 / c3 < 0.0)) {
-            throw new OptimizationException("unable to first guess the harmonic coefficients");
+            throw new OptimizationException(LocalizedFormats.UNABLE_TO_FIRST_GUESS_HARMONIC_COEFFICIENTS);
         }
-        a     = Math.sqrt(c1 / c2);
-        omega = Math.sqrt(c2 / c3);
+        a     = FastMath.sqrt(c1 / c2);
+        omega = FastMath.sqrt(c2 / c3);
 
     }
 
@@ -265,14 +265,14 @@ public class HarmonicCoefficientsGuesser {
             final double currentYPrime = (currentY - previousY) / (currentX - previousX);
 
             double   omegaX = omega * currentX;
-            double   cosine = Math.cos(omegaX);
-            double   sine   = Math.sin(omegaX);
+            double   cosine = FastMath.cos(omegaX);
+            double   sine   = FastMath.sin(omegaX);
             fcMean += omega * currentY * cosine - currentYPrime *   sine;
             fsMean += omega * currentY *   sine + currentYPrime * cosine;
 
         }
 
-        phi = Math.atan2(-fsMean, fcMean);
+        phi = FastMath.atan2(-fsMean, fcMean);
 
     }
 

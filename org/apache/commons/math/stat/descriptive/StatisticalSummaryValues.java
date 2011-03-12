@@ -17,12 +17,14 @@
 package org.apache.commons.math.stat.descriptive;
 
 import java.io.Serializable;
+
+import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
 
 /**
  *  Value object representing the results of a univariate statistical summary.
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1054186 $ $Date: 2011-01-01 03:28:46 +0100 (sam. 01 janv. 2011) $
  */
 public class StatisticalSummaryValues implements Serializable,
     StatisticalSummary {
@@ -108,7 +110,7 @@ public class StatisticalSummaryValues implements Serializable,
      * @return Returns the standard deviation
      */
     public double getStandardDeviation() {
-        return Math.sqrt(variance);
+        return FastMath.sqrt(variance);
     }
 
     /**
@@ -135,12 +137,12 @@ public class StatisticalSummaryValues implements Serializable,
             return false;
         }
         StatisticalSummaryValues stat = (StatisticalSummaryValues) object;
-        return MathUtils.equals(stat.getMax(),      getMax())  &&
-               MathUtils.equals(stat.getMean(),     getMean()) &&
-               MathUtils.equals(stat.getMin(),      getMin())  &&
-               MathUtils.equals(stat.getN(),        getN())    &&
-               MathUtils.equals(stat.getSum(),      getSum())  &&
-               MathUtils.equals(stat.getVariance(), getVariance());
+        return MathUtils.equalsIncludingNaN(stat.getMax(),      getMax())  &&
+               MathUtils.equalsIncludingNaN(stat.getMean(),     getMean()) &&
+               MathUtils.equalsIncludingNaN(stat.getMin(),      getMin())  &&
+               MathUtils.equalsIncludingNaN(stat.getN(),        getN())    &&
+               MathUtils.equalsIncludingNaN(stat.getSum(),      getSum())  &&
+               MathUtils.equalsIncludingNaN(stat.getVariance(), getVariance());
     }
 
     /**
@@ -157,6 +159,28 @@ public class StatisticalSummaryValues implements Serializable,
         result = result * 31 + MathUtils.hash(getSum());
         result = result * 31 + MathUtils.hash(getVariance());
         return result;
+    }
+
+    /**
+     * Generates a text report displaying values of statistics.
+     * Each statistic is displayed on a separate line.
+     *
+     * @return String with line feeds displaying statistics
+     */
+    @Override
+    public String toString() {
+        StringBuilder outBuffer = new StringBuilder();
+        String endl = "\n";
+        outBuffer.append("StatisticalSummaryValues:").append(endl);
+        outBuffer.append("n: ").append(getN()).append(endl);
+        outBuffer.append("min: ").append(getMin()).append(endl);
+        outBuffer.append("max: ").append(getMax()).append(endl);
+        outBuffer.append("mean: ").append(getMean()).append(endl);
+        outBuffer.append("std dev: ").append(getStandardDeviation())
+            .append(endl);
+        outBuffer.append("variance: ").append(getVariance()).append(endl);
+        outBuffer.append("sum: ").append(getSum()).append(endl);
+        return outBuffer.toString();
     }
 
 }

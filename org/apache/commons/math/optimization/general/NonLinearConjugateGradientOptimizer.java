@@ -22,10 +22,11 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.solvers.BrentSolver;
 import org.apache.commons.math.analysis.solvers.UnivariateRealSolver;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
-import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.RealPointValuePair;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Non-linear conjugate gradient optimizer.
@@ -35,14 +36,13 @@ import org.apache.commons.math.optimization.RealPointValuePair;
  * optional preconditioning.
  * </p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @since 2.0
  *
  */
 
 public class NonLinearConjugateGradientOptimizer
-    extends AbstractScalarDifferentiableOptimizer
-    implements DifferentiableMultivariateRealOptimizer {
+    extends AbstractScalarDifferentiableOptimizer {
 
     /** Update formula for the beta parameter. */
     private final ConjugateGradientFormula updateFormula;
@@ -226,14 +226,14 @@ public class NonLinearConjugateGradientOptimizer
         throws FunctionEvaluationException, OptimizationException {
         final double yA = f.value(a);
         double yB = yA;
-        for (double step = h; step < Double.MAX_VALUE; step *= Math.max(2, yA / yB)) {
+        for (double step = h; step < Double.MAX_VALUE; step *= FastMath.max(2, yA / yB)) {
             final double b = a + step;
             yB = f.value(b);
             if (yA * yB <= 0) {
                 return b;
             }
         }
-        throw new OptimizationException("unable to bracket optimum in line search");
+        throw new OptimizationException(LocalizedFormats.UNABLE_TO_BRACKET_OPTIMUM_IN_LINE_SEARCH);
     }
 
     /** Default identity preconditioner. */
@@ -276,7 +276,8 @@ public class NonLinearConjugateGradientOptimizer
             }
 
             // gradient of the objective function
-            final double[] gradient = computeObjectiveGradient(shiftedPoint);
+            final double[] gradient;
+            gradient = computeObjectiveGradient(shiftedPoint);
 
             // dot product with the search direction
             double dotProduct = 0;

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.CompositeFormat;
 
 /**
@@ -39,7 +40,7 @@ import org.apache.commons.math.util.CompositeFormat;
  * returned. In the second case, however, the parse position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
- * @version $Revision: 783702 $ $Date: 2009-06-11 04:54:02 -0400 (Thu, 11 Jun 2009) $
+ * @version $Revision: 1003886 $ $Date: 2010-10-02 23:04:44 +0200 (sam. 02 oct. 2010) $
  * @since 2.0
  */
 public class RealVectorFormat extends CompositeFormat {
@@ -75,7 +76,7 @@ public class RealVectorFormat extends CompositeFormat {
     private final String trimmedSeparator;
 
     /** The format used for components. */
-    private NumberFormat format;
+    private final NumberFormat format;
 
     /**
      * Create an instance with default settings.
@@ -246,7 +247,7 @@ public class RealVectorFormat extends CompositeFormat {
         }
 
         throw MathRuntimeException.createIllegalArgumentException(
-              "cannot format a {0} instance as a real vector",
+              LocalizedFormats.CANNOT_FORMAT_INSTANCE_AS_REAL_VECTOR,
               obj.getClass().getName());
 
     }
@@ -264,7 +265,7 @@ public class RealVectorFormat extends CompositeFormat {
         if (parsePosition.getIndex() == 0) {
             throw MathRuntimeException.createParseException(
                     parsePosition.getErrorIndex(),
-                    "unparseable real vector: \"{0}\"", source);
+                    LocalizedFormats.UNPARSEABLE_REAL_VECTOR, source);
         }
         return result;
     }

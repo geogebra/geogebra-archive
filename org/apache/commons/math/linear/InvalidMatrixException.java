@@ -18,25 +18,39 @@
 package org.apache.commons.math.linear;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.DummyLocalizable;
+import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * Thrown when a system attempts an operation on a matrix, and
  * that matrix does not satisfy the preconditions for the
  * aforementioned operation.
- * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
+ * @version $Revision: 1073253 $ $Date: 2011-02-22 09:40:05 +0100 (mar. 22 févr. 2011) $
  */
 public class InvalidMatrixException extends MathRuntimeException {
 
     /** Serializable version identifier. */
-    private static final long serialVersionUID = 1135533765052675495L;
+    private static final long serialVersionUID = -2068020346562029801L;
 
     /**
      * Construct an exception with the given message.
      * @param pattern format specifier
      * @param arguments format arguments
      * @since 2.0
+     * @deprecated since 2.2 replaced by {@link #InvalidMatrixException(Localizable, Object...)}
      */
+    @Deprecated
     public InvalidMatrixException(final String pattern, final Object ... arguments) {
+        this(new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Construct an exception with the given message.
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public InvalidMatrixException(final Localizable pattern, final Object ... arguments) {
         super(pattern, arguments);
     }
 

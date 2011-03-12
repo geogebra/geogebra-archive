@@ -18,6 +18,7 @@
 package org.apache.commons.math.linear;
 
 import org.apache.commons.math.FieldElement;
+import org.apache.commons.math.linear.MatrixVisitorException;
 
 /**
  * Default implementation of the {@link FieldMatrixPreservingVisitor} interface.
@@ -27,7 +28,7 @@ import org.apache.commons.math.FieldElement;
  * </p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  */
 public class DefaultFieldMatrixPreservingVisitor<T extends FieldElement<T>>

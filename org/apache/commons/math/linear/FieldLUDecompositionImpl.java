@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Calculates the LUP-decomposition of a square matrix.
@@ -34,7 +35,7 @@ import org.apache.commons.math.MathRuntimeException;
  * a zero pivot element, no attempt is done to get the largest pivot element.</p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 903046 $ $Date: 2010-01-25 21:07:26 -0500 (Mon, 25 Jan 2010) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 2.0
  */
 public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements FieldLUDecomposition<T> {
@@ -263,7 +264,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
             final int m = pivot.length;
             if (b.length != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "vector length mismatch: got {0} but expected {1}",
+                        LocalizedFormats.VECTOR_LENGTH_MISMATCH,
                         b.length, m);
             }
             if (singular) {
@@ -309,7 +310,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
                 final int m = pivot.length;
                 if (b.getDimension() != m) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                            "vector length mismatch: got {0} but expected {1}",
+                            LocalizedFormats.VECTOR_LENGTH_MISMATCH,
                             b.getDimension(), m);
                 }
                 if (singular) {
@@ -365,7 +366,7 @@ public class FieldLUDecompositionImpl<T extends FieldElement<T>> implements Fiel
             final int m = pivot.length;
             if (b.getRowDimension() != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "dimensions mismatch: got {0}x{1} but expected {2}x{3}",
+                        LocalizedFormats.DIMENSIONS_MISMATCH_2x2,
                         b.getRowDimension(), b.getColumnDimension(), m, "n");
             }
             if (singular) {

@@ -18,12 +18,15 @@
 package org.apache.commons.math;
 
 import org.apache.commons.math.ConvergenceException;
+import org.apache.commons.math.exception.util.DummyLocalizable;
+import org.apache.commons.math.exception.util.Localizable;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Error thrown when a numerical computation exceeds its allowed
  * number of functions evaluations.
  *
- * @version $Revision: 779273 $ $Date: 2009-05-27 14:54:48 -0400 (Wed, 27 May 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 2.0
  */
 public class MaxEvaluationsExceededException extends ConvergenceException {
@@ -35,12 +38,11 @@ public class MaxEvaluationsExceededException extends ConvergenceException {
     private final int maxEvaluations;
 
     /**
-     * Constructs an exception with specified formatted detail message.
-     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * Constructs an exception with a default detail message.
      * @param maxEvaluations maximal number of evaluations allowed
      */
     public MaxEvaluationsExceededException(final int maxEvaluations) {
-        super("Maximal number of evaluations ({0}) exceeded", maxEvaluations);
+        super(LocalizedFormats.MAX_EVALUATIONS_EXCEEDED, maxEvaluations);
         this.maxEvaluations = maxEvaluations;
     }
 
@@ -50,9 +52,24 @@ public class MaxEvaluationsExceededException extends ConvergenceException {
      * @param maxEvaluations the exceeded maximal number of evaluations
      * @param pattern format specifier
      * @param arguments format arguments
+     * @deprecated as of 2.2 replaced by {@link #MaxEvaluationsExceededException(int, Localizable, Object...)}
      */
+    @Deprecated
     public MaxEvaluationsExceededException(final int maxEvaluations,
                                           final String pattern, final Object ... arguments) {
+        this(maxEvaluations, new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs an exception with specified formatted detail message.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param maxEvaluations the exceeded maximal number of evaluations
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public MaxEvaluationsExceededException(final int maxEvaluations,
+                                           final Localizable pattern, final Object ... arguments) {
         super(pattern, arguments);
         this.maxEvaluations = maxEvaluations;
     }

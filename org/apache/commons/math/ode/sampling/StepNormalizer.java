@@ -18,6 +18,7 @@
 package org.apache.commons.math.ode.sampling;
 
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class wraps an object implementing {@link FixedStepHandler}
@@ -43,7 +44,7 @@ import org.apache.commons.math.ode.DerivativeException;
  *
  * @see StepHandler
  * @see FixedStepHandler
- * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  */
 
@@ -72,7 +73,7 @@ public class StepNormalizer implements StepHandler {
      * @param handler fixed time step handler to wrap
      */
     public StepNormalizer(final double h, final FixedStepHandler handler) {
-        this.h       = Math.abs(h);
+        this.h       = FastMath.abs(h);
         this.handler = handler;
         reset();
     }

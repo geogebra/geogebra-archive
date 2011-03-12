@@ -24,6 +24,7 @@ import java.util.ConcurrentModificationException;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Open addressed map from int to double.
@@ -33,7 +34,7 @@ import org.apache.commons.math.MathRuntimeException;
  * {@link #iterator()} are fail-fast: they throw a
  * <code>ConcurrentModificationException</code> when they detect the map has been
  * modified during iteration.</p>
- * @version $Revision: 885278 $ $Date: 2009-11-29 16:47:51 -0500 (Sun, 29 Nov 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
  */
 public class OpenIntToDoubleHashMap implements Serializable {
@@ -49,14 +50,6 @@ public class OpenIntToDoubleHashMap implements Serializable {
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -3646337053166149105L;
-
-    /** Message for map modification during iteration. */
-    private static final String CONCURRENT_MODIFICATION_MESSAGE =
-        "map has been modified while iterating";
-
-    /** Message for exhausted iterator. */
-    private static final String EXHAUSTED_ITERATOR_MESSAGE =
-        "iterator exhausted";
 
     /** Load factor for the map. */
     private static final float LOAD_FACTOR = 0.5f;
@@ -160,7 +153,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
         if (expectedSize == 0) {
             return 1;
         }
-        final int capacity   = (int) Math.ceil(expectedSize / LOAD_FACTOR);
+        final int capacity   = (int) FastMath.ceil(expectedSize / LOAD_FACTOR);
         final int powerOfTwo = Integer.highestOneBit(capacity);
         if (powerOfTwo == capacity) {
             return capacity;
@@ -534,11 +527,10 @@ public class OpenIntToDoubleHashMap implements Serializable {
         public int key()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(
-                      CONCURRENT_MODIFICATION_MESSAGE);
+                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
+                throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
             }
             return keys[current];
         }
@@ -552,11 +544,10 @@ public class OpenIntToDoubleHashMap implements Serializable {
         public double value()
             throws ConcurrentModificationException, NoSuchElementException {
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(
-                      CONCURRENT_MODIFICATION_MESSAGE);
+                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
             }
             if (current < 0) {
-                throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
+                throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
             }
             return values[current];
         }
@@ -570,8 +561,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
             throws ConcurrentModificationException, NoSuchElementException {
 
             if (referenceCount != count) {
-                throw MathRuntimeException.createConcurrentModificationException(
-                      CONCURRENT_MODIFICATION_MESSAGE);
+                throw MathRuntimeException.createConcurrentModificationException(LocalizedFormats.MAP_MODIFIED_WHILE_ITERATING);
             }
 
             // advance on step
@@ -585,7 +575,7 @@ public class OpenIntToDoubleHashMap implements Serializable {
             } catch (ArrayIndexOutOfBoundsException e) {
                 next = -2;
                 if (current < 0) {
-                    throw MathRuntimeException.createNoSuchElementException(EXHAUSTED_ITERATOR_MESSAGE);
+                    throw MathRuntimeException.createNoSuchElementException(LocalizedFormats.ITERATOR_EXHAUSTED);
                 }
             }
 

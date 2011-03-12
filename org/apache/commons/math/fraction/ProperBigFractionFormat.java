@@ -21,7 +21,8 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NullArgumentException;
 
 /**
  * Formats a BigFraction number in proper format.  The number format for each of
@@ -32,7 +33,7 @@ import org.apache.commons.math.MathRuntimeException;
  * will result in a <code>ParseException</code>.</p>
  *
  * @since 1.1
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public class ProperBigFractionFormat extends BigFractionFormat {
 
@@ -227,15 +228,12 @@ public class ProperBigFractionFormat extends BigFractionFormat {
     /**
      * Modify the whole format.
      * @param format The new whole format value.
-     * @throws IllegalArgumentException if <code>format</code> is
-     *         <code>null</code>.
+     * @throws NullArgumentException if {@code format} is {@code null}.
      */
     public void setWholeFormat(final NumberFormat format) {
         if (format == null) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                "whole format can not be null");
+            throw new NullArgumentException(LocalizedFormats.WHOLE_FORMAT);
         }
         this.wholeFormat = format;
     }
-
 }

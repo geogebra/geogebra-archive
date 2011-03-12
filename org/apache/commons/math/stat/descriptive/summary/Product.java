@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.WeightedEvaluation;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Returns the product of the available values.
@@ -32,7 +33,7 @@ import org.apache.commons.math.stat.descriptive.WeightedEvaluation;
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 917270 $ $Date: 2010-02-28 14:37:53 -0500 (Sun, 28 Feb 2010) $
+ * @version $Revision: 1006299 $ $Date: 2010-10-10 16:47:17 +0200 (dim. 10 oct. 2010) $
  */
 public class Product extends AbstractStorelessUnivariateStatistic implements Serializable, WeightedEvaluation {
 
@@ -162,7 +163,7 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
         if (test(values, weights, begin, length)) {
             product = 1.0;
             for (int i = begin; i < begin + length; i++) {
-                product *= Math.pow(values[i], weights[i]);
+                product *= FastMath.pow(values[i], weights[i]);
             }
         }
         return product;
@@ -215,6 +216,7 @@ public class Product extends AbstractStorelessUnivariateStatistic implements Ser
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(Product source, Product dest) {
+        dest.setData(source.getDataRef());
         dest.n = source.n;
         dest.value = source.value;
     }

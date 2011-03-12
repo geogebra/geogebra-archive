@@ -17,6 +17,7 @@
 
 package org.apache.commons.math.optimization;
 
+import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
 
 /**
@@ -28,7 +29,7 @@ import org.apache.commons.math.util.MathUtils;
  * or if either the absolute difference between the point coordinates are
  * smaller than another threshold.
  * </p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
  */
 public class SimpleVectorialPointChecker implements VectorialConvergenceChecker {
@@ -76,8 +77,8 @@ public class SimpleVectorialPointChecker implements VectorialConvergenceChecker 
         for (int i = 0; i < p.length; ++i) {
             final double pi         = p[i];
             final double ci         = c[i];
-            final double difference = Math.abs(pi - ci);
-            final double size       = Math.max(Math.abs(pi), Math.abs(ci));
+            final double difference = FastMath.abs(pi - ci);
+            final double size       = FastMath.max(FastMath.abs(pi), FastMath.abs(ci));
             if ((difference > (size * relativeThreshold)) &&
                 (difference > absoluteThreshold)) {
                 return false;

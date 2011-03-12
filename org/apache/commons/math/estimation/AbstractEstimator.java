@@ -19,16 +19,18 @@ package org.apache.commons.math.estimation;
 
 import java.util.Arrays;
 
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Base class for implementing estimators.
  * <p>This base class handles the boilerplates methods associated to thresholds
  * settings, jacobian and error estimation.</p>
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -127,7 +129,7 @@ public abstract class AbstractEstimator implements Estimator {
         int index = 0;
         for (int i = 0; i < rows; i++) {
             WeightedMeasurement wm = measurements[i];
-            double factor = -Math.sqrt(wm.getWeight());
+            double factor = -FastMath.sqrt(wm.getWeight());
             for (int j = 0; j < cols; ++j) {
                 jacobian[index++] = factor * wm.getPartial(parameters[j]);
             }
@@ -150,7 +152,7 @@ public abstract class AbstractEstimator implements Estimator {
     throws EstimationException {
 
         if (++costEvaluations > maxCostEval) {
-            throw new EstimationException("maximal number of evaluations exceeded ({0})",
+            throw new EstimationException(LocalizedFormats.MAX_EVALUATIONS_EXCEEDED,
                                           maxCostEval);
         }
 
@@ -159,10 +161,10 @@ public abstract class AbstractEstimator implements Estimator {
         for (int i = 0; i < rows; i++, index += cols) {
             WeightedMeasurement wm = measurements[i];
             double residual = wm.getResidual();
-            residuals[i] = Math.sqrt(wm.getWeight()) * residual;
+            residuals[i] = FastMath.sqrt(wm.getWeight()) * residual;
             cost += wm.getWeight() * residual * residual;
         }
-        cost = Math.sqrt(cost);
+        cost = FastMath.sqrt(cost);
 
     }
 
@@ -184,7 +186,7 @@ public abstract class AbstractEstimator implements Estimator {
             double residual = wm[i].getResidual();
             criterion += wm[i].getWeight() * residual * residual;
         }
-        return Math.sqrt(criterion / wm.length);
+        return FastMath.sqrt(criterion / wm.length);
     }
 
     /**
@@ -237,7 +239,7 @@ public abstract class AbstractEstimator implements Estimator {
                 new LUDecompositionImpl(MatrixUtils.createRealMatrix(jTj)).getSolver().getInverse();
             return inverse.getData();
         } catch (InvalidMatrixException ime) {
-            throw new EstimationException("unable to compute covariances: singular problem");
+            throw new EstimationException(LocalizedFormats.UNABLE_TO_COMPUTE_COVARIANCE_SINGULAR_PROBLEM);
         }
 
     }
@@ -257,14 +259,14 @@ public abstract class AbstractEstimator implements Estimator {
         int p = problem.getUnboundParameters().length;
         if (m <= p) {
             throw new EstimationException(
-                    "no degrees of freedom ({0} measurements, {1} parameters)",
+                    LocalizedFormats.NO_DEGREES_OF_FREEDOM,
                     m, p);
         }
         double[] errors = new double[problem.getUnboundParameters().length];
-        final double c = Math.sqrt(getChiSquare(problem) / (m - p));
+        final double c = FastMath.sqrt(getChiSquare(problem) / (m - p));
         double[][] covar = getCovariances(problem);
         for (int i = 0; i < errors.length; ++i) {
-            errors[i] = Math.sqrt(covar[i][i]) * c;
+            errors[i] = FastMath.sqrt(covar[i][i]) * c;
         }
         return errors;
     }

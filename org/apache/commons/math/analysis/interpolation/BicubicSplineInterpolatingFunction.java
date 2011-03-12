@@ -16,10 +16,12 @@
  */
 package org.apache.commons.math.analysis.interpolation;
 
-import org.apache.commons.math.util.MathUtils;
-import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.DimensionMismatchException;
+import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.BivariateRealFunction;
+import org.apache.commons.math.exception.NoDataException;
+import org.apache.commons.math.exception.OutOfRangeException;
+import org.apache.commons.math.util.MathUtils;
 
 /**
  * Function that implements the
@@ -58,52 +60,63 @@ public class BicubicSplineInterpolatingFunction
     private final double[] xval;
     /** Samples y-coordinates */
     private final double[] yval;
-    /** Set of cubic splines pacthing the whole data grid */
+    /** Set of cubic splines patching the whole data grid */
     private final BicubicSplineFunction[][] splines;
+    /**
+     * Partial derivatives
+     * The value of the first index determines the kind of derivatives:
+     * 0 = first partial derivatives wrt x
+     * 1 = first partial derivatives wrt y
+     * 2 = second partial derivatives wrt x
+     * 3 = second partial derivatives wrt y
+     * 4 = cross partial derivatives
+     */
+    private BivariateRealFunction[][][] partialDerivatives = null;
 
     /**
-     * @param x Sample values of the x-coordinate, in increasing order
-     * @param y Sample values of the y-coordinate, in increasing order
-     * @param z Values of the function on every grid point
-     * @param dZdX Values of the partial derivative of function with respect
-     * to x on every grid point
-     * @param dZdY Values of the partial derivative of function with respect
-     * to y on every grid point
-     * @param dZdXdY Values of the cross partial derivative of function on
-     * every grid point
+     * @param x Sample values of the x-coordinate, in increasing order.
+     * @param y Sample values of the y-coordinate, in increasing order.
+     * @param f Values of the function on every grid point.
+     * @param dFdX Values of the partial derivative of function with respect
+     * to x on every grid point.
+     * @param dFdY Values of the partial derivative of function with respect
+     * to y on every grid point.
+     * @param d2FdXdY Values of the cross partial derivative of function on
+     * every grid point.
      * @throws DimensionMismatchException if the various arrays do not contain
      * the expected number of elements.
-     * @throws IllegalArgumentException if {@code x} or {@code y} are not strictly
-     * increasing.
+     * @throws org.apache.commons.math.exception.NonMonotonousSequenceException
+     * if {@code x} or {@code y} are not strictly increasing.
+     * @throws NoDataException if any of the arrays has zero length.
      */
     public BicubicSplineInterpolatingFunction(double[] x,
                                               double[] y,
-                                              double[][] z,
-                                              double[][] dZdX,
-                                              double[][] dZdY,
-                                              double[][] dZdXdY)
+                                              double[][] f,
+                                              double[][] dFdX,
+                                              double[][] dFdY,
+                                              double[][] d2FdXdY)
         throws DimensionMismatchException {
         final int xLen = x.length;
         final int yLen = y.length;
 
-        if (xLen == 0 || yLen == 0 || z.length == 0 || z[0].length == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("no data");
+        if (xLen == 0 || yLen == 0 || f.length == 0 || f[0].length == 0) {
+            throw new NoDataException();
         }
-        if (xLen != z.length) {
-            throw new DimensionMismatchException(xLen, z.length);
+        if (xLen != f.length) {
+            throw new DimensionMismatchException(xLen, f.length);
         }
-        if (xLen != dZdX.length) {
-            throw new DimensionMismatchException(xLen, dZdX.length);
+        if (xLen != dFdX.length) {
+            throw new DimensionMismatchException(xLen, dFdX.length);
         }
-        if (xLen != dZdY.length) {
-            throw new DimensionMismatchException(xLen, dZdY.length);
+        if (xLen != dFdY.length) {
+            throw new DimensionMismatchException(xLen, dFdY.length);
         }
-        if (xLen != dZdXdY.length) {
-            throw new DimensionMismatchException(xLen, dZdXdY.length);
+        if (xLen != d2FdXdY.length) {
+            throw new DimensionMismatchException(xLen, d2FdXdY.length);
         }
 
-        MathUtils.checkOrder(x, 1, true);
-        MathUtils.checkOrder(y, 1, true);
+        MathUtils.checkOrder(x);
+        MathUtils.checkOrder(y);
 
         xval = x.clone();
         yval = y.clone();
@@ -113,26 +126,26 @@ public class BicubicSplineInterpolatingFunction
         splines = new BicubicSplineFunction[lastI][lastJ];
 
         for (int i = 0; i < lastI; i++) {
-            if (z[i].length != yLen) {
-                throw new DimensionMismatchException(z[i].length, yLen);
+            if (f[i].length != yLen) {
+                throw new DimensionMismatchException(f[i].length, yLen);
             }
-            if (dZdX[i].length != yLen) {
-                throw new DimensionMismatchException(dZdX[i].length, yLen);
+            if (dFdX[i].length != yLen) {
+                throw new DimensionMismatchException(dFdX[i].length, yLen);
             }
-            if (dZdY[i].length != yLen) {
-                throw new DimensionMismatchException(dZdY[i].length, yLen);
+            if (dFdY[i].length != yLen) {
+                throw new DimensionMismatchException(dFdY[i].length, yLen);
             }
-            if (dZdXdY[i].length != yLen) {
-                throw new DimensionMismatchException(dZdXdY[i].length, yLen);
+            if (d2FdXdY[i].length != yLen) {
+                throw new DimensionMismatchException(d2FdXdY[i].length, yLen);
             }
             final int ip1 = i + 1;
             for (int j = 0; j < lastJ; j++) {
                 final int jp1 = j + 1;
                 final double[] beta = new double[] {
-                    z[i][j],      z[ip1][j],      z[i][jp1],      z[ip1][jp1],
-                    dZdX[i][j],   dZdX[ip1][j],   dZdX[i][jp1],   dZdX[ip1][jp1],
-                    dZdY[i][j],   dZdY[ip1][j],   dZdY[i][jp1],   dZdY[ip1][jp1],
-                    dZdXdY[i][j], dZdXdY[ip1][j], dZdXdY[i][jp1], dZdXdY[ip1][jp1]
+                    f[i][j], f[ip1][j], f[i][jp1], f[ip1][jp1],
+                    dFdX[i][j], dFdX[ip1][j], dFdX[i][jp1], dFdX[ip1][jp1],
+                    dFdY[i][j], dFdY[ip1][j], dFdY[i][jp1], dFdY[ip1][jp1],
+                    d2FdXdY[i][j], d2FdXdY[ip1][j], d2FdXdY[i][jp1], d2FdXdY[ip1][jp1]
                 };
 
                 splines[i][j] = new BicubicSplineFunction(computeSplineCoefficients(beta));
@@ -146,13 +159,11 @@ public class BicubicSplineInterpolatingFunction
     public double value(double x, double y) {
         final int i = searchIndex(x, xval);
         if (i == -1) {
-            throw MathRuntimeException.createIllegalArgumentException("{0} out of [{1}, {2}] range",
-                                                                      x, xval[0], xval[xval.length - 1]);
+            throw new OutOfRangeException(x, xval[0], xval[xval.length - 1]);
         }
         final int j = searchIndex(y, yval);
         if (j == -1) {
-            throw MathRuntimeException.createIllegalArgumentException("{0} out of [{1}, {2}] range",
-                                                                      y, yval[0], yval[yval.length - 1]);
+            throw new OutOfRangeException(y, yval[0], yval[yval.length - 1]);
         }
 
         final double xN = (x - xval[i]) / (xval[i + 1] - xval[i]);
@@ -162,18 +173,121 @@ public class BicubicSplineInterpolatingFunction
     }
 
     /**
-     * @param c coordinate
-     * @param val coordinate samples
+     * @param x x-coordinate.
+     * @param y y-coordinate.
+     * @return the value at point (x, y) of the first partial derivative with
+     * respect to x.
+     * @since 2.2
+     */
+    public double partialDerivativeX(double x, double y) {
+        return partialDerivative(0, x, y);
+    }
+    /**
+     * @param x x-coordinate.
+     * @param y y-coordinate.
+     * @return the value at point (x, y) of the first partial derivative with
+     * respect to y.
+     * @since 2.2
+     */
+    public double partialDerivativeY(double x, double y) {
+        return partialDerivative(1, x, y);
+    }
+    /**
+     * @param x x-coordinate.
+     * @param y y-coordinate.
+     * @return the value at point (x, y) of the second partial derivative with
+     * respect to x.
+     * @since 2.2
+     */
+    public double partialDerivativeXX(double x, double y) {
+        return partialDerivative(2, x, y);
+    }
+    /**
+     * @param x x-coordinate.
+     * @param y y-coordinate.
+     * @return the value at point (x, y) of the second partial derivative with
+     * respect to y.
+     * @since 2.2
+     */
+    public double partialDerivativeYY(double x, double y) {
+        return partialDerivative(3, x, y);
+    }
+    /**
+     * @param x x-coordinate.
+     * @param y y-coordinate.
+     * @return the value at point (x, y) of the second partial cross-derivative.
+     * @since 2.2
+     */
+    public double partialDerivativeXY(double x, double y) {
+        return partialDerivative(4, x, y);
+    }
+
+    /**
+     * @param which First index in {@link #partialDerivatives}.
+     * @param x x-coordinate.
+     * @param y y-coordinate.
+     * @return the value at point (x, y) of the selected partial derivative.
+     * @throws FunctionEvaluationException
+     */
+    private double partialDerivative(int which, double x, double y) {
+        if (partialDerivatives == null) {
+            computePartialDerivatives();
+        }
+
+        final int i = searchIndex(x, xval);
+        if (i == -1) {
+            throw new OutOfRangeException(x, xval[0], xval[xval.length - 1]);
+        }
+        final int j = searchIndex(y, yval);
+        if (j == -1) {
+            throw new OutOfRangeException(y, yval[0], yval[yval.length - 1]);
+        }
+
+        final double xN = (x - xval[i]) / (xval[i + 1] - xval[i]);
+        final double yN = (y - yval[j]) / (yval[j + 1] - yval[j]);
+
+        try {
+            return partialDerivatives[which][i][j].value(xN, yN);
+        } catch (FunctionEvaluationException fee) {
+            // this should never happen
+            throw new RuntimeException(fee);
+        }
+
+    }
+
+    /**
+     * Compute all partial derivatives.
+     */
+    private void computePartialDerivatives() {
+        final int lastI = xval.length - 1;
+        final int lastJ = yval.length - 1;
+        partialDerivatives = new BivariateRealFunction[5][lastI][lastJ];
+
+        for (int i = 0; i < lastI; i++) {
+            for (int j = 0; j < lastJ; j++) {
+                final BicubicSplineFunction f = splines[i][j];
+                partialDerivatives[0][i][j] = f.partialDerivativeX();
+                partialDerivatives[1][i][j] = f.partialDerivativeY();
+                partialDerivatives[2][i][j] = f.partialDerivativeXX();
+                partialDerivatives[3][i][j] = f.partialDerivativeYY();
+                partialDerivatives[4][i][j] = f.partialDerivativeXY();
+            }
+        }
+    }
+
+    /**
+     * @param c Coordinate.
+     * @param val Coordinate samples.
      * @return the index in {@code val} corresponding to the interval
      * containing {@code c}, or {@code -1} if {@code c} is out of the
-     * range defined by the end values of {@code val}
+     * range defined by the end values of {@code val}.
      */
     private int searchIndex(double c, double[] val) {
         if (c < val[0]) {
             return -1;
         }
 
-        int max = val.length;
+        final int max = val.length;
         for (int i = 1; i < max; i++) {
             if (c <= val[i]) {
                 return i - 1;
@@ -192,22 +306,25 @@ public class BicubicSplineInterpolatingFunction
      *  <li>f(1,0)</li>
      *  <li>f(0,1)</li>
      *  <li>f(1,1)</li>
-     *  <li>fx(0,0)</li>
-     *  <li>fx(1,0)</li>
-     *  <li>fx(0,1)</li>
-     *  <li>fx(1,1)</li>
-     *  <li>fy(0,0)</li>
-     *  <li>fy(1,0)</li>
-     *  <li>fy(0,1)</li>
-     *  <li>fy(1,1)</li>
-     *  <li>fxy(0,0)</li>
-     *  <li>fxy(1,0)</li>
-     *  <li>fxy(0,1)</li>
-     *  <li>fxy(1,1)</li>
+     *  <li>f<sub>x</sub>(0,0)</li>
+     *  <li>f<sub>x</sub>(1,0)</li>
+     *  <li>f<sub>x</sub>(0,1)</li>
+     *  <li>f<sub>x</sub>(1,1)</li>
+     *  <li>f<sub>y</sub>(0,0)</li>
+     *  <li>f<sub>y</sub>(1,0)</li>
+     *  <li>f<sub>y</sub>(0,1)</li>
+     *  <li>f<sub>y</sub>(1,1)</li>
+     *  <li>f<sub>xy</sub>(0,0)</li>
+     *  <li>f<sub>xy</sub>(1,0)</li>
+     *  <li>f<sub>xy</sub>(0,1)</li>
+     *  <li>f<sub>xy</sub>(1,1)</li>
      * </ul>
+     * where the subscripts indicate the partial derivative with respect to
+     * the corresponding variable(s).
+     *
      * @param beta List of function values and function partial derivatives
-     * values
-     * @return the spline coefficients
+     * values.
+     * @return the spline coefficients.
      */
     private double[] computeSplineCoefficients(double[] beta) {
         final double[] a = new double[16];
@@ -224,6 +341,7 @@ public class BicubicSplineInterpolatingFunction
         return a;
     }
 }
+
 /**
  * 2D-spline function.
  *
@@ -231,60 +349,210 @@ public class BicubicSplineInterpolatingFunction
  */
 class BicubicSplineFunction
     implements BivariateRealFunction {
-//CHECKSTYLE: stop MultipleVariableDeclarations
+
+    /** Number of points. */
+    private static final short N = 4;
+
     /** Coefficients */
-    private final double
-        a00, a01, a02, a03,
-        a10, a11, a12, a13,
-        a20, a21, a22, a23,
-        a30, a31, a32, a33;
-//CHECKSTYLE: resume MultipleVariableDeclarations
+    private final double[][] a;
+
+    /** First partial derivative along x. */
+    private BivariateRealFunction partialDerivativeX;
+
+    /** First partial derivative along y. */
+    private BivariateRealFunction partialDerivativeY;
+
+    /** Second partial derivative along x. */
+    private BivariateRealFunction partialDerivativeXX;
+
+    /** Second partial derivative along y. */
+    private BivariateRealFunction partialDerivativeYY;
+
+    /** Second crossed partial derivative. */
+    private BivariateRealFunction partialDerivativeXY;
 
     /**
+     * Simple constructor.
      * @param a Spline coefficients
      */
     public BicubicSplineFunction(double[] a) {
-        this.a00 = a[0];
-        this.a10 = a[1];
-        this.a20 = a[2];
-        this.a30 = a[3];
-        this.a01 = a[4];
-        this.a11 = a[5];
-        this.a21 = a[6];
-        this.a31 = a[7];
-        this.a02 = a[8];
-        this.a12 = a[9];
-        this.a22 = a[10];
-        this.a32 = a[11];
-        this.a03 = a[12];
-        this.a13 = a[13];
-        this.a23 = a[14];
-        this.a33 = a[15];
+        this.a = new double[N][N];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                this.a[i][j] = a[i + N * j];
+            }
+        }
     }
 
     /**
-     * @param x x-coordinate of the interpolation point
-     * @param y y-coordinate of the interpolation point
-     * @return the interpolated value.
+     * {@inheritDoc}
      */
     public double value(double x, double y) {
         if (x < 0 || x > 1) {
-            throw MathRuntimeException.createIllegalArgumentException("{0} out of [{1}, {2}] range",
-                                                                      x, 0, 1);
+            throw new OutOfRangeException(x, 0, 1);
         }
         if (y < 0 || y > 1) {
-            throw MathRuntimeException.createIllegalArgumentException("{0} out of [{1}, {2}] range",
-                                                                      y, 0, 1);
+            throw new OutOfRangeException(y, 0, 1);
         }
 
         final double x2 = x * x;
         final double x3 = x2 * x;
+        final double[] pX = {1, x, x2, x3};
+
         final double y2 = y * y;
         final double y3 = y2 * y;
+        final double[] pY = {1, y, y2, y3};
 
-        return a00 + a01 * y + a02 * y2 + a03 * y3 +
-            a10 * x + a11 * x * y + a12 * x * y2 + a13 * x * y3 +
-            a20 * x2 + a21 * x2 * y + a22 * x2 * y2 + a23 * x2 * y3 +
-            a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
+        return apply(pX, pY, a);
+    }
+
+    /**
+     * Compute the value of the bicubic polynomial.
+     *
+     * @param pX Powers of the x-coordinate.
+     * @param pY Powers of the y-coordinate.
+     * @param coeff Spline coefficients.
+     * @return the interpolated value.
+     */
+    private double apply(double[] pX, double[] pY, double[][] coeff) {
+        double result = 0;
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                result += coeff[i][j] * pX[i] * pY[j];
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * @return the partial derivative wrt {@code x}.
+     */
+    public BivariateRealFunction partialDerivativeX() {
+        if (partialDerivativeX == null) {
+            computePartialDerivatives();
+        }
+
+        return partialDerivativeX;
+    }
+    /**
+     * @return the partial derivative wrt {@code y}.
+     */
+    public BivariateRealFunction partialDerivativeY() {
+        if (partialDerivativeY == null) {
+            computePartialDerivatives();
+        }
+
+        return partialDerivativeY;
+    }
+    /**
+     * @return the second partial derivative wrt {@code x}.
+     */
+    public BivariateRealFunction partialDerivativeXX() {
+        if (partialDerivativeXX == null) {
+            computePartialDerivatives();
+        }
+
+        return partialDerivativeXX;
+    }
+    /**
+     * @return the second partial derivative wrt {@code y}.
+     */
+    public BivariateRealFunction partialDerivativeYY() {
+        if (partialDerivativeYY == null) {
+            computePartialDerivatives();
+        }
+
+        return partialDerivativeYY;
+    }
+    /**
+     * @return the second partial cross-derivative.
+     */
+    public BivariateRealFunction partialDerivativeXY() {
+        if (partialDerivativeXY == null) {
+            computePartialDerivatives();
+        }
+
+        return partialDerivativeXY;
+    }
+
+    /**
+     * Compute all partial derivatives functions.
+     */
+    private void computePartialDerivatives() {
+        final double[][] aX = new double[N][N];
+        final double[][] aY = new double[N][N];
+        final double[][] aXX = new double[N][N];
+        final double[][] aYY = new double[N][N];
+        final double[][] aXY = new double[N][N];
+
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                final double c = a[i][j];
+                aX[i][j] = i * c;
+                aY[i][j] = j * c;
+                aXX[i][j] = (i - 1) * aX[i][j];
+                aYY[i][j] = (j - 1) * aY[i][j];
+                aXY[i][j] = j * aX[i][j];
+            }
+        }
+
+        partialDerivativeX = new BivariateRealFunction() {
+                public double value(double x, double y)  {
+                    final double x2 = x * x;
+                    final double[] pX = {0, 1, x, x2};
+
+                    final double y2 = y * y;
+                    final double y3 = y2 * y;
+                    final double[] pY = {1, y, y2, y3};
+
+                    return apply(pX, pY, aX);
+                }
+            };
+        partialDerivativeY = new BivariateRealFunction() {
+                public double value(double x, double y)  {
+                    final double x2 = x * x;
+                    final double x3 = x2 * x;
+                    final double[] pX = {1, x, x2, x3};
+
+                    final double y2 = y * y;
+                    final double[] pY = {0, 1, y, y2};
+
+                    return apply(pX, pY, aY);
+                }
+            };
+        partialDerivativeXX = new BivariateRealFunction() {
+                public double value(double x, double y)  {
+                    final double[] pX = {0, 0, 1, x};
+
+                    final double y2 = y * y;
+                    final double y3 = y2 * y;
+                    final double[] pY = {1, y, y2, y3};
+
+                    return apply(pX, pY, aXX);
+                }
+            };
+        partialDerivativeYY = new BivariateRealFunction() {
+                public double value(double x, double y)  {
+                    final double x2 = x * x;
+                    final double x3 = x2 * x;
+                    final double[] pX = {1, x, x2, x3};
+
+                    final double[] pY = {0, 0, 1, y};
+
+                    return apply(pX, pY, aYY);
+                }
+            };
+        partialDerivativeXY = new BivariateRealFunction() {
+                public double value(double x, double y)  {
+                    final double x2 = x * x;
+                    final double[] pX = {0, 1, x, x2};
+
+                    final double y2 = y * y;
+                    final double[] pY = {0, 1, y, y2};
+
+                    return apply(pX, pY, aXY);
+                }
+            };
     }
 }

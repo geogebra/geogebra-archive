@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @param <T> generic type of the {@link AbstractListChromosome}s for crossover
  * @since 2.0
- * @version $Revision: 903046 $ $Date: 2010-01-25 21:07:26 -0500 (Mon, 25 Jan 2010) $
+ * @version $Revision: 903046 $ $Date: 2010-01-26 03:07:26 +0100 (mar. 26 janv. 2010) $
  *
  */
 public class OnePointCrossover<T> implements CrossoverPolicy {

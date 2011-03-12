@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.apache.commons.math.DimensionMismatchException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
@@ -31,6 +32,7 @@ import org.apache.commons.math.stat.descriptive.summary.Sum;
 import org.apache.commons.math.stat.descriptive.summary.SumOfLogs;
 import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * <p>Computes summary statistics for a stream of n-tuples added using the
@@ -63,7 +65,7 @@ import org.apache.commons.math.util.MathUtils;
  * threads is required.</p>
  *
  * @since 1.2
- * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1042376 $ $Date: 2010-12-05 16:54:55 +0100 (dim. 05 déc. 2010) $
  */
 public class MultivariateSummaryStatistics
   implements StatisticalMultivariateSummary, Serializable {
@@ -247,7 +249,7 @@ public class MultivariateSummaryStatistics
         } else {
             RealMatrix matrix = covarianceImpl.getResult();
             for (int i = 0; i < k; ++i) {
-                stdDev[i] = Math.sqrt(matrix.getEntry(i, i));
+                stdDev[i] = FastMath.sqrt(matrix.getEntry(i, i));
             }
         }
         return stdDev;
@@ -303,17 +305,19 @@ public class MultivariateSummaryStatistics
      */
     @Override
     public String toString() {
-        StringBuffer outBuffer = new StringBuffer();
-        outBuffer.append("MultivariateSummaryStatistics:\n");
-        outBuffer.append("n: " + getN() + "\n");
-        append(outBuffer, getMin(), "min: ", ", ", "\n");
-        append(outBuffer, getMax(), "max: ", ", ", "\n");
-        append(outBuffer, getMean(), "mean: ", ", ", "\n");
-        append(outBuffer, getGeometricMean(), "geometric mean: ", ", ", "\n");
-        append(outBuffer, getSumSq(), "sum of squares: ", ", ", "\n");
-        append(outBuffer, getSumLog(), "sum of logarithms: ", ", ", "\n");
-        append(outBuffer, getStandardDeviation(), "standard deviation: ", ", ", "\n");
-        outBuffer.append("covariance: " + getCovariance().toString() + "\n");
+        final String separator = ", ";
+        final String suffix = System.getProperty("line.separator");
+        StringBuilder outBuffer = new StringBuilder();
+        outBuffer.append("MultivariateSummaryStatistics:" + suffix);
+        outBuffer.append("n: " + getN() + suffix);
+        append(outBuffer, getMin(), "min: ", separator, suffix);
+        append(outBuffer, getMax(), "max: ", separator, suffix);
+        append(outBuffer, getMean(), "mean: ", separator, suffix);
+        append(outBuffer, getGeometricMean(), "geometric mean: ", separator, suffix);
+        append(outBuffer, getSumSq(), "sum of squares: ", separator, suffix);
+        append(outBuffer, getSumLog(), "sum of logarithms: ", separator, suffix);
+        append(outBuffer, getStandardDeviation(), "standard deviation: ", separator, suffix);
+        outBuffer.append("covariance: " + getCovariance().toString() + suffix);
         return outBuffer.toString();
     }
 
@@ -325,7 +329,7 @@ public class MultivariateSummaryStatistics
      * @param separator elements separator
      * @param suffix text suffix
      */
-    private void append(StringBuffer buffer, double[] data,
+    private void append(StringBuilder buffer, double[] data,
                         String prefix, String separator, String suffix) {
         buffer.append(prefix);
         for (int i = 0; i < data.length; ++i) {
@@ -355,7 +359,7 @@ public class MultivariateSummaryStatistics
     }
 
     /**
-     * Returns true iff <code>object</code> is a <code>SummaryStatistics</code>
+     * Returns true iff <code>object</code> is a <code>MultivariateSummaryStatistics</code>
      * instance and all statistics have the same values as this.
      * @param object the object to test equality against.
      * @return true if object equals this
@@ -369,14 +373,14 @@ public class MultivariateSummaryStatistics
             return false;
         }
         MultivariateSummaryStatistics stat = (MultivariateSummaryStatistics) object;
-        return MathUtils.equals(stat.getGeometricMean(), getGeometricMean()) &&
-               MathUtils.equals(stat.getMax(),           getMax())           &&
-               MathUtils.equals(stat.getMean(),          getMean())          &&
-               MathUtils.equals(stat.getMin(),           getMin())           &&
-               MathUtils.equals(stat.getN(),             getN())             &&
-               MathUtils.equals(stat.getSum(),           getSum())           &&
-               MathUtils.equals(stat.getSumSq(),         getSumSq())         &&
-               MathUtils.equals(stat.getSumLog(),        getSumLog())        &&
+        return MathUtils.equalsIncludingNaN(stat.getGeometricMean(), getGeometricMean()) &&
+               MathUtils.equalsIncludingNaN(stat.getMax(),           getMax())           &&
+               MathUtils.equalsIncludingNaN(stat.getMean(),          getMean())          &&
+               MathUtils.equalsIncludingNaN(stat.getMin(),           getMin())           &&
+               MathUtils.equalsIncludingNaN(stat.getN(),             getN())             &&
+               MathUtils.equalsIncludingNaN(stat.getSum(),           getSum())           &&
+               MathUtils.equalsIncludingNaN(stat.getSumSq(),         getSumSq())         &&
+               MathUtils.equalsIncludingNaN(stat.getSumLog(),        getSumLog())        &&
                stat.getCovariance().equals( getCovariance());
     }
 
@@ -613,7 +617,7 @@ public class MultivariateSummaryStatistics
     private void checkEmpty() {
         if (n > 0) {
             throw MathRuntimeException.createIllegalStateException(
-                    "{0} values have been added before statistic is configured",
+                    LocalizedFormats.VALUES_ADDED_BEFORE_CONFIGURING_STATISTIC,
                     n);
         }
     }

@@ -16,11 +16,12 @@
  */
 package org.apache.commons.math.random;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
+import org.apache.commons.math.util.FastMath;
 
 /** Base class for random number generators that generates bits streams.
 
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
 
  */
@@ -99,10 +100,10 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
             // generate a new pair of gaussian numbers
             final double x = nextDouble();
             final double y = nextDouble();
-            final double alpha = 2 * Math.PI * x;
-            final double r      = Math.sqrt(-2 * Math.log(y));
-            random       = r * Math.cos(alpha);
-            nextGaussian = r * Math.sin(alpha);
+            final double alpha = 2 * FastMath.PI * x;
+            final double r      = FastMath.sqrt(-2 * FastMath.log(y));
+            random       = r * FastMath.cos(alpha);
+            nextGaussian = r * FastMath.sin(alpha);
         } else {
             // use the second element of the pair already generated
             random = nextGaussian;
@@ -122,8 +123,7 @@ public abstract class BitsStreamGenerator implements RandomGenerator {
     public int nextInt(int n) throws IllegalArgumentException {
 
         if (n < 1) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "upper bound must be positive ({0})", n);
+            throw new NotStrictlyPositiveException(n);
         }
 
         // find bit mask for n

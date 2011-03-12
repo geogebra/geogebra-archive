@@ -20,12 +20,14 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.special.Beta;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * The default implementation of {@link BinomialDistribution}.
  *
- * @version $Revision: 920852 $ $Date: 2010-03-09 07:53:44 -0500 (Tue, 09 Mar 2010) $
+ * @version $Revision: 1054524 $ $Date: 2011-01-03 05:59:18 +0100 (lun. 03 janv. 2011) $
  */
 public class BinomialDistributionImpl extends AbstractIntegerDistribution
         implements BinomialDistribution, Serializable {
@@ -82,6 +84,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
     public void setNumberOfTrials(int trials) {
         setNumberOfTrialsInternal(trials);
     }
+
     /**
      * Change the number of trials for this distribution.
      *
@@ -92,7 +95,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
     private void setNumberOfTrialsInternal(int trials) {
         if (trials < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "number of trials must be non-negative ({0})", trials);
+                    LocalizedFormats.NEGATIVE_NUMBER_OF_TRIALS, trials);
         }
         numberOfTrials = trials;
     }
@@ -109,6 +112,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
     public void setProbabilityOfSuccess(double p) {
         setProbabilityOfSuccessInternal(p);
     }
+
     /**
      * Change the probability of success for this distribution.
      *
@@ -119,7 +123,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
     private void setProbabilityOfSuccessInternal(double p) {
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
+                    LocalizedFormats.OUT_OF_RANGE_SIMPLE, p, 0.0, 1.0);
         }
         probabilityOfSuccess = p;
     }
@@ -183,7 +187,7 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
         if (x < 0 || x > numberOfTrials) {
             ret = 0.0;
         } else {
-            ret = Math.exp(SaddlePointExpansion.logBinomialProbability(x,
+            ret = FastMath.exp(SaddlePointExpansion.logBinomialProbability(x,
                     numberOfTrials, probabilityOfSuccess,
                     1.0 - probabilityOfSuccess));
         }
@@ -217,5 +221,59 @@ public class BinomialDistributionImpl extends AbstractIntegerDistribution
 
         // use default bisection impl
         return super.inverseCumulativeProbability(p);
+    }
+
+    /**
+     * Returns the lower bound of the support for the distribution.
+     *
+     * The lower bound of the support is always 0 no matter the number of trials
+     * and probability parameter.
+     *
+     * @return lower bound of the support (always 0)
+     * @since 2.2
+     */
+    public int getSupportLowerBound() {
+        return 0;
+    }
+
+    /**
+     * Returns the upper bound of the support for the distribution.
+     *
+     * The upper bound of the support is the number of trials.
+     *
+     * @return upper bound of the support (equal to number of trials)
+     * @since 2.2
+     */
+    public int getSupportUpperBound() {
+        return getNumberOfTrials();
+    }
+
+    /**
+     * Returns the mean.
+     *
+     * For <code>n</code> number of trials and
+     * probability parameter <code>p</code>, the mean is
+     * <code>n * p</code>
+     *
+     * @return the mean
+     * @since 2.2
+     */
+    public double getNumericalMean() {
+        return (double)getNumberOfTrials() * getProbabilityOfSuccess();
+    }
+
+    /**
+     * Returns the variance.
+     *
+     * For <code>n</code> number of trials and
+     * probability parameter <code>p</code>, the variance is
+     * <code>n * p * (1 - p)</code>
+     *
+     * @return the variance
+     * @since 2.2
+     */
+    public double getNumericalVariance() {
+        final double p = getProbabilityOfSuccess();
+        return (double)getNumberOfTrials() * p * (1 - p);
     }
 }

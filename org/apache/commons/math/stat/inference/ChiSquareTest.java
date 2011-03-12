@@ -23,7 +23,7 @@ import org.apache.commons.math.MathException;
  * <p>This interface handles only known distributions. If the distribution is
  * unknown and should be provided by a sample, then the {@link UnknownDistributionChiSquareTest
  * UnknownDistributionChiSquareTest} extended interface should be used instead.</p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (sam. 05 sept. 2009) $
  */
 public interface ChiSquareTest {
 

@@ -18,10 +18,12 @@
 package org.apache.commons.math.linear;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.DummyLocalizable;
+import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * Thrown when a visitor encounters an error while processing a matrix entry.
- * @version $Revision: 729673 $ $Date: 2008-12-27 15:55:12 -0500 (Sat, 27 Dec 2008) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  */
 public class MatrixVisitorException extends MathRuntimeException {
 
@@ -34,6 +36,16 @@ public class MatrixVisitorException extends MathRuntimeException {
      * @param arguments format arguments
      */
     public MatrixVisitorException(final String pattern, final Object[] arguments) {
+      super(new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs a new instance with specified formatted detail message.
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public MatrixVisitorException(final Localizable pattern, final Object[] arguments) {
       super(pattern, arguments);
     }
 

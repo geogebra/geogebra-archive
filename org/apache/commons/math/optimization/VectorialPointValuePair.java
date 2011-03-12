@@ -24,7 +24,7 @@ import java.io.Serializable;
  * <p>This is a simple immutable container.</p>
  * @see RealPointValuePair
  * @see org.apache.commons.math.analysis.MultivariateVectorialFunction
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 980981 $ $Date: 2010-07-31 00:03:04 +0200 (sam. 31 juil. 2010) $
  * @since 2.0
  */
 public class VectorialPointValuePair implements Serializable {
@@ -44,8 +44,8 @@ public class VectorialPointValuePair implements Serializable {
      * @param value value of an objective function at the point
      */
     public VectorialPointValuePair(final double[] point, final double[] value) {
-        this.point = point.clone();
-        this.value = value.clone();
+        this.point = (point == null) ? null : point.clone();
+        this.value = (value == null) ? null : value.clone();
     }
 
     /** Build a point/objective function value pair.
@@ -57,15 +57,19 @@ public class VectorialPointValuePair implements Serializable {
      */
     public VectorialPointValuePair(final double[] point, final double[] value,
                                    final boolean copyArray) {
-        this.point = copyArray ? point.clone() : point;
-        this.value = copyArray ? value.clone() : value;
+        this.point = copyArray ?
+                      ((point == null) ? null : point.clone()) :
+                      point;
+        this.value = copyArray ?
+                      ((value == null) ? null : value.clone()) :
+                      value;
     }
 
     /** Get the point.
      * @return a copy of the stored point
      */
     public double[] getPoint() {
-        return point.clone();
+        return (point == null) ? null : point.clone();
     }
 
     /** Get a reference to the point.
@@ -81,7 +85,7 @@ public class VectorialPointValuePair implements Serializable {
      * @return a copy of the stored value of the objective function
      */
     public double[] getValue() {
-        return value.clone();
+        return (value == null) ? null : value.clone();
     }
 
     /** Get a reference to the value of the objective function.

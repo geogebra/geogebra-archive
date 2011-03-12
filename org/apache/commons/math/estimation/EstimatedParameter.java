@@ -27,7 +27,7 @@ import java.io.Serializable;
  * solvers should adjust the value of unbounds parameters until they
  * satisfy convergence criterions specific to each solver.</p>
  *
- * @version $Revision: 922710 $ $Date: 2010-03-13 20:20:56 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 922710 $ $Date: 2010-03-14 02:20:56 +0100 (dim. 14 mars 2010) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general

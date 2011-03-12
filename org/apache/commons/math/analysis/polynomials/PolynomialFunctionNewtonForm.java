@@ -16,9 +16,10 @@
  */
 package org.apache.commons.math.analysis.polynomials;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Implements the representation of a real polynomial function in
@@ -30,7 +31,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  *            a[n](x-c[0])(x-c[1])...(x-c[n-1])
  * Note that the length of a[] is one more than the length of c[]</p>
  *
- * @version $Revision: 922708 $ $Date: 2010-03-13 20:15:47 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 1073498 $ $Date: 2011-02-22 21:57:26 +0100 (mar. 22 févr. 2011) $
  * @since 1.2
  */
 public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
@@ -155,8 +156,8 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
      * @throws FunctionEvaluationException if a runtime error occurs
      * @throws IllegalArgumentException if inputs are not valid
      */
-    public static double evaluate(double a[], double c[], double z) throws
-        FunctionEvaluationException, IllegalArgumentException {
+    public static double evaluate(double a[], double c[], double z)
+        throws FunctionEvaluationException, IllegalArgumentException {
 
         verifyInputArray(a, c);
 
@@ -209,11 +210,11 @@ public class PolynomialFunctionNewtonForm implements UnivariateRealFunction {
 
         if (a.length < 1 || c.length < 1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "empty polynomials coefficients array");
+                  LocalizedFormats.EMPTY_POLYNOMIALS_COEFFICIENTS_ARRAY);
         }
         if (a.length != c.length + 1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "array sizes should have difference 1 ({0} != {1} + 1)",
+                  LocalizedFormats.ARRAY_SIZES_SHOULD_HAVE_DIFFERENCE_1,
                   a.length, c.length);
         }
     }

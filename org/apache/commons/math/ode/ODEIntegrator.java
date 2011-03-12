@@ -27,7 +27,7 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * for first and second order differential equations.
  * @see FirstOrderIntegrator
  * @see SecondOrderIntegrator
- * @version $Revision: 785473 $ $Date: 2009-06-17 00:02:35 -0400 (Wed, 17 Jun 2009) $
+ * @version $Revision: 1061507 $ $Date: 2011-01-20 21:55:00 +0100 (jeu. 20 janv. 2011) $
  * @since 2.0
  */
 public interface ODEIntegrator  {
@@ -73,10 +73,8 @@ public interface ODEIntegrator  {
      * @see #getEventHandlers()
      * @see #clearEventHandlers()
      */
-    void addEventHandler(EventHandler handler,
-                                         double maxCheckInterval,
-                                         double convergence,
-                                         int maxIterationCount);
+    void addEventHandler(EventHandler handler, double maxCheckInterval,
+                         double convergence, int maxIterationCount);
 
     /** Get all the event handlers that have been added to the integrator.
      * @return an unmodifiable collection of the added events handlers

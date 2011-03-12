@@ -34,7 +34,7 @@ import org.apache.commons.math.ode.DerivativeException;
  *
  * @see StepHandler
  * @see StepNormalizer
- * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  */
 

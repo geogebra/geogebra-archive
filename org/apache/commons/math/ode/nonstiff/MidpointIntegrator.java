@@ -36,7 +36,7 @@ package org.apache.commons.math.ode.nonstiff;
  * @see ClassicalRungeKuttaIntegrator
  * @see GillIntegrator
  *
- * @version $Revision: 810196 $ $Date: 2009-09-01 15:47:46 -0400 (Tue, 01 Sep 2009) $
+ * @version $Revision: 810196 $ $Date: 2009-09-01 21:47:46 +0200 (mar. 01 sept. 2009) $
  * @since 1.2
  */
 

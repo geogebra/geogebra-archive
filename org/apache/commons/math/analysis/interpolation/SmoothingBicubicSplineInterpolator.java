@@ -20,9 +20,11 @@ import org.apache.commons.math.DimensionMismatchException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.util.MathUtils;
-import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.util.MathUtils.OrderDirection;
 import org.apache.commons.math.analysis.BivariateRealFunction;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Generates a bicubic interpolation function.
@@ -31,27 +33,33 @@ import org.apache.commons.math.analysis.polynomials.PolynomialSplineFunction;
  * See <b>Handbook on splines for the user</b>, ISBN 084939404X,
  * chapter 2.
  *
- * @version $Revision$ $Date$
+ * @version $Revision: 1059400 $ $Date: 2011-01-15 20:35:27 +0100 (sam. 15 janv. 2011) $
  * @since 2.1
+ * @deprecated This class does not perform smoothing; the name is thus misleading.
+ * Please use {@link org.apache.commons.math.analysis.interpolation.BicubicSplineInterpolator}
+ * instead. If smoothing is desired, a tentative implementation is provided in class
+ * {@link org.apache.commons.math.analysis.interpolation.SmoothingPolynomialBicubicSplineInterpolator}.
+ * This class will be removed in math 3.0.
  */
+@Deprecated
 public class SmoothingBicubicSplineInterpolator
     implements BivariateRealGridInterpolator {
     /**
      * {@inheritDoc}
      */
     public BivariateRealFunction interpolate(final double[] xval,
-                                             final double[] yval,
-                                             final double[][] zval)
+                                                          final double[] yval,
+                                                          final double[][] zval)
         throws MathException, IllegalArgumentException {
         if (xval.length == 0 || yval.length == 0 || zval.length == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("no data");
+            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.NO_DATA);
         }
         if (xval.length != zval.length) {
             throw new DimensionMismatchException(xval.length, zval.length);
         }
 
-        MathUtils.checkOrder(xval, 1, true);
-        MathUtils.checkOrder(yval, 1, true);
+        MathUtils.checkOrder(xval, OrderDirection.INCREASING, true);
+        MathUtils.checkOrder(yval, OrderDirection.INCREASING, true);
 
         final int xLen = xval.length;
         final int yLen = yval.length;
@@ -133,9 +141,9 @@ public class SmoothingBicubicSplineInterpolator
             for (int j = 0; j < yLen; j++) {
                 final int nJ = nextIndex(j, yLen);
                 final int pJ = previousIndex(j);
-                dZdXdY[i][j] =  (zY_2[nI][nJ] - zY_2[nI][pJ] -
-                                 zY_2[pI][nJ] + zY_2[pI][pJ]) /
-                    ((xval[nI] - xval[pI]) * (yval[nJ] - yval[pJ])) ;
+                dZdXdY[i][j] = (zY_2[nI][nJ] - zY_2[nI][pJ] -
+                                zY_2[pI][nJ] + zY_2[pI][pJ]) /
+                    ((xval[nI] - xval[pI]) * (yval[nJ] - yval[pJ]));
             }
         }
 

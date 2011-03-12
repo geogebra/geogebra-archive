@@ -18,7 +18,6 @@
 package org.apache.commons.math.optimization.fitting;
 
 import org.apache.commons.math.FunctionEvaluationException;
-import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 import org.apache.commons.math.optimization.OptimizationException;
@@ -27,7 +26,7 @@ import org.apache.commons.math.optimization.OptimizationException;
  * <p>Polynomial fitting is a very simple case of curve fitting. The
  * estimated coefficients are the polynomial coefficients. They are
  * searched by a least square estimator.</p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1073270 $ $Date: 2011-02-22 10:19:27 +0100 (mar. 22 févr. 2011) $
  * @since 2.0
  */
 
@@ -60,17 +59,24 @@ public class PolynomialFitter {
         fitter.addObservedPoint(weight, x, y);
     }
 
+    /**
+     * Remove all observations.
+     * @since 2.2
+     */
+    public void clearObservations() {
+        fitter.clearObservations();
+    }
+
     /** Get the polynomial fitting the weighted (x, y) points.
      * @return polynomial function best fitting the observed points
      * @exception OptimizationException if the algorithm failed to converge
      */
-    public PolynomialFunction fit()
-        throws OptimizationException {
+    public PolynomialFunction fit() throws OptimizationException {
         try {
             return new PolynomialFunction(fitter.fit(new ParametricPolynomial(), new double[degree + 1]));
         } catch (FunctionEvaluationException fee) {
-            // this should never happen
-            throw MathRuntimeException.createInternalError(fee);
+            // should never happen
+            throw new RuntimeException(fee);
         }
     }
 
@@ -78,8 +84,7 @@ public class PolynomialFitter {
     private static class ParametricPolynomial implements ParametricRealFunction {
 
         /** {@inheritDoc} */
-        public double[] gradient(double x, double[] parameters)
-                throws FunctionEvaluationException {
+        public double[] gradient(double x, double[] parameters) {
             final double[] gradient = new double[parameters.length];
             double xn = 1.0;
             for (int i = 0; i < parameters.length; ++i) {

@@ -20,9 +20,10 @@ package org.apache.commons.math.optimization;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.random.RandomVectorGenerator;
 
 /**
@@ -33,7 +34,7 @@ import org.apache.commons.math.random.RandomVectorGenerator;
  * turn with different starting points in order to avoid being trapped
  * into a local extremum when looking for a global one.
  * </p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  */
 public class MultiStartDifferentiableMultivariateVectorialOptimizer
@@ -121,7 +122,7 @@ public class MultiStartDifferentiableMultivariateVectorialOptimizer
      */
     public VectorialPointValuePair[] getOptima() throws IllegalStateException {
         if (optima == null) {
-            throw MathRuntimeException.createIllegalStateException("no optimum computed yet");
+            throw MathRuntimeException.createIllegalStateException(LocalizedFormats.NO_OPTIMUM_COMPUTED_YET);
         }
         return optima.clone();
     }
@@ -225,7 +226,7 @@ public class MultiStartDifferentiableMultivariateVectorialOptimizer
 
         if (optima[0] == null) {
             throw new OptimizationException(
-                    "none of the {0} start points lead to convergence",
+                    LocalizedFormats.NO_CONVERGENCE_WITH_ANY_START_POINT,
                     starts);
         }
 

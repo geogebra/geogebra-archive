@@ -22,10 +22,13 @@ import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.Localizable;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NonMonotonousSequenceException;
 
 /**
  * Some useful additions to the built-in functions in {@link Math}.
- * @version $Revision: 927249 $ $Date: 2010-03-24 21:06:51 -0400 (Wed, 24 Mar 2010) $
+ * @version $Revision: 1073472 $ $Date: 2011-02-22 20:49:07 +0100 (mar. 22 févr. 2011) $
  */
 public final class MathUtils {
 
@@ -42,7 +45,7 @@ public final class MathUtils {
      * 2 &pi;.
      * @since 2.1
      */
-    public static final double TWO_PI = 2 * Math.PI;
+    public static final double TWO_PI = 2 * FastMath.PI;
 
     /** -1.0 cast as a byte. */
     private static final byte  NB = (byte)-1;
@@ -67,6 +70,9 @@ public final class MathUtils {
 
     /** Offset to order signed double numbers lexicographically. */
     private static final long SGN_MASK = 0x8000000000000000L;
+
+    /** Offset to order signed double numbers lexicographically. */
+    private static final int SGN_MASK_FLOAT = 0x80000000;
 
     /** All long-representable factorials */
     private static final long[] FACTORIALS = new long[] {
@@ -98,7 +104,7 @@ public final class MathUtils {
     public static int addAndCheck(int x, int y) {
         long s = (long)x + (long)y;
         if (s < Integer.MIN_VALUE || s > Integer.MAX_VALUE) {
-            throw new ArithmeticException("overflow: add");
+            throw MathRuntimeException.createArithmeticException(LocalizedFormats.OVERFLOW_IN_ADDITION, x, y);
         }
         return (int)s;
     }
@@ -114,7 +120,7 @@ public final class MathUtils {
      * @since 1.2
      */
     public static long addAndCheck(long a, long b) {
-        return addAndCheck(a, b, "overflow: add");
+        return addAndCheck(a, b, LocalizedFormats.OVERFLOW_IN_ADDITION);
     }
 
     /**
@@ -122,17 +128,17 @@ public final class MathUtils {
      *
      * @param a an addend
      * @param b an addend
-     * @param msg the message to use for any thrown exception.
+     * @param pattern the pattern to use for any thrown exception.
      * @return the sum <code>a+b</code>
      * @throws ArithmeticException if the result can not be represented as an
      *         long
      * @since 1.2
      */
-    private static long addAndCheck(long a, long b, String msg) {
+    private static long addAndCheck(long a, long b, Localizable pattern) {
         long ret;
         if (a > b) {
             // use symmetry to reduce boundary cases
-            ret = addAndCheck(b, a, msg);
+            ret = addAndCheck(b, a, pattern);
         } else {
             // assert a <= b
 
@@ -142,7 +148,7 @@ public final class MathUtils {
                     if (Long.MIN_VALUE - b <= a) {
                         ret = a + b;
                     } else {
-                        throw new ArithmeticException(msg);
+                        throw MathRuntimeException.createArithmeticException(pattern, a, b);
                     }
                 } else {
                     // opposite sign addition is always safe
@@ -156,7 +162,7 @@ public final class MathUtils {
                 if (a <= Long.MAX_VALUE - b) {
                     ret = a + b;
                 } else {
-                    throw new ArithmeticException(msg);
+                    throw MathRuntimeException.createArithmeticException(pattern, a, b);
                 }
             }
         }
@@ -284,7 +290,7 @@ public final class MathUtils {
              result *= (double)(n - k + i) / (double)i;
         }
 
-        return Math.floor(result + 0.5);
+        return FastMath.floor(result + 0.5);
     }
 
     /**
@@ -311,7 +317,7 @@ public final class MathUtils {
             return 0;
         }
         if ((k == 1) || (k == n - 1)) {
-            return Math.log(n);
+            return FastMath.log(n);
         }
 
         /*
@@ -319,7 +325,7 @@ public final class MathUtils {
          * return the log of the exact value
          */
         if (n < 67) {
-            return Math.log(binomialCoefficient(n,k));
+            return FastMath.log(binomialCoefficient(n,k));
         }
 
         /*
@@ -327,7 +333,7 @@ public final class MathUtils {
          * overflow binomialCoefficientDouble
          */
         if (n < 1030) {
-            return Math.log(binomialCoefficientDouble(n, k));
+            return FastMath.log(binomialCoefficientDouble(n, k));
         }
 
         if (k > n / 2) {
@@ -341,12 +347,12 @@ public final class MathUtils {
 
         // n!/(n-k)!
         for (int i = n - k + 1; i <= n; i++) {
-            logSum += Math.log(i);
+            logSum += FastMath.log(i);
         }
 
         // divide by k!
         for (int i = 2; i <= k; i++) {
-            logSum -= Math.log(i);
+            logSum -= FastMath.log(i);
         }
 
         return logSum;
@@ -362,12 +368,12 @@ public final class MathUtils {
         throws IllegalArgumentException {
         if (n < k) {
             throw MathRuntimeException.createIllegalArgumentException(
-                "must have n >= k for binomial coefficient (n,k), got n = {0}, k = {1}",
+                LocalizedFormats.BINOMIAL_INVALID_PARAMETERS_ORDER,
                 n, k);
         }
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "must have n >= 0 for binomial coefficient (n,k), got n = {0}",
+                  LocalizedFormats.BINOMIAL_NEGATIVE_PARAMETER,
                   n);
         }
     }
@@ -399,40 +405,75 @@ public final class MathUtils {
      * @return hyperbolic cosine of x
      */
     public static double cosh(double x) {
-        return (Math.exp(x) + Math.exp(-x)) / 2.0;
+        return (FastMath.exp(x) + FastMath.exp(-x)) / 2.0;
     }
 
     /**
-     * Returns true iff both arguments are NaN or neither is NaN and they are
-     * equal
+     * Returns true iff they are strictly equal.
      *
      * @param x first value
      * @param y second value
-     * @return true if the values are equal or both are NaN
+     * @return {@code true} if the values are equal.
+     * @deprecated as of 2.2 his method considers that {@code NaN == NaN}. In release
+     * 3.0, the semantics will change in order to comply with IEEE754 where it
+     * is specified that {@code NaN != NaN}.
+     * New methods have been added for those cases wher the old semantics is
+     * useful (see e.g. {@link #equalsIncludingNaN(float,float)
+     * equalsIncludingNaN}.
      */
-    public static boolean equals(double x, double y) {
-        return (Double.isNaN(x) && Double.isNaN(y)) || x == y;
+    @Deprecated
+    public static boolean equals(float x, float y) {
+        return (Float.isNaN(x) && Float.isNaN(y)) || x == y;
     }
 
     /**
-     * Returns true iff both arguments are equal or within the range of allowed
-     * error (inclusive).
-     * <p>
-     * Two NaNs are considered equals, as are two infinities with same sign.
-     * </p>
+     * Returns true if both arguments are NaN or neither is NaN and they are
+     * equal as defined by {@link #equals(float,float,int) equals(x, y, 1)}.
      *
      * @param x first value
      * @param y second value
-     * @param eps the amount of absolute error to allow
-     * @return true if the values are equal or within range of each other
+     * @return {@code true} if the values are equal or both are NaN.
+     * @since 2.2
      */
-    public static boolean equals(double x, double y, double eps) {
-      return equals(x, y) || (Math.abs(y - x) <= eps);
+    public static boolean equalsIncludingNaN(float x, float y) {
+        return (Float.isNaN(x) && Float.isNaN(y)) || equals(x, y, 1);
     }
 
     /**
-     * Returns true iff both arguments are equal or within the range of allowed
+     * Returns true if both arguments are equal or within the range of allowed
      * error (inclusive).
+     *
+     * @param x first value
+     * @param y second value
+     * @param eps the amount of absolute error to allow.
+     * @return {@code true} if the values are equal or within range of each other.
+     * @since 2.2
+     */
+    public static boolean equals(float x, float y, float eps) {
+        return equals(x, y, 1) || FastMath.abs(y - x) <= eps;
+    }
+
+    /**
+     * Returns true if both arguments are NaN or are equal or within the range
+     * of allowed error (inclusive).
+     *
+     * @param x first value
+     * @param y second value
+     * @param eps the amount of absolute error to allow.
+     * @return {@code true} if the values are equal or within range of each other,
+     * or both are NaN.
+     * @since 2.2
+     */
+    public static boolean equalsIncludingNaN(float x, float y, float eps) {
+        return equalsIncludingNaN(x, y) || (FastMath.abs(y - x) <= eps);
+    }
+
+    /**
+     * Returns true if both arguments are equal or within the range of allowed
+     * error (inclusive).
+     * Two float numbers are considered equal if there are {@code (maxUlps - 1)}
+     * (or fewer) floating point numbers between them, i.e. two adjacent floating
+     * point numbers are considered equal.
      * Adapted from <a
      * href="http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm">
      * Bruce Dawson</a>
@@ -441,12 +482,203 @@ public final class MathUtils {
      * @param y second value
      * @param maxUlps {@code (maxUlps - 1)} is the number of floating point
      * values between {@code x} and {@code y}.
-     * @return {@code true} if there are less than {@code maxUlps} floating
-     * point values between {@code x} and {@code y}
+     * @return {@code true} if there are fewer than {@code maxUlps} floating
+     * point values between {@code x} and {@code y}.
+     * @since 2.2
+     */
+    public static boolean equals(float x, float y, int maxUlps) {
+        // Check that "maxUlps" is non-negative and small enough so that
+        // NaN won't compare as equal to anything (except another NaN).
+        assert maxUlps > 0 && maxUlps < NAN_GAP;
+
+        int xInt = Float.floatToIntBits(x);
+        int yInt = Float.floatToIntBits(y);
+
+        // Make lexicographically ordered as a two's-complement integer.
+        if (xInt < 0) {
+            xInt = SGN_MASK_FLOAT - xInt;
+        }
+        if (yInt < 0) {
+            yInt = SGN_MASK_FLOAT - yInt;
+        }
+
+        final boolean isEqual = FastMath.abs(xInt - yInt) <= maxUlps;
+
+        return isEqual && !Float.isNaN(x) && !Float.isNaN(y);
+    }
+
+    /**
+     * Returns true if both arguments are NaN or if they are equal as defined
+     * by {@link #equals(float,float,int) equals(x, y, maxUlps)}.
+     *
+     * @param x first value
+     * @param y second value
+     * @param maxUlps {@code (maxUlps - 1)} is the number of floating point
+     * values between {@code x} and {@code y}.
+     * @return {@code true} if both arguments are NaN or if there are less than
+     * {@code maxUlps} floating point values between {@code x} and {@code y}.
+     * @since 2.2
+     */
+    public static boolean equalsIncludingNaN(float x, float y, int maxUlps) {
+        return (Float.isNaN(x) && Float.isNaN(y)) || equals(x, y, maxUlps);
+    }
+
+    /**
+     * Returns true iff both arguments are null or have same dimensions and all
+     * their elements are equal as defined by
+     * {@link #equals(float,float)}.
+     *
+     * @param x first array
+     * @param y second array
+     * @return true if the values are both null or have same dimension
+     * and equal elements.
+     * @deprecated as of 2.2 this method considers that {@code NaN == NaN}. In release
+     * 3.0, the semantics will change in order to comply with IEEE754 where it
+     * is specified that {@code NaN != NaN}.
+     * New methods have been added for those cases where the old semantics is
+     * useful (see e.g. {@link #equalsIncludingNaN(float[],float[])
+     * equalsIncludingNaN}.
+     */
+    @Deprecated
+    public static boolean equals(float[] x, float[] y) {
+        if ((x == null) || (y == null)) {
+            return !((x == null) ^ (y == null));
+        }
+        if (x.length != y.length) {
+            return false;
+        }
+        for (int i = 0; i < x.length; ++i) {
+            if (!equals(x[i], y[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns true iff both arguments are null or have same dimensions and all
+     * their elements are equal as defined by
+     * {@link #equalsIncludingNaN(float,float)}.
+     *
+     * @param x first array
+     * @param y second array
+     * @return true if the values are both null or have same dimension and
+     * equal elements
+     * @since 2.2
+     */
+    public static boolean equalsIncludingNaN(float[] x, float[] y) {
+        if ((x == null) || (y == null)) {
+            return !((x == null) ^ (y == null));
+        }
+        if (x.length != y.length) {
+            return false;
+        }
+        for (int i = 0; i < x.length; ++i) {
+            if (!equalsIncludingNaN(x[i], y[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns true iff both arguments are NaN or neither is NaN and they are
+     * equal
+     *
+     * <p>This method considers that {@code NaN == NaN}. In release
+     * 3.0, the semantics will change in order to comply with IEEE754 where it
+     * is specified that {@code NaN != NaN}.
+     * New methods have been added for those cases where the old semantics
+     * (w.r.t. NaN) is useful (see e.g.
+     * {@link #equalsIncludingNaN(double,double, double) equalsIncludingNaN}.
+     * </p>
+     *
+     * @param x first value
+     * @param y second value
+     * @return {@code true} if the values are equal.
+     */
+    public static boolean equals(double x, double y) {
+        return (Double.isNaN(x) && Double.isNaN(y)) || x == y;
+    }
+
+    /**
+     * Returns true if both arguments are NaN or neither is NaN and they are
+     * equal as defined by {@link #equals(double,double,int) equals(x, y, 1)}.
+     *
+     * @param x first value
+     * @param y second value
+     * @return {@code true} if the values are equal or both are NaN.
+     * @since 2.2
+     */
+    public static boolean equalsIncludingNaN(double x, double y) {
+        return (Double.isNaN(x) && Double.isNaN(y)) || equals(x, y, 1);
+    }
+
+    /**
+     * Returns true if both arguments are equal or within the range of allowed
+     * error (inclusive).
+     * <p>
+     * Two NaNs are considered equals, as are two infinities with same sign.
+     * </p>
+     * <p>This method considers that {@code NaN == NaN}. In release
+     * 3.0, the semantics will change in order to comply with IEEE754 where it
+     * is specified that {@code NaN != NaN}.
+     * New methods have been added for those cases where the old semantics
+     * (w.r.t. NaN) is useful (see e.g.
+     * {@link #equalsIncludingNaN(double,double, double) equalsIncludingNaN}.
+     * </p>
+     * @param x first value
+     * @param y second value
+     * @param eps the amount of absolute error to allow.
+     * @return {@code true} if the values are equal or within range of each other.
+     */
+    public static boolean equals(double x, double y, double eps) {
+        return equals(x, y) || FastMath.abs(y - x) <= eps;
+    }
+
+    /**
+     * Returns true if both arguments are NaN or are equal or within the range
+     * of allowed error (inclusive).
+     *
+     * @param x first value
+     * @param y second value
+     * @param eps the amount of absolute error to allow.
+     * @return {@code true} if the values are equal or within range of each other,
+     * or both are NaN.
+     * @since 2.2
+     */
+    public static boolean equalsIncludingNaN(double x, double y, double eps) {
+        return equalsIncludingNaN(x, y) || (FastMath.abs(y - x) <= eps);
+    }
+
+    /**
+     * Returns true if both arguments are equal or within the range of allowed
+     * error (inclusive).
+     * Two float numbers are considered equal if there are {@code (maxUlps - 1)}
+     * (or fewer) floating point numbers between them, i.e. two adjacent floating
+     * point numbers are considered equal.
+     * Adapted from <a
+     * href="http://www.cygnus-software.com/papers/comparingfloats/comparingfloats.htm">
+     * Bruce Dawson</a>
+     *
+     * <p>This method considers that {@code NaN == NaN}. In release
+     * 3.0, the semantics will change in order to comply with IEEE754 where it
+     * is specified that {@code NaN != NaN}.
+     * New methods have been added for those cases where the old semantics
+     * (w.r.t. NaN) is useful (see e.g.
+     * {@link #equalsIncludingNaN(double,double, int) equalsIncludingNaN}.
+     * </p>
+     *
+     * @param x first value
+     * @param y second value
+     * @param maxUlps {@code (maxUlps - 1)} is the number of floating point
+     * values between {@code x} and {@code y}.
+     * @return {@code true} if there are fewer than {@code maxUlps} floating
+     * point values between {@code x} and {@code y}.
      */
     public static boolean equals(double x, double y, int maxUlps) {
-        // Check that "maxUlps" is non-negative and small enough so that the
-        // default NAN won't compare as equal to anything.
+        // Check that "maxUlps" is non-negative and small enough so that
+        // NaN won't compare as equal to anything (except another NaN).
         assert maxUlps > 0 && maxUlps < NAN_GAP;
 
         long xInt = Double.doubleToLongBits(x);
@@ -460,18 +692,41 @@ public final class MathUtils {
             yInt = SGN_MASK - yInt;
         }
 
-        return Math.abs(xInt - yInt) <= maxUlps;
+        return FastMath.abs(xInt - yInt) <= maxUlps;
     }
 
     /**
-     * Returns true iff both arguments are null or have same dimensions
-     * and all their elements are {@link #equals(double,double) equals}
+     * Returns true if both arguments are NaN or if they are equal as defined
+     * by {@link #equals(double,double,int) equals(x, y, maxUlps}.
      *
+     * @param x first value
+     * @param y second value
+     * @param maxUlps {@code (maxUlps - 1)} is the number of floating point
+     * values between {@code x} and {@code y}.
+     * @return {@code true} if both arguments are NaN or if there are less than
+     * {@code maxUlps} floating point values between {@code x} and {@code y}.
+     * @since 2.2
+     */
+    public static boolean equalsIncludingNaN(double x, double y, int maxUlps) {
+        return (Double.isNaN(x) && Double.isNaN(y)) || equals(x, y, maxUlps);
+    }
+
+    /**
+     * Returns true iff both arguments are null or have same dimensions and all
+     * their elements are equal as defined by
+     * {@link #equals(double,double)}.
+     *
+     * <p>This method considers that {@code NaN == NaN}. In release
+     * 3.0, the semantics will change in order to comply with IEEE754 where it
+     * is specified that {@code NaN != NaN}.
+     * New methods have been added for those cases wher the old semantics is
+     * useful (see e.g. {@link #equalsIncludingNaN(double[],double[])
+     * equalsIncludingNaN}.
+     * </p>
      * @param x first array
      * @param y second array
      * @return true if the values are both null or have same dimension
-     * and equal elements
-     * @since 1.2
+     * and equal elements.
      */
     public static boolean equals(double[] x, double[] y) {
         if ((x == null) || (y == null)) {
@@ -482,6 +737,32 @@ public final class MathUtils {
         }
         for (int i = 0; i < x.length; ++i) {
             if (!equals(x[i], y[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns true iff both arguments are null or have same dimensions and all
+     * their elements are equal as defined by
+     * {@link #equalsIncludingNaN(double,double)}.
+     *
+     * @param x first array
+     * @param y second array
+     * @return true if the values are both null or have same dimension and
+     * equal elements
+     * @since 2.2
+     */
+    public static boolean equalsIncludingNaN(double[] x, double[] y) {
+        if ((x == null) || (y == null)) {
+            return !((x == null) ^ (y == null));
+        }
+        if (x.length != y.length) {
+            return false;
+        }
+        for (int i = 0; i < x.length; ++i) {
+            if (!equalsIncludingNaN(x[i], y[i])) {
                 return false;
             }
         }
@@ -513,7 +794,7 @@ public final class MathUtils {
     public static long factorial(final int n) {
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "must have n >= 0 for n!, got n = {0}",
+                  LocalizedFormats.FACTORIAL_NEGATIVE_PARAMETER,
                   n);
         }
         if (n > 20) {
@@ -546,13 +827,13 @@ public final class MathUtils {
     public static double factorialDouble(final int n) {
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "must have n >= 0 for n!, got n = {0}",
+                  LocalizedFormats.FACTORIAL_NEGATIVE_PARAMETER,
                   n);
         }
         if (n < 21) {
             return factorial(n);
         }
-        return Math.floor(Math.exp(factorialLog(n)) + 0.5);
+        return FastMath.floor(FastMath.exp(factorialLog(n)) + 0.5);
     }
 
     /**
@@ -571,15 +852,15 @@ public final class MathUtils {
     public static double factorialLog(final int n) {
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "must have n >= 0 for n!, got n = {0}",
+                  LocalizedFormats.FACTORIAL_NEGATIVE_PARAMETER,
                   n);
         }
         if (n < 21) {
-            return Math.log(factorial(n));
+            return FastMath.log(factorial(n));
         }
         double logSum = 0;
         for (int i = 2; i <= n; i++) {
-            logSum += Math.log(i);
+            logSum += FastMath.log(i);
         }
         return logSum;
     }
@@ -619,10 +900,10 @@ public final class MathUtils {
         if ((u == 0) || (v == 0)) {
             if ((u == Integer.MIN_VALUE) || (v == Integer.MIN_VALUE)) {
                 throw MathRuntimeException.createArithmeticException(
-                        "overflow: gcd({0}, {1}) is 2^31",
+                        LocalizedFormats.GCD_OVERFLOW_32_BITS,
                         p, q);
             }
-            return Math.abs(u) + Math.abs(v);
+            return FastMath.abs(u) + FastMath.abs(v);
         }
         // keep u and v negative, as negative integers range down to
         // -2^31, while positive numbers can only be as large as 2^31-1
@@ -645,7 +926,7 @@ public final class MathUtils {
         }
         if (k == 31) {
             throw MathRuntimeException.createArithmeticException(
-                    "overflow: gcd({0}, {1}) is 2^31",
+                    LocalizedFormats.GCD_OVERFLOW_32_BITS,
                     p, q);
         }
         // B2. Initialize: u and v have been divided by 2^k and at least
@@ -708,10 +989,10 @@ public final class MathUtils {
         if ((u == 0) || (v == 0)) {
             if ((u == Long.MIN_VALUE) || (v == Long.MIN_VALUE)){
                 throw MathRuntimeException.createArithmeticException(
-                        "overflow: gcd({0}, {1}) is 2^63",
+                        LocalizedFormats.GCD_OVERFLOW_64_BITS,
                         p, q);
             }
-            return Math.abs(u) + Math.abs(v);
+            return FastMath.abs(u) + FastMath.abs(v);
         }
         // keep u and v negative, as negative integers range down to
         // -2^63, while positive numbers can only be as large as 2^63-1
@@ -734,7 +1015,7 @@ public final class MathUtils {
         }
         if (k == 63) {
             throw MathRuntimeException.createArithmeticException(
-                    "overflow: gcd({0}, {1}) is 2^63",
+                    LocalizedFormats.GCD_OVERFLOW_64_BITS,
                     p, q);
         }
         // B2. Initialize: u and v have been divided by 2^k and at least
@@ -881,10 +1162,10 @@ public final class MathUtils {
         if (a==0 || b==0){
             return 0;
         }
-        int lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
+        int lcm = FastMath.abs(mulAndCheck(a / gcd(a, b), b));
         if (lcm == Integer.MIN_VALUE) {
             throw MathRuntimeException.createArithmeticException(
-                "overflow: lcm({0}, {1}) is 2^31",
+                LocalizedFormats.LCM_OVERFLOW_32_BITS,
                 a, b);
         }
         return lcm;
@@ -916,10 +1197,10 @@ public final class MathUtils {
         if (a==0 || b==0){
             return 0;
         }
-        long lcm = Math.abs(mulAndCheck(a / gcd(a, b), b));
+        long lcm = FastMath.abs(mulAndCheck(a / gcd(a, b), b));
         if (lcm == Long.MIN_VALUE){
             throw MathRuntimeException.createArithmeticException(
-                "overflow: lcm({0}, {1}) is 2^63",
+                LocalizedFormats.LCM_OVERFLOW_64_BITS,
                 a, b);
         }
         return lcm;
@@ -942,7 +1223,7 @@ public final class MathUtils {
      * @since 1.2
      */
     public static double log(double base, double x) {
-        return Math.log(x)/Math.log(base);
+        return FastMath.log(x)/FastMath.log(base);
     }
 
     /**
@@ -1034,7 +1315,10 @@ public final class MathUtils {
      * direction is greater or smaller than d)
      * @return the next machine representable number in the specified direction
      * @since 1.2
+     * @deprecated as of 2.2, replaced by {@link FastMath#nextAfter(double, double)}
+     * which handles Infinities differently, and returns direction if d and direction compare equal.
      */
+    @Deprecated
     public static double nextAfter(double d, double direction) {
 
         // handling of some important special cases
@@ -1072,7 +1356,6 @@ public final class MathUtils {
                                         exponent | (mantissa - 1));
                 }
         }
-
     }
 
     /**
@@ -1080,26 +1363,14 @@ public final class MathUtils {
      * <p>If <code>d</code> is 0 or NaN or Infinite, it is returned unchanged.</p>
      *
      * @param d base number
-     * @param scaleFactor power of two by which d sould be multiplied
+     * @param scaleFactor power of two by which d should be multiplied
      * @return d &times; 2<sup>scaleFactor</sup>
      * @since 2.0
+     * @deprecated as of 2.2, replaced by {@link FastMath#scalb(double, int)}
      */
+    @Deprecated
     public static double scalb(final double d, final int scaleFactor) {
-
-        // handling of some important special cases
-        if ((d == 0) || Double.isNaN(d) || Double.isInfinite(d)) {
-            return d;
-        }
-
-        // split the double in raw components
-        final long bits     = Double.doubleToLongBits(d);
-        final long exponent = bits & 0x7ff0000000000000L;
-        final long rest     = bits & 0x800fffffffffffffL;
-
-        // shift the exponent
-        final long newBits = rest | (exponent + (((long) scaleFactor) << 52));
-        return Double.longBitsToDouble(newBits);
-
+        return FastMath.scalb(d, scaleFactor);
     }
 
     /**
@@ -1107,7 +1378,7 @@ public final class MathUtils {
      * <p>This method has three main uses:</p>
      * <ul>
      *   <li>normalize an angle between 0 and 2&pi;:<br/>
-     *       <code>a = MathUtils.normalizeAngle(a, Math.PI);</code></li>
+     *       <code>a = MathUtils.normalizeAngle(a, FastMath.PI);</code></li>
      *   <li>normalize an angle between -&pi; and +&pi;<br/>
      *       <code>a = MathUtils.normalizeAngle(a, 0.0);</code></li>
      *   <li>compute the angle between two defining angular positions:<br>
@@ -1122,7 +1393,7 @@ public final class MathUtils {
      * @since 1.2
      */
      public static double normalizeAngle(double a, double center) {
-         return a - TWO_PI * Math.floor((a + Math.PI - center) / TWO_PI);
+         return a - TWO_PI * FastMath.floor((a + FastMath.PI - center) / TWO_PI);
      }
 
      /**
@@ -1150,11 +1421,11 @@ public final class MathUtils {
        throws ArithmeticException, IllegalArgumentException {
          if (Double.isInfinite(normalizedSum)) {
              throw MathRuntimeException.createIllegalArgumentException(
-                     "Cannot normalize to an infinite value");
+                     LocalizedFormats.NORMALIZE_INFINITE);
          }
          if (Double.isNaN(normalizedSum)) {
              throw MathRuntimeException.createIllegalArgumentException(
-                     "Cannot normalize to NaN");
+                     LocalizedFormats.NORMALIZE_NAN);
          }
          double sum = 0d;
          final int len = values.length;
@@ -1162,15 +1433,14 @@ public final class MathUtils {
          for (int i = 0; i < len; i++) {
              if (Double.isInfinite(values[i])) {
                  throw MathRuntimeException.createArithmeticException(
-                         "Array contains an infinite element, {0} at index {1}", values[i], i);
+                         LocalizedFormats.INFINITE_ARRAY_ELEMENT, values[i], i);
              }
              if (!Double.isNaN(values[i])) {
                  sum += values[i];
              }
          }
          if (sum == 0) {
-             throw MathRuntimeException.createArithmeticException(
-                     "Array sums to zero");
+             throw MathRuntimeException.createArithmeticException(LocalizedFormats.ARRAY_SUMS_TO_ZERO);
          }
          for (int i = 0; i < len; i++) {
              if (Double.isNaN(values[i])) {
@@ -1249,7 +1519,7 @@ public final class MathUtils {
      */
     public static float round(float x, int scale, int roundingMethod) {
         float sign = indicator(x);
-        float factor = (float)Math.pow(10.0f, scale) * sign;
+        float factor = (float)FastMath.pow(10.0f, scale) * sign;
         return (float)roundUnscaled(x * factor, sign, roundingMethod) / factor;
     }
 
@@ -1270,70 +1540,69 @@ public final class MathUtils {
         switch (roundingMethod) {
         case BigDecimal.ROUND_CEILING :
             if (sign == -1) {
-                unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
+                unscaled = FastMath.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
             } else {
-                unscaled = Math.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
+                unscaled = FastMath.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
             }
             break;
         case BigDecimal.ROUND_DOWN :
-            unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
+            unscaled = FastMath.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
             break;
         case BigDecimal.ROUND_FLOOR :
             if (sign == -1) {
-                unscaled = Math.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
+                unscaled = FastMath.ceil(nextAfter(unscaled, Double.POSITIVE_INFINITY));
             } else {
-                unscaled = Math.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
+                unscaled = FastMath.floor(nextAfter(unscaled, Double.NEGATIVE_INFINITY));
             }
             break;
         case BigDecimal.ROUND_HALF_DOWN : {
             unscaled = nextAfter(unscaled, Double.NEGATIVE_INFINITY);
-            double fraction = unscaled - Math.floor(unscaled);
+            double fraction = unscaled - FastMath.floor(unscaled);
             if (fraction > 0.5) {
-                unscaled = Math.ceil(unscaled);
+                unscaled = FastMath.ceil(unscaled);
             } else {
-                unscaled = Math.floor(unscaled);
+                unscaled = FastMath.floor(unscaled);
             }
             break;
         }
         case BigDecimal.ROUND_HALF_EVEN : {
-            double fraction = unscaled - Math.floor(unscaled);
+            double fraction = unscaled - FastMath.floor(unscaled);
             if (fraction > 0.5) {
-                unscaled = Math.ceil(unscaled);
+                unscaled = FastMath.ceil(unscaled);
             } else if (fraction < 0.5) {
-                unscaled = Math.floor(unscaled);
+                unscaled = FastMath.floor(unscaled);
             } else {
                 // The following equality test is intentional and needed for rounding purposes
-                if (Math.floor(unscaled) / 2.0 == Math.floor(Math
+                if (FastMath.floor(unscaled) / 2.0 == FastMath.floor(Math
                     .floor(unscaled) / 2.0)) { // even
-                    unscaled = Math.floor(unscaled);
+                    unscaled = FastMath.floor(unscaled);
                 } else { // odd
-                    unscaled = Math.ceil(unscaled);
+                    unscaled = FastMath.ceil(unscaled);
                 }
             }
             break;
         }
         case BigDecimal.ROUND_HALF_UP : {
             unscaled = nextAfter(unscaled, Double.POSITIVE_INFINITY);
-            double fraction = unscaled - Math.floor(unscaled);
+            double fraction = unscaled - FastMath.floor(unscaled);
             if (fraction >= 0.5) {
-                unscaled = Math.ceil(unscaled);
+                unscaled = FastMath.ceil(unscaled);
             } else {
-                unscaled = Math.floor(unscaled);
+                unscaled = FastMath.floor(unscaled);
             }
             break;
         }
         case BigDecimal.ROUND_UNNECESSARY :
-            if (unscaled != Math.floor(unscaled)) {
+            if (unscaled != FastMath.floor(unscaled)) {
                 throw new ArithmeticException("Inexact result from rounding");
             }
             break;
         case BigDecimal.ROUND_UP :
-            unscaled = Math.ceil(nextAfter(unscaled,  Double.POSITIVE_INFINITY));
+            unscaled = FastMath.ceil(nextAfter(unscaled,  Double.POSITIVE_INFINITY));
             break;
         default :
             throw MathRuntimeException.createIllegalArgumentException(
-                  "invalid rounding method {0}, valid methods: {1} ({2}), {3} ({4})," +
-                  " {5} ({6}), {7} ({8}), {9} ({10}), {11} ({12}), {13} ({14}), {15} ({16})",
+                  LocalizedFormats.INVALID_ROUNDING_METHOD,
                   roundingMethod,
                   "ROUND_CEILING",     BigDecimal.ROUND_CEILING,
                   "ROUND_DOWN",        BigDecimal.ROUND_DOWN,
@@ -1449,7 +1718,7 @@ public final class MathUtils {
      * @return hyperbolic sine of x
      */
     public static double sinh(double x) {
-        return (Math.exp(x) - Math.exp(-x)) / 2.0;
+        return (FastMath.exp(x) - FastMath.exp(-x)) / 2.0;
     }
 
     /**
@@ -1465,7 +1734,7 @@ public final class MathUtils {
     public static int subAndCheck(int x, int y) {
         long s = (long)x - (long)y;
         if (s < Integer.MIN_VALUE || s > Integer.MAX_VALUE) {
-            throw new ArithmeticException("overflow: subtract");
+            throw MathRuntimeException.createArithmeticException(LocalizedFormats.OVERFLOW_IN_SUBTRACTION, x, y);
         }
         return (int)s;
     }
@@ -1491,7 +1760,7 @@ public final class MathUtils {
             }
         } else {
             // use additive inverse
-            ret = addAndCheck(a, -b, msg);
+            ret = addAndCheck(a, -b, LocalizedFormats.OVERFLOW_IN_ADDITION);
         }
         return ret;
     }
@@ -1508,7 +1777,7 @@ public final class MathUtils {
 
         if (e < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                "cannot raise an integral value to a negative power ({0}^{1})",
+                LocalizedFormats.POWER_NEGATIVE_PARAMETERS,
                 k, e);
         }
 
@@ -1538,7 +1807,7 @@ public final class MathUtils {
 
         if (e < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                "cannot raise an integral value to a negative power ({0}^{1})",
+                LocalizedFormats.POWER_NEGATIVE_PARAMETERS,
                 k, e);
         }
 
@@ -1568,7 +1837,7 @@ public final class MathUtils {
 
         if (e < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                "cannot raise an integral value to a negative power ({0}^{1})",
+                LocalizedFormats.POWER_NEGATIVE_PARAMETERS,
                 k, e);
         }
 
@@ -1598,7 +1867,7 @@ public final class MathUtils {
 
         if (e < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                "cannot raise an integral value to a negative power ({0}^{1})",
+                LocalizedFormats.POWER_NEGATIVE_PARAMETERS,
                 k, e);
         }
 
@@ -1628,7 +1897,7 @@ public final class MathUtils {
 
         if (e < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                "cannot raise an integral value to a negative power ({0}^{1})",
+                LocalizedFormats.POWER_NEGATIVE_PARAMETERS,
                 k, e);
         }
 
@@ -1648,7 +1917,7 @@ public final class MathUtils {
 
         if (e < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                "cannot raise an integral value to a negative power ({0}^{1})",
+                LocalizedFormats.POWER_NEGATIVE_PARAMETERS,
                 k, e);
         }
 
@@ -1678,7 +1947,7 @@ public final class MathUtils {
 
         if (e.compareTo(BigInteger.ZERO) < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                "cannot raise an integral value to a negative power ({0}^{1})",
+                LocalizedFormats.POWER_NEGATIVE_PARAMETERS,
                 k, e);
         }
 
@@ -1706,7 +1975,7 @@ public final class MathUtils {
     public static double distance1(double[] p1, double[] p2) {
         double sum = 0;
         for (int i = 0; i < p1.length; i++) {
-            sum += Math.abs(p1[i] - p2[i]);
+            sum += FastMath.abs(p1[i] - p2[i]);
         }
         return sum;
     }
@@ -1721,7 +1990,7 @@ public final class MathUtils {
     public static int distance1(int[] p1, int[] p2) {
       int sum = 0;
       for (int i = 0; i < p1.length; i++) {
-          sum += Math.abs(p1[i] - p2[i]);
+          sum += FastMath.abs(p1[i] - p2[i]);
       }
       return sum;
     }
@@ -1739,7 +2008,7 @@ public final class MathUtils {
             final double dp = p1[i] - p2[i];
             sum += dp * dp;
         }
-        return Math.sqrt(sum);
+        return FastMath.sqrt(sum);
     }
 
     /**
@@ -1755,7 +2024,7 @@ public final class MathUtils {
           final double dp = p1[i] - p2[i];
           sum += dp * dp;
       }
-      return Math.sqrt(sum);
+      return FastMath.sqrt(sum);
     }
 
     /**
@@ -1768,7 +2037,7 @@ public final class MathUtils {
     public static double distanceInf(double[] p1, double[] p2) {
         double max = 0;
         for (int i = 0; i < p1.length; i++) {
-            max = Math.max(max, Math.abs(p1[i] - p2[i]));
+            max = FastMath.max(max, FastMath.abs(p1[i] - p2[i]));
         }
         return max;
     }
@@ -1783,9 +2052,80 @@ public final class MathUtils {
     public static int distanceInf(int[] p1, int[] p2) {
         int max = 0;
         for (int i = 0; i < p1.length; i++) {
-            max = Math.max(max, Math.abs(p1[i] - p2[i]));
+            max = FastMath.max(max, FastMath.abs(p1[i] - p2[i]));
         }
         return max;
+    }
+
+    /**
+     * Specification of ordering direction.
+     */
+    public static enum OrderDirection {
+        /** Constant for increasing direction. */
+        INCREASING,
+        /** Constant for decreasing direction. */
+        DECREASING
+    }
+
+    /**
+     * Checks that the given array is sorted.
+     *
+     * @param val Values.
+     * @param dir Ordering direction.
+     * @param strict Whether the order should be strict.
+     * @throws NonMonotonousSequenceException if the array is not sorted.
+     * @since 2.2
+     */
+    public static void checkOrder(double[] val, OrderDirection dir, boolean strict) {
+        double previous = val[0];
+        boolean ok = true;
+
+        int max = val.length;
+        for (int i = 1; i < max; i++) {
+            switch (dir) {
+            case INCREASING:
+                if (strict) {
+                    if (val[i] <= previous) {
+                        ok = false;
+                    }
+                } else {
+                    if (val[i] < previous) {
+                        ok = false;
+                    }
+                }
+                break;
+            case DECREASING:
+                if (strict) {
+                    if (val[i] >= previous) {
+                        ok = false;
+                    }
+                } else {
+                    if (val[i] > previous) {
+                        ok = false;
+                    }
+                }
+                break;
+            default:
+                // Should never happen.
+                throw new IllegalArgumentException();
+            }
+
+            if (!ok) {
+                throw new NonMonotonousSequenceException(val[i], previous, i, dir, strict);
+            }
+            previous = val[i];
+        }
+    }
+
+    /**
+     * Checks that the given array is sorted in strictly increasing order.
+     *
+     * @param val Values.
+     * @throws NonMonotonousSequenceException if the array is not sorted.
+     * @since 2.2
+     */
+    public static void checkOrder(double[] val) {
+        checkOrder(val, OrderDirection.INCREASING, true);
     }
 
     /**
@@ -1794,40 +2134,132 @@ public final class MathUtils {
      * @param val Values
      * @param dir Order direction (-1 for decreasing, 1 for increasing)
      * @param strict Whether the order should be strict
-     * @throws IllegalArgumentException if the array is not sorted.
+     * @throws NonMonotonousSequenceException if the array is not sorted.
+     * @deprecated as of 2.2 (please use the new {@link #checkOrder(double[],OrderDirection,boolean)
+     * checkOrder} method). To be removed in 3.0.
      */
+    @Deprecated
     public static void checkOrder(double[] val, int dir, boolean strict) {
-        double previous = val[0];
+        if (dir > 0) {
+            checkOrder(val, OrderDirection.INCREASING, strict);
+        } else {
+            checkOrder(val, OrderDirection.DECREASING, strict);
+        }
+    }
 
-        int max = val.length;
-        for (int i = 1; i < max; i++) {
-            if (dir > 0) {
-                if (strict) {
-                    if (val[i] <= previous) {
-                        throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not strictly increasing ({2} >= {3})",
-                                                                                  i - 1, i, previous, val[i]);
-                    }
+    /**
+     * Returns the Cartesian norm (2-norm), handling both overflow and underflow.
+     * Translation of the minpack enorm subroutine.
+     *
+     * The redistribution policy for MINPACK is available <a
+     * href="http://www.netlib.org/minpack/disclaimer">here</a>, for convenience, it
+     * is reproduced below.</p>
+     *
+     * <table border="0" width="80%" cellpadding="10" align="center" bgcolor="#E0E0E0">
+     * <tr><td>
+     *    Minpack Copyright Notice (1999) University of Chicago.
+     *    All rights reserved
+     * </td></tr>
+     * <tr><td>
+     * Redistribution and use in source and binary forms, with or without
+     * modification, are permitted provided that the following conditions
+     * are met:
+     * <ol>
+     *  <li>Redistributions of source code must retain the above copyright
+     *      notice, this list of conditions and the following disclaimer.</li>
+     * <li>Redistributions in binary form must reproduce the above
+     *     copyright notice, this list of conditions and the following
+     *     disclaimer in the documentation and/or other materials provided
+     *     with the distribution.</li>
+     * <li>The end-user documentation included with the redistribution, if any,
+     *     must include the following acknowledgment:
+     *     <code>This product includes software developed by the University of
+     *           Chicago, as Operator of Argonne National Laboratory.</code>
+     *     Alternately, this acknowledgment may appear in the software itself,
+     *     if and wherever such third-party acknowledgments normally appear.</li>
+     * <li><strong>WARRANTY DISCLAIMER. THE SOFTWARE IS SUPPLIED "AS IS"
+     *     WITHOUT WARRANTY OF ANY KIND. THE COPYRIGHT HOLDER, THE
+     *     UNITED STATES, THE UNITED STATES DEPARTMENT OF ENERGY, AND
+     *     THEIR EMPLOYEES: (1) DISCLAIM ANY WARRANTIES, EXPRESS OR
+     *     IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTIES
+     *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE
+     *     OR NON-INFRINGEMENT, (2) DO NOT ASSUME ANY LEGAL LIABILITY
+     *     OR RESPONSIBILITY FOR THE ACCURACY, COMPLETENESS, OR
+     *     USEFULNESS OF THE SOFTWARE, (3) DO NOT REPRESENT THAT USE OF
+     *     THE SOFTWARE WOULD NOT INFRINGE PRIVATELY OWNED RIGHTS, (4)
+     *     DO NOT WARRANT THAT THE SOFTWARE WILL FUNCTION
+     *     UNINTERRUPTED, THAT IT IS ERROR-FREE OR THAT ANY ERRORS WILL
+     *     BE CORRECTED.</strong></li>
+     * <li><strong>LIMITATION OF LIABILITY. IN NO EVENT WILL THE COPYRIGHT
+     *     HOLDER, THE UNITED STATES, THE UNITED STATES DEPARTMENT OF
+     *     ENERGY, OR THEIR EMPLOYEES: BE LIABLE FOR ANY INDIRECT,
+     *     INCIDENTAL, CONSEQUENTIAL, SPECIAL OR PUNITIVE DAMAGES OF
+     *     ANY KIND OR NATURE, INCLUDING BUT NOT LIMITED TO LOSS OF
+     *     PROFITS OR LOSS OF DATA, FOR ANY REASON WHATSOEVER, WHETHER
+     *     SUCH LIABILITY IS ASSERTED ON THE BASIS OF CONTRACT, TORT
+     *     (INCLUDING NEGLIGENCE OR STRICT LIABILITY), OR OTHERWISE,
+     *     EVEN IF ANY OF SAID PARTIES HAS BEEN WARNED OF THE
+     *     POSSIBILITY OF SUCH LOSS OR DAMAGES.</strong></li>
+     * <ol></td></tr>
+     * </table>
+     *
+     * @param v vector of doubles
+     * @return the 2-norm of the vector
+     * @since 2.2
+     */
+    public static double safeNorm(double[] v) {
+    double rdwarf = 3.834e-20;
+    double rgiant = 1.304e+19;
+    double s1=0.0;
+    double s2=0.0;
+    double s3=0.0;
+    double x1max = 0.0;
+    double x3max = 0.0;
+    double floatn = (double)v.length;
+    double agiant = rgiant/floatn;
+    for (int i=0;i<v.length;i++) {
+        double xabs = Math.abs(v[i]);
+        if (xabs<rdwarf || xabs>agiant) {
+            if (xabs>rdwarf) {
+                if (xabs>x1max) {
+                    double r=x1max/xabs;
+                    s1=1.0+s1*r*r;
+                    x1max=xabs;
                 } else {
-                    if (val[i] < previous) {
-                        throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not increasing ({2} > {3})",
-                                                                                  i - 1, i, previous, val[i]);
-                    }
+                    double r=xabs/x1max;
+                    s1+=r*r;
                 }
             } else {
-                if (strict) {
-                    if (val[i] >= previous) {
-                        throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not strictly decreasing ({2} <= {3})",
-                                                                                  i - 1, i, previous, val[i]);
-                    }
+                if (xabs>x3max) {
+                 double r=x3max/xabs;
+                 s3=1.0+s3*r*r;
+                 x3max=xabs;
                 } else {
-                    if (val[i] > previous) {
-                        throw MathRuntimeException.createIllegalArgumentException("points {0} and {1} are not decreasing ({2} < {3})",
-                                                                                  i - 1, i, previous, val[i]);
+                    if (xabs!=0.0) {
+                        double r=xabs/x3max;
+                        s3+=r*r;
                     }
                 }
             }
-
-            previous = val[i];
+        } else {
+         s2+=xabs*xabs;
         }
     }
+    double norm;
+    if (s1!=0.0) {
+        norm = x1max*Math.sqrt(s1+(s2/x1max)/x1max);
+    } else {
+        if (s2==0.0) {
+            norm = x3max*Math.sqrt(s3);
+        } else {
+            if (s2>=x3max) {
+                norm = Math.sqrt(s2*(1.0+(x3max/s2)*(x3max*s3)));
+            } else {
+                norm = Math.sqrt(x3max*((s2/x3max)+(x3max*s3)));
+            }
+        }
+    }
+    return norm;
+}
+
 }

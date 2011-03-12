@@ -21,9 +21,9 @@ import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.IntegratorException;
-import org.apache.commons.math.ode.events.CombinedEventsManager;
 import org.apache.commons.math.ode.sampling.NordsieckStepInterpolator;
 import org.apache.commons.math.ode.sampling.StepHandler;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
@@ -135,10 +135,13 @@ import org.apache.commons.math.ode.sampling.StepHandler;
  * <p>The P<sup>-1</sup>u vector and the P<sup>-1</sup> A P matrix do not depend on the state,
  * they only depend on k and therefore are precomputed once for all.</p>
  *
- * @version $Revision: 927202 $ $Date: 2010-03-24 18:11:51 -0400 (Wed, 24 Mar 2010) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  */
 public class AdamsBashforthIntegrator extends AdamsIntegrator {
+
+    /** Integrator method name. */
+    private static final String METHOD_NAME = "Adams-Bashforth";
 
     /**
      * Build an Adams-Bashforth integrator with the given order and step control parameters.
@@ -156,7 +159,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
                                     final double scalAbsoluteTolerance,
                                     final double scalRelativeTolerance)
         throws IllegalArgumentException {
-        super("Adams-Bashforth", nSteps, nSteps, minStep, maxStep,
+        super(METHOD_NAME, nSteps, nSteps, minStep, maxStep,
               scalAbsoluteTolerance, scalRelativeTolerance);
     }
 
@@ -176,7 +179,7 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
                                     final double[] vecAbsoluteTolerance,
                                     final double[] vecRelativeTolerance)
         throws IllegalArgumentException {
-        super("Adams-Bashforth", nSteps, nSteps, minStep, maxStep,
+        super(METHOD_NAME, nSteps, nSteps, minStep, maxStep,
               vecAbsoluteTolerance, vecRelativeTolerance);
     }
 
@@ -198,19 +201,16 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
             System.arraycopy(y0, 0, y, 0, n);
         }
         final double[] yDot = new double[n];
-        final double[] yTmp = new double[y0.length];
 
         // set up an interpolator sharing the integrator arrays
         final NordsieckStepInterpolator interpolator = new NordsieckStepInterpolator();
         interpolator.reinitialize(y, forward);
-        final NordsieckStepInterpolator interpolatorTmp = new NordsieckStepInterpolator();
-        interpolatorTmp.reinitialize(yTmp, forward);
 
         // set up integration control objects
         for (StepHandler handler : stepHandlers) {
             handler.reset();
         }
-        CombinedEventsManager manager = addEndTimeChecker(t0, t, eventsHandlersManager);
+        setStateInitialized(false);
 
         // compute the initial Nordsieck vector using the configured starter integrator
         start(t0, y, t);
@@ -222,115 +222,72 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
         double hNew = stepSize;
         interpolator.rescale(hNew);
 
-        boolean lastStep = false;
-        while (!lastStep) {
+        // main integration loop
+        isLastStep = false;
+        do {
 
-            // shift all data
-            interpolator.shift();
-
-            double error = 0;
-            for (boolean loop = true; loop;) {
+            double error = 10;
+            while (error >= 1.0) {
 
                 stepSize = hNew;
 
                 // evaluate error using the last term of the Taylor expansion
                 error = 0;
-                for (int i = 0; i < y0.length; ++i) {
-                    final double yScale = Math.abs(y[i]);
+                for (int i = 0; i < mainSetDimension; ++i) {
+                    final double yScale = FastMath.abs(y[i]);
                     final double tol = (vecAbsoluteTolerance == null) ?
                                        (scalAbsoluteTolerance + scalRelativeTolerance * yScale) :
                                        (vecAbsoluteTolerance[i] + vecRelativeTolerance[i] * yScale);
                     final double ratio  = nordsieck.getEntry(lastRow, i) / tol;
                     error += ratio * ratio;
                 }
-                error = Math.sqrt(error / y0.length);
+                error = FastMath.sqrt(error / mainSetDimension);
 
-                if (error <= 1.0) {
-
-                    // predict a first estimate of the state at step end
-                    final double stepEnd = stepStart + stepSize;
-                    interpolator.setInterpolatedTime(stepEnd);
-                    System.arraycopy(interpolator.getInterpolatedState(), 0, yTmp, 0, y0.length);
-
-                    // evaluate the derivative
-                    computeDerivatives(stepEnd, yTmp, yDot);
-
-                    // update Nordsieck vector
-                    final double[] predictedScaled = new double[y0.length];
-                    for (int j = 0; j < y0.length; ++j) {
-                        predictedScaled[j] = stepSize * yDot[j];
-                    }
-                    final Array2DRowRealMatrix nordsieckTmp = updateHighOrderDerivativesPhase1(nordsieck);
-                    updateHighOrderDerivativesPhase2(scaled, predictedScaled, nordsieckTmp);
-
-                    // discrete events handling
-                    interpolatorTmp.reinitialize(stepEnd, stepSize, predictedScaled, nordsieckTmp);
-                    interpolatorTmp.storeTime(stepStart);
-                    interpolatorTmp.shift();
-                    interpolatorTmp.storeTime(stepEnd);
-                    if (manager.evaluateStep(interpolatorTmp)) {
-                        final double dt = manager.getEventTime() - stepStart;
-                        if (Math.abs(dt) <= Math.ulp(stepStart)) {
-                            // we cannot simply truncate the step, reject the current computation
-                            // and let the loop compute another state with the truncated step.
-                            // it is so small (much probably exactly 0 due to limited accuracy)
-                            // that the code above would fail handling it.
-                            // So we set up an artificial 0 size step by copying states
-                            interpolator.storeTime(stepStart);
-                            System.arraycopy(y, 0, yTmp, 0, y0.length);
-                            hNew     = 0;
-                            stepSize = 0;
-                            loop     = false;
-                        } else {
-                            // reject the step to match exactly the next switch time
-                            hNew = dt;
-                            interpolator.rescale(hNew);
-                        }
-                    } else {
-                        // accept the step
-                        scaled    = predictedScaled;
-                        nordsieck = nordsieckTmp;
-                        interpolator.reinitialize(stepEnd, stepSize, scaled, nordsieck);
-                        loop = false;
-                    }
-
-                } else {
+                if (error >= 1.0) {
                     // reject the step and attempt to reduce error by stepsize control
                     final double factor = computeStepGrowShrinkFactor(error);
                     hNew = filterStep(stepSize * factor, forward, false);
                     interpolator.rescale(hNew);
+
                 }
-
             }
 
-            // the step has been accepted (may have been truncated)
-            final double nextStep = stepStart + stepSize;
-            System.arraycopy(yTmp, 0, y, 0, n);
-            interpolator.storeTime(nextStep);
-            manager.stepAccepted(nextStep, y);
-            lastStep = manager.stop();
+            // predict a first estimate of the state at step end
+            final double stepEnd = stepStart + stepSize;
+            interpolator.shift();
+            interpolator.setInterpolatedTime(stepEnd);
+            System.arraycopy(interpolator.getInterpolatedState(), 0, y, 0, y0.length);
 
-            // provide the step data to the step handler
-            for (StepHandler handler : stepHandlers) {
-                interpolator.setInterpolatedTime(nextStep);
-                handler.handleStep(interpolator, lastStep);
+            // evaluate the derivative
+            computeDerivatives(stepEnd, y, yDot);
+
+            // update Nordsieck vector
+            final double[] predictedScaled = new double[y0.length];
+            for (int j = 0; j < y0.length; ++j) {
+                predictedScaled[j] = stepSize * yDot[j];
             }
-            stepStart = nextStep;
+            final Array2DRowRealMatrix nordsieckTmp = updateHighOrderDerivativesPhase1(nordsieck);
+            updateHighOrderDerivativesPhase2(scaled, predictedScaled, nordsieckTmp);
+            interpolator.reinitialize(stepEnd, stepSize, predictedScaled, nordsieckTmp);
 
-            if (!lastStep && manager.reset(stepStart, y)) {
+            // discrete events handling
+            interpolator.storeTime(stepEnd);
+            stepStart = acceptStep(interpolator, y, yDot, t);
+            scaled    = predictedScaled;
+            nordsieck = nordsieckTmp;
+            interpolator.reinitialize(stepEnd, stepSize, scaled, nordsieck);
 
-                // some events handler has triggered changes that
-                // invalidate the derivatives, we need to restart from scratch
-                start(stepStart, y, t);
-                interpolator.reinitialize(stepStart, stepSize, scaled, nordsieck);
+            if (!isLastStep) {
 
-            }
+                // prepare next step
+                interpolator.storeTime(stepStart);
 
-            if (! lastStep) {
-                // in some rare cases we may get here with stepSize = 0, for example
-                // when an event occurs at integration start, reducing the first step
-                // to zero; we have to reset the step to some safe non zero value
-                stepSize = filterStep(stepSize, forward, true);
+                if (resetOccurred) {
+                    // some events handler has triggered changes that
+                    // invalidate the derivatives, we need to restart from scratch
+                    start(stepStart, y, t);
+                    interpolator.reinitialize(stepStart, stepSize, scaled, nordsieck);
+                }
 
                 // stepsize control for next step
                 final double  factor     = computeStepGrowShrinkFactor(error);
@@ -338,14 +295,21 @@ public class AdamsBashforthIntegrator extends AdamsIntegrator {
                 final double  nextT      = stepStart + scaledH;
                 final boolean nextIsLast = forward ? (nextT >= t) : (nextT <= t);
                 hNew = filterStep(scaledH, forward, nextIsLast);
+
+                final double  filteredNextT      = stepStart + hNew;
+                final boolean filteredNextIsLast = forward ? (filteredNextT >= t) : (filteredNextT <= t);
+                if (filteredNextIsLast) {
+                    hNew = t - stepStart;
+                }
+
                 interpolator.rescale(hNew);
+
             }
 
-        }
+        } while (!isLastStep);
 
-        final double stopTime  = stepStart;
-        stepStart = Double.NaN;
-        stepSize  = Double.NaN;
+        final double stopTime = stepStart;
+        resetInternalState();
         return stopTime;
 
     }

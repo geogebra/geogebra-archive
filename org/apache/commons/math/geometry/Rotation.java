@@ -20,6 +20,8 @@ package org.apache.commons.math.geometry;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class implements rotations in a three-dimensional space.
@@ -32,12 +34,12 @@ import org.apache.commons.math.MathRuntimeException;
  * user can build a rotation from any of these representations, and
  * any of these representations can be retrieved from a
  * <code>Rotation</code> instance (see the various constructors and
- * getters). In addition, a rotation can also be built implicitely
+ * getters). In addition, a rotation can also be built implicitly
  * from a set of vectors and their image.</p>
  * <p>This implies that this class can be used to convert from one
  * representation to another one. For example, converting a rotation
  * matrix into a set of Cardan angles from can be done using the
- * followong single line of code:</p>
+ * following single line of code:</p>
  * <pre>
  * double[] angles = new Rotation(matrix, 1.0e-10).getAngles(RotationOrder.XYZ);
  * </pre>
@@ -49,20 +51,22 @@ import org.apache.commons.math.MathRuntimeException;
  * meaning of these vectors may vary and the semantics of the rotation also.</p>
  * <p>For example in an spacecraft attitude simulation tool, users will often
  * consider the vectors are fixed (say the Earth direction for example) and the
- * rotation transforms the coordinates coordinates of this vector in inertial
+ * frames change. The rotation transforms the coordinates of the vector in inertial
  * frame into the coordinates of the same vector in satellite frame. In this
- * case, the rotation implicitely defines the relation between the two frames.
- * Another example could be a telescope control application, where the rotation
+ * case, the rotation implicitly defines the relation between the two frames.</p>
+ * <p>Another example could be a telescope control application, where the rotation
  * would transform the sighting direction at rest into the desired observing
  * direction when the telescope is pointed towards an object of interest. In this
- * case the rotation transforms the directionf at rest in a topocentric frame
- * into the sighting direction in the same topocentric frame. In many case, both
- * approaches will be combined, in our telescope example, we will probably also
- * need to transform the observing direction in the topocentric frame into the
- * observing direction in inertial frame taking into account the observatory
- * location and the Earth rotation.</p>
+ * case the rotation transforms the direction at rest in a topocentric frame
+ * into the sighting direction in the same topocentric frame. This implies in this
+ * case the frame is fixed and the vector moves.</p>
+ * <p>In many case, both approaches will be combined. In our telescope example,
+ * we will probably also need to transform the observing direction in the topocentric
+ * frame into the observing direction in inertial frame taking into account the observatory
+ * location and the Earth rotation, which would essentially be an application of the
+ * first approach.</p>
  *
- * <p>These examples show that a rotation is what the user wants it to be, so this
+ * <p>These examples show that a rotation is what the user wants it to be. This
  * class does not push the user towards one specific definition and hence does not
  * provide methods like <code>projectVectorIntoDestinationFrame</code> or
  * <code>computeTransformedDirection</code>. It provides simpler and more generic
@@ -82,7 +86,7 @@ import org.apache.commons.math.MathRuntimeException;
  *
  * <p>Rotations are guaranteed to be immutable objects.</p>
  *
- * @version $Revision: 772119 $ $Date: 2009-05-06 05:43:28 -0400 (Wed, 06 May 2009) $
+ * @version $Revision: 1067500 $ $Date: 2011-02-05 21:11:30 +0100 (sam. 05 févr. 2011) $
  * @see Vector3D
  * @see RotationOrder
  * @since 1.2
@@ -114,6 +118,10 @@ public class Rotation implements Serializable {
    * q<sub>1</sub><sup>2</sup> + q<sub>2</sub><sup>2</sup> +
    * q<sub>3</sub><sup>2</sup> = 1. If the quaternion is not normalized,
    * the constructor can normalize it in a preprocessing step.</p>
+   * <p>Note that some conventions put the scalar part of the quaternion
+   * as the 4<sup>th</sup> component and the vector part as the first three
+   * components. This is <em>not</em> our convention. We put the scalar part
+   * as the first component.</p>
    * @param q0 scalar part of the quaternion
    * @param q1 first coordinate of the vectorial part of the quaternion
    * @param q2 second coordinate of the vectorial part of the quaternion
@@ -127,7 +135,7 @@ public class Rotation implements Serializable {
 
     if (needsNormalization) {
       // normalization preprocessing
-      double inv = 1.0 / Math.sqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
+      double inv = 1.0 / FastMath.sqrt(q0 * q0 + q1 * q1 + q2 * q2 + q3 * q3);
       q0 *= inv;
       q1 *= inv;
       q2 *= inv;
@@ -145,9 +153,19 @@ public class Rotation implements Serializable {
    * <p>We use the convention that angles are oriented according to
    * the effect of the rotation on vectors around the axis. That means
    * that if (i, j, k) is a direct frame and if we first provide +k as
-   * the axis and PI/2 as the angle to this constructor, and then
+   * the axis and &pi;/2 as the angle to this constructor, and then
    * {@link #applyTo(Vector3D) apply} the instance to +i, we will get
    * +j.</p>
+   * <p>Another way to represent our convention is to say that a rotation
+   * of angle &theta; about the unit vector (x, y, z) is the same as the
+   * rotation build from quaternion components { cos(-&theta;/2),
+   * x * sin(-&theta;/2), y * sin(-&theta;/2), z * sin(-&theta;/2) }.
+   * Note the minus sign on the angle!</p>
+   * <p>On the one hand this convention is consistent with a vectorial
+   * perspective (moving vectors in fixed frames), on the other hand it
+   * is different from conventions with a frame perspective (fixed vectors
+   * viewed from different frames) like the ones used for example in spacecraft
+   * attitude community or in the graphics community.</p>
    * @param axis axis around which to rotate
    * @param angle rotation angle.
    * @exception ArithmeticException if the axis norm is zero
@@ -156,13 +174,13 @@ public class Rotation implements Serializable {
 
     double norm = axis.getNorm();
     if (norm == 0) {
-      throw MathRuntimeException.createArithmeticException("zero norm for rotation axis");
+      throw MathRuntimeException.createArithmeticException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_AXIS);
     }
 
     double halfAngle = -0.5 * angle;
-    double coeff = Math.sin(halfAngle) / norm;
+    double coeff = FastMath.sin(halfAngle) / norm;
 
-    q0 = Math.cos (halfAngle);
+    q0 = FastMath.cos (halfAngle);
     q1 = coeff * axis.getX();
     q2 = coeff * axis.getY();
     q3 = coeff * axis.getZ();
@@ -176,7 +194,7 @@ public class Rotation implements Serializable {
    * coefficients. The module of the determinant of unit matrices is
    * 1, among the orthogonal 3X3 matrices, only the ones having a
    * positive determinant (+1) are rotation matrices.</p>
-
+   *
    * <p>When a rotation is defined by a matrix with truncated values
    * (typically when it is extracted from a technical sheet where only
    * four to five significant digits are available), the matrix is not
@@ -186,18 +204,18 @@ public class Rotation implements Serializable {
    * the Frobenius norm of the correction needed is above the given
    * threshold, then the matrix is considered to be too far from a
    * true rotation matrix and an exception is thrown.<p>
-
+   *
    * @param m rotation matrix
    * @param threshold convergence threshold for the iterative
    * orthogonality correction (convergence is reached when the
    * difference between two steps of the Frobenius norm of the
    * correction is below this threshold)
-
+   *
    * @exception NotARotationMatrixException if the matrix is not a 3X3
    * matrix, or if it cannot be transformed into an orthogonal matrix
    * with the given threshold, or if the determinant of the resulting
    * orthogonal matrix is negative
-
+   *
    */
   public Rotation(double[][] m, double threshold)
     throws NotARotationMatrixException {
@@ -206,7 +224,7 @@ public class Rotation implements Serializable {
     if ((m.length != 3) || (m[0].length != 3) ||
         (m[1].length != 3) || (m[2].length != 3)) {
       throw new NotARotationMatrixException(
-              "a {0}x{1} matrix cannot be a rotation matrix",
+              LocalizedFormats.ROTATION_MATRIX_DIMENSIONS,
               m.length, m[0].length);
     }
 
@@ -219,7 +237,7 @@ public class Rotation implements Serializable {
                  ort[2][0] * (ort[0][1] * ort[1][2] - ort[1][1] * ort[0][2]);
     if (det < 0.0) {
       throw new NotARotationMatrixException(
-              "the closest orthogonal matrix has a negative determinant {0}",
+              LocalizedFormats.CLOSEST_ORTHOGONAL_MATRIX_HAS_NEGATIVE_DETERMINANT,
               det);
     }
 
@@ -237,7 +255,7 @@ public class Rotation implements Serializable {
     double s = ort[0][0] + ort[1][1] + ort[2][2];
     if (s > -0.19) {
       // compute q0 and deduce q1, q2 and q3
-      q0 = 0.5 * Math.sqrt(s + 1.0);
+      q0 = 0.5 * FastMath.sqrt(s + 1.0);
       double inv = 0.25 / q0;
       q1 = inv * (ort[1][2] - ort[2][1]);
       q2 = inv * (ort[2][0] - ort[0][2]);
@@ -246,7 +264,7 @@ public class Rotation implements Serializable {
       s = ort[0][0] - ort[1][1] - ort[2][2];
       if (s > -0.19) {
         // compute q1 and deduce q0, q2 and q3
-        q1 = 0.5 * Math.sqrt(s + 1.0);
+        q1 = 0.5 * FastMath.sqrt(s + 1.0);
         double inv = 0.25 / q1;
         q0 = inv * (ort[1][2] - ort[2][1]);
         q2 = inv * (ort[0][1] + ort[1][0]);
@@ -255,7 +273,7 @@ public class Rotation implements Serializable {
         s = ort[1][1] - ort[0][0] - ort[2][2];
         if (s > -0.19) {
           // compute q2 and deduce q0, q1 and q3
-          q2 = 0.5 * Math.sqrt(s + 1.0);
+          q2 = 0.5 * FastMath.sqrt(s + 1.0);
           double inv = 0.25 / q2;
           q0 = inv * (ort[2][0] - ort[0][2]);
           q1 = inv * (ort[0][1] + ort[1][0]);
@@ -263,7 +281,7 @@ public class Rotation implements Serializable {
         } else {
           // compute q3 and deduce q0, q1 and q2
           s = ort[2][2] - ort[0][0] - ort[1][1];
-          q3 = 0.5 * Math.sqrt(s + 1.0);
+          q3 = 0.5 * FastMath.sqrt(s + 1.0);
           double inv = 0.25 / q3;
           q0 = inv * (ort[0][1] - ort[1][0]);
           q1 = inv * (ort[0][2] + ort[2][0]);
@@ -279,13 +297,13 @@ public class Rotation implements Serializable {
    * <p>Except for possible scale factors, if the instance were applied to
    * the pair (u<sub>1</sub>, u<sub>2</sub>) it will produce the pair
    * (v<sub>1</sub>, v<sub>2</sub>).</p>
-
+   *
    * <p>If the angular separation between u<sub>1</sub> and u<sub>2</sub> is
    * not the same as the angular separation between v<sub>1</sub> and
    * v<sub>2</sub>, then a corrected v'<sub>2</sub> will be used rather than
    * v<sub>2</sub>, the corrected vector will be in the (v<sub>1</sub>,
    * v<sub>2</sub>) plane.</p>
-
+   *
    * @param u1 first vector of the origin pair
    * @param u2 second vector of the origin pair
    * @param v1 desired image of u1 by the rotation
@@ -300,7 +318,7 @@ public class Rotation implements Serializable {
   double v1v1 = Vector3D.dotProduct(v1, v1);
   double v2v2 = Vector3D.dotProduct(v2, v2);
   if ((u1u1 == 0) || (u2u2 == 0) || (v1v1 == 0) || (v2v2 == 0)) {
-    throw MathRuntimeException.createIllegalArgumentException("zero norm for rotation defining vector");
+    throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_DEFINING_VECTOR);
   }
 
   double u1x = u1.getX();
@@ -312,7 +330,7 @@ public class Rotation implements Serializable {
   double u2z = u2.getZ();
 
   // normalize v1 in order to have (v1'|v1') = (u1|u1)
-  double coeff = Math.sqrt (u1u1 / v1v1);
+  double coeff = FastMath.sqrt (u1u1 / v1v1);
   double v1x   = coeff * v1.getX();
   double v1y   = coeff * v1.getY();
   double v1z   = coeff * v1.getZ();
@@ -323,7 +341,7 @@ public class Rotation implements Serializable {
   double v1v2   = Vector3D.dotProduct(v1, v2);
   double coeffU = u1u2 / u1u1;
   double coeffV = v1v2 / u1u1;
-  double beta   = Math.sqrt((u2u2 - u1u2 * coeffU) / (v2v2 - v1v2 * coeffV));
+  double beta   = FastMath.sqrt((u2u2 - u1u2 * coeffU) / (v2v2 - v1v2 * coeffV));
   double alpha  = coeffU - beta * coeffV;
   double v2x    = alpha * v1x + beta * v2.getX();
   double v2y    = alpha * v1y + beta * v2.getY();
@@ -399,7 +417,7 @@ public class Rotation implements Serializable {
   }
 
   // compute the vectorial part
-  c = Math.sqrt(c);
+  c = FastMath.sqrt(c);
   double inv = 1.0 / (c + c);
   q1 = inv * k.getX();
   q2 = inv * k.getY();
@@ -422,7 +440,7 @@ public class Rotation implements Serializable {
    * one with the smallest associated angle (i.e. the one whose axis
    * is orthogonal to the (u, v) plane). If u and v are colinear, an
    * arbitrary rotation axis is chosen.</p>
-
+   *
    * @param u origin vector
    * @param v desired image of u by the rotation
    * @exception IllegalArgumentException if the norm of one of the vectors is zero
@@ -431,7 +449,7 @@ public class Rotation implements Serializable {
 
     double normProduct = u.getNorm() * v.getNorm();
     if (normProduct == 0) {
-        throw MathRuntimeException.createIllegalArgumentException("zero norm for rotation defining vector");
+        throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.ZERO_NORM_FOR_ROTATION_DEFINING_VECTOR);
     }
 
     double dot = Vector3D.dotProduct(u, v);
@@ -447,7 +465,7 @@ public class Rotation implements Serializable {
     } else {
       // general case: (u, v) defines a plane, we select
       // the shortest possible rotation: axis orthogonal to this plane
-      q0 = Math.sqrt(0.5 * (1.0 + dot / normProduct));
+      q0 = FastMath.sqrt(0.5 * (1.0 + dot / normProduct));
       double coeff = 1.0 / (2.0 * q0 * normProduct);
       q1 = coeff * (v.getY() * u.getZ() - v.getZ() * u.getY());
       q2 = coeff * (v.getZ() * u.getX() - v.getX() * u.getZ());
@@ -469,7 +487,7 @@ public class Rotation implements Serializable {
    * for what really are Cardan angles (this confusion is especially
    * widespread in the aerospace business where Roll, Pitch and Yaw angles
    * are often wrongly tagged as Euler angles).</p>
-
+   *
    * @param order order of rotations to use
    * @param alpha1 angle of the first elementary rotation
    * @param alpha2 angle of the second elementary rotation
@@ -528,29 +546,31 @@ public class Rotation implements Serializable {
 
   /** Get the normalized axis of the rotation.
    * @return normalized axis of the rotation
+   * @see #Rotation(Vector3D, double)
    */
   public Vector3D getAxis() {
     double squaredSine = q1 * q1 + q2 * q2 + q3 * q3;
     if (squaredSine == 0) {
       return new Vector3D(1, 0, 0);
     } else if (q0 < 0) {
-      double inverse = 1 / Math.sqrt(squaredSine);
+      double inverse = 1 / FastMath.sqrt(squaredSine);
       return new Vector3D(q1 * inverse, q2 * inverse, q3 * inverse);
     }
-    double inverse = -1 / Math.sqrt(squaredSine);
+    double inverse = -1 / FastMath.sqrt(squaredSine);
     return new Vector3D(q1 * inverse, q2 * inverse, q3 * inverse);
   }
 
   /** Get the angle of the rotation.
    * @return angle of the rotation (between 0 and &pi;)
+   * @see #Rotation(Vector3D, double)
    */
   public double getAngle() {
     if ((q0 < -0.1) || (q0 > 0.1)) {
-      return 2 * Math.asin(Math.sqrt(q1 * q1 + q2 * q2 + q3 * q3));
+      return 2 * FastMath.asin(FastMath.sqrt(q1 * q1 + q2 * q2 + q3 * q3));
     } else if (q0 < 0) {
-      return 2 * Math.acos(-q0);
+      return 2 * FastMath.acos(-q0);
     }
-    return 2 * Math.acos(q0);
+    return 2 * FastMath.acos(q0);
   }
 
   /** Get the Cardan or Euler angles corresponding to the instance.
@@ -569,7 +589,7 @@ public class Rotation implements Serializable {
    *   <li>for Euler angles, the chosen set is the one for which the
    *   second angle is between 0 and &pi; (i.e its sine is positive).</li>
    * </ul>
-
+   *
    * <p>Cardan and Euler angle have a very disappointing drawback: all
    * of them have singularities. This means that if the instance is
    * too close to the singularities corresponding to the given
@@ -582,7 +602,7 @@ public class Rotation implements Serializable {
    * -&pi;/2 or +&pi;/2, for Euler angle singularities occur when the
    * second angle is close to 0 or &pi;, this implies that the identity
    * rotation is always singular for Euler angles!</p>
-
+   *
    * @param order rotation order to use
    * @return an array of three angles, in the order specified by the set
    * @exception CardanEulerSingularityException if the rotation is
@@ -604,9 +624,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(true);
       }
       return new double[] {
-        Math.atan2(-(v1.getY()), v1.getZ()),
-        Math.asin(v2.getZ()),
-        Math.atan2(-(v2.getY()), v2.getX())
+        FastMath.atan2(-(v1.getY()), v1.getZ()),
+        FastMath.asin(v2.getZ()),
+        FastMath.atan2(-(v2.getY()), v2.getX())
       };
 
     } else if (order == RotationOrder.XZY) {
@@ -622,9 +642,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(true);
       }
       return new double[] {
-        Math.atan2(v1.getZ(), v1.getY()),
-       -Math.asin(v2.getY()),
-        Math.atan2(v2.getZ(), v2.getX())
+        FastMath.atan2(v1.getZ(), v1.getY()),
+       -FastMath.asin(v2.getY()),
+        FastMath.atan2(v2.getZ(), v2.getX())
       };
 
     } else if (order == RotationOrder.YXZ) {
@@ -640,9 +660,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(true);
       }
       return new double[] {
-        Math.atan2(v1.getX(), v1.getZ()),
-       -Math.asin(v2.getZ()),
-        Math.atan2(v2.getX(), v2.getY())
+        FastMath.atan2(v1.getX(), v1.getZ()),
+       -FastMath.asin(v2.getZ()),
+        FastMath.atan2(v2.getX(), v2.getY())
       };
 
     } else if (order == RotationOrder.YZX) {
@@ -658,9 +678,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(true);
       }
       return new double[] {
-        Math.atan2(-(v1.getZ()), v1.getX()),
-        Math.asin(v2.getX()),
-        Math.atan2(-(v2.getZ()), v2.getY())
+        FastMath.atan2(-(v1.getZ()), v1.getX()),
+        FastMath.asin(v2.getX()),
+        FastMath.atan2(-(v2.getZ()), v2.getY())
       };
 
     } else if (order == RotationOrder.ZXY) {
@@ -676,9 +696,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(true);
       }
       return new double[] {
-        Math.atan2(-(v1.getX()), v1.getY()),
-        Math.asin(v2.getY()),
-        Math.atan2(-(v2.getX()), v2.getZ())
+        FastMath.atan2(-(v1.getX()), v1.getY()),
+        FastMath.asin(v2.getY()),
+        FastMath.atan2(-(v2.getX()), v2.getZ())
       };
 
     } else if (order == RotationOrder.ZYX) {
@@ -694,9 +714,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(true);
       }
       return new double[] {
-        Math.atan2(v1.getY(), v1.getX()),
-       -Math.asin(v2.getX()),
-        Math.atan2(v2.getY(), v2.getZ())
+        FastMath.atan2(v1.getY(), v1.getX()),
+       -FastMath.asin(v2.getX()),
+        FastMath.atan2(v2.getY(), v2.getZ())
       };
 
     } else if (order == RotationOrder.XYX) {
@@ -712,9 +732,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(false);
       }
       return new double[] {
-        Math.atan2(v1.getY(), -v1.getZ()),
-        Math.acos(v2.getX()),
-        Math.atan2(v2.getY(), v2.getZ())
+        FastMath.atan2(v1.getY(), -v1.getZ()),
+        FastMath.acos(v2.getX()),
+        FastMath.atan2(v2.getY(), v2.getZ())
       };
 
     } else if (order == RotationOrder.XZX) {
@@ -730,9 +750,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(false);
       }
       return new double[] {
-        Math.atan2(v1.getZ(), v1.getY()),
-        Math.acos(v2.getX()),
-        Math.atan2(v2.getZ(), -v2.getY())
+        FastMath.atan2(v1.getZ(), v1.getY()),
+        FastMath.acos(v2.getX()),
+        FastMath.atan2(v2.getZ(), -v2.getY())
       };
 
     } else if (order == RotationOrder.YXY) {
@@ -748,9 +768,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(false);
       }
       return new double[] {
-        Math.atan2(v1.getX(), v1.getZ()),
-        Math.acos(v2.getY()),
-        Math.atan2(v2.getX(), -v2.getZ())
+        FastMath.atan2(v1.getX(), v1.getZ()),
+        FastMath.acos(v2.getY()),
+        FastMath.atan2(v2.getX(), -v2.getZ())
       };
 
     } else if (order == RotationOrder.YZY) {
@@ -766,9 +786,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(false);
       }
       return new double[] {
-        Math.atan2(v1.getZ(), -v1.getX()),
-        Math.acos(v2.getY()),
-        Math.atan2(v2.getZ(), v2.getX())
+        FastMath.atan2(v1.getZ(), -v1.getX()),
+        FastMath.acos(v2.getY()),
+        FastMath.atan2(v2.getZ(), v2.getX())
       };
 
     } else if (order == RotationOrder.ZXZ) {
@@ -784,9 +804,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(false);
       }
       return new double[] {
-        Math.atan2(v1.getX(), -v1.getY()),
-        Math.acos(v2.getZ()),
-        Math.atan2(v2.getX(), v2.getY())
+        FastMath.atan2(v1.getX(), -v1.getY()),
+        FastMath.acos(v2.getZ()),
+        FastMath.atan2(v2.getX(), v2.getY())
       };
 
     } else { // last possibility is ZYZ
@@ -802,9 +822,9 @@ public class Rotation implements Serializable {
         throw new CardanEulerSingularityException(false);
       }
       return new double[] {
-        Math.atan2(v1.getY(), v1.getX()),
-        Math.acos(v2.getZ()),
-        Math.atan2(v2.getY(), -v2.getX())
+        FastMath.atan2(v1.getY(), v1.getX()),
+        FastMath.acos(v2.getZ()),
+        FastMath.atan2(v2.getY(), -v2.getX())
       };
 
     }
@@ -998,7 +1018,7 @@ public class Rotation implements Serializable {
             corr20 * corr20 + corr21 * corr21 + corr22 * corr22;
 
       // convergence test
-      if (Math.abs(fn1 - fn) <= threshold)
+      if (FastMath.abs(fn1 - fn) <= threshold)
         return o;
 
       // prepare next iteration
@@ -1017,7 +1037,7 @@ public class Rotation implements Serializable {
 
     // the algorithm did not converge after 10 iterations
     throw new NotARotationMatrixException(
-            "unable to orthogonalize matrix in {0} iterations",
+            LocalizedFormats.UNABLE_TO_ORTHOGONOLIZE_MATRIX,
             i - 1);
   }
 

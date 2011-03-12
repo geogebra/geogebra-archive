@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Mutation for {@link BinaryChromosome}s. Randomly changes one gene.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (sam. 05 sept. 2009) $
  * @since 2.0
  */
 public class BinaryMutation implements MutationPolicy {

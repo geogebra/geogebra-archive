@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.TreeMap;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Maintains a frequency distribution.
@@ -43,7 +44,7 @@ import org.apache.commons.math.MathRuntimeException;
  * The values are ordered using the default (natural order), unless a
  * <code>Comparator</code> is supplied in the constructor.</p>
  *
- * @version $Revision: 922722 $ $Date: 2010-03-13 21:15:01 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 1054186 $ $Date: 2011-01-01 03:28:46 +0100 (sam. 01 janv. 2011) $
  */
 public class Frequency implements Serializable {
 
@@ -79,7 +80,7 @@ public class Frequency implements Serializable {
     @Override
     public String toString() {
         NumberFormat nf = NumberFormat.getPercentInstance();
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
         outBuffer.append("Value \t Freq. \t Pct. \t Cum Pct. \n");
         Iterator<Comparable<?>> iter = freqTable.keySet().iterator();
         while (iter.hasNext()) {
@@ -114,7 +115,7 @@ public class Frequency implements Serializable {
             addValue((Comparable<?>) v);
         } else {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "class ({0}) does not implement Comparable",
+                  LocalizedFormats.CLASS_DOESNT_IMPLEMENT_COMPARABLE,
                   v.getClass().getName());
         }
     }
@@ -144,7 +145,7 @@ public class Frequency implements Serializable {
         } catch (ClassCastException ex) {
             //TreeMap will throw ClassCastException if v is not comparable
             throw MathRuntimeException.createIllegalArgumentException(
-                  "instance of class {0} not comparable to existing values",
+                  LocalizedFormats.INSTANCES_NOT_COMPARABLE_TO_EXISTING_VALUES,
                   v.getClass().getName());
         }
     }
@@ -285,6 +286,16 @@ public class Frequency implements Serializable {
      */
     public long getCount(char v) {
         return getCount(Character.valueOf(v));
+    }
+
+    /**
+     * Returns the number of values in the frequency table.
+     *
+     * @return the number of unique values that have been added to the frequency table.
+     * @see #valuesIterator()
+     */
+    public int getUniqueCount(){
+        return freqTable.keySet().size();
     }
 
     //-------------------------------------------------------------

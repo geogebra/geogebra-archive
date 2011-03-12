@@ -19,7 +19,9 @@ package org.apache.commons.math.linear;
 
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Calculates the eigen decomposition of a real <strong>symmetric</strong>
@@ -46,7 +48,7 @@ import org.apache.commons.math.util.MathUtils;
  * Handbook for automatic computation, vol. 2, Linear algebra, Springer-Verlag,
  * New-York
  * </p>
- * @version $Revision: 912413 $ $Date: 2010-02-21 16:46:12 -0500 (Sun, 21 Feb 2010) $
+ * @version $Revision: 1002040 $ $Date: 2010-09-28 09:18:31 +0200 (mar. 28 sept. 2010) $
  * @since 2.0
  */
 public class EigenDecompositionImpl implements EigenDecomposition {
@@ -102,7 +104,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             // NOT supported
             // see issue https://issues.apache.org/jira/browse/MATH-235
             throw new InvalidMatrixException(
-                    "eigen decomposition of assymetric matrices not supported yet");
+                    LocalizedFormats.ASSYMETRIC_EIGEN_NOT_SUPPORTED);
         }
     }
 
@@ -144,8 +146,8 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             for (int j = i + 1; j < columns; ++j) {
                 final double mij = matrix.getEntry(i, j);
                 final double mji = matrix.getEntry(j, i);
-                if (Math.abs(mij - mji) > (Math.max(Math.abs(mij), Math
-                        .abs(mji)) * eps)) {
+                if (FastMath.abs(mij - mji) >
+                    (FastMath.max(FastMath.abs(mij), FastMath.abs(mji)) * eps)) {
                     return false;
                 }
             }
@@ -291,7 +293,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             final int m = realEigenvalues.length;
             if (b.length != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "vector length mismatch: got {0} but expected {1}",
+                        LocalizedFormats.VECTOR_LENGTH_MISMATCH,
                         b.length, m);
             }
 
@@ -333,7 +335,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             final int m = realEigenvalues.length;
             if (b.getDimension() != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "vector length mismatch: got {0} but expected {1}", b
+                        LocalizedFormats.VECTOR_LENGTH_MISMATCH, b
                                 .getDimension(), m);
             }
 
@@ -376,7 +378,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             if (b.getRowDimension() != m) {
                 throw MathRuntimeException
                         .createIllegalArgumentException(
-                                "dimensions mismatch: got {0}x{1} but expected {2}x{3}",
+                                LocalizedFormats.DIMENSIONS_MISMATCH_2x2,
                                 b.getRowDimension(), b.getColumnDimension(), m,
                                 "n");
             }
@@ -483,20 +485,20 @@ public class EigenDecompositionImpl implements EigenDecomposition {
         // Determine the largest main and secondary value in absolute term.
         double maxAbsoluteValue=0.0;
         for (int i = 0; i < n; i++) {
-            if (Math.abs(realEigenvalues[i])>maxAbsoluteValue) {
-                maxAbsoluteValue=Math.abs(realEigenvalues[i]);
+            if (FastMath.abs(realEigenvalues[i])>maxAbsoluteValue) {
+                maxAbsoluteValue=FastMath.abs(realEigenvalues[i]);
             }
-            if (Math.abs(e[i])>maxAbsoluteValue) {
-                maxAbsoluteValue=Math.abs(e[i]);
+            if (FastMath.abs(e[i])>maxAbsoluteValue) {
+                maxAbsoluteValue=FastMath.abs(e[i]);
             }
         }
         // Make null any main and secondary value too small to be significant
         if (maxAbsoluteValue!=0.0) {
             for (int i=0; i < n; i++) {
-                if (Math.abs(realEigenvalues[i])<=MathUtils.EPSILON*maxAbsoluteValue) {
+                if (FastMath.abs(realEigenvalues[i])<=MathUtils.EPSILON*maxAbsoluteValue) {
                     realEigenvalues[i]=0.0;
                 }
-                if (Math.abs(e[i])<=MathUtils.EPSILON*maxAbsoluteValue) {
+                if (FastMath.abs(e[i])<=MathUtils.EPSILON*maxAbsoluteValue) {
                     e[i]=0.0;
                 }
             }
@@ -507,8 +509,8 @@ public class EigenDecompositionImpl implements EigenDecomposition {
             int m;
             do {
                 for (m = j; m < n - 1; m++) {
-                    double delta = Math.abs(realEigenvalues[m]) + Math.abs(realEigenvalues[m + 1]);
-                    if (Math.abs(e[m]) + delta == delta) {
+                    double delta = FastMath.abs(realEigenvalues[m]) + FastMath.abs(realEigenvalues[m + 1]);
+                    if (FastMath.abs(e[m]) + delta == delta) {
                         break;
                     }
                 }
@@ -518,7 +520,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                                 new MaxIterationsExceededException(maxIter));
                     its++;
                     double q = (realEigenvalues[j + 1] - realEigenvalues[j]) / (2 * e[j]);
-                    double t = Math.sqrt(1 + q * q);
+                    double t = FastMath.sqrt(1 + q * q);
                     if (q < 0.0) {
                         q = realEigenvalues[m] - realEigenvalues[j] + e[j] / (q - t);
                     } else {
@@ -531,15 +533,15 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                     for (i = m - 1; i >= j; i--) {
                         double p = s * e[i];
                         double h = c * e[i];
-                        if (Math.abs(p) >= Math.abs(q)) {
+                        if (FastMath.abs(p) >= FastMath.abs(q)) {
                             c = q / p;
-                            t = Math.sqrt(c * c + 1.0);
+                            t = FastMath.sqrt(c * c + 1.0);
                             e[i + 1] = p * t;
                             s = 1.0 / t;
                             c = c * s;
                         } else {
                             s = p / q;
-                            t = Math.sqrt(s * s + 1.0);
+                            t = FastMath.sqrt(s * s + 1.0);
                             e[i + 1] = q * t;
                             c = 1.0 / t;
                             s = s * c;
@@ -560,7 +562,7 @@ public class EigenDecompositionImpl implements EigenDecomposition {
                             z[ia][i] = c * z[ia][i] - s * p;
                         }
                     }
-                    if (e[i + 1] == 0.0 && i >= j)
+                    if (t == 0.0 && i >= j)
                         continue;
                     realEigenvalues[j] -= u;
                     e[j] = q;
@@ -593,14 +595,14 @@ public class EigenDecompositionImpl implements EigenDecomposition {
         // Determine the largest eigen value in absolute term.
         maxAbsoluteValue=0.0;
         for (int i = 0; i < n; i++) {
-            if (Math.abs(realEigenvalues[i])>maxAbsoluteValue) {
-                maxAbsoluteValue=Math.abs(realEigenvalues[i]);
+            if (FastMath.abs(realEigenvalues[i])>maxAbsoluteValue) {
+                maxAbsoluteValue=FastMath.abs(realEigenvalues[i]);
             }
         }
         // Make null any eigen value too small to be significant
         if (maxAbsoluteValue!=0.0) {
             for (int i=0; i < n; i++) {
-                if (Math.abs(realEigenvalues[i])<MathUtils.EPSILON*maxAbsoluteValue) {
+                if (FastMath.abs(realEigenvalues[i])<MathUtils.EPSILON*maxAbsoluteValue) {
                     realEigenvalues[i]=0.0;
                 }
             }

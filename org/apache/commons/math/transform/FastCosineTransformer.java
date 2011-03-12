@@ -20,6 +20,8 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
 import org.apache.commons.math.complex.Complex;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the <a href="http://documents.wolfram.com/v5/Add-onsLinks/
@@ -98,7 +100,7 @@ public class FastCosineTransformer implements RealTransformer {
      */
     public double[] transform2(double f[]) throws IllegalArgumentException {
 
-        double scaling_coefficient = Math.sqrt(2.0 / (f.length-1));
+        double scaling_coefficient = FastMath.sqrt(2.0 / (f.length-1));
         return FastFourierTransformer.scaleArray(fct(f), scaling_coefficient);
     }
 
@@ -124,7 +126,7 @@ public class FastCosineTransformer implements RealTransformer {
         throws FunctionEvaluationException, IllegalArgumentException {
 
         double data[] = FastFourierTransformer.sample(f, min, max, n);
-        double scaling_coefficient = Math.sqrt(2.0 / (n-1));
+        double scaling_coefficient = FastMath.sqrt(2.0 / (n-1));
         return FastFourierTransformer.scaleArray(fct(data), scaling_coefficient);
     }
 
@@ -157,8 +159,7 @@ public class FastCosineTransformer implements RealTransformer {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
-     * at some point
+     * @throws FunctionEvaluationException if function cannot be evaluated at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double[] inversetransform(UnivariateRealFunction f,
@@ -197,8 +198,7 @@ public class FastCosineTransformer implements RealTransformer {
      * @param max the upper bound for the interval
      * @param n the number of sample points
      * @return the real inversely transformed array
-     * @throws FunctionEvaluationException if function cannot be evaluated
-     * at some point
+     * @throws FunctionEvaluationException if function cannot be evaluated at some point
      * @throws IllegalArgumentException if any parameters are invalid
      */
     public double[] inversetransform2(UnivariateRealFunction f,
@@ -223,7 +223,7 @@ public class FastCosineTransformer implements RealTransformer {
         final int n = f.length - 1;
         if (!FastFourierTransformer.isPowerOf2(n)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "{0} is not a power of 2 plus one",
+                    LocalizedFormats.NOT_POWER_OF_TWO_PLUS_ONE,
                     f.length);
         }
         if (n == 1) {       // trivial case
@@ -239,8 +239,8 @@ public class FastCosineTransformer implements RealTransformer {
         double t1 = 0.5 * (f[0] - f[n]);   // temporary variable for transformed[1]
         for (int i = 1; i < (n >> 1); i++) {
             final double a = 0.5 * (f[i] + f[n-i]);
-            final double b = Math.sin(i * Math.PI / n) * (f[i] - f[n-i]);
-            final double c = Math.cos(i * Math.PI / n) * (f[i] - f[n-i]);
+            final double b = FastMath.sin(i * FastMath.PI / n) * (f[i] - f[n-i]);
+            final double c = FastMath.cos(i * FastMath.PI / n) * (f[i] - f[n-i]);
             x[i] = a - b;
             x[n-i] = a + b;
             t1 += c;

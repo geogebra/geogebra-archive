@@ -26,10 +26,12 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
  *
  * @see FirstOrderIntegratorWithJacobians
  *
- * @version $Revision: 919963 $ $Date: 2010-03-07 05:59:33 -0500 (Sun, 07 Mar 2010) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.1
+ * @deprecated as of 2.2 the complete package is deprecated, it will be replaced
+ * in 3.0 by a completely rewritten implementation
  */
-
+@Deprecated
 public interface ODEWithJacobians extends FirstOrderDifferentialEquations {
 
     /** Get the number of parameters.

@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Generates values for use in simulation applications.
@@ -42,7 +43,7 @@ import org.apache.commons.math.MathRuntimeException;
  *                       standard deviation = <code>sigma</code></li>
  * <li> CONSTANT_MODE -- returns <code>mu</code> every time.</li></ul></p>
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1003886 $ $Date: 2010-10-02 23:04:44 +0200 (sam. 02 oct. 2010) $
  *
  */
 public class ValueServer {
@@ -84,12 +85,13 @@ public class ValueServer {
     private BufferedReader filePointer = null;
 
     /** RandomDataImpl to use for random data generation. */
-    private RandomData randomData = new RandomDataImpl();
+    private final RandomData randomData;
 
     // Data generation modes ======================================
 
     /** Creates new ValueServer */
     public ValueServer() {
+        randomData = new RandomDataImpl();
     }
 
     /**
@@ -119,8 +121,7 @@ public class ValueServer {
             case GAUSSIAN_MODE: return getNextGaussian();
             case CONSTANT_MODE: return mu;
             default: throw MathRuntimeException.createIllegalStateException(
-                    "unknown mode {0}, known modes: " +
-                    "{1} ({2}), {3} ({4}), {5} ({6}), {7} ({8}), {9} ({10}) and {11} ({12})",
+                    LocalizedFormats.UNKNOWN_MODE,
                     mode,
                     "DIGEST_MODE",   DIGEST_MODE,   "REPLAY_MODE",      REPLAY_MODE,
                     "UNIFORM_MODE",  UNIFORM_MODE,  "EXPONENTIAL_MODE", EXPONENTIAL_MODE,
@@ -313,7 +314,7 @@ public class ValueServer {
     private double getNextDigest() {
         if ((empiricalDistribution == null) ||
             (empiricalDistribution.getBinStats().size() == 0)) {
-            throw MathRuntimeException.createIllegalStateException("digest not initialized");
+            throw MathRuntimeException.createIllegalStateException(LocalizedFormats.DIGEST_NOT_INITIALIZED);
         }
         return empiricalDistribution.getNextValue();
     }
@@ -346,7 +347,7 @@ public class ValueServer {
             closeReplayFile();
             resetReplayFile();
             if ((str = filePointer.readLine()) == null) {
-                throw MathRuntimeException.createEOFException("URL {0} contains no data",
+                throw MathRuntimeException.createEOFException(LocalizedFormats.URL_CONTAINS_NO_DATA,
                                                               valuesFileURL);
             }
         }

@@ -22,12 +22,12 @@ package org.apache.commons.math.random;
  * implemented by {@link AbstractRandomGenerator}.
  *
  * @since 1.1
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 949750 $ $Date: 2010-05-31 16:06:04 +0200 (lun. 31 mai 2010) $
  */
 public interface RandomGenerator {
 
     /**
-     * Sets the seed of the underyling random number generator using an
+     * Sets the seed of the underlying random number generator using an
      * <code>int</code> seed.
      * <p>Sequences of values generated starting with the same seeds
      * should be identical.
@@ -37,7 +37,7 @@ public interface RandomGenerator {
     void setSeed(int seed);
 
     /**
-     * Sets the seed of the underyling random number generator using an
+     * Sets the seed of the underlying random number generator using an
      * <code>int</code> array seed.
      * <p>Sequences of values generated starting with the same seeds
      * should be identical.
@@ -47,7 +47,7 @@ public interface RandomGenerator {
     void setSeed(int[] seed);
 
     /**
-     * Sets the seed of the underyling random number generator using a
+     * Sets the seed of the underlying random number generator using a
      * <code>long</code> seed.
      * <p>Sequences of values generated starting with the same seeds
      * should be identical.

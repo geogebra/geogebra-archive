@@ -16,11 +16,13 @@
  */
 package org.apache.commons.math;
 
+import org.apache.commons.math.exception.util.LocalizedFormats;
+
 /**
  * Exception thrown when a sample contains several entries at the same abscissa.
  *
  * @since 1.2
- * @version $Revision: 822454 $ $Date: 2009-10-06 15:29:52 -0400 (Tue, 06 Oct 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public class DuplicateSampleAbscissaException extends MathException  {
 
@@ -34,7 +36,7 @@ public class DuplicateSampleAbscissaException extends MathException  {
      * @param i2 index of another entry having the duplicate abscissa
      */
     public DuplicateSampleAbscissaException(double abscissa, int i1, int i2) {
-        super("Abscissa {0} is duplicated at both indices {1} and {2}",
+        super(LocalizedFormats.DUPLICATED_ABSCISSA,
               abscissa, i1, i2);
     }
 

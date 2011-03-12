@@ -24,14 +24,16 @@ import java.text.ParsePosition;
 import java.util.Locale;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.CompositeFormat;
+import org.apache.commons.math.exception.NullArgumentException;
 
 /**
  * Formats a Complex number in cartesian format "Re(c) + Im(c)i".  'i' can
  * be replaced with 'j' (or anything else), and the number format for both real
  * and imaginary parts can be configured.
  *
- * @version $Revision: 811783 $ $Date: 2009-09-06 04:56:58 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public class ComplexFormat extends CompositeFormat {
 
@@ -192,7 +194,7 @@ public class ComplexFormat extends CompositeFormat {
                 toAppendTo, pos);
         } else {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "cannot format a {0} instance as a complex number",
+                  LocalizedFormats.CANNOT_FORMAT_INSTANCE_AS_COMPLEX,
                   obj.getClass().getName());
         }
 
@@ -255,7 +257,7 @@ public class ComplexFormat extends CompositeFormat {
         if (parsePosition.getIndex() == 0) {
             throw MathRuntimeException.createParseException(
                     parsePosition.getErrorIndex(),
-                    "unparseable complex number: \"{0}\"", source);
+                    LocalizedFormats.UNPARSEABLE_COMPLEX_NUMBER, source);
         }
         return result;
     }
@@ -349,7 +351,7 @@ public class ComplexFormat extends CompositeFormat {
     public void setImaginaryCharacter(String imaginaryCharacter) {
         if (imaginaryCharacter == null || imaginaryCharacter.length() == 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "empty string for imaginary character");
+                  LocalizedFormats.EMPTY_STRING_FOR_IMAGINARY_CHARACTER);
         }
         this.imaginaryCharacter = imaginaryCharacter;
     }
@@ -357,13 +359,11 @@ public class ComplexFormat extends CompositeFormat {
     /**
      * Modify the imaginaryFormat.
      * @param imaginaryFormat The new imaginaryFormat value.
-     * @throws IllegalArgumentException if <code>imaginaryFormat</code> is
-     *         <code>null</code>.
+     * @throws NullArgumentException if {@code imaginaryFormat} is {@code null}.
      */
     public void setImaginaryFormat(NumberFormat imaginaryFormat) {
         if (imaginaryFormat == null) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "null imaginary format");
+            throw new NullArgumentException(LocalizedFormats.IMAGINARY_FORMAT);
         }
         this.imaginaryFormat = imaginaryFormat;
     }
@@ -371,13 +371,11 @@ public class ComplexFormat extends CompositeFormat {
     /**
      * Modify the realFormat.
      * @param realFormat The new realFormat value.
-     * @throws IllegalArgumentException if <code>realFormat</code> is
-     *         <code>null</code>.
+     * @throws NullArgumentException if {@code realFormat} is {@code null}.
      */
     public void setRealFormat(NumberFormat realFormat) {
         if (realFormat == null) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "null real format");
+            throw new NullArgumentException(LocalizedFormats.REAL_FORMAT);
         }
         this.realFormat = realFormat;
     }

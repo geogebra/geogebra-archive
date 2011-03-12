@@ -20,9 +20,9 @@ package org.apache.commons.math.optimization.fitting;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
@@ -37,7 +37,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is done by finding the parameters values that minimizes the objective
  * function &sum;(y<sub>i</sub>-f(x<sub>i</sub>))<sup>2</sup>. This is
  * really a least squares problem.</p>
- * @version $Revision: 927009 $ $Date: 2010-03-24 07:14:07 -0400 (Wed, 24 Mar 2010) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  */
 public class CurveFitter {
@@ -118,8 +118,7 @@ public class CurveFitter {
      * @param f parametric function to fit
      * @param initialGuess first guess of the function parameters
      * @return fitted parameters
-     * @exception FunctionEvaluationException if the objective function throws one during
-     * the search
+     * @exception FunctionEvaluationException if the objective function throws one during the search
      * @exception OptimizationException if the algorithm failed to converge
      * @exception IllegalArgumentException if the start point dimension is wrong
      */
@@ -180,8 +179,7 @@ public class CurveFitter {
         }
 
         /** {@inheritDoc} */
-        public double[] value(double[] point)
-                throws FunctionEvaluationException, IllegalArgumentException {
+        public double[] value(double[] point) throws FunctionEvaluationException, IllegalArgumentException {
 
             // compute the residuals
             final double[] values = new double[observations.size()];

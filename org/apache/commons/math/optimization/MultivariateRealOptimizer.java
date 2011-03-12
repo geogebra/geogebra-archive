@@ -27,7 +27,7 @@ import org.apache.commons.math.analysis.MultivariateRealFunction;
  * maximize or minimize} an objective function.</p>
  * @see DifferentiableMultivariateRealOptimizer
  * @see DifferentiableMultivariateVectorialOptimizer
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1065481 $ $Date: 2011-01-31 06:31:41 +0100 (lun. 31 janv. 2011) $
  * @since 2.0
  */
 public interface MultivariateRealOptimizer {

@@ -42,7 +42,7 @@ import org.apache.commons.math.ode.DerivativeException;
  * @see org.apache.commons.math.ode.FirstOrderIntegrator
  * @see org.apache.commons.math.ode.SecondOrderIntegrator
  * @see StepHandler
- * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  */
 
@@ -89,8 +89,8 @@ public interface StepInterpolator extends Externalizable {
    * to be preserved across several calls.</p>
    * @return state vector at time {@link #getInterpolatedTime}
    * @see #getInterpolatedDerivatives()
-   * @throws DerivativeException if this call induces an automatic
-   * step finalization that throws one
+   * @exception DerivativeException if user code called from step interpolator
+   * finalization triggers one
    */
   double[] getInterpolatedState() throws DerivativeException;
 
@@ -101,8 +101,8 @@ public interface StepInterpolator extends Externalizable {
    * to be preserved across several calls.</p>
    * @return derivatives of the state vector at time {@link #getInterpolatedTime}
    * @see #getInterpolatedState()
-   * @throws DerivativeException if this call induces an automatic
-   * step finalization that throws one
+   * @exception DerivativeException if user code called from step interpolator
+   * finalization triggers one
    * @since 2.0
    */
   double[] getInterpolatedDerivatives() throws DerivativeException;
@@ -123,8 +123,8 @@ public interface StepInterpolator extends Externalizable {
    * original one. Both can be used with different settings for
    * interpolated time without any side effect.</p>
    * @return a deep copy of the instance, which can be used independently.
-   * @throws DerivativeException if this call induces an automatic
-   * step finalization that throws one
+   * @exception DerivativeException if user code called from step interpolator
+   * finalization triggers one
    * @see #setInterpolatedTime(double)
    */
    StepInterpolator copy() throws DerivativeException;

@@ -19,11 +19,12 @@ package org.apache.commons.math.analysis.polynomials;
 import java.util.ArrayList;
 
 import org.apache.commons.math.fraction.BigFraction;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * A collection of static methods that operate on or return polynomials.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
  */
 public class PolynomialsUtils {
@@ -193,7 +194,7 @@ public class PolynomialsUtils {
                                                       final ArrayList<BigFraction> coefficients,
                                                       final RecurrenceCoefficientsGenerator generator) {
 
-        final int maxDegree = (int) Math.floor(Math.sqrt(2 * coefficients.size())) - 1;
+        final int maxDegree = (int) FastMath.floor(FastMath.sqrt(2 * coefficients.size())) - 1;
         synchronized (PolynomialsUtils.class) {
             if (degree > maxDegree) {
                 computeUpToDegree(degree, maxDegree, generator, coefficients);

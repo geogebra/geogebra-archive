@@ -18,16 +18,17 @@
 package org.apache.commons.math.ode;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.util.DummyLocalizable;
+import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * This exception is made available to users to report
  * the error conditions that are triggered while computing
  * the differential equations.
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1072413 $ $Date: 2011-02-19 19:59:39 +0100 (sam. 19 févr. 2011) $
  * @since 1.2
  */
-public class DerivativeException
-  extends MathException {
+public class DerivativeException extends MathException {
 
   /** Serializable version identifier */
   private static final long serialVersionUID = 5666710788967425123L;
@@ -38,10 +39,20 @@ public class DerivativeException
    * @param parts to insert in the format (no translation)
    */
   public DerivativeException(final String specifier, final Object ... parts) {
+    this(new DummyLocalizable(specifier), parts);
+  }
+
+  /** Simple constructor.
+   * Build an exception by translating and formating a message
+   * @param specifier format specifier (to be translated)
+   * @param parts to insert in the format (no translation)
+   * @since 2.2
+   */
+  public DerivativeException(final Localizable specifier, final Object ... parts) {
     super(specifier, parts);
   }
 
-  /** Build an instance from an underlying cause.
+ /** Build an instance from an underlying cause.
    * @param cause cause for the exception
    */
   public DerivativeException(final Throwable cause) {

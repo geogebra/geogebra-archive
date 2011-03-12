@@ -18,6 +18,7 @@
 package org.apache.commons.math.optimization.general;
 
 import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.BlockRealMatrix;
 import org.apache.commons.math.linear.DecompositionSolver;
 import org.apache.commons.math.linear.InvalidMatrixException;
@@ -36,7 +37,7 @@ import org.apache.commons.math.optimization.VectorialPointValuePair;
  * is faster but QR decomposition is more robust for difficult problems.
  * </p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  *
  */
@@ -116,7 +117,7 @@ public class GaussNewtonOptimizer extends AbstractLeastSquaresOptimizer {
                 }
 
             } catch(InvalidMatrixException e) {
-                throw new OptimizationException("unable to solve: singular problem");
+                throw new OptimizationException(LocalizedFormats.UNABLE_TO_SOLVE_SINGULAR_PROBLEM);
             }
 
             // check convergence

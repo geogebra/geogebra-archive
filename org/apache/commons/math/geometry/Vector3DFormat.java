@@ -24,6 +24,7 @@ import java.text.ParsePosition;
 import java.util.Locale;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.CompositeFormat;
 
 /**
@@ -37,7 +38,7 @@ import org.apache.commons.math.util.CompositeFormat;
  * returned. In the second case, however, the parse position after parsing will be
  * just after the closing curly brace, i.e. just before the trailing space.</p>
  *
- * @version $Revision: 772119 $ $Date: 2009-05-06 05:43:28 -0400 (Wed, 06 May 2009) $
+ * @version $Revision: 1003886 $ $Date: 2010-10-02 23:04:44 +0200 (sam. 02 oct. 2010) $
  */
 public class Vector3DFormat extends CompositeFormat {
 
@@ -72,7 +73,7 @@ public class Vector3DFormat extends CompositeFormat {
     private final String trimmedSeparator;
 
     /** The format used for components. */
-    private NumberFormat format;
+    private final NumberFormat format;
 
     /**
      * Create an instance with default settings.
@@ -241,7 +242,7 @@ public class Vector3DFormat extends CompositeFormat {
             return format( (Vector3D)obj, toAppendTo, pos);
         }
 
-        throw MathRuntimeException.createIllegalArgumentException("cannot format a {0} instance as a 3D vector",
+        throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.CANNOT_FORMAT_INSTANCE_AS_3D_VECTOR,
                                                                   obj.getClass().getName());
 
     }
@@ -259,7 +260,7 @@ public class Vector3DFormat extends CompositeFormat {
         if (parsePosition.getIndex() == 0) {
             throw MathRuntimeException.createParseException(
                     parsePosition.getErrorIndex(),
-                    "unparseable 3D vector: \"{0}\"", source);
+                    LocalizedFormats.UNPARSEABLE_3D_VECTOR, source);
         }
         return result;
     }

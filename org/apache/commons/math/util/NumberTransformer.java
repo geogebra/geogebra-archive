@@ -20,7 +20,7 @@ import org.apache.commons.math.MathException;
 
 /**
  * Subclasses implementing this interface can transform Objects to doubles.
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (sam. 05 sept. 2009) $
  *
  * No longer extends Serializable since 2.0
  *

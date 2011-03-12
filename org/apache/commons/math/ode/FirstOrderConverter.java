@@ -17,6 +17,8 @@
 
 package org.apache.commons.math.ode;
 
+import org.apache.commons.math.ode.DerivativeException;
+
 /** This class converts second order differential equations to first
  * order ones.
  *
@@ -49,7 +51,7 @@ package org.apache.commons.math.ode;
  * @see FirstOrderIntegrator
  * @see FirstOrderDifferentialEquations
  * @see SecondOrderDifferentialEquations
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  */
 

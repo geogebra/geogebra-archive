@@ -32,7 +32,7 @@ import org.apache.commons.math.analysis.polynomials.PolynomialFunctionNewtonForm
  * The actual code of Neville's evaluation is in PolynomialFunctionLagrangeForm,
  * this class provides an easy-to-use interface to it.</p>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 825919 $ $Date: 2009-10-16 16:51:55 +0200 (ven. 16 oct. 2009) $
  * @since 1.2
  */
 public class DividedDifferenceInterpolator implements UnivariateRealInterpolator,

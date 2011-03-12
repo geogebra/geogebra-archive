@@ -19,6 +19,7 @@ package org.apache.commons.math.analysis.solvers;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/Bisection.html">
@@ -26,7 +27,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  */
 public class BisectionSolver extends UnivariateRealSolverImpl {
 
@@ -66,13 +67,36 @@ public class BisectionSolver extends UnivariateRealSolverImpl {
         return solve(f, min, max);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     * @deprecated in 2.2 (to be removed in 3.0).
+     */
+    @Deprecated
     public double solve(final UnivariateRealFunction f, double min, double max, double initial)
         throws MaxIterationsExceededException, FunctionEvaluationException {
-        return solve(min, max);
+        return solve(f, min, max);
     }
 
     /** {@inheritDoc} */
+    @Override
+    public double solve(int maxEval, final UnivariateRealFunction f, double min, double max, double initial)
+        throws MaxIterationsExceededException, FunctionEvaluationException {
+        return solve(maxEval, f, min, max);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double solve(int maxEval, final UnivariateRealFunction f, double min, double max)
+        throws MaxIterationsExceededException, FunctionEvaluationException {
+        setMaximalIterationCount(maxEval);
+        return solve(f, min, max);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @deprecated in 2.2 (to be removed in 3.0).
+     */
+    @Deprecated
     public double solve(final UnivariateRealFunction f, double min, double max)
         throws MaxIterationsExceededException, FunctionEvaluationException {
 
@@ -96,7 +120,7 @@ public class BisectionSolver extends UnivariateRealSolverImpl {
                 max = m;
             }
 
-            if (Math.abs(max - min) <= absoluteAccuracy) {
+            if (FastMath.abs(max - min) <= absoluteAccuracy) {
                 m = UnivariateRealSolverUtils.midpoint(min, max);
                 setResult(m, i);
                 return m;

@@ -27,7 +27,7 @@ import org.apache.commons.math.optimization.RealPointValuePair;
 /**
  * This class implements the multi-directional direct search method.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @see NelderMead
  * @since 1.2
  */
@@ -112,8 +112,7 @@ public class MultiDirectional extends DirectSearchOptimizer {
      * @param coeff linear coefficient
      * @param comparator comparator to use to sort simplex vertices from best to poorest
      * @return best point in the transformed simplex
-     * @exception FunctionEvaluationException if the function cannot be evaluated at
-     * some point
+     * @exception FunctionEvaluationException if the function cannot be evaluated at some point
      * @exception OptimizationException if the maximal number of evaluations is exceeded
      */
     private RealPointValuePair evaluateNewSimplex(final RealPointValuePair[] original,

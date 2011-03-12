@@ -66,10 +66,12 @@ import org.apache.commons.math.ode.events.EventException;
  * reasons, it is recommended to use this interface <em>only</em> if jacobians are really
  * needed and to use lower level handlers if only state is needed.</p>
  *
- * @version $Revision: 920131 $ $Date: 2010-03-07 17:19:18 -0500 (Sun, 07 Mar 2010) $
+ * @version $Revision: 1037341 $ $Date: 2010-11-20 22:58:35 +0100 (sam. 20 nov. 2010) $
  * @since 2.1
+ * @deprecated as of 2.2 the complete package is deprecated, it will be replaced
+ * in 3.0 by a completely rewritten implementation
  */
-
+@Deprecated
 public interface EventHandlerWithJacobians  {
 
     /** Stop indicator.

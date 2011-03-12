@@ -25,7 +25,7 @@ import java.util.Locale;
 /**
  * Base class for formatters of composite objects (complex numbers, vectors ...).
  *
- * @version $Revision: 811783 $ $Date: 2009-09-06 04:56:58 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1042376 $ $Date: 2010-12-05 16:54:55 +0100 (dim. 05 déc. 2010) $
  */
 public abstract class CompositeFormat extends Format {
 
@@ -109,7 +109,7 @@ public abstract class CompositeFormat extends Format {
                                final ParsePosition pos) {
         Number ret = null;
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append('(');
         sb.append(value);
         sb.append(')');

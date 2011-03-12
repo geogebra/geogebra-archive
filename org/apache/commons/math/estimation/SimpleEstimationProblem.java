@@ -35,7 +35,7 @@ import java.util.List;
  * type. The instances of the internal classes would have access to the
  * various parameters and their current estimate.</p>
 
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 811827 $ $Date: 2009-09-06 17:32:50 +0200 (dim. 06 sept. 2009) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general

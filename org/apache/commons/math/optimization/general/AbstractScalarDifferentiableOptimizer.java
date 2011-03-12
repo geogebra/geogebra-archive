@@ -17,15 +17,15 @@
 
 package org.apache.commons.math.optimization.general;
 
+import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
+import org.apache.commons.math.analysis.MultivariateVectorialFunction;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MaxEvaluationsExceededException;
 import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.analysis.DifferentiableMultivariateRealFunction;
-import org.apache.commons.math.analysis.MultivariateVectorialFunction;
+import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.OptimizationException;
 import org.apache.commons.math.optimization.RealConvergenceChecker;
-import org.apache.commons.math.optimization.DifferentiableMultivariateRealOptimizer;
 import org.apache.commons.math.optimization.RealPointValuePair;
 import org.apache.commons.math.optimization.SimpleScalarValueChecker;
 
@@ -33,7 +33,7 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
  * Base class for implementing optimizers for multivariate scalar functions.
  * <p>This base class handles the boilerplate methods associated to thresholds
  * settings, iterations and evaluations counting.</p>
- * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
+ * @version $Revision: 1069567 $ $Date: 2011-02-10 22:07:26 +0100 (jeu. 10 févr. 2011) $
  * @since 2.0
  */
 public abstract class AbstractScalarDifferentiableOptimizer
@@ -43,15 +43,18 @@ public abstract class AbstractScalarDifferentiableOptimizer
     public static final int DEFAULT_MAX_ITERATIONS = 100;
 
     /** Convergence checker. */
+    @Deprecated
     protected RealConvergenceChecker checker;
 
     /**
      * Type of optimization.
      * @since 2.1
      */
+    @Deprecated
     protected GoalType goal;
 
     /** Current point set. */
+    @Deprecated
     protected double[] point;
 
     /** Maximal number of iterations allowed. */

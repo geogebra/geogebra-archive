@@ -22,12 +22,13 @@ import java.lang.reflect.Array;
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.OpenIntToFieldHashMap;
 
 /**
  * This class implements the {@link FieldVector} interface with a {@link OpenIntToFieldHashMap} backing store.
  * @param <T> the type of the field elements
- * @version $Revision: 922714 $ $Date: 2010-03-13 20:35:14 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 2.0
  */
 public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
@@ -548,9 +549,8 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
      */
     private void checkIndex(final int index) throws MatrixIndexException {
         if (index < 0 || index >= getDimension()) {
-            throw new MatrixIndexException(
-                    "index {0} out of allowed range [{1}, {2}]",
-                    index, 0, getDimension() - 1);
+            throw new MatrixIndexException(LocalizedFormats.INDEX_OUT_OF_RANGE,
+                                           index, 0, getDimension() - 1);
         }
     }
 
@@ -565,7 +565,7 @@ public class SparseFieldVector<T extends FieldElement<T>> implements FieldVector
     protected void checkVectorDimensions(int n) throws IllegalArgumentException {
         if (getDimension() != n) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "vector length mismatch: got {0} but expected {1}",
+                    LocalizedFormats.VECTOR_LENGTH_MISMATCH,
                     getDimension(), n);
         }
     }

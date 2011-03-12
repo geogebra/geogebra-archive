@@ -22,6 +22,7 @@ import org.apache.commons.math.ArgumentOutsideDomainException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.DifferentiableUnivariateRealFunction;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Represents a polynomial spline function.
@@ -55,7 +56,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * than or equal to <code>x</code>.  The value returned is <br>
  * <code>polynomials[j](x - knot[j])</code></li></ol></p>
  *
- * @version $Revision: 922708 $ $Date: 2010-03-13 20:15:47 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 1037327 $ $Date: 2010-11-20 21:57:37 +0100 (sam. 20 nov. 2010) $
  */
 public class PolynomialSplineFunction
     implements DifferentiableUnivariateRealFunction {
@@ -97,17 +98,17 @@ public class PolynomialSplineFunction
     public PolynomialSplineFunction(double knots[], PolynomialFunction polynomials[]) {
         if (knots.length < 2) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "spline partition must have at least {0} points, got {1}",
+                  LocalizedFormats.NOT_ENOUGH_POINTS_IN_SPLINE_PARTITION,
                   2, knots.length);
         }
         if (knots.length - 1 != polynomials.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "number of polynomial interpolants must match the number of segments ({0} != {1} - 1)",
+                  LocalizedFormats.POLYNOMIAL_INTERPOLANTS_MISMATCH_SEGMENTS,
                   polynomials.length, knots.length);
         }
         if (!isStrictlyIncreasing(knots)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "knot values must be strictly increasing");
+                  LocalizedFormats.NOT_STRICTLY_INCREASING_KNOT_VALUES);
         }
 
         this.n = knots.length -1;
@@ -119,10 +120,6 @@ public class PolynomialSplineFunction
 
     /**
      * Compute the value for the function.
-     * <p>
-     * Throws FunctionEvaluationException if v is outside of the domain of the
-     * function.  The domain is [smallest knot, largest knot].</p>
-     * <p>
      * See {@link PolynomialSplineFunction} for details on the algorithm for
      * computing the value of the function.</p>
      *

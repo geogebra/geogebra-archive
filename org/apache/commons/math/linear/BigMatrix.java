@@ -26,7 +26,7 @@ import java.math.BigDecimal;
  * Matrix element indexing is 0-based -- e.g., <code>getEntry(0, 0)</code>
  * returns the element in the first row, first column of the matrix.</p>
  *
- * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 811786 $ $Date: 2009-09-06 11:36:08 +0200 (dim. 06 sept. 2009) $
  * @deprecated as of 2.0, replaced by {@link FieldMatrix} with a {@link
  * org.apache.commons.math.util.BigReal} parameter
  */

@@ -45,7 +45,7 @@ import org.apache.commons.math.linear.ArrayRealVector;
  * The c<sub>i</sub>, l<sub>i</sub> or r<sub>i</sub> are the coefficients of the constraints, the x<sub>i</sub>
  * are the coordinates of the current point and v is the value of the constraint.
  * </p>
- * @version $Revision: 922713 $ $Date: 2010-03-13 20:26:13 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 922713 $ $Date: 2010-03-14 02:26:13 +0100 (dim. 14 mars 2010) $
  * @since 2.0
  */
 public class LinearConstraint implements Serializable {

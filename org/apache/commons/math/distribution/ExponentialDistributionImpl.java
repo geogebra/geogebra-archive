@@ -20,11 +20,13 @@ import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * The default implementation of {@link ExponentialDistribution}.
  *
- * @version $Revision: 925900 $ $Date: 2010-03-21 17:10:07 -0400 (Sun, 21 Mar 2010) $
+ * @version $Revision: 1055914 $ $Date: 2011-01-06 16:34:34 +0100 (jeu. 06 janv. 2011) $
  */
 public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     implements ExponentialDistribution, Serializable {
@@ -83,7 +85,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     private void setMeanInternal(double newMean) {
         if (newMean <= 0.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "mean must be positive ({0})", newMean);
+                  LocalizedFormats.NOT_POSITIVE_MEAN, newMean);
         }
         this.mean = newMean;
     }
@@ -103,6 +105,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
      * @return The pdf at point x.
      * @deprecated - use density(double)
      */
+    @Deprecated
     public double density(Double x) {
         return density(x.doubleValue());
     }
@@ -119,7 +122,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         if (x < 0) {
             return 0;
         }
-        return Math.exp(-x / mean) / mean;
+        return FastMath.exp(-x / mean) / mean;
     }
 
     /**
@@ -142,7 +145,7 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
         if (x <= 0.0) {
             ret = 0.0;
         } else {
-            ret = 1.0 - Math.exp(-x / mean);
+            ret = 1.0 - FastMath.exp(-x / mean);
         }
         return ret;
     }
@@ -165,14 +168,31 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
 
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "{0} out of [{1}, {2}] range", p, 0.0, 1.0);
+                  LocalizedFormats.OUT_OF_RANGE_SIMPLE, p, 0.0, 1.0);
         } else if (p == 1.0) {
             ret = Double.POSITIVE_INFINITY;
         } else {
-            ret = -mean * Math.log(1.0 - p);
+            ret = -mean * FastMath.log(1.0 - p);
         }
 
         return ret;
+    }
+
+    /**
+     * Generates a random value sampled from this distribution.
+     *
+     * <p><strong>Algorithm Description</strong>: Uses the <a
+     * href="http://www.jesus.ox.ac.uk/~clifford/a5/chap1/node5.html"> Inversion
+     * Method</a> to generate exponentially distributed random values from
+     * uniform deviates. </p>
+     *
+     * @return random value
+     * @since 2.2
+     * @throws MathException if an error occurs generating the random value
+     */
+    @Override
+    public double sample() throws MathException {
+        return randomData.nextExponential(mean);
     }
 
     /**
@@ -243,4 +263,57 @@ public class ExponentialDistributionImpl extends AbstractContinuousDistribution
     protected double getSolverAbsoluteAccuracy() {
         return solverAbsoluteAccuracy;
     }
+
+    /**
+     * Returns the lower bound of the support for the distribution.
+     *
+     * The lower bound of the support is always 0, regardless of the mean.
+     *
+     * @return lower bound of the support (always 0)
+     * @since 2.2
+     */
+    public double getSupportLowerBound() {
+        return 0;
+    }
+
+    /**
+     * Returns the upper bound of the support for the distribution.
+     *
+     * The upper bound of the support is always positive infinity,
+     * regardless of the mean.
+     *
+     * @return upper bound of the support (always Double.POSITIVE_INFINITY)
+     * @since 2.2
+     */
+    public double getSupportUpperBound() {
+        return Double.POSITIVE_INFINITY;
+    }
+
+    /**
+     * Returns the mean of the distribution.
+     *
+     * For mean parameter <code>k</code>, the mean is
+     * <code>k</code>
+     *
+     * @return the mean
+     * @since 2.2
+     */
+    public double getNumericalMean() {
+        return getMean();
+    }
+
+    /**
+     * Returns the variance of the distribution.
+     *
+     * For mean parameter <code>k</code>, the variance is
+     * <code>k^2</code>
+     *
+     * @return the variance
+     * @since 2.2
+     */
+    public double getNumericalVariance() {
+        final double m = getMean();
+        return m * m;
+    }
+
 }

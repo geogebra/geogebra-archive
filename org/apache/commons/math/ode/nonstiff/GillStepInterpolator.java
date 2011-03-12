@@ -19,6 +19,7 @@ package org.apache.commons.math.ode.nonstiff;
 
 import org.apache.commons.math.ode.DerivativeException;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class implements a step interpolator for the Gill fourth
@@ -40,7 +41,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  * the step.</p>
  *
  * @see GillIntegrator
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  */
 
@@ -48,10 +49,10 @@ class GillStepInterpolator
   extends RungeKuttaStepInterpolator {
 
     /** First Gill coefficient. */
-    private static final double TWO_MINUS_SQRT_2 = 2 - Math.sqrt(2.0);
+    private static final double TWO_MINUS_SQRT_2 = 2 - FastMath.sqrt(2.0);
 
     /** Second Gill coefficient. */
-    private static final double TWO_PLUS_SQRT_2 = 2 + Math.sqrt(2.0);
+    private static final double TWO_PLUS_SQRT_2 = 2 + FastMath.sqrt(2.0);
 
     /** Serializable version identifier */
     private static final long serialVersionUID = -107804074496313322L;

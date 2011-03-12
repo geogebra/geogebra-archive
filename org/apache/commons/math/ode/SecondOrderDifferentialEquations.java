@@ -17,6 +17,8 @@
 
 package org.apache.commons.math.ode;
 
+import org.apache.commons.math.ode.DerivativeException;
+
 /** This interface represents a second order differential equations set.
 
  * <p>This interface should be implemented by all real second order
@@ -40,7 +42,7 @@ package org.apache.commons.math.ode;
  * @see SecondOrderIntegrator
  * @see FirstOrderConverter
  * @see FirstOrderDifferentialEquations
- * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  */
 
@@ -58,10 +60,10 @@ public interface SecondOrderDifferentialEquations {
      * of the state vector
      * @param yDDot placeholder array where to put the second time derivative
      * of the state vector
-     * @throws DerivativeException this exception is propagated to the caller if the
-     * underlying user function triggers one
+     * @throws DerivativeException this user-defined exception should be used if an error is
+     * is triggered by user code
      */
-    void computeSecondDerivatives(double t, double[] y, double[] yDot,
-                                  double[] yDDot) throws DerivativeException;
+    void computeSecondDerivatives(double t, double[] y, double[] yDot, double[] yDDot)
+        throws DerivativeException;
 
 }

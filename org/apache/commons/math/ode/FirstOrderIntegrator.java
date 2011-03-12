@@ -17,6 +17,7 @@
 
 package org.apache.commons.math.ode;
 
+
 /** This interface represents a first order integrator for
  * differential equations.
 
@@ -28,7 +29,7 @@ package org.apache.commons.math.ode;
  * @see FirstOrderDifferentialEquations
  * @see org.apache.commons.math.ode.sampling.StepHandler
  * @see org.apache.commons.math.ode.events.EventHandler
- * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  */
 
@@ -49,9 +50,9 @@ public interface FirstOrderIntegrator extends ODEIntegrator {
    * @return stop time, will be the same as target time if integration reached its
    * target, but may be different if some {@link
    * org.apache.commons.math.ode.events.EventHandler} stops it at some point.
-   * @throws IntegratorException if the integrator cannot perform integration
    * @throws DerivativeException this exception is propagated to the caller if
    * the underlying user function triggers one
+   * @throws IntegratorException if the integrator cannot perform integration
    */
   double integrate (FirstOrderDifferentialEquations equations,
                     double t0, double[] y0,

@@ -21,6 +21,7 @@ import org.apache.commons.math.DimensionMismatchException;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.NotPositiveDefiniteMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * A {@link RandomVectorGenerator} that generates vectors with with
@@ -35,7 +36,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * interesting case is when the generated vector should be drawn from a <a
  * href="http://en.wikipedia.org/wiki/Multivariate_normal_distribution">
  * Multivariate Normal Distribution</a>. The approach using a Cholesky
- * decomposition is quite usual in this case. However, it cas be extended
+ * decomposition is quite usual in this case. However, it can be extended
  * to other cases as long as the underlying random generator provides
  * {@link NormalizedRandomGenerator normalized values} like {@link
  * GaussianRandomGenerator} or {@link UniformRandomGenerator}.</p>
@@ -47,7 +48,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * should be null. Another non-conventional extension handling this case
  * is used here. Rather than computing <code>C = U<sup>T</sup>.U</code>
  * where <code>C</code> is the covariance matrix and <code>U</code>
- * is an uppertriangular matrix, we compute <code>C = B.B<sup>T</sup></code>
+ * is an upper-triangular matrix, we compute <code>C = B.B<sup>T</sup></code>
  * where <code>B</code> is a rectangular matrix having
  * more rows than columns. The number of columns of <code>B</code> is
  * the rank of the covariance matrix, and it is the dimension of the
@@ -55,7 +56,7 @@ import org.apache.commons.math.linear.RealMatrix;
  * of the correlated vector. This class handles this situation
  * automatically.</p>
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1043908 $ $Date: 2010-12-09 12:53:14 +0100 (jeu. 09 déc. 2010) $
  * @since 1.2
  */
 
@@ -243,7 +244,7 @@ public class CorrelatedRandomVectorGenerator
             } else {
 
                 // transform the matrix
-                double sqrt = Math.sqrt(c[ir][ir]);
+                double sqrt = FastMath.sqrt(c[ir][ir]);
                 b[rank][rank] = sqrt;
                 double inverse = 1 / sqrt;
                 for (int i = rank + 1; i < order; ++i) {

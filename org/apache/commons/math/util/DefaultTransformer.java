@@ -20,6 +20,7 @@ package org.apache.commons.math.util;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * A Default NumberTransformer for java.lang.Numbers and Numeric Strings. This
@@ -27,7 +28,7 @@ import org.apache.commons.math.MathException;
  * into a primitive double or to turn a String representation of a Number into
  * a double.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1073658 $ $Date: 2011-02-23 10:45:42 +0100 (mer. 23 févr. 2011) $
  */
 public class DefaultTransformer implements NumberTransformer, Serializable {
 
@@ -37,14 +38,12 @@ public class DefaultTransformer implements NumberTransformer, Serializable {
     /**
      * @param o  the object that gets transformed.
      * @return a double primitive representation of the Object o.
-     * @throws org.apache.commons.math.MathException If it cannot successfully
-     * be transformed or is null.
-     * @see <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/Transformer.html"/>
+     * @throws MathException if it cannot successfully be transformed.
+     * @see <a href="http://commons.apache.org/collections/api-release/org/apache/commons/collections/Transformer.html">Commons Collections Transformer</a>
      */
-    public double transform(Object o) throws MathException{
-
+    public double transform(Object o) throws MathException {
         if (o == null) {
-            throw new MathException("Conversion Exception in Transformation, Object is null");
+            throw new MathException(LocalizedFormats.OBJECT_TRANSFORMATION);
         }
 
         if (o instanceof Number) {
@@ -55,7 +54,7 @@ public class DefaultTransformer implements NumberTransformer, Serializable {
             return Double.valueOf(o.toString()).doubleValue();
         } catch (NumberFormatException e) {
             throw new MathException(e,
-                                    "Conversion Exception in Transformation: {0}", e.getMessage());
+                                    LocalizedFormats.CANNOT_TRANSFORM_TO_DOUBLE, e.getMessage());
         }
     }
 

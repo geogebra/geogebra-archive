@@ -17,9 +17,11 @@
 package org.apache.commons.math.analysis.polynomials;
 
 import org.apache.commons.math.DuplicateSampleAbscissaException;
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the representation of a real polynomial function in
@@ -30,7 +32,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * The approximated function should be smooth enough for Lagrange polynomial
  * to work well. Otherwise, consider using splines instead.</p>
  *
- * @version $Revision: 922708 $ $Date: 2010-03-13 20:15:47 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 1073498 $ $Date: 2011-02-22 21:57:26 +0100 (mar. 22 févr. 2011) $
  * @since 1.2
  */
 public class PolynomialFunctionLagrangeForm implements UnivariateRealFunction {
@@ -78,19 +80,12 @@ public class PolynomialFunctionLagrangeForm implements UnivariateRealFunction {
         coefficientsComputed = false;
     }
 
-    /**
-     * Calculate the function value at the given point.
-     *
-     * @param z the point at which the function value is to be computed
-     * @return the function value
-     * @throws FunctionEvaluationException if a runtime error occurs
-     * @see UnivariateRealFunction#value(double)
-     */
+    /** {@inheritDoc} */
     public double value(double z) throws FunctionEvaluationException {
         try {
             return evaluate(x, y, z);
         } catch (DuplicateSampleAbscissaException e) {
-            throw new FunctionEvaluationException(e, z, e.getPattern(), e.getArguments());
+            throw new FunctionEvaluationException(z, e.getSpecificPattern(), e.getGeneralPattern(), e.getArguments());
         }
     }
 
@@ -178,7 +173,7 @@ public class PolynomialFunctionLagrangeForm implements UnivariateRealFunction {
             c[i] = y[i];
             d[i] = y[i];
             // find out the abscissa closest to z
-            final double dist = Math.abs(z - x[i]);
+            final double dist = FastMath.abs(z - x[i]);
             if (dist < min_dist) {
                 nearest = i;
                 min_dist = dist;
@@ -255,8 +250,9 @@ public class PolynomialFunctionLagrangeForm implements UnivariateRealFunction {
                 // This happens only when two abscissas are identical.
                 for (int k = 0; k < n; ++k) {
                     if ((i != k) && (x[i] == x[k])) {
-                        throw MathRuntimeException.createArithmeticException("identical abscissas x[{0}] == x[{1}] == {2} cause division by zero",
-                                                                             i, k, x[i]);
+                        throw MathRuntimeException.createArithmeticException(
+                              LocalizedFormats.IDENTICAL_ABSCISSAS_DIVISION_BY_ZERO,
+                              i, k, x[i]);
                     }
                 }
             }
@@ -297,12 +293,12 @@ public class PolynomialFunctionLagrangeForm implements UnivariateRealFunction {
 
         if (x.length != y.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "dimension mismatch {0} != {1}", x.length, y.length);
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, x.length, y.length);
         }
 
         if (x.length < 2) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "{0} points are required, got only {1}", 2, x.length);
+                  LocalizedFormats.WRONG_NUMBER_OF_POINTS, 2, x.length);
         }
 
     }

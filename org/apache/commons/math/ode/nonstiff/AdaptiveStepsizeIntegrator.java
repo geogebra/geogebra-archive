@@ -17,10 +17,13 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.ode.AbstractIntegrator;
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.ode.ExtendedFirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
 import org.apache.commons.math.ode.IntegratorException;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This abstract class holds the common part of all adaptive
@@ -35,18 +38,26 @@ import org.apache.commons.math.ode.IntegratorException;
  * where absTol_i is the absolute tolerance for component i of the
  * state vector and relTol_i is the relative tolerance for the same
  * component. The user can also use only two scalar values absTol and
- * relTol which will be used for all components.</p>
+ * relTol which will be used for all components.
+ * </p>
+ *
+ * <p>If the Ordinary Differential Equations is an {@link ExtendedFirstOrderDifferentialEquations
+ * extended ODE} rather than a {@link FirstOrderDifferentialEquations basic ODE},
+ * then <em>only</em> the {@link ExtendedFirstOrderDifferentialEquations#getMainSetDimension()
+ * main set} part of the state vector is used for stepsize control, not the complete
+ * state vector.
+ * </p>
  *
  * <p>If the estimated error for ym+1 is such that
  * <pre>
  * sqrt((sum (errEst_i / threshold_i)^2 ) / n) < 1
  * </pre>
  *
- * (where n is the state vector dimension) then the step is accepted,
+ * (where n is the main set dimension) then the step is accepted,
  * otherwise the step is rejected and a new attempt is made with a new
  * stepsize.</p>
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  *
  */
@@ -65,6 +76,9 @@ public abstract class AdaptiveStepsizeIntegrator
 
     /** Allowed relative vectorial error. */
     protected final double[] vecRelativeTolerance;
+
+    /** Main set dimension. */
+    protected int mainSetDimension;
 
     /** User supplied initial step. */
     private double initialStep;
@@ -92,8 +106,8 @@ public abstract class AdaptiveStepsizeIntegrator
 
     super(name);
 
-    this.minStep     = Math.abs(minStep);
-    this.maxStep     = Math.abs(maxStep);
+    this.minStep     = FastMath.abs(minStep);
+    this.maxStep     = FastMath.abs(maxStep);
     this.initialStep = -1.0;
 
     this.scalAbsoluteTolerance = scalAbsoluteTolerance;
@@ -170,18 +184,20 @@ public abstract class AdaptiveStepsizeIntegrator
 
       super.sanityChecks(equations, t0, y0, t, y);
 
-      if ((vecAbsoluteTolerance != null) && (vecAbsoluteTolerance.length != y0.length)) {
-          throw new IntegratorException(
-                  "dimensions mismatch: state vector has dimension {0}," +
-                  " absolute tolerance vector has dimension {1}",
-                  y0.length, vecAbsoluteTolerance.length);
+      if (equations instanceof ExtendedFirstOrderDifferentialEquations) {
+          mainSetDimension = ((ExtendedFirstOrderDifferentialEquations) equations).getMainSetDimension();
+      } else {
+          mainSetDimension = equations.getDimension();
       }
 
-      if ((vecRelativeTolerance != null) && (vecRelativeTolerance.length != y0.length)) {
+      if ((vecAbsoluteTolerance != null) && (vecAbsoluteTolerance.length != mainSetDimension)) {
           throw new IntegratorException(
-                  "dimensions mismatch: state vector has dimension {0}," +
-                  " relative tolerance vector has dimension {1}",
-                  y0.length, vecRelativeTolerance.length);
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, mainSetDimension, vecAbsoluteTolerance.length);
+      }
+
+      if ((vecRelativeTolerance != null) && (vecRelativeTolerance.length != mainSetDimension)) {
+          throw new IntegratorException(
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, mainSetDimension, vecRelativeTolerance.length);
       }
 
   }
@@ -190,7 +206,7 @@ public abstract class AdaptiveStepsizeIntegrator
    * @param equations differential equations set
    * @param forward forward integration indicator
    * @param order order of the method
-   * @param scale scaling vector for the state vector
+   * @param scale scaling vector for the state vector (can be shorter than state vector)
    * @param t0 start time
    * @param y0 state vector at t0
    * @param yDot0 first time derivative of y0
@@ -216,7 +232,7 @@ public abstract class AdaptiveStepsizeIntegrator
     double ratio;
     double yOnScale2 = 0;
     double yDotOnScale2 = 0;
-    for (int j = 0; j < y0.length; ++j) {
+    for (int j = 0; j < scale.length; ++j) {
       ratio         = y0[j] / scale[j];
       yOnScale2    += ratio * ratio;
       ratio         = yDot0[j] / scale[j];
@@ -224,7 +240,7 @@ public abstract class AdaptiveStepsizeIntegrator
     }
 
     double h = ((yOnScale2 < 1.0e-10) || (yDotOnScale2 < 1.0e-10)) ?
-               1.0e-6 : (0.01 * Math.sqrt(yOnScale2 / yDotOnScale2));
+               1.0e-6 : (0.01 * FastMath.sqrt(yOnScale2 / yDotOnScale2));
     if (! forward) {
       h = -h;
     }
@@ -237,20 +253,20 @@ public abstract class AdaptiveStepsizeIntegrator
 
     // estimate the second derivative of the solution
     double yDDotOnScale = 0;
-    for (int j = 0; j < y0.length; ++j) {
+    for (int j = 0; j < scale.length; ++j) {
       ratio         = (yDot1[j] - yDot0[j]) / scale[j];
       yDDotOnScale += ratio * ratio;
     }
-    yDDotOnScale = Math.sqrt(yDDotOnScale) / h;
+    yDDotOnScale = FastMath.sqrt(yDDotOnScale) / h;
 
     // step size is computed such that
     // h^order * max (||y'/tol||, ||y''/tol||) = 0.01
-    final double maxInv2 = Math.max(Math.sqrt(yDotOnScale2), yDDotOnScale);
+    final double maxInv2 = FastMath.max(FastMath.sqrt(yDotOnScale2), yDDotOnScale);
     final double h1 = (maxInv2 < 1.0e-15) ?
-                      Math.max(1.0e-6, 0.001 * Math.abs(h)) :
-                      Math.pow(0.01 / maxInv2, 1.0 / order);
-    h = Math.min(100.0 * Math.abs(h), h1);
-    h = Math.max(h, 1.0e-12 * Math.abs(t0));  // avoids cancellation when computing t1 - t0
+                      FastMath.max(1.0e-6, 0.001 * FastMath.abs(h)) :
+                      FastMath.pow(0.01 / maxInv2, 1.0 / order);
+    h = FastMath.min(100.0 * FastMath.abs(h), h1);
+    h = FastMath.max(h, 1.0e-12 * FastMath.abs(t0));  // avoids cancellation when computing t1 - t0
     if (h < getMinStep()) {
       h = getMinStep();
     }
@@ -278,13 +294,13 @@ public abstract class AdaptiveStepsizeIntegrator
     throws IntegratorException {
 
       double filteredH = h;
-      if (Math.abs(h) < minStep) {
+      if (FastMath.abs(h) < minStep) {
           if (acceptSmall) {
               filteredH = forward ? minStep : -minStep;
           } else {
               throw new IntegratorException(
-                      "minimal step size ({0,number,0.00E00}) reached, integration needs {1,number,0.00E00}",
-                      minStep, Math.abs(h));
+                      LocalizedFormats.MINIMAL_STEPSIZE_REACHED_DURING_INTEGRATION,
+                      minStep, FastMath.abs(h));
           }
       }
 
@@ -313,7 +329,7 @@ public abstract class AdaptiveStepsizeIntegrator
   /** Reset internal state to dummy values. */
   protected void resetInternalState() {
     stepStart = Double.NaN;
-    stepSize  = Math.sqrt(minStep * maxStep);
+    stepSize  = FastMath.sqrt(minStep * maxStep);
   }
 
   /** Get the minimal step.

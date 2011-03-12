@@ -127,7 +127,7 @@ import org.apache.commons.math.linear.MatrixUtils;
  * vector and a P<sup>-1</sup> A P matrix are used that do not depend on the state,
  * they only depend on k. This class handles these transformations.</p>
  *
- * @version $Revision: 810196 $ $Date: 2009-09-01 15:47:46 -0400 (Tue, 01 Sep 2009) $
+ * @version $Revision: 810196 $ $Date: 2009-09-01 21:47:46 +0200 (mar. 01 sept. 2009) $
  * @since 2.0
  */
 public class AdamsNordsieckTransformer {

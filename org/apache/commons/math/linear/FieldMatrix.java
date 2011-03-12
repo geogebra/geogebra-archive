@@ -20,6 +20,7 @@ package org.apache.commons.math.linear;
 
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
+import org.apache.commons.math.linear.MatrixVisitorException;
 
 /**
  * Interface defining field-valued matrix with basic algebraic operations.
@@ -28,7 +29,7 @@ import org.apache.commons.math.FieldElement;
  * returns the element in the first row, first column of the matrix.</p>
  *
  * @param <T> the type of the field elements
- * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  */
 public interface FieldMatrix<T extends FieldElement<T>> extends AnyMatrix {
 

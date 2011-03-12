@@ -27,13 +27,14 @@ import java.util.Arrays;
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.fraction.BigFraction;
 import org.apache.commons.math.fraction.Fraction;
 
 /**
  * A collection of static methods that operate on or return matrices.
  *
- * @version $Revision: 903046 $ $Date: 2010-01-25 21:07:26 -0500 (Mon, 25 Jan 2010) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public class MatrixUtils {
 
@@ -352,7 +353,7 @@ public class MatrixUtils {
         createRowFieldMatrix(final T[] rowData) {
         final int nCols = rowData.length;
         if (nCols == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one column");
+            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.AT_LEAST_ONE_COLUMN);
         }
         final FieldMatrix<T> m = createFieldMatrix(rowData[0].getField(), 1, nCols);
         for (int i = 0; i < nCols; ++i) {
@@ -451,7 +452,7 @@ public class MatrixUtils {
         createColumnFieldMatrix(final T[] columnData) {
         final int nRows = columnData.length;
         if (nRows == 0) {
-            throw MathRuntimeException.createIllegalArgumentException("matrix must have at least one row");
+            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.AT_LEAST_ONE_ROW);
         }
         final FieldMatrix<T> m = createFieldMatrix(columnData[0].getField(), nRows, 1);
         for (int i = 0; i < nRows; ++i) {
@@ -528,7 +529,7 @@ public class MatrixUtils {
      */
     public static void checkRowIndex(final AnyMatrix m, final int row) {
         if (row < 0 || row >= m.getRowDimension()) {
-            throw new MatrixIndexException("row index {0} out of allowed range [{1}, {2}]",
+            throw new MatrixIndexException(LocalizedFormats.ROW_INDEX_OUT_OF_RANGE,
                                            row, 0, m.getRowDimension() - 1);
         }
     }
@@ -542,7 +543,7 @@ public class MatrixUtils {
     public static void checkColumnIndex(final AnyMatrix m, final int column)
         throws MatrixIndexException {
         if (column < 0 || column >= m.getColumnDimension()) {
-            throw new MatrixIndexException("column index {0} out of allowed range [{1}, {2}]",
+            throw new MatrixIndexException(LocalizedFormats.COLUMN_INDEX_OUT_OF_RANGE,
                                            column, 0, m.getColumnDimension() - 1);
         }
     }
@@ -564,14 +565,14 @@ public class MatrixUtils {
         checkRowIndex(m, startRow);
         checkRowIndex(m, endRow);
         if (startRow > endRow) {
-            throw new MatrixIndexException("initial row {0} after final row {1}",
+            throw new MatrixIndexException(LocalizedFormats.INITIAL_ROW_AFTER_FINAL_ROW,
                                            startRow, endRow);
         }
 
         checkColumnIndex(m, startColumn);
         checkColumnIndex(m, endColumn);
         if (startColumn > endColumn) {
-            throw new MatrixIndexException("initial column {0} after final column {1}",
+            throw new MatrixIndexException(LocalizedFormats.INITIAL_COLUMN_AFTER_FINAL_COLUMN,
                                            startColumn, endColumn);
         }
 
@@ -592,9 +593,9 @@ public class MatrixUtils {
         throws MatrixIndexException {
         if (selectedRows.length * selectedColumns.length == 0) {
             if (selectedRows.length == 0) {
-                throw new MatrixIndexException("empty selected row index array");
+                throw new MatrixIndexException(LocalizedFormats.EMPTY_SELECTED_ROW_INDEX_ARRAY);
             }
-            throw new MatrixIndexException("empty selected column index array");
+            throw new MatrixIndexException(LocalizedFormats.EMPTY_SELECTED_COLUMN_INDEX_ARRAY);
         }
 
         for (final int row : selectedRows) {
@@ -616,7 +617,7 @@ public class MatrixUtils {
         if ((left.getRowDimension()    != right.getRowDimension()) ||
             (left.getColumnDimension() != right.getColumnDimension())) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "{0}x{1} and {2}x{3} matrices are not addition compatible",
+                    LocalizedFormats.NOT_ADDITION_COMPATIBLE_MATRICES,
                     left.getRowDimension(), left.getColumnDimension(),
                     right.getRowDimension(), right.getColumnDimension());
         }
@@ -633,7 +634,7 @@ public class MatrixUtils {
         if ((left.getRowDimension()    != right.getRowDimension()) ||
             (left.getColumnDimension() != right.getColumnDimension())) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "{0}x{1} and {2}x{3} matrices are not subtraction compatible",
+                    LocalizedFormats.NOT_SUBTRACTION_COMPATIBLE_MATRICES,
                     left.getRowDimension(), left.getColumnDimension(),
                     right.getRowDimension(), right.getColumnDimension());
         }
@@ -649,7 +650,7 @@ public class MatrixUtils {
         throws IllegalArgumentException {
         if (left.getColumnDimension() != right.getRowDimension()) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "{0}x{1} and {2}x{3} matrices are not multiplication compatible",
+                    LocalizedFormats.NOT_MULTIPLICATION_COMPATIBLE_MATRICES,
                     left.getRowDimension(), left.getColumnDimension(),
                     right.getRowDimension(), right.getColumnDimension());
         }

@@ -18,13 +18,14 @@
 package org.apache.commons.math.analysis;
 
 import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
  * Base class for {@link UnivariateRealFunction} that can be composed with other functions.
  *
  * @since 2.1
- * @version $Revision: 924453 $ $Date: 2010-03-17 16:05:20 -0400 (Wed, 17 Mar 2010) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  */
 public abstract class ComposableFunction implements UnivariateRealFunction {
 
@@ -55,12 +56,12 @@ public abstract class ComposableFunction implements UnivariateRealFunction {
         }
     };
 
-    /** The {@code Math.abs} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.abs} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction ABS = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.abs(d);
+            return FastMath.abs(d);
         }
     };
 
@@ -82,191 +83,191 @@ public abstract class ComposableFunction implements UnivariateRealFunction {
         }
     };
 
-    /** The {@code Math.sin} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.sin} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction SIN = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.sin(d);
+            return FastMath.sin(d);
         }
     };
 
-    /** The {@code Math.sqrt} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.sqrt} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction SQRT = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.sqrt(d);
+            return FastMath.sqrt(d);
         }
     };
 
-    /** The {@code Math.sinh} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.sinh} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction SINH = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.sinh(d);
+            return FastMath.sinh(d);
         }
     };
 
-    /** The {@code Math.exp} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.exp} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction EXP = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.exp(d);
+            return FastMath.exp(d);
         }
     };
 
-    /** The {@code Math.expm1} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.expm1} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction EXPM1 = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.expm1(d);
+            return FastMath.expm1(d);
         }
     };
 
-    /** The {@code Math.asin} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.asin} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction ASIN = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.asin(d);
+            return FastMath.asin(d);
         }
     };
 
-    /** The {@code Math.atan} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.atan} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction ATAN = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.atan(d);
+            return FastMath.atan(d);
         }
     };
 
-    /** The {@code Math.tan} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.tan} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction TAN = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.tan(d);
+            return FastMath.tan(d);
         }
     };
 
-    /** The {@code Math.tanh} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.tanh} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction TANH = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.tanh(d);
+            return FastMath.tanh(d);
         }
     };
 
-    /** The {@code Math.cbrt} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.cbrt} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction CBRT = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.cbrt(d);
+            return FastMath.cbrt(d);
         }
     };
 
-    /** The {@code Math.ceil} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.ceil} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction CEIL = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.ceil(d);
+            return FastMath.ceil(d);
         }
     };
 
-    /** The {@code Math.floor} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.floor} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction FLOOR = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.floor(d);
+            return FastMath.floor(d);
         }
     };
 
-    /** The {@code Math.log} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.log} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction LOG = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.log(d);
+            return FastMath.log(d);
         }
     };
 
-    /** The {@code Math.log10} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.log10} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction LOG10 = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.log10(d);
+            return FastMath.log10(d);
         }
     };
 
-    /** The {@code Math.log1p} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.log1p} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction LOG1P = new ComposableFunction () {
         @Override
         public double value(double d){
-            return Math.log1p(d);
+            return FastMath.log1p(d);
         }
     };
 
-    /** The {@code Math.cos} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.cos} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction COS = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.cos(d);
+            return FastMath.cos(d);
         }
     };
 
-    /** The {@code Math.abs} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.abs} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction ACOS = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.acos(d);
+            return FastMath.acos(d);
         }
     };
 
-    /** The {@code Math.cosh} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.cosh} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction COSH = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.cosh(d);
+            return FastMath.cosh(d);
         }
     };
 
-    /** The {@code Math.rint} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.rint} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction RINT = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.rint(d);
+            return FastMath.rint(d);
         }
     };
 
-    /** The {@code Math.signum} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.signum} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction SIGNUM = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.signum(d);
+            return FastMath.signum(d);
         }
     };
 
-    /** The {@code Math.ulp} method wrapped as a {@link ComposableFunction}. */
+    /** The {@code FastMath.ulp} method wrapped as a {@link ComposableFunction}. */
     public static final ComposableFunction ULP = new ComposableFunction() {
         /** {@inheritDoc} */
         @Override
         public double value(double d) {
-            return Math.ulp(d);
+            return FastMath.ulp(d);
         }
     };
 
@@ -432,7 +433,7 @@ public abstract class ComposableFunction implements UnivariateRealFunction {
      * </p>
      * @param combiner combiner to use between entries
      * @param initialValue initial value to use before first entry
-     * @return a new function that iteratively applie instance function on all
+     * @return a new function that iteratively apply instance function on all
      * elements of an array.
      */
     public MultivariateRealFunction asCollector(final BivariateRealFunction combiner,
@@ -458,7 +459,7 @@ public abstract class ComposableFunction implements UnivariateRealFunction {
      * #asCollector(BivariateRealFunction, double) asCollector(BivariateRealFunction, 0.0)}.
      * </p>
      * @param combiner combiner to use between entries
-     * @return a new function that iteratively applie instance function on all
+     * @return a new function that iteratively apply instance function on all
      * elements of an array.
      * @see #asCollector(BivariateRealFunction, double)
      */
@@ -474,7 +475,7 @@ public abstract class ComposableFunction implements UnivariateRealFunction {
      * #asCollector(BivariateRealFunction, double) asCollector(BinaryFunction.ADD, initialValue)}.
      * </p>
      * @param initialValue initial value to use before first entry
-     * @return a new function that iteratively applie instance function on all
+     * @return a new function that iteratively apply instance function on all
      * elements of an array.
      * @see #asCollector(BivariateRealFunction, double)
      * @see BinaryFunction#ADD
@@ -490,7 +491,7 @@ public abstract class ComposableFunction implements UnivariateRealFunction {
      * Calling this method is equivalent to call {@link
      * #asCollector(BivariateRealFunction, double) asCollector(BinaryFunction.ADD, 0.0)}.
      * </p>
-     * @return a new function that iteratively applie instance function on all
+     * @return a new function that iteratively apply instance function on all
      * elements of an array.
      * @see #asCollector(BivariateRealFunction, double)
      * @see BinaryFunction#ADD

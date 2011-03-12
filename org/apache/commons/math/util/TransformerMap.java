@@ -29,7 +29,7 @@ import org.apache.commons.math.MathException;
  * It provides a means to set NumberTransformers that will be selected
  * based on the Class of the object handed to the Maps
  * <code>double transform(Object o)</code> method.
- * @version $Revision: 922713 $ $Date: 2010-03-13 20:26:13 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 922713 $ $Date: 2010-03-14 02:26:13 +0100 (dim. 14 mars 2010) $
  */
 public class TransformerMap implements NumberTransformer, Serializable {
 

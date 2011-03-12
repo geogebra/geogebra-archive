@@ -16,6 +16,9 @@
  */
 package org.apache.commons.math;
 
+import org.apache.commons.math.exception.util.DummyLocalizable;
+import org.apache.commons.math.exception.util.Localizable;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.ArrayRealVector;
 
 /**
@@ -24,16 +27,12 @@ import org.apache.commons.math.linear.ArrayRealVector;
  * Maintains an <code>argument</code> property holding the input value that
  * caused the function evaluation to fail.
  *
- * @version $Revision: 885278 $ $Date: 2009-11-29 16:47:51 -0500 (Sun, 29 Nov 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  */
 public class FunctionEvaluationException extends MathException  {
 
     /** Serializable version identifier. */
-    private static final long serialVersionUID = -4305020489115478365L;
-
-    /** Message for failed evaluation. */
-    private static final String FAILED_EVALUATION_MESSAGE =
-        "evaluation failed for argument = {0}";
+    private static final long serialVersionUID = 1384427981840836868L;
 
     /** Argument causing function evaluation failure */
     private double[] argument;
@@ -45,7 +44,7 @@ public class FunctionEvaluationException extends MathException  {
      * @param argument  the failing function argument
      */
     public FunctionEvaluationException(double argument) {
-        super(FAILED_EVALUATION_MESSAGE, argument);
+        super(LocalizedFormats.EVALUATION_FAILED, argument);
         this.argument = new double[] { argument };
     }
 
@@ -57,7 +56,7 @@ public class FunctionEvaluationException extends MathException  {
      * @since 2.0
      */
     public FunctionEvaluationException(double[] argument) {
-        super(FAILED_EVALUATION_MESSAGE, new ArrayRealVector(argument));
+        super(LocalizedFormats.EVALUATION_FAILED, new ArrayRealVector(argument));
         this.argument = argument.clone();
     }
 
@@ -71,6 +70,19 @@ public class FunctionEvaluationException extends MathException  {
      */
     public FunctionEvaluationException(double argument,
                                        String pattern, Object ... arguments) {
+        this(argument, new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs an exception with specified formatted detail message.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param argument  the failing function argument
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public FunctionEvaluationException(double argument,
+                                       Localizable pattern, Object ... arguments) {
         super(pattern, arguments);
         this.argument = new double[] { argument };
     }
@@ -85,6 +97,19 @@ public class FunctionEvaluationException extends MathException  {
      */
     public FunctionEvaluationException(double[] argument,
                                        String pattern, Object ... arguments) {
+        this(argument, new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs an exception with specified formatted detail message.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param argument  the failing function argument
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public FunctionEvaluationException(double[] argument,
+                                       Localizable pattern, Object ... arguments) {
         super(pattern, arguments);
         this.argument = argument.clone();
     }
@@ -125,6 +150,21 @@ public class FunctionEvaluationException extends MathException  {
     public FunctionEvaluationException(Throwable cause,
                                        double argument, String pattern,
                                        Object ... arguments) {
+        this(cause, argument, new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs an exception with specified formatted detail message and root cause.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param cause  the exception or error that caused this exception to be thrown
+     * @param argument  the failing function argument
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public FunctionEvaluationException(Throwable cause,
+                                       double argument, Localizable pattern,
+                                       Object ... arguments) {
         super(cause, pattern, arguments);
         this.argument = new double[] { argument };
     }
@@ -141,6 +181,21 @@ public class FunctionEvaluationException extends MathException  {
     public FunctionEvaluationException(Throwable cause,
                                        double[] argument, String pattern,
                                        Object ... arguments) {
+        this(cause, argument, new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs an exception with specified formatted detail message and root cause.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param cause  the exception or error that caused this exception to be thrown
+     * @param argument  the failing function argument
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public FunctionEvaluationException(Throwable cause,
+                                       double[] argument, Localizable pattern,
+                                       Object ... arguments) {
         super(cause, pattern, arguments);
         this.argument = argument.clone();
     }
@@ -153,5 +208,4 @@ public class FunctionEvaluationException extends MathException  {
     public double[] getArgument() {
         return argument.clone();
     }
-
 }

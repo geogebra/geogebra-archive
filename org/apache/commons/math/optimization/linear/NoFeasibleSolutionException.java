@@ -17,12 +17,13 @@
 
 package org.apache.commons.math.optimization.linear;
 
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.OptimizationException;
 
 /**
  * This class represents exceptions thrown by optimizers when no solution
  * fulfills the constraints.
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 2.0
  */
 public class NoFeasibleSolutionException extends OptimizationException {
@@ -34,7 +35,7 @@ public class NoFeasibleSolutionException extends OptimizationException {
      * Simple constructor using a default message.
      */
     public NoFeasibleSolutionException() {
-        super("no feasible solution");
+        super(LocalizedFormats.NO_FEASIBLE_SOLUTION);
     }
 
 }

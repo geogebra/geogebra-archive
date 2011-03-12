@@ -20,9 +20,13 @@ import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.distribution.TDistribution;
 import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.DimensionMismatchException;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.BlockRealMatrix;
 import org.apache.commons.math.stat.regression.SimpleRegression;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Computes Pearson's product-moment correlation coefficients for pairs of arrays
@@ -36,7 +40,7 @@ import org.apache.commons.math.stat.regression.SimpleRegression;
  * where <code>E(X)</code> is the mean of <code>X</code>, <code>E(Y)</code>
  * is the mean of the <code>Y</code> values and s(X), s(Y) are standard deviations.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
  */
 public class PearsonsCorrelation {
@@ -91,7 +95,7 @@ public class PearsonsCorrelation {
     public PearsonsCorrelation(Covariance covariance) {
         RealMatrix covarianceMatrix = covariance.getCovarianceMatrix();
         if (covarianceMatrix == null) {
-            throw MathRuntimeException.createIllegalArgumentException("covariance matrix is null");
+            throw new NullArgumentException(LocalizedFormats.COVARIANCE_MATRIX);
         }
         nObs = covariance.getN();
         correlationMatrix = covarianceToCorrelation(covarianceMatrix);
@@ -138,7 +142,7 @@ public class PearsonsCorrelation {
         for (int i = 0; i < nVars; i++) {
             for (int j = 0; j < nVars; j++) {
                 double r = correlationMatrix.getEntry(i, j);
-                out[i][j] = Math.sqrt((1 - r * r) /(nObs - 2));
+                out[i][j] = FastMath.sqrt((1 - r * r) /(nObs - 2));
             }
         }
         return new BlockRealMatrix(out);
@@ -167,8 +171,8 @@ public class PearsonsCorrelation {
                     out[i][j] = 0d;
                 } else {
                     double r = correlationMatrix.getEntry(i, j);
-                    double t = Math.abs(r * Math.sqrt((nObs - 2)/(1 - r * r)));
-                    out[i][j] = 2 * (1 - tDistribution.cumulativeProbability(t));
+                    double t = FastMath.abs(r * FastMath.sqrt((nObs - 2)/(1 - r * r)));
+                    out[i][j] = 2 * tDistribution.cumulativeProbability(-t);
                 }
             }
         }
@@ -223,16 +227,16 @@ public class PearsonsCorrelation {
      */
     public double correlation(final double[] xArray, final double[] yArray) throws IllegalArgumentException {
         SimpleRegression regression = new SimpleRegression();
-        if(xArray.length == yArray.length && xArray.length > 1) {
+        if (xArray.length != yArray.length) {
+            throw new DimensionMismatchException(xArray.length, yArray.length);
+        } else if (xArray.length < 2) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  LocalizedFormats.INSUFFICIENT_DIMENSION, xArray.length, 2);
+        } else {
             for(int i=0; i<xArray.length; i++) {
                 regression.addData(xArray[i], yArray[i]);
             }
             return regression.getR();
-        }
-        else {
-            throw MathRuntimeException.createIllegalArgumentException(
-                    "invalid array dimensions. xArray has size {0}; yArray has {1} elements",
-                    xArray.length, yArray.length);
         }
     }
 
@@ -251,11 +255,11 @@ public class PearsonsCorrelation {
         int nVars = covarianceMatrix.getColumnDimension();
         RealMatrix outMatrix = new BlockRealMatrix(nVars, nVars);
         for (int i = 0; i < nVars; i++) {
-            double sigma = Math.sqrt(covarianceMatrix.getEntry(i, i));
+            double sigma = FastMath.sqrt(covarianceMatrix.getEntry(i, i));
             outMatrix.setEntry(i, i, 1d);
             for (int j = 0; j < i; j++) {
                 double entry = covarianceMatrix.getEntry(i, j) /
-                       (sigma * Math.sqrt(covarianceMatrix.getEntry(j, j)));
+                       (sigma * FastMath.sqrt(covarianceMatrix.getEntry(j, j)));
                 outMatrix.setEntry(i, j, entry);
                 outMatrix.setEntry(j, i, entry);
             }
@@ -274,7 +278,7 @@ public class PearsonsCorrelation {
         int nCols = matrix.getColumnDimension();
         if (nRows < 2 || nCols < 2) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "insufficient data: only {0} rows and {1} columns.",
+                    LocalizedFormats.INSUFFICIENT_ROWS_AND_COLUMNS,
                     nRows, nCols);
         }
     }

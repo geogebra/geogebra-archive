@@ -19,12 +19,14 @@ package org.apache.commons.math.estimation;
 
 import java.io.Serializable;
 
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.MatrixUtils;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math.linear.ArrayRealVector;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class implements a solver for estimation problems.
@@ -33,7 +35,7 @@ import org.apache.commons.math.linear.ArrayRealVector;
  * squares criterion on the measurement residuals. It uses a
  * Gauss-Newton algorithm.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 1.2
  * @deprecated as of 2.0, everything in package org.apache.commons.math.estimation has
  * been deprecated and replaced by package org.apache.commons.math.optimization.general
@@ -96,7 +98,7 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
      * to improve the criterion anymore
      * @param steadyStateThreshold steady state detection threshold, the
      * problem has converged has reached a steady state if
-     * <code>Math.abs(J<sub>n</sub> - J<sub>n-1</sub>) &lt;
+     * <code>FastMath.abs(J<sub>n</sub> - J<sub>n-1</sub>) &lt;
      * J<sub>n</sub> &times convergence</code>, where <code>J<sub>n</sub></code>
      * and <code>J<sub>n-1</sub></code> are the current and preceding criterion
      * values (square sum of the weighted residuals of considered measurements).
@@ -121,7 +123,7 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
      * Set the steady state detection threshold.
      * <p>
      * The problem has converged has reached a steady state if
-     * <code>Math.abs(J<sub>n</sub> - J<sub>n-1</sub>) &lt;
+     * <code>FastMath.abs(J<sub>n</sub> - J<sub>n-1</sub>) &lt;
      * J<sub>n</sub> &times convergence</code>, where <code>J<sub>n</sub></code>
      * and <code>J<sub>n-1</sub></code> are the current and preceding criterion
      * values (square sum of the weighted residuals of considered measurements).
@@ -213,7 +215,7 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
                 }
 
             } catch(InvalidMatrixException e) {
-                throw new EstimationException("unable to solve: singular problem");
+                throw new EstimationException(LocalizedFormats.UNABLE_TO_SOLVE_SINGULAR_PROBLEM);
             }
 
 
@@ -221,8 +223,8 @@ public class GaussNewtonEstimator extends AbstractEstimator implements Serializa
             updateResidualsAndCost();
 
         } while ((getCostEvaluations() < 2) ||
-                 (Math.abs(previous - cost) > (cost * steadyStateThreshold) &&
-                  (Math.abs(cost) > convergence)));
+                 (FastMath.abs(previous - cost) > (cost * steadyStateThreshold) &&
+                  (FastMath.abs(cost) > convergence)));
 
     }
 

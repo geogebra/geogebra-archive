@@ -25,6 +25,7 @@ import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxEvaluationsExceededException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.optimization.GoalType;
 import org.apache.commons.math.optimization.MultivariateRealOptimizer;
 import org.apache.commons.math.optimization.OptimizationException;
@@ -61,10 +62,10 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
  * configuration from a unit hypercube. Each call to {@link
  * #optimize(MultivariateRealFunction, GoalType, double[]) optimize} will reuse
  * the current start configuration and move it such that its first vertex
- * is at the provided start point of the optimization. If the same optimizer
- * is used to solve different problems and the number of parameters change,
- * the start configuration <em>must</em> be reset or a dimension mismatch
- * will occur.</p>
+ * is at the provided start point of the optimization. If the {@code optimize}
+ * method is called to solve a different problem and the number of parameters
+ * change, the start configuration will be reset to a default one with the
+ * appropriate dimensions.</p>
  *
  * <p>If {@link #setConvergenceChecker(RealConvergenceChecker)} is not called,
  * a default {@link SimpleScalarValueChecker} is used.</p>
@@ -82,18 +83,10 @@ import org.apache.commons.math.optimization.SimpleScalarValueChecker;
  * @see MultivariateRealFunction
  * @see NelderMead
  * @see MultiDirectional
- * @version $Revision: 885278 $ $Date: 2009-11-29 16:47:51 -0500 (Sun, 29 Nov 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @since 1.2
  */
 public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer {
-
-    /** Message for equal vertices. */
-    private static final String EQUAL_VERTICES_MESSAGE =
-        "equal vertices {0} and {1} in simplex configuration";
-
-    /** Message for dimension mismatch. */
-    private static final String DIMENSION_MISMATCH_MESSAGE =
-        "dimension mismatch {0} != {1}";
 
     /** Simplex. */
     protected RealPointValuePair[] simplex;
@@ -154,7 +147,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
             for (int j = 0; j < i + 1; ++j) {
                 if (steps[j] == 0.0) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                          EQUAL_VERTICES_MESSAGE, j, j + 1);
+                          LocalizedFormats.EQUAL_VERTICES_IN_SIMPLEX, j, j + 1);
                 }
                 System.arraycopy(steps, 0, vertexI, 0, j + 1);
             }
@@ -178,7 +171,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
         final int n = referenceSimplex.length - 1;
         if (n < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "simplex must contain at least one point");
+                    LocalizedFormats.SIMPLEX_NEED_ONE_POINT);
         }
         startConfiguration = new double[n][n];
         final double[] ref0 = referenceSimplex[0];
@@ -191,7 +184,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
             // safety checks
             if (refI.length != n) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                      DIMENSION_MISMATCH_MESSAGE, refI.length, n);
+                      LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, refI.length, n);
             }
             for (int j = 0; j < i; ++j) {
                 final double[] refJ = referenceSimplex[j];
@@ -204,7 +197,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
                 }
                 if (allEquals) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                          EQUAL_VERTICES_MESSAGE, i, j);
+                          LocalizedFormats.EQUAL_VERTICES_IN_SIMPLEX, i, j);
                 }
             }
 
@@ -264,10 +257,10 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
     public RealPointValuePair optimize(final MultivariateRealFunction function,
                                        final GoalType goalType,
                                        final double[] startPoint)
-        throws FunctionEvaluationException, OptimizationException,
-        IllegalArgumentException {
+        throws FunctionEvaluationException, OptimizationException, IllegalArgumentException {
 
-        if (startConfiguration == null) {
+        if ((startConfiguration == null) ||
+            (startConfiguration.length != startPoint.length)) {
             // no initial configuration has been set up for simplex
             // build a default one from a unit hypercube
             final double[] unit = new double[startPoint.length];
@@ -348,8 +341,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
     protected double evaluate(final double[] x)
         throws FunctionEvaluationException, IllegalArgumentException {
         if (++evaluations > maxEvaluations) {
-            throw new FunctionEvaluationException(new MaxEvaluationsExceededException(maxEvaluations),
-                                                  x);
+            throw new FunctionEvaluationException(new MaxEvaluationsExceededException(maxEvaluations), x);
         }
         return f.value(x);
     }
@@ -365,7 +357,7 @@ public abstract class DirectSearchOptimizer implements MultivariateRealOptimizer
         final int n = startPoint.length;
         if (n != startConfiguration.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  DIMENSION_MISMATCH_MESSAGE, n, startConfiguration.length);
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, n, startConfiguration.length);
         }
 
         // set first vertex

@@ -25,12 +25,13 @@ import org.apache.commons.math.ode.FirstOrderDifferentialEquations;
  *
  * @see FirstOrderIntegratorWithJacobians
  *
- * @version $Revision: 918702 $ $Date: 2010-03-03 16:28:16 -0500 (Wed, 03 Mar 2010) $
+ * @version $Revision: 1037341 $ $Date: 2010-11-20 22:58:35 +0100 (sam. 20 nov. 2010) $
  * @since 2.1
+ * @deprecated as of 2.2 the complete package is deprecated, it will be replaced
+ * in 3.0 by a completely rewritten implementation
  */
-
-public interface ParameterizedODE
-    extends FirstOrderDifferentialEquations {
+@Deprecated
+public interface ParameterizedODE extends FirstOrderDifferentialEquations {
 
     /** Get the number of parameters.
      * @return number of parameters

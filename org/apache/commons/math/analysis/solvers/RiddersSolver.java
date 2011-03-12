@@ -20,6 +20,7 @@ import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
 
 /**
@@ -31,7 +32,7 @@ import org.apache.commons.math.util.MathUtils;
  * <p>
  * The function should be continuous but not necessarily smooth.</p>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @since 1.2
  */
 public class RiddersSolver extends UnivariateRealSolverImpl {
@@ -52,7 +53,9 @@ public class RiddersSolver extends UnivariateRealSolverImpl {
 
     /**
      * Construct a solver.
+     * @deprecated in 2.2
      */
+    @Deprecated
     public RiddersSolver() {
         super(100, 1E-6);
     }
@@ -80,12 +83,36 @@ public class RiddersSolver extends UnivariateRealSolverImpl {
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
      * @param initial the start value to use
+     * @param maxEval Maximum number of evaluations.
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
      * @throws IllegalArgumentException if any parameters are invalid
      */
+    @Override
+    public double solve(int maxEval, final UnivariateRealFunction f,
+                        final double min, final double max, final double initial)
+        throws MaxIterationsExceededException, FunctionEvaluationException {
+        setMaximalIterationCount(maxEval);
+        return solve(f, min, max, initial);
+    }
+
+    /**
+     * Find a root in the given interval with initial value.
+     * <p>
+     * Requires bracketing condition.</p>
+     *
+     * @param f the function to solve
+     * @param min the lower bound for the interval
+     * @param max the upper bound for the interval
+     * @param initial the start value to use
+     * @return the point at which the function value is zero
+     * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
+     * @throws IllegalArgumentException if any parameters are invalid
+     * @deprecated in 2.2 (to be removed in 3.0).
+     */
+    @Deprecated
     public double solve(final UnivariateRealFunction f,
                         final double min, final double max, final double initial)
         throws MaxIterationsExceededException, FunctionEvaluationException {
@@ -112,12 +139,35 @@ public class RiddersSolver extends UnivariateRealSolverImpl {
      * @param f the function to solve
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
+     * @param maxEval Maximum number of evaluations.
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
      * @throws IllegalArgumentException if any parameters are invalid
      */
+    @Override
+    public double solve(int maxEval, final UnivariateRealFunction f,
+                        final double min, final double max)
+        throws MaxIterationsExceededException, FunctionEvaluationException {
+        setMaximalIterationCount(maxEval);
+        return solve(f, min, max);
+    }
+
+    /**
+     * Find a root in the given interval.
+     * <p>
+     * Requires bracketing condition.</p>
+     *
+     * @param f the function to solve
+     * @param min the lower bound for the interval
+     * @param max the upper bound for the interval
+     * @return the point at which the function value is zero
+     * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
+     * @throws IllegalArgumentException if any parameters are invalid
+     * @deprecated in 2.2 (to be removed in 3.0).
+     */
+    @Deprecated
     public double solve(final UnivariateRealFunction f,
                         final double min, final double max)
         throws MaxIterationsExceededException, FunctionEvaluationException {
@@ -145,23 +195,23 @@ public class RiddersSolver extends UnivariateRealSolverImpl {
             // calculate the new root approximation
             final double x3 = 0.5 * (x1 + x2);
             final double y3 = f.value(x3);
-            if (Math.abs(y3) <= functionValueAccuracy) {
+            if (FastMath.abs(y3) <= functionValueAccuracy) {
                 setResult(x3, i);
                 return result;
             }
             final double delta = 1 - (y1 * y2) / (y3 * y3);  // delta > 1 due to bracketing
             final double correction = (MathUtils.sign(y2) * MathUtils.sign(y3)) *
-                                      (x3 - x1) / Math.sqrt(delta);
+                                      (x3 - x1) / FastMath.sqrt(delta);
             final double x = x3 - correction;                // correction != 0
             final double y = f.value(x);
 
             // check for convergence
-            final double tolerance = Math.max(relativeAccuracy * Math.abs(x), absoluteAccuracy);
-            if (Math.abs(x - oldx) <= tolerance) {
+            final double tolerance = FastMath.max(relativeAccuracy * FastMath.abs(x), absoluteAccuracy);
+            if (FastMath.abs(x - oldx) <= tolerance) {
                 setResult(x, i);
                 return result;
             }
-            if (Math.abs(y) <= functionValueAccuracy) {
+            if (FastMath.abs(y) <= functionValueAccuracy) {
                 setResult(x, i);
                 return result;
             }

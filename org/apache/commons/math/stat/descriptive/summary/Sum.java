@@ -32,7 +32,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 917270 $ $Date: 2010-02-28 14:37:53 -0500 (Sun, 28 Feb 2010) $
+ * @version $Revision: 1006299 $ $Date: 2010-10-10 16:47:17 +0200 (dim. 10 oct. 2010) $
  */
 public class Sum extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -212,6 +212,7 @@ public class Sum extends AbstractStorelessUnivariateStatistic implements Seriali
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(Sum source, Sum dest) {
+        dest.setData(source.getDataRef());
         dest.n = source.n;
         dest.value = source.value;
     }

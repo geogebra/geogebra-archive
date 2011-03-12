@@ -22,17 +22,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math.DimensionMismatchException;
-import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.exception.NoDataException;
 import org.apache.commons.math.linear.ArrayRealVector;
 import org.apache.commons.math.linear.RealVector;
 import org.apache.commons.math.random.UnitSphereRandomVectorGenerator;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Interpolating function that implements the
  * <a href="http://www.dudziak.com/microsphere.php">Microsphere Projection</a>.
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  */
 public class MicrosphereInterpolatingFunction
     implements MultivariateRealFunction {
@@ -141,16 +142,16 @@ public class MicrosphereInterpolatingFunction
      * {@code xval} (equal to {@code n}, the number of interpolation points)
      * do not match, or the the arrays {@code xval[0]} ... {@code xval[n]},
      * have lengths different from {@code dimension}.
-     * @throws IllegalArgumentException if there are no data (xval null or zero length)
+     * @throws NoDataException if there are no data (xval null or zero length)
      */
     public MicrosphereInterpolatingFunction(double[][] xval,
                                             double[] yval,
                                             int brightnessExponent,
                                             int microsphereElements,
                                             UnitSphereRandomVectorGenerator rand)
-        throws DimensionMismatchException, IllegalArgumentException {
+        throws DimensionMismatchException, NoDataException {
         if (xval.length == 0 || xval[0] == null) {
-            throw MathRuntimeException.createIllegalArgumentException("no data");
+            throw new NoDataException();
         }
 
         if (xval.length != yval.length) {
@@ -200,14 +201,14 @@ public class MicrosphereInterpolatingFunction
             final RealVector diff = sd.getKey().subtract(p);
             final double diffNorm = diff.getNorm();
 
-            if (Math.abs(diffNorm) < Math.ulp(1d)) {
+            if (FastMath.abs(diffNorm) < FastMath.ulp(1d)) {
                 // No need to interpolate, as the interpolation point is
                 // actually (very close to) one of the sampled points.
                 return sd.getValue();
             }
 
             for (MicrosphereSurfaceElement md : microsphere) {
-                final double w = Math.pow(diffNorm, -brightnessExponent);
+                final double w = FastMath.pow(diffNorm, -brightnessExponent);
                 md.store(cosAngle(diff, md.normal()) * w, sd);
             }
 

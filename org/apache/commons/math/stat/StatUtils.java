@@ -17,6 +17,8 @@
 package org.apache.commons.math.stat;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math.stat.descriptive.UnivariateStatistic;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
@@ -33,7 +35,7 @@ import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
  * StatUtils provides static methods for computing statistics based on data
  * stored in double[] arrays.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1073276 $ $Date: 2011-02-22 10:34:52 +0100 (mar. 22 févr. 2011) $
  */
 public final class StatUtils {
 
@@ -564,10 +566,13 @@ public final class StatUtils {
     public static double sumDifference(final double[] sample1, final double[] sample2)
         throws IllegalArgumentException {
         int n = sample1.length;
-        if ((n  != sample2.length) || (n < 1)) {
+        if (n  != sample2.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "input arrays must have the same positive length ({0} and {1})",
-                  n, sample2.length);
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, n, sample2.length);
+        }
+        if (n < 1) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  LocalizedFormats.INSUFFICIENT_DIMENSION, sample2.length, 1);
         }
         double result = 0;
         for (int i = 0; i < n; i++) {
@@ -609,10 +614,13 @@ public final class StatUtils {
         double sum2 = 0d;
         double diff = 0d;
         int n = sample1.length;
-        if (n < 2 || n != sample2.length) {
+        if (n != sample2.length) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "input arrays must have the same length and at least two elements ({0} and {1})",
-                  n, sample2.length);
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, n, sample2.length);
+        }
+        if (n < 2) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  LocalizedFormats.INSUFFICIENT_DIMENSION, n, 2);
         }
         for (int i = 0; i < n; i++) {
             diff = sample1[i] - sample2[i];
@@ -620,6 +628,36 @@ public final class StatUtils {
             sum2 += diff - meanDifference;
         }
         return (sum1 - (sum2 * sum2 / n)) / (n - 1);
+    }
+
+
+    /**
+     * Normalize (standardize) the series, so in the end it is having a mean of 0 and a standard deviation of 1.
+     *
+     * @param sample sample to normalize
+     * @return normalized (standardized) sample
+     * @since 2.2
+     */
+    public static double[] normalize(final double[] sample) {
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        // Add the data from the series to stats
+        for (int i = 0; i < sample.length; i++) {
+            stats.addValue(sample[i]);
+        }
+
+        // Compute mean and standard deviation
+        double mean = stats.getMean();
+        double standardDeviation = stats.getStandardDeviation();
+
+        // initialize the standardizedSample, which has the same length as the sample
+        double[] standardizedSample = new double[sample.length];
+
+        for (int i = 0; i < sample.length; i++) {
+            // z = (x- mean)/standardDeviation
+            standardizedSample[i] = (sample[i] - mean) / standardDeviation;
+        }
+        return standardizedSample;
     }
 
 }

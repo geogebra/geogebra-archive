@@ -45,7 +45,7 @@ import org.apache.commons.math.stat.descriptive.SummaryStatistics;
  * generate random values "like" those in the input file -- i.e., the values
  * generated will follow the distribution of the values in the file.</p>
  *
- * @version $Revision: 817128 $ $Date: 2009-09-20 21:30:53 -0400 (Sun, 20 Sep 2009) $
+ * @version $Revision: 817128 $ $Date: 2009-09-21 03:30:53 +0200 (lun. 21 sept. 2009) $
  */
 public interface EmpiricalDistribution {
 

@@ -18,6 +18,8 @@
 package org.apache.commons.math.linear;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
@@ -28,7 +30,7 @@ import org.apache.commons.math.MathRuntimeException;
  *
  * @see <a href="http://mathworld.wolfram.com/CholeskyDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/Cholesky_decomposition">Wikipedia</a>
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
  */
 public class CholeskyDecompositionImpl implements CholeskyDecomposition {
@@ -117,8 +119,8 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
                 final double lIJ = lI[j];
                 final double lJI = lJ[i];
                 final double maxDelta =
-                    relativeSymmetryThreshold * Math.max(Math.abs(lIJ), Math.abs(lJI));
-                if (Math.abs(lIJ - lJI) > maxDelta) {
+                    relativeSymmetryThreshold * FastMath.max(FastMath.abs(lIJ), FastMath.abs(lJI));
+                if (FastMath.abs(lIJ - lJI) > maxDelta) {
                     throw new NotSymmetricMatrixException();
                 }
                 lJ[i] = 0;
@@ -135,7 +137,7 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
                 throw new NotPositiveDefiniteMatrixException();
             }
 
-            ltI[i] = Math.sqrt(ltI[i]);
+            ltI[i] = FastMath.sqrt(ltI[i]);
             final double inverse = 1.0 / ltI[i];
 
             for (int q = order - 1; q > i; --q) {
@@ -212,7 +214,7 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
             final int m = lTData.length;
             if (b.length != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "vector length mismatch: got {0} but expected {1}",
+                        LocalizedFormats.VECTOR_LENGTH_MISMATCH,
                         b.length, m);
             }
 
@@ -251,7 +253,7 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
                 final int m = lTData.length;
                 if (b.getDimension() != m) {
                     throw MathRuntimeException.createIllegalArgumentException(
-                            "vector length mismatch: got {0} but expected {1}",
+                            LocalizedFormats.VECTOR_LENGTH_MISMATCH,
                             b.getDimension(), m);
                 }
 
@@ -300,7 +302,7 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
             final int m = lTData.length;
             if (b.getRowDimension() != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "dimensions mismatch: got {0}x{1} but expected {2}x{3}",
+                        LocalizedFormats.DIMENSIONS_MISMATCH_2x2,
                         b.getRowDimension(), b.getColumnDimension(), m, "n");
             }
 

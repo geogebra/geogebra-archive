@@ -22,6 +22,8 @@ import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.distribution.TDistribution;
 import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Estimates an ordinary least squares regression model
@@ -51,7 +53,7 @@ import org.apache.commons.math.distribution.TDistributionImpl;
  * the necessary computations to return the requested statistic.</li>
  * </ul></p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1042336 $ $Date: 2010-12-05 13:40:48 +0100 (dim. 05 déc. 2010) $
  */
 public class SimpleRegression implements Serializable {
 
@@ -99,10 +101,24 @@ public class SimpleRegression implements Serializable {
      * compute inference statistics.
      * @param t the distribution used to compute inference statistics.
      * @since 1.2
+     * @deprecated in 2.2 (to be removed in 3.0). Please use the {@link
+     * #SimpleRegression(int) other constructor} instead.
      */
+    @Deprecated
     public SimpleRegression(TDistribution t) {
         super();
         setDistribution(t);
+    }
+
+    /**
+     * Create an empty SimpleRegression.
+     *
+     * @param degrees Number of degrees of freedom of the distribution
+     * used to compute inference statistics.
+     * @since 2.2
+     */
+    public SimpleRegression(int degrees) {
+        setDistribution(new TDistributionImpl(degrees));
     }
 
     /**
@@ -298,7 +314,7 @@ public class SimpleRegression implements Serializable {
         if (n < 2) {
             return Double.NaN; //not enough data
         }
-        if (Math.abs(sumXX) < 10 * Double.MIN_VALUE) {
+        if (FastMath.abs(sumXX) < 10 * Double.MIN_VALUE) {
             return Double.NaN; //not enough variation in x
         }
         return sumXY / sumXX;
@@ -334,7 +350,7 @@ public class SimpleRegression implements Serializable {
      * @return sum of squared errors associated with the regression model
      */
     public double getSumSquaredErrors() {
-        return Math.max(0d, sumYY - sumXY * sumXY / sumXX);
+        return FastMath.max(0d, sumYY - sumXY * sumXY / sumXX);
     }
 
     /**
@@ -430,7 +446,7 @@ public class SimpleRegression implements Serializable {
      */
     public double getR() {
         double b1 = getSlope();
-        double result = Math.sqrt(getRSquare());
+        double result = FastMath.sqrt(getRSquare());
         if (b1 < 0) {
             result = -result;
         }
@@ -468,7 +484,7 @@ public class SimpleRegression implements Serializable {
      * @return standard error associated with intercept estimate
      */
     public double getInterceptStdErr() {
-        return Math.sqrt(
+        return FastMath.sqrt(
             getMeanSquareError() * ((1d / (double) n) + (xbar * xbar) / sumXX));
     }
 
@@ -484,7 +500,7 @@ public class SimpleRegression implements Serializable {
      * @return standard error associated with slope estimate
      */
     public double getSlopeStdErr() {
-        return Math.sqrt(getMeanSquareError() / sumXX);
+        return FastMath.sqrt(getMeanSquareError() / sumXX);
     }
 
     /**
@@ -548,7 +564,7 @@ public class SimpleRegression implements Serializable {
         throws MathException {
         if (alpha >= 1 || alpha <= 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "out of bounds significance level {0}, must be between {1} and {2}",
+                  LocalizedFormats.OUT_OF_BOUND_SIGNIFICANCE_LEVEL,
                   alpha, 0.0, 1.0);
         }
         return getSlopeStdErr() *
@@ -578,7 +594,7 @@ public class SimpleRegression implements Serializable {
      */
     public double getSignificance() throws MathException {
         return 2d * (1.0 - distribution.cumulativeProbability(
-                    Math.abs(getSlope()) / getSlopeStdErr()));
+                    FastMath.abs(getSlope()) / getSlopeStdErr()));
     }
 
     // ---------------------Private methods-----------------------------------
@@ -609,7 +625,9 @@ public class SimpleRegression implements Serializable {
      * Modify the distribution used to compute inference statistics.
      * @param value the new distribution
      * @since 1.2
+     * @deprecated in 2.2 (to be removed in 3.0).
      */
+    @Deprecated
     public void setDistribution(TDistribution value) {
         distribution = value;
 

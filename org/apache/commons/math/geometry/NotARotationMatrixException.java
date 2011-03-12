@@ -18,12 +18,13 @@
 package org.apache.commons.math.geometry;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * This class represents exceptions thrown while building rotations
  * from matrices.
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 1.2
  */
 
@@ -38,8 +39,21 @@ public class NotARotationMatrixException
      * Build an exception by translating and formating a message
      * @param specifier format specifier (to be translated)
      * @param parts to insert in the format (no translation)
+     * @deprecated as of 2.2 replaced by {@link #NotARotationMatrixException(Localizable, Object...)}
      */
+    @Deprecated
     public NotARotationMatrixException(String specifier, Object ... parts) {
+        super(specifier, parts);
+    }
+
+    /**
+     * Simple constructor.
+     * Build an exception by translating and formating a message
+     * @param specifier format specifier (to be translated)
+     * @param parts to insert in the format (no translation)
+     * @since 2.2
+     */
+    public NotARotationMatrixException(Localizable specifier, Object ... parts) {
         super(specifier, parts);
     }
 

@@ -19,12 +19,30 @@ package org.apache.commons.math.random;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.Collection;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.BetaDistributionImpl;
+import org.apache.commons.math.distribution.BinomialDistributionImpl;
+import org.apache.commons.math.distribution.CauchyDistributionImpl;
+import org.apache.commons.math.distribution.ChiSquaredDistributionImpl;
+import org.apache.commons.math.distribution.ContinuousDistribution;
+import org.apache.commons.math.distribution.FDistributionImpl;
+import org.apache.commons.math.distribution.GammaDistributionImpl;
+import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
+import org.apache.commons.math.distribution.IntegerDistribution;
+import org.apache.commons.math.distribution.PascalDistributionImpl;
+import org.apache.commons.math.distribution.TDistributionImpl;
+import org.apache.commons.math.distribution.WeibullDistributionImpl;
+import org.apache.commons.math.distribution.ZipfDistributionImpl;
+import org.apache.commons.math.exception.MathInternalError;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
+import org.apache.commons.math.exception.NumberIsTooLargeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
 
 /**
@@ -62,7 +80,7 @@ import org.apache.commons.math.util.MathUtils;
  * it any easier to predict subsequent values.</li>
  * <li>
  * When a new <code>RandomDataImpl</code> is created, the underlying random
- * number generators are <strong>not</strong> intialized. If you do not
+ * number generators are <strong>not</strong> initialized. If you do not
  * explicitly seed the default non-secure generator, it is seeded with the
  * current time in milliseconds on first use. The same holds for the secure
  * generator. If you provide a <code>RandomGenerator</code> to the constructor,
@@ -82,7 +100,7 @@ import org.apache.commons.math.util.MathUtils;
  * </ul>
  * </p>
  *
- * @version $Revision: 831510 $ $Date: 2009-10-30 22:30:18 -0400 (Fri, 30 Oct 2009) $
+ * @version $Revision: 1061496 $ $Date: 2011-01-20 21:32:16 +0100 (jeu. 20 janv. 2011) $
  */
 public class RandomDataImpl implements RandomData, Serializable {
 
@@ -130,18 +148,18 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param len
      *            the desired string length.
      * @return the random string.
+     * @throws NotStrictlyPositiveException if {@code len <= 0}.
      */
     public String nextHexString(int len) {
         if (len <= 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "length must be positive ({0})", len);
+            throw new NotStrictlyPositiveException(LocalizedFormats.LENGTH, len);
         }
 
         // Get a random number generator
         RandomGenerator ran = getRan();
 
         // Initialize output buffer
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
 
         // Get int(len/2)+1 random bytes
         byte[] randomBytes = new byte[(len / 2) + 1];
@@ -176,12 +194,12 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param upper
      *            the upper bound.
      * @return the random integer.
+     * @throws NumberIsTooLargeException if {@code lower >= upper}.
      */
     public int nextInt(int lower, int upper) {
         if (lower >= upper) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                    "upper bound ({0}) must be greater than lower bound ({1})",
-                    upper, lower);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
+                                                lower, upper, false);
         }
         double r = getRan().nextDouble();
         return (int) ((r * upper) + ((1.0 - r) * lower) + r);
@@ -196,12 +214,12 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param upper
      *            the upper bound.
      * @return the random integer.
+     * @throws NumberIsTooLargeException if {@code lower >= upper}.
      */
     public long nextLong(long lower, long upper) {
         if (lower >= upper) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "upper bound ({0}) must be greater than lower bound ({1})",
-                  upper, lower);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
+                                                lower, upper, false);
         }
         double r = getRan().nextDouble();
         return (long) ((r * upper) + ((1.0 - r) * lower) + r);
@@ -226,11 +244,11 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param len
      *            the length of the generated string
      * @return the random string
+     * @throws NotStrictlyPositiveException if {@code len <= 0}.
      */
     public String nextSecureHexString(int len) {
         if (len <= 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "length must be positive ({0})", len);
+            throw new NotStrictlyPositiveException(LocalizedFormats.LENGTH, len);
         }
 
         // Get SecureRandom and setup Digest provider
@@ -240,14 +258,14 @@ public class RandomDataImpl implements RandomData, Serializable {
             alg = MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException ex) {
             // this should never happen
-            throw MathRuntimeException.createInternalError(ex);
+            throw new MathInternalError(ex);
         }
         alg.reset();
 
         // Compute number of iterations required (40 bytes each)
         int numIter = (len / 40) + 1;
 
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
         for (int iter = 1; iter < numIter + 1; iter++) {
             byte[] randomBytes = new byte[40];
             secRan.nextBytes(randomBytes);
@@ -287,12 +305,12 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param upper
      *            the upper bound.
      * @return the random integer.
+     * @throws NumberIsTooLargeException if {@code lower >= upper}.
      */
     public int nextSecureInt(int lower, int upper) {
         if (lower >= upper) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "upper bound ({0}) must be greater than lower bound ({1})",
-                  upper, lower);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
+                                                lower, upper, false);
         }
         SecureRandom sec = getSecRan();
         return lower + (int) (sec.nextDouble() * (upper - lower + 1));
@@ -308,12 +326,12 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param upper
      *            the upper bound.
      * @return the random integer.
+     * @throws NumberIsTooLargeException if {@code lower >= upper}.
      */
     public long nextSecureLong(long lower, long upper) {
         if (lower >= upper) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "upper bound ({0}) must be greater than lower bound ({1})",
-                  upper, lower);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
+                                                lower, upper, false);
         }
         SecureRandom sec = getSecRan();
         return lower + (long) (sec.nextDouble() * (upper - lower + 1));
@@ -334,18 +352,18 @@ public class RandomDataImpl implements RandomData, Serializable {
      *
      * @param mean mean of the Poisson distribution.
      * @return the random Poisson value.
+     * @throws NotStrictlyPositiveException if {@code mean <= 0}.
      */
     public long nextPoisson(double mean) {
         if (mean <= 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "the Poisson mean must be positive ({0})", mean);
+            throw new NotStrictlyPositiveException(LocalizedFormats.MEAN, mean);
         }
 
         final RandomGenerator generator = getRan();
 
         final double pivot = 40.0d;
         if (mean < pivot) {
-            double p = Math.exp(-mean);
+            double p = FastMath.exp(-mean);
             long n = 0;
             double r = 1.0d;
             double rnd = 1.0d;
@@ -361,16 +379,16 @@ public class RandomDataImpl implements RandomData, Serializable {
             }
             return n;
         } else {
-            final double lambda = Math.floor(mean);
+            final double lambda = FastMath.floor(mean);
             final double lambdaFractional = mean - lambda;
-            final double logLambda = Math.log(lambda);
+            final double logLambda = FastMath.log(lambda);
             final double logLambdaFactorial = MathUtils.factorialLog((int) lambda);
             final long y2 = lambdaFractional < Double.MIN_VALUE ? 0 : nextPoisson(lambdaFractional);
-            final double delta = Math.sqrt(lambda * Math.log(32 * lambda / Math.PI + 1));
+            final double delta = FastMath.sqrt(lambda * FastMath.log(32 * lambda / FastMath.PI + 1));
             final double halfDelta = delta / 2;
             final double twolpd = 2 * lambda + delta;
-            final double a1 = Math.sqrt(Math.PI * twolpd) * Math.exp(1 / 8 * lambda);
-            final double a2 = (twolpd / delta) * Math.exp(-delta * (1 + delta) / twolpd);
+            final double a1 = FastMath.sqrt(FastMath.PI * twolpd) * FastMath.exp(1 / 8 * lambda);
+            final double a2 = (twolpd / delta) * FastMath.exp(-delta * (1 + delta) / twolpd);
             final double aSum = a1 + a2 + 1;
             final double p1 = a1 / aSum;
             final double p2 = a2 / aSum;
@@ -387,11 +405,11 @@ public class RandomDataImpl implements RandomData, Serializable {
                 final double u = nextUniform(0.0, 1);
                 if (u <= p1) {
                     final double n = nextGaussian(0d, 1d);
-                    x = n * Math.sqrt(lambda + halfDelta) - 0.5d;
+                    x = n * FastMath.sqrt(lambda + halfDelta) - 0.5d;
                     if (x > delta || x < -lambda) {
                         continue;
                     }
-                    y = x < 0 ? Math.floor(x) : Math.ceil(x);
+                    y = x < 0 ? FastMath.floor(x) : FastMath.ceil(x);
                     final double e = nextExponential(1d);
                     v = -e - (n * n / 2) + c1;
                 } else {
@@ -400,7 +418,7 @@ public class RandomDataImpl implements RandomData, Serializable {
                         break;
                     } else {
                         x = delta + (twolpd / delta) * nextExponential(1d);
-                        y = Math.ceil(x);
+                        y = FastMath.ceil(x);
                         v = -nextExponential(1d) - delta * (x + 1) / twolpd;
                     }
                 }
@@ -438,11 +456,11 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param sigma
      *            the standard deviation of the distribution
      * @return the random Normal value
+     * @throws NotStrictlyPositiveException if {@code sigma <= 0}.
      */
     public double nextGaussian(double mu, double sigma) {
         if (sigma <= 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "standard deviation must be positive ({0})", sigma);
+            throw new NotStrictlyPositiveException(LocalizedFormats.STANDARD_DEVIATION, sigma);
         }
         return sigma * getRan().nextGaussian() + mu;
     }
@@ -459,18 +477,18 @@ public class RandomDataImpl implements RandomData, Serializable {
      *
      * @param mean the mean of the distribution
      * @return the random Exponential value
+     * @throws NotStrictlyPositiveException if {@code mean <= 0}.
      */
     public double nextExponential(double mean) {
         if (mean <= 0.0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "mean must be positive ({0})", mean);
+            throw new NotStrictlyPositiveException(LocalizedFormats.MEAN, mean);
         }
         final RandomGenerator generator = getRan();
         double unif = generator.nextDouble();
         while (unif == 0.0d) {
             unif = generator.nextDouble();
         }
-        return -mean * Math.log(unif);
+        return -mean * FastMath.log(unif);
     }
 
     /**
@@ -488,12 +506,12 @@ public class RandomDataImpl implements RandomData, Serializable {
      *            the upper bound.
      * @return a uniformly distributed random value from the interval (lower,
      *         upper)
+     * @throws NumberIsTooLargeException if {@code lower >= upper}.
      */
     public double nextUniform(double lower, double upper) {
         if (lower >= upper) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "upper bound ({0}) must be greater than lower bound ({1})",
-                  upper, lower);
+            throw new NumberIsTooLargeException(LocalizedFormats.LOWER_BOUND_NOT_BELOW_UPPER_BOUND,
+                                                lower, upper, false);
         }
         final RandomGenerator generator = getRan();
 
@@ -504,6 +522,170 @@ public class RandomDataImpl implements RandomData, Serializable {
         }
 
         return lower + u * (upper - lower);
+    }
+
+    /**
+     * Generates a random value from the {@link BetaDistributionImpl Beta Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(ContinuousDistribution) inversion}
+     * to generate random values.
+     *
+     * @param alpha first distribution shape parameter
+     * @param beta second distribution shape parameter
+     * @return random value sampled from the beta(alpha, beta) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public double nextBeta(double alpha, double beta) throws MathException {
+        return nextInversionDeviate(new BetaDistributionImpl(alpha, beta));
+    }
+
+    /**
+     * Generates a random value from the {@link BinomialDistributionImpl Binomial Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(ContinuousDistribution) inversion}
+     * to generate random values.
+     *
+     * @param numberOfTrials number of trials of the Binomial distribution
+     * @param probabilityOfSuccess probability of success of the Binomial distribution
+     * @return random value sampled from the Binomial(numberOfTrials, probabilityOfSuccess) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public int nextBinomial(int numberOfTrials, double probabilityOfSuccess) throws MathException {
+        return nextInversionDeviate(new BinomialDistributionImpl(numberOfTrials, probabilityOfSuccess));
+    }
+
+    /**
+     * Generates a random value from the {@link CauchyDistributionImpl Cauchy Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(ContinuousDistribution) inversion}
+     * to generate random values.
+     *
+     * @param median the median of the Cauchy distribution
+     * @param scale the scale parameter of the Cauchy distribution
+     * @return random value sampled from the Cauchy(median, scale) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public double nextCauchy(double median, double scale) throws MathException {
+        return nextInversionDeviate(new CauchyDistributionImpl(median, scale));
+    }
+
+    /**
+     * Generates a random value from the {@link ChiSquaredDistributionImpl ChiSquare Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(ContinuousDistribution) inversion}
+     * to generate random values.
+     *
+     * @param df the degrees of freedom of the ChiSquare distribution
+     * @return random value sampled from the ChiSquare(df) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public double nextChiSquare(double df) throws MathException {
+        return nextInversionDeviate(new ChiSquaredDistributionImpl(df));
+    }
+
+    /**
+     * Generates a random value from the {@link FDistributionImpl F Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(ContinuousDistribution) inversion}
+     * to generate random values.
+     *
+     * @param numeratorDf the numerator degrees of freedom of the F distribution
+     * @param denominatorDf the denominator degrees of freedom of the F distribution
+     * @return random value sampled from the F(numeratorDf, denominatorDf) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public double nextF(double numeratorDf, double denominatorDf) throws MathException {
+        return nextInversionDeviate(new FDistributionImpl(numeratorDf, denominatorDf));
+    }
+
+    /**
+     * Generates a random value from the {@link GammaDistributionImpl Gamma Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(ContinuousDistribution) inversion}
+     * to generate random values.
+     *
+     * @param shape the median of the Gamma distribution
+     * @param scale the scale parameter of the Gamma distribution
+     * @return random value sampled from the Gamma(shape, scale) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public double nextGamma(double shape, double scale) throws MathException {
+        return nextInversionDeviate(new GammaDistributionImpl(shape, scale));
+    }
+
+    /**
+     * Generates a random value from the {@link HypergeometricDistributionImpl Hypergeometric Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(IntegerDistribution) inversion}
+     * to generate random values.
+     *
+     * @param populationSize the population size of the Hypergeometric distribution
+     * @param numberOfSuccesses number of successes in the population of the Hypergeometric distribution
+     * @param sampleSize the sample size of the Hypergeometric distribution
+     * @return random value sampled from the Hypergeometric(numberOfSuccesses, sampleSize) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public int nextHypergeometric(int populationSize, int numberOfSuccesses, int sampleSize) throws MathException {
+        return nextInversionDeviate(new HypergeometricDistributionImpl(populationSize, numberOfSuccesses, sampleSize));
+    }
+
+    /**
+     * Generates a random value from the {@link PascalDistributionImpl Pascal Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(IntegerDistribution) inversion}
+     * to generate random values.
+     *
+     * @param r the number of successes of the Pascal distribution
+     * @param p the probability of success of the Pascal distribution
+     * @return random value sampled from the Pascal(r, p) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public int nextPascal(int r, double p) throws MathException {
+        return nextInversionDeviate(new PascalDistributionImpl(r, p));
+    }
+
+    /**
+     * Generates a random value from the {@link TDistributionImpl T Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(ContinuousDistribution) inversion}
+     * to generate random values.
+     *
+     * @param df the degrees of freedom of the T distribution
+     * @return random value from the T(df) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public double nextT(double df) throws MathException {
+        return nextInversionDeviate(new TDistributionImpl(df));
+    }
+
+    /**
+     * Generates a random value from the {@link WeibullDistributionImpl Weibull Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(ContinuousDistribution) inversion}
+     * to generate random values.
+     *
+     * @param shape the shape parameter of the Weibull distribution
+     * @param scale the scale parameter of the Weibull distribution
+     * @return random value sampled from the Weibull(shape, size) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public double nextWeibull(double shape, double scale) throws MathException {
+        return nextInversionDeviate(new WeibullDistributionImpl(shape, scale));
+    }
+
+    /**
+     * Generates a random value from the {@link ZipfDistributionImpl Zipf Distribution}.
+     * This implementation uses {@link #nextInversionDeviate(IntegerDistribution) inversion}
+     * to generate random values.
+     *
+     * @param numberOfElements the number of elements of the ZipfDistribution
+     * @param exponent the exponent of the ZipfDistribution
+     * @return random value sampled from the Zipf(numberOfElements, exponent) distribution
+     * @throws MathException if an error occurs generating the random value
+     * @since 2.2
+     */
+    public int nextZipf(int numberOfElements, double exponent) throws MathException {
+        return nextInversionDeviate(new ZipfDistributionImpl(numberOfElements, exponent));
     }
 
     /**
@@ -648,15 +830,17 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param k
      *            size of the permutation (must satisfy 0 < k <= n).
      * @return the random permutation as an int array
+     * @throws NumberIsTooLargeException if {@code k > n}.
+     * @throws NotStrictlyPositiveException if {@code k <= 0}.
      */
     public int[] nextPermutation(int n, int k) {
         if (k > n) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "permutation k ({0}) exceeds n ({1})", k, n);
+            throw new NumberIsTooLargeException(LocalizedFormats.PERMUTATION_EXCEEDS_N,
+                                                k, n, true);
         }
         if (k == 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "permutation k ({0}) must be positive", k);
+            throw new NotStrictlyPositiveException(LocalizedFormats.PERMUTATION_SIZE,
+                                                   k);
         }
 
         int[] index = getNatural(n);
@@ -684,16 +868,17 @@ public class RandomDataImpl implements RandomData, Serializable {
      * @param k
      *            sample size.
      * @return the random sample.
+     * @throws NumberIsTooLargeException if {@code k > c.size()}.
+     * @throws NotStrictlyPositiveException if {@code k <= 0}.
      */
     public Object[] nextSample(Collection<?> c, int k) {
         int len = c.size();
         if (k > len) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "sample size ({0}) exceeds collection size ({1})");
+            throw new NumberIsTooLargeException(LocalizedFormats.SAMPLE_SIZE_EXCEEDS_COLLECTION_SIZE,
+                                                k, len, true);
         }
         if (k <= 0) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "sample size must be positive ({0})", k);
+            throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES, k);
         }
 
         Object[] objects = c.toArray();
@@ -703,6 +888,39 @@ public class RandomDataImpl implements RandomData, Serializable {
             result[i] = objects[index[i]];
         }
         return result;
+    }
+
+    /**
+     * Generate a random deviate from the given distribution using the
+     * <a href="http://en.wikipedia.org/wiki/Inverse_transform_sampling"> inversion method.</a>
+     *
+     * @param distribution Continuous distribution to generate a random value from
+     * @return a random value sampled from the given distribution
+     * @throws MathException if an error occurs computing the inverse cumulative distribution function
+     * @since 2.2
+     */
+    public double nextInversionDeviate(ContinuousDistribution distribution) throws MathException {
+        return distribution.inverseCumulativeProbability(nextUniform(0, 1));
+
+    }
+
+    /**
+     * Generate a random deviate from the given distribution using the
+     * <a href="http://en.wikipedia.org/wiki/Inverse_transform_sampling"> inversion method.</a>
+     *
+     * @param distribution Integer distribution to generate a random value from
+     * @return a random value sampled from the given distribution
+     * @throws MathException if an error occurs computing the inverse cumulative distribution function
+     * @since 2.2
+     */
+    public int nextInversionDeviate(IntegerDistribution distribution) throws MathException {
+        final double target = nextUniform(0, 1);
+        final int glb = distribution.inverseCumulativeProbability(target);
+        if (distribution.cumulativeProbability(glb) == 1.0d) { // No mass above
+            return glb;
+        } else {
+            return glb + 1;
+        }
     }
 
     // ------------------------Private methods----------------------------------

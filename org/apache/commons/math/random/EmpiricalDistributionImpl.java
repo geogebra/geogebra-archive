@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements <code>EmpiricalDistribution</code> interface.  This implementation
@@ -56,7 +58,7 @@ import org.apache.commons.math.stat.descriptive.SummaryStatistics;
  *    entry per line.</li>
  * </ul></p>
  *
- * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
+ * @version $Revision: 1003886 $ $Date: 2010-10-02 23:04:44 +0200 (sam. 02 oct. 2010) $
  */
 public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistribution {
 
@@ -64,7 +66,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
     private static final long serialVersionUID = 5729073523949762654L;
 
     /** List of SummaryStatistics objects characterizing the bins */
-    private List<SummaryStatistics> binStats = null;
+    private final List<SummaryStatistics> binStats;
 
     /** Sample statistics */
     private SummaryStatistics sampleStats = null;
@@ -79,7 +81,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
     private double delta = 0d;
 
     /** number of bins */
-    private int binCount = 1000;
+    private final int binCount;
 
     /** is the distribution loaded? */
     private boolean loaded = false;
@@ -88,12 +90,13 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
     private double[] upperBounds = null;
 
     /** RandomData instance to use in repeated calls to getNext() */
-    private RandomData randomData = new RandomDataImpl();
+    private final RandomData randomData = new RandomDataImpl();
 
     /**
      * Creates a new EmpiricalDistribution with the default bin count.
      */
     public EmpiricalDistributionImpl() {
+        binCount = 1000;
         binStats = new ArrayList<SummaryStatistics>();
     }
 
@@ -138,7 +141,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
             DataAdapter da = new StreamDataAdapter(in);
             da.computeStats();
             if (sampleStats.getN() == 0) {
-                throw MathRuntimeException.createEOFException("URL {0} contains no data",
+                throw MathRuntimeException.createEOFException(LocalizedFormats.URL_CONTAINS_NO_DATA,
                                                               url);
             }
             in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -219,8 +222,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
                 return new ArrayDataAdapter(inputArray);
             } else {
                 throw MathRuntimeException.createIllegalArgumentException(
-                      "input data comes from unsupported datasource: {0}, " +
-                      "supported sources: {1}, {2}",
+                      LocalizedFormats.INPUT_DATA_FROM_UNSUPPORTED_DATASOURCE,
                       in.getClass().getName(),
                       BufferedReader.class.getName(), double[].class.getName());
             }
@@ -356,8 +358,8 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
      * @return the index of the bin containing the value
      */
     private int findBin(double value) {
-        return Math.min(
-                Math.max((int) Math.ceil((value- min) / delta) - 1, 0),
+        return FastMath.min(
+                FastMath.max((int) FastMath.ceil((value- min) / delta) - 1, 0),
                 binCount - 1);
         }
 
@@ -370,11 +372,11 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
     public double getNextValue() throws IllegalStateException {
 
         if (!loaded) {
-            throw MathRuntimeException.createIllegalStateException("distribution not loaded");
+            throw MathRuntimeException.createIllegalStateException(LocalizedFormats.DISTRIBUTION_NOT_LOADED);
         }
 
         // Start with a uniformly distributed random number in (0,1)
-        double x = Math.random();
+        double x = FastMath.random();
 
         // Use this to select the bin and generate a Gaussian within the bin
         for (int i = 0; i < binCount; i++) {
@@ -390,7 +392,7 @@ public class EmpiricalDistributionImpl implements Serializable, EmpiricalDistrib
                }
            }
         }
-        throw new MathRuntimeException("no bin selected");
+        throw new MathRuntimeException(LocalizedFormats.NO_BIN_SELECTED);
     }
 
     /**

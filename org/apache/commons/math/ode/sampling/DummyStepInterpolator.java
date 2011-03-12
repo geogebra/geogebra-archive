@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-import org.apache.commons.math.ode.DerivativeException;
-
 /** This class is a step interpolator that does nothing.
  *
  * <p>This class is used when the {@link StepHandler "step handler"}
@@ -33,7 +31,7 @@ import org.apache.commons.math.ode.DerivativeException;
  *
  * @see StepHandler
  *
- * @version $Revision: 919479 $ $Date: 2010-03-05 11:35:56 -0500 (Fri, 05 Mar 2010) $
+ * @version $Revision: 1037327 $ $Date: 2010-11-20 21:57:37 +0100 (sam. 20 nov. 2010) $
  * @since 1.2
  */
 
@@ -98,12 +96,9 @@ public class DummyStepInterpolator
    * (theta is zero at the previous time step and one at the current time step)
    * @param oneMinusThetaH time gap between the interpolated time and
    * the current time
-   * @throws DerivativeException this exception is propagated to the caller if the
-   * underlying user function triggers one
    */
   @Override
-  protected void computeInterpolatedStateAndDerivatives(final double theta, final double oneMinusThetaH)
-    throws DerivativeException {
+  protected void computeInterpolatedStateAndDerivatives(final double theta, final double oneMinusThetaH) {
       System.arraycopy(currentState,      0, interpolatedState,       0, currentState.length);
       System.arraycopy(currentDerivative, 0, interpolatedDerivatives, 0, currentDerivative.length);
   }

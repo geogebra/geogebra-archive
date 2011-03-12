@@ -28,13 +28,13 @@ package org.apache.commons.math.stat.ranking;
  * of the last occurrence. For example, (1,3,4,3) is ranked as (1,3,4,3)</li>
  * <li>AVERAGE - Tied values are assigned the average of the applicable ranks.
  * For example, (1,3,4,3) is ranked as (1,2.5,4,2.5)</li>
- * <li>AVERAGE - Tied values are assigned a random integer rank from among the
+ * <li>RANDOM - Tied values are assigned a random integer rank from among the
  * applicable values. The assigned rank will always be an integer, (inclusively)
- * between the values retured by the MINIMUM and MAXIMUM strategies.</li>
+ * between the values returned by the MINIMUM and MAXIMUM strategies.</li>
  * </ul>
  *
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 981332 $ $Date: 2010-08-02 00:24:31 +0200 (lun. 02 août 2010) $
  */
 public enum TiesStrategy {
 

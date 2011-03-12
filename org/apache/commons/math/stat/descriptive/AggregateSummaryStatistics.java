@@ -46,7 +46,7 @@ import java.util.Iterator;
  * to avoid unecessary computation and synchronization delays.</p>
  *
  * @since 2.0
- * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 811833 $ $Date: 2009-09-06 18:27:50 +0200 (dim. 06 sept. 2009) $
  *
  */
 public class AggregateSummaryStatistics implements StatisticalSummary,

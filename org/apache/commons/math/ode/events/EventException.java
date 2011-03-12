@@ -18,11 +18,12 @@
 package org.apache.commons.math.ode.events;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * This exception is made available to users to report
  * the error conditions that are triggered by {@link EventHandler}
- * @version $Revision: 746578 $ $Date: 2009-02-21 15:01:14 -0500 (Sat, 21 Feb 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 2.0
  */
 public class EventException extends MathException {
@@ -34,8 +35,20 @@ public class EventException extends MathException {
      * Build an exception by translating and formating a message
      * @param specifier format specifier (to be translated)
      * @param parts to insert in the format (no translation)
+     * @deprecated as of 2.2 replaced by {@link #EventException(Localizable, Object...)}
      */
+     @Deprecated
     public EventException(final String specifier, final Object ... parts) {
+        super(specifier, parts);
+    }
+
+    /** Simple constructor.
+     * Build an exception by translating and formating a message
+     * @param specifier format specifier (to be translated)
+     * @param parts to insert in the format (no translation)
+     * @since 2.2
+     */
+    public EventException(final Localizable specifier, final Object ... parts) {
         super(specifier, parts);
     }
 

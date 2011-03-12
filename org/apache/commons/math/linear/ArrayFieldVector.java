@@ -23,11 +23,12 @@ import java.util.Arrays;
 import org.apache.commons.math.Field;
 import org.apache.commons.math.FieldElement;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * This class implements the {@link FieldVector} interface with a {@link FieldElement} array.
  * @param <T> the type of the field elements
- * @version $Revision: 903046 $ $Date: 2010-01-25 21:07:26 -0500 (Mon, 25 Jan 2010) $
+ * @version $Revision: 1003997 $ $Date: 2010-10-03 18:45:55 +0200 (dim. 03 oct. 2010) $
  * @since 2.0
  */
 public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<T>, Serializable {
@@ -78,8 +79,15 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
 
     /**
      * Construct a vector from an array, copying the input array.
+     * <p>
+     * This constructor needs a non-empty {@code d} array to retrieve
+     * the field from its first element. This implies it cannot build
+     * 0 length vectors. To build vectors from any size, one should
+     * use the {@link #ArrayFieldVector(Field, FieldElement[])} constructor.
+     * </p>
      * @param d array of Ts.
      * @throws IllegalArgumentException if <code>d</code> is empty
+     * @see #ArrayFieldVector(Field, FieldElement[])
      */
     public ArrayFieldVector(T[] d)
         throws IllegalArgumentException {
@@ -88,8 +96,19 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             data = d.clone();
         } catch (ArrayIndexOutOfBoundsException e) {
             throw MathRuntimeException.createIllegalArgumentException(
-                      "vector must have at least one element");
+                      LocalizedFormats.VECTOR_MUST_HAVE_AT_LEAST_ONE_ELEMENT);
         }
+    }
+
+    /**
+     * Construct a vector from an array, copying the input array.
+     * @param field field to which the elements belong
+     * @param d array of Ts.
+     * @see #ArrayFieldVector(FieldElement[])
+     */
+    public ArrayFieldVector(Field<T> field, T[] d) {
+        this.field = field;
+        data = d.clone();
     }
 
     /**
@@ -99,22 +118,46 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
      * ArrayFieldVector and not used directly, the <code>copyArray</code> may be
      * set to <code>false</code. This will prevent the copying and improve
      * performance as no new array will be built and no data will be copied.</p>
+     * <p>
+     * This constructor needs a non-empty {@code d} array to retrieve
+     * the field from its first element. This implies it cannot build
+     * 0 length vectors. To build vectors from any size, one should
+     * use the {@link #ArrayFieldVector(Field, FieldElement[], boolean)} constructor.
+     * </p>
      * @param d data for new vector
      * @param copyArray if true, the input array will be copied, otherwise
      * it will be referenced
      * @throws IllegalArgumentException if <code>d</code> is empty
      * @throws NullPointerException if <code>d</code> is null
      * @see #ArrayFieldVector(FieldElement[])
+     * @see #ArrayFieldVector(Field, FieldElement[], boolean)
      */
     public ArrayFieldVector(T[] d, boolean copyArray)
         throws NullPointerException, IllegalArgumentException {
-        try {
-            field = d[0].getField();
-            data = copyArray ? d.clone() :  d;
-        } catch (ArrayIndexOutOfBoundsException e) {
+        if (d.length == 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                      "vector must have at least one element");
+                  LocalizedFormats.VECTOR_MUST_HAVE_AT_LEAST_ONE_ELEMENT);
         }
+        field = d[0].getField();
+        data = copyArray ? d.clone() :  d;
+    }
+
+    /**
+     * Create a new ArrayFieldVector using the input array as the underlying
+     * data array.
+     * <p>If an array is built specially in order to be embedded in a
+     * ArrayFieldVector and not used directly, the <code>copyArray</code> may be
+     * set to <code>false</code. This will prevent the copying and improve
+     * performance as no new array will be built and no data will be copied.</p>
+     * @param field field to which the elements belong
+     * @param d data for new vector
+     * @param copyArray if true, the input array will be copied, otherwise
+     * it will be referenced
+     * @see #ArrayFieldVector(FieldElement[], boolean)
+     */
+    public ArrayFieldVector(Field<T> field, T[] d, boolean copyArray) {
+        this.field = field;
+        data = copyArray ? d.clone() :  d;
     }
 
     /**
@@ -126,7 +169,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     public ArrayFieldVector(T[] d, int pos, int size) {
         if (d.length < pos + size) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "position {0} and size {1} don't fit to the size of the input array {2}",
+                    LocalizedFormats.POSITION_SIZE_MISMATCH_INPUT_ARRAY,
                     pos, size, d.length);
         }
         field = d[0].getField();
@@ -203,9 +246,16 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
 
     /**
      * Construct a vector by appending one vector to another vector.
+     * <p>
+     * This constructor needs at least one non-empty array to retrieve
+     * the field from its first element. This implies it cannot build
+     * 0 length vectors. To build vectors from any size, one should
+     * use the {@link #ArrayFieldVector(Field, FieldElement[], FieldElement[])} constructor.
+     * </p>
      * @param v1 first vector (will be put in front of the new vector)
      * @param v2 second vector (will be put at back of the new vector)
      * @exception IllegalArgumentException if both vectors are empty
+     * @see #ArrayFieldVector(Field, FieldElement[], FieldElement[])
      */
     public ArrayFieldVector(T[] v1, T[] v2) {
         try {
@@ -215,8 +265,26 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
             field = data[0].getField();
         } catch (ArrayIndexOutOfBoundsException e) {
             throw MathRuntimeException.createIllegalArgumentException(
-                      "vector must have at least one element");
+                      LocalizedFormats.VECTOR_MUST_HAVE_AT_LEAST_ONE_ELEMENT);
         }
+    }
+
+    /**
+     * Construct a vector by appending one vector to another vector.
+     * @param field field to which the elements belong
+     * @param v1 first vector (will be put in front of the new vector)
+     * @param v2 second vector (will be put at back of the new vector)
+     * @see #ArrayFieldVector(FieldElement[], FieldElement[])
+     */
+    public ArrayFieldVector(Field<T> field, T[] v1, T[] v2) {
+        if (v1.length + v2.length == 0) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  LocalizedFormats.VECTOR_MUST_HAVE_AT_LEAST_ONE_ELEMENT);
+        }
+        data = buildArray(v1.length + v2.length);
+        System.arraycopy(v1, 0, data, 0, v1.length);
+        System.arraycopy(v2, 0, data, v1.length, v2.length);
+        this.field = data[0].getField();
     }
 
     /** Build an array of elements.
@@ -715,7 +783,7 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
         throws IllegalArgumentException {
         if (data.length != n) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "vector length mismatch: got {0} but expected {1}",
+                    LocalizedFormats.VECTOR_LENGTH_MISMATCH,
                     data.length, n);
         }
     }
@@ -793,9 +861,8 @@ public class ArrayFieldVector<T extends FieldElement<T>> implements FieldVector<
     private void checkIndex(final int index)
         throws MatrixIndexException {
         if (index < 0 || index >= getDimension()) {
-            throw new MatrixIndexException(
-                    "index {0} out of allowed range [{1}, {2}]",
-                    index, 0, getDimension() - 1);
+            throw new MatrixIndexException(LocalizedFormats.INDEX_OUT_OF_RANGE,
+                                           index, 0, getDimension() - 1);
         }
     }
 

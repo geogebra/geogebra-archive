@@ -21,7 +21,7 @@ import org.apache.commons.math.FunctionEvaluationException;
 /**
  * An interface representing a univariate vectorial function.
  *
- * @version $Revision: 811786 $ $Date: 2009-09-06 05:36:08 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073498 $ $Date: 2011-02-22 21:57:26 +0100 (mar. 22 févr. 2011) $
  * @since 2.0
  */
 public interface UnivariateVectorialFunction {

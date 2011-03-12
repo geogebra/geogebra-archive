@@ -59,7 +59,7 @@ import java.util.List;
  * @param <T>
  *            type of the permuted objects
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (sam. 05 sept. 2009) $
  */
 public abstract class RandomKey<T> extends AbstractListChromosome<Double> implements PermutationChromosome<T> {
 

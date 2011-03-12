@@ -18,12 +18,15 @@
 package org.apache.commons.math.ode;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.ode.nonstiff.AdaptiveStepsizeIntegrator;
 import org.apache.commons.math.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math.ode.sampling.StepHandler;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class is the base class for multistep integrators for Ordinary
@@ -53,7 +56,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see org.apache.commons.math.ode.nonstiff.AdamsBashforthIntegrator
  * @see org.apache.commons.math.ode.nonstiff.AdamsMoultonIntegrator
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  */
 public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
@@ -113,7 +116,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
 
         if (nSteps <= 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "{0} method needs at least one previous point",
+                  LocalizedFormats.INTEGRATION_METHOD_NEEDS_AT_LEAST_ONE_PREVIOUS_POINT,
                   name);
         }
 
@@ -127,7 +130,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
         // set the default values of the algorithm control parameters
         setSafety(0.9);
         setMinReduction(0.2);
-        setMaxGrowth(Math.pow(2.0, -exp));
+        setMaxGrowth(FastMath.pow(2.0, -exp));
 
     }
 
@@ -166,7 +169,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
         // set the default values of the algorithm control parameters
         setSafety(0.9);
         setMinReduction(0.2);
-        setMaxGrowth(Math.pow(2.0, -exp));
+        setMaxGrowth(FastMath.pow(2.0, -exp));
 
     }
 
@@ -222,10 +225,10 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
         try {
             starter.integrate(new CountingDifferentialEquations(y0.length),
                               t0, y0, t, new double[y0.length]);
-        } catch (DerivativeException de) {
-            if (!(de instanceof InitializationCompletedMarkerException)) {
+        } catch (DerivativeException mue) {
+            if (!(mue instanceof InitializationCompletedMarkerException)) {
                 // this is not the expected nominal interruption of the start integrator
-                throw de;
+                throw mue;
             }
         }
 
@@ -290,7 +293,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
      * @return grow/shrink factor for next step
      */
     protected double computeStepGrowShrinkFactor(final double error) {
-        return Math.min(maxGrowth, Math.max(minReduction, safety * Math.pow(error, exp)));
+        return FastMath.min(maxGrowth, FastMath.max(minReduction, safety * FastMath.pow(error, exp)));
     }
 
     /** Transformer used to convert the first step to Nordsieck representation. */
@@ -377,7 +380,7 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
     }
 
     /** Wrapper for differential equations, ensuring start evaluations are counted. */
-    private class CountingDifferentialEquations implements FirstOrderDifferentialEquations {
+    private class CountingDifferentialEquations implements ExtendedFirstOrderDifferentialEquations {
 
         /** Dimension of the problem. */
         private final int dimension;
@@ -398,6 +401,11 @@ public abstract class MultistepIntegrator extends AdaptiveStepsizeIntegrator {
         /** {@inheritDoc} */
         public int getDimension() {
             return dimension;
+        }
+
+        /** {@inheritDoc} */
+        public int getMainSetDimension() {
+            return mainSetDimension;
         }
     }
 

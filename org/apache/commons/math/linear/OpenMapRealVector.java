@@ -19,12 +19,14 @@ package org.apache.commons.math.linear;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.util.OpenIntToDoubleHashMap;
 import org.apache.commons.math.util.OpenIntToDoubleHashMap.Iterator;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * This class implements the {@link RealVector} interface with a {@link OpenIntToDoubleHashMap} backing store.
- * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
+ * @version $Revision: 1073262 $ $Date: 2011-02-22 10:02:25 +0100 (mar. 22 févr. 2011) $
  * @since 2.0
 */
 public class OpenMapRealVector extends AbstractRealVector implements SparseRealVector, Serializable {
@@ -42,7 +44,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
     private final int virtualSize;
 
     /** Tolerance for having a value considered zero. */
-    private double epsilon;
+    private final double epsilon;
 
     /**
      * Build a 0-length vector.
@@ -203,7 +205,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
      * @since 2.1
      */
     protected boolean isDefaultValue(double value) {
-        return Math.abs(value) < epsilon;
+        return FastMath.abs(value) < epsilon;
     }
 
     /** {@inheritDoc} */
@@ -428,7 +430,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
                 res += value * value;
             }
         }
-        return Math.sqrt(res);
+        return FastMath.sqrt(res);
     }
 
     /** {@inheritDoc} */
@@ -450,7 +452,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
             double delta = entries.get(i) - v[i];
             res += delta * delta;
         }
-        return Math.sqrt(res);
+        return FastMath.sqrt(res);
     }
 
     /** {@inheritDoc} */
@@ -472,7 +474,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
         Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            double delta = Math.abs(iter.value() - v.getEntry(iter.key()));
+            double delta = FastMath.abs(iter.value() - v.getEntry(iter.key()));
             max += delta;
         }
         iter = v.getEntries().iterator();
@@ -480,8 +482,8 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
             iter.advance();
             int key = iter.key();
             if (!entries.containsKey(key)) {
-                double delta = Math.abs(iter.value());
-                max +=  Math.abs(delta);
+                double delta = FastMath.abs(iter.value());
+                max +=  FastMath.abs(delta);
             }
         }
         return max;
@@ -503,7 +505,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
         checkVectorDimensions(v.length);
         double max = 0;
         for (int i = 0; i < v.length; i++) {
-            double delta = Math.abs(getEntry(i) - v[i]);
+            double delta = FastMath.abs(getEntry(i) - v[i]);
             max += delta;
         }
         return max;
@@ -519,7 +521,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
         Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             iter.advance();
-            double delta = Math.abs(iter.value() - v.getEntry(iter.key()));
+            double delta = FastMath.abs(iter.value() - v.getEntry(iter.key()));
             if (delta > max) {
                 max = delta;
             }
@@ -553,7 +555,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
         checkVectorDimensions(v.length);
         double max = 0;
         for (int i = 0; i < v.length; i++) {
-            double delta = Math.abs(getEntry(i) - v[i]);
+            double delta = FastMath.abs(getEntry(i) - v[i]);
             if (delta > max) {
                 max = delta;
             }
@@ -732,7 +734,7 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
     public void unitize() {
         double norm = getNorm();
         if (isDefaultValue(norm)) {
-            throw  MathRuntimeException.createArithmeticException("cannot normalize a zero norm vector");
+            throw  MathRuntimeException.createArithmeticException(LocalizedFormats.CANNOT_NORMALIZE_A_ZERO_NORM_VECTOR);
         }
         Iterator iter = entries.iterator();
         while (iter.hasNext()) {
@@ -815,8 +817,19 @@ public class OpenMapRealVector extends AbstractRealVector implements SparseRealV
     /**
      *
      * @return the percentage of none zero elements as a decimal percent.
+     * @deprecated as of 2.2 replaced by the correctly spelled {@link #getSparsity()}
      */
+    @Deprecated
     public double getSparcity() {
+        return getSparsity();
+    }
+
+    /**
+    *
+    * @return the percentage of none zero elements as a decimal percent.
+    * @since 2.2
+    */
+   public double getSparsity() {
         return (double)entries.size()/(double)getDimension();
     }
 

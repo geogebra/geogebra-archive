@@ -23,11 +23,12 @@ import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Locale;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.NullArgumentException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Common part shared by both {@link FractionFormat} and {@link BigFractionFormat}.
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 2.0
  */
 public abstract class AbstractFormat extends NumberFormat implements Serializable {
@@ -113,13 +114,11 @@ public abstract class AbstractFormat extends NumberFormat implements Serializabl
     /**
      * Modify the denominator format.
      * @param format the new denominator format value.
-     * @throws IllegalArgumentException if <code>format</code> is
-     *         <code>null</code>.
+     * @throws NullArgumentException if {@code format} is {@code null}.
      */
     public void setDenominatorFormat(final NumberFormat format) {
         if (format == null) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                "denominator format can not be null");
+            throw new NullArgumentException(LocalizedFormats.DENOMINATOR_FORMAT);
         }
         this.denominatorFormat = format;
     }
@@ -127,13 +126,11 @@ public abstract class AbstractFormat extends NumberFormat implements Serializabl
     /**
      * Modify the numerator format.
      * @param format the new numerator format value.
-     * @throws IllegalArgumentException if <code>format</code> is
-     *         <code>null</code>.
+     * @throws NullArgumentException if {@code format} is {@code null}.
      */
     public void setNumeratorFormat(final NumberFormat format) {
         if (format == null) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                "numerator format can not be null");
+            throw new NullArgumentException(LocalizedFormats.NUMERATOR_FORMAT);
         }
         this.numeratorFormat = format;
     }

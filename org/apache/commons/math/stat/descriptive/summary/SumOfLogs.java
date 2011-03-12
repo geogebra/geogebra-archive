@@ -19,6 +19,7 @@ package org.apache.commons.math.stat.descriptive.summary;
 import java.io.Serializable;
 
 import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStatistic;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Returns the sum of the natural logs for this collection of values.
@@ -39,7 +40,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1006299 $ $Date: 2010-10-10 16:47:17 +0200 (dim. 10 oct. 2010) $
  */
 public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -77,7 +78,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      */
     @Override
     public void increment(final double d) {
-        value += Math.log(d);
+        value += FastMath.log(d);
         n++;
     }
 
@@ -132,7 +133,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
         if (test(values, begin, length)) {
             sumLog = 0.0;
             for (int i = begin; i < begin + length; i++) {
-                sumLog += Math.log(values[i]);
+                sumLog += FastMath.log(values[i]);
             }
         }
         return sumLog;
@@ -157,6 +158,7 @@ public class SumOfLogs extends AbstractStorelessUnivariateStatistic implements S
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(SumOfLogs source, SumOfLogs dest) {
+        dest.setData(source.getDataRef());
         dest.n = source.n;
         dest.value = source.value;
     }

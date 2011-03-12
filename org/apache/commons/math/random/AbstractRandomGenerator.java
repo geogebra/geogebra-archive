@@ -16,21 +16,22 @@
  */
 package org.apache.commons.math.random;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.NotStrictlyPositiveException;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Abstract class implementing the {@link  RandomGenerator} interface.
  * Default implementations for all methods other than {@link #nextDouble()} and
  * {@link #setSeed(long)} are provided.
  * <p>
- * All data generation methods are based on <code>nextDouble().</code>
+ * All data generation methods are based on {@code code nextDouble()}.
  * Concrete implementations <strong>must</strong> override
  * this method and <strong>should</strong> provide better / more
  * performant implementations of the other methods if the underlying PRNG
  * supplies them.</p>
  *
  * @since 1.1
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  */
 public abstract class AbstractRandomGenerator implements RandomGenerator {
 
@@ -38,7 +39,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      * Cached random normal value.  The default implementation for
      * {@link #nextGaussian} generates pairs of values and this field caches the
      * second value so that the full algorithm is not executed for every
-     * activation.  The value <code>Double.NaN</code> signals that there is
+     * activation.  The value {@code Double.NaN} signals that there is
      * no cached value.  Use {@link #clear} to clear the cached value.
      */
     private double cachedNormalDeviate = Double.NaN;
@@ -54,7 +55,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
     /**
      * Clears the cache used by the default implementation of
      * {@link #nextGaussian}. Implemementations that do not override the
-     * default implementation of <code>nextGaussian</code> should call this
+     * default implementation of {@code nextGaussian} should call this
      * method in the implementation of {@link #setSeed(long)}
      */
     public void clear() {
@@ -80,11 +81,11 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
 
     /**
      * Sets the seed of the underyling random number generator using a
-     * <code>long</code> seed.  Sequences of values generated starting with the
+     * {@code long} seed.  Sequences of values generated starting with the
      * same seeds should be identical.
      * <p>
      * Implementations that do not override the default implementation of
-     * <code>nextGaussian</code> should include a call to {@link #clear} in the
+     * {@code nextGaussian} should include a call to {@link #clear} in the
      * implementation of this method.</p>
      *
      * @param seed the seed value
@@ -119,9 +120,9 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
     }
 
      /**
-     * Returns the next pseudorandom, uniformly distributed <code>int</code>
+     * Returns the next pseudorandom, uniformly distributed {@code int}
      * value from this random number generator's sequence.
-     * All 2<font size="-1"><sup>32</sup></font> possible <tt>int</tt> values
+     * All 2<font size="-1"><sup>32</sup></font> possible {@code int} values
      * should be produced with  (approximately) equal probability.
      * <p>
      * The default implementation provided here returns
@@ -129,7 +130,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      * <code>(int) (nextDouble() * Integer.MAX_VALUE)</code>
      * </pre></p>
      *
-     * @return the next pseudorandom, uniformly distributed <code>int</code>
+     * @return the next pseudorandom, uniformly distributed {@code int}
      *  value from this random number generator's sequence
      */
     public int nextInt() {
@@ -137,7 +138,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
     }
 
     /**
-     * Returns a pseudorandom, uniformly distributed <tt>int</tt> value
+     * Returns a pseudorandom, uniformly distributed {@code int} value
      * between 0 (inclusive) and the specified value (exclusive), drawn from
      * this random number generator's sequence.
      * <p>
@@ -148,23 +149,22 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      *
      * @param n the bound on the random number to be returned.  Must be
      * positive.
-     * @return  a pseudorandom, uniformly distributed <tt>int</tt>
+     * @return  a pseudorandom, uniformly distributed {@code int}
      * value between 0 (inclusive) and n (exclusive).
-     * @throws IllegalArgumentException if n is not positive.
+     * @throws NotStrictlyPositiveException if {@code n <= 0}.
      */
     public int nextInt(int n) {
         if (n <= 0 ) {
-            throw MathRuntimeException.createIllegalArgumentException(
-                  "upper bound must be positive ({0})", n);
+            throw new NotStrictlyPositiveException(n);
         }
         int result = (int) (nextDouble() * n);
         return result < n ? result : n - 1;
     }
 
      /**
-     * Returns the next pseudorandom, uniformly distributed <code>long</code>
+     * Returns the next pseudorandom, uniformly distributed {@code long}
      * value from this random number generator's sequence.  All
-     * 2<font size="-1"><sup>64</sup></font> possible <tt>long</tt> values
+     * 2<font size="-1"><sup>64</sup></font> possible {@code long} values
      * should be produced with (approximately) equal probability.
      * <p>
      * The default implementation returns
@@ -172,7 +172,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      * <code>(long) (nextDouble() * Long.MAX_VALUE)</code>
      * </pre></p>
      *
-     * @return  the next pseudorandom, uniformly distributed <code>long</code>
+     * @return  the next pseudorandom, uniformly distributed {@code long}
      *value from this random number generator's sequence
      */
     public long nextLong() {
@@ -181,7 +181,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
 
     /**
      * Returns the next pseudorandom, uniformly distributed
-     * <code>boolean</code> value from this random number generator's
+     * {@code boolean} value from this random number generator's
      * sequence.
      * <p>
      * The default implementation returns
@@ -190,7 +190,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      * </pre></p>
      *
      * @return  the next pseudorandom, uniformly distributed
-     * <code>boolean</code> value from this random number generator's
+     * {@code boolean} value from this random number generator's
      * sequence
      */
     public boolean nextBoolean() {
@@ -198,8 +198,8 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
     }
 
      /**
-     * Returns the next pseudorandom, uniformly distributed <code>float</code>
-     * value between <code>0.0</code> and <code>1.0</code> from this random
+     * Returns the next pseudorandom, uniformly distributed {@code float}
+     * value between {@code 0.0} and {@code 1.0} from this random
      * number generator's sequence.
      * <p>
      * The default implementation returns
@@ -207,8 +207,8 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      * <code>(float) nextDouble() </code>
      * </pre></p>
      *
-     * @return  the next pseudorandom, uniformly distributed <code>float</code>
-     * value between <code>0.0</code> and <code>1.0</code> from this
+     * @return  the next pseudorandom, uniformly distributed {@code float}
+     * value between {@code 0.0} and {@code 1.0} from this
      * random number generator's sequence
      */
     public float nextFloat() {
@@ -217,22 +217,22 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
 
     /**
      * Returns the next pseudorandom, uniformly distributed
-     * <code>double</code> value between <code>0.0</code> and
-     * <code>1.0</code> from this random number generator's sequence.
+     * {@code double} value between {@code 0.0} and
+     * {@code 1.0} from this random number generator's sequence.
      * <p>
      * This method provides the underlying source of random data used by the
      * other methods.</p>
      *
      * @return  the next pseudorandom, uniformly distributed
-     *  <code>double</code> value between <code>0.0</code> and
-     *  <code>1.0</code> from this random number generator's sequence
+     *  {@code double} value between {@code 0.0} and
+     *  {@code 1.0} from this random number generator's sequence
      */
     public abstract double nextDouble();
 
     /**
      * Returns the next pseudorandom, Gaussian ("normally") distributed
-     * <code>double</code> value with mean <code>0.0</code> and standard
-     * deviation <code>1.0</code> from this random number generator's sequence.
+     * {@code double} value with mean {@code 0.0} and standard
+     * deviation {@code 1.0} from this random number generator's sequence.
      * <p>
      * The default implementation uses the <em>Polar Method</em>
      * due to G.E.P. Box, M.E. Muller and G. Marsaglia, as described in
@@ -245,8 +245,8 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
      * implementation of {@link #setSeed(long)}.</p>
      *
      * @return  the next pseudorandom, Gaussian ("normally") distributed
-     * <code>double</code> value with mean <code>0.0</code> and
-     * standard deviation <code>1.0</code> from this random number
+     * {@code double} value with mean {@code 0.0} and
+     * standard deviation {@code 1.0} from this random number
      *  generator's sequence
      */
     public double nextGaussian() {
@@ -264,7 +264,7 @@ public abstract class AbstractRandomGenerator implements RandomGenerator {
             s = v1 * v1 + v2 * v2;
         }
         if (s != 0) {
-            s = Math.sqrt(-2 * Math.log(s) / s);
+            s = FastMath.sqrt(-2 * FastMath.log(s) / s);
         }
         cachedNormalDeviate = v2 * s;
         return v1 * s;

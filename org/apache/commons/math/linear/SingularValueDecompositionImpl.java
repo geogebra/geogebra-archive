@@ -18,6 +18,8 @@
 package org.apache.commons.math.linear;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Calculates the compact Singular Value Decomposition of a matrix.
@@ -29,7 +31,7 @@ import org.apache.commons.math.MathRuntimeException;
  * n orthogonal matrix (hence V<sup>T</sup> is also orthogonal) where
  * p=min(m,n).
  * </p>
- * @version $Revision: 912413 $ $Date: 2010-02-21 16:46:12 -0500 (Sun, 21 Feb 2010) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
  */
 public class SingularValueDecompositionImpl implements
@@ -107,7 +109,7 @@ public class SingularValueDecompositionImpl implements
                 for (int k = 0; k < n; k++) {
                     matAAT[i][j] += localcopy[i][k] * localcopy[j][k];
                 }
-                matAAT[j][i]=matAAT[i][j];
+                 matAAT[j][i]=matAAT[i][j];
             }
         }
         int p;
@@ -118,7 +120,6 @@ public class SingularValueDecompositionImpl implements
                     new Array2DRowRealMatrix(matATA),1.0);
             singularValues = eigenDecomposition.getRealEigenvalues();
             cachedV = eigenDecomposition.getV();
-
             // compute eigen decomposition of A*A^T
             eigenDecomposition = new EigenDecompositionImpl(
                     new Array2DRowRealMatrix(matAAT),1.0);
@@ -137,10 +138,10 @@ public class SingularValueDecompositionImpl implements
             cachedV = eigenDecomposition.getV().getSubMatrix(0,n-1,0,p-1);
         }
         for (int i = 0; i < p; i++) {
-            singularValues[i] = Math.sqrt(Math.abs(singularValues[i]));
+            singularValues[i] = FastMath.sqrt(FastMath.abs(singularValues[i]));
         }
         // Up to this point, U and V are computed independently of each other.
-        // There still an sign indetermination of each column of, say, U.
+        // There still a sign indetermination of each column of, say, U.
         // The sign is set such that A.V_i=sigma_i.U_i (i<=p)
         // The right sign corresponds to a positive dot product of A.V_i and U_i
         for (int i = 0; i < p; i++) {
@@ -219,7 +220,7 @@ public class SingularValueDecompositionImpl implements
 
         if (dimension == 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "cutoff singular value is {0}, should be at most {1}",
+                    LocalizedFormats.TOO_LARGE_CUTOFF_SINGULAR_VALUE,
                     minSingularValue, singularValues[0]);
         }
 
@@ -251,7 +252,7 @@ public class SingularValueDecompositionImpl implements
     /** {@inheritDoc} */
     public int getRank() throws IllegalStateException {
 
-        final double threshold = Math.max(m, n) * Math.ulp(singularValues[0]);
+        final double threshold = FastMath.max(m, n) * FastMath.ulp(singularValues[0]);
 
         for (int i = singularValues.length - 1; i >= 0; --i) {
             if (singularValues[i] > threshold) {

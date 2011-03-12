@@ -20,6 +20,8 @@ package org.apache.commons.math.linear;
 import java.util.Arrays;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
@@ -35,7 +37,7 @@ import org.apache.commons.math.MathRuntimeException;
  * @see <a href="http://mathworld.wolfram.com/QRDecomposition.html">MathWorld</a>
  * @see <a href="http://en.wikipedia.org/wiki/QR_decomposition">Wikipedia</a>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 1.2
  */
 public class QRDecompositionImpl implements QRDecomposition {
@@ -72,7 +74,7 @@ public class QRDecompositionImpl implements QRDecomposition {
         final int m = matrix.getRowDimension();
         final int n = matrix.getColumnDimension();
         qrt = matrix.transpose().getData();
-        rDiag = new double[Math.min(m, n)];
+        rDiag = new double[FastMath.min(m, n)];
         cachedQ  = null;
         cachedQT = null;
         cachedR  = null;
@@ -83,7 +85,7 @@ public class QRDecompositionImpl implements QRDecomposition {
          * reflectors by repeating the following operations to each minor
          * A(minor,minor) of A:
          */
-        for (int minor = 0; minor < Math.min(m, n); minor++) {
+        for (int minor = 0; minor < FastMath.min(m, n); minor++) {
 
             final double[] qrtMinor = qrt[minor];
 
@@ -99,7 +101,7 @@ public class QRDecompositionImpl implements QRDecomposition {
                 final double c = qrtMinor[row];
                 xNormSqr += c * c;
             }
-            final double a = (qrtMinor[minor] > 0) ? -Math.sqrt(xNormSqr) : Math.sqrt(xNormSqr);
+            final double a = (qrtMinor[minor] > 0) ? -FastMath.sqrt(xNormSqr) : FastMath.sqrt(xNormSqr);
             rDiag[minor] = a;
 
             if (a != 0.0) {
@@ -154,7 +156,7 @@ public class QRDecompositionImpl implements QRDecomposition {
             cachedR = MatrixUtils.createRealMatrix(m, n);
 
             // copy the diagonal from rDiag and the upper triangle of qr
-            for (int row = Math.min(m, n) - 1; row >= 0; row--) {
+            for (int row = FastMath.min(m, n) - 1; row >= 0; row--) {
                 cachedR.setEntry(row, row, rDiag[row]);
                 for (int col = row + 1; col < n; col++) {
                     cachedR.setEntry(row, col, qrt[col][row]);
@@ -191,11 +193,11 @@ public class QRDecompositionImpl implements QRDecomposition {
              * applying the Householder transformations Q_(m-1),Q_(m-2),...,Q1 in
              * succession to the result
              */
-            for (int minor = m - 1; minor >= Math.min(m, n); minor--) {
+            for (int minor = m - 1; minor >= FastMath.min(m, n); minor--) {
                 cachedQT.setEntry(minor, minor, 1.0);
             }
 
-            for (int minor = Math.min(m, n)-1; minor >= 0; minor--){
+            for (int minor = FastMath.min(m, n)-1; minor >= 0; minor--){
                 final double[] qrtMinor = qrt[minor];
                 cachedQT.setEntry(minor, minor, 1.0);
                 if (qrtMinor[minor] != 0.0) {
@@ -229,7 +231,7 @@ public class QRDecompositionImpl implements QRDecomposition {
             final int m = qrt[0].length;
             cachedH = MatrixUtils.createRealMatrix(m, n);
             for (int i = 0; i < m; ++i) {
-                for (int j = 0; j < Math.min(i + 1, n); ++j) {
+                for (int j = 0; j < FastMath.min(i + 1, n); ++j) {
                     cachedH.setEntry(i, j, qrt[j][i] / -rDiag[j]);
                 }
             }
@@ -290,7 +292,7 @@ public class QRDecompositionImpl implements QRDecomposition {
             final int m = qrt[0].length;
             if (b.length != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "vector length mismatch: got {0} but expected {1}",
+                        LocalizedFormats.VECTOR_LENGTH_MISMATCH,
                         b.length, m);
             }
             if (!isNonSingular()) {
@@ -301,7 +303,7 @@ public class QRDecompositionImpl implements QRDecomposition {
             final double[] y = b.clone();
 
             // apply Householder transforms to solve Q.y = b
-            for (int minor = 0; minor < Math.min(m, n); minor++) {
+            for (int minor = 0; minor < FastMath.min(m, n); minor++) {
 
                 final double[] qrtMinor = qrt[minor];
                 double dotProduct = 0;
@@ -361,7 +363,7 @@ public class QRDecompositionImpl implements QRDecomposition {
             final int m = qrt[0].length;
             if (b.getRowDimension() != m) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                        "dimensions mismatch: got {0}x{1} but expected {2}x{3}",
+                        LocalizedFormats.DIMENSIONS_MISMATCH_2x2,
                         b.getRowDimension(), b.getColumnDimension(), m, "n");
             }
             if (!isNonSingular()) {
@@ -377,14 +379,14 @@ public class QRDecompositionImpl implements QRDecomposition {
 
             for (int kBlock = 0; kBlock < cBlocks; ++kBlock) {
                 final int kStart = kBlock * blockSize;
-                final int kEnd   = Math.min(kStart + blockSize, columns);
+                final int kEnd   = FastMath.min(kStart + blockSize, columns);
                 final int kWidth = kEnd - kStart;
 
                 // get the right hand side vector
                 b.copySubMatrix(0, m - 1, kStart, kEnd - 1, y);
 
                 // apply Householder transforms to solve Q.y = b
-                for (int minor = 0; minor < Math.min(m, n); minor++) {
+                for (int minor = 0; minor < FastMath.min(m, n); minor++) {
                     final double[] qrtMinor = qrt[minor];
                     final double factor     = 1.0 / (rDiag[minor] * qrtMinor[minor]);
 

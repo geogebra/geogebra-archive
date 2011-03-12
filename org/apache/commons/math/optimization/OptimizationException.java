@@ -18,27 +18,42 @@
 package org.apache.commons.math.optimization;
 
 import org.apache.commons.math.ConvergenceException;
+import org.apache.commons.math.exception.util.DummyLocalizable;
+import org.apache.commons.math.exception.util.Localizable;
 
 /**
  * This class represents exceptions thrown by optimizers.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1044015 $ $Date: 2010-12-09 17:06:26 +0100 (jeu. 09 déc. 2010) $
  * @since 1.2
- *
+ * @deprecated in 2.2 (to be removed in 3.0).
  */
 
 public class OptimizationException extends ConvergenceException {
 
     /** Serializable version identifier. */
-    private static final long serialVersionUID = -357696069587075016L;
+    private static final long serialVersionUID = -4605887730798282127L;
 
     /**
      * Simple constructor.
      * Build an exception by translating and formating a message
      * @param specifier format specifier (to be translated)
      * @param parts to insert in the format (no translation)
+     * @deprecated as of 2.2 replaced by {@link #OptimizationException(Localizable, Object...)}
      */
+    @Deprecated
     public OptimizationException(String specifier, Object ... parts) {
+        this(new DummyLocalizable(specifier), parts);
+    }
+
+    /**
+     * Simple constructor.
+     * Build an exception by translating and formating a message
+     * @param specifier format specifier (to be translated)
+     * @param parts to insert in the format (no translation)
+     * @since 2.2
+     */
+    public OptimizationException(Localizable specifier, Object ... parts) {
         super(specifier, parts);
     }
 

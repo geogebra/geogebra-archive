@@ -17,6 +17,7 @@
 package org.apache.commons.math.stat.correlation;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.RealMatrix;
 import org.apache.commons.math.linear.BlockRealMatrix;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
@@ -39,7 +40,7 @@ import org.apache.commons.math.stat.descriptive.moment.Variance;
  *
  * <p>Non-bias-corrected estimates use <code>n</code> in place of <code>n - 1</code>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  * @since 2.0
  */
 public class Covariance {
@@ -221,7 +222,13 @@ public class Covariance {
         Mean mean = new Mean();
         double result = 0d;
         int length = xArray.length;
-        if(length == yArray.length && length > 1) {
+        if (length != yArray.length) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE, length, yArray.length);
+        } else if (length < 2) {
+            throw MathRuntimeException.createIllegalArgumentException(
+                  LocalizedFormats.INSUFFICIENT_DIMENSION, length, 2);
+        } else {
             double xMean = mean.evaluate(xArray);
             double yMean = mean.evaluate(yArray);
             for (int i = 0; i < length; i++) {
@@ -229,12 +236,6 @@ public class Covariance {
                 double yDev = yArray[i] - yMean;
                 result += (xDev * yDev - result) / (i + 1);
             }
-        }
-        else {
-            throw MathRuntimeException.createIllegalArgumentException(
-               "arrays must have the same length and both must have at " +
-               "least two elements. xArray has size {0}, yArray has {1} elements",
-                    length, yArray.length);
         }
         return biasCorrected ? result * ((double) length / (double)(length - 1)) : result;
     }
@@ -266,7 +267,7 @@ public class Covariance {
         int nCols = matrix.getColumnDimension();
         if (nRows < 2 || nCols < 2) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "insufficient data: only {0} rows and {1} columns.",
+                    LocalizedFormats.INSUFFICIENT_ROWS_AND_COLUMNS,
                     nRows, nCols);
         }
     }

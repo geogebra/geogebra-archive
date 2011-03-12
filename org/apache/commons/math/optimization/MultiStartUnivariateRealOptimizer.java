@@ -21,7 +21,9 @@ import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.random.RandomGenerator;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Special implementation of the {@link UnivariateRealOptimizer} interface adding
@@ -31,7 +33,7 @@ import org.apache.commons.math.random.RandomGenerator;
  * turn with different starting points in order to avoid being trapped
  * into a local extremum when looking for a global one.
  * </p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @since 2.0
  */
 public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimizer {
@@ -88,12 +90,12 @@ public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimize
 
     /** {@inheritDoc} */
     public double getFunctionValue() {
-        return optimizer.getFunctionValue();
+        return optimaValues[0];
     }
 
     /** {@inheritDoc} */
     public double getResult() {
-        return optimizer.getResult();
+        return optima[0];
     }
 
     /** {@inheritDoc} */
@@ -190,7 +192,7 @@ public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimize
      */
     public double[] getOptima() throws IllegalStateException {
         if (optima == null) {
-            throw MathRuntimeException.createIllegalStateException("no optimum computed yet");
+            throw MathRuntimeException.createIllegalStateException(LocalizedFormats.NO_OPTIMUM_COMPUTED_YET);
         }
         return optima.clone();
     }
@@ -216,7 +218,7 @@ public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimize
      */
     public double[] getOptimaValues() throws IllegalStateException {
         if (optimaValues == null) {
-            throw MathRuntimeException.createIllegalStateException("no optimum computed yet");
+            throw MathRuntimeException.createIllegalStateException(LocalizedFormats.NO_OPTIMUM_COMPUTED_YET);
         }
         return optimaValues.clone();
     }
@@ -224,8 +226,7 @@ public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimize
     /** {@inheritDoc} */
     public double optimize(final UnivariateRealFunction f, final GoalType goalType,
                            final double min, final double max)
-        throws ConvergenceException,
-            FunctionEvaluationException {
+        throws ConvergenceException, FunctionEvaluationException {
 
         optima           = new double[starts];
         optimaValues     = new double[starts];
@@ -241,8 +242,8 @@ public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimize
                 final double bound1 = (i == 0) ? min : min + generator.nextDouble() * (max - min);
                 final double bound2 = (i == 0) ? max : min + generator.nextDouble() * (max - min);
                 optima[i]       = optimizer.optimize(f, goalType,
-                                                     Math.min(bound1, bound2),
-                                                     Math.max(bound1, bound2));
+                                                     FastMath.min(bound1, bound2),
+                                                     FastMath.max(bound1, bound2));
                 optimaValues[i] = optimizer.getFunctionValue();
             } catch (FunctionEvaluationException fee) {
                 optima[i]       = Double.NaN;
@@ -299,7 +300,7 @@ public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimize
 
         if (Double.isNaN(optima[0])) {
             throw new OptimizationException(
-                    "none of the {0} start points lead to convergence",
+                    LocalizedFormats.NO_CONVERGENCE_WITH_ANY_START_POINT,
                     starts);
         }
 
@@ -314,5 +315,4 @@ public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimize
             throws ConvergenceException, FunctionEvaluationException {
         return optimize(f, goalType, min, max);
     }
-
 }

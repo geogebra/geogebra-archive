@@ -17,6 +17,8 @@
 
 package org.apache.commons.math.linear;
 
+import org.apache.commons.math.linear.MatrixVisitorException;
+
 /**
  * Default implementation of the {@link RealMatrixPreservingVisitor} interface.
  * <p>
@@ -24,7 +26,7 @@ package org.apache.commons.math.linear;
  * methods. This class provides default implementations that do nothing.
  * </p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.0
  */
 public class DefaultRealMatrixPreservingVisitor implements RealMatrixPreservingVisitor {

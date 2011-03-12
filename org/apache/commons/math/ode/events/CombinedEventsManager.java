@@ -31,10 +31,11 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see EventHandler
  * @see EventState
- * @version $Revision: 786881 $ $Date: 2009-06-20 14:53:08 -0400 (Sat, 20 Jun 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
+ * @deprecated as of 2.2, this class is not used anymore
  */
-
+@Deprecated
 public class CombinedEventsManager {
 
     /** Events states. */
@@ -135,11 +136,8 @@ public class CombinedEventsManager {
             if (! initialized) {
 
                 // initialize the events states
-                final double t0 = interpolator.getPreviousTime();
-                interpolator.setInterpolatedTime(t0);
-                final double [] y = interpolator.getInterpolatedState();
                 for (EventState state : states) {
-                    state.reinitializeBegin(t0, y);
+                    state.reinitializeBegin(interpolator);
                 }
 
                 initialized = true;
@@ -170,6 +168,10 @@ public class CombinedEventsManager {
             return first != null;
 
         } catch (EventException se) {
+            final Throwable cause = se.getCause();
+            if ((cause != null) && (cause instanceof DerivativeException)) {
+                throw (DerivativeException) cause;
+            }
             throw new IntegratorException(se);
         } catch (ConvergenceException ce) {
             throw new IntegratorException(ce);

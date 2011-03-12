@@ -18,13 +18,14 @@
 package org.apache.commons.math.linear;
 
 import org.apache.commons.math.MathException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * This class represents exceptions thrown when a matrix expected to
  * be positive definite is not.
  *
  * @since 1.2
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 
 public class NotPositiveDefiniteMatrixException extends MathException {
@@ -36,7 +37,7 @@ public class NotPositiveDefiniteMatrixException extends MathException {
      * build an exception with a default message.
      */
     public NotPositiveDefiniteMatrixException() {
-        super("not positive definite matrix");
+        super(LocalizedFormats.NOT_POSITIVE_DEFINITE_MATRIX);
     }
 
 }

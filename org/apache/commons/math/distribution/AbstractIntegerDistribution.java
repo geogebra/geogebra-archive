@@ -18,9 +18,11 @@ package org.apache.commons.math.distribution;
 
 import java.io.Serializable;
 
-import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.random.RandomDataImpl;
+import org.apache.commons.math.util.FastMath;
 
 
 /**
@@ -28,21 +30,19 @@ import org.apache.commons.math.MathRuntimeException;
  * implementations are provided for some of the methods that do not vary
  * from distribution to distribution.
  *
- * @version $Revision: 920558 $ $Date: 2010-03-08 17:57:32 -0500 (Mon, 08 Mar 2010) $
+ * @version $Revision: 1067494 $ $Date: 2011-02-05 20:49:07 +0100 (sam. 05 févr. 2011) $
  */
 public abstract class AbstractIntegerDistribution extends AbstractDistribution
     implements IntegerDistribution, Serializable {
 
-    /** Message for endpoints in wrong order. */
-    private static final String WRONG_ORDER_ENDPOINTS_MESSAGE =
-        "lower endpoint ({0}) must be less than or equal to upper endpoint ({1})";
-
-    /** Message for out of range point. */
-    private static final String OUT_OF_RANGE_POINT =
-        "{0} out of [{1}, {2}] range";
-
-    /** Serializable version identifier */
+   /** Serializable version identifier */
     private static final long serialVersionUID = -1146319659338487221L;
+
+    /**
+     * RandomData instance used to generate samples from the distribution
+     * @since 2.2
+     */
+    protected final RandomDataImpl randomData = new RandomDataImpl();
 
     /**
      * Default constructor.
@@ -67,7 +67,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
      * computed due to convergence or other numerical errors.
      */
     public double cumulativeProbability(double x) throws MathException {
-        return cumulativeProbability((int) Math.floor(x));
+        return cumulativeProbability((int) FastMath.floor(x));
     }
 
     /**
@@ -88,14 +88,14 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
         throws MathException {
         if (x0 > x1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  WRONG_ORDER_ENDPOINTS_MESSAGE, x0, x1);
+                  LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT, x0, x1);
         }
-        if (Math.floor(x0) < x0) {
-            return cumulativeProbability(((int) Math.floor(x0)) + 1,
-               (int) Math.floor(x1)); // don't want to count mass below x0
+        if (FastMath.floor(x0) < x0) {
+            return cumulativeProbability(((int) FastMath.floor(x0)) + 1,
+               (int) FastMath.floor(x1)); // don't want to count mass below x0
         } else { // x0 is mathematical integer, so use as is
-            return cumulativeProbability((int) Math.floor(x0),
-                (int) Math.floor(x1));
+            return cumulativeProbability((int) FastMath.floor(x0),
+                (int) FastMath.floor(x1));
         }
     }
 
@@ -123,7 +123,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
      * @return the value of the probability density function at x
      */
     public double probability(double x) {
-        double fl = Math.floor(x);
+        double fl = FastMath.floor(x);
         if (fl == x) {
             return this.probability((int) x);
         } else {
@@ -145,7 +145,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
     public double cumulativeProbability(int x0, int x1) throws MathException {
         if (x0 > x1) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  WRONG_ORDER_ENDPOINTS_MESSAGE, x0, x1);
+                  LocalizedFormats.LOWER_ENDPOINT_ABOVE_UPPER_ENDPOINT, x0, x1);
         }
         return cumulativeProbability(x1) - cumulativeProbability(x0 - 1);
     }
@@ -164,7 +164,7 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
     public int inverseCumulativeProbability(final double p) throws MathException{
         if (p < 0.0 || p > 1.0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  OUT_OF_RANGE_POINT, p, 0.0, 1.0);
+                  LocalizedFormats.OUT_OF_RANGE_SIMPLE, p, 0.0, 1.0);
         }
 
         // by default, do simple bisection.
@@ -209,25 +209,64 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
     }
 
     /**
-     * Computes the cumulative probablity function and checks for NaN values returned.
-     * Throws MathException if the value is NaN. Wraps and rethrows any MathException encountered
-     * evaluating the cumulative probability function in a FunctionEvaluationException. Throws
-     * FunctionEvaluationException of the cumulative probability function returns NaN.
+     * Reseeds the random generator used to generate samples.
+     *
+     * @param seed the new seed
+     * @since 2.2
+     */
+    public void reseedRandomGenerator(long seed) {
+        randomData.reSeed(seed);
+    }
+
+    /**
+     * Generates a random value sampled from this distribution. The default
+     * implementation uses the
+     * <a href="http://en.wikipedia.org/wiki/Inverse_transform_sampling"> inversion method.</a>
+     *
+     * @return random value
+     * @since 2.2
+     * @throws MathException if an error occurs generating the random value
+     */
+    public int sample() throws MathException {
+        return randomData.nextInversionDeviate(this);
+    }
+
+    /**
+     * Generates a random sample from the distribution.  The default implementation
+     * generates the sample by calling {@link #sample()} in a loop.
+     *
+     * @param sampleSize number of random values to generate
+     * @since 2.2
+     * @return an array representing the random sample
+     * @throws MathException if an error occurs generating the sample
+     * @throws IllegalArgumentException if sampleSize is not positive
+     */
+    public int[] sample(int sampleSize) throws MathException {
+        if (sampleSize <= 0) {
+            MathRuntimeException.createIllegalArgumentException(LocalizedFormats.NOT_POSITIVE_SAMPLE_SIZE, sampleSize);
+        }
+        int[] out = new int[sampleSize];
+        for (int i = 0; i < sampleSize; i++) {
+            out[i] = sample();
+        }
+        return out;
+    }
+
+    /**
+     * Computes the cumulative probability function and checks for NaN values returned.
+     * Throws MathException if the value is NaN. Rethrows any MathException encountered
+     * evaluating the cumulative probability function. Throws
+     * MathException if the cumulative probability function returns NaN.
      *
      * @param argument input value
      * @return cumulative probability
-     * @throws FunctionEvaluationException if a MathException occurs computing the cumulative probability
+     * @throws MathException if the cumulative probability is NaN
      */
-    private double checkedCumulativeProbability(int argument) throws FunctionEvaluationException {
+    private double checkedCumulativeProbability(int argument) throws MathException {
         double result = Double.NaN;
-        try {
             result = cumulativeProbability(argument);
-        } catch (MathException ex) {
-            throw new FunctionEvaluationException(ex, argument, ex.getPattern(), ex.getArguments());
-        }
         if (Double.isNaN(result)) {
-            throw new FunctionEvaluationException(argument,
-                "Discrete cumulative probability function returned NaN for argument {0}", argument);
+            throw new MathException(LocalizedFormats.DISCRETE_CUMULATIVE_PROBABILITY_RETURNED_NAN, argument);
         }
         return result;
     }
@@ -253,4 +292,28 @@ public abstract class AbstractIntegerDistribution extends AbstractDistribution
      *         P(X &lt; <i>upper bound</i>) &gt; <code>p</code>
      */
     protected abstract int getDomainUpperBound(double p);
+
+    /**
+     * Use this method to get information about whether the lower bound
+     * of the support is inclusive or not. For discrete support,
+     * only true here is meaningful.
+     *
+     * @return true (always but at Integer.MIN_VALUE because of the nature of discrete support)
+     * @since 2.2
+     */
+    public boolean isSupportLowerBoundInclusive() {
+        return true;
+    }
+
+    /**
+     * Use this method to get information about whether the upper bound
+     * of the support is inclusive or not. For discrete support,
+     * only true here is meaningful.
+     *
+     * @return true (always but at Integer.MAX_VALUE because of the nature of discrete support)
+     * @since 2.2
+     */
+    public boolean isSupportUpperBoundInclusive() {
+        return true;
+    }
 }

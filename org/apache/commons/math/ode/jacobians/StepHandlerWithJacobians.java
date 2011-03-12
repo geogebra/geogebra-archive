@@ -55,10 +55,12 @@ import org.apache.commons.math.ode.DerivativeException;
  *
  * @see FirstOrderIntegratorWithJacobians
  * @see StepInterpolatorWithJacobians
- * @version $Revision: 920131 $ $Date: 2010-03-07 17:19:18 -0500 (Sun, 07 Mar 2010) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 2.1
+ * @deprecated as of 2.2 the complete package is deprecated, it will be replaced
+ * in 3.0 by a completely rewritten implementation
  */
-
+@Deprecated
 public interface StepHandlerWithJacobians {
 
   /** Determines whether this handler needs dense output.

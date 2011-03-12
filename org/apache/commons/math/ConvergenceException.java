@@ -16,22 +16,26 @@
  */
 package org.apache.commons.math;
 
+import org.apache.commons.math.exception.util.DummyLocalizable;
+import org.apache.commons.math.exception.util.Localizable;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+
 /**
  * Error thrown when a numerical computation can not be performed because the
  * numerical result failed to converge to a finite value.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public class ConvergenceException extends MathException {
 
     /** Serializable version identifier */
-    private static final long serialVersionUID = 4883703247677159141L;
+    private static final long serialVersionUID = -1111352570797662604L;
 
     /**
      * Default constructor.
      */
     public ConvergenceException() {
-        super("Convergence failed");
+        super(LocalizedFormats.CONVERGENCE_FAILED);
     }
 
     /**
@@ -40,8 +44,21 @@ public class ConvergenceException extends MathException {
      * @param pattern format specifier
      * @param arguments format arguments
      * @since 1.2
+     * @deprecated as of 2.2 replaced by {@link #ConvergenceException(Localizable, Object...)}
      */
+    @Deprecated
     public ConvergenceException(String pattern, Object ... arguments) {
+        this(new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs an exception with specified formatted detail message.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public ConvergenceException(Localizable pattern, Object ... arguments) {
         super(pattern, arguments);
     }
 
@@ -60,8 +77,22 @@ public class ConvergenceException extends MathException {
      * @param pattern format specifier
      * @param arguments format arguments
      * @since 1.2
+     * @deprecated as of 2.2 replaced by {@link #ConvergenceException(Throwable, Localizable, Object...)}
      */
+    @Deprecated
     public ConvergenceException(Throwable cause, String pattern, Object ... arguments) {
+        this(cause, new DummyLocalizable(pattern), arguments);
+    }
+
+    /**
+     * Constructs an exception with specified formatted detail message and root cause.
+     * Message formatting is delegated to {@link java.text.MessageFormat}.
+     * @param cause  the exception or error that caused this exception to be thrown
+     * @param pattern format specifier
+     * @param arguments format arguments
+     * @since 2.2
+     */
+    public ConvergenceException(Throwable cause, Localizable pattern, Object ... arguments) {
         super(cause, pattern, arguments);
     }
 

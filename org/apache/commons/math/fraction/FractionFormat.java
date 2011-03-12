@@ -25,6 +25,7 @@ import java.util.Locale;
 
 import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 
 /**
  * Formats a Fraction number in proper format or improper format.  The number
@@ -32,7 +33,7 @@ import org.apache.commons.math.MathRuntimeException;
  * configured.
  *
  * @since 1.1
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public class FractionFormat extends AbstractFormat {
 
@@ -180,12 +181,12 @@ public class FractionFormat extends AbstractFormat {
                              toAppendTo, pos);
             } catch (ConvergenceException ex) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                    "cannot convert given object to a fraction number: {0}",
+                    LocalizedFormats.CANNOT_CONVERT_OBJECT_TO_FRACTION,
                     ex.getLocalizedMessage());
             }
         } else {
             throw MathRuntimeException.createIllegalArgumentException(
-                "cannot format given object as a fraction number");
+                LocalizedFormats.CANNOT_FORMAT_OBJECT_TO_FRACTION);
         }
 
         return ret;
@@ -205,7 +206,7 @@ public class FractionFormat extends AbstractFormat {
         if (parsePosition.getIndex() == 0) {
             throw MathRuntimeException.createParseException(
                     parsePosition.getErrorIndex(),
-                    "unparseable fraction number: \"{0}\"", source);
+                    LocalizedFormats.UNPARSEABLE_FRACTION_NUMBER, source);
         }
         return result;
     }

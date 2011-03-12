@@ -36,7 +36,7 @@ import org.apache.commons.math.linear.ArrayRealVector;
  * The c<sub>i</sub> and d are the coefficients of the equation,
  * the x<sub>i</sub> are the coordinates of the current point.
  * </p>
- * @version $Revision: 922713 $ $Date: 2010-03-13 20:26:13 -0500 (Sat, 13 Mar 2010) $
+ * @version $Revision: 922713 $ $Date: 2010-03-14 02:26:13 +0100 (dim. 14 mars 2010) $
  * @since 2.0
  */
 public class LinearObjectiveFunction implements Serializable {

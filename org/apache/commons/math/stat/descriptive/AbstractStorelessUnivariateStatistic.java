@@ -16,7 +16,8 @@
  */
 package org.apache.commons.math.stat.descriptive;
 
-import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NullArgumentException;
 import org.apache.commons.math.util.MathUtils;
 
 /**
@@ -28,7 +29,7 @@ import org.apache.commons.math.util.MathUtils;
  * <p>
  * <strong>Note that these implementations are not synchronized.</strong></p>
  *
- * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public abstract class AbstractStorelessUnivariateStatistic
     extends AbstractUnivariateStatistic
@@ -55,7 +56,7 @@ public abstract class AbstractStorelessUnivariateStatistic
     @Override
     public double evaluate(final double[] values) {
         if (values == null) {
-            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
+            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
         }
         return evaluate(values, 0, values.length);
     }
@@ -123,7 +124,7 @@ public abstract class AbstractStorelessUnivariateStatistic
      */
     public void incrementAll(double[] values) {
         if (values == null) {
-            throw MathRuntimeException.createIllegalArgumentException("input values array is null");
+            throw new NullArgumentException(LocalizedFormats.INPUT_ARRAY);
         }
         incrementAll(values, 0, values.length);
     }
@@ -165,8 +166,8 @@ public abstract class AbstractStorelessUnivariateStatistic
             return false;
         }
         AbstractStorelessUnivariateStatistic stat = (AbstractStorelessUnivariateStatistic) object;
-        return MathUtils.equals(stat.getResult(), this.getResult()) &&
-               MathUtils.equals(stat.getN(), this.getN());
+        return MathUtils.equalsIncludingNaN(stat.getResult(), this.getResult()) &&
+               MathUtils.equalsIncludingNaN(stat.getN(), this.getN());
     }
 
     /**

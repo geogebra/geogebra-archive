@@ -20,11 +20,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.exception.NotPositiveException;
+import org.apache.commons.math.exception.NumberIsTooLargeException;
+
 /**
  * Population of chromosomes represented by a {@link List}.
  *
  * @since 2.0
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public abstract class ListPopulation implements Population {
 
@@ -43,10 +47,11 @@ public abstract class ListPopulation implements Population {
      */
     public ListPopulation (List<Chromosome> chromosomes, int populationLimit) {
         if (chromosomes.size() > populationLimit) {
-            throw new IllegalArgumentException("List of chromosomes bigger than maxPopulationSize.");
+            throw new NumberIsTooLargeException(LocalizedFormats.LIST_OF_CHROMOSOMES_BIGGER_THAN_POPULATION_SIZE,
+                                                chromosomes.size(), populationLimit, false);
         }
         if (populationLimit < 0) {
-            throw new IllegalArgumentException("Population limit has to be >= 0");
+            throw new NotPositiveException(LocalizedFormats.POPULATION_LIMIT_NOT_POSITIVE, populationLimit);
         }
 
         this.chromosomes = chromosomes;
@@ -61,7 +66,7 @@ public abstract class ListPopulation implements Population {
      */
     public ListPopulation (int populationLimit) {
         if (populationLimit < 0) {
-            throw new IllegalArgumentException("Population limit has to be >= 0");
+            throw new NotPositiveException(LocalizedFormats.POPULATION_LIMIT_NOT_POSITIVE, populationLimit);
         }
         this.populationLimit = populationLimit;
         this.chromosomes = new ArrayList<Chromosome>(populationLimit);

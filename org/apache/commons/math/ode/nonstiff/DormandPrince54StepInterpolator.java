@@ -17,8 +17,8 @@
 
 package org.apache.commons.math.ode.nonstiff;
 
-import org.apache.commons.math.ode.AbstractIntegrator;
 import org.apache.commons.math.ode.DerivativeException;
+import org.apache.commons.math.ode.AbstractIntegrator;
 import org.apache.commons.math.ode.sampling.StepInterpolator;
 
 /**
@@ -27,7 +27,7 @@ import org.apache.commons.math.ode.sampling.StepInterpolator;
  *
  * @see DormandPrince54Integrator
  *
- * @version $Revision: 811827 $ $Date: 2009-09-06 11:32:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  */
 

@@ -22,6 +22,7 @@ import org.apache.commons.math.MathException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.distribution.FDistribution;
 import org.apache.commons.math.distribution.FDistributionImpl;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.summary.Sum;
 import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
 
@@ -43,7 +44,7 @@ import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
  * </pre>
  *
  * @since 1.2
- * @version $Revision: 825917 $ $Date: 2009-10-16 10:47:27 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 983921 $ $Date: 2010-08-10 12:46:06 +0200 (mar. 10 août 2010) $
  */
 public class OneWayAnovaImpl implements OneWayAnova  {
 
@@ -102,7 +103,7 @@ public class OneWayAnovaImpl implements OneWayAnova  {
         throws IllegalArgumentException, MathException {
         if ((alpha <= 0) || (alpha > 0.5)) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "out of bounds significance level {0}, must be between {1} and {2}",
+                  LocalizedFormats.OUT_OF_BOUND_SIGNIFICANCE_LEVEL,
                   alpha, 0, 0.5);
         }
         return anovaPValue(categoryData) < alpha;
@@ -125,7 +126,7 @@ public class OneWayAnovaImpl implements OneWayAnova  {
         // check if we have enough categories
         if (categoryData.size() < 2) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "two or more categories required, got {0}",
+                  LocalizedFormats.TWO_OR_MORE_CATEGORIES_REQUIRED,
                   categoryData.size());
         }
 
@@ -133,7 +134,7 @@ public class OneWayAnovaImpl implements OneWayAnova  {
         for (double[] array : categoryData) {
             if (array.length <= 1) {
                 throw MathRuntimeException.createIllegalArgumentException(
-                      "two or more values required in each category, one has {0}",
+                      LocalizedFormats.TWO_OR_MORE_VALUES_IN_CATEGORY_REQUIRED,
                       array.length);
             }
         }

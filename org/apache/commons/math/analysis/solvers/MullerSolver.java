@@ -20,6 +20,7 @@ import org.apache.commons.math.ConvergenceException;
 import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.util.FastMath;
 import org.apache.commons.math.util.MathUtils;
 
 /**
@@ -32,7 +33,7 @@ import org.apache.commons.math.util.MathUtils;
  * restrict ourselves to real functions. Methods solve() and solve2() find
  * real zeros, using different ways to bypass complex arithmetics.</p>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @since 1.2
  */
 public class MullerSolver extends UnivariateRealSolverImpl {
@@ -53,7 +54,9 @@ public class MullerSolver extends UnivariateRealSolverImpl {
 
     /**
      * Construct a solver.
+     * @deprecated in 2.2 (to be removed in 3.0).
      */
+    @Deprecated
     public MullerSolver() {
         super(100, 1E-6);
     }
@@ -81,13 +84,38 @@ public class MullerSolver extends UnivariateRealSolverImpl {
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
      * @param initial the start value to use
+     * @param maxEval Maximum number of evaluations.
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
      * @throws IllegalArgumentException if any parameters are invalid
      */
+    @Override
+    public double solve(int maxEval, final UnivariateRealFunction f,
+                        final double min, final double max, final double initial)
+        throws MaxIterationsExceededException, FunctionEvaluationException {
+        setMaximalIterationCount(maxEval);
+        return solve(f, min, max, initial);
+    }
+
+    /**
+     * Find a real root in the given interval with initial value.
+     * <p>
+     * Requires bracketing condition.</p>
+     *
+     * @param f the function to solve
+     * @param min the lower bound for the interval
+     * @param max the upper bound for the interval
+     * @param initial the start value to use
+     * @return the point at which the function value is zero
+     * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
+     * or the solver detects convergence problems otherwise
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
+     * @throws IllegalArgumentException if any parameters are invalid
+     * @deprecated in 2.2 (to be removed in 3.0).
+     */
+    @Deprecated
     public double solve(final UnivariateRealFunction f,
                         final double min, final double max, final double initial)
         throws MaxIterationsExceededException, FunctionEvaluationException {
@@ -124,13 +152,47 @@ public class MullerSolver extends UnivariateRealSolverImpl {
      * @param f the function to solve
      * @param min the lower bound for the interval
      * @param max the upper bound for the interval
+     * @param maxEval Maximum number of evaluations.
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
      * @throws IllegalArgumentException if any parameters are invalid
      */
+    @Override
+    public double solve(int maxEval, final UnivariateRealFunction f,
+                        final double min, final double max)
+        throws MaxIterationsExceededException, FunctionEvaluationException {
+        setMaximalIterationCount(maxEval);
+        return solve(f, min, max);
+    }
+
+    /**
+     * Find a real root in the given interval.
+     * <p>
+     * Original Muller's method would have function evaluation at complex point.
+     * Since our f(x) is real, we have to find ways to avoid that. Bracketing
+     * condition is one way to go: by requiring bracketing in every iteration,
+     * the newly computed approximation is guaranteed to be real.</p>
+     * <p>
+     * Normally Muller's method converges quadratically in the vicinity of a
+     * zero, however it may be very slow in regions far away from zeros. For
+     * example, f(x) = exp(x) - 1, min = -50, max = 100. In such case we use
+     * bisection as a safety backup if it performs very poorly.</p>
+     * <p>
+     * The formulas here use divided differences directly.</p>
+     *
+     * @param f the function to solve
+     * @param min the lower bound for the interval
+     * @param max the upper bound for the interval
+     * @return the point at which the function value is zero
+     * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
+     * or the solver detects convergence problems otherwise
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
+     * @throws IllegalArgumentException if any parameters are invalid
+     * @deprecated in 2.2 (to be removed in 3.0).
+     */
+    @Deprecated
     public double solve(final UnivariateRealFunction f,
                         final double min, final double max)
         throws MaxIterationsExceededException, FunctionEvaluationException {
@@ -167,20 +229,20 @@ public class MullerSolver extends UnivariateRealSolverImpl {
             final double d012 = (d12 - d01) / (x2 - x0);
             final double c1 = d01 + (x1 - x0) * d012;
             final double delta = c1 * c1 - 4 * y1 * d012;
-            final double xplus = x1 + (-2.0 * y1) / (c1 + Math.sqrt(delta));
-            final double xminus = x1 + (-2.0 * y1) / (c1 - Math.sqrt(delta));
+            final double xplus = x1 + (-2.0 * y1) / (c1 + FastMath.sqrt(delta));
+            final double xminus = x1 + (-2.0 * y1) / (c1 - FastMath.sqrt(delta));
             // xplus and xminus are two roots of parabola and at least
             // one of them should lie in (x0, x2)
             final double x = isSequence(x0, xplus, x2) ? xplus : xminus;
             final double y = f.value(x);
 
             // check for convergence
-            final double tolerance = Math.max(relativeAccuracy * Math.abs(x), absoluteAccuracy);
-            if (Math.abs(x - oldx) <= tolerance) {
+            final double tolerance = FastMath.max(relativeAccuracy * FastMath.abs(x), absoluteAccuracy);
+            if (FastMath.abs(x - oldx) <= tolerance) {
                 setResult(x, i);
                 return result;
             }
-            if (Math.abs(y) <= functionValueAccuracy) {
+            if (FastMath.abs(y) <= functionValueAccuracy) {
                 setResult(x, i);
                 return result;
             }
@@ -237,8 +299,7 @@ public class MullerSolver extends UnivariateRealSolverImpl {
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
      * @throws IllegalArgumentException if any parameters are invalid
      * @deprecated replaced by {@link #solve2(UnivariateRealFunction, double, double)}
      * since 2.0
@@ -271,10 +332,11 @@ public class MullerSolver extends UnivariateRealSolverImpl {
      * @return the point at which the function value is zero
      * @throws MaxIterationsExceededException if the maximum iteration count is exceeded
      * or the solver detects convergence problems otherwise
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
      * @throws IllegalArgumentException if any parameters are invalid
+     * @deprecated in 2.2 (to be removed in 3.0).
      */
+    @Deprecated
     public double solve2(final UnivariateRealFunction f,
                          final double min, final double max)
         throws MaxIterationsExceededException, FunctionEvaluationException {
@@ -307,12 +369,12 @@ public class MullerSolver extends UnivariateRealSolverImpl {
             final double denominator;
             if (delta >= 0.0) {
                 // choose a denominator larger in magnitude
-                double dplus = b + Math.sqrt(delta);
-                double dminus = b - Math.sqrt(delta);
-                denominator = Math.abs(dplus) > Math.abs(dminus) ? dplus : dminus;
+                double dplus = b + FastMath.sqrt(delta);
+                double dminus = b - FastMath.sqrt(delta);
+                denominator = FastMath.abs(dplus) > FastMath.abs(dminus) ? dplus : dminus;
             } else {
-                // take the modulus of (B +/- Math.sqrt(delta))
-                denominator = Math.sqrt(b * b - delta);
+                // take the modulus of (B +/- FastMath.sqrt(delta))
+                denominator = FastMath.sqrt(b * b - delta);
             }
             if (denominator != 0) {
                 x = x2 - 2.0 * c * (x2 - x1) / denominator;
@@ -323,18 +385,18 @@ public class MullerSolver extends UnivariateRealSolverImpl {
                 }
             } else {
                 // extremely rare case, get a random number to skip it
-                x = min + Math.random() * (max - min);
+                x = min + FastMath.random() * (max - min);
                 oldx = Double.POSITIVE_INFINITY;
             }
             final double y = f.value(x);
 
             // check for convergence
-            final double tolerance = Math.max(relativeAccuracy * Math.abs(x), absoluteAccuracy);
-            if (Math.abs(x - oldx) <= tolerance) {
+            final double tolerance = FastMath.max(relativeAccuracy * FastMath.abs(x), absoluteAccuracy);
+            if (FastMath.abs(x - oldx) <= tolerance) {
                 setResult(x, i);
                 return result;
             }
-            if (Math.abs(y) <= functionValueAccuracy) {
+            if (FastMath.abs(y) <= functionValueAccuracy) {
                 setResult(x, i);
                 return result;
             }

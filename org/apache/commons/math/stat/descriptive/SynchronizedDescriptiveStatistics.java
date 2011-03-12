@@ -27,7 +27,7 @@ package org.apache.commons.math.stat.descriptive;
  * the instance nor compute another statistic.
  *
  * @since 1.2
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 811685 $ $Date: 2009-09-05 19:36:48 +0200 (sam. 05 sept. 2009) $
  */
 public class SynchronizedDescriptiveStatistics extends DescriptiveStatistics {
 

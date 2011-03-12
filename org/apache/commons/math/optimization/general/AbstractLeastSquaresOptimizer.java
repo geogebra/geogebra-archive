@@ -22,6 +22,7 @@ import org.apache.commons.math.MaxEvaluationsExceededException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
 import org.apache.commons.math.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.MatrixUtils;
@@ -31,12 +32,13 @@ import org.apache.commons.math.optimization.SimpleVectorialValueChecker;
 import org.apache.commons.math.optimization.VectorialConvergenceChecker;
 import org.apache.commons.math.optimization.DifferentiableMultivariateVectorialOptimizer;
 import org.apache.commons.math.optimization.VectorialPointValuePair;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Base class for implementing least squares optimizers.
  * <p>This base class handles the boilerplate methods associated to thresholds
  * settings, jacobian and error estimation.</p>
- * @version $Revision: 925812 $ $Date: 2010-03-21 11:49:31 -0400 (Sun, 21 Mar 2010) $
+ * @version $Revision: 1073158 $ $Date: 2011-02-21 22:46:52 +0100 (lun. 21 févr. 2011) $
  * @since 1.2
  *
  */
@@ -83,6 +85,12 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
 
     /** Current residuals. */
     protected double[] residuals;
+
+    /** Weighted Jacobian */
+    protected double[][] wjacobian;
+
+    /** Weighted residuals */
+    protected double[] wresiduals;
 
     /** Cost value (square root of the sum of the residuals). */
     protected double cost;
@@ -183,14 +191,15 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         ++jacobianEvaluations;
         jacobian = jF.value(point);
         if (jacobian.length != rows) {
-            throw new FunctionEvaluationException(point, "dimension mismatch {0} != {1}",
+            throw new FunctionEvaluationException(point, LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
                                                   jacobian.length, rows);
         }
         for (int i = 0; i < rows; i++) {
             final double[] ji = jacobian[i];
-            final double factor = -Math.sqrt(residualsWeights[i]);
+            double wi = FastMath.sqrt(residualsWeights[i]);
             for (int j = 0; j < cols; ++j) {
-                ji[j] *= factor;
+                ji[j] *=  -1.0;
+                wjacobian[i][j] = ji[j]*wi;
             }
         }
     }
@@ -210,7 +219,7 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         }
         objective = function.value(point);
         if (objective.length != rows) {
-            throw new FunctionEvaluationException(point, "dimension mismatch {0} != {1}",
+            throw new FunctionEvaluationException(point, LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
                                                   objective.length, rows);
         }
         cost = 0;
@@ -218,10 +227,11 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         for (int i = 0; i < rows; i++) {
             final double residual = targetValues[i] - objective[i];
             residuals[i] = residual;
+            wresiduals[i]= residual*FastMath.sqrt(residualsWeights[i]);
             cost += residualsWeights[i] * residual * residual;
             index += cols;
         }
-        cost = Math.sqrt(cost);
+        cost = FastMath.sqrt(cost);
 
     }
 
@@ -236,25 +246,17 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
      * @return RMS value
      */
     public double getRMS() {
-        double criterion = 0;
-        for (int i = 0; i < rows; ++i) {
-            final double residual = residuals[i];
-            criterion += residualsWeights[i] * residual * residual;
-        }
-        return Math.sqrt(criterion / rows);
+        return FastMath.sqrt(getChiSquare() / rows);
     }
 
     /**
-     * Get the Chi-Square value.
+     * Get a Chi-Square-like value assuming the N residuals follow N
+     * distinct normal distributions centered on 0 and whose variances are
+     * the reciprocal of the weights.
      * @return chi-square value
      */
     public double getChiSquare() {
-        double chiSquare = 0;
-        for (int i = 0; i < rows; ++i) {
-            final double residual = residuals[i];
-            chiSquare += residual * residual / residualsWeights[i];
-        }
-        return chiSquare;
+        return cost*cost;
     }
 
     /**
@@ -277,7 +279,7 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
             for (int j = i; j < cols; ++j) {
                 double sum = 0;
                 for (int k = 0; k < rows; ++k) {
-                    sum += jacobian[k][i] * jacobian[k][j];
+                    sum += wjacobian[k][i] * wjacobian[k][j];
                 }
                 jTj[i][j] = sum;
                 jTj[j][i] = sum;
@@ -285,12 +287,12 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         }
 
         try {
-            // compute the covariances matrix
+            // compute the covariance matrix
             RealMatrix inverse =
                 new LUDecompositionImpl(MatrixUtils.createRealMatrix(jTj)).getSolver().getInverse();
             return inverse.getData();
         } catch (InvalidMatrixException ime) {
-            throw new OptimizationException("unable to compute covariances: singular problem");
+            throw new OptimizationException(LocalizedFormats.UNABLE_TO_COMPUTE_COVARIANCE_SINGULAR_PROBLEM);
         }
 
     }
@@ -308,14 +310,14 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         throws FunctionEvaluationException, OptimizationException {
         if (rows <= cols) {
             throw new OptimizationException(
-                    "no degrees of freedom ({0} measurements, {1} parameters)",
+                    LocalizedFormats.NO_DEGREES_OF_FREEDOM,
                     rows, cols);
         }
         double[] errors = new double[cols];
-        final double c = Math.sqrt(getChiSquare() / (rows - cols));
+        final double c = FastMath.sqrt(getChiSquare() / (rows - cols));
         double[][] covar = getCovariances();
         for (int i = 0; i < errors.length; ++i) {
-            errors[i] = Math.sqrt(covar[i][i]) * c;
+            errors[i] = FastMath.sqrt(covar[i][i]) * c;
         }
         return errors;
     }
@@ -327,7 +329,7 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         throws FunctionEvaluationException, OptimizationException, IllegalArgumentException {
 
         if (target.length != weights.length) {
-            throw new OptimizationException("dimension mismatch {0} != {1}",
+            throw new OptimizationException(LocalizedFormats.DIMENSIONS_MISMATCH_SIMPLE,
                                             target.length, weights.length);
         }
 
@@ -349,6 +351,9 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
         cols      = point.length;
         jacobian  = new double[rows][cols];
 
+        wjacobian = new double[rows][cols];
+        wresiduals = new double[rows];
+
         cost = Double.POSITIVE_INFINITY;
 
         return doOptimize();
@@ -364,5 +369,6 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
      */
     protected abstract VectorialPointValuePair doOptimize()
         throws FunctionEvaluationException, OptimizationException, IllegalArgumentException;
+
 
 }

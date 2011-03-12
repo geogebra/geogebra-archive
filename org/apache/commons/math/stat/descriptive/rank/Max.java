@@ -35,7 +35,7 @@ import org.apache.commons.math.stat.descriptive.AbstractStorelessUnivariateStati
  * one of the threads invokes the <code>increment()</code> or
  * <code>clear()</code> method, it must be synchronized externally.</p>
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 1006299 $ $Date: 2010-10-10 16:47:17 +0200 (dim. 10 oct. 2010) $
  */
 public class Max extends AbstractStorelessUnivariateStatistic implements Serializable {
 
@@ -156,6 +156,7 @@ public class Max extends AbstractStorelessUnivariateStatistic implements Seriali
      * @throws NullPointerException if either source or dest is null
      */
     public static void copy(Max source, Max dest) {
+        dest.setData(source.getDataRef());
         dest.n = source.n;
         dest.value = source.value;
     }

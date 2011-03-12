@@ -19,6 +19,7 @@ package org.apache.commons.math.stat.descriptive;
 import java.io.Serializable;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
 import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
 import org.apache.commons.math.stat.descriptive.moment.Mean;
 import org.apache.commons.math.stat.descriptive.moment.SecondMoment;
@@ -29,6 +30,7 @@ import org.apache.commons.math.stat.descriptive.summary.Sum;
 import org.apache.commons.math.stat.descriptive.summary.SumOfLogs;
 import org.apache.commons.math.stat.descriptive.summary.SumOfSquares;
 import org.apache.commons.math.util.MathUtils;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * <p>
@@ -52,7 +54,7 @@ import org.apache.commons.math.util.MathUtils;
  * {@link SynchronizedSummaryStatistics} if concurrent access from multiple
  * threads is required.
  * </p>
- * @version $Revision: 811833 $ $Date: 2009-09-06 12:27:50 -0400 (Sun, 06 Sep 2009) $
+ * @version $Revision: 1042376 $ $Date: 2010-12-05 16:54:55 +0100 (dim. 05 déc. 2010) $
  */
 public class SummaryStatistics implements StatisticalSummary, Serializable {
 
@@ -216,7 +218,7 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
         double stdDev = Double.NaN;
         if (getN() > 0) {
             if (getN() > 1) {
-                stdDev = Math.sqrt(getVariance());
+                stdDev = FastMath.sqrt(getVariance());
             } else {
                 stdDev = 0.0;
             }
@@ -307,7 +309,7 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
      */
     @Override
     public String toString() {
-        StringBuffer outBuffer = new StringBuffer();
+        StringBuilder outBuffer = new StringBuilder();
         String endl = "\n";
         outBuffer.append("SummaryStatistics:").append(endl);
         outBuffer.append("n: ").append(getN()).append(endl);
@@ -360,14 +362,14 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
             return false;
         }
         SummaryStatistics stat = (SummaryStatistics)object;
-        return MathUtils.equals(stat.getGeometricMean(), getGeometricMean()) &&
-               MathUtils.equals(stat.getMax(),           getMax())           &&
-               MathUtils.equals(stat.getMean(),          getMean())          &&
-               MathUtils.equals(stat.getMin(),           getMin())           &&
-               MathUtils.equals(stat.getN(),             getN())             &&
-               MathUtils.equals(stat.getSum(),           getSum())           &&
-               MathUtils.equals(stat.getSumsq(),         getSumsq())         &&
-               MathUtils.equals(stat.getVariance(),      getVariance());
+        return MathUtils.equalsIncludingNaN(stat.getGeometricMean(), getGeometricMean()) &&
+               MathUtils.equalsIncludingNaN(stat.getMax(),           getMax())           &&
+               MathUtils.equalsIncludingNaN(stat.getMean(),          getMean())          &&
+               MathUtils.equalsIncludingNaN(stat.getMin(),           getMin())           &&
+               MathUtils.equalsIncludingNaN(stat.getN(),             getN())             &&
+               MathUtils.equalsIncludingNaN(stat.getSum(),           getSum())           &&
+               MathUtils.equalsIncludingNaN(stat.getSumsq(),         getSumsq())         &&
+               MathUtils.equalsIncludingNaN(stat.getVariance(),      getVariance());
     }
 
     /**
@@ -628,7 +630,7 @@ public class SummaryStatistics implements StatisticalSummary, Serializable {
     private void checkEmpty() {
         if (n > 0) {
             throw MathRuntimeException.createIllegalStateException(
-                    "{0} values have been added before statistic is configured",
+                    LocalizedFormats.VALUES_ADDED_BEFORE_CONFIGURING_STATISTIC,
                     n);
         }
     }

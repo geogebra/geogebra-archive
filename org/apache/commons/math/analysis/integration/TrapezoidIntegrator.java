@@ -20,6 +20,8 @@ import org.apache.commons.math.FunctionEvaluationException;
 import org.apache.commons.math.MathRuntimeException;
 import org.apache.commons.math.MaxIterationsExceededException;
 import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Implements the <a href="http://mathworld.wolfram.com/TrapezoidalRule.html">
@@ -29,7 +31,7 @@ import org.apache.commons.math.analysis.UnivariateRealFunction;
  * <p>
  * The function should be integrable.</p>
  *
- * @version $Revision: 825919 $ $Date: 2009-10-16 10:51:55 -0400 (Fri, 16 Oct 2009) $
+ * @version $Revision: 1070725 $ $Date: 2011-02-15 02:31:12 +0100 (mar. 15 févr. 2011) $
  * @since 1.2
  */
 public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
@@ -70,8 +72,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
      * @param max the upper bound for the interval
      * @param n the stage of 1/2 refinement, n = 0 is no refinement
      * @return the value of n-th stage integral
-     * @throws FunctionEvaluationException if an error occurs evaluating the
-     * function
+     * @throws FunctionEvaluationException if an error occurs evaluating the function
      */
     double stage(final UnivariateRealFunction f,
                  final double min, final double max, final int n)
@@ -103,8 +104,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
     }
 
     /** {@inheritDoc} */
-    public double integrate(final UnivariateRealFunction f,
-                            final double min, final double max)
+    public double integrate(final UnivariateRealFunction f, final double min, final double max)
         throws MaxIterationsExceededException, FunctionEvaluationException, IllegalArgumentException {
 
         clearResult();
@@ -115,9 +115,9 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
         for (int i = 1; i <= maximalIterationCount; ++i) {
             final double t = stage(f, min, max, i);
             if (i >= minimalIterationCount) {
-                final double delta = Math.abs(t - oldt);
+                final double delta = FastMath.abs(t - oldt);
                 final double rLimit =
-                    relativeAccuracy * (Math.abs(oldt) + Math.abs(t)) * 0.5;
+                    relativeAccuracy * (FastMath.abs(oldt) + FastMath.abs(t)) * 0.5;
                 if ((delta <= rLimit) || (delta <= absoluteAccuracy)) {
                     setResult(t, i);
                     return result;
@@ -135,7 +135,7 @@ public class TrapezoidIntegrator extends UnivariateRealIntegratorImpl {
         // at most 64 bisection refinements
         if (maximalIterationCount > 64) {
             throw MathRuntimeException.createIllegalArgumentException(
-                    "invalid iteration limits: min={0}, max={1}",
+                    LocalizedFormats.INVALID_ITERATIONS_LIMITS,
                     0, 64);
         }
     }

@@ -19,6 +19,8 @@ package org.apache.commons.math.linear;
 
 import java.util.Arrays;
 
+import org.apache.commons.math.util.FastMath;
+
 
 /**
  * Class transforming a symmetrical matrix to tridiagonal shape.
@@ -32,7 +34,7 @@ import java.util.Arrays;
  * EigenDecomposition eigen decomposition}. This class is therefore intended for internal
  * use by the library and is not public. As a consequence of this explicitly limited scope,
  * many methods directly returns references to internal arrays, not copies.</p>
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  * @since 2.0
  */
 class TriDiagonalTransformer {
@@ -213,7 +215,7 @@ class TriDiagonalTransformer {
                 final double c = hK[j];
                 xNormSqr += c * c;
             }
-            final double a = (hK[k + 1] > 0) ? -Math.sqrt(xNormSqr) : Math.sqrt(xNormSqr);
+            final double a = (hK[k + 1] > 0) ? -FastMath.sqrt(xNormSqr) : FastMath.sqrt(xNormSqr);
             secondary[k] = a;
             if (a != 0.0) {
                 // apply Householder transform from left and right simultaneously

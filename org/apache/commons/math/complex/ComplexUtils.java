@@ -18,12 +18,14 @@
 package org.apache.commons.math.complex;
 
 import org.apache.commons.math.MathRuntimeException;
+import org.apache.commons.math.exception.util.LocalizedFormats;
+import org.apache.commons.math.util.FastMath;
 
 /**
  * Static implementations of common
  * {@link org.apache.commons.math.complex.Complex} utilities functions.
  *
- * @version $Revision: 811685 $ $Date: 2009-09-05 13:36:48 -0400 (Sat, 05 Sep 2009) $
+ * @version $Revision: 990655 $ $Date: 2010-08-29 23:49:40 +0200 (dim. 29 août 2010) $
  */
 public class ComplexUtils {
 
@@ -62,9 +64,9 @@ public class ComplexUtils {
     public static Complex polar2Complex(double r, double theta) {
         if (r < 0) {
             throw MathRuntimeException.createIllegalArgumentException(
-                  "negative complex module {0}", r);
+                  LocalizedFormats.NEGATIVE_COMPLEX_MODULE, r);
         }
-        return new Complex(r * Math.cos(theta), r * Math.sin(theta));
+        return new Complex(r * FastMath.cos(theta), r * FastMath.sin(theta));
     }
 
 }
