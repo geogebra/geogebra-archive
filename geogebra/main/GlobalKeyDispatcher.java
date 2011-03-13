@@ -234,6 +234,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 		
 			switch (event.getKeyCode()) {				
 			case KeyEvent.VK_1:
+			case KeyEvent.VK_NUMPAD1:
 				if (event.isShiftDown()) {
 					app.getGuiManager().setShowView(
 							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN),
@@ -246,6 +247,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				}
 				break;
 				
+			case KeyEvent.VK_NUMPAD2:
 			case KeyEvent.VK_2:
 				if (event.isShiftDown()) {
 					app.getGuiManager().setShowView(
@@ -260,6 +262,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 				}
 				break;
 			
+			case KeyEvent.VK_NUMPAD3:
 			case KeyEvent.VK_3:
 				if (event.isShiftDown()) {
 					app.getGuiManager().setShowView(
