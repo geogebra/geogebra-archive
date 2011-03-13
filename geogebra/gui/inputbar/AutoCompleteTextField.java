@@ -30,7 +30,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	protected AutoCompleteDictionary dict;
 	protected boolean autoComplete;
 	private int historyIndex;
-	private ArrayList history;  
+	private ArrayList<String> history;  
 	private boolean handleEscapeKey = false;
 	
 	
@@ -61,7 +61,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		curWord = new StringBuilder();
 
 		historyIndex = 0;
-		history = new ArrayList(50);
+		history = new ArrayList<String>(50);
 
 		//addKeyListener(this); now in MathTextField
 		setDictionary(app.getCommandDictionary());   
@@ -421,6 +421,13 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 	protected String lookup(String s) {
 		
+		if (dict == null) return null;
+		
+		String ret = dict.lookup(s);
+		
+		if (ret != null) return ret;
+
+		
 		String sKorean = flattenKorean(s);
 		
 		Iterator<String> it = dict.getIterator();
@@ -433,8 +440,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		}
 		
 		
-		if(dict != null)
-			return dict.lookup(s);
 		return null;
 	}
 	
@@ -676,7 +681,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			String selWord = getWordAtPos(text, pos-2);
 			if (selWord == null) return false;
 
-			String cmdWord = dict.lookup(selWord);
+			String cmdWord = lookup(selWord);
 			if (cmdWord == null ||
 					cmdWord.length() != selWord.length()) return false;
 
@@ -712,7 +717,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	private String getPreviousInput() {
 		if (history.size() == 0) return null;
 		if (historyIndex > 0) --historyIndex;
-		return (String) history.get(historyIndex);
+		return history.get(historyIndex);
 	}
 
 	/**
@@ -723,7 +728,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		if (historyIndex == history.size()) 
 			return null;          
 		else 
-			return (String) history.get(historyIndex);
+			return history.get(historyIndex);
 	}
 
 	/**
