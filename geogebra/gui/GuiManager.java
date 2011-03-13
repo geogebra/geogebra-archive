@@ -594,7 +594,12 @@ public class GuiManager {
 	}
 	
 	public boolean showView(int viewId) {
-		return layout.getDockManager().getPanel(viewId).isVisible();
+		try {
+			return layout.getDockManager().getPanel(viewId).isVisible();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	public void setShowToolBarHelp(boolean flag) {
