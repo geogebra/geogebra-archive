@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 /**
  * Take first n objects from a list
  * @author Michael Borcherds
@@ -87,12 +89,12 @@ public class AlgoTakeString extends AlgoElement {
         	return;
     	}
     	
-    	if (!inputText.isDefined() ||  size == 0 || start <= 0 || end > size - 1 || start > end) {
+    	if (!inputText.isDefined() ||  size == 0 || start <= 0 || end > size || start > end) {
     		outputText.setUndefined();
     		return;
     	} 
     	
-    	outputText.setTextString(str.substring(start, end + 1));
+    	outputText.setTextString(str.substring(start - 1, end));
        
     	
    }
