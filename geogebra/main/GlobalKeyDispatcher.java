@@ -149,9 +149,25 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	 */
 	public boolean handleGeneralKeys(KeyEvent event) {
 		boolean consumed = false;
+		
+		int keyCode = event.getKeyCode();
+		
+		// make sure Ctrl-1/2/3 works on the Numeric Keypad even with Numlock off
+		// **** NB if NumLock on, event.isShiftDown() always returns false with Numlock on!!! (Win 7)
+		if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
+			String keyText = KeyEvent.getKeyText(keyCode);
+			if (keyText.equals("End")) {
+				keyCode = KeyEvent.VK_1;
+			} else if (keyText.equals("Down")) {
+				keyCode = KeyEvent.VK_2;
+			} else if (keyText.equals("Page Down")) {
+				keyCode = KeyEvent.VK_3;
+			}
+			
+		}
 
 		// ESC and function keys
-		switch (event.getKeyCode()) {					
+		switch (keyCode) {					
 			case KeyEvent.VK_ESCAPE:		
 				// ESC: set move mode				
 				app.setMoveMode();
@@ -226,76 +242,69 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 					consumed = true;
 				}
 				break;
-		}
-		
-		int keyCode = event.getKeyCode();
-		
-		// make sure Ctrl-1/2/3 works on the Numeric Keypad even with Numlock off
-		// **** NB if NumLock on, event.isShiftDown() always returns false with Numlock on!!! (Win 7)
-		if (event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD) {
-			String keyText = KeyEvent.getKeyText(keyCode);
-			if (keyText.equals("End")) {
-				keyCode = KeyEvent.VK_1;
-			} else if (keyText.equals("Down")) {
-				keyCode = KeyEvent.VK_2;
-			} else if (keyText.equals("Page Down")) {
-				keyCode = KeyEvent.VK_3;
-			}
-			
-		}
-						
-		// Ctrl key down
-		if (Application.isControlDown(event)) {
-		
-			switch (keyCode) {				
+				
 			case KeyEvent.VK_1:
 			case KeyEvent.VK_NUMPAD1:
 				// event.isShiftDown() doesn't work if NumLock on
-				if (event.isShiftDown() || event.isAltDown()) {
-					app.getGuiManager().setShowView(
-							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN),
-							Application.VIEW_EUCLIDIAN);
-					consumed = true;
-					
-				} else {
-					// Ctrl-1: set objects back to the default size (for font size 12)
-					changeFontsAndGeoElements(app, 12, false);
-					consumed = true;
-				}
+				// check for ctrl for backwards compatibility with 3.2 (doesn't work on linux)
+				if (event.isAltDown() || Application.isControlDown(event))
+					if (event.isShiftDown()) {
+						app.getGuiManager().setShowView(
+								!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN),
+								Application.VIEW_EUCLIDIAN);
+						consumed = true;
+						
+					} else {
+						// Alt-1: set objects back to the default size (for font size 12)
+						changeFontsAndGeoElements(app, 12, false);
+						consumed = true;
+					}
 				break;
 				
 			case KeyEvent.VK_NUMPAD2:
 			case KeyEvent.VK_2:
 				// event.isShiftDown() doesn't work if NumLock on
-				if (event.isShiftDown() || event.isAltDown()) {
-					app.getGuiManager().setShowView(
-							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN2),
-							Application.VIEW_EUCLIDIAN2);
-					consumed = true;
-					
-				} else {
-					// Ctrl-2: large font size and thicker lines for projectors etc
-					int fontSize = Math.min(32, app.getFontSize() + 4);
-					changeFontsAndGeoElements(app, fontSize, false);
-					consumed = true;	
-				}
+				// check for ctrl for backwards compatibility with 3.2 (doesn't work on linux)
+				if (event.isAltDown() || Application.isControlDown(event))
+					if (event.isShiftDown()) {
+						app.getGuiManager().setShowView(
+								!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN2),
+								Application.VIEW_EUCLIDIAN2);
+						consumed = true;
+						
+					} else {
+						// Alt-2: large font size and thicker lines for projectors etc
+						int fontSize = Math.min(32, app.getFontSize() + 4);
+						changeFontsAndGeoElements(app, fontSize, false);
+						consumed = true;	
+					}
 				break;
 			
 			case KeyEvent.VK_NUMPAD3:
 			case KeyEvent.VK_3:
 				// event.isShiftDown() doesn't work if NumLock on
-				if (event.isShiftDown() || event.isAltDown()) {
-					app.getGuiManager().setShowView(
-							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN3D),
-							Application.VIEW_EUCLIDIAN3D);
-					consumed = true;
-					
-				} else {
-					// Ctrl-3: set black/white mode printing and visually impaired users
-					changeFontsAndGeoElements(app, app.getFontSize(), true);
-					consumed = true;
-				}
+				// check for ctrl for backwards compatibility with 3.2 (doesn't work on linux)
+				if (event.isAltDown() || Application.isControlDown(event))
+					if (event.isShiftDown()) {
+						app.getGuiManager().setShowView(
+								!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN3D),
+								Application.VIEW_EUCLIDIAN3D);
+						consumed = true;
+						
+					} else {
+						// Alt-3: set black/white mode printing and visually impaired users
+						changeFontsAndGeoElements(app, app.getFontSize(), true);
+						consumed = true;
+					}
 				break;
+
+		}
+		
+						
+		// Ctrl key down
+		if (Application.isControlDown(event)) {
+		
+			switch (keyCode) {				
 				
 			case KeyEvent.VK_C:
 				// Ctrl-shift-c: copy graphics view to clipboard
