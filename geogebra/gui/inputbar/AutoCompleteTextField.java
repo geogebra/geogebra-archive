@@ -422,12 +422,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	protected String lookup(String s) {
 		
 		if (dict == null) return null;
-		
-		String ret = dict.lookup(s);
-		
-		if (ret != null) return ret;
-
-		
+			
 		String sKorean = flattenKorean(s);
 		
 		Iterator<String> it = dict.getIterator();
@@ -439,8 +434,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			}
 		}
 		
-		
-		return null;
+		return dict.lookup(s);
 	}
 	
 	StringBuilder koreanSB;
