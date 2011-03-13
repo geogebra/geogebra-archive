@@ -285,7 +285,7 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 		GeoPoint P = (GeoPoint) PI;
 		PathParameter pp = P.getPathParameter();
 		
-		Application.debug("XXXXXXXXXXXXXXXXXXXX");
+		//Application.debug("XXXXXXXXXXXXXXXXXXXX");
 		
 		int n = (int)Math.floor(pp.t);
 		
