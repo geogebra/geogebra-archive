@@ -23,7 +23,8 @@ public abstract class AlgoQuadricLimitedPointPointRadius extends AlgoElement3D {
 	
 	//output
 	private GeoQuadric3DPart side;
-	private GeoConic3D bottom, top;
+	protected GeoConic3D bottom;
+	protected GeoConic3D top;
 	private GeoQuadric3DLimited quadric;
 	
 
@@ -42,18 +43,8 @@ public abstract class AlgoQuadricLimitedPointPointRadius extends AlgoElement3D {
 		this.secondPoint=secondPoint;
 		this.radius=r;
 		
-		
-		//bottomCoordsys = new CoordSys(2);
-		//topCoordsys = new CoordSys(2);
-		
 		quadric=new GeoQuadric3DLimited(c,origin,secondPoint);
 		quadric.setType(type);
-
-
-		//bottom.setCoordSys(bottomCoordsys);
-		//top.setCoordSys(topCoordsys);
-		
-		//setInputOutput(new GeoElement[] {(GeoElement) origin,(GeoElement) secondPoint,(GeoElement) r}, new GeoElement[] {quadric,bottom,top,side},false);
 
 		input = new GeoElement[] {(GeoElement) origin,(GeoElement) secondPoint,(GeoElement) r};
 
@@ -70,36 +61,35 @@ public abstract class AlgoQuadricLimitedPointPointRadius extends AlgoElement3D {
         
 		compute();
         
-        //quadric.setParts();
-        
-		//AlgoQuadricSide algo = new AlgoQuadricSide(cons, quadric, origin, secondPoint);            
-		AlgoQuadricSide algo = new AlgoQuadricSide(cons, quadric,true);            
+ 		AlgoQuadricSide algo = new AlgoQuadricSide(cons, quadric,true);            
 		cons.removeFromConstructionList(algo);
 		side = (GeoQuadric3DPart) algo.getQuadric();
 		
-		//AlgoQuadricEnds algo2 = new AlgoQuadricEnds(cons, quadric, origin, secondPoint);
+		/*
 		AlgoQuadricEnds algo2 = new AlgoQuadricEnds(cons, quadric);
 		cons.removeFromConstructionList(algo2);
 		bottom = algo2.getSection1();
 		top = algo2.getSection2();
-		
+		*/
+		createEnds();
 
 		quadric.setParts(side,bottom,top);
 
-		output = new GeoElement[] {quadric,bottom,top,side};
+		//output = new GeoElement[] {quadric,bottom,top,side};
+		setOutput();
 	
-
-
-		//compute();
-		
 		
 		quadric.initLabels(labels);
 		quadric.updatePartsVisualStyle();
-		
-
-		
+				
 	}
 	
+	/**
+	 * sets the output
+	 */
+	abstract protected void setOutput();
+	
+	abstract protected void createEnds();
 	
 	protected void compute() {
 		

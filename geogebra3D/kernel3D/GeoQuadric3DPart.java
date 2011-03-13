@@ -107,6 +107,24 @@ public class GeoQuadric3DPart extends GeoQuadric3D {
         return new GeoQuadric3DPart(this);
 
     }
+    
+    //////////////////////////
+    // REGION
+    //////////////////////////
+    
+	protected Coords getNormalProjectionParameters(Coords coords){
+		
+		Coords parameters = super.getNormalProjectionParameters(coords);
+
+		if (parameters.getY()<getMinParameter(1))
+			parameters.setY(getMinParameter(1));
+		else if (parameters.getY()>getMaxParameter(1))
+			parameters.setY(getMaxParameter(1));
+		
+		return parameters;
+		
+	}
+
 
 
     //////////////////////////

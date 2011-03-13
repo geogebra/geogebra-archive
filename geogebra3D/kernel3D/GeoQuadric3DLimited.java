@@ -97,6 +97,10 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	
 	public GeoQuadric3DLimited(GeoQuadric3DLimited quadric) {
 		this(quadric.getConstruction());
+		this.bottom = new GeoConic3D(quadric.getConstruction());
+		if (quadric.top!=null)
+			this.top = new GeoConic3D(quadric.getConstruction());
+		this.side=new GeoQuadric3DPart(quadric.getConstruction());
 		set(quadric);
 	}
 	
@@ -139,18 +143,22 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		}
 		
 		setLabel(labels[0]);
-		
-		if (labels.length<4){
+
+		if (labels.length<3){
 			bottom.setLabel(null);
-			top.setLabel(null);
+			if (top!=null)
+				top.setLabel(null);
 			side.setLabel(null);
 			return;
+		}else if (labels.length==3){		
+			bottom.setLabel(labels[1]);
+			side.setLabel(labels[2]);
+		}else{
+			bottom.setLabel(labels[1]);
+			top.setLabel(labels[2]);
+			side.setLabel(labels[3]);	
 		}
-		
-		bottom.setLabel(labels[1]);
-		top.setLabel(labels[2]);
-		side.setLabel(labels[3]);
-		
+
 	}
 	
 	
@@ -273,7 +281,8 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		if (bottom==null)
 			return;
 		bottom.setObjColor(color);
-		top.setObjColor(color);
+		if (top!=null)
+			top.setObjColor(color);
 		side.setObjColor(color);
 
 	}
@@ -291,7 +300,8 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 
 		super.setEuclidianVisible(visible);
 		bottom.setEuclidianVisible(visible);
-		top.setEuclidianVisible(visible);
+		if (top!=null)
+			top.setEuclidianVisible(visible);
 		side.setEuclidianVisible(visible);
 
 
@@ -306,7 +316,8 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 			return;
 
 		bottom.setLineType(type);
-		top.setLineType(type);
+		if (top!=null)
+			top.setLineType(type);
 
 	}
 
@@ -319,7 +330,8 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 			return;
 
 		bottom.setLineTypeHidden(type);
-		top.setLineTypeHidden(type);
+		if (top!=null)
+			top.setLineTypeHidden(type);
 	}
 
 
@@ -328,7 +340,8 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		if (bottom==null)
 			return;
 		bottom.setLineThickness(th);
-		top.setLineThickness(th);	
+		if (top!=null)
+			top.setLineThickness(th);	
 	}
 
 
@@ -342,8 +355,10 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 
 		bottom.setAlphaValue(alpha);
 		bottom.update();
-		top.setAlphaValue(alpha);
-		top.update();
+		if (top!=null){
+			top.setAlphaValue(alpha);
+			top.update();
+		}
 		side.setAlphaValue(alpha);
 		side.update();
 
@@ -377,10 +392,15 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		
 		if (geo instanceof GeoQuadric3DLimited){
 			GeoQuadric3DLimited quadric = (GeoQuadric3DLimited) geo;
-			//setParts((GeoConic3D) quadric.bottom.copy(), (GeoConic3D) quadric.top.copy(), (GeoQuadric3DPart) quadric.side.copy()); 
 
+			type=quadric.type;
+			min=quadric.min;
+			max=quadric.max;
+			volume=quadric.volume;
+			
 			bottom.set(quadric.bottom);
-			top.set(quadric.top);
+			if (quadric.top!=null)
+				top.set(quadric.top);
 			side.set(quadric.side);
 		
 		}

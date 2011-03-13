@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 
@@ -27,6 +28,17 @@ public class AlgoQuadricLimitedPointPointRadiusCylinder extends AlgoQuadricLimit
 		
 	}
 	
+	protected void createEnds(){
+		AlgoQuadricEnds algo2 = new AlgoQuadricEnds(cons, getQuadric());
+		cons.removeFromConstructionList(algo2);
+		bottom = algo2.getSection1();
+		top = algo2.getSection2();
+
+	}
+	
+	protected void setOutput(){
+		output = new GeoElement[] {getQuadric(),getQuadric().getBottom(),getQuadric().getTop(),getQuadric().getSide()};
+	}
 	
 
 	protected void setQuadric(Coords o1, Coords o2, Coords d, double r, double min, double max){

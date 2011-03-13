@@ -618,8 +618,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 		return true;
 	}
 
-
-	public Coords[] getNormalProjection(Coords coords) {
+	protected Coords getNormalProjectionParameters(Coords coords){
 		
 		Coords eigenCoords = eigenMatrix.solve(coords);
 		double x = eigenCoords.getX();
@@ -636,18 +635,30 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 			v = Math.atan2(z, r);
 
 			parameters = new Coords(u,v);
-			return new Coords[]{getPoint(u,v), parameters};
+			return parameters;
 
 		case QUADRIC_CONE:	
 		case QUADRIC_CYLINDER:
 			u = Math.atan2(y, x);
 			parameters = new Coords(u,z);
-			return new Coords[]{getPoint(u,z), parameters};
+			return parameters;
 			
 		default:
 			Application.printStacktrace("TODO -- type: "+getType());
 			return null;
 		}
+	}
+
+	public Coords[] getNormalProjection(Coords coords) {
+		
+		Coords parameters = getNormalProjectionParameters(coords);
+
+		if (parameters==null)
+			return null;
+		else
+			return new Coords[]{getPoint(parameters.getX(),parameters.getY()), parameters};
+
+
 	}
 
 
