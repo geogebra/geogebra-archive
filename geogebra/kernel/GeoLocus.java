@@ -240,6 +240,9 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 			MyPoint locusPoint = (MyPoint) myPointList.get(i);
 			MyPoint locusPoint2 = (MyPoint) myPointList.get(i+1);
 			
+			// not a line, just a move (eg Voronoi Diagram)
+			if (!locusPoint2.lineTo) continue;
+			
 			double x1 = locusPoint.x;
 			double x2 = locusPoint2.x;
 			double y1 = locusPoint.y;
@@ -312,7 +315,7 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 		MyPoint closestPoint = getClosestPoint(P);
 		
 		PathParameter pp = P.getPathParameter();
-		Application.debug(pp.t);
+		//Application.debug(pp.t);
 		if (closestPoint != null) {
 			P.x = closestPoint.x;//(1 - closestPointParameter) * locusPoint.x + closestPointParameter * locusPoint2.x;
 			P.y = closestPoint.y;//(1 - closestPointParameter) * locusPoint.y + closestPointParameter * locusPoint2.y;
