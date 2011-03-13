@@ -1953,11 +1953,15 @@ public class Application implements KeyEventDispatcher {
 			translateCommandTable = new Hashtable();
 
 		// command dictionary for all public command names available in
-		// GeoGebra's input field
-		if (commandDict == null) 
-			commandDict = new LowerCaseDictionary();		
+		// GeoGebra's input field	
+		// removed check for null: commandDict.clear() removes keys, but they are still available with commandDict.getIterator()
+		// so change English -> French -> English doesn't work in the input bar
+		// see AutoCompleteTextfield.lookup()
+		//if (commandDict == null) 
+			commandDict = new LowerCaseDictionary();	
+		//else commandDict.clear();
+
 		translateCommandTable.clear();
-		commandDict.clear();
 
 		Enumeration e = rbcommand.getKeys();
 		Set publicCommandNames = kernel.getAlgebraProcessor().getPublicCommandSet();
