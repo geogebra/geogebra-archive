@@ -349,8 +349,7 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 			if (geo.isCasEvaluableObject()) {
 				String funStr = geo.toCasAssignment(cas.getCurrentCASstringType());
 				if (funStr != null) {
-//					cas.evaluateRaw(funStr);
-					cas.evaluateGeoGebraCAS(funStr);
+					cas.evaluateRaw(funStr);
 					// TODO: remove
 					System.out.println("updateInCAS: " + funStr);
 					return true;
