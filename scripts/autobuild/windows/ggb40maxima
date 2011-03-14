@@ -33,10 +33,16 @@ which zip 2>&1 >/dev/null || {
     exit 1
     }
 
-echo "This script will change GeoGebra JAR files from $GGB40_ZIPVERSION version to $VERSION_STRING for Maxima $MAXIMAVERSION"
+echo "Updating GeoGebra JAR files from version $GGB40_ZIPVERSION to $VERSION_STRING for Maxima $MAXIMAVERSION..."
 
 DIRNAME=ggb40maxima-${VERSION_STRING}_$MAXIMAVERSION
+rm -fR ggb40maxima-${GGB40_ZIPVERSION}_$MAXIMAVERSION # removing old working directory
 mkdir -p $DIRNAME
 cd $DIRNAME
-unzip /tmp/$ZIPFILE
+unzip /tmp/$ZIPFILE >> /dev/null
 
+cp ../../../../build/unpacked/* .
+cd ..
+zip -r $DIRNAME.zip $DIRNAME >> /dev/null
+
+rm -fR $DIRNAME # removing current working directory
