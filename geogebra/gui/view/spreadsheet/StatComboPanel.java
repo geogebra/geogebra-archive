@@ -256,6 +256,8 @@ public class StatComboPanel extends JPanel implements ActionListener{
 		fldTitleX.setBorder(BorderFactory.createEmptyBorder());
 		fldTitleY.setEditable(false);
 		fldTitleY.setBorder(BorderFactory.createEmptyBorder());
+		fldTitleX.setBackground(Color.white);
+		fldTitleY.setBackground(Color.white);
 		
 		
 		metaPlotPanel = new JPanel(new BorderLayout());
