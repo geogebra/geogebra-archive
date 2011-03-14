@@ -1264,6 +1264,11 @@ Transformable{
 			// find closest point on path
 			Point2D.Double closestPoint = getNearestPoint(P);
 			
+			GeoElement geo = get(closestPointIndex);
+			if (!(geo instanceof PathOrPoint)){
+				Application.debug("TODO: "+geo.getClassName()+" should implement PathOrPoint interface");
+				return;
+			}
 			PathOrPoint path = (PathOrPoint)get(closestPointIndex);
 			
 			path.pointChanged(P);

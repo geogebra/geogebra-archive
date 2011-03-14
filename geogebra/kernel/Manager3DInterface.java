@@ -224,12 +224,17 @@ public interface Manager3DInterface {
 			 public GeoElement[] CylinderLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) ;
 
 			 
+
+
+
+				/** 
+				 * Limited quadrics
+				 */
 			 public GeoQuadricND QuadricSide(String label, GeoQuadricND quadric) ;
 
-
-
-
-
+			 public GeoConicND QuadricBottom(String label, GeoQuadricND quadric);
+			 
+			 public GeoConicND QuadricTop(String label, GeoQuadricND quadric);
 
 
 

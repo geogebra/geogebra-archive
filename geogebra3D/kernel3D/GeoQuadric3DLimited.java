@@ -393,7 +393,6 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		if (geo instanceof GeoQuadric3DLimited){
 			GeoQuadric3DLimited quadric = (GeoQuadric3DLimited) geo;
 
-			type=quadric.type;
 			min=quadric.min;
 			max=quadric.max;
 			volume=quadric.volume;
@@ -402,6 +401,24 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 			if (quadric.top!=null)
 				top.set(quadric.top);
 			side.set(quadric.side);
+			
+			//TODO merge with GeoQuadric3D
+			// copy everything
+			toStringMode = quadric.toStringMode;
+			type = quadric.type;
+			for (int i = 0; i < 10; i++)
+				matrix[i] = quadric.matrix[i]; // flat matrix A   
+			
+			for (int i=0; i<3; i++){
+				eigenvecND[i].set(quadric.eigenvecND[i]);
+				halfAxes[i] = quadric.halfAxes[i];
+			}
+
+			setMidpoint(quadric.getMidpoint().get());
+			
+
+
+			defined = quadric.defined;	
 		
 		}
 		
@@ -438,10 +455,10 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 		
 		switch(type){
 		case QUADRIC_CYLINDER:
-			volume=bottom.getArea()*(max-min);
+			volume=getHalfAxis(0)*getHalfAxis(0)*Math.PI*(max-min);
 			break;
 		case QUADRIC_CONE:
-			volume=bottom.getArea()*(max-min)/3;
+			volume=getHalfAxis(0)*getHalfAxis(0)*Math.PI*(max-min)/3;
 			break;
 		//default:
 		//	volume=Double.NaN;

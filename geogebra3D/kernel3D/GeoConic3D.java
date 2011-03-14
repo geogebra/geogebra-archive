@@ -293,7 +293,12 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 			
 			if (geo instanceof GeoConic3D){
 				super.set(geo);
-				setCoordSys(((GeoConic3D) geo).getCoordSys());
+				//setCoordSys(((GeoConic3D) geo).getCoordSys());
+				//coordSys = new CoordSys(((GeoConic3D) geo).getCoordSys());
+				if (coordSys==null) //TODO remove that
+					coordSys=new CoordSys(2);
+				coordSys.set(((GeoConic3D) geo).getCoordSys());
+				setIsEndOfQuadric(((GeoConic3D) geo).isEndOfQuadric());
 			}
 			
 		}

@@ -52,6 +52,21 @@ public class CoordSys {
 		
 	}	
 	
+	
+	public void set(CoordSys cs){
+		matrix.set(cs.matrix);
+		matrixOrthonormal.set(cs.matrixOrthonormal);
+		if (drawingMatrix==null) //TODO remove that
+			drawingMatrix=new CoordMatrix4x4();
+		drawingMatrix.set(cs.drawingMatrix);
+		//dimension=cs.dimension;
+		equationVector.set(cs.equationVector);
+		madeCoordSys=cs.madeCoordSys;
+		//origin.set(cs.origin);
+		//spaceDimension=cs.spaceDimension;
+		//vectors=cs.vectors;
+	}
+	
 
 	/**
 	 * @return "identity" coord sys

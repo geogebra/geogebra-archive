@@ -411,6 +411,16 @@ public class Manager3D implements Manager3DInterface {
 		AlgoQuadric algo = new AlgoQuadricSide(cons, label, (GeoQuadric3DLimited) quadric);
 		return (GeoQuadric3DPart) algo.getQuadric();
 	}
+	
+	final public GeoConic3D  QuadricBottom(String label, GeoQuadricND quadric){
+		AlgoQuadricEnd algo = new AlgoQuadricEndBottom(cons, label, (GeoQuadric3DLimited) quadric);
+		return algo.getSection();
+	}
+	
+	final public GeoConic3D  QuadricTop(String label, GeoQuadricND quadric){
+		AlgoQuadricEnd algo = new AlgoQuadricEndTop(cons, label, (GeoQuadric3DLimited) quadric);
+		return algo.getSection();
+	}
 
 
 	/** 

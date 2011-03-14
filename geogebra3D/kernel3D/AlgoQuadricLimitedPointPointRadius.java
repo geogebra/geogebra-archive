@@ -81,6 +81,7 @@ public abstract class AlgoQuadricLimitedPointPointRadius extends AlgoElement3D {
 		
 		quadric.initLabels(labels);
 		quadric.updatePartsVisualStyle();
+		
 				
 	}
 	

@@ -121,7 +121,7 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		brush.setThickness(getLineThickness(),(float) getView3D().getScale());
 		//brush.setColor(getGeoElement().getObjectColor());
 		brush.setAffineTexture(
-				(float) ((0.-minmax[0])/(minmax[1]-minmax[0])),  0.25f);
+				(float) ((0.5-minmax[0])/(minmax[1]-minmax[0])),  0.25f);
 		brush.segment(p1, p2);
 		setGeometryIndex(brush.end());
 		

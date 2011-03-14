@@ -122,7 +122,7 @@ public class AlgoQuadricEnds extends AlgoElement3D {
     	
     	//areas
     	section1.calcArea();
-    	section2.setArea(section1.getArea());
+    	section2.calcArea();
 
     }
     
