@@ -20,6 +20,9 @@ public class PlotSettings {
 	public boolean forceXAxisBuffer = false;
 	public boolean[] isEdgeAxis = {false,false};
 	public boolean[] isPositiveOnly = {false,false};
+	
+	public boolean showGrid = false;
+	
 	public PlotSettings(){
 		
 	}

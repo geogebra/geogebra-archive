@@ -106,6 +106,10 @@ public class CellRange {
 	}
 	
 	
+	boolean isSingleCell() {
+		return ((maxColumn - minColumn == 0) && (maxRow - minRow == 0));
+	}
+	
 	boolean isColumn() {
 		return (anchorRow == -1);
 	}
@@ -114,6 +118,7 @@ public class CellRange {
 		return (anchorColumn == -1);
 	}
 	
+	// TODO -- refator this name, should mean has either exactly 2 rows or 2 columns
 	boolean is2D() {
 		return (maxColumn - minColumn == 1) || (maxRow - minRow == 1);
 	}
@@ -289,46 +294,6 @@ public class CellRange {
 		return hasEmptyCells;
 	}
 	
-	
-	
-	
-	public String getName(){
-		
-		String s = "";
-		
-		if(this.isColumn()){
-			s = "column " + getSpreadsheetColumnName(this.minColumn);
-			
-		}else if(this.isRow()){
-			s = "row " + this.minRow;
-			
-		}else if(this.is2D()){
-			s = getSpreadsheetCellName(minColumn, minRow);
-			s += ":";
-			s += getSpreadsheetCellName(maxColumn, maxRow);
-			
-		}else{
-			s = getSpreadsheetCellName(minColumn, minRow);
-		}
-		
-		return s;
-	}
-	
-	public static String getSpreadsheetCellName(int column, int row) {
-		++row;
-		return getSpreadsheetColumnName(column) + row;
-	}
-		
-    public static String getSpreadsheetColumnName(int i) {
-        ++ i;  
-        String col = "";
-        while (i > 0) {
-              col = (char)('A' + (i-1) % 26)  + col;
-              i = (i-1)/ 26; 
-        }
-        return col;
-    } 	
-    
 	
 	
 	

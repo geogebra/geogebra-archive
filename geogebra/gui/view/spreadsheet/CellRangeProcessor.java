@@ -6,6 +6,7 @@ import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
@@ -113,114 +114,42 @@ public class CellRangeProcessor {
 	//           Create Lists from Cells
 	//====================================================
 
-
-
+	/**
+	 * Creates a GeoList containing points constructed from the spreadsheet
+	 * cells found in rangeList
+	 * Uses these defaults: no sorting, perform undo 
+	 */
 	public GeoElement createPointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
-
 		return  createPointList(rangeList, byValue, leftToRight, false, true);
-
 	}
 
-
+	/**
+	 * Creates a GeoList containing points constructed from the spreadsheet
+	 * cells found in rangeList.
+	 * 
+	 * @param rangeList
+	 * @param byValue
+	 * @param leftToRight
+	 * @param isSorted
+	 * @param doStoreUndo
+	 * @return
+	 */
 	public GeoElement createPointList(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight,
 			boolean isSorted, boolean doStoreUndo) {
 
-
 		GeoElement[] geos = null;
 
-		int c1, c2, r1, r2;
-		StringBuilder list = new StringBuilder();
-		//LinkedList<String> list = new LinkedList<String>();
-		boolean doHorizontalPairs = true;
-		boolean isError = false;
-
-		// note: we assume that rangeList has passed the isCreatePointListPossible() test 
-
-		list.append("{");
-		try {			
-			// Determine if pairs are joined vertically or horizontally and get the 
-			// row column indices needed to traverse the cells.
-
-			// CASE 1: selection is contiguous and 2D
-			if (rangeList.size() == 1) {
-
-				doHorizontalPairs = rangeList.get(0).getWidth() == 2;
-				c1 = rangeList.get(0).getMinColumn();
-				c2 = rangeList.get(0).getMaxColumn();
-				r1 = rangeList.get(0).getMinRow();
-				r2 = rangeList.get(0).getMaxRow();
-
-
-				// CASE 2: non-contiguous with two ranges (either single row or single column)
-			} else {
-
-				if(rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1){
-					doHorizontalPairs = true;
-					// we are traversing down columns. so get min and max column indices
-					c1 = Math.min(rangeList.get(0).getMinColumn(), rangeList.get(1).getMinColumn());
-					c2 = Math.max(rangeList.get(0).getMaxColumn(), rangeList.get(1).getMaxColumn());
-					// but get the max-min and min-max row indices in case the columns don't line up
-					r1 = Math.max(rangeList.get(0).getMinRow(), rangeList.get(1).getMinRow());
-					r2 = Math.min(rangeList.get(0).getMaxRow(), rangeList.get(1).getMaxRow());
-
-				}else{
-					doHorizontalPairs = true;
-					// we are traversing across rows. so get min and max row indices
-					r1 = Math.min(rangeList.get(0).getMinRow(), rangeList.get(1).getMinRow());
-					r2 = Math.max(rangeList.get(0).getMaxRow(), rangeList.get(1).getMaxRow());	
-					// but get the max-min and min-max column indices in case the rows don't line up
-					c1 = Math.max(rangeList.get(0).getMinColumn(), rangeList.get(1).getMinColumn());
-					c2 = Math.min(rangeList.get(0).getMaxColumn(), rangeList.get(1).getMaxColumn());
-
-				}
-			}
-
-
-			// Create points and store their names in list of strings
-			if (doHorizontalPairs) {
-				for (int i = r1; i <= r2; ++i) {
-					GeoElement xCoord = RelativeCopy.getValue(table, c1, i);
-					GeoElement yCoord = RelativeCopy.getValue(table, c2, i);
-					if(leftToRight)
-						createListPoint(xCoord, yCoord, list, isError, byValue);
-					else
-						createListPoint(yCoord, xCoord, list, isError, byValue);
-				}
-
-			} else {
-				for (int i = c1; i <= c2; ++i) {
-					GeoElement xCoord = RelativeCopy.getValue(table, i, r1);
-					GeoElement yCoord = RelativeCopy.getValue(table, i, r2);
-					if(leftToRight)
-						createListPoint(xCoord, yCoord, list, isError, byValue);
-					else
-						createListPoint(yCoord, xCoord, list, isError, byValue);
-				}
-			}
-
-			// finish processing the text
-			list.deleteCharAt(list.length()-1);
-			list.append("}");
-
-			if(isSorted){
-				list.insert(0, "Sort[" );
-				list.append("]");
-			}
-			//System.out.println(list.toString());
-
-			// convert the text to a GeoList
-			geos = table.kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptions(list.toString(), false);
+		try {
+			// get a string expression for the list and convert the string to a geo
+			String pointListStr = createPointListString(rangeList, byValue,  leftToRight, isSorted, doStoreUndo);
+			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(pointListStr, false);
 
 			if(doStoreUndo)
 				app.storeUndoInfo();
-		}
 
-		catch (Exception ex) {
-			//app.showError("NumberExpected");
-			Application.debug("Creating list of points failed with exception " + ex);
+		} catch (Exception e) {
+			Application.debug("Creating list of points failed with exception: " + e);
 		}
-
 
 		if(geos != null)
 			return geos[0];
@@ -229,170 +158,47 @@ public class CellRangeProcessor {
 
 	}
 
-	private void createListPoint(GeoElement xCoord, GeoElement yCoord,
-			StringBuilder sb, boolean isError, boolean byValue) {
-
-		String pointString = "";
-		String pointName = "";
-		boolean isPolar = false;
-		try {
-			if (xCoord != null && yCoord != null
-					&& (!xCoord.isGeoNumeric() || !yCoord.isGeoNumeric()))
-				isError = true;
-
-
-
-			// if both cells are non-empty and numeric then make a point
-			if (xCoord != null && yCoord != null && xCoord.isGeoNumeric()
-					&& yCoord.isGeoNumeric()) {
-
-				// test for polar point
-				isPolar = yCoord.isAngle();
-				String separator = isPolar? ";" : ",";
-
-				pointString = "(" + xCoord.getLabel() + separator + yCoord.getLabel() + ")";
-
-				// create a GeoPoint from text	
-				if(!byValue){
-					GeoElement[] geos = table.kernel.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptions(pointString,false);
-
-					pointName = geos[0].getIndexLabel("P");
-					geos[0].setLabel(pointName);
-					geos[0].setAuxiliaryObject(true);
-
-					//convert to polar mode
-					if(isPolar) 
-						((GeoPoint)geos[0]).setPolar();
-				}
-
-				// add point to the list string
-				if(byValue){
-					sb.append(pointString);
-				}else{
-					sb.append(pointName);
-				}
-				sb.append(",");
-			}
-
-		} catch (Exception ex) {
-			app.showError("NumberExpected");
-		}
-
-	}
-
-
-
+	/**
+	 * Creates a GeoPolyLine out of points constructed from the spreadsheet
+	 * cells found in rangeList.
+	 * Uses these defaults: no sorting, perform undo 
+	 * @param rangeList
+	 * @param byValue
+	 * @param leftToRight
+	 * @return
+	 */
 	public GeoElement createPolyLine(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight) {
-
 		return  createPolyLine(rangeList, byValue, leftToRight, false, true);
-
 	}
 
+	/**
+	 * * Creates a GeoPolyLine out of points constructed from the spreadsheet
+	 * cells found in rangeList.
+	 * 
+	 * @param rangeList
+	 * @param byValue
+	 * @param leftToRight
+	 * @param isSorted
+	 * @param doStoreUndo
+	 * @return
+	 */
 	public GeoElement createPolyLine(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight,
 			boolean isSorted, boolean doStoreUndo) {
 
-
 		GeoElement[] geos = null;
 
-		int c1, c2, r1, r2;
-		StringBuilder list = new StringBuilder();
-		//LinkedList<String> list = new LinkedList<String>();
-		boolean doHorizontalPairs = true;
-		boolean isError = false;
-
-		// note: we assume that rangeList has passed the isCreatePointListPossible() test 
-
-		list.append("{");
-		try {			
-			// Determine if pairs are joined vertically or horizontally and get the 
-			// row column indices needed to traverse the cells.
-
-			// CASE 1: selection is contiguous and 2D
-			if (rangeList.size() == 1) {
-
-				doHorizontalPairs = rangeList.get(0).getWidth() == 2;
-				c1 = rangeList.get(0).getMinColumn();
-				c2 = rangeList.get(0).getMaxColumn();
-				r1 = rangeList.get(0).getMinRow();
-				r2 = rangeList.get(0).getMaxRow();
-
-
-				// CASE 2: non-contiguous with two ranges (either single row or single column)
-			} else {
-
-				if(rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1){
-					doHorizontalPairs = true;
-					// we are traversing down columns. so get min and max column indices
-					c1 = Math.min(rangeList.get(0).getMinColumn(), rangeList.get(1).getMinColumn());
-					c2 = Math.max(rangeList.get(0).getMaxColumn(), rangeList.get(1).getMaxColumn());
-					// but get the max-min and min-max row indices in case the columns don't line up
-					r1 = Math.max(rangeList.get(0).getMinRow(), rangeList.get(1).getMinRow());
-					r2 = Math.min(rangeList.get(0).getMaxRow(), rangeList.get(1).getMaxRow());
-
-				}else{
-					doHorizontalPairs = true;
-					// we are traversing across rows. so get min and max row indices
-					r1 = Math.min(rangeList.get(0).getMinRow(), rangeList.get(1).getMinRow());
-					r2 = Math.max(rangeList.get(0).getMaxRow(), rangeList.get(1).getMaxRow());	
-					// but get the max-min and min-max column indices in case the rows don't line up
-					c1 = Math.max(rangeList.get(0).getMinColumn(), rangeList.get(1).getMinColumn());
-					c2 = Math.min(rangeList.get(0).getMaxColumn(), rangeList.get(1).getMaxColumn());
-
-				}
-			}
-
-
-			// Create points and store their names in list of strings
-			if (doHorizontalPairs) {
-				for (int i = r1; i <= r2; ++i) {
-					GeoElement xCoord = RelativeCopy.getValue(table, c1, i);
-					GeoElement yCoord = RelativeCopy.getValue(table, c2, i);
-					if(leftToRight)
-						createListPoint(xCoord, yCoord, list, isError, byValue);
-					else
-						createListPoint(yCoord, xCoord, list, isError, byValue);
-				}
-
-			} else {
-				for (int i = c1; i <= c2; ++i) {
-					GeoElement xCoord = RelativeCopy.getValue(table, i, r1);
-					GeoElement yCoord = RelativeCopy.getValue(table, i, r2);
-					if(leftToRight)
-						createListPoint(xCoord, yCoord, list, isError, byValue);
-					else
-						createListPoint(yCoord, xCoord, list, isError, byValue);
-				}
-			}
-
-			// finish processing the text
-			list.deleteCharAt(list.length()-1);
-			list.append("}");
-
-			if(isSorted){
-				list.insert(0, "Sort[" );
-				list.append("]");
-			}
-			//System.out.println(list.toString());
-
-
-			list.insert(0, "PolyLine[" );
-			list.append("]");
-
-
-			// convert the text to a PolyLine
-			geos = table.kernel.getAlgebraProcessor()
-			.processAlgebraCommandNoExceptions(list.toString(), false);
+		try {
+			// get a string expression for the PolyLine and convert the string to a geo
+			String pointListStr = createPointListString(rangeList, byValue,  leftToRight, isSorted, doStoreUndo);
+			pointListStr = "PolyLine["  + pointListStr + "]";
+			geos = table.kernel.getAlgebraProcessor().processAlgebraCommandNoExceptions(pointListStr, false);
 
 			if(doStoreUndo)
 				app.storeUndoInfo();
-		}
 
-		catch (Exception ex) {
-			//app.showError("NumberExpected");
-			Application.debug("Creating list of points failed with exception " + ex);
+		} catch (Exception e) {
+			Application.debug("Creating PolyLine failed with exception: " + e);
 		}
-
 
 		if(geos != null)
 			return geos[0];
@@ -401,6 +207,245 @@ public class CellRangeProcessor {
 
 	}
 
+
+
+	private class PointDimension{
+		private boolean doHorizontalPairs;
+		private int c1, c2, r1, r2;
+	}
+
+
+	/**
+	 * Given a cell range to converted into a point list, this determines if
+	 * pairs are joined vertically or horizontally and gets the row column
+	 * indices needed to traverse the cells.
+	 */
+	private void getPointListDimensions(ArrayList<CellRange> rangeList, PointDimension pd) {
+
+		pd.doHorizontalPairs = true;
+
+		// note: we assume that rangeList has passed the isCreatePointListPossible() test 
+
+		// CASE 1: selection is contiguous and 2D
+		if (rangeList.size() == 1) {
+
+			pd.doHorizontalPairs = rangeList.get(0).getWidth() == 2;
+			pd.c1 = rangeList.get(0).getMinColumn();
+			pd.c2 = rangeList.get(0).getMaxColumn();
+			pd.r1 = rangeList.get(0).getMinRow();
+			pd.r2 = rangeList.get(0).getMaxRow();
+
+
+			// CASE 2: non-contiguous with two ranges (either single row or single column)
+		} else {
+
+			if(rangeList.get(0).getWidth() == 1 && rangeList.get(1).getWidth() == 1){
+				pd.doHorizontalPairs = true;
+				// we are traversing down columns. so get min and max column indices
+				pd.c1 = Math.min(rangeList.get(0).getMinColumn(), rangeList.get(1).getMinColumn());
+				pd.c2 = Math.max(rangeList.get(0).getMaxColumn(), rangeList.get(1).getMaxColumn());
+				// but get the max-min and min-max row indices in case the columns don't line up
+				pd.r1 = Math.max(rangeList.get(0).getMinRow(), rangeList.get(1).getMinRow());
+				pd.r2 = Math.min(rangeList.get(0).getMaxRow(), rangeList.get(1).getMaxRow());
+
+			}else{
+				pd.doHorizontalPairs = true;
+				// we are traversing across rows. so get min and max row indices
+				pd.r1 = Math.min(rangeList.get(0).getMinRow(), rangeList.get(1).getMinRow());
+				pd.r2 = Math.max(rangeList.get(0).getMaxRow(), rangeList.get(1).getMaxRow());	
+				// but get the max-min and min-max column indices in case the rows don't line up
+				pd.c1 = Math.max(rangeList.get(0).getMinColumn(), rangeList.get(1).getMinColumn());
+				pd.c2 = Math.min(rangeList.get(0).getMaxColumn(), rangeList.get(1).getMaxColumn());
+
+			}
+		}
+
+	}
+
+
+
+	/**
+	 * Builds a string expression for a list of points.
+	 * note: It is assumed that rangeList has passed the isCreatePointListPossible() test 
+	 * @param rangeList
+	 * @param byValue
+	 * @param leftToRight
+	 * @param isSorted
+	 * @param doStoreUndo
+	 * @return
+	 */
+	public String createPointListString(ArrayList<CellRange> rangeList, boolean byValue, boolean leftToRight,
+			boolean isSorted, boolean doStoreUndo) {
+
+		// get the orientation and dimensions of the list
+		PointDimension pd = new PointDimension();
+		getPointListDimensions(rangeList, pd);
+
+
+		// build the string
+		StringBuilder list = new StringBuilder();
+
+		try {			
+			list.append("{");
+			String pointStr;
+			GeoElement xCoord, yCoord;
+
+			if (pd.doHorizontalPairs) {
+				for (int i = pd.r1; i <= pd.r2; ++i) {
+					xCoord = RelativeCopy.getValue(table, pd.c1, i);
+					yCoord = RelativeCopy.getValue(table, pd.c2, i);
+					pointStr = pointString(xCoord, yCoord, byValue, leftToRight);
+					if(pointStr != null)
+						list.append(pointStr + ",");
+				}
+
+			} else {   // vertical pairs
+				for (int i = pd.c1; i <= pd.c2; ++i) {
+					xCoord = RelativeCopy.getValue(table, i, pd.r1);
+					yCoord = RelativeCopy.getValue(table, i, pd.r2);
+					pointStr = pointString(xCoord, yCoord, byValue, leftToRight);
+					if(pointStr != null)
+						list.append(pointStr + ",");
+				}
+			}
+
+			// finish processing the text
+			if(list.length() > 1)
+				list.deleteCharAt(list.length()-1);
+			list.append("}");
+
+			if(isSorted){
+				list.insert(0, "Sort[" );
+				list.append("]");
+			}
+			//System.out.println(list.toString());
+		}
+
+
+		catch (Exception ex) {
+			Application.debug("Creating list of points expression failed with exception " + ex);
+		}
+
+		return list.toString();
+
+	}
+
+
+
+	/**
+	 * Creates a string expression for a point.
+	 * @param leftCoord
+	 * @param rightCoord
+	 * @param byValue
+	 * @param leftToRight
+	 * @return
+	 */
+	private String pointString(GeoElement leftCoord, GeoElement rightCoord, boolean byValue, boolean leftToRight) {
+
+		// return null and exit if either coordinate is null or non-numeric 
+		if (leftCoord == null || rightCoord == null || !leftCoord.isGeoNumeric() || !rightCoord.isGeoNumeric()) 
+			return null;
+
+		// set the coords to leftward or rightward orientation
+		GeoElement xCoord, yCoord;
+		xCoord = leftToRight? leftCoord: rightCoord;
+		yCoord = leftToRight? rightCoord: leftCoord;
+
+		String pointString = "";
+		boolean isPolar = false;
+		try {
+			// test for polar point
+			isPolar = yCoord.isAngle();
+			String separator = isPolar? ";" : ",";
+
+			if(byValue)
+				pointString = "(" + ((GeoNumeric)xCoord).getDouble() 
+				+ separator + ((GeoNumeric)yCoord).getDouble() + ")";
+			else
+				pointString = "(" + xCoord.getLabel() + separator + yCoord.getLabel() + ")";
+
+		} catch (Exception ex) {
+			Application.debug("Creating point string failed with exception: " + ex);
+		}
+
+		return pointString;
+	}
+
+
+
+	public String[] getPointListTitles(ArrayList<CellRange> rangeList, boolean leftToRight) {
+
+		String[] title = new String[2];
+
+		// get the orientation and dimensions of the list
+		PointDimension pd = new PointDimension();
+		getPointListDimensions(rangeList, pd);
+
+		if (pd.doHorizontalPairs) {
+			// handle first title
+			if(RelativeCopy.getValue(table, pd.c1, pd.r1).isGeoText()){
+				//header cell text
+				title[0] = ((GeoText)RelativeCopy.getValue(table, pd.c1, pd.r1)).getTextString();
+			}
+			else if(pd.r1 == 0){
+				// column name
+				title[0] = getCellRangeString(new CellRange(table,pd.c1,-1,pd.c1,-1));
+			} else{
+				// cell range
+				title[0] = getCellRangeString(new CellRange(table,pd.c1,pd.r1,pd.c1,pd.r2));
+			}
+
+			// handle second title
+			if(RelativeCopy.getValue(table, pd.c2, pd.r1).isGeoText()){
+				//header cell text
+				title[1] = ((GeoText)RelativeCopy.getValue(table, pd.c2, pd.r1)).getTextString();
+			}
+			else if(pd.r1 == 0){
+				// column name
+				title[1] = getCellRangeString(new CellRange(table,pd.c2,-1,pd.c2,-1));
+			} else{
+				// cell range
+				title[1] = getCellRangeString(new CellRange(table,pd.c2,pd.r1,pd.c2,pd.r2));
+			}
+
+
+		} else {   // vertical pairs
+			
+			// handle first title
+			if(RelativeCopy.getValue(table, pd.c1, pd.r1).isGeoText()){
+				//header cell text
+				title[0] = ((GeoText)RelativeCopy.getValue(table, pd.c1, pd.r1)).getTextString();
+			}
+			else if(pd.c1 == 0){
+				// row name
+				title[0] = getCellRangeString(new CellRange(table,-1,pd.r1,-1,pd.r1));
+			} else{
+				// cell range
+				title[0] = getCellRangeString(new CellRange(table,pd.c1,pd.r1,pd.c2,pd.r1));
+			}
+
+			// handle second title
+			if(RelativeCopy.getValue(table, pd.c1, pd.r2).isGeoText()){
+				//header cell text
+				title[1] = ((GeoText)RelativeCopy.getValue(table, pd.c1, pd.r2)).getTextString();
+			}
+			else if(pd.c1 == 0){
+				// row name
+				title[1] = getCellRangeString(new CellRange(table,-1,pd.r2,-1,pd.r2));
+			} else{
+				// cell range
+				title[1] = getCellRangeString(new CellRange(table,pd.c1,pd.r2,pd.c2,pd.r2));
+			}
+				
+		}
+
+		if(!leftToRight){
+			String temp = title[0];
+			title[0]=title[1];
+			title[1]=temp;
+		}
+		return title;
+	}
 
 
 
@@ -519,9 +564,9 @@ public class CellRangeProcessor {
 		return isAllColumns;
 	}
 
-	
+
 	/**
-	 * Creates an string expression for a matrix where each sub-list is a list
+	 * Creates a string expression for a matrix where each sub-list is a list
 	 * of cells in the columns spanned by the range list
 	 */
 	public String createColumnMatrixExpression(ArrayList<CellRange> rangeList) {
@@ -540,19 +585,14 @@ public class CellRangeProcessor {
 		sb.append("}");
 
 		return sb.toString();
-		
+
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 
 	public GeoElement createMatrix(int column1, int column2, int row1, int row2, boolean copyByValue){
 		return createMatrix( column1,  column2,  row1,  row2,  copyByValue, false);
@@ -636,10 +676,6 @@ public class CellRangeProcessor {
 		else 
 			return null;
 	}
-
-
-
-
 
 
 
@@ -935,5 +971,32 @@ public class CellRangeProcessor {
 	}
 
 
+
+	public String getCellRangeString(CellRange range){
+		
+		String s = "";
+		
+		if(range.isColumn()){
+			s = app.getCommand("Column") + " " + GeoElement.getSpreadsheetColumnName(range.getMinColumn());
+			
+		}else if(range.isRow()){
+			s = app.getCommand("Row") + " " + (range.getMinRow() + 1);
+			
+		}else if(!range.isSingleCell()){
+			s = GeoElement.getSpreadsheetCellName(range.getMinColumn(), range.getMinRow());
+			s += ":";
+			s += GeoElement.getSpreadsheetCellName(range.getMaxColumn(),range.getMaxRow());
+			
+		}else{
+			s = GeoElement.getSpreadsheetCellName(range.getMinColumn(), range.getMinRow());
+		}
+		
+		return s;
+	}
+	
+	
+	
+	
+	
 
 }

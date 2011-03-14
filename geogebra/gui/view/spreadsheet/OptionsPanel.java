@@ -1,6 +1,8 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.kernel.GeoText;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -11,6 +13,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -28,7 +32,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-public class OptionsPanel extends JPanel implements PropertyChangeListener, ActionListener{
+public class OptionsPanel extends JPanel implements PropertyChangeListener, ActionListener, FocusListener{
 
 
 	private Application app;
@@ -40,7 +44,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 	private JLabel lblFreqType;
 
 	// graph  panel components
-	private JCheckBox ckAutoDimension, ckShowGrid;
+	private JCheckBox ckAutoWindow, ckShowGrid;
 	private JLabel lblXMin, lblXMax, lblYMin, lblYMax, lblXInterval, lblYInterval;
 	private MyTextField fldXMin, fldXMax, fldYMin, fldYMax, fldXInterval, fldYInterval;
 
@@ -56,6 +60,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 	private JCheckBox ckShowLines;
 	private JLabel lblOverlay;
 
+	private boolean isUpdating = false;
 
 
 	public OptionsPanel(Application app, StatPanelSettings settings){
@@ -83,6 +88,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		setLayout(new BorderLayout());
 		add(tabbedPane, BorderLayout.CENTER);
 
+		tabbedPane.addFocusListener(this);
 		// update
 		setLabels();
 		updateGUI();
@@ -91,7 +97,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 
 
 	public void setMode(int mode){
-		
+
 		showYSettings = false;
 		tabbedPane.removeAll();
 		switch(mode){
@@ -151,7 +157,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx=0;
 		c.anchor=GridBagConstraints.WEST;
-		
+
 		p.add(insetPanel(tab1, lblFreqType),c);
 		p.add(insetPanel(tab2,ckCumulative),c);
 		p.add(insetPanel(tab2, ckFreq),c);
@@ -205,8 +211,8 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		int fieldWidth = 5;
 
 		// create components
-		ckAutoDimension = new JCheckBox();		
-		ckAutoDimension.addActionListener(this);
+		ckAutoWindow = new JCheckBox();		
+		ckAutoWindow.addActionListener(this);
 
 		ckShowGrid = new JCheckBox();		
 		ckShowGrid.addActionListener(this);
@@ -214,29 +220,35 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		lblXMin = new JLabel();
 		fldXMin = new MyTextField(app.getGuiManager(),fieldWidth);
 		fldXMin.setEditable(true);
-
+		fldXMin.addActionListener(this);
+		
 		lblXMax = new JLabel();
 		fldXMax = new MyTextField(app.getGuiManager(),fieldWidth);
-
+		fldXMax.addActionListener(this);
+		
 		lblYMin = new JLabel();
 		fldYMin = new MyTextField(app.getGuiManager(),fieldWidth);
-
+		fldYMin.addActionListener(this);
+		
 		lblYMax = new JLabel();
 		fldYMax = new MyTextField(app.getGuiManager(),fieldWidth);
-
+		fldYMax.addActionListener(this);
+		
 		lblXInterval = new JLabel();
 		fldXInterval = new MyTextField(app.getGuiManager(),fieldWidth);
-
+		fldXInterval.addActionListener(this);
+		
 		lblYInterval = new JLabel();
 		fldYInterval = new MyTextField(app.getGuiManager(),fieldWidth);
-
+		fldYInterval.addActionListener(this);
+		
 		//layout
 		JPanel p = new JPanel(new GridBagLayout()); 
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx=0;
 		c.anchor=GridBagConstraints.WEST;
 		p.add(ckShowGrid,c);
-		p.add(ckAutoDimension,c);
+		p.add(ckAutoWindow,c);
 		c.anchor=GridBagConstraints.EAST;
 		p.add(insetPanelRight(0, lblXMin,fldXMin),c);
 		p.add(insetPanelRight(0, lblXMin,fldXMin),c);
@@ -246,7 +258,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		p.add(insetPanelRight(tab2, lblYMin,fldYMin),c);
 		p.add(insetPanelRight(tab2, lblYMax,fldYMax),c);
 		p.add(insetPanelRight(tab2, lblYInterval,fldYInterval),c);
-		
+
 		graphPanel = new JPanel(new BorderLayout());
 		graphPanel.add(p, BorderLayout.NORTH);
 
@@ -279,7 +291,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 
 
 	private void setLabels(){
-		
+
 		// histogram options
 		ckManual.setText(app.getMenu("SetClasssesManually"));		
 		lblFreqType.setText(app.getMenu("FrequencyType") + ":");
@@ -294,7 +306,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		ckOverlayPolygon.setText(app.getMenu("FrequencyPolygon"));
 
 		// graph options
-		ckAutoDimension.setText(app.getMenu("AutoDimension"));
+		ckAutoWindow.setText(app.getMenu("AutoDimension"));
 		ckShowGrid.setText(app.getMenu("ShowGridlines"));
 		lblXMin.setText("X " + app.getPlain("min") + ":");
 		lblXMax.setText("X " + app.getPlain("max") + ":");
@@ -307,10 +319,11 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		ckShowLines.setText(app.getMenu("LineGraph"));
 	}
 
-	
+
 	private void updateGUI(){
 
-	
+		isUpdating  = true;
+
 		ckManual.setSelected(settings.useManualClasses);	
 		//cbType.setSelectedIndex(prefs.type);
 
@@ -324,6 +337,9 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		ckCumulative.setSelected(settings.isCumulative);	
 		ckOverlayNormal.setSelected(settings.hasOverlayNormal);	
 		ckOverlayPolygon.setSelected(settings.hasOverlayPolygon);	
+		ckShowGrid.setSelected(settings.showGrid);	
+		ckAutoWindow.setSelected(settings.isAutomaticWindow);
+
 
 		lblYMin.setVisible(showYSettings);
 		fldYMin.setVisible(showYSettings);
@@ -332,15 +348,83 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 		lblYInterval.setVisible(showYSettings);
 		fldYInterval.setVisible(showYSettings);
 
+		// enable/disable window dimension components
+		fldXMin.setEnabled(!ckAutoWindow.isSelected());
+		fldXMax.setEnabled(!ckAutoWindow.isSelected());
+		fldXInterval.setEnabled(!ckAutoWindow.isSelected());
+		fldYMin.setEnabled(!ckAutoWindow.isSelected());
+		fldYMax.setEnabled(!ckAutoWindow.isSelected());
+		fldYInterval.setEnabled(!ckAutoWindow.isSelected());
+
+		lblXMin.setEnabled(!ckAutoWindow.isSelected());
+		lblXMax.setEnabled(!ckAutoWindow.isSelected());
+		lblXInterval.setEnabled(!ckAutoWindow.isSelected());
+		lblYMin.setEnabled(!ckAutoWindow.isSelected());
+		lblYMax.setEnabled(!ckAutoWindow.isSelected());
+		lblYInterval.setEnabled(!ckAutoWindow.isSelected());
+
+
+		if(ckAutoWindow.isSelected()){
+			//PlotSettings ps = settings.plotPanel.getPlotSettings();
+			fldXMin.setText("" + settings.xMin);
+			fldXMax.setText("" + settings.xMax);
+			fldYMin.setText("" + settings.yMin);
+			fldYMax.setText("" + settings.yMax);
+
+		}
+
+		isUpdating  = false;
 	}
 
 
+	private void doTextFieldActionPerformed(JTextField source) {
+		if(isUpdating) return;
+		try {
+			String inputText = source.getText().trim();
+			NumberValue nv;
+			nv = app.getKernel().getAlgebraProcessor().evaluateToNumeric(inputText, false);		
+			double value = nv.getDouble();
+
+			if(source == fldXMin){
+				settings.xMin = value;  
+				firePropertyChange("settings", true, false);
+			}
+			else if(source == fldXMax){
+				settings.xMax = value;
+				firePropertyChange("settings", true, false);
+			}
+			else if(source == fldYMax){
+				settings.yMax = value;
+				firePropertyChange("settings", true, false);
+			}
+			else if(source == fldYMin){
+				settings.yMin = value;
+				firePropertyChange("settings", true, false);
+			}
+			else if(source == fldXInterval){
+				settings.xInterval = value;
+				firePropertyChange("settings", true, false);
+			}
+			else if(source == fldYInterval){
+				settings.yInterval = value;
+				firePropertyChange("settings", true, false);
+			}
+						
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void actionPerformed(ActionEvent e) {
 
-		Object source  = e.getSource();
+		if(isUpdating) return;
 
-		if(source == ckManual){
+		Object source  = e.getSource();
+		if(source instanceof JTextField){
+			doTextFieldActionPerformed((JTextField) source);
+		}
+
+		else if(source == ckManual){
 			settings.useManualClasses = ckManual.isSelected();
 			firePropertyChange("settings", true, false);
 		}
@@ -368,15 +452,36 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 			settings.hasOverlayPolygon = ckOverlayPolygon.isSelected();
 			firePropertyChange("settings", true, false);
 		}
+		else if(source == ckShowGrid){
+			settings.showGrid = ckShowGrid.isSelected();
+			firePropertyChange("settings", true, false);
+		}
+		else if(source == ckAutoWindow){
+			settings.isAutomaticWindow = ckAutoWindow.isSelected();
+			firePropertyChange("settings", true, false);
+		}
+
 		else{
 			firePropertyChange("settings", true, false);
 		}
 
-
+		updateGUI();
 	}
 
 	public void propertyChange(PropertyChangeEvent arg0) {
 		// TODO Auto-generated method stub
+
+	}
+
+
+	public void focusGained(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	public void focusLost(FocusEvent arg0) {
+		System.out.println("================== focus lost =======");
 
 	}
 

@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.kernel.AlgoFunctionAreaSums;
+import geogebra.kernel.AlgoResidualPlot;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -200,7 +201,7 @@ public class StatGeo   {
 				text = createStatListString(statMap2, label, regFunction.getLabel());
 			else
 				text = createStatListString(statMap2, label);
-			
+
 			break;
 
 
@@ -383,23 +384,25 @@ public class StatGeo   {
 	}
 
 
-	public PlotSettings updateHistogram(GeoList dataList, GeoElement histogram, StatPanelSettings settings){	
+	public PlotSettings getHistogramSettings(GeoList dataList, GeoElement histogram, StatPanelSettings settings){	
 
 		PlotSettings ps = new PlotSettings();	
 		getDataBounds(dataList);	
-
-		//double barWidth = (xMaxData - xMinData)/(numClasses - 1);  
-		//double freqMax = getFrequencyTableMax(dataList, barWidth);
 
 		double freqMax = ((AlgoFunctionAreaSums)histogram.getParentAlgorithm()).getFreqMax();
 		if(settings.type == StatPanelSettings.TYPE_RELATIVE)
 			freqMax = 1.0;
 
-		double buffer = .25*(xMaxData - xMinData);
-		ps.xMin = xMinData - buffer;  
-		ps.xMax = xMaxData + buffer;
-		ps.yMin = -1.0;
-		ps.yMax = 1.1 * freqMax;
+		yMinData = -1.0;
+		yMaxData = freqMax;
+		
+		ps = setXYBounds(ps, settings, .2, .1);
+		
+	//	double buffer = .25*(xMaxData - xMinData);
+	//	ps.xMin = xMinData - buffer;  
+	//	ps.xMax = xMaxData + buffer;
+	//	ps.yMin = -1.0;
+	//	ps.yMax = 1.1 * freqMax;
 		ps.showYAxis = true;
 		ps.isEdgeAxis[0] = false;
 		ps.isEdgeAxis[1] = true;
@@ -423,11 +426,12 @@ public class StatGeo   {
 		return geo;		
 	}
 
-	public PlotSettings updateBoxPlot(GeoList dataList){
+	public PlotSettings getBoxPlotSettings(GeoList dataList){
 
 		PlotSettings ps = new PlotSettings();
 
-		getDataBounds(dataList);		
+		getDataBounds(dataList);
+		
 		double buffer = .25*(xMaxData - xMinData);
 		ps.xMin = xMinData - buffer;
 		ps.xMax = xMaxData + buffer;
@@ -513,7 +517,7 @@ public class StatGeo   {
 		// copy the dataList geo
 		GeoList geo = new GeoList(cons);
 		geo.setAuxiliaryObject(true);
-		geo.setLabel(null);
+		geo.setLabel("scatterPlotPointList");
 
 		for(int i=0; i<dataList.size(); ++i)
 			geo.add(dataList.get(i));	
@@ -522,57 +526,59 @@ public class StatGeo   {
 		geo.setEuclidianVisible(true);	
 		geo.setAuxiliaryObject(true);
 		geo.setLabelVisible(false);	
+		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
+		geo.setAlphaValue(0.25f);
 
 		return geo;
 
+
 	}
 
-	public PlotSettings updateScatterPlot(GeoList dataList){
+	public PlotSettings getScatterPlotSettings(GeoList dataList, StatPanelSettings settings){
 
 		PlotSettings ps = new PlotSettings();	
 		getDataBounds(dataList, true);	
 
-		double xBuffer = .25*(xMaxData - xMinData);
-		ps.xMin = xMinData - xBuffer;
-		ps.xMax = xMaxData + xBuffer;
-
-		double yBuffer = .25*(yMaxData - yMinData);
-		ps.yMin = yMinData - yBuffer;
-		ps.yMax = yMaxData + yBuffer;
+		ps = setXYBounds(ps, settings);
 
 		ps.showYAxis = true;
 		ps.forceXAxisBuffer = false;
 		ps.isEdgeAxis[0] = true;
 		ps.isEdgeAxis[1] = true;
+		ps.isPositiveOnly[0] = true;
+		ps.isPositiveOnly[1] = true;
 		return ps;		
+
 	}
 
 
 
 	public GeoElement createRegressionPlot(GeoList dataList, int regType, int order){
 
-		GeoElement geo = null;
-
+		// if regression mode = none a dummy linear model is 
+		// created with visibility set to false
 		boolean regNone = regType == StatDialog.REG_NONE;
 		if(regNone) regType = StatDialog.REG_LINEAR;
 
+		// create the geo
 		String label = dataList.getLabel();	
-
 		String text = regCmd[regType] + "[" + label + "]";
 		if(regType == StatDialog.REG_POLY)
 			text = regCmd[regType] + "[" + label + "," + order + "]";
+		GeoElement geo  = createGeoFromString(text);	
 
-		geo  = createGeoFromString(text);
+		// set geo options
 		geo.setObjColor(StatDialog.REGRESSION_COLOR);
-
 		if(regType == StatDialog.REG_LINEAR)	
 			((GeoLine)geo).setToExplicit();	
 
+		// hide the dummy geo
 		if(regNone) geo.setEuclidianVisible(false);
 
 		return geo;
 
 	}
+
 
 
 	public void updateRegressionPlot(PlotSettings ps, GeoList dataList){
@@ -615,36 +621,69 @@ public class StatGeo   {
 
 	}
 
-	public void updateResidualPlot(PlotSettings ps, GeoList dataList){
+	public PlotSettings getResidualPlotSettings(GeoList dataList, GeoElement residualPlot, StatPanelSettings settings){
 
-		getDataBounds(dataList, true);
+		PlotSettings ps = new PlotSettings();	
 
-		double xBuffer = .25*(xMaxData - xMinData);
-		ps.xMin = xMinData - xBuffer;
-		ps.xMax = xMaxData + xBuffer;
+		getDataBounds(dataList, true);	
 
-		double yBuffer = .25*(yMaxData - yMinData);
-		ps.yMin = yMinData - yBuffer;
-		ps.yMax = yMaxData + yBuffer;
+		double[] residualBounds = ((AlgoResidualPlot)residualPlot.getParentAlgorithm()).getResidualBounds();
+		yMaxData = Math.max(Math.abs(residualBounds[0]),Math.abs(residualBounds[1]));
+		yMinData = -yMaxData;
+
+		ps = setXYBounds(ps, settings);
 
 		ps.showYAxis = true;
 		ps.forceXAxisBuffer = false;
-
-		ps.isEdgeAxis[0] = true;
+		ps.isEdgeAxis[0] = false;
 		ps.isEdgeAxis[1] = true;
-
+		ps.isPositiveOnly[0] = true;
+		ps.isPositiveOnly[1] = false;
+		return ps;
 
 	}
+
+	private PlotSettings setXYBounds(PlotSettings ps, StatPanelSettings settings){
+		return setXYBounds( ps,  settings, .2, .2);
+	}
+
+	private PlotSettings setXYBounds(PlotSettings ps, StatPanelSettings settings, double xBufferScale, double yBufferScale){
+
+		if(settings.isAutomaticWindow){
+			
+			double xBuffer = xBufferScale*(xMaxData - xMinData);
+			settings.xMin = xMinData - xBuffer;
+			settings.xMax = xMaxData + xBuffer;
+
+			double yBuffer = yBufferScale*(yMaxData - yMinData);
+			settings.yMin = yMinData - yBuffer;
+			settings.yMax = yMaxData + yBuffer;
+		}
+	
+			ps.xMin = settings.xMin;
+			ps.xMax = settings.xMax;
+			ps.yMin = settings.yMin;
+			ps.yMax = settings.yMax;
+			ps.xAxesInterval = settings.xInterval;
+			ps.yAxesInterval = settings.yInterval;
+		
+
+		ps.showGrid = settings.showGrid;
+		return ps;
+	}
+
 
 	public String getStemPlotLatex(GeoList dataList, int adjustment){
 
 		String label = dataList.getLabel();	
-		GeoElement geo;
+		GeoElement tempGeo;
 
 		String	text = "StemPlot[" + label + "," + adjustment + "]";
-		geo  = createGeoFromString(text);
+		tempGeo  = createGeoFromString(text);
+		String latex = tempGeo.getLaTeXdescription();
+		tempGeo.remove();
 
-		return geo.getLaTeXdescription();		
+		return latex;		
 	}
 
 }

@@ -125,6 +125,7 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 
 	public void setEVParams(){
 		
+		showGrid(plotSettings.showGrid);
 		setShowAxis(EuclidianView.AXIS_Y, plotSettings.showYAxis, false);
 		
 		if(plotSettings.showArrows){
@@ -134,6 +135,12 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 		}
 		
 		setDrawBorderAxes(plotSettings.isEdgeAxis);
+		if(!plotSettings.isEdgeAxis[0])
+			setAxisCross(0,0);
+		if(!plotSettings.isEdgeAxis[1])
+			setAxisCross(1,0);
+		
+		
 		setPositiveAxes(plotSettings.isPositiveOnly);
 		
 		
@@ -147,6 +154,7 @@ public class PlotPanel extends EuclidianView implements ComponentListener {
 
 		
 		setAxesCornerCoordsVisible(false);
+		
 		
 		this.setAutomaticAxesNumberingDistance(plotSettings.xAxesIntervalAuto, 0);
 		this.setAutomaticAxesNumberingDistance(plotSettings.yAxesIntervalAuto, 1);

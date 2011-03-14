@@ -24,24 +24,33 @@ import javax.swing.JPanel;
 public class StatDialogOptionsPanel extends JPanel implements  ActionListener{
 
 	private Application app;
+	private StatDialog statDialog;
+	
 	private JCheckBox cbShowData, cbShowCombo2;
 	private AbstractButton cbShowStats;
 
 	public void setShowData(boolean flag) {
-		this.cbShowData.setSelected(flag);
+		cbShowData.removeActionListener(this);
+		cbShowData.setSelected(flag);
+		cbShowData.addActionListener(this);
 	}
 
 	public void setShowCombo2(boolean flag) {
-		this.cbShowCombo2.setSelected(flag);
+		cbShowCombo2.removeActionListener(this);
+		cbShowCombo2.setSelected(flag);
+		cbShowCombo2.addActionListener(this);
 	}
 	
 	public void setShowStats(boolean flag) {
-		this.cbShowStats.setSelected(flag);
+		cbShowStats.removeActionListener(this);
+		cbShowStats.setSelected(flag);
+		cbShowStats.addActionListener(this);
 	}
 
-	public StatDialogOptionsPanel(Application app){
+	public StatDialogOptionsPanel(Application app, StatDialog statDialog){
 
 		this.app = app;
+		this.statDialog = statDialog;
 		setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
 
 		cbShowData = new JCheckBox();
@@ -83,6 +92,8 @@ public class StatDialogOptionsPanel extends JPanel implements  ActionListener{
 		}
 	}
 
+
+	
 	private void setLabels(){
 
 		cbShowData.setText(app.getMenu("ShowData"));

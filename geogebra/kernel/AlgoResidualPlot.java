@@ -35,6 +35,8 @@ public class AlgoResidualPlot extends AlgoElement {
 	private GeoFunctionable function;
 	private GeoList outputList; //output	
 	private int size;
+	private double min, max;
+	
 
 	AlgoResidualPlot(Construction cons, String label, GeoList inputList, GeoFunctionable function2) {
 		super(cons);
@@ -65,6 +67,12 @@ public class AlgoResidualPlot extends AlgoElement {
 		return outputList;
 	}
 
+	public double[] getResidualBounds(){
+		double[] bounds = {min,max}; 
+		return bounds;
+	}
+	
+	
 	protected final void compute() {
 
 		size = inputList.size();
@@ -82,12 +90,17 @@ public class AlgoResidualPlot extends AlgoElement {
     	
 		double x,y, r;
 
+		min = Double.MAX_VALUE;
+		max = Double.MIN_VALUE;
+		
 		for (int i = 0 ; i < size ; i++) {
 			GeoElement p = inputList.get(i);
 			if (p.isGeoPoint()) {
 				x = ((GeoPoint)p).getInhomX();
 				y = ((GeoPoint)p).getInhomY();
-				r = y - funGeo.evaluate(x); 
+				r = y - funGeo.evaluate(x);
+				min = Math.min(r,min);
+				max = Math.max(r,max);
 				outputList.add(new GeoPoint(cons, null, x, r, 1.0));
 			} else {
 				outputList.setUndefined();

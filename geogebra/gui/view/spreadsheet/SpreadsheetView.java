@@ -224,8 +224,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 		//InspectorView id = new InspectorView(app); id.setVisible(true);
 
-
-
 	}
 
 
@@ -417,11 +415,13 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		switch (mode) {	
 
 		case EuclidianConstants.MODE_SPREADSHEET_ONEVARSTATS:
-			showStatDialog(StatDialog.MODE_ONEVAR);
+			if(table.getCellRangeProcessor().isOneVarStatsPossible(table.selectedCellRanges))
+				showStatDialog(StatDialog.MODE_ONEVAR);
 			break;
 
 		case EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS:
-			showStatDialog(StatDialog.MODE_REGRESSION);
+			if(table.getCellRangeProcessor().isCreatePointListPossible(table.selectedCellRanges))
+				showStatDialog(StatDialog.MODE_REGRESSION);
 			break;
 
 		case EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS:
@@ -596,6 +596,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			if(oneVarStatDialog == null){
 				oneVarStatDialog = new StatDialog(view, app, mode);
 			}else{
+				oneVarStatDialog.setLeftToRight(true);
 				oneVarStatDialog.updateDialog();
 			}
 			oneVarStatDialog.setVisible(true);	
@@ -640,7 +641,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 	public void showProbabilityCalculator(){
-
+		
 		if(probCalculator == null)
 			probCalculator = new ProbabilityCalculator(view, app);
 		if(!probCalculator.isVisible()){
