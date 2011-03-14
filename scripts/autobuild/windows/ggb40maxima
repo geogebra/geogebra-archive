@@ -1,0 +1,42 @@
+#!/bin/sh
+
+# Creates the actual Maxima version of GeoGebra.
+# @author Zoltan Kovacs <zoltan@geogebra.org>
+
+GGB40MAXIMA_ZIP=./ggb40maxima-3.9.155.0_5.23.2.zip
+# GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/ggb40maxima-3.9.155.0_5.23.2.zip
+
+# Please do not edit below this.
+
+cp $GGB40MAXIMA_ZIP /tmp
+ZIPFILE=`basename $GGB40MAXIMA_ZIP`
+
+## GGB40MAXIMA_ZIP_URL=http://www.geogebra.org/webstart/4.0/ggb40maxima-3.9.155.0_5.23.2.zip
+
+GGB40_ZIPVERSION=`echo $GGB40MAXIMA_ZIP | sed 's/[0-9a-z\.\/]*-//g' | sed 's/_[0-9a-z\.]*//g'`
+MAXIMAVERSION=`echo $GGB40MAXIMA_ZIP | sed 's/[0-9a-z\.\/\-]*_//g' | sed 's/.zip//g'`
+
+
+VERSION_STRING=`cat ../../../build/unpacked/version.txt`
+if [ "$VERSION_STRING" = "" ]; then
+ echo "Please build GeoGebra first."
+ exit 1
+ fi
+
+which unzip 2>&1 >/dev/null || {
+    echo unzip is required to run this script.
+    exit 1
+    }
+
+which zip 2>&1 >/dev/null || {
+    echo zip is required to run this script.
+    exit 1
+    }
+
+echo "This script will change GeoGebra JAR files from $GGB40_ZIPVERSION version to $VERSION_STRING for Maxima $MAXIMAVERSION"
+
+DIRNAME=ggb40maxima-${VERSION_STRING}_$MAXIMAVERSION
+mkdir -p $DIRNAME
+cd $DIRNAME
+unzip /tmp/$ZIPFILE
+
