@@ -866,7 +866,7 @@ public class GeoGebraToPgf extends GeoGebraExport {
     protected void drawPolygon(GeoPolygon geo){
     	// command: \pspolygon[par](x0,y0)....(xn,yn)
     	float alpha=geo.getAlphaValue();
-    	if (alpha==0.0f) return;
+    	if (alpha==0.0f&&geo.getFillType()!=GeoPolygon.FILL_HATCH) return;
 		startBeamer(codeFilledObject);
     	codeFilledObject.append("\\fill");
     	String s=LineOptionCode(geo,true);

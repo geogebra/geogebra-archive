@@ -791,7 +791,7 @@ public class GeoGebraToPstricks extends GeoGebraExport {
     protected void drawPolygon(GeoPolygon geo){
     	// command: \pspolygon[par](x0,y0)....(xn,yn)
     	float alpha=geo.getAlphaValue();
-    	if (alpha==0.0f) return;
+    	if (alpha==0.0f&&geo.getFillType()!=GeoPolygon.FILL_HATCH) return;
 		startBeamer(codeFilledObject);
     	codeFilledObject.append("\\pspolygon");
     	codeFilledObject.append(LineOptionCode(geo, true));
@@ -1785,7 +1785,8 @@ public class GeoGebraToPstricks extends GeoGebraExport {
 		sb.append("linecolor=");
 		ColorCode(linecolor,sb);
 	}
-	if (transparency&&geo.isFillable()){
+//	System.out.println(geo.isFillable()+" "+transparency+" "+geo.getObjectType());
+	if (geo.isFillable()&&transparency){
 		int id=geo.getFillType();
 		switch(id){
 			case GeoElement.FILL_STANDARD:
