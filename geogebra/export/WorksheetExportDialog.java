@@ -1292,7 +1292,12 @@ public class WorksheetExportDialog extends JDialog {
 		}
 		appendWithLineBreak(sb, "</head>");
 
-		appendWithLineBreak(sb, "<body>");
+		// Guy Hed  14/03/2011
+		if( app.isRightToLeftReadingOrder() )
+			appendWithLineBreak(sb, "<body dir='rtl'>");
+		else
+			appendWithLineBreak(sb, "<body>");
+		// -----------------
 		appendWithLineBreak(sb, "<table border=\"0\" width=\"" + pageWidth + "\">");
 		appendWithLineBreak(sb, "<tr><td>");
 
