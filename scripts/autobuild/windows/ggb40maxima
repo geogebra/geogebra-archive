@@ -36,14 +36,14 @@ which zip 2>&1 >/dev/null || {
 
 echo "Updating GeoGebra JAR files from version $GGB40_ZIPVERSION to $VERSION_STRING for Maxima $MAXIMAVERSION..."
 
-# 1. Preparations and unzipping.
+# 1. Preparations and unzipping:
 DIRNAME=ggb40maxima-${VERSION_STRING}_$MAXIMAVERSION
 rm -fR ggb40maxima-${GGB40_ZIPVERSION}_$MAXIMAVERSION # removing old working directory
 unzip /tmp/$ZIPFILE >> /dev/null
 mv ggb40maxima-${GGB40_ZIPVERSION}_$MAXIMAVERSION $DIRNAME
 cd $DIRNAME
 
-# 2. Zipping.
+# 2. Zipping:
 cp ../../../../build/unpacked/* .
 cd ..
 rm -f $DIRNAME.zip # deleting if a previous version already exists
@@ -51,10 +51,16 @@ zip -r $DIRNAME.zip $DIRNAME >> /dev/null
 chmod g+w $DIRNAME.zip
 cp $DIRNAME.zip $TARGET_DIR
 
-# 3. Creating symlink.
+# 3. Creating symlink:
 rm -f $TARGET_DIR/ggb40maxima-latest.zip
 cd $TARGET_DIR
 ln -s $DIRNAME.zip ggb40maxima-latest.zip
 chmod g+w ggb40maxima-latest.zip
 
+# 4. Copying to Google Code:
+if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
+ ../googlecode_upload.py -s "$VERSION_STRING" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $DIRNAME.zip
+ fi
+
+# 5. Cleanup:
 rm -fR $DIRNAME # removing current working directory
