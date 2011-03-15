@@ -4,7 +4,7 @@
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
 # GGB40MAXIMA_ZIP=./ggb40maxima-3.9.155.0_5.23.2.zip
-GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/4.0/ggb40maxima-3.9.155.0_5.23.2.zip
+GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/4.0/ggb40maxima-3.9.189.0_5.23.2.zip
 
 # Please do not edit below this. (FIXME: the above settings should come from the config file.)
 
