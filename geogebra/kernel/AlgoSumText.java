@@ -46,6 +46,7 @@ public class AlgoSumText extends AlgoElement {
         setInputOutput();
         compute();
         result.setLabel(label);
+        result.setIsTextCommand(true);
     }
 
     public String getClassName() {
