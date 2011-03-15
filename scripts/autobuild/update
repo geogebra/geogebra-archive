@@ -100,7 +100,7 @@ for i in *.html *.jnlp; do
     done
 
 # 7. Finally, making sure that all files have group writable permissions:
-chmod -R g+rw $WWWDIR/MYDIR
+chmod -R g+rw $WWWDIR/$MYDIR
 
 date
 echo "$0: end"
