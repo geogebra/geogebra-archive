@@ -51,16 +51,17 @@ zip -r $DIRNAME.zip $DIRNAME >> /dev/null
 chmod g+w $DIRNAME.zip
 cp $DIRNAME.zip $TARGET_DIR
 
-# 3. Creating symlink:
+# 3. Copying to Google Code:
+if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
+ ../googlecode_upload.py -s "$VERSION_STRING" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $DIRNAME.zip
+ fi
+
+# 4. Cleanup:
+rm -fR $DIRNAME $DIRNAME.zip # removing current working directory and file
+
+# 5. Creating symlink:
 rm -f $TARGET_DIR/ggb40maxima-latest.zip
 cd $TARGET_DIR
 ln -s $DIRNAME.zip ggb40maxima-latest.zip
 chmod g+w ggb40maxima-latest.zip
 
-# 4. Copying to Google Code:
-if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
- ../googlecode_upload.py -s "$VERSION_STRING" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $DIRNAME.zip
- fi
-
-# 5. Cleanup:
-rm -fR $DIRNAME # removing current working directory
