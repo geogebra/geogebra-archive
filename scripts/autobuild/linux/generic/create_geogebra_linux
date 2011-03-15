@@ -22,6 +22,11 @@ if [ "$PYTHON3" = "" ]; then
   fi
  fi
 
+# Packaging hicolor icons:
+cd ../../../../icons
+tar czf $SVNDIR/geogebra/scripts/autobuild/linux/generic/hicolor.tgz hicolor
+cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
+
 $PYTHON3 ./create_geogebra_linux.py \
  $VERSION_STRING \
  ../../../../build/unpacked \
@@ -30,4 +35,5 @@ $PYTHON3 ./create_geogebra_linux.py \
  ../../../../_LICENSE.txt \
  geogebra.xml \
  geogebra.desktop \
+ hicolor.tgz \
  ../../../../build
