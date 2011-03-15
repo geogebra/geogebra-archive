@@ -99,7 +99,7 @@ public class GeoButton extends GeoElement implements AbsoluteScreenLocateable, T
 		return -1;
 	}
 	
-	final public String toValueString() {
+	public String toValueString() {
 		return "";
 	}
 	

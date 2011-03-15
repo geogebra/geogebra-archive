@@ -257,7 +257,11 @@ public final class DrawTextField extends Drawable {
 					text = text.replaceAll("\n", "\\\\\\\\n");
 			}
 			textField.setText(text);
+			
 		}
+		
+		((GeoTextField)geo).setText(textField.getText());
+
 	}
 
 
