@@ -37,9 +37,9 @@ echo "Updating GeoGebra JAR files from version $GGB40_ZIPVERSION to $VERSION_STR
 
 DIRNAME=ggb40maxima-${VERSION_STRING}_$MAXIMAVERSION
 rm -fR ggb40maxima-${GGB40_ZIPVERSION}_$MAXIMAVERSION # removing old working directory
-mkdir -p $DIRNAME
-cd $DIRNAME
 unzip /tmp/$ZIPFILE >> /dev/null
+mv ggb40maxima-${GGB40_ZIPVERSION}_$MAXIMAVERSION $DIRNAME
+cd $DIRNAME
 
 cp ../../../../build/unpacked/* .
 cd ..
