@@ -15,12 +15,11 @@ if [ "$VERSION_STRING" = "" ]; then
 . ../../autobuild.conf
 
 if [ "$PYTHON3" = "" ]; then
- which python3 2>&1 >/dev/null || {
+ PYTHON3=`which python3 2>&1 >/dev/null`
+ if [ "$PYTHON3" = "" ]; then
   echo Python3 is required to run this script.
   exit 1
-  }
-else
- PYTHON3=`which python3`
+  fi
  fi
 
 $PYTHON3 ./create_geogebra_linux.py \
