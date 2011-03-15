@@ -6,13 +6,16 @@
 
 # @author Zoltan Kovacs <zoltan@geogebra.org>
 
+. ../../autobuild.conf
+
+TARGET_DIR=$WWWDIR/installer
+
+# 1. Testing prerequisities:
 VERSION_STRING=`cat ../../../../build/unpacked/version.txt`
 if [ "$VERSION_STRING" = "" ]; then
  echo "Please build GeoGebra first."
  exit 1
  fi
-
-. ../../autobuild.conf
 
 if [ "$PYTHON3" = "" ]; then
  PYTHON3=`which python3 2>&1 >/dev/null`
@@ -22,11 +25,13 @@ if [ "$PYTHON3" = "" ]; then
   fi
  fi
 
-# Packaging hicolor icons:
+# 2. Packaging hicolor icons:
 cd ../../../../icons
 tar czf $SVNDIR/geogebra/scripts/autobuild/linux/generic/hicolor.tgz hicolor
 cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
+chmod g+w hicolor.tgz
 
+# 3. Creating package file:
 $PYTHON3 ./create_geogebra_linux.py \
  $VERSION_STRING \
  ../../../../build/unpacked \
@@ -37,3 +42,14 @@ $PYTHON3 ./create_geogebra_linux.py \
  geogebra.desktop \
  hicolor.tgz \
  ../../../../build
+
+# 4. Copying to installer/ directory (deploying):
+cd ../../../../build
+chmod g+w geogebra-$VERSION_STRING.tar.gz
+cp geogebra-$VERSION_STRING.tar.gz $TARGET_DIR
+
+# 5. Copying to Google Code:
+if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
+ ../googlecode_upload.py -s "GeoGebra $VERSION_STRING for Linux" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test geogebra-$VERSION_STRING.tar.gz
+ fi
+
