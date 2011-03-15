@@ -10,9 +10,10 @@ GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/4.0/ggb40maxima-3.9.189.0_5
 
 cp $GGB40MAXIMA_ZIP /tmp
 ZIPFILE=`basename $GGB40MAXIMA_ZIP`
+. ../autobuild.conf
+TARGET_DIR=$WWWDIR/4.0
 
 ## GGB40MAXIMA_ZIP_URL=http://www.geogebra.org/webstart/4.0/ggb40maxima-3.9.155.0_5.23.2.zip
-
 GGB40_ZIPVERSION=`echo $GGB40MAXIMA_ZIP | sed 's/[0-9a-zA-Z\.\/]*-//g' | sed 's/_[0-9a-zA-Z\.]*//g'`
 MAXIMAVERSION=`echo $GGB40MAXIMA_ZIP | sed 's/[0-9a-zA-Z\.\/\-]*_//g' | sed 's/.zip//g'`
 
@@ -43,7 +44,9 @@ cd $DIRNAME
 
 cp ../../../../build/unpacked/* .
 cd ..
+rm -f $DIRNAME.zip # deleting if a previous version already exists
 zip -r $DIRNAME.zip $DIRNAME >> /dev/null
 chmod g+w $DIRNAME.zip
+cp $DIRNAME.zip $TARGET_DIR
 
 rm -fR $DIRNAME # removing current working directory
