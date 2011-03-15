@@ -36,7 +36,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	private static final double STRICT_INEQ_OFFSET = 4*Kernel.MIN_PRECISION;
 	private static final int SEEK_DENSITY = 30;
 	private FunctionNVar fun;
-	private List<Inequality> ineqs;	
+	//private List<Inequality> ineqs;	
 	private boolean isInequality;
 	private boolean isDefined = true;
 	
@@ -116,8 +116,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
-		isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
-		ineqs = fun.getIneqs();
+		isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);		
 	}
 	
 
@@ -489,12 +488,12 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		/**
 		 * @return the ineqs
 		 */
-		public List<Inequality> getIneqs(){
-			if(ineqs == null){
+		public FunctionNVar.IneqTree getIneqs(){
+			if(fun.getIneqs() == null){
 				isInequality = fun.initIneqs(fun.getExpression(),isInverseFill(),this);
-				ineqs = fun.getIneqs();
+				
 			}
-			return ineqs;
+			return fun.getIneqs();
 		}
 				
 		public void update(){
@@ -522,12 +521,8 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				myX = P.getX2D(), myY = P.getY2D();
 				double bestDist = (bestY-myY)*(bestY-myY)+(bestX-myX)*(bestX-myX);
 				
-				if(ineqs==null){
-					getIneqs();
-					fun.initIneqs(getFunctionExpression(),isInverseFill(),this);
-				}
-				int size = ineqs.size();
-				
+				FunctionNVar.IneqTree ineqs = fun.getIneqs();
+				int size = ineqs.getSize();
 				for(int i = 0; i<size; i++){
 					Inequality in = ineqs.get(i);
 					double px=0,py=0;

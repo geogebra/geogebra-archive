@@ -2,12 +2,15 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.util.ArrayList;
+import java.awt.geom.Area;
+
 
 /**
  * Graphical representation of linear inequality
@@ -21,11 +24,11 @@ public class DrawInequality extends Drawable {
 
 	private boolean isVisible;
 	private boolean labelVisible;
-	
-	private FunctionalNVar function;
-	private int ineqCount;
-	private ArrayList<Drawable> drawables;
-
+			
+	private Drawable drawable;
+	private int operation = 0;
+	private DrawInequality left,right;
+	private Inequality ineq;
 	/**
 	 * Creates new drawable linear inequality
 	 * 
@@ -34,11 +37,29 @@ public class DrawInequality extends Drawable {
 	 */
 	public DrawInequality(EuclidianView view, FunctionalNVar function) {
 		this.view = view;
-    	hitThreshold = view.getCapturingThreshold();
-		this.function = function;
-		geo = (GeoElement)function;
+    	hitThreshold = view.getCapturingThreshold();		
+		geo = (GeoElement)function;		
+		operation = function.getIneqs().getOperation(); 
+		if(function.getIneqs().getLeft()!=null)
+			left=new DrawInequality(function.getIneqs().getLeft(),view,geo);
+		if(function.getIneqs().getRight()!=null)
+			right=new DrawInequality(function.getIneqs().getRight(),view,geo);
+		if(function.getIneqs().getIneq()!=null)
+			ineq=function.getIneqs().getIneq();			
 		update();
 
+	}
+	private DrawInequality(FunctionNVar.IneqTree tree,EuclidianView view,GeoElement geo){
+		this.view = view;
+		this.geo = geo;		
+		setForceNoFill(true);
+		operation = tree.getOperation();
+		if(tree.getLeft()!=null)
+			left=new DrawInequality(tree.getLeft(),view,geo);
+		if(tree.getRight()!=null)
+			right=new DrawInequality(tree.getRight(),view,geo);
+		if(tree.getIneq()!=null)
+			ineq=tree.getIneq();
 	}
 
 	final public void update() {
@@ -50,52 +71,14 @@ public class DrawInequality extends Drawable {
 		// updateStrokes(n);
 
 		// init gp
-
-		ineqCount = function.getIneqs().size();
+		updateRecursive();
+		
+		
 		// plot like definite integral
-		if (drawables == null) 
-			drawables = new ArrayList<Drawable>(ineqCount);		
+		
 			
-		for (int i = 0; i < ineqCount; i++) {
-			Inequality ineq = function.getIneqs().get(i);			
-			if(drawables.size() <= i || !matchBorder(ineq.getBorder(),i)){
-				Drawable draw;
-				switch (ineq.getType()){
-					case Inequality.INEQUALITY_PARAMETRIC_Y: 
-						draw = new DrawParametricInequality(ineq, view, geo);
-						break;
-					case Inequality.INEQUALITY_PARAMETRIC_X: 
-						draw = new DrawParametricInequality(ineq, view, geo);
-						break;
-					case Inequality.INEQUALITY_1VAR_X: 
-						draw = new DrawInequality1Var(ineq, view, geo, false);
-						break;
-					case Inequality.INEQUALITY_1VAR_Y: 
-						draw = new DrawInequality1Var(ineq, view, geo, true);
-						break;	
-					case Inequality.INEQUALITY_CONIC: 
-						draw = new DrawConic(view, ineq.getConicBorder());					
-						ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
-						break;	
-					case Inequality.INEQUALITY_IMPLICIT: 
-						draw = new DrawImplicitPoly(view, ineq.getImpBorder());
-						break;
-					default: draw = null;
-				}
-			
-				draw.setGeoElement((GeoElement)function);
-				draw.update();
-				if(drawables.size() <= i)
-					drawables.add(draw);
-				else
-					drawables.set(i,draw);
-			}
-			else {
-				if(ineq.getType() == Inequality.INEQUALITY_CONIC) {					
-					ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());
-				}
-				drawables.get(i).update();
-			}
+		
+					
 			// gp on screen?
 			/*if (!gp[i].intersects(0, 0, view.width, view.height)) {
 				isVisible = false;
@@ -104,27 +87,88 @@ public class DrawInequality extends Drawable {
 			}*/
 
 			
-		}
+		
 	}
-
 	
 
-	private boolean matchBorder(GeoElement border, int i) {
-		Drawable d = drawables.get(i);
+	private void updateRecursive() {
+		if(left!=null)
+			left.updateRecursive();
+		if(right!=null)
+			right.updateRecursive();
+		if(operation==ExpressionNode.AND){
+			setShape(left.getShape());
+			getShape().intersect(right.getShape());
+		}else if(operation==ExpressionNode.OR){
+			setShape(left.getShape());
+			getShape().add(right.getShape());
+		}
+		if(ineq==null)
+			return;		
+		if(drawable == null || !matchBorder(ineq.getBorder(),drawable)){
+			switch (ineq.getType()){
+				case Inequality.INEQUALITY_PARAMETRIC_Y: 
+					drawable = new DrawParametricInequality(ineq, view, geo);
+					break;
+				case Inequality.INEQUALITY_PARAMETRIC_X: 
+					drawable = new DrawParametricInequality(ineq, view, geo);
+					break;
+				case Inequality.INEQUALITY_1VAR_X: 
+					drawable = new DrawInequality1Var(ineq, view, geo, false);
+					break;
+				case Inequality.INEQUALITY_1VAR_Y: 
+					drawable = new DrawInequality1Var(ineq, view, geo, true);
+					break;	
+				case Inequality.INEQUALITY_CONIC: 
+					drawable = new DrawConic(view, ineq.getConicBorder());					
+					ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
+					break;	
+				case Inequality.INEQUALITY_IMPLICIT: 
+					drawable = new DrawImplicitPoly(view, ineq.getImpBorder());
+					break;
+				default: drawable = null;
+			}
+		
+			drawable.setGeoElement(geo);
+			drawable.setForceNoFill(true);
+			drawable.update();
+			
+		}
+		else {
+			if(ineq.getType() == Inequality.INEQUALITY_CONIC) {					
+				ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());
+			}
+			drawable.update();
+		}
+		setShape(drawable.getShape());
+		
+		
+	}
+	private boolean matchBorder(GeoElement border, Drawable d) {
 		if(d instanceof DrawConic && ((DrawConic)d).getConic().equals(border))
 			return true;
 		if(d instanceof DrawImplicitPoly && ((DrawImplicitPoly)d).getPoly().equals(border))
 			return true;
-		if(drawables.get(i) instanceof DrawParametricInequality && ((DrawParametricInequality)d).getBorder().equals(border))
-			return ((DrawParametricInequality)drawables.get(i)).isXparametric();
+		if(d instanceof DrawParametricInequality && ((DrawParametricInequality)d).getBorder().equals(border))
+			return ((DrawParametricInequality)d).isXparametric();
 		
 		return false;
 	}
-
+	
 	public void draw(Graphics2D g2) {
-		if (isVisible) {
-			for(int i=0;i<ineqCount;i++)
-				drawables.get(i).draw(g2);
+		if(operation == ExpressionNode.NO_OPERATION){						
+			if ( drawable!=null) {
+				drawable.draw(g2);			
+		}
+		}else{
+		if(left!=null)
+			left.draw(g2);
+		if(right!=null)
+			right.draw(g2);				
+		}
+		if(!isForceNoFill()){
+			g2.setPaint(geo.getObjectColor());
+			fill(g2, getShape(), true);
 		}
 	}
 
@@ -135,12 +179,16 @@ public class DrawInequality extends Drawable {
 
 	@Override
 	public boolean hit(int x, int y) {
-		 if(drawables==null)
+		if(left!= null && operation==ExpressionNode.AND)
+			 return left.hit(x, y) && right.hit(x, y);
+		 if(left!= null && operation==ExpressionNode.OR)
+			 return left.hit(x, y) || right.hit(x, y);
+		 if(left!= null && operation==ExpressionNode.NOT)
+			 return !left.hit(x, y);
+		 if(drawable==null)
 			 return false;
-		 boolean ret = false; 
-		 for (int i = 0; i < ineqCount; i++)
-				ret |= drawables.get(i).hit(x,y);
-		 return ret;
+		 return drawable.hit(x, y);
+		 
 	}
 
 	@Override
@@ -162,20 +210,26 @@ public class DrawInequality extends Drawable {
 		protected DrawParametricInequality(Inequality ineq,EuclidianView view,GeoElement geo){
 			this.view = view;
 			this.ineq = ineq;
-			this.geo = geo;			
+			this.geo = geo;								
+		}
+		
+		public Area getShape(){
+			return new Area(gp);
 		}
 		
 		private Object getBorder() {
 			return ineq.getBorder();			
 		}
 		@Override
-		public void draw(Graphics2D g2) {
+		public void draw(Graphics2D g2) {			
 			if (geo.doHighlighting()) {
 				g2.setPaint(geo.getSelColor());
 				g2.setStroke(selStroke);
 				Drawable.drawWithValueStrokePure(gp, g2);
 			}
-			fill(g2, gp, true); // fill using default/hatching/image as
+			
+			if(!isForceNoFill())
+				fill(g2, gp, true); // fill using default/hatching/image as
 			// appropriate
 
 			if (geo.lineThickness > 0) {
@@ -215,7 +269,7 @@ public class DrawInequality extends Drawable {
 		}
 
 		@Override
-		public void update() {
+		public void update() {			
 			if(gp==null)
 				gp=new GeneralPathClipped(view);
 			else

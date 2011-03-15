@@ -16,18 +16,19 @@ import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.Functional;
 import geogebra.kernel.arithmetic.FunctionalNVar;
-import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
 
-import java.util.List;
+
 import java.util.Locale;
 
 /**
@@ -62,7 +63,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
     // parent conditional function
    // private GeoFunctionConditional parentCondFun = null;
 
-	private List<Inequality> ineqs;
 	private boolean isInequality;    
 	
 	/**
@@ -83,8 +83,11 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		super(c);
 		fun = f;				
 		fun.initFunction();
-		if(fun.isBooleanFunction())
-			setVisualStyle(cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_INEQUALITY_1VAR));		
+		if(fun.isBooleanFunction()){
+			GeoElement ge = cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_INEQUALITY_1VAR);
+			setVisualStyle(ge);
+			setAlphaValue(ge.getAlphaValue());
+		}
 		setLabel(label);	
 	}
 	
@@ -133,7 +136,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			}			
 		}
 		isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
-		ineqs = fun.getIneqs();
 	}
 	
 
@@ -539,9 +541,11 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		}
 		double bestDist = Double.MAX_VALUE;
 		getIneqs();			
-		if(!this.evaluateBoolean(px))
-			for(Inequality ineq:ineqs){
-				for(GeoPoint point:ineq.getZeros())
+		if(!this.evaluateBoolean(px)){		
+			FunctionNVar.IneqTree ineqs = fun.getIneqs();
+			int ineqCount = ineqs.getSize();
+			for(int i=0;i<ineqCount;i++){
+				for(GeoPoint point:ineqs.get(i).getZeros())
 					if(Math.abs(point.x-px)<bestDist){
 						bestDist = Math.abs(point.x-px);
 						if(yfun)
@@ -550,6 +554,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 							P.x=point.x;
 					}
 			}
+		}
 		
 	}
 
@@ -1269,17 +1274,6 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 
 	
-	/**
-	 * @return the ineqs
-	 */
-	public List<Inequality> getIneqs() {
-		if(ineqs == null){
-			isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
-			ineqs = fun.getIneqs();
-		}
-		return ineqs;
-	}
-	
 
 	public boolean isInRegion(GeoPointND P) {
 		return isInRegion(P.getX2D(),P.getY2D());
@@ -1320,6 +1314,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public void regionChanged(GeoPointND P) {
 		pointChangedForRegion(P);
 		
+	}
+
+	public IneqTree getIneqs() {
+		if(fun.getIneqs() == null){
+			isInequality = fun.initIneqs(fun.getExpression(),isInverseFill(),this);			
+		}
+		return fun.getIneqs();
 	}
 
 }

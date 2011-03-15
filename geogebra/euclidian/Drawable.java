@@ -38,6 +38,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
+import java.awt.geom.Area;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -61,6 +62,7 @@ public abstract class Drawable extends DrawableND {
 	// use JLaTeXMath or HotEqn
 	//final private static boolean useJLaTeXMath = true;
 	static TeXFormula initJLaTeXMath; 
+	private boolean forceNoFill;
 	
 	
 	BasicStroke objStroke = EuclidianView.getDefaultStroke();
@@ -83,6 +85,8 @@ public abstract class Drawable extends DrawableND {
 	/** for label hit testing */
 	Rectangle labelRectangle = new Rectangle(); 
 	Shape strokedShape, strokedShape2;
+	
+	private Area shape;
 	
 	
 	
@@ -1017,6 +1021,8 @@ public abstract class Drawable extends DrawableND {
 	}
 	
 	protected void fill(Graphics2D g2, Shape shape, boolean usePureStroke) {
+		if(isForceNoFill())
+			return;
 		if (geo.getFillType()==GeoElement.FILL_HATCH) {
 			
 			// use decoStroke as it is always full (not dashed/dotted etc)
@@ -1039,6 +1045,30 @@ public abstract class Drawable extends DrawableND {
 
 		}        	        	
 		
+	}
+	/**
+	 * @param forceNoFill the forceNoFill to set
+	 */
+	public void setForceNoFill(boolean forceNoFill) {
+		this.forceNoFill = forceNoFill;
+	}
+	/**
+	 * @return the forceNoFill
+	 */
+	public boolean isForceNoFill() {
+		return forceNoFill;
+	}
+	/**
+	 * @param shape the shape to set
+	 */
+	public void setShape(Area shape) {
+		this.shape = shape;
+	}
+	/**
+	 * @return the shape
+	 */
+	public Area getShape() {
+		return shape;
 	}
 
 

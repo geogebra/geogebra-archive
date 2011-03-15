@@ -6,6 +6,7 @@ import geogebra.kernel.arithmetic.Inequality;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.Area;
 
 /**
  * @author kondr
@@ -34,6 +35,8 @@ public class DrawInequality1Var extends Drawable {
 		this.varIsY = varIsY;
 
 	}
+	
+	
 
 	@Override
 	public void draw(Graphics2D g2) {
@@ -103,6 +106,7 @@ public class DrawInequality1Var extends Drawable {
 				gp = new GeneralPathClipped[numOfX / 2];
 			int j = ineq.getFunBorder().evaluate(view.ymin) <= 0
 					^ geo.isInverseFill() ? 1 : 0;
+			Area a = new Area();
 			for (int i = 0; 2 * i + j + 1 < numOfX; i++) {
 				gp[i] = new GeneralPathClipped(view);
 				gp[i].moveTo(-10, x[2 * i + j]);
@@ -111,8 +115,9 @@ public class DrawInequality1Var extends Drawable {
 				gp[i].lineTo(-10, x[2 * i + j + 1]);
 				gp[i].lineTo(-10, x[2 * i + j]);
 				gp[i].closePath();
-
+				a.add(new Area(gp[i]));
 			}
+			setShape(a);
 		} else {
 			GeoPoint[] roots = ineq.getZeros();
 			double[] x = new double[roots.length + 2];
@@ -127,6 +132,7 @@ public class DrawInequality1Var extends Drawable {
 				gp = new GeneralPathClipped[numOfX / 2];
 			int j = ineq.getFunBorder().evaluate(view.xmin) <= 0
 					^ geo.isInverseFill() ? 1 : 0;
+			Area a = new Area();
 			for (int i = 0; 2 * i + j + 1 < numOfX; i++) {
 				gp[i] = new GeneralPathClipped(view);
 				gp[i].moveTo(x[2 * i + j],-10);
@@ -135,9 +141,15 @@ public class DrawInequality1Var extends Drawable {
 				gp[i].lineTo(x[2 * i + j + 1],-10);
 				gp[i].lineTo(x[2 * i + j],-10);
 				gp[i].closePath();
+				a.add(new Area(gp[i]));
 
 			}
+			setShape(a);
 		}
+		
+		
+			
+		
 	}
 
 }

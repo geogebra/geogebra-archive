@@ -18,10 +18,8 @@ import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * Function of N variables that returns either a number or a boolean. This
@@ -36,7 +34,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	protected ExpressionNode expression;
 	/** function variables */
 	protected FunctionVariable[] fVars;
-	private List<Inequality> ineqs;
+	private IneqTree ineqs;
 
 	/** standard case: number function, see initFunction() */
 	protected boolean isBooleanFunction = false;
@@ -48,6 +46,103 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	protected Kernel kernel;
 
 	private StringBuilder sb = new StringBuilder(80);
+	/**
+	 * Tree containing inequalities (possibly with NOT)
+	 * in leaves and AND or OR operations in other nodes 
+	 * @author Zbynek Konecny
+	 *
+	 */
+	public class IneqTree {
+		private IneqTree left,right;
+		private Inequality ineq;
+		private int operation = ExpressionNode.NO_OPERATION;
+
+		/**
+		 * @param right the right to set
+		 */
+		public void setRight(IneqTree right) {
+			this.right = right;			
+		}
+		/**
+		 * @return the right
+		 */
+		public IneqTree getRight() {
+			return right;
+		}
+		/**
+		 * @param left the left to set
+		 */
+		public void setLeft(IneqTree left) {
+			this.left = left;			
+		}
+		/**
+		 * @return the left
+		 */
+		public IneqTree getLeft() {
+			return left;
+		}
+		/**
+		 * @param operation the operation to set
+		 */
+		public void setOperation(int operation) {
+			this.operation = operation;
+		}
+		/**
+		 * @return the operation
+		 */
+		public int getOperation() {
+			return operation;
+		}
+		/**
+		 * @param ineq the ineq to set
+		 */
+		public void setIneq(Inequality ineq) {
+			this.ineq = ineq;
+		}
+		/**
+		 * @return the ineq
+		 */
+		public Inequality getIneq() {
+			return ineq;
+		}
+		public void updateCoef() {
+			if(ineq!=null){
+				ineq.updateCoef();
+				return;
+			}
+			if(left!=null)
+				left.updateCoef();
+			if(right!=null)
+				right.updateCoef();	
+			
+		}
+		private int size;
+		public int getSize() {
+			return size;
+		}
+		public Inequality get(int i){
+			if(ineq != null)
+				return ineq;
+			if(i<left.getSize())
+				return left.get(i);
+			return right.get(i-left.getSize());
+		}
+		public void recomputeSize() {
+			if(ineq!=null){				
+				size = 1;
+			}
+			else size = 0;
+			if(left!= null){
+				left.recomputeSize();				
+				size += left.size;
+			}
+			if(right!= null){			
+				right.recomputeSize();				
+				size += right.size;
+			}
+			
+		}
+	}
 
 	/**
 	 * Creates new Function from expression. Note: call initFunction() after
@@ -548,7 +643,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		return sb.toString();
 	}
 
-	public List<Inequality> getIneqs() {
+	public IneqTree getIneqs() {
 		return ineqs;
 	}
 
@@ -557,10 +652,17 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 * @param fe
 	 * @param inverseFill
 	 * @param functional function to which ineqs are associated
+	 * @return true if the functions consists of inequalities
 	 */
-	public boolean initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {		
-		if (fe == getExpression())
-			ineqs = new ArrayList<Inequality>();
+	public boolean initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {
+		if(ineqs == null || fe == getExpression())
+			ineqs = new IneqTree();
+		boolean b = initIneqs(fe, inverseFill, functional, ineqs);
+		ineqs.recomputeSize();
+		return b;
+	}
+	
+	private boolean initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional,IneqTree tree) {		
 		int op = fe.getOperation();
 		ExpressionNode leftTree = fe.getLeftTree();
 		ExpressionNode rightTree = fe.getRightTree();
@@ -572,14 +674,17 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 				if (newIneq.getType() != Inequality.INEQUALITY_1VAR_X
 						&& newIneq.getType() != Inequality.INEQUALITY_1VAR_Y)
 					newIneq.getBorder().setInverseFill(
-							newIneq.isAboveBorder() ^ inverseFill);
-				ineqs.add(newIneq);
+							newIneq.isAboveBorder() ^ inverseFill);			
+				tree.setIneq(newIneq);
 			}
 			return true;
 		}
 		else if (op == ExpressionNode.AND || op == ExpressionNode.OR) {
-			initIneqs(leftTree, inverseFill,functional);
-			initIneqs(rightTree, inverseFill,functional);
+			tree.operation = op;
+			tree.left = new IneqTree();
+			tree.right = new IneqTree();
+			initIneqs(leftTree, inverseFill,functional,tree.left);
+			initIneqs(rightTree, inverseFill,functional,tree.right);
 			return true;
 		}
 		else return false;
@@ -591,7 +696,6 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 */
 	public void updateIneqs() {
 		if(ineqs == null) return;
-		for (Inequality ineq : getIneqs())
-			ineq.updateCoef();
+		ineqs.updateCoef();
 	}
 }

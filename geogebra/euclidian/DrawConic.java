@@ -92,6 +92,7 @@ final public class DrawConic extends Drawable implements Previewable {
                             transform = new AffineTransform();   
     private Shape shape;     
     
+        
     // CONIC_ELLIPSE    
     private boolean firstEllipse = true;
     private double [] halfAxes;      
@@ -121,6 +122,15 @@ final public class DrawConic extends Drawable implements Previewable {
 	private GeoNumeric previewTempRadius;
 	private int previewMode, neededPrevPoints;
     
+	public Area getShape(){
+		Area a = new Area(shape);
+		if(conic.isInverseFill()){                    	        	
+        	Area b = new Area(view.getBoundingPath());
+        	b.subtract(a);
+        	return b;
+        }
+        return a;
+	}
     /** Creates new DrawVector 
      * @param view 
      * @param c */
@@ -759,7 +769,7 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_DOUBLE_LINE: 
             case GeoConic.CONIC_PARALLEL_LINES:
                 drawLines[0].draw(g2);
-                drawLines[1].draw(g2);
+                drawLines[1].draw(g2);                
                 if(conic.isInverseFill()){                    	
                 	Area a = new Area(shape);
                 	Area b = new Area(view.getBoundingPath());
