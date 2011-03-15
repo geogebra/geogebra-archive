@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # This script creates the portable version for Linux (32bit & 64bit).
@@ -26,6 +26,9 @@ if not os.path.exists(sys.argv[4]):
 	sys.exit(1)
 if not os.path.exists(sys.argv[5]):
 	print("Error: "+sys.argv[5]+" does not exist.")
+	sys.exit(1)
+if not os.path.exists(sys.argv[6]):
+	print("Error: "+sys.argv[6]+" does not exist.")
 	sys.exit(1)
 geogebra_version = sys.argv[1].replace(".", "-")
 java_path = os.path.abspath(sys.argv[2])

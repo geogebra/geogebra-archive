@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+# This script creates the generic version for Linux.
+# @author Christian Schött <schoett@gmx.de>
+
 # argument 1: version of GeoGebra (eg. 3.2.44.0)
 # argument 2: path of directory containing unpacked geogebra files
 # argument 3: path of directory containing unsigned geogebra files
@@ -8,11 +11,12 @@
 # argument 5: path of file license.txt
 # argument 6: path of file geogebra.xml
 # argument 7: path of file geogebra.desktop
-# argument 8: path of destination directory
+# argument 8: path of file GeoGebra_hicolor_icons.tar.gz
+# argument 9: path of destination directory
 
-import os, shutil, sys, tarfile, tempfile, urllib.request
-if len(sys.argv) != 9:
-	print("Error: Eight arguments are expected.")
+import os, shutil, sys, tarfile, tempfile
+if len(sys.argv) != 10:
+	print("Error: Nine arguments are expected.")
 	sys.exit(1)
 if not os.path.exists(sys.argv[2]):
 	print("Error: "+sys.argv[2]+" does not exist.")
@@ -35,6 +39,9 @@ if not os.path.exists(sys.argv[7]):
 if not os.path.exists(sys.argv[8]):
 	print("Error: "+sys.argv[8]+" does not exist.")
 	sys.exit(1)
+if not os.path.exists(sys.argv[9]):
+	print("Error: "+sys.argv[9]+" does not exist.")
+	sys.exit(1)
 geogebra_version = sys.argv[1]
 unpacked_path = os.path.abspath(sys.argv[2])
 unsigned_path = os.path.abspath(sys.argv[3])
@@ -42,7 +49,8 @@ start_script_path = os.path.abspath(sys.argv[4])
 license_txt_path = os.path.abspath(sys.argv[5])
 geogebra_xml_path = os.path.abspath(sys.argv[6])
 geogebra_desktop_path = os.path.abspath(sys.argv[7])
-destination_path = os.path.abspath(sys.argv[8])
+icons_tar_gz_file_path = os.path.abspath(sys.argv[8])
+destination_path = os.path.abspath(sys.argv[9])
 if not os.path.isdir(unpacked_path):
 	print("Error: "+unpacked_path+" is not a directory.")
 	sys.exit(1)
@@ -61,6 +69,9 @@ if not os.path.isfile(geogebra_xml_path):
 if not os.path.isfile(geogebra_desktop_path):
 	print("Error: "+geogebra_desktop_path+" is not a file.")
 	sys.exit(1)
+if not os.path.isfile(icons_tar_gz_file_path):
+	print("Error: "+icons_tar_gz_file_path+" is not a file.")
+	sys.exit(1)
 if not os.path.isdir(destination_path):
 	print("Error: "+destination_path+" is not a directory.")
 	sys.exit(1)
@@ -77,7 +88,7 @@ try:
 		if os.path.isfile(unsigned_path+"/"+element) and os.path.splitext(unsigned_path+"/"+element)[1] == ".jar":
 			shutil.copy(unsigned_path+"/"+element, "unsigned")
 	os.mkdir("icons")
-	icons_tar_gz_file = tarfile.open(urllib.request.urlretrieve("http://www.geogebra.org/download/GeoGebra_hicolor_icons.tar.gz")[0], "r:gz")
+	icons_tar_gz_file = tarfile.open(icons_tar_gz_file_path, "r:gz")
 	try:
 		icons_tar_gz_file.extractall("icons")
 	finally:
