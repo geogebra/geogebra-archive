@@ -39,6 +39,7 @@ export ANT_OPTS="-Xmx1024m"
 # 4. Building
 # alias signjar=jarsigner # May be needed for ant version < 1.8.0 (the "executable" attribute is not supported yet).
 ant -f build.xml geogebra-cl || exit 3
+chmod -R g+rw build
 
 # 5. Setting local variables
 MYVER=`cat build/unpacked/version.txt`
