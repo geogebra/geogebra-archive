@@ -50,6 +50,6 @@ cp geogebra-$VERSION_STRING.tar.gz $TARGET_DIR
 
 # 5. Copying to Google Code:
 if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
- ../googlecode_upload.py -s "GeoGebra $VERSION_STRING for Linux" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test geogebra-$VERSION_STRING.tar.gz
+ ../../googlecode_upload.py -s "GeoGebra $VERSION_STRING for Linux" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test geogebra-$VERSION_STRING.tar.gz
  fi
 
