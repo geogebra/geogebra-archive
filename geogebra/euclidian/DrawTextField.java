@@ -14,6 +14,7 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -186,6 +187,9 @@ public final class DrawTextField extends Drawable {
 						defineText = prefix + defineText;
 				} else if (linkedGeo.isGeoText()) {
 					defineText = "\"" +  defineText + "\"";
+				} else if (linkedGeo instanceof GeoFunctionNVar) {
+					// string like f(x,y)=x^2
+					defineText = linkedGeo.getLabel() + "(" + ((GeoFunctionNVar)linkedGeo).getVarString() + ")=" + defineText;
 				}
 				
 
