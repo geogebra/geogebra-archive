@@ -43,13 +43,13 @@ $PYTHON3 ./create_geogebra_linux.py \
  hicolor.tgz \
  ../../../../build
 
-# 4. Copying to Google Code:
-if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
- ../../googlecode_upload.py -s "GeoGebra $VERSION_STRING for Linux" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test geogebra-$VERSION_STRING.tar.gz
- fi
-
-# 5. Copying to installer/ directory (deploying):
+# 4. Copying to installer/ directory (deploying):
 cd ../../../../build
 chmod g+w geogebra-$VERSION_STRING.tar.gz
 cp geogebra-$VERSION_STRING.tar.gz $TARGET_DIR
+
+# 5. Copying to Google Code:
+if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
+ $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $VERSION_STRING for Linux" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test geogebra-$VERSION_STRING.tar.gz
+ fi
 
