@@ -4,6 +4,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.arithmetic.MyStringBuffer;
+import geogebra.kernel.arithmetic.TextValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 public class GeoTextField extends GeoButton {
@@ -42,6 +45,7 @@ public class GeoTextField extends GeoButton {
 	
 	public void setLinkedGeo(GeoElement geo) {
 		linkedGeo = geo;
+		text = geo.getValueForInputBar();
 	}
 	
 	public GeoElement getLinkedGeo() {
@@ -87,6 +91,16 @@ public class GeoTextField extends GeoButton {
 			
 		}
 	}
+	
+	private String text = null;
+	public String toValueString() {
+		if (linkedGeo == null) return "";
+		return text;
+	}
+	public void setText(String text2) {
+		text = text2;		
+	}
+	
 	
 
 }
