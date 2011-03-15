@@ -47,7 +47,11 @@ chmod -R g+rw $WWWDIR/$MYDIR $WWWDIR/history
 cd $SVNDIR/geogebra/scripts/autobuild/windows
 ./ggb40maxima
 
-# 7. Sending an email to geogebra-dev:
+# 7. Deploying Linux/generic as well:
+cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
+./create_geogebra_linux
+
+# 8. Sending an email to geogebra-dev:
 echo "New version of GeoGebra 4.0 has just been uploaded: $MYVER
 Automatic message, do not reply" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || exit 7
 
