@@ -53,7 +53,7 @@ cp $DIRNAME.zip $TARGET_DIR
 
 # 3. Copying to Google Code:
 if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
- ../googlecode_upload.py -s "$VERSION_STRING" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $DIRNAME.zip
+ ../googlecode_upload.py -s "GeoGebra $VERSION_STRING for Windows with Maxima $MAXIMAVERSION (portable)" -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $DIRNAME.zip
  fi
 
 # 4. Cleanup:
