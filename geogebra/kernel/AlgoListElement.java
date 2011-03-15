@@ -204,7 +204,7 @@ public class AlgoListElement extends AlgoElement {
 
 				GeoList list = ((GeoList) current);
 
-				if (m < list.size())
+				if (m>=0 && m < list.size())
 					current = list.get(m);
 				else {
 					element.setUndefined();
