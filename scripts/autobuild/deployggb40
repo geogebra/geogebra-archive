@@ -43,7 +43,11 @@ echo "$0: JAR files copied to 4.0 and history/$MYVER"
 # 5. Finally, making sure that all files have group writable permissions:
 chmod -R g+rw $WWWDIR/$MYDIR $WWWDIR/history
 
-# 6. Sending an email to geogebra-dev:
+# 6. Deploying ggb40maxima as well:
+cd $SVNDIR/geogebra/scripts/autobuild/windows
+./ggb40maxima
+
+# 7. Sending an email to geogebra-dev:
 echo "New version of GeoGebra 4.0 has just been uploaded: $MYVER
 Automatic message, do not reply" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || exit 7
 
