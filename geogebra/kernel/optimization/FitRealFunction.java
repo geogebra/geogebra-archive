@@ -82,7 +82,7 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 	/** Main constructor
 	 * @param f	Function to be copied and manipulated
 	 */
-	public FitRealFunction(Function f){
+	public FitRealFunction(Function f)throws Exception{
 		super();
 		this.oldf=f;
 		setFunction(f);
@@ -120,12 +120,16 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 		return gradient;
 	}//gradient(x,pars)
 	
-	public void setFunction(Function f) {
+	public void setFunction(Function f) throws Exception{
 		kernel=f.getKernel();
 		FunctionVariable fvar=f.getFunctionVariable();
-		
+
 		java.util.HashSet<GeoNumeric> hash= f.getVariables();		//Get a,b,c,... to array
-		gliders=hash.toArray();
+		if(hash==null){	
+			throw(new Exception("No gliders/parameters in fit-function..."));	
+		}else{	
+			gliders=hash.toArray();		
+		}//if no gliders
 		
 		numberOfParameters=gliders.length;
 		
@@ -188,7 +192,7 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
   // --- SNIP --- /// *** Comment out when finished ***
  	
     // Hook for plugin scripts
-	public FitRealFunction(Kernel k,String fname){
+	public FitRealFunction(Kernel k,String fname) throws Exception{
 		GeoElement geo=k.lookupLabel(fname);
 		if(geo.isGeoFunction()){
 			setFunction(((GeoFunction)geo).getFunction());
