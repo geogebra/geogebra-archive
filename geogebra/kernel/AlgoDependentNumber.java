@@ -37,6 +37,10 @@ public class AlgoDependentNumber extends AlgoElement {
         
     /** Creates new AlgoJoinPoints */
     public AlgoDependentNumber(Construction cons, String label, ExpressionNode root, boolean isAngle) {
+    	this(cons,root,isAngle);
+        number.setLabel(label);
+    }   
+    public AlgoDependentNumber(Construction cons, ExpressionNode root, boolean isAngle) {
     	super(cons);
         this.root = root;  
         
@@ -52,7 +56,7 @@ public class AlgoDependentNumber extends AlgoElement {
         
         // compute value of dependent number
         compute();      
-        number.setLabel(label);
+        
     }   
     
 	public String getClassName() {

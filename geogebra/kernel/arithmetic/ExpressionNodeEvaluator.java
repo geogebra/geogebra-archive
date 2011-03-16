@@ -1,5 +1,6 @@
 package geogebra.kernel.arithmetic;
 
+import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -1664,15 +1665,17 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             	
             	NumberValue[] nvs = new NumberValue[lv.size()];
             	// convert list1(1,2) into Element[Element[list1,1],2]
-            	for(int i = 0; i < lv.size(); i++)
-            		nvs[i]=(NumberValue) lv.getMyList().getListElement(i).evaluate();
-
+            	for(int i = 0; i < lv.size(); i++){
+            		ExpressionNode ith = (ExpressionNode) lv.getMyList().getListElement(i);
+            		if(ith.isConstant())
+            			nvs[i] = (NumberValue) ith.evaluate();
+            		else {
+            			AlgoDependentNumber adn=new AlgoDependentNumber(kernel.getConstruction(),ith,false);
+            			nvs[i] = adn.getNumber();
+            		}
+            	}
           		AlgoListElement algo = new AlgoListElement(kernel.getConstruction(), null, (GeoList)subList, nvs,true);
            		return algo.getElement();
-
-
-            	
-            	
            }else
             
             // fallthrough
