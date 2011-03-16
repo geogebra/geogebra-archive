@@ -97,10 +97,10 @@ public abstract class AlgoOptimize extends AlgoElement{
    		
    		if(type==MINIMIZE){
    			res=extrFinder.findMinimum(indep.getIntervalMin(),indep.getIntervalMax(),
-    									i_am_not_a_real_function,5.0E-8);	debug("Minimize ("+counter+") found "+res);
+    									i_am_not_a_real_function,5.0E-8);	//debug("Minimize ("+counter+") found "+res);
    		}else{
    			res=extrFinder.findMaximum(indep.getIntervalMin(),indep.getIntervalMax(),
-   										i_am_not_a_real_function,5.0E-8);	debug("Maximize ("+counter+") found "+res);
+   										i_am_not_a_real_function,5.0E-8);	//debug("Maximize ("+counter+") found "+res);
    		}
    		result.setValue(res);
    		indep.setValue(old);
