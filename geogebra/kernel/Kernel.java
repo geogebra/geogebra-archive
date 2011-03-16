@@ -54,6 +54,7 @@ import geogebra.kernel.statistics.AlgoDoubleListSigmaYY;
 import geogebra.kernel.statistics.AlgoExponential;
 import geogebra.kernel.statistics.AlgoFDistribution;
 import geogebra.kernel.statistics.AlgoFit;
+import geogebra.kernel.statistics.AlgoFitNL;
 import geogebra.kernel.statistics.AlgoFitExp;
 import geogebra.kernel.statistics.AlgoFitGrowth;
 import geogebra.kernel.statistics.AlgoFitLineX;
@@ -3729,6 +3730,17 @@ public class Kernel {
 		AlgoFit algo = new AlgoFit(cons, label, ptslist,funclist);
 		GeoFunction function = algo.getFit();
 		return function;
+	}	
+	
+	/** 
+	 * Fit[list of points,function]
+	 * NonLinear case, one function with glider parameters
+	 * Hans-Petter Ulven
+	 */
+	final public GeoFunction Fit(String label, GeoList ptslist,GeoFunction function) {
+		AlgoFitNL algo = new AlgoFitNL(cons, label, ptslist,function);
+		GeoFunction geofunction = algo.getFitNL();
+		return geofunction;
 	}	
 
 	/**
