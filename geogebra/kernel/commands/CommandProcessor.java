@@ -7530,29 +7530,23 @@ class CmdLineStyle extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 
-		boolean ok;
-
 		switch (n) {
 		case 2:
 			arg = resArgs(c);
-			if (ok = arg[0].isGeoLine() && arg[1].isNumberValue()) {
-
-				GeoLine line = (GeoLine) arg[0];
+			if (arg[1].isNumberValue()) {
 
 				int style = (int) ((NumberValue) arg[1]).getDouble();
 				Integer[] types = EuclidianView.getLineTypes();
 
 				if (style < 0 || style >= types.length)
-					throw argErr(app, c.getName(), arg[0]);
+					throw argErr(app, c.getName(), arg[1]);
 
-				line.setLineType(types[style].intValue());
-				line.updateRepaint();
+				arg[0].setLineType(types[style].intValue());
+				arg[0].updateRepaint();
 
-				GeoElement[] ret = { line };
+				GeoElement[] ret = { arg[0] };
 				return ret;
-			} else if (!ok)
-				throw argErr(app, c.getName(), arg[0]);
-			else
+			} else
 				throw argErr(app, c.getName(), arg[1]);
 
 		default:
@@ -7579,25 +7573,20 @@ class CmdSetLineThickness extends CommandProcessor {
 	final public GeoElement[] process(Command c) throws MyError {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
-		boolean ok;
 		switch (n) {
 		case 2:
 			arg = resArgs(c);
 
-			if (ok = arg[0].isGeoLine() && arg[1].isNumberValue()) {
-
-				GeoLine line = (GeoLine) arg[0];
+			if (arg[1].isNumberValue()) {
 
 				int thickness = (int) ((NumberValue) arg[1]).getDouble();
 
-				line.setLineThickness(thickness);
-				line.updateRepaint();
+				arg[0].setLineThickness(thickness);
+				arg[0].updateRepaint();
 
-				GeoElement[] ret = { line };
+				GeoElement[] ret = { arg[0] };
 				return ret;
-			} else if (!ok)
-				throw argErr(app, c.getName(), arg[0]);
-			else
+			} else
 				throw argErr(app, c.getName(), arg[1]);
 
 		default:
