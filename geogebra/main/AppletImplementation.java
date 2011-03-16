@@ -1276,8 +1276,11 @@ public class AppletImplementation implements AppletImplementationInterface {
 		//Application.debug("callJavaScript: " + jsFunction);		
 
 		try {			
-			if (browserWindow != null)
+			if (browserWindow != null) {
+				Application.debug("callJavaScript: "+jsFunction);
 				browserWindow.call(jsFunction, args);
+			}
+			else Application.debug("Warning: browserWindow not found when calling "+jsFunction);
 		} catch (Exception e) {						
 			System.err.println("Warning: JavaScript function '"+jsFunction+"' not found");
 		}    
