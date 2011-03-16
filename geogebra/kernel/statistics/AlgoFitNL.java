@@ -58,7 +58,7 @@ import org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizer;
  */
 public class AlgoFitNL extends AlgoElement {
 	
-	private static final boolean	DEBUG				=	true;		//false in distribution
+	private static final boolean	DEBUG				=	false;		//false in distribution
 
 	private static final long 		serialVersionUID 	= 	1L;
 	private GeoList 				pointlist; 							// input
