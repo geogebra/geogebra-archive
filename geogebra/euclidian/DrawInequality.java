@@ -2,10 +2,12 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
+import geogebra.kernel.roots.RealRootUtil;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -13,9 +15,9 @@ import java.awt.geom.Area;
 
 
 /**
- * Graphical representation of linear inequality
+ * Graphical representation of inequality
  * 
- * @author Michael Borcherds
+ * @author Zbynek Konecny
  * 
  */
 public class DrawInequality extends Drawable {
@@ -72,22 +74,7 @@ public class DrawInequality extends Drawable {
 
 		// init gp
 		updateRecursive();
-		
-		
-		// plot like definite integral
-		
-			
-		
-					
-			// gp on screen?
-			/*if (!gp[i].intersects(0, 0, view.width, view.height)) {
-				isVisible = false;
-				// don't return here to make sure that getBounds() works for
-				// offscreen points too
-			}*/
-
-			
-		
+						
 	}
 	
 
@@ -156,6 +143,8 @@ public class DrawInequality extends Drawable {
 	}
 	
 	public void draw(Graphics2D g2) {
+		if(!isForceNoFill() && !isVisible)
+			return;
 		if(operation == ExpressionNode.NO_OPERATION){						
 			if ( drawable!=null) {
 				drawable.draw(g2);			
@@ -177,17 +166,16 @@ public class DrawInequality extends Drawable {
 		return geo;
 	}
 
+	private boolean hit2(int x, int y){
+		double[] coords =  new double[]{view.toRealWorldCoordX(x),
+				view.toRealWorldCoordY(y)};
+		return ((GeoFunctionNVar)geo).getFunction().evaluateBoolean(coords);
+	}
+	
 	@Override
-	public boolean hit(int x, int y) {
-		if(left!= null && operation==ExpressionNode.AND)
-			 return left.hit(x, y) && right.hit(x, y);
-		 if(left!= null && operation==ExpressionNode.OR)
-			 return left.hit(x, y) || right.hit(x, y);
-		 if(left!= null && operation==ExpressionNode.NOT)
-			 return !left.hit(x, y);
-		 if(drawable==null)
-			 return false;
-		 return drawable.hit(x, y);
+	public boolean hit(int x, int y) {		
+		return hit2(x,y)||hit2(x-4,y)||hit2(x+4,y)||hit2(x,y-4)||hit2(x,y+4);
+		
 		 
 	}
 
@@ -277,21 +265,26 @@ public class DrawInequality extends Drawable {
 			GeoFunction border = ineq.getFunBorder();
 			updateStrokes(border);
 			if(ineq.getType() == Inequality.INEQUALITY_PARAMETRIC_X){
-				double ax = view.toRealWorldCoordY(0);
-				double bx = view.toRealWorldCoordY(view.height);
+				double ax = view.toRealWorldCoordY(-10);
+				double bx = view.toRealWorldCoordY(view.height+10);
+				double [] intervalX = RealRootUtil.getDefinedInterval(border.getFunction(), ax, bx);
+				ax = intervalX[0];
+				bx = intervalX[1];
+				double axEv = view.toScreenCoordYd(ax);
+				double bxEv = view.toScreenCoordYd(bx);				
 				if (geo.isInverseFill() ^ ineq.isAboveBorder()) {
-					gp.moveTo(view.width+10, -10);
+					gp.moveTo(view.width+10, axEv);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
 							false, false);
-					gp.lineTo(view.width+10, view.height+10);
-					gp.lineTo(view.width+10, -10);
+					gp.lineTo(view.width+10, bxEv);
+					gp.lineTo(view.width+10, axEv);
 					gp.closePath();
 				} else {
-					gp.moveTo(-10, -10);
+					gp.moveTo(-10, axEv);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
 							false, false);
-					gp.lineTo(-10, view.height+10);
-					gp.lineTo(-10, -10);
+					gp.lineTo(-10, bxEv);
+					gp.lineTo(-10, axEv);
 					gp.closePath();
 				}
 				if (labelVisible) {
@@ -302,21 +295,26 @@ public class DrawInequality extends Drawable {
 				}
 			}
 			else{
-				double ax = view.toRealWorldCoordX(0);
-				double bx = view.toRealWorldCoordX(view.width);
+				double ax = view.toRealWorldCoordX(-10);
+				double bx = view.toRealWorldCoordX(view.width+10);
+				double [] intervalX = RealRootUtil.getDefinedInterval(border.getFunction(), ax, bx);
+				ax = intervalX[0];
+				bx = intervalX[1];
+				double axEv = view.toScreenCoordXd(ax);
+				double bxEv = view.toScreenCoordXd(bx);				
 				if (geo.isInverseFill() ^ ineq.isAboveBorder()) {
-					gp.moveTo(-10, -10);
+					gp.moveTo(axEv, -10);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
 							false, false);
-					gp.lineTo(view.width+10, -10);
-					gp.lineTo(-10, -10);
+					gp.lineTo(bxEv, -10);
+					gp.lineTo(axEv, -10);
 					gp.closePath();
 				} else {
-					gp.moveTo(-10, view.height+10);
+					gp.moveTo(axEv, view.height+10);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
 							false, false);
-					gp.lineTo(view.width+10, view.height+10);
-					gp.lineTo(-10, view.height+10);
+					gp.lineTo(bxEv, view.height+10);
+					gp.lineTo(axEv, view.height+10);
 					gp.closePath();
 				}
 				border.evaluateCurve(ax);
