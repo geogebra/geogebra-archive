@@ -12,6 +12,7 @@ the Free Software Foundation.
 */
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -21,7 +22,7 @@ import geogebra.main.MyError;
  * Fit[<List Points>,<List of Functions>]
  * 
  * @author Hans-Petter Ulven
- * @version 2010-02-22
+ * @version 2011-03-15
  */
 public class CmdFit extends CommandProcessor{
 
@@ -35,6 +36,9 @@ public class CmdFit extends CommandProcessor{
                     if(  (arg[0].isGeoList() )&& (arg[1].isGeoList())  ){ 
                         GeoElement[] ret={kernel.Fit(c.getLabel(),(GeoList)arg[0],(GeoList) arg[1]) };
                         return ret;
+                    }else if(  (arg[0].isGeoList() )&& (arg[1].isGeoFunction())  ){
+                    	GeoElement[] ret={kernel.Fit(c.getLabel(),(GeoList)arg[0],(GeoFunction) arg[1])  };
+                    	return ret;
                     }else{
                         throw argErr(app,c.getName(),arg[0]);
                     }//if arg[0] is GeoList 
