@@ -64,4 +64,5 @@ if [ $(expr match "$JAVA_OPTS" ".*-Xms") -eq 0 ]; then
 fi
 
 # run
-exec $JAVACMD $JAVA_OPTS -jar /usr/share/geogebra/geogebra.jar $GG_OPTS "$@"
+#exec $JAVACMD $JAVA_OPTS -jar /usr/share/geogebra/geogebra.jar $GG_OPTS "$@"
+exec $JAVACMD $JAVA_OPTS -jar geogebra.jar $GG_OPTS "$@" # not sure if this is OK --- Zoltan
