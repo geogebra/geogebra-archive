@@ -19,8 +19,8 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.MyError;
 
 /** 
- * Fit[<List Points>,<List of Functions>]
- * 
+ * Fit[<List Points>,<List of Functions>]  (linear combination)
+ * Fit[<List Points>, <Function>] (nonlinear with gliders as startvalues)
  * @author Hans-Petter Ulven
  * @version 2011-03-15
  */
