@@ -51,7 +51,15 @@ cd $SVNDIR/geogebra/scripts/autobuild/windows
 cd $SVNDIR/geogebra/scripts/autobuild/linux/generic
 ./create_geogebra_linux
 
-# 8. Sending an email to geogebra-dev:
+# 8. Copying the Mac OS X version to Google Code:
+if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
+ cd $SVNDIR/geogebra/build/installer
+ MACOSX_ZIP=GeoGebra_`echo $MYVER | tr . _`.zip
+ $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $VERSION_STRING for Mac OSX" \
+  -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $MACOSX_ZIP
+ fi
+
+# 9. Sending an email to geogebra-dev:
 echo "New version of GeoGebra 4.0 has just been uploaded: $MYVER
 Automatic message, do not reply" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || exit 7
 
