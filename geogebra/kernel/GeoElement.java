@@ -2078,11 +2078,21 @@ public abstract class GeoElement
 				break;
 				case 'n' : captionSB.append(getLabel());
 				break;
-				case 'x' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointND)this).getInhomCoords().getX()) : "%x");
+				case 'x' : 	
+					if (isGeoPoint()) captionSB.append(kernel.format(((GeoPointND)this).getInhomCoords().getX()));
+					else if (isGeoLine()) captionSB.append(kernel.format(((GeoLine)this).x));
+					else captionSB.append("%x");
+					
+					break;
+				case 'y' : 						
+					if (isGeoPoint()) captionSB.append(kernel.format(((GeoPointND)this).getInhomCoords().getY()));
+					else if (isGeoLine()) captionSB.append(kernel.format(((GeoLine)this).y));
+					else captionSB.append("%y");
 				break;
-				case 'y' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointND)this).getInhomCoords().getY()) : "%y");
-				break;
-				case 'z' : 	captionSB.append(isGeoPoint() ? kernel.format(((GeoPointND)this).getInhomCoords().getZ()) : "%z");
+				case 'z' : 
+					if (isGeoPoint()) captionSB.append(kernel.format(((GeoPointND)this).getInhomCoords().getZ()));
+					else if (isGeoLine()) captionSB.append(kernel.format(((GeoLine)this).z));
+					else captionSB.append("%z");
 				break;
 				default : 	captionSB.append('%');
 							captionSB.append(ch);
