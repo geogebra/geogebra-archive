@@ -1,6 +1,7 @@
 package geogebra.export;
 
 import geogebra.GeoGebra;
+import geogebra.kernel.Construction;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -99,11 +100,23 @@ public class GeoGebraTubeExport {
 			// send output
 			try {
 				printout = new DataOutputStream(urlConn.getOutputStream());
+
+				Construction cons = app.getKernel().getConstruction();
 				
 				// build post query
 				StringBuffer stringBuffer = new StringBuffer();
 				stringBuffer.append("data=");
 				stringBuffer.append(URLEncoder.encode(getBase64String(), "UTF-8"));
+
+				stringBuffer.append("&title=");
+				stringBuffer.append(URLEncoder.encode(cons.getTitle(), "UTF-8"));
+				
+				stringBuffer.append("&pretext=");
+				stringBuffer.append(URLEncoder.encode(cons.getWorksheetText(0), "UTF-8"));
+				
+				stringBuffer.append("&posttext=");
+				stringBuffer.append(URLEncoder.encode(cons.getWorksheetText(1), "UTF-8"));
+				
 				stringBuffer.append("&version=");
 				stringBuffer.append(URLEncoder.encode(GeoGebra.VERSION_STRING, "UTF-8"));
 
