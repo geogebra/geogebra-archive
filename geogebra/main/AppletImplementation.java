@@ -147,6 +147,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 	 * in a separate thread.
 	 */
 	public void initInBackground() {	
+		Application.debug("initInBackground");
 
 		// start animation if wanted by ggb file
 		if (kernel.wantAnimationStarted())
@@ -157,6 +158,7 @@ public class AppletImplementation implements AppletImplementationInterface {
 		Object [] noArgs = { };
 		Object [] arg = { ggbOnInitParam };
 
+		Application.debug("calling ggbOnInit("+(((ggbOnInitParam == null) ? "" : ggbOnInitParam))+")");
 		app.getScriptManager().callJavaScript("ggbOnInit", (ggbOnInitParam == null) ? noArgs : arg );
 
 		// give applet time to repaint

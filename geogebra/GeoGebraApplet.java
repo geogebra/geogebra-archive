@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra;
 
 import geogebra.main.AppletImplementation;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -44,6 +45,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	 * jar files, a splash screen is shown.
 	 */
 	public void init() {		
+		Application.debug("init");
 		try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {										
@@ -63,6 +65,7 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 	private void initAppletInBackground() {
 		Thread runner = new Thread() {
 			public void run() {						
+				Application.debug("initAppletInBackground");
 				// init applet
 				getAppletImplementation();
 																									
