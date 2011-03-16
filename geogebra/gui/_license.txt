@@ -67,7 +67,7 @@ TRANSLATIONS
   * Swedish: Jonas Enlund (Finland), Thomas Lingefjard (Sweden)
   * Spanish: Liliana Saidon (Argentina)
   * Turkish: Erol Karakirik, Mustafa Dogan, Suleyman Cengiz (Turkey)
-  * Vietnamese: Nguyen Thanh Trung, Quang Nguyen (Vietnam)
+  * Vietnamese: Nguyen Thanh Trung, Quang Nguyen, Nguyen Danh Nam (Vietnam)
   * Welsh: Uned Gyfieithu Translation Unit, Prifysgol Bangor University; Gwyn Jones (Wales)
    
 PROJECTS
