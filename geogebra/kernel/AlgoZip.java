@@ -18,13 +18,12 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
 
 /**
- * Algorithm for the Sequence[ expression of var, var, from-value, to-value, step ] command.
- * @author  Markus Hohenwarter
+ * Algorithm for the Zip[ expression of var, var, list, var, list, ... ] command.
+ * @author  Zbynek Konecny
  */
 public class AlgoZip extends AlgoElement {
 
@@ -48,6 +47,7 @@ public class AlgoZip extends AlgoElement {
      * @param cons
      * @param label label for the list
      * @param expression
+     * @param vars 
      * @param over 
      */
     AlgoZip(Construction cons, String label, GeoElement expression, GeoElement[] vars, 
@@ -115,9 +115,9 @@ public class AlgoZip extends AlgoElement {
      *  because of GetCommandDescription method).
      */
     GeoElement[] getInputForUpdateSetPropagation() {
-    	GeoElement[] realInput = new GeoElement[input.length-1];
+    	GeoElement[] realInput = new GeoElement[varCount+1];
     	realInput[0] = expression;
-    	 for(int i=0;i<varCount;i++){
+    	 for(int i=0;i<varCount;i++){    		 
           	realInput[i+1] = over[i];                  	
           }   	
     	return realInput;
@@ -192,8 +192,7 @@ public class AlgoZip extends AlgoElement {
     		
     		
 			while (currentVal < minOverSize()) 
-			{Application.debug("making el"+currentVal);				
-				
+			{				
 				// check we haven't run out of memory
 				if (app.freeMemoryIsCritical()) {
 					long mem = app.freeMemory();
