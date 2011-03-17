@@ -269,6 +269,10 @@ public class RelativeCopy {
 		}
 		String text = null;
 		
+		
+		// make sure a/0.001 doesn't become a/0
+		kernel.setTemporaryPrintFigures(15);
+		
 		if (value.isPointOnPath()) {
 			text = value.getCommandDescription();
 		}
@@ -326,6 +330,9 @@ public class RelativeCopy {
 			
 		// allow pasting blank strings
 		if (text.equals("")) text = "\"\"";
+		
+		kernel.restorePrintAccuracy();
+
 
 		//Application.debug("add text = " + text + ", name = " + (char)('A' + column + dx) + (row + dy + 1));
 		//int column3 = table.convertColumnIndexToView(column) + dx;
