@@ -111,7 +111,7 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 	 */
 	public final double[] gradient(double x,double[] pars) {
 		double oldf,newf;
-		double	deltap	=1.0E-10;// 1E-10 better than -5? fewer iterations... looks ok?  -15 does NOT work!     numberrange/1.0E15;
+		double	deltap	=1.0E-5;// 1E-10 and 1E-15 is far too small, keep E-5 until search algo is made
 		double[] gradient=new double[numberOfParameters];
 		for(int i=0;i<numberOfParameters;i++) {
 			oldf=value(x,pars);
