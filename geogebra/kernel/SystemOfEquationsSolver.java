@@ -1,6 +1,7 @@
 package geogebra.kernel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /** Class for solving system of equations
  * a1 x^2 + b1 xy + c1 y^2 + d1 x + e1 y + d1 = 0
@@ -79,8 +80,10 @@ public class SystemOfEquationsSolver {
         double [] quarticRoots = new double[4];
         
         // finding candidates for y
+        
         int solnr = eqnSolver.solveQuartic(quarticParams, quarticRoots); 
-
+        Arrays.sort(quarticRoots, 0, solnr);
+        
         for(int i=0; i<solnr; i++)
         {
         	double [] quadraticParams = new double[3];
@@ -93,7 +96,8 @@ public class SystemOfEquationsSolver {
         	
         	// finding candidates for x
             int solnr2 = eqnSolver.solveQuadratic(quadraticParams, quadraticRoots); 
-
+            Arrays.sort(quadraticRoots, 0, solnr2);
+            
             for(int j=0; j<solnr2; j++)
             { // checking pairs (x, y)
                 double x = quadraticRoots[j];
@@ -117,7 +121,6 @@ public class SystemOfEquationsSolver {
                     ys.remove(j);
                     j--;
                 }
-
 
         for(int i=0; i<xs.size(); i++)
         {

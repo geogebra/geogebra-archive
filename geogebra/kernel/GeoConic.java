@@ -18,8 +18,11 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
 import geogebra.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.roots.RealRootFunction;
 
 /**
  * Conics in 2D
@@ -153,7 +156,50 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		}
 		setAffineTransform();
 	}
+	
+	/**
+	 * Return angle of rotation from x-axis to the major axis of ellipse
+	 * @return angle between x-axis and major axis of ellipse
+	 */
+	double getPhi()
+	{
+		if(matrix[3] == 0)
+			if(matrix[0] < matrix[1])
+				return 0.0;
+			else
+				return 0.5*Math.PI;
+		else
+			if(matrix[0] <= matrix[1])
+				return 0.25*Math.PI - 0.5*Math.atan((matrix[0] - matrix[1])/(2*matrix[3]));
+			else
+				return 0.75*Math.PI - 0.5*Math.atan((matrix[0] - matrix[1])/(2*matrix[3]));
+	}
     
+	/**
+	 * Return coordinations of points on conic 
+	 * @param n number of points 
+	 * @return Array list of coordinations of points
+	 */
+	public ArrayList<double[]> getCoordsOfPointsOnConic(int n)
+	{
+		GeoCurveCartesian curve = new GeoCurveCartesian(cons);
+		this.toGeoCurveCartesian(curve);
+		
+		double startInterval = -Math.PI, endInterval = Math.PI;
+		
+		if(this.type == CONIC_HYPERBOLA)
+		{
+			startInterval = -Math.PI/2;
+			endInterval = Math.PI/2;
+		}
+		if(this.type == CONIC_PARABOLA)
+		{
+			startInterval = -1;
+			endInterval = 1;
+		}
+		
+		return curve.getCoordsOfPointsOnCurve(n, startInterval, endInterval);
+	}
 	
 	/**
 	 * Invert circle in or line in circle

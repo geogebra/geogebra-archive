@@ -106,15 +106,20 @@ public class AlgoMirror extends AlgoTransformation {
         	out = new GeoConic(cons);
         	geoOut = (GeoElement)out;
         }
+        /*
         else if (mirror instanceof GeoConic && geoIn instanceof GeoConic && 
         		(!((GeoConic)geoIn).isCircle()||!((GeoConic)geoIn).keepsType())){
         	out = new GeoCurveCartesian(cons);
         	geoOut = (GeoElement)out;
+        }*/
+        else if (mirror instanceof GeoConic && geoIn instanceof GeoConic && 
+        		(!((GeoConic)geoIn).isCircle()||!((GeoConic)geoIn).keepsType())){
+        	out = new GeoImplicitPoly(cons);
+        	geoOut = (GeoElement)out;
         }
         else if(geoIn instanceof GeoPolygon || geoIn instanceof GeoPolyLine){
         	out = (Mirrorable) geoIn.copyInternal(cons);               
-        	geoOut = out.toGeoElement();
-        	
+        	geoOut = out.toGeoElement();        	
         }
         else if(geoIn instanceof Mirrorable){
         	out = (Mirrorable) geoIn.copy();               
@@ -175,8 +180,12 @@ public class AlgoMirror extends AlgoTransformation {
     	if(mirror instanceof GeoConic && geoIn instanceof GeoLine){
     		((GeoLine)geoIn).toGeoConic((GeoConic)geoOut);    		
     	}
+    	/*
     	else if(mirror instanceof GeoConic && geoIn instanceof GeoConic && geoOut instanceof GeoCurveCartesian){
     		((GeoConic)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);    		
+    	}*/
+    	else if(mirror instanceof GeoConic && geoIn instanceof GeoConic && geoOut instanceof GeoImplicitPoly){
+    		((GeoConic)geoIn).toGeoImplicitPoly((GeoImplicitPoly)geoOut);    		
     	}
     	else if(geoIn instanceof GeoFunction && mirror != mirrorPoint){
     		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);

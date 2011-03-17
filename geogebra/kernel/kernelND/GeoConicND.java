@@ -16,6 +16,7 @@ import geogebra.kernel.EquationSolver;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
@@ -2940,7 +2941,24 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	}
 
 
-
+	/**
+	 * Sets implicit poly to this conic
+	 * @param implicitPoly implicitPoly for storing this conic
+	 */
+	public void toGeoImplicitPoly(GeoImplicitPoly implicitPoly) 
+	{
+		double coeff[][] =new double[3][3];
+		coeff[0][0]= matrix[2];
+		coeff[1][1]=2*matrix[3];
+		coeff[2][2]=0;
+		coeff[1][0]=2*matrix[4];
+		coeff[0][1]=2*matrix[5];
+		coeff[2][0]=matrix[0];
+		coeff[0][2]=matrix[1];
+		coeff[2][1]=coeff[1][2]=0;
+		implicitPoly.setCoeff(coeff);
+	}
+	
 	/**
 	 * Some ellipses might be circles by accident.
 	 * This method tells us whether we can rely on this conic being circle after some points are moved.

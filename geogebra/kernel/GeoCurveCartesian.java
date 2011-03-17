@@ -12,6 +12,9 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
+import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -317,7 +320,29 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 	}
 	
 	
-	
+	/**
+	 * return n different points on curve, needs for inversion
+	 * @param n number of requested points
+	 * @param startInterval 
+	 * @param endInterval 
+	 * @return array list of coordinations of points
+	 */
+	public ArrayList<double[]> getCoordsOfPointsOnCurve(int n, double startInterval, double endInterval)
+	{
+		ArrayList<double[]> pointList = new ArrayList<double[]>();
+		
+		double step = (endInterval - startInterval)/(n+1); 
+		
+		for(double i=0,v=startInterval; i<n; i++, v+=step)
+		{
+			double [] point = new double[2];
+			point[0] = funX.evaluate(v); 
+			point[1] = funY.evaluate(v);
+			pointList.add(point);
+		}
+		
+		return pointList;
+	}
 	
 	/**
 	 * Transforms curve using matrix
@@ -708,8 +733,5 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 			double t = getClosestParameter(p, 0);
 			return GeoVec2D.length(funX.evaluate(t) - p.x, funY.evaluate(t) - p.y);
 		}
-		
-
-	 
 
 }

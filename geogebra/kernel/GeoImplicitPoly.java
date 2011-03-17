@@ -18,11 +18,16 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
+import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.DecompositionSolver;
+import org.apache.commons.math.linear.LUDecompositionImpl;
+import org.apache.commons.math.linear.RealMatrix;
 
 import edu.jas.arith.BigRational;
 import edu.jas.poly.ExpVector;
@@ -32,18 +37,22 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
+import edu.jas.util.ArrayUtil;
 
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.Polynomial;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 /**
  * Represents implicit bivariat polynomial equations, with degree greater than 2.
  */
-public class GeoImplicitPoly extends GeoUserInputElement implements Path, Traceable{
+public class GeoImplicitPoly extends GeoUserInputElement 
+implements Path, Traceable, Mirrorable, ConicMirrorable
+{
 
 	private double[][] coeff;
 	private double[][] coeffSquarefree;
@@ -113,7 +122,44 @@ public class GeoImplicitPoly extends GeoUserInputElement implements Path, Tracea
 		Application.debug("Conic -> "+this);
 	}
 	
-
+	/**
+	 * Create conic from this implicitPoly (if degX == degY == 2)
+	 * @param g GeoConic for storing this implicitPoly
+	 */
+	public void toGeoConic(GeoConicND g)
+	{
+		if(degX != 2 || degY != 2)
+		{
+			g.setUndefined();
+			return;
+		}
+		
+		double [] matrix = new double[6];
+		matrix[0] = coeff[2][0];
+		matrix[1] = coeff[0][2];	
+		matrix[2] = coeff[0][0];
+		matrix[3] = .5*coeff[1][1];
+		matrix[4] = .5*coeff[1][0];
+		matrix[5] = .5*coeff[0][1];
+		g.setMatrix(matrix);
+	}
+	
+	/**
+	 * Create this implicitPoly from geoConic
+	 * @param g geoConic
+	 */
+	public void fromGeoConic(GeoConicND g)
+	{
+		double [][] coeffs = new double[3][3];
+		coeffs[2][0] = g.matrix[0];
+		coeffs[0][2] = g.matrix[1];	
+		coeffs[0][0] = g.matrix[2];
+		coeffs[1][1] = 2*g.matrix[3];
+		coeffs[1][0] = 2*g.matrix[4];
+		coeffs[0][1] = 2*g.matrix[5];
+		this.setCoeff(coeffs);
+	}
+	
 	@Override
 	public GeoElement copy() {
 		return new GeoImplicitPoly(this);
@@ -288,6 +334,7 @@ public class GeoImplicitPoly extends GeoUserInputElement implements Path, Tracea
 				}
 			}
 		}
+
 		return sb.toString();
 	}
 	
@@ -784,4 +831,223 @@ public class GeoImplicitPoly extends GeoUserInputElement implements Path, Tracea
     	return c;
     }
 
+	public void mirror(GeoConic c) 
+	{
+		if(c.getType() != GeoConic.CONIC_CIRCLE)
+		{
+			setUndefined();
+			return;
+		}
+		
+		if(degX != 2 || degY != 2)
+		{
+			setUndefined();
+			return;
+		}
+		
+		GeoVec2D midpoint = c.getTranslationVector();
+		double x0 = midpoint.x;
+		double y0 = midpoint.y;
+		double r =  c.getHalfAxes()[0];
+		
+		GeoConic gc = new GeoConic(cons);
+		this.toGeoConic(gc);	
+		
+		GeoPoint centerOfInversion = new GeoPoint(cons, "", 
+				c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
+		double distance = gc.distance(centerOfInversion);
+		centerOfInversion.remove();
+		
+		// first case: polyline is circle
+		if(gc.type == GeoConic.CONIC_CIRCLE)
+		{ 
+			gc.mirror(c);
+			this.fromGeoConic(gc);
+			return;
+		}
+		
+		// idea: find coeffs of resulting curve by
+		// finding enough points on resulting curve and solving appropriate system of equation
+		
+		double [][] matrix;
+		double [] results;
+		double [][] coeffMatrix; 
+
+		RealMatrix realMatrix;
+		DecompositionSolver solver;
+		double [] partialSolution;
+		double [] solution = new double[13];
+		
+		ArrayList<double[]> coordsOfPointsOnConic = gc.getCoordsOfPointsOnConic(13);    	
+    	ArrayList<double[]> coordsOfInversePoints = new ArrayList<double[]>();
+
+		// find coords of 12 points on inversion curve
+		for(int i=0; i<coordsOfPointsOnConic.size(); i++)
+		{
+			double x = coordsOfPointsOnConic.get(i)[0];
+			double y = coordsOfPointsOnConic.get(i)[1];
+			
+			double [] inversePoint = new double[2];
+			inversePoint[0] = x0 + (r*r*(x-x0))/(Math.pow(x-x0,2)+Math.pow(y-y0,2));
+			inversePoint[1] = y0 + (r*r*(y-y0))/(Math.pow(x-x0,2)+Math.pow(y-y0,2));
+			
+			if(Double.isNaN(inversePoint[0]))
+				continue;
+			
+			coordsOfInversePoints.add(inversePoint);
+		}
+		
+		// second case: center of circle inversion is on conic
+		if(Math.abs(distance) < Kernel.STANDARD_PRECISION)
+		{
+			matrix = new double[10][10];
+			results = new double[10];
+	
+			for(int i=0; i<10; i++)
+	        {
+	        	double x = coordsOfInversePoints.get(i)[0];
+	        	double y = coordsOfInversePoints.get(i)[1];
+	        	
+	        	matrix[i][0] = 1;
+	            matrix[i][1] = x;
+	            matrix[i][2] = y;
+	            matrix[i][3] = x*y;
+	            matrix[i][4] = Math.pow(x,2);
+	            matrix[i][5] = Math.pow(y,2);
+	            matrix[i][6] = x*Math.pow(y,2);
+	            matrix[i][7] = Math.pow(x,2)*y;
+	            matrix[i][8] = Math.pow(x,2)*Math.pow(y,2);
+	            matrix[i][9] = Math.pow(x,3);
+	            results[i] = -Math.pow(y,3);
+	        }
+
+			realMatrix = new Array2DRowRealMatrix(matrix);
+			solver = new LUDecompositionImpl(realMatrix).getSolver();	
+			
+			if(solver.isNonSingular())
+			{ // param with x^3 is != 0 
+				partialSolution = solver.solve(results);	
+				for(int i=0; i<10; i++)
+					solution[i] = partialSolution[i];
+				solution[10] = 1;
+				solution[11] = 0;
+				solution[12] = 0;
+			}
+			else
+			{
+				// param with x^3 is == 0, but param with y^3 != 0
+				for(int i=0; i<10; i++)
+		        {
+		        	double x = coordsOfInversePoints.get(i)[0];
+		        	double y = coordsOfInversePoints.get(i)[1];
+		    
+		        	matrix[i][9] = Math.pow(y,3);
+		            results[i] = -Math.pow(x,3);
+		        }
+		
+				realMatrix = new Array2DRowRealMatrix(matrix);
+				solver = new LUDecompositionImpl(realMatrix).getSolver();	
+
+				partialSolution = solver.solve(results);
+				
+				for(int i=0; i<9; i++)
+					solution[i] = partialSolution[i];
+				solution[9] = 1;
+				solution[10] = partialSolution[9];
+			}
+
+		}
+		else
+		{ // third case: center of circle of inversion is outside a conic
+			matrix = new double[12][12];
+			results = new double[12];
+			
+			for(int i=0; i<12; i++)
+	        {
+	        	double x = coordsOfInversePoints.get(i)[0];
+	        	double y = coordsOfInversePoints.get(i)[1];
+	        	
+	        	matrix[i][0] = 1;
+	            matrix[i][1] = x;
+	            matrix[i][2] = y;
+	            matrix[i][3] = x*y;
+	            matrix[i][4] = Math.pow(x,2);
+	            matrix[i][5] = Math.pow(y,2);
+	            matrix[i][6] = x*Math.pow(y,2);
+	            matrix[i][7] = Math.pow(x,2)*y;
+	            matrix[i][8] = Math.pow(x,2)*Math.pow(y,2);
+	            matrix[i][9] = Math.pow(x,3);
+	            matrix[i][10] = Math.pow(y,3);
+	            matrix[i][11] = Math.pow(x,4);
+	            
+	            results[i] = -Math.pow(y,4);
+	        }
+	
+			realMatrix = new Array2DRowRealMatrix(matrix);
+			solver = new LUDecompositionImpl(realMatrix).getSolver();
+			
+			if(solver.isNonSingular())
+			{
+				partialSolution = solver.solve(results);
+				for(int i=0; i<12; i++)
+					solution[i] = partialSolution[i];
+				solution[12] = 1;
+			}
+			else
+			{ 
+				setUndefined();
+				return;
+			}
+		}
+			
+		for(int i=0; i<solution.length; i++)
+			if(Math.abs(solution[i]) < Kernel.STANDARD_PRECISION)
+				solution[i] = 0;
+		
+		coeffMatrix = new double[5][5];
+		
+		coeffMatrix[0][0] = solution[0];
+		coeffMatrix[0][1] = solution[2];
+		coeffMatrix[0][2] = solution[5];
+		coeffMatrix[0][3] = solution[10];
+		coeffMatrix[0][4] = solution[12];
+		
+		coeffMatrix[1][0] = solution[1];
+		coeffMatrix[1][1] = solution[3];
+		coeffMatrix[1][2] = solution[6];
+		coeffMatrix[1][3] = 0;
+		coeffMatrix[1][4] = 0;
+		
+		coeffMatrix[2][0] = solution[4];
+		coeffMatrix[2][1] = solution[7];
+		coeffMatrix[2][2] = solution[8];
+		coeffMatrix[2][3] = 0;
+		coeffMatrix[2][4] = 0;
+		
+		coeffMatrix[3][0] = solution[9];
+		coeffMatrix[3][1] = 0;
+		coeffMatrix[3][2] = 0;
+		coeffMatrix[3][3] = 0;
+		coeffMatrix[3][4] = 0;
+		
+		coeffMatrix[4][0] = solution[11];
+		coeffMatrix[4][1] = 0;
+		coeffMatrix[4][2] = 0;
+		coeffMatrix[4][3] = 0;
+		coeffMatrix[4][4] = 0;
+
+		this.setCoeff(coeffMatrix);
+	}
+
+	public void mirror(GeoPoint Q) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void mirror(GeoLine g) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }
