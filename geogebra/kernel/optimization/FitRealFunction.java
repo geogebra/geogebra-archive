@@ -50,6 +50,9 @@ import geogebra.kernel.GeoNumeric;
   	
   	ToDo:		The gradient could be more sophisticated, but the Apache lib is quite robust :-)
   				Some tuning of numerical precision both here and in the setup of LM-optimizer
+  				
+  				Should probably make an abstract, and make this a subclass,
+  				will do if the need arises.
 	
 </pre>  
 
@@ -108,7 +111,7 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 	 */
 	public final double[] gradient(double x,double[] pars) {
 		double oldf,newf;
-		double	deltap	=1.0E-5;//numberrange/1.0E15;
+		double	deltap	=1.0E-10;// 1E-10 better than -5? fewer iterations... looks ok?  -15 does NOT work!     numberrange/1.0E15;
 		double[] gradient=new double[numberOfParameters];
 		for(int i=0;i<numberOfParameters;i++) {
 			oldf=value(x,pars);
@@ -181,13 +184,7 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 	}//evaluate(x);
 	
 	public final Function getFunction(){return newf;}
-	
-	/* Don't use, makes a new one every time, do it in main algo 
-	public final GeoFunction getGeoFunction(){
-		GeoFunction geof=new GeoFunction(kernel.getConstruction(),"ny",newf);
-		return geof;
-	}//getGeoFunction()
-	*/
+
 	
   // --- SNIP --- /// *** Comment out when finished ***
  	
@@ -200,6 +197,13 @@ public class FitRealFunction implements org.apache.commons.math.optimization.fit
 			System.err.println(""+geo.toString()+" is not a GeoFunction");
 		}//if GeoFunction
 	}//Test constructor
+	
+	/* Obs, makes a new one, don't use in algo!!! */ 
+	public final GeoFunction getGeoFunction(){
+		GeoFunction geof=new GeoFunction(kernel.getConstruction(),"ny",newf);
+		return geof;
+	}//getGeoFunction()
+	
 
 
  
