@@ -1265,22 +1265,28 @@ public class AppletImplementation implements AppletImplementationInterface {
 		if (browserWindow == null) {
 			try {							
 				browserWindow = JSObject.getWindow(applet);
+				
+				if (browserWindow == null)
+					Application.debug("Warning: could not initialize JSObject.getWindow() for GeoGebraApplet");
+				
 			} catch (Exception e) {							
-				System.err.println("Exception: could not initialize JSObject.getWindow() for GeoGebraApplet");
+				Application.debug("Exception: could not initialize JSObject.getWindow() for GeoGebraApplet");
 			}    			
 		}
 	}
 
 
 	public void callJavaScript(String jsFunction, Object [] args) {		
-		//Application.debug("callJavaScript: " + jsFunction);		
-
+		//Application.debug("callJavaScript: " + jsFunction);
+		
+		initJavaScript();
+		
 		try {			
 			if (browserWindow != null) {
 				Application.debug("callJavaScript: "+jsFunction);
 				browserWindow.call(jsFunction, args);
 			}
-			else Application.debug("Warning: browserWindow not found when calling "+jsFunction);
+			else Application.debug("Warning: could not initialize JSObject.getWindow() for GeoGebraApplet when calling "+jsFunction);
 		} catch (Exception e) {						
 			System.err.println("Warning: JavaScript function '"+jsFunction+"' not found");
 		}    
