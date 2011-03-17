@@ -178,6 +178,8 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 					return;
 				}
 				
+				if(prepareToShowPopup() == false) return;
+				
 				Point locButton = getLocation();
 				int h = e.getX() - locButton.x;
 
@@ -250,10 +252,15 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 			iconSize.width = myTable.getColumnWidth()-4;
 			iconSize.height = myTable.getRowHeight()-4;	
 		}
-		
-		
-		
-		
+				
+	}
+	
+	/**
+	 * Prepares the popup before it is shown. Override this if the popup needs
+	 * special handling before opening. 
+	 */
+	public boolean prepareToShowPopup(){
+		return true;
 	}
 	
 	

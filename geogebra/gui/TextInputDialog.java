@@ -40,6 +40,7 @@ import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -89,8 +90,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	private SelectionTable recentSymbolTable;
 	private ArrayList<String> recentSymbolList;
 
-
+	// JList for the object menu popup
+	private JList geoList;
+	
+	
 	boolean isIniting;
+
+	
 
 	/**
 	 * Input Dialog for a GeoText object
@@ -141,7 +147,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 
 	public void reInitEditor(GeoText text, GeoPoint startPoint) {
-		
+
 		this.startPoint = startPoint;
 		setGeoText(text);  
 		textPreviewer.updatePreviewText(text, editor.buildGeoGebraString(isLaTeX), isLaTeX);
@@ -344,10 +350,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 
+	
 	/** 
-	 * Builds GeoElement insertion button. 
+	 * Creates an array of labels of existing geos that can be inserted into the editor as dynamic text
 	 */
-	private void buildInsertGeoButton(){
+	private String[] getGeoObjectList(){
 
 		TreeSet ts = app.getKernel().getConstruction().getGeoSetLabelOrder();
 		ArrayList<String> list = new ArrayList<String>(); 
@@ -358,12 +365,26 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				list.add(g.getLabel());
 			}
 		}
+		String[] geoArray = new String[list.size()];
+		geoArray = list.toArray(geoArray);
+		return geoArray;
+	}
+		
+	
+	/** 
+	 * Builds GeoElement insertion button. 
+	 */
+	private void buildInsertGeoButton(){
 
-		final JList geoList = new JList(list.toArray());
+		// create a JList to hold the geo labels for the object popup menu
+		geoList = new JList(getGeoObjectList());
+		geoList.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
+		JScrollPane scroller = new JScrollPane(geoList);
+		scroller.setBorder(BorderFactory.createEmptyBorder());
+		
+		// add a list selection listener that will insert a selected geo into the editor
 		geoList.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-
 			public void valueChanged(ListSelectionEvent e) {
-
 				if(!e.getValueIsAdjusting()){		
 					String label = (String) geoList.getSelectedValue();
 					insertGeoElement(app.getKernel().lookupLabel(label));
@@ -373,17 +394,23 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 			}
 
 		});
-
-		geoList.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
-		JScrollPane scroller = new JScrollPane(geoList);
-		scroller.setBorder(BorderFactory.createEmptyBorder());
-
-		btInsertGeo = new PopupMenuButton();
+	
+		// create a popup button and add the list to it
+		btInsertGeo = new PopupMenuButton(){
+			// update the object list before opening the popup
+			public boolean prepareToShowPopup(){
+				geoList.setListData(getGeoObjectList());
+				int rowCount = Math.min(8,geoList.getModel().getSize());
+				geoList.setVisibleRowCount(rowCount);
+				return geoList.getModel().getSize() > 0;
+			}
+		};
 		btInsertGeo.addPopupMenuItem(scroller);
 		btInsertGeo.setKeepVisible(false);
 		btInsertGeo.setStandardButton(true);
-		btInsertGeo.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
-
+		btInsertGeo.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));	
+		
+		
 	};
 
 
@@ -498,7 +525,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 			isLaTeX = geo.isLaTeX();
 		}           
 		//----------------------------------------------
-		
+
 		editor.setText(geo, this);
 		editor.setCaretPosition(0);
 		cbLaTeX.setSelected(false);
@@ -590,7 +617,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 				btInsertLaTeX.setEnabled(cbLaTeX.isSelected());
 				isLaTeX = cbLaTeX.isSelected();
 				textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(isLaTeX), isLaTeX);
-				
+
 
 				if(isLaTeX && inputPanel.getText().length() == 0) {
 					insertString("$  $");
@@ -650,7 +677,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 	protected void handleDocumentEvent(DocumentEvent e) {
-		
+
 		textPreviewer.updatePreviewText(editGeo, editor.buildGeoGebraString(isLaTeX), isLaTeX);
 	}
 
