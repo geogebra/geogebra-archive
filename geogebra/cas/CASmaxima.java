@@ -363,6 +363,11 @@ public class CASmaxima extends CASgeneric {
 	    // Variable Ordering. See Tickets #281 and #311 in trac
 	    ggbMaxima.executeCall("powerdisp:true;");
 	    
+	    // change binding power of multiplication in Maxima 
+	    // In Maxima a*b/c is read as (a*b)/c by default but GeoGebra reads this as a*(b/c)
+	    // see #631 and http://maxima.sourceforge.net/docs/manual/en/maxima_6.html
+	    ggbMaxima.executeCall("infix(\"*\", 110, 110);");
+	    
 		// set line length of "terminal"
 		// we don't want lines broken
 	    ggbMaxima.executeCall("linel:10000;");
