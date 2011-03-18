@@ -452,7 +452,8 @@ public class ConstructionDefaults {
 		
 		if (defaultGeo != null) {
 			geo.setAllVisualProperties(defaultGeo, isReset);
-			
+			if(geo instanceof GeoFunction)
+				geo.setAlphaValue(defaultGeo.getAlphaValue());
 			
 			if(!isReset) {
 				// set to highest used layer
