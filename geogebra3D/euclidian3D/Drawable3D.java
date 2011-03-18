@@ -142,9 +142,6 @@ public abstract class Drawable3D extends DrawableND {
 	/** says if it has to be updated */
 	private boolean waitForUpdate;
 	
-	/** says if it has to be updated caused by the 3D view*/
-	private boolean viewChanged;
-	
 	/** says if the label has to be updated */
 	private boolean labelWaitForUpdate;
 	
@@ -234,7 +231,6 @@ public abstract class Drawable3D extends DrawableND {
 		setGeoElement(a_geo);
 		
 		waitForUpdate = true;
-		viewChanged = true;
 		
 	}
 	
@@ -262,12 +258,8 @@ public abstract class Drawable3D extends DrawableND {
 					*/
 
 
-		
-		if (viewChanged){
+		if (isVisible())
 			updateForView();
-			viewChanged = false;
-			//setLabelWaitForUpdate();//TODO remove that
-		}
 		
 		if (labelWaitForUpdate){
 			updateLabel();
@@ -343,13 +335,6 @@ public abstract class Drawable3D extends DrawableND {
 		return waitForUpdate;
 	}
 	
-	/**
-	 * says that the view has changed
-	 */
-	public void viewChanged(){
-		
-		viewChanged = true;
-	}
 	
 	
 	/**
@@ -369,7 +354,6 @@ public abstract class Drawable3D extends DrawableND {
 		label.setWaitForReset();
 		setLabelWaitForUpdate();
 		setWaitForUpdate();
-		viewChanged();
 	}
 	
 	

@@ -146,6 +146,9 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	}
 	
 	protected void updateForView(){
+		if (!getView3D().viewChanged())
+			return;
+		
 		double oldRadius = savedRadius;
 		updateRadius();
 		if(unlimitedRange && savedRadius>lastBaseRadius){

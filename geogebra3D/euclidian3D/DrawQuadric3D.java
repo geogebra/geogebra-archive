@@ -167,7 +167,14 @@ implements Previewable {
 	
 	
 	protected void updateForView(){
-		updateForItSelf();
+
+		switch(((GeoQuadric3D) getGeoElement()).getType()){
+		case GeoQuadric3D.QUADRIC_CONE:
+		case GeoQuadric3D.QUADRIC_CYLINDER:
+			updateForItSelf();
+			break;
+		}
+		//no update for sphere : TODO if zoom (nb of vertices)
 	}
 	
 	

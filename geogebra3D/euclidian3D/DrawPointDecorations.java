@@ -106,6 +106,13 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 	protected int getLineThickness(){
 		return 1;
 	}
+	
+
+	protected void updateForView(){
+		if (getView3D().viewChangedByZoom())
+			updateForItSelf();
+	}
+
 
 	///////////////////////////////////////////
 	// UNUSED METHODS

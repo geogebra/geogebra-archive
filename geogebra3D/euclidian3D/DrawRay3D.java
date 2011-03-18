@@ -77,6 +77,12 @@ public class DrawRay3D extends DrawCoordSys1D {
 	}
 	
 	
+
+	protected void updateForView(){
+		if (getView3D().viewChanged())
+			updateForItSelf();
+	}
+	
 	/*
 	public void drawGeometry(EuclidianRenderer3D renderer) {
 		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());

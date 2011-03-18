@@ -339,7 +339,8 @@ public class Renderer implements GLEventListener {
         // update 3D drawables
         drawable3DLists.updateAll();
 
-    	
+    	// say that 3D view changed has been performed
+        view3D.resetViewChanged();
         
         
         

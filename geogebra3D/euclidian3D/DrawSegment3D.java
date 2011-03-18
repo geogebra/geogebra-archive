@@ -44,6 +44,12 @@ public class DrawSegment3D extends DrawCoordSys1D {
 		return super.doHighlighting();
 	}
 	
+	protected void updateForView(){
+		if (getView3D().viewChangedByZoom())
+			updateForItSelf();
+	}
+
+	
 	
 	////////////////////////////////
 	// Previewable interface 

@@ -77,7 +77,8 @@ implements Previewable {
 	}
 	
 	protected void updateForView(){
-		updateForItSelf();
+		if (getView3D().viewChangedByZoom())
+			updateForItSelf();
 	}
 	
 	

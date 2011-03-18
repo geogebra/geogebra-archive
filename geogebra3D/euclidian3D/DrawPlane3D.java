@@ -162,8 +162,6 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	}
 
 	protected void updateForView(){
-		//setMinMax();
-		//updateForItSelf();
 		setWaitForUpdate();
 	}
 	

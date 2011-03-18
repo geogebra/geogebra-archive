@@ -109,8 +109,8 @@ implements Previewable, Functional2Var{
 	
 	protected void updateForView(){
 		
-		updateForItSelf();
-		//TODO only if zoom
+		if (getView3D().viewChangedByZoom())
+			updateForItSelf();
 		
 	}
 	

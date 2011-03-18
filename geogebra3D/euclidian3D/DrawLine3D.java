@@ -84,7 +84,11 @@ public class DrawLine3D extends DrawCoordSys1D implements Previewable {
 		updateDrawMinMax(true);
 	}
 	
-	
+
+	protected void updateForView(){
+		if (getView3D().viewChanged())
+			updateForItSelf();
+	}
 	
 	
 	

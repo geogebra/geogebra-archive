@@ -220,6 +220,8 @@ public class PlotterSurface {
 			longitude*=2;
 		}
 		
+		//longitude=2;
+		
 		int latitude=longitude/2;
 
 		for (int ui=0; ui<longitude; ui++){
@@ -244,12 +246,15 @@ public class PlotterSurface {
 
 	
 	private Coords sphericalCoords(int ui, int vi, int longitude, int latitude){
+		
 		double u = ((double) ui/longitude)*2*Math.PI;
 		double v = ((double) vi/latitude)*Math.PI/2;
+		
 		return new Coords(				
 				Math.cos(u)*Math.cos(v),
 				Math.sin(u)*Math.cos(v),
 				Math.sin(v),0);
+			
 	}
 	
 	/** 

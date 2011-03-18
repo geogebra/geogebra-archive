@@ -180,6 +180,9 @@ public class DrawCurve3D extends Drawable3DCurves {
 	
 	
 	protected void updateForView(){
+		if (!getView3D().viewChanged())
+			return;
+		
 		if(!useOldCurves){
 			EuclidianView3D view = getView3D();
 			mesh.updateScale((float)view.getScale());

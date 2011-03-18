@@ -268,10 +268,25 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 		return true;
 	}
 	
-	
+
 	protected void updateForView(){
-		
-		updateForItSelf();
+		if (getView3D().viewChanged())
+			switch(((GeoConicND) getGeoElement()).getType()){
+			case GeoConic.CONIC_DOUBLE_LINE:
+			case GeoConic.CONIC_HYPERBOLA:
+			case GeoConic.CONIC_INTERSECTING_LINES:
+			case GeoConic.CONIC_LINE:
+			case GeoConic.CONIC_PARABOLA:
+			case GeoConic.CONIC_PARALLEL_LINES:
+				updateForItSelf();
+				break;
+			case GeoConic.CONIC_CIRCLE:
+			case GeoConic.CONIC_ELLIPSE:
+			case GeoConic.CONIC_SINGLE_POINT:
+				if (getView3D().viewChangedByZoom()) //update only if zoom occurred
+					updateForItSelf();
+				break;
+			}
 		
 	}
 	

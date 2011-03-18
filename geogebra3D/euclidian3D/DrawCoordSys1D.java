@@ -136,9 +136,6 @@ public abstract class DrawCoordSys1D extends Drawable3DCurves implements Preview
 		return getGeoElement().getLineThickness();
 	}
 	
-	protected void updateForView(){
-		updateForItSelf();
-	}
 	
 	
 	

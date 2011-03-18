@@ -704,7 +704,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		toSceneCoords3D(viewDirection);	
 		viewDirection.normalize();
 		
-		setWaitForUpdate();
+		//setWaitForUpdate();
 		
 	}
 	
@@ -721,9 +721,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * sets the rotation matrix
 	 * @param a
 	 * @param b
-	 * @param repaint
 	 */
-	public void setRotXYinDegrees(double a, double b, boolean repaint){
+	public void setRotXYinDegrees(double a, double b){
 		
 		//Application.debug("setRotXY");
 		
@@ -736,11 +735,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			this.b=-EuclidianController3D.ANGLE_MAX;
 		
 		
-		
+
 		updateMatrix();
-		
-		if (repaint)
-			setWaitForUpdate();
+
+		setViewChangedByRotate();
+		setWaitForUpdate();
 	}
 	
 	
@@ -748,40 +747,19 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	final public void setCoordSystemFromMouseMove(int dx, int dy, int mode) {	
 		switch(mode){
 		case EuclidianController3D.MOVE_ROTATE_VIEW:
-			setRotXYinDegrees(aOld - dx, bOld + dy, true);
+			setRotXYinDegrees(aOld - dx, bOld + dy);
 			break;
 		case EuclidianController3D.MOVE_VIEW:
 			setXZero(XZeroOld+dx);
 			setYZero(YZeroOld-dy);
 			updateMatrix();
+			setViewChangedByTranslate();
 			setWaitForUpdate();
 			break;
 		}
 	}
 
-	/**
-	 * add to the rotation matrix
-	 * @param da
-	 * @param db
-	 * @param repaint
-	 */
-	public void addRotXY(int da, int db, boolean repaint){
-		
-		setRotXYinDegrees(a+da,b+db,repaint);
-	}	
 
-	/**
-	 * set the rotation matrix in radians
-	 * @param a
-	 * @param b
-	 * @param repaint
-	 */
-	public void setRotXY(double a, double b, boolean repaint){
-		
-		setRotXYinDegrees(a/EuclidianController3D.ANGLE_TO_DEGREES,b/EuclidianController3D.ANGLE_TO_DEGREES,repaint);
-		
-	}
-	
 	
 
 	/* TODO interaction - note : methods are called by EuclidianRenderer3D.viewOrtho() 
@@ -829,6 +807,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void setScale(double val){
 		scale = val;
+		setViewChangedByZoom();
 	}
 	
 	/**
@@ -922,8 +901,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			
 			
-			drawable3DLists.viewChanged();
-			
 			viewChangedOwnDrawables();
 			setWaitForUpdateOwnDrawables();
 			
@@ -934,7 +911,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 		// update decorations
-		pointDecorations.update();
+		//pointDecorations.update();
 	}
 	
 	
@@ -1137,7 +1114,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		resetAllDrawables();
 		//updateAllDrawables();
 		viewChangedOwnDrawables();
+		setViewChanged();
 		setWaitForUpdate();
+		
 		//update();
 		
 	}
@@ -1740,7 +1719,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		if (animatedContinueRot){
 			double da = (System.currentTimeMillis()-animatedRotTimeStart)*animatedRotSpeed;			
-			setRotXYinDegrees(aOld + da, bOld, true);
+			setRotXYinDegrees(aOld + da, bOld);
 		}
 		
 		if (animatedRot){
@@ -1752,7 +1731,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				animatedRot = false;
 			}
 			
-			setRotXYinDegrees(aOld*(1-t)+aNew*t, bOld*(1-t)+bNew*t, true);
+			setRotXYinDegrees(aOld*(1-t)+aNew*t, bOld*(1-t)+bNew*t);
 		}
 
 			
@@ -2106,6 +2085,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 		setScale(getXscale()*zoomFactor);
 		updateMatrix();
+		setWaitForUpdate();
 		
 	}
 	
@@ -3417,6 +3397,42 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void setResizeYAxisCursor() {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	
+	
+	
+	
+	
+	
+	/////////////////////////////////////////////////
+	// UPDATE VIEW : ZOOM, TRANSLATE, ROTATE
+	/////////////////////////////////////////////////
+	
+	private boolean viewChangedByZoom = true;
+	private boolean viewChangedByTranslate = true;
+	private boolean viewChangedByRotate = true;
+	
+	private void setViewChangedByZoom(){viewChangedByZoom = true;}
+	private void setViewChangedByTranslate(){viewChangedByTranslate = true;}
+	private void setViewChangedByRotate(){viewChangedByRotate = true;}
+	private void setViewChanged(){
+		viewChangedByZoom = true;
+		viewChangedByTranslate = true;
+		viewChangedByRotate = true;
+	}
+	
+	public boolean viewChangedByZoom(){return viewChangedByZoom;}
+	public boolean viewChangedByTranslate(){return viewChangedByTranslate;}
+	public boolean viewChangedByRotate(){return viewChangedByRotate;}
+	public boolean viewChanged(){
+		return viewChangedByZoom || viewChangedByTranslate || viewChangedByRotate;
+	}
+	
+	public void resetViewChanged(){
+		viewChangedByZoom = false;
+		viewChangedByTranslate = false;
+		viewChangedByRotate = false;
 	}
 
 

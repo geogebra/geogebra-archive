@@ -174,9 +174,7 @@ public class DrawList3D extends Drawable3D {
     	return true;
 	}
 
-	@Override
 	protected void updateForView() {
-		// TODO Auto-generated method stub
 		
 	}
 	
