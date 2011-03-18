@@ -481,10 +481,9 @@ public class CASmaxima extends CASgeneric {
 	     * TODO: change to ggb syntax
 	     */
 	    ggbMaxima.executeCall("load(\"noninteractive\");");
-
 	    
 	    // define Degree
-	    ggbMaxima.executeCall("Degree:180/%pi;");
+	    ggbMaxima.executeCall("Degree : %pi/180;");
 	    
 	    // access functions for elements of a vector (for the "if" part, see #556)
 	    ggbMaxima.executeCall("x(a) := if listp(a) then part(a, 1) else x*a;");

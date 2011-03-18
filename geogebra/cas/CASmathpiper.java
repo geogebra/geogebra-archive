@@ -272,7 +272,7 @@ public class CASmathpiper extends CASgeneric {
 		}
 		
 		// define constant for Degree
-		response = ggbMathPiper.evaluate("Degree := 180/Pi;");
+		response = ggbMathPiper.evaluate("Degree := Pi/180;");
 		
 		// set default numeric precision to 16 significant figures
 		ggbMathPiper.evaluate("BuiltinPrecisionSet(16);");
