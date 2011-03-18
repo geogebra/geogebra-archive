@@ -754,7 +754,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			setXZero(XZeroOld+dx);
 			setYZero(YZeroOld-dy);
 			updateMatrix();
-			update();
+			setWaitForUpdate();
 			break;
 		}
 	}

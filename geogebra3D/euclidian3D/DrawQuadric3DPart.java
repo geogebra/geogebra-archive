@@ -28,4 +28,11 @@ public class DrawQuadric3DPart extends DrawQuadric3D {
 		surface.setV(min,max);surface.setNbV(3);
 	}
 	
+	
+	
+	protected void updateForView(){
+		
+	}
+	
+
 }

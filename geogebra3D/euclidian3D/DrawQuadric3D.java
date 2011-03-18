@@ -94,38 +94,6 @@ implements Previewable {
 			
 			break;
 			
-			/*
-		case GeoQuadric3D.QUADRIC_CONE:
-			
-			
-			o = getView3D().getToScreenMatrix().mul(quadric.getMidpoint());
-			v = getView3D().getToScreenMatrix().mul(quadric.getEigenvec3D(2));
-								
-			minmax = getView3D().getRenderer().getIntervalInFrustum(
-					new double[] {Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY},
-					o, v, true);
-			
-			min = (float) minmax[0]; 
-			max = (float) minmax[1];		
-
-			surface = renderer.getGeometryManager().getSurface();
-			surface.start(quadric);
-			surface.setU((float) quadric.getMinParameter(0), (float) quadric.getMaxParameter(0));surface.setNbU(60);
-			
-			//Application.debug("min, max ="+min+", "+max);
-			fade = (max-min)/10f;
-			if (min*max<0){
-				surface.setV(min,0);surface.setNbV(2);surface.setVFading(fade, 0);surface.draw();
-				surface.setV(0,max);surface.setNbV(2);surface.setVFading(0, fade);surface.draw();
-			}else{
-				surface.setV(min,max);surface.setNbV(3);surface.setVFading(fade, fade);surface.draw();
-			}
-			setGeometryIndex(surface.end());
-			
-			
-			break;
-			*/
-			
 		case GeoQuadric3D.QUADRIC_CONE:
 		case GeoQuadric3D.QUADRIC_CYLINDER:
 						

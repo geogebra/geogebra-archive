@@ -82,12 +82,26 @@ implements Previewable, Functional2Var{
 		PlotterSurface surface;
 
 		surface = renderer.getGeometryManager().getSurface();
+		
+		
+		/*
 		surface.start(this);
+		
+		
 		//number of vertices depends on point size
 		int nb = 2+((GeoPointND) getGeoElement()).getPointSize();
+				
 		surface.setU((float) getMinParameter(0), (float) getMaxParameter(0));surface.setNbU(2*nb); 
 		surface.setV((float) getMinParameter(1), (float) getMaxParameter(1));surface.setNbV(nb);
 		surface.draw();
+		*/
+
+		
+		surface.start();
+		GeoPointND point = (GeoPointND) getGeoElement(); 
+		surface.drawSphere(point.getPointSize(),point.getInhomCoordsInD(3), point.getPointSize()/getView3D().getScale()*1.5);
+		
+		
 		setGeometryIndex(surface.end());
 		
 		return true;

@@ -44,11 +44,13 @@ public class PlotterSurface {
 	/** texture coord for in (alpha = 1) */
 	static final private float TEXTURE_FADE_IN = 0f;
 	
+
 	/** default constructor
 	 * @param manager
 	 */
 	public PlotterSurface(Manager manager){
 		this.manager = manager;
+		
 	}
 	
 	
@@ -168,6 +170,7 @@ public class PlotterSurface {
 		manager.vertex(p2);
 		manager.endGeometry();
 	}
+	
 	/** 
 	 * draw part of the surface
 	 */
@@ -202,6 +205,51 @@ public class PlotterSurface {
 		}
 		
 		manager.endGeometry();
+	}
+	
+
+	
+	public void drawSphere(int size, Coords center, double radius){
+		manager.startGeometry(Manager.QUADS);
+		
+		Coords n;
+		
+		int longitude=6;
+		size+=3;
+		while(longitude*6<size*size){//find the correct longitude size (size=3 <-> longitude=6 and size=9 <-> longitude=24)
+			longitude*=2;
+		}
+		
+		int latitude=longitude/2;
+
+		for (int ui=0; ui<longitude; ui++){
+			
+			for (int vi=-latitude; vi<latitude; vi++){			
+				
+				n=sphericalCoords(ui,vi,longitude,latitude);
+				drawNV(n,center.add(n.mul(radius)));
+				n=sphericalCoords(ui+1,vi,longitude,latitude);
+				drawNV(n,center.add(n.mul(radius)));
+				n=sphericalCoords(ui+1,vi+1,longitude,latitude);
+				drawNV(n,center.add(n.mul(radius)));
+				n=sphericalCoords(ui,vi+1,longitude,latitude);
+				drawNV(n,center.add(n.mul(radius)));
+	
+			}
+			
+		}
+		
+		manager.endGeometry();
+	}
+
+	
+	private Coords sphericalCoords(int ui, int vi, int longitude, int latitude){
+		double u = ((double) ui/longitude)*2*Math.PI;
+		double v = ((double) vi/latitude)*Math.PI/2;
+		return new Coords(				
+				Math.cos(u)*Math.cos(v),
+				Math.sin(u)*Math.cos(v),
+				Math.sin(v),0);
 	}
 	
 	/** 
@@ -382,8 +430,12 @@ public class PlotterSurface {
 		
 		float u = uMin+ui*du;
 		float v = vMin+vi*dv;			
-		manager.normal(functional2Var.evaluateNormal(u, v));
-		manager.vertex(functional2Var.evaluatePoint(u, v));
+		drawNV(functional2Var.evaluateNormal(u, v),functional2Var.evaluatePoint(u, v));
+	}
+	
+	private void drawNV(Coords normal, Coords point){
+		manager.normal(normal);
+		manager.vertex(point);
 	}
 	
 	private float getTextureCoord(int i, int n, float fadeMin, float fadeMax){
