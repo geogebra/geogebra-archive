@@ -9,7 +9,7 @@ import geogebra.euclidian.EuclidianConstants;
  * tangent to Curve f in point P: (b'(t), -a'(t), a'(t)*b(t)-a(t)*b'(t))
  */
 
-public class AlgoTangentCurve extends AlgoElement {
+public class AlgoTangentCurve extends AlgoElementCAS {
 
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P; // input
@@ -38,11 +38,14 @@ public class AlgoTangentCurve extends AlgoElement {
         tangent.setStartPoint(T);
 
         //First derivative of curve f
-        AlgoCasDerivative algo = new AlgoCasDerivative(cons, f);
-		this.df = (GeoCurveCartesian) algo.getResult();
+        algoCAS = new AlgoCasDerivative(cons, f);
+		this.df = (GeoCurveCartesian) ((AlgoCasDerivative)algoCAS).getResult();
 		
-		cons.removeFromConstructionList(algo);
-        setInputOutput(); // for AlgoElement                
+		// make sure it's removed properly if f is deleted
+		geo = f;
+		cons.removeFromConstructionList(algoCAS);
+        
+		setInputOutput(); // for AlgoElement                
         compute();
         tangent.setLabel(label);
     }

@@ -13,18 +13,18 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.main.Application;
 
 
-public class AlgoTangentFunctionPoint extends AlgoElement {
+public class AlgoTangentFunctionPoint extends AlgoElementCAS {
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint P; // input
-    private GeoFunction f; // input
     private GeoLine tangent; // output  
-
+    private GeoFunction f;
     private GeoPoint T;
     private boolean pointOnFunction;
     private GeoFunction deriv;
@@ -54,9 +54,12 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         tangent.setStartPoint(T);
         
         // derivative of f
-        AlgoCasDerivative algoDeriv = new AlgoCasDerivative(cons, f);       
-        deriv = (GeoFunction) algoDeriv.getResult();
-        cons.removeFromConstructionList(algoDeriv);
+        algoCAS = new AlgoCasDerivative(cons, f);       
+        deriv = (GeoFunction) ((AlgoCasDerivative)algoCAS).getResult();
+        geo = f;
+        cons.removeFromConstructionList(algoCAS);
+        //cons.removeFromAlgorithmList(algoCAS);
+        //cons.removeFromAllUpdateSets(algoDeriv);
 
         setInputOutput(); // for AlgoElement                
         compute();
@@ -119,4 +122,5 @@ public class AlgoTangentFunctionPoint extends AlgoElement {
         return app.getPlain("TangentToAatB",f.getLabel(),"x = x("+P.getLabel()+")");
 
     }
+    
 }
