@@ -169,7 +169,9 @@ public class DrawInequality extends Drawable {
 	private boolean hit2(int x, int y){
 		double[] coords =  new double[]{view.toRealWorldCoordX(x),
 				view.toRealWorldCoordY(y)};
-		return ((GeoFunctionNVar)geo).getFunction().evaluateBoolean(coords);
+		if(geo instanceof GeoFunctionNVar)
+			return ((GeoFunctionNVar)geo).getFunction().evaluateBoolean(coords);
+		return ((GeoFunction)geo).getFunction().evaluateBoolean(coords[0]);
 	}
 	
 	@Override
@@ -178,6 +180,7 @@ public class DrawInequality extends Drawable {
 		
 		 
 	}
+		
 
 	@Override
 	public boolean isInside(Rectangle rect) {
