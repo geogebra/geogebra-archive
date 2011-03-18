@@ -26,7 +26,7 @@ import geogebra.kernel.arithmetic.NumberValue;
  * @author  Markus
  * @version 
  */
-public class AlgoTangentFunctionNumber extends AlgoElement {
+public class AlgoTangentFunctionNumber extends AlgoElementCAS {
 
     /**
 	 * 
@@ -55,9 +55,11 @@ public class AlgoTangentFunctionNumber extends AlgoElement {
         tangent.setStartPoint(T);
         
         // derivative of f
-        AlgoCasDerivative algoDeriv = new AlgoCasDerivative(cons, f);       
-        deriv = (GeoFunction) algoDeriv.getResult();
-        cons.removeFromConstructionList(algoDeriv);
+        algoCAS = new AlgoCasDerivative(cons, f);       
+        deriv = (GeoFunction) ((AlgoCasDerivative)algoCAS).getResult();
+        
+        geo = f;
+        cons.removeFromConstructionList(algoCAS);
 
         setInputOutput(); // for AlgoElement                
         compute();

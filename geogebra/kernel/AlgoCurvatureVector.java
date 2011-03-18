@@ -8,7 +8,7 @@ package geogebra.kernel;
  * Calculate Curvature Vector for function: c(x) = (1/T^4)*(-f'*f'',f''), T = sqrt(1+(f')^2)
  */
 
-public class AlgoCurvatureVector extends AlgoElement {
+public class AlgoCurvatureVector extends AlgoElementCAS {
 
 	private static final long serialVersionUID = 1L;
 	private GeoPoint A; // input
@@ -38,14 +38,16 @@ public class AlgoCurvatureVector extends AlgoElement {
         } catch (CircularDefinitionException e) {}                         
         
         //First derivative of function f
-        AlgoCasDerivative algo = new AlgoCasDerivative(cons, f);
-        cons.removeFromConstructionList(algo);
-		this.f1 = (GeoFunction) algo.getResult();
+        algoCAS = new AlgoCasDerivative(cons, f);
+        cons.removeFromConstructionList(algoCAS);
+		this.f1 = (GeoFunction) ((AlgoCasDerivative)algoCAS).getResult();
 		
 		//Second derivative of function f
-		algo = new AlgoCasDerivative(cons, f1);
-		cons.removeFromConstructionList(algo);
-		this.f2 = (GeoFunction) algo.getResult();
+		algoCAS = new AlgoCasDerivative(cons, f1);
+		cons.removeFromConstructionList(algoCAS);
+		this.f2 = (GeoFunction) ((AlgoCasDerivative)algoCAS).getResult();
+		
+		geo = f;
         		
 		setInputOutput();
         compute();

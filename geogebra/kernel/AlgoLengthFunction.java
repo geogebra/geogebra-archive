@@ -9,7 +9,7 @@ import geogebra.kernel.roots.RealRootFunction;
  * Calculate Function Length between the numbers A and B: integral from A to B on T = sqrt(1+(f')^2)
  */
 
-public class AlgoLengthFunction extends AlgoElement {
+public class AlgoLengthFunction extends AlgoElementCAS {
 
 	private static final long serialVersionUID = 1L;
 	private GeoNumeric A, B; //input
@@ -30,13 +30,15 @@ public class AlgoLengthFunction extends AlgoElement {
         length = new GeoNumeric(cons);
         
         //First derivative of function f
-        AlgoCasDerivative algo = new AlgoCasDerivative(cons, f);
-        this.f1 = (GeoFunction) algo.getResult();               
+        algoCAS = new AlgoCasDerivative(cons, f);
+        this.f1 = (GeoFunction) ((AlgoCasDerivative)algoCAS).getResult();               
                 
         // Integral of length function        
     	lengthFunction = new LengthFunction();
         
-        cons.removeFromConstructionList(algo);
+    	geo = f;
+        cons.removeFromConstructionList(algoCAS);
+        
         setInputOutput();
         compute(); 
 	}

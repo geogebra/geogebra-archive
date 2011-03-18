@@ -9,7 +9,7 @@ import geogebra.kernel.roots.RealRootFunction;
 * Calculate Curve Length between the parameters t0 and t1: integral from t0 to t1 on T = sqrt(a'(t)^2+b'(t)^2)
 */
 
-public class AlgoLengthCurve extends AlgoElement {
+public class AlgoLengthCurve extends AlgoElementCAS {
 
 	private static final long serialVersionUID = 1L;
 	private GeoNumeric t0, t1; //input
@@ -25,12 +25,14 @@ public class AlgoLengthCurve extends AlgoElement {
         length = new GeoNumeric(cons);
 
         //First derivative of curve f
-        AlgoCasDerivative algo = new AlgoCasDerivative(cons, c);
-        this.c1 = (GeoCurveCartesian) algo.getResult();
+        algoCAS = new AlgoCasDerivative(cons, c);
+        this.c1 = (GeoCurveCartesian) ((AlgoCasDerivative)algoCAS).getResult();
 
         lengthCurve = new LengthCurve();		
 
-        cons.removeFromConstructionList(algo);
+        cons.removeFromConstructionList(algoCAS);
+        geo = c;
+        
         setInputOutput();
         compute();
         length.setLabel(label);

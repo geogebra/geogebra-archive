@@ -26,7 +26,7 @@ import org.apache.commons.math.analysis.integration.LegendreGaussIntegrator;
  * 
  * @author Markus Hohenwarter
  */
-public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInformation{
+public class AlgoIntegralDefinite extends AlgoElementCAS implements AlgoDrawInformation{
 
 	private static final long serialVersionUID = 1L;
 	private GeoFunction f; // input
@@ -90,6 +90,9 @@ public class AlgoIntegralDefinite extends AlgoElement implements AlgoDrawInforma
         if ((evaluate != null && evaluate.getBoolean()) && !f.isGeoFunctionConditional()) {
             AlgoCasIntegral algoInt = new AlgoCasIntegral(cons, f, null);
             symbIntegral = (GeoFunction) algoInt.getResult();
+            
+            // make sure algo is removed properly
+            geo = f;
             cons.removeFromConstructionList(algoInt);     
         }
         
