@@ -796,7 +796,6 @@ public class WorksheetExportDialog extends JDialog {
 	appendWithLineBreak(sb,"<head>");
 	appendWithLineBreak(sb,"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">");
 	appendWithLineBreak(sb,"<title>" + kernel.getConstruction().getTitle() + "</title>");
-	 
 	appendWithLineBreak(sb,"<script type=\"text/javascript\" src=\"tabber.js\"></script>");
 	appendWithLineBreak(sb,"<link rel=\"stylesheet\" href=\"ggb.css\" TYPE=\"text/css\" MEDIA=\"screen\">");
 	//appendWithLineBreak(sb,"<link rel=\"stylesheet\" href=\"example-print.css\" TYPE=\"text/css\" MEDIA=\"print\">");
@@ -1268,8 +1267,11 @@ public class WorksheetExportDialog extends JDialog {
 		appendWithLineBreak(sb, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
 		appendWithLineBreak(sb, "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
 		appendWithLineBreak(sb, "<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-
 		appendWithLineBreak(sb, "<head>");
+		String textBoth = textAbove.getText() + textBelow.getText();
+		if(textBoth.contains("$$")||textBoth.contains("\\("))
+		appendWithLineBreak(sb, "<script type=\"text/javascript\" " +
+			"src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>");
 		sb.append("<title>");
 		Construction cons = kernel.getConstruction();
 		String title = cons.getTitle();
