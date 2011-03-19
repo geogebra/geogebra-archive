@@ -94,7 +94,7 @@ public class StatDialogOptionsPanel extends JPanel implements  ActionListener{
 
 
 	
-	private void setLabels(){
+	public void setLabels(){
 
 		cbShowData.setText(app.getMenu("ShowData"));
 		cbShowCombo2.setText(app.getMenu("ShowPlot2"));

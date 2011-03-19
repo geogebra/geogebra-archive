@@ -353,7 +353,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		String text = "";
 
 		boolean scanByColumn = true;
-		boolean isSorted = true;
+		boolean isSorted = false;
 		boolean copyByValue = false;
 		boolean doStoreUndo = false;
 
@@ -666,10 +666,13 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			setTitle(app.getMenu("OneVariableStatistics"));	
 			lblOneVarTitle.setText(app.getMenu("DataTitle") + ": ");
 			statisticsHeader.setText(app.getMenu("Statistics"));
+			statTable.updateTable();
 			break;
 		case MODE_REGRESSION:
 			setTitle(app.getMenu("RegressionAnalysis"));	
 			statisticsHeader.setText(app.getMenu("Statistics"));
+			regressionPanel.setLabels();
+			statTable.updateTable();
 			break;
 
 		case MODE_MULTIVAR:
@@ -680,7 +683,10 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		btnClose.setText(app.getMenu("Close"));
 		btnPrint.setText(app.getMenu("Print"));	
 		btnOptions.setText(app.getMenu("Options"));
-
+			
+		comboStatPanel.setLabels();
+		
+		dialogOptionsPanel.setLabels();
 
 	}
 

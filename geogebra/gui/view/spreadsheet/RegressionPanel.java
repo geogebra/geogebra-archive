@@ -212,7 +212,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 	}
 
 
-	private void setLabels(){
+	public void setLabels(){
 
 		regressionLabels = new String[StatDialog.regressionTypes];
 		setRegressionLabels();

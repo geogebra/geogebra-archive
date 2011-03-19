@@ -290,7 +290,7 @@ public class OptionsPanel extends JPanel implements PropertyChangeListener, Acti
 
 
 
-	private void setLabels(){
+	public void setLabels(){
 
 		// histogram options
 		ckManual.setText(app.getMenu("SetClasssesManually"));		

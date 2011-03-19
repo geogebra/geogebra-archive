@@ -1290,9 +1290,17 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	public void setLabels(){
 		if(traceDialog !=null)
 			traceDialog.setLabels();
-		
+		if(oneVarStatDialog !=null)
+			oneVarStatDialog.setLabels();
+		if(twoVarStatDialog !=null)
+			twoVarStatDialog.setLabels();
+		if(multiVarStatDialog !=null)
+			multiVarStatDialog.setLabels();
+		if(probCalculator !=null)
+			probCalculator.setLabels();	
 	}
 
+	
 	public void updateFonts() {
 
 		Font font = app.getPlainFont();

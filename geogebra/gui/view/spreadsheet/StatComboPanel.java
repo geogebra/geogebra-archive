@@ -258,8 +258,8 @@ public class StatComboPanel extends JPanel implements ActionListener{
 		fldTitleY.setBorder(BorderFactory.createEmptyBorder());
 		fldTitleX.setBackground(Color.white);
 		fldTitleY.setBackground(Color.white);
-		
-		
+
+
 		metaPlotPanel = new JPanel(new BorderLayout());
 		metaPlotPanel.add(plotPanel, BorderLayout.CENTER);
 		metaPlotPanel.add(northTitlePanel, BorderLayout.NORTH);
@@ -349,8 +349,10 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	/**
 	 * Sets the labels to the current language
 	 */
-	private void setLabels(){
+	public void setLabels(){
 
+		createPlotMap();
+		createDisplayTypeComboBox();
 		lblNumClasses.setText(app.getMenu("Classes") + ": ");
 		lblStart.setText(app.getMenu("Start") + ": ");
 		lblWidth.setText(app.getMenu("Width") + ": ");
@@ -363,6 +365,8 @@ public class StatComboPanel extends JPanel implements ActionListener{
 		}
 		lblAdjust.setText(app.getMenu("Adjustment")+ ": ");
 
+		optionsPanel.setLabels();
+
 	}
 
 
@@ -372,8 +376,13 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	 */
 	private void createDisplayTypeComboBox(){
 
-		cbDisplayType = new JComboBox();
-
+		if(cbDisplayType == null){
+			cbDisplayType = new JComboBox();
+		}else{
+			cbDisplayType.removeActionListener(this);
+			cbDisplayType.removeAllItems();
+		}
+		
 		switch(mode){
 
 		case StatDialog.MODE_ONEVAR:
@@ -401,14 +410,7 @@ public class StatComboPanel extends JPanel implements ActionListener{
 		}
 
 		cbDisplayType.setSelectedItem(plotMap.get(selectedPlot));
-		cbDisplayType.addActionListener(new ActionListener() {       
-			public void actionPerformed(ActionEvent e)
-			{
-				selectedPlot = plotMapReverse.get(cbDisplayType.getSelectedItem());
-				updatePlot(true);
-				//btnClose.requestFocus();
-			}
-		});      
+		cbDisplayType.addActionListener(this);
 
 	}
 
@@ -602,8 +604,10 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	 * 2) plotMapReverse: Key = JComboBox menu string, Value = integer display type    
 	 */
 	private void createPlotMap(){
-		plotMap = new HashMap<Integer,String>();
+		if(plotMap == null)
+			plotMap = new HashMap<Integer,String>();
 
+		plotMap.clear();
 		plotMap.put(PLOT_HISTOGRAM, app.getMenu("Histogram"));
 		plotMap.put(PLOT_BOXPLOT, app.getMenu("Boxplot"));
 		plotMap.put(PLOT_DOTPLOT, app.getMenu("DotPlot"));
@@ -806,7 +810,7 @@ public class StatComboPanel extends JPanel implements ActionListener{
 		if(source instanceof JTextField)
 			doTextFieldActionPerformed(source);
 
-		if(source == minus || source == plus || source == none){
+		else if(source == minus || source == plus || source == none){
 			minus.setSelected(source == minus);
 			none.setSelected(source == none);
 			plus.setSelected(source == plus);
@@ -816,10 +820,16 @@ public class StatComboPanel extends JPanel implements ActionListener{
 			updatePlot(true);
 		}
 
-		if(source == optionsButton){
+		else if(source == optionsButton){
 			optionsPanel.setVisible(optionsButton.isSelected());
 			optionsPanel.setMode(selectedPlot);
 		}
+
+		else if(source == cbDisplayType){
+			selectedPlot = plotMapReverse.get(cbDisplayType.getSelectedItem());
+			updatePlot(true);
+		}
+
 
 	}
 
