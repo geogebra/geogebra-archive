@@ -55,6 +55,17 @@ public class CmdOrthogonalLine3D extends CmdOrthogonalLine {
 	    						(GeoPointND) arg[0],
 	    						(GeoLineND) arg[1])};
 	    		return ret;
+	    	}else if (
+	    			((ok[0] = (arg[0] instanceof GeoLineND ) )
+	    			&& (ok[1] = (arg[1] instanceof GeoLineND )))
+	    	) {
+	    		GeoElement[] ret =
+	    		{
+	    				(GeoElement) kernel.getManager3D().OrthogonalLine3D(
+	    						c.getLabel(),
+	    						(GeoLineND) arg[0],
+	    						(GeoLineND) arg[1])};
+	    		return ret;
 	    	}
 	    	
 	    }

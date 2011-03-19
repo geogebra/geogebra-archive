@@ -45,6 +45,8 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		
 		super(a_view3D, a_plane3D);
 		
+		setMinMax();
+		
 	}
 	
 	

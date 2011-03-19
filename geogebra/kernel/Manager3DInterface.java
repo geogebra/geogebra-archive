@@ -9,6 +9,7 @@ import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 
 /**
@@ -96,10 +97,15 @@ public interface Manager3DInterface {
 
 			 /** Line3D through point orthogonal to line   */	
 			 public GeoLineND OrthogonalLine3D(String label, GeoPointND point, GeoLineND line);
+			 
+			 /** Line3D orthogonal two lines   */	
+			 public GeoLineND OrthogonalLine3D(String label, GeoLineND line1, GeoLineND line2);
 
 			 /** Vector3D orthogonal to plane   */	
 			 public GeoVectorND OrthogonalVector3D(String label, GeoCoordSys2D plane);
 
+			 /** Vector3D unit orthogonal to plane   */	
+			 public GeoVectorND UnitOrthogonalVector3D(String label, GeoCoordSys2D plane);
 
 
 			/** Polygon3D linking points P1, P2, ...  
@@ -170,13 +176,22 @@ public interface Manager3DInterface {
 			 public GeoPlaneND Plane3D(String label, GeoPointND point, GeoCoordSys2D cs);
 
 			/** 
-			 * Line named label through Point P orthogonal to line l
+			 * Plane named label through Point P orthogonal to line l
 			 */
 			 public GeoPlaneND OrthogonalPlane3D(
 					String label,
 					GeoPointND point,
 					GeoLineND line) ;
+			 
+			 
+			 public GeoPlaneND PlaneBisector(
+						String label,
+						GeoPointND point1,
+						GeoPointND point2) ;
 
+			 public GeoPlaneND PlaneBisector(
+						String label,
+						GeoSegmentND segment) ;
 
 
 

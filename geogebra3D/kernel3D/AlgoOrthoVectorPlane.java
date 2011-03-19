@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys;
@@ -95,13 +96,21 @@ public class AlgoOrthoVectorPlane extends AlgoElement3D {
     
     protected void compute(){
     	
+    	if (!((GeoElement) plane).isDefined()){
+    		vector.setUndefined();
+    		return;
+    	}
     	
+    	vector.setCoords(getCoords());
     	
-    	vector.setCoords(plane.getCoordSys().getVz());
-    	
-    	
-
+    }
     
+    /**
+     * 
+     * @return coords of the vector
+     */
+    protected Coords getCoords(){
+    	return plane.getCoordSys().getVz();
     }
     
     

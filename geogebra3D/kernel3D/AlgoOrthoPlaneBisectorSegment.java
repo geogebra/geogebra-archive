@@ -21,6 +21,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
 
@@ -30,19 +31,17 @@ import geogebra.main.Application;
  * @author  matthieu
  * @version 
  */
-public class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
+public class AlgoOrthoPlaneBisectorSegment extends AlgoOrthoPlane {
 
  
-	private GeoPointND point; // input
-    private GeoLineND line; // input   
+	private GeoSegmentND segment; // input
 
 
-    public AlgoOrthoPlanePoint(Construction cons, String label, GeoPointND point, GeoLineND line) {
+    public AlgoOrthoPlaneBisectorSegment(Construction cons, String label, GeoSegmentND segment) {
         super(cons);
-        this.point = point;
-        this.line = line;
+        this.segment = segment;
         
-        setInputOutput(new GeoElement[] {(GeoElement) point, (GeoElement) line}, new GeoElement[] {getPlane()});
+        setInputOutput(new GeoElement[] {(GeoElement) segment}, new GeoElement[] {getPlane()});
 
         // compute plane 
         compute();
@@ -50,22 +49,18 @@ public class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
     }
 
     public String getClassName() {
-        return "AlgoOrthoPlanePoint";
+        return "AlgoPlaneBisector";
     }
 
 
 
 
     protected Coords getNormal(){
-    	return ((GeoElement) line).getMainDirection();
+    	return ((GeoElement) segment).getMainDirection();
     }
 
     protected Coords getPoint(){
-    	return point.getInhomCoordsInD(3);
+    	return segment.getPointInD(3, 0.5);
     }
 
-    final public String toString() {
-    	return app.getPlain("PlaneThroughAPerpendicularToB",point.getLabel(),((GeoElement) line).getLabel());
-
-    }
 }

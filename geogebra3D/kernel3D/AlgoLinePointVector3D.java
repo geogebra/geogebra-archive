@@ -27,7 +27,7 @@ import geogebra.main.Application;
 
 
 /**
- * Compute a plane through a point and parallel to a vector
+ * Compute a line through a point and parallel to a vector
  *
  * @author  matthieu
  * @version 

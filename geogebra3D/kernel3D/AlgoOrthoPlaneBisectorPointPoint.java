@@ -30,19 +30,19 @@ import geogebra.main.Application;
  * @author  matthieu
  * @version 
  */
-public class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
+public class AlgoOrthoPlaneBisectorPointPoint extends AlgoOrthoPlane {
 
  
-	private GeoPointND point; // input
-    private GeoLineND line; // input   
+	private GeoPointND point1; // input
+    private GeoPointND point2; // input   
 
 
-    public AlgoOrthoPlanePoint(Construction cons, String label, GeoPointND point, GeoLineND line) {
+    public AlgoOrthoPlaneBisectorPointPoint(Construction cons, String label, GeoPointND point1, GeoPointND point2) {
         super(cons);
-        this.point = point;
-        this.line = line;
+        this.point1 = point1;
+        this.point2 = point2;
         
-        setInputOutput(new GeoElement[] {(GeoElement) point, (GeoElement) line}, new GeoElement[] {getPlane()});
+        setInputOutput(new GeoElement[] {(GeoElement) point1, (GeoElement) point2}, new GeoElement[] {getPlane()});
 
         // compute plane 
         compute();
@@ -50,22 +50,18 @@ public class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
     }
 
     public String getClassName() {
-        return "AlgoOrthoPlanePoint";
+        return "AlgoPlaneBisector";
     }
 
 
 
 
     protected Coords getNormal(){
-    	return ((GeoElement) line).getMainDirection();
+    	return point2.getInhomCoordsInD(3).sub(point1.getInhomCoordsInD(3));
     }
 
     protected Coords getPoint(){
-    	return point.getInhomCoordsInD(3);
+    	return point1.getInhomCoordsInD(3).add(point2.getInhomCoordsInD(3)).mul(0.5);
     }
 
-    final public String toString() {
-    	return app.getPlain("PlaneThroughAPerpendicularToB",point.getLabel(),((GeoElement) line).getLabel());
-
-    }
 }

@@ -108,10 +108,10 @@ implements GeoVectorND, Locateable, Vector3DValue{
 	}
 
 
-	public boolean isDefined() {
-		return true;
-	}
 
+    public boolean isDefined() {
+    	return (!(Double.isNaN(getX()) || Double.isNaN(getY()) || Double.isNaN(getZ()) || Double.isNaN(getW())));        
+    }
 
 	public boolean isEqual(GeoElement Geo) {
 		// TODO Auto-generated method stub
@@ -134,10 +134,10 @@ implements GeoVectorND, Locateable, Vector3DValue{
 	}
 
 
-	public void setUndefined() {
-		// TODO Auto-generated method stub
-
-	}
+    public void setUndefined() {     
+    	setCoords(Double.NaN, Double.NaN, Double.NaN, Double.NaN);        
+    } 
+    
 
 
 	public boolean showInAlgebraView() {

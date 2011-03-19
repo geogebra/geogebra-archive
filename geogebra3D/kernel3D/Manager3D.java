@@ -23,6 +23,7 @@ import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 
@@ -205,12 +206,21 @@ public class Manager3D implements Manager3DInterface {
 		 return algo.getLine();
 	 }
 	 
+	 
+	 public GeoLineND OrthogonalLine3D(String label, GeoLineND line1, GeoLineND line2){
+		 AlgoOrthoLineLineLine algo = new AlgoOrthoLineLineLine(cons, label, line1, line2);
+		 return algo.getLine();
+	 } 
+	 
 	 public GeoVectorND OrthogonalVector3D(String label, GeoCoordSys2D plane){
 		 AlgoOrthoVectorPlane algo = new AlgoOrthoVectorPlane(cons, label, plane);
 		 return algo.getVector();
 	 }
 	 
-
+	 public GeoVectorND UnitOrthogonalVector3D(String label, GeoCoordSys2D plane){
+		 AlgoUnitOrthoVectorPlane algo = new AlgoUnitOrthoVectorPlane(cons, label, plane);
+		 return algo.getVector();
+	 }
 
 	/** Polygon3D linking points P1, P2, ...  
 	 * @param label name of the polygon
@@ -328,7 +338,22 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 
+	
+	final public GeoPlane3D PlaneBisector(
+			String label,
+			GeoPointND point1,
+			GeoPointND point2) {
 
+		return new AlgoOrthoPlaneBisectorPointPoint(cons, label, point1, point2).getPlane();
+	}
+
+
+	final public GeoPlane3D PlaneBisector(
+			String label,
+			GeoSegmentND segment) {
+
+		return new AlgoOrthoPlaneBisectorSegment(cons, label, segment).getPlane();
+	}
 
 
 
