@@ -11,6 +11,8 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -21,7 +23,7 @@ import geogebra.main.Application;
  * @author mathieu
  *
  */
-public class GeoQuadric3DLimited extends GeoQuadricND {
+public class GeoQuadric3DLimited extends GeoQuadricND implements NumberValue {
 	
 	/** side of the quadric */
 	private GeoQuadric3DPart side;
@@ -504,6 +506,25 @@ public class GeoQuadric3DLimited extends GeoQuadricND {
 	public void setSphereND(GeoPointND M, GeoPointND P) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	
+	//////////////////////////////////
+	// NumberValue
+	//////////////////////////////////
+
+
+	public MyDouble getNumber() {
+		return new MyDouble(kernel,  getDouble() );
+	}
+
+
+	public double getDouble() {		
+		return getVolume();
+	}
+	
+	public boolean isNumberValue() {
+		return true;
 	}
 
 

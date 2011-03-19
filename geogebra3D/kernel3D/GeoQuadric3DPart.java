@@ -3,6 +3,8 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
 /**
@@ -10,7 +12,7 @@ import geogebra.main.Application;
  * @author mathieu
  *
  */
-public class GeoQuadric3DPart extends GeoQuadric3D {
+public class GeoQuadric3DPart extends GeoQuadric3D implements NumberValue{
 	
 	/** min value for limites */
 	private double min;
@@ -150,6 +152,26 @@ public class GeoQuadric3DPart extends GeoQuadric3D {
     		return area;				        
     	else 
     		return Double.NaN;			        	
-    }	
+    }
+    
+    
+	//////////////////////////////////
+	// NumberValue
+	//////////////////////////////////
+
+
+	public MyDouble getNumber() {
+		return new MyDouble(kernel,  getDouble() );
+	}
+
+
+	public double getDouble() {		
+		return getArea();
+	}
+	
+	public boolean isNumberValue() {
+		return true;
+	}
+
 
 }
