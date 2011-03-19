@@ -1128,14 +1128,18 @@ KeyListener, ActionListener{
 
 	private double evaluateExpression(String expr){
 		NumberValue nv;
-		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);	
-		return nv.getDouble();
+		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);
+		double num = nv.getDouble();
+		nv.toGeoElement().remove();
+		return num;
 	}
 
 
 	private String evaluateToText(String expr){
-		GeoText text = kernel.getAlgebraProcessor().evaluateToText(expr, false);	
-		return text.getTextString();
+		GeoText text = kernel.getAlgebraProcessor().evaluateToText(expr, false);
+		String result = text.getTextString();
+		text.remove();
+		return result;
 	}
 
 
@@ -1174,7 +1178,6 @@ KeyListener, ActionListener{
 
 
 	private void clearGeoList(){
-		Application.debug("");
 		for(GeoElement geo : geoList){
 			if(geo != null){
 				geo.remove();
