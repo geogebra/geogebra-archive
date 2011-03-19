@@ -169,9 +169,10 @@ public class DrawInequality extends Drawable {
 	private boolean hit2(int x, int y){
 		double[] coords =  new double[]{view.toRealWorldCoordX(x),
 				view.toRealWorldCoordY(y)};
-		if(geo instanceof GeoFunctionNVar)
-			return ((GeoFunctionNVar)geo).getFunction().evaluateBoolean(coords);
-		return ((GeoFunction)geo).getFunction().evaluateBoolean(coords[0]);
+		if(geo instanceof GeoFunction && ((GeoFunction)geo).getVarString().equals("y"))
+			return ((GeoFunction)geo).getFunction().evaluateBoolean(coords[1]);
+		return ((FunctionalNVar)geo).getFunction().evaluateBoolean(coords);
+		
 	}
 	
 	@Override
