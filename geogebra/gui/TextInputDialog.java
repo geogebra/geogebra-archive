@@ -381,6 +381,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		geoList.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
 		JScrollPane scroller = new JScrollPane(geoList);
 		scroller.setBorder(BorderFactory.createEmptyBorder());
+		scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		// add a list selection listener that will insert a selected geo into the editor
 		geoList.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
