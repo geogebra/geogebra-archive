@@ -911,7 +911,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 		// update decorations
-		//pointDecorations.update();
+		pointDecorations.update();
 	}
 	
 	
@@ -1070,10 +1070,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			//for GeoList : remove all 3D drawables linked to it
 			if (geo.isGeoList()){
-				for (DrawableND d1 : ((DrawList3D) d).getDrawables3D()){
-					if (d1.createdByDrawList())
-						remove((Drawable3D) d1);
-				}
+				if (d!=null)
+					for (DrawableND d1 : ((DrawList3D) d).getDrawables3D()){
+						if (d1.createdByDrawList())
+							remove((Drawable3D) d1);
+					}
 			}
 		}
 		

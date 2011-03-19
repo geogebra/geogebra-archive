@@ -162,7 +162,8 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	}
 
 	protected void updateForView(){
-		setWaitForUpdate();
+		if (getView3D().viewChanged())
+			setWaitForUpdate();
 	}
 	
 	public void setWaitForUpdate(){

@@ -47,7 +47,10 @@ public class DrawPointDecorations extends DrawCoordSys1D {
 	}
 	
 	
-
+	
+	protected boolean isVisible(){
+		return true; //no geoelement connected
+	}
 	
 	
 	
