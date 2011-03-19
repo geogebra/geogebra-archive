@@ -140,7 +140,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 		}
 		else {
 			// STANDARD CASE: finite point			
-			return Math.abs(x * P.getX()/P.getZ() + y * P.getY()/getZ() + z) < eps * simplelength;
+			return Math.abs(x * P.getX()/P.getZ() + y * P.getY()/P.getZ() + z) < eps * simplelength;
 		}
 	}
 	
