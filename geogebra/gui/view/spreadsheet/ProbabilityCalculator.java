@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -25,9 +26,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -36,6 +39,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
@@ -102,8 +106,10 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private JPanel probPanel;
 	private PlotPanel plotPanel;
 	private PlotSettings plotSettings;
-	private JLabel intervalLabel;
-
+	private JLabel lblBetween;
+	private JPanel mainPanel;
+	private JPanel notAvailablePanel;
+	
 
 	// GeoElements
 	private ArrayList<GeoElement> plotGeoList;
@@ -124,7 +130,14 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	private int probMode = PROB_INTERVAL;
 
 	//interval values and current probability
-	private double low, high, probability;
+	private double low = 0, high = 1, probability;
+
+	private ArrayList<GeoElement> pointList;
+
+	private JLabel lblProbOf;
+
+	private JLabel lblEndProbOf;
+
 
 	// colors
 	private static final Color COLOR_PDF = new Color(0, 0, 255);  //blue
@@ -150,14 +163,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		initGUI();
 
-		// initGUI creates a new EV, so we may need to give it time to setup
-		// before adding geos into it
-		SwingUtilities.invokeLater(new Runnable(){ 
-			public void run() { 
-
-
-			}
-		});
 		//	createGeoElements();
 		attachView();
 		isIniting = false;
@@ -167,46 +172,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	/**************** end constructor ****************/
 
 
-
-	public void removeGeos(){	
-		clearPlotGeoList();
-	}
-
-	private void clearPlotGeoList(){
-		for(GeoElement geo : plotGeoList){
-			if(geo != null)
-				geo.remove();
-		}
-		plotGeoList.clear();
-	}
-
-
-	private void hideAllGeosFromViews(){
-		for(GeoElement geo:plotGeoList){
-			hideGeoFromViews(geo);
-		}
-	}
-
-	private void labelAllGeos(){
-		for(int i= 0; i < plotGeoList.size(); i++ ){
-			plotGeoList.get(i).setLabel("xPrb" + i);
-		}
-	}
-
-
-	private void hideGeoFromViews(GeoElement geo){
-		// add the geo to our view and remove it from EV		
-		geo.addView(plotPanel);
-		plotPanel.add(geo);
-		geo.removeView(app.getEuclidianView());
-		app.getEuclidianView().remove(geo);
-	}
-
-	private void hideToolTips(){
-		for(GeoElement geo:plotGeoList){
-			geo.setTooltipMode(GeoElement.TOOLTIP_OFF);
-		}
-	}
 
 
 
@@ -220,6 +185,9 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		try {		
 
+			//TODO remove this temporary panel
+			notAvailablePanel = createNotAvailablePanel();
+			
 			// create the button panel for the bottom of the dialog
 			//=====================================================
 			btnClose = new JButton(app.getMenu("Close"));
@@ -272,7 +240,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 			// put the sub-panels together into the main panel
 			//=====================================================
-			JPanel mainPanel = new JPanel(new BorderLayout());		
+			mainPanel = new JPanel(new BorderLayout());		
 			mainPanel.add(plotPanel, BorderLayout.CENTER);		
 			mainPanel.add(controlPanel, BorderLayout.SOUTH);
 			mainPanel.setBorder(BorderFactory.createEmptyBorder(2, 2,2,2));
@@ -339,32 +307,31 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		// create panel to hold the entry fields
 		JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		JLabel lbl1 = new JLabel(app.getMenu("ProbabilityOf"));
-
+		lblProbOf = new JLabel();
+		lblBetween = new JLabel();   // <= X <=
+		lblEndProbOf = new JLabel();
 		fldLow = new MyTextField(app.getGuiManager());
 		fldLow.setColumns(6);
 		fldLow.addActionListener(this);
 		fldLow.addFocusListener(this);
 
-		intervalLabel = new JLabel(app.getMenu("XBetween"));   // <= X <=
+		
 
 		fldHigh = new MyTextField(app.getGuiManager());
 		fldHigh.setColumns(6);
 		fldHigh.addActionListener(this);
 		fldHigh.addFocusListener(this);
-
-		JLabel lbl3 = new JLabel(app.getMenu("EndProbabilityOf"));
-
+		
 		fldResult = new MyTextField(app.getGuiManager());
 		fldResult.setColumns(6);
 		fldResult.addActionListener(this);
 		fldResult.addFocusListener(this);
 
-		fieldPanel.add(lbl1);
+		fieldPanel.add(lblProbOf);
 		fieldPanel.add(fldLow);
-		fieldPanel.add(intervalLabel);
+		fieldPanel.add(lblBetween);
 		fieldPanel.add(fldHigh);
-		fieldPanel.add(lbl3);
+		fieldPanel.add(lblEndProbOf);
 		fieldPanel.add(fldResult);
 
 
@@ -377,6 +344,28 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	}
 
+	/**
+	 * Creates a panel with message "not available"
+	 */
+	private JPanel createNotAvailablePanel(){
+
+		JLabel imageContainer = new JLabel();
+		String message = "\\text{" + app.getPlain("NotAvailable") + "}";
+		imageContainer.setIcon(GeoGebraIcon.createLatexIcon(app, message, 
+				app.getPlainFont(), false, Color.BLACK, null));
+
+		JPanel imagePanel = new JPanel(new BorderLayout());
+		imagePanel.setBorder(BorderFactory.createEmptyBorder());
+		imagePanel.setBackground(Color.WHITE);
+		imagePanel.setAlignmentX(SwingConstants.CENTER);
+		imagePanel.setAlignmentY(SwingConstants.CENTER);
+		imageContainer.setHorizontalAlignment(SwingConstants.CENTER);
+		imagePanel.add(imageContainer, BorderLayout.CENTER);
+
+		return imagePanel;
+
+	}
+
 
 
 
@@ -386,7 +375,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	//=================================================
 
 	private void createGeoElements(){
-		//Application.printStacktrace("createGEOS==================");
+		
 		this.removeGeos();
 
 		String expr;
@@ -415,6 +404,13 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		highPoint.setPointSize(4);
 		highPoint.setPointStyle(EuclidianView.POINT_STYLE_TRIANGLE_NORTH);
 
+		pointList = new ArrayList<GeoElement>();
+		pointList.add(lowPoint);
+		pointList.add(highPoint);
+		
+		// Set the axis points so they are not equal. This needs to be done 
+		// before the integral geo is created.
+		setXAxisPoints();
 
 		// create density curve
 		expr = buildDensityCurveExpression(selectedContinuousDist);
@@ -528,14 +524,25 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	public void setXAxisPoints(){
 
 		isSettingAxisPoints = true;
+		
 		lowPoint.setCoords(low, 0.0, 1.0);
-		lowPoint.updateCascade();
 		highPoint.setCoords(high, 0.0, 1.0);
-		highPoint.updateCascade();
 		plotPanel.repaint();
+		GeoElement.updateCascade(pointList, getTempSet());
+		
 		isSettingAxisPoints = false;
 	}
 
+	
+	private TreeSet tempSet;	
+	private TreeSet getTempSet() {
+		if (tempSet == null) {
+			tempSet = new TreeSet();
+		}
+		return tempSet;
+	}
+	
+	
 	/**
 	 * Returns the parameter values from the parmList geo
 	 */
@@ -671,12 +678,61 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 	}
 
+
+
+	//=================================================
+	//       Geo Handlers
+	//=================================================
+
+	public void removeGeos(){	
+		clearPlotGeoList();
+	}
+
+	private void clearPlotGeoList(){
+		for(GeoElement geo : plotGeoList){
+			if(geo != null)
+				geo.remove();
+		}
+		plotGeoList.clear();
+	}
+
+
+	private void hideAllGeosFromViews(){
+		for(GeoElement geo:plotGeoList){
+			hideGeoFromViews(geo);
+		}
+	}
+
+	private void labelAllGeos(){
+		for(int i= 0; i < plotGeoList.size(); i++ ){
+			plotGeoList.get(i).setLabel("xPrb" + i);
+		}
+	}
+
+
+	private void hideGeoFromViews(GeoElement geo){
+		// add the geo to our view and remove it from EV		
+		geo.addView(plotPanel);
+		plotPanel.add(geo);
+		geo.removeView(app.getEuclidianView());
+		app.getEuclidianView().remove(geo);
+	}
+
+	private void hideToolTips(){
+		for(GeoElement geo:plotGeoList){
+			geo.setTooltipMode(GeoElement.TOOLTIP_OFF);
+		}
+	}
+
+
 	private double evaluateFunction(String expr, double x){
 
 		GeoFunction tempGeo;
 		tempGeo = kernel.getAlgebraProcessor().evaluateToFunction(expr, false);	
+		double result = tempGeo.evaluate(x);
+		tempGeo.remove();
 
-		return tempGeo.evaluate(x);
+		return result;
 	}
 
 
@@ -684,10 +740,10 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		NumberValue nv;
 		nv = kernel.getAlgebraProcessor().evaluateToNumeric(expr, false);	
+		double result = nv.getDouble();
 
-		return nv.getDouble();
+		return result;
 	}
-
 
 
 	//=================================================
@@ -700,8 +756,9 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		super.setVisible(isVisible);
 
 		if(isVisible){
-			if(!isIniting)
+			if(!isIniting){
 				updateAll();
+			}
 		}else{
 			app.setMoveMode();
 			removeGeos();
@@ -879,7 +936,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			highPoint.setEuclidianVisible(true);			
 			fldLow.setVisible(true);
 			fldHigh.setVisible(true);
-			intervalLabel.setText(app.getMenu("XBetween"));
+			lblBetween.setText(app.getMenu("XBetween"));
 
 			low = plotSettings.xMin + 0.4*(plotSettings.xMax -plotSettings.xMin);
 			high = plotSettings.xMin + 0.6*(plotSettings.xMax -plotSettings.xMin);
@@ -891,7 +948,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			highPoint.setEuclidianVisible(true);
 			fldLow.setVisible(false);
 			fldHigh.setVisible(true);
-			intervalLabel.setText(app.getMenu("XLessThanOrEqual"));
+			lblBetween.setText(app.getMenu("XLessThanOrEqual"));
 			if(isContinuous)
 				low = plotSettings.xMin - 1; // move offscreen so the integral looks complete
 			else
@@ -904,7 +961,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			highPoint.setEuclidianVisible(false);
 			fldLow.setVisible(true);
 			fldHigh.setVisible(false);
-			intervalLabel.setText(app.getMenu("LessThanOrEqualToX"));
+			lblBetween.setText(app.getMenu("LessThanOrEqualToX"));
 			if(isContinuous)
 				high = plotSettings.xMax + 1; // move offscreen so the integral looks complete
 			else
@@ -938,7 +995,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 
 	private void updateDistribution(){
-
+		comboDistribution.removeActionListener(this);
 		// update the selection variables
 		selectedDist = comboDistribution.getSelectedIndex();
 		isContinuous = selectedDist < continuousDistCount ;
@@ -956,19 +1013,36 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		removeGeos();
 		createGeoElements();
 
-		// set visibility
-		densityCurve.setEuclidianVisible(isContinuous);
-		if(hasIntegral)
-			integral.setEuclidianVisible(isContinuous);
-		discreteGraph.setEuclidianVisible(!isContinuous);
-		discreteIntervalGraph.setEuclidianVisible(!isContinuous);
+	
+		if(selectedDist == DIST_F
+				|| selectedDist == DIST_GAMMA
+				|| selectedDist == DIST_WEIBULL
+				|| selectedDist == DIST_EXPONENTIAL){
+			mainPanel.remove(plotPanel);
+			mainPanel.add(notAvailablePanel,BorderLayout.CENTER);
+			this.repaint();
+		}else{
+			mainPanel.remove(notAvailablePanel);
+			mainPanel.add(plotPanel, BorderLayout.CENTER);
 
-		// update 
-		densityCurve.update();
-		if(hasIntegral)
-			integral.update();
-		discreteGraph.update();
-		discreteIntervalGraph.update();
+			// set visibility
+			densityCurve.setEuclidianVisible(isContinuous);
+			if(hasIntegral)
+				integral.setEuclidianVisible(isContinuous);
+			discreteGraph.setEuclidianVisible(!isContinuous);
+			discreteIntervalGraph.setEuclidianVisible(!isContinuous);
+
+			// update 
+			densityCurve.update();
+			if(hasIntegral)
+				integral.update();
+			discreteGraph.update();
+			discreteIntervalGraph.update();
+
+			this.repaint();
+		}
+
+		comboDistribution.addActionListener(this);
 	}
 
 
@@ -990,11 +1064,6 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 
 
-
-
-
-
-
 	//=================================================
 	//      View Implementation
 	//=================================================
@@ -1008,6 +1077,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 	public void setMode(int mode) {} 
 	public void updateAuxiliaryObject(GeoElement geo) {}
 
+	// Handles user point changes in the EV plot panel 
 	public void update(GeoElement geo) {
 		double[] coords = new double[2];;
 		if(!isSettingAxisPoints && !isIniting){
@@ -1041,7 +1111,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 
 
-	private void setLabels(){
+	public void setLabels(){
 
 		setTitle(app.getMenu("ProbabilityCalculator"));	
 		distPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Distribution")));
@@ -1052,6 +1122,16 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		comboProbType.addItem(app.getMenu("IntervalProb"));
 		comboProbType.addItem(app.getMenu("LeftProb"));
 		comboProbType.addItem(app.getMenu("RightProb"));
+		
+		lblBetween.setText(app.getMenu("XBetween"));   // <= X <=
+		lblEndProbOf.setText(app.getMenu("EndProbabilityOf") + " = ");
+		lblProbOf.setText(app.getMenu("ProbabilityOf"));
+		
+		comboDistribution.setModel(new DefaultComboBoxModel(distLabels));
+		comboDistribution.removeActionListener(this);
+		comboDistribution.setSelectedIndex(selectedDist);
+		comboDistribution.addActionListener(this);
+		
 	}
 
 
@@ -1093,20 +1173,20 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		distLabels[DIST_BINOMIAL] = app.getMenu("Distribution.Binomial");
 		parameterLabels[DIST_BINOMIAL][0] = app.getMenu("Binomial.number");
 		parameterLabels[DIST_BINOMIAL][1] = app.getMenu("Binomial.probability");
-		
+
 		distLabels[DIST_PASCAL] = app.getMenu("Distribution.Pascal");
 		parameterLabels[DIST_PASCAL][0] = app.getMenu("Binomial.number");
 		parameterLabels[DIST_PASCAL][1] = app.getMenu("Binomial.probability");
 
 		distLabels[DIST_POISSON] = app.getMenu("Distribution.Poisson");
 		parameterLabels[DIST_POISSON][0] = app.getMenu("Mean");
-		
+
 		distLabels[DIST_HYPERGEOMETRIC] = app.getMenu("Distribution.Hypergeometric");
 		parameterLabels[DIST_HYPERGEOMETRIC][0] = app.getMenu("Hypergeometric.population");
 		parameterLabels[DIST_HYPERGEOMETRIC][1] = app.getMenu("Hypergeometric.number");
 		parameterLabels[DIST_HYPERGEOMETRIC][2] = app.getMenu("Hypergeometric.sample");
 
-		
+
 	}
 
 
@@ -1162,7 +1242,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 		defaultParameterMap.put(DIST_PASCAL, new double[] {20, 0.5}); // n = 20, p = 0.5
 		defaultParameterMap.put(DIST_POISSON, new double[] {4}); // mean = 4
 		defaultParameterMap.put(DIST_HYPERGEOMETRIC, new double[] {60, 10, 20}); // pop = 60, n = 10, sample = 20
-		
+
 		this.maxParameterCount = 3;
 
 	}
@@ -1270,7 +1350,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			expr = "Sequence[Binomial[" + n + "," + p + ",";
 			expr += "Element[" + discreteValueList.getLabel() + ",k], false ";
 			expr +=	"],k,1," + n + "+ 1 ]";
-					
+
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
 
@@ -1286,7 +1366,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			expr = "Sequence[Pascal[" + n + "," + p + ",";
 			expr += "Element[" + discreteValueList.getLabel() + ",k], false";
 			expr +=	"],k,1," + n + "+ 1 ]";
-					
+
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
 
@@ -1295,34 +1375,34 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 
 		case DIST_POISSON:	
 			mean = "Element[" + parmList.getLabel() + ",1]";
-			
+
 			n = "Element[" + parmList.getLabel() + ",1] + 4*sqrt(" +  "Element[" + parmList.getLabel() + ",1]"  + ")";
-			
+
 			expr = "Sequence[k,k,0," + n + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
 
 			expr = "Sequence[Poisson[" + mean + ",";
 			expr += "Element[" + discreteValueList.getLabel() + ",k], false";
 			expr +=	"],k,1," + n + "+ 1 ]";
-					
+
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
 
 			break;
 
-			
+
 		case DIST_HYPERGEOMETRIC:	
 			p = "Element[" + parmList.getLabel() + ",1]";  // population size
 			n = "Element[" + parmList.getLabel() + ",2]";  // n
 			s = "Element[" + parmList.getLabel() + ",3]";  // sample size
-			
+
 			expr = "Sequence[k,k,0," + n + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
 
 			expr = "Sequence[HyperGeometric[" + p + "," + n + "," + s + ",";
 			expr += "Element[" + discreteValueList.getLabel() + ",k], false" ;
 			expr +=	"],k,1," + n + "+ 1 ]";
-			
+
 			//System.out.println(expr);
 			discreteProbList = (GeoList) createGeoFromString(expr);
 
@@ -1464,7 +1544,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			yMin = 0;	
 			yMax = 1.2* getDiscreteMax();
 			break;
-			
+
 		case DIST_POISSON:
 			mean = parms[0];
 			xMin = -1;
@@ -1472,7 +1552,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			yMin = 0;	
 			yMax = 1.2* getDiscreteMax();
 			break;
-			
+
 		case DIST_HYPERGEOMETRIC:
 			pop = parms[0];
 			n = parms[1];
@@ -1483,7 +1563,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			yMin = 0;	
 			yMax = 1.2* getDiscreteMax();
 			break;
-			
+
 		}
 
 
@@ -1530,8 +1610,8 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 				cons.setSuppressLabelCreation(oldSuppressLabelMode);
 
 			plotGeoList.add(geos[0]);
-		//	geos[0].setLabel("xPrb" + plotGeoList.size());
-		//	System.out.println(geos[0].getLabel() + " : " + geos[0].getCommandDescription());
+			//	geos[0].setLabel("xPrb" + plotGeoList.size());
+			//	System.out.println(geos[0].getLabel() + " : " + geos[0].getCommandDescription());
 			return geos[0];
 
 		} catch (Exception e) {
