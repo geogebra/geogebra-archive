@@ -1682,7 +1682,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 							// check if we need a multiplication sign, see #414
 							// digit-digit, e.g. 3 * 5
 							// digit-fraction, e.g. 3 * \frac{5}{2}
-							char lastLeft = sb.charAt(sb.length() - 1);
+							char lastLeft = leftStr.charAt(leftStr.length() - 1);
 							char firstRight = rightStr.charAt(0);
 							showMultiplicationSign = 
 								// left is digit or ends with }, e.g. exponent, fraction
@@ -1693,19 +1693,33 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 							break;
 
 						default: // GeoGebra syntax
-							char firstLeft = sb.charAt(0);
-							lastLeft = sb.charAt(sb.length() - 1);
+							char firstLeft = leftStr.charAt(0);
+							lastLeft = leftStr.charAt(leftStr.length() - 1);
 							firstRight = rightStr.charAt(0);
 							// check if we need a multiplication sign, see #414
 							// digit-digit, e.g. 3 * 5
 							showMultiplicationSign = Character.isDigit(lastLeft) &&  Character.isDigit(firstRight);
-							// check if we need a multiplication space:
-							// all cases except digit - character, e.g. 3x
 							
-							// need to check start and end for eg A1 * A2
-							boolean leftIsDigit=Character.isDigit(lastLeft) && Character.isDigit(firstLeft);
-							multiplicationSpaceNeeded = showMultiplicationSign ||
-								!(leftIsDigit && !Character.isDigit(firstRight));
+							// check if we need a multiplication space:
+							multiplicationSpaceNeeded = showMultiplicationSign;
+							if (!multiplicationSpaceNeeded) {
+								// check if we need a multiplication space:
+								// it's needed except for number * character, e.g. 23x
+								// need to check start and end for eg A1 * A2
+								boolean leftIsNumber = true;
+								for (int i=0; i<leftStr.length(); i++) {
+									char ch = leftStr.charAt(i);
+									if (ch != '.' && !Character.isDigit(ch)) {
+										leftIsNumber = false;
+										break;
+									}
+								}
+								
+								// check if we need a multiplication space:
+								// all cases except number * character, e.g. 3x
+								multiplicationSpaceNeeded = showMultiplicationSign ||
+									!(leftIsNumber && !Character.isDigit(firstRight));
+							}
 						}
 
 						if (showMultiplicationSign) {
