@@ -497,7 +497,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         else { // u != 0
             double dis = d * d - u * w;
             // Tangente
-            if (Math.abs(dis)< 1E-7) {
+            if (Kernel.isZero(dis)) {
                 double t1 = -d / u;
                 sol[0].setCoords(px + t1 * g.y,  py - t1 * g.x, 1.0);
                 sol[1].setCoords(sol[0]);
@@ -522,7 +522,11 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
                     double t2 = swap ? q / u : w / q;
                                         
                     sol[0].setCoords(px + t1 * g.y, py - t1 * g.x, 1.0);
-                    sol[1].setCoords(px + t2 * g.y, py - t2 * g.x, 1.0);       
+                    sol[1].setCoords(px + t2 * g.y, py - t2 * g.x, 1.0);
+                    
+                    if(c.type == GeoConic.CONIC_DOUBLE_LINE)
+                    	sol[1].setCoords(sol[0].x, sol[0].y, sol[0].z);
+                    
                     return INTERSECTION_SECANT_LINE;
                 }
                 // Passante
