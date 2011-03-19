@@ -9,7 +9,7 @@ package geogebra.kernel;
  * (-b'(t),a'(t)) T = sqrt(a'(t)^2+b'(t)^2)
  */
 
-public class AlgoCurvatureVectorCurve extends AlgoElementCAS {
+public class AlgoCurvatureVectorCurve extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 
@@ -19,6 +19,8 @@ public class AlgoCurvatureVectorCurve extends AlgoElementCAS {
 
 	private double f1eval[] = new double[2];
 	private double f2eval[] = new double[2];
+	
+    AlgoCasDerivative algoCAS, algoCAS2;
 
 	AlgoCurvatureVectorCurve(Construction cons, String label, GeoPoint A,
 			GeoCurveCartesian f) {
@@ -47,15 +49,13 @@ public class AlgoCurvatureVectorCurve extends AlgoElementCAS {
 		// First derivative of curve f
 		algoCAS = new AlgoCasDerivative(cons, f);
 		cons.removeFromConstructionList(algoCAS);
-		this.f1 = (GeoCurveCartesian) ((AlgoCasDerivative)algoCAS).getResult();
+		this.f1 = (GeoCurveCartesian) algoCAS.getResult();
 
 		// Second derivative of curve f
-		algoCAS = new AlgoCasDerivative(cons, f1);
-		cons.removeFromConstructionList(algoCAS);
-		this.f2 = (GeoCurveCartesian) ((AlgoCasDerivative)algoCAS).getResult();
+		algoCAS2 = new AlgoCasDerivative(cons, f1);
+		cons.removeFromConstructionList(algoCAS2);
+		this.f2 = (GeoCurveCartesian) algoCAS2.getResult();
 		
-		geo = f;
-
 		setInputOutput();
 		compute();
 	}
@@ -103,4 +103,13 @@ public class AlgoCurvatureVectorCurve extends AlgoElementCAS {
 			v.setUndefined();
 		}
 	}
+	
+	public void remove() {  
+    	super.remove();  
+   		A.removeAlgorithm(algoCAS);
+   		f.removeAlgorithm(algoCAS);
+   		A.removeAlgorithm(algoCAS2);
+   		f.removeAlgorithm(algoCAS2);
+    }
+
 }

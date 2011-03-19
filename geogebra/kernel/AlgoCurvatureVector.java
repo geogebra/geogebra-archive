@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 
 /**
  * @author  Victor Franco Espino
@@ -8,12 +10,14 @@ package geogebra.kernel;
  * Calculate Curvature Vector for function: c(x) = (1/T^4)*(-f'*f'',f''), T = sqrt(1+(f')^2)
  */
 
-public class AlgoCurvatureVector extends AlgoElementCAS {
+public class AlgoCurvatureVector extends AlgoElement {
 
 	private static final long serialVersionUID = 1L;
 	private GeoPoint A; // input
     private GeoFunction f, f1, f2; // f = f(x), f1 is f'(x), f2 is f''(x)
     private GeoVector v; // output
+    
+    AlgoCasDerivative algoCAS, algoCAS2;
 
     AlgoCurvatureVector(Construction cons, String label, GeoPoint A, GeoFunction f){
     	this(cons, A, f);
@@ -40,15 +44,13 @@ public class AlgoCurvatureVector extends AlgoElementCAS {
         //First derivative of function f
         algoCAS = new AlgoCasDerivative(cons, f);
         cons.removeFromConstructionList(algoCAS);
-		this.f1 = (GeoFunction) ((AlgoCasDerivative)algoCAS).getResult();
+		this.f1 = (GeoFunction) algoCAS.getResult();
 		
 		//Second derivative of function f
-		algoCAS = new AlgoCasDerivative(cons, f1);
-		cons.removeFromConstructionList(algoCAS);
-		this.f2 = (GeoFunction) ((AlgoCasDerivative)algoCAS).getResult();
+		algoCAS2 = new AlgoCasDerivative(cons, f1);
+		cons.removeFromConstructionList(algoCAS2);
+		this.f2 = (GeoFunction) algoCAS2.getResult();
 		
-		geo = f;
-        		
 		setInputOutput();
         compute();
     }
@@ -92,4 +94,13 @@ public class AlgoCurvatureVector extends AlgoElementCAS {
 			v.setUndefined();
 		}
     }
+    
+	public void remove() {  
+    	super.remove();  
+   		A.removeAlgorithm(algoCAS);
+   		f.removeAlgorithm(algoCAS);
+   		A.removeAlgorithm(algoCAS2);
+   		f.removeAlgorithm(algoCAS2);
+    }
+
 }

@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 /**
  * @author  Victor Franco Espino, Markus Hohenwarter
  * @version 11-02-2007
@@ -60,4 +62,9 @@ public class AlgoCurvature extends AlgoElement {
     	else     	
     		K.setUndefined();    	
     }   
+    
+	public void remove() {  
+    	super.remove();  
+    }
+
 }

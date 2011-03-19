@@ -1,5 +1,7 @@
 package geogebra.kernel;
 
+import geogebra.main.Application;
+
 
 
 /**
@@ -20,6 +22,9 @@ public class AlgoOsculatingCircle extends AlgoElement {
     private GeoNumeric curv; //curvature of f in point A
     private GeoConic circle; // output
     
+    AlgoCurvature algo;
+    AlgoCurvatureVector cv;
+    
     AlgoOsculatingCircle(Construction cons, String label, GeoPoint A, GeoFunction f) {
         super(cons);
         this.A = A;
@@ -29,13 +34,15 @@ public class AlgoOsculatingCircle extends AlgoElement {
         circle = new GeoConic(cons);        
         
         //Catch curvature and curvature vector
-        AlgoCurvature algo = new AlgoCurvature(cons,A,f);
-        AlgoCurvatureVector cv = new AlgoCurvatureVector(cons,A,f);
+        algo = new AlgoCurvature(cons,A,f);
+        cv = new AlgoCurvatureVector(cons,A,f);
         curv = algo.getResult();
         v = cv.getVector();
  
     	cons.removeFromConstructionList(algo);
 		cons.removeFromConstructionList(cv);
+    	cons.removeFromAlgorithmList(algo);
+		cons.removeFromAlgorithmList(cv);
 		setInputOutput();
         compute();
         circle.setLabel(label);
@@ -76,5 +83,16 @@ public class AlgoOsculatingCircle extends AlgoElement {
     	
     	R.setCoords(A.inhomX + x, A.inhomY + y, 1.0);
     	circle.setCircle(R, A);    	
+    }
+    
+    public void remove() {
+        super.remove();
+        f.removeAlgorithm(algo);
+        f.removeAlgorithm(cv);
+        A.removeAlgorithm(algo);
+        A.removeAlgorithm(cv);
+        
+        // make sure all AlgoCASDerivatives get removed
+        cv.remove();
     }
 }

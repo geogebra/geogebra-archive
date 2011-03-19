@@ -19,6 +19,9 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
     private GeoNumeric curv;//curvature of f in point A
     private GeoConic circle; // output
     
+    AlgoCurvatureCurve algo;
+    AlgoCurvatureVectorCurve cv;
+    
     AlgoOsculatingCircleCurve(Construction cons, String label, GeoPoint A, GeoCurveCartesian f) {
         super(cons);
         this.A = A;
@@ -28,8 +31,8 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
         circle = new GeoConic(cons);
 
         //Catch curvature and curvature vector
-        AlgoCurvatureCurve algo = new AlgoCurvatureCurve(cons,A,f);
-        AlgoCurvatureVectorCurve cv = new AlgoCurvatureVectorCurve(cons,A,f);
+        algo = new AlgoCurvatureCurve(cons,A,f);
+        cv = new AlgoCurvatureVectorCurve(cons,A,f);
         curv = algo.getResult();
         v = cv.getVector();
  
@@ -77,4 +80,16 @@ public class AlgoOsculatingCircleCurve extends AlgoElement {
     	R.setCoords(A.inhomX + x, A.inhomY + y, 1.0);
     	circle.setCircle(R, A);	
     }
+    
+    public void remove() {
+        super.remove();
+        f.removeAlgorithm(algo);
+        f.removeAlgorithm(cv);
+        A.removeAlgorithm(algo);
+        A.removeAlgorithm(cv);
+        
+        // make sure all AlgoCASDerivatives get removed
+        cv.remove();
+    }
+
 }
