@@ -1706,14 +1706,8 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 								// check if we need a multiplication space:
 								// it's needed except for number * character, e.g. 23x
 								// need to check start and end for eg A1 * A2
-								boolean leftIsNumber = true;
-								for (int i=0; i<leftStr.length(); i++) {
-									char ch = leftStr.charAt(i);
-									if (ch != '.' && !Character.isDigit(ch)) {
-										leftIsNumber = false;
-										break;
-									}
-								}
+								boolean leftIsNumber = left.isLeaf() && 
+									Character.isDigit(firstLeft) && Character.isDigit(lastLeft);
 								
 								// check if we need a multiplication space:
 								// all cases except number * character, e.g. 3x
