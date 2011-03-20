@@ -290,7 +290,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	AffineTransform coordTransform = new AffineTransform();
 
-	int width, height;
+	// use sensible defaults, see #640
+	int width = Application.getScreenSize().width;
+	int height = Application.getScreenSize().height;
 
 	protected NumberFormat[] axesNumberFormat;
 

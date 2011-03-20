@@ -4565,12 +4565,12 @@ public class Application implements KeyEventDispatcher {
 		
 	}
 	
-	private Rectangle screenSize = null;
+	private static Rectangle screenSize = null;
 	
 	/*
 	 * gets the screensize (taking into account toolbars etc)
 	 */
-	public Rectangle getScreenSize() {
+	public static Rectangle getScreenSize() {
 		if (screenSize == null) {
 			GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
 			screenSize = env.getMaximumWindowBounds(); 
