@@ -9,11 +9,13 @@ and plug-in files that are subject to other licenses.
 For details please read on and see the file LICENSE.txt
 
 Other libraries and plugins used      
-* MathPiper, https://mathrider.dev.java.net/
-* Jasymca, http://webuser.hs-furtwangen.de/~dersch/
-* FreeHEP Java Libraries, http://java.freehep.org/
-* Java EPS Graphics2D package, http://www.jibble.org/epsgraphics/
-* HotEqn, http://freemind.sourceforge.net/HotEqn/
-* Tango Icon Gallery, http://tango.freedesktop.org/
-* RestrictedFileSystemView class from Jython, http://www.jython.org/
-* Mathworks/NIST JAMA Matrix Package, http://math.nist.gov/javanumerics/jama/
+SOFTWARE
+  * MathPiper, http://www.mathpiper.org/
+  * The Apache Commons Mathematics Library, http://commons.apache.org/math/
+  * FreeHEP Java Libraries, http://java.freehep.org
+  * EPS Graphics, http://epsgraphics.sf.net
+  * JAS, http://krum.rz.uni-mannheim.de/jas/
+  * JLaTeXMath, http://forge.scilab.org/index.php/p/jlatexmath/
+  * JUNG, http://jung.sourceforge.net
+  * Tango Icon Gallery, http://tango.freedesktop.org
+  * Maxima, http://maxima.sourceforge.net/
