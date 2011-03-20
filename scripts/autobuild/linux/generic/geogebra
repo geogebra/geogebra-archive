@@ -26,8 +26,9 @@ GeoGebra options:
 _USAGE
 }
 
+# if Java command not set, use java
 if [ -z "$JAVACMD" ]; then
-	JAVACMD=java
+	JAVACMD='java'
 fi
 
 # check for option --help and pass memory options to Java, others to GeoGebra
@@ -63,6 +64,19 @@ if [ $(expr match "$JAVA_OPTS" ".*-Xms") -eq 0 ]; then
 	JAVA_OPTS="$JAVA_OPTS -Xms32m"
 fi
 
+# if path of geogebra.jar not set, use path of this script
+if [ -z "$GG_PATH" ]; then
+	GG_PATH="${BASH_SOURCE[0]}"
+	if [ -h "${GG_PATH}" ]; then
+		while [ -h "${GG_PATH}" ]; do
+		GG_PATH=`readlink "${GG_PATH}"`
+		done
+	fi
+	pushd . > /dev/null
+	cd `dirname ${GG_PATH}` > /dev/null
+	GG_PATH=`pwd`
+	popd > /dev/null
+fi
+
 # run
-#exec $JAVACMD $JAVA_OPTS -jar /usr/share/geogebra/geogebra.jar $GG_OPTS "$@"
-exec $JAVACMD $JAVA_OPTS -jar geogebra.jar $GG_OPTS "$@" # not sure if this is OK --- Zoltan
+exec $JAVACMD $JAVA_OPTS -jar $GG_PATH/geogebra.jar $GG_OPTS "$@"
