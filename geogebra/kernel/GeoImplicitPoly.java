@@ -612,9 +612,29 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 	}
 
 	public boolean isOnPath(GeoPointND PI, double eps) {
-		Application.debug("on path? "+PI+"; eps="+eps);
+		//Application.debug("on path? "+PI+"; eps="+eps);
+
+		if(!PI.isDefined())
+			return false;
+
+		GeoPoint P = (GeoPoint) PI;
+
+		double px = P.x;
+		double py = P.y;
+		double pz = P.z;
 		
-		return false;
+		if(P.isFinite())
+		{
+			px/=pz;
+			py/=pz;
+		}
+		
+		double sum = 0;
+		for(int i=0; i<degX+1; i++)
+			for(int j=0; j<degY+1; j++)
+				sum += coeff[i][j] * Math.pow(px, i) * Math.pow(py, j); 
+		
+		return Kernel.isZero(sum);
 	}
 
 	public double getMinParameter() {
