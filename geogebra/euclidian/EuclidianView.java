@@ -3430,6 +3430,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 				d = new DrawInequality(this, (GeoFunctionNVar) geo);
 			}
 			break;
+		case GeoElement.GEO_CLASS_INTERVAL:
+			if(((GeoFunction) geo).isBooleanFunction()) {
+				d = new DrawInequality(this, (GeoFunction) geo);
+			}
+			break;
 
 		case GeoElement.GEO_CLASS_ANGLE:
 			if (geo.isIndependent()) {
