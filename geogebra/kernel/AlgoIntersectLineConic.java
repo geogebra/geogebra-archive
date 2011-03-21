@@ -497,6 +497,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         else { // u != 0
             double dis = d * d - u * w;
             // Tangente
+            
             if (Kernel.isZero(dis)) {
                 double t1 = -d / u;
                 sol[0].setCoords(px + t1 * g.y,  py - t1 * g.x, 1.0);
@@ -506,6 +507,14 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
             // Sekante oder Passante
             else {
                 // Sekante
+            	
+            	// Double line => one intersection point
+            	if(c.type == GeoConic.CONIC_DOUBLE_LINE){
+                	double t1 = -d / u;
+                    sol[0].setCoords(px + t1 * g.y,  py - t1 * g.x, 1.0);
+                    sol[1].setCoords(sol[0]);
+                    return INTERSECTION_SECANT_LINE;
+                }
                 if (dis > 0) {
                     dis = Math.sqrt(dis);
                     // For accuracy, calculate one root using:
@@ -523,9 +532,6 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
                                         
                     sol[0].setCoords(px + t1 * g.y, py - t1 * g.x, 1.0);
                     sol[1].setCoords(px + t2 * g.y, py - t2 * g.x, 1.0);
-                    
-                    if(c.type == GeoConic.CONIC_DOUBLE_LINE)
-                    	sol[1].setCoords(sol[0].x, sol[0].y, sol[0].z);
                     
                     return INTERSECTION_SECANT_LINE;
                 }
