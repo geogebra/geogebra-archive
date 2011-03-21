@@ -224,4 +224,12 @@ public class Application3D extends Application{
 	}	
 	
 	
+	
+	
+	protected void updateStyleBars(){		
+		super.updateStyleBars();
+		getEuclidianView3D().getStyleBar().updateStyleBar();
+	}
+	
+	
 }

@@ -11,7 +11,6 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
-import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
@@ -55,7 +54,6 @@ import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.JPanel;
 
@@ -964,6 +962,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/** sets EuclidianController3D mode */
 	public void setMode(int mode){
 		euclidianController3D.setMode(mode);
+		getStyleBar().setMode(mode);
 	}
 	
 	
@@ -1321,13 +1320,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 
-	public int getPointCapturingMode() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-
 
 
 
@@ -1392,8 +1384,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public boolean getShowXaxis() {
-		// TODO Auto-generated method stub
-		return false;
+		return axis[AXIS_X].isEuclidianVisible();
 	}
 
 
@@ -1410,8 +1401,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public boolean getShowYaxis() {
-		// TODO Auto-generated method stub
-		return false;
+		return axis[AXIS_Y].isEuclidianVisible();
 	}
 
 
@@ -1559,6 +1549,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return  animatedContinueRot || animatedRot;
 	}
 	
+	/** 
+	 * @return true if there is a continue rotation animation*/
+	public boolean isRotAnimatedContinue(){
+		return  animatedContinueRot;
+	}
+	
 	public void setAnimatedCoordSystem(double ox, double oy, double newScale,
 			int steps, boolean storeUndo) {
 		
@@ -1590,8 +1586,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			return;
 		
 		//if speed is too small, no animation
-		if (Math.abs(rotSpeed)<0.01)
+		if (Math.abs(rotSpeed)<0.01){
+			stopRotAnimation();
 			return;
+		}
 		
 		//if speed is too large, use max speed
 		if (rotSpeed>0.1)
@@ -1640,15 +1638,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		bNew = spheric.get(3)*180/Math.PI;
 		
 
-		/*
-		Application.debug(
-				"(a,b)=(" + (this.a) +"�,"+ (this.b)+"�)\n"
-				+
-				"(aOld,bOld)=(" + (this.aOld) +"�,"+ (this.bOld)+"�)\n"
-				+
-				"(aNew,bNew)=(" + (this.aNew) +"�,"+ (this.bNew)+"�)"
-		);
-		*/
 		
 		
 		//if (aNew,bNew)=(0°,90°), then change it to (90°,90°) to have correct xOy orientation
@@ -1675,18 +1664,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			bOld-=360;
 
 
-
-		
-
-		/*
-		Application.debug(
-				"bis\n(a,b)=(" + (this.a) +"�,"+ (this.b)+"�)\n"
-				+
-				"(aOld,bOld)=(" + (this.aOld) +"�,"+ (this.bOld)+"�)\n"
-				+
-				"(aNew,bNew)=(" + (this.aNew) +"�,"+ (this.bNew)+"�)"
-		);
-		*/
 		
 	}
 	
@@ -3140,8 +3117,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public boolean getShowGrid() {
-		// TODO Auto-generated method stub
-		return false;
+		return xOyPlane.isGridVisible();
 	}
 
 
@@ -3218,7 +3194,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 	public void showGrid(boolean selected) {
-		// TODO Auto-generated method stub
+		xOyPlane.setGridVisible(selected);
 		
 	}
 
@@ -3413,6 +3389,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private boolean viewChangedByZoom = true;
 	private boolean viewChangedByTranslate = true;
 	private boolean viewChangedByRotate = true;
+
+
+
+	private int pointCapturingMode;
+
+
+
+	private int pointStyle;
 	
 	private void setViewChangedByZoom(){viewChangedByZoom = true;}
 	private void setViewChangedByTranslate(){viewChangedByTranslate = true;}
@@ -3434,6 +3418,42 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		viewChangedByZoom = false;
 		viewChangedByTranslate = false;
 		viewChangedByRotate = false;
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Returns point capturing mode.
+	 */
+	final public int getPointCapturingMode() {
+		return pointCapturingMode;
+	}
+
+	/**
+	 * Set capturing of points to the grid.
+	 */
+	public void setPointCapturing(int mode) {
+		pointCapturingMode = mode;
+	}
+	
+	final public int getPointStyle() {
+		return pointStyle;
+	}
+	
+	
+	
+	/** 
+	 * Get styleBar 
+	 */
+	EuclidianStyleBar3D styleBar;
+	public EuclidianStyleBar3D getStyleBar(){
+		if(styleBar==null){
+			styleBar = new EuclidianStyleBar3D(this);
+		}
+		
+		return styleBar;
 	}
 
 

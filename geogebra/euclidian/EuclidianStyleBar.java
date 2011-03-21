@@ -43,8 +43,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 	// ggb
 	private EuclidianController ec;
-	private EuclidianView ev;
-	private Application app;
+	protected EuclidianViewInterface ev;
+	protected Application app;
 	private Construction cons; 
 	
 	
@@ -69,9 +69,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private GeoElement oldDefaultGeo, currentDefaultGeo;
 	
 	// flags and constants
-	private int iconHeight = 18;
+	protected int iconHeight = 18;
 	private Dimension iconDimension = new Dimension(16, iconHeight);
-	private int mode = -1;
+	public int mode = -1;
 	private boolean isIniting;
 	private boolean needUndo = false;
 	private Integer oldDefaultMode;
@@ -92,7 +92,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	/*************************************************
 	 * Constructs a styleBar
 	 */
-	public EuclidianStyleBar(EuclidianView ev) {
+	public EuclidianStyleBar(EuclidianViewInterface ev) {
 		
 		isIniting = true;
 		
@@ -160,10 +160,13 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	
+	protected boolean isVisibleInThisView(GeoElement geo){
+		return geo.isVisibleInView(ev) ;
+	}
 	
 	
 	public void updateStyleBar(){
-	
+		
 		if(mode == EuclidianConstants.MODE_VISUAL_STYLE) return;
 
 		// geos = list of geos that will have their properties set by stylebar buttons
@@ -175,7 +178,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 			boolean hasGeosInThisView = false;
 			for(GeoElement geo: ev.getApplication().getSelectedGeos()){
-				if(geo.isVisibleInView(ev) && geo.isEuclidianVisible()){
+				if(isVisibleInThisView(geo) && geo.isEuclidianVisible() ){
 					hasGeosInThisView = true;
 					break;
 				}
@@ -202,7 +205,6 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				oldDefaultMode = defaultGeoMap.get(mode);
 			}
 		}
-
 		
 		// update the buttons
 		updateTableText(geos.toArray());
@@ -300,7 +302,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	//	add(btnPenEraser);
 		//add(btnHideShowLabel);
 		add(btnLabelStyle);
-		add(btnPointCapture);
+		addBtnPointCapture();
+		//add(btnPointCapture);
+		addBtnRotateView();
 	//	add(btnPenDelete);
 			
 		popupBtnList = new PopupMenuButton[]{
@@ -319,13 +323,19 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	
+	protected void addBtnPointCapture(){
+		add(btnPointCapture);
+	}
+	
+	protected void addBtnRotateView(){
 
+	}
 	
 	//=====================================================
 	//                 Create Buttons
 	//=====================================================
 	
-	private void createButtons() {
+	protected void createButtons() {
 		
 		//========================================
 		// mode button
@@ -523,7 +533,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					setSliderValue( ((PointProperties)geo).getPointSize());
 					int pointStyle = ((PointProperties)geo).getPointStyle();
 					if(pointStyle == -1) // global default point style
-			    		pointStyle = ev.pointStyle;
+			    		pointStyle = ev.getPointStyle();
 					setSelectedIndex(pointStyleMap.get(pointStyle));
 					this.setKeepVisible(mode == EuclidianConstants.MODE_MOVE);
 				}
@@ -1117,7 +1127,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	//=====================================================
 	
 	
-	private void updateGUI(){
+	protected void updateGUI(){
 
 		if(isIniting) return;
 
@@ -1229,6 +1239,28 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			targetGeos = app.getSelectedGeos();
 		
 		
+		
+		processSource(source,targetGeos);
+		
+		
+
+		if(needUndo){
+			app.storeUndoInfo();
+			needUndo = false;
+		}
+		
+		updateGUI();
+		
+	}
+
+	/**
+	 * process the action performed
+	 * @param source
+	 * @param targetGeos
+	 */
+	protected void processSource(Object source, ArrayList<GeoElement> targetGeos){
+
+		
 		if (source.equals(btnShowAxes)) {		
 			ev.setShowAxes(!ev.getShowXaxis(), true);
 			ev.repaint();
@@ -1335,16 +1367,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			// add code here to toggle between pen and eraser mode;			
 			
 		}
-
-		if(needUndo){
-			app.storeUndoInfo();
-			needUndo = false;
-		}
-		
-		updateGUI();
-		
 	}
-
 
 
 
@@ -1594,7 +1617,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	
-	private class MyToggleButton extends JButton {
+	public class MyToggleButton extends JButton {
 		public MyToggleButton(ImageIcon icon){
 			super(icon);
 			Dimension d = new Dimension(icon.getIconWidth(), iconHeight);

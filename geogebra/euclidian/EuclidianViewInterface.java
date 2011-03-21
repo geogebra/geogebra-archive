@@ -3,6 +3,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.main.Application;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -373,6 +374,14 @@ public interface EuclidianViewInterface {
 	public GeoNumeric getYmaxObject();
 	public void setResizeXAxisCursor();
 	public void setResizeYAxisCursor();
+	
+	
+	
+	public EuclidianController getEuclidianController();
+	public Application getApplication();
+	public int getPointStyle();
+	public void repaint();
+	public void setPointCapturing(int mode);
 	
 
 	

@@ -26,7 +26,7 @@ public class EuclidianDockPanel3D extends EuclidianDockPanelAbstract {
 			Application.VIEW_EUCLIDIAN3D,	// view id 
 			"GraphicsView3D", 				// view title
 			Toolbar.getAllToolsNoMacros3D(),// toolbar string
-			false,						// style bar?
+			true,						// style bar?
 			4,							// menu order
 			'3' // ctrl-shift-3
 		);
@@ -34,20 +34,13 @@ public class EuclidianDockPanel3D extends EuclidianDockPanelAbstract {
 		this.app = app;
 	}
 
-//	@Override
-//	public ImageIcon getIcon() {
-//		return app.getImageIcon("document-properties.png");
-//	}
 
-	@Override
-	protected JComponent loadStyleBar() {
-		return null;//app.getEuclidianView().getStyleBar();
-	}
 
-	@Override
 	protected JComponent loadComponent() {
 		return ((Application3D)app).getEuclidianView3D();
 	}
 	
-
+	protected JComponent loadStyleBar() {
+		return ((Application3D)app).getEuclidianView3D().getStyleBar();
+	}
 }
