@@ -38,7 +38,7 @@ public class CASTableCellController implements KeyListener {
 		case KeyEvent.VK_ENTER:
 			handleEnterKey(e);
 			consumeEvent = true;
-			needUndo = true;
+			// needUndo remains falls because handleEnterKey handles Undo!
 			break;
 
 		case KeyEvent.VK_UP:
