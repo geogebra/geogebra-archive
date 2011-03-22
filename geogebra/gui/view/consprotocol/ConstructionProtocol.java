@@ -928,8 +928,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			// name = geo.getNameDescriptionHTML(true, true);
 			name = geo.getNameDescriptionTextOrHTML();
 			algebra = geo.getAlgebraDescriptionTextOrHTML();
+			if (algebra.indexOf("=")>-1)
+				algebra=algebra.substring(algebra.indexOf("=")+1);
 			definition = geo.getDefinitionDescriptionHTML(true);
-			command = geo.getCommandDescriptionHTML(true);
+			command = geo.getCommandDescriptionHTML(true);			
 			consProtocolVisible = new Boolean(geo.isConsProtocolBreakpoint());
 
 			// does this line include an index?
