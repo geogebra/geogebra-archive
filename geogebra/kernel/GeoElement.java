@@ -3487,7 +3487,8 @@ public abstract class GeoElement
 			
 			strAlgebraDescriptionNeedsUpdate = false;
 		}
-		
+		if (strAlgebraDescription.indexOf("=")>-1)
+			strAlgebraDescription=strAlgebraDescription.substring(strAlgebraDescription.indexOf("=")+1);
 		return strAlgebraDescription;
 	}	
 	
