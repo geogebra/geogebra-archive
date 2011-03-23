@@ -200,15 +200,10 @@ public class DynamicTextInputPane extends JTextPane {
 		}
 
 		// if dependent text then get the root 
-		if(geo.getParentAlgorithm() instanceof AlgoDependentText){
-			ExpressionNode root = ((AlgoDependentText)geo.getParentAlgorithm()).getRoot();
-			root.splitString(this, id);
-		}
-		else{
-			insertDynamicText(geo.getCommandDescription(), -1, id);
-		}
+		ExpressionNode root = ((AlgoDependentText)geo.getParentAlgorithm()).getRoot(); 
+
 		// parse the root and set the text content
-		
+		root.splitString(this, id);
 
 	}
 
