@@ -360,8 +360,9 @@ public class CASmaxima extends CASgeneric {
 		// with this setting ev( a+a, simp ) is needed to get 2*a
 	    ggbMaxima.executeCall("simp:false;");
 	    
-	    // Variable Ordering. See Tickets #281 and #311 in trac
-	    ggbMaxima.executeCall("powerdisp:true;");
+	    // Variable Ordering. See Tickets #311 and #281 in trac
+	    ggbMaxima.executeCall("powerdisp:false;");
+	    ggbMaxima.executeCall("orderless(z,y,x,w,v,u,t,s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a);");
 	    
 	    // change binding power of multiplication in Maxima 
 	    // In Maxima a*b/c is read as (a*b)/c by default but GeoGebra reads this as a*(b/c)
