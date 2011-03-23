@@ -307,19 +307,26 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		addBtnRotateView();
 	//	add(btnPenDelete);
 			
-		popupBtnList = new PopupMenuButton[]{
-				btnColor, btnBgColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, 
-				btnTableTextJustify, btnTableTextBracket, btnLabelStyle, btnPointCapture};
-		
-		toggleBtnList = new MyToggleButton[]{
-				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
-	            btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel, btnTableTextLinesV, btnTableTextLinesH};
+		popupBtnList = newPopupBtnList();
+		toggleBtnList = newToggleBtnList();
 		
 		for(int i=0; i< popupBtnList.length; i++){
 			//popupBtnList[i].setStandardButton(true);
 		}
 		
 		
+	}
+	
+	protected PopupMenuButton[] newPopupBtnList(){
+		return new PopupMenuButton[]{
+				btnColor, btnBgColor, btnTextColor, btnLineStyle, btnPointStyle, btnTextSize, 
+				btnTableTextJustify, btnTableTextBracket, btnLabelStyle, btnPointCapture};
+	}
+	
+	protected MyToggleButton[] newToggleBtnList(){
+		return new MyToggleButton[]{
+				btnCopyVisualStyle, btnPen, btnShowGrid, btnShowAxes,
+	            btnBold, btnItalic, btnDelete, btnLabel, btnPenEraser, btnHideShowLabel, btnTableTextLinesV, btnTableTextLinesH};
 	}
 	
 	

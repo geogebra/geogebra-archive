@@ -1613,6 +1613,12 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param vn
 	 */
 	public void setRotAnimation(Coords vn){
+		Coords spheric = CoordMatrixUtil.sphericalCoords(vn);		
+		setRotAnimation(spheric.get(2)*180/Math.PI,spheric.get(3)*180/Math.PI);
+	}
+		
+
+	public void setRotAnimation(double aN, double bN){
 
 		animatedRot = true;
 		animatedContinueRot = false;
@@ -1620,24 +1626,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		aOld = this.a % 360;
 		bOld = this.b % 360;
 		
-		/*
-		Coords spheric;
-		//put the eye in front of the visible side
-		Coords eye = CoordMatrixUtil.cartesianCoords(1,aOld*Math.PI/180,bOld*Math.PI/180);
-		//Application.debug("c="+eye.dotproduct(vn));
-		if(eye.dotproduct(vn)>=0)
-			spheric = CoordMatrixUtil.sphericalCoords(vn);
-		else
-			spheric = CoordMatrixUtil.sphericalCoords((Coords) vn.mul(-1));
-		*/
-		Coords spheric = CoordMatrixUtil.sphericalCoords(vn);
-		
-		//Application.debug("vn\n"+vn+"\nbis\n"+Ggb3DMatrixUtil.cartesianCoords(spheric));
-		
-		aNew = spheric.get(2)*180/Math.PI;
-		bNew = spheric.get(3)*180/Math.PI;
-		
-
+		aNew = aN;
+		bNew = bN;
 		
 		
 		//if (aNew,bNew)=(0°,90°), then change it to (90°,90°) to have correct xOy orientation
