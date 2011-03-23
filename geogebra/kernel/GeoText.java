@@ -309,6 +309,10 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	}
 	
 	public boolean isTextCommand() {
+
+		// check for eg If[ a==1 , "hello", "bye"] first
+		if (!(getParentAlgorithm() == null) && !(getParentAlgorithm() instanceof AlgoDependentText)) return true;
+
 		return isTextCommand;
 	}
 	
