@@ -96,7 +96,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	
 	public void setSphereND(GeoPointND M, GeoPointND P){
 		//TODO do this in GeoQuadricND, implement degenerate cases
-		setSphereNDMatrix(M.getCoordsInD(3), M.distance(P));
+		setSphereNDMatrix(M.getInhomCoordsInD(3), M.distance(P));
 	}
 	
 	
