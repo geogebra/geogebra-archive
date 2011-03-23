@@ -400,29 +400,21 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return isDefined();
 	}
 
-	/**
-	 * @return function description as f(x)=...
-	 */
-	private String toXMLString(){
-		sbToString.setLength(0);
-		sbToString.append(label);
-		sbToString.append("(");
-		sbToString.append(getVarString());
-		sbToString.append(") = ");
-		sbToString.append(toValueString());
-		return sbToString.toString();
-	}
-	
+		
 	/**
 	 * @return function description as f(x)=... for real and e.g. f:x>4 for bool
 	 */
-	public String toString() {
-		if (isLabelSet() && !isBooleanFunction())
-			return toXMLString();
+	public String toString() {		
 		sbToString.setLength(0);
 		if(isLabelSet()) {
 			sbToString.append(label);
-			sbToString.append(": ");
+			if(isBooleanFunction())
+				sbToString.append(": ");
+			else{
+				sbToString.append("(");
+				sbToString.append(getVarString());
+				sbToString.append(") = ");
+			}
 		}
 		sbToString.append(toValueString());
 		return sbToString.toString();
@@ -467,7 +459,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				sb.append(" label =\"");
 				sb.append(label);
 				sb.append("\" exp=\"");
-				sb.append(toXMLString());
+				sb.append(toString());
 				// expression   
 			sb.append("\"/>\n");
 		 }
