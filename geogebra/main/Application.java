@@ -2353,7 +2353,12 @@ public class Application implements KeyEventDispatcher {
 			kernel.updateLocalAxesNames();
 		}
 	}
-
+	
+	final public Enumeration<String> getKeyNames(){
+		initTranslatedCommands();
+		return rbcommand.getKeys();
+	}
+	
 	final public String getCommand(String key) {
 		
 		if (tooltipFlag) return getCommandTooltip(key);
@@ -2410,6 +2415,11 @@ public class Application implements KeyEventDispatcher {
 	public String getCommandSyntax(String key) {
 		
 		return getCommand(key+"Syntax");
+	}
+	
+	public String getCommandSyntaxCAS(String key) {
+		
+		return getCommand(key+"SyntaxCAS");
 	}
 
 	final public String getSetting(String key) {

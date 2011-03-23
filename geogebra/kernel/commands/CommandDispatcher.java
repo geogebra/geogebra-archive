@@ -20,6 +20,7 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -55,8 +56,9 @@ public class CommandDispatcher {
     public static final int TABLE_GEOGEBRA = 15;
     public static final int TABLE_OPTIMIZATION = 16;
     public static final int TABLE_ENGLISH = 17;
+    public static final int TABLE_CAS=18;
     
-    private int tableCount = 18;
+    private int tableCount = 19;
     
     
     public String getSubCommandSetName(int index){
@@ -78,6 +80,7 @@ public class CommandDispatcher {
     	case TABLE_DISCRETE_MATH: return app.getMenu("Type.DiscreteMath");
     	case TABLE_GEOGEBRA: return app.getMenu("Type.GeoGebra");
     	case TABLE_OPTIMIZATION: return app.getMenu("Type.OptimizationCommands");
+    	case TABLE_CAS: return app.getMenu("Type.CAS");
     	// TABLE_ENGLISH:
     	default: return null;
     	}
@@ -212,8 +215,6 @@ public class CommandDispatcher {
     	cmdSubTable = new HashMap[tableCount];
     	for(int i = 0; i<tableCount; i++)
     		cmdSubTable[i] = new HashMap<String,CommandProcessor>(500);
-    
-    	
 
 
        	//=================================================================
@@ -720,6 +721,19 @@ public class CommandDispatcher {
     	cmdTable.put("RandomBetween",new CmdRandom(kernel));  	
     	
     	cmdSubTable[TABLE_ENGLISH].putAll(cmdTable);
+    	cmdTable.clear();
+    	
+    	Enumeration<String> keyNames=app.getKeyNames();
+    	while (keyNames.hasMoreElements()){
+    		String key=keyNames.nextElement();
+    		if (key.contains("SyntaxCAS")) {
+    			String withoutCAS=key.replaceAll("CAS", "");
+    			if (withoutCAS.equals(app.getCommand(withoutCAS))){
+    				cmdTable.put(app.getCommand(key.replaceAll("SyntaxCAS", "")),null);
+    			}
+    		}
+    	}
+    	cmdSubTable[TABLE_CAS].putAll(cmdTable);
     	cmdTable.clear();
     	
     	

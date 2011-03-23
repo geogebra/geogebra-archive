@@ -32,6 +32,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -41,6 +42,11 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
@@ -71,7 +77,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	
 	
 	private JPopupMenu contextMenu;
-	private JTextArea helpTextArea;
+	private JTextPane helpTextPane;
 	private JButton btnOnlineHelp, btnRefresh;
 	private SelectionTable functionTable;
 	private JPanel tablePanel;
@@ -148,14 +154,14 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 	private void createSyntaxPanel(){
 	
-		helpTextArea = new JTextArea();
+		helpTextPane = new JTextPane();
 		//helpTextArea.setText("");
-		helpTextArea.setEditable(false);
+		helpTextPane.setEditable(false);
 		//helpTextArea.setMinimumSize(new Dimension(200,300));
-		helpTextArea.setBorder(BorderFactory.createEmptyBorder(8, 5, 2, 5));
-		helpTextArea.setBackground(bgColor);
+		helpTextPane.setBorder(BorderFactory.createEmptyBorder(8, 5, 2, 5));
+		helpTextPane.setBackground(bgColor);
 		JPanel p = new JPanel(new BorderLayout());
-		p.add(helpTextArea, BorderLayout.CENTER);
+		p.add(helpTextPane, BorderLayout.CENTER);
 		
 		p.setBorder(BorderFactory.createEmptyBorder());
 		JPanel titlePanel = new JPanel(new BorderLayout());
@@ -168,7 +174,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		titlePanel.add(syntaxLabel, BorderLayout.WEST);
 		
 		syntaxHelpPanel = new JPanel(new BorderLayout());
-		JScrollPane scroller = new JScrollPane(helpTextArea);
+		JScrollPane scroller = new JScrollPane(helpTextPane);
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		//scroller.setBorder(BorderFactory.createEmptyBorder());
@@ -304,7 +310,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 					cmdTree.clearSelection();
 				selectedFunction = (String) functionTable.getSelectedValue();
 				selectedCommand = null;
-				helpTextArea.setText("");
+				helpTextPane.setText("");
 				if(e.getClickCount()==2)
 					doPaste();
 			}
@@ -327,7 +333,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	public void updateFonts(){
 
 		functionTable.updateFonts();
-		helpTextArea.setFont(app.getPlainFont());
+		helpTextPane.setFont(app.getPlainFont());
 		titleLabel.setFont(app.getPlainFont());
 		syntaxLabel.setFont(app.getPlainFont());
 		
@@ -595,9 +601,49 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		
 		String cmd = app.translateCommand(selectedCommand); // internal name
 		//String s = "Syntax:\n" + app.getCommandSyntax(cmd);
-		helpTextArea.setText(app.getCommandSyntax(cmd));
-		helpTextArea.setCaretPosition(0);
-		helpTextArea.repaint();	
+		String description=app.getCommandSyntax(cmd);
+		String descriptionCAS=app.getCommandSyntaxCAS(cmd);
+		
+		StyledDocument doc=helpTextPane.getStyledDocument();
+		try {
+			doc.remove(0,doc.getLength());
+		} catch (BadLocationException e1) {
+			// this should never occur
+			e1.printStackTrace();
+		}
+		
+		//define the regular and italic style
+		Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+		Style regular = doc.addStyle("regular", def);
+		StyleConstants.setFontFamily(def, "SansSerif");
+		Style s = doc.addStyle("italic", regular);
+		StyleConstants.setItalic(s, true);
+		
+		if (!descriptionCAS.equals(cmd+"SyntaxCAS")){
+			if (!description.equals(cmd+"Syntax"))
+				try {
+					doc.insertString(doc.getLength(), description+"\n", doc.getStyle("regular"));
+				} catch (BadLocationException e) {
+					// should never occur
+					e.printStackTrace();
+				}
+			try {
+				doc.insertString(doc.getLength(), descriptionCAS, doc.getStyle("italic"));
+			} catch (BadLocationException e) {
+				// should never occur
+				e.printStackTrace();
+			}
+		} else {
+			try {
+				doc.insertString(doc.getLength(), description, doc.getStyle("regular"));
+			} catch (BadLocationException e) {
+				// should never occur
+				e.printStackTrace();
+			}
+		}
+		//helpTextArea.setText(app.getCommandSyntax(cmd));
+		//helpTextArea.setCaretPosition(0);
+		helpTextPane.repaint();	
 	}
 	
 
@@ -679,7 +725,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			cmdTree.setRootVisible(false);
 			fcnTree.collapseRow(0);
 			btnRefresh.setEnabled(false);
-			helpTextArea.setText("");
+			helpTextPane.setText("");
 			selectedCommand = null;
 			selectedFunction = null;
 		}
