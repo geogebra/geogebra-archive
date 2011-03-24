@@ -679,12 +679,18 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 			}
 			return true;
 		}
-		else if (op == ExpressionNode.AND || op == ExpressionNode.OR) {
+		else if (op == ExpressionNode.AND || op == ExpressionNode.OR
+				||op == ExpressionNode.EQUAL_BOOLEAN || op == ExpressionNode.NOT_EQUAL) {
 			tree.operation = op;
 			tree.left = new IneqTree();
 			tree.right = new IneqTree();
 			initIneqs(leftTree, inverseFill,functional,tree.left);
 			initIneqs(rightTree, inverseFill,functional,tree.right);
+			return true;
+		}else if (op == ExpressionNode.NOT) {
+			tree.operation = op;
+			tree.left = new IneqTree();
+			initIneqs(leftTree, inverseFill,functional,tree.left);			
 			return true;
 		}
 		else return false;

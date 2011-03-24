@@ -90,6 +90,18 @@ public class DrawInequality extends Drawable {
 			setShape(left.getShape());
 			getShape().add(right.getShape());
 		}
+		else if(operation==ExpressionNode.EQUAL_BOOLEAN){
+			setShape(new Area(view.getBoundingPath()));
+			left.getShape().exclusiveOr(right.getShape());
+			getShape().subtract(left.getShape());				
+		}else if(operation==ExpressionNode.NOT_EQUAL){			
+			setShape(left.getShape());
+			getShape().exclusiveOr(right.getShape());						
+		}else if(operation==ExpressionNode.NOT){			
+			setShape(new Area(view.getBoundingPath()));
+			getShape().subtract(left.getShape());
+		}
+		
 		if(ineq==null)
 			return;		
 		if(drawable == null || !matchBorder(ineq.getBorder(),drawable)){
