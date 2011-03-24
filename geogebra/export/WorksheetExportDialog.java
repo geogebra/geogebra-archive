@@ -685,7 +685,7 @@ public class WorksheetExportDialog extends JDialog {
 				appletHeight = sizePanel.getSelectedHeight();
 			}
 
-			stringSelection = new StringSelection(getAppletTag(app, null, appletWidth, appletHeight, false, removeLineBreaks, cbIncludeHTML5.isSelected()));
+			stringSelection = new StringSelection(getAppletTag(app, null, appletWidth, appletHeight, false, removeLineBreaks, cbIncludeHTML5.isSelected(), false));
 			break;
 			
 		//case TYPE_JSXGRAPH:
@@ -838,7 +838,7 @@ public class WorksheetExportDialog extends JDialog {
 			//appendWithLineBreak(sb,"<p>Tab 1 content.</p>");
 			sb.append("<p>");			
 
-			sb.append(getAppletTag(application, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), false, removeLineBreaks, cbIncludeHTML5.isSelected()));
+			sb.append(getAppletTag(application, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), false, removeLineBreaks, cbIncludeHTML5.isSelected(), true));
 			sb.append("</p>");
 
 			appendWithLineBreak(sb,"</div>");
@@ -1225,7 +1225,7 @@ public class WorksheetExportDialog extends JDialog {
 		appendWithLineBreak(sb, "<![CDATA[");
 		appendWithLineBreak(sb, "<div id='ggbapplet'>");
 		
-		sb.append(getAppletTag(app, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true, removeLineBreaks, cbIncludeHTML5.isSelected()));
+		sb.append(getAppletTag(app, null, sizePanel.getSelectedWidth(), sizePanel.getSelectedHeight(), true, removeLineBreaks, cbIncludeHTML5.isSelected(), true));
 
 		appendWithLineBreak(sb, "</div>");
 		appendWithLineBreak(sb, "]]>");
@@ -1320,7 +1320,7 @@ public class WorksheetExportDialog extends JDialog {
 
 		// include applet tag
 		appendWithLineBreak(sb, "");
-		sb.append(getAppletTag(app, ggbFile, appletWidth, appletHeight, true, removeLineBreaks, cbIncludeHTML5.isSelected()));
+		sb.append(getAppletTag(app, ggbFile, appletWidth, appletHeight, true, removeLineBreaks, cbIncludeHTML5.isSelected(), true));
 		appendWithLineBreak(sb, "");
 
 		// text after applet
@@ -1426,7 +1426,7 @@ public class WorksheetExportDialog extends JDialog {
 		return sb.toString();
 	}
 	
-	public String getAppletTag(Application app, File ggbFile, int width, int height, boolean mayscript, boolean RemoveLineBreaks, boolean includeHTML5) {
+	public String getAppletTag(Application app, File ggbFile, int width, int height, boolean mayscript, boolean RemoveLineBreaks, boolean includeHTML5, boolean includeNoJavaMessage) {
 		
 		this.removeLineBreaks = RemoveLineBreaks;
 		
@@ -1512,7 +1512,10 @@ public class WorksheetExportDialog extends JDialog {
 			appendWithLineBreak(sb, "\t<param name=\"bgcolor\" value=\"#FFFFFF\"  />");
 		}
 
-		appendWithLineBreak(sb, app.getPlain("NoJavaMessage"));
+		// problem with Moodle 1.9.5 mangling this
+		if (includeNoJavaMessage)
+			appendWithLineBreak(sb, app.getPlain("NoJavaMessage"));
+		
 		sb.append("</applet>");
 		if (includeHTML5) {	
 			appendWithLineBreak(sb, "</noscript>");
