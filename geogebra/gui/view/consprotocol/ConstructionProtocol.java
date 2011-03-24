@@ -887,7 +887,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		
 		public void updateAlgebraAndName() {
 			algebra = geo.getAlgebraDescriptionTextOrHTML();
-			algebra = showOnlyValue(algebra);
+			//algebra = showOnlyValue(algebra);
 			// name description changes if type changes, e.g. ellipse becomes
 			// hyperbola
 			name = geo.getNameDescriptionTextOrHTML();
@@ -929,7 +929,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			// name = geo.getNameDescriptionHTML(true, true);
 			name = geo.getNameDescriptionTextOrHTML();
 			algebra = geo.getAlgebraDescriptionTextOrHTML();
-			algebra = showOnlyValue(algebra);			
+			//algebra = showOnlyValue(algebra);			
 			definition = geo.getDefinitionDescriptionHTML(true);
 			command = geo.getCommandDescriptionHTML(true);			
 			consProtocolVisible = new Boolean(geo.isConsProtocolBreakpoint());
