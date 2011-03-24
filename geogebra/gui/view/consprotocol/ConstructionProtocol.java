@@ -1,3 +1,4 @@
+package geogebra.gui.view.consprotocol;
 /* 
 GeoGebra - Dynamic Mathematics for Everyone
 http://www.geogebra.org
@@ -10,7 +11,7 @@ the Free Software Foundation.
 
  */
 
-package geogebra.gui.view.consprotocol;
+
 
 import geogebra.euclidian.Drawable;
 import geogebra.export.WorksheetExportDialog;
@@ -19,6 +20,7 @@ import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
 import geogebra.main.Application;
@@ -876,7 +878,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 					// geo is shown in the protocol
 		GeoElement geo;
 		ImageIcon toolbarIcon;
-		String name, algebra, definition, command;
+		String name, algebra, definition, command, caption;
 		boolean includesIndex;
 		Boolean consProtocolVisible;
 
@@ -886,14 +888,19 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 		
 		public void updateAlgebraAndName() {
-			algebra = geo.getAlgebraDescriptionTextOrHTML();
-			//algebra = showOnlyValue(algebra);
+			if (geo instanceof GeoText)
+				algebra = "\""+geo.toValueString()+"\"";
+			else algebra = geo.getAlgebraDescriptionTextOrHTML();
 			// name description changes if type changes, e.g. ellipse becomes
 			// hyperbola
 			name = geo.getNameDescriptionTextOrHTML();
 			// name = geo.getNameDescriptionHTML(true, true);
 		}
 
+		public void updateCaption(){
+			caption = geo.getRawCaption();
+		}
+		
 		public void updateAll() {
 
 			/* Only one toolbar should be displayed for each step,
@@ -928,10 +935,14 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 			// name = geo.getNameDescriptionHTML(true, true);
 			name = geo.getNameDescriptionTextOrHTML();
-			algebra = geo.getAlgebraDescriptionTextOrHTML();
-			//algebra = showOnlyValue(algebra);			
+			//algebra = geo.getRedefineString(true, true);
+			//algebra = geo.toOutputValueString();
+			if (geo instanceof GeoText)
+				algebra = "\""+geo.toValueString()+"\"";
+			else algebra = geo.getAlgebraDescriptionTextOrHTML();
 			definition = geo.getDefinitionDescriptionHTML(true);
-			command = geo.getCommandDescriptionHTML(true);			
+			command = geo.getCommandDescriptionHTML(true);
+			caption = geo.getCaption();
 			consProtocolVisible = new Boolean(geo.isConsProtocolBreakpoint());
 
 			// does this line include an index?
@@ -941,11 +952,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 					|| (command.indexOf("<sub>") >= 0);
 		}
 
-		private String showOnlyValue(String text){
-			if (text.indexOf("=")>-1)
-				text=text.substring(text.indexOf("=")+1);
-			return text;
-		}
 		
 	}
 
@@ -1011,7 +1017,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				new ColumnData("Command", 150, 50, SwingConstants.LEFT, false),
 				new ColumnData("Value", 150, 50, SwingConstants.LEFT, true),
 				new ColumnData("Breakpoint", 70, 35, SwingConstants.CENTER,
-						false), };
+						false),
+				new ColumnData("Caption", 150, 50, SwingConstants.LEFT, true) };
 
 		private ArrayList rowList;
 		// map for (GeoElement, RowData) pairs
@@ -1185,6 +1192,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				return ((RowData) rowList.get(nRow)).algebra;
 			case 6:
 				return ((RowData) rowList.get(nRow)).consProtocolVisible;
+			case 7:
+				return ((RowData) rowList.get(nRow)).caption;
 			}
 			return "";
 		}
@@ -1474,6 +1483,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 					remove(geo);
 				else {
 					row.updateAlgebraAndName();
+					row.updateCaption();
 					fireTableRowsUpdated(row.rowNumber, row.rowNumber);
 				}
 			} else {
