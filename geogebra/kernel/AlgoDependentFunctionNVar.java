@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.main.Application;
 
 /**
  * This class is needed to handle dependent multivariate functions like
@@ -93,10 +94,10 @@ public class AlgoDependentFunctionNVar extends AlgoElement {
     }
     
     private StringBuilder sb;
-    public String toString() {
+    public String toString() {    	
         if (sb == null) sb = new StringBuilder();
         else sb.setLength(0);
-        if (f.isLabelSet()) {
+        if (f.isLabelSet() && !f.isBooleanFunction()) {
             sb.append(f.label);
             sb.append("(");
 			sb.append(f.getVarString());
@@ -107,10 +108,11 @@ public class AlgoDependentFunctionNVar extends AlgoElement {
     }
     
     public String toRealString() {
+    	Application.printStacktrace("wrong string");
         if (sb == null) sb = new StringBuilder();
         else sb.setLength(0);
-        if (f.isLabelSet()) {
-            sb.append(f.label);
+        if (f.isLabelSet() && !f.isBooleanFunction()) {
+            sb.append(f.getRealLabel());
             sb.append("(");
 			sb.append(f.getVarString());
 			sb.append(") = ");

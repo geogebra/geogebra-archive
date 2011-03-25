@@ -20,6 +20,8 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
+
 import java.util.List;
 
 /**
@@ -229,7 +231,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	/**
 	 * @return function description as f(x,y)=... for real and e.g. f:x>4*y for bool
 	 */
-	public String toString() {
+	public String toString() {		
 		if (isLabelSet() && !isBooleanFunction())
 			return toXMLString();
 		sbToString.setLength(0);

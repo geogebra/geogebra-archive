@@ -166,10 +166,13 @@ public class Inequality {
 					GeoLine[] lines = conicBorder.getLines();
 					midX = midpoint.x + lines[0].x + lines[1].x;
 					midY = midpoint.y + lines[0].y + lines[1].y;
-				} else {
+				} else if (conicBorder.type == GeoConic.CONIC_PARABOLA){
+					midX = midpoint.x+conicBorder.p*conicBorder.eigenvec[0].x;
+					midY = midpoint.y+conicBorder.p*conicBorder.eigenvec[0].x;;
+				} else {					
 					midX = midpoint.x;
 					midY = midpoint.y;
-				}
+				} 
 				normalCopy.replace(fv[0], new MyDouble(kernel, midX));
 				normalCopy.replace(fv[1], new MyDouble(kernel, midY));
 				double valAtCenter = ((NumberValue) normalCopy.evaluate())

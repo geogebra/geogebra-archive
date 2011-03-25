@@ -210,7 +210,7 @@ public class AlgoDependentFunction extends AlgoElement {
     public String toString() {
         if (sb == null) sb = new StringBuilder();
         else sb.setLength(0);
-        if (f.isLabelSet()) {
+        if (f.isLabelSet() && !f.isBooleanFunction()) {
             sb.append(f.label);
             sb.append("(");
 			sb.append(f.getVarString());
@@ -223,8 +223,8 @@ public class AlgoDependentFunction extends AlgoElement {
     public String toRealString() {
         if (sb == null) sb = new StringBuilder();
         else sb.setLength(0);
-        if (f.isLabelSet()) {
-            sb.append(f.label);
+        if (f.isLabelSet() && !f.isBooleanFunction()) {
+            sb.append(f.getRealLabel());
             sb.append("(");
 			sb.append(f.getVarString());
 			sb.append(") = ");

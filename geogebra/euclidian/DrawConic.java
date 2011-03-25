@@ -123,7 +123,8 @@ final public class DrawConic extends Drawable implements Previewable {
 	private int previewMode, neededPrevPoints;
     
 	public Area getShape(){
-		Area a = new Area(shape);
+		Area a = super.getShape()!=null? 
+				super.getShape():new Area(shape);
 		if(conic.isInverseFill()){                    	        	
         	Area b = new Area(view.getBoundingPath());
         	b.subtract(a);
@@ -595,7 +596,8 @@ final public class DrawConic extends Drawable implements Previewable {
             firstHyperbola = false;
             points = PLOT_POINTS;
             hypRight = new GeneralPathClipped(view); // right wing
-            hypLeft  = new GeneralPathClipped(view); // left wing                                     
+            hypLeft  = new GeneralPathClipped(view); // left wing            
+            
         }     
         else {
         	hypRight.reset();
@@ -693,6 +695,8 @@ final public class DrawConic extends Drawable implements Previewable {
         transform.transform(labelCoords, 0, labelCoords, 0, 1);
         xLabel = (int) labelCoords[0];
         yLabel = (int) labelCoords[1];
+        setShape(new Area(hypLeft));
+        super.getShape().add(new Area(hypRight));
     }
     
     final private void updateParabola() {
@@ -770,11 +774,8 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_PARALLEL_LINES:
                 drawLines[0].draw(g2);
                 drawLines[1].draw(g2);                
-                if(conic.isInverseFill()){                    	
-                	Area a = new Area(shape);
-                	Area b = new Area(view.getBoundingPath());
-                	b.subtract(a);
-                	fill(g2, b, false);
+                if(conic.isInverseFill()){                    	                	
+                	fill(g2, getShape(), false);
                 }
                 else fill(g2, shape, false);
                 break;             
@@ -787,10 +788,7 @@ final public class DrawConic extends Drawable implements Previewable {
             case GeoConic.CONIC_ELLIPSE:                                
 			case GeoConic.CONIC_PARABOLA: 	
                     if(conic.isInverseFill()){                    	
-                    	Area a = new Area(shape);
-                    	Area b = new Area(view.getBoundingPath());
-                    	b.subtract(a);
-                    	fill(g2, b, false);
+                    	fill(g2, getShape(), false);
                     }
                     else {                    	
                     	fill(g2, shape, false); // fill using default/hatching/image as appropriate

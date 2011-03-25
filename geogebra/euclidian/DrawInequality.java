@@ -102,8 +102,15 @@ public class DrawInequality extends Drawable {
 			getShape().subtract(left.getShape());
 		}
 		
-		if(ineq==null)
+		if(ineq==null){
+			if(geo.isInverseFill() && !isForceNoFill()){                    	        	
+	        	Area b = new Area(view.getBoundingPath());
+	        	b.subtract(getShape());
+	        	setShape(b);
+	        }
 			return;		
+		}
+			
 		if(drawable == null || !matchBorder(ineq.getBorder(),drawable)){
 			switch (ineq.getType()){
 				case Inequality.INEQUALITY_PARAMETRIC_Y: 
@@ -120,7 +127,7 @@ public class DrawInequality extends Drawable {
 					break;	
 				case Inequality.INEQUALITY_CONIC: 
 					drawable = new DrawConic(view, ineq.getConicBorder());					
-					ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());	
+					ineq.getConicBorder().setInverseFill(ineq.isAboveBorder());	
 					break;	
 				case Inequality.INEQUALITY_IMPLICIT: 
 					drawable = new DrawImplicitPoly(view, ineq.getImpBorder());
@@ -135,10 +142,13 @@ public class DrawInequality extends Drawable {
 		}
 		else {
 			if(ineq.getType() == Inequality.INEQUALITY_CONIC) {					
-				ineq.getConicBorder().setInverseFill(geo.isInverseFill() ^ ineq.isAboveBorder());
+				ineq.getConicBorder().setInverseFill(ineq.isAboveBorder());
 			}
 			drawable.update();
 		}
+		
+		
+		
 		setShape(drawable.getShape());
 		
 		
@@ -288,7 +298,7 @@ public class DrawInequality extends Drawable {
 				bx = intervalX[1];
 				double axEv = view.toScreenCoordYd(ax);
 				double bxEv = view.toScreenCoordYd(bx);				
-				if (geo.isInverseFill() ^ ineq.isAboveBorder()) {
+				if (ineq.isAboveBorder()) {
 					gp.moveTo(view.width+10, axEv);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
 							false, false);
@@ -318,7 +328,7 @@ public class DrawInequality extends Drawable {
 				bx = intervalX[1];
 				double axEv = view.toScreenCoordXd(ax);
 				double bxEv = view.toScreenCoordXd(bx);				
-				if (geo.isInverseFill() ^ ineq.isAboveBorder()) {
+				if (ineq.isAboveBorder()) {
 					gp.moveTo(axEv, -10);
 					DrawParametricCurve.plotCurve(border, ax, bx, view, gp,
 							false, false);
