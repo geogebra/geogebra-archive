@@ -161,7 +161,6 @@ public class TableSymbols {
 		// create a list of special symbols for the current locale
 		int index = 100;
 		while (app.getSymbol(index) != null){
-			System.out.println(index + "==========> " + app.getSymbol(index));
 			extraSymbols.add(app.getSymbol(index));
 			index++;
 		}
