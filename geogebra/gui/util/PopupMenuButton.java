@@ -268,6 +268,13 @@ public class PopupMenuButton extends JButton implements ChangeListener{
 		myPopup.add(component);
 	}
 	
+	public void removePopupMenuItem(JComponent component){
+		myPopup.remove(component);
+	}
+	
+	public void removeAllMenuItems(){
+		myPopup.removeAll();
+	}
 	
 	/**
 	 * Override processMouseEvents to prevent firing a mouseReleased event and

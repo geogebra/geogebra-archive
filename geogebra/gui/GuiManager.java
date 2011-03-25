@@ -131,6 +131,7 @@ public class GuiManager {
 	private Layout layout;
 
 	private FunctionInspector functionInspector;
+	private TextInputDialog textInputDialog;
 	
 	// Actions
 	private AbstractAction showAxesAction, showGridAction, undoAction,
@@ -815,6 +816,9 @@ public class GuiManager {
 			
 		if(functionInspector != null)
 			functionInspector.setLabels();
+
+		if(textInputDialog != null)
+			textInputDialog.setLabels();
 		
 		layout.getDockManager().setLabels();			
 	}
@@ -1060,13 +1064,13 @@ public class GuiManager {
 		showTextDialog(null, startPoint);
 	}
 
-	private JDialog textInputDialog;
+	
 
 	private void showTextDialog(GeoText text, GeoPoint startPoint) {
 		app.setWaitCursor();
 
 		if(textInputDialog == null)
-			textInputDialog = createTextDialog(text, startPoint);
+			textInputDialog = (TextInputDialog) createTextDialog(text, startPoint);
 		else
 			((TextInputDialog)textInputDialog).reInitEditor(text,startPoint);
 

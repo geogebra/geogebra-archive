@@ -165,6 +165,9 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		cbLaTeX.addActionListener(this);
 
 		// create insertion buttons
+		btInsertUnicode = new PopupMenuButton();
+		btInsertLaTeX = new PopupMenuButton();
+		
 		buildInsertLaTeXButton();
 		buildInsertUnicodeButton();		
 		buildInsertGeoButton();	
@@ -245,14 +248,16 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 */
 	private void buildInsertUnicodeButton(){
 
-		btInsertUnicode = new PopupMenuButton();
+		if(btInsertUnicode != null)
+			btInsertUnicode.removeAllMenuItems();
+		
 		btInsertUnicode.setKeepVisible(false);
 		btInsertUnicode.setStandardButton(true);
 		btInsertUnicode.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
 		//btInsertUnicode.setText("Symbols");
 
 		JMenu menu = new JMenu(app.getMenu("Properties.Basic"));
-		menu.add(new LatexTable(app, this, btInsertUnicode, TableSymbols.basicSymbols, -1, 11,SelectionTable.MODE_TEXT));
+		menu.add(new LatexTable(app, this, btInsertUnicode, TableSymbols.basicSymbols(app), -1, 11,SelectionTable.MODE_TEXT));
 		btInsertUnicode.addPopupMenuItem(menu);
 		//btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.math_ops,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.operators,-1,8));
@@ -286,8 +291,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 * Builds LaTeX insertion button and drop down tables.
 	 */
 	private void buildInsertLaTeXButton(){
-
-		btInsertLaTeX = new PopupMenuButton();
+		
+		if(btInsertLaTeX != null){
+			btInsertLaTeX.removeAllMenuItems();
+		}
+		
 		btInsertLaTeX.setKeepVisible(false);
 		btInsertLaTeX.setStandardButton(true);
 		btInsertLaTeX.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
@@ -477,7 +485,10 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	//      Getters/Setters
 	//=============================================================
 
-
+	public void setLabels() {
+		setLabels(app.getPlain("Text"));
+	}
+	
 	public void setLabels(String title) {
 
 		if(isIniting) return;
@@ -489,10 +500,14 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		if(previewHeader != null)
 			previewHeader.setText(app.getMenu("Preview"));
 
+		// rebuild the symbol tables to catch localized symbols
+		buildInsertUnicodeButton();
+		buildInsertLaTeXButton();
+	
 		btInsertLaTeX.setText(app.getPlain("LaTeXFormula"));	
 		btInsertUnicode.setText(app.getMenu("Symbols"));
 		btInsertGeo.setText(app.getMenu("Objects"));	
-
+			
 	}
 
 
