@@ -25,7 +25,7 @@ public class SymbolTable extends SelectionTable implements MenuElement{
 
 
 	private MyTextField inputField;
-
+	private Application app;
 
 	public SymbolTable(Application app, MyTextField inputField) {
 		super(app, TableSymbols.basicSymbols(app), -1,10, new Dimension(24,24), SelectionTable.MODE_TEXT);
@@ -35,6 +35,7 @@ public class SymbolTable extends SelectionTable implements MenuElement{
 		setFocusable(false);
 		setToolTipArray(TableSymbols.basicSymbolsToolTips(app));
 		this.inputField = inputField;
+		this.app = app;
 
 	}
 
@@ -55,7 +56,7 @@ public class SymbolTable extends SelectionTable implements MenuElement{
 
 	public void processMouseEvent(MouseEvent arg0, MenuElement[] arg1, MenuSelectionManager arg2) {
 
-		if(this.getSelectedIndex() >= TableSymbols.basicSymbols.length) return;
+		if(this.getSelectedIndex() >= this.getData().length) return;
 
 		if (arg0.getID()==MouseEvent.MOUSE_RELEASED){
 			inputField.handlePopupSelection();

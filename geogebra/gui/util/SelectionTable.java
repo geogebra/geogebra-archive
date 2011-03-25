@@ -293,7 +293,9 @@ public class SelectionTable extends JTable{
 				if(toolTipArray!=null){
 					int index = getColumnCount() * row  + column;
 					if(index < data.length)
-						setToolTipText(toolTipArray[index]);  
+						setToolTipText(toolTipArray[index]);
+					else
+						setToolTipText(null);
 				}
 				repaint();
 			}

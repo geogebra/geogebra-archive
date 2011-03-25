@@ -1,5 +1,9 @@
 package geogebra.gui.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
@@ -12,11 +16,11 @@ import geogebra.util.Unicode;
  */
 public class TableSymbols {
 
+
 	/**
 	 * array of basic symbols displayed in the MyTextField popup
 	 */
-	public final static String [] basicSymbols = {
-
+	private final static String [] basicSymbols = {
 
 		"\u03B1" ,     //GREEK SMALL LETTER ALPHA
 		"\u03B2" ,     //GREEK SMALL LETTER BETA
@@ -69,7 +73,7 @@ public class TableSymbols {
 		ExpressionNode.strIS_ELEMENT_OF,
 		ExpressionNode.strIS_SUBSET_OF,
 		ExpressionNode.strIS_SUBSET_OF_STRICT,
-		
+
 
 		"\u2220", //ANGLE
 		"\u2221", //MEASURED ANGLE
@@ -96,19 +100,19 @@ public class TableSymbols {
 				{ "\u03B6" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B6"},  //lowercaseGreekZETA
 				{ "\u03B7" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B7"},  //lowercaseGreekETA
 				{ "\u03B8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B8"},  //lowercaseGreekTHETA
-		    //	{ "\u03B9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B9"},  //lowercaseGreekIOTA
+				//	{ "\u03B9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B9"},  //lowercaseGreekIOTA
 				{ "\u03BA" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BA"},  //lowercaseGreekKAPPA
 				{ "\u03BB" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BB"},  //lowercaseGreekLAMDA
 				{ "\u03BC" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BC"},  //lowercaseGreekMU
-		    //	{ "\u03BD" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BD"},  //lowercaseGreekNU
+				//	{ "\u03BD" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BD"},  //lowercaseGreekNU
 				{ "\u03BE" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BE"},  //lowercaseGreekXI
-		    //	{ "\u03BF" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BF"},  //lowercaseGreekOMICRON
-			//	{ "\u03C0" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C0"},  //lowercaseGreekPI
+				//	{ "\u03BF" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BF"},  //lowercaseGreekOMICRON
+				//	{ "\u03C0" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C0"},  //lowercaseGreekPI
 				{ "\u03C1" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C1"},  //lowercaseGreekRHO
-		    //	{ "\u03C2" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C2"},  //lowercaseGreekFINALSIGMA
+				//	{ "\u03C2" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C2"},  //lowercaseGreekFINALSIGMA
 				{ "\u03C3" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C3"},  //lowercaseGreekSIGMA
 				{ "\u03C4" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C4"},  //lowercaseGreekTAU
-			//	{ "\u03C5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C5"},  //lowercaseGreekUPSILON
+				//	{ "\u03C5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C5"},  //lowercaseGreekUPSILON
 				{ "\u03D5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03D5"},  //lowercaseGreekPHI
 				{ "\u03C7" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C7"},  //lowercaseGreekCHI
 				{ "\u03C8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C8"},  //lowercaseGreekPSI
@@ -152,9 +156,23 @@ public class TableSymbols {
 
 	public final static String[] basicSymbols(Application app){
 
-		String[] array = new String[basicSymbolsMap(app).length];
-		for(int i=0; i< array.length; i++){
+		ArrayList<String> extraSymbols = new ArrayList<String>();
+		
+		// create a list of special symbols for the current locale
+		int index = 100;
+		while (app.getSymbol(index) != null){
+			System.out.println(index + "==========> " + app.getSymbol(index));
+			extraSymbols.add(app.getSymbol(index));
+			index++;
+		}
+		
+		// build the array from the basic symbol array and the extra symbol list
+		String[] array = new String[basicSymbolsMap(app).length + extraSymbols.size()];
+		for(int i=0; i< basicSymbolsMap(app).length; i++){
 			array[i] = basicSymbolsMap(app)[i][0];
+		}
+		for(int i=0; i < extraSymbols.size(); i++){
+			array[i + basicSymbolsMap(app).length] = extraSymbols.get(i);
 		}
 		return array;
 	};
@@ -162,8 +180,8 @@ public class TableSymbols {
 
 	public final static String[] basicSymbolsToolTips(Application app){
 
-		String[] array = new String[basicSymbolsMap(app).length];
-		for(int i=0; i< array.length; i++){
+		String[] array = basicSymbols(app);
+		for(int i=0; i< basicSymbolsMap(app).length; i++){
 			array[i] = basicSymbolsMap(app)[i][1];
 		}
 		return array;
