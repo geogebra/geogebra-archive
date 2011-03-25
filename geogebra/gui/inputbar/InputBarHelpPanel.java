@@ -86,6 +86,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	private JLabel titleLabel;
 	private JLabel syntaxLabel;
 	private JButton btnPaste;
+	private JScrollPane scroller;
 
 	
 	
@@ -110,7 +111,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		commandPanel.add(tablePanel,BorderLayout.NORTH);
 		commandPanel.add(cmdTree,BorderLayout.CENTER);
 		commandPanel.setBorder(BorderFactory.createEmptyBorder());
-		JScrollPane scroller = new JScrollPane(commandPanel);
+		scroller = new JScrollPane(commandPanel);
+	
 		//scroller.setBorder(BorderFactory.createEmptyBorder());
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		
@@ -345,6 +347,10 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		d.width = Math.max( (int) (1.25* this.cmdSplitPane.getPreferredSize().width),
 				this.getPreferredSize().width);
 		this.setMinimumSize(d);
+		
+		// adjust scrolling increments to match font size
+		scroller.getVerticalScrollBar().setBlockIncrement(10*app.getFontSize());
+		scroller.getVerticalScrollBar().setUnitIncrement(3*app.getFontSize());
 		
 		
 	}
