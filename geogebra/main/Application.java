@@ -1927,6 +1927,8 @@ public class Application implements KeyEventDispatcher {
 			rbcommand = MyResourceBundle.createBundle(RB_COMMAND, currentLocale);
 		if (rbcolors != null)
 			rbcolors = MyResourceBundle.createBundle(RB_COLORS, currentLocale);
+		if (rbsymbol != null)
+			rbsymbol = MyResourceBundle.createBundle(RB_SYMBOL, currentLocale);
 	}
 	
 	/*
