@@ -124,6 +124,7 @@ public class GeoGebraKeys implements KeyListener {
 				keyString = ".";
 			else if (keyString.equals("equals"))
 				keyString = "=";
+			else if (keyString.length() > 1) Application.debug("Unknown keyString: "+keyString);
 			
 			// workaround for shifted characters:
 			// (different in different locales)
@@ -156,6 +157,11 @@ public class GeoGebraKeys implements KeyListener {
 					insertStr = "\u2260"; // alt-= -> notEqualTo
 					break;
 				case Unicode.eGrave :
+					Application.debug("matched eGrave "+e.isShiftDown());
+					insertStr = e.isShiftDown() ? "{" : "["; // for Italian keyboard
+					break;					
+				case Unicode.eAcute : // Shift+eGrave on Italian keyboard
+					Application.debug("matched eAcute "+e.isShiftDown());
 					insertStr = e.isShiftDown() ? "{" : "["; // for Italian keyboard
 					break;					
 				case '+' :
@@ -209,7 +215,7 @@ public class GeoGebraKeys implements KeyListener {
 						insertStr = "\u03b3"; // alt-g -> unicode gamma
 					break;
 				case 'i' :
-					insertStr = Unicode.IMAGINARY; // alt-i -> infinity
+					insertStr = Unicode.IMAGINARY; // alt-i -> sqrt(-1) symbol
 					break;
 				case 'l' :
 					if (e.isShiftDown())
@@ -292,6 +298,8 @@ Ctrl Alt               {   }
 				case '9' :
 					insertStr = "\u2079"; // alt-9 -> unicode superscript 9
 					break;
+				default:
+					Application.debug("no key matched "+keyString+" "+Util.toHexString(keyString));
 				}
 
 			if (!insertStr.equals("")) {
