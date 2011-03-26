@@ -80,7 +80,7 @@ public class GeoGebraEditorPane extends JEditorPane implements CaretListener,
 		addMouseMotionListener(this);
 		addMouseListener(this);
 		addFocusListener(this);
-		addKeyListener(new GeoGebraKeys());
+		addKeyListener(new GeoGebraKeys(app));
 	}
 
 	/**

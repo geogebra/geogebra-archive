@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import geogebra.gui.virtualkeyboard.MyTextField;
+import geogebra.main.Application;
 
 /*
  * Michael Borcherds
@@ -15,10 +16,11 @@ import geogebra.gui.virtualkeyboard.MyTextField;
 
 public class MathTextField extends MyTextField implements KeyListener {
 
-	private static GeoGebraKeys ggbKeys = new GeoGebraKeys();
+	private static GeoGebraKeys ggbKeys;
 	
-	public MathTextField(GuiManager guiManager) {
-		super(guiManager);
+	public MathTextField(Application app) {
+		super(app.getGuiManager());
+		ggbKeys = new GeoGebraKeys(app);
 		addKeyListener(this);
 	}
 	

@@ -26,6 +26,8 @@ public class Unicode {
 	final public static String degree = Character.toString(degreeChar);
 	/** Unicode symbol for e */
 	
+	final public static char eGrave = '\u00E8'; 
+	
 	final public static char eulerChar = '\u212f'; // "\u0435";
 	final public static String EULER_STRING = eulerChar + ""; // "\u0435";
 	

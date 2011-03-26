@@ -234,7 +234,7 @@ public class AlgebraView extends JTree implements View {
 
 	private void initTreeCellRendererEditor() {
 		renderer = new MyRenderer(app);		
-		editTF = new MathTextField(app.getGuiManager());
+		editTF = new MathTextField(app);
 		editor = new MyDefaultTreeCellEditor(this, renderer, 
 									new MyCellEditor(editTF, app));
 		

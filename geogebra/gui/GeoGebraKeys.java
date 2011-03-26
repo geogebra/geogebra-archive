@@ -1,5 +1,6 @@
 package geogebra.gui;
 
+import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
@@ -23,8 +24,12 @@ public class GeoGebraKeys implements KeyListener {
 	private static StringBuilder altCodes = new StringBuilder();
 
 	private boolean altPressed;
+	
+	Application app;
 
-	public GeoGebraKeys() { }
+	public GeoGebraKeys(Application app) {
+		this.app = app;
+	}
 	
 	public void keyPressed(KeyEvent e) {   
 		//Application.debug("keyPressed");
@@ -106,7 +111,7 @@ public class GeoGebraKeys implements KeyListener {
 			if (!e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD)
 				keyString = e.getKeyChar() + "";
 			
-			Application.debug("Key pressed "+Util.toHexString(e.getKeyChar()));
+			Application.debug("Key pressed "+Util.toHexString(e.getKeyChar())+" "+keyString);
 			
 			// workaround for different Java versions!!
 			if (keyString.equals("minus"))
@@ -150,8 +155,12 @@ public class GeoGebraKeys implements KeyListener {
 				case '=' :
 					insertStr = "\u2260"; // alt-= -> notEqualTo
 					break;
+				case Unicode.eGrave :
+					insertStr = "{"; // for Italian keyboard
+					break;					
 				case '+' :
-					insertStr = "\u00b1"; // alt-+ -> minusOrPlus
+					if (app.getLocale().toString().startsWith("it")) insertStr = "}"; // Italian keyboard			
+					else insertStr = "\u00b1"; // alt-+ -> plusOrMinus
 					break;
 				case '-' :
 					//insertStr = "\u2213"; // alt-- -> minusOrPlus

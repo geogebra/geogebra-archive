@@ -52,7 +52,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	}    
 
 	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey) {
-		super(app.getGuiManager());
+		super(app);
 		setColumns(columns);
 
 		this.app = app;

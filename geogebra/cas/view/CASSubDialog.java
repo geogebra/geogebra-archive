@@ -334,7 +334,7 @@ public class CASSubDialog extends JDialog implements ActionListener {
 		
 		public MathTextCellEditor(GuiManager guiManager) {
 			super();
-			delegate=new MathTextField(guiManager);
+			delegate=new MathTextField(app);
 			editing=false;
 			changeEvent=new ChangeEvent(delegate);
 			delegate.addKeyListener(new KeyAdapter() {	
