@@ -101,11 +101,30 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 	// this is used by stat dialogs when setting window dimensions
 	private double freqMax;
 
+	/**
+	 * Returns maximum frequency of a bar chart or histogram
+	 * @return
+	 */
 	public double getFreqMax() {
 		return freqMax;
 	}
-
-
+	
+	/**
+	 * Returns y values (heights) of a bar chart or histogram
+	 * @return
+	 */
+	public double[] getYValue() {
+		return yval;
+	}
+	
+	/**
+	 * Returns left class borders of a bar chart or histogram
+	 * @return
+	 */
+	public double[] getLeftBorder() {
+		return leftBorder;
+	}
+	
 	/**
 	 * Rectangle sum
 	 * @param cons

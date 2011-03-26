@@ -2996,7 +2996,7 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Histogram
+	 * Histogram with list of class boundaries and list of heights
 	 */
 	final public GeoNumeric Histogram(String label, 
 					GeoList list1, GeoList list2) {
@@ -3026,9 +3026,6 @@ public class Kernel {
 	}
 	
 	
-	
-	
-	
 	/** 
 	 * Histogram with density scale factor and cumulative parameter
 	 */
@@ -3037,6 +3034,48 @@ public class Kernel {
 		AlgoHistogram algo = new AlgoHistogram(cons, label, isCumulative, list1, list2, useDensity, density);
 		GeoNumeric sum = algo.getSum();
 		return sum;
+	}
+	
+	
+	/** 
+	 * FrequencyPolygon with list of class boundaries and list of heights
+	 */
+	final public GeoPolyLine FrequencyPolygon(String label, 
+					GeoList list1, GeoList list2) {
+		AlgoFrequencyPolygon algo = new AlgoFrequencyPolygon(cons, label, list1, list2);
+		GeoPolyLine result = algo.getResult();
+		return result;
+	}
+	
+	/** 
+	 * FrequencyPolygon with density scale factor  (no cumulative parameter)
+	 */
+	final public GeoPolyLine FrequencyPolygon(String label, 
+					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
+		AlgoFrequencyPolygon algo = new AlgoFrequencyPolygon(cons, label, null, list1, list2, useDensity, density);
+		GeoPolyLine result = algo.getResult();
+		return result;
+	}
+	
+	/** 
+	 * FrequencyPolygon with density scale factor and cumulative parameter
+	 */
+	final public GeoPolyLine FrequencyPolygon(String label, GeoBoolean isCumulative,
+					GeoList list1, GeoList list2, GeoBoolean useDensity) {
+		AlgoFrequencyPolygon algo = new AlgoFrequencyPolygon(cons, label, isCumulative, list1, list2, useDensity, null);
+		GeoPolyLine result = algo.getResult();
+		return result;
+	}
+	
+	
+	/** 
+	 * FrequencyPolygon with density scale factor and cumulative parameter
+	 */
+	final public GeoPolyLine FrequencyPolygon(String label, GeoBoolean isCumulative,
+					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
+		AlgoFrequencyPolygon algo = new AlgoFrequencyPolygon(cons, label, isCumulative, list1, list2, useDensity, density);
+		GeoPolyLine result = algo.getResult();
+		return result;
 	}
 	
 	

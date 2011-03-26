@@ -451,6 +451,7 @@ public class CommandDispatcher {
     	cmdTable.put("DotPlot", new CmdDotPlot(kernel)); //G.Sturr 2010-8-10
     	cmdTable.put("StemPlot", new CmdStemPlot(kernel));  
     	cmdTable.put("ResidualPlot", new CmdResidualPlot(kernel));  
+    	cmdTable.put("FrequencyPolygon", new CmdFrequencyPolygon(kernel));  
     	
     	cmdSubTable[TABLE_CHARTS].putAll(cmdTable);
     	cmdTable.clear();
