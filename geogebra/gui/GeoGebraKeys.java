@@ -156,10 +156,10 @@ public class GeoGebraKeys implements KeyListener {
 					insertStr = "\u2260"; // alt-= -> notEqualTo
 					break;
 				case Unicode.eGrave :
-					insertStr = "{"; // for Italian keyboard
+					insertStr = e.isShiftDown() ? "{" : "["; // for Italian keyboard
 					break;					
 				case '+' :
-					if (app.getLocale().toString().startsWith("it")) insertStr = "}"; // Italian keyboard			
+					if (app.getLocale().toString().startsWith("it")) insertStr = e.isShiftDown() ? "}" : "]"; // Italian keyboard			
 					else insertStr = "\u00b1"; // alt-+ -> plusOrMinus
 					break;
 				case '-' :
