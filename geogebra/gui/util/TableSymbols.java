@@ -159,11 +159,11 @@ public class TableSymbols {
 		ArrayList<String> extraSymbols = new ArrayList<String>();
 		
 		// create a list of special symbols for the current locale
-		int index = 100;
+		int index = 1;
 		while (app.getSymbol(index) != null){
 			extraSymbols.add(app.getSymbol(index));
 			index++;
-		}
+		};
 		
 		// build the array from the basic symbol array and the extra symbol list
 		String[] array = new String[basicSymbolsMap(app).length + extraSymbols.size()];
@@ -179,9 +179,20 @@ public class TableSymbols {
 
 	public final static String[] basicSymbolsToolTips(Application app){
 
+		ArrayList<String> extraTooltips = new ArrayList<String>();
+		
+		// create a list of special symbols for the current locale
+		int index = 1;
+		while (app.getSymbol(index) != null){
+			extraTooltips.add(app.getSymbolTooltip(index));
+			index++;
+		};
 		String[] array = basicSymbols(app);
 		for(int i=0; i< basicSymbolsMap(app).length; i++){
 			array[i] = basicSymbolsMap(app)[i][1];
+		}
+		for(int i=0; i < extraTooltips.size(); i++){
+			array[i + basicSymbolsMap(app).length] = extraTooltips.get(i);
 		}
 		return array;
 	};

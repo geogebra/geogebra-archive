@@ -2186,6 +2186,18 @@ public class Application implements KeyEventDispatcher {
 		}
 	}
 
+	final public String getSymbolTooltip(int key) {
+		if (rbsymbol == null) {
+			initSymbolResourceBundle();
+		}
+
+		try {
+			return rbsymbol.getString("T."+key);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
 //	final public String reverseGetPlain(String str) {
 //		if (rbplain == null) {			
 //			initPlainResourceBundle();
