@@ -2,6 +2,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
@@ -1305,43 +1306,30 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 		Font font = app.getPlainFont();
 
-		int size = font.getSize();
-		if (size < 12) size = 12; // minimum size
-		double multiplier = (double)(size)/12.0;
-
-		table.setRowHeight((int)(MyTable.TABLE_CELL_HEIGHT * multiplier));
-		rowHeader.setFixedCellWidth((int)(ROW_HEADER_WIDTH * multiplier));	
-
-		//rowHeader.setFixedCellHeight(table.getRowHeight()); //G.STURR 2010-1-9 
+		MyTextField dummy = new MyTextField(app.getGuiManager());
+		dummy.setFont(font);
+		dummy.setText("999999");
+		int h = dummy.getPreferredSize().height;
+		int w = dummy.getPreferredSize().width;
+		
+		//TODO: column widths are not set from here
+		// need to revise updateColumnWidths() to do this correctly
+		
+		table.setRowHeight(h);
+		rowHeader.setFixedCellWidth(w);	
+		table.preferredColumnWidth = w;
+		table.columnHeader.setPreferredSize(new Dimension(w, h));
 
 		table.setFont(app.getPlainFont());
 		rowHeader.setFont(font);
 		table.columnHeader.setFont(font);
 		rowHeaderRenderer.setFont(font);
-		table.preferredColumnWidth = (int) (MyTable.TABLE_CELL_WIDTH * multiplier);
-		table.columnHeader.setPreferredSize(new Dimension(table.preferredColumnWidth
-				, (int)(MyTable.TABLE_CELL_HEIGHT * multiplier)));
-
-		// G.Sturr 2010-4-2
+		
 		// Adjust row heights for tall LaTeX images
 		table.fitAll(true, false); 
 
-		/*
-		JLabel testLabel = new JLabel();
-		testLabel.setFont(app.getFontCanDisplay("M", Font.BOLD));
-		testLabel.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
-
-		testLabel.setText("M");
-		int newHeight = (int) testLabel.getPreferredSize().getHeight();
-
-		table.setRowHeight(newHeight);
-		table.columnHeader.setPreferredSize(new Dimension((int)(MyTable.TABLE_CELL_WIDTH * multiplier)
-				, newHeight));
-		 */
-
 		if(fileBrowser != null)
 			fileBrowser.updateFonts();
-
 	}
 
 
