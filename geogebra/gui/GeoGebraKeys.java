@@ -3,6 +3,7 @@ package geogebra.gui;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
+import geogebra.util.Util;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -104,6 +105,8 @@ public class GeoGebraKeys implements KeyListener {
 			// Numeric keypad numbers eg NumPad-8, NumPad *
 			if (!e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD)
 				keyString = e.getKeyChar() + "";
+			
+			Application.debug("Key pressed "+Util.toHexString(e.getKeyChar()));
 			
 			// workaround for different Java versions!!
 			if (keyString.equals("minus"))
