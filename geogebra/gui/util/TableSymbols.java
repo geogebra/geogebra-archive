@@ -92,41 +92,41 @@ public class TableSymbols {
 	public final static String[][] basicSymbolsMap(Application app) {
 
 		String[][] array = {
-				{ "\u03B1" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B1"},  //lowercaseGreekALPHA
-				{ "\u03B2" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B2"},  //lowercaseGreekBETA
-				{ "\u03B3" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B3"},  //lowercaseGreekGAMMA
-				{ "\u03B4" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B4"},  //lowercaseGreekDELTA
-				{ "\u03B5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B5"},  //lowercaseGreekEPSILON
-				{ "\u03B6" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B6"},  //lowercaseGreekZETA
-				{ "\u03B7" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B7"},  //lowercaseGreekETA
-				{ "\u03B8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B8"},  //lowercaseGreekTHETA
+				{ "\u03B1" , app.getPlain("GreekCharacterA", "\u03B1" ) },  //lowercaseGreekALPHA
+				{ "\u03B2" , app.getPlain("GreekCharacterA", "\u03B2" ) },  //lowercaseGreekBETA
+				{ "\u03B3" , app.getPlain("GreekCharacterA", "\u03B3" ) },  //lowercaseGreekGAMMA
+				{ "\u03B4" , app.getPlain("GreekCharacterA", "\u03B4" ) },  //lowercaseGreekDELTA
+				{ "\u03B5" , app.getPlain("GreekCharacterA", "\u03B5" ) },  //lowercaseGreekEPSILON
+				{ "\u03B6" , app.getPlain("GreekCharacterA", "\u03B6" ) },  //lowercaseGreekZETA
+				{ "\u03B7" , app.getPlain("GreekCharacterA", "\u03B7" ) },  //lowercaseGreekETA
+				{ "\u03B8" , app.getPlain("GreekCharacterA", "\u03B8" ) },  //lowercaseGreekTHETA
 				//	{ "\u03B9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03B9"},  //lowercaseGreekIOTA
-				{ "\u03BA" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BA"},  //lowercaseGreekKAPPA
-				{ "\u03BB" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BB"},  //lowercaseGreekLAMDA
-				{ "\u03BC" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BC"},  //lowercaseGreekMU
+				{ "\u03BA" , app.getPlain("GreekCharacterA", "\u03BA" ) },  //lowercaseGreekKAPPA
+				{ "\u03BB" , app.getPlain("GreekCharacterA", "\u03BB" ) },  //lowercaseGreekLAMDA
+				{ "\u03BC" , app.getPlain("GreekCharacterA", "\u03BC" ) },  //lowercaseGreekMU
 				//	{ "\u03BD" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BD"},  //lowercaseGreekNU
-				{ "\u03BE" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BE"},  //lowercaseGreekXI
+				{ "\u03BE" , app.getPlain("GreekCharacterA", "\u03BE" ) },  //lowercaseGreekXI
 				//	{ "\u03BF" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03BF"},  //lowercaseGreekOMICRON
 				//	{ "\u03C0" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C0"},  //lowercaseGreekPI
-				{ "\u03C1" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C1"},  //lowercaseGreekRHO
+				{ "\u03C1" , app.getPlain("GreekCharacterA", "\u03C1" ) },  //lowercaseGreekRHO
 				//	{ "\u03C2" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C2"},  //lowercaseGreekFINALSIGMA
-				{ "\u03C3" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C3"},  //lowercaseGreekSIGMA
-				{ "\u03C4" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C4"},  //lowercaseGreekTAU
+				{ "\u03C3" , app.getPlain("GreekCharacterA", "\u03C3" ) },  //lowercaseGreekSIGMA
+				{ "\u03C4" , app.getPlain("GreekCharacterA", "\u03C4" ) },  //lowercaseGreekTAU
 				//	{ "\u03C5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C5"},  //lowercaseGreekUPSILON
-				{ "\u03D5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03D5"},  //lowercaseGreekPHI
-				{ "\u03C7" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C7"},  //lowercaseGreekCHI
-				{ "\u03C8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C8"},  //lowercaseGreekPSI
-				{ "\u03C9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C9"},  //lowercaseGreekOMEGA
-				{ "\u0393" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u0393"},  //uppercaseGreekGAMMA
-				{ "\u0394" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u0394"},  //uppercaseGreekDELTA
-				{ "\u0398" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u0398"},  //uppercaseGreekTHETA
-				{ "\u039b" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u039b"},  //uppercaseGreekLAMBDA
-				{ "\u039e" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u039e"},  //uppercaseGreekXI
-				{ "\u03a0" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a0"},  //uppercaseGreekPI
-				{ "\u03a3" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a3"},  //uppercaseGreekSIGMA
-				{ "\u03a6" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a6"},  //uppercaseGreekPHI
-				{ "\u03a8" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a8"},  //uppercaseGreekPSI
-				{ "\u03a9" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03a9"},  //uppercaseGreekOMEGA
+				{ "\u03D5" , app.getPlain("GreekCharacterA", "\u03D5" ) },  //lowercaseGreekPHI
+				{ "\u03C7" , app.getPlain("GreekCharacterA", "\u03C7" ) },  //lowercaseGreekCHI
+				{ "\u03C8" , app.getPlain("GreekCharacterA", "\u03C8" ) },  //lowercaseGreekPSI
+				{ "\u03C9" , app.getPlain("GreekCharacterA", "\u03C9" ) },  //lowercaseGreekOMEGA
+				{ "\u0393" , app.getPlain("GreekCharacterA", "\u0393" ) },  //uppercaseGreekGAMMA
+				{ "\u0394" , app.getPlain("GreekCharacterA", "\u0394" ) },  //uppercaseGreekDELTA
+				{ "\u0398" , app.getPlain("GreekCharacterA", "\u0398" ) },  //uppercaseGreekTHETA
+				{ "\u039b" , app.getPlain("GreekCharacterA", "\u039b" ) },  //uppercaseGreekLAMBDA
+				{ "\u039e" , app.getPlain("GreekCharacterA", "\u039e" ) },  //uppercaseGreekXI
+				{ "\u03a0" , app.getPlain("GreekCharacterA", "\u03a0" ) },  //uppercaseGreekPI
+				{ "\u03a3" , app.getPlain("GreekCharacterA", "\u03a3" ) },  //uppercaseGreekSIGMA
+				{ "\u03a6" , app.getPlain("GreekCharacterA", "\u03a6" ) },  //uppercaseGreekPHI
+				{ "\u03a8" , app.getPlain("GreekCharacterA", "\u03a8" ) },  //uppercaseGreekPSI
+				{ "\u03a9" , app.getPlain("GreekCharacterA", "\u03a9" ) },  //uppercaseGreekOMEGA
 				{ "\u221e" , app.getMenu("Symbol.Infinity" )},   
 				{ ExpressionNode.strVECTORPRODUCT , app.getMenu("Symbol.VectorProduct" )},   
 				{ ExpressionNode.strEQUAL_BOOLEAN , app.getMenu("Symbol.BooleanEqual" )},   
