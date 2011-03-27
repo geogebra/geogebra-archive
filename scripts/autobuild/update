@@ -44,7 +44,7 @@ export ANT_OPTS="-Xmx1024m"
 ant geogebra-cl || exit 3
 ant installer-clean installer-macosx
 WARNINGS=`chmod -R g+rw build 2>&1 | wc -l | awk '{print $1}'`
-echo "$WARNINGS warnings during build files"
+echo "$WARNINGS warnings during chmod'ing build files"
 
 # 5. Setting local variables
 MYVER=`cat build/unpacked/version.txt`
