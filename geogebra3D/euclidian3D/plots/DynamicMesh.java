@@ -418,7 +418,7 @@ public abstract class DynamicMesh {
 		if (printInfo)
 			System.out.println(getDebugInfo(new Date().getTime() - t1));
 
-		if (side==Side.NONE) // this only happens if the LoD
+		if (side!=prevSide) // this only happens if the LoD
 			return true; // is at the desired level
 
 		return false;

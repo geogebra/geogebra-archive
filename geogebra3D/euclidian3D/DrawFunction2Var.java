@@ -2,6 +2,7 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
+import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.plots.SurfaceMesh;
@@ -72,34 +73,34 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	@Override
 	protected void realtimeUpdate(){
-		Renderer renderer = getView3D().getRenderer();
-		mesh.setRadius(savedRadius);
-		mesh.optimize();
-		
-		PlotterSurface surface = renderer.getGeometryManager().getSurface();
-		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
-		surface.start(geo);
-		
-		float uMin, uMax, vMin, vMax;
-		if (unlimitedRange){
-			uMin = -1; uMax = 1; vMin = -1; vMax = 1;
-		}else{
-			uMin = (float) geo.getMinParameter(0);
-			uMax = (float) geo.getMaxParameter(0);
-			vMin = (float) geo.getMinParameter(1);
-			vMax = (float) geo.getMaxParameter(1);
-		}
-		
-		surface.setU(uMin,uMax);
-		surface.setNbU((int) (uMax-uMin)*10);
-		surface.setV(vMin, vMax);
-		surface.setNbV((int) (vMax-vMin)*10);
-		
-		//TODO use fading texture
-		
-
-		surface.draw(mesh);
-		setGeometryIndex(surface.end());
+//		Renderer renderer = getView3D().getRenderer();
+//		mesh.setRadius(savedRadius);
+//		mesh.optimize();
+//		
+//		PlotterSurface surface = renderer.getGeometryManager().getSurface();
+//		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
+//		surface.start(geo);
+//		
+//		float uMin, uMax, vMin, vMax;
+//		if (unlimitedRange){
+//			uMin = -1; uMax = 1; vMin = -1; vMax = 1;
+//		}else{
+//			uMin = (float) geo.getMinParameter(0);
+//			uMax = (float) geo.getMaxParameter(0);
+//			vMin = (float) geo.getMinParameter(1);
+//			vMax = (float) geo.getMaxParameter(1);
+//		}
+//		
+//		surface.setU(uMin,uMax);
+//		surface.setNbU((int) (uMax-uMin)*10);
+//		surface.setV(vMin, vMax);
+//		surface.setNbV((int) (vMax-vMin)*10);
+//		
+//		//TODO use fading texture
+//		
+//
+//		surface.draw(mesh);
+//		setGeometryIndex(surface.end());
 	}
 	
 	/** 
@@ -135,14 +136,38 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	}
 	
 	protected boolean updateForItSelf(){
-		updateRadius();
-		if(unlimitedRange){
-			lastBaseRadius=savedRadius*unlimitedScaleFactor;
-			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-		} else
-			mesh = new SurfaceMesh(function, savedRadius, false);
+		super.updateForItSelf();
+		boolean ret = true;
+		
+		Renderer renderer = getView3D().getRenderer();
+		mesh.setRadius(savedRadius);
+		ret = mesh.optimize();
+		
+		PlotterSurface surface = renderer.getGeometryManager().getSurface();
+		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
+		surface.start(geo);
+		
+		float uMin, uMax, vMin, vMax;
+		if (unlimitedRange){
+			uMin = -1; uMax = 1; vMin = -1; vMax = 1;
+		}else{
+			uMin = (float) geo.getMinParameter(0);
+			uMax = (float) geo.getMaxParameter(0);
+			vMin = (float) geo.getMinParameter(1);
+			vMax = (float) geo.getMaxParameter(1);
+		}
+		
+		surface.setU(uMin,uMax);
+		surface.setNbU((int) (uMax-uMin)*10);
+		surface.setV(vMin, vMax);
+		surface.setNbV((int) (vMax-vMin)*10);
+		
+		//TODO use fading texture
+		
+		surface.draw(mesh);
+		setGeometryIndex(surface.end());
 
-		return super.updateForItSelf();
+		return ret;
 	}
 	
 	protected void updateForView(){
@@ -156,11 +181,14 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
 			mesh = new SurfaceMesh(function, lastBaseRadius, true);
+			setWaitForUpdate();
 		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
 			lastBaseRadius=savedRadius/unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
 			mesh = new SurfaceMesh(function, lastBaseRadius, true);
+			setWaitForUpdate
+			();
 		} 
 //		else if(oldRadius!=savedRadius && mesh != null)
 //			mesh.turnOnUpdates();
