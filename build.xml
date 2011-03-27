@@ -465,7 +465,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 	<!-- Define Proguard task -->
 	<taskdef 
 		resource="proguard/ant/task.properties" 
-		classpath="tools_proguard451.jar" />
+		classpath="tools_proguard46.jar" />
 
 	<!-- Define pack200 task -->
 	<!-- bug in Java 6, see http://www.geogebra.org/forum/viewtopic.php?f=8&t=3972&st=0&sk=t&sd=a&start=15 -->
