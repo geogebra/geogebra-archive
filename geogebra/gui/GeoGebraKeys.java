@@ -107,8 +107,10 @@ public class GeoGebraKeys implements KeyListener {
 				//Application.debug("alt:"+altCodes);
 			}
 			
+			boolean numpad = e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD;
+			
 			// Numeric keypad numbers eg NumPad-8, NumPad *
-			if (!e.isAltDown() && e.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD)
+			if (!e.isAltDown() && numpad)
 				keyString = e.getKeyChar() + "";
 			
 			Application.debug("Key pressed "+Util.toHexString(e.getKeyChar())+" "+keyString);
@@ -126,24 +128,23 @@ public class GeoGebraKeys implements KeyListener {
 				keyString = "=";
 			else if (keyString.length() > 1) Application.debug("Unknown keyString: "+keyString);
 			
+			switch (e.getKeyChar()) {
 			// workaround for shifted characters:
 			// (different in different locales)
-			if (e.getKeyChar() == '+')
-				keyString = "+";
-			else if (e.getKeyChar() == '*')
-				keyString = "*";
-			else if (e.getKeyChar() == '=')
-				keyString = "=";
-			else if (e.getKeyChar() == '-')
-				keyString = "-";
-			else if (e.getKeyChar() == '>')
-				keyString = ">";
-			else if (e.getKeyChar() == '<')
-				keyString = "<";
+			case  '+': 
+			case  '*': 
+			case  '=': 
+			case  '-': 
+			case  '>': 
+			case  '<': 
+				// Italian keyboard, keyString="unknown keycode: 0x0" for these two
+			case  Unicode.eGrave: 
+			case  Unicode.eAcute: 
+				keyString = e.getKeyChar()+""; 
+			}
+				
 			
-
-			
-			//Application.debug(keyString);
+			boolean italian = app.getLocale().toString().startsWith("it");
 
 
 			// don't want to act on eg "Shift"
@@ -151,10 +152,12 @@ public class GeoGebraKeys implements KeyListener {
 				switch (keyString.charAt(0)) {
 
 				case '*' :
-					insertStr = ExpressionNode.strVECTORPRODUCT; // alt-* -> vector product
+					if (italian && !numpad) insertStr = e.isShiftDown() ? "}" : "]"; // Italian keyboard			
+					else insertStr = ExpressionNode.strVECTORPRODUCT; // alt-* -> vector product
 					break;
-				case '=' :
-					insertStr = "\u2260"; // alt-= -> notEqualTo
+				case '+' :
+					if (italian) insertStr = e.isShiftDown() ? "}" : "]"; // Italian keyboard			
+					else insertStr = "\u00b1"; // alt-+ -> plusOrMinus
 					break;
 				case Unicode.eGrave :
 					Application.debug("matched eGrave "+e.isShiftDown());
@@ -164,9 +167,8 @@ public class GeoGebraKeys implements KeyListener {
 					Application.debug("matched eAcute "+e.isShiftDown());
 					insertStr = e.isShiftDown() ? "{" : "["; // for Italian keyboard
 					break;					
-				case '+' :
-					if (app.getLocale().toString().startsWith("it")) insertStr = e.isShiftDown() ? "}" : "]"; // Italian keyboard			
-					else insertStr = "\u00b1"; // alt-+ -> plusOrMinus
+				case '=' :
+					insertStr = "\u2260"; // alt-= -> notEqualTo
 					break;
 				case '-' :
 					//insertStr = "\u2213"; // alt-- -> minusOrPlus
