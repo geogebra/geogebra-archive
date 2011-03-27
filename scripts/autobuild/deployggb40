@@ -60,7 +60,9 @@ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
  fi
 
 # 9. Sending an email to geogebra-dev:
+REVISION=`cat .revision`
 echo "New version of GeoGebra 4.0 has just been uploaded: $MYVER
+http://www.geogebra.org/trac/log/trunk?rev=$REVISION
 Automatic message, do not reply" | mail -s "deployggb40 report" geogebra-dev@googlegroups.com || exit 7
 
 date
