@@ -332,17 +332,14 @@ public class MyTextField extends JTextField implements FocusListener, VirtualKey
 	}
 
 
-	/**
-	 * Overrides getInsets so that an icon can be inserted on the far left.
+	/**	 
+	 * Overrides getInsets so that an icon can be inserted on the far right.
 	 * (Note: setMargin() should really be used for this but it will not work
 	 * when custom borders are applied.)
 	 */
 	public Insets getInsets(){
 		Insets insets = super.getInsets();
 		insets.right = insets.right + iconOffset;
-		insets.left = insets.left ; //left margin
-		insets.top = insets.top + 2;
-		insets.bottom = insets.bottom + 2;
 		return insets;
 	}
 
