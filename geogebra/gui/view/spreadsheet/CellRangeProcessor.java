@@ -84,29 +84,61 @@ public class CellRangeProcessor {
 	}
 
 
-	/** Returns true if at least three cells in rangeList are nonempty  */
-	public boolean isOneVarStatsPossible(ArrayList<CellRange> rangeList){
+	/**
+	 * Returns true if at least three cells in rangeList are GeoNumeric
+	 */
+	public boolean isOneVarStatsPossible(ArrayList<CellRange> rangeList) {
 
 		if(rangeList == null || rangeList.size() == 0) return false; 
 
-		int count = 0;
-		for(CellRange cr:rangeList)
-			for (int col = cr.getMinColumn(); col <= cr.getMaxColumn(); ++col) {
-				for (int row = cr.getMinRow(); row <= cr.getMaxRow(); ++row) {
-					GeoElement geo = RelativeCopy.getValue(table, col, row);
-					if (geo != null) ++count;
-					if(count > 2) return true;
-				}
-			}
+		for(CellRange cr:rangeList){
+			if(containsMinimumGeoNumeric(cr,3)) return true;
+		}
 
 		return false;
 
 	}
 
 
+	/**
+	 * Returns true if rangeList contains two or more columns and each column
+	 * has at least three data values.
+	 * 
+	 * @param rangeList
+	 * @return
+	 */
+	public boolean isMultiVarStatsPossible(ArrayList<CellRange> rangeList){
 
+		if(rangeList == null || rangeList.size() == 0) return false; 
 
+		int columnCount = 0;
+		for(CellRange cr : rangeList){
+			if(!cr.isColumn()) return false;
+			if(!containsMinimumGeoNumeric(cr,3)) return false;
+			columnCount += cr.getMaxColumn() - cr.getMinColumn() + 1;
+		}
 
+		return columnCount >= 2;
+
+	}
+
+	/**
+	 * Returns true if the number of GeoNumeric cells in cellRange is at least minimumCount.
+	 * @param cellRange
+	 * @param minimumCount
+	 * @return
+	 */
+	private boolean containsMinimumGeoNumeric(CellRange cellRange, int minimumCount){
+		int count = 0;
+		for (int col = cellRange.getMinColumn(); col <= cellRange.getMaxColumn(); ++col) {
+			for (int row = cellRange.getMinRow(); row <= cellRange.getMaxRow(); ++row) {
+				GeoElement geo = RelativeCopy.getValue(table, col, row);
+				if (geo != null && geo.isGeoNumeric()) ++count;
+				if(count >= minimumCount) return true;
+			}
+		}
+		return false;
+	}
 
 
 
@@ -410,7 +442,7 @@ public class CellRangeProcessor {
 
 
 		} else {   // vertical pairs
-			
+
 			// handle first title
 			if(RelativeCopy.getValue(table, pd.c1, pd.r1).isGeoText()){
 				//header cell text
@@ -436,7 +468,7 @@ public class CellRangeProcessor {
 				// cell range
 				title[1] = getCellRangeString(new CellRange(table,pd.c1,pd.r2,pd.c2,pd.r2));
 			}
-				
+
 		}
 
 		if(!leftToRight){
@@ -444,6 +476,31 @@ public class CellRangeProcessor {
 			title[0]=title[1];
 			title[1]=temp;
 		}
+		return title;
+	}
+
+
+
+
+	public String[] getColumnTitles(ArrayList<CellRange> rangeList) {
+
+		ArrayList<String> titleList = new ArrayList<String>();
+
+		for(CellRange cr : rangeList){
+			// get column header or column name from each column in this cell range
+			for(int col = cr.getMinColumn(); col <= cr.getMaxColumn(); col++){
+				if(RelativeCopy.getValue(table, col, 0).isGeoText()){
+					// use header cell text
+					titleList.add(((GeoText)RelativeCopy.getValue(table, col, 0)).getTextString());
+				}else{
+					// use column name
+					titleList.add(getCellRangeString(new CellRange(table,col,-1,col,-1)));
+				}
+			}
+		}
+		
+		String[] title = new String[titleList.size()];
+		title = titleList.toArray(title);
 		return title;
 	}
 
@@ -587,9 +644,6 @@ public class CellRangeProcessor {
 		return sb.toString();
 
 	}
-
-
-
 
 
 
@@ -973,30 +1027,30 @@ public class CellRangeProcessor {
 
 
 	public String getCellRangeString(CellRange range){
-		
+
 		String s = "";
-		
+
 		if(range.isColumn()){
 			s = app.getCommand("Column") + " " + GeoElement.getSpreadsheetColumnName(range.getMinColumn());
-			
+
 		}else if(range.isRow()){
 			s = app.getCommand("Row") + " " + (range.getMinRow() + 1);
-			
+
 		}else if(!range.isSingleCell()){
 			s = GeoElement.getSpreadsheetCellName(range.getMinColumn(), range.getMinRow());
 			s += ":";
 			s += GeoElement.getSpreadsheetCellName(range.getMaxColumn(),range.getMaxRow());
-			
+
 		}else{
 			s = GeoElement.getSpreadsheetCellName(range.getMinColumn(), range.getMinRow());
 		}
-		
+
 		return s;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 
 }

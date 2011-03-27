@@ -6,12 +6,12 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
+
+import java.awt.Color;
 
 /**
  * 
@@ -397,12 +397,12 @@ public class StatGeo   {
 		yMaxData = freqMax;
 		
 		ps = setXYBounds(ps, settings, .2, .1);
-		
-	//	double buffer = .25*(xMaxData - xMinData);
-	//	ps.xMin = xMinData - buffer;  
-	//	ps.xMax = xMaxData + buffer;
-	//	ps.yMin = -1.0;
-	//	ps.yMax = 1.1 * freqMax;
+
+		//	double buffer = .25*(xMaxData - xMinData);
+		//	ps.xMin = xMinData - buffer;  
+		//	ps.xMax = xMaxData + buffer;
+		//	ps.yMin = -1.0;
+		//	ps.yMax = 1.1 * freqMax;
 		ps.showYAxis = true;
 		ps.isEdgeAxis[0] = false;
 		ps.isEdgeAxis[1] = true;
@@ -431,7 +431,7 @@ public class StatGeo   {
 		PlotSettings ps = new PlotSettings();
 
 		getDataBounds(dataList);
-		
+
 		double buffer = .25*(xMaxData - xMinData);
 		ps.xMin = xMinData - buffer;
 		ps.xMax = xMaxData + buffer;
@@ -450,15 +450,15 @@ public class StatGeo   {
 		GeoElement geo;
 
 		// Sequence[BoxPlot[k, 0.33333, Element[mm, k]], k, 1, Length[mm]]
-
-		String	text = "Sequence[BoxPlot[k, 1/3, Element[" + label + ", k]], k, 1, Length[" + label + "]]";
+		String len = "Length[" + label + "]";
+		String	text = "Sequence[BoxPlot[k, 1/3, Element[" + label + "," + len + "-k+1]], k, 1," + len + "]";
 		geo  = createGeoFromString(text);
 		geo.setObjColor(StatDialog.BOXPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
 		return geo;		
 	}
 
-	public PlotSettings updateMultipleBoxPlot(GeoList dataList){
+	public PlotSettings getMultipleBoxPlotSettings(GeoList dataList){
 
 		PlotSettings ps = new PlotSettings();
 
@@ -475,7 +475,24 @@ public class StatGeo   {
 
 	}
 
+	public GeoElement createBoxPlotTitles(StatDialog statDialog, PlotSettings ps){
 
+		String[] dataTitles = statDialog.getDataTitles();	
+		GeoElement geo;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for (int i = 0; i < dataTitles.length; i++){
+			sb.append("Text[\"  " + dataTitles[dataTitles.length - i - 1] + "\", (" + ps.xMin + "," + (i+1) + ")],");
+		}
+		sb.deleteCharAt(sb.lastIndexOf(","));
+		sb.append("}");
+		geo  = createGeoFromString(sb.toString());
+		geo.setBackgroundColor(Color.WHITE);
+		geo.setObjColor(Color.BLACK);
+		//((GeoList)geo).setFontStyle(Font.BOLD);
+		return geo;		
+	}
 
 
 	public GeoElement createDotPlot(GeoList dataList){
@@ -487,7 +504,7 @@ public class StatGeo   {
 		geo  = createGeoFromString(text);
 		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
-
+		
 		return geo;	
 	}
 
@@ -650,7 +667,7 @@ public class StatGeo   {
 	private PlotSettings setXYBounds(PlotSettings ps, StatPanelSettings settings, double xBufferScale, double yBufferScale){
 
 		if(settings.isAutomaticWindow){
-			
+
 			double xBuffer = xBufferScale*(xMaxData - xMinData);
 			settings.xMin = xMinData - xBuffer;
 			settings.xMax = xMaxData + xBuffer;
@@ -659,14 +676,14 @@ public class StatGeo   {
 			settings.yMin = yMinData - yBuffer;
 			settings.yMax = yMaxData + yBuffer;
 		}
-	
-			ps.xMin = settings.xMin;
-			ps.xMax = settings.xMax;
-			ps.yMin = settings.yMin;
-			ps.yMax = settings.yMax;
-			ps.xAxesInterval = settings.xInterval;
-			ps.yAxesInterval = settings.yInterval;
-		
+
+		ps.xMin = settings.xMin;
+		ps.xMax = settings.xMax;
+		ps.yMin = settings.yMin;
+		ps.yMax = settings.yMax;
+		ps.xAxesInterval = settings.xInterval;
+		ps.yAxesInterval = settings.yInterval;
+
 
 		ps.showGrid = settings.showGrid;
 		return ps;

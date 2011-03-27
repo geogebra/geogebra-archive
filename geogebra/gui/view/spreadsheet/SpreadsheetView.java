@@ -426,7 +426,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			break;
 
 		case EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS:
-			showStatDialog(StatDialog.MODE_MULTIVAR);
+			if(table.getCellRangeProcessor().isMultiVarStatsPossible(table.selectedCellRanges))
+				showStatDialog(StatDialog.MODE_MULTIVAR);
 			break;
 
 		case EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST:
@@ -1308,15 +1309,17 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 		MyTextField dummy = new MyTextField(app.getGuiManager());
 		dummy.setFont(font);
-		dummy.setText("999999");
+		dummy.setText("9999");  // for row header width
 		int h = dummy.getPreferredSize().height;
-		int w = dummy.getPreferredSize().width;
+		int w = dummy.getPreferredSize().width;	
+		rowHeader.setFixedCellWidth(w);	
 		
 		//TODO: column widths are not set from here
 		// need to revise updateColumnWidths() to do this correctly
-		
+		dummy.setText("MMMMMMMMMM");  // for column width
+		h = dummy.getPreferredSize().height;
+		w = dummy.getPreferredSize().width;
 		table.setRowHeight(h);
-		rowHeader.setFixedCellWidth(w);	
 		table.preferredColumnWidth = w;
 		table.columnHeader.setPreferredSize(new Dimension(w, h));
 

@@ -314,7 +314,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		try {
 			GeoElement geo = app.getSelectedGeos().get(0);
 			if(geo.isGeoList()){
-				// handle validation for a geoList source
+				// TODO: handle validation for a geoList source
 				dataSource = geo;
 			} else {
 				ArrayList<CellRange> rangeList = spreadsheetTable.selectedCellRanges;			
@@ -325,8 +325,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 					success = cr.isCreatePointListPossible(rangeList);
 				}
 				else if(mode == MODE_MULTIVAR){
-					//TODO --- create multivar test
-					success = cr.isOneVarStatsPossible(rangeList);
+					success = cr.isMultiVarStatsPossible(rangeList);
 				}
 
 				if(success)
@@ -513,10 +512,12 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 			break;
 
 		case MODE_MULTIVAR:
-			//TODO -- get actual titles, handling ctrl-select
-			title = new String[2];	
-			title[0] = app.getMenu("Untitled");
-			title[1] = app.getMenu("Untitled");
+			if(dataSource instanceof GeoList){
+				//TODO -- handle geolist data source titles
+				//title[0] = ((GeoList) dataSource).getLabel();
+			}else{
+				title = cr.getColumnTitles((ArrayList<CellRange>)dataSource);
+			}
 			break;
 
 		}
@@ -683,9 +684,9 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		btnClose.setText(app.getMenu("Close"));
 		btnPrint.setText(app.getMenu("Print"));	
 		btnOptions.setText(app.getMenu("Options"));
-			
+
 		comboStatPanel.setLabels();
-		
+
 		dialogOptionsPanel.setLabels();
 
 	}

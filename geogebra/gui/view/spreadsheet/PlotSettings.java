@@ -18,6 +18,7 @@ public class PlotSettings {
 	public boolean showYAxis = false;
 	public boolean showArrows = false;
 	public boolean forceXAxisBuffer = false;
+	public boolean forceYAxisBuffer = false;
 	public boolean[] isEdgeAxis = {false,false};
 	public boolean[] isPositiveOnly = {false,false};
 	

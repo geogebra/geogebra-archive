@@ -121,8 +121,9 @@ public class MultiVarStatPanel extends JPanel{
 		}
 
 		headerModel.setSize(0);
-		for(int i=0; i<dataList.size(); i++){
-			headerModel.addElement("var " + i);
+		String[] dataTitles = statDialog.getDataTitles();
+		for(int i=0; i < dataTitles.length; i++){
+			headerModel.addElement(dataTitles[i]);
 		}
 
 

@@ -88,6 +88,7 @@ public class StatComboPanel extends JPanel implements ActionListener{
 	private GeoList dataListSelected;
 	private GeoList regressionAnalysisList;
 	private ArrayList<GeoElement> plotGeoList;
+	private GeoElement histogram, dotPlot, boxPlotTitles, frequencyPolygon, normalCurve;
 
 
 	// display panels 	
@@ -654,9 +655,11 @@ public class StatComboPanel extends JPanel implements ActionListener{
 		switch(selectedPlot){
 
 		case PLOT_HISTOGRAM:			
-			if(doCreate)
-				plotGeoList.add(statGeo.createHistogram( dataListSelected, numClasses, settings));
-			plotPanel.setPlotSettings(statGeo.getHistogramSettings( dataListSelected, plotGeoList.get(plotGeoList.size()-1), settings));
+			if(doCreate){
+				histogram = statGeo.createHistogram( dataListSelected, numClasses, settings);
+				plotGeoList.add(histogram);
+			}
+			plotPanel.setPlotSettings(statGeo.getHistogramSettings( dataListSelected, histogram, settings));
 
 			if(hasControlPanel)
 				if(settings.useManualClasses)
@@ -676,9 +679,11 @@ public class StatComboPanel extends JPanel implements ActionListener{
 			break;
 
 		case PLOT_DOTPLOT:
-			if(doCreate)
-				plotGeoList.add(statGeo.createDotPlot( dataListSelected));
-			plotPanel.setPlotSettings(statGeo.updateDotPlot(dataListSelected, plotGeoList.get(plotGeoList.size()-1)));
+			if(doCreate){
+				dotPlot = statGeo.createDotPlot( dataListSelected);
+				plotGeoList.add(dotPlot);
+			}
+				plotPanel.setPlotSettings(statGeo.updateDotPlot(dataListSelected, dotPlot));
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			break;
 
@@ -748,9 +753,15 @@ public class StatComboPanel extends JPanel implements ActionListener{
 			break;
 
 		case PLOT_MULTIBOXPLOT:
-			if(doCreate)
+			if(doCreate){
 				plotGeoList.add(statGeo.createMultipleBoxPlot( dataListSelected));
-			plotPanel.setPlotSettings(statGeo.updateMultipleBoxPlot( dataListSelected));
+			}
+			plotPanel.setPlotSettings(statGeo.getMultipleBoxPlotSettings( dataListSelected));
+			if(boxPlotTitles != null)
+				boxPlotTitles.remove();
+			boxPlotTitles = statGeo.createBoxPlotTitles(statDialog, plotPanel.getPlotSettings());
+			plotGeoList.add(boxPlotTitles);
+			
 			((CardLayout)statDisplayPanel.getLayout()).show(statDisplayPanel, "plotPanel");
 			optionsButton.setVisible(false);
 			break;
