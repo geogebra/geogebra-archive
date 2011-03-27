@@ -9,11 +9,12 @@
 # argument 3: path of directory containing unpacked geogebra files
 # argument 4: path of directory containing unsigned geogebra files
 # argument 5: path of geogebra icon (eg. geogebra.png)
-# argument 6: path of destination directory
+# argument 6: path of start script geogebra
+# argument 7: path of destination directory
 
 import os, shutil, sys, tarfile, tempfile
-if len(sys.argv) != 7:
-	print("Error: Six arguments are expected.")
+if len(sys.argv) != 8:
+	print("Error: Seven arguments are expected.")
 	sys.exit(1)
 if not os.path.exists(sys.argv[2]):
 	print("Error: "+sys.argv[2]+" does not exist.")
@@ -30,12 +31,16 @@ if not os.path.exists(sys.argv[5]):
 if not os.path.exists(sys.argv[6]):
 	print("Error: "+sys.argv[6]+" does not exist.")
 	sys.exit(1)
+if not os.path.exists(sys.argv[7]):
+	print("Error: "+sys.argv[7]+" does not exist.")
+	sys.exit(1)
 geogebra_version = sys.argv[1].replace(".", "-")
 java_path = os.path.abspath(sys.argv[2])
 unpacked_path = os.path.abspath(sys.argv[3])
 unsigned_path = os.path.abspath(sys.argv[4])
 icon_path = os.path.abspath(sys.argv[5])
-destination_path = os.path.abspath(sys.argv[6])
+start_script_path = os.path.abspath(sys.argv[6])
+destination_path = os.path.abspath(sys.argv[7])
 if not os.path.isfile(java_path):
 	print("Error: "+java_path+" is not a file.")
 	sys.exit(1)
@@ -57,6 +62,9 @@ if os.path.splitext(icon_path)[1] != ".png":
 if not os.access(icon_path,os.R_OK):
 	print("Error: "+icon_path+" is not readable.")
 	sys.exit(1)
+if not os.path.isfile(start_script_path):
+	print("Error: "+start_script_path+" is not a file.")
+	sys.exit(1)
 if not os.path.isdir(destination_path):
 	print("Error: "+destination_path+" is not a directory.")
 	sys.exit(1)
@@ -77,10 +85,8 @@ try:
 	if not icon_filename == "geogebra.png":
 		os.rename(icon_filename, "geogebra.png")
 	os.chmod("geogebra.png",0o444)
-	with open("geogebra.sh", "w") as sh_file:
-		sh_file_lines = ["#!/bin/sh\n", "jre/bin/java -jar -Xms32m -Xmx512m geogebra.jar \"$@\"\n"]
-		sh_file.writelines(sh_file_lines)
-	os.chmod("geogebra.sh",0o755)
+	shutil.copy(start_script_path, ".")
+	os.chmod("geogebra",0o755)
 	os.system("sh "+java_path)
 	content = os.listdir(os.getcwd())
 	jre_dir = ""

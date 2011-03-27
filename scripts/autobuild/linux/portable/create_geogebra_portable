@@ -32,5 +32,6 @@ for i in ../../../../../jre*.bin; do
       ../../../../build/unpacked \
       ../../../../build/unsigned/unpacked \
       $IMAGE_DIR/geogebra.png \
+      geogebra \
       ../../../../build
      done

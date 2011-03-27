@@ -90,7 +90,13 @@ try:
 	os.mkdir("icons")
 	icons_tar_gz_file = tarfile.open(icons_tar_gz_file_path, "r:gz")
 	try:
-		icons_tar_gz_file.extractall("icons")
+		for item in ["16x16", "22x22", "24x24", "32x32", "36x36", "48x48", "64x64", "72x72", "96x96", "128x128", "192x192", "256x256"]:
+			icons_tar_gz_file.extract("hicolor/"+item+"/apps/geogebra.png", path="icons")
+			icons_tar_gz_file.extract("hicolor/"+item+"/mimetypes/application-vnd.geogebra.file.png", path="icons")
+			icons_tar_gz_file.extract("hicolor/"+item+"/mimetypes/application-vnd.geogebra.tool.png", path="icons")
+		icons_tar_gz_file.extract("hicolor/scalable/apps/geogebra.svgz", path="icons")
+		icons_tar_gz_file.extract("hicolor/scalable/mimetypes/application-vnd.geogebra.file.svgz", path="icons")
+		icons_tar_gz_file.extract("hicolor/scalable/mimetypes/application-vnd.geogebra.tool.svgz", path="icons")
 	finally:
 		icons_tar_gz_file.close()
 	shutil.copy(start_script_path, ".")
