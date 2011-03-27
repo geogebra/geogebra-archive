@@ -4,6 +4,7 @@ import geogebra.gui.TextInputDialog;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.main.Application;
+import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -50,9 +51,9 @@ public class LatexTable extends SelectionTable implements MenuElement{
 	public void setCaretPosition(int caretPosition){
 		this.caretPosition = caretPosition;
 	}
-	 
-	
-	
+
+
+
 	// support for MenuElement interface
 
 	public Component getComponent() {
@@ -74,17 +75,28 @@ public class LatexTable extends SelectionTable implements MenuElement{
 		if(this.getSelectedIndex() >= latexArray.length) return;
 
 		if (arg0.getID()==MouseEvent.MOUSE_RELEASED){
+
+			// get the selected string
 			StringBuffer sb = new StringBuffer(latexArray[this.getSelectedIndex()]);
-			String selText = ((InputPanel)inputDialog.getInputPanel()).getSelectedText();		
-			if (selText != null) {
-				sb.deleteCharAt(sb.indexOf("{")+1);
-				sb.insert(sb.indexOf("{")+1, selText);
+			// if LaTeX string, adjust the string to include selected text within braces
+			if(mode == SelectionTable.MODE_LATEX){
+				
+				String selText = ((InputPanel)inputDialog.getInputPanel()).getSelectedText();		
+				if (selText != null) {
+					sb.deleteCharAt(sb.indexOf("{")+1);
+					sb.insert(sb.indexOf("{")+1, selText);
+				}
 			}
 
-			inputDialog.insertString(sb.toString());
-			if(mode == SelectionTable.MODE_TEXT)
+			// now insert the string
+			inputDialog.insertString(sb.toString(), inputDialog.isLaTeX());
+
+			// if unicode string, add the string to the recent symbol list
+			if(mode == SelectionTable.MODE_TEXT){
 				inputDialog.addRecentSymbol(sb.toString());
-			//inputDialog.setRelativeCaretPosition(caretPosition);
+			}
+			
+			// notify the popup button
 			popupButton.handlePopupActionEvent();
 		}	
 	}

@@ -18,6 +18,7 @@ import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
+import geogebra.util.Util;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -221,9 +222,20 @@ public class InputDialog extends JDialog implements ActionListener,
 			insertString(" " + geo.getLabel() + " ");
 	}
 	
+	
 	public void insertString(String str) {
-		if (str != null)
+		insertString(str,false);
+	}
+		
+	public void insertString(String str, boolean isLatex) {
+		
+		boolean convertGreekLetters = !app.getLocale().equals("gr");
+		if (str != null){
+			if(isLatex){
+				str = Util.toLaTeXString(str, convertGreekLetters);
+			}		
 			inputPanel.insertString(str);
+		}
 	}
 	
 	protected void centerOnScreen() {

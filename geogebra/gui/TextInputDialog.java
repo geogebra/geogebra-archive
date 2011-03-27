@@ -71,6 +71,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	// editor and preview panels
 	private DynamicTextInputPane editor;
 	private TextPreviewPanel textPreviewer;
+	private TextInputDialog textInputDialog;
 
 	//GUI
 	private JCheckBox cbLaTeX;
@@ -117,6 +118,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		this.isTextMode = isTextMode;
 		this.title = title;
 		this.editGeo = editGeo;
+		textInputDialog = this;
 		inputHandler = new TextInputHandler();
 
 		isIniting = true;
@@ -449,7 +451,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 		recentSymbolTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				insertString(recentSymbolList.get(recentSymbolTable.getSelectedIndex()));
+				insertString(recentSymbolList.get(recentSymbolTable.getSelectedIndex()), textInputDialog.isLaTeX);
 			}
 		});
 
@@ -465,11 +467,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 
 	public void addRecentSymbol(String newSymbol){
-
-		this.recentSymbolList.add(0,newSymbol);
-		this.recentSymbolList.remove(recentSymbolList.size()-1);
-		updateRecentSymbolTable();
-
+		if(!recentSymbolList.contains(newSymbol)){
+			this.recentSymbolList.add(0,newSymbol);
+			this.recentSymbolList.remove(recentSymbolList.size()-1);
+			updateRecentSymbolTable();
+		}
 	}
 
 
