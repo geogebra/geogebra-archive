@@ -41,7 +41,8 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' | while read filename; do
 echo "$0: JAR files copied to 4.0 and history/$MYVER"
 
 # 5. Finally, making sure that all files have group writable permissions:
-chmod -R g+rw $WWWDIR/$MYDIR $WWWDIR/history
+WARNINGS=`chmod -R g+rw $WWWDIR/$MYDIR $WWWDIR/history 2>&1 | wc -l | awk '{print $1}'`
+echo "$WARNINGS warnings during chmod'ing web files"
 
 # 6. Deploying ggb40maxima as well:
 cd $SVNDIR/geogebra/scripts/autobuild/windows

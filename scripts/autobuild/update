@@ -32,7 +32,8 @@ else
  $SVN_COMMAND update --accept theirs-full --force
  fi
 $SVN_COMMAND info | grep Revision | awk '{print $2}' > scripts/autobuild/.revision
-chmod -R g+rw $SVNDIR/geogebra
+WARNINGS=`chmod -R g+rw $SVNDIR/geogebra 2>&1 | wc -l | awk '{print $1}'`
+echo "$WARNINGS warnings during chmod'ing source files"
 
 # 3. Setting global variables
 export JAVA_HOME
@@ -42,7 +43,8 @@ export ANT_OPTS="-Xmx1024m"
 # alias signjar=jarsigner # May be needed for ant version < 1.8.0 (the "executable" attribute is not supported yet).
 ant geogebra-cl || exit 3
 ant installer-clean installer-macosx
-chmod -R g+rw build
+WARNINGS=`chmod -R g+rw build 2>&1 | wc -l | awk '{print $1}'`
+echo "$WARNINGS warnings during build files"
 
 # 5. Setting local variables
 MYVER=`cat build/unpacked/version.txt`
@@ -103,7 +105,8 @@ for i in *.html *.jnlp; do
     done
 
 # 7. Finally, making sure that all files have group writable permissions:
-chmod -R g+rw $WWWDIR/$MYDIR
+WARNINGS=`chmod -R g+rw $WWWDIR/$MYDIR 2>&1 | wc -l | awk '{print $1}'`
+echo "$WARNINGS warnings during chmod'ing web files"
 
 date
 echo "$0: end"
