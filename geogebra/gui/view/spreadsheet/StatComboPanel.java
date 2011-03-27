@@ -656,9 +656,25 @@ public class StatComboPanel extends JPanel implements ActionListener{
 
 		case PLOT_HISTOGRAM:			
 			if(doCreate){
-				histogram = statGeo.createHistogram( dataListSelected, numClasses, settings);
+				histogram = statGeo.createHistogram( dataListSelected, numClasses, settings, false);
 				plotGeoList.add(histogram);
 			}
+			if(frequencyPolygon != null)
+				frequencyPolygon.remove();
+			if(settings.hasOverlayPolygon){
+				frequencyPolygon = statGeo.createHistogram( dataListSelected, numClasses, settings, true);
+				plotGeoList.add(frequencyPolygon);
+			}
+			if(normalCurve != null)
+				normalCurve.remove();
+			if(settings.hasOverlayNormal){
+				normalCurve = statGeo.createNormalCurveOverlay(dataListSelected);
+				plotGeoList.add(normalCurve);
+			}
+			
+			
+			
+			
 			plotPanel.setPlotSettings(statGeo.getHistogramSettings( dataListSelected, histogram, settings));
 
 			if(hasControlPanel)

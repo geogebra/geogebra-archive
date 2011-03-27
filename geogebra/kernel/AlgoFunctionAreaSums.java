@@ -1042,8 +1042,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			// this is used by the stat dialogs
 			freqMax = 0.0;
 			for(int k = 0; k < yval.length; ++k){
-				if(yval[k] > freqMax)
-					freqMax = yval[k];
+					freqMax = Math.max(yval[k], freqMax);
 			}
 
 			
@@ -1345,11 +1344,6 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 
 				}
 				
-				//convert to cumulative frequencies if cumulative option is set
-				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean()){
-					for (int i=1; i < N; i++)  
-						yval[i] += yval[i-1];
-				}
 				
 				
 				// turn frequencies into frequency densities
@@ -1358,6 +1352,12 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 					for (int i=1; i < N; i++)  
 						yval[i-1] = densityFactor * yval[i-1] / (leftBorder[i] - leftBorder[i-1]);
 
+				//convert to cumulative frequencies if cumulative option is set
+				if(isCumulative != null && ((GeoBoolean)isCumulative).getBoolean()){
+					for (int i=1; i < N; i++)  
+						yval[i] += yval[i-1];
+				}
+				
 				
 				// area of rectangles = total frequency	* densityFactor			
 				sum.setValue(Math.abs( list2.size() * densityFactor ));	
@@ -1366,8 +1366,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 				// this is used by the stat dialogs
 				freqMax = 0.0;
 				for(int k = 0; k < yval.length; ++k){
-					if(yval[k] > freqMax)
-						freqMax = yval[k];
+						freqMax = Math.max(yval[k], freqMax);
 				}
 				
 
@@ -1415,8 +1414,7 @@ implements EuclidianViewAlgo, AlgoDrawInformation{
 			// this is used by the stat dialogs
 			freqMax = 0.0;
 			for(int k = 0; k < yval.length; ++k){
-				if(yval[k] > freqMax)
-					freqMax = yval[k];
+					freqMax = Math.max(yval[k], freqMax);
 			}
 			
 			break;

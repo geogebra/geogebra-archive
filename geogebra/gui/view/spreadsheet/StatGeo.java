@@ -353,7 +353,7 @@ public class StatGeo   {
 
 
 
-	public GeoElement createHistogram(GeoList dataList, int numClasses, StatPanelSettings settings){
+	public GeoElement createHistogram(GeoList dataList, int numClasses, StatPanelSettings settings, boolean isFrequencyPolygon){
 
 		GeoElement geo;
 		String label = dataList.getLabel();	
@@ -374,15 +374,40 @@ public class StatGeo   {
 			density = 1.0*classWidth/dataList.size();
 		if(settings.type == StatPanelSettings.TYPE_NORMALIZED)
 			density = 1.0/dataList.size();
+		
+		String text;
+		if(isFrequencyPolygon)
+			text = "FrequencyPolygon[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
+		else
+			text = "Histogram[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
 
-		String text = "Histogram[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
 		//Application.debug(text);
 		geo = createGeoFromString(text);
-		geo.setObjColor(StatDialog.HISTOGRAM_COLOR);
-		geo.setAlphaValue(0.25f);
+		if(isFrequencyPolygon){
+			geo.setObjColor(Color.BLACK);
+		}else{
+			geo.setObjColor(StatDialog.HISTOGRAM_COLOR);
+			geo.setAlphaValue(0.25f);
+		}
 		return geo;	
 	}
 
+	
+
+	public GeoElement createNormalCurveOverlay(GeoList dataList){
+
+		GeoElement geo;
+		String label = dataList.getLabel();	
+		String text = "Normal[Mean[" + label + "],SD[" + label + "],x]";
+
+		//Application.debug(text);
+		geo = createGeoFromString(text);
+		geo.setObjColor(Color.BLACK);
+
+		return geo;	
+	}
+
+	
 
 	public PlotSettings getHistogramSettings(GeoList dataList, GeoElement histogram, StatPanelSettings settings){	
 
@@ -390,10 +415,10 @@ public class StatGeo   {
 		getDataBounds(dataList);	
 
 		double freqMax = ((AlgoFunctionAreaSums)histogram.getParentAlgorithm()).getFreqMax();
-		if(settings.type == StatPanelSettings.TYPE_RELATIVE)
-			freqMax = 1.0;
+		//if(settings.type == StatPanelSettings.TYPE_RELATIVE)
+			//freqMax = 1.0;
 
-		yMinData = -1.0;
+		yMinData = 0.0;
 		yMaxData = freqMax;
 		
 		ps = setXYBounds(ps, settings, .2, .1);
