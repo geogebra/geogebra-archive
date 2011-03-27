@@ -22,6 +22,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class FileDropTargetListener implements DropTargetListener {
@@ -54,19 +55,25 @@ public class FileDropTargetListener implements DropTargetListener {
 			return;
 		}
 
-		File droppedFile = getGGBfile(event);		
-		if (droppedFile == null) {
+		ArrayList<File> al = getGGBfiles(event);	
+		
+		if (al.size() == 0) {
 			event.dropComplete(false);
 		} else if (app.isSaved() || app.saveCurrentFile()) {				
-			File [] files = { droppedFile };
+			File [] files = new File[al.size()];
+			for (int i = 0 ; i < al.size() ; i++)
+				files[i] = al.get(i);
 			app.getGuiManager().doOpenFiles(files, true);			
 			event.dropComplete(true);			
 		}			
 	}
 	
-	private File getGGBfile(DropTargetDropEvent event) {
+	private ArrayList<File> getGGBfiles(DropTargetDropEvent event) {
 		Transferable transferable = event.getTransferable();
 		DataFlavor[] flavors = event.getCurrentDataFlavors();
+		
+		ArrayList<File> al = new ArrayList<File>();
+		
 
 		for (int i = 0; i < flavors.length; i++) {
 			DataFlavor dataFlavor = flavors[i];
@@ -74,18 +81,25 @@ public class FileDropTargetListener implements DropTargetListener {
 				if (dataFlavor.equals(DataFlavor.javaFileListFlavor)) {
 					java.util.List fileList = (java.util.List) transferable
 							.getTransferData(dataFlavor);
-					File droppedFile = (File) fileList.get(0);
-					String lowerCase = droppedFile.getName().toLowerCase(Locale.US);
-					if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA)) {						
-						return droppedFile;
-					} 
-					else if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL)) {						
-						return droppedFile;
-					}											
+
+					for (int j = 0 ; j < fileList.size() ; j++) {
+						File droppedFile = (File) fileList.get(j);
+						String lowerCase = droppedFile.getName().toLowerCase(Locale.US);
+						if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA)) {						
+							//return droppedFile;
+							al.add(droppedFile);
+						} 
+						else if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL)) {						
+							//return droppedFile;
+							al.add(droppedFile);
+	
+						}									
+					}
 				}			
-			} catch (Exception e) {							
+			} catch (Exception e) {	
+				e.printStackTrace();
 			}
 		}
-		return null;
+		return al;
 	}
 }
