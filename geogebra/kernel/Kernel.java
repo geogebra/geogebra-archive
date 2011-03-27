@@ -7558,7 +7558,10 @@ public class Kernel {
 		if (formatSB == null) formatSB = new StringBuilder(17);
 		else formatSB.setLength(0);
 		
-		boolean reverseOrder = app.isRightToLeftDigits();
+		// make sure minus sign works in Arabic
+		boolean reverseOrder = num.charAt(0) == '-' && app.isRightToLeftDigits();
+		
+		if (reverseOrder) formatSB.append(Unicode.RightToLeftMark);
 		
 		int length = num.length();
 		
@@ -7573,12 +7576,15 @@ public class Kernel {
 			}
 
 			// make sure the minus is treated as part of the number in eg Arabic
-			if ( reverseOrder && c=='-'){
-				formatSB.append(Unicode.RightToLeftUnaryMinusSign);
-			} 
-			else
+			//if ( reverseOrder && c=='-'){
+			//	formatSB.append(Unicode.RightToLeftUnaryMinusSign);
+			//} 
+			//else
 				formatSB.append(c);
 		}
+		
+		if (reverseOrder) formatSB.append(Unicode.RightToLeftMark);
+
 		
 		return formatSB.toString();
 		
