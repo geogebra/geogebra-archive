@@ -28,6 +28,7 @@ if [ "$0" = "./update" -a "$1" != "--no-update" ]; then
  $SVN_COMMAND update --accept theirs-full --force | tail -1 | grep ^At && exit 1 # No updates found.
  echo "$0: new commit was found in repository"
 else
+ rm -fR org/mathpiper # not sure why SVN cannot handle this properly
  $SVN_COMMAND update --accept theirs-full --force
  fi
 chmod -R g+rw $SVNDIR/geogebra
