@@ -63,7 +63,7 @@ public class Application3D extends Application{
     	
         
 	    //TODO remove 3D test : just comment following line        
-        new Test3D(kernel3D,euclidianView,euclidianView3D,this);
+        //new Test3D(kernel3D,euclidianView,euclidianView3D,this);
         
         
     }
@@ -108,8 +108,7 @@ public class Application3D extends Application{
 		sb.append(super.getCompleteUserInterfaceXML(asPreference));
 
 		// save euclidianView3D settings
-		//if (euclidianView3D != null) //TODO remove this
-			sb.append(euclidianView3D.getXML());
+		sb.append(euclidianView3D.getXML());
 
 
 		return sb.toString();
@@ -135,12 +134,7 @@ public class Application3D extends Application{
 		return super.saveGeoGebraFile(file);
 	}
 	
-	/** return 2D (and 3D) views settings
-	 * @return 2D (and 3D) views settings
-	 */
-	public String getEuclidianViewsXML() {
-		return getEuclidianView().getXML()+""+getEuclidianView3D().getXML();
-	}
+
 	
 	/////////////////////////////////
 	// GUI

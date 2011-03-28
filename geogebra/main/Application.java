@@ -1290,12 +1290,7 @@ public class Application implements KeyEventDispatcher {
 	
 	
 	
-	/** return 2D (and 3D) views settings
-	 * @return 2D (and 3D) views settings
-	 */
-	public String getEuclidianViewsXML() {
-		return getEuclidianView().getXML();
-	}	
+	
 	
 
 	public void geoElementSelected(GeoElement geo, boolean addToSelection) {

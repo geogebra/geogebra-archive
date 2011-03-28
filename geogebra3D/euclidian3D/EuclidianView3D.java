@@ -722,7 +722,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void setRotXYinDegrees(double a, double b){
 		
-		//Application.debug("setRotXY");
+		//Application.debug("setRotXY: "+a+","+b);
 		
 		this.a = a;
 		this.b = b;
@@ -776,6 +776,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	/** set the z-coord of the origin 
 	 * @param val */
 	public void setZZero(double val) { ZZero=val; }
+	
+	
+	public double getXRot(){ return a;}
+	public double getZRot(){ return b;}
 	
 	
 
@@ -1614,11 +1618,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void setRotAnimation(Coords vn){
 		Coords spheric = CoordMatrixUtil.sphericalCoords(vn);		
-		setRotAnimation(spheric.get(2)*180/Math.PI,spheric.get(3)*180/Math.PI);
+		setRotAnimation(spheric.get(2)*180/Math.PI,spheric.get(3)*180/Math.PI,true);
 	}
 		
 
-	public void setRotAnimation(double aN, double bN){
+	/**
+	 * start a rotation animation to go to the new values
+	 * @param aN
+	 * @param bN
+	 * @param checkSameValues if true, check new values are same than old, 
+	 * in this case revert the view
+	 */
+	public void setRotAnimation(double aN, double bN, boolean checkSameValues){
 
 		animatedRot = true;
 		animatedContinueRot = false;
@@ -1642,14 +1653,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		else if (aOld-aNew<-180)
 			aOld+=360;
 			
-		
-		else if (Kernel.isEqual(aOld, aNew, Kernel.STANDARD_PRECISION))
-			if (Kernel.isEqual(bOld, bNew, Kernel.STANDARD_PRECISION)){
-				if (!Kernel.isEqual(Math.abs(bNew), 90, Kernel.STANDARD_PRECISION))
-					aNew+=180;
-				bNew*=-1;
-				//Application.debug("ici");
-			}
+
+		else if (checkSameValues) 
+			if (Kernel.isEqual(aOld, aNew, Kernel.STANDARD_PRECISION))
+				if (Kernel.isEqual(bOld, bNew, Kernel.STANDARD_PRECISION)){
+					if (!Kernel.isEqual(Math.abs(bNew), 90, Kernel.STANDARD_PRECISION))
+						aNew+=180;
+					bNew*=-1;
+					//Application.debug("ici");
+				}
 		if (bOld>180)
 			bOld-=360;
 
@@ -2589,6 +2601,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @return the XML description of 3D view settings
 	 */
 	public String getXML() {
+		
+		//Application.debug("getXML: "+a+","+b);
 		
 		//if (true)	return "";
 		
