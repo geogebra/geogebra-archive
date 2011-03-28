@@ -2021,6 +2021,13 @@ public class Kernel {
 		GeoImplicitPoly implicitPoly = new GeoImplicitPoly(cons, label, poly);
 		return implicitPoly;
 	}
+	
+	/** Implicit Polynomial through points */
+	final public GeoImplicitPoly ImplicitPoly(String label, GeoPoint [] points) {
+		AlgoImplicitPolyThroughPoints algo = new AlgoImplicitPolyThroughPoints(cons, label, points);
+		GeoImplicitPoly implicitPoly = algo.getImplicitPoly();
+		return implicitPoly;
+	}
 
 	/** Converts number to angle */
 	final public GeoAngle Angle(String label, GeoNumeric num) {

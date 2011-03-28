@@ -26,8 +26,16 @@ import java.util.Map;
 import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.DecompositionSolver;
+import org.apache.commons.math.linear.InvalidMatrixException;
 import org.apache.commons.math.linear.LUDecompositionImpl;
+import org.apache.commons.math.linear.MatrixIndexException;
+import org.apache.commons.math.linear.MatrixVisitorException;
+import org.apache.commons.math.linear.NonSquareMatrixException;
 import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.linear.RealMatrixChangingVisitor;
+import org.apache.commons.math.linear.RealMatrixImpl;
+import org.apache.commons.math.linear.RealMatrixPreservingVisitor;
+import org.apache.commons.math.linear.RealVector;
 
 import edu.jas.arith.BigRational;
 import edu.jas.poly.ExpVector;
@@ -46,6 +54,7 @@ import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
+import geogebra.main.MyError;
 
 /**
  * Represents implicit bivariat polynomial equations, with degree greater than 2.
@@ -83,13 +92,13 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		setLabel(label);
 		setCoeff(coeff);
 	}
-		
 	
 	protected GeoImplicitPoly(Construction c, String label,Polynomial poly){
 		this(c);
 		setLabel(label);
 		setCoeff(poly.getCoeff());
 	}
+	
 	
 	public GeoImplicitPoly(GeoImplicitPoly g){
 		this(g.cons);
@@ -600,6 +609,94 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 //			p.z=points[k].z;
 //		}
 	}
+	
+	/** 
+	 * Makes make curve through given points 
+	 * @param points array of points
+	 */
+	public void throughPoints(GeoPoint[] points)
+	{
+		ArrayList<GeoPoint> p = new ArrayList<GeoPoint>();
+		for(int i=0; i<points.length; i++)
+			p.add(points[i]);
+		throughPoints(p);
+	}
+	
+	/**
+	 * make curve through given points
+	 * @param points ArrayList of points
+	 */
+	public void throughPoints(ArrayList<GeoPoint> points)
+	{
+		if((int)Math.sqrt(9+8*points.size()) != Math.sqrt(9+8*points.size()))
+		{
+			// throw "Inadequate number of points"
+		}
+		
+		int degree = (int)(0.5*Math.sqrt(8*(1+points.size()))) - 1;
+		
+		RealMatrix extendMatrix = new RealMatrixImpl(points.size(), points.size()+1);
+		RealMatrix matrix = new RealMatrixImpl(points.size(), points.size());
+		
+		DecompositionSolver solver;
+		
+		double [] matrixRow = new double[points.size()+1];
+		double [] results = new double[points.size()];
+		
+		for(int i=0; i<points.size(); i++)
+		{
+			double x = points.get(i).x;
+			double y = points.get(i).y;
+			
+			for(int j=0, m=0; j<degree+1; j++)
+				for(int k=0; j+k != degree+1; k++)
+					matrixRow[m++] = Math.pow(x, j)*Math.pow(y, k);
+			extendMatrix.setRow(i, matrixRow);
+		}
+		
+		int solutionColumn = 0;
+		do 
+		{
+			results = extendMatrix.getColumn(solutionColumn);
+			
+			for(int i=0, j=0; i<points.size();i++)
+				if(i==solutionColumn)
+					continue;
+				else
+					matrix.setColumn(j++, extendMatrix.getColumn(i));
+			solutionColumn++;
+			
+			solver = new LUDecompositionImpl(matrix).getSolver();
+		} while (!solver.isNonSingular());
+		
+		
+		for(int i=0; i<results.length; i++)
+			results[i] *= -1;
+		
+		double [] partialSolution = solver.solve(results);
+		
+		for(int i=0; i<partialSolution.length; i++)
+			if(Kernel.isZero(partialSolution[i]))
+				partialSolution[i] = 0;
+		
+		double [][] coeffMatrix = new double[degree+1][degree+1];
+		
+		
+		for(int i=0; i<partialSolution.length; i++)
+			if(Kernel.isZero(partialSolution[i]))
+				partialSolution[i] = 0;
+		
+		for(int i=0, k=0; i<degree+1; i++)
+			for(int j=0; j+i != degree+1; j++)
+				if(k==solutionColumn-1)
+					coeffMatrix[i][j] = 1;
+				else
+					coeffMatrix[i][j] = partialSolution[k++];
+		
+		this.setCoeff(coeffMatrix);
+	}
+	
+	
 
 	public void pointChanged(GeoPointND PI) {
 		Application.debug("point changed="+PI);
@@ -629,12 +726,9 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 			py/=pz;
 		}
 		
-		double sum = 0;
-		for(int i=0; i<degX+1; i++)
-			for(int j=0; j<degY+1; j++)
-				sum += coeff[i][j] * Math.pow(px, i) * Math.pow(py, j); 
+		double value = this.evalPolyAt(px, py);
 		
-		return Kernel.isZero(sum);
+		return Kernel.isZero(value);
 	}
 
 	public double getMinParameter() {
@@ -853,6 +947,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 
 	public void mirror(GeoConic c) 
 	{
+		
 		if(c.getType() != GeoConic.CONIC_CIRCLE)
 		{
 			setUndefined();
@@ -865,20 +960,10 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 			return;
 		}
 		
-		GeoVec2D midpoint = c.getTranslationVector();
-		double x0 = midpoint.x;
-		double y0 = midpoint.y;
-		double r =  c.getHalfAxes()[0];
 		
 		GeoConic gc = new GeoConic(cons);
 		this.toGeoConic(gc);	
 		
-		GeoPoint centerOfInversion = new GeoPoint(cons, "", 
-				c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
-		double distance = gc.distance(centerOfInversion);
-		centerOfInversion.remove();
-		
-		// first case: polyline is circle
 		if(gc.type == GeoConic.CONIC_CIRCLE)
 		{ 
 			gc.mirror(c);
@@ -886,177 +971,49 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 			return;
 		}
 		
-		// idea: find coeffs of resulting curve by
-		// finding enough points on resulting curve and solving appropriate system of equation
-		
-		double [][] matrix;
-		double [] results;
-		double [][] coeffMatrix; 
+		GeoPoint centerOfInversion = new GeoPoint(cons, "", c.getMidpoint().getX(), c.getMidpoint().getY(), 1);
+		double distance = gc.distance(centerOfInversion);
+		centerOfInversion.remove();
 
-		RealMatrix realMatrix;
-		DecompositionSolver solver;
-		double [] partialSolution;
-		double [] solution = new double[13];
-		
-		ArrayList<double[]> coordsOfPointsOnConic = gc.getCoordsOfPointsOnConic(13);    	
-    	ArrayList<double[]> coordsOfInversePoints = new ArrayList<double[]>();
-
-		// find coords of 12 points on inversion curve
-		for(int i=0; i<coordsOfPointsOnConic.size(); i++)
-		{
-			double x = coordsOfPointsOnConic.get(i)[0];
-			double y = coordsOfPointsOnConic.get(i)[1];
-			
-			double [] inversePoint = new double[2];
-			inversePoint[0] = x0 + (r*r*(x-x0))/(Math.pow(x-x0,2)+Math.pow(y-y0,2));
-			inversePoint[1] = y0 + (r*r*(y-y0))/(Math.pow(x-x0,2)+Math.pow(y-y0,2));
-			
-			if(Double.isNaN(inversePoint[0]))
-				continue;
-			
-			coordsOfInversePoints.add(inversePoint);
-		}
-		
-		// second case: center of circle inversion is on conic
+		ArrayList<GeoPoint> pointsOnConic;    	
+    	
+		// center of circle inversion is on conic
 		if(Math.abs(distance) < Kernel.STANDARD_PRECISION)
 		{
-			matrix = new double[10][10];
-			results = new double[10];
-	
-			for(int i=0; i<10; i++)
-	        {
-	        	double x = coordsOfInversePoints.get(i)[0];
-	        	double y = coordsOfInversePoints.get(i)[1];
-	        	
-	        	matrix[i][0] = 1;
-	            matrix[i][1] = x;
-	            matrix[i][2] = y;
-	            matrix[i][3] = x*y;
-	            matrix[i][4] = Math.pow(x,2);
-	            matrix[i][5] = Math.pow(y,2);
-	            matrix[i][6] = x*Math.pow(y,2);
-	            matrix[i][7] = Math.pow(x,2)*y;
-	            matrix[i][8] = Math.pow(x,2)*Math.pow(y,2);
-	            matrix[i][9] = Math.pow(x,3);
-	            results[i] = -Math.pow(y,3);
-	        }
-
-			realMatrix = new Array2DRowRealMatrix(matrix);
-			solver = new LUDecompositionImpl(realMatrix).getSolver();	
+			pointsOnConic = gc.getPointsOnConic(10);
+			for(int i=0; i<pointsOnConic.size(); i++)
+				pointsOnConic.get(i).remove();
 			
-			if(solver.isNonSingular())
-			{ // param with x^3 is != 0 
-				partialSolution = solver.solve(results);	
-				for(int i=0; i<10; i++)
-					solution[i] = partialSolution[i];
-				solution[10] = 1;
-				solution[11] = 0;
-				solution[12] = 0;
-			}
-			else
+			for(int i=0; i<pointsOnConic.size(); i++)
 			{
-				// param with x^3 is == 0, but param with y^3 != 0
-				for(int i=0; i<10; i++)
-		        {
-		        	double x = coordsOfInversePoints.get(i)[0];
-		        	double y = coordsOfInversePoints.get(i)[1];
-		    
-		        	matrix[i][9] = Math.pow(y,3);
-		            results[i] = -Math.pow(x,3);
-		        }
-		
-				realMatrix = new Array2DRowRealMatrix(matrix);
-				solver = new LUDecompositionImpl(realMatrix).getSolver();	
-
-				partialSolution = solver.solve(results);
-				
-				for(int i=0; i<9; i++)
-					solution[i] = partialSolution[i];
-				solution[9] = 1;
-				solution[10] = partialSolution[9];
+				pointsOnConic.get(i).mirror(c);
+				if(pointsOnConic.get(i).isInfinite())
+					pointsOnConic.remove(i);
 			}
-
+			
+			if(pointsOnConic.size() > 9)
+				pointsOnConic.remove(9);
+		
+			this.throughPoints(pointsOnConic);
 		}
 		else
-		{ // third case: center of circle of inversion is outside a conic
-			matrix = new double[12][12];
-			results = new double[12];
-			
-			for(int i=0; i<12; i++)
-	        {
-	        	double x = coordsOfInversePoints.get(i)[0];
-	        	double y = coordsOfInversePoints.get(i)[1];
-	        	
-	        	matrix[i][0] = 1;
-	            matrix[i][1] = x;
-	            matrix[i][2] = y;
-	            matrix[i][3] = x*y;
-	            matrix[i][4] = Math.pow(x,2);
-	            matrix[i][5] = Math.pow(y,2);
-	            matrix[i][6] = x*Math.pow(y,2);
-	            matrix[i][7] = Math.pow(x,2)*y;
-	            matrix[i][8] = Math.pow(x,2)*Math.pow(y,2);
-	            matrix[i][9] = Math.pow(x,3);
-	            matrix[i][10] = Math.pow(y,3);
-	            matrix[i][11] = Math.pow(x,4);
-	            
-	            results[i] = -Math.pow(y,4);
-	        }
-	
-			realMatrix = new Array2DRowRealMatrix(matrix);
-			solver = new LUDecompositionImpl(realMatrix).getSolver();
-			
-			if(solver.isNonSingular())
+		{
+			pointsOnConic = gc.getPointsOnConic(15);
+			for(int i=0; i<pointsOnConic.size(); i++)
+				pointsOnConic.get(i).remove();
+			for(int i=0; i<pointsOnConic.size(); i++)
 			{
-				partialSolution = solver.solve(results);
-				for(int i=0; i<12; i++)
-					solution[i] = partialSolution[i];
-				solution[12] = 1;
+				pointsOnConic.get(i).mirror(c);
+				if(pointsOnConic.get(i).isInfinite())
+					pointsOnConic.remove(i);
 			}
-			else
-			{ 
-				setUndefined();
-				return;
-			}
+			
+			if(pointsOnConic.size() > 14)
+				pointsOnConic.remove(14);
+		
+			this.throughPoints(pointsOnConic);
 		}
 			
-		for(int i=0; i<solution.length; i++)
-			if(Math.abs(solution[i]) < Kernel.STANDARD_PRECISION)
-				solution[i] = 0;
-		
-		coeffMatrix = new double[5][5];
-		
-		coeffMatrix[0][0] = solution[0];
-		coeffMatrix[0][1] = solution[2];
-		coeffMatrix[0][2] = solution[5];
-		coeffMatrix[0][3] = solution[10];
-		coeffMatrix[0][4] = solution[12];
-		
-		coeffMatrix[1][0] = solution[1];
-		coeffMatrix[1][1] = solution[3];
-		coeffMatrix[1][2] = solution[6];
-		coeffMatrix[1][3] = 0;
-		coeffMatrix[1][4] = 0;
-		
-		coeffMatrix[2][0] = solution[4];
-		coeffMatrix[2][1] = solution[7];
-		coeffMatrix[2][2] = solution[8];
-		coeffMatrix[2][3] = 0;
-		coeffMatrix[2][4] = 0;
-		
-		coeffMatrix[3][0] = solution[9];
-		coeffMatrix[3][1] = 0;
-		coeffMatrix[3][2] = 0;
-		coeffMatrix[3][3] = 0;
-		coeffMatrix[3][4] = 0;
-		
-		coeffMatrix[4][0] = solution[11];
-		coeffMatrix[4][1] = 0;
-		coeffMatrix[4][2] = 0;
-		coeffMatrix[4][3] = 0;
-		coeffMatrix[4][4] = 0;
-
-		this.setCoeff(coeffMatrix);
 	}
 
 	public void mirror(GeoPoint Q) {

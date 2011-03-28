@@ -325,11 +325,11 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 	 * @param n number of requested points
 	 * @param startInterval 
 	 * @param endInterval 
-	 * @return array list of coordinations of points
+	 * @return array list of points
 	 */
-	public ArrayList<double[]> getCoordsOfPointsOnCurve(int n, double startInterval, double endInterval)
+	public ArrayList<GeoPoint> getPointsOnCurve(int n, double startInterval, double endInterval)
 	{
-		ArrayList<double[]> pointList = new ArrayList<double[]>();
+		ArrayList<GeoPoint> pointList = new ArrayList<GeoPoint>();
 		
 		double step = (endInterval - startInterval)/(n+1); 
 		
@@ -338,7 +338,7 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 			double [] point = new double[2];
 			point[0] = funX.evaluate(v); 
 			point[1] = funY.evaluate(v);
-			pointList.add(point);
+			pointList.add(new GeoPoint(cons, null, point[0], point[1], 1));
 		}
 		
 		return pointList;

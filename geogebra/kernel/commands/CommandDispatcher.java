@@ -371,6 +371,9 @@ public class CommandDispatcher {
     	cmdTable.put("RootList", new CmdRootList(kernel));   
     	cmdTable.put("Intersect", new CmdIntersect(kernel));
     	
+    	// d. drakulic 2011/3/26
+    	cmdTable.put("ImplicitCurve", new CmdImplicitPoly(kernel));
+    	
     	cmdSubTable[TABLE_FUNCTION].putAll(cmdTable);
     	cmdTable.clear();
     	
@@ -404,7 +407,6 @@ public class CommandDispatcher {
     	cmdSubTable[TABLE_CONIC].putAll(cmdTable);
     	cmdTable.clear();
     	
-
     	
     	//=============================================================
     	// lists

@@ -176,11 +176,11 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	}
     
 	/**
-	 * Return coordinations of points on conic 
+	 * Return n points on conic 
 	 * @param n number of points 
-	 * @return Array list of coordinations of points
+	 * @return Array list of points
 	 */
-	public ArrayList<double[]> getCoordsOfPointsOnConic(int n)
+	public ArrayList<GeoPoint> getPointsOnConic(int n)
 	{
 		GeoCurveCartesian curve = new GeoCurveCartesian(cons);
 		this.toGeoCurveCartesian(curve);
@@ -198,7 +198,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 			endInterval = 1;
 		}
 		
-		return curve.getCoordsOfPointsOnCurve(n, startInterval, endInterval);
+		return curve.getPointsOnCurve(n, startInterval, endInterval);
 	}
 	
 	/**
