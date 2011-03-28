@@ -2659,7 +2659,7 @@ public abstract class GeoElement
 	 * Removes this object and all dependent objects from the Kernel.
 	 * If this object is not independent, it's parent algorithm is removed too.
 	 */
-	final public void remove() {
+	public void remove() {
 		// dependent object: remove parent algorithm
 		if (algoParent != null) {
 			algoParent.remove(this);

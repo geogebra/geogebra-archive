@@ -883,7 +883,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			return false;
 
 
+		
 		addSelectedPolygon(hits, 1, false);
+		//hits.removePolygons();
+		//addSelectedNumberValue(hits, 1, false);
 		addSelectedNumeric(hits, 1, false);
 		
 		/*
@@ -891,8 +894,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		for (int i=0;i<selectedPolygons.size();i++)
 			s+=selectedPolygons.get(i)+"\n";
 		s+="\nNumeric=\n";
-		for (int i=0;i<selectedNumbers.size();i++)
-			s+=selectedNumbers.get(i)+"\n";
+		for (int i=0;i<selectedNumberValues.size();i++)
+			s+=selectedNumberValues.get(i)+"\n";
 		
 		if (!selectionPreview)
 			Application.debug(s);
@@ -903,6 +906,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			if (selNumbers() == 1) {
 				// fetch selected point and vector
 				GeoPolygon[] basis = getSelectedPolygons();
+				//NumberValue[] height = getSelectedNumberValues();
 				GeoNumeric[] height = getSelectedNumbers();
 				// create new plane
 				getKernel().getManager3D().Prism(null, basis[0], height[0]);

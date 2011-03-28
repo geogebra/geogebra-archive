@@ -20,6 +20,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -369,7 +370,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	  * remove an old segment
 	  * @param oldSegment the old segment 
 	  */
-	 public void removeSegment(GeoSegmentND oldSegment){		 
+	 public void removeSegment(GeoSegmentND oldSegment){	
 		 AlgoElement parentAlgo = ((GeoSegment) oldSegment).getParentAlgorithm();
 		 //if this polygon is Polygon[<list of points>], we don't do anything
 		 if(parentAlgo instanceof AlgoJoinPointsSegment)

@@ -552,8 +552,8 @@ implements AlgoElementWithResizeableOutput{
 		
 		//add polyhedron's segments and polygons, without setting this algo as algoparent
 		GeoPolyhedron polyhedron = outputPolyhedron.getElement(0);
-		outputPolygons.addOutput(polyhedron.getFaces(),false);
-		outputSegments.addOutput(polyhedron.getSegments(),false);
+		outputPolygons.addOutput(polyhedron.getFaces(),false,false);
+		outputSegments.addOutput(polyhedron.getSegments(),false,true);
 		
 	}
 

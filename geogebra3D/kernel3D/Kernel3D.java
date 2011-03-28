@@ -291,13 +291,13 @@ public class Kernel3D
 			if (type.equals("point3d")){
 				return new GeoPoint3D(cons);
 			}
-			else if (type.equals("polygon3D"))
+			else if (type.equals("polygon3d"))
 				return new GeoPolygon3D(cons, null);
 			else if (type.equals("plane3d")){
 				return new GeoPlane3D(cons);
 			}
 		case 's': // segment 
-			if (type.equals("segment3D"))
+			if (type.equals("segment3d"))
 				return new GeoSegment3D(cons, null, null);	 
 		case 'v': // vector 
 			if (type.equals("vector3d"))

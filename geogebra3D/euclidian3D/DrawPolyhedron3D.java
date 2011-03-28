@@ -8,12 +8,14 @@ import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.gui.GuiManager.NumberInputHandler;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.AlgoPolyhedron;
+import geogebra3D.kernel3D.AlgoPolyhedronPointsPrism;
 import geogebra3D.kernel3D.GeoPolyhedron;
 
 import java.util.ArrayList;
@@ -160,8 +162,7 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 			algo = new AlgoPolyhedronComputed(getView3D().getKernel().getConstruction(),
 					null, 
 					basis, 
-					height, 
-					GeoPolyhedron.TYPE_PRISM);
+					height);
 			algo.removeOutputFromAlgebraView();
 			algo.removeOutputFromPicking();
 			algo.setOutputPointsEuclidianVisible(false);
@@ -216,7 +217,8 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 							app.getPlain("PositiveValuesFollowTheView"));
 				//if (num==null)//button cancel
 				//	selectedPolygons.clear();
-				hits.add(num);
+				//Application.debug(num);
+				hits.add((GeoElement) num);
 			}else
 				hits.add(height);
 			
@@ -231,11 +233,11 @@ public class DrawPolyhedron3D extends Drawable3DSurfaces implements Previewable{
 	
 	
 	
-	private class AlgoPolyhedronComputed extends AlgoPolyhedron{
+	private class AlgoPolyhedronComputed extends AlgoPolyhedronPointsPrism{
 
 		public AlgoPolyhedronComputed(Construction c, String[] labels,
-				GeoPolygon polygon, NumberValue height, int type) {
-			super(c, labels, polygon, height, type);
+				GeoPolygon polygon, NumberValue height) {
+			super(c, labels, polygon, height);
 		}
 		
 		private int computed;

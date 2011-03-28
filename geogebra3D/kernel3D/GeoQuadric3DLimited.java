@@ -136,16 +136,19 @@ public class GeoQuadric3DLimited extends GeoQuadricND implements NumberValue {
 	 */
 	public void initLabels(String[] labels) {
 		
-		if (labels==null){
-			setLabel(null);
-			bottom.setLabel(null);
-			top.setLabel(null);
-			side.setLabel(null);
-			return;
-		}
+    	if(cons.isSuppressLabelsActive()){ //for redefine
+    		return;
+    	}
+		
+		
+    	if (labels == null || labels.length == 0) {
+    		labels = new String[1];
+    	}
+    	
 		
 		setLabel(labels[0]);
 
+		
 		if (labels.length<3){
 			bottom.setLabel(null);
 			if (top!=null)

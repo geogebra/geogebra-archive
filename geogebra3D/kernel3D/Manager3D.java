@@ -257,7 +257,7 @@ public class Manager3D implements Manager3DInterface {
 	final public GeoElement [] Prism(String[] labels, GeoPointND[] points){
 
 
-		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,points,GeoPolyhedron.TYPE_PRISM);
+		AlgoPolyhedronPointsPrism algo = new AlgoPolyhedronPointsPrism(cons,labels,points);
 
 		return algo.getOutput();
 
@@ -266,7 +266,7 @@ public class Manager3D implements Manager3DInterface {
 	
 	 final public GeoElement [] Prism(String[] labels, GeoPolygon polygon, GeoPointND point){
 		 
-		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,polygon,point,GeoPolyhedron.TYPE_PRISM);
+		 AlgoPolyhedronPointsPrism algo = new AlgoPolyhedronPointsPrism(cons,labels,polygon,point);
 
 		return algo.getOutput();
 
@@ -274,7 +274,7 @@ public class Manager3D implements Manager3DInterface {
 
 	 final public GeoElement [] Prism(String[] labels, GeoPolygon polygon, NumberValue height){
 
-		 AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,polygon,height,GeoPolyhedron.TYPE_PRISM);
+		 AlgoPolyhedronPointsPrism algo = new AlgoPolyhedronPointsPrism(cons,labels,polygon,height);
 
 		 return algo.getOutput();
 
@@ -287,7 +287,7 @@ public class Manager3D implements Manager3DInterface {
 	 */
 	final public GeoElement [] Pyramid(String[] labels, GeoPointND[] points){
 
-		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels, points, GeoPolyhedron.TYPE_PYRAMID);
+		AlgoPolyhedronPointsPyramid algo = new AlgoPolyhedronPointsPyramid(cons,labels, points);
 
 		return algo.getOutput();
 

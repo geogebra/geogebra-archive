@@ -31,6 +31,8 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	public static final int TYPE_PSEUDO_PRISM = 2;
 	public static final int TYPE_PRISM = 3;
 	
+	int type;
+	
 	
 	/** vertices */
 	//protected ArrayList<GeoPoint3D> points;
@@ -103,6 +105,24 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 		polygonsLinked = new TreeSet<GeoPolygon>();
 	}
 	
+	
+	/**
+	 * 
+	 * @param polyhedron
+	 */
+	public GeoPolyhedron(GeoPolyhedron polyhedron) {
+		this(polyhedron.getConstruction());
+		set(polyhedron);
+	}
+	
+	
+	/**
+	 * set the type of polyhedron
+	 * @param type
+	 */
+	public void setType(int type){
+		this.type=type;
+	}
 	
 	/**
 	 * restart faces descriptions
@@ -323,6 +343,10 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	 
 	 
 	 public void defaultLabels(String [] labels){
+
+		 if(cons.isSuppressLabelsActive()){ //for redefine
+			 return;
+		 }
 		 
 		 if (labels == null || labels.length == 0) 
 	    		labels = new String[1];
@@ -341,17 +365,26 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	     * labels[0] for polyhedron itself, labels[1..n] for faces and edges,
 	     * @param labels
 	     */
-	    void initLabels(String [] labels) {       	 
+	    void initLabels(String [] labels) {   
+	    	if(cons.isSuppressLabelsActive()){ //for redefine
+	    		return;
+	    	}
 	    	
-	    	int index=1;
+	    	
 	    	
 	    	if (labels == null || labels.length == 0) {
 	    		labels = new String[1];
 	    	}
+	    	
+	    	String s="labels:\n";
+	    	for (int i=0; i<labels.length; i++)
+	    		s+=labels[i]+"\n";
+	    	Application.debug(s);
 
 	        // first label for polyhedron itself
-	    	setLabel(labels[0]); 
+	    	setLabel(labels[0]);
 	    	
+	    	int index=1;
 	    	
 	    	if (labels.length - index < polygons.size()){
 	    		defaultPolygonsLabels();
@@ -715,12 +748,36 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 		return false;
 	}
 
-	@Override
+	
+	
 	public void set(GeoElement geo) {
-		// TODO Auto-generated method stub
-
+		if (geo instanceof GeoPolyhedron){
+			GeoPolyhedron polyhedron = (GeoPolyhedron) geo;
+			
+			type=polyhedron.type;
+			
+			polygons.clear();
+			polygons.putAll(polyhedron.polygons);
+			polygonsIndex.clear();
+			polygonsIndex.putAll(polyhedron.polygonsIndex);
+			polygonsLinked.clear();
+			polygonsLinked.addAll(polyhedron.polygonsLinked);			
+			polygonsIndexMax = polyhedron.polygonsIndexMax;
+			
+			segments.clear();
+			segments.putAll(polyhedron.segments);
+			segmentsIndex.clear();
+			segmentsIndex.putAll(polyhedron.segmentsIndex);
+			segmentsLinked.clear();
+			segmentsLinked.putAll(polyhedron.segmentsLinked);
+			segmentsIndexMax = polyhedron.segmentsIndexMax;
+			
+		}
 	}
 
+	
+	
+	
 	@Override
 	public void setUndefined() {
 		// TODO Auto-generated method stub
@@ -830,5 +887,23 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	public boolean isPath(){
 		return true;
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	public void remove() {
+		
+		//prevent from removing this when redefine a prism (see AlgoJoinPoints3D and AlgoPolygon)
+		if (this!=getConstruction().getKeepGeo())
+			super.remove();
+	}
+	
+	
+	
+	
 
 }

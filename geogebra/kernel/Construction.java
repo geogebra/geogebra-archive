@@ -417,6 +417,7 @@ public class Construction {
 		updateAllConstructionProtocolAlgorithms();
 		ceList.add(index, ce);
 		updateConstructionIndex(index);
+		
 	}
 
 	/**
@@ -440,6 +441,12 @@ public class Construction {
 		updateConstructionIndex(pos);
 		updateAllConstructionProtocolAlgorithms(); // Michael Borcherds
 													// 2008-05-15
+		/*
+		if (ce.getClassName().equals("AlgoPrism")||ce.getClassName().equals("AlgoPyramid"))
+			Application.printStacktrace(ce.getClassName());
+		else
+			Application.debug(ce.getClassName());
+			*/
 	}
 
 	/**
@@ -1544,6 +1551,13 @@ public class Construction {
 		buildConstruction(consXML);
 	}
 	
+	
+	private GeoElement keepGeo;
+	public GeoElement getKeepGeo(){
+		return keepGeo;
+	}
+	
+
 	// 1) remove all brothers and sisters of oldGeo
 	// 2) move all predecessors of newGeo to the left of oldGeo in construction list
 	private void prepareReplace(GeoElement oldGeo, GeoElement newGeo)  {
@@ -1552,7 +1566,9 @@ public class Construction {
 		
 		// 1) remove all brothers and sisters of oldGeo
 		if (oldGeoAlgo != null) {
+			keepGeo=oldGeo;
 			oldGeoAlgo.removeOutputExcept(oldGeo);
+			keepGeo=null;
 		}
 
 		// if newGeo is not in construction index, we must set its index now
@@ -1736,6 +1752,7 @@ public class Construction {
 		kernel.setCASPrintForm(oldPrintForm);	
 		
 		// replace Strings: oldXML by newXML in consXML
+		//Application.debug("cons=\n"+consXML+"\nold=\n"+oldXML+"\nnew=\n"+newXML);
 		int pos = consXML.indexOf(oldXML);
 		if (pos < 0) {
 			restoreCurrentUndoInfo();

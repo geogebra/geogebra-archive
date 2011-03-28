@@ -198,18 +198,34 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 			}
 		}
 		
+		public void augmentOutputSize(int size){
+			size+=outputList.size();
+			outputList.ensureCapacity(size);
+			for (int i=outputList.size();i<size;i++){
+				T newGeo = fac.newElement();
+				outputList.add(newGeo);
+				setOutputDependencies(newGeo);
+			}
+			refreshOutput();
+			
+			if (setLabels){
+				updateLabels();
+			}
+		}
+		
 		/**
 		 * add the geos list to the output
 		 * @param geos
 		 * @param setDependencies says if the dependencies have to be set for this output
 		 */
-		public void addOutput(T[] geos, boolean setDependencies){
+		public void addOutput(T[] geos, boolean setDependencies, boolean refresh){
 			for (int i=0; i<geos.length; i++){
 				outputList.add(geos[i]);
 				if (setDependencies)
 					setOutputDependencies(geos[i]);
 			}
-			refreshOutput();
+			if (refresh)
+				refreshOutput();
 		}
 		
 		/**
@@ -616,6 +632,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * algorithm except for keepGeo.
      */
     void removeOutputExcept(GeoElement keepGeo) {
+    	
     	for (int i=0; i < getOutputLength(); i++) {
             GeoElement geo = getOutput(i);
             if (geo != keepGeo) 

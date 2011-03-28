@@ -207,6 +207,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected ArrayList selectedPoints = new ArrayList();
 
 	protected ArrayList selectedNumbers = new ArrayList();
+	protected ArrayList selectedNumberValues = new ArrayList();
 
 	protected ArrayList selectedLines = new ArrayList();
 
@@ -573,6 +574,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public void clearSelections() {
 
 		clearSelection(selectedNumbers);
+		clearSelection(selectedNumberValues);
 		clearSelection(selectedPoints);
 		clearSelection(selectedLines);
 		clearSelection(selectedSegments);
@@ -6184,7 +6186,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		clearSelection(selectedNumbers);
 		return ret;
 	}
-
+	
+	final protected NumberValue[] getSelectedNumberValues() {				
+		NumberValue[] ret = new NumberValue[selectedNumberValues.size()];
+		for (int i = 0; i < selectedNumberValues.size(); i++) {		
+			ret[i] = (NumberValue) selectedNumberValues.get(i);
+		}
+		clearSelection(selectedNumberValues);
+		return ret;
+	}
+	
 	final protected GeoList[] getSelectedLists() {				
 		GeoList[] ret = new GeoList[selectedLists.size()];
 		for (int i = 0; i < selectedLists.size(); i++) {		
@@ -6360,6 +6371,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedNumbers, GeoNumeric.class);
 	}
+	
+	public final int addSelectedNumberValue(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedNumberValues, NumberValue.class);
+	}
 
 	final protected int addSelectedLine(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
@@ -6427,7 +6443,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected final int selNumbers() {
 		return selectedNumbers.size();
 	}
-
+	
+	protected final int selNumberValues() {
+		return selectedNumberValues.size();
+	}
+	
 	final int selLists() {
 		return selectedLists.size();
 	}
