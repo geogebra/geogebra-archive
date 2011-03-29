@@ -556,8 +556,8 @@ public class WorksheetExportDialog extends JDialog {
 		//secondLine2.add(new JLabel(app.getPlain("AxisLabel") + ":"));
 		secondLine3.add(cbAllWorksheets);
 		appletPanel.add(secondLine3);	
-		
-		String fileTypeStrings[] = {app.getMenu("File")+": html",app.getMenu("Clipboard")+": html",app.getMenu("Clipboard")+": MediaWiki",app.getMenu("Clipboard")+": Google Gadget" ,app.getMenu("Clipboard")+": Moodle" };
+
+		String fileTypeStrings[] = {app.getPlain("File.HTML"), app.getPlain("Clipboard.HTML"), app.getPlain("Clipboard.MediaWiki"), app.getPlain("Clipboard.Google"), app.getPlain("Clipboard.Moodle") };
 		cbFileType = new JComboBox(fileTypeStrings);
 		cbFileType.setEnabled(true);
 		JPanel secondLine2 = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 5));				
