@@ -4550,13 +4550,18 @@ public abstract class GeoElement
 	 */
 	private boolean moveObject(Coords rwTransVec, Coords endPosition, Coords viewDirection, ArrayList updateGeos) {
 		boolean movedGeo = false;
-		
+		GeoElement geo = this;
 		// moveable geo
 		if (isMoveable()) {
 			// point
 			if (isGeoPoint()) {
 				
-				movedGeo = movePoint(rwTransVec, endPosition);
+				if (getParentAlgorithm() instanceof AlgoDynamicCoordinates) {
+					GeoPoint p = ((AlgoDynamicCoordinates)getParentAlgorithm()).getParentPoint();
+					movedGeo = p.movePoint(rwTransVec, endPosition);
+					geo = p;
+				}
+				else movedGeo = movePoint(rwTransVec, endPosition);
 				
 			}
 			
@@ -4594,9 +4599,9 @@ public abstract class GeoElement
 			
 			if (movedGeo) {
 				if (updateGeos != null)
-					updateGeos.add(this);
+					updateGeos.add(geo);
 				else
-					updateCascade();
+					geo.updateCascade();
 			}			
 		}			
 		
