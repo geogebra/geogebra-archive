@@ -92,6 +92,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		btnToggleInputPanel = new JToggleButton();
 		btnToggleInputPanel.setSelectedIcon(GeoGebraIcon.listRightIcon());
 		btnToggleInputPanel.setIcon(GeoGebraIcon.listLeftIcon());
+		btnToggleInputPanel.setPreferredSize(new Dimension(14,14));
 		btnToggleInputPanel.addActionListener(this);
 		btnToggleInputPanel.setFocusable(false);
 		btnToggleInputPanel.setContentAreaFilled(false);   
@@ -106,7 +107,6 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		JPanel eastPanel = new JPanel(new BorderLayout());
 		if (app.showCmdList()) {
 			eastPanel.add(btnToggleInputPanel, BorderLayout.WEST);
-			eastPanel.add(Box.createRigidArea(new Dimension(10,1)), BorderLayout.EAST);
 		}
 
 		setLayout(new GridBagLayout());
@@ -129,6 +129,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			c.fill = GridBagConstraints.NONE;
 			c.weightx = 0;
 			c.anchor = GridBagConstraints.LINE_END;
+			c.insets = new Insets(2,0,2,20);
 			this.add(eastPanel,c);
 		}
 
