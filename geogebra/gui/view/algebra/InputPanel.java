@@ -186,12 +186,13 @@ ActionListener, ListSelectionListener {
 			//tfPanel.setBackground(Color.white);
 			
 			// create the symbol button panel
+			// TODO the input field now has an embedded popup ... so do we want these buttons anymore?
 			JPanel buttonPanel = new JPanel(new BorderLayout(0,0));
 			buttonPanel.add(createPopupButton(),BorderLayout.EAST);
 			
 			// put these sub-panels together to create the input panel
 			add(tfPanel, BorderLayout.CENTER);
-			add(buttonPanel, BorderLayout.EAST);	
+			//add(buttonPanel, BorderLayout.EAST);	
 		}		
 		
 	}

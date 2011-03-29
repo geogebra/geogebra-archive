@@ -129,7 +129,11 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 			c.fill = GridBagConstraints.NONE;
 			c.weightx = 0;
 			c.anchor = GridBagConstraints.LINE_END;
-			c.insets = new Insets(2,0,2,20);
+			// add space on the right to set off the Mac's window grab icon
+			if(Application.MAC_OS)
+				c.insets = new Insets(2,5,2,20);
+			else
+				c.insets = new Insets(2,5,2,5);
 			this.add(eastPanel,c);
 		}
 
