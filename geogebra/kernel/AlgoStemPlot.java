@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.util.Util;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,6 +26,7 @@ public class AlgoStemPlot extends AlgoElement {
 	private GeoList geoList; //input
 	private GeoNumeric scaleAdjustment; //input
 	private GeoText text; //output	
+	StringBuffer low, high;
 
 	private GeoList[] geoLists;
 
@@ -313,19 +316,23 @@ public class AlgoStemPlot extends AlgoElement {
 		//==========================================
 		// create LaTeX for the outliers
 
-		StringBuffer low = new StringBuffer();
-		low.append(app.getPlain("low: "));
+		low = Util.resetStringBuffer(low);
+		low.append("\\text{");
+		low.append(app.getPlain("StemPlot.low"));
+		low.append(": ");
 		for(int i=0; i< outlierIndex[0];i++){
 			low.append((i < outlierIndex[0]-1) ? data[i] + "," : data[i]);
 		}
-		low.append(" \\\\ "); // newline in LaTeX ie \\
+		low.append("} \\\\ "); // newline in LaTeX ie \\
 
-		StringBuffer high = new StringBuffer();
-		high.append(app.getPlain("high: "));
+		high = Util.resetStringBuffer(high);
+		high.append(app.getPlain("\\text{"));
+		high.append(app.getPlain("StemPlot.high"));
+		high.append(": ");
 		for(int i = outlierIndex[1]; i< data.length; i++){
 			high.append((i < data.length-1) ? data[i] + "," : data[i]);
 		}
-		high.append(" \\\\ "); // newline in LaTeX ie \\
+		high.append("} \\\\ "); // newline in LaTeX ie \\
 
 
 		//==========================================
