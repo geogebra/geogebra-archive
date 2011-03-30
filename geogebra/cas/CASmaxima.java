@@ -567,6 +567,11 @@ public class CASmaxima extends CASgeneric {
 	    
 	    // for intfudu
 	    ggbMaxima.executeCall("load(\"partition\");");
+	    
+	    // so that intfdu uses logabs
+	    // http://permalink.gmane.org/gmane.comp.mathematics.maxima.general/34149
+	    ggbMaxima.executeCall("intable[\"^\"] : lambda([u,v],if freeof(%voi,u) then [u^v/log(u),diff(v,%voi)] else if freeof(%voi,v) then if v#-1 then  [u^(1+v)/(1+v),diff(u,%voi)] else [log(if logabs then  abs(u) else u),diff(u,%voi)] );");
+
 	}
 
 	private String executeRaw(String maximaInput) throws MaximaTimeoutException, geogebra.cas.jacomax.MaximaTimeoutException {
