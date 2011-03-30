@@ -16,7 +16,7 @@ public class CmdImplicitPoly extends CommandProcessor {
 	public GeoElement[] process(Command c) throws MyError
 	{
 		int n = c.getArgumentNumber();
-		if((int)Math.sqrt(9+8*n) != Math.sqrt(9+8*n))
+		if(n == 0 || (int)Math.sqrt(9+8*n) != Math.sqrt(9+8*n))
 			throw argNumErr(app, "ImplicitPoly", n);
 		
 		GeoElement[] arg = resArgs(c);

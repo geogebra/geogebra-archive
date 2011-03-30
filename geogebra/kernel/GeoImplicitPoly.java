@@ -630,10 +630,12 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 	{
 		if((int)Math.sqrt(9+8*points.size()) != Math.sqrt(9+8*points.size()))
 		{
-			// throw "Inadequate number of points"
+			setUndefined();
+			return;
 		}
 		
 		int degree = (int)(0.5*Math.sqrt(8*(1+points.size()))) - 1;
+		int realDegree = degree;
 		
 		RealMatrix extendMatrix = new RealMatrixImpl(points.size(), points.size()+1);
 		RealMatrix matrix = new RealMatrixImpl(points.size(), points.size());
@@ -654,12 +656,35 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 			extendMatrix.setRow(i, matrixRow);
 		}
 		
-		int solutionColumn = 0;
+		int solutionColumn = 0, noPoints = points.size();
 		do 
 		{
+			
+			if(solutionColumn > noPoints)
+			{
+				noPoints = noPoints-realDegree-1;
+				extendMatrix = new RealMatrixImpl(noPoints, noPoints+1);
+				realDegree-=1;
+				matrixRow = new double[noPoints+1];
+				
+				for(int i=0; i<noPoints; i++)
+				{
+					double x = points.get(i).x;
+					double y = points.get(i).y;
+					
+					for(int j=0, m=0; j<realDegree+1; j++)
+						for(int k=0; j+k != realDegree+1; k++)
+							matrixRow[m++] = Math.pow(x, j)*Math.pow(y, k);
+					extendMatrix.setRow(i, matrixRow);
+				}
+				
+				matrix = new RealMatrixImpl(noPoints, noPoints);
+				solutionColumn = 0;
+			}
+						
 			results = extendMatrix.getColumn(solutionColumn);
 			
-			for(int i=0, j=0; i<points.size();i++)
+			for(int i=0, j=0; i<noPoints;i++)
 				if(i==solutionColumn)
 					continue;
 				else
@@ -686,8 +711,8 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 			if(Kernel.isZero(partialSolution[i]))
 				partialSolution[i] = 0;
 		
-		for(int i=0, k=0; i<degree+1; i++)
-			for(int j=0; j+i != degree+1; j++)
+		for(int i=0, k=0; i<realDegree+1; i++)
+			for(int j=0; j+i != realDegree+1; j++)
 				if(k==solutionColumn-1)
 					coeffMatrix[i][j] = 1;
 				else
