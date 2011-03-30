@@ -41,4 +41,5 @@ public interface FunctionalNVar {
 	 */
 	public boolean isBooleanFunction();
 	//public GeoFunctionNVar getGeoDerivative(int order, int nvar);
+	public String getVarString();
 }
