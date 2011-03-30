@@ -1295,10 +1295,10 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			break;
 
 		case DIST_CAUCHY:			
-			// CauchyPDF =  1 / (¹ scale (1 + ((x - med) / scale)^2))
+			// CauchyPDF =  1 / (pi scale (1 + ((x - med) / scale)^2))
 			median = "Element[" + parmList.getLabel() + ",1]";
 			scale = "Element[" + parmList.getLabel() + ",2]";
-			expr = "1 / (¹ * " + scale + "*(1 + ((x - " + median + ") / " + scale + ")^2))";
+			expr = "1 / (pi * " + scale + "*(1 + ((x - " + median + ") / " + scale + ")^2))";
 			break;
 
 		case DIST_EXPONENTIAL:
