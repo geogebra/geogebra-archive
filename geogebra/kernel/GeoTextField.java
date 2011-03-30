@@ -1,13 +1,11 @@
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+import geogebra.gui.inputbar.AutoCompleteTextField;
+import geogebra.util.Util;
+
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-
-import geogebra.euclidian.EuclidianConstants;
-import geogebra.kernel.arithmetic.MyStringBuffer;
-import geogebra.kernel.arithmetic.TextValue;
-import geogebra.main.Application;
-import geogebra.util.Util;
 
 public class GeoTextField extends GeoButton {
 
@@ -15,11 +13,15 @@ public class GeoTextField extends GeoButton {
 	
 	private static int defaultLength = 20;
 	
-	JTextField textField = new JTextField(defaultLength);
+	AutoCompleteTextField textField;
 	
 	public GeoTextField(Construction c) {
 		
 		super(c);
+		
+		textField = new AutoCompleteTextField(defaultLength, c.getApplication());
+		textField.showPopupSymbolButton(true);
+		textField.setAutoComplete(false);
 	}
 	public String getClassName() {
 		return "GeoTextField";

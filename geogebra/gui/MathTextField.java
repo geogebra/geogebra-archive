@@ -24,6 +24,12 @@ public class MathTextField extends MyTextField implements KeyListener {
 		addKeyListener(this);
 	}
 	
+	public MathTextField(Application app, int length) {
+		super(app.getGuiManager(), length);
+		ggbKeys = new GeoGebraKeys(app);
+		addKeyListener(this);
+	}
+	
 	public void keyPressed(KeyEvent e) {
 		ggbKeys.keyPressed(e);
 	}
