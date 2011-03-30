@@ -101,7 +101,7 @@ final public class DrawConic extends Drawable implements Previewable {
     // CONIC_PARABOLA   
     private boolean firstParabola = true;
     private double x0, y0;
-    private int k2;
+    private double k2;
     private GeoVec2D vertex;
     private QuadCurve2D.Double parabola;    
     private double [] parpoints = new double[6];        
@@ -725,8 +725,11 @@ final public class DrawConic extends Drawable implements Previewable {
         // i = 2*k is quadratic number
         // make parabola big enough: k*p >= 2*x0 -> 2*k >= 4*x0/p
         x0 = 4*x0/conic.p;
-        int i = 4; 
+        
+        // changed these to doubles, see #654 y=x^2+100000x+1
+        double i = 4; 
         k2 = 16;
+        
         while (k2 < x0) {
             i += 2;
             k2 = i * i;
