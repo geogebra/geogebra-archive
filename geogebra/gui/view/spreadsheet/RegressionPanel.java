@@ -262,7 +262,8 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 
 		catch (Exception e) {
 			e.printStackTrace();
-			eqn = app.getPlain("NotAvailable");
+			eqn = "\\text{" + app.getPlain("NotAvailable") + "}";
+
 		}
 
 		//System.out.println("============>" + eqn);
