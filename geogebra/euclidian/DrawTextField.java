@@ -14,10 +14,11 @@ package geogebra.euclidian;
 
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunctionNVar;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.GeoTextField;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -187,12 +188,12 @@ public final class DrawTextField extends Drawable {
 						defineText = prefix + defineText;
 				} else if (linkedGeo.isGeoText()) {
 					defineText = "\"" +  defineText + "\"";
-				} else if (linkedGeo instanceof GeoFunctionNVar) {
+				} else if (linkedGeo instanceof FunctionalNVar) {
 					// string like f(x,y)=x^2
-					defineText = linkedGeo.getLabel() + "(" + ((GeoFunctionNVar)linkedGeo).getVarString() + ")=" + defineText;
-				}
+					// or f(\theta) = \theta
+					defineText = linkedGeo.getLabel() + "(" + ((FunctionalNVar)linkedGeo).getVarString() + ")=" + defineText;
+				} 
 				
-
 				try {
 					linkedGeo = geo.getKernel().getAlgebraProcessor().changeGeoElementNoExceptionHandling(linkedGeo, defineText, false, true);
 				} catch (Exception e1) {
