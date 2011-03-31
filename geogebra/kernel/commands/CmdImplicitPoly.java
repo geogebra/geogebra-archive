@@ -17,12 +17,12 @@ public class CmdImplicitPoly extends CommandProcessor {
 	{
 		int n = c.getArgumentNumber();
 		if(n == 0 || (int)Math.sqrt(9+8*n) != Math.sqrt(9+8*n))
-			throw argNumErr(app, "ImplicitPoly", n);
+			throw argNumErr(app, "ImplicitCurve", n);
 		
 		GeoElement[] arg = resArgs(c);
 		for(int i=0; i<n; i++)
 			if(!arg[i].isGeoPoint())
-				throw argErr(app, "ImplicitPoly", arg[i]);
+				throw argErr(app, "ImplicitCurve", arg[i]);
 		
 		GeoPoint [] points = new GeoPoint[n];
 		for(int i=0; i<n; i++)
