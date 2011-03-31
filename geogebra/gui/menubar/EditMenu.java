@@ -30,7 +30,8 @@ public class EditMenu extends BaseMenu {
 		selectAllAction,
 		selectAllAncestorsAction,
 		selectAllDescendantsAction,
-		selectCurrentLayerAction
+		selectCurrentLayerAction,
+		copyToClipboardAction
 	;
 	
 	private JMenuItem
@@ -42,7 +43,8 @@ public class EditMenu extends BaseMenu {
 		selectAllItem,
 		selectAllAncestorsItem,
 		selectAllDescendantsItem,
-		selectCurrentLayerItem
+		selectCurrentLayerItem,
+		copyToClipboardItem
 	;
 	
 	private JSeparator
@@ -79,6 +81,12 @@ public class EditMenu extends BaseMenu {
 			addSeparator();
 		}
 
+		copyToClipboardItem = add(copyToClipboardAction);
+		// ctrl-shift-c is also handled in MyKeyListener
+		setMenuShortCutShiftAccelerator(copyToClipboardItem, 'C');
+		
+		addSeparator();
+
 		mi = add(propertiesAction);
 		setMenuShortCutAccelerator(mi, 'E');
 
@@ -107,7 +115,6 @@ public class EditMenu extends BaseMenu {
 
 		showhideLabelsItem = add(showhideLabelsAction);
 		setMenuShortCutShiftAccelerator(showhideLabelsItem, 'G');
-
 
 		if (app.letDelete()) {
 			deleteSeparator = new JSeparator();
@@ -203,7 +210,19 @@ public class EditMenu extends BaseMenu {
 				app.showHideSelectionLabels();
 			}
 		};
+		
+		copyToClipboardAction = new AbstractAction(
+				app.getMenu("DrawingPadToClipboard"),
+				app.getImageIcon("edit-copy.png")) {
+			private static final long serialVersionUID = 1L;
 
+			public void actionPerformed(ActionEvent e) {			
+				app.setWaitCursor();
+				app.copyGraphicsViewToClipboard();	
+				app.setDefaultCursor();
+			}
+		};
+		
 		deleteAction = new AbstractAction(app.getPlain("Delete"), app
 				.getImageIcon("delete_small.gif")) {
 			private static final long serialVersionUID = 1L;
