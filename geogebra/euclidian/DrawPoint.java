@@ -85,10 +85,8 @@ public final class DrawPoint extends Drawable {
     	
         isVisible = geo.isEuclidianVisible();    
         
-        //if it's a 3D point, looks if it's on xOy plane
-        //TODO use other planes and regions
-    	if (geo.isGeoElement3D())
-    		isVisible &= Kernel.isZero(((GeoPointND) geo).getCoordsInD(3).getZ());
+        //looks if it's on plane
+        isVisible &= includedInView();
     		
         
     	// still needs updating if it's being traced to the spreadsheet
@@ -97,7 +95,8 @@ public final class DrawPoint extends Drawable {
         		
         // compute lower left corner of bounding box
 	    double [] coords = new double[2];
-        P.getInhomCoords(coords);                    
+        //P.getInhomCoords(coords);
+	    view.getInhomCoords(P, coords);
         
         // convert to screen
 		view.toScreenCoords(coords);	

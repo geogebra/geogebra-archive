@@ -185,6 +185,9 @@ public class Construction {
 			return null;
 	}
 	
+	public TreeSet<GeoElement> getGeoElements() {
+		return geoSet;
+	}
 	
 	/**
 	 * creates the ConstructionDefaults consDefaults

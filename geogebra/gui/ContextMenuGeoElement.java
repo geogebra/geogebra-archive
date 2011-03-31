@@ -28,6 +28,7 @@ import geogebra.kernel.GeoUserInputElement;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Traceable;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -68,6 +69,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	private GeoLine line;
 	private GeoVector vector;
 	private GeoConic conic;
+	private GeoPlaneND plane;
 	//private GeoNumeric numeric;
 	//private Point location;
 	protected Application app;
@@ -101,6 +103,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			addVectorItems();
 			addConicItems();
 			addNumberItems();	
+			//addPlaneItems();
 			addUserInputItem();
 			
 		}
@@ -503,7 +506,28 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	}
 	
 	
-	
+	private void addPlaneItems() {
+		if (!(geo instanceof GeoPlaneND))
+			return;
+		plane = (GeoPlaneND) geo;
+
+		AbstractAction action;
+
+		action = new AbstractAction(app.getPlain("View2D")) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				//Application.debug("geo: "+geo.getLabel());
+				plane.createView2D();
+				//app.storeUndoInfo();
+			}
+		};
+		addAction(action);
+
+	}
 
 
 	private void addForAllItems() {

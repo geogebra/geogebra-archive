@@ -18,19 +18,26 @@ the Free Software Foundation.
 package geogebra3D;
 
 import geogebra.CommandLineArguments;
+import geogebra.euclidian.EuclidianController;
 import geogebra.gui.GuiManager;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.layout.DockPanel;
+import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.euclidianForPlane.EuclidianViewForPlane;
 import geogebra3D.gui.GuiManager3D;
+import geogebra3D.gui.layout.panels.EuclidianDockPanelForPlane;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.Kernel3D;
 import geogebra3D.util.ImageManager3D;
 
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -44,6 +51,7 @@ public class Application3D extends Application{
     private EuclidianController3D euclidianController3D;      
     protected Kernel3D kernel3D;
     
+    private EuclidianViewForPlane euclidianViewForPlane;
 
 
     public Application3D(CommandLineArguments args, JFrame frame, boolean undoActive) {
@@ -91,6 +99,7 @@ public class Application3D extends Application{
 		//init the 3D euclidian view
 		euclidianController3D = new EuclidianController3D(kernel3D);
         euclidianView3D = new EuclidianView3D(euclidianController3D); 
+        
 	}
 	
 	public void setMode(int mode) {
@@ -121,6 +130,11 @@ public class Application3D extends Application{
 		return euclidianView3D;
 	}
 	
+	public void getEuclidianViewXML(StringBuilder sb,boolean asPreference){
+		super.getEuclidianViewXML(sb, asPreference);
+		sb.append(getEuclidianView3D().getXML());
+	}
+	
 	
 	public BufferedImage getExportImage(double maxX, double maxY) throws OutOfMemoryError {
 		//TODO use maxX, maxY values
@@ -134,7 +148,39 @@ public class Application3D extends Application{
 		return super.saveGeoGebraFile(file);
 	}
 	
-
+	/////////////////////////////////
+	// EUCLIDIAN VIEW FOR PLANE
+	/////////////////////////////////
+	
+	public EuclidianViewForPlane getEuclidianViewForPlane(){
+		return euclidianViewForPlane;
+	}
+	
+	public EuclidianViewForPlane createEuclidianViewForPlane(GeoPlaneND plane){
+		// create new view for plane and controller
+		EuclidianController ec = new EuclidianController(kernel3D);
+		euclidianViewForPlane = new EuclidianViewForPlane(ec, plane);
+		euclidianViewForPlane.updateFonts();
+		euclidianViewForPlane.addExistingGeos();
+		
+		// create dock panel
+		EuclidianDockPanelForPlane panel = new EuclidianDockPanelForPlane(this);
+		getGuiManager().getLayout().registerPanel(panel);
+		
+		//panel.setToolbarString(dpInfo[i].getToolbarString());
+		panel.setFrameBounds(new Rectangle(600, 400));
+		//panel.setEmbeddedDef(dpInfo[i].getEmbeddedDef());
+		//panel.setEmbeddedSize(dpInfo[i].getEmbeddedSize());
+		//panel.setShowStyleBar(dpInfo[i].showStyleBar());
+		//panel.setOpenInFrame(dpInfo[i].isOpenInFrame());
+		panel.setVisible(true);
+		
+		
+		getGuiManager().getLayout().getDockManager().show(panel);
+		
+		return euclidianViewForPlane;
+	
+	}
 	
 	/////////////////////////////////
 	// GUI
@@ -187,6 +233,15 @@ public class Application3D extends Application{
 		setWaitCursor();
 		guiManager = new GuiManager3D(this);
 		setDefaultCursor();
+	}
+	
+	
+	public void updateFonts() {
+
+		super.updateFonts();
+		
+		if (euclidianViewForPlane!=null)
+			euclidianViewForPlane.updateFonts();
 	}
     
 	///////////////////////////////////////

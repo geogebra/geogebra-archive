@@ -1070,6 +1070,16 @@ public abstract class Drawable extends DrawableND {
 	public Area getShape() {
 		return shape;
 	}
+	
+	
+	
+	/**
+	 * 
+	 * @return true if is included in this view (for 3D objects)
+	 */
+	protected boolean includedInView(){
+		return view.contains(getGeoElement());
+	}
 
 
 	

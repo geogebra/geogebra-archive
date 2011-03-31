@@ -12,6 +12,7 @@
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.DrawableList.DrawableIterator;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoFunctionAreaSums;
@@ -3649,7 +3650,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// repaint();
 	}
 
-	final protected void updateAllDrawables(boolean repaint) {
+	final public void updateAllDrawables(boolean repaint) {
 		allDrawableList.updateAll();
 		if (repaint)
 			repaint();
@@ -4909,6 +4910,34 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if((xmax2-xmin2 > kernel.MIN_PRECISION)&&(ymax2-ymin2 > kernel.MIN_PRECISION))
 			setRealWorldCoordSystem(xmin2,xmax2,ymin2,ymax2);
 		updatingBounds = false;
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param geo
+	 * @return true if the geo is included in this view (for 3D geos)
+	 */
+	public boolean contains(GeoElement geo){
+		if (geo.isGeoElement3D()){
+			switch(geo.getGeoClassType()){
+			case GeoElement.GEO_CLASS_POINT3D:
+				return Kernel.isZero(((GeoPointND) geo).getCoordsInD(3).getZ());
+			default:
+				return false;
+			}
+		}else
+			return true;
+	}
+	
+	/**
+	 * 
+	 * @param P
+	 * @return coords of the point for this view
+	 */
+	public void getInhomCoords(GeoPointND P, double[] ret){
+		P.getInhomCoords(ret);
 	}
 	
 }

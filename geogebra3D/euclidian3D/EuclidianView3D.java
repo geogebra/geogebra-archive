@@ -1636,6 +1636,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 */
 	public void setRotAnimation(double aN, double bN, boolean checkSameValues){
 
+
+		//app.storeUndoInfo();
+		
 		animatedRot = true;
 		animatedContinueRot = false;
 		animatedRotTimeStart = System.currentTimeMillis();// - 16;
@@ -1681,6 +1684,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void stopRotAnimation(){
 		animatedContinueRot = false;
 		animatedRot = false;
+		
+		
 	}
 
 

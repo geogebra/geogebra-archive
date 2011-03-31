@@ -310,6 +310,7 @@ public class Application implements KeyEventDispatcher {
 	public static final int VIEW_CAS = 8;
 	public static final int VIEW_EUCLIDIAN2 = 16;
     public static final int VIEW_EUCLIDIAN3D = 512;
+    public static final int VIEW_EUCLIDIAN_FOR_PLANE = 1024;
 
 	/**
 	 * The preferred size of this application. Used in case the frame size should be updated.
@@ -1245,6 +1246,10 @@ public class Application implements KeyEventDispatcher {
 
 	public EuclidianView getEuclidianView() {
 		return euclidianView;
+	}
+	
+	public void getEuclidianViewXML(StringBuilder sb,boolean asPreference){
+		getEuclidianView().getXML(sb,asPreference);
 	}
 	
 	public EuclidianViewInterface getActiveEuclidianView() {

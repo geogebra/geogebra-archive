@@ -1,9 +1,13 @@
 package geogebra3D.kernel3D;
 
+import java.awt.Rectangle;
+
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
+import geogebra.gui.layout.DockPanel;
+import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -13,6 +17,10 @@ import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
+import geogebra3D.Application3D;
+import geogebra3D.euclidianForPlane.EuclidianViewForPlane;
+import geogebra3D.gui.layout.panels.EuclidianDockPanel3D;
+import geogebra3D.gui.layout.panels.EuclidianDockPanelForPlane;
 
 public class GeoPlane3D extends GeoElement3D
 implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
@@ -113,8 +121,9 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		return coords.projectPlaneThruV(getCoordSys().getMatrixOrthonormal(),willingDirection);
 	}
 
-	public boolean isInRegion(GeoPointND PI) {
-		Coords planeCoords = getNormalProjection(PI.getInhomCoords())[1];
+	public boolean isInRegion(GeoPointND P) {
+		Coords planeCoords = getNormalProjection(P.getInhomCoordsInD(3))[1];
+		//Application.debug(P.getLabel()+":\n"+planeCoords);
 		return Kernel.isEqual(planeCoords.get(3),0,Kernel.STANDARD_PRECISION);
 	}
 	
@@ -488,7 +497,25 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	}
 	
 	
-
+	
+	
+	//////////////////////////////////
+	// 2D VIEW
+	
+	private EuclidianViewForPlane euclidianViewForPlane;
+	
+	public void createView2D(){
+		Application.debug("geo: "+getLabel());
+		
+		euclidianViewForPlane = ((Application3D) app).createEuclidianViewForPlane(this);
+	
+	}
+	
+	public void update(){
+		super.update();
+		if (euclidianViewForPlane!=null)
+			euclidianViewForPlane.updateAllDrawables(true);
+	}
 
 
 }

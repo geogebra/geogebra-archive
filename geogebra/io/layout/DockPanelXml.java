@@ -134,6 +134,12 @@ public class DockPanelXml {
 	 * @return An XML representation of the data stored in this class.
 	 */
 	public String getXml() {
+		
+		//TODO remove this : here to avoid saving planes 2D views
+		if (getViewId()>=1024)
+			return "";
+		
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("<view id=\"");
 		sb.append(getViewId());
