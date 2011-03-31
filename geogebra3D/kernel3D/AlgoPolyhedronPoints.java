@@ -59,6 +59,17 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 				return p;
 			}
 		});
+		
+		
+		outputPoints=new OutputHandler<GeoPoint3D>(new elementFactory<GeoPoint3D>() {
+			public GeoPoint3D newElement() {
+				GeoPoint3D p=new GeoPoint3D(cons);
+				p.setCoords(0, 0, 0, 1);
+				p.setParentAlgorithm(AlgoPolyhedronPoints.this);
+				return p;
+			}
+		});
+		
 
 		outputPolygons=new OutputHandler<GeoPolygon3D>(new elementFactory<GeoPolygon3D>() {
 			public GeoPolygon3D newElement() {
@@ -77,15 +88,7 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 			}
 		});
 		
-		
-		outputPoints=new OutputHandler<GeoPoint3D>(new elementFactory<GeoPoint3D>() {
-			public GeoPoint3D newElement() {
-				GeoPoint3D p=new GeoPoint3D(cons);
-				p.setCoords(0, 0, 0, 1);
-				p.setParentAlgorithm(AlgoPolyhedronPoints.this);
-				return p;
-			}
-		});
+
 
 		
 		

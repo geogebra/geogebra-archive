@@ -367,6 +367,38 @@ public class PlotterBrush {
 	}
 
 	
+	public void arc(Coords center, Coords v1, Coords v2, double radius, double start, double extent){
+		
+		
+		length=(float) (extent*radius); //TODO use integer to avoid bad dash cycle connection
+		
+		int longitude = 60;
+		
+		Coords vn1;
+		Coords vn2 = v2.crossProduct(v1);
+		
+    	float dt = (float) 1/longitude;
+    	float da = (float) (extent *dt) ; 
+    	float u, v;
+		u = (float) Math.cos (start); 
+		v = (float) Math.sin (start); 
+   	
+    	setTextureX(0,0);
+		vn1 = (Coords) v1.mul(u).add(v2.mul(v));
+		down((Coords) center.add(vn1.mul(radius)),vn1,vn2);  	
+    	
+    	for( int i = 1; i <= longitude  ; i++ ) { 
+    		u = (float) Math.cos (start + i * da ); 
+    		v = (float) Math.sin (start + i * da ); 
+    		
+    		setTextureX(i*dt);
+    		vn1 = (Coords) v1.mul(u).add(v2.mul(v));
+    		moveTo((Coords) center.add(vn1.mul(radius)),vn1,vn2);
+    	} 
+    	
+	}
+
+	
 	/** draws an ellipse
 	 * @param center
 	 * @param v1 1st eigenvector
@@ -374,7 +406,7 @@ public class PlotterBrush {
 	 * @param a  1st eigenvalue
 	 * @param b  2nd eigenvalue
 	 *  	 */
-	public void ellipse(Coords center, Coords v1, Coords v2, double a, double b){
+	public void arcEllipse(Coords center, Coords v1, Coords v2, double a, double b, double start, double extent){
 		
 		//Ramanujan approximation
 		//length=(float) (Math.PI*(3*(a+b)-Math.sqrt((3*a+b)*(a+3*b)))); //TODO use integer to avoid bad dash cycle connection
@@ -393,19 +425,21 @@ public class PlotterBrush {
 		int longitude = 60;
 		
 		Coords m,mold,vn1;
-		Coords vn2 = v1.crossProduct(v2);
+		Coords vn2 = v2.crossProduct(v1);
 		
     	float dt = (float) 1/longitude;
-    	float da = (float) (2*Math.PI *dt) ; 
-    	float u=0, v=1;
-    	
+    	float da = (float) (extent *dt) ; 
+    	float u, v;
+		u = (float) Math.cos (start); 
+		v = (float) Math.sin (start); 
+     	
 		m = v1.mul(a*u).add(v2.mul(b*v));
 		vn1 = (m.sub(f1).normalized()).add((m.sub(f2).normalized())).normalized(); //bissector
 		down(center.add(m),vn1,vn2);  	
     	
     	for( int i = 1; i <= longitude  ; i++ ) { 
-    		u = (float) Math.sin ( i * da ); 
-    		v = (float) Math.cos ( i * da ); 
+    		u = (float) Math.cos (start + i * da ); 
+    		v = (float) Math.sin (start + i * da ); 
     		
     		mold=m;
     		m = v1.mul(a*u).add(v2.mul(b*v));

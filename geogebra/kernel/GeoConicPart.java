@@ -15,6 +15,7 @@ the Free Software Foundation.
  */
 package geogebra.kernel;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.integration.EllipticArcLength;
@@ -417,9 +418,9 @@ implements LimitedPath, NumberValue, LineProperties {
 		return false;
 	}
 	
-	public void pointChanged(GeoPointND PI) {
+	public void pointChanged(GeoPointND P) {
 		
-		GeoPoint P = (GeoPoint) PI;
+		//GeoPoint P = (GeoPoint) PI;
 		
 		PathParameter pp = P.getPathParameter(); 
 		pp.setPathType(type);
@@ -449,9 +450,14 @@ implements LimitedPath, NumberValue, LineProperties {
 				} else {
 					// two rays
 					// we take point at infinty
+					/*
 					P.x = -lines[0].y;
 					P.y = lines[0].x;
 					P.z = 0.0;
+					 */
+					P.setCoords2D(-lines[0].y, lines[0].x, 0);
+					P.updateCoordsFrom2D(false,getCoordSys());
+					P.updateCoords();
 				}
 			break;
 
@@ -461,7 +467,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		}	
 	}
 	
-	private void setEllipseParameter(GeoPoint P) {
+	private void setEllipseParameter(GeoPointND P) {
 		// let GeoConic do the work
 		super.pointChanged(P);		
 			
@@ -475,7 +481,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		pp.t = t / paramExtent;	
 	}
 	
-	private void clipEllipseParameter(GeoPoint P) {
+	private void clipEllipseParameter(GeoPointND P) {
 		// make sure we don't get outside [0,1]
 		// the values of the path parameter are now
 		// between [0, 2pi/paramExtent]
@@ -503,9 +509,9 @@ implements LimitedPath, NumberValue, LineProperties {
 		}	
 	}
 	
-	public void pathChanged(GeoPointND PI) {	
+	public void pathChanged(GeoPointND P) {	
 		
-		GeoPoint P = (GeoPoint) PI;
+		//GeoPoint P = (GeoPoint) PI;
 		
 		PathParameter pp = P.getPathParameter();						
 		if (pp.getPathType() != type || Double.isNaN(pp.t)) {		
@@ -536,12 +542,22 @@ implements LimitedPath, NumberValue, LineProperties {
 						pp.t:
 						1.0 - pp.t;
 				double angle = paramStart + t * paramExtent;
+				/*
 				P.x = halfAxes[0] * Math.cos(angle);	
 				P.y = halfAxes[1] * Math.sin(angle);
 				P.z = 1.0;
 				
 				//	transform to real world coord system
-				coordsEVtoRW(P);								
+				coordsEVtoRW(P);
+				*/
+				
+				Coords coords = new Coords(halfAxes[0] * Math.cos(angle),halfAxes[1] * Math.sin(angle),1);
+				coordsEVtoRW(coords);
+				
+				P.setCoords2D(coords.getX(),coords.getY(),coords.getZ());
+				P.updateCoordsFrom2D(false,getCoordSys());
+				P.updateCoords();
+				
 			break;	
 			
 			case CONIC_PARALLEL_LINES:
@@ -556,9 +572,15 @@ implements LimitedPath, NumberValue, LineProperties {
 				} else {
 					// two rays
 					// we take point at infinty
+					/*
 					P.x = -lines[0].y;
 					P.y = lines[0].x;
 					P.z = 0.0;
+					*/
+					P.setCoords2D(-lines[0].y, lines[0].x, 0);
+					P.updateCoordsFrom2D(false,getCoordSys());
+					P.updateCoords();
+
 				}
 			break;
 
@@ -859,6 +881,10 @@ implements LimitedPath, NumberValue, LineProperties {
 	}
 	
 	
+	
+    public boolean hasDrawable3D() {
+    	return true;
+    }
 	
 	
 }

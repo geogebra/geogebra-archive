@@ -216,7 +216,7 @@ public class PlotterSurface {
 		
 		int longitude=6;
 		size+=3;
-		while(longitude*6<size*size){//find the correct longitude size (size=3 <-> longitude=6 and size=9 <-> longitude=24)
+		while(longitude*6<=size*size){//find the correct longitude size (size=3 <-> longitude=12 and size=9 <-> longitude=48)
 			longitude*=2;
 		}
 		
@@ -360,8 +360,10 @@ public class PlotterSurface {
 	 * @param v2
 	 * @param a 
 	 * @param b 
+	 * @param start 
+	 * @param extent 
 	 */
-	public void ellipse(Coords center, Coords v1, Coords v2, double a, double b){
+	public void ellipsePart(Coords center, Coords v1, Coords v2, double a, double b, double start, double extent){
 		manager.startGeometry(Manager.TRIANGLE_FAN);
 		
 		int longitude = 60;
@@ -369,19 +371,21 @@ public class PlotterSurface {
 		Coords m;
 		
     	float dt = (float) 1/longitude;
-    	float da = (float) (2*Math.PI *dt) ; 
+    	float da = (float) (extent *dt) ; 
     	
     	manager.texture(0, 0);
     	manager.normal(v1.crossProduct(v2));
     	manager.vertex(center);  
     	
-    	float u=1, v=0;
+    	float u, v;
+    	u = (float) Math.cos (start); 
+		v = (float) Math.sin (start);
 		m = v1.mul(a*u).add(v2.mul(b*v));
 		manager.vertex(center.add(m));  	
     	
     	for( int i = 1; i <= longitude  ; i++ ) { 
-    		u = (float) Math.cos ( i * da ); 
-    		v = (float) Math.sin ( i * da ); 
+    		u = (float) Math.cos (start + i * da ); 
+    		v = (float) Math.sin (start + i * da ); 
     		
      		m = v1.mul(a*u).add(v2.mul(b*v));
     		manager.vertex(center.add(m));

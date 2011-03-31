@@ -145,7 +145,7 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 
 
 			brush.setAffineTexture(0f,0f);
-			double tMin, tMax;
+			double tMax;
 			
 
 			Coords m;
@@ -156,13 +156,11 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 			
 			switch(conic.getType()){
 			case GeoConic.CONIC_CIRCLE:
-				m = conic.getMidpoint3D();
+				updateCircle(brush);
 				//Application.debug(m.toString()+"\n2D:\n"+conic.getMidpoint2D().toString());
-				brush.circle(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
 				break;
 			case GeoConic.CONIC_ELLIPSE:
-				m = conic.getMidpoint3D();
-				brush.ellipse(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0), conic.getHalfAxis(1));
+				updateEllipse(brush);
 				break;
 			case GeoConic.CONIC_HYPERBOLA:
 				m = conic.getMidpoint3D();
@@ -250,10 +248,10 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 			
 			switch(conic.getType()){
 			case GeoConic.CONIC_CIRCLE:
-				surface.disc(conic.getMidpoint3D(), conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
-				break;
+				//surface.disc(conic.getMidpoint3D(), conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
+				//break;
 			case GeoConic.CONIC_ELLIPSE:
-				surface.ellipse(conic.getMidpoint3D(), conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0), conic.getHalfAxis(1));
+				surface.ellipsePart(conic.getMidpoint3D(), conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0), conic.getHalfAxis(1),getStart(),getExtent());
 				break;
 			default:
 				break;
@@ -268,6 +266,30 @@ public class DrawConic3D extends Drawable3DCurves implements Functional2Var {
 		return true;
 	}
 	
+	
+	protected double getStart(){
+		return 0;
+	}
+	
+	protected double getExtent(){
+		return 2*Math.PI;
+	}
+	
+	
+	protected void updateCircle(PlotterBrush brush){
+		
+		GeoConicND conic = (GeoConicND) getGeoElement();
+		Coords m = conic.getMidpoint3D();
+		brush.circle(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0));
+
+	}
+	
+	protected void updateEllipse(PlotterBrush brush){
+		GeoConicND conic = (GeoConicND) getGeoElement();
+		Coords m = conic.getMidpoint3D();
+		brush.arcEllipse(m, conic.getEigenvec3D(0), conic.getEigenvec3D(1), conic.getHalfAxis(0), conic.getHalfAxis(1),0,2*Math.PI);
+
+	}
 
 	protected void updateForView(){
 		if (getView3D().viewChanged())

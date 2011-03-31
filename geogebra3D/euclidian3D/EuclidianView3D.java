@@ -11,6 +11,7 @@ import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
+import geogebra.kernel.GeoConicPart;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoList;
@@ -542,6 +543,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			case GeoElement3D.GEO_CLASS_CONIC:					
 			case GeoElement3D.GEO_CLASS_CONIC3D:					
 				d = new DrawConic3D(this, (GeoConicND) geo);
+				break;	
+				
+			case GeoElement3D.GEO_CLASS_CONICPART:					
+				d = new DrawConicPart3D(this, (GeoConicPart) geo);
 				break;	
 
 			case GeoElement3D.GEO_CLASS_AXIS3D:	

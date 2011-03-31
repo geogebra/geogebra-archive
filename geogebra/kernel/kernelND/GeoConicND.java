@@ -715,7 +715,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 * Transforms coords of point P from Eigenvector space to real world space.
 	 * @param P 2D point in EV coords
 	 */
-	final void coordsEVtoRW(Coords P) {
+	protected final void coordsEVtoRW(Coords P) {
 		// rotate by alpha
 		double px = P.getX();
 		double py = P.getY();
