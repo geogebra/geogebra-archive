@@ -106,8 +106,13 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private CoordMatrix4x4 m = CoordMatrix4x4.Identity(); 
 	private CoordMatrix4x4 mInv = CoordMatrix4x4.Identity();
 	private CoordMatrix4x4 undoRotationMatrix = CoordMatrix4x4.Identity();
-	private double a = 0;
-	private double b = 0;//angles (in degrees)
+	
+	
+	public final static double ANGLE_ROT_OZ=-60;
+	public final static double ANGLE_ROT_XOY=20;
+	
+	private double a = ANGLE_ROT_OZ;
+	private double b = ANGLE_ROT_XOY;//angles (in degrees)
 	private double aOld, bOld;
 	private double aNew, bNew;
 	
@@ -298,6 +303,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		//point decorations
 		initPointDecorations();
+		
 		
 		
 		

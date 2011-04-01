@@ -24,6 +24,7 @@ import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
@@ -152,11 +153,16 @@ public class Application3D extends Application{
 	// EUCLIDIAN VIEW FOR PLANE
 	/////////////////////////////////
 	
+	
 	public EuclidianViewForPlane getEuclidianViewForPlane(){
 		return euclidianViewForPlane;
 	}
 	
-	public EuclidianViewForPlane createEuclidianViewForPlane(GeoPlaneND plane){
+	/**
+	 * @param plane
+	 * @return create a new euclidian view for the plane
+	 */
+	public EuclidianViewForPlane createEuclidianViewForPlane(GeoCoordSys2D plane){
 		// create new view for plane and controller
 		EuclidianController ec = new EuclidianController(kernel3D);
 		euclidianViewForPlane = new EuclidianViewForPlane(ec, plane);

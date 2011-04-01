@@ -3356,7 +3356,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		
 		//G.Sturr 2010-6-30
 		// filter out any geo not marked for this view
-		if(!geo.isVisibleInView(this)) return;
+		if(!isVisibleInThisView(geo)) return;
 		// END G.Sturr
 		
 		
@@ -3371,6 +3371,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			repaint();			
 		}
 		
+	}
+	
+	public boolean isVisibleInThisView(GeoElement geo){
+		return geo.isVisibleInView(this);
 	}
 
 	

@@ -1,12 +1,15 @@
 package geogebra3D.euclidianForPlane;
 
+import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra3D.kernel3D.GeoPlane3D;
 
 
 /**
@@ -22,27 +25,35 @@ public class EuclidianViewForPlane extends EuclidianView {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private GeoPlaneND plane;
+	private GeoCoordSys2D plane;
 
 	/**
 	 * 
 	 * @param ec
 	 * @param plane 
 	 */
-	public EuclidianViewForPlane(EuclidianController ec, GeoPlaneND plane) {
+	public EuclidianViewForPlane(EuclidianController ec, GeoCoordSys2D plane) {
 		super(ec, new boolean[]{ true, true }, true);
 		
 		this.plane = plane;
 	}
+	
+	
+	public boolean isVisibleInThisView(GeoElement geo){
+		return geo.isVisibleInView3D();
+	}
+	
+	public void attachView() {
+		kernel.attach(this);
+	}
+
 
 	/**
 	 * add all existing geos to this view
 	 */
 	public void addExistingGeos(){
-		for (GeoElement geo : getKernel().getConstruction().getGeoElements()){
-			geo.addView(this); //TODO replace with link with 3D view
-			add(geo);
-		}
+
+		kernel.notifyAddAll(this);
 	}
 	
 	
@@ -61,7 +72,8 @@ public class EuclidianViewForPlane extends EuclidianView {
 	
 	
 	public void getInhomCoords(GeoPointND P, double[] ret){
-		Coords coords = plane.getNormalProjection(P.getInhomCoordsInD(3))[1];
+		CoordSys coordSys = plane.getCoordSys();
+		Coords coords = coordSys.getNormalProjectionForDrawing(P.getInhomCoordsInD(3))[1];
 		for (int i=0; i<ret.length; i++)
     		ret[i]=coords.get(i+1);
 	}

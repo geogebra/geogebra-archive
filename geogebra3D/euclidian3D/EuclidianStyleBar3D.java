@@ -89,7 +89,7 @@ public class EuclidianStyleBar3D extends EuclidianStyleBar {
 			}
 			*/
 		}else if (source.equals(btnViewPerspective)) {
-			((EuclidianView3D) ev).setRotAnimation(-60,20,false);
+			((EuclidianView3D) ev).setRotAnimation(EuclidianView3D.ANGLE_ROT_OZ,EuclidianView3D.ANGLE_ROT_XOY,false);
 		}else if (source.equals(btnViewXY)) {
 			((EuclidianView3D) ev).setRotAnimation(-90,90,true);
 		}else if (source.equals(btnViewXZ)) {
