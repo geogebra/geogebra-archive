@@ -167,13 +167,14 @@ public class GeoInterval extends GeoFunction {
 				if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
 					leftDir = -1;
 					rightInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
-					rightBound = ((NumberValue)leftRight).getDouble();
+					rightBound = ((NumberValue)leftRight.evaluate()).getDouble();
 					rightStr = leftRight.toLaTeXString(true);
 				}
 				else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
 					leftDir = +1;
 					leftInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
-					leftBound = ((NumberValue)leftLeft).getDouble();
+					Application.debug(leftLeft.getClass());
+					leftBound = ((NumberValue)leftLeft.evaluate()).getDouble();
 					leftStr = leftLeft.toLaTeXString(true);
 				}
 
