@@ -411,19 +411,47 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		doResolveVariables();
 		simplifyAndEvalCommands();
 		simplifyLeafs();
-		
+
 		//left instanceof NumberValue needed rather than left.isNumberValue() as left can be an
 		//ExpressionNode, eg Normal[0,1,x]
-		if (operation == POWER && left instanceof NumberValue && ((NumberValue)left).getDouble() == Math.E) {
-			GeoElement geo = kernel.lookupLabel("e");
-			if (geo != null && geo.needsReplacingInExpressionNode()) {
-				
-				// replace e^x with exp(x)
-				// if e was autocreated
-				operation = EXP;
-				left = right;
-				kernel.getConstruction().removeLabel(geo);
+		switch (operation) {
+		case POWER: // eg e^x
+			if (left instanceof NumberValue && ((NumberValue)left).getDouble() == Math.E) {
+				GeoElement geo = kernel.lookupLabel("e");
+				if (geo != null && geo.needsReplacingInExpressionNode()) {
+
+					// replace e^x with exp(x)
+					// if e was autocreated
+					operation = EXP;
+					left = right;
+					kernel.getConstruction().removeLabel(geo);
+				}
 			}
+			break;
+		case MULTIPLY: // eg 1 * e or e * 1
+		case DIVIDE: // eg 1 / e or e / 1
+		case PLUS: // eg 1 + e or e + 1
+		case MINUS: // eg 1 - e or e - 1
+			if (left instanceof NumberValue && ((NumberValue)left).getDouble() == Math.E) {
+				GeoElement geo = kernel.lookupLabel("e");
+				if (geo != null && geo.needsReplacingInExpressionNode()) {
+
+					// replace 'e' with exp(1) 
+					// if e was autocreated
+					left = new ExpressionNode(kernel, new MyDouble(kernel, 1.0), EXP, null);
+					kernel.getConstruction().removeLabel(geo);
+				}
+			} else if (right instanceof NumberValue && ((NumberValue)right).getDouble() == Math.E) {
+				GeoElement geo = kernel.lookupLabel("e");
+				if (geo != null && geo.needsReplacingInExpressionNode()) {
+
+					// replace 'e' with exp(1) 
+					// if e was autocreated
+					right = new ExpressionNode(kernel, new MyDouble(kernel, 1.0), EXP, null);
+					kernel.getConstruction().removeLabel(geo);
+				}
+			}
+			break;
 		}
 	}
 
