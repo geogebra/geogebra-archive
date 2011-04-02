@@ -907,7 +907,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			hits.removePolygons();
-			createNewPoint(hits, true, true, true, true);
+			createNewPoint(hits, true, false, true, true);
 			break;
 
 		case EuclidianView.MODE_RIGID_POLYGON:
