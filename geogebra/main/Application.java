@@ -2060,6 +2060,8 @@ public class Application implements KeyEventDispatcher {
 	 * @return the scriptingLanguage
 	 */
 	public String getScriptingLanguage() {
+		if("null".equals(scriptingLanguage))
+			scriptingLanguage=null;
 		return scriptingLanguage;
 	}    
 	
