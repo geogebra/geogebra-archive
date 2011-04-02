@@ -25,6 +25,8 @@ if [ "$PYTHON3" = "" ]; then
   fi
  fi
 
+umask 0002 # trying to ensure g+w rights for all created files automatically
+
 # 2. Packaging hicolor icons:
 cd ../../../../icons
 tar czf $SVNDIR/geogebra/scripts/autobuild/linux/generic/hicolor.tgz hicolor

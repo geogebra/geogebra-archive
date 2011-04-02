@@ -8,6 +8,8 @@ GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/4.0/ggb40maxima-3.9.189.0_5
 
 # Please do not edit below this. (FIXME: the above settings should come from the config file.)
 
+umask 0002 # trying to ensure g+w rights for all created files automatically
+
 cp $GGB40MAXIMA_ZIP /tmp
 ZIPFILE=`basename $GGB40MAXIMA_ZIP`
 . ../autobuild.conf

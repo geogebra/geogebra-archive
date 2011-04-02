@@ -23,6 +23,8 @@ test -r autobuild.conf || {
 . ./autobuild.conf
 cd $SVNDIR/geogebra
 
+umask 0002 # trying to ensure g+w rights for all created files automatically
+
 # 2. Updating source files
 if [ "$0" = "./update" -a "$1" != "--no-update" ]; then
  $SVN_COMMAND update --accept theirs-full --force | tail -1 | grep ^At && exit 1 # No updates found.

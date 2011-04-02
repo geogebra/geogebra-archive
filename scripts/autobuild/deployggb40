@@ -17,6 +17,8 @@ cd $SVNDIR/geogebra
 MYVER=`cat build/unpacked/version.txt`
 MYDIR=4.0
 
+umask 0002 # trying to ensure g+w rights for all created files automatically
+
 # 3. (Re)creating $WWWDIR/$MYDIR directory
 if [ "$WWWDIR" = "" ]; then
  echo "Fatal error, WWWDIR=$WWWDIR, exiting for safety reasons"

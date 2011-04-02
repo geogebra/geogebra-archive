@@ -12,6 +12,9 @@ test -r autobuild.conf || {
  exit 1
  }
 . ./autobuild.conf
+
+umask 0002 # trying to ensure g+w rights for all created files automatically
+
 cd $SVNDIR
 svn co --force $REPO
 cd geogebra
