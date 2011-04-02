@@ -8973,7 +8973,7 @@ class CmdTextfield extends CommandProcessor {
 		case 1:
 			
 			arg = resArgs(c);
-			if (arg[0].isIndependent()){				
+			if (arg[0].isLabelSet()){				
 				return new GeoElement[] {kernel.textfield(c.getLabel(),arg[0])};
 			}
 			else
