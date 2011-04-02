@@ -1,36 +1,30 @@
 package geogebra.kernel.commands;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.main.MyError;
 
-public class CmdImplicitPoly extends CommandProcessor {
+public class CmdImplicitPoly extends CmdOneListFunction {
 
 	public CmdImplicitPoly(Kernel kernel) {
 		super(kernel);
 	}
 
 	@Override
-	public GeoElement[] process(Command c) throws MyError
-	{
-		int n = c.getArgumentNumber();
+	protected GeoElement doCommand(String a, GeoList b) {
+		int n = b.size();
 		if(n == 0 || (int)Math.sqrt(9+8*n) != Math.sqrt(9+8*n))
 			throw argNumErr(app, "ImplicitCurve", n);
 		
-		GeoElement[] arg = resArgs(c);
 		for(int i=0; i<n; i++)
-			if(!arg[i].isGeoPoint())
-				throw argErr(app, "ImplicitCurve", arg[i]);
+			if(!b.get(i).isGeoPoint())
+				throw argErr(app, "ImplicitCurve", b.get(i));
 		
-		GeoPoint [] points = new GeoPoint[n];
-		for(int i=0; i<n; i++)
-			points[i] = (GeoPoint) arg[i];
-		
-		GeoElement [] ret = { kernel.ImplicitPoly(c.getLabel(), points) };
+		GeoElement ret = kernel.ImplicitPoly(a, b);
 		
 		return ret;
 	}
-
 }

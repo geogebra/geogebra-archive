@@ -2023,7 +2023,7 @@ public class Kernel {
 	}
 	
 	/** Implicit Polynomial through points */
-	final public GeoImplicitPoly ImplicitPoly(String label, GeoPoint [] points) {
+	final public GeoImplicitPoly ImplicitPoly(String label, GeoList points) {
 		AlgoImplicitPolyThroughPoints algo = new AlgoImplicitPolyThroughPoints(cons, label, points);
 		GeoImplicitPoly implicitPoly = algo.getImplicitPoly();
 		return implicitPoly;

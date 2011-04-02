@@ -6,10 +6,10 @@ import java.awt.Label;
 
 public class AlgoImplicitPolyThroughPoints extends AlgoElement 
 {
-	private GeoPoint[] P; // input points      
+	private GeoList P; // input points      
     private GeoImplicitPoly implicitPoly; // output 
 	
-	AlgoImplicitPolyThroughPoints(Construction cons, String label, GeoPoint[] p)
+	AlgoImplicitPolyThroughPoints(Construction cons, String label, GeoList p)
 	{
 		super(cons);
 		this.P = p;
@@ -26,13 +26,13 @@ public class AlgoImplicitPolyThroughPoints extends AlgoElement
 		return implicitPoly;
 	}
 	
-	public GeoPoint[] getP() {
+	public GeoList getP() {
 		return P;
 	}
 	
 	@Override
 	protected void setInputOutput() {
-		input = P;
+		input = P.getGeoElements();
 		output = new GeoElement[1];
 		output[0] = implicitPoly;
 		setDependencies();
@@ -53,9 +53,9 @@ public class AlgoImplicitPolyThroughPoints extends AlgoElement
 	}
 
 	final public String toString() {
-		 String [] str = new String[P.length];
-		 for(int i=0; i<P.length; i++)
-			 str[i] = P[i].getLabel();
+		 String [] str = new String[P.getGeoElements().length];
+		 for(int i=0; i<P.getGeoElements().length; i++)
+			 str[i] = P.get(i).getLabel();
 		 return app.getPlain("ImplicitPolyThroughPoints",str);
 	}
 }

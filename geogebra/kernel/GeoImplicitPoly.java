@@ -622,6 +622,18 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		throughPoints(p);
 	}
 	
+	/** 
+	 * Makes make curve through given points 
+	 * @param points array of points
+	 */
+	public void throughPoints(GeoList points)
+	{
+		ArrayList<GeoPoint> p = new ArrayList<GeoPoint>();
+		for(int i=0; i<points.size(); i++)
+			p.add((GeoPoint)points.get(i));
+		throughPoints(p);
+	}
+	
 	/**
 	 * make curve through given points
 	 * @param points ArrayList of points
@@ -639,6 +651,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		
 		RealMatrix extendMatrix = new RealMatrixImpl(points.size(), points.size()+1);
 		RealMatrix matrix = new RealMatrixImpl(points.size(), points.size());
+		double [][] coeffMatrix = new double[degree+1][degree+1];
 		
 		DecompositionSolver solver;
 		
@@ -657,12 +670,19 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		}
 		
 		int solutionColumn = 0, noPoints = points.size();
+
 		do 
 		{
-			
 			if(solutionColumn > noPoints)
 			{
 				noPoints = noPoints-realDegree-1;
+				
+				if(noPoints < 2)
+				{
+					setUndefined();
+					return;
+				}
+				
 				extendMatrix = new RealMatrixImpl(noPoints, noPoints+1);
 				realDegree-=1;
 				matrixRow = new double[noPoints+1];
@@ -677,7 +697,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 							matrixRow[m++] = Math.pow(x, j)*Math.pow(y, k);
 					extendMatrix.setRow(i, matrixRow);
 				}
-				
+					
 				matrix = new RealMatrixImpl(noPoints, noPoints);
 				solutionColumn = 0;
 			}
@@ -704,9 +724,6 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 			if(Kernel.isZero(partialSolution[i]))
 				partialSolution[i] = 0;
 		
-		double [][] coeffMatrix = new double[degree+1][degree+1];
-		
-		
 		for(int i=0; i<partialSolution.length; i++)
 			if(Kernel.isZero(partialSolution[i]))
 				partialSolution[i] = 0;
@@ -719,8 +736,15 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 					coeffMatrix[i][j] = partialSolution[k++];
 		
 		this.setCoeff(coeffMatrix);
+		this.update();
+		this.defined = true;
+		for(int i=0; i<points.size(); i++)
+			if(!this.isOnPath(points.get(i)))
+			{
+				this.setUndefined();
+				return;
+			}
 	}
-	
 	
 
 	public void pointChanged(GeoPointND PI) {
@@ -733,6 +757,10 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		setNearestPointOnCurve(PI);
 	}
 
+	public boolean isOnPath(GeoPointND PI) {
+		return isOnPath(PI, Kernel.STANDARD_PRECISION);
+	}
+	
 	public boolean isOnPath(GeoPointND PI, double eps) {
 		//Application.debug("on path? "+PI+"; eps="+eps);
 
@@ -753,7 +781,7 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		
 		double value = this.evalPolyAt(px, py);
 		
-		return Kernel.isZero(value);
+		return Math.abs(value) < Kernel.MIN_PRECISION;
 	}
 
 	public double getMinParameter() {
