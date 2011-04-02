@@ -211,7 +211,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	}
 
 	protected boolean showInEuclidianView() {
-		return isDefined();
+		return isDefined() && (!isBooleanFunction() || isInequality);
 	}
 	
 	
@@ -493,14 +493,15 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		public FunctionNVar.IneqTree getIneqs(){
 			if(fun.getIneqs() == null){
 				isInequality = fun.initIneqs(fun.getExpression(),isInverseFill(),this);
-				
+				Application.debug(isInequality);
 			}
 			return fun.getIneqs();
 		}
 				
 		public void update(){
 			super.update();
-			fun.updateIneqs();			
+			isInequality = fun.updateIneqs();
+			Application.debug(isInequality);
 		}
 		public boolean isRegion() {
 			return isBooleanFunction();

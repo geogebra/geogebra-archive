@@ -237,7 +237,7 @@ public class Inequality {
 		}
 		if (coefVal == null || coefVal == 0
 				|| (otherVal != null && Math.abs(otherVal) > Math.abs(coefVal)))
-			update();
+			update();		
 		else {
 			isAboveBorder = coefVal > 0;
 			coef.set(-coefVal);

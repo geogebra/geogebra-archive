@@ -56,7 +56,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		private IneqTree left,right;
 		private Inequality ineq;
 		private int operation = ExpressionNode.NO_OPERATION;
-
+		
 		/**
 		 * @param right the right to set
 		 */
@@ -105,16 +105,17 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		public Inequality getIneq() {
 			return ineq;
 		}
-		public void updateCoef() {
+		public boolean updateCoef() {
 			if(ineq!=null){
 				ineq.updateCoef();
-				return;
+				return ineq.getType()!=Inequality.INEQUALITY_INVALID;
 			}
+			boolean b=true;
 			if(left!=null)
-				left.updateCoef();
+				b &= left.updateCoef();
 			if(right!=null)
-				right.updateCoef();	
-			
+				b &= right.updateCoef();	
+			return b;
 		}
 		private int size;
 		public int getSize() {
@@ -677,21 +678,19 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 							newIneq.isAboveBorder() ^ inverseFill);			
 				tree.setIneq(newIneq);
 			}
-			return true;
+			return newIneq.getType()!=Inequality.INEQUALITY_INVALID;
 		}
 		else if (op == ExpressionNode.AND || op == ExpressionNode.OR
 				||op == ExpressionNode.EQUAL_BOOLEAN || op == ExpressionNode.NOT_EQUAL) {
 			tree.operation = op;
 			tree.left = new IneqTree();
 			tree.right = new IneqTree();
-			initIneqs(leftTree, inverseFill,functional,tree.left);
-			initIneqs(rightTree, inverseFill,functional,tree.right);
-			return true;
+			return initIneqs(leftTree, inverseFill,functional,tree.left)
+			&& initIneqs(rightTree, inverseFill,functional,tree.right);			
 		}else if (op == ExpressionNode.NOT) {
 			tree.operation = op;
-			tree.left = new IneqTree();
-			initIneqs(leftTree, inverseFill,functional,tree.left);			
-			return true;
+			tree.left = new IneqTree();				
+			return initIneqs(leftTree, inverseFill,functional,tree.left); 
 		}
 		else return false;
 
@@ -700,8 +699,9 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	/**
 	 * updates list of inequalities
 	 */
-	public void updateIneqs() {
-		if(ineqs == null) return;
-		ineqs.updateCoef();
+	public boolean updateIneqs() {
+		if(ineqs == null) return false;
+		Application.debug(ineqs.updateCoef());
+		return ineqs.updateCoef();
 	}
 }

@@ -377,7 +377,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 	
 	public boolean isFillable(){
-		return isBooleanFunction();
+		return isInequality;
 	}
 
 	/**
@@ -396,8 +396,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		return true;
 	}
 
-	protected boolean showInEuclidianView() {
-		return isDefined();
+	protected boolean showInEuclidianView() {		
+		return isDefined() && (!isBooleanFunction() || isInequality);
 	}
 
 		
