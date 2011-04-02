@@ -2056,6 +2056,9 @@ public abstract class GeoElement
 
 	StringBuilder captionSB = null;
 	
+	public String getCaptionNoReplace() {
+		return caption;
+	}
 	public String getCaption() {
 		if (caption == null)
 			return getLabel();

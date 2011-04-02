@@ -170,6 +170,8 @@ implements EuclidianViewAlgo {
 					((GeoNumeric) algoGeo).setDrawable(true);
 					algoGeo.setDrawAlgorithm(((AlgoDrawInformation)drawAlgo).copy());
 				}
+				if(macro.isCopyCaptions())
+					algoGeo.setCaption(macroGeo.getCaptionNoReplace());
 			}
 			else algoGeo.setUndefined();		
 		}		

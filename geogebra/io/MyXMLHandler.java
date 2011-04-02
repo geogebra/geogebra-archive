@@ -1908,6 +1908,7 @@ public class MyXMLHandler implements DocHandler {
 			String toolName = (String) attrs.get("toolName");
 			String toolHelp = (String) attrs.get("toolHelp");
 			String iconFile = (String) attrs.get("iconFile");
+			boolean copyCaptions = parseBoolean((String) attrs.get("copyCaptions"));
 			String strShowInToolBar = (String) attrs.get("showInToolBar");
 
 			// Make sure we don't have a macro with the same name in kernel.
@@ -1923,6 +1924,7 @@ public class MyXMLHandler implements DocHandler {
 			// create macro and a kernel for it
 			macro = new Macro(kernel, myCmdName);
 			macro.setToolName(toolName);
+			macro.setCopyCaptions(copyCaptions);
 			macro.setToolHelp(toolHelp);
 			macro.setIconFileName(iconFile);
 			boolean showTool = strShowInToolBar == null ? true

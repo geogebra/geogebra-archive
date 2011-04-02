@@ -71,7 +71,8 @@ public class Macro {
 	 */
 	public Macro(Kernel kernel, String cmdName) { 	
 		this.kernel = kernel;
-		setCommandName(cmdName);						
+		setCommandName(cmdName);	
+		copyCaptions = true;
 	}		
 	
 	/**
@@ -612,7 +613,9 @@ public class Macro {
         sb.append("\" iconFile=\""); 
         sb.append(Util.encodeXML(iconFileName));  
         sb.append("\" showInToolBar=\"");
-        sb.append(showInToolBar);  
+        sb.append(showInToolBar);
+        sb.append("\" copyCaptions=\"");
+        sb.append(copyCaptions);  
 		sb.append("\">\n");
     			        
         // add input labels
@@ -693,5 +696,19 @@ public class Macro {
 			}
 		}
 		return geos;
+	}
+	private boolean copyCaptions;
+	/**
+	 * Set whether the macro should copy captions of resulting objects
+	 * @param copyCaptions true to copy
+	 */
+	public void setCopyCaptions(boolean copyCaptions) {
+		this.copyCaptions=copyCaptions;
+	}
+	/**
+	 * @return true if the macro copies captions of resulting objects
+	 */
+	public boolean isCopyCaptions() {
+		return copyCaptions;
 	}
 }
