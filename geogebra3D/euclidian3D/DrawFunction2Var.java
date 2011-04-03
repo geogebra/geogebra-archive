@@ -2,7 +2,6 @@ package geogebra3D.euclidian3D;
 
 import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
-import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.euclidian3D.plots.SurfaceMesh;
@@ -37,19 +36,26 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		super(a_view3d, function);
 		this.function=function;
 		
-		/*
-		Application.debug("function on ["
-				+function.getMinParameter(0)+","+function.getMaxParameter(0)
-				+"]x["
-				+function.getMinParameter(1)+","+function.getMaxParameter(1)
-				+"]"
-		);
-		*/
-
 		if (Double.isNaN(function.getMinParameter(0))){
 			unlimitedRange=true;
 		}else{
 			unlimitedRange=false;
+		}
+		
+		updateRadius();
+		if(unlimitedRange && savedRadius>lastBaseRadius){
+			lastBaseRadius=savedRadius*unlimitedScaleFactor;
+			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
+								 new double [] {-lastBaseRadius,lastBaseRadius});
+			mesh = new SurfaceMesh(function, lastBaseRadius, true);
+			setWaitForUpdate();
+		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
+			lastBaseRadius=savedRadius/unlimitedScaleFactor;
+			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
+								 new double [] {-lastBaseRadius,lastBaseRadius});
+			mesh = new SurfaceMesh(function, lastBaseRadius, true);
+			setWaitForUpdate
+			();
 		}
 	}
 	
@@ -69,38 +75,6 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	public void drawGeometryPicked(Renderer renderer) {
 		// TODO Auto-generated method stub
 
-	}
-	
-	@Override
-	protected void realtimeUpdate(){
-//		Renderer renderer = getView3D().getRenderer();
-//		mesh.setRadius(savedRadius);
-//		mesh.optimize();
-//		
-//		PlotterSurface surface = renderer.getGeometryManager().getSurface();
-//		GeoFunctionNVar geo = (GeoFunctionNVar) getGeoElement();
-//		surface.start(geo);
-//		
-//		float uMin, uMax, vMin, vMax;
-//		if (unlimitedRange){
-//			uMin = -1; uMax = 1; vMin = -1; vMax = 1;
-//		}else{
-//			uMin = (float) geo.getMinParameter(0);
-//			uMax = (float) geo.getMaxParameter(0);
-//			vMin = (float) geo.getMinParameter(1);
-//			vMax = (float) geo.getMaxParameter(1);
-//		}
-//		
-//		surface.setU(uMin,uMax);
-//		surface.setNbU((int) (uMax-uMin)*10);
-//		surface.setV(vMin, vMax);
-//		surface.setNbV((int) (vMax-vMin)*10);
-//		
-//		//TODO use fading texture
-//		
-//
-//		surface.draw(mesh);
-//		setGeometryIndex(surface.end());
 	}
 	
 	/** 
@@ -174,7 +148,6 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		if (!getView3D().viewChanged())
 			return;
 		
-		double oldRadius = savedRadius;
 		updateRadius();
 		if(unlimitedRange && savedRadius>lastBaseRadius){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
@@ -189,9 +162,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 			mesh = new SurfaceMesh(function, lastBaseRadius, true);
 			setWaitForUpdate
 			();
-		} 
-//		else if(oldRadius!=savedRadius && mesh != null)
-//			mesh.turnOnUpdates();
+		}
 	}
 
 	public int getPickOrder() {
