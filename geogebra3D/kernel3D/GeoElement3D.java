@@ -24,6 +24,7 @@ import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.PointProperties;
 import geogebra3D.Test3D;
 import geogebra3D.euclidian3D.Drawable3D;
 

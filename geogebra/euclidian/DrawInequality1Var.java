@@ -105,7 +105,7 @@ public class DrawInequality1Var extends Drawable {
 			if (gp == null)
 				gp = new GeneralPathClipped[numOfX / 2];
 			int j = ineq.getFunBorder().evaluate(view.toRealWorldCoordY(view.height+10)) <= 0
-					^ geo.isInverseFill() ? 1 : 0;
+					 ? 1 : 0;
 			Area a = new Area();
 			for (int i = 0; 2 * i + j + 1 < numOfX; i++) {
 				gp[i] = new GeneralPathClipped(view);
@@ -131,7 +131,7 @@ public class DrawInequality1Var extends Drawable {
 			if (gp == null)
 				gp = new GeneralPathClipped[numOfX / 2];
 			int j = ineq.getFunBorder().evaluate(view.toRealWorldCoordX(-10)) <= 0
-					^ geo.isInverseFill() ? 1 : 0;
+					 ? 1 : 0;
 			Area a = new Area();
 			for (int i = 0; 2 * i + j + 1 < numOfX; i++) {
 				gp[i] = new GeneralPathClipped(view);

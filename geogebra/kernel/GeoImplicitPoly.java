@@ -18,25 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
-import org.apache.commons.math.linear.Array2DRowRealMatrix;
-import org.apache.commons.math.linear.DecompositionSolver;
-import org.apache.commons.math.linear.InvalidMatrixException;
-import org.apache.commons.math.linear.LUDecompositionImpl;
-import org.apache.commons.math.linear.MatrixIndexException;
-import org.apache.commons.math.linear.MatrixVisitorException;
-import org.apache.commons.math.linear.NonSquareMatrixException;
-import org.apache.commons.math.linear.RealMatrix;
-import org.apache.commons.math.linear.RealMatrixChangingVisitor;
-import org.apache.commons.math.linear.RealMatrixImpl;
-import org.apache.commons.math.linear.RealMatrixPreservingVisitor;
-import org.apache.commons.math.linear.RealVector;
-
 import edu.jas.arith.BigRational;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.ExpVectorLong;
@@ -45,8 +26,6 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
-import edu.jas.util.ArrayUtil;
-
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -54,7 +33,17 @@ import geogebra.kernel.arithmetic.Polynomial;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
-import geogebra.main.MyError;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.math.analysis.polynomials.PolynomialFunction;
+import org.apache.commons.math.linear.DecompositionSolver;
+import org.apache.commons.math.linear.LUDecompositionImpl;
+import org.apache.commons.math.linear.RealMatrix;
+import org.apache.commons.math.linear.RealMatrixImpl;
 
 /**
  * Represents implicit bivariat polynomial equations, with degree greater than 2.
@@ -1078,6 +1067,9 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		// TODO Auto-generated method stub
 		
 	}
-
+	 @Override
+	 protected char getLabelDelimiter(){
+		 return ':';
+	 }
 	
 }

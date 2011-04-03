@@ -232,7 +232,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	/**
 	 * @return function description as f(x,y)=... for real and e.g. f:x>4*y for bool
 	 */
-	public String toString() {		
+	public String toString() {	
 		if (isLabelSet() && !isBooleanFunction())
 			return toXMLString();
 		sbToString.setLength(0);
@@ -245,7 +245,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 	}
 	
 	private StringBuilder sbToString = new StringBuilder(80);
-	public String toValueString() {	
+	public String toValueString() {			
 		if (isDefined())
 			return fun.toValueString();
 		else
@@ -266,6 +266,10 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			return app.getPlain("undefined");
 	}
 	
+	@Override
+	protected char getLabelDelimiter(){
+		return isBooleanFunction()?':':'=';
+	}
 		
 	/**
 	   * save object in xml format
@@ -493,8 +497,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		 */
 		public FunctionNVar.IneqTree getIneqs(){
 			if(fun.getIneqs() == null){
-				isInequality = fun.initIneqs(fun.getExpression(),isInverseFill(),this);
-				Application.debug(isInequality);
+				isInequality = fun.initIneqs(fun.getExpression(),isInverseFill(),this);				
 			}
 			return fun.getIneqs();
 		}
@@ -587,6 +590,10 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		public void regionChanged(GeoPointND P) {
 			pointChangedForRegion(P);
 			
+		}
+
+		public boolean isInequality() {
+			return isInequality;
 		}
 
 		

@@ -1098,7 +1098,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 
 
     }
-    
+    @Override
+	protected char getLabelDelimiter(){
+		return isBooleanFunction()?':':'=';
+	}
     /**
      * Adds vertical asymptotes to the string builder VerticalSB
      * @param f function whose asymptotes we are looking for

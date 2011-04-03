@@ -82,15 +82,10 @@ public class DrawInequality extends Drawable {
 
 		if (ineq != it.getIneq())
 			ineq = it.getIneq();
-		if (ineq == null) {
-			if (geo.isInverseFill() && !isForceNoFill()) {
-				Area b = new Area(view.getBoundingPath());
-				b.subtract(getShape());
-				setShape(b);
-			}
-			return;
-		}
-
+		
+			
+		if(ineq!=null){
+			
 		if (drawable == null || !matchBorder(ineq.getBorder(), drawable)) {
 			createDrawable();
 		} 
@@ -99,6 +94,12 @@ public class DrawInequality extends Drawable {
 		}
 		drawable.update();
 		setShape(drawable.getShape());
+		}
+		if (geo.isInverseFill() && !isForceNoFill()) {
+			Area b = new Area(view.getBoundingPath());
+			b.subtract(getShape());
+			setShape(b);
+		}
 
 	}
 
@@ -311,6 +312,7 @@ public class DrawInequality extends Drawable {
 			else
 				gp.reset();
 			GeoFunction border = ineq.getFunBorder();
+			border.setLineThickness(geo.lineThickness);
 			updateStrokes(border);
 			if (ineq.getType() == Inequality.INEQUALITY_PARAMETRIC_X) {
 				double ax = view.toRealWorldCoordY(-10);

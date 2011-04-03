@@ -29,6 +29,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoLine;
@@ -4234,7 +4235,7 @@ public	class PropertiesPanel extends JPanel {
 			lblFillInverse.setVisible(true);
 			cbFillType.setVisible(true); //TODO remove this (see below)
 			for (int i = 0; i < geos.length; i++) {
-				if (!(geos[i] instanceof GeoFunctionNVar)){
+				if (!(geos[i] instanceof GeoFunctionNVar || geos[i] instanceof GeoFunction)){
 					cbFillInverse.setVisible(false);
 					lblFillInverse.setVisible(false);
 				}
@@ -4482,7 +4483,9 @@ public	class PropertiesPanel extends JPanel {
 				if (!(geo.isPath()
 					|| (geo.isGeoList() && ((GeoList)geo).showLineProperties() )
 					|| (geo.isGeoNumeric()
-						&& ((GeoNumeric) geo).isDrawable()))) {
+						&& ((GeoNumeric) geo).isDrawable())
+					|| ((geo instanceof GeoFunctionNVar)
+						&& ((GeoFunctionNVar) geo).isInequality()))) {
 					geosOK = false;
 					break;
 				}

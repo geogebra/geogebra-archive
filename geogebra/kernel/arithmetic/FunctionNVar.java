@@ -431,7 +431,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		return expression.getGeoElementVariables();
 	}
 
-	public String toString() {
+	public String toString() {		
 		return expression.toString();
 	}
 
@@ -700,8 +700,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 * updates list of inequalities
 	 */
 	public boolean updateIneqs() {
-		if(ineqs == null) return false;
-		Application.debug(ineqs.updateCoef());
+		if(ineqs == null) return false;		
 		return ineqs.updateCoef();
 	}
 }

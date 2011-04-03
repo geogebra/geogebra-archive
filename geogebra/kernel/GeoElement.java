@@ -709,7 +709,13 @@ public abstract class GeoElement
 			kernel.restorePrintAccuracy();		
 		return ret;
 	}
-	
+	/**
+	 * Returns the character which is used between label and definition
+	 * @return : for conics, implicit polynomials and inequalities, = otherwise
+	 */
+	protected char getLabelDelimiter(){
+		return '=';
+	}
 	/**
 	 * Returns the definition of this GeoElement for the
 	 * input field, e.g. A1 = 5, B1 = A1 + 2
@@ -725,8 +731,10 @@ public abstract class GeoElement
     	if (!inputBarStr.equals("")) {
     		
     		// check needed for eg f(x) = g(x) + h(x), f(x) = sin(x)
-    		if (inputBarStr.indexOf('=') < 0)
-    			inputBarStr = getLabel() + " = " + inputBarStr;
+    		char delimiter = getLabelDelimiter();
+    		if (inputBarStr.indexOf(delimiter) < 0){
+    			inputBarStr = getLabel() + (delimiter=='='?" =":delimiter) + " "+inputBarStr;
+    		}
     	} else {
     		inputBarStr = getAlgebraDescription();
     	}

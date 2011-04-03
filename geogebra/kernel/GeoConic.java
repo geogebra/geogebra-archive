@@ -434,7 +434,10 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 final public boolean isCasEvaluableObject() {
 		 return true;
 	 }
-
+	 @Override
+	 protected char getLabelDelimiter(){
+		 return ':';
+	 }
 
 
 
