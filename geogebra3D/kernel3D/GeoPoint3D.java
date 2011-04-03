@@ -127,6 +127,15 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		setPath(path);
 	}
     
+    @Override
+	public void setVisualStyle(GeoElement geo){
+    	super.setVisualStyle(geo);
+		if (geo instanceof PointProperties) {
+			setPointSize(((PointProperties)geo).getPointSize());
+			setPointStyle(((PointProperties)geo).getPointStyle());
+		}
+	}
+    
     public void setPath(Path path){
     	this.path = path;
     }
