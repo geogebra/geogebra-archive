@@ -1407,9 +1407,8 @@ public class GuiManager {
 			{
 
 				initFileChooser();
-
-				fileChooser.setCurrentDirectory(app.getCurrentImagePath());
 				fileChooser.setMode(GeoGebraFileChooser.MODE_IMAGES);
+				fileChooser.setCurrentDirectory(app.getCurrentImagePath());
 				
 				MyFileFilter fileFilter = new MyFileFilter();
 				fileFilter.addExtension("jpg");
@@ -1473,13 +1472,13 @@ public class GuiManager {
 		try {
 			app.setWaitCursor();
 			initFileChooser();
-
+			fileChooser.setMode(GeoGebraFileChooser.MODE_DATA);
 			fileChooser.setCurrentDirectory(app.getCurrentImagePath());
-			fileChooser.setMode(GeoGebraFileChooser.MODE_GEOGEBRA);
 
 			MyFileFilter fileFilter = new MyFileFilter();
 			fileFilter.addExtension("txt");
 			fileFilter.addExtension("csv");
+			fileFilter.addExtension("dat");
 
 			// fileFilter.setDescription(app.getPlain("Image"));
 			fileChooser.resetChoosableFileFilters();
@@ -1651,8 +1650,9 @@ public class GuiManager {
 		// <-- Added for Intergeo File Format (Yves Kreis)
 
 		initFileChooser();
+		fileChooser.setMode(GeoGebraFileChooser.MODE_GEOGEBRA_SAVE);
 		fileChooser.setCurrentDirectory(app.getCurrentPath());
-
+		
 		if (dirsOnly)
 			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		

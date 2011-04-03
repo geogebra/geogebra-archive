@@ -78,9 +78,9 @@ public class MyXMLio {
 	// Added for Intergeo File Format (Yves Kreis) -->
 	final private static String I2G_FILE_THUMBNAIL = "construction/preview.png";
 	// <-- Added for Intergeo File Format (Yves Kreis)
-	final private static double THUMBNAIL_PIXELS_X = 200.0; // max no of
+	final public static double THUMBNAIL_PIXELS_X = 200.0; // max no of
 															// horizontal pixels
-	final private static double THUMBNAIL_PIXELS_Y = 200.0; // max no of
+	final public static double THUMBNAIL_PIXELS_Y = 200.0; // max no of
 															// vertical pixels
 
 	// Added for Intergeo File Format (Yves Kreis) -->

@@ -4,11 +4,13 @@ import geogebra.io.MyXMLio;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Insets;
 import java.awt.Label;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentEvent;
@@ -17,13 +19,18 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * An enhanced file chooser for GeoGebra which can be used
@@ -46,10 +53,22 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 	public static final int MODE_IMAGES = 0;
 	
 	/**
-	 * The file chooser is used to load / save ggb files at the moment.
+	 * The file chooser is used to load ggb files at the moment.
 	 */
 	public static final int MODE_GEOGEBRA = 1;
 
+	/**
+	 * The file chooser is used to save ggb files at the moment.
+	 */
+	public static final int MODE_GEOGEBRA_SAVE = 2;
+	
+	/**
+	 * The file chooser is used to load data files at the moment.
+	 */
+	public static final int MODE_DATA = 3;
+
+	
+	
 	/**
 	 * An instance of the GeoGebra application.
 	 */
@@ -107,6 +126,10 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 		addComponentListener(this);
 		
 		setMode(MODE_GEOGEBRA); // default mode is the mode to load geogebra files
+		
+		Dimension d = this.getPreferredSize();
+		d.width = Math.max(ACCESSORY_WIDTH, d.width);
+		this.setPreferredSize(d);
 	}
 	
 	/**
@@ -128,7 +151,11 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 	public void setMode(int mode)
 	{
 		// invalid mode?
-		if(mode != MODE_IMAGES && mode != MODE_GEOGEBRA) {
+		if(mode != MODE_IMAGES 
+				&& mode != MODE_GEOGEBRA 
+				&& mode != MODE_GEOGEBRA_SAVE 
+				&& mode != MODE_DATA) 
+		{
 			Application.debug("Invalid file chooser mode, MODE_GEOGEBRA used as default.");
 			mode = MODE_GEOGEBRA;
 		}
@@ -142,6 +169,9 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 		} else {							// load images
 			setMultiSelectionEnabled(false);
 		}
+		
+		// set the preview panel type: image, data or ?
+		previewPanel.setPreviewPanelType(mode);
 		
 		// TODO apply mode specific settings..
 		
@@ -215,6 +245,17 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 		 */
 		private ImagePanel imagePanel = null;
 		
+		
+		/**
+		 * Panel for data preview.
+		 */
+		private JTextArea dataPreviewPanel = null;
+		
+		/**
+		 * CardLayout panel to hold different preview panels
+		 */
+		private JPanel cards;
+		
 		/**
 		 * A label to describe the properties of the selected file.
 		 */
@@ -227,12 +268,42 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 			setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5)); // border at the left & right
 
 			imagePanel = new ImagePanel();
-			add(BorderLayout.CENTER, imagePanel);
+			
+			cards = new JPanel(new CardLayout());
+			cards.add("imagePanel", imagePanel);
+			cards.add("dataPanel", buildDataPanel());
+			add(BorderLayout.CENTER, cards);
 			
 			fileLabel = new Label();
 			add(BorderLayout.SOUTH, fileLabel);
 		}
 
+		public void setPreviewPanelType(int mode) {
+			CardLayout layout = (CardLayout) cards.getLayout();
+			if(mode == GeoGebraFileChooser.MODE_DATA){
+				layout.show(cards, "dataPanel");
+				dataPreviewPanel.setText(null);
+			}else{
+				layout.show(cards, "imagePanel");
+				img = null;
+			}
+		}
+
+		public JScrollPane buildDataPanel(){		
+			dataPreviewPanel = new JTextArea();
+			dataPreviewPanel.setEditable(false);
+			dataPreviewPanel.setWrapStyleWord(false);
+			dataPreviewPanel.setLineWrap(false);
+			dataPreviewPanel.setPreferredSize(imagePanel.getPreferredSize());
+			dataPreviewPanel.setMargin(new Insets(5,5,5,5));
+			dataPreviewPanel.setText(app.getPlain("PreviewUnavailable"));
+			JScrollPane scroller = new JScrollPane(dataPreviewPanel);
+			scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+			
+			return scroller;
+		}
+		
 		/**
 		 * A new file was selected -> update the panel if necessary.
 		 */
@@ -241,12 +312,73 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 				File file = fileChooser.getSelectedFile();
 				
 				if (file != null && file.exists()) // don't update on directory change
-					updateImage(file);
+					if(fileChooser.getMode() == GeoGebraFileChooser.MODE_DATA)
+						updateDataPreview(file);
+					else
+						updateImage(file);
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
 		}
-		
+
+		/**
+		 * Updates the data preview panel
+		 * @param file
+		 * @throws IOException
+		 */
+		private void updateDataPreview(File file) throws IOException {
+
+			fileLabel.setText("");
+			String fileName = file.getName();
+
+			StringBuffer contents = new StringBuffer();
+			BufferedReader reader = null;
+
+			try {
+				reader = new BufferedReader(new FileReader(file));
+				String text = null;
+				int lineCount = 0;
+				// read at most 20 lines
+				while ((text = reader.readLine()) != null && lineCount < 20) {
+					contents.append(text).append(System.getProperty("line.separator"));
+					lineCount ++;
+				}
+
+				StringBuilder fileInfo = new StringBuilder();
+
+				if(fileName.length() > 20) {
+					fileInfo.append(fileName.substring(0, 20));
+					fileInfo.append("..");
+				} else {
+					fileInfo.append(fileName);
+				}
+
+				fileLabel.setText(fileInfo.toString());
+
+				if(contents.length() == 0)
+					contents.append(app.getPlain("PreviewUnavailable"));
+				
+				dataPreviewPanel.setText(contents.toString());
+				dataPreviewPanel.setCaretPosition(0);
+
+			} 
+
+			catch (FileNotFoundException e) {
+				e.printStackTrace();
+
+			} finally {
+				try {
+					if (reader != null) {
+						reader.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+
 		/**
 		 * Update the preview image if it's possible to load one.
 		 * 
@@ -259,7 +391,7 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 			try {
 				BufferedImage tmpImage = null;
 				
-				// Update preview for ggb files
+				// Update preview for opening ggb files
 				if (fileChooser.getMode() == GeoGebraFileChooser.MODE_GEOGEBRA) {
 					String fileName = file.getName();
 					
@@ -282,8 +414,18 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 					}	
 				}
 				
+				
+				// Update preview for saving a ggb file
+				else if (fileChooser.getMode() == GeoGebraFileChooser.MODE_GEOGEBRA_SAVE) {
+					tmpImage = app.getExportImage(MyXMLio.THUMBNAIL_PIXELS_X,MyXMLio.THUMBNAIL_PIXELS_Y);	
+					//TODO: show file size info?
+					fileLabel.setText(null);
+				}
+
+				
+				
 				// Update preview for images
-				else {
+				else{
 					// fails for a few JPEGs so turn off preview for large files
 					if (file.length() < 1024 * maxImageSize) {
 						tmpImage = ImageIO.read(file); // returns null if file isn't an image
