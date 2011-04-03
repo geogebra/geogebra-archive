@@ -282,11 +282,12 @@ public class GeoGebraFileChooser extends JFileChooser implements ComponentListen
 			CardLayout layout = (CardLayout) cards.getLayout();
 			if(mode == GeoGebraFileChooser.MODE_DATA){
 				layout.show(cards, "dataPanel");
-				dataPreviewPanel.setText(null);
+				dataPreviewPanel.setText(app.getPlain("PreviewUnavailable"));
 			}else{
 				layout.show(cards, "imagePanel");
 				img = null;
 			}
+			fileLabel.setText(null);
 		}
 
 		public JScrollPane buildDataPanel(){		
