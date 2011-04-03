@@ -340,7 +340,10 @@ public class CommandDispatcher {
     	cmdTable.put("Extremum", new CmdExtremum(kernel));	
     	cmdTable.put("CurveCartesian", new CmdCurveCartesian(kernel));
     	cmdTable.put("Derivative", new CmdDerivative(kernel));	
-    	cmdTable.put("Integral", new CmdIntegral(kernel));	   
+    	// from GeoGebra 4.0, Integral has been split into Integral and IntegralBetween
+    	// old syntax and files will still work
+    	cmdTable.put("Integral", new CmdIntegral(kernel, false));	   
+    	cmdTable.put("IntegralBetween", new CmdIntegral(kernel, true));	   
     	cmdTable.put("LowerSum", new CmdLowerSum(kernel));
     	cmdTable.put("LeftSum",  new CmdLeftSum(kernel));
     	cmdTable.put("RectangleSum", new CmdRectangleSum(kernel));    	

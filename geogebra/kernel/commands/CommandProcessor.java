@@ -3274,14 +3274,20 @@ class CmdDerivative extends CommandProcessor {
  */
 class CmdIntegral extends CommandProcessor {
 
+	
+	// from GeoGebra 4.0, Integral has been split into Integral and IntegralBetween
+	// old syntax and files will still work
+	private String internalCommandName;
+
 	/**
 	 * Create new command processor
 	 * 
 	 * @param kernel
 	 *            kernel
 	 */
-	public CmdIntegral(Kernel kernel) {
+	public CmdIntegral(Kernel kernel, boolean between) {
 		super(kernel);
+		internalCommandName = between ? "IntegralBetween" : "Integral";
 	}
 
 	final public GeoElement[] process(Command c) throws MyError {
@@ -3297,7 +3303,7 @@ class CmdIntegral extends CommandProcessor {
 						((GeoFunctionable) arg[0]).getGeoFunction(), null) };
 				return ret;
 			} else
-				throw argErr(app, "Integral", arg[0]);
+				throw argErr(app, internalCommandName, arg[0]);
 
 		case 2:
 			// Integral[ f(x,y), x]
@@ -3308,7 +3314,7 @@ class CmdIntegral extends CommandProcessor {
 						(GeoNumeric) arg[1]) }; // var
 				return ret;
 			} else
-				throw argErr(app, "Integral", arg[0]);
+				throw argErr(app, internalCommandName, arg[0]);
 
 		case 3:
 			arg = resArgs(c);
@@ -3321,11 +3327,11 @@ class CmdIntegral extends CommandProcessor {
 				return ret;
 			} else {
 				if (!ok[0])
-					throw argErr(app, "Integral", arg[0]);
+					throw argErr(app, internalCommandName, arg[0]);
 				else if (!ok[1])
-					throw argErr(app, "Integral", arg[1]);
+					throw argErr(app, internalCommandName, arg[1]);
 				else
-					throw argErr(app, "Integral", arg[2]);
+					throw argErr(app, internalCommandName, arg[2]);
 			}
 
 		case 4:
@@ -3356,13 +3362,13 @@ class CmdIntegral extends CommandProcessor {
 
 			} else {
 				if (!ok[0])
-					throw argErr(app, "Integral", arg[0]);
+					throw argErr(app, internalCommandName, arg[0]);
 				else if (!ok[1])
-					throw argErr(app, "Integral", arg[1]);
+					throw argErr(app, internalCommandName, arg[1]);
 				else if (!ok[2])
-					throw argErr(app, "Integral", arg[2]);
+					throw argErr(app, internalCommandName, arg[2]);
 				else
-					throw argErr(app, "Integral", arg[3]);
+					throw argErr(app, internalCommandName, arg[3]);
 			}
 
 		case 5:
@@ -3381,19 +3387,19 @@ class CmdIntegral extends CommandProcessor {
 				return ret;
 			} else {
 				if (!ok[0])
-					throw argErr(app, "Integral", arg[0]);
+					throw argErr(app, internalCommandName, arg[0]);
 				else if (!ok[1])
-					throw argErr(app, "Integral", arg[1]);
+					throw argErr(app, internalCommandName, arg[1]);
 				else if (!ok[2])
-					throw argErr(app, "Integral", arg[2]);
+					throw argErr(app, internalCommandName, arg[2]);
 				else if (!ok[3])
-					throw argErr(app, "Integral", arg[3]);
+					throw argErr(app, internalCommandName, arg[3]);
 				else
-					throw argErr(app, "Integral", arg[4]);
+					throw argErr(app, internalCommandName, arg[4]);
 			}
 
 		default:
-			throw argNumErr(app, "Integral", n);
+			throw argNumErr(app, internalCommandName, n);
 		}
 	}
 }
