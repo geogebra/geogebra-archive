@@ -256,6 +256,8 @@ public class GeoGebraMenuBar extends JMenuBar {
 				systemInfo.append(System.getProperty("java.version"));
 				systemInfo.append("\nOS: ");
 				systemInfo.append(System.getProperty("os.name"));
+				systemInfo.append("\nArchitecture: ");
+				systemInfo.append(System.getProperty("os.arch")); // tells us 32 or 64 bit (Java)
 				systemInfo.append("\nHeap: ");
 				systemInfo.append(app.getHeapSize()/1024/1024);
 				systemInfo.append("MB\nCAS: ");
