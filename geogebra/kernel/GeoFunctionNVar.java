@@ -21,6 +21,7 @@ import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
+import geogebra.util.Util;
 
 import java.util.List;
 
@@ -279,7 +280,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				sb.append(" label =\"");
 				sb.append(label);
 				sb.append("\" exp=\"");
-				sb.append(toXMLString());
+				sb.append(Util.encodeXML(toXMLString()));
 				// expression   
 			sb.append("\"/>\n");
 		 }

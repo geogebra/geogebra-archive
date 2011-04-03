@@ -27,6 +27,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.roots.RealRootFunction;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
+import geogebra.util.Util;
 
 
 import java.util.Locale;
@@ -459,7 +460,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				sb.append(" label =\"");
 				sb.append(label);
 				sb.append("\" exp=\"");
-				sb.append(toString());
+				sb.append(Util.encodeXML(toString()));
 				// expression   
 			sb.append("\"/>\n");
 		 }
