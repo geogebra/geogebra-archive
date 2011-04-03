@@ -60,6 +60,9 @@ public class Inequality {
 	private MyDouble coef;
 	private GeoPoint[] zeros;
 	private FunctionalNVar function;
+	// if variable x or y appears with 0 coef, we want to replace the 
+	// variable by 0 itself to avoid errors on computation
+	private MyDouble zeroDummy0,zeroDummy1;
 
 	/**
 	 * check whether ExpressionNodes are evaluable to instances of Polynomial or
@@ -79,7 +82,7 @@ public class Inequality {
 		this.kernel = kernel;
 		this.fv = fv;
 		this.function = function;
-
+		
 		if (op == ExpressionNode.GREATER || op == ExpressionNode.GREATER_EQUAL) {
 			normal = new ExpressionNode(kernel, lhs, ExpressionNode.MINUS, rhs);
 
@@ -102,6 +105,10 @@ public class Inequality {
 
 			return;
 		}
+		if(zeroDummy0!=null)
+			normal.replace(zeroDummy0, fv[0]);
+		if(zeroDummy0!=null)
+			normal.replace(zeroDummy1, fv[1]);
 		Double coefY = normal.getCoefficient(fv[1]);
 		Double coefX = normal.getCoefficient(fv[0]);
 		Function fun = null;
@@ -126,12 +133,14 @@ public class Inequality {
 			fun = new Function(m, fv[1]);
 			type = INEQUALITY_PARAMETRIC_X;
 		} else if (coefX != null && Kernel.isZero(coefX) && coefY == null) {
-			normal.replace(fv[0], new MyDouble(kernel, 0));
+			zeroDummy0 = new MyDouble(kernel, 0);
+			normal.replace(fv[0], zeroDummy0 );
 			init1varFunction(1);
 			type = funBorder.isPolynomialFunction(false) ?				
 				INEQUALITY_1VAR_Y:INEQUALITY_INVALID;
 		} else if (coefY != null && Kernel.isZero(coefY) && coefX == null) {
-			normal.replace(fv[1], new MyDouble(kernel, 0));
+			zeroDummy1 = new MyDouble(kernel, 0);
+			normal.replace(fv[1], zeroDummy1);
 			init1varFunction(0);
 			type = funBorder.isPolynomialFunction(false) ?				
 					INEQUALITY_1VAR_X:INEQUALITY_INVALID;
