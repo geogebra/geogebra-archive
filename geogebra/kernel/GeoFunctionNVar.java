@@ -505,7 +505,6 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		public void update(){
 			super.update();
 			isInequality = fun.updateIneqs();
-			Application.debug(isInequality);
 		}
 		public boolean isRegion() {
 			return isBooleanFunction();

@@ -107,7 +107,7 @@ public class Inequality {
 		}
 		if(zeroDummy0!=null)
 			normal.replace(zeroDummy0, fv[0]);
-		if(zeroDummy0!=null)
+		if(zeroDummy1!=null)
 			normal.replace(zeroDummy1, fv[1]);
 		Double coefY = normal.getCoefficient(fv[1]);
 		Double coefX = normal.getCoefficient(fv[0]);
