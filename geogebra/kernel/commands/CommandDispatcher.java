@@ -732,6 +732,7 @@ public class CommandDispatcher {
     	cmdSubTable[TABLE_ENGLISH].putAll(cmdTable);
     	cmdTable.clear();
     	
+    	/* removed, see #668
     	Enumeration<String> keyNames=app.getKeyNames();
     	while (keyNames.hasMoreElements()){
     		String key=keyNames.nextElement();
@@ -741,7 +742,8 @@ public class CommandDispatcher {
     				cmdTable.put(app.getCommand(key.replaceAll("SyntaxCAS", "")),null);
     			}
     		}
-    	}
+    	}*/
+    	
     	cmdSubTable[TABLE_CAS].putAll(cmdTable);
     	cmdTable.clear();
     	
