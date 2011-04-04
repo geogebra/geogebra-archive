@@ -15,7 +15,6 @@ public class GeoLine3D extends GeoCoordSys1D {
 	/** creates a line joining O and I */
 	public GeoLine3D(Construction c, GeoPointND O, GeoPointND I) {
 		super(c, O, I);
-		this.setVisualStyle(condShowObject);
 	}
 
     public GeoLine3D(Construction c) {
