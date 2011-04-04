@@ -1073,16 +1073,6 @@ public abstract class Drawable extends DrawableND {
 	
 	
 	
-	/**
-	 * 
-	 * @return true if is included in this view (for 3D objects)
-	 */
-	protected boolean includedInView(){
-		return view.contains(getGeoElement());
-	}
-
-
-	
 
 	
 	/*  

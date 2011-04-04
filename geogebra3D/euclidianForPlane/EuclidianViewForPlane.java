@@ -1,5 +1,6 @@
 package geogebra3D.euclidianForPlane;
 
+import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
@@ -59,23 +60,15 @@ public class EuclidianViewForPlane extends EuclidianView {
 	
 	
 	
-
-	public boolean contains(GeoElement geo){
-		switch(geo.getGeoClassType()){
-		case GeoElement.GEO_CLASS_POINT:
-		case GeoElement.GEO_CLASS_POINT3D:
-			return plane.isInRegion((GeoPointND) geo);
-		default:
-			return false;
-		}
+	
+	
+	
+	public Coords getInhomCoordsForView(Coords coords){
+		return coords.projectPlane(getPlaneMatrix())[1];
 	}
 	
-	
-	public void getInhomCoords(GeoPointND P, double[] ret){
-		CoordSys coordSys = plane.getCoordSys();
-		Coords coords = coordSys.getNormalProjectionForDrawing(P.getInhomCoordsInD(3))[1];
-		for (int i=0; i<ret.length; i++)
-    		ret[i]=coords.get(i+1);
+	public CoordMatrix getPlaneMatrix(){
+		return plane.getCoordSys().getDrawingMatrix();
 	}
 	
 }

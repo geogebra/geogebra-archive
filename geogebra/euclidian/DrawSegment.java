@@ -86,17 +86,18 @@ implements Previewable {
         labelVisible = geo.isLabelVisible();       
 		updateStrokes(geo);
 		
-        Coords A = s.getStartInhomCoords();
-        Coords B = s.getEndInhomCoords();
-		
-		if (geo.isGeoElement3D() && (!Kernel.isZero(A.getZ()) || !Kernel.isZero(B.getZ())) ){
-			//TODO generalize
-			isVisible = false;
-			return;
+        Coords A = view.getInhomCoordsForView(s.getStartInhomCoords());
+        Coords B = view.getInhomCoordsForView(s.getEndInhomCoords());
+        
+        //check if in view
+        if (!Kernel.isZero(A.getZ()) || !Kernel.isZero(B.getZ())){
+    		isVisible = false;
+    		return;
 		}else{
 			coordsA[0] = A.getX(); coordsA[1] = A.getY();
 			coordsB[0] = B.getX(); coordsB[1] = B.getY();
 		}
+		
 		
 		
 		boolean onscreenA = view.toScreenCoords(coordsA);

@@ -31,6 +31,7 @@ public interface GeoLineND {
 	
 	/**
 	 * 
+	 * @param dimension 
 	 * @return coords of the starting point
 	 */
 	public Coords getStartInhomCoords();

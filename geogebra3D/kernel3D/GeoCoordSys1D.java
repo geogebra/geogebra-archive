@@ -1,5 +1,6 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordMatrix4x4;
@@ -66,6 +67,8 @@ GeoLineND, GeoCoordSys{
 		coordsys.addPoint(o);
 		coordsys.addVector(v);
 		coordsys.makeOrthoMatrix(false,false);
+		//Application.debug("o=\n"+o+"\nv=\n"+v+"\ncoordsys=\n"+coordsys.getMatrixOrthonormal());
+		//Application.debug("o=\n"+o+"\nv=\n"+v+"\norigin=\n"+coordsys.getOrigin()+"\nVx=\n"+coordsys.getVx());
 	}
 	
 	
@@ -82,12 +85,12 @@ GeoLineND, GeoCoordSys{
 			if (O.isInfinite())
 				setUndefined(); //TODO infinite line
 			else
-				setCoord(O.getCoordsInD(3),I.getCoordsInD(3));
+				setCoord(O.getInhomCoordsInD(3),I.getCoordsInD(3));
 		else
 			if (O.isInfinite())
-				setCoord(I.getCoordsInD(3),O.getCoordsInD(3));
+				setCoord(I.getInhomCoordsInD(3),O.getCoordsInD(3));
 			else
-				setCoord(O.getCoordsInD(3),I.getCoordsInD(3).sub(O.getCoordsInD(3)));
+				setCoord(O.getInhomCoordsInD(3),I.getInhomCoordsInD(3).sub(O.getInhomCoordsInD(3)));
 		
 	}
 	
@@ -154,6 +157,7 @@ GeoLineND, GeoCoordSys{
 	public Coords getPointInD(int dimension, double lambda){
 
 		Coords v = getPoint(lambda);
+		//Application.debug("v("+lambda+")=\n"+v+"\no=\n"+coordsys.getOrigin()+"\nVx=\n"+coordsys.getVx()+"\ncoordsys=\n"+coordsys.getMatrixOrthonormal());
 		switch(dimension){
 		case 3:
 			return v;
@@ -336,32 +340,23 @@ GeoLineND, GeoCoordSys{
 	
 
 	public Coords getCartesianEquationVector(CoordMatrix m){
-		Coords origin = getCoordSys().getOrigin();
-		Coords direction = getCoordSys().getVx();
-		
-		//TODO generalize it to other planes than xOy
-		
-		//if lines is not in the plane, return null
-		if (!Kernel.isZero(origin.getZ()) || !Kernel.isZero(direction.getZ()))
-			return null;
-		
-		double x = -direction.getY();
-		double y = direction.getX();
-		double z = -x*origin.getX()-y*origin.getY();
-		
-		return new Coords(x, y, z);
+
+		if (m==null)
+			return CoordMatrixUtil.lineEquationVector(getCoordSys().getOrigin(),getCoordSys().getVx());
+		else
+			return CoordMatrixUtil.lineEquationVector(getCoordSys().getOrigin(),getCoordSys().getVx(), m);
 	}
 	
 	
 	public Coords getStartInhomCoords(){
-		return getCoordSys().getOrigin().getInhomCoords();
+		return getCoordSys().getOrigin().getInhomCoordsInSameDimension();
 	}
 	
 	/**
 	 * @return inhom coords of the end point
 	 */
 	public Coords getEndInhomCoords(){
-		return getCoordSys().getPoint(1).getInhomCoords();
+		return getCoordSys().getPoint(1).getInhomCoordsInSameDimension();
 	}
 	
 	

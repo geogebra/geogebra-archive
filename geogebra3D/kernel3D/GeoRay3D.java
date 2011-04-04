@@ -6,8 +6,8 @@ import geogebra.kernel.kernelND.GeoRayND;
 
 public class GeoRay3D extends GeoLine3D implements GeoRayND{
 
-	public GeoRay3D(Construction c, GeoPointND O) {
-		super(c);
+	public GeoRay3D(Construction c, GeoPointND O, GeoPointND Q) {
+		super(c, O, Q);
 		setStartPoint(O);
         
 		// TODO Auto-generated constructor stub

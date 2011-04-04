@@ -86,7 +86,7 @@ implements Previewable {
 			
 	    	
 			// calc start point of ray in screen coords
-			a=ray.getStartInhomCoords().get();
+			a=ray.getStartInhomCoords().copyVector().get();
 			view.toScreenCoords(a);
 
 			// calc direction vector of ray in screen coords

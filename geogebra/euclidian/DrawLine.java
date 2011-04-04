@@ -118,7 +118,7 @@ public class DrawLine extends Drawable implements Previewable {
 			labelVisible = geo.isLabelVisible();
 			updateStrokes(geo);
 			
-			Coords equation = g.getCartesianEquationVector(null);//TODO
+			Coords equation = g.getCartesianEquationVector(view.getPlaneMatrix());
 			if (equation==null){
 				isVisible = false;
 				return;

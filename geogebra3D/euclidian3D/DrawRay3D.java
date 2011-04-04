@@ -5,6 +5,8 @@ import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoRayND;
+import geogebra.main.Application;
+import geogebra3D.Application3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoRay3D;
 
@@ -31,7 +33,6 @@ public class DrawRay3D extends DrawCoordSys1D {
 	
 	
 	protected boolean updateForItSelf(){
-		
 
 		updateForItSelf(true);
 		
@@ -62,7 +63,7 @@ public class DrawRay3D extends DrawCoordSys1D {
 
 		
 		GeoLineND line = (GeoLineND) getGeoElement();
-		
+
 		Coords o = getView3D().getToScreenMatrix().mul(line.getPointInD(3, 0));
 		Coords v = getView3D().getToScreenMatrix().mul(line.getPointInD(3, 1)).sub(o);
 		
@@ -72,6 +73,8 @@ public class DrawRay3D extends DrawCoordSys1D {
 				o, v, true);
 		
 		setDrawMinMax(minmax[0], minmax[1]);
+		
+		//Application.debug(minmax[0]+", "+minmax[1]);
 		
 		
 	}
@@ -83,46 +86,10 @@ public class DrawRay3D extends DrawCoordSys1D {
 			updateForItSelf();
 	}
 	
-	/*
-	public void drawGeometry(EuclidianRenderer3D renderer) {
-		//renderer.setThickness(LINE3D_THICKNESS*getGeoElement().getLineThickness());
-		super.drawGeometry(renderer);
-		renderer.drawRay();
-	}
-	
-	public void drawGeometryPicked(EuclidianRenderer3D renderer){
-		//renderer.setThickness(LINE3D_THICKNESS*PICKED_DILATATION*getGeoElement().getLineThickness());
-		super.drawGeometryPicked(renderer);
-		renderer.drawRay();
-	}
-	*/
-
-
-	/*
-	public void drawGeometryHidden(EuclidianRenderer3D renderer){
-		
-		GeoRay3D l_ray3D = (GeoRay3D) getGeoElement();
-		double dashLength = 0.12f/((float) l_ray3D.getUnit()); //TODO use object property
-		//renderer.drawRayDashed(LINE3D_THICKNESS*getGeoElement().getLineThickness(),dashLength); 
-		drawGeometry(renderer);
-		
-	}
-	*/
-	
 
 
 	
 
-	
-
-	/*
-	
-	public int getPickOrder() {
-		return DRAW_PICK_ORDER_1D;
-	}
-
-	*/
-	
 	
 
 	////////////////////////////////

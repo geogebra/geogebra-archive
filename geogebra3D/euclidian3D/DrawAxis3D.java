@@ -195,8 +195,11 @@ public class DrawAxis3D extends DrawLine3D {
 		
 
     	//gets the direction vector of the axis as it is drawn on screen
+		/*
     	Coords v = axis.getCoordSys().getVx().copyVector();
     	getView3D().toScreenCoords3D(v);
+    	*/
+		Coords v = getView3D().getToScreenMatrix().mul(axis.getCoordSys().getVx());
     	v.set(3, 0); //set z-coord to 0
     	//double vScale = v.norm(); //axis scale, used for ticks distance
     	double vScale = getView3D().getScale(); //TODO use different scales for x/y/z

@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.Evaluatable;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -1104,16 +1105,22 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	}
 	
 	public Coords getCartesianEquationVector(CoordMatrix m){
-		return new Coords(x, y, z);
+		if (m==null)
+			return new Coords(x, y, z);
+		else{
+			Coords o = getStartInhomCoords();
+			Coords d = getEndInhomCoords().sub(o);
+			return CoordMatrixUtil.lineEquationVector(o,d, m);
+		}
 	}
 	
 	public Coords getStartInhomCoords(){
-		return startPoint.getInhomCoords();
+		return startPoint.getInhomCoordsInD(3);
 	}
 	
 
 	public Coords getEndInhomCoords(){
-		return getEndPoint().getInhomCoords();
+		return getEndPoint().getInhomCoordsInD(3);
 	}
 	
 

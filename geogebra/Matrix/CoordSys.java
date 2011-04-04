@@ -483,6 +483,10 @@ public class CoordSys {
 	}
 
 	
+	/** returns drawing matrix   */
+	public CoordMatrix4x4 getDrawingMatrix(){
+		return drawingMatrix;
+	}
 
 	
 	

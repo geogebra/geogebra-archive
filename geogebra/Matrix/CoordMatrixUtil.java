@@ -152,4 +152,41 @@ public final class CoordMatrixUtil {
 
 		
 	}
+	
+	
+	/**
+	 * 
+	 * @param origin 
+	 * @param direction 
+	 * @param plane
+	 * @return (a,b,c) where ax+by+c=0 is an equation of the line in the plane
+	 */
+	static final public Coords lineEquationVector(Coords origin, Coords direction, CoordMatrix plane){
+		
+		Coords o = origin.projectPlane(plane)[1];
+		Coords d = direction.projectPlane(plane)[1];		
+		return lineEquationVector(o, d);
+	}
+	
+	
+
+	/**
+	 * 
+	 * @param origin 
+	 * @param direction 
+	 * @return (a,b,c) where ax+by+c=0 is an equation of the line in xOy plane
+	 */
+	static final public Coords lineEquationVector(Coords origin, Coords direction){
+				
+		//if lines is not in the plane, return null
+		if (!Kernel.isZero(origin.getZ()) || !Kernel.isZero(direction.getZ()))
+			return null;
+		
+		double x = -direction.getY();
+		double y = direction.getX();
+		double z = -x*origin.getX()-y*origin.getY();
+		
+		return new Coords(x, y, z);
+	}
+
 }

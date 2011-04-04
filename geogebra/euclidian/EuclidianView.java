@@ -12,6 +12,8 @@
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.CoordMatrix;
+import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.DrawableList.DrawableIterator;
 import geogebra.kernel.AlgoElement;
@@ -4918,30 +4920,22 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	
 	
+	
 	/**
-	 * 
-	 * @param geo
-	 * @return true if the geo is included in this view (for 3D geos)
+	 * tranform in view coords
+	 * @param coords
 	 */
-	public boolean contains(GeoElement geo){
-		if (geo.isGeoElement3D()){
-			switch(geo.getGeoClassType()){
-			case GeoElement.GEO_CLASS_POINT3D:
-				return Kernel.isZero(((GeoPointND) geo).getCoordsInD(3).getZ());
-			default:
-				return false;
-			}
-		}else
-			return true;
+	public Coords getInhomCoordsForView(Coords coords){
+		return coords;
 	}
 	
 	/**
-	 * 
-	 * @param P
-	 * @return coords of the point for this view
+	 * return null if classic 2D view
+	 * @return matrix representation of the plane shown by this view
 	 */
-	public void getInhomCoords(GeoPointND P, double[] ret){
-		P.getInhomCoords(ret);
+	public CoordMatrix getPlaneMatrix(){
+		return null;
 	}
+	
 	
 }

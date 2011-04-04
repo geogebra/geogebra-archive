@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntersectAbstract;
 import geogebra.kernel.GeoConic;
@@ -85,18 +86,20 @@ public final class DrawPoint extends Drawable {
     	
         isVisible = geo.isEuclidianVisible();    
         
-        //looks if it's on plane
-        isVisible &= includedInView();
-    		
+        //looks if it's on view
+	    double [] coords = new double[2];
+	    Coords p = view.getInhomCoordsForView(P.getInhomCoordsInD(3));
+	    if (!Kernel.isZero(p.getZ())){
+	    	isVisible = false;
+	    }else{
+	    	coords[0] = p.getX(); coords[1] = p.getY();
+	    }
         
     	// still needs updating if it's being traced to the spreadsheet
         if (!isVisible && !P.getSpreadsheetTrace()) return;
 		labelVisible = geo.isLabelVisible();
         		
-        // compute lower left corner of bounding box
-	    double [] coords = new double[2];
-        //P.getInhomCoords(coords);
-	    view.getInhomCoords(P, coords);
+        
         
         // convert to screen
 		view.toScreenCoords(coords);	

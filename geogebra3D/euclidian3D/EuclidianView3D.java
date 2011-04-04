@@ -611,23 +611,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	
-	/**
-	 * Converts real world coordinates to screen coordinates.
-	 * 
-	 * @param vInOut
-	 *            input and output array with x, y, z, w coords (
-	 */
-	final public void toScreenCoords3D(Coords vInOut) {	
-		changeCoords(m,vInOut);		
-	}
-	
-	/**
-	 * converts the matrix to screen coords
-	 * @param mInOut
-	 */
-	final public void toScreenCoords3D(CoordMatrix mInOut) {		
-		changeCoords(m,mInOut);			
-	}
 	
 	
 	/**
@@ -638,25 +621,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		changeCoords(mInv,vInOut);		
 	}
 	
-	/**
-	 * converts the matrix to scene coords
-	 * @param mInOut
-	 */
-	final public void toSceneCoords3D(CoordMatrix mInOut) {		
-		changeCoords(mInv,mInOut);			
-	}
-	
 	
 	final private void changeCoords(CoordMatrix mat, Coords vInOut){
 		Coords v1 = vInOut.getCoordsLast1();
 		vInOut.set(mat.mul(v1));		
 	}
-
-	final private void changeCoords(CoordMatrix mat, CoordMatrix mInOut){	
-		CoordMatrix m1 = mInOut.copy();
-		mInOut.set(mat.mul(m1));		
-	}
-	
 	
 	/** return the matrix : screen coords -> scene coords.
 	 * @return the matrix : screen coords -> scene coords.
@@ -1023,8 +992,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param dy 
 	 * @return 3D physical coords  */
 	public Coords getPickFromScenePoint(Coords p, int dx, int dy){
+		/*
 		Coords point = p.copyVector();
 		toScreenCoords3D(point);
+		*/
+		Coords point = getToScreenMatrix().mul(p);
 		Coords ret = new Coords(
 				new double[] {
 						point.get(1)+dx,
