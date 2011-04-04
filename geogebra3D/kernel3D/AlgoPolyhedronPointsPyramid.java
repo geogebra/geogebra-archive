@@ -50,7 +50,7 @@ public class AlgoPolyhedronPointsPyramid extends AlgoPolyhedronPoints{
 		setBottom(polyhedron);
 
 		//sides of the pyramid
-		for (int i=0; i<numPoints-1; i++){
+		for (int i=0; i<numPoints; i++){
 			polyhedron.startNewFace();
 			polyhedron.addPointToCurrentFace(bottomPoints[i]);
 			polyhedron.addPointToCurrentFace(bottomPoints[(i+1)%(numPoints)]);
