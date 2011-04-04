@@ -52,10 +52,4 @@ public class AlgoImplicitPolyThroughPoints extends AlgoElement
 		 return "AlgoImplicitPolyThroughPoints";
 	}
 
-	final public String toString() {
-		 String [] str = new String[P.getGeoElements().length];
-		 for(int i=0; i<P.getGeoElements().length; i++)
-			 str[i] = P.get(i).getLabel();
-		 return app.getPlain("ImplicitPolyThroughPoints",str);
-	}
 }
