@@ -22,10 +22,31 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.StringTokenizer;
+
+import javax.swing.ImageIcon;
 
 public class FileDropTargetListener implements DropTargetListener {
+	
+	static DataFlavor urlFlavor, uriListFlavor, macPictStreamFlavor;
+	static {
+
+		try { 
+			urlFlavor = 
+			new DataFlavor ("application/x-java-url; class=java.net.URL"); 
+			uriListFlavor = 
+			new DataFlavor ("text/uri-list; class=java.lang.String");
+		} catch (ClassNotFoundException cnfe) { 
+			cnfe.printStackTrace( );
+		}
+	}
+
+
 
 	private Application app;
 
@@ -70,36 +91,43 @@ public class FileDropTargetListener implements DropTargetListener {
 	
 	private ArrayList<File> getGGBfiles(DropTargetDropEvent event) {
 		Transferable transferable = event.getTransferable();
-		DataFlavor[] flavors = event.getCurrentDataFlavors();
-		
+
 		ArrayList<File> al = new ArrayList<File>();
+
+		try {
+			// try to get an image
+			if (transferable.isDataFlavorSupported (DataFlavor.imageFlavor)) { 
+				System.out.println ("image flavor not supported"); 
+				//Image img = (Image) trans.getTransferData (DataFlavor.imageFlavor); 
+			} else if (transferable.isDataFlavorSupported (DataFlavor.javaFileListFlavor)) {
+				//Application.debug("javaFileList is supported");
+				List<File> list = (List<File>)transferable.getTransferData (DataFlavor.javaFileListFlavor);
+				ListIterator<File> it = list.listIterator( );    
+				while (it.hasNext( )) {
+					File f = (File) it.next( );
+					al.add(f);
+				}
+			} else if (transferable.isDataFlavorSupported (uriListFlavor)) {
+				//Application.debug("uri-list flavor is supported"); 
+				String uris = (String)
+				transferable.getTransferData (uriListFlavor);
+
+				// url-lists are defined by rfc 2483 as crlf-delimited 
+				StringTokenizer st = new StringTokenizer (uris, "\r\n");   
+				while (st.hasMoreTokens ( )) {
+					String uriString = st.nextToken( );
+					URI uri = new URI(uriString);
+					System.out.println (uri);
+					al.add(new File(uri));
+				}
+			} else if (transferable.isDataFlavorSupported (urlFlavor)) {
+				Application.debug("url flavor not supported");
+				//URL url = (URL) trans.getTransferData (urlFlavor);
+			} else Application.debug("flavor not supported: "+transferable);
+		} catch (Exception e) {
+			e.printStackTrace( );
+		} 
 		
-
-		for (int i = 0; i < flavors.length; i++) {
-			DataFlavor dataFlavor = flavors[i];
-			try {
-				if (dataFlavor.equals(DataFlavor.javaFileListFlavor)) {
-					java.util.List fileList = (java.util.List) transferable
-							.getTransferData(dataFlavor);
-
-					for (int j = 0 ; j < fileList.size() ; j++) {
-						File droppedFile = (File) fileList.get(j);
-						String lowerCase = droppedFile.getName().toLowerCase(Locale.US);
-						if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA)) {						
-							//return droppedFile;
-							al.add(droppedFile);
-						} 
-						else if (lowerCase.endsWith(Application.FILE_EXT_GEOGEBRA_TOOL)) {						
-							//return droppedFile;
-							al.add(droppedFile);
-	
-						}									
-					}
-				}			
-			} catch (Exception e) {	
-				e.printStackTrace();
-			}
-		}
 		return al;
 	}
 }
