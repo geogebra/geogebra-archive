@@ -36,27 +36,26 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		super(a_view3d, function);
 		this.function=function;
 		
+		/*
+		Application.debug("function on ["
+				+function.getMinParameter(0)+","+function.getMaxParameter(0)
+				+"]x["
+				+function.getMinParameter(1)+","+function.getMaxParameter(1)
+				+"]"
+		);
+		*/
+
 		if (Double.isNaN(function.getMinParameter(0))){
 			unlimitedRange=true;
 		}else{
 			unlimitedRange=false;
 		}
 		
-		updateRadius();
-		if(unlimitedRange && savedRadius>lastBaseRadius){
+		if(unlimitedRange){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
-			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
-								 new double [] {-lastBaseRadius,lastBaseRadius});
 			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-			setWaitForUpdate();
-		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
-			lastBaseRadius=savedRadius/unlimitedScaleFactor;
-			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
-								 new double [] {-lastBaseRadius,lastBaseRadius});
-			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-			setWaitForUpdate
-			();
-		}
+		} else
+			mesh = new SurfaceMesh(function, savedRadius, false);
 	}
 	
 	public void drawGeometry(Renderer renderer) {
@@ -145,24 +144,20 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	}
 	
 	protected void updateForView(){
-		if (!getView3D().viewChanged())
-			return;
-		
 		updateRadius();
 		if(unlimitedRange && savedRadius>lastBaseRadius){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
 			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-			setWaitForUpdate();
 		} else if(unlimitedRange && savedRadius<lastBaseRadius/unlimitedScaleFactor*.5) {
 			lastBaseRadius=savedRadius/unlimitedScaleFactor;
 			function.setInterval(new double[] {-lastBaseRadius,lastBaseRadius}, 
 								 new double [] {-lastBaseRadius,lastBaseRadius});
 			mesh = new SurfaceMesh(function, lastBaseRadius, true);
-			setWaitForUpdate
-			();
-		}
+		} 
+//		else if(oldRadius!=savedRadius && mesh != null)
+//			mesh.turnOnUpdates();
 	}
 
 	public int getPickOrder() {

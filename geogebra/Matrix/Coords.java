@@ -381,16 +381,13 @@ public class Coords
 		
 		if(recalcNorm)
 			calcNorm();
+		double normInv = 1/getNorm();
+		int len = getLength();
+		for (int i=0; i<len; i++)
+			val[i]*=normInv;
+
+		norm=sqNorm=1.0;
 		
-		double norm=getNorm();
-		if(norm>0.0){
-			double normInv = 1/norm;
-			int len = getLength();
-			for (int i=0; i<len; i++)
-				val[i]*=normInv;
-	
-			norm=sqNorm=1.0;
-		}
 		return this;
 	}	
 	
@@ -558,7 +555,7 @@ public class Coords
 	 * @return this-v 
 	 */
 	public Coords sub(Coords v){
-		int i;
+			int i;
 		Coords result=new Coords(rows);
 		for (i=0;i<rows;i++)
 			result.val[i]=val[i]-v.val[i];

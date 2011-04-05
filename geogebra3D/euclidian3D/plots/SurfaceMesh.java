@@ -752,6 +752,9 @@ public class SurfaceMesh extends DynamicMesh {
 			initMesh(function.getMinParameter(0), function.getMaxParameter(0),
 					function.getMinParameter(1), function.getMaxParameter(1));
 		splitQueue.add(root);
+		
+		for(int i=0;i<8;i++)
+			split(splitQueue.poll());
 	}
 
 	/**

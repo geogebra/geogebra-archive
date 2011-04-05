@@ -295,7 +295,7 @@ public abstract class DynamicMesh {
 	protected DynamicMeshBucketPQ splitQueue;
 
 	/** controls if debug info is displayed or not */
-	protected boolean printInfo = true;
+	protected boolean printInfo = false;
 
 	/** the squared radius of the bounding volume */
 	protected double radSq;
@@ -305,9 +305,6 @@ public abstract class DynamicMesh {
 
 	/** the maximum amount of operations to perform in one update */
 	private int stepRefinement = 100;
-
-	/** the maximum level of refinement */
-	private final int maxLevel;
 
 	private final int nChildren;
 	private final int nParents;
@@ -343,7 +340,6 @@ public abstract class DynamicMesh {
 		this.drawList = drawList;
 		this.nParents = nParents;
 		this.nChildren = nChildren;
-		this.maxLevel = maxLevel;
 	}
 
 	/**
