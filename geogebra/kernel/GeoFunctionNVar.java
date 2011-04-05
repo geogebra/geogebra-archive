@@ -502,9 +502,9 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 			return fun.getIneqs();
 		}
 				
-		public void update(){
-			super.update();
+		public void update(){			
 			isInequality = fun.updateIneqs();
+			super.update();
 		}
 		public boolean isRegion() {
 			return isBooleanFunction();
