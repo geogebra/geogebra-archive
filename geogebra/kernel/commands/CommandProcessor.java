@@ -1211,7 +1211,7 @@ class CmdVertex extends CommandProcessor {
 				return kernel.Vertex(c.getLabels(), (GeoPolygon) arg[0]);
 			else if (ok[0] = (arg[0].isNumberValue())) {
 				GeoElement[] ret = { kernel.CornerOfDrawingPad(c.getLabel(),
-						(NumberValue) arg[0]) };
+						(NumberValue) arg[0], null) };
 				return ret;
 			} else
 				throw argErr(app, c.getName(), arg[0]);
@@ -1238,6 +1238,12 @@ class CmdVertex extends CommandProcessor {
 						(GeoText) arg[0], (NumberValue) arg[1]) };
 				return ret;
 				// Michael Borcherds 2007-11-26 END
+			} else if ((ok[0] = (arg[0].isNumberValue()))
+					&& (ok[1] = (arg[1].isNumberValue()))) {
+				GeoElement[] ret = { kernel.CornerOfDrawingPad(c.getLabel(),
+						(NumberValue) arg[1], (NumberValue) arg[0]) };
+				return ret;
+				
 			} else {
 				if (!ok[0])
 					throw argErr(app, c.getName(), arg[0]);

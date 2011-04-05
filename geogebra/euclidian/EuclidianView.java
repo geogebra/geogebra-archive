@@ -1285,6 +1285,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if (repaint) {
 			updateBackgroundImage();
 			updateAllDrawables(repaint);
+			
+			// needed so that eg Corner[2,1] updates properly on zoom / pan
+			if (app.hasEuclidianView2()) kernel.notifyRepaint();
 			//app.updateStatusLabelAxesRatio();
 		}
 	}
@@ -1375,7 +1378,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		calcPrintingScale();
 		
 		// tell kernel
-		kernel.setEuclidianViewBounds(xmin, xmax, ymin, ymax, xscale, yscale);
+		kernel.setEuclidianViewBounds(evNo, xmin, xmax, ymin, ymax, xscale, yscale);
 		
 	}
 
@@ -3916,7 +3919,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		calcPrintingScale();
 		
 		// tell kernel
-		kernel.setEuclidianViewBounds(xmin, xmax, ymin, ymax, xscale, yscale);
+		kernel.setEuclidianViewBounds(evNo, xmin, xmax, ymin, ymax, xscale, yscale);
 
 		coordTransform.setTransform(xscale, 0.0d, 0.0d, -yscale, xZero, yZero);
 

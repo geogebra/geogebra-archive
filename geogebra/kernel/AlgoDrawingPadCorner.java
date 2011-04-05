@@ -17,6 +17,7 @@ package geogebra.kernel;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.AppletImplementation;
+import geogebra.main.Application;
 
 import javax.swing.JPanel;
 
@@ -28,11 +29,12 @@ implements EuclidianViewAlgo {
 	 */
 	private static final long serialVersionUID = 1L;
     private GeoPoint corner;     // output    
-    private NumberValue number;
+    private NumberValue number, evNum;
     
-    AlgoDrawingPadCorner(Construction cons, String label, NumberValue number) {        
+    AlgoDrawingPadCorner(Construction cons, String label, NumberValue number, NumberValue evNum) {        
         super(cons);
         this.number = number;
+        this.evNum = evNum; // can be null
         
               
         corner = new GeoPoint(cons);                
@@ -52,8 +54,15 @@ implements EuclidianViewAlgo {
     
     // for AlgoElement
     protected void setInputOutput() {
-        input = new GeoElement[1];
-        input[0] = number.toGeoElement();
+    	if (evNum == null) {
+	        input = new GeoElement[1];
+	        input[0] = number.toGeoElement();
+    	} else {
+            input = new GeoElement[2];
+            input[0] = evNum.toGeoElement();
+            input[1] = number.toGeoElement();
+       	
+        }
         
         output = new GeoElement[1];
         output[0] = corner;        
@@ -67,7 +76,18 @@ implements EuclidianViewAlgo {
 		//x1 = x1 / invXscale + xZero;
 		//x2 = x2 / invXscale + xZero;
 
-		EuclidianView ev=cons.getApplication().getEuclidianView();
+		EuclidianView ev;
+		
+		Application app = cons.getApplication();
+		
+		if (evNum == null || evNum.getDouble() == 1.0) ev = app.getEuclidianView();
+		else {
+			if (!app.hasEuclidianView2()) {
+				corner.setUndefined();
+				return;
+			}
+			else ev = cons.getApplication().getGuiManager().getEuclidianView2();
+		}
 		
 		double width=ev.toRealWorldCoordX((double)(ev.getWidth())+1);
 		double height=ev.toRealWorldCoordY((double)(ev.getHeight())+1);

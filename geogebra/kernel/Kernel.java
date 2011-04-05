@@ -250,6 +250,8 @@ public class Kernel {
 	private boolean resolveUnkownVarsAsDummyGeos = false;
 	
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
+	// for 2nd Graphics View
+	private double xmin2, xmax2, ymin2, ymax2, xscale2, yscale2;
 	
 	// Views may register to be informed about 
 	// changes to the Kernel
@@ -608,14 +610,25 @@ public class Kernel {
 	 * in EudlidianView. The scale is the number of pixels per unit.
 	 * (useful for some algorithms like findminimum). All 
 	 */
-	final public void setEuclidianViewBounds(double xmin, double xmax, 
+	final public void setEuclidianViewBounds(int view, double xmin, double xmax, 
 			double ymin, double ymax, double xscale, double yscale) {
-		this.xmin = xmin;
-		this.xmax = xmax;
-		this.ymin = ymin;
-		this.ymax = ymax;
-		this.xscale = xscale;
-		this.yscale = yscale;	
+		
+		if (view == 1) {
+			this.xmin = xmin;
+			this.xmax = xmax;
+			this.ymin = ymin;
+			this.ymax = ymax;
+			this.xscale = xscale;
+			this.yscale = yscale;	
+		} else {
+			this.xmin2 = xmin;
+			this.xmax2 = xmax;
+			this.ymin2 = ymin;
+			this.ymax2 = ymax;
+			this.xscale2 = xscale;
+			this.yscale2 = yscale;	
+
+		}
 		
 		notifyEuclidianViewAlgos();
 	}	
@@ -628,22 +641,22 @@ public class Kernel {
 	}
 	
 	double getXmax() {
-		return xmax;
+		return Math.max(xmax, xmax2);
 	}
 	double getXmin() {
-		return xmin;
+		return Math.min(xmin, xmin2);
 	}
 	double getXscale() {
-		return xscale;
+		return Math.min(xscale, xscale2);
 	}
 	double getYmax() {
-		return ymax;
+		return Math.max(ymax, ymax2);
 	}
 	double getYmin() {
-		return ymin;
+		return Math.min(ymin, ymin2);
 	}
 	double getYscale() {
-		return yscale;
+		return Math.min(yscale, yscale2);
 	}
 	
 	
@@ -5488,8 +5501,8 @@ public class Kernel {
 	/** 
 	 * Corner of Drawing Pad Michael Borcherds 2008-05-10
 	 */
-	final public GeoPoint CornerOfDrawingPad(String label, NumberValue number) {
-		AlgoDrawingPadCorner algo = new AlgoDrawingPadCorner(cons, label, number);	
+	final public GeoPoint CornerOfDrawingPad(String label, NumberValue number, NumberValue ev) {
+		AlgoDrawingPadCorner algo = new AlgoDrawingPadCorner(cons, label, number, ev);	
 		return algo.getCorner();
 	}
 
