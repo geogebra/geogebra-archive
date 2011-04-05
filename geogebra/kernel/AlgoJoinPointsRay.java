@@ -42,6 +42,7 @@ public class AlgoJoinPointsRay extends AlgoElement {
         this.P = P;
         this.Q = Q;                
         ray = new GeoRay(cons, P); 
+        ray.setEndPoint(Q);
         setInputOutput(); // for AlgoElement
         
         // compute line through P, Q

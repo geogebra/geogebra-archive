@@ -41,6 +41,23 @@ public class EuclidianViewForPlane extends EuclidianView {
 	
 	
 	public boolean isVisibleInThisView(GeoElement geo){
+
+		switch (geo.getGeoClassType()){
+		case GeoElement.GEO_CLASS_POINT:
+		case GeoElement.GEO_CLASS_POINT3D:
+		case GeoElement.GEO_CLASS_SEGMENT:
+		case GeoElement.GEO_CLASS_SEGMENT3D:
+		case GeoElement.GEO_CLASS_LINE:
+		case GeoElement.GEO_CLASS_LINE3D:
+		case GeoElement.GEO_CLASS_RAY:
+		case GeoElement.GEO_CLASS_RAY3D:
+		case GeoElement.GEO_CLASS_POLYGON:
+		case GeoElement.GEO_CLASS_POLYGON3D:
+			break;
+		default:
+			return false;
+		}
+		
 		return geo.isVisibleInView3D();
 	}
 	

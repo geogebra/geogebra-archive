@@ -25,6 +25,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 
@@ -85,17 +86,20 @@ implements Previewable {
 			updateStrokes((GeoElement) ray);
 			
 	    	
-			// calc start point of ray in screen coords
-			a=ray.getStartInhomCoords().copyVector().get();
-			view.toScreenCoords(a);
+			
 
 			// calc direction vector of ray in screen coords
-			
-			Coords equation = ray.getCartesianEquationVector(null);//TODO
+			Coords equation = ray.getCartesianEquationVector(view.getPlaneMatrix());
 			if (equation==null){
 				isVisible = false;
 				return;
 			}
+
+			// calc start point of ray in screen coords		
+			Coords A = view.getInhomCoordsForView(ray.getStartInhomCoords());
+			a[0] = A.getX(); a[1] = A.getY();
+			view.toScreenCoords(a);
+			
 			
 			v[0] = equation.getY() * view.xscale;
 			v[1] = equation.getX() * view.yscale;
