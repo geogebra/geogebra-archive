@@ -649,8 +649,8 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		
 		for(int i=0; i<points.size(); i++)
 		{
-			double x = points.get(i).x;
-			double y = points.get(i).y;
+			double x = points.get(i).x / points.get(i).z;
+			double y = points.get(i).y / points.get(i).z;
 			
 			for(int j=0, m=0; j<degree+1; j++)
 				for(int k=0; j+k != degree+1; k++)
