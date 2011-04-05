@@ -7,7 +7,9 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.awt.Point;
 import java.util.Iterator;
@@ -284,7 +286,7 @@ public class RelativeCopy {
 		}
 		
 		// enclose in quotes if we are copying a GeoText
-		if(value.isGeoText()){
+		if(value.isGeoText() && !((GeoText)value).isTextCommand()){
 			text = "\"" + text + "\"";
 		}
 		
@@ -296,7 +298,9 @@ public class RelativeCopy {
 			text = ((GeoFunction)value).toSymbolicString();
 		}
 
+		Application.debug("before:"+text);
 		text = updateCellReferences(value, text, dx, dy);
+		Application.debug("after:"+text);
 		
 		// condition to show object
 		GeoBoolean bool = value.getShowObjectCondition();
