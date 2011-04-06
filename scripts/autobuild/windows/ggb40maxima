@@ -10,7 +10,9 @@ GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/4.0/ggb40maxima-3.9.189.0_5
 
 umask 0002 # trying to ensure g+w rights for all created files automatically
 
-cp $GGB40MAXIMA_ZIP /tmp
+TEMPDIR=/tmp/ggb40maxima
+mkdir -p $TEMPDIR
+cp $GGB40MAXIMA_ZIP $TEMPDIR
 ZIPFILE=`basename $GGB40MAXIMA_ZIP`
 . ../autobuild.conf
 TARGET_DIR=$WWWDIR/installer
@@ -41,7 +43,7 @@ echo "Updating GeoGebra JAR files from version $GGB40_ZIPVERSION to $VERSION_STR
 # 1. Preparations and unzipping:
 DIRNAME=ggb40maxima-${VERSION_STRING}_$MAXIMAVERSION
 rm -fR ggb40maxima-${GGB40_ZIPVERSION}_$MAXIMAVERSION # removing old working directory
-unzip /tmp/$ZIPFILE >> /dev/null
+unzip $TEMPDIR/$ZIPFILE >> /dev/null
 mv ggb40maxima-${GGB40_ZIPVERSION}_$MAXIMAVERSION $DIRNAME
 cd $DIRNAME
 
@@ -64,7 +66,7 @@ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
 
 # 4. Cleanup:
 rm -fR $DIRNAME $WINDOWS_MAXIMA_ZIP_FINAL # removing current working directory and file
-rm -f /tmp/$GGB40MAXIMA_ZIP
+rm -f $TEMPDIR/$GGB40MAXIMA_ZIP
 
 # 5. Creating symlink:
 rm -f $TARGET_DIR/ggb40maxima-latest.zip
