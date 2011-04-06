@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipShape;
 import geogebra.kernel.AlgoCirclePointRadius;
 import geogebra.kernel.AlgoCircleThreePoints;
@@ -33,6 +34,7 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
@@ -62,7 +64,7 @@ final public class DrawConic extends Drawable implements Previewable {
     * bigger circles are drawn via Arc2D */ 
     public static final double HUGE_RADIUS = 1E12;  
            
-    private GeoConic conic;
+    private GeoConicND conic;
     
     private boolean isVisible, labelVisible;
     private int type;
@@ -135,14 +137,14 @@ final public class DrawConic extends Drawable implements Previewable {
     /** Creates new DrawVector 
      * @param view 
      * @param c */
-    public DrawConic(EuclidianView view, GeoConic c) {
+    public DrawConic(EuclidianView view, GeoConicND c) {
     	this.view = view;
     	hitThreshold = view.getCapturingThreshold();
         initConic(c);
         update();
     }
     
-    private void initConic(GeoConic c) {
+    private void initConic(GeoConicND c) {
     	conic = c;
         geo = c;
                 
@@ -392,15 +394,41 @@ final public class DrawConic extends Drawable implements Previewable {
             circle = ellipse;
             arcFiller = null;         
             // calc screen coords of midpoint
-            mx =  midpoint.x * view.xscale + view.xZero;
-            my = -midpoint.y * view.yscale + view.yZero;   
+            Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());            
+            if (!Kernel.isZero(M.getZ())){//check if in view
+        		isVisible = false;
+        		return;
+            }
+            //check if eigen vec are in view
+            for(int j=0; j<2; j++){
+            	Coords ev = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+                if (!Kernel.isZero(ev.getZ())){//check if in view
+            		isVisible = false;
+            		return;
+                }
+            }
+            mx =  M.getX() * view.xscale + view.xZero;
+            my = -M.getY() * view.yscale + view.yZero;   
             ellipse.setFrame(mx-radius, my-yradius, 2.0*radius, 2.0*yradius);                                                      
         } else {            
         // special case: really big circle
         // draw arc according to midpoint position        	        	        	
         	// of the arc
-        	mx =  midpoint.x * view.xscale + view.xZero;
-            my = -midpoint.y * view.yscale + view.yZero;
+        	Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());
+            if (!Kernel.isZero(M.getZ())){//check if in view
+        		isVisible = false;
+        		return;
+            }
+            //check if eigen vec are in view
+            for(int j=0; j<2; j++){
+            	Coords ev = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+                if (!Kernel.isZero(ev.getZ())){//check if in view
+            		isVisible = false;
+            		return;
+                }
+            }
+            mx =  M.getX() * view.xscale + view.xZero;
+            my = -M.getY() * view.yscale + view.yZero;   
         	
             angSt = Double.NaN;            
             // left 
@@ -561,6 +589,22 @@ final public class DrawConic extends Drawable implements Previewable {
 			isVisible = false;
 			return;
 		}
+		
+		//check if in view
+        Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());            
+        if (!Kernel.isZero(M.getZ())){//check if in view
+    		isVisible = false;
+    		return;
+        }       
+        for(int j=0; j<2; j++){
+        	Coords ev = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+            if (!Kernel.isZero(ev.getZ())){//check if in view
+        		isVisible = false;
+        		return;
+            }
+        }
+        
+        
 		
         if (firstEllipse) {
             firstEllipse = false;
@@ -1096,7 +1140,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	 * (might not be equal to geo, if this is part of bigger geo)
 	 * @return conic
 	 */
-	public GeoConic getConic() {
+	public GeoConicND getConic() {
 		return conic;
 	}
 }

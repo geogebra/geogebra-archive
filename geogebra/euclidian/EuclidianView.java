@@ -50,6 +50,7 @@ import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoRayND;
@@ -3507,7 +3508,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;
 
 		case GeoElement.GEO_CLASS_CONIC:
-			d = new DrawConic(this, (GeoConic) geo);
+		//case GeoElement.GEO_CLASS_CONIC3D:
+			d = new DrawConic(this, (GeoConicND) geo);
 			break;
 
 		case GeoElement.GEO_CLASS_IMPLICIT_POLY:
@@ -4924,6 +4926,13 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	
 	
+	
+	///////////////////////////////////////////
+	// FOR EUCLIDIANVIEWFORPLANE
+	///////////////////////////////////////////
+	
+	
+	
 	/**
 	 * tranform in view coords
 	 * @param coords
@@ -4940,5 +4949,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return null;
 	}
 	
-	
+	/*
+	public AffineTransform getCoordTransformFromPlane(){
+		return coordTransform;
+	}
+	*/
 }

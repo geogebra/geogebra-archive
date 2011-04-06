@@ -93,12 +93,10 @@ implements Previewable {
         if (!Kernel.isZero(A.getZ()) || !Kernel.isZero(B.getZ())){
     		isVisible = false;
     		return;
-		}else{
-			coordsA[0] = A.getX(); coordsA[1] = A.getY();
-			coordsB[0] = B.getX(); coordsB[1] = B.getY();
-		}
-		
-		
+        }
+        
+        coordsA[0] = A.getX(); coordsA[1] = A.getY();
+        coordsB[0] = B.getX(); coordsB[1] = B.getY();
 		
 		boolean onscreenA = view.toScreenCoords(coordsA);
 		boolean onscreenB = view.toScreenCoords(coordsB);	

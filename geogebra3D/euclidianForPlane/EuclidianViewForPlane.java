@@ -1,5 +1,7 @@
 package geogebra3D.euclidianForPlane;
 
+import java.awt.geom.AffineTransform;
+
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
@@ -42,6 +44,7 @@ public class EuclidianViewForPlane extends EuclidianView {
 	
 	public boolean isVisibleInThisView(GeoElement geo){
 
+		// prevent not implemented type to be displayed (TODO remove)
 		switch (geo.getGeoClassType()){
 		case GeoElement.GEO_CLASS_POINT:
 		case GeoElement.GEO_CLASS_POINT3D:
@@ -53,6 +56,8 @@ public class EuclidianViewForPlane extends EuclidianView {
 		case GeoElement.GEO_CLASS_RAY3D:
 		case GeoElement.GEO_CLASS_POLYGON:
 		case GeoElement.GEO_CLASS_POLYGON3D:
+		case GeoElement.GEO_CLASS_CONIC:
+		case GeoElement.GEO_CLASS_CONIC3D:
 			break;
 		default:
 			return false;
@@ -85,7 +90,13 @@ public class EuclidianViewForPlane extends EuclidianView {
 	}
 	
 	public CoordMatrix getPlaneMatrix(){
+		//return plane.getCoordSys().getMatrixOrthonormal();
 		return plane.getCoordSys().getDrawingMatrix();
 	}
 	
+	/*
+	public AffineTransform getCoordTransformFromPlane(){
+		return coordT
+	}
+	*/
 }
