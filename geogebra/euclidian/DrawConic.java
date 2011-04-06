@@ -35,6 +35,7 @@ import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
@@ -90,8 +91,7 @@ final public class DrawConic extends Drawable implements Previewable {
     private double  mx, my, radius, yradius, angSt, angEnd;    
     
     // for ellipse, hyperbola, parabola
-    private AffineTransform conicTransform, 
-                            transform = new AffineTransform();   
+    private AffineTransform transform = new AffineTransform();   
     private Shape shape;     
     
         
@@ -151,7 +151,7 @@ final public class DrawConic extends Drawable implements Previewable {
         vertex = c.getTranslationVector(); // vertex                            
         midpoint = vertex;
         halfAxes = c.getHalfAxes();
-        conicTransform = c.getAffineTransform();                              
+        c.getAffineTransform();                              
     }
     
 	/**
@@ -295,6 +295,12 @@ final public class DrawConic extends Drawable implements Previewable {
     }
     
     final private void updateSinglePoint() {
+    	
+    	if (conic.isGeoElement3D()){//TODO implement for 3D conics
+    		isVisible=false;
+    		return;
+    	}
+    	
         if (firstPoint) {
             firstPoint = false;
             point = conic.getSinglePoint();
@@ -310,6 +316,12 @@ final public class DrawConic extends Drawable implements Previewable {
     }
     
     final private void updateLines() {
+    	
+    	if (conic.isGeoElement3D()){//TODO implement for 3D conics
+    		isVisible=false;
+    		return;
+    	}
+    	
         if (firstLines) {
             firstLines = false;
             lines = conic.getLines();
@@ -325,6 +337,7 @@ final public class DrawConic extends Drawable implements Previewable {
 			drawLines[i].forceLineType(conic.lineType);		
 			drawLines[i].update();			
         }
+        
         if(conic.type == GeoConic.CONIC_PARALLEL_LINES){
         	GeneralPathClipped gpc = new GeneralPathClipped(view);
         	gpc.moveTo(drawLines[0].x2,drawLines[0].y2);
@@ -365,7 +378,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	        gpc.closePath();
 	        shape = gpc;
         }
-           
+         
     }
     
     final private void updateCircle() {
@@ -596,9 +609,10 @@ final public class DrawConic extends Drawable implements Previewable {
     		isVisible = false;
     		return;
         }       
+        Coords[] ev = new Coords[2];
         for(int j=0; j<2; j++){
-        	Coords ev = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
-            if (!Kernel.isZero(ev.getZ())){//check if in view
+        	ev[j] = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+            if (!Kernel.isZero(ev[j].getZ())){//check if in view
         		isVisible = false;
         		return;
             }
@@ -613,7 +627,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	       
 		//	set transform
 		transform.setTransform(view.coordTransform);
-		transform.concatenate(conicTransform);  
+		transform.concatenate(view.getTransform(conic,M,ev));  
         
         // set ellipse
         ellipse.setFrameFromCenter(0, 0, halfAxes[0], halfAxes[1]); 
@@ -635,7 +649,25 @@ final public class DrawConic extends Drawable implements Previewable {
         yLabel = (int) labelCoords[1];   
     }
     
-    final private void updateHyperbola() {     
+    final private void updateHyperbola() {  
+    	
+
+		//check if in view
+        Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());            
+        if (!Kernel.isZero(M.getZ())){//check if in view
+    		isVisible = false;
+    		return;
+        }       
+        Coords[] ev = new Coords[2];
+        for(int j=0; j<2; j++){
+        	ev[j] = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+            if (!Kernel.isZero(ev[j].getZ())){//check if in view
+        		isVisible = false;
+        		return;
+            }
+        }
+        
+    	
         if (firstHyperbola) {                                       
             firstHyperbola = false;
             points = PLOT_POINTS;
@@ -726,8 +758,8 @@ final public class DrawConic extends Drawable implements Previewable {
         
         // set transform for Graphics2D 
         transform.setTransform(view.coordTransform);
-        transform.concatenate(conicTransform);
-        
+		transform.concatenate(view.getTransform(conic,M,ev));
+		
         // build general paths of hyperbola wings and transform them
 		hypLeft.transform(transform);
 		hypRight.transform(transform); 
@@ -748,6 +780,24 @@ final public class DrawConic extends Drawable implements Previewable {
 			isVisible = false;
 			return;
 		}
+		
+
+
+		//check if in view
+        Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());            
+        if (!Kernel.isZero(M.getZ())){//check if in view
+    		isVisible = false;
+    		return;
+        }       
+        Coords[] ev = new Coords[2];
+        for(int j=0; j<2; j++){
+        	ev[j] = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+            if (!Kernel.isZero(ev[j].getZ())){//check if in view
+        		isVisible = false;
+        		return;
+            }
+        }
+        
     	
         if (firstParabola) {                                      
             firstParabola = false;
@@ -783,7 +833,7 @@ final public class DrawConic extends Drawable implements Previewable {
         
 		//	set transform
 		transform.setTransform(view.coordTransform);
-		transform.concatenate(conicTransform);  
+		transform.concatenate(view.getTransform(conic,M,ev));
          
         // setCurve(P0, P1, P2)    
         //parabola.setCurve(x0, y0, -x0, 0.0, x0, -y0);  

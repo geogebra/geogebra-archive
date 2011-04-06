@@ -3508,7 +3508,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;
 
 		case GeoElement.GEO_CLASS_CONIC:
-		//case GeoElement.GEO_CLASS_CONIC3D:
+		case GeoElement.GEO_CLASS_CONIC3D:
 			d = new DrawConic(this, (GeoConicND) geo);
 			break;
 
@@ -4949,9 +4949,15 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return null;
 	}
 	
-	/*
-	public AffineTransform getCoordTransformFromPlane(){
-		return coordTransform;
+	/**
+	 * 
+	 * @param conic
+	 * @param M
+	 * @param ev
+	 * @return affine transform of the conic for this view
+	 */
+	public AffineTransform getTransform(GeoConicND conic, Coords M, Coords[] ev){
+		return conic.getAffineTransform();
 	}
-	*/
+	
 }

@@ -9,6 +9,7 @@ import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -93,10 +94,19 @@ public class EuclidianViewForPlane extends EuclidianView {
 		//return plane.getCoordSys().getMatrixOrthonormal();
 		return plane.getCoordSys().getDrawingMatrix();
 	}
-	
-	/*
-	public AffineTransform getCoordTransformFromPlane(){
-		return coordT
+
+	public AffineTransform getTransform(GeoConicND conic, Coords M, Coords[] ev){
+
+		//use already computed for this view middlepoint M and eigen vecs ev
+		AffineTransform transform = new AffineTransform();			
+		transform.setTransform(
+				ev[0].getX(),
+				ev[0].getY(),
+				ev[1].getX(),
+				ev[1].getY(),
+				M.getX(),
+				M.getY());
+
+		return transform;
 	}
-	*/
 }

@@ -1071,18 +1071,19 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 		return getPointInD(3, 0.5);
 	}
  	
+  	
   	public Coords getPointInD(int dimension, double lambda){
+  		return getStartCoordsInD(dimension).add(getDirectionInD(dimension).mul(lambda));
+	}
 
-  		if (dimension<2 || dimension>3)
-  			return null;
-  		
+  	private Coords getStartCoordsInD(int dimension){
+
   		Coords startCoords;
-  		 
   		//TODO merge with getPointOnLine
-		// point defined by parent algorithm
-		if (startPoint != null && startPoint.isFinite()) {
-			startCoords=startPoint.getCoordsInD(dimension);
-		} 
+  		// point defined by parent algorithm
+  		if (startPoint != null && startPoint.isFinite()) {
+  			startCoords=startPoint.getInhomCoordsInD(dimension);
+  		} 
 		// point on axis
 		else {
 			startCoords = new Coords(dimension+1);
@@ -1093,15 +1094,20 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 			}   
 			startCoords.set(dimension+1, 1); //last homogeneous coord
 		}  
-		
+  		
+		return startCoords;
+  	}
+  	
+  	private Coords getDirectionInD(int dimension){
+
 		Coords direction = new Coords(dimension+1);
-		direction.setX(y*lambda);direction.setY(-x*lambda);
+		direction.setX(y);direction.setY(-x);
 		
-  		return startCoords.add(direction);
-	}
+		return direction;
+  	}
   	
 	public Coords getMainDirection(){
-		return getPointInD(3, 1).sub(getPointInD(3, 0));
+		return getDirectionInD(3);
 	}
 	
 	public Coords getCartesianEquationVector(CoordMatrix m){
@@ -1115,12 +1121,15 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	}
 	
 	public Coords getStartInhomCoords(){
-		return startPoint.getInhomCoordsInD(3);
+		return getStartCoordsInD(3);
 	}
 	
 
 	public Coords getEndInhomCoords(){
-		return getEndPoint().getInhomCoordsInD(3);
+		if (getEndPoint()!=null)
+			return getEndPoint().getInhomCoordsInD(3);
+		else
+			return getPointInD(3, 1);
 	}
 	
 
