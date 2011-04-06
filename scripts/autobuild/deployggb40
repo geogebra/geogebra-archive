@@ -61,7 +61,7 @@ if [ "$GC_USER" != "" -a "$GC_PASS" != "" ]; then
  # GeoGebra_3_9_209_0.zip -> GeoGebra-MacOS-Installer-3-9-209-0.zip (GeoGebra for Mac OSX)
  MACOSX_ZIP_FINAL=GeoGebra-MacOS-Installer-`echo $MYVER | tr . -`.zip
  mv $MACOSX_ZIP $MACOSX_ZIP_FINAL
- $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $VERSION_STRING for Mac OSX" \
+ $SVNDIR/geogebra/scripts/autobuild/googlecode_upload.py -s "GeoGebra $MYVER for Mac OSX" \
   -p geogebra -u $GC_USER -w "$GC_PASS" -l Test $MACOSX_ZIP_FINAL
  fi
 
