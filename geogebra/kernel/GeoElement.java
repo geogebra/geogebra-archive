@@ -2297,6 +2297,8 @@ public abstract class GeoElement
 	public static final Pattern spreadsheetPattern = 
 		Pattern.compile("\\$?([A-Z]+)\\$?([1-9][0-9]*)");
 
+	public static final int MAX_LINE_WIDTH = 13;
+
 	private static StringBuilder sb = null;
 
 	/*
@@ -4190,8 +4192,8 @@ public abstract class GeoElement
 	/**
 	 * @param f
 	 */
-	public void setLineThickness(int th) {
-		lineThickness = th;
+	public void setLineThickness(int th) {		
+		lineThickness = Math.min(MAX_LINE_WIDTH,Math.max(0,th));
 	}
 
 	/**

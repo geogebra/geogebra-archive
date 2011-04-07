@@ -4354,7 +4354,7 @@ public	class PropertiesPanel extends JPanel {
 
 		public LineStylePanel() {
 			// thickness slider		
-			slider = new JSlider(1, 13);
+			slider = new JSlider(1, GeoElement.MAX_LINE_WIDTH);
 			slider.setMajorTickSpacing(2);
 			slider.setMinorTickSpacing(1);
 			slider.setPaintTicks(true);
