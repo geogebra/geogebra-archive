@@ -4,6 +4,7 @@ import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoVec2D;
@@ -1717,11 +1718,15 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             	FunctionNVar funN = ((FunctionalNVar) lt).getFunction();
             	ListValue list = (ListValue) rt;
             	if (funN.getVarNumber() == list.size()) {
+            		funN.initFunction();
             		double [] args = list.toDouble(); 
-            		if (args != null)
+            		if (args != null){
             			if(funN.isBooleanFunction())
             				return new MyBoolean(funN.evaluateBoolean(args));
             			return new MyDouble(kernel, funN.evaluate(args));
+            		}
+            		//let's assume that we called this as f(x,y) and we actually want the function
+            		return lt;
             	}
             } 
         	//Application.debug("FUNCTION lt: " + lt + ", " + lt.getClass() + " rt: " + rt + ", " + rt.getClass());
