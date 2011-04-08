@@ -27,6 +27,7 @@ import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.kernel.AlgoDynamicCoordinates;
 import geogebra.kernel.AlgoElement;
@@ -807,29 +808,54 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	
 	final public String toString() {
 		
+		return toString(null); 
+	}
+	
+	final public String toString(EuclidianViewInterface view) {
+		
 		StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
 		sbToString.append(" = "); 
 		
-		sbToString.append(toValueString());
+		sbToString.append(toValueString(view));
 		
 		return sbToString.toString();  
 	}
+
 	
 	
 	public String toValueString() {
+		return toValueString(null);
+	}
+	
+	private String toValueString(EuclidianViewInterface view) {
     	if (isInfinite()) 
 			return app.getPlain("undefined");
     	
+    	
     	StringBuilder sbToString = getSbBuildValueString();
+    	
+    	boolean isVisibleInView2D = false;
+    	Coords p = getInhomCoordsInD(3);
+    	
+    	if (view instanceof EuclidianView){
+    		Coords p2D = ((EuclidianView) view).getInhomCoordsForView(getInhomCoordsInD(3));
+    	    if (Kernel.isZero(p.getZ())){
+    	    	isVisibleInView2D=true;
+    	    	p = p2D;
+    	    }
+    	}
+    	
 		sbToString.setLength(0);
 		sbToString.append("(");
-		sbToString.append(kernel.format(inhom.get(1))); 
+		sbToString.append(kernel.format(p.getX())); 
 		sbToString.append(", ");
-		sbToString.append(kernel.format(inhom.get(2)));
-		sbToString.append(", ");
-		sbToString.append(kernel.format(inhom.get(3)));
+		sbToString.append(kernel.format(p.getY()));
+		if (!isVisibleInView2D){
+			sbToString.append(", ");
+			sbToString.append(kernel.format(p.getZ()));
+		}	
 		sbToString.append(")");
 		
 		//TODO use point property

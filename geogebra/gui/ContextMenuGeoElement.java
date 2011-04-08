@@ -28,6 +28,7 @@ import geogebra.kernel.GeoUserInputElement;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Traceable;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.main.Application;
 
@@ -69,7 +70,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	private GeoLine line;
 	private GeoVector vector;
 	private GeoConic conic;
-	private GeoPlaneND plane;
+	private GeoCoordSys2D plane;
 	//private GeoNumeric numeric;
 	//private Point location;
 	protected Application app;
@@ -103,10 +104,14 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			addVectorItems();
 			addConicItems();
 			addNumberItems();	
-			//addPlaneItems();
 			addUserInputItem();
 			
 		}
+		
+		//TODO remove the condition when ggb version >= 5
+		if (app.getKernel().getManager3D()!=null)
+			addPlaneItems();
+
 
 		
 		
@@ -507,22 +512,20 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	
 	
 	private void addPlaneItems() {
-		if (!(geo instanceof GeoPlaneND))
+		if (!(geo instanceof GeoCoordSys2D))
 			return;
-		plane = (GeoPlaneND) geo;
+		plane = (GeoCoordSys2D) geo;
 
 		AbstractAction action;
 
-		action = new AbstractAction(app.getPlain("View2D")) {
+		action = new AbstractAction(app.getPlain("Create2DViewFrom")) {
 			/**
 			 * 
 			 */
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
-				//Application.debug("geo: "+geo.getLabel());
 				plane.createView2D();
-				//app.storeUndoInfo();
 			}
 		};
 		addAction(action);

@@ -274,7 +274,7 @@ public class GuiManager {
 	public AlgebraView getAlgebraView() {
 		if (algebraView == null) {
 			initAlgebraController();
-			algebraView = new AlgebraView(algebraController);
+			algebraView = newAlgebraView(algebraController);
 			if (!app.isApplet()) {
 				// allow drag & drop of files on algebraView
 				algebraView.setDropTarget(new DropTarget(algebraView,
@@ -283,6 +283,15 @@ public class GuiManager {
 		}
 
 		return algebraView;
+	}
+	
+	/**
+	 * 
+	 * @param algc
+	 * @return new algebra view
+	 */
+	protected AlgebraView newAlgebraView(AlgebraController algc){
+		return new AlgebraView(algc);
 	}
 	
 	public void startEditing(GeoElement geo) {

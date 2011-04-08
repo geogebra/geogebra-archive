@@ -1,26 +1,17 @@
 package geogebra3D.kernel3D;
 
-import java.awt.Rectangle;
-
 import geogebra.Matrix.CoordMatrix;
-import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
-import geogebra.gui.layout.DockPanel;
-import geogebra.gui.layout.panels.EuclidianDockPanel;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.PointProperties;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
-import geogebra3D.Application3D;
-import geogebra3D.euclidianForPlane.EuclidianViewForPlane;
-import geogebra3D.gui.layout.panels.EuclidianDockPanel3D;
-import geogebra3D.gui.layout.panels.EuclidianDockPanelForPlane;
 
 public class GeoPlane3D extends GeoElement3D
 implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
@@ -502,12 +493,10 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	//////////////////////////////////
 	// 2D VIEW
 	
-	private EuclidianViewForPlane euclidianViewForPlane;
+	private EuclidianView euclidianViewForPlane;
 	
 	public void createView2D(){
-		Application.debug("geo: "+getLabel());
-		
-		euclidianViewForPlane = ((Application3D) app).createEuclidianViewForPlane(this);
+		euclidianViewForPlane = app.createEuclidianViewForPlane(this);
 	
 	}
 	

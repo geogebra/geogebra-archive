@@ -40,6 +40,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.kernel.Relation;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.ScriptManager;
@@ -125,8 +126,6 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.WindowConstants;
-
-import org.mathpiper.lisp.cons.Cons;
 
 public class Application implements KeyEventDispatcher {
 	
@@ -5164,6 +5163,15 @@ public class Application implements KeyEventDispatcher {
 		
 		// no real latex string
 		return false;
+	}
+
+	
+	
+	
+
+	//TODO remove this after ggb v>=5 (replace with same from Application3D
+	public EuclidianView createEuclidianViewForPlane(GeoCoordSys2D plane) {
+		return null;
 	}
 
 

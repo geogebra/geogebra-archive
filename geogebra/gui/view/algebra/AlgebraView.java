@@ -233,7 +233,7 @@ public class AlgebraView extends JTree implements View {
 	}
 
 	private void initTreeCellRendererEditor() {
-		renderer = new MyRenderer(app);		
+		renderer = newMyRenderer(app);		
 		editTF = new MathTextField(app);
 		editor = new MyDefaultTreeCellEditor(this, renderer, 
 									new MyCellEditor(editTF, app));
@@ -241,6 +241,15 @@ public class AlgebraView extends JTree implements View {
 		editor.addCellEditorListener(editor); // self-listening
 		setCellRenderer(renderer);
 		setCellEditor(editor);
+	}
+	
+	/**
+	 * 
+	 * @param app
+	 * @return new renderer of a cell
+	 */
+	protected MyRenderer newMyRenderer(Application app){
+		return new MyRenderer(app);
 	}
 
 	public void clearSelection() {

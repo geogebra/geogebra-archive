@@ -742,6 +742,8 @@ public class DockManager implements AWTEventListener {
 			if(focusedEuclidianDockPanel != null) {
 				focusedEuclidianDockPanel.setEuclidianFocus(true);
 			}
+			
+			
 		}
 		
 	}

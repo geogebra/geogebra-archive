@@ -1103,9 +1103,16 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 	private double[] coeffs = new double[6];	
 	
-	
-	
 	protected StringBuilder buildValueString() {
+		return buildValueString(matrix);
+	}
+	
+	/**
+	 * 
+	 * @param matrix
+	 * @return the value string regarding the given matrix (used for views)
+	 */
+	protected StringBuilder buildValueString(double[] matrix) {
 		sbToValueString().setLength(0);
 	       if (!isDefined()) {
 	    	   sbToValueString.append("?");
@@ -1640,12 +1647,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	
 	protected final void doTranslate(double vx, double vy) {
 		// calc translated matrix   
-		matrix[2] =
-			matrix[2]
-				+ vx * (matrix[0] * vx - 2.0 * matrix[4])
-				+ vy * (matrix[1] * vy - 2.0 * matrix[5] + 2.0 * matrix[3] * vx);
-		matrix[4] = matrix[4] - matrix[0] * vx - matrix[3] * vy;
-		matrix[5] = matrix[5] - matrix[3] * vx - matrix[1] * vy;
+		translateMatrix(matrix, vx, vy);
 		
 		// avoid classification and set changes by hand:   
 		setMidpoint(getMidpoint().add(new Coords(new double[] {vx,vy,0})).get());
@@ -1653,7 +1655,16 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		b.x += vx;
 		b.y += vy;
 		*/
-	}		
+	}	
+	
+	protected void translateMatrix(double[] matrix, double vx, double vy){
+		matrix[2] =
+			matrix[2]
+				+ vx * (matrix[0] * vx - 2.0 * matrix[4])
+				+ vy * (matrix[1] * vy - 2.0 * matrix[5] + 2.0 * matrix[3] * vx);
+		matrix[4] = matrix[4] - matrix[0] * vx - matrix[3] * vy;
+		matrix[5] = matrix[5] - matrix[3] * vx - matrix[1] * vy;
+	}
 
 	/**
 	 * rotate this conic by angle phi around (0,0)
@@ -1714,6 +1725,21 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 */
 	final private void rotate(double phi) {
 		// set rotated matrix
+		rotateMatrix(matrix, phi);
+
+		// avoid classification: make changes by hand
+		eigenvec[0].rotate(phi);
+		eigenvec[1].rotate(phi);
+		b.rotate(phi);	
+		setMidpoint(new double[] {b.x,b.y});
+	}
+	
+	/**
+	 * rotate the matrix
+	 * @param matrix
+	 * @param phi
+	 */
+	final protected void rotateMatrix(double[] matrix, double phi) {
 		double sum = matrix[0] + matrix[1];
 		double diff = matrix[0] - matrix[1];
 		double cos = Math.cos(phi);
@@ -1733,12 +1759,6 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		matrix[1] = A1;
 		matrix[3] = A3;
 		matrix[4] = A4;
-
-		// avoid classification: make changes by hand
-		eigenvec[0].rotate(phi);
-		eigenvec[1].rotate(phi);
-		b.rotate(phi);	
-		setMidpoint(new double[] {b.x,b.y});
 	}
 	
 	/**

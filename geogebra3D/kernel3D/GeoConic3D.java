@@ -4,10 +4,13 @@ import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -213,26 +216,21 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 	 public boolean isGeoElement3D(){
 		 return true;
 	 } 
-	 
-	 
-		public String toString() {	
-			StringBuilder sbToString = getSbToString();
-			sbToString.setLength(0);
-			sbToString.append(label);
-			
 
-			/*
-			//TODO says in which 2D coord sys the equation is calculated
-			if (coordSys.getLabel()!=null){
-				sbToString.append("\\");
-				sbToString.append(coordSys.getLabel());
-			}
-*/
-			
-			sbToString.append(": ");
-			sbToString.append(buildValueString()); 
-			return sbToString.toString();
-		}
+	 final public String toString() {
+
+		 return toString(null); 
+	 }
+
+	 final public String toString(EuclidianViewInterface view) {	
+		 StringBuilder sbToString = getSbToString();
+		 sbToString.setLength(0);
+		 sbToString.append(label);
+
+		 sbToString.append(": ");
+		 sbToString.append(buildValueString(view)); 
+		 return sbToString.toString();
+	 }
 
 	 
 		
@@ -240,6 +238,53 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 
 		protected StringBuilder buildValueString() {
 			return new StringBuilder("todo-GeoConic3D");
+		}
+
+		/**
+		 * @param viewI
+		 * @return the value string regarding the view
+		 */
+		protected StringBuilder buildValueString(EuclidianViewInterface viewI) {
+			
+			
+			if (!(viewI instanceof EuclidianView))
+				return new StringBuilder("todo-GeoConic3D");
+			
+			EuclidianView view = (EuclidianView) viewI;
+			
+			//check if in view
+	        Coords M = view.getInhomCoordsForView(getMidpoint3D());            
+	        if (!Kernel.isZero(M.getZ())){//check if in view
+	    		return new StringBuilder("todo-GeoConic3D");
+	        }       
+	        Coords[] ev = new Coords[2];
+	        for(int j=0; j<2; j++){
+	        	ev[j] = view.getInhomCoordsForView(getEigenvec3D(j));   
+	            if (!Kernel.isZero(ev[j].getZ())){//check if in view
+	        		return new StringBuilder("todo-GeoConic3D");
+	            }
+	        }
+
+	        double[] matrix = getMatrix();
+	 
+	        Coords mid2D = getMidpoint2D();
+	        translateMatrix(matrix, -mid2D.getX(), -mid2D.getY());
+
+	        
+	        Coords ev2D0 = getEigenvec(0);
+	        Coords ev2D1 = getEigenvec(1);	        
+	        double x = ev2D0.dotproduct(ev[0]);
+	        double y = ev2D1.dotproduct(ev[0]);
+	        double phi = Math.atan2(y, x);
+	        rotateMatrix(matrix, phi);
+	        
+	        
+	        translateMatrix(matrix, M.getX(), M.getY());
+
+
+	        
+	        return buildValueString(matrix);
+	        
 		}
 
 

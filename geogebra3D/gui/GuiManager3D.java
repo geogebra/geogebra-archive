@@ -5,9 +5,12 @@ import geogebra.gui.layout.Layout;
 import geogebra.gui.layout.panels.Euclidian2DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.gui.toolbar.Toolbar;
+import geogebra.gui.view.algebra.AlgebraController;
+import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.gui.layout.panels.EuclidianDockPanel3D;
+import geogebra3D.gui.view.algebra.AlgebraView3D;
 
 import java.awt.Component;
 import java.awt.Point;
@@ -44,39 +47,10 @@ public class GuiManager3D extends GuiManager {
 	 */
 	protected void initLayoutPanels() {
 		super.initLayoutPanels();
-
-		/*
-
-    	DockPanel panel3D = new DockPanel(Application3D.VIEW_EUCLIDIAN3D, 
-    			"GraphicsView3D", 
-    			null, 
-    			false, 4) {
-    		protected JComponent loadStyleBar() {
-				return null;
-			}
-
-    		protected JComponent loadComponent() {
-				return ((Application3D)app).getEuclidianView3D();
-			}
-		};
-		panel3D.setMaximumSize(new Dimension(0,0));
-		panel3D.setMinimumSize(new Dimension(0,0));
-
-    	getLayout().registerPanel(panel3D);
-
-		 */
-		
-		getLayout().registerPanel(new EuclidianDockPanel3D(app));
+		EuclidianDockPanel3D panel = new EuclidianDockPanel3D(app);
+		getLayout().registerPanel(panel);
 	}
 	
-	/*
-	protected EuclidianDockPanel newEuclidianDockPanel(){
-		return new EuclidianDockPanel(app,Toolbar.getAllToolsNoMacros());
-	}
-	
-	protected Euclidian2DockPanel newEuclidian2DockPanel(){
-		return new Euclidian2DockPanel(app,Toolbar.getAllToolsNoMacros());
-	}*/
 	
 	//////////////////////////////
 	// ACTIONS
@@ -189,5 +163,15 @@ public class GuiManager3D extends GuiManager {
 		popupMenu.show(invoker, p.x, p.y);
 	}
 	
+	
+
+	
+	//////////////////////////////
+	// ALGEBRA VIEW
+	//////////////////////////////
+	
+	protected AlgebraView newAlgebraView(AlgebraController algc){
+		return new AlgebraView3D(algc);
+	}
 
 }

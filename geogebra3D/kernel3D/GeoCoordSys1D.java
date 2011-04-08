@@ -81,6 +81,9 @@ GeoLineND, GeoCoordSys{
 		startPoint = O;
 		endPoint = I;
 		
+		if ((O==null) || (I==null))
+			return;
+		
 		if (I.isInfinite())
 			if (O.isInfinite())
 				setUndefined(); //TODO infinite line

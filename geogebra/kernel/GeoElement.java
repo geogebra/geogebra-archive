@@ -2960,6 +2960,10 @@ public abstract class GeoElement
 		return label;
 	}
 	
+	public String toString(EuclidianViewInterface view) {
+		return toString();
+	}
+	
 	public String toRealString() {
 		return getRealLabel();
 	}
@@ -3442,8 +3446,13 @@ public abstract class GeoElement
 		* a HTML string is returned.		
 		*/
 	final public String getAlgebraDescriptionTextOrHTML() {
+		
+		return getAlgebraDescriptionTextOrHTML(null);
+	}
+	
+	final public String getAlgebraDescriptionTextOrHTML(EuclidianViewInterface view) {
 		if (strAlgebraDescTextOrHTMLneedsUpdate) {
-			String algDesc = getAlgebraDescription();
+			String algDesc = getAlgebraDescription(view);
 			// convertion to html is only needed if indices are found
 			if (hasIndexLabel()) {
 				strAlgebraDescTextOrHTML =
@@ -3457,6 +3466,8 @@ public abstract class GeoElement
 		
 		return strAlgebraDescTextOrHTML;
 	}
+	
+	
 
 	final public String getAlgebraDescriptionHTML(boolean addHTMLtag) {
 		if (strAlgebraDescriptionHTMLneedsUpdate) {
@@ -3487,9 +3498,14 @@ public abstract class GeoElement
 	 * Returns algebraic representation of this GeoElement.		
 	 */
 	final public String getAlgebraDescription() {
+		return getAlgebraDescription(null);
+	}	
+	
+
+	final public String getAlgebraDescription(EuclidianViewInterface view) {
 		if (strAlgebraDescriptionNeedsUpdate) {
 			if (isDefined()) {
-				strAlgebraDescription = toString();
+				strAlgebraDescription = toString(view);
 			} else {			
 				StringBuilder sbAlgebraDesc = new StringBuilder();		
 				sbAlgebraDesc.append(label);
@@ -3501,7 +3517,7 @@ public abstract class GeoElement
 			strAlgebraDescriptionNeedsUpdate = false;
 		}
 		return strAlgebraDescription;
-	}	
+	}
 	
 	public String getLaTeXdescription() {
 		if (strLaTeXneedsUpdate) {			

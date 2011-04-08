@@ -14,13 +14,13 @@ package geogebra.kernel;
 
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -1385,6 +1385,22 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	
 	
 	
+	
+	//////////////////////////////////
+	// 2D VIEW
+	
+	private EuclidianView euclidianViewForPlane;
+	
+	public void createView2D(){
+		euclidianViewForPlane = app.createEuclidianViewForPlane(this);
+	
+	}
+	
+	public void update(){
+		super.update();
+		if (euclidianViewForPlane!=null)
+			euclidianViewForPlane.updateAllDrawables(true);
+	}
 	
 
 }

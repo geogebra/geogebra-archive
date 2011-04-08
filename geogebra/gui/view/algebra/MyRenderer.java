@@ -24,7 +24,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 	
 	private static final long serialVersionUID = 1L;				
 			
-	private Application app;
+	protected Application app;
 	private Kernel kernel;
 	private ImageIcon iconShown, iconHidden;
 		
@@ -59,11 +59,11 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 			
 			String text = null;
 			if (geo.isIndependent()) {
-				text = geo.getAlgebraDescriptionTextOrHTML();
+				text = getAlgebraDescriptionTextOrHTML(geo);
 			} else {
 				switch (kernel.getAlgebraStyle()) {
 					case Kernel.ALGEBRA_STYLE_VALUE:
-						text = geo.getAlgebraDescriptionTextOrHTML();
+						text = getAlgebraDescriptionTextOrHTML(geo);
 						break;
 						
 					case Kernel.ALGEBRA_STYLE_DEFINITION:
@@ -129,6 +129,15 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		}		
 		
 		return this;
+	}
+	
+	/**
+	 * 
+	 * @param geo
+	 * @return algebra description of the geo
+	 */
+	protected String getAlgebraDescriptionTextOrHTML(GeoElement geo){
+		return geo.getAlgebraDescriptionTextOrHTML();
 	}
 	
 	
