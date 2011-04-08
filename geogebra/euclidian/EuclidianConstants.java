@@ -140,9 +140,6 @@ public interface EuclidianConstants {
 	
 	public static final int MODE_FUNCTION_INSPECTOR = 68;
 	
-	public static final int MODE_IMPLICIT_POLY_THROUGH_POINTS = 69;
-	
-	
 	// ggb3D start
 	/** special mode that allows to create point inside a region (polygon, etc.) */
 	public static final int MODE_POINT_ON_OBJECT = 501;

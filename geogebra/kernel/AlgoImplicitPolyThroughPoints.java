@@ -43,10 +43,6 @@ public class AlgoImplicitPolyThroughPoints extends AlgoElement
 		implicitPoly.throughPoints(P);
 	}
 	
-	public int getRelatedModeID() {
-    	return EuclidianConstants.MODE_IMPLICIT_POLY_THROUGH_POINTS;
-    }
-
 	@Override
 	public String getClassName() {
 		 return "AlgoImplicitPolyThroughPoints";
