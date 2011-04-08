@@ -394,15 +394,17 @@ public class CoordSys {
 				setVz(getVx().crossProduct(getVy()));
 			}
 			
+			Coords o = getOrigin();			
+			if (projectOrigin) //recompute origin for ortho matrix
+				o = (new Coords(0,0,0,1)).projectPlane(getMatrixOrthonormal())[0];
+			
 			//sets orthonormal matrix
 			matrixOrthonormal.set(new Coords[] {
 					getVx().normalized(),
 					getVy().normalized(),
 					getVz().normalized(),
-					getOrigin()});
+					o});
 			
-			if (projectOrigin)
-				projectOrigin();
 			
 			return true;
 			
@@ -432,14 +434,13 @@ public class CoordSys {
 				vy = vz.crossProduct(vx);				
 			}
 			
-			
-			Coords o = getOrigin();
-			matrixOrthonormal.set(new Coords[] {vx,vy,vz,o});
-			
-			if (projectOrigin)
-				projectOrigin();
-			else //recompute origin for drawing matrix
-				o = (new Coords(0,0,0,1)).projectPlane(getMatrixOrthonormal())[0];
+			matrixOrthonormal.setOrigin(getOrigin());
+			matrixOrthonormal.setVx(vx);
+			matrixOrthonormal.setVy(vy);
+			matrixOrthonormal.setVz(vz);
+			Coords o = (new Coords(0,0,0,1)).projectPlane(getMatrixOrthonormal())[0];			
+			if (projectOrigin) //recompute origin for ortho and drawing matrix
+				matrixOrthonormal.setOrigin(o);
 			
 			drawingMatrix = new CoordMatrix4x4(o,vz,CoordMatrix4x4.VZ);
 			
@@ -455,13 +456,6 @@ public class CoordSys {
 	
 	
 	
-	/**
-	 * project 0 for origin
-	 */
-	private void projectOrigin(){
-		Coords o = (new Coords(0,0,0,1)).projectPlane(getMatrixOrthonormal())[0];
-		matrixOrthonormal.set(o, 4);
-	}
 	
 	
 	public boolean isDefined() {

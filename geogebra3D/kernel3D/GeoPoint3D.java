@@ -818,18 +818,16 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		sbToString.append(label);
 		sbToString.append(" = "); 
 		
-		sbToString.append(toValueString(view));
+		sbToString.append(toValueString());
 		
 		return sbToString.toString();  
 	}
 
 	
 	
-	public String toValueString() {
-		return toValueString(null);
-	}
 	
-	private String toValueString(EuclidianViewInterface view) {
+	
+	public String toValueString() {
     	if (isInfinite()) 
 			return app.getPlain("undefined");
     	
@@ -839,8 +837,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	boolean isVisibleInView2D = false;
     	Coords p = getInhomCoordsInD(3);
     	
-    	if (view instanceof EuclidianView){
-    		Coords p2D = ((EuclidianView) view).getInhomCoordsForView(getInhomCoordsInD(3));
+    	if (getViewForValueString() instanceof EuclidianView){
+    		Coords p2D = ((EuclidianView) getViewForValueString()).getInhomCoordsForView(getInhomCoordsInD(3));
     	    if (Kernel.isZero(p.getZ())){
     	    	isVisibleInView2D=true;
     	    	p = p2D;

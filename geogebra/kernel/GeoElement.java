@@ -686,6 +686,26 @@ public abstract class GeoElement
 	public abstract void setUndefined();
 	public abstract String toValueString();	
 	
+	private EuclidianViewInterface viewForValueString;
+	
+	/**
+	 * sets a view for building the value string
+	 * @param view
+	 */
+	public void setViewForValueString(EuclidianViewInterface view){
+		viewForValueString = view;
+	}
+	
+	/**
+	 * 
+	 * @return the view used for building the value string
+	 */
+	public EuclidianViewInterface getViewForValueString(){
+		return viewForValueString;
+	}
+	
+	
+	
 	/**
 	 * Returns definition or value string of this object.
 	 * Automatically increases decimals to at least 5, e.g.
@@ -2960,9 +2980,6 @@ public abstract class GeoElement
 		return label;
 	}
 	
-	public String toString(EuclidianViewInterface view) {
-		return toString();
-	}
 	
 	public String toRealString() {
 		return getRealLabel();
@@ -3446,13 +3463,8 @@ public abstract class GeoElement
 		* a HTML string is returned.		
 		*/
 	final public String getAlgebraDescriptionTextOrHTML() {
-		
-		return getAlgebraDescriptionTextOrHTML(null);
-	}
-	
-	final public String getAlgebraDescriptionTextOrHTML(EuclidianViewInterface view) {
 		if (strAlgebraDescTextOrHTMLneedsUpdate) {
-			String algDesc = getAlgebraDescription(view);
+			String algDesc = getAlgebraDescription();
 			// convertion to html is only needed if indices are found
 			if (hasIndexLabel()) {
 				strAlgebraDescTextOrHTML =
@@ -3498,14 +3510,9 @@ public abstract class GeoElement
 	 * Returns algebraic representation of this GeoElement.		
 	 */
 	final public String getAlgebraDescription() {
-		return getAlgebraDescription(null);
-	}	
-	
-
-	final public String getAlgebraDescription(EuclidianViewInterface view) {
 		if (strAlgebraDescriptionNeedsUpdate) {
 			if (isDefined()) {
-				strAlgebraDescription = toString(view);
+				strAlgebraDescription = toString();
 			} else {			
 				StringBuilder sbAlgebraDesc = new StringBuilder();		
 				sbAlgebraDesc.append(label);

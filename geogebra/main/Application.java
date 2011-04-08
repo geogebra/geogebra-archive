@@ -50,7 +50,6 @@ import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
-
 import java.awt.AWTKeyStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -5169,12 +5168,16 @@ public class Application implements KeyEventDispatcher {
 	
 	
 
-	//TODO remove this after ggb v>=5 (replace with same from Application3D
+	//TODO remove this after ggb v>=5 (replace with same from Application3D)
 	public EuclidianView createEuclidianViewForPlane(GeoCoordSys2D plane) {
 		return null;
 	}
 
 
+	//TODO when ggb v>=5 (merge with Application3D)
+	public EuclidianView getEuclidianViewForPlane(){
+		return null;
+	}
 
 		
 }

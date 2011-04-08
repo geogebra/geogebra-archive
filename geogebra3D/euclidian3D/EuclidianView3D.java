@@ -81,7 +81,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	//viewing values
 	private double XZero = 0;
-	private double YZero = 0;
+	private double YZero = -117;
 	private double ZZero = 0;
 	
 	private double XZeroOld = 0;

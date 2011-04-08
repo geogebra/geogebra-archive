@@ -1,9 +1,7 @@
 package geogebra3D.gui.view.algebra;
 
 import geogebra.gui.view.algebra.MyRenderer;
-import geogebra.kernel.GeoElement;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.EuclidianView3D;
 
 
 /**
@@ -26,9 +24,5 @@ public class MyRenderer3D extends MyRenderer {
 	}
 	
 	
-	protected String getAlgebraDescriptionTextOrHTML(GeoElement geo){
-		return geo.getAlgebraDescriptionTextOrHTML(app.getActiveEuclidianView());
-	}
-
 
 }

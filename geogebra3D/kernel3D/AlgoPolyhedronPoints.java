@@ -116,7 +116,7 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 			
 		createPolyhedron(polyhedron);
 		
-		update();
+		compute();
 		
 		// input : inputPoints or list of faces
 		input = new GeoElement[points.length];

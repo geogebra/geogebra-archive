@@ -228,7 +228,7 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 		 sbToString.append(label);
 
 		 sbToString.append(": ");
-		 sbToString.append(buildValueString(view)); 
+		 sbToString.append(buildValueString()); 
 		 return sbToString.toString();
 	 }
 
@@ -237,20 +237,12 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 
 
 		protected StringBuilder buildValueString() {
-			return new StringBuilder("todo-GeoConic3D");
-		}
-
-		/**
-		 * @param viewI
-		 * @return the value string regarding the view
-		 */
-		protected StringBuilder buildValueString(EuclidianViewInterface viewI) {
 			
 			
-			if (!(viewI instanceof EuclidianView))
+			if (!(getViewForValueString() instanceof EuclidianView))
 				return new StringBuilder("todo-GeoConic3D");
 			
-			EuclidianView view = (EuclidianView) viewI;
+			EuclidianView view = (EuclidianView) getViewForValueString();
 			
 			//check if in view
 	        Coords M = view.getInhomCoordsForView(getMidpoint3D());            

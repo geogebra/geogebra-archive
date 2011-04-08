@@ -14,6 +14,7 @@ the Free Software Foundation.
 package geogebra.gui;
 
 import geogebra.gui.inputbar.AlgebraInput;
+import geogebra.gui.layout.DockPanel;
 import geogebra.gui.util.AnimatedGifEncoder;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Animatable;
@@ -106,6 +107,10 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			addNumberItems();	
 			addUserInputItem();
 			
+			/*
+			if (app.getEuclidianViewForPlane()!=null)
+				addViewForValueStringItems();
+				*/
 		}
 		
 		//TODO remove the condition when ggb version >= 5
@@ -526,6 +531,31 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				plane.createView2D();
+			}
+		};
+		addAction(action);
+
+	}
+	
+	private void addViewForValueStringItems() {
+
+		AbstractAction action;
+
+		DockPanel panel = app.getGuiManager().getLayout().getDockManager().getFocusedEuclidianPanel();
+		if (panel==null)
+			return;
+		
+		action = new AbstractAction(app.getPlain("SetValueStringRegardingA",app.getPlain(panel.getViewTitle()))) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				//TODO change that to chooser
+				Application.debug("ici");
+				geo.setViewForValueString(app.getActiveEuclidianView());
+				geo.update();
 			}
 		};
 		addAction(action);
