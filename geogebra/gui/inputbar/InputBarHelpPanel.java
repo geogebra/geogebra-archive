@@ -43,6 +43,7 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -322,13 +323,14 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 
 
 	public void setLabels(){
-
 		setCommands();
 		cmdTreeModel.setRoot(rootSubCommands);
 		cmdTreeModel.reload();
 		titleLabel.setText(app.getMenu("InputHelp"));
 		syntaxLabel.setText(app.getPlain("Syntax"));
 		btnPaste.setText(app.getMenu("Paste"));
+		helpTextPane.setText(null);
+		updateFonts();
 	}
 
 
@@ -338,15 +340,19 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		helpTextPane.setFont(app.getPlainFont());
 		titleLabel.setFont(app.getPlainFont());
 		syntaxLabel.setFont(app.getPlainFont());
+		this.validate();
 		
+		// set the height of the syntax panel
 		Dimension d = syntaxHelpPanel.getMinimumSize();
-		d.height = 7*app.getFontSize();
+		d.height = 12*app.getFontSize();
 		syntaxHelpPanel.setMinimumSize(d);
 		
-		d = this.getMinimumSize();
-		d.width = Math.max( (int) (1.25* this.cmdSplitPane.getPreferredSize().width),
+		// set the minimum width of the help panel (see Application.setShowInputHelpPanel)
+		d = this.getPreferredSize();
+		d.width = Math.max( (int) (1.1* this.cmdSplitPane.getPreferredSize().width),
 				this.getPreferredSize().width);
 		this.setMinimumSize(d);
+		
 		
 		// adjust scrolling increments to match font size
 		scroller.getVerticalScrollBar().setBlockIncrement(10*app.getFontSize());
@@ -609,6 +615,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		//String s = "Syntax:\n" + app.getCommandSyntax(cmd);
 		String description=app.getCommandSyntax(cmd);
 		String descriptionCAS=app.getCommandSyntaxCAS(cmd);
+		String descriptionCASHeader = "\n" + app.getMenu("Type.CAS") + ":\n";
+		
 		
 		StyledDocument doc=helpTextPane.getStyledDocument();
 		try {
@@ -625,6 +633,12 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		Style s = doc.addStyle("italic", regular);
 		StyleConstants.setItalic(s, true);
 		
+		SimpleAttributeSet attrs=new SimpleAttributeSet();
+		StyleConstants.setFirstLineIndent(attrs, -50);
+		StyleConstants.setLeftIndent(attrs, 50);
+	    doc.setParagraphAttributes(0,doc.getLength(),attrs, false);
+		
+		
 		if (!descriptionCAS.equals(cmd+"SyntaxCAS")){
 			if (!description.equals(cmd+"Syntax"))
 				try {
@@ -634,7 +648,8 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 					e.printStackTrace();
 				}
 			try {
-				doc.insertString(doc.getLength(), descriptionCAS, doc.getStyle("italic"));
+				doc.insertString(doc.getLength(), descriptionCASHeader, doc.getStyle("italic"));
+				doc.insertString(doc.getLength(), descriptionCAS, doc.getStyle("regular"));
 			} catch (BadLocationException e) {
 				// should never occur
 				e.printStackTrace();
@@ -648,7 +663,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			}
 		}
 		//helpTextArea.setText(app.getCommandSyntax(cmd));
-		//helpTextArea.setCaretPosition(0);
+		helpTextPane.setCaretPosition(0);
 		helpTextPane.repaint();	
 	}
 	
