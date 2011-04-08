@@ -2,9 +2,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoListElement;
-import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoVec2D;
@@ -13,7 +11,6 @@ import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.arithmetic3D.Vector3DValue;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra.util.MyMath;
 
 /**
  * @author ggb3D
@@ -755,13 +752,13 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             			// check if we have a/b with a and b integers
             			double a = ((NumberValue) node.left.evaluate()).getDouble(); 
             			long al = Math.round(a);
-            			if (kernel.isEqual(a, al)) { // a is integer         				
+            			if (Kernel.isEqual(a, al)) { // a is integer         				
             				double b = ((NumberValue) node.right.evaluate()).getDouble();                 			
             				long bl = Math.round(b);
             				if (b == 0)
                 				// (x^a)^(1/0)
                 				num.set(Double.NaN);            				
-                			else if (kernel.isEqual(b, bl)) { // b is integer
+                			else if (Kernel.isEqual(b, bl)) { // b is integer
                 				// divide through greatest common divisor of a and b
                 				long gcd = Kernel.gcd(al, bl);
                 				al = al / gcd;
@@ -1658,7 +1655,6 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         	//Application.debug(rt.getClass()+" "+rt.getClass());
             if (rt.isListValue() && lt instanceof GeoList) { 
             	
-            	Construction cons = kernel.getConstruction();
             	GeoElement subList = ((GeoList)lt);
             	ListValue lv = (ListValue)rt;
             	
@@ -1717,8 +1713,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             if (rt.isListValue() && lt instanceof FunctionalNVar) {    
             	FunctionNVar funN = ((FunctionalNVar) lt).getFunction();
             	ListValue list = (ListValue) rt;
-            	if (funN.getVarNumber() == list.size()) {
-            		funN.initFunction();
+            	if (funN.getVarNumber() == list.size()) {            		
             		double [] args = list.toDouble(); 
             		if (args != null){
             			if(funN.isBooleanFunction())
@@ -1802,7 +1797,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
     	//  nummber == number
     	else if (lt.isNumberValue() && rt.isNumberValue())
 			return new MyBoolean(
-    			kernel.isEqual(
+    			Kernel.isEqual(
     				((NumberValue)lt).getDouble(),
 					((NumberValue)rt).getDouble()
 				)
