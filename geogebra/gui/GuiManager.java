@@ -20,6 +20,7 @@ import geogebra.gui.menubar.GeoGebraMenuBar;
 import geogebra.gui.toolbar.Toolbar;
 import geogebra.gui.toolbar.ToolbarConfigDialog;
 import geogebra.gui.toolbar.ToolbarContainer;
+import geogebra.gui.util.AutoCompletion;
 import geogebra.gui.util.BrowserLauncher;
 import geogebra.gui.util.GeoGebraFileChooser;
 import geogebra.gui.view.algebra.AlgebraController;
@@ -1397,6 +1398,13 @@ public class GuiManager {
 		if (fileChooser != null) {
 			fileChooser.setLocale(currentLocale);
 			SwingUtilities.updateComponentTreeUI(fileChooser);
+			
+			// Unfortunately the preceding line removes the event listener from the
+			// internal JTextField inside the file chooser. This means that the 
+			// listener has to be registered again. (e.g. a simple call to 
+			// 'AutoCompletion.install(this);' inside the GeoGebraFileChooser 
+			// constructor is not sufficient)
+			AutoCompletion.install(fileChooser, true);
 		}
 	}
 
