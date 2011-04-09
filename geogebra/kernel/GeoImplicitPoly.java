@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import edu.jas.arith.BigRational;
+import edu.jas.gb.RPseudoReduction;
 import edu.jas.poly.ExpVector;
 import edu.jas.poly.ExpVectorLong;
 import edu.jas.poly.GenPolynomial;
@@ -26,6 +27,7 @@ import edu.jas.poly.GenPolynomialRing;
 import edu.jas.poly.TermOrder;
 import edu.jas.structure.RingElem;
 import edu.jas.structure.RingFactory;
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -49,7 +51,7 @@ import org.apache.commons.math.linear.RealMatrixImpl;
  * Represents implicit bivariat polynomial equations, with degree greater than 2.
  */
 public class GeoImplicitPoly extends GeoUserInputElement 
-implements Path, Traceable, Mirrorable, ConicMirrorable
+implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRotateable, Dilateable
 {
 
 	private double[][] coeff;
@@ -59,11 +61,12 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 	
 	private static GenPolynomialRing<BigRational> CoeffRing;
 
-	
 	private boolean defined = true;
 	private boolean isConstant;
 	
 	private boolean trace; //for traceable interface
+	
+	private Coords [] pointsOnCurve;
 	
 //	private Thread factorThread;
 	
@@ -80,18 +83,26 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		this(c);
 		setLabel(label);
 		setCoeff(coeff);
+		pointsOnCurve = null;
 	}
 	
 	protected GeoImplicitPoly(Construction c, String label,Polynomial poly){
 		this(c);
 		setLabel(label);
 		setCoeff(poly.getCoeff());
+		pointsOnCurve = null;
 	}
 	
 	
 	public GeoImplicitPoly(GeoImplicitPoly g){
 		this(g.cons);
 		set(g);
+		if(g.pointsOnCurve != null)
+		{
+			pointsOnCurve = new Coords[g.pointsOnCurve.length];
+	        for(int i=0; i<pointsOnCurve.length; i++)
+	        	pointsOnCurve[i] = new Coords(g.pointsOnCurve[i].get());
+		}
 	}
 	
 	/* 
@@ -119,6 +130,11 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 		degY=2;
 		Application.debug("Conic -> "+this);
 	}
+	
+	public Coords[] getpointsOnCurve() {
+		return pointsOnCurve;
+	}
+	
 	
 	/**
 	 * Create conic from this implicitPoly (if degX == degY == 2)
@@ -635,6 +651,21 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 			return;
 		}
 		
+		if(pointsOnCurve == null)
+			pointsOnCurve = new Coords[points.size()];
+		
+		for(int i=0; i<points.size(); i++)
+		{
+			if(pointsOnCurve[i] == null)
+				pointsOnCurve[i] = new Coords(points.get(i).x, points.get(i).y, points.get(i).z);
+			else
+			{
+				pointsOnCurve[i].setX(points.get(i).x);
+				pointsOnCurve[i].setY(points.get(i).y);
+				pointsOnCurve[i].setZ(points.get(i).z);
+			}
+		}
+		
 		int degree = (int)(0.5*Math.sqrt(8*(1+points.size()))) - 1;
 		int realDegree = degree;
 		
@@ -1059,17 +1090,112 @@ implements Path, Traceable, Mirrorable, ConicMirrorable
 	}
 
 	public void mirror(GeoPoint Q) {
-		// TODO Auto-generated method stub
+		// for curves given by equation
+		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
+			return;
 		
+		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
+			
+		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
+		for(int i=0; i<parentCharacteristicPoints.length; i++)
+		{
+			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
+			points[i].mirror(Q);
+			points[i].remove();
+		}
+		this.throughPoints(points);
 	}
 
 	public void mirror(GeoLine g) {
-		// TODO Auto-generated method stub
+		// for curves given by equation
+		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
+			return;
+		
+		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
+			
+		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
+		for(int i=0; i<parentCharacteristicPoints.length; i++)
+		{
+			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
+			points[i].mirror(g);
+			points[i].remove();
+		}
+		this.throughPoints(points);
 		
 	}
 	 @Override
 	 protected char getLabelDelimiter(){
 		 return ':';
 	 }
-	
+
+	public void translate(Coords v) {
+		// for curves given by equation
+		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
+			return;
+		
+		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
+			
+		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
+		for(int i=0; i<parentCharacteristicPoints.length; i++)
+		{
+			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
+			points[i].translate(v);
+			points[i].remove();
+		}
+		this.throughPoints(points);
+		
+	}
+
+	public void rotate(NumberValue r) {
+		// for curves given by equation
+		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
+			return;
+		
+		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
+		
+		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
+		for(int i=0; i<parentCharacteristicPoints.length; i++)
+		{
+			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
+			points[i].rotate(r);
+			points[i].remove();
+		}
+		this.throughPoints(points);	
+	}
+
+	public void rotate(NumberValue r, GeoPoint S) {
+		// for curves given by equation
+		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
+			return;
+		
+		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
+			
+		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
+		for(int i=0; i<parentCharacteristicPoints.length; i++)
+		{
+			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
+			points[i].rotate(r, S);
+			points[i].remove();
+		}
+		this.throughPoints(points);
+		
+	}
+
+	public void dilate(NumberValue r, GeoPoint S) {
+		// for curves given by equation
+		if(((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve == null)
+			return;
+		
+		Coords [] parentCharacteristicPoints = ((GeoImplicitPoly)algoParent.input[0]).pointsOnCurve;
+			
+		GeoPoint [] points = new GeoPoint[parentCharacteristicPoints.length];
+		for(int i=0; i<parentCharacteristicPoints.length; i++)
+		{
+			points[i] = new GeoPoint(cons, null, parentCharacteristicPoints[i].getX(), parentCharacteristicPoints[i].getY(), parentCharacteristicPoints[i].getZ());
+			points[i].dilate(r, S);
+			points[i].remove();
+		}
+		this.throughPoints(points);	
+		
+	}
 }
