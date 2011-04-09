@@ -282,11 +282,17 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		 //Application.debug("after:\n"+P.getCoordsInD(3)+"\n2D:\n"+coords+"\npp="+pp.getT());
 	 }
 
-	
-	
+		/**
+		 * Edited by:  Kai Chung Tam
+		 * Date: 4/6/2011
+		 * Fixed case CONIC_ELLIPSE, CONIC_HYPERBOLA and CONIC_PARABOLA
+		 */
 	private void pointChanged(Coords P, PathParameter pp) {
 		
-		double px, py;	
+		double px, py, ha, hb, hc_2;
+		double abspx, abspy; //for parabola and hyperbola
+		double tolerance = Kernel.EPSILON; //required precision (robustness not proven)
+		
 		pp.setPathType(type);
 			
 		switch (type) {
@@ -333,11 +339,9 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				lines[0].doPointChanged(P,pp);
 			break;
 			
-			case CONIC_CIRCLE:
-			case CONIC_ELLIPSE:			
+			case CONIC_CIRCLE:	
 				//	transform to eigenvector coord-system
-				coordsRWtoEV(P);				
-
+				coordsRWtoEV(P);		
 				// calc parameter 
 				px = P.getX() / P.getZ();
 				py = P.getY() / P.getZ();	
@@ -356,7 +360,55 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				//	transform back to real world coord system
 				coordsEVtoRW(P);				
 			break;			
-			
+			case CONIC_ELLIPSE:
+				// transform to eigenvector coord-system
+				coordsRWtoEV(P);	
+				
+				// calc parameter 
+				px = P.getX() / P.getZ();
+				py = P.getY() / P.getZ();
+				abspx = Math.abs(px);
+				abspy = Math.abs(py);
+				ha = halfAxes[0];
+				hb = halfAxes[1];
+				hc_2 = ha*ha - hb*hb;
+
+				if (abspx<kernel.EPSILON) {
+					pp.setT(Math.asin(Math.max(-1,-hb*abspy/hc_2)));
+				} else if (abspy<kernel.EPSILON) {
+					pp.setT(Math.acos(Math.min(1,ha*abspx/hc_2)));
+				} else {	
+					//To solve (1-u^2)*(b*py + (a^2-b^2)*u)^2-a^2*px^2*u^2 = 0, where u = sin(theta)
+					double bpy=hb*abspy;
+					double [] eqn = {bpy*bpy, 2*bpy*hc_2, -bpy*bpy+hc_2*hc_2-ha*ha*abspx*abspx, -2*bpy*hc_2, -hc_2*hc_2 };
+					double [] roots = { 0, 0, 0 , 0};
+					eqnSolver.solveQuartic(eqn,roots);
+	
+					if (roots[0]>0) {
+						pp.setT(Math.asin(roots[0]));
+					} else if (roots[1]>0) {
+						pp.setT(Math.asin(roots[1]));
+					} else if (roots[2]>0) {
+						pp.setT(Math.asin(roots[2]));
+					} else {
+						pp.setT(Math.asin(roots[3]));
+					}
+				}
+				
+				//transform the parameter if (px,py) is not in the first quadrant.
+				if (px<0) {
+					pp.setT(Math.PI-pp.getT());
+				}
+				if (py<0) {
+					pp.setT(Math.PI*2-pp.getT());
+				}
+				
+				P.setX(ha*Math.cos(pp.getT()));
+				P.setY(hb*Math.sin(pp.getT()));
+				P.setZ(1.0);
+				//transform back to real world coord system
+				coordsEVtoRW(P);				
+			break;
 			case CONIC_HYPERBOLA:
 				/* 
 				 * For hyperbolas, we use the parameter ranges 
@@ -371,22 +423,50 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				
 				// transform to eigenvector coord-system
 				coordsRWtoEV(P);
-				px = P.getX() / P.getZ();
-				py = P.getY() / P.getZ();	
 				
-				// calculate s in (-inf, inf) and keep py				
-				double s = MyMath.asinh(py / halfAxes[1]);
-				P.setX( halfAxes[0] * MyMath.cosh(s));	
-				P.setY( py);
-				P.setZ( 1.0);
+				// calc parameter 
+				px = P.getX() / P.getZ();
+				py = P.getY() / P.getZ();
+				abspx = Math.abs(px);
+				abspy = Math.abs(py);
+				ha = halfAxes[0];
+				hb = halfAxes[1];
+				hc_2 = ha*ha + hb*hb;
+				double s;
 
+				if (abspy<kernel.EPSILON) {
+					s=MyMath.acosh(Math.max(1,ha*abspx/hc_2));
+				} else {	
+					//To solve (1+u^2)*(-(b^2+a^2)*u +b*py)^2 - a^2*px^2, where u=sinh(t)
+					double bpy=hb*abspy;
+					double [] eqn = {bpy*bpy, -2*bpy*hc_2, bpy*bpy+hc_2*hc_2-ha*ha*abspx*abspx, -2*bpy*hc_2, hc_2*hc_2 };
+					double [] roots = { 0, 0, 0 , 0};
+					eqnSolver.solveQuartic(eqn,roots);
+	
+					if (roots[0]>0) {
+						s=MyMath.asinh(roots[0]);
+					} else if (roots[1]>0) {
+						s=MyMath.asinh(roots[1]);
+					} else if (roots[2]>0) {
+						s=MyMath.asinh(roots[2]);
+					} else {
+						s=MyMath.asinh(roots[3]);
+					}
+				}
+				
+				// transform the s-parameter if (px,py) is not in the first quadrant.
+				if (py < 0) { // lower-half plane
+					s=-s;
+				}
 				// compute t in (-1,1) from s in (-inf, inf)
 				pp.setT(PathNormalizer.inverseInfFunction(s));	
 				if (px < 0) { // left branch									
 					pp.setT( pp.getT() + 2); // convert (-1,1) to (1,3)
-					P.setX( -P.getX());
-				}		
+				}
 
+				P.setX(ha*Math.cos(pp.getT()));
+				P.setY(hb*Math.sin(pp.getT()));
+				P.setZ(1.0);
 				// transform back to real world coord system
 				coordsEVtoRW(P);													
 			break;																			
@@ -394,19 +474,44 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 			case CONIC_PARABOLA:
 				//	transform to eigenvector coord-system
 				coordsRWtoEV(P);
-				
-				// keep py
+
+				//calculate parameters. consider only the upper-half plane.
+				px = P.getX() / P.getZ();
 				py = P.getY() / P.getZ();
-				pp.setT(  py / p);
-				P.setX( p * pp.getT()  * pp.getT()  / 2.0);
-				P.setY( py);
-				P.setZ( 1.0); 									
+				abspx=Math.abs(px);
+				abspy=Math.abs(py);
+							
+				 if (abspy<tolerance) { // Point is on x-axis
+					pp.setT(Math.sqrt(Math.max(0,2*(px-p)/p)));
+				} else { //binary search
+
+					double[] eqn = { abspy, -p+px, 0, -p/2 };
+					double[] roots = {0, 0, 0};
+					eqnSolver.solveCubic(eqn,roots);
+					if(roots[0]>0) {
+						pp.setT(roots[0]);
+					} else if (roots[1]>0) {
+						pp.setT(roots[1]);
+					} else {
+						pp.setT(roots[2]);
+					}
 				
+					if (py <0 ) {
+						pp.setT(-pp.getT());
+					}
+				}
+				
+				P.setX( p * pp.getT()  * pp.getT()  / 2.0);
+				P.setY( p*pp.getT());
+				P.setZ( 1.0); 									
 				// transform back to real world coord system
-				coordsEVtoRW(P);		
+				coordsEVtoRW(P);
 			break;
 		}		
 	}
+	/*
+	 * Edited by Kai Chung Tam
+	 */
 	
 	
 	
