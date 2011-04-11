@@ -788,12 +788,23 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 			P.setX( startPoint.inhomX + pp.t * y);
 			P.setY( startPoint.inhomY - pp.t * x);
 			P.setZ( 1.0);		
-		} else  {
-			doPointChanged(P,pp);		
+		} else {
+			double inhomX = 0;
+			double inhomY = 0;
+			if (x != 0 && y != 0) {
+				inhomX = -z * x / ( x*x + y*y);
+				inhomY = -z * y / ( x*x + y*y);
+			} else if (x != 0) {
+				inhomX = -z / x;
+			} else if (y != 0) {
+				inhomY = -z / y;
+			}
+			P.setX( inhomX + pp.t * y );
+			P.setY( inhomY - pp.t * x );
+			P.setZ( 1.0);
 		}
 	}
-	
-    
+
 	public boolean isPath() {
 		return true;
 	}
