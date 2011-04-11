@@ -744,18 +744,31 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 		coords.setX(px);
 		coords.setY(py);
 		coords.setZ(1);
-						
+
 		// set path parameter
+		double spx = 0;
+		double spy = 0;
+		double spz = 1;
 		if (startPoint != null) {
-			if (Math.abs(x) <= Math.abs(y)) {	
-				pp.t = (startPoint.z * px - startPoint.x) / (y * startPoint.z);								
-			} 
-			else {		
-				pp.t = (startPoint.y - startPoint.z * py) / (x * startPoint.z);			
+			spx = startPoint.x;
+			spy = startPoint.y;
+			spz = startPoint.z;
+		} else {
+			if (x != 0 && y != 0) {
+				spx = -z * x / ( x*x + y*y);
+				spy = -z * y / ( x*x + y*y);
+			} else if (x != 0) {
+				spx = -z / x;
+			} else if (y != 0) {
+				spy = -z / y;
 			}
-		}	
-		
-		
+		}
+		if (Math.abs(x) <= Math.abs(y)) {	
+			pp.t = (spz * px - spx) / (y * spz);								
+		} else {		
+			pp.t = (spy - spz * py) / (x * spz);			
+		}
+
 	}			
 	
 	public Point2D.Double getNearestPoint(GeoPoint p) {
