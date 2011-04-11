@@ -113,7 +113,7 @@ public class TableSymbols {
 				{ "\u03C3" , app.getPlain("GreekCharacterA", "\u03C3" ) },  //lowercaseGreekSIGMA
 				{ "\u03C4" , app.getPlain("GreekCharacterA", "\u03C4" ) },  //lowercaseGreekTAU
 				//	{ "\u03C5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C5"},  //lowercaseGreekUPSILON
-				{ "\u03D5" , app.getPlain("GreekCharacterA", "\u03D5" ) },  //lowercaseGreekPHI
+				{ "\u03C6" , app.getPlain("GreekCharacterA", "\u03C6" ) },  //lowercaseGreekPHI (\varPhi the "loopy" phi)
 				{ "\u03C7" , app.getPlain("GreekCharacterA", "\u03C7" ) },  //lowercaseGreekCHI
 				{ "\u03C8" , app.getPlain("GreekCharacterA", "\u03C8" ) },  //lowercaseGreekPSI
 				{ "\u03C9" , app.getPlain("GreekCharacterA", "\u03C9" ) },  //lowercaseGreekOMEGA
@@ -293,7 +293,25 @@ public class TableSymbols {
 	};
 
 
-
+	public final static String[] greekLettersPlusVariants(){
+		ArrayList<String> list = new ArrayList<String>();
+		for(int i = 0; i < greekUpperCaseFull.length; i++){
+		   list.add(greekUpperCaseFull[i]);
+		}
+		for(int i = 0; i < greekLowerCase.length; i++){
+			   list.add(greekLowerCase[i]);
+			}
+		list.add("\u03C6");  // LaTeX /varPhi (loopy phi)
+		list.add("\u03B5");  // LaTeX /varEpsilon
+		list.add("\u03D1");  // LaTeX /varTheta (curly theta)
+		list.add("\u03C2");  // LaTeX /varSigma 
+		
+		String[] s = new String[list.size()];
+		list.toArray(s);
+		
+		return s;
+	}
+	
 	public final static String [] analysis = {
 
 		"\u2211", //N-ARY SUMMATION

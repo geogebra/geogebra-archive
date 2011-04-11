@@ -263,7 +263,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertUnicode.addPopupMenuItem(menu);
 		//btInsertUnicode.addPopupMenuItem(createMenuItem(SymbolTable.math_ops,0,1,2));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.operators,-1,8));
-		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.greekUpperCaseFull,-1,8));
+		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.greekLettersPlusVariants(),-1,8));
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.analysis,-1,8));
 
 		btInsertUnicode.addPopupMenuItem(createMenuItem(TableSymbols.sets,-1,8));
