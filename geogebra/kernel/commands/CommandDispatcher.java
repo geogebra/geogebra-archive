@@ -58,7 +58,7 @@ public class CommandDispatcher {
     public static final int TABLE_ENGLISH = 17;
     public static final int TABLE_CAS=18;
     
-    private int tableCount = 19;
+    private int tableCount = 18;
     
     
     public String getSubCommandSetName(int index){
@@ -744,7 +744,7 @@ public class CommandDispatcher {
     		}
     	}*/
     	
-    	cmdSubTable[TABLE_CAS].putAll(cmdTable);
+    	//cmdSubTable[TABLE_CAS].putAll(cmdTable);
     	cmdTable.clear();
     	
     	
