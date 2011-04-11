@@ -3965,8 +3965,12 @@ public class Application implements KeyEventDispatcher {
 	
 	final public GlobalKeyDispatcher getGlobalKeyDispatcher() {
 		if (globalKeyDispatcher == null)
-			globalKeyDispatcher = new GlobalKeyDispatcher(this);
+			globalKeyDispatcher = newGlobalKeyDispatcher();
 		return globalKeyDispatcher;
+	}
+	
+	protected GlobalKeyDispatcher newGlobalKeyDispatcher(){
+		return new GlobalKeyDispatcher(this);
 	}
 
 		

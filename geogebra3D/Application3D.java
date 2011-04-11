@@ -24,6 +24,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.main.AppletImplementation;
 import geogebra.main.Application;
+import geogebra.main.GlobalKeyDispatcher;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 import geogebra3D.euclidianForPlane.EuclidianViewForPlane;
@@ -280,6 +281,37 @@ public class Application3D extends Application{
 	protected void updateStyleBars(){		
 		super.updateStyleBars();
 		getEuclidianView3D().getStyleBar().updateStyleBar();
+	}
+	
+	
+	/////////////////////////////////
+	// FOR TESTING : TODO remove all
+
+	protected GlobalKeyDispatcher newGlobalKeyDispatcher(){
+		return new GlobalKeyDispatcher3D(this);
+	}
+	
+	private static final int WIREFRAME_OFF =0;
+	private static final int WIREFRAME_ON =1;
+	private int wireframe = WIREFRAME_OFF ;
+	
+	public void toggleWireframe(){
+		switch (wireframe){
+		case WIREFRAME_OFF:
+			wireframe = WIREFRAME_ON;
+			Application.debug("wireframe on");
+			break;
+		case WIREFRAME_ON:
+			wireframe = WIREFRAME_OFF;
+			Application.debug("wireframe off");
+			break;
+			
+		}
+		
+	}
+	
+	public boolean drawWireFrame(){
+		return (wireframe == WIREFRAME_ON);
 	}
 	
 	

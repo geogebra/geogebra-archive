@@ -40,7 +40,7 @@ import javax.swing.text.JTextComponent;
  */
 public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	
-	private Application app;
+	protected Application app;
 
 	public GlobalKeyDispatcher(Application app) {
 		this.app = app;
@@ -81,7 +81,7 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 	/**
 	 * The "key pressed" event is generated when a key is pushed down. 
 	 */
-	private boolean handleKeyPressed(KeyEvent event) {	
+	protected boolean handleKeyPressed(KeyEvent event) {	
 		
 		// GENERAL KEYS: 
 		// handle ESC, function keys, zooming with Ctrl +, Ctrl -, etc.

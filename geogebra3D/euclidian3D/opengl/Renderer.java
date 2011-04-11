@@ -9,6 +9,7 @@ import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.main.Application;
+import geogebra3D.Application3D;
 import geogebra3D.euclidian3D.Drawable3DLists;
 import geogebra3D.euclidian3D.Drawable3D;
 import geogebra3D.euclidian3D.EuclidianController3D;
@@ -492,24 +493,19 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
 
+        //TODO remove this
+        if (((Application3D) view3D.getApplication()).drawWireFrame())
+        	drawWireFrame();
+
         
         
         gl.glPopMatrix();
-    	
-    	/*
-        setColor(color.BLACK, 1);
-        GgbVector v = new GgbVector(1, 0, 0, 1);
-        view3D.toScreenCoords3D(v);
-    	geometryManager.getText().draw3D(gl, (float) v.getX(), (float) v.getY(), (float) v.getZ());
-    	
-    	*/
         
    	
     	//drawFPS();
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
 
-    	
     	
         gLDrawable.swapBuffers(); //TODO
         
