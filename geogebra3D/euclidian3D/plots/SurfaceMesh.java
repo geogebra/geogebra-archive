@@ -1,9 +1,9 @@
 package geogebra3D.euclidian3D.plots;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra3D.euclidian3D.BucketAssigner;
 import geogebra3D.euclidian3D.TriListElem;
+import geogebra.Matrix.Coords;
 
 /**
  * An element in a CurveMesh.
@@ -35,8 +35,6 @@ class SurfaceDiamond extends DynamicMeshElement {
 	/** the index of this diamond within each of its parents */
 	int[] indices = new int[2];
 
-	// FLAGS
-
 	/**
 	 * the vertices of the segment addressed in the order [start/end][vertex
 	 * num][x/y/z]
@@ -55,14 +53,15 @@ class SurfaceDiamond extends DynamicMeshElement {
 	 * @param isClipped
 	 */
 	public SurfaceDiamond(GeoFunctionNVar function, int level, double pa1,
-			double pa2, boolean isClipped, int version) {
+			double pa2, boolean isClipped, int version,
+			DynamicMeshBucketPQ splitQueue, DynamicMeshBucketPQ mergeQueue) {
 		super(SurfaceMesh.nChildren, SurfaceMesh.nParents, level, isClipped,
-				version);
+				version, splitQueue, mergeQueue);
 
 		this.function = function;
 		params[0] = pa1;
 		params[1] = pa2;
-		vertex = function.evaluatePoint(pa1, pa2);
+		vertex = calcVertex(pa1,pa2);
 		normal = approxNormal(function, pa1, pa2);
 	}
 
@@ -77,10 +76,12 @@ class SurfaceDiamond extends DynamicMeshElement {
 	 * @param level
 	 */
 	SurfaceDiamond(GeoFunctionNVar function, SurfaceDiamond parent0,
-			int index0, SurfaceDiamond parent1, int index1,
-			SurfaceDiamond a0, SurfaceDiamond a1, int level, int version) {
-		super(SurfaceMesh.nChildren, SurfaceMesh.nParents, level,
-				a0.ignoreFlag || (parent0.ignoreFlag && parent1.ignoreFlag), version);
+			int index0, SurfaceDiamond parent1, int index1, SurfaceDiamond a0,
+			SurfaceDiamond a1, int level, int version,
+			DynamicMeshBucketPQ splitQueue, DynamicMeshBucketPQ mergeQueue) {
+		super(SurfaceMesh.nChildren, SurfaceMesh.nParents, level, a0.ignoreFlag
+				|| (parent0.ignoreFlag && parent1.ignoreFlag), version,
+				splitQueue, mergeQueue);
 
 		this.function = function;
 		parents[0] = parent0;
@@ -91,7 +92,7 @@ class SurfaceDiamond extends DynamicMeshElement {
 		ancestors[1] = a1;
 		params[0] = (a0.params[0] + a1.params[0]) * 0.5;
 		params[1] = (a0.params[1] + a1.params[1]) * 0.5;
-		vertex = function.evaluatePoint(params[0], params[1]);
+		vertex = calcVertex(params[0], params[1]);
 		normal = approxNormal(function, params[0], params[1]);
 
 		init();
@@ -101,6 +102,26 @@ class SurfaceDiamond extends DynamicMeshElement {
 		setBoundingRadii();
 		setArea();
 		generateError();
+	}
+
+	private Coords calcVertex(double u, double v) {
+		Coords f = function.evaluatePoint(u, v);
+		
+		// if infinite, attempt to move in some direction
+		float d = 1e-6f;
+		if (!f.isFinite() || !f.isDefined()){
+			f = function.evaluatePoint(u+d, v+d);
+			if (f.isSingular()){
+				f = function.evaluatePoint(u, v + d);
+				if (f.isSingular()){
+					f = function.evaluatePoint(u - d, v);
+					if(f.isSingular())
+						f = function.evaluatePoint(u, v - d);
+				}
+			}
+		}
+
+		return f;
 	}
 
 	/**
@@ -134,7 +155,7 @@ class SurfaceDiamond extends DynamicMeshElement {
 		isNaN |= Double.isNaN(r);
 
 		r = ((SurfaceDiamond) parents[0]).vertex.squareNorm();
-		if (r > maxRadSq)
+		if (r	 > maxRadSq)
 			maxRadSq = r;
 		else if (r < minRadSq)
 			minRadSq = r;
@@ -169,10 +190,10 @@ class SurfaceDiamond extends DynamicMeshElement {
 	 */
 	private Coords approxNormal(GeoFunctionNVar func, double param1,
 			double param2) {
-		Coords dx = func
-				.evaluatePoint(param1 + OldSurfaceMesh.normalDelta, param2);
-		Coords dy = func
-				.evaluatePoint(param1, param2 + OldSurfaceMesh.normalDelta);
+		Coords dx = calcVertex(param1 + OldSurfaceMesh.normalDelta,
+				param2);
+		Coords dy = calcVertex(param1, param2
+				+ OldSurfaceMesh.normalDelta);
 		return dx.sub(vertex).crossProduct(dy.sub(vertex)).normalized();
 	}
 
@@ -254,8 +275,7 @@ class SurfaceDiamond extends DynamicMeshElement {
 	}
 
 	@Override
-	protected void reinsertInQueue(DynamicMeshBucketPQ splitQueue,
-			DynamicMeshBucketPQ mergeQueue) {
+	protected void reinsertInQueue() {
 		if (mergeQueue.remove(this))
 			mergeQueue.add(this);
 		else if (splitQueue.remove(this))
@@ -263,8 +283,7 @@ class SurfaceDiamond extends DynamicMeshElement {
 	}
 
 	@Override
-	protected void cullChildren(double radSq, DynamicMeshTriList drawList,
-			DynamicMeshBucketPQ splitQueue, DynamicMeshBucketPQ mergeQueue) {
+	protected void cullChildren(double radSq, DynamicMeshTriList drawList) {
 		if (!isSplit())
 			return;
 
@@ -307,45 +326,16 @@ class SurfaceDiamond extends DynamicMeshElement {
 		if (otherParent != null && otherParent.parents[1] == parent)
 			otherIndex |= 2;
 		if (i == 1 || i == 3)
-			children[i] = new SurfaceDiamond(function, otherParent,
-					otherIndex, this, i, a0, a1, level + 1, lastVersion);
+			children[i] = new SurfaceDiamond(function, otherParent, otherIndex,
+					this, i, a0, a1, level + 1, lastVersion, splitQueue,
+					mergeQueue);
 		else
 			children[i] = new SurfaceDiamond(function, this, i, otherParent,
-					otherIndex, a0, a1, level + 1, lastVersion);
+					otherIndex, a0, a1, level + 1, lastVersion, splitQueue,
+					mergeQueue);
 
 		if (otherParent != null)
 			((SurfaceDiamond) otherParent).setChild(otherIndex, children[i]);
-
-		// // first generate midpoints and -normals
-		// float[][] midPoints = new float[CurveMesh.nVerts][3];
-		// float[][] midNormals = new float[CurveMesh.nVerts][3];
-		//
-		// Coords[] v = tangents[1].completeOrthonormal();
-		// Coords c = vertices[1];
-		//
-		// // create midpoints
-		// for (int j = 0; j < CurveMesh.nVerts; j++) {
-		// Coords point = c.add(v[0].mul(cosines[j])).add(v[1].mul(sines[j]));
-		// Coords normal = point.sub(c).normalized();
-		//
-		// midPoints[j][0] = (float) point.getX();
-		// midPoints[j][1] = (float) point.getY();
-		// midPoints[j][2] = (float) point.getZ();
-		//
-		// midNormals[j][0] = (float) normal.getX();
-		// midNormals[j][1] = (float) normal.getY();
-		// midNormals[j][2] = (float) normal.getZ();
-		// }
-		//
-		// // generate both children at once
-		// children[0] = new SurfaceDiamond2(function, level + 1, params[0],
-		// params[1], vertices[0], vertices[1], tangents[0], tangents[1],
-		// points[0], midPoints, normals[0], midNormals, cosines, sines,
-		// this);
-		// children[1] = new SurfaceDiamond2(function, level + 1, params[1],
-		// params[2], vertices[1], vertices[2], tangents[1], tangents[2],
-		// midPoints, points[1], midNormals, normals[1], cosines, sines,
-		// this);
 	}
 
 	/**
@@ -362,7 +352,7 @@ class SurfaceDiamond extends DynamicMeshElement {
 
 	@Override
 	protected double getError() {
-		return errors[0] + errors[1];
+		return Math.max(errors[0], errors[1]);
 	}
 
 	/**
@@ -421,8 +411,7 @@ class SurfaceDiamond extends DynamicMeshElement {
 		triangles[j] = e;
 	}
 
-	private DynamicMeshElement getOtherParent(
-			DynamicMeshElement p) {
+	private DynamicMeshElement getOtherParent(DynamicMeshElement p) {
 		if (p == parents[0])
 			return parents[1];
 		return parents[0];
@@ -437,9 +426,30 @@ class SurfaceDiamond extends DynamicMeshElement {
 	}
 
 	@Override
-	public boolean recalculate(int currentVersion) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean recalculate(int currentVersion, boolean recurse) {
+		if (lastVersion == currentVersion)
+			return false;
+
+		lastVersion = currentVersion;
+
+		// we need to reevalutate the vertices, normals, error and culling
+
+		// make sure ancestors are updated
+		if (true) {
+			parents[0].recalculate(currentVersion, false);
+			parents[1].recalculate(currentVersion, false);
+			ancestors[0].recalculate(currentVersion, false);
+			ancestors[1].recalculate(currentVersion, false);
+		}
+		vertex = calcVertex(params[0], params[1]);
+
+		normal = approxNormal(function, params[0], params[1]);
+
+		setBoundingRadii();
+		setArea();
+		generateError();
+
+		return true;
 	}
 }
 
@@ -449,8 +459,8 @@ class SurfaceDiamond extends DynamicMeshElement {
  * @author André Eriksson
  */
 class SurfaceTriList extends DynamicMeshTriList {
-	private double totalError = 0;
-	private double totalArea = 0;
+	// private double totalError = 0;
+	// private double totalArea = 0;
 
 	/**
 	 * @param capacity
@@ -462,19 +472,19 @@ class SurfaceTriList extends DynamicMeshTriList {
 		super(capacity, marigin, 9);
 	}
 
-	/**
-	 * @return the total error of the visible parts of the function
-	 */
-	public double getError() {
-		return totalError;
-	}
+	// /**
+	// * @return the total error of the visible parts of the function
+	// */
+	// public double getError() {
+	// return totalError;
+	// }
 
-	/**
-	 * @return the total length of the visible parts of the function
-	 */
-	public double getArea() {
-		return totalArea;
-	}
+	// /**
+	// * @return the total length of the visible parts of the function
+	// */
+	// public double getArea() {
+	// return totalArea;
+	// }
 
 	/**
 	 * Adds a triangle to the list.
@@ -490,7 +500,7 @@ class SurfaceTriList extends DynamicMeshTriList {
 		if (s.ignoreFlag || ((SurfaceDiamond) s.parents[j]).ignoreFlag)
 			return;
 
-		totalError += s.getError();
+		// totalError += s.getError();
 
 		if (s.isSingular()) {
 			// create an empty TriListElem to show that
@@ -501,7 +511,7 @@ class SurfaceTriList extends DynamicMeshTriList {
 			return;
 		}
 
-		totalArea += s.getArea();
+		// totalArea += s.getArea();
 
 		float[] v = new float[9];
 		float[] n = new float[9];
@@ -570,11 +580,11 @@ class SurfaceTriList extends DynamicMeshTriList {
 
 		if (d.isSingular() && d.getTriangle(j) != null
 				&& d.getTriangle(j).getIndex() != -1) {
-			totalError -= d.getError();
+			// totalError -= d.getError();
 			return true;
 		} else if (hide(d.getTriangle(j))) {
-			totalError -= d.getError();
-			totalArea -= d.getArea();
+			// totalError -= d.getError();
+			// totalArea -= d.getArea();
 			return true;
 		}
 
@@ -594,11 +604,11 @@ class SurfaceTriList extends DynamicMeshTriList {
 		SurfaceDiamond d = (SurfaceDiamond) e;
 		if (d.isSingular() && d.getTriangle(j) != null
 				&& d.getTriangle(j).getIndex() == -1) {
-			totalError += d.getError();
+			// totalError += d.getError();
 			return true;
 		} else if (show(d.getTriangle(j))) {
-			totalError += d.getError();
-			totalArea += d.getArea();
+			// totalError += d.getError();
+			// totalArea += d.getArea();
 			return true;
 		}
 
@@ -631,8 +641,28 @@ class SurfaceTriList extends DynamicMeshTriList {
 
 	@Override
 	protected void reinsert(DynamicMeshElement a, int currentVersion) {
-		// TODO Auto-generated method stub
-		
+		SurfaceDiamond s = (SurfaceDiamond) a;
+
+		s.recalculate(currentVersion, true);
+
+		TriListElem e0 = s.getTriangle(0);
+		TriListElem e1 = s.getTriangle(1);
+		if (e0 != null && e0.getIndex() != -1) {
+			float[] v0 = new float[9];
+			float[] n0 = new float[9];
+			calcFloats(s, 0, v0, n0);
+			setVertices(e0, v0);
+			setNormals(e0, n0);
+		}
+		if (e1 != null && e1.getIndex() != -1) {
+			float[] v1 = new float[9];
+			float[] n1 = new float[9];
+			calcFloats(s, 1, v1, n1);
+			setVertices(e1, v1);
+			setNormals(e1, n1);
+		}
+
+		s.reinsertInQueue();
 	}
 }
 
@@ -642,8 +672,7 @@ class SurfaceTriList extends DynamicMeshTriList {
  * 
  * @author André Eriksson
  */
-class SurfaceSplitBucketAssigner implements
-		BucketAssigner<DynamicMeshElement> {
+class SurfaceSplitBucketAssigner implements BucketAssigner<DynamicMeshElement> {
 
 	public int getBucketIndex(Object o, int bucketAmt) {
 		SurfaceDiamond d = (SurfaceDiamond) o;
@@ -661,8 +690,7 @@ class SurfaceSplitBucketAssigner implements
  * 
  * @author André Eriksson
  */
-class SurfaceMergeBucketAssigner implements
-		BucketAssigner<DynamicMeshElement> {
+class SurfaceMergeBucketAssigner implements BucketAssigner<DynamicMeshElement> {
 
 	public int getBucketIndex(Object o, int bucketAmt) {
 		SurfaceDiamond d = (SurfaceDiamond) o;
@@ -695,7 +723,7 @@ public class SurfaceMesh extends DynamicMesh {
 	 * according to a second degree polynomial with erroCoeffs as coefficients
 	 */
 	private final double[] errorCoeffs = { 0.0015, 0, 0, 0.00012 };
-	private double maxErrorCoeff = 4.4e-6;
+	private double maxErrorCoeff = 1e-7;
 
 	/**
 	 * a proportionality constant used for setting the error of diamonds where
@@ -718,14 +746,14 @@ public class SurfaceMesh extends DynamicMesh {
 
 	/** desired error per visible area unit */
 	private double desiredErrorPerAreaUnit;
-	
+
 	/** desired maximum error */
 	private double desiredMaxError;
 
 	@Override
 	public void setRadius(double r) {
 		radSq = r * r;
-		desiredMaxError = maxErrorCoeff*r;
+		desiredMaxError = maxErrorCoeff * r;
 		desiredErrorPerAreaUnit = errorCoeffs[0] + errorCoeffs[1] * r
 				+ errorCoeffs[2] * radSq + Math.sqrt(r) * errorCoeffs[3];
 	}
@@ -752,9 +780,9 @@ public class SurfaceMesh extends DynamicMesh {
 			initMesh(function.getMinParameter(0), function.getMaxParameter(0),
 					function.getMinParameter(1), function.getMaxParameter(1));
 		splitQueue.add(root);
-		
-		for(int i=0;i<8;i++)
-			split(splitQueue.poll());
+
+		for (int i = 0; i < 100; i++)
+			split(splitQueue.forcePoll());
 	}
 
 	/**
@@ -787,12 +815,14 @@ public class SurfaceMesh extends DynamicMesh {
 				x = xMin + (i - 0.5) * dx;
 				y = yMin + (j - 0.5) * dy;
 				base0[j][i] = new SurfaceDiamond(function, 0, x, y,
-						!(i == 1 && j == 1), currentVersion);
+						!(i == 1 && j == 1), currentVersion, splitQueue,
+						mergeQueue);
 
 				x = xMin + (i - 1) * dx;
 				y = yMin + (j - 1) * dy;
 				base1[j][i] = t = new SurfaceDiamond(function,
-						((i ^ j) & 1) != 0 ? -1 : -2, x, y, false, currentVersion);
+						((i ^ j) & 1) != 0 ? -1 : -2, x, y, false,
+						currentVersion, splitQueue, mergeQueue);
 				t.setSplit(true);
 			}
 
@@ -853,24 +883,18 @@ public class SurfaceMesh extends DynamicMesh {
 
 	@Override
 	protected Side tooCoarse() {
-		SurfaceTriList d = (SurfaceTriList) drawList;
-
-//		double error = d.getError();
-//		double areaGoal = desiredErrorPerAreaUnit * d.getArea();
 
 		double maxError = splitQueue.peek().getError();
-		if(maxError>desiredMaxError)
+		if (maxError > desiredMaxError)
 			return Side.SPLIT;
-		
+
 		return Side.MERGE;
 	}
 
 	@Override
 	protected String getDebugInfo(long time) {
 		return function + ":\tupdate time: " + time + "ms\ttriangles: "
-				+ drawList.getTriAmt() + "\terror: "
-				+ (float) ((SurfaceTriList) drawList).getError() + "\tarea: "
-				+ (float) ((SurfaceTriList) drawList).getArea();
+				+ drawList.getTriAmt();
 	}
 
 	/**

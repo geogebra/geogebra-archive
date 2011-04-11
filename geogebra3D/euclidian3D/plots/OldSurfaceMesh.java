@@ -47,7 +47,7 @@ public class OldSurfaceMesh {
 	private static final int maxLevel = 20;
 
 	/** x/y difference used when estimating normals */
-	public static final double normalDelta = 1e-8;
+	public static final double normalDelta = 1e-4;
 
 	// PRIVATE VARIABLES
 

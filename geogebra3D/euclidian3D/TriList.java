@@ -200,8 +200,8 @@ public class TriList {
 	 */
 	public TriListElem add(float[] vertices, float[] normals) {
 
-		if (!inputValid(vertices, normals))
-			return null;
+//		if (!inputValid(vertices, normals))
+//			return null;
 
 		TriListElem t = new TriListElem();
 		t.setPrev(back);

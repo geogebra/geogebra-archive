@@ -215,6 +215,12 @@ public class BucketPQ<E> extends AbstractQueue<E> {
 		remove(elem);
 		return elem.data;
 	}
+	
+	public E forcePoll() {
+		Link<E> elem = buckets[maxBucket];
+		remove(elem);
+		return elem.data;
+	}
 
 	public Iterator<E> iterator() {
 		

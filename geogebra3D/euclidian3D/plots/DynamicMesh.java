@@ -55,8 +55,11 @@ abstract class DynamicMeshElement {
 
 	/** true if any evaluated point of the segment is singular */
 	protected boolean isSingular;
-	
+
 	protected int lastVersion;
+
+	protected final DynamicMeshBucketPQ splitQueue;
+	protected final DynamicMeshBucketPQ mergeQueue;
 
 	/**
 	 * @param nChildren
@@ -69,7 +72,10 @@ abstract class DynamicMeshElement {
 	 *            true if the element shouldn't be updated or drawn
 	 */
 	public DynamicMeshElement(int nChildren, int nParents, int level,
-			boolean ignoreFlag, int version) {
+			boolean ignoreFlag, int version, DynamicMeshBucketPQ splitQueue,
+			DynamicMeshBucketPQ mergeQueue) {
+		this.splitQueue = splitQueue;
+		this.mergeQueue = mergeQueue;
 		this.nChildren = nChildren;
 		this.level = level;
 		this.ignoreFlag = ignoreFlag;
@@ -110,12 +116,12 @@ abstract class DynamicMeshElement {
 			throw new IndexOutOfBoundsException();
 		if (children[i] == null)
 			createChild(i);
-		
-		//TODO: this might be risky, perhaps the current version should be 
+
+		// TODO: this might be risky, perhaps the current version should be
 		// passed to getChild. same goes for getParent()
-		if(children[i].lastVersion!=lastVersion)
-			children[i].recalculate(lastVersion);
-			
+		if (children[i].lastVersion != lastVersion)
+			children[i].recalculate(lastVersion, true);
+
 		return children[i];
 	}
 
@@ -137,10 +143,10 @@ abstract class DynamicMeshElement {
 	 * @return the parent at index i
 	 */
 	public DynamicMeshElement getParent(int i) {
-		
-		if(parents[i] != null && parents[i].lastVersion!=lastVersion)
-			parents[i].recalculate(lastVersion);
-		
+
+		if (parents[i] != null && parents[i].lastVersion != lastVersion)
+			parents[i].recalculate(lastVersion, true);
+
 		return parents[i];
 	}
 
@@ -162,41 +168,29 @@ abstract class DynamicMeshElement {
 		CullInfo prev = cullInfo;
 
 		// update cull flag
-//		if (parentCull == CullInfo.SOMEIN || parentCull == null) {
-			if (maxRadSq < radSq)
-				cullInfo = CullInfo.ALLIN;
-			else if (minRadSq < radSq)
-				cullInfo = CullInfo.SOMEIN;
-			else
-				cullInfo = CullInfo.OUT;
-//		} else
-//			cullInfo = parentCull;
-
-		// // special case for singular segments - make sure
-		// // children are always checked
-		// if (isSingular)
-		// cullInfo = CullInfo.SOMEIN;
+		// if (parentCull == CullInfo.SOMEIN || parentCull == null) {
+		if (maxRadSq < radSq)
+			cullInfo = CullInfo.ALLIN;
+		else if (minRadSq < radSq)
+			cullInfo = CullInfo.SOMEIN;
+		else
+			cullInfo = CullInfo.OUT;
+		// } else
+		// cullInfo = parentCull;
 
 		// handle new culling info
 		if (prev != cullInfo || cullInfo == CullInfo.SOMEIN) {
-			
-			if(isSingular())
-				System.out.print("");
-			
-			double err = drawList.getError();
-			
+
+
 			// hide/show the element
 			setHidden(drawList, cullInfo == CullInfo.OUT);
 
-			if(drawList.getError()-err>10)
-				System.out.print("");
-			
 			// reinsert into priority queue
 			if (prev == CullInfo.OUT || cullInfo == CullInfo.OUT)
-				reinsertInQueue(splitQueue, mergeQueue);
+				reinsertInQueue();
 
 			// update children
-			cullChildren(radSq, drawList, splitQueue, mergeQueue);
+			cullChildren(radSq, drawList);
 		}
 	}
 
@@ -240,8 +234,7 @@ abstract class DynamicMeshElement {
 	 * @param mergeQueue
 	 *            a reference to the merge queue
 	 */
-	abstract protected void reinsertInQueue(DynamicMeshBucketPQ splitQueue,
-			DynamicMeshBucketPQ mergeQueue);
+	abstract protected void reinsertInQueue();
 
 	/**
 	 * @param radSq
@@ -254,8 +247,7 @@ abstract class DynamicMeshElement {
 	 *            a reference to the merge queue
 	 */
 	abstract protected void cullChildren(double radSq,
-			DynamicMeshTriList drawList, DynamicMeshBucketPQ splitQueue,
-			DynamicMeshBucketPQ mergeQueue);
+			DynamicMeshTriList drawList);
 
 	/**
 	 * @return true if all children have been split
@@ -268,15 +260,18 @@ abstract class DynamicMeshElement {
 	}
 
 	/**
-	 * Checks if the element is ready to be moved from the split to the merge queue.
-	 * @param activeParent the parent that is trying to initiate the move
+	 * Checks if the element is ready to be moved from the split to the merge
+	 * queue.
+	 * 
+	 * @param activeParent
+	 *            the parent that is trying to initiate the move
 	 * @return true if the element can be moved, otherwise false
 	 */
 	public boolean readyForMerge(DynamicMeshElement activeParent) {
 		return true;
 	}
 
-	public abstract boolean recalculate(int currentVersion);
+	public abstract boolean recalculate(int currentVersion, boolean recurse);
 }
 
 /**
@@ -308,16 +303,16 @@ public abstract class DynamicMesh {
 
 	private final int nChildren;
 	private final int nParents;
-	
+
 	protected int currentVersion = 0;
 
 	/** used in optimizeSub() */
 	protected enum Side {
-		/** indicates that elements should be merged*/
-		MERGE, 
-		/** indicates that elements should be split*/
+		/** indicates that elements should be merged */
+		MERGE,
+		/** indicates that elements should be split */
 		SPLIT,
-		/** indicates that no action should be taken*/
+		/** indicates that no action should be taken */
 		NONE
 	};
 
@@ -332,9 +327,9 @@ public abstract class DynamicMesh {
 	 * @param nChildren
 	 * @param maxLevel
 	 */
-	DynamicMesh(DynamicMeshBucketPQ mergeQueue,
-			DynamicMeshBucketPQ splitQueue, DynamicMeshTriList drawList,
-			int nParents, int nChildren, int maxLevel) {
+	DynamicMesh(DynamicMeshBucketPQ mergeQueue, DynamicMeshBucketPQ splitQueue,
+			DynamicMeshTriList drawList, int nParents, int nChildren,
+			int maxLevel) {
 		this.mergeQueue = mergeQueue;
 		this.splitQueue = splitQueue;
 		this.drawList = drawList;
@@ -395,13 +390,13 @@ public abstract class DynamicMesh {
 		int count = 0;
 
 		updateCullingInfo();
-		
+
 		long t1 = new Date().getTime();
-		
+
 		Side side = tooCoarse();
 		Side prevSide;
-		
-		do{
+
+		do {
 			if (side == Side.MERGE)
 				merge(mergeQueue.poll());
 			else
@@ -409,12 +404,12 @@ public abstract class DynamicMesh {
 			prevSide = side;
 			side = tooCoarse();
 			count++;
-		}while (side != Side.NONE && count < maxCount && prevSide==side);
+		} while (side != Side.NONE && count < maxCount && prevSide == side);
 
 		if (printInfo)
 			System.out.println(getDebugInfo(new Date().getTime() - t1));
 
-		if (side!=prevSide) // this only happens if the LoD
+		if (side != prevSide) // this only happens if the LoD
 			return true; // is at the desired level
 
 		return false;
@@ -463,10 +458,10 @@ public abstract class DynamicMesh {
 		for (int i = 0; i < nChildren; i++) {
 			DynamicMeshElement c = t.getChild(i);
 
-			if(c.readyForMerge(t)){
+			if (c.readyForMerge(t)) {
 
 				splitQueue.remove(c);
-				
+
 				if (c.isSplit())
 					mergeQueue.add(c);
 			}
@@ -509,7 +504,7 @@ public abstract class DynamicMesh {
 
 		// mark as split
 		t.setSplit(true);
-
+		
 		// handle parents
 		for (int i = 0; i < nParents; i++) {
 			DynamicMeshElement p = t.getParent(i);
@@ -525,12 +520,12 @@ public abstract class DynamicMesh {
 		for (int i = 0; i < nChildren; i++) {
 			DynamicMeshElement c = t.getChild(i);
 
-			if (!c.ignoreFlag){
+			if (!c.ignoreFlag) {
 				c.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
-	
+
 				// add child to drawing list
-	
-				if (!c.isSplit()){
+
+				if (!c.isSplit()) {
 					drawList.add(c, (c.parents[0] == t ? 0 : 1));
 					splitQueue.add(c);
 				}
@@ -541,30 +536,29 @@ public abstract class DynamicMesh {
 		// remove from drawing list
 		drawList.remove(t);
 	}
-	
-	protected double totalError(){
+
+	protected double totalError() {
 		Iterator<DynamicMeshElement> it = splitQueue.iterator();
 		double totErr = 0;
 		DynamicMeshElement e;
-		while(it.hasNext()){
-			e=it.next();
-			if(e.cullInfo!=CullInfo.OUT)
-				totErr+=e.getError();
+		while (it.hasNext()) {
+			e = it.next();
+			if (e.cullInfo != CullInfo.OUT)
+				totErr += e.getError();
 		}
 		return totErr;
 	}
-	
-	public void updateParameters(){
+
+	public void updateParameters() {
 		currentVersion++;
-		
-		//update all elements currently in draw list
+
+		// update all elements currently in draw list
 		drawList.recalculate(currentVersion);
-		
-		//update elements in queues
+
+		// update elements in queues
 		splitQueue.recalculate(currentVersion);
 		mergeQueue.recalculate(currentVersion);
-		
+
 		updateCullingInfo();
 	}
 }
-

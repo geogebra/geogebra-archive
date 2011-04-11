@@ -22,7 +22,7 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	
 	private double lastBaseRadius;
 	
-	private static final double unlimitedScaleFactor = 2.0;
+	private static final double unlimitedScaleFactor = 1.3;
 	
 	private double savedRadius;
 
@@ -50,6 +50,8 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 		}else{
 			unlimitedRange=false;
 		}
+		
+		updateRadius();
 		
 		if(unlimitedRange){
 			lastBaseRadius=savedRadius*unlimitedScaleFactor;
@@ -111,6 +113,11 @@ public class DrawFunction2Var extends Drawable3DSurfaces {
 	protected boolean updateForItSelf(){
 		super.updateForItSelf();
 		boolean ret = true;
+		
+		if(elementHasChanged){
+			elementHasChanged = false;
+			mesh.updateParameters();
+		}
 		
 		Renderer renderer = getView3D().getRenderer();
 		mesh.setRadius(savedRadius);

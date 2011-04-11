@@ -10,6 +10,8 @@ import geogebra3D.euclidian3D.opengl.Renderer;
  */
 public abstract class Drawable3DSurfaces extends Drawable3D {
 	
+
+	protected boolean elementHasChanged;
 	
 	/** alpha value for rendering transparency */
 	protected float alpha;
@@ -120,6 +122,14 @@ public abstract class Drawable3DSurfaces extends Drawable3D {
 		
 	}
 	
+	/**
+	 * says that it has to be updated
+	 */
+	@Override
+	public void setWaitForUpdate(){
+		elementHasChanged = true;
+		super.setWaitForUpdate();
+	}
 	
 
 

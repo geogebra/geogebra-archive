@@ -75,7 +75,7 @@ public class DynamicMeshBucketPQ extends BucketPQ<DynamicMeshElement> {
 			Link<DynamicMeshElement> el = buckets[i];
 			while (el != null) {
 				DynamicMeshElement d = el.data;
-				if(d.recalculate(currentVersion))
+				if(d.recalculate(currentVersion,true))
 					list.add(d);
 				el = el.next;
 			}

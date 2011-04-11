@@ -59,8 +59,9 @@ class CurveSegment extends DynamicMeshElement {
 	 * @param sines
 	 */
 	public CurveSegment(GeoCurveCartesian3D curve, int level, double pa1,
-			double pa2, float[] cosines, float[] sines, int version) {
-		super(2, 1, level, false, version);
+			double pa2, float[] cosines, float[] sines, int version,
+			DynamicMeshBucketPQ splitQueue, DynamicMeshBucketPQ mergeQueue) {
+		super(2, 1, level, false, version, splitQueue, mergeQueue);
 
 		this.curve = curve;
 
@@ -87,8 +88,9 @@ class CurveSegment extends DynamicMeshElement {
 	private CurveSegment(GeoCurveCartesian3D curve, int level, double pa1,
 			double pa2, Coords v1, Coords v2, Coords t1, Coords t2,
 			float[][] p1, float[][] p2, float[][] n1, float[][] n2,
-			float[] cosines, float[] sines, CurveSegment parent, int version) {
-		super(2, 1, level, false, version);
+			float[] cosines, float[] sines, CurveSegment parent, int version,
+			DynamicMeshBucketPQ splitQueue, DynamicMeshBucketPQ mergeQueue) {
+		super(2, 1, level, false, version, splitQueue, mergeQueue);
 		this.cosines = cosines;
 		this.sines = sines;
 		parents[0] = parent;
@@ -239,8 +241,7 @@ class CurveSegment extends DynamicMeshElement {
 	}
 
 	@Override
-	protected void reinsertInQueue(DynamicMeshBucketPQ splitQueue,
-			DynamicMeshBucketPQ mergeQueue) {
+	protected void reinsertInQueue() {
 		if (mergeQueue.remove(this))
 			mergeQueue.add(this);
 		else if (splitQueue.remove(this))
@@ -248,8 +249,7 @@ class CurveSegment extends DynamicMeshElement {
 	}
 
 	@Override
-	protected void cullChildren(double radSq, DynamicMeshTriList drawList,
-			DynamicMeshBucketPQ splitQueue, DynamicMeshBucketPQ mergeQueue) {
+	protected void cullChildren(double radSq, DynamicMeshTriList drawList) {
 		if (!isSplit())
 			return;
 
@@ -287,11 +287,11 @@ class CurveSegment extends DynamicMeshElement {
 		children[0] = new CurveSegment(curve, level + 1, params[0], params[1],
 				vertices[0], vertices[1], tangents[0], tangents[1], points[0],
 				midPoints, normals[0], midNormals, cosines, sines, this,
-				lastVersion);
+				lastVersion, splitQueue, mergeQueue);
 		children[1] = new CurveSegment(curve, level + 1, params[1], params[2],
 				vertices[1], vertices[2], tangents[1], tangents[2], midPoints,
 				points[1], midNormals, normals[1], cosines, sines, this,
-				lastVersion);
+				lastVersion, splitQueue, mergeQueue);
 	}
 
 	@Override
@@ -317,7 +317,7 @@ class CurveSegment extends DynamicMeshElement {
 	}
 
 	@Override
-	public boolean recalculate(int currentVersion) {
+	public boolean recalculate(int currentVersion, boolean recurse) {
 		if (lastVersion == currentVersion)
 			return false;
 
@@ -585,7 +585,7 @@ class CurveTriList extends DynamicMeshTriList {
 			totalLength -= s.length;
 		}
 		
-		s.recalculate(currentVersion);
+		s.recalculate(currentVersion, true);
 		
 		if(visible){
 			totalError += s.error;
@@ -695,7 +695,8 @@ public class CurveMesh extends DynamicMesh {
 			sines[i] = (float) Math.sin(i * fac);
 		}
 		root = new CurveSegment(curve, 0, curve.getMinParameter(),
-				curve.getMaxParameter(), cosines, sines, currentVersion);
+				curve.getMaxParameter(), cosines, sines, currentVersion,
+				splitQueue, mergeQueue);
 
 		root.updateCullInfo(radSq, drawList, splitQueue, mergeQueue);
 
