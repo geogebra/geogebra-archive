@@ -888,7 +888,7 @@ ExpressionNode functionExpressionnode():
 	   (	     funName = <FUNCTION_LABEL> |  // includes "(" at end
 	     funName = <Z_FUNC> // includes "(" at end
 	   ) 
-	   		// local variables, no function of y	   		(( varName =  <VARX> | varName = label() )
+	   		// local variables, allow function of y and deal with it in GeoFunction constructor	   		(( varName =  <VARX> | varName =  <VARY> | varName = label() )
 	   		  { localVars = new ArrayList<String>(); localVars.add(varName.image); } )
 			// optional second variable						 (<COMMA> ( varName = casVar() )
 			 { localVars.add(varName.image); } )* 
