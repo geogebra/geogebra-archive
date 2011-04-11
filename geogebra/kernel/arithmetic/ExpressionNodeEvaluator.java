@@ -1695,6 +1695,15 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 	            	return arg.getNumber().apply((Evaluatable)lt);
             	}
             }
+            else if (rt instanceof GeoPoint) {
+            	if( lt instanceof Evaluatable) {
+            		GeoPoint pt = (GeoPoint)rt;
+            		FunctionNVar fun=((GeoFunction)lt).getFunction();
+            		if(lt instanceof GeoFunction && fun.isBooleanFunction())
+            			return new MyBoolean(fun.evaluateBoolean(pt));            	                     			            
+	            	return new MyDouble(kernel,fun.evaluate(pt));
+            	}
+            }
             else if (lt.isPolynomialInstance() &&
                 rt.isPolynomialInstance() && ((Polynomial) rt).degree() == 0) {  
                 lt = ((Polynomial) lt).getConstantCoefficient();
@@ -1728,19 +1737,18 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             		return lt;
             	}
             	else if (funN.getVarNumber() == 2 && list.size()==1) {
-            		ExpressionValue ge = list.getMyList().getListElement(0).evaluate();            		
-            		if(ge instanceof GeoPoint){
-            		double [] args = new double[] {((GeoPoint)ge).x,((GeoPoint)ge).y};            		
-            		if (args != null){
+            		ExpressionValue ev = list.getMyList().getListElement(0).evaluate();            		
+            		if(ev instanceof GeoPoint){
+            			GeoPoint pt = (GeoPoint)ev;
             			if(funN.isBooleanFunction())            				
-            				return new MyBoolean(funN.evaluateBoolean(args));
-            			return new MyDouble(kernel, funN.evaluate(args));
+            				return new MyBoolean(funN.evaluateBoolean(pt));
+            			return new MyDouble(kernel, funN.evaluate(pt));
             		}
             	}
             		//let's assume that we called this as f(x,y) and we actually want the function
             		return lt;
             	}
-            } 
+             
         	//Application.debug("FUNCTION lt: " + lt + ", " + lt.getClass() + " rt: " + rt + ", " + rt.getClass());
             String [] str3 = { "IllegalArgument", rt.toString() };
             throw new MyError(app, str3);

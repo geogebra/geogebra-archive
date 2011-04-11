@@ -14,6 +14,7 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
@@ -702,5 +703,26 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	public boolean updateIneqs() {
 		if(ineqs == null) return false;		
 		return ineqs.updateCoef();
+	}
+	
+	/**
+	 * Evaluates function at given point
+	 * @param pt
+	 * @return function value
+	 */
+	public double evaluate(GeoPoint pt) {		
+		if(fVars.length == 1 &&"y".equals(fVars[0].toString()))
+			return evaluate(new double[]{pt.y/pt.z});
+		return evaluate(new double[]{pt.x/pt.z,pt.y/pt.z});
+	}
+	/**
+	 * Evaluates function at given point as boolean
+	 * @param pt
+	 * @return function value
+	 */
+	public boolean evaluateBoolean(GeoPoint pt) {
+		if(fVars.length == 1 &&"y".equals(fVars[0].toString()))
+			return evaluateBoolean(new double[]{pt.y/pt.z});
+		return evaluateBoolean(new double[]{pt.x/pt.z,pt.y/pt.z});
 	}
 }

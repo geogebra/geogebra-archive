@@ -88,6 +88,12 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			GeoElement ge = cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_INEQUALITY_1VAR);
 			setVisualStyle(ge);
 			setAlphaValue(ge.getAlphaValue());
+		//TODO: Remove following code for 5.0 -- it's there to make sure no functions of y are created	
+		}else if("y".equals(fun.getVarString(0))){
+			FunctionVariable fv = new FunctionVariable(kernel,"x");
+			fun.getExpression().replace(fun.getFunctionVariables()[0], fv);
+			fun.getFunctionVariables()[0]=fv;
+			fun.initFunction();
 		}
 		setLabel(label);	
 	}
@@ -258,6 +264,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		
 		return evaluate(vals[0]);
 	}
+	
 	/**
 	 * If restricted to interval, returns its minimum
 	 * @return interval minimum
