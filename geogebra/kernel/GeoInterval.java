@@ -112,7 +112,9 @@ public class GeoInterval extends GeoFunction {
 					sbToString.append(symbolic ? leftStr : kernel.format(leftBound));
 					sbToString.append(' ');
 					sbToString.append(leftInequality);
-					sbToString.append(" x ");
+					sbToString.append(' ');
+					sbToString.append(getVarString());
+					sbToString.append(' ');
 					sbToString.append(rightInequality);
 					sbToString.append(' ');
 					sbToString.append(symbolic ? rightStr : kernel.format(rightBound));

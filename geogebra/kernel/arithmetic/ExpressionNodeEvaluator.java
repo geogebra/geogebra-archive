@@ -3,8 +3,10 @@ package geogebra.kernel.arithmetic;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
@@ -1686,8 +1688,10 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         case FUNCTION:      
             // function(number)
             if (rt.isNumberValue()) {
-            	if( lt instanceof Evaluatable) {    
-	            	NumberValue arg = (NumberValue) rt;                     			            
+            	if( lt instanceof Evaluatable) {
+            		NumberValue arg = (NumberValue) rt;
+            		if(lt instanceof GeoFunction && ((GeoFunction)lt).isBooleanFunction())
+            			return new MyBoolean(((GeoFunction)lt).evaluateBoolean(arg.getDouble()));            	                     			            
 	            	return arg.getNumber().apply((Evaluatable)lt);
             	}
             }
@@ -1716,10 +1720,23 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             	if (funN.getVarNumber() == list.size()) {            		
             		double [] args = list.toDouble(); 
             		if (args != null){
-            			if(funN.isBooleanFunction())
+            			if(funN.isBooleanFunction())            				
+            				return new MyBoolean(funN.evaluateBoolean(args));           			
+            			return new MyDouble(kernel, funN.evaluate(args));
+            		}
+            		//let's assume that we called this as f(x,y) and we actually want the function
+            		return lt;
+            	}
+            	else if (funN.getVarNumber() == 2 && list.size()==1) {
+            		ExpressionValue ge = list.getMyList().getListElement(0).evaluate();            		
+            		if(ge instanceof GeoPoint){
+            		double [] args = new double[] {((GeoPoint)ge).x,((GeoPoint)ge).y};            		
+            		if (args != null){
+            			if(funN.isBooleanFunction())            				
             				return new MyBoolean(funN.evaluateBoolean(args));
             			return new MyDouble(kernel, funN.evaluate(args));
             		}
+            	}
             		//let's assume that we called this as f(x,y) and we actually want the function
             		return lt;
             	}
