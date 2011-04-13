@@ -71,9 +71,7 @@ public class MySpecialDouble extends MyDouble {
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 				char ch = strToString.charAt(0);
 				switch (ch) {
-					// pi
 					case Unicode.piChar:	return "Pi";
-					// degree
 					case Unicode.degreeChar:	return "Pi/180";
 				} 	
 			break;
@@ -81,15 +79,20 @@ public class MySpecialDouble extends MyDouble {
 			case ExpressionNode.STRING_TYPE_MAXIMA:
 				ch = strToString.charAt(0);
 				switch (ch) {
-					// pi
 					case Unicode.piChar:	return "%pi";
-					// degree
 					case Unicode.degreeChar:	return "%pi/180";
-					
-					// e
 					case Unicode.eulerChar: return "%e";
 				} 	
 			break;
+			
+			case ExpressionNode.STRING_TYPE_MPREDUCE:
+				ch = strToString.charAt(0);
+				switch (ch) {
+					case Unicode.piChar:	return "PI";
+					case Unicode.degreeChar:	return "PI/180";
+					case Unicode.eulerChar: return "E";
+				} 	
+			break;				
 				
 			//default:
 			//	return strToString;		

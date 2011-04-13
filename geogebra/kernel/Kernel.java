@@ -729,10 +729,13 @@ public class Kernel {
 			casPrintFormPI = "%pi";
 			break;
 			
-			case ExpressionNode.STRING_TYPE_JASYMCA:
-			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
-				casPrintFormPI = "pi";
-				break;
+		case ExpressionNode.STRING_TYPE_JASYMCA:
+		case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
+			casPrintFormPI = "pi";
+			break;
+				
+		case ExpressionNode.STRING_TYPE_MPREDUCE:
+			casPrintFormPI = "PI";
 		
 			default:
 				casPrintFormPI = Unicode.PI_STRING;
@@ -7501,6 +7504,7 @@ public class Kernel {
 			switch (casPrintForm) {
 				case ExpressionNode.STRING_TYPE_MATH_PIPER:
 				case ExpressionNode.STRING_TYPE_MAXIMA:
+				case ExpressionNode.STRING_TYPE_MPREDUCE:
 					return numberStr + "*";
 					
 				default:
@@ -7629,7 +7633,8 @@ public class Kernel {
 			// number formatting for CAS
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:				
 			case ExpressionNode.STRING_TYPE_JASYMCA:		
-			case ExpressionNode.STRING_TYPE_MAXIMA:		
+			case ExpressionNode.STRING_TYPE_MAXIMA:
+			case ExpressionNode.STRING_TYPE_MPREDUCE:
 				if (Double.isNaN(x))
 					return " 1/0 ";	
 				else if (Double.isInfinite(x)) {
@@ -7874,6 +7879,7 @@ public class Kernel {
 		switch (casPrintForm) {
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 			case ExpressionNode.STRING_TYPE_JASYMCA:
+			case ExpressionNode.STRING_TYPE_MPREDUCE: 
 				if (angleUnit == ANGLE_DEGREE) {
 					sbFormatAngle.append("(");
 					// STANDARD_PRECISION * 10 as we need a little leeway as we've converted from radians

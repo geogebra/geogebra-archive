@@ -15,6 +15,7 @@ import java.util.TimerTask;
 
 import org.mathpiper.interpreters.EvaluationResponse;
 import org.mathpiper.interpreters.Interpreter;
+import org.mathpiper.Version;
 
 public class CASmathpiper extends CASgeneric {
 	

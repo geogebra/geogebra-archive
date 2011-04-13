@@ -1236,7 +1236,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_MATH_PIPER:
 				sb.append("Not ");
 				break;
-
+				
 			default:
 				sb.append(strNOT);
 			}
@@ -1261,6 +1261,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_MATH_PIPER:
 				sb.append("Or");
 				break;
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("or ");
+				break;
 
 			default:
 				sb.append(strOR);
@@ -1283,6 +1287,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_MATH_PIPER:
 				sb.append("And");
 				break;
+				
+			case STRING_TYPE_MPREDUCE:
+				sb.append("and ");
+				break;
 
 			default:
 				sb.append(strAND);
@@ -1300,6 +1308,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_LATEX:
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_JASYMCA:
+			case STRING_TYPE_MPREDUCE:
 				sb.append("=");
 				break;
 
@@ -1322,6 +1331,10 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 			case STRING_TYPE_MATH_PIPER:
 				sb.append("!=");
+				break;
+			
+			case STRING_TYPE_MPREDUCE:
+				sb.append("neq");
 				break;
 
 			default:
@@ -1426,6 +1439,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			case STRING_TYPE_MATH_PIPER:
+			case STRING_TYPE_MPREDUCE:
 				sb.append("<=");
 				break;
 
@@ -1447,6 +1461,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			case STRING_TYPE_MATH_PIPER:
+			case STRING_TYPE_MPREDUCE:
 				sb.append(">=");
 				break;
 
@@ -1514,6 +1529,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MPREDUCE:
 				sb.append('(');
 				sb.append(leftStr);
 				sb.append(") + (");
@@ -1573,6 +1589,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MPREDUCE:
 				sb.append('(');
 				sb.append(leftStr);
 				sb.append(") - (");
@@ -1668,6 +1685,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
 			case STRING_TYPE_LATEX:
+			case STRING_TYPE_MPREDUCE:
 
 				boolean nounary = true;
 
@@ -1707,6 +1725,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						case STRING_TYPE_JASYMCA:
 						case STRING_TYPE_MATH_PIPER:
 						case STRING_TYPE_MAXIMA:
+						case STRING_TYPE_MPREDUCE:
 							showMultiplicationSign = true;
 							break;
 							
@@ -1785,6 +1804,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						case STRING_TYPE_JASYMCA:
 						case STRING_TYPE_MATH_PIPER:
 						case STRING_TYPE_MAXIMA:
+						case STRING_TYPE_MPREDUCE:
 							sb.append(multiplicationSign(STRING_TYPE));
 							break;
 
@@ -1814,6 +1834,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MPREDUCE:
 				sb.append('(');
 				sb.append(leftStr);
 				sb.append(")/(");
@@ -1905,6 +1926,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MPREDUCE:
 				sb.append('(');
 				sb.append(leftStr);
 				sb.append(')');
@@ -1948,6 +1970,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_GEOGEBRA_XML:
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MPREDUCE:
 				sb.append('^');
 				sb.append('(');
 				sb.append(rightStr);
@@ -2495,6 +2518,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_GEOGEBRA_XML:
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MPREDUCE:
 				sb.append("exp(");
 				sb.append(leftStr);
 				sb.append(')');
@@ -2533,6 +2557,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_MAXIMA:
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_GEOGEBRA_XML:
+			case STRING_TYPE_MPREDUCE:
 				sb.append("log(");
 				break;
 
@@ -2560,6 +2585,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 			case STRING_TYPE_MAXIMA:
 			case STRING_TYPE_MATH_PIPER:
+			case STRING_TYPE_MPREDUCE:
 				// user defined function
 				sb.append("logB(");
 				sb.append(leftStr);
@@ -2600,6 +2626,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 			case STRING_TYPE_MAXIMA:
 			case STRING_TYPE_MATH_PIPER:
+			case STRING_TYPE_MPREDUCE:
 				sb.append("erf(");
 				sb.append(leftStr);
 				sb.append(')');
@@ -2630,6 +2657,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 
 			case STRING_TYPE_MAXIMA:
 			case STRING_TYPE_MATH_PIPER:
+			case STRING_TYPE_MPREDUCE:
 			case STRING_TYPE_PGF:
 				sb.append("log10("); // user-defined function in Maxima
 				sb.append(leftStr);
@@ -2697,6 +2725,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			case STRING_TYPE_MATH_PIPER:
+			case STRING_TYPE_MPREDUCE:
 				sb.append("(");
 				sb.append(leftStr);
 				sb.append(")^(1/3)");
@@ -2835,6 +2864,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				break;
 
 			case STRING_TYPE_MAXIMA:
+			case STRING_TYPE_MPREDUCE:
 			case STRING_TYPE_PSTRICKS:
 				sb.append("ceiling(");
 				sb.append(leftStr);

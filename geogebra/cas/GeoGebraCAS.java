@@ -72,6 +72,11 @@ public class GeoGebraCAS {
 					((CASmaxima) cas).initialize();
 					currentCAS = CAS;
 					break;
+					
+				case Application.CAS_MPREDUCE:
+					cas = getMPReduce();
+					currentCAS = CAS;
+					break;	
 				
 				default:
 					cas = getMathPiper();
@@ -99,6 +104,10 @@ public class GeoGebraCAS {
 	
 	private CASmaxima getMaxima() {
 		return new CASmaxima(casParser);
+	}
+	
+	private CASmpreduce getMPReduce() {
+		return new CASmpreduce(casParser);
 	}
 	
 	/**

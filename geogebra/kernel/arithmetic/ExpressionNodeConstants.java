@@ -12,6 +12,7 @@ public interface ExpressionNodeConstants {
 	public static final int STRING_TYPE_PSTRICKS = 5;
 	public static final int STRING_TYPE_PGF = 6;
 	public static final int STRING_TYPE_JASYMCA = 7;
+	public static final int STRING_TYPE_MPREDUCE = 8;
 	
 	public static final String UNICODE_PREFIX = "uNiCoDe";
 	public static final String UNICODE_DELIMITER = "U";  

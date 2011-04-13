@@ -1248,6 +1248,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
 			case ExpressionNode.STRING_TYPE_MAXIMA:
+			case ExpressionNode.STRING_TYPE_MPREDUCE:	
 				squared = "^2";
 				myVars = varsCAS;
 				break;

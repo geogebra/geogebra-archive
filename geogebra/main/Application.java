@@ -977,7 +977,7 @@ public class Application implements KeyEventDispatcher {
 							+ "  --fontSize=NUMBER\tset default font size\n"
 							+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes\n"
 							+ "  --settingsFile=PATH|FILENAME\tLoad/save settings from/in a local file\n"
-							+ "  --CAS=[MATHPIPER|MAXIMA]\tselect which CAS to use, default MathPiper\n"
+							+ "  --CAS=[MATHPIPER|MAXIMA|MPREDUCE]\tselect which CAS to use, default MathPiper\n"
 							+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
 							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
 			System.exit(0);
@@ -1020,6 +1020,9 @@ public class Application implements KeyEventDispatcher {
 			if(args.containsArg("maximaPath")) {
 				setMaximaPath(args.getStringValue("maximaPath"));
 			}
+		}
+		else if (cas.toLowerCase(Locale.US).equals("mpreduce")) {
+			setDefaultCAS(CAS_MPREDUCE);
 		}
 		
 		String fontSize = args.getStringValue("fontSize");
@@ -4891,6 +4894,7 @@ public class Application implements KeyEventDispatcher {
 	// determines which CAS is being used
 	final public static int CAS_MATHPIPER = ExpressionNode.STRING_TYPE_MATH_PIPER;
 	final public static int CAS_MAXIMA = ExpressionNode.STRING_TYPE_MAXIMA;
+	final public static int CAS_MPREDUCE = ExpressionNode.STRING_TYPE_MPREDUCE;	
 
 	
 	public void setDefaultCAS(int CAS) {
@@ -4898,6 +4902,10 @@ public class Application implements KeyEventDispatcher {
 		if (CAS == CAS_MAXIMA) {
 			Application.debug("Attempting to set CAS=Maxima");
 			success = setMaximaCAS();
+		}
+		else if (CAS == CAS_MPREDUCE) {
+			Application.debug("Attempting to set CAS=MPReduce");
+			success = setMPReduceCAS();
 		}
 		
 		// fallback / default option
@@ -4931,6 +4939,11 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		return false;
+	}
+	
+	private boolean setMPReduceCAS() {
+		kernel.setDefaultCAS(CAS_MPREDUCE);
+		return true;
 	}
 	
 	/*

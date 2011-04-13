@@ -138,6 +138,7 @@ implements ExpressionValue {
     	switch (kernel.getCASPrintForm()){
 		case ExpressionNode.STRING_TYPE_MATH_PIPER:
 		case ExpressionNode.STRING_TYPE_MAXIMA:
+		case ExpressionNode.STRING_TYPE_MPREDUCE:
     			// MathPiper command syntax
     			return ((geogebra.cas.GeoGebraCAS) kernel.getGeoGebraCAS()).
     				getCASCommand(name, args, symbolic);    			    	
