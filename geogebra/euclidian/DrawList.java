@@ -89,7 +89,8 @@ public final class DrawList extends Drawable {
     	}    
     	
     	// remove end of list
-    	for (int i=drawables.size()-1; i >= drawablePos; i--) {      		 
+    	for (int i=drawables.size()-1; i >= drawablePos; i--) {
+    		view.remove(drawables.get(i).getGeoElement());
     		drawables.remove(i);
     	}
     	
