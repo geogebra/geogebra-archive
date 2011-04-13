@@ -1566,6 +1566,10 @@ public class Kernel {
 			notifyReset();
 			cons.undo();
 			notifyReset();
+
+			// repaint needed for last undo in second EuclidianView (bugfix)
+			if (!undoPossible())
+				notifyRepaint();
 		}
 	}
 
