@@ -109,13 +109,17 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		public boolean updateCoef() {
 			if(ineq!=null){
 				ineq.updateCoef();
+				Application.debug(ineq.getType());
 				return ineq.getType()!=Inequality.INEQUALITY_INVALID;
 			}
+			if(left == null && right ==null)
+				return false;
 			boolean b=true;
 			if(left!=null)
 				b &= left.updateCoef();
 			if(right!=null)
-				b &= right.updateCoef();	
+				b &= right.updateCoef();
+			Application.debug("tree"+b);
 			return b;
 		}
 		private int size;
