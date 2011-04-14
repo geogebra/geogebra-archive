@@ -704,7 +704,13 @@ public abstract class GeoElement
 		return viewForValueString;
 	}
 	
-	
+	/**
+	 * 
+	 * @return true if the value string can be changed regarding a view
+	 */
+	public boolean hasValueStringChangeableRegardingView(){
+		return false;
+	}
 	
 	/**
 	 * Returns definition or value string of this object.

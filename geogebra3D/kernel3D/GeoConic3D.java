@@ -232,60 +232,64 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 		 return sbToString.toString();
 	 }
 
-	 
-		
-
-
-		protected StringBuilder buildValueString() {
-			
-			
-			if (!(getViewForValueString() instanceof EuclidianView))
-				return new StringBuilder("todo-GeoConic3D");
-			
-			EuclidianView view = (EuclidianView) getViewForValueString();
-			
-			//check if in view
-	        Coords M = view.getInhomCoordsForView(getMidpoint3D());            
-	        if (!Kernel.isZero(M.getZ())){//check if in view
-	    		return new StringBuilder("todo-GeoConic3D");
-	        }       
-	        Coords[] ev = new Coords[2];
-	        for(int j=0; j<2; j++){
-	        	ev[j] = view.getInhomCoordsForView(getEigenvec3D(j));   
-	            if (!Kernel.isZero(ev[j].getZ())){//check if in view
-	        		return new StringBuilder("todo-GeoConic3D");
-	            }
-	        }
-
-	        double[] matrix = getMatrix();
-	 
-	        Coords mid2D = getMidpoint2D();
-	        translateMatrix(matrix, -mid2D.getX(), -mid2D.getY());
-
-	        
-	        Coords ev2D0 = getEigenvec(0);
-	        Coords ev2D1 = getEigenvec(1);	        
-	        double x = ev2D0.dotproduct(ev[0]);
-	        double y = ev2D1.dotproduct(ev[0]);
-	        double phi = Math.atan2(y, x);
-	        rotateMatrix(matrix, phi);
-	        
-	        
-	        translateMatrix(matrix, M.getX(), M.getY());
-
-
-	        
-	        return buildValueString(matrix);
-	        
-		}
 
 
 
-		@Override
-		public void setSphereND(GeoPointND M, GeoSegmentND segment) {
-			// TODO Auto-generated method stub
-			
-		}
+	 public boolean hasValueStringChangeableRegardingView(){
+		 return true;
+	 }
+
+
+	 protected StringBuilder buildValueString() {
+
+
+		 if (!(getViewForValueString() instanceof EuclidianView))
+			 return new StringBuilder("todo-GeoConic3D");
+
+		 EuclidianView view = (EuclidianView) getViewForValueString();
+
+		 //check if in view
+		 Coords M = view.getInhomCoordsForView(getMidpoint3D());            
+		 if (!Kernel.isZero(M.getZ())){//check if in view
+			 return new StringBuilder("todo-GeoConic3D");
+		 }       
+		 Coords[] ev = new Coords[2];
+		 for(int j=0; j<2; j++){
+			 ev[j] = view.getInhomCoordsForView(getEigenvec3D(j));   
+			 if (!Kernel.isZero(ev[j].getZ())){//check if in view
+				 return new StringBuilder("todo-GeoConic3D");
+			 }
+		 }
+
+		 double[] matrix = getMatrix();
+
+		 Coords mid2D = getMidpoint2D();
+		 translateMatrix(matrix, -mid2D.getX(), -mid2D.getY());
+
+
+		 Coords ev2D0 = getEigenvec(0);
+		 Coords ev2D1 = getEigenvec(1);	        
+		 double x = ev2D0.dotproduct(ev[0]);
+		 double y = ev2D1.dotproduct(ev[0]);
+		 double phi = Math.atan2(y, x);
+		 rotateMatrix(matrix, phi);
+
+
+		 translateMatrix(matrix, M.getX(), M.getY());
+
+
+
+		 return buildValueString(matrix);
+
+	 }
+
+
+
+	 @Override
+	 public void setSphereND(GeoPointND M, GeoSegmentND segment) {
+		 // TODO Auto-generated method stub
+
+	 }
 
 
 

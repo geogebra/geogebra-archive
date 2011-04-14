@@ -250,13 +250,13 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 
 		 if (coordSys.makeOrthoMatrix(true,false)){
 			 
-			 Application.debug("ortho=\n"+coordSys.getMatrixOrthonormal());
+			 //Application.debug("ortho=\n"+coordSys.getMatrixOrthonormal());
 			 
 			 for(int i=0;i<points.length;i++){
 				 //project the point on the coord sys
 				 Coords[] project=points[i].getInhomCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
 
-				 Application.debug("project["+i+"]="+project[1]);
+				 //Application.debug("project["+i+"]="+project[1]);
 				 
 				 //check if the vertex lies on the coord sys
 				 if(!Kernel.isEqual(project[1].getZ(), 0, Kernel.STANDARD_PRECISION)){

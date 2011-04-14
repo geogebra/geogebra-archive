@@ -13,6 +13,8 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
+import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.layout.DockPanel;
 import geogebra.gui.util.AnimatedGifEncoder;
@@ -107,10 +109,8 @@ public class ContextMenuGeoElement extends JPopupMenu {
 			addNumberItems();	
 			addUserInputItem();
 			
-			/*
-			if (app.getEuclidianViewForPlane()!=null)
-				addViewForValueStringItems();
-				*/
+			addViewForValueStringItems();
+				
 		}
 		
 		//TODO remove the condition when ggb version >= 5
@@ -540,10 +540,35 @@ public class ContextMenuGeoElement extends JPopupMenu {
 	private void addViewForValueStringItems() {
 
 		AbstractAction action;
+		
+		if (!geo.hasValueStringChangeableRegardingView())
+			return;
 
 		DockPanel panel = app.getGuiManager().getLayout().getDockManager().getFocusedEuclidianPanel();
 		if (panel==null)
 			return;
+		
+		EuclidianViewInterface oldView = geo.getViewForValueString();
+		EuclidianViewInterface newView = app.getActiveEuclidianView();
+		
+		if (oldView==newView)
+			return;
+
+		// if old and new views are both graphics/graphics2, return
+		if (((oldView==app.getEuclidianView()) && (newView==app.getEuclidianView2()))
+				||
+				((oldView==app.getEuclidianView2()) && (newView==app.getEuclidianView())))
+			return;
+
+		if (oldView==null)
+			if (newView==app.getEuclidianView() || newView==app.getEuclidianView2()){
+				if (!geo.isGeoElement3D()) // if 2D geo and new view is 2D standard view, no changes
+					return;
+			}else if (!(newView instanceof EuclidianView))
+				if (geo.isGeoElement3D()) // if 3D geo and new view is 3D view, no changes
+					return;
+		
+		
 		
 		action = new AbstractAction(app.getPlain("SetValueStringRegardingA",app.getPlain(panel.getViewTitle()))) {
 			/**
@@ -553,7 +578,6 @@ public class ContextMenuGeoElement extends JPopupMenu {
 
 			public void actionPerformed(ActionEvent e) {
 				//TODO change that to chooser
-				Application.debug("ici");
 				geo.setViewForValueString(app.getActiveEuclidianView());
 				geo.update();
 			}

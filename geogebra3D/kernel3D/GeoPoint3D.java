@@ -825,6 +825,11 @@ implements GeoPointND, PointProperties, Vector3DValue{
 
 	
 	
+
+	public boolean hasValueStringChangeableRegardingView(){
+		return true;
+	}
+	
 	
 	
 	public String toValueString() {
