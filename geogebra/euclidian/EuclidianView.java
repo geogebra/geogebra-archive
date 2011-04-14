@@ -966,8 +966,16 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * whether to clear selection rectangle when mode selected
 	 */
 	final private boolean clearRectangle(int mode) {
-		if (mode == EuclidianConstants.MODE_PEN) return false;
-		return true;
+		switch (mode)
+		{
+		case MODE_PEN: return false;
+		case MODE_MIRROR_AT_LINE: return false;
+		case MODE_MIRROR_AT_POINT: return false;
+		case MODE_ROTATE_BY_ANGLE: return false;
+		case MODE_TRANSLATE_BY_VECTOR: return false;
+		case MODE_DILATE_FROM_POINT: return false;
+		default: return true;
+		}
 	}
 
 	final public int getMode() {
@@ -4724,6 +4732,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		case MODE_VISUAL_STYLE: return true;
 		case MODE_FITLINE: return true;
 		case MODE_PEN: return true;
+		case MODE_MIRROR_AT_LINE: return true;
+		case MODE_MIRROR_AT_POINT: return true;
+		case MODE_ROTATE_BY_ANGLE: return true;
+		case MODE_TRANSLATE_BY_VECTOR: return true;
+		case MODE_DILATE_FROM_POINT: return true;
 		default: return false;
 		}
 	}
