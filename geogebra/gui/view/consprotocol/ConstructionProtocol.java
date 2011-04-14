@@ -108,7 +108,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	private boolean useColors, addIcons;
 
 	// for drag & drop
-	boolean dragging = false;
+	private boolean dragging = false;
 	private int dragIndex = -1; // dragged construction index
 	private int dropIndex = -1;
 
@@ -304,11 +304,11 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		setTitle(app.getPlain("ConstructionProtocol"));
 		setFont(app.getPlainFont());
 		setMenuBar();
-
 		// set header values (language may have changed)
 		for (int k = 0; k < tableColumns.length; k++) {
-			tableColumns[k].setHeaderValue(data.columns[k].getTitle());
+			tableColumns[k].setHeaderValue(app.getPlain(data.columns[k].getTitle()));
 		}
+		table.updateUI();
 		table.setFont(app.getPlainFont());
 		data.updateAll();
 	}
@@ -974,7 +974,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 
 		public String getTitle() {
-			return app.getPlain(title);
+			return title;
 		}
 
 		public int getPreferredWidth() {
