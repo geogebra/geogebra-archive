@@ -172,9 +172,8 @@ public class DockManager implements AWTEventListener {
 				
 				DockPanel panel = getPanel(dpInfo[i].getViewId());
 				
-				//manages case where the panel is not found (e.g. 3D view)
-				if (panel==null)
-					panel=getErrorPanel();
+				
+
 				
 				// skip panels which will not be drawn in the main window
 				if(!dpInfo[i].isVisible())
@@ -1064,18 +1063,22 @@ public class DockManager implements AWTEventListener {
 			}
 		}
 		
+		if (panel!=null)
+			return panel;
+		else{//manages case where the panel is not found (e.g. 3D view)
+			Application.printStacktrace("viewId="+viewId+" not found");
+			return new ErrorDockPanel(app,viewId);
+		}
+		/*
 		if(panel != null) {
 			return panel;
 		} else if (viewId==Application.VIEW_EUCLIDIAN3D){
 			return null;
 		}else{
-	        app.setDefaultCursor();
-			throw new IllegalArgumentException("viewId="+viewId+" not found");
+			app.setDefaultCursor();
+			throw new IllegalArgumentException("viewId="+viewId+" not found");			
 		}
-	}
-	
-	private DockPanel getErrorPanel(){
-		return new ErrorDockPanel(app);
+		*/
 	}
 	
 	/**

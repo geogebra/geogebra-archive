@@ -23,39 +23,29 @@ import geogebra.main.Application;
  */
 public class ErrorDockPanel extends DockPanel {
 	private static final long serialVersionUID = 1L;
-	private Application app;
 	
 	/**
 	 * @param app
+	 * @param viewId 
 	 */
-	public ErrorDockPanel(Application app) {
+	public ErrorDockPanel(Application app, int viewId) {
 		super(
 			Application.VIEW_ERROR,	// view id 
-			"ErrorWindow", 			// view title phrase
+			"ErrorWindow (viewId="+viewId+")", 			// view title phrase
 			null,						// toolbar string
 			false,						// style bar?
 			4, 							// menu order
 			'3'							// menu shortcut
 		);
 		
-		this.app = app;
 		
-		setVisible(false);
-		//setEmbeddedSize(50);
+		//setVisible(false);
+		
+		this.app = app;
 	}
 
 	
 	protected JComponent loadComponent() {
-		/*
-		JTextArea text = new JTextArea("error: 3D not supported on this version");
-		Font f = app.getBoldFont();
-		text.setFont(f);
-		text.setLineWrap(true); 
-		text.setWrapStyleWord(true); 
-		
-		return text;
-		*/
-		
 		return new JPanel();
 		
 	}
@@ -64,7 +54,10 @@ public class ErrorDockPanel extends DockPanel {
 		if(component == null && isVisible()) {
 			component = loadComponent();
 			add(component, BorderLayout.CENTER);
-		}
-		
+		}	
 	}
+	
+	//unused methods
+	public final void setFocus(boolean hasFocus) {}
+	protected void closePanel() {}
 }

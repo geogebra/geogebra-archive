@@ -699,7 +699,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	/**
 	 * Close this panel.
 	 */
-	private void closePanel() {
+	protected void closePanel() {
 		dockManager.hide(this);
 		dockManager.getLayout().getApplication().updateMenubar();
 		
@@ -961,7 +961,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	 * 
 	 * @param hasFocus
 	 */
-	public final void setFocus(boolean hasFocus) {
+	public void setFocus(boolean hasFocus) {
 		// don't change anything if it's not necessary
 		if(this.hasFocus == hasFocus)
 			return;
