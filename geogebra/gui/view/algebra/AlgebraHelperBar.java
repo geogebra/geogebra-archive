@@ -19,12 +19,12 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	/**
 	 * The algebra view which uses this tool bar.
 	 */
-	private AlgebraView algebraView;
+	protected AlgebraView algebraView;
 	
 	/**
 	 * Instance of the application.
 	 */
-	private Application app;
+	protected Application app;
 	
 	/**
 	 * Button to show/hide auxiliary objects in the algebra view.
@@ -36,7 +36,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	 *  - Categorize objects by free / independent / auxiliary
 	 *  - Categorize objects by their type 
 	 */
-	private JButton toggleTypeTreeMode;
+	protected JButton toggleTypeTreeMode;
 	
 	/**
 	 * Helper bar.
@@ -50,6 +50,17 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 		
 		setFloatable(false);
 		
+		addButtons();
+		
+		updateStates();
+		updateLabels();
+	}
+	
+	/**
+	 * add the buttons
+	 */
+	protected void addButtons(){
+		
 		toggleAuxiliary = new JButton(app.getImageIcon("auxiliary.png"));
 		toggleAuxiliary.addActionListener(this);
 		add(toggleAuxiliary);
@@ -60,8 +71,6 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 		toggleTypeTreeMode.addActionListener(this);
 		add(toggleTypeTreeMode);
 		
-		updateStates();
-		updateLabels();
 	}
 	
 	/**
@@ -93,7 +102,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 			app.setShowAuxiliaryObjects(!app.showAuxiliaryObjects());
 			toggleAuxiliary.setSelected(app.showAuxiliaryObjects());
 		} else if(e.getSource() == toggleTypeTreeMode) {
-			algebraView.setTreeMode((algebraView.getTreeMode() == AlgebraView.MODE_TYPE) ? AlgebraView.MODE_DEPENDENCY : AlgebraView.MODE_TYPE);
+			algebraView.setTreeMode((algebraView.getTreeMode() != AlgebraView.MODE_TYPE) ? AlgebraView.MODE_TYPE : AlgebraView.MODE_DEPENDENCY);
 			toggleTypeTreeMode.setSelected(algebraView.getTreeMode() == AlgebraView.MODE_TYPE);
 			updateLabels();
 		}

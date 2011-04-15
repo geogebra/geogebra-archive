@@ -3449,4 +3449,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	}
 
 
+	public String getFromPlaneString(){
+		return "space";
+	}
+	
+	public String getTranslatedFromPlaneString(){
+		return app.getPlain("space");
+	}
 }

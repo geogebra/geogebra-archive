@@ -4973,4 +4973,14 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return conic.getAffineTransform();
 	}
 	
+	
+	public String getFromPlaneString(){
+		return "xOyPlane";
+	}
+
+	
+	public String getTranslatedFromPlaneString(){
+		return app.getPlain("xOyPlane");
+	}
+	
 }

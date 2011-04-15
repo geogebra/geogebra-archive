@@ -424,11 +424,21 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		add(metaPanel, BorderLayout.NORTH);
 	}
 	
+
+	
+	/**
+	 * 
+	 * @return title in plain style
+	 */
+	protected String getPlainTitle(){
+		return app.getPlain(title);
+	}
+	
 	/**
 	 * Create a frame for this DockPanel.
 	 */
 	public void createFrame() {
-		frame = new JFrame(app.getPlain(title));
+		frame = new JFrame(getPlainTitle());
 		
 		// needs the higher res as used by Windows 7 for the Toolbar
 	   	frame.setIconImage(app.getInternalImage("geogebra32.gif"));  
@@ -643,7 +653,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 		}
 		
 		if(frame == null) {
-			titleLabel.setText(app.getPlain(title));
+			titleLabel.setText(getPlainTitle());
 		} else {
 			updateTitle();
 		}
@@ -668,7 +678,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 	public void updateTitle() {
 		if(isOpenInFrame()) {
 			StringBuilder windowTitle = new StringBuilder();
-			windowTitle.append(app.getPlain(title));
+			windowTitle.append(getPlainTitle());
 			
 	        if (app.getCurrentFile() != null) {
 	        	windowTitle.append(" - ");

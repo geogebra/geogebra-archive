@@ -151,9 +151,6 @@ public class Application3D extends Application{
 	/////////////////////////////////
 	
 	
-	public EuclidianViewForPlane getEuclidianViewForPlane(){
-		return euclidianViewForPlane;
-	}
 	
 	/**
 	 * @param plane
@@ -167,7 +164,7 @@ public class Application3D extends Application{
 		euclidianViewForPlane.addExistingGeos();
 		
 		// create dock panel
-		EuclidianDockPanelForPlane panel = new EuclidianDockPanelForPlane(this);
+		EuclidianDockPanelForPlane panel = new EuclidianDockPanelForPlane(this,euclidianViewForPlane);
 		getGuiManager().getLayout().registerPanel(panel);
 		
 		//panel.setToolbarString(dpInfo[i].getToolbarString());

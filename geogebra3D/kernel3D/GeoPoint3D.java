@@ -808,11 +808,6 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	
 	final public String toString() {
 		
-		return toString(null); 
-	}
-	
-	final public String toString(EuclidianViewInterface view) {
-		
 		StringBuilder sbToString = getSbToString();
 		sbToString.setLength(0);
 		sbToString.append(label);
@@ -844,10 +839,11 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	
     	if (getViewForValueString() instanceof EuclidianView){
     		Coords p2D = ((EuclidianView) getViewForValueString()).getInhomCoordsForView(getInhomCoordsInD(3));
-    	    if (Kernel.isZero(p.getZ())){
+    		if (Kernel.isZero(p2D.getZ())){
     	    	isVisibleInView2D=true;
     	    	p = p2D;
-    	    }
+    	    }else
+    	    	return app.getPlain("NotIncluded");
     	}
     	
 		sbToString.setLength(0);

@@ -219,10 +219,6 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 
 	 final public String toString() {
 
-		 return toString(null); 
-	 }
-
-	 final public String toString(EuclidianViewInterface view) {	
 		 StringBuilder sbToString = getSbToString();
 		 sbToString.setLength(0);
 		 sbToString.append(label);
@@ -251,13 +247,13 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 		 //check if in view
 		 Coords M = view.getInhomCoordsForView(getMidpoint3D());            
 		 if (!Kernel.isZero(M.getZ())){//check if in view
-			 return new StringBuilder("todo-GeoConic3D");
+			 return new StringBuilder(app.getPlain("NotIncluded"));
 		 }       
 		 Coords[] ev = new Coords[2];
 		 for(int j=0; j<2; j++){
 			 ev[j] = view.getInhomCoordsForView(getEigenvec3D(j));   
 			 if (!Kernel.isZero(ev[j].getZ())){//check if in view
-				 return new StringBuilder("todo-GeoConic3D");
+				 return new StringBuilder(app.getPlain("NotIncluded"));
 			 }
 		 }
 

@@ -64,8 +64,14 @@ public class AlgebraView extends JTree implements View {
 	 * (points, circles, ..)
 	 */
 	public static final int MODE_TYPE = 1;
+	
+	/**
+	 * Tree mode where the objects are categorized by the view on which their value is computed 
+	 * (xOyPlane, space, ...)
+	 */	
+	public static final int MODE_VIEW = 2;
 
-	private Application app; // parent appame
+	protected Application app; // parent appame
 	private Kernel kernel;
 	
 	private MyRenderer renderer;
@@ -78,17 +84,19 @@ public class AlgebraView extends JTree implements View {
 	/**
 	 * The tree model.
 	 */
-	private DefaultTreeModel model;
+	protected DefaultTreeModel model;
 
 	/**
 	 * Root node for tree mode MODE_DEPENDENCY.
 	 */
-	private DefaultMutableTreeNode rootDependency;
+	protected DefaultMutableTreeNode rootDependency;
 	
 	/**
 	 * Nodes for tree mode MODE_DEPENDENCY
 	 */
-	private DefaultMutableTreeNode depNode, indNode, auxiliaryNode;
+	private DefaultMutableTreeNode depNode, indNode;
+
+	protected DefaultMutableTreeNode auxiliaryNode;
 
 	/**
 	 * Root node for tree mode MODE_TYPE.
@@ -103,12 +111,12 @@ public class AlgebraView extends JTree implements View {
 	/**
 	 * The mode of the tree, see MODE_DEPENDENCY, MODE_TYPE
 	 */
-	private int treeMode;
+	protected int treeMode;
 	
 	/**
 	 * Should we show auxiliary objects?
 	 */
-	private boolean showAuxiliaryObjects;
+	protected boolean showAuxiliaryObjects;
 
 	private GeoElement selectedGeoElement;
 	private DefaultMutableTreeNode selectedNode;
@@ -167,7 +175,7 @@ public class AlgebraView extends JTree implements View {
 	 * 
 	 * This method will also actually change the model of the tree.
 	 */
-	private void initModel() {	
+	protected void initModel() {	
 		// build default tree structure
 		if(treeMode == MODE_DEPENDENCY) {
 			// don't re-init anything
@@ -200,12 +208,16 @@ public class AlgebraView extends JTree implements View {
 			
 			// always try to remove the auxiliary node
 			if(showAuxiliaryObjects && auxiliaryNode != null) {
-				model.removeNodeFromParent(auxiliaryNode);
+				removeAuxiliaryNode();
 			}
 
 			// set the root
 			model.setRoot(rootType);
 		}
+	}
+	
+	protected void removeAuxiliaryNode(){
+		model.removeNodeFromParent(auxiliaryNode);
 	}
 	
 	boolean attached = false;
@@ -324,10 +336,18 @@ public class AlgebraView extends JTree implements View {
 	 */
 	public AlgebraHelperBar getHelperBar() {
 		if(helperBar == null) {
-			helperBar = new AlgebraHelperBar(this, app);
+			helperBar = newAlgebraHelperBar();
 		}
 		
 		return helperBar;
+	}
+	
+	/**
+	 * 
+	 * @return new algebra helper bar
+	 */
+	protected AlgebraHelperBar newAlgebraHelperBar(){
+		return new AlgebraHelperBar(this, app);
 	}
 
 	public static GeoElement getGeoElementForLocation(JTree tree, int x, int y) {
@@ -409,6 +429,18 @@ public class AlgebraView extends JTree implements View {
 	 * by the application if the language setting is changed.
 	 */
 	public void setLabels() {
+		
+		setTreeLabels();
+		
+		if(helperBar != null) {
+			helperBar.updateLabels();
+		}
+	}
+	
+	/**
+	 * set labels on the tree
+	 */
+	protected void setTreeLabels(){
 		if(getTreeMode() == MODE_DEPENDENCY) {
 			indNode.setUserObject(app.getPlain("FreeObjects"));
 			model.nodeChanged(indNode);
@@ -426,10 +458,6 @@ public class AlgebraView extends JTree implements View {
 				model.nodeChanged(node);
 			}
 		}
-		
-		if(helperBar != null) {
-			helperBar.updateLabels();
-		}
 	}
 
 	/**
@@ -440,47 +468,14 @@ public class AlgebraView extends JTree implements View {
 		
 		if (geo.isLabelSet() && geo.showInAlgebraView() && geo.isSetAlgebraVisible()) {
 			// don't add auxiliary objects if the tree is categorized by type
-			if(getTreeMode() == MODE_TYPE && !showAuxiliaryObjects() && geo.isAuxiliaryObject()) {
+			if(getTreeMode() != MODE_DEPENDENCY && !showAuxiliaryObjects() && geo.isAuxiliaryObject()) {
 				return;
 			}
 			
 			DefaultMutableTreeNode parent, node;
 			node = new DefaultMutableTreeNode(geo);
+			parent = getParentNode(geo);
 			
-			if(treeMode == MODE_DEPENDENCY) {				
-				if (geo.isAuxiliaryObject()) {
-					parent = auxiliaryNode;
-				}				
-				else if (geo.isIndependent()) {			
-					parent = indNode;				
-				} 
-				else {				
-					parent = depNode;
-				}
-			} else {
-				// get type node
-				String typeString = geo.getObjectType();
-				parent = (DefaultMutableTreeNode) typeNodesMap.get(typeString);
-				
-				// do we have to create the parent node?
-				if (parent == null) {
-					String transTypeString = geo.translatedTypeString();
-					parent = new DefaultMutableTreeNode(transTypeString);									
-					typeNodesMap.put(typeString, parent);
-					
-					// find insert pos
-					int pos = rootType.getChildCount();
-					for (int i=0; i < pos; i++) {
-						DefaultMutableTreeNode child = (DefaultMutableTreeNode) rootType.getChildAt(i);
-						if (transTypeString.compareTo(child.toString()) < 0) {
-							pos = i;
-							break;
-						}
-					}
-					
-					model.insertNodeInto(parent, rootType, pos);				
-				}
-			}
 
 			// add node to model (alphabetically ordered)
 			int pos = getInsertPosition(parent, geo);
@@ -493,6 +488,51 @@ public class AlgebraView extends JTree implements View {
 		}
 	}
 
+	/**
+	 * 
+	 * @param geo
+	 * @return parent node of this geo
+	 */
+	protected DefaultMutableTreeNode getParentNode(GeoElement geo){
+		DefaultMutableTreeNode parent;
+		
+		if(treeMode == MODE_DEPENDENCY) {				
+			if (geo.isAuxiliaryObject()) {
+				parent = auxiliaryNode;
+			}				
+			else if (geo.isIndependent()) {			
+				parent = indNode;				
+			} 
+			else {				
+				parent = depNode;
+			}
+		} else {
+			// get type node
+			String typeString = geo.getObjectType();
+			parent = (DefaultMutableTreeNode) typeNodesMap.get(typeString);
+			
+			// do we have to create the parent node?
+			if (parent == null) {
+				String transTypeString = geo.translatedTypeString();
+				parent = new DefaultMutableTreeNode(transTypeString);									
+				typeNodesMap.put(typeString, parent);
+				
+				// find insert pos
+				int pos = rootType.getChildCount();
+				for (int i=0; i < pos; i++) {
+					DefaultMutableTreeNode child = (DefaultMutableTreeNode) rootType.getChildAt(i);
+					if (transTypeString.compareTo(child.toString()) < 0) {
+						pos = i;
+						break;
+					}
+				}
+				
+				model.insertNodeInto(parent, rootType, pos);				
+			}
+		}
+		
+		return parent;
+	}
 	
 	/**
 	 * Gets the insert position for newGeo to insert it in alphabetical
@@ -590,6 +630,15 @@ public class AlgebraView extends JTree implements View {
 	public void clearView() {
 		nodeTable.clear();
 		
+		clearTree();
+		
+		model.reload();
+	}
+	
+	/**
+	 * remove all from the tree
+	 */
+	protected void clearTree() {
 		if(getTreeMode() == MODE_DEPENDENCY) {
 			indNode.removeAllChildren();
 			depNode.removeAllChildren();
@@ -598,9 +647,8 @@ public class AlgebraView extends JTree implements View {
 			rootType.removeAllChildren();
 			typeNodesMap.clear();
 		}
-		
-		model.reload();
 	}
+	
 	
 	final public void repaintView() {
 		repaint();

@@ -383,6 +383,17 @@ public interface EuclidianViewInterface {
 	public void repaint();
 	public void setPointCapturing(int mode);
 	
+	/**
+	 * 
+	 * @return string description of plane from the view was created
+	 */
+	public String getFromPlaneString();
+	
+	/**
+	 * 
+	 * @return string translated description of plane from the view was created
+	 */
+	public String getTranslatedFromPlaneString();
 
 	
 }

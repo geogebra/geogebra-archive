@@ -109,4 +109,15 @@ public class EuclidianViewForPlane extends EuclidianView {
 
 		return transform;
 	}
+	
+	public String getFromPlaneString(){
+		return ((GeoElement) plane).getLabel();
+	}
+
+	public String getTranslatedFromPlaneString(){
+		if (plane instanceof GeoPlaneND)
+			return app.getPlain("PlaneA",((GeoElement) plane).getLabel());
+		else
+			return app.getPlain("PlaneFromA",((GeoElement) plane).getLabel());
+	}
 }

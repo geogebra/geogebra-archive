@@ -551,14 +551,12 @@ public class ContextMenuGeoElement extends JPopupMenu {
 		EuclidianViewInterface oldView = geo.getViewForValueString();
 		EuclidianViewInterface newView = app.getActiveEuclidianView();
 		
+		if (newView==app.getEuclidianView2())
+			newView=app.getEuclidianView(); //graphics and graphics2 are treated the same
+		
 		if (oldView==newView)
 			return;
 
-		// if old and new views are both graphics/graphics2, return
-		if (((oldView==app.getEuclidianView()) && (newView==app.getEuclidianView2()))
-				||
-				((oldView==app.getEuclidianView2()) && (newView==app.getEuclidianView())))
-			return;
 
 		if (oldView==null)
 			if (newView==app.getEuclidianView() || newView==app.getEuclidianView2()){
@@ -570,7 +568,7 @@ public class ContextMenuGeoElement extends JPopupMenu {
 		
 		
 		
-		action = new AbstractAction(app.getPlain("SetValueStringRegardingA",app.getPlain(panel.getViewTitle()))) {
+		action = new AbstractAction(app.getPlain("ShowValueStringRegardingA",newView.getTranslatedFromPlaneString())) {
 			/**
 			 * 
 			 */
@@ -580,6 +578,9 @@ public class ContextMenuGeoElement extends JPopupMenu {
 				//TODO change that to chooser
 				geo.setViewForValueString(app.getActiveEuclidianView());
 				geo.update();
+				app.getGuiManager().getAlgebraView().remove(geo);
+				app.getGuiManager().getAlgebraView().add(geo);
+				
 			}
 		};
 		addAction(action);

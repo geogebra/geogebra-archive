@@ -5191,11 +5191,6 @@ public class Application implements KeyEventDispatcher {
 	}
 
 
-	//TODO when ggb v>=5 (merge with Application3D)
-	public EuclidianView getEuclidianViewForPlane(){
-		return null;
-	}
-
 		
 }
 

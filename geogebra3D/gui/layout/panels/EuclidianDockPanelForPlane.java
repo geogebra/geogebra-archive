@@ -10,6 +10,7 @@ import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.toolbar.Toolbar;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
+import geogebra3D.euclidianForPlane.EuclidianViewForPlane;
 
 /**
  * Dock panel for the primary euclidian view.
@@ -17,14 +18,15 @@ import geogebra3D.Application3D;
 public class EuclidianDockPanelForPlane extends EuclidianDockPanelAbstract {
 	private static final long serialVersionUID = 1L;
 	private Application app;
+	private EuclidianViewForPlane view;
 	
 	/**
 	 * @param app
 	 */
-	public EuclidianDockPanelForPlane(Application app) {
+	public EuclidianDockPanelForPlane(Application app, EuclidianViewForPlane view) {
 		super(
 			Application.VIEW_EUCLIDIAN_FOR_PLANE,	// view id 
-			"GraphicsViewForPlane", 				// view title
+			"GraphicsViewForPlaneA", 				// view title
 			null,// toolbar string
 			true,						// style bar?
 			-1,							// menu order
@@ -32,15 +34,21 @@ public class EuclidianDockPanelForPlane extends EuclidianDockPanelAbstract {
 		);
 		
 		this.app = app;
+		this.view = view;
 	}
+	
+	protected String getPlainTitle(){
+		return app.getPlain(getViewTitle(),view.getTranslatedFromPlaneString());
+	}
+
 
 
 
 	protected JComponent loadComponent() {
-		return ((Application3D)app).getEuclidianViewForPlane();
+		return view;
 	}
 	
 	protected JComponent loadStyleBar() {
-		return ((Application3D)app).getEuclidianViewForPlane().getStyleBar();
+		return view.getStyleBar();
 	}
 }
