@@ -869,6 +869,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 	}
 	
+	protected void createNewPointForModePoint(Hits hits){
+		// if mode==EuclidianView.MODE_POINT_ON_OBJECT, point can be in a region
+		createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_ON_OBJECT, true, true);
+	}
+	
+	protected void createNewPointForModeOther(Hits hits){
+		createNewPoint(hits, true, false, true, true);
+	}
+	
 	protected void switchModeForMousePressed(MouseEvent e){
 
 		Hits hits;
@@ -880,8 +889,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_POINT_ON_OBJECT:				
 			view.setHits(mouseLoc);
 			hits = view.getHits();
-			// if mode==EuclidianView.MODE_POINT_IN_REGION, point can be in a region
-			createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_ON_OBJECT, true, true); 
+			// if mode==EuclidianView.MODE_POINT_ON_OBJECT, point can be in a region
+			createNewPointForModePoint(hits); 
 			break;
 
 		case EuclidianView.MODE_SEGMENT:
@@ -907,7 +916,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			view.setHits(mouseLoc);
 			hits = view.getHits();
 			hits.removePolygons();
-			createNewPoint(hits, true, false, true, true);
+			createNewPointForModeOther(hits);
 			break;
 
 		case EuclidianView.MODE_RIGID_POLYGON:
@@ -1997,10 +2006,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// Michael Borcherds 2007-12-08 BEGIN moved up a few lines (bugfix: Tools eg Line Segment weren't working with grid on)
 		// grid capturing on: newly created point should be taken
-		if (hits.isEmpty() && POINT_CREATED) {			
-			hits = new Hits();
-			hits.add(getMovedGeoPoint());//hits.add(movedGeoPoint);				
-		}
+		//Application.debug("POINT_CREATED="+POINT_CREATED+"\nhits=\n"+hits+"\ngetMovedGeoPoint()="+getMovedGeoPoint());
+		if (POINT_CREATED) 			
+			hits=addPointCreatedForMouseReleased(hits);		
 		POINT_CREATED = false;		
 		//		 Michael Borcherds 2007-12-08 END	
 
@@ -2056,6 +2064,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		initShowMouseCoords();	
 		view.setShowAxesRatio(false);
 		kernel.notifyRepaint();					
+	}
+	
+	
+	protected Hits addPointCreatedForMouseReleased(Hits hits){
+		
+		if (hits.isEmpty()) {			
+			hits = new Hits();
+			hits.add(getMovedGeoPoint());			
+		}
+		
+		return hits;
 	}
 	
 	

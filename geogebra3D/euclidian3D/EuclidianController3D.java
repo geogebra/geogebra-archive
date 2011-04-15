@@ -520,7 +520,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 			
 		((GeoElement) ret).update();
-		//point.setEuclidianVisible(false);
 		
 		view3D.addToHits3D((GeoElement) ret);
 		view3D.updateCursor3D();
@@ -1258,6 +1257,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	///////////////////////////////////////////
 	// MOUSE PRESSED
 	
+	protected void createNewPointForModePoint(Hits hits){
+		createNewPoint(hits, true, true, true, true);
+	}
+	
+	protected void createNewPointForModeOther(Hits hits){
+		createNewPoint(hits, true, true, true, true);
+	}
+
+	
 	protected void switchModeForMousePressed(MouseEvent e){
 
 		Hits hits;
@@ -1330,6 +1338,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 		}
 
+	}
+	
+	protected Hits addPointCreatedForMouseReleased(Hits hits){
+		
+		hits.add(getMovedGeoPoint());	
+		return hits;
 	}
 	
 	
@@ -1703,6 +1717,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			*/
 		
 		Application.debug("TODO");
-	}		
+	}	
+	
+	
+	
+	
 	
 }
