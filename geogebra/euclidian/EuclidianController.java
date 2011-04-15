@@ -2202,11 +2202,22 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;	
 
 		case EuclidianView.MODE_FITLINE:
-			processSelectionRectangleForTransformations(hits, GeoPoint.class);									
-			processMode(hits, e);
-			view.setSelectionRectangle(null);	
-
-
+			for (int i=0; i < hits.size(); i++) {
+				GeoElement geo = (GeoElement) hits.get(i);
+				if (!(GeoPoint.class.isInstance(geo))) {
+					hits.remove(i);
+				}
+			}
+			// Fit line makes sense only for more than 2 points
+			if (hits.size() < 3) { 
+				hits.clear();
+			} else {
+				removeParentPoints(hits);				
+				selectedGeos.addAll(hits);
+				app.setSelectedGeos(hits);
+				processMode(hits, e);
+				view.setSelectionRectangle(null);
+			}
 			break;	
 
 		default:
