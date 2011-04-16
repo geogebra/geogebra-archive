@@ -9554,6 +9554,8 @@ class CmdExecute extends CommandProcessor {
 		arg = resArgs(c);
 		if (n > 11)
 			throw argNumErr(app, c.getName(), n);
+		if (arg[0].isGeoList() && ((GeoList) arg[0]).size()==0 || !arg[0].isDefined())
+			return new GeoElement[] {};
 		if ((!arg[0].isGeoList())
 				|| (!((GeoList) arg[0]).getGeoElementForPropertiesDialog()
 						.isGeoText()))
