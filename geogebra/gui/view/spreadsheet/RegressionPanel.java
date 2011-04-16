@@ -2,7 +2,6 @@ package geogebra.gui.view.spreadsheet;
 
 import geogebra.gui.util.GeoGebraIcon;
 import geogebra.gui.virtualkeyboard.MyTextField;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -11,34 +10,22 @@ import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
+import javax.swing.border.TitledBorder;
 
 public class RegressionPanel extends JPanel implements  ActionListener{
 
@@ -47,7 +34,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 	private StatDialog statDialog;
 
 	// regression panel objects
-	private JLabel lblRegression, lblRegEquation, lblEqn;
+	private JLabel lblRegEquation, lblEqn;
 	private JLabel lblTitleX, lblTitleY;
 	private MyTextField fldTitleX, fldTitleY;
 	private JComboBox cbRegression, cbPolyOrder;
@@ -56,8 +43,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 	private MyTextField fldInputX;
 	private JLabel lblOutputY;
 
-	private String[] regressionLabels, regCmd;
-	private String regEquation;
+	private String[] regressionLabels;
 	private MyTextField fldOutputY;
 	private boolean isIniting = true;
 	private JPanel predictionPanel;
@@ -75,7 +61,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 		isIniting = false;
 	}
 
-
+	private JPanel regressionPanel;
 	private JPanel createRegressionPanel(){
 
 		// components
@@ -99,7 +85,6 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 	//	fldTitleX.setColumns(15);
 	//	fldTitleY.setColumns(15);
 
-		lblRegression = new JLabel();
 		lblRegEquation = new JLabel();
 		lblEqn = new JLabel();
 
@@ -151,7 +136,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 		southPanel.add(predictionPanel, BorderLayout.CENTER);
 		southPanel.add(swapPanel, BorderLayout.WEST);
 		
-		JPanel regressionPanel = new JPanel(new BorderLayout());
+		regressionPanel = new JPanel(new BorderLayout());
 		regressionPanel.add(scroller,BorderLayout.CENTER);
 		regressionPanel.add(southPanel, BorderLayout.SOUTH);
 		regressionPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("RegressionModel")));
@@ -212,11 +197,24 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 	}
 
 
-	public void setLabels(){
-
+	/**
+	 * Sets the labels according to current locale 
+	 */
+	public void setLabels(){		
 		regressionLabels = new String[StatDialog.regressionTypes];
 		setRegressionLabels();
-		lblRegression.setText(app.getMenu("RegressionModel")+ ":");
+		
+		//we need to remove old labels from combobox and we don't want the listener to
+		//be operational since it will call unnecessary Construction updates
+		int j = cbRegression.getSelectedIndex(); 
+		ActionListener al = cbRegression.getActionListeners()[0];
+		cbRegression.removeActionListener(al);
+		cbRegression.removeAllItems();
+		for(int i=0;i<5;i++)
+			cbRegression.addItem(regressionLabels[i]);
+		cbRegression.setSelectedIndex(j);
+		cbRegression.addActionListener(al);		
+		((TitledBorder)regressionPanel.getBorder()).setTitle(app.getMenu("RegressionModel"));
 		lblEqn.setText(app.getMenu("Equation")+ ":");
 		lblTitleX.setText(app.getMenu("Column.X") + ": ");
 		lblTitleY.setText(app.getMenu("Column.Y") + ": ");
@@ -226,7 +224,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 		btnSwapXY.setFont(app.getPlainFont());
 		btnSwapXY.setText(swapString);
 		lblEvaluate.setText(app.getMenu("Evaluate")+ ": ");
-
+	
 	}
 
 
@@ -302,7 +300,7 @@ public class RegressionPanel extends JPanel implements  ActionListener{
 			doTextFieldActionPerformed((JTextField)source);
 		}	
 
-		else if(source == cbRegression){
+		else if(source == cbRegression){			
 			statDialog.setRegressionMode(cbRegression.getSelectedIndex());
 			statDialog.setRegressionGeo();
 			setRegressionEquationLabel();

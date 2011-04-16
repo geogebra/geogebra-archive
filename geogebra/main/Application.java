@@ -30,6 +30,7 @@ import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.inputbar.AlgebraInput;
 import geogebra.gui.inputbar.InputBarHelpPanel;
 import geogebra.gui.util.ImageSelection;
+import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.io.MyXMLio;
 import geogebra.io.layout.Perspective;
 import geogebra.kernel.AlgoElement;
@@ -1519,14 +1520,14 @@ public class Application implements KeyEventDispatcher {
 		if (!initing) {
 			setMoveMode();
 		}
-
+		
 		// load resource files
 		setLocale(locale);
 		
 		// update right angle style in euclidian view (different for German)
 		if (euclidianView != null)
 			euclidianView.updateRightAngleStyle(locale);
-		
+		((SpreadsheetView)getGuiManager().getSpreadsheetView()).restart();
 		// make sure digits are updated in all numbers
 		getKernel().updateConstruction();
 		setUnsaved();
