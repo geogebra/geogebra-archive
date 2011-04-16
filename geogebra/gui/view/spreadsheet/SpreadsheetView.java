@@ -501,7 +501,8 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 			oneVarStatDialog.setVisible(false);
 		if(twoVarStatDialog != null)
 			twoVarStatDialog.setVisible(false);
-
+		if(multiVarStatDialog != null)
+			multiVarStatDialog.setVisible(false);
 
 	}	
 

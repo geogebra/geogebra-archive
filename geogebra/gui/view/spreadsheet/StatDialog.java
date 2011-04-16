@@ -6,17 +6,14 @@ import geogebra.gui.util.PopupMenuButton;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.View;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -34,15 +31,12 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 
 public class StatDialog extends JDialog  implements ActionListener, View, Printable   {
@@ -686,6 +680,7 @@ public class StatDialog extends JDialog  implements ActionListener, View, Printa
 		btnOptions.setText(app.getMenu("Options"));
 
 		comboStatPanel.setLabels();
+		comboStatPanel2.setLabels();
 
 		dialogOptionsPanel.setLabels();
 

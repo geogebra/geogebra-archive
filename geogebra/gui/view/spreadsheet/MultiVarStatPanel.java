@@ -11,19 +11,14 @@ import java.awt.Component;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
