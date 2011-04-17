@@ -2292,7 +2292,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 			halfAxes[0] = Math.sqrt(mu[0]);
 			halfAxes[1] = Math.sqrt(mu[1]);
 			linearEccentricity = Math.sqrt(mu[0] - mu[1]);
-			eccentricity = linearEccentricity / mu[0];
+			eccentricity = linearEccentricity / Math.sqrt(mu[0]);
 
 			/*
 			Application.debug("Ellipse");            
@@ -2323,7 +2323,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		halfAxes[0] = Math.sqrt(mu[0]);
 		halfAxes[1] = Math.sqrt(mu[1]);
 		linearEccentricity = Math.sqrt(mu[0] + mu[1]);
-		eccentricity = linearEccentricity / mu[0];
+		eccentricity = linearEccentricity / Math.sqrt(mu[0]);
 
 		/*
 		Application.debug("Hyperbola");            
