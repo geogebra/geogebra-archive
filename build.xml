@@ -421,7 +421,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 					edu/jas/**,
 					edu/mas/**,
 					org/apache/log4j/**,
-					org/mathpiper/**"
+					org/mathpiper/**,
+					default.img"
 			excludes="**/*.java" 
 		/>
 	</target>
