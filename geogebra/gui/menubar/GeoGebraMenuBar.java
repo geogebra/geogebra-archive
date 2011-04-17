@@ -212,7 +212,15 @@ public class GeoGebraMenuBar extends JMenuBar {
 		vsb.append(app.getPlain("ApplicationName"));
 		vsb.append(" ");
 		vsb.append(GeoGebra.VERSION_STRING);
-		vsb.append((Kernel.DEFAULT_CAS == Application.CAS_MAXIMA) ? 'm' : "" );
+		switch (Kernel.DEFAULT_CAS) {
+		case Application.CAS_MAXIMA:
+			vsb.append('m');
+			break;
+		case Application.CAS_MPREDUCE:
+			vsb.append('r');
+			break;
+			// default: do nothing
+		}
 		if (app.getApplet() != null) vsb.append(" Applet");
 		else if (app.isWebstart()) vsb.append(" Webstart");
 		

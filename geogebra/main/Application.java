@@ -532,6 +532,8 @@ public class Application implements KeyEventDispatcher {
 			pluginmanager = getPluginManager();
 		
 		isSaved = true;
+		
+		CASVersionString = getPlain("CASInitializing");
 	}
 		
 	/**
@@ -5105,7 +5107,7 @@ public class Application implements KeyEventDispatcher {
 		return midiSoundManager;
 	}
 	
-	private static String CASVersionString = "MathPiper"; // default
+	private static String CASVersionString = "";
 
 	public static void setCASVersionString(String string) {
 		CASVersionString = string;
