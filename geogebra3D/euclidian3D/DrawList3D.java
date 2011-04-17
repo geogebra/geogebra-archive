@@ -17,6 +17,7 @@ public class DrawList3D extends Drawable3D {
 	private GeoList geoList;	
 	private DrawList3DArray drawables;
 	private boolean isVisible;
+	private EuclidianView3D view3D;
 
 	/**
 	 * common constructor
@@ -26,6 +27,7 @@ public class DrawList3D extends Drawable3D {
 	public DrawList3D(EuclidianView3D view3D, GeoList geo) {
 		super(view3D, geo);
 		this.geoList = geo;
+		this.view3D = view3D;
 		
 		drawables = new DrawList3DArray(view3D);
 		
@@ -166,6 +168,7 @@ public class DrawList3D extends Drawable3D {
     	
     	// remove end of list
     	for (int i=drawables.size()-1; i >= drawablePos; i--) {      		 
+    		view3D.remove(drawables.get(i).getGeoElement());
     		DrawableND d = drawables.remove(i);
     		if (d.createdByDrawList()) //sets the drawable to not visible
     			d.setCreatedByDrawListVisible(false);
