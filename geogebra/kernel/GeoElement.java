@@ -1227,8 +1227,10 @@ public abstract class GeoElement
 			hatchingDistance = geo.hatchingDistance;		
 			imageFileName = geo.imageFileName;
 			alphaValue = geo.alphaValue;
+		}else if(geo.alphaValue<0){
+			alphaValue = geo.alphaValue;
 		}
-		else{
+		else{			
 			fillColor = geo.objColor;			
 			this.setAlphaValue(alphaValue);
 		}
