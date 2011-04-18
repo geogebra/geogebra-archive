@@ -1249,6 +1249,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	//////////////////////////////////////////////////////
 
 	private GeoNumeric changeableCoordNumber = null;
+	private GeoElement changeableCoordDirector = null;
 	
 	/**
 	 * sets the parent number for changing coords
@@ -1258,26 +1259,15 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		changeableCoordNumber=geo;
 	}
 	
+	/**
+	 * sets the parent director for changing coords
+	 * @param geo
+	 */
+	final public void setCoordParentDirector(GeoElement geo) {
+		changeableCoordDirector=geo;
+	}	
+	
 	final private GeoNumeric getCoordParentNumber() {
-		
-		/*
-		if (changeableCoordNumber==null){
-			AlgoElement parentAlgo = getParentAlgorithm();
-			if (parentAlgo instanceof AlgoPolygon){
-				GeoElement polyhedron = ((AlgoPolygon) parentAlgo).getPolyhedron();				
-				if (polyhedron!=null){
-					parentAlgo = polyhedron.getParentAlgorithm();
-					if (parentAlgo instanceof AlgoPolyhedron){
-						NumberValue height = ((AlgoPolyhedron) parentAlgo).getHeight();
-						if (height != null)
-							if (height instanceof GeoNumeric)
-								changeableCoordNumber = (GeoNumeric) height;
-					}
-				}
-			}
-		}
-		*/
-		
 		return changeableCoordNumber;
 	}
 	
@@ -1291,7 +1281,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 
 	public void recordChangeableCoordParentNumbers() {
 		startValue = getCoordParentNumber().getValue();
-		direction = getMainDirection().normalized();
+		//direction = getMainDirection().normalized();
+		this.direction=changeableCoordDirector.getMainDirection();
 	}
 	
 	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition,  Coords viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
@@ -1308,7 +1299,6 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			return true;
 		}else{ //comes from mouse
 			Coords direction2=direction.sub(viewDirection.mul(viewDirection.dotproduct(direction)));
-			//Application.debug("direction2\n"+direction2+"trans=\n"+rwTransVec+"viewDirection=\n"+viewDirection);
 			double ld = direction2.dotproduct(direction2);
 			if (Kernel.isZero(ld))
 				return false;			
