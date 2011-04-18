@@ -866,7 +866,7 @@ Transformable{
 
 		public float getAlphaValue() {
 			
-			if (super.getAlphaValue() == -1) {
+			if (alphaValue == -1) {
 				// no alphaValue set
 				// so we need to set it to that of the first element, if there is one
 				if (geoList != null && geoList.size() > 0) {
@@ -891,7 +891,7 @@ Transformable{
 				}
 				else
 				{
-					return 0.2f;
+					return 1.0f;
 				}
 			}
 			
