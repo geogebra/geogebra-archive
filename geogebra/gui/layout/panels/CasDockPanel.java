@@ -23,7 +23,7 @@ public class CasDockPanel extends DockPanel {
 			getDefaultToolbar(),	// toolbar string
 			false,					// style bar?
 			4,						// menu order
-			'D' // ctrl-shift-D
+			'K' // ctrl-shift-K
 		);
 		
 		this.app = app;
