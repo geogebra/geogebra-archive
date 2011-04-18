@@ -1635,7 +1635,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				// pg.drawString(str, x[nCol], y);
 				String str = data.getPlainTextAt(nRow, col);
 				pg.setColor(data.getColorAt(nRow, col));
-				yAdd = Drawable.drawIndexedString((Graphics2D) pg, str,
+				yAdd = Drawable.drawIndexedString(app, (Graphics2D) pg, str,
 						x[nCol], y).y;
 				if (yAdd > maxYadd)
 					maxYadd = yAdd;

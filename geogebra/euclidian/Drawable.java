@@ -176,7 +176,7 @@ public abstract class Drawable extends DrawableND {
 			// do the slower index drawing routine and check for indices
 			oldLabelDesc = labelDesc;
 					
-			Point p = drawIndexedString(g2, label, xLabel, yLabel);
+			Point p = drawIndexedString(view.getApplication(), g2, label, xLabel, yLabel);
 			labelHasIndex = p.y > 0;
 			labelRectangle.setBounds(xLabel, yLabel - fontSize, p.x, fontSize + p.y);			
 		}		
@@ -421,7 +421,7 @@ public abstract class Drawable extends DrawableND {
 					
 					// draw the string
 					g2.setFont(font); // JLaTeXMath changes g2's fontsize
-					xOffset += drawIndexedString(g2, lines[j], xLabel + xOffset, yLabel + height + yOffset + lineSpread).x;
+					xOffset += drawIndexedString(view.getApplication(), g2, lines[j], xLabel + xOffset, yLabel + height + yOffset + lineSpread).x;
 					
 					// add the height of this line if more lines follow
 					if(j + 1 < lines.length) {
@@ -708,12 +708,14 @@ public abstract class Drawable extends DrawableND {
 		}
 
 
-	final static Rectangle drawMultiLineText(String labelDesc, int xLabel, int yLabel, Graphics2D g2) {
+	final static Rectangle drawMultiLineText(Application app, String labelDesc, int xLabel, int yLabel, Graphics2D g2) {
 		int lines = 0;				
 		int fontSize = g2.getFont().getSize();
 		float lineSpread = fontSize * 1.5f;
 
 		Font font = g2.getFont();
+		font = app.getFontCanDisplay(labelDesc, false, font.getStyle(), font.getSize());				
+
 		FontRenderContext frc = g2.getFontRenderContext();
 		int xoffset = 0;
 
@@ -758,7 +760,7 @@ public abstract class Drawable extends DrawableND {
 		// no index in text
 		if (oldLabelDesc == labelDesc && !labelHasIndex) {	
 
-			labelRectangle.setBounds(drawMultiLineText(labelDesc, xLabel, yLabel, g2) );
+			labelRectangle.setBounds(drawMultiLineText(view.getApplication(), labelDesc, xLabel, yLabel, g2) );
 		} 
 		else { 			
 			int lines = 0;				
@@ -778,7 +780,7 @@ public abstract class Drawable extends DrawableND {
 			for (int i=0; i < length-1; i++) {
 				if (labelDesc.charAt(i) == '\n') {
 					//end of line reached: draw this line
-					Point p = drawIndexedString(g2, labelDesc.substring(lineBegin, i), xLabel, yLabel + lines * lineSpread);
+					Point p = drawIndexedString(view.getApplication(), g2, labelDesc.substring(lineBegin, i), xLabel, yLabel + lines * lineSpread);
 					if (p.x > xoffset) xoffset = p.x;
 					if (p.y > yoffset) yoffset = p.y;
 					lines++;
@@ -787,7 +789,7 @@ public abstract class Drawable extends DrawableND {
 			}
 					
 			float ypos = yLabel + lines * lineSpread;
-			Point p = drawIndexedString(g2, labelDesc.substring(lineBegin), xLabel, ypos);
+			Point p = drawIndexedString(view.getApplication(), g2, labelDesc.substring(lineBegin), xLabel, ypos);
 			if (p.x > xoffset) xoffset = p.x;
 			if (p.y > yoffset) yoffset = p.y;
 			labelHasIndex = yoffset > 0;			
@@ -804,8 +806,9 @@ public abstract class Drawable extends DrawableND {
 	 * @param str
 	 * @return additional pixel needed to draw str (x-offset, y-offset) 
 	 */
-	public static Point drawIndexedString(Graphics2D g2, String str, float xPos, float yPos) {
+	public static Point drawIndexedString(Application app, Graphics2D g2, String str, float xPos, float yPos) {
 		Font g2font = g2.getFont();
+		g2font = app.getFontCanDisplay(str, false, g2font.getStyle(), g2font.getSize());				
 		Font indexFont = getIndexFont(g2font);
 		Font font = g2font;
 		TextLayout layout;
