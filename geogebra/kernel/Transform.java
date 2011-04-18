@@ -156,12 +156,22 @@ public abstract class Transform {
 			transformedPoints[i].setVisualStyleForTransformations(oldPoints[i]);
 			cons.getKernel().notifyUpdate(transformedPoints[i]);
 		}
+		
+		GeoElement [] ret;
 
 		// build the polygon from the transformed points
 		if(oldPoly instanceof GeoPolygon)
-			return cons.getKernel().Polygon(polyLabel, transformedPoints);
+			ret = cons.getKernel().Polygon(polyLabel, transformedPoints);
 		else
-			return cons.getKernel().PolyLine(polyLabel, transformedPoints);
+			ret = cons.getKernel().PolyLine(polyLabel, transformedPoints);
+		
+		for (int i = 0; i < ret.length; i++) {
+			ret[i].setEuclidianVisible(((GeoElement)oldPoly)
+					.isSetEuclidianVisible());
+			ret[i].setVisualStyleForTransformations(((GeoElement)oldPoly));
+		}	
+		
+		return ret;
 	}
 	
 	
