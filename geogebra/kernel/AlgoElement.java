@@ -960,6 +960,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         // intersect for single intersection points
         if (!isPrintedInXML) return; 
         
+        // turn off eg Arabic digits
+        boolean oldDigitsSetting = kernel.internationalizeDigits;
+        kernel.internationalizeDigits = false;
+        
         // USE INTERNAL COMMAND NAMES IN EXPRESSION        
         boolean oldValue = kernel.isTranslateCommandName();
         kernel.setTranslateCommandName(false);                           
@@ -988,7 +992,10 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         	e.printStackTrace();
         }
         
-        kernel.setTranslateCommandName(oldValue);        
+        kernel.setTranslateCommandName(oldValue);      
+        
+        kernel.internationalizeDigits = oldDigitsSetting;
+
     }
 
     /**

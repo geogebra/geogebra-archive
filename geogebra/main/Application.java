@@ -1622,6 +1622,7 @@ public class Application implements KeyEventDispatcher {
 	private boolean rightToLeftDigits = false;
 
 	final public boolean isRightToLeftDigits() {
+		if (!kernel.internationalizeDigits) return false;
 		return rightToLeftDigits;
 	}
 
