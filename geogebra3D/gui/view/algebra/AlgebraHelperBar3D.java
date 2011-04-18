@@ -14,6 +14,7 @@ import geogebra.main.Application;
  *
  */
 public class AlgebraHelperBar3D extends AlgebraHelperBar {
+	
 
 	/**
 	 * 
