@@ -1347,7 +1347,7 @@ public class ProbabilityCalculator extends JDialog implements View, ActionListen
 			expr = "Sequence[k,k,0," + n + "]";
 			discreteValueList = (GeoList) createGeoFromString(expr);
 
-			expr = "Sequence[Binomial[" + n + "," + p + ",";
+			expr = "Sequence[BinomialDist[" + n + "," + p + ",";
 			expr += "Element[" + discreteValueList.getLabel() + ",k], false ";
 			expr +=	"],k,1," + n + "+ 1 ]";
 
