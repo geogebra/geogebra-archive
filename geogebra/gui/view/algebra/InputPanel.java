@@ -104,6 +104,11 @@ ActionListener, ListSelectionListener {
 
 	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon) {
 		this(initText, app, rows, columns, showSymbolPopupIcon, false, null, false);
+		if (textComponent instanceof AutoCompleteTextField) {
+			AutoCompleteTextField atf = (AutoCompleteTextField) textComponent;
+			atf.setAutoComplete(false);
+		}
+
 	}
 	
 	public InputPanel(String initText, Application app, int rows, int columns, boolean showSymbolPopupIcon, boolean dynamic) {
