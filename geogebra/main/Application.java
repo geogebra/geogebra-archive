@@ -1057,6 +1057,7 @@ public class Application implements KeyEventDispatcher {
 				GlobalKeyDispatcher.changeFontsAndGeoElements(this, 20, false);
 				setLabelingStyle(ConstructionDefaults.LABEL_VISIBLE_ALWAYS_OFF);
 				getEuclidianView().setCapturingThreshold(10);
+				kernel.setPrintDecimals(0); // rounding to 0dp
 				GeoAngle defaultAngle = (GeoAngle)getKernel().getConstruction().getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_ANGLE);
 				defaultAngle.setAllowReflexAngle(false);
 			}
