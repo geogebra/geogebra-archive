@@ -4204,7 +4204,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// tries to get a single intersection point for the given hits
 	// i.e. hits has to include two intersectable objects.
 	protected GeoPointND getSingleIntersectionPoint(Hits hits) {
-		if (hits.isEmpty() || hits.size() != 2)
+		if (hits.isEmpty() || hits.size() < 2)
 			return null;
 
 		GeoElement a = (GeoElement) hits.get(0);
