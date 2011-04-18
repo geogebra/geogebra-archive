@@ -59,6 +59,9 @@ public class Hits extends ArrayList {
 	
 	/** adding specifics GeoElements */
 	public void add(GeoElement geo){
+		
+		if (!geo.isSelectionAllowed()) return;
+		
 		if (geo.isGeoList()) {
 			listCount++;
 		} else if (geo.isGeoImage()) {
