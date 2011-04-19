@@ -114,6 +114,7 @@ public class TableSymbols {
 				{ "\u03C4" , app.getPlain("GreekCharacterA", "\u03C4" ) },  //lowercaseGreekTAU
 				//	{ "\u03C5" , app.getMenu("Symbol.GreekCharacter" ) + ":  " +   "\u03C5"},  //lowercaseGreekUPSILON
 				{ "\u03C6" , app.getPlain("GreekCharacterA", "\u03C6" ) },  //lowercaseGreekPHI (\varPhi the "loopy" phi)
+				{ "\u03D5" , app.getPlain("GreekCharacterA", "\u03D5" ) },  //lowercaseGreekPHI \phi the "straight" math phi
 				{ "\u03C7" , app.getPlain("GreekCharacterA", "\u03C7" ) },  //lowercaseGreekCHI
 				{ "\u03C8" , app.getPlain("GreekCharacterA", "\u03C8" ) },  //lowercaseGreekPSI
 				{ "\u03C9" , app.getPlain("GreekCharacterA", "\u03C9" ) },  //lowercaseGreekOMEGA
@@ -125,7 +126,7 @@ public class TableSymbols {
 				{ "\u03a0" , app.getPlain("GreekCharacterA", "\u03a0" ) },  //uppercaseGreekPI
 				{ "\u03a3" , app.getPlain("GreekCharacterA", "\u03a3" ) },  //uppercaseGreekSIGMA
 				{ "\u03a6" , app.getPlain("GreekCharacterA", "\u03a6" ) },  //uppercaseGreekPHI
-				{ "\u03a8" , app.getPlain("GreekCharacterA", "\u03a8" ) },  //uppercaseGreekPSI
+				//{ "\u03a8" , app.getPlain("GreekCharacterA", "\u03a8" ) },  //uppercaseGreekPSI
 				{ "\u03a9" , app.getPlain("GreekCharacterA", "\u03a9" ) },  //uppercaseGreekOMEGA
 				{ "\u221e" , app.getMenu("Symbol.Infinity" )},   
 				{ ExpressionNode.strVECTORPRODUCT , app.getMenu("Symbol.VectorProduct" )},   
