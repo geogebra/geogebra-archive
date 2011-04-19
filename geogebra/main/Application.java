@@ -5203,7 +5203,6 @@ public class Application implements KeyEventDispatcher {
 
 	public void setUseInternalCommandNames(boolean b) {
 		useInternalCommandNames = b;		
-		Application.debug("UseInternalCommandNames:"+isUsingInternalCommandNames());
 	}
 
 	
