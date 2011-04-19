@@ -3625,7 +3625,7 @@ public class MyXMLHandler implements DocHandler {
 		} catch (Exception e) {
 			animationSpeedList.clear();
 			e.printStackTrace();
-			throw new MyError(app, "processAnimationSpeedList: " + e.toString());
+			throw new MyError(app, "processMinMaxList: " + e.toString());
 		}
 		animationSpeedList.clear();
 	}
