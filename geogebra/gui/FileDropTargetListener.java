@@ -116,9 +116,13 @@ public class FileDropTargetListener implements DropTargetListener {
 				StringTokenizer st = new StringTokenizer (uris, "\r\n");   
 				while (st.hasMoreTokens ( )) {
 					String uriString = st.nextToken( );
-					URI uri = new URI(uriString);
-					System.out.println (uri);
-					al.add(new File(uri));
+					if(uriString.startsWith("http://")){
+						app.getGuiManager().loadURL(uriString);
+					}else{
+						URI uri = new URI(uriString);
+						System.out.println (uri);
+						al.add(new File(uri));
+					}
 				}
 			} else if (transferable.isDataFlavorSupported (urlFlavor)) {
 				Application.debug("url flavor not supported");
