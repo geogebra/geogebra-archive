@@ -409,7 +409,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 
 	// END
 	
-	int pointStyle = POINT_STYLE_DOT;
+	// static so that will be correct when EV2 created
+	static int pointStyle = POINT_STYLE_DOT;
 	
 	int booleanSize=13;
 

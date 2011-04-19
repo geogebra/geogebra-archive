@@ -150,6 +150,8 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			public void actionPerformed(ActionEvent ae) {
 				int style = Integer.parseInt(ae.getActionCommand());
 				app.getEuclidianView().setPointStyle(style);
+				if (app.getGuiManager().hasEuclidianView2())
+					app.getGuiManager().getEuclidianView2().setPointStyle(style);
 			}
 		};
 		addRadioButtonMenuItems(menuPointStyle, psal, strPointStyle,
