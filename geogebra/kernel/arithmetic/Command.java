@@ -50,8 +50,14 @@ implements ExpressionValue {
     public Command(Kernel kernel, String name, boolean translateName) {    
         this.kernel = kernel;
         app = kernel.getApplication();
-            
-        if (translateName) {           
+        
+        /* need to check app.isUsingInternalCommandNames() due to clash with
+        * BinomialDist=Binomial
+        * Binomial=BinomialCoefficient
+        * Should also allow other languages to use English names for different commands
+        */
+        
+        if (translateName && !app.isUsingInternalCommandNames()) {           
             //  translate command name to internal name
             this.name = app.translateCommand(name);           
         } else {

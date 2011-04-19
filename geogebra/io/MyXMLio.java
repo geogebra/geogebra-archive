@@ -297,6 +297,9 @@ public class MyXMLio {
 	private void doParseXML(Reader ir, boolean clearConstruction,
 			boolean isGGTFile) throws Exception {
 		boolean oldVal = kernel.isNotifyViewsActive();
+		boolean oldVal2 = app.isUsingInternalCommandNames();
+		app.setUseInternalCommandNames(true);
+		
 		if (!isGGTFile) {
 			kernel.setNotifyViewsActive(false);
 		}
@@ -315,6 +318,7 @@ public class MyXMLio {
 		} catch (Exception e) {
 			throw e;
 		} finally {
+			app.setUseInternalCommandNames(oldVal2);
 			if (!isGGTFile) {
 				kernel.updateConstruction();
 				kernel.setNotifyViewsActive(oldVal);				

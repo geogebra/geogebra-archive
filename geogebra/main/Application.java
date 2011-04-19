@@ -5185,8 +5185,27 @@ public class Application implements KeyEventDispatcher {
 		// no real latex string
 		return false;
 	}
-
 	
+    /* useInternalCommandNames is true during file loading.
+     * 
+     * need to have useInternalCommandNames due to clash with
+     * BinomialDist=Binomial
+     * Binomial=BinomialCoefficient
+     * Should also allow other languages to use English names for different commands
+     */
+
+	private boolean useInternalCommandNames = false;
+
+	public boolean isUsingInternalCommandNames() {
+		return useInternalCommandNames;
+	}
+
+
+	public void setUseInternalCommandNames(boolean b) {
+		useInternalCommandNames = b;		
+		Application.debug("UseInternalCommandNames:"+isUsingInternalCommandNames());
+	}
+
 	
 	
 
