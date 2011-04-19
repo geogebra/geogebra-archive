@@ -89,7 +89,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			setVisualStyle(ge);
 			setAlphaValue(ge.getAlphaValue());
 		//TODO: Remove following code for 5.0 -- it's there to make sure no functions of y are created	
-		}else if("y".equals(fun.getVarString(0))){
+		}else if("y".equals(fun.getVarString(0)) && !"y".equals(toString())){
 			FunctionVariable fv = new FunctionVariable(kernel,"x");
 			fun.getExpression().replace(fun.getFunctionVariables()[0], fv);
 			fun.getFunctionVariables()[0]=fv;
