@@ -5719,16 +5719,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// we got the point
 		if (selPoints() == 1) {
 			// get length of segment
-			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(getKernel().getModeText(mode)),
-					app.getPlain("Length"), null);		
+			app.getGuiManager().showNumberInputDialogSegmentFixed(app.getMenu(getKernel().getModeText(mode)),
+					getSelectedPoints()[0]);
 
-			if (num == null) {
-				view.resetMode();
-				return false;
-			}
-
-			GeoPoint[] points = getSelectedPoints();		
-			kernel.Segment(null, points[0], num);
 			return true;
 		}
 		return false;
@@ -5926,31 +5919,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// we got the center point
 		if (selPoints() == 1) {	
-			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(getKernel().getModeText(mode)),
-					app.getPlain("Radius"), null);
-
-			if (num == null) {
-				view.resetMode();
-				return false;
-			}
-
-			/*
-			GeoPoint[] points = getSelectedPoints();	
-
-			kernel.Circle(null, points[0], num);
-			*/
-			
-			circleOrSphere(num);
+			app.getGuiManager().showNumberInputDialogCirclePointRadius(app.getMenu(getKernel().getModeText(mode)),
+					getSelectedPoints()[0]);
 			return true;
 		}
 		return false;
 	}	
-	
-	protected void circleOrSphere(NumberValue num){
-		GeoPoint[] points = getSelectedPoints();	
-
-		kernel.Circle(null, points[0], num);
-	}
 
 	// get point and vector
 	final protected boolean vectorFromPoint(Hits hits) {

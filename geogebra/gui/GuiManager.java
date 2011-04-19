@@ -2482,6 +2482,22 @@ public class GuiManager {
 
 	}
 
+	public void showNumberInputDialogCirclePointRadius(String title, GeoPoint geoPoint1) {
+
+		NumberInputHandler handler = new NumberInputHandler();
+		InputDialog id = new InputDialogCirclePointRadius(app, title, handler, geoPoint1, kernel);
+		id.setVisible(true);
+
+	}
+
+	public void showNumberInputDialogSegmentFixed(String title, GeoPoint geoPoint1) {
+
+		NumberInputHandler handler = new NumberInputHandler();
+		InputDialog id = new InputDialogSegmentFixed(app, title, handler, geoPoint1, kernel);
+		id.setVisible(true);
+
+	}
+
 	/**
 	 * Shows a modal dialog to enter an angle or angle variable name.
 	 * 
