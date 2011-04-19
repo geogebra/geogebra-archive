@@ -2090,7 +2090,16 @@ public class GuiManager {
 				// try ggb
 				if (success == false) 
 					success = loadGgbFromHTML(url.openStream(), urlString);
-				
+				//maybe some address like download.php?file=1234, e.g. the forum
+				if (success == false){
+					try {
+						URL urlg = new URL(urlString);
+						isMacroFile = urlString.contains(".ggt");
+						success = app.loadXML(urlg, isMacroFile);
+					} catch (IOException e) {
+						//success = false;
+					}
+				}
 			} catch (IOException e) {
 				//success = false;
 			}
