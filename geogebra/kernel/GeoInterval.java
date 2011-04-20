@@ -79,15 +79,11 @@ public class GeoInterval extends GeoFunction {
 		return toString(false);
 	}
 
-	double rightBound = Double.NaN;
-	double leftBound = Double.NaN;
+	private double rightBound = Double.NaN;
+	private double leftBound = Double.NaN;
 
-	String rightStr = "", leftStr = "";
-	// directions of inequalities, need one + and one - for an interval
-	int leftDir = 0;
-	int rightDir = 0;
-	char rightInequality = ' ';
-	char leftInequality = ' ';
+	private char rightInequality = ' ';
+	private char leftInequality = ' ';
 
 
 	public String toString(boolean symbolic) {		
@@ -106,10 +102,10 @@ public class GeoInterval extends GeoFunction {
 			if (left.isExpressionNode() && right.isExpressionNode()) {
 
 				updateBoundaries();
-
+				//we cannot use leftstr / rightstr here because it may use different STRING_TYPE
 				if (!Double.isNaN(rightBound) && !Double.isNaN(leftBound) && leftBound <= rightBound) {
 					sbToString.setLength(0);
-					sbToString.append(symbolic ? leftStr : kernel.format(leftBound));
+					sbToString.append(symbolic ? left : kernel.format(leftBound));
 					sbToString.append(' ');
 					sbToString.append(leftInequality);
 					sbToString.append(' ');
@@ -117,7 +113,7 @@ public class GeoInterval extends GeoFunction {
 					sbToString.append(' ');
 					sbToString.append(rightInequality);
 					sbToString.append(' ');
-					sbToString.append(symbolic ? rightStr : kernel.format(rightBound));
+					sbToString.append(symbolic ? right : kernel.format(rightBound));
 					return sbToString.toString();
 					//return kernel.format(leftBound) +leftInequality+" x "+rightInequality+kernel.format(rightBound);
 				}
@@ -167,63 +163,55 @@ public class GeoInterval extends GeoFunction {
 
 			if ((opLeft == en.LESS || opLeft == en.LESS_EQUAL)) {
 				if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
-					leftDir = -1;
 					rightInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
 					rightBound = ((NumberValue)leftRight.evaluate()).getDouble();
-					rightStr = leftRight.toLaTeXString(true);
+					leftRight.toLaTeXString(true);
 				}
 				else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
-					leftDir = +1;
 					leftInequality = opLeft == en.LESS ? '<' : Unicode.LESS_EQUAL;
 					Application.debug(leftLeft.getClass());
 					leftBound = ((NumberValue)leftLeft.evaluate()).getDouble();
-					leftStr = leftLeft.toLaTeXString(true);
+					leftLeft.toLaTeXString(true);
 				}
 
 			} else
 				if ((opLeft == en.GREATER || opLeft == en.GREATER_EQUAL)) {
 					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
-						leftDir = +1;
 						leftInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
 						leftBound = ((NumberValue)leftRight.evaluate()).getDouble();
-						leftStr = leftRight.toLaTeXString(true);
+						leftRight.toLaTeXString(true);
 					}
 					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
-						leftDir = -1;
 						rightInequality = opLeft == en.GREATER ? '<' : Unicode.LESS_EQUAL;
 						rightBound = ((NumberValue)leftLeft.evaluate()).getDouble();
-						rightStr = leftLeft.toLaTeXString(true);
+						leftLeft.toLaTeXString(true);
 					}
 
 				}
 
 			if ((opRight == en.LESS || opRight == en.LESS_EQUAL)) {
 				if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
-					rightDir = -1;
 					rightInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
 					rightBound = ((NumberValue)rightRight.evaluate()).getDouble();
-					rightStr = rightRight.toLaTeXString(true);
+					rightRight.toLaTeXString(true);
 				}
 				else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
-					rightDir = +1;
 					leftInequality = opRight == en.LESS ? '<' : Unicode.LESS_EQUAL;
 					leftBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-					leftStr = rightLeft.toLaTeXString(true);
+					rightLeft.toLaTeXString(true);
 				}
 
 			} else
 				if ((opRight == en.GREATER || opRight == en.GREATER_EQUAL)) {
 					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
-						rightDir = +1;
 						leftInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
 						leftBound = ((NumberValue)rightRight.evaluate()).getDouble();
-						leftStr = rightRight.toLaTeXString(true);
+						rightRight.toLaTeXString(true);
 					}
 					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
-						rightDir = -1;
 						rightInequality = opRight == en.GREATER ? '<' : Unicode.LESS_EQUAL;
 						rightBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-						rightStr = rightLeft.toLaTeXString(true);
+						rightLeft.toLaTeXString(true);
 					}
 
 				}
