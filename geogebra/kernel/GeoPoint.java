@@ -501,10 +501,13 @@ GeoPointND, Animatable, Transformable  {
 		return isDefined;        
 	}     
 	
+    public void setUndefined() {     
+    	isDefined = false;
+    }       
+
 	final public boolean isFixable() {
 		return path != null || super.isFixable();
-	}		
-    
+	}		    
 	
     public void setCoords2D(double x, double y, double z){
     	this.x = x;
