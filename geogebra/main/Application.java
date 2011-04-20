@@ -1048,13 +1048,16 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		if(args.containsArg("showAxes")) {
-			boolean showAxes = args.getBooleanValue("showAxes", true);			
+			boolean showAxes = args.getBooleanValue("showAxes", true);	
+			this.showAxes[0]=showAxes;
+			this.showAxes[1]=showAxes;
 			this.getEuclidianView().setShowAxes(showAxes, true);
 			this.getEuclidianView2().setShowAxes(showAxes, true);			
 		}
 		
 		if(args.containsArg("showGrid")) {
 			boolean showGrid = args.getBooleanValue("showGrid", false);
+			this.showGrid=showGrid;
 			this.getEuclidianView().showGrid(showGrid);
 			this.getEuclidianView2().showGrid(showGrid);
 		}
@@ -1076,6 +1079,8 @@ public class Application implements KeyEventDispatcher {
 		boolean antiAliasing = args.getBooleanValue("antiAliasing", true);
 		if(!antiAliasing) {
 			this.antialiasing = false;
+			this.getEuclidianView().setAntialiasing(antiAliasing);
+			this.getEuclidianView2().setAntialiasing(antiAliasing);
 		}
 	}
 	
