@@ -336,12 +336,17 @@ KeyListener, ActionListener{
 		btnRemoveColumn = new JButton();
 		btnRemoveColumn.addActionListener(this);
 
+		makeBtnAddColumn();
+
+	}
+
+
+	private void makeBtnAddColumn() {
 		columnNames = new String[4];
 		columnNames[COL_DERIVATIVE] =	app.getPlain("fncInspector.Derivative");
 		columnNames[COL_DERIVATIVE2] =	app.getPlain("fncInspector.Derivative2");
 		columnNames[COL_CURVATURE] =	app.getPlain("fncInspector.Curvature");
 		columnNames[COL_DIFFERENCE] =	app.getPlain("fncInspector.Difference");
-
 		btnAddColumn = new PopupMenuButton(app, columnNames, -1, 1, 
 				new Dimension(0, 18), SelectionTable.MODE_TEXT);
 		btnAddColumn.setKeepVisible(false);
@@ -350,6 +355,7 @@ KeyListener, ActionListener{
 		btnAddColumn.setText("\u271A");
 		btnAddColumn.addActionListener(this);
 	}
+
 
 
 	public void setLabels() {
@@ -374,8 +380,13 @@ KeyListener, ActionListener{
 		btnAddColumn.setToolTipText(app.getPlainTooltip("fncInspector.addColumn"));
 		btnRemoveColumn.setToolTipText(app.getPlainTooltip("fncInspector.removeColumn"));
 		fldStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));
-		lblStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));
-
+		lblStep.setToolTipText(app.getPlainTooltip("fncInspector.step"));		
+		lblGeoName.setText(getTitleString());
+		Container c = btnAddColumn.getParent();
+		c.removeAll();
+		makeBtnAddColumn();		
+		c.add(btnAddColumn);
+		c.add(btnRemoveColumn);
 	}
 
 
