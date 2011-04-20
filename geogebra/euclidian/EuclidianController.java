@@ -5537,7 +5537,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						}
 					}
 				}
-				return (GeoElement[])ret.toArray();
+				GeoElement[] retex = {};
+				return ret.toArray(retex);
 			}
 		}
 		return null;
@@ -5641,7 +5642,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						}
 					}
 				}
-				return (GeoElement[])ret.toArray();
+				GeoElement[] retex = {};
+				return ret.toArray(retex);
 			}
 		}
 		return null;
@@ -5804,7 +5806,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 							ret.addAll(Arrays.asList(kernel.Translate(null,   geos[i], vec)));
 					}
 				}
-				return (GeoElement[])ret.toArray();
+				GeoElement[] retex = {};
+				return ret.toArray(retex);
 			}
 		}
 		return null;
@@ -5867,7 +5870,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						}
 					}
 				}
-				return (GeoElement[])ret.toArray();
+				GeoElement[] retex = {};
+				return ret.toArray(retex);
 			}
 			
 		}
