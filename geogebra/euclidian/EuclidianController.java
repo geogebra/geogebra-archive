@@ -2690,11 +2690,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_DILATE_FROM_POINT:
-			changedKernel = dilateFromPoint(hits.getTopHits());
+			ret = dilateFromPoint(hits.getTopHits());
 			break;
 
 		case EuclidianView.MODE_FITLINE:
-			changedKernel = fitLine(hits);
+			ret = fitLine(hits);
 			break;
 
 		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
@@ -2702,11 +2702,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;				
 
 		case EuclidianView.MODE_ANGLE:
-			changedKernel = angle(hits.getTopHits());
+			ret = angle(hits.getTopHits());
 			break;
 
 		case EuclidianView.MODE_VECTOR_FROM_POINT:
-			changedKernel = vectorFromPoint(hits);
+			ret = vectorFromPoint(hits);
 			break;
 
 		case EuclidianView.MODE_DISTANCE:
@@ -4766,9 +4766,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// get 2 lines, 2 vectors or 3 points
-	final protected boolean angle(Hits hits) {
+	final protected GeoElement[] angle(Hits hits) {
 		if (hits.isEmpty())
-			return false;				
+			return null;
 
 		int count = 0;
 		if (selPoints() == 0) {
@@ -4812,7 +4812,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				angle.setLabelMode(GeoElement.LABEL_VALUE);
 			angle.setLabelVisible(true);
 			angle.updateRepaint();
-			return true;
+			GeoElement[] ret = { angle };
+			return ret;
 		} 
 		else if (angles != null) {
 			for (int i=0; i < angles.length; i++) {
@@ -4824,9 +4825,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				angles[i].setLabelVisible(true);
 				angles[i].updateRepaint();
 			}
-			return true;
+			return angles;
 		} else
-			return false;
+			return null;
 	}
 
 	// build angle between two lines
@@ -5880,9 +5881,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}		
 
 	// get dilateable object, point and number
-	final protected boolean dilateFromPoint(Hits hits) {
+	final protected GeoElement[] dilateFromPoint(Hits hits) {
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		// dilateable
 		int count = 0;
@@ -5907,30 +5908,30 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					app.getPlain("Numeric"), null);			
 			if (num == null) {
 				view.resetMode();
-				return false;
+				return null;
 			}
 
 			if (selPolygons() == 1) {
 				GeoPolygon[] polys = getSelectedPolygons();
 				GeoPoint[] points = getSelectedPoints();
-				kernel.Dilate(null,  polys[0], num, points[0]);
-				return true;
+				return kernel.Dilate(null,  polys[0], num, points[0]);
 			} 
 			else if (selGeos() > 0) {					
 				// mirror all selected geos
 				GeoElement [] geos = getSelectedGeos();
-				GeoPoint point = getSelectedPoints()[0];					
+				GeoPoint point = getSelectedPoints()[0];
+				ArrayList<GeoElement> ret = new ArrayList<GeoElement>();
 				for (int i=0; i < geos.length; i++) {				
 					if (geos[i] != point) {
 						if (geos[i] instanceof Dilateable || geos[i].isGeoPolygon())
-							kernel.Dilate(null,  geos[i], num, point);
-						
+							ret.addAll(Arrays.asList(kernel.Dilate(null,  geos[i], num, point)));
 					}
-				}		
-				return true;
+				}
+				GeoElement[] retex = {};
+				return ret.toArray(retex);
 			}		
 		}
-		return false;
+		return null;
 	}
 
 
@@ -5955,18 +5956,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 
-	final protected boolean fitLine(Hits hits) {
+	final protected GeoElement[] fitLine(Hits hits) {
 
 		GeoList list;
 
 		addSelectedList(hits,1,false);
 
+		GeoElement[] ret = { null };
 		if (selLists() > 0)
 		{
 			list = getSelectedLists()[0];
 			if (list != null) {
-				kernel.FitLineY(null, list);
-				return true;   
+				ret[0] = kernel.FitLineY(null, list);
+				return ret;   
 			}
 		}
 		else
@@ -5978,12 +5980,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoPoint[] points = getSelectedPoints();
 				list = geogebra.kernel.commands.CommandProcessor.wrapInList(kernel,points, points.length, GeoElement.GEO_CLASS_POINT);
 				if (list != null) {
-					kernel.FitLineY(null, list);
-					return true;             	     	 
+					ret[0] = kernel.FitLineY(null, list);
+					return ret;             	     	 
 				} 
 			}
 		}
-		return false;
+		return null;
 	}
 
 
@@ -6156,9 +6158,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}	
 
 	// get point and vector
-	final protected boolean vectorFromPoint(Hits hits) {
+	final protected GeoElement[] vectorFromPoint(Hits hits) {
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		// point	
 		int count = addSelectedPoint(hits, 1, false);
@@ -6172,10 +6174,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			GeoVector[] vecs = getSelectedVectors();			
 			GeoPoint[] points = getSelectedPoints();
 			GeoPoint endPoint = (GeoPoint) kernel.Translate(null, points[0], vecs[0])[0];
-			kernel.Vector(null, points[0], endPoint);
-			return true;
+			GeoElement[] ret = { null };
+			ret[0] = kernel.Vector(null, points[0], endPoint);
+			return ret;
 		}
-		return false;
+		return null;
 	}
 
 	/**
