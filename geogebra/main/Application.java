@@ -959,16 +959,17 @@ public class Application implements KeyEventDispatcher {
 	/**
 	 * Handles command line options (like -language).
 	 */
-	private void handleOptionArgs(CommandLineArguments args) {
-		
+	private void handleOptionArgs(CommandLineArguments args) {		
+		//args.containsArg("help");
 		if (args == null) return;
 		
-		if(args.getStringValue("help").length() > 0) {
+		if(args.containsArg("help")) {
 			// help message
 			System.out
 					.println("Usage: java -jar geogebra.jar [OPTION] [FILE]\n"
 							+ "Start GeoGebra with the specified OPTIONs and open the given FILE.\n"
 							+ "  --help\t\tprint this message\n"
+							+ "  --v\t\tprint version\n"
 							+ "  --language=LANGUAGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n"
 							+ "  --showAlgebraInput=BOOLEAN\tshow/hide algebra input field\n"
 							+ "  --showAlgebraInputTop=BOOLEAN\tshow algebra input at top/bottom\n"
@@ -983,6 +984,14 @@ public class Application implements KeyEventDispatcher {
 							+ "  --CAS=[MATHPIPER|MAXIMA|MPREDUCE]\tselect which CAS to use, default MathPiper\n"
 							+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
 							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
+			System.exit(0);
+		}
+		if(args.containsArg("v")) {
+			// help message			
+			System.out
+					.println("GeoGebra version: "+GeoGebra.VERSION_STRING
+							+"\nBuild date: "+GeoGebra.BUILD_DATE							
+							);
 			System.exit(0);
 		}
 		
@@ -1039,14 +1048,15 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		if(args.containsArg("showAxes")) {
-			boolean showAxes = args.getBooleanValue("showAxes", true);
-			this.showAxes[0] = showAxes;
-			this.showAxes[1] = showAxes;
+			boolean showAxes = args.getBooleanValue("showAxes", true);			
+			this.getEuclidianView().setShowAxes(showAxes, true);
+			this.getEuclidianView2().setShowAxes(showAxes, true);			
 		}
 		
 		if(args.containsArg("showGrid")) {
 			boolean showGrid = args.getBooleanValue("showGrid", false);
-			this.showGrid = showGrid;
+			this.getEuclidianView().showGrid(showGrid);
+			this.getEuclidianView2().showGrid(showGrid);
 		}
 		
 		if(args.containsArg("primary")) {
