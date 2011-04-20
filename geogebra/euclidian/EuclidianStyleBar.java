@@ -184,7 +184,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				}
 			}
 			if(hasGeosInThisView) 
-				geos = ev.getApplication().getSelectedGeos();;
+				geos = ev.getApplication().getSelectedGeos();
 
 		}
 
@@ -199,12 +199,24 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				oldDefaultMode = null;
 			}
 			geos.add(cons.getConstructionDefaults().getDefaultGeo(defaultGeoMap.get(mode)));
+			
 			defaultGeos = geos;
+
 			if(modeChanged){
 				oldDefaultGeo = defaultGeos.get(0);  
 				oldDefaultMode = defaultGeoMap.get(mode);
 			}
+
+			// As currently the application can only have selected geos
+			// of this type (the default geo) in this mode, we don't
+			// need to add the selected geos here to geos
+			// which might have been necessary because in processSource
+			// we modify the selected geos also now,
+			// not only the default geos
+			//geos.addAll(ev.getApplication().getSelectedGeos());
 		}
+		// else: no options in stylebar, although there may be selected
+		// elements (for transformations)
 		
 		// update the buttons
 		updateTableText(geos.toArray());
@@ -1240,12 +1252,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	*/
 		
 		needUndo = false;
-		
-		ArrayList<GeoElement> targetGeos = defaultGeos;
-		if(mode == EuclidianConstants.MODE_MOVE)
-			targetGeos = app.getSelectedGeos();
-		
-		
+
+
+		ArrayList<GeoElement> targetGeos = app.getSelectedGeos();
+		if(mode != EuclidianConstants.MODE_MOVE)
+			targetGeos.addAll(defaultGeos);
+
 		
 		processSource(source,targetGeos);
 		
