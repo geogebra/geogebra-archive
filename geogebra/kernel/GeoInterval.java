@@ -107,7 +107,7 @@ public class GeoInterval extends GeoFunction {
 
 	/**
 	 * Returns string description of the interval
-	 * @param symbolic ignored now (FIXME)
+	 * @param symbolic true for symbolic, false for numeric
 	 * @return string description of the interval
 	 */
 	public String toString(boolean symbolic) {		
