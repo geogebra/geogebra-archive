@@ -303,7 +303,16 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		defaultGeoMap.put(EuclidianConstants.MODE_SLOPE, ConstructionDefaults.DEFAULT_POLYGON) ;
 		
 		defaultGeoMap.put(EuclidianConstants.MODE_MIRROR_AT_LINE, ConstructionDefaults.DEFAULT_NONE) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_MIRROR_AT_CIRCLE, ConstructionDefaults.DEFAULT_NONE) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_MIRROR_AT_POINT, ConstructionDefaults.DEFAULT_NONE) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_DILATE_FROM_POINT, ConstructionDefaults.DEFAULT_NONE) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_TRANSLATE_BY_VECTOR, ConstructionDefaults.DEFAULT_NONE) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_ROTATE_BY_ANGLE, ConstructionDefaults.DEFAULT_NONE) ;
 		
+		defaultGeoMap.put(EuclidianConstants.MODE_TEXT, ConstructionDefaults.DEFAULT_TEXT) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_SLIDER, ConstructionDefaults.DEFAULT_NUMBER) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_IMAGE, ConstructionDefaults.DEFAULT_IMAGE) ;
+			
 		
 		defaultGeoMap.put(EuclidianConstants.MODE_CONIC_FIVE_POINTS, ConstructionDefaults.DEFAULT_CONIC) ;
 		defaultGeoMap.put(EuclidianConstants.MODE_CIRCLE_TWO_POINTS, ConstructionDefaults.DEFAULT_CONIC) ;
