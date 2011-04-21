@@ -2714,7 +2714,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;	
 
 		case EuclidianView.MODE_MACRO:			
-			changedKernel = macro(hits);//?
+			changedKernel = macro(hits);
 			break;
 
 		case EuclidianView.MODE_AREA:
@@ -2747,7 +2747,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// Michael Borcherds 2008-03-13	
 		case EuclidianView.MODE_COMPASSES:
-			changedKernel = compasses(hits);
+			ret = compasses(hits);
 			break;
 			
 			
@@ -5802,9 +5802,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// Michael Borcherds 2008-03-14	
 	// Markus 2008-07-30: added support for two identical input points (center *2 and point on edge)
-	final protected boolean compasses(Hits hits) {
+	final protected GeoElement[] compasses(Hits hits) {
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		// we already have two points that define the radius
 		if (selPoints() == 2) {			
@@ -5821,13 +5821,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					tempArrayList.clear();
 					tempArrayList.add(centerPoint);
 					addToHighlightedList(selectedPoints, tempArrayList, 3);
-					return false;
+					return null;
 				}
 				else {
 					// three points: center, distance between two points		
-					kernel.Circle(null, centerPoint, points[0], points[1],true);
+					GeoElement circle = kernel.Circle(null, centerPoint, points[0], points[1],true);
+					GeoElement[] ret = { circle };
 					clearSelections();
-					return true;
+					return ret;
 				}
 			}
 		} 
@@ -5845,13 +5846,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					tempArrayList.clear();
 					tempArrayList.add(centerPoint);
 					addToHighlightedList(selectedPoints, tempArrayList, 3);
-					return false;
+					return null;
 				}
 				else {
 					// center point and circle which defines radius
-					kernel.Circle(null, centerPoint, circle);
+					GeoElement circlel = kernel.Circle(null, centerPoint, circle);
+					GeoElement ret[] = { circlel };
 					clearSelections();
-					return true;
+					return ret;
 				}
 			}
 		}
@@ -5868,13 +5870,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					tempArrayList.clear();
 					tempArrayList.add(centerPoint);
 					addToHighlightedList(selectedPoints, tempArrayList, 3);
-					return false;
+					return null;
 				}
 				else {
 					// center point and segment
-					kernel.Circle(null, centerPoint, segment);
+					GeoElement circlel = kernel.Circle(null, centerPoint, segment);
+					GeoElement[] ret = { circlel };
 					clearSelections();
-					return true;
+					return ret;
 				}
 			}
 		}
@@ -5896,8 +5899,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 		}
 
-		return false;
-	}	
+		return null;
+	}
 
 	// get two points and number
 	final protected GeoElement[] angleFixed(Hits hits) {
@@ -6006,12 +6009,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// we're done if in selection preview
 		if (selectionPreview) 
-			return false; 	
+			return false;
 
 
 		// only one point needed: try to create it
 		if (!objectFound && macroInput[index] == GeoPoint.class) {
-			if (createNewPoint(hits, true, true, false)) {				
+			if (createNewPoint(hits, true, true, false)) {
 				// take movedGeoPoint which is the newly created point								
 				selectedGeos.add(getMovedGeoPoint());
 				app.addSelectedGeo(getMovedGeoPoint());
@@ -6019,8 +6022,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				POINT_CREATED = false;
 			}
 		}
-		
-		
+
+
 		// object found in handleAddSelected()
 		if (objectFound || macroInput[index] == GeoNumeric.class || macroInput[index] == GeoAngle.class) {
 			if(!objectFound)index--;
@@ -6065,7 +6068,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// do we have everything we need?
 		if (selGeos() == macroInput.length) {						
-			kernel.useMacro(null, macro, getSelectedGeos())	;		
+			kernel.useMacro(null, macro, getSelectedGeos());
 			return true;
 		} 		
 		return false;
