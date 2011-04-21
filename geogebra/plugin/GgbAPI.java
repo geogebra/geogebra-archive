@@ -835,7 +835,7 @@ public class GgbAPI {
 	 */
 	public synchronized void setValue(String objName, double x) {
 		GeoElement geo = kernel.lookupLabel(objName);
-		if (geo == null) return;
+		if (geo == null || !geo.isIndependent()) return;
 		
 		if (geo.isGeoNumeric()) {
 			((GeoNumeric) geo).setValue(x);

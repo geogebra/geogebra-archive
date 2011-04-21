@@ -7240,17 +7240,19 @@ class CmdSetValue extends CommandProcessor {
 		GeoElement[] arg;
 		arg = resArgs(c);
 		boolean ok;
+		GeoElement[] ret = {};
 
 		switch (n) {
 		case 2:
-			if (arg[0].isGeoNumeric() && arg[1].isNumberValue()) {
-				NumberValue num = (NumberValue) arg[1];
-				((GeoNumeric) arg[0]).setValue(num.getDouble());
-			} else {
-				arg[0].set(arg[1]);
+			if (arg[0].isIndependent()) {
+				if (arg[0].isGeoNumeric() && arg[1].isNumberValue()) {
+					NumberValue num = (NumberValue) arg[1];
+					((GeoNumeric) arg[0]).setValue(num.getDouble());
+				} else {
+					arg[0].set(arg[1]);
+				}
+				arg[0].updateRepaint();
 			}
-			arg[0].updateRepaint();
-			GeoElement[] ret = {};
 			return ret;
 		case 3:
 			if (ok = arg[0].isGeoList() && arg[1].isNumberValue()) {
@@ -7261,11 +7263,13 @@ class CmdSetValue extends CommandProcessor {
 					throw argErr(app, c.getName(), arg[1]);
 
 				GeoElement geo = list.get(nn - 1);
-				if (geo.isGeoNumeric() && arg[2].isNumberValue()) {
-					NumberValue num = (NumberValue) arg[2];
-					((GeoNumeric) geo).setValue(num.getDouble());
-				} else {
-					geo.set(arg[1]);
+				if (geo.isIndependent()) {
+					if (geo.isGeoNumeric() && arg[2].isNumberValue()) {
+						NumberValue num = (NumberValue) arg[2];
+						((GeoNumeric) geo).setValue(num.getDouble());
+					} else {
+						geo.set(arg[1]);
+					}
 				}
 
 				geo.updateRepaint();
@@ -7289,8 +7293,7 @@ class CmdSetValue extends CommandProcessor {
 			} else
 				throw argErr(app, c.getName(), ok ? arg[1] : arg[0]);
 
-			GeoElement[] ret2 = {};
-			return ret2;
+			return ret;
 
 		default:
 			throw argNumErr(app, c.getName(), n);
