@@ -192,7 +192,7 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("lt")); // Lithuanian
 		supportedLocales.add(new Locale("ml")); // Malayalam (Virtual Keyboard & numerals only)
 		supportedLocales.add(new Locale("mk")); // Macedonian
-		supportedLocales.add(new Locale("mr")); // Marati
+		supportedLocales.add(new Locale("mr")); // Marathi
 		supportedLocales.add(new Locale("ms")); // Malay
 		supportedLocales.add(new Locale("ne")); // Nepalese
 		supportedLocales.add(new Locale("no", "NO")); // Norwegian (Bokmal)

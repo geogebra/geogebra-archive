@@ -119,6 +119,12 @@ public class Unicode {
 			testCharMap.put("gu", '\u0be7'); // Gujarati
 			testCharMap.put("si", '\u0d9a'); // Sinhala
 			testCharMap.put("ar", '\u0681'); // Arabic
+			testCharMap.put("ml", '\u0D2E'); // Malayalam
+			testCharMap.put("ko", '\uD55C'); // Korean
+			testCharMap.put("ru", '\u0439'); // Russian
+			testCharMap.put("mr", '\u092e'); // Marathi
+			testCharMap.put("ne", '\u0947'); // Nepalese
+			
 		}
 		
 	}
