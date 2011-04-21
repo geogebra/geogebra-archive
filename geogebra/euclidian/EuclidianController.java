@@ -2560,12 +2560,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// new vector between two points
 		case EuclidianView.MODE_VECTOR:
-			changedKernel = vector(hits);
+			ret = vector(hits);
 			break;
 
 			// intersect two objects
 		case EuclidianView.MODE_INTERSECT:
-			changedKernel = intersect(hits);
+			ret = intersect(hits);
 			break;
 
 			// new line through point with direction of vector or line
@@ -2580,7 +2580,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// new line through point orthogonal to vector or line
 		case EuclidianView.MODE_ORTHOGONAL:
-			changedKernel = orthogonal(hits);
+			ret = orthogonal(hits);
 			break;
 
 			// new line bisector
@@ -2597,7 +2597,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_CIRCLE_TWO_POINTS:
 			// new semicircle (2 points)
 		case EuclidianView.MODE_SEMICIRCLE:
-			changedKernel = circleOrSphere2(hits, mode);
+			ret = circleOrSphere2(hits, mode);
 			break;
 
 		case EuclidianView.MODE_LOCUS:
@@ -2612,7 +2612,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
 		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
 		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
-			changedKernel = threePoints(hits, mode);
+			ret = threePoints(hits, mode);
 			break;
 
 			// new conic (5 points)
@@ -2714,7 +2714,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;	
 
 		case EuclidianView.MODE_MACRO:			
-			changedKernel = macro(hits);
+			changedKernel = macro(hits);//?
 			break;
 
 		case EuclidianView.MODE_AREA:
@@ -2722,7 +2722,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;	
 
 		case EuclidianView.MODE_SLOPE:
-			changedKernel = slope(hits);
+			ret = slope(hits);
 			break;
 
 		case EuclidianView.MODE_REGULAR_POLYGON:
@@ -3932,9 +3932,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// get two points and create vector between them
-	final protected boolean vector(Hits hits) {
+	final protected GeoElement[] vector(Hits hits) {
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		// points needed
 		addSelectedPoint(hits, 2, false);
@@ -3944,17 +3944,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			GeoPoint[] points = getSelectedPoints();
 			kernel.Vector(null, points[0], points[1]);
 			*/
-			vector();
-			return true;
+			return vector();
 		}
-		return false;
+		return null;
 	}
 	
 	// fetch the two selected points for vector
-	protected void vector(){
+	protected GeoElement[] vector(){
 		GeoPoint[] points = getSelectedPoints();
 		GeoElement[] ret = { null };
 		ret[0] = kernel.Vector(null, points[0], points[1]);
+		return ret;
 	}
 
 	//	get two points and create ray with them
@@ -4061,11 +4061,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 	}
 
-	/*
 	// get two objects (lines or conics) and create intersection point
 	protected GeoElement[] intersect(Hits hits) {
 		if (hits.isEmpty())
-			return null;		
+			return null;
 
 		// when two objects are selected at once then only one single
 		// intersection point should be created
@@ -4218,164 +4217,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				kernel.IntersectImplicitpolys(null, p[0], p[1]);
 		}
 		return null;
-	}*/
-
-	// get two objects (lines or conics) and create intersection point
-	protected boolean intersect(Hits hits) {
-		if (hits.isEmpty())
-			return false;		
-
-		// when two objects are selected at once then only one single
-		// intersection point should be created
-		boolean singlePointWanted = selGeos() == 0;
-
-		// check how many interesting hits we have
-		if (!selectionPreview && hits.size() > 2 - selGeos()) {
-			Hits goodHits = new Hits();
-			//goodHits.add(selectedGeos);
-			hits.getHits(GeoLine.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			hits.getHits(GeoConic.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			hits.getHits(GeoFunction.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-
-			//if (goodHits.size() > 2 - selGeos()) {
-			//	//  choose one geo, and select only this one
-			//	GeoElement geo = chooseGeo(goodHits, true);
-			//	hits.clear();
-			//	hits.add(geo);				
-			//} else {
-				hits = goodHits;
-			//}
-		}			
-
-		// get lines, conics and functions
-		// now there's no popup chooser, when we use the intersect Tool where multiple objects intersect
-		// just choose any 2
-		addSelectedLine(hits, 10, true);
-		addSelectedConic(hits, 10, true);
-		addSelectedFunction(hits, 10, true);	
-		addSelectedImplicitpoly(hits, 10, true);
-		
-		singlePointWanted = singlePointWanted && selGeos() == 2;
-
-		//if (selGeos() > 2)
-		//	return false;
-
-		// two lines
-		if (selLines() >= 2) {
-			GeoLine[] lines = getSelectedLines();
-			GeoElement[] ret = { null };
-			ret[0] = kernel.IntersectLines(null, lines[0], lines[1]);
-			return true;
-		}
-		// two conics
-		else if (selConics() >= 2) {
-			GeoConic[] conics = getSelectedConics();
-			GeoElement[] ret = { null };
-			if (singlePointWanted)
-				ret[0] = kernel.IntersectConicsSingle(null, conics[0], conics[1], xRW,
-						yRW);
-			else
-				ret = kernel.IntersectConics(null, conics[0], conics[1]);
-			return true;
-		} else if (selFunctions() >= 2) {
-			GeoFunction[] fun = getSelectedFunctions();
-			boolean polynomials = fun[0].isPolynomialFunction(false)
-			&& fun[1].isPolynomialFunction(false);
-			if (!polynomials) {
-				GeoPoint startPoint = new GeoPoint(kernel.getConstruction());
-				startPoint.setCoords(xRW, yRW, 1.0);
-				kernel.IntersectFunctions(null, fun[0], fun[1], startPoint);
-			} else {
-				// polynomials
-				if (singlePointWanted) {
-					kernel.IntersectPolynomialsSingle(null, fun[0], fun[1],
-							xRW, yRW);
-				} else {
-					kernel.IntersectPolynomials(null, fun[0], fun[1]);
-				}
-			}
-		}
-		// one line and one conic
-		else if (selLines() >= 1 && selConics() >= 1) {
-			GeoConic[] conic = getSelectedConics();
-			GeoLine[] line = getSelectedLines();
-			GeoElement[] ret = { null };
-			if (singlePointWanted)
-				ret[0] = kernel.IntersectLineConicSingle(null, line[0], conic[0], xRW,
-						yRW);
-			else
-				ret = kernel.IntersectLineConic(null, line[0], conic[0]);
-
-			return true;
-		}
-		// line and function
-		else if (selLines() >= 1 && selFunctions() >= 1) {
-			GeoLine[] line = getSelectedLines();
-			GeoFunction[] fun = getSelectedFunctions();
-			GeoElement[] ret = { null };
-			if (fun[0].isPolynomialFunction(false)) {
-				if (singlePointWanted)
-					ret[0] = kernel.IntersectPolynomialLineSingle(null, fun[0], line[0],
-							xRW, yRW);
-				else
-					ret = kernel.IntersectPolynomialLine(null, fun[0], line[0]);
-			} else {
-				GeoPoint startPoint = new GeoPoint(kernel.getConstruction());
-				startPoint.setCoords(xRW, yRW, 1.0);
-				ret[0] = kernel.IntersectFunctionLine(null, fun[0], line[0], startPoint);
-			}
-			return true;
-		// function and conic
-		}else if (selFunctions() >= 1 && selConics() >= 1){
-			GeoConic[] conic = getSelectedConics();
-			GeoFunction[] fun = getSelectedFunctions();
-			if (fun[0].isPolynomialFunction(false)){
-				if (singlePointWanted)
-					kernel.IntersectPolynomialConicSingle(null, fun[0], conic[0],
-							xRW, yRW);
-				else
-					kernel.IntersectPolynomialConic(null, fun[0], conic[0]);
-			}else{
-				return false;
-			}
-		}else if (selImplicitpoly() >= 1){
-			if (selFunctions() >=1 ){
-				GeoImplicitPoly p=getSelectedImplicitpoly()[0];
-				GeoFunction fun=getSelectedFunctions()[0];
-				if (fun.isPolynomialFunction(false)){
-					if (singlePointWanted){
-						kernel.IntersectImplicitpolyPolynomialSingle(null, p, fun, xRW, yRW);
-					}else
-						kernel.IntersectImplicitpolyPolynomial(null, p, fun);
-				}else
-					return false;
-			}else if (selLines() >= 1){
-				GeoImplicitPoly p=getSelectedImplicitpoly()[0];
-				GeoLine l=getSelectedLines()[0];
-				if (singlePointWanted){
-					kernel.IntersectImplicitpolyLineSingle(null, p, l, xRW, yRW);
-				}else
-					kernel.IntersectImplicitpolyLine(null, p, l);
-			}else if (selConics() >= 1){
-				GeoImplicitPoly p=getSelectedImplicitpoly()[0];
-				GeoConic c=getSelectedConics()[0];
-				if (singlePointWanted){
-					kernel.IntersectImplicitpolyConicSingle(null, p, c, xRW, yRW);
-				}else
-					kernel.IntersectImplicitpolyConic(null, p, c);
-			}else
-				return false;
-		}else if (selImplicitpoly() >= 2){
-			GeoImplicitPoly[] p=getSelectedImplicitpoly();
-			if (singlePointWanted){
-				kernel.IntersectImplicitpolysSingle(null, p[0], p[1], xRW, yRW);
-			}else
-				kernel.IntersectImplicitpolys(null, p[0], p[1]);
-		}
-		return false;
 	}
 
 	// tries to get a single intersection point for the given hits
@@ -4520,7 +4361,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return null;
 	}
 
-	/*
 	// get point and line or vector;
 	// create line through point orthogonal to line or vector
 	final protected GeoElement[] orthogonal(Hits hits) {
@@ -4551,48 +4391,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 		}
 		return null;
-	}*/
-
-	// get point and line or vector;
-	// create line through point orthogonal to line or vector
-	final protected boolean orthogonal(Hits hits) {
-		if (hits.isEmpty())
-			return false;
-		
-		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
-		if (!hitPoint) {
-			if (selLines() == 0) {
-				addSelectedVector(hits, 1, false);
-			}
-			if (selVectors() == 0) {
-				addSelectedLine(hits, 1, false);
-			}
-		}
-
-		if (selPoints() == 1) {
-			if (selVectors() == 1) {
-				// fetch selected point and vector
-				GeoPoint[] points = getSelectedPoints();
-				GeoVector[] vectors = getSelectedVectors();
-				// create new line
-				GeoElement[] ret = { null };
-				ret[0] = kernel.OrthogonalLine(null, points[0], vectors[0]);
-				return true;
-			} else if (selLines() == 1) {
-				orthogonal();
-				return true;
-			}
-		}
-		return false;
 	}
 	
-	protected void orthogonal() {
+	protected GeoElement[] orthogonal() {
 		// fetch selected point and line
 		GeoPoint[] points = getSelectedPoints();
 		GeoLine[] lines = getSelectedLines();
 		// create new line
 		GeoElement[] ret = { null };
 		ret[0] = kernel.OrthogonalLine(null, points[0], lines[0]);
+		return ret;
 	}
 	
 	// get two points, line segment or conic
@@ -4709,22 +4517,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// get 3 points
-	final protected boolean threePoints(Hits hits, int mode) {
+	final protected GeoElement[] threePoints(Hits hits, int mode) {
 		
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		// points needed
 		addSelectedPoint(hits, 3, false);
 		if (selPoints() == 3) {
-			switchModeForThreePoints();
-			return true;
+			return switchModeForThreePoints();
 		}
-		return false;
+		return null;
 	}
 	
 	
-	protected boolean switchModeForThreePoints(){
+	protected GeoElement[] switchModeForThreePoints(){
 		// fetch the three selected points
 		GeoPoint[] points = getSelectedPoints();
 		GeoElement[] ret = { null };
@@ -4758,10 +4565,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;												
 
 		default:
-			return false;
+			return null;
 		}
 		
-		return true;
+		return ret;
 
 	}
 
@@ -4864,27 +4671,27 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// get 2 points
-	final protected boolean circleOrSphere2(Hits hits, int mode) {
+	final protected GeoElement[] circleOrSphere2(Hits hits, int mode) {
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		// points needed
 		addSelectedPoint(hits, 2, false);
 		if (selPoints() == 2) {
 			// fetch the three selected points
-			switchModeForCircleOrSphere2(mode);
-			return true;
+			return switchModeForCircleOrSphere2(mode);
 		}
-		return false;
+		return null;
 	}
 	
-	protected void switchModeForCircleOrSphere2(int mode){
+	protected GeoElement[] switchModeForCircleOrSphere2(int mode){
 		GeoPoint[] points = getSelectedPoints();
 		GeoElement[] ret = { null };
 		if (mode == EuclidianView.MODE_SEMICIRCLE)
 			ret[0] = kernel.Semicircle(null, points[0], points[1]);
 		else
 			ret[0] = kernel.Circle(null, points[0], points[1]);
+		return ret;
 	}
 
 	// get 2 points for locus
@@ -5212,9 +5019,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return descText;
 	}
 
-	protected boolean slope(Hits hits) {
+	protected GeoElement[] slope(Hits hits) {
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		addSelectedLine(hits, 1, false);			
 
@@ -5249,9 +5056,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			slope.setLabelVisible(true);
 			slope.updateRepaint();
-			return true;
+			GeoElement[] ret = { slope };
+			return ret;
 		}
-		return false;
+		return null;
 	}
 
 	protected boolean regularPolygon(Hits hits) {

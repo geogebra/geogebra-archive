@@ -25,6 +25,7 @@ import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoElement3DInterface;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.Kernel3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
 
@@ -755,15 +756,17 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		return lines;
 	}
-		
-	
+
+
 	// fetch the two selected points for vector
-	protected void vector(){
+	protected GeoElement[] vector(){
 		GeoPointND[] points = getSelectedPointsND();
-		getKernel().getManager3D().Vector3D(null,points[0], points[1]);
+		GeoElement[] ret = { null };
+		ret[0] = getKernel().getManager3D().Vector3D(null,points[0], points[1]);
+		return ret;
 	}
-	
-	
+
+
 	// build polygon	
 	/*
 	protected void polygon(){
@@ -791,13 +794,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
-	protected void orthogonal() {
+	protected GeoElement[] orthogonal() {
 		// fetch selected point and line
 		GeoPointND[] points = getSelectedPointsND();
 		GeoLineND[] lines = getSelectedLinesND();
 		// create new line
-		getKernel().getManager3D().OrthogonalPlane3D(null, points[0], lines[0]);
-		
+		GeoPlane3D ret0 = (GeoPlane3D)getKernel().getManager3D().OrthogonalPlane3D(null, points[0], lines[0]);
+		GeoElement[] ret = { ret0 };
+		return ret;
 	}
 	
 	
@@ -1166,14 +1170,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		switch (mode) {
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
-			changedKernel = threePoints(hits, mode);
+			changedKernel = (threePoints(hits, mode) != null);
 			break;
 		case EuclidianView3D.MODE_PLANE_POINT_LINE:
 			changedKernel = pointLine(hits);
 			break;		
 		
 		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
-			changedKernel = orthogonal(hits);
+			changedKernel = (orthogonal(hits) != null);
 			break;
 			
 		case EuclidianView3D.MODE_PARALLEL_PLANE:
@@ -1185,7 +1189,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;
 			
 		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:	
-			changedKernel = circleOrSphere2(hits, mode);
+			changedKernel = (circleOrSphere2(hits, mode) != null);
 			break;
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
 			changedKernel = circleOrSpherePointRadius(hits);
@@ -1225,13 +1229,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
-	protected boolean switchModeForThreePoints(){
+	protected GeoElement[] switchModeForThreePoints(){
 		
 		switch (mode) {
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
 			GeoPointND[] points = getSelectedPointsND();
-			getKernel().getManager3D().Plane3D(null, points[0], points[1], points[2]);
-			return true;
+			GeoPlane3D ret0 = (GeoPlane3D)getKernel().getManager3D().Plane3D(null, points[0], points[1], points[2]);
+			GeoElement[] ret = { ret0 };
+			return ret;
 		default:
 			return super.switchModeForThreePoints();
 
@@ -1239,17 +1244,17 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 	}
 
-	protected void switchModeForCircleOrSphere2(int mode){
+	protected GeoElement[] switchModeForCircleOrSphere2(int mode){
 		
 		
 		switch (mode) {
 		case EuclidianView3D.MODE_SPHERE_TWO_POINTS:
 			GeoPointND[] points = getSelectedPointsND();
-			getKernel().getManager3D().Sphere(null, points[0], points[1]);
-			break;
+			GeoElement[] ret = { null };
+			ret[0] = getKernel().getManager3D().Sphere(null, points[0], points[1]);
+			return ret;
 		default:
-			super.switchModeForCircleOrSphere2(mode);
-			break;
+			return super.switchModeForCircleOrSphere2(mode);
 		}
 	}
 
@@ -1360,9 +1365,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 *
 	 */
 	@SuppressWarnings("unchecked")
-	protected boolean intersect(Hits hits) {
+	protected GeoElement[] intersect(Hits hits) {
 		if (hits.isEmpty())
-			return false;		
+			return null;		
 
 		// when two objects are selected at once then only one single
 		// intersection point should be created
@@ -1393,19 +1398,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		singlePointWanted = singlePointWanted && selGeos() == 2;
 		
 		if (selGeos() > 2)
-			return false;
+			return null;
 
 		// two 3D lines		
 		if (selCS1D() == 2) {
 						
 			GeoCoordSys1D[] lines = getSelectedCS1D();
-			getKernel().getManager3D().Intersect(null, lines[0], lines[1]);
-			return true;
+			GeoElement[] ret = { null };
+			ret[0] = getKernel().getManager3D().Intersect(null, lines[0], lines[1]);
+			return ret;
 			
 		}
 		
 		
-		return false;
+		return null;
 	}
 
 	
