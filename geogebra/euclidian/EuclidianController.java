@@ -328,11 +328,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				|| newMode == EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS
 				|| newMode == EuclidianConstants.MODE_SPREADSHEET_CREATE_LIST)
 			return;
-		
-		
+
+
 		endOfMode(mode);
 
-		if (EuclidianView.usesSelectionRectangleAsInput(newMode))
+		if (EuclidianView.usesSelectionAsInput(newMode))
+		{
+			initNewMode(newMode);
+			processSelection();
+		}
+		else if (EuclidianView.usesSelectionRectangleAsInput(newMode))
 		{
 			initNewMode(newMode);
 			processSelectionRectangle(null);			
@@ -2186,7 +2191,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void processSelectionRectangle(MouseEvent e) {
 		clearSelections();
 		view.setHits(view.getSelectionRectangle());
-		Hits hits = view.getHits();		
+		Hits hits = view.getHits();
 
 		switch (mode) {
 		case EuclidianView.MODE_SELECTION_LISTENER:
@@ -2238,7 +2243,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				processMode(hits, e);
 				view.setSelectionRectangle(null);
 			}
-			break;	
+			break;
 
 		default:
 			// STANDARD CASE
@@ -2273,15 +2278,60 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					)) {
 				hits.remove(i);
 			}
-		}	
-		removeParentPoints(hits);				
+		}
+		removeParentPoints(hits);
 		selectedGeos.addAll(hits);
 		app.setSelectedGeos(hits);
 	}
 
+	protected void processSelection() {
+		Hits hits = new Hits();
+		hits.addAll(Arrays.asList(getSelectedGeos()));
 
+		switch (mode) {
+		case EuclidianView.MODE_MIRROR_AT_POINT:	
+		case EuclidianView.MODE_MIRROR_AT_LINE:
+		case EuclidianView.MODE_MIRROR_AT_CIRCLE: // Michael Borcherds 2008-03-23
+			processSelectionRectangleForTransformations(hits, Transformable.class);									
+			break;
 
+		case EuclidianView.MODE_ROTATE_BY_ANGLE:
+			processSelectionRectangleForTransformations(hits, Transformable.class);									
+			break;		
 
+		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+			processSelectionRectangleForTransformations(hits, Transformable.class);									
+			break;	
+
+		case EuclidianView.MODE_DILATE_FROM_POINT:
+			processSelectionRectangleForTransformations(hits, Dilateable.class);
+			break;
+
+		case EuclidianView.MODE_FITLINE:
+			for (int i=0; i < hits.size(); i++) {
+				GeoElement geo = (GeoElement) hits.get(i);
+				if (!(GeoPoint.class.isInstance(geo))) {
+					hits.remove(i);
+				}
+			}
+			// Fit line makes sense only for more than 2 points
+			if (hits.size() < 3) { 
+				hits.clear();
+			} else {
+				removeParentPoints(hits);				
+				selectedGeos.addAll(hits);
+				app.setSelectedGeos(hits);
+				processMode(hits, null);
+				view.setSelectionRectangle(null);
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		kernel.notifyRepaint();
+	}
 
 
 
@@ -2422,7 +2472,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		highlightedGeos.add(geo);
 		geo.setHighlighted(true); 
-		kernel.notifyRepaint();					
+		kernel.notifyRepaint();
 	}
 
 	// mode specific highlighting of selectable objects
@@ -5760,7 +5810,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return true;
 		}
 		return false;
-	}	
+	}
 
 
 

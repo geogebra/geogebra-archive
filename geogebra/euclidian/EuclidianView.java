@@ -4725,7 +4725,20 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		g2Dtemp.setFont(font); // Michael Borcherds 2008-06-11 bugfix for Corner[text,n]		
 		return g2Dtemp;
 	}
-	
+
+	final public static boolean usesSelectionAsInput(int mode)
+	{
+		switch (mode)
+		{
+		case MODE_MIRROR_AT_LINE: return true;
+		case MODE_MIRROR_AT_POINT: return true;
+		case MODE_ROTATE_BY_ANGLE: return true;
+		case MODE_TRANSLATE_BY_VECTOR: return true;
+		case MODE_DILATE_FROM_POINT: return true;
+		default: return false;
+		}
+	}
+
 	final public static boolean usesSelectionRectangleAsInput(int mode)
 	{
 		switch (mode)
