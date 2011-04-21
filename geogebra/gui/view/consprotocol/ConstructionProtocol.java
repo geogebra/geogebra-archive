@@ -17,6 +17,7 @@ import geogebra.euclidian.Drawable;
 import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.spreadsheet.MyTable;
+import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
 import geogebra.kernel.ConstructionElement;
 import geogebra.kernel.GeoElement;
@@ -765,6 +766,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		private JCheckBox cbTemp = new JCheckBox();
 		private JLabel iTemp = new JLabel();
+		private MyTextField tfTemp = new MyTextField(app.getGuiManager());
 		
 		public ConstructionTableCellRenderer() {
 			setOpaque(true);
@@ -836,6 +838,14 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				return iTemp;
 			}
 			
+			//FIXME: language
+			if(table.getColumnName(column).equals("Caption")){
+				tfTemp.setColumns(14);
+				tfTemp.setShowSymbolTableIcon(true);
+				tfTemp.setText((String)value);
+				return tfTemp;
+			}
+			
 			setText((value == null) ? "" : value.toString());
 			return this;
 
@@ -898,7 +908,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 
 		public void updateCaption(){
-			caption = geo.getRawCaption();
+			caption = geo.getCaptionText();
 		}
 		
 		public void updateAll() {
@@ -942,7 +952,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			else algebra = geo.getAlgebraDescriptionTextOrHTML();
 			definition = geo.getDefinitionDescriptionHTML(true);
 			command = geo.getCommandDescriptionHTML(true);
-			caption = geo.getCaption();
+			caption = geo.getCaptionText();
 			consProtocolVisible = new Boolean(geo.isConsProtocolBreakpoint());
 
 			// does this line include an index?
@@ -1160,6 +1170,12 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 
 		public boolean isCellEditable(int nRow, int nCol) {
+        	//FIXME Maybe it (or something similar) is neccessary, if we changing the language:
+        	//app.getPlain(data.columns[nCol].getTitle())
+        	
+        	if((this.columns[nCol].getTitle()).equals("Caption")){
+        		return true;
+        	}
 			return false;
 		}
 
@@ -1523,6 +1539,16 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		public void reset() {
 			repaint();
 		}
+		
+        public void setValueAt(Object value, int row, int col) {
+        	//FIXME Maybe it (or something similar) is neccessary, if we changing the language:
+        	//app.getPlain(data.columns[col].getTitle())
+        	
+        	if((this.columns[col].getTitle()).equals("Caption")){
+        		data.getRow(row).geo.setCaption(value.toString());
+        	}
+        	updateAll();
+        }
 	}
 
 	/************

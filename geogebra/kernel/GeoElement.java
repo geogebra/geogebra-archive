@@ -2149,6 +2149,14 @@ public abstract class GeoElement
 			return caption;
 	}
 	
+	public String getCaptionText() {
+		if (caption == null)
+			return "";
+		else
+			return caption;
+	}
+
+	
 	/**
 	 * Sets label of a local variable object. This method should
 	 * only be used by Construction.
