@@ -23,6 +23,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.Unicode;
 import geogebra.util.Util;
 
 import java.awt.BasicStroke;
@@ -40,6 +41,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Area;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.JLabel;
 
@@ -600,7 +602,17 @@ public abstract class Drawable extends DrawableND {
 			// make sure cache doesn't get too big
 			JLaTeXMathCache.setMaxCachedObjects(100);
 			
-			//equations = new HashMap<String, TeXIcon>();
+			Iterator<String> it = Unicode.getCharMapIterator();
+			
+			while (it.hasNext()) {
+				String lang = it.next();
+				Character ch = Unicode.getTestChar(lang);
+				Font testFont = app.getFontCanDisplay(ch.toString(), true, Font.PLAIN, 12);				
+				TeXFormula.registerExternalFont(Character.UnicodeBlock.of(ch), testFont.getFontName());
+				//Application.debug("LaTeX font registering: "+lang+" "+testFont.getFontName());
+
+			}
+			
 			
 		   try{
 			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_GREEK);

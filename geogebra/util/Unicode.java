@@ -1,5 +1,8 @@
 package geogebra.util;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 public class Unicode {
 
 	final public static char minus = '\u2212';
@@ -24,13 +27,13 @@ public class Unicode {
 	final public static String superscriptMinusOneBracket = "\u207b\u00b9(";
 	final public static char degreeChar = '\u00b0';
 	final public static String degree = Character.toString(degreeChar);
-	/** Unicode symbol for e */
 	
 	final public static char eGrave = '\u00E8'; 
 	final public static char eAcute = '\u00E9'; 
 	
-	final public static char eulerChar = '\u212f'; // "\u0435";
-	final public static String EULER_STRING = eulerChar + ""; // "\u0435";
+	/** Unicode symbol for e */
+	final public static char eulerChar = '\u212f'; 
+	final public static String EULER_STRING = eulerChar + ""; 
 	
 	/** Unicode symbol for pi */
 	final public static char piChar = '\u03c0'; // "\u0435";
@@ -81,6 +84,43 @@ public class Unicode {
 
 	final public static boolean isSuperscriptDigit(char c) {
 		return (c >= Superscript_0 && c <= Superscript_9) || c == Superscript_1 || c == Superscript_2 || c == Superscript_3;
+	}
+	
+	static HashMap<String, Character> testCharMap = null;
+
+	public static Character getTestChar(String lang) {
+		initCharMap();
+				
+		return (Character)testCharMap.get(lang);
+	}
+	
+	public static Iterator<String> getCharMapIterator() {
+		initCharMap();
+
+		return testCharMap.keySet().iterator();
+	}
+	
+	/*
+	 * test characters to get a font that can display the correct symbols for each language
+	 * Also used to register the fonts so that JLaTeXMath can display other Unicode blocks
+	 */
+	private static void initCharMap() {
+		if (testCharMap == null) {
+			testCharMap = new HashMap<String, Character>();
+			testCharMap.put("zh", '\u984F');// Chinese, last CJK unified ideograph in unicode alphabet
+			testCharMap.put("ka", '\u10d8'); // Georgian
+			testCharMap.put("iw", '\u05ea'); // Hebrew
+			testCharMap.put("ji", '\u05ea'); // Yiddish
+			testCharMap.put("ja", '\uff9d'); // Japanese
+			testCharMap.put("ta", '\u0be7'); // Tamil
+			testCharMap.put("pa", '\u0be7'); // Punjabi
+			testCharMap.put("hi", '\u0be7'); // Hindi
+			testCharMap.put("ur", '\u0be7'); // Urdu
+			testCharMap.put("gu", '\u0be7'); // Gujarati
+			testCharMap.put("si", '\u0d9a'); // Sinhala
+			testCharMap.put("ar", '\u0681'); // Arabic
+		}
+		
 	}
 	
 }

@@ -1,5 +1,8 @@
 package geogebra.main;
 
+import geogebra.util.Unicode;
+import geogebra.util.Util;
+
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.util.Arrays;
@@ -23,7 +26,6 @@ public class FontManager {
 	private static HashMap fontMap = new HashMap();
 	private static StringBuilder key = new StringBuilder();
 	
-	private static char EULER_CHAR = '\u212f'; 
 	public static final String[] FONT_NAMES_SANSSERIF = { 
 		"SansSerif", // Java
 		"Arial Unicode MS", // Windows
@@ -56,10 +58,16 @@ public class FontManager {
 		LinkedList tryFontsSansSerif = new LinkedList(Arrays.asList(FONT_NAMES_SANSSERIF));
 		LinkedList tryFontsSerif = new LinkedList(Arrays.asList(FONT_NAMES_SERIF));
 
+		Character testChar = Unicode.getTestChar(lang);
+		if (testChar != null) {
+			testCharacters.append(testChar.charValue());
+			//Application.debug("Using test char:"+Util.toHexString(testChar.charValue()));
+		} //else Application.debug("No language specific test char");
+		
 		// CHINESE
 		if ("zh".equals(lang)) {
 			// last CJK unified ideograph in unicode alphabet
-			testCharacters.append('\u984F');
+			//testCharacters.append('\u984F');
 			tryFontsSansSerif.addFirst("\u00cb\u00ce\u00cc\u00e5");
 			tryFontsSerif.addFirst("\u00cb\u00ce\u00cc\u00e5");
 		}
@@ -67,7 +75,7 @@ public class FontManager {
 		// GEORGIAN
 		else if ("ka".equals(lang)) {
 			// some Georgian letter
-			testCharacters.append('\u10d8');
+			//testCharacters.append('\u10d8');
 			tryFontsSerif.addFirst("Sylfaen");
 		}
 
@@ -75,7 +83,7 @@ public class FontManager {
 		// Guy Hed, 26.4.2009 - added Yiddish, which also use Hebrew letters.
 		else if ("iw".equals(lang) || "ji".equals(lang)) {
 			// Hebrew letter "tav"
-			testCharacters.append('\u05ea');
+			//testCharacters.append('\u05ea');
 
 			// move Java fonts to end of list
 			tryFontsSansSerif.remove("SansSerif");
@@ -83,6 +91,8 @@ public class FontManager {
 			tryFontsSerif.remove("Serif");
 			tryFontsSerif.addLast("Serif");
 		}
+		
+		/* replaced by Unicode.getTestChar()
 
 		// JAPANESE
 		else if ("ja".equals(lang)) {
@@ -113,7 +123,7 @@ public class FontManager {
 			testCharacters.append('\u0be7');
 		} else if ("si".equals(lang)) {
 			testCharacters.append('\u0d9a'); // letter a
-		}
+		} */
 
 		// we need roman (English) characters if possible
 		// eg the language menu :)
@@ -121,7 +131,7 @@ public class FontManager {
 		
 		// make sure we use a font that can display the Euler character
 		// add at end -> lowest priority
-		testCharacters.append(EULER_CHAR);
+		testCharacters.append(Unicode.eulerChar);
 
 		// get fonts that can display all test characters
 		fontNameSansSerif = getFontCanDisplay(tryFontsSansSerif, testCharacters.toString());
