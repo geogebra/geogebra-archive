@@ -841,6 +841,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (Application.isRightClick(e)) {			
 			//ggb3D - for 3D rotation
 			processRightPressFor3D();
+
 			return;
 		} 
 		else if (
@@ -1490,9 +1491,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					oldMode = mode; // remember current mode			
 					view.setMode(EuclidianView.MODE_MOVE);
 					handleMousePressedForMoveMode(e, true);	
-					
-					//DONT_CLEAR_SELECTION=true;
-					
+
+					// make sure that dragging doesn't deselect the geos
+					DONT_CLEAR_SELECTION=true;
+
 					return;
 				}
 				
