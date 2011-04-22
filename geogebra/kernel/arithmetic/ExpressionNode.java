@@ -693,7 +693,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		// left tree
 		if (left == oldOb) {
 			left = newOb;
-		} else if (left.isExpressionNode()) {
+		} else if (left!= null && left.isExpressionNode()) {
 			left = ((ExpressionNode) left).replace(oldOb, newOb);
 		}
 
