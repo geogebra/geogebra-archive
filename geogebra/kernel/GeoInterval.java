@@ -189,13 +189,13 @@ public class GeoInterval extends GeoFunction {
 				if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
 					rightInequality = opLeft == ExpressionNode.LESS ? '<' : Unicode.LESS_EQUAL;
 					rightBound = ((NumberValue)leftRight.evaluate()).getDouble();
-					rightStr = leftRight.toString();
+					rightStr = leftRight.toValueString();
 				}
 				else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
 					leftInequality = opLeft == ExpressionNode.LESS ? '<' : Unicode.LESS_EQUAL;
 					Application.debug(leftLeft.getClass());
 					leftBound = ((NumberValue)leftLeft.evaluate()).getDouble();
-					leftStr = leftLeft.toString();
+					leftStr = leftLeft.toValueString();
 				}
 
 			} else
@@ -203,12 +203,12 @@ public class GeoInterval extends GeoFunction {
 					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
 						leftInequality = opLeft == ExpressionNode.GREATER ? '<' : Unicode.LESS_EQUAL;
 						leftBound = ((NumberValue)leftRight.evaluate()).getDouble();
-						leftStr = leftRight.toString();
+						leftStr = leftRight.toValueString();
 					}
 					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
 						rightInequality = opLeft == ExpressionNode.GREATER ? '<' : Unicode.LESS_EQUAL;
 						rightBound = ((NumberValue)leftLeft.evaluate()).getDouble();
-						rightStr = leftLeft.toString();
+						rightStr = leftLeft.toValueString();
 					}
 
 				}
@@ -217,12 +217,12 @@ public class GeoInterval extends GeoFunction {
 				if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
 					rightInequality = opRight == ExpressionNode.LESS ? '<' : Unicode.LESS_EQUAL;
 					rightBound = ((NumberValue)rightRight.evaluate()).getDouble();
-					rightStr = rightRight.toString();
+					rightStr = rightRight.toValueString();
 				}
 				else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
 					leftInequality = opRight == ExpressionNode.LESS ? '<' : Unicode.LESS_EQUAL;
 					leftBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-					leftStr = rightLeft.toString();
+					leftStr = rightLeft.toValueString();
 				}
 
 			} else
@@ -230,12 +230,12 @@ public class GeoInterval extends GeoFunction {
 					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
 						leftInequality = opRight == ExpressionNode.GREATER ? '<' : Unicode.LESS_EQUAL;
 						leftBound = ((NumberValue)rightRight.evaluate()).getDouble();
-						leftStr = rightRight.toString();
+						leftStr = rightRight.toValueString();
 					}
 					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
 						rightInequality = opRight == ExpressionNode.GREATER ? '<' : Unicode.LESS_EQUAL;
 						rightBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-						rightStr = rightLeft.toString();
+						rightStr = rightLeft.toValueString();
 					}
 
 				}
