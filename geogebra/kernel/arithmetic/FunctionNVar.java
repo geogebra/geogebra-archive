@@ -660,15 +660,15 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 	 * @param functional function to which ineqs are associated
 	 * @return true if the functions consists of inequalities
 	 */
-	public boolean initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional) {
+	public boolean initIneqs(ExpressionNode fe,FunctionalNVar functional) {
 		if(ineqs == null || fe == getExpression())
 			ineqs = new IneqTree();
-		boolean b = initIneqs(fe, inverseFill, functional, ineqs);
+		boolean b = initIneqs(fe, functional, ineqs);
 		ineqs.recomputeSize();
 		return b;
 	}
 	
-	private boolean initIneqs(ExpressionNode fe, boolean inverseFill,FunctionalNVar functional,IneqTree tree) {		
+	private boolean initIneqs(ExpressionNode fe,FunctionalNVar functional,IneqTree tree) {		
 		int op = fe.getOperation();
 		ExpressionNode leftTree = fe.getLeftTree();
 		ExpressionNode rightTree = fe.getRightTree();
@@ -680,7 +680,7 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 				if (newIneq.getType() != Inequality.INEQUALITY_1VAR_X
 						&& newIneq.getType() != Inequality.INEQUALITY_1VAR_Y)
 					newIneq.getBorder().setInverseFill(
-							newIneq.isAboveBorder() ^ inverseFill);			
+							newIneq.isAboveBorder());			
 				tree.setIneq(newIneq);
 			}
 			return newIneq.getType()!=Inequality.INEQUALITY_INVALID;
@@ -690,12 +690,12 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 			tree.operation = op;
 			tree.left = new IneqTree();
 			tree.right = new IneqTree();
-			return initIneqs(leftTree, inverseFill,functional,tree.left)
-			&& initIneqs(rightTree, inverseFill,functional,tree.right);			
+			return initIneqs(leftTree,functional,tree.left)
+			&& initIneqs(rightTree,functional,tree.right);			
 		}else if (op == ExpressionNode.NOT) {
 			tree.operation = op;
 			tree.left = new IneqTree();				
-			return initIneqs(leftTree, inverseFill,functional,tree.left); 
+			return initIneqs(leftTree,functional,tree.left); 
 		}
 		else return false;
 
@@ -729,4 +729,121 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 			return evaluateBoolean(new double[]{pt.y/pt.z});
 		return evaluateBoolean(new double[]{pt.x/pt.z,pt.y/pt.z});
 	}
+	
+	public void translate(double vx, double vy) {                  
+        boolean isLeaf = expression.isLeaf();
+        ExpressionValue left = expression.getLeft();
+
+        // translate x
+        if (!Kernel.isZero(vx)) {
+            translateX(expression, vx, 0);
+            
+        }
+        if (!Kernel.isZero(vy)) {
+            translateX(expression, vy, 1);
+            
+        } 
+               
+        
+        // make sure that expression object is changed!
+        // this is needed to know that the expression has changed
+        if (expression.isLeaf() && expression.getLeft().isExpressionNode()) {
+        	expression = new ExpressionNode( (ExpressionNode) expression.getLeft());    
+        } else {
+            expression = new ExpressionNode(expression);
+        }
+    }
+    
+    // replace every x in tree by (x - vx)
+    // i.e. replace fVar with (fvar - vx)
+    private void translateX(ExpressionNode en, double vx, int varNo) {                               
+        ExpressionValue left = en.getLeft();
+        ExpressionValue right = en.getRight();  
+        
+        // left tree
+        if (left == fVars[varNo]) {         
+            try { // is there a constant number to the right?
+                MyDouble num = (MyDouble) right;
+                double temp;
+                switch (en.getOperation()) {
+                    case ExpressionNode.PLUS :
+                        temp = num.getDouble() - vx;                    
+                        if (Kernel.isZero(temp)) {                      
+                            expression = expression.replace(en, fVars[varNo]);                          
+                        } else if (temp < 0) {
+                            en.setOperation(ExpressionNode.MINUS);
+                            num.set(-temp);
+                        } else {
+                            num.set(temp);
+                        }
+                        return;
+
+                    case ExpressionNode.MINUS :
+                        temp = num.getDouble() + vx;
+                        if (Kernel.isZero(temp)) {
+                            expression = expression.replace(en, fVars[varNo]);                      
+                        } else if (temp < 0) {
+                            en.setOperation(ExpressionNode.PLUS);
+                            num.set(-temp);
+                        } else {
+                            num.set(temp);
+                        }
+                        return;
+
+                    default :
+                        en.setLeft(shiftXnode(vx,varNo));
+                }
+            } catch (Exception e) {
+                en.setLeft(shiftXnode(vx,varNo));
+            }   
+        }
+        else if (left instanceof ExpressionNode) {
+            translateX((ExpressionNode) left, vx,varNo);
+        }       
+
+        // right tree
+        if (right == fVars[varNo]) {
+            en.setRight(shiftXnode(vx,varNo));
+        }
+        else if (right instanceof ExpressionNode) {
+            translateX((ExpressionNode) right, vx,varNo);
+        }       
+    }
+    
+    // node for (x - vx)
+    private ExpressionNode shiftXnode(double vx,int varNo) {
+        ExpressionNode node;        
+        if (vx > 0) {
+            node =
+                new ExpressionNode(kernel,
+                		fVars[varNo],
+                    ExpressionNode.MINUS,
+                    new MyDouble(kernel,vx));
+        } else {
+            node =
+                new ExpressionNode(kernel,
+                		fVars[varNo],
+                    ExpressionNode.PLUS,
+                    new MyDouble(kernel,-vx));
+        }
+        return node;
+    }
+
+	public void matrixTransform(double a00, double a01, double a10, double a11) {
+		ExpressionNode dummy = new ExpressionNode();
+		expression.replace(fVars[0], dummy);		
+		
+		ExpressionNode newX = new ExpressionNode(kernel, 
+				new ExpressionNode(kernel,new MyDouble(kernel,a00),ExpressionNode.MULTIPLY,fVars[0]),
+				ExpressionNode.PLUS,
+				new ExpressionNode(kernel,new MyDouble(kernel,a01),ExpressionNode.MULTIPLY,fVars[1]));
+		ExpressionNode newY = new ExpressionNode(kernel, 
+				new ExpressionNode(kernel,new MyDouble(kernel,a10),ExpressionNode.MULTIPLY,fVars[0]),
+				ExpressionNode.PLUS,
+				new ExpressionNode(kernel,new MyDouble(kernel,a11),ExpressionNode.MULTIPLY,fVars[1]));
+		expression.replace(fVars[1], newY);
+		expression.replace(dummy, newX);	
+		this.initIneqs(expression, this);
+	}
+    
 }

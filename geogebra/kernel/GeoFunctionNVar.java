@@ -19,6 +19,8 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
+import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Util;
@@ -34,7 +36,8 @@ import java.util.List;
  * @author Markus Hohenwarter
  */
 public class GeoFunctionNVar extends GeoElement
-implements FunctionalNVar, CasEvaluableFunction, Region {
+implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translateable, MatrixTransformable,
+ Dilateable, Rotateable, PointRotateable, Mirrorable{
 
 	private static final double STRICT_INEQ_OFFSET = 4*Kernel.MIN_PRECISION;
 	private static final int SEEK_DENSITY = 30;
@@ -119,7 +122,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
-		isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);		
+		isInequality = fun.initIneqs(this.getFunctionExpression(),this);		
 	}
 	
 
@@ -497,7 +500,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		 */
 		public FunctionNVar.IneqTree getIneqs(){
 			if(fun.getIneqs() == null){
-				isInequality = fun.initIneqs(fun.getExpression(),isInverseFill(),this);				
+				isInequality = fun.initIneqs(fun.getExpression(),this);				
 			}
 			return fun.getIneqs();
 		}
@@ -621,7 +624,88 @@ implements FunctionalNVar, CasEvaluableFunction, Region {
 		}
 
 */
+		public void translate(Coords v){
+			fun.translate(v.getX(),v.getY());
+		}
+		/**
+		 * Return the geo
+		 * @return geo element
+		 */
+		public GeoElement toGeoElement(){
+			return this;
+		}
+		/**
+		 * Returns true if the element is translateable
+		 * @return true
+		 */
+		public boolean isTranslateable(){
+			return true;
 		
+		}
+
+		public void matrixTransform(double a00, double a01, double a10,
+				double a11) {
+			double d=a00*a11-a01*a10;
+			if(d==0)
+				setUndefined();
+			else
+				fun.matrixTransform(a11/d,-a01/d,-a10/d,a00/d);				
+		}
+
+		public void dilate(NumberValue r, GeoPoint S) {
+			fun.translate(-S.getX(),-S.getY());
+			fun.matrixTransform(1/r.getDouble(),0,0,1/r.getDouble());
+			fun.translate(S.getX(),S.getY());
+			
+		}
+		
+		public void dilate(NumberValue r){
+			matrixTransform(r.getDouble(),0,0,r.getDouble());
+		}
+
+		public void rotate(NumberValue phi) {
+			double cosPhi = Math.cos(phi.getDouble());
+			double sinPhi = Math.sin(phi.getDouble());
+			matrixTransform(cosPhi,-sinPhi,sinPhi,cosPhi);			
+		}
+
+		public void rotate(NumberValue phi, GeoPoint P) {
+			fun.translate(-P.getX(),-P.getY());
+			rotate(phi);
+			fun.translate(P.getX(),P.getY());
+			
+		}
+
+		public void mirror(GeoPoint Q) {
+			dilate(new MyDouble(kernel,-1.0),Q);
+			
+		}
+
+		public void mirror(GeoLine g) {
+			double qx, qy; 
+	        if (Math.abs(g.x) > Math.abs(g.y)) {
+	            qx = g.z / g.x;
+	            qy = 0.0d;
+	        } else {
+	            qx = 0.0d;
+	            qy = g.z / g.y;
+	        }
+	        
+	        // translate -Q
+	        fun.translate(qx, qy);     
+	        
+	        // S(phi)        
+	        mirror(new MyDouble(kernel,2.0 * Math.atan2(-g.x, g.y)));
+	        
+	        // translate back +Q
+	        fun.translate(-qx, -qy);
+			
+		}
+		private void mirror(NumberValue phi){				
+			double cosPhi = Math.cos(phi.getDouble());
+			double sinPhi = Math.sin(phi.getDouble());
+			matrixTransform(cosPhi,sinPhi,sinPhi,-cosPhi);				
+		}
 	 
 
 }

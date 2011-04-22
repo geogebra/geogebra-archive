@@ -144,7 +144,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				algoMacro.initFunction(this.fun);	
 			}			
 		}
-		isInequality = fun.initIneqs(this.getFunctionExpression(),isInverseFill(),this);
+		isInequality = fun.initIneqs(this.getFunctionExpression(),this);
 	}
 	
 
@@ -1323,7 +1323,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 
 	public IneqTree getIneqs() {
 		if(fun.getIneqs() == null){
-			isInequality = fun.initIneqs(fun.getExpression(),isInverseFill(),this);			
+			isInequality = fun.initIneqs(fun.getExpression(),this);			
 		}
 		return fun.getIneqs();
 	}
