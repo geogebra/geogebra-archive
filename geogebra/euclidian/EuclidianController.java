@@ -2552,7 +2552,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (selectionPreview) {
 				if (mode==EuclidianView.MODE_POINT)
 					hits.keepOnlyHitsForNewPointMode();
+
 				point(hits);
+			} else {
+				GeoElement[] ret0 = { null };
+				ret0[0] = hits.getFirstHit(GeoPoint.class);
+				ret = ret0;
+				clearSelection(selectedPoints);
 			}
 			break;
 
@@ -2817,7 +2823,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				app.addSelectedGeo(ret[i], false);
 			}
 		}
-		
+
 		if (!changedKernel)
 			return ret != null;
 
