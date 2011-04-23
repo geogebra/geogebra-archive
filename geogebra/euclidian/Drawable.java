@@ -607,8 +607,9 @@ public abstract class Drawable extends DrawableND {
 			while (it.hasNext()) {
 				String lang = it.next();
 				Character ch = Unicode.getTestChar(lang);
-				Font testFont = app.getFontCanDisplay(ch.toString(), true, Font.PLAIN, 12);				
-				TeXFormula.registerExternalFont(Character.UnicodeBlock.of(ch), testFont.getFontName());
+				Font testFont = app.getFontCanDisplay(ch.toString(), true, Font.PLAIN, 12);
+				if (testFont != null)
+					TeXFormula.registerExternalFont(Character.UnicodeBlock.of(ch), testFont.getFontName());
 				//Application.debug("LaTeX font registering: "+lang+" "+testFont.getFontName());
 
 			}
