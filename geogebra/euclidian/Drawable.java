@@ -613,6 +613,13 @@ public abstract class Drawable extends DrawableND {
 				//Application.debug("LaTeX font registering: "+lang+" "+testFont.getFontName());
 
 			}
+
+			// Arabic is in standard Java fonts, so we don't need to search for a font
+			TeXFormula.registerExternalFont(Character.UnicodeBlock.of('\u0681'), "Sans Serif", "Serif");
+
+			
+			// test code - use Java fonts
+			//TeXFormula.registerExternalFont(Character.UnicodeBlock.BASIC_LATIN, "Sans Serif", "Serif");
 			
 			
 		   try{
@@ -632,15 +639,7 @@ public abstract class Drawable extends DrawableND {
 		eqnSB.append(Util.toHexString(fgColor));
 		eqnSB.append("}{");
 		
-		if (!serif) eqnSB.append("\\mathsf{ ");
-		if (font.isItalic()) eqnSB.append("\\mathit{ "); //else eqnSB.append("\\mathrm{ ");
-		if (font.isBold()) eqnSB.append("\\boldsymbol{ ");
-		
 		eqnSB.append(text);
-		
-		if (font.isBold()) eqnSB.append(" }");		
-		if (font.isItalic()) eqnSB.append(" }"); 
-		if (!serif) eqnSB.append(" }");
 		
 		eqnSB.append(" }"); // fgcolor
 		
@@ -650,6 +649,11 @@ public abstract class Drawable extends DrawableND {
 		//eqnSB.append(' ');
 		//eqnSB.append(font.getSize()+"");
 		
+		
+		int style = 0;
+		if (font.isBold()) style = style | TeXFormula.BOLD;
+		if (font.isItalic()) style = style | TeXFormula.ITALIC;
+		if (!serif) style = style | TeXFormula.SANSSERIF;
 		
 		// if we're exporting, we want to draw it full resolution
 		// if it's a \jlmDynamic text, we don't want to add it to the cache
@@ -661,14 +665,14 @@ public abstract class Drawable extends DrawableND {
 			
 			try {			
 				formula = new TeXFormula(eqnSB.substring(0, strLen));
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style);
 			} catch (MyError e) {
 				//e.printStackTrace();
 				//Application.debug("MyError LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 				
 				formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style);
 				
 				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				//return new Dimension(rec.width, rec.height);
@@ -678,7 +682,7 @@ public abstract class Drawable extends DrawableND {
 				// Write error message to Graphics View
 				
 				formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3);
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style);
 				
 				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				//return new Dimension(rec.width, rec.height);
@@ -698,9 +702,9 @@ public abstract class Drawable extends DrawableND {
 			// so that we can remove it from the cache if it changes
 			// eg for a (regular) dynamic LaTeX text eg "\sqrt{"+a+"}"
 			if (geo == null)
-				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/);
+				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/, style);
 			else
-				key = geo.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3);
+				key = geo.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3, style);
 			
 			im = JLaTeXMathCache.getCachedTeXFormulaImage(key); 
 			} catch (ParseException e) {

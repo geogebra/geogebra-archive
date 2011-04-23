@@ -118,7 +118,8 @@ public class Unicode {
 			testCharMap.put("ur", '\u0be7'); // Urdu
 			testCharMap.put("gu", '\u0be7'); // Gujarati
 			testCharMap.put("si", '\u0d9a'); // Sinhala
-			testCharMap.put("ar", '\u0681'); // Arabic
+			// Arabic is in standard Java fonts, so we don't need to search for a font
+			//testCharMap.put("ar", '\u0681'); // Arabic
 			testCharMap.put("ml", '\u0D2E'); // Malayalam
 			testCharMap.put("ko", '\uD55C'); // Korean
 			testCharMap.put("ru", '\u0439'); // Russian
