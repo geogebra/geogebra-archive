@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.cas.GeoGebraCAS;
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.euclidian.EuclidianView;
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.arithmetic.Equation;
 import geogebra.kernel.arithmetic.ExpressionNode;
@@ -252,6 +253,7 @@ public class Kernel {
 	private double xmin, xmax, ymin, ymax, xscale, yscale;
 	// for 2nd Graphics View
 	private double xmin2, xmax2, ymin2, ymax2, xscale2, yscale2;
+	private boolean graphicsView2showing = false;
 	
 	// Views may register to be informed about 
 	// changes to the Kernel
@@ -613,23 +615,27 @@ public class Kernel {
 	final public void setEuclidianViewBounds(int view, double xmin, double xmax, 
 			double ymin, double ymax, double xscale, double yscale) {
 		
-		if (view == 1) {
-			this.xmin = xmin;
-			this.xmax = xmax;
-			this.ymin = ymin;
-			this.ymax = ymax;
-			this.xscale = xscale;
-			this.yscale = yscale;	
-		} else {
-			this.xmin2 = xmin;
-			this.xmax2 = xmax;
-			this.ymin2 = ymin;
-			this.ymax2 = ymax;
-			this.xscale2 = xscale;
-			this.yscale2 = yscale;	
-
+		switch (view) {
+			case 1:
+				this.xmin = xmin;
+				this.xmax = xmax;
+				this.ymin = ymin;
+				this.ymax = ymax;
+				this.xscale = xscale;
+				this.yscale = yscale;	
+				break;
+				
+			case 2:
+				this.xmin2 = xmin;
+				this.xmax2 = xmax;
+				this.ymin2 = ymin;
+				this.ymax2 = ymax;
+				this.xscale2 = xscale;
+				this.yscale2 = yscale;	
+				break;
 		}
-		
+
+		graphicsView2showing = app.isShowingEuclidianView2();
 		notifyEuclidianViewAlgos();
 	}	
 	
@@ -641,22 +647,48 @@ public class Kernel {
 	}
 	
 	double getXmax() {
-		return Math.max(xmax, xmax2);
+		if (graphicsView2showing)
+			return Math.max(xmax, xmax2);
+		else 
+			return xmax;
 	}
+	
 	double getXmin() {
-		return Math.min(xmin, xmin2);
+		if (graphicsView2showing)
+			return Math.min(xmin, xmin2);
+		else
+			return xmin;
 	}
+	
 	double getXscale() {
-		return Math.min(xscale, xscale2);
+		if (graphicsView2showing) {
+			return Math.min(xscale, xscale2);
+		}
+		else {
+			return xscale;
+		}
+			
 	}
+	
 	double getYmax() {
-		return Math.max(ymax, ymax2);
+		if (graphicsView2showing)
+			return Math.max(ymax, ymax2);
+		else
+			return ymax;
 	}
+	
 	double getYmin() {
-		return Math.min(ymin, ymin2);
+		if (graphicsView2showing)
+			return Math.min(ymin, ymin2);
+		else
+			return ymin;
 	}
+	
 	double getYscale() {
-		return Math.min(yscale, yscale2);
+		if (graphicsView2showing)
+			return Math.min(yscale, yscale2);
+		else
+			return yscale;
 	}
 	
 	

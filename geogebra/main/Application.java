@@ -1276,6 +1276,11 @@ public class Application implements KeyEventDispatcher {
 		return getGuiManager().hasEuclidianView2();
 	}
 	
+	public boolean isShowingEuclidianView2() {
+		return getGuiManager().hasEuclidianView2() && 
+			getGuiManager().getEuclidianView2().isShowing();
+	}
+	
 	public void getEuclidianViewXML(StringBuilder sb,boolean asPreference){
 		getEuclidianView().getXML(sb,asPreference);
 	}

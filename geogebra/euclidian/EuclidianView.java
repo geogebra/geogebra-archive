@@ -494,8 +494,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	// ggb3D 2009-02-05
 	private Hits hits;
 	
-	//set EuclidianView no - 2 for 2nd EulidianView, 0 for 1st EuclidianView and Applet
-	private int evNo=0;
+	//set EuclidianView no - 2 for 2nd EulidianView, 1 for 1st EuclidianView and Applet
+	private int evNo=1;
 	
 	
 
