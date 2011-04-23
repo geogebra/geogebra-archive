@@ -823,6 +823,42 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
        	
        	return resultFun;
 	}
+	public static GeoFunction operationSymb(int op, GeoFunction fun1, GeoFunction fun2) {
+		
+		Kernel kernel = fun1.getKernel();
+		
+		FunctionVariable x =  new FunctionVariable(kernel);
+		ExpressionNode sum = new ExpressionNode(kernel,
+				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x),
+				op,
+				new ExpressionNode(kernel,fun2,ExpressionNode.FUNCTION,x));
+		
+    	Function f = new Function(sum,x);
+    	       	
+       	AlgoDependentFunction adf = new AlgoDependentFunction(fun1.getConstruction(),null,f);
+       	return adf.getFunction();
+	}
+	
+	public static GeoFunction applyNumberSymb(int op, GeoFunction fun1, NumberValue nv,boolean right) {
+		
+		Kernel kernel = fun1.getKernel();
+		
+		FunctionVariable x =  new FunctionVariable(kernel);
+		ExpressionNode sum;
+		if(right){sum = new ExpressionNode(kernel,
+				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x),				
+				op, nv);			
+		}
+		else{ sum = new ExpressionNode(kernel,nv,op,
+				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x));
+		}
+    	Function f = new Function(sum,x);
+    	       	
+       	AlgoDependentFunction adf = new AlgoDependentFunction(fun1.getConstruction(),null,f);
+       	return adf.getFunction();
+	}
+
+	
 	
 	/**
 	 * Subtracts two functions and stores the result to another 
