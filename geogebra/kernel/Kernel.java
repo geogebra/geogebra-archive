@@ -662,7 +662,9 @@ public class Kernel {
 	
 	double getXscale() {
 		if (graphicsView2showing) {
-			return Math.min(xscale, xscale2);
+			// xscale = pixel per unit
+			// higher xscale means more pixels per unit, i.e. higher precision
+			return Math.max(xscale, xscale2);
 		}
 		else {
 			return xscale;
@@ -686,7 +688,9 @@ public class Kernel {
 	
 	double getYscale() {
 		if (graphicsView2showing)
-			return Math.min(yscale, yscale2);
+			// yscale = pixel per unit
+			// higher xscale means more pixels per unit, i.e. higher precision
+			return Math.max(yscale, yscale2);
 		else
 			return yscale;
 	}
