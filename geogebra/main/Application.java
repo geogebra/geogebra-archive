@@ -3888,6 +3888,17 @@ public class Application implements KeyEventDispatcher {
 		updateSelection();
 	}
 
+	final public void addSelectedGeos(ArrayList<GeoElement> geos, boolean repaint) {
+
+		selectedGeos.addAll(geos);
+		for (int i = 0 ; i < geos.size() ; i++) {
+			geos.get(i).setSelected(true);
+		}
+		if (repaint)
+			kernel.notifyRepaint();
+		updateSelection();
+	}
+
 	/* Event dispatching */
 	private GlassPaneListener glassPaneListener;
 

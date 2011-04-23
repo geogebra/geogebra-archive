@@ -1920,28 +1920,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						//GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
 						app.getGuiManager().showPopupMenu(app.getSelectedGeos(), (JPanel) view, mouseLoc);
 					}
-					//else if (app.selectedGeosSize() > 1) {
-					//	// there are selected geos: show them
-					//	app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
-					//}
 					else {
-						// there are no selected geos: show drawing pad popup menu
-						//app.getGuiManager().showDrawingPadPopup((JPanel) view, mouseLoc);
 						showDrawingPadPopup(mouseLoc);
 					}
 				} else {		
 					// there are hits
 					if (app.selectedGeosSize() > 0) {	
-						// selected geos: add first hit to selection and show properties
-						app.addSelectedGeo((GeoElement) hits.get(0));
 
-						//if (app.selectedGeosSize() == 1) {
-							//GeoElement selGeo = (GeoElement) app.getSelectedGeos().get(0);
-							app.getGuiManager().showPopupMenu(app.getSelectedGeos(), (JPanel) view, mouseLoc);
-						//}
-						//else  { // more than 1 selected					
-						//	app.getGuiManager().showPropertiesDialog(app.getSelectedGeos());
-						//}
+						// right click on already selected geos -> show menu for them
+						// right click on object(s) not selected -> clear selection
+						//     and show menu just for new objects
+						if (!app.getSelectedGeos().contains(hits.get(0))) {
+							app.clearSelectedGeos();
+							app.addSelectedGeos(hits, true);
+						} else {					
+							app.addSelectedGeo((GeoElement) hits.get(0));
+						}
+						
+						app.getGuiManager().showPopupMenu(app.getSelectedGeos(), (JPanel) view, mouseLoc);
 					}
 					else {
 						// no selected geos: choose geo and show popup menu
