@@ -460,13 +460,15 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 				}
 				// compute t in (-1,1) from s in (-inf, inf)
 				pp.setT(PathNormalizer.inverseInfFunction(s));	
+				P.setX(ha*Math.cosh(s));
+				P.setY(hb*Math.sinh(s));
+				P.setZ(1.0);
+				
 				if (px < 0) { // left branch									
 					pp.setT( pp.getT() + 2); // convert (-1,1) to (1,3)
+					P.setX(-P.getX());
 				}
 
-				P.setX(ha*Math.cos(pp.getT()));
-				P.setY(hb*Math.sin(pp.getT()));
-				P.setZ(1.0);
 				// transform back to real world coord system
 				coordsEVtoRW(P);													
 			break;																			
