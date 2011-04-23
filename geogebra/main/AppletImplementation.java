@@ -1113,6 +1113,13 @@ public class AppletImplementation implements AppletImplementationInterface {
 	}	
 
 	/**
+	 * Returns true if the object with the given name is independent.
+	 */
+	public synchronized boolean isIndependent(String objName) {			
+		return ggbApi.isIndependent(objName);
+	}	
+
+	/**
 	 * Returns the value of the object with the given name as a string.
 	 */
 	public synchronized String getValueString(String objName) {

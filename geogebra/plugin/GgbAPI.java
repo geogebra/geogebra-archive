@@ -730,6 +730,17 @@ public class GgbAPI {
 	}	
 	
 	/**
+	 * Returns true if the object with the given name is independent.
+	 */
+	public synchronized boolean isIndependent(String objName) {			
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) 
+			return false;
+		else
+			return geo.isIndependent();
+	}	
+	
+	/**
 	 * Returns the value of the object with the given name as a string.
 	 */
 	public synchronized String getValueString(String objName) {

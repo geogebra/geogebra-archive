@@ -357,6 +357,10 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		return getAppletImplementation().isDefined(objName);
 	}
 
+	public synchronized boolean isIndependent(String objName) {
+		return getAppletImplementation().isIndependent(objName);
+	}
+
 	public synchronized void openFile(String strURL) {
 		getAppletImplementation().openFile(strURL);
 	}

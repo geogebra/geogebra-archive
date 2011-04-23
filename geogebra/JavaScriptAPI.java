@@ -286,6 +286,11 @@ public interface JavaScriptAPI {
 	public boolean isDefined(String objName);
 	
 	/**
+	 * Returns true if the object with the given name is independent.
+	 */
+	public boolean isIndependent(String objName);
+	
+	/**
 	 * Returns the value of the object with the given name as a string.
 	 */
 	public String getValueString(String objName);
