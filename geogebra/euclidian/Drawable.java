@@ -660,14 +660,14 @@ public abstract class Drawable extends DrawableND {
 
 			try {
 				formula = new TeXFormula(eqnSB.substring(0, strLen));
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style);
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 			} catch (MyError e) {
 				//e.printStackTrace();
 				//Application.debug("MyError LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 
 				formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style);
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 
 				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				//return new Dimension(rec.width, rec.height);
@@ -677,7 +677,7 @@ public abstract class Drawable extends DrawableND {
 				// Write error message to Graphics View
 
 				formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
-				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style);
+				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 
 				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
 				//return new Dimension(rec.width, rec.height);
