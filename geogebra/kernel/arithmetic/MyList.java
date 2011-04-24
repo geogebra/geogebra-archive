@@ -313,7 +313,8 @@ public class MyList extends ValidExpression implements ListValue {
 		ExpressionNode tempNode = new ExpressionNode(kernel, (ExpressionValue) listElements.get(0));
 		tempNode.setOperation(operation);
 		
-		
+		boolean b = kernel.getConstruction().isSuppressLabelsActive();
+		kernel.getConstruction().setSuppressLabelCreation(true);
 		for (int i = 0; i < size; i++) {	
 			//try {				
 				// singleValue to apply to i-th element of this list
@@ -333,6 +334,7 @@ public class MyList extends ValidExpression implements ListValue {
 				}
 				
 				// evaluate operation
+				
 				ExpressionValue operationResult = tempNode.evaluate(); 
 				
 				
@@ -343,6 +345,7 @@ public class MyList extends ValidExpression implements ListValue {
 				if (!operationResult.isExpressionNode()) {
 					operationResult = new ExpressionNode(kernel, operationResult); 
 				}
+				
 				listElements.set(i, (ExpressionValue) operationResult);
 			//} 
 			//catch (MyError err) {
@@ -354,7 +357,7 @@ public class MyList extends ValidExpression implements ListValue {
 			//	return;
 			//}							
 		}
-		
+		kernel.getConstruction().setSuppressLabelCreation(b);
 		
 //		Application.debug("   gives : " + this);
 	

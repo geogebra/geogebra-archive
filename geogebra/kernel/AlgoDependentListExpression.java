@@ -226,7 +226,28 @@ public class AlgoDependentListExpression extends AlgoElement {
 				
 				// add point to list
 				list.add(geo);	
-			} else {
+			}else if (element instanceof GeoFunction){
+				GeoFunction fun = (GeoFunction)element;
+				if (i < cachedListSize) {
+					GeoElement cachedGeo = list.getCached(i);
+					
+					// the cached element is a point: set value
+					if (cachedGeo.isGeoFunction()) {
+						((GeoFunction) cachedGeo).set(fun);
+						geo = cachedGeo;
+					}     			
+				}
+				
+				// no cached point: create new one
+				if (geo == null) {
+					GeoFunction geoFun = new GeoFunction(cons);
+					geoFun.set(fun);					
+					geo = geoFun;
+				}
+				list.add(geo);
+				
+			}
+			else {
 				Application.debug("unsupported list addition: "+element.getClass()+"");
 
 			}
