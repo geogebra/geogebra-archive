@@ -796,7 +796,7 @@ public class GuiManager {
 		if(app.getEuclidianView() != null)
 			app.getEuclidianView().getStyleBar().setLabels();
 			
-		if(getEuclidianView2() != null)
+		if(hasEuclidianView2() == true)
 			getEuclidianView2().getStyleBar().setLabels();
 		
 		
