@@ -617,11 +617,6 @@ public abstract class Drawable extends DrawableND {
 			// Arabic is in standard Java fonts, so we don't need to search for a font
 			TeXFormula.registerExternalFont(Character.UnicodeBlock.of('\u0681'), "Sans Serif", "Serif");
 
-
-			// test code - use Java fonts
-			//TeXFormula.registerExternalFont(Character.UnicodeBlock.BASIC_LATIN, "Sans Serif", "Serif");
-
-
 		   try{
 			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_GREEK);
 			   WebStartAlphabetRegistration.register(AlphabetRegistration.JLM_CYRILLIC);
@@ -1089,6 +1084,23 @@ public abstract class Drawable extends DrawableND {
 	 */
 	public Area getShape() {
 		return shape;
+	}
+	
+	private static boolean useJavaFontsForLaTeX = false;
+	
+	public static boolean useJavaFontsForLaTeX() {
+		return useJavaFontsForLaTeX;
+		
+	}
+	public static void setUseJavaFontsForLaTeX(Application app, boolean b) {
+		if (b != useJavaFontsForLaTeX) {
+			useJavaFontsForLaTeX = b;
+			String serifFont =  b ? "Serif" : null;
+			String sansSerifFont = b ? "Sans Serif" : null;
+			TeXFormula.registerExternalFont(Character.UnicodeBlock.BASIC_LATIN, sansSerifFont, serifFont);
+			JLaTeXMathCache.clearCache();
+			app.getKernel().notifyRepaint();
+		}
 	}
 
 

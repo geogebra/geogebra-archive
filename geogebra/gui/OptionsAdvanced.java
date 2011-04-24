@@ -1,7 +1,8 @@
 package geogebra.gui;
 
-import geogebra.gui.virtualkeyboard.VirtualKeyboard;
+import geogebra.euclidian.Drawable;
 import geogebra.gui.layout.Layout;
+import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -42,7 +43,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private Application app;
 
 	/** */
-	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel, anglePanel,  perspectivesPanel, scriptingPanel;
+	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel,  perspectivesPanel, miscPanel;
 	
 	/**	*/
 	private JLabel keyboardLanguageLabel, widthLabel, heightLabel, opacityLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
@@ -51,7 +52,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout;
 	
 	/**	 */
-	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting;
+	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting, cbUseJavaFonts;
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
@@ -100,7 +101,6 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		initVirtualKeyboardPanel();
 		initTooltipPanel();
 		initLanguagePanel();
-		initAnglePanel();
 		initPerspectivesPanel();
 		initScriptingPanel();
 
@@ -109,9 +109,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		panel.add(virtualKeyboardPanel);
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
-		panel.add(anglePanel);
 		panel.add(perspectivesPanel);
-		panel.add(scriptingPanel);
+		panel.add(miscPanel);
 		
 		JScrollPane scrollPane = new JScrollPane(panel);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(20);
@@ -213,16 +212,6 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		tooltipPanel.add(cbTooltipTimeout);
 	}
 	
-	/**
-	 * Initialize the angle panel.
-	 */
-	private void initAnglePanel() {
-		anglePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		
-		cbReturnAngleInverseTrig = new JCheckBox();
-		cbReturnAngleInverseTrig.addActionListener(this);
-		anglePanel.add(cbReturnAngleInverseTrig);
-	}
 	
 	/**
 	 * Initialize the perspectives panel.
@@ -247,10 +236,20 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 * Initialize the scripting panel.
 	 */
 	private void initScriptingPanel() {
-		scriptingPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		miscPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
 		cbEnableScripting = new JCheckBox();
-		scriptingPanel.add(cbEnableScripting);
+		cbEnableScripting.addActionListener(this);
+		miscPanel.add(cbEnableScripting);
+		
+		cbReturnAngleInverseTrig = new JCheckBox();
+		cbReturnAngleInverseTrig.addActionListener(this);
+		miscPanel.add(cbReturnAngleInverseTrig);
+		
+		cbUseJavaFonts = new JCheckBox();
+		cbUseJavaFonts.addActionListener(this);
+		miscPanel.add(cbUseJavaFonts);
+		
 	}	
 	
 	
@@ -315,6 +314,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			int index = cbTooltipLanguage.getSelectedIndex() - 1;
 			if (index == -1) app.setTooltipLanguage(null);
 			else app.setTooltipLanguage(Application.supportedLocales.get(index));
+		} else if(e.getSource() == cbUseJavaFonts) {
+			Drawable.setUseJavaFontsForLaTeX(app, cbUseJavaFonts.isSelected());
 		} else if(e.getSource() == cbUseLocalDigits) {
 			app.setUseLocalizedDigits(cbUseLocalDigits.isSelected());
 		} else if(e.getSource() == cbReturnAngleInverseTrig) {
@@ -394,17 +395,18 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		cbUseLocalDigits.setText(app.getPlain("LocalizedDigits"));
 		cbUseLocalLabels.setText(app.getPlain("LocalizedLabels"));
 		
-		anglePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Angle")));
-		cbReturnAngleInverseTrig.setText(app.getMenu("ReturnAngleInverseTrig"));
-		cbReturnAngleInverseTrig.setSelected(app.getKernel().getInverseTrigReturnsAngle());
-		
 		perspectivesPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Perspectives")));
 		cbIgnoreDocumentLayout.setText(app.getPlain("IgnoreDocumentLayout"));
 		cbShowTitleBar.setText(app.getPlain("ShowTitleBar"));
 		managePerspectivesButton.setText(app.getMenu("ManagePerspectives"));
 		
-		scriptingPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Scripting")));
+		miscPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Miscellaneous")));
 		cbEnableScripting.setText(app.getPlain("EnableScripting"));
+		//cbEnableScripting.setSelected(b)
+		cbUseJavaFonts.setText(app.getPlain("UseJavaFontsForLaTeX"));	
+		cbUseJavaFonts.setSelected(Drawable.useJavaFontsForLaTeX());
+		cbReturnAngleInverseTrig.setText(app.getMenu("ReturnAngleInverseTrig"));
+		cbReturnAngleInverseTrig.setSelected(app.getKernel().getInverseTrigReturnsAngle());
 		
 		setLabelsKeyboardLanguage();
 		setLabelsTooltipLanguages();
