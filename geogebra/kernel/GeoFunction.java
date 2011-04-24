@@ -831,10 +831,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		ExpressionNode sum = new ExpressionNode(kernel,
 				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x),
 				op,
-				new ExpressionNode(kernel,fun2,ExpressionNode.FUNCTION,x));
+				fun2==null ? null:new ExpressionNode(kernel,fun2,ExpressionNode.FUNCTION,x));
 		
     	Function f = new Function(sum,x);
-    	       	
+    	f.initFunction();       	
        	AlgoDependentFunction adf = new AlgoDependentFunction(fun1.getConstruction(),null,f);
        	return adf.getFunction();
 	}
@@ -853,8 +853,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x));
 		}
     	Function f = new Function(sum,x);
-    	       	
+    	f.initFunction();       	
        	AlgoDependentFunction adf = new AlgoDependentFunction(fun1.getConstruction(),null,f);
+       	
        	return adf.getFunction();
 	}
 

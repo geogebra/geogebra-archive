@@ -5,6 +5,7 @@ import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
+import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
@@ -141,6 +142,9 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         		bool.setValue(!bool.getBoolean());
         		return bool;
         	}
+        	else if (lt instanceof GeoFunction) {
+        		return GeoFunction.operationSymb(operation, (GeoFunction)lt, null);
+        	}
         	else { 
                 String [] str = { "IllegalBoolean",  strNOT, lt.toString()};
                 throw new MyError(app, str);
@@ -154,6 +158,12 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         		bool.setValue(bool.getBoolean() || ((BooleanValue)rt).getBoolean());
         		return bool;
         	}
+        	else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {
+        		return GeoFunction.operationSymb(operation, (GeoFunction)lt, (GeoFunction)rt);
+        	}
+        	else if (lt instanceof GeoFunctionNVar && rt instanceof GeoFunctionNVar) {
+        		return GeoFunctionNVar.operationSymb(operation, (GeoFunctionNVar)lt, (GeoFunctionNVar)rt);
+        	}
         	else { 
                 String [] str = { "IllegalBoolean", lt.toString(), strOR,  rt.toString() };
                 throw new MyError(app, str);
@@ -165,6 +175,12 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         		bool = ((BooleanValue) lt).getMyBoolean();
         		bool.setValue(bool.getBoolean() && ((BooleanValue)rt).getBoolean());
         		return bool;
+        	}
+        	else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {
+        		return GeoFunction.operationSymb(operation, (GeoFunction)lt, (GeoFunction)rt);
+        	}
+        	else if (lt instanceof GeoFunctionNVar && rt instanceof GeoFunctionNVar) {
+        		return GeoFunctionNVar.operationSymb(operation, (GeoFunctionNVar)lt, (GeoFunctionNVar)rt);
         	}
         	else { 
                 String [] str = { "IllegalBoolean", lt.toString(), strAND,  rt.toString() };
@@ -181,7 +197,8 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
         		if (b == null) {
         			String [] str = { "IllegalComparison", lt.toString(), strEQUAL_BOOLEAN,  rt.toString() };
                     throw new MyError(app, str);
-        		} else {
+        		}
+        		else {
         			return b;
         		}
         	}

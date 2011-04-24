@@ -16,10 +16,13 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.MyDouble;
+import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
@@ -706,6 +709,27 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 			double sinPhi = Math.sin(phi.getDouble());
 			matrixTransform(cosPhi,sinPhi,sinPhi,-cosPhi);				
 		}
-	 
+		
+		public static GeoFunctionNVar operationSymb(int op, GeoFunctionNVar fun1, GeoFunctionNVar fun2) {
+			
+			Kernel kernel = fun1.getKernel();
+			
+			FunctionVariable[] xy =  new FunctionVariable[] {
+					new FunctionVariable(kernel,"x"),
+			new FunctionVariable(kernel,"y")};
+			MyList xyList = new MyList(kernel);
+			xyList.addListElement(xy[0]);
+			xyList.addListElement(xy[1]);
+			
+			ExpressionNode sum = new ExpressionNode(kernel,
+					new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION_NVAR,xyList),
+					op,
+					fun2==null ? null:new ExpressionNode(kernel,fun2,ExpressionNode.FUNCTION_NVAR,xyList));
+			
+	    	FunctionNVar f = new FunctionNVar(sum,xy);
+	    	f.initFunction();       	
+	       	AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
+	       	return adf.getFunction();
+		}
 
 }
