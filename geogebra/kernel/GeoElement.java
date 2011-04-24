@@ -5468,10 +5468,10 @@ public abstract class GeoElement
 	// used by Captions, GeoText and DrawParametricCurve to cache LaTeX formulae
 	Object keyLaTeX = null;
 
-	public Object getCachedLaTeXKey(String latex, int fontSize, int style) {
+	public Object getCachedLaTeXKey(String latex, int fontSize, int style, Color fgColor) {
 		Object newKey;
 		try {
-		newKey = JLaTeXMathCache.getCachedTeXFormula(latex, TeXConstants.STYLE_DISPLAY, style, fontSize, 1 /* inset around the label*/);
+		newKey = JLaTeXMathCache.getCachedTeXFormula(latex, TeXConstants.STYLE_DISPLAY, style, fontSize, 1 /* inset around the label*/, fgColor);
 		} catch (ParseException e) {
 			if (keyLaTeX != null) {
 				// remove old key from cache

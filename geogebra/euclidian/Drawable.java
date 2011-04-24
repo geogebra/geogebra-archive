@@ -630,13 +630,13 @@ public abstract class Drawable extends DrawableND {
 
 		} else eqnSB.setLength(0);
 
-		eqnSB.append("\\fgcolor{");
-		eqnSB.append(Util.toHexString(fgColor));
-		eqnSB.append("}{");
+		//eqnSB.append("\\fgcolor{");
+		//eqnSB.append(Util.toHexString(fgColor));
+		//eqnSB.append("}{");
 
 		eqnSB.append(text);
 
-		eqnSB.append(" }"); // fgcolor
+		//eqnSB.append(" }"); // fgcolor
 
 		int strLen = eqnSB.length();
 
@@ -697,9 +697,9 @@ public abstract class Drawable extends DrawableND {
 			// so that we can remove it from the cache if it changes
 			// eg for a (regular) dynamic LaTeX text eg "\sqrt{"+a+"}"
 			if (geo == null)
-				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, style, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/);
+				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, style, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/, fgColor);
 			else
-				key = geo.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3, style);
+				key = geo.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3, style, fgColor);
 
 			im = JLaTeXMathCache.getCachedTeXFormulaImage(key);
 			} catch (ParseException e) {
