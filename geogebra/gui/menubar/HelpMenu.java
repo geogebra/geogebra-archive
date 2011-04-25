@@ -104,7 +104,7 @@ class HelpMenu extends BaseMenu {
 		};
 		
 		websiteAction = new AbstractAction("GeoGebra.org", new ImageIcon(
-				app.getInternalImage("geogebra.gif"))) {
+				app.getInternalImage("geogebra.png"))) {
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {

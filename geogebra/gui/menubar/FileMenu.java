@@ -141,7 +141,7 @@ class FileMenu extends BaseMenu {
 				File file = Application.getFromFileList(i);
 				if (file != null) {
 					mi = new JMenuItem(file.getName());
-					mi.setIcon(app.getImageIcon("geogebra.gif"));
+					mi.setIcon(app.getImageIcon("geogebra.png"));
 					ActionListener al = new LoadFileListener(app, file);
 					mi.addActionListener(al);
 					submenuRecent.add(mi);

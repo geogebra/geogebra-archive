@@ -32,7 +32,7 @@ public class FileChooserCompletionListCellRenderer extends DefaultListCellRender
 	static {
 		Icon icon;
 		// ggb, ggt 
-		icon = loadIcon("geogebra-file.png");
+		icon = loadIcon("geogebra.png");
 		FILE_EXT_ICONS.put("ggb", icon);
 		FILE_EXT_ICONS.put("ggt", icon);
 		// html, htm
