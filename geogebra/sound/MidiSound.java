@@ -1,5 +1,7 @@
 package geogebra.sound;
 
+import geogebra.kernel.GeoFunction;
+import geogebra.kernel.arithmetic.Function;
 import geogebra.main.Application;
 
 import java.io.File;
@@ -25,37 +27,47 @@ import javax.swing.JFileChooser;
 
 /**
  * Class for managing and playing Midi sound. 
- * Both sequenced sounds and directly generated notes are handled. 
  * 
  * @author G. Sturr 2010-9-18
  *
  */
-public class MidiManager  {
+public class MidiSound  {
 
 	private Application app;
 	private Synthesizer synthesizer;
 	private Instrument instruments[];
 	private MidiChannel channels[];
+	private Sequencer sequencer;
 
 
-	public MidiManager(Application app) {
+	public MidiSound(Application app) {
 
 		this.app = app;
 		initSynthesizer();
-
+		try {
+			sequencer = MidiSystem.getSequencer( );
+		} catch (MidiUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// testing ...
 		//System.out.println(getInstrumentNames());
 
 	}
 
 
-	public void initSynthesizer() {
+	//==================================================
+	//  Initialization
+	//==================================================
 
+	public boolean initSynthesizer() {
+
+		boolean success = true;
 		try {
 			if (synthesizer == null) {
 				if ((synthesizer = MidiSystem.getSynthesizer()) == null) {
-					System.out.println("getSynthesizer() failed!");
-					return;
+					Application.debug("getSynthesizer() failed!");
+					return false;
 				}
 			} 
 			synthesizer.open();
@@ -68,11 +80,18 @@ public class MidiManager  {
 
 			channels = synthesizer.getChannels();    
 
-		} catch (Exception ex) { ex.printStackTrace(); return; }
+		} catch (Exception e) { 
+			e.printStackTrace(); 
+			return false; 
+		}
 
+		return success;
 	}
 
-	/** Generates a list of available instruments in String form */
+	
+	/** 
+	 * Generates a list of available instruments in String form 
+	 * */
 	public String getInstrumentNames() {
 
 		int size = Math.min(128,instruments.length);
@@ -89,7 +108,7 @@ public class MidiManager  {
 	}
 
 
-	public void close() {
+	public void closeMidiSound() {
 		if (synthesizer != null) {
 			synthesizer.close();
 		}
@@ -103,31 +122,36 @@ public class MidiManager  {
 	//  Play Single Midi Note
 	//==================================================
 
-	
-	/** Plays a single note in channel[0]  */
-	public void playNote(int note, double duration, int instrument, int velocity){
-		try {
-			programChange(instrument,0);
-			channels[0].noteOn(note, velocity);
-			Thread.sleep((long) (duration*1000));
-			channels[0].noteOff(note);
 
-		} 
-		
-		catch (Exception e){
+	/** 
+	 * Uses the Sequencer to play a single note in channel[0]  
+	 * 
+	 * */
+	public void playSequenceNote(final int note, final double duration, final int instrument, final int velocity){
+
+		Sequence sequence;
+		try {
+
+			sequence = new Sequence(Sequence.SMPTE_24, 100);
+			int ticks = (int) (duration *2400);
+
+			Track track = sequence.createTrack( );  
+
+			// Set the instrument on channel 0
+			ShortMessage sm = new ShortMessage( );
+			sm.setMessage(ShortMessage.PROGRAM_CHANGE, 0, instrument, 0);
+			track.add(new MidiEvent(sm, 0));
+
+			// add the note to the track and play it
+			addNote(track, 0, ticks, note, velocity);
+			playSequence(sequence, 120);
+
+
+			//System.out.println(sequence.getMicrosecondLength()*1E-6 + ":" + duration);
+
+		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
-	}
-
-
-	public void programChange(int program, int channel) {
-		
-		if(program == channels[channel].getProgram()) return;
-		
-		if (instruments != null) {
-			synthesizer.loadInstrument(instruments[program]);
-		}
-		channels[channel].programChange(program);
 
 	}
 
@@ -138,12 +162,15 @@ public class MidiManager  {
 	//  Play Midi Sequence from File 
 	//==================================================
 
-
+	/*
+	 * Uses the sequencer to play a Midi file.
+	 * Currently only supports files with extension .mid
+	 */
 	public void playMidiFile(String fileName){
 
 		try {
 			Sequence sequence = null;
-			
+
 			if(fileName.equals("")){
 				// launch a file chooser (just for testing)
 				final JFileChooser fc = new JFileChooser();
@@ -157,12 +184,13 @@ public class MidiManager  {
 			}
 
 			// Create a sequencer for the sequence
-			Sequencer sequencer = MidiSystem.getSequencer();
+			//sequencer = MidiSystem.getSequencer();
 			sequencer.open();
 			sequencer.setSequence(sequence);
 
-			// Start playing
 			sequencer.start();
+
+
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -187,32 +215,49 @@ public class MidiManager  {
 	//==================================================
 
 	/**
-	 * Plays a midi sequence parsed from an input string
+	 * Uses the sequencer to play a midi sequence parsed from an input string
 	 */
-	public void playString( String noteString, int instrument ) {
+	public void playSequenceFromString( String noteString, int instrument ) {
 
 		int tempo = 120;
 		char[ ] notes = noteString.toCharArray();
 
-		try{
-
-			// 16 ticks per quarter note. 
-			Sequence sequence = new Sequence(Sequence.PPQ, 16);
+		// 16 ticks per quarter note. 
+		Sequence sequence;
+		try {
+			sequence = new Sequence(Sequence.PPQ, 16);
 
 			// Add the specified notes to the track
 			addTrack(sequence, instrument, tempo, notes);
 
+			playSequence(sequence, tempo);
+
+		} catch (InvalidMidiDataException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+
+
+	/**
+	 * Plays a midi sequence 
+	 */
+	public void playSequence( Sequence sequence, int tempo ) {
+
+		try{
 
 			// Set up the Sequencer and Synthesizer objects
-			Sequencer sequencer = MidiSystem.getSequencer( );
+			if(sequencer.isOpen())
+				sequencer.close();
 			sequencer.open( );  
-			sequencer.getTransmitter( ).setReceiver(synthesizer.getReceiver( ));
+			sequencer.getTransmitter( ).setReceiver(synthesizer.getReceiver());
 
 			// Specify the sequence to play, and the tempo to play it at
 			sequencer.setSequence(sequence);
 			sequencer.setTempoInBPM(tempo);
 
-			// And start playing now.
+			// Start playing 
 			sequencer.start( );
 
 		} catch (MidiUnavailableException e) {
@@ -226,7 +271,7 @@ public class MidiManager  {
 	 * Offsets for octave changes. Offset amounts are added to the base midi
 	 * values for the notes of A B C D E F G
 	 * */
-	static final int[] offsets = { -4, -2, 0, 1, 3, 5, 7  };
+	static final int[] offsets = { -3, -1, 0, 2, 4, 5, 7  };
 
 
 	/**
@@ -247,7 +292,7 @@ public class MidiManager  {
 	 * Space: Play the previous note or notes; notes not separated by spaces
 	 *        are played at the same time
 	 */
-	public static void addTrack(Sequence s, int instrument, int tempo, char[  ] notes) {
+	public static void addTrack(Sequence s, int instrument, int tempo, char[] notes) {
 
 		int DAMPER_PEDAL = 64;
 		int DAMPER_ON = 127;
@@ -261,7 +306,7 @@ public class MidiManager  {
 			sm.setMessage(ShortMessage.PROGRAM_CHANGE, 0, instrument, 0);
 			track.add(new MidiEvent(sm, 0));
 
-			int n = 0; // current character in notes[  ] array
+			int n = 0; // current character in notes[] array
 			int t = 0; // time in ticks for the composition
 
 			// These values persist and apply to all notes 'till changed
@@ -301,17 +346,21 @@ public class MidiManager  {
 				}
 				else if (c >= 'A' && c <= 'G') {
 					int key = basekey + offsets[c - 'A'];
+					// sb = new StringBuilder();
+					//sb.append(c);
 					if (n < notes.length) {
-						if (notes[n] == 'b') { // flat
+						if (notes[n] == 'b' ) { // flat
 							key--; 
 							n++;
+							//sb.append("b");
 						}
 						else if (notes[n] == '#') { // sharp
 							key++;
 							n++;
+							//sb.append("#");
 						}
 					}
-
+					//System.out.println("note:" + sb.toString() + "  key:" + key);
 					addNote(track, t, notelength, key, velocity);
 					numnotes++;
 				}
@@ -357,53 +406,7 @@ public class MidiManager  {
 
 	}
 
-	
-	
 
-	
-	 /** Generates a tone.
-	  @param hz Base frequency (neglecting harmonic) of the tone in cycles per second
-	  @param msecs The number of milliseconds to play the tone.
-	  @param volume Volume, form 0 (mute) to 100 (max).
-	  @param addHarmonic Whether to add an harmonic, one octave up. */
-	  public static void generateTone(int hz,int msecs, int volume, boolean addHarmonic)
-	    throws LineUnavailableException {
-	 
-	    float frequency = 44100;
-	    byte[] buf;
-	    AudioFormat af;
-	    if (addHarmonic) {
-	      buf = new byte[2];
-	      af = new AudioFormat(frequency,8,2,true,false);
-	    } else {
-	      buf = new byte[1];
-	      af = new AudioFormat(frequency,8,1,true,false);
-	    }
-	    SourceDataLine sdl = AudioSystem.getSourceDataLine(af);
-	    sdl = AudioSystem.getSourceDataLine(af);
-	    sdl.open(af);
-	    sdl.start();
-	    for(int i=0; i<msecs*frequency/1000; i++){
-	      double angle = i/(frequency/hz)*2.0*Math.PI;
-	      buf[0]=(byte)(Math.sin(angle)*volume);
-	 
-	      if(addHarmonic) {
-	        double angle2 = (i)/(frequency/hz)*2.0*Math.PI;
-	        buf[1]=(byte)(Math.sin(2*angle2)*volume*0.6);
-	        sdl.write(buf,0,2);
-	      } else {
-	        sdl.write(buf,0,1);
-	      }
-	    }
-	    sdl.drain();
-	    sdl.stop();
-	    sdl.close();
-	  }
-
-
-	
-	
-	
 
 
 } 

@@ -56,7 +56,8 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra.sound.MidiManager;
+import geogebra.sound.MidiSound;
+import geogebra.sound.SoundManager;
 import geogebra.util.ImageManager;
 
 import java.awt.Color;
@@ -9062,18 +9063,15 @@ class CmdPlaySound extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 		GeoElement[] ret = {};
-
-		MidiManager m = app.getMidiSoundManager();
+		boolean[] ok = new boolean[n];
+		SoundManager m = app.getSoundManager();
 
 		switch (n) {
 		case 1:
 			arg = resArgs(c);
 
 			// play a midi file
-			if (arg[0].isGeoText()) {
-				// m.playString(
-				// ((MyStringBuffer)((GeoText)arg[0]).getText()).toString(), 0
-				// );
+			if (ok[0] = arg[0].isGeoText()) {
 				m.playMidiFile(((String) ((GeoText) arg[0]).toValueString()));
 				return ret;
 			}
@@ -9085,36 +9083,41 @@ class CmdPlaySound extends CommandProcessor {
 		case 2:
 			arg = resArgs(c);
 
-			if (arg[0].isGeoNumeric() && arg[1].isGeoNumeric()) {
+			if ( (ok[0] = arg[0].isGeoNumeric()) 
+					&& (ok[1] = arg[1].isGeoNumeric())) {
 
 				// play a note using args: note and duration
 				// use default instrument 0 = piano, default 50% velocity
 				// (volume) = 64)
-				m.playNote((int) ((GeoNumeric) arg[0]).getDouble(),
+				m.playSequenceNote((int) ((GeoNumeric) arg[0]).getDouble(),
 						((GeoNumeric) arg[1]).getDouble(), 0, 64);
 
 				return ret;
 			}
 
-			else if (arg[0].isGeoText() && arg[1].isGeoNumeric()) {
+			else if ((ok[0] = arg[0].isGeoText()) 
+					&& (ok[1] = arg[1].isGeoNumeric())) {
 				// play a sequence string
-				m.playString(((String) ((GeoText) arg[0]).toValueString()),
+				m.playSequenceFromString(((String) ((GeoText) arg[0]).toValueString()),
 						(int) ((GeoNumeric) arg[1]).getDouble());
 				return ret;
 			}
 
-			else {
+			else if (!ok[0])
 				throw argErr(app, c.getName(), arg[0]);
-			}
+			else if (!ok[1])
+				throw argErr(app, c.getName(), arg[1]);
+			
 
 		case 3:
 			arg = resArgs(c);
 
 			// play a note using args: note, duration, instrument
-			if (arg[0].isGeoNumeric() && arg[1].isGeoNumeric()
-					&& arg[2].isGeoNumeric()) {
+			if ((ok[0] = arg[0].isGeoNumeric()) 
+					&& (ok[1] = arg[1].isGeoNumeric())
+					&& (ok[2] = arg[2].isGeoNumeric())) {
 
-				m.playNote((int) ((GeoNumeric) arg[0]).getDouble(), // note
+				m.playSequenceNote((int) ((GeoNumeric) arg[0]).getDouble(), // note
 						((GeoNumeric) arg[1]).getDouble(), // duration
 						(int) ((GeoNumeric) arg[2]).getDouble(), // instrument
 						64);
@@ -9122,10 +9125,55 @@ class CmdPlaySound extends CommandProcessor {
 				return ret;
 			}
 
-			else {
-				throw argErr(app, c.getName(), arg[0]);
-			}
+			else if ((ok[0] = arg[0].isGeoFunction()) 
+					&& (ok[1] = arg[1].isGeoNumeric())
+					&& (ok[2] = arg[2].isGeoNumeric())) {
 
+				m.playFunction(((GeoFunction) arg[0]), // function
+						((GeoNumeric) arg[1]).getDouble(), // min value
+						((GeoNumeric) arg[2]).getDouble()); // max value
+				return ret;
+			}
+			
+			
+			else if (!ok[0])
+				throw argErr(app, c.getName(), arg[0]);
+			else if (!ok[1])
+				throw argErr(app, c.getName(), arg[1]);
+			else if (!ok[2])
+				throw argErr(app, c.getName(), arg[2]);
+			
+			
+
+		case 5:
+			arg = resArgs(c);
+
+			if ((ok[0] = arg[0].isGeoFunction() 
+					&& (ok[1] = arg[1].isGeoNumeric())
+					&& (ok[2] = arg[2].isGeoNumeric())
+					&& (ok[3] = arg[3].isGeoNumeric()) 
+					&& (ok[4] = arg[4].isGeoNumeric()))) {
+
+				m.playFunction(((GeoFunction) arg[0]), // function
+						((GeoNumeric) arg[1]).getDouble(), // min value
+						((GeoNumeric) arg[2]).getDouble(), // max value
+						(int)((GeoNumeric) arg[3]).getDouble(), // sample rate
+						(int)((GeoNumeric) arg[4]).getDouble()); // bit depth
+				
+				return ret;
+			} 
+			else if (!ok[0])
+				throw argErr(app, c.getName(), arg[0]);
+			else if (!ok[1])
+				throw argErr(app, c.getName(), arg[1]);
+			else if (!ok[2])
+				throw argErr(app, c.getName(), arg[2]);
+			else if (!ok[3])
+				throw argErr(app, c.getName(), arg[3]);
+			else
+				throw argErr(app, c.getName(), arg[4]);
+			
+			
 		default:
 			throw argNumErr(app, c.getName(), n);
 		}

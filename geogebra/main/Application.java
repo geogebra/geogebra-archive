@@ -45,7 +45,7 @@ import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.plugin.GgbAPI;
 import geogebra.plugin.PluginManager;
 import geogebra.plugin.ScriptManager;
-import geogebra.sound.MidiManager;
+import geogebra.sound.SoundManager;
 import geogebra.util.DownloadManager;
 import geogebra.util.ImageManager;
 import geogebra.util.LowerCaseDictionary;
@@ -5131,13 +5131,13 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	
-	private MidiManager midiSoundManager = null;
+	private SoundManager soundManager = null;
 
-	public MidiManager getMidiSoundManager() {
-		if(midiSoundManager == null){
-			midiSoundManager = new MidiManager(this);
+	public SoundManager getSoundManager() {
+		if(soundManager == null){
+			soundManager = new SoundManager(this);
 		}
-		return midiSoundManager;
+		return soundManager;
 	}
 	
 	private static String CASVersionString = "";
