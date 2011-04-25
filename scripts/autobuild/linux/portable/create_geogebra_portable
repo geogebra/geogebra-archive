@@ -21,7 +21,7 @@ which python3 2>&1 >/dev/null || {
 umask 0002 # trying to ensure g+w rights for all created files automatically
 
 IMAGE_DIR=../../../../geogebra/gui/images/
-convert $IMAGE_DIR/geogebra32.gif png:$IMAGE_DIR/geogebra.png || {
+convert $IMAGE_DIR/geogebra32.png png:$IMAGE_DIR/geogebra.png || {
     echo ImageMagick convert is required to run this script.
     exit 1
     }
