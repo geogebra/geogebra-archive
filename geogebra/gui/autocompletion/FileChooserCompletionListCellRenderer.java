@@ -25,8 +25,9 @@ public class FileChooserCompletionListCellRenderer extends DefaultListCellRender
 	private static final String ICON_LOCATION = "/geogebra/gui/images/";
 	
 	private static final Icon DIRECTORY_ICON = loadIcon("folder.png");
-	private static final Icon UNKNOWN_FILE_ICON = loadIcon("unknown-file.png");
+	private static final Icon UNKNOWN_FILE_ICON = loadIcon("text-x-generic.png");
 	
+	// Most of these Icons are from the the tango! icon set: http://tango.freedesktop.org/
 	private static final Map<String, Icon> FILE_EXT_ICONS = new HashMap<String, Icon>();
 	static {
 		Icon icon;
@@ -35,7 +36,7 @@ public class FileChooserCompletionListCellRenderer extends DefaultListCellRender
 		FILE_EXT_ICONS.put("ggb", icon);
 		FILE_EXT_ICONS.put("ggt", icon);
 		// html, htm
-		icon = loadIcon("websites.png");
+		icon = loadIcon("text-html.png");
 		FILE_EXT_ICONS.put("html", icon);
 		FILE_EXT_ICONS.put("htm", icon);
 	}
