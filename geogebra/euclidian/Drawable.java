@@ -511,7 +511,6 @@ public abstract class Drawable extends DrawableND {
 
 
 	private static JLabel jl = new JLabel();
-	private static StringBuilder eqnSB;
 	/**
 	 * Adds \\- to positions where the line can
 	 * be broken. Now it only breaks at +, -, *
@@ -573,6 +572,8 @@ public abstract class Drawable extends DrawableND {
 	}
 
 
+	static boolean drawEquationJLaTeXMathFirstCall = true;
+	
 	/**
 	 * Renders LaTeX equation using JLaTeXMath
 	 * @param app
@@ -592,9 +593,9 @@ public abstract class Drawable extends DrawableND {
 		//text=addPossibleBreaks(text);
 
 
-		if (eqnSB == null) { // first call
+		if (drawEquationJLaTeXMathFirstCall) { // first call
 
-			eqnSB = new StringBuilder(20);
+			drawEquationJLaTeXMathFirstCall = false;
 
 			// initialise definitions
 			if (initJLaTeXMath == null) initJLaTeXMath = new TeXFormula("\\DeclareMathOperator{\\sech}{sech} \\DeclareMathOperator{\\csch}{csch} \\DeclareMathOperator{\\erf}{erf}");
@@ -628,22 +629,7 @@ public abstract class Drawable extends DrawableND {
 	       LatexConvertorFactory factory = new LatexConvertorFactory(app.getKernel());
 	       DynamicAtom.setExternalConverterFactory(factory);
 
-		} else eqnSB.setLength(0);
-
-		//eqnSB.append("\\fgcolor{");
-		//eqnSB.append(Util.toHexString(fgColor));
-		//eqnSB.append("}{");
-
-		eqnSB.append(text);
-
-		//eqnSB.append(" }"); // fgcolor
-
-		int strLen = eqnSB.length();
-
-		// removed - needed for old hashmap caching
-		//eqnSB.append(' ');
-		//eqnSB.append(font.getSize()+"");
-
+		} 
 
 		int style = 0;
 		if (font.isBold()) style = style | TeXFormula.BOLD;
@@ -652,21 +638,21 @@ public abstract class Drawable extends DrawableND {
 
 		// if we're exporting, we want to draw it full resolution
 		// if it's a \jlmDynamic text, we don't want to add it to the cache
-		if (exporting || eqnSB.indexOf("\\jlmDynamic") > -1) {
+		if (exporting || text.indexOf("\\jlmDynamic") > -1) {
 
 			//Application.debug("creating new icon for: "+text);
 			TeXFormula formula;
 			TeXIcon icon;
 
 			try {
-				formula = new TeXFormula(eqnSB.substring(0, strLen));
+				formula = new TeXFormula(text);
 				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 			} catch (MyError e) {
 				//e.printStackTrace();
 				//Application.debug("MyError LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 
-				formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
+				formula = TeXFormula.getPartialTeXFormula(text);
 				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 
 				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
@@ -676,7 +662,7 @@ public abstract class Drawable extends DrawableND {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 
-				formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
+				formula = TeXFormula.getPartialTeXFormula(text);
 				icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, style, fgColor);
 
 				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
@@ -697,16 +683,16 @@ public abstract class Drawable extends DrawableND {
 			// so that we can remove it from the cache if it changes
 			// eg for a (regular) dynamic LaTeX text eg "\sqrt{"+a+"}"
 			if (geo == null)
-				key = JLaTeXMathCache.getCachedTeXFormula(eqnSB.substring(0, strLen), TeXConstants.STYLE_DISPLAY, style, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/, fgColor);
+				key = JLaTeXMathCache.getCachedTeXFormula(text, TeXConstants.STYLE_DISPLAY, style, font.getSize() + 3 /*font size*/, 1 /* inset around the label*/, fgColor);
 			else
-				key = geo.getCachedLaTeXKey(eqnSB.substring(0, strLen), font.getSize() + 3, style, fgColor);
+				key = geo.getCachedLaTeXKey(text, font.getSize() + 3, style, fgColor);
 
 			im = JLaTeXMathCache.getCachedTeXFormulaImage(key);
 			} catch (ParseException e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 
-				TeXFormula formula = TeXFormula.getPartialTeXFormula(eqnSB.substring(0, strLen));
+				TeXFormula formula = TeXFormula.getPartialTeXFormula(text);
 				im = formula.createBufferedImage(TeXConstants.STYLE_DISPLAY, font.getSize() + 3, Color.black, Color.white);
 
 				//Rectangle rec = drawMultiLineText(e.getMessage()+"\n"+text, x, y + g2.getFont().getSize(), g2);
