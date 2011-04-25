@@ -37,7 +37,7 @@ public class GeoGebraTubeExport {
 	/**
 	 * URL of the webpage to call if a file should be uploaded.
 	 */
-	private static final String uploadURL = "http://geogebra-tube/tube/upload";
+	private static final String uploadURL = "http://www.geogebratube.org/upload";
 	
 	/**
 	 * Application instance.
@@ -96,6 +96,7 @@ public class GeoGebraTubeExport {
 
 			// content type
 			urlConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			urlConn.setRequestProperty("Accept-Language", app.getLocale().toString());
 			
 			// send output
 			try {
@@ -194,6 +195,17 @@ public class GeoGebraTubeExport {
 					progressDialog.pack();
 				} else {
 					Application.debug("Upload failed. Response: #" + responseCode + " - " + responseMessage);
+					
+					BufferedReader errors = new BufferedReader(new InputStreamReader(urlConn.getErrorStream()));
+					StringBuffer errorBuffer = new StringBuffer();
+					
+					String line;
+					while (null != ((line = errors.readLine()))) {
+						errorBuffer.append(line);
+					}
+					errors.close();
+					
+					Application.debug(errorBuffer.toString());
 					
 					statusLabel.setText(app.getPlain("UploadError", Integer.toString(responseCode)));
 					progressBar.setEnabled(false);
