@@ -1,8 +1,13 @@
-package geogebra.gui.util;
+package geogebra.gui.autocompletion;
 
-import static java.awt.event.KeyEvent.*;
-import static java.lang.Math.*;
-import geogebra.gui.util.AutoCompletion.CompletionProvider;
+import static java.awt.event.KeyEvent.VK_DOWN;
+import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.event.KeyEvent.VK_ESCAPE;
+import static java.awt.event.KeyEvent.VK_PAGE_DOWN;
+import static java.awt.event.KeyEvent.VK_PAGE_UP;
+import static java.awt.event.KeyEvent.VK_UP;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 import java.awt.Dimension;
 import java.awt.event.FocusAdapter;
@@ -18,6 +23,7 @@ import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -30,11 +36,13 @@ import javax.swing.text.Document;
  * A user should prefer one of the static <code>install</code> methods in the
  * {@link AutoCompletion} class over instantiating this class directly.
  * 
+ * @param <T> The type of the displayed completion options 
+ * 
  * @author Julian Lettner
  */
-public class OptionsPopup {
+public class OptionsPopup<T> {
 	private final JTextField textField;
-	private final CompletionProvider completionProvider;
+	private final CompletionProvider<T> completionProvider;
 	private final int maxPopupRowCount;
 	
 	private final JPopupMenu popup;
@@ -49,10 +57,13 @@ public class OptionsPopup {
 	 * Initializes components and registers event listeners.
 	 * 
 	 * @param textField The text field
-	 * @param completionProvider A completion provider
+	 * @param completionProvider A completion provider (The returned values will be 
+	 * 							 the input for the supplied {@link ListCellRenderer})
+	 * @param listCellRenderer A list cell renderer which visualizes the options 
+	 *                         returned by the provided {@link CompletionProvider}
 	 * @param maxPopupRowCount The maximal number of rows for the options popup
 	 */
-	public OptionsPopup(JTextField textField, CompletionProvider completionProvider, int maxPopupRowCount) {
+	public OptionsPopup(JTextField textField, CompletionProvider<T> completionProvider, ListCellRenderer listCellRenderer, int maxPopupRowCount) {
 		this.textField = textField;
 		this.completionProvider = completionProvider;
 		this.maxPopupRowCount = maxPopupRowCount;
@@ -60,6 +71,7 @@ public class OptionsPopup {
 		// Initialize components
 		listModel = new DelegatingListModel();
 		list = new JList(listModel);
+		list.setCellRenderer(listCellRenderer);
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setFocusable(false);
 		popup = new JPopupMenu();
@@ -69,7 +81,6 @@ public class OptionsPopup {
 		
 		registerListeners();
 	}
-
 
 	private void registerListeners() {
 		// Suggest completions on text changes, store reference to listener object
@@ -89,11 +100,7 @@ public class OptionsPopup {
 		});
 		// Allow the user click on a option for completion
 		list.addMouseListener(new MouseAdapter() {
-			@Override public void mouseClicked(MouseEvent e) {
-				if (SwingUtilities.isLeftMouseButton(e)) {
-					updateText();
-				}
-			}
+			@Override public void mouseClicked(MouseEvent e) { handleMouseClick(e); }
 		});
 	}
 	
@@ -104,7 +111,7 @@ public class OptionsPopup {
 			return;
 		}
 		
-		List<String> options = completionProvider.getCompletionOptions(userInput);
+		List<?> options = completionProvider.getCompletionOptions(userInput);
 		if (null != options && 0 != options.size()) {
 			listModel.setDataList(options);
 			showOptionsPopup();
@@ -156,8 +163,9 @@ public class OptionsPopup {
 	}
 	
 	private void updateText() {
-		String text = (String) list.getSelectedValue();
-		text = text == null ? userInput : text;
+		@SuppressWarnings("unchecked")
+		T option = (T) list.getSelectedValue();
+		String text = option == null ? userInput : completionProvider.toString(option);
 		Document d = textField.getDocument();
 		d.removeDocumentListener(documentListener);
 		textField.setText(text);
@@ -215,6 +223,14 @@ public class OptionsPopup {
 			list.ensureIndexIsVisible(index);
 		}
 		updateText();
+	}
+	
+	private void handleMouseClick(MouseEvent e) {
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			updateText();
+			hideOptionsPopup();
+			textField.selectAll();
+		}
 	}
 
 }

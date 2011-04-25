@@ -1,4 +1,4 @@
-package geogebra.gui.util;
+package geogebra.gui.autocompletion;
 
 import java.util.Collections;
 import java.util.List;
