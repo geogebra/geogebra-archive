@@ -1,5 +1,6 @@
 package geogebra.gui.layout.panels;
 
+import geogebra.euclidian.EuclidianViewInterface;
 import geogebra.gui.layout.DockPanel;
 import geogebra.main.Application;
 
@@ -13,18 +14,14 @@ import javax.swing.JPanel;
 
 
 /**
- * Abstract class for all "euclidian" panels
+ * Abstract class for all "euclidian" panels. 
  * 
  * @author matthieu
- *
+ * @remark {@link #getEuclidianView()} has to be overridden if {@link #getComponent()}
+ * 			does not return the euclidian view directly
  */
 public abstract class EuclidianDockPanelAbstract extends DockPanel {
-	
-
-
-	/**
-	 * 
-	 */
+	/** */
 	private static final long serialVersionUID = 1L;
 	
 	
@@ -51,6 +48,15 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 	}
 	
 	/**
+	 * @return The euclidian view associated with this dock panel.
+	 * @remark This method has to be overridden if the component of the 
+	 * 			dock panel is not the euclidian view itself
+	 */
+	public EuclidianViewInterface getEuclidianView() {
+		return (EuclidianViewInterface)getComponent();
+	}
+	
+	/**
 	 * sets this euclidian panel to have the "euclidian focus"
 	 * @param hasFocus
 	 */
@@ -58,9 +64,6 @@ public abstract class EuclidianDockPanelAbstract extends DockPanel {
 		hasEuclidianFocus = hasFocus;
 		euclidianFocus.setVisible(hasEuclidianFocus);
 	}
-	
-	
-	
 	
 	/**
 	 * create the focus panel (composed of titleLabel, and, for EuclidianDockPanels, focus icon)

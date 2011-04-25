@@ -430,7 +430,7 @@ public class GuiManager {
 		EuclidianDockPanelAbstract focusedEuclidianPanel = layout.getDockManager().getFocusedEuclidianPanel();
 
 		if(focusedEuclidianPanel != null)
-			return (EuclidianViewInterface)focusedEuclidianPanel.getComponent();			
+			return focusedEuclidianPanel.getEuclidianView();			
 		else 
 			return app.getEuclidianView();
 		
@@ -636,6 +636,8 @@ public class GuiManager {
 			if (constProtocolNavigation != null)
 				constProtocolNavigation.unregister();
 		}
+		
+		constProtocolNavigation.setVisible(show);
 	}
 	
 	public void setShowConstructionProtocolNavigation(boolean show, 

@@ -38,8 +38,6 @@ public class Euclidian2DockPanel extends EuclidianDockPanelAbstract {
 	}
 	
 	protected JComponent loadComponent() {
-		// the fact that this object is of type EuclidianView is
-		// used for the limited focus subsystem, see DockPanel::updatePanel()
 		return app.getGuiManager().getEuclidianView2();
 	}
 }

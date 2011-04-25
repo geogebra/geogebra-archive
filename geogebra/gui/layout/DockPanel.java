@@ -1,7 +1,7 @@
 package geogebra.gui.layout;
 
-import geogebra.euclidian.EuclidianView;
 import geogebra.gui.app.GeoGebraFrame;
+import geogebra.gui.layout.panels.EuclidianDockPanelAbstract;
 import geogebra.gui.toolbar.Toolbar;
 import geogebra.gui.toolbar.ToolbarContainer;
 import geogebra.io.layout.DockPanelXml;
@@ -577,7 +577,7 @@ public abstract class DockPanel extends JPanel implements ActionListener, Window
 			} 
 			
 			// euclidian view uses the general toolbar
-			if(component instanceof EuclidianView) {
+			if(this instanceof EuclidianDockPanelAbstract) {
 				// TODO implement..
 			}
 		}
