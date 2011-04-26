@@ -3122,7 +3122,8 @@ public class Application implements KeyEventDispatcher {
 	
 	protected void updateStyleBars(){
 		getEuclidianView().getStyleBar().updateStyleBar();	
-		getGuiManager().getEuclidianView2().getStyleBar().updateStyleBar();
+		if (getGuiManager().hasEuclidianView2())
+			getGuiManager().getEuclidianView2().getStyleBar().updateStyleBar();
 	}
 
 	public void updateMenuWindow() {
