@@ -416,7 +416,6 @@ public final class Environment {
                 if(!key.startsWith("$") 
 			&& !key.equals("I") 
 			&& !key.equals("%") 
-			&& !key.equals("LoadResult")
 			&& !key.equals("geogebra"))
                 {
                     //Do not unbind private variables (which are those which start with a $) or the other listed variables.

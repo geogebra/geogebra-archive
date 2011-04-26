@@ -72,7 +72,7 @@ Return a list which contains the names of all the global variables.
 
 *E.G.
 In> GlobalVariablesGet()
-Result> {\$CacheOfConstantsN1,%,LoadResult,I,\$numericMode2}
+Result> {\$CacheOfConstantsN1,%,I,\$numericMode2}
 
 %/mathpiper_docs
  */

@@ -37,9 +37,11 @@ package org.mathpiper.mpreduce.numbers;
 
 
 import java.math.BigInteger;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.datatypes.Cons;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public class LispBigInteger extends LispInteger
@@ -141,26 +143,26 @@ public class LispBigInteger extends LispInteger
     
     public void scan()
     {
-        if (Jlisp.objects.contains(value)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(value))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(value)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(value))
+	    {   LispReader.repeatedObjects.put(
 	            value,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
-	else Jlisp.objects.add(value);
+	else LispReader.objects.add(value);
     }
     
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(value);
+        Object w = LispReader.repeatedObjects.get(value);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            value,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 // Now this is the first time I see this integer while writing a dump
@@ -262,12 +264,12 @@ public class LispBigInteger extends LispInteger
 
     public LispObject evenp() throws Exception
     {
-        return value.testBit(0) ? Jlisp.nil : Jlisp.lispTrue;
+        return value.testBit(0) ? Environment.nil : Jlisp.lispTrue;
     }
 
     public LispObject oddp() throws Exception
     {
-        return value.testBit(0) ? Jlisp.lispTrue : Jlisp.nil;
+        return value.testBit(0) ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject fix() throws Exception
@@ -292,29 +294,29 @@ public class LispBigInteger extends LispInteger
 
     public LispObject floatp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject minusp() throws Exception
     {
-        return value.signum() < 0 ? Jlisp.lispTrue : Jlisp.nil;
+        return value.signum() < 0 ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject plusp() throws Exception
     {
-        return value.signum() >= 0 ? Jlisp.lispTrue : Jlisp.nil;
+        return value.signum() >= 0 ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject zerop() throws Exception
     {
-        return value.signum() == 0 ? Jlisp.lispTrue : Jlisp.nil;
+        return value.signum() == 0 ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject onep() throws Exception
     {
         return (value.compareTo(BigInteger.ONE) == 0) ? 
                Jlisp.lispTrue :
-               Jlisp.nil;
+               Environment.nil;
     }
 
     public LispObject add(LispObject a) throws Exception

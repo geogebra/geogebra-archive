@@ -5,9 +5,11 @@ package org.mathpiper.mpreduce.symbols;
 // Copyright \u00a9 (C) Codemist Ltd, 1998-2011.
 //
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.functions.lisp.Undefined;
 
 import org.mathpiper.mpreduce.Jlisp;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.Lit;
 
 /**************************************************************************
@@ -51,7 +53,7 @@ public class Gensym extends Symbol
         pname = null;
         nameBase = name;
         car/*value*/ = Jlisp.lit[Lit.undefined];
-        cdr/*plist*/ = Jlisp.nil;
+        cdr/*plist*/ = Environment.nil;
         fn = new Undefined(name);
         special = null;
         myNumber = -1;
@@ -64,15 +66,15 @@ public class Gensym extends Symbol
 
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(this);
+        Object w = LispReader.repeatedObjects.get(this);
 	if (w != null &&
 	    w instanceof Integer)
 	    putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            this,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 	    byte [] rep = nameBase.getBytes("UTF8");
@@ -85,10 +87,10 @@ public class Gensym extends Symbol
             Jlisp.odump.write((myNumber >> 16) & 0xff);
             Jlisp.odump.write((myNumber >> 24) & 0xff);
 	    if (Jlisp.descendSymbols)	
-	    {   Jlisp.stack.push(car/*value*/);
-	        Jlisp.stack.push(cdr/*plist*/);
-	        Jlisp.stack.push(special);
-	        Jlisp.stack.push(fn);
+	    {   LispReader.stack.push(car/*value*/);
+	        LispReader.stack.push(cdr/*plist*/);
+	        LispReader.stack.push(special);
+	        LispReader.stack.push(fn);
 	    }
 	}
     }

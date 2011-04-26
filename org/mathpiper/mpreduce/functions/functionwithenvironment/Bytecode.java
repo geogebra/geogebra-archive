@@ -2,6 +2,7 @@ package org.mathpiper.mpreduce.functions.functionwithenvironment;
 
 //
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.datatypes.Cons;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.Spid;
@@ -129,7 +130,7 @@ public LispObject op1(LispObject a1) throws Exception
 {
     if (nargs != 1) Jlisp.error("Wrong number of arguments for " + name);
     int spsave = sp;
-    LispObject r = Jlisp.nil;
+    LispObject r = Environment.nil;
     stack[++sp] = a1;
     try
     {   r = interpret(0);
@@ -146,7 +147,7 @@ public LispObject op2(LispObject a1, LispObject a2) throws Exception
 {
     if (nargs != 2) Jlisp.error("Wrong number of arguments for " + name);
     int spsave = sp;
-    LispObject r = Jlisp.nil;
+    LispObject r = Environment.nil;
     stack[++sp] = a1;
     stack[++sp] = a2;
     try
@@ -175,7 +176,7 @@ public LispObject opn(LispObject [] args) throws Exception
         n = 1;
     }
     else n = 0;
-    LispObject r = Jlisp.nil;
+    LispObject r = Environment.nil;
     try
     {   r = interpret(n);
         sp = spsave;
@@ -831,7 +832,7 @@ LispObject interpret(int pc) throws Exception
     }
     int spsave = sp;
     int arg;
-    LispObject a = Jlisp.nil, b = Jlisp.nil, w;
+    LispObject a = Environment.nil, b = Environment.nil, w;
     int iw, fname;
 
     if (sp > stack_size - 500) // the 500 is a pretty arbitrary margin!
@@ -913,7 +914,7 @@ case LOC3LOC2:
         a = stack[sp-2];
         continue;
 case VNIL:
-        b = a; a = Jlisp.nil;
+        b = a; a = Environment.nil;
         continue;
 case LOADLIT:
         b = a; a = env[bytecodes[pc++] & 0xff];
@@ -1746,7 +1747,7 @@ case JUMP_BL:
         pc = pc - ((arg << 8) + (bytecodes[pc] & 0xff)) + 1;
         continue;
 case JUMPNIL:
-        if (a == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (a == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPNIL_B:
@@ -1754,12 +1755,12 @@ case JUMPNIL_B:
         {
             handleInterrupt();
         }
-        if (a == Jlisp.nil) pc = pc - (bytecodes[pc] & 0xff) + 1;
+        if (a == Environment.nil) pc = pc - (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPNIL_L:
         arg = bytecodes[pc++] & 0xff;
-        if (a == Jlisp.nil) pc = pc + (arg << 8) + (bytecodes[pc] & 0xff) + 1;
+        if (a == Environment.nil) pc = pc + (arg << 8) + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPNIL_BL:
@@ -1768,11 +1769,11 @@ case JUMPNIL_BL:
             handleInterrupt();
         }
         arg = bytecodes[pc++] & 0xff;
-        if (a == Jlisp.nil) pc = pc - ((arg << 8) + (bytecodes[pc] & 0xff)) + 1;
+        if (a == Environment.nil) pc = pc - ((arg << 8) + (bytecodes[pc] & 0xff)) + 1;
         else pc++;
         continue;
 case JUMPT:
-        if (a != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (a != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPT_B:
@@ -1780,12 +1781,12 @@ case JUMPT_B:
         {
             handleInterrupt();
         }
-        if (a != Jlisp.nil) pc = pc - (bytecodes[pc] & 0xff) + 1;
+        if (a != Environment.nil) pc = pc - (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPT_L:
         arg = bytecodes[pc++] & 0xff;
-        if (a != Jlisp.nil) pc = pc + (arg << 8) + (bytecodes[pc] & 0xff) + 1;
+        if (a != Environment.nil) pc = pc + (arg << 8) + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPT_BL:
@@ -1794,7 +1795,7 @@ case JUMPT_BL:
             handleInterrupt();
         }
         arg = bytecodes[pc++] & 0xff;
-        if (a != Jlisp.nil) pc = pc - ((arg << 8) + (bytecodes[pc] & 0xff)) + 1;
+        if (a != Environment.nil) pc = pc - ((arg << 8) + (bytecodes[pc] & 0xff)) + 1;
         else pc++;
         continue;
 case JUMPATOM:
@@ -1956,67 +1957,67 @@ case JUMPNEQUAL_BL:
         else pc++;
         continue;
 case JUMPL0NIL:
-        if (stack[sp-0] == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-0] == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL0T:
-        if (stack[sp-0] != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-0] != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL1NIL:
-        if (stack[sp-1] == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-1] == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL1T:
-        if (stack[sp-1] != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-1] != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL2NIL:
-        if (stack[sp-2] == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-2] == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL2T:
-        if (stack[sp-2] != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-2] != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL3NIL:
-        if (stack[sp-3] == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-3] == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL3T:
-        if (stack[sp-3] != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-3] != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL4NIL:
-        if (stack[sp-4] == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-4] == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL4T:
-        if (stack[sp-4] != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (stack[sp-4] != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPST0NIL:
-        if ((stack[sp-0] = a) == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if ((stack[sp-0] = a) == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPST0T:
-        if ((stack[sp-0] = a) != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if ((stack[sp-0] = a) != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPST1NIL:
-        if ((stack[sp-1] = a) == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if ((stack[sp-1] = a) == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPST1T:
-        if ((stack[sp-1] = a) != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if ((stack[sp-1] = a) != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPST2NIL:
-        if ((stack[sp-2] = a) == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if ((stack[sp-2] = a) == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPST2T:
-        if ((stack[sp-2] = a) != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if ((stack[sp-2] = a) != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPL0ATOM:
@@ -2052,45 +2053,45 @@ case JUMPL3NATOM:
         else pc++;
         continue;
 case JUMPFREE1NIL:
-        if (env[1].car/*value*/ == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[1].car/*value*/ == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREE1T:
-        if (env[1].car/*value*/ != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[1].car/*value*/ != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREE2NIL:
-        if (env[2].car/*value*/ == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[2].car/*value*/ == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREE2T:
-        if (env[2].car/*value*/ != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[2].car/*value*/ != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREE3NIL:
-        if (env[3].car/*value*/ == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[3].car/*value*/ == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREE3T:
-        if (env[3].car/*value*/ != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[3].car/*value*/ != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREE4NIL:
-        if (env[4].car/*value*/ == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[4].car/*value*/ == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREE4T:
-        if (env[4].car/*value*/ != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[4].car/*value*/ != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREENIL:
         arg = bytecodes[pc++] & 0xff;
-        if (env[arg].car/*value*/ == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[arg].car/*value*/ == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFREET:
         arg = bytecodes[pc++] & 0xff;
-        if (env[arg].car/*value*/ != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (env[arg].car/*value*/ != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPLIT1EQ:
@@ -2137,32 +2138,32 @@ case JUMPLITNE:
         continue;
 case JUMPB1NIL:
         arg = bytecodes[pc++] & 0xff;
-        if (builtin1[arg].op1(a) == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (builtin1[arg].op1(a) == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPB1T:
         arg = bytecodes[pc++] & 0xff;
-        if (builtin1[arg].op1(a) != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (builtin1[arg].op1(a) != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPB2NIL:
         arg = bytecodes[pc++] & 0xff;
-        if (builtin2[arg].op2(b, a) == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (builtin2[arg].op2(b, a) == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPB2T:
         arg = bytecodes[pc++] & 0xff;
-        if (builtin2[arg].op2(b, a) != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (builtin2[arg].op2(b, a) != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPFLAGP:
         arg = bytecodes[pc++] & 0xff;
-        if (builtin2[BIflagp].op2(a, env[arg]) != Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (builtin2[BIflagp].op2(a, env[arg]) != Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPNFLAGP:
         arg = bytecodes[pc++] & 0xff;
-        if (builtin2[BIflagp].op2(a, env[arg]) == Jlisp.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
+        if (builtin2[BIflagp].op2(a, env[arg]) == Environment.nil) pc = pc + (bytecodes[pc] & 0xff) + 1;
         else pc++;
         continue;
 case JUMPEQCAR:
@@ -2200,7 +2201,7 @@ case FREEBIND:
         {   LispObject [] v = ((LispVector)env[arg]).vec;
             for (int i=0; i<v.length; i++)
             {   stack[++sp] = v[i].car/*value*/;
-                v[i].car/*value*/ = Jlisp.nil;
+                v[i].car/*value*/ = Environment.nil;
             }
             stack[++sp] = env[arg];
             stack[++sp] = Spid.fbind;
@@ -2219,7 +2220,7 @@ case EXIT:
         return a;
 case NILEXIT:
         sp = spsave;
-        return Jlisp.nil;
+        return Environment.nil;
 case LOC0EXIT:
         pc = sp;
         sp = spsave;
@@ -2236,21 +2237,21 @@ case PUSH:
         stack[++sp] = a;
         continue;
 case PUSHNIL:
-        stack[++sp] = Jlisp.nil;
+        stack[++sp] = Environment.nil;
         continue;
 case PUSHNIL2:
-        stack[++sp] = Jlisp.nil;
-        stack[++sp] = Jlisp.nil;
+        stack[++sp] = Environment.nil;
+        stack[++sp] = Environment.nil;
         continue;
 case PUSHNIL3:
-        stack[++sp] = Jlisp.nil;
-        stack[++sp] = Jlisp.nil;
-        stack[++sp] = Jlisp.nil;
+        stack[++sp] = Environment.nil;
+        stack[++sp] = Environment.nil;
+        stack[++sp] = Environment.nil;
         continue;
 case PUSHNILS:
         arg = bytecodes[pc++] & 0xff;
         for (int i=0; i<arg; i++)
-            stack[++sp] = Jlisp.nil;
+            stack[++sp] = Environment.nil;
         continue;
 case POP:
         b = a;
@@ -2273,22 +2274,22 @@ case SWOP:
         continue;
 case EQCAR:
         if (b.atom)
-        {   a = Jlisp.nil;
+        {   a = Environment.nil;
             continue;
         }
         else b = b.car;
         // drop through into EQ
 case EQ:
         if (a instanceof LispInteger)                         // @@@ EQ
-            a = a.lispequals(b) ? Jlisp.lispTrue : Jlisp.nil; // @@@ EQ
+            a = a.lispequals(b) ? Jlisp.lispTrue : Environment.nil; // @@@ EQ
         else                                                  // @@@ EQ
-            a = (a == b) ? Jlisp.lispTrue : Jlisp.nil;
+            a = (a == b) ? Jlisp.lispTrue : Environment.nil;
         continue;
 case EQUAL:
-        a = (a.lispequals(b)) ? Jlisp.lispTrue : Jlisp.nil;
+        a = (a.lispequals(b)) ? Jlisp.lispTrue : Environment.nil;
         continue;
 case NUMBERP:
-        a = (a instanceof LispNumber) ? Jlisp.lispTrue : Jlisp.nil;
+        a = (a instanceof LispNumber) ? Jlisp.lispTrue : Environment.nil;
         continue;
 case CAR:
         if (a.atom) Jlisp.error("attempt to take car of an atom", a);
@@ -2326,7 +2327,7 @@ case CONS:
         a = new Cons(b, a);
         continue;
 case NCONS:
-        a = new Cons(a, Jlisp.nil);
+        a = new Cons(a, Environment.nil);
         continue;
 case XCONS:
         a = new Cons(a, b);
@@ -2338,13 +2339,13 @@ case LENGTH:
         a = builtin1[BIlength].op1(a);
         continue;
 case LIST2:
-        a = new Cons(b, new Cons(a, Jlisp.nil));
+        a = new Cons(b, new Cons(a, Environment.nil));
         continue;
 case LIST2STAR:
         a = new Cons(stack[sp--], new Cons(b, a));
         continue;
 case LIST3:
-        a = new Cons(stack[sp--], new Cons(b, new Cons(a, Jlisp.nil)));
+        a = new Cons(stack[sp--], new Cons(b, new Cons(a, Environment.nil)));
         continue;
 case PLUS2:
         a = builtin2[BIplus2].op2(b, a);

@@ -874,6 +874,8 @@ Function("PNorm",{v,p})
     
     While( cr <= mRows )  
     [
+        Local(ic);
+
         
         If(iDebug, Tell("  STEP 1"));
         cnz := 0;   

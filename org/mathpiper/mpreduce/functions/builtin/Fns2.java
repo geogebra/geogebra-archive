@@ -44,6 +44,7 @@ package org.mathpiper.mpreduce.functions.builtin;
 //         hyperbolic functions
 
 import java.math.BigInteger;
+import org.mathpiper.mpreduce.Environment;
 
 
 
@@ -710,7 +711,7 @@ class EqSafeFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1) throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -794,7 +795,7 @@ class GeqFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
-        return arg1.geq(arg2) ? Jlisp.lispTrue : Jlisp.nil;
+        return arg1.geq(arg2) ? Jlisp.lispTrue : Environment.nil;
     }
 }
 
@@ -802,7 +803,7 @@ class EqnFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
-        return arg1.eqn(arg2) ? Jlisp.lispTrue : Jlisp.nil;
+        return arg1.eqn(arg2) ? Jlisp.lispTrue : Environment.nil;
     }
 }
 
@@ -811,7 +812,7 @@ class GreaterpFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
-        return arg1.ge(arg2) ? Jlisp.lispTrue : Jlisp.nil;
+        return arg1.ge(arg2) ? Jlisp.lispTrue : Environment.nil;
     }
 }
 
@@ -847,7 +848,7 @@ class IgeqFn extends BuiltinFunction
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
         if (arg1.geq(arg2)) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -856,7 +857,7 @@ class IgreaterpFn extends BuiltinFunction
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
         if (arg1.ge(arg2)) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -865,7 +866,7 @@ class IleqFn extends BuiltinFunction
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
         if (arg1.leq(arg2)) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -874,7 +875,7 @@ class IlesspFn extends BuiltinFunction
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
         if (arg1.le(arg2)) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -1112,7 +1113,7 @@ class LeqFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
-        return arg1.leq(arg2) ? Jlisp.lispTrue : Jlisp.nil;
+        return arg1.leq(arg2) ? Jlisp.lispTrue : Environment.nil;
     }
 }
 
@@ -1120,7 +1121,7 @@ class LesspFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
-        return arg1.le(arg2) ? Jlisp.lispTrue : Jlisp.nil;
+        return arg1.le(arg2) ? Jlisp.lispTrue : Environment.nil;
     }
 }
 
@@ -1396,7 +1397,7 @@ class NumberpFn extends BuiltinFunction
     public LispObject op1(LispObject arg1)
     {
         if (arg1 instanceof LispNumber) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -1483,7 +1484,7 @@ class Safe_fp_plusFn extends BuiltinFunction
 // case seems a bit curious but it is what the REDUCE code appears to
 // expect and I should not adjust it without making a major review of all
 // that REDUCE does...
-        if (x == 0x7ff || x == 0 || x < (x1-40)) return Jlisp.nil;
+        if (x == 0x7ff || x == 0 || x < (x1-40)) return Environment.nil;
         else return new LispFloat(r);
     }
 }
@@ -1504,7 +1505,7 @@ class Safe_fp_timesFn extends BuiltinFunction
 // denormalised or infinite.
         long r1 = Double.doubleToLongBits(r);
         int x = (int)(r1 >> 52) & 0x7ff;
-        if (x == 0x7ff || x == 0) return Jlisp.nil;
+        if (x == 0x7ff || x == 0) return Environment.nil;
         return new LispFloat(r);
     }
 }
@@ -1515,12 +1516,12 @@ class Safe_fp_quotFn extends BuiltinFunction
     {
 	double a1 = ((LispFloat)arg1).value,
                a2 = ((LispFloat)arg2).value;
-        if (a2 == 0.0) return Jlisp.nil;
+        if (a2 == 0.0) return Environment.nil;
         else if (a1 == 0.0) return new LispFloat(0.0);
         double r = a1/a2;
         long r1 = Double.doubleToLongBits(r);
         int x = (int)(r1 >> 52) & 0x7ff;
-        if (x == 0x7ff || x == 0) return Jlisp.nil;
+        if (x == 0x7ff || x == 0) return Environment.nil;
         return new LispFloat(r);
     }
 }

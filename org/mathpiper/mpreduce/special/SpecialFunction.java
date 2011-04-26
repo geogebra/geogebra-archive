@@ -36,8 +36,10 @@ package org.mathpiper.mpreduce.special;
  *************************************************************************/
 
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public abstract class SpecialFunction extends LispObject
@@ -72,26 +74,26 @@ public abstract class SpecialFunction extends LispObject
 
     public void scan()
     {
-        if (Jlisp.objects.contains(this)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(this))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(this)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(this))
+	    {   LispReader.repeatedObjects.put(
 	            this,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
-	else Jlisp.objects.add(this);
+	else LispReader.objects.add(this);
     }
     
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(this);
+        Object w = LispReader.repeatedObjects.get(this);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            this,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 	    byte [] rep = name.getBytes("UTF8");

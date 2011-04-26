@@ -69,7 +69,7 @@ public class UserJava
 
     public static LispObject opn(LispObject [] a) throws ResourceException
     {
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         for (int i=0; i<a.length; i++)
             r = new Cons(a[i], r);
         return r;

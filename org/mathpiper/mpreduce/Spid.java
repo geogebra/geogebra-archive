@@ -92,27 +92,27 @@ public class Spid extends LispObject
     public void scan()
     {
         Object w = new Integer(tag);
-        if (Jlisp.objects.contains(w)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(w))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(w)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(w))
+	    {   LispReader.repeatedObjects.put(
 	            w,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
-	else Jlisp.objects.add(w);
+	else LispReader.objects.add(w);
     }
     
     public void dump() throws Exception
     {
         Object d = new Integer(tag);
-        Object w = Jlisp.repeatedObjects.get(d);
+        Object w = LispReader.repeatedObjects.get(d);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            d,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 	    Jlisp.odump.write(X_SPID);

@@ -303,7 +303,7 @@ symbolic procedure blockox u;
       prinox curblock;
       prin2ox " := 0; ";
       omark list(curmark,2);
-      prin2ox "LispObject retVal := Jlisp.nil;";
+      prin2ox "LispObject retVal := Environment.nil;";
       omark list(curmark,2);
       if car u then varprx car u;
       prin2ox "for (;;)";
@@ -351,7 +351,7 @@ symbolic procedure varprx u;
       prin2ox "LispObject ";
       while u do
         <<prinox caar u;
-          prin2ox " := Jlisp.nil";
+          prin2ox " := Environment.nil";
           if cdr u then prin2ox ", " 
           else prin2ox "; ";
           u := cdr u>>;

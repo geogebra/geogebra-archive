@@ -2,7 +2,7 @@ package org.mathpiper.mpreduce.exceptions;
 
 //
 
-import org.mathpiper.mpreduce.Jlisp;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.LispObject;
 
 // This file is part of the Jlisp implementation of Standard Lisp
@@ -48,7 +48,7 @@ public class LispException extends Exception
     public LispException()
     {
         this.message = "unknown"; 
-	this.details = Jlisp.nil;
+	this.details = Environment.nil;
     }
     
     public LispException(String message)

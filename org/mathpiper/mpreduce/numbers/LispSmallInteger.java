@@ -38,9 +38,11 @@ package org.mathpiper.mpreduce.numbers;
 
 
 import java.math.BigInteger;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.datatypes.Cons;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public class LispSmallInteger extends LispInteger
@@ -145,27 +147,27 @@ public class LispSmallInteger extends LispInteger
     public void scan()
     {
         Object w = new Integer(value);
-        if (Jlisp.objects.contains(w)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(w))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(w)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(w))
+	    {   LispReader.repeatedObjects.put(
 	            w,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
-	else Jlisp.objects.add(w);
+	else LispReader.objects.add(w);
     }
     
     public void dump() throws Exception
     {
         Object d = new Integer(value);
-        Object w = Jlisp.repeatedObjects.get(d);
+        Object w = LispReader.repeatedObjects.get(d);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            d,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 // Note whacky coding with sign bit in bottom bit position. The intent
@@ -260,7 +262,7 @@ public class LispSmallInteger extends LispInteger
 
     public LispObject safeModRecip() throws Exception
     {
-        if (value == 0) return Jlisp.nil;
+        if (value == 0) return Environment.nil;
         int a = Jlisp.modulus, b = value, s = 0, t = 1;
         while (b != 0)
         {   int q = a/b;
@@ -328,12 +330,12 @@ public class LispSmallInteger extends LispInteger
 
     public LispObject evenp() throws Exception
     {
-        return ((value & 1) != 0) ? Jlisp.nil : Jlisp.lispTrue;
+        return ((value & 1) != 0) ? Environment.nil : Jlisp.lispTrue;
     }
 
     public LispObject oddp() throws Exception
     {
-        return ((value & 1) != 0) ? Jlisp.lispTrue : Jlisp.nil;
+        return ((value & 1) != 0) ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject fix() throws Exception
@@ -358,27 +360,27 @@ public class LispSmallInteger extends LispInteger
 
     public LispObject floatp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject minusp() throws Exception
     {
-        return value < 0 ? Jlisp.lispTrue : Jlisp.nil;
+        return value < 0 ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject plusp() throws Exception
     {
-        return value >= 0 ? Jlisp.lispTrue : Jlisp.nil;
+        return value >= 0 ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject zerop() throws Exception
     {
-        return value == 0 ? Jlisp.lispTrue : Jlisp.nil;
+        return value == 0 ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject onep() throws Exception
     {
-        return value == 1 ? Jlisp.lispTrue : Jlisp.nil;
+        return value == 1 ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject add(LispObject a) throws Exception

@@ -40,8 +40,10 @@ package org.mathpiper.mpreduce.datatypes;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public class LispHash extends LispObject
@@ -76,36 +78,36 @@ public class LispHash extends LispObject
 
     public void scan()
     {
-        if (Jlisp.objects.contains(this)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(this))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(this)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(this))
+	    {   LispReader.repeatedObjects.put(
 	            this,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
 	else 
-	{   Jlisp.objects.add(this);
+	{   LispReader.objects.add(this);
             for (Iterator e = hash.keySet().iterator();
                  e.hasNext();
 	        )
             {   Object k = e.next();
                 Object v = hash.get(k);
-		Jlisp.stack.push(v);
-		Jlisp.stack.push(k);
+		LispReader.stack.push(v);
+		LispReader.stack.push(k);
 	    }
 	}
     }
   
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(this);
+        Object w = LispReader.repeatedObjects.get(this);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            this,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 	    Jlisp.odump.write(X_HASH + flavour);
@@ -114,8 +116,8 @@ public class LispHash extends LispObject
 		)
             {   Object k = e.next();
 	        Object v = hash.get(k);
-		Jlisp.stack.push(v);
-		Jlisp.stack.push(k);
+		LispReader.stack.push(v);
+		LispReader.stack.push(k);
             }
 	    Jlisp.odump.write(X_ENDHASH);
 	}

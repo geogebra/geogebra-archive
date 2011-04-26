@@ -1,6 +1,6 @@
 package org.mathpiper.mpreduce.functions.builtin;
 
-import org.mathpiper.mpreduce.Jlisp;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.LispObject;
 
 /**************************************************************************
@@ -43,7 +43,7 @@ public class MPReduceFunctions {
 
         public LispObject op0() {
             inEvaluationMode = true;
-            return Jlisp.nil;
+            return Environment.nil;
         }
 
     }
@@ -52,7 +52,7 @@ public class MPReduceFunctions {
 
         public LispObject op1(LispObject o) throws Exception{
             inEvaluationMode = false;
-            return Jlisp.nil;
+            return Environment.nil;
         }
 
     }

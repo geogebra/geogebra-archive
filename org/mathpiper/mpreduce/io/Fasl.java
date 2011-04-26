@@ -42,6 +42,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.io.streams.WriterToLisp;
 import org.mathpiper.mpreduce.functions.functionwithenvironment.ByteOpt;
 import org.mathpiper.mpreduce.functions.functionwithenvironment.Bytecode;
@@ -60,6 +61,7 @@ import org.mathpiper.mpreduce.functions.builtin.Fns;
 
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.Lit;
 import org.mathpiper.mpreduce.Spid;
 import org.mathpiper.mpreduce.symbols.Symbol;
@@ -76,7 +78,7 @@ public class Fasl
 
     public static LispObject startModule(LispObject arg1) throws LispException
     {
-        if (arg1 == Jlisp.nil) // terminate file
+        if (arg1 == Environment.nil) // terminate file
         {   if (writer != null)
             {   try
                 {   writer.write(0);
@@ -90,7 +92,7 @@ public class Fasl
                     Jlisp.errprintln(
                         "+++ IO error on FASL file: " +
                         e.getMessage());
-                    return Jlisp.nil;
+                    return Environment.nil;
                 }
                 writer = null;
                 recent = null;
@@ -125,7 +127,7 @@ public class Fasl
         {   Jlisp.errprintln(
                 "+++ Trouble with file \"" + name +
                 "\": " + e.getMessage());
-            return Jlisp.nil;
+            return Environment.nil;
         }
         recent = new LispObject [512];
         recentp = recentn = 0;
@@ -154,7 +156,7 @@ public class Fasl
 
     public static void faslWrite(LispObject arg1) throws Exception
     {
-        Jlisp.dumpTree(arg1, writer);
+        LispReader.dumpTree(arg1, writer);
     }
     
     static String name;
@@ -202,14 +204,14 @@ public class Fasl
         reader = null;
         boolean saveHeadline = Jlisp.headline,
                 saveBacktrace = Jlisp.backtrace;
-        if (openModule(arg1)) return Jlisp.nil;
+        if (openModule(arg1)) return Environment.nil;
         try
         {   if ((Jlisp.verbosFlag & 2) != 0)
                 Jlisp.println("Fasl-loading \"" + name + "\"");
             Jlisp.headline = Jlisp.backtrace = true;
             recent = new LispObject [512];
             recentp = recentn = 0;
-            LispObject lastSaveDef = Jlisp.nil;
+            LispObject lastSaveDef = Environment.nil;
             try
             {
                 for (;;)
@@ -226,7 +228,7 @@ public class Fasl
                         {   if (sw.data == -1) lastSaveDef = faslRead();
                             else 
                             {   readByteDef(sw.data, lastSaveDef);
-                                lastSaveDef = Jlisp.nil;
+                                lastSaveDef = Environment.nil;
                             }
                         }
                     }
@@ -267,7 +269,7 @@ public class Fasl
             Jlisp.headline = saveHeadline;
             Jlisp.backtrace = saveBacktrace;
         }
-        return Jlisp.nil;
+        return Environment.nil;
     } 
 
     static void readByteDef(int nargs, LispObject savedef) throws Exception
@@ -292,7 +294,7 @@ public class Fasl
         bps.env = env.vec;
         bps.nargs = nargs;
         name.fn = bps;
-        if (savedef != Jlisp.nil)
+        if (savedef != Environment.nil)
             Fns.put(name, Jlisp.lit[Lit.savedef], savedef);
     }
 
@@ -300,10 +302,10 @@ public class Fasl
     static LispObject faslRead() throws Exception
     {
         Jlisp.idump = reader;
-        Jlisp.preRestore();
+        LispReader.preRestore();
         Jlisp.descendSymbols = false;
-        LispObject r = Jlisp.readObject();
-        Jlisp.postRestore();
+        LispObject r = LispReader.readObject();
+        LispReader.postRestore();
         return r;
     }
 

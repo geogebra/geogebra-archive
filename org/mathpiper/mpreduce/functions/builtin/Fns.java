@@ -2,6 +2,7 @@ package org.mathpiper.mpreduce.functions.builtin;
 
 //
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.datatypes.Cons;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
@@ -77,12 +78,12 @@ public class Fns
     {
         Symbol s = (Symbol)a;
         put(s, Jlisp.lit[Lit.special], Jlisp.lispTrue);
-        if (s.car/*value*/ == Jlisp.lit[Lit.undefined]) s.car/*value*/ = Jlisp.nil;
+        if (s.car/*value*/ == Jlisp.lit[Lit.undefined]) s.car/*value*/ = Environment.nil;
     }
 
     static LispObject get(LispObject n, LispObject key)
     {
-        if (!(n instanceof Symbol)) return Jlisp.nil;
+        if (!(n instanceof Symbol)) return Environment.nil;
         Symbol name = (Symbol)n;
         LispObject plist = name.cdr/*plist*/;
         while (!plist.atom)
@@ -91,7 +92,7 @@ public class Fns
             LispObject x = w.car;
             if (!x.atom && x.car == key) return x.cdr;
         }
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     static LispObject remprop(Symbol name, LispObject key)
@@ -109,17 +110,17 @@ public class Fns
             }
             prev = w;
         }
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     static LispObject list2(LispObject a, LispObject b) throws ResourceException
     {
-        return new Cons(a, new Cons(b, Jlisp.nil));
+        return new Cons(a, new Cons(b, Environment.nil));
     }
 
     public static LispObject reversip(LispObject arg1)
     {
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!arg1.atom)
 	{   LispObject a = arg1;
             arg1 = a.cdr;
@@ -131,7 +132,7 @@ public class Fns
 
     static LispObject lessp(LispObject arg1, LispObject arg2) throws Exception
     {
-        return arg1.le(arg2) ? Jlisp.lispTrue : Jlisp.nil;
+        return arg1.le(arg2) ? Jlisp.lispTrue : Environment.nil;
     }
 
 // The following applyx functions are only ever used when the function
@@ -204,10 +205,10 @@ public class Fns
         if (nrest==0 && passed > total)
             Jlisp.error("too many args provided", bvl);
 // Pad so optional args get nil as their values.
-        for (int i=passed; i<total; i++) args[i] = Jlisp.nil;
+        for (int i=passed; i<total; i++) args[i] = Environment.nil;
 // collect things that go into "&rest" into a list. Adjust var count
         if (nrest != 0)
-        {   LispObject r = Jlisp.nil;
+        {   LispObject r = Environment.nil;
             for (int i=passed-1; i>=total; i--)
                  r = new Cons(args[i], r);
             args[total++] = r;
@@ -221,7 +222,7 @@ public class Fns
             save[nvars] = s.car/*value*/;
             s.car/*value*/ = args[nvars++];
         }
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         try
         {   while (!body.atom && Specfn.progEvent == Specfn.NONE)
             {   r = body.car.eval();

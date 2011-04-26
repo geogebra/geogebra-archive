@@ -36,8 +36,10 @@ package org.mathpiper.mpreduce.functions.lisp;
  *************************************************************************/
 
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public abstract class LispFunction extends LispObject
@@ -95,14 +97,14 @@ public abstract class LispFunction extends LispObject
 
     public void scan()
     {
-        if (Jlisp.objects.contains(this)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(this))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(this)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(this))
+	    {   LispReader.repeatedObjects.put(
 	            this,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
-	else Jlisp.objects.add(this);
+	else LispReader.objects.add(this);
     }
     
 

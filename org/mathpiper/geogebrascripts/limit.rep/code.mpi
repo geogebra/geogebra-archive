@@ -179,6 +179,8 @@ Sign(_var, _tar, _dir, _exp, _n)
     r := u / v;
 
     If (u = Undefined And IsInfinity(v), [
+        Local(li, ls);
+
         li := LimInf(var,tar,dir,x); 
         ls := LimSup(var,tar,dir,x);
         r := (li * ls) / v;

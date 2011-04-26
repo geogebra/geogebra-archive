@@ -50,6 +50,7 @@ import java.text.DateFormat;
 import java.text.ParsePosition;
 import java.util.Date;
 import java.util.Iterator;
+import org.mathpiper.mpreduce.Environment;
 
 import org.mathpiper.mpreduce.functions.functionwithenvironment.Bytecode;
 import org.mathpiper.mpreduce.datatypes.Cons;
@@ -67,6 +68,7 @@ import org.mathpiper.mpreduce.datatypes.LispHash;
 import org.mathpiper.mpreduce.numbers.LispInteger;
 import org.mathpiper.mpreduce.numbers.LispNumber;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.numbers.LispSmallInteger;
 import org.mathpiper.mpreduce.io.streams.LispStream;
 import org.mathpiper.mpreduce.datatypes.LispString;
@@ -401,12 +403,12 @@ class AconsFn extends BuiltinFunction
 class AppendFn extends BuiltinFunction
 {
     public LispObject op0()
-    { return Jlisp.nil; }
+    { return Environment.nil; }
     public LispObject op1(LispObject arg1)
     { return arg1; }
     public LispObject op2(LispObject arg1, LispObject arg2) throws ResourceException
     {
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!arg1.atom)
         {   LispObject a = arg1;
             r = new Cons(a.car, r);
@@ -435,7 +437,7 @@ class ApplyFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1) throws Exception
     {
-        return applySub(arg1, 0, Jlisp.nil);
+        return applySub(arg1, 0, Environment.nil);
     }
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
@@ -547,7 +549,7 @@ class AssocFn extends BuiltinFunction
             if (q.atom) continue;
             if (arg1.lispequals(q.car)) return q;
         }
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -561,7 +563,7 @@ class AssocStarStarFn extends BuiltinFunction
             if (q.atom) continue;
             if (arg1.lispequals(q.car)) return q;
         }
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -571,7 +573,7 @@ class AtomFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1)
     {   return arg1.atom ? Jlisp.lispTrue :
-                           Jlisp.nil;
+                           Environment.nil;
     }
 }
 
@@ -588,7 +590,7 @@ class AtsocFn extends BuiltinFunction
                 arg1.lispequals(q.car)) return p.car;    // @@@
             else if (arg1 == q.car) return p.car;
         }
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -596,7 +598,7 @@ class BatchpFn extends BuiltinFunction
 {
     public LispObject op0() throws Exception
     {
-        if (Jlisp.interactivep) return Jlisp.nil;
+        if (Jlisp.interactivep) return Environment.nil;
         else return Jlisp.lispTrue;
     }
 }
@@ -752,7 +754,7 @@ class BoundpFn extends BuiltinFunction
         if (arg1 instanceof Symbol &&
             ((Symbol)arg1).car/*value*/ != Jlisp.lit[Lit.undefined])
             return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -794,7 +796,7 @@ class BpspFn extends BuiltinFunction
     public LispObject op1(LispObject arg1)
     {
         if (arg1 instanceof Bytecode) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -820,7 +822,7 @@ class BytecountsFn extends BuiltinFunction
 {
     public LispObject op0() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -1067,7 +1069,7 @@ class CarStarFn extends BuiltinFunction
     public LispObject op1(LispObject arg1)
     {
         if (!arg1.atom) return arg1.car;
-        return Jlisp.nil;
+        return Environment.nil;
 
     }
 }
@@ -1365,18 +1367,18 @@ class CheckpointFn extends BuiltinFunction
 {
     public LispObject op0() throws Exception
     {
-        return op1(Jlisp.nil);
+        return op1(Environment.nil);
     }
     
     public LispObject op1(LispObject arg1) throws Exception
     {
-        return op2(arg1, Jlisp.nil);
+        return op2(arg1, Environment.nil);
     }
     
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
         Jlisp.preserve(arg1, arg2);
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -1395,7 +1397,7 @@ class CloseFn extends BuiltinFunction
         if (arg1 instanceof LispStream)
         {   ((LispStream)arg1).close();
         }
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -1412,13 +1414,13 @@ class ClrhashFn extends BuiltinFunction
     public LispObject op0() throws Exception
     {
         ((LispHash)Jlisp.lit[Lit.hashtab]).hash.clear();
-        return Jlisp.nil;
+        return Environment.nil;
     }
     
     public LispObject op1(LispObject ht) throws Exception
     {
         ((LispHash)ht).hash.clear();
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -1435,7 +1437,7 @@ class CodepFn extends BuiltinFunction
     public LispObject op1(LispObject arg1) throws Exception
     {
         if (arg1 instanceof BuiltinFunction) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -1445,10 +1447,10 @@ class CompressFn extends BuiltinFunction
     {
         LispObject save = Jlisp.lit[Lit.std_input].car/*value*/;
         LispStream from = new ListReader(arg1);
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         try
         {   Jlisp.lit[Lit.std_input].car/*value*/ = from;
-            r = Jlisp.read();
+            r = LispReader.read();
 //-             int c = from.readChar();
             from.close();
 //- // The next section is a pretty shameless hack to make REDUCE a bit
@@ -1488,7 +1490,7 @@ class CompressFn extends BuiltinFunction
             LispStream ee = // @@@
                         (LispStream)Jlisp.lit[Lit.err_output].car/*value*/;
             e.printStackTrace(new PrintWriter(new WriterToLisp(ee)));
-            r = Jlisp.nil;
+            r = Environment.nil;
         }
         finally
         {   Jlisp.lit[Lit.std_input].car/*value*/ = save;
@@ -1509,7 +1511,7 @@ class ConsFn extends BuiltinFunction
 class ConspFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1)
-    {   return arg1.atom ? Jlisp.nil :
+    {   return arg1.atom ? Environment.nil :
                Jlisp.lispTrue;
     }
 }
@@ -1519,7 +1521,7 @@ class ConstantpFn extends BuiltinFunction
     public LispObject op1(LispObject arg1) throws Exception
     {
         if (arg1 instanceof Symbol || !arg1.atom)
-            return Jlisp.nil;
+            return Environment.nil;
         else return Jlisp.lispTrue;
     }
 }
@@ -1552,7 +1554,7 @@ class Copy_moduleFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1) throws Exception
     {
-        if (arg1==Jlisp.nil) return arg1;
+        if (arg1==Environment.nil) return arg1;
         Fasl.startModule(arg1);  // set up for output...
         InputStream readerSave = Fasl.reader;
         if (Fasl.openModule(arg1))
@@ -1563,7 +1565,7 @@ class Copy_moduleFn extends BuiltinFunction
             {   Fasl.writer = null;
                 Fasl.reader = readerSave;
             }
-            return Jlisp.nil;
+            return Environment.nil;
         }
         int c;
         while ((c = Fasl.reader.read()) != -1) Fasl.writer.write(c);
@@ -1621,7 +1623,7 @@ class DatelesspFn extends BuiltinFunction
         d2 = LispStream.dFormat.parse(s2, new ParsePosition(0));
         if (d1 == null || d2 == null) error("badly formatted date");
         boolean res = d1.getTime() < d2.getTime();
-        return res ? Jlisp.lispTrue : Jlisp.nil;
+        return res ? Jlisp.lispTrue : Environment.nil;
     }
 }
 
@@ -1641,7 +1643,7 @@ class Define_in_moduleFn extends BuiltinFunction
         int n = arg1.intValue();
         if (n < -1 || n > 0x3ffff) error("bad arg to define-in-module");
         Fasl.defineInModule(n);
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -1657,7 +1659,7 @@ class DeleqFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
-        LispObject w = Jlisp.nil;
+        LispObject w = Environment.nil;
         while (!arg2.atom)
         {   LispObject a2 = arg2;
             arg2 = a2.cdr;
@@ -1680,7 +1682,7 @@ class DeleteFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws ResourceException
     {
-        LispObject w = Jlisp.nil;
+        LispObject w = Environment.nil;
         while (!arg2.atom)
         {   LispObject a2 = arg2;
             arg2 = a2.cdr;
@@ -1707,7 +1709,7 @@ class Delete_fileFn extends BuiltinFunction
             s = ((Symbol)arg1).pname;
         }
         else if (arg1 instanceof LispString) s = ((LispString)arg1).string;
-        else return Jlisp.nil;
+        else return Environment.nil;
         return LispStream.fileDelete(s);
     }
 }
@@ -1716,10 +1718,10 @@ class Library_membersFn extends BuiltinFunction
 {
     public LispObject op0() throws Exception
     {
-        if (Jlisp.outputImagePos < 0) return Jlisp.nil;
+        if (Jlisp.outputImagePos < 0) return Environment.nil;
         PDS z = Jlisp.images[Jlisp.outputImagePos];
         if (z != null) return z.members();
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -1728,7 +1730,7 @@ class Delete_moduleFn extends BuiltinFunction
     public LispObject op1(LispObject arg1) throws Exception
     {
         Jlisp.println("++++ delete-module not coded yet"); // @@@
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -1736,7 +1738,7 @@ class Demo_modeFn extends BuiltinFunction
 {
     public LispObject op0() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -1744,12 +1746,12 @@ class DigitFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1) throws Exception
     {
-        if (!(arg1 instanceof Symbol)) return Jlisp.nil;
+        if (!(arg1 instanceof Symbol)) return Environment.nil;
         Symbol s = (Symbol)arg1;
         s.completeName();
         char ch = s.pname.charAt(0);
         if (Character.isDigit(ch)) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -1836,8 +1838,8 @@ class Enable_backtraceFn extends BuiltinFunction
 class EndpFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1) throws Exception
-    {   if (arg1 == Jlisp.nil) return Jlisp.lispTrue;
-        else if (!arg1.atom) return Jlisp.nil;
+    {   if (arg1 == Environment.nil) return Jlisp.lispTrue;
+        else if (!arg1.atom) return Environment.nil;
         else return error("ill-formed list detected by ENDP");
     }
 }
@@ -1857,8 +1859,8 @@ class EqFn extends BuiltinFunction
     public LispObject op2(LispObject arg1, LispObject arg2)
     {
         if (arg1 instanceof LispNumber)                                // @@@
-            return arg1.lispequals(arg2) ? Jlisp.lispTrue : Jlisp.nil; // @@@
-        else return arg1==arg2 ? Jlisp.lispTrue : Jlisp.nil;
+            return arg1.lispequals(arg2) ? Jlisp.lispTrue : Environment.nil; // @@@
+        else return arg1==arg2 ? Jlisp.lispTrue : Environment.nil;
     }
 }
 
@@ -1866,11 +1868,11 @@ class EqcarFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2)
     {
-        if (arg1.atom) return Jlisp.nil;
+        if (arg1.atom) return Environment.nil;
         arg1 = arg1.car;
         if (arg1 instanceof LispNumber)                                // @@@
-            return arg1.lispequals(arg2) ? Jlisp.lispTrue : Jlisp.nil; // @@@
-        else return arg1==arg2 ? Jlisp.lispTrue : Jlisp.nil;
+            return arg1.lispequals(arg2) ? Jlisp.lispTrue : Environment.nil; // @@@
+        else return arg1==arg2 ? Jlisp.lispTrue : Environment.nil;
     }
 }
 
@@ -1881,7 +1883,7 @@ class EqualcarFn extends BuiltinFunction
         if (!arg1.atom &&
             (arg1.car == arg2 ||
              arg1.car.lispequals(arg2))) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -1908,7 +1910,7 @@ class EqualFn extends BuiltinFunction
         if (arg1 == arg2) return Jlisp.lispTrue;
         return (arg1.lispequals(arg2) ? 
                 Jlisp.lispTrue :
-                Jlisp.nil);
+                Environment.nil);
     }
 }
 
@@ -1968,8 +1970,8 @@ class ErrorsetFn extends BuiltinFunction
         boolean savehead = Jlisp.headline;
         boolean saveback = Jlisp.backtrace;
         try
-        {   Jlisp.headline = (args[1] != Jlisp.nil);
-            Jlisp.backtrace = (args[2] != Jlisp.nil);
+        {   Jlisp.headline = (args[1] != Environment.nil);
+            Jlisp.backtrace = (args[2] != Environment.nil);
 // "-g" forces all errors to be noisy!
             if (Jlisp.debugFlag)
             {   Jlisp.headline = true;
@@ -2047,7 +2049,7 @@ class ErrorsetFn extends BuiltinFunction
         {   Jlisp.headline = savehead;
             Jlisp.backtrace = saveback;
         }
-        return new Cons(form, Jlisp.nil);
+        return new Cons(form, Environment.nil);
     }
 }
 
@@ -2118,13 +2120,13 @@ class ResourceLimitFn extends BuiltinFunction
         LispObject form = args[0];
         LispObject time   = args[1];
         LispObject space  = args[2];
-        LispObject io     = args.length > 3 ? args[3] : Jlisp.nil;
-        LispObject errors = args.length > 4 ? args[4] : Jlisp.nil;
+        LispObject io     = args.length > 3 ? args[3] : Environment.nil;
+        LispObject errors = args.length > 4 ? args[4] : Environment.nil;
         int itime   = time instanceof LispInteger ? time.intValue() : -1;
         int ispace  = space instanceof LispInteger ? space.intValue() : -1;
         int iio     = io instanceof LispInteger ? io.intValue() : -1;
         int ierrors = errors instanceof LispInteger ? errors.intValue() : -1;
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         ResourceException.time_base = ResourceException.time_now;
         ResourceException.space_base = ResourceException.space_now;
         ResourceException.io_base = ResourceException.io_now;
@@ -2178,7 +2180,7 @@ class ResourceLimitFn extends BuiltinFunction
             new Cons(new LispSmallInteger(itime),
                 new Cons(new LispSmallInteger(ispace),
                     new Cons(new LispSmallInteger(iio),
-                        new Cons(new LispSmallInteger(ierrors), Jlisp.nil))));
+                        new Cons(new LispSmallInteger(ierrors), Environment.nil))));
         }finally{
  	  	         ResourceException.time_base    = save_time_base;
  	  	         ResourceException.space_base   = save_space_base;
@@ -2189,8 +2191,8 @@ class ResourceLimitFn extends BuiltinFunction
  	  	         ResourceException.io_limit     = save_io_limit;
                          ResourceException.errors_limit = save_errors_limit;
         }
-        if (ok) return new Cons(r, Jlisp.nil);
-        else return Jlisp.nil;
+        if (ok) return new Cons(r, Environment.nil);
+        else return Environment.nil;
     }
 }
 
@@ -2235,14 +2237,14 @@ class EvlisFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1) throws Exception
     {
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!arg1.atom)
         {   LispObject a1 = arg1;
             r = new Cons(a1.car.eval(), r);
-            if (Specfn.progEvent != Specfn.NONE) return Jlisp.nil;
+            if (Specfn.progEvent != Specfn.NONE) return Environment.nil;
             arg1 = a1.cdr;
         }
-        arg1 = Jlisp.nil;
+        arg1 = Environment.nil;
         while (!r.atom)
         {   LispObject a1 = r;
             r = a1.cdr;
@@ -2547,7 +2549,7 @@ class FiledateFn extends BuiltinFunction
             s = ((Symbol)arg1).pname;
         }
         else if (arg1 instanceof LispString) s = ((LispString)arg1).string;
-        else return Jlisp.nil;
+        else return Environment.nil;
         return LispStream.fileDate(s);
     }
 }
@@ -2563,7 +2565,7 @@ class FilepFn extends BuiltinFunction
             s = ((Symbol)arg1).pname;
         }
         else if (arg1 instanceof LispString) s = ((LispString)arg1).string;
-        else return Jlisp.nil;
+        else return Environment.nil;
         return LispStream.fileDate(s);
     }
 }
@@ -2588,7 +2590,7 @@ class FlagpFn extends BuiltinFunction
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
         LispObject res = Fns.get(arg1, arg2);
-        if (res != Jlisp.nil) res = Jlisp.lispTrue;
+        if (res != Environment.nil) res = Jlisp.lispTrue;
         return res;
     }
 }
@@ -2598,7 +2600,7 @@ class FlagpStarStarFn extends BuiltinFunction
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
         LispObject res = Fns.get(arg1, arg2);
-        if (res != Jlisp.nil) res = Jlisp.lispTrue;
+        if (res != Environment.nil) res = Jlisp.lispTrue;
         return res;
     }
 }
@@ -2607,10 +2609,10 @@ class FlagpcarFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
-        if (arg1.atom) return Jlisp.nil;
+        if (arg1.atom) return Environment.nil;
         arg1 = arg1.car;
         LispObject res = Fns.get(arg1, arg2);
-        if (res != Jlisp.nil) res = Jlisp.lispTrue;
+        if (res != Environment.nil) res = Jlisp.lispTrue;
         return res;
     }
 }
@@ -2638,13 +2640,13 @@ class FlushFn extends BuiltinFunction
         LispStream ee = 
             (LispStream)Jlisp.lit[Lit.std_output].car/*value*/;
         ee.flush();
-        return Jlisp.nil;
+        return Environment.nil;
     }
     public LispObject op1(LispObject arg1) throws Exception
     {
         LispStream ee = (LispStream)arg1;
         ee.flush();
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -2771,7 +2773,7 @@ class GensympFn extends BuiltinFunction
     public LispObject op1(LispObject arg1) throws Exception
     {
         if (arg1 instanceof Gensym) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -2811,12 +2813,12 @@ class GetdFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1) throws Exception
     {
-        if (!(arg1 instanceof Symbol)) return Jlisp.nil;
+        if (!(arg1 instanceof Symbol)) return Environment.nil;
         Symbol name = (Symbol)arg1;
         if (name.special != null) 
             return new Cons(Jlisp.lit[Lit.fexpr], name.special);
         LispFunction fn = name.fn;
-        if (fn instanceof Undefined) return Jlisp.nil;
+        if (fn instanceof Undefined) return Environment.nil;
         else if (fn instanceof Macro)
         {   LispObject body = ((Macro)fn).body;
             return new Cons(Jlisp.lit[Lit.macro], body);
@@ -2839,14 +2841,14 @@ class GetenvFn extends BuiltinFunction
             s = ((Symbol)arg1).pname;
         }
         else if (arg1 instanceof LispString) s = ((LispString)arg1).string;
-        else return Jlisp.nil;
+        else return Environment.nil;
         try
         {   String s2 = System.getProperty(s);
-            if (s2 == null) return Jlisp.nil;
+            if (s2 == null) return Environment.nil;
             else return new LispString(s2);
         }
         catch (SecurityException e)
-        {   return Jlisp.nil;
+        {   return Environment.nil;
         }
     }
 }
@@ -2857,7 +2859,7 @@ class GethashFn extends BuiltinFunction
     {
         LispObject r = (LispObject)
             ((LispHash)Jlisp.lit[Lit.hashtab]).hash.get(key);
-        if (r == null) r = Jlisp.nil;
+        if (r == null) r = Environment.nil;
         else r = new Cons(key, r);  // as needed by REDUCE - apologies!
         return r;
     }
@@ -2865,7 +2867,7 @@ class GethashFn extends BuiltinFunction
     {
         LispHash h = (LispHash)table;
         LispObject r = (LispObject)h.hash.get(key);
-        if (r == null) r = Jlisp.nil;
+        if (r == null) r = Environment.nil;
         return r;
     }
     public LispObject opn(LispObject [] args) throws Exception
@@ -2943,7 +2945,7 @@ class Hash_table_pFn extends BuiltinFunction
     public LispObject op1(LispObject arg1) throws Exception
     {
         if (arg1 instanceof LispHash) return Jlisp.lispTrue;
-        else return Jlisp.nil;
+        else return Environment.nil;
     }
 }
 
@@ -2952,7 +2954,7 @@ class HashcontentsFn extends BuiltinFunction
     public LispObject op1(LispObject arg1) throws ResourceException
     {
         LispHash h = (LispHash)arg1;
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         if (h.flavour != 0)
         {   for (Iterator k = h.hash.keySet().iterator(); k.hasNext();)
             {   LispObject key = ((LispEqualObject)k.next()).value;
@@ -2996,7 +2998,7 @@ class IdpFn extends BuiltinFunction
 {
     public LispObject op1(LispObject arg1)
     {   return arg1 instanceof Symbol ? Jlisp.lispTrue :
-               Jlisp.nil;
+               Environment.nil;
     }
 }
 
@@ -3065,7 +3067,7 @@ class IntersectionFn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws Exception
     {
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!arg1.atom)
         {   LispObject a1 = arg1;
             LispObject a2 = arg2;
@@ -3077,7 +3079,7 @@ class IntersectionFn extends BuiltinFunction
             if (!a2.atom) r = new Cons(a1.car, r);
             arg1 = a1.cdr;
         }
-        arg1 = Jlisp.nil;
+        arg1 = Environment.nil;
         while (!r.atom)
         {   LispObject a1 = r;
             r = a1.cdr;
@@ -3187,17 +3189,17 @@ class LinelengthFn extends BuiltinFunction
 
 class ListFn extends BuiltinFunction
 {
-    public LispObject op0() { return Jlisp.nil; }
+    public LispObject op0() { return Environment.nil; }
     public LispObject op1(LispObject arg1) throws ResourceException
-    {   return new Cons(arg1, Jlisp.nil); 
+    {   return new Cons(arg1, Environment.nil); 
     }
     public LispObject op2(LispObject arg1, LispObject arg2) throws ResourceException
     {   return new Cons(arg1,
-            new Cons(arg2, Jlisp.nil)); 
+            new Cons(arg2, Environment.nil)); 
     }
     public LispObject opn(LispObject [] args) throws ResourceException
     {
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         for (int i=args.length; i!=0;)
         {   r = new Cons(args[--i], r);
         }
@@ -3207,7 +3209,7 @@ class ListFn extends BuiltinFunction
 
 class ListStarFn extends BuiltinFunction
 {
-    public LispObject op0() { return Jlisp.nil; }
+    public LispObject op0() { return Environment.nil; }
     public LispObject op1(LispObject arg1)
     {   return arg1; 
     }
@@ -3241,7 +3243,7 @@ class List_modulesFn extends BuiltinFunction
         {   PDS z = Jlisp.images[i];
             if (z != null) z.print();
         }
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -3295,7 +3297,7 @@ class List2Fn extends BuiltinFunction
 {
     public LispObject op2(LispObject arg1, LispObject arg2) throws ResourceException
     {
-        return new Cons(arg1, new Cons(arg2, Jlisp.nil));
+        return new Cons(arg1, new Cons(arg2, Environment.nil));
     }
 }
 
@@ -3319,7 +3321,7 @@ class List3Fn extends BuiltinFunction
                          " args when 3 were expected");
         else return new Cons(args[0],
                              new Cons(args[1],
-                                      new Cons(args[2], Jlisp.nil)));
+                                      new Cons(args[2], Environment.nil)));
     }
 }
 

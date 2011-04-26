@@ -4,6 +4,7 @@ Defun(DefFileList,{}) {
 "array.rep/code.mpi",
 "assoc.rep/code.mpi",
 "base.rep/code.mpi",
+"calendar.rep/code.mpi",
 "combinatorics.rep/code.mpi",
 "complex.rep/code.mpi",
 "complex.rep/om.mpi",

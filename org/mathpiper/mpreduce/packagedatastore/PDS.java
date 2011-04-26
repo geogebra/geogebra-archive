@@ -46,6 +46,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.datatypes.Cons;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
@@ -215,7 +216,7 @@ public void print() throws ResourceException // print to Java standard output (f
 
 public LispObject members() throws ResourceException
 {
-    LispObject r = Jlisp.nil;
+    LispObject r = Environment.nil;
     if (directory != null)
     {   for (Iterator k = directory.keySet().iterator(); k.hasNext();)
         {   Object key = k.next();
@@ -535,9 +536,9 @@ void addToDirectory(String member) throws IOException, ResourceException
 public LispObject modulep(String s)
 {
     Object d = directory.get(s);
-    if (d == null) return Jlisp.nil;
+    if (d == null) return Environment.nil;
     long date = ((PDSEntry)d).date;
-    if (date == 0) return Jlisp.nil;
+    if (date == 0) return Environment.nil;
     return new LispString(LispStream.dFormat.format(new Date(date)));
 }
 

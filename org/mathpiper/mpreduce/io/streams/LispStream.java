@@ -43,6 +43,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.numbers.LispFloat;
 import org.mathpiper.mpreduce.numbers.LispInteger;
 import org.mathpiper.mpreduce.functions.builtin.Fns;
@@ -51,6 +52,7 @@ import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.Lit;
 import org.mathpiper.mpreduce.symbols.Symbol;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.datatypes.LispString;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
@@ -227,7 +229,7 @@ public class LispStream extends LispObject
         catch (IOException e)
         {   return -1;
         }
-        if (Jlisp.lit[Lit.starecho].car/*value*/ != Jlisp.nil)
+        if (Jlisp.lit[Lit.starecho].car/*value*/ != Environment.nil)
         {   LispStream o = (LispStream)Jlisp.lit[Lit.std_output].car/*value*/;
             o.print(String.valueOf((char)c));
         }
@@ -240,9 +242,9 @@ public class LispStream extends LispObject
         int c = read();
         if (c >= 0 && !escaped)
         {   if (((Symbol)Jlisp.lit[Lit.lower]).car/*value*/ !=
-                Jlisp.nil) c = (int)Character.toLowerCase((char)c);
+                Environment.nil) c = (int)Character.toLowerCase((char)c);
             else if (((Symbol)Jlisp.lit[Lit.raise]).car/*value*/ !=
-                Jlisp.nil) c = (int)Character.toUpperCase((char)c);
+                Environment.nil) c = (int)Character.toUpperCase((char)c);
         }
         prevChar = nextChar = c;
     }
@@ -634,7 +636,7 @@ public class LispStream extends LispObject
                     value = Symbol.intern(s.toString());
                     break;
             default:
-                    value = Jlisp.nil; // should never happen
+                    value = Environment.nil; // should never happen
                 } 
                 return TT_WORD;
             }
@@ -654,7 +656,7 @@ public class LispStream extends LispObject
                 else return ',';
             }
             else
-            {   if (nextChar < 128) value = Jlisp.chars[nextChar];
+            {   if (nextChar < 128) value = LispReader.chars[nextChar];
                 else value = Symbol.intern(String.valueOf((char)nextChar));
                 nextChar = -2;
                 return TT_WORD;
@@ -733,12 +735,12 @@ public class LispStream extends LispObject
         try
         {   File f = new File(nameConvert(s));
             long n = f.lastModified();
-            if (n == 0) return Jlisp.nil;
+            if (n == 0) return Environment.nil;
             s = dFormat.format(new Date(n));
             return new LispString(s);
         }
         catch (Exception e)
-        {   return Jlisp.nil;
+        {   return Environment.nil;
         }
     }
     
@@ -750,7 +752,7 @@ public class LispStream extends LispObject
             return Jlisp.lispTrue;
         }
         catch (Exception e)
-        {   return Jlisp.nil;
+        {   return Environment.nil;
         }
     }
     
@@ -763,32 +765,32 @@ public class LispStream extends LispObject
             return Jlisp.lispTrue;
         }
         catch (Exception e)
-        {   return Jlisp.nil;
+        {   return Environment.nil;
         }
     }
     
     public void scan()
     {
-        if (Jlisp.objects.contains(this)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(this))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(this)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(this))
+	    {   LispReader.repeatedObjects.put(
 	            this,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
-	else Jlisp.objects.add(this);
+	else LispReader.objects.add(this);
     }
     
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(this);
+        Object w = LispReader.repeatedObjects.get(this);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            this,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 	    Jlisp.odump.write(X_STREAM); // not re-loadable!

@@ -39,12 +39,14 @@ package org.mathpiper.mpreduce.datatypes;
 // A "cons" is an ordered pair. In ML terms it would be
 // a bit like ('a * 'b)
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.functions.lisp.Macro;
 import org.mathpiper.mpreduce.exceptions.ProgEvent;
 import org.mathpiper.mpreduce.LispObject;
 import org.mathpiper.mpreduce.functions.builtin.Fns;
 
 import org.mathpiper.mpreduce.Jlisp;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 import org.mathpiper.mpreduce.special.Specfn;
 import org.mathpiper.mpreduce.symbols.Symbol;
@@ -108,12 +110,12 @@ public class Cons extends LispObject
                 {
             case 0: return fname.fn.op0();
             case 1: a = cdr.car.eval();
-                    if (Specfn.progEvent != Specfn.NONE) return Jlisp.nil;
+                    if (Specfn.progEvent != Specfn.NONE) return Environment.nil;
                     return fname.fn.op1(a);
             case 2: a = cdr.car.eval();
-                    if (Specfn.progEvent != Specfn.NONE) return Jlisp.nil;
+                    if (Specfn.progEvent != Specfn.NONE) return Environment.nil;
                     LispObject b = cdr.cdr.car.eval();
-                    if (Specfn.progEvent != Specfn.NONE) return Jlisp.nil;
+                    if (Specfn.progEvent != Specfn.NONE) return Environment.nil;
                     return fname.fn.op2(a, b);
             default:
                     LispObject [] args = new LispObject [n];
@@ -122,7 +124,7 @@ public class Cons extends LispObject
                          !a.atom;
                          a = a.cdr)
                     {   args[n++] = a.car.eval();
-                        if (Specfn.progEvent != Specfn.NONE) return Jlisp.nil;
+                        if (Specfn.progEvent != Specfn.NONE) return Environment.nil;
                     }
                     return fname.fn.opn(args);
                 }
@@ -138,7 +140,7 @@ public class Cons extends LispObject
             if (!car.atom)
             {   for (int i=0; i<n; i++)
                 {   args[i] = args[i].eval();
-                    if (Specfn.progEvent != Specfn.NONE) return Jlisp.nil;
+                    if (Specfn.progEvent != Specfn.NONE) return Environment.nil;
                 }
                 for (int i=0; i<n; i++) Fns.args[i] = args[i];
                 args = null;
@@ -190,7 +192,7 @@ public class Cons extends LispObject
             else x.car.blankprint();
             x = x.cdr;
         }
-        if (x != Jlisp.nil)
+        if (x != Environment.nil)
         {   if ((currentFlags & noLineBreak) == 0 &&
                 currentOutput.column + 1 >= currentOutput.lineLength)
                 currentOutput.println();
@@ -222,7 +224,7 @@ public class Cons extends LispObject
     public LispObject copy()
     {
         LispObject a = this;
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!a.atom) {
             int re = ResourceException.space_limit;
             ResourceException.space_limit = -1;
@@ -293,45 +295,45 @@ public class Cons extends LispObject
 
     public void scan()
     {
-        if (Jlisp.objects.contains(this)) // seen before?
-        {   if (!Jlisp.repeatedObjects.containsKey(this))
-            {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(this)) // seen before?
+        {   if (!LispReader.repeatedObjects.containsKey(this))
+            {   LispReader.repeatedObjects.put(
                     this,
-                    Jlisp.nil); // value is junk at this stage
+                    Environment.nil); // value is junk at this stage
             }
         }
         else
-        {   Jlisp.objects.add(this);
-            Jlisp.stack.push(cdr);
-            Jlisp.stack.push(car);
+        {   LispReader.objects.add(this);
+            LispReader.stack.push(cdr);
+            LispReader.stack.push(car);
         }
     }
 
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(this);
+        Object w = LispReader.repeatedObjects.get(this);
         if (w != null &&
             w instanceof Integer) putSharedRef(w); // processed before
         else
         {   if (w != null) // will be used again sometime
-            {   Jlisp.repeatedObjects.put(
+            {   LispReader.repeatedObjects.put(
                     this,
-                    new Integer(Jlisp.sharedIndex++));
+                    new Integer(LispReader.sharedIndex++));
                 Jlisp.odump.write(X_STORE);
             }
             int n = 1;
             boolean starred = false;
             LispObject l = cdr;
-            Jlisp.spine[0] = car;
+            LispReader.spine[0] = car;
             while (n < 16 &&
                    !l.atom &&
-                   Jlisp.repeatedObjects.get(l) == null)
-            {   Jlisp.spine[n++] = l.car;
+                   LispReader.repeatedObjects.get(l) == null)
+            {   LispReader.spine[n++] = l.car;
                 l = l.cdr;
             }
             if (n < 16 &&
                 Jlisp.specialNil && // ha ha be careful here
-                l == Jlisp.nil)     // especially common case!
+                l == Environment.nil)     // especially common case!
             {   Jlisp.odump.write(X_LIST+n);
             }
             else
@@ -339,9 +341,9 @@ public class Cons extends LispObject
                 starred = true;
             }
             for (int i=0; i<n; i++)
-            {   Jlisp.stack.push(Jlisp.spine[i]);
+            {   LispReader.stack.push(LispReader.spine[i]);
             }
-            if (starred) Jlisp.stack.push(l);
+            if (starred) LispReader.stack.push(l);
         }
     }
 

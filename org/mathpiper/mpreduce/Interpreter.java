@@ -75,8 +75,7 @@ public class Interpreter {
             //myOutputStream.connect(jLispInputStream);
             //myInputStream.connect(jLispOutputStream);
 
-			System.out.println("starting new thread");
-			System.out.flush();
+
 
             final String[] args = new String[0];
 
@@ -98,8 +97,7 @@ public class Interpreter {
             reduceThread.setName("MPReduce");
 
             reduceThread.start();
-			System.out.println("started new thread");
-			System.out.flush();
+
 
             responseBuffer = new StringBuffer();
             inputPromptPattern = Pattern.compile("\n*[0-9]+\\:");
@@ -107,9 +105,7 @@ public class Interpreter {
 
             startMessage = getResponse();
 
-			System.out.println("got first response");
-			System.out.flush();
-			
+
             //Initialize MPReduce.
             evaluate("symbolic procedure update!_prompt; begin setpchar \"f179eb\" end;;");
             inputPromptPattern = Pattern.compile("\n*(f179eb)+");
@@ -192,19 +188,15 @@ public class Interpreter {
     public String getResponse() throws Throwable {
         boolean keepChecking = true;
 
-		int nchecks = 0;
         mainLoop:
         while (keepChecking) {
             int serialAvailable = myInputStream.available();
-            ++nchecks;
             if (serialAvailable == 0) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ie) {
                     System.out.println("Jlisp session interrupted.");
                 }
-                if (nchecks == 100)
-					throw new RuntimeException("timeout");
                 continue mainLoop;
             }//end while
 

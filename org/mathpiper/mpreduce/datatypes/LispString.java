@@ -38,8 +38,10 @@ package org.mathpiper.mpreduce.datatypes;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public class LispString extends LispObject
@@ -121,26 +123,26 @@ public class LispString extends LispObject
 
     public void scan()
     {
-        if (Jlisp.objects.contains(string)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(string))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(string)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(string))
+	    {   LispReader.repeatedObjects.put(
 	            string,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
-	else Jlisp.objects.add(string);
+	else LispReader.objects.add(string);
     }
     
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(string);
+        Object w = LispReader.repeatedObjects.get(string);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            string,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 // The next line turns the string into bytes using the platform's default

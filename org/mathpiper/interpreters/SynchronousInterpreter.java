@@ -417,15 +417,13 @@ class SynchronousInterpreter implements Interpreter {
 
                 if (object instanceof String && ((String) object).startsWith("Load")) {
                     ConsPointer loadResult = new ConsPointer();
-                    iEnvironment.getGlobalVariable(-1, "LoadResult", loadResult);
+                    iEnvironment.getGlobalVariable(-1, "$LoadResult", loadResult);
                     StringBuffer string_out = new StringBuffer();
                     MathPiperOutputStream output = new StringOutputStream(string_out);
                     printer.rememberLastChar(' ');
                     printer.print(-1, loadResult, output, iEnvironment);
                     String loadResultString = string_out.toString();
-                    //GlobalVariable loadResultVariable = (GlobalVariable) environment.iGlobalState.lookUp("LoadResult");
                     evaluationResponse.setResult(loadResultString);
-                    //environment.iGlobalState.release("LoadResult");
                     if (loadResult.type() == Utility.OBJECT) {
                         JavaObject javaObject = (JavaObject) loadResult.car();
                         evaluationResponse.setObject(javaObject.getObject());

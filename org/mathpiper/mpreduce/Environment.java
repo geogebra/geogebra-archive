@@ -1,13 +1,5 @@
-package org.mathpiper.mpreduce.functions.lisp;
-
-//
-// This file is part of the Jlisp implementation of Standard Lisp
-// Copyright \u00a9 (C) Codemist Ltd, 1998-2000.
-//
-
 /**************************************************************************
- * Copyright (C) 1998-2011, Codemist Ltd.                A C Norman       *
- *                            also contributions from Vijay Chauhan, 2002 *
+ * Copyright (C) 2011 Ted Kosan                                           *
  *                                                                        *
  * Redistribution and use in source and binary forms, with or without     *
  * modification, are permitted provided that the following conditions are *
@@ -35,40 +27,33 @@ package org.mathpiper.mpreduce.functions.lisp;
  * DAMAGE.                                                                *
  *************************************************************************/
 
+package org.mathpiper.mpreduce;
 
-import org.mathpiper.mpreduce.Jlisp;
-import org.mathpiper.mpreduce.LispReader;
+import java.math.BigInteger;
+import org.mathpiper.mpreduce.functions.builtin.Fns1;
+import org.mathpiper.mpreduce.functions.builtin.Fns2;
+import org.mathpiper.mpreduce.functions.builtin.Fns3;
+import org.mathpiper.mpreduce.functions.builtin.MPReduceFunctions;
+import org.mathpiper.mpreduce.special.Specfn;
+import org.mathpiper.mpreduce.symbols.Symbol;
 
-public class Undefined extends LispFunction
-{
 
-    public Undefined(String name)
-    {
-        this.name = name;
-    }
+public class Environment {
+    public static Symbol nil;
+    public static Symbol lispTrue;
+    public static LispObject[] lit = new LispObject[Lit.names.length];
+    public static BigInteger bigModulus = BigInteger.ONE;
+    public static int modulus = 1;
+    public static int printprec = 15;
+    public static boolean descendSymbols;
+    public static boolean specialNil;
 
-    public void dump() throws Exception
-    {
-        Object w = LispReader.repeatedObjects.get(this);
-	if (w != null &&
-	    w instanceof Integer) putSharedRef(w); // processed before
-	else
-	{   if (w != null) // will be used again sometime
-	    {   LispReader.repeatedObjects.put(
-	            this,
-		    new Integer(LispReader.sharedIndex++));
-		Jlisp.odump.write(X_STORE);
-            }
-	    byte [] rep = name.getBytes("UTF8");
-	    int length = rep.length;
-	    putPrefix(length, X_UNDEF1);
-	    for (int i=0; i<length; i++)
-	        Jlisp.odump.write(rep[i]);
-	}
-    }
+    static Fns1 fns1 = new Fns1();
+    static Fns2 fns2 = new Fns2();
+    static Fns3 fns3 = new Fns3();
+    static MPReduceFunctions mpreduceFunctions = new MPReduceFunctions();
+    static Specfn specfn = new Specfn();
+
 
 
 }
-
-// end of Undefined.java
-

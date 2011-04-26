@@ -203,7 +203,7 @@ public abstract class LispObject extends Object
         {   Jlisp.odump.write(X_REFn + n);
             return;
         }
-	int n1 = Jlisp.sharedIndex - n;
+	int n1 = LispReader.sharedIndex - n;
         if (n1 < 17)  // range 1 to 16 is possible here (0 can not arise)
         {   Jlisp.odump.write(X_REFn + n1 - 1 + 48);
             return;
@@ -337,12 +337,12 @@ public abstract class LispObject extends Object
 
     public LispObject evenp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject oddp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject fix() throws Exception
@@ -352,12 +352,12 @@ public abstract class LispObject extends Object
 
     public LispObject fixp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject integerp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject jfloat() throws Exception
@@ -367,27 +367,27 @@ public abstract class LispObject extends Object
 
     public LispObject floatp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject minusp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject plusp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject zerop() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject onep() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject abs() throws Exception

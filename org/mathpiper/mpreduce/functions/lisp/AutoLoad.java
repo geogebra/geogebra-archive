@@ -34,10 +34,12 @@ package org.mathpiper.mpreduce.functions.lisp;
  * DAMAGE.                                                                *
  *************************************************************************/
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.LispObject;
 
 import org.mathpiper.mpreduce.io.Fasl;
 import org.mathpiper.mpreduce.Jlisp;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 import org.mathpiper.mpreduce.symbols.Symbol;
 
@@ -99,35 +101,35 @@ public class AutoLoad extends LispFunction
     
     public void scan()
     {
-        if (Jlisp.objects.contains(this)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(this))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(this)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(this))
+	    {   LispReader.repeatedObjects.put(
 	            this,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
 	else
-	{   Jlisp.objects.add(this);
-	    Jlisp.stack.push(name);
-	    Jlisp.stack.push(data);
+	{   LispReader.objects.add(this);
+	    LispReader.stack.push(name);
+	    LispReader.stack.push(data);
 	}
     }
     
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(this);
+        Object w = LispReader.repeatedObjects.get(this);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w);
 	else
 	{   if (w != null)
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            this,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
 	    }
 	    Jlisp.odump.write(X_AUTOLOAD);
-	    Jlisp.stack.push(data);
-	    Jlisp.stack.push(name);
+	    LispReader.stack.push(data);
+	    LispReader.stack.push(name);
 	}
     }
     

@@ -5,10 +5,12 @@ package org.mathpiper.mpreduce.functions.functionwithenvironment;
 // Copyright \u00a9 (C) Codemist Ltd, 1998-2000.
 //
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.functions.lisp.LispFunction;
 import org.mathpiper.mpreduce.LispObject;
 
 import org.mathpiper.mpreduce.Jlisp;
+import org.mathpiper.mpreduce.LispReader;
 
 /**************************************************************************
  * Copyright (C) 1998-2011, Codemist Ltd.                A C Norman       *
@@ -62,28 +64,28 @@ FnWithEnv(LispObject [] env)
 
 public void scan()
 {
-    if (Jlisp.objects.contains(this)) // seen before?
-    {   if (!Jlisp.repeatedObjects.containsKey(this))
-        {   Jlisp.repeatedObjects.put(
+    if (LispReader.objects.contains(this)) // seen before?
+    {   if (!LispReader.repeatedObjects.containsKey(this))
+        {   LispReader.repeatedObjects.put(
                 this,
-                Jlisp.nil); // value is junk at this stage
+                Environment.nil); // value is junk at this stage
         }
     }
-    else Jlisp.objects.add(this);
+    else LispReader.objects.add(this);
     for (int i=0; i<env.length; i++)
-        Jlisp.stack.push(env[i]);
+        LispReader.stack.push(env[i]);
 }
 
 public void dump() throws Exception
 {
-    Object w = Jlisp.repeatedObjects.get(this);
+    Object w = LispReader.repeatedObjects.get(this);
     if (w != null &&
         w instanceof Integer) putSharedRef(w); // processed before
     else
     {   if (w != null) // will be used again sometime
-        {   Jlisp.repeatedObjects.put(
+        {   LispReader.repeatedObjects.put(
                 this,
-                new Integer(Jlisp.sharedIndex++));
+                new Integer(LispReader.sharedIndex++));
             Jlisp.odump.write(X_STORE);
         }
         int length;
@@ -107,7 +109,7 @@ public void dump() throws Exception
         length = env.length;
         putPrefix(length, X_VEC);  // context after BPS decodes this case!
         for (int i=0; i<length; i++)
-            Jlisp.stack.push(env[i]);
+            LispReader.stack.push(env[i]);
     }
 }
 

@@ -2,8 +2,8 @@ package org.mathpiper.mpreduce.functions.functionwithenvironment;
 
 //
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.datatypes.Cons;
-import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.Spid;
 import org.mathpiper.mpreduce.LispObject;
 
@@ -73,8 +73,8 @@ public LispObject op0() throws Exception
     int spsave = sp;
     LispObject r;
     for (int i = 0; i<((nargs>>8)&0xff); i++)
-        stack[++sp] = (nargs & 0x10000) != 0 ? (LispObject)Spid.noarg : (LispObject)Jlisp.nil;
-    if ((nargs & 0x20000) != 0) stack[++sp] = Jlisp.nil;
+        stack[++sp] = (nargs & 0x10000) != 0 ? (LispObject)Spid.noarg : (LispObject)Environment.nil;
+    if ((nargs & 0x20000) != 0) stack[++sp] = Environment.nil;
     try
     {   r = interpret(2);
     }
@@ -90,13 +90,13 @@ public LispObject op1(LispObject a1) throws Exception
     int spsave = sp;
     if ((nargs & 0xff) == 0 && ((nargs>>8)&0xff) == 0)
     {   if ((nargs & 0x20000)==0) error("too many args");
-        stack[++sp] = new Cons(a1, Jlisp.nil); // all in the &rest arg
+        stack[++sp] = new Cons(a1, Environment.nil); // all in the &rest arg
     }
     else
     {   stack[++sp] = a1;
         for (int i = 0; i<(nargs & 0xff)+((nargs>>8)&0xff)-1; i++)
-            stack[++sp] = (nargs & 0x10000) != 0 ? (LispObject)Spid.noarg : (LispObject)Jlisp.nil;
-        if ((nargs & 0x20000) != 0) stack[++sp] = Jlisp.nil;
+            stack[++sp] = (nargs & 0x10000) != 0 ? (LispObject)Spid.noarg : (LispObject)Environment.nil;
+        if ((nargs & 0x20000) != 0) stack[++sp] = Environment.nil;
     }
     LispObject r;
     try
@@ -115,21 +115,21 @@ public LispObject op2(LispObject a1, LispObject a2) throws Exception
     switch ((nargs & 0xff)+((nargs>>8)&0xff))
     {
 case 0: if ((nargs & 0x20000)==0) error("too many args");
-        stack[++sp] = new Cons(a1, new Cons(a2, Jlisp.nil));
+        stack[++sp] = new Cons(a1, new Cons(a2, Environment.nil));
         break;
 case 1: if ((nargs & 0x20000)==0) error("too many args");
         stack[++sp] = a1; // will be either needed or optional
-        stack[++sp] = new Cons(a2, Jlisp.nil);
+        stack[++sp] = new Cons(a2, Environment.nil);
         break;
 case 2: stack[++sp] = a1;
         stack[++sp] = a2;
-        if ((nargs & 0x20000)!=0) stack[++sp] = Jlisp.nil;
+        if ((nargs & 0x20000)!=0) stack[++sp] = Environment.nil;
         break;
 default:stack[++sp] = a1;
         stack[++sp] = a2;
         for (int i = 0; i<(nargs & 0xff)+((nargs>>8)&0xff)-2; i++)
-            stack[++sp] = (nargs & 0x10000) != 0 ? (LispObject)Spid.noarg : (LispObject)Jlisp.nil;
-        if ((nargs & 0x20000) != 0) stack[++sp] = Jlisp.nil;
+            stack[++sp] = (nargs & 0x10000) != 0 ? (LispObject)Spid.noarg : (LispObject)Environment.nil;
+        if ((nargs & 0x20000) != 0) stack[++sp] = Environment.nil;
     }
     LispObject r;
     try
@@ -145,7 +145,7 @@ public LispObject opn(LispObject [] args) throws Exception
 {
 // @@@
     error("byteopt call with 3 or more args not yet implemented, sorry");
-    return Jlisp.nil;
+    return Environment.nil;
 }
 
 }

@@ -38,6 +38,7 @@ package org.mathpiper.mpreduce.symbols;
 
 // Class to represent Lisp symbols
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.special.SpecialFunction;
 import org.mathpiper.mpreduce.io.Fasl;
 import org.mathpiper.mpreduce.functions.lisp.Undefined;
@@ -45,6 +46,7 @@ import org.mathpiper.mpreduce.functions.lisp.LispFunction;
 
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.Lit;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
@@ -82,10 +84,10 @@ public class Symbol extends LispObject
     {
         Symbol p;
         int inc = name.hashCode();
-        int hash = ((169*inc) & 0x7fffffff) % Jlisp.oblistSize;
-        inc = 1 + (inc & 0x7fffffff) % (Jlisp.oblistSize-1);
+        int hash = ((169*inc) & 0x7fffffff) % LispReader.oblistSize;
+        inc = 1 + (inc & 0x7fffffff) % (LispReader.oblistSize-1);
         for (;;)
-        {   p = Jlisp.oblist[hash];
+        {   p = LispReader.oblist[hash];
             if (p == null) break;    // symbol is not in oblist
             if (p.pname.equals(name)) 
             {   if (fn != null) p.fn = fn;
@@ -93,20 +95,20 @@ public class Symbol extends LispObject
                 return p;
             }
             hash += inc;
-            if (hash >= Jlisp.oblistSize) hash -= Jlisp.oblistSize;
+            if (hash >= LispReader.oblistSize) hash -= LispReader.oblistSize;
         }
 // not found on object-list, so create it.
         p = new Symbol();
         p.pname = name;
         p.cacheFlags = -1;
         p.car/*value*/ = Jlisp.lit[Lit.undefined];
-        p.cdr/*plist*/ = Jlisp.nil;
-        Jlisp.oblist[hash] = p;
+        p.cdr/*plist*/ = Environment.nil;
+        LispReader.oblist[hash] = p;
         if (fn != null) p.fn = fn;
         else p.fn = new Undefined(name);
         p.special = special;
-        Jlisp.oblistCount++;
-        if (4*Jlisp.oblistCount > 3*Jlisp.oblistSize) Jlisp.reHashOblist();
+        LispReader.oblistCount++;
+        if (4*LispReader.oblistCount > 3*LispReader.oblistSize) LispReader.reHashOblist();
         return p;
     }
 
@@ -115,26 +117,26 @@ public class Symbol extends LispObject
     {
         Symbol p;
         int inc = name.hashCode();
-        int hash = ((169*inc) & 0x7fffffff) % Jlisp.oblistSize;
-        inc = 1 + (inc & 0x7fffffff) % (Jlisp.oblistSize-1);
+        int hash = ((169*inc) & 0x7fffffff) % LispReader.oblistSize;
+        inc = 1 + (inc & 0x7fffffff) % (LispReader.oblistSize-1);
         for (;;)
-        {   p = Jlisp.oblist[hash];
+        {   p = LispReader.oblist[hash];
             if (p == null) break;    // symbol is not in oblist
             if (p.pname.equals(name)) return p;
             hash += inc;
-            if (hash >= Jlisp.oblistSize) hash -= Jlisp.oblistSize;
+            if (hash >= LispReader.oblistSize) hash -= LispReader.oblistSize;
         }
 // not found on object-list, so create it.
         p = new Symbol();
         p.pname = name;
         p.cacheFlags = -1;
         p.car/*value*/ = Jlisp.lit[Lit.undefined];
-        p.cdr/*plist*/ = Jlisp.nil;
-        Jlisp.oblist[hash] = p;
+        p.cdr/*plist*/ = Environment.nil;
+        LispReader.oblist[hash] = p;
         p.fn = new Undefined(name);
         p.special = null;
-        Jlisp.oblistCount++;
-        if (4*Jlisp.oblistCount > 3*Jlisp.oblistSize) Jlisp.reHashOblist();
+        LispReader.oblistCount++;
+        if (4*LispReader.oblistCount > 3*LispReader.oblistSize) LispReader.reHashOblist();
         return p;
     }
 
@@ -160,12 +162,12 @@ public class Symbol extends LispObject
         if ((currentFlags & printEscape) != 0)
         {   if (Character.isLetter(c))
             {   if (((Symbol)Jlisp.lit[Lit.lower]).car/*value*/ !=
-                    Jlisp.nil)
+                    Environment.nil)
                 {   if (Character.isUpperCase(c))
                         cache.append((char)'!');
                 }
                 else if (((Symbol)Jlisp.lit[Lit.raise]).car/*value*/ !=
-                    Jlisp.nil)
+                    Environment.nil)
                 {   if (Character.isLowerCase(c))
                         cache.append((char)'!');
                 }
@@ -185,12 +187,12 @@ public class Symbol extends LispObject
             if ((currentFlags & printEscape) != 0)
             {   if (Character.isLetterOrDigit(c) || c == '_')
                 {   if (((Symbol)Jlisp.lit[Lit.lower]).car/*value*/ !=
-                        Jlisp.nil)
+                        Environment.nil)
                     {   if (Character.isUpperCase(c))
                             cache.append((char)'!');
                     }
                     else if (((Symbol)Jlisp.lit[Lit.raise]).car/*value*/ !=
-                        Jlisp.nil)
+                        Environment.nil)
                     {   if (Character.isLowerCase(c))
                             cache.append((char)'!');
                     }
@@ -236,31 +238,31 @@ public class Symbol extends LispObject
 
     public void scan()
     {
-        if (Jlisp.objects.contains(this)) // seen before?
-        {   if (!Jlisp.repeatedObjects.containsKey(this))
-            {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(this)) // seen before?
+        {   if (!LispReader.repeatedObjects.containsKey(this))
+            {   LispReader.repeatedObjects.put(
                     this,
-                    Jlisp.nil); // value is junk at this stage
+                    Environment.nil); // value is junk at this stage
             }
         }
         else 
-        {   Jlisp.objects.add(this);
+        {   LispReader.objects.add(this);
             if (Jlisp.descendSymbols)
-            {   if (car/*value*/ != null) Jlisp.stack.push(car/*value*/);
-                if (cdr/*plist*/ != null) Jlisp.stack.push(cdr/*plist*/);
-                if (fn != null) Jlisp.stack.push(fn);
-                if (special != null) Jlisp.stack.push(special);
+            {   if (car/*value*/ != null) LispReader.stack.push(car/*value*/);
+                if (cdr/*plist*/ != null) LispReader.stack.push(cdr/*plist*/);
+                if (fn != null) LispReader.stack.push(fn);
+                if (special != null) LispReader.stack.push(special);
             }
         }
     }
     
     public void dump() throws Exception
     {
-        Object w = Jlisp.repeatedObjects.get(this);
+        Object w = LispReader.repeatedObjects.get(this);
         if (w != null &&
             w instanceof Integer)
         {   if (Jlisp.specialNil &&
-                this == Jlisp.nil) 
+                this == Environment.nil) 
                 // important enough for a special-case, but must not use
                 // that while dumping itself!
                 Jlisp.odump.write(X_LIST+0);
@@ -268,9 +270,9 @@ public class Symbol extends LispObject
         }
         else
         {   if (w != null) // will be used again sometime
-            {   Jlisp.repeatedObjects.put(
+            {   LispReader.repeatedObjects.put(
                     this,
-                    new Integer(Jlisp.sharedIndex++));
+                    new Integer(LispReader.sharedIndex++));
                 Jlisp.odump.write(X_STORE);
             }
 // Now this is the first time I see this symbol while writing a dump
@@ -306,7 +308,7 @@ public class Symbol extends LispObject
             boolean undefined = false;
 // NB gensyms are handled as a derived class so do not need attention here
             if (fn instanceof Undefined &&
-                Jlisp.repeatedObjects.get(fn) == null)
+                LispReader.repeatedObjects.get(fn) == null)
             {   putPrefix2(length, X_UNDEFn, X_UNDEF);
                 undefined = true;
             }
@@ -314,14 +316,14 @@ public class Symbol extends LispObject
             for (int i=0; i<length; i++)
                 Jlisp.odump.write(rep[i]);
             if (Jlisp.descendSymbols)        
-            {   Jlisp.stack.push(car/*value*/);
-                Jlisp.stack.push(cdr/*plist*/);
-                Jlisp.stack.push(special);
+            {   LispReader.stack.push(car/*value*/);
+                LispReader.stack.push(cdr/*plist*/);
+                LispReader.stack.push(special);
 // If the symbol had a non-trivial function-definition then that will
 // be dumped straight after the symbol-header/pname info. Otherwise I
 // skip and start with the "special-function" info which will usually be
 // empty.
-                if (!undefined) Jlisp.stack.push(fn);
+                if (!undefined) LispReader.stack.push(fn);
             }
             else Fasl.recent[Fasl.recentp++ & 0x1ff] = this;
         }

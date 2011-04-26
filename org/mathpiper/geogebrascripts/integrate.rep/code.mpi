@@ -316,6 +316,20 @@ UnFence("IntegrateMultiplicative",4);
     <-- defIntegrate(var,from,to,expr,a,b);
 
 
+20 # (Integrate(_var,_from,_to,optionsList_IsList)(_expr)) <--
+[
+    Local(result);
+
+    optionsList := OptionsToAssociativeList(optionsList);
+
+    result := Integrate(var,from,to) expr;
+
+    If( optionsList["logAbs"] = "True", result := ( result /: {Ln(_x) <- Ln(Abs(x))}) );
+
+    result;
+];
+
+
 
 
 

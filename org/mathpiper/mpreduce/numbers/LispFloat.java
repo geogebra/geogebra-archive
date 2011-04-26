@@ -38,8 +38,10 @@ package org.mathpiper.mpreduce.numbers;
 
 
 import java.math.BigDecimal;
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public class LispFloat extends LispNumber
@@ -259,27 +261,27 @@ public class LispFloat extends LispNumber
     public void scan()
     {
         Object w = new Double(value);
-        if (Jlisp.objects.contains(w)) // seen before?
-	{   if (!Jlisp.repeatedObjects.containsKey(w))
-	    {   Jlisp.repeatedObjects.put(
+        if (LispReader.objects.contains(w)) // seen before?
+	{   if (!LispReader.repeatedObjects.containsKey(w))
+	    {   LispReader.repeatedObjects.put(
 	            w,
-	            Jlisp.nil); // value is junk at this stage
+	            Environment.nil); // value is junk at this stage
 	    }
 	}
-	else Jlisp.objects.add(w);
+	else LispReader.objects.add(w);
     }
     
     public void dump() throws Exception
     {
         Object d = new Double(value);
-        Object w = Jlisp.repeatedObjects.get(d);
+        Object w = LispReader.repeatedObjects.get(d);
 	if (w != null &&
 	    w instanceof Integer) putSharedRef(w); // processed before
 	else
 	{   if (w != null) // will be used again sometime
-	    {   Jlisp.repeatedObjects.put(
+	    {   LispReader.repeatedObjects.put(
 	            d,
-		    new Integer(Jlisp.sharedIndex++));
+		    new Integer(LispReader.sharedIndex++));
 		Jlisp.odump.write(X_STORE);
             }
 	    long rep = Double.doubleToLongBits(value);
@@ -421,12 +423,12 @@ public class LispFloat extends LispNumber
 
     public LispObject fixp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject integerp() throws Exception
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 
     public LispObject jfloat() throws Exception
@@ -441,22 +443,22 @@ public class LispFloat extends LispNumber
 
     public LispObject minusp() throws Exception
     {
-        return (value < 0.0) ? Jlisp.lispTrue : Jlisp.nil;
+        return (value < 0.0) ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject plusp() throws Exception
     {
-        return (value >= 0.0) ? Jlisp.lispTrue : Jlisp.nil;
+        return (value >= 0.0) ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject zerop() throws Exception
     {
-        return (value == 0.0) ? Jlisp.lispTrue : Jlisp.nil;
+        return (value == 0.0) ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject onep() throws Exception
     {
-        return (value == 1.0) ? Jlisp.lispTrue : Jlisp.nil;
+        return (value == 1.0) ? Jlisp.lispTrue : Environment.nil;
     }
 
     public LispObject addInteger(LispBigInteger a) throws Exception

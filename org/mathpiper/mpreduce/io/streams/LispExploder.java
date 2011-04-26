@@ -36,11 +36,12 @@ package org.mathpiper.mpreduce.io.streams;
  *************************************************************************/
 
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.numbers.LispInteger;
 import org.mathpiper.mpreduce.datatypes.Cons;
-import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.symbols.Symbol;
 import org.mathpiper.mpreduce.LispObject;
+import org.mathpiper.mpreduce.LispReader;
 import org.mathpiper.mpreduce.exceptions.ResourceException;
 
 public class LispExploder extends LispStream
@@ -53,7 +54,7 @@ public class LispExploder extends LispStream
     {
         super("<exploder>");
         asSymbols = n;
-        exploded = Jlisp.nil;
+        exploded = Environment.nil;
     }
 
     public void flush()
@@ -62,7 +63,7 @@ public class LispExploder extends LispStream
 
     public void close()
     {
-        exploded = Jlisp.nil;
+        exploded = Environment.nil;
     }
 
     public void print(String s) throws ResourceException
@@ -72,7 +73,7 @@ public class LispExploder extends LispStream
         {   char c = v[i];
             LispObject w;
             if (asSymbols)
-            {   if ((int)c < 128) w = Jlisp.chars[(int)c];
+            {   if ((int)c < 128) w = LispReader.chars[(int)c];
                 else w = Symbol.intern(String.valueOf(c));
             }
             else w = LispInteger.valueOf((int)c);
@@ -83,7 +84,7 @@ public class LispExploder extends LispStream
     public void println(String s) throws ResourceException
     {
         print(s);
-        if (asSymbols) exploded = new Cons(Jlisp.chars['\n'], exploded);
+        if (asSymbols) exploded = new Cons(LispReader.chars['\n'], exploded);
         else exploded = new Cons(LispInteger.valueOf('\n'), exploded);
     }
 

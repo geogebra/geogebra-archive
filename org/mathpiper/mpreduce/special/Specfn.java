@@ -2,6 +2,7 @@ package org.mathpiper.mpreduce.special;
 
 //
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.LispObject;
 import org.mathpiper.mpreduce.Lit;
@@ -93,7 +94,7 @@ class QuoteSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args)
     {
-        if (args.atom) return Jlisp.nil;
+        if (args.atom) return Environment.nil;
         else return args.car;
     }
 }
@@ -107,7 +108,7 @@ class FunctionSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args)
     {
-        if (args.atom) return Jlisp.nil;
+        if (args.atom) return Environment.nil;
         else return args.car;
     }
 }
@@ -138,19 +139,19 @@ class CondSpecial extends SpecialFunction
             LispObject predicate = x.car;   // p1
             LispObject consequent = x.cdr;  // (e1)
             predicate = predicate.eval();
-            if (progEvent != NONE) return Jlisp.nil;
-            if (predicate != Jlisp.nil)
-            {   LispObject r = Jlisp.nil;
+            if (progEvent != NONE) return Environment.nil;
+            if (predicate != Environment.nil)
+            {   LispObject r = Environment.nil;
                 while (!consequent.atom)
                 {   LispObject cc = consequent;
                     r = cc.car.eval();
-                    if (progEvent != NONE) return Jlisp.nil;
+                    if (progEvent != NONE) return Environment.nil;
                     consequent = cc.cdr;
                 }
                 return r;
             }
         }
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -158,22 +159,22 @@ class IfSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args) throws Exception
     {
-        if (args.atom) return Jlisp.nil;
+        if (args.atom) return Environment.nil;
         LispObject c1 = args;     // car is the predicate
         if (c1.cdr.atom)
         {   c1.car.eval();        // degenerate case (IF p)
-            return Jlisp.nil;
+            return Environment.nil;
         }
         LispObject c2 = c1.cdr; // car is the consequent
         c1 = c1.car.eval();
-        if (progEvent != NONE) return Jlisp.nil;
-        if (c1 != Jlisp.nil) return c2.car.eval();
+        if (progEvent != NONE) return Environment.nil;
+        if (c1 != Environment.nil) return c2.car.eval();
         args = c2.cdr;
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!args.atom)
         {   c2 = args;
             r = c2.car.eval();
-            if (progEvent != NONE) return Jlisp.nil;
+            if (progEvent != NONE) return Environment.nil;
             args = c2.cdr;
         }
         return r;
@@ -184,16 +185,16 @@ class WhenSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args) throws Exception
     {
-        if (args.atom) return Jlisp.nil;
+        if (args.atom) return Environment.nil;
         LispObject c = args;
-        if (c.car.eval() == Jlisp.nil) return Jlisp.nil;
-        if (progEvent != NONE) return Jlisp.nil;
+        if (c.car.eval() == Environment.nil) return Environment.nil;
+        if (progEvent != NONE) return Environment.nil;
         args = c.cdr;
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!args.atom)
         {   c = args;
             r = c.car.eval();
-            if (progEvent != NONE) return Jlisp.nil;
+            if (progEvent != NONE) return Environment.nil;
             args = c.cdr;
         }
         return r;   
@@ -204,16 +205,16 @@ class UnlessSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args) throws Exception
     {
-        if (args.atom) return Jlisp.nil;
+        if (args.atom) return Environment.nil;
         LispObject c = args;
-        if (c.car.eval() != Jlisp.nil) return Jlisp.nil;
-        if (progEvent != NONE) return Jlisp.nil;
+        if (c.car.eval() != Environment.nil) return Environment.nil;
+        if (progEvent != NONE) return Environment.nil;
         args = c.cdr;
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!args.atom)
         {   c = args;
             r = c.car.eval();
-            if (progEvent != NONE) return Jlisp.nil;
+            if (progEvent != NONE) return Environment.nil;
             args = c.cdr;
         }
         return r;   
@@ -226,12 +227,12 @@ class DefunSpecial extends SpecialFunction
 {
     public LispObject op(LispObject a) throws Exception
     {
-        if (a.atom) return Jlisp.nil;  // (de) with no args at all!
+        if (a.atom) return Environment.nil;  // (de) with no args at all!
         Symbol name = (Symbol)(a.car);
         name.fn = new Interpreted(a.cdr);
-        if (Jlisp.lit[Lit.starcomp].car/*value*/ != Jlisp.nil &&
+        if (Jlisp.lit[Lit.starcomp].car/*value*/ != Environment.nil &&
             !(((Symbol)Jlisp.lit[Lit.compile]).fn instanceof Undefined))
-        {   a = new Cons(name , Jlisp.nil);
+        {   a = new Cons(name , Environment.nil);
             ((Symbol)Jlisp.lit[Lit.compile]).fn.op1(a);
         }
         return name;
@@ -242,12 +243,12 @@ class DmSpecial extends SpecialFunction
 {
     public LispObject op(LispObject a) throws Exception
     {
-        if (a.atom) return Jlisp.nil;
+        if (a.atom) return Environment.nil;
         Symbol name = (Symbol)a.car;
         name.fn = new Macro(a.cdr);
-        if (Jlisp.lit[Lit.starcomp].car/*value*/ != Jlisp.nil &&
+        if (Jlisp.lit[Lit.starcomp].car/*value*/ != Environment.nil &&
             !(((Symbol)Jlisp.lit[Lit.compile]).fn instanceof Undefined))
-        {   a = new Cons(name , Jlisp.nil);
+        {   a = new Cons(name , Environment.nil);
             ((Symbol)Jlisp.lit[Lit.compile]).fn.op1(a);
         }
         return name;
@@ -258,17 +259,17 @@ class SetqSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args) throws Exception
     {
-        LispObject value = Jlisp.nil;
+        LispObject value = Environment.nil;
         Symbol name;
         while (!args.atom)
         {   name = (Symbol)args.car;
             args = args.cdr;
             if (!args.atom)
             {   value = args.car.eval();
-                if (progEvent != NONE) return Jlisp.nil;
+                if (progEvent != NONE) return Environment.nil;
                 args = args.cdr;
             }
-            else value = Jlisp.nil;
+            else value = Environment.nil;
             name.car/*value*/ = value;
         }
         return value;
@@ -305,7 +306,7 @@ class GoSpecial extends SpecialFunction
             return error("go called without an argument");
         progEvent = GOTO;
         progData = args.car;
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -313,10 +314,10 @@ class ProgSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args) throws Exception
     {
-        if (args.atom) return Jlisp.nil; // (PROG)
+        if (args.atom) return Environment.nil; // (PROG)
         LispObject bvl = args.car;
         args = args.cdr;
-        if (args.atom) return Jlisp.nil; // (PROG (v))
+        if (args.atom) return Environment.nil; // (PROG (v))
         int nvars = 0;
         LispObject bvlsave = bvl;
         while (!bvl.atom)
@@ -337,7 +338,7 @@ class ProgSpecial extends SpecialFunction
             Symbol name = (Symbol)(w.car);
             bvl = w.cdr;
             save[i] = name.car/*value*/;
-            name.car/*value*/ = Jlisp.nil;
+            name.car/*value*/ = Environment.nil;
         }
         try
         {   LispObject pc = args;
@@ -352,7 +353,7 @@ class ProgSpecial extends SpecialFunction
                 case RETURN:
                         s = progData;
                         progEvent = NONE;
-                        progData = Jlisp.nil;
+                        progData = Environment.nil;
                         return s;
                 case GOTO:
                         pc = args;
@@ -361,7 +362,7 @@ class ProgSpecial extends SpecialFunction
                             pc = pc.cdr;
                         }
                         progEvent = NONE;
-                        progData = Jlisp.nil;
+                        progData = Environment.nil;
                         if (!pc.atom) pc = pc.cdr;
                         else return error("label not found in GO");
                         continue;
@@ -386,7 +387,7 @@ class ProgSpecial extends SpecialFunction
         }
 // If the prog block terminates by dropping off the end I
 // will give back the result NIL.
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 
@@ -397,7 +398,7 @@ class AndSpecial extends SpecialFunction
         LispObject r = Jlisp.lispTrue;
         while (!args.atom)
         {   r = args.car.eval();
-            if (progEvent != NONE || r == Jlisp.nil) break;
+            if (progEvent != NONE || r == Environment.nil) break;
             args = args.cdr;
         }
         return r;
@@ -408,10 +409,10 @@ class OrSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args) throws Exception
     {
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!args.atom)
         {   r = args.car.eval();
-            if (progEvent != NONE || r != Jlisp.nil) break;
+            if (progEvent != NONE || r != Environment.nil) break;
             args = args.cdr;
         }
         return r;
@@ -452,12 +453,12 @@ class ListSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args) throws Exception
     {
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!args.atom)
         {   r = new Cons(args.car.eval(), r);
             args = args.cdr;
         }
-        args = Jlisp.nil;
+        args = Environment.nil;
         while (!r.atom)
         {   LispObject w = r;
             r = r.cdr;
@@ -473,7 +474,7 @@ class ListStarSpecial extends SpecialFunction
     public LispObject op(LispObject args) throws Exception
     {
         if (args.atom) return error("list* with no args");
-        LispObject r = Jlisp.nil;
+        LispObject r = Environment.nil;
         while (!args.atom)
         {   r = new Cons(args.car.eval(), r);
             args = args.cdr;
@@ -496,7 +497,7 @@ class DeclareSpecial extends SpecialFunction
 {
     public LispObject op(LispObject args)
     {
-        return Jlisp.nil;
+        return Environment.nil;
     }
 }
 

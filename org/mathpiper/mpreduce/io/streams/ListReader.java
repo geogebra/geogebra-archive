@@ -35,11 +35,11 @@ package org.mathpiper.mpreduce.io.streams;
  * DAMAGE.                                                                *
  *************************************************************************/
 
+import org.mathpiper.mpreduce.Environment;
 import org.mathpiper.mpreduce.datatypes.LispString;
 import org.mathpiper.mpreduce.numbers.LispInteger;
 import org.mathpiper.mpreduce.LispObject;
 
-import org.mathpiper.mpreduce.Jlisp;
 import org.mathpiper.mpreduce.symbols.Symbol;
 
 public class ListReader extends LispStream
@@ -71,7 +71,7 @@ public class ListReader extends LispStream
 
     public void close()
     {
-        inputData = Jlisp.nil;
+        inputData = Environment.nil;
     }
 
 }

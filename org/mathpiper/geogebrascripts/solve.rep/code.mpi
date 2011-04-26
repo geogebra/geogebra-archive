@@ -323,8 +323,11 @@ Function("SolveMatrix",{matrix,vector})
         ans:=SolveLinearSystem( exprns, vars ),
         ans:=SolveNonlinearSystem( exprns, vars )
     );
-    ans := Map("==",{vars,ans});
+
+    If(ans != {}, ans := Map("==",{vars,ans}));
+
     If(InVerboseMode(),Tell("",ans));
+
     ans;
 ];
 
@@ -361,12 +364,12 @@ Function("SolveMatrix",{matrix,vector})
     rhs := -WithValue(vars,zeros,polys);
     If(InVerboseMode(),Tell("       ",rhs));
     
-    
-    
     A := Transpose(Concat(Transpose(lhs),{rhs}));
     E := RREF(A);
-    
-    MatrixColumn(E,Dimensions(E)[2]) - (ExtractSubMatrix(E, 1, 1, Length(E), Length(E)) - Identity(Length(E))) * vars;
+
+    If(Contains(E,BaseVector(Dimensions(E)[2],Dimensions(E)[2])),
+        {},
+        MatrixColumn(E,Dimensions(E)[2]) - (ExtractSubMatrix(E, 1, 1, Length(E), Length(E)) - Identity(Length(E))) * vars);
 ];
 
 
