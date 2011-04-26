@@ -1654,6 +1654,11 @@ public class Kernel {
 			oldViewCnt = viewCnt;
 			viewCnt = 0;
 		}
+		
+		System.err.println("XXXXXXXXX Number of registered views = "+viewCnt);
+		for (int i = 0 ; i < viewCnt ; i++) {
+			System.out.println(views[i].getClass());
+		}
 	}
 
 	public void detach(View view) {    
@@ -1693,6 +1698,12 @@ public class Kernel {
 			oldViewCnt = viewCnt;
 			viewCnt = 0;
 		}
+		
+		System.err.println("XXXXXXXXX Number of registered views = "+viewCnt);
+		for (int i = 0 ; i < viewCnt ; i++) {
+			System.out.println(views[i].getClass());
+		}
+
 	}	
 	
 	/**
