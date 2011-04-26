@@ -823,15 +823,38 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
        	
        	return resultFun;
 	}
-	public static GeoFunction operationSymb(int op, GeoFunction fun1, GeoFunction fun2) {
-		
+	public static GeoElement operationSymb(int op, GeoFunction fun1, GeoFunction fun2) {
 		Kernel kernel = fun1.getKernel();
+		FunctionVariable x =  new FunctionVariable(kernel,"x");
+		FunctionVariable y =  new FunctionVariable(kernel,"y");
+		FunctionVariable swap;
 		
-		FunctionVariable x =  new FunctionVariable(kernel);
+		if("y".equals(fun1.getVarString())^"y".equals(fun2.getVarString())){
+
+			FunctionVariable[] xy = new FunctionVariable[] {x,y};
+			if("y".equals(fun2.getVarString())){
+				swap = x;
+				x= y;
+				y=swap;
+			}
+			
+			ExpressionNode sum = new ExpressionNode(kernel,
+					new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,y),
+					op,
+					fun2==null ? null:new ExpressionNode(kernel,fun2,ExpressionNode.FUNCTION,x));
+			
+	    	FunctionNVar f = new FunctionNVar(sum,xy);
+	    	f.initFunction();       	
+	       	AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
+	       	return adf.getFunction();
+		}
+			
+		if("y".equals(fun1.getVarString()))x=y;
 		ExpressionNode sum = new ExpressionNode(kernel,
 				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x),
 				op,
 				fun2==null ? null:new ExpressionNode(kernel,fun2,ExpressionNode.FUNCTION,x));
+		
 		
     	Function f = new Function(sum,x);
     	f.initFunction();       	
