@@ -7256,7 +7256,7 @@ class CmdSetValue extends CommandProcessor {
 			}
 			return ret;
 		case 3:
-			if (ok = arg[0].isGeoList() && arg[1].isNumberValue()) {
+			if (ok = (arg[0].isGeoList() && arg[0].isIndependent()) && arg[1].isNumberValue()) {
 				GeoList list = (GeoList) arg[0];
 				int nn = (int) ((NumberValue) arg[1]).getDouble();
 
@@ -7978,7 +7978,7 @@ class CmdSetCoords extends CommandProcessor {
 		switch (n) {
 		case 3:
 			arg = resArgs(c);
-			if ((ok[0] = (arg[0] instanceof GeoVec3D))
+			if ((ok[0] = (arg[0] instanceof GeoVec3D && arg[0].isIndependent()))
 					&& (ok[1] = (arg[1].isGeoNumeric()))
 					&& (ok[2] = (arg[2].isGeoNumeric()))) {
 
