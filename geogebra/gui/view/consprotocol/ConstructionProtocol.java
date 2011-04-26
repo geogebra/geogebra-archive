@@ -16,6 +16,7 @@ the Free Software Foundation.
 import geogebra.euclidian.Drawable;
 import geogebra.export.WorksheetExportDialog;
 import geogebra.gui.TitlePanel;
+import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.view.spreadsheet.MyTable;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Construction;
@@ -767,6 +768,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		private JCheckBox cbTemp = new JCheckBox();
 		private JLabel iTemp = new JLabel();
 		private MyTextField tfTemp = new MyTextField(app.getGuiManager());
+		InputPanel inputPanel;
 		
 		public ConstructionTableCellRenderer() {
 			setOpaque(true);
@@ -838,12 +840,12 @@ public class ConstructionProtocol extends JDialog implements Printable {
 				return iTemp;
 			}
 			
-			//FIXME: language
 			if(table.getColumnName(column).equals("Caption")){
-				tfTemp.setColumns(14);
-				tfTemp.setShowSymbolTableIcon(true);
-				tfTemp.setText((String)value);
-				return tfTemp;
+				//tfTemp.setColumns(14);
+				//tfTemp.setShowSymbolTableIcon(true);
+				//tfTemp.setText((String)value);
+				inputPanel = new InputPanel(value.toString(), app, 20,false);
+				return inputPanel;
 			}
 			
 			setText((value == null) ? "" : value.toString());
@@ -1170,10 +1172,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 
 		public boolean isCellEditable(int nRow, int nCol) {
-        	//FIXME Maybe it (or something similar) is neccessary, if we changing the language:
-        	//app.getPlain(data.columns[nCol].getTitle())
         	
-        	if((this.columns[nCol].getTitle()).equals("Caption")){
+        	if((this.columns[nCol].getTitle()).equals("Caption")){ 
         		return true;
         	}
 			return false;
@@ -1541,13 +1541,13 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		}
 		
         public void setValueAt(Object value, int row, int col) {
-        	//FIXME Maybe it (or something similar) is neccessary, if we changing the language:
-        	//app.getPlain(data.columns[col].getTitle())
-        	
+       	
         	if((this.columns[col].getTitle()).equals("Caption")){
         		data.getRow(row).geo.setCaption(value.toString());
+        		data.getRow(row).geo.update();
+        		//updateAll();
+        		kernel.notifyRepaint();     		
         	}
-        	updateAll();
         }
 	}
 
