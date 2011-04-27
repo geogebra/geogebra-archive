@@ -109,7 +109,7 @@ public class ConstructionProtocolExportDialog extends JDialog implements
 
 		cbIcons = new JCheckBox(
 				app.getPlain("ToolbarIconsConstructionProtocolExport"));
-		cbIcons.setSelected(false);
+		cbIcons.setSelected(prot.getAddIcons());
 
 		// disable width and height field when checkbox is deselected
 		cbDrawingPadPicture.addActionListener(new ActionListener() {

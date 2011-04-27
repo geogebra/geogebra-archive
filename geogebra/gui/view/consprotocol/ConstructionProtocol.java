@@ -330,6 +330,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		data.updateAll();
 	}
 
+	public boolean getAddIcons(){
+		return addIcons;
+	}
+	
 	// Michael Borcherds 2008-05-15
 	public void update() {
 		data.updateAll();
@@ -1687,6 +1691,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	public String getHTML(File imgFile, String thisPath) throws IOException {
 		StringBuilder sb = new StringBuilder();
 
+		boolean icon_column;
+		
 		// Let's be W3C compliant:
 		sb.append("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n"
 				+ "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
@@ -1762,7 +1768,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		for (int nCol = 0; nCol < nColumns; nCol++) {
 			// toolbar icon will only be inserted on request
 
-			if ((nCol == 1 && addIcons) || nCol != 1) {
+			icon_column = table.getColumnName(nCol).equals("ToolbarIcon");
+			if ((icon_column && addIcons) || !icon_column) {
 				TableColumn tk = colModel.getColumn(nCol);
 				title = (String) tk.getIdentifier();
 				sb.append("<th>");
@@ -1780,7 +1787,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			for (int nCol = 0; nCol < nColumns; nCol++) {
 
 				// toolbar icon will only be inserted on request
-				if ((nCol == 1 && addIcons) || (nCol != 1)) {
+				icon_column = table.getColumnName(nCol).equals("ToolbarIcon");
+				if ((icon_column && addIcons) || !icon_column) {
 					int col = table.getColumnModel().getColumn(nCol)
 							.getModelIndex();
 					String str = data.getPlainHTMLAt(nRow, col, thisPath);
