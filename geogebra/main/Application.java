@@ -1351,6 +1351,10 @@ public class Application implements KeyEventDispatcher {
 	public GeoElementSelectionListener getCurrentSelectionListener() {
 		return currentSelectionListener;
 	}
+	
+	public void setCurrentSelectionListener(GeoElementSelectionListener sl) {
+		currentSelectionListener = sl;
+	}
 
 	public void setMoveMode() {
 		setMode(EuclidianView.MODE_MOVE);

@@ -322,7 +322,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	public void setMode(int newMode) {
-		
+
 		if(newMode == EuclidianConstants.MODE_SPREADSHEET_ONEVARSTATS
 				|| newMode == EuclidianConstants.MODE_SPREADSHEET_TWOVARSTATS
 				|| newMode == EuclidianConstants.MODE_SPREADSHEET_MULTIVARSTATS
@@ -2815,18 +2815,20 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		if (ret != null)
-		{
-			for (int i = 0; i < ret.length; i++)
-			{
-				selectedGeos.add(ret[i]);
-				app.addSelectedGeo(ret[i], false);
-			}
-		}
+			selectGeos(ret);
 
 		if (!changedKernel)
 			return ret != null;
 
 		return changedKernel;
+	}
+	
+	public void selectGeos(GeoElement[] geos) {
+		for (int i = 0; i < geos.length; i++)
+		{
+			selectedGeos.add(geos[i]);
+			app.addSelectedGeo(geos[i], false);
+		}
 	}
 
 	// process mode and return whether kernel was changed
@@ -6439,7 +6441,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 		clearSelection(selectedCurves);
 		return curves;
-	}	
+	}
 
 	final protected void clearSelection(ArrayList selectionList) {
 		// unselect

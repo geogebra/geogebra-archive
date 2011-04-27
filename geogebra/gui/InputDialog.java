@@ -320,6 +320,18 @@ public class InputDialog extends JDialog implements ActionListener,
 		super.setVisible(flag);
 	}
 	
+	public void setVisibleForTools(boolean flag) {
+		if (!isModal()) {
+			if (flag) { // set old mode again			
+				addWindowFocusListener(this);
+			} else {
+				removeWindowFocusListener(this);
+				app.setCurrentSelectionListener(null);
+			}
+		}
+		super.setVisible(flag);
+	}
+	
 	public void windowGainedFocus(WindowEvent arg0) {
 		if (!isModal()) {
 			app.setSelectionListenerMode(sl);

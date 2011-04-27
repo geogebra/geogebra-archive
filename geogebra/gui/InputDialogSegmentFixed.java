@@ -4,10 +4,12 @@ package geogebra.gui;
 import geogebra.gui.GuiManager.NumberInputHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 
 public class InputDialogSegmentFixed extends InputDialog{
 	
@@ -31,15 +33,15 @@ public class InputDialogSegmentFixed extends InputDialog{
 
 		try {
 			if (source == btOK || source == inputPanel.getTextComponent()) {
-					setVisible(!processInput());
-				} else if (source == btApply) {
-					processInput();
-				} else if (source == btCancel) {
-					setVisible(false);
+				setVisibleForTools(!processInput());
+			} else if (source == btApply) {
+				processInput();
+			} else if (source == btCancel) {
+				setVisibleForTools(false);
 			} 
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
-			setVisible(false);
+			setVisibleForTools(false);
 		}
 	}
 	
@@ -53,13 +55,20 @@ public class InputDialogSegmentFixed extends InputDialog{
 		boolean ret = inputHandler.processInput(inputPanel.getText());
 
 		cons.setSuppressLabelCreation(oldVal);
-		
-		if (ret) 
-			kernel.Segment(null, geoPoint1, ((NumberInputHandler)inputHandler).getNum());		
+
+		if (ret) { 
+			GeoElement[] segment = kernel.Segment(null, geoPoint1, ((NumberInputHandler)inputHandler).getNum());
+			kernel.getApplication().getActiveEuclidianView().getEuclidianController().selectGeos(segment);
+		}
 
 		return ret;
 		
 	}
 
-
+	public void windowGainedFocus(WindowEvent arg0) {
+		if (!isModal()) {
+			app.setCurrentSelectionListener(null);
+		}
+		app.getGuiManager().setCurrentTextfield(this, true);
+	}
 }
