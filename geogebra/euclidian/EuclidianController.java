@@ -1822,7 +1822,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected void processReleaseForMovedGeoPoint(){
 		
 		// deselect point after drag, but not on click
-		if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
+		// outdated - we want to leave the point selected after drag now
+		//if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
 
 		if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) getMovedGeoPoint().resetTraceColumns();
 
@@ -3450,6 +3451,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (doSingleHighlighting)
 				doSingleHighlighting(getMovedGeoPoint());
 			POINT_CREATED = true;
+
 			return true;
 		} else {
 			moveMode = MOVE_NONE;
