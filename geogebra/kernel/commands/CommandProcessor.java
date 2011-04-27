@@ -9603,7 +9603,7 @@ class CmdExecute extends CommandProcessor {
 		int n = c.getArgumentNumber();
 		GeoElement[] arg;
 		arg = resArgs(c);
-		if (n > 11)
+		if (n > 10)
 			throw argNumErr(app, c.getName(), n);
 		if (arg[0].isGeoList() && ((GeoList) arg[0]).size()==0 || !arg[0].isDefined())
 			return new GeoElement[] {};
@@ -9616,7 +9616,7 @@ class CmdExecute extends CommandProcessor {
 			try {
 				String cmdText = ((GeoText) list.get(i)).getTextString();
 				for(int k=1;k<n;k++)
-					cmdText = cmdText.replace("%"+(k-1), arg[k].getLabel());
+					cmdText = cmdText.replace("%"+k, arg[k].getLabel());
 				kernel.getAlgebraProcessor()
 						.processAlgebraCommandNoExceptionHandling(cmdText
 								, false,
