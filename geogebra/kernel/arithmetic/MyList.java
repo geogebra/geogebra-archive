@@ -546,6 +546,12 @@ public class MyList extends ValidExpression implements ListValue {
 				 sb.append("matrix(");
 			 else
 				 sb.append("[");
+		 } else if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MPREDUCE)
+		 {
+			 if (isMatrix())
+				 sb.append("mat(");
+			 else
+				 sb.append("list(");
 		 }
 		 else
 			 sb.append("{");
@@ -570,6 +576,11 @@ public class MyList extends ValidExpression implements ListValue {
 				 sb.append(")");
 			 else
 				 sb.append("]");
+		 } else if (kernel.getCASPrintForm() == ExpressionNode.STRING_TYPE_MPREDUCE)
+		 {
+			 sb.append(")");
+			 if (isMatrix())
+			 	 return sb.toString().replaceAll("list", "");
 		 }
 		 else
 			 sb.append("}");

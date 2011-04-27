@@ -73,6 +73,7 @@ public class CASmpreduce extends CASgeneric {
         try {
 			String ret = mpreduce.evaluate(exp);
 			ret = ret.trim();
+			ret=ret.replaceAll("\\*\\*", "^");
 	        while (ret.endsWith("$")) {
 	        	ret = ret.substring(0, ret.length() - 1);
 	        }
@@ -80,7 +81,7 @@ public class CASmpreduce extends CASgeneric {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			return "?";
-		}   
+		}
 	}
 
 	/**
