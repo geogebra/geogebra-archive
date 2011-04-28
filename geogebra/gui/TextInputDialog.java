@@ -34,6 +34,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -147,6 +148,13 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		this.pack();
 	}
 
+	// override because we don't want to set mode to another mode
+	public void windowGainedFocus(WindowEvent arg0) {
+		if (!isModal()) {
+			app.setCurrentSelectionListener(null);
+		}
+		app.getGuiManager().setCurrentTextfield(this, true);
+	}
 
 	public void reInitEditor(GeoText text, GeoPoint startPoint) {
 
@@ -613,9 +621,14 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 				if (isShowing()) {	
 					// text dialog window is used and open
-					setVisible(!finished);
-					if(isTextMode)
-						app.setMode(EuclidianConstants.MODE_TEXT);
+
+					if(isTextMode)// don't clear selected geos don't set mode
+						setVisibleForTools(!finished);
+					else
+						setVisible(!finished);
+
+					//if(isTextMode)
+					//	app.setMode(EuclidianConstants.MODE_TEXT);
 				} 
 
 			} 
@@ -784,9 +797,14 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 						t.setRealWorldLoc(startPoint.inhomX, startPoint.inhomY);
 						t.setAbsoluteScreenLocActive(false); 
 					}
+
+					// make sure (only) the output of the text tool is selected
+					kernel.getApplication().getActiveEuclidianView().getEuclidianController().clearSelections();
+					kernel.getApplication().getActiveEuclidianView().getEuclidianController().selectGeos(ret);
+
 					t.updateRepaint();
-					app.storeUndoInfo();                    
-					return true;                
+					app.storeUndoInfo();
+					return true;
 				}
 				return false;
 			}

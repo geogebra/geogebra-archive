@@ -1208,6 +1208,11 @@ public class GuiManager {
 	
 			GeoImage.updateInstances();
 			ret = true;
+
+			// make sure only this image will be selected
+			GeoElement[] geos = { geoImage };
+			app.getActiveEuclidianView().getEuclidianController().clearSelections();
+			app.getActiveEuclidianView().getEuclidianController().selectGeos(geos);
 		}
 		
 		app.setDefaultCursor();
