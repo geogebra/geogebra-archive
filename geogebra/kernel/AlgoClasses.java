@@ -39,23 +39,17 @@ public class AlgoClasses extends AlgoElement {
 
 
 	AlgoClasses(Construction cons, String label, GeoList dataList, GeoNumeric start, GeoNumeric width, GeoNumeric numClasses ) {
-		this(cons, dataList, start, width, numClasses);
-		classList.setLabel(label);
-	}
-
-	AlgoClasses(Construction cons, GeoList dataList, GeoNumeric start, GeoNumeric width, GeoNumeric numClasses ) {
 		super(cons);
-
 		this.dataList = dataList;
 		this.start = start;
 		this.width = width;
 		this.numClasses = numClasses;
 
-
 		classList = new GeoList(cons);
-
 		setInputOutput();
 		compute();
+		classList.setLabel(label);
+		
 
 	}
 

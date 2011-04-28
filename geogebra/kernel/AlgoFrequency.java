@@ -50,10 +50,11 @@ public class AlgoFrequency extends AlgoElement {
 		this.isCumulative = isCumulative;
 
 		frequency = new GeoList(cons);
-		frequency.setLabel(label);
+		
 		setInputOutput();
 		compute();
-
+		frequency.setLabel(label);
+		
 	}
 
 	
