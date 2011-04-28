@@ -4,10 +4,12 @@ package geogebra.gui;
 import geogebra.gui.GuiManager.NumberInputHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
 
 public class InputDialogRegularPolygon extends InputDialog{
 	
@@ -32,15 +34,15 @@ public class InputDialogRegularPolygon extends InputDialog{
 
 		try {
 			if (source == btOK || source == inputPanel.getTextComponent()) {
-					setVisible(!processInput());
+					setVisibleForTools(!processInput());
 				} else if (source == btApply) {
 					processInput();
 				} else if (source == btCancel) {
-					setVisible(false);
+					setVisibleForTools(false);
 			} 
 		} catch (Exception ex) {
 			// do nothing on uninitializedValue		
-			setVisible(false);
+			setVisibleForTools(false);
 		}
 	}
 	
@@ -54,14 +56,21 @@ public class InputDialogRegularPolygon extends InputDialog{
 		boolean ret = inputHandler.processInput(inputPanel.getText());
 
 		cons.setSuppressLabelCreation(oldVal);
-		
-		if (ret) 
-			kernel.RegularPolygon(null, geoPoint1, geoPoint2, ((NumberInputHandler)inputHandler).getNum());
+
+		if (ret) {
+			GeoElement[] geos = kernel.RegularPolygon(null, geoPoint1, geoPoint2, ((NumberInputHandler)inputHandler).getNum());
+			kernel.getApplication().getActiveEuclidianView().getEuclidianController().selectGeos(geos);
+		}
 		
 
 		return ret;
 		
 	}
 
-
+	public void windowGainedFocus(WindowEvent arg0) {
+		if (!isModal()) {
+			app.setCurrentSelectionListener(null);
+		}
+		app.getGuiManager().setCurrentTextfield(this, true);
+	}
 }
