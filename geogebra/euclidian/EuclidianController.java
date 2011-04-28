@@ -6936,9 +6936,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		double xFactor = 1;
 		if (e.isAltDown())
 			xFactor = 1.5;
+		
+		double reverse = app.isMouseWheelReversed() ? -1 : 1;
 
 
-		double factor = (e.getWheelRotation() > 0) ?
+		double factor = (e.getWheelRotation() * reverse > 0) ?
 				EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR * xFactor:
 					1d / (EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR * xFactor);
 

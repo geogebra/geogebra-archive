@@ -1,5 +1,4 @@
 /* 
- GeoGebra - Dynamic Mathematics for Everyone
  http://www.geogebra.org
 
  This file is part of GeoGebra.

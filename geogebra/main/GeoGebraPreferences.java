@@ -69,6 +69,9 @@ public class GeoGebraPreferences {
 	public static final String PRINT_ORIENTATION = "print_orientation";
 	public static final String PRINT_SHOW_SCALE = "print_show_scale";
 	
+	// misc
+	public static final String MISC_REVERSE_MOUSE_WHEEL = "misc_reverse_mouse_wheel";
+	
 	
 	 // preferences node name for GeoGebra 	 
 	 private  Preferences ggbPrefs;

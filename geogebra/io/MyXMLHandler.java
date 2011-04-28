@@ -1277,6 +1277,12 @@ public class MyXMLHandler implements DocHandler {
 				break;
 			}
 
+		case 'm':
+			if (eName.equals("mouse")) {
+				ok = handleMouse(app, attrs);
+				break;
+			}
+
 		case 'l':
 			if (eName.equals("labelingStyle")) {
 				ok = handleLabelingStyle(app, attrs);
@@ -1670,6 +1676,16 @@ public class MyXMLHandler implements DocHandler {
 //			}
 
 			app.setFontSize(guiSize); // set gui font size and update all fonts
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	private boolean handleMouse(Application app, LinkedHashMap<String, String> attrs) {
+		try {			
+			app.reverseMouseWheel(!((String)attrs.get("reverseWheel")).equals("false"));
+
 			return true;
 		} catch (Exception e) {
 			return false;

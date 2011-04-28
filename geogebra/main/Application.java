@@ -3521,11 +3521,15 @@ public class Application implements KeyEventDispatcher {
 			sb.append("\"/>\n");
 		//}
 
-		// just save font size as preference
+		// just save font size, mouse settings as preference
 		if(asPreference) {
 			sb.append("\t<font ");
 			sb.append(" size=\"");
 			sb.append(appFontSize);
+			sb.append("\"/>\n");
+			
+			sb.append("\t<mouse reverseWheel=\"");
+			sb.append(isMouseWheelReversed());
 			sb.append("\"/>\n");
 		}
 
@@ -5247,6 +5251,18 @@ public class Application implements KeyEventDispatcher {
 	//TODO remove this after ggb v>=5 (replace with same from Application3D)
 	public EuclidianView createEuclidianViewForPlane(GeoCoordSys2D plane) {
 		return null;
+	}
+	
+	boolean reverseMouseWheel = false;
+
+
+	public boolean isMouseWheelReversed() {
+		return reverseMouseWheel;
+	}
+
+
+	public void reverseMouseWheel(boolean b) {
+		reverseMouseWheel = b;
 	}
 
 

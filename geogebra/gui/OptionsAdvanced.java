@@ -52,7 +52,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private JComboBox cbKeyboardLanguage, cbTooltipLanguage, cbTooltipTimeout;
 	
 	/**	 */
-	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting, cbUseJavaFonts;
+	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting, cbUseJavaFonts, cbReverseMouseWheel;
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
@@ -236,20 +236,41 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	 * Initialize the scripting panel.
 	 */
 	private void initScriptingPanel() {
+		
+
+		
+		
 		miscPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		
+		// two columns
+		JPanel guiPanelWest = new JPanel();
+		guiPanelWest.setLayout(new BoxLayout(guiPanelWest, BoxLayout.Y_AXIS));
+		JPanel guiPanelEast = new JPanel();
+		guiPanelEast.setLayout(new BoxLayout(guiPanelEast, BoxLayout.Y_AXIS));
+		JPanel twoColumns = new JPanel();
+		twoColumns.setLayout(new BorderLayout());
+		twoColumns.add(guiPanelEast, BorderLayout.EAST);
+		twoColumns.add(guiPanelWest, BorderLayout.WEST);
+		twoColumns.setAlignmentX(LEFT_ALIGNMENT);
+		miscPanel.add(twoColumns);
+
 		cbEnableScripting = new JCheckBox();
 		cbEnableScripting.addActionListener(this);
-		miscPanel.add(cbEnableScripting);
+		guiPanelWest.add(cbEnableScripting);
 		
 		cbReturnAngleInverseTrig = new JCheckBox();
 		cbReturnAngleInverseTrig.addActionListener(this);
-		miscPanel.add(cbReturnAngleInverseTrig);
+		guiPanelWest.add(cbReturnAngleInverseTrig);
 		
 		cbUseJavaFonts = new JCheckBox();
 		cbUseJavaFonts.addActionListener(this);
-		miscPanel.add(cbUseJavaFonts);
+		guiPanelEast.add(cbUseJavaFonts);
 		
+		cbReverseMouseWheel = new JCheckBox();
+		cbReverseMouseWheel.addActionListener(this);
+		guiPanelEast.add(cbReverseMouseWheel);
+		
+	
 	}	
 	
 	
@@ -316,6 +337,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			else app.setTooltipLanguage(Application.supportedLocales.get(index));
 		} else if(e.getSource() == cbUseJavaFonts) {
 			Drawable.setUseJavaFontsForLaTeX(app, cbUseJavaFonts.isSelected());
+		} else if(e.getSource() == cbReverseMouseWheel) {
+			app.reverseMouseWheel(cbReverseMouseWheel.isSelected());
 		} else if(e.getSource() == cbUseLocalDigits) {
 			app.setUseLocalizedDigits(cbUseLocalDigits.isSelected());
 		} else if(e.getSource() == cbReturnAngleInverseTrig) {
@@ -405,6 +428,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		//cbEnableScripting.setSelected(b)
 		cbUseJavaFonts.setText(app.getPlain("UseJavaFontsForLaTeX"));	
 		cbUseJavaFonts.setSelected(Drawable.useJavaFontsForLaTeX());
+		cbReverseMouseWheel.setText(app.getPlain("ReverseMouseWheel"));	
+		cbReverseMouseWheel.setSelected(app.isMouseWheelReversed());
 		cbReturnAngleInverseTrig.setText(app.getMenu("ReturnAngleInverseTrig"));
 		cbReturnAngleInverseTrig.setSelected(app.getKernel().getInverseTrigReturnsAngle());
 		
