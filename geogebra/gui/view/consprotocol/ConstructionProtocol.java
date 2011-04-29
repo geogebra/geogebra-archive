@@ -308,7 +308,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		setMenuBar();
 		// set header values (language may have changed)
 		for (int k = 0; k < tableColumns.length; k++) {
-			tableColumns[k].setHeaderValue(app.getPlain(data.columns[k].getTitle()));
+			tableColumns[k].setHeaderValue(data.columns[k].getTranslatedTitle());
 		}
 		table.updateUI();
 		table.setFont(app.getPlainFont());
@@ -366,7 +366,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		for (int k = 1; k < tableColumns.length; k++) {
 			JCheckBoxMenuItem item = new JCheckBoxMenuItem(
-					data.columns[k].getTitle());
+					data.columns[k].getTranslatedTitle());
 			TableColumn column = tableColumns[k];
 			ColumnKeeper colKeeper = new ColumnKeeper(column, data.columns[k]);
 			item.setSelected(isColumnInModel(column));
@@ -609,7 +609,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 						int column = table.columnAtPoint(origin);
 						String colName = table.getColumnName(column);
 
-						if (colName.equals(app.getPlain("Breakpoint"))) {
+						if (colName.equals("Breakpoint")) {
 							RowData rd = data.getRow(row);
 							GeoElement geo = rd.geo;
 							boolean newVal = !geo.isConsProtocolBreakpoint();
@@ -993,6 +993,10 @@ public class ConstructionProtocol extends JDialog implements Printable {
 			return title;
 		}
 
+		public String getTranslatedTitle() {
+			return app.getPlain(title);
+		}
+
 		public int getPreferredWidth() {
 			return prefWidth;
 		}
@@ -1158,10 +1162,6 @@ public class ConstructionProtocol extends JDialog implements Printable {
 
 		public int getRowIndex(RowData row) {
 			return rowList.indexOf(row);
-		}
-
-		public String getColumnName(int column) {
-			return columns[column].getTitle();
 		}
 
 		public int getColumnNumber(ColumnData column) {
