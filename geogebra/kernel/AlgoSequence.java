@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra.main.Application;
 
 
@@ -353,7 +354,7 @@ public class AlgoSequence extends AlgoElement {
 			}
 			// GeoCurve
 			else if (listElement.isGeoCurveCartesian()) {				
-				GeoCurveCartesian curve = (GeoCurveCartesian) listElement;
+				GeoCurveCartesianND curve = (GeoCurveCartesianND) listElement;
 				curve.replaceChildrenByValues(var);
 			}
 		}		

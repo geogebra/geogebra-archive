@@ -3,10 +3,14 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.Matrix.Coords3D;
+import geogebra.kernel.AlgoMacro;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.ParametricCurveDistanceFunction;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.kernelND.GeoCurveCartesianND;
+import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
 /**
@@ -37,12 +41,15 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 	 */
 	public GeoCurveCartesian3D(Construction c, Function fun[]) {
 		super(c, fun);
-		
-		/*
-		Application.debug(evaluateCurve(getMinParameter()).toString()+"\n"+evaluateTangent(getMinParameter()).toString());
-		Application.debug(evaluateCurve(0).toString()+"\n"+evaluateTangent(0).toString());
-		Application.debug(evaluateCurve(getMaxParameter()).toString()+"\n"+evaluateTangent(getMaxParameter()).toString());
-		*/
+	}
+	
+	/**
+	 * 
+	 * @param curve
+	 */
+	public GeoCurveCartesian3D(GeoCurveCartesian3D curve) {
+		super(curve.cons);
+		set(curve);
 	}
 
 	public Coords evaluateCurve(double t){
@@ -91,10 +98,9 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 		return cross.norm()/Math.pow(D1.norm(),3);
 	}
 	
-	@Override
+
 	public GeoElement copy() {
-		// TODO Auto-generated method stub
-		return null;
+		return new GeoCurveCartesian3D(this);
 	}
 
 
@@ -104,9 +110,32 @@ implements GeoCurveCartesian3DInterface, GeoElement3DInterface{
 		return false;
 	}
 
-	@Override
+
 	public void set(GeoElement geo) {
-		// TODO Auto-generated method stub
+		GeoCurveCartesian3D geoCurve = (GeoCurveCartesian3D) geo;				
+		
+		fun = new Function[3];
+		for (int i=0; i<3; i++){
+			fun[i] = new Function(geoCurve.fun[i], kernel);
+			//Application.debug(fun[i].toString());
+		}
+
+		startParam = geoCurve.startParam;
+		endParam = geoCurve.endParam;
+		isDefined = geoCurve.isDefined;
+		
+		// macro OUTPUT
+		if (geo.getConstruction() != cons && isAlgoMacroOutput()) {	
+			if (!geo.isIndependent()) {				
+				// this object is an output object of AlgoMacro
+				// we need to check the references to all geos in its function's expression
+				AlgoMacro algoMacro = (AlgoMacro) getParentAlgorithm();
+				for (int i=0; i<3; i++)
+					algoMacro.initFunction(fun[i]);
+			}
+		}
+		
+		//distFun = new ParametricCurveDistanceFunction(this);
 		
 	}
 

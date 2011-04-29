@@ -25,6 +25,7 @@ import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
+import geogebra.main.Application;
 
 
 /**
@@ -594,9 +595,6 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 		return false;
 	}	
 	
-	public boolean isGeoCurveCartesian() {
-		return true;
-	}	
 	
 	final public boolean isTraceable() {
 		return true;
