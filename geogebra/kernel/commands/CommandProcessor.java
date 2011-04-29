@@ -7978,7 +7978,8 @@ class CmdSetCoords extends CommandProcessor {
 		switch (n) {
 		case 3:
 			arg = resArgs(c);
-			if ((ok[0] = (arg[0] instanceof GeoVec3D && arg[0].isIndependent()))
+			//we don't want to change coords unless the point is free or Point[path/region]
+			if ((ok[0] = (arg[0] instanceof GeoVec3D && arg[0].isMoveable()))
 					&& (ok[1] = (arg[1].isGeoNumeric()))
 					&& (ok[2] = (arg[2].isGeoNumeric()))) {
 
