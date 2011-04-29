@@ -332,20 +332,20 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		endOfMode(mode);
 
-		if (EuclidianView.usesSelectionAsInput(newMode))
+		if (EuclidianView.usesSelectionRectangleAsInput(newMode) && view.getSelectionRectangle() != null)
+		{
+			initNewMode(newMode);
+			processSelectionRectangle(null);
+		}
+		else if (EuclidianView.usesSelectionAsInput(newMode))
 		{
 			initNewMode(newMode);
 			processSelection();
 		}
-		else if (EuclidianView.usesSelectionRectangleAsInput(newMode))
-		{
-			initNewMode(newMode);
-			processSelectionRectangle(null);			
-		}
 		else
 		{
 			if (!TEMPORARY_MODE) app.clearSelectedGeos(false);
-			initNewMode(newMode);			
+			initNewMode(newMode);
 		}
 
 		kernel.notifyRepaint();
