@@ -2554,7 +2554,8 @@ public	class PropertiesPanel extends JPanel {
 				Iterator<GeoElement> it = points.iterator();
 				int count=0;
 				while (it.hasNext() || ++count > MAX_COMBOBOX_ENTRIES) {
-					GeoPoint p = (GeoPoint)it.next();						
+					GeoPointND p = (GeoPointND)it.next();	
+					
 					for (int k=0; k<3; k++) {
 						cbModel[k].addElement(p.getLabel());
 					}
