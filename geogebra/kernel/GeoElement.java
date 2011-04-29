@@ -1659,6 +1659,14 @@ public abstract class GeoElement
 		// allow only moving of certain object types
 		switch (getGeoClassType()) {
 			case GEO_CLASS_CONIC:
+				
+				// special case for Circle[A, r]
+				if (getParentAlgorithm() instanceof AlgoCirclePointRadius) {
+					return containsOnlyMoveableGeos(getFreeInputPoints());					
+				}
+				
+				// fall through
+				
 			case GEO_CLASS_CONICPART:
 			case GEO_CLASS_IMAGE:
 			case GEO_CLASS_LINE:
