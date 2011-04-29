@@ -520,6 +520,14 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 
 		 return polygonsArray;
 	 }
+	 
+	 /**
+	  * 
+	  * @return collection of polygons created by this
+	  */
+	 public Collection<GeoPolygon3D> getPolygons(){
+		 return polygons.values();
+	 }
 
 
 	 //TODO remove this and replace with tessellation

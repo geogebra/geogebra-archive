@@ -202,10 +202,17 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 		setOutput(); 
 		
 		if (height instanceof GeoNumeric){
-			getTopFace().setCoordParentNumber((GeoNumeric) height);
-			getTopFace().setCoordParentDirector(bottom);
+			if (((GeoNumeric) height).isIndependent()){
+
+				for (GeoPolygon p : getPolyhedron().getPolygons()){
+					p.setCoordParentNumber((GeoNumeric) height);
+					p.setCoordParentDirector(bottom);
+				}
+				
+				//getTopFace().setCoordParentNumber((GeoNumeric) height);
+				//getTopFace().setCoordParentDirector(bottom);
+			}
 		}
-		
       
         polyhedron.defaultLabels(labels);
 	}
