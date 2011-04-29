@@ -977,16 +977,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 	            sb.append(getCmdXML(cmdname));
 	        
 	        if (includeOutputGeos){// && output != null) {	       
-		        // output               
-		        GeoElement geo;                   
-		        for (int i = 0; i < getOutputLength(); i++) {
-		            geo = getOutput(i);
-		            // save only GeoElements that have a valid label
-		            //Application.debug(geo.toString()+"--"+geo.isLabelSet());
-		            if (geo.isLabelSet()) {
-		                geo.getXML(sb);
-		            }
-		        }
+		        getOutputXML(sb);
 	        }            
         } catch (Exception e) {
         	e.printStackTrace();
@@ -996,6 +987,23 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
         
         kernel.internationalizeDigits = oldDigitsSetting;
 
+    }
+    
+    /**
+     * concatenate output XML to sb
+     * @param sb
+     */
+    protected void getOutputXML(StringBuilder sb){
+    	// output               
+        GeoElement geo;                   
+        for (int i = 0; i < getOutputLength(); i++) {
+            geo = getOutput(i);
+            // save only GeoElements that have a valid label
+            //Application.debug(geo.toString()+"--"+geo.isLabelSet());
+            if (geo.isLabelSet()) {
+                geo.getXML(sb);
+            }
+        }
     }
 
     /**

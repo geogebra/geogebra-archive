@@ -475,4 +475,16 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 
 	}
 	*/
+	
+	protected void getOutputXML(StringBuilder sb){
+		super.getOutputXML(sb);
+		GeoPolyhedron polyhedron = getPolyhedron();
+		
+		//append XML for polygon and segments linked once more, to avoid override of specific properties		
+		for (GeoPolygon polygon : polyhedron.getPolygonsLinked())
+			polygon.getXML(sb);
+		for (GeoSegmentND segment : polyhedron.getSegmentsLinked())
+			((GeoElement) segment).getXML(sb);
+		
+	}
 }

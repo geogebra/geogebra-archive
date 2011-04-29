@@ -13,6 +13,7 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
 import java.awt.Color;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -103,6 +104,22 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 		
 		segmentsLinked = new TreeMap<ConstructionElementCycle,GeoSegmentND>();
 		polygonsLinked = new TreeSet<GeoPolygon>();
+	}
+	
+	/**
+	 * 
+	 * @return segments linked to the polyhedron (eg segments of the bottom)
+	 */
+	public Collection<GeoSegmentND> getSegmentsLinked(){
+		return segmentsLinked.values();
+	}
+	
+	/**
+	 * 
+	 * @return polygons linked to the polyhedron (eg the bottom)
+	 */
+	public Collection<GeoPolygon> getPolygonsLinked(){
+		return polygonsLinked;
 	}
 	
 	
