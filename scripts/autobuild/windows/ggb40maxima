@@ -5,7 +5,9 @@
 
 # GGB40MAXIMA_ZIP=./ggb40maxima-3.9.155.0_5.23.2.zip
 #GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/4.0/ggb40maxima-3.9.189.0_5.23.2.zip
-GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/4.0/ggb40maxima-3.9.213.0_5.23.2.zip
+#GGB40MAXIMA_ZIP=/Library/WebServer/geogebra/webstart/4.0/ggb40maxima-3.9.213.0_5.23.2.zip
+GGB40MAXIMA_ZIP=/Users/mrb/ggb40maxima-3.9.226.0_5.24.0.zip
+# You can also add a variable for that into autobuild.conf.
 
 # Please do not edit below this. (FIXME: the above settings should come from the config file.)
 
