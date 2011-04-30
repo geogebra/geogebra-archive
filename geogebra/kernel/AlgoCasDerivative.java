@@ -89,10 +89,11 @@ public class AlgoCasDerivative extends AlgoCasBase {
 		 sb.append(order == null ? 1 : (int) Math.round(order.getDouble()));
 		 sb.append(")");
 		 
-		 kernel.internationalizeDigits = internationalizeDigits;
 		 
 		 // find symbolic derivative of f
 		 g.setUsingCasCommand(sb.toString(), f, true);	
+
+		 kernel.internationalizeDigits = internationalizeDigits;
 	}
   
     final public String toString() {
