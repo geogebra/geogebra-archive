@@ -7245,7 +7245,7 @@ class CmdSetValue extends CommandProcessor {
 
 		switch (n) {
 		case 2:
-			if (arg[0].isIndependent()) {
+			if (arg[0].isIndependent() || arg[0].isMoveable()) {
 				if (arg[0].isGeoNumeric() && arg[1].isNumberValue()) {
 					NumberValue num = (NumberValue) arg[1];
 					((GeoNumeric) arg[0]).setValue(num.getDouble());
