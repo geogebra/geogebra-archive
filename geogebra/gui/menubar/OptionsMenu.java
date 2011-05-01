@@ -171,6 +171,8 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			public void actionPerformed(ActionEvent ae) {
 				int size = Integer.parseInt(ae.getActionCommand());
 				app.getEuclidianView().setBooleanSize(size);
+				if (app.getGuiManager().hasEuclidianView2())
+					app.getGuiManager().getEuclidianView2().setBooleanSize(size);
 			}
 		};
 		addRadioButtonMenuItems(menuBooleanSize, bsal, strBooleanSize,
