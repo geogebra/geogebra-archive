@@ -1241,7 +1241,7 @@ public class WorksheetExportDialog extends JDialog {
 	 * @param ggbFile
 	 *            construction File
 	 */
-	private String getHTML(Application app, File ggbFile, String nextLink, String previousLink) {
+	private String getHTML(Application app2, File ggbFile, String nextLink, String previousLink) {
 		StringBuilder sb = new StringBuilder();
 
 		// applet width
@@ -1272,21 +1272,21 @@ public class WorksheetExportDialog extends JDialog {
 		appendWithLineBreak(sb, "<script type=\"text/javascript\" " +
 			"src=\"http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML\"></script>");
 		sb.append("<title>");
-		Construction cons = kernel.getConstruction();
-		String title = cons.getTitle();
+		Construction cons2 = app2.getKernel().getConstruction();
+		String title = cons2.getTitle();
 		if (!title.equals("")) {
 			sb.append(Util.toHTMLString(title));
 			sb.append(" - ");
 		}
-		sb.append(Util.toHTMLString(app.getPlain("ApplicationName") + " "
-				+ app.getPlain("DynamicWorksheet")));
+		sb.append(Util.toHTMLString(app2.getPlain("ApplicationName") + " "
+				+ app2.getPlain("DynamicWorksheet")));
 		appendWithLineBreak(sb, "</title>");
 		// charset
 		appendWithLineBreak(sb, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
 		// sb.append("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />");
 		
 		appendWithLineBreak(sb, "<meta name=\"generator\" content=\"GeoGebra\" />");
-		String css = app.getSetting("cssDynamicWorksheet");
+		String css = app2.getSetting("cssDynamicWorksheet");
 		if (css != null) {
 			sb.append(css);
 			appendWithLineBreak(sb, "");
@@ -1294,7 +1294,7 @@ public class WorksheetExportDialog extends JDialog {
 		appendWithLineBreak(sb, "</head>");
 
 		// Guy Hed  14/03/2011
-		if( app.isRightToLeftReadingOrder() )
+		if( app2.isRightToLeftReadingOrder() )
 			appendWithLineBreak(sb, "<body dir='rtl'>");
 		else
 			appendWithLineBreak(sb, "<body>");
@@ -1310,7 +1310,7 @@ public class WorksheetExportDialog extends JDialog {
 		}
 
 		// text before applet
-		String text = textAbove.getText();
+		String text = app == app2 ? textAbove.getText() : cons2.getWorksheetText(0);
 		if (text != null) {
 			appendWithLineBreak(sb, "<p>");
 			sb.append(Util.toHTMLString(text));
@@ -1319,18 +1319,18 @@ public class WorksheetExportDialog extends JDialog {
 
 		// include applet tag
 		appendWithLineBreak(sb, "");
-		sb.append(getAppletTag(app, ggbFile, appletWidth, appletHeight, true, removeLineBreaks, cbIncludeHTML5.isSelected(), true));
+		sb.append(getAppletTag(app2, ggbFile, appletWidth, appletHeight, true, removeLineBreaks, cbIncludeHTML5.isSelected(), true));
 		appendWithLineBreak(sb, "");
 
 		// text after applet
-		text = textBelow.getText();
+		text = app == app2 ? textBelow.getText() : cons2.getWorksheetText(1);
 		if (text != null) {
 			appendWithLineBreak(sb, "<p>");
 			sb.append(Util.toHTMLString(text));
 			appendWithLineBreak(sb, "</p>");
 		}
 
-		sb.append(getFooter(cons, false));
+		sb.append(getFooter(cons2, false));
 
 		appendWithLineBreak(sb, "</td></tr>");
 		sb.append("</table>");
@@ -1340,7 +1340,7 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append(previousLink);
 			appendWithLineBreak(sb, "\">");
 			sb.append("<input type=\"submit\" value=\"");
-			sb.append(app.getMenu("Back"));
+			sb.append(app2.getMenu("Back"));
 			appendWithLineBreak(sb, "\">");
 			appendWithLineBreak(sb, "</form>");		
 		}
@@ -1350,7 +1350,7 @@ public class WorksheetExportDialog extends JDialog {
 			sb.append(nextLink);
 			appendWithLineBreak(sb, "\">");
 			sb.append("<input type=\"submit\" value=\"");
-			sb.append(app.getMenu("Next"));
+			sb.append(app2.getMenu("Next"));
 			appendWithLineBreak(sb, "\">");
 			appendWithLineBreak(sb, "</form>");					
 		}
