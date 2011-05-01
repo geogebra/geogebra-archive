@@ -165,15 +165,24 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	}
 	
 	
+	/**
+	 * Updates the state of the stylebar buttons and the defaultGeo field.
+	 */
 	public void updateStyleBar(){
-		
+
 		if(mode == EuclidianConstants.MODE_VISUAL_STYLE) return;
 
-		// geos = list of geos that will have their properties set by stylebar buttons
-		// The buttons also use this list to update their gui and set visibility
-		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
+		//-----------------------------------------------------
+		// Create activeGeoList, a list of geos the stylebar can adjust.
+		// These are either the selected geos or the current default geo. 
+		// Each button uses this list to update its gui and set visibility
+		//-----------------------------------------------------
+		ArrayList<GeoElement> activeGeoList = new ArrayList<GeoElement>();
 
-		// If in move mode, geos contains all selected geos
+		
+		//-----------------------------------------------------
+		// MODE_MOVE case: load activeGeoList with all selected geos
+		//-----------------------------------------------------
 		if(mode == EuclidianConstants.MODE_MOVE){
 
 			boolean hasGeosInThisView = false;
@@ -184,26 +193,33 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				}
 			}
 			if(hasGeosInThisView) 
-				geos = ev.getApplication().getSelectedGeos();
-
+				activeGeoList = ev.getApplication().getSelectedGeos();
 		}
 
-		// For all other modes, geos contains the default geo for current mode.
-		// The original default geo state is saved. Stylebar buttons temporarily change the default
-		// geo, but when the mode changes the default geo is restored to its previous state.
+		//-----------------------------------------------------
+		// All other modes: load activeGeoList with current default geo 
+		//-----------------------------------------------------
 		else if (defaultGeoMap.containsKey(mode)){
 
+			// Save the current default geo state in oldDefaultGeo. 
+			// Stylebar buttons can temporarily change a default geo, but this default  
+			// geo is always restored to its previous state after a mode change.
+
 			if(oldDefaultGeo != null && modeChanged){
+				// add oldDefaultGeo to the default map so that the old default is restored
 				cons.getConstructionDefaults().addDefaultGeo(oldDefaultMode, oldDefaultGeo);
 				oldDefaultGeo = null;
 				oldDefaultMode = null;
 			}
-			
-			GeoElement geo = cons.getConstructionDefaults().getDefaultGeo(defaultGeoMap.get(mode));
-			if (geo != null) geos.add(geo);
-			
-			defaultGeos = geos;
 
+			// get the current default geo
+			GeoElement geo = cons.getConstructionDefaults().getDefaultGeo(defaultGeoMap.get(mode));
+			if (geo != null) activeGeoList.add(geo);
+
+			// update the defaultGeos field (needed elsewhere for adjusting default geo state)
+			defaultGeos = activeGeoList;
+
+			// update oldDefaultGeo
 			if (modeChanged) {
 				if (defaultGeos.size() == 0) {
 					oldDefaultGeo = null;
@@ -213,33 +229,28 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					oldDefaultMode = defaultGeoMap.get(mode);
 				}
 			}
+		}
 
-			// As currently the application can only have selected geos
-			// of this type (the default geo) in this mode, we don't
-			// need to add the selected geos here to geos
-			// which might have been necessary because in processSource
-			// we modify the selected geos also now,
-			// not only the default geos
-			//geos.addAll(ev.getApplication().getSelectedGeos());
+
+		//-----------------------------------------------------
+		// update the buttons
+		// note: this must always be done, even when activeGeoList is empty
+		//-----------------------------------------------------
+		updateTableText(activeGeoList.toArray());
+		for(int i = 0; i < popupBtnList.length; i++){
+			popupBtnList[i].update(activeGeoList.toArray());
 		}
-		// else: no options in stylebar, although there may be selected
-		// elements (for transformations)
-		
-		if (geos.size() > 0) {
-			// update the buttons
-			updateTableText(geos.toArray());
-			for(int i = 0; i < popupBtnList.length; i++){
-				popupBtnList[i].update(geos.toArray());
-			}
-			for(int i = 0; i < toggleBtnList.length; i++){
-				toggleBtnList[i].update(geos.toArray());
-			}
+		for(int i = 0; i < toggleBtnList.length; i++){
+			toggleBtnList[i].update(activeGeoList.toArray());
 		}
-		
-		
+
+		// show the pen delete button
+		// TODO: handle pen mode in code above
 		btnPenDelete.setVisible((mode == EuclidianConstants.MODE_PEN));
 
 	}
+
+	
 	
 	private void updateTableText(Object[] geos){
 
@@ -346,8 +357,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		createBgColorButton();
 		createTextButtons();
 		
+		// add the buttons --- order matters here
 		add(btnShowAxes);
 		add(btnShowGrid);
+		addBtnPointCapture();
+		
 		add(btnColor);
 		add(btnBgColor);
 		add(btnTextColor);
@@ -366,7 +380,6 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	//	add(btnPenEraser);
 		//add(btnHideShowLabel);
 		add(btnLabelStyle);
-		addBtnPointCapture();
 		//add(btnPointCapture);
 		addBtnRotateView();
 	//	add(btnPenDelete);
@@ -480,7 +493,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnShowAxes = new MyToggleButton(app.getImageIcon("axes.gif")){
 		      @Override
 			public void update(Object[] geos) {
-				this.setVisible(geos.length == 0  && mode != EuclidianConstants.MODE_PEN);	  
+		    	// always show this button unless in pen mode
+				this.setVisible(mode != EuclidianConstants.MODE_PEN);	  
 		      }
 		};
 		
@@ -494,7 +508,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		btnShowGrid = new MyToggleButton(app.getImageIcon("grid.gif")){
 		      @Override
 			public void update(Object[] geos) {
-					this.setVisible(geos.length == 0 && mode != EuclidianConstants.MODE_PEN);	  
+		    	// always show this button unless in pen mode
+					this.setVisible(mode != EuclidianConstants.MODE_PEN);	  
 			      }
 			};			
 		//btnShowGrid.setPreferredSize(new Dimension(16,16));
@@ -750,9 +765,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			
 			@Override
 			public void update(Object[] geos) {
-				// show when nothing else is selected
-				
-				this.setVisible(geos.length == 0 && mode != EuclidianConstants.MODE_PEN);
+				// always show this button unless in pen mode
+				this.setVisible(mode != EuclidianConstants.MODE_PEN);
 				
 			}	
 					
@@ -1310,6 +1324,7 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		if(mode != EuclidianConstants.MODE_MOVE)
 			targetGeos.addAll(defaultGeos);
 
+		
 		
 		processSource(source,targetGeos);
 		
