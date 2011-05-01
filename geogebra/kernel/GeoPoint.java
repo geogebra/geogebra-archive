@@ -501,7 +501,8 @@ GeoPointND, Animatable, Transformable  {
 		return isDefined;        
 	}     
 	
-    public void setUndefined() {     
+    public void setUndefined() {   
+    	super.setUndefined();
     	isDefined = false;
     }       
 
