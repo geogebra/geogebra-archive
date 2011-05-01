@@ -200,32 +200,42 @@ public abstract class GeoElement
 		{ 'c', 'd', 'e', 'f', 'g', 'h', 'k', 'p', 'q', 'r', 's', 't' };
 
 	private static final char[] lowerCaseLabels =
-		{
-			'a',
-			'b',
-			'c',
-			'd',
-			'e',
-			'f',
-			'g',
-			'h',
-			'i',
-			'j',
-			'k',
-			'l',
-			'm',
-			'n',
-			'o',
-			'p',
-			'q',
-			'r',
-			's',
-			't',
-			'u',
-			'v',
-			'w',
-			'z'
-			};
+	{
+		'a',
+		'b',
+		'c',
+		'd',
+		'e',
+		'f',
+		'g',
+		'h',
+		'i',
+		'j',
+		'k',
+		'l',
+		'm',
+		'n',
+		'o',
+		'p',
+		'q',
+		'r',
+		's',
+		't',
+		'u',
+		'v',
+		'w',
+		'z'
+		};
+
+	private static final char[] integerLabels =
+	{
+		'n',
+		'i',
+		'j',
+		'k',
+		'l',
+		'm',
+		};
 
 	private static final char[] greekLowerCase =
 		{
@@ -2520,7 +2530,7 @@ public abstract class GeoElement
 	public String getFreeLabel(String suggestedLabel) {
 		if (suggestedLabel != null) {
 			if ("x".equals(suggestedLabel) || "y".equals(suggestedLabel))
-				return getDefaultLabel();
+				return getDefaultLabel(false);
 
 			if (cons.isFreeLabel(suggestedLabel))
 				return suggestedLabel;
@@ -2529,14 +2539,18 @@ public abstract class GeoElement
 		}
 
 		// standard case: get default label
-		return getDefaultLabel();
+		return getDefaultLabel(false);
+	}
+
+	public String getDefaultLabel(boolean isInteger) {
+		return getDefaultLabel(null, isInteger);
 	}
 
 	public String getDefaultLabel() {
-		return getDefaultLabel(null);
+		return getDefaultLabel(null, false);
 	}
 
-	protected String getDefaultLabel(char[] chars) {
+	protected String getDefaultLabel(char[] chars, boolean isInteger) {
 
 		if(chars==null){
 			if (isGeoPoint()) {
@@ -2636,6 +2650,9 @@ public abstract class GeoElement
 					str = list.isMatrix() ? app.getPlain("Name.matrix") + kernel.internationalizeDigits(counter+"") : app.getPlain("Name.list") + kernel.internationalizeDigits(counter+"");;
 				} while (!cons.isFreeLabel(str));
 				return str;
+			}
+			else if (isInteger && isGeoNumeric()) {
+				chars = integerLabels;
 			}
 			else {
 				chars = lowerCaseLabels;

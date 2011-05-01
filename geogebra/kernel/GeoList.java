@@ -682,6 +682,14 @@ Transformable{
 		 */
 		public void update() {  	
 			super.update();
+			
+			if (getParentAlgorithm() instanceof AlgoMirror) {
+				AlgoMirror algo = (AlgoMirror)getParentAlgorithm();
+				GeoElement[] geos = algo.getInput();
+				GeoList list = (GeoList)geos[0];
+				Application.debug("size = "+list.size());
+			}
+			
 			// update all registered locatables (they have this point as start point)
 			if (colorFunctionListener != null) {
 				//Application.debug("GeoList update listeners");

@@ -442,7 +442,7 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	
 	
 	public String getDefaultLabel() {	
-		return getDefaultLabel(Labels);
+		return getDefaultLabel(Labels, false);
 	}
 	
 	
