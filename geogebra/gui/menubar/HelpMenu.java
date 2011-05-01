@@ -73,7 +73,7 @@ class HelpMenu extends BaseMenu {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.getGuiManager().openHelp("");
+						app.getGuiManager().openHelp("Manual:MainPage");
 					}
 				};
 				runner.start();
@@ -86,7 +86,7 @@ class HelpMenu extends BaseMenu {
 			public void actionPerformed(ActionEvent e) {
 				Thread runner = new Thread() {
 					public void run() {
-						app.getGuiManager().openHelp("Tutorial");
+						app.getGuiManager().openHelp("Tutorial:MainPage");
 					}
 				};
 				runner.start();

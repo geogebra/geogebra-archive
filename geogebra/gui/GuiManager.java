@@ -2704,7 +2704,10 @@ public class GuiManager {
 	    		typeStr = "tool";
 	    		break;
 	    	case HELP_GENERIC:
-	    		strURL =  app.getWiki(pageName);
+	    		String[] str = pageName.split(":");	    		
+	    		strURL =  app.getWiki(str[0]);
+	    		if(str.length>1)
+	    			strURL+=":"+app.getWiki(str[1]);
 	    		typeStr = "article";
 	    		break;
 	    	default:
