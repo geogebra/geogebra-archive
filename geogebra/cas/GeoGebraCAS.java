@@ -54,6 +54,9 @@ public class GeoGebraCAS {
 			case Application.CAS_MAXIMA:
 				return ExpressionNode.STRING_TYPE_MAXIMA;
 				
+			case Application.CAS_MPREDUCE:
+				return ExpressionNode.STRING_TYPE_MPREDUCE;
+				
 			default:
 			case Application.CAS_MATHPIPER:
 				return ExpressionNode.STRING_TYPE_MATH_PIPER;	
