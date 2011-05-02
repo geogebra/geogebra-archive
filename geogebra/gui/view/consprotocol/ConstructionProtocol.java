@@ -609,7 +609,8 @@ public class ConstructionProtocol extends JDialog implements Printable {
 						int column = table.columnAtPoint(origin);
 						String colName = table.getColumnName(column);
 
-						if (colName.equals("Breakpoint")) {
+						//if (colName.equals("Breakpoint")) {
+						if (colName.equals("G")) {
 							RowData rd = data.getRow(row);
 							GeoElement geo = rd.geo;
 							boolean newVal = !geo.isConsProtocolBreakpoint();
