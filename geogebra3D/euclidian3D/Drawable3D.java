@@ -2,7 +2,6 @@ package geogebra3D.euclidian3D;
 
 
 
-import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.DrawableND;
 import geogebra.kernel.GeoElement;
@@ -11,8 +10,6 @@ import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Manager;
 import geogebra3D.euclidian3D.opengl.Renderer;
 import geogebra3D.kernel3D.GeoElement3D;
-import geogebra3D.kernel3D.GeoElement3DInterface;
-import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

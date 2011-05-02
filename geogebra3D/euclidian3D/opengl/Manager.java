@@ -328,14 +328,15 @@ abstract public class Manager {
 	/////////////////////////////////////////////
 
 	
-	/** return the color for highlighting object
-	 * @param c
-	 * @param amplitude amplitude of the variation of color
+	/** return the color for highlighting object regarding time
+	 * @param color normal color
+	 * @param colorHighlighted highlighting color
 	 * @return the color for highlighting object
 	 */
 	public Coords getHigthlighting(Coords color, Coords colorHighlighted){
 				
-		return color.mul(colorFactor).add(colorHighlighted.mul(1-colorFactor));
+		//return color.mul(colorFactor).add(colorHighlighted.mul(1-colorFactor));
+		return colorHighlighted;
 	}
 	
 	
