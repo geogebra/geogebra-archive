@@ -2951,9 +2951,22 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			}
 		}
 		
+		// keep geoelements only on the top layer
+		int maxlayer = 0;
+		for (int i = 0; i < hits.size(); ++i) {
+			GeoElement geo = (GeoElement) hits.get(i);
+			if (maxlayer < geo.getLayer())
+				maxlayer = geo.getLayer();
+		}
+		for (int i = hits.size() - 1; i >= 0; i--) {
+			GeoElement geo = (GeoElement) hits.get(i);
+			if (geo.getLayer() < maxlayer)
+				hits.remove(i);
+		}
+		
 		// remove all lists and  images if there are other objects too
 		if (hits.size() - (hits.getListCount() + hits.getImageCount()) > 0) {
-			for (int i = 0; i < hits.size(); ++i) {
+			for (int i = hits.size() - 1; i >= 0; i--) {
 				GeoElement geo = (GeoElement) hits.get(i);
 				if (geo.isGeoList() || geo.isGeoImage())
 					hits.remove(i);
