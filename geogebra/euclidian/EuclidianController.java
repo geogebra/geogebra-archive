@@ -335,12 +335,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (EuclidianView.usesSelectionRectangleAsInput(newMode) && view.getSelectionRectangle() != null)
 		{
 			initNewMode(newMode);
-			processSelectionRectangle(null);
+			if (app.getActiveEuclidianView() == view)
+				processSelectionRectangle(null);
 		}
 		else if (EuclidianView.usesSelectionAsInput(newMode))
 		{
 			initNewMode(newMode);
-			processSelection();
+			if (app.getActiveEuclidianView() == view)
+				processSelection();
 		}
 		else
 		{
