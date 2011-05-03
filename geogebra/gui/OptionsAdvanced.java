@@ -3,6 +3,7 @@ package geogebra.gui;
 import geogebra.euclidian.Drawable;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
 import java.awt.BorderLayout;
@@ -17,12 +18,15 @@ import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -43,7 +47,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private Application app;
 
 	/** */
-	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel,  perspectivesPanel, miscPanel;
+	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel,  perspectivesPanel, miscPanel, angleUnitPanel, continuityPanel, pointStylePanel, checkboxSizePanel;
 	
 	/**	*/
 	private JLabel keyboardLanguageLabel, widthLabel, heightLabel, opacityLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
@@ -53,6 +57,12 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	
 	/**	 */
 	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting, cbUseJavaFonts, cbReverseMouseWheel;
+	
+	/** */
+	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian, continuityRadioOn, continuityRadioOff, pointStyleRadio0, pointStyleRadio1, pointStyleRadio2, pointStyleRadio3, pointStyleRadio4, pointStyleRadio6, pointStyleRadio7, checkboxSizeRadioRegular, checkboxSizeRadioLarge;
+	
+	/** */
+	private ButtonGroup angleUnitButtonGroup, continuityButtonGroup, pointStyleButtonGroup, checkboxSizeButtonGroup;
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
@@ -103,6 +113,10 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		initLanguagePanel();
 		initPerspectivesPanel();
 		initScriptingPanel();
+		initAngleUnitPanel();
+		initContinuityPanel();
+		initPointStylePanel();
+		initCheckboxSizePanel();
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new FullWidthLayout());
@@ -110,6 +124,10 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		panel.add(tooltipPanel);
 		panel.add(languagePanel);
 		panel.add(perspectivesPanel);
+		panel.add(angleUnitPanel);
+		panel.add(continuityPanel);
+		panel.add(pointStylePanel);
+		panel.add(checkboxSizePanel);
 		panel.add(miscPanel);
 		
 		JScrollPane scrollPane = new JScrollPane(panel);
@@ -272,7 +290,106 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		
 	
 	}	
+
+	/**
+	 * Initialize the angle unit panel
+	 */
+	private void initAngleUnitPanel() {
+		angleUnitPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		angleUnitButtonGroup = new ButtonGroup();
+		
+		angleUnitRadioDegree = new JRadioButton();
+		angleUnitRadioDegree.addActionListener(this);
+		angleUnitPanel.add(angleUnitRadioDegree);
+		angleUnitButtonGroup.add(angleUnitRadioDegree);
+
+		angleUnitRadioRadian = new JRadioButton();
+		angleUnitRadioRadian.addActionListener(this);
+		angleUnitPanel.add(angleUnitRadioRadian);
+		angleUnitButtonGroup.add(angleUnitRadioRadian);
+	}
 	
+	/**
+	 * Initialize the continuity panel
+	 */
+	private void initContinuityPanel() {
+		continuityPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		continuityButtonGroup = new ButtonGroup();
+		
+		continuityRadioOn = new JRadioButton();
+		continuityRadioOn.addActionListener(this);
+		continuityPanel.add(continuityRadioOn);
+		continuityButtonGroup.add(continuityRadioOn);
+
+		continuityRadioOff = new JRadioButton();
+		continuityRadioOff.addActionListener(this);
+		continuityPanel.add(continuityRadioOff);
+		continuityButtonGroup.add(continuityRadioOff);
+	}
+
+	/**
+	 * Initialize the point style panel
+	 */
+	private void initPointStylePanel() {
+		pointStylePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		pointStyleButtonGroup = new ButtonGroup();
+
+		pointStyleRadio0 = new JRadioButton();
+		pointStyleRadio0.addActionListener(this);
+		pointStylePanel.add(pointStyleRadio0);
+		pointStyleButtonGroup.add(pointStyleRadio0);
+
+		pointStyleRadio2 = new JRadioButton();
+		pointStyleRadio2.addActionListener(this);
+		pointStylePanel.add(pointStyleRadio2);
+		pointStyleButtonGroup.add(pointStyleRadio2);
+
+		pointStyleRadio1 = new JRadioButton();
+		pointStyleRadio1.addActionListener(this);
+		pointStylePanel.add(pointStyleRadio1);
+		pointStyleButtonGroup.add(pointStyleRadio1);
+
+		pointStyleRadio3 = new JRadioButton();
+		pointStyleRadio3.addActionListener(this);
+		pointStylePanel.add(pointStyleRadio3);
+		pointStyleButtonGroup.add(pointStyleRadio3);
+
+		pointStyleRadio4 = new JRadioButton();
+		pointStyleRadio4.addActionListener(this);
+		pointStylePanel.add(pointStyleRadio4);
+		pointStyleButtonGroup.add(pointStyleRadio4);
+
+		pointStyleRadio6 = new JRadioButton();
+		pointStyleRadio6.addActionListener(this);
+		pointStylePanel.add(pointStyleRadio6);
+		pointStyleButtonGroup.add(pointStyleRadio6);
+
+		pointStyleRadio7 = new JRadioButton();
+		pointStyleRadio7.addActionListener(this);
+		pointStylePanel.add(pointStyleRadio7);
+		pointStyleButtonGroup.add(pointStyleRadio7);
+	}
+	
+	/**
+	 * Initialize the checkbox size panel
+	 */
+	private void initCheckboxSizePanel() {
+		checkboxSizePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		checkboxSizeButtonGroup = new ButtonGroup();
+		
+		checkboxSizeRadioRegular = new JRadioButton();
+		checkboxSizeRadioRegular.addActionListener(this);
+		checkboxSizePanel.add(checkboxSizeRadioRegular);
+		checkboxSizeButtonGroup.add(checkboxSizeRadioRegular);
+
+		checkboxSizeRadioLarge = new JRadioButton();
+		checkboxSizeRadioLarge.addActionListener(this);
+		checkboxSizePanel.add(checkboxSizeRadioLarge);
+		checkboxSizeButtonGroup.add(checkboxSizeRadioLarge);
+	}
 	
 	/**
 	 * Update the user interface, ie change selected values.
@@ -282,7 +399,41 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	public void updateGUI() {
 		cbUseLocalDigits.setSelected(app.isUsingLocalizedDigits());
 		cbUseLocalLabels.setSelected(app.isUsingLocalizedLabels());
-		
+
+		angleUnitRadioDegree.setSelected(app.getKernel().getAngleUnit() == Kernel.ANGLE_DEGREE);
+		angleUnitRadioRadian.setSelected(app.getKernel().getAngleUnit() != Kernel.ANGLE_DEGREE);
+
+		continuityRadioOn.setSelected(app.getKernel().isContinuous());
+		continuityRadioOff.setSelected(!app.getKernel().isContinuous());
+
+		checkboxSizeRadioRegular.setSelected(app.getEuclidianView().getBooleanSize() == 13);
+		checkboxSizeRadioLarge.setSelected(app.getEuclidianView().getBooleanSize() == 26);
+
+		switch (app.getEuclidianView().getPointStyle()) {
+		case 1:
+			pointStyleRadio1.setSelected(true);
+			break;
+		case 2:
+			pointStyleRadio2.setSelected(true);
+			break;
+		case 3:
+			pointStyleRadio3.setSelected(true);
+			break;
+		case 4:
+			pointStyleRadio4.setSelected(true);
+			break;
+		case 6:
+			pointStyleRadio6.setSelected(true);
+			break;
+		case 7:
+			pointStyleRadio7.setSelected(true);
+			break;
+		case 0:
+		default:
+			pointStyleRadio0.setSelected(true);
+			break;
+		}
+
 		Layout layout = app.getGuiManager().getLayout();
 		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
 		cbShowTitleBar.setSelected(layout.isTitleBarVisible());
@@ -357,6 +508,58 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			app.getGuiManager().getLayout().setIgnoreDocument(cbIgnoreDocumentLayout.isSelected());
 		} else if(e.getSource() == managePerspectivesButton) {
 			app.getGuiManager().getLayout().showManageDialog();
+		} else if (e.getSource() == angleUnitRadioDegree) {
+			app.getKernel().setAngleUnit(Kernel.ANGLE_DEGREE);
+			app.getKernel().updateConstruction();
+			app.setUnsaved();
+		} else if (e.getSource() == angleUnitRadioRadian) {
+			app.getKernel().setAngleUnit(Kernel.ANGLE_RADIANT);
+			app.getKernel().updateConstruction();
+			app.setUnsaved();
+		} else if (e.getSource() == continuityRadioOn) {
+			app.getKernel().setContinuous(true);
+			app.getKernel().updateConstruction();
+			app.setUnsaved();
+		} else if (e.getSource() == continuityRadioOff) {
+			app.getKernel().setContinuous(false);
+			app.getKernel().updateConstruction();
+			app.setUnsaved();
+		} else if (e.getSource() == pointStyleRadio0) {
+			app.getEuclidianView().setPointStyle(0);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setPointStyle(0);
+		} else if (e.getSource() == pointStyleRadio1) {
+			app.getEuclidianView().setPointStyle(1);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setPointStyle(1);
+		} else if (e.getSource() == pointStyleRadio2) {
+			app.getEuclidianView().setPointStyle(2);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setPointStyle(2);
+		} else if (e.getSource() == pointStyleRadio3) {
+			app.getEuclidianView().setPointStyle(3);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setPointStyle(3);
+		} else if (e.getSource() == pointStyleRadio4) {
+			app.getEuclidianView().setPointStyle(4);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setPointStyle(4);
+		} else if (e.getSource() == pointStyleRadio6) {
+			app.getEuclidianView().setPointStyle(6);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setPointStyle(6);
+		} else if (e.getSource() == pointStyleRadio7) {
+			app.getEuclidianView().setPointStyle(7);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setPointStyle(7);
+		} else if (e.getSource() == checkboxSizeRadioRegular) {
+			app.getEuclidianView().setBooleanSize(13);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setBooleanSize(13);
+		} else if (e.getSource() == checkboxSizeRadioLarge) {
+			app.getEuclidianView().setBooleanSize(26);
+			if (app.getGuiManager().hasEuclidianView2())
+				app.getGuiManager().getEuclidianView2().setBooleanSize(26);
 		}
 	}
 
@@ -417,7 +620,28 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		languagePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Language")));
 		cbUseLocalDigits.setText(app.getPlain("LocalizedDigits"));
 		cbUseLocalLabels.setText(app.getPlain("LocalizedLabels"));
-		
+
+		angleUnitPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("AngleUnit")));
+		angleUnitRadioDegree.setText(app.getMenu("Degree"));
+		angleUnitRadioRadian.setText(app.getMenu("Radiant"));
+
+		continuityPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Continuity")));
+		continuityRadioOn.setText(app.getMenu("on"));
+		continuityRadioOff.setText(app.getMenu("off"));
+
+		checkboxSizePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("CheckboxSize")));
+		checkboxSizeRadioRegular.setText(app.getMenu("CheckboxSize.Regular"));
+		checkboxSizeRadioLarge.setText(app.getMenu("CheckboxSize.Large"));
+
+		pointStylePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("PointStyle")));
+		pointStyleRadio0.setText(app.getMenu("\u25cf"));
+		pointStyleRadio1.setText(app.getMenu("\u2716"));
+		pointStyleRadio2.setText(app.getMenu("\u25cb"));
+		pointStyleRadio3.setText(app.getMenu("\u271a"));
+		pointStyleRadio4.setText(app.getMenu("\u25c6"));
+		pointStyleRadio6.setText(app.getMenu("\u25b2"));
+		pointStyleRadio7.setText(app.getMenu("\u25bc"));
+	
 		perspectivesPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Perspectives")));
 		cbIgnoreDocumentLayout.setText(app.getPlain("IgnoreDocumentLayout"));
 		cbShowTitleBar.setText(app.getPlain("ShowTitleBar"));
