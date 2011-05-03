@@ -9,9 +9,11 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -19,6 +21,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
@@ -791,18 +794,51 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	
-	
-	
-	
-	protected GeoElement[] orthogonal() {
-		// fetch selected point and line
-		GeoPointND[] points = getSelectedPointsND();
-		GeoLineND[] lines = getSelectedLinesND();
-		// create new line
-		GeoPlane3D ret0 = (GeoPlane3D)getKernel().getManager3D().OrthogonalPlane3D(null, points[0], lines[0]);
-		GeoElement[] ret = { ret0 };
-		return ret;
+	/**
+	 * get point and line or vector;
+	// create plane through point orthogonal to line or vector
+	 * 
+	 * @param hits
+	 * @return orthogonal plane
+	 */
+	final protected GeoElement[] orthogonalPlane(Hits hits) {
+		if (hits.isEmpty())
+			return null;
+		
+		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
+		if (!hitPoint) {
+			if (selLines() == 0) {
+				addSelectedVector(hits, 1, false);
+			}
+			if (selVectors() == 0) {
+				addSelectedLine(hits, 1, false);
+			}
+		}
+
+		if (selPoints() == 1) {
+			if (selVectors() == 1) {
+				// fetch selected point and vector
+				GeoPointND[] points = getSelectedPointsND();
+				GeoVectorND[] vectors = getSelectedVectorsND();
+				// create new plane
+				GeoElement[] ret = { null };
+				ret[0] = (GeoPlane3D) getKernel().getManager3D().OrthogonalPlane3D(null, points[0], vectors[0]);
+				return ret;
+
+			} else if (selLines() == 1) {
+				// fetch selected point and line
+				GeoPointND[] points = getSelectedPointsND();
+				GeoLineND[] lines = getSelectedLinesND();
+				// create new plane
+				GeoElement[] ret = { null };
+				ret[0] = (GeoPlane3D) getKernel().getManager3D().OrthogonalPlane3D(null, points[0], lines[0]);
+				return ret;
+			}
+		}
+		return null;
 	}
+
+	
 	
 	
 	
@@ -1177,7 +1213,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;		
 		
 		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
-			changedKernel = (orthogonal(hits) != null);
+			changedKernel = (orthogonalPlane(hits) != null);
 			break;
 			
 		case EuclidianView3D.MODE_PARALLEL_PLANE:

@@ -30,5 +30,7 @@ public interface GeoVectorND {
 
 	void updateStartPointPosition();
 
+	boolean getTrace();
+
 
 }

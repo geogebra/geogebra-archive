@@ -545,6 +545,10 @@ public class Toolbar extends JToolBar {
 		+EuclidianView3D.MODE_RAY
 		+" , "
 		+EuclidianView3D.MODE_VECTOR
+		+" | "
+		+EuclidianView3D.MODE_ORTHOGONAL
+		+" "
+		+EuclidianView3D.MODE_PARALLEL
 		+" || "
 		+EuclidianView3D.MODE_POLYGON
 		//+" | "

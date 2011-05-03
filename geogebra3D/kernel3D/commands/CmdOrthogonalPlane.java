@@ -7,6 +7,7 @@ import geogebra.kernel.commands.CommandProcessor;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.MyError;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -34,23 +35,24 @@ public class CmdOrthogonalPlane extends CommandProcessor {
 	    switch (n) {
 	    case 2 :
 	    	arg = resArgs(c);
-	    	if (
-	    			(ok[0] = (arg[0] .isGeoPoint() ) )
-	    			&& (ok[1] = (arg[1] instanceof GeoLineND ))
-	    	) {
-	    		GeoElement[] ret =
-	    		{
-	    				(GeoElement) kernel.getManager3D().OrthogonalPlane3D(
-	    						c.getLabel(),
-	    						(GeoPointND) arg[0],
-	    						(GeoLineND) arg[1])};
-	    		return ret;
-	    	}else{
-	    		if (!ok[0])
-	    			throw argErr(app, "OrthogonalPlane", arg[0]);
-	    		else 
+	    	if (arg[0] .isGeoPoint()){
+	    		if (arg[1] instanceof GeoLineND ){
+	    			return new GeoElement[] {
+	    					(GeoElement) kernel.getManager3D().OrthogonalPlane3D(
+	    							c.getLabel(),
+	    							(GeoPointND) arg[0],
+	    							(GeoLineND) arg[1])};                 
+	    		}else if (arg[1] instanceof GeoVectorND ){
+	    			return new GeoElement[] {
+	    					(GeoElement) kernel.getManager3D().OrthogonalPlane3D(
+	    							c.getLabel(),
+	    							(GeoPointND) arg[0],
+	    							(GeoVectorND) arg[1])};                 
+	    		}else
 	    			throw argErr(app, "OrthogonalPlane", arg[1]);
-	    	}
+	    	}else
+	    		throw argErr(app, "OrthogonalPlane", arg[0]);
+	    		
 	    	
 	    default :
 	    	throw argNumErr(app, "OrthogonalPlane", n);

@@ -55,6 +55,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 import geogebra.main.GeoElementSelectionListener;
 
@@ -4378,17 +4379,23 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			GeoElement[] ret = { null };
 			if (selVectors() == 1) {
 				// fetch selected point and vector
-				GeoPoint[] points = getSelectedPoints();
-				GeoVector[] vectors = getSelectedVectors();
+				GeoPointND[] points = getSelectedPointsND();
+				GeoVectorND[] vectors = getSelectedVectorsND();
 				// create new line
-				ret[0] = kernel.Line(null, points[0], vectors[0]);
+				if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) vectors[0]).isGeoElement3D())
+					ret[0] = (GeoElement) getKernel().getManager3D().Line3D(null,points[0], vectors[0]);
+				else
+					ret[0] = kernel.Line(null, (GeoPoint) points[0], (GeoVector) vectors[0]);
 				return ret;
 			} else if (selLines() == 1) {
 				// fetch selected point and vector
-				GeoPoint[] points = getSelectedPoints();
-				GeoLine[] lines = getSelectedLines();
+				GeoPointND[] points = getSelectedPointsND();
+				GeoLineND[] lines = getSelectedLinesND();
 				// create new line
-				ret[0] = kernel.Line(null, points[0], lines[0]);
+				if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) lines[0]).isGeoElement3D())
+					ret[0] = (GeoElement) getKernel().getManager3D().Line3D(null,points[0], lines[0]);
+				else
+					ret[0] = getKernel().Line(null, (GeoPoint) points[0], (GeoLine) lines[0]);
 				return ret;
 			}
 		}
@@ -4430,7 +4437,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		boolean hitPoint = (addSelectedPoint(hits, 1, false) != 0);
 		if (!hitPoint) {
 			if (selLines() == 0) {
-				addSelectedVector(hits, 1, false);
+				addSelectedVector(hits, 1, false, GeoVector.class);
 			}
 			if (selVectors() == 0) {
 				addSelectedLine(hits, 1, false);
@@ -4440,28 +4447,33 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (selPoints() == 1) {
 			if (selVectors() == 1) {
 				// fetch selected point and vector
-				GeoPoint[] points = getSelectedPoints();
-				GeoVector[] vectors = getSelectedVectors();
+				GeoPointND[] points = getSelectedPointsND();
+				GeoVectorND[] vectors = getSelectedVectorsND();
 				// create new line
 				GeoElement[] ret = { null };
-				ret[0] = kernel.OrthogonalLine(null, points[0], vectors[0]);
+				//no defined line through a point and orthogonal to a vector in 3D
+				if (((GeoElement) points[0]).isGeoElement3D())// || ((GeoElement) vectors[0]).isGeoElement3D())
+					return null;
+				else
+					ret[0] = kernel.OrthogonalLine(null, (GeoPoint) points[0], (GeoVector) vectors[0]);
 				return ret;
+
 			} else if (selLines() == 1) {
-				return orthogonal();
+				// fetch selected point and line
+				GeoPointND[] points = getSelectedPointsND();
+				GeoLineND[] lines = getSelectedLinesND();
+				// create new line
+				GeoElement[] ret = { null };
+				if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) lines[0]).isGeoElement3D())
+					ret[0] = (GeoElement) getKernel().getManager3D().OrthogonalLine3D(null,points[0], lines[0]);
+				else
+					ret[0] = getKernel().OrthogonalLine(null, (GeoPoint) points[0], (GeoLine) lines[0]);
+				return ret;
 			}
 		}
 		return null;
 	}
 	
-	protected GeoElement[] orthogonal() {
-		// fetch selected point and line
-		GeoPoint[] points = getSelectedPoints();
-		GeoLine[] lines = getSelectedLines();
-		// create new line
-		GeoElement[] ret = { null };
-		ret[0] = kernel.OrthogonalLine(null, points[0], lines[0]);
-		return ret;
-	}
 	
 	// get two points, line segment or conic
 	// and create midpoint/center for them/it
@@ -6360,15 +6372,29 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return segments;
 	}
 
-	final protected GeoVector[] getSelectedVectors() {
-		GeoVector[] vectors = new GeoVector[selectedVectors.size()];
+	
+	
+	protected final void getSelectedVectorsND(GeoVectorND[] vectors) {
 		int i = 0;
 		Iterator it = selectedVectors.iterator();
 		while (it.hasNext()) {
-			vectors[i] = (GeoVector) it.next();
+			vectors[i] = (GeoVectorND) it.next();
 			i++;
 		}
 		clearSelection(selectedVectors);
+	}
+	
+	final protected GeoVectorND[] getSelectedVectorsND() {
+		GeoVectorND[] vectors = new GeoVectorND[selectedVectors.size()];
+		getSelectedVectorsND(vectors);
+
+		return vectors;
+	}
+	
+	final protected GeoVector[] getSelectedVectors() {
+		GeoVector[] vectors = new GeoVector[selectedVectors.size()];
+		getSelectedVectorsND(vectors);
+
 		return vectors;
 	}
 
@@ -6496,7 +6522,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final protected int addSelectedVector(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedVectors, GeoVector.class);
+		return addSelectedVector(hits, max, addMoreThanOneAllowed, GeoVectorND.class);
+	}
+	
+	final protected int addSelectedVector(Hits hits, int max,
+			boolean addMoreThanOneAllowed, Class geoClass) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedVectors, geoClass);
 	}
 
 	final protected int addSelectedConic(Hits hits, int max,
@@ -6571,7 +6602,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return selectedSegments.size();
 	}
 
-	final int selVectors() {
+	protected final int selVectors() {
 		return selectedVectors.size();
 	}
 

@@ -14,14 +14,9 @@ the Free Software Foundation.
 package geogebra3D.kernel3D;
 
 import geogebra.Matrix.CoordSys;
-import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
-import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.kernelND.GeoLineND;
-import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 
 /**
@@ -36,6 +31,10 @@ public abstract class AlgoOrthoPlane extends AlgoElement3D {
     private GeoPlane3D plane; // output       
 
 
+    /**
+     * 
+     * @param cons
+     */
     public AlgoOrthoPlane(Construction cons) {
         super(cons);
         plane = new GeoPlane3D(cons);
@@ -43,9 +42,12 @@ public abstract class AlgoOrthoPlane extends AlgoElement3D {
      }
 
 
-
+    /**
+     * 
+     * @return the plane
+     */
     public GeoPlane3D getPlane() {
-        return plane;
+    	return plane;
     }
 
     

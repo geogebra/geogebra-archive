@@ -13,36 +13,38 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.Matrix.CoordSys;
-import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.Kernel;
-import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
 
 /**
- * Compute a plane through a point and orthogonal to a line (or segment, ...)
+ * Compute a plane through a point and orthogonal to ...
  *
  * @author  matthieu
  * @version 
  */
-public class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
+public abstract class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
 
  
 	private GeoPointND point; // input
-    private GeoLineND line; // input   
+    private GeoElement secondInput; // input   
 
 
-    public AlgoOrthoPlanePoint(Construction cons, String label, GeoPointND point, GeoLineND line) {
+    /**
+     * 
+     * @param cons
+     * @param label
+     * @param point
+     * @param secondInput
+     */
+    public AlgoOrthoPlanePoint(Construction cons, String label, GeoPointND point, GeoElement secondInput) {
         super(cons);
         this.point = point;
-        this.line = line;
+        this.secondInput = secondInput;
         
-        setInputOutput(new GeoElement[] {(GeoElement) point, (GeoElement) line}, new GeoElement[] {getPlane()});
+        setInputOutput(new GeoElement[] {(GeoElement) point, secondInput}, new GeoElement[] {getPlane()});
 
         // compute plane 
         compute();
@@ -56,16 +58,21 @@ public class AlgoOrthoPlanePoint extends AlgoOrthoPlane {
 
 
 
-    protected Coords getNormal(){
-    	return ((GeoElement) line).getMainDirection();
-    }
 
     protected Coords getPoint(){
     	return point.getInhomCoordsInD(3);
     }
+    
+    /**
+     * 
+     * @return second input
+     */
+    protected GeoElement getSecondInput(){
+    	return secondInput;
+    }
 
     final public String toString() {
-    	return app.getPlain("PlaneThroughAPerpendicularToB",point.getLabel(),((GeoElement) line).getLabel());
+    	return app.getPlain("PlaneThroughAPerpendicularToB",point.getLabel(),secondInput.getLabel());
 
     }
 }

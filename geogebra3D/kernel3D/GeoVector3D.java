@@ -395,6 +395,13 @@ implements GeoVectorND, Locateable, Vector3DValue{
 			}
 			return ret;
 		}
+
+		
+		
+		public boolean getTrace() {
+			// TODO Auto-generated method stub
+			return false;
+		}
 		
 		
 

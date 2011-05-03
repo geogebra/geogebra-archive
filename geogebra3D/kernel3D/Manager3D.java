@@ -327,14 +327,25 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 	/** 
-	 * Line named label through Point P orthogonal to line l
+	 * Plane named label through Point P orthogonal to line l
 	 */
 	final public GeoPlane3D OrthogonalPlane3D(
 			String label,
 			GeoPointND point,
 			GeoLineND line) {
 
-		return new AlgoOrthoPlanePoint(cons, label, point, line).getPlane();
+		return new AlgoOrthoPlanePointLine(cons, label, point, line).getPlane();
+	}
+
+	/** 
+	 * Plane named label through Point P orthogonal to line l
+	 */
+	final public GeoPlane3D OrthogonalPlane3D(
+			String label,
+			GeoPointND point,
+			GeoVectorND vector) {
+
+		return new AlgoOrthoPlanePointVector(cons, label, point, vector).getPlane();
 	}
 
 

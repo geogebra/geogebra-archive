@@ -437,9 +437,10 @@ public class DrawLine extends Drawable implements Previewable {
 				
 			case PREVIEW_PARALLEL:
 			    // calc the line g through (xRW,yRW) and perpendicular to l
-				GeoLine l = (GeoLine)lines.get(0);
-			    GeoVec3D.cross(xRW, yRW, 1.0, l.y, -l.x, 0.0, ((GeoLine) g));
-	
+				GeoLineND lND = (GeoLineND)lines.get(0);
+				GeoLine l;
+				Coords equation = lND.getCartesianEquationVector(view.getPlaneMatrix());
+				GeoVec3D.cross(xRW, yRW, 1.0, equation.getY(), -equation.getX(), 0.0, ((GeoLine) g));
 				break;
 			case PREVIEW_PERPENDICULAR:
 			    // calc the line g through (xRW,yRW) and parallel to l

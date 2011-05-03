@@ -18,12 +18,15 @@ the Free Software Foundation.
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.Coords;
 import geogebra.euclidian.clipping.ClipLine;
 import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoVectorND;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -39,8 +42,8 @@ import java.util.ArrayList;
  */
 public class DrawVector extends Drawable implements Previewable {
    
-    private GeoVector v;
-    private GeoPoint P;
+    private GeoVectorND v;
+    private GeoPointND P;
     
     boolean isVisible, labelVisible;
     private boolean traceDrawingNeeded = false;
@@ -54,10 +57,10 @@ public class DrawVector extends Drawable implements Previewable {
     private ArrayList points;
     
     /** Creates new DrawVector */
-    public DrawVector(EuclidianView view, GeoVector v) {
+    public DrawVector(EuclidianView view, GeoVectorND v) {
     	this.view = view;
 		this.v = v;
-		geo = v;
+		geo = (GeoElement) v;
     			
 		update();
     }
@@ -73,7 +76,7 @@ public class DrawVector extends Drawable implements Previewable {
         if (!isVisible) return;
 		labelVisible = geo.isLabelVisible();    
         
-		updateStrokes(v);
+		updateStrokes((GeoElement) v);
 		
 		//start point in real world coords
 		P = v.getStartPoint();            		                            
@@ -85,15 +88,16 @@ public class DrawVector extends Drawable implements Previewable {
         }       
         
         // vector
-        coordsV[0] = v.x;
-        coordsV[1] = v.y;
+        Coords coords = v.getCoordsInD(2);
+        coordsV[0] = coords.getX();
+        coordsV[1] = coords.getY();
          
 		// end point 
         coordsB[0] = coordsA[0] + coordsV[0];
         coordsB[1] = coordsA[1] + coordsV[1];
         
         // set line and arrow of vector and converts all coords to screen
-		setArrow(v.lineThickness);
+		setArrow(((GeoElement) v).lineThickness);
         
 		// label position
 		if (labelVisible) {
@@ -105,7 +109,7 @@ public class DrawVector extends Drawable implements Previewable {
 		}    
 		
 		if (v == view.getEuclidianController().recordObject)
-		    recordToSpreadsheet(v);
+		    recordToSpreadsheet((GeoElement) v);
 
 		
 		// draw trace
@@ -113,8 +117,8 @@ public class DrawVector extends Drawable implements Previewable {
 		// happen that there are several update() calls
 		// before the new trace should be drawn
 		// so the actual drawing is moved to draw()
-		traceDrawingNeeded = v.trace;		
-		if (v.trace) {
+		traceDrawingNeeded = v.getTrace();		
+		if (v.getTrace()) {
 			isTracing = true;			
 		} else {
 			if (isTracing) {				
@@ -204,19 +208,19 @@ public class DrawVector extends Drawable implements Previewable {
         	}
         	
             if (geo.doHighlighting()) {
-                g2.setPaint(v.getSelColor());
+                g2.setPaint(((GeoElement) v).getSelColor());
                 g2.setStroke(selStroke);            
                 if (lineVisible) g2.draw(line);       
             }
             
-            g2.setPaint(v.getObjectColor());
+            g2.setPaint(((GeoElement) v).getObjectColor());
 			g2.setStroke(objStroke);  
 			if (lineVisible) g2.draw(line);              
 			if (arrowheadVisible) g2.fill(gp);
                                               
             if (labelVisible) {
 				g2.setFont(view.fontVector);
-				g2.setPaint(v.getLabelColor());
+				g2.setPaint(((GeoElement) v).getLabelColor());
 				drawLabel(g2);
             }            
         }
@@ -224,7 +228,7 @@ public class DrawVector extends Drawable implements Previewable {
     
     
 	final void drawTrace(Graphics2D g2) {
-		g2.setPaint(v.getObjectColor());
+		g2.setPaint(((GeoElement) v).getObjectColor());
 		g2.setStroke(objStroke);  
 		if (lineVisible) g2.draw(line);  
 		if (arrowheadVisible) g2.fill(gp);       

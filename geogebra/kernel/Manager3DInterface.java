@@ -11,6 +11,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
+import geogebra3D.kernel3D.GeoPlane3D;
 
 /**
  * Interface for managing all 3D methods in Kernel.
@@ -183,6 +184,10 @@ public interface Manager3DInterface {
 					GeoPointND point,
 					GeoLineND line) ;
 			 
+			 public GeoPlane3D OrthogonalPlane3D(
+						String label,
+						GeoPointND point,
+						GeoVectorND vector);
 			 
 			 public GeoPlaneND PlaneBisector(
 						String label,

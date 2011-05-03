@@ -55,6 +55,7 @@ import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra.main.Application;
 
 import java.awt.BasicStroke;
@@ -3521,7 +3522,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			break;
 
 		case GeoElement.GEO_CLASS_VECTOR:
-			d = new DrawVector(this, (GeoVector) geo);
+		case GeoElement.GEO_CLASS_VECTOR3D:
+			d = new DrawVector(this, (GeoVectorND) geo);
 			break;
 
 		case GeoElement.GEO_CLASS_CONICPART:
