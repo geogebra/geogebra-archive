@@ -7260,9 +7260,14 @@ class CmdSetValue extends CommandProcessor {
 				GeoList list = (GeoList) arg[0];
 				int nn = (int) ((NumberValue) arg[1]).getDouble();
 
-				if (nn < 1 || nn > list.size())
+				if (nn < 1 || nn > list.size() + 1)
 					throw argErr(app, c.getName(), arg[1]);
-
+				if(nn > list.size()){
+					list.add((GeoElement)arg[2].deepCopy(kernel));
+					list.updateRepaint();
+					return ret;
+				}
+				else{
 				GeoElement geo = list.get(nn - 1);
 				if (geo.isIndependent()) {
 					if (geo.isGeoNumeric() && arg[2].isNumberValue()) {
@@ -7289,7 +7294,7 @@ class CmdSetValue extends CommandProcessor {
 							}
 						}
 					}
-				}
+				}}
 
 			} else
 				throw argErr(app, c.getName(), ok ? arg[1] : arg[0]);
