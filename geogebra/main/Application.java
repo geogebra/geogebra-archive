@@ -420,10 +420,9 @@ public class Application implements KeyEventDispatcher {
 
 	protected Application(CommandLineArguments args, JFrame frame,
 			AppletImplementation appletImpl, Container comp, boolean undoActive) {
-		// help debug applets
-		System.out.println("GeoGebra " + GeoGebra.VERSION_STRING + " " +  GeoGebra.BUILD_DATE
-				+ " Java " + System.getProperty("java.version"));
 
+		handleHelpVersionArgs(args);
+		
 		isApplet = appletImpl != null;
 		
 		JApplet applet = null;
@@ -536,6 +535,40 @@ public class Application implements KeyEventDispatcher {
 		CASVersionString = getPlain("CASInitializing");
 	}
 		
+	private void handleHelpVersionArgs(CommandLineArguments args) {
+		if(args.containsArg("help")) {
+			// help message
+			System.out
+					.println("Usage: java -jar geogebra.jar [OPTION] [FILE]\n"
+							+ "Start GeoGebra with the specified OPTIONs and open the given FILE.\n"
+							+ "  --help\t\tprint this message\n"
+							+ "  --v\t\tprint version\n"
+							+ "  --language=LANGUAGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n"
+							+ "  --showAlgebraInput=BOOLEAN\tshow/hide algebra input field\n"
+							+ "  --showAlgebraInputTop=BOOLEAN\tshow algebra input at top/bottom\n"
+							+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
+							+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
+							+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
+							+ "  --showSplash=BOOLEAN\tenable/disable the splash screen\n"
+							+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
+							+ "  --fontSize=NUMBER\tset default font size\n"
+							+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes\n"
+							+ "  --settingsFile=PATH|FILENAME\tLoad/save settings from/in a local file\n"
+							+ "  --CAS=[MATHPIPER|MAXIMA|MPREDUCE]\tselect which CAS to use, default MathPiper\n"
+							+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
+							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
+			System.exit(0);
+		}
+		// help debug applets
+		System.out.println("GeoGebra " + GeoGebra.VERSION_STRING + " " +  GeoGebra.BUILD_DATE
+				+ " Java " + System.getProperty("java.version"));
+		if(args.containsArg("v")) {
+			System.exit(0);
+		}
+		
+	}
+
+
 	/**
 	 * init the kernel (used for 3D)
 	 */
@@ -963,37 +996,7 @@ public class Application implements KeyEventDispatcher {
 		//args.containsArg("help");
 		if (args == null) return;
 		
-		if(args.containsArg("help")) {
-			// help message
-			System.out
-					.println("Usage: java -jar geogebra.jar [OPTION] [FILE]\n"
-							+ "Start GeoGebra with the specified OPTIONs and open the given FILE.\n"
-							+ "  --help\t\tprint this message\n"
-							+ "  --v\t\tprint version\n"
-							+ "  --language=LANGUAGE_CODE\t\tset language using locale strings, e.g. en, de, de_AT, ...\n"
-							+ "  --showAlgebraInput=BOOLEAN\tshow/hide algebra input field\n"
-							+ "  --showAlgebraInputTop=BOOLEAN\tshow algebra input at top/bottom\n"
-							+ "  --showAlgebraWindow=BOOLEAN\tshow/hide algebra window\n"
-							+ "  --showSpreadsheet=BOOLEAN\tshow/hide spreadsheet\n"
-							+ "  --showCAS=BOOLEAN\tshow/hide CAS window\n"
-							+ "  --showSplash=BOOLEAN\tenable/disable the splash screen\n"
-							+ "  --enableUndo=BOOLEAN\tenable/disable Undo\n"
-							+ "  --fontSize=NUMBER\tset default font size\n"
-							+ "  --showAxes=BOOLEAN\tshow/hide coordinate axes\n"
-							+ "  --settingsFile=PATH|FILENAME\tLoad/save settings from/in a local file\n"
-							+ "  --CAS=[MATHPIPER|MAXIMA|MPREDUCE]\tselect which CAS to use, default MathPiper\n"
-							+ "  --maximaPath=PATH\tspecify where Maxima is installed and select Maxima as the current CAS\n"
-							+ "  --antiAliasing=BOOLEAN\tturn anti-aliasing on/off\n");
-			System.exit(0);
-		}
-		if(args.containsArg("v")) {
-			// help message			
-			System.out
-					.println("GeoGebra version: "+GeoGebra.VERSION_STRING
-							+"\nBuild date: "+GeoGebra.BUILD_DATE							
-							);
-			System.exit(0);
-		}
+		
 		
 		String language = args.getStringValue("language");
 		if(language.length() > 0) {
