@@ -633,7 +633,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		checkboxSizeRadioRegular.setText(app.getMenu("CheckboxSize.Regular"));
 		checkboxSizeRadioLarge.setText(app.getMenu("CheckboxSize.Large"));
 
-		pointStylePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("PointStyle")));
+		pointStylePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("DefaultPointStyle")));
 		pointStyleRadio0.setText(app.getMenu("\u25cf"));
 		pointStyleRadio1.setText(app.getMenu("\u2716"));
 		pointStyleRadio2.setText(app.getMenu("\u25cb"));
