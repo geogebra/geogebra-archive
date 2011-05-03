@@ -7274,9 +7274,10 @@ class CmdSetValue extends CommandProcessor {
 						NumberValue num = (NumberValue) arg[2];
 						((GeoNumeric) geo).setValue(num.getDouble());
 					} else {
-						geo.set(arg[1]);
+						geo.set(arg[2]);						
 					}
 				}
+				else Application.debug(geo.getParentAlgorithm());
 
 				geo.updateRepaint();
 
