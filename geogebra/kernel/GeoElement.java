@@ -1687,6 +1687,7 @@ public abstract class GeoElement
 				return hasOnlyFreeInputPoints() && containsOnlyMoveableGeos(getFreeInputPoints());
 
 			case GEO_CLASS_POLYGON:
+			case GEO_CLASS_POLYLINE:
 				return containsOnlyMoveableGeos(getFreeInputPoints());
 
 			case GEO_CLASS_VECTOR:

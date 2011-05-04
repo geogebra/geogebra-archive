@@ -1185,6 +1185,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				// allow only moving of the following object types
 				if (movedGeoElement.isGeoLine() || 
 						movedGeoElement.isGeoPolygon() ||					 
+						movedGeoElement instanceof GeoPolyLine ||					 
 						movedGeoElement.isGeoConic() || 
 						movedGeoElement.isGeoImage() || 
 						movedGeoElement.isGeoList() || 
