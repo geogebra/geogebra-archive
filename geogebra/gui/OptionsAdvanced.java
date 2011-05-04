@@ -1,6 +1,7 @@
 package geogebra.gui;
 
 import geogebra.euclidian.Drawable;
+import geogebra.euclidian.EuclidianView;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.virtualkeyboard.VirtualKeyboard;
 import geogebra.kernel.Kernel;
@@ -47,7 +48,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private Application app;
 
 	/** */
-	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel,  perspectivesPanel, miscPanel, angleUnitPanel, continuityPanel, pointStylePanel, checkboxSizePanel;
+	private JPanel virtualKeyboardPanel, tooltipPanel, languagePanel,  perspectivesPanel, miscPanel, angleUnitPanel, continuityPanel, pointStylePanel, checkboxSizePanel, rightAnglePanel, coordinatesPanel;
 	
 	/**	*/
 	private JLabel keyboardLanguageLabel, widthLabel, heightLabel, opacityLabel, tooltipLanguageLabel, tooltipTimeoutLabel;
@@ -59,10 +60,10 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting, cbUseJavaFonts, cbReverseMouseWheel;
 	
 	/** */
-	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian, continuityRadioOn, continuityRadioOff, pointStyleRadio0, pointStyleRadio1, pointStyleRadio2, pointStyleRadio3, pointStyleRadio4, pointStyleRadio6, pointStyleRadio7, checkboxSizeRadioRegular, checkboxSizeRadioLarge;
+	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian, continuityRadioOn, continuityRadioOff, pointStyleRadio0, pointStyleRadio1, pointStyleRadio2, pointStyleRadio3, pointStyleRadio4, pointStyleRadio6, pointStyleRadio7, checkboxSizeRadioRegular, checkboxSizeRadioLarge, rightAngleRadio1, rightAngleRadio2, rightAngleRadio3, rightAngleRadio4, coordinatesRadio1, coordinatesRadio2;
 	
 	/** */
-	private ButtonGroup angleUnitButtonGroup, continuityButtonGroup, pointStyleButtonGroup, checkboxSizeButtonGroup;
+	private ButtonGroup angleUnitButtonGroup, continuityButtonGroup, pointStyleButtonGroup, checkboxSizeButtonGroup, rightAngleButtonGroup, coordinatesButtonGroup;
 	
 	/** */
 	private JTextField tfKeyboardWidth, tfKeyboardHeight;
@@ -117,6 +118,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		initContinuityPanel();
 		initPointStylePanel();
 		initCheckboxSizePanel();
+		initRightAnglePanel();
+		initCoordinatesPanel();
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new FullWidthLayout());
@@ -128,6 +131,8 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		panel.add(continuityPanel);
 		panel.add(pointStylePanel);
 		panel.add(checkboxSizePanel);
+		panel.add(rightAnglePanel);
+		panel.add(coordinatesPanel);
 		panel.add(miscPanel);
 		
 		JScrollPane scrollPane = new JScrollPane(panel);
@@ -392,6 +397,54 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	}
 	
 	/**
+	 * Initialize the right angle panel
+	 */
+	private void initRightAnglePanel() {
+		rightAnglePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		rightAngleButtonGroup = new ButtonGroup();
+		
+		rightAngleRadio1 = new JRadioButton();
+		rightAngleRadio1.addActionListener(this);
+		rightAnglePanel.add(rightAngleRadio1);
+		rightAngleButtonGroup.add(rightAngleRadio1);
+
+		rightAngleRadio2 = new JRadioButton();
+		rightAngleRadio2.addActionListener(this);
+		rightAnglePanel.add(rightAngleRadio2);
+		rightAngleButtonGroup.add(rightAngleRadio2);
+
+		rightAngleRadio3 = new JRadioButton();
+		rightAngleRadio3.addActionListener(this);
+		rightAnglePanel.add(rightAngleRadio3);
+		rightAngleButtonGroup.add(rightAngleRadio3);
+
+		rightAngleRadio4 = new JRadioButton();
+		rightAngleRadio4.addActionListener(this);
+		rightAnglePanel.add(rightAngleRadio4);
+		rightAngleButtonGroup.add(rightAngleRadio4);
+	}
+
+	/**
+	 * Initialize the coordinates panel
+	 */
+	private void initCoordinatesPanel() {
+		coordinatesPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+		coordinatesButtonGroup = new ButtonGroup();
+		
+		coordinatesRadio1 = new JRadioButton();
+		coordinatesRadio1.addActionListener(this);
+		coordinatesPanel.add(coordinatesRadio1);
+		coordinatesButtonGroup.add(coordinatesRadio1);
+
+		coordinatesRadio2 = new JRadioButton();
+		coordinatesRadio2.addActionListener(this);
+		coordinatesPanel.add(coordinatesRadio2);
+		coordinatesButtonGroup.add(coordinatesRadio2);
+	}
+	
+	/**
 	 * Update the user interface, ie change selected values.
 	 * 
 	 * @remark Do not call setLabels() here
@@ -433,6 +486,14 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			pointStyleRadio0.setSelected(true);
 			break;
 		}
+
+		rightAngleRadio1.setSelected(app.getEuclidianView().getRightAngleStyle() == 0);
+		rightAngleRadio2.setSelected(app.getEuclidianView().getRightAngleStyle() == 1);
+		rightAngleRadio3.setSelected(app.getEuclidianView().getRightAngleStyle() == 2);
+		rightAngleRadio4.setSelected(app.getEuclidianView().getRightAngleStyle() == 3);
+
+		coordinatesRadio1.setSelected(app.getKernel().getCoordStyle() == 0);
+		coordinatesRadio2.setSelected(app.getKernel().getCoordStyle() == 1);
 
 		Layout layout = app.getGuiManager().getLayout();
 		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
@@ -560,6 +621,20 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 			app.getEuclidianView().setBooleanSize(26);
 			if (app.getGuiManager().hasEuclidianView2())
 				app.getGuiManager().getEuclidianView2().setBooleanSize(26);
+		} else if (e.getSource() == rightAngleRadio1) {
+			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_NONE);
+		} else if (e.getSource() == rightAngleRadio2) {
+			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE);
+		} else if (e.getSource() == rightAngleRadio3) {
+			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_DOT);
+		} else if (e.getSource() == rightAngleRadio4) {
+			app.getEuclidianView().setRightAngleStyle(EuclidianView.RIGHT_ANGLE_STYLE_L);
+		} else if (e.getSource() == coordinatesRadio1) {
+			app.getKernel().setCoordStyle(0);
+			app.getKernel().updateConstruction();
+		} else if (e.getSource() == coordinatesRadio2) {
+			app.getKernel().setCoordStyle(1);
+			app.getKernel().updateConstruction();
 		}
 	}
 
@@ -633,6 +708,17 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		checkboxSizeRadioRegular.setText(app.getMenu("CheckboxSize.Regular"));
 		checkboxSizeRadioLarge.setText(app.getMenu("CheckboxSize.Large"));
 
+		rightAnglePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("RightAngleStyle")));
+		rightAngleRadio1.setText(app.getMenu(app.getPlain("off")));
+		rightAngleRadio2.setText(app.getMenu("\u25a1"));
+		rightAngleRadio3.setText(app.getMenu("\u2219"));
+		rightAngleRadio4.setText(app.getMenu("\u2335"));
+		rightAngleRadio4.setFont(app.getFontCanDisplay("\u2335"));
+
+		coordinatesPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Coordinates")));
+		coordinatesRadio1.setText(app.getMenu("A = (x, y)"));
+		coordinatesRadio2.setText(app.getMenu("A(x | y)"));
+
 		pointStylePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("DefaultPointStyle")));
 		pointStyleRadio0.setText(app.getMenu("\u25cf"));
 		pointStyleRadio1.setText(app.getMenu("\u2716"));
@@ -641,7 +727,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		pointStyleRadio4.setText(app.getMenu("\u25c6"));
 		pointStyleRadio6.setText(app.getMenu("\u25b2"));
 		pointStyleRadio7.setText(app.getMenu("\u25bc"));
-	
+
 		perspectivesPanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("Perspectives")));
 		cbIgnoreDocumentLayout.setText(app.getPlain("IgnoreDocumentLayout"));
 		cbShowTitleBar.setText(app.getPlain("ShowTitleBar"));
