@@ -25,7 +25,7 @@ import java.util.HashSet;
  * 
  * @author Michael Borcherds, adapted from GeoPolygon
  */
-public class GeoPolyLine extends GeoElement implements NumberValue, Path, LineProperties,Transformable,
+public class GeoPolyLine extends GeoElement implements NumberValue, Path, Traceable, LineProperties,Transformable,
 Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dilateable,GeoPolyLineInterface{
 	
 	private static final long serialVersionUID = 1L;
@@ -453,6 +453,22 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 		return true;
 	}
 	
+	   private boolean trace;
+
+
+		public boolean isTraceable() {
+			return true;
+		}
+
+		public void setTrace(boolean trace) {
+			this.trace = trace;
+		}
+
+		public boolean getTrace() {
+			return trace;
+		}
+		
+
 	
 
 }

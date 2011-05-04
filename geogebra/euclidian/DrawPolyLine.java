@@ -72,7 +72,30 @@ implements Previewable {
             	// don't return here to make sure that getBounds() works for offscreen points too
     		}             
         }
+        
+		// draw trace
+		if (poly.getTrace()) {
+			isTracing = true;
+			Graphics2D g2 = view.getBackgroundGraphics();
+			if (g2 != null) drawTrace(g2);
+		} else {
+			if (isTracing) {
+				isTracing = false;
+				view.updateBackground();
+			}
+		}			
+
     }
+	
+	final void drawTrace(Graphics2D g2) {
+    	if (isVisible) {
+    		g2.setPaint(geo.getObjectColor());
+    		g2.setStroke(objStroke);  
+            Drawable.drawWithValueStrokePure(gp, g2);
+    	}
+	}
+    
+
 	
 	private void addPointsToPath(GeoPointND[] points) {
 		if (gp == null)
