@@ -60,7 +60,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 	private JCheckBox cbKeyboardShowAutomatic, cbUseLocalDigits, cbUseLocalLabels, cbReturnAngleInverseTrig, cbIgnoreDocumentLayout, cbShowTitleBar, cbEnableScripting, cbUseJavaFonts, cbReverseMouseWheel;
 	
 	/** */
-	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian, continuityRadioOn, continuityRadioOff, pointStyleRadio0, pointStyleRadio1, pointStyleRadio2, pointStyleRadio3, pointStyleRadio4, pointStyleRadio6, pointStyleRadio7, checkboxSizeRadioRegular, checkboxSizeRadioLarge, rightAngleRadio1, rightAngleRadio2, rightAngleRadio3, rightAngleRadio4, coordinatesRadio1, coordinatesRadio2;
+	private JRadioButton angleUnitRadioDegree, angleUnitRadioRadian, continuityRadioOn, continuityRadioOff, pointStyleRadio0, pointStyleRadio1, pointStyleRadio2, pointStyleRadio3, pointStyleRadio4, pointStyleRadio6, pointStyleRadio7, checkboxSizeRadioRegular, checkboxSizeRadioLarge, rightAngleRadio1, rightAngleRadio2, rightAngleRadio3, rightAngleRadio4, coordinatesRadio1, coordinatesRadio2, coordinatesRadio3;
 	
 	/** */
 	private ButtonGroup angleUnitButtonGroup, continuityButtonGroup, pointStyleButtonGroup, checkboxSizeButtonGroup, rightAngleButtonGroup, coordinatesButtonGroup;
@@ -442,6 +442,11 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		coordinatesRadio2.addActionListener(this);
 		coordinatesPanel.add(coordinatesRadio2);
 		coordinatesButtonGroup.add(coordinatesRadio2);
+
+		coordinatesRadio3 = new JRadioButton();
+		coordinatesRadio3.addActionListener(this);
+		coordinatesPanel.add(coordinatesRadio3);
+		coordinatesButtonGroup.add(coordinatesRadio3);
 	}
 	
 	/**
@@ -494,6 +499,7 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 
 		coordinatesRadio1.setSelected(app.getKernel().getCoordStyle() == 0);
 		coordinatesRadio2.setSelected(app.getKernel().getCoordStyle() == 1);
+		coordinatesRadio3.setSelected(app.getKernel().getCoordStyle() == 2);
 
 		Layout layout = app.getGuiManager().getLayout();
 		cbIgnoreDocumentLayout.setSelected(layout.isIgnoringDocument());
@@ -635,6 +641,9 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 		} else if (e.getSource() == coordinatesRadio2) {
 			app.getKernel().setCoordStyle(1);
 			app.getKernel().updateConstruction();
+		} else if (e.getSource() == coordinatesRadio3) {
+			app.getKernel().setCoordStyle(2);
+			app.getKernel().updateConstruction();
 		}
 	}
 
@@ -710,14 +719,15 @@ public class OptionsAdvanced  extends JPanel implements ActionListener, ChangeLi
 
 		rightAnglePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("RightAngleStyle")));
 		rightAngleRadio1.setText(app.getMenu(app.getPlain("off")));
-		rightAngleRadio2.setText(app.getMenu("\u25a1"));
-		rightAngleRadio3.setText(app.getMenu("\u2219"));
-		rightAngleRadio4.setText(app.getMenu("\u2335"));
+		rightAngleRadio2.setText("\u25a1");
+		rightAngleRadio3.setText("\u2219");
+		rightAngleRadio4.setText("\u2335");
 		rightAngleRadio4.setFont(app.getFontCanDisplay("\u2335"));
 
 		coordinatesPanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("Coordinates")));
 		coordinatesRadio1.setText(app.getMenu("A = (x, y)"));
 		coordinatesRadio2.setText(app.getMenu("A(x | y)"));
+		coordinatesRadio3.setText(app.getMenu("A: (x, y)"));
 
 		pointStylePanel.setBorder(BorderFactory.createTitledBorder(app.getPlain("DefaultPointStyle")));
 		pointStyleRadio0.setText(app.getMenu("\u25cf"));
