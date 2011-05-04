@@ -39,14 +39,8 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	;
 	
 	private JMenu
-		menuAngleUnit,
 		menuPointCapturing,
 		menuDecimalPlaces,
-		menuContinuity,
-		menuPointStyle,
-		menuBooleanSize,
-		menuRightAngleStyle,
-		menuCoordStyle,
 		menuLabeling, 
 		menuAlgebraStyle
 	;
@@ -103,15 +97,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		add(menuPointCapturing);
 		updateMenuPointCapturing();
 
-		// Angle unit
-		menuAngleUnit = new JMenu(app.getMenu("AngleUnit"));
-		menuAngleUnit.setIcon(app.getImageIcon("mode_angle_16.gif"));
-		String[] strAngleUnit = { "Degree", "Radiant" };
-		addRadioButtonMenuItems(menuAngleUnit, (ActionListener) this,
-				strAngleUnit, strAngleUnit, 0);
-		add(menuAngleUnit);
-		updateMenuAngleUnit();
-
 		// decimal places
 		menuDecimalPlaces = new JMenu(app.getMenu("Rounding"));
 		menuDecimalPlaces.setIcon(app.getEmptyIcon());
@@ -128,99 +113,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		add(menuDecimalPlaces);
 		updateMenuDecimalPlaces();
 
-		// continuity
-		menuContinuity = new JMenu(app.getMenu("Continuity"));
-		menuContinuity.setIcon(app.getEmptyIcon());
-		String[] strContinuity = { "on", "off" };
-		String[] strContinuityAC = { "true Continuity", "false Continuity" };
-		addRadioButtonMenuItems(menuContinuity, (ActionListener) this,
-				strContinuity, strContinuityAC, 0);
-		add(menuContinuity);
-		updateMenuContinuity();
-
 		addSeparator();
-
-		// point style
-		menuPointStyle = new JMenu(app.getMenu("PointStyle"));
-		menuPointStyle.setIcon(app.getImageIcon("mode_point_16.gif"));
-		// dot, circle, cross, plus
-		String[] strPointStyle = { "\u25cf", "\u25cb", "\u2716", "\u271a", "\u25c6", "\u25b2", "\u25bc" };
-		String[] strPointStyleAC = { "0", "2", "1", "3", "4", "6", "7" };
-		ActionListener psal = new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				int style = Integer.parseInt(ae.getActionCommand());
-				app.getEuclidianView().setPointStyle(style);
-				if (app.getGuiManager().hasEuclidianView2())
-					app.getGuiManager().getEuclidianView2().setPointStyle(style);
-			}
-		};
-		addRadioButtonMenuItems(menuPointStyle, psal, strPointStyle,
-				strPointStyleAC, 0);
-		add(menuPointStyle);
-		updateMenuPointStyle();
-
-		// checkboxsize
-		// Michael Borcherds 2008-05-12
-		menuBooleanSize = new JMenu(app.getMenu("CheckboxSize"));
-		menuBooleanSize.setIcon(app.getImageIcon("checkbox16.gif"));
-		// dot, circle, cross
-		String[] strBooleanSize = { app.getMenu("CheckboxSize.Regular"),
-				app.getMenu("CheckboxSize.Large") };
-		String[] strBooleanSizeAC = { "13", "26" };
-		ActionListener bsal = new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				int size = Integer.parseInt(ae.getActionCommand());
-				app.getEuclidianView().setBooleanSize(size);
-				if (app.getGuiManager().hasEuclidianView2())
-					app.getGuiManager().getEuclidianView2().setBooleanSize(size);
-			}
-		};
-		addRadioButtonMenuItems(menuBooleanSize, bsal, strBooleanSize,
-				strBooleanSizeAC, 0);
-		add(menuBooleanSize);
-		updateMenuBooleanSize();
-
-		// added by Loï¿½c BEGIN
-		// right angle style
-
-		menuRightAngleStyle = new JMenu(app.getMenu("RightAngleStyle"));
-		menuRightAngleStyle.setIcon(app.getImageIcon("right_angle.gif"));
-		// dot, none, square
-		String[] strAngleStyle = { app.getPlain("off"), "\u25a1", "\u2219", "\u2335" };
-		String[] strAngleStyleAC = {
-				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_NONE),
-				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_SQUARE),
-				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_DOT),
-				String.valueOf(EuclidianView.RIGHT_ANGLE_STYLE_L) };
-		ActionListener asal = new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				int style = Integer.parseInt(ae.getActionCommand());
-				app.getEuclidianView().setRightAngleStyle(style);
-			}
-		};
-		addRadioButtonMenuItems(menuRightAngleStyle, asal, strAngleStyle,
-				strAngleStyleAC, 0);
-		add(menuRightAngleStyle);
-		updateMenuRightAngleStyle();
-		// END
-
-		// coordinate style
-		menuCoordStyle = new JMenu(app.getPlain("Coordinates"));
-		menuCoordStyle.setIcon(app.getEmptyIcon());
-		// dot, circle, cross
-		String[] strCoordStyle = { "A = (x, y)", "A(x | y)" };
-		String[] strCoordStyleAC = { "0", "1" };
-		ActionListener csal = new ActionListener() {
-			public void actionPerformed(ActionEvent ae) {
-				int style = Integer.parseInt(ae.getActionCommand());
-				kernel.setCoordStyle(style);
-				kernel.updateConstruction();
-			}
-		};
-		addRadioButtonMenuItems(menuCoordStyle, csal, strCoordStyle,
-				strCoordStyleAC, 0);
-		add(menuCoordStyle);
-		updateMenuCoordStyle();
 
 		// Labeling
 		menuLabeling = new JMenu(app.getMenu("Labeling"));
@@ -428,30 +321,9 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	public void update() {
 		// TODO update labels
 		
-		updateMenuAngleUnit();
-		updateMenuBooleanSize();
-		updateMenuContinuity();
-		updateMenuCoordStyle();
 		updateMenuDecimalPlaces();
 		updateMenuPointCapturing();
-		updateMenuPointStyle();
-		updateMenuRightAngleStyle();
 		updateMenuViewDescription();
-	}
-	
-	/**
-	 * Update angle menu (switch between degree / radiant).
-	 */
-	private void updateMenuAngleUnit() {
-		int pos;
-		if (kernel.getAngleUnit() == Kernel.ANGLE_DEGREE)
-			pos = 0;
-		else
-			pos = 1;
-		if (menuAngleUnit != null) {
-			((JRadioButtonMenuItem) menuAngleUnit.getMenuComponent(pos))
-					.setSelected(true);
-		}
 	}
 	
 	/**
@@ -463,58 +335,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 					.setSelected(true);
 		}
 	}
-	
-	/**
-	 * Update default point drawing style.
-	 */
-	protected void updateMenuPointStyle() {
-		if (menuPointStyle == null) return;
-		
-		int pos = app.getEuclidianView().getPointStyle();
-		if (pos == 1) pos=2; else if (pos == 2) pos=1; // bugfix swap 2 and 1 Michael Borcherds 2008-03-13
-		if (pos > 5) pos--; // needed as hollow diamond not in menu (yet)
-		((JRadioButtonMenuItem) menuPointStyle.getMenuComponent(pos)).setSelected(true);
-	}
-	
-	/**
-	 * Update the size of the checkboxes.
-	 */
-	private void updateMenuBooleanSize() {
-		if (menuBooleanSize == null)
-			return;
 
-		int size = app.getEuclidianView().getBooleanSize();
-		int pos = (size == 13) ? 0 : 1; // only 13 and 26 allowed
-		((JRadioButtonMenuItem) menuBooleanSize.getMenuComponent(pos))
-				.setSelected(true);
-	}
-
-	/**
-	 * Update the style of a right angle in the euclidian view.
-	 * 
-	 * @author Loïc
-	 */
-	private void updateMenuRightAngleStyle() {
-		if (menuRightAngleStyle == null)
-			return;
-
-		int pos = app.getEuclidianView().getRightAngleStyle();
-		((JRadioButtonMenuItem) menuRightAngleStyle.getMenuComponent(pos))
-				.setSelected(true);
-	}
-	
-	/**
-	 * Update the coordinate style.
-	 */
-	private void updateMenuCoordStyle() {
-		if (menuCoordStyle == null)
-			return;
-
-		int pos = kernel.getCoordStyle();
-		((JRadioButtonMenuItem) menuCoordStyle.getMenuComponent(pos))
-				.setSelected(true);
-	}
-	
 	/**
 	 * Update the point capturing menu.
 	 */
@@ -562,19 +383,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		}
 
 	}
-	
-	/**
-	 * Update the continuity menu.
-	 */
-	private void updateMenuContinuity() {
-		int pos = kernel.isContinuous() ? 0 : 1;
-		try {
-			((JRadioButtonMenuItem) menuContinuity.getMenuComponent(pos))
-					.setSelected(true);
-		} catch (Exception e) {
-		}
-	}
-	
+
 	/**
 	 * Handle the change of the language.
 	 */
@@ -597,19 +406,8 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		String cmd = event.getActionCommand();
 
-		// change angle unit
-		if (cmd.equals("Degree")) {
-			kernel.setAngleUnit(Kernel.ANGLE_DEGREE);
-			kernel.updateConstruction();
-			app.setUnsaved();
-		} else if (cmd.equals("Radiant")) {
-			kernel.setAngleUnit(Kernel.ANGLE_RADIANT);
-			kernel.updateConstruction();
-			app.setUnsaved();
-		}
-
 		// change graphics quality
-		else if (cmd.equals("LowQuality")) {
+		if (cmd.equals("LowQuality")) {
 			app.getEuclidianView().setAntialiasing(false);
 		} else if (cmd.equals("HighQuality")) {
 			app.getEuclidianView().setAntialiasing(true);
@@ -671,14 +469,6 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		else if (cmd.endsWith("PointCapturing")) {
 			int mode = Integer.parseInt(cmd.substring(0, 1));
 			app.getEuclidianView().setPointCapturing(mode);
-			app.setUnsaved();
-		}
-
-		// Continuity
-		else if (cmd.endsWith("Continuity")) {
-			boolean state = cmd.startsWith("true");
-			kernel.setContinuous(state);
-			kernel.updateConstruction();
 			app.setUnsaved();
 		}
 
