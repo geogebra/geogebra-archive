@@ -284,17 +284,15 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 		// better for loci with very few segments eg from ShortestDistance[ ]
 		GeoPoint P = (GeoPoint) PI;
 		PathParameter pp = P.getPathParameter();
-		
-		//Application.debug("XXXXXXXXXXXXXXXXXXXX");
-		
+					
 		int n = (int)Math.floor(pp.t);
 		
 		double t = pp.t - n; // between 0 and 1
 		
-		// check n is in a sensible range
+		// check n and n+1 are in a sensible range
 		// might occur if locus has changed no of segments/points
-		if (n >= myPointList.size() || n < 0) {
-			n = (n < 0) ? 0 : myPointList.size() - 1;
+		if (n+1 >= myPointList.size() || n < 0) {
+			n = (n < 0) ? 0 : myPointList.size() - 2;
 		}
 		
 		MyPoint locusPoint = (MyPoint) myPointList.get(n);
