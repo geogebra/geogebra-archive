@@ -27,7 +27,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	private Layout layout;
 	
 	private AbstractAction
-		drawingPadPropAction,
+		//drawingPadPropAction,
 		savePreferencesAction,
 		clearPreferencesAction,
 		showOptionsAction
@@ -126,7 +126,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 				lastr, 0);
 		add(menuLabeling);
 		
-		add(drawingPadPropAction);	
+		//add(drawingPadPropAction);	
 
 		/*
 		 * // Graphics quality submenu = new
@@ -280,7 +280,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	{
 		// display the options dialog
 		showOptionsAction = new AbstractAction(app
-				.getMenu("Options"), app.getEmptyIcon()) {
+				.getMenu("Options")+"...", app.getImageIcon("document-properties.png")) {
 			public static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
@@ -288,6 +288,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			}
 		};
 
+		/*
 		drawingPadPropAction = new AbstractAction(app.getPlain("DrawingPad")
 				+ " ...", app.getImageIcon("document-properties.png")) {
 			private static final long serialVersionUID = 1L;
@@ -295,7 +296,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				app.getGuiManager().showOptionsDialog(OptionsDialog.TAB_EUCLIDIAN);
 			}
-		};
+		};*/
 
 		savePreferencesAction = new AbstractAction(
 				app.getMenu("Settings.Save"), app
