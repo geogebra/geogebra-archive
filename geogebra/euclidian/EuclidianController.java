@@ -1128,6 +1128,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		} else {
 			// no geo clicked at
 			moveMode = MOVE_NONE;	
+			resetMovedGeoPoint();
 			return;
 		}				
 
@@ -1135,27 +1136,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 
-		//doSingleHighlighting(movedGeoElement);				
+		resetMovedGeoPoint();
 
-		/*
-		// if object was chosen before, take it now!
-		ArrayList selGeos = app.getSelectedGeos();
-		if (selGeos.size() == 1 && hits != null && hits.contains(selGeos.get(0))) {
-			// object was chosen before: take it
-			geo = (GeoElement) selGeos.get(0);			
-		} else {
-			geo = chooseGeo(hits);			
-		}		
-
-		if (geo != null) {
-			app.clearSelectedGeos(false);
-			app.addSelectedGeo(geo);
-			moveModeSelectionHandled = true;			
-		}						
-
-		movedGeoElement = geo;
-		doSingleHighlighting(movedGeoElement);	
-		 */	
 
 		// multiple geos selected
 		if (movedGeoElement != null && selGeos.size() > 1) {									
@@ -1229,12 +1211,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		else if (movedGeoElement.isGeoPoint()) {
 			moveMode = MOVE_POINT;
 			setMovedGeoPoint(movedGeoElement);
-			/*
-			movedGeoPoint = (GeoPoint) movedGeoElement;
-			view.setShowMouseCoords(!app.isApplet()
-					&& !movedGeoPoint.hasPath());
-			view.setDragCursor();
-			 */
 		} 			
 
 		// free line
@@ -1823,7 +1799,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// used for 3D
-	protected void processReleaseForMovedGeoPoint(){
+	protected void processReleaseForMovedGeoPoint(MouseEvent e){
 		
 		// deselect point after drag, but not on click
 		// outdated - we want to leave the point selected after drag now
@@ -1857,7 +1833,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) view.resetTraceRow(); // for trace/spreadsheet
 		if (getMovedGeoPoint() != null){
 
-			processReleaseForMovedGeoPoint();
+			processReleaseForMovedGeoPoint(e);
 			/*
 			// deselect point after drag, but not on click
 			if (movedGeoPointDragged) getMovedGeoPoint().setSelected(false);
@@ -4606,35 +4582,40 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	protected GeoElement[] switchModeForThreePoints(){
 		// fetch the three selected points
-		GeoPoint[] points = getSelectedPoints();
+		GeoPointND[] points = getSelectedPointsND();
 		GeoElement[] ret = { null };
 		switch (mode) {
 		case EuclidianView.MODE_CIRCLE_THREE_POINTS:
-			ret[0] = kernel.Circle(null, points[0], points[1], points[2]);
+			if ( ((GeoElement) points[0]).isGeoElement3D() 
+					|| ((GeoElement) points[1]).isGeoElement3D() 
+					|| ((GeoElement) points[2]).isGeoElement3D() )
+				ret[0] = kernel.getManager3D().Circle3D(null, points[0], points[1], points[2]);
+			else
+				ret[0] = kernel.Circle(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
 		case EuclidianView.MODE_ELLIPSE_THREE_POINTS:
-			ret[0] = kernel.Ellipse(null, points[0], points[1], points[2]);
+			ret[0] = kernel.Ellipse(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
 		case EuclidianView.MODE_HYPERBOLA_THREE_POINTS:
-			ret[0] = kernel.Hyperbola(null, points[0], points[1], points[2]);
+			ret[0] = kernel.Hyperbola(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
 		case EuclidianView.MODE_CIRCUMCIRCLE_ARC_THREE_POINTS:
-			ret[0] = kernel.CircumcircleArc(null, points[0], points[1], points[2]);
+			ret[0] = kernel.CircumcircleArc(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
 		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
-			ret[0] = kernel.CircumcircleSector(null, points[0], points[1], points[2]);
+			ret[0] = kernel.CircumcircleSector(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
 		case EuclidianView.MODE_CIRCLE_ARC_THREE_POINTS:
-			ret[0] = kernel.CircleArc(null, points[0], points[1], points[2]);
+			ret[0] = kernel.CircleArc(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;
 
 		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
-			ret[0] = kernel.CircleSector(null, points[0], points[1], points[2]);
+			ret[0] = kernel.CircleSector(null, (GeoPoint) points[0], (GeoPoint) points[1], (GeoPoint) points[2]);
 			break;												
 
 		default:

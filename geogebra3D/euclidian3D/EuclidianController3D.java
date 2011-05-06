@@ -968,7 +968,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	///////////////////////////////////////////
 	// mouse released
 	
-	protected void processReleaseForMovedGeoPoint(){
+	protected void processReleaseForMovedGeoPoint(MouseEvent e){
 		
 		
 		
@@ -983,8 +983,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				//avoid switch if the point is created by a click
 				freePointJustCreated=false;
 			else{
-				//switch the direction of move (xy or z)
-				if (!movedGeoPointDragged){
+				//switch the direction of move (xy or z) in case of left-click
+				//if (!movedGeoPointDragged){
+				if (!DRAGGING_OCCURED && !Application.isRightClick(e)){
 					movedGeoPoint.switchMoveMode();
 					((EuclidianView3D) view).getCursor3D().setMoveMode(movedGeoPoint.getMoveMode());
 					((EuclidianView3D) view).setDefaultCursorWillBeHitCursor();
@@ -992,7 +993,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			}
 		}
 		
-		super.processReleaseForMovedGeoPoint();
+		super.processReleaseForMovedGeoPoint(e);
 		
 	}
 

@@ -36,6 +36,7 @@ import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
 import java.awt.Graphics2D;
@@ -117,7 +118,7 @@ final public class DrawConic extends Drawable implements Previewable {
     private boolean hypLeftOnScreen, hypRightOnScreen;      
     
     // preview of circle (two points or three points)
-	private ArrayList<GeoPoint> prevPoints;
+	private ArrayList<GeoPointND> prevPoints;
 	private ArrayList<GeoSegment> prevSegments;
 	private ArrayList<GeoConic> prevConics; 
 	private GeoPoint [] previewTempPoints;  
@@ -160,7 +161,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	 * @param mode 
 	 * @param points 
 	 */
-	DrawConic(EuclidianView view, int mode, ArrayList<GeoPoint> points) {
+	DrawConic(EuclidianView view, int mode, ArrayList<GeoPointND> points) {
 		this.view = view; 
 		prevPoints = points;
 		previewMode = mode;	
@@ -184,7 +185,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	 * @param segments 
 	 * @param conics 
 	 */
-	DrawConic(EuclidianView view, int mode, ArrayList<GeoPoint> points, ArrayList<GeoSegment> segments, ArrayList<GeoConic> conics) {
+	DrawConic(EuclidianView view, int mode, ArrayList<GeoPointND> points, ArrayList<GeoSegment> segments, ArrayList<GeoConic> conics) {
 		this.view = view; 
 		prevPoints = points;
 		prevSegments = segments;
@@ -1159,7 +1160,8 @@ final public class DrawConic extends Drawable implements Previewable {
 			isVisible = conic != null && prevPoints.size() == neededPrevPoints;
 			if (isVisible) {
 				for (int i=0; i < prevPoints.size(); i++) {
-					previewTempPoints[i].setCoords((GeoPoint) prevPoints.get(i));					
+					Coords p = view.getInhomCoordsForView(prevPoints.get(i).getInhomCoordsInD(3));
+					previewTempPoints[i].setCoords(p,true);					
 				}						
 				previewTempPoints[0].updateCascade();			
 			}	

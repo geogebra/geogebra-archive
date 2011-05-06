@@ -29,6 +29,7 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyVecNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.util.Unicode;
@@ -458,7 +459,7 @@ GeoPointND, Animatable, Transformable  {
         // of concis correctly for path parameter calculation of point P
         GeoElement geo = path.toGeoElement();
         if (geo.isGeoConic()) {
-        	((GeoConic) geo).addPointOnConic(this);
+        	((GeoConicND) geo).addPointOnConic(this);
         }   
 	}
 	
