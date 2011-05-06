@@ -536,7 +536,11 @@ public class Toolbar extends JToolBar {
 		+" || "
 		+EuclidianView3D.MODE_POINT_ON_OBJECT
 		+" "
+		+EuclidianView3D.MODE_POINT
+		+" "
 		+EuclidianView3D.MODE_INTERSECT
+		+" "
+		+EuclidianView3D.MODE_MIDPOINT
 		+" | "
 		+EuclidianView3D.MODE_JOIN
 		+" "

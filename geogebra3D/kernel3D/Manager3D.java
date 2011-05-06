@@ -2,6 +2,7 @@ package geogebra3D.kernel3D;
 
 import geogebra.kernel.AlgoCircleThreePoints;
 import geogebra.kernel.AlgoLinePointLine;
+import geogebra.kernel.AlgoMidpoint;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
@@ -148,6 +149,18 @@ public class Manager3D implements Manager3DInterface {
 
 		return p;
 	}	
+	
+	/** 
+	 * Midpoint M = (P + Q)/2
+	 */
+	final public GeoPoint3D Midpoint(
+		String label,
+		GeoPointND P,
+		GeoPointND Q) {
+		AlgoMidpoint3D algo = new AlgoMidpoint3D(cons, label, P, Q);
+		GeoPoint3D M = algo.getPoint();
+		return M;
+	}
 
 
 	/** Segment3D label linking points v1 and v2   */

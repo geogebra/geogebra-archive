@@ -4470,8 +4470,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		if (selPoints() == 2) {
 			// fetch the two selected points
-			GeoPoint[] points = getSelectedPoints();
-			ret[0] = kernel.Midpoint(null, points[0], points[1]);
+			GeoPointND[] points = getSelectedPointsND();
+			if (((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[1]).isGeoElement3D())
+				ret[0] = (GeoElement) kernel.getManager3D().Midpoint(null, points[0], points[1]);
+			else
+				ret[0] = kernel.Midpoint(null, (GeoPoint) points[0], (GeoPoint) points[1]);
 			return ret;
 		} else if (selSegments() == 1) {
 			// fetch the selected segment

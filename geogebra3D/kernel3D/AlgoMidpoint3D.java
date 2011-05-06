@@ -16,17 +16,19 @@ the Free Software Foundation.
  * Created on 24. September 2001, 21:37
  */
 
-package geogebra.kernel;
+package geogebra3D.kernel3D;
 
+import geogebra.kernel.AlgoMidpointND;
+import geogebra.kernel.Construction;
 import geogebra.kernel.kernelND.GeoPointND;
 
 
 /**
  *
- * @author  Markus
+ * @author  mathieu
  * @version 
  */
-public class AlgoMidpoint extends AlgoMidpointND {
+public class AlgoMidpoint3D extends AlgoMidpointND {
       
 
     /** 
@@ -36,7 +38,7 @@ public class AlgoMidpoint extends AlgoMidpointND {
      * @param P
      * @param Q
      */
-    AlgoMidpoint(Construction cons, String label, GeoPoint P, GeoPoint Q) {
+    AlgoMidpoint3D(Construction cons, String label, GeoPointND P, GeoPointND Q) {
     	this(cons, P, Q);
     	getPoint().setLabel(label);
     }
@@ -47,36 +49,30 @@ public class AlgoMidpoint extends AlgoMidpointND {
      * @param P
      * @param Q
      */
-    AlgoMidpoint(Construction cons, GeoPoint P, GeoPoint Q) {
+    AlgoMidpoint3D(Construction cons, GeoPointND P, GeoPointND Q) {
         super(cons,P,Q);
     }
 
 	protected GeoPointND newGeoPoint(Construction cons) {
 		
-		return new GeoPoint(cons);
+		return new GeoPoint3D(cons);
 	}
 
 
 
 
     
-    protected GeoPoint getPoint() {
-        return (GeoPoint) super.getPoint();
+    protected GeoPoint3D getPoint() {
+        return (GeoPoint3D) super.getPoint();
     }
     
     protected void copyCoords(GeoPointND point){
-    	getPoint().setCoords((GeoPoint) point);
+    	getPoint().setCoords(point.getCoordsInD(3));
     }
     
     protected void computeMidCoords(){
-    	
-    	GeoPoint P = (GeoPoint) getP();
-        GeoPoint Q = (GeoPoint) getQ();
         
-    	getPoint().setCoords(
-                (P.inhomX + Q.inhomX) / 2.0d,
-                (P.inhomY + Q.inhomY) / 2.0d,
-                1.0);
+    	getPoint().setCoords(getP().getInhomCoordsInD(3).add(getQ().getInhomCoordsInD(3)).mul(0.5));
     }
 
 }

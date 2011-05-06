@@ -156,6 +156,8 @@ public interface GeoPointND {
 	public boolean isDefined();
 
 	public void updateCoords();
+
+	public void setUndefined();
 	
 	//private boolean movePointMode = MOVE_POINT_MODE_XY;
 

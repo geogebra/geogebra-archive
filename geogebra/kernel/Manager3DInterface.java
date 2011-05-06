@@ -65,6 +65,16 @@ public interface Manager3DInterface {
 
 			/** Point3D on a 1D path without cartesian coordinates   */
 			 public GeoElement Point3D(String label, Path path) ;
+			 
+
+
+			 /** 
+			  * Midpoint M = (P + Q)/2
+			  */
+			 public GeoPointND Midpoint(
+					 String label,
+					 GeoPointND P,
+					 GeoPointND Q);
 
 			/** Segment3D label linking points v1 and v2   */
 			/*

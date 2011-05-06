@@ -3,6 +3,7 @@ package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.Kernel;
 import geogebra.kernel.commands.CmdIntersect;
+import geogebra.kernel.commands.CmdMidpoint;
 import geogebra.kernel.commands.CmdUnitOrthogonalVector;
 import geogebra.kernel.commands.CommandDispatcher;
 
@@ -22,6 +23,8 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		cmdTable.put("Vector", new CmdVector3D(kernel));
 		cmdTable.put("Polygon", new CmdPolygon3D(kernel));
 		cmdTable.put("Point", new CmdPoint3D(kernel));
+		cmdTable.put("Midpoint", new CmdMidpoint3D(kernel));	
+		
 		cmdTable.put("Circle", new CmdCircle3D(kernel));
 		
 		
