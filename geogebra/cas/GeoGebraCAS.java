@@ -136,7 +136,16 @@ public class GeoGebraCAS {
 	 * @throws Throwable
 	 */
 	public String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
-		return cas.evaluateGeoGebraCAS(casInput);
+
+		Kernel kernel = app.getKernel();
+		boolean oldDigits = kernel.internationalizeDigits;
+		kernel.internationalizeDigits = false;
+		
+		String ret = cas.evaluateGeoGebraCAS(casInput);
+		
+		kernel.internationalizeDigits = oldDigits;
+		
+		return ret;
 	}
 	
 	/** 
