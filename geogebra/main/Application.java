@@ -421,7 +421,7 @@ public class Application implements KeyEventDispatcher {
 	protected Application(CommandLineArguments args, JFrame frame,
 			AppletImplementation appletImpl, Container comp, boolean undoActive) {
 
-		handleHelpVersionArgs(args);
+		if (args != null) handleHelpVersionArgs(args);
 		
 		isApplet = appletImpl != null;
 		
