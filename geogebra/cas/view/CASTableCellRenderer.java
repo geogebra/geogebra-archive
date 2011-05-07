@@ -1,5 +1,8 @@
 package geogebra.cas.view;
 
+import geogebra.kernel.Kernel;
+import geogebra.kernel.arithmetic.ExpressionNodeConstants;
+
 import java.awt.Component;
 
 import javax.swing.JTable;
@@ -20,8 +23,15 @@ public class CASTableCellRenderer extends CASTableCell implements
 			dummyField.setFont(view.getFont());
 			
 			CASTableCellValue tempV = (CASTableCellValue) value;	
+			
+			Kernel kernel = tempV.getKernel();
+			int oldCASPrintForm = kernel.getCASPrintForm();
+			kernel.setCASPrintForm(ExpressionNodeConstants.STRING_TYPE_LATEX);
+			
 			tempV.setRow(row);
 			setValue(tempV);
+
+			kernel.setCASPrintForm(oldCASPrintForm);
 							
 			// update row height
 			updateTableRowHeight(table, row);	

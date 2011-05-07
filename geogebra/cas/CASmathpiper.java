@@ -96,6 +96,7 @@ public class CASmathpiper extends CASgeneric {
 		// convert MathPiper result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
 		
+		Application.printStacktrace("");
 		// TODO: remove
 		System.out.println("eval with MathPiper: " + MathPiperString);
 		System.out.println("   result: " + result);

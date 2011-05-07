@@ -772,7 +772,12 @@ public class Kernel {
 				
 		case ExpressionNode.STRING_TYPE_MPREDUCE:
 			casPrintFormPI = "PI";
+			break;
 		
+		case ExpressionNode.STRING_TYPE_LATEX:
+			casPrintFormPI = "\\pi";
+			break;
+			
 			default:
 				casPrintFormPI = Unicode.PI_STRING;
 		}

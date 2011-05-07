@@ -90,8 +90,6 @@ public class CASmaxima extends CASgeneric {
 		
 		// EVALUATE input in Maxima 
 		String result = evaluateMaxima(MaximaString);
-		// TODO: replace by an adequate 
-		result=result.replaceAll("%i", "\u0131");
 		// convert Maxima result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
 		
@@ -243,6 +241,14 @@ public class CASmaxima extends CASgeneric {
 			if (result.indexOf("%e") > -1) {
 				result = result.replaceAll("%e",Unicode.EULER_STRING);
 				Application.debug("WARNING: replacing %e by Euler e",1);
+			}
+			
+			if (result.indexOf("%pi") > -1) {
+				result = result.replaceAll("%pi",Unicode.PI_STRING);
+			}
+			
+			if (result.indexOf("%i") > -1) {
+				result = result.replaceAll("%i",Unicode.IMAGINARY);
 			}
 			
 			if (result.indexOf(" =") > -1) { // y = not :=
@@ -580,7 +586,9 @@ public class CASmaxima extends CASgeneric {
         	maximaInput += ";";
         }    
        
-        return getMaxima().executeCall(maximaInput);
+        String result = getMaxima().executeCall(maximaInput);
+
+		return result;
 
 	}
 	

@@ -557,6 +557,11 @@ public class CASTableCellValue {
 		return sb.toString();
 	}
 
+	public Kernel getKernel() {
+		return kernel;
+		
+	}
+
 	// public void setLineBorderVisible(boolean inV){
 	// isLineBorderVisible = inV;
 	// }
