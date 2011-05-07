@@ -20,15 +20,13 @@ package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 import geogebra.util.Unicode;
 
 import java.util.HashSet;
-
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.MaxIterationsExceededException;
-import org.apache.commons.math.special.Erf;
 
 /**
  *
@@ -575,5 +573,37 @@ implements NumberValue {
         "\u0ed0"-"\u0ed9",
         "\u1040"-"\u1049"*/
 
+	}
+
+	public ExpressionValue gammaIncompleteRegularized(NumberValue lt) {
+		val = MyMath.gammaIncompleteRegularized(val, lt.getDouble());
+		isAngle = false;
+		return this;
+	}
+
+	public ExpressionValue gammaIncomplete(NumberValue lt) {
+		val = MyMath.gammaIncomplete(val, lt.getDouble(), kernel);
+		isAngle = false;
+		return this;
+	}
+
+	public ExpressionValue beta(NumberValue lt) {
+		val = MyMath.beta(val, lt.getDouble());
+		isAngle = false;
+		return this;
+	}
+
+	public ExpressionValue betaIncomplete(VectorValue lt) {
+		GeoVec2D vec = lt.getVector();
+		val = MyMath.betaIncomplete(val, vec.x, vec.y);
+		isAngle = false;
+		return this;
+	}
+
+	public ExpressionValue betaIncompleteRegularized(VectorValue lt) {
+		GeoVec2D vec = lt.getVector();
+		val = MyMath.betaIncompleteRegularized(val, vec.x, vec.y);
+		isAngle = false;
+		return this;
 	}
 }

@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.MaxIterationsExceededException;
+import org.apache.commons.math.special.Beta;
 import org.apache.commons.math.special.Erf;
 import org.apache.commons.math.special.Gamma;
 
@@ -116,6 +117,53 @@ public final class MyMath {
 		else
 			return -Math.PI/(x*gamma(-x, kernel)*Math.sin(Math.PI*x));
 // Michael Borcherds 2007-10-15 END
+	}
+	
+	final public static double gammaIncomplete(double a, double x, Kernel kernel) {		
+
+		try {
+			// see http://mathworld.wolfram.com/RegularizedGammaFunction.html
+			// http://en.wikipedia.org/wiki/Incomplete_gamma_function#Regularized_Gamma_functions_and_Poisson_random_variables
+			return Gamma.regularizedGammaQ(a, x) * gamma(a, kernel);
+		} catch (MathException e) {
+			return Double.NaN;
+		}
+	
+	}
+	
+	final public static double gammaIncompleteRegularized(double a, double x) {		
+
+		try {
+			return Gamma.regularizedGammaQ(a, x);
+		} catch (MathException e) {
+			return Double.NaN;
+		}
+	
+	}
+	
+	final public static double beta(double a, double b) {		
+
+		return Math.exp(Beta.logBeta(a, b));
+	
+	}
+	
+	final public static double betaIncomplete(double a, double b, double x) {	
+
+		try {
+			return Beta.regularizedBeta(x, a, b) * beta(a,b);
+		} catch (MathException e) {
+			return Double.NaN;
+		}
+	
+	}
+	
+	final public static double betaIncompleteRegularized(double a, double b, double x) {		
+
+		try {
+			return Beta.regularizedBeta(x, a, b);
+		} catch (MathException e) {
+			return Double.NaN;
+		}
 	}
 	
 	/**

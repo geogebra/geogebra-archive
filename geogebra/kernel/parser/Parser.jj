@@ -342,6 +342,12 @@ TOKEN: {
 |	< ATANH_FUNC: ( "atanh(" | "arctanh(" | "ArcTanh(" ) > 
 |	< EXP_FUNC: ( "exp(" | "Exp(" ) > 
 |	< LOG_FUNC: ( "log(" | "ln(" | "Ln(" ) > 
+|	< BETA_FUNC:  "beta(" > 
+|	< BETA_INCOMPLETE_FUNC:  "betaIncomplete(" > 
+|	< BETA_INCOMPLETE_REGULARIZED_FUNC:  "betaIncompleteRegularized(" > 
+|	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
+|	< GAMMA_INCOMPLETE_FUNC:  "gammaIncomplete(" > 
+|	< GAMMA_INCOMPLETE_REGULARIZED_FUNC:  "gammaIncompleteRegularized(" > 
 |	< LD_FUNC:    "ld("  > 
 |	< LG_FUNC:    "lg("  > 
 |	< SQRT_FUNC: ( "sqrt(" | "Sqrt(" ) > 
@@ -353,7 +359,6 @@ TOKEN: {
 |	< CONJUGATE_FUNC:  ( "conjugate(" | "Conjugate(" ) > 
 |	< ARG_FUNC:  ( "arg(" | "Arg(" ) > 
 |	< ROUND_FUNC: ( "round(" | "Round(" ) > 
-|	< GAMMA_FUNC: ( "gamma(" | "Gamma(" ) > 
 |	< RANDOM_FUNC:  "random()"  >
 |	< DERIV_MP:  "Deriv()"  >  // may be returned by MathPiper
 | 	< FUNCTION_LABEL: (<SPREADSHEET_LABEL> | <LABEL> ) "(" >
@@ -1771,6 +1776,26 @@ ExpressionNode numberFunction():
 	LOOKAHEAD (2147483647)
     <LOG_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.LOGB, en2); }
+|
+	LOOKAHEAD (2147483647)
+    <GAMMA_INCOMPLETE_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA_INCOMPLETE, en2); }
+|
+	LOOKAHEAD (2147483647)
+    <GAMMA_INCOMPLETE_REGULARIZED_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.GAMMA_INCOMPLETE_REGULARIZED, en2); }
+|
+	LOOKAHEAD (2147483647)
+    <BETA_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) ")"
+      { return new ExpressionNode(kernel, en, ExpressionNode.BETA, en2); }
+|
+	LOOKAHEAD (2147483647)
+    <BETA_INCOMPLETE_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) < COMMA > ( en3 = expressionOrEquation() ) ")"
+      { return new ExpressionNode(kernel, new MyNumberPair(kernel, en, en2), ExpressionNode.BETA_INCOMPLETE, en3); }
+|
+	LOOKAHEAD (2147483647)
+    <BETA_INCOMPLETE_REGULARIZED_FUNC> ( en = expressionOrEquation() ) < COMMA > ( en2 = expressionOrEquation() ) < COMMA > ( en3 = expressionOrEquation() ) ")"
+      { return new ExpressionNode(kernel, new MyNumberPair(kernel, en, en2), ExpressionNode.BETA_INCOMPLETE_REGULARIZED, en3); }
 | 
     <LOG_FUNC> en = expressionOrEquation() ")"
       { return new ExpressionNode(kernel, en, ExpressionNode.LOG, null); }

@@ -2912,6 +2912,101 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			sb.append(rightBracket(STRING_TYPE));
 			break;
 
+		case GAMMA_INCOMPLETE:
+			switch (STRING_TYPE) {
+			case STRING_TYPE_LATEX:
+				sb.append("\\Gamma \\left( ");
+				break;
+
+			case STRING_TYPE_MAXIMA:
+				sb.append("gamma_incomplete(");
+				break;
+
+			default:
+				sb.append("gammaIncomplete(");
+			}
+			sb.append(leftStr);
+			sb.append(", ");
+			sb.append(rightStr);
+			sb.append(rightBracket(STRING_TYPE));
+			break;
+
+		case GAMMA_INCOMPLETE_REGULARIZED:
+			switch (STRING_TYPE) {
+			case STRING_TYPE_LATEX:
+				sb.append("Q \\left( ");
+				break;
+
+			case STRING_TYPE_MAXIMA:
+				sb.append("gamma_incomplete_regularized(");
+				break;
+
+			default:
+				sb.append("gammaIncompleteRegularized(");
+			}
+			sb.append(leftStr);
+			sb.append(", ");
+			sb.append(rightStr);
+			sb.append(rightBracket(STRING_TYPE));
+			break;
+
+		case BETA:
+			switch (STRING_TYPE) {
+			case STRING_TYPE_LATEX:
+				sb.append("\\Beta \\left( ");
+				break;
+
+			case STRING_TYPE_MATH_PIPER:
+				sb.append("Beta(");
+				break;
+
+			default:
+				sb.append("beta(");
+			}
+			sb.append(leftStr);
+			sb.append(", ");
+			sb.append(rightStr);
+			sb.append(rightBracket(STRING_TYPE));
+			break;
+
+		case BETA_INCOMPLETE:
+			switch (STRING_TYPE) {
+			case STRING_TYPE_LATEX:
+				sb.append("\\Beta \\left( ");
+				break;
+
+			case STRING_TYPE_MAXIMA:
+				sb.append("beta_incomplete(");
+				break;
+
+			default:
+				sb.append("betaIncomplete(");
+			}
+			sb.append(leftStr);
+			sb.append(", ");
+			sb.append(rightStr);
+			sb.append(rightBracket(STRING_TYPE));
+			break;
+
+		case BETA_INCOMPLETE_REGULARIZED:
+			switch (STRING_TYPE) {
+			case STRING_TYPE_LATEX:
+				sb.append("I \\left( ");
+				break;
+
+			case STRING_TYPE_MAXIMA:
+				sb.append("beta_incomplete_regularized(");
+				break;
+
+			default:
+				sb.append("betaIncompleteRegularized(");
+			}
+			sb.append(leftStr);
+			sb.append(", ");
+			sb.append(rightStr);
+			sb.append(rightBracket(STRING_TYPE));
+			break;
+
 		case RANDOM:
 			if (valueForm)
 				sb.append(leftStr);

@@ -34,7 +34,7 @@ public class MyVecNode extends ValidExpression implements VectorValue {
 
     private ExpressionValue x, y;   
     private int mode = Kernel.COORD_CARTESIAN;    
-    private Kernel kernel;
+    protected Kernel kernel;
     
     /** Creates new MyVec2D */
     public MyVecNode(Kernel kernel) {
@@ -110,7 +110,7 @@ public class MyVecNode extends ValidExpression implements VectorValue {
     }                  
       
             
-    final public String toString() {         
+    public String toString() {         
         StringBuilder sb = new StringBuilder();  
         double[] coords;
         

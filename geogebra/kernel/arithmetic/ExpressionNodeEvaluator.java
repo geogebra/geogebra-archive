@@ -1336,6 +1336,56 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                 throw new MyError(app, str);
             }
             
+        case GAMMA_INCOMPLETE:
+            // log(base, number)
+            if (lt.isNumberValue() && rt.isNumberValue()) {
+				return ((NumberValue)rt).getNumber().gammaIncomplete((NumberValue) lt);
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "gammaIncomplete", lt.toString(), rt.toString() };
+                throw new MyError(app, str);
+            }
+            
+        case GAMMA_INCOMPLETE_REGULARIZED:
+            // log(base, number)
+            if (lt.isNumberValue() && rt.isNumberValue()) {
+				return ((NumberValue)rt).getNumber().gammaIncompleteRegularized((NumberValue) lt);
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "gammaIncompleteRegularized", lt.toString(), rt.toString() };
+                throw new MyError(app, str);
+            }
+            
+        case BETA:
+            // log(base, number)
+            if (lt.isNumberValue() && rt.isNumberValue()) {
+				return ((NumberValue)rt).getNumber().beta((NumberValue) lt);
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "beta", lt.toString(), rt.toString() };
+                throw new MyError(app, str);
+            }
+            
+        case BETA_INCOMPLETE:
+            // log(base, number)
+            if (lt.isVectorValue() && rt.isNumberValue()) {
+				return ((NumberValue)rt).getNumber().betaIncomplete((VectorValue) lt);
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "betaIncomplete", lt.toString(), rt.toString() };
+                throw new MyError(app, str);
+            }
+            
+        case BETA_INCOMPLETE_REGULARIZED:
+            // log(base, number)
+            if (lt.isVectorValue() && rt.isNumberValue()) {
+				return ((NumberValue)rt).getNumber().betaIncompleteRegularized((VectorValue) lt);
+            }     
+            else { 
+                 String [] str = { "IllegalArgument", "betaIncompleteRegularized", lt.toString(), rt.toString() };
+                throw new MyError(app, str);
+            }
+            
         case ERF:
             // log(base, number)
             if (lt.isNumberValue()) {

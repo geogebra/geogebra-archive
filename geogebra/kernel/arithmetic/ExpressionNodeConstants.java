@@ -96,26 +96,31 @@ public interface ExpressionNodeConstants {
     public static final int FACTORIAL = 34;
     public static final int ROUND = 35;  
     public static final int GAMMA = 36;    
-    public static final int ERF = 37;     // error function [aka phi(x)]
-    public static final int LOG10 = 38;  
-    public static final int LOG2 = 39; 
-    public static final int CBRT = 40;   
-    public static final int RANDOM = 41;
-    public static final int VECTORPRODUCT = 42;
-    public static final int CONJUGATE = 43;
-    public static final int ARG = 44; 
+    public static final int GAMMA_INCOMPLETE = 37;    
+    public static final int GAMMA_INCOMPLETE_REGULARIZED = 38;    
+    public static final int BETA = 39;    
+    public static final int BETA_INCOMPLETE = 40;    
+    public static final int BETA_INCOMPLETE_REGULARIZED = 41;    
+    public static final int ERF = 42;     // error function [aka phi(x)]
+    public static final int LOG10 = 43;  
+    public static final int LOG2 = 44; 
+    public static final int CBRT = 45;   
+    public static final int RANDOM = 46;
+    public static final int VECTORPRODUCT = 47;
+    public static final int CONJUGATE = 48;
+    public static final int ARG = 49; 
      
-    public static final int FUNCTION = 45;
-    public static final int FUNCTION_NVAR = 46;
-    public static final int VEC_FUNCTION = 47;
-    public static final int DERIVATIVE = 48;  
-    public static final int ELEMENT_OF = 49;  
+    public static final int FUNCTION = 50;
+    public static final int FUNCTION_NVAR = 51;
+    public static final int VEC_FUNCTION = 52;
+    public static final int DERIVATIVE = 53;  
+    public static final int ELEMENT_OF = 54;  
     
     // spreadsheet absolute reference using $ signs
-    public static final int $VAR_ROW = 50;
-    public static final int $VAR_COL = 51;
-    public static final int $VAR_ROW_COL = 52;
+    public static final int $VAR_ROW = 55;
+    public static final int $VAR_COL = 56;
+    public static final int $VAR_ROW_COL = 57;
 	
     // logarithm for arbitrary base log(b, x)
-    public static final int LOGB = 53;
+    public static final int LOGB = 58;
 }
