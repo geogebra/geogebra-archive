@@ -44,10 +44,7 @@ class ViewMenu extends BaseMenu {
 		showConsProtNavigationOpenProtAction,
 		showConsProtNavigationPlayAction,
 		refreshAction,
-		recomputeAllViews,
-		changePerspectiveAction,
-		managePerspectivesAction,
-		savePerspectiveAction
+		recomputeAllViews
 	;
 	
 	private JCheckBoxMenuItem
@@ -76,8 +73,7 @@ class ViewMenu extends BaseMenu {
 		menuViews,
 		menuHandwriting,
 		menuInput,
-		menuToolBar, 
-		menuPerspectives
+		menuToolBar
 	;
 	
 	public ViewMenu(Application app, Layout layout) {
@@ -115,18 +111,6 @@ class ViewMenu extends BaseMenu {
 		
 		JMenuItem mi;
 		
-		menuPerspectives = new JMenu(app.getMenu("Perspectives") + " ...");
-		menuPerspectives.setIcon(app.getImageIcon("perspective.gif"));
-		
-		if (!app.isApplet()) {
-			add(menuPerspectives);
-
-			updatePerspectives();
-
-			addSeparator();
-		}
-		
-
 		// show/hide keyboard
 		cbShowKeyboard = new JCheckBoxMenuItem(showKeyboardAction);
 		app.setEmptyIcon(cbShowKeyboard);
@@ -351,40 +335,6 @@ class ViewMenu extends BaseMenu {
 			}
 		};
 
-		savePerspectiveAction = new AbstractAction(app
-				.getMenu("SaveCurrentPerspective"), app.getEmptyIcon()) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				layout.showSaveDialog();
-			}
-		};
-
-		managePerspectivesAction = new AbstractAction(app
-				.getMenu("ManagePerspectives"), app.getEmptyIcon()) {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				layout.showManageDialog();
-			}
-		};
-
-		changePerspectiveAction = new AbstractAction() {
-			public static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				// default perspectives start with a "d"
-				if (e.getActionCommand().startsWith("d")) {
-					int index = Integer.parseInt(e.getActionCommand()
-							.substring(1));
-					layout.applyPerspective(Layout.defaultPerspectives[index]);
-				} else {
-					int index = Integer.parseInt(e.getActionCommand());
-					layout.applyPerspective(layout.getPerspective(index));
-				}
-			}
-		};
-
 		showConsProtNavigationAction = new AbstractAction(app
 				.getPlain("ConstructionProtocolNavigation")) {
 			private static final long serialVersionUID = 1L;
@@ -512,51 +462,9 @@ class ViewMenu extends BaseMenu {
 		//menuInput.setEnabled(app.showAlgebraInput());
 		//menuToolBar.setEnabled(app.showToolBar());
 	
-		if(!app.isApplet())
-			updatePerspectives();
-		
 		// TODO update labels
 	}
-	
-	/**
-	 * Update the list of available perspectives.
-	 */
-	private void updatePerspectives()
-	{
-		menuPerspectives.removeAll();
-
-		// default perspectives
-		Perspective[] defaultPerspectives = Layout.defaultPerspectives;
-
-		for (int i = 0; i < defaultPerspectives.length; ++i) {
-			JMenuItem tmpItem = new JMenuItem(changePerspectiveAction);
-			tmpItem.setText(app.getMenu("Perspective."
-					+ defaultPerspectives[i].getId()));
-			tmpItem.setIcon(app.getEmptyIcon());
-			tmpItem.setActionCommand("d" + i);
-			menuPerspectives.add(tmpItem);
-		}
-
-		menuPerspectives.addSeparator();
-
-		// user perspectives
-		Perspective[] perspectives = layout.getPerspectives();
-
-		if (perspectives.length != 0) {
-			for (int i = 0; i < perspectives.length; ++i) {
-				JMenuItem tmpItem = new JMenuItem(changePerspectiveAction);
-				tmpItem.setText(perspectives[i].getId());
-				tmpItem.setIcon(app.getEmptyIcon());
-				tmpItem.setActionCommand(Integer.toString(i));
-				menuPerspectives.add(tmpItem);
-			}
-			menuPerspectives.addSeparator();
-		}
-
-		menuPerspectives.add(managePerspectivesAction);
-		menuPerspectives.add(savePerspectiveAction);
-	}
-	
+		
 	private void initViewActions() {
 		DockPanel[] dockPanels = layout.getDockManager().getPanels();
 		Arrays.sort(dockPanels, new DockPanel.MenuOrderComparator());

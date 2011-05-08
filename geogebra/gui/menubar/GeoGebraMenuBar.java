@@ -35,7 +35,7 @@ import org.scilab.forge.jlatexmath.TeXIcon;
 public class GeoGebraMenuBar extends JMenuBar {
 	private static final long serialVersionUID = 1736020764918189176L;
 
-	private BaseMenu fileMenu, editMenu, viewMenu, optionsMenu, toolsMenu, windowMenu, helpMenu;
+	private BaseMenu fileMenu, editMenu, viewMenu, perspectivesMenu, optionsMenu, toolsMenu, windowMenu, helpMenu;
 
 	private Application app;
 	private Layout layout;
@@ -82,6 +82,12 @@ public class GeoGebraMenuBar extends JMenuBar {
 		// "View"
 		viewMenu = new ViewMenu(app, layout);
 		add(viewMenu);
+		
+		// "Perspectives"
+		if(!app.isApplet()) {
+			perspectivesMenu = new PerspectivesMenu(app, layout);
+			add(perspectivesMenu);
+		}
 		
 		// "Options"
 		optionsMenu = new OptionsMenu(app, layout);
