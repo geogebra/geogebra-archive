@@ -40,6 +40,17 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt | while rea
  cp $filename $WWWDIR/$MYDIR/$filename || exit 6
  cp $filename $WWWDIR/history/$MYVER/$filename || exit 6
  done
+
+# 4/1. Creating a jnlp file for webstart/history (implementing #692)
+MYVER_DASHED=`echo $MYVER | tr . -`
+for i in unpacked debug; do
+ cat $SVNDIR/geogebra/scripts/autobuild/history-template.jnlp |\
+  sed s/MYVER/$MYVER/g |\
+  sed s/MYVER_DASHED/$MYVER_DASHED/g |\
+  sed s/ENDDIR/$i/g \
+  > $WWWDIR/history/$MYVER/$i/geogebra-$MYVER_DASHED.jnlp
+ done
+
 echo "$0: JAR files copied to 4.0 and history/$MYVER"
 
 # 5. Finally, making sure that all files have group writable permissions:
