@@ -139,6 +139,25 @@ public class Hits extends ArrayList {
 		}				
 				
 	}
+	
+	
+	/*
+	 * remove sides of polygons present
+	 *
+	final public void removeSidesOfPolygons(){
+		
+		Iterator it = this.iterator();
+		while (it.hasNext()) {
+			GeoElement geo = (GeoElement) it.next();
+			if (geo.isGeoPolygon()) {
+				GeoSegmentND [] sides = ((GeoPolygon) geo).getSegments();
+				for (int k=0; k < sides.length; k++) 
+					this.remove(sides[k]);
+			}				
+		}				
+				
+	}
+*/
 
 	// replaces final public ArrayList getPointVectorNumericHits(Point p) {
 	final public Hits getPointVectorNumericHits(){
@@ -172,6 +191,14 @@ public class Hits extends ArrayList {
 			}
 		}
 	}
+
+	final public void removeAllPolygons(){
+		for (int i = size() - 1 ; i >= 0 ; i-- ) {
+			GeoElement geo = (GeoElement) get(i);
+			if (geo.isGeoPolygon())
+				remove(i);
+		}
+	}	
 	
 	/**
 	 * remove all polygons but one

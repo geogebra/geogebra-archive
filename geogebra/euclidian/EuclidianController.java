@@ -880,8 +880,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected void createNewPointForModePoint(Hits hits){
-		// if mode==EuclidianView.MODE_POINT_ON_OBJECT, point can be in a region
-		createNewPoint(hits, true, mode==EuclidianView.MODE_POINT_ON_OBJECT, true, true);
+		if (mode==EuclidianView.MODE_POINT){//remove polygons : point inside a polygon is created free, as in v3.2
+			//Application.debug("avant:"+hits);
+			hits.removeAllPolygons();
+			//Application.debug("après:"+hits);
+			createNewPoint(hits, true, false, true, true);
+		}else {// if mode==EuclidianView.MODE_POINT_ON_OBJECT, point can be in a region
+			createNewPoint(hits, true, true,  true, true);
+		}
 	}
 	
 	protected void createNewPointForModeOther(Hits hits){
@@ -3471,6 +3477,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// only keep polygon in hits if one side of polygon is in hits too
 		// removed: Point Tool creates Point on edge of Polygon
 		if (mode != EuclidianView.MODE_POINT
+				&& mode != EuclidianView.MODE_POINT_ON_OBJECT
 				&& !hits.isEmpty())
 			hits.keepOnlyHitsForNewPointMode();
 
@@ -3520,7 +3527,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						region = (Region) chooseGeo(regionHits, true);
 					else
 						region = (Region) regionHits.get(0);
-					createPoint = region != null;
+					if (region != null){
+						if (((GeoElement) region).isGeoPolygon()){
+							GeoSegmentND [] sides = ((GeoPolygon) region).getSegments();
+							boolean sideInHits = false;
+							for (int k=0; k < sides.length; k++) 
+								sideInHits = sideInHits || hits.remove(sides[k]);
+							if (!sideInHits)
+								createPoint = true;	
+							else{
+								createPoint = false;	
+								region = null;
+							}
+						}
+					}else
+						createPoint = true;
 				} else {
 					createPoint = true;
 					// if inRegionPossible is false, the point is created as a free point

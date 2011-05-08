@@ -253,14 +253,6 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		 return true;
 	 }
 	 
-	 /*
-	 private Coords eigenvec0ForPath, eigenvec1ForPath, midpointForPath;
-	 
-	 private CoordMatrix matrixForPath;
-
-	 private double[] halfAxesForPath = new double[2];
-	 */
-
 	 public void pointChanged(GeoPointND P) {
 		 
 		 //Application.printStacktrace("ici");
@@ -2920,8 +2912,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		RegionParameters rp = PI.getRegionParameters();
 
 		if (!isInRegion(PI)){
-
-			moveBackToRegion(PI,rp);
+			pointChanged(PI);
+			rp.setIsOnPath(true);	
 		}else{
 			GeoPoint P=(GeoPoint)PI;
 			rp.setIsOnPath(false);
@@ -2941,15 +2933,6 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	}
 
 
-	/**
-	 * Move a point  back to region
-	 * @param pi
-	 * @param rp
-	 */
-	protected void moveBackToRegion(GeoPointND pi,RegionParameters rp) {
-		pointChanged(pi);
-		rp.setIsOnPath(true);		
-	}
 
 
 
