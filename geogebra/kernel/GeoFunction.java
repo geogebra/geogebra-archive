@@ -1290,7 +1290,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		StringBuilder sb = new StringBuilder();
 		sb.append(getLabel());
 		sb.append("(" );
-		sb.append(fun.getFunctionVariable());
+		sb.append(fun == null ? "x" : fun.getFunctionVariable());
 		sb.append(")");
 		return sb.toString();
 	 }
