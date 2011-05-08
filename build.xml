@@ -147,6 +147,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 		</path>
 		<javac srcdir="${src.dir}" destdir="${build.dir}/classes">
 			<classpath refid="build.class.path" />
+		<!-- Adding line numbers -->
+		<compilerarg value="-g" />
 		</javac>
 	</target>
 
@@ -173,6 +175,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 		</path>
 		<javac srcdir="${src.dir}">
 			<classpath refid="build.class.path"/>
+			<!-- Adding line numbers -->
+			<compilerarg value="-g" />
 		</javac>
 	</target>
 
