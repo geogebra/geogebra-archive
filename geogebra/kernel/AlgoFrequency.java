@@ -45,21 +45,20 @@ public class AlgoFrequency extends AlgoElement {
 	AlgoFrequency(Construction cons, String label, GeoBoolean isCumulative, GeoList classList, GeoList dataList, 
 			GeoBoolean useDensity, GeoNumeric density) {
 		super(cons);
+		
 		this.classList = classList;
 		this.dataList = dataList;
 		this.isCumulative = isCumulative;
-
-		frequency = new GeoList(cons);
+		this.useDensity = useDensity;
+		this.density = density;
 		
+		frequency = new GeoList(cons);
 		setInputOutput();
 		compute();
 		frequency.setLabel(label);
 		
 	}
 
-	
-	
-	
 	
 	
 	public String getClassName() {
@@ -156,8 +155,8 @@ public class AlgoFrequency extends AlgoElement {
 
 
 		
-		// Get the unique value list and compute frequencies for  
-		// each value if classList does not exist   
+		// If classList does not exist, 
+		// get the unique value list and compute frequencies for this list  
 		//=======================================================
 
 		// handle string data
@@ -208,7 +207,7 @@ public class AlgoFrequency extends AlgoElement {
 
 
 		
-		// Compute frequencies using the classList (if provided)
+		// If classList exists, compute frequencies using the classList
 		//=======================================================
 
 		if(classList != null){
@@ -218,9 +217,16 @@ public class AlgoFrequency extends AlgoElement {
 			double classFreq = 0;
 
 			
-			//TODO  testing density condition
-			boolean hasDensity = false;
-			double density = 1.0 / f.getSumFreq();
+			//set density conditions
+			boolean hasDensity = true;
+			if(useDensity != null)
+				hasDensity = useDensity.getBoolean();
+			
+			double densityValue = 1;  // default density
+			if(density != null){
+				densityValue = density.getDouble();
+			}
+			
 			
 			for(int i=1; i < classList.size()-1; i++){
 
@@ -239,7 +245,7 @@ public class AlgoFrequency extends AlgoElement {
 			//	System.out.println(" =================================");
 			//	System.out.println("class freq: " + classFreq + "   " + density);
 				if(hasDensity){
-					classFreq = density *classFreq/(upperClassBound - lowerClassBound );
+					classFreq = densityValue *classFreq/(upperClassBound - lowerClassBound );
 				}
 			//	System.out.println("class freq: " + classFreq);
 				
@@ -267,7 +273,7 @@ public class AlgoFrequency extends AlgoElement {
 				+ f.getCount((Comparable)lowerClassBound);
 			}
 			if(hasDensity){
-				classFreq = density *classFreq/(upperClassBound - lowerClassBound );
+				classFreq = densityValue *classFreq/(upperClassBound - lowerClassBound );
 			}
 			
 				

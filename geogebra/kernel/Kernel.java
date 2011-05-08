@@ -3075,7 +3075,7 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Histogram with list of class boundaries and list of heights
+	 * Histogram[classList, dataList]
 	 */
 	final public GeoNumeric Histogram(String label, 
 					GeoList list1, GeoList list2) {
@@ -3085,7 +3085,7 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Histogram with density scale factor  (no cumulative parameter)
+	 *  Histogram[classList, dataList, useDensity, density]
 	 */
 	final public GeoNumeric Histogram(String label, 
 					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
@@ -3095,7 +3095,7 @@ public class Kernel {
 	}
 	
 	/** 
-	 * Histogram with density scale factor and cumulative parameter
+	 * Histogram[isCumulative, classList, dataList, useDensity]
 	 */
 	final public GeoNumeric Histogram(String label, GeoBoolean isCumulative,
 					GeoList list1, GeoList list2, GeoBoolean useDensity) {
@@ -3106,7 +3106,7 @@ public class Kernel {
 	
 	
 	/** 
-	 * Histogram with density scale factor and cumulative parameter
+	  * Histogram[isCumulative, classList, dataList, useDensity, density]
 	 */
 	final public GeoNumeric Histogram(String label, GeoBoolean isCumulative,
 					GeoList list1, GeoList list2, GeoBoolean useDensity, GeoNumeric density) {
@@ -4632,6 +4632,29 @@ public class Kernel {
 	
 	
 	/** 
+	 * Frequency[classList, dataList, useDensity]
+	 * G. Sturr
+	 */
+	final public GeoList Frequency(String label,  GeoList classList, GeoList dataList,
+			GeoBoolean useDensity) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, null, classList, dataList, useDensity, null);
+		GeoList list = algo.getResult();
+		return list;
+	}
+
+	/** 
+	 * Frequency[classList, dataList, useDensity, scaleFactor]
+	 * G. Sturr
+	 */
+	final public GeoList Frequency(String label,  GeoList classList, GeoList dataList,
+			GeoBoolean useDensity, GeoNumeric scaleFactor) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, null, classList, dataList, useDensity, scaleFactor);
+		GeoList list = algo.getResult();
+		return list;
+	}
+	
+	
+	/** 
 	 * Frequency[isCumulative, classList, dataList]
 	 * G. Sturr
 	 */
@@ -4640,6 +4663,21 @@ public class Kernel {
 		GeoList list = algo.getResult();
 		return list;
 	}
+	
+
+	
+	/** 
+	 * Frequency[isCumulative, classList, dataList, useDensity]
+	 * G. Sturr
+	 */
+	final public GeoList Frequency(String label, GeoBoolean isCumulative,  GeoList classList, GeoList dataList,
+			GeoBoolean useDensity) {
+		AlgoFrequency algo = new AlgoFrequency(cons, label, isCumulative, classList, dataList, useDensity, null);
+		GeoList list = algo.getResult();
+		return list;
+	}
+	
+	
 	
 	/** 
 	 * Frequency[isCumulative, classList, dataList, useDensity, scaleFactor]
