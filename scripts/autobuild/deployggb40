@@ -33,7 +33,7 @@ chmod g+rwx $WWWDIR/$MYDIR || exit 3
 rm -fR $WWWDIR/history/$MYVER || exit 4
 mkdir -p $WWWDIR/history/$MYVER || exit 4
 chmod g+rwx $WWWDIR/history/$MYVER || exit 4
-find . -name '*.jar' -or -name '*.jar.pack.gz' | while read filename; do
+find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt | while read filename; do
  directory=`dirname $filename`
  mkdir -p $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
  chmod g+rwx $WWWDIR/$MYDIR/$directory $WWWDIR/history/$MYVER/$directory || exit 5
