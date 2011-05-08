@@ -32,7 +32,8 @@ import java.util.HashSet;
  */
 public class MyVecNode extends ValidExpression implements VectorValue {
 
-    private ExpressionValue x, y;   
+    protected ExpressionValue x;
+	protected ExpressionValue y;   
     private int mode = Kernel.COORD_CARTESIAN;    
     protected Kernel kernel;
     

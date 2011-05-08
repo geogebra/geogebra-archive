@@ -33,21 +33,26 @@ import java.util.HashSet;
 public class MyNumberPair extends MyVecNode implements VectorValue {
     
             
-    public MyNumberPair(Kernel kernel, ExpressionNode en, ExpressionNode en2) {
+    public MyNumberPair(Kernel kernel, ExpressionValue en, ExpressionValue en2) {
 		super(kernel, en, en2);
 	}
 
+    public ExpressionValue deepCopy(Kernel kernel) {
+        return new MyNumberPair(kernel, x.deepCopy(kernel), y.deepCopy(kernel));
+    }
+    
 
+    @Override
 	final public String toString() {         
         StringBuilder sb = new StringBuilder();  
         double[] coords;
         
 				coords = getCoords();
 				sb.append(kernel.format(coords[0]));
-				sb.append(",xx ");
+				sb.append(", ");
 				sb.append(kernel.format(coords[1]));
 		        
 		 return sb.toString();      
     }    
-    
+	
 }
