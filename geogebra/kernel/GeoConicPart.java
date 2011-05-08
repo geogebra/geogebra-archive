@@ -15,6 +15,9 @@ the Free Software Foundation.
  */
 package geogebra.kernel;
 
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -141,6 +144,7 @@ implements LimitedPath, NumberValue, LineProperties {
 	final public double getParameterStart() {
 		return paramStart;
 	}
+	
 	
 	/**
 	 * @return end parameter
@@ -370,7 +374,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		switch (type) {
 			case CONIC_CIRCLE:
 			case CONIC_ELLIPSE:
-				setEllipseParameter(P);
+				setEllipseParameter(P.getCoordsInD2(getCoordSys()),P.getPathParameter());
 			break;
 			
 			// degenerate case: two rays or one segment
@@ -418,34 +422,32 @@ implements LimitedPath, NumberValue, LineProperties {
 		return false;
 	}
 	
-	public void pointChanged(GeoPointND P) {
+	protected void pointChanged(Coords P, PathParameter pp) {
 		
-		//GeoPoint P = (GeoPoint) PI;
 		
-		PathParameter pp = P.getPathParameter(); 
 		pp.setPathType(type);
 
 		switch (type) {
 			case CONIC_CIRCLE:
 			case CONIC_ELLIPSE:
-				setEllipseParameter(P);
-				clipEllipseParameter(P);		
+				setEllipseParameter(P,pp);
+				clipEllipseParameter(P,pp);		
 			break;
 			
 			// degenerate case: two rays or one segment
 			case CONIC_PARALLEL_LINES: 		
 				if (posOrientation) {
 					// segment
-					lines[0].pointChanged(P);
+					lines[0].doPointChanged(P,pp);
 					
 					// make sure we don't get outside [0,1]
 					if (pp.t < 0) {
 						pp.t = 0;
-						pathChanged(P);
+						pathChanged(P,pp);
 					}
 					else if (pp.t > 1) {
 						pp.t = 1;
-						pathChanged(P);
+						pathChanged(P,pp);
 					}
 				} else {
 					// two rays
@@ -455,9 +457,9 @@ implements LimitedPath, NumberValue, LineProperties {
 					P.y = lines[0].x;
 					P.z = 0.0;
 					 */
-					P.setCoords2D(-lines[0].y, lines[0].x, 0);
-					P.updateCoordsFrom2D(false,getCoordSys());
-					P.updateCoords();
+					P.setX(-lines[0].y);
+					P.setY(lines[0].x);
+					P.setZ(0);
 				}
 			break;
 
@@ -467,12 +469,11 @@ implements LimitedPath, NumberValue, LineProperties {
 		}	
 	}
 	
-	private void setEllipseParameter(GeoPointND P) {
+	private void setEllipseParameter(Coords P, PathParameter pp) {
 		// let GeoConic do the work
-		super.pointChanged(P);		
+		super.pointChanged(P,pp);		
 			
 		// now transform parameter t from [paramStart, paramEnd] to [0, 1]
-		PathParameter pp = P.getPathParameter();
 		if (pp.t < 0)
 			pp.t += Kernel.PI_2;
 		double t = pp.t - paramStart;
@@ -481,7 +482,7 @@ implements LimitedPath, NumberValue, LineProperties {
 		pp.t = t / paramExtent;	
 	}
 	
-	private void clipEllipseParameter(GeoPointND P) {
+	private void clipEllipseParameter(Coords P, PathParameter pp) {
 		// make sure we don't get outside [0,1]
 		// the values of the path parameter are now
 		// between [0, 2pi/paramExtent]
@@ -489,33 +490,29 @@ implements LimitedPath, NumberValue, LineProperties {
 		// handle [1, 2pi/paramExtent]:
 		// take 0 for parameter > (1 + 2pi/paramExtent)/2
 		// else take 1
-		PathParameter pp = P.getPathParameter();
 		if (pp.t > 0.5 + Math.PI/paramExtent) {
 			if (posOrientation)
 				pp.t = 0;
 			else
 				pp.t = 1;
-			pathChanged(P);
+			pathChanged(P,pp);
 		}
 		else if (pp.t > 1) {
 			if (posOrientation)
 				pp.t = 1;
 			else
 				pp.t = 0;
-			pathChanged(P);
+			pathChanged(P,pp);
 		}
 		else if (!posOrientation) {
 			pp.t = 1.0 - pp.t;
 		}	
 	}
 	
-	public void pathChanged(GeoPointND P) {	
-		
-		//GeoPoint P = (GeoPoint) PI;
-		
-		PathParameter pp = P.getPathParameter();						
+	protected void pathChanged(Coords P, PathParameter pp) {
+							
 		if (pp.getPathType() != type || Double.isNaN(pp.t)) {		
-			pointChanged(P);
+			pointChanged(P,pp);
 			return;
 		}
 
@@ -533,7 +530,7 @@ implements LimitedPath, NumberValue, LineProperties {
 				// if type of path changed (other conic) then we
 				// have to recalc the parameter with pointChanged()
 				if (pp.getPathType() != type) {					
-					pointChanged(P);
+					pointChanged(P,pp);
 					return;
 				}		
 				
@@ -542,22 +539,11 @@ implements LimitedPath, NumberValue, LineProperties {
 						pp.t:
 						1.0 - pp.t;
 				double angle = paramStart + t * paramExtent;
-				/*
-				P.x = halfAxes[0] * Math.cos(angle);	
-				P.y = halfAxes[1] * Math.sin(angle);
-				P.z = 1.0;
-				
-				//	transform to real world coord system
-				coordsEVtoRW(P);
-				*/
-				
-				Coords coords = new Coords(halfAxes[0] * Math.cos(angle),halfAxes[1] * Math.sin(angle),1);
-				coordsEVtoRW(coords);
-				
-				P.setCoords2D(coords.getX(),coords.getY(),coords.getZ());
-				P.updateCoordsFrom2D(false,getCoordSys());
-				P.updateCoords();
-				
+
+				P.setX(halfAxes[0] * Math.cos(angle));
+				P.setY(halfAxes[1] * Math.sin(angle));
+				P.setZ(1);
+				coordsEVtoRW(P);							
 			break;	
 			
 			case CONIC_PARALLEL_LINES:
@@ -565,21 +551,16 @@ implements LimitedPath, NumberValue, LineProperties {
 					// if type of path changed (other conic) then we
 					// have to recalc the parameter with pointChanged()
 					if (pp.getPathType() != type) {					
-						pointChanged(P);						
+						pointChanged(P,pp);						
 					}	else {
-						lines[0].pathChanged(P);
+						lines[0].pathChanged(P,pp);
 					}
 				} else {
 					// two rays
 					// we take point at infinty
-					/*
-					P.x = -lines[0].y;
-					P.y = lines[0].x;
-					P.z = 0.0;
-					*/
-					P.setCoords2D(-lines[0].y, lines[0].x, 0);
-					P.updateCoordsFrom2D(false,getCoordSys());
-					P.updateCoords();
+					P.setX(-lines[0].y);
+					P.setY(lines[0].x);
+					P.setZ(0);
 
 				}
 			break;
@@ -813,11 +794,28 @@ implements LimitedPath, NumberValue, LineProperties {
 		if(!super.isInRegion(x0, y0))
 			return false;
 		
-		double arg = computeArg(x0,y0);
-		if (arg < 0) 
-			arg += Kernel.PI_2;
-		Application.debug(paramStart+"-"+arg+"-"+paramEnd);
-		return (arg >= -Kernel.EPSILON) && (arg <= paramExtent+Kernel.EPSILON);
+
+		//for sector, check if (x0,y0) is on the arc outline
+		if (getConicPartType()==CONIC_PART_SECTOR){
+			double arg = computeArg(x0,y0);
+			if (arg < 0) 
+				arg += Kernel.PI_2;
+			//Application.debug(arg+" <? "+paramExtent);
+
+			return ((arg >= -Kernel.EPSILON) && (arg <= paramExtent+Kernel.EPSILON));
+		}
+			
+		
+		//for arc, check if is inside the arc : cross product with limit 
+		//Application.debug(posOrientation);
+		Coords midpoint = getMidpoint2D();
+		Coords firstVec = getEigenvec(0).mul(getHalfAxis(0)*Math.cos(paramStart)).add(getEigenvec(1).mul(getHalfAxis(1)*Math.sin(paramStart)));
+		Coords secondVec = getEigenvec(0).mul(getHalfAxis(0)*Math.cos(paramEnd)).add(getEigenvec(1).mul(getHalfAxis(1)*Math.sin(paramEnd)));
+
+		double vx = (x0-midpoint.getX())-firstVec.getX(), vy = (y0-midpoint.getY())-firstVec.getY();
+		double lx = secondVec.getX()-firstVec.getX(), ly = secondVec.getY()-firstVec.getY();
+		
+		return (vx*ly-vy*lx>0);
 		
 	}
 	
@@ -843,33 +841,56 @@ implements LimitedPath, NumberValue, LineProperties {
 	}
 
 	protected void moveBackToRegion(GeoPointND pi,RegionParameters rp) {
-		double x0=pi.getX2D(), y0 = pi.getY2D();
-		if(!super.isInRegion(x0,y0)){
-			pointChanged(pi);
-			rp.setIsOnPath(true);
+		Coords coords = pi.getCoordsInD2(getCoordSys());
+		PathParameter pp = pi.getPathParameter();
+		
+		//try to find the nearest point in the conic part
+		TreeMap<Double, Coords> nearestPoints = new TreeMap<Double, Coords>();
+		
+		//may calc the nearest point of the global conic
+		if(!super.isInRegion(coords.getX(),coords.getY())){
+			Coords pointConic = coords.copyVector();
+			pointChanged(pointConic, pp);
+			nearestPoints.put(pointConic.distance(coords),pointConic);
 		}
-		else{
-			rp.setIsOnPath(false);
-			double arg = computeArg(x0,y0);
-			double px=3,py=3;
-			if(arg<0){
-				px =Math.cos(paramStart);
-				py = Math.sin(paramStart);
-				//arg += Kernel.PI_2;
-			}
-			if(arg>paramExtent){
-				px = Math.cos(paramEnd);
-				py = Math.sin(paramEnd);
-			}
-			if(px<2){
-				double ratio = Math.sqrt((x0-b.x)*(x0-b.x)+(y0-b.y)*(y0-b.y))/halfAxes[0];
-				px = ratio * px;
-				py = ratio * py;
-				rp.setT1(px);
-				rp.setT2(py);
-			}
-			regionChanged(pi);
+		
+		//check points of the conic part
+		Coords midpoint = getMidpoint2D();
+		if (getConicPartType()==CONIC_PART_SECTOR)
+			nearestPoints.put(midpoint.distance(coords),midpoint);
+		
+		Coords ev0 = new Coords(3); ev0.set(getEigenvec(0));
+		Coords ev1 = new Coords(3); ev1.set(getEigenvec(1));	
+		
+		Coords firstPoint = midpoint.add(ev0.mul(getHalfAxis(0)*Math.cos(paramStart))).add(ev1.mul(getHalfAxis(1)*Math.sin(paramStart)));
+		nearestPoints.put(firstPoint.distance(coords),firstPoint);
+		Coords secondPoint = midpoint.add(ev0.mul(getHalfAxis(0)*Math.cos(paramEnd))).add(ev1.mul(getHalfAxis(1)*Math.sin(paramEnd)));
+		nearestPoints.put(secondPoint.distance(coords),secondPoint);
+
+		//check project points on segments edges
+		Coords[] segPoint;
+		if (getConicPartType()==CONIC_PART_SECTOR){
+			segPoint = coords.projectLine(midpoint, firstPoint.sub(midpoint));
+			if (segPoint[1].getX()>0 && segPoint[1].getX()<1) //check if the projected point is on the segment
+				nearestPoints.put(segPoint[0].distance(coords),segPoint[0]);
+			segPoint = coords.projectLine(midpoint, secondPoint.sub(midpoint));
+			if (segPoint[1].getX()>0 && segPoint[1].getX()<1) //check if the projected point is on the segment
+				nearestPoints.put(segPoint[0].distance(coords),segPoint[0]);
+		}else{
+			segPoint = coords.projectLine(firstPoint, secondPoint.sub(firstPoint));
+			if (segPoint[1].getX()>0 && segPoint[1].getX()<1) //check if the projected point is on the segment
+				nearestPoints.put(segPoint[0].distance(coords),segPoint[0]);
 		}
+
+		//take nearest point above all
+		coords = nearestPoints.get(nearestPoints.firstKey());
+
+
+		pi.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
+		pi.updateCoordsFrom2D(false,getCoordSys());
+		pi.updateCoords();
+
+
 	}
 	
 	public void regionChanged(GeoPointND PI){

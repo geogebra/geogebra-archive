@@ -279,7 +279,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		 * Date: 4/6/2011
 		 * Fixed case CONIC_ELLIPSE, CONIC_HYPERBOLA and CONIC_PARABOLA
 		 */
-	private void pointChanged(Coords P, PathParameter pp) {
+	protected void pointChanged(Coords P, PathParameter pp) {
 		
 		double px, py, ha, hb, hc_2;
 		double abspx, abspy; //for parabola and hyperbola
@@ -530,7 +530,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	}
 	
 
-	private void pathChanged(Coords P, PathParameter pp) {
+	protected void pathChanged(Coords P, PathParameter pp) {
 		
 		
 		// if type of path changed (other conic) then we
@@ -2873,10 +2873,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 
 	
 	public boolean isInRegion(GeoPointND PI) {
-		double x0 = PI.getX2D();
-		double y0 = PI.getY2D();
-		
-		return isInRegion(x0,y0);
+		Coords coords = PI.getCoordsInD2(getCoordSys());		
+		return isInRegion(coords.getX(),coords.getY());
 		
 	}
 	
@@ -2905,15 +2903,13 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 * @version 2010-07-30
 	 * Last change: Zbynek Konecny
 	 */
-	
 	public void pointChangedForRegion(GeoPointND PI) {
 		PI.updateCoords2D();
 
 		RegionParameters rp = PI.getRegionParameters();
 
 		if (!isInRegion(PI)){
-			pointChanged(PI);
-			rp.setIsOnPath(true);	
+			moveBackToRegion(PI,rp);
 		}else{
 			GeoPoint P=(GeoPoint)PI;
 			rp.setIsOnPath(false);
@@ -2933,6 +2929,15 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	}
 
 
+	/**
+	 * Move a point  back to region
+	 * @param pi
+	 * @param rp
+	 */
+	protected void moveBackToRegion(GeoPointND pi,RegionParameters rp) {
+		pointChanged(pi);
+		rp.setIsOnPath(true);		
+	}
 
 
 

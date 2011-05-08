@@ -24,6 +24,10 @@ public class PathParameter {
 		t = Double.NaN;
 	}
 	
+	public PathParameter(PathParameter pp){
+		set(pp);
+	}
+	
 	public PathParameter(double t) {
 		this.t = t;
 	}
