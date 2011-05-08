@@ -45,8 +45,8 @@ find . -name '*.jar' -or -name '*.jar.pack.gz' -or -name version.txt | while rea
 MYVER_DASHED=`echo $MYVER | tr . -`
 for i in unpacked debug; do
  cat $SVNDIR/geogebra/scripts/autobuild/history-template.jnlp |\
-  sed s/MYVER/$MYVER/g |\
   sed s/MYVER_DASHED/$MYVER_DASHED/g |\
+  sed s/MYVER/$MYVER/g |\
   sed s/ENDDIR/$i/g \
   > $WWWDIR/history/$MYVER/$i/geogebra-$MYVER_DASHED.jnlp
  done
