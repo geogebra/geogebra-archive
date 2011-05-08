@@ -554,6 +554,7 @@ public class CommandDispatcher {
     	cmdTable.put("InverseWeibull", new CmdInverseWeibull(kernel));
     	cmdTable.put("Zipf", new CmdZipf(kernel));  
     	cmdTable.put("InverseZipf", new CmdInverseZipf(kernel));
+    	cmdTable.put("Triangular", new CmdTriangular(kernel));
     	
     	cmdSubTable[TABLE_PROBABILITY].putAll(cmdTable);
     	cmdTable.clear();
