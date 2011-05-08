@@ -1,12 +1,11 @@
 package geogebra.kernel.commands;
 
+import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
-import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 
 /*
@@ -25,18 +24,34 @@ public class CmdNormal extends CommandProcessor {
 		boolean ok;
 		GeoElement[] arg;
 
+		boolean cumulative = false; // default for n=3
+		arg = resArgs(c);
+		
 		switch (n) {
+		case 4:
+			if (arg[3].isGeoBoolean()) {
+				cumulative = ((GeoBoolean)arg[3]).getBoolean();
+			} else
+				throw argErr(app, c.getName(), arg[3]);
+			
+			// fall through
 		case 3:			
-			arg = resArgs(c);
 			if ((ok = arg[0].isNumberValue()) && (arg[1].isNumberValue())) {
 				if (arg[2].isGeoFunction() && ((GeoFunction)arg[2]).toString().equals("x")) {
 									
 					String mean = arg[0].getLabel();
 					String sd = arg[1].getLabel();
 					
-					GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "1/sqrt(2 * pi) / abs("+sd+")*exp(-((x-("+mean+"))/("+sd+"))^2/2)", true );
-					
-					return ret;
+					if (cumulative) {
+						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "erf((x-("+mean+"))/abs("+sd+"))/2 + 0.5", true );
+						
+						return ret;
+						
+					} else {
+						GeoElement[] ret = kernel.getAlgebraProcessor().processAlgebraCommand( "1/sqrt(2 * pi) / abs("+sd+")*exp(-((x-("+mean+"))/("+sd+"))^2/2)", true );
+						
+						return ret;
+					}
 					
 				} else if (arg[2].isNumberValue()) 
 				{
