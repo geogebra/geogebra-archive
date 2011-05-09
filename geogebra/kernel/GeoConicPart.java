@@ -18,6 +18,7 @@ package geogebra.kernel;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import geogebra.Matrix.CoordNearest;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -845,45 +846,49 @@ implements LimitedPath, NumberValue, LineProperties {
 		PathParameter pp = pi.getPathParameter();
 		
 		//try to find the nearest point in the conic part
-		TreeMap<Double, Coords> nearestPoints = new TreeMap<Double, Coords>();
+		CoordNearest nearestPoint = new CoordNearest(coords);
 		
-		//may calc the nearest point of the global conic
-		if(!super.isInRegion(coords.getX(),coords.getY())){
-			Coords pointConic = coords.copyVector();
-			pointChanged(pointConic, pp);
-			nearestPoints.put(pointConic.distance(coords),pointConic);
-		}
+
 		
 		//check points of the conic part
 		Coords midpoint = getMidpoint2D();
 		if (getConicPartType()==CONIC_PART_SECTOR)
-			nearestPoints.put(midpoint.distance(coords),midpoint);
+			nearestPoint.check(midpoint);
 		
 		Coords ev0 = new Coords(3); ev0.set(getEigenvec(0));
 		Coords ev1 = new Coords(3); ev1.set(getEigenvec(1));	
 		
 		Coords firstPoint = midpoint.add(ev0.mul(getHalfAxis(0)*Math.cos(paramStart))).add(ev1.mul(getHalfAxis(1)*Math.sin(paramStart)));
-		nearestPoints.put(firstPoint.distance(coords),firstPoint);
+		nearestPoint.check(firstPoint);
 		Coords secondPoint = midpoint.add(ev0.mul(getHalfAxis(0)*Math.cos(paramEnd))).add(ev1.mul(getHalfAxis(1)*Math.sin(paramEnd)));
-		nearestPoints.put(secondPoint.distance(coords),secondPoint);
-
+		nearestPoint.check(secondPoint);
+		
 		//check project points on segments edges
 		Coords[] segPoint;
 		if (getConicPartType()==CONIC_PART_SECTOR){
 			segPoint = coords.projectLine(midpoint, firstPoint.sub(midpoint));
 			if (segPoint[1].getX()>0 && segPoint[1].getX()<1) //check if the projected point is on the segment
-				nearestPoints.put(segPoint[0].distance(coords),segPoint[0]);
+				nearestPoint.check(segPoint[0]);
 			segPoint = coords.projectLine(midpoint, secondPoint.sub(midpoint));
 			if (segPoint[1].getX()>0 && segPoint[1].getX()<1) //check if the projected point is on the segment
-				nearestPoints.put(segPoint[0].distance(coords),segPoint[0]);
+				nearestPoint.check(segPoint[0]);
 		}else{
 			segPoint = coords.projectLine(firstPoint, secondPoint.sub(firstPoint));
 			if (segPoint[1].getX()>0 && segPoint[1].getX()<1) //check if the projected point is on the segment
-				nearestPoints.put(segPoint[0].distance(coords),segPoint[0]);
+				nearestPoint.check(segPoint[0]);
+		}
+		
+		
+		//may calc the nearest point of the global conic
+		if(!super.isInRegion(coords.getX(),coords.getY())){
+			Coords pointConic = coords.copyVector();
+			pointChanged(pointConic, pp);
+			nearestPoint.check(pointConic);
+			rp.setIsOnPath(true);
 		}
 
 		//take nearest point above all
-		coords = nearestPoints.get(nearestPoints.firstKey());
+		coords = nearestPoint.get();
 
 
 		pi.setCoords2D(coords.getX(), coords.getY(), coords.getZ());
