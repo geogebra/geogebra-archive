@@ -455,7 +455,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 		<jar jarfile="${build.dir}/geogebra_3d.jar"
 			basedir="${src.dir}"
 			includes="geogebra3D/**"		
-			excludes="**/*.java" 
+			excludes="**/*.java,
+						geogebra3D/samples/**" 
 		/>
 	</target>
 
