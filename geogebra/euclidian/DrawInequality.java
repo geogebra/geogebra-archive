@@ -252,6 +252,9 @@ public class DrawInequality extends Drawable {
 
 	@Override
 	public boolean hit(int x, int y) {
+		if(geo instanceof GeoFunction && ((GeoFunction)geo).showOnAxis() && 
+				Math.abs(y-view.toScreenCoordY(0))>3)
+			return false;
 		return hit2(x, y) || hit2(x - 4, y) || hit2(x + 4, y) || hit2(x, y - 4)
 				|| hit2(x, y + 4);
 
