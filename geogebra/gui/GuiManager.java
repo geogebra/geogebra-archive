@@ -82,6 +82,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -2359,7 +2360,10 @@ public class GuiManager {
 				if (propDialog != null && propDialog.isShowing())
 					propDialog.cancel();
 				
-				undo();
+				// handle events from Undo button and menu, not ctrl-z
+				// as that is handled by GlobalKeyDispatcher
+				if (e.getSource() instanceof JMenu || e.getSource() instanceof MySmallJButton)
+					undo();
 			}
 		};
 
@@ -2371,7 +2375,10 @@ public class GuiManager {
 				if (propDialog != null && propDialog.isShowing())
 					propDialog.cancel();
 
-				redo();
+				// handle events from Redo button and menu, not ctrl-z
+				// as that is handled by GlobalKeyDispatcher
+				if (e.getSource() instanceof JMenu || e.getSource() instanceof MySmallJButton)
+					redo();
 			}
 		};
 		
