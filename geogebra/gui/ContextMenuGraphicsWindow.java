@@ -97,8 +97,6 @@ implements ActionListener {
         addAxesRatioItems(yaxisMenu);
         add(yaxisMenu);                        
        
-        addSeparator(); 
-        
         JMenuItem miShowAllObjectsView = new JMenuItem(app.getPlain("ShowAllObjects"));
         miShowAllObjectsView.setIcon(app.getEmptyIcon());
         miShowAllObjectsView.setActionCommand("showAllObjects");
