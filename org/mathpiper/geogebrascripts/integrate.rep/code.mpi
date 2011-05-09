@@ -268,7 +268,7 @@ IntFunc(x,num_IsFreeOf(var)/(n_IsNumber + m_IsNumber*Exp(p_IsNumber*(_x))),num*x
 IntFunc(x,num_IsFreeOf(var)/(m_IsNumber*Exp(p_IsNumber*(_x)) + n_IsNumber),num*x/n - num*Ln(n + m*Exp(p*x))/(n*p));
 
 
-IntPureSquare(x,num_IsFreeOf(var)/(_x),1,1,(num/(Sqrt(Matched'b()/Matched'a())))*ArcTan(var/Sqrt(Matched'b()/Matched'a())));
+IntPureSquare(x,num_IsFreeOf(var)/(_x),1,1,(num/(Sqrt(Matched'b()*Matched'a())))*ArcTan(var/Sqrt(Matched'b()/Matched'a())));
 
 
 IntFunc(x,Erf(_x), x*Erf(x)+ 1/(Exp(x^2)*Sqrt(Pi)) );

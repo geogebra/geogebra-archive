@@ -65,7 +65,7 @@ public class Interpreter2 extends Applet {
 
                 public void run() {
                     try {
-                        jlisp.startup(args, in, out, true);
+                        jlisp.startup(args, in, out, false);
                         out.flush();
                     } catch (Exception ex) {
                         ex.printStackTrace();
