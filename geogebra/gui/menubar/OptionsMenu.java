@@ -280,7 +280,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 	{
 		// display the options dialog
 		showOptionsAction = new AbstractAction(app
-				.getMenu("Options")+"...", app.getImageIcon("document-properties.png")) {
+				.getMenu("Settings")+"...", app.getImageIcon("document-properties.png")) {
 			public static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
