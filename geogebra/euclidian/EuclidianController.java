@@ -1945,7 +1945,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		// handle moving
-		boolean changedKernel = POINT_CREATED;		
+		boolean changedKernel = false;		
 		if (DRAGGING_OCCURED) {			
 
 			DRAGGING_OCCURED = false;
