@@ -142,6 +142,7 @@ class ViewMenu extends BaseMenu {
 		menuInput.setIcon(app.getEmptyIcon());
 		cbShowCmdList = new JCheckBoxMenuItem(showCmdListAction);
 		cbShowAlgebraInput = new JCheckBoxMenuItem(showAlgebraInputAction);
+		app.setEmptyIcon(cbShowAlgebraInput);
 		menuInput.add(cbShowAlgebraInput);
 		app.setEmptyIcon(cbShowCmdList);
 		menuInput.add(cbShowCmdList);
