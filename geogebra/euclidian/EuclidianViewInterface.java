@@ -208,7 +208,7 @@ public interface EuclidianViewInterface {
 	
 	/** Sets coord system from mouse move */
 	public void setCoordSystemFromMouseMove(int dx, int dy, int mode);
-	void setAnimatedCoordSystem(double ox, double oy, double newScale,int steps, boolean storeUndo);
+	void setAnimatedCoordSystem(double ox, double oy, double f, double newScale,int steps, boolean storeUndo);
 
 
 	//setters and getters	

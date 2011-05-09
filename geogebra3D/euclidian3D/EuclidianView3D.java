@@ -200,6 +200,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private double animatedScaleTimeFactor;
 	/** starting time for animated scale */
 	private long animatedScaleTimeStart;
+	/** x start of animated scale */
+	private double animatedScaleStartX;
+	/** y start of animated scale */
+	private double animatedScaleStartY;
+	/** x end of animated scale */
+	private double animatedScaleEndX;
+	/** y end of animated scale */
+	private double animatedScaleEndY;
 	
 	
 	/** tells if the view is under continue animation for rotation */
@@ -682,7 +690,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		toSceneCoords3D(viewDirection);	
 		viewDirection.normalize();
 		
-		//setWaitForUpdate();
+		//Application.debug("Zero = ("+getXZero()+","+getYZero()+","+getZZero()+")");
 		
 	}
 	
@@ -1542,10 +1550,18 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		return  animatedContinueRot;
 	}
 	
-	public void setAnimatedCoordSystem(double ox, double oy, double newScale,
+	public void setAnimatedCoordSystem(double ox, double oy, double f, double newScale,
 			int steps, boolean storeUndo) {
 		
-
+		animatedScaleStartX=getXZero();
+		animatedScaleStartY=getYZero();
+		double centerX = ox+renderer.getLeft();
+		double centerY = -oy+renderer.getTop();
+		animatedScaleEndX=centerX+(animatedScaleStartX-centerX)*f;
+		animatedScaleEndY=centerY+(animatedScaleStartY-centerY)*f;
+		
+		//Application.debug("mouse = ("+ox+","+oy+")"+"\nscale end = ("+animatedScaleEndX+","+animatedScaleEndY+")"+"\nZero = ("+animatedScaleStartX+","+animatedScaleStartY+")");
+		
 		animatedScaleStart = getScale();
 		animatedScaleTimeStart = System.currentTimeMillis();
 		animatedScaleEnd = newScale;
@@ -1680,6 +1696,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			//Application.debug("t="+t+"\nscale="+(startScale*(1-t)+endScale*t));
 			
 			setScale(animatedScaleStart*(1-t)+animatedScaleEnd*t);
+			setXZero(animatedScaleStartX*(1-t)+animatedScaleEndX*t);
+			setYZero(animatedScaleStartY*(1-t)+animatedScaleEndY*t);
 			updateMatrix();
 			
 		}
@@ -2050,10 +2068,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 	public void zoom(double px, double py, double zoomFactor, int steps,
 			boolean storeUndo) {
-
+						
 		setScale(getXscale()*zoomFactor);
 		updateMatrix();
 		setWaitForUpdate();
+		
 		
 	}
 	

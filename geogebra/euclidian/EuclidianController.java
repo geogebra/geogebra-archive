@@ -6969,8 +6969,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//double py = view.height / 2d;
 		double px = mouseLoc.x;
 		double py = mouseLoc.y;
-		double dx = view.getXZero() - px;
-		double dy = view.getYZero() - py;
+		//double dx = view.getXZero() - px;
+		//double dy = view.getYZero() - py;
 
 		double xFactor = 1;
 		if (e.isAltDown())
@@ -6987,8 +6987,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// make zooming a little bit smoother by having some steps
 
 		view.setAnimatedCoordSystem(
-				px + dx * factor,
-				py + dy * factor,
+				//px + dx * factor,
+				//py + dy * factor,
+				px, py, factor,
 				view.getXscale() * factor, 4, false);
 		//view.yscale * factor);
 		app.setUnsaved();
@@ -7005,8 +7006,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		double px = mouseLoc.x;
 		double py = mouseLoc.y;
-		double dx = view.getXZero() - px;
-		double dy = view.getYZero() - py;
+		//double dx = view.getXZero() - px;
+		//double dy = view.getYZero() - py;
 		
 		double factor = event.getKeyCode() == KeyEvent.VK_MINUS ? 1d / EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR
 				: EuclidianView.MOUSE_WHEEL_ZOOM_FACTOR;
@@ -7017,8 +7018,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// make zooming a little bit smoother by having some steps
 		view.setAnimatedCoordSystem(
-				px + dx * factor,
-				py + dy * factor,
+				//px + dx * factor,
+				//py + dy * factor,
+				px,py,factor,
 				view.getXscale() * factor, 4, false);
 		//view.yscale * factor);
 		app.setUnsaved();

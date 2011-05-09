@@ -4120,12 +4120,12 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 						} catch (Exception e) {
 						}
 					}
-					setAnimatedCoordSystem(xzero, yzero, SCALE_STANDARD, 15, false);
+					setAnimatedCoordSystem(xzero, yzero, 0, SCALE_STANDARD, 15, false);
 				}
 			};
 			waiter.start();
 		} else {
-			setAnimatedCoordSystem(xzero, yzero, SCALE_STANDARD, 15, false);
+			setAnimatedCoordSystem(xzero, yzero, 0, SCALE_STANDARD, 15, false);
 		}
 		if (storeUndo)
 			app.storeUndoInfo();
@@ -4136,13 +4136,17 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * previous animation.
 	 * 
 	 * @param ox:
-	 *            x coord of new origin
+	 *            x coord of old origin
 	 * @param oy:
-	 *            y coord of new origin
+	 *            y coord of old origin
 	 * @param newscale
 	 */
-	final public void setAnimatedCoordSystem(double ox, double oy, double newScale,
+	final public void setAnimatedCoordSystem(double ox, double oy, double f, double newScale,
 			int steps, boolean storeUndo) {
+		
+		ox+=(getXZero() - ox)*f;
+		oy+=(getYZero() - oy)*f;
+		
 		if (!kernel.isEqual(xscale, newScale)) {
 			// different scales: zoom back to standard view
 			double factor = newScale / xscale;
