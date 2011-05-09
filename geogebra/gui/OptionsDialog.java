@@ -240,7 +240,7 @@ public class OptionsDialog extends JDialog implements WindowListener {
 	 * TODO use real phrases (F.S.)
 	 */
 	public void setLabels() {
-		setTitle(app.getMenu("Options"));
+		setTitle(app.getMenu("Settings"));
 
 		closeButton.setText(app.getMenu("Close"));
 		saveButton.setText(app.getMenu("Settings.Save"));
