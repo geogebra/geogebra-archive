@@ -239,8 +239,7 @@ public class AlgebraController
 		int y = e.getY();
 
 		GeoElement geo = AlgebraView.getGeoElementForLocation(view, x, y);
-		
-		
+				
 		// tell EuclidianView to handle mouse over
 		//EuclidianView ev = app.getEuclidianView();
 		EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();

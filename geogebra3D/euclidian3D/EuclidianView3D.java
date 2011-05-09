@@ -1619,7 +1619,6 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		animatedRot = true;
 		animatedContinueRot = false;
-		animatedRotTimeStart = System.currentTimeMillis();// - 16;
 		aOld = this.a % 360;
 		bOld = this.b % 360;
 		
@@ -1651,7 +1650,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		if (bOld>180)
 			bOld-=360;
 
-
+		animatedRotTimeStart = System.currentTimeMillis();
 		
 	}
 	
@@ -1692,6 +1691,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		if (animatedRot){
 			double t = (System.currentTimeMillis()-animatedRotTimeStart)*0.001;
+			t*=t;
 			//t+=0.2; //starting at 1/4
 			
 			if (t>=1){

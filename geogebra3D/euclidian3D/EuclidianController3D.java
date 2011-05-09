@@ -848,7 +848,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 * @param hits
 	 * @return true if a plane has been created
 	 */
-	final protected boolean pointLine(Hits hits) {
+	final protected boolean planePointLine(Hits hits) {
 		if (hits.isEmpty())
 			return false;
 		
@@ -870,6 +870,41 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return false;
 	}
 
+	/**
+	 * process view in front of mode
+	 * @param hits
+	 * @return false (kernel won't change)
+	 */
+	final protected boolean viewInFrontOf(Hits hits) {
+		if (hits.isEmpty())
+			return false;
+		
+		//Application.debug(hits);
+		
+		addSelectedGeo(hits.getTopHits(), 1, false);//TODO hits.getTopHits() ?
+
+		
+
+		if (selGeos() == 1){ //clear selection
+			GeoElement geo = getSelectedGeos()[0];
+
+			//GeoElement geo = (GeoElement) hits.get(0);
+			//Application.debug(view3D.hasMouse());
+			Coords vn = geo.getMainDirection();
+			if (vn!=null){
+				if (view3D.hasMouse())
+					view3D.setRotAnimation(view3D.getCursor3D().getDrawingMatrix().getVz());
+				else {//doesn't come from 3D view
+					if (vn.dotproduct(view3D.getViewDirection())<0)
+						view3D.setRotAnimation(vn.mul(-1));
+					else
+						view3D.setRotAnimation(vn);
+				}
+			}
+		}
+		
+		return false;
+	}
 	
 	/** get point and plane;
 	 * create line through point parallel to plane
@@ -1098,7 +1133,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
-	
+	/*
 	protected void mouseClickedMode(MouseEvent e, int mode){
 		
 
@@ -1119,7 +1154,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				super.mouseClickedMode(e,mode);
 		}
 	}
-	
+	*/
 
 	
 	//TODO
@@ -1210,7 +1245,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			changedKernel = (threePoints(hits, mode) != null);
 			break;
 		case EuclidianView3D.MODE_PLANE_POINT_LINE:
-			changedKernel = pointLine(hits);
+			changedKernel = planePointLine(hits);
 			break;		
 		
 		case EuclidianView3D.MODE_ORTHOGONAL_PLANE:
@@ -1230,6 +1265,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			break;
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
 			changedKernel = circleOrSpherePointRadius(hits);
+			break;
+			
+		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
+			changedKernel = viewInFrontOf(hits);
 			break;
 		
 
