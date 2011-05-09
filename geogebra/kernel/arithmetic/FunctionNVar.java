@@ -21,6 +21,7 @@ import geogebra.main.MyError;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Function of N variables that returns either a number or a boolean. This
@@ -147,6 +148,21 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 				size += right.size;
 			}
 			
+		}
+		public double[] getZeros(Set<Double> zeros) {
+			if(ineq!=null){
+				GeoPoint[] zeroPoints =	ineq.getZeros();
+				for(int i=0;i<zeroPoints.length;i++){					
+					zeros.add(zeroPoints[i].getX());
+				}
+			}
+			if(left!=null){
+				left.getZeros(zeros);
+			}
+			if(right!=null){
+				right.getZeros(zeros);
+			}
+			return null;
 		}
 	}
 

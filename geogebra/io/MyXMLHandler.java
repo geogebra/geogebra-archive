@@ -33,6 +33,7 @@ import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoImplicitPoly;
 import geogebra.kernel.GeoLine;
@@ -2413,7 +2414,11 @@ public class MyXMLHandler implements DocHandler {
 			if (eName.equals("show")) {
 				ok = handleShow(attrs);
 				break;
-			} else if (eName.equals("startPoint")) {
+			}else if (eName.equals("showOnAxis")) {
+				ok = handleShowOnAxis(attrs);
+				break;
+			}
+			else if (eName.equals("startPoint")) {
 				ok = handleStartPoint(attrs);
 				break;
 			} else if (eName.equals("slider")) {
@@ -2500,6 +2505,20 @@ public class MyXMLHandler implements DocHandler {
 		}
 	}
 
+	private boolean handleShowOnAxis(LinkedHashMap<String, String> attrs) {
+		try {
+			if(!(geo instanceof GeoFunction))
+				return false;
+			((GeoFunction)geo).setShowOnAxis(parseBoolean((String) attrs.get("val")));
+			return true;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
 	private boolean handleObjColor(LinkedHashMap<String, String> attrs) {
 		Color col = handleColorAttrs(attrs);
 		if (col == null)

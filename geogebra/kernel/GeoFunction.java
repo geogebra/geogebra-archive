@@ -100,6 +100,12 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		}
 	}
 	
+	public void setVisualStyle(GeoElement g){
+		super.setVisualStyle(g);
+		if(g instanceof GeoFunction)
+			setShowOnAxis(((GeoFunction)g).showOnAxis); 
+	}
+	
 	public String getClassName() {
 		return "GeoFunction";
 	}
@@ -431,6 +437,8 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	}
 	/** StringBuilder for temporary string manipulation */
 	protected StringBuilder sbToString = new StringBuilder(80);
+
+	private boolean showOnAxis;
 	
 	public String toValueString() {	
 
@@ -493,6 +501,9 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 
 	   //	line thickness and type  
 		getLineStyleXML(sb);
+		if(showOnAxis()){
+			sb.append("<showOnAxis val=\"true\" />");
+		}
 
    }
 
@@ -1386,6 +1397,22 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			isInequality = fun.initIneqs(fun.getExpression(),this);			
 		}
 		return fun.getIneqs();
+	}
+
+	/**
+	 * For inequalities.
+	 * @return true iff should be drawn on x-Axis only
+	 */
+	public boolean showOnAxis() {
+		
+		return showOnAxis;
+	}
+	/**
+	 * For inequalities.
+	 * @param showOnAxis true iff should be drawn on x-Axis only
+	 */
+	public void setShowOnAxis(boolean showOnAxis){
+		this.showOnAxis=showOnAxis;
 	}
 
 }

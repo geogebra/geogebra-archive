@@ -151,6 +151,7 @@ public	class PropertiesPanel extends JPanel {
 		private TracePanel tracePanel;
 		private AnimatingPanel animatingPanel;
 		private FixPanel fixPanel;
+		private IneqStylePanel ineqStylePanel;
 		private CheckBoxFixPanel checkBoxFixPanel;
  		private AllowReflexAnglePanel allowReflexAnglePanel;
  		private AllowOutlyingIntersectionsPanel allowOutlyingIntersectionsPanel;
@@ -234,6 +235,7 @@ public	class PropertiesPanel extends JPanel {
 			conicEqnPanel = new ConicEqnPanel();
 			pointSizePanel = new PointSizePanel();
 			pointStylePanel = new PointStylePanel(); // Florian Sonner 2008-07-12
+			ineqStylePanel = new IneqStylePanel();
 			textOptionsPanel = new TextOptionsPanel();
 			arcSizePanel = new ArcSizePanel();
 			slopeTriangleSizePanel = new SlopeTriangleSizePanel();
@@ -351,7 +353,8 @@ public	class PropertiesPanel extends JPanel {
 			styleTabList.add(slopeTriangleSizePanel);
 			styleTabList.add(pointSizePanel);
 			styleTabList.add(pointStylePanel);
-			styleTabList.add(lineStylePanel);	
+			styleTabList.add(lineStylePanel);
+			styleTabList.add(ineqStylePanel);
 			styleTabList.add(lineStylePanelHidden);	
 			styleTabList.add(arcSizePanel);		
 			styleTabList.add(fillingPanel);
@@ -467,6 +470,7 @@ public	class PropertiesPanel extends JPanel {
 			textOptionsPanel.setLabels();
 			arcSizePanel.setLabels();
 			lineStylePanel.setLabels();
+			ineqStylePanel.setLabels();
 			lineStylePanelHidden.setLabels();
 			decoSegmentPanel.setLabels();
 			decoAnglePanel.setLabels();
@@ -1875,6 +1879,89 @@ public	class PropertiesPanel extends JPanel {
 		}
 	}
 
+	private class IneqStylePanel extends JPanel implements ItemListener, UpdateablePanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private Object[] geos; // currently selected geos
+		private JCheckBox showOnAxis;
+
+		public IneqStylePanel() {
+			super(new FlowLayout(FlowLayout.LEFT));
+			
+			// check boxes for show trace
+			showOnAxis = new JCheckBox();
+			showOnAxis.addItemListener(this);
+			add(showOnAxis);
+		}
+		
+		public void setLabels() {
+			showOnAxis.setText(app.getPlain("ShowOnXAxis"));
+		}
+
+		public JPanel update(Object[] geos) {
+			this.geos = geos;
+			if (!checkGeos(geos))
+				return null;
+
+			showOnAxis.removeItemListener(this);
+
+			// check if properties have same values
+			if(!(geos[0] instanceof GeoFunction))
+				return null;
+			GeoFunction temp, geo0 = (GeoFunction) geos[0];
+			boolean equalFix = true;
+
+			for (int i = 0; i < geos.length; i++) {
+				if(!(geos[i] instanceof GeoFunction))
+					return null;
+				temp = (GeoFunction) geos[i];
+				
+				if (geo0.showOnAxis() != temp.showOnAxis())
+					equalFix = false;
+			}
+
+			// set trace visible checkbox
+			if (equalFix)
+				showOnAxis.setSelected(geo0.showOnAxis());
+			else
+				showOnAxis.setSelected(false);
+
+			showOnAxis.addItemListener(this);
+			return this;
+		}
+
+		private boolean checkGeos(Object[] geos) {
+			for (int i = 0; i < geos.length; i++) {
+				GeoElement geo = (GeoElement) geos[i];
+			//	if (!geo.isGeoFunction())
+			//		return false;
+			}
+			return true;
+		}
+
+		/**
+		 * listens to checkboxes and sets trace state
+		 */
+		public void itemStateChanged(ItemEvent e) {
+			GeoFunction geo;
+			Object source = e.getItemSelectable();
+
+			// show trace value changed
+			if (source == showOnAxis) {
+				for (int i = 0; i < geos.length; i++) {
+					geo = (GeoFunction) geos[i];
+					geo.setShowOnAxis(showOnAxis.isSelected());
+					geo.updateRepaint();
+				}
+			}		
+			
+			updateSelection(geos);
+		}
+	}
+
+	
 	/**
 	 * panel to set object's absoluteScreenLocation flag
 	 * @author Markus Hohenwarter

@@ -8,10 +8,12 @@ import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
 import geogebra.kernel.roots.RealRootUtil;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
+import java.util.TreeSet;
 
 /**
  * Graphical representation of inequality
@@ -61,7 +63,7 @@ public class DrawInequality extends Drawable {
 		setForceNoFill(true);
 		updateRecursive(tree);
 	}
-
+	GeneralPathClipped[] gpAxis;
 	final public void update() {
 		// take line g here, not geo this object may be used for conics too
 		isVisible = geo.isEuclidianVisible();
@@ -71,7 +73,33 @@ public class DrawInequality extends Drawable {
 		// updateStrokes(n);
 
 		// init gp
-		updateRecursive(function.getIneqs());
+		updateRecursive(function.getIneqs());		
+		if((geo instanceof GeoFunction) && ((GeoFunction)geo).showOnAxis()){
+			geo.setLineType(EuclidianView.LINE_TYPE_FULL);
+			TreeSet<Double> zeros = new TreeSet<Double>();			
+			((GeoFunction)geo).getIneqs().getZeros(zeros);
+			//radius of the dots
+			double radius = geo.getLineThickness()*DrawInequality1Var.DOT_RADIUS;
+			//we add poits 2*radius to the left and right of the screen			
+			zeros.add(view.xmin-2*radius*view.xscale);
+			zeros.add(view.xmax+2*radius*view.xscale);
+			gpAxis = new GeneralPathClipped[zeros.size()];
+			Double last = null;
+			int gpCount = 0;
+			for(Double zero:zeros){
+				if(last!=null){
+					boolean value = ((GeoFunction)geo).evaluateBoolean(0.5*(last+zero));
+					if(value){
+						gpAxis[gpCount] = new GeneralPathClipped(view);
+						gpAxis[gpCount].moveTo(view.toScreenCoordXd(last)+radius, view.toScreenCoordYd(0));
+						gpAxis[gpCount].lineTo(view.toScreenCoordXd(zero)-radius, view.toScreenCoordYd(0));
+						gpCount++;
+					}
+				}
+				last = zero;
+			}
+			
+		}
 
 	}
 
@@ -198,7 +226,12 @@ public class DrawInequality extends Drawable {
 		}
 		if (!isForceNoFill()) {
 			g2.setPaint(geo.getObjectColor());
-			fill(g2, getShape(), true);
+			if(gpAxis!=null){				
+				for(int i=0;gpAxis[i]!=null;i++){
+					Drawable.drawWithValueStrokePure(gpAxis[i], g2);
+				}
+			}
+			fill(g2, getShape(), true);		
 		}
 	}
 
