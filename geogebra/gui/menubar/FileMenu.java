@@ -79,6 +79,12 @@ class FileMenu extends BaseMenu {
 		mi = add(loadAction);
 		setMenuShortCutAccelerator(mi, 'O'); // open
 		mi = add(loadURLAction);
+		
+		// recent SubMenu
+		JMenu submenuRecent = new JMenu(app.getMenu("Recent"));
+		submenuRecent.setIcon(app.getEmptyIcon());
+		add(submenuRecent);
+
 		addSeparator();
 		mi = add(saveAction);
 		setMenuShortCutAccelerator(mi, 'S');
@@ -128,12 +134,6 @@ class FileMenu extends BaseMenu {
 		if (app.isApplet())
 			return;
 		
-		// recent SubMenu
-		addSeparator();
-		JMenu submenuRecent = new JMenu(app.getMenu("Recent"));
-		submenu.setIcon(app.getEmptyIcon());
-		add(submenuRecent);
-
 		// Recent files list
 		int size = Application.getFileListSize();
 		if (size > 0) {
