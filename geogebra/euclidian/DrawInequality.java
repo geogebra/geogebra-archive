@@ -8,7 +8,6 @@ import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.Inequality;
 import geogebra.kernel.arithmetic.FunctionNVar.IneqTree;
 import geogebra.kernel.roots.RealRootUtil;
-import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -63,7 +62,9 @@ public class DrawInequality extends Drawable {
 		setForceNoFill(true);
 		updateRecursive(tree);
 	}
-	GeneralPathClipped[] gpAxis;
+
+	private GeneralPathClipped[] gpAxis;
+
 	final public void update() {
 		// take line g here, not geo this object may be used for conics too
 		isVisible = geo.isEuclidianVisible();
@@ -73,33 +74,38 @@ public class DrawInequality extends Drawable {
 		// updateStrokes(n);
 
 		// init gp
-		updateRecursive(function.getIneqs());		
-		if((geo instanceof GeoFunction) && ((GeoFunction)geo).showOnAxis()){
-			geo.setLineType(EuclidianView.LINE_TYPE_FULL);
-			TreeSet<Double> zeros = new TreeSet<Double>();			
-			((GeoFunction)geo).getIneqs().getZeros(zeros);
-			//radius of the dots
-			double radius = geo.getLineThickness()*DrawInequality1Var.DOT_RADIUS;
-			//we add poits 2*radius to the left and right of the screen			
-			zeros.add(view.xmin-2*radius*view.xscale);
-			zeros.add(view.xmax+2*radius*view.xscale);
+		updateRecursive(function.getIneqs());
+		if ((geo instanceof GeoFunction) && ((GeoFunction) geo).showOnAxis()
+				&& !"y".equals(((GeoFunction) geo).getVarString())) {
+			TreeSet<Double> zeros = new TreeSet<Double>();
+			((GeoFunction) geo).getIneqs().getZeros(zeros);
+			// radius of the dots
+			double radius = geo.getLineThickness()
+					* DrawInequality1Var.DOT_RADIUS;
+			// we add poits 2*radius to the left and right of the screen
+			zeros.add(view.xmin - 2 * radius * view.xscale);
+			zeros.add(view.xmax + 2 * radius * view.xscale);
 			gpAxis = new GeneralPathClipped[zeros.size()];
 			Double last = null;
 			int gpCount = 0;
-			for(Double zero:zeros){
-				if(last!=null){
-					boolean value = ((GeoFunction)geo).evaluateBoolean(0.5*(last+zero));
-					if(value){
+			for (Double zero : zeros) {
+				if (last != null) {
+					boolean value = ((GeoFunction) geo)
+							.evaluateBoolean(0.5 * (last + zero));
+					if (value) {
 						gpAxis[gpCount] = new GeneralPathClipped(view);
-						gpAxis[gpCount].moveTo(view.toScreenCoordXd(last)+radius, view.toScreenCoordYd(0));
-						gpAxis[gpCount].lineTo(view.toScreenCoordXd(zero)-radius, view.toScreenCoordYd(0));
+						gpAxis[gpCount].moveTo(view.toScreenCoordXd(last)
+								+ radius, view.toScreenCoordYd(0));
+						gpAxis[gpCount].lineTo(view.toScreenCoordXd(zero)
+								- radius, view.toScreenCoordYd(0));
 						gpCount++;
 					}
 				}
 				last = zero;
 			}
-			
-		}
+			updateStrokes(geo);
+		} else
+			gpAxis = null;
 
 	}
 
@@ -110,18 +116,16 @@ public class DrawInequality extends Drawable {
 
 		if (ineq != it.getIneq())
 			ineq = it.getIneq();
-		
-			
-		if(ineq!=null){
-			
-		if (drawable == null || !matchBorder(ineq.getBorder(), drawable)) {
-			createDrawable();
-		} 
-		else if (ineq.getType() == Inequality.INEQUALITY_CONIC) {
+
+		if (ineq != null) {
+
+			if (drawable == null || !matchBorder(ineq.getBorder(), drawable)) {
+				createDrawable();
+			} else if (ineq.getType() == Inequality.INEQUALITY_CONIC) {
 				ineq.getConicBorder().setInverseFill(ineq.isAboveBorder());
-		}
-		drawable.update();
-		setShape(drawable.getShape());
+			}
+			drawable.update();
+			setShape(drawable.getShape());
 		}
 		if (geo.isInverseFill() && !isForceNoFill()) {
 			Area b = new Area(view.getBoundingPath());
@@ -224,14 +228,23 @@ public class DrawInequality extends Drawable {
 			if (right != null)
 				right.draw(g2);
 		}
-		if (!isForceNoFill()) {
-			g2.setPaint(geo.getObjectColor());
-			if(gpAxis!=null){				
-				for(int i=0;gpAxis[i]!=null;i++){
-					Drawable.drawWithValueStrokePure(gpAxis[i], g2);
+		if (!isForceNoFill()) {			
+			if (gpAxis != null) {
+				if (geo.doHighlighting()) {
+					g2.setPaint(geo.getSelColor());
+					g2.setStroke(selStroke);
+					for (int i = 0; gpAxis[i] != null; i++) {
+						g2.draw(gpAxis[i]);
+					}
 				}
-			}
-			fill(g2, getShape(), true);		
+				g2.setPaint(geo.getObjectColor());
+				g2.setStroke(objStroke);
+				for (int i = 0; gpAxis[i] != null; i++) {
+					g2.draw(gpAxis[i]);
+				}
+
+			} else
+				fill(g2, getShape(), true);
 		}
 	}
 
@@ -252,8 +265,8 @@ public class DrawInequality extends Drawable {
 
 	@Override
 	public boolean hit(int x, int y) {
-		if(geo instanceof GeoFunction && ((GeoFunction)geo).showOnAxis() && 
-				Math.abs(y-view.toScreenCoordY(0))>3)
+		if (geo instanceof GeoFunction && ((GeoFunction) geo).showOnAxis()
+				&& Math.abs(y - view.toScreenCoordY(0)) > 3)
 			return false;
 		return hit2(x, y) || hit2(x - 4, y) || hit2(x + 4, y) || hit2(x, y - 4)
 				|| hit2(x, y + 4);

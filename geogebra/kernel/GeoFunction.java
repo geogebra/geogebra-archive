@@ -834,6 +834,13 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
        	
        	return resultFun;
 	}
+	/**
+	 * Applies an operation on first and second function and returns the result
+	 * @param op
+	 * @param fun1
+	 * @param fun2
+	 * @return resulting GeoFunction or GeFunctionNvar
+	 */
 	public static GeoElement operationSymb(int op, GeoFunction fun1, GeoFunction fun2) {
 		Kernel kernel = fun1.getKernel();
 		FunctionVariable x =  new FunctionVariable(kernel,"x");
@@ -872,12 +879,21 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
        	AlgoDependentFunction adf = new AlgoDependentFunction(fun1.getConstruction(),null,f);
        	return adf.getFunction();
 	}
-	
+	/**
+	 * Applies an operation on this function and number value
+	 * @param op
+	 * @param fun1
+	 * @param nv
+	 * @param right f op nv for true, nv op f for false
+	 * @return resulting function
+	 */
 	public static GeoFunction applyNumberSymb(int op, GeoFunction fun1, NumberValue nv,boolean right) {
 		
 		Kernel kernel = fun1.getKernel();
 		
 		FunctionVariable x =  new FunctionVariable(kernel);
+		if(nv.toString().equals(fun1.getVarString()))
+			nv = x;
 		ExpressionNode sum;
 		if(right){sum = new ExpressionNode(kernel,
 				new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION,x),				
@@ -1403,8 +1419,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * For inequalities.
 	 * @return true iff should be drawn on x-Axis only
 	 */
-	public boolean showOnAxis() {
-		
+	public boolean showOnAxis() {		
 		return showOnAxis;
 	}
 	/**

@@ -17,7 +17,7 @@ import java.awt.geom.Ellipse2D;
 public class DrawInequality1Var extends Drawable {
 
 	/** ratio of dot radius and line thickness */
-	public static final double DOT_RADIUS = 1.5;
+	public static final double DOT_RADIUS = 1;
 	private Inequality ineq;
 	private GeneralPathClipped[] gp;
 	private Ellipse2D.Double[] circle;
@@ -51,13 +51,11 @@ public class DrawInequality1Var extends Drawable {
 				g2.setPaint(geo.getSelColor());
 				g2.setStroke(selStroke);
 				Drawable.drawWithValueStrokePure(gp[i], g2);
-			}
-			fill(g2, gp[i], true); // fill using default/hatching/image as
-			// appropriate
+			}			
 
 			if (geo.lineThickness > 0) {
 				g2.setPaint(geo.getObjectColor());
-				g2.setStroke(EuclidianView.getStroke(geo.lineThickness, ineq
+				g2.setStroke(EuclidianView.getStroke(geo.lineThickness / 2.0f, ineq
 						.getFunBorder().lineType));
 				Drawable.drawWithValueStrokePure(gp[i], g2);
 			}
@@ -72,14 +70,12 @@ public class DrawInequality1Var extends Drawable {
 				g2.setPaint(geo.getSelColor());
 				g2.setStroke(selStroke);
 				Drawable.drawWithValueStrokePure(circle[i], g2);
-			}
-			fill(g2, circle[i], true); // fill using default/hatching/image as
-			// appropriate
+			}	
 
 			if (geo.lineThickness > 0) {
 				g2.setPaint(geo.getObjectColor());
-				g2.setStroke(EuclidianView.getStroke(geo.lineThickness,
-						geo.lineType));
+				g2.setStroke(EuclidianView.getStroke(geo.lineThickness / 2.0f,
+						EuclidianView.LINE_TYPE_FULL));
 				Drawable.drawWithValueStrokePure(circle[i], g2);
 				if (!ineq.isStrict()) {
 					g2.fill(circle[i]);
@@ -193,7 +189,7 @@ public class DrawInequality1Var extends Drawable {
 			}
 			setShape(a);
 		}
-
+		updateStrokes(geo);
 	}
 
 }

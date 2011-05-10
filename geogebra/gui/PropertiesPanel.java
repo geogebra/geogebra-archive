@@ -1923,8 +1923,11 @@ public	class PropertiesPanel extends JPanel {
 			}
 
 			// set trace visible checkbox
-			if (equalFix)
+			if (equalFix){
 				showOnAxis.setSelected(geo0.showOnAxis());
+				if(geo0.showOnAxis())
+					fillingPanel.setAllEnabled(false);
+			}
 			else
 				showOnAxis.setSelected(false);
 
@@ -1934,9 +1937,11 @@ public	class PropertiesPanel extends JPanel {
 
 		private boolean checkGeos(Object[] geos) {
 			for (int i = 0; i < geos.length; i++) {
-				GeoElement geo = (GeoElement) geos[i];
-			//	if (!geo.isGeoFunction())
-			//		return false;
+				if(!(geos[i] instanceof GeoFunction))
+					return false;
+				GeoFunction gfun = (GeoFunction) geos[i];
+				if (!gfun.isBooleanFunction() || gfun.getVarString().equals("y"))
+					return false;
 			}
 			return true;
 		}
@@ -1954,7 +1959,9 @@ public	class PropertiesPanel extends JPanel {
 					geo = (GeoFunction) geos[i];
 					geo.setShowOnAxis(showOnAxis.isSelected());
 					geo.updateRepaint();
+					
 				}
+				fillingPanel.setAllEnabled(!showOnAxis.isSelected());
 			}		
 			
 			updateSelection(geos);
@@ -4178,6 +4185,16 @@ public	class PropertiesPanel extends JPanel {
 			
 		}
 		
+		public void setAllEnabled(boolean b) {
+			Component[] c = this.getComponents();
+			for(int i=0;i<c.length;i++){
+				Component[] subc = ((JPanel)c[i]).getComponents();
+				for(int j=0;j<subc.length;j++){
+					subc[j].setEnabled(b);
+				}
+			}			
+		}
+
 		public void setLabels() {
 			
 			//setBorder(BorderFactory.createTitledBorder(app.getPlain("Filling")));
