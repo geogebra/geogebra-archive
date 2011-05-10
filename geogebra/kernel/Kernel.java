@@ -7719,7 +7719,7 @@ public class Kernel {
 		switch (casPrintForm) {
 			// number formatting for XML string output
 			case ExpressionNode.STRING_TYPE_GEOGEBRA_XML:
-				if (Math.floor(x) == x)
+				if (Math.abs(x) < Integer.MAX_VALUE && Math.floor(x) == x)
 					return Integer.toString((int) x);
 				else
 					return Double.toString(x);		
