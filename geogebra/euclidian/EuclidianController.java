@@ -504,6 +504,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			previewDrawable = view.createPreviewConic(mode, selectedPoints);
 			break;
 
+		case EuclidianView.MODE_ANGLE:		
+			previewDrawable = view.createPreviewAngle(selectedPoints);
+			break;
+
 			// preview for compass: radius first
 		case EuclidianView.MODE_COMPASSES:
 			previewDrawable = new DrawConic((EuclidianView) view, mode, selectedPoints, selectedSegments, selectedConics);

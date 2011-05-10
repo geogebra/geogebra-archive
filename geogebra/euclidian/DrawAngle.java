@@ -12,19 +12,26 @@
 
 package geogebra.euclidian;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoAngleLines;
 import geogebra.kernel.AlgoAnglePoints;
 import geogebra.kernel.AlgoAngleVector;
 import geogebra.kernel.AlgoAngleVectors;
+import geogebra.kernel.AlgoCircleTwoPoints;
 import geogebra.kernel.AlgoElement;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
+import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVec3D;
 import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -33,12 +40,14 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 /**
  * 
  * @author Markus Hohenwarter, Loic De Coq
  * @version
  */
-public class DrawAngle extends Drawable {
+public class DrawAngle extends Drawable implements Previewable {
 
 	private GeoAngle angle;
 
@@ -72,6 +81,8 @@ public class DrawAngle extends Drawable {
 	private double[] firstVec = new double[2];
 	private GeoPoint tempPoint;
 	private boolean drawDot;
+	private GeoPoint [] previewTempPoints;  
+
 
 	private Kernel kernel;
 	
@@ -84,6 +95,8 @@ public class DrawAngle extends Drawable {
 	/** maximum angle distance between two ticks.*/
 	public static final double MAX_TICK_DISTANCE=Math.toRadians(15);
 	private GeneralPath square;
+
+	private ArrayList<GeoPointND> prevPoints;
 	//END
 	
 
@@ -105,8 +118,28 @@ public class DrawAngle extends Drawable {
 			angle.setDrawable(true);
 			update();
 		}
-			
 	}
+	
+	/**
+	 * Creates a new DrawAngle for preview 
+	 * @param view 
+	 * @param mode 
+	 * @param points 
+	 */
+	DrawAngle(EuclidianView view, ArrayList<GeoPointND> points) {
+		this.view = view; 
+		prevPoints = points;
+
+		Construction cons = view.getKernel().getConstruction();
+		previewTempPoints = new GeoPoint[3];
+		for (int i=0; i < previewTempPoints.length; i++) {
+			previewTempPoints[i] = new GeoPoint(cons);			
+		}
+		
+		initPreview();
+	} 
+	
+
 
 	private void init(){
 		AlgoElement algo = geo.getDrawAlgorithm();
@@ -658,4 +691,47 @@ public class DrawAngle extends Drawable {
 		return shape.getBounds();		
 	}
 
+    private void initPreview() {
+		//	init the conic for preview			    	
+		Construction cons = previewTempPoints[0].getConstruction();
+		
+				AlgoAnglePoints algo = new AlgoAnglePoints(cons, 
+						previewTempPoints[0], 
+						previewTempPoints[1],
+						previewTempPoints[2]);
+				cons.removeFromConstructionList(algo);				
+				
+				geo = algo.getAngle();
+				angle = (GeoAngle)geo;
+				geo.setEuclidianVisible(true);
+				init();
+				//initConic(algo.getCircle());
+    }
+
+	final public void updatePreview() {
+		isVisible = geo != null && prevPoints.size() == 2;
+		if (isVisible) {
+			for (int i=0; i < prevPoints.size(); i++) {
+				Coords p = view.getCoordsForView(prevPoints.get(i).getInhomCoordsInD(3));
+				previewTempPoints[i].setCoords(p,true);					
+			}						
+			previewTempPoints[0].updateCascade();			
+		}	
+	}
+
+	final public void updateMousePos(double xRW, double yRW) {
+		if (isVisible) {
+			previewTempPoints[previewTempPoints.length-1].setCoords(xRW, yRW, 1.0);
+			previewTempPoints[previewTempPoints.length-1].updateCascade();		
+			update();
+		}
+	}
+
+	final public void drawPreview(Graphics2D g2) {
+		isVisible = geo != null && prevPoints.size() == 2;
+		draw(g2);
+	}
+
+	public void disposePreview() {
+	}
 }

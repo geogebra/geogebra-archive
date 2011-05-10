@@ -67,7 +67,7 @@ public class AlgoAnglePoints extends AlgoElement  implements AlgoDrawInformation
     	return EuclidianConstants.MODE_ANGLE;
     }
     
-    private AlgoAnglePoints(
+    public AlgoAnglePoints(
         Construction cons,
         GeoPoint A,
         GeoPoint B,
@@ -129,7 +129,7 @@ public class AlgoAnglePoints extends AlgoElement  implements AlgoDrawInformation
 			return super.getConstructionIndex();
     }
 
-    GeoAngle getAngle() {
+    public GeoAngle getAngle() {
         return angle;
     }
     public GeoPoint getA() {

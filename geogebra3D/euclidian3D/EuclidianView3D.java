@@ -3475,4 +3475,10 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public String getTranslatedFromPlaneString(){
 		return app.getPlain("space");
 	}
+
+
+	public Previewable createPreviewAngle(ArrayList selectedPoints) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

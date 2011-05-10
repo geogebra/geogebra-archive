@@ -4887,6 +4887,10 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return new DrawConic(this, mode, selectedPoints);
 	}	
 	
+	public Previewable createPreviewAngle(ArrayList selectedPoints){
+		return new DrawAngle(this, selectedPoints);
+	}	
+	
 	public Previewable createPreviewPolyLine(ArrayList selectedPoints){
 		return new DrawPolyLine(this, selectedPoints);
 	}	

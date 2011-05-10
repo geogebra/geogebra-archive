@@ -394,6 +394,7 @@ public interface EuclidianViewInterface {
 	 * @return string translated description of plane from the view was created
 	 */
 	public String getTranslatedFromPlaneString();
+	public Previewable createPreviewAngle(ArrayList selectedPoints);
 
 	
 }
