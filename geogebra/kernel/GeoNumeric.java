@@ -481,7 +481,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			sb.append(Util.encodeXML(getIntervalMinObject().getLabel()));
 			sb.append("\"");
 		}
-		if (intervalMinActive) {
+		if (intervalMaxActive) {
 			sb.append(" max=\"");
 			sb.append(Util.encodeXML(getIntervalMaxObject().getLabel()));
 			sb.append("\"");
