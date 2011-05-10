@@ -86,8 +86,8 @@ implements Previewable {
         labelVisible = geo.isLabelVisible();       
 		updateStrokes(geo);
 		
-        Coords A = view.getInhomCoordsForView(s.getStartInhomCoords());
-        Coords B = view.getInhomCoordsForView(s.getEndInhomCoords());
+        Coords A = view.getCoordsForView(s.getStartInhomCoords());
+        Coords B = view.getCoordsForView(s.getEndInhomCoords());
         
         //check if in view
         if (!Kernel.isZero(A.getZ()) || !Kernel.isZero(B.getZ())){

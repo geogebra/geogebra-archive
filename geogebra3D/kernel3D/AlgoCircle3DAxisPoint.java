@@ -55,6 +55,10 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
     }
 
 
+    /**
+     * 
+     * @return circle
+     */
     public GeoConic3D getCircle() {
         return circle;
     }

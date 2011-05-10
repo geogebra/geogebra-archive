@@ -286,6 +286,36 @@ public interface Manager3DInterface {
 					 GeoLineND axis,
 					 GeoPointND A) ;
 
+			 /** 
+			  * circle with point, axis parallel to axis and radius 
+			  */
+			 public GeoConicND Circle3D(
+					 String label,
+					 GeoPointND A,
+					 NumberValue radius,
+					 GeoLineND axis) ;
+			 
+			 
+			 /** 
+			  * circle with point, axis parallel to vector and radius 
+			  */
+			 public GeoConicND Circle3D(
+					 String label,
+					 GeoPointND A,
+					 NumberValue radius,
+					 GeoVectorND vector) ;
+			 
+			 /** 
+			  * circle with point parallel to plane and radius 
+			  */
+			 public GeoConicND Circle3D(
+					 String label,
+					 GeoPointND A,
+					 NumberValue radius,
+					 GeoCoordSys2D plane) ;
+			 
+			 
+
 
 			/** 
 			 * plane through points A, B, C

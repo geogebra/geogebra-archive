@@ -408,14 +408,14 @@ final public class DrawConic extends Drawable implements Previewable {
             circle = ellipse;
             arcFiller = null;         
             // calc screen coords of midpoint
-            Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());            
+            Coords M = view.getCoordsForView(conic.getMidpoint3D());            
             if (!Kernel.isZero(M.getZ())){//check if in view
         		isVisible = false;
         		return;
             }
             //check if eigen vec are in view
             for(int j=0; j<2; j++){
-            	Coords ev = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+            	Coords ev = view.getCoordsForView(conic.getEigenvec3D(j));   
                 if (!Kernel.isZero(ev.getZ())){//check if in view
             		isVisible = false;
             		return;
@@ -428,14 +428,14 @@ final public class DrawConic extends Drawable implements Previewable {
         // special case: really big circle
         // draw arc according to midpoint position        	        	        	
         	// of the arc
-        	Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());
+        	Coords M = view.getCoordsForView(conic.getMidpoint3D());
             if (!Kernel.isZero(M.getZ())){//check if in view
         		isVisible = false;
         		return;
             }
             //check if eigen vec are in view
             for(int j=0; j<2; j++){
-            	Coords ev = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+            	Coords ev = view.getCoordsForView(conic.getEigenvec3D(j));   
                 if (!Kernel.isZero(ev.getZ())){//check if in view
             		isVisible = false;
             		return;
@@ -605,14 +605,14 @@ final public class DrawConic extends Drawable implements Previewable {
 		}
 		
 		//check if in view
-        Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());            
+        Coords M = view.getCoordsForView(conic.getMidpoint3D());            
         if (!Kernel.isZero(M.getZ())){//check if in view
     		isVisible = false;
     		return;
         }       
         Coords[] ev = new Coords[2];
         for(int j=0; j<2; j++){
-        	ev[j] = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+        	ev[j] = view.getCoordsForView(conic.getEigenvec3D(j));   
             if (!Kernel.isZero(ev[j].getZ())){//check if in view
         		isVisible = false;
         		return;
@@ -654,14 +654,14 @@ final public class DrawConic extends Drawable implements Previewable {
     	
 
 		//check if in view
-        Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());            
+        Coords M = view.getCoordsForView(conic.getMidpoint3D());            
         if (!Kernel.isZero(M.getZ())){//check if in view
     		isVisible = false;
     		return;
         }       
         Coords[] ev = new Coords[2];
         for(int j=0; j<2; j++){
-        	ev[j] = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+        	ev[j] = view.getCoordsForView(conic.getEigenvec3D(j));   
             if (!Kernel.isZero(ev[j].getZ())){//check if in view
         		isVisible = false;
         		return;
@@ -785,14 +785,14 @@ final public class DrawConic extends Drawable implements Previewable {
 
 
 		//check if in view
-        Coords M = view.getInhomCoordsForView(conic.getMidpoint3D());            
+        Coords M = view.getCoordsForView(conic.getMidpoint3D());            
         if (!Kernel.isZero(M.getZ())){//check if in view
     		isVisible = false;
     		return;
         }       
         Coords[] ev = new Coords[2];
         for(int j=0; j<2; j++){
-        	ev[j] = view.getInhomCoordsForView(conic.getEigenvec3D(j));   
+        	ev[j] = view.getCoordsForView(conic.getEigenvec3D(j));   
             if (!Kernel.isZero(ev[j].getZ())){//check if in view
         		isVisible = false;
         		return;
@@ -1160,7 +1160,7 @@ final public class DrawConic extends Drawable implements Previewable {
 			isVisible = conic != null && prevPoints.size() == neededPrevPoints;
 			if (isVisible) {
 				for (int i=0; i < prevPoints.size(); i++) {
-					Coords p = view.getInhomCoordsForView(prevPoints.get(i).getInhomCoordsInD(3));
+					Coords p = view.getCoordsForView(prevPoints.get(i).getInhomCoordsInD(3));
 					previewTempPoints[i].setCoords(p,true);					
 				}						
 				previewTempPoints[0].updateCascade();			

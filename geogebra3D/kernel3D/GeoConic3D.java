@@ -245,13 +245,13 @@ extends GeoConicND implements GeoElement3DInterface{//, GeoCoordSys2D{
 		 EuclidianView view = (EuclidianView) getViewForValueString();
 
 		 //check if in view
-		 Coords M = view.getInhomCoordsForView(getMidpoint3D());            
+		 Coords M = view.getCoordsForView(getMidpoint3D());            
 		 if (!Kernel.isZero(M.getZ())){//check if in view
 			 return new StringBuilder(app.getPlain("NotIncluded"));
 		 }       
 		 Coords[] ev = new Coords[2];
 		 for(int j=0; j<2; j++){
-			 ev[j] = view.getInhomCoordsForView(getEigenvec3D(j));   
+			 ev[j] = view.getCoordsForView(getEigenvec3D(j));   
 			 if (!Kernel.isZero(ev[j].getZ())){//check if in view
 				 return new StringBuilder(app.getPlain("NotIncluded"));
 			 }

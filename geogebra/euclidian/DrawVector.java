@@ -25,6 +25,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.GeoVector;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
 
@@ -78,20 +79,34 @@ public class DrawVector extends Drawable implements Previewable {
         
 		updateStrokes((GeoElement) v);
 		
+		Coords coords;
+		
 		//start point in real world coords
 		P = v.getStartPoint();            		                            
         if (P != null && !P.isInfinite()) {
-        	P.getInhomCoords(coordsA);
+        	coords = P.getCoordsInD(3);
+            if (!Kernel.isZero(coords.getZ())){
+            	isVisible = false;
+            	return;
+            }else{
+            	coordsA[0] = coords.getX();
+            	coordsA[1] = coords.getY();
+            }
         } else {
             coordsA[0] = 0;
            	coordsA[1] = 0;			
         }       
         
         // vector
-        Coords coords = v.getCoordsInD(2);
-        coordsV[0] = coords.getX();
-        coordsV[1] = coords.getY();
-         
+        coords = v.getCoordsInD(3);
+        if (!Kernel.isZero(coords.getZ())){
+        	isVisible = false;
+        	return;
+        }else{
+        	coordsV[0] = coords.getX();
+        	coordsV[1] = coords.getY();
+        }
+        
 		// end point 
         coordsB[0] = coordsA[0] + coordsV[0];
         coordsB[1] = coordsA[1] + coordsV[1];

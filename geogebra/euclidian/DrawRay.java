@@ -96,7 +96,7 @@ implements Previewable {
 			}
 
 			// calc start point of ray in screen coords		
-			Coords A = view.getInhomCoordsForView(ray.getStartInhomCoords());
+			Coords A = view.getCoordsForView(ray.getStartInhomCoords());
 			a[0] = A.getX(); a[1] = A.getY();
 			view.toScreenCoords(a);
 			

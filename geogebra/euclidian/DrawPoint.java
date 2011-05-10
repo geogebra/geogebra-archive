@@ -88,7 +88,7 @@ public final class DrawPoint extends Drawable {
         
         //looks if it's on view
 	    double [] coords = new double[2];
-	    Coords p = view.getInhomCoordsForView(P.getInhomCoordsInD(3));
+	    Coords p = view.getCoordsForView(P.getInhomCoordsInD(3));
 	    if (!Kernel.isZero(p.getZ())){
 	    	isVisible = false;
 	    }else{

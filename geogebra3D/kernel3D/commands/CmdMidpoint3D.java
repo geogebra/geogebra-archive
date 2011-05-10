@@ -33,12 +33,14 @@ public class CmdMidpoint3D extends CmdMidpoint {
 		switch (n) {
 		case 2:
 			arg = resArgs(c);
-			if ((ok[0] = (arg[0].isGeoPoint()))
-					&& (ok[1] = (arg[1].isGeoPoint()))) {
-				GeoElement[] ret = { (GeoElement) kernel.getManager3D().Midpoint(c.getLabel(),
-						(GeoPointND) arg[0], (GeoPointND) arg[1]) };
-				return ret;
-			} 
+			if (arg[0].isGeoElement3D() || arg[1].isGeoElement3D() ){
+				if ((ok[0] = (arg[0].isGeoPoint()))
+						&& (ok[1] = (arg[1].isGeoPoint()))) {
+					GeoElement[] ret = { (GeoElement) kernel.getManager3D().Midpoint(c.getLabel(),
+							(GeoPointND) arg[0], (GeoPointND) arg[1]) };
+					return ret;
+				} 
+			}
 
 
 		default :

@@ -86,13 +86,13 @@ public class EuclidianViewForPlane extends EuclidianView {
 	
 	
 	
-	public Coords getInhomCoordsForView(Coords coords){
+	public Coords getCoordsForView(Coords coords){
 		return coords.projectPlane(getPlaneMatrix())[1];
 	}
 	
 	public CoordMatrix getPlaneMatrix(){
-		//return plane.getCoordSys().getMatrixOrthonormal();
-		return plane.getCoordSys().getDrawingMatrix();
+		return plane.getCoordSys().getMatrixOrthonormal();
+		//return plane.getCoordSys().getDrawingMatrix();
 	}
 
 	public AffineTransform getTransform(GeoConicND conic, Coords M, Coords[] ev){

@@ -838,7 +838,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	Coords p = getInhomCoordsInD(3);
     	
     	if (getViewForValueString() instanceof EuclidianView){
-    		Coords p2D = ((EuclidianView) getViewForValueString()).getInhomCoordsForView(getInhomCoordsInD(3));
+    		Coords p2D = ((EuclidianView) getViewForValueString()).getCoordsForView(getInhomCoordsInD(3));
     		if (Kernel.isZero(p2D.getZ())){
     	    	isVisibleInView2D=true;
     	    	p = p2D;

@@ -499,6 +499,53 @@ public class Manager3D implements Manager3DInterface {
 		kernel.notifyUpdate(circle);
 		return circle;
 	}
+	
+	public GeoConicND Circle3D(
+			 String label,
+			 GeoPointND A,
+			 NumberValue radius,
+			 GeoLineND axis){
+		
+		AlgoCircle3DPointAxisRadius algo = new AlgoCircle3DPointLineRadius(cons, label, A, radius, axis);
+		GeoConic3D circle = algo.getCircle();
+		//circle.setToSpecific();
+		circle.update();
+		kernel.notifyUpdate(circle);
+		return circle;
+
+		
+	}
+	
+	 public GeoConicND Circle3D(
+			 String label,
+			 GeoPointND A,
+			 NumberValue radius,
+			 GeoVectorND vector){
+		 
+			AlgoCircle3DPointAxisRadius algo = new AlgoCircle3DPointVectorRadius(cons, label, A, radius, vector);
+			GeoConic3D circle = algo.getCircle();
+			//circle.setToSpecific();
+			circle.update();
+			kernel.notifyUpdate(circle);
+			return circle;
+	 }
+	 
+	 
+	 public GeoConicND Circle3D(
+			 String label,
+			 GeoPointND A,
+			 NumberValue radius,
+			 GeoCoordSys2D plane) {
+		 
+		 AlgoCircle3DPointAxisRadius algo = new AlgoCircle3DPointPlaneRadius(cons, label, A, radius, plane);
+			GeoConic3D circle = algo.getCircle();
+			//circle.setToSpecific();
+			circle.update();
+			kernel.notifyUpdate(circle);
+			return circle;
+	 
+	 }
+	 
 
 	/** 
 	 * plane through points A, B, C

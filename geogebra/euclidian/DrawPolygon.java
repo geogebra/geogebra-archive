@@ -118,7 +118,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 			gp.reset();
 
 		// first point
-		Coords v = view.getInhomCoordsForView(points[0].getInhomCoordsInD(3));
+		Coords v = view.getCoordsForView(points[0].getInhomCoordsInD(3));
 		if (!Kernel.isZero(v.getZ()))
 			return false;
 		coords[0] = v.getX();
@@ -131,7 +131,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 		double ysum = coords[1];
 
 		for (int i = 1; i < points.length; i++) {
-			v = view.getInhomCoordsForView(points[i].getInhomCoordsInD(3));
+			v = view.getCoordsForView(points[i].getInhomCoordsInD(3));
 			if (!Kernel.isZero(v.getZ())) { 
 				return false;
 			}

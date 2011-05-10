@@ -248,7 +248,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 			 coordSys.addPoint(points[i].getInhomCoordsInD(3));
 		 }
 
-		 if (coordSys.makeOrthoMatrix(true,false)){
+		 if (coordSys.makeOrthoMatrix(false,false)){
 			 
 			 //Application.debug("ortho=\n"+coordSys.getMatrixOrthonormal());
 			 

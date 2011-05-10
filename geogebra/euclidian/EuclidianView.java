@@ -4982,7 +4982,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * tranform in view coords
 	 * @param coords
 	 */
-	public Coords getInhomCoordsForView(Coords coords){
+	public Coords getCoordsForView(Coords coords){
 		return coords;
 	}
 	
