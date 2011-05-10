@@ -22,6 +22,7 @@ import geogebra.main.MyError;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Iterator;
 
 /**
  * Function of N variables that returns either a number or a boolean. This
@@ -572,6 +573,24 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 			casEvalMap = new HashMap<String, FunctionNVar>();
 		}
 		return casEvalMap;
+	}
+	
+	// clears those entries in the function cache which contain this label
+	// or clear everything if the label is null (called by clearConstruction)
+	public static void clearCasEvalMap(String label) {
+		if (label == null) {
+			getCasEvalMap().clear();
+		} else {
+			Set<String> keyset = getCasEvalMap().keySet();
+			Iterator<String> it = keyset.iterator();
+			String actual = null;
+			while (it.hasNext())
+			{
+				actual = it.next();
+				if (actual.indexOf(label) != -1)
+					getCasEvalMap().remove(actual);
+			}
+		}
 	}
 
 	private static HashMap<String, FunctionNVar> casEvalMap;

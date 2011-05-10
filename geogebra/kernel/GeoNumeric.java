@@ -23,6 +23,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -773,6 +774,10 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 			((GeoNumeric)intervalMin).unregisterMinMaxListener(this);
 		if(intervalMax instanceof GeoNumeric)
 			((GeoNumeric)intervalMax).unregisterMinMaxListener(this);
+
+
+		// getLabel() gives wrong answer for some reason
+		FunctionNVar.clearCasEvalMap(label);
 	}
 
 	/**

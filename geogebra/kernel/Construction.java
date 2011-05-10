@@ -15,6 +15,7 @@ package geogebra.kernel;
 import geogebra.io.MyXMLio;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeConstants;
+import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.main.Application;
@@ -567,6 +568,8 @@ public class Construction {
 		worksheetText[1] = null;
 
 		usedMacros = null;
+		
+		FunctionNVar.clearCasEvalMap(null);
 	}
 
 	/**
