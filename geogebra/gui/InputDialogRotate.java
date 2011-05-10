@@ -71,13 +71,13 @@ public class InputDialogRotate extends AngleInputDialog implements KeyListener {
 		boolean oldVal = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
 
-		boolean ret2 = inputHandler.processInput(inputPanel.getText());
+		boolean success = inputHandler.processInput(inputPanel.getText());
 
 		cons.setSuppressLabelCreation(oldVal);
 		
 		
 		
-		if (ret2) {
+		if (success) {
 			//GeoElement circle = kernel.Circle(null, geoPoint1, ((NumberInputHandler)inputHandler).getNum());
 			NumberValue num = ((NumberInputHandler)inputHandler).getNum();
 			//geogebra.gui.AngleInputDialog dialog = (geogebra.gui.AngleInputDialog) ob[1];
@@ -125,8 +125,6 @@ public class InputDialogRotate extends AngleInputDialog implements KeyListener {
 	}
 
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	/*

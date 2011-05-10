@@ -5801,7 +5801,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		// we got the mirror point
-		if (selPoints() == 1) {		
+		if (selPoints() == 1) {	
+						
+			GeoElement[] selGeos = getSelectedGeos();
+			
+			app.getGuiManager().showNumberInputDialogDilate(app.getMenu(getKernel().getModeText(mode)), getSelectedPolygons(), getSelectedPoints(), selGeos);
+			
+			return null;
+
+			
+			/*
 			NumberValue num = app.getGuiManager().showNumberInputDialog(app.getMenu(getKernel().getModeText(mode)),
 					app.getPlain("Numeric"), null);			
 			if (num == null) {
@@ -5827,7 +5836,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				}
 				GeoElement[] retex = {};
 				return ret.toArray(retex);
-			}		
+			}		*/
 		}
 		return null;
 	}

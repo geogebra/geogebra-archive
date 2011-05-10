@@ -2513,6 +2513,14 @@ public class GuiManager {
 
 	}
 
+	public void showNumberInputDialogDilate(String title, GeoPolygon[] polys, GeoPoint[] points, GeoElement[] selGeos) {
+
+		NumberInputHandler handler = new NumberInputHandler();
+		InputDialog id = new InputDialogDilate(app, title, handler, polys, points, selGeos, kernel);
+		id.setVisible(true);
+
+	}
+
 	public void showNumberInputDialogSegmentFixed(String title, GeoPoint geoPoint1) {
 
 		NumberInputHandler handler = new NumberInputHandler();
