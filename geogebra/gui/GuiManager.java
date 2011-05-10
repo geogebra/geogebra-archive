@@ -37,6 +37,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -2500,6 +2501,14 @@ public class GuiManager {
 
 		NumberInputHandler handler = new NumberInputHandler();
 		InputDialog id = new InputDialogCirclePointRadius(app, title, handler, geoPoint1, kernel);
+		id.setVisible(true);
+
+	}
+
+	public void showNumberInputDialogRotate(String title, GeoPolygon[] polys, GeoPoint[] points, GeoElement[] selGeos) {
+
+		NumberInputHandler handler = new NumberInputHandler();
+		InputDialog id = new InputDialogRotate(app, title, handler, polys, points, selGeos, kernel);
 		id.setVisible(true);
 
 	}

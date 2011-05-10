@@ -227,7 +227,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected ArrayList selectedPolygons = new ArrayList();
 
-	protected ArrayList selectedGeos = new ArrayList();
+	protected ArrayList<GeoElement> selectedGeos = new ArrayList<GeoElement>();
 	protected ArrayList selectedLists = new ArrayList();
 
 	//protected LinkedList highlightedGeos = new LinkedList();
@@ -259,8 +259,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	boolean polygonRigid = false;
 
-	private static String defaultRotateAngle = "45\u00b0"; // 45 degrees
-	
 	// used for gridlock when dragging polygons, segments etc
 	double[] transformCoordsOffset = new double[2];
 
@@ -2815,6 +2813,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			selectedGeos.add(geos[i]);
 			app.addSelectedGeo(geos[i], false);
 		}
+	}
+
+	public void selectGeos(ArrayList<GeoElement> geos) {
+		selectedGeos.addAll(geos);
+		app.addSelectedGeos(geos, false);
 	}
 
 	// process mode and return whether kernel was changed
@@ -5723,9 +5726,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		// we got the rotation center point
-		if (selPoints() == 1 && selGeos() > 0) {					
+		if (selPoints() == 1 && selGeos() > 0) {	
+			
+			GeoElement[] selGeos = getSelectedGeos();
+			
+			app.getGuiManager().showNumberInputDialogRotate(app.getMenu(getKernel().getModeText(mode)), getSelectedPolygons(), getSelectedPoints(), selGeos);
+			
+			return null;
+
+			/*
 			Object [] ob = app.getGuiManager().showAngleInputDialog(app.getMenu(getKernel().getModeText(mode)),
 					app.getPlain("Angle"), defaultRotateAngle);
+
 			NumberValue num = (NumberValue) ob[0];
 			geogebra.gui.AngleInputDialog dialog = (geogebra.gui.AngleInputDialog) ob[1];
 			String angleText = dialog.getText();
@@ -5759,7 +5771,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				}
 				GeoElement[] retex = {};
 				return ret.toArray(retex);
-			}
+			}*/
 			
 		}
 
@@ -6117,7 +6129,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						return false;
 					} else {
 						// great, we got our number
-						selectedGeos.add(num);
+						if (num.isGeoElement())
+							selectedGeos.add(num.toGeoElement());
 					}
 				}	
 
@@ -6133,7 +6146,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 						return false;
 					} else {
 						// great, we got our angle
-						selectedGeos.add(num);
+						if (num.isGeoElement())
+							selectedGeos.add(num.toGeoElement());
 					}
 				}	
 
