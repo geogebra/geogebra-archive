@@ -268,8 +268,12 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             } 
         
         case GREATER:
+        	// f(x,y) > number
+        	if ((lt instanceof GeoFunctionNVar) && rt.isNumberValue()){
+        		return GeoFunctionNVar.applyNumberSymb(operation, (GeoFunctionNVar)lt,rt, true);
+        	}
         	// number > number
-        	if (lt.isNumberValue() && rt.isNumberValue())
+        	else if (lt.isNumberValue() && rt.isNumberValue())
 				return new MyBoolean(
         			kernel.isGreater(
     					((NumberValue)lt).getDouble(),
@@ -277,7 +281,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
 					)
         		);
 			else { 
-                String [] str = { "IllegalComparison", lt.toString(), ">",  rt.toString() };
+                String [] str = { "IllegalComparison", lt.getClass().getName(),lt.toString(), ">",  rt.toString(),rt.getClass().getName() };
                 throw new MyError(app, str);
             } 
         	

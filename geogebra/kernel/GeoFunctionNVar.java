@@ -731,5 +731,41 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 	       	AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
 	       	return adf.getFunction();
 		}
+		
+		public static GeoFunctionNVar applyNumberSymb(int op, GeoFunctionNVar fun1, ExpressionValue nv,boolean right) {
+			
+			Kernel kernel = fun1.getKernel();
+			
+			FunctionVariable[] xy =  new FunctionVariable[] {
+					new FunctionVariable(kernel,"x"),
+			new FunctionVariable(kernel,"y")};
+			MyList xyList = new MyList(kernel);
+			xyList.addListElement(xy[0]);
+			xyList.addListElement(xy[1]);
+			if(nv instanceof ExpressionNode){
+				((ExpressionNode)nv).replaceVariables(fun1.getVarString(0), xy[0]);
+				((ExpressionNode)nv).replaceVariables(fun1.getVarString(1), xy[1]);
+			}
+			else if(nv instanceof FunctionVariable) { 
+				if(nv.toString().equals(fun1.getVarString(0)))
+					nv = xy[0];
+				if(nv.toString().equals(fun1.getVarString(1)))
+					nv = xy[1];
+				}
+			ExpressionNode sum;
+			if(right){sum = new ExpressionNode(kernel,
+					new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION_NVAR,xyList),				
+					op, nv);			
+			}
+			else{ sum = new ExpressionNode(kernel,nv,op,
+					new ExpressionNode(kernel,fun1,ExpressionNode.FUNCTION_NVAR,xyList));
+			}
+	    	FunctionNVar f = new FunctionNVar(sum,xy);
+	    	f.initFunction();       	
+	       	AlgoDependentFunctionNVar adf = new AlgoDependentFunctionNVar(fun1.getConstruction(),null,f);
+	       	
+	       	return adf.getFunction();
+		}
+
 
 }

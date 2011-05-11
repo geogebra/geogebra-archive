@@ -146,8 +146,7 @@ public class Inequality {
 					INEQUALITY_1VAR_X:INEQUALITY_INVALID;
 		}
 
-		else {
-
+		else {			
 			GeoElement newBorder = kernel.getAlgebraProcessor()
 					.evaluateToGeoElement(normal.toString() + "=0", false);
 			if (newBorder == null)
