@@ -79,6 +79,8 @@ public class GeoTextField extends GeoButton {
 	
 	public void setLength(int l) {
 		textField.setColumns(l);
+		// don't show the popup button in small fields
+		textField.showPopupSymbolButton(l > 8);
 	}
 	
 	public int getLength() {
