@@ -1,15 +1,12 @@
 package geogebra.kernel.arithmetic;
 
-import geogebra.kernel.AlgoDependentFunction;
 import geogebra.kernel.AlgoDependentNumber;
 import geogebra.kernel.AlgoListElement;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
-import geogebra.kernel.GeoFunctionable;
 import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
@@ -432,11 +429,11 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
            else if (lt instanceof GeoFunction && rt instanceof GeoFunction) {              	            	
             	return GeoFunction.operationSymb(ExpressionNode.PLUS,(GeoFunction)lt, (GeoFunction)rt);            	            	
             }           
-           else if (lt instanceof GeoFunction && rt.isNumberValue()) {            	
-        	   return GeoFunction.applyNumberSymb(ExpressionNode.PLUS,(GeoFunction)lt,(NumberValue)rt,true);              	
+           else if (lt instanceof GeoFunction && rt.isNumberValue()) {           	   
+        	   return GeoFunction.applyNumberSymb(ExpressionNode.PLUS,(GeoFunction)lt,right,true);              	
               }           
            else if (rt instanceof GeoFunction && lt.isNumberValue()) {            	
-        	   return GeoFunction.applyNumberSymb(ExpressionNode.PLUS,(GeoFunction)rt,(NumberValue)lt,true);
+        	   return GeoFunction.applyNumberSymb(ExpressionNode.PLUS,(GeoFunction)rt,left,true);
            } 
             else {    
                 String [] str = { "IllegalAddition", lt.toString(), "+",  rt.toString() };
@@ -500,10 +497,10 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
             	return GeoFunction.operationSymb(ExpressionNode.MINUS,(GeoFunction)lt, (GeoFunction)rt);            	
            }
            else if (lt instanceof GeoFunction && rt.isNumberValue()) {            	
-        	   return GeoFunction.applyNumberSymb(ExpressionNode.MINUS,(GeoFunction)lt,(NumberValue)rt,true);             	
+        	   return GeoFunction.applyNumberSymb(ExpressionNode.MINUS,(GeoFunction)lt,right,true);             	
              }           
           else if (rt instanceof GeoFunction && lt.isNumberValue()) {            	             	       	             	
-             	return GeoFunction.applyNumberSymb(ExpressionNode.MINUS,(GeoFunction)rt,(NumberValue)lt,false);             	
+             	return GeoFunction.applyNumberSymb(ExpressionNode.MINUS,(GeoFunction)rt,left,false);             	
              }         
             else { 
                 String [] str = { "IllegalSubtraction", lt.toString(), "-", rt.toString() };
@@ -563,7 +560,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                         
                else if (rt instanceof GeoFunction) {            	
                   	
-                  	return GeoFunction.applyNumberSymb(ExpressionNode.MULTIPLY,(GeoFunction)rt, (NumberValue)lt,false);
+                  	return GeoFunction.applyNumberSymb(ExpressionNode.MULTIPLY,(GeoFunction)rt, left,false);
                   	
                   } 
                 // number * 3D vector
@@ -581,7 +578,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
            	return GeoFunction.operationSymb(ExpressionNode.MULTIPLY,(GeoFunction)lt, (GeoFunction)rt);            	            	
            }           
           else if (lt instanceof GeoFunction && rt.isNumberValue()) {            	             	       	
-             	return GeoFunction.applyNumberSymb(ExpressionNode.MULTIPLY,(GeoFunction)lt, (NumberValue)rt,false);              	
+             	return GeoFunction.applyNumberSymb(ExpressionNode.MULTIPLY,(GeoFunction)lt, right,false);              	
              } 
            // boolean * number
            else if (lt.isBooleanValue() && rt.isNumberValue()) {
@@ -689,7 +686,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
                      return vec;
                  }  
                  else if (lt instanceof GeoFunction) {            	
-              	   return GeoFunction.applyNumberSymb(ExpressionNode.DIVIDE,(GeoFunction)lt,(NumberValue)rt,true);             	
+              	   return GeoFunction.applyNumberSymb(ExpressionNode.DIVIDE,(GeoFunction)lt,right,true);             	
                    } 
                  /*
                  // number * 3D vector
@@ -736,7 +733,7 @@ public class ExpressionNodeEvaluator implements ExpressionNodeConstants {
            }
                      
           else if (rt instanceof GeoFunction && lt.isNumberValue()) {            	             	       	             	
-             	return GeoFunction.applyNumberSymb(ExpressionNode.DIVIDE,(GeoFunction)rt,(NumberValue)lt,false);             	
+             	return GeoFunction.applyNumberSymb(ExpressionNode.DIVIDE,(GeoFunction)rt,left,false);             	
              } 
             else { 
                 String [] str = { "IllegalDivision", lt.toString(), "/", rt.toString() };

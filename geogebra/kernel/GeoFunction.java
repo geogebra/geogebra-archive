@@ -887,12 +887,14 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	 * @param right f op nv for true, nv op f for false
 	 * @return resulting function
 	 */
-	public static GeoFunction applyNumberSymb(int op, GeoFunction fun1, NumberValue nv,boolean right) {
+	public static GeoFunction applyNumberSymb(int op, GeoFunction fun1, ExpressionValue nv,boolean right) {
 		
 		Kernel kernel = fun1.getKernel();
 		
 		FunctionVariable x =  new FunctionVariable(kernel);
-		if(nv.toString().equals(fun1.getVarString()))
+		if(nv instanceof ExpressionNode)
+			((ExpressionNode)nv).replaceVariables(fun1.getVarString(), x);
+		else if((nv instanceof FunctionVariable) && nv.toString().equals(fun1.getVarString()))
 			nv = x;
 		ExpressionNode sum;
 		if(right){sum = new ExpressionNode(kernel,

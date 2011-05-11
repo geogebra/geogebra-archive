@@ -72,7 +72,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			setRight(right);
 		} else { // set dummy value
 			setRight(new MyDouble(kernel, Double.NaN));
-		}
+		}		
 	}
 
 	/** for only one leaf */
@@ -82,7 +82,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		app = kernel.getApplication();
 
 		setLeft(leaf);
-		this.leaf = true;
+		this.leaf = true;		
 	}
 
 	// copy constructor: NO deep copy of subtrees is done here!
@@ -94,7 +94,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		leaf = node.leaf;
 		operation = node.operation;
 		setLeft(node.left);
-		setRight(node.right);
+		setRight(node.right);		
 	}
 
 	public Kernel getKernel() {
@@ -607,7 +607,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	 * 
 	 * @return number of replacements done
 	 */
-	final int replaceVariables(String varName, FunctionVariable fVar) {
+	public final int replaceVariables(String varName, FunctionVariable fVar) {
 		int replacements = 0;
 
 		// left tree
@@ -621,6 +621,11 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 				left = fVar;
 				replacements++;
 			}
+		} else if (left instanceof FunctionVariable) {
+			if (varName.equals(((FunctionVariable) left).toString())) {
+				left = fVar;
+				replacements++;
+			}	
 		}
 
 		// right tree
