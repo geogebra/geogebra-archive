@@ -108,7 +108,7 @@ public class GuiManager {
 	private ResourceBundle rbJavaUI;
 
 	public Application app;
-	private Kernel kernel;
+	protected Kernel kernel;
 	
 	private OptionsDialog optionsDialog;
 

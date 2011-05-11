@@ -52,6 +52,7 @@ import geogebra.kernel.Region;
 import geogebra.kernel.Transformable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -212,6 +213,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected ArrayList selectedNumberValues = new ArrayList();
 
 	protected ArrayList selectedLines = new ArrayList();
+	protected ArrayList<GeoDirectionND> selectedDirections = new ArrayList<GeoDirectionND>();
 
 	protected ArrayList selectedSegments = new ArrayList();
 
@@ -6443,6 +6445,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return conics;
 	}
 	
+	final protected GeoDirectionND[] getSelectedDirections() {
+		GeoDirectionND[] directions = new GeoDirectionND[selectedDirections.size()];
+		int i = 0;
+		Iterator it = selectedDirections.iterator();
+		while (it.hasNext()) {
+			directions[i] = (GeoDirectionND) it.next();
+			i++;
+		}
+		clearSelection(selectedDirections);
+		return directions;
+	}
+	
 	final protected Region[] getSelectedRegions() {
 		Region[] regions = new Region[selectedRegions.size()];
 		int i = 0;
@@ -6547,6 +6561,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedLines, GeoLineND.class);
 	}
+	
+	final protected int addSelectedDirection(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedDirections, GeoDirectionND.class);
+	}
 
 	final protected int addSelectedSegment(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
@@ -6629,6 +6648,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected final int selLines() {
 		return selectedLines.size();
+	}
+
+	protected final int selDirections() {
+		return selectedDirections.size();
 	}
 
 	final int selSegments() {

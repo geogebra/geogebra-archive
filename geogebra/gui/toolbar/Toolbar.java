@@ -556,6 +556,10 @@ public class Toolbar extends JToolBar {
 		+" || "
 		+EuclidianView3D.MODE_POLYGON
 		+" | "
+		+EuclidianView3D.MODE_CIRCLE_AXIS_POINT
+		+" "
+		+EuclidianView3D.MODE_CIRCLE_POINT_RADIUS_DIRECTION
+		+" "
 		+EuclidianView3D.MODE_CIRCLE_THREE_POINTS
 		+" || "
 		+EuclidianView3D.MODE_PLANE_THREE_POINTS

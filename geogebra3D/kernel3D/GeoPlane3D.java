@@ -507,4 +507,11 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	}
 
 
+
+
+	public Coords getDirectionInD3(){
+		return getCoordSys().getNormal();
+	}
+	
+	
 }

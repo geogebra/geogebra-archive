@@ -365,5 +365,12 @@ GeoLineND, GeoCoordSys{
 	
 	
 
+
+	public Coords getDirectionInD3(){
+		return getCoordSys().getVx();
+	}
+	
+	
+
 	
 }

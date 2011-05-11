@@ -162,6 +162,12 @@ public class Kernel3D
 		case EuclidianView3D.MODE_ROTATEVIEW:
 			return "RotateView";
 			
+		case EuclidianView3D.MODE_CIRCLE_POINT_RADIUS_DIRECTION:
+			return "CirclePointRadiusDirection";
+			
+		case EuclidianView3D.MODE_CIRCLE_AXIS_POINT:
+			return "CircleAxisPoint";
+			
 		default:
 			return super.getModeText(mode);
 		}

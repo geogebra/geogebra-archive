@@ -174,6 +174,12 @@ public interface EuclidianConstants {
 	/** rotate the view */
 	public static final int MODE_ROTATEVIEW = 540;
 	
+	/** circle with center, radius, direction */
+	public static final int MODE_CIRCLE_POINT_RADIUS_DIRECTION = 550;
+	
+	/** circle with center, radius, direction */
+	public static final int MODE_CIRCLE_AXIS_POINT = 551;
+	
 	// CAS view modes
 	public static final int MODE_CAS_EVALUATE = 1001;
 	public static final int MODE_CAS_NUMERIC = 1002;

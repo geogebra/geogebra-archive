@@ -5,6 +5,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -287,34 +288,20 @@ public interface Manager3DInterface {
 					 GeoPointND A) ;
 
 			 /** 
-			  * circle with point, axis parallel to axis and radius 
+			  * circle with point, radius, axis
 			  */
 			 public GeoConicND Circle3D(
 					 String label,
 					 GeoPointND A,
 					 NumberValue radius,
-					 GeoLineND axis) ;
-			 
-			 
-			 /** 
-			  * circle with point, axis parallel to vector and radius 
-			  */
+					 GeoDirectionND axis) ;
+
 			 public GeoConicND Circle3D(
 					 String label,
 					 GeoPointND A,
-					 NumberValue radius,
-					 GeoVectorND vector) ;
-			 
-			 /** 
-			  * circle with point parallel to plane and radius 
-			  */
-			 public GeoConicND Circle3D(
-					 String label,
-					 GeoPointND A,
-					 NumberValue radius,
-					 GeoCoordSys2D plane) ;
-			 
-			 
+					 GeoPointND B,
+					 GeoDirectionND axis);
+
 
 
 			/** 

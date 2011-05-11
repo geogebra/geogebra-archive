@@ -405,6 +405,10 @@ implements GeoVectorND, Locateable, Vector3DValue{
 		
 		
 
+		public Coords getDirectionInD3(){
+			return getCoordsInD(3);
+		}
+		
 
 
 }

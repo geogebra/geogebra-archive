@@ -838,6 +838,63 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return null;
 	}
 
+
+	/**
+	 * get axis and point
+	 * create circle with axis and through the point
+	 * @param hits 
+	 * @return true if circle created
+	 * 
+	 */
+	final protected boolean circleAxisPoint(Hits hits) {
+		if (hits.isEmpty())
+			return false;
+		
+		
+		addSelectedPoint(hits, 1, false);
+		addSelectedLine(hits, 1, false);
+
+
+		if (selPoints() == 1 && selLines() == 1) {
+			getKernel().getManager3D().Circle3D(null, getSelectedLinesND()[0], getSelectedPointsND()[0]);
+
+			return true;
+
+		} 
+		
+		return false;
+		
+	}	
+	
+	/**
+	 * get point, direction, enter radius
+	 * create circle with center, radius, axis parallel to direction
+	 * @param hits 
+	 * @return true if circle created
+	 * 
+	 */
+	final protected boolean circlePointRadiusDirection(Hits hits) {
+		if (hits.isEmpty())
+			return false;
+		
+		
+		addSelectedPoint(hits, 1, false);
+		addSelectedDirection(hits, 1, false);
+
+
+		if (selPoints() == 1 && selDirections() == 1) {
+			((GuiManager3D) app.getGuiManager()).showNumberInputDialogCirclePointDirectionRadius(app.getMenu(getKernel().getModeText(mode)),
+					getSelectedPointsND()[0],getSelectedDirections()[0]);
+
+			return true;
+
+		} 
+		
+		return false;
+		
+	}
+
+	
 	
 	
 	
@@ -1270,6 +1327,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
 			changedKernel = viewInFrontOf(hits);
 			break;
+
+		case EuclidianView3D.MODE_CIRCLE_AXIS_POINT:
+			changedKernel = circleAxisPoint(hits);
+			break;
+
+		case EuclidianView3D.MODE_CIRCLE_POINT_RADIUS_DIRECTION:
+			changedKernel = circlePointRadiusDirection(hits);
+			break;
+
+			
 		
 
 		default:
@@ -1388,6 +1455,14 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			moveMode = MOVE_ROTATE_VIEW;
 			break;
 			
+		case EuclidianView.MODE_CIRCLE_AXIS_POINT:	
+		case EuclidianView.MODE_CIRCLE_POINT_RADIUS_DIRECTION:	
+			view.setHits(mouseLoc);
+			hits = view.getHits();
+			hits.removePolygons();
+			if (hits.size() == 0)
+				createNewPoint(hits, false, true, true);
+			break;
 			
 		default:
 			super.switchModeForMousePressed(e);

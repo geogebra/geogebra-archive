@@ -6,6 +6,7 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.CmdCircle;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -67,40 +68,28 @@ public class CmdCircle3D extends CmdCircle {
 	    		}
 	    	}
 
-	    	if ((ok[0] = (arg[0] .isGeoPoint()))
-    				&& (ok[1] = (arg[1] .isNumberValue()))) {
-    			if (ok[2] = (arg[2] instanceof GeoLineND)){
-    				GeoElement[] ret =
-        			{
-        					kernel.getManager3D().Circle3D(
-        							c.getLabel(),
-        							(GeoPointND) arg[0],
-        							(NumberValue) arg[1],
-        							(GeoLineND) arg[2])};
-        			return ret;
-        			
-    			}else if (ok[2] = (arg[2] instanceof GeoVectorND)){
-    				GeoElement[] ret =
-        			{
-        					kernel.getManager3D().Circle3D(
-        							c.getLabel(),
-        							(GeoPointND) arg[0],
-        							(NumberValue) arg[1],
-        							(GeoVectorND) arg[2])};
-        			return ret;
-        			
-    			}else if (ok[2] = (arg[2] instanceof GeoCoordSys2D)){
-    				GeoElement[] ret =
-        			{
-        					kernel.getManager3D().Circle3D(
-        							c.getLabel(),
-        							(GeoPointND) arg[0],
-        							(NumberValue) arg[1],
-        							(GeoCoordSys2D) arg[2])};
-        			return ret;
-        			
-    			}
+	    	if ((ok[0] = (arg[0] .isGeoPoint())) && (ok[2] = (arg[2] instanceof GeoDirectionND))){
+	    		if ((ok[1] = (arg[1] .isNumberValue()))){
+	    			GeoElement[] ret =
+	    			{
+	    					kernel.getManager3D().Circle3D(
+	    							c.getLabel(),
+	    							(GeoPointND) arg[0],
+	    							(NumberValue) arg[1],
+	    							(GeoDirectionND) arg[2])};
+	    			return ret;
+	    		}else if ((ok[1] = (arg[1] .isGeoPoint()))){
+	    			GeoElement[] ret =
+	    			{
+	    					kernel.getManager3D().Circle3D(
+	    							c.getLabel(),
+	    							(GeoPointND) arg[0],
+	    							(GeoPointND) arg[1],
+	    							(GeoDirectionND) arg[2])};
+	    			return ret;
+	    		}
 	    	}
+	    	
 	    	
 	    	break;
 	    }

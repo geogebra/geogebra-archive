@@ -8,7 +8,7 @@ import geogebra.Matrix.Coords;
  *
  * Interface for lines (lines, segments, ray, ...) in any dimension
  */
-public interface GeoLineND {
+public interface GeoLineND extends GeoDirectionND{
 	
 	
 	/** returns the point at position lambda on the coord sys in the dimension given

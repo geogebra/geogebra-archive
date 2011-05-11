@@ -1160,4 +1160,10 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	final public boolean isCasEvaluableObject() {
 		return true;
 	}
+	
+	
+	public Coords getDirectionInD3(){
+		return new Coords(-y,x,0);
+	}
+	
 }

@@ -5,7 +5,7 @@ package geogebra.kernel.kernelND;
  * @author matthieu
  *
  */
-public interface GeoCoordSys2D extends GeoCoordSys, Region3D {
+public interface GeoCoordSys2D extends GeoCoordSys, Region3D, GeoDirectionND {
 
 	void createView2D();
 	

@@ -1373,7 +1373,11 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 
 	
 	
-	
+
+
+	public Coords getDirectionInD3(){
+		return new Coords(0,0,1);
+	}
 	
 	
 	//////////////////////////////////

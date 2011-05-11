@@ -20,6 +20,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -499,14 +500,30 @@ public class Manager3D implements Manager3DInterface {
 		kernel.notifyUpdate(circle);
 		return circle;
 	}
-	
+
 	public GeoConicND Circle3D(
 			 String label,
 			 GeoPointND A,
 			 NumberValue radius,
-			 GeoLineND axis){
+			 GeoDirectionND axis){
 		
-		AlgoCircle3DPointAxisRadius algo = new AlgoCircle3DPointLineRadius(cons, label, A, radius, axis);
+		AlgoCircle3DPointDirection algo = new AlgoCircle3DPointRadiusDirection(cons, label, A, radius, axis);
+		GeoConic3D circle = algo.getCircle();
+		//circle.setToSpecific();
+		circle.update();
+		kernel.notifyUpdate(circle);
+		return circle;
+
+		
+	}
+
+	public GeoConicND Circle3D(
+			 String label,
+			 GeoPointND A,
+			 GeoPointND B,
+			 GeoDirectionND axis){
+		
+		AlgoCircle3DPointDirection algo = new AlgoCircle3DPointPointDirection(cons, label, A, B, axis);
 		GeoConic3D circle = algo.getCircle();
 		//circle.setToSpecific();
 		circle.update();
@@ -516,35 +533,6 @@ public class Manager3D implements Manager3DInterface {
 		
 	}
 	
-	 public GeoConicND Circle3D(
-			 String label,
-			 GeoPointND A,
-			 NumberValue radius,
-			 GeoVectorND vector){
-		 
-			AlgoCircle3DPointAxisRadius algo = new AlgoCircle3DPointVectorRadius(cons, label, A, radius, vector);
-			GeoConic3D circle = algo.getCircle();
-			//circle.setToSpecific();
-			circle.update();
-			kernel.notifyUpdate(circle);
-			return circle;
-	 }
-	 
-	 
-	 public GeoConicND Circle3D(
-			 String label,
-			 GeoPointND A,
-			 NumberValue radius,
-			 GeoCoordSys2D plane) {
-		 
-		 AlgoCircle3DPointAxisRadius algo = new AlgoCircle3DPointPlaneRadius(cons, label, A, radius, plane);
-			GeoConic3D circle = algo.getCircle();
-			//circle.setToSpecific();
-			circle.update();
-			kernel.notifyUpdate(circle);
-			return circle;
-	 
-	 }
 	 
 
 	/** 

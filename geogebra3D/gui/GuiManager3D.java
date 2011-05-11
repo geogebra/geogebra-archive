@@ -1,12 +1,19 @@
 package geogebra3D.gui;
 
 import geogebra.gui.GuiManager;
+import geogebra.gui.InputDialog;
+import geogebra.gui.InputDialogCirclePointRadius;
+import geogebra.gui.GuiManager.NumberInputHandler;
 import geogebra.gui.layout.Layout;
 import geogebra.gui.layout.panels.Euclidian2DockPanel;
 import geogebra.gui.layout.panels.EuclidianDockPanel;
 import geogebra.gui.toolbar.Toolbar;
 import geogebra.gui.view.algebra.AlgebraController;
 import geogebra.gui.view.algebra.AlgebraView;
+import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
+import geogebra.kernel.kernelND.GeoDirectionND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra3D.Application3D;
 import geogebra3D.gui.layout.panels.EuclidianDockPanel3D;
@@ -173,5 +180,25 @@ public class GuiManager3D extends GuiManager {
 	protected AlgebraView newAlgebraView(AlgebraController algc){
 		return new AlgebraView3D(algc);
 	}
+	
+	
+	//////////////////////////////
+	// INPUT HANDLERS
+	//////////////////////////////
+	
+	/**
+	 * @param title 
+	 * @param geoPoint 
+	 * @param forAxis 
+	 * 
+	 */
+	public void showNumberInputDialogCirclePointDirectionRadius(String title, GeoPointND geoPoint, GeoDirectionND forAxis) {
+
+		NumberInputHandler handler = new NumberInputHandler();
+		InputDialog id = new InputDialogCirclePointDirectionRadius(app, title, handler, geoPoint, forAxis, kernel);
+		id.setVisible(true);
+
+	}
+
 
 }

@@ -69,7 +69,7 @@ public class AlgoCircle3DAxisPoint extends AlgoElement3D {
     	
     	Coords p = point.getCoordsInD(3);
     	Coords o = axis.getPointInD(3, 0);
-    	Coords d = axis.getPointInD(3, 1).sub(o);
+    	Coords d = axis.getDirectionInD3();
     	
     	// project the point on the axis   	
     	Coords center = p.projectLine(o, d)[0];

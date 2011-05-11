@@ -9,7 +9,7 @@ import geogebra.kernel.CircularDefinitionException;
  * @author ggb3D
  *
  */
-public interface GeoVectorND {
+public interface GeoVectorND extends GeoDirectionND {
 
 	void setLabel(String label);
 

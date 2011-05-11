@@ -541,5 +541,11 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 
 	
+
+	public Coords getDirectionInD3(){
+		return getCoordSys().getNormal();
+	}
+	
+	
 	
 }

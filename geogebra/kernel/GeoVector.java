@@ -642,5 +642,8 @@ Transformable, GeoVectorND {
 		
 	}
 
-	
+
+	public Coords getDirectionInD3(){
+		return getCoordsInD(3);
+	}
 }
