@@ -177,6 +177,20 @@ public class GgbAPI {
 	}
 	
 	/**
+	 * Returns current construction in Base64 format. May be used for saving.
+	 */
+	public synchronized String getBase64() {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			app.getXMLio().writeGeoGebraFile(baos, false);
+			return geogebra.util.Base64.encode(baos.toByteArray(), 0);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
 	 * Returns the GeoGebra XML string for the given GeoElement object, 
 	 * i.e. only the <element> tag is returned. 
 	 */
@@ -214,6 +228,21 @@ public class GgbAPI {
 	 */
 	public synchronized void setXML(String xml) {
 		app.setXML(xml, true);
+	}
+	
+	/**
+	 * Opens construction given in XML format. May be used for loading constructions.
+	 */
+	public synchronized void setBase64(String base64) {
+		byte[] zipFile;
+		try {
+			zipFile = geogebra.util.Base64.decode(base64);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+			return;
+		}
+		app.loadXML(zipFile);
 	}
 	
 	/**

@@ -19,6 +19,7 @@ public interface JavaScriptAPI {
 	 * Returns current construction in XML format. May be used for saving.
 	 */
 	public  String getXML();
+	public  String getBase64();
 	
 	/**
 	 * Returns the GeoGebra XML string for the given GeoElement object, 
@@ -37,6 +38,7 @@ public interface JavaScriptAPI {
 	 * Opens construction given in XML format. May be used for loading constructions.
 	 */
 	public  void setXML(String xml);
+	public  void setBase64(String base64);
 	
 	/**
 	 * Evaluates the given XML string and changes the current construction. 

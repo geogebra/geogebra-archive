@@ -634,6 +634,13 @@ public class AppletImplementation implements AppletImplementationInterface {
 	}
 
 	/**
+	 * Returns current construction in XML format. May be used for saving.
+	 */
+	public synchronized String getBase64() {
+		return ggbApi.getBase64();
+	}
+
+	/**
 	 * Returns the GeoGebra XML string for the given GeoElement object, 
 	 * i.e. only the <element> tag is returned. 
 	 */
@@ -656,6 +663,13 @@ public class AppletImplementation implements AppletImplementationInterface {
 	public synchronized void setXML(String xml) {
 		app.setXML(xml, true);
 		reinitGUI(); 
+	}
+
+	/**
+	 * Opens construction given in Base64 format. May be used for loading constructions.
+	 */
+	public synchronized void setBase64(String base64) {
+		ggbApi.setBase64(base64);
 	}
 
 	/**

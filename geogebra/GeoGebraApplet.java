@@ -337,6 +337,10 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 		return getAppletImplementation().getXML();
 	}
 
+	public synchronized String getBase64() {
+		return getAppletImplementation().getBase64();
+	}
+
 	public synchronized String getXML(String objName) {
 		return getAppletImplementation().getXML(objName);
 	}
@@ -536,6 +540,10 @@ public class GeoGebraApplet extends JApplet implements JavaScriptAPI {
 
 	public synchronized void setXML(String xml) {
 		getAppletImplementation().setXML(xml);
+	}
+
+	public synchronized void setBase64(String base64) {
+		getAppletImplementation().setBase64(base64);
 	}
 
 	public synchronized void unregisterAddListener(String JSFunctionName) {
