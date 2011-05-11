@@ -3231,8 +3231,13 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	 * @return operation number
 	 */
 	static public int opID(ExpressionValue ev) {
-		if (ev.isExpressionNode())
-			return ((ExpressionNode) ev).operation;
+		if (ev.isExpressionNode()){
+			int op = ((ExpressionNode) ev).operation;
+			//input (x>y)==(x+y>3) must be kept
+			if(op == GREATER || op == LESS || op == LESS_EQUAL || op == GREATER_EQUAL)
+				return NOT_EQUAL-1;
+			return op;
+		}
 		else
 			return -1;
 	}
@@ -3415,7 +3420,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	 */
 	private void append(StringBuilder sb, String str, ExpressionValue ev,
 			int op, int STRING_TYPE) {
-		if (ev.isLeaf() || (STRING_TYPE!=STRING_TYPE_GEOGEBRA_XML && opID(ev) >= op)) {
+		if (ev.isLeaf() || opID(ev) >= op) {
 			sb.append(str);
 		} else {
 			sb.append(leftBracket(STRING_TYPE));
