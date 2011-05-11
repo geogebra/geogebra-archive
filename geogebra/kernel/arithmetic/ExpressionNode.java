@@ -3415,7 +3415,7 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 	 */
 	private void append(StringBuilder sb, String str, ExpressionValue ev,
 			int op, int STRING_TYPE) {
-		if (ev.isLeaf() || opID(ev) >= op) {
+		if (ev.isLeaf() || (STRING_TYPE!=STRING_TYPE_GEOGEBRA_XML && opID(ev) >= op)) {
 			sb.append(str);
 		} else {
 			sb.append(leftBracket(STRING_TYPE));
