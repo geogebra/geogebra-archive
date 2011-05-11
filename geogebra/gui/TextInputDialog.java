@@ -94,11 +94,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 	// JList for the object menu popup
 	private JList geoList;
-	
-	
+
+
 	boolean isIniting;
 
-	
+
 
 	/**
 	 * Input Dialog for a GeoText object
@@ -177,7 +177,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// create insertion buttons
 		btInsertUnicode = new PopupMenuButton();
 		btInsertLaTeX = new PopupMenuButton();
-		
+
 		buildInsertLaTeXButton();
 		buildInsertUnicodeButton();		
 		buildInsertGeoButton();	
@@ -260,7 +260,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 
 		if(btInsertUnicode != null)
 			btInsertUnicode.removeAllMenuItems();
-		
+
 		btInsertUnicode.setKeepVisible(false);
 		btInsertUnicode.setStandardButton(true);
 		btInsertUnicode.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
@@ -301,11 +301,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	 * Builds LaTeX insertion button and drop down tables.
 	 */
 	private void buildInsertLaTeXButton(){
-		
+
 		if(btInsertLaTeX != null){
 			btInsertLaTeX.removeAllMenuItems();
 		}
-		
+
 		btInsertLaTeX.setKeepVisible(false);
 		btInsertLaTeX.setStandardButton(true);
 		btInsertLaTeX.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));
@@ -368,7 +368,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	}
 
 
-	
+
 	/** 
 	 * Creates an array of labels of existing geos that can be inserted into the editor as dynamic text
 	 */
@@ -387,8 +387,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		geoArray = list.toArray(geoArray);
 		return geoArray;
 	}
-		
-	
+
+
 	/** 
 	 * Builds GeoElement insertion button. 
 	 */
@@ -400,7 +400,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		JScrollPane scroller = new JScrollPane(geoList);
 		scroller.setBorder(BorderFactory.createEmptyBorder());
 		scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		
+
 		// add a list selection listener that will insert a selected geo into the editor
 		geoList.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 			public void valueChanged(ListSelectionEvent e) {
@@ -413,7 +413,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 			}
 
 		});
-	
+
 		// create a popup button and add the list to it
 		btInsertGeo = new PopupMenuButton(){
 			// update the object list before opening the popup
@@ -428,8 +428,8 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		btInsertGeo.setKeepVisible(false);
 		btInsertGeo.setStandardButton(true);
 		btInsertGeo.setFixedIcon(GeoGebraIcon.createDownTriangleIcon(10));	
-		
-		
+
+
 	};
 
 
@@ -498,7 +498,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 	public void setLabels() {
 		setLabels(app.getPlain("Text"));
 	}
-	
+
 	public void setLabels(String title) {
 
 		if(isIniting) return;
@@ -513,11 +513,11 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		// rebuild the symbol tables to catch localized symbols
 		buildInsertUnicodeButton();
 		buildInsertLaTeXButton();
-	
+
 		btInsertLaTeX.setText(app.getPlain("LaTeXFormula"));	
 		btInsertUnicode.setText(app.getMenu("Symbols"));
 		btInsertGeo.setText(app.getMenu("Objects"));	
-			
+
 	}
 
 
@@ -668,7 +668,6 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 		if(!isVisible ){
 			if(textPreviewer != null){
 				textPreviewer.removePreviewGeoText();
-				//textPreviewer.detachView();
 			}
 		}
 		super.setVisible(isVisible);

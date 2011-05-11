@@ -14,7 +14,6 @@ import geogebra.kernel.arithmetic.TextValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.TokenMgrError;
-import geogebra.main.Application;
 import geogebra.main.MyError;
 
 import java.awt.Color;
@@ -76,10 +75,12 @@ public class TextPreviewPanel extends EuclidianView {
 	 */
 	public void removePreviewGeoText() {
 		if(previewGeoIndependent != null){
+			this.remove(previewGeoIndependent);
 			previewGeoIndependent.remove();
 			previewGeoIndependent = null;
 		}
 		if(previewGeoDependent != null){
+			this.remove(previewGeoDependent);
 			previewGeoDependent.remove();
 			previewGeoIndependent = null;
 			textAlgo.remove();
@@ -88,14 +89,15 @@ public class TextPreviewPanel extends EuclidianView {
 
 	
 	/**
-	 * Detach this view from the kernel
+	 * Overrides attachView with an empty method to prevent this panel from
+	 * attaching to the kernel
 	 */
-	public void detachView() {
-		removePreviewGeoText();
-		kernel.detach(this);
+	@Override
+	public void attachView() {
+
 	}
 	
-
+	
 
 	/**
 	 * Updates the preview geos and creates new geos if needed.
@@ -176,9 +178,8 @@ public class TextPreviewPanel extends EuclidianView {
 		}
 
 
-		//=========================================
-		// create the preview Geo
-		//=========================================
+		// ====================================
+		// update the preview Geo
 
 		// case1: independent text based on string only, including error messages
 		if (isIndependent) 
@@ -222,10 +223,13 @@ public class TextPreviewPanel extends EuclidianView {
 		// hide/show the preview geos  
 		previewGeoIndependent.setEuclidianVisible(isIndependent);
 		previewGeoIndependent.updateRepaint();
+		this.update(previewGeoIndependent);
 		if(previewGeoDependent !=null){
 			previewGeoDependent.setEuclidianVisible(!isIndependent);
 			previewGeoDependent.updateRepaint();
+			this.update(previewGeoDependent);
 		}
+		this.repaintView();
 
 	}
 
