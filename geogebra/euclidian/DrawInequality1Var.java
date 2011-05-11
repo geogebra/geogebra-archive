@@ -159,7 +159,7 @@ public class DrawInequality1Var extends Drawable {
 
 			Area a = new Area();
 			int circleCount = 0;
-			if (((GeoFunction) this.geo).showOnAxis()) {
+			if ((geo instanceof GeoFunction)&&((GeoFunction) geo).showOnAxis()) {
 				circle = new Ellipse2D.Double[numOfX];
 				for (int i = 0; i < numOfX; i++) {					
 					if (x[i] < 0)
