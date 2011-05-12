@@ -184,7 +184,7 @@ public class AlgebraController
 	public void mousePressed(java.awt.event.MouseEvent e) {
 		view.cancelEditing();
 
-		boolean rightClick = Application.isRightClick(e);
+		boolean rightClick = app.isRightClickEnabled() && Application.isRightClick(e);
 		
 		// RIGHT CLICK
 		if (rightClick) {
