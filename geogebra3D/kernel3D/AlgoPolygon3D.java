@@ -78,9 +78,9 @@ public class AlgoPolygon3D extends AlgoPolygon {
 
     protected void compute() { 
     	
-    	((GeoPolygon3D) poly).updateCoordSys();
-    	
-    	super.compute();
+    	//check if a coord sys is possible
+    	if (((GeoPolygon3D) poly).updateCoordSys())
+    		super.compute();
     	
     }
 

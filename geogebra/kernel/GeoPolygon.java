@@ -541,7 +541,7 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * @return undirected area
 	 */
 	public double getArea() {
-		if (defined)
+		if (isDefined())
 			return Math.abs(area);				        
 		else 
 			return Double.NaN;			        	

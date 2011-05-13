@@ -7,6 +7,7 @@ package geogebra.kernel.kernelND;
  */
 public interface GeoCoordSys2D extends GeoCoordSys, Region3D, GeoDirectionND {
 
+	/** create a 2D view about this coord sys */
 	void createView2D();
 	
 

@@ -240,11 +240,18 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	}
 	 
 	 
-	 public void updateCoordSys(){
+	 public boolean updateCoordSys(){
 
 		 coordSys.resetCoordSys();
 		 for(int i=0;(!coordSys.isMadeCoordSys())&&(i<points.length);i++){
 			 //Application.debug(points[i].getLabel()+"=\n"+points[i].getCoordsInD(3));
+
+			 //check if the vertex is defined and finite
+			 if(!points[i].isDefined() || !points[i].isFinite()){
+				 coordSys.setUndefined();
+				 return false;
+			 }
+			 
 			 coordSys.addPoint(points[i].getInhomCoordsInD(3));
 		 }
 
@@ -253,6 +260,13 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 			 //Application.debug("ortho=\n"+coordSys.getMatrixOrthonormal());
 			 
 			 for(int i=0;i<points.length;i++){
+
+				 //check if the vertex is defined and finite
+				 if(!points[i].isDefined() || !points[i].isFinite()){
+					 coordSys.setUndefined();
+					 return false;
+				 }
+				 
 				 //project the point on the coord sys
 				 Coords[] project=points[i].getInhomCoordsInD(3).projectPlane(coordSys.getMatrixOrthonormal());
 
@@ -261,7 +275,7 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 				 //check if the vertex lies on the coord sys
 				 if(!Kernel.isEqual(project[1].getZ(), 0, Kernel.STANDARD_PRECISION)){
 					 coordSys.setUndefined();
-					 break;
+					 return false;
 				 }
 
 				 
@@ -270,6 +284,8 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 				 points2D[i].setCoords(project[1].getX(), project[1].getY(), project[1].getW());
 			 }
 		 }
+		 
+		 return true;
 		 
 	 }
 	 
