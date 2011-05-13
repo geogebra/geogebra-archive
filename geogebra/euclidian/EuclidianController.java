@@ -2743,7 +2743,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_CIRCLE_POINT_RADIUS:
-			changedKernel = circleOrSpherePointRadius(hits);
+			changedKernel = circlePointRadius(hits);
 			break;				
 
 		case EuclidianView.MODE_ANGLE:
@@ -6058,7 +6058,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}	
 
 	// get center point and number
-	final protected boolean circleOrSpherePointRadius(Hits hits) {
+	final protected boolean circlePointRadius(Hits hits) {
 		if (hits.isEmpty())
 			return false;
 

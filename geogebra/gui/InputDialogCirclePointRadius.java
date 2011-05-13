@@ -11,7 +11,7 @@ import geogebra.main.Application;
  * 
  *
  */
-public class InputDialogCirclePointRadius extends InputDialogCircleRadius{
+public class InputDialogCirclePointRadius extends InputDialogRadius{
 	
 	/**
 	 * 
@@ -35,7 +35,7 @@ public class InputDialogCirclePointRadius extends InputDialogCircleRadius{
 
 	}
 
-	protected GeoElement createCircle(NumberValue num){
+	protected GeoElement createOutput(NumberValue num){
 		return kernel.Circle(null, geoPoint1, num);
 	}
 

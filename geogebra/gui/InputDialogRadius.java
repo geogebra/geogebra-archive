@@ -16,7 +16,7 @@ import java.awt.event.WindowEvent;
  * @author mathieu
  *
  */
-public abstract class InputDialogCircleRadius extends InputDialog{
+public abstract class InputDialogRadius extends InputDialog{
 	
 
 	/**
@@ -34,7 +34,7 @@ public abstract class InputDialogCircleRadius extends InputDialog{
 	 * @param handler
 	 * @param kernel
 	 */
-	public InputDialogCircleRadius(Application app, String title, InputHandler handler, Kernel kernel) {
+	public InputDialogRadius(Application app, String title, InputHandler handler, Kernel kernel) {
 		super(app, app.getPlain("Radius"), title, "", false, handler);
 		
 		this.kernel = kernel;
@@ -73,7 +73,7 @@ public abstract class InputDialogCircleRadius extends InputDialog{
 		cons.setSuppressLabelCreation(oldVal);
 		
 		if (ret) {
-			GeoElement circle = createCircle(((NumberInputHandler)inputHandler).getNum());
+			GeoElement circle = createOutput(((NumberInputHandler)inputHandler).getNum());
 			GeoElement[] geos = { circle };
 			kernel.getApplication().getActiveEuclidianView().getEuclidianController().selectGeos(geos);
 		}
@@ -87,7 +87,7 @@ public abstract class InputDialogCircleRadius extends InputDialog{
 	 * @param num
 	 * @return the circle
 	 */
-	abstract protected GeoElement createCircle(NumberValue num);
+	abstract protected GeoElement createOutput(NumberValue num);
 	
 
 	public void windowGainedFocus(WindowEvent arg0) {

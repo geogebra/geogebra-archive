@@ -793,6 +793,25 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 	
 	
+	/**
+	 * get center point and number
+	 * @param hits 
+	 * @return true if sphere created
+	 */
+	final protected boolean spherePointRadius(Hits hits) {
+		if (hits.isEmpty())
+			return false;
+
+		addSelectedPoint(hits, 1, false);		
+
+		// we got the center point
+		if (selPoints() == 1) {	
+			((GuiManager3D) app.getGuiManager()).showNumberInputDialogSpherePointRadius(app.getMenu(getKernel().getModeText(mode)),
+					getSelectedPointsND()[0]);
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * get point and line or vector;
@@ -1321,7 +1340,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			changedKernel = (circleOrSphere2(hits, mode) != null);
 			break;
 		case EuclidianView3D.MODE_SPHERE_POINT_RADIUS:
-			changedKernel = circleOrSpherePointRadius(hits);
+			changedKernel = spherePointRadius(hits);
 			break;
 			
 		case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
@@ -1515,8 +1534,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 *  get two objects (lines or conics) and create intersection point 
 	 *
 	 */
-	@SuppressWarnings("unchecked")
 	protected GeoElement[] intersect(Hits hits) {
+		
 		if (hits.isEmpty())
 			return null;		
 

@@ -199,6 +199,20 @@ public class GuiManager3D extends GuiManager {
 		id.setVisible(true);
 
 	}
+	
+	
+	/**
+	 * 
+	 * @param title
+	 * @param geoPoint
+	 */
+	public void showNumberInputDialogSpherePointRadius(String title, GeoPointND geoPoint) {
+
+		NumberInputHandler handler = new NumberInputHandler();
+		InputDialog id = new InputDialogSpherePointRadius(app, title, handler, geoPoint, kernel);
+		id.setVisible(true);
+
+	}
 
 
 }
