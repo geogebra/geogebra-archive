@@ -1,7 +1,5 @@
 package geogebra.sound;
 
-import geogebra.kernel.GeoFunction;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.main.Application;
 
 import java.io.File;
@@ -9,6 +7,8 @@ import java.io.IOException;
 
 import javax.sound.midi.Instrument;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiChannel;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiSystem;
@@ -19,10 +19,6 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 import javax.swing.JFileChooser;
 
 /**
@@ -31,28 +27,26 @@ import javax.swing.JFileChooser;
  * @author G. Sturr 2010-9-18
  *
  */
-public class MidiSound  {
+public class MidiSound implements MetaEventListener  {
 
 	private Application app;
 	private Synthesizer synthesizer;
 	private Instrument instruments[];
 	private MidiChannel channels[];
+
 	private Sequencer sequencer;
+	private Sequence sequence;
+	private long tickPosition;
 
+	// Midi meta event
+	public static final int END_OF_TRACK_MESSAGE = 47;
 
+	/**
+	 * Constructor
+	 * @param app
+	 */
 	public MidiSound(Application app) {
-
 		this.app = app;
-		initSynthesizer();
-		try {
-			sequencer = MidiSystem.getSequencer( );
-		} catch (MidiUnavailableException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// testing ...
-		//System.out.println(getInstrumentNames());
-
 	}
 
 
@@ -60,27 +54,35 @@ public class MidiSound  {
 	//  Initialization
 	//==================================================
 
-	public boolean initSynthesizer() {
+	public boolean initialize() {
 
 		boolean success = true;
+
 		try {
+			sequencer = MidiSystem.getSequencer( );
+			sequencer.addMetaEventListener(this);
+
 			if (synthesizer == null) {
 				if ((synthesizer = MidiSystem.getSynthesizer()) == null) {
 					Application.debug("getSynthesizer() failed!");
 					return false;
 				}
-			} 
-			synthesizer.open();
 
-			Soundbank sb = synthesizer.getDefaultSoundbank();
-			if (sb != null) {
-				instruments = synthesizer.getDefaultSoundbank().getInstruments();
-				synthesizer.loadInstrument(instruments[0]);
+				Soundbank sb = synthesizer.getDefaultSoundbank();
+				if (sb != null) {
+					instruments = synthesizer.getDefaultSoundbank().getInstruments();
+					synthesizer.loadInstrument(instruments[0]);
+				}
+
+				channels = synthesizer.getChannels();    
 			}
-
-			channels = synthesizer.getChannels();    
-
-		} catch (Exception e) { 
+		}
+		
+		catch (MidiUnavailableException e) {
+			e.printStackTrace(); 
+			return false; 
+		} 
+		catch (Exception e) { 
 			e.printStackTrace(); 
 			return false; 
 		}
@@ -88,7 +90,7 @@ public class MidiSound  {
 		return success;
 	}
 
-	
+
 	/** 
 	 * Generates a list of available instruments in String form 
 	 * */
@@ -108,14 +110,87 @@ public class MidiSound  {
 	}
 
 
+	/**
+	 * Plays a midi sequence with default tempo 
+	 */
+	public void playSequence( Sequence sequence, long tickPosition ) {
+		int tempo = 120;
+		playSequence( sequence, tempo, tickPosition );
+	}
+
+
+	/**
+	 * Plays a MIDI sequence
+	 * 
+	 * @param sequence
+	 * @param tempo
+	 * @param tickPosition
+	 */
+	public void playSequence( Sequence sequence, int tempo, long tickPosition ) {
+
+		try{
+			initialize();
+			sequencer.open( );  
+			synthesizer.open();
+
+			// Specify the sequence, tempo, and tickPosition
+			sequencer.setSequence(sequence);
+			sequencer.setTempoInBPM(tempo);
+			sequencer.setTickPosition(tickPosition);
+
+
+			// Start playing 
+			sequencer.start( );
+
+		} catch (MidiUnavailableException e) {
+		} catch (InvalidMidiDataException e) {
+		}
+	}
+
+
+
+
+	public void pause(boolean doPause){
+		if(sequencer == null) return;
+		if(doPause){
+			tickPosition = sequencer.getTickPosition();
+			closeMidiSound();
+		} else {
+			playSequence(sequence,tickPosition);
+		} 
+
+	}
+
+	public void stop() {
+		closeMidiSound();
+	}
+
 	public void closeMidiSound() {
+
 		if (synthesizer != null) {
 			synthesizer.close();
 		}
-
 		instruments = null;
 		channels = null;
+		if(sequencer != null && sequencer.isOpen()){
+			//sequencer.stop();
+			sequencer.close();
+		}
+		System.gc();
 	}
+
+
+	/**
+	 * Midi meta event listener that closes the sequencer at end of track.
+	 */
+	public void meta(MetaMessage event) {
+		System.out.println("midi sound event " + event.getType());
+		if (event.getType() == END_OF_TRACK_MESSAGE) {
+			closeMidiSound();
+		}
+	}
+
+
 
 
 	//==================================================
@@ -129,9 +204,8 @@ public class MidiSound  {
 	 * */
 	public void playSequenceNote(final int note, final double duration, final int instrument, final int velocity){
 
-		Sequence sequence;
 		try {
-
+			tickPosition = 0;
 			sequence = new Sequence(Sequence.SMPTE_24, 100);
 			int ticks = (int) (duration *2400);
 
@@ -144,10 +218,7 @@ public class MidiSound  {
 
 			// add the note to the track and play it
 			addNote(track, 0, ticks, note, velocity);
-			playSequence(sequence, 120);
-
-
-			//System.out.println(sequence.getMicrosecondLength()*1E-6 + ":" + duration);
+			playSequence(sequence, tickPosition);
 
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
@@ -169,8 +240,7 @@ public class MidiSound  {
 	public void playMidiFile(String fileName){
 
 		try {
-			Sequence sequence = null;
-
+			tickPosition = 0;
 			if(fileName.equals("")){
 				// launch a file chooser (just for testing)
 				final JFileChooser fc = new JFileChooser();
@@ -183,18 +253,10 @@ public class MidiSound  {
 				sequence = MidiSystem.getSequence(new File(fileName));
 			}
 
-			// Create a sequencer for the sequence
-			//sequencer = MidiSystem.getSequencer();
-			sequencer.open();
-			sequencer.setSequence(sequence);
-
-			sequencer.start();
-
+			playSequence(sequence,tickPosition);
 
 
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (MidiUnavailableException e) {
 			e.printStackTrace();
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
@@ -223,46 +285,19 @@ public class MidiSound  {
 		char[ ] notes = noteString.toCharArray();
 
 		// 16 ticks per quarter note. 
-		Sequence sequence;
 		try {
+			tickPosition = 0;
 			sequence = new Sequence(Sequence.PPQ, 16);
 
 			// Add the specified notes to the track
 			addTrack(sequence, instrument, tempo, notes);
 
-			playSequence(sequence, tempo);
+			playSequence(sequence, tickPosition);
 
 		} catch (InvalidMidiDataException e) {
 			e.printStackTrace();
 		}
 
-	}
-
-
-
-	/**
-	 * Plays a midi sequence 
-	 */
-	public void playSequence( Sequence sequence, int tempo ) {
-
-		try{
-
-			// Set up the Sequencer and Synthesizer objects
-			if(sequencer.isOpen())
-				sequencer.close();
-			sequencer.open( );  
-			sequencer.getTransmitter( ).setReceiver(synthesizer.getReceiver());
-
-			// Specify the sequence to play, and the tempo to play it at
-			sequencer.setSequence(sequence);
-			sequencer.setTempoInBPM(tempo);
-
-			// Start playing 
-			sequencer.start( );
-
-		} catch (MidiUnavailableException e) {
-		} catch (InvalidMidiDataException e) {
-		}
 	}
 
 

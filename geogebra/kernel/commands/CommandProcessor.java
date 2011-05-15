@@ -9015,7 +9015,7 @@ class CmdPlaySound extends CommandProcessor {
 		GeoElement[] arg;
 		GeoElement[] ret = {};
 		boolean[] ok = new boolean[n];
-		SoundManager m = app.getSoundManager();
+		SoundManager sm = app.getSoundManager();
 
 		switch (n) {
 		case 1:
@@ -9023,10 +9023,14 @@ class CmdPlaySound extends CommandProcessor {
 
 			// play a midi file
 			if (ok[0] = arg[0].isGeoText()) {
-				m.playMidiFile(((String) ((GeoText) arg[0]).toValueString()));
+				sm.playMidiFile(((String) ((GeoText) arg[0]).toValueString()));
 				return ret;
 			}
-
+			// pause/resume current sound
+			else if (ok[0] = arg[0].isGeoBoolean()) {
+				sm.pauseResumeSound(((boolean) ((GeoBoolean) arg[0]).getBoolean()));
+				return ret;
+			}
 			else {
 				throw argErr(app, c.getName(), arg[0]);
 			}
@@ -9040,7 +9044,7 @@ class CmdPlaySound extends CommandProcessor {
 				// play a note using args: note and duration
 				// use default instrument 0 = piano, default 50% velocity
 				// (volume) = 64)
-				m.playSequenceNote((int) ((GeoNumeric) arg[0]).getDouble(),
+				sm.playSequenceNote((int) ((GeoNumeric) arg[0]).getDouble(),
 						((GeoNumeric) arg[1]).getDouble(), 0, 64);
 
 				return ret;
@@ -9049,7 +9053,7 @@ class CmdPlaySound extends CommandProcessor {
 			else if ((ok[0] = arg[0].isGeoText()) 
 					&& (ok[1] = arg[1].isGeoNumeric())) {
 				// play a sequence string
-				m.playSequenceFromString(((String) ((GeoText) arg[0]).toValueString()),
+				sm.playSequenceFromString(((String) ((GeoText) arg[0]).toValueString()),
 						(int) ((GeoNumeric) arg[1]).getDouble());
 				return ret;
 			}
@@ -9068,7 +9072,7 @@ class CmdPlaySound extends CommandProcessor {
 					&& (ok[1] = arg[1].isGeoNumeric())
 					&& (ok[2] = arg[2].isGeoNumeric())) {
 
-				m.playSequenceNote((int) ((GeoNumeric) arg[0]).getDouble(), // note
+				sm.playSequenceNote((int) ((GeoNumeric) arg[0]).getDouble(), // note
 						((GeoNumeric) arg[1]).getDouble(), // duration
 						(int) ((GeoNumeric) arg[2]).getDouble(), // instrument
 						64);
@@ -9080,7 +9084,7 @@ class CmdPlaySound extends CommandProcessor {
 					&& (ok[1] = arg[1].isGeoNumeric())
 					&& (ok[2] = arg[2].isGeoNumeric())) {
 
-				m.playFunction(((GeoFunction) arg[0]), // function
+				sm.playFunction(((GeoFunction) arg[0]), // function
 						((GeoNumeric) arg[1]).getDouble(), // min value
 						((GeoNumeric) arg[2]).getDouble()); // max value
 				return ret;
@@ -9105,7 +9109,7 @@ class CmdPlaySound extends CommandProcessor {
 					&& (ok[3] = arg[3].isGeoNumeric()) 
 					&& (ok[4] = arg[4].isGeoNumeric()))) {
 
-				m.playFunction(((GeoFunction) arg[0]), // function
+				sm.playFunction(((GeoFunction) arg[0]), // function
 						((GeoNumeric) arg[1]).getDouble(), // min value
 						((GeoNumeric) arg[2]).getDouble(), // max value
 						(int)((GeoNumeric) arg[3]).getDouble(), // sample rate
