@@ -3196,7 +3196,12 @@ public class Application implements KeyEventDispatcher {
 		// glassPane is active: don't exit now!
 		if (glassPaneListener != null)
 			return;
-
+		
+		// stop sound thread if currently playing
+		if(getSoundManager() != null){
+			getSoundManager().stopCurrentSound();
+		}
+		
 		if (isSaved() || appletImpl != null || saveCurrentFile()) {
 			if (appletImpl != null) {
 				setApplet(appletImpl);
