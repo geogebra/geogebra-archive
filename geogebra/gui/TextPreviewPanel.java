@@ -82,9 +82,10 @@ public class TextPreviewPanel extends EuclidianView {
 		if(previewGeoDependent != null){
 			this.remove(previewGeoDependent);
 			previewGeoDependent.remove();
-			previewGeoIndependent = null;
+			previewGeoDependent = null;
 			textAlgo.remove();
 		}
+		this.repaint();
 	}
 
 	
@@ -203,6 +204,7 @@ public class TextPreviewPanel extends EuclidianView {
 		else
 		{
 			if(previewGeoDependent != null){
+				this.remove(previewGeoDependent);
 				previewGeoDependent.remove();
 				textAlgo.remove();
 			}

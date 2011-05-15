@@ -2804,7 +2804,7 @@ public	class PropertiesPanel extends JPanel {
 	}
 
 	/**
-	 * panel for text editing
+	 * panel for script editing
 	 */
 	private class ScriptEditPanel
 		extends JPanel
