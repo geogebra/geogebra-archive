@@ -68,7 +68,9 @@ public class DrawPlaneConstant3D extends DrawPlane3D {
 		
 	}
 	
-	
+	protected boolean isGridVisible(){
+		return ((GeoPlane3D)getGeoElement()).isGridVisible();
+	}
 	
 	
 

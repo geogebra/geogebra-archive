@@ -810,6 +810,13 @@ public class PlotterBrush {
 		setTextureType(TEXTURE_AFFINE);
 	}
 	
+	/**
+	 * 
+	 */
+	public void setPlainTexture(){
+		setTextureType(TEXTURE_CONSTANT_0);
+	}
+	
 	
 	/** sets the type of texture
 	 * @param type

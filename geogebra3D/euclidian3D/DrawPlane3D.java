@@ -6,6 +6,7 @@ package geogebra3D.euclidian3D;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
+import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.PlotterBrush;
 import geogebra3D.euclidian3D.opengl.PlotterSurface;
@@ -33,6 +34,9 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	
 	protected double xmin, xmax, ymin, ymax;
 	double[] minmaxXFinal,minmaxYFinal;
+	
+	/** says if the view direction is parallel to the plane */
+	private boolean viewDirectionIsParallel; 
 
 	
 	
@@ -74,19 +78,26 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 
 	public void drawHidden(Renderer renderer){
 		//renderer.setMatrix(getMatrix());
+		//setHighlightingColor(1f);
 		drawGeometryHidden(renderer);
 	}; 
 
 	public void drawGeometryHidden(Renderer renderer){ 
-		if (!((GeoPlane3D)getGeoElement()).isGridVisible())
-			return;
-		//renderer.initMatrix();
+		if (!isGridVisible()) return;
+
 		//dash
 		renderer.getTextures().loadTextureNearest(Textures.DASH_SHORT);
 		renderer.getGeometryManager().draw(gridIndex);
-		//renderer.resetMatrix();
 		
 	};
+	
+	/**
+	 * 
+	 * @return true if grid is visible
+	 */
+	protected boolean isGridVisible(){
+		return ((GeoPlane3D)getGeoElement()).isGridVisible() || viewDirectionIsParallel;
+	}
 	
 	
 	
@@ -105,21 +116,26 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		GeoPlane3D geo = (GeoPlane3D) getGeoElement();
 		CoordSys coordsys = geo.getCoordSys();
 		
+		
+		
 		if (checkTime)
 			setMinMaxToGeo();
+		
+		float xmin = (float) geo.getXmin(), xmax = (float) geo.getXmax(), xdelta = xmax-xmin; 
+		float ymin = (float) geo.getYmin(), ymax = (float) geo.getYmax(), ydelta = ymax-ymin; 
 		
 		// plane	
 		PlotterSurface surface = renderer.getGeometryManager().getSurface();
 		
 		surface.start(geo);
 		
-		surface.setU((float) geo.getXmin(), (float) geo.getXmax());surface.setNbU(2);
-		surface.setV((float) geo.getYmin(), (float) geo.getYmax());surface.setNbV(2);
+		surface.setU(xmin,xmax);surface.setNbU(2);
+		surface.setV(ymin,ymax);surface.setNbV(2);
 		
 		float fading;
-		fading = (float) ((geo.getXmax()-geo.getXmin()) * geo.getFading());
+		fading = (float) (xdelta * geo.getFading());
 		surface.setUFading(fading, fading);
-		fading = (float) ((geo.getYmax()-geo.getYmin()) * geo.getFading());
+		fading = (float) (ydelta * geo.getFading());
 		surface.setVFading(fading, fading);
 		surface.draw();
 		setGeometryIndex(surface.end());
@@ -130,30 +146,52 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		// grid
 		removeGeometryIndex(gridIndex);
 		
+		if (Kernel.isZero(coordsys.getNormal().dotproduct(getView3D().getViewDirection()))){
+			viewDirectionIsParallel = true;
+		}else{
+			viewDirectionIsParallel = false;
+		}
+
+		
 		PlotterBrush brush = renderer.getGeometryManager().getBrush();
 		
 		brush.start(8);
 		brush.setThickness(getGeoElement().getLineThickness(),(float) getView3D().getScale());
 
-		brush.setColor(Color.GRAY);
+		brush.setColor(getGeoElement().getObjectColor());
 		
 		//double dx = Math.max(geo.getGridXd(), geo.getGridYd()); //TODO
 		double dx = Math.min(geo.getGridXd(), geo.getGridYd());
 		double dy = dx; //TODO
-		//along x axis
-		brush.setAffineTexture(
-				(float) ((0-geo.getYmin())/(geo.getYmax()-geo.getYmin())),
-				0.25f);
-		for(int i=(int) (geo.getYmin()/dy);i<=geo.getYmax()/dy;i++)
-			brush.segment(coordsys.getPoint(geo.getXmin(),i*dy), 
-					coordsys.getPoint(geo.getXmax(),i*dy));	
-		//along y axis
-		brush.setAffineTexture(
-				(float) ((0-geo.getXmin())/(geo.getXmax()-geo.getXmin())),
-				0.25f);
-		for(int i=(int) (geo.getXmin()/dx);i<=geo.getXmax()/dx;i++)
-			brush.segment(coordsys.getPoint(i*dx, geo.getYmin()), 
-					coordsys.getPoint(i*dx, geo.getYmax()));
+		
+		//Application.debug("geo:"+getGeoElement().getLabel()+"\n"+dx+","+dy+"\nx="+geo.getXmin()+","+geo.getXmax()+"\nthickness="+getGeoElement().getLineThickness());
+		
+		
+		if (viewDirectionIsParallel){
+			//draws the two diagonals
+			brush.setPlainTexture();
+			brush.segment(coordsys.getPointForDrawing(geo.getXmin(),geo.getYmin()), 
+					coordsys.getPointForDrawing(geo.getXmin(),geo.getYmax()));	
+			brush.segment(coordsys.getPointForDrawing(geo.getXmin(),geo.getYmin()), 
+					coordsys.getPointForDrawing(geo.getXmax(),geo.getYmin()));				
+		}else{
+			//along x axis
+			brush.setAffineTexture(
+					(0f-ymin)/ydelta,
+					0.25f);
+			for(int i=(int) (geo.getYmin()/dy);i<=geo.getYmax()/dy;i++)
+				brush.segment(coordsys.getPointForDrawing(geo.getXmin(),i*dy), 
+						coordsys.getPointForDrawing(geo.getXmax(),i*dy));	
+			//along y axis
+			brush.setAffineTexture(
+					(0f-xmin)/xdelta,
+					0.25f);
+			for(int i=(int) (geo.getXmin()/dx);i<=geo.getXmax()/dx;i++)
+				brush.segment(coordsys.getPointForDrawing(i*dx, geo.getYmin()), 
+						coordsys.getPointForDrawing(i*dx, geo.getYmax()));
+		}
+		
+		
 	
 		gridIndex = brush.end();
 		
@@ -271,5 +309,13 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	}
 	
 	
-
+	public void addToDrawable3DLists(Drawable3DLists lists){
+		addToDrawable3DLists(lists,DRAW_TYPE_CURVES);
+		super.addToDrawable3DLists(lists);
+	}
+    
+    public void removeFromDrawable3DLists(Drawable3DLists lists){
+    	removeFromDrawable3DLists(lists,DRAW_TYPE_CURVES);
+    	super.removeFromDrawable3DLists(lists);
+    }
 }
