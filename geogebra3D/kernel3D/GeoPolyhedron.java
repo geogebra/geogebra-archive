@@ -13,6 +13,7 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.main.Application;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -64,6 +65,9 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	
 	/** faces linked */
 	protected TreeSet<GeoPolygon> polygonsLinked;
+	
+	/** points created by the algo */
+	protected ArrayList<GeoPoint3D> pointsCreated;
 
 	
 	
@@ -104,6 +108,8 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 		
 		segmentsLinked = new TreeMap<ConstructionElementCycle,GeoSegmentND>();
 		polygonsLinked = new TreeSet<GeoPolygon>();
+		
+		pointsCreated = new ArrayList<GeoPoint3D>();
 	}
 	
 	/**
@@ -305,6 +311,14 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 			addSegmentLinked(segments[i]);
 	}
 	
+	/**
+	 * add the point as created point (by algo)
+	 * @param point
+	 */
+	public void addPointCreated(GeoPoint3D point){
+		pointsCreated.add(point);
+	}
+	
 	 /**
 	  * return a segment joining startPoint and endPoint
 	  * if this segment already exists in segments, return the already stored one
@@ -393,36 +407,50 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	    		labels = new String[1];
 	    	}
 	    	
+	    	/*
 	    	String s="labels:\n";
 	    	for (int i=0; i<labels.length; i++)
 	    		s+=labels[i]+"\n";
 	    	Application.debug(s);
+	    	*/
 
 	        // first label for polyhedron itself
 	    	setLabel(labels[0]);
 	    	
 	    	int index=1;
 	    	
+	    	// labels for created points	    	
+	    	if (labels.length - index < pointsCreated.size()){
+	    		defaultPolygonsLabels();
+	    		defaultSegmentLabels();
+	    		return;
+	    	}
+	    	
+	    	for (GeoPoint3D point : pointsCreated){
+	    		point.setLabel(labels[index]);
+	    		index++;
+	    	}
+	    	
+	    	
+	    	// labels for polygons	    	
 	    	if (labels.length - index < polygons.size()){
 	    		defaultPolygonsLabels();
 	    		defaultSegmentLabels();
 	    		return;
 	    	}
 	    	
-	    	
-	    	// labels for polygons
 	    	for (GeoPolygon3D polygon : polygons.values()){
 	    		polygon.setLabel(labels[index]);
 	    		index++;
 	    	}
 
 	    	
+	    	// labels for segments
 	    	if (labels.length - index < segments.size()){
 	    		defaultSegmentLabels();
 	    		return;
 	    	}
-
-	    	
+    	
 	    	// labels for segments
 	    	for (GeoSegment3D segment : segments.values()){
 	    		segment.setLabel(labels[index]);

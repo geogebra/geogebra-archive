@@ -115,6 +115,7 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 		shift=1; //output points are shifted of 1 to input points
 			
 		createPolyhedron(polyhedron);
+		//polyhedron.updateFaces();
 		
 		compute();
 		
@@ -130,7 +131,8 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 		
         
         
-        polyhedron.defaultLabels(labels);
+        //polyhedron.defaultLabels(labels);
+        polyhedron.initLabels(labels);
 	}
 	
 	

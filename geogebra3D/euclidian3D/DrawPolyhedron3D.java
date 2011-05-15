@@ -14,7 +14,6 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra3D.euclidian3D.opengl.Renderer;
-import geogebra3D.kernel3D.AlgoPolyhedron;
 import geogebra3D.kernel3D.AlgoPolyhedronPointsPrism;
 import geogebra3D.kernel3D.GeoPolyhedron;
 

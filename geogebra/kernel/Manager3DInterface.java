@@ -71,11 +71,25 @@ public interface Manager3DInterface {
 
 			 /** 
 			  * Midpoint M = (P + Q)/2
+			 * @param label 
+			 * @param P 
+			 * @param Q 
+			 * @return midpoint
 			  */
 			 public GeoPointND Midpoint(
 					 String label,
 					 GeoPointND P,
 					 GeoPointND Q);
+			 
+			 /** 
+			  * Midpoint of segment
+			 * @param label 
+			 * @param segment 
+			 * @return midpoint
+			  */
+			 public GeoPointND Midpoint(
+					 String label,
+					 GeoSegmentND segment);			 
 
 			/** Segment3D label linking points v1 and v2   */
 			/*
@@ -126,12 +140,6 @@ public interface Manager3DInterface {
 			 * @return the polygon */
 			 public GeoElement [] Polygon3D(String[] label, GeoPointND[] points);
 
-			/** Polyhedron with vertices and faces description
-			 * @param label name
-			 * @param faces faces description
-			 * @return the polyhedron
-			 */
-			 public GeoElement[] Polyhedron(String[] labels, GeoList faces);
 
 			/** Prism with vertices (last one is first vertex of second parallel face)
 			 * @param label name

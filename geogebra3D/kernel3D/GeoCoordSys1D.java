@@ -371,6 +371,20 @@ GeoLineND, GeoCoordSys{
 	}
 	
 	
-
+	/**
+	 * 
+	 * @return start point
+	 */
+	public GeoPointND getStartPoint(){
+		return startPoint;
+	}
+	
+	/**
+	 * 
+	 * @return "end" point
+	 */
+	public GeoPointND getEndPoint(){
+		return endPoint;
+	}
 	
 }

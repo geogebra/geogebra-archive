@@ -16,10 +16,13 @@ the Free Software Foundation.
  * Created on 24. September 2001, 21:37
  */
 
-package geogebra.kernel;
+package geogebra.kernel.kernelND;
 
 import geogebra.euclidian.EuclidianConstants;
-import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.Construction;
+import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
 
 
 /**
@@ -37,6 +40,12 @@ public abstract class AlgoMidpointND extends AlgoElement {
     private GeoPointND M; // output        
 
 	
+    /**
+     * 
+     * @param cons
+     * @param P
+     * @param Q
+     */
     protected AlgoMidpointND(Construction cons, GeoPointND P, GeoPointND Q) {
         super(cons);
         this.P = P;
@@ -50,6 +59,23 @@ public abstract class AlgoMidpointND extends AlgoElement {
     }
     
     /**
+     * 
+     * used for midpoint of a segment
+     * 
+     * @param cons
+     * @param segment
+     */
+    protected AlgoMidpointND(Construction cons, GeoSegmentND segment) {
+		super(cons);
+		
+		P = segment.getStartPoint();
+    	Q = segment.getEndPoint();
+    	
+        // create new Point
+        M = newGeoPoint(cons);
+	}
+
+	/**
      * 
      * @param cons
      * @return new GeoPointND 
@@ -133,7 +159,7 @@ public abstract class AlgoMidpointND extends AlgoElement {
         return Q;
     }
 
-    final public String toString() {
+    public String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
     	return app.getPlain("MidpointOfAB",P.getLabel(),Q.getLabel());

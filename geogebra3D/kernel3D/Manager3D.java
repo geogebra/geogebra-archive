@@ -162,6 +162,16 @@ public class Manager3D implements Manager3DInterface {
 		GeoPoint3D M = algo.getPoint();
 		return M;
 	}
+	
+	public GeoPointND Midpoint(
+			 String label,
+			 GeoSegmentND segment){
+		
+		AlgoMidpoint3D algo = new AlgoMidpointSegment3D(cons, label, segment);
+		GeoPoint3D M = algo.getPoint();
+		return M;
+		
+	}
 
 
 	/** Segment3D label linking points v1 and v2   */
@@ -249,19 +259,6 @@ public class Manager3D implements Manager3DInterface {
 
 	}	
 
-	/** Polyhedron with vertices and faces description
-	 * @param label name
-	 * @param faces faces description
-	 * @return the polyhedron
-	 */
-	final public GeoElement[] Polyhedron(String[] labels, GeoList faces){
-
-
-		AlgoPolyhedron algo = new AlgoPolyhedron(cons,labels,faces);
-
-		return algo.getOutput();
-
-	}	
 
 	/** Prism with vertices (last one is first vertex of second parallel face)
 	 * @param label name

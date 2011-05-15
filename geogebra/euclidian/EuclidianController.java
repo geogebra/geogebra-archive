@@ -4508,8 +4508,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return ret;
 		} else if (selSegments() == 1) {
 			// fetch the selected segment
-			GeoSegment[] segments = getSelectedSegments();
-			ret[0] = kernel.Midpoint(null, segments[0]);
+			GeoSegmentND[] segments = getSelectedSegmentsND();
+			if (((GeoElement) segments[0]).isGeoElement3D())
+				ret[0] = (GeoElement) kernel.getManager3D().Midpoint(null, segments[0]);
+			else
+				ret[0] = kernel.Midpoint(null, (GeoSegment) segments[0]);
 			return ret;
 		} else if (selConics() == 1) {
 			// fetch the selected segment
@@ -6395,15 +6398,30 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return lines;
 	}
 	
-	final protected GeoSegment[] getSelectedSegments() {
-		GeoSegment[] segments = new GeoSegment[selectedSegments.size()];
+	
+	
+	final protected void getSelectedSegmentsND(GeoSegmentND[] segments) {
 		int i = 0;
 		Iterator it = selectedSegments.iterator();
 		while (it.hasNext()) {
-			segments[i] = (GeoSegment) it.next();
+			segments[i] = (GeoSegmentND) it.next();
 			i++;
 		}
 		clearSelection(selectedSegments);
+	}
+	
+	
+	final protected GeoSegmentND[] getSelectedSegmentsND() {
+		GeoSegmentND[] segments = new GeoSegmentND[selectedSegments.size()];
+		getSelectedSegmentsND(segments);
+
+		return segments;
+	}
+	
+	final protected GeoSegment[] getSelectedSegments() {
+		GeoSegment[] segments = new GeoSegment[selectedSegments.size()];
+		getSelectedSegmentsND(segments);
+
 		return segments;
 	}
 
@@ -6569,7 +6587,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final protected int addSelectedSegment(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
-		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedSegments, GeoSegment.class);
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedSegments, GeoSegmentND.class);
 	}
 
 	final protected int addSelectedVector(Hits hits, int max,

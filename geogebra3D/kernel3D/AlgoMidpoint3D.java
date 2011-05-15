@@ -18,9 +18,10 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
-import geogebra.kernel.AlgoMidpointND;
 import geogebra.kernel.Construction;
+import geogebra.kernel.kernelND.AlgoMidpointND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.kernel.kernelND.GeoSegmentND;
 
 
 /**
@@ -52,6 +53,15 @@ public class AlgoMidpoint3D extends AlgoMidpointND {
     AlgoMidpoint3D(Construction cons, GeoPointND P, GeoPointND Q) {
         super(cons,P,Q);
     }
+
+    /**
+     * 
+     * @param cons
+     * @param segment
+     */
+	public AlgoMidpoint3D(Construction cons, GeoSegmentND segment) {
+		super(cons,segment);
+	}
 
 	protected GeoPointND newGeoPoint(Construction cons) {
 		

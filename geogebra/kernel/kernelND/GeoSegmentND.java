@@ -80,4 +80,9 @@ public interface GeoSegmentND extends GeoLineND {
 
 	boolean isLabelVisible();
 
+
+	public GeoPointND getStartPoint();
+
+	public GeoPointND getEndPoint();
+
 }

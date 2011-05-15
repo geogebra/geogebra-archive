@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.kernel.kernelND.AlgoMidpointND;
 import geogebra.kernel.kernelND.GeoPointND;
 
 

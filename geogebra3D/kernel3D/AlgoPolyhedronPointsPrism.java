@@ -82,9 +82,11 @@ public class AlgoPolyhedronPointsPrism extends AlgoPolyhedronPoints{
 		for(int i=0;i<numPoints;i++)
 			points[i] = bottomPoints[i];
 		points[numPoints] = topPoint;		
-		for(int i=0;i<numPoints-1;i++)
-			points[numPoints+1+i] = outputPoints.getElement(i+1-getShift());
-		
+		for(int i=0;i<numPoints-1;i++){
+			GeoPoint3D point = outputPoints.getElement(i+1-getShift());
+			points[numPoints+1+i] = point;
+			polyhedron.addPointCreated(point);
+		}
 		
 		//bottom of the prism
 		setBottom(polyhedron);
