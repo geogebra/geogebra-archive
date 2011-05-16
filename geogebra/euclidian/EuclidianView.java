@@ -76,6 +76,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.Transparency;
+import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -558,7 +559,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		// ggb3D 2009-02-05
 		hits=new Hits();
 		
-		
+		// enable drop transfers 
+		setTransferHandler(new EuclidianViewTransferHandler(this));
 	}
 	
 	public Application getApplication() {

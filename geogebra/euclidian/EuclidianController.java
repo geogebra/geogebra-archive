@@ -6246,7 +6246,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				break;
 
 			case EuclidianView.MODE_IMAGE:	
-				app.getGuiManager().loadImage(loc, altDown);
+				app.getGuiManager().loadImage(loc, null, altDown);
 				break;
 			}			
 			return true;

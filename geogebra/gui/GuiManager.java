@@ -1184,16 +1184,31 @@ public class GuiManager {
 	}
 
 	/**
-	 * Creates a new image at the given location (real world coords).
+	 * Creates a new GeoImage, using an image provided by either 
+	 * a Transferable object or the clipboard contents, then 
+	 * places it at the given location (real world coords).
 	 * 
-	 * @return whether a new image was create or not
+	 * @return whether a new image was created or not
 	 */
-	public boolean loadImage(GeoPoint loc, boolean fromClipboard) {
+	public boolean loadImage(GeoPoint loc, Transferable transfer, boolean fromClipboard) {
 		app.setWaitCursor();
 		
-		String fileName;
-		if (fromClipboard)
-			fileName = getImageFromClipboard();
+		String fileName = null;
+		
+		if (transfer != null && transfer.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
+			java.util.List list = null;
+			try {
+				list = (java.util.List) transfer.getTransferData(DataFlavor.javaFileListFlavor);
+			} catch (UnsupportedFlavorException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			fileName = getImageFromFile((File) list.get(0));
+		}
+		else if (fromClipboard || (transfer != null))
+			fileName = getImageFromTransferable(transfer);
 		else
 			fileName = getImageFromFile();
 
@@ -1303,19 +1318,20 @@ public class GuiManager {
 	 * 
 	 * @return fileName of image stored in imageManager
 	 */
-	public String getImageFromClipboard() {
+	public String getImageFromTransferable(Transferable transfer) {
 
 		BufferedImage img = null;
 		String fileName = null;
 		try {
 			app.setWaitCursor();
 
-			// if (fromClipboard)
+			
 			{
-
-				Clipboard clip = Toolkit.getDefaultToolkit()
-						.getSystemClipboard();
-				Transferable transfer = clip.getContents(null);
+				// if transfer is null then try to get it from the clipboard
+				if(transfer == null){
+					Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+					transfer = clip.getContents(null);
+				}
 
 				try {
 					if (transfer.isDataFlavorSupported(DataFlavor.imageFlavor)) {
@@ -1417,6 +1433,7 @@ public class GuiManager {
 		}
 	}
 
+	
 	/**
 	 * Shows a file open dialog to choose an image file, Then the image file is
 	 * loaded and stored in this application's imageManager.
@@ -1424,6 +1441,17 @@ public class GuiManager {
 	 * @return fileName of image stored in imageManager
 	 */
 	public String getImageFromFile() {
+		return getImageFromFile(null);
+	}
+	
+	/**
+	 * Loads and stores an image file is in this application's 
+	 * imageManager. If a null image file is passed, then
+	 * a file dialog is opened to choose a file. 
+	 * 
+	 * @return fileName of image stored in imageManager
+	 */
+	public String getImageFromFile(File imageFile) {
 
 		BufferedImage img = null;
 		String fileName = null;
@@ -1431,41 +1459,41 @@ public class GuiManager {
 			app.setWaitCursor();
 			// else
 			{
+				if( imageFile == null){
+					initFileChooser();
+					fileChooser.setMode(GeoGebraFileChooser.MODE_IMAGES);
+					fileChooser.setCurrentDirectory(app.getCurrentImagePath());
 
-				initFileChooser();
-				fileChooser.setMode(GeoGebraFileChooser.MODE_IMAGES);
-				fileChooser.setCurrentDirectory(app.getCurrentImagePath());
-				
-				MyFileFilter fileFilter = new MyFileFilter();
-				fileFilter.addExtension("jpg");
-				fileFilter.addExtension("jpeg");
-				fileFilter.addExtension("png");
-				fileFilter.addExtension("gif");
-				fileFilter.addExtension("tif");
-				if (Util.getJavaVersion() >= 1.5)
-					fileFilter.addExtension("bmp");
-				fileFilter.setDescription(app.getPlain("Image"));
-				fileChooser.resetChoosableFileFilters();
-				fileChooser.setFileFilter(fileFilter);
+					MyFileFilter fileFilter = new MyFileFilter();
+					fileFilter.addExtension("jpg");
+					fileFilter.addExtension("jpeg");
+					fileFilter.addExtension("png");
+					fileFilter.addExtension("gif");
+					fileFilter.addExtension("tif");
+					if (Util.getJavaVersion() >= 1.5)
+						fileFilter.addExtension("bmp");
+					fileFilter.setDescription(app.getPlain("Image"));
+					fileChooser.resetChoosableFileFilters();
+					fileChooser.setFileFilter(fileFilter);
 
-				File imageFile = null;
-				int returnVal = fileChooser.showOpenDialog(app.getMainComponent());
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					imageFile = fileChooser.getSelectedFile();
-					if (imageFile != null) {
-						app.setCurrentImagePath(imageFile.getParentFile());
-						if (!app.isApplet()) {
-							GeoGebraPreferences.getPref().
-									saveDefaultImagePath(app.getCurrentImagePath());
+					int returnVal = fileChooser.showOpenDialog(app.getMainComponent());
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+						imageFile = fileChooser.getSelectedFile();
+						if (imageFile != null) {
+							app.setCurrentImagePath(imageFile.getParentFile());
+							if (!app.isApplet()) {
+								GeoGebraPreferences.getPref().
+								saveDefaultImagePath(app.getCurrentImagePath());
+							}
 						}
 					}
-				}
 
-				if (imageFile == null) {
-					app.setDefaultCursor();
-					return null;
+					if (imageFile == null) {
+						app.setDefaultCursor();
+						return null;
+					}
 				}
-
+				
 				// get file name
 				fileName = imageFile.getCanonicalPath();
 

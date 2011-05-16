@@ -164,6 +164,10 @@ public class AlgebraView extends JTree implements View {
 		setRowHeight(-1); // to enable flexible height of cells
 		
 		setToggleClickCount(1);
+				
+        // enable drag n drop
+		setDragEnabled(true);
+		setTransferHandler(new AlgebraViewTransferHandler());
 		
 		attachView();						
 	}
