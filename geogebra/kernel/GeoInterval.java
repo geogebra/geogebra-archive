@@ -5,7 +5,6 @@ import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.NumberValue;
-import geogebra.main.Application;
 import geogebra.util.Unicode;
 /**
  * Boolean function of the type a(<|<=)x(<|<=)b
@@ -89,7 +88,7 @@ public class GeoInterval extends GeoFunction {
 			sbToString2.append(label);
 			sbToString2.append(": ");
 		}
-		sbToString2.append(toValueString());
+		sbToString2.append(toSymbolicString());
 		return sbToString2.toString();
 	}
 
@@ -110,7 +109,7 @@ public class GeoInterval extends GeoFunction {
 	 * @param symbolic true for symbolic, false for numeric
 	 * @return string description of the interval
 	 */
-	public String toString(boolean symbolic) {		
+	private String toString(boolean symbolic) {		
 
 		// output as nice string eg 3 < x < 5
 
@@ -188,27 +187,22 @@ public class GeoInterval extends GeoFunction {
 			if ((opLeft == ExpressionNode.LESS || opLeft == ExpressionNode.LESS_EQUAL)) {
 				if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
 					rightInequality = opLeft == ExpressionNode.LESS ? '<' : Unicode.LESS_EQUAL;
-					rightBound = ((NumberValue)leftRight.evaluate()).getDouble();
-					rightStr = leftRight.toValueString();
+					setRightBound(leftRight);
 				}
 				else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
 					leftInequality = opLeft == ExpressionNode.LESS ? '<' : Unicode.LESS_EQUAL;
-					Application.debug(leftLeft.getClass());
-					leftBound = ((NumberValue)leftLeft.evaluate()).getDouble();
-					leftStr = leftLeft.toValueString();
+					setLeftBound(leftLeft);					
 				}
 
 			} else
 				if ((opLeft == ExpressionNode.GREATER || opLeft == ExpressionNode.GREATER_EQUAL)) {
 					if (leftLeft instanceof FunctionVariable && leftRight.isNumberValue()) {
 						leftInequality = opLeft == ExpressionNode.GREATER ? '<' : Unicode.LESS_EQUAL;
-						leftBound = ((NumberValue)leftRight.evaluate()).getDouble();
-						leftStr = leftRight.toValueString();
+						setLeftBound(leftRight);
 					}
 					else if (leftRight instanceof FunctionVariable && leftLeft.isNumberValue()) {
 						rightInequality = opLeft == ExpressionNode.GREATER ? '<' : Unicode.LESS_EQUAL;
-						rightBound = ((NumberValue)leftLeft.evaluate()).getDouble();
-						rightStr = leftLeft.toValueString();
+						setRightBound(leftLeft);
 					}
 
 				}
@@ -216,26 +210,22 @@ public class GeoInterval extends GeoFunction {
 			if ((opRight == ExpressionNode.LESS || opRight == ExpressionNode.LESS_EQUAL)) {
 				if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
 					rightInequality = opRight == ExpressionNode.LESS ? '<' : Unicode.LESS_EQUAL;
-					rightBound = ((NumberValue)rightRight.evaluate()).getDouble();
-					rightStr = rightRight.toValueString();
+					setRightBound(rightRight);
 				}
 				else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
 					leftInequality = opRight == ExpressionNode.LESS ? '<' : Unicode.LESS_EQUAL;
-					leftBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-					leftStr = rightLeft.toValueString();
+					setLeftBound(rightLeft);
 				}
 
 			} else
 				if ((opRight == ExpressionNode.GREATER || opRight == ExpressionNode.GREATER_EQUAL)) {
 					if (rightLeft instanceof FunctionVariable && rightRight.isNumberValue()) {
 						leftInequality = opRight == ExpressionNode.GREATER ? '<' : Unicode.LESS_EQUAL;
-						leftBound = ((NumberValue)rightRight.evaluate()).getDouble();
-						leftStr = rightRight.toValueString();
+						setLeftBound(rightRight);
 					}
 					else if (rightRight instanceof FunctionVariable && rightLeft.isNumberValue()) {
 						rightInequality = opRight == ExpressionNode.GREATER ? '<' : Unicode.LESS_EQUAL;
-						rightBound = ((NumberValue)rightLeft.evaluate()).getDouble();
-						rightStr = rightLeft.toValueString();
+						setRightBound(rightLeft);
 					}
 
 				}
@@ -250,7 +240,20 @@ public class GeoInterval extends GeoFunction {
 		}
 
 	}
-
+	private void setLeftBound(ExpressionValue nv){
+		leftBound = ((NumberValue)nv.evaluate()).getDouble();
+		if(nv.isGeoElement())
+			leftStr = ((GeoElement)nv).getLabel();
+		else
+			leftStr =  nv.toString();
+	}
+	private void setRightBound(ExpressionValue nv){
+		rightBound = ((NumberValue)nv.evaluate()).getDouble();
+		if(nv.isGeoElement())
+			rightStr = ((GeoElement)nv).getLabel();
+		else
+			rightStr = nv.toString();
+	}
 	/**
 	 * @return left bound of the interval
 	 */
