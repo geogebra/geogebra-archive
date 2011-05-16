@@ -2737,8 +2737,12 @@ public class Application implements KeyEventDispatcher {
 		if (euclidianView != null)
 			euclidianView.updateFonts();
 
-		if (guiManager != null)
+		if (guiManager != null) {
 			getGuiManager().updateFonts();
+			if (getGuiManager().hasEuclidianView2()) {
+				getGuiManager().getEuclidianView2().updateFonts();
+			}
+		}
 
 	}
 
