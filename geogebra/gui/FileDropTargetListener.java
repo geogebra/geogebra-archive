@@ -33,14 +33,12 @@ import javax.swing.ImageIcon;
 
 public class FileDropTargetListener implements DropTargetListener {
 	
-	static DataFlavor urlFlavor, uriListFlavor, macPictStreamFlavor;
+	static DataFlavor urlFlavor, macPictStreamFlavor;
 	static {
 
 		try { 
 			urlFlavor = 
-			new DataFlavor ("application/x-java-url; class=java.net.URL"); 
-			uriListFlavor = 
-			new DataFlavor ("text/uri-list; class=java.lang.String");
+			new DataFlavor ("application/x-java-url; class=java.net.URL"); 			
 		} catch (ClassNotFoundException cnfe) { 
 			cnfe.printStackTrace( );
 		}
@@ -107,10 +105,10 @@ public class FileDropTargetListener implements DropTargetListener {
 					File f = (File) it.next( );
 					al.add(f);
 				}
-			} else if (transferable.isDataFlavorSupported (uriListFlavor)) {
+			} else if (transferable.isDataFlavorSupported (GuiManager.getUriListFlavor())) {
 				//Application.debug("uri-list flavor is supported"); 
 				String uris = (String)
-				transferable.getTransferData (uriListFlavor);
+				transferable.getTransferData (GuiManager.getUriListFlavor());
 
 				// url-lists are defined by rfc 2483 as crlf-delimited 
 				StringTokenizer st = new StringTokenizer (uris, "\r\n");   

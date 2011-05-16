@@ -1,11 +1,13 @@
 package geogebra.euclidian;
 
 
+import geogebra.gui.GuiManager;
 import geogebra.gui.view.algebra.AlgebraViewTransferHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
+import geogebra.main.Application;
 
 import java.awt.Image;
 import java.awt.Point;
@@ -62,8 +64,10 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 	public boolean importData(JComponent comp, Transferable t) {
 
 
+		
 		// handle image file
-		if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
+		if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor) || 
+				t.isDataFlavorSupported(GuiManager.getUriListFlavor())){
 
 			if (debug) System.out.println("dropped image: " + t.toString());
 			 

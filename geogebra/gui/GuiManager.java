@@ -69,11 +69,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -1182,7 +1184,16 @@ public class GuiManager {
 		//}
 		return true;//button != null;
 	}
-
+	private static DataFlavor uriListFlavor = null;
+	public static DataFlavor getUriListFlavor(){
+		if(uriListFlavor != null) return uriListFlavor; 
+		try{
+		 uriListFlavor = new DataFlavor ("text/uri-list; class=java.lang.String");
+		}catch(ClassNotFoundException e){
+			Application.debug("URI list flavor not supported");
+		}
+		return uriListFlavor;
+	}
 	/**
 	 * Creates a new GeoImage, using an image provided by either 
 	 * a Transferable object or the clipboard contents, then 
@@ -1193,8 +1204,7 @@ public class GuiManager {
 	public boolean loadImage(GeoPoint loc, Transferable transfer, boolean fromClipboard) {
 		app.setWaitCursor();
 		
-		String fileName = null;
-		
+		String fileName = null;		
 		if (transfer != null && transfer.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
 			java.util.List list = null;
 			try {
@@ -1207,6 +1217,24 @@ public class GuiManager {
 			
 			fileName = getImageFromFile((File) list.get(0));
 		}
+		else if (transfer != null && transfer.isDataFlavorSupported(getUriListFlavor())){
+			try{
+			String uris = (String)	transfer.getTransferData (uriListFlavor);
+			StringTokenizer st = new StringTokenizer (uris, "\r\n"); 
+			ArrayList<File> al = new ArrayList<File>();
+			while (st.hasMoreTokens ( )) {
+				String uriString = st.nextToken( );		
+				URI uri = new URI(uriString);
+				System.out.println (uri);
+				al.add(new File(uri));
+			}
+			fileName = getImageFromFile(al.get(0));
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+			
 		else if (fromClipboard || (transfer != null))
 			fileName = getImageFromTransferable(transfer);
 		else
