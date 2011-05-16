@@ -1431,5 +1431,10 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 	public void setShowOnAxis(boolean showOnAxis){
 		this.showOnAxis=showOnAxis;
 	}
+	
+	public void update(){			
+		isInequality = fun.updateIneqs();
+		super.update();
+	}
 
 }
