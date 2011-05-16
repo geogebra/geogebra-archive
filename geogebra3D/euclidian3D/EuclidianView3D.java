@@ -55,6 +55,7 @@ import java.awt.print.PrinterException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.JPanel;
 
@@ -97,6 +98,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	private LinkedList<Drawable3D> drawable3DListToBeRemoved;// = new DrawList3D();
 	/** list for Geos to that will be added on next frame */
 	private TreeMap<String,GeoElement> geosToBeAdded;
+	/** set for geos to had to hits */
+	private TreeSet<GeoElement> geosToAddToHits;
 	
 	
 	// Map (geo, drawable) for GeoElements and Drawables
@@ -264,6 +267,8 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		drawable3DListToBeRemoved = new LinkedList<Drawable3D>();
 		
 		geosToBeAdded = new TreeMap<String,GeoElement>();
+		
+		geosToAddToHits = new TreeSet<GeoElement>();
 		
 		//TODO replace canvas3D with GLDisplay
 		renderer = new Renderer(this);
@@ -464,6 +469,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		d = createDrawable(geo);
 		if (d != null) {
 			drawable3DLists.add(d);
+			//if geo wait to be hitted by mouse, add its new drawable
+			if(geosToAddToHits.remove(geo)){
+				addToHits3D(d);
+				//Application.debug(geo+"\n"+hits);
+			}
 		}
 	}
 	
@@ -1886,10 +1896,15 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	 * @param geo
 	 */
 	public void addToHits3D(GeoElement geo){
+		
 
 		DrawableND d = getDrawableND(geo);
-		if (d!=null)
+		
+		
+		if (d!=null) //add it immediately
 			addToHits3D((Drawable3D) d);
+		else //wait for drawable created
+			geosToAddToHits.add(geo);
 		
 	}	
 
@@ -2219,14 +2234,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	/**
 	 * update the 3D cursor with current hits
+	 * @param hits 
 	 */
-	public void updateCursor3D(){
+	public void updateCursor3D(Hits hits){
 
-		//Application.debug("hits ="+getHits().toString());
+		//Application.debug(hits.toString());
+		
 		
 		if (hasMouse){
 			getEuclidianController().updateNewPoint(true, 
-				getHits().getTopHits(), 
+				hits, 
 				true, true, true, false, //TODO doSingleHighlighting = false ? 
 				false);
 			
@@ -2235,6 +2252,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			updateMatrixForCursor3D();
 		}
 		
+	}
+	
+	
+	/**
+	 * update the 3D cursor with current hits
+	 */
+	public void updateCursor3D(){
+		updateCursor3D(getHits().getTopHits());
 	}
 
 	/**
@@ -2478,7 +2503,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void drawCursor(Renderer renderer){
 
 		
-		//Application.debug("cursor="+cursor);
+		//Application.debug("cursor="+cursor);Application.debug("getCursor3DType()="+getCursor3DType());		
 		
 		if (hasMouse 
 				&& !getEuclidianController().mouseIsOverLabel() 
@@ -2489,11 +2514,11 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			switch(cursor){
 			case CURSOR_DEFAULT:
-				//if(getCursor3DType()!=PREVIEW_POINT_ALREADY)
-				//renderer.drawCursorCross3D();
+			case CURSOR_DRAG:
+				if(getCursor3DType()==PREVIEW_POINT_ALREADY)
+					drawPointAlready();
 				break;
-			case CURSOR_HIT:
-				//Application.debug("getCursor3DType()="+getCursor3DType());				
+			case CURSOR_HIT:									
 				switch(getCursor3DType()){
 				case PREVIEW_POINT_FREE:
 					renderer.drawCursor(PlotterCursor.TYPE_CROSS2D);
@@ -2515,21 +2540,26 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 					break;
 
 				case PREVIEW_POINT_ALREADY:
-					switch (getCursor3D().getMoveMode()){
-					case GeoPointND.MOVE_MODE_XY:
-						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_XY);
-						break;
-					case GeoPointND.MOVE_MODE_Z:
-						renderer.drawCursor(PlotterCursor.TYPE_ALREADY_Z);
-						break;
-					}
+					drawPointAlready();
 					break;
 				}
 				break;
 			}
+		
 		}
 	}
 	
+	
+	private void drawPointAlready(){
+		switch (getCursor3D().getMoveMode()){
+		case GeoPointND.MOVE_MODE_XY:
+			renderer.drawCursor(PlotterCursor.TYPE_ALREADY_XY);
+			break;
+		case GeoPointND.MOVE_MODE_Z:
+			renderer.drawCursor(PlotterCursor.TYPE_ALREADY_Z);
+			break;
+		}
+	}
 	
 
 	

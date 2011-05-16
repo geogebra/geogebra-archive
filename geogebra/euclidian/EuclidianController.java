@@ -1071,7 +1071,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected void handleMousePressedForMoveMode(MouseEvent e, boolean drag) {
-
+		
 		//long t0 = System.currentTimeMillis();
 
 
@@ -1111,6 +1111,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			moveableList = view.getHits();
 
 		Hits hits = moveableList.getTopHits();
+		
 
 		//Application.debug("end("+(System.currentTimeMillis()-t0)+")");
 
@@ -1454,6 +1455,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 
+	protected boolean viewHasHitsForMouseDragged(){
+		return !(view.getHits().isEmpty());
+	}
 
 	public void mouseDragged(MouseEvent e) {
 
@@ -1475,7 +1479,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					|| mode == EuclidianView.MODE_POINT_ON_OBJECT
 			){
 				view.setHits(mouseLoc);
-				if (!(view.getHits().isEmpty())) 
+				if (viewHasHitsForMouseDragged()) 
 				{
 					TEMPORARY_MODE = true;
 					oldMode = mode; // remember current mode			
@@ -2009,7 +2013,6 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 
-
 		if (TEMPORARY_MODE) {
 
 			//			Michael Borcherds 2007-10-13 BEGIN
@@ -2045,14 +2048,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//		Michael Borcherds 2007-10-12
 
 
+		
 		if (!hits.isEmpty()){
 			//Application.debug("hits ="+hits);
 			view.setDefaultCursor();		
 		}else
 			view.setHitCursor();
 
+		
 		refreshHighlighting(null);
 
+		
+		
 		// reinit vars
 		//view.setDrawMode(EuclidianView.DRAW_MODE_BACKGROUND_IMAGE);
 		moveMode = MOVE_NONE;
@@ -2545,7 +2552,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				point(hits);
 			} else {
 				GeoElement[] ret0 = { null };
-				ret0[0] = hits.getFirstHit(GeoPoint.class);
+				ret0[0] = hits.getFirstHit(GeoPointND.class);
 				ret = ret0;
 				clearSelection(selectedPoints);
 			}

@@ -9,11 +9,8 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.Hits;
 import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoNumeric;
-import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
-import geogebra.kernel.GeoVector;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -26,18 +23,14 @@ import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
-import geogebra3D.kernel3D.GeoElement3DInterface;
-import geogebra3D.kernel3D.GeoPoint3D;
 import geogebra3D.kernel3D.GeoPlane3D;
-import geogebra3D.kernel3D.Kernel3D;
-import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -462,6 +455,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			ret = point3D;
 			view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
 			view3D.updateMatrixForCursor3D();
+			view3D.getCursor3D().setMoveMode(point3D.getMoveMode());
 			if (mode==EuclidianView.MODE_POINT || mode==EuclidianView.MODE_POINT_ON_OBJECT)
 				freePointJustCreated = true;
 			break;
@@ -513,6 +507,15 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				point3D = null;
 			return point3D;
 			
+			
+		case EuclidianView3D.PREVIEW_POINT_ALREADY:
+			//Application.debug(hits);
+			//if (mode==EuclidianView3D.MODE_POINT || mode==EuclidianView3D.MODE_POINT_ON_OBJECT)
+			GeoPointND firstPoint = (GeoPointND) hits.getFirstHit(GeoPointND.class);			
+			if (firstPoint!=null)
+				return firstPoint;
+			else
+				return (GeoPointND) getMovedGeoPoint(); //keep current point
 		case EuclidianView3D.PREVIEW_POINT_NONE:
 		default:
 			return super.getNewPoint(hits, 
@@ -525,12 +528,13 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			
 		((GeoElement) ret).update();
 		
-		view3D.addToHits3D((GeoElement) ret);
-		view3D.updateCursor3D();
-		
+		//view3D.addToHits3D((GeoElement) ret);
 
 		setMovedGeoPoint(point3D);
-
+		
+		view3D.setCursor3DType(EuclidianView3D.PREVIEW_POINT_ALREADY);
+		view3D.updateMatrixForCursor3D();
+		
 		return ret;
 	
 		
@@ -1837,6 +1841,16 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		setStartPointLocation();
 		handledGeo.recordChangeableCoordParentNumbers();
 	}
+	
+	
+	protected boolean viewHasHitsForMouseDragged(){
+		Application.debug(moveMode);
+		if (moveMode==MOVE_POINT && view3D.getCursor3DType()==EuclidianView3D.PREVIEW_POINT_ALREADY)
+			return view.getHits().containsGeoPoint(); //if a point is under the mouse, don't try to find another hit
+		else
+			return super.viewHasHitsForMouseDragged();
+	}
+	
 	
 	public void mouseDragged(MouseEvent e) {
 		if (handledGeo!=null){
