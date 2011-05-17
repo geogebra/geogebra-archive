@@ -1,6 +1,5 @@
 package geogebra.kernel;
 
-import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.inputbar.AutoCompleteTextField;
 import geogebra.util.Util;
 
@@ -29,9 +28,6 @@ public class GeoTextField extends GeoButton {
 	public boolean isChangeable(){
 		return true;
 	}
-    public int getRelatedModeID() {
-    	return EuclidianConstants.MODE_TEXTFIELD_ACTION;
-    }
 	
     protected String getTypeString() {
 		return "TextField";

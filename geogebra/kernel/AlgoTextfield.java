@@ -12,6 +12,8 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianConstants;
+
 
 
 
@@ -66,6 +68,10 @@ public class AlgoTextfield extends AlgoElement {
     protected final void compute() {
 
     	
+    }
+    
+    public int getRelatedModeID() {
+    	return EuclidianConstants.MODE_TEXTFIELD_ACTION;
     }
   
 }
