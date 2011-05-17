@@ -50,7 +50,7 @@ public class TextPreviewPanel extends EuclidianView {
 
 	public TextPreviewPanel(Kernel kernel) {
 
-		super(new EuclidianController(kernel), showAxes, showGrid);
+		super(new EuclidianController(kernel), showAxes, showGrid, EuclidianView.EVNO_GENERAL);
 		this.ec = this.getEuclidianController();
 
 		this.cons = kernel.getConstruction();

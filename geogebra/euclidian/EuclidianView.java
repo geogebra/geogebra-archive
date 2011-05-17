@@ -496,15 +496,20 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	private Hits hits;
 	
 	//set EuclidianView no - 2 for 2nd EulidianView, 1 for 1st EuclidianView and Applet
+	// EVNO_GENERAL for others
 	private int evNo=1;
+	public static int EVNO_GENERAL = 1001;
 	
-	
+	public EuclidianView(EuclidianController ec, boolean[] showAxes,
+			boolean showGrid) {
+		this(ec, showAxes, showGrid, 1);
+	}
 
 	/**
 	 * Creates EuclidianView
 	 */
 	public EuclidianView(EuclidianController ec, boolean[] showAxes,
-			boolean showGrid) {
+			boolean showGrid, int evno) {
 		
 		// Michael Borcherds 2008-03-01
 		  drawLayers = new DrawableList[MAX_LAYERS+1];
@@ -512,6 +517,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		     drawLayers[k] = new DrawableList();
 		  }
 	
+		evNo = evno;
 		euclidianController = ec;
 		kernel = ec.getKernel();
 		app = ec.getApplication();		
@@ -1388,10 +1394,11 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		setAxesIntervals(xscale, 0);
 		setAxesIntervals(yscale, 1);
 		calcPrintingScale();
-		
+
 		// tell kernel
-		kernel.setEuclidianViewBounds(evNo, xmin, xmax, ymin, ymax, xscale, yscale);
-		
+		if (evNo != EVNO_GENERAL)
+			kernel.setEuclidianViewBounds(evNo, xmin, xmax, ymin, ymax, xscale, yscale);
+
 	}
 
 	public void updateBoundObjects() {
@@ -3946,7 +3953,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		calcPrintingScale();
 		
 		// tell kernel
-		kernel.setEuclidianViewBounds(evNo, xmin, xmax, ymin, ymax, xscale, yscale);
+		if (evNo != EVNO_GENERAL)
+			kernel.setEuclidianViewBounds(evNo, xmin, xmax, ymin, ymax, xscale, yscale);
 
 		coordTransform.setTransform(xscale, 0.0d, 0.0d, -yscale, xZero, yZero);
 
