@@ -1409,7 +1409,12 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		pointChangedForRegion(P);
 		
 	}
-
+	/**
+	 * Reset all inequalities (slow, involves parser)
+	 */
+	public void resetIneqs(){
+		isInequality = fun.initIneqs(getFunctionExpression(),this);
+	}
 	public IneqTree getIneqs() {
 		if(fun.getIneqs() == null){
 			isInequality = fun.initIneqs(fun.getExpression(),this);			
@@ -1432,8 +1437,7 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 		this.showOnAxis=showOnAxis;
 	}
 	
-	public void update(){			
-		isInequality = fun.updateIneqs();
+	public void update(){				
 		super.update();
 	}
 

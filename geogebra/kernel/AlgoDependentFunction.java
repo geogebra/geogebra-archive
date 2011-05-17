@@ -135,7 +135,9 @@ public class AlgoDependentFunction extends AlgoElement {
                 
             expandedFun.setExpression(node);
             f.setFunction(expandedFun);
+            f.resetIneqs();
         }
+        else f.getFunction().updateIneqs();
     }
     
     /**
