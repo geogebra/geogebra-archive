@@ -2503,7 +2503,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	public void drawCursor(Renderer renderer){
 
 		
-		//Application.debug("cursor="+cursor);Application.debug("getCursor3DType()="+getCursor3DType());		
+		//Application.debug("cursor="+cursor+"\ngetCursor3DType()="+getCursor3DType());		
 		
 		if (hasMouse 
 				&& !getEuclidianController().mouseIsOverLabel() 
@@ -2514,6 +2514,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			switch(cursor){
 			case CURSOR_DEFAULT:
+				if(getCursor3DType()==PREVIEW_POINT_FREE) //free point on xOy plane
+					renderer.drawCursor(PlotterCursor.TYPE_CROSS2D);
+				break;
 			case CURSOR_DRAG:
 				if(getCursor3DType()==PREVIEW_POINT_ALREADY)
 					drawPointAlready();

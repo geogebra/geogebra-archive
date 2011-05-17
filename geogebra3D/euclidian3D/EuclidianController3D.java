@@ -1790,6 +1790,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				
 		if (cursorType==EuclidianView3D.PREVIEW_POINT_ALREADY){
 			switch(mode){
+			//cross arrows for moving point
 			case EuclidianView.MODE_MOVE:
 			case EuclidianView.MODE_POINT:
 			case EuclidianView.MODE_POINT_ON_OBJECT:
@@ -1799,22 +1800,20 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			}		
 		}else{
 			switch(mode){
-			case EuclidianView.MODE_POINT:
-			case EuclidianView.MODE_POINT_ON_OBJECT:
+			//modes where point can't be created on path/region
+			case EuclidianView.MODE_MOVE:
 				
-			case EuclidianView.MODE_JOIN:
+			case EuclidianView.MODE_PARALLEL:
 			case EuclidianView.MODE_ORTHOGONAL:
 
-			case EuclidianView.MODE_POLYGON:
-				
-			case EuclidianView.MODE_PLANE_THREE_POINTS:
+			case EuclidianView.MODE_CIRCLE_AXIS_POINT:
+
 			case EuclidianView.MODE_PLANE_POINT_LINE:
 			case EuclidianView.MODE_ORTHOGONAL_PLANE:
-				//return true;
-			case EuclidianView3D.MODE_VIEW_IN_FRONT_OF:
-				return true;
+				return false;
+
 			default:
-				return false;			
+				return true;			
 			}
 		}
 	}
@@ -1844,7 +1843,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	protected boolean viewHasHitsForMouseDragged(){
-		Application.debug(moveMode);
+		//Application.debug(moveMode);
 		if (moveMode==MOVE_POINT && view3D.getCursor3DType()==EuclidianView3D.PREVIEW_POINT_ALREADY)
 			return view.getHits().containsGeoPoint(); //if a point is under the mouse, don't try to find another hit
 		else
