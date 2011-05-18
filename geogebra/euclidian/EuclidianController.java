@@ -1101,6 +1101,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// find and set movedGeoElement
 		view.setHits(mouseLoc); 
+		
+		// make sure that eg slider takes precedence over a polygon (in the same layer)
+		view.getHits().removePolygons();
+
 		Hits moveableList;		
 
 		// if we just click (no drag) on eg an intersection, we want it selected
