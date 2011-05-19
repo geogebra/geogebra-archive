@@ -12,6 +12,7 @@ public class GlobalKeyDispatcher3D extends GlobalKeyDispatcher {
 		super(app);
 	}
 
+	/*
 	protected boolean handleKeyPressed(KeyEvent event) {	
 
 		if (event.getKeyCode()==KeyEvent.VK_W) {					
@@ -21,5 +22,5 @@ public class GlobalKeyDispatcher3D extends GlobalKeyDispatcher {
 
 		return super.handleKeyPressed(event);
 	}
-
+*/
 }

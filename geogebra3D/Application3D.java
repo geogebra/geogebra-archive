@@ -288,6 +288,7 @@ public class Application3D extends Application{
 		return new GlobalKeyDispatcher3D(this);
 	}
 	
+	/*
 	private static final int WIREFRAME_OFF =0;
 	private static final int WIREFRAME_ON =1;
 	private int wireframe = WIREFRAME_OFF ;
@@ -311,5 +312,5 @@ public class Application3D extends Application{
 		return (wireframe == WIREFRAME_ON);
 	}
 	
-	
+	*/
 }

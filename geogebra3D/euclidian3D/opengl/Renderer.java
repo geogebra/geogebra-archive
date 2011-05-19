@@ -493,9 +493,8 @@ public class Renderer implements GLEventListener {
         gl.glDisable(GL.GL_LIGHTING);
         gl.glDisable(GL.GL_DEPTH_TEST);
 
-        //TODO remove this
-        if (((Application3D) view3D.getApplication()).drawWireFrame())
-        	drawWireFrame();
+
+        //drawWireFrame();
 
         
         
@@ -503,6 +502,7 @@ public class Renderer implements GLEventListener {
         
    	
     	//drawFPS();
+        
     	gl.glEnable(GL.GL_DEPTH_TEST);
     	gl.glEnable(GL.GL_LIGHTING);
 
