@@ -2390,6 +2390,11 @@ public class Kernel {
 		return algo.getGeo();
 	}
 	
+	final public GeoElement DependentGeoCopy(String label, GeoElement origGeoNode) {
+		AlgoDependentGeoCopy algo = new AlgoDependentGeoCopy(cons, label, origGeoNode);
+		return algo.getGeo();
+	}
+	
 	/** 
 	 * Name of geo.
 	 */

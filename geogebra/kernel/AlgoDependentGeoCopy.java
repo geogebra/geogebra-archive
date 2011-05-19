@@ -23,7 +23,21 @@ public class AlgoDependentGeoCopy extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private ExpressionNode origGeoNode;
     private GeoElement origGeo, copyGeo;     // input, ouput              
+    
+    public AlgoDependentGeoCopy(Construction cons, String label, GeoElement origGeoNode) {
+    	super(cons);
+    	origGeo = origGeoNode;
+    	
+    	// just for the toString() method
+    	this.origGeoNode = new ExpressionNode(kernel, origGeo.evaluate());
+    	
+        copyGeo = origGeo.copy();
+        setInputOutput(); // for AlgoElement
         
+        compute();      
+        copyGeo.setLabel(label);
+    }
+    
     public AlgoDependentGeoCopy(Construction cons, String label, ExpressionNode origGeoNode) {
     	super(cons);
     	this.origGeoNode = origGeoNode;

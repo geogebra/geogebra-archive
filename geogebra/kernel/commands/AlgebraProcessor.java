@@ -794,9 +794,18 @@ public class AlgebraProcessor {
 			//Application.debug(left.getClass()+"");
 			//Application.debug(right.getClass()+"");
 			//Application.debug("");
+		} else if (en.operation == en.FUNCTION) {
+			ExpressionValue left = en.left;
+			ExpressionValue right = en.right;
+			if (left.isLeaf() && left.isGeoElement() &&
+				right.isLeaf() && right.isNumberValue() &&
+				!isIndependent) {
+				f = (GeoFunction) kernel.DependentGeoCopy(label, (GeoElement)left);
+				ret[0] = f;		
+				return ret;
+			}
 		}
-		
-		
+
 		if (isIndependent) {
 			f = kernel.Function(label, fun);			
 		} else {			
