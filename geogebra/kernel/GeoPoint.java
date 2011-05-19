@@ -51,7 +51,7 @@ final public class GeoPoint extends GeoVec3D
 implements VectorValue, PathOrPoint,
 Translateable, PointRotateable, Mirrorable, Dilateable, MatrixTransformable, ConicMirrorable, PointProperties,
 GeoPointND, Animatable, Transformable  {   	
-	
+
 	private static final long serialVersionUID = 1L;
 
 	// don't set point size here as this would overwrite setConstructionDefaults() 
@@ -83,6 +83,7 @@ GeoPointND, Animatable, Transformable  {
     
     public GeoPoint(Construction c) {     	 
     	super(c);
+    	animationType = ANIMATION_INCREASING;
     	setUndefined();
     }
   
@@ -91,11 +92,13 @@ GeoPointND, Animatable, Transformable  {
      */  
     public GeoPoint(Construction c, String label, double x, double y, double z) {               
         super(c, x, y, z); // GeoVec3D constructor          
+    	animationType = ANIMATION_INCREASING;
         setLabel(label);
     }
     
     public GeoPoint(Construction c, Path path) {
 		super(c);
+    	animationType = ANIMATION_INCREASING;
 		this.path = path;	
 	}
     
