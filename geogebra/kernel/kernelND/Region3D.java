@@ -26,12 +26,13 @@ public interface Region3D extends Region {
 	public Coords[] getNormalProjection(Coords coords);
 
 
-	/** return the willingDirection projection of the (coords) point on the region 
-	 * @param coords coords of the point
+	/** return the willingDirection projection of the (willing coords) point on the region 
+	 * @param oldCoords pld coords of the points
+	 * @param willingCoords willing coords of the point
 	 * @param willingDirection direction of the projection
 	 * @return projection
 	 */
-	public Coords[] getProjection(Coords coords, Coords willingDirection);
+	public Coords[] getProjection(Coords oldCoords, Coords willingCoords, Coords willingDirection);
 	
 	
 

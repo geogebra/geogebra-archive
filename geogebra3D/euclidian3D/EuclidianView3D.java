@@ -302,12 +302,14 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		
 		
 		//previewables
-		kernel3D.setSilentMode(true);
-		cursor3D = (GeoPoint3D) kernel3D.getManager3D().Point3D(null, 1, 1, 0);
+		//kernel3D.setSilentMode(true);
+		cursor3D = new GeoPoint3D(kernel3D.getConstruction());
+		cursor3D.setCoords(0,0,0,1);
 		cursor3D.setIsPickable(false);
 		//cursor3D.setLabelOffset(5, -5);
-		cursor3D.setEuclidianVisible(false);
-		kernel3D.setSilentMode(false);
+		//cursor3D.setEuclidianVisible(false);
+		cursor3D.setMoveNormalDirection(EuclidianView3D.vz);
+		//kernel3D.setSilentMode(false);
 		
 		
 		
@@ -2279,7 +2281,7 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			case PREVIEW_POINT_REGION:
 				// use region drawing directions for the arrow
 				t = 1/getScale();
-				v = getCursor3D().getRegionParameters().getNormal();				
+				v = getCursor3D().getMoveNormalDirection();		
 				if (v.dotproduct(getViewDirection())<0)
 					v=v.mul(-1);
 
@@ -2314,22 +2316,16 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 				getCursor3D().getDrawingMatrix().setVz((Coords) vz.mul(t));
 				break;
 			case PREVIEW_POINT_REGION:
+				
+				
 				// use region drawing directions for the cross
 				t = 1/getScale();
 
-				//v = ((GeoElement)getCursor3D().getRegion()).getMainDirection(); //vz
-				v = getCursor3D().getRegionParameters().getNormal();
-				m = new CoordMatrix(4, 2);
-				m.set(v, 1);
-				m.set(4, 2, 1);
-				matrix = new CoordMatrix4x4(m);
-
-				getCursor3D().getDrawingMatrix().setVx(
-						(Coords) matrix.getVy().normalized().mul(t));
-				getCursor3D().getDrawingMatrix().setVy(
-						(Coords) matrix.getVz().normalized().mul(t));
-				getCursor3D().getDrawingMatrix().setVz(
-						(Coords) matrix.getVx().normalized().mul(t));
+				v = getCursor3D().getMoveNormalDirection();	
+				
+				matrix = new CoordMatrix4x4(getCursor3D().getDrawingMatrix().getOrigin(),v,CoordMatrix4x4.VZ);
+				matrix.mulAllButOrigin(t);
+				getCursor3D().setDrawingMatrix(matrix);
 
 				break;
 			case PREVIEW_POINT_PATH:
@@ -2383,21 +2379,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 
 
 				}else if (getCursor3D().hasRegion()){
-					//v = ((GeoElement)getCursor3D().getRegion()).getMainDirection();
-					v = getCursor3D().getRegionParameters().getNormal();
+					
+					v = getCursor3D().getMoveNormalDirection();	
 
-					/*
-				m = new CoordMatrix(4, 2);
-				m.set(v, 1);
-				m.set(4, 2, 1);
-				m2 = new CoordMatrix4x4(m);
-
-				matrix = new CoordMatrix4x4();
-				matrix.setVx(m2.getVy());
-				matrix.setVy(m2.getVz());
-				matrix.setVz(m2.getVx());
-				matrix.setOrigin(m2.getOrigin());
-					 */
 					matrix = new CoordMatrix4x4(getCursor3D().getCoordsInD(3), v, CoordMatrix4x4.VZ);
 				}else
 					matrix = CoordMatrix4x4.Identity();
@@ -2514,13 +2498,21 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 			
 			switch(cursor){
 			case CURSOR_DEFAULT:
-				if(getCursor3DType()==PREVIEW_POINT_FREE) //free point on xOy plane
-					renderer.drawCursor(PlotterCursor.TYPE_CROSS2D);
+				switch(getCursor3DType()){
+				case PREVIEW_POINT_FREE: //free point on xOy plane
+					renderer.drawCursor(PlotterCursor.TYPE_CROSS2D);					
+					break;
+				case PREVIEW_POINT_ALREADY: //showing arrows directions
+					drawPointAlready();				
+					break;				
+				}
 				break;
+				/*
 			case CURSOR_DRAG:
 				if(getCursor3DType()==PREVIEW_POINT_ALREADY)
 					drawPointAlready();
 				break;
+				*/
 			case CURSOR_HIT:									
 				switch(getCursor3DType()){
 				case PREVIEW_POINT_FREE:
@@ -2554,6 +2546,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 	
 	
 	private void drawPointAlready(){
+		
+		//Application.debug(getCursor3D().getMoveMode());
+		
 		switch (getCursor3D().getMoveMode()){
 		case GeoPointND.MOVE_MODE_XY:
 			renderer.drawCursor(PlotterCursor.TYPE_ALREADY_XY);

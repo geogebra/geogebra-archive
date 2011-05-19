@@ -669,8 +669,7 @@ implements GeoElement3DInterface, Functional2Var, Region3D{
 	
 
 
-
-	public Coords[] getProjection(Coords coords, Coords willingDirection) {
+	public Coords[] getProjection(Coords oldCoords, Coords willingCoords, Coords willingDirection) {
 		// TODO Auto-generated method stub
 		return null;
 	}

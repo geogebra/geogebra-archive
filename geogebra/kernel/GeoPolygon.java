@@ -1238,8 +1238,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		return getCoordSys().getNormalProjection(coords);
 	}
 
-	public Coords[] getProjection(Coords coords, Coords willingDirection){
-		return getCoordSys().getProjection(coords, willingDirection);
+	public Coords[] getProjection(Coords oldCoords, Coords willingCoords, Coords willingDirection) {
+		return willingCoords.projectPlaneThruVIfPossible(getCoordSys().getMatrixOrthonormal(),oldCoords,willingDirection);
 	}
 	
 	

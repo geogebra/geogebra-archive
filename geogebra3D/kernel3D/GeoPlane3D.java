@@ -107,9 +107,8 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 		return coords.projectPlane(getCoordSys().getMatrixOrthonormal());
 	}
 
-	public Coords[] getProjection(Coords coords,
-			Coords willingDirection) {
-		return coords.projectPlaneThruV(getCoordSys().getMatrixOrthonormal(),willingDirection);
+	public Coords[] getProjection(Coords oldCoords, Coords willingCoords, Coords willingDirection) {
+		return willingCoords.projectPlaneThruVIfPossible(getCoordSys().getMatrixOrthonormal(),oldCoords,willingDirection);
 	}
 
 	public boolean isInRegion(GeoPointND P) {

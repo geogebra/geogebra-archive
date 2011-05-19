@@ -60,7 +60,7 @@ import geogebra3D.Application3D;
  * @author  Markus + ggb3D
  * @version 
  */
-final public class GeoPoint3D extends GeoVec4D
+public class GeoPoint3D extends GeoVec4D
 implements GeoPointND, PointProperties, Vector3DValue{   	
 	
 	/**
@@ -559,6 +559,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
     	return regionParameters;
     }
     
+
+    
     final public Region getRegion(){
     	return region;
     }
@@ -609,7 +611,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 			project = ((Region3D) region).getNormalProjection(coords);
 			//coords.projectPlane(coordSys2D.getMatrix4x4());
 		}else{ //use willing direction for projection
-			project = ((Region3D) region).getProjection(coords,getWillingDirection());
+			project = ((Region3D) region).getProjection(getCoords(),coords,getWillingDirection());
 			//project = coords.projectPlaneThruV(coordSys2D.getMatrix4x4(),getWillingDirection());
 		}
 			
@@ -1076,7 +1078,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	// MOVING THE POINT (3D)
 	/////////////////////////////////////////
 	
-	private int moveMode = MOVE_MODE_XY;
+	protected int moveMode = MOVE_MODE_XY;
 
 	public void switchMoveMode(){
 		
@@ -1107,6 +1109,23 @@ implements GeoPointND, PointProperties, Vector3DValue{
 			return moveMode;
 	}
 
+	private Coords moveNormalDirection;
+	
+	/**
+	 * sets the normal to moving directions (for region points)
+	 * @param d
+	 */
+	public void setMoveNormalDirection(Coords d){
+		moveNormalDirection = d.copyVector();
+	}
+	
+	/**
+	 * 
+	 * @return the normal to moving directions (for region points)
+	 */
+	public Coords getMoveNormalDirection(){
+		return moveNormalDirection;
+	}
    
 
 }

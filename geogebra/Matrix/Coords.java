@@ -481,6 +481,33 @@ public class Coords
 		
 	}		
 	
+	/** returns this projected on the plane represented by the matrix, with vector v used for direction.  
+	 *  <p>
+	 *  If v is parallel to plane, first project old position of the line (this,v),
+	 *  then project the result using plane third vector
+	 * @param m matrix {v1 v2 v3 o} where (o,v1,v2) is a coord sys fo the plane, and v3
+	 * @param oldCoords old position of this
+	 * @param v the direction used for projection (v3 is used instead if v is parallel to the plane)
+	 * @return two vectors {globalCoords,inPlaneCoords}: the point projected, and the original point in plane coords
+	 */	
+	public Coords[] projectPlaneThruVIfPossible(CoordMatrix m, Coords oldCoords, Coords v){
+		
+		//Application.debug(this+"\nold=\n"+oldCoords);
+		
+		// check if v is parallel to plane
+		Coords v3 = m.getColumn(3);
+		if (Kernel.isZero(v3.dotproduct(v))){
+			Coords firstProjection = oldCoords.projectLine(this, v)[0];
+			return firstProjection.projectPlane(m);
+		}
+		
+		// if not, use v for direction
+		CoordMatrix m1 = new CoordMatrix(4,4);
+		m1.set(new Coords[] {m.getColumn(1), m.getColumn(2), v, m.getColumn(4)});
+		
+		return projectPlane(m1);
+		
+	}		
 	
 	
 	
