@@ -117,6 +117,7 @@ public class MyVecNode extends ValidExpression implements VectorValue {
         
     	switch (kernel.getCASPrintForm()) {
 			case ExpressionNode.STRING_TYPE_MATH_PIPER:
+			case ExpressionNode.STRING_TYPE_MPREDUCE:
 				coords = getCoords();
 				sb.append("{");
 				sb.append(coords[0]);
@@ -133,9 +134,7 @@ public class MyVecNode extends ValidExpression implements VectorValue {
 				sb.append(coords[1]);
 				sb.append("]");
 				break;
-				
-			// TODO: add case for MPReduce!!!
-				
+								
 			default: // continue below
 			  sb.append('(');
 		        sb.append(x.toString());

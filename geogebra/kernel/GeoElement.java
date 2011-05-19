@@ -25,6 +25,7 @@ import geogebra.gui.GuiManager;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.kernel.arithmetic.ExpressionNode;
+import geogebra.kernel.arithmetic.ExpressionNodeConstants;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -554,8 +555,25 @@ public abstract class GeoElement
 				return toOutputValueString();
 			else
 				return algoParent.getCommandDescription();
-		} else
+		} else {
+			//mpreduce uses e for the euler constant
+			//i for the imaginary unit and
+			//T for true
+			int STRING_TYPE = kernel.getCASPrintForm();
+			switch(STRING_TYPE){
+			case ExpressionNodeConstants.STRING_TYPE_MPREDUCE:
+				
+				if (label.equalsIgnoreCase("e") || label.equalsIgnoreCase("i") || label.equalsIgnoreCase("t")){
+					StringBuilder sb=new StringBuilder();
+					sb.append(ExpressionNodeConstants.UNICODE_PREFIX);
+					sb.append((int) label.charAt(0)); // decimal unicode for e
+					sb.append(ExpressionNodeConstants.UNICODE_DELIMITER);
+					return sb.toString();
+				}	
+			}
+			//standard case
 			return label;
+		}
 	}
 
 	public void copyLabel(GeoElement c) {

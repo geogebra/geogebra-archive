@@ -71,12 +71,15 @@ public class CASmpreduce extends CASgeneric {
 	 */
 	private String evaluateMPReduce(String exp) {
         try {
+        	exp=casParser.replaceIndices(exp);
 			String ret = mpreduce.evaluate(exp);
 			ret = ret.trim();
 			ret=ret.replaceAll("\\*\\*", "^");
 	        while (ret.endsWith("$")) {
 	        	ret = ret.substring(0, ret.length() - 1);
 	        }
+			// undo special character handling
+			ret = casParser.insertSpecialChars(ret);
 			return ret;
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -107,7 +110,7 @@ public class CASmpreduce extends CASgeneric {
 				str = sb.toString();
 			} else {	
 				// assignment, e.g. a : 5
-				str = veLabel + " : " + str;
+				str = veLabel + " := " + str;
 			}
 		}
 		return str;
@@ -174,6 +177,10 @@ public class CASmpreduce extends CASgeneric {
 			mpreduce.evaluate("off nat;");
 			mpreduce.evaluate("off arbvars");
 			mpreduce.evaluate("off solvesingular");
+			mpreduce.evaluate("load\\_package(\"rsolve\")");
+			mpreduce.evaluate("load\\_package(\"numeric\")");
+			//the first command sent to mpreduce produces an error
+			evaluateGeoGebraCAS("1+2");
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

@@ -154,8 +154,11 @@ public class CASparser {
 					foundIndex = true;
 					replaceCharacter = true;
 					
-					if (i > 0 && str.charAt(i-1) == '\\')
+					if (i > 0 && str.charAt(i-1) == '\\'){
 						replaceCharacter = false;
+						// \\_ is translated to _
+						sbReplaceIndices.deleteCharAt(sbReplaceIndices.length()-1);
+					}
 					break;
 										
 				case '{': 	

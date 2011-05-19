@@ -14,8 +14,11 @@ public interface ExpressionNodeConstants {
 	public static final int STRING_TYPE_JASYMCA = 7;
 	public static final int STRING_TYPE_MPREDUCE = 8;
 	
-	public static final String UNICODE_PREFIX = "uNiCoDe";
-	public static final String UNICODE_DELIMITER = "U";  
+	//public static final String UNICODE_PREFIX = "uNiCoDe";
+	public static final String UNICODE_PREFIX = "unicode";
+	
+//	public static final String UNICODE_DELIMITER = "U";  
+	public static final String UNICODE_DELIMITER = "u";  
 	
 	public static final int NO_OPERATION = Integer.MIN_VALUE; 
     
