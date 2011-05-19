@@ -16,79 +16,6 @@ import geogebra.util.Unicode;
  */
 public class TableSymbols {
 
-
-	/**
-	 * array of basic symbols displayed in the MyTextField popup
-	 */
-	private final static String [] basicSymbols = {
-
-		"\u03B1" ,     //GREEK SMALL LETTER ALPHA
-		"\u03B2" ,     //GREEK SMALL LETTER BETA
-		"\u03B3" ,     //GREEK SMALL LETTER GAMMA
-		"\u03B4" ,     //GREEK SMALL LETTER DELTA
-		"\u03B5" ,     //GREEK SMALL LETTER EPSILON
-		"\u03B6" ,     //GREEK SMALL LETTER ZETA
-		"\u03B7" ,     //GREEK SMALL LETTER ETA
-		"\u03B8" ,     //GREEK SMALL LETTER THETA
-		"\u03B9" ,     //GREEK SMALL LETTER IOTA
-		"\u03BA" ,     //GREEK SMALL LETTER KAPPA
-		"\u03BB" ,     //GREEK SMALL LETTER LAMDA
-		"\u03BC" ,     //GREEK SMALL LETTER MU
-		"\u03BD" ,     //GREEK SMALL LETTER NU
-		"\u03BE" ,     //GREEK SMALL LETTER XI
-		"\u03BF" ,     //GREEK SMALL LETTER OMICRON
-		"\u03C0" ,     //GREEK SMALL LETTER PI
-		"\u03C1" ,     //GREEK SMALL LETTER RHO
-		//	"\u03C2" ,     //GREEK SMALL LETTER FINAL SIGMA
-		"\u03C3" ,     //GREEK SMALL LETTER SIGMA
-		"\u03C4" ,     //GREEK SMALL LETTER TAU
-		"\u03C5" ,     //GREEK SMALL LETTER UPSILON
-		"\u03D5" ,     //GREEK PHI (TECHNICAL)
-		"\u03C7" ,     //GREEK SMALL LETTER CHI
-		"\u03C8" ,     //GREEK SMALL LETTER PSI
-		"\u03C9" ,     //GREEK SMALL LETTER OMEGA
-
-		"\u0393", // UpperCase Gamma
-		"\u0394", // UpperCase Delta
-		"\u0398", // UpperCase Theta
-		"\u039b", // UpperCase Lambda
-		"\u039e", // UpperCase Xi
-		"\u03a0", // UpperCase Pi
-		"\u03a3", // UpperCase Sigma
-		"\u03a6", // UpperCase Phi
-		"\u03a8", // UpperCase Psi
-		"\u03a9", // UpperCase Omega
-
-		"\u221e", // infinity
-		ExpressionNode.strVECTORPRODUCT, //  "\u2297", // vector product (circled times)
-		ExpressionNode.strEQUAL_BOOLEAN,
-		ExpressionNode.strNOT_EQUAL,
-		ExpressionNode.strLESS_EQUAL,
-		ExpressionNode.strGREATER_EQUAL,
-		ExpressionNode.strNOT,
-		ExpressionNode.strAND,
-		ExpressionNode.strOR, 
-		ExpressionNode.strPARALLEL,
-		ExpressionNode.strPERPENDICULAR,
-		ExpressionNode.strIS_ELEMENT_OF,
-		ExpressionNode.strIS_SUBSET_OF,
-		ExpressionNode.strIS_SUBSET_OF_STRICT,
-
-
-		"\u2220", //ANGLE
-		"\u2221", //MEASURED ANGLE
-
-		"\u00b2",  // exponents ^2 
-		"\u00b3",  // exponents ^3 
-		"\u00b0", // degree		
-
-		Unicode.PI_STRING, // pi	
-		Unicode.EULER_STRING, // e
-
-	};
-
-
-
 	public final static String[][] basicSymbolsMap(Application app) {
 
 		String[][] array = {
@@ -142,11 +69,12 @@ public class TableSymbols {
 				{ ExpressionNode.strIS_ELEMENT_OF , app.getMenu("Symbol.ElementOf" )},   
 				{ ExpressionNode.strIS_SUBSET_OF , app.getMenu("Symbol.Subset" )},   
 				{ ExpressionNode.strIS_SUBSET_OF_STRICT , app.getMenu("Symbol.StrictSubset" )},   
-				{ "\u2220" , app.getMenu("Symbol.Angle" )},   
+				//{ "\u2220" , app.getMenu("Symbol.Angle" )},   
 				{ "\u2221" , app.getMenu("Symbol.AngleMeasure" )},   
-				{ "\u00b2" , app.getMenu("Symbol.Square" )},   //exponents^2
-				{ "\u00b3" , app.getMenu("Symbol.Cube" )},   //exponents^3
-				{ "\u00b0" , app.getMenu("Symbol.Degree" )},   //degree
+				{ Unicode.Superscript_2+"" , app.getMenu("Symbol.Square" )},   //exponents^2
+				{ Unicode.Superscript_3+"" , app.getMenu("Symbol.Cube" )},   //exponents^3
+				{ Unicode.degree , app.getMenu("Symbol.Degree" )},   //degree
+				{ Unicode.IMAGINARY , Unicode.IMAGINARY },   //sqrt(-1)
 				{ Unicode.PI_STRING , Unicode.PI_STRING },   //pi
 				{ Unicode.EULER_STRING , Unicode.EULER_STRING },   //e
 		};
