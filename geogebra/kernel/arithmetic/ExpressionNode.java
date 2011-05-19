@@ -1206,6 +1206,15 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		String rightStr = null;
 		if (right != null) {
 			rightStr = right.toLaTeXString(symbolic);
+			if ((operation == FUNCTION_NVAR || operation == ELEMENT_OF) &&
+				(right instanceof MyList))
+			{
+				// 1 character will be taken from the left and right
+				// of rightStr in operationToString, but more
+				// is necessary in case of LaTeX, we do that here
+				// " \\{ " is put by MyList 5 - 1(escape) -1(operationToString)
+				rightStr = rightStr.substring(3, rightStr.length() - 3);
+			}
 		}
 
 		// build latex string
