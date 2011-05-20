@@ -2417,11 +2417,8 @@ public class GuiManager {
 				if (propDialog != null && propDialog.isShowing())
 					propDialog.cancel();
 				
-				// handle events from Undo button and menu, not ctrl-z
-				// as that is handled by GlobalKeyDispatcher
-				// TODO: why does e.getSource() instanceof javax.swing.JMenu not work? see #791
-				if (e.getSource().getClass().toString().indexOf("javax.swing.JMenu") > -1 || e.getSource() instanceof MySmallJButton)
-					undo();
+				undo();
+
 			}
 		};
 
@@ -2432,11 +2429,8 @@ public class GuiManager {
 			public void actionPerformed(ActionEvent e) {
 				if (propDialog != null && propDialog.isShowing())
 					propDialog.cancel();
-
-				// handle events from Redo button and menu, not ctrl-z
-				// as that is handled by GlobalKeyDispatcher
-				if (e.getSource() instanceof JMenu || e.getSource() instanceof MySmallJButton)
-					redo();
+				
+				redo();
 			}
 		};
 		
