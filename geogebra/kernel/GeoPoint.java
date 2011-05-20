@@ -83,7 +83,7 @@ GeoPointND, Animatable, Transformable  {
     
     public GeoPoint(Construction c) {     	 
     	super(c);
-    	animationType = ANIMATION_INCREASING;
+    	setAnimationType(ANIMATION_INCREASING);
     	setUndefined();
     }
   
@@ -91,14 +91,14 @@ GeoPointND, Animatable, Transformable  {
      * Creates new GeoPoint 
      */  
     public GeoPoint(Construction c, String label, double x, double y, double z) {               
-        super(c, x, y, z); // GeoVec3D constructor          
-    	animationType = ANIMATION_INCREASING;
+        super(c, x, y, z); // GeoVec3D constructor
+    	setAnimationType(ANIMATION_INCREASING);
         setLabel(label);
     }
     
     public GeoPoint(Construction c, Path path) {
 		super(c);
-    	animationType = ANIMATION_INCREASING;
+    	setAnimationType(ANIMATION_INCREASING);
 		this.path = path;	
 	}
     
