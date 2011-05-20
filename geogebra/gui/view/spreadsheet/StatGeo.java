@@ -374,7 +374,7 @@ public class StatGeo   {
 			density = 1.0*classWidth/dataList.size();
 		if(settings.type == StatPanelSettings.TYPE_NORMALIZED)
 			density = 1.0/dataList.size();
-		
+
 		String text;
 		if(isFrequencyPolygon)
 			text = "FrequencyPolygon[" + settings.isCumulative + "," + classes + "," +  label + ",true," + density + "]";
@@ -392,7 +392,7 @@ public class StatGeo   {
 		return geo;	
 	}
 
-	
+
 
 	public GeoElement createNormalCurveOverlay(GeoList dataList){
 
@@ -407,7 +407,7 @@ public class StatGeo   {
 		return geo;	
 	}
 
-	
+
 
 	public PlotSettings getHistogramSettings(GeoList dataList, GeoElement histogram, StatPanelSettings settings){	
 
@@ -416,11 +416,17 @@ public class StatGeo   {
 
 		double freqMax = ((AlgoFunctionAreaSums)histogram.getParentAlgorithm()).getFreqMax();
 		//if(settings.type == StatPanelSettings.TYPE_RELATIVE)
-			//freqMax = 1.0;
+		//freqMax = 1.0;
+
+		if(settings.useManualClasses){
+			double[] leftBorder = ((AlgoFunctionAreaSums)histogram.getParentAlgorithm()).getLeftBorder();
+			xMinData = leftBorder[0];
+			xMaxData = leftBorder[leftBorder.length-1];
+		}
 
 		yMinData = 0.0;
 		yMaxData = freqMax;
-		
+
 		ps = setXYBounds(ps, settings, .2, .1);
 
 		//	double buffer = .25*(xMaxData - xMinData);
@@ -529,7 +535,7 @@ public class StatGeo   {
 		geo  = createGeoFromString(text);
 		geo.setObjColor(StatDialog.DOTPLOT_COLOR);
 		geo.setAlphaValue(0.25f);
-		
+
 		return geo;	
 	}
 
