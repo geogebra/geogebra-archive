@@ -5384,7 +5384,30 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// movedGeoElement is the active geo
 		if (movedGeoElement == null) {
 			movedGeoElement = geo;
-			app.addSelectedGeo(geo);
+			Hits oldhits = new Hits();
+			oldhits.addAll(app.getSelectedGeos());
+			for (int i=oldhits.size()-1; i >= 0; i--) {
+				GeoElement oldgeo = (GeoElement) oldhits.get(i);
+				if (!(movedGeoElement.getClass().isInstance(oldgeo))) {
+					oldhits.remove(i);
+				}
+			}
+			if (oldhits.size() > 0) {
+				// there were appropriate selected elements
+				// apply visual style for them
+				// standard case: copy visual properties
+				for (int i=0; i < oldhits.size(); i++) {
+					GeoElement oldgeo = (GeoElement) oldhits.get(i);
+					oldgeo.setAdvancedVisualStyle(movedGeoElement);
+					oldgeo.updateRepaint();
+				}
+				clearSelections();
+				return true;
+			} else {
+				// there were no appropriate selected elements
+				// set movedGeoElement
+				app.addSelectedGeo(geo);
+			}
 		} else {
 			if (geo == movedGeoElement) {
 				// deselect

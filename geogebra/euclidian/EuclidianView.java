@@ -4779,6 +4779,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		case MODE_ROTATE_BY_ANGLE: return true;
 		case MODE_TRANSLATE_BY_VECTOR: return true;
 		case MODE_DILATE_FROM_POINT: return true;
+		case MODE_COPY_VISUAL_STYLE: return true;
 		default: return false;
 		}
 	}
