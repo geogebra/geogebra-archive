@@ -1476,12 +1476,7 @@ public class Construction {
 	public void replace(GeoElement oldGeo, GeoElement newGeo) throws Exception {
 		if (oldGeo == null || newGeo == null || oldGeo == newGeo)
 			return;
-	
-		// put back, breaks the Rigid polygon Tool, see #379
-		
-		///* removed, see ticket #379
-		// * http://www.geogebra.org/trac/ticket/379
-		
+
 		// if oldGeo does not have any children, we can simply
 		// delete oldGeo and give newGeo the name of oldGeo
 		if (!oldGeo.hasChildren()) {
@@ -1490,15 +1485,22 @@ public class Construction {
 			
 			if (newGeo.isIndependent())
 				addToConstructionList(newGeo, true);
-			else 
-				addToConstructionList(newGeo.getParentAlgorithm(), true);
+			else {
+				AlgoElement parentAlgo = newGeo.getParentAlgorithm();
+				addToConstructionList(parentAlgo, true);								
+				// make sure all output objects get labels, see #218
+				GeoElement.setLabels(oldGeoLabel, parentAlgo.getOutput());							
+			}
 
+			// copy formatting of oldGeo to newGeo
 			newGeo.setAllVisualProperties(oldGeo, false);
+			
+			// copy label of oldGeo to newGeo
 			// use setLoadedLabel() instead of setLabel() to make sure that 
 			// hidden objects also get the label, see #379	
-			newGeo.setLoadedLabel(oldGeoLabel);
+			newGeo.setLoadedLabel(oldGeoLabel);		
 			return;
-		}//*/
+		}
 		
 	    // check for circular definition
 	    if (newGeo.isChildOf(oldGeo)) {
