@@ -1476,8 +1476,7 @@ public class Construction {
 	public void replace(GeoElement oldGeo, GeoElement newGeo) throws Exception {
 		if (oldGeo == null || newGeo == null || oldGeo == newGeo)
 			return;
-
-		
+	
 		// put back, breaks the Rigid polygon Tool, see #379
 		
 		///* removed, see ticket #379
@@ -1493,8 +1492,11 @@ public class Construction {
 				addToConstructionList(newGeo, true);
 			else 
 				addToConstructionList(newGeo.getParentAlgorithm(), true);
-			newGeo.setAllVisualProperties(oldGeo, false);			
-			newGeo.setLabel(oldGeoLabel);			
+
+			newGeo.setAllVisualProperties(oldGeo, false);
+			// use setLoadedLabel() instead of setLabel() to make sure that 
+			// hidden objects also get the label, see #379	
+			newGeo.setLoadedLabel(oldGeoLabel);
 			return;
 		}//*/
 		
