@@ -182,6 +182,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 
 		switch (keyCode) {
 		
+		case KeyEvent.VK_Z:
+		case KeyEvent.VK_Y:
+			if (Application.isControlDown(e)) {
+				app.getGlobalKeyDispatcher().handleGeneralKeys(e);
+				e.consume();
+			}
+			break;
+
 		case KeyEvent.VK_0:
 		case KeyEvent.VK_1:
 		case KeyEvent.VK_2:
