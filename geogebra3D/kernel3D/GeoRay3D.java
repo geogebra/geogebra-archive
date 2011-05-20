@@ -1,6 +1,8 @@
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoRayND;
 
@@ -43,5 +45,21 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND{
 		return (x>=0);
 	}
 	
+	public boolean isOnFullLine(Coords p, double eps){
+		//first check global line
+		if (!super.isOnFullLine(p, eps))
+			return false;
+		
+		//then check position on segment
+		if (Kernel.isEqual(p.getW(),0,eps))//infinite point
+			return false;
+		double d = p.sub(getStartInhomCoords()).dotproduct(getDirectionInD3());
+		if (d<-eps)
+			return false;
 
+		
+		return true;
+
+		
+	}
 }

@@ -6214,7 +6214,7 @@ public class Kernel {
 			return algo;
 		 }
 	  
-	 private AlgoElement findExistingIntersectionAlgorithm(GeoElement a, GeoElement b) {
+	 public AlgoElement findExistingIntersectionAlgorithm(GeoElement a, GeoElement b) {
 		int size = intersectionAlgos.size();
 		AlgoElement algo;
 		for (int i=0; i < size; i++) {
@@ -6228,12 +6228,16 @@ public class Kernel {
 		return null;
 	 }
 	 
-	 void removeIntersectionAlgorithm(AlgoIntersect algo) {
+	 public void removeIntersectionAlgorithm(AlgoIntersectAbstract algo) {
 		intersectionAlgos.remove(algo);	 
 	 }
 
 
-	/** 
+	 public void addIntersectionAlgorithm(AlgoIntersectAbstract algo) {
+			intersectionAlgos.add(algo);	 
+		 }
+	 
+	 /** 
 	 * polar line to P relativ to c
 	 */
 	final public GeoLine PolarLine(

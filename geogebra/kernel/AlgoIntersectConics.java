@@ -118,14 +118,14 @@ public class AlgoIntersectConics extends AlgoIntersect {
         setDependencies(); // done by AlgoElement
     }    
         
-	GeoPoint [] getIntersectionPoints() {
+	protected GeoPoint [] getIntersectionPoints() {
 		return P;
 	}
 	
     GeoConic getA() { return A; }
     GeoConic getB() { return B; }
 	
-	GeoPoint [] getLastDefinedIntersectionPoints() {
+	protected GeoPoint [] getLastDefinedIntersectionPoints() {
 		return D;
 	}
 	
@@ -133,7 +133,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	return true;
     }
 	
-	final void initForNearToRelationship() {     
+	protected final void initForNearToRelationship() {     
 		isPermutationNeeded = true;
     	for (int i=0; i < P.length; i++) {        	 	 
     	 	 age[i] = 0; 

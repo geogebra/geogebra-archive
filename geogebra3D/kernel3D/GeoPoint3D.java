@@ -798,10 +798,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		
 	}
 	
-	public boolean showInAlgebraView() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+
 	public boolean showInEuclidianView() {
 		// TODO Auto-generated method stub
 		return true;
@@ -866,9 +863,29 @@ implements GeoPointND, PointProperties, Vector3DValue{
 
 
 
-	public boolean isEqual(GeoElement Geo) {
-		// TODO Raccord de méthode auto-généré
-		return false;
+	public boolean isEqual(GeoElement geo) {
+		
+if (!geo.isGeoPoint()) return false;
+    	
+    	GeoPointND P = (GeoPointND)geo;
+    	
+        if (!(isDefined() && P.isDefined())) return false;   
+        
+        // both finite      
+        if (isFinite() && P.isFinite()){
+        	Coords c1 = getInhomCoords();
+        	Coords c2 = P.getInhomCoordsInD(3);
+        	return Kernel.isEqual(c1.getX(), c2.getX()) && 
+        		Kernel.isEqual(c1.getY(), c2.getY()) &&
+        		Kernel.isEqual(c1.getZ(), c2.getZ());
+        }else if (isInfinite() && P.isInfinite()){
+        	Coords c1 = getCoords();
+        	Coords c2 = P.getCoordsInD(3);
+			return c1.crossProduct(c2).equalsForKernel(0, Kernel.STANDARD_PRECISION);      
+        }else 
+        	return false;    
+		
+        
 	}
 
 	
@@ -979,7 +996,7 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	 * Tells Locateables that their start point is removed
 	 * and calls super.remove()
 	 */
-	protected void doRemove() {
+	public void doRemove() {
 		if (locateableList != null) {
 			
 			locateableList.doRemove();
@@ -1127,5 +1144,20 @@ implements GeoPointND, PointProperties, Vector3DValue{
 		return moveNormalDirection;
 	}
    
+	
+	
+	
+	
+	
+	private boolean showUndefinedInAlgebraView = true;
+	
+	public void showUndefinedInAlgebraView(boolean flag) {
+		showUndefinedInAlgebraView = flag;
+	}
+	
+    public final boolean showInAlgebraView() {
+        // intersection points
+        return (isDefined || showUndefinedInAlgebraView);
+    }  
 
 }

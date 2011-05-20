@@ -374,7 +374,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * loading a file, so that they have a look at the current
      * location of their output points. 
      */
-    void initForNearToRelationship() {}
+    protected void initForNearToRelationship() {}
     
     public boolean isNearToAlgorithm() {
     	return false;
@@ -1192,7 +1192,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
      * Sets whether the output of this command should
      * be labeled. This setting is used for getXML().
      */
-    void setPrintedInXML(boolean flag) {
+    public void setPrintedInXML(boolean flag) {
         isPrintedInXML = flag;
         if (flag)
             cons.addToConstructionList(this, true);
@@ -1200,7 +1200,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
             cons.removeFromConstructionList(this);
     }
     
-    boolean isPrintedInXML() {
+    protected boolean isPrintedInXML() {
         return isPrintedInXML;
     }
     

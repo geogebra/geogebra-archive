@@ -384,4 +384,19 @@ public interface Manager3DInterface {
 
 
 
+			 ////////////////////////////////////////////////
+			 // intersection algos
+
+
+			 /**
+			  * intersection between 3D line and conic
+			  * @param labels
+			  * @param g
+			  * @param c
+			  * @return two intersection points
+			  */
+			 public GeoPointND[] IntersectLineConic(
+					 String[] labels,
+					 GeoLineND g,
+					 GeoConicND c);
 }

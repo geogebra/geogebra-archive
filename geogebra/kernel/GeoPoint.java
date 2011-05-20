@@ -648,7 +648,7 @@ GeoPointND, Animatable, Transformable  {
     	
         if (!(isDefined() && P.isDefined())) return false;                        
         
-        // both finite
+        // both finite      
         if (isFinite() && P.isFinite())
 			return kernel.isEqual(inhomX, P.inhomX) && 
                     	kernel.isEqual(inhomY, P.inhomY);
@@ -1156,7 +1156,7 @@ GeoPointND, Animatable, Transformable  {
 	 * Tells Locateables that their start point is removed
 	 * and calls super.remove()
 	 */
-	protected void doRemove() {
+	public void doRemove() {
 		if (locateableList != null) {
 			
 			locateableList.doRemove();
@@ -1202,7 +1202,7 @@ GeoPointND, Animatable, Transformable  {
 		return true;
 	}
 	
-	void showUndefinedInAlgebraView(boolean flag) {
+	public void showUndefinedInAlgebraView(boolean flag) {
 		showUndefinedInAlgebraView = flag;
 	}
 	

@@ -131,10 +131,6 @@ public class GeoLine3D extends GeoCoordSys1D {
 	//Path3D interface
 	
 	
-	public boolean isOnPath(GeoPointND p, double eps) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
 
 

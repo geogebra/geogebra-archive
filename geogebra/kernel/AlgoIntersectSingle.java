@@ -41,7 +41,7 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		point.setLabel(label);		
 	}
 	
-    boolean showUndefinedPointsInAlgebraView() {
+    protected boolean showUndefinedPointsInAlgebraView() {
     	return true;
     }
 	
@@ -73,11 +73,11 @@ public class AlgoIntersectSingle extends AlgoIntersect {
 		return point;
 	}
 	
-	GeoPoint [] getIntersectionPoints() {
+	protected GeoPoint [] getIntersectionPoints() {
 		return (GeoPoint []) output;
 	}
 		
-	GeoPoint[] getLastDefinedIntersectionPoints() {	
+	protected GeoPoint[] getLastDefinedIntersectionPoints() {	
 		return null;
 	}
 
@@ -85,7 +85,7 @@ public class AlgoIntersectSingle extends AlgoIntersect {
     	return true;
     }
     
-	final void initForNearToRelationship() {				
+	protected final void initForNearToRelationship() {				
 		parentOutput = algo.getIntersectionPoints();					
 		
 		// tell parent algorithm about the loaded position;

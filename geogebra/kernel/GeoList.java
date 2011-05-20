@@ -708,7 +708,7 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 	 * Tells conidition listeners that their condition is removed and calls
 	 * super.remove() // Michael Borcherds 2008-04-02
 	 */
-	protected void doRemove() {
+	public void doRemove() {
 
 		if (colorFunctionListener != null) {
 			// copy conditionListeners into array

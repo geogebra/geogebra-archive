@@ -19,6 +19,7 @@ the Free Software Foundation.
 package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.kernelND.GeoConicND;
 
 import java.util.ArrayList;
 
@@ -129,13 +130,13 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
         setDependencies(); // done by AlgoElement
     }    
     
-    final GeoPoint [] getIntersectionPoints() {
+    protected final GeoPoint [] getIntersectionPoints() {
         return P;
     }
     
     GeoLine getLine() { return g; }
     GeoConic getConic() { return c; }
-    GeoPoint [] getLastDefinedIntersectionPoints() {
+    protected GeoPoint [] getLastDefinedIntersectionPoints() {
         return D;
     }
     
@@ -143,7 +144,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     	return true;
     }
     	 
-    final void initForNearToRelationship() {   
+    protected final void initForNearToRelationship() {   
     	if (isDefinedAsTangent) return;
     	    	
     	isPermutationNeeded = true; // for non-continuous intersections    	
@@ -440,7 +441,7 @@ public class AlgoIntersectLineConic extends AlgoIntersect {
     }
         
     // do the actual computations
-    final static int intersectLineConic(GeoLine g, GeoConic c, GeoPoint [] sol) { 
+    public final static int intersectLineConic(GeoLine g, GeoConicND c, GeoPoint [] sol) { 
         double [] A = c.matrix;
         
         // get arbitrary point of line       

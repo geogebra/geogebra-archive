@@ -302,7 +302,7 @@ implements Locateable, AbsoluteScreenLocateable,
 		}
 	}		
 	
-	protected void doRemove() {
+	public void doRemove() {
 		instances.remove(this);		
 		
 		// remove background image

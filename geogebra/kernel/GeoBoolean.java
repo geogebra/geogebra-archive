@@ -119,7 +119,7 @@ AbsoluteScreenLocateable {
 	 * Tells conidition listeners that their condition is removed
 	 * and calls super.remove()
 	 */
-	protected void doRemove() {
+	public void doRemove() {
 		if (condListenersShowObject != null) {
 			// copy conditionListeners into array
 			Object [] geos = condListenersShowObject.toArray();	

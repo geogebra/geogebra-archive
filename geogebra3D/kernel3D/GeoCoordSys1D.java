@@ -283,11 +283,24 @@ GeoLineND, GeoCoordSys{
 	}
 	
 	
-	public boolean isOnPath(GeoPointND PI, double eps){
-		return false; //TODO
+	public boolean isOnPath(GeoPointND PI, double eps){		
+		if (PI.getPath()==this)
+			return true;
+			
+		return isOnFullLine(PI.getCoordsInD(3), eps);
 	}
 
-	
+	public boolean isOnFullLine(Coords p, double eps){
+		Coords cross;
+		
+		if (Kernel.isEqual(p.getW(),0,eps))//infinite point : check direction
+			cross = p.crossProduct(getDirectionInD3());
+		else
+			cross = p.sub(getStartInhomCoords()).crossProduct(getDirectionInD3());
+		
+		
+		return cross.dotproduct(cross) < eps;
+	}
 	
 
 	////////////////////////////////////

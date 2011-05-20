@@ -249,7 +249,7 @@ Transformable, GeoVectorND {
 		waitingForStartPoint = true;
 	}
     
-    protected void doRemove() {
+    public void doRemove() {
     	super.doRemove();
 		// tell startPoint	
 		if (startPoint != null) startPoint.getLocateableList().unregisterLocateable(this);

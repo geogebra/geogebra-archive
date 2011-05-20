@@ -716,10 +716,8 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		}		
 	}
 	
-	public boolean isOnPath(GeoPointND PI, double eps) {
-		
-		GeoPoint P = (GeoPoint) PI;
-		
+	public boolean isOnPath(GeoPointND P, double eps) {
+			
 		if (P.getPath() == this)
 			return true;
 		
@@ -742,7 +740,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	}
 	
 	
-	final boolean isOnFullConic(Coords P, double eps) {						
+	public final boolean isOnFullConic(Coords P, double eps) {						
 		switch (type) {	
 			 case GeoConic.CONIC_SINGLE_POINT:  
 				Coords singlePointCoords = new Coords(singlePoint.x,singlePoint.y,singlePoint.z);

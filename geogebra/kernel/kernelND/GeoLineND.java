@@ -2,6 +2,7 @@ package geogebra.kernel.kernelND;
 
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.Coords;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 /**
  * @author mathieu
@@ -50,5 +51,15 @@ public interface GeoLineND extends GeoDirectionND{
 	/** see PathOrPoint 
 	 * @return max parameter */
 	public double getMaxParameter();
+
+	/**
+	 * 
+	 * @param p
+	 * @param minPrecision
+	 * @return true if point is on the line
+	 */
+	public boolean isOnPath(GeoPointND p, double minPrecision);
+
+	public boolean isOnFullLine(Coords p, double minPrecision);
 
 }

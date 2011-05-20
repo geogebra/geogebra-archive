@@ -1,9 +1,12 @@
 package geogebra3D.kernel3D;
 
 import geogebra.kernel.AlgoCircleThreePoints;
+import geogebra.kernel.AlgoElement;
+import geogebra.kernel.AlgoIntersectLineConic;
 import geogebra.kernel.AlgoLinePointLine;
 import geogebra.kernel.AlgoMidpoint;
 import geogebra.kernel.Construction;
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunctionNVar;
 import geogebra.kernel.GeoLine;
@@ -657,6 +660,37 @@ public class Manager3D implements Manager3DInterface {
 	}	
 
 
+	////////////////////////////////////////////////
+	// intersection algos
+	
+	/**
+	 * intersect line and conic
+	 */
+	private AlgoIntersectLineConic3D getIntersectionAlgorithm(GeoLineND g, GeoConicND c) {
+		AlgoElement existingAlgo = kernel.findExistingIntersectionAlgorithm((GeoElement) g, c);
+		if (existingAlgo != null) return (AlgoIntersectLineConic3D) existingAlgo;
+			
+	 	// we didn't find a matching algorithm, so create a new one
+		AlgoIntersectLineConic3D algo = new AlgoIntersectLineConic3D(cons, g, c);
+		algo.setPrintedInXML(false);
+		kernel.addIntersectionAlgorithm(algo); // remember this algorithm
+		return algo;
+	 }
+	
+	/** 
+	 * IntersectLineConic yields intersection points named label1, label2
+	 * of line g and conic c
+	 */
+	final public GeoPoint3D[] IntersectLineConic(
+		String[] labels,
+		GeoLineND g,
+		GeoConicND c) {
+		AlgoIntersectLineConic3D algo = getIntersectionAlgorithm(g, c);
+		algo.setPrintedInXML(true);
+		GeoPoint3D[] points = algo.getIntersectionPoints();		
+		GeoElement.setLabels(labels, points);	
+		return points;
+	}
 
 
 }

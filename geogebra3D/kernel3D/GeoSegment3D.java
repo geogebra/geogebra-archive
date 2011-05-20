@@ -4,6 +4,7 @@ import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.PathMover;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -183,12 +184,25 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 		return super.getGeoElement2D();
 	}
 	
-	
-	public boolean isOnPath(GeoPointND p, double eps) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	public boolean isOnFullLine(Coords p, double eps){
+		//first check global line
+		if (!super.isOnFullLine(p, eps))
+			return false;
+		
+		//then check position on segment
+		if (Kernel.isEqual(p.getW(),0,eps))//infinite point
+			return false;
+		double d = p.sub(getStartInhomCoords()).dotproduct(getDirectionInD3());
+		if (d<-eps)
+			return false;
+		double l = getLength();
+		if (d>l*l+eps)
+			return false;
+		
+		return true;
 
+		
+	}
 
 
 	public PathMover createPathMover() {

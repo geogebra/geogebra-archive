@@ -158,6 +158,8 @@ public interface GeoPointND {
 	public void updateCoords();
 
 	public void setUndefined();
+
+	public void showUndefinedInAlgebraView(boolean b);
 	
 	//private boolean movePointMode = MOVE_POINT_MODE_XY;
 

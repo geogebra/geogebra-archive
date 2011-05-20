@@ -2518,7 +2518,7 @@ public abstract class GeoElement
 	 * set labels for array of GeoElements pairwise:
 	 * geos[i].setLabel(labels[i])
 	 */
-	static void setLabels(String[] labels, GeoElement[] geos) {
+	public static void setLabels(String[] labels, GeoElement[] geos) {
 		setLabels(labels, geos, false);
 	}
 
@@ -2760,7 +2760,7 @@ public abstract class GeoElement
 	}
 
 	// removes this GeoElement and all its dependents
-	protected void doRemove() {
+	public void doRemove() {
 		// stop animation of this geo
 		setAnimating(false);
 

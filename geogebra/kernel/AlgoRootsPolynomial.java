@@ -176,11 +176,11 @@ public class AlgoRootsPolynomial extends AlgoIntersect {
         return rootPoints;
     }
 
-    GeoPoint[] getIntersectionPoints() {
+    protected GeoPoint[] getIntersectionPoints() {
         return rootPoints;
     }
 
-    GeoPoint[] getLastDefinedIntersectionPoints() {
+    protected GeoPoint[] getLastDefinedIntersectionPoints() {
         return null;
     }       
 

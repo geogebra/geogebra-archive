@@ -107,9 +107,6 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		return trace;
 	}
 	
-	public boolean isPath() {
-		return true;
-	}
 	
 	
 	

@@ -765,7 +765,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 		return true;
 	}
 	
-	protected void doRemove() {
+	public void doRemove() {
 		super.doRemove();
 		
 		// if this was a random number, make sure it's removed

@@ -1,9 +1,12 @@
 package geogebra3D.kernel3D.commands;
 
+import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoLine;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdIntersect;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
@@ -73,7 +76,13 @@ public  GeoElement[] process(Command c) throws MyError {
         							(GeoPlaneND) arg[1],
         							(GeoQuadricND) arg[0])};
         			return ret;
-        		}
+        		}else if (
+                        (arg[0] instanceof GeoLineND)
+                        && (arg[1] instanceof GeoConicND))
+    				return (GeoElement[]) kernel.getManager3D().IntersectLineConic(
+                        c.getLabels(),
+                        (GeoLineND) arg[0],
+                        (GeoConicND) arg[1]);
         	}
         	
         	
