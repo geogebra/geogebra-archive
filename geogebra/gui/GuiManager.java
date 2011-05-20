@@ -2419,7 +2419,8 @@ public class GuiManager {
 				
 				// handle events from Undo button and menu, not ctrl-z
 				// as that is handled by GlobalKeyDispatcher
-				if (e.getSource() instanceof JMenu || e.getSource() instanceof MySmallJButton)
+				// TODO: why does e.getSource() instanceof javax.swing.JMenu not work? see #791
+				if (e.getSource().getClass().toString().indexOf("javax.swing.JMenu") > -1 || e.getSource() instanceof MySmallJButton)
 					undo();
 			}
 		};
