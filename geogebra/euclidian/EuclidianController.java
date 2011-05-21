@@ -1349,7 +1349,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				// should we move the slider 
 				// or the point on the slider, i.e. change the number
 				DrawSlider ds = (DrawSlider) d;
-				if (!ds.hitPoint(mouseLoc.x, mouseLoc.y) &&
+				// TEMPORARY_MODE true -> dragging slider using Slider Tool
+				// otherwise using Move Tool -> move dot
+				if (TEMPORARY_MODE && !ds.hitPoint(mouseLoc.x, mouseLoc.y) &&
 						ds.hitSlider(mouseLoc.x, mouseLoc.y)) {
 					moveMode = MOVE_SLIDER;
 					if (movedGeoNumeric.isAbsoluteScreenLocActive()) {
@@ -1361,8 +1363,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 								yRW - movedGeoNumeric.getRealWorldLocY());
 					}
 				}	
-				else {						
+				else 
+				{						
 					startPoint.setLocation(movedGeoNumeric.getSliderX(), movedGeoNumeric.getSliderY());
+					
+					// update straightaway in case it's just a click (no drag)
+					moveNumeric(true);
 				}
 			} 						
 
@@ -1481,8 +1487,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (Application.isRightClick(e) 
 					|| mode == EuclidianView.MODE_POINT 
 					|| mode == EuclidianView.MODE_POINT_ON_OBJECT
+					|| mode == EuclidianView.MODE_SLIDER
 			){
 				view.setHits(mouseLoc);
+				
+				// make sure slider tool drags only sliders, not other object types
+				if (mode == EuclidianView.MODE_SLIDER) {
+					if (view.getHits().size() != 1) return;
+					
+					if (!(view.getHits().get(0) instanceof GeoNumeric)) return;
+				}
+				
+				
 				if (viewHasHitsForMouseDragged()) 
 				{
 					TEMPORARY_MODE = true;
@@ -1862,7 +1878,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (movedGeoNumeric != null) {
 
 			// deselect slider after drag, but not on click
-			if (movedGeoNumericDragged) movedGeoNumeric.setSelected(false);
+			//if (movedGeoNumericDragged) movedGeoNumeric.setSelected(false);
 
 			if (mode != EuclidianView.MODE_RECORD_TO_SPREADSHEET) movedGeoNumeric.resetTraceColumns();
 		}
