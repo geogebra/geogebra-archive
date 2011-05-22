@@ -14,6 +14,7 @@ package geogebra.gui.inputbar;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.GeoGebraIcon;
+import geogebra.gui.view.algebra.AlgebraInputTransferHandler;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -42,6 +43,7 @@ import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
+import javax.swing.TransferHandler;
 
 /**
  * @author Markus Hohenwarter
@@ -82,6 +84,12 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.setEditable(true);						
 		inputField.addKeyListener(this);
 		inputField.addFocusListener(this);
+		
+		// enable drag n drop
+		//inputField.setDragEnabled(true);
+		inputField.setTransferHandler(new AlgebraInputTransferHandler(app, inputField));
+		
+		
 		updateFonts();
 
 		// show the history popup
