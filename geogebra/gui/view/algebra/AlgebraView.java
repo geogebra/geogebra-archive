@@ -167,7 +167,7 @@ public class AlgebraView extends JTree implements View {
 				
         // enable drag n drop
 		setDragEnabled(true);
-		setTransferHandler(new AlgebraViewTransferHandler());
+		setTransferHandler(new AlgebraViewTransferHandler(app));
 		
 		attachView();						
 	}

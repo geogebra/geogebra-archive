@@ -17,6 +17,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
@@ -103,15 +104,38 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 				|| t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)) {
 			try {
 
-				// get text for algebra processor
+				// string for algebra processor
 				String text;
+				
+				// handle algebra view data flavor 
 				if (t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)){
-					text = (String) t.getTransferData(AlgebraViewTransferHandler.algebraViewFlavor);
-					text = "FormulaText[" + text + "]";
+
+					// get list of selected geo labels
+					ArrayList<String> list = (ArrayList<String>) t
+					.getTransferData(AlgebraViewTransferHandler.algebraViewFlavor);
+					
+					// exit if empty list
+					if(list.size()==0) return false;
+					
+					// if single geo, create FormulaText
+					if(list.size()==1){
+						text = "FormulaText[" + list.get(0) + "]";
+					}
+					
+					// if multiple geos, create TableText
+					else{
+						text = list.toString();
+						text = text.replace("]", "}");
+						text = text.replace("[", "{");
+						text = "TableText[" + text + "]";
+					}
+					
+				// handle ordinary text flavor	
 				}else{
 					text = (String) t.getTransferData(DataFlavor.stringFlavor);
 					text = "\"" + text + "\"";
 				}
+				
 				if (debug) System.out.println("dropped geo: " + text);
 
 				// convert text to geo

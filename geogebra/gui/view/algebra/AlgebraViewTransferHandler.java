@@ -1,20 +1,37 @@
 package geogebra.gui.view.algebra;
 
 
+import geogebra.kernel.GeoElement;
+import geogebra.main.Application;
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.util.ArrayList;
+
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
 
 public class AlgebraViewTransferHandler extends TransferHandler implements Transferable {
 
-	public static DataFlavor algebraViewFlavor = new DataFlavor(AlgebraView.class, "geoLabel");
+	private Application app;
+
+	public static DataFlavor algebraViewFlavor = new DataFlavor(AlgebraView.class, "algebraView");
 	private static final DataFlavor supportedFlavors[] = { algebraViewFlavor };
 
-	private String geoLabel;
-	
-	
+	private ArrayList<String> geoLabelList;
+
+
+	/****************************************
+	 * Constructor
+	 * @param ev
+	 */
+	public AlgebraViewTransferHandler(Application app){
+		this.app = app;
+	}
+
+
+
 	public int getSourceActions(JComponent c) {
 		return TransferHandler.COPY;
 	}
@@ -25,10 +42,17 @@ public class AlgebraViewTransferHandler extends TransferHandler implements Trans
 
 	public Transferable createTransferable(JComponent comp) {
 		
-		geoLabel = null;
+		if(geoLabelList == null)
+			geoLabelList = new ArrayList<String>();
+		else
+			geoLabelList.clear();
+		
 		if (comp instanceof AlgebraView) {
-			geoLabel = ((AlgebraView)comp).getSelectedGeoElement().getLabel();
-				return this;
+			ArrayList<GeoElement> geos = app.getSelectedGeos();		
+			for(GeoElement geo : geos){
+				geoLabelList.add(geo.getLabel());
+			}
+			return this;
 		}
 		return null;
 	}
@@ -37,10 +61,10 @@ public class AlgebraViewTransferHandler extends TransferHandler implements Trans
 		return false;
 	}
 
-	
+
 	public Object getTransferData(DataFlavor flavor) {
 		if (isDataFlavorSupported(flavor)) {
-			return geoLabel;
+			return geoLabelList;
 		}
 		return null;
 	}

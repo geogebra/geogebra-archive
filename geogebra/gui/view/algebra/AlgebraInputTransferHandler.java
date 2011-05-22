@@ -2,13 +2,13 @@ package geogebra.gui.view.algebra;
 
 
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoPoint;
 import geogebra.main.Application;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
@@ -79,15 +79,36 @@ public class AlgebraInputTransferHandler extends TransferHandler implements Tran
 				|| t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)) {
 			try {
 
-				// get text for algebra processor
-				if (t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)){
-					String label = (String) t.getTransferData(AlgebraViewTransferHandler.algebraViewFlavor);
-					GeoElement geo = app.getKernel().lookupLabel(label);
-					if(geo != null)
-						text = geo.getDefinitionForInputBar();
-				}else{
+				// handle plain text flavor
+				if(t.isDataFlavorSupported(DataFlavor.stringFlavor)){
 					text = (String) t.getTransferData(DataFlavor.stringFlavor);
 				}
+
+				// handle algebraView flavor
+				else if (t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)){
+					
+					// get list of selected geo labels 
+					ArrayList<String> list = (ArrayList<String>) t
+					.getTransferData(AlgebraViewTransferHandler.algebraViewFlavor);
+					
+					// exit if empty list
+					if(list.size()==0) return false;
+					
+					// if only one geo, get definition string 
+					if(list.size()==1){
+						GeoElement geo = app.getKernel().lookupLabel(list.get(0));
+						if(geo != null)
+							text = geo.getDefinitionForInputBar();
+					}
+					
+					// if more than one geo, create list string
+					else{
+						text = list.toString();
+						text = text.replace("]", "}");
+						text = text.replace("[", "{");
+					}
+				}
+
 				ta.setText(text);
 				return true;
 
@@ -98,7 +119,7 @@ public class AlgebraInputTransferHandler extends TransferHandler implements Tran
 
 		// handle potential ggb file drop
 		app.getGuiManager().handleGGBFileDrop(t);
-		
+
 		return false;
 	}
 
