@@ -23,13 +23,10 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.StringTokenizer;
-
-import javax.swing.ImageIcon;
 
 public class FileDropTargetListener implements DropTargetListener {
 	
@@ -74,21 +71,49 @@ public class FileDropTargetListener implements DropTargetListener {
 			return;
 		}
 
-		ArrayList<File> al = getGGBfiles(event);	
-		
-		if (al.size() == 0) {
-			event.dropComplete(false);
-		} else if (app.isSaved() || app.saveCurrentFile()) {				
+		event.dropComplete(handleFileDrop(event.getTransferable()));
+
+	}
+
+	/**
+	 * Determines if a transferable contains ggb files and attempts
+	 * to open them.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public boolean handleFileDrop(Transferable t){
+
+		ArrayList<File> al = getGGBfiles(t);	
+
+		if (al.size() == 0 || !isGGBFile(al.get(0).getName())) {
+			return false;
+		}
+		else if (app.isSaved() || app.saveCurrentFile()) {				
 			File [] files = new File[al.size()];
 			for (int i = 0 ; i < al.size() ; i++)
 				files[i] = al.get(i);
 			app.getGuiManager().doOpenFiles(files, true);			
-			event.dropComplete(true);			
+			return true;			
 		}			
+		return false;
 	}
 	
-	private ArrayList<File> getGGBfiles(DropTargetDropEvent event) {
-		Transferable transferable = event.getTransferable();
+	
+	/**
+	 * Tests if a file has the GeoGebra extension
+	 * @param fileName
+	 * @return
+	 */
+	private boolean isGGBFile(String fileName){
+		int mid = fileName.lastIndexOf(".");
+	    String ext = fileName.substring(mid+1,fileName.length());
+	    return ext.equals(Application.FILE_EXT_GEOGEBRA);
+	}
+
+	
+
+	private ArrayList<File> getGGBfiles(Transferable transferable) {
 
 		ArrayList<File> al = new ArrayList<File>();
 
@@ -115,7 +140,9 @@ public class FileDropTargetListener implements DropTargetListener {
 				while (st.hasMoreTokens ( )) {
 					String uriString = st.nextToken( );
 					if(uriString.startsWith("http://")){
-						app.getGuiManager().loadURL(uriString);
+						// loadURL with error messages suppressed in case transferable
+						// will be imported from another method down the line
+						app.getGuiManager().loadURL(uriString, false);
 					}else{
 						URI uri = new URI(uriString);
 						System.out.println (uri);
@@ -129,7 +156,7 @@ public class FileDropTargetListener implements DropTargetListener {
 		} catch (Exception e) {
 			e.printStackTrace( );
 		} 
-		
+
 		return al;
 	}
 }

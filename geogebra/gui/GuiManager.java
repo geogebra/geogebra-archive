@@ -2081,6 +2081,23 @@ public class GuiManager {
 //        });
 	}
 
+	/**
+	 * Passes a transferable object to the application's dropTargetListener.
+	 * Returns true if a ggb file was dropped succesfully. This is a utility
+	 * method for component transfer handlers that need to pass potential ggb
+	 * file drops on to the top level drop handler.
+	 * 
+	 * @param t
+	 * @return
+	 */
+	public boolean handleGGBFileDrop(Transferable t){ 
+		FileDropTargetListener dtl = ((GeoGebraFrame)app.getFrame()).getDropTargetListener();
+		boolean isGGBFileDrop = dtl.handleFileDrop(t);
+		return (isGGBFileDrop);
+	}
+		
+	
+	
 	public boolean loadFile(final File file, final boolean isMacroFile) {
 		// show file not found message
 		if (!file.exists()) {
@@ -2111,7 +2128,12 @@ public class GuiManager {
         
     }
 	
+	
 	public boolean loadURL(String urlString) {
+		return loadURL(urlString, true);
+	}
+	
+	public boolean loadURL(String urlString, boolean suppressErrorMsg) {
 		
 		boolean success = false;
 		boolean isMacroFile =  false;
@@ -2170,7 +2192,7 @@ public class GuiManager {
 			}
 		}
 		
-		if (!success) {
+		if (!success && !suppressErrorMsg) {
 			app.showError(app.getError("LoadFileFailed") + "\n" + urlString);
 		}
 		

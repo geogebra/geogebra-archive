@@ -20,6 +20,7 @@ package geogebra.gui.app;
 import geogebra.CommandLineArguments;
 import geogebra.euclidian.Drawable;
 import geogebra.euclidian.EuclidianView;
+import geogebra.gui.FileDropTargetListener;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
@@ -56,6 +57,9 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 
 	private static ArrayList<GeoGebraFrame> instances = new ArrayList<GeoGebraFrame>();
 	private static GeoGebraFrame activeInstance;
+	private static FileDropTargetListener dropTargetListener;
+	
+
 	protected Application app;
 	
 	public GeoGebraFrame() {
@@ -301,7 +305,8 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		// init GUI
 		wnd.app = app;
 		wnd.getContentPane().add(app.buildApplicationPanel());
-		wnd.setDropTarget(new DropTarget(wnd, new geogebra.gui.FileDropTargetListener(app)));			
+		dropTargetListener = new geogebra.gui.FileDropTargetListener(app);
+		wnd.setDropTarget(new DropTarget(wnd, dropTargetListener));			
 		wnd.addWindowFocusListener(wnd);
 		
 		updateAllTitles();		
@@ -415,6 +420,12 @@ public class GeoGebraFrame extends JFrame implements WindowFocusListener
 		return getExtendedState() == JFrame.ICONIFIED;		
 	}
 	
-	
+	/**
+	 * Returns the dropTarget listener for this frame.
+	 * @return
+	 */
+	public FileDropTargetListener getDropTargetListener() {
+		return dropTargetListener;
+	}
 
 }
