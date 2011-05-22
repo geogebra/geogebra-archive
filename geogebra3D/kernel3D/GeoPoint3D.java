@@ -794,14 +794,14 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	
 	
 	public void setUndefined() {
+		setCoords(Double.NaN, Double.NaN, Double.NaN, Double.NaN);
 		isDefined = false;
 		
 	}
 	
 
 	public boolean showInEuclidianView() {
-		// TODO Auto-generated method stub
-		return true;
+		return isDefined;
 	}
 	
 	
@@ -1156,7 +1156,6 @@ if (!geo.isGeoPoint()) return false;
 	}
 	
     public final boolean showInAlgebraView() {
-        // intersection points
         return (isDefined || showUndefinedInAlgebraView);
     }  
 

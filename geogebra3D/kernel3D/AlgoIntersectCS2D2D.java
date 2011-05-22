@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
@@ -70,23 +71,12 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
     	GeoCoordSys2D cs1 = (GeoCoordSys2D) getCS1();
     	GeoCoordSys2D cs2 = (GeoCoordSys2D) getCS2();
     	
-    	// compute direction vector
-    	Coords vn1 = cs1.getCoordSys().getNormal();
-    	Coords vn2 = cs2.getCoordSys().getNormal();
-    	Coords v = vn1.crossProduct(vn2);
-    	
-    	// compute origin:
-    	// projection of first plane origin on second plane
-    	// direction orthogonal to v and colinear to first plane
-    	Coords[] project = 
-    		cs1.getCoordSys().getOrigin().projectPlaneThruV(
-    				cs2.getCoordSys().getMatrixOrthonormal(), 
-    			vn1.crossProduct(v));
-    	
+    	Coords[] intersection = CoordMatrixUtil.intersectPlanes(cs1.getCoordSys().getMatrixOrthonormal(), cs2.getCoordSys().getMatrixOrthonormal());
+
     	// update line
     	GeoLine3D l = (GeoLine3D) getIntersection();
     	
-    	l.setCoord(project[0], v);
+    	l.setCoord(intersection[0], intersection[1]);
  
     	
 

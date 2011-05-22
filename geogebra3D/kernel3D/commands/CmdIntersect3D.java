@@ -83,6 +83,20 @@ public  GeoElement[] process(Command c) throws MyError {
                         c.getLabels(),
                         (GeoLineND) arg[0],
                         (GeoConicND) arg[1]);
+        		else if (
+                        (arg[0] instanceof GeoConicND)
+                        && (arg[1] instanceof GeoLineND))
+    				return (GeoElement[]) kernel.getManager3D().IntersectLineConic(
+                        c.getLabels(),
+                        (GeoLineND) arg[1],
+                        (GeoConicND) arg[0]);
+        		else if (
+                        (arg[0] instanceof GeoConicND)
+                        && (arg[1] instanceof GeoConicND))
+    				return (GeoElement[]) kernel.getManager3D().IntersectConics(
+                        c.getLabels(),
+                        (GeoConicND) arg[0],
+                        (GeoConicND) arg[1]);
         	}
         	
         	

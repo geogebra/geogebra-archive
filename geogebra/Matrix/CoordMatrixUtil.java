@@ -1,6 +1,7 @@
 package geogebra.Matrix;
 
 import geogebra.kernel.Kernel;
+import geogebra3D.kernel3D.GeoLine3D;
 
 /**
  * @author ggb3D
@@ -187,6 +188,40 @@ public final class CoordMatrixUtil {
 		double z = -x*origin.getX()-y*origin.getY();
 		
 		return new Coords(x, y, z);
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param plane1
+	 * @param plane2
+	 * @return {origin, direction} of the line intersection of the two planes
+	 */
+	static final public Coords[] intersectPlanes(
+			CoordMatrix plane1, 
+			CoordMatrix plane2
+			){
+		
+		// compute direction vector
+    	Coords vn1 = plane1.getVz();
+    	Coords vn2 = plane2.getVz();
+    	Coords v = vn1.crossProduct(vn2);
+    	
+    	// compute origin:
+    	// projection of first plane origin on second plane
+    	// direction orthogonal to v and colinear to first plane
+    	Coords[] project = 
+    		plane1.getOrigin().projectPlaneThruV(
+    				plane2, 
+    			vn1.crossProduct(v));
+    	
+    	// return line
+    	Coords direction = new Coords(4);
+    	direction.set(v);
+    	
+    	return new Coords[] {project[0], direction};
+		
 	}
 
 }

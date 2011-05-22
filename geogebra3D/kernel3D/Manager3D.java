@@ -692,5 +692,35 @@ public class Manager3D implements Manager3DInterface {
 		return points;
 	}
 
+	
+	/**
+	 * intersect conics
+	 */
+	private AlgoIntersectConics3D getIntersectionAlgorithm(GeoConicND A, GeoConicND B) {
+		AlgoElement existingAlgo = kernel.findExistingIntersectionAlgorithm(A, B);
+		if (existingAlgo != null) return (AlgoIntersectConics3D) existingAlgo;
+			
+	 	// we didn't find a matching algorithm, so create a new one
+		AlgoIntersectConics3D algo = new AlgoIntersectConics3D(cons, A, B);
+		algo.setPrintedInXML(false);
+		kernel.addIntersectionAlgorithm(algo); // remember this algorithm
+		return algo;
+	 }
+	
+	/** 
+	 * IntersectLineConic yields intersection points named label1, label2
+	 * of conics A and B
+	 */
+	final public GeoPoint3D[] IntersectConics(
+		String[] labels,
+		GeoConicND A,
+		GeoConicND B) {
+		AlgoIntersectConics3D algo = getIntersectionAlgorithm(A, B);
+		algo.setPrintedInXML(true);
+		GeoPoint3D[] points = algo.getIntersectionPoints();		
+		GeoElement.setLabels(labels, points);	
+		return points;
+	}
+
 
 }

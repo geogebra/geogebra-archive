@@ -299,7 +299,7 @@ GeoLineND, GeoCoordSys{
 			cross = p.sub(getStartInhomCoords()).crossProduct(getDirectionInD3());
 		
 		
-		return cross.dotproduct(cross) < eps;
+		return cross.equalsForKernel(0,  Kernel.MIN_PRECISION);
 	}
 	
 

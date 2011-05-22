@@ -13,6 +13,7 @@ import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
 import geogebra3D.kernel3D.GeoPlane3D;
+import geogebra3D.kernel3D.GeoPoint3D;
 
 /**
  * Interface for managing all 3D methods in Kernel.
@@ -399,4 +400,16 @@ public interface Manager3DInterface {
 					 String[] labels,
 					 GeoLineND g,
 					 GeoConicND c);
+			 
+			 /**
+			  * intersection between two 3D conics
+			  * @param labels
+			  * @param A
+			  * @param B
+			  * @return 4 intersection points
+			  */
+			 public GeoPoint3D[] IntersectConics(
+						String[] labels,
+						GeoConicND A,
+						GeoConicND B);
 }

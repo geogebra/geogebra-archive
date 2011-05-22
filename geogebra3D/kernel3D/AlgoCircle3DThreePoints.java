@@ -120,14 +120,7 @@ public class AlgoCircle3DThreePoints extends AlgoCircleThreePoints {
     }
     
     
-    /*
-    public void remove() {      
-
-    	algo.remove();
-    	coordSys.doRemove();
-    	for(int i=0;i<points2D.length;i++)
-    		points2D[i].remove();
-    	
+    public String toString() {
+    	return app.getPlain("CircleThroughABC",points[0].getLabel(),points[1].getLabel(),points[2].getLabel());
     }
-    */
 }
