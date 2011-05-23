@@ -354,6 +354,18 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 		}  
 	}
    
+	public final void setStandardStartPoint() {
+
+		if (startPoint == null)
+			startPoint = new GeoPoint(cons);
+
+		if (Math.abs(x) > Math.abs(y)) {
+			startPoint.setCoords(-z / x, 0.0, 1.0);
+		} else {
+			startPoint.setCoords(0.0, -z / y,  1.0);
+		}
+	}
+
     public final void setStartPoint(GeoPoint P) {        	
     	startPoint = P;	    	
     }
@@ -851,7 +863,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	
 	private class PathMoverLine extends PathMoverGeneric {
 				
-		private GeoPoint moverStartPoint;	
+		//private GeoPoint moverStartPoint;	
 		
 		public PathMoverLine() {
 			super(GeoLine.this);
@@ -861,17 +873,17 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 			// we need a start point for pathChanged() to work correctly
 			// with our path parameters
 			if (startPoint == null) {
-				moverStartPoint = new GeoPoint(cons);
-				setStartPoint(moverStartPoint);				
+				//moverStartPoint = new GeoPoint(cons);
+				setStandardStartPoint();
 			}
-			
-			if (moverStartPoint != null) {
-				moverStartPoint.setCoords(p);
+
+			//if (moverStartPoint != null) {
+			//	moverStartPoint.setCoords(p);
 				// point p is on the line and we use it's location
 				// as the startpoint, thus p needs to get path parameter 0
-				PathParameter pp = p.getPathParameter();
-				pp.t = 0;	
-			}
+			//	PathParameter pp = p.getPathParameter();
+			//	pp.t = 0;	
+			//}
 			
 			super.init(p);
 						

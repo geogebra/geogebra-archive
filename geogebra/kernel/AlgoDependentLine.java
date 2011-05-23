@@ -127,7 +127,11 @@ public class AlgoDependentLine extends AlgoElement {
 	    	try {
 		        g.x = ((NumberValue) ev[0].evaluate()).getDouble();
 		        g.y = ((NumberValue) ev[1].evaluate()).getDouble();
-		        g.z = ((NumberValue) ev[2].evaluate()).getDouble();   
+		        g.z = ((NumberValue) ev[2].evaluate()).getDouble();
+		        
+		        // other algos might use the startPoint so we have to update it
+		        if (g.getStartPoint() != null)
+		        	g.setStandardStartPoint();
 		    } catch (Throwable e) {
 				g.setUndefined();
 			}
