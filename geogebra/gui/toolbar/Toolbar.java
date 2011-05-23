@@ -17,7 +17,6 @@ import geogebra.gui.layout.DockPanel;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
-import geogebra3D.euclidian3D.EuclidianView3D;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -532,61 +531,61 @@ public class Toolbar extends JToolBar {
 	 * @return default toolbar (3D)
 	 */
     public static String getAllToolsNoMacros3D() {
-		return EuclidianView3D.MODE_MOVE
+		return EuclidianView.MODE_MOVE
 		+" || "
-		+EuclidianView3D.MODE_POINT_ON_OBJECT
+		+EuclidianView.MODE_POINT_ON_OBJECT
 		+" "
-		+EuclidianView3D.MODE_POINT
+		+EuclidianView.MODE_POINT
 		+" "
-		+EuclidianView3D.MODE_INTERSECT
+		+EuclidianView.MODE_INTERSECT
 		+" "
-		+EuclidianView3D.MODE_MIDPOINT
+		+EuclidianView.MODE_MIDPOINT
 		+" | "
-		+EuclidianView3D.MODE_JOIN
+		+EuclidianView.MODE_JOIN
 		+" "
-		+EuclidianView3D.MODE_SEGMENT
+		+EuclidianView.MODE_SEGMENT
 		+" "
-		+EuclidianView3D.MODE_RAY
+		+EuclidianView.MODE_RAY
 		+" , "
-		+EuclidianView3D.MODE_VECTOR
+		+EuclidianView.MODE_VECTOR
 		+" | "
-		+EuclidianView3D.MODE_ORTHOGONAL
+		+EuclidianView.MODE_ORTHOGONAL
 		+" "
-		+EuclidianView3D.MODE_PARALLEL
+		+EuclidianView.MODE_PARALLEL
 		+" || "
-		+EuclidianView3D.MODE_POLYGON
+		+EuclidianView.MODE_POLYGON
 		+" | "
-		+EuclidianView3D.MODE_CIRCLE_AXIS_POINT
+		+EuclidianView.MODE_CIRCLE_AXIS_POINT
 		+" "
-		+EuclidianView3D.MODE_CIRCLE_POINT_RADIUS_DIRECTION
+		+EuclidianView.MODE_CIRCLE_POINT_RADIUS_DIRECTION
 		+" "
-		+EuclidianView3D.MODE_CIRCLE_THREE_POINTS
+		+EuclidianView.MODE_CIRCLE_THREE_POINTS
 		+" || "
-		+EuclidianView3D.MODE_PLANE_THREE_POINTS
+		+EuclidianView.MODE_PLANE_THREE_POINTS
 		+" , "
-		+EuclidianView3D.MODE_PLANE_POINT_LINE
+		+EuclidianView.MODE_PLANE_POINT_LINE
 		+" | "
-		+EuclidianView3D.MODE_ORTHOGONAL_PLANE
+		+EuclidianView.MODE_ORTHOGONAL_PLANE
 		+" , "
-		+EuclidianView3D.MODE_PARALLEL_PLANE
+		+EuclidianView.MODE_PARALLEL_PLANE
 		+" || "
-		+EuclidianView3D.MODE_RIGHT_PRISM		
+		+EuclidianView.MODE_RIGHT_PRISM		
 		//+" , "
-		//+EuclidianView3D.MODE_PRISM		
+		//+EuclidianView.MODE_PRISM		
 		+" | "
-		+EuclidianView3D.MODE_SPHERE_TWO_POINTS
+		+EuclidianView.MODE_SPHERE_TWO_POINTS
 		+" "
-		+EuclidianView3D.MODE_SPHERE_POINT_RADIUS
+		+EuclidianView.MODE_SPHERE_POINT_RADIUS
 		+" || "
-		+EuclidianView3D.MODE_ROTATEVIEW
+		+EuclidianView.MODE_ROTATEVIEW
 		+" "
-		+EuclidianView3D.MODE_TRANSLATEVIEW
+		+EuclidianView.MODE_TRANSLATEVIEW
 		+" "
-		+EuclidianView3D.MODE_ZOOM_IN
+		+EuclidianView.MODE_ZOOM_IN
 		+" "
-		+EuclidianView3D.MODE_ZOOM_OUT
+		+EuclidianView.MODE_ZOOM_OUT
 		+" | "
-		+EuclidianView3D.MODE_VIEW_IN_FRONT_OF
+		+EuclidianView.MODE_VIEW_IN_FRONT_OF
 		;
 	}
 }

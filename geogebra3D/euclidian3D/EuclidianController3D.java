@@ -910,8 +910,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			return false;
 		
 		
-		addSelectedPoint(hits, 1, false);
-		addSelectedDirection(hits, 1, false);
+		if (addSelectedPoint(hits, 1, false)==0)
+			addSelectedDirection(hits, 1, false);
 
 
 		if (selPoints() == 1 && selDirections() == 1) {
@@ -1924,6 +1924,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		updateTranslationVector();
 		GeoElement.moveObjects(translateableGeos, translationVec3D, startPoint3D, view3D.getViewDirection());	
+	
+		kernel.notifyRepaint();
 	}
 	
 	protected void moveMultipleObjects(boolean repaint) {	

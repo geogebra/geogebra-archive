@@ -1,25 +1,18 @@
 package geogebra3D.kernel3D;
 
-import java.util.ArrayList;
-
-import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.CoordMatrix4x4;
+import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
-import geogebra.kernel.AlgoElement;
-import geogebra.kernel.AlgoPolygon;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.PathParameter;
-import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 import geogebra3D.euclidian3D.Drawable3D;
 
 

@@ -11,14 +11,12 @@ the Free Software Foundation.
 */
 package geogebra.kernel;
 
-import java.util.LinkedHashMap;
-
 import geogebra.io.MyXMLHandler;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.commands.AlgebraProcessor;
-import geogebra.main.Application;
 import geogebra.main.MyError;
-import geogebra3D.kernel3D.arithmetic.ExpressionNodeEvaluator3D;
+
+import java.util.LinkedHashMap;
 
 
 

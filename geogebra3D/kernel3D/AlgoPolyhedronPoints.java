@@ -168,7 +168,7 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 		
         
         
-        polyhedron.defaultLabels(labels);
+        polyhedron.initLabels(labels);
 	}
 	
 	
@@ -190,6 +190,7 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 		
 		outputPoints.augmentOutputSize(1);
 		topPoint=outputPoints.getElement(0);
+		polyhedron.addPointCreated((GeoPoint3D) topPoint);
 		createPolyhedron(polyhedron);
 		
 		update();
@@ -216,7 +217,7 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 			}
 		}
       
-        polyhedron.defaultLabels(labels);
+        polyhedron.initLabels(labels);
 	}
 
 	

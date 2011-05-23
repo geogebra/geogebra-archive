@@ -21,6 +21,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -1286,8 +1287,6 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	}
 	
 	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition,  Coords viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
-		
-
 		
 		GeoNumeric var = getCoordParentNumber();
 				

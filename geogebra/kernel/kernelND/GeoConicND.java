@@ -38,7 +38,6 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 import geogebra.util.MyMath;
-import geogebra3D.kernel3D.GeoPoint3D;
 
 
 /** Class for conic in any dimension.

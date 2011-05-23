@@ -2985,8 +2985,8 @@ public abstract class GeoElement
 	 *
 	 * @param tempSet: a temporary set that is used to collect all algorithms that need to be updated
 	 */
-	final static public synchronized void updateCascade(ArrayList geos, TreeSet tempSet) {
-			// only one geo: call updateCascade()
+	final static public synchronized void updateCascade(ArrayList geos, TreeSet tempSet) {		
+				// only one geo: call updateCascade()
 		if (geos.size() == 1) {
 			ConstructionElement ce = (ConstructionElement) geos.get(0);
 			if (ce.isGeoElement()) {

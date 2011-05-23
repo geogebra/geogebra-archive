@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.ListValue;
 import geogebra.kernel.arithmetic.MyDouble;
@@ -26,8 +25,6 @@ import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
-import geogebra.main.Application;
-import geogebra3D.kernel3D.Geo3DVec;
 
 import java.util.HashSet;
 

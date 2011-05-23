@@ -28,7 +28,7 @@ import java.util.Set;
 public class ConstructionDefaults {
 	
 	// DEFAULT GeoElement types
-	// PLEASE DON'T USE RANGE 3000-3999 (used by GeoGebra3D)
+	// PLEASE DON'T USE RANGE 3000-3999 (used by GeoGebra 3D)
 	public static final int DEFAULT_NONE = -1;
 	public static final int DEFAULT_POINT_FREE = 10;
 	public static final int DEFAULT_POINT_DEPENDENT = 11;

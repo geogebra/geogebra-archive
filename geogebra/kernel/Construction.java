@@ -22,7 +22,7 @@ import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra.util.Unicode;
 import geogebra.util.Util;
-import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra.kernel.kernelND.GeoPointND;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -1039,7 +1039,7 @@ public class Construction {
 			if (geo1 != null && geo1.isGeoPoint()) {
 				GeoElement geo2 = kernel.lookupLabel(label.charAt(1)+"");
 				if (geo2 != null && geo2.isGeoPoint()) {
-					AlgoDistancePoints dist = new AlgoDistancePoints(this, null, (GeoPoint)geo1, (GeoPoint)geo2);
+					AlgoDistancePoints dist = new AlgoDistancePoints(this, null, (GeoPointND)geo1, (GeoPointND)geo2);
 					createdGeo = dist.getDistance();
 					fix = false;
 				}
@@ -1524,9 +1524,9 @@ public class Construction {
 	            oldGeo.updateRepaint();
 	            return;
 
-	        } else if (oldGeo.isIndependent() && oldGeo instanceof GeoPoint3D) {
+	        } else if (oldGeo.isIndependent() && oldGeo.isGeoPoint() && oldGeo.isGeoElement3D()) {//GeoPoint3D
 
-	            ((GeoPoint3D)oldGeo).set(newGeo);
+	            oldGeo.set(newGeo);
 	            oldGeo.updateRepaint();
 	            return;
 

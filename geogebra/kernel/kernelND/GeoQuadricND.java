@@ -1,15 +1,11 @@
 package geogebra.kernel.kernelND;
 
-import java.awt.geom.AffineTransform;
-
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.arithmetic.ExpressionNode;
-import geogebra.main.Application;
-import geogebra3D.kernel3D.GeoQuadric3D;
 
 
 /** Abstract class describing quadrics in n-dimension space.

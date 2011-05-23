@@ -2,7 +2,6 @@ package geogebra.kernel.kernelND;
 
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.Coords;
-import geogebra3D.kernel3D.GeoPoint3D;
 
 /**
  * @author mathieu

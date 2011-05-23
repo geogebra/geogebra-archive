@@ -407,12 +407,13 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	    		labels = new String[1];
 	    	}
 	    	
-	    	/*
+	    	
 	    	String s="labels:\n";
 	    	for (int i=0; i<labels.length; i++)
 	    		s+=labels[i]+"\n";
+	    	s+="points: "+pointsCreated.size()+"\npolygons: "+polygons.size()+"\nsegments: "+segments.size();
 	    	Application.debug(s);
-	    	*/
+	    	
 
 	        // first label for polyhedron itself
 	    	setLabel(labels[0]);

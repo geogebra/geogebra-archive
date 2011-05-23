@@ -1,6 +1,5 @@
 package geogebra.Matrix;
 
-import geogebra3D.euclidian3D.Drawable3D.setComparator;
 
 /**
  * 4x4 matrix for 3D transformations, planes descriptions, lines, etc.

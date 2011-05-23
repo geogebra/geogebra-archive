@@ -68,7 +68,7 @@ public class AlgebraController
 	private GeoElement lastSelectedGeo = null;
 
 	public void mouseClicked(java.awt.event.MouseEvent e) {	
-		// right click is consumed in mousePressed, but in GeoGebra3D,
+		// right click is consumed in mousePressed, but in GeoGebra 3D,
 		// where heavyweight popup menus are enabled this doesn't work
 		// so make sure that this is no right click as well (ticket #302)
 		if (e.isConsumed() || Application.isRightClick(e)) {
