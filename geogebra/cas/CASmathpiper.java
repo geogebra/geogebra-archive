@@ -21,12 +21,16 @@ public class CASmathpiper extends CASgeneric {
 	
 	final public String RB_GGB_TO_MathPiper = "/geogebra/cas/ggb2mathpiper";
 
+	private final CasParserTools parserTools;
+	
 	private Interpreter ggbMathPiper;
 	private EvaluationResponse response;
 	private ResourceBundle ggb2MathPiper;
 	
-	public CASmathpiper(CASparser casParser) {
+	public CASmathpiper(CASparser casParser, CasParserTools parserTools) {
 		super(casParser);
+		this.parserTools = parserTools;
+		
 		getMathPiper();
 	}
 	
@@ -173,7 +177,7 @@ public class CASmathpiper extends CASgeneric {
 			result = casParser.insertSpecialChars(result);
 			
 			// convert MathPiper's scientific notation from e.g. 3.24e-4 to 3.2E-4
-			result = CASparser.convertScientificFloatNotation(result, 'e');
+			result = parserTools.convertScientificFloatNotation(result);
 
 			return result;
 		} catch (Throwable th) {

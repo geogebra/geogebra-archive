@@ -241,32 +241,4 @@ public class CASparser {
 		return insertSpecial.toString();
 	}
 
-
-	/**
-	 * Converts scientific number notations in input into GeoGebra notation.
-	 * For example, 3.4e-5 is changed into 3.4E-5 for expChar 'e' (MathPiper) and
-	 * 3.4b-5 is changed into 3.4E-5 for expChar 'b' (Maxima).
-	 * @param input expression
-	 * @param expChar exponent character like 'e' or 'b'
-	 * @return converted expression with exponent character 'E'
-	 */
-	public static String convertScientificFloatNotation(String input, char expChar) {
-		// convert MathPiper's scientific notation from e.g. 3.24e-4 to 3.2E-4
-		if (input.indexOf(expChar) > -1) {
-			boolean prevDigit = false;
-			StringBuilder sb = new StringBuilder(input.length());
-			for (int i=0; i < input.length(); i++) {
-				char cur = input.charAt(i);
-				if (cur == expChar && prevDigit) {
-					sb.append('E');
-				} else {
-					sb.append(cur);
-				}
-				prevDigit = Character.isDigit(cur);
-			}
-			return sb.toString();
-		}
-		return input;
-	}
-
 }

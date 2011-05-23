@@ -102,11 +102,11 @@ public class GeoGebraCAS {
 	}
 	
 	private CASmathpiper getMathPiper() {
-		return new CASmathpiper(casParser);
+		return new CASmathpiper(casParser, new CasParserToolsImpl('e'));
 	}
 	
 	private CASmaxima getMaxima() {
-		return new CASmaxima(casParser);
+		return new CASmaxima(casParser, new CasParserToolsImpl('b'));
 	}
 	
 	private CASmpreduce getMPReduce() {

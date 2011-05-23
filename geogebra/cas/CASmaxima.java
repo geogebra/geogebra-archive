@@ -31,11 +31,15 @@ public class CASmaxima extends CASgeneric {
 	// 5.23.0 needed by #314
 	final public int[] MINIMAL_REQUIRED_VERSION = {5, 23};
 	
+	private final CasParserTools parserTools;
+	
 	private MaximaInteractiveProcess ggbMaxima;
 	private ResourceBundle ggb2Maxima;
 	
-	public CASmaxima(CASparser casParser) {
+	public CASmaxima(CASparser casParser, CasParserTools parserTools) {
 		super(casParser);
+		this.parserTools = parserTools;
+		
 		Application.setCASVersionString("Maxima"); // called later on with eg "Maxima 5.22.1"
 	}
 	
@@ -266,7 +270,7 @@ public class CASmaxima extends CASgeneric {
 			result = casParser.insertSpecialChars(result);
 			
 			// convert Maxima's bfloat notation from e.g. 3.24b-4 to 3.2E-4
-			result = CASparser.convertScientificFloatNotation(result, 'b');
+			result = parserTools.convertScientificFloatNotation(result);
 			
 			// replace eg [x=0,x=1] with {x=0,x=1}
 			while (result.indexOf('[') > -1) result = result.replace('[','{');
