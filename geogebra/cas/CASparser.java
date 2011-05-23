@@ -30,17 +30,10 @@ import geogebra.main.Application;
  * @author Markus Hohenwarter
  */
 public class CASparser {
-	
 	private Kernel kernel;
-	private Parser ggbParser;
-	private StringBuilder sbInsertSpecial, sbReplaceIndices;
 	
 	public CASparser(Kernel kernel) {	
 		this.kernel = kernel;
-		ggbParser = kernel.getParser();
-		
-		sbInsertSpecial = new StringBuilder(80);
-		sbReplaceIndices = new StringBuilder(80);
 	}
 	
 	Kernel getKernel() {
@@ -52,7 +45,7 @@ public class CASparser {
 	 * @throws Throwable when something goes wrong
 	 */
 	public ValidExpression parseGeoGebraCASInput(String exp) throws Throwable {
-		return ggbParser.parseGeoGebraCAS(exp);
+		return kernel.getParser().parseGeoGebraCAS(exp);
 	}
 	
 	/**
@@ -121,14 +114,14 @@ public class CASparser {
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
 	public ValidExpression parseMathPiper(String MathPiperString) throws Throwable {
-		return ggbParser.parseMathPiper(MathPiperString);		
+		return kernel.getParser().parseMathPiper(MathPiperString);		
 	}
 	
 	/**
 	 * Tries to convert the given MathPiper string to GeoGebra syntax.
 	 */
 	public ValidExpression parseMaxima(String maximaString) throws Throwable {
-		return ggbParser.parseMaxima(maximaString);		
+		return kernel.getParser().parseMaxima(maximaString);		
 	}
 
 
@@ -139,7 +132,7 @@ public class CASparser {
 	 */
 	public synchronized String replaceIndices(String str) {
 		int len = str.length();
-		sbReplaceIndices.setLength(0);
+		StringBuilder replaceIndices = new StringBuilder();
 		
 		boolean foundIndex = false;
 
@@ -157,7 +150,7 @@ public class CASparser {
 					if (i > 0 && str.charAt(i-1) == '\\'){
 						replaceCharacter = false;
 						// \\_ is translated to _
-						sbReplaceIndices.deleteCharAt(sbReplaceIndices.length()-1);
+						replaceIndices.deleteCharAt(replaceIndices.length()-1);
 					}
 					break;
 										
@@ -179,15 +172,15 @@ public class CASparser {
 			}
 			
 			if (replaceCharacter) {
-				sbReplaceIndices.append(ExpressionNode.UNICODE_PREFIX);
-				sbReplaceIndices.append(code);
-				sbReplaceIndices.append(ExpressionNode.UNICODE_DELIMITER);
+				replaceIndices.append(ExpressionNode.UNICODE_PREFIX);
+				replaceIndices.append(code);
+				replaceIndices.append(ExpressionNode.UNICODE_DELIMITER);
 			} else {
-				sbReplaceIndices.append(c);
+				replaceIndices.append(c);
 			}
 		}
 					
-		return sbReplaceIndices.toString();
+		return replaceIndices.toString();
 	}
 
 	/**
@@ -200,7 +193,7 @@ public class CASparser {
 		if (str.length() < prefixLen) return str;
 		
 		int len = str.length();
-		sbInsertSpecial.setLength(0);
+		StringBuilder insertSpecial = new StringBuilder();
 
 		// convert every single character and append it to sb
 		char prefixStart = ExpressionNode.UNICODE_PREFIX.charAt(0);
@@ -232,20 +225,20 @@ public class CASparser {
 					}
 
 					if (code > 0 && code < 65536) { // valid unicode
-						sbInsertSpecial.append((char) code);
+						insertSpecial.append((char) code);
 						i = j;
 					} else { // invalid
-						sbInsertSpecial.append(ExpressionNode.UNICODE_PREFIX);
+						insertSpecial.append(ExpressionNode.UNICODE_PREFIX);
 						i += prefixLen;
 					}
 				} else {
-					sbInsertSpecial.append(c);
+					insertSpecial.append(c);
 				}
 			} else {
-				sbInsertSpecial.append(c);
+				insertSpecial.append(c);
 			}
 		}
-		return sbInsertSpecial.toString();
+		return insertSpecial.toString();
 	}
 
 
