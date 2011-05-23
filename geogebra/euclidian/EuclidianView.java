@@ -1644,10 +1644,16 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			drawZoomRectangle(g2);
 		}
 
-		if (allowShowMouseCoords && showMouseCoords && (showAxes[0] || showAxes[1] || showGrid))
-			drawMouseCoords(g2);
-		if (showAxesRatio)
-			drawAxesRatio(g2);
+		// when mouse over slider, show preview value of slider for that point
+		boolean drawn = drawSliderValue(g2);
+		
+		if (!drawn) {
+			if (allowShowMouseCoords && showMouseCoords && (showAxes[0] || showAxes[1] || showGrid))
+				drawMouseCoords(g2);
+			if (showAxesRatio)
+				drawAxesRatio(g2);
+		}
+		
 
 		if (kernel.needToShowAnimationButton()) {
 			drawAnimationButtons(g2);
@@ -2725,6 +2731,25 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		g2.setColor(Color.darkGray);
 		g2.setFont(fontLine);
 		g2.drawString(getXYscaleRatioString(), pos.x + 15, pos.y + 30);
+	}
+	
+	final protected boolean drawSliderValue(Graphics2D g2) {
+		
+		if (mode != MODE_MOVE) return false;
+		
+		Point pos = euclidianController.mouseLoc;
+		if (pos == null)
+			return false;				
+		
+		String val = euclidianController.getSliderValue();
+		
+		if (val == null) return false;
+
+		g2.setColor(Color.darkGray);
+		g2.setFont(fontLine);
+		g2.drawString(val, pos.x + 15, pos.y + 15);
+		
+		return true;
 	}
 	
 	final protected void drawAnimationButtons(Graphics2D g2) {

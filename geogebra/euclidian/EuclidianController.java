@@ -2447,6 +2447,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		//if (app.isUsingLayout() && app.getGuiManager().showAlgebraView()) {
 			//hits = view.getTopHits(hits);
 			hits = hits.getTopHits();
+			
+			sliderValue = null;
+			if (hits.size() == 1) {
+				GeoElement hit = ((GeoElement)hits.get(0));
+				if (hit.isGeoNumeric() && ((GeoNumeric)hit).isSlider()) {
+					startPoint.setLocation(((GeoNumeric) hit).getSliderX(), ((GeoNumeric) hit).getSliderY());
+					sliderValue = kernel.format(getSliderValue((GeoNumeric) hit));
+				} 
+			}
+			
 			if (!hits.isEmpty()) {
 				String text = GeoElement.getToolTipDescriptionHTML(hits,
 						true, true);				
@@ -3109,8 +3119,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		else
 			movedGeoButton.updateCascade();
 	}
-
-	final protected void moveNumeric(boolean repaint) {
+	final protected double getSliderValue(GeoNumeric movedGeoNumeric) {
 		double min = movedGeoNumeric.getIntervalMin();
 		double max = movedGeoNumeric.getIntervalMax();
 		double param;
@@ -3148,6 +3157,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			val = kernel.checkDecimalFraction(val * Kernel.CONST_180_PI) / Kernel.CONST_180_PI;
 
 		}
+
+		return val;
+	}
+
+	final protected void moveNumeric(boolean repaint) {
+		
+		double val = getSliderValue(movedGeoNumeric);
 
 		// do not set value unless it really changed!
 		if (movedGeoNumeric.getValue() == val)
@@ -7296,6 +7312,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return true;
 		
 		else return false;
+	}
+
+
+	private String sliderValue = null;
+	public String getSliderValue() {
+		return sliderValue;
 	}
 
 }
