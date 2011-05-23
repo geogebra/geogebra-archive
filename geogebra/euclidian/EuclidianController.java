@@ -1470,6 +1470,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	public void mouseDragged(MouseEvent e) {
+		
+		sliderValue = null;
 
 		if (textfieldHasFocus) return;
 
@@ -1849,6 +1851,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	public void mouseReleased(MouseEvent e) {	
+		
+		sliderValue = null;
+
 		if (e != null) {
 			mx = e.getX();
 			my = e.getY();
