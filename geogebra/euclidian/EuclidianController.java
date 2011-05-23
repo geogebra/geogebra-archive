@@ -1650,6 +1650,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_ROTATE_BY_ANGLE:
 		case EuclidianView.MODE_FITLINE:
 		case EuclidianView.MODE_VISUAL_STYLE:
+		case EuclidianView.MODE_COPY_VISUAL_STYLE:
 			return true;
 
 			// checkbox, button
