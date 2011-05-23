@@ -206,8 +206,17 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 * @return the matrix representation of the conic in its 2D sub space
 	 */
 	protected CoordMatrix getSymetricMatrix(double[] vals){
-		//TODO
-		return null;
+		CoordMatrix ret = new CoordMatrix(3, 3);
+		
+		ret.set(1, 1, vals[0]);
+		ret.set(2, 2, vals[1]);
+		ret.set(3, 3, vals[2]);
+		
+		ret.set(1, 2, vals[3]); ret.set(2, 1, vals[3]);
+		ret.set(1, 3, vals[4]); ret.set(3, 1, vals[4]);
+		ret.set(2, 3, vals[5]); ret.set(3, 2, vals[5]);
+		
+		return ret;
 	}
 	
 	

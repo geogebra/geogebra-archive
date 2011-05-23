@@ -68,9 +68,12 @@ public class AlgoIntersectConics extends AlgoIntersect {
     	return EuclidianConstants.MODE_INTERSECT;
     }
     
+	public AlgoIntersectConics(Construction cons) {           
+    	super(cons); 
+	}
     
     AlgoIntersectConics(Construction cons, GeoConic A, GeoConic B) {           
-    	super(cons);     
+    	this(cons);     
     	
 		eqnSolver = cons.getEquationSolver();
 		sysSolver = new SystemOfEquationsSolver(eqnSolver);
@@ -430,7 +433,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
     
     // calc four intersection Points of conics A and B.
     // write result into points
-    final void intersectConics(GeoConic conic1, GeoConic conic2, 
+    final public void intersectConics(GeoConic conic1, GeoConic conic2, 
                                         GeoPoint[] points) {
     	    	 
     	if (!(conic1.isDefined() && conic2.isDefined())) {

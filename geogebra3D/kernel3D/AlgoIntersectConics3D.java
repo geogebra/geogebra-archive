@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra3D.kernel3D;
 
+import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
@@ -53,11 +54,28 @@ public class AlgoIntersectConics3D extends AlgoIntersectND {
     private GeoConicND A, B;  // input
     private GeoPoint3D [] P, D;     // output  
     
-    /** 2d description of g when included in conic coord sys */
-    private GeoLine g2d;
+    /** 2d line description of intersection of the two coord sys when exists */
+    private GeoLine l2d;
+    /** 2d conic description of A and B when B included in A coord sys */
+    private GeoConic A2d, B2d;
     /** 2d points created by using AlgoIntersectLineConic.intersectLineConic */
     private GeoPoint[] points2d;
+    /** 2d intersect conics helper algo */
+    private AlgoIntersectConics algo2d;
+    
         
+    /** matrix so that (x y 0 z) = AUGMENT_DIM * (x y z) */
+    final static private CoordMatrix AUGMENT_DIM = new CoordMatrix(4, 3, 
+    		new double[] {
+    		1,0,0,0,
+    		0,1,0,0,
+    		0,0,0,1
+    }
+    );
+    
+    /** matrix so that (x y z) = REDUCE_DIM * (x y 0 z) */
+    final static private CoordMatrix REDUCE_DIM = AUGMENT_DIM.transposeCopy();
+    
     /**
      * 
      * @param cons
@@ -107,7 +125,10 @@ public class AlgoIntersectConics3D extends AlgoIntersectND {
         D  = new GeoPoint3D[4];
         
         //helper algo
-        g2d = new GeoLine(cons);
+        l2d = new GeoLine(cons);
+        A2d = new GeoConic(cons);
+        B2d = new GeoConic(cons);
+        algo2d = new AlgoIntersectConics(cons);
         points2d = new GeoPoint[4];
                
         for (int i=0; i < 4; i++) {
@@ -180,8 +201,8 @@ public class AlgoIntersectConics3D extends AlgoIntersectND {
 			Coords[] intersection = CoordMatrixUtil.intersectPlanes(A.getCoordSys().getMatrixOrthonormal(), B.getCoordSys().getMatrixOrthonormal());
 			Coords op = csA.getNormalProjection(intersection[0])[1];
 			Coords dp = csA.getNormalProjection(intersection[1])[1];		
-			g2d.setCoords(dp.getY(), -dp.getX(), -dp.getY()*op.getX() +dp.getX()*op.getY());
-			AlgoIntersectLineConic.intersectLineConic(g2d, A, points2d);
+			l2d.setCoords(dp.getY(), -dp.getX(), -dp.getY()*op.getX() +dp.getX()*op.getY());
+			AlgoIntersectLineConic.intersectLineConic(l2d, A, points2d);
 			//Application.debug(points2d[0]+"\n"+points2d[1]);
 			
 			P[0].setCoords(csA.getPoint(points2d[0].x, points2d[0].y), false);
@@ -206,16 +227,25 @@ public class AlgoIntersectConics3D extends AlgoIntersectND {
 				setPointsUndefined(); //TODO infinite points ?
 			}else{//coord sys included
 				setPointsUndefined();
-				//AlgoIntersectConics.in
-				/*
-				g2d.setCoords(dp.getY(), -dp.getX(), -dp.getY()*op.getX() +dp.getX()*op.getY());
-				AlgoIntersectLineConic.intersectLineConic(g2d, c, points2d);
-				//Application.debug(points2d[0]+"\n"+points2d[1]);
-				P[0].setCoords(cs.getPoint(points2d[0].x, points2d[0].y), false);
-				checkIsOnLine(P[0]);
-				P[1].setCoords(cs.getPoint(points2d[1].x, points2d[1].y), false);
-				checkIsOnLine(P[1]);
-				*/
+				
+				CoordMatrix BtoA = 
+					REDUCE_DIM.mul(
+							csB.getMatrixOrthonormal().inverse().mul(csA.getMatrixOrthonormal())).mul(
+									AUGMENT_DIM);
+				//Application.debug(BtoA);
+				
+				CoordMatrix sB = B.getSymetricMatrix();
+				CoordMatrix sBinA = BtoA.transposeCopy().mul(sB).mul(BtoA);
+				//Application.debug("sym=\n"+sB+"\ninA\n"+sBinA);
+				
+				A2d.setMatrix(A.getMatrix());
+				B2d.setMatrix(sBinA);
+				algo2d.intersectConics(A2d, B2d, points2d);
+				
+				for(int i=0; i<4; i++)
+					P[i].setCoords(csA.getPoint(points2d[i].x, points2d[i].y), false);
+				
+				
 			}
 		}
 				
