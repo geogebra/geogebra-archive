@@ -368,6 +368,9 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 			startPoint.setCoords(-z / x, 0.0, 1.0);
 		} else if (y != 0) {
 			startPoint.setCoords(0.0, -z / y,  1.0);
+		} else {
+			// this case probably won't happen, just for completeness
+			startPoint.setCoords(0.0, 0.0, 1.0);
 		}
 
 		// alternative method
