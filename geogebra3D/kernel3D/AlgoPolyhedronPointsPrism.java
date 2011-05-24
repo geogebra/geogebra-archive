@@ -134,12 +134,12 @@ public class AlgoPolyhedronPointsPrism extends AlgoPolyhedronPoints{
 		
 		//translate all output points
 		for (int i=0;i<outputPoints.size();i++)
-			outputPoints.getElement(i).setCoords(bottomPoints[i+getShift()].getCoordsInD(3).add(v),true);
+			outputPoints.getElement(i).setCoords(bottomPoints[i+getShift()].getInhomCoordsInD(3).add(v),true);
 
 		//TODO remove this and replace with tesselation
 		Coords interiorPoint = new Coords(4);
 		for (int i=0;i<bottomPoints.length;i++){
-			interiorPoint = (Coords) interiorPoint.add(bottomPoints[i].getCoordsInD(3));
+			interiorPoint = (Coords) interiorPoint.add(bottomPoints[i].getInhomCoordsInD(3));
 		}
 		interiorPoint = (Coords) interiorPoint.mul((double) 1/(bottomPoints.length));
 		polyhedron.setInteriorPoint((Coords) interiorPoint.add(v.mul(0.5)));

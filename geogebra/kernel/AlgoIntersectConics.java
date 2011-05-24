@@ -70,13 +70,16 @@ public class AlgoIntersectConics extends AlgoIntersect {
     
 	public AlgoIntersectConics(Construction cons) {           
     	super(cons); 
+    	
+		eqnSolver = cons.getEquationSolver();
+		sysSolver = new SystemOfEquationsSolver(eqnSolver);
+		
+		degConic = new GeoConic(cons);  
+	       
 	}
     
     AlgoIntersectConics(Construction cons, GeoConic A, GeoConic B) {           
     	this(cons);     
-    	
-		eqnSolver = cons.getEquationSolver();
-		sysSolver = new SystemOfEquationsSolver(eqnSolver);
     	
         this.A = A;
         this.B = B;   
@@ -98,9 +101,7 @@ public class AlgoIntersectConics extends AlgoIntersect {
             D[i] = new GeoPoint(cons);            
         }                                   
         
-        //degConic = new GeoConic[3];
-        //for (i=0; i < 3; i++) degConic[i] = new GeoConic(cons);
-        degConic = new GeoConic(cons);  
+
         
         // check possible special case
         possibleSpecialCase = handleSpecialCase();

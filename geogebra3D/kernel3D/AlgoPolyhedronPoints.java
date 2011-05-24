@@ -268,6 +268,8 @@ public abstract class AlgoPolyhedronPoints extends AlgoElement3D{
 		if (height==null)
 			uptranslation = getTopPoint().getInhomCoordsInD(3).sub(getBottomPoints()[0].getInhomCoordsInD(3));
 		else{
+			//Coords v = bottom.getMainDirection();
+			//Application.debug(height.getDouble()+"\nv=\n"+v);
 			uptranslation=bottom.getMainDirection().normalized().mul(height.getDouble());		
 		}
 

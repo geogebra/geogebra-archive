@@ -445,6 +445,10 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	//TODO merge with GeoPolygon
 	public void pointChanged(GeoPointND PI) {
 		
+		//TODO remove that
+		if (!(PI instanceof GeoPoint3D))
+			return;
+		
 		GeoPoint3D P = (GeoPoint3D) PI;
 		
 		Coords coordsOld = P.getInhomCoords();

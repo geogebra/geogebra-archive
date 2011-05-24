@@ -396,7 +396,10 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	     * labels[0] for polyhedron itself, labels[1..n] for faces and edges,
 	     * @param labels
 	     */
-	    void initLabels(String [] labels) {   
+	    void initLabels(String [] labels) {  
+	    	
+	    	//Application.printStacktrace("");
+	    	
 	    	if(cons.isSuppressLabelsActive()){ //for redefine
 	    		return;
 	    	}
@@ -407,13 +410,13 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	    		labels = new String[1];
 	    	}
 	    	
-	    	
+	    	/*
 	    	String s="labels:\n";
 	    	for (int i=0; i<labels.length; i++)
 	    		s+=labels[i]+"\n";
 	    	s+="points: "+pointsCreated.size()+"\npolygons: "+polygons.size()+"\nsegments: "+segments.size();
 	    	Application.debug(s);
-	    	
+	    	*/
 
 	        // first label for polyhedron itself
 	    	setLabel(labels[0]);
@@ -442,6 +445,7 @@ public class GeoPolyhedron extends GeoElement3D {//implements Path {
 	    	
 	    	for (GeoPolygon3D polygon : polygons.values()){
 	    		polygon.setLabel(labels[index]);
+	    		//Application.debug("labels["+index+"]="+labels[index]);
 	    		index++;
 	    	}
 
