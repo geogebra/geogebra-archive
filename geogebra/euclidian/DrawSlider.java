@@ -172,7 +172,9 @@ public class DrawSlider extends Drawable {
      * @return true if the slider line was hit, false for fixed sliders
      */
     public boolean hitSlider(int x, int y) {
-    	return !number.isSliderFixed() && line.intersects(x-2, y-2, 4,4);    	
+    	// changed: we want click on fixed slider to move the dot to that point
+    	//return !number.isSliderFixed() && line.intersects(x-2, y-2, 4,4);    	
+    	return line.intersects(x-2, y-2, 4,4);    	
     }
     
     public GeoElement getGeoElement() {
