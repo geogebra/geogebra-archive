@@ -584,8 +584,7 @@ public class DrawAngle extends Drawable implements Previewable {
 			if (show90degrees) {
 				switch (view.rightAngleStyle) {
 					case EuclidianView.RIGHT_ANGLE_STYLE_DOT:
-						fill(g2, dot90degree, false); // fill using default/hatching/image as appropriate
-
+						g2.fill(dot90degree);
 						break;
 						
 					default:
