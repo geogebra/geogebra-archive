@@ -100,7 +100,32 @@ public class Hits extends ArrayList {
 	}
 	*/
 	
+	/** absorbs new elements in hits2
+	 * returns the repeated elements in hits2
+	 * Tam: 2011/5/21
+	 */
+	public Hits absorb(ArrayList hits2){
+		Hits ret = new Hits();
+		for(int i=0; i<hits2.size(); i++){
+			if (!contains(hits2.get(i)))
+				add(hits2.get(i));
+			else
+				ret.add(hits2.get(i));
+		}
+		return ret;
+	}
 
+	/** remove all the points
+	 * Tam, 5/22/2011
+	 */
+	final public void removeAllPoints(){
+		for (int i = size() - 1 ; i >= 0 ; i-- ) {
+			GeoElement geo = (GeoElement) get(i);
+			if (geo==null || geo.isGeoPoint())
+				remove(i);
+		}
+	}
+	
 	/**
 	 * A polygon is only kept if none of its sides is also in
 	 * hits.
