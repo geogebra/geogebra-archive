@@ -1566,56 +1566,84 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	///////////////////////////////////////////
 	// INTERSECTIONS
 	
+	///////////////////////////////////////////
+	// INTERSECTIONS
+	
 	/**
 	 *  get two objects (lines or conics) and create intersection point 
-	 *
+	 *  Tam edited 5/22/2011
 	 */
 	protected GeoElement[] intersect(Hits hits) {
 		
 		if (hits.isEmpty())
 			return null;		
+		
+		if (hits.containsGeoPoint())
+			return null;
 
 		// when two objects are selected at once then only one single
-		// intersection point should be created
+		// intersection point should be created	
 		boolean singlePointWanted = selGeos() == 0;
-							
+		
 		// check how many interesting hits we have
-		//Application.debug("selectionPreview = "+selectionPreview);
-		if (!selectionPreview && hits.size() > 2 - selGeos()) {
+		// For now we store lines and planes.
+		// Points and any repeated elements are eliminated
+		if (!selectionPreview && hits.size() + selGeos() >=2) {
 			Hits goodHits = new Hits();
-			//goodHits.add(selectedGeos);
-			hits.getHits(GeoCoordSys1D.class, tempArrayList);
-			goodHits.addAll(tempArrayList);
-			//Application.debug(goodHits.toString());
 			
-			if (goodHits.size() > 2 - selGeos()) {
+			hits.getHits(GeoCoordSys1D.class, tempArrayList);
+			hits.getHits(GeoCoordSys2D.class, tempArrayList2);
+			goodHits.addAll(tempArrayList);
+			goodHits.addAll(tempArrayList2);
+			//System.out.println("goodHits~"+goodHits.toString());
+			//System.out.println("selectedGeos~"+selectedGeos.toString());
+			
+			//including all selected Geos, without repetition, without points
+			goodHits.absorb(selectedGeos);
+			goodHits.removeAllPoints();
+			
+			//System.out.println("newgoodHits~"+goodHits.toString());
+	
+			if (goodHits.size() > 2) {			
 				//  choose one geo, and select only this one
-				GeoElement geo = chooseGeo(goodHits, true);
-				hits.clear();
-				hits.add(geo);				
+				//GeoElement geo = chooseGeo(goodHits, true);
+				//hits.clear();
+				//hits.add(geo);
+				Application.debug("TODO: more than 2 objects to intersect");
+				return null;
 			} else {
 				hits = goodHits;
 			}
-		}			
+
+		} else { 
+			return null;
+		}
 		
 		// get lines, segments, etc.
-		addSelectedCS1D(hits, 2, true);
+		addSelectedCS1D(hits, 2, true);		
 		
-		singlePointWanted = singlePointWanted && selGeos() == 2;
+		// currently tested only for planes
+		addSelectedCS2D(hits, 2, true);
 		
-		if (selGeos() > 2)
-			return null;
+		//singlePointWanted = singlePointWanted && selGeos() == 2;
+		
+		//if (selGeos() > 2)
+		//	return null;
 
 		// two 3D lines		
 		if (selCS1D() == 2) {
-						
 			GeoCoordSys1D[] lines = getSelectedCS1D();
 			GeoElement[] ret = { null };
 			ret[0] = getKernel().getManager3D().Intersect(null, lines[0], lines[1]);
 			return ret;
 			
+		} else if (selCS1D() ==1 && selCS2D()==1 ) {
+			GeoCoordSys1D line = getSelectedCS1D()[0];
+			GeoCoordSys2D plane = getSelectedCS2D()[0];
+			GeoElement[] ret = { null };
+			ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) plane);
+			return ret;
 		}
-		
 		
 		return null;
 	}
@@ -1680,6 +1708,50 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return lines;
 	}	
 	
+	
+	///////////////////////////////////////////
+	// selectedCS2D list, similar to selectedCS1D 
+	
+	/** selected 2D coord sys */
+	@SuppressWarnings("unchecked")
+	protected ArrayList selectedCS2D = new ArrayList();	
+	
+	/** add hits to selectedCS2D
+	 * @param hits hits
+	 * @param max max number of hits to add
+	 * @param addMoreThanOneAllowed if adding more than one is allowed
+	 * @return TODO
+	 */
+	final protected int addSelectedCS2D(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCS2D, GeoCoordSys2D.class);
+	}
+	
+	
+	/**
+	 * return number of selected 2D coord sys
+	 * @return number of selected 2D coord sys
+	 */
+	final int selCS2D() {
+		return selectedCS2D.size();
+	}	
+	
+	
+	/** return selected 2D coord sys
+	 * @return selected 2D coord sys
+	 */
+	@SuppressWarnings("unchecked")
+	final protected GeoCoordSys2D[] getSelectedCS2D() {
+		GeoCoordSys2D[] lines = new GeoCoordSys2D[selectedCS2D.size()];
+		int i = 0;
+		Iterator it = selectedCS2D.iterator();
+		while (it.hasNext()) {
+			lines[i] = (GeoCoordSys2D) it.next();
+			i++;
+		}
+		clearSelection(selectedCS2D);
+		return lines;
+	}	
 	
 	
 	
@@ -1947,3 +2019,4 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 }
+
