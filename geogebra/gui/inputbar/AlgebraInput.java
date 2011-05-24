@@ -85,8 +85,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.addKeyListener(this);
 		inputField.addFocusListener(this);
 		
-		// enable drag n drop
-		//inputField.setDragEnabled(true);
+		// set transfer handler so that drops can be accepted
 		inputField.setTransferHandler(new AlgebraInputTransferHandler(app, inputField));
 		
 		

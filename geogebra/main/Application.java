@@ -3126,6 +3126,8 @@ public class Application implements KeyEventDispatcher {
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {			
 				updateStyleBars();
+				if(getGuiManager().getAlgebraView() != null)
+					getGuiManager().getAlgebraView().updateSelection();
 		}
 			
 	}

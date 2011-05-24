@@ -724,6 +724,22 @@ public class AlgebraView extends JTree implements View {
 		} 	
 	}
 	
+	/**
+	 * Update tree selection to match currently selected geos.
+	 */
+	final public void updateSelection() {	
+		this.clearSelection();
+		DefaultMutableTreeNode node;
+		ArrayList<GeoElement> geos = app.getSelectedGeos();
+		for(GeoElement geo: geos){
+		 node = (DefaultMutableTreeNode) nodeTable.get(geo);
+		if(node != null)
+			this.addSelectionPath(new TreePath(node.getPath()));	
+		}
+	}
+	
+	
+	
 	final public void updateAuxiliaryObject(GeoElement geo) {
 		remove(geo);
 		add(geo);

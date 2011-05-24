@@ -124,18 +124,25 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 					
 					// if multiple geos, create TableText
 					else{
-						text = list.toString();
-						text = text.replace("]", "}");
-						text = text.replace("[", "{");
-						text = "TableText[" + text + "]";
+						GeoElement geo;
+						text = "TableText[";
+						for(int i=0; i<list.size(); i++){
+							geo = app.getKernel().lookupLabel(list.get(i));
+							text += "{\"" + geo.getLabel() + " = \"" + list.get(i) + "}";
+							if(i<list.size()-1){
+								text += ",";
+							}
+						}
+						text += "]";
+						
 					}
 					
-				// handle ordinary text flavor	
+				// handle text flavor	
 				}else{
 					text = (String) t.getTransferData(DataFlavor.stringFlavor);
 					text = "\"" + text + "\"";
 				}
-				
+				ev.getEuclidianViewNo();
 				if (debug) System.out.println("dropped geo: " + text);
 
 				// convert text to geo

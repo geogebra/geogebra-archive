@@ -11,7 +11,15 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-
+/**
+ * Transfer handler for AlgebraView.
+ * 
+ * Exports its own data flavor, AlgebraViewFlavor. This contains an arrayList of
+ * the labels of all selected geos in the AlgebraView
+ * 
+ * @author gsturr
+ * 
+ */
 public class AlgebraViewTransferHandler extends TransferHandler implements Transferable {
 
 	private Application app;
@@ -75,9 +83,9 @@ public class AlgebraViewTransferHandler extends TransferHandler implements Trans
 
 	public boolean isDataFlavorSupported(DataFlavor flavor) {
 		for(int i = 0; i < supportedFlavors.length; i++){
-			System.out.println(flavor.getMimeType());
-			System.out.println(supportedFlavors[i].getMimeType());
-			System.out.println("------------");
+			//System.out.println(flavor.getMimeType());
+			//System.out.println(supportedFlavors[i].getMimeType());
+			//System.out.println("------------");
 			if (supportedFlavors[i].equals(flavor))
 				return true;
 		}

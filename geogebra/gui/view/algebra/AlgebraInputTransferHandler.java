@@ -46,7 +46,7 @@ public class AlgebraInputTransferHandler extends TransferHandler implements Tran
 
 
 	/**
-	 * Ensures that transfer are done in COPY mode
+	 * Ensures that transfers are done in COPY mode
 	 */
 	public int getSourceActions(JComponent c) {
 		return TransferHandler.COPY;
