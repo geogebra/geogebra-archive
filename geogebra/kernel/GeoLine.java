@@ -359,11 +359,23 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 		if (startPoint == null)
 			startPoint = new GeoPoint(cons);
 
-		if (Math.abs(x) > Math.abs(y)) {
+		// this way the behaviour of pathChanged and pointChanged remain
+		// the same as if there weren't a startPoint
+		// so the dependent path parameters (probably) needn't be changed 
+		if (x != 0 && y != 0) {
+			startPoint.setCoords(-z * x / ( x*x + y*y), -z * y / ( x*x + y*y), 1.0);
+		} else if (x != 0) {
 			startPoint.setCoords(-z / x, 0.0, 1.0);
-		} else {
+		} else if (y != 0) {
 			startPoint.setCoords(0.0, -z / y,  1.0);
 		}
+
+		// alternative method
+		//if (Math.abs(x) > Math.abs(y)) {
+		//	startPoint.setCoords(-z / x, 0.0, 1.0);
+		//} else {
+		//	startPoint.setCoords(0.0, -z / y,  1.0);
+		//}
 	}
 
     public final void setStartPoint(GeoPoint P) {        	
