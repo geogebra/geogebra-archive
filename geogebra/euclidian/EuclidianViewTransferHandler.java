@@ -39,7 +39,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 		DataFlavor.javaFileListFlavor,
 		AlgebraViewTransferHandler.algebraViewFlavor };
 
-	private boolean debug  = false;
+	private boolean debug  = true;
 
 
 	/****************************************
@@ -128,7 +128,8 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 						text = "TableText[";
 						for(int i=0; i<list.size(); i++){
 							geo = app.getKernel().lookupLabel(list.get(i));
-							text += "{\"" + geo.getLabel() + " = \"" + list.get(i) + "}";
+							
+							text += "{\"" + geo.getLabel() + " = \"" + "FormulaText[" + list.get(i) + "]}";
 							if(i<list.size()-1){
 								text += ",";
 							}
