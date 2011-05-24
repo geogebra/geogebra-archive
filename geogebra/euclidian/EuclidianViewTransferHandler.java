@@ -117,19 +117,19 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 					// exit if empty list
 					if(list.size()==0) return false;
 					
-					// if single geo, create FormulaText
+					// single geo
 					if(list.size()==1){
-						text = "FormulaText[" + list.get(0) + "]";
+						text = "Name[" + list.get(0) + "] + \" = \"" + " + FormulaText[" + list.get(0) + "]";
 					}
 					
-					// if multiple geos, create TableText
+					// multiple geos, wrap in TableText
 					else{
 						GeoElement geo;
 						text = "TableText[";
 						for(int i=0; i<list.size(); i++){
 							geo = app.getKernel().lookupLabel(list.get(i));
 							
-							text += "{\"" + geo.getLabel() + " = \"" + "FormulaText[" + list.get(i) + "]}";
+							text += "{Name[" + list.get(i) + "] + \" = \"" + "FormulaText[" + list.get(i) + "]}";
 							if(i<list.size()-1){
 								text += ",";
 							}
@@ -152,6 +152,11 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 
 				if (ret != null && ret[0].isTextValue()) {
 					GeoText geo = (GeoText) ret[0];
+					
+					// render AlgebraView imports with LaTeX
+					if(t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor))
+						geo.setLaTeX(true, false);	
+					
 					Point p = ev.getMousePosition();
 					geo.setRealWorldLoc(ev.toRealWorldCoordX(p.x), ev.toRealWorldCoordY(p.y));
 					geo.updateRepaint();
