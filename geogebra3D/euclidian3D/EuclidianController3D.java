@@ -1593,7 +1593,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		// check how many interesting hits we have
 		// For now we store lines and planes.
 		// Points and any repeated elements are eliminated
-		if (!selectionPreview /* && hits.size() > 2 - selGeos()*/) {
+		if (!selectionPreview  && hits.size() > 2 - selGeos()) {
 			Hits goodHits = new Hits();
 			
 			hits.getHits(GeoLineND.class, tempArrayList);
@@ -1602,40 +1602,25 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			goodHits.addAll(tempArrayList);
 			goodHits.addAll(tempArrayList2);
 			goodHits.addAll(tempArrayList3);
-			//System.out.println("goodHits~"+goodHits.toString());
-			//System.out.println("selectedGeos~"+selectedGeos.toString());
-			
-			//including all selected Geos, without repetition, without points
-			//goodHits.absorb(selectedGeos);
-			//goodHits.removeAllPoints();
-			
-			//System.out.println("newgoodHits~"+goodHits.toString());
-	
-			/*
-			if (goodHits.size() > 2) {			
-				//  choose one geo, and select only this one
-				//GeoElement geo = chooseGeo(goodHits, true);
-				//hits.clear();
-				//hits.add(geo);
-				Application.debug("TODO: more than 2 objects to intersect");
-				return null;
-			} else */{
-				hits = goodHits;
-			}
-			
 
-		} else { 
-			return null;
+			hits = goodHits;
+
 		}
 		
-		// get lines, segments, etc.
-		addSelectedLine(hits, 10, true);		
+		boolean addedCurves = false;
 		
-		// currently tested only for planes
-		addSelectedCS2D(hits, 10, true);
+		
+		// get lines, segments, etc.
+		addSelectedLine(hits, 10, true);
 		
 		// currently tested only for 3D conics
 		addSelectedConicND(hits, 10, true);
+		
+		
+		// currently tested only for planes
+		addSelectedCS2D(hits, 10, false);
+		
+
 		
 		//singlePointWanted = singlePointWanted && selGeos() == 2;
 		
