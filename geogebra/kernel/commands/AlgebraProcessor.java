@@ -41,6 +41,7 @@ import geogebra.kernel.parser.ParseException;
 import geogebra.kernel.parser.Parser;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.Unicode;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -1256,7 +1257,7 @@ public class AlgebraProcessor {
 		// check for free "complex" points like 2 + i that only depend on i
 		if (complex && !isIndependent) {
 			GeoElement [] vars = n.getGeoElementVariables();
-			if (vars.length == 1 && "i".equals(vars[0].getLabel())) {
+			if (vars.length == 1 && (Unicode.IMAGINARY.equals(vars[0].getLabel()))) {
 				isIndependent = true;			
 				complex = true;
 			}
