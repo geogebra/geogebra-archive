@@ -67,8 +67,8 @@ public class AlgoSphereTwoPoints extends AlgoSphereNDTwoPoints {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
         return app.getPlain("SphereThroughAwithCenterB",
-        		((GeoElement) getM()).getLabel(),
-        		((GeoElement) getP()).getLabel());
+        		((GeoElement) getP()).getLabel(),
+        		((GeoElement) getM()).getLabel());
 
     }
 }
