@@ -420,7 +420,11 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 	
 	
 	//TODO merge with GeoPolygon
-	public void pathChanged(GeoPointND PI) {		
+	public void pathChanged(GeoPointND PI) {	
+		
+		//TODO remove that
+		if (!(PI instanceof GeoPoint3D))
+			return;
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 		

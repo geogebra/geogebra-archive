@@ -83,6 +83,10 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 	}; 
 
 	public void drawGeometryHidden(Renderer renderer){ 
+		
+		if(!isVisible())
+			return;
+		
 		if (!isGridVisible()) return;
 
 		//dash
@@ -168,11 +172,15 @@ public class DrawPlane3D extends Drawable3DSurfaces {
 		
 		
 		if (viewDirectionIsParallel){
-			//draws the two diagonals
+			//draws the rectangle outline
 			brush.setPlainTexture();
 			brush.segment(coordsys.getPointForDrawing(geo.getXmin(),geo.getYmin()), 
 					coordsys.getPointForDrawing(geo.getXmin(),geo.getYmax()));	
 			brush.segment(coordsys.getPointForDrawing(geo.getXmin(),geo.getYmin()), 
+					coordsys.getPointForDrawing(geo.getXmax(),geo.getYmin()));				
+			brush.segment(coordsys.getPointForDrawing(geo.getXmax(),geo.getYmax()), 
+					coordsys.getPointForDrawing(geo.getXmin(),geo.getYmax()));	
+			brush.segment(coordsys.getPointForDrawing(geo.getXmax(),geo.getYmax()), 
 					coordsys.getPointForDrawing(geo.getXmax(),geo.getYmin()));				
 		}else{
 			//along x axis
