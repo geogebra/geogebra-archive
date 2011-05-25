@@ -5442,6 +5442,9 @@ public class Kernel {
 		return algo.getLocus();
 	}
 	
+	/**
+	 * locus line for Q dependent on P. Note: P must be a visible slider
+	 */
 	final public GeoLocus Locus(String label, GeoPoint Q, GeoNumeric P) {
 		if (!P.isSlider() || !P.isDefined() || !P.isAnimatable() || // !P.isSliderable() || !P.isDrawable() ||
 			 Q.getPath() != null ||

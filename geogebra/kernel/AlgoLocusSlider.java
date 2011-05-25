@@ -315,7 +315,8 @@ public class AlgoLocusSlider extends AlgoElement implements EuclidianViewAlgo {
 
     // compute locus line
     final protected void compute() {    	    
-    	if (!movingSlider.isDefined() || macroCons == null) {    		
+    	if (!movingSlider.isDefined() || !movingSlider.isSlider() ||
+    		!movingSlider.isAnimatable() || macroCons == null) {    		
     		locus.setUndefined();
     		return;
     	}
