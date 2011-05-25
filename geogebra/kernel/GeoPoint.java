@@ -326,12 +326,17 @@ GeoPointND, Animatable, Transformable  {
 		GeoNumeric num1 = coords.get(0);
 		GeoNumeric num2 = coords.get(1);
 		
-		if (num1 == null || num2 == null || num1.getIntervalMaxObject() == null || num1.getIntervalMinObject() == null) return false;
+		if (num1 == null || num2 == null) return false;
 		
-		if(num1.getIntervalMaxObject().isChildOrEqual(num2))return false;
-		if(num2.getIntervalMaxObject().isChildOrEqual(num1))return false;
-		if(num1.getIntervalMinObject().isChildOrEqual(num2))return false;
-		if(num2.getIntervalMinObject().isChildOrEqual(num1))return false;		
+		GeoElement maxObj1 = num1.getIntervalMaxObject();
+		GeoElement maxObj2 = num2.getIntervalMaxObject();
+		GeoElement minObj1 = num1.getIntervalMinObject();
+		GeoElement minObj2 = num2.getIntervalMinObject();
+		if (maxObj1 != null && maxObj1.isChildOrEqual(num2))return false;
+		if (minObj1 != null && minObj1.isChildOrEqual(num2))return false;
+		if (maxObj2 != null && maxObj2.isChildOrEqual(num1))return false;
+		if (minObj2 != null && minObj2.isChildOrEqual(num1))return false;
+	
 		boolean ret = num1.isChangeable() && 
 				num2.isChangeable();
 
