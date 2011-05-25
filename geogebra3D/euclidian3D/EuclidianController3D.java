@@ -1572,7 +1572,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	/**
 	 *  get two objects (lines or conics) and create intersection point 
-	 *  Tam edited 5/22/2011
 	 */
 	protected GeoElement[] intersect(Hits hits) {
 		
@@ -1588,6 +1587,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		// when two objects are selected at once then only one single
 		// intersection point should be created	
+		
+		//not working
 		boolean singlePointWanted = selGeos() == 0;
 		
 		// check how many interesting hits we have
@@ -1607,8 +1608,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 
 		}
 		
+		//not working
 		boolean addedCurves = false;
-		
 		
 		// get lines, segments, etc.
 		addSelectedLine(hits, 10, true);
@@ -1618,7 +1619,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		
 		// currently tested only for planes
-		addSelectedCS2D(hits, 10, false);
+		addSelectedCS2D(hits, 10, true);
 		
 
 		
@@ -1658,6 +1659,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			for(int i=0;i<4; i++)
 				ret[i] = (GeoElement) points[i];
 			return ret;
+		} else if (selCS2D()>=2) { // plane-plane
+			GeoCoordSys2D[] planes = getSelectedCS2D();
+			GeoElement[] ret = { null };
+			ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) planes[0], (GeoElement) planes[1]);
+			System.out.println("return=" + ret[0].toString());
 		}
 		
 		return null;
