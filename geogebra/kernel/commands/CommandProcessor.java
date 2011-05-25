@@ -1262,6 +1262,8 @@ class CmdSemicircle extends CommandProcessor {
 
 /**
  * Locus[ <GeoPoint Q>, <GeoPoint P> ]
+ * or
+ * Locus[ <GeoPoint Q>, <GeoNumeric P> ]
  */
 class CmdLocus extends CommandProcessor {
 
@@ -1301,6 +1303,14 @@ class CmdLocus extends CommandProcessor {
 					return ret;
 					
 				}
+			} else if ((ok[0] = (arg[0].isGeoPoint()))
+					&& (ok[1] = (arg[1].isGeoNumeric()))) {
+				GeoPoint p1 = (GeoPoint) arg[0];
+				GeoNumeric p2 = (GeoNumeric) arg[1];
+				
+				GeoElement[] ret = { kernel.Locus(c.getLabel(),
+						p1, p2) };
+				return ret;
 			} else {
 				if (!ok[0])
 					throw argErr(app, "Locus", arg[0]);

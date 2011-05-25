@@ -5441,6 +5441,14 @@ public class Kernel {
 		AlgoLocus algo = new AlgoLocus(cons, label, Q, P);
 		return algo.getLocus();
 	}
+	
+	final public GeoLocus Locus(String label, GeoPoint Q, GeoNumeric P) {
+		if (!P.isSlider() || !P.isDefined() || !P.isAnimatable() || // !P.isSliderable() || !P.isDrawable() ||
+			 Q.getPath() != null ||
+			!P.isParentOf(Q)) return null;
+		AlgoLocusSlider algo = new AlgoLocusSlider(cons, label, Q, P);
+		return algo.getLocus();
+	}
 
 	/** 
 	 * circle with through points A, B, C
