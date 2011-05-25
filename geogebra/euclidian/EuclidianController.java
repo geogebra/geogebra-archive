@@ -4844,6 +4844,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// points needed
 		addSelectedPoint(hits, 2, false);
+		addSelectedNumeric(hits, 1, false);
+
 		if (selPoints() == 2) {
 			// fetch the two selected points
 			GeoPoint[] points = getSelectedPoints();
@@ -4855,6 +4857,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			}
 			GeoElement[] ret = { null };
 			ret[0] = locus;
+			return ret;
+		} else if (selPoints() == 1 && selNumbers() == 1) {
+			GeoPoint[] points = getSelectedPoints();
+			GeoNumeric[] numbers = getSelectedNumbers();
+			GeoLocus locus = kernel.Locus(null, points[0], numbers[0]);
+			GeoElement[] ret = { locus };
 			return ret;
 		}
 		return null;
