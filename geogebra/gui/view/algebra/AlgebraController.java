@@ -66,6 +66,7 @@ public class AlgebraController
 	 */
 
 	private GeoElement lastSelectedGeo = null;
+	private boolean skipSelection;
 
 	public void mouseClicked(java.awt.event.MouseEvent e) {	
 		// right click is consumed in mousePressed, but in GeoGebra 3D,
@@ -107,7 +108,7 @@ public class AlgebraController
 		} 	
 		
 		int mode = ev.getMode();
-		if (mode == EuclidianView.MODE_MOVE ) {
+		if (!skipSelection && mode == EuclidianView.MODE_MOVE ) {
 			// update selection	
 			if (geo == null)
 				app.clearSelectedGeos();
@@ -215,6 +216,35 @@ public class AlgebraController
 					app.getGuiManager().showPopupMenu(app.getSelectedGeos(), view, e.getPoint());
 				}
 			}	
+			
+		// LEFT CLICK	
+		}else{
+			
+			// When a single, new selection is made with no key modifiers
+			// we need to handle selection in mousePressed, not mouseClicked.
+			// By doing this selection early, a DnD drag will come afterwards
+			// and grab the new selection. 
+			// All other selection types must be handled later in mouseClicked. 
+			// In this case a DnD drag starts first and grabs the previously selected 
+			// geos (e.g. cntrl-selected or EV selected) as the user expects.
+			
+			skipSelection = false; // flag to prevent duplicate selection in MouseClicked
+			
+			TreePath tp = view.getPathForLocation(e.getX(), e.getY());
+			GeoElement geo = AlgebraView.getGeoElementForPath(tp);	
+			EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();
+			int mode = ev.getMode();
+
+			if (mode == EuclidianView.MODE_MOVE  && 
+					!Application.isControlDown(e) && !e.isShiftDown() 
+					&& geo != null  && !app.containsSelectedGeo(geo)) 
+			{					
+				app.clearSelectedGeos();
+				app.addSelectedGeo(geo);
+				lastSelectedGeo = geo;
+				skipSelection = true;
+			} 
+					
 		}
 	}
 

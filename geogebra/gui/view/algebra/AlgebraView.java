@@ -122,13 +122,20 @@ public class AlgebraView extends JTree implements View {
 	private DefaultMutableTreeNode selectedNode;
 	
 	private AlgebraHelperBar helperBar;
+	
+	private AlgebraController algebraController;
+	public AlgebraController getAlgebraController() {
+		return algebraController;
+	}
+
+	
 
 	/** Creates new AlgebraView */
 	public AlgebraView(AlgebraController algCtrl) {		
 		app = algCtrl.getApplication();
 		kernel = algCtrl.getKernel();
 		algCtrl.setView(this);	
-		
+		this.algebraController = algCtrl;
 		// this is the default value
 		treeMode = MODE_DEPENDENCY;
 		showAuxiliaryObjects = false;

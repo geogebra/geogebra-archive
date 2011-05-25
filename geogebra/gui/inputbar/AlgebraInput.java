@@ -14,7 +14,7 @@ package geogebra.gui.inputbar;
 
 import geogebra.euclidian.EuclidianView;
 import geogebra.gui.util.GeoGebraIcon;
-import geogebra.gui.view.algebra.AlgebraInputTransferHandler;
+import geogebra.gui.view.algebra.AlgebraInputDropTargetListener;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -29,6 +29,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.SystemColor;
+import java.awt.dnd.DropTarget;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -39,11 +40,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
-import javax.swing.TransferHandler;
 
 /**
  * @author Markus Hohenwarter
@@ -85,9 +84,10 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 		inputField.addKeyListener(this);
 		inputField.addFocusListener(this);
 		
-		// set transfer handler so that drops can be accepted
-		inputField.setTransferHandler(new AlgebraInputTransferHandler(app, inputField));
-		
+		// enable drops
+		inputField.setDragEnabled(true);
+		inputField.setDropTarget(new DropTarget(this,
+				new AlgebraInputDropTargetListener(app, inputField)));
 		
 		updateFonts();
 
