@@ -1682,7 +1682,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCS1D, GeoCoordSys1D.class);
 	}
 	
-	
 	/**
 	 * return number of selected 1D coord sys
 	 * @return number of selected 1D coord sys
@@ -1690,8 +1689,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	final int selCS1D() {
 		return selectedCS1D.size();
 	}	
-	
-	
+
 	/** return selected 1D coord sys
 	 * @return selected 1D coord sys
 	 */
