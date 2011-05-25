@@ -3117,6 +3117,8 @@ public class Application implements KeyEventDispatcher {
 			return;
 
 		getGuiManager().updateMenubarSelection();
+		if(getGuiManager().getAlgebraView() != null)
+					getGuiManager().getAlgebraView().updateSelection();
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
 			if (selectedGeos.size() > 0) {				
@@ -3125,9 +3127,7 @@ public class Application implements KeyEventDispatcher {
 		}
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_MOVE) {			
-				updateStyleBars();
-				if(getGuiManager().getAlgebraView() != null)
-					getGuiManager().getAlgebraView().updateSelection();
+				updateStyleBars();		
 		}
 			
 	}

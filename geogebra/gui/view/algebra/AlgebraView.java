@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.gui.view.algebra;
 
+import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -128,8 +129,22 @@ public class AlgebraView extends JTree implements View {
 		return algebraController;
 	}
 
+	/**
+	 * Flag for LaTeX rendering
+	 */
+	private boolean renderLaTeX = true;
 	
+	public boolean isRenderLaTeX() {
+		return renderLaTeX;
+	}
 
+	public void setRenderLaTeX(boolean renderLaTeX) {
+		this.renderLaTeX = renderLaTeX;
+	}
+
+	
+	
+	
 	/** Creates new AlgebraView */
 	public AlgebraView(AlgebraController algCtrl) {		
 		app = algCtrl.getApplication();
@@ -272,7 +287,7 @@ public class AlgebraView extends JTree implements View {
 	 * @return new renderer of a cell
 	 */
 	protected MyRenderer newMyRenderer(Application app){
-		return new MyRenderer(app);
+		return new MyRenderer(app, this);
 	}
 
 	public void clearSelection() {
@@ -677,6 +692,8 @@ public class AlgebraView extends JTree implements View {
 	 * Reset the algebra view if the mode changed.
 	 */
 	public void setMode(int mode) {
+		// allow drags only in move mode
+		setDragEnabled(mode == EuclidianConstants.MODE_MOVE);
 		reset();
 	}
 	

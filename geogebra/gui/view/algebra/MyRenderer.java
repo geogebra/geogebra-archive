@@ -29,19 +29,16 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 	private static final long serialVersionUID = 1L;				
 			
 	protected Application app;
+	private AlgebraView view;
 	private Kernel kernel;
 	private ImageIcon iconShown, iconHidden;
-	
 
-	
-	private boolean useLaTeX = true;  //<============== flag for testing 
-	
 	private ImageIcon latexIcon;
 	private String latexStr = null;
 	
 	
 	
-	public MyRenderer(Application app) {
+	public MyRenderer(Application app, AlgebraView view) {
 		setOpaque(true);		
 		this.app = app;
 		this.kernel = app.getKernel();
@@ -54,6 +51,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		
 		latexIcon = new ImageIcon();
 		String laTextStr;
+		this.view = view;
 	}
 	
 	public Component getTreeCellRendererComponent(
@@ -108,12 +106,12 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 				setIcon(iconHidden);
 			}
 
-			if(useLaTeX  && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE){
+			if(view.isRenderLaTeX()  && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE){
 				latexStr  = "\\," +  geo.getLabel() + "\\,=\\," +
 					geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);				
 				drawLatexImageIcon(latexIcon, latexStr, app.getPlainFont(), false, Color.black, this.getBackground() );
 				setIcon(joinIcons((ImageIcon) getIcon(),latexIcon));
-				setText("");
+				setText(" ");
 			}
 
 			// sometimes objects do not identify themselves as GeoElement for a second,
