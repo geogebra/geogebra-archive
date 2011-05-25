@@ -52,6 +52,7 @@ import geogebra.kernel.Region;
 import geogebra.kernel.Transformable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -219,7 +220,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected ArrayList selectedRegions = new ArrayList();
 	protected ArrayList selectedPaths = new ArrayList();
-	protected ArrayList selectedConics = new ArrayList();
+	protected ArrayList selectedConics = new ArrayList(); //TODO merge with selectedConicsND
+	protected ArrayList selectedConicsND = new ArrayList<GeoConicND>();
 	protected ArrayList selectedImplicitpoly = new ArrayList();
 
 	protected ArrayList selectedFunctions = new ArrayList();
@@ -592,6 +594,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		clearSelection(selectedLines);
 		clearSelection(selectedSegments);
 		clearSelection(selectedConics);
+		clearSelection(selectedConicsND);
 		clearSelection(selectedVectors);
 		clearSelection(selectedPolygons);
 		clearSelection(selectedGeos);
@@ -6535,6 +6538,18 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return conics;
 	}
 	
+	final protected GeoConicND[] getSelectedConicsND() {
+		GeoConicND[] conics = new GeoConicND[selectedConicsND.size()];
+		int i = 0;
+		Iterator it = selectedConicsND.iterator();
+		while (it.hasNext()) {
+			conics[i] = (GeoConicND) it.next();
+			i++;
+		}
+		clearSelection(selectedConicsND);
+		return conics;
+	}	
+	
 	final protected GeoDirectionND[] getSelectedDirections() {
 		GeoDirectionND[] directions = new GeoDirectionND[selectedDirections.size()];
 		int i = 0;
@@ -6677,6 +6692,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedConics, GeoConic.class);
 	}
 	
+	final protected int addSelectedConicND(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedConicsND, GeoConicND.class);
+	}
+	
 	final protected int addSelectedPath(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPaths, Path.class);
@@ -6754,6 +6774,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	final int selConics() {
 		return selectedConics.size();
+	}
+	
+	protected final int selConicsND() {
+		return selectedConicsND.size();
 	}
 	
 	final int selPaths() {

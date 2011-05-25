@@ -15,6 +15,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -1578,8 +1579,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (hits.isEmpty())
 			return null;		
 		
+		/*
 		if (hits.containsGeoPoint())
 			return null;
+			*/
+		
+		//Application.debug(hits+"\nselGeos="+selGeos()+"\nselectionPreview="+selectionPreview);
 
 		// when two objects are selected at once then only one single
 		// intersection point should be created	
@@ -1588,22 +1593,25 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		// check how many interesting hits we have
 		// For now we store lines and planes.
 		// Points and any repeated elements are eliminated
-		if (!selectionPreview && hits.size() + selGeos() >=2) {
+		if (!selectionPreview /* && hits.size() > 2 - selGeos()*/) {
 			Hits goodHits = new Hits();
 			
-			hits.getHits(GeoCoordSys1D.class, tempArrayList);
+			hits.getHits(GeoLineND.class, tempArrayList);
 			hits.getHits(GeoCoordSys2D.class, tempArrayList2);
+			hits.getHits(GeoConicND.class, tempArrayList3);
 			goodHits.addAll(tempArrayList);
 			goodHits.addAll(tempArrayList2);
+			goodHits.addAll(tempArrayList3);
 			//System.out.println("goodHits~"+goodHits.toString());
 			//System.out.println("selectedGeos~"+selectedGeos.toString());
 			
 			//including all selected Geos, without repetition, without points
-			goodHits.absorb(selectedGeos);
-			goodHits.removeAllPoints();
+			//goodHits.absorb(selectedGeos);
+			//goodHits.removeAllPoints();
 			
 			//System.out.println("newgoodHits~"+goodHits.toString());
 	
+			/*
 			if (goodHits.size() > 2) {			
 				//  choose one geo, and select only this one
 				//GeoElement geo = chooseGeo(goodHits, true);
@@ -1611,37 +1619,59 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				//hits.add(geo);
 				Application.debug("TODO: more than 2 objects to intersect");
 				return null;
-			} else {
+			} else */{
 				hits = goodHits;
 			}
+			
 
 		} else { 
 			return null;
 		}
 		
 		// get lines, segments, etc.
-		addSelectedCS1D(hits, 2, true);		
+		addSelectedLine(hits, 10, true);		
 		
 		// currently tested only for planes
-		addSelectedCS2D(hits, 2, true);
+		addSelectedCS2D(hits, 10, true);
+		
+		// currently tested only for 3D conics
+		addSelectedConicND(hits, 10, true);
 		
 		//singlePointWanted = singlePointWanted && selGeos() == 2;
 		
 		//if (selGeos() > 2)
 		//	return null;
 
-		// two 3D lines		
-		if (selCS1D() == 2) {
-			GeoCoordSys1D[] lines = getSelectedCS1D();
-			GeoElement[] ret = { null };
-			ret[0] = getKernel().getManager3D().Intersect(null, lines[0], lines[1]);
-			return ret;
+		//Application.debug("lines="+selLines()+"\ncs2D="+selCS2D()+"\nconics="+selConicsND());
 			
-		} else if (selCS1D() ==1 && selCS2D()==1 ) {
-			GeoCoordSys1D line = getSelectedCS1D()[0];
-			GeoCoordSys2D plane = getSelectedCS2D()[0];
+		if (selLines() >= 2) {// two lines	
+			GeoLineND[] lines = getSelectedLinesND();
 			GeoElement[] ret = { null };
-			ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) plane);
+			ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) lines[0], (GeoElement) lines[1]);
+			return ret;
+
+		} else if (selLines() ==1){
+			if (selConicsND()>=1 ) {// line-conic
+				GeoLineND line = getSelectedLinesND()[0];
+				GeoConicND conic = getSelectedConicsND()[0];
+				GeoElement[] ret = new GeoElement[2];
+				GeoPointND[] points = getKernel().getManager3D().IntersectLineConic(null, line, conic);
+				for(int i=0;i<2; i++)
+					ret[i] = (GeoElement) points[i];
+				return ret;
+			}else if (selCS2D()>=1 ) {// line-plane
+				GeoLineND line = getSelectedLinesND()[0];
+				GeoCoordSys2D plane = getSelectedCS2D()[0];
+				GeoElement[] ret = { null };
+				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) plane);
+				return ret;
+			}
+		} else if (selConicsND()>=2 ) {// conic-conic
+			GeoConicND[] conics = getSelectedConicsND();
+			GeoElement[] ret = new GeoElement[4];
+			GeoPointND[] points = getKernel().getManager3D().IntersectConics(null, conics[0], conics[1]);
+			for(int i=0;i<4; i++)
+				ret[i] = (GeoElement) points[i];
 			return ret;
 		}
 		
@@ -1904,6 +1934,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			switch(mode){
 			//modes where point can't be created on path/region
 			case EuclidianView.MODE_MOVE:
+				
+			case EuclidianView.MODE_INTERSECT:
 				
 			case EuclidianView.MODE_PARALLEL:
 			case EuclidianView.MODE_ORTHOGONAL:
