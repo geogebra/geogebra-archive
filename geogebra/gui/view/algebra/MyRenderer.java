@@ -34,7 +34,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 	
 
 	
-	private boolean useLaTeX = false;  //<============== flag for testing 
+	private boolean useLaTeX = true;  //<============== flag for testing 
 	
 	private ImageIcon latexIcon;
 	private String latexStr = null;
