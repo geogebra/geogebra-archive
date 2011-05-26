@@ -261,6 +261,14 @@ Sign(_var, _tar, _dir, _exp, _n)
 ] )
 <-- Lim(var, tar, dir, x*(1+y/x));
 
+603 # Lim(_var, _tar, _dir, _x + _y)_
+(
+    Lim(var, tar, dir, x) = Infinity And Lim(var, tar, dir, y) = Undefined And LimInf(var, tar, dir, y) != -Infinity
+    Or
+    Lim(var, tar, dir, x) = Undefined And LimInf(var, tar, dir, x) != -Infinity And Lim(var, tar, dir, y) = Infinity
+
+) <-- Infinity;
+
 
 610 # Lim(_var, _tar, _dir, _x + _y)
 <-- Lim(var, tar, dir, x)+Lim(var, tar, dir, y);

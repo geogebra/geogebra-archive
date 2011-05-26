@@ -1552,6 +1552,10 @@ TeXFormMaxPrec() := 60000;
 
 120 # TeXForm(_x ^ _y, _p) <-- TeXFormBracketIf(p<=PrecedenceGet("^"), ConcatStrings(TeXForm(x, PrecedenceGet("^")), " ^{", TeXForm(y, TeXFormMaxPrec()), "}" ) );
 
+100 # TeXForm(if(_pred)_body, _p) <-- "\\textrm{if }(":TeXForm(pred,60000):") ":TeXForm(body,60000);
+100 # TeXForm(_left else _right, _p) <-- TeXForm(left,60000):"\\textrm{ else }":TeXForm(right,60000);
+
+
 
 
 

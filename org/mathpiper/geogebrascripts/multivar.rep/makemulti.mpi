@@ -85,6 +85,7 @@ MultiNomial(_vars,_x) - MultiNomial(_vars,_y) <--
         MultiNomialAdd(MultiNomial(vars,x), MultiNomialNegate(MultiNomial(vars,y)));
                       - MultiNomial(_vars,_y) <--
         MultiNomialNegate(MultiNomial(vars,y));
+MultiNomial(_vars,_x) / MultiNomial(_vars,_x) <-- MakeMultiNomial(1, vars);
 
 
 LocalSymbols(x,n,vars)  [

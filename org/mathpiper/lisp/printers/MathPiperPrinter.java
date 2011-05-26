@@ -161,21 +161,17 @@ public class MathPiperPrinter extends LispPrinter {
                     }//end if.
                 }
 
-                boolean addSpaceAroundInfixOperator = false; //Todo:tk:perhaps a more general way should be found to place a space after a prefix operator.
-                if(functionOrOperatorName.equals("And"))
-                {
-                    addSpaceAroundInfixOperator = true;
-                }
+                boolean addSpaceAroundInfixOperator = 
+                    left != null && right != null && // is this really an infix operator?
+                    functionOrOperatorName.length() > 1;// no spaces around +,-,*,/ etc
 
-                if (addSpaceAroundInfixOperator == true) {
-                    WriteToken(aOutput, " ");
-                }//end if.
+                if (addSpaceAroundInfixOperator)
+                    WriteToken(aOutput, "  ");
 
                 WriteToken(aOutput, functionOrOperatorName);
 
-                if (addSpaceAroundInfixOperator == true) {
-                    WriteToken(aOutput, " ");
-                }//end if.
+                if (addSpaceAroundInfixOperator)
+                    WriteToken(aOutput, "  ");
 
                 if (right != null) {
 

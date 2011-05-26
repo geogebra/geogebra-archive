@@ -22,7 +22,7 @@ public class GeoGebraCAS {
 	/**
 	 * Timeout for CAS in seconds.
 	 */
-	private static int timeout;
+	private static int timeout = 5;
 
 	private StringBuilder sbPolyCoeffs;
 	private Application app;
@@ -35,8 +35,6 @@ public class GeoGebraCAS {
 		casParser = new CASparser(kernel);
 		
 		//app.setDefaultCAS(Application.CAS_MAXIMA);
-		
-		timeout = 5;
 		
 		setCurrentCAS(Kernel.DEFAULT_CAS);
 	}
