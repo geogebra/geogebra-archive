@@ -3573,6 +3573,9 @@ public class Application implements KeyEventDispatcher {
 			getGuiManager().getSpreadsheetViewXML(sb);
 		}
 		
+		// save AlgebraView settings
+		getGuiManager().getAlgebraViewXML(sb);
+		
 		// coord style, decimal places settings etc
 		kernel.getKernelXML(sb);
 		getScriptingXML(sb);

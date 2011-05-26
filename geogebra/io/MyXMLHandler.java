@@ -21,6 +21,7 @@ package geogebra.io;
 import geogebra.GeoGebra;
 import geogebra.euclidian.EuclidianView;
 import geogebra.euclidian.EuclidianViewInterface;
+import geogebra.gui.view.algebra.AlgebraView;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.gui.view.spreadsheet.TraceSettings;
 import geogebra.io.layout.DockPanelXml;
@@ -94,6 +95,7 @@ public class MyXMLHandler implements DocHandler {
 	/** currently parsing tags for Euclidian3D view */
 	protected static final int MODE_EUCLIDIAN_VIEW3D = 101; //only for 3D
 	private static final int MODE_SPREADSHEET_VIEW = 150;
+	private static final int MODE_ALGEBRA_VIEW = 151;
 	private static final int MODE_CAS_VIEW = 160;
 	private static final int MODE_CAS_SESSION = 161;
 	private static final int MODE_CAS_CELL_PAIR = 162;
@@ -318,6 +320,10 @@ public class MyXMLHandler implements DocHandler {
 			startSpreadsheetViewElement(eName, attrs);
 			break;
 
+		case MODE_ALGEBRA_VIEW:
+			startAlgebraViewElement(eName, attrs);
+			break;
+
 //		case MODE_CAS_VIEW:
 //			startCASViewElement(eName, attrs);
 //			break;
@@ -430,6 +436,11 @@ public class MyXMLHandler implements DocHandler {
 			break;
 		case MODE_EUCLIDIAN_VIEW3D:
 			if (eName.equals("euclidianView3D"))
+				mode = MODE_GEOGEBRA;
+			break;
+
+		case MODE_ALGEBRA_VIEW:
+			if (eName.equals("algebraView"))
 				mode = MODE_GEOGEBRA;
 			break;
 
@@ -548,6 +559,8 @@ public class MyXMLHandler implements DocHandler {
 			mode = MODE_EUCLIDIAN_VIEW;
 		}else if (eName.equals("euclidianView3D")) {
 			mode = MODE_EUCLIDIAN_VIEW3D;
+		}else if (eName.equals("algebraView")) {
+			mode = MODE_ALGEBRA_VIEW;
 		} else if (eName.equals("kernel")) {
 				mode = MODE_KERNEL;
 		} else if (eName.equals("spreadsheetView")) {
@@ -732,6 +745,44 @@ public class MyXMLHandler implements DocHandler {
 
 		if (!ok)
 			System.err.println("error in <spreadsheetView>: " + eName);
+	}
+
+	// ====================================
+	// <AlgebraView>
+	// ====================================
+	private void startAlgebraViewElement(String eName, LinkedHashMap<String, String> attrs) {
+		boolean ok = true;
+
+		switch (eName.charAt(0)) {
+		
+		case 'u':
+		if (eName.equals("useLaTeX")) {
+			ok = handleAlgebraLaTeX(app.getGuiManager().getAlgebraView(), attrs);
+			break;
+		}
+		default:
+			System.err.println("unknown tag in <algebraView>: " + eName);
+		}
+
+		if (!ok)
+			System.err.println("error in <algebraView>: " + eName);
+	}
+
+	private boolean handleAlgebraLaTeX(AlgebraView av,
+			LinkedHashMap<String, String> attrs) {
+			try {
+				// axes attribute was removed with V3.0, see handleAxis()
+				// this code is for downward compatibility
+				String b = (String) attrs.get("value");
+				if (b != null) {
+					boolean useLaTeX = parseBoolean(b);
+					av.setRenderLaTeX(useLaTeX);
+				}
+				
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
 	}
 
 	// ====================================

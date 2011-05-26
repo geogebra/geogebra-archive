@@ -375,6 +375,11 @@ public class GuiManager {
 			spreadsheetView.getXML(sb);
 	}
 	
+	public void getAlgebraViewXML(StringBuilder sb) {
+		if (algebraView != null)
+			algebraView.getXML(sb);
+	}
+	
 	public void getConsProtocolXML(StringBuilder sb) {
 	
 		if (constProtocol != null)
