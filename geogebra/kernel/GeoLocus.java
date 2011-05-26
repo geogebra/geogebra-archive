@@ -276,8 +276,12 @@ public class GeoLocus extends GeoElement implements Path, Traceable {
 	public boolean trace;
 
 	public void pathChanged(GeoPointND PI) {
+
 		// find closest point on changed path to P
-		//pointChanged(PI);
+		if (getParentAlgorithm() instanceof AlgoLocusSlider) {
+			pointChanged(PI);
+			return;
+		}
 		
 		// new method
 		// keep point on same segment, the same proportion along it
