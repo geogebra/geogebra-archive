@@ -1166,6 +1166,14 @@ public class GgbAPI {
 		app.getScriptManager().unregisterObjectUpdateListener(objName);
 	}
 
+	public boolean isMoveable(String objName) {
+		GeoElement geo = kernel.lookupLabel(objName);
+		if (geo == null) 
+			return false;
+		else
+			return geo.isMoveable();
+	}
+
 
 		
 	

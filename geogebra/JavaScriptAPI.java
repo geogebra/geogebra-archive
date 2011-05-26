@@ -292,6 +292,7 @@ public interface JavaScriptAPI {
 	 */
 	public boolean isIndependent(String objName);
 	
+	public boolean isMoveable(String objName);
 	/**
 	 * Returns the value of the object with the given name as a string.
 	 */

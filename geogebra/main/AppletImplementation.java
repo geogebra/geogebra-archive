@@ -1366,4 +1366,9 @@ public class AppletImplementation implements AppletImplementationInterface {
 	}
 
 
+	public boolean isMoveable(String objName) {
+		return ggbApi.isMoveable(objName);
+	}
+
+
 }
