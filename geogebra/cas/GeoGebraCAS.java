@@ -301,7 +301,7 @@ public class GeoGebraCAS {
 		// render in latex if necessary
 		// eg if contains ^2 or \frac
 		if (Application.isLaTeXneeded(latex)) return latex;
-		else return null;
+		else return ggbExp.toString();
 					
 	}
 	
