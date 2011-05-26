@@ -1589,7 +1589,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		// intersection point should be created	
 		
 		//not working
-		boolean singlePointWanted = selGeos() == 0;
+		//boolean singlePointWanted = selGeos() == 0;
 		
 		// check how many interesting hits we have
 		// For now we store lines and planes.
@@ -1609,7 +1609,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		}
 		
 		//not working
-		boolean addedCurves = false;
+		//boolean addedCurves = false;
 		
 		// get lines, segments, etc.
 		addSelectedLine(hits, 10, true);
@@ -1659,12 +1659,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			for(int i=0;i<4; i++)
 				ret[i] = (GeoElement) points[i];
 			return ret;
-		} else if (selCS2D()>=2) { // plane-plane
+		} /*else if (selCS2D()>=2) { // plane-plane
 			GeoCoordSys2D[] planes = getSelectedCS2D();
 			GeoElement[] ret = { null };
 			ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) planes[0], (GeoElement) planes[1]);
 			System.out.println("return=" + ret[0].toString());
-		}
+		}*/
 		
 		return null;
 	}
