@@ -3926,6 +3926,9 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 			sb.append(gridDistances[0]);
 			sb.append("\" distY=\"");
 			sb.append(gridDistances[1]);
+			sb.append("\" distTheta=\"");
+			//polar angle step added in v4.0
+			sb.append(gridDistances[2]); 
 			sb.append("\"/>\n");
 		}
 

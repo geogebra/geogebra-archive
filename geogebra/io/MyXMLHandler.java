@@ -1058,9 +1058,13 @@ public class MyXMLHandler implements DocHandler {
 			dists[0] = Double.parseDouble((String) attrs.get("distX"));
 			dists[1] = Double.parseDouble((String) attrs.get("distY"));
 			
-			//G.Sturr
-			//TODO: this is a temporary fix until Polar grid xml is done
-			dists[2] = Double.parseDouble((String) attrs.get("distY"));
+			// in v4.0 the polar grid adds an angle step element to gridDistances 
+			String theta = (String) attrs.get("distTheta");
+			if(theta !=null)
+				dists[2] = Double.parseDouble((String) attrs.get("distTheta"));
+			else
+				dists[2] = Math.PI/6; //default
+			
 			ev.setGridDistances(dists);
 
 			return true;

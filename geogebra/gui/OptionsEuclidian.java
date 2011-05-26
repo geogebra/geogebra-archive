@@ -374,7 +374,7 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 		tickPanel.add(gridLabel2);
 		tickPanel.add(ncbGridTickY);
 		
-		gridLabel3 = new JLabel("\u0398" + ":");  // Theta
+		gridLabel3 = new JLabel("\u03B8" + ":");  // Theta
 		gridLabel3.setLabelFor(cbGridTickAngle);
 		tickPanel.add(gridLabel3);
 		tickPanel.add(cbGridTickAngle);	
