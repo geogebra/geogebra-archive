@@ -2361,6 +2361,10 @@ public class GuiManager {
 			if(!app.isIniting()) {
 				updateFrameSize(); // checks internally if frame is available
 			}
+		} else if (isMacroFile && success) {
+			setToolBarDefinition(Toolbar.getAllTools(app));
+			app.updateToolBar();
+			app.updateContentPane();
 		}
 		
 		// force JavaScript ggbOnInit(); to be called
