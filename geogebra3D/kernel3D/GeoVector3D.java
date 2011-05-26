@@ -3,6 +3,7 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordMatrix4x4;
 import geogebra.Matrix.Coords;
+import geogebra.kernel.AlgoDependentVector;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -275,6 +276,52 @@ implements GeoVectorND, Locateable, Vector3DValue{
 		
 		
 		
+		private StringBuilder sb;
+		
+	    public String toLaTeXString(boolean symbolic) {
+	    	if (sb == null) sb = new StringBuilder();
+	    	else sb.setLength(0);
+	    	
+	    	
+	    	String[] inputs;
+	    	if (symbolic && getParentAlgorithm() instanceof AlgoDependentVector) {
+	    		AlgoDependentVector algo = (AlgoDependentVector)getParentAlgorithm();
+	    		String symbolicStr = algo.toString();
+	    		inputs = symbolicStr.substring(1, symbolicStr.length() - 1).split(",");
+	    	} else {
+	    		inputs = new String[3];
+	    		inputs[0] = kernel.format(getX());
+	    		inputs[1] = kernel.format(getY());
+	    		inputs[2] = kernel.format(getZ());
+	    	}
+	    	
+	    	boolean alignOnDecimalPoint = true;
+			for (int i = 0 ; i < inputs.length ; i++) {
+		    	if (inputs[i].indexOf('.') == -1) {
+		    		alignOnDecimalPoint = false;
+		    		continue;
+		    	}
+			}
+			
+			if (alignOnDecimalPoint) {
+				sb.append("\\left( \\begin{tabular}{r@{.}l}");
+				for (int i = 0 ; i < inputs.length ; i++) {
+					inputs[i] = inputs[i].replace('.', '&');
+				}
+			} else {			
+				sb.append("\\left( \\begin{tabular}{r}");
+			}
+			
+			
+			for (int i = 0 ; i < inputs.length ; i++) {
+		    	sb.append(inputs[i]);
+		    	sb.append(" \\\\ ");    			
+			}
+	    	
+	    	sb.append("\\end{tabular} \\right)"); 
+	    	return sb.toString();
+	    }     
+	    
 		
 	    /**
 	     * returns all class-specific xml tags for saveXML
