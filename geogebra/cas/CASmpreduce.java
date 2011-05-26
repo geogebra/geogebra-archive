@@ -175,10 +175,11 @@ public class CASmpreduce extends CASgeneric {
 	private synchronized void initMyMPReduceFunctions() {
 		try {
 			mpreduce.evaluate("off nat;");
-			mpreduce.evaluate("off arbvars");
-			mpreduce.evaluate("off solvesingular");
-			mpreduce.evaluate("load\\_package(\"rsolve\")");
-			mpreduce.evaluate("load\\_package(\"numeric\")");
+			
+			// ARBVARS introduces arbitrary new variables when solving singular systems of equations
+			mpreduce.evaluate("off arbvars;");
+			mpreduce.evaluate("load\\_package(\"rsolve\");");
+			mpreduce.evaluate("load\\_package(\"numeric\");");
 			//the first command sent to mpreduce produces an error
 			evaluateGeoGebraCAS("1+2");
 		} catch (Throwable e) {
