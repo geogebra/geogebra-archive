@@ -442,7 +442,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 			}
 		}
 		
-		return dict.lookup(s);
+		String ret = dict.lookup(s);
+		
+		// make sure when we type eg CA we get CAuchy not Cauchy, in case we want CA=33
+		if (!ret.startsWith(s)) {
+			ret = s + ret.substring(s.length());
+		}
+		
+		return ret;
 	}
 	
 	StringBuilder koreanSB;
@@ -628,6 +635,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// build new autocompletion text
 		StringBuilder sb = new StringBuilder();
 		sb.append(cmd);
+		Application.debug(cmd);
 		sb.append("[]"); // add brackets
 		cmd = sb.toString();            
 
