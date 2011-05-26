@@ -106,7 +106,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 		} else {
 			toggleTypeTreeMode.setToolTipText(app.getPlainTooltip("TreeModeType"));
 		}
-		toggleLaTeX.setToolTipText(app.getPlainTooltip("LaTeX"));
+		toggleLaTeX.setToolTipText(app.getPlainTooltip("ToggleFormulaView"));
 	}
 
 	/**
