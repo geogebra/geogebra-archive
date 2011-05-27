@@ -395,7 +395,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 			includes="geogebra/export/**, 
 					org/freehep/**, 
 					meta-inf/services/**"
-			excludes="**/*.java" 
+			excludes="**/*.java,
+			**/*.html" 
 		/>
 	</target>
 
@@ -439,6 +440,8 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 					edu/uci/**,
 					org/apache/**"
 			excludes="**/*.java,
+			**/*.html,
+			**/*.txt,
 			org/apache/log4j/**" 
 		/>
 	</target>
