@@ -1220,6 +1220,7 @@ public class Application implements KeyEventDispatcher {
 
 	public void refreshViews() {
 		euclidianView.updateBackground();
+		if (getGuiManager().hasEuclidianView2()) getGuiManager().getEuclidianView2().updateBackground();
 		kernel.notifyRepaint();
 	}
 
