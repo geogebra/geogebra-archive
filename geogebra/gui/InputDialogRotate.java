@@ -70,8 +70,15 @@ public class InputDialogRotate extends AngleInputDialog implements KeyListener {
 		Construction cons = kernel.getConstruction();
 		boolean oldVal = cons.isSuppressLabelsActive();
 		cons.setSuppressLabelCreation(true);
-
-		boolean success = inputHandler.processInput(inputPanel.getText());
+		
+		inputText = inputPanel.getText();
+		
+		// negative orientation ?
+		if (rbClockWise.isSelected()) {
+			inputText = "-(" + inputText + ")";
+		}
+		
+		boolean success = inputHandler.processInput(inputText);
 
 		cons.setSuppressLabelCreation(oldVal);
 		
