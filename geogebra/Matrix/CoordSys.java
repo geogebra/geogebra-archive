@@ -29,6 +29,7 @@ public class CoordSys {
 	/** dimension of the space (2 for 2D, 3 for 3D, ...) */
 	private int spaceDimension = 3;
 	
+	
 
 	
 	/** create a coord sys  

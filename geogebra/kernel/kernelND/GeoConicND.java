@@ -152,12 +152,10 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 	 abstract public Coords getEigenvec3D(int i);
 
 	 /**
-	  * If 2D conic, return null (xOy plane)
+	  * If 2D conic, return identity (xOy plane)
 	  * @return coord sys where the conic lies
 	  */
-	 public CoordSys getCoordSys(){
-		 return null;
-	 }
+	 abstract public CoordSys getCoordSys();
 	 
 	 /**
 	  * 

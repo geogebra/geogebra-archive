@@ -20,6 +20,7 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 
+import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.roots.RealRootFunction;
@@ -436,6 +437,12 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 		 return ':';
 	 }
 
+	 
+	 private CoordSys coordSys = CoordSys.Identity3D();
+	 
+	 public CoordSys getCoordSys(){
+		 return coordSys;
+	 }
 
 
 
