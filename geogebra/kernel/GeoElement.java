@@ -4847,7 +4847,10 @@ public abstract class GeoElement
 				sb.append("& : ");
 				sb.append(geoFun.getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
 				sb.append("\\\\ ");
-				sb.append(geoFun.getElseFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+				if(geoFun.getElseFunction()!=null)
+					sb.append(geoFun.getElseFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+				else
+					sb.append("?");
 				sb.append("& : \\text{");
 				sb.append(app.getPlain("otherwise"));
 				sb.append("} \\end{array} \\right. ");
