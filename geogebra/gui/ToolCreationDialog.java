@@ -397,7 +397,7 @@ implements GeoElementSelectionListener {
 			tabbedPane.addTab(app.getMenu("InputObjects"), null, inputPanel, null);															
 			
 			// name & icon
-			namePanel = new ToolNameIconPanel(app);
+			namePanel = new ToolNameIconPanel(app, false);
 			tabbedPane.addTab(app.getMenu("NameIcon"), null, namePanel, null);									
 			
 			setResizable(false);			

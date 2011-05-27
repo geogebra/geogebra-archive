@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.gui;
 
+import geogebra.gui.toolbar.Toolbar;
 import geogebra.gui.virtualkeyboard.MyTextField;
 import geogebra.kernel.Macro;
 import geogebra.main.Application;
@@ -58,6 +59,7 @@ public class ToolNameIconPanel extends JPanel {
 	private JButton btIconFile;
 	
 	private Application app;
+	private boolean editHappens = false;
 
 	// tool manager updating
 	private ToolManagerDialog managerDialog;
@@ -67,9 +69,9 @@ public class ToolNameIconPanel extends JPanel {
 	 * Creates new ToolNameIconPanel in a Tool Creation Dialog
 	 * @param app Application to which the Tool Creation Dialog belongs
 	 */
-	public ToolNameIconPanel(final Application app) {
+	public ToolNameIconPanel(final Application app, boolean edithappens) {
 		this.app = app;
-		
+		this.editHappens = edithappens;
 		GridBagLayout namePanelLayout = new GridBagLayout();
 		namePanelLayout.rowWeights = new double[] {0.1, 0.1, 0.1, 0.1, 0.0};
 		namePanelLayout.rowHeights = new int[] {7, 7, 7, 20, 7};
@@ -156,13 +158,21 @@ public class ToolNameIconPanel extends JPanel {
 		cbShowInToolBar = new JCheckBox();
 		add(cbShowInToolBar, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
 		cbShowInToolBar.setText(app.getMenu("ShowInToolBar"));
-		cbShowInToolBar.setSelected(true);		
+		cbShowInToolBar.setSelected(true);
 		ActionListener ac2 = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				boolean active = cbShowInToolBar.isSelected();
 				labelIcon.setEnabled(active);
 				btIconFile.setEnabled(active);
 				updateMacro();
+				
+				// perhaps the method below is not the fastest
+				if (editHappens) {
+					app.getGuiManager().setToolBarDefinition(Toolbar.getAllTools(app));
+					app.updateToolBar();
+					app.updateMenubar();
+					// app.updateContentPane();// this may not be needed
+				}
 			}				
 		};
 		cbShowInToolBar.addActionListener(ac2);				

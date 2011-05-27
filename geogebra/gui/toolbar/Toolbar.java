@@ -342,8 +342,20 @@ public class Toolbar extends JToolBar {
     	
         // macros       
         Kernel kernel = app.getKernel();
-        int macroNumber = kernel.getMacroNumber();        
-        if (macroNumber > 0) {    
+        int macroNumber = kernel.getMacroNumber();
+
+        // check if at least one macro is shown
+        // to avoid strange GUI
+        boolean at_least_one_shown = false;
+    	for (int i = 0; i < macroNumber; i++) {
+    		Macro macro = kernel.getMacro(i);
+    		if (macro.isShowInToolBar()) {
+    			at_least_one_shown = true;
+    			break;
+    		}
+    	}
+
+        if (macroNumber > 0 && at_least_one_shown) {
         	sb.append(" || ");
         	int count = 0;
         	for (int i = 0; i < macroNumber; i++) {

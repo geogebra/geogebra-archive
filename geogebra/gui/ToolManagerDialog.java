@@ -223,7 +223,7 @@ public class ToolManagerDialog extends javax.swing.JDialog {
 			btSave.setText(app.getMenu("SaveAs") + " ...");
 								
 			// name & icon			
-			final ToolNameIconPanel namePanel = new ToolNameIconPanel(app);		
+			final ToolNameIconPanel namePanel = new ToolNameIconPanel(app, true);		
 			namePanel.setBorder(BorderFactory.createTitledBorder(app.getMenu("NameIcon")));			
 			panel.add(namePanel, BorderLayout.CENTER);
 			
