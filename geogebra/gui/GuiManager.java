@@ -611,6 +611,8 @@ public class GuiManager {
 				app.getEuclidianView().requestFocus();
 			}
 		}
+		toolbarPanel.validate();
+		toolbarPanel.updateHelpText();
 	}
 	
 	public boolean showView(int viewId) {
