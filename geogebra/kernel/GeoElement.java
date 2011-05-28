@@ -4850,7 +4850,7 @@ public abstract class GeoElement
 				if(geoFun.getElseFunction()!=null)
 					sb.append(geoFun.getElseFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
 				else
-					sb.append("?");
+					sb.append(app.getPlain("undefined"));
 				sb.append("& : \\text{");
 				sb.append(app.getPlain("otherwise"));
 				sb.append("} \\end{array} \\right. ");
