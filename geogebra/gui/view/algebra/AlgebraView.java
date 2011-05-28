@@ -140,6 +140,11 @@ public class AlgebraView extends JTree implements View {
 
 	public void setRenderLaTeX(boolean renderLaTeX) {
 		this.renderLaTeX = renderLaTeX;
+		// clear and load the tree to reset heights and widths  
+		clearView();
+		initModel();	
+		kernel.notifyAddAll(this);
+		setLabels();
 	}
 
 	

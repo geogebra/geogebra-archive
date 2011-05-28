@@ -36,7 +36,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 	private ImageIcon latexIcon;
 	private String latexStr = null;
 	
-	
+	private Font latexFont;
 	
 	public MyRenderer(Application app, AlgebraView view) {
 		setOpaque(true);		
@@ -52,6 +52,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		latexIcon = new ImageIcon();
 		String laTextStr;
 		this.view = view;
+		setFont(app.getPlainFont());
 	}
 	
 	public Component getTreeCellRendererComponent(
@@ -106,10 +107,12 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 				setIcon(iconHidden);
 			}
 
+			// if enabled, render with LaTeX
 			if(view.isRenderLaTeX()  && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE){
 				latexStr  = "\\," +  geo.getLabel() + "\\,=\\," +
-					geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);				
-				drawLatexImageIcon(latexIcon, latexStr, app.getPlainFont(), false, Color.black, this.getBackground() );
+					geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);	
+				
+				drawLatexImageIcon(latexIcon, latexStr, latexFont, false, getForeground(), this.getBackground() );
 				setIcon(joinIcons((ImageIcon) getIcon(),latexIcon));
 				setText(" ");
 			}
@@ -202,7 +205,14 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		
 	}
 	
-	public ImageIcon joinIcons(ImageIcon leftIcon, ImageIcon rightIcon){
+	/**
+	 * Creates a new ImageIcon by joining them together (leftIcon to rightIcon).
+	 * 
+	 * @param leftIcon
+	 * @param rightIcon
+	 * @return
+	 */
+	private ImageIcon joinIcons(ImageIcon leftIcon, ImageIcon rightIcon){
 		
 		int w1 = leftIcon.getIconWidth();
 		int w2 = rightIcon.getIconWidth();
@@ -219,6 +229,19 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		ImageIcon ic = new ImageIcon(image);
 		return ic;
 	}
+	
+	/**
+	 * Overrides setFont to also set the LaTeX font.
+	 */
+	@Override
+	public void setFont(Font font){
+		super.setFont(font);
+		latexFont = font;
+		// use a slightly smaller font for LaTeX
+		latexFont = new Font(font.getName(),font.getStyle(),font.getSize()-1);
+	}
+	
+	
 	
 	
 } // MyRenderer

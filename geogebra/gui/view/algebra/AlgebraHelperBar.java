@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JToolBar;
+import javax.swing.tree.TreeModel;
 
 /**
  * Helper tool bar for the algebra view which displays some useful
@@ -121,11 +122,10 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 			algebraView.setTreeMode((algebraView.getTreeMode() != AlgebraView.MODE_TYPE) ? AlgebraView.MODE_TYPE : AlgebraView.MODE_DEPENDENCY);
 			toggleTypeTreeMode.setSelected(algebraView.getTreeMode() == AlgebraView.MODE_TYPE);
 			updateLabels();
-			
+
 		} else if(e.getSource() == toggleLaTeX) {
 			algebraView.setRenderLaTeX(!algebraView.isRenderLaTeX());
 			toggleLaTeX.setSelected(algebraView.isRenderLaTeX());
-			algebraView.repaint();
 		}
 	}
 }
