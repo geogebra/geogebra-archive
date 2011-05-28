@@ -4842,7 +4842,7 @@ public abstract class GeoElement
 			} else if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
 
 				StringBuilder sb = new StringBuilder();
-				sb.append("f(x) = \\left\\{ \\begin{array}{ll} ");
+				sb.append("\\left\\{ \\begin{array}{ll} ");
 				sb.append(geoFun.getIfFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
 				sb.append("& : ");
 				sb.append(geoFun.getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
