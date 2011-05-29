@@ -95,11 +95,14 @@ public class CASmaxima extends CASgeneric {
 		// EVALUATE input in Maxima 
 		String result = evaluateMaxima(MaximaString);
 		// convert Maxima result back into GeoGebra syntax
-		String ggbString = toGeoGebraString(result);
-		
+
 		// TODO: remove
 		System.out.println("eval with Maxima: " + MaximaString);
 		System.out.println("   result: " + result);
+
+		String ggbString = toGeoGebraString(result);
+		
+		// TODO: remove
 		System.out.println("   ggbString: " + ggbString);
 		
 		return ggbString;
