@@ -73,12 +73,15 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JApplet;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -137,6 +140,22 @@ public class GuiManager {
 
 	private FunctionInspector functionInspector;
 	private TextInputDialog textInputDialog;
+	
+	
+	public static DataFlavor urlFlavor, uriListFlavor;
+	static {
+		try { 
+			urlFlavor = 
+				new DataFlavor ("application/x-java-url; class=java.net.URL"); 
+			uriListFlavor = 
+				new DataFlavor ("text/uri-list; class=java.lang.String");
+		} 
+		catch (ClassNotFoundException cnfe) { 
+			cnfe.printStackTrace( );
+		}
+	}
+
+
 	
 	// Actions
 	private AbstractAction showAxesAction, showGridAction, undoAction,
@@ -1191,86 +1210,62 @@ public class GuiManager {
 		//}
 		return true;//button != null;
 	}
-	private static DataFlavor uriListFlavor = null;
-	public static DataFlavor getUriListFlavor(){
-		if(uriListFlavor != null) return uriListFlavor; 
-		try{
-		 uriListFlavor = new DataFlavor ("text/uri-list; class=java.lang.String");
-		}catch(ClassNotFoundException e){
-			Application.debug("URI list flavor not supported");
-		}
-		return uriListFlavor;
-	}
+	
+	
+	
+	
 	/**
-	 * Creates a new GeoImage, using an image provided by either 
-	 * a Transferable object or the clipboard contents, then 
-	 * places it at the given location (real world coords).
+	 * Creates a new GeoImage, using an image provided by either a Transferable
+	 * object or the clipboard contents, then places it at the given location
+	 * (real world coords). 
+	 * If the transfer content is a list of images, then
+	 * multiple GeoImages will be created.
 	 * 
 	 * @return whether a new image was created or not
 	 */
 	public boolean loadImage(GeoPoint loc, Transferable transfer, boolean fromClipboard) {
 		app.setWaitCursor();
 		
-		String fileName = null;		
-		if (transfer != null && transfer.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
-			java.util.List list = null;
-			try {
-				list = (java.util.List) transfer.getTransferData(DataFlavor.javaFileListFlavor);
-			} catch (UnsupportedFlavorException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			fileName = getImageFromFile((File) list.get(0));
-		}
-		else if (transfer != null && transfer.isDataFlavorSupported(getUriListFlavor())){
-			try{
-			String uris = (String)	transfer.getTransferData (uriListFlavor);
-			StringTokenizer st = new StringTokenizer (uris, "\r\n"); 
-			ArrayList<File> al = new ArrayList<File>();
-			while (st.hasMoreTokens ( )) {
-				String uriString = st.nextToken( );		
-				URI uri = new URI(uriString);
-				System.out.println (uri);
-				al.add(new File(uri));
-			}
-			fileName = getImageFromFile(al.get(0));
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
-		}
-			
-		else if (fromClipboard || (transfer != null))
+		String[] fileName = null;	
+				
+		if (fromClipboard)
+			fileName = getImageFromTransferable(null);
+		else if (transfer != null)
 			fileName = getImageFromTransferable(transfer);
-		else
-			fileName = getImageFromFile();
+		else{
+			fileName = new String[1];	
+			fileName[0] = getImageFromFile();  // opens file chooser dialog
+		}
 
 		boolean ret;
-		if (fileName == null) {
+		if (fileName.length == 0) {
 			ret = false;
 		}
 		else {
-			// create GeoImage object for this fileName
-			GeoImage geoImage = new GeoImage(app.getKernel().getConstruction());
-			geoImage.setImageFileName(fileName);
-			geoImage.setCorner(loc, 0);
-			geoImage.setLabel(null);
-	
-			GeoImage.updateInstances();
-			ret = true;
+			// create GeoImage object(s) for this fileName
+			GeoImage geoImage = null;
+			for(int i = 0; i < fileName.length; i++){
+				geoImage = new GeoImage(app.getKernel().getConstruction());
+				geoImage.setImageFileName(fileName[i]);
+				geoImage.setCorner(loc, 0);
+				geoImage.setLabel(null);
 
-			// make sure only this image will be selected
+				GeoImage.updateInstances();	
+			}
+			// make sure only the last image will be selected
 			GeoElement[] geos = { geoImage };
 			app.getActiveEuclidianView().getEuclidianController().clearSelections();
 			app.getActiveEuclidianView().getEuclidianController().selectGeos(geos);
+			ret = true;
 		}
-		
-		app.setDefaultCursor();
-		return ret;
+
+	
+	app.setDefaultCursor();
+	return ret;
 	}
 	
+	
+
 	
 	/**
 	 * Shows the function inspector dialog. If none exists, a new inspector is
@@ -1348,59 +1343,138 @@ public class GuiManager {
 	}
 
 	/**
-	 * gets an image from the clipboard Then the image file is loaded and stored
-	 * in this application's imageManager. Michael Borcherds 2008-05-10
+	 * /**
+	 * Tries to gets an image from a transferable object or the clipboard (if transfer is null). If an
+	 * image is found, then it is loaded and stored in this application's
+	 * imageManager.
 	 * 
+	 * @param transfer
 	 * @return fileName of image stored in imageManager
 	 */
-	public String getImageFromTransferable(Transferable transfer) {
+	public String[] getImageFromTransferable(Transferable transfer) {
 
 		BufferedImage img = null;
 		String fileName = null;
-		try {
-			app.setWaitCursor();
+		ArrayList<String> nameList = new ArrayList<String>();
+		boolean imageFound = false;
+		
+		app.setWaitCursor();
 
-			
-			{
-				// if transfer is null then try to get it from the clipboard
-				if(transfer == null){
+			// if transfer is null then get it from the clipboard
+			if(transfer == null){
+				try {
 					Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
 					transfer = clip.getContents(null);
-				}
+					fileName = "clipboard.png"; // extension determines what format
+					// it will be in ggb file
 
-				try {
-					if (transfer.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-						img = (BufferedImage) transfer
-								.getTransferData(DataFlavor.imageFlavor);
+				} catch (Exception e) {
+					app.setDefaultCursor();
+					e.printStackTrace();
+					app.showError("PasteImageFailed");
+					return null;
+				}
+			} 
+
+
+			// load image from transfer
+			try {
+
+				DataFlavor[] df = transfer.getTransferDataFlavors();
+				for(int i = 0 ; i< df.length; i++){
+					//System.out.println(df[i].getMimeType());
+				}
+				
+				
+				if (transfer.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+					img = (BufferedImage) transfer.getTransferData(DataFlavor.imageFlavor);
+					if(img != null){
+						fileName = "transferImage.png";			
+						nameList.add(app.createImage(img, fileName));
+						imageFound = true;
 					}
-				} catch (UnsupportedFlavorException ufe) {
-					app.showError("PasteImageFailed");
-					return null;
-					// ufe.printStackTrace();
-				} catch (IOException ioe) {
-					app.showError("PasteImageFailed");
-					return null;
-					// ioe.printStackTrace();
+					//System.out.println(nameList.toString());
+
 				}
 
-				if (img == null) {
-					app.showError("PasteImageFailed");
-					return null;
+				if (!imageFound && transfer.isDataFlavorSupported(DataFlavor.javaFileListFlavor)){
+					//java.util.List list = null;
+
+					//list = (java.util.List) transfer.getTransferData(DataFlavor.javaFileListFlavor);
+					
+					List<File> list = (List<File>)transfer.getTransferData (DataFlavor.javaFileListFlavor);
+					ListIterator<File> it = list.listIterator( );    
+					while (it.hasNext( )) {
+						File f = (File) it.next( );
+						fileName = f.getName();
+						img = ImageIO.read(f);
+						if(img!=null){
+							nameList.add(app.createImage(img, fileName));
+							imageFound = true;
+						}
+					}
+					System.out.println(nameList.toString());
+
 				}
 
-				fileName = "clipboard.png"; // extension determines what format
-				// it will be in ggb file
+				if (!imageFound  && transfer.isDataFlavorSupported(uriListFlavor)){
+
+					String uris = (String)	transfer.getTransferData (uriListFlavor);
+					StringTokenizer st = new StringTokenizer (uris, "\r\n"); 
+					while (st.hasMoreTokens ( )) {
+						URI uri = new URI(st.nextToken( ));				
+						File f = new File(uri.toString());
+						fileName = f.getName();
+						img = ImageIO.read(uri.toURL());
+						if(img != null){						
+							nameList.add(app.createImage(img, fileName));	
+							imageFound = true;
+						}
+					}
+					System.out.println(nameList.toString());
+				}
+
+				if (!imageFound && transfer.isDataFlavorSupported (urlFlavor)) {
+
+					URL url = (URL) transfer.getTransferData (urlFlavor);
+					ImageIcon ic = new ImageIcon (url);
+					if(ic.getIconHeight()>-1 && ic.getIconWidth()>-1){
+						File f = new File(url.toString());
+						fileName = f.getName();
+						img = (BufferedImage) ic.getImage();
+						if(img != null){						
+							nameList.add(app.createImage(img, fileName));
+							imageFound = true;
+						}
+					}
+					System.out.println(nameList.toString());
+
+				}
+			
+
+			} catch (UnsupportedFlavorException ufe) {
+				app.setDefaultCursor();
+				// ufe.printStackTrace();
+				return null;
+
+			} catch (IOException ioe) {
+				app.setDefaultCursor();
+				// ioe.printStackTrace();
+				return null;
+
+			} catch (Exception e) {
+				app.setDefaultCursor();
+				e.printStackTrace();
+				return null;
 			}
-		} catch (Exception e) {
-			app.setDefaultCursor();
-			e.printStackTrace();
-			app.showError("PasteImageFailed");
-			return null;
-		}
 
-		return app.createImage(img, fileName);
+			app.setDefaultCursor();
+			String[] f = new String[nameList.size()];
+			return nameList.toArray(f);
 
 	}
+
+
 
 	public synchronized void initFileChooser() {
 		if (fileChooser == null) {
@@ -1417,11 +1491,11 @@ public class GuiManager {
 				Application.debug("Error creating GeoGebraFileChooser - using fallback option");
 				fileChooser = new GeoGebraFileChooser(app, app.getCurrentImagePath(), true); // restricted version		
 			} 
-					
+
 			updateJavaUILanguage();
 		}
 	}
-	
+
 	/**
 	 * Loads java-ui.properties and sets all key-value pairs
 	 * using UIManager.put(). This is needed to translate JFileChooser to

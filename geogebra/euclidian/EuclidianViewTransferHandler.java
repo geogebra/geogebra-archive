@@ -84,21 +84,18 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 		// give the drop target (this EV) the view focus
 		requestViewFocus();
 
-		// handle image
-		if (t.isDataFlavorSupported(DataFlavor.imageFlavor)){
+		
+		Construction cons = ev.getApplication().getKernel().getConstruction();
+		Point mousePos = ev.getMousePosition();
+		GeoPoint startPoint = new GeoPoint(cons);
+		startPoint.setCoords(ev.toRealWorldCoordX(mousePos.x), ev.toRealWorldCoordY(mousePos.y), 1.0);
+		
+		
+		// first try to get an image
+		boolean imageDropped = ev.getApplication().getGuiManager().loadImage(startPoint, t, false);
+		if(imageDropped) return true;
 
-			if (debug) System.out.println("dropped image: " + t.toString());
-
-			Construction cons = ev.getApplication().getKernel().getConstruction();
-			Point p = ev.getMousePosition();
-			GeoPoint gp = new GeoPoint(cons);
-			gp.setCoords(ev.toRealWorldCoordX(p.x), ev.toRealWorldCoordY(p.y), 1.0);
-			if(ev.getApplication().getGuiManager().loadImage(gp, t, false))
-				return true;	
-
-		}
-
-
+		
 		// handle text
 		if (t.isDataFlavorSupported(DataFlavor.stringFlavor)
 				|| t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)) {
@@ -157,8 +154,8 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 					if(t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor))
 						geo.setLaTeX(true, false);	
 					
-					Point p = ev.getMousePosition();
-					geo.setRealWorldLoc(ev.toRealWorldCoordX(p.x), ev.toRealWorldCoordY(p.y));
+					
+					geo.setRealWorldLoc(ev.toRealWorldCoordX(mousePos.x), ev.toRealWorldCoordY(mousePos.y));
 					geo.updateRepaint();
 				}
 
@@ -169,25 +166,10 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 			}
 		}
 
-		// handle ggb and image files
-		if (t.isDataFlavorSupported(DataFlavor.javaFileListFlavor) || 
-				t.isDataFlavorSupported(GuiManager.getUriListFlavor())){
-
-			// pass the transferable to the FileDropListener and exit if ggb file 
-			if(app.getGuiManager().handleGGBFileDrop(t))
-				return false;
-
-			// if it's not a ggb file then try to get an image file
-			if (debug) System.out.println("dropped image: " + t.toString());
-
-			Construction cons = ev.getApplication().getKernel().getConstruction();
-			Point p = ev.getMousePosition();
-			GeoPoint gp = new GeoPoint(cons);
-			gp.setCoords(ev.toRealWorldCoordX(p.x), ev.toRealWorldCoordY(p.y), 1.0);
-
-			return (ev.getApplication().getGuiManager().loadImage(gp, t, false));	
-
-		}
+		
+		// check for ggb file
+		boolean ggbFileDropped =  app.getGuiManager().handleGGBFileDrop(t);
+		if(ggbFileDropped) return true;
 
 		return false;
 	}

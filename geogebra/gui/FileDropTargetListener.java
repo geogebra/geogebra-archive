@@ -130,22 +130,19 @@ public class FileDropTargetListener implements DropTargetListener {
 					File f = (File) it.next( );
 					al.add(f);
 				}
-			} else if (transferable.isDataFlavorSupported (GuiManager.getUriListFlavor())) {
+			} else if (transferable.isDataFlavorSupported (GuiManager.uriListFlavor)) {
 				//Application.debug("uri-list flavor is supported"); 
 				String uris = (String)
-				transferable.getTransferData (GuiManager.getUriListFlavor());
+				transferable.getTransferData (GuiManager.uriListFlavor);
 
 				// url-lists are defined by rfc 2483 as crlf-delimited 
 				StringTokenizer st = new StringTokenizer (uris, "\r\n");   
 				while (st.hasMoreTokens ( )) {
 					String uriString = st.nextToken( );
-					if(uriString.startsWith("http://")){
-						// loadURL with error messages suppressed in case transferable
-						// will be imported from another method down the line
-						app.getGuiManager().loadURL(uriString, false);
+					if(uriString.startsWith("http://") && isGGBFile(uriString)){
+						app.getGuiManager().loadURL(uriString, true);
 					}else{
 						URI uri = new URI(uriString);
-						System.out.println (uri);
 						al.add(new File(uri));
 					}
 				}
