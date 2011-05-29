@@ -36,7 +36,7 @@ TRANSLATIONS
   * English: Markus Hohenwarter, Judith Hohenwarter (Austria), Yves Kreis (Luxembourg),
       Michael Borcherds (Great Britain)
   * Estonian: Jane Albre (Estonia)
-  * Finnish: Hannu Korhonen, Juha Leino, Kirsi Malinen (Finland)
+  * Finnish: Juha Leino, Mikko Rahikka, Erkki Luoma-aho, Teemu Hinkula (Finland)
   * French: Noel Lambert (France)
   * Galician: Jesus Garcia Otero, Irene Arias Lopez (Spain) 
   * Georgian: Lasha Kokilashvili (Georgia)
@@ -49,6 +49,7 @@ TRANSLATIONS
   * Indonesian: Aam Sudrajat (Indonesia)
   * Italian: Alessandra Tomasi, Simona Riva (Italy)
   * Japanese: Akihito Wachi, Kazuhiro Hasegawa (Japan)
+  * Kazakh: Talgat Bainazarov (Kazakhstan)
   * Korean: Kyeong-Sik Choi (Korea)
   * Lithuanian: Rokas Tamosiunas (Lithuania)
   * Macedonian: Linda Fahlberg-Stojanovska, OIKT, Faculty of Technical Sciences, UKLO,
