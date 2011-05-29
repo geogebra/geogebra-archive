@@ -635,7 +635,6 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		// build new autocompletion text
 		StringBuilder sb = new StringBuilder();
 		sb.append(cmd);
-		Application.debug(cmd);
 		sb.append("[]"); // add brackets
 		cmd = sb.toString();            
 
