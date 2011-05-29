@@ -53,7 +53,6 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		latexIcon = new ImageIcon();
 		String laTextStr;
 		this.view = view;
-		setFont(app.getPlainFont());
 	}
 
 	public Component getTreeCellRendererComponent(
@@ -110,10 +109,13 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 
 			// if enabled, render with LaTeX
 			if(view.isRenderLaTeX()  && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE){
+				latexFont = new Font(app.getBoldFont().getName(),app.getBoldFont().getStyle(),app.getBoldFont().getSize()-1);
 				setLaTeXString(text,geo);
-				drawLatexImageIcon(latexIcon, latexStr, latexFont, false, getForeground(), this.getBackground() );
-				setIcon(joinIcons((ImageIcon) getIcon(),latexIcon));
-				setText(" ");
+				if(latexStr != null){
+					drawLatexImageIcon(latexIcon, latexStr, latexFont, false, getForeground(), this.getBackground() );
+					setIcon(joinIcons((ImageIcon) getIcon(),latexIcon));
+					setText(" ");
+				}
 			}
 
 			// sometimes objects do not identify themselves as GeoElement for a second,
@@ -234,38 +236,43 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 	@Override
 	public void setFont(Font font){
 		super.setFont(font);
-		latexFont = font;
+		//latexFont = font;
 		// use a slightly smaller font for LaTeX
-		latexFont = new Font(font.getName(),font.getStyle(),font.getSize()-1);
+
 	}
 
 	private void setLaTeXString(String text,GeoElement geo){
+		
+		latexStr = null;
+		
+		StringBuilder sb = new StringBuilder("\\:");
 
 		if(!geo.isDefined()){
-			latexStr = "\\mbox{" + getAlgebraDescriptionTextOrHTML(geo) + "}" ;
-		}
+			sb.append("\\:\\mbox{" + getAlgebraDescriptionTextOrHTML(geo) + "}") ;
 
-		String[] temp;
-		if(text.indexOf(":") > -1){
-			latexStr = text.split(":")[0] + "\\, : \\," +
-			geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
-			return;
-		}
+		}else{
 
-		if(text.indexOf("=") > -1){
-			latexStr = text.split("=")[0] + "\\, = \\,";
-			if (!geo.isGeoText()){
-				latexStr += geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true);
+			String[] temp;
+			if(text.indexOf(":") > -1){
+				sb.append(text.split(":")[0] + ": \\,");
+				sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
 			}
-			else if (((GeoText)geo).isLaTeX()){
-				latexStr +=  ((GeoText)geo).getTextString() ;
-			}else{
-				latexStr += "\\mbox{" +  ((GeoText)geo).getTextString() + "}";
+
+			if(text.indexOf("=") > -1){
+				sb.append(text.split("=")[0] + "\\, = \\,");
+				if (!geo.isGeoText()){
+					sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
+				}
+				else if (((GeoText)geo).isLaTeX()){
+					sb.append(((GeoText)geo).getTextString()) ;
+				}else{
+					return;  //a null latexStr will force non-LaTeX rendering
+				}
 			}
-			return;
 		}
-
-
+		
+		latexStr = sb.toString();
+		
 	}
 
 

@@ -4887,7 +4887,13 @@ public abstract class GeoElement
 			ret = substituteNumbers ? this.toValueString()
 					: this.getCommandDescription();
 		}
-
+		
+		// if GeoList and not matrix, enclose with {}
+		if (this.isGeoList() && ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX && !((GeoList)this).isMatrix()) {
+			ret = "\\left\\lbrace" + ret +  "\\right\\rbrace";
+		}
+		
+		
 		// GeoNumeric eg a=1
 		if ("".equals(ret) && this.isGeoNumeric() && !substituteNumbers && label != null) {
 			ret = label;
