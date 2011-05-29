@@ -45,6 +45,7 @@ public class CmdMidpoint3D extends CmdMidpoint {
 					return ret;
 				} 
 			}
+			break;
 			
 		case 2:
 			arg = resArgs(c);
@@ -56,7 +57,7 @@ public class CmdMidpoint3D extends CmdMidpoint {
 					return ret;
 				} 
 			}
-
+			break;
 
 		default :
 
