@@ -31,7 +31,9 @@ public final class FunctionSound implements LineListener {
 	private static final int DEFAULT_BIT_RATE = 8;
 	private int bitDepth;
 	private int sampleRate;
-	private int maxVolume;
+	
+	// set maximum volume to 100% of external volume setting 
+	private int maxVolume = 100; 
 	
 	// sound function fields
 	private  volatile GeoFunction f;
@@ -50,8 +52,7 @@ public final class FunctionSound implements LineListener {
 		this.app = app;
 		bitDepth = DEFAULT_BIT_RATE;
 		sampleRate = DEFAULT_SAMPLE_RATE;
-		// set maximum volume to 50%  (possible range is 0 - 100)
-		maxVolume = 50;  
+		
 		if(!initStreamingAudio(sampleRate, bitDepth)){
 			throw new Exception("Cannot initialize streaming audio");
 		}

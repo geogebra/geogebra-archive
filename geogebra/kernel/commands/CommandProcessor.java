@@ -9052,10 +9052,9 @@ class CmdPlaySound extends CommandProcessor {
 					&& (ok[1] = arg[1].isGeoNumeric())) {
 
 				// play a note using args: note and duration
-				// use default instrument 0 = piano, default 50% velocity
-				// (volume) = 64)
+				// using instrument 0 (piano) and velocity 127 (100% of external volume control) 
 				sm.playSequenceNote((int) ((GeoNumeric) arg[0]).getDouble(),
-						((GeoNumeric) arg[1]).getDouble(), 0, 64);
+						((GeoNumeric) arg[1]).getDouble(), 0, 127);
 
 				return ret;
 			}
@@ -9085,7 +9084,7 @@ class CmdPlaySound extends CommandProcessor {
 				sm.playSequenceNote((int) ((GeoNumeric) arg[0]).getDouble(), // note
 						((GeoNumeric) arg[1]).getDouble(), // duration
 						(int) ((GeoNumeric) arg[2]).getDouble(), // instrument
-						64);
+						127); // 100% of external volume control 
 
 				return ret;
 			}
