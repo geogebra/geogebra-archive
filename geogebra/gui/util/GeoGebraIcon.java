@@ -606,7 +606,6 @@ public class GeoGebraIcon {
 	public static ImageIcon createLatexIcon(Application app, String latex, boolean serif, Color fgColor, Color bgColor, int height) {
 		ImageIcon ic = new ImageIcon(TeXFormula.createBufferedImage(latex, TeXConstants.STYLE_DISPLAY, height-6, fgColor, bgColor));
 		ensureIconSize(ic, new Dimension(ic.getIconWidth(), height));
-		System.out.println(height + " ic height: " + ic.getIconHeight());
 		return ic;
 	}
 	
