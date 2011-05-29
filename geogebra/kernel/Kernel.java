@@ -1140,6 +1140,9 @@ public class Kernel {
 		case EuclidianConstants.MODE_INTERSECT:
 			return "Intersect";
 
+		case EuclidianConstants.MODE_INTERSECTION_CURVE:
+			return "IntersectionCurve";
+				
 		case EuclidianConstants.MODE_LINE_BISECTOR:
 			return "LineBisector";
 

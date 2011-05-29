@@ -20,12 +20,15 @@ import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoVectorND;
+import geogebra.kernel.kernelND.GeoPlaneND;
+import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.Region3D;
 import geogebra.main.Application;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoQuadric3D;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -1354,6 +1357,9 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		boolean changedKernel = false;
 		
 		switch (mode) {
+		case EuclidianView3D.MODE_INTERSECTION_CURVE:
+			changedKernel = intersectionCurve(hits); 
+			break;
 		case EuclidianView3D.MODE_PLANE_THREE_POINTS:
 			changedKernel = (threePoints(hits, mode) != null);
 			break;
@@ -1592,8 +1598,6 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		//boolean singlePointWanted = selGeos() == 0;
 		
 		// check how many interesting hits we have
-		// For now we store lines and planes.
-		// Points and any repeated elements are eliminated
 		if (!selectionPreview  && hits.size() > 2 - selGeos()) {
 			Hits goodHits = new Hits();
 			
@@ -1670,6 +1674,70 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	}
 
 	
+		/**
+		 * 
+		 * @param hits
+		 * @return true if a curve is created
+		 */
+		private boolean intersectionCurve(Hits hits) {
+			
+			/**
+			 * rationale: only look at surfaces; for simplicity at this point,
+			 * choose the first two surfaces in hits, then find out the intersection
+			 * algorithm: 
+			 *  - if hits is empty, do nothing.
+			 *  - if hits contains no surfaces, do nothing.
+			 *   Note: surfaces include planes, (planar) region, quadric, and general surfaces.
+			 *   now focus on planes and quadric.
+			 */
+			if (hits.isEmpty())
+				return false;		
+			
+			//////////////////////////////////////////////////
+			if (!selectionPreview  && hits.size() > 2 - selGeos()) {
+				Hits goodHits = new Hits();
+				
+				hits.getHits(GeoCoordSys2D.class, tempArrayList);
+				hits.getHits(GeoQuadric3D.class, tempArrayList2);
+				goodHits.addAll(tempArrayList);
+				goodHits.addAll(tempArrayList2);
+				
+				hits = goodHits;
+	
+			}
+		
+			addSelectedCS2D(hits, 10, true);
+			addSelectedQuadric(hits, 10, true);
+	
+			
+			//singlePointWanted = singlePointWanted && selGeos() == 2;
+			
+			//if (selGeos() > 2)
+			//	return null;
+	
+			//Application.debug("cs2D="+selCS2D()+"\nquadrics="+selQuadric());
+			
+			if (selCS2D()>=2) { // plane-plane
+				GeoCoordSys2D[] planes = getSelectedCS2D();
+				GeoElement[] ret = { null };
+				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) planes[0], (GeoElement) planes[1]);
+				return ret[0].isDefined();
+			}
+	
+			else if 
+			((selCS2D() == 1) &&  (selQuadric() >= 1)) {
+				GeoElement plane = (GeoElement) getSelectedCS2D()[0];
+				GeoQuadric3D quad = getSelectedQuadric()[0];
+				GeoElement[] ret = {kernel.getManager3D().Intersect( null, (GeoPlaneND) plane, (GeoQuadricND) quad)};
+				return ret[0].isDefined();
+			}
+			
+			
+			////////////////////////////////////////
+			
+			return false;
+		}
+	
 	
 	
 	
@@ -1733,7 +1801,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	/** selected 2D coord sys */
 	@SuppressWarnings("unchecked")
-	protected ArrayList selectedCS2D = new ArrayList();	
+	protected ArrayList<GeoCoordSys2D> selectedCS2D = new ArrayList<GeoCoordSys2D>();	
 	
 	/** add hits to selectedCS2D
 	 * @param hits hits
@@ -1761,18 +1829,40 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	 */
 	@SuppressWarnings("unchecked")
 	final protected GeoCoordSys2D[] getSelectedCS2D() {
-		GeoCoordSys2D[] lines = new GeoCoordSys2D[selectedCS2D.size()];
+		GeoCoordSys2D[] planes = new GeoCoordSys2D[selectedCS2D.size()];
 		int i = 0;
 		Iterator it = selectedCS2D.iterator();
 		while (it.hasNext()) {
-			lines[i] = (GeoCoordSys2D) it.next();
+			planes[i] = (GeoCoordSys2D) it.next();
 			i++;
 		}
 		clearSelection(selectedCS2D);
-		return lines;
+		return planes;
 	}	
 	
+	///for quadric
+	protected ArrayList<GeoQuadric3D> selectedQuadric = new ArrayList<GeoQuadric3D>();	
 	
+	final int selQuadric() {
+		return selectedQuadric.size();
+	}	
+	
+	final protected int addSelectedQuadric(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedQuadric, GeoQuadric3D.class);
+	}	
+	final protected GeoQuadric3D[] getSelectedQuadric() {
+		GeoQuadric3D[] quads = new GeoQuadric3D[selectedQuadric.size()];
+		int i = 0;
+		Iterator it = selectedQuadric.iterator();
+		while (it.hasNext()) {
+			quads[i] = (GeoQuadric3D) it.next();
+			i++;
+		}
+		clearSelection(selectedQuadric);
+		return quads;
+	}	
+ 	
 	
 	
 	@SuppressWarnings("unchecked")
@@ -1927,6 +2017,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			case EuclidianView.MODE_MOVE:
 				
 			case EuclidianView.MODE_INTERSECT:
+			case EuclidianView.MODE_INTERSECTION_CURVE:
 				
 			case EuclidianView.MODE_PARALLEL:
 			case EuclidianView.MODE_ORTHOGONAL:
