@@ -188,6 +188,7 @@ public class Application implements KeyEventDispatcher {
 		supportedLocales.add(new Locale("in")); // Indonesian
 		supportedLocales.add(new Locale("it")); // Italian
 		supportedLocales.add(new Locale("ja")); // Japanese
+		supportedLocales.add(new Locale("kk")); // Kazakh
 		supportedLocales.add(new Locale("ko")); // Korean
 		supportedLocales.add(new Locale("lt")); // Lithuanian
 		supportedLocales.add(new Locale("ml")); // Malayalam (Virtual Keyboard & numerals only)
