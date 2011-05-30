@@ -1104,7 +1104,7 @@ public class Application implements KeyEventDispatcher {
 	 * because if a ggt file was loaded we will need to load something
 	 * instead of the ggb
 	 * 
-	 * @return true if file is loading but not ggt file
+	 * @return true if file is loading and is a ggt file
 	 */
 	private boolean handleFileArgGGTMaybeLoaded(CommandLineArguments args) {
 		if(args == null || args.getNoOfFiles() == 0) 
