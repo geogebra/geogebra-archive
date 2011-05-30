@@ -228,6 +228,7 @@ implements WindowFocusListener, ActionListener, GeoElementSelectionListener {
 			} else {		
 				removeWindowFocusListener(this);
 				app.setSelectionListenerMode(null);
+				app.setMode(EuclidianView.MODE_SHOW_HIDE_CHECKBOX);
 			}
 		}
 		super.setVisible(flag);
