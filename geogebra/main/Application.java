@@ -503,7 +503,8 @@ public class Application implements KeyEventDispatcher {
 		// GeoGebra may exit. (dockPanel not entirely defined)
 		// This is needed before handleFileArg because
 		// we don't want to redefine the toolbar string from the file.
-		if(handleFileArgGGTMaybeLoaded(args)) {
+		boolean ggtloading = handleFileArgGGTMaybeLoaded(args); 
+		if(ggtloading) {
 			if (!isApplet)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
 			if (hasFullGui()) 
@@ -519,11 +520,11 @@ public class Application implements KeyEventDispatcher {
 			currentImagePath = GeoGebraPreferences.getPref()
 					.getDefaultImagePath();
 			
-			if (!fileLoaded)
+			if (!fileLoaded && !ggtloading)
 				GeoGebraPreferences.getPref().loadXMLPreferences(this);
 		}
 
-		if(hasFullGui() && !fileLoaded) {			
+		if(hasFullGui() && !fileLoaded && !ggtloading) {			
 			getGuiManager().getLayout().setPerspectives(tmpPerspectives);	
 		}
 
