@@ -241,39 +241,50 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 
 	}
 
+	/**
+	 * Sets latexStr, the string used to render a LaTeX form of the algebra description for geo, the given GeoElement. 
+	 *  
+	 * @param geo
+	 */
 	private void setLaTeXString(GeoElement geo){
 		
-		latexStr = null;
+		
 		String algebraDesc = geo.getAlgebraDescription();
 		StringBuilder sb = new StringBuilder("\\:");
+		String[] temp;
 
+		// handle undefined
 		if(!geo.isDefined()){
 			sb.append("\\:\\mbox{" + getAlgebraDescriptionTextOrHTML(geo) + "}") ;
 
-		}else{
-
-			String[] temp;
-			if(algebraDesc.indexOf(":") > -1){
-				sb.append(algebraDesc.split(":")[0] + ": \\,");
-				sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
-			}
-
-			if(algebraDesc.indexOf("=") > -1){
-				sb.append(algebraDesc.split("=")[0] + "\\, = \\,");
-				if (!geo.isGeoText()){
-					sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
-				}
-				else if (((GeoText)geo).isLaTeX()){
-					sb.append(((GeoText)geo).getTextString()) ;
-				}else{
-					return;  //a null latexStr will force non-LaTeX rendering
-				}
-			}
+		// handle non-GeoText prefixed with ":", e.g.  "a: x = 3"
+		}else if(algebraDesc.indexOf(":") > -1 & !geo.isGeoText()){
+			sb.append(algebraDesc.split(":")[0] + ": \\,");
+			sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
 		}
+
+		// now handle non-GeoText prefixed with "="
+		else if(algebraDesc.indexOf("=") > -1 && !geo.isGeoText()){
+			sb.append(algebraDesc.split("=")[0] + "\\, = \\,");
+			sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
+		}
+
+		// handle GeoText with LaTeX
+		else if (geo.isGeoText() && ((GeoText)geo).isLaTeX()){
+			sb.append(algebraDesc.split("=")[0] + "\\, = \\,"); 
+			sb.append(((GeoText)geo).getTextString()) ;
+		}		
 		
-		latexStr = sb.toString();
-		
-	}
+		// handle regular GeoText (and anything else we may have missed)
+		// by returning a null string that will force non-LaTeX rendering
+		else {
+			latexStr = null; 
+			return;
+		}
+			 
+	latexStr = sb.toString();
+
+}
 
 
 } // MyRenderer
