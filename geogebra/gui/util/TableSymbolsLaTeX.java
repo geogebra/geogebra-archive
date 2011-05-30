@@ -54,6 +54,7 @@ public class TableSymbolsLaTeX {
 		"\\flat",
 		"\\natural",
 		"\\sharp",
+		"\\textdbend"
 
 	};
 
@@ -132,8 +133,11 @@ public class TableSymbolsLaTeX {
 		"\\left\\lceil   \\right\\rceil  ",
 		"\\left\\lfloor  \\right\\rfloor ",
 		"\\left\\lgroup  \\right\\rgroup ",
-		"\\left\\lmoustache  \\right\\rmoustache "
-
+		"\\left\\lmoustache  \\right\\rmoustache ",
+		"\\shadowbox{xx}",
+		"\\fbox{xx}",
+		"\\doublebox{xx}",
+		"\\ovalbox{xx}"
 	};
 
 
