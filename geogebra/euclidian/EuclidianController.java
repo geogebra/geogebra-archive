@@ -1497,6 +1497,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					|| mode == EuclidianView.MODE_BUTTON_ACTION
 					|| mode == EuclidianView.MODE_TEXTFIELD_ACTION
 					|| mode == EuclidianView.MODE_SHOW_HIDE_CHECKBOX
+					|| mode == EuclidianView.MODE_TEXT
 			){
 				view.setHits(mouseLoc);
 				
@@ -1514,6 +1515,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					if (view.getHits().size() != 1) return;
 					
 					if (!(view.getHits().get(0) instanceof GeoBoolean)) return;
+				} else if (mode == EuclidianView.MODE_TEXT ) {
+					if (view.getHits().size() != 1) return;
+					
+					if (!(view.getHits().get(0) instanceof GeoText)) return;
 				}
 
 				
