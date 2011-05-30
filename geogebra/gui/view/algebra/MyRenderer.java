@@ -271,8 +271,11 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 
 		// handle GeoText with LaTeX
 		else if (geo.isGeoText() && ((GeoText)geo).isLaTeX()){
-			sb.append(algebraDesc.split("=")[0] + "\\, = \\,"); 
-			sb.append(((GeoText)geo).getTextString()) ;
+			sb.append(algebraDesc.split("=")[0]);
+			sb.append("\\, = \\,");
+			sb.append("\\text{``"); // left quote
+			sb.append(((GeoText)geo).getTextString());
+			sb.append("''}"); // right quote
 		}		
 		
 		// handle regular GeoText (and anything else we may have missed)
