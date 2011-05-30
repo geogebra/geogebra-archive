@@ -1494,6 +1494,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					|| mode == EuclidianView.MODE_POINT 
 					|| mode == EuclidianView.MODE_POINT_ON_OBJECT
 					|| mode == EuclidianView.MODE_SLIDER
+					|| mode == EuclidianView.MODE_BUTTON_ACTION
+					|| mode == EuclidianView.MODE_TEXTFIELD_ACTION
+					|| mode == EuclidianView.MODE_SHOW_HIDE_CHECKBOX
 			){
 				view.setHits(mouseLoc);
 				
@@ -1502,7 +1505,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					if (view.getHits().size() != 1) return;
 					
 					if (!(view.getHits().get(0) instanceof GeoNumeric)) return;
+				} else if (mode == EuclidianView.MODE_BUTTON_ACTION
+						|| mode == EuclidianView.MODE_TEXTFIELD_ACTION ) {
+					if (view.getHits().size() != 1) return;
+					
+					if (!(view.getHits().get(0) instanceof GeoButton)) return;
+				} else if (mode == EuclidianView.MODE_SHOW_HIDE_CHECKBOX ) {
+					if (view.getHits().size() != 1) return;
+					
+					if (!(view.getHits().get(0) instanceof GeoBoolean)) return;
 				}
+
 				
 				
 				if (viewHasHitsForMouseDragged()) 
