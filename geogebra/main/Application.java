@@ -503,8 +503,11 @@ public class Application implements KeyEventDispatcher {
 		// GeoGebra may exit. (dockPanel not entirely defined)
 		// This is needed before handleFileArg because
 		// we don't want to redefine the toolbar string from the file.
-		if(hasFullGui() && !handleFileArgGGBMaybeLoaded(args)) {
-			getGuiManager().getLayout().setPerspectives(tmpPerspectives);	
+		if(handleFileArgGGTMaybeLoaded(args)) {
+			if (!isApplet)
+				GeoGebraPreferences.getPref().loadXMLPreferences(this);
+			if (hasFullGui()) 
+				getGuiManager().getLayout().setPerspectives(tmpPerspectives);	
 		}
 
 		// open file given by startup parameter
@@ -1097,18 +1100,18 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	/**
-	 * This function helps determine if a ggb file was loaded
+	 * This function helps determine if a ggt file was loaded
 	 * because if a ggt file was loaded we will need to load something
 	 * instead of the ggb
 	 * 
 	 * @return true if file is loading but not ggt file
 	 */
-	private boolean handleFileArgGGBMaybeLoaded(CommandLineArguments args) {
+	private boolean handleFileArgGGTMaybeLoaded(CommandLineArguments args) {
 		if(args == null || args.getNoOfFiles() == 0) 
 			return false;
 		String fileArgument = args.getStringValue("file0");
 		String lowerCase = fileArgument.toLowerCase(Locale.US);
-		return !(lowerCase.endsWith(FILE_EXT_GEOGEBRA_TOOL));
+		return lowerCase.endsWith(FILE_EXT_GEOGEBRA_TOOL);
 	}
 
 	/**
