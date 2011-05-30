@@ -445,7 +445,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		String ret = dict.lookup(s);
 		
 		// make sure when we type eg CA we get CAuchy not Cauchy, in case we want CA=33
-		if (!ret.startsWith(s)) {
+		if (ret != null && !ret.startsWith(s)) {
 			ret = s + ret.substring(s.length());
 		}
 		
