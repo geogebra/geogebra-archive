@@ -3560,17 +3560,17 @@ public class Application implements KeyEventDispatcher {
 			sb.append("\"/>\n");
 		//}
 
-		// just save font size, mouse settings as preference
+		// just save mouse settings as preference
 		if(asPreference) {
-			sb.append("\t<font ");
-			sb.append(" size=\"");
-			sb.append(appFontSize);
-			sb.append("\"/>\n");
-			
 			sb.append("\t<mouse reverseWheel=\"");
 			sb.append(isMouseWheelReversed());
 			sb.append("\"/>\n");
 		}
+
+		sb.append("\t<font ");
+		sb.append(" size=\"");
+		sb.append(appFontSize);
+		sb.append("\"/>\n");
 
 		sb.append(getConsProtocolXML());
 
