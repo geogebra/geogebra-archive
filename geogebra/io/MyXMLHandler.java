@@ -3963,7 +3963,13 @@ public class MyXMLHandler implements DocHandler {
 				// for downward compatibility: lookup label first
 				// as this could be some weird name that can't be parsed
 				// e.g. "1/2_{a,b}" could be a label name
-				geo = kernel.lookupLabel(arg);
+				// we don't want to override local variables with this fix, therefore we
+				// make exception for Sequence and CurveCartesian
+				if(cmd.getName().equals("Sequence")||cmd.getName().equals("CurveCartesian"))
+					geo = null;
+				else
+					geo = kernel.lookupLabel(arg);
+				
 				
 				//Application.debug("input : "+geo.getLabel());
 
