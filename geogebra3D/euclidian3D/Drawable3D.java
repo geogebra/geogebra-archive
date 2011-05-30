@@ -610,7 +610,7 @@ public abstract class Drawable3D extends DrawableND {
 			}
 			
 			// check if one is on a path and the other not
-			if (this.getGeoElement().isGeoPoint() && this.getGeoElement().isGeoPoint()){
+			if (this.getGeoElement().isGeoPoint() && d.getGeoElement().isGeoPoint()){
 				if ((((GeoPointND) this.getGeoElement()).hasPath())&&(!((GeoPointND) d.getGeoElement()).hasPath()))
 					return -1;
 				if ((!((GeoPointND) this.getGeoElement()).hasPath())&&(((GeoPointND) d.getGeoElement()).hasPath()))
