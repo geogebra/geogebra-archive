@@ -1263,9 +1263,11 @@ public class WorksheetExportDialog extends JDialog {
 		// The declaration may be optionally omitted because it declares as its encoding the default encoding.
 		// and casuses problems on some servers (when short php tags enabled)
 		//sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		appendWithLineBreak(sb, "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"");
-		appendWithLineBreak(sb, "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-		appendWithLineBreak(sb, "<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+		
+		//Gabor Ancsin 2010 05 20
+		//html5 doctype
+		appendWithLineBreak(sb, "<!DOCTYPE html>");
+		appendWithLineBreak(sb, "<html>");
 		appendWithLineBreak(sb, "<head>");
 		String textBoth = textAbove.getText() + textBelow.getText();
 		if(textBoth.contains("$$")||textBoth.contains("\\("))
@@ -1436,14 +1438,15 @@ public class WorksheetExportDialog extends JDialog {
 			
 			
 			appendWithLineBreak(sb, "<script type=\"text/javascript\" language=\"javascript\" src=\"http://www.geogebra.org/mobile/4.0/geogebramobile/geogebramobile.nocache.js\"></script>"); 
-			sb.append("<div id=\"geogebramobile_div\" class=\"ggbApplet\" style=\"width: ");
+			sb.append("<article class=\"geogebramobile\" style=\"width: ");
 			sb.append(width);
 			sb.append("px; height: ");
 			sb.append(height);
-			appendWithLineBreak(sb, "px; border: 1px solid black;\">");
-			sb.append("<span id=\"ggbBase64\" style=\"display: none;\">");
+			appendWithLineBreak(sb, "px; border: 1px solid black;\"");
+			sb.append("data-param-ggbbase64=\"");
 			appendBase64(app,sb);
-			appendWithLineBreak(sb, "</span></div>");			
+			sb.append("\"");
+			appendWithLineBreak(sb, "></article>");			
 			appendWithLineBreak(sb, "<noscript id=\"ggbappletwrapper\">");			
 		}
 		
