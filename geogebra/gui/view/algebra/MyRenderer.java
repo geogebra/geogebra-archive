@@ -110,7 +110,7 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 			// if enabled, render with LaTeX
 			if(view.isRenderLaTeX()  && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE){
 				latexFont = new Font(app.getBoldFont().getName(),app.getBoldFont().getStyle(),app.getBoldFont().getSize()-1);
-				setLaTeXString(text,geo);
+				setLaTeXString(geo);
 				if(latexStr != null){
 					drawLatexImageIcon(latexIcon, latexStr, latexFont, false, getForeground(), this.getBackground() );
 					setIcon(joinIcons((ImageIcon) getIcon(),latexIcon));
@@ -241,10 +241,10 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 
 	}
 
-	private void setLaTeXString(String text,GeoElement geo){
+	private void setLaTeXString(GeoElement geo){
 		
 		latexStr = null;
-		
+		String algebraDesc = geo.getAlgebraDescription();
 		StringBuilder sb = new StringBuilder("\\:");
 
 		if(!geo.isDefined()){
@@ -253,13 +253,13 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		}else{
 
 			String[] temp;
-			if(text.indexOf(":") > -1){
-				sb.append(text.split(":")[0] + ": \\,");
+			if(algebraDesc.indexOf(":") > -1){
+				sb.append(algebraDesc.split(":")[0] + ": \\,");
 				sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
 			}
 
-			if(text.indexOf("=") > -1){
-				sb.append(text.split("=")[0] + "\\, = \\,");
+			if(algebraDesc.indexOf("=") > -1){
+				sb.append(algebraDesc.split("=")[0] + "\\, = \\,");
 				if (!geo.isGeoText()){
 					sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
 				}
