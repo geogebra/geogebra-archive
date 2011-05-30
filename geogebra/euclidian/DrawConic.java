@@ -35,7 +35,6 @@ import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoConicND;
-import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 
@@ -339,50 +338,74 @@ final public class DrawConic extends Drawable implements Previewable {
 			drawLines[i].update();			
         }
         
-        if(conic.type == GeoConic.CONIC_PARALLEL_LINES){
-        	GeneralPathClipped gpc = new GeneralPathClipped(view);
-        	gpc.moveTo(drawLines[0].x2,drawLines[0].y2);
-        	gpc.lineTo(drawLines[0].x1,drawLines[0].y1);
-        	if(!Kernel.isZero(lines[0].x) && lines[0].x*lines[0].y < 0)
-        		gpc.lineTo(0,view.height);
-        	else if(!Kernel.isZero(lines[0].x))
-        		gpc.lineTo(view.width,view.height);
-            gpc.lineTo(drawLines[1].x1,drawLines[1].y1);
-            gpc.lineTo(drawLines[1].x2,drawLines[1].y2);
-            if(!Kernel.isZero(lines[0].x) && lines[0].x*lines[0].y < 0)
-        		gpc.lineTo(view.width,0);
-        	else if(!Kernel.isZero(lines[0].x))
-        		gpc.lineTo(0,0);
-            gpc.lineTo(drawLines[0].x2,drawLines[0].y2);
-            
-            gpc.closePath();
-            shape = gpc;
-        }
-        else if(conic.type == GeoConic.CONIC_INTERSECTING_LINES){
-	        GeneralPathClipped gpc = new GeneralPathClipped(view);
-	        gpc.moveTo(drawLines[0].x2,drawLines[0].y2);
-        	gpc.lineTo(drawLines[0].x1,drawLines[0].y1);
-        	if(lines[0].x*lines[0].y < 0)
-        		gpc.lineTo(0,view.height);
-        	if(lines[1].x*lines[1].y > 0) 
-        		gpc.lineTo(view.width,view.height);
+        if(conic.type == GeoConic.CONIC_PARALLEL_LINES||
+        		conic.type == GeoConic.CONIC_INTERSECTING_LINES){
         	
-        	
-            gpc.lineTo(drawLines[1].x1,drawLines[1].y1);
-            gpc.lineTo(drawLines[1].x2,drawLines[1].y2);
-            if(lines[1].x*lines[1].y > 0) 
-        		gpc.lineTo(0,0);
-            if(lines[0].x*lines[0].y < 0)
-        		gpc.lineTo(view.width,0);
-            
-            gpc.lineTo(drawLines[0].x2,drawLines[0].y2);
-	        gpc.closePath();
-	        shape = gpc;
+	       shape = lineToGpc(drawLines[1]);
+	       ((Area)shape).exclusiveOr(lineToGpc(drawLines[0]));
+	       //FIXME: buggy when conic(RW(0),RW(0))=0
+	       if(conic.evaluate(view.toRealWorldCoordX(0), view.toRealWorldCoordY(0))<0){
+	    	   Area b = new Area(view.getBoundingPath());
+	    	   b.subtract((Area)shape);
+	    	   shape = b;
+	       
+	       }
+	       
         }
          
     }
     
-    final private void updateCircle() {
+    private Area lineToGpc(DrawLine drawLine) {
+    	GeneralPathClipped gpc = new GeneralPathClipped(view);
+    	 boolean invert = false;
+        if(drawLine.x1 > drawLine.x2){
+        	double t = drawLine.x1;
+        	drawLine.x1=drawLine.x2;
+        	drawLine.x2=t;
+        	t = drawLine.y1;
+        	drawLine.y1=drawLine.y2;
+        	drawLine.y2=t;
+        }
+        gpc.moveTo(drawLine.x1,drawLine.y1);
+        gpc.lineTo(drawLine.x2,drawLine.y2);
+    	//cross top and bottom
+    	if(drawLine.x1>0 && drawLine.x2<=view.width){
+    		Application.debug("top-bot");
+        	if(drawLines[0].y2<drawLine.y1){
+        		gpc.lineTo(0, 0);
+        		gpc.lineTo(0, view.height);
+        	}
+        	else{
+        		gpc.lineTo(0, view.height);
+        		gpc.lineTo(0, 0);
+        	}
+    	}
+    	//cross top/bottom and right
+    	else if(drawLine.x1>0 && drawLine.x2>view.width){    		
+        		gpc.lineTo(view.width,drawLine.y1);
+        		invert = true;
+        	}
+    	//cros left and bottom/top
+    	else if(drawLine.x1<=0 && drawLine.x2<=view.width){    		
+    		gpc.lineTo(0,drawLine.y2);
+    		invert = drawLine.y2 >0;
+    	}
+    	//cross left and right
+        	else{        		           		
+        		gpc.lineTo(view.width, 0);
+        		gpc.lineTo(0, 0);
+        		
+        	}
+    	gpc.closePath();
+    	Area a = new Area(gpc);
+    	if(!invert)
+    		return a;
+    	Area b= new Area(view.getBoundingPath());
+    	b.subtract(a);
+    	return b;
+    	
+	}
+	final private void updateCircle() {
         // calc screen pixel of radius                        
         radius =  halfAxes[0] * view.xscale;
         yradius =  halfAxes[1] * view.yscale; // radius scaled in y direction
