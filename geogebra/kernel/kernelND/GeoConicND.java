@@ -398,7 +398,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 					pp.setT(Math.PI-pp.getT());
 				}
 				if (py<0) {
-					pp.setT(Math.PI*2-pp.getT());
+					pp.setT(-pp.getT());
 				}
 				
 				P.setX(ha*Math.cos(pp.getT()));
