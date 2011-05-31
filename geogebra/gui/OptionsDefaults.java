@@ -204,7 +204,6 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		typeToNode.put(vectorNode, ConstructionDefaults.DEFAULT_VECTOR);
 		typeToNode.put(conicNode, ConstructionDefaults.DEFAULT_CONIC);
 		typeToNode.put(conicSectorNode, ConstructionDefaults.DEFAULT_CONIC_SECTOR);
-		typeToNode.put(numberNode, ConstructionDefaults.DEFAULT_NUMBER);
 		typeToNode.put(functionNode, ConstructionDefaults.DEFAULT_FUNCTION);
 		typeToNode.put(polygonNode, ConstructionDefaults.DEFAULT_POLYGON);
 		typeToNode.put(locusNode, ConstructionDefaults.DEFAULT_LOCUS);
@@ -244,7 +243,7 @@ public class OptionsDefaults extends JPanel implements TreeSelectionListener {
 		locusNode.setUserObject(app.getPlain("Locus"));
 		textNode.setUserObject(app.getPlain("Text"));
 		imageNode.setUserObject(app.getPlain("Image"));
-		numberNode.setUserObject(app.getPlain("Numeric"));
+		numberNode.setUserObject(app.getPlain("Slider"));
 		angleNode.setUserObject(app.getPlain("Angle"));
 		booleanNode.setUserObject(app.getPlain("Boolean"));
 		listNode.setUserObject(app.getPlain("List"));
