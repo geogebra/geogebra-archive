@@ -688,7 +688,7 @@ public abstract class Drawable extends DrawableND {
 				key = geo.getCachedLaTeXKey(text, font.getSize() + 3, style, fgColor);
 
 			im = JLaTeXMathCache.getCachedTeXFormulaImage(key);
-			} catch (ParseException e) {
+			} catch (Exception e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
 
