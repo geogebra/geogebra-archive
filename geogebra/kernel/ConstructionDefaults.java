@@ -253,6 +253,7 @@ public class ConstructionDefaults {
 		GeoNumeric number = new GeoNumeric(cons);	
 //		number.setLocalVariableLabel(app.getPlain("Numeric"));
 		number.setLocalVariableLabel("Numeric");
+		number.setSliderFixed(true);
 		number.setLabelMode(GeoElement.LABEL_NAME_VALUE);	
 		defaultGeoElements.put(DEFAULT_NUMBER, number);
 				
@@ -260,6 +261,7 @@ public class ConstructionDefaults {
 		GeoAngle angle = new GeoAngle(cons);	
 //		angle.setLocalVariableLabel(app.getPlain("Angle"));
 		angle.setLocalVariableLabel("Angle");
+		angle.setSliderFixed(true);
 		angle.setObjColor(colAngle);		
 		angle.setAlphaValue(DEFAULT_ANGLE_ALPHA);
 		angle.setArcSize(angleSize);

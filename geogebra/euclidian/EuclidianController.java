@@ -1354,8 +1354,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				// or the point on the slider, i.e. change the number
 				DrawSlider ds = (DrawSlider) d;
 				// TEMPORARY_MODE true -> dragging slider using Slider Tool
+				// or right-hand mouse button
+
 				// otherwise using Move Tool -> move dot
-				if (TEMPORARY_MODE && !ds.hitPoint(mouseLoc.x, mouseLoc.y) &&
+				if ((TEMPORARY_MODE || !movedGeoNumeric.isSliderFixed()) && !ds.hitPoint(mouseLoc.x, mouseLoc.y) &&
 						ds.hitSlider(mouseLoc.x, mouseLoc.y)) {
 					moveMode = MOVE_SLIDER;
 					if (movedGeoNumeric.isAbsoluteScreenLocActive()) {
@@ -3209,11 +3211,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	final protected void moveSlider(boolean repaint) {
+		
+		// TEMPORARY_MODE true -> dragging slider using Slider Tool
+		// or right-hand mouse button
+		
 		if (movedGeoNumeric.isAbsoluteScreenLocActive()) {
 			movedGeoNumeric.setAbsoluteScreenLoc( oldLoc.x + mouseLoc.x-startLoc.x, 
-					oldLoc.y + mouseLoc.y-startLoc.y);
+					oldLoc.y + mouseLoc.y-startLoc.y, TEMPORARY_MODE);
 		} else {
-			movedGeoNumeric.setSliderLocation(xRW - startPoint.x, yRW - startPoint.y);
+			movedGeoNumeric.setSliderLocation(xRW - startPoint.x, yRW - startPoint.y, TEMPORARY_MODE);
 		}		
 
 		// don't cascade, only position of the slider has changed

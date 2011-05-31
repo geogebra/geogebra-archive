@@ -3036,7 +3036,7 @@ public class MyXMLHandler implements DocHandler {
 
 			double x = Double.parseDouble((String) attrs.get("x"));
 			double y = Double.parseDouble((String) attrs.get("y"));
-			num.setSliderLocation(x, y);
+			num.setSliderLocation(x, y, true);
 			num.setSliderWidth(Double.parseDouble((String) attrs.get("width")));
 			num.setSliderFixed(parseBoolean((String) attrs.get("fixed")));
 			num.setSliderHorizontal(parseBoolean((String) attrs

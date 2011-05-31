@@ -14,6 +14,7 @@ package geogebra.gui;
 
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.kernel.Construction;
+import geogebra.kernel.ConstructionDefaults;
 import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
@@ -71,16 +72,20 @@ public class SliderDialog extends JDialog
 		
 		// create temp geos that may be returned as result
 		Construction cons = app.getKernel().getConstruction();
+		GeoNumeric defaultNum = (GeoNumeric)cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_NUMBER);
+		GeoNumeric defaultAngle = (GeoNumeric)cons.getConstructionDefaults().getDefaultGeo(ConstructionDefaults.DEFAULT_ANGLE);
 		number = new GeoNumeric(cons);
+		number.setSliderFixed(defaultNum.isSliderFixed());
 		number.setEuclidianVisible(true);
-		number.setSliderLocation(x, y);
+		number.setSliderLocation(x, y, true);
 		number.setAbsoluteScreenLocActive(true);
 		number.setValue(1);
 		
 		angle = new GeoAngle(cons);
+		angle.setSliderFixed(defaultAngle.isSliderFixed());
 		angle.setEuclidianVisible(true);
 		angle.setLabelMode(GeoElement.LABEL_NAME_VALUE);
-		angle.setSliderLocation(x, y);
+		angle.setSliderLocation(x, y, true);
 		angle.setAnimationType(GeoElement.ANIMATION_INCREASING);
 		angle.setAbsoluteScreenLocActive(true);
 		angle.setValue(45 * Math.PI/180);

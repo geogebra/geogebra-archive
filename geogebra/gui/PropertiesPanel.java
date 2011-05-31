@@ -5087,7 +5087,7 @@ class SliderPanel
 		sliderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));		
 		animationPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5, 5));
 		
-		cbSliderFixed = new JCheckBox();
+		cbSliderFixed = new JCheckBox("",true);
 		cbSliderFixed.addActionListener(this);
 		sliderPanel.add(cbSliderFixed);		
 		

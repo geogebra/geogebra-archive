@@ -27,6 +27,7 @@ import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.util.ArrayList;
@@ -590,8 +591,8 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	 * @param x x-coord of the slider
 	 * @param y y-coord of the slider
 	 */
-	public final void setSliderLocation(double x, double y) {
-		if (sliderFixed) return;
+	public final void setSliderLocation(double x, double y, boolean force) {
+		if (!force && sliderFixed) return;
 		sliderX = x;
 		sliderY = y;			
 	}
@@ -688,7 +689,7 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 
 	/**
-	 * Sets whether slider shoud be horizontal or vertical
+	 * Sets whether slider should be horizontal or vertical
 	 * @param sliderHorizontal true iff should be horizontal
 	 */
 	public void setSliderHorizontal(boolean sliderHorizontal) {
@@ -696,8 +697,12 @@ implements NumberValue,  AbsoluteScreenLocateable, GeoFunctionable, Animatable {
 	}
 	
 	
+	public void setAbsoluteScreenLoc(int x, int y, boolean force) {
+		setSliderLocation(x, y, force);		
+	}
+
 	public void setAbsoluteScreenLoc(int x, int y) {
-		setSliderLocation(x, y);		
+		setSliderLocation(x, y, false);		
 	}
 
 	public int getAbsoluteScreenLocX() {	
