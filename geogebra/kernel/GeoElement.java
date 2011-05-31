@@ -2804,6 +2804,12 @@ public abstract class GeoElement
 
 		labelSet = false;
 		labelWanted = false;
+		
+		if (keyLaTeX != null) {
+			// remove old key from cache
+			JLaTeXMathCache.removeCachedTeXFormula(keyLaTeX);
+		}
+
 	}
 
 	final public void notifyAdd() {
