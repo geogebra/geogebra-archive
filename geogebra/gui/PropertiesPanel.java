@@ -223,9 +223,9 @@ public	class PropertiesPanel extends JPanel {
 				graphicsViewLocationPanel = new GraphicsViewLocationPanel(app, this);
 				
 				//coordinateFunctionPanel = new CoordinateFunctionPanel(app, this);
-				sliderPanel = new SliderPanel(app, this, false, true);
 			}
 			
+			sliderPanel = new SliderPanel(app, this, false, true);
 			showObjectPanel = new ShowObjectPanel();
 			selectionAllowed = new SelectionAllowedPanel();
 			showTrimmedIntersectionLines = new ShowTrimmedIntersectionLines();
@@ -334,7 +334,8 @@ public	class PropertiesPanel extends JPanel {
 			tabPanelList.add(textTab);
 			
 			// slider tab
-			if(!isDefaults) {
+			//if(!isDefaults)
+			{
 				ArrayList<JPanel> sliderTabList = new ArrayList<JPanel>();	
 				sliderTabList.add(sliderPanel);	
 				sliderTab = new TabPanel(sliderTabList);
@@ -449,10 +450,10 @@ public	class PropertiesPanel extends JPanel {
 			lineStyleTab.setTitle(app.getPlain("Decoration"));
 			textTab.setTitle(app.getPlain("Text"));
 			algebraTab.setTitle(app.getMenu("Properties.Algebra"));
+			sliderTab.setTitle(app.getPlain("Slider")); 
 			
 			if(!isDefaults) {
 				positionTab.setTitle(app.getMenu("Properties.Position"));
-				sliderTab.setTitle(app.getPlain("Slider")); 
 				scriptTab.setTitle(app.getPlain("Scripting")); 
 				advancedTab.setTitle(app.getMenu("Advanced"));
 			}
@@ -488,6 +489,7 @@ public	class PropertiesPanel extends JPanel {
 			animSpeedPanel.setLabels();
 			slopeTriangleSizePanel.setLabels();
 			absScreenLocPanel.setLabels();
+			sliderPanel.setLabels();
 
 			if(!isDefaults) {
 				namePanel.setLabels();
@@ -502,7 +504,6 @@ public	class PropertiesPanel extends JPanel {
 				bgImagePanel.setLabels();	
 				showConditionPanel.setLabels();
 				colorFunctionPanel.setLabels();
-				sliderPanel.setLabels();
 			}
 									
 			// remember selected tab
