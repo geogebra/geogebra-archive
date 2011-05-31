@@ -14,6 +14,7 @@ package geogebra.kernel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Manages macros (user defined tools).
@@ -31,16 +32,16 @@ public class MacroManager {
 	}
 		
 	public void addMacro(Macro macro) {						
-		macroMap.put(macro.getCommandName(), macro);
+		macroMap.put(macro.getCommandName().toLowerCase(Locale.US), macro);
 		macroList.add(macro);
 	}
 	
 	public Macro getMacro(String name) {
-		return (Macro) macroMap.get(name);
+		return (Macro) macroMap.get(name.toLowerCase(Locale.US));
 	}
 	
 	public void removeMacro(Macro macro) {
-		macroMap.remove(macro.getCommandName());	
+		macroMap.remove(macro.getCommandName().toLowerCase(Locale.US));	
 		macroList.remove(macro);		
 	}	
 	
@@ -55,9 +56,9 @@ public class MacroManager {
 	 * Sets the command name of a macro.
 	 */
 	public void setMacroCommandName(Macro macro, String cmdName) {
-		macroMap.remove(macro.getCommandName());
+		macroMap.remove(macro.getCommandName().toLowerCase(Locale.US));
 		macro.setCommandName(cmdName);
-		macroMap.put(macro.getCommandName(), macro);			
+		macroMap.put(macro.getCommandName().toLowerCase(Locale.US), macro);			
 	}
 	
 	public Macro getMacro(int i) {
