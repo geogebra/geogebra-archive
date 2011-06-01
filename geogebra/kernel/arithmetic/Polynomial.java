@@ -542,4 +542,8 @@ public class Polynomial extends ValidExpression implements Serializable, Express
 		return false;
 	}    
     
+	public String toOutputValueString() {
+		return toValueString();
+	}
+
 } // end of class Polynomial

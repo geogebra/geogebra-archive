@@ -606,4 +606,8 @@ implements NumberValue {
 		isAngle = false;
 		return this;
 	}
+
+	public String toOutputValueString() {
+		return toValueString();
+	}
 }

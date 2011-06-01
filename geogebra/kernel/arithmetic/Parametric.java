@@ -132,4 +132,8 @@ public class Parametric extends ValidExpression {
 		return false;
 	}      
     
+	public String toOutputValueString() {
+		return toValueString();
+	}
+
 }

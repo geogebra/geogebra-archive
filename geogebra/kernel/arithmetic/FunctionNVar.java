@@ -461,6 +461,10 @@ public class FunctionNVar extends ValidExpression implements ExpressionValue,
 		return expression.toValueString();
 	}
 
+	final public String toOutputValueString() {
+		return expression.toOutputValueString();
+	}
+
 	final public String toLaTeXString(boolean symbolic) {
 		return expression.toLaTeXString(symbolic);
 	}

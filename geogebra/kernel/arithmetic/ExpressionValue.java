@@ -48,6 +48,7 @@ public interface ExpressionValue {
     public ExpressionValue evaluate();
     public HashSet<GeoElement> getVariables();   
     public String toValueString();
+    public String toOutputValueString();
     public String toLaTeXString(boolean symbolic);   
     public void resolveVariables();
 	public String toRealString();

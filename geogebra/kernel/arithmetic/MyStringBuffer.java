@@ -13,6 +13,7 @@ the Free Software Foundation.
 package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 import java.util.HashSet;
 
@@ -91,6 +92,14 @@ public class MyStringBuffer extends ValidExpression implements TextValue {
 
     final public String toValueString() {
         return sb.toString();
+    }
+    
+    final public String toOutputValueString() {
+    	StringBuffer sb2 = new StringBuffer(sb.length() + 2);
+    	sb2.append('"');
+    	sb2.append(sb);
+    	sb2.append('"');
+        return sb2.toString();
     }
     
     final public String toLaTeXString(boolean symbolic) {

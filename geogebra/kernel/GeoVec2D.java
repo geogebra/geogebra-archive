@@ -753,5 +753,9 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
 			return false;
 		}
 		
+		public String toOutputValueString() {
+			return toValueString();
+		}
+
 		
 }

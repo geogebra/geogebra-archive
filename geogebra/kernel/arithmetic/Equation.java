@@ -383,5 +383,10 @@ public class Equation extends ValidExpression {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	public String toOutputValueString() {
+		return toValueString();
+	}
+
  
 } // end of class Equation

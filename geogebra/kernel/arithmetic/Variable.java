@@ -189,4 +189,8 @@ public class Variable extends ValidExpression implements ExpressionValue {
 		return false;
 	}    
     
+	public String toOutputValueString() {
+		return toValueString();
+	}
+
 }

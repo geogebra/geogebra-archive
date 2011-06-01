@@ -630,4 +630,9 @@ implements Vector3DValue {
 		public Geo3DVec get3DVec() {
 			return this;
 		}
+		
+		public String toOutputValueString() {
+			return toValueString();
+		}
+
 }

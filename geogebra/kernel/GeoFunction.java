@@ -448,6 +448,22 @@ CasEvaluableFunction, ParametricCurve, LineProperties, RealRootFunction, Dilatea
 			return app.getPlain("undefined");
 	}	
 	
+	/*
+	 * (non-Javadoc)
+	 * @see geogebra.kernel.GeoElement#toOutputValueString()
+	 * needed for eg KeepIf[x!="h",{"h","k","o"}]
+	 */
+	public String toOutputValueString() {	
+		
+		if (isLocalVariable())
+			return label;
+
+		if (isDefined())
+			return fun.toOutputValueString();
+		else
+			return app.getPlain("undefined");
+	}	
+	
 	public String toSymbolicString() {	
 		if (isDefined())
 			return fun.toString();

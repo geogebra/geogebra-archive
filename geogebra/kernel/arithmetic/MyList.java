@@ -825,5 +825,9 @@ public class MyList extends ValidExpression implements ListValue {
 		
 	}
 
+	public String toOutputValueString() {
+		return toValueString();
+	}
+
 
 }

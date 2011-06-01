@@ -1186,6 +1186,23 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		return operationToString(leftStr, rightStr, true);
 	}
 
+	final public String toOutputValueString() {
+		if (isLeaf()) { // leaf is GeoElement or not
+			if (left != null)
+				return left.toOutputValueString();
+		}
+
+		// expression node
+		String leftStr = left.toOutputValueString();
+
+		String rightStr = null;
+		if (right != null) {
+			rightStr = right.toOutputValueString();
+		}
+
+		return operationToString(leftStr, rightStr, true);
+	}
+
 	/**
 	 * Returns a string representation of this node in LaTeX syntax. Note: the
 	 * resulting string may contain special unicode characters like greek

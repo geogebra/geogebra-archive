@@ -120,5 +120,10 @@ public class MyBoolean extends ValidExpression implements BooleanValue {
 	public double getDouble() {		
 		return value ? 1 : 0;
 	}
+	
+	public String toOutputValueString() {
+		return toValueString();
+	}
+
 
 }

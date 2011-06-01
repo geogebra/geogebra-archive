@@ -336,4 +336,8 @@ implements ExpressionValue {
 		return this;
 	}
 
+	public String toOutputValueString() {
+		return toValueString();
+	}
+
 }

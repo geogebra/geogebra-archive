@@ -213,4 +213,9 @@ public class MyVec3DNode extends ValidExpression implements Vector3DValue {
 	public Geo3DVec get3DVec() {
 		return new Geo3DVec(kernel,((NumberValue)x.evaluate()).getDouble(),((NumberValue)y.evaluate()).getDouble(),((NumberValue)z.evaluate()).getDouble());
 	}
+	
+	public String toOutputValueString() {
+		return toValueString();
+	}
+
 }
