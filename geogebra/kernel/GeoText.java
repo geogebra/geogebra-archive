@@ -254,13 +254,13 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 		
 		sbToString.setLength(0);
 		if (printForm == ExpressionNode.STRING_TYPE_LATEX)
-			sbToString.append("``");
+			sbToString.append("\\text{``");
 		else
 			sbToString.append('\"');
 		if (str != null)
 			sbToString.append(str);
 		if (printForm == ExpressionNode.STRING_TYPE_LATEX)
-			sbToString.append("''");
+			sbToString.append("''}");
 		else
 			sbToString.append('\"');
 		return sbToString.toString();	
