@@ -2447,8 +2447,8 @@ public class Kernel {
 	 */
 	final public GeoText LaTeX(
 		String label,
-		GeoElement geo, GeoBoolean substituteVars) {
-		AlgoLaTeX algo = new AlgoLaTeX(cons, label, geo, substituteVars);
+		GeoElement geo, GeoBoolean substituteVars, GeoBoolean showName) {
+		AlgoLaTeX algo = new AlgoLaTeX(cons, label, geo, substituteVars, showName);
 		GeoText t = algo.getGeoText();
 		return t;
 	}

@@ -116,7 +116,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 					
 					// single geo
 					if(list.size()==1){
-						text = "Name[" + list.get(0) + "] + \" = \"" + " + FormulaText[" + list.get(0) + "]";
+						text = "FormulaText[" + list.get(0) + ", true, true]";
 					}
 					
 					// multiple geos, wrap in TableText
@@ -126,7 +126,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 						for(int i=0; i<list.size(); i++){
 							geo = app.getKernel().lookupLabel(list.get(i));
 							
-							text += "{Name[" + list.get(i) + "] + \" = \"" + "FormulaText[" + list.get(i) + "]}";
+							text += "{FormulaText[" + list.get(i) + ", true, true]}";
 							if(i<list.size()-1){
 								text += ",";
 							}

@@ -3602,6 +3602,58 @@ public abstract class GeoElement
 		return strLaTeX;
 	}
 
+	
+	/**
+	 * Returns a string used to render a LaTeX form of the geo's algebra description. 
+	 *  
+	 */
+	public String getLaTeXAlgebraDescription(boolean substituteNumbers){
+		return getLaTeXAlgebraDescription(this, substituteNumbers);
+	}
+	private String getLaTeXAlgebraDescription(GeoElement geo, boolean substituteNumbers){
+		String latexStr;
+
+		String algebraDesc = geo.getAlgebraDescription();
+		StringBuilder sb = new StringBuilder();
+		String[] temp;
+
+		// handle undefined
+		if(!geo.isDefined()){
+			sb.append("\\:\\mbox{" + geo.getAlgebraDescriptionTextOrHTML() + "}") ;
+
+		// handle non-GeoText prefixed with ":", e.g.  "a: x = 3"
+		}else if(algebraDesc.indexOf(":") > -1 & !geo.isGeoText()){
+			sb.append(algebraDesc.split(":")[0] + ": \\,");
+			sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+		}
+
+		// now handle non-GeoText prefixed with "="
+		else if(algebraDesc.indexOf("=") > -1 && !geo.isGeoText()){
+			sb.append(algebraDesc.split("=")[0] + "\\, = \\,");
+			sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+		}
+
+		// handle GeoText with LaTeX
+		else if (geo.isGeoText() && ((GeoText)geo).isLaTeX()){
+			sb.append(algebraDesc.split("=")[0]);
+			sb.append("\\, = \\,");
+			sb.append("\\text{``"); // left quote
+			sb.append(((GeoText)geo).getTextString());
+			sb.append("''}"); // right quote
+		}		
+
+		// handle regular GeoText (and anything else we may have missed)
+		// by returning a null string that will force non-LaTeX rendering
+		else {
+			return null; 
+		}
+
+		return sb.toString();
+
+	}
+	
+	
+	
 	/*
 	final public Image getAlgebraImage(Image tempImage) {
 		Graphics2D g2 = (Graphics2D) g;

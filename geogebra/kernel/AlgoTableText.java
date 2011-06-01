@@ -79,8 +79,8 @@ public class AlgoTableText extends AlgoElement {
         setInputOutput();
         compute();
         
-        // make sure for new LaTeX texts we get nice "x"s
-        text.setSerifFont(true);
+        // set sans-serif LaTeX default
+		text.setSerifFont(false);
     }
 
     public String getClassName() {

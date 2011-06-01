@@ -18,12 +18,14 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import java.util.ArrayList;
+
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
 
 
 /**
- * Returns the name of a GeoElement as a GeoText.
+ * Returns a description of a GeoElement as a GeoText in LaTeX format.
  * @author  Markus
  * @version 
  */
@@ -32,38 +34,42 @@ public class AlgoLaTeX extends AlgoElement {
 	private static final long serialVersionUID = 1L;
 	private GeoElement geo;  // input
 	private GeoBoolean substituteVars; 
-    private GeoText text;     // output              
-        
-    public AlgoLaTeX(Construction cons, String label, GeoElement geo, GeoBoolean substituteVars ) {
-    	super(cons);
-        this.geo = geo;  
-        this.substituteVars = substituteVars;
+	private GeoBoolean showName; 
+	private GeoText text;     // output              
 
-       text = new GeoText(cons);
-       setInputOutput(); // for AlgoElement
-        
-        // compute value of dependent number
-        compute();      
-        text.setLabel(label);
-    }   
-    
-    public AlgoLaTeX(Construction cons, String label, GeoElement geo) {
-    	super(cons);
-        this.geo = geo;  
-        this.substituteVars = null;
+	public AlgoLaTeX(Construction cons, String label, GeoElement geo, GeoBoolean substituteVars, GeoBoolean showName ) {
+		super(cons);
+		this.geo = geo;  
+		this.substituteVars = substituteVars;
+		this.showName = showName;
+		text = new GeoText(cons);
+		setInputOutput(); // for AlgoElement
 
-       text = new GeoText(cons);
+		// compute value of dependent number
+		compute();      
+		text.setLabel(label);
+		
+		// set sans-serif LaTeX default
+		text.setSerifFont(false);
+	}   
+
+	public AlgoLaTeX(Construction cons, String label, GeoElement geo) {
+		super(cons);
+		this.geo = geo;  
+		this.substituteVars = null;
+		this.showName = null;
+		text = new GeoText(cons);
 
 		text.setIsTextCommand(true); // stop editing as text
 		setInputOutput(); // for AlgoElement
-        
-        // compute value of dependent number
-        compute();      
-        text.setLabel(label);
-        
-        // make sure for new LaTeX texts we get nice "x"s
-        text.setSerifFont(true);
-    }   
+
+		// compute value of dependent number
+		compute();      
+		text.setLabel(label);
+
+		// set sans-serif LaTeX default
+		text.setSerifFont(false);
+	}   
     
 	public String getClassName() {
 		return "AlgoLaTeX";
@@ -71,16 +77,19 @@ public class AlgoLaTeX extends AlgoElement {
     
     // for AlgoElement
 	protected void setInputOutput() {
-		
-		if (substituteVars == null) {
-			input = new GeoElement[1];
-			input[0] = geo;				
-		} else {
-			input = new GeoElement[2];
-			input[0] = geo;			
-			input[1] = substituteVars;	
-		}
-        
+
+		ArrayList<GeoElement> geos = new ArrayList<GeoElement>();
+		geos.add(geo);
+		if (substituteVars != null) 
+			geos.add(substituteVars);
+		if (showName != null) 
+			geos.add(showName);	
+
+		input = new GeoElement[geos.size()];
+		for(int i=0; i<input.length; i++)
+			input[i] = geos.get(i);
+
+
         output = new GeoElement[1];        
         output[0] = text;        
         setDependencies(); // done by AlgoElement
@@ -89,24 +98,38 @@ public class AlgoLaTeX extends AlgoElement {
     public GeoText getGeoText() { return text; }
     
     // calc the current value of the arithmetic tree
-    protected final void compute() {    
+    protected final void compute() {  
     	
-		if (!geo.isDefined() || (substituteVars != null && !substituteVars.isDefined())) {
+    	boolean useLaTeX = true;
+		
+    	if (!geo.isDefined() 
+				|| (substituteVars != null && !substituteVars.isDefined())
+				|| showName != null && !showName.isDefined()) {
     		text.setTextString("");
+    		
+    		
 		} else {
-    		boolean bool = substituteVars == null ? true : substituteVars.getBoolean();
-
+    		boolean substitute = substituteVars == null ? true : substituteVars.getBoolean();
+    		boolean show = showName == null ? false : showName.getBoolean();
+    		
     		text.setTemporaryPrintAccuracy();
     		
-    		Application.debug(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, bool ));
-    		
-    		text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, bool ));    		
+    		//Application.debug(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substitute ));
+    		if(show){
+    			text.setTextString(geo.getLaTeXAlgebraDescription(substitute));
+    			if(text.getTextString() == null){
+    				text.setTextString(geo.getAlgebraDescriptionTextOrHTML());
+    				useLaTeX = false;
+    			}
+    		}else{
+    			text.setTextString(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substitute ));   
+    		}
 
     		text.restorePrintAccuracy();
 		}
 		
     	
-    	text.setLaTeX(true, false);
+    	text.setLaTeX(useLaTeX, false);
     	
     	/*
     	int tempCASPrintForm = kernel.getCASPrintForm();

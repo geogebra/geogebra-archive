@@ -110,8 +110,9 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 			// if enabled, render with LaTeX
 			if(view.isRenderLaTeX()  && kernel.getAlgebraStyle() == Kernel.ALGEBRA_STYLE_VALUE){
 				latexFont = new Font(app.getBoldFont().getName(),app.getBoldFont().getStyle(),app.getBoldFont().getSize()-1);
-				setLaTeXString(geo);
+				latexStr = geo.getLaTeXAlgebraDescription(true);
 				if(latexStr != null){
+					latexStr = "\\;" + latexStr; // add a little space for the icon
 					drawLatexImageIcon(latexIcon, latexStr, latexFont, false, getForeground(), this.getBackground() );
 					setIcon(joinIcons((ImageIcon) getIcon(),latexIcon));
 					setText(" ");
@@ -240,54 +241,6 @@ public class MyRenderer extends DefaultTreeCellRenderer {
 		// use a slightly smaller font for LaTeX
 
 	}
-
-	/**
-	 * Sets latexStr, the string used to render a LaTeX form of the algebra description for geo, the given GeoElement. 
-	 *  
-	 * @param geo
-	 */
-	private void setLaTeXString(GeoElement geo){
-		
-		
-		String algebraDesc = geo.getAlgebraDescription();
-		StringBuilder sb = new StringBuilder("\\:");
-		String[] temp;
-
-		// handle undefined
-		if(!geo.isDefined()){
-			sb.append("\\:\\mbox{" + getAlgebraDescriptionTextOrHTML(geo) + "}") ;
-
-		// handle non-GeoText prefixed with ":", e.g.  "a: x = 3"
-		}else if(algebraDesc.indexOf(":") > -1 & !geo.isGeoText()){
-			sb.append(algebraDesc.split(":")[0] + ": \\,");
-			sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
-		}
-
-		// now handle non-GeoText prefixed with "="
-		else if(algebraDesc.indexOf("=") > -1 && !geo.isGeoText()){
-			sb.append(algebraDesc.split("=")[0] + "\\, = \\,");
-			sb.append(geo.getFormulaString(ExpressionNode.STRING_TYPE_LATEX, true));
-		}
-
-		// handle GeoText with LaTeX
-		else if (geo.isGeoText() && ((GeoText)geo).isLaTeX()){
-			sb.append(algebraDesc.split("=")[0]);
-			sb.append("\\, = \\,");
-			sb.append("\\text{``"); // left quote
-			sb.append(((GeoText)geo).getTextString());
-			sb.append("''}"); // right quote
-		}		
-		
-		// handle regular GeoText (and anything else we may have missed)
-		// by returning a null string that will force non-LaTeX rendering
-		else {
-			latexStr = null; 
-			return;
-		}
-			 
-	latexStr = sb.toString();
-
-}
 
 
 } // MyRenderer

@@ -2,6 +2,7 @@ package geogebra.kernel.commands;
 
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPoint;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.main.MyError;
@@ -33,12 +34,25 @@ public class CmdLaTeX extends CommandProcessor {
 			arg = resArgs(c);	
 			if (arg[1].isGeoBoolean()) {
 				GeoElement[] ret2 = { kernel.LaTeX(c.getLabel(),
-									arg[0], (GeoBoolean)arg[1]) };
+									arg[0], (GeoBoolean)arg[1], null) };
 				return ret2;
 			}
 			else
-           	 	throw argErr(app, c.getName(), arg[1]);         
-
+           	 	throw argErr(app, c.getName(), arg[1]);   
+			
+		case 3:
+			
+			arg = resArgs(c);	
+			if (arg[1].isGeoBoolean() && arg[2].isGeoBoolean()) {
+				GeoElement[] ret2 = { kernel.LaTeX(c.getLabel(),
+									arg[0], (GeoBoolean)arg[1], (GeoBoolean)arg[2]) };
+				return ret2;
+			}
+			
+			else if (!arg[1].isGeoBoolean())
+				throw argErr(app, c.getName(), arg[1]);
+			else 
+				throw argErr(app, c.getName(), arg[2]);
 
 
 		default:
