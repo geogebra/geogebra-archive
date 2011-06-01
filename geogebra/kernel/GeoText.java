@@ -2,6 +2,7 @@ package geogebra.kernel;
 
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.euclidian.EuclidianView;
+import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.MyStringBuffer;
 import geogebra.kernel.arithmetic.TextValue;
 import geogebra.kernel.kernelND.GeoPointND;
@@ -249,11 +250,19 @@ implements Locateable, AbsoluteScreenLocateable, TextValue, TextProperties {
 	 * Returns quoted text value string.
 	 */
 	public String toOutputValueString() {	
+		int printForm = kernel.getCASPrintForm();
+		
 		sbToString.setLength(0);
-		sbToString.append('\"');
+		if (printForm == ExpressionNode.STRING_TYPE_LATEX)
+			sbToString.append("``");
+		else
+			sbToString.append('\"');
 		if (str != null)
 			sbToString.append(str);
-		sbToString.append('\"');	
+		if (printForm == ExpressionNode.STRING_TYPE_LATEX)
+			sbToString.append("''");
+		else
+			sbToString.append('\"');
 		return sbToString.toString();	
 	}
 	
