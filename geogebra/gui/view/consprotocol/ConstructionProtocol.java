@@ -15,6 +15,7 @@ the Free Software Foundation.
 
 import geogebra.euclidian.Drawable;
 import geogebra.export.WorksheetExportDialog;
+import geogebra.gui.GuiManager;
 import geogebra.gui.TitlePanel;
 import geogebra.gui.view.algebra.InputPanel;
 import geogebra.gui.view.spreadsheet.MyTable;
@@ -48,6 +49,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.awt.print.PageFormat;
 import java.awt.print.Printable;
@@ -124,7 +127,7 @@ public class ConstructionProtocol extends JDialog implements Printable {
 	private ConstructionProtocolNavigation protNavBar; // navigation bar of
 														// protocol window
 
-	public ConstructionProtocol(Application app) {
+	public ConstructionProtocol(final Application app) {
 		super(app.getFrame());
 
 		this.app = app;
@@ -190,6 +193,44 @@ public class ConstructionProtocol extends JDialog implements Printable {
 		getContentPane().add(protNavBar, BorderLayout.SOUTH);
 		Util.addKeyListenerToAll(protNavBar, keyListener);
 
+		addWindowListener(new WindowListener() {
+			public void windowClosed(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+						
+			}
+
+			public void windowActivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void windowClosing(WindowEvent arg0) {
+				GuiManager gm = app.getGuiManager();
+				gm.hideConstructionProtocol();
+				gm.updateMenubar();
+			}
+
+			public void windowDeactivated(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void windowDeiconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void windowIconified(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void windowOpened(WindowEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		initGUI();
 
 		// setSize(500, 200);
