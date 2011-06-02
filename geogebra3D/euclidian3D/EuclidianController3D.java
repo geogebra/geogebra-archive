@@ -28,8 +28,10 @@ import geogebra3D.gui.GuiManager3D;
 import geogebra3D.kernel3D.GeoCoordSys1D;
 import geogebra3D.kernel3D.GeoPlane3D;
 import geogebra3D.kernel3D.GeoPoint3D;
+import geogebra3D.kernel3D.GeoPolygon3D;
 import geogebra3D.kernel3D.GeoQuadric3D;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -112,7 +114,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	/** 2D coord sys (plane, polygon, ...) */
 	protected ArrayList<GeoCoordSys2D> selectedCoordSys2D = new ArrayList<GeoCoordSys2D>();
 	
-	
+	private ArrayList<GeoPolygon3D> selectedPolygons3D = new ArrayList<GeoPolygon3D>();
 	
 	
 	/**
@@ -1601,12 +1603,24 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		if (!selectionPreview  && hits.size() > 2 - selGeos()) {
 			Hits goodHits = new Hits();
 			
+			//hits.getHits(GeoLineND.class, tempArrayList);
+			//hits.getHits(GeoCoordSys2D.class, tempArrayList2);
+			//hits.getHits(GeoConicND.class, tempArrayList3);
+			//goodHits.addAll(tempArrayList);
+			//goodHits.addAll(tempArrayList2);
+			//goodHits.addAll(tempArrayList3);
+
 			hits.getHits(GeoLineND.class, tempArrayList);
-			hits.getHits(GeoCoordSys2D.class, tempArrayList2);
-			hits.getHits(GeoConicND.class, tempArrayList3);
 			goodHits.addAll(tempArrayList);
-			goodHits.addAll(tempArrayList2);
-			goodHits.addAll(tempArrayList3);
+			
+			hits.getHits(GeoCoordSys2D.class, tempArrayList);
+			goodHits.addAll(tempArrayList);
+			
+			hits.getHits(GeoConicND.class, tempArrayList);
+			goodHits.addAll(tempArrayList);
+			
+			hits.getHits(GeoPolygon.class, tempArrayList);
+			goodHits.addAll(tempArrayList);
 
 			hits = goodHits;
 
@@ -1621,11 +1635,11 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		// currently tested only for 3D conics
 		addSelectedConicND(hits, 10, true);
 		
-		
 		// currently tested only for planes
 		addSelectedCS2D(hits, 10, true);
 		
-
+		// polygons
+		addSelectedPolygon(hits, 10, true);
 		
 		//singlePointWanted = singlePointWanted && selGeos() == 2;
 		
@@ -1655,6 +1669,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				GeoElement[] ret = { null };
 				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) plane);
 				return ret;
+			}else if (selPolygons()>=1) {// line-polygon
+				GeoLineND line = getSelectedLinesND()[0];
+				GeoPolygon polygon = getSelectedPolygons()[0];
+				GeoElement[] ret = { null };
+				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) polygon);
+				return ret;
 			}
 		} else if (selConicsND()>=2 ) {// conic-conic
 			GeoConicND[] conics = getSelectedConicsND();
@@ -1673,6 +1693,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		return null;
 	}
 
+	public Color intersectionCurveColorPlanarPlanar = new Color(127, 0, 255);
+	public Color intersectionCurveColorPlanarQuadric = Color.YELLOW;
 	
 		/**
 		 * 
@@ -1692,24 +1714,24 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			 */
 			if (hits.isEmpty())
 				return false;		
-			
 			//////////////////////////////////////////////////
 			if (!selectionPreview  && hits.size() > 2 - selGeos()) {
 				Hits goodHits = new Hits();
 				
 				hits.getHits(GeoCoordSys2D.class, tempArrayList);
-				hits.getHits(GeoQuadric3D.class, tempArrayList2);
 				goodHits.addAll(tempArrayList);
-				goodHits.addAll(tempArrayList2);
-				
+				hits.getHits(GeoQuadric3D.class, tempArrayList);
+				goodHits.addAll(tempArrayList);
+	
 				hits = goodHits;
+				
+				
 	
 			}
 		
 			addSelectedCS2D(hits, 10, true);
 			addSelectedQuadric(hits, 10, true);
-	
-			
+
 			//singlePointWanted = singlePointWanted && selGeos() == 2;
 			
 			//if (selGeos() > 2)
@@ -1717,20 +1739,24 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 			//Application.debug("cs2D="+selCS2D()+"\nquadrics="+selQuadric());
 			
-			if (selCS2D()>=2) { // plane-plane
+			if (selCS2D()>=2)  { // plane-plane
 				GeoCoordSys2D[] planes = getSelectedCS2D();
 				GeoElement[] ret = { null };
 				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) planes[0], (GeoElement) planes[1]);
+				ret[0].setObjColor(intersectionCurveColorPlanarPlanar);
 				return ret[0].isDefined();
 			}
+
 	
-			else if 
-			((selCS2D() == 1) &&  (selQuadric() >= 1)) {
+			else if ((selCS2D() >= 1) &&  (selQuadric() >= 1)) { //plane-quadric
 				GeoElement plane = (GeoElement) getSelectedCS2D()[0];
 				GeoQuadric3D quad = getSelectedQuadric()[0];
 				GeoElement[] ret = {kernel.getManager3D().Intersect( null, (GeoPlaneND) plane, (GeoQuadricND) quad)};
+				ret[0].setObjColor(intersectionCurveColorPlanarQuadric);
 				return ret[0].isDefined();
 			}
+			
+	
 			
 			
 			////////////////////////////////////////
@@ -1825,6 +1851,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 	
 	
 	/** return selected 2D coord sys
+	 * then also clear all selected 2D coord sys. 
 	 * @return selected 2D coord sys
 	 */
 	@SuppressWarnings("unchecked")
@@ -2126,8 +2153,23 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		Application.debug("TODO");
 	}	
 	
-	
-	
+	final protected int addSelectedPolygon3D(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPolygons3D, GeoPolygon3D.class);
+	}
+	final protected GeoPolygon[] getSelectedPolygons3D() {				
+		GeoPolygon[] ret = new GeoPolygon[selectedPolygons3D.size()];
+		for (int i = 0; i < selectedPolygons3D.size(); i++) {		
+			ret[i] = (GeoPolygon) selectedPolygons3D.get(i);
+		}
+		clearSelection(selectedPolygons3D);
+		return ret;
+	}
+
+	protected final int selPolygons3D() {
+		return selectedPolygons3D.size();
+	}
+
 	
 	
 }

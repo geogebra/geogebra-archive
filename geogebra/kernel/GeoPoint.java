@@ -464,7 +464,7 @@ GeoPointND, Animatable, Transformable  {
 		path = p;
 		
 		// tell conic that this point is on it, that's needed to handle reflections
-        // of concis correctly for path parameter calculation of point P
+        // of conics correctly for path parameter calculation of point P
         GeoElement geo = path.toGeoElement();
         if (geo.isGeoConic()) {
         	((GeoConicND) geo).addPointOnConic(this);

@@ -4245,7 +4245,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			goodHits.addAll(tempArrayList);
 			hits.getHits(GeoFunction.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
-
+			hits.getHits(GeoPolygon.class, tempArrayList);
+			goodHits.addAll(tempArrayList);
+			
 			//if (goodHits.size() > 2 - selGeos()) {
 			//	//  choose one geo, and select only this one
 			//	GeoElement geo = chooseGeo(goodHits, true);
@@ -4263,6 +4265,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		addSelectedConic(hits, 10, true);
 		addSelectedFunction(hits, 10, true);	
 		addSelectedImplicitpoly(hits, 10, true);
+		addSelectedPolygon(hits, 10, true);
 		
 		singlePointWanted = singlePointWanted && selGeos() == 2;
 
@@ -4315,6 +4318,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			else
 				ret = kernel.IntersectLineConic(null, line[0], conic[0]);
 
+			return ret;
+		}
+		// line and polygon
+		else if (selLines()>=1 && selPolygons() >=1) {
+			GeoLine line = getSelectedLines()[0];
+			GeoPolygon polygon = getSelectedPolygons()[0];
+			GeoElement[] ret = { null };
+			ret = kernel.IntersectLinePolygon(null, line, polygon);
 			return ret;
 		}
 		// line and function
