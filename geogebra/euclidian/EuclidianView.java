@@ -966,6 +966,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		if (mode == this.mode) return; 
 		this.mode = mode;
 		initCursor();
+		euclidianController.clearJustCreatedGeos();
 		euclidianController.setMode(mode);
 		if (clearRectangle(mode)) setSelectionRectangle(null);
 		getStyleBar().setMode(mode);

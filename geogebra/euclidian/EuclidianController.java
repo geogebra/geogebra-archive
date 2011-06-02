@@ -236,6 +236,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	//protected LinkedList highlightedGeos = new LinkedList();
 	protected Hits highlightedGeos = new Hits();
+	
+	protected ArrayList<GeoElement> justCreatedGeos = new ArrayList<GeoElement>();
 
 	protected boolean selectionPreview = false;
 
@@ -1486,6 +1488,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			return;
 		}
 
+		clearJustCreatedGeos();
+		
 		if (!DRAGGING_OCCURED) {
 			
 			DRAGGING_OCCURED = true;			
@@ -2872,25 +2876,35 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		}
 
 		if (ret != null)
-			selectGeos(ret);
+			memorizeJustCreatedGeos(ret);
 
 		if (!changedKernel)
 			return ret != null;
 
 		return changedKernel;
 	}
-	
-	public void selectGeos(GeoElement[] geos) {
+
+	public void memorizeJustCreatedGeos(GeoElement[] geos) {
+		justCreatedGeos.clear();
 		for (int i = 0; i < geos.length; i++)
 		{
-			selectedGeos.add(geos[i]);
-			app.addSelectedGeo(geos[i], false);
+			justCreatedGeos.add(geos[i]);
 		}
 	}
 
-	public void selectGeos(ArrayList<GeoElement> geos) {
-		selectedGeos.addAll(geos);
-		app.addSelectedGeos(geos, false);
+	public void memorizeJustCreatedGeos(ArrayList<GeoElement> geos) {
+		justCreatedGeos.clear();
+		justCreatedGeos.addAll(geos);
+	}
+	
+	public void clearJustCreatedGeos()
+	{
+		justCreatedGeos.clear();
+	}
+	
+	public ArrayList<GeoElement> getJustCreatedGeos()
+	{
+		return justCreatedGeos;
 	}
 
 	// process mode and return whether kernel was changed

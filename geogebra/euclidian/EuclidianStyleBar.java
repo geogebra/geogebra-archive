@@ -1320,9 +1320,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		needUndo = false;
 
 
-		ArrayList<GeoElement> targetGeos = app.getSelectedGeos();
+		ArrayList<GeoElement> targetGeos = new ArrayList<GeoElement>();
+		targetGeos.addAll(ec.getJustCreatedGeos());
 		if(mode != EuclidianConstants.MODE_MOVE)
 			targetGeos.addAll(defaultGeos);
+		else
+			targetGeos.addAll(app.getSelectedGeos());
 
 		
 		

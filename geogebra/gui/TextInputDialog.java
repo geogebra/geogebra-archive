@@ -798,8 +798,7 @@ public class TextInputDialog extends InputDialog implements DocumentListener {
 					}
 
 					// make sure (only) the output of the text tool is selected
-					kernel.getApplication().getActiveEuclidianView().getEuclidianController().clearSelections();
-					kernel.getApplication().getActiveEuclidianView().getEuclidianController().selectGeos(ret);
+					kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(ret);
 
 					t.updateRepaint();
 					app.storeUndoInfo();

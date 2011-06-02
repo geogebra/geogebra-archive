@@ -1600,6 +1600,7 @@ public class Kernel {
 	public void redo() {
 		if (undoActive){			
 			notifyReset();
+			clearJustCreatedGeosInViews();
 			cons.redo();	
 			notifyReset();
 		}
@@ -1608,6 +1609,7 @@ public class Kernel {
 	public void undo() {
 		if (undoActive) {			
 			notifyReset();
+			clearJustCreatedGeosInViews();
 			cons.undo();
 			notifyReset();
 
@@ -1894,6 +1896,13 @@ public class Kernel {
 	final void notifyClearView() {
 		for (int i = 0; i < viewCnt; ++i) {
 			views[i].clearView();
+		}
+	}
+	
+	public void clearJustCreatedGeosInViews() {
+		for (int i = 0; i < viewCnt; i++) {
+			if (views[i] instanceof EuclidianView)
+				((EuclidianView)views[i]).getEuclidianController().clearJustCreatedGeos();
 		}
 	}
 	

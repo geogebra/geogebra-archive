@@ -1255,7 +1255,7 @@ public class GuiManager {
 			// make sure only the last image will be selected
 			GeoElement[] geos = { geoImage };
 			app.getActiveEuclidianView().getEuclidianController().clearSelections();
-			app.getActiveEuclidianView().getEuclidianController().selectGeos(geos);
+			app.getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(geos);
 			ret = true;
 		}
 

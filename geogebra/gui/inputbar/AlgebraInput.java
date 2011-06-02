@@ -268,6 +268,7 @@ public class AlgebraInput extends  JPanel implements ActionListener, KeyListener
 
 		int keyCode = e.getKeyCode();    
 		if (keyCode == KeyEvent.VK_ENTER) {	
+			app.getKernel().clearJustCreatedGeosInViews();
 			String input = inputField.getText();					   
 			if (input == null || input.length() == 0)
 			{

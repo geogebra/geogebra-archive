@@ -299,6 +299,8 @@ public class PropertiesDialog
 	 * shows this dialog and select GeoElement geo at screen position location
 	 */
 	public void setVisibleWithGeos(ArrayList geos) {
+		kernel.clearJustCreatedGeosInViews();
+		
 		setViewActive(true);					
 	
 		if (kernel.getConstruction().getGeoSetConstructionOrder().size() < 

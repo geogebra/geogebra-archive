@@ -82,7 +82,7 @@ public class InputDialogDilate extends AngleInputDialog {
 							ret.addAll(Arrays.asList(kernel.Dilate(null,  selGeos[i], num, point)));
 					}
 				}
-				kernel.getApplication().getActiveEuclidianView().getEuclidianController().selectGeos(ret);
+				kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(ret);
 				return true;
 			}
 			

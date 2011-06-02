@@ -97,7 +97,7 @@ public class InputDialogRotate extends AngleInputDialog implements KeyListener {
 			if (polys.length == 1) {
 				
 				GeoElement[] geos = kernel.Rotate(null,  polys[0], num, points[0]);
-				kernel.getApplication().getActiveEuclidianView().getEuclidianController().selectGeos(geos);
+				kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(geos);
 				return true;
 			} else {	
 				ArrayList<GeoElement> ret = new ArrayList<GeoElement>();
@@ -110,7 +110,7 @@ public class InputDialogRotate extends AngleInputDialog implements KeyListener {
 						}
 					}
 				}
-				kernel.getApplication().getActiveEuclidianView().getEuclidianController().selectGeos(ret);
+				kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(ret);
 				return true;
 			}
 			

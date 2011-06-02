@@ -27,6 +27,7 @@ public class RedefineInputHandler implements InputHandler {
 		try {
 			GeoElement newGeo = app.getKernel().getAlgebraProcessor().changeGeoElement(
 					geo, inputValue, true);
+			app.getKernel().clearJustCreatedGeosInViews();
 			app.doAfterRedefine(newGeo);
 			
             // update after redefine
