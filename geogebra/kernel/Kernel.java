@@ -7675,14 +7675,19 @@ public class Kernel {
 	 * converts to localised digits if appropriate
 	 */
 	final public String format(double x) {	
+		
+		String ret = formatRaw(x);
+		
 		if (Application.unicodeZero != '0') {
-			
-			String num = formatRaw(x);
-			
-			return internationalizeDigits(num);
-			
-			
-		} else return formatRaw(x);
+			ret = internationalizeDigits(ret);						
+		} 
+		
+		// fix for changing height in Algebra View plus / minus
+		if (getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) {
+			ret = ret.replace("-", "\\smash[b]{-}");
+		}
+		
+		return ret;
 		
 	}
 	

@@ -1650,11 +1650,13 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 						sb.append(" + ");
 						sb.append(rightStr.substring(3));
 					} else {
-						sb.append(" - ");
+						// fix for changing height in Algebra View plus / minus
+						sb.append(STRING_TYPE == STRING_TYPE_LATEX ? " \\; \\smash[b]{-} \\; " : " - ");
 						sb.append(rightStr);
 					}
 				} else {
-					sb.append(" - ");
+					// fix for changing height in Algebra View plus / minus
+					sb.append(STRING_TYPE == STRING_TYPE_LATEX ? " \\; \\smash[b]{-} \\; " : " - ");
 					sb.append(leftBracket(STRING_TYPE));
 					sb.append(rightStr);
 					sb.append(rightBracket(STRING_TYPE));
