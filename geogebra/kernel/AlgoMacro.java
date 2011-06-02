@@ -78,7 +78,17 @@ implements EuclidianViewAlgo {
     		cons.registerEuclidianViewAlgo(this);
     	}
         
-        GeoElement.setLabels(labels, getOutput());           
+        GeoElement.setLabels(labels, getOutput());     
+        
+        //we hide objects that are hidden in macro construction, but
+        //we want to do this only with 4.0 macros
+        if(macro.isCopyCaptionsAndVisibility()){
+			for(int i=0;i<macroOutput.length;i++)
+				if(!macroOutput[i].isEuclidianVisible()){
+					getOutput(i).setEuclidianVisible(false);
+					getOutput(i).update();
+				}
+		}
     }         
     
     public void remove() {
@@ -170,8 +180,7 @@ implements EuclidianViewAlgo {
 					((GeoNumeric) algoGeo).setDrawable(true);
 					algoGeo.setDrawAlgorithm(((AlgoDrawInformation)drawAlgo).copy());
 				}
-				if(macro.isCopyCaptions())
-					algoGeo.setCaption(macroGeo.getCaptionNoReplace());
+
 			}
 			else algoGeo.setUndefined();		
 		}		
@@ -190,7 +199,9 @@ implements EuclidianViewAlgo {
 			GeoElement out = getOutput(i); 
 			out.setUseVisualDefaults(false);
 			out.setAdvancedVisualStyle(macroOutput[i]);	
-			
+			if(macro.isCopyCaptionsAndVisibility()){
+				out.setCaption(macroOutput[i].getCaptionNoReplace());								
+			}
 			AlgoElement drawAlgo = macroOutput[i].getParentAlgorithm();
 			if(drawAlgo instanceof AlgoDrawInformation){
 				((GeoNumeric) out).setDrawable(true);

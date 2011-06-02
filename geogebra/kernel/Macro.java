@@ -702,13 +702,13 @@ public class Macro {
 	 * Set whether the macro should copy captions of resulting objects
 	 * @param copyCaptions true to copy
 	 */
-	public void setCopyCaptions(boolean copyCaptions) {
+	public void setCopyCaptionsAndVisibility(boolean copyCaptions) {
 		this.copyCaptions=copyCaptions;
 	}
 	/**
 	 * @return true if the macro copies captions of resulting objects
 	 */
-	public boolean isCopyCaptions() {
+	public boolean isCopyCaptionsAndVisibility() {
 		return copyCaptions;
 	}
 }

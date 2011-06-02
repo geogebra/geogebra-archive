@@ -1996,7 +1996,7 @@ public class MyXMLHandler implements DocHandler {
 			// create macro and a kernel for it
 			macro = new Macro(kernel, myCmdName);
 			macro.setToolName(toolName);
-			macro.setCopyCaptions(copyCaptions);
+			macro.setCopyCaptionsAndVisibility(copyCaptions);
 			macro.setToolHelp(toolHelp);
 			macro.setIconFileName(iconFile);
 			boolean showTool = strShowInToolBar == null ? true
