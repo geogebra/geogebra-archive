@@ -452,6 +452,7 @@ public class Manager3D implements Manager3DInterface {
 
 	final public GeoElement[] CylinderLimited(String[] labels, GeoPointND origin, GeoPointND secondPoint, NumberValue r) {
 		AlgoQuadricLimitedPointPointRadius algo = new AlgoQuadricLimitedPointPointRadiusCylinder(cons, labels, origin, secondPoint, r);
+		algo.update();//ensure volume is correctly computed
 		return algo.getOutput();
 	}
 
