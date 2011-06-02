@@ -3619,7 +3619,8 @@ public abstract class GeoElement
 
 		// handle undefined
 		if(!geo.isDefined()){
-			sb.append("\\:\\mbox{" + geo.getAlgebraDescriptionTextOrHTML() + "}") ;
+			// enclose in mbox so that spaces are preserved
+			sb.append("\\mbox{" + geo.getAlgebraDescription() + "}") ;
 
 		// handle non-GeoText prefixed with ":", e.g.  "a: x = 3"
 		}else if(algebraDesc.indexOf(":") > -1 & !geo.isGeoText()){
