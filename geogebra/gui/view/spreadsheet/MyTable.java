@@ -178,17 +178,11 @@ public class MyTable extends JTable implements FocusListener
 		app = view.getApplication();
 		kernel = app.getKernel();
 		table = this;
+			
 		
-		//G.Sturr 2009-11-15
-		selectedCellRanges = new ArrayList<CellRange>();
-		selectedCellRanges.add(new CellRange(this));
-
+		// set cell size and column header
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		//setAutoscrolls(true);
-
-		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		setCellSelectionEnabled(true);
-		// set cell size and column header
 		setRowHeight(TABLE_CELL_HEIGHT);
 		columnHeader = new MyColumnHeaderRenderer();
 		columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, TABLE_CELL_HEIGHT));
@@ -197,18 +191,21 @@ public class MyTable extends JTable implements FocusListener
 			getColumnModel().getColumn(i).setHeaderRenderer(columnHeader);
 			getColumnModel().getColumn(i).setPreferredWidth(preferredColumnWidth);
 		}
-		// add renderer & editor
 		
-		//G.Sturr 2010-4-4: add format handling to cell renderer
+		// add cell renderer & editors
 		setDefaultRenderer(Object.class, new MyCellRenderer(app, view, this.getCellFormatHandler()));
-		
-		//setDefaultRenderer(Object.class, new MyCellRenderer(app));
 		editorButton = new MyCellEditorButton();
 		editorBoolean = new MyCellEditorBoolean(kernel);
 		editorList = new MyCellEditorList();
 		editor = new MyCellEditor(kernel);
 		setDefaultEditor(Object.class, editor);
 
+		// setup selection
+		selectedCellRanges = new ArrayList<CellRange>();
+		selectedCellRanges.add(new CellRange(this));
+		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		setCellSelectionEnabled(true);
+		
 		// set selection colors
 		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
 		setSelectionForeground(Color.BLACK);
@@ -228,6 +225,7 @@ public class MyTable extends JTable implements FocusListener
 			removeMouseMotionListener(mouseMotionListeners[i]);
 			addMouseMotionListener(mouseMotionListeners[i]);
 		}
+		
 		// key listener
 		KeyListener[] defaultKeyListeners = getKeyListeners();
 		for (int i = 0; i < defaultKeyListeners.length; ++ i) {
@@ -392,9 +390,6 @@ public class MyTable extends JTable implements FocusListener
 	//===============================================================
 	
 	
-	
-	//G.STURR 2009-11-15
-	
 	/**
 	 * JTable does not support non-contiguous cell selection. It treats ctrl-down 
 	 * cell selection as if it was shift-extend. To prevent this behavior the JTable 
@@ -406,14 +401,13 @@ public class MyTable extends JTable implements FocusListener
 			//super.changeSelection(rowIndex, columnIndex, false, false);	
 		//else
 		
-		//G.Sturr 2010-7-10: force column selection
+		//force column selection
 		if(view.isColumnSelect()){
 			setColumnSelectionInterval(columnIndex, columnIndex);
 		}
-		// END G.Sturr 
 
 		
-			super.changeSelection(rowIndex, columnIndex, toggle, extend);
+		super.changeSelection(rowIndex, columnIndex, toggle, extend);
 		// let selectionChanged know about a change in single cell selection
 		selectionChanged();
 	}
@@ -437,13 +431,11 @@ public class MyTable extends JTable implements FocusListener
 	}
 	
    
-   //G.STURR 2010-1-29
+   
 	/**
 	 * This handles all selection changes for the table.
 	 */
 	public void selectionChanged() {
-		
-	
 		
 		// create a cell range object to store
 		// the current table selection 
@@ -562,49 +554,6 @@ public class MyTable extends JTable implements FocusListener
 		
 		repaint();
 		
-		
-		/*  ------------  old code
-
-		protected void selectionChanged() {
-		if (selectionChangedNonResponsive) return;
-		selectionTime = System.currentTimeMillis();
-		int[] cols = this.getSelectedColumns();
-		int[] rows = this.getSelectedRows();
-		ArrayList list = new ArrayList();
-		if (cols != null && rows != null) {
-			if (cols.length != 0 && rows.length != 0) {
-				for (int i = 0; i < cols.length; ++ i) {
-					for (int j = 0; j < rows.length; ++ j) {
-						GeoElement geo = RelativeCopy.getValue(this, cols[i], rows[j]);
-						if (geo != null) {
-							list.add(geo);							
-						}
-					}
-				}
-			}
-			else if (rows.length == 0) {
-				for (int i = 0; i < cols.length; ++ i) {
-					for (int j = 0; j < tableModel.getRowCount(); ++ j) {
-						GeoElement geo = RelativeCopy.getValue(this, cols[i], j);
-						if (geo != null) {
-							list.add(geo);							
-						}
-					}
-				}
-			}
-			else if (cols.length == 0) {				
-				for (int i = 0; i < tableModel.getColumnCount(); ++ i) {
-					for (int j = 0; j < rows.length; ++ j) {
-						GeoElement geo = RelativeCopy.getValue(this, i, rows[j]);
-						if (geo != null) {
-							list.add(geo);							
-						}
-					}
-				}
-			}
-		}
-		app.setSelectedGeos(list);		
-		*/
 		
 	}
 
@@ -825,7 +774,6 @@ public class MyTable extends JTable implements FocusListener
 	}
 	
 
-	//G.STURR 2010-1-29
 	// By adding a call to selectionChanged in JTable's setRowSelectionInterval 
 	// and setColumnSelectionInterval methods, selectionChanged becomes 
 	// the sole handler for selection events.
@@ -843,10 +791,9 @@ public class MyTable extends JTable implements FocusListener
 		selectionChanged(); 
 		
 	}
-	//END GSTURR
+	
 	
 	 
-	//G.STURR 2010-1-9
 	private boolean isSelectAll = false;
 	public boolean getSelectAll() {	
 		return isSelectAll;
@@ -912,36 +859,20 @@ public class MyTable extends JTable implements FocusListener
 			return new Point(0, 0);
 		}
 		
-		//G.Sturr 2009-9-23
 		//Replace old code with JTable method to get pixel location
 		Rectangle cellRect = getCellRect(row, column, false);
-		if (min)return new Point(cellRect.x, cellRect.y);
-		else return new Point(cellRect.x + cellRect.width , cellRect.y + cellRect.height);
-		
-		
-		//Old code -- adds extra border pixel when min false
-		/*
-		int x = 0;
-		int y = 0;
-		if (! min) {
-			++ column;
-			++ row;
-		}
-		for (int i = 0; i < column; ++ i) {
-			x += getColumnModel().getColumn(i).getWidth();
-		}
-		int rowHeight = getRowHeight();
-		for (int i = 0; i < row; ++ i) {
-			y += rowHeight;
-		}
-		return new Point(x, y);
-		*/ 
+		if (min)
+			return new Point(cellRect.x, cellRect.y);
+		else 
+			return new Point(cellRect.x + cellRect.width , cellRect.y + cellRect.height);
 	}
 
+	
 	protected Point getMinSelectionPixel() {
 		return getPixel(minSelectionColumn, minSelectionRow, true);
 	}
 
+	
 	protected Point getMaxSelectionPixel() {
 		return getPixel(maxSelectionColumn, maxSelectionRow, false);
 	}
@@ -979,12 +910,6 @@ public class MyTable extends JTable implements FocusListener
 	@Override
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
-
-		/* G.Sturr 2009-9-30: removed so we can draw row/column selection frames
-		if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
-			return;
-		}
-		*/
 
 		
 		Graphics2D g2 = (Graphics2D)graphics;
@@ -1092,13 +1017,12 @@ public class MyTable extends JTable implements FocusListener
 		Point pixel1 = getMaxSelectionPixel();
 		if (doShowDragHandle && pixel1 != null && ! editor.isEditing()) {
 			
-			//(G.Sturr 20099-12) Highlight the dragging dot if mouseover 
+			//Highlight the dragging dot if mouseover 
 			if (isOverDot) 
 				{graphics.setColor(Color.gray);}
 			else
 				//{graphics.setColor(Color.BLUE);}
 				{graphics.setColor(selectionRectangleColor);}
-			//(G.Sturr)
 			
 			int x = (int)pixel1.getX() - (DOT_SIZE + 1) / 2;
 			int y = (int)pixel1.getY() - (DOT_SIZE + 1) / 2;
@@ -1139,10 +1063,8 @@ public class MyTable extends JTable implements FocusListener
 		}
 		
 		
-		//G.Sturr 2010-4-2
 		// After rendering the LaTeX image for a geo, update the row height 
 		// with the preferred size set by the renderer.
-		
 		resizeMarkedCells();
 		
 	}
@@ -1500,9 +1422,8 @@ public class MyTable extends JTable implements FocusListener
 				}					
 			}
 			
-			//G.Sturr 2009-9-23 
-			//Show context menu .... moved from mousePressed 
-			//to allow right click selection (as done in drawing pad)
+			
+			//handle right click
 			if (rightClick){
 				if (!kernel.getApplication().letShowPopupMenu()) return;
 				
@@ -1517,30 +1438,13 @@ public class MyTable extends JTable implements FocusListener
 					if(getSelectionType() != CELL_SELECT){
 						setSelectionType(CELL_SELECT);
 					}
-					/*
-					if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
-						setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-						setColumnSelectionAllowed(true);
-						setRowSelectionAllowed(true);
-					}
-					*/
 					
 					//now change the selection
-					changeSelection((int) p.getY(), (int) p.getX(),false, false );
-					//selectionChanged();		
+					changeSelection((int) p.getY(), (int) p.getX(),false, false );		
 				}
-				//G.STURR 2009-12-20 A single ContextMenu is now used for all right clicks 
-				//				
-				//ContextMenu popupMenu = new ContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, 
-				//		maxSelectionColumn, maxSelectionRow, selectedColumns);
 				
-			//	ContextMenu popupMenu = new SpreadsheetContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, 
-			//			maxSelectionColumn, maxSelectionRow, selectedColumns,1);
-				
+				//create and show context menu 
 				SpreadsheetContextMenu popupMenu = new SpreadsheetContextMenu(MyTable.this, e.isShiftDown());
-				
-				//END GSTURR
-				
 				popupMenu.show(e.getComponent(), e.getX(), e.getY());
 			}
 			
@@ -1730,7 +1634,7 @@ public class MyTable extends JTable implements FocusListener
 			} else
 				setToolTipText(null);	
 			
-			//(G. Sturr 2009-9-12) highlight dragging dot on mouseover
+			//highlight dragging dot on mouseover
 			Point point1 = getMaxSelectionPixel();
 			if (point1 == null) return;
 			int x1 = e.getX();
@@ -1743,7 +1647,6 @@ public class MyTable extends JTable implements FocusListener
 				isOverDot = nowOverDot;
 				repaint();
 			}
-			//(G.Sturr)
 			
 		}
 
