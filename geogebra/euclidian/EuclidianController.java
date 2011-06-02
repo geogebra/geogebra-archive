@@ -2551,6 +2551,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		selectionPreview = true; // only preview selection, see also
 		// mouseReleased()
 		processMode(hits, null); // build highlightedGeos List
+		highlightedGeos.addAll(justCreatedGeos); // we also highlight just created geos
 		selectionPreview = false; // reactivate selection in mouseReleased()
 
 		// set highlighted objects
@@ -2877,6 +2878,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		if (ret != null)
 			memorizeJustCreatedGeos(ret);
+		else if (!selectionPreview)
+			clearJustCreatedGeos();
 
 		if (!changedKernel)
 			return ret != null;
