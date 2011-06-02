@@ -147,7 +147,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		tableModel = new DefaultTableModel(rows, columns);
 		table = new MyTable(this, tableModel);
 
-		table.columnHeader.setPreferredSize(new Dimension((int)(table.preferredColumnWidth)
+		table.headerRenderer.setPreferredSize(new Dimension((int)(table.preferredColumnWidth)
 				, (int)(MyTable.TABLE_CELL_HEIGHT)));
 
 
@@ -1322,11 +1322,11 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		w = dummy.getPreferredSize().width;
 		table.setRowHeight(h);
 		table.preferredColumnWidth = w;
-		table.columnHeader.setPreferredSize(new Dimension(w, h));
+		table.headerRenderer.setPreferredSize(new Dimension(w, h));
 
 		table.setFont(app.getPlainFont());
 		rowHeader.setFont(font);
-		table.columnHeader.setFont(font);
+		table.headerRenderer.setFont(font);
 		rowHeaderRenderer.setFont(font);
 		
 		// Adjust row heights for tall LaTeX images

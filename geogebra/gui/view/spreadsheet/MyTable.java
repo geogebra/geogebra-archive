@@ -52,7 +52,6 @@ import javax.swing.text.JTextComponent;
 public class MyTable extends JTable implements FocusListener 
 {
 	
-
 	public static final int MAX_CELL_EDIT_STRING_LENGTH = 10;
 
 	public static final int TABLE_CELL_WIDTH = 70;
@@ -78,7 +77,7 @@ public class MyTable extends JTable implements FocusListener
 	
 	protected RelativeCopy relativeCopy;
 	protected CopyPasteCut copyPasteCut;
-	protected MyColumnHeaderRenderer columnHeader;
+	protected SpreadsheetColumnController.ColumnHeaderRenderer headerRenderer;
 	protected SpreadsheetView view;
 	protected DefaultTableModel tableModel;
 	private CellRangeProcessor crProcessor;
@@ -186,18 +185,28 @@ public class MyTable extends JTable implements FocusListener
 		table = this;
 			
 		
-		// set cell size and column header
+		// prepare column headers
+		SpreadsheetColumnController columnController = new SpreadsheetColumnController(app,this);
+		headerRenderer = columnController.new ColumnHeaderRenderer();
+		getTableHeader().setFocusable(true);
+		getTableHeader().addMouseListener(columnController);
+		getTableHeader().addMouseMotionListener(columnController);
+		getTableHeader().addKeyListener(columnController);
+		getTableHeader().setReorderingAllowed(false);
+		setAutoCreateColumnsFromModel(false);
+
+		
+		// set cell size 
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		setRowHeight(TABLE_CELL_HEIGHT);
-		columnHeader = new MyColumnHeaderRenderer();
-		columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, TABLE_CELL_HEIGHT));
-		
+		headerRenderer.setPreferredSize(new Dimension(preferredColumnWidth, TABLE_CELL_HEIGHT));	
 		for (int i = 0; i < getColumnCount(); ++ i) {
-			getColumnModel().getColumn(i).setHeaderRenderer(columnHeader);
+			getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
 			getColumnModel().getColumn(i).setPreferredWidth(preferredColumnWidth);
 		}
 		
-		// visual appearance 	 
+		
+		// set visual appearance 	 
 		setShowGrid(true); 	 
 		setGridColor(TABLE_GRID_COLOR); 	
 		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
@@ -212,37 +221,21 @@ public class MyTable extends JTable implements FocusListener
 		editor = new MyCellEditor(kernel);
 		setDefaultEditor(Object.class, editor);
 
-		// setup selection
+		// initialize selection fields
 		selectedCellRanges = new ArrayList<CellRange>();
 		selectedCellRanges.add(new CellRange(this));
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setCellSelectionEnabled(true);
 		
 		
-		// setup mouse listeners
+		// add mouse and key listeners
 		MouseListener[] mouseListeners = getMouseListeners();
 		SpreadsheetMouseListener ml = new SpreadsheetMouseListener(app,this);
 		addMouseListener(ml);
-		for (int i = 0; i < mouseListeners.length; ++ i) {
-			removeMouseListener(mouseListeners[i]);
-			addMouseListener(mouseListeners[i]);
-		}
-
-		// setup mouse motion listeners
-		MouseMotionListener[] mouseMotionListeners = getMouseMotionListeners();
 		addMouseMotionListener(ml);
-		for (int i = 0; i < mouseMotionListeners.length; ++ i) {
-			removeMouseMotionListener(mouseMotionListeners[i]);
-			addMouseMotionListener(mouseMotionListeners[i]);
-		}
-		
-		// key listener
-		KeyListener[] defaultKeyListeners = getKeyListeners();
-		for (int i = 0; i < defaultKeyListeners.length; ++ i) {
-			removeKeyListener(defaultKeyListeners[i]);
-		}
 		addKeyListener(new SpreadsheetKeyListener(app, this));
 
+		
 		// setup selection listener
 		//TODO 
 		//These listeners are no longer needed.
@@ -250,7 +243,7 @@ public class MyTable extends JTable implements FocusListener
 		//getColumnModel().getSelectionModel().addListSelectionListener(new ColumnSelectionListener());
 		//getColumnModel().getSelectionModel().addListSelectionListener(columnHeader);
 		
-		// table model listener
+		// add table model listener
 		tableModel.addTableModelListener(new TableModelListener() {
 
 			public void tableChanged(TableModelEvent e) {
@@ -267,17 +260,7 @@ public class MyTable extends JTable implements FocusListener
 		relativeCopy = new RelativeCopy(this, kernel);
 		copyPasteCut = new CopyPasteCut(this, kernel);
 		
-		// column header
-		this.getTableHeader().setFocusable(true);
-		this.getTableHeader().addMouseListener(new MouseListener2());
-		this.getTableHeader().addMouseMotionListener(new MouseMotionListener2());
-		this.getTableHeader().addKeyListener(new KeyListener2());
-		
-		this.getTableHeader().setReorderingAllowed(false);
-		setAutoCreateColumnsFromModel(false);
-
-		 
-
+	
 		// - see ticket #135
 		 addFocusListener(this);
 		
@@ -292,8 +275,7 @@ public class MyTable extends JTable implements FocusListener
 		// needed in case spreadsheet selected with ctrl-tab rather than mouse click
 		//changeSelection(0, 0, false, false);
 		
-		
-		
+			
 	}
 	
 	//==============================================================
@@ -343,7 +325,7 @@ public class MyTable extends JTable implements FocusListener
 		// add new columns to table			
 		for (int i = oldColumnCount; i < newColumnCount; ++i) {
 			TableColumn col = new TableColumn(i);
-			col.setHeaderRenderer(columnHeader);
+			col.setHeaderRenderer(headerRenderer);
 			col.setPreferredWidth(preferredColumnWidth);
 			addColumn(col);
 		}	
@@ -1245,387 +1227,6 @@ public class MyTable extends JTable implements FocusListener
 	
 
 	
-
-	protected class MyColumnHeaderRenderer extends JLabel implements TableCellRenderer, ListSelectionListener  //, FocusListener
-	{
-		private static final long serialVersionUID = 1L;
-
-		private Color defaultBackground;
-
-		private ImageIcon traceIcon = new ImageIcon();
-		private ImageIcon emptyIcon = new ImageIcon();
-		
-		public MyColumnHeaderRenderer() {    		
-			super("", SwingConstants.CENTER);
-			setOpaque(true);
-			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
-			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
-			Font font1 = getFont(); 
-			if (font1 == null || font1.getSize() == 0) {
-				kernel.getApplication().getPlainFont();
-				if (font1 == null || font1.getSize() == 0) {
-					font1 = new Font("dialog", 0, 12);
-				}
-			}
-			setFont(font1);
-			
-			traceIcon = app.getImageIcon("spreadsheettrace.gif");
-			emptyIcon = new ImageIcon();
-			
-		}
-
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int colIndex) {
-			
-			setText(value.toString());
-			setIcon(emptyIcon);
-			
-			if (getSelectionType() == ROW_SELECT) {
-				setBackground(defaultBackground);
-			} else {
-				if (selectedColumnSet.contains(colIndex)
-						|| (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn) ) {
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
-				} else {
-					setBackground(defaultBackground);
-				}
-			}
-			if(view.getTraceManager().isTraceColumn(colIndex)){
-				setIcon(traceIcon);
-			}
-			return this;
-			
-		/* ------------- old code ----------	
-		if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-				if (colIndex >= minSelectionColumn && colIndex <= maxSelectionColumn && selectedColumns != null && selectedColumns.length > colIndex && selectedColumns[colIndex]) {
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);					
-				}
-				else {
-					setBackground(defaultBackground);				
-				}
-			}
-			else {
-				setBackground(defaultBackground);				
-			}
-        
-			return this;
-          ------------------  */
-          			
-		}
-
-		// G.STURR 2010-1-29 (no longer needed)
-		
-		public void valueChanged(ListSelectionEvent e) {
-	/*
-			ListSelectionModel selectionModel = (ListSelectionModel)e.getSource();
-			//minSelectionColumn = selectionModel.getMinSelectionIndex();
-			//maxSelectionColumn = selectionModel.getMaxSelectionIndex();
-			selectedColumns = new boolean[getColumnCount()];
-			for (int i = 0; i < selectedColumns.length; ++ i) {
-				if (selectionModel.isSelectedIndex(i)) {
-					selectedColumns[i] = true;
-				}
-			}
-			//repaint();
-		*/
-		}
-
-		/*   (focus listener not needed yet)
-		public void focusGained(FocusEvent e) {
-			if (Application.isVirtualKeyboardActive())
-				app.getGuiManager().toggleKeyboard(true);
-			
-		}
-
-
-		public void focusLost(FocusEvent e) {
-			// avoid infinite loop!
-			if (e.getOppositeComponent() instanceof VirtualKeyboard)
-				return;
-			if (Application.isVirtualKeyboardActive()
-			app.getGuiManager().toggleKeyboard(false);
-			
-		}
-		*/
-		
-	
-	}
-	
-	
-	//  MouseListener2 is the column header listener
-	//
-	protected int column0 = -1;
-	protected boolean isResizing = false;
-
-	protected class MouseListener2 implements MouseListener
-	{
-
-		public void mouseClicked(MouseEvent e) {
-			
-			// Double clicking on a column boundary auto-adjusts the 
-			// width of the column on the left
-						
-			if (isResizing && !Application.isRightClick(e) && e.getClickCount() == 2) {
-							
-				// get column to adjust
-				int x = e.getX();
-				int y = e.getY();
-				Point point = getIndexFromPixel(x, y);
-				Point testPoint = getIndexFromPixel(x-4, y);
-				int col = (int) point.getX();
-				if(point.getX()!= testPoint.getX()){
-					col = col-1;
-				}				
-				
-				// enlarge or shrink to fit the contents 
-				fitColumn(col);
-				
-				e.consume();
-			}	
-			//END G.Sturr
-		}
-
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		public void mouseExited(MouseEvent e) {
-		}
-
-		public void mousePressed(MouseEvent e) {
-			int x = e.getX();
-			int y = e.getY();
-			boolean metaDown = Application.isControlDown(e); 	 
-			boolean shiftDown = e.isShiftDown(); 	 
-			boolean rightClick = Application.isRightClick(e); 	 
-
-			if (!rightClick) {
-				Point point = getIndexFromPixel(x, y);
-				if (point != null) {
-					Point point2 = getPixel((int)point.getX(), (int)point.getY(), true);
-					Point point3 = getPixel((int)point.getX(), (int)point.getY(), false);
-					int x2 = (int)point2.getX();
-					int x3 = (int)point3.getX();
-					isResizing = ! (x > x2 + 2 && x < x3 - 3);
-					if (! isResizing) {
-
-						if(getSelectionType() != COLUMN_SELECT){
-							setSelectionType(COLUMN_SELECT);
-							getTableHeader().requestFocusInWindow();
-						}
-						
-						/*
-						if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION || 
-								getColumnSelectionAllowed() == false) {
-							setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							setColumnSelectionAllowed(true);
-							setRowSelectionAllowed(false);
-							getTableHeader().requestFocusInWindow();
-						}
-						*/
-						
-						if (shiftDown) {
-							if (column0 != -1) {
-								int column = (int)point.getX();
-								setColumnSelectionInterval(column0, column);
-							}
-						}
-						else if (metaDown) {					
-							column0 = (int)point.getX();
-							//G.Sturr 2009-11-15: ctrl-select now handled in changeSelection
-							setColumnSelectionInterval(column0, column0);
-							//addColumnSelectionInterval(column0, column0);
-						}
-						else {
-							column0 = (int)point.getX();
-							setColumnSelectionInterval(column0, column0);
-						}
-						//repaint();
-					}
-				}
-
-			}
-		}
-
-		public void mouseReleased(MouseEvent e)	{
-			boolean rightClick = Application.isRightClick(e); 	 
-			
-			if (!kernel.getApplication().letShowPopupMenu()) return;    
-			
-			//G.Sturr 2009-9-30: added right click selection
-			
-			if (rightClick) { 	 
-			
-				if (!app.letShowPopupMenu()) return; 
-				
-				Point p = getIndexFromPixel(e.getX(), e.getY());	
-				if (p == null) return;
-				
-				// if click is outside current selection then change selection
-				if(p.getY() < minSelectionRow ||  p.getY() > maxSelectionRow 
-						|| p.getX() < minSelectionColumn || p.getX() > maxSelectionColumn)
-				{
-					// switch to column selection mode and select column
-					if(table.getSelectionType() != MyTable.COLUMN_SELECT)
-						setSelectionType(MyTable.COLUMN_SELECT);
-					/*
-					if (getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
-						getColumnSelectionAllowed() == true) {
-						setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						setColumnSelectionAllowed(true);
-						setRowSelectionAllowed(false);
-					}
-					*/
-					
-					//selectNone();
-					setColumnSelectionInterval((int)p.getX(), (int)p.getX());
-					
-				}	
-				
-				//show contextMenu
-				
-				//GSTURR 2009-11-15 added a parameter to indicate selection type
-				//
-				//ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
-				//		selectedColumns);
-			//	ContextMenu popupMenu = new SpreadsheetContextMenu(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, 
-			//			selectedColumns,1);
-				
-				SpreadsheetContextMenu popupMenu = new SpreadsheetContextMenu(MyTable.this, e.isShiftDown());
-				
-				//END GSTURR
-		        popupMenu.show(e.getComponent(), e.getX(), e.getY());
-			
-		        
-				/*    (old code)
-				if (minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					ContextMenuCol popupMenu = new ContextMenuCol(MyTable.this, minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, selectedColumns);
-					popupMenu.show(e.getComponent(), e.getX(), e.getY());
-				}	
-				*/
-					
-			}
-			else if (isResizing) {
-				
-				if (e.getClickCount() == 2 )return;
-				
-				int x = e.getX();
-				int y = e.getY();
-				Point point = getIndexFromPixel(x, y);
-				if (point == null) return;
-				Point point2 = getPixel((int)point.getX(), (int)point.getY(), false);
-				int column = (int)point.getX();
-				if (x < (int)point2.getX() - 3) {
-					-- column;
-				}
-				
-				if(x<=0) x=0; //G.Sturr 2010-4-10 prevent x=-1 with very small row size
-				
-				int width = getColumnModel().getColumn(column).getWidth();
-				int[] selected = getSelectedColumns();
-				if (selected == null) return;
-				boolean in = false;
-				for (int i = 0; i < selected.length; ++ i) {
-					if (column == selected[i]) in = true;
-				}
-				if (! in) return;				
-				for (int i = 0; i < selected.length; ++ i) {
-					getColumnModel().getColumn(selected[i]).setPreferredWidth(width);					
-				}
-			}
-		}
-
-	}
-
-	//
-	//  MouseMotionListener2 is the column header motion listener
-	
-	protected class MouseMotionListener2 implements MouseMotionListener
-	{
-
-		public void mouseDragged(MouseEvent e) {
-			
-			if(Application.isRightClick(e))return; //G.Sturr 2009-9-30 
-				
-			if (isResizing) return;
-			int x = e.getX();
-			int y = e.getY();
-			Point point = getIndexFromPixel(x, y);
-			if (point != null) {
-				int column = (int)point.getX();
-				setColumnSelectionInterval(column0, column);
-			//	repaint();
-			}
-		}
-
-		public void mouseMoved(MouseEvent e) {
-		}
-
-	}
-
-
-
-	protected class KeyListener2 implements KeyListener 
-	{
-
-		public void keyTyped(KeyEvent e) {
-		}
-
-		public void keyPressed(KeyEvent e) {
-			//Application.debug("keypressed");
-			
-			//G.Sturr 2009-11-15: metaDown now declared above so it can be used in changeSelection
-			// to handle ctrl-select
-			//boolean metaDown = Application.isControlDown(e);
-			metaDown = Application.isControlDown(e);
-			
-			//boolean metaDown = Application.isControlDown(e);
-			boolean altDown = e.isAltDown();
-			int keyCode = e.getKeyCode();
-			switch (keyCode) {
-
-			case KeyEvent.VK_C : // control + c
-				//Application.debug(minSelectionColumn);
-				//Application.debug(maxSelectionColumn);
-				if (metaDown  && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					copyPasteCut.copy(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1, altDown);
-					e.consume();
-				}
-				break;
-
-			case KeyEvent.VK_V : // control + v
-				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					boolean storeUndo = copyPasteCut.paste(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);					
-					if (storeUndo)
-						app.storeUndoInfo();
-					getView().getRowHeader().revalidate();
-					e.consume();
-				}
-				break;		
-
-			case KeyEvent.VK_X : // control + x
-				if (metaDown && minSelectionColumn != -1 && maxSelectionColumn != -1) {
-					boolean storeUndo = copyPasteCut.cut(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);
-					if (storeUndo)
-						app.storeUndoInfo();
-					e.consume();
-				}
-				break;
-
-			case KeyEvent.VK_BACK_SPACE : // delete
-			case KeyEvent.VK_DELETE : // delete
-				boolean storeUndo = copyPasteCut.delete(minSelectionColumn, 0, maxSelectionColumn, tableModel.getRowCount() - 1);
-				if (storeUndo)
-					app.storeUndoInfo();
-				break;
-			}
-		}
-
-		public void keyReleased(KeyEvent e) {
-			//G.Sturr 2009-11-15: metaDown flag needed to do ctrl-select in changeSelection 
-			metaDown = false;  
-		}
-
-	}
-
 	@Override
 	public int convertColumnIndexToModel(int viewColumnIndex) {
 		return viewColumnIndex;    	
