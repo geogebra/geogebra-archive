@@ -270,7 +270,7 @@ public class CASmathpiper extends CASgeneric {
 //							Coef(MakeUni(expr,x),x, 0 .. Degree(expr,x));			           ],
 //			           {};
 //			      );
-		String strGetPolynomialCoeffs = "getPolynomialCoeffs(expr,x) := If( CanBeUni(expr),[ Coef(MakeUni(expr,x),x, 0 .. Degree(expr,x));],{});";
+		String strGetPolynomialCoeffs = "getPolynomialCoeffs(expr,x) :=If(CanBeUni(x,expr),[ Coef(MakeUni(expr,x),x, 0 .. Degree(expr,x));],{});";
 		EvaluationResponse resp = ggbMathPiper.evaluate(strGetPolynomialCoeffs);
 		if (resp.isExceptionThrown()) {
 			return false;
