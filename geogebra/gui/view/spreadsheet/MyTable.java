@@ -36,7 +36,6 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -48,7 +47,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.text.JTextComponent;
 
 public class MyTable extends JTable implements FocusListener 
@@ -86,12 +84,10 @@ public class MyTable extends JTable implements FocusListener
 	private CellRangeProcessor crProcessor;
 	private MyTable table;
 	private MyTableColumnModelListener columnModelListener;
-	//G.Sturr 2010-4-4
+	
 	private CellFormat formatHandler;
 	
 	
-	
-	//G.STURR: 2010-1-29
 	/**
 	 * All currently selected cell ranges are held in this list.
 	 * Cell ranges are added when selecting with ctrl-down. 
@@ -141,15 +137,13 @@ public class MyTable extends JTable implements FocusListener
 	protected boolean metaDown = false;
 	
 	
-	// G.Sturr 2010-3-29
+	
+	
 	// Cells to be resized on next repaint are put in these HashSets.
 	// A cell is added to a set when editing is done. The cells are removed
 	// after a repaint in MyTable.
-	
 	public static HashSet<Point> cellResizeHeightSet = new HashSet<Point>();
 	public static HashSet<Point> cellResizeWidthSet = new HashSet<Point>();
-	
-	// END G.Sturr
 	
 	
 	private ArrayList<Point> adjustedRowHeights = new ArrayList<Point>();
@@ -157,7 +151,7 @@ public class MyTable extends JTable implements FocusListener
 
 	public int preferredColumnWidth = TABLE_CELL_WIDTH; //G.Sturr 2010-4-10 
 	
-	// G.Sturr 2010-6-4
+	
 	// Collection of cells that contain geos that can be edited with one click,
 	// e.g. booleans, buttons, lists
 	protected HashMap<Point,GeoElement> oneClickEditMap = new HashMap<Point,GeoElement>();
@@ -165,24 +159,21 @@ public class MyTable extends JTable implements FocusListener
 	
 
 	
-	
-	//============================================================
-	// Construct table
-	//
-	
+	/*******************************************************************
+	 * Constructor
+	 */
 	public MyTable(SpreadsheetView view, DefaultTableModel tableModel) {
 		super(tableModel);
 
-		this.tableModel = tableModel;
-		this.view = view;
 		app = view.getApplication();
 		kernel = app.getKernel();
+		this.tableModel = tableModel;
+		this.view = view;
 		table = this;
 			
 		
 		// set cell size and column header
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		//setAutoscrolls(true);
 		setRowHeight(TABLE_CELL_HEIGHT);
 		columnHeader = new MyColumnHeaderRenderer();
 		columnHeader.setPreferredSize(new Dimension(preferredColumnWidth, TABLE_CELL_HEIGHT));
@@ -191,6 +182,13 @@ public class MyTable extends JTable implements FocusListener
 			getColumnModel().getColumn(i).setHeaderRenderer(columnHeader);
 			getColumnModel().getColumn(i).setPreferredWidth(preferredColumnWidth);
 		}
+		
+		// visual appearance 	 
+		setShowGrid(true); 	 
+		setGridColor(TABLE_GRID_COLOR); 	
+		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
+		setSelectionForeground(Color.BLACK);
+		
 		
 		// add cell renderer & editors
 		setDefaultRenderer(Object.class, new MyCellRenderer(app, view, this.getCellFormatHandler()));
@@ -206,9 +204,6 @@ public class MyTable extends JTable implements FocusListener
 		setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		setCellSelectionEnabled(true);
 		
-		// set selection colors
-		setSelectionBackground( SELECTED_BACKGROUND_COLOR);
-		setSelectionForeground(Color.BLACK);
 		
 		// setup mouse listeners
 		MouseListener[] mouseListeners = getMouseListeners();
@@ -231,7 +226,7 @@ public class MyTable extends JTable implements FocusListener
 		for (int i = 0; i < defaultKeyListeners.length; ++ i) {
 			removeKeyListener(defaultKeyListeners[i]);
 		}
-		addKeyListener(new KeyListener1());
+		addKeyListener(new SpreadsheetKeyListener(app, this));
 
 		// setup selection listener
 		//TODO 
@@ -262,13 +257,11 @@ public class MyTable extends JTable implements FocusListener
 		this.getTableHeader().addMouseListener(new MouseListener2());
 		this.getTableHeader().addMouseMotionListener(new MouseMotionListener2());
 		this.getTableHeader().addKeyListener(new KeyListener2());
-		//
+		
 		this.getTableHeader().setReorderingAllowed(false);
 		setAutoCreateColumnsFromModel(false);
 
-		// visual appearance 	 
-		setShowGrid(true); 	 
-		setGridColor(TABLE_GRID_COLOR); 	 
+		 
 
 		// - see ticket #135
 		 addFocusListener(this);
@@ -276,9 +269,9 @@ public class MyTable extends JTable implements FocusListener
 		// editing 	 
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		
-		//G.Sturr 2010-4-10
+		
 		columnModelListener = new MyTableColumnModelListener();
-		getColumnModel().addColumnModelListener( columnModelListener); 
+		getColumnModel().addColumnModelListener(columnModelListener); 
 		
 		// set first cell active 
 		// needed in case spreadsheet selected with ctrl-tab rather than mouse click
@@ -312,7 +305,7 @@ public class MyTable extends JTable implements FocusListener
 	
 	/**
 	 * Returns CellFormat helper class for this table.
-	 * If none exist, a new one is created.
+	 * If none exists, a new one is created.
 	 */
 	public CellFormat getCellFormatHandler(){
 		if(formatHandler == null)
@@ -1708,379 +1701,6 @@ public class MyTable extends JTable implements FocusListener
 	
 	
 	
-	protected class KeyListener1 implements KeyListener 
-	{
-
-		public void keyTyped(KeyEvent e) {
-
-		}
-
-		public void keyPressed(KeyEvent e) {
-			int keyCode = e.getKeyCode();
-			//Application.debug(keyCode+"");
-			//boolean shiftDown = e.isShiftDown(); 	 
-			boolean altDown = e.isAltDown(); 	 
-			boolean ctrlDown = Application.isControlDown(e) // Windows ctrl/Mac Meta
-			|| e.isControlDown(); // Fudge (Mac ctrl key)	
-						
-			//G.Sturr 2009-11-15: metaDown flag is needed for changeSelection method
-			metaDown = Application.isControlDown(e);
-					
-			int row = getSelectedRow();
-			int column = getSelectedColumn();
-			
-			TableModel model = getModel();
-
-
-			switch (keyCode) {
-			
-			case KeyEvent.VK_UP:
-
-				if (Application.isControlDown(e)) {
-
-					if (model.getValueAt(row, column) != null) {
-						// move to top of current "block"
-						// if shift pressed, select cells too
-						while ( row > 0 && model.getValueAt(row - 1, column) != null) row--;
-						changeSelection(row, column, false, e.isShiftDown());
-					} else {
-						// move up to next defined cell
-						while ( row > 0 && model.getValueAt(row - 1, column) == null) row--;
-						changeSelection(Math.max(0, row - 1), column, false, false);
-						
-					}
-					e.consume();
-				}
-				// copy description into input bar when a cell is entered
-//				GeoElement geo = (GeoElement) getModel().getValueAt(getSelectedRow() - 1, getSelectedColumn());
-//				if (geo != null) {
-//					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
-//					ai.setString(geo);
-//				}
-				
-				break;
-				
-			case KeyEvent.VK_LEFT:
-				if (Application.isControlDown(e)) {
-
-					if (model.getValueAt(row, column) != null) {
-						// move to left of current "block"
-						// if shift pressed, select cells too
-						while ( column > 0 && model.getValueAt(row, column - 1) != null) column--;
-						changeSelection(row, column, false, e.isShiftDown());
-					} else {
-						// move left to next defined cell
-						while ( column > 0 && model.getValueAt(row, column - 1) == null) column--;
-						changeSelection(row, Math.max(0, column - 1), false, false);						
-					}
-					
-					e.consume();
-				}
-//				// copy description into input bar when a cell is entered
-//				geo = (GeoElement) getModel().getValueAt(getSelectedRow(), getSelectedColumn() - 1);
-//				if (geo != null) {
-//					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
-//					ai.setString(geo);
-//				}
-				break;
-
-			
-			case KeyEvent.VK_DOWN:
-				// auto increase spreadsheet size when you go off the bottom	
-				if (getSelectedRow() + 1 == getRowCount() && getSelectedRow() < SpreadsheetView.MAX_ROWS) {
-					tableModel.setRowCount(getRowCount() +1);
-					
-					//getView().getRowHeader().revalidate();   //G.STURR 2010-1-9
-				}
-				
-				else if (Application.isControlDown(e)) {
-
-					if (model.getValueAt(row, column) != null) {
-					
-						// move to bottom of current "block"
-						// if shift pressed, select cells too
-						while ( row < getRowCount()-1 && model.getValueAt(row + 1, column) != null) row++;
-						changeSelection(row, column, false, e.isShiftDown());
-					} else {
-						// move down to next selected cell
-						while ( row < getRowCount()-1 && model.getValueAt(row + 1, column) == null) row++;
-						changeSelection(Math.min(getRowCount() - 1, row + 1), column, false, false);
-						
-					}
-					
-					e.consume();
-				}
-
-
-//				// copy description into input bar when a cell is entered
-//				geo = (GeoElement) getModel().getValueAt(getSelectedRow()+1, getSelectedColumn());
-//				if (geo != null) {
-//					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
-//					ai.setString(geo);
-//				}
-
-				
-				break;
-				
-			case KeyEvent.VK_HOME:
-
-				// if shift pressed, select cells too
-				if (Application.isControlDown(e)) {
-					// move to top left of spreadsheet
-					changeSelection(0, 0, false, e.isShiftDown());
-				}
-				else {
-					// move to left of current row
-					changeSelection(row, 0, false, e.isShiftDown());
-				}
-				
-				e.consume();
-				break;
-				
-			case KeyEvent.VK_END:
-
-				// move to bottom right of spreadsheet
-				// if shift pressed, select cells too
-				
-				// find rectangle that will contain all cells 
-				for (int c = 0 ; c < model.getColumnCount() ; c++)
-				for (int r = 0 ; r < model.getRowCount() ; r++)
-					if ((r > row || c > column) && getModel().getValueAt(r, c) != null) {
-						if (r > row) row = r;
-						if (c > column) column = c;
-					}
-				changeSelection(row, column, false, e.isShiftDown());
-				
-				e.consume();
-
-			case KeyEvent.VK_RIGHT:
-				// auto increase spreadsheet size when you go off the right
-				
-				if (getSelectedColumn() + 1 == getColumnCount() && getSelectedColumn() < SpreadsheetView.MAX_COLUMNS) {
-					setMyColumnCount(getColumnCount() +1);		
-					getView().getColumnHeader().revalidate();
-					
-					// these two lines are a workaround for Java 6
-					// (Java bug?)
-					changeSelection(row, column + 1, false, false);
-					e.consume();
-				}
-				else if (Application.isControlDown(e)) {
-
-					if (model.getValueAt(row, column) != null) {
-						// move to bottom of current "block"
-						// if shift pressed, select cells too
-						while ( column < getColumnCount() - 1 && model.getValueAt(row, column + 1) != null) column++;
-						changeSelection(row, column, false, e.isShiftDown());
-					} else {
-						// move right to next defined cell
-						while ( column < getColumnCount() - 1 && model.getValueAt(row, column + 1) == null) column++;
-						changeSelection(row, Math.min(getColumnCount() - 1, column + 1), false, false);
-						
-					}
-					e.consume();
-				}
-
-//				// copy description into input bar when a cell is entered
-//				geo = (GeoElement) getModel().getValueAt(getSelectedRow(), getSelectedColumn() + 1);
-//				if (geo != null) {
-//					AlgebraInput ai = (AlgebraInput)(app.getGuiManager().getAlgebraInput());
-//					ai.setString(geo);
-//				}
-				break;
-				
-			case KeyEvent.VK_SHIFT:
-			case KeyEvent.VK_CONTROL:
-			case KeyEvent.VK_ALT:
-			case KeyEvent.VK_META: //MAC_OS Meta
-				e.consume(); // stops editing start
-				break;
-
-			case KeyEvent.VK_F9:
-				kernel.updateConstruction();
-				e.consume(); // stops editing start
-				break;
-
-			case KeyEvent.VK_R:
-				if (Application.isControlDown(e)) {
-					kernel.updateConstruction();
-					e.consume();
-				}
-				else letterOrDigitTyped();
-				break;
-
-				// needs to be here to stop keypress starting a cell edit after the undo
-			case KeyEvent.VK_Z: //undo
-				if (ctrlDown) {
-					//Application.debug("undo");
-					app.getGuiManager().undo();
-					e.consume();
-				}
-				else letterOrDigitTyped();
-				break;
-
-				// needs to be here to stop keypress starting a cell edit after the redo
-			case KeyEvent.VK_Y: //redo
-				if (ctrlDown) {
-					//Application.debug("redo");
-					app.getGuiManager().redo();
-					e.consume();
-				}
-				else letterOrDigitTyped();
-				break;
-
-
-			case KeyEvent.VK_C: 	                         
-			case KeyEvent.VK_V: 	                        
-			case KeyEvent.VK_X: 	                         
-			case KeyEvent.VK_DELETE: 	                         
-			case KeyEvent.VK_BACK_SPACE:
-				if (! editor.isEditing()) {
-					if (Character.isLetterOrDigit(e.getKeyChar()) &&
-							!editor.isEditing() && !(ctrlDown || e.isAltDown())) {
-						letterOrDigitTyped();
-					} else	if (ctrlDown) {
-						e.consume();
-
-						if (keyCode == KeyEvent.VK_C) {
-							copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, altDown);
-						}
-						else if (keyCode == KeyEvent.VK_V) {
-							boolean storeUndo = copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-							getView().getRowHeader().revalidate();
-							if (storeUndo)
-								app.storeUndoInfo();
-						}
-						else if (keyCode == KeyEvent.VK_X) {
-							boolean storeUndo = copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-							if (storeUndo)
-								app.storeUndoInfo();
-						}
-					}
-					if (keyCode == KeyEvent.VK_DELETE || 	                                         
-							keyCode == KeyEvent.VK_BACK_SPACE) {
-						e.consume();
-						//Application.debug("deleting...");
-						boolean storeUndo = copyPasteCut.delete(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
-						if (storeUndo)
-							app.storeUndoInfo();
-					}
-					return;
-				}
-				break;		
-				
-			//case KeyEvent.VK_ENTER:	
-			case KeyEvent.VK_F2:	
-				if (!editor.isEditing()) {
-					allowEditing = true;
-					editCellAt(getSelectedRow(), getSelectedColumn());
-					 final JTextComponent f = (JTextComponent)getEditorComponent();
-			            f.requestFocus();
-			            f.getCaret().setVisible(true);
-					allowEditing = false;
-				}
-				e.consume();
-				break;	
-				
-			case KeyEvent.VK_ENTER:	
-				
-				if (MyCellEditor.tabReturnCol > -1) {
-					changeSelection(row , MyCellEditor.tabReturnCol, false, false);
-					MyCellEditor.tabReturnCol = -1;
-				}
-				
-				// fall through
-			case KeyEvent.VK_PAGE_DOWN:	
-			case KeyEvent.VK_PAGE_UP:	
-				// stop cell being erased before moving
-				break;
-				
-				// stop TAB erasing cell before moving
-			case KeyEvent.VK_TAB:
-				// disable shift-tab in column A
-				if (getSelectedColumn() == 0 && e.isShiftDown()) 
-					e.consume();
-				break;
-
-			case KeyEvent.VK_A:
-				if (Application.isControlDown(e)) {
-					// select all cells
-					
-					row = 0;
-					column = 0;
-					// find rectangle that will contain all defined cells 
-					for (int c = 0 ; c < model.getColumnCount() ; c++)
-					for (int r = 0 ; r < model.getRowCount() ; r++)
-						if ((r > row || c > column) && getModel().getValueAt(r, c) != null) {
-							if (r > row) row = r;
-							if (c > column) column = c;
-						}
-					changeSelection(0, 0, false, false);
-					changeSelection(row, column, false, true);
-
-					
-					e.consume();
-					
-				}
-				// no break, fall through
-			default:
-				if (!Character.isIdentifierIgnorable(e.getKeyChar()) &&
-						!editor.isEditing() && !(ctrlDown || e.isAltDown())) {
-					letterOrDigitTyped();
-				} else
-					e.consume();
-			break;
-				
-			}
-				
-			/*
-			if (keyCode >= 37 && keyCode <= 40) {
-				if (editor.isEditing())	return;			
-			}
-
-			for (int i = 0; i < defaultKeyListeners.length; ++ i) {
-				if (e.isConsumed()) break;
-				defaultKeyListeners[i].keyPressed(e);			
-			}
-			 */
-		}
-		
-		public void letterOrDigitTyped() {
-			allowEditing = true;
-			repaint();  //G.Sturr 2009-10-10: cleanup when keypress edit begins
-			
-			// check if cell fixed
-			Object o = tableModel.getValueAt(getSelectedRow(), getSelectedColumn());			
-			if ( o != null && o instanceof GeoElement) {
-				GeoElement geo = (GeoElement)o;
-				if (geo.isFixed()) return;
-			}
-		
-			tableModel.setValueAt(null, getSelectedRow(), getSelectedColumn());
-			editCellAt(getSelectedRow(), getSelectedColumn()); 
-			// workaround, see
-			// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4192625				
-            final JTextComponent f = (JTextComponent)getEditorComponent();
-            f.requestFocus();
-            f.getCaret().setVisible(true);
-            
-            // workaround for Mac OS X 10.5 problem (first character typed deleted)
-            if (Application.MAC_OS)
-	            SwingUtilities.invokeLater( new Runnable(){ public void
-	            	run() { f.setSelectionStart(1);
-		            f.setSelectionEnd(1);} });
-
-			allowEditing = false;
-			
-		}
-
-		public void keyReleased(KeyEvent e) {
-			metaDown = false;    //G Sturr 
-		}
-
-	}
-
-
 	
 	//G.STURR 2010-1-29
     // Row and Column selection listeners no longer needed.
@@ -2111,10 +1731,11 @@ public class MyTable extends JTable implements FocusListener
 
 		}
 		
-		
-
 	}
 
+	
+	
+	
 	protected class ColumnSelectionListener implements ListSelectionListener
 	{
 
@@ -2150,31 +1771,7 @@ public class MyTable extends JTable implements FocusListener
 
 	
 
-	/*
-	protected class KeyListener4 implements KeyListener 
-	{
-
-		public void keyTyped(KeyEvent e) {
-			int keyCode = e.getKeyChar();
-			int keyCode2 = e.getKeyCode();
-			Application.debug("getKeyChar=" + keyCode);
-			Application.debug("getKeyCode=" + keyCode2);
-			if (keyCode == 27) {
-				if (editor.isEditing()) {
-					editor.undoEdit();
-					editor.editing = false;
-				}
-			}
-		}
-
-		public void keyPressed(KeyEvent e) {
-		}
-
-		public void keyReleased(KeyEvent e) {
-		}
-
-	}
-	/**/
+	
 
 	protected class MyColumnHeaderRenderer extends JLabel implements TableCellRenderer, ListSelectionListener  //, FocusListener
 	{
@@ -2291,7 +1888,6 @@ public class MyTable extends JTable implements FocusListener
 
 		public void mouseClicked(MouseEvent e) {
 			
-			// G.Sturr 2010-3-29
 			// Double clicking on a column boundary auto-adjusts the 
 			// width of the column on the left
 						
@@ -2564,6 +2160,15 @@ public class MyTable extends JTable implements FocusListener
 
 	private boolean allowEditing = false;
 
+
+	public boolean isAllowEditing() {
+		return allowEditing;
+	}
+
+	public void setAllowEditing(boolean allowEditing) {
+		this.allowEditing = allowEditing;
+	}
+
 	/*
 	 * we need to return false for this normally, otherwise we can't detect double-clicks
 	 * 
@@ -2826,6 +2431,27 @@ public class MyTable extends JTable implements FocusListener
 			((JViewport) p).setBackground(getBackground());
 		}
 	}
+	
+	
+	//===========================================
+	// copy/paste/cut/delete methods
+	//
+	// this is temporary code while cleaning up
+	//===========================================
+	public void copy(boolean altDown){
+		copyPasteCut.copy(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow, altDown);
+	}
+	
+	public boolean paste(){
+		 return copyPasteCut.paste(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+	}
+	public boolean cut(){
+		 return copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+	}
+	public boolean delete(){
+		 return copyPasteCut.cut(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow);
+	}
+	
 	
 	
 	
