@@ -1,9 +1,6 @@
 package geogebra.euclidian;
 
 
-import geogebra.gui.FileDropTargetListener;
-import geogebra.gui.GuiManager;
-import geogebra.gui.app.GeoGebraFrame;
 import geogebra.gui.view.algebra.AlgebraViewTransferHandler;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
@@ -11,12 +8,13 @@ import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoText;
 import geogebra.main.Application;
 
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 
 import javax.swing.JComponent;
@@ -24,13 +22,25 @@ import javax.swing.TransferHandler;
 
 /**
  * Transfer handler for Euclidian Views
- * @author gsturr
+ * @author G. Sturr
  *
  */
 public class EuclidianViewTransferHandler extends TransferHandler implements Transferable {
 
 	private EuclidianView ev;
 	private Application app;
+
+	static DataFlavor textReaderFlavor;
+	static {
+		
+		try { 
+			textReaderFlavor = 
+				new DataFlavor ("text/plain;class=java.io.Reader"); 			
+		} catch (ClassNotFoundException cnfe) { 
+			cnfe.printStackTrace( );
+		}
+	}
+
 
 	// supported data flavors
 	private static final DataFlavor supportedFlavors[] = { 
@@ -65,13 +75,14 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 	public boolean canImport(JComponent comp, DataFlavor flavor[]) {
 
 		for (int i = 0, n = flavor.length; i < n; i++) {
+			//System.out.println(flavor[i].getMimeType());
 			for (int j = 0, m = supportedFlavors.length; j < m; j++) {
 				if (flavor[i].equals(supportedFlavors[j])) {
 					return true;
 				}
 			}
 		}
-		return false;
+		return true;  // allow all types for now (testing)
 	}
 
 
@@ -84,77 +95,112 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 		// give the drop target (this EV) the view focus
 		requestViewFocus();
 
-		
+		// get context info
 		Construction cons = ev.getApplication().getKernel().getConstruction();
 		Point mousePos = ev.getMousePosition();
 		GeoPoint startPoint = new GeoPoint(cons);
 		startPoint.setCoords(ev.toRealWorldCoordX(mousePos.x), ev.toRealWorldCoordY(mousePos.y), 1.0);
-		
-		
+
+		//------------------------------------------
+		// Import handling is done in this order:
+		// 1) Images
+		// 2) Text
+		// 3) GGB files
+		//------------------------------------------
+
 		// first try to get an image
 		boolean imageDropped = ev.getApplication().getGuiManager().loadImage(startPoint, t, false);
 		if(imageDropped) return true;
 
-		
-		// handle text
+
+		// handle all text flavors
 		if (t.isDataFlavorSupported(DataFlavor.stringFlavor)
 				|| t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)) {
 			try {
-
-				// string for algebra processor
-				String text;
 				
-				// handle algebra view data flavor 
+				String text = null; // expression to be converted into GeoText 
+				boolean isLaTeX = false;
+
+
+				// get text from AlgebraView flavor 
 				if (t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)){
+
+					isLaTeX = true;
 
 					// get list of selected geo labels
 					ArrayList<String> list = (ArrayList<String>) t
 					.getTransferData(AlgebraViewTransferHandler.algebraViewFlavor);
-					
+
 					// exit if empty list
 					if(list.size()==0) return false;
-					
+
 					// single geo
 					if(list.size()==1){
 						text = "FormulaText[" + list.get(0) + ", true, true]";
 					}
-					
+
 					// multiple geos, wrap in TableText
 					else{
 						GeoElement geo;
 						text = "TableText[";
 						for(int i=0; i<list.size(); i++){
 							geo = app.getKernel().lookupLabel(list.get(i));
-							
+
 							text += "{FormulaText[" + list.get(i) + ", true, true]}";
 							if(i<list.size()-1){
 								text += ",";
 							}
 						}
 						text += "]";
-						
 					}
-					
-				// handle text flavor	
-				}else{
-					text = (String) t.getTransferData(DataFlavor.stringFlavor);
-					text = "\"" + text + "\"";
 				}
-				ev.getEuclidianViewNo();
-				if (debug) System.out.println("dropped geo: " + text);
+				
+				// get text from String flavor
+				else{ 	
+					try {
+						// first try to read text line-by-line
+						Reader r = textReaderFlavor.getReaderForText(t);
+						if(r!=null){
+							StringBuilder sb = new StringBuilder();
+							String line = null;
+							BufferedReader br = new BufferedReader(r);
+							line = br.readLine();
+							while (line != null) {
+								sb.append(line + "\n");
+								line = br.readLine();
+							}
+							br.close();
+							text = sb.toString();
+						}
+					}
+					catch (Exception e) {
+						Application.debug("Caught exception decoding text transfer:" + e.getMessage());
+					}
 
-				// convert text to geo
+					// if the reader didn't work, try to get whatever string is available
+					if(text == null)
+						text = (String) t.getTransferData(DataFlavor.stringFlavor);
+
+					// exit if no text found
+					if(text == null) return false;
+
+					//TODO --- validate the text? e.g. no quotes for a GeoText
+					
+					// wrap text in quotes
+					text = "\"" + text + "\"";
+
+				}
+
+
+				//---------------------------------
+				// create GeoText 
+
 				GeoElement[] ret = ev.getApplication().getKernel().getAlgebraProcessor()
 				.processAlgebraCommand(text, true);
 
 				if (ret != null && ret[0].isTextValue()) {
 					GeoText geo = (GeoText) ret[0];
-					
-					// render AlgebraView imports with LaTeX
-					if(t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor))
-						geo.setLaTeX(true, false);	
-					
-					
+					geo.setLaTeX(isLaTeX, false);	
 					geo.setRealWorldLoc(ev.toRealWorldCoordX(mousePos.x), ev.toRealWorldCoordY(mousePos.y));
 					geo.updateRepaint();
 				}
@@ -166,8 +212,9 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 			}
 		}
 
-		
-		// check for ggb file
+
+
+		// check for ggb file drop
 		boolean ggbFileDropped =  app.getGuiManager().handleGGBFileDrop(t);
 		if(ggbFileDropped) return true;
 
