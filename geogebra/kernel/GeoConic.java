@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoConicND;
-import geogebra.kernel.roots.RealRootFunction;
 
 /**
  * Conics in 2D
@@ -204,7 +203,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 * @version 2010-01-21
 	 * @author Michael Borcherds 
 	 * @param c Circle used as mirror
-	 */
+	 */	
 	    final public void mirror(GeoConic c) {
 	    	if (c.isCircle() && this.isCircle() )
 	    	{ // Mirror point in circle
@@ -222,21 +221,21 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	    		double p = Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 	    		
 	    		// does circle being inverted pass through center of the other?
-	    		if (Kernel.isEqual(p, r2)) { 
-	    			AlgoIntersectConics intersect = new AlgoIntersectConics(cons, this, c);
-	    			cons.removeFromConstructionList(intersect);
-	    			
-	    			GeoPoint [] points = intersect.getIntersectionPoints();
+	    		if (Kernel.isEqual(p, r2)) {	    			
+	    			double dx=x2-x1;
+	    			double dy=y2-y1;
+	    			//(x3,y3) is a point on the line
+	    			double k=r1*r1/2/r2/r2;
+	    			double x3=x1+k*dx;
+	    			double y3=y1+k*dy;	    				    			
 	    			
 	    			if (lines == null) {
 	    				lines = new GeoLine[2];
-	    				lines[0] = new GeoLine(cons);
+	    				lines[0] = new GeoLine(cons);	    				
 	    				lines[1] = new GeoLine(cons);
 	    			}
-	    				
-	    			type = GeoConic.CONIC_LINE;
-	    			GeoVec3D.lineThroughPoints(points[0], points[1], lines[0]);
-	    			lines[1].setUndefined();
+	    				lines[0].setCoords(dx, dy, -dx*x3-dy*y3);
+	    			type = GeoConic.CONIC_LINE;	    			
 
 	    			return;
 	    		}
