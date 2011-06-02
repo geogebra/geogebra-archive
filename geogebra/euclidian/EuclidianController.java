@@ -2487,7 +2487,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoElement hit = ((GeoElement)hits.get(0));
 				if (hit.isGeoNumeric() && ((GeoNumeric)hit).isSlider()) {
 					startPoint.setLocation(((GeoNumeric) hit).getSliderX(), ((GeoNumeric) hit).getSliderY());
-					sliderValue = kernel.format(getSliderValue((GeoNumeric) hit));
+					
+					// preview just for fixed sliders
+					if (((GeoNumeric) hit).isSliderFixed())					
+						sliderValue = kernel.format(getSliderValue((GeoNumeric) hit));
 				} 
 			}
 			
