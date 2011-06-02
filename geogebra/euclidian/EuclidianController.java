@@ -5682,27 +5682,48 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (hits.isEmpty())
 			return null;
 
-
-		// remove conics that aren't circles
-		for (int i=0 ; i<hits.size(); i++)
-		{
-			GeoElement geo = (GeoElement) hits.get(i);
-			if (geo.isGeoConic())
-				if (!((GeoConic)geo).isCircle()) hits.remove(i);
+		// Transformable	
+		int count = 0;
+		if (selGeos() == 0) {
+			Hits mirAbles = hits.getHits(Transformable.class, tempArrayList);
+			count =addSelectedGeo(mirAbles, 1, false);
 		}
 
-		addSelectedConic(hits, 1, false);
+		// polygon
+		if (count == 0) {					
+			count = addSelectedPolygon(hits, 1, false);
+		}
 
-		addSelectedPoint(hits, 1, false);
+		// line = mirror
+		if (count == 0) {
+			addSelectedConic(hits, 1, false);
+		}					
 
-		if (selConics() == 1 && selPoints() == 1) {
-			GeoConic[] conics = getSelectedConics();
-			GeoPoint[] points = getSelectedPoints();
-			//if (((GeoConic)conics[0]).getTypeString()!="Circle") return false;
-			if (!((GeoConic)conics[0]).isCircle()) return null;
-			return kernel.Mirror(null, points[0], conics[0]);
-
-		} 
+		// we got the mirror point
+		if (selConics() == 1) {	
+			if (selPolygons() == 1) {
+				GeoPolygon[] polys = getSelectedPolygons();
+				GeoConic[] lines = getSelectedCircles();	
+				return kernel.Mirror(null,  polys[0], lines[0]);
+			} 
+			else if (selGeos() > 0) {					
+				// mirror all selected geos
+				GeoElement [] geos = getSelectedGeos();
+				GeoConic line = getSelectedCircles()[0];
+				ArrayList<GeoElement> ret = new ArrayList<GeoElement>();
+				for (int i=0; i < geos.length; i++) {				
+					if (geos[i] != line) {
+						if (geos[i] instanceof Transformable)
+							ret.addAll(Arrays.asList(kernel.Mirror(null,  geos[i], line)));
+						else if (geos[i].isGeoPolygon()) {
+							ret.addAll(Arrays.asList(kernel.Mirror(null, (GeoPolygon) geos[i], line)));
+						}
+					}
+				}
+				GeoElement[] retex = {};
+				return ret.toArray(retex);
+			}
+		}
 		return null;
 	}
 
@@ -6591,6 +6612,21 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return conics;
 	}
 	
+	final protected GeoConic[] getSelectedCircles() {
+		GeoConic[] circles = new GeoConic[selectedConics.size()];
+		int i = 0;
+		Iterator it = selectedConics.iterator();
+		while (it.hasNext()) {
+			GeoConic c =(GeoConic) it.next();
+			if(c.isCircle()){
+				circles[i] = c;
+				i++;
+			}
+		}
+		clearSelection(selectedConics);
+		return circles;
+	}
+	
 	final protected GeoConicND[] getSelectedConicsND() {
 		GeoConicND[] conics = new GeoConicND[selectedConicsND.size()];
 		int i = 0;
@@ -6743,6 +6779,16 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	final protected int addSelectedConic(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedConics, GeoConic.class);
+	}
+	
+	final protected int addSelectedCircle(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		ArrayList<GeoConic> selectedCircles = new ArrayList<GeoConic>();
+		for(Object c:selectedConics){
+			if(((GeoConic)c).isCircle())
+				selectedCircles.add((GeoConic)c);
+		}
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedCircles, GeoConic.class);
 	}
 	
 	final protected int addSelectedConicND(Hits hits, int max,
