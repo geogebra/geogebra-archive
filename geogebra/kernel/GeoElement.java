@@ -4901,22 +4901,25 @@ public abstract class GeoElement
 			} else if (ExpressionNodeType == ExpressionNode.STRING_TYPE_LATEX) {
 
 				StringBuilder sb = new StringBuilder();
-				sb.append("\\left\\{ \\begin{array}{ll} ");
-				sb.append(geoFun.getIfFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
-				sb.append("& : ");
-				sb.append(geoFun.getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
-				sb.append("\\\\ ");
-				if(geoFun.getElseFunction()!=null)
+				
+				if (geoFun.getElseFunction() == null) {
+					sb.append(geoFun.getIfFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+					sb.append(" \\;\\;\\;\\; \\left(");
+					sb.append(geoFun.getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+					sb.append(" \\right)");
+					
+				} else {
+				
+					sb.append("\\left\\{ \\begin{array}{ll} ");
+					sb.append(geoFun.getIfFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+					sb.append("& : ");
+					sb.append(geoFun.getCondFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
+					sb.append("\\\\ ");
 					sb.append(geoFun.getElseFunction().getFormulaString(ExpressionNode.STRING_TYPE_LATEX, substituteNumbers));
-				else
-					{ 
-						sb.append("\\text{");
-						sb.append(app.getPlain("undefined"));
-						sb.append("}");
-					}
-				sb.append("& : \\text{");
-				sb.append(app.getPlain("otherwise"));
-				sb.append("} \\end{array} \\right. ");
+					sb.append("& : \\text{");
+					sb.append(app.getPlain("otherwise"));
+					sb.append("} \\end{array} \\right. ");
+				}
 
 				ret = sb.toString();
 
