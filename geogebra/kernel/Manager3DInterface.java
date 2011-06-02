@@ -339,11 +339,7 @@ public interface Manager3DInterface {
 					GeoElement cs2) ;
 
 			 
-			public GeoElement[] IntersectPlanePolygon(
-					String[] labels,
-					GeoElement cs1,
-					GeoElement cs2);
-			 
+
 			 
 			 /** Calculate the intersection of plane and quadric
 			  * @param label name of the point
