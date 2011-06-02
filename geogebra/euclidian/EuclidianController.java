@@ -1357,7 +1357,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				// or right-hand mouse button
 
 				// otherwise using Move Tool -> move dot
-				if ((TEMPORARY_MODE || !movedGeoNumeric.isSliderFixed()) && !ds.hitPoint(mouseLoc.x, mouseLoc.y) &&
+				if (((TEMPORARY_MODE && app.isRightClickEnabled()) || !movedGeoNumeric.isSliderFixed()) && !ds.hitPoint(mouseLoc.x, mouseLoc.y) &&
 						ds.hitSlider(mouseLoc.x, mouseLoc.y)) {
 					moveMode = MOVE_SLIDER;
 					if (movedGeoNumeric.isAbsoluteScreenLocActive()) {
