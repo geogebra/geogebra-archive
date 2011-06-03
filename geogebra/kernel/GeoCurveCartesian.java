@@ -12,9 +12,6 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
-import java.util.ArrayList;
-
-import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
@@ -25,7 +22,8 @@ import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
-import geogebra.main.Application;
+
+import java.util.ArrayList;
 
 
 /**
@@ -255,7 +253,7 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 		funX.translateY(vx);
 		funY.translateY(vy);
 	}	
-    //<Zbynek Konecny, 2010-06-16>
+
 	final public void rotate(NumberValue phi,GeoPoint P){
 		translate(-P.getX(),-P.getY());
 		rotate(phi);
@@ -361,18 +359,12 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 		MyDouble md = new MyDouble(kernel,d);
 		ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
 		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
-		ExpressionNode transX = new ExpressionNode(kernel,
-				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,ma),
-				ExpressionNode.PLUS,
-				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,mb));
-		ExpressionNode transY = new ExpressionNode(kernel,
-				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,mc),
-				ExpressionNode.PLUS,
-				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,md));
+		ExpressionNode transX = plus(multiply(exprX,ma),multiply(exprY,mb));
+		ExpressionNode transY = plus(multiply(exprX,mc),multiply(exprY,md));
 		funX.setExpression(transX);
 		funY.setExpression(transY);
 	}
-	//</Zbynek>
+	
 	
 	public boolean showInAlgebraView() {
 		return true;
@@ -705,12 +697,11 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 	    		ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
 	    		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
 	    		
-	    		ExpressionNode sf=new ExpressionNode(kernel, new MyDouble(kernel,r*r),ExpressionNode.DIVIDE,new ExpressionNode(kernel,
-	    				new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,exprX),
-	    				ExpressionNode.PLUS,
-	    				new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,exprY)));
-	    		ExpressionNode transX = new ExpressionNode(kernel,exprX,ExpressionNode.MULTIPLY,sf);
-	    		ExpressionNode transY = new ExpressionNode(kernel,exprY,ExpressionNode.MULTIPLY,sf);
+	    		ExpressionNode sf=new ExpressionNode(kernel, new MyDouble(kernel,r*r),ExpressionNode.DIVIDE,
+	    				plus(multiply(exprX,exprX),multiply(exprY,exprY))
+	    				);
+	    		ExpressionNode transX = multiply(exprX,sf);
+	    		ExpressionNode transY = multiply(exprY,sf);
 	    		funX.setExpression(transX);
 	    		funY.setExpression(transY);
 	    		this.translate(a, b);
@@ -730,6 +721,43 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 		public double distance(GeoPoint p) {
 			double t = getClosestParameter(p, 0);
 			return GeoVec2D.length(funX.evaluate(t) - p.x, funY.evaluate(t) - p.y);
+		}
+		
+		private ExpressionNode plus(ExpressionValue v1,ExpressionValue v2){
+			return new ExpressionNode(kernel,v1,ExpressionNode.PLUS,v2);
+		}
+		private ExpressionNode multiply(ExpressionValue v1,ExpressionValue v2){
+			return new ExpressionNode(kernel,v1,ExpressionNode.MULTIPLY,v2);
+		}
+		
+		public void matrixTransform(double a00, double a01, double a02,
+				double a10, double a11, double a12, double a20, double a21,
+				double a22) {
+			MyDouble ma00 = new MyDouble(kernel,a00);
+			MyDouble ma01 = new MyDouble(kernel,a01);
+			MyDouble ma02 = new MyDouble(kernel,a02);
+			MyDouble ma10 = new MyDouble(kernel,a10);
+			MyDouble ma11 = new MyDouble(kernel,a11);
+			MyDouble ma12 = new MyDouble(kernel,a12);
+			MyDouble ma20 = new MyDouble(kernel,a20);
+			MyDouble ma21 = new MyDouble(kernel,a21);
+			MyDouble ma22 = new MyDouble(kernel,a22);
+			
+			
+			ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
+			ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();			
+			ExpressionNode transX = plus(
+					multiply(exprX,ma00),
+					plus(multiply(exprY,ma01),ma02));
+			ExpressionNode transY = plus(
+					multiply(exprX,ma10),
+					plus(multiply(exprY,ma11),ma12));
+			ExpressionNode transZ = plus(
+					multiply(exprX,ma20),
+					plus(multiply(exprY,ma21),ma22));										
+			funX.setExpression(new ExpressionNode(kernel,transX,ExpressionNode.DIVIDE,transZ));
+			funY.setExpression(new ExpressionNode(kernel,transY,ExpressionNode.DIVIDE,transZ));
+			
 		}
 
 }

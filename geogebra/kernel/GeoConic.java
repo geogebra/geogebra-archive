@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.main.Application;
 
 /**
  * Conics in 2D
@@ -442,6 +443,48 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	 public CoordSys getCoordSys(){
 		 return coordSys;
 	 }
+
+
+	 
+	public void matrixTransform(double a00, double a01, double a02, double a10,
+			double a11, double a12, double a20, double a21, double a22) {
+		// TODO Auto-generated method stub
+		double det = a00*a11*a22+a01*a12*a20+a02*a10*a21-a20*a11*a02-a10*a01*a22-a12*a21*a00;
+		double b00 = (a11*a22-a21*a12)/det;
+		double b01 = -(a10*a22-a20*a12)/det;
+		double b02 = (a10*a21-a20*a11)/det;
+		double b10 = -(a01*a22-a02*a21)/det;
+		double b11 = (a00*a22-a20*a02)/det;
+		double b12 = -(a00*a21-a01*a20)/det;
+		double b20 = (a01*a12-a02*a11)/det;
+		double b21 = -(a00*a12-a02*a10)/det;
+		double b22 = (a00*a11-a10*a01)/det;
+		/* 
+		 *               ( A[0]  A[3]    A[4] )
+		 *      matrix = ( A[3]  A[1]    A[5] )
+		 *               ( A[4]  A[5]    A[2] )
+		 *      P=matrix*B
+		 */
+		double p00 = matrix[0]*b00+matrix[3]*b10+matrix[4]*b20;
+		double p01 = matrix[0]*b01+matrix[3]*b11+matrix[4]*b21;
+		double p02 = matrix[0]*b02+matrix[3]*b12+matrix[4]*b22;
+		double p10 = matrix[3]*b00+matrix[1]*b10+matrix[5]*b20;
+		double p11 = matrix[3]*b01+matrix[1]*b11+matrix[5]*b21;
+		double p12 = matrix[3]*b02+matrix[1]*b12+matrix[5]*b22;
+		double p20 = matrix[4]*b00+matrix[5]*b10+matrix[2]*b20;
+		double p21 = matrix[4]*b01+matrix[5]*b11+matrix[2]*b21;
+		double p22 = matrix[4]*b02+matrix[5]*b12+matrix[2]*b22;
+		
+		matrix[0] = b00*p00+b10*p10+b20*p20;
+		matrix[3] = b00*p01+b10*p11+b20*p21;
+		matrix[4] = b00*p02+b10*p12+b20*p22;
+		matrix[1] = b01*p01+b11*p11+b21*p21;
+		matrix[5] = b01*p02+b11*p12+b21*p22;
+		matrix[2] = b02*p02+b12*p12+b22*p22;
+	this.classifyConic(false);
+	
+	
+	}
 
 
 

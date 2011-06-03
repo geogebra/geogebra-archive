@@ -25,6 +25,7 @@ import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.arithmetic.ValidExpression;
 import geogebra.kernel.arithmetic.VectorValue;
+import geogebra.main.Application;
 
 import java.util.HashSet;
 
@@ -719,7 +720,7 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
 			double a,b,c,d,e,f,g,h,i,x1,y1,z1,xx = x, yy = y, zz = 1;
 			
 			// use homogeneous coordinates if available
-			if (rt instanceof GeoVec3D) {
+			if ((rt instanceof GeoPoint) || (rt instanceof GeoLine)) {
 				GeoVec3D p = (GeoVec3D)rt;
 				xx = p.x;
 				yy = p.y;
@@ -735,10 +736,11 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
 			g = ((NumberValue)(MyList.getCell(list,0,2).evaluate())).getDouble();
 			h = ((NumberValue)(MyList.getCell(list,1,2).evaluate())).getDouble();
 			i = ((NumberValue)(MyList.getCell(list,2,2).evaluate())).getDouble();
-	 
+			
 			x1 = a * xx + b * yy + c * zz;
 			y1 = d * xx + e * yy + f * zz;
 			z1 = g * xx + h * yy + i * zz;
+			
 			x=x1 / z1;
 			y=y1 / z1;
 			return;
@@ -755,6 +757,24 @@ final public class GeoVec2D extends ValidExpression implements MatrixTransformab
 		
 		public String toOutputValueString() {
 			return toValueString();
+		}
+
+		public void matrixTransform(double a00, double a01, double a02,
+				double a10, double a11, double a12, double a20, double a21,
+				double a22) {
+			
+			double	xx = x;
+			double	yy = y;
+			double	zz = 1;
+			
+	 
+			double x1 = a00 * xx + a01 * yy + a02 * zz;
+			double y1 = a10 * xx + a11 * yy + a12 * zz;
+			double z1 = a20 * xx + a21 * yy + a22 * zz;
+			x=x1 / z1;
+			y=y1 / z1;
+			return;
+			
 		}
 
 		

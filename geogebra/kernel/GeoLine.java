@@ -29,6 +29,7 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
@@ -1191,6 +1192,26 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	
 	public Coords getDirectionInD3(){
 		return new Coords(-y,x,0);
+	}
+
+	public void matrixTransform(double a00, double a01, double a02, double a10,
+			double a11, double a12, double a20, double a21, double a22) {
+		double det = a00*a11*a22+a01*a12*a20+a02*a10*a21-a20*a11*a02-a10*a01*a22-a12*a21*a00;
+		double b00 = (a11*a22-a21*a12)/det;
+		double b01 = -(a10*a22-a20*a12)/det;
+		double b02 = (a10*a21-a20*a11)/det;
+		double b10 = -(a01*a22-a02*a21)/det;
+		double b11 = (a00*a22-a20*a02)/det;
+		double b12 = -(a00*a21-a01*a20)/det;
+		double b20 = (a01*a12-a02*a11)/det;
+		double b21 = -(a00*a12-a02*a10)/det;
+		double b22 = (a00*a11-a10*a01)/det;
+		
+		double x1 = b00 * x + b01 * y + b02 * z;
+		double y1 = b10 * x + b11 * y + b12 * z;
+		double z1 = b20 * x + b21 * y + b22 * z;
+		setCoords(x1,y1,z1);
+		
 	}
 	
 }

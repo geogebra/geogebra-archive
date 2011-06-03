@@ -16,7 +16,6 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
 import java.io.File;
@@ -864,6 +863,17 @@ implements Locateable, AbsoluteScreenLocateable,
 
 	final public boolean isAlgebraViewEditable() {
 		return false;
+	}
+
+	public void matrixTransform(double a00, double a01, double a02, double a10,
+			double a11, double a12, double a20, double a21, double a22) {
+		for (int i=0; i < corners.length; i++) {
+    		GeoVec2D vec = tempPoints[i].getVector();
+    		vec.matrixTransform(a00, a01, a02, a10,a11,a12,a20,a21,a22);    
+    		if (corners[i] == null) corners[i] = new GeoPoint(cons);
+    		corners[i].setCoords(vec);    			
+    	}
+		
 	}
 
 

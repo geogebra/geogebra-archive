@@ -1492,7 +1492,6 @@ GeoPointND, Animatable, Transformable  {
 		boolean isI = false;
 
 		public boolean isI() {
-			// TODO Auto-generated method stub
 			return isI;
 		}
 		
@@ -1502,6 +1501,19 @@ GeoPointND, Animatable, Transformable  {
 		
 		public boolean isFixed() {
 			return fixed && !isI;
+		}
+
+		public void matrixTransform(double a00, double a01, double a02,
+				double a10, double a11, double a12, double a20, double a21,
+				double a22) {
+
+	 
+			double x1 = a00 * x + a01 * y + a02 * z;
+			double y1 = a10 * x + a11 * y + a12 * z;
+			double z1 = a20 * x + a21 * y + a22 * z;			
+			setCoords(x1,y1,z1);
+			
+			
 		}
 
 

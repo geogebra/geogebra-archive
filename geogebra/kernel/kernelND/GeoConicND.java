@@ -2083,7 +2083,7 @@ public abstract class GeoConicND extends GeoQuadricND implements LineProperties,
 		classifyConic(false);
 	}
 	
-	private void classifyConic(boolean degenerate) {		
+	public void classifyConic(boolean degenerate) {		
 		defined = degenerate || checkDefined();		
 		if (!defined)
 			return;
