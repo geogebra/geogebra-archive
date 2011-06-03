@@ -4,6 +4,10 @@ import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.arithmetic.ExpressionValue;
+import geogebra.kernel.arithmetic.ListValue;
+import geogebra.kernel.arithmetic.MyList;
+import geogebra.kernel.arithmetic.NumberValue;
 
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
 import org.apache.commons.math.linear.RealMatrix;
@@ -64,6 +68,34 @@ public class GgbMat extends Array2DRowRealMatrix {
 		}
 	}
 
+	public GgbMat (MyList inputList) {
+		
+		
+		if ( !inputList.isMatrix()) {
+			setIsUndefined(true);
+			return;
+		} 
+		int rows = inputList.getMatrixRows();
+		int cols = inputList.getMatrixCols();
+		if(rows < 1 || cols <1){
+			setIsUndefined(true);
+			return;
+		} 
+
+		data = new double[rows][cols];
+				
+		for (int r = 0 ; r < rows ; r++) {
+			for (int c = 0 ; c < cols ; c++) {
+				ExpressionValue geo = MyList.getCell(inputList, c, r);
+				if (!geo.isNumberValue()) {
+					setIsUndefined(true);
+					return;   		
+				}
+				setEntry(r, c, ((NumberValue)geo).getDouble());
+			}
+		}
+	}
+	
 	public void inverseImmediate() {
 
 		try {

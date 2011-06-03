@@ -19,9 +19,11 @@
 package geogebra.kernel.arithmetic;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoList;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 import geogebra.main.MyError;
+import geogebra.util.GgbMat;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -233,7 +235,7 @@ public class MyList extends ValidExpression implements ListValue {
 			double power = ((NumberValue)value).getDouble();
 			//Application.debug("matrix ^ "+power);
 			
-			if (power < -0.5 || !kernel.isInteger(power)) {
+			if ( !kernel.isInteger(power)) {
 				listElements.clear();
 				return;
 			}
@@ -241,27 +243,23 @@ public class MyList extends ValidExpression implements ListValue {
 			power = Math.round(power);
 			
 			if (power == 0) {		
-				listElements.clear();
-				if(matrixRows == matrixCols)
-					for (int row = 0 ; row < matrixRows ; row++)
-					{
-						MyList col1 = new MyList(kernel);
-						for (int col = 0 ; col < matrixCols ; col++)
-						{
-							ExpressionNode md = new ExpressionNode(kernel,new MyDouble(kernel,row == col ? 1 : 0));		
-							col1.addListElement(md);
-						}
-						ExpressionNode col1a = new ExpressionNode(kernel, col1); 
-						listElements.add(col1a);
-						
-					}
-				return;
+				setIdentityMatrix();
 			}
-			
+			if(power<0){
+				listElements = this.invert().listElements;
+				Application.debug(this);
+				power *= -1;
+				if(power==1){
+					MyList RHlist=(MyList)this.deepCopy(kernel);
+					RHlist.setIdentityMatrix();
+					matrixMultiply((MyList)this.deepCopy(kernel),RHlist);
+					return;
+				}
+			}
 			if (power != 1) {
 			
-				MyList LHlist,RHlist;
 				
+				MyList LHlist,RHlist;	
 				RHlist=(MyList)this.deepCopy(kernel);
 				while (power > 1.0) {
 					LHlist=(MyList)this.deepCopy(kernel);
@@ -363,6 +361,25 @@ public class MyList extends ValidExpression implements ListValue {
 	
 	}
 	
+	private void setIdentityMatrix() {
+		isMatrix();
+		listElements.clear();
+		if(matrixRows == matrixCols)
+			for (int row = 0 ; row < matrixRows ; row++)
+			{
+				MyList col1 = new MyList(kernel);
+				for (int col = 0 ; col < matrixCols ; col++)
+				{
+					ExpressionNode md = new ExpressionNode(kernel,new MyDouble(kernel,row == col ? 1 : 0));		
+					col1.addListElement(md);
+				}
+				ExpressionNode col1a = new ExpressionNode(kernel, col1); 
+				listElements.add(col1a);
+				
+			}		
+		
+	}
+
 	/**
 	 * @return 0 if not a matrix
 	 * 
@@ -395,6 +412,14 @@ public class MyList extends ValidExpression implements ListValue {
 		
 	}
 	
+	public MyList invert(){
+		GgbMat g = new GgbMat(this);
+		Application.debug(g);
+		g.inverseImmediate();
+		GeoList gl = new GeoList(kernel.getConstruction());
+		g.getGeoList(gl, kernel.getConstruction());
+		return gl.getMyList();	
+	}
 	/**
 	 * @return true if this list is a matrix
 	 */
