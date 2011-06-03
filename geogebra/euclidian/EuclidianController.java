@@ -2340,7 +2340,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	protected void processSelection() {
 		Hits hits = new Hits();
-		hits.addAll(Arrays.asList(getSelectedGeos()));
+		hits.addAll(app.getSelectedGeos());
+		clearSelections();
 
 		switch (mode) {
 		case EuclidianView.MODE_MIRROR_AT_POINT:	
