@@ -250,6 +250,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected boolean POINT_CREATED = false;
 
 	protected boolean moveModeSelectionHandled;
+	
+	protected boolean highlightJustCreatedGeos = true;
 
 	//protected MyPopupMenu popupMenu;
 
@@ -2559,7 +2561,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		selectionPreview = true; // only preview selection, see also
 		// mouseReleased()
 		processMode(hits, null); // build highlightedGeos List
-		highlightedGeos.addAll(justCreatedGeos); // we also highlight just created geos
+
+		if (highlightJustCreatedGeos)
+			highlightedGeos.addAll(justCreatedGeos); // we also highlight just created geos
+
+
 		selectionPreview = false; // reactivate selection in mouseReleased()
 
 		// set highlighted objects
