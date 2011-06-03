@@ -2907,11 +2907,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		{
 			justCreatedGeos.add(geos[i]);
 		}
+		app.updateStyleBars();
 	}
 
 	public void memorizeJustCreatedGeos(ArrayList<GeoElement> geos) {
 		justCreatedGeos.clear();
 		justCreatedGeos.addAll(geos);
+		app.updateStyleBars();
 	}
 	
 	public void clearJustCreatedGeos()

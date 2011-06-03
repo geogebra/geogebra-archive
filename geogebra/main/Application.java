@@ -3162,7 +3162,7 @@ public class Application implements KeyEventDispatcher {
 	}
 	
 	
-	protected void updateStyleBars(){
+	public void updateStyleBars(){
 		getEuclidianView().getStyleBar().updateStyleBar();	
 		if (getGuiManager().hasEuclidianView2())
 			getGuiManager().getEuclidianView2().getStyleBar().updateStyleBar();

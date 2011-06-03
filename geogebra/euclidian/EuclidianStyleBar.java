@@ -192,8 +192,18 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					break;
 				}
 			}
-			if(hasGeosInThisView) 
+			for(GeoElement geo: ec.getJustCreatedGeos()) {
+				if(isVisibleInThisView(geo) && geo.isEuclidianVisible() ){
+					hasGeosInThisView = true;
+					break;
+				}
+			}
+			if(hasGeosInThisView) { 
 				activeGeoList = ev.getApplication().getSelectedGeos();
+				
+				// we also update stylebars according to just created geos
+				activeGeoList.addAll(ec.getJustCreatedGeos());
+			}
 		}
 
 		//-----------------------------------------------------
@@ -229,6 +239,9 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					oldDefaultMode = defaultGeoMap.get(mode);
 				}
 			}
+			
+			// we also update stylebars according to just created geos
+			activeGeoList.addAll(ec.getJustCreatedGeos());
 		}
 
 
