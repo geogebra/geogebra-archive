@@ -59,9 +59,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	// spreadsheet table and row header
 	protected MyTable table;
 	protected DefaultTableModel tableModel;
-	private JList rowHeader;
-	private RowHeaderRenderer rowHeaderRenderer;
-	private MyListModel listModel;
+	private SpreadsheetRowHeader rowHeader;
 	private SpreadsheetView view;
 
 
@@ -79,21 +77,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private TraceDialog traceDialog;
 
 
-	//G.STURR 2010-1-9: needed for resizing rows
-	private static Cursor resizeCursor = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
-	private Cursor otherCursor = resizeCursor; 
-	private int mouseYOffset, resizingRow; 
-	private boolean doRowResize = false;
-	//END GSTURR
-
-	//G.STURR 
-	// note: MyTable uses its own minSelectionRow and maxSelectionRow.
-	// The rowHeaderRenderer keeps them in sync.
-	private int minSelectionRow = -1 ; 
-	private int maxSelectionRow = -1 ; 
-
-
-	// G.STURR 2010-2-12: needed for split panel, fileBrowser and toolbar
+	//needed for split panel, fileBrowser and toolbar
 	private JScrollPane spreadsheet;
 	private FileBrowserPanel fileBrowser;
 	private int defaultDividerLocation = 150;
@@ -112,8 +96,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	private boolean isColumnSelect = false; //TODO: do we need forced column select?
 	private boolean allowSpecialEditor = false;
 	private boolean allowToolTips = true;
-	// flag to set option for requiring that commands are prepended with "="
-	private boolean equalsRequired;
+	private boolean equalsRequired; // flag for requiring commands start with "="
 
 	private StatDialog oneVarStatDialog;
 	private StatDialog twoVarStatDialog;
@@ -143,34 +126,19 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		this.app = app;
 		kernel = app.getKernel();
 		view = this;
+		
 		// table
 		tableModel = new DefaultTableModel(rows, columns);
 		table = new MyTable(this, tableModel);
-
+		
 		table.headerRenderer.setPreferredSize(new Dimension((int)(table.preferredColumnWidth)
 				, (int)(MyTable.TABLE_CELL_HEIGHT)));
 
-
-		// row header list
-		listModel = new MyListModel(tableModel); 
-		rowHeader = new JList(listModel);
-		rowHeader.setFocusable(true);
-		rowHeader.setAutoscrolls(false);
-		rowHeader.addMouseListener(new MouseListener1());
-		rowHeader.addMouseMotionListener(new MouseMotionListener1());
-		rowHeader.addKeyListener(new KeyListener1());
-		//rowHeader.setFixedCellWidth(MyTable.TABLE_CELL_WIDTH);
-		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
-
-		//G.STURR 2010-1-9: row heights are no longer fixed 
-		//rowHeader.setFixedCellHeight(table.getRowHeight()); // + table.getRowMargin();
-
-		rowHeaderRenderer = new RowHeaderRenderer(table, rowHeader);
-		rowHeader.setCellRenderer(rowHeaderRenderer);
-
-
-		// put the table and the row header list into a scroll plane
-		// G.STURR 2010-2-12: scrollPane now named as spreadsheet
+		// Create row header
+		rowHeader = new SpreadsheetRowHeader(app,table);
+	
+		// Put the table and the row header into a scroll plane
+		// The scrollPane is now named as spreadsheet
 		spreadsheet = new JScrollPane();
 		spreadsheet.setBorder(BorderFactory.createEmptyBorder());
 		spreadsheet.setRowHeaderView(rowHeader);
@@ -709,427 +677,7 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 
-
-
-
-
-	public static class MyListModel extends AbstractListModel {
-
-		private static final long serialVersionUID = 1L;
-
-		protected DefaultTableModel model;
-
-		public MyListModel(DefaultTableModel model0) {
-			model = model0;
-		}
-
-		public int getSize() {
-			return model.getRowCount();
-		}
-
-		public Object getElementAt(int index) {
-			return "" + (index + 1);
-		}
-
-		//G.STURR 2010-1-9: forces update of rowHeader, called after row resizing
-		public Void changed() {
-			this.fireContentsChanged(this, 0, model.getRowCount());
-			return null;
-
-		}
-
-	}
-
-
-	public class RowHeaderRenderer extends JLabel implements ListCellRenderer, ListSelectionListener {
-
-		private static final long serialVersionUID = 1L;
-
-		protected JTableHeader header;
-		protected JList rowHeader;
-		protected ListSelectionModel selectionModel;
-		private Color defaultBackground;
-
-		public RowHeaderRenderer(JTable table, JList rowHeader) {
-			super("", JLabel.CENTER);
-			setOpaque(true);
-			defaultBackground = MyTable.BACKGROUND_COLOR_HEADER;
-
-			this.rowHeader = rowHeader;
-			header = table.getTableHeader() ;
-			//			setOpaque(true);
-			//setBorder(UIManager.getBorder("TableHeader.cellBorder" ));
-			setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, MyTable.TABLE_GRID_COLOR));
-			//			setHorizontalAlignment(CENTER) ;
-			//			setForeground(header.getForeground()) ;
-			//			setBackground(header.getBackground());
-			if (getFont().getSize() == 0) {
-				Font font1 = app.getPlainFont();
-				if (font1 == null || font1.getSize() == 0) {
-					font1 = new Font("dialog", 0, 12);
-				}
-				setFont(font1);
-			}
-			table.getSelectionModel().addListSelectionListener(this);
-		}
-
-		public Component getListCellRendererComponent(JList list, Object value,	int index, boolean  isSelected, boolean cellHasFocus) {
-
-			// G.STURR 2010-1-9: adjust row height to match spreadsheet table row height 
-			Dimension size = getPreferredSize();
-			size.height = table.getRowHeight(index);
-			setPreferredSize(size);
-			//END GSTURR
-
-			setText((value == null) ? "" : value.toString());
-
-			if (table.getSelectionType() == table.COLUMN_SELECT ) {
-				setBackground(defaultBackground);
-			} else {
-				if (table.selectedRowSet.contains(index)
-						|| (index >= minSelectionRow && index <= maxSelectionRow)) {
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
-				} else {
-					setBackground(defaultBackground);
-				}
-			}
-
-			/* --------- old code
-			if (minSelectionRow != -1 && maxSelectionRow != -1) {
-				if (index >= minSelectionRow && index <= maxSelectionRow &&
-						selectionModel.isSelectedIndex(index)) 
-				{
-					setBackground(MyTable.SELECTED_BACKGROUND_COLOR_HEADER);
-				}
-				else {
-					setBackground(defaultBackground);					
-				}
-			}
-			else {
-				setBackground(defaultBackground);
-			}		
-			 */
-
-			return this;
-		}
-
-		/**
-		 * Update the rowHeader list when row selection changes in the table
-		 */
-		public void valueChanged(ListSelectionEvent e) {
-			selectionModel = (ListSelectionModel)e.getSource();
-			minSelectionRow = selectionModel.getMinSelectionIndex();
-			maxSelectionRow = selectionModel.getMaxSelectionIndex();
-			rowHeader.repaint();
-		}
-
-	}
-
-
-	// Returns index of row to be resized if mouse point P is 
-	// near a row boundary (within 3 pixels) 
-	private int getResizingRow(Point p){ 
-		int resizeRow = -1;
-		Point point = table.getIndexFromPixel(p.x, p.y);
-		if (point != null) {
-			// test if mouse is 3 pixels from row boundary
-			int cellRow = (int) point.getY();
-			if(cellRow >= 0) {
-				Rectangle r = table.getCellRect(cellRow, 0, true);
-				// near row bottom
-				if (p.y < r.y+3) resizeRow = cellRow-1;
-				// near row top
-				if (p.y > r.y + r.height - 3)resizeRow = cellRow;
-			}
-		}
-		return resizeRow; 
-	} 
-
-	// Cursor change for when mouse is over a row boundary  
-	private void swapCursor(){ 
-		Cursor tmp = rowHeader.getCursor(); 
-		rowHeader.setCursor(otherCursor); 
-		otherCursor = tmp; 
-	} 
-
-
-
-
-	protected int row0 = -1;
-
-	protected class MouseListener1 implements MouseListener
-	{
-
-		public void mouseClicked(MouseEvent e) {
-
-			// Double clicking on a row boundary auto-adjusts the 
-			// height of the row above the boundary (the resizingRow)
-
-			if (resizingRow >= 0 && !Application.isRightClick(e) && e.getClickCount() == 2) {
-
-				table.fitRow(resizingRow);
-				e.consume();
-			}
-		}
-
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		public void mouseExited(MouseEvent e) {
-		}
-
-		public void mousePressed(MouseEvent e) {						
-			boolean shiftPressed = e.isShiftDown();	
-			boolean metaDown = Application.isControlDown(e);							
-			boolean rightClick = Application.isRightClick(e);
-
-			int x = e.getX();
-			int y = e.getY();
-
-			// Update resizingRow. If nonnegative, then mouse is over a boundary
-			// and it gives the row to be resized (resizing is done in mouseDragged).
-			Point p = e.getPoint(); 
-			resizingRow = getResizingRow(p); 
-			mouseYOffset = p.y - table.getRowHeight(resizingRow); 
-			//
-
-
-			// left click
-			if (!rightClick) {		
-
-				if(resizingRow >=0) return; //GSTURR 2010-1-9
-
-				Point point = table.getIndexFromPixel(x, y);
-				if (point != null) {
-					//G.STURR 2010-1-29
-					if(table.getSelectionType() != table.ROW_SELECT){
-						table.setSelectionType(table.ROW_SELECT);
-						rowHeader.requestFocusInWindow();
-					}
-					/*
-					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
-							table.getColumnSelectionAllowed() == true) {
-						table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						table.setColumnSelectionAllowed(false);
-						table.setRowSelectionAllowed(true);
-					}
-					 */
-					if (shiftPressed) {
-						if (row0 != -1) {
-							int row = (int)point.getY();
-							table.setRowSelectionInterval(row0, row);
-						}
-					}	
-					/*
-					 * G.Sturr 2009-11-15 (ctrl-select now handled in table)
-					} else if (metaDown) {
-						row0 = (int) point.getY();
-						table.setRowSelectionInterval(row0, row0);
-						// table.addRowSelectionInterval(row0, row0);
-					}
-					 */
-
-					else {
-						row0 = (int)point.getY();
-						table.setRowSelectionInterval(row0, row0);
-					}
-					table.repaint();
-				}
-			}
-			/* G.Sturr 2009-9-30: moved this to mouseReleased
-			// RIGHT CLICK
-			else {	
-				if (!app.letShowPopupMenu()) return;    	
-
-				if (minSelectionRow != -1 && maxSelectionRow != -1) {
-					ContextMenuRow popupMenu = new ContextMenuRow(table, 0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, new boolean[0]);
-			        popupMenu.show(e.getComponent(), e.getX(), e.getY());
-				}	
-
-			}
-			 */
-
-		}
-
-		public void mouseReleased(MouseEvent e)	{
-			//G.Sturr 2009-9-30: moved show contextMenu from mousePressed
-			// and added right click selection
-
-			boolean rightClick = Application.isRightClick(e);
-
-			if (rightClick) { 			
-				if (!app.letShowPopupMenu()) return; 
-
-
-				Point p = table.getIndexFromPixel(e.getX(), e.getY());
-				if (p == null) return;
-
-				// if click is outside current selection then change selection
-				if(p.getY() < minSelectionRow ||  p.getY() > maxSelectionRow 
-						|| p.getX() < table.minSelectionColumn || p.getX() > table.maxSelectionColumn){
-					// switch to row selection mode and select row
-					//G.STURR 2010-1-29
-					if(table.getSelectionType() != table.ROW_SELECT){
-						table.setSelectionType(table.ROW_SELECT);
-					}
-					/*------- old code
-					if (table.getSelectionModel().getSelectionMode() != ListSelectionModel.MULTIPLE_INTERVAL_SELECTION ||
-							table.getColumnSelectionAllowed() == true) {
-						table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						table.setColumnSelectionAllowed(false);
-						table.setRowSelectionAllowed(true);
-					}
-					 */
-					//table.selectNone();
-					table.setRowSelectionInterval((int)p.getY(), (int)p.getY());
-				}	
-
-				//show contextMenu		
-				SpreadsheetContextMenu popupMenu = new SpreadsheetContextMenu(table, e.isShiftDown());
-				popupMenu.show(e.getComponent(), e.getX(), e.getY());
-
-			} 
-
-
-			// If row resize has happened, resize all other selected rows
-			if (doRowResize) {
-				if (minSelectionRow != -1 && maxSelectionRow != -1
-						&& (maxSelectionRow - minSelectionRow > 1)) {
-					if (table.getSelectAll())
-						table.setRowHeight(table.getRowHeight(resizingRow));
-					else
-						for (int row = minSelectionRow; row <= maxSelectionRow; row++) {
-							table.setRowHeight(row, table.getRowHeight(resizingRow));
-						}
-				}
-				doRowResize = false;
-			}
-		}
-	}
-
-
-	protected class MouseMotionListener1 implements MouseMotionListener
-	{
-
-		public void mouseDragged(MouseEvent e) {
-			if(Application.isRightClick(e))return; //G.Sturr 2009-9-30 
-
-			// G.STURR 2010-1-9
-			// On mouse drag either resize or select a row
-			int x = e.getX();
-			int y = e.getY();
-			if (resizingRow >= 0) {
-				// resize row
-				int newHeight = y - mouseYOffset;
-				if (newHeight > 0) {
-					table.setRowHeight(resizingRow, newHeight);
-					// set this flag to resize all selected rows on mouse release
-					doRowResize = true; 
-				}
-
-			} else { // select row
-				Point point = table.getIndexFromPixel(x, y);
-				if (point != null) {
-					int row = (int) point.getY();
-					table.setRowSelectionInterval(row0, row);
-
-					//G.Sturr 2010-4-4
-					// keep the row header updated when drag selecting multiple rows 
-					view.updateRowHeader();
-					table.scrollRectToVisible(table.getCellRect(point.y,point.x,true));
-					table.repaint();
-				}
-			}
-
-
-			/* -------- old code	
-	        int x = e.getX();
-			int y = e.getY();
-			Point point = table.getIndexFromPixel(x, y);
-			if (point != null) {
-				int row = (int)point.getY();
-				table.setRowSelectionInterval(row0, row);
-				table.repaint();
-			}
-			 */
-
-		}
-
-		public void mouseMoved(MouseEvent e) {
-
-			//G.STURR 2010-1-9
-			// Show resize cursor when mouse is over a row boundary
-			if ( ( getResizingRow(e.getPoint()) >= 0 ) != (rowHeader.getCursor() == resizeCursor ) ){
-				swapCursor();
-			}
-			//END GSTURR
-		}
-
-	}
-
-
-
-
-	protected class KeyListener1 implements KeyListener 
-	{
-
-		public void keyTyped(KeyEvent e) {
-		}
-
-		public void keyPressed(KeyEvent e) {
-
-			int keyCode = e.getKeyCode();
-
-			boolean metaDown = Application.isControlDown(e);				
-			boolean altDown = e.isAltDown();				
-
-			//G.Sturr 2009-11-15: metaDown flag needed to handle ctrl-select in MyTable
-			table.metaDown = metaDown;
-
-			//Application.debug(keyCode);
-			switch (keyCode) {				
-			case KeyEvent.VK_C : // control + c
-				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, altDown);
-					e.consume();
-				}
-				break;
-			case KeyEvent.VK_V : // control + v
-				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
-					boolean storeUndo = table.copyPasteCut.paste(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
-					if (storeUndo)
-						app.storeUndoInfo();
-					e.consume();
-				}
-				break;				
-			case KeyEvent.VK_X : // control + x
-				if (metaDown && minSelectionRow != -1 && maxSelectionRow != -1) {
-					table.copyPasteCut.copy(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow, altDown);
-					e.consume();
-				}
-				boolean storeUndo = table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
-				if (storeUndo)
-					app.storeUndoInfo();
-				break;
-
-			case KeyEvent.VK_DELETE : // delete
-			case KeyEvent.VK_BACK_SPACE : // delete on MAC
-				storeUndo = table.copyPasteCut.delete(0, minSelectionRow, table.getModel().getColumnCount() - 1, maxSelectionRow);
-				if (storeUndo)
-					app.storeUndoInfo();
-				break;			
-			}
-		}
-
-		public void keyReleased(KeyEvent e) {
-			//G.Sturr 2009-11-15: metaDown flag needed to handle ctrl-select in MyTable
-			table.metaDown = false;
-
-		}
-
-	}
-
-
+	
 
 	//===============================================================
 	//             XML 
@@ -1327,7 +875,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 		table.setFont(app.getPlainFont());
 		rowHeader.setFont(font);
 		table.headerRenderer.setFont(font);
-		rowHeaderRenderer.setFont(font);
 		
 		// Adjust row heights for tall LaTeX images
 		table.fitAll(true, false); 
@@ -1363,11 +910,10 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 	}
 
 
-	//G.STURR 2010-1-9
 	public void updateRowHeader() {
-		listModel.changed();
+		rowHeader.updateRowHeader();
 	}
-	//END GSTURR
+	
 
 	public void setSpreadsheetScrollPosition(int hScroll, int vScroll){
 		spreadsheet.getHorizontalScrollBar().setValue(hScroll);
@@ -1378,10 +924,6 @@ public class SpreadsheetView extends JSplitPane implements View, ComponentListen
 
 
 
-
-
-
-	// G.Sturr 2010-4-10
 	// ==========================================================
 	// Handle spreadsheet resize.
 	//
