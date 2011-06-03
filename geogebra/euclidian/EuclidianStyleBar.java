@@ -724,10 +724,11 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			@Override
 			public void update(Object[] geos) {
 				// only show this button when handling selection, do not use it for defaults
-				if(mode != EuclidianConstants.MODE_MOVE){
-					this.setVisible(false);
-					return;
-				}
+				// but not
+				//if(mode != EuclidianConstants.MODE_MOVE){
+				//	this.setVisible(false);
+				//	return;
+				//}
 				boolean geosOK = false;
 				GeoElement geo = null;
 				for (int i = 0; i < geos.length; i++) {
