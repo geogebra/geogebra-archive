@@ -606,6 +606,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		app.clearSelectedGeos();
 
+		// if we clear selection and highlighting,
+		// we may want to clear justCreatedGeos also
+		clearJustCreatedGeos();
+
 		// clear highlighting
 		refreshHighlighting(null);		
 	}
