@@ -7780,6 +7780,117 @@ class CmdSetFixed extends CommandProcessor {
 }
 
 /**
+ *ShowLabel
+ */
+class CmdShowLabel extends CommandProcessor {
+
+	/**
+	 * Create new command processor
+	 * 
+	 * @param kernel
+	 *            kernel
+	 */
+	public CmdShowLabel(Kernel kernel) {
+		super(kernel);
+	}
+
+	final public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+
+		switch (n) {
+		case 2:
+			arg = resArgs(c);
+			if (arg[1].isGeoBoolean()) {
+
+				GeoElement geo = (GeoElement) arg[0];
+
+				geo.setLabelVisible(((GeoBoolean) arg[1]).getBoolean());
+				geo.updateRepaint();
+
+				GeoElement[] ret = { geo };
+				return ret;
+			} else
+				throw argErr(app, c.getName(), arg[1]);
+
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+}
+
+/**
+ *SetVisibleInView
+ */
+class CmdSetVisibleInView extends CommandProcessor {
+
+	/**
+	 * Create new command processor
+	 * 
+	 * @param kernel
+	 *            kernel
+	 */
+	public CmdSetVisibleInView(Kernel kernel) {
+		super(kernel);
+	}
+
+	final public GeoElement[] process(Command c) throws MyError {
+		int n = c.getArgumentNumber();
+		GeoElement[] arg;
+
+		switch (n) {
+		case 3:
+			arg = resArgs(c);
+			if (!arg[1].isNumberValue())
+				throw argErr(app, c.getName(), arg[1]);
+
+
+			if (arg[2].isGeoBoolean()) {
+
+				GeoElement geo = (GeoElement) arg[0];
+				GeoElement[] ret = { geo };
+
+				int viewNo = (int)((NumberValue)arg[1]).getDouble();
+
+				EuclidianView ev = null;
+
+				switch (viewNo) {
+				case 1:
+					ev = app.getEuclidianView();
+					break;
+				case 2:
+					if (!app.getGuiManager().hasEuclidianView2()) break;
+					ev = app.getGuiManager().getEuclidianView2();
+					break;
+				default:
+					// do nothing
+				}
+
+				if (ev != null) {
+					boolean show = ((GeoBoolean)arg[2]).getBoolean();
+
+					if (show) {
+						geo.addView(ev);
+						ev.add(geo);
+					} else {
+						geo.removeView(ev);
+						ev.remove(geo);
+					}
+					
+					geo.updateRepaint();
+				}
+
+				return ret;
+			} else
+				throw argErr(app, c.getName(), arg[2]);
+
+		default:
+			throw argNumErr(app, c.getName(), n);
+		}
+	}
+}
+
+/**
  *Rename
  */
 class CmdRename extends CommandProcessor {

@@ -647,6 +647,8 @@ public class CommandDispatcher {
     	cmdTable.put("Button", new CmdButton(kernel));
     	cmdTable.put("Execute", new CmdExecute(kernel));     
     	cmdTable.put("GetTime", new CmdGetTime(kernel));     
+    	cmdTable.put("ShowLabel", new CmdShowLabel(kernel));     
+    	cmdTable.put("SetVisibleInView", new CmdSetVisibleInView(kernel));     
        		
        	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);
     	cmdTable.clear();
