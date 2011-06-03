@@ -280,9 +280,11 @@ public class EditMenu extends BaseMenu {
 		 *  -2 means different layers selected
 		 */
 		
-		deleteAction.setEnabled(layer != -1);
-		deleteItem.setVisible(layer != -1);
-		deleteSeparator.setVisible(layer != -1);
+		boolean justCreated = !(app.getActiveEuclidianView().getEuclidianController().getJustCreatedGeos().isEmpty());
+		
+		deleteAction.setEnabled(layer != -1 || justCreated);
+		deleteItem.setVisible(layer != -1 || justCreated);
+		deleteSeparator.setVisible(layer != -1 || justCreated);
 		
 		showhideAction.setEnabled(layer != -1);
 		showhideItem.setVisible(layer != -1);

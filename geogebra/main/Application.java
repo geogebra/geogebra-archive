@@ -4444,6 +4444,16 @@ public class Application implements KeyEventDispatcher {
 				if (!geo.isFixed())
 					geo.removeOrSetUndefinedIfHasFixedDescendent();
 			}
+
+			// also delete just created geos if possible
+			ArrayList<GeoElement> geos2 = getActiveEuclidianView().getEuclidianController().getJustCreatedGeos();
+			for (int j = 0; j < geos2.size(); j++) {
+				GeoElement geo = (GeoElement) geos2.get(j);
+				if (!geo.isFixed())
+					geo.removeOrSetUndefinedIfHasFixedDescendent();
+			}
+			getActiveEuclidianView().getEuclidianController().clearJustCreatedGeos();
+
 			storeUndoInfo();
 		}
 
