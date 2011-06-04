@@ -272,7 +272,7 @@ Translateable, PointRotateable, Mirrorable, Dilateable, LineProperties, MatrixTr
 	    	    		
 	    	    		if(lx == 0){
 	    	    			perpX = a;
-	    	    			perpY = -ly/lz;
+	    	    			perpY = -lz/ly;
 	    	    		}else{
 	    	    			perpY = -(lx*ly*a-lx*lx*b+ly*lz)/(lx*lx+ly*ly);
 	    	    			perpX = (-lz-ly*perpY)/lx;
