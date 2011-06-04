@@ -200,8 +200,6 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 	
 	public boolean respectLimitedPath(Coords p, double eps) {  
 		
-		Application.debug("ici");
-		
 		if (Kernel.isEqual(p.getW(),0,eps))//infinite point
 			return false;
 		double d = p.sub(getStartInhomCoords()).dotproduct(getDirectionInD3());
