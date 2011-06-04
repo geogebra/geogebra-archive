@@ -786,12 +786,12 @@ class OptionsEuclidian extends JPanel  implements ActionListener, FocusListener,
 				
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			
-			String strAxis = (axis == 0) ? app.getPlain("xAxis") : app.getPlain("yAxis");
-			this.setBorder(BorderFactory.createTitledBorder(strAxis));		
+			String strAxisEn = (axis == 0) ? "xAxis" : "yAxis";			
+			this.setBorder(BorderFactory.createTitledBorder(app.getPlain(strAxisEn)));		
 			
 			
-			cbShowAxis = new JCheckBox(app.getPlain("Show") + " " + strAxis);		
-			cbAxisNumber = new JCheckBox(app.getPlain("Show") + " " + app.getPlain("AxisNumbers"));					
+			cbShowAxis = new JCheckBox(app.getPlain("Show"+strAxisEn));		
+			cbAxisNumber = new JCheckBox(app.getPlain("ShowAxisNumbers"));					
 			ncbTickDist = new NumberComboBox(app);
 			cbManualTicks = new JCheckBox(app.getPlain("TickDistance") + ":");
 			

@@ -505,7 +505,7 @@ ItemListener, WindowListener {
 						
 			setLayout(new BorderLayout());
 			String strAxis = (axis == 0) ? app.getPlain("xAxis") : app.getPlain("yAxis");
-			cbShowAxis = new JCheckBox(app.getPlain("Show"));		
+			//cbShowAxis = new JCheckBox(app.getPlain("Showu"));		
 			cbAxisNumber = new JCheckBox(app.getPlain("AxisNumbers"));			
 			ncbMin = new NumberComboBox(app);
 			ncbMax = new NumberComboBox(app);			
