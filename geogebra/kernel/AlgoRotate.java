@@ -64,21 +64,10 @@ public class AlgoRotate extends AlgoTransformation {
         
         
         // create output object
-        if(A instanceof GeoPolygon || A instanceof GeoPolyLine){
-	        outGeo = ((GeoPolygon)inGeo).copyInternal(cons);
-	        out = (Rotateable) outGeo;
-        }
-        else if(A instanceof Rotateable){
-	        outGeo = inGeo.copy();
-	        out = (Rotateable) outGeo;
-        }
-        else if(A instanceof GeoFunction){
-        	outGeo = new GeoCurveCartesian(cons);
-            out = (Rotateable) outGeo;	
-        }
-        else if(A.isGeoList()){
-        	outGeo = new GeoList(cons);
-        }
+        outGeo = getResultTemplate(inGeo);
+        if(outGeo instanceof PointRotateable)
+        	out = (PointRotateable) outGeo;
+        
         setInputOutput();
         
         cons.registerEuclidianViewAlgo(this);
@@ -125,6 +114,8 @@ public class AlgoRotate extends AlgoTransformation {
     	}
     	else outGeo.set(inGeo);
         out.rotate(angle);
+        if(inGeo.isLimitedPath())
+        	this.transformLimitedPath(inGeo, outGeo);
     }
     
        
@@ -141,5 +132,12 @@ public class AlgoRotate extends AlgoTransformation {
 		if(!(outGeo instanceof GeoList))
 			out = (Rotateable)outGeo;
 		
+	}
+    
+    @Override
+	protected GeoElement getResultTemplate(GeoElement geo) {
+		if(geo instanceof GeoFunction)
+			return new GeoCurveCartesian(cons);
+		return super.getResultTemplate(geo);
 	}
 }

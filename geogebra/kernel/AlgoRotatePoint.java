@@ -68,21 +68,9 @@ public class AlgoRotatePoint extends AlgoTransformation {
         angleGeo = angle.toGeoElement();
         inGeo = A;
         
-        if(A instanceof GeoPolygon || A instanceof GeoPolyLine){
-	        outGeo = ((GeoPolygon)inGeo).copyInternal(cons);
-	        out = (PointRotateable) outGeo;
-        }
-        else if(A instanceof Rotateable){	    
-	        outGeo = inGeo.copy();
-	        out = (PointRotateable) outGeo;
-        }
-        else if(A instanceof GeoFunction){        	
-            outGeo = new GeoCurveCartesian(cons);
-            out = (PointRotateable) outGeo;	
-        }
-        else if(A.isGeoList()){        	
-        	outGeo = new GeoList(cons);
-        }        
+        outGeo = getResultTemplate(inGeo);
+        if(outGeo instanceof PointRotateable)
+        	out = (PointRotateable) outGeo;
         
         setInputOutput();
 
@@ -141,6 +129,8 @@ public class AlgoRotatePoint extends AlgoTransformation {
     	}
     	else outGeo.set(inGeo);
         out.rotate(angle, Q);
+        if(inGeo.isLimitedPath())
+        	this.transformLimitedPath(inGeo, outGeo);
     }
        
     final public String toString() {
@@ -157,6 +147,13 @@ public class AlgoRotatePoint extends AlgoTransformation {
 		if(!(out instanceof GeoList))
 			out = (PointRotateable)outGeo;
 		
+	}
+    
+    @Override
+	protected GeoElement getResultTemplate(GeoElement geo) {
+		if(geo instanceof GeoFunction)
+			return new GeoCurveCartesian(cons);
+		return super.getResultTemplate(geo);
 	}
     
 }

@@ -33,11 +33,8 @@ public abstract class AlgoTransformation extends AlgoElement {
 				bgeo2.get(i).set(trans);
 			}
 			else{
-				trans = ageo2.get(i);
-				if(trans instanceof GeoPolygon)
-					trans = trans.copyInternal(cons);
-				else 
-					trans = trans.copy();
+				trans = getResultTemplate(ageo2.get(i));
+				
 				setTransformedObject(ageo2.get(i),trans);
 				compute();
 				bgeo2.add(trans);
@@ -45,5 +42,42 @@ public abstract class AlgoTransformation extends AlgoElement {
 		}		
 		setTransformedObject(ageo2,bgeo2);
 	}
-	 
+	protected GeoElement getResultTemplate(GeoElement geo) {		
+		if(geo instanceof GeoPolyLineInterface || geo.isLimitedPath())
+			return geo.copyInternal(cons);
+		if(geo.isGeoList())        	
+        	return new GeoList(cons);
+		return geo.copy();		
+	}
+
+	protected void transformLimitedPath(GeoElement a,GeoElement b){
+		
+		if(a instanceof GeoRay){
+			setTransformedObject(
+					((GeoRay)a).getStartPoint(),
+					((GeoRay)b).getStartPoint());
+			compute();
+			setTransformedObject(a,b);
+		}
+		else if(a instanceof GeoSegment){
+			setTransformedObject(
+					((GeoSegment)a).getStartPoint(),
+					((GeoSegment)b).getStartPoint());
+			compute();
+			setTransformedObject(
+					((GeoSegment)a).getEndPoint(),
+					((GeoSegment)b).getEndPoint());
+			compute();
+			setTransformedObject(a,b);
+		}
+		if(a instanceof GeoConicPart){
+			double p = ((GeoConicPart)a).getParameterStart();
+			double q = ((GeoConicPart)a).getParameterEnd();
+			((GeoConicPart)b).setParameters(transformConicParam(p), transformConicParam(q), isInConstructionList());
+			//TODO transform for conic part
+		}
+	}
+	protected double transformConicParam(double d){
+		return d;
+	}
 }

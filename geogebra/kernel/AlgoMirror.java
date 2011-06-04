@@ -99,38 +99,9 @@ public class AlgoMirror extends AlgoTransformation {
 			mirror = c; // Michael Borcherds 2008-02-10
               
         inGeo = in;
-        if(inGeo.isGeoList()){
-        	outGeo = new GeoList(cons);
-        }
-        if (mirror instanceof GeoConic && inGeo instanceof GeoLine){
-        	out = new GeoConic(cons);
-        	outGeo = (GeoElement)out;
-        }
-        /*
-        else if (mirror instanceof GeoConic && geoIn instanceof GeoConic && 
-        		(!((GeoConic)geoIn).isCircle()||!((GeoConic)geoIn).keepsType())){
-        	out = new GeoCurveCartesian(cons);
-        	geoOut = (GeoElement)out;
-        }*/
-        else if (mirror instanceof GeoConic && inGeo instanceof GeoConic && 
-        		(!((GeoConic)inGeo).isCircle()||!((GeoConic)inGeo).keepsType())){
-        	out = new GeoImplicitPoly(cons);
-        	outGeo = (GeoElement)out;
-        }
-        else if(inGeo instanceof GeoPolygon || inGeo instanceof GeoPolyLine){
-        	out = (Mirrorable) inGeo.copyInternal(cons);               
-        	outGeo = out.toGeoElement();        	
-        }
-        else if(inGeo instanceof Mirrorable){
-        	out = (Mirrorable) inGeo.copy();               
-        	outGeo = out.toGeoElement();
-        	
-        }else if (inGeo instanceof GeoFunction && mirror!= mirrorPoint){
-        	out = new GeoCurveCartesian(cons);
-        	outGeo = (GeoElement)out;
-        }else if (inGeo instanceof GeoFunction && mirror == mirrorPoint){
-        	outGeo = inGeo.copy();
-        }
+        outGeo = getResultTemplate(inGeo);
+        if(outGeo instanceof Mirrorable)
+        	out = (Mirrorable)outGeo;
         setInputOutput();
               
         cons.registerEuclidianViewAlgo(this);
@@ -202,6 +173,8 @@ public class AlgoMirror extends AlgoTransformation {
         		out.mirror(mirrorPoint);
         }
         else ((ConicMirrorable)out).mirror(mirrorConic);
+        if(inGeo.isLimitedPath())
+        	this.transformLimitedPath(inGeo, outGeo);
     }       
     
     final public String toString() {
@@ -214,8 +187,27 @@ public class AlgoMirror extends AlgoTransformation {
 	protected void setTransformedObject(GeoElement g, GeoElement g2) {
 		inGeo = g;
 		outGeo = g2;
-		if(!(out instanceof GeoList))
+		if(!(outGeo instanceof GeoList))
 			out = (Mirrorable)outGeo;
 		
+	}
+    
+    @Override
+	protected GeoElement getResultTemplate(GeoElement geo) {
+		if((geo instanceof GeoFunction) && mirror != mirrorPoint)
+			return new GeoCurveCartesian(cons);
+		if (mirror instanceof GeoConic && geo instanceof GeoLine){
+        	return new GeoConic(cons);        	
+        }
+        if (mirror instanceof GeoConic && geo instanceof GeoConic && 
+        		(!((GeoConic)geo).isCircle()||!((GeoConic)geo).keepsType()))
+        	return new GeoImplicitPoly(cons);
+		if(geo instanceof GeoPolyLineInterface  || (geo.isLimitedPath() && mirror!=mirrorConic))
+			return geo.copyInternal(cons);
+		if(geo.isLimitedPath() && mirror == mirrorConic)
+			return new GeoConicPart(cons, GeoConicPart.CONIC_PART_ARC);
+		if(geo.isGeoList())        	
+        	return new GeoList(cons);
+		return geo.copy();
 	}
 }

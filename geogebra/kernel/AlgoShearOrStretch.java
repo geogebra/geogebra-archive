@@ -56,7 +56,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         this.num = num;
          
         inGeo = in;
-        if(in instanceof GeoPolygon || in instanceof GeoPolyLine){
+        if(inGeo instanceof GeoPolyLineInterface || inGeo.isLimitedPath()){
 	        outGeo = ((GeoPolygon)in).copyInternal(cons);
 	        out = (MatrixTransformable) outGeo;
         }
@@ -148,6 +148,8 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         else
         	out.matrixTransform(c*c+s*s*n,c*s*(1-n),c*s*(1-n),s*s+c*c*n);        
         tranOut.translate(new Coords(-qx, -qy,0));        
+        if(inGeo.isLimitedPath())
+        	this.transformLimitedPath(inGeo, outGeo);
     }       
     @Override
 	protected void setTransformedObject(GeoElement g, GeoElement g2) {
@@ -156,6 +158,13 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 		if(!(outGeo instanceof GeoList))
 			out = (MatrixTransformable)outGeo;
 		
+	}
+    
+    @Override
+	protected GeoElement getResultTemplate(GeoElement geo) {
+		if(geo instanceof GeoFunction)
+			return new GeoCurveCartesian(cons);
+		return super.getResultTemplate(geo);
 	}
 
 }

@@ -59,14 +59,12 @@ public class AlgoApplyMatrix extends AlgoTransformation {
      */
     public AlgoApplyMatrix(Construction cons, GeoElement in, GeoList matrix) {
         super(cons);
-        //this.in = in;      
-        this.matrix = matrix;
-        
 
+        this.matrix = matrix;
               
         inGeo = in.toGeoElement();
-        if(in instanceof GeoPolygon|| inGeo instanceof GeoPolyLine){
-	        outGeo = ((GeoPolygon)in).copyInternal(cons);
+        if(inGeo instanceof GeoPolyLineInterface || inGeo.isLimitedPath()){
+	        outGeo = in.copyInternal(cons);
 	        out = (MatrixTransformable) outGeo;
         }
         else if(inGeo.isGeoList()){
@@ -147,7 +145,8 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 			i = ((NumberValue)(MyList.getCell(list,2,2).evaluate())).getDouble();
 			out.matrixTransform(a,b,c,d,e,f,g,h,i);			
 		}
-        
+		if(inGeo.isLimitedPath())
+        	this.transformLimitedPath(inGeo, outGeo);
 
     }
     
@@ -160,5 +159,11 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 		
 	}
     
+    @Override
+	protected GeoElement getResultTemplate(GeoElement geo) {
+		if(geo instanceof GeoFunction)
+			return new GeoCurveCartesian(cons);
+		return super.getResultTemplate(geo);
+	}
 
 }

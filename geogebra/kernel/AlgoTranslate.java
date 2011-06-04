@@ -61,8 +61,8 @@ public class AlgoTranslate extends AlgoTransformation {
         inGeo = in;
                 
         // create out
-        if(inGeo instanceof GeoPolygon || inGeo instanceof GeoPolyLine){
-	        outGeo = ((GeoPolygon)inGeo).copyInternal(cons);
+        if(inGeo instanceof GeoPolyLineInterface || inGeo.isLimitedPath()){
+	        outGeo = inGeo.copyInternal(cons);
 	        out = (Translateable) outGeo;
         }
         else if(in.isGeoList()){
@@ -108,6 +108,8 @@ public class AlgoTranslate extends AlgoTransformation {
     	}
         outGeo.set(inGeo);
         out.translate(new Coords(new double[] {v.x,v.y,v.z}));
+        if(inGeo.isLimitedPath())
+        	this.transformLimitedPath(inGeo, outGeo);
     }       
 
     

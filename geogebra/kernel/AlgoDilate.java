@@ -67,7 +67,7 @@ public class AlgoDilate extends AlgoTransformation {
 
         inGeo = A;
         rgeo = r.toGeoElement();
-        if(A instanceof GeoPolygon || A instanceof GeoPolyLine){
+        if(A instanceof GeoPolygon || A instanceof GeoPolyLine || A.isLimitedPath()){
         	outGeo = inGeo.copyInternal(cons);
         	out = (Dilateable) outGeo;
         }
@@ -75,7 +75,7 @@ public class AlgoDilate extends AlgoTransformation {
         // create output object
         	outGeo = inGeo.copy();
         	out = (Dilateable) outGeo;                    
-        }        
+        }                
         else outGeo = new GeoList(cons);
         setInputOutput();
         cons.registerEuclidianViewAlgo(this);
@@ -132,6 +132,8 @@ public class AlgoDilate extends AlgoTransformation {
         }
         else
         	out.dilate(r, S);
+        if(inGeo.isLimitedPath())
+        	this.transformLimitedPath(inGeo, outGeo);
     }
        
    	final public String toString() {
