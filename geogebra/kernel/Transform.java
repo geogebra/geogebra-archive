@@ -71,9 +71,7 @@ public abstract class Transform {
 		if (label == null)
 			label = transformedGeoLabel(geo);
 
-		if(geo.isGeoList()){
-			return transformList(label, (GeoList)geo);
-		}
+	
 		if (geo.isLimitedPath()) {
 			// handle segments, rays and arcs separately
 			GeoElement[] geos = ((LimitedPath) geo)
@@ -95,38 +93,6 @@ public abstract class Transform {
 
 	}
 
-	private GeoList[] transformList(String label, GeoList geo) {
-		
-		GeoList ret = transformList(geo);	
-		AlgoElement algo = getTransformAlgo(geo);
-		ret.setParentAlgorithm(algo);
-		ret.setVisualStyleForTransformations(geo);
-		algo.setOutput(0, ret);
-		algo.input[0] = geo;
-		ret.setLabel(label);
-		GeoList[] geos = { ret };
-		return geos;
-	}
-	
-	private GeoList transformList(GeoList geo) {
-		GeoList ret = new GeoList(cons);
-		boolean suppress = cons.isSuppressLabelsActive();
-		cons.setSuppressLabelCreation(true);
-		for(int i = 0; i < geo.size(); i++){
-			GeoElement current = geo.get(i);
-			if(current.isGeoList()){
-				ret.add(transformList((GeoList)current));
-			}else if(current.isLimitedPath() ){
-				GeoElement[] geos = ((LimitedPath) current)
-				.createTransformedObject(this,null);
-				ret.add(geos[0]);
-				
-			}
-			else ret.add(doTransform(current));			
-		}
-		cons.setSuppressLabelCreation(suppress);
-		return ret;
-	}
 	/**
 	 * Returns algo that will be used for traansforming given geo 
 	 * @param geo

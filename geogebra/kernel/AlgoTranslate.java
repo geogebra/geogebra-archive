@@ -103,6 +103,7 @@ public class AlgoTranslate extends AlgoTransformation {
     // calc translated point
     protected final void compute() {
     	if(inGeo.isGeoList()){
+    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
         outGeo.set(inGeo);
@@ -115,4 +116,13 @@ public class AlgoTranslate extends AlgoTransformation {
         // Michael Borcherds 2008-03-24 simplified code!
         return app.getPlain("TranslationOfAbyB",inGeo.getLabel(),v.getLabel());
     }
+
+	@Override
+	protected void setTransformedObject(GeoElement g, GeoElement g2) {
+		inGeo = g;
+		outGeo = g2;
+		if(!(outGeo instanceof GeoList))
+			out = (Translateable)outGeo;
+		
+	}
 }

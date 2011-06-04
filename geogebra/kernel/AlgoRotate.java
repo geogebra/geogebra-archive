@@ -33,9 +33,9 @@ public class AlgoRotate extends AlgoTransformation {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Rotateable B;    
+	private Rotateable out;    
     private NumberValue angle; 
-    private GeoElement Ageo, Bgeo, angleGeo;
+    private GeoElement inGeo, outGeo, angleGeo;
     /**
      * Creates new generic rotation algo
      * @param cons
@@ -46,7 +46,7 @@ public class AlgoRotate extends AlgoTransformation {
     AlgoRotate(Construction cons, String label,
             GeoElement A, NumberValue angle) {
     	this(cons, A, angle);
-    	Bgeo.setLabel(label);
+    	outGeo.setLabel(label);
     }
     
     /**
@@ -60,24 +60,24 @@ public class AlgoRotate extends AlgoTransformation {
         this.angle = angle;
 
         angleGeo = angle.toGeoElement();
-        Ageo = A;
+        inGeo = A;
         
         
         // create output object
         if(A instanceof GeoPolygon || A instanceof GeoPolyLine){
-	        Bgeo = ((GeoPolygon)Ageo).copyInternal(cons);
-	        B = (Rotateable) Bgeo;
+	        outGeo = ((GeoPolygon)inGeo).copyInternal(cons);
+	        out = (Rotateable) outGeo;
         }
         else if(A instanceof Rotateable){
-	        Bgeo = Ageo.copy();
-	        B = (Rotateable) Bgeo;
+	        outGeo = inGeo.copy();
+	        out = (Rotateable) outGeo;
         }
         else if(A instanceof GeoFunction){
-        	Bgeo = new GeoCurveCartesian(cons);
-            B = (Rotateable) Bgeo;	
+        	outGeo = new GeoCurveCartesian(cons);
+            out = (Rotateable) outGeo;	
         }
         else if(A.isGeoList()){
-        	Bgeo = new GeoList(cons);
+        	outGeo = new GeoList(cons);
         }
         setInputOutput();
         
@@ -98,11 +98,11 @@ public class AlgoRotate extends AlgoTransformation {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];
-        input[0] = Ageo;
+        input[0] = inGeo;
         input[1] = angle.toGeoElement();
 
         setOutputLength(1);
-        setOutput(0,Bgeo);
+        setOutput(0,outGeo);
         setDependencies(); // done by AlgoElement
     }
 
@@ -111,26 +111,35 @@ public class AlgoRotate extends AlgoTransformation {
      * @return rotated object
      */
     GeoElement getResult() {
-        return Bgeo;
+        return outGeo;
     }
 
     // calc rotated point
     protected final void compute() {
-    	if(Ageo.isGeoList()){
+    	if(inGeo.isGeoList()){
+    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
-    	if(Ageo instanceof GeoFunction){
-    		((GeoFunction)Ageo).toGeoCurveCartesian((GeoCurveCartesian)Bgeo);
+    	if(inGeo instanceof GeoFunction){
+    		((GeoFunction)inGeo).toGeoCurveCartesian((GeoCurveCartesian)outGeo);
     	}
-    	else Bgeo.set(Ageo);
-        B.rotate(angle);
+    	else outGeo.set(inGeo);
+        out.rotate(angle);
     }
     
        
     final public String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
-        return app.getPlain("ARotatedByAngleB",Ageo.getLabel(),angleGeo.getLabel());
+        return app.getPlain("ARotatedByAngleB",inGeo.getLabel(),angleGeo.getLabel());
 
-    }    
+    }
+    @Override
+	protected void setTransformedObject(GeoElement g, GeoElement g2) {
+		inGeo = g;
+		outGeo = g2;
+		if(!(outGeo instanceof GeoList))
+			out = (Rotateable)outGeo;
+		
+	}
 }

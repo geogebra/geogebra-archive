@@ -35,7 +35,7 @@ public class AlgoShearOrStretch extends AlgoTransformation {
 	 */
 	private static final long serialVersionUID = 1L;
 	private MatrixTransformable out;   
-    private GeoElement geoIn, geoOut; 
+    private GeoElement inGeo, outGeo; 
     private GeoVec3D l;
     private NumberValue num;
     private boolean shear;
@@ -55,21 +55,21 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         this.l = l;
         this.num = num;
          
-        geoIn = in;
+        inGeo = in;
         if(in instanceof GeoPolygon || in instanceof GeoPolyLine){
-	        geoOut = ((GeoPolygon)in).copyInternal(cons);
-	        out = (MatrixTransformable) geoOut;
+	        outGeo = ((GeoPolygon)in).copyInternal(cons);
+	        out = (MatrixTransformable) outGeo;
         }
-        else if(geoIn.isGeoList()){
-        	geoOut = new GeoList(cons);
+        else if(inGeo.isGeoList()){
+        	outGeo = new GeoList(cons);
         }
-        else if(geoIn instanceof GeoFunction){
+        else if(inGeo instanceof GeoFunction){
         	out = new GeoCurveCartesian(cons);
-        	geoOut = (GeoElement)out;
+        	outGeo = (GeoElement)out;
         }
         else{
-        	out = (MatrixTransformable) geoIn.copy();               
-        	geoOut = out.toGeoElement();
+        	out = (MatrixTransformable) inGeo.copy();               
+        	outGeo = out.toGeoElement();
         }
         setInputOutput();
               
@@ -87,13 +87,13 @@ public class AlgoShearOrStretch extends AlgoTransformation {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[num == null?2:3];
-        input[0] = geoIn; 
+        input[0] = inGeo; 
         input[1] = l;
         if(num!=null)
         	input[2] = num.toGeoElement();
         
         setOutputLength(1);        
-        setOutput(0,geoOut);        
+        setOutput(0,outGeo);        
         setDependencies(); // done by AlgoElement
     }           
     
@@ -102,18 +102,19 @@ public class AlgoShearOrStretch extends AlgoTransformation {
      * @return resulting element
      */
     public GeoElement getResult() { 
-    	return geoOut; 
+    	return outGeo; 
     }       
    
 
     protected final void compute() {
-    	if(geoIn.isGeoList()){
+    	if(inGeo.isGeoList()){
+    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
-    	if(geoIn.isGeoFunction()){
-    		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
+    	if(inGeo.isGeoFunction()){
+    		((GeoFunction)inGeo).toGeoCurveCartesian((GeoCurveCartesian)outGeo);
     	}
-    	else geoOut.set(geoIn); 
+    	else outGeo.set(inGeo); 
         
         //matrix.add
         Translateable tranOut = (Translateable) out;
@@ -148,7 +149,14 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         	out.matrixTransform(c*c+s*s*n,c*s*(1-n),c*s*(1-n),s*s+c*c*n);        
         tranOut.translate(new Coords(-qx, -qy,0));        
     }       
-    
+    @Override
+	protected void setTransformedObject(GeoElement g, GeoElement g2) {
+		inGeo = g;
+		outGeo = g2;
+		if(!(outGeo instanceof GeoList))
+			out = (MatrixTransformable)outGeo;
+		
+	}
 
 }
 

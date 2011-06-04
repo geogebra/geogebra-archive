@@ -33,7 +33,7 @@ public class AlgoMirror extends AlgoTransformation {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Mirrorable out;   
-    private GeoElement geoIn, geoOut; 
+    private GeoElement inGeo, outGeo; 
     private GeoLine mirrorLine;   
     private GeoPoint mirrorPoint;      
     private GeoConic mirrorConic;      
@@ -48,7 +48,7 @@ public class AlgoMirror extends AlgoTransformation {
      */
     AlgoMirror(Construction cons, String label,GeoElement in,GeoPoint p) {
     	this(cons, in, null, p, null);  
-    	 geoOut.setLabel(label);
+    	 outGeo.setLabel(label);
     }
     
     /**
@@ -60,7 +60,7 @@ public class AlgoMirror extends AlgoTransformation {
      */
     AlgoMirror(Construction cons, String label,GeoElement in,GeoConic c) {
     	this(cons,in,null,null,c);  
-    	geoOut.setLabel(label);
+    	outGeo.setLabel(label);
     }
     
     /**
@@ -73,7 +73,7 @@ public class AlgoMirror extends AlgoTransformation {
     AlgoMirror(Construction cons, String label,GeoElement in,GeoLine g) {
     	
     	this(cons, in, g, null, null);
-    	 geoOut.setLabel(label);
+    	 outGeo.setLabel(label);
     }    
     
     /**
@@ -98,13 +98,13 @@ public class AlgoMirror extends AlgoTransformation {
 		else
 			mirror = c; // Michael Borcherds 2008-02-10
               
-        geoIn = in;
-        if(geoIn.isGeoList()){
-        	geoOut = new GeoList(cons);
+        inGeo = in;
+        if(inGeo.isGeoList()){
+        	outGeo = new GeoList(cons);
         }
-        if (mirror instanceof GeoConic && geoIn instanceof GeoLine){
+        if (mirror instanceof GeoConic && inGeo instanceof GeoLine){
         	out = new GeoConic(cons);
-        	geoOut = (GeoElement)out;
+        	outGeo = (GeoElement)out;
         }
         /*
         else if (mirror instanceof GeoConic && geoIn instanceof GeoConic && 
@@ -112,24 +112,24 @@ public class AlgoMirror extends AlgoTransformation {
         	out = new GeoCurveCartesian(cons);
         	geoOut = (GeoElement)out;
         }*/
-        else if (mirror instanceof GeoConic && geoIn instanceof GeoConic && 
-        		(!((GeoConic)geoIn).isCircle()||!((GeoConic)geoIn).keepsType())){
+        else if (mirror instanceof GeoConic && inGeo instanceof GeoConic && 
+        		(!((GeoConic)inGeo).isCircle()||!((GeoConic)inGeo).keepsType())){
         	out = new GeoImplicitPoly(cons);
-        	geoOut = (GeoElement)out;
+        	outGeo = (GeoElement)out;
         }
-        else if(geoIn instanceof GeoPolygon || geoIn instanceof GeoPolyLine){
-        	out = (Mirrorable) geoIn.copyInternal(cons);               
-        	geoOut = out.toGeoElement();        	
+        else if(inGeo instanceof GeoPolygon || inGeo instanceof GeoPolyLine){
+        	out = (Mirrorable) inGeo.copyInternal(cons);               
+        	outGeo = out.toGeoElement();        	
         }
-        else if(geoIn instanceof Mirrorable){
-        	out = (Mirrorable) geoIn.copy();               
-        	geoOut = out.toGeoElement();
+        else if(inGeo instanceof Mirrorable){
+        	out = (Mirrorable) inGeo.copy();               
+        	outGeo = out.toGeoElement();
         	
-        }else if (geoIn instanceof GeoFunction && mirror!= mirrorPoint){
+        }else if (inGeo instanceof GeoFunction && mirror!= mirrorPoint){
         	out = new GeoCurveCartesian(cons);
-        	geoOut = (GeoElement)out;
-        }else if (geoIn instanceof GeoFunction && mirror == mirrorPoint){
-        	geoOut = geoIn.copy();
+        	outGeo = (GeoElement)out;
+        }else if (inGeo instanceof GeoFunction && mirror == mirrorPoint){
+        	outGeo = inGeo.copy();
         }
         setInputOutput();
               
@@ -156,11 +156,11 @@ public class AlgoMirror extends AlgoTransformation {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];
-        input[0] = geoIn; 
+        input[0] = inGeo; 
         input[1] = mirror;
         
         setOutputLength(1);        
-        setOutput(0,geoOut);        
+        setOutput(0,outGeo);        
         setDependencies(); // done by AlgoElement
     }           
     
@@ -169,34 +169,35 @@ public class AlgoMirror extends AlgoTransformation {
      * @return transformed geo
      */
     GeoElement getResult() { 
-    	return geoOut; 
+    	return outGeo; 
     }       
 
     
     protected final void compute() {
-    	if(geoIn.isGeoList()){
+    	if(inGeo.isGeoList()){
+    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
-    	if(mirror instanceof GeoConic && geoIn instanceof GeoLine){
-    		((GeoLine)geoIn).toGeoConic((GeoConic)geoOut);    		
+    	if(mirror instanceof GeoConic && inGeo instanceof GeoLine){
+    		((GeoLine)inGeo).toGeoConic((GeoConic)outGeo);    		
     	}
     	/*
     	else if(mirror instanceof GeoConic && geoIn instanceof GeoConic && geoOut instanceof GeoCurveCartesian){
     		((GeoConic)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);    		
     	}*/
-    	else if(mirror instanceof GeoConic && geoIn instanceof GeoConic && geoOut instanceof GeoImplicitPoly){
-    		((GeoConic)geoIn).toGeoImplicitPoly((GeoImplicitPoly)geoOut);    		
+    	else if(mirror instanceof GeoConic && inGeo instanceof GeoConic && outGeo instanceof GeoImplicitPoly){
+    		((GeoConic)inGeo).toGeoImplicitPoly((GeoImplicitPoly)outGeo);    		
     	}
-    	else if(geoIn instanceof GeoFunction && mirror != mirrorPoint){
-    		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
+    	else if(inGeo instanceof GeoFunction && mirror != mirrorPoint){
+    		((GeoFunction)inGeo).toGeoCurveCartesian((GeoCurveCartesian)outGeo);
     	}
-    	else geoOut.set(geoIn);
+    	else outGeo.set(inGeo);
         
         if (mirror == mirrorLine)
         	out.mirror(mirrorLine);
         else if (mirror == mirrorPoint){
-        	if(geoOut.isGeoFunction())
-        		((GeoFunction)geoOut).dilate(new MyDouble(kernel,-1), mirrorPoint);
+        	if(outGeo.isGeoFunction())
+        		((GeoFunction)outGeo).dilate(new MyDouble(kernel,-1), mirrorPoint);
         	else
         		out.mirror(mirrorPoint);
         }
@@ -206,7 +207,15 @@ public class AlgoMirror extends AlgoTransformation {
     final public String toString() {
         // Michael Borcherds 2008-03-31
         // simplified to allow better translation
-        return app.getPlain("AMirroredAtB",geoIn.getLabel(),mirror.getLabel());
+        return app.getPlain("AMirroredAtB",inGeo.getLabel(),mirror.getLabel());
 
     }
+    @Override
+	protected void setTransformedObject(GeoElement g, GeoElement g2) {
+		inGeo = g;
+		outGeo = g2;
+		if(!(out instanceof GeoList))
+			out = (Mirrorable)outGeo;
+		
+	}
 }

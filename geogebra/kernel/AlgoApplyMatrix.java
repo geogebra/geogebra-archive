@@ -35,7 +35,7 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 	 */
 	private static final long serialVersionUID = 1L;
 	private MatrixTransformable out;   
-    private GeoElement geoIn, geoOut; 
+    private GeoElement inGeo, outGeo; 
     private GeoList matrix;
     
   
@@ -48,7 +48,7 @@ public class AlgoApplyMatrix extends AlgoTransformation {
      */
     public AlgoApplyMatrix(Construction cons, String label, GeoElement in, GeoList matrix) {
     	this(cons,in,matrix);          
-        geoOut.setLabel(label);
+        outGeo.setLabel(label);
     }           
     
     /**
@@ -64,21 +64,21 @@ public class AlgoApplyMatrix extends AlgoTransformation {
         
 
               
-        geoIn = in.toGeoElement();
-        if(in instanceof GeoPolygon|| geoIn instanceof GeoPolyLine){
-	        geoOut = ((GeoPolygon)in).copyInternal(cons);
-	        out = (MatrixTransformable) geoOut;
+        inGeo = in.toGeoElement();
+        if(in instanceof GeoPolygon|| inGeo instanceof GeoPolyLine){
+	        outGeo = ((GeoPolygon)in).copyInternal(cons);
+	        out = (MatrixTransformable) outGeo;
         }
-        else if(geoIn.isGeoList()){
-        	geoOut = new GeoList(cons);
+        else if(inGeo.isGeoList()){
+        	outGeo = new GeoList(cons);
         }
-        else if(geoIn instanceof GeoFunction){
+        else if(inGeo instanceof GeoFunction){
         	out = new GeoCurveCartesian(cons);
-        	geoOut = (GeoElement)out;
+        	outGeo = (GeoElement)out;
         }
         else{
-        	out = (MatrixTransformable) geoIn.copy();               
-        	geoOut = out.toGeoElement();
+        	out = (MatrixTransformable) inGeo.copy();               
+        	outGeo = out.toGeoElement();
         }                    
         setInputOutput();
               
@@ -94,11 +94,11 @@ public class AlgoApplyMatrix extends AlgoTransformation {
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];
-        input[1] = geoIn; 
+        input[1] = inGeo; 
         input[0] = matrix;
         
         setOutputLength(1);        
-        setOutput(0,geoOut);        
+        setOutput(0,outGeo);        
         setDependencies(); // done by AlgoElement
     }           
     
@@ -107,21 +107,23 @@ public class AlgoApplyMatrix extends AlgoTransformation {
      * @return resulting element
      */
     public GeoElement getResult() { 
-    	return geoOut; 
+    	return outGeo; 
     }       
    
 
     protected final void compute() {
-    	if(geoIn.isGeoList())
+    	if(inGeo.isGeoList()){
+    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
     		return;
-    	if(geoIn.isGeoFunction()){
-    		((GeoFunction)geoIn).toGeoCurveCartesian((GeoCurveCartesian)geoOut);
     	}
-    	else geoOut.set(geoIn); 
+    	if(inGeo.isGeoFunction()){
+    		((GeoFunction)inGeo).toGeoCurveCartesian((GeoCurveCartesian)outGeo);
+    	}
+    	else outGeo.set(inGeo); 
         MyList list = matrix.getMyList();
 		
 		if (list.getMatrixCols() != list.getMatrixRows() || list.getMatrixRows() < 2 || list.getMatrixRows() > 3) {
-			geoOut.setUndefined();
+			outGeo.setUndefined();
 			return;
 		}
 		 
@@ -147,7 +149,16 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 		}
         
 
-    }       
+    }
+    
+    @Override
+	protected void setTransformedObject(GeoElement g, GeoElement g2) {
+		inGeo = g;
+		outGeo = g2;
+		if(!(out instanceof GeoList))
+			out = (MatrixTransformable)outGeo;
+		
+	}
     
 
 }

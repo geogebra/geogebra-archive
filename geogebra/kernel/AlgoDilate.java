@@ -34,9 +34,9 @@ public class AlgoDilate extends AlgoTransformation {
 	 */
 	private static final long serialVersionUID = 1L;
 	private GeoPoint S;
-    private Dilateable B;    
+    private Dilateable out;    
     private NumberValue r; 
-    private GeoElement Ageo, Bgeo, rgeo;
+    private GeoElement inGeo, outGeo, rgeo;
     /**
      * Creates new labeled enlarge geo
      * @param cons
@@ -48,7 +48,7 @@ public class AlgoDilate extends AlgoTransformation {
     AlgoDilate(Construction cons, String label,
     		GeoElement A, NumberValue r, GeoPoint S) {
     	this(cons, A, r, S);
-    	Bgeo.setLabel(label);    
+    	outGeo.setLabel(label);    
     }
     
   
@@ -65,18 +65,18 @@ public class AlgoDilate extends AlgoTransformation {
         this.r = r;
         this.S = S;
 
-        Ageo = A;
+        inGeo = A;
         rgeo = r.toGeoElement();
         if(A instanceof GeoPolygon || A instanceof GeoPolyLine){
-        	Bgeo = Ageo.copyInternal(cons);
-        	B = (Dilateable) Bgeo;
+        	outGeo = inGeo.copyInternal(cons);
+        	out = (Dilateable) outGeo;
         }
         else if(!A.isGeoList()){
         // create output object
-        	Bgeo = Ageo.copy();
-        	B = (Dilateable) Bgeo;                    
+        	outGeo = inGeo.copy();
+        	out = (Dilateable) outGeo;                    
         }        
-        else Bgeo = new GeoList(cons);
+        else outGeo = new GeoList(cons);
         setInputOutput();
         cons.registerEuclidianViewAlgo(this);
         compute();
@@ -95,12 +95,12 @@ public class AlgoDilate extends AlgoTransformation {
     // for AlgoElement
     protected void setInputOutput() {    	
         input = new GeoElement[S==null ? 2:3];
-        input[0] = Ageo;
+        input[0] = inGeo;
         input[1] = rgeo;
         if(S != null)input[2] = S;
 
         setOutputLength(1);
-        setOutput(0,Bgeo);
+        setOutput(0,outGeo);
         setDependencies(); // done by AlgoElement
     }
 
@@ -109,30 +109,36 @@ public class AlgoDilate extends AlgoTransformation {
      * @return the resulting GeoElement
      */
     GeoElement getResult() {
-        return Bgeo;
+        return outGeo;
     }
 
-    // calc rotated point
+    protected void setTransformedObject(GeoElement g,GeoElement g2){
+        inGeo =g;
+        outGeo = g2;
+        if(!(outGeo instanceof GeoList))
+        out = (Dilateable) outGeo;
+       }
+    
+    // calc dilated point
     protected final void compute() {
-    	if(Ageo.isGeoList()){
+    	if(inGeo.isGeoList()){    		
+    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
-        Bgeo.set(Ageo);
+        outGeo.set(inGeo);
         if(S==null){
         	//Application.debug(cons.getOrigin());
-        	B.dilate(r, cons.getOrigin());
+        	out.dilate(r, cons.getOrigin());
         }
         else
-        	B.dilate(r, S);
+        	out.dilate(r, S);
     }
        
-   
-
-    final public String toString() {
+   	final public String toString() {
         // Michael Borcherds 2008-03-30
         // simplified to allow better Chinese translation
     	String sLabel = S == null ? cons.getOrigin().toValueString() : S.getLabel();
-    	return app.getPlain("ADilatedByFactorBfromC",Ageo.getLabel(),rgeo.getLabel(),sLabel);
+    	return app.getPlain("ADilatedByFactorBfromC",inGeo.getLabel(),rgeo.getLabel(),sLabel);
 
     }
 }
