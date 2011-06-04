@@ -228,14 +228,31 @@ public class MyTable extends JTable implements FocusListener
 		setCellSelectionEnabled(true);
 		
 		
-		// add mouse and key listeners
-		MouseListener[] mouseListeners = getMouseListeners();
+		// add mouse and key listeners 
 		SpreadsheetMouseListener ml = new SpreadsheetMouseListener(app,this);
-		addMouseListener(ml);
-		addMouseMotionListener(ml);
+		
+		MouseListener[] mouseListeners = getMouseListeners();
+		addMouseListener(ml); 
+		for (int i = 0; i < mouseListeners.length; ++ i) { 
+			removeMouseListener(mouseListeners[i]); 
+			addMouseListener(mouseListeners[i]); 
+		} 
+
+		MouseMotionListener[] mouseMotionListeners = getMouseMotionListeners(); 
+		addMouseMotionListener(ml); 
+		for (int i = 0; i < mouseMotionListeners.length; ++ i) { 
+			removeMouseMotionListener(mouseMotionListeners[i]); 
+			addMouseMotionListener(mouseMotionListeners[i]); 
+		} 
+
+		// key listener 
+		KeyListener[] defaultKeyListeners = getKeyListeners(); 
+		for (int i = 0; i < defaultKeyListeners.length; ++ i) { 
+			removeKeyListener(defaultKeyListeners[i]); 
+		} 
 		addKeyListener(new SpreadsheetKeyListener(app, this));
 
-		
+	
 		// setup selection listener
 		//TODO 
 		//These listeners are no longer needed.
