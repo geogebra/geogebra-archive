@@ -21,6 +21,11 @@ import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 import javax.swing.JFileChooser;
 
+//import org.jfugue.Pattern;
+//import org.jfugue.Player;
+
+
+
 /**
  * Class for managing and playing Midi sound. 
  * 
@@ -77,7 +82,7 @@ public class MidiSound implements MetaEventListener  {
 				channels = synthesizer.getChannels();    
 			}
 		}
-		
+
 		catch (MidiUnavailableException e) {
 			e.printStackTrace(); 
 			return false; 
@@ -127,7 +132,9 @@ public class MidiSound implements MetaEventListener  {
 	 * @param tickPosition
 	 */
 	public void playSequence( Sequence sequence, int tempo, long tickPosition ) {
-
+		
+		if(sequence == null) return;
+		
 		try{
 			initialize();
 			sequencer.open( );  
@@ -137,7 +144,6 @@ public class MidiSound implements MetaEventListener  {
 			sequencer.setSequence(sequence);
 			sequencer.setTempoInBPM(tempo);
 			sequencer.setTickPosition(tickPosition);
-
 
 			// Start playing 
 			sequencer.start( );
@@ -151,7 +157,9 @@ public class MidiSound implements MetaEventListener  {
 
 
 	public void pause(boolean doPause){
+		
 		if(sequencer == null) return;
+		
 		if(doPause){
 			tickPosition = sequencer.getTickPosition();
 			closeMidiSound();
@@ -163,10 +171,11 @@ public class MidiSound implements MetaEventListener  {
 
 	public void stop() {
 		closeMidiSound();
+		sequence = null;
 	}
 
 	public void closeMidiSound() {
-
+		
 		if (synthesizer != null) {
 			synthesizer.close();
 		}
@@ -176,6 +185,7 @@ public class MidiSound implements MetaEventListener  {
 			//sequencer.stop();
 			sequencer.close();
 		}
+		
 		System.gc();
 	}
 
@@ -184,7 +194,7 @@ public class MidiSound implements MetaEventListener  {
 	 * Midi meta event listener that closes the sequencer at end of track.
 	 */
 	public void meta(MetaMessage event) {
-		System.out.println("midi sound event " + event.getType());
+		//System.out.println("midi sound event " + event.getType());
 		if (event.getType() == END_OF_TRACK_MESSAGE) {
 			closeMidiSound();
 		}
@@ -218,6 +228,7 @@ public class MidiSound implements MetaEventListener  {
 
 			// add the note to the track and play it
 			addNote(track, 0, ticks, note, velocity);
+			addNote(track, ticks, 640, 1, 0);
 			playSequence(sequence, tickPosition);
 
 		} catch (InvalidMidiDataException e) {
@@ -237,24 +248,31 @@ public class MidiSound implements MetaEventListener  {
 	 * Uses the sequencer to play a Midi file.
 	 * Currently only supports files with extension .mid
 	 */
-	public void playMidiFile(String fileName){
+	public void playMidiFile(String filePath){
 
 		try {
-			tickPosition = 0;
-			if(fileName.equals("")){
+
+			if(filePath.equals("")){
 				// launch a file chooser (just for testing)
 				final JFileChooser fc = new JFileChooser();
 				int returnVal = fc.showOpenDialog(app.getMainComponent());
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					sequence = MidiSystem.getSequence(fc.getSelectedFile());
+					filePath = fc.getSelectedFile().getAbsolutePath();
 				}
-			}else{
-				// Load sequence from input file name
-				sequence = MidiSystem.getSequence(new File(fileName));
+			}	
+
+
+			String ext =  filePath.substring(filePath.lastIndexOf(".") + 1);
+			if(ext.equals("mid")){
+				// Load new sequence from .mid file 
+				tickPosition = 0;
+				sequence = MidiSystem.getSequence(new File(filePath));
+				playSequence(sequence,tickPosition);
 			}
 
-			playSequence(sequence,tickPosition);
-
+			else if(ext.equals("gm")){
+				loadSoundBank(new File(filePath));
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -266,7 +284,62 @@ public class MidiSound implements MetaEventListener  {
 	}
 
 
+	private void loadSoundBank(File soundbankFile){
 
+		try {
+
+			synthesizer.close();
+			Soundbank sb = MidiSystem.getSoundbank(soundbankFile);
+			synthesizer = MidiSystem.getSynthesizer();
+			synthesizer.open();
+
+			System.out.println("soundbank added: " + sb);
+						
+			if (sb != null){
+				System.out.println("soundbank supported: " + synthesizer.isSoundbankSupported(sb));
+				boolean bInstrumentsLoaded = synthesizer.loadAllInstruments(sb);
+				System.out.println("Instruments loaded: " + bInstrumentsLoaded);
+			}
+
+		} catch (MidiUnavailableException e) {
+			e.printStackTrace();
+		} catch (InvalidMidiDataException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+
+	/**
+	 * Uses the sequencer to play a midi sequence parsed from an input string
+	 */
+	public void playSequenceFromJFugueString( String noteString, int instrument ) {
+		
+		/*
+		initialize();
+		try {
+			sequencer.open( );
+			synthesizer.open();
+		} catch (MidiUnavailableException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
+		
+		Player player = new Player(sequencer); 
+		Pattern pattern = new Pattern(noteString); 
+		player.play(pattern); 
+		*/
+		
+	}
+	
+	
+
+	
+	
+	
 	//==================================================
 	//  Play Midi Sequence from String 
 	//
