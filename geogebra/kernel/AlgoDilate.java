@@ -122,7 +122,7 @@ public class AlgoDilate extends AlgoTransformation {
     // calc dilated point
     protected final void compute() {
     	if(inGeo.isGeoList()){    		
-    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
+    		transformList((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
         outGeo.set(inGeo);

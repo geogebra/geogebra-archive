@@ -113,7 +113,7 @@ public class AlgoApplyMatrix extends AlgoTransformation {
 
     protected final void compute() {
     	if(inGeo.isGeoList()){
-    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
+    		transformList((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
     	if(inGeo.isGeoFunction()){

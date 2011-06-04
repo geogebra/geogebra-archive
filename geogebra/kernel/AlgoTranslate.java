@@ -103,7 +103,7 @@ public class AlgoTranslate extends AlgoTransformation {
     // calc translated point
     protected final void compute() {
     	if(inGeo.isGeoList()){
-    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
+    		transformList((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
         outGeo.set(inGeo);

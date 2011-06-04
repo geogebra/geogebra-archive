@@ -117,7 +117,7 @@ public class AlgoRotate extends AlgoTransformation {
     // calc rotated point
     protected final void compute() {
     	if(inGeo.isGeoList()){
-    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
+    		transformList((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
     	if(inGeo instanceof GeoFunction){

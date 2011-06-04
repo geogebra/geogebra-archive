@@ -175,7 +175,7 @@ public class AlgoMirror extends AlgoTransformation {
     
     protected final void compute() {
     	if(inGeo.isGeoList()){
-    		adjustLength((GeoList)inGeo,(GeoList)outGeo);
+    		transformList((GeoList)inGeo,(GeoList)outGeo);
     		return;
     	}
     	if(mirror instanceof GeoConic && inGeo instanceof GeoLine){
