@@ -583,36 +583,102 @@ implements Path, Traceable, Mirrorable, ConicMirrorable, Translateable, PointRot
 //		Application.debug("squarefree: "+sqEngine.baseSquarefreePart(genPoly));
 	}
 	
+	public GeoPoint getSomePointOnCurve()
+	{
+		Coords coords = new Coords(0,0,1);
+		double r = 1;
+		double coeffs[] = {1, 0, 1,  0, 0, -r};
+		
+		GeoConic circle = new GeoConic(cons, "", coeffs);
+		GeoImplicitPoly poly = new GeoImplicitPoly(circle);
+		AlgoIntersectImplicitpolys algo = new AlgoIntersectImplicitpolys(cons, this, poly);
+		algo.compute();
+		GeoPoint [] ip = (GeoPoint[]) algo.getIntersectionPoints();
+		while(ip.length == 0)
+		{
+			r++;
+			coeffs[5] = -r;
+			circle.setCoeffs(coeffs);
+			circle.update();
+			poly.fromGeoConic(circle);
+			algo = new AlgoIntersectImplicitpolys(cons, this, poly);;
+			algo.compute();
+			ip = (GeoPoint[]) algo.getIntersectionPoints();
+		}
+		circle.remove();
+		poly.remove();
+		return ip[0];
+	}
+	
 	public void setNearestPointOnCurve(GeoPointND PI){
-//		GeoLine g=new GeoLine(cons);
-//		PI.updateCoords2D();
-//		double x=PI.getX2D();
-//		double y=PI.getY2D();
-//		double dy=-evalDiffXPolyAt(x, y);
-//		double dx=evalDiffYPolyAt(x, y);
-//		double c=x*dx+y*dy;
-//		g.setCoords(dx, dy, -c);
-////		Application.debug("a = "+dx+"; b = "+dy+"; c="+-c);
-//		Application.debug("g = "+g);
-//		AlgoIntersect algo=new AlgoIntersectImplicitpolyParametric(cons, this,g);
-//		cons.removeFromConstructionList(algo);
-//		algo.compute();
-//		GeoPoint[] points=algo.getIntersectionPoints();
-//		Application.debug("points = "+Arrays.deepToString(points));
-//		double dist=Double.POSITIVE_INFINITY;
-//		int k=-1;
-//		for (int i=0;i<points.length;i++){
-//			if (dist>(points[i].x-x)*(points[i].x-x)+(points[i].y-y)*(points[i].y-y)){
-//				dist=(points[i].x-x)*(points[i].x-x)+(points[i].y-y)*(points[i].y-y);
-//				k=i;
-//			}
-//		}
-//		if (k>=0){
-//			GeoPoint p=((GeoPoint) PI);
-//			p.x=points[k].x;
-//			p.y=points[k].y;
-//			p.z=points[k].z;
-//		}
+		
+		if(this.isOnPath(PI))
+			return;
+		
+		Coords coords = PI.getCoordsInD(2);
+		double x = coords.getX();
+		double y = coords.getY();
+		
+		GeoPoint gp = getSomePointOnCurve();
+		double r = Math.sqrt(Math.pow(gp.getX() - x, 2) + Math.pow(gp.getY() - y, 2));
+		double coeffs[] = {1, 0, 1,  -2*x, -2*y, -r*r+x*x+y*y};
+		
+		GeoConic circle = new GeoConic(cons, "", coeffs);
+		GeoImplicitPoly poly = new GeoImplicitPoly(circle);
+		circle.remove();
+		poly.remove();
+
+		AlgoIntersectImplicitpolys algo = new AlgoIntersectImplicitpolys(cons, this, poly);
+		algo.compute();
+		GeoPoint [] ip = (GeoPoint[]) algo.getIntersectionPoints();
+		
+		double down = 0, up = r;
+		while(ip.length != 1)
+		{
+			if(down > up)
+			{
+				double t = up;
+				up = down;
+				down = t;
+			}
+			
+			if (ip.length == 2)
+				if(ip[0].distance(ip[1]) < 1E-2)
+					break;
+			
+			if(ip.length >= 2)
+			{
+				r -= (up-down)/2;
+				up = r;
+			}	
+			else
+			{
+				r += (up-down)/2;
+				down = r;
+			}
+		
+			coeffs[5] = -r*r+x*x+y*y;
+			circle.setCoeffs(coeffs);
+			circle.update();
+			poly.fromGeoConic(circle);
+			
+			algo = new AlgoIntersectImplicitpolys(cons, this, poly);
+			algo.compute();
+			ip = (GeoPoint[]) algo.getIntersectionPoints();
+		}
+		
+		PI.setCoords2D(ip[0].getX(), ip[0].getY(), 1);
+		PI.updateCoords();
+		
+	}
+	
+	
+	final public double distance(GeoPoint p) {
+		AlgoClosestPoint algo = new AlgoClosestPoint(cons, "", this, p);
+		algo.compute();
+		algo.remove();
+		GeoPoint pointOnCurve = (GeoPoint) algo.getOutput(0);
+		return p.distance(pointOnCurve);
 	}
 	
 	/** 
