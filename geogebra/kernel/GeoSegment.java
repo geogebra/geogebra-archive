@@ -578,7 +578,11 @@ GeoSegmentND {
     	double t = pp.getT();
 
     	return  t >= -eps &&  t <= 1 + eps;   	
-    } 
+    }
+
+	public boolean isAllEndpointsLabelsSet() {
+		return startPoint.isLabelSet() && endPoint.isLabelSet();		
+	} 
 
 	
 }

@@ -71,12 +71,13 @@ public abstract class Transform {
 		if (label == null)
 			label = transformedGeoLabel(geo);
 
-	
-		if (geo.isLimitedPath()) {
-			// handle segments, rays and arcs separately
+		// handle segments, rays and arcs separately 
+		// in case these are not e.g. parts of list
+		if (geo.isLimitedPath() && ((LimitedPath)geo).isAllEndpointsLabelsSet()) {
+			
 			GeoElement[] geos = ((LimitedPath) geo)
 					.createTransformedObject(this,label);
-
+			//TODO: make sure orientation of arcs is OK
 			// if (geos[0] instanceof Orientable && geoMir instanceof
 			// Orientable)
 			// ((Orientable)geos[0]).setOppositeOrientation(

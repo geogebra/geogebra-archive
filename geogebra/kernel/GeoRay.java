@@ -297,7 +297,11 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
     	double t = pp.getT();
 
     	return  t >= -eps;   	
-    } 	
+    }
+    
+    public boolean isAllEndpointsLabelsSet() {
+		return startPoint.isLabelSet();		
+	} 
 
  
 	

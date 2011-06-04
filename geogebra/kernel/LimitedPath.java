@@ -70,4 +70,10 @@ public interface LimitedPath extends Path {
 	 */
 	public GeoElement [] createTransformedObject(Transform t,String label);
 	
+	/**
+	 * Returns true iff all endpoints are labeled
+	 * @return true iff all endpoints are labeled
+	 */
+	public boolean isAllEndpointsLabelsSet() ;
+	
 }

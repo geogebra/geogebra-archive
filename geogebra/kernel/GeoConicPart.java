@@ -911,6 +911,19 @@ implements LimitedPath, NumberValue, LineProperties {
     public boolean hasDrawable3D() {
     	return true;
     }
+    
+    public boolean isAllEndpointsLabelsSet() {
+    	AlgoElement algo = this.getParentAlgorithm();
+    	if(algo==null)//should never happen, just to be sure
+    		return false; 
+    	if(algo instanceof geogebra.kernel.AlgoConicPartConicPoints)
+    		return ((AlgoConicPartConicPoints)algo).getStartPoint().isLabelSet() &&
+    		((AlgoConicPartConicPoints)algo).getEndPoint().isLabelSet();
+    	if(algo instanceof geogebra.kernel.AlgoConicPartCircumcircle)
+    		return algo.getInput()[0].isLabelSet() && algo.getInput()[1].isLabelSet() &&
+    		algo.getInput()[2].isLabelSet();	
+    	return false;		
+	} 
 	
 	
 }
