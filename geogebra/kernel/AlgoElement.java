@@ -144,6 +144,7 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
     	private elementFactory<T> fac;
     	private ArrayList<T> outputList;
     	private String[] labels;
+    	private String indexLabel;
     	/**
     	 * use Labels for this outputs
     	 */
@@ -242,12 +243,25 @@ public abstract class AlgoElement extends ConstructionElement implements Euclidi
 		}
 		
 		/**
+		 * set setLabels to true
+		 * @param label use this String as indexed labels. 
+		 */
+		public void setIndexLabels(String label){
+			this.indexLabel=label;
+			setLabels=true;
+			updateLabels();
+		}	
+		
+		
+		/**
 		 * assigns Labels to unlabeled elements
 		 */
 		public void updateLabels(){
 			for (int i=0;i<outputList.size();i++){
 				if (!outputList.get(i).isLabelSet()){
-					if (labels!=null&&i<labels.length)
+					if (indexLabel!=null){ //use indexed label
+						outputList.get(i).setLabel(outputList.get(i).getIndexLabel(indexLabel));
+					}else if (labels!=null&&i<labels.length)
 						outputList.get(i).setLabel(labels[i]);
 					else
 						outputList.get(i).setLabel(null);

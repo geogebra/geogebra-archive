@@ -53,6 +53,7 @@ public class CommandDispatcher3D extends CommandDispatcher {
 		
     	cmdTable.put("Intersect", new CmdIntersect3D(kernel));	
     	cmdTable.put("Intersection", new CmdIntersect3D(kernel)); 
+    	cmdTable.put("IntersectInterior", new CmdIntersectInterior3D(kernel)); 
     	
     	cmdTable.put("Sphere", new CmdSphere3D(kernel));
     	

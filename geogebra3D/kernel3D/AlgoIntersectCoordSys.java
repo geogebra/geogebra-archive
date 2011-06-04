@@ -158,12 +158,12 @@ public abstract class AlgoIntersectCoordSys extends AlgoElement3D {
 	
 	
     final public String toString() {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append(app.getPlain("Intersection",((GeoElement) cs1).getLabel(),((GeoElement) cs2).getLabel()));
-        
-        return sb.toString();
-    }   
+    	return app.getPlain(getIntersectionTypeString(),getCS1().getLabel(),getCS2().getLabel());
+       
+    } 
+    
+    abstract protected String getIntersectionTypeString();
   
  
 

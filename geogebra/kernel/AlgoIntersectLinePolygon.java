@@ -20,10 +20,9 @@ package geogebra.kernel;
 
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianConstants;
+import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 
-import java.util.ArrayList;
 import java.util.TreeMap;
 
 
@@ -32,8 +31,7 @@ import java.util.TreeMap;
  * @author  matthieu
  * @version 
  */
-public class AlgoIntersectLinePolygon extends AlgoElement
-implements AlgoElementWithResizeableOutput{
+public class AlgoIntersectLinePolygon extends AlgoElement{
 
     /**
 	 * 
@@ -41,57 +39,66 @@ implements AlgoElementWithResizeableOutput{
 	private static final long serialVersionUID = 1L;
 	
 	
-	private GeoLine g; // input
+	private GeoLineND g; // input
 	private GeoPolygon p; //input
-    private OutputList pointsList, segmentsList; // output   
-    //private ArrayList<GeoSegment> segmentsList; // output   
+	protected OutputHandler<GeoElement> outputPoints; // output   
     
     
-    private TreeMap<Double, GeoPoint> pointsTree;
+    private TreeMap<Double, Coords> newCoords;
     
-    private int labelsUsed = 0;
-    
-    private String singleLabel = null;
     
     /** 
      * common constructor
-     * @param cons
+     * @param c 
      * @param labels
      * @param g
      * @param p
      */
-    AlgoIntersectLinePolygon(Construction cons, String[] labels, GeoLine g, GeoPolygon p) {
-        super(cons);
+    protected AlgoIntersectLinePolygon(Construction c, String[] labels, GeoLineND g, GeoPolygon p) {
+        super(c);
+        
+		outputPoints=createOutputPoints();
         
         
         this.g = g;
         this.p = p;
 
-        pointsTree = new TreeMap<Double, GeoPoint>();
+        newCoords = new TreeMap<Double, Coords>(Kernel.DoubleComparator(Kernel.STANDARD_PRECISION));
+        
+        compute();
         
         setInputOutput(); // for AlgoElement
 
         
-        //if only one label (e.g. "A"), new labels will be A_1, A_2, ...
-        if (labels!=null)
-        	if (labels.length==1)
-        		if (labels[0]!=null)
-        			if (!labels[0].equals(""))
-        				singleLabel = labels[0];
-
-        //set labels dependencies: will be used with Construction.resolveLabelDependency()
-        if (singleLabel==null && labels!=null)
-        	for (int i=0; i<labels.length; i++){
-        		cons.setLabelDependsOn(labels[i], this);
-        	}
-
-        compute();
-        
-        
-        
-
+        //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
+        if (labels!=null &&
+        		labels.length==1 &&
+        		outputPoints.size() > 1 &&
+        		labels[0]!=null &&
+        		!labels[0].equals(""))
+        	outputPoints.setIndexLabels(labels[0]);
+        else
+        	outputPoints.setLabels(labels);
+        				
+        update();    
     }
-
+    
+    /**
+     * 
+     * @return handler for output points
+     */
+    protected OutputHandler<GeoElement> createOutputPoints(){
+    	return new OutputHandler<GeoElement>(new elementFactory<GeoElement>() {
+			public GeoPoint newElement() {
+				GeoPoint p=new GeoPoint(cons);
+				p.setCoords(0, 0, 1);
+				p.setParentAlgorithm(AlgoIntersectLinePolygon.this);
+				return p;
+			}
+		});
+    }
+    
+    
     public String getClassName() {
         return "AlgoIntersectLinePolygon";
     }
@@ -103,27 +110,28 @@ implements AlgoElementWithResizeableOutput{
     // for AlgoElement
     protected void setInputOutput() {
         input = new GeoElement[2];
-        input[0] = g;
+        input[0] = (GeoElement) g;
         input[1] = p;
-
-        
-
-        pointsList = new OutputList();
-        segmentsList = new OutputList();
-        //segmentsList = new ArrayList<GeoSegment>();
-        
         
         setDependencies(); // done by AlgoElement
     }
 
-    private void setLabel(GeoElement geo){
+
+    protected void intersectionsCoords(GeoLineND g, GeoPolygon p, TreeMap<Double, Coords> newCoords){
     	
-    	if (singleLabel==null) //choose any free label
-    		geo.setLabel(null);
-    	else //choose a "A_i" label
-    		geo.setLabel(geo.getIndexLabel(singleLabel));
+    	double min = g.getMinParameter();
+    	double max = g.getMaxParameter();
     	
-    	labelsUsed++;
+    	for(int i=0; i<p.getSegments().length; i++){
+    		GeoSegment seg = (GeoSegment) p.getSegments()[i];
+    		Coords coords = GeoVec3D.cross((GeoLine) g, seg);
+    		if (seg.respectLimitedPath(coords, Kernel.MIN_PRECISION)){
+       			double t = ((GeoLine) g).getPossibleParameter(coords);
+    			//Application.debug("parameter("+i+") : "+t);
+       			if (t>=min && t<=max)//TODO optimize that
+       				newCoords.put(t, coords);
+    		}
+        }
     }
     
 
@@ -131,214 +139,37 @@ implements AlgoElementWithResizeableOutput{
     protected final void compute() {  
     	
     	//clear the points map
-    	pointsTree.clear();
+    	newCoords.clear();
     	
     	//fill a new points map
-    	for(int i=0; i<p.getSegments().length; i++){
-    		GeoSegment seg = (GeoSegment) p.getSegments()[i];
-    		GeoPoint point = new GeoPoint(getConstruction());
-    		GeoVec3D.cross(g, seg,point);
-    		if (seg.isIntersectionPointIncident(point, Kernel.MIN_PRECISION)){
-       			double t = g.getPossibleParameter(point);
-       			//TODO line without start point
-       			//double t = g.inner(point);
-    			//Application.debug("parameter("+i+") : "+t);
-       			if (t>=g.getMinParameter() && t<=g.getMaxParameter())//TODO optimize that
-       				pointsTree.put(t, point);
-    		}
-        }
+    	intersectionsCoords(g, p, newCoords);
     	
     	//update and/or create points
-    	int index = 0;
-    	for (GeoPointND point : pointsTree.values()){
-    		if (index<pointsList.getNumber())//re-affect old point
-    			pointsList.get(index).set((GeoElement) point);
-    		else{//add new point to the list and to the output
-    			addComputedElementToOutput((GeoElement) point);
-    			setLabel((GeoElement) point);
-    		}
+    	int index = 0;   	
+    	//affect new computed points
+    	outputPoints.adjustOutputSize(newCoords.size());
+    	for (Coords coords : newCoords.values()){
+    		GeoPointND point = (GeoPointND) outputPoints.getElement(index);
+    		point.setCoords(coords,false);
+    		point.updateCoords();
     		index++;
     	}
- 
-    	// set other points to undefined
-    	pointsList.setLastUndefined(index);
+    	//other points are undefined
+    	for(;index<outputPoints.size();index++)
+    		outputPoints.getElement(index).setUndefined();
     	
-    	
-    	//update and/or create segments
-    	index = 0;
-    	GeoPointND startPoint = null;
-    	for (GeoPointND point : pointsTree.values()){
-    		if (startPoint!=null){
-    			
-    			Coords middle = (Coords) startPoint.getInhomCoords().add(point.getInhomCoords()).mul(0.5);
-    			if (p.isInRegion(middle.getX(),middle.getY())){
-
-    				GeoSegment segment;
-    				if (index < segmentsList.getNumber()){
-    					segment = (GeoSegment) segmentsList.get(index);
-    					segment.setPoints((GeoPoint) startPoint, (GeoPoint) point);
-    					segment.calcLength();
-    				}else{    				
-    					segment = new GeoSegment(getConstruction(),(GeoPoint) startPoint, (GeoPoint) point);
-    					segment.calcLength();
-    					addComputedElementToOutput(segment);
-    					setLabel(segment);
-    				}  			
-    				index++;
-
-    			}
-    		}
-    		startPoint = point;    		
-    	}
  
-    	// set other points to undefined
-    	segmentsList.setLastUndefined(index);
     	
     }
 
     final public String toString() {
-        return app.getPlain("IntersectionPointOfAB",g.getLabel(),p.getLabel());
+        return app.getPlain("IntersectionPointOfAB",((GeoElement) g).getLabel(),p.getLabel());
     }
     
-    
-    
-    ///////////////////////////////////////////////////
-    // OUTPUT
-    ///////////////////////////////////////////////////
-    
+      
 
-    private OutputList getOutputList(int geoClassType){
-    	switch (geoClassType){
-    	case GeoElement.GEO_CLASS_POINT:
-    		return pointsList;
-    	case GeoElement.GEO_CLASS_SEGMENT:
-    		return segmentsList;
-    	default:
-    		return null;
-    	}
-    }
-    
-    private void addComputedElementToOutput(GeoElement geo){
 
-    	/*
-    	switch (geo.getGeoClassType()){
-    	case GeoElement.GEO_CLASS_POINT:
-    		pointsList.add((GeoPoint) geo);
-    		break;
-    	}
-    	*/
-    	
-    	getOutputList(geo.getGeoClassType()).add(geo);
-    	
-		setOutputDependencies(geo);
-    	
-    }
-    
-    public GeoElement addLabelToOutput(String label, int type){
-    	
-    	GeoElement ret;
-    	
-    	GeoElement geo;
-    	
-    	switch (type){
-    	case GeoElement.GEO_CLASS_POINT:
-    		geo=new GeoPoint(getConstruction());
-    	case GeoElement.GEO_CLASS_SEGMENT:
-    		geo=new GeoSegment(getConstruction());
-    	default:
-    		geo=null;
-    	}
-    	
-    	ret = getOutputList(type).addCreatedElement(geo);
-    	
-    	
-    	
-    	return ret;
-    }
     
     
-    protected GeoElement getOutput(int i){
-    	
-    	//return pointsList.get(i);
-    	
-    	
-    	if (i<pointsList.size())
-    		return pointsList.get(i);
-    	else
-    		return segmentsList.get(i-pointsList.size());
-    		
-    }
-    
-    protected int getOutputLength(){
-    	return pointsList.size()+segmentsList.size();
-    }
-    
-    public GeoElement[] getOutput(){
-    	GeoElement[] output = new GeoElement[getOutputLength()];
-    	
-    	
-    	int i = 0;
-    	for (GeoElement geo : pointsList){
-    		output[i] = geo;
-    		i++;
-    	}
-    	
-    	
-    	for (GeoElement geo : segmentsList){
-    		output[i] = geo;
-    		i++;
-    	}
-    	
-    	
-    	return output;
-    	
-    }
-    
-    
-    ///////////////////////////////////////////////////
-    // OUTPUT LIST
-    ///////////////////////////////////////////////////
-    
-    /**
-     * Class managing output lists
-     */
-    private class OutputList extends ArrayList<GeoElement>{
-    	
-    	private int number = 0;
-    	
-    	private int nbLabelSet = 0;
-    	
-    	public int getNumber(){
-    		return number;
-    	}
-    	
-    	/**
-    	 * set geos from index to number to undefined
-    	 * @param index
-    	 */
-    	public void setLastUndefined(int index){
-        	for (int i=index; i<number; i++)
-        		get(i).setUndefined();
-        	
-        	// update number of points
-        	number = size();
-    	}
-    	
-    	
-    	public GeoElement addCreatedElement(GeoElement geo){
-    		GeoElement ret;
-    		if (nbLabelSet<size()){ //set geo equal to element of the list
-    			ret=get(nbLabelSet);
-    			nbLabelSet++;
-    		}else{ // add this geo at the end of the list
-    			add(geo);
-    			ret=geo;
-    			setOutputDependencies(geo);
-    			nbLabelSet++;
-    		}
-    		return ret;
-    	}
-    }
-
     
 }

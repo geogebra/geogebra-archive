@@ -8,6 +8,7 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.PathMover;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
+import geogebra.main.Application;
 
 /**
  * 
@@ -183,13 +184,24 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 		}
 		return super.getGeoElement2D();
 	}
+
 	
-	public boolean isOnFullLine(Coords p, double eps){
+	
+	public boolean isOnPath(Coords p, double eps){
 		//first check global line
-		if (!super.isOnFullLine(p, eps))
+		if (!super.isOnPath(p, eps))
 			return false;
 		
 		//then check position on segment
+		return respectLimitedPath(p, eps);
+
+		
+	}
+	
+	public boolean respectLimitedPath(Coords p, double eps) {  
+		
+		Application.debug("ici");
+		
 		if (Kernel.isEqual(p.getW(),0,eps))//infinite point
 			return false;
 		double d = p.sub(getStartInhomCoords()).dotproduct(getDirectionInD3());
@@ -199,10 +211,8 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 		if (d>l*l+eps)
 			return false;
 		
-		return true;
-
-		
-	}
+		return true;   	
+	} 
 
 
 	public PathMover createPathMover() {

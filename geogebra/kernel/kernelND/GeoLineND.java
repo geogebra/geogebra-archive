@@ -55,9 +55,19 @@ public interface GeoLineND extends GeoDirectionND{
 	 * 
 	 * @param p
 	 * @param minPrecision
-	 * @return true if point is on the line
+	 * @return true if point is on the path
 	 */
 	public boolean isOnPath(GeoPointND p, double minPrecision);
+	
+	public boolean isOnPath(Coords coords, double eps);
+	
+	/**
+	 * when intersection point is calculated, check if not outside limited path (segment, ray)
+	 * @param coords
+	 * @param eps
+	 * @return true if not outside
+	 */
+	public boolean respectLimitedPath(Coords coords, double eps);
 
 	public boolean isOnFullLine(Coords p, double minPrecision);
 

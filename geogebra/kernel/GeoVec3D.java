@@ -18,6 +18,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.util.Util;
 
@@ -167,6 +168,21 @@ implements Traceable {
         					 u.z * v.x - u.x * v.z,  
         					 u.x * v.y - u.y * v.x );              
     }  
+    
+    /** Calculates the cross product of vectors u and v.
+     * @param u 
+     * @param v 
+     * @return the cross product of vectors u and v.
+     */
+    final public static Coords cross(GeoVec3D u, GeoVec3D v){
+    	Coords ret = new Coords(3);
+    	ret.setX(u.y * v.z - u.z * v.y);
+    	ret.setY(u.z * v.x - u.x * v.z);
+    	ret.setZ(u.x * v.y - u.y * v.x);
+    	
+    	return ret;
+    	
+    }
     
     /** Calculates the line through the points A and B.
      * The result is stored in g.

@@ -202,7 +202,7 @@ public class AlgoIntersectLineConic3D extends AlgoIntersectND {
 	private void checkIsOnLine(GeoPoint3D p){
 		if (!p.isDefined())
 			return;
-		if (!g.isOnFullLine(p.getCoords(),Kernel.MIN_PRECISION))
+		if (!g.respectLimitedPath(p.getCoords(),Kernel.MIN_PRECISION))
 			p.setUndefined();
 	}
 	

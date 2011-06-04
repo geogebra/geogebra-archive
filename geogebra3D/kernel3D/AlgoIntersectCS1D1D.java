@@ -23,7 +23,6 @@ import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
-import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoLineND;
 
 
@@ -87,10 +86,14 @@ public class AlgoIntersectCS1D1D extends AlgoIntersectCoordSys {
     	if (project==null)
     		p.setUndefined(); //TODO infinite point
     	else if (project[0].equalsForKernel(project[1], Kernel.STANDARD_PRECISION)){
-    		if (project[2].get(1) > line1.getMinParameter()
-    				&& project[2].get(1) < line1.getMaxParameter() 				
-    				&& project[2].get(2) > line2.getMinParameter()
-    				&& project[2].get(2) < line2.getMaxParameter()
+    		
+    		double t1 = project[2].get(1); //parameter on line 1
+       		double t2 = project[2].get(2); //parameter on line 2
+       	    		
+    		if (t1 > line1.getMinParameter()
+    				&& t1 < line1.getMaxParameter() 				
+    				&& t2 > line2.getMinParameter()
+    				&& t2 < line2.getMaxParameter()
     				)   		
     			p.setCoords(project[0]);
     		else
@@ -100,13 +103,7 @@ public class AlgoIntersectCS1D1D extends AlgoIntersectCoordSys {
     		p.setUndefined();
     	
     }
-    
-    
-    
-    
-    
-    
- 
+  
     
     
     
@@ -118,7 +115,10 @@ public class AlgoIntersectCS1D1D extends AlgoIntersectCoordSys {
 	}
 
 	
-	
+
+	protected String getIntersectionTypeString(){
+		return "IntersectionPointOfAB";
+	}
   
  
 

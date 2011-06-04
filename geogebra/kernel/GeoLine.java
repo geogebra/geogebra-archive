@@ -205,36 +205,34 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     }
     
     
+    
+    public boolean isOnPath(Coords coords, double eps) {    	
+    	return isOnFullLine(coords, eps);    	
+    }
+    
+    public boolean respectLimitedPath(Coords coords, double eps) {    	
+    	return true;    	
+    } 
+    
     /**
      * return a possible parameter for the point P
      * (return the parameter for the projection of P on the path)
-     * @param P
+     * @param coords 
      * @return a possible parameter for the point P
      */
-    public double getPossibleParameter(GeoPoint P){
-    	
-    	// remember the old point coordinates
-		double px = P.x, py = P.y, pz = P.z;
+    public double getPossibleParameter(Coords coords){
+
 		PathParameter tempPP = getTempPathParameter();
-		PathParameter pp = P.getPathParameter();
-		tempPP.set(pp);
-		
+
 		// make sure we use point changed for a line to get parameters on 
 		// the entire line when this is a segment or ray
-		doPointChanged(P);		
+		doPointChanged(coords,tempPP);		
 		
-		double result = pp.t;
-	
-		// restore old values
-		P.x = px; P.y = py; P.z = pz;
-		pp.set(tempPP);
-		
-		return result;
-		
+		return tempPP.t;		
     }
     
     private PathParameter tempPP;
-    private PathParameter getTempPathParameter() {
+    protected PathParameter getTempPathParameter() {
     	if (tempPP == null) 
     		tempPP = new PathParameter();
     	return tempPP;

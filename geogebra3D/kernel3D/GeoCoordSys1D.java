@@ -287,9 +287,15 @@ GeoLineND, GeoCoordSys{
 		if (PI.getPath()==this)
 			return true;
 			
-		return isOnFullLine(PI.getCoordsInD(3), eps);
+		return isOnPath(PI.getCoordsInD(3), eps);
+	}
+	
+	
+	public boolean isOnPath(Coords coords, double eps) {    
+		return isOnFullLine(coords, eps);		
 	}
 
+	
 	public boolean isOnFullLine(Coords p, double eps){
 		Coords cross;
 		
@@ -301,6 +307,10 @@ GeoLineND, GeoCoordSys{
 		
 		return cross.equalsForKernel(0,  Kernel.MIN_PRECISION);
 	}
+
+	public boolean respectLimitedPath(Coords coords, double eps) {    	
+		return true;    	
+	} 
 	
 
 	////////////////////////////////////

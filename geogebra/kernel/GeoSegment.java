@@ -562,6 +562,23 @@ GeoSegmentND {
     public GeoElement getHighlightingAncestor(){
     	return highlightingAncestor;
     }
+    
+    
+    public boolean isOnPath(Coords coords, double eps) {    	
+    	if  (!super.isOnPath(coords, eps))
+    		return false;
+ 
+    	return respectLimitedPath(coords, eps);
+    	   	
+    }
+    
+    public boolean respectLimitedPath(Coords coords, double eps) {    	
+    	PathParameter pp = getTempPathParameter();
+    	doPointChanged(coords,pp);
+    	double t = pp.getT();
+
+    	return  t >= -eps &&  t <= 1 + eps;   	
+    } 
 
 	
 }

@@ -44,22 +44,26 @@ public class GeoRay3D extends GeoLine3D implements GeoRayND{
 	public boolean isValidCoord(double x){
 		return (x>=0);
 	}
-	
-	public boolean isOnFullLine(Coords p, double eps){
+
+	public boolean isOnPath(Coords p, double eps){
 		//first check global line
-		if (!super.isOnFullLine(p, eps))
+		if (!super.isOnPath(p, eps))
 			return false;
-		
+
 		//then check position on segment
+		return respectLimitedPath(p, eps);
+
+
+	}
+
+	public boolean respectLimitedPath(Coords p, double eps) {    	
 		if (Kernel.isEqual(p.getW(),0,eps))//infinite point
 			return false;
 		double d = p.sub(getStartInhomCoords()).dotproduct(getDirectionInD3());
 		if (d<-eps)
 			return false;
 
-		
-		return true;
 
-		
-	}
+		return true;	
+	} 
 }

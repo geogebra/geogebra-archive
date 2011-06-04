@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.Matrix.Coords;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoRayND;
 
@@ -282,8 +283,21 @@ final public class GeoRay extends GeoLine implements LimitedPath, GeoRayND {
 	
 	
 	
-	
-	
+    public boolean isOnPath(Coords coords, double eps) {    	
+    	if  (!super.isOnPath(coords, eps))
+    		return false;
+    	
+    	return respectLimitedPath(coords, eps);
+	   	
+    }
+    
+    public boolean respectLimitedPath(Coords coords, double eps) {    	
+    	PathParameter pp = getTempPathParameter();
+    	doPointChanged(coords,pp);
+    	double t = pp.getT();
+
+    	return  t >= -eps;   	
+    } 	
 
  
 	

@@ -130,6 +130,7 @@ import geogebra.util.Unicode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -5292,7 +5293,7 @@ public class Kernel {
 	
 	
 	/** 
-	 * yields intersection point named label of line g and polygon p
+	 * yields intersection point named label of line g and outline of polygon p
 	 */
 	final public GeoElement[] IntersectLinePolygon(
 		String[] labels,
@@ -8500,6 +8501,32 @@ public class Kernel {
 	
 	public boolean getInverseTrigReturnsAngle() {
 		return arcusFunctionCreatesAngle;
+	}
+	
+	
+	/**
+	 * 
+	 * @param precision
+	 * @return a double comparator which says doubles are equal if their diff is less than precision
+	 */
+	final static public Comparator<Double> DoubleComparator(double precision){
+		
+		final double eps = precision;
+		
+		Comparator<Double> ret = new Comparator<Double>() {
+
+			public int compare(Double d1, Double d2) {
+				if (Math.abs(d1-d2)<eps)
+					return 0;
+				else if (d1<d2)
+					return -1;
+				else
+					return 1;
+			}
+			
+		};
+		
+		return ret;
 	}
 }
 	

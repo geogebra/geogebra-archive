@@ -576,8 +576,7 @@ public class Manager3D implements Manager3DInterface {
 				algo = new AlgoIntersectCS1D1D(cons,label,
 						(GeoLineND) cs1,(GeoLineND) cs2);
 			else if (cs2 instanceof GeoCoordSys2D)
-				algo = new AlgoIntersectCS1D2D(cons,label, 
-						 cs1, cs2);
+				algo = new AlgoIntersectCS1D2D(cons,label,cs1, cs2);
 		}else if (cs1 instanceof GeoCoordSys2D){
 			if (cs2 instanceof GeoLineND)
 				algo = new AlgoIntersectCS1D2D(cons,label, 
@@ -589,6 +588,15 @@ public class Manager3D implements Manager3DInterface {
 		return algo.getIntersection();
 	}
 
+	public GeoElement[] IntersectOutline(
+			String[] labels,
+			GeoLineND g, GeoPolygon p){
+		
+		AlgoIntersectLinePolygon3D algo = new AlgoIntersectLinePolygon3D(cons, labels, g, p);
+		
+		return algo.getOutput();
+		
+	}
 
 	
 	public GeoConic3D Intersect(

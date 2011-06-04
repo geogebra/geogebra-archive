@@ -25,6 +25,7 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
 
 
 
@@ -112,12 +113,17 @@ public class AlgoIntersectCS1D2D extends AlgoIntersectCoordSys {
     
 
 	public String getClassName() {
-    	
-    	return "AlgoIntersectCoordSys";
+
+		if (getCS2() instanceof GeoPlaneND) //surface with no outline
+			return "AlgoIntersectCoordSys";
+		else //surface with ouline : says that intersection is interior point
+			return "AlgoIntersectInterior";
 	}
 
 	
-	
+	protected String getIntersectionTypeString(){
+		return "IntersectionInteriorPointOfAB";
+	}
   
  
 

@@ -338,7 +338,16 @@ public interface Manager3DInterface {
 					GeoElement cs1,
 					GeoElement cs2) ;
 
-			 
+			 /**
+			  * Calculate the intersection of the line g with the outline of p
+			  * @param label
+			  * @param g
+			  * @param p
+			  * @return
+			  */
+			 public GeoElement[] IntersectOutline(
+						String[] labels,
+						GeoLineND g, GeoPolygon p) ;		 
 
 			 
 			 /** Calculate the intersection of plane and quadric
