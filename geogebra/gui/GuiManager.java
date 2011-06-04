@@ -1038,21 +1038,6 @@ public class GuiManager {
 	}
 
 	/**
-
-	 * Displays the porperties dialog for the drawing pad
-	 */
-	public void showDrawingPadPropertiesDialog() {
-		if (!app.letShowPropertiesDialog())
-			return;
-		app.setWaitCursor();
-		app.getEuclidianView().resetMode();
-		PropertiesDialogGraphicsWindow euclidianViewDialog = new PropertiesDialogGraphicsWindow(
-				app, app.getEuclidianView());
-		euclidianViewDialog.setVisible(true);
-		app.setDefaultCursor();
-	}
-
-	/**
 	 * Displays the configuration dialog for the toolbar
 	 */
 	public void showToolbarConfigDialog() {
