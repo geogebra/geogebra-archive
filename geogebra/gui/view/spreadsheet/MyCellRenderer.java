@@ -1,6 +1,7 @@
 package geogebra.gui.view.spreadsheet;
 
 import geogebra.euclidian.Drawable;
+import geogebra.euclidian.FormulaDimension;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoImage;
@@ -9,15 +10,12 @@ import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.main.Application;
-import geogebra.util.Util;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
@@ -322,7 +320,7 @@ public class MyCellRenderer extends DefaultTableCellRenderer
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		Dimension d = new Dimension();
+		FormulaDimension d = new FormulaDimension();
 		d = Drawable.drawEquation(app, null, g2image, 0, 0, latex, font, serif, fgColor,
 				bgColor);
 

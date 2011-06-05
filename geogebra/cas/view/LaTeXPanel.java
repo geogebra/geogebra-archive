@@ -1,6 +1,7 @@
 package geogebra.cas.view;
 
 import geogebra.euclidian.Drawable;
+import geogebra.euclidian.FormulaDimension;
 import geogebra.main.Application;
 
 import java.awt.Dimension;
@@ -53,7 +54,9 @@ public class LaTeXPanel extends JPanel {
 		g2image.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
 							RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		return Drawable.drawEquation(app, null, g2image, 0, 0, latex, getFont(), false, getForeground(), getBackground());	
+		FormulaDimension fd =  Drawable.drawEquation(app, null, g2image, 0, 0, latex, getFont(), false, getForeground(), getBackground());	
+
+		return new Dimension(fd.width, fd.height + fd.depth);
 	}
 	
 	private boolean ensureImageSize(int width, int height) {

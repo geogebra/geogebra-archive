@@ -137,8 +137,8 @@ public abstract class Drawable extends DrawableND {
 		if (label.startsWith("$") && label.endsWith("$")) {
 			boolean serif = true; // nice "x"s
 			if (geo.isGeoText()) serif = ((GeoText)geo).isSerifFont();
-			Dimension dim = drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont(), serif, g2.getColor(), g2.getBackground());
-			labelRectangle.setBounds(xLabel, yLabel, (int)dim.getWidth(), (int)dim.getHeight());
+			FormulaDimension dim = drawEquation(geo.getKernel().getApplication(), geo, g2, xLabel, yLabel, label.substring(1, label.length() - 1), g2.getFont(), serif, g2.getColor(), g2.getBackground());
+			labelRectangle.setBounds(xLabel, yLabel - dim.depth, (int)dim.width, (int)dim.height);
 			return;
 		}
 
@@ -358,6 +358,7 @@ public abstract class Drawable extends DrawableND {
 		ArrayList<Integer> lineHeights = new ArrayList<Integer>();
 		lineHeights.add(new Integer(lineSpread + lineSpace));
 		ArrayList<Integer> elementHeights = new ArrayList<Integer>();
+		ArrayList<Integer> elementDepths = new ArrayList<Integer>();
 
 		// use latex by default just if there is just a single element
 		boolean isLaTeX = (elements.length == 1);
@@ -366,8 +367,13 @@ public abstract class Drawable extends DrawableND {
 		for(int i = 0, currentLine = 0, currentElement = 0; i < elements.length; ++i) {
 			if(isLaTeX) {
 				// save the height of this element by drawing it to a temporary buffer
-				int height = drawEquation(view.app, geo, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).height;
+				FormulaDimension dim = new FormulaDimension();
+				dim = drawEquation(view.app, geo, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor);
+				
+				int height = dim.height;
+				
 				elementHeights.add(new Integer(height));
+				elementDepths.add(new Integer(dim.depth));
 
 				// check if this element is taller than every else in the line
 				if(height > (lineHeights.get(currentLine)).intValue())
@@ -380,6 +386,7 @@ public abstract class Drawable extends DrawableND {
 
 				for(int j = 0; j < lines.length; ++j) {
 					elementHeights.add(new Integer(lineSpread));
+					elementDepths.add(new Integer(0));
 
 					// create a new line
 					if(j + 1 < lines.length) {
@@ -409,9 +416,9 @@ public abstract class Drawable extends DrawableND {
 			if(isLaTeX) {
 				// calculate the y offset of this element by: (lineHeight - elementHeight) / 2
 				yOffset = (((lineHeights.get(currentLine))).intValue() - ((elementHeights.get(currentElement))).intValue()) / 2;
-
+				
 				// draw the equation and save the x offset
-				xOffset += drawEquation(view.app, geo, g2, xLabel + xOffset, (yLabel + height) + yOffset, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).width;
+				xOffset += drawEquation(view.app, geo, g2, xLabel + xOffset, (yLabel + height) + yOffset + elementDepths.get(currentElement), elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor).width;
 
 				++currentElement;
 			} else {
@@ -456,7 +463,7 @@ public abstract class Drawable extends DrawableND {
 		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
 	}
 
-	final  public static Dimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
+	final  public static FormulaDimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
 
 		//if (useJLaTeXMath)
 			return drawEquationJLaTeXMath(app, geo, g2, x, y, text, font, serif, fgColor, bgColor);
@@ -587,10 +594,14 @@ public abstract class Drawable extends DrawableND {
 	 * @param bgColor
 	 * @return dimension of rendered equation
 	 */
-	final  public static Dimension drawEquationJLaTeXMath(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
+	final  public static FormulaDimension drawEquationJLaTeXMath(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor)
 	{
 		//TODO uncomment when \- works
 		//text=addPossibleBreaks(text);
+		
+		int width = -1;
+		int height = -1;
+		int depth = 0;
 
 
 		if (drawEquationJLaTeXMathFirstCall) { // first call
@@ -669,10 +680,10 @@ public abstract class Drawable extends DrawableND {
 				//return new Dimension(rec.width, rec.height);
 			}
 			icon.setInsets(new Insets(1, 1, 1, 1));
-
+			
 			jl.setForeground(fgColor);
 			icon.paintIcon(jl, g2, x, y);
-			return new Dimension(icon.getIconWidth(), icon.getIconHeight());
+			return new FormulaDimension(icon.getIconWidth(), icon.getIconHeight(), icon.getIconDepth());
 
 		}
 
@@ -688,6 +699,12 @@ public abstract class Drawable extends DrawableND {
 				key = geo.getCachedLaTeXKey(text, font.getSize() + 3, style, fgColor);
 
 			im = JLaTeXMathCache.getCachedTeXFormulaImage(key);
+			
+			int ret[] = JLaTeXMathCache.getCachedTeXFormulaDimensions(key);
+			width = ret[0];
+			height = ret[1];
+			depth = ret[2];
+			
 			} catch (Exception e) {
 				//Application.debug("LaTeX parse exception: "+e.getMessage()+"\n"+text);
 				// Write error message to Graphics View
@@ -701,8 +718,17 @@ public abstract class Drawable extends DrawableND {
 			}
 
 			g2.drawImage(im,x,y,null);
+			
+			if (width == -1) {
+				Application.debug("width not set");
+				width = im.getWidth(null);
+			}
+			if (height == -1) {
+				Application.debug("height not set");
+				width = im.getHeight(null);
+			}
 
-			return new Dimension(im.getWidth(null), im.getHeight(null));
+			return new FormulaDimension(width, height, depth);
 		}
 
 
