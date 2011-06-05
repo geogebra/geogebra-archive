@@ -8,30 +8,41 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.Transformable;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.main.Application;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class InputDialogDilate extends AngleInputDialog {
-	
-	GeoPolygon[] polys;
+import javax.swing.JPanel;
+
+public class InputDialogDilate extends InputDialog {
+		
 	GeoPoint[] points;
 	GeoElement[] selGeos;
 
 	private Kernel kernel;
 		
-	public InputDialogDilate(Application app, String title, InputHandler handler, GeoPolygon[] polys, GeoPoint[] points, GeoElement[] selGeos, Kernel kernel) {
-		super(app, app.getPlain("Numeric"), title, "", false, handler, false);
+	public InputDialogDilate(Application app, String title, InputHandler handler,  GeoPoint[] points, GeoElement[] selGeos, Kernel kernel) {
+		super(app.getFrame(), false);
 		
-		this.polys = polys;
+		this.app = app;
+		inputHandler = handler;
+		
 		this.points = points;
 		this.selGeos = selGeos;
 		this.kernel = kernel;
+
+		createGUI(title, app.getPlain("Numeric"), false, DEFAULT_COLUMNS, 1, true, true, false, false, false, false, false);		
+		JPanel centerPanel = new JPanel(new BorderLayout());
+		centerPanel.add(inputPanel, BorderLayout.CENTER);								
+		getContentPane().add(centerPanel, BorderLayout.CENTER);		
+		centerOnScreen();
 
 	}
 
@@ -78,7 +89,7 @@ public class InputDialogDilate extends AngleInputDialog {
 				ArrayList<GeoElement> ret = new ArrayList<GeoElement>();
 				for (int i=0; i < selGeos.length; i++) {				
 					if (selGeos[i] != point) {
-						if (selGeos[i] instanceof Dilateable || selGeos[i].isGeoPolygon())
+						if ((selGeos[i] instanceof Transformable) || selGeos[i].isGeoList())
 							ret.addAll(Arrays.asList(kernel.Dilate(null,  selGeos[i], num, point)));
 					}
 				}
