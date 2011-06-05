@@ -11,6 +11,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,44 +34,58 @@ import javax.swing.text.html.parser.ParserDelegator;
 
 public class CopyPasteCut {
 
+	// ggb support classes
 	protected Kernel kernel;
 	protected Application app;
 	protected MyTable table;
 	protected DefaultTableModel tableModel;
-
-	protected String externalBuf;
-	protected GeoElement[][] internalBuf;
-	protected int bufColumn;
-	protected int bufRow;
-	
 	protected SpreadsheetView view;
 
+	/**
+	 * Stores cell geo values as a tab-delimited string.
+	 */
+	protected String externalBuf;
+
+	/**
+	 * Stores cell geos as GeoElement[columns][rows]
+	 */
+	protected GeoElement[][] internalBuf;
+
+
+	protected int bufColumn;
+	protected int bufRow;
+
+
+
+
+
+	/***************************************
+	 * Constructor
+	 */
 	public CopyPasteCut(JTable table0, Kernel kernel0) {
 		table = (MyTable)table0;
 		tableModel = (DefaultTableModel) table.getModel();
 		kernel = kernel0;	
 		app = kernel.getApplication();
-		
+
 		view = table.getView();
-		
+
 	}
 
+
+	/**
+	 * Copies a block of cell geos to the external buffer and to the clipboard. 
+	 * If skipInternalCopy = false, the geos are also copied to the internal buffer 
+	 */
 	public void copy(int column1, int row1, int column2, int row2, boolean skipInternalCopy) {
-		// external
+
+		// copy tab-delimited geo values into the external buffer 
 		externalBuf = "";
 		for (int row = row1; row <= row2; ++ row) {
 			for (int column = column1; column <= column2; ++ column) {
 				GeoElement value = RelativeCopy.getValue(table, column, row);
 				if (value != null) {
 					externalBuf += value.toValueString();
-					//if (value.isChangeable()) {
-					//	externalBuf += value.toValueString();
-					//}
-					//else {
-					//	String def = value.getDefinitionDescription();
-					//	def = def.replaceAll("\\s+", "");
-					//	externalBuf += def;
-					//}
 				}
 				if (column != column2) {
 					externalBuf += "\t";
@@ -80,12 +95,15 @@ public class CopyPasteCut {
 				externalBuf += "\n";
 			}
 		}
+
+		// store the tab-delimited values into the clipboard
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Clipboard clipboard = toolkit.getSystemClipboard();
 		StringSelection stringSelection = new StringSelection(externalBuf);
 		clipboard.setContents(stringSelection, null);
 
-		// internal
+
+		// store copies of the actual geos in the internal buffer
 		if (skipInternalCopy) {
 			internalBuf = null;
 		}
@@ -97,6 +115,8 @@ public class CopyPasteCut {
 		}
 	}
 
+
+
 	public boolean cut(int column1, int row1, int column2, int row2) {
 
 		copy(column1, row1, column2, row2, false);
@@ -104,18 +124,18 @@ public class CopyPasteCut {
 		return delete(column1, row1, column2, row2);	
 	}
 
-	
-	
+
+
 	public boolean paste(CellRange cr) {
 		return paste(cr.getMinColumn(),cr.getMinRow(),cr.getMaxColumn(),cr.getMaxRow());
 	}
-	
+
 	public boolean paste(int column1, int row1, int column2, int row2) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable contents = clipboard.getContents(null);
 		String buf = null;
 		boolean succ = false;
-		
+
 		/*
 		// print available data formats on clipboard
 		StringBuilder sb = new StringBuilder();
@@ -124,105 +144,30 @@ public class CopyPasteCut {
 			sb.append("\n");
 		}
 		Application.debug(sb.toString());
-*/
-
+		 */
 
 		try {
 			DataFlavor HTMLflavor = new	DataFlavor("text/html;class=java.lang.String");
-			String str = (String) contents.getTransferData(HTMLflavor);
-
-			final StringBuilder sbHTML = new StringBuilder();
-
-			// convert HTML table into CSV
-			HTMLEditorKit.ParserCallback callback = 
-				new HTMLEditorKit.ParserCallback () {
-				boolean foundTable = false;
-				boolean firstInRow = true;
-				boolean firstColumn = true;
-				boolean finished = false;
-				public void handleText(char[] data, int pos) {
-
-					if (foundTable && !finished) {
-
-						// if string contains a comma, surround the string with quotes ""
-						boolean containsComma = false;
-						boolean appendQuotes = false;
-						for (int i = 0 ; i < data.length ; i++)
-							if (data[i] == ',') containsComma=true;
-
-						if (containsComma && (data[0] != '"' || data[data.length-1] != '"'))
-							appendQuotes = true;
-						
-						if (containsComma) {
-							boolean isNumber = true;
-							int noOfCommas = 0;
-							for (int i = 0 ; i < data.length ; i++) {
-								if (data[i] == ',') noOfCommas++;
-								else if (data[i] < '0' || data[i] > '9') isNumber = false;
-							}
-							
-							// check for European-style decimal comma
-							if (isNumber && noOfCommas == 1)
-								for (int i = 0 ; i < data.length ; i++)
-								if (data[i] == ',') {
-									//Application.debug("replacing , with .");
-									data[i] = '.';
-								}
-						}
-
-						if (appendQuotes) sbHTML.append('"');
-						for (int i = 0 ; i < data.length ; i++)
-							sbHTML.append(data[i]);
-						if (appendQuotes) sbHTML.append('"');
-					}
-					//System.out.println(data);
-				}
-				public void handleStartTag(HTML.Tag tag, 
-						MutableAttributeSet attrSet, int pos) {
-					if (tag == HTML.Tag.TABLE) {
-						//Application.debug("table");	
-						if (foundTable) finished = true;
-						foundTable = true;
-						firstColumn = true;
-						sbHTML.setLength(0);
-					} else if (foundTable && tag == HTML.Tag.TR) {
-						//Application.debug("TR");	            
-						if (!firstColumn) sbHTML.append("\n");
-						firstInRow = true;
-						firstColumn = false;
-					} else if (foundTable && (tag == HTML.Tag.TD || tag == HTML.Tag.TH)) {
-						//Application.debug("TD");	     
-						if (!firstInRow)
-							sbHTML.append(",");
-						firstInRow = false;
-					} else if (!foundTable) {
-						//Application.debug("TR without table");
-						sbHTML.setLength(0);
-						if (tag == HTML.Tag.TR) {
-							foundTable = true; // HTML fragment without <TABLE>
-							firstInRow = true;
-							firstColumn = false;
-						}
-					}
-
-				}
-
-			};
-			Reader reader = new StringReader(str);
-			new ParserDelegator().parse(reader, callback, true);
 			
-			if (sbHTML.length() != 0) {
-				// found HTML table to paste (as CSV)
-				buf = sbHTML.toString();
-			//	Application.debug("pasting from HTML <table>: "+buf);
+			System.out.println("is HTML? " + contents.isDataFlavorSupported(HTMLflavor));
+			
+			if(contents.isDataFlavorSupported(HTMLflavor)){
+				buf = convertHTMLTableToCSV((String) contents.getTransferData(HTMLflavor));
 			}
 
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedFlavorException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		catch (Exception e) {
-			Application.debug("clipboard: no HTML");
-		}			
 
 		//Application.debug("paste: "+row1+" "+row2+" "+column1+" "+column2);
+
+
+
+
 
 		// no HTML found, try plain text
 		if ( buf == null && (contents != null) && contents.isDataFlavorSupported(DataFlavor.stringFlavor)) {
@@ -262,7 +207,7 @@ public class CopyPasteCut {
 				for (int c = column1 ; c <= column2 ; c+= columnStep)
 					for (int r = row1 ; r <= row2 ; r+= rowStep)
 						succ = succ && pasteInternal(c, r, maxColumn, maxRow);
-				
+
 				// now do all redefining and build new construction 
 				cons.processCollectedRedefineCalls();
 
@@ -294,6 +239,115 @@ public class CopyPasteCut {
 
 		return succ;
 	}
+
+
+	/** 
+	 * Converts HTML table into CSV
+	 */
+	private String convertHTMLTableToCSV(String HTMLTableString){
+
+		final StringBuilder sbHTML = new StringBuilder();
+
+		try {
+			// prepare the parser
+			HTMLEditorKit.ParserCallback callback = 
+				new HTMLEditorKit.ParserCallback () {
+				boolean foundTable = false;
+				boolean firstInRow = true;
+				boolean firstColumn = true;
+				boolean finished = false;
+				public void handleText(char[] data, int pos) {
+
+					if (foundTable && !finished) {
+
+						// if string contains a comma, surround the string with quotes ""
+						boolean containsComma = false;
+						boolean appendQuotes = false;
+						for (int i = 0 ; i < data.length ; i++)
+							if (data[i] == ',') containsComma=true;
+
+						if (containsComma && (data[0] != '"' || data[data.length-1] != '"'))
+							appendQuotes = true;
+
+						if (containsComma) {
+							boolean isNumber = true;
+							int noOfCommas = 0;
+							for (int i = 0 ; i < data.length ; i++) {
+								if (data[i] == ',') noOfCommas++;
+								else if (data[i] < '0' || data[i] > '9') isNumber = false;
+							}
+
+							// check for European-style decimal comma
+							if (isNumber && noOfCommas == 1)
+								for (int i = 0 ; i < data.length ; i++)
+									if (data[i] == ',') {
+										//Application.debug("replacing , with .");
+										data[i] = '.';
+									}
+						}
+
+						if (appendQuotes) sbHTML.append('"');
+						for (int i = 0 ; i < data.length ; i++)
+							sbHTML.append(data[i]);
+						if (appendQuotes) sbHTML.append('"');
+					}
+					//System.out.println(data);
+				}
+
+				public void handleStartTag(HTML.Tag tag, 
+						MutableAttributeSet attrSet, int pos) {
+					if (tag == HTML.Tag.TABLE) {
+						//Application.debug("table");	
+						if (foundTable) finished = true;
+						foundTable = true;
+						firstColumn = true;
+						sbHTML.setLength(0);
+					} else if (foundTable && tag == HTML.Tag.TR) {
+						//Application.debug("TR");	            
+						if (!firstColumn) sbHTML.append("\n");
+						firstInRow = true;
+						firstColumn = false;
+					} else if (foundTable && (tag == HTML.Tag.TD || tag == HTML.Tag.TH)) {
+						//Application.debug("TD");	     
+						if (!firstInRow)
+							sbHTML.append(",");
+						firstInRow = false;
+					} else if (!foundTable) {
+						//Application.debug("TR without table");
+						sbHTML.setLength(0);
+						if (tag == HTML.Tag.TR) {
+							foundTable = true; // HTML fragment without <TABLE>
+							firstInRow = true;
+							firstColumn = false;
+						}
+					}
+
+				}
+			};
+
+			// parse the text
+			Reader reader = new StringReader(HTMLTableString);
+			new ParserDelegator().parse(reader, callback, true);
+		}
+
+		catch (Exception e) {
+			Application.debug("clipboard: no HTML");
+		}			
+
+
+		if (sbHTML.length() != 0) 	//found HTML table to paste as CSV		
+			return sbHTML.toString();  
+		else
+			return null;
+	}
+
+
+
+
+
+
+
+
 
 	Object [] constructionIndexes;
 
@@ -348,14 +402,14 @@ public class CopyPasteCut {
 				int ix = x - x1;
 				for (int y = y1; y <= y2; ++ y) {
 					int iy = y - y1;
-					
+
 					// check if we're pasting back into what we're copying from
 					boolean inSource =  x + (x3-x1) <= x2 &&
-										x + (x3-x1) >= x1 &&
-										y + (y3-y1) <= y2 &&
-										y + (y3-y1) >= y1;
-					
-					
+					x + (x3-x1) >= x1 &&
+					y + (y3-y1) <= y2 &&
+					y + (y3-y1) >= y1;
+
+
 					//Application.debug("x1="+x1+" x2="+x2+" x3="+x3+" x4="+x4+" x="+x+" ix="+ix);
 					//Application.debug("y1="+y1+" y2="+y2+" y3="+y3+" y4="+y4+" y="+y+" iy="+iy);
 					if (ix+column1 <= maxColumn && iy+row1 <= maxRow//) { // check not outside selection rectangle
@@ -406,27 +460,27 @@ public class CopyPasteCut {
 	protected static Pattern pattern2 = Pattern.compile("((\\\"([^\\\"]+)\\\")|([^,\\\"\\(]+)|(\\([^)]+\\)))?(,|$)");
 
 	public static String[][] parseData(String input) {
-		
+
 		//Application.debug("parse data: "+input);
-		
+
 		String[] lines = input.split("\\r*\\n", -1);
 		String[][] data = new String[lines.length][];
 		for (int i = 0; i < lines.length; ++ i) {
-			
+
 			// trim() removes tabs which we need
 			lines[i] = geogebra.util.Util.trimSpaces(lines[i]);
 			LinkedList list = new LinkedList();
-			
+
 			int firstCommaIndex = lines[i].indexOf(",");
 			int lastCommaIndex = lines[i].lastIndexOf(",");
 			int firstBracketIndex = lines[i].indexOf("[");
 			int lastBracketIndex = lines[i].lastIndexOf("]");
-			
+
 			if (firstCommaIndex > firstBracketIndex && lastCommaIndex < lastBracketIndex) {
 				// assume it's a GeoGebra command and therefore we don't want to split on commas etc
 				list.addLast(lines[i]);
 			} else {
-			
+
 				Matcher matcher = null;
 				if (lines[i].indexOf('\t') != -1) {
 					matcher = pattern1.matcher(lines[i]);
@@ -434,16 +488,16 @@ public class CopyPasteCut {
 				else {
 					matcher = pattern2.matcher(lines[i]);
 				}
-	
+
 				while (matcher.find()) {
 					String data1 = matcher.group(3);
 					String data2 = matcher.group(4);
 					String data3 = matcher.group(5);
-					
+
 					//Application.debug("data1: "+data1);
 					//Application.debug("data2: "+data2);
 					//Application.debug("data3: "+data3);
-	
+
 					if (data1 != null) {
 						data1 = data1.trim();
 						data1 = checkDecimalComma(data1); // allow decimal comma
@@ -470,7 +524,7 @@ public class CopyPasteCut {
 		}
 		return data;		
 	}
-	
+
 	/*
 	 * change 3,4 to 3.4
 	 * leave {3,4,5} alone
@@ -479,7 +533,7 @@ public class CopyPasteCut {
 		if (str.indexOf("{") == -1 && str.indexOf(",") == str.lastIndexOf(",")) {
 			str = str.replaceAll(",", "."); // allow decimal comma
 		}
-		
+
 		return str;
 	}
 
@@ -501,7 +555,7 @@ public class CopyPasteCut {
 		String[][] data = parseData(buf);
 		int rowStep = data.length;
 		int columnStep = data[0].length;
-		
+
 		if (columnStep == 0) return false;
 
 		int maxColumn = column2;
@@ -607,13 +661,13 @@ public class CopyPasteCut {
 				//}
 			}
 		}
-		
+
 		// Let the trace manager know about the delete 
 		// TODO add SelectAll
 		if(table.getSelectionType()==MyTable.COLUMN_SELECT){
 			view.getTraceManager().handleColumnDelete(column1, column2);
 		}
-		
+
 		return succ;
 	}
 
@@ -765,30 +819,30 @@ public class CopyPasteCut {
 		return comparator;
 	}
 	private static Comparator comparator;
-	
-	
+
+
 	//G.STURR 2010-1-15
 	public void deleteAll() {
-		
+
 		table.copyPasteCut.delete(0, 0, tableModel.getColumnCount(), tableModel.getRowCount());
-		
-	}
-		
-	
-	// default pasteFromFile: clear spreadsheet and then paste from upper left corner
-	public boolean pasteFromURL(URL url) {
-		
-		CellRange cr = new CellRange(table, 0,0,0,0);
-		return pasteFromURL(url, cr, true);
-		
+
 	}
 
-	
+
+	// default pasteFromFile: clear spreadsheet and then paste from upper left corner
+	public boolean pasteFromURL(URL url) {
+
+		CellRange cr = new CellRange(table, 0,0,0,0);
+		return pasteFromURL(url, cr, true);
+
+	}
+
+
 	public boolean pasteFromURL(URL url, CellRange targetRange, boolean clearSpreadsheet) {
 
 		// read file 
 		StringBuilder contents = new StringBuilder();
-		
+
 		try {				
 			InputStream is = url.openStream();
 			BufferedReader input = new BufferedReader(new InputStreamReader(is));
@@ -800,7 +854,7 @@ public class CopyPasteCut {
 				}
 			} finally {
 				input.close();
-			
+
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -808,27 +862,27 @@ public class CopyPasteCut {
 		}
 
 		//System.out.println(dataFile.getName() + ": " + contents.capacity());
-		
+
 		// copy file contents to clipboard		
 		StringSelection stringSelection = new StringSelection(contents.toString());
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable oldContent = clipboard.getContents(null);
 		clipboard.setContents(stringSelection, null);
-		
-		
+
+
 		// paste from clipboard into spreadsheet
 		if(clearSpreadsheet){
 			deleteAll();
 		}
 		boolean succ = paste(targetRange);
 		clipboard.setContents(oldContent, null);
-		
+
 		return succ;
-		
-		
+
+
 
 	}
-	
+
 	//END GSTURR
 
 

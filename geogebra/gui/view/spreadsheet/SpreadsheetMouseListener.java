@@ -22,16 +22,12 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 	protected String selectedCellName;
 	protected String prefix0, postfix0;
 	
-
-	
 	private Application app;
 	private SpreadsheetView view;
 	private Kernel kernel;
 	private MyTable table;
 	private DefaultTableModel model;	
 	private MyCellEditor editor;
-	
-	
 	
 	private RelativeCopy relativeCopy;
 	
@@ -50,8 +46,6 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 	
 	
 	
-	
-
 	public void mouseClicked(MouseEvent e) {	
 
 		boolean doubleClick = (e.getClickCount() != 1);
@@ -61,13 +55,12 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 
 			if (doubleClick) {
 				
-				//G.Sturr added 2009-9-15
 				// auto-fill down if dragging dot is double-clicked
 				if(table.isOverDot) {
 					handleAutoFillDown();
 					return;
 				}  
-				// 
+				
 				//otherwise, doubleClick edits cell
 				
 				if(!table.getOneClickEditMap().containsKey(point)){
@@ -125,8 +118,8 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 //		}
 	}				
 
-	//G. Sturr added 2009-9-18
-	// auto fill down on dragging dot double-click
+	
+	// automatic fill down from the dragging dot 
 	public void handleAutoFillDown() {
 		int col = table.getSelectedColumn();
 		int row = table.maxSelectionRow;
@@ -184,7 +177,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				table.setSelectionType(MyTable.CELL_SELECT);
 			}
 			
-			//G.Sturr 2010-7-10: force column selection
+			//force column selection
 			if(view.isColumnSelect()){
 				Point point = table.getIndexFromPixel(e.getX(), e.getY());
 				if (point != null) {
@@ -192,7 +185,6 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 					table.setColumnSelectionInterval(column, column);
 				}
 			}
-			// END G.Sturr 
 			
 			
 			/*
@@ -202,6 +194,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				setRowSelectionAllowed(true);
 			}
 			*/
+			
 			Point point1 = table.getMaxSelectionPixel();
 			if (point1 == null) return;
 			int x1 = e.getX();
@@ -245,24 +238,10 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				e.consume();
 			}
 		}
-		
-		/*
-		//G.Sturr 2009-9-23: moved show context menu to mouseReleased 
-		// to allow right click selection
-		
-		// RIGHT CLICK: show context menu
-		else {
-			if (!kernel.getApplication().letShowPopupMenu()) return;    	
-
-			if ((table.minSelectionColumn != -1 && table.maxSelectionColumn != -1) || (table.minSelectionRow != -1 && table.maxSelectionRow != -1)) {
-				ContextMenu popupMenu = new ContextMenu(MyTable.this, table.minSelectionColumn, table.minSelectionRow, table.maxSelectionColumn, table.maxSelectionRow, selectedColumns);
-				popupMenu.show(e.getComponent(), e.getX(), e.getY());
-			}
-		}
-		*/
-		
 	}
 
+	
+	
 	public void mouseReleased(MouseEvent e)	 {
 		boolean rightClick = Application.isRightClick(e); 	        
 
@@ -427,10 +406,10 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 			int x = e.getX();
 			int y = e.getY();
 			Point point = table.getIndexFromPixel(x, y);
-			//(G.Sturr 2009-9-12) save the selected cell position so it can be re-selected if needed
+			
+			//save the selected cell position so it can be re-selected if needed
 			int row = table.getSelectedRow();
 			int column = table.getSelectedColumn();
-			//(G.Sturr)
 			
 			if (point == null) {
 				table.dragingToRow = -1;
@@ -440,18 +419,12 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				table.dragingToRow = (int)point.getY();
 				table.dragingToColumn = (int)point.getX();							
 				
-				// increase size if we're at the bottom of the spreadsheet
-				
+				// increase size if we're at the bottom of the spreadsheet				
 				if (table.dragingToRow + 1 == table.getRowCount() && table.dragingToRow < SpreadsheetView.MAX_ROWS) {
-					model.setRowCount(table.getRowCount() +1);		
-						
-					//getView().getRowHeader().revalidate();  //G.STURR 2010-1-9
-					
+					model.setRowCount(table.getRowCount() +1);							
 				}
 				
-				//(G.Sturr 2009-9-12) increase size when you go off the right edge
-				// also moved scrolling call to the end so column addition works correctly   
-				
+				// increase size when you go off the right edge
 				if (table.dragingToColumn + 1 == table.getColumnCount() && table.dragingToColumn < SpreadsheetView.MAX_COLUMNS) {
 					
 					table.setMyColumnCount(table.getColumnCount() +1);		
@@ -464,7 +437,6 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				
 				// scroll to show "highest" selected cell
 				table.scrollRectToVisible(table.getCellRect(point.y, point.x, true));
-				//(G.Sturr)
 				
 				
 				// 1|2|3

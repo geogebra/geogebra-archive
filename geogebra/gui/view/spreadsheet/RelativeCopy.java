@@ -24,25 +24,25 @@ public class RelativeCopy {
 
 	protected Kernel kernel;
 	protected MyTable table;
-	
+
 	public RelativeCopy(JTable table0, Kernel kernel0) {
 		table = (MyTable)table0;
 		kernel = kernel0;
 	}
-	
+
 	public boolean doCopy(int sx1, int sy1, int sx2, int sy2, int dx1, int dy1, int dx2, int dy2) {
 		// -|1|-
 		// 2|-|3
 		// -|4|-
 		kernel.getApplication().setWaitCursor();
 		Construction cons = kernel.getConstruction();
-		
+
 		try {			
 			boolean success = false;
-			
+
 			// collect all redefine operations				
 			cons.startCollectingRedefineCalls();
-			
+
 			if (sx1 == dx1 && sx2 == dx2) {
 				if (dy2 < sy1) { // 1
 					if (sy1 + 1 == sy2) {
@@ -139,13 +139,13 @@ public class RelativeCopy {
 					success = true;
 				}			
 			}
-			
+
 			// now do all redefining and build new construction 
 			cons.processCollectedRedefineCalls();
-			
+
 			if (success)
 				return true;
-			
+
 			String msg = 
 				"sx1 = " + sx1 + "\r\n" +
 				"sy1 = " + sy1 + "\r\n" +
@@ -165,10 +165,10 @@ public class RelativeCopy {
 			kernel.getApplication().setDefaultCursor();
 		}
 	}
-	
+
 	public void doCopyVerticalNoStoringUndoInfo1(int x1, int x2, int sy, int dy1, int dy2) throws Exception {
-		
-		
+
+
 		// create a treeset, ordered by construction index
 		// so that when we relative copy A1=1 B1=(A1+C1)/2 C1=3 
 		// B2 is done last
@@ -177,46 +177,46 @@ public class RelativeCopy {
 			int ix = x - x1;
 			tree.add(getValue(table,x1 + ix, sy));
 		}
-		
+
 		for (int y = dy1; y <= dy2; ++ y) {
 			int iy = y - dy1;
-			
+
 			Iterator  iterator = tree.iterator();
 			while (iterator.hasNext()){
-			
+
 				GeoElement geo = (GeoElement)(iterator.next());
-				
+
 				if (geo != null) {
 					Point p = geo.getSpreadsheetCoords();
-					
+
 					doCopyNoStoringUndoInfo0(kernel, table, geo,
 							getValue(table,p.x, dy1 + iy), 0, y - sy);
 					//Application.debug(p.x+"");
 				}
-				
+
 			}
 
-			
-			
-			
+
+
+
 		}
-		
+
 		//old code - just works left to right
-		
+
 		/*
-		
+
 		for (int y = dy1; y <= dy2; ++ y) {
 			int iy = y - dy1;
 			for (int x = x1; x <= x2; ++ x) {
 				int ix = x - x1;
-				
+
 				// does work
 				doCopyNoStoringUndoInfo0(kernel, table, getValue(table,x1 + ix, sy),
 														getValue(table,x1 + ix, dy1 + iy), 0, y - sy);
 			}
 		}*/
 	}
-	
+
 	public void doCopyHorizontalNoStoringUndoInfo1(int y1, int y2, int sx, int dx1, int dx2) throws Exception {
 
 		// create a treeset, ordered by construction index
@@ -229,17 +229,17 @@ public class RelativeCopy {
 		}
 		for (int x = dx1; x <= dx2; ++ x) {
 			int ix = x - dx1;
-		
+
 			Iterator  iterator = tree.iterator();
 			while (iterator.hasNext()){
-			
+
 				GeoElement geo = (GeoElement)(iterator.next());
-				
+
 				//G.Sturr 2009-9-18 bug fix: null test was missing
 				if (geo != null) {
 					Point p = geo.getSpreadsheetCoords();
 					doCopyNoStoringUndoInfo0(kernel, table, geo,
-						getValue(table, dx1 + ix, p.y), x - sx, 0);
+							getValue(table, dx1 + ix, p.y), x - sx, 0);
 					//Application.debug(p.y+"");
 				}
 			}
@@ -254,7 +254,7 @@ public class RelativeCopy {
 			}
 		} */
 	}
-	
+
 	//G.Sturr 2009-9-23 bug fix: [A-Z] needs to be [A-Z]+ for double letter columns
 	protected static final Pattern pattern2 = Pattern.compile("(::|\\$)([A-Z]+)(::|\\$)([0-9]+)");
 
@@ -264,17 +264,17 @@ public class RelativeCopy {
 				Matcher matcher = GeoElement.spreadsheetPattern.matcher(oldValue.getLabel());
 				int column = GeoElement.getSpreadsheetColumn(matcher);
 				int row = GeoElement.getSpreadsheetRow(matcher);
-				
+
 				prepareAddingValueToTableNoStoringUndoInfo(kernel, table, null, oldValue, column, row);
 			}
 			return null;
 		}
 		String text = null;
-		
-		
+
+
 		// make sure a/0.001 doesn't become a/0
 		kernel.setTemporaryPrintFigures(15);
-		
+
 		if (value.isPointOnPath()) {
 			text = value.getCommandDescription();
 		}
@@ -284,13 +284,13 @@ public class RelativeCopy {
 		else {
 			text = value.getCommandDescription(); 
 		}
-		
+
 		// enclose in quotes if we are copying a GeoText
 		if(value.isGeoText() && !((GeoText)value).isTextCommand()){
 			text = "\"" + text + "\"";
 		}
-		
-		
+
+
 		// for E1 = Polynomial[D1] we need value.getCommandDescription(); 
 		// even though it's a GeoFunction
 		if (value.isGeoFunction() && text.equals("")) {
@@ -301,7 +301,7 @@ public class RelativeCopy {
 		Application.debug("before:"+text);
 		text = updateCellReferences(value, text, dx, dy);
 		Application.debug("after:"+text);
-		
+
 		// condition to show object
 		GeoBoolean bool = value.getShowObjectCondition();
 		String boolText = null, oldBoolText = null;
@@ -312,11 +312,11 @@ public class RelativeCopy {
 			else {
 				oldBoolText = bool.getCommandDescription();
 			}
-		
+
 		if (oldBoolText != null) {
 			boolText = updateCellReferences(bool, oldBoolText, dx, dy);
 		}
-		
+
 		// dynamic color function
 		GeoList dynamicColorList = value.getColorFunction();
 		String colorText = null, oldColorText = null;
@@ -327,14 +327,14 @@ public class RelativeCopy {
 			else {
 				oldColorText = dynamicColorList.getCommandDescription();
 			}
-		
+
 		if (oldColorText != null) {
 			colorText = updateCellReferences(dynamicColorList, oldColorText, dx, dy);
 		}
-			
+
 		// allow pasting blank strings
 		if (text.equals("")) text = "\"\"";
-		
+
 		kernel.restorePrintAccuracy();
 
 
@@ -344,11 +344,11 @@ public class RelativeCopy {
 		int column0 = GeoElement.getSpreadsheetColumn(matcher);
 		int row0 = GeoElement.getSpreadsheetRow(matcher);
 		GeoElement value2 = prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, oldValue, column0 + dx, row0 + dy);
-		
+
 		value2.setAllVisualProperties(value, false);
-		
+
 		value2.setAuxiliaryObject(true);
-		
+
 		// attempt to set updated condition to show object (if it's changed)
 		if (boolText != null && !boolText.equals(oldBoolText)) {
 			try {
@@ -359,9 +359,9 @@ public class RelativeCopy {
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
-				}
+			}
 		}
-		
+
 		// attempt to set updated dynamic color function (if it's changed)
 		if (colorText != null && !colorText.equals(oldColorText)) {
 			try {
@@ -372,17 +372,17 @@ public class RelativeCopy {
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
-				}
+			}
 		}
-		
+
 		//Application.debug((row + dy) + "," + column);
 		//Application.debug("isGeoFunction()=" + value2.isGeoFunction());
 		//Application.debug("row0 ="+row0+" dy="+dy+" column0= "+column0+" dx="+dx);
 		table.setValueAt(value2, row0 + dy, column0 + dx);
 		return value2;
-		
+
 	}
-	
+
 	/*
 	 * updates the cell references in text according to a relative copy in the spreadsheet of offset (dx,dy)
 	 * (changes only dependents of value)
@@ -401,20 +401,20 @@ public class RelativeCopy {
 			Matcher matcher = GeoElement.spreadsheetPattern.matcher(name);			
 			int column = GeoElement.getSpreadsheetColumn(matcher);
 			int row = GeoElement.getSpreadsheetRow(matcher);
-			
+
 			if (column == -1 || row == -1) continue;
 			String column1 = GeoElement.getSpreadsheetColumnName(column);
 			String row1 = "" + (row + 1);
 			text = replaceAll(GeoElement.spreadsheetPattern, text, "$" + column1 + row1, "$" + column1 + "::" + row1);
 			text = replaceAll(GeoElement.spreadsheetPattern, text, column1 + "$" + row1, "::" + column1 + "$" + row1);
 			text = replaceAll(GeoElement.spreadsheetPattern, text, column1 + row1, "::" + column1 + "::" + row1);
-			
+
 		}
-		
+
 		// TODO is this a bug in the regex?
 		// needed for eg Mod[$A2, B$1] which gives Mod[$A2, ::::B$1]
 		text = text.replaceAll("::::", "::");
-		
+
 		Matcher matcher = GeoElement.spreadsheetPattern.matcher(value.getLabel());			
 		for (int i = 0; i < dependents.length; ++ i) {
 			String name = dependents[i].getLabel();
@@ -429,13 +429,13 @@ public class RelativeCopy {
 			text = replaceAll(pattern2, text, "::" + column1 + "::" + row1, column2 + row2);
 			text = replaceAll(pattern2, text, "$" + column1 + "::" + row1, "$" + column1 + row2);
 			text = replaceAll(pattern2, text, "::" + column1 + "$" + row1, column2 + "$" + row1);
-			
+
 		}
-		
+
 		return text;
 
 	}
-	
+
 	public static void doCopyNoStoringUndoInfo1(Kernel kernel, MyTable table, String text, GeoElement geoForStyle, int column, int row) throws Exception {
 		GeoElement oldValue = getValue(table, column, row);
 		if (text == null) {
@@ -451,7 +451,7 @@ public class RelativeCopy {
 
 		table.setValueAt(value2, row, column);
 	}
-	
+
 	public static String replaceAll(Pattern pattern, String text, String text1, String text2) {
 		String pre = "";
 		String post = text;
@@ -468,7 +468,7 @@ public class RelativeCopy {
 		}
 		return pre + post;
 	}
-	
+
 	/*
 	// return true if any of elems1 is dependent on any of elems
 	// preposition: every elems1 is not null.
@@ -480,7 +480,7 @@ public class RelativeCopy {
 		}
 		return false;
 	}
-	
+
 	// return true if elem is dependent on any of elems
 	// preposition: elem is not null
 	public static boolean checkDependency(GeoElement elem, GeoElement[][] elems) {
@@ -492,7 +492,7 @@ public class RelativeCopy {
 		}
 		return false;
 	}
-	
+
 	// return true if elem1 is dependent on elem2
 	// preposition: elem is not null
 	public static boolean checkDependency(GeoElement elem1, GeoElement elem2) {
@@ -510,25 +510,31 @@ public class RelativeCopy {
 		return false;
 	}
 	/**/
-	
+
 	public static GeoElement[] getDependentObjects(GeoElement geo) {
 		if (geo.isIndependent()) return new GeoElement[0];
-    	TreeSet geoTree = geo.getAllPredecessors();
-    	return (GeoElement[])geoTree.toArray(new GeoElement[0]);
+		TreeSet geoTree = geo.getAllPredecessors();
+		return (GeoElement[])geoTree.toArray(new GeoElement[0]);
 	}
-	
-	
-	public static GeoElement[][] getValues(MyTable table, int x1, int y1, int x2, int y2) {
-		GeoElement[][] values = new GeoElement[x2 - x1 + 1][y2 - y1 + 1];
-		for (int y = y1; y <= y2; ++ y) {
-			for (int x = x1; x <= x2; ++ x) {
-				values[x - x1][y - y1] = getValue(table, x, y);
+
+	/**
+	 * Returns a GeoElement[columns][rows] array containing GeoElements found in
+	 * the cell block with upper left corner in column1, row1 and lower
+	 * right corner in column2, row2.
+	 */
+	public static GeoElement[][] getValues(MyTable table, int column1, int row1, int column2, int row2) {
+		GeoElement[][] values = new GeoElement[column2 - column1 + 1][row2 - row1 + 1];
+		for (int r = row1; r <= row2; ++ r) {
+			for (int c = column1; c <= column2; ++ c) {
+				values[c - column1][r - row1] = getValue(table, c, r);
 			}			
 		}
 		return values;
 	}
-	
 
+	/**
+	 * Returns the GeoElement for the cell with the given column and row values. 
+	 */
 	public static GeoElement getValue(MyTable table, int column, int row) {
 		TableModel tableModel = table.getModel();
 		//column = table.convertColumnIndexToModel(column);
@@ -537,23 +543,23 @@ public class RelativeCopy {
 		if (column < 0 || column >= tableModel.getColumnCount()) return null;
 		return (GeoElement)tableModel.getValueAt(row, column);
 	}	
-	
-	
+
+
 	//=========================================================================
 	//              Cell Editing Methods    
 	//=========================================================================
-	
+
 	// G.Sturr 2010-6-4
 	// Some methods used by cell editors to add/edit cell values. 
 	// TODO ... is this the correct place to for these?
-	
-	
-	
+
+
+
 	private static GeoElement prepareNewValue(Kernel kernel, String name,
 			String text) throws Exception {
 		if (text == null)
 			return null;
-	
+
 		// remove leading equal sign, e.g. "= A1 + A2"
 		if (text.startsWith("=")) {
 			text = text.substring(1);
@@ -568,23 +574,23 @@ public class RelativeCopy {
 				// circular definition
 				throw new CircularDefinitionException();
 			}
-						
+
 			// evaluate input text
 			newValues = kernel.getAlgebraProcessor()
-					// G.Sturr 2010-7-5
-					// make sure that an error dialog is not displayed for unquoted text
-					.processAlgebraCommandNoExceptionHandling(text, false, false, false);
-					//.processAlgebraCommandNoExceptionHandling(text, false);
-			
+			// G.Sturr 2010-7-5
+			// make sure that an error dialog is not displayed for unquoted text
+			.processAlgebraCommandNoExceptionHandling(text, false, false, false);
+			//.processAlgebraCommandNoExceptionHandling(text, false);
+
 			// check if text was the label of an existing geo 
 			if (text.equals(newValues[0].getLabel())) {
 				// make sure we create a copy of this existing or auto-created geo 
 				// by providing the new cell name in the beginning
 				text = name + " = " + text;		
 				newValues = kernel.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptions(text, false);
+				.processAlgebraCommandNoExceptions(text, false);
 			}
-			
+
 			// check if name was auto-created: if yes we could have a circular definition
 			GeoElement autoCreateGeo = kernel.lookupLabel(name);		
 			if (autoCreateGeo != null) {				
@@ -596,26 +602,26 @@ public class RelativeCopy {
 						break;
 					}
 				}
-				
+
 				if (circularDefinition) {
 					// remove the auto-created object and the result
 					autoCreateGeo.remove();
 					newValues[0].remove();
-					
+
 					// circular definition
 					throw new CircularDefinitionException();
 				}
 			}
-			
+
 			for (int i=0; i < newValues.length; i++) {
 				newValues[i].setAuxiliaryObject(true);
 				if (newValues[i].isGeoText())
 					newValues[i].setEuclidianVisible(false);
 			}
-			
+
 			GeoElement.setLabels(name, newValues); // set names to be D1, E1,
-													// F1, etc for multiple
-													// objects			
+			// F1, etc for multiple
+			// objects			
 		} 
 		catch (CircularDefinitionException ce) {
 			// circular definition
@@ -626,7 +632,7 @@ public class RelativeCopy {
 			// create text if something went wrong
 			text = "\"" + text + "\"";
 			newValues = kernel.getAlgebraProcessor()
-					.processAlgebraCommandNoExceptions(text, false);
+			.processAlgebraCommandNoExceptions(text, false);
 			newValues[0].setLabel(name);
 			newValues[0].setEuclidianVisible(false);
 			newValues[0].update();
@@ -634,8 +640,8 @@ public class RelativeCopy {
 		return newValues[0];
 	}
 
-	
-	
+
+
 	private static GeoElement updateOldValue(Kernel kernel,
 			GeoElement oldValue, String name, String text) throws Exception {
 		String text0 = text;
@@ -647,8 +653,8 @@ public class RelativeCopy {
 			// always redefine objects in spreadsheet, don't store undo info
 			// here
 			newValue = kernel.getAlgebraProcessor()
-					.changeGeoElementNoExceptionHandling(oldValue, text, true,
-							false);
+			.changeGeoElementNoExceptionHandling(oldValue, text, true,
+					false);
 
 			// newValue.setConstructionDefaults();
 			newValue.setAllVisualProperties(oldValue, true);
@@ -668,17 +674,17 @@ public class RelativeCopy {
 			return null;
 		}
 		catch (Throwable e) {
-			 //Application.debug("SPREADSHEET: input error: " + e.getMessage());
-			 //Application.debug("text0 = " + text0);
-			
-			
+			//Application.debug("SPREADSHEET: input error: " + e.getMessage());
+			//Application.debug("text0 = " + text0);
+
+
 			//if (text0.startsWith("=") || text0.startsWith("\"")) {
-				//throw new Exception(e);				
+			//throw new Exception(e);				
 			//} else
 			{
 				if (!oldValue.hasChildren()) {
 					oldValue.remove();
-					
+
 					// add input as text
 					try {
 						newValue = prepareNewValue(kernel, name, "\"" + text0 + "\"");
@@ -696,7 +702,7 @@ public class RelativeCopy {
 		return newValue;
 	}
 
-	
+
 	/**
 	 * Prepares a spreadsheet cell editor string for processing in the kernel and 
 	 * returns either a new GeoElement for the cell or null.
@@ -717,10 +723,10 @@ public class RelativeCopy {
 	public static GeoElement prepareAddingValueToTableNoStoringUndoInfo(
 			Kernel kernel, MyTable table, String text, GeoElement oldValue,
 			int column, int row) throws Exception {
-		
+
 		// get the cell name
 		String name = table.getModel().getColumnName(column) + (row + 1);
-		
+
 		// trim the text
 		if (text != null) {
 			text = text.trim();
@@ -728,12 +734,12 @@ public class RelativeCopy {
 				text = null;
 			}
 		}
-		
+
 		// If "=" is required before commands and text is not a number 
 		// or does not begin with "=" then surround it with quotes. 
 		// This will force the cell to become GeoText. 
 		if(table.isEqualsRequired()){
-			
+
 			//boolean isNumber = kernel.getAlgebraProcessor().evaluateToNumeric(text, true) != null;
 			boolean isNumber = true;
 			try {
@@ -745,10 +751,10 @@ public class RelativeCopy {
 			if (text != null && !(text.startsWith("=") || isNumber)){ 
 				text = "\"" + text + "\"";
 			}
-			
+
 		}
 
-		
+
 		// if the cell is currently GeoText then prepare it for changes
 		// make sure it can be changed to something else
 		// eg (2,3 can be overwritten as (2,3)
@@ -763,8 +769,8 @@ public class RelativeCopy {
 				oldValue.remove();
 			}
 			return null;
-			
-		// if not null, try to convert it to a GeoElement for the cell
+
+			// if not null, try to convert it to a GeoElement for the cell
 		} else if (oldValue == null) {
 			try {
 				// this will be a new geo
@@ -777,7 +783,7 @@ public class RelativeCopy {
 			return updateOldValue(kernel, oldValue, name, text);
 		}
 	}
-	
-	
-	
+
+
+
 }
