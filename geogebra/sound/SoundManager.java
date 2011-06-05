@@ -121,7 +121,7 @@ public class SoundManager {
 		try {
 			stopCurrentSound();
 			currentSoundType = SOUNDTYPE_MIDI;
-			getMidiSound().playSequenceFromString(noteString, instrument);
+			getMidiSound().playSequenceFromJFugueString(noteString, instrument);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

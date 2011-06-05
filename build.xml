@@ -438,6 +438,7 @@ For more information please read http://www.geogebra.org/trac/wiki/SetUpCommandL
 			includes="geogebra/kernel/discrete/**,
 					geogebra/kernel/statistics/**,
 					edu/uci/**,
+					org/jfugue/**,
 					org/apache/**"
 			excludes="**/*.java,
 			**/*.html,

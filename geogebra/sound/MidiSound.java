@@ -21,6 +21,9 @@ import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
 import javax.swing.JFileChooser;
 
+import org.jfugue.Pattern;
+import org.jfugue.Player;
+
 //import org.jfugue.Pattern;
 //import org.jfugue.Player;
 
@@ -318,7 +321,7 @@ public class MidiSound implements MetaEventListener  {
 	 */
 	public void playSequenceFromJFugueString( String noteString, int instrument ) {
 		
-		/*
+		
 		initialize();
 		try {
 			sequencer.open( );
@@ -331,56 +334,15 @@ public class MidiSound implements MetaEventListener  {
 		Player player = new Player(sequencer); 
 		Pattern pattern = new Pattern(noteString); 
 		player.play(pattern); 
-		*/
+		
 		
 	}
 	
-	
-
-	
-	
-	
-	//==================================================
-	//  Play Midi Sequence from String 
-	//
-	// Adapted from: 
-	// Java Examples in a Nutshell, 3rd Edition
-	// example: PlayerPiano.java 
-	// http://tim.oreilly.com/pub/a/onjava/excerpt/jenut3_ch17/index1.html 
-	//==================================================
-
-	/**
-	 * Uses the sequencer to play a midi sequence parsed from an input string
-	 */
-	public void playSequenceFromString( String noteString, int instrument ) {
-
-		int tempo = 120;
-		char[ ] notes = noteString.toCharArray();
-
-		// 16 ticks per quarter note. 
-		try {
-			tickPosition = 0;
-			sequence = new Sequence(Sequence.PPQ, 16);
-
-			// Add the specified notes to the track
-			addTrack(sequence, instrument, tempo, notes);
-
-			playSequence(sequence, tickPosition);
-
-		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-
-
 	/**
 	 * Offsets for octave changes. Offset amounts are added to the base midi
 	 * values for the notes of A B C D E F G
 	 * */
 	static final int[] offsets = { -3, -1, 0, 2, 4, 5, 7  };
-
 
 	/**
 	 * This method parses the specified char[ ] of notes into a Track.
