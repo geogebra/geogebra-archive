@@ -94,12 +94,6 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
     
     
     
-
-	public String getClassName() {
-
-    	return "AlgoIntersectCoordSys";
-	}
-
 	
 	
 

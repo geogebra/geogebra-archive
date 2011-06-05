@@ -103,26 +103,11 @@ public class AlgoIntersectCS1D2D extends AlgoIntersectCoordSys {
     
     
     
+       
     
-    
-    
- 
-    
-    
-    
-    
-
-	public String getClassName() {
-
-		if (getCS2() instanceof GeoPlaneND) //surface with no outline
-			return "AlgoIntersectCoordSys";
-		else //surface with ouline : says that intersection is interior point
-			return "AlgoIntersectInterior";
-	}
-
 	
 	protected String getIntersectionTypeString(){
-		return "IntersectionInteriorPointOfAB";
+		return "IntersectionPointOfAB";
 	}
   
  
