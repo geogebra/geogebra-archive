@@ -28,12 +28,12 @@ public class CASInputPanel extends JPanel {
 	public CASInputPanel(Application app) {
 		this.app = app;
 		
-		setBackground(Color.white);		
+		setBackground(Color.white);
 		setLayout(new BorderLayout(0,0));
 		
 		// use autocomplete text field from input bar 
 		// but ignore Escape, Up, Down keys
-		inputArea = new AutoCompleteTextField(1, app, false);	
+		inputArea = new AutoCompleteTextField(1, app, false,app.getCommandDictionaryCAS());
 		inputArea.setAutoComplete(true);
 		inputArea.showPopupSymbolButton(true);
 		inputArea.setBorder(BorderFactory.createEmptyBorder());						
@@ -77,6 +77,10 @@ public class CASInputPanel extends JPanel {
 
 		if (inputArea != null)
 			inputArea.setFont(ft);
+	}
+
+	public void setLabels() {
+		inputArea.setDictionary(app.getCommandDictionaryCAS());
 	}
 	
 }

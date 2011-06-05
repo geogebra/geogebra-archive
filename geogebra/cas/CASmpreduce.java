@@ -41,8 +41,44 @@ public class CASmpreduce extends CASgeneric {
 	public synchronized String evaluateGeoGebraCAS(ValidExpression casInput) throws Throwable {
 		// convert parsed input to MathPiper string
 		String exp = toMPReduceString(casInput);
+		
+		//MPReduce supports UNICODE and case sensitivity by adding a ! in front of a letter
+		StringBuilder strBuilder=new StringBuilder();
+		int strLength=exp.length();
+		for (int i=0; i< strLength; i++){
+			char character=exp.charAt(i);
+			
+			//lowercase letters don't need a !
+			if (Character.isLetter(character) && (((int) character)<97 || ((int) character)>122)){
+				//the character is not a lowercase ascii character
+				strBuilder.append("!");
+				strBuilder.append(character);
+			} else {
+				strBuilder.append(character);
+			}
+		}
+		exp=strBuilder.toString();
+		
 		String result = evaluateMPReduce(exp);
-
+		
+		//removing the !
+		strBuilder=new StringBuilder();
+		strLength=result.length();
+		for (int i=0; i< strLength; i++){
+			char character=result.charAt(i);
+			if (character=='!')
+				if (i+1<strLength){
+					char nextChar=result.charAt(i+1);
+					if (Character.isLetter(nextChar) && (((int) nextChar)<97 || ((int) nextChar)>122)){
+						i++;
+						character=nextChar;
+					}
+				}
+			strBuilder.append(character);
+		}
+		
+		result=strBuilder.toString();
+		
 		// convert result back into GeoGebra syntax
 		String ggbString = toGeoGebraString(result);
 		
@@ -88,12 +124,12 @@ public class CASmpreduce extends CASgeneric {
 	}
 
 	/**
-	 * Evaluates the given ExpressionValue and returns the result in MathPiper syntax.
+	 * Evaluates the given ExpressionValue and returns the result in MPReduce syntax.
 	 */
 	public synchronized String toMPReduceString(ValidExpression ve) {
 
 		String str = doToMPReduceString(ve);
-
+		
 		// handle assignments
 		String veLabel = ve.getLabel();
 		if (veLabel != null) {

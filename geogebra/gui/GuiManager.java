@@ -835,6 +835,9 @@ public class GuiManager {
 		if (spreadsheetView != null)
 			spreadsheetView.setLabels();
 		
+		if (casView != null)
+			casView.setLabels();
+		
 		if (toolbarPanel != null) {
 			toolbarPanel.buildGui();
 			toolbarPanel.updateHelpText();

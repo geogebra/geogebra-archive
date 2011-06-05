@@ -15,4 +15,5 @@ public interface CasManager extends View, Printable {
 	public void updateFonts();
 	public void attachView();
 	public void detachView();
+	public void setLabels();
 }

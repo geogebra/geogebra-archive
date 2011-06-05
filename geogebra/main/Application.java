@@ -99,6 +99,7 @@ import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -350,6 +351,7 @@ public class Application implements KeyEventDispatcher {
 	private Hashtable<String,String> translateCommandTable,translateCommandTableScripting;
 	// command dictionary
 	private LowerCaseDictionary commandDict;
+	private LowerCaseDictionary commandDictCAS;
 	
 	// array of dictionaries corresponding to the sub command tables
 	private LowerCaseDictionary[] subCommandDict;
@@ -1586,7 +1588,10 @@ public class Application implements KeyEventDispatcher {
 		// update right angle style in euclidian view (different for German)
 		if (euclidianView != null)
 			euclidianView.updateRightAngleStyle(locale);
+		
+		// TODO: avoid initing GUI when spreadsheet is not showing
 		((SpreadsheetView)getGuiManager().getSpreadsheetView()).restart();
+		
 		// make sure digits are updated in all numbers
 		getKernel().updateConstruction();
 		setUnsaved();
@@ -2072,6 +2077,33 @@ public class Application implements KeyEventDispatcher {
 					}
 					
 				}
+			}
+		}
+		
+		//get CAS Commands
+		
+		commandDictCAS=new LowerCaseDictionary();
+		HashSet<String> casCommands=new HashSet<String>();
+		
+		Enumeration<String> keys=rbcommand.getKeys();
+		
+		while (keys.hasMoreElements()){
+			String key=keys.nextElement();
+			if (key.endsWith("SyntaxCAS")){
+				casCommands.add(key.replaceAll("SyntaxCAS", ""));
+			}
+		}
+
+		keys=rbcommand.getKeys();
+
+		while (keys.hasMoreElements()){
+			String key=keys.nextElement();
+			if (casCommands.contains(key)){
+				String local = rbcommand.getString(key);
+				if (local!=null)
+					commandDictCAS.addEntry(local);
+				else
+					commandDictCAS.addEntry(key.replaceAll("SyntaxCAS", ""));
 			}
 		}
 
@@ -4643,6 +4675,11 @@ public class Application implements KeyEventDispatcher {
 
 	public final LowerCaseDictionary getCommandDictionary() {
 		return commandDict;
+	}
+	
+	public final LowerCaseDictionary getCommandDictionaryCAS() {
+		fillCommandDict();
+		return commandDictCAS;
 	}
 	
 	/**

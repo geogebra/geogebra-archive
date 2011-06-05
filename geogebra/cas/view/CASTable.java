@@ -423,6 +423,10 @@ public class CASTable extends JTable {
 		}
 	}
 	
+	public void setLabels(){
+		editor.setLabels();
+	}
+	
 
 
 }

@@ -516,4 +516,8 @@ public class CASView extends JComponent implements CasManager, FocusListener,
 		Drawable.exporting=false;
 		return r;
 	}
+
+	public void setLabels() {
+		consoleTable.setLabels();
+	}
 }

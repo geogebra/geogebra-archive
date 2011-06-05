@@ -51,7 +51,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		this(columns, app, true); 
 	}    
 
-	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey) {
+	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey, AutoCompleteDictionary dict) {
 		super(app);
 		setColumns(columns);
 
@@ -64,10 +64,14 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 		history = new ArrayList<String>(50);
 
 		//addKeyListener(this); now in MathTextField
-		setDictionary(app.getCommandDictionary());   
-		
+		setDictionary(dict);
 		
 	}   
+	
+	
+	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey){
+		this(columns, app, handleEscapeKey, app.getCommandDictionary());
+	}
 
 	
 	public void showPopupSymbolButton(boolean showPopupSymbolButton){
