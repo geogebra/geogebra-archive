@@ -496,6 +496,7 @@ public class MyTable extends JTable implements FocusListener
 		*/
 		
 		
+		
 		// update the selection list
 		
 		if (!Application.getControlDown()) {
@@ -515,8 +516,7 @@ public class MyTable extends JTable implements FocusListener
 				}
 			}
 			*/
-			
-			
+						
 			// handle dragging  
 			if (selectedCellRanges.get(0).hasSameAnchor(newSelection)) {
 				selectedCellRanges.remove(0);
@@ -552,15 +552,16 @@ public class MyTable extends JTable implements FocusListener
 		for (int i = 0; i < selectedCellRanges.size(); i++) {
 			list.addAll(0,(selectedCellRanges.get(i)).toGeoList());
 		}
-		app.setSelectedGeos(list);
+		
+		// if the selection has actually changed, update selected geos and repaint
+		if(!list.equals(app.getSelectedGeos())){
+			app.setSelectedGeos(list);
+			view.notifySpreadsheetSelectionChange();
+			repaint();
+		}
 		
 		//System.out.println("------------------");
 		//for (CellRange cr: selectedCellRanges)cr.debug();
-		 
-		view.notifySpreadsheetSelectionChange();
-		
-		repaint();
-		
 		
 	}
 
@@ -786,15 +787,14 @@ public class MyTable extends JTable implements FocusListener
 	// the sole handler for selection events.
 	@Override
 	public void setRowSelectionInterval(int row0, int row1) {
+		setSelectionType(ROW_SELECT);
 		super.setRowSelectionInterval(row0, row1);
 		selectionChanged(); 
-		setSelectionType(ROW_SELECT);
-		
 	}
 	@Override
 	public void setColumnSelectionInterval(int col0, int col1) {
-		super.setColumnSelectionInterval(col0, col1);
 		setSelectionType(COLUMN_SELECT);
+		super.setColumnSelectionInterval(col0, col1);
 		selectionChanged(); 
 		
 	}
