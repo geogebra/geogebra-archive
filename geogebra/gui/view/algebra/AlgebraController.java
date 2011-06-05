@@ -351,7 +351,8 @@ implements MouseListener, MouseMotionListener, DragGestureListener, DragSourceLi
 			ImageIcon ic  = GeoGebraIcon.createLatexIcon(app, sb.toString(), app.getPlainFont(), false, Color.DARK_GRAY, null);
 			
 			// start drag
-			ds.startDrag(dge, DragSource.DefaultCopyDrop, ic.getImage(), new Point(0,30), new TransferableAlgebraView(geoLabelList),  this);
+			ds.startDrag(dge, DragSource.DefaultCopyDrop, ic.getImage(), 
+					new Point(-5,-ic.getIconHeight()+5), new TransferableAlgebraView(geoLabelList),  this);
 		}
 
 	}

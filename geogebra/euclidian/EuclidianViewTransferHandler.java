@@ -32,7 +32,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 
 	static DataFlavor textReaderFlavor;
 	static {
-		
+
 		try { 
 			textReaderFlavor = 
 				new DataFlavor ("text/plain;class=java.io.Reader"); 			
@@ -99,7 +99,11 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 		Construction cons = ev.getApplication().getKernel().getConstruction();
 		Point mousePos = ev.getMousePosition();
 		GeoPoint startPoint = new GeoPoint(cons);
-		startPoint.setCoords(ev.toRealWorldCoordX(mousePos.x), ev.toRealWorldCoordY(mousePos.y), 1.0);
+
+		double x = ev.toRealWorldCoordX(mousePos.x);
+		double y = ev.toRealWorldCoordX(mousePos.y);
+
+		startPoint.setCoords(x,y, 1.0);
 
 		//------------------------------------------
 		// Import handling is done in this order:
@@ -117,7 +121,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 		if (t.isDataFlavorSupported(DataFlavor.stringFlavor)
 				|| t.isDataFlavorSupported(AlgebraViewTransferHandler.algebraViewFlavor)) {
 			try {
-				
+
 				String text = null; // expression to be converted into GeoText 
 				boolean isLaTeX = false;
 
@@ -154,7 +158,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 						text += "]";
 					}
 				}
-				
+
 				// get text from String flavor
 				else{ 	
 					try {
@@ -185,7 +189,7 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 					if(text == null) return false;
 
 					//TODO --- validate the text? e.g. no quotes for a GeoText
-					
+
 					// wrap text in quotes
 					text = "\"" + text + "\"";
 
@@ -200,9 +204,14 @@ public class EuclidianViewTransferHandler extends TransferHandler implements Tra
 
 				if (ret != null && ret[0].isTextValue()) {
 					GeoText geo = (GeoText) ret[0];
-					geo.setLaTeX(isLaTeX, false);	
-					geo.setRealWorldLoc(ev.toRealWorldCoordX(mousePos.x), ev.toRealWorldCoordY(mousePos.y));
+					geo.setLaTeX(isLaTeX, false);
+					
+					//TODO: h should equal the geo height, this is just an estimate
+					double h = 2*app.getFontSize();
+					
+					geo.setRealWorldLoc(ev.toRealWorldCoordX(mousePos.x), ev.toRealWorldCoordY(mousePos.y-h));
 					geo.updateRepaint();
+					
 				}
 
 				return true;
