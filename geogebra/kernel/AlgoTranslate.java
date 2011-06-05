@@ -71,10 +71,8 @@ public class AlgoTranslate extends AlgoTransformation {
         outGeo = inGeo.copy();
         out = (Translateable) outGeo;
         }
-        setInputOutput();
         
-        cons.registerEuclidianViewAlgo(this);
-                
+        setInputOutput();               
         compute();               
     }           
     

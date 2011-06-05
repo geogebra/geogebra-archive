@@ -71,12 +71,9 @@ public class AlgoShearOrStretch extends AlgoTransformation {
         	out = (MatrixTransformable) inGeo.copy();               
         	outGeo = out.toGeoElement();
         }
-        setInputOutput();
-              
-        cons.registerEuclidianViewAlgo(this);
         
+        setInputOutput();        
         compute();          
-        
     }
     
     public String getClassName() {

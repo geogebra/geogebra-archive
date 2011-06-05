@@ -78,10 +78,8 @@ public class AlgoApplyMatrix extends AlgoTransformation {
         	out = (MatrixTransformable) inGeo.copy();               
         	outGeo = out.toGeoElement();
         }                    
-        setInputOutput();
-              
-        cons.registerEuclidianViewAlgo(this);
         
+        setInputOutput();
         compute();          
     }           
     

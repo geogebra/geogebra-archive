@@ -77,8 +77,7 @@ public class AlgoDilate extends AlgoTransformation {
         	out = (Dilateable) outGeo;                    
         }                
         else outGeo = new GeoList(cons);
-        setInputOutput();
-        cons.registerEuclidianViewAlgo(this);
+        setInputOutput();        
         compute();
            
     }
