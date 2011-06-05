@@ -3146,8 +3146,6 @@ public class Application implements KeyEventDispatcher {
 			return;
 
 		getGuiManager().updateMenubarSelection();
-		if(getGuiManager().getAlgebraView() != null)
-					getGuiManager().getAlgebraView().updateSelection();
 		
 		if (getEuclidianView().getMode() == EuclidianView.MODE_VISUAL_STYLE) {
 			if (selectedGeos.size() > 0) {				
@@ -3941,6 +3939,7 @@ public class Application implements KeyEventDispatcher {
 		if (repaint)
 			kernel.notifyRepaint();
 		updateSelection();
+		
 	}
 
 	final public void addSelectedGeos(ArrayList<GeoElement> geos, boolean repaint) {

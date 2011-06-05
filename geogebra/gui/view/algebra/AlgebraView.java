@@ -18,7 +18,6 @@ the Free Software Foundation.
 
 package geogebra.gui.view.algebra;
 
-import geogebra.euclidian.EuclidianConstants;
 import geogebra.gui.MathTextField;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
@@ -50,7 +49,7 @@ import javax.swing.tree.TreePath;
  * @author  Markus
  * @version 
  */
-public class AlgebraView extends JTree implements View {	
+public class AlgebraView extends JTree implements View{	
 		
 	private static final long serialVersionUID = 1L;
 	
@@ -133,7 +132,8 @@ public class AlgebraView extends JTree implements View {
 	 * Flag for LaTeX rendering
 	 */
 	private boolean renderLaTeX = true;
-	
+
+
 	
 	
 	/** Creates new AlgebraView */
@@ -179,9 +179,8 @@ public class AlgebraView extends JTree implements View {
 		setToggleClickCount(1);
 				
         // enable drag n drop
-		setDragEnabled(true);
-		setTransferHandler(new AlgebraViewTransferHandler(app));
-		
+		algCtrl.enableDnD();
+			
 		attachView();						
 	}
 	
@@ -683,8 +682,6 @@ public class AlgebraView extends JTree implements View {
 	 * Reset the algebra view if the mode changed.
 	 */
 	public void setMode(int mode) {
-		// allow drags only in move mode
-		setDragEnabled(mode == EuclidianConstants.MODE_MOVE);
 		reset();
 	}
 	
@@ -739,19 +736,7 @@ public class AlgebraView extends JTree implements View {
 		} 	
 	}
 	
-	/**
-	 * Update tree selection to match currently selected geos.
-	 */
-	final public void updateSelection() {	
-		this.clearSelection();
-		DefaultMutableTreeNode node;
-		ArrayList<GeoElement> geos = app.getSelectedGeos();
-		for(GeoElement geo: geos){
-		 node = (DefaultMutableTreeNode) nodeTable.get(geo);
-		if(node != null)
-			this.addSelectionPath(new TreePath(node.getPath()));	
-		}
-	}
+
 	
 	
 	
@@ -893,5 +878,16 @@ public class AlgebraView extends JTree implements View {
 		sb.append("</algebraView>\n");
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 } // AlgebraView
