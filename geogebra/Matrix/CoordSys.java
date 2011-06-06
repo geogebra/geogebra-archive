@@ -55,6 +55,12 @@ public class CoordSys {
 	
 	
 	public void set(CoordSys cs){
+
+		setOrigin(cs.getOrigin());
+		for (int i=0;i<spaceDimension;i++){
+			setV(cs.getV(i), i);
+		}
+		
 		matrix.set(cs.matrix);
 		matrixOrthonormal.set(cs.matrixOrthonormal);
 		if (drawingMatrix==null) //TODO remove that

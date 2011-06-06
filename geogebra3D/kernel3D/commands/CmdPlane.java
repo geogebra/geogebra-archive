@@ -26,7 +26,19 @@ public class CmdPlane extends CommandProcessor {
 	    boolean[] ok = new boolean[n];
 	    GeoElement[] arg;
 
-	    switch (n) {
+	    switch (n) {	    
+	    case 1 :
+	    	arg = resArgs(c);
+	    	if (arg[0] instanceof GeoCoordSys2D )
+	    	{GeoElement[] ret =
+	    	{
+	    			(GeoElement) kernel.getManager3D().Plane3D(
+	    					c.getLabel(),
+	    					(GeoCoordSys2D) arg[0])};
+	    	return ret;
+	    	}else{
+	    		throw argErr(app, "Plane", arg[0]);
+	    	}
 	    case 2 :
 	    	arg = resArgs(c);
 	    	if (
@@ -51,14 +63,14 @@ public class CmdPlane extends CommandProcessor {
 	    						(GeoPointND) arg[0],
 	    						(GeoCoordSys2D) arg[1])};
 	    		return ret;
-	    		
+
 	    	}else{
 	    		if (!ok[0])
 	    			throw argErr(app, "Plane", arg[0]);
 	    		else 
 	    			throw argErr(app, "Plane", arg[1]);
 	    	}
-	    	
+
 	    case 3 :
 	    	arg = resArgs(c);
 	    	if ((ok[0] = (arg[0] .isGeoPoint() ) )

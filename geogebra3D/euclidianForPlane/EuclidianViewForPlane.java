@@ -90,6 +90,10 @@ public class EuclidianViewForPlane extends EuclidianView {
 		return coords.projectPlane(getPlaneMatrix())[1];
 	}
 	
+	public Coords getCoordsFromView(Coords coords){
+		return getPlaneMatrix().mul(coords);
+	}
+	
 	public CoordMatrix getPlaneMatrix(){
 		return plane.getCoordSys().getMatrixOrthonormal();
 		//return plane.getCoordSys().getDrawingMatrix();

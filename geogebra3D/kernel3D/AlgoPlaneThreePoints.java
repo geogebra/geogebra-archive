@@ -13,7 +13,7 @@ import geogebra.main.Application;
  * @author ggb3D
  *
  */
-public class AlgoPlane extends AlgoElement3D {
+public class AlgoPlaneThreePoints extends AlgoElement3D {
 	
 	/** the 2D coord sys created */
 	protected GeoCoordSys2D cs;
@@ -30,7 +30,7 @@ public class AlgoPlane extends AlgoElement3D {
 	 * @param B second point
 	 * @param C third point
 	 */
-	public AlgoPlane(Construction c, String label, GeoPointND A, GeoPointND B, GeoPointND C) {
+	public AlgoPlaneThreePoints(Construction c, String label, GeoPointND A, GeoPointND B, GeoPointND C) {
 		super(c);
 		 
 		this.A = A;

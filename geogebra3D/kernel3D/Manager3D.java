@@ -544,13 +544,17 @@ public class Manager3D implements Manager3DInterface {
 			GeoPointND A,
 			GeoPointND B,
 			GeoPointND C) {
-		AlgoPlane algo = new AlgoPlane(cons, label, A, B, C);
+		AlgoPlaneThreePoints algo = new AlgoPlaneThreePoints(cons, label, A, B, C);
 		GeoPlane3D plane = (GeoPlane3D) algo.getCoordSys();
 		return plane;
 	}
 
 
-
+	final public GeoPlane3D Plane3D(String label,GeoCoordSys2D cs2D){
+		AlgoPlaneCS2D algo = new AlgoPlaneCS2D(cons, label, cs2D);
+		GeoPlane3D plane = (GeoPlane3D) algo.getCoordSys();
+		return plane;
+	}
 
 	////////////////////////////////////////////////
 	// INTERSECTION (POINTS)

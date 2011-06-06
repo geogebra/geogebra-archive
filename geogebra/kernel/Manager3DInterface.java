@@ -321,6 +321,13 @@ public interface Manager3DInterface {
 					GeoPointND C) ;
 
 
+			 /**
+			  * 
+			  * @param label
+			  * @param cs2D
+			  * @return plane containing the 2D coord sys
+			  */
+			 public GeoPlaneND Plane3D(String label,GeoCoordSys2D cs2D);
 
 
 			////////////////////////////////////////////////

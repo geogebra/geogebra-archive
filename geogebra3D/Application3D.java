@@ -27,6 +27,7 @@ import geogebra.main.Application;
 import geogebra.main.GlobalKeyDispatcher;
 import geogebra3D.euclidian3D.EuclidianController3D;
 import geogebra3D.euclidian3D.EuclidianView3D;
+import geogebra3D.euclidianForPlane.EuclidianControllerForPlane;
 import geogebra3D.euclidianForPlane.EuclidianViewForPlane;
 import geogebra3D.gui.GuiManager3D;
 import geogebra3D.gui.layout.panels.EuclidianDockPanelForPlane;
@@ -158,7 +159,7 @@ public class Application3D extends Application{
 	 */
 	public EuclidianView createEuclidianViewForPlane(GeoCoordSys2D plane){
 		// create new view for plane and controller
-		EuclidianController ec = new EuclidianController(kernel3D);
+		EuclidianController ec = new EuclidianControllerForPlane(kernel3D);
 		euclidianViewForPlane = new EuclidianViewForPlane(ec, plane);
 		euclidianViewForPlane.updateFonts();
 		euclidianViewForPlane.addExistingGeos();

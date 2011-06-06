@@ -8,6 +8,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
+import geogebra.kernel.RegionParameters;
 import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
@@ -130,7 +131,9 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	}
 
 	public void regionChanged(GeoPointND P) {
-		pointChangedForRegion(P);
+		//pointChangedForRegion(P);
+		RegionParameters rp = P.getRegionParameters();
+		P.setCoords(getPoint(rp.getT1(), rp.getT2()),false);
 		
 	}
 	

@@ -794,7 +794,8 @@ implements GeoPointND, PointProperties, Vector3DValue{
 	
 	
 	public void setUndefined() {
-		setCoords(Double.NaN, Double.NaN, Double.NaN, Double.NaN);
+		setCoords(new Coords(Double.NaN, Double.NaN, Double.NaN, Double.NaN),false);
+		setWillingCoords(null);
 		isDefined = false;
 		
 	}
