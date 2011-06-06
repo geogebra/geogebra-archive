@@ -725,7 +725,6 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 			public void update(Object[] geos) {
 				boolean geosOK = false;
 				GeoElement geo = null;
-				Application.printStacktrace("labelStyle update");
 				if (mode == EuclidianConstants.MODE_MOVE) {
 					for (int i = 0; i < geos.length; i++) {
 						if (((GeoElement)geos[i]).isLabelShowable()) {
