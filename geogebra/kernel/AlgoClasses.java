@@ -155,12 +155,12 @@ public class AlgoClasses extends AlgoElement {
 		//=======================================================
 		if(input.length == 3){
 			double value = start.getDouble();
-			classList.add(new GeoNumeric(cons,value));
 			while (value <= maxGeoValue){
-				value = value + width.getDouble();
 				classList.add(new GeoNumeric(cons,value));
+				value = value + width.getDouble();
 			}
-
+			if(classList.size()<2)
+				classList.setUndefined();
 		}
 	}
 
