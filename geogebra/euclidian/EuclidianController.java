@@ -2905,7 +2905,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		justCreatedGeos.clear();
 		for (int i = 0; i < geos.length; i++)
 		{
-			justCreatedGeos.add(geos[i]);
+			if(geos[i]!=null)
+				justCreatedGeos.add(geos[i]);
 		}
 		app.updateStyleBars();
 		app.getGuiManager().updateMenubarSelection();
