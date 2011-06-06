@@ -723,20 +723,36 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 
 			@Override
 			public void update(Object[] geos) {
-				// only show this button when handling selection, do not use it for defaults
-				// but not
-				//if(mode != EuclidianConstants.MODE_MOVE){
-				//	this.setVisible(false);
-				//	return;
-				//}
 				boolean geosOK = false;
 				GeoElement geo = null;
-				for (int i = 0; i < geos.length; i++) {
-					
-					if (((GeoElement)geos[i]).isLabelShowable()) {
-						geo = (GeoElement)geos[i];
-						geosOK = true;
-						break;
+				Application.printStacktrace("labelStyle update");
+				if (mode == EuclidianConstants.MODE_MOVE) {
+					for (int i = 0; i < geos.length; i++) {
+						if (((GeoElement)geos[i]).isLabelShowable()) {
+							geo = (GeoElement)geos[i];
+							geosOK = true;
+							break;
+						}
+					}
+				} else if (app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_ALWAYS_OFF) {
+					this.setVisible(false);
+					return;
+				} else if (app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_POINTS_ONLY) {
+					for (int i = 0; i < geos.length; i++) {
+					if (((GeoElement)geos[i]).isLabelShowable() &&
+							((GeoElement)geos[i]).isGeoPoint()) {
+							geo = (GeoElement)geos[i];
+							geosOK = true;
+							break;
+						}
+					}
+				} else {
+					for (int i = 0; i < geos.length; i++) {
+						if (((GeoElement)geos[i]).isLabelShowable()) {
+							geo = (GeoElement)geos[i];
+							geosOK = true;
+							break;
+						}
 					}
 				}
 				this.setVisible(geosOK);
@@ -1612,11 +1628,18 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private void applyCaptionStyle(ArrayList<GeoElement> geos) {
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
-			if(btnLabelStyle.getSelectedIndex() == 0){
-				geo.setLabelVisible(false);
-			}else{
-				geo.setLabelVisible(true);
-				geo.setLabelMode(btnLabelStyle.getSelectedIndex()-1);
+			if ((mode == EuclidianConstants.MODE_MOVE && geo.isLabelShowable()) ||
+				(app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_POINTS_ONLY && geo.isLabelShowable() && geo.isGeoPoint()) ||
+				(app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_ALWAYS_ON && geo.isLabelShowable() && geo.isLabelVisible()) ||
+				(app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC && geo.isLabelShowable())) {
+				if(btnLabelStyle.getSelectedIndex() == 0){
+					if (mode == EuclidianConstants.MODE_MOVE || app.getLabelingStyle() != ConstructionDefaults.LABEL_VISIBLE_ALWAYS_ON) {
+						geo.setLabelVisible(false);
+					}
+				}else{
+					geo.setLabelVisible(true);
+					geo.setLabelMode(btnLabelStyle.getSelectedIndex()-1);
+				}
 			}
 			geo.updateRepaint();
 			needUndo = true;
