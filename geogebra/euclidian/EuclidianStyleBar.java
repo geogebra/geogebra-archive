@@ -553,7 +553,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 						GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
 						if (!(geo.isPath()
 								|| (geo.isGeoList() && ((GeoList)geo).showLineProperties() )
-								|| (geo.isGeoNumeric() && ((GeoNumeric) geo).isDrawable() || geo.isGeoAngle() || ((GeoNumeric) geo).isSliderFixed()))) {
+								|| (geo.isGeoNumeric() && ((GeoNumeric) geo).isDrawable() )
+								|| (geo.isGeoAngle() && ((GeoNumeric) geo).isSliderFixed()))) {
 							geosOK = false;
 							break;
 						}
