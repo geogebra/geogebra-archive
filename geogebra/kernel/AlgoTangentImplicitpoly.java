@@ -97,6 +97,51 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
     
 	@Override
 	protected void compute() {
+		// idea: find intersection points between given curve and
+		// curve dF/dx * x_p + dF/dy * y_p + u_{n-1} + 2*u_{n-2} + ... + n*u_0
+		// and construct lines through (x_p, y_p) and intersection points, 
+		// where (x_p, y_p) is given point.
+		
+		double [][] matrix = this.p.getCoeff();
+		
+		double x = this.R.getX();
+		double y = this.R.getY();
+		
+		int degX = this.p.getDegX();
+		int degY = this.p.getDegY();
+		
+		double [][] matrixx = new double[degX+1][degY+1];
+		double [][] matrixy = new double[degX+1][degY+1];
+		
+		for(int i=1; i<degX+1; i++)
+			for(int j=0; j<degY+1; j++)
+				matrixx[i-1][j] = x*i*matrix[i][j];
+		
+		for(int i=0; i<degX+1; i++)
+			for(int j=1; j<degY+1; j++)
+				matrixy[i][j-1] = y*j*matrix[i][j];
+	
+		double [][] newMatrix = new double[degX+1][degY+1];
+		
+		int maxDeg = (degX > degY) ? degX : degY;
+		for(int i=0; i<degX+1; i++)
+			for(int j=0; j<degY+1; j++)
+				newMatrix[i][j] = (maxDeg - (i+j) + 1) * matrix[i][j] + matrixx[i][j] + matrixy[i][j];
+		
+		GeoImplicitPoly newPoly = new GeoImplicitPoly(cons, "", newMatrix);
+		newPoly.remove();
+		
+		AlgoIntersectImplicitpolys algo = new AlgoIntersectImplicitpolys(cons, this.p, newPoly);
+		algo.compute();
+		algo.remove();
+		GeoPoint[] ip = algo.getIntersectionPoints();
+		tangents.adjustOutputSize(ip.length);
+		
+		for(int i=0; i<ip.length; i++)
+			tangents.getElement(i).setCoords(ip[i].getY() - this.R.getY(), this.R.getX() - ip[i].getX(), 
+					ip[i].getX() * this.R.getY() - this.R.getX() * ip[i].getY());
+		
+		/*
 		String[] vars={"y","x","l"};
 		int varX=1;
 		int varY=2;
@@ -131,7 +176,8 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
 		 * (2) l*(dP(x0,y0)/dy)=-g.y
 		 * (3) l*(dP(x0,y0)/dx)=g.x
 		 */
-		if (R!=null){
+		
+		/*if (R!=null){
 			P1=Py.multiply(new BigRational(-1), ExpVector.create(3, varL, 1)).sum(BigRational.ONE,ExpVector.create(3,varX,1)).sum(GeoImplicitPoly.toRational(-R.inhomX));
 			P2=Px.multiply(BigRational.ONE, ExpVector.create(3, varL, 1)).sum(BigRational.ONE,ExpVector.create(3,varY,1)).sum(GeoImplicitPoly.toRational(-R.inhomY));
 		}else if (g!=null){
@@ -259,7 +305,7 @@ public class AlgoTangentImplicitpoly extends AlgoElement {
     		}
     		
     		tangents.getElement(i).setCoords(a,b,c);
-    	}
+    	}*/
 	}
 
 	@Override
