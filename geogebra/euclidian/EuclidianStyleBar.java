@@ -548,13 +548,12 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					setSliderValue(ec.getPen().getPenSize());
 					setSelectedIndex(lineStyleMap.get(ec.getPen().getPenLineStyle()));
 				}else{
-
 					boolean geosOK = (geos.length > 0 );
 					for (int i = 0; i < geos.length; i++) {
 						GeoElement geo = ((GeoElement) geos[i]).getGeoElementForPropertiesDialog();
 						if (!(geo.isPath()
 								|| (geo.isGeoList() && ((GeoList)geo).showLineProperties() )
-								|| (geo.isGeoNumeric() && ((GeoNumeric) geo).isDrawable()))) {
+								|| (geo.isGeoNumeric() && ((GeoNumeric) geo).isDrawable() || geo.isGeoAngle()))) {
 							geosOK = false;
 							break;
 						}
@@ -722,7 +721,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 				GeoElement geo = null;
 				if (mode == EuclidianConstants.MODE_MOVE) {
 					for (int i = 0; i < geos.length; i++) {
-						if (((GeoElement)geos[i]).isLabelShowable()) {
+						if (((GeoElement)geos[i]).isLabelShowable() ||
+								((GeoElement)geos[i]).isGeoAngle()) {
 							geo = (GeoElement)geos[i];
 							geosOK = true;
 							break;
@@ -742,7 +742,8 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 					}
 				} else {
 					for (int i = 0; i < geos.length; i++) {
-						if (((GeoElement)geos[i]).isLabelShowable()) {
+						if (((GeoElement)geos[i]).isLabelShowable() ||
+							((GeoElement)geos[i]).isGeoAngle()) {
 							geo = (GeoElement)geos[i];
 							geosOK = true;
 							break;
@@ -1622,10 +1623,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 	private void applyCaptionStyle(ArrayList<GeoElement> geos) {
 		for (int i = 0 ; i < geos.size() ; i++) {
 			GeoElement geo = geos.get(i);
-			if ((mode == EuclidianConstants.MODE_MOVE && geo.isLabelShowable()) ||
+			if ((mode == EuclidianConstants.MODE_MOVE && (geo.isLabelShowable() || geo.isGeoAngle())) ||
 				(app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_POINTS_ONLY && geo.isLabelShowable() && geo.isGeoPoint()) ||
-				(app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_ALWAYS_ON && geo.isLabelShowable() && geo.isLabelVisible()) ||
-				(app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC && geo.isLabelShowable())) {
+				(app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_ALWAYS_ON && (geo.isLabelShowable() || geo.isGeoAngle()) ) ||
+				(app.getLabelingStyle() == ConstructionDefaults.LABEL_VISIBLE_AUTOMATIC && geo.isLabelShowable() || geo.isGeoAngle())) {
 				if(btnLabelStyle.getSelectedIndex() == 0){
 					if (mode == EuclidianConstants.MODE_MOVE || app.getLabelingStyle() != ConstructionDefaults.LABEL_VISIBLE_ALWAYS_ON) {
 						geo.setLabelVisible(false);
