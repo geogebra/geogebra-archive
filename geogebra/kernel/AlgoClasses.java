@@ -141,7 +141,10 @@ public class AlgoClasses extends AlgoElement {
 	
 		if(input.length == 2){
 
-			double n = numClasses.getDouble();
+			int n = (int) numClasses.getDouble();
+			if(n < 1)
+				classList.setUndefined();
+			
 			double width = (maxGeoValue - minGeoValue)/n;
 			for(int i = 0; i < n; i++){
 				classList.add(new GeoNumeric(cons, minGeoValue + i*width));
