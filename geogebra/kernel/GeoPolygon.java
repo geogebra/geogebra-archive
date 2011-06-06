@@ -33,7 +33,7 @@ import java.util.HashSet;
  * 
  * @author Markus Hohenwarter
  */
-public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, Traceable,Rotateable,PointRotateable,
+public class GeoPolygon extends GeoElement implements NumberValue, Path, Region, GeoSurfaceFinite, Traceable,Rotateable,PointRotateable,
 MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLineInterface, Transformable{
 	
 	private static final long serialVersionUID = 1L;
@@ -935,6 +935,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 	 * Region interface implementation
 	 */
 	
+	//by default, a polygon is always a region. 
+	// A polygon can also be a path (as the boundary of the region)
 	public boolean isRegion() {
 		return true;
 	}
@@ -1104,6 +1106,24 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			
 			
 	}
+	
+	////////////////////////////
+	// interface GeoSurfaceFinite
+	///////////////////////////////
+	private boolean asBoundary = false;
+	
+	public void setRole(boolean isAsBoundary) {
+		this.asBoundary = isAsBoundary; //false means 'as region'
+	}
+	public boolean asBoundary() {
+		return asBoundary;
+	}
+	
+
+
+	
+	
+	
 	
 	/** returns true if the segment ((x1,y1),(x2,y2)) intersects [Ox) */
 	private boolean intersectOx(double x1, double y1, double x2, double y2){
@@ -1401,6 +1421,5 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			((GeoPoint)points[i]).matrixTransform(a00, a01, a02, a10, a11, a12, a20, a21, a22);
 		
 	}
-	
-
 }
+

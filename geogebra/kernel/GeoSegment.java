@@ -110,6 +110,10 @@ GeoSegmentND {
 		setEndPoint(B);
 	}
 	
+	public void setTwoPointsCoords(Coords start, Coords end) {
+		setPoints(this.startPoint, this.endPoint);
+		calcLength();
+	}
 	
 	public String getClassName() {	
 		return "GeoSegment";

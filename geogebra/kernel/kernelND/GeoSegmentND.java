@@ -16,11 +16,12 @@ public interface GeoSegmentND extends GeoLineND {
 
 	void setLabel(String string);
 
-
 	void setObjColor(Color objectColor);
 
 	void setEuclidianVisible(boolean visible);
 
+	void setTwoPointsCoords(Coords start, Coords end);
+	
 	void update();
 
 	void setLineType(int type);
@@ -29,7 +30,7 @@ public interface GeoSegmentND extends GeoLineND {
 
 	
 	double getLength();
-	
+
 	public GeoElement getStartPointAsGeoElement();
 
 	public GeoElement getEndPointAsGeoElement();

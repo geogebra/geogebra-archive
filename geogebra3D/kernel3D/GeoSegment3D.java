@@ -185,7 +185,9 @@ public class GeoSegment3D extends GeoCoordSys1D implements GeoSegmentND {
 		return super.getGeoElement2D();
 	}
 
-	
+	public void setTwoPointsCoords(Coords start, Coords end) {
+		this.setCoord(start, end.sub(start));
+	}
 	
 	public boolean isOnPath(Coords p, double eps){
 		//first check global line

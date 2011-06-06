@@ -346,12 +346,19 @@ public interface Manager3DInterface {
 					GeoElement cs2) ;
 
 			 /**
-			  * Calculate the intersection of the line g with the outline of p
+			  * Calculate the intersection of the line g with the region of p
 			  * @param label
 			  * @param g
 			  * @param p
 			  * @return
 			  */
+			 
+			 public GeoElement[] Intersect(
+						String[] labels,
+						GeoLineND g, GeoSurfaceFinite p) ;		 
+
+					 
+					 
 			 public GeoElement[] IntersectOutline(
 						String[] labels,
 						GeoLineND g, GeoPolygon p) ;		 
@@ -428,4 +435,5 @@ public interface Manager3DInterface {
 						String[] labels,
 						GeoConicND A,
 						GeoConicND B);
+
 }

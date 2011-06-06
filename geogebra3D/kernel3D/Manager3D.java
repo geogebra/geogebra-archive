@@ -14,6 +14,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoSurfaceFinite;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Manager3DInterface;
 import geogebra.kernel.Path;
@@ -572,7 +573,7 @@ public class Manager3D implements Manager3DInterface {
 			String label,
 			GeoElement cs1,
 			GeoElement cs2) {
-
+		
 		AlgoIntersectCoordSys algo = null;
 
 		if (cs1 instanceof GeoLineND){
@@ -592,11 +593,25 @@ public class Manager3D implements Manager3DInterface {
 		return algo.getIntersection();
 	}
 
+	 public GeoElement[] Intersect(
+				String[] labels,
+				GeoLineND g, GeoSurfaceFinite p) {
+			
+		 	boolean asBoundary = false;
+		 	
+		 	if (p instanceof GeoPolygon) {
+		 		AlgoIntersectLinePolygon3D algo = new AlgoIntersectLinePolygon3D(cons, labels, g, (GeoPolygon)p, asBoundary);
+		 		return algo.getOutput();
+		 	} else {
+		 		return null;
+		 	}
+	 }
+	 
 	public GeoElement[] IntersectOutline(
 			String[] labels,
 			GeoLineND g, GeoPolygon p){
-		
-		AlgoIntersectLinePolygon3D algo = new AlgoIntersectLinePolygon3D(cons, labels, g, p);
+		boolean asBoundary = true;
+		AlgoIntersectLinePolygon3D algo = new AlgoIntersectLinePolygon3D(cons, labels, g, p, asBoundary);
 		
 		return algo.getOutput();
 		

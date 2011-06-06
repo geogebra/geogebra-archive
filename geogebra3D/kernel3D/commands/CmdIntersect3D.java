@@ -1,6 +1,8 @@
 package geogebra3D.kernel3D.commands;
 
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoSurfaceFinite;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.commands.CmdIntersect;
@@ -39,21 +41,21 @@ public  GeoElement[] process(Command c) throws MyError {
         		
         		//POINTS
         		
-        		//intersection outlined surface/line : points on outline
-        		/*
-        		if (arg[0] instanceof GeoLineND && arg[1] instanceof GeoPolygon){
+        		//intersection outlined surface/line : points on outline (boundary)
+        		
+        		if (arg[0] instanceof GeoLineND && arg[1] instanceof GeoSurfaceFinite && ((GeoPolygon) arg[1]).asBoundary()){
         			return kernel.getManager3D().IntersectOutline(
         					c.getLabels(),
         					(GeoLineND) arg[0],
         					(GeoPolygon) arg[1]);
-        		}else if (arg[0] instanceof GeoPolygon && arg[1] instanceof GeoLineND){
+        			// else: will be done in line/surface
+        		}else if (arg[0] instanceof GeoSurfaceFinite && arg[1] instanceof GeoLineND && ((GeoPolygon) arg[0]).asBoundary()){
         			return kernel.getManager3D().IntersectOutline(
         					c.getLabels(),
         					(GeoLineND) arg[1],
         					(GeoPolygon) arg[0]);
         		}else 
-        		*/	
-
+        			
         		//intersection line/conic
         		if (
         				(arg[0] instanceof GeoLineND)
@@ -79,12 +81,22 @@ public  GeoElement[] process(Command c) throws MyError {
         					(GeoConicND) arg[0],
         					(GeoConicND) arg[1]);
         		
+
+        		//intersection line/surfaceFinite
+        		
+        		else if ((arg[0] instanceof GeoLineND && arg[1] instanceof GeoSurfaceFinite)
+        				||(arg[1] instanceof GeoLineND && arg[0] instanceof GeoSurfaceFinite))
+        			
+        			return kernel.getManager3D().Intersect(
+        							new String[] {c.getLabel()},
+        							(GeoLineND) arg[0],
+        							(GeoSurfaceFinite) arg[1]);
         		
 
-        		//intersection line/surface : only if surface has no outline
+        		//intersection line/surface : only if surface is treated as its outline
         		else if ((arg[0] instanceof GeoLineND && arg[1] instanceof GeoCoordSys2D)
         				||(arg[1] instanceof GeoLineND && arg[0] instanceof GeoCoordSys2D)){
-
+        			
         			GeoElement[] ret =
         			{
         					kernel.getManager3D().Intersect(
@@ -108,6 +120,7 @@ public  GeoElement[] process(Command c) throws MyError {
         			
         		//LINES
 
+        			
         		//intersection plane/plane
         		}else if (arg[0] instanceof GeoPlaneND && arg[1] instanceof GeoPlaneND){
 
