@@ -380,7 +380,10 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			// needed for detached views and MacOS
 			// Ctrl + Z: Undo
 			case KeyEvent.VK_Z:
-				app.getGuiManager().undo();
+				if (event.isShiftDown())
+					app.getGuiManager().redo();
+				else
+					app.getGuiManager().undo();
 				consumed = true;
 				break;
 						
