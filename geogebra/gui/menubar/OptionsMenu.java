@@ -123,6 +123,7 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 		addRadioButtonMenuItems(menuLabeling, (ActionListener) this, lstr,
 				lastr, 0);
 		add(menuLabeling);
+		updateMenuLabeling();
 		
 		//add(drawingPadPropAction);	
 
@@ -353,6 +354,17 @@ class OptionsMenu extends BaseMenu implements ActionListener {
 				break;
 			}
 		}
+	}
+
+	/**
+	 * Update the selected item in the labeling capturing menu.
+	 */
+	private void updateMenuLabeling() {
+		if (menuLabeling == null) return;
+		
+		int pos = app.getLabelingStyle();
+		((JRadioButtonMenuItem) menuLabeling.getMenuComponent(pos))
+				.setSelected(true);
 	}
 
 	/**
