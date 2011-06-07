@@ -23,7 +23,7 @@ Contributions by Loic Le Coq (France 2006-11); Joan Carles Naranjo, Victor Franc
   Zoltan Kovacs (Hungary 2010-11); Philipp Birklbauer (Austria 2010-11); 
   Simon Weitzhofer (Austria 2011); Judit Elias (Hungary 2010-11); 
   Thomas Unterthiner (Austria 2011); Kai Chung Tam (USA 2011);
-  Darko Drakulic (Bosnia-Herzegovina 2011); Julian Lettner (Austria 2011)
+  Darko Drakulic (Bosnia and Herzegovina 2011); Julian Lettner (Austria 2011)
   
 TRANSLATIONS
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia), Maha Ah (Egypt)
