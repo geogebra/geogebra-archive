@@ -348,6 +348,10 @@ public class EuclidianStyleBar extends JToolBar implements ActionListener {
 		defaultGeoMap.put(EuclidianConstants.MODE_TEXT, ConstructionDefaults.DEFAULT_TEXT) ;
 		defaultGeoMap.put(EuclidianConstants.MODE_SLIDER, ConstructionDefaults.DEFAULT_NUMBER) ;
 		defaultGeoMap.put(EuclidianConstants.MODE_IMAGE, ConstructionDefaults.DEFAULT_IMAGE) ;
+		
+		defaultGeoMap.put(EuclidianConstants.MODE_SHOW_HIDE_CHECKBOX, ConstructionDefaults.DEFAULT_BOOLEAN) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_BUTTON_ACTION, ConstructionDefaults.DEFAULT_NONE) ;
+		defaultGeoMap.put(EuclidianConstants.MODE_TEXTFIELD_ACTION, ConstructionDefaults.DEFAULT_NONE) ;
 	}
 	
 	
