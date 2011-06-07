@@ -2841,7 +2841,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_DISTANCE:
-			changedKernel = distance(hits, e);
+			ret = distance(hits, e);
 			break;	
 
 		case EuclidianView.MODE_MACRO:			
@@ -4975,9 +4975,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 
 	// get 2 points, 2 lines or 1 point and 1 line
-	final protected boolean distance(Hits hits, MouseEvent e) {
+	final protected GeoElement[] distance(Hits hits, MouseEvent e) {
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		int count = addSelectedPoint(hits, 2, false);
 		if (count == 0) {
@@ -5001,8 +5001,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// set startpoint of text to midpoint of two points
 			GeoPoint midPoint = kernel.Midpoint(points[0], points[1]);
-			createDistanceText(points[0], points[1], midPoint, length);			
-			return true;
+			GeoElement[] ret = { null };
+			ret[0] = createDistanceText(points[0], points[1], midPoint, length);
+			return ret;
 		} 
 
 		// SEGMENT
@@ -5017,14 +5018,15 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				segments[0].setLabelMode(GeoElement.LABEL_VALUE);
 			segments[0].setLabelVisible(true);
 			segments[0].updateRepaint();
-			return true;
+			return segments; // return this not null because the kernel has changed 
 		}
 
 		// TWO LINES
 		else if (selLines() == 2) {			
 			GeoLine[] lines = getSelectedLines();
-			kernel.Distance(null, lines[0], lines[1]);
-			return true;
+			GeoElement[] ret = { null };
+			ret[0] = kernel.Distance(null, lines[0], lines[1]);
+			return ret; // return this not null because the kernel has changed
 		}
 
 		// POINT AND LINE
@@ -5035,8 +5037,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// set startpoint of text to midpoint between point and line
 			GeoPoint midPoint = kernel.Midpoint(points[0], kernel.ProjectedPoint(points[0], lines[0]));
-			createDistanceText(points[0],lines[0], midPoint, length);	
-			return true;
+			GeoElement[] ret = { null };
+			ret[0] = createDistanceText(points[0],lines[0], midPoint, length);	
+			return ret;
 		}
 
 		// circumference of CONIC
@@ -5052,7 +5055,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					else 
 						conic.setLabelMode(GeoElement.LABEL_VALUE);
 					conic.updateRepaint();
-					return true;
+					GeoElement [] ret = { conic };
+					return ret; // return this not null because the kernel has changed
 				}				
 			} 
 
@@ -5064,8 +5068,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (conic.isLabelSet()) {
 				circumFerence.setLabel(removeUnderscores(app.getCommand("Circumference").toLowerCase(Locale.US) + conic.getLabel()));							
 				text.setLabel(removeUnderscores(app.getPlain("Text") + conic.getLabel()));				
-			}			
-			return true;
+			}
+			GeoElement[] ret = { text };
+			return ret;
 		}
 
 		// perimeter of CONIC
@@ -5081,10 +5086,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				perimeter.setLabel(removeUnderscores(app.getCommand("Perimeter").toLowerCase(Locale.US) + poly[0].getLabel()));							
 				text.setLabel(removeUnderscores(app.getPlain("Text") + poly[0].getLabel()));				
 			} 
-			return true;
+			GeoElement[] ret = { text };
+			return ret;
 		}
 
-		return false;
+		return null;
 	}	
 
 	/**
