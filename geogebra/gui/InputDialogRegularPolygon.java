@@ -59,7 +59,10 @@ public class InputDialogRegularPolygon extends InputDialog{
 
 		if (ret) {
 			GeoElement[] geos = kernel.RegularPolygon(null, geoPoint1, geoPoint2, ((NumberInputHandler)inputHandler).getNum());
-			kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(geos);
+			GeoElement[] onlypoly = { null };
+			if (geos != null)
+				onlypoly[0] = geos[0];
+			kernel.getApplication().getActiveEuclidianView().getEuclidianController().memorizeJustCreatedGeos(onlypoly);
 		}
 		
 
