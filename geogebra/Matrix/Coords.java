@@ -73,7 +73,7 @@ public class Coords
 	 * @param w
 	 */
 	public Coords(double x, double y, double z){
-		super(4,1);
+		super(3,1);
 		val[0]=x;
 		val[1]=y;
 		val[2]=z;
@@ -252,7 +252,7 @@ public class Coords
 	 * @param v vector multiplied with
 	 * @return value of the dot product*/
 	public double dotproduct(Coords v){
-		int len = getLength();
+		int len = Math.min(getLength(), v.getLength());
 		double res = 0;
 		for(int i=0;i<len; i++)
 			res+=val[i]*v.val[i];
@@ -658,6 +658,10 @@ public class Coords
 				return false;
 		
 		return true;
+	}
+	
+	public boolean isEqual(Coords v){
+		return equalsForKernel(v, Kernel.EPSILON);
 	}
 	
 	/**
