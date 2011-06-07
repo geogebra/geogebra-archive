@@ -144,18 +144,15 @@ public class SelectionTable extends JTable{
 		else if(columns == -1){
 			columns = (int) (1.0 * Math.ceil(data.length / rows));
 		}
-
-
-		//=======================================
-		// create the table model and load the data
+		
 		numRows = rows;
 		numColumns = columns;
-		model = new DefaultTableModel(rows, columns);
-
+		
+		//=======================================
+		
+		
+		// set the table model with the data
 		populateModel(data);
-
-		// add the model to the table
-		this.setModel(model);
 
 
 		//=======================================	
@@ -198,12 +195,13 @@ public class SelectionTable extends JTable{
 
 
 
-
 	/** Loads a one dimensional array of data into the table model*/
 	public void populateModel( Object [] data){
-
+		
+		model = new DefaultTableModel(numRows, numColumns);
 		int r=0;
 		int c=0;
+		
 		for(int i=0; i < Math.min(data.length, this.numRows * this.numColumns); i++){
 			model.setValueAt(data[i], r, c);
 			++c;
@@ -212,6 +210,8 @@ public class SelectionTable extends JTable{
 				++r;
 			}
 		}
+		
+		setModel(model);
 	}
 
 
@@ -222,10 +222,6 @@ public class SelectionTable extends JTable{
 		}
 		return iconArray;
 	}
-
-
-
-
 
 
 

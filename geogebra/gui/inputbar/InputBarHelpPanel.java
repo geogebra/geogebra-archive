@@ -20,6 +20,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.Collator;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -65,7 +66,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	
 	
 	private MyJTree cmdTree, fcnTree;
-	private DefaultMutableTreeNode functionRoot, rootSubCommands, rootAllCommands;;
+	private DefaultMutableTreeNode functionTitleNode, rootSubCommands, rootAllCommands;;
 	private DefaultTreeModel cmdTreeModel;
 
 	private String selectedCommand, rollOverCommand;
@@ -73,8 +74,6 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		return selectedCommand;
 	}
 	private String selectedFunction;
-	
-	
 	
 	
 	private JPopupMenu contextMenu;
@@ -249,11 +248,11 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		functionTable.setBackground(bgColor);
 		functionTable.setVisible(false);
 
-		functionRoot = new DefaultMutableTreeNode();
+		DefaultMutableTreeNode functionRoot = new DefaultMutableTreeNode();
 		
-		DefaultMutableTreeNode node = new DefaultMutableTreeNode(app.getMenu("MathematicalFunctions"));
-		node.add(new DefaultMutableTreeNode());
-		functionRoot.add(node);
+		functionTitleNode = new DefaultMutableTreeNode(app.getMenu("MathematicalFunctions"));
+		functionTitleNode.add(new DefaultMutableTreeNode());
+		functionRoot.add(functionTitleNode);
 		fcnTree = new MyJTree(new DefaultTreeModel(functionRoot));
 		fcnTree.addTreeExpansionListener(
 				new TreeExpansionListener(){
@@ -304,8 +303,6 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 	/** mouse listener to handle table selection */
 	public class TableSelectionListener extends MouseAdapter  {
 
-		
-
 		public void mouseClicked(MouseEvent e) {
 
 			if(e.getSource() == functionTable){
@@ -330,7 +327,11 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		syntaxLabel.setText(app.getPlain("Syntax"));
 		btnPaste.setText(app.getMenu("Paste"));
 		helpTextPane.setText(null);
+		functionTable.populateModel(TableSymbols.functions);
+		functionTitleNode.setUserObject(app.getMenu("MathematicalFunctions"));
+		rootAllCommands.setUserObject(app.getMenu("AllCommands") );
 		updateFonts();
+		repaint();
 	}
 
 
@@ -457,14 +458,20 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			parent.add(child);
 			return;
 		}
+		
+		Collator collator = Collator.getInstance(app.getLocale());
+		collator.setStrength(Collator.SECONDARY);
+		collator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
 		DefaultMutableTreeNode node=null;
+		
 		for(int i=0;i<n;i++){
 			node = (DefaultMutableTreeNode)parent.getChildAt(i);
-			if(node.toString().compareTo(child.toString())>0){
+			if(collator.compare(node.toString(), child.toString()) > 0){
 				parent.insert(child, i);
 				return;
 			}
 		}
+		
 		parent.add(child);
 		return;
 	}
