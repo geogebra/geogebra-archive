@@ -4225,9 +4225,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 	// build polygon	
 	protected GeoElement[] polygon(){
-		if (polygonRigid)
-			return kernel.RigidPolygon(null, getSelectedPoints());
-		else{
+		if (polygonRigid) {
+			GeoElement[] ret = { null };
+			GeoElement [] ret0 = kernel.RigidPolygon(null, getSelectedPoints());
+			if (ret0 != null)
+				ret[0] = ret0[0];
+			return ret;
+		} else{
 			//check if there is a 3D point
 			GeoPointND[] pointsND = getSelectedPointsND();
 			GeoPoint[] points = new GeoPoint[pointsND.length];
@@ -4237,10 +4241,19 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					point3D=true;
 				else 
 					points[i]=(GeoPoint) pointsND[i];
-			if (point3D)
-				return kernel.getManager3D().Polygon3D(null, pointsND);
-			else
-				return kernel.Polygon(null, points);
+			if (point3D) {
+				GeoElement[] ret = { null };
+				GeoElement [] ret0 = kernel.getManager3D().Polygon3D(null, pointsND);
+				if (ret0 != null)
+					ret[0] = ret0[0];
+				return ret;
+			} else {
+				GeoElement[] ret = { null };
+				GeoElement[] ret0 = kernel.Polygon(null, points);
+				if (ret0 != null)
+					ret[0] = ret0[0];
+				return ret;
+			}
 		}
 	}
 
