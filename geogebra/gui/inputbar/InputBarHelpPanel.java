@@ -432,13 +432,32 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 				}
 			}	 
 		}
+		
+		// make sure eg accented letters get sorted correctly
+		Collator collator = Collator.getInstance(app.getLocale());
+		collator.setStrength(Collator.SECONDARY);
+		collator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
+
 
 		LowerCaseDictionary dict = app.getCommandDictionary(); 
 		Iterator<?> it = dict.getIterator();
 		while (it.hasNext()) {
 			String cmdName = (String) dict.get(it.next());
 			if (cmdName != null && cmdName.length() > 0){
-				rootAllCommands.add(new DefaultMutableTreeNode(cmdName));
+				boolean inserted = false;
+				if (rootAllCommands.getChildCount() == 0) {
+					rootAllCommands.add(new DefaultMutableTreeNode(cmdName));
+				} else {
+					for (int i = 0 ; i < rootAllCommands.getChildCount() ; i++) {
+						if(collator.compare(rootAllCommands.getChildAt(i).toString(), cmdName) > 0){
+							rootAllCommands.insert(new DefaultMutableTreeNode(cmdName), i);
+							//Application.debug(rootAllCommands.getChildAt(i).toString()+" "+cmdName);
+							inserted = true;
+							break;
+						}
+					}
+					if (!inserted) rootAllCommands.add(new DefaultMutableTreeNode(cmdName));
+				}
 			}
 		}	
 
