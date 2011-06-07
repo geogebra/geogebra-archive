@@ -61,6 +61,11 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
      */
     protected AlgoIntersectLinePolygon(Construction c, String[] labels, GeoLineND g, GeoPolygon p) {
         this(c, labels, g, p, p.asBoundary());    }
+ 
+    public AlgoIntersectLinePolygon(Construction c, String[] labels,
+    		GeoPolygon p, GeoLineND g, boolean asBoundary) {
+    	this(c,labels,g,p,asBoundary);
+    }
     
     public AlgoIntersectLinePolygon(Construction c, String[] labels,
 			GeoLineND g, GeoPolygon p, boolean asBoundary) {
@@ -80,20 +85,31 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
         compute();
         
         setInputOutput(); // for AlgoElement
-
         
         //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
         if (labels!=null &&
         		labels.length==1 &&
-        		outputPoints.size() > 1 &&
+        		//outputPoints.size() > 1 &&
         		labels[0]!=null &&
         		!labels[0].equals("")) {
         	outputPoints.setIndexLabels(labels[0]);
-        	outputSegments.setIndexLabels(labels[0]);
+          	outputSegments.setLabels(null);
+        //if there are k>=2 labels, now for simplicity only the first two will be used.
+        //first for indexing points, second for indexing segments.
+        } else if (labels!=null &&
+        		labels.length>=2 &&
+   //     		outputPoints.size() > 1 && outputSegments.size() > 1 &&
+        		labels[0]!=null && labels[1]!=null &&
+        		!labels[0].equals("") && !labels[1].equals("")) {
+        	outputPoints.setIndexLabels(labels[0]);
+        	outputSegments.setIndexLabels(labels[1]);
         } else {
+        	
         	outputPoints.setLabels(labels);
-        	if ( outputPoints.size()==0 || outputSegments.size()!=0) //when there is a point, an 'empty segment' is not needed.
-        		outputSegments.setLabels(labels);
+        	outputPoints.setIndexLabels(outputPoints.getElement(0).getLabel());
+        	//if ( outputPoints.size()==0 || outputSegments.size()!=0) //when there is a point, an 'empty segment' is not needed.
+        	outputSegments.setLabels(labels);
+        	outputSegments.setIndexLabels(outputSegments.getElement(0).getLabel());
         }
         update();    
 
@@ -369,7 +385,6 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     	for(;index<outputPoints.size();index++)
     		outputPoints.getElement(index).setUndefined();
 
-    	
     	if (!pAsBoundary) {
     		newSegmentCoords.clear();
     		

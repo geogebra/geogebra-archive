@@ -12,6 +12,7 @@ import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
+import geogebra3D.kernel3D.GeoPlane3D;
 
 /**
  * Interface for managing all 3D methods in Kernel.
@@ -363,7 +364,9 @@ public interface Manager3DInterface {
 						String[] labels,
 						GeoLineND g, GeoPolygon p) ;		 
 
-			 
+			 public GeoElement[] Intersect(
+						String[] labels,
+						GeoPlane3D g, GeoSurfaceFinite p) ;		 
 			 /** Calculate the intersection of plane and quadric
 			  * @param label name of the point
 			  * @param plane

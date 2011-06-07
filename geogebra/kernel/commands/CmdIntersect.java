@@ -51,7 +51,7 @@ public  GeoElement[] process(Command c) throws MyError {
             }
             // Line - Polygon
             else if ((ok[0] = (arg[0] .isGeoLine()))
-                && (ok[1] = (arg[1] .isGeoPolygon()))) {
+            		&& (ok[1] = (arg[1] .isGeoPolygon()))) {
                 GeoElement[] ret =
                          kernel.IntersectLinePolygon(
                             c.getLabels(),

@@ -84,8 +84,19 @@ public class AlgoIntersectCS2D2D extends AlgoIntersectCoordSys {
 
     }
     
-    
-    
+    public static GeoLine3D getIntersectPlanePlane (GeoCoordSys2D cs1, GeoCoordSys2D cs2) {
+
+    	Coords[] intersection = CoordMatrixUtil.intersectPlanes(
+    			cs1.getCoordSys().getMatrixOrthonormal(),
+    			cs2.getCoordSys().getMatrixOrthonormal());
+
+    	// update line
+    	Construction c = cs1.toGeoElement().getConstruction();
+    	c.getKernel().setSilentMode(true);
+    	GeoLine3D l = new GeoLine3D(c, intersection[0], intersection[1]);
+    	c.getKernel().setSilentMode(false);
+    	return l;
+    }
     
     
     

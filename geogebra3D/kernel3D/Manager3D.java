@@ -618,6 +618,20 @@ public class Manager3D implements Manager3DInterface {
 	}
 
 	
+	 public GeoElement[] Intersect(
+				String[] labels,
+				GeoPlane3D plane, GeoSurfaceFinite s) {
+			
+		 	boolean asBoundary = false;
+		 	
+		 	if (s instanceof GeoPolygon) {
+		 		AlgoIntersectLinePolygon3D algo = new AlgoIntersectPlanePolygon(cons, labels, plane, (GeoPolygon)s, asBoundary);
+		 		return algo.getOutput();
+		 	} else {
+		 		return null;
+		 	}
+	 }
+	
 	public GeoConic3D Intersect(
 			 String label,
 			 GeoPlaneND plane,

@@ -12,6 +12,7 @@ import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoQuadricND;
 import geogebra.main.MyError;
+import geogebra3D.kernel3D.GeoPlane3D;
 
 
 /*
@@ -88,7 +89,7 @@ public  GeoElement[] process(Command c) throws MyError {
         				||(arg[1] instanceof GeoLineND && arg[0] instanceof GeoSurfaceFinite))
         			
         			return kernel.getManager3D().Intersect(
-        							new String[] {c.getLabel()},
+        							c.getLabels(),
         							(GeoLineND) arg[0],
         							(GeoSurfaceFinite) arg[1]);
         		
@@ -119,6 +120,18 @@ public  GeoElement[] process(Command c) throws MyError {
 
         		}
         		//LINES
+        		
+        		//intersection plane/polygon
+        		else if (arg[0] instanceof GeoPlane3D && arg[1] instanceof GeoSurfaceFinite ||
+        				arg[1] instanceof GeoPlane3D && arg[0] instanceof GeoSurfaceFinite ){
+
+        			GeoElement[] ret =
+        					kernel.getManager3D().Intersect(
+        							c.getLabels(),
+        							(GeoPlane3D) arg[0],
+        							(GeoSurfaceFinite) arg[1]);
+        			return ret;
+        		}
         		
         		//intersection plane/plane
         		else if (arg[0] instanceof GeoPlaneND && arg[1] instanceof GeoPlaneND){
