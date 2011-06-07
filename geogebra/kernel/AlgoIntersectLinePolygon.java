@@ -60,7 +60,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
      * @param p
      */
     protected AlgoIntersectLinePolygon(Construction c, String[] labels, GeoLineND g, GeoPolygon p) {
-        this(c, labels, g, p, true);    }
+        this(c, labels, g, p, p.asBoundary());    }
     
     public AlgoIntersectLinePolygon(Construction c, String[] labels,
 			GeoLineND g, GeoPolygon p, boolean asBoundary) {
@@ -155,7 +155,15 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     	for(int i=0; i<p.getSegments().length; i++){
     		GeoSegment seg = (GeoSegment) p.getSegments()[i];
     		Coords coords = GeoVec3D.cross((GeoLine) g, seg);
-    		if (seg.respectLimitedPath(coords, Kernel.MIN_PRECISION)){
+    		if (Kernel.isZero(coords.getLast())){
+    			Coords segStart = seg.getPointInD(2, 0);
+    			Coords segEnd = seg.getPointInD(2, 1);
+    			if (((GeoLine) g).isOnPath(segStart, Kernel.EPSILON) &&
+    					((GeoLine) g).isOnPath(segEnd, Kernel.EPSILON)	) {
+    				newCoords.put(((GeoLine) g).getPossibleParameter(segStart), segStart);
+    				newCoords.put(((GeoLine) g).getPossibleParameter(segEnd), segEnd);
+    			}
+    		} else if (seg.respectLimitedPath(coords, Kernel.MIN_PRECISION)){
        			double t = ((GeoLine) g).getPossibleParameter(coords);
     			//Application.debug("parameter("+i+") : "+t);
        			if (t>=min && t<=max)//TODO optimize that
@@ -185,7 +193,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     	double pOutsideY = 0;
     	*/
     	
-    	//naive traversing algorithm which assumes no special case
+/*    	//naive traversing algorithm which assumes no special case
     	double s1 = g.getMinParameter();
     	double s2 = g.getMaxParameter(); 
        	double minKey = newCoords.firstKey();
@@ -225,24 +233,116 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		}
     		tLast = t;
     	}
- 
+ */
     	
     	//traversing algorithm for dealing with degenerated case
-   /* 	int regionChange = 1;  // 1: enter once; -1: quit once; 0: neither
-    	int regionWaitingToChange = 0; //0: no need to wait;
-    	//1: wait for other right hand segment
-    	//-1: wait for another left hand segment 
     	
-    	double minKey = newCoords.firstKey();
+       	double minKey = newCoords.firstKey();
     	double maxKey = newCoords.lastKey();
+    	double tOld;
     	
-    	for (double t = maxKey;
-    			t > minKey;
-    			t = newCoords.subMap(minKey, t).lastKey()) {
-    		//if guaranteed no singularity, just do    		
-    		//check which segments contains P(t) 
-    	}	 
-    */		
+    	boolean isEnteringRegion = true; // true: entering; false: quitting;
+    	
+    	//the following variables will be used only
+    	//when the line enters the region through a vertex of the polygon
+    	boolean segmentAlongLine = false; //true when a positive length of segment is going to be
+    	//contained in the result.
+    	
+ 
+    	//initiate tOld
+    	if (g.getMinParameter()>=maxKey)
+    		tOld = g.getMinParameter();
+    	else
+    		tOld = g.getMaxParameter();
+         	
+    	//PathParameter tempParam = new PathParameter(tOld);
+      	//Coords tempCoords = new Coords(0, 0, 1);
+      	Coords tempCoords = ((GeoLine)g).getPointInD(2, tOld);
+    	//.doPointChanged(tempCoords, tempParam);
+
+    	isEnteringRegion = (p.isInRegion(tempCoords.get(1),tempCoords.get(2))
+    			&& !Kernel.isEqual(tOld, maxKey));
+    	
+    	if (!isEnteringRegion) {
+    		tOld = maxKey;
+    		isEnteringRegion = true;
+    	}
+ 
+    	//loop for all possible change of region
+    	while (tOld > minKey) {
+    		double tNew = newCoords.subMap(minKey, tOld).lastKey();
+    		
+    		//Check multiplicity at tLast
+    		//i.e. how many times g crosses the border at tLast
+    		int tOld_m = 0;
+    		int tOld_mRight = 0;
+    		int tOld_mLeft = 0;
+    		
+    		Coords gRight = g.getDirectionInD3().crossProduct(p.getCoordSys().getNormal());
+    		Coords coordsOld = newCoords.get(tOld);
+    		
+    		for (int i = 0; i<p.getPointsLength(); i++) {
+    			GeoSegmentND currSeg = p.getSegments()[i];
+    			
+    			if (currSeg.isOnPath(coordsOld, Kernel.EPSILON)) {
+    				tOld_m++;
+    			} else {
+    				continue;
+    			}
+    				
+    			if (coordsOld.getInhomCoords().isEqual(currSeg.getStartInhomCoords())
+    					|| coordsOld.getInhomCoords().isEqual(currSeg.getEndInhomCoords()) ) {
+    				tOld_m--;
+    				
+    				double currSegIncline = currSeg.getDirectionInD3().dotproduct(gRight);
+    				if (Kernel.isGreater(currSegIncline, 0))
+    					tOld_mRight++;
+    				else if (Kernel.isGreater(0, currSegIncline))
+    					tOld_mLeft++;
+    				else {//logically saying currSeg is along the line; can have potential computational problem unknown
+    					segmentAlongLine = true;
+    					tOld_m--;
+    				}
+    			}
+    		}
+    		
+    		if (tOld_mRight != 0 || tOld_mLeft != 0)
+    			if (tOld_mRight >= tOld_mLeft) {
+    				tOld_mRight -= tOld_mLeft;
+    				tOld_m += tOld_mLeft;
+    				tOld_mLeft=0;
+    			} else if (tOld_mRight < tOld_mLeft) {
+    				tOld_mLeft -= tOld_mRight;
+    				tOld_m += tOld_mRight;
+    				tOld_mRight=0;
+    			}
+    				
+    		//This is the main equation of this algorithm.
+    		//When the line meeting some segment,
+    		//default assumes that only one segment is involved,
+    		//and the line must be entering (isEnteringRegion=true)
+    		//or quitting (isEnteringRegion=false) the region.
+    		//If it turns out that the crossing is even number of  times,
+    		//revert isEnteringRegion.
+    		isEnteringRegion ^= (tOld_m % 2 == 0);
+    				
+    		if (segmentAlongLine) { //unconditionally add the segment
+    			//isEnteringRegion won't change
+    			newSegmentCoords.put(tOld,  new Coords[] {
+		    			newCoords.get(tOld), 
+		    			newCoords.get(tNew)
+		    			});
+    		} else {
+    			if (isEnteringRegion) //add the segment only if it is entering the region
+    				newSegmentCoords.put(tOld,  new Coords[] {
+    						newCoords.get(tOld), 
+    						newCoords.get(tNew)
+    						});
+    			isEnteringRegion = !isEnteringRegion;
+    		}
+    		tOld = tNew;
+    	}
+    	
 		
 	}
 

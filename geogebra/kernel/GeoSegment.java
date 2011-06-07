@@ -111,6 +111,8 @@ GeoSegmentND {
 	}
 	
 	public void setTwoPointsCoords(Coords start, Coords end) {
+		this.startPoint.setCoords(start.get(1),start.get(2),start.get(3));
+		this.endPoint.setCoords(end.get(1),end.get(2),end.get(3));
 		setPoints(this.startPoint, this.endPoint);
 		calcLength();
 	}

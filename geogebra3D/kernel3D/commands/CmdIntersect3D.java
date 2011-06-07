@@ -117,12 +117,11 @@ public  GeoElement[] process(Command c) throws MyError {
         							(GeoElement) arg[1])};
         			return ret;
 
-        			
+        		}
         		//LINES
-
-        			
+        		
         		//intersection plane/plane
-        		}else if (arg[0] instanceof GeoPlaneND && arg[1] instanceof GeoPlaneND){
+        		else if (arg[0] instanceof GeoPlaneND && arg[1] instanceof GeoPlaneND){
 
         			GeoElement[] ret =
         			{
