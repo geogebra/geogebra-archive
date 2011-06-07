@@ -22,10 +22,12 @@ import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
+import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoCoordSys;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPlaneND;
+import geogebra.kernel.kernelND.GeoPointND;
 
 
 
@@ -101,10 +103,48 @@ public class AlgoIntersectCS1D2D extends AlgoIntersectCoordSys {
 
     }
     
+    public static int RESULTCATEGORY_GENERAL = 1;
+    public static int RESULTCATEGORY_PARALLEL = 2;
+    public static int RESULTCATEGORY_CONTAINED = 3;
     
+    //TODO optimize it
+    public static int getConfigLinePlane(GeoLineND line, GeoCoordSys2D plane) {
+    	if (Kernel.isZero(line.getDirectionInD3().dotproduct(plane.getDirectionInD3()))) {
+    		if (Kernel.isZero(line.getPointInD(3, 0).sub(plane.getCoordSys().getOrigin()).dotproduct(plane.getDirectionInD3()))) {
+    			return RESULTCATEGORY_CONTAINED;
+    		} else {
+    			return RESULTCATEGORY_PARALLEL;
+    		}	
+    	} else {
+    		return RESULTCATEGORY_GENERAL;
+    	}
+    }
     
-       
-    
+    /**
+     * almost a clone of compute(), just for debugging
+     * @param line
+     * @param cs2D
+     * @return
+     */
+    public static Coords getIntersectLinePlane(GeoLineND line, GeoCoordSys2D cs2D) {
+
+    	Coords o = line.getPointInD(3, 0);
+    	Coords d = line.getPointInD(3, 1).sub(o);
+    	Coords[] project = 
+    		o.projectPlaneThruV(cs2D.getCoordSys().getMatrixOrthonormal(), d);
+    	
+    	//check if the point is in the line (segment or half-line)
+    	// and if the point is in the region (polygon, ...)
+    	if (
+    			-project[1].get(3) > line.getMinParameter()
+    			&& -project[1].get(3) < line.getMaxParameter() 	
+    			&&
+ 				cs2D.isInRegion(project[1].get(1),project[1].get(2))
+ 		){
+			return project[0];
+		}else
+			return null;
+    }
 	
 	protected String getIntersectionTypeString(){
 		return "IntersectionPointOfAB";

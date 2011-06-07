@@ -6,31 +6,40 @@ import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoIntersectLinePolygon;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
-import geogebra.kernel.GeoLine;
-import geogebra.kernel.GeoPoint;
+
 import geogebra.kernel.GeoPolygon;
-import geogebra.kernel.GeoSegment;
+
 import geogebra.kernel.Kernel;
-import geogebra.kernel.PathParameter;
-import geogebra.kernel.AlgoElement.OutputHandler;
-import geogebra.kernel.AlgoElement.elementFactory;
+
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.util.TreeMap;
 
-
 public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
 
+	private boolean lineInPlaneOfPolygon = false;
+	
+	/**
+	 * This assumes that the line is in the plane of polygon 
+	 * and the polygon acts as a region
+	 * @param c 
+	 * @param labels 
+	 * @param g 
+	 * @param p 
+	 */
 	AlgoIntersectLinePolygon3D(Construction c, String[] labels, GeoLineND g,
 			GeoPolygon p) {
-		super(c, labels, g, p);
+		this(c, labels, g, p, false);
 	}
 	
 	
     public AlgoIntersectLinePolygon3D(Construction c, String[] labels,
 			GeoLineND g, GeoPolygon p, boolean asBoundary) {
     	super(c, labels, g, p, asBoundary);
+    
+
+    	//else: no need to use this boolean.
 	}
 
 
@@ -62,13 +71,25 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
     
     protected void intersectionsCoords(GeoLineND g, GeoPolygon p, TreeMap<Double, Coords> newCoords){
 
+    	if (!lineInPlaneOfPolygon){
+    		//p.getConstruction().getKernel().setSilentMode(true);
+    		
+    		//AlgoIntersectCS1D2D algo = new AlgoIntersectCS1D2D(cons, null, (GeoElement) g,  p);
+    		//GeoPoint3D point = (GeoPoint3D) algo.getIntersection();
+    		
+    		Coords singlePoint = AlgoIntersectCS1D2D.getIntersectLinePlane(g,p);
+    		
+    		if (singlePoint!=null)
+    			newCoords.put(0.0, singlePoint);
+    		
+    		//p.getConstruction().getKernel().setSilentMode(false);
+    		return;
+    	}
     	//line origin, direction, min and max parameter values
     	Coords o1 = g.getPointInD(3, 0);
     	Coords d1 = g.getPointInD(3, 1).sub(o1);
     	double min = g.getMinParameter();
     	double max = g.getMaxParameter();
- 
-    	
     	
     	for(int i=0; i<p.getSegments().length; i++){
     		GeoSegmentND seg = (GeoSegmentND) p.getSegments()[i];
@@ -99,11 +120,14 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
 			TreeMap<Double, Coords> newCoords,
 			TreeMap<Double, Coords[]> newSegmentCoords) {
 		
-    	
-    	if (newCoords==null || newCoords.size()==0) {
-    		newSegmentCoords.clear();
+    	if (!lineInPlaneOfPolygon){
     		return;
     	}
+    	
+    	if (newCoords==null || newCoords.size()==0) {
+    		return;
+    	}
+    	
     	/*
       	//coords of some point outside of p, e.g. (x=1+Max X coord of P, 0) 
     	double pMaxX = 0;
@@ -174,6 +198,9 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
 		
 	}
 
-    
-
+    protected void compute() {
+    	if (!pAsBoundary) 
+    		lineInPlaneOfPolygon = (AlgoIntersectCS1D2D.getConfigLinePlane(g, p) == AlgoIntersectCS1D2D.RESULTCATEGORY_CONTAINED);
+    	super.compute();
+    }
 }

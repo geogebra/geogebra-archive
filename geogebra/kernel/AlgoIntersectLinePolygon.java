@@ -40,8 +40,8 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
 	private static final long serialVersionUID = 1L;
 	
 	
-	private GeoLineND g; // input
-	private GeoPolygon p; //input
+	protected GeoLineND g; // input
+	protected GeoPolygon p; //input
 	protected OutputHandler<GeoElement> outputPoints; // output
 	protected OutputHandler<GeoElement> outputSegments; // output 
     
@@ -50,7 +50,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     private TreeMap<Double, Coords[]> newSegmentCoords;
 
 
-	private boolean doComputeWhenPolygonAsBoundary;
+	protected boolean pAsBoundary;
     
     /** 
      * common constructor
@@ -69,7 +69,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
         
 		outputPoints=createOutputPoints();
 		outputSegments = createOutputSegments();
-        doComputeWhenPolygonAsBoundary = asBoundary;
+        pAsBoundary = asBoundary;
         
         this.g = g;
         this.p = p;
@@ -87,12 +87,13 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
         		labels.length==1 &&
         		outputPoints.size() > 1 &&
         		labels[0]!=null &&
-        		!labels[0].equals(""))
+        		!labels[0].equals("")) {
         	outputPoints.setIndexLabels(labels[0]);
-        else {
+        	outputSegments.setIndexLabels(labels[0]);
+        } else {
         	outputPoints.setLabels(labels);
-        	//test
-        	outputSegments.setLabels(labels);
+        	if ( outputPoints.size()==0 || outputSegments.size()!=0) //when there is a point, an 'empty segment' is not needed.
+        		outputSegments.setLabels(labels);
         }
         update();    
 
@@ -246,7 +247,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
 	}
 
     
-    protected final void compute() {  
+    protected void compute() {
     	
     	//clear the points map
     	newCoords.clear();
@@ -269,7 +270,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		outputPoints.getElement(index).setUndefined();
 
     	
-    	if (!doComputeWhenPolygonAsBoundary) {
+    	if (!pAsBoundary) {
     		newSegmentCoords.clear();
     		
     		//Calculate segments. Not for degenerating case 
