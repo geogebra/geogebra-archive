@@ -2849,7 +2849,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			break;
 
 		case EuclidianView.MODE_AREA:
-			changedKernel = area(hits, e);
+			ret = area(hits, e);
 			break;	
 
 		case EuclidianView.MODE_SLOPE:
@@ -5158,9 +5158,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		return label.replaceAll("_", "");			
 	}
 
-	protected boolean area(Hits hits,  MouseEvent e) {
+	protected GeoElement[] area(Hits hits,  MouseEvent e) {
 		if (hits.isEmpty())
-			return false;
+			return null;
 
 		int count = addSelectedPolygon(hits, 1, false);
 		if (count == 0) {
@@ -5176,7 +5176,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				GeoConicPart conicPart = (GeoConicPart) conic;
 				if (conicPart.getConicPartType() == GeoConicPart.CONIC_PART_ARC) {
 					clearSelections();
-					return false;
+					return null;
 				}				
 			} 
 
@@ -5188,8 +5188,9 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			if (conic.isLabelSet()) {					
 				area.setLabel(removeUnderscores(app.getCommand("Area").toLowerCase(Locale.US) + conic.getLabel()));							
 				text.setLabel(removeUnderscores(app.getPlain("Text") + conic.getLabel()));				
-			}			
-			return true;
+			}
+			GeoElement[] ret = { text };
+			return ret;
 		}
 
 		// area of polygon
@@ -5200,11 +5201,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			GeoText text = createDynamicText(descriptionPoints(app.getCommand("Area"), poly[0]), poly[0], e.getPoint());			
 			if (poly[0].isLabelSet()) {					
 				text.setLabel(removeUnderscores(app.getPlain("Text") + poly[0].getLabel()));				
-			} 
-			return true;
+			}
+			GeoElement[] ret = { text };
+			return ret;
 		}
 
-		return false;
+		return null;
 	}
 
 
