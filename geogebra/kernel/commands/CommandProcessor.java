@@ -7592,9 +7592,12 @@ class CmdLineStyle extends CommandProcessor {
 				int style = (int) ((NumberValue) arg[1]).getDouble();
 				Integer[] types = EuclidianView.getLineTypes();
 
+				//For invalid number we assume it's 0
+				//We do this also for SetPointStyle
+				 
 				if (style < 0 || style >= types.length)
-					throw argErr(app, c.getName(), arg[1]);
-
+					style = 0;
+				
 				arg[0].setLineType(types[style].intValue());
 				arg[0].updateRepaint();
 
