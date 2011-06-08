@@ -29,11 +29,13 @@ public class GeoGebraCAS {
 	private CASparser casParser;
 	private CASgeneric cas;
 	public int currentCAS = -1;
+	
+	private CASmathpiper casPiper;
 
 	public GeoGebraCAS(Kernel kernel) {
 		app = kernel.getApplication();
 		casParser = new CASparser(kernel);
-		
+		casPiper = new CASmathpiper(casParser, new CasParserToolsImpl('e'));
 		//app.setDefaultCAS(Application.CAS_MAXIMA);
 		
 		setCurrentCAS(Kernel.DEFAULT_CAS);
@@ -100,7 +102,10 @@ public class GeoGebraCAS {
 	}
 	
 	private CASmathpiper getMathPiper() {
-		return new CASmathpiper(casParser, new CasParserToolsImpl('e'));
+		if (casPiper != null)
+			return casPiper;
+		else 
+			return casPiper = new CASmathpiper(casParser, new CasParserToolsImpl('e'));
 	}
 	
 	private CASmaxima getMaxima() {
