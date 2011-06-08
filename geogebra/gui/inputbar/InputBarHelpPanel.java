@@ -415,58 +415,47 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 		rootSubCommands.removeAllChildren();
 		rootAllCommands.removeAllChildren();
 		
-		DefaultMutableTreeNode child;
-		
+		DefaultMutableTreeNode child;		
 		LowerCaseDictionary[] subDict = app.getSubCommandDictionary();
 
+		// load the sub-command nodes 
 		for(int i=0; i<subDict.length; i++){
+			
+			// add stem node: sub-command set name
 			String name = app.getKernel().getAlgebraProcessor().getSubCommandSetName(i);
 			child = new DefaultMutableTreeNode(name);
 			addNodeInSortedOrder(rootSubCommands,child);
-			//rootSubCommands.add(child);
+			
+			// add leaf nodes: sub-command names
 			Iterator<?> it = subDict[i].getIterator();
 			while (it.hasNext()) {
 				String cmdName = (String) subDict[i].get(it.next());
 				if (cmdName != null && cmdName.length() > 0){
-					child.add(new DefaultMutableTreeNode(cmdName));
+					addNodeInSortedOrder(child,new DefaultMutableTreeNode(cmdName));
 				}
 			}	 
 		}
 		
-		// make sure eg accented letters get sorted correctly
-		Collator collator = Collator.getInstance(app.getLocale());
-		collator.setStrength(Collator.SECONDARY);
-		collator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
-
-
+		// laod the All Commands node
 		LowerCaseDictionary dict = app.getCommandDictionary(); 
 		Iterator<?> it = dict.getIterator();
 		while (it.hasNext()) {
 			String cmdName = (String) dict.get(it.next());
 			if (cmdName != null && cmdName.length() > 0){
-				boolean inserted = false;
-				if (rootAllCommands.getChildCount() == 0) {
-					rootAllCommands.add(new DefaultMutableTreeNode(cmdName));
-				} else {
-					for (int i = 0 ; i < rootAllCommands.getChildCount() ; i++) {
-						if(collator.compare(rootAllCommands.getChildAt(i).toString(), cmdName) > 0){
-							rootAllCommands.insert(new DefaultMutableTreeNode(cmdName), i);
-							//Application.debug(rootAllCommands.getChildAt(i).toString()+" "+cmdName);
-							inserted = true;
-							break;
-						}
-					}
-					if (!inserted) rootAllCommands.add(new DefaultMutableTreeNode(cmdName));
-				}
+				addNodeInSortedOrder(rootAllCommands,new DefaultMutableTreeNode(cmdName));
 			}
 		}	
-
+		// ignore sort and put this one first
 		rootSubCommands.insert(rootAllCommands,0);
 
 	}
 
 
 
+	/**
+	 * Adds a new node to a sorted tree. Node leaf strings are sorted in ascending
+	 * order using a locale-sensitive Collator class.
+	 */
 	private void addNodeInSortedOrder(DefaultMutableTreeNode parent,
 			DefaultMutableTreeNode child){
 		
@@ -478,6 +467,7 @@ public class InputBarHelpPanel extends JPanel implements TreeSelectionListener, 
 			return;
 		}
 		
+		// make sure eg accented letters get sorted correctly
 		Collator collator = Collator.getInstance(app.getLocale());
 		collator.setStrength(Collator.SECONDARY);
 		collator.setDecomposition(Collator.CANONICAL_DECOMPOSITION);
