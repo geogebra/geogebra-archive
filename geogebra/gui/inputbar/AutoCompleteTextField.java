@@ -71,6 +71,7 @@ AutoComplete, KeyListener, GeoElementSelectionListener {
 	
 	public AutoCompleteTextField(int columns, Application app, boolean handleEscapeKey){
 		this(columns, app, handleEscapeKey, app.getCommandDictionary());
+		setDictionary(app.getCommandDictionary());
 	}
 
 	
