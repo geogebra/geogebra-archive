@@ -2593,7 +2593,7 @@ public abstract class GeoElement
 
 			} else if (isGeoFunction()) {
 				chars = functionLabels;
-			} else if (isGeoLine()) {
+			} else if (isGeoLine() || this instanceof GeoPolyLine) {
 				chars = lineLabels;
 			} else if (isGeoConic() || isGeoCubic()) {
 				chars = conicLabels;
@@ -2608,15 +2608,6 @@ public abstract class GeoElement
 				do {
 					counter++;
 					str = app.getPlain("Name.polygon") + kernel.internationalizeDigits(counter+"");;
-				} while (!cons.isFreeLabel(str));
-				return str;
-			}
-			else if (this instanceof GeoPolyLine) {
-				int counter = 0;
-				String str;
-				do {
-					counter++;
-					str = app.getPlain("Name.polyline") + kernel.internationalizeDigits(counter+"");;
 				} while (!cons.isFreeLabel(str));
 				return str;
 			}
