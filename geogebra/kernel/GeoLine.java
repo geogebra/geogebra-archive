@@ -1126,6 +1126,11 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
   		return getStartCoordsInD(dimension).add(getDirectionInD(dimension).mul(lambda));
 	}
 
+  	/**
+  	 * returns inhom coords in dimension
+  	 * @param dimension
+  	 * @return
+  	 */
   	private Coords getStartCoordsInD(int dimension){
 
   		Coords startCoords;

@@ -71,4 +71,8 @@ public interface GeoLineND extends GeoDirectionND{
 
 	public boolean isOnFullLine(Coords p, double minPrecision);
 
+	public GeoPointND getEndPoint();
+	
+	public GeoPointND getStartPoint();
+
 }

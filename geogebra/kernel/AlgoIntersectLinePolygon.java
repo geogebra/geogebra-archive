@@ -194,10 +194,9 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
 			TreeMap<Double, Coords[]> newSegmentCoords) {
 		
     	
-    	if (newCoords==null || newCoords.size()==0) {
-    		newSegmentCoords.clear();
+    	if (newCoords==null )
     		return;
-    	}
+
     	/*
       	//coords of some point outside of p, e.g. (x=1+Max X coord of P, 0) 
     	double pMaxX = 0;
@@ -250,12 +249,21 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		tLast = t;
     	}
  */
-    	
+    	if (newCoords.isEmpty()) {
+    		if (g instanceof GeoSegmentND &&
+    				p.isInRegion(((GeoSegmentND)g).getStartPoint(),false))
+    			newSegmentCoords.put(0.0,  new Coords[] {
+    					((GeoSegmentND)g).getStartPoint().getCoordsInD(2),
+    					((GeoSegmentND)g).getEndPoint().getCoordsInD(2)});
+    		
+    		return;
+    	}
     	//traversing algorithm for dealing with degenerated case
     	
        	double minKey = newCoords.firstKey();
     	double maxKey = newCoords.lastKey();
-    	double tOld;
+    	double tOld, tFirst, tLast;
+    	Coords coordsOld, coordsFirst, coordsLast;
     	
     	boolean isEnteringRegion = true; // true: entering; false: quitting;
     	
@@ -265,25 +273,35 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     	//contained in the result.
     	
  
-    	//initiate tOld
-    	if (g.getMinParameter()>=maxKey)
-    		tOld = g.getMinParameter();
-    	else
-    		tOld = g.getMaxParameter();
-         	
-    	//PathParameter tempParam = new PathParameter(tOld);
-      	//Coords tempCoords = new Coords(0, 0, 1);
-      	Coords tempCoords = ((GeoLine)g).getPointInD(2, tOld);
-    	//.doPointChanged(tempCoords, tempParam);
-
-    	isEnteringRegion = (p.isInRegion(tempCoords.get(1),tempCoords.get(2))
-    			&& !Kernel.isEqual(tOld, maxKey));
-    	
-    	if (!isEnteringRegion) {
-    		tOld = maxKey;
-    		isEnteringRegion = true;
+    	//initiate tOld and coordsOld
+    	if (g.getMinParameter()>=maxKey){
+    		tFirst = g.getMinParameter();
+    		//coordsFirst = ((GeoLine) g).startPoint.getCoordsInD(2);
+    		tLast = g.getMaxParameter();
+    		//coordsLast = ((GeoLine) g).endPoint.getCoordsInD(2);
+    	} else {
+    		tFirst = g.getMaxParameter();
+    		//coordsFirst = ((GeoLine) g).endPoint.getCoordsInD(2);
+    		tLast = g.getMinParameter();
+    		//coordsLast = ((GeoLine) g).startPoint.getCoordsInD(2);
     	}
- 
+    	coordsFirst = ((GeoLine)g).getPointInD(2, tFirst);
+    	coordsLast = ((GeoLine)g).getPointInD(2, tLast);
+    	
+    	//deal with the first point
+    	tOld = tFirst;
+   		coordsOld = ((GeoLine)g).getPointInD(2, tOld);//TODO optimize it
+
+    	if (isEnteringRegion = (p.isInRegion(coordsOld.get(1),coordsOld.get(2))
+    			&& !Kernel.isEqual(tOld, maxKey))) 
+    		newSegmentCoords.put(tOld,
+    				new Coords[] {coordsFirst, newCoords.get(maxKey)}
+    		);
+    	isEnteringRegion = !isEnteringRegion;
+    	
+    	tOld = maxKey;
+    	coordsOld = newCoords.get(maxKey);
+
     	//loop for all possible change of region
     	while (tOld > minKey) {
     		double tNew = newCoords.subMap(minKey, tOld).lastKey();
@@ -295,7 +313,6 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		int tOld_mLeft = 0;
     		
     		Coords gRight = g.getDirectionInD3().crossProduct(p.getCoordSys().getNormal());
-    		Coords coordsOld = newCoords.get(tOld);
     		
     		for (int i = 0; i<p.getPointsLength(); i++) {
     			GeoSegmentND currSeg = p.getSegments()[i];
@@ -357,6 +374,13 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     			isEnteringRegion = !isEnteringRegion;
     		}
     		tOld = tNew;
+    		coordsOld = newCoords.get(tOld);
+    	}
+    	if (isEnteringRegion && !Kernel.isEqual(tOld, tLast)) {
+    		newSegmentCoords.put(tOld,  new Coords[] {
+					newCoords.get(tOld), 
+					coordsLast
+					});
     	}
     	
 		

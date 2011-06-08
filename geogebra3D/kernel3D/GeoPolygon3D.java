@@ -525,10 +525,10 @@ extends GeoPolygon implements GeoElement3DInterface, Path, GeoCoordSys2D {
 		
 		GeoPoint3D P = (GeoPoint3D) PI;
 
-		if (update){
+		//if (update){
 			//udpate region coords
 			P.updateCoords2D(this);
-		}
+		//}
 		
 		return isInRegion(P.getX2D(), P.getY2D());
 		
