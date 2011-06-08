@@ -528,7 +528,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		case EuclidianView.MODE_CIRCLE_SECTOR_THREE_POINTS:
 		case EuclidianView.MODE_CIRCUMCIRCLE_SECTOR_THREE_POINTS:
 			previewDrawable = new DrawConicPart((EuclidianView) view, mode, selectedPoints);
-			break;										
+			break;
+
+		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+			useLineEndPoint = false;
+			previewDrawable = view.createPreviewVector(selectedPoints);
+			break;
 
 		case EuclidianView.MODE_SHOW_HIDE_OBJECT:
 			// select all hidden objects			
@@ -5908,20 +5913,38 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 		// translation vector
 		if (count == 0) {
-			addSelectedVector(hits, 1, false);
-		}				
+			count = addSelectedVector(hits, 1, false);
+		}
+		
+		// create translation vector
+		if (count == 0) {
+			count = addSelectedPoint(hits, 2, false);
+			selectedGeos.removeAll(selectedPoints);
+		}
 
 		// we got the mirror point
-		if (selVectors() == 1) {		
+		if (selVectors() == 1 || selPoints() == 2) {		
 			if (selPolygons() == 1) {
 				GeoPolygon[] polys = getSelectedPolygons();
-				GeoVector[] vecs = getSelectedVectors();	
-				return kernel.Translate(null,  polys[0], vecs[0]);
+				GeoVector vec = null;
+				if (selVectors() == 1)
+					vec = getSelectedVectors()[0];
+				else {
+					GeoPoint[] ab = getSelectedPoints();
+					vec = kernel.Vector(null, ab[0], ab[1]);
+				}
+				return kernel.Translate(null,  polys[0], vec);
 			}
 			else if (selGeos() > 0) {
 				// mirror all selected geos
 				GeoElement [] geos = getSelectedGeos();
-				GeoVector vec = getSelectedVectors()[0];
+				GeoVector vec = null;
+				if (selVectors() == 1)
+					vec = getSelectedVectors()[0];
+				else {
+					GeoPoint[] ab = getSelectedPoints();
+					vec = kernel.Vector(null, ab[0], ab[1]);
+				}
 				ArrayList<GeoElement> ret = new ArrayList<GeoElement>();
 				for (int i=0; i < geos.length; i++) {
 					if (geos[i] != vec) {
