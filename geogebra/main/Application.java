@@ -4674,6 +4674,7 @@ public class Application implements KeyEventDispatcher {
 	}
 
 	public final LowerCaseDictionary getCommandDictionary() {
+		fillCommandDict();
 		return commandDict;
 	}
 	

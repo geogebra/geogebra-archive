@@ -113,7 +113,9 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 			return textField.isEqualsRequired();
 	}
 	
-	
+	public void setLabels() {
+		textField.setDictionary(app.getCommandDictionary());	
+	}
 	
 
 	//=======================================================
@@ -453,6 +455,9 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		delegate.setValue(text);
 		super.stopCellEditing();
 	}
+
+
+
 
 	
 	/*

@@ -405,7 +405,9 @@ public class MyTable extends JTable implements FocusListener
 		return view.isEqualsRequired();
 	}
 	
-	
+	public void setLabels() {
+		editor.setLabels();
+	}
 	
 	
 	
