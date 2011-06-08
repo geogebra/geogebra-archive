@@ -1449,6 +1449,24 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			else if (movedGeoImage.hasAbsoluteLocation()) {
 				startPoint.setLocation(xRW, yRW);
 				oldImage = new GeoImage(movedGeoImage);
+
+				GeoPoint loc = (GeoPoint) movedGeoImage.getStartPoints()[2];
+				if (loc != null) { // top left defined
+					transformCoordsOffset[0]=loc.inhomX-xRW;
+					transformCoordsOffset[1]=loc.inhomY-yRW;
+				} else {
+					loc = (GeoPoint) movedGeoImage.getStartPoint();
+					if (loc != null) { // bottom left defined (default)
+						transformCoordsOffset[0]=loc.inhomX-xRW;
+						transformCoordsOffset[1]=loc.inhomY-yRW;
+					} else {
+						loc = (GeoPoint) movedGeoImage.getStartPoints()[1];
+						if (loc != null) { // bottom right defined
+							transformCoordsOffset[0]=loc.inhomX-xRW;
+							transformCoordsOffset[1]=loc.inhomY-yRW;
+						}
+					}
+				}
 			} 				
 		}
 		else {
