@@ -7,7 +7,6 @@ import geogebra.kernel.GeoPolygon;
 
 public class AlgoIntersectPlanePolygon extends AlgoIntersectLinePolygon3D {
 	
-
 	public AlgoIntersectPlanePolygon(Construction c, String[] labels,
 			GeoPlane3D plane, GeoPolygon s) {
 	    this(c, labels, plane, s, s.asBoundary()); 

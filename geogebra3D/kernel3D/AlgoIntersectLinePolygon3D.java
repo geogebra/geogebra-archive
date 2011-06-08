@@ -39,7 +39,6 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
     	super(c, labels, g, p, asBoundary);
     
 
-    	//else: no need to use this boolean.
 	}
 
 

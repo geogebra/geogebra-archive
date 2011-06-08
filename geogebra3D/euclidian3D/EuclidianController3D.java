@@ -11,6 +11,7 @@ import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoSurfaceFinite;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.Path;
 import geogebra.kernel.Region;
@@ -1663,18 +1664,28 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				for(int i=0;i<2; i++)
 					ret[i] = (GeoElement) points[i];
 				return ret;
-			}else if (selCS2D()>=1 ) {// line-plane
+			}else if (selCS2D()>=1 ) {// line-CS2D
 				GeoLineND line = getSelectedLinesND()[0];
-				GeoCoordSys2D plane = getSelectedCS2D()[0];
-				GeoElement[] ret = { null };
-				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) plane);
+				GeoCoordSys2D[] cs2Ds = getSelectedCS2D();
+				int firstP = 0;
+				for (firstP = 0; firstP<cs2Ds.length; firstP++) {
+					if (cs2Ds[firstP] instanceof GeoPolygon)
+						return getKernel().getManager3D().Intersect(
+								new String[] {null},
+								line,
+								(GeoSurfaceFinite) cs2Ds[firstP]);
+				}
+				
+				GeoElement[] ret = new GeoElement[1];
+				ret[0] = getKernel().getManager3D().Intersect(
+						null, (GeoElement) line, (GeoElement) cs2Ds[0]);
 				return ret;
 			}else if (selPolygons()>=1) {// line-polygon
 				GeoLineND line = getSelectedLinesND()[0];
 				GeoPolygon polygon = getSelectedPolygons()[0];
-				GeoElement[] ret = { null };
-				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) polygon);
-				return ret;
+				//GeoElement[] ret = { null };
+				//ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) polygon);
+
 			}
 		} else if (selConicsND()>=2 ) {// conic-conic
 			GeoConicND[] conics = getSelectedConicsND();
@@ -1738,13 +1749,54 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			//	return null;
 	
 			//Application.debug("cs2D="+selCS2D()+"\nquadrics="+selQuadric());
-			
-			if (selCS2D()>=2)  { // plane-plane
-				GeoCoordSys2D[] planes = getSelectedCS2D();
+			/*
+			if (selPolygons()>=1 && selCS2D()>=1)  { // plane-polygon
+				GeoCoordSys2D plane = getSelectedCS2D()[0];
+				GeoSurfaceFinite polygon = getSelectedPolygons()[0];
 				GeoElement[] ret = { null };
-				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) planes[0], (GeoElement) planes[1]);
+				ret = getKernel().getManager3D().Intersect(null, (GeoPlane3D) plane, polygon);
 				ret[0].setObjColor(intersectionCurveColorPlanarPlanar);
 				return ret[0].isDefined();
+			}
+			
+			else*/ 
+			if (selCS2D()>=2)  { // cs2D-cs2D
+				GeoCoordSys2D[] cs2Ds = getSelectedCS2D();
+
+				int pIndex = 0;
+				int npIndex = 0;
+				boolean foundP = false;
+				boolean foundNp = false;
+				for (int i = 0; i<cs2Ds.length; i++){
+					if ( cs2Ds[i] instanceof GeoPolygon ) {
+						if (!foundP) {
+							pIndex = i;
+							foundP = true;		
+						}
+					} else {
+						if ( !foundNp ){
+							npIndex = i;
+							foundNp = true;
+						}
+					}
+					if (foundP && foundNp)
+						break;
+				}
+				
+				if (!foundP) {
+					GeoElement[] ret = new GeoElement[1];
+					ret[0] = getKernel().getManager3D().Intersect(null, 
+							(GeoElement) cs2Ds[0], (GeoElement) cs2Ds[1]);
+					ret[0].setObjColor(intersectionCurveColorPlanarPlanar);
+					return ret[0].isDefined();	
+				} else if (foundP && foundNp) {
+					GeoElement[] ret = getKernel().getManager3D().Intersect(new String[] {null}, 
+							(GeoPlane3D) cs2Ds[npIndex], (GeoSurfaceFinite) cs2Ds[pIndex]);
+					for (int i = 0; i<ret.length; i++){
+						ret[i].setObjColor(intersectionCurveColorPlanarPlanar);
+					}
+					return (ret==null || ret[0]==null);
+				}
 			}
 
 	
