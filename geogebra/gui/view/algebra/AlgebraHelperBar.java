@@ -93,7 +93,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	public void updateStates() {
 		toggleAuxiliary.setSelected(app.showAuxiliaryObjects());
 		toggleTypeTreeMode.setSelected(algebraView.getTreeMode() == AlgebraView.MODE_TYPE);
-		toggleLaTeX.setSelected(algebraView.isRenderLaTeX());
+		toggleLaTeX.setSelected(!algebraView.isRenderLaTeX());
 	}
 	
 	/**
@@ -102,12 +102,12 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 	public void updateLabels() {
 		toggleAuxiliary.setToolTipText(app.getPlainTooltip("AuxiliaryObjects"));
 		
-		if(algebraView.getTreeMode() == algebraView.MODE_TYPE) {
+		if(algebraView.getTreeMode() == AlgebraView.MODE_TYPE) {
 			toggleTypeTreeMode.setToolTipText(app.getPlainTooltip("TreeModeDependency"));
 		} else {
 			toggleTypeTreeMode.setToolTipText(app.getPlainTooltip("TreeModeType"));
 		}
-		toggleLaTeX.setToolTipText(app.getPlainTooltip("ToggleFormulaView"));
+		toggleLaTeX.setToolTipText(app.getPlainTooltip("SimpleFormulas"));
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class AlgebraHelperBar extends JToolBar implements ActionListener {
 
 		} else if(e.getSource() == toggleLaTeX) {
 			algebraView.setRenderLaTeX(!algebraView.isRenderLaTeX());
-			toggleLaTeX.setSelected(algebraView.isRenderLaTeX());
+			toggleLaTeX.setSelected(!algebraView.isRenderLaTeX());
 		}
 	}
 }
