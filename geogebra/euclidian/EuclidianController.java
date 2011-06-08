@@ -1316,6 +1316,13 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				} else {
 					startPoint.setLocation(xRW - loc.inhomX, yRW
 							- loc.inhomY);
+
+			        movedGeoText.setNeedsUpdatedBoundingBox(true);
+			        movedGeoText.update(); 
+					loc.setCoords(movedGeoText.getBoundingBox().getX(), movedGeoText.getBoundingBox().getY(), 1.0);
+
+					transformCoordsOffset[0]=loc.inhomX-xRW;
+					transformCoordsOffset[1]=loc.inhomY-yRW;
 				}
 			} else {
 				// for relative locations label has to be moved
