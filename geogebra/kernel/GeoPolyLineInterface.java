@@ -15,5 +15,7 @@ public interface GeoPolyLineInterface {
 	public boolean isVertexCountFixed() ;
 	
 	public GeoPoint[] getPoints(); 
+	
+	public GeoPoint getPoint(int i);
 
 }

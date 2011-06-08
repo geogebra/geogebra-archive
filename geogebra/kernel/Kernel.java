@@ -5575,16 +5575,16 @@ public class Kernel {
 	/** 
 	 * Vertices of polygon. returns 3+ GeoPoints
 	 */
-	final public GeoElement[] Vertex(String[] labels, GeoPolygon p) {
+	final public GeoElement[] Vertex(String[] labels, GeoPolyLineInterface p) {
 		AlgoVertexPolygon algo = new AlgoVertexPolygon(cons, labels, p);
 		GeoElement[] vertex = algo.getVertex();
 		return vertex;
 	}
 	
 	/** 
-	 * Vertices of polygon. returns 3+ GeoPoints
+	 * Vertex of polygon. returns a GeoPoint
 	 */
-	final public GeoPoint Vertex(String label, GeoPolygon p,NumberValue v) {
+	final public GeoPoint Vertex(String label, GeoPolyLineInterface p,NumberValue v) {
 		AlgoVertexPolygon algo = new AlgoVertexPolygon(cons, label, p,v);
 		GeoPoint vertex = algo.getOneVertex();
 		return vertex;

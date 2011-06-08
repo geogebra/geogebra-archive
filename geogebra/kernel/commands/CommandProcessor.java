@@ -38,6 +38,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolyLineInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
 import geogebra.kernel.GeoText;
@@ -1152,8 +1153,8 @@ class CmdVertex extends CommandProcessor {
 			arg = resArgs(c);
 			if (ok[0] = (arg[0].isGeoConic()))
 				return kernel.Vertex(c.getLabels(), (GeoConic) arg[0]);
-			if (ok[0] = (arg[0].isGeoPolygon()))
-				return kernel.Vertex(c.getLabels(), (GeoPolygon) arg[0]);
+			if (ok[0] = (arg[0] instanceof GeoPolyLineInterface))
+				return kernel.Vertex(c.getLabels(), (GeoPolyLineInterface) arg[0]);
 			else if (ok[0] = (arg[0].isNumberValue())) {
 				GeoElement[] ret = { kernel.CornerOfDrawingPad(c.getLabel(),
 						(NumberValue) arg[0], null) };
@@ -1164,10 +1165,10 @@ class CmdVertex extends CommandProcessor {
 			// Corner[ <Image>, <number> ]
 		case 2:
 			arg = resArgs(c);
-			if ((ok[0] = (arg[0].isGeoPolygon()))
+			if ((ok[0] = (arg[0] instanceof GeoPolyLineInterface))
 					&& (ok[1] = (arg[1].isNumberValue()))) {
 				GeoElement[] ret = { kernel.Vertex(c.getLabel(),
-						(GeoPolygon) arg[0], (NumberValue) arg[1]) };
+						(GeoPolyLineInterface) arg[0], (NumberValue) arg[1]) };
 				return ret;
 			} else if ((ok[0] = (arg[0].isGeoImage()))
 					&& (ok[1] = (arg[1].isNumberValue()))) {

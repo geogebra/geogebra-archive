@@ -34,7 +34,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private GeoPolygon p; // input
+	private GeoPolyLineInterface p; // input
 	private ArrayList<GeoPoint> pointsList; // output
 	private String singleLabel = null;
 	private int nbLabelSet = 0;
@@ -49,7 +49,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	 * @param p
 	 */
 
-	AlgoVertexPolygon(Construction cons, String[] labels, GeoPolygon p) {
+	AlgoVertexPolygon(Construction cons, String[] labels, GeoPolyLineInterface p) {
 
 		this(cons, p);
 		// if only one label (e.g. "A"), new labels will be A_1, A_2, ...
@@ -70,7 +70,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	 * @param p
 	 * @param v
 	 */
-	AlgoVertexPolygon(Construction cons, String label, GeoPolygon p,
+	AlgoVertexPolygon(Construction cons, String label, GeoPolyLineInterface p,
 			NumberValue v) {
 
 		this(cons, p, v);
@@ -84,7 +84,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	 * @param p
 	 */
 
-	AlgoVertexPolygon(Construction cons, GeoPolygon p) {
+	AlgoVertexPolygon(Construction cons, GeoPolyLineInterface p) {
 		super(cons);
 		this.p = p;
 
@@ -97,7 +97,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	 * @param p
 	 * @param v
 	 */
-	AlgoVertexPolygon(Construction cons, GeoPolygon p, NumberValue v) {
+	AlgoVertexPolygon(Construction cons, GeoPolyLineInterface p, NumberValue v) {
 		super(cons);
 		this.p = p;
 		this.index = v;
@@ -122,7 +122,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 			if (pointsList == null)
 				pointsList = new ArrayList<GeoPoint>();
 		}
-		input[0] = p;
+		input[0] = (GeoElement)p;
 		/*
 		 * setOutputLength(vertex.length); for(int i=0;i<vertex.length;i++){
 		 * setOutput(i,vertex[i]); }
@@ -136,7 +136,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	 * 
 	 * @return input polygon
 	 */
-	public GeoPolygon getPolygon() {
+	public GeoPolyLineInterface getPolygon() {
 		return p;
 	}
 
@@ -166,14 +166,14 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	protected final void compute() {
 		if(index != null){
 			int  i = (int)Math.floor(index.getDouble())-1;
-			if(i >= p.getPointsLength()||i < 0)
+			if(i >= p.getPoints().length||i < 0)
 				oneVertex.setUndefined();
 			else 
 				oneVertex.set((GeoElement)p.getPoint(i));
 			oneVertex.update();
 			return;
 		}
-		int length = p.getPointsLength();
+		int length = p.getPoints().length;
 		for (int i = length; i < pointsList.size(); i++) {
 			pointsList.get(i).setUndefined();
 		}
@@ -186,7 +186,7 @@ public class AlgoVertexPolygon extends AlgoElement implements
 	}
 
 	public final String toString() {
-		return app.getPlain("VertexOfA", p.getLabel());
+		return app.getPlain("VertexOfA", ((GeoElement)p).getLabel());
 
 	}
 
