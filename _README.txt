@@ -15,7 +15,7 @@ Libraries used by GeoGebra:
 * JAS, http://krum.rz.uni-mannheim.de/jas/ (GPL)
 * JLaTeXMath, http://forge.scilab.org/index.php/p/jlatexmath/ (GPL)
 * JUNG, http://jung.sourceforge.net (BSD)
-* Tango Icon Gallery, http://tango.freedesktop.org (GPL)
+* Tango Icon Gallery, http://tango.freedesktop.org (Public Domain)
 * Maxima, http://maxima.sourceforge.net/ (GPL)
 
 For other tools used for running or building GeoGebra please see
