@@ -57,8 +57,11 @@ public class ColorPopupMenuButton extends PopupMenuButton implements ActionListe
 	}
 	
 	public void actionPerformed(ActionEvent e){
-    	if(this.hasSlider)
-    		updateColorTable();	 
+    	if(this.hasSlider) {
+    		Integer si = getSelectedIndex();
+    		updateColorTable();
+    		setSelectedIndex(si);
+    	}
     }
 	
 	
