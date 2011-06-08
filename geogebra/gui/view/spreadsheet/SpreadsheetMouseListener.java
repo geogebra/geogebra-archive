@@ -5,7 +5,9 @@ import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.main.Application;
 
+import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -18,34 +20,40 @@ import javax.swing.text.JTextComponent;
 
 public class SpreadsheetMouseListener implements MouseListener, MouseMotionListener
 {
-	
+
 	protected String selectedCellName;
 	protected String prefix0, postfix0;
-	
+
 	private Application app;
 	private SpreadsheetView view;
 	private Kernel kernel;
 	private MyTable table;
 	private DefaultTableModel model;	
 	private MyCellEditor editor;
-	
+
 	private RelativeCopy relativeCopy;
-	
-	
+
+
+
+
+
+	/*************************************************
+	 * Constructor
+	 */
 	public SpreadsheetMouseListener(Application app, MyTable table){
-		
+
 		this.app = app;
 		this.kernel = app.getKernel();
 		this.table = table;
 		this.view = table.getView();
 		this.model = (DefaultTableModel) table.getModel();  
 		this.editor = table.editor;
-			
+
 		this.relativeCopy = new RelativeCopy(table, kernel);
 	}
-	
-	
-	
+
+
+
 	public void mouseClicked(MouseEvent e) {	
 
 		boolean doubleClick = (e.getClickCount() != 1);
@@ -54,15 +62,15 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 		if (point != null) {
 
 			if (doubleClick) {
-				
+
 				// auto-fill down if dragging dot is double-clicked
 				if(table.isOverDot) {
 					handleAutoFillDown();
 					return;
 				}  
-				
+
 				//otherwise, doubleClick edits cell
-				
+
 				if(!table.getOneClickEditMap().containsKey(point)){
 					table.setAllowEditing(true);
 					table.editCellAt(table.getSelectedRow(), table.getSelectedColumn()); 
@@ -105,20 +113,20 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 			// let euclidianView know about the click
 			app.getEuclidianView().clickedGeo(geo, e);
 		}
-	
-//		else
-//		{ // !editor.isEditing()
-//			int row = rowAtPoint(e.getPoint());
-//			int col = columnAtPoint(e.getPoint());
-//			GeoElement geo = (GeoElement) getModel().getValueAt(row, col);			
-//			
-//			// copy description into input bar when a cell is clicked on
-//			copyDefinitionToInputBar(geo);
-//			selectionChanged();	
-//		}
+
+		//		else
+		//		{ // !editor.isEditing()
+		//			int row = rowAtPoint(e.getPoint());
+		//			int col = columnAtPoint(e.getPoint());
+		//			GeoElement geo = (GeoElement) getModel().getValueAt(row, col);			
+		//			
+		//			// copy description into input bar when a cell is clicked on
+		//			copyDefinitionToInputBar(geo);
+		//			selectionChanged();	
+		//		}
 	}				
 
-	
+
 	// automatic fill down from the dragging dot 
 	public void handleAutoFillDown() {
 		int col = table.getSelectedColumn();
@@ -132,7 +140,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 			if (row - table.maxSelectionRow == 0 && table.maxSelectionColumn <= table.getColumnCount()-1 )
 				while ( row < table.getRowCount() - 1 && model.getValueAt(row+1, table.maxSelectionColumn + 1) != null) row++;
 			int rowCount = row - table.maxSelectionRow;
-			
+
 			// now fill down
 			if (rowCount != 0){
 				boolean succ = relativeCopy.doCopy(table.minSelectionColumn, table.minSelectionRow, table.maxSelectionColumn, table.maxSelectionRow,
@@ -142,8 +150,8 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 			table.isDragingDot = false;
 		}
 	}
-	
-	
+
+
 	public void mouseEntered(MouseEvent e) {
 	}
 
@@ -152,13 +160,13 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 
 	public void mousePressed(MouseEvent e) {
 		boolean rightClick = Application.isRightClick(e); 
-		
+
 		// tell selection listener about click on GeoElement
 		if (!rightClick && app.getMode() == EuclidianConstants.MODE_SELECTION_LISTENER) {
 			int row = table.rowAtPoint(e.getPoint());
 			int col = table.columnAtPoint(e.getPoint());
 			GeoElement geo = (GeoElement) model.getValueAt(row, col);
-			
+
 			// double click or empty geo
 			if (e.getClickCount() == 2 || geo == null) {
 				table.requestFocusInWindow();
@@ -172,11 +180,11 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 		}					
 
 		if (!rightClick) {
-			
+
 			if(table.getSelectionType() != MyTable.CELL_SELECT){
 				table.setSelectionType(MyTable.CELL_SELECT);
 			}
-			
+
 			//force column selection
 			if(view.isColumnSelect()){
 				Point point = table.getIndexFromPixel(e.getX(), e.getY());
@@ -185,16 +193,16 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 					table.setColumnSelectionInterval(column, column);
 				}
 			}
-			
-			
+
+
 			/*
 			if (MyTable.this.getSelectionModel().getSelectionMode() != ListSelectionModel.SINGLE_INTERVAL_SELECTION) {
 				setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 				setColumnSelectionAllowed(true);
 				setRowSelectionAllowed(true);
 			}
-			*/
-			
+			 */
+
 			Point point1 = table.getMaxSelectionPixel();
 			if (point1 == null) return;
 			int x1 = e.getX();
@@ -202,7 +210,7 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 			int x2 = (int)point1.getX();
 			int y2 = (int)point1.getY();
 			int range = MyTable.DOT_SIZE / 2;
-			
+
 			// Handle click in another cell while editing a cell:
 			// if the edit string begins with "=" then the clicked cell name
 			// is inserted into the edit text
@@ -240,8 +248,8 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 		}
 	}
 
-	
-	
+
+
 	public void mouseReleased(MouseEvent e)	 {
 		boolean rightClick = Application.isRightClick(e); 	        
 
@@ -305,40 +313,41 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 					//	table.maxSelectionColumn = -1;
 					//	table.maxSelectionRow = -1;						
 				}
-				
+
 				//(G.Sturr 2009-9-12) extend the selection to include the drag copy selection
 				// and un-highlight dragging dot 
 				table.changeSelection(table.dragingToRow, table.dragingToColumn, true, true);
 				table.isOverDot = false;
 				//(G.Sturr)
-				
+
 				table.isDragingDot = false;
 				table.dragingToRow = -1;
 				table.dragingToColumn = -1;
+				setTableCursor();
 				table.repaint();
 			}
 		}
-		
+
 		// Alt click: copy definition to input field
 		if (!table.isEditing() && e.isAltDown() && app.showAlgebraInput()) {
 			int row = table.rowAtPoint(e.getPoint());
 			int col = table.columnAtPoint(e.getPoint());
 			GeoElement geo = (GeoElement) model.getValueAt(row, col);
-		
+
 			if (geo != null) {
 				// F3 key: copy definition to input bar
 				app.getGlobalKeyDispatcher().handleFunctionKeyForAlgebraInput(3, geo);					
 				return;
 			}					
 		}
-		
-		
+
+
 		//handle right click
 		if (rightClick){
 			if (!kernel.getApplication().letShowPopupMenu()) return;
-			
+
 			Point p = table.getIndexFromPixel(e.getX(), e.getY());
-			
+
 			// change selection if right click is outside current selection
 			if(p.getY() < table.minSelectionRow ||  p.getY() > table.maxSelectionRow 
 					|| p.getX() < table.minSelectionColumn || p.getX() > table.maxSelectionColumn)
@@ -348,33 +357,35 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 				if(table.getSelectionType() != MyTable.CELL_SELECT){
 					table.setSelectionType(MyTable.CELL_SELECT);
 				}
-				
+
 				//now change the selection
 				table.changeSelection((int) p.getY(), (int) p.getX(),false, false );		
 			}
-			
+
 			//create and show context menu 
 			SpreadsheetContextMenu popupMenu = new SpreadsheetContextMenu(table, e.isShiftDown());
 			popupMenu.show(e.getComponent(), e.getX(), e.getY());
 		}
-		
-		
+
+
 	}		
 
 
 
 	public void mouseDragged(MouseEvent e) {
+
+		// handle editing mode drag 
 		if (editor.isEditing()) {
 			Point point = table.getIndexFromPixel(e.getX(), e.getY());
 			if (point != null && selectedCellName != null) {
 				int column2 = (int)point.getX();
 				int row2 = (int)point.getY();
-				
+
 				Matcher matcher = GeoElement.spreadsheetPattern.matcher(selectedCellName);
-					int column1 = GeoElement.getSpreadsheetColumn(matcher);
-					int row1 = GeoElement.getSpreadsheetRow(matcher);
-				
-					if (column1 > column2) {
+				int column1 = GeoElement.getSpreadsheetColumn(matcher);
+				int row1 = GeoElement.getSpreadsheetRow(matcher);
+
+				if (column1 > column2) {
 					int temp = column1;
 					column1 = column2;
 					column2 = temp;
@@ -401,119 +412,101 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 			e.consume();
 			return;
 		}
+
+		// handle dot drag
 		if (table.isDragingDot) {
+
 			e.consume();
-			int x = e.getX();
-			int y = e.getY();
-			Point point = table.getIndexFromPixel(x, y);
-			
+			int mouseX = e.getX();
+			int mouseY = e.getY();
+			Point mouseCell = table.getIndexFromPixel(mouseX, mouseY);
+
 			//save the selected cell position so it can be re-selected if needed
 			int row = table.getSelectedRow();
 			int column = table.getSelectedColumn();
-			
-			if (point == null) {
+
+			if (mouseCell == null) { // drag to left or above the table
 				table.dragingToRow = -1;
 				table.dragingToColumn = -1;
 			}
-			else {
-				table.dragingToRow = (int)point.getY();
-				table.dragingToColumn = (int)point.getX();							
-				
+			else 
+			{
+				table.dragingToRow = (int)mouseCell.getY();
+				table.dragingToColumn = (int)mouseCell.getX();
+				Rectangle selRect = table.getSelectionRect(true);
+
 				// increase size if we're at the bottom of the spreadsheet				
 				if (table.dragingToRow + 1 == table.getRowCount() && table.dragingToRow < SpreadsheetView.MAX_ROWS) {
 					model.setRowCount(table.getRowCount() +1);							
 				}
-				
-				// increase size when you go off the right edge
+
+				// increase size if we go beyond the right edge
 				if (table.dragingToColumn + 1 == table.getColumnCount() && table.dragingToColumn < SpreadsheetView.MAX_COLUMNS) {
-					
 					table.setMyColumnCount(table.getColumnCount() +1);		
 					view.getColumnHeader().revalidate();
-					
 					// Java's addColumn will clear selection, so re-select our cell 
 					table.changeSelection(row, column, false, false);
-					
 				}
-				
+
 				// scroll to show "highest" selected cell
-				table.scrollRectToVisible(table.getCellRect(point.y, point.x, true));
-				
-				
-				// 1|2|3
-				// 4|5|6
-				// 7|8|9
-				if (table.dragingToRow < table.minSelectionRow) {
-					if (table.dragingToColumn < table.minSelectionColumn) { // 1
-						int dy = table.minSelectionRow - table.dragingToRow;
-						int dx = table.minSelectionColumn - table.dragingToColumn;
-						if (dx > dy) {
-							table.dragingToRow = table.minSelectionRow;
-						}
-						else {
-							table.dragingToColumn = table.minSelectionColumn;
-						}
+				table.scrollRectToVisible(table.getCellRect(mouseCell.y, mouseCell.x, true));
+
+
+				if (!selRect.contains(e.getPoint()) ){
+
+					int rowOffset = 0, colOffset = 0;
+
+					// get row distance
+					if (table.minSelectionRow > 0 && table.dragingToRow < table.minSelectionRow) {
+						rowOffset = mouseY - selRect.y;
+						if( -rowOffset < 0.5 * table.getCellRect(table.minSelectionRow -1, table.minSelectionColumn, true).height)
+							rowOffset = 0;
 					}
-					else if (table.dragingToColumn > table.maxSelectionColumn) { // 3
-						int dy = table.minSelectionRow - table.dragingToRow;
-						int dx = table.dragingToColumn - table.maxSelectionColumn;
-						if (dx > dy) {
-							table.dragingToRow = table.minSelectionRow;
-						}
-						else {
-							table.dragingToColumn = table.maxSelectionColumn;
-						}
+					else if (table.maxSelectionRow < SpreadsheetView.MAX_ROWS &&  table.dragingToRow > table.maxSelectionRow) {
+						rowOffset = mouseY - (selRect.y + selRect.height);
+						if( rowOffset < 0.5 * table.getCellRect(table.maxSelectionRow + 1, table.maxSelectionColumn, true).height)
+							rowOffset = 0;
 					}
-					else { // 2
-						table.dragingToColumn = table.minSelectionColumn;
+
+					// get column distance
+					if (table.minSelectionColumn > 0 && table.dragingToColumn < table.minSelectionColumn) {
+						colOffset = mouseX - selRect.x;
+						if( -colOffset < 0.5 * table.getCellRect(table.minSelectionRow, table.minSelectionColumn - 1, true).width)
+							colOffset = 0;
 					}
-				}
-				else if (table.dragingToRow > table.maxSelectionRow) {
-					if (table.dragingToColumn < table.minSelectionColumn) { // 7
-						int dy = table.dragingToRow - table.minSelectionRow;
-						int dx = table.minSelectionColumn - table.dragingToColumn;
-						if (dx > dy) {
-							table.dragingToRow = table.minSelectionRow;
-						}
-						else {
-							table.dragingToColumn = table.maxSelectionColumn;
-						}
+					else if (table.maxSelectionColumn < SpreadsheetView.MAX_COLUMNS && table.dragingToColumn > table.maxSelectionColumn) {
+						colOffset = mouseX - (selRect.x + selRect.width);
+						if( colOffset < 0.5 * table.getCellRect(table.maxSelectionRow, table.maxSelectionColumn + 1, true).width)
+							colOffset = 0;
 					}
-					else if (table.dragingToColumn > table.maxSelectionColumn) { // 9
-						int dy = table.dragingToRow - table.maxSelectionRow;
-						int dx = table.dragingToColumn - table.maxSelectionColumn;
-						if (dx > dy) {
-							table.dragingToRow = table.maxSelectionRow;
-						}
-						else {
-							table.dragingToColumn = table.maxSelectionColumn;
-						}
-					}
-					else { // 8
-						table.dragingToColumn = table.maxSelectionColumn;
-					}
-				}
-				else {
-					if (table.dragingToColumn < table.minSelectionColumn) { // 6
-						table.dragingToRow = table.maxSelectionRow;
-					}
-					else if (table.dragingToColumn > table.maxSelectionColumn) { // 4
-						table.dragingToRow = table.minSelectionRow;							
-					}
-					else { // 5
-						table.dragingToRow = -1;
+					
+					if(rowOffset == 0 && colOffset == 0){
 						table.dragingToColumn = -1;
+						table.dragingToRow = -1;
 					}
+					else if(Math.abs(rowOffset) > Math.abs(colOffset)){
+						table.dragingToRow = mouseCell.y;
+						table.dragingToColumn = (colOffset > 0) ? table.maxSelectionColumn : table.minSelectionColumn;
+					}
+					else{
+						table.dragingToColumn = mouseCell.x;
+						table.dragingToRow = (rowOffset > 0) ? table.maxSelectionRow : table.minSelectionRow;
+					}
+					table.repaint();
+				}
+
+
+
+				// handle ctrl-select dragging of cell blocks
+				else{
+					if(e.isControlDown()){
+						table.handleControlDragSelect(e);}
 				}
 			}
-			table.repaint();
-		}
-
-		//G.STURR 2010-1-29: handle ctrl-select dragging of cell blocks
-		else{
-			if(e.isControlDown()){
-				table.handleControlDragSelect(e);}
 		}
 	}
+
+
 
 	/**
 	 *  Shows tool tip description of geo on mouse over
@@ -534,22 +527,64 @@ public class SpreadsheetMouseListener implements MouseListener, MouseMotionListe
 			app.clearTooltipFlag();
 		} else
 			table.setToolTipText(null);	
-		
-		//highlight dragging dot on mouseover
-		Point point1 = table.getMaxSelectionPixel();
-		if (point1 == null) return;
-		int x1 = e.getX();
-		int y1 = e.getY();
-		int x2 = (int)point1.getX();
-		int y2 = (int)point1.getY();
-		int range = MyTable.DOT_SIZE / 2;
-		boolean nowOverDot = (x1 >= x2 - range && x1 <= x2 + range && y1 >= y2 - range && y1 <= y2 + range); 
-		if (table.isOverDot != nowOverDot) {	
-			table.isOverDot = nowOverDot;
-			table.repaint();
+
+		//check if over the dragging dot and update accordingly
+		Point maxPoint = table.getMaxSelectionPixel();
+		Point minPoint = table.getMinSelectionPixel();
+
+		if (maxPoint != null) {
+			int dotX = (int)maxPoint.getX();
+			int dotY = (int)maxPoint.getY();
+			int s = MyTable.DOT_SIZE + 2;
+			Rectangle dotRect = new Rectangle(dotX - s/2 ,dotY - s/2 , s, s);	
+			boolean overDot = dotRect.contains(e.getPoint());
+			if (table.isOverDot != overDot) {	
+				table.isOverDot = overDot;
+				setTableCursor();
+				table.repaint();
+			}
 		}
-		
+
+		//check if over the DnD region and update accordingly
+		Point testPoint = table.getMinSelectionPixel();
+		if (testPoint != null) {
+			int minX = (int)minPoint.getX();
+			int minY = (int)minPoint.getY();
+			int maxX = (int)maxPoint.getX();
+			int w = maxX - minX;
+			Rectangle dndRect = new Rectangle(minX, minY - 2 , w, 4);	
+			boolean overDnD = dndRect.contains(e.getPoint());
+			if (table.isOverDnDRegion != overDnD) {	
+				table.isOverDnDRegion = overDnD;
+				setTableCursor();
+			}
+		}
+
 	}
+
+
+	/**
+	 * Sets table cursor
+	 */
+	private void setTableCursor(){ 
+
+		if(table.isOverDot){
+			if(table.isDragingDot)
+				table.setCursor(table.largeCrossCursor);
+			else
+				table.setCursor(table.largeCrossCursor);
+		}
+		//else if(table.isOverDnDRegion)
+			//table.setCursor(table.grabCursor);
+		
+		else
+			table.setCursor(table.defaultCursor);
+
+	} 
+
+
+
+
 
 }
 

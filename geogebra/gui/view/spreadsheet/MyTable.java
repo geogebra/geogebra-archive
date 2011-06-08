@@ -11,12 +11,15 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
@@ -137,6 +140,8 @@ public class MyTable extends JTable implements FocusListener
 	protected int minRow2 = -1;
 	protected int maxRow2 = -1;
 	
+	protected boolean isOverDnDRegion = false;
+	
 	// Keep track of ctrl-down. This is needed in some
 	// selection methods that do not receive key events.
 	protected boolean metaDown = false;
@@ -172,6 +177,16 @@ public class MyTable extends JTable implements FocusListener
 		this.oneClickEditMap = oneClickEditMap;
 	}
 
+	
+	// cursors
+	protected static Cursor defaultCursor = Cursor.getDefaultCursor(); 
+	protected static Cursor crossHairCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+	protected static Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
+	protected static Cursor grabbingCursor, grabCursor, largeCrossCursor; 
+	
+	
+	
+	
 	/*******************************************************************
 	 * Constructor
 	 */
@@ -183,7 +198,9 @@ public class MyTable extends JTable implements FocusListener
 		this.tableModel = tableModel;
 		this.view = view;
 		table = this;
-			
+		grabCursor = createCursor(app.getImageIcon("cursor_grab.gif").getImage(), true);
+		grabbingCursor = createCursor(app.getImageIcon("cursor_grabbing.gif").getImage(), true);
+		largeCrossCursor = createCursor(app.getImageIcon("cursor_large_cross.gif").getImage(), true);
 		
 		// prepare column headers
 		SpreadsheetColumnController columnController = new SpreadsheetColumnController(app,this);
@@ -553,12 +570,19 @@ public class MyTable extends JTable implements FocusListener
 			list.addAll(0,(selectedCellRanges.get(i)).toGeoList());
 		}
 		
-		// if the selection has actually changed, update selected geos and repaint
-		if(!list.equals(app.getSelectedGeos())){
+		// if the selection has changed, update selected geos 
+		boolean changed = !list.equals(app.getSelectedGeos());
+		if(changed){
 			app.setSelectedGeos(list);
 			view.notifySpreadsheetSelectionChange();
-			repaint();
 		}
+		
+		// if the selection has changed or an empty cell has been clicked, repaint 
+		if(changed || list.isEmpty()){			
+			repaint();
+			getTableHeader().repaint();
+		}
+		
 		
 		//System.out.println("------------------");
 		//for (CellRange cr: selectedCellRanges)cr.debug();
@@ -796,7 +820,6 @@ public class MyTable extends JTable implements FocusListener
 		setSelectionType(COLUMN_SELECT);
 		super.setColumnSelectionInterval(col0, col1);
 		selectionChanged(); 
-		
 	}
 	
 	
@@ -866,7 +889,6 @@ public class MyTable extends JTable implements FocusListener
 			return new Point(0, 0);
 		}
 		
-		//Replace old code with JTable method to get pixel location
 		Rectangle cellRect = getCellRect(row, column, false);
 		if (min)
 			return new Point(cellRect.x, cellRect.y);
@@ -884,6 +906,9 @@ public class MyTable extends JTable implements FocusListener
 		return getPixel(maxSelectionColumn, maxSelectionRow, false);
 	}
 
+	/**
+	 * Returns Point(columnIndex, rowIndex), the cell indices at the given pixel location as 
+	 */
 	public Point getIndexFromPixel(int x, int y) {
 		if (x < 0 || y < 0) return null;
 		int indexX = -1;
@@ -911,6 +936,19 @@ public class MyTable extends JTable implements FocusListener
 		return new Point(indexX, indexY);
 	}
 
+	public Rectangle getCellBlockRect(int column1, int row1, int column2, int row2, boolean includeSpacing){
+		Rectangle r1 = getCellRect(row1, column1, includeSpacing);
+		Rectangle r2 = getCellRect(row2, column2, includeSpacing);
+		r1.setBounds(r1.x, r1.y, (r2.x - r1.x) + r2.width, (r2.y - r1.y) + r2.height);
+		return r1;
+	}
+	
+	public Rectangle getSelectionRect(boolean includeSpacing){
+		return getCellBlockRect(minSelectionColumn, minSelectionRow, maxSelectionColumn, maxSelectionRow,includeSpacing);
+	}
+	
+	
+	
 	
 	private Rectangle cellFrame;
 	
@@ -1544,6 +1582,19 @@ public class MyTable extends JTable implements FocusListener
 	}
 	
 	
+	
+	private Cursor createCursor(Image cursorImage, boolean center){
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Point cursorHotSpot;
+		if(center){
+			cursorHotSpot = new Point(cursorImage.getWidth(null)/2,cursorImage.getHeight(null)/2);
+		}else{
+			cursorHotSpot= new Point(0,0);
+		}
+		Cursor cursor = toolkit.createCustomCursor(cursorImage, cursorHotSpot, null);
+		return cursor;
+	}
+
 	
 	
 }
