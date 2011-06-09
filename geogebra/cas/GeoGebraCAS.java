@@ -113,7 +113,10 @@ public class GeoGebraCAS {
 	}
 	
 	private CASmpreduce getMPReduce() {
-		return new CASmpreduce(casParser);
+		if (currentCAS == Application.CAS_MPREDUCE)
+			return (CASmpreduce) cas;
+		else
+			return new CASmpreduce(casParser);
 	}
 	
 	/**
@@ -195,6 +198,11 @@ public class GeoGebraCAS {
 		return getMaxima().evaluateMaxima(exp);
 	}
 	
+	final public String evaluateMPReduce(String exp)
+	{
+		return getMPReduce().evaluateMPReduce(exp);
+	}
+	
 
 	private HashMap getPolynomialCoeffsCache = new HashMap(50);
 	private StringBuilder getPolynomialCoeffsSB = new StringBuilder();
@@ -208,7 +216,7 @@ public class GeoGebraCAS {
 	 */
 	final public String[] getPolynomialCoeffs(String MathPiperExp, String variable) {
 		//return ggbJasymca.getPolynomialCoeffs(MathPiperExp, variable);
-		
+		final boolean useMathPiper = true; // This can be swapped to use MP instead of MPReduce!
 		getPolynomialCoeffsSB.setLength(0);
 		getPolynomialCoeffsSB.append(MathPiperExp);
 		getPolynomialCoeffsSB.append(':');
@@ -240,7 +248,10 @@ public class GeoGebraCAS {
 		/* replaced Michael Borcherds 2009-02-08
 		 * doesn't seem to work properly polyCoeffsbug.ggb
 		 */
-		sbPolyCoeffs.append("getPolynomialCoeffs(");
+		if (useMathPiper)
+			sbPolyCoeffs.append("getPolynomialCoeffs(");
+		else
+			sbPolyCoeffs.append("coeff(");
 		sbPolyCoeffs.append(MathPiperExp);
 		sbPolyCoeffs.append(',');
 		sbPolyCoeffs.append(variable);
@@ -259,14 +270,17 @@ public class GeoGebraCAS {
 		try {
 			// expand expression and get coefficients of
 			// "3*a*x^2 + b" in form "{ b, 0, 3*a }" 
-			result = evaluateMathPiper(sbPolyCoeffs.toString());
+			if (useMathPiper)
+				result = evaluateMathPiper(sbPolyCoeffs.toString());
+			else
+				result = evaluateMPReduce(sbPolyCoeffs.toString());
 			
 			// empty list of coefficients -> return null
 			if ("{}".equals(result) || "".equals(result) || result == null) 
 				return null;
 			
 			// cache result
-			//Application.debug("caching result: "+result);		
+			// Application.debug("caching result of " + getPolynomialCoeffsSB.toString() + ": "+result);		
 			getPolynomialCoeffsCache.put(getPolynomialCoeffsSB.toString(), result);
 
 			//Application.debug(sbPolyCoeffs+"");

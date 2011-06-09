@@ -83,9 +83,9 @@ public class CASmpreduce extends CASgeneric {
 		String ggbString = toGeoGebraString(result);
 		
 		// TODO: remove
-		System.out.println("eval with MPReduce: " + exp);
-		System.out.println("   result: " + result);
-		System.out.println("   ggbString: " + ggbString);
+//		System.out.println("eval with MPReduce: " + exp);
+//		System.out.println("   result: " + result);
+//		System.out.println("   ggbString: " + ggbString);
 		
 		return ggbString;
 	}
@@ -105,7 +105,7 @@ public class CASmpreduce extends CASgeneric {
 	 * 
 	 * @return result string (null possible)
 	 */
-	private String evaluateMPReduce(String exp) {
+	public final String evaluateMPReduce(String exp) {
         try {
         	exp=casParser.replaceIndices(exp);
 			String ret = mpreduce.evaluate(exp);
