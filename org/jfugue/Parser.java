@@ -85,12 +85,12 @@ public class Parser
 
     protected void clearParserProgressListeners () 
     {
-    	throw new Error("Needs Java 6");
- /*       EventListener[] l = progressListenerList.getListeners (ParserProgressListener.class);
+ //   	throw new Error("Needs Java 6");
+        EventListener[] l = progressListenerList.getListeners (ParserProgressListener.class);
         int numListeners = l.length;
         for (int i = 0; i < numListeners; i++) {
-            progressListenerList.remove (ParserProgressListener.class, l[i]);
-        }*/
+          //  progressListenerList.remove (ParserProgressListener.class, l[i]);
+        }
     }
 
     /** Tells all ParserProgressListener interfaces that progress has occurred. */
@@ -134,12 +134,12 @@ public class Parser
 
     protected void clearParserListeners () 
     {
-    	throw new Error("Needs Java 6");
-/*        EventListener[] l = listenerList.getListeners (ParserListener.class);
+    	//throw new Error("Needs Java 6");
+        EventListener[] l = listenerList.getListeners (ParserListener.class);
         int numListeners = l.length;
         for (int i = 0; i < numListeners; i++) {
-            listenerList.remove (ParserListener.class, l[i]);
-        }*/
+           // listenerList.remove (ParserListener.class, l[i]);
+        }
     }
 
     /** Tells all ParserListener interfaces that a voice event has been parsed. */

@@ -94,7 +94,8 @@ public class Player implements PatternListener
 
         sequencer.start();
 
-        System.out.println("seq length div 1000 = "+(long)(sequence.getMicrosecondLength() / 1000));
+        //System.out.println("seq length div 1000 = "+(long)(sequence.getMicrosecondLength() / 1000));
+        
         
         try {
             Thread.sleep(sequence.getMicrosecondLength() / 1000 + 250);  // extra time when finishing with a short (ie 1/16) note

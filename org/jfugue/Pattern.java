@@ -272,13 +272,13 @@ public class Pattern
     }
 
     protected void clearPatternListeners () {
-    	throw new Error("Needs Java 6");
-/*
+    //	throw new Error("Needs Java 6");
+
         EventListener[] l = listenerList.getListeners (PatternListener.class);
         int numListeners = l.length;
         for (int i = 0; i < numListeners; i++) {
-            listenerList.remove (PatternListener.class, l[i]);
-        }*/
+          //  listenerList.remove (PatternListener.class, l[i]);
+        }
     }
 
     /** Tells all PatternListener interfaces that a fragment has been added. */

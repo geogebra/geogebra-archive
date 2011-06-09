@@ -22,6 +22,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Soundbank;
 import javax.sound.midi.Synthesizer;
 import javax.sound.midi.Track;
+import javax.sound.sampled.LineUnavailableException;
 import javax.swing.JFileChooser;
 
 import org.jfugue.Pattern;
@@ -45,12 +46,13 @@ public class MidiSound implements MetaEventListener  {
 	private Sequence sequence;
 	private long tickPosition;
 
+	private Player player;
 	// Midi meta event
 	public static final int END_OF_TRACK_MESSAGE = 47;
 
-	/**
+
+	/***********************************************
 	 * Constructor
-	 * @param app
 	 */
 	public MidiSound(Application app) {
 		this.app = app;
@@ -117,6 +119,9 @@ public class MidiSound implements MetaEventListener  {
 	}
 
 
+
+
+
 	/**
 	 * Plays a midi sequence with default tempo 
 	 */
@@ -134,9 +139,9 @@ public class MidiSound implements MetaEventListener  {
 	 * @param tickPosition
 	 */
 	public void playSequence( Sequence sequence, int tempo, long tickPosition ) {
-		
+
 		if(sequence == null) return;
-		
+
 		try{
 			initialize();
 			sequencer.open( );  
@@ -159,9 +164,9 @@ public class MidiSound implements MetaEventListener  {
 
 
 	public void pause(boolean doPause){
-		
+
 		if(sequencer == null) return;
-		
+
 		if(doPause){
 			tickPosition = sequencer.getTickPosition();
 			closeMidiSound();
@@ -177,7 +182,7 @@ public class MidiSound implements MetaEventListener  {
 	}
 
 	public void closeMidiSound() {
-		
+
 		if (synthesizer != null) {
 			synthesizer.close();
 		}
@@ -187,7 +192,7 @@ public class MidiSound implements MetaEventListener  {
 			//sequencer.stop();
 			sequencer.close();
 		}
-		
+
 		System.gc();
 	}
 
@@ -205,50 +210,23 @@ public class MidiSound implements MetaEventListener  {
 
 
 
-	//==================================================
-	//  Play Single Midi Note
-	//==================================================
-
-
 	/** 
 	 * Uses the Sequencer to play a single note in channel[0]  
 	 * 
 	 * */
 	public void playSequenceNote(final int note, final double duration, final int instrument, final int velocity){
 
-		try {
-			tickPosition = 0;
-			sequence = new Sequence(Sequence.SMPTE_24, 100);
-			int ticks = (int) (duration *2400);
-
-			Track track = sequence.createTrack( );  
-
-			// Set the instrument on channel 0
-			ShortMessage sm = new ShortMessage( );
-			sm.setMessage(ShortMessage.PROGRAM_CHANGE, 0, instrument, 0);
-			track.add(new MidiEvent(sm, 0));
-
-			// add the note to the track and play it
-			addNote(track, 0, ticks, note, velocity);
-			addNote(track, ticks, 640, 1, 0);
-			playSequence(sequence, tickPosition);
-
-		} catch (InvalidMidiDataException e) {
-			e.printStackTrace();
-		}
-
+		tickPosition = 0;
+		String str = "[" + note + "]d0/" + duration;
+		this.playSequenceFromJFugueString(str, instrument);
+		//System.out.println(str);
 	}
 
 
 
-
-	//==================================================
-	//  Play Midi Sequence from File 
-	//==================================================
-
 	/*
-	 * Uses the sequencer to play a Midi file.
-	 * Currently only supports files with extension .mid
+	 * Uses the sequencer to play a Midi sequence from a .mid file
+	 * or a .txt file containing a JFugue string.
 	 */
 	public void playMidiFile(String filePath){
 
@@ -299,7 +277,7 @@ public class MidiSound implements MetaEventListener  {
 			synthesizer.open();
 
 			System.out.println("soundbank added: " + sb);
-						
+
 			if (sb != null){
 				System.out.println("soundbank supported: " + synthesizer.isSoundbankSupported(sb));
 				boolean bInstrumentsLoaded = synthesizer.loadAllInstruments(sb);
@@ -316,51 +294,31 @@ public class MidiSound implements MetaEventListener  {
 	}
 
 
+	
 
+	public void playSequenceFromJFugueString(String noteString, int instrument){
 
-
-	/**
-	 * Uses the sequencer to play a midi sequence parsed from an input string
-	 */
-	public void playSequenceFromJFugueString( String noteString, int instrument ) {
-		
 		initialize();
 		try {
 			sequencer.open( );
 			synthesizer.open();
 		} catch (MidiUnavailableException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}  
-		
+
 		noteString = "I[" + instrument + "] " + noteString;
-		Player player = new Player(sequencer); 
-		Pattern pattern = new Pattern(noteString); 
-		player.play(pattern); 
-		
-	}
-	
-	
-
-	// A convenience method to add a note to the track on channel 0
-	public static void addNote(Track track, int startTick, int tickLength, int key, int velocity){
-
-		try{
-			ShortMessage on = new ShortMessage( );
-			on.setMessage(ShortMessage.NOTE_ON,  0, key, velocity);
-			ShortMessage off = new ShortMessage( );
-			off.setMessage(ShortMessage.NOTE_OFF, 0, key, velocity);
-			track.add(new MidiEvent(on, startTick));
-			track.add(new MidiEvent(off, startTick + tickLength));
-
-		} catch (InvalidMidiDataException e) {
-		}
+		player = new Player(sequencer); 
+		Pattern pattern = new Pattern(noteString);
+		PlayerThread thread = new PlayerThread(player, pattern);
+		thread.start(); 
 
 	}
 
 
-	
-	private void playJFugueFromFile(File file) throws IOException {
+
+
+
+	public void playJFugueFromFile(File file) throws IOException {
 
 		String fileName = file.getName();
 		StringBuffer contents = new StringBuffer();
@@ -372,7 +330,7 @@ public class MidiSound implements MetaEventListener  {
 			while ((text = reader.readLine()) != null) {
 				contents.append(text);
 			}
-			System.out.println(contents.toString());
+			//System.out.println(contents.toString());
 			this.playSequenceFromJFugueString(contents.toString(),0);
 		} 
 
@@ -382,14 +340,42 @@ public class MidiSound implements MetaEventListener  {
 		} finally {
 			try {
 				if (reader != null) reader.close();
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	
+
+
+
+
+
+
+	/**********************************************************
+	 * Class PlayerThread 
+	 * Thread extension that runs a JFugue MIDI player 
+	 */
+	private class PlayerThread extends Thread {
+
+		private volatile boolean stopped = false;
+		private Pattern pattern;
+		private Player player;
+
+		public PlayerThread(Player player, Pattern pattern){
+			this.player = player;
+			this.pattern = pattern;
+		}
+
+		public void run() {
+			player.play(pattern);
+			player.close();
+		}
+	}
+
+
+
 
 
 } 
