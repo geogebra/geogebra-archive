@@ -270,7 +270,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	// used for gridlock when dragging polygons, segments etc
 	double[] transformCoordsOffset = new double[2];
 
-	
+	boolean allowSelectionRectangleForTranslateByVector = true;
 	
 	
 	/*********************************************** 
@@ -338,6 +338,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 
 		endOfMode(mode);
+
+		allowSelectionRectangleForTranslateByVector = true;
 
 		if (EuclidianView.usesSelectionRectangleAsInput(newMode) && view.getSelectionRectangle() != null)
 		{
@@ -961,7 +963,17 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			hits.removePolygons();
 			createNewPoint(hits, false, false, false, false); 
 			break;
-			
+
+		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+			if (!allowSelectionRectangleForTranslateByVector) {
+				view.setHits(mouseLoc);
+				hits = view.getHits();
+				hits.removePolygons();
+				if (hits.size() == 0)
+					createNewPoint(hits, false, true, true);
+			}
+			break;
+
 		case EuclidianView.MODE_PARALLEL:
 		case EuclidianView.MODE_PARABOLA: // Michael Borcherds 2008-04-08
 		case EuclidianView.MODE_ORTHOGONAL:
@@ -1709,6 +1721,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			// transformations
 		case EuclidianView.MODE_TRANSLATE_BY_VECTOR:
+			return allowSelectionRectangleForTranslateByVector;
+
 		case EuclidianView.MODE_DILATE_FROM_POINT:	
 		case EuclidianView.MODE_MIRROR_AT_POINT:
 		case EuclidianView.MODE_MIRROR_AT_LINE:
@@ -5920,6 +5934,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		if (count == 0) {
 			count = addSelectedPoint(hits, 2, false);
 			selectedGeos.removeAll(selectedPoints);
+			allowSelectionRectangleForTranslateByVector = false;
 		}
 
 		// we got the mirror point
@@ -5933,6 +5948,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					GeoPoint[] ab = getSelectedPoints();
 					vec = kernel.Vector(null, ab[0], ab[1]);
 				}
+				allowSelectionRectangleForTranslateByVector = true;
 				return kernel.Translate(null,  polys[0], vec);
 			}
 			else if (selGeos() > 0) {
@@ -5953,6 +5969,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 					}
 				}
 				GeoElement[] retex = {};
+				allowSelectionRectangleForTranslateByVector = true;
 				return ret.toArray(retex);
 			}
 		}
