@@ -31,7 +31,7 @@ public class EuclidianControllerForPlane extends EuclidianController {
 		
 		Coords coords = getCoordsFromView(xRW,yRW);
 		
-		//Application.debug("xRW, yRW= "+xRW+", "+yRW+"\n3D coords:\n"+coords);
+		Application.debug("xRW, yRW= "+xRW+", "+yRW+"\n3D coords:\n"+coords);
 		
 		movedGeoPoint.setCoords(coords, true);
 		((GeoElement) movedGeoPoint).updateCascade();

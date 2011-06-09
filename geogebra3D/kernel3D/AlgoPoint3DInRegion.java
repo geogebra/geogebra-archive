@@ -34,11 +34,9 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
         this.region = region;
         P = new GeoPoint3D(cons, region);
         
-        P.setWillingCoords(x, y, z, 1.0);
-        
-
-        
-        region.pointChangedForRegion(P);
+        P.setCoords(x, y, z, 1.0);        
+        //P.setWillingCoords(x, y, z, 1.0);
+        //region.pointChangedForRegion(P);
         
 
         setInputOutput(); // for AlgoElement
