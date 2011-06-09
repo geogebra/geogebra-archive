@@ -21,7 +21,6 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
-import geogebra.main.Application;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
@@ -1306,7 +1305,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		this.direction=changeableCoordDirector.getMainDirection();
 	}
 	
-	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition,  Coords viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
+	public boolean moveFromChangeableCoordParentNumbers(Coords rwTransVec, Coords endPosition, 
+			Coords viewDirection, ArrayList updateGeos, ArrayList tempMoveObjectList){
 		
 		GeoNumeric var = getCoordParentNumber();
 				
@@ -1421,5 +1421,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			((GeoPoint)points[i]).matrixTransform(a00, a01, a02, a10, a11, a12, a20, a21, a22);
 		
 	}
+	public  void toGeoCurveCartesian(GeoCurveCartesian curve){
+		curve.setFromPolyLine(points, true);
+    }
 }
 

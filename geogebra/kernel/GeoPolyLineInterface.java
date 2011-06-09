@@ -17,5 +17,11 @@ public interface GeoPolyLineInterface {
 	public GeoPoint[] getPoints(); 
 	
 	public GeoPoint getPoint(int i);
+	
+	/**
+	 * Converts polyline to cartesian curve
+	 * @param outGeo
+	 */
+	public void toGeoCurveCartesian(GeoCurveCartesian outGeo);
 
 }

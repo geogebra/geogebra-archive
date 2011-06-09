@@ -16,12 +16,14 @@ import geogebra.Matrix.Coords;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.Function;
+import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
+import geogebra.main.Application;
 
 import java.util.ArrayList;
 
@@ -747,6 +749,44 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 					exprX.multiply(ma20).plus(exprY.multiply(ma21)).plus(ma22);										
 			funX.setExpression(new ExpressionNode(kernel,transX,ExpressionNode.DIVIDE,transZ));
 			funY.setExpression(new ExpressionNode(kernel,transY,ExpressionNode.DIVIDE,transZ));
+			
+		}
+		
+		public void setFromPolyLine(GeoPointND[] points,boolean repeatLast){
+			double coef = 0,coefY=0;
+	    	double cumulative = 0,cumulativeY =0;
+	    	ExpressionNode enx = new ExpressionNode(kernel,new MyDouble(kernel,((GeoPoint)points[0]).x));
+	    	ExpressionNode eny = new ExpressionNode(kernel,new MyDouble(kernel,((GeoPoint)points[0]).y));
+	    	FunctionVariable fv = new FunctionVariable(kernel,"t");
+	    	double sum =0;
+	    	double sumY =0;
+	    	int limit =  repeatLast? points.length+1:points.length;
+	    	for(int i=1;i<limit;i++){	    
+	    		int pointIndex = i >= points.length?0:i;
+	    		ExpressionNode greater = new ExpressionNode(kernel,new ExpressionNode(kernel,fv,ExpressionNode.MINUS,new MyDouble(kernel,i-1)),
+	    				ExpressionNode.ABS,
+	    				null);
+	    		Application.debug((i-1)+"=>"+pointIndex);
+	    		coef = 0.5*((GeoPoint)points[pointIndex]).x- 0.5*((GeoPoint)points[i-1]).x-cumulative;
+	    		coefY = 0.5*((GeoPoint)points[pointIndex]).y- 0.5*((GeoPoint)points[i-1]).y-cumulativeY;
+	    		sum+=coef*(i-1);
+	    		sumY+=coefY*(i-1);
+	    		cumulative += coef;
+	    		cumulativeY += coefY;
+	    		enx=enx.plus(greater.multiply(new MyDouble(kernel,coef)));
+	    		eny=eny.plus(greater.multiply(new MyDouble(kernel,coefY)));
+	    	}
+	    	enx=enx.plus(new ExpressionNode(kernel,fv,ExpressionNode.MULTIPLY,new MyDouble(kernel,cumulative)));
+	    	eny=eny.plus(new ExpressionNode(kernel,fv,ExpressionNode.MULTIPLY,new MyDouble(kernel,cumulativeY)));
+	    	enx=enx.plus(new MyDouble(kernel,-sum));
+	    	eny=eny.plus(new MyDouble(kernel,-sumY));
+	    	Function xFun = new Function(enx,fv);
+	    	Function yFun = new Function(eny,fv);
+	    	this.setFunctionY(yFun);
+			 
+			 this.setFunctionX(xFun);			 	
+			 this.setInterval(0, limit-1);
+
 			
 		}
 

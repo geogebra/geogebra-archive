@@ -39,6 +39,7 @@ import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoLocus;
 import geogebra.kernel.GeoNumeric;
 import geogebra.kernel.GeoPoint;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.GeoPolyLineInterface;
 import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoSegment;
@@ -2982,6 +2983,7 @@ class CmdMirror extends CommandProcessor {
 						&& arg[0].isGeoConic() || arg[0].isGeoPoint()
 						|| arg[0] instanceof GeoCurveCartesian
 						|| arg[0] instanceof GeoLine
+						|| arg[0] instanceof GeoPolyLineInterface
 						|| arg[0] instanceof GeoFunction
 						|| arg[0] instanceof GeoList) {
 					ret = kernel.Mirror(label, arg[0], conic1);

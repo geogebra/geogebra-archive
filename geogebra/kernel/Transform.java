@@ -63,7 +63,7 @@ public abstract class Transform {
 	 */
 	public GeoElement[] transform(GeoElement geo, String label) {
 		//for polygons we transform
-		if (geo instanceof GeoPolyLineInterface) {
+		if (geo instanceof GeoPolyLineInterface && this.isAffine()) {
 			GeoPolyLineInterface poly = (GeoPolyLineInterface) geo;
 			if(poly.isVertexCountFixed() && poly.isAllVertexLabelsSet())
 				return transformPoly(label, poly, transformPoints(poly.getPoints()));

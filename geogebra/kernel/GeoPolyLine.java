@@ -478,6 +478,12 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 		public GeoPoint getPoint(int i) {
 			return (GeoPoint)points[i];
 		}
+		
+		public  void toGeoCurveCartesian(GeoCurveCartesian curve){
+			curve.setFromPolyLine(points, false);
+	    }
+		
+		
 
 	
 

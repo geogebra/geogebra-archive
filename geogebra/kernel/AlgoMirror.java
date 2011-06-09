@@ -162,6 +162,9 @@ public class AlgoMirror extends AlgoTransformation {
     	else if(inGeo instanceof GeoFunction && mirror != mirrorPoint){
     		((GeoFunction)inGeo).toGeoCurveCartesian((GeoCurveCartesian)outGeo);
     	}
+    	else if(inGeo instanceof GeoPolyLineInterface && mirror == mirrorConic){
+    		((GeoPolyLineInterface)inGeo).toGeoCurveCartesian((GeoCurveCartesian)outGeo);
+    	}
     	else outGeo.set(inGeo);
         
         if (mirror == mirrorLine)
@@ -194,6 +197,8 @@ public class AlgoMirror extends AlgoTransformation {
     
     @Override
 	protected GeoElement getResultTemplate(GeoElement geo) {
+    	if((geo instanceof GeoPolyLineInterface) && mirror == mirrorConic)
+			return new GeoCurveCartesian(cons);
 		if((geo instanceof GeoFunction) && mirror != mirrorPoint)
 			return new GeoCurveCartesian(cons);
 		if (mirror instanceof GeoConic && geo instanceof GeoLine){
