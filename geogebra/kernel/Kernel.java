@@ -5339,7 +5339,7 @@ public class Kernel {
 	 * Intersect[polygon,polygon]
 	 * G. Sturr
 	 */
-	final public GeoElement[] Intersection(String[] labels, GeoPolygon poly0, GeoPolygon poly1) {
+	final public GeoElement[] IntersectPolygons(String[] labels, GeoPolygon poly0, GeoPolygon poly1) {
 		AlgoPolygonIntersection algo = new AlgoPolygonIntersection(cons, labels, poly0, poly1);
 		GeoElement[] polygon = algo.getOutput();
 		return polygon;

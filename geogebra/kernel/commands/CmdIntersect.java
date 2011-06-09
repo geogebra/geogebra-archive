@@ -179,7 +179,7 @@ public  GeoElement[] process(Command c) throws MyError {
 			} 
             // intersection of two lists
 			else if (arg[0].isGeoPolygon() && arg[1].isGeoPolygon() ) {
-				GeoElement[] ret =  kernel.Intersection(c.getLabels(),
+				GeoElement[] ret =  kernel.IntersectPolygons(c.getLabels(),
 						(GeoPolygon) arg[0], (GeoPolygon)arg[1] ) ;
 				return ret;
 			} 

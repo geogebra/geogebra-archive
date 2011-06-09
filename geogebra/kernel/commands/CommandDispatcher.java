@@ -266,7 +266,8 @@ public class CommandDispatcher {
     		   
     	cmdTable.put("Polygon", new CmdPolygon(kernel));
     	cmdTable.put("RigidPolygon", new CmdRigidPolygon(kernel));	   
-    	cmdTable.put("Area", new CmdArea(kernel));	
+    	cmdTable.put("Area", new CmdArea(kernel));
+    	cmdTable.put("Union", new CmdArea(kernel));
     		   
     	// Philipp Weissenbacher 10-04-2007
     	cmdTable.put("Circumference", new CmdCircumference(kernel));
