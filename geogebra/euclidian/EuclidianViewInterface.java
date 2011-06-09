@@ -3,6 +3,7 @@ package geogebra.euclidian;
 import geogebra.kernel.GeoAxis;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoNumeric;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.main.Application;
 
 import java.awt.Color;
@@ -402,4 +403,5 @@ public interface EuclidianViewInterface {
 	 * @return true if this is Graphics or Graphics 2
 	 */
 	public boolean isDefault2D();
+	
 }

@@ -1,16 +1,19 @@
 package geogebra3D.euclidianForPlane;
 
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 
 import geogebra.Matrix.CoordMatrix;
 import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianController;
 import geogebra.euclidian.EuclidianView;
+import geogebra.euclidian.Previewable;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra3D.kernel3D.GeoPlane3D;
@@ -140,4 +143,20 @@ public class EuclidianViewForPlane extends EuclidianView {
 		else
 			return kernel.getManager3D().Plane3D(plane);
 	}
+	
+	public GeoDirectionND getDirection(){
+		return plane;
+	}
+	
+	
+	
+	///////////////////////////////////////////////////////
+	// PREVIEWABLES
+	///////////////////////////////////////////////////////
+	
+	public Previewable createPreviewConic(int mode, ArrayList selectedPoints){
+		return null;
+	}
+	
+	
 }

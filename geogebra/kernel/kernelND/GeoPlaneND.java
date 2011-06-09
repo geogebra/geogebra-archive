@@ -8,7 +8,7 @@ import geogebra.kernel.Region;
  * @author mathieu
  *
  */
-public interface GeoPlaneND extends Region{
+public interface GeoPlaneND extends Region, GeoDirectionND{
 	
 	/**
 	 * sets the fading for the "ends" of the plane 

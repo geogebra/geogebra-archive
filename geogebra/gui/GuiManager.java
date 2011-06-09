@@ -41,6 +41,8 @@ import geogebra.kernel.GeoPolygon;
 import geogebra.kernel.GeoText;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.NumberValue;
+import geogebra.kernel.kernelND.GeoDirectionND;
+import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.main.Application;
 import geogebra.main.GeoGebraPreferences;
 import geogebra.main.MyError;
@@ -2643,10 +2645,10 @@ public class GuiManager {
 
 	}
 
-	public void showNumberInputDialogCirclePointRadius(String title, GeoPoint geoPoint1) {
+	public void showNumberInputDialogCirclePointRadius(String title, GeoPointND geoPoint1, EuclidianView view) {
 
 		NumberInputHandler handler = new NumberInputHandler();
-		InputDialog id = new InputDialogCirclePointRadius(app, title, handler, geoPoint1, kernel);
+		InputDialog id = new InputDialogCirclePointRadius(app, title, handler, (GeoPoint) geoPoint1, kernel);
 		id.setVisible(true);
 
 	}

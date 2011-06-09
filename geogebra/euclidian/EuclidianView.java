@@ -51,7 +51,9 @@ import geogebra.kernel.View;
 import geogebra.kernel.arithmetic.FunctionalNVar;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
+import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoRayND;
 import geogebra.kernel.kernelND.GeoSegmentND;
@@ -5061,6 +5063,22 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	
 	public boolean isDefault2D(){
 		return true;
+	}
+	
+	/**
+	 * 
+	 * @return null (for 2D) and xOyPlane (for 3D)
+	 */
+	public GeoPlaneND getPlaneContaining(){
+		return kernel.getDefaultPlane();
+	}
+	
+	/**
+	 * 
+	 * @return null (for 2D) and xOyPlane (for 3D)
+	 */
+	public GeoDirectionND getDirection(){
+		return getPlaneContaining();
 	}
 	
 }

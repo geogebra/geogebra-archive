@@ -36,9 +36,9 @@ public class AlgoPoint3DOnPath extends AlgoElement3D {
         
 
         
-        //P.setCoords(x, y, z, 1.0);
-        P.setWillingCoords(x, y, z, 1);
-        path.pointChanged(P);
+        P.setCoords(x, y, z, 1.0);
+        //P.setWillingCoords(x, y, z, 1);
+        //path.pointChanged(P);
 
         setInputOutput(); // for AlgoElement
 

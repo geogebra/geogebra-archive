@@ -42,6 +42,7 @@ import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionNodeEvaluator;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.commands.AlgebraProcessor;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 import geogebra3D.Application3D;
@@ -356,7 +357,10 @@ public class Kernel3D
 
 	
 
-	
+
+	public GeoPlaneND getDefaultPlane(){
+		return app3D.getEuclidianView3D().getxOyPlane();
+	}
 
 	
 

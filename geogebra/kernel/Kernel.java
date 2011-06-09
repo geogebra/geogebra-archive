@@ -39,6 +39,7 @@ import geogebra.kernel.discrete.AlgoMinimumSpanningTree;
 import geogebra.kernel.discrete.AlgoShortestDistance;
 import geogebra.kernel.discrete.AlgoTravelingSalesman;
 import geogebra.kernel.discrete.AlgoVoronoi;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.parser.Parser;
@@ -8528,5 +8529,14 @@ public class Kernel {
 		
 		return ret;
 	}
+	
+	/**
+	 * 
+	 * @return default plane (null for 2D implementation, xOy plane for 3D)
+	 */
+	public GeoPlaneND getDefaultPlane(){
+		return null;
+	}
+	
 }
 	

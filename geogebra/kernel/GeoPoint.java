@@ -1183,7 +1183,7 @@ GeoPointND, Animatable, Transformable  {
 		if (path != null) {
 			GeoElement geo = path.toGeoElement();
 			if (geo.isGeoConic()) {
-				((GeoConic) geo).removePointOnConic(this);
+				((GeoConicND) geo).removePointOnConic(this);
 			}
 		}
 		

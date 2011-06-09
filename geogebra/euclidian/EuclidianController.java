@@ -55,6 +55,7 @@ import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoConicND;
 import geogebra.kernel.kernelND.GeoDirectionND;
 import geogebra.kernel.kernelND.GeoLineND;
+import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.kernel.kernelND.GeoVectorND;
@@ -4958,13 +4959,23 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	}
 	
 	protected GeoElement[] switchModeForCircleOrSphere2(int mode){
-		GeoPoint[] points = getSelectedPoints();
-		GeoElement[] ret = { null };
+		GeoPointND[] points = getSelectedPointsND();
 		if (mode == EuclidianView.MODE_SEMICIRCLE)
-			ret[0] = kernel.Semicircle(null, points[0], points[1]);
+			return new GeoElement[] {kernel.Semicircle(null, (GeoPoint) points[0], (GeoPoint) points[1])};
 		else
-			ret[0] = kernel.Circle(null, points[0], points[1]);
-		return ret;
+			return createCircle2(points[0], points[1]);
+		
+	}
+	
+	protected GeoElement[] createCircle2(GeoPointND p0, GeoPointND p1){
+		if ( ((GeoElement) p0).isGeoElement3D() || ((GeoElement) p1).isGeoElement3D() )
+			return createCircle2ForPoints3D(p0, p1);
+		else
+			return new GeoElement[] {kernel.Circle(null, (GeoPoint) p0, (GeoPoint) p1)};
+	}
+	
+	protected GeoElement[] createCircle2ForPoints3D(GeoPointND p0, GeoPointND p1){
+		return new GeoElement[] {kernel.getManager3D().Circle3D(null, p0, p1, ((EuclidianView) view).getDirection())};
 	}
 
 	// get 2 points for locus
@@ -6334,7 +6345,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// we got the center point
 		if (selPoints() == 1) {	
 			app.getGuiManager().showNumberInputDialogCirclePointRadius(app.getMenu(getKernel().getModeText(mode)),
-					getSelectedPoints()[0]);
+					getSelectedPointsND()[0],(EuclidianView) view);
 			return true;
 		}
 		return false;
@@ -7563,5 +7574,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	public String getSliderValue() {
 		return sliderValue;
 	}
+	
+	
+
 
 }
