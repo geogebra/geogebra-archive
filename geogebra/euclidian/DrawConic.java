@@ -123,6 +123,7 @@ final public class DrawConic extends Drawable implements Previewable {
 	private GeoPoint [] previewTempPoints;  
 	private GeoNumeric previewTempRadius;
 	private int previewMode, neededPrevPoints;
+	private boolean isPreview = false;
     
 	public Area getShape(){
 		Area a = super.getShape()!=null? 
@@ -139,6 +140,7 @@ final public class DrawConic extends Drawable implements Previewable {
      * @param c */
     public DrawConic(EuclidianView view, GeoConicND c) {
     	this.view = view;
+    	isPreview = false;
     	hitThreshold = view.getCapturingThreshold();
         initConic(c);
         update();
@@ -304,7 +306,7 @@ final public class DrawConic extends Drawable implements Previewable {
         if (firstPoint) {
             firstPoint = false;
             point = conic.getSinglePoint();
-            drawPoint = new DrawPoint(view, point);                
+            drawPoint = new DrawPoint(view, point,isPreview);                
             drawPoint.setGeoElement(conic);
             //drawPoint.font = view.fontConic;            
         }
@@ -312,6 +314,7 @@ final public class DrawConic extends Drawable implements Previewable {
         point.setObjColor(conic.getObjectColor());
         point.setLabelColor(conic.getLabelColor());
         point.pointSize = conic.lineThickness;
+        
         drawPoint.update();   
     }
     
@@ -431,18 +434,23 @@ final public class DrawConic extends Drawable implements Previewable {
             circle = ellipse;
             arcFiller = null;         
             // calc screen coords of midpoint
-            Coords M = view.getCoordsForView(conic.getMidpoint3D());            
-            if (!Kernel.isZero(M.getZ())){//check if in view
-        		isVisible = false;
-        		return;
-            }
-            //check if eigen vec are in view
-            for(int j=0; j<2; j++){
-            	Coords ev = view.getCoordsForView(conic.getEigenvec3D(j));   
-                if (!Kernel.isZero(ev.getZ())){//check if in view
+            Coords M;
+            if (isPreview) //midpoint has been calculated in view coords
+            	M = conic.getMidpoint3D().getInhomCoords();
+            else{
+            	M = view.getCoordsForView(conic.getMidpoint3D());            
+            	if (!Kernel.isZero(M.getZ())){//check if in view
             		isVisible = false;
             		return;
-                }
+            	}
+            	//check if eigen vec are in view
+            	for(int j=0; j<2; j++){
+            		Coords ev = view.getCoordsForView(conic.getEigenvec3D(j));   
+            		if (!Kernel.isZero(ev.getZ())){//check if in view
+            			isVisible = false;
+            			return;
+            		}
+            	}
             }
             mx =  M.getX() * view.xscale + view.xZero;
             my = -M.getY() * view.yscale + view.yZero;   
@@ -1104,6 +1112,7 @@ final public class DrawConic extends Drawable implements Previewable {
     private void initPreview() {
 		//	init the conic for preview			    	
 		Construction cons = previewTempPoints[0].getConstruction();
+		isPreview = true;
 		
 		switch (previewMode) {			
 			case EuclidianView.MODE_CIRCLE_TWO_POINTS:			
@@ -1162,8 +1171,8 @@ final public class DrawConic extends Drawable implements Previewable {
 			isVisible = conic != null && (prevPoints.size() == 2 || prevSegments.size() == 1 || prevConics.size() == 1);
 			if (isVisible) {
 				if (prevPoints.size() == 2) {
-					GeoPoint p1 = (GeoPoint) prevPoints.get(0);
-					GeoPoint p2 = (GeoPoint) prevPoints.get(1);
+					GeoPointND p1 = prevPoints.get(0);
+					GeoPointND p2 = prevPoints.get(1);
 					previewTempRadius.setValue(p1.distance(p2));
 				}
 				else if (prevSegments.size() == 1) {
@@ -1184,7 +1193,8 @@ final public class DrawConic extends Drawable implements Previewable {
 			if (isVisible) {
 				for (int i=0; i < prevPoints.size(); i++) {
 					Coords p = view.getCoordsForView(prevPoints.get(i).getInhomCoordsInD(3));
-					previewTempPoints[i].setCoords(p,true);					
+					//Application.debug("p["+i+"]=\n"+p);
+					previewTempPoints[i].setCoords(p.projectInfDim(),true);					
 				}						
 				previewTempPoints[0].updateCascade();			
 			}	

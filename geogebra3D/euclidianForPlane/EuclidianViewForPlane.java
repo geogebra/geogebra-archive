@@ -43,6 +43,9 @@ public class EuclidianViewForPlane extends EuclidianView {
 		super(ec, new boolean[]{ true, true }, true);
 		
 		this.plane = plane;
+		
+		//TODO
+		setShowAxes(false, true);
 	}
 	
 
@@ -63,6 +66,8 @@ public class EuclidianViewForPlane extends EuclidianView {
 		case GeoElement.GEO_CLASS_LINE3D:
 		case GeoElement.GEO_CLASS_RAY:
 		case GeoElement.GEO_CLASS_RAY3D:
+		case GeoElement.GEO_CLASS_VECTOR:
+		case GeoElement.GEO_CLASS_VECTOR3D:
 		case GeoElement.GEO_CLASS_POLYGON:
 		case GeoElement.GEO_CLASS_POLYGON3D:
 		case GeoElement.GEO_CLASS_CONIC:
@@ -150,13 +155,6 @@ public class EuclidianViewForPlane extends EuclidianView {
 	
 	
 	
-	///////////////////////////////////////////////////////
-	// PREVIEWABLES
-	///////////////////////////////////////////////////////
-	
-	public Previewable createPreviewConic(int mode, ArrayList selectedPoints){
-		return null;
-	}
 	
 	
 }

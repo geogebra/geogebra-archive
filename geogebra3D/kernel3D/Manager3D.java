@@ -5,6 +5,7 @@ import geogebra.kernel.AlgoElement;
 import geogebra.kernel.AlgoIntersectLineConic;
 import geogebra.kernel.AlgoLinePointLine;
 import geogebra.kernel.AlgoMidpoint;
+import geogebra.kernel.AlgoPointOnPath;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoConic;
 import geogebra.kernel.GeoElement;
@@ -132,9 +133,18 @@ public class Manager3D implements Manager3DInterface {
 
 
 	/** Point3D on a 1D path with cartesian coordinates (x,y,z)   */
-	final public GeoPoint3D Point3D(String label, Path path, double x, double y, double z) {
+	final public GeoPoint3D Point3D(String label, Path path, double x, double y, double z, boolean addToConstruction) {
+		boolean oldMacroMode = false;
+		if (!addToConstruction) {
+			oldMacroMode = cons.isSuppressLabelsActive();
+			cons.setSuppressLabelCreation(true);		
+
+		}
 		AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, x, y, z);
-		GeoPoint3D p = algo.getP();		
+		GeoPoint3D p = algo.getP();	
+		if (!addToConstruction) {
+			cons.setSuppressLabelCreation(oldMacroMode);
+		}
 		return p;
 	}	
 
@@ -143,7 +153,7 @@ public class Manager3D implements Manager3DInterface {
 		// try (0,0,0)
 		//AlgoPoint3DOnPath algo = new AlgoPoint3DOnPath(cons, label, path, 0, 0, 0);
 		//GeoPoint3D p = algo.getP(); 
-		GeoPoint3D p = Point3D(label,path,0,0,0);
+		GeoPoint3D p = Point3D(label,path,0,0,0,true);
 
 		/* TODO below
 			// try (1,0,0) 

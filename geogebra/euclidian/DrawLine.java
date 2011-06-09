@@ -65,7 +65,8 @@ public class DrawLine extends Drawable implements Previewable {
     protected boolean isVisible;
 	protected boolean labelVisible;
     
-    private ArrayList points, lines; // for preview
+    private ArrayList<GeoPointND> points;// for preview
+    private ArrayList lines; // for preview
     private GeoPointND startPoint, previewPoint2;
    
     // clipping attributes
@@ -83,7 +84,7 @@ public class DrawLine extends Drawable implements Previewable {
 	/**
 	 * Creates a new DrawLine for preview.     
 	 */
-	DrawLine(EuclidianView view, ArrayList points, int previewMode) {
+	DrawLine(EuclidianView view, ArrayList<GeoPointND> points, int previewMode) {
 		this.previewMode = previewMode;
 		this.view = view; 
 		this.points = points;
@@ -100,7 +101,7 @@ public class DrawLine extends Drawable implements Previewable {
 	/**
 	 * Creates a new DrawLine for preview of parallel tool  
 	 */
-    public DrawLine(EuclidianView view, ArrayList points,
+    public DrawLine(EuclidianView view, ArrayList<GeoPointND> points,
 			ArrayList lines, boolean parallel) {
     	if (parallel) previewMode = PREVIEW_PARALLEL;
     	else previewMode = PREVIEW_PERPENDICULAR;
@@ -429,7 +430,8 @@ public class DrawLine extends Drawable implements Previewable {
 					view.getEuclidianController().setLineEndPoint(null);
 				
 				// line through first point and mouse position	
-				coords = startPoint.getCoordsInD(2).crossProduct(new Coords(xRW, yRW, 1));
+				//coords = startPoint.getCoordsInD(2).crossProduct(new Coords(xRW, yRW, 1));
+				coords = view.getCoordsForView(startPoint.getInhomCoordsInD(3)).projectInfDim().crossProduct(new Coords(xRW, yRW, 1));
 				((GeoLine) g).setCoords(coords.getX(), coords.getY(), coords.getZ());
 				//GeoVec3D.cross(startPoint, xRW, yRW, 1.0, g);
     

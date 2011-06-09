@@ -55,7 +55,7 @@ public class DrawVector extends Drawable implements Previewable {
 	private double [] coordsV = new double[2]; 
     private GeneralPath gp; // for arrow   
     private boolean arrowheadVisible, lineVisible;
-    private ArrayList points;
+    private ArrayList<GeoPointND> points;
     
     /** Creates new DrawVector */
     public DrawVector(EuclidianView view, GeoVectorND v) {
@@ -66,7 +66,7 @@ public class DrawVector extends Drawable implements Previewable {
 		update();
     }
     
-	DrawVector(EuclidianView view, ArrayList points) {
+	DrawVector(EuclidianView view, ArrayList<GeoPointND> points) {
 		this.view = view;
 		this.points = points;
 		updatePreview();
@@ -84,7 +84,7 @@ public class DrawVector extends Drawable implements Previewable {
 		//start point in real world coords
 		P = v.getStartPoint();            		                            
         if (P != null && !P.isInfinite()) {
-        	coords = P.getCoordsInD(3);
+        	coords = view.getCoordsForView(P.getInhomCoordsInD(3));//P.getCoordsInD(3);
             if (!Kernel.isZero(coords.getZ())){
             	isVisible = false;
             	return;
@@ -98,7 +98,7 @@ public class DrawVector extends Drawable implements Previewable {
         }       
         
         // vector
-        coords = v.getCoordsInD(3);
+        coords = view.getCoordsForView(v.getCoordsInD(3));//v.getCoordsInD(3);
         if (!Kernel.isZero(coords.getZ())){
         	isVisible = false;
         	return;
@@ -253,8 +253,9 @@ public class DrawVector extends Drawable implements Previewable {
 		isVisible = points.size() == 1;
 		if (isVisible) { 
 			//	start point
-			GeoPoint P = (GeoPoint) points.get(0);	
-			P.getInhomCoords(coordsA);
+			//GeoPoint P = (GeoPoint) points.get(0);	
+			//P.getInhomCoords(coordsA);
+			coordsA=view.getCoordsForView(points.get(0).getInhomCoordsInD(3)).get();
 			coordsB[0] = coordsA[0];
 			coordsB[1] = coordsA[1];
 			setArrow(1);                              			                                            
@@ -290,8 +291,9 @@ public class DrawVector extends Drawable implements Previewable {
 				view.getEuclidianController().setLineEndPoint(null);
   
 			// set start and end point in real world coords
-			GeoPoint P = (GeoPoint) points.get(0);	
-			P.getInhomCoords(coordsA);
+			//GeoPoint P = (GeoPoint) points.get(0);	
+			//P.getInhomCoords(coordsA);
+			coordsA=view.getCoordsForView(points.get(0).getInhomCoordsInD(3)).get();
 			coordsB[0] = xRW;
 			coordsB[1] = yRW;
 			setArrow(1);

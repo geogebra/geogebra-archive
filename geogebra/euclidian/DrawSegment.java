@@ -27,6 +27,7 @@ import geogebra.kernel.GeoVec2D;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra.main.Application;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -45,7 +46,7 @@ implements Previewable {
     private GeoLineND s;
        
     private boolean isVisible, labelVisible;
-    private ArrayList<GeoPoint> points;
+    private ArrayList<GeoPointND> points;
     
     private Line2D.Double line;               
     private double [] coordsA = new double[2];
@@ -73,7 +74,7 @@ implements Previewable {
 	 * @param view Euclidian view to be used
 	 * @param points endpoints of the segment
 	 */
-	DrawSegment(EuclidianView view, ArrayList<GeoPoint> points) {
+	DrawSegment(EuclidianView view, ArrayList<GeoPointND> points) {
 		this.view = view; 
 		this.points = points;
 
@@ -365,8 +366,10 @@ implements Previewable {
 		if (isVisible) { 
 
 			//	start point
-			coordsA = ((GeoPointND) points.get(0)).getInhomCoordsInD(2).get();	
+			coordsA = view.getCoordsForView(points.get(0).getInhomCoordsInD(3)).get();
+			//coordsA = points.get(0).getInhomCoordsInD(2).get();	
 			view.toScreenCoords(coordsA);		
+
 			
 			if (line == null)
 				line = new Line2D.Double();
@@ -377,6 +380,7 @@ implements Previewable {
 	private Point2D.Double endPoint = new Point2D.Double();
 	
 	final public void updateMousePos(double xRW, double yRW) {		
+	
 		if (isVisible) { 											
 			//double xRW = view.toRealWorldCoordX(mx);
 			//double yRW = view.toRealWorldCoordY(my);

@@ -646,6 +646,19 @@ public class Coords
 	}
 	
 	/**
+	 * 
+	 * @return this with (n-1) coord removed
+	 */
+	public Coords projectInfDim(){
+		int len = getLength();
+		Coords result=new Coords(len-1);
+		for (int i=0;i<len-1;i++)
+			result.val[i]=val[i];
+		result.val[len-2]=val[len-1];
+		return result;
+	}
+	
+	/**
 	 * Return true if this==v for the precision given (ie each coordinates are not different more than precision).
 	 * @param v vector compared with
 	 * @param precision 

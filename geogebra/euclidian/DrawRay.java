@@ -48,7 +48,7 @@ implements Previewable {
     //private GeoPoint A;
      
     boolean isVisible, labelVisible;
-    private ArrayList points;
+    private ArrayList<GeoPointND> points;
     
     private Line2D.Double line = new Line2D.Double();               
     private double [] a = new double[2];
@@ -68,7 +68,7 @@ implements Previewable {
 	/**
 	 * Creates a new DrawSegment for preview.     
 	 */
-	DrawRay(EuclidianView view, ArrayList points) {
+	DrawRay(EuclidianView view, ArrayList<GeoPointND> points) {
 		this.view = view; 
 		this.points = points;
 
@@ -219,7 +219,8 @@ implements Previewable {
 		isVisible = points.size() == 1;
 		if (isVisible) { 
 			//	start point
-			Coords coords = ((GeoPointND) points.get(0)).getInhomCoordsInD(2);						   			
+			//Coords coords = ((GeoPointND) points.get(0)).getInhomCoordsInD(2);						   			
+			Coords coords = view.getCoordsForView(points.get(0).getInhomCoordsInD(3));						   			
 			a = coords.get();			                        
 			view.toScreenCoords(a);						
 			line.setLine(a[0], a[1], a[0], a[1]);                                   			                                            

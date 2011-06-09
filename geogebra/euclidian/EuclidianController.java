@@ -3014,21 +3014,26 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		
 		if (getTopHits.size() > 0 ) {
 			GeoElement geo = (GeoElement)getTopHits.get(0);
-			if (geo.isPath()) {
-				Path path = (Path)geo;
-				GeoPoint p = kernel.Point(null, path, xRW, yRW, false);
-				p.update();
-				xRW = p.inhomX;
-				yRW = p.inhomY;
+			if (geo instanceof Path) {
+				processModeLock((Path)geo);
 			} else if (geo.isGeoPoint()) {
-				Coords coords = ((GeoPointND) geo).getInhomCoordsInD(2);
-				xRW = coords.getX();
-				yRW = coords.getY();
+				processModeLock((GeoPointND) geo);
 			} else transformCoords(); // grid lock
 		} else transformCoords(); // grid lock
 	}
 	
+	protected void processModeLock(Path path){
+		GeoPoint p = kernel.Point(null, path, xRW, yRW, false);
+		p.update();
+		xRW = p.inhomX;
+		yRW = p.inhomY;	
+	}
 	
+	protected void processModeLock(GeoPointND point){
+		Coords coords = point.getInhomCoordsInD(2);
+		xRW = coords.getX();
+		yRW = coords.getY();
+	}
 
 	public void mouseEntered(MouseEvent e) {
 
@@ -3782,14 +3787,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected GeoPointND createNewPoint(boolean forPreviewable, Path path, double x, double y, double z){
 		
 		if (((GeoElement) path).isGeoElement3D()) //check if the path is not a 3D element
-			return (GeoPointND) kernel.getManager3D().Point3D(null, path, x, y, z);
+			return (GeoPointND) kernel.getManager3D().Point3D(null, path, x, y, z,!forPreviewable);
 		else
 			return createNewPoint2D(forPreviewable, path, x, y);
 
 	}
 	
 	protected GeoPointND createNewPoint2D(boolean forPreviewable, Path path, double x, double y){
-		return kernel.Point(null, path, x, y, true);
+		return kernel.Point(null, path, x, y, !forPreviewable);
 	}
 	
 	
@@ -4179,9 +4184,12 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	
 	// fetch the two selected points for vector
 	protected GeoElement[] vector(){
-		GeoPoint[] points = getSelectedPoints();
+		GeoPointND[] points = getSelectedPointsND();
 		GeoElement[] ret = { null };
-		ret[0] = kernel.Vector(null, points[0], points[1]);
+		if ( ((GeoElement) points[0]).isGeoElement3D() || ((GeoElement) points[1]).isGeoElement3D() )
+			ret[0] = kernel.getManager3D().Vector3D(null, points[0], points[1]);
+		else
+			ret[0] = kernel.Vector(null, (GeoPoint) points[0], (GeoPoint) points[1]);
 		return ret;
 	}
 

@@ -67,6 +67,27 @@ public class EuclidianControllerForPlane extends EuclidianController {
 	protected GeoElement[] createCircle2(GeoPointND p0, GeoPointND p1){
 		return createCircle2ForPoints3D(p0, p1);
 	}
+	
+	
+	
+	
+	
+	
 
+	
+	
+	protected void processModeLock(GeoPointND point){
+		Coords coords = ((EuclidianView) view).getCoordsForView(point.getInhomCoordsInD(3));
+		xRW = coords.getX();
+		yRW = coords.getY();
+	}
+	
+	protected void processModeLock(Path path){
+		GeoPointND p = createNewPoint(true, path);
+		((GeoElement) p).update();
+		Coords coords = ((EuclidianView) view).getCoordsForView(p.getInhomCoordsInD(3));
+		xRW = coords.getX();
+		yRW = coords.getY();
+	}
 
 }

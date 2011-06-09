@@ -64,7 +64,7 @@ public interface Manager3DInterface {
 
 
 			/** Point3D on a 1D path with cartesian coordinates (x,y,z)   */
-			 public GeoPointND Point3D(String label, Path path, double x, double y, double z) ;
+			 public GeoPointND Point3D(String label, Path path, double x, double y, double z, boolean addToConstruction) ;
 
 			/** Point3D on a 1D path without cartesian coordinates   */
 			 public GeoPointND Point3D(String label, Path path) ;

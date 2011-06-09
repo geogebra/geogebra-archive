@@ -67,13 +67,25 @@ public final class DrawPoint extends Drawable {
     private static BasicStroke borderStroke = EuclidianView.getDefaultStroke();
     private static BasicStroke [] crossStrokes = new BasicStroke[10];
     
+    private boolean isPreview;
+    
     /** Creates new DrawPoint 
      * @param view 
      * @param P */
-    public DrawPoint(EuclidianView view, GeoPointND P) {      
+    public DrawPoint(EuclidianView view, GeoPointND P) {   
+    	this(view,P,false);
+    }
+    
+    /** Creates new DrawPoint 
+     * @param view 
+     * @param P 
+     * @param isPreview */   	 
+    public DrawPoint(EuclidianView view, GeoPointND P, boolean isPreview) {      
     	this.view = view;          
         this.P = P;
         geo = (GeoElement) P;
+        
+        this.isPreview=isPreview;
         
         //crossStrokes[1] = new BasicStroke(1f);
 
@@ -84,16 +96,21 @@ public final class DrawPoint extends Drawable {
     	
     	if (gp != null) gp.reset(); // stop trace being left when (filled diamond) point moved
     	
-        isVisible = geo.isEuclidianVisible();    
+        isVisible = geo.isEuclidianVisible();   
         
-        //looks if it's on view
-	    double [] coords = new double[2];
-	    Coords p = view.getCoordsForView(P.getInhomCoordsInD(3));
-	    if (!Kernel.isZero(p.getZ())){
-	    	isVisible = false;
-	    }else{
-	    	coords[0] = p.getX(); coords[1] = p.getY();
-	    }
+        double [] coords = new double[2];
+        if (isPreview){
+        	Coords p = P.getInhomCoordsInD(2);
+        	coords[0] = p.getX(); coords[1] = p.getY();
+        }else{
+        	//looks if it's on view     	
+        	Coords p = view.getCoordsForView(P.getInhomCoordsInD(3));
+        	if (!Kernel.isZero(p.getZ())){
+        		isVisible = false;
+        	}else{
+        		coords[0] = p.getX(); coords[1] = p.getY();
+        	}
+        }
         
     	// still needs updating if it's being traced to the spreadsheet
         if (!isVisible && !P.getSpreadsheetTrace()) return;
