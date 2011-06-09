@@ -42,15 +42,6 @@ public GeoElement[] process(Command c) throws MyError {
 	        arg[2].isNumberValue())
 				return kernel.RegularPolygon(c.getLabels(), (GeoPoint) arg[0], (GeoPoint) arg[1], (NumberValue) arg[2]);		
         
-      //G.Sturr 2010-2-19
-        // polygon operation
-        if (arg[0].isGeoPolygon() && 
-	        arg[1].isGeoPolygon() &&
-	        arg[2].isNumberValue())
-				return kernel.PolygonOperation(c.getLabels(), (GeoPolygon) arg[0], (GeoPolygon) arg[1],(NumberValue) arg[2]);		
-       //END G.Sturr 
-        
-        
         default:
 			// polygon for given points
 	        GeoPoint[] points = new GeoPoint[n];

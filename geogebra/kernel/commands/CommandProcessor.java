@@ -17,6 +17,7 @@ import geogebra.euclidian.EuclidianView;
 import geogebra.gui.GuiManager;
 import geogebra.gui.view.spreadsheet.SpreadsheetView;
 import geogebra.kernel.AlgoCellRange;
+import geogebra.kernel.AlgoPolygonOperation;
 import geogebra.kernel.CasEvaluableFunction;
 import geogebra.kernel.CircularDefinitionException;
 import geogebra.kernel.Construction;
@@ -5492,8 +5493,12 @@ class CmdUnion extends CommandProcessor {
 						(GeoList) arg[0], (GeoList) arg[1]) };
 				return ret;
 			} else
-
-				throw argErr(app, c.getName(), arg[0]);
+				if (arg[0].isGeoPolygon() && arg[1].isGeoPolygon()) {
+					GeoElement[] ret = kernel.Union(c.getLabels(), (GeoPolygon) arg[0],
+							(GeoPolygon) arg[1]);
+					return ret;
+				} else
+					throw argErr(app, c.getName(), arg[0]);
 
 		default:
 			throw argNumErr(app, c.getName(), n);

@@ -4331,6 +4331,7 @@ public class Kernel {
 		return list2;
 	}
 	
+	
 	/** 
 	 * Intersection[list,list]
 	 * Michael Borcherds
@@ -4351,6 +4352,7 @@ public class Kernel {
 		return list2;
 	}
 	
+
 	/** 
 	 * RemoveUndefined[list]
 	 * Michael Borcherds
@@ -5133,18 +5135,6 @@ public class Kernel {
 	}
 	
 	
-	//G.Sturr 2010-3-14
-	/** 
-	 * Polygon formed by operation on two input polygons.
-	 * Possible operations: addition, subtraction or intersection
-     * The labels name the polygon itself, its segments and points
-	 */	
-	final public GeoElement [] PolygonOperation(String [] labels, GeoPolygon A, GeoPolygon B, NumberValue n) {
-		AlgoPolygonOperation algo = new AlgoPolygonOperation(cons, labels, A, B,n);
-		return algo.getOutput();
-	}
-	//END G.Sturr
-	
 	
 	/** 
 	 * Creates new point B with distance n from A and  new segment AB 
@@ -5343,6 +5333,28 @@ public class Kernel {
 		GeoPoint[] S = algo.getIntersectionPoints();
 		return S;
 	}//IntersectFunctions(label,f,g,left,right)
+	
+	
+	/** 
+	 * Intersect[polygon,polygon]
+	 * G. Sturr
+	 */
+	final public GeoElement[] Intersection(String[] labels, GeoPolygon poly0, GeoPolygon poly1) {
+		AlgoPolygonIntersection algo = new AlgoPolygonIntersection(cons, labels, poly0, poly1);
+		GeoElement[] polygon = algo.getOutput();
+		return polygon;
+	}
+	
+	/** 
+	 * Union[polygon,polygon]
+	 * G. Sturr
+	 */
+	final public GeoElement[] Union(String[] labels, GeoPolygon poly0, GeoPolygon poly1) {
+		AlgoPolygonUnion algo = new AlgoPolygonUnion(cons, labels, poly0, poly1);
+		GeoElement[] polygon = algo.getOutput();
+		return polygon;
+	}
+	
 	
 	
 	/*********************************************
