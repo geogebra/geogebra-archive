@@ -114,6 +114,14 @@ public class Manager3D implements Manager3DInterface {
 		GeoPoint3D p = algo.getP();    
 		return p;
 	}
+	
+	
+	/** Point in region with cartesian coordinates (x,y,z)   */
+	final public GeoPoint3D Point3DIn(Region region, double x, double y, double z) {
+		AlgoPoint3DInRegion algo = new AlgoPoint3DInRegion(cons, region, x, y, z);
+		GeoPoint3D p = algo.getP();    
+		return p;
+	}
 
 	/** Point in region */
 	final public GeoPoint3D Point3DIn(String label, Region region) {  
@@ -553,6 +561,12 @@ public class Manager3D implements Manager3DInterface {
 
 	final public GeoPlane3D Plane3D(String label,GeoCoordSys2D cs2D){
 		AlgoPlaneCS2D algo = new AlgoPlaneCS2D(cons, label, cs2D);
+		GeoPlane3D plane = (GeoPlane3D) algo.getCoordSys();
+		return plane;
+	}
+
+	final public GeoPlane3D Plane3D(GeoCoordSys2D cs2D){
+		AlgoPlaneCS2D algo = new AlgoPlaneCS2D(cons, cs2D);
 		GeoPlane3D plane = (GeoPlane3D) algo.getCoordSys();
 		return plane;
 	}

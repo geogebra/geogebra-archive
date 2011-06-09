@@ -5331,8 +5331,8 @@ public abstract class GeoElement
 		if(viewSet.isEmpty()){
 			EuclidianViewInterface ev = app.getGuiManager().getActiveEuclidianView();
 			viewSet.add(ev);
-			// if ev is a 3D view, then also add 1st 2D euclidian view
-			if (!(ev instanceof EuclidianView))
+			// if ev isn't Graphics or Graphics 2, then also add 1st 2D euclidian view
+			if (!(ev.isDefault2D()))
 				viewSet.add(app.getEuclidianView());
 
 		}

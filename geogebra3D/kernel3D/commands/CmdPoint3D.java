@@ -40,13 +40,13 @@ public class CmdPoint3D extends CmdPoint {
 				GeoElement geo0 = arg[0];
 				if (ok[0] = (geo0.isPath())) {
 					GeoElement[] ret =
-					{ kernel.getManager3D().Point3D(c.getLabel(), (Path) geo0)};
+					{ (GeoElement) kernel.getManager3D().Point3D(c.getLabel(), (Path) geo0)};
 					return ret;
 				}
 				// if arg[0] isn't a Path, try to process it as a region (e.g. GeoPlane3D)
 				if (ok[0] = (arg[0].isRegion())) {
 					GeoElement[] ret =
-					{ kernel.getManager3D().Point3DIn(c.getLabel(), (Region) arg[0])};
+					{ (GeoElement) kernel.getManager3D().Point3DIn(c.getLabel(), (Region) arg[0])};
 					return ret;
 				}
 				

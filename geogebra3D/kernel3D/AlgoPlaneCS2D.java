@@ -31,6 +31,14 @@ public class AlgoPlaneCS2D extends AlgoElement3D {
 	 * @param csInput 
 	 */
 	public AlgoPlaneCS2D(Construction c, String label, GeoCoordSys2D csInput) {
+
+		this(c, csInput);
+		
+		((GeoElement) cs).setLabel(label);
+		
+	}
+	
+	public AlgoPlaneCS2D(Construction c, GeoCoordSys2D csInput) {
 		super(c);
 		 
 		this.csInput = csInput;
@@ -40,7 +48,6 @@ public class AlgoPlaneCS2D extends AlgoElement3D {
 		//set input and output		
 		setInputOutput(new GeoElement[]{(GeoElement) csInput}, new GeoElement[]{(GeoElement) cs});
 		
-		((GeoElement) cs).setLabel(label);
 		
 	}
 	

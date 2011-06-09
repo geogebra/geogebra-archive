@@ -53,19 +53,21 @@ public interface Manager3DInterface {
 
 
 			/** Point in region with cartesian coordinates (x,y,z)   */
-			 public GeoElement Point3DIn(String label, Region region, double x, double y, double z);
+			 public GeoPointND Point3DIn(String label, Region region, double x, double y, double z);
+		
+			 public GeoPointND Point3DIn(Region region, double x, double y, double z);
 
 			/** Point in region */
-			 public GeoElement Point3DIn(String label, Region region) ;
+			 public GeoPointND Point3DIn(String label, Region region) ;
 
 
 
 
 			/** Point3D on a 1D path with cartesian coordinates (x,y,z)   */
-			 public GeoElement Point3D(String label, Path path, double x, double y, double z) ;
+			 public GeoPointND Point3D(String label, Path path, double x, double y, double z) ;
 
 			/** Point3D on a 1D path without cartesian coordinates   */
-			 public GeoElement Point3D(String label, Path path) ;
+			 public GeoPointND Point3D(String label, Path path) ;
 			 
 
 
@@ -329,6 +331,8 @@ public interface Manager3DInterface {
 			  * @return plane containing the 2D coord sys
 			  */
 			 public GeoPlaneND Plane3D(String label,GeoCoordSys2D cs2D);
+
+			 public GeoPlaneND Plane3D(GeoCoordSys2D cs2D);
 
 
 			////////////////////////////////////////////////

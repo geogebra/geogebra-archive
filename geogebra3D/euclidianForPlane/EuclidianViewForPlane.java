@@ -42,6 +42,11 @@ public class EuclidianViewForPlane extends EuclidianView {
 		this.plane = plane;
 	}
 	
+
+	public boolean isDefault2D(){
+		return false;
+	}
+	
 	
 	public boolean isVisibleInThisView(GeoElement geo){
 
@@ -123,5 +128,16 @@ public class EuclidianViewForPlane extends EuclidianView {
 			return app.getPlain("PlaneA",((GeoElement) plane).getLabel());
 		else
 			return app.getPlain("PlaneFromA",((GeoElement) plane).getLabel());
+	}
+	
+	public GeoCoordSys2D getGeoElement(){
+		return plane;
+	}
+	
+	public GeoPlaneND getPlaneContaining(){
+		if (plane instanceof GeoPlaneND)
+			return (GeoPlaneND) plane;
+		else
+			return kernel.getManager3D().Plane3D(plane);
 	}
 }

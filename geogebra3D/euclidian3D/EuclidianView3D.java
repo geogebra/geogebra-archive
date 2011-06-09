@@ -3509,4 +3509,9 @@ public class EuclidianView3D extends JPanel implements View, Printable, Euclidia
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+
+	public boolean isDefault2D(){
+		return false;
+	}
 }

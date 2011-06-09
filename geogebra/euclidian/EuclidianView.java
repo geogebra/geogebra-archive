@@ -5059,4 +5059,8 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 		return app.getPlain("xOyPlane");
 	}
 	
+	public boolean isDefault2D(){
+		return true;
+	}
+	
 }

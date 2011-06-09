@@ -26,7 +26,6 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
 
     public AlgoPoint3DInRegion(
         Construction cons,
-        String label,
         Region region,
         double x,
         double y,
@@ -46,6 +45,18 @@ public class AlgoPoint3DInRegion extends AlgoElement3D {
 
         // compute 
         compute();
+        
+    }
+    
+    public AlgoPoint3DInRegion(
+            Construction cons,
+            String label,
+            Region region,
+            double x,
+            double y,
+            double z) {
+    	
+    	this(cons, region, x, y, z);
         P.setLabel(label);
     }
     

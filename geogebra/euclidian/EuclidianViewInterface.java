@@ -397,4 +397,9 @@ public interface EuclidianViewInterface {
 	public Previewable createPreviewAngle(ArrayList selectedPoints);
 
 	
+	/**
+	 * 
+	 * @return true if this is Graphics or Graphics 2
+	 */
+	public boolean isDefault2D();
 }
