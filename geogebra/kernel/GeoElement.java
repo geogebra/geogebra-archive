@@ -4609,9 +4609,19 @@ public abstract class GeoElement
 	 * (xPixel, yPixel) in screen coordinates.
 	 * @param endPosition may be null
 	 */
-	public static boolean moveObjects(ArrayList geos, Coords rwTransVec, Coords endPosition, Coords viewDirection) {
+	public static boolean moveObjects(ArrayList<GeoElement> geos, Coords rwTransVec, Coords endPosition, Coords viewDirection) {
 		if (moveObjectsUpdateList == null)
-			moveObjectsUpdateList = new ArrayList();
+			moveObjectsUpdateList = new ArrayList<GeoElement>();
+		
+		ArrayList<GeoElement> geos2 = new ArrayList<GeoElement>();
+		
+		// remove duplicates, eg drag Circle[A,A]
+		for (int i = 0 ; i < geos.size(); i++) {
+			if (!geos2.contains(geos.get(i)))
+				geos2.add(geos.get(i));
+		}
+		
+		geos = geos2;
 
 		boolean moved = false;
 		int size = geos.size();
