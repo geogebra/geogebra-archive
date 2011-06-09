@@ -18,11 +18,10 @@ import geogebra.kernel.Kernel;
 import geogebra.kernel.ParametricCurve;
 import geogebra.kernel.VarString;
 import geogebra.kernel.roots.RealRootUtil;
-import geogebra.main.Application;
-
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 
 /**
@@ -153,7 +152,14 @@ public class DrawParametricCurve extends Drawable {
 			}
 			addLabelOffset();
 		}
+		//shape for filling
 		
+		if(!geo.isInverseFill())
+			setShape(new Area(gp));
+		else{
+			setShape(new Area(view.getBoundingPath()));
+			getShape().subtract(new Area(gp));
+		}
 		// draw trace
 		if (curve.getTrace()) {
 			isTracing = true;
@@ -903,7 +909,7 @@ public class DrawParametricCurve extends Drawable {
         	if (fillCurve) {
 				try {
 					
-					fill(g2, gp, false); // fill using default/hatching/image as appropriate
+					fill(g2, getShape(), false); // fill using default/hatching/image as appropriate
 
 				} catch (Exception e) {
 					System.err.println(e.getMessage());

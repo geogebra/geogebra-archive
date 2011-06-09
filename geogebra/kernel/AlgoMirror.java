@@ -164,6 +164,10 @@ public class AlgoMirror extends AlgoTransformation {
     	}
     	else if(inGeo instanceof GeoPolyLineInterface && mirror == mirrorConic){
     		((GeoPolyLineInterface)inGeo).toGeoCurveCartesian((GeoCurveCartesian)outGeo);
+    		if(inGeo.isRegion()){
+    			GeoVec2D v = mirrorConic.getTranslationVector();
+    			outGeo.setInverseFill(((Region)inGeo).isInRegion(v.x,v.y));
+    		}
     	}
     	else outGeo.set(inGeo);
         
