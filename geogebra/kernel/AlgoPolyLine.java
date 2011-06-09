@@ -104,9 +104,6 @@ public class AlgoPolyLine extends AlgoElement {
     		return;
     	}
     	
-    	// remember old number of points
-    	int oldPointsLength = points == null ? 0 : points.length;
-    	
     	// create new points array
     	int size = pointList.size();
     	points = new GeoPoint[size];
@@ -133,15 +130,16 @@ public class AlgoPolyLine extends AlgoElement {
             input[i].addAlgorithm(this);
         }
         
-        // parent of output
-        poly.setParentAlgorithm(this);       
-        cons.addToAlgorithmList(this); 
+        // set output
+        setOutputLength(1);
+        setOutput(0,poly);
+        setDependencies();
     }    
     
     public void update() {
         // compute output from input
         compute();
-        output[0].update();
+        getOutput(0).update();
     }
     
     
