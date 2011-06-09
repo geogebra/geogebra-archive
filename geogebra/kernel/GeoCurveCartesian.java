@@ -23,7 +23,6 @@ import geogebra.kernel.kernelND.GeoCurveCartesianND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.optimization.ExtremumFinder;
 import geogebra.kernel.roots.RealRootFunction;
-import geogebra.main.Application;
 
 import java.util.ArrayList;
 
@@ -765,8 +764,7 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 	    		int pointIndex = i >= points.length?0:i;
 	    		ExpressionNode greater = new ExpressionNode(kernel,new ExpressionNode(kernel,fv,ExpressionNode.MINUS,new MyDouble(kernel,i-1)),
 	    				ExpressionNode.ABS,
-	    				null);
-	    		Application.debug((i-1)+"=>"+pointIndex);
+	    				null);	    		
 	    		coef = 0.5*((GeoPoint)points[pointIndex]).x- 0.5*((GeoPoint)points[i-1]).x-cumulative;
 	    		coefY = 0.5*((GeoPoint)points[pointIndex]).y- 0.5*((GeoPoint)points[i-1]).y-cumulativeY;
 	    		sum+=coef*(i-1);
