@@ -1498,7 +1498,11 @@ public class Construction {
 			// copy label of oldGeo to newGeo
 			// use setLoadedLabel() instead of setLabel() to make sure that 
 			// hidden objects also get the label, see #379	
-			newGeo.setLoadedLabel(oldGeoLabel);		
+			newGeo.setLoadedLabel(oldGeoLabel);
+
+			if (newGeo instanceof GeoText)
+				newGeo.updateRepaint();
+
 			return;
 		}
 		
