@@ -29,9 +29,8 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
+import geogebra.util.MyMath;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 
 public class GeoLine extends GeoVec3D 
@@ -65,7 +64,12 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     	setMode( mode );
     }
     
-    /** Creates new GeoLine */     
+    /** Creates new GeoLine 
+     * @param cons 
+     * @param label 
+     * @param a 
+     * @param b 
+     * @param c */     
     public GeoLine(Construction cons, String label, double a, double b, double c) {
         super(cons, a, b, c);	// GeoVec3D constructor                 
         setMode( GeoLine.EQUATION_IMPLICIT );
@@ -111,13 +115,20 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 		 */
 	 } 
     
-    /** returns true if P lies on this line */
+    /** returns true if P lies on this line 
+     * @param p point
+     * @param eps precision
+     * @return true if P lies on this line 
+     * */
     public boolean isIntersectionPointIncident(GeoPoint p, double eps) {    
         return isOnFullLine(p, eps);
     }
     
     /** 
 	 * States wheter P lies on this line or not.
+	 * @return true iff P lies on this line
+	 * @param P point
+	 * @param eps precision (ratio of allowed error and |x|+|y|)
 	 */
 	final boolean isOnFullLine(GeoPoint P, double eps) {						
 		if (!P.isDefined()) return false;	
@@ -239,21 +250,24 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     }
     
     
-    /** returns true if this line and g are parallel */
+    /** @param g line
+     * @return true if this line and g are parallel */
     final public boolean isParallel(GeoLine g) {        
-        return kernel.isEqual(g.x * y, g.y * x);        
+        return Kernel.isEqual(g.x * y, g.y * x);        
     }
     
-    /** returns true if this line and g are parallel (signed)*/
+    /** @param g line
+     * @return true if this line and g are parallel (signed)*/
     final public boolean isSameDirection(GeoLine g) {        
     	// check x and g.x have the same sign
     	// also y and g.y
         return (g.x * x >= 0) && (g.y * y >= 0) && isParallel(g);        
     }
     
-    /** returns true if this line and g are perpendicular */
+    /** @param g line
+     * @return true if this line and g are perpendicular */
     final public boolean isPerpendicular(GeoLine g) {        
-        return kernel.isEqual(g.x * x, -g.y * y);        
+        return Kernel.isEqual(g.x * x, -g.y * y);        
     }
         
     /** Calculates the euclidian distance between this GeoLine and (px, py).
@@ -266,6 +280,8 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	/** Calculates the euclidian distance between this GeoLine and GeoPoint P.
 	 * Here the inhomogenouse coords of p are calculated and p.inhomX,
 	 * p.inhomY are not used.
+	 * @param p point
+	 * @return distance between this line and a point
 	 */
 	final public double distanceHom(GeoPoint p) {                        
 		return Math.abs( (x * p.x / p.z + y * p.y / p.z + z) / 
@@ -283,10 +299,12 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	}
     
     /** Calculates the euclidian distance between this GeoLine and GeoLine g.
+     * @param g line
+     * @return euclidean distance between lines
      */
     final public double distance(GeoLine g) {          
         // parallel
-        if (kernel.isZero(g.x * y - g.y * x)) {
+        if (Kernel.isZero(g.x * y - g.y * x)) {
             // get a point (px, py) of g and calc distance
             double px, py; 
             if (Math.abs(g.x) > Math.abs(g.y)) {
@@ -307,7 +325,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     
     /**
      * Writes coords of direction vector to array dir.
-     * @param dir: array of length 2
+     * @param dir array of length 2
      */
     final public void getDirection(double [] dir) {
         dir[0] = y;
@@ -315,7 +333,8 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     }
         
     /** 
-     * Set array p to (x,y) coords of a point on this line 
+     * Set array p to (x,y) coords of a point on this line
+     * @param p array for pint coordinates 
 	 */
     final public void getInhomPointOnLine(double [] p) {  
     	// point defined by parent algorithm
@@ -337,6 +356,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     
 	/** 
 	 * Sets point p p to coords of some point on this line 
+	 * @param p point to be moved to this path
 	 */
 	final public void getPointOnLine(GeoPoint p) {  
 		// point defined by parent algorithm
@@ -404,7 +424,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 
     public boolean isDefined() {
         return (!(Double.isNaN(x) || Double.isNaN(y) || Double.isNaN(z)) &&
-                !(kernel.isZero(x) && kernel.isZero(y)));  
+                !(Kernel.isZero(x) && Kernel.isZero(y)));  
     }
         
     protected boolean showInEuclidianView() {
@@ -438,6 +458,8 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 
     /**
      * yields true if this line is defined as a tangent of conic c
+     * @param c conic
+     * @return true iff defined as tangent of given conic
      */
     final public boolean isDefinedTangent(GeoConic c) {        
         boolean isTangent = false;
@@ -457,6 +479,8 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
     
     /**
      * yields true if this line is defined as a asymptote of conic c
+     * @param c conic
+     * @return true iff defined as a asymptote of conic c
      */
     final public boolean isDefinedAsymptote(GeoConic c) {        
         boolean isAsymptote = false;
@@ -577,6 +601,10 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
             
     /***********************************************************/
             
+    /**
+     * Switch to parametric mode and set parameter name
+     * @param parameter name
+     */
     final public void setToParametric(String parameter) {
             setMode( GeoLine.PARAMETRIC );
             if (parameter != null && parameter.length() > 0)
@@ -664,7 +692,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
                 g[0] = x;
                 g[1] = y;
                 g[2] = z;                
-                if (kernel.isZero(x) || kernel.isZero(y)) 
+                if (Kernel.isZero(x) || Kernel.isZero(y)) 
 					return kernel.buildExplicitLineEquation(g, vars, op);
                 else
                     return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN, false, op);
@@ -673,7 +701,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
                 g[0] = x;
                 g[1] = y;
                 g[2] = z;                
-                if (kernel.isZero(x) || kernel.isZero(y)) 
+                if (Kernel.isZero(x) || Kernel.isZero(y)) 
 					return kernel.buildExplicitLineEquation(g, vars, op);
                 else
                     return kernel.buildImplicitEquation(g, vars, KEEP_LEADING_SIGN, true, op);
@@ -687,7 +715,9 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 		return sbBuildValueString;
 	}
     
-    /** left hand side as String : ax + by + c */
+    /** left hand side as String : ax + by + c
+     * @return left hand side as ax + by + c
+     */
     final public StringBuilder toStringLHS() {		  
         double [] g = new double[3];	
         
@@ -855,7 +885,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	/**
 	 * Returns the smallest possible parameter value for this
 	 * path (may be Double.NEGATIVE_INFINITY)
-	 * @return
+	 * @return smallest possible parameter value for this path
 	 */
 	public double getMinParameter() {
 		return Double.NEGATIVE_INFINITY;
@@ -864,7 +894,7 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 	/**
 	 * Returns the largest possible parameter value for this
 	 * path (may be Double.POSITIVE_INFINITY)
-	 * @return
+	 * @return largest possible parameter value for this path
 	 */
 	public double getMaxParameter() {
 		return Double.POSITIVE_INFINITY;
@@ -1199,20 +1229,11 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
 
 	public void matrixTransform(double a00, double a01, double a02, double a10,
 			double a11, double a12, double a20, double a21, double a22) {
-		double det = a00*a11*a22+a01*a12*a20+a02*a10*a21-a20*a11*a02-a10*a01*a22-a12*a21*a00;
-		double b00 = (a11*a22-a21*a12)/det;
-		double b01 = -(a10*a22-a20*a12)/det;
-		double b02 = (a10*a21-a20*a11)/det;
-		double b10 = -(a01*a22-a02*a21)/det;
-		double b11 = (a00*a22-a20*a02)/det;
-		double b12 = -(a00*a21-a01*a20)/det;
-		double b20 = (a01*a12-a02*a11)/det;
-		double b21 = -(a00*a12-a02*a10)/det;
-		double b22 = (a00*a11-a10*a01)/det;
+		double[][] b=MyMath.adjoint(a00, a01, a02, a10, a11, a12, a20, a21, a22); 
 		
-		double x1 = b00 * x + b01 * y + b02 * z;
-		double y1 = b10 * x + b11 * y + b12 * z;
-		double z1 = b20 * x + b21 * y + b22 * z;
+		double x1 = b[0][0] * x + b[0][1] * y + b[0][2] * z;
+		double y1 = b[1][0] * x + b[1][1] * y + b[1][2] * z;
+		double z1 = b[2][0] * x + b[2][1] * y + b[2][2] * z;
 		setCoords(x1,y1,z1);
 		
 	}

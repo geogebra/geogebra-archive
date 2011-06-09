@@ -3540,5 +3540,16 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		}
 		return operationToString(leftStr, rightStr, false);
 	}
+	
+	public ExpressionNode plus(ExpressionValue v2){
+		return new ExpressionNode(kernel,this,ExpressionNode.PLUS,v2);
+	}
+	public ExpressionNode multiply(ExpressionValue v2){
+		return new ExpressionNode(kernel,this,ExpressionNode.MULTIPLY,v2);
+	}
+	public ExpressionNode divide(ExpressionValue v2){
+		return new ExpressionNode(kernel,this,ExpressionNode.DIVIDE,v2);
+	}
+	
 
 }

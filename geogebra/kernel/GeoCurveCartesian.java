@@ -359,8 +359,8 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 		MyDouble md = new MyDouble(kernel,d);
 		ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
 		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
-		ExpressionNode transX = plus(multiply(exprX,ma),multiply(exprY,mb));
-		ExpressionNode transY = plus(multiply(exprX,mc),multiply(exprY,md));
+		ExpressionNode transX = exprX.multiply(ma).plus(exprY.multiply(mb));
+		ExpressionNode transY = exprX.multiply(mc).plus(exprY.multiply(md));
 		funX.setExpression(transX);
 		funY.setExpression(transY);
 	}
@@ -698,10 +698,10 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 	    		ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();
 	    		
 	    		ExpressionNode sf=new ExpressionNode(kernel, new MyDouble(kernel,r*r),ExpressionNode.DIVIDE,
-	    				plus(multiply(exprX,exprX),multiply(exprY,exprY))
+	    				exprX.multiply(exprX).plus(exprY.multiply(exprY))
 	    				);
-	    		ExpressionNode transX = multiply(exprX,sf);
-	    		ExpressionNode transY = multiply(exprY,sf);
+	    		ExpressionNode transX = exprX.multiply(sf);
+	    		ExpressionNode transY = exprY.multiply(sf);
 	    		funX.setExpression(transX);
 	    		funY.setExpression(transY);
 	    		this.translate(a, b);
@@ -721,14 +721,7 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 		public double distance(GeoPoint p) {
 			double t = getClosestParameter(p, 0);
 			return GeoVec2D.length(funX.evaluate(t) - p.x, funY.evaluate(t) - p.y);
-		}
-		
-		private ExpressionNode plus(ExpressionValue v1,ExpressionValue v2){
-			return new ExpressionNode(kernel,v1,ExpressionNode.PLUS,v2);
-		}
-		private ExpressionNode multiply(ExpressionValue v1,ExpressionValue v2){
-			return new ExpressionNode(kernel,v1,ExpressionNode.MULTIPLY,v2);
-		}
+		}			
 		
 		public void matrixTransform(double a00, double a01, double a02,
 				double a10, double a11, double a12, double a20, double a21,
@@ -745,16 +738,13 @@ implements Transformable, VarString, Path, Translateable, Rotateable, PointRotat
 			
 			
 			ExpressionNode exprX = ((Function)funX.deepCopy(kernel)).getExpression();
-			ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();			
-			ExpressionNode transX = plus(
-					multiply(exprX,ma00),
-					plus(multiply(exprY,ma01),ma02));
-			ExpressionNode transY = plus(
-					multiply(exprX,ma10),
-					plus(multiply(exprY,ma11),ma12));
-			ExpressionNode transZ = plus(
-					multiply(exprX,ma20),
-					plus(multiply(exprY,ma21),ma22));										
+			ExpressionNode exprY = ((Function)funY.deepCopy(kernel)).getExpression();				
+			ExpressionNode transX = 
+					exprX.multiply(ma00).plus(exprY.multiply(ma01)).plus(ma02);
+			ExpressionNode transY = 
+					exprX.multiply(ma10).plus(exprY.multiply(ma11)).plus(ma12);
+			ExpressionNode transZ = 
+					exprX.multiply(ma20).plus(exprY.multiply(ma21)).plus(ma22);										
 			funX.setExpression(new ExpressionNode(kernel,transX,ExpressionNode.DIVIDE,transZ));
 			funY.setExpression(new ExpressionNode(kernel,transY,ExpressionNode.DIVIDE,transZ));
 			

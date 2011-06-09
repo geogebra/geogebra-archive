@@ -16,7 +16,6 @@ import geogebra.Matrix.Coords;
 import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
-import geogebra.kernel.arithmetic.Function;
 import geogebra.kernel.arithmetic.FunctionNVar;
 import geogebra.kernel.arithmetic.FunctionVariable;
 import geogebra.kernel.arithmetic.FunctionalNVar;
@@ -25,10 +24,8 @@ import geogebra.kernel.arithmetic.MyDouble;
 import geogebra.kernel.arithmetic.MyList;
 import geogebra.kernel.arithmetic.NumberValue;
 import geogebra.kernel.kernelND.GeoPointND;
-import geogebra.main.Application;
 import geogebra.util.Util;
 
-import java.util.List;
 
 /**
  * Explicit function in multiple variables, e.g. f(a, b, c) := a^2 + b - 3c. 
@@ -770,7 +767,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 		public void matrixTransform(double a00, double a01, double a02,
 				double a10, double a11, double a12, double a20, double a21,
 				double a22) {
-			// TODO Auto-generated method stub
+			fun.matrixTransform(a00, a01, a02, a10, a11, a12, a20, a21, a22);
 			
 		}
 
