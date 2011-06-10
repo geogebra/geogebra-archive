@@ -7705,11 +7705,6 @@ public class Kernel {
 			ret = internationalizeDigits(ret);						
 		} 
 		
-		// fix for changing height in Algebra View plus / minus
-		if (getCASPrintForm() == ExpressionNode.STRING_TYPE_LATEX) {
-			ret = ret.replace("-", ExpressionNode.LATEX_UNARY_MINUS);
-		}
-		
 		return ret;
 		
 	}

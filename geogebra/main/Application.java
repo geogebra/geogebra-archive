@@ -5303,10 +5303,6 @@ public class Application implements KeyEventDispatcher {
 	 */
 	public static boolean isLaTeXneeded(String latex) {
 		
-		// remove unary minus signs
-		while (latex.indexOf(ExpressionNode.LATEX_UNARY_MINUS) > -1)
-			latex = latex.replace(ExpressionNode.LATEX_UNARY_MINUS, "");
-		
 		for (int i=0; i < latex.length(); i++) {
 			char ch = latex.charAt(i);
 			switch (ch) {

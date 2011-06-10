@@ -45,8 +45,6 @@ import javax.swing.text.Document;
 public class ExpressionNode extends ValidExpression implements ExpressionValue,
 		ExpressionNodeConstants {
 
-	private static final String LATEX_MINUS = " \\; \\smash[b]{-} \\; ";
-	public static final String LATEX_UNARY_MINUS = "\\smash[b]{-}";
 	public Application app;
 	public Kernel kernel;
 	public ExpressionValue left, right;
@@ -1608,9 +1606,6 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					} else if (rightStr.startsWith(Unicode.RightToLeftUnaryMinusSign)) { // Arabic convert + - to -
 						sb.append(" - ");
 						sb.append(rightStr.substring(3));
-					} else if (rightStr.startsWith(LATEX_UNARY_MINUS)) { 
-						sb.append(" - ");
-						sb.append(rightStr.substring(LATEX_UNARY_MINUS.length()));
 					} else {
 						sb.append(" + ");
 						sb.append(rightStr);
@@ -1655,17 +1650,14 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 					} else if (rightStr.startsWith(Unicode.RightToLeftUnaryMinusSign)) { // Arabic convert - - to +
 						sb.append(" + ");
 						sb.append(rightStr.substring(3));
-					} else if (rightStr.startsWith(LATEX_UNARY_MINUS)) { 
-						sb.append(" + ");
-						sb.append(rightStr.substring(LATEX_UNARY_MINUS.length()));
 					} else {
 						// fix for changing height in Algebra View plus / minus
-						sb.append(STRING_TYPE == STRING_TYPE_LATEX ? LATEX_MINUS : " - ");
+						sb.append(" - ");
 						sb.append(rightStr);
 					}
 				} else {
 					// fix for changing height in Algebra View plus / minus
-					sb.append(STRING_TYPE == STRING_TYPE_LATEX ? LATEX_MINUS : " - ");
+					sb.append(" - ");
 					sb.append(leftBracket(STRING_TYPE));
 					sb.append(rightStr);
 					sb.append(rightBracket(STRING_TYPE));
