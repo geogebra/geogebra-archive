@@ -1469,4 +1469,11 @@ public class GeoList extends GeoElement implements ListValue, LineProperties,
 		sb.append(')');
 		return sb.toString();
 	}
+	
+	public boolean listContains(GeoElement geo){
+		if(geoList == null)
+			return true;
+		return geoList.contains(geo);
+	}
+	
 }
