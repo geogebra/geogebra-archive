@@ -1186,7 +1186,7 @@ public abstract class GeoElement
 		labelOffsetX = geo.labelOffsetX;
 		labelOffsetY = geo.labelOffsetY;
 		caption = geo.caption;
-
+		inverseFill = geo.inverseFill;
 		if (isTraceable() && geo.isTraceable()) {
 			((Traceable) this).setTrace(((Traceable) geo).getTrace());
 		}

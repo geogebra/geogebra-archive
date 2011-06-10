@@ -28,6 +28,7 @@ import geogebra.kernel.GeoAngle;
 import geogebra.kernel.GeoBoolean;
 import geogebra.kernel.GeoButton;
 import geogebra.kernel.GeoConic;
+import geogebra.kernel.GeoCurveCartesian;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoFunction;
 import geogebra.kernel.GeoFunctionNVar;
@@ -4341,7 +4342,8 @@ public	class PropertiesPanel extends JPanel {
 			lblFillInverse.setVisible(true);
 			cbFillType.setVisible(true); //TODO remove this (see below)
 			for (int i = 0; i < geos.length; i++) {
-				if (!(geos[i] instanceof GeoFunctionNVar || geos[i] instanceof GeoFunction)){
+				if (!(geos[i] instanceof GeoFunctionNVar || geos[i] instanceof GeoFunction
+						|| geos[i] instanceof GeoCurveCartesian || geos[i] instanceof GeoConic)){
 					cbFillInverse.setVisible(false);
 					lblFillInverse.setVisible(false);
 				}
