@@ -530,7 +530,7 @@ implements FunctionalNVar, CasEvaluableFunction, Region, Transformable, Translat
 				myX = P.getX2D(), myY = P.getY2D();
 				double bestDist = (bestY-myY)*(bestY-myY)+(bestX-myX)*(bestX-myX);
 				
-				FunctionNVar.IneqTree ineqs = fun.getIneqs();
+				FunctionNVar.IneqTree ineqs = getIneqs();
 				int size = ineqs.getSize();
 				for(int i = 0; i<size; i++){
 					Inequality in = ineqs.get(i);
