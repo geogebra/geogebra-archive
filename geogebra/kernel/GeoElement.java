@@ -3607,7 +3607,8 @@ public abstract class GeoElement
 		String algebraDesc = geo.getAlgebraDescription();
 		StringBuilder sb = new StringBuilder();
 		String[] temp;
-
+		if(geo.isGeoList() && ((GeoList)geo).getElementType()==GEO_CLASS_TEXT)
+			return null;
 		// handle undefined
 		if(!geo.isDefined()){
 			// enclose in mbox so that spaces are preserved
