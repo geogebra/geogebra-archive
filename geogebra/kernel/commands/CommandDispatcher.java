@@ -20,7 +20,6 @@ import geogebra.kernel.arithmetic.Command;
 import geogebra.main.Application;
 import geogebra.main.MyError;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -648,7 +647,8 @@ public class CommandDispatcher {
     	cmdTable.put("Button", new CmdButton(kernel));
     	cmdTable.put("Execute", new CmdExecute(kernel));     
     	cmdTable.put("GetTime", new CmdGetTime(kernel));     
-    	cmdTable.put("ShowLabel", new CmdShowLabel(kernel));     
+    	cmdTable.put("ShowLabel", new CmdShowLabel(kernel));
+    	cmdTable.put("SetAxesRatio", new CmdSetAxesRatio(kernel));   
     	cmdTable.put("SetVisibleInView", new CmdSetVisibleInView(kernel));     
        		
        	cmdSubTable[TABLE_SCRIPTING].putAll(cmdTable);
