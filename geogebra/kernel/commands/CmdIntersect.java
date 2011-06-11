@@ -130,7 +130,7 @@ public  GeoElement[] process(Command c) throws MyError {
 	                    ((GeoFunctionable) arg[1]).getGeoFunction()
 	                   );
 			else if (ok[0] = (arg[0] .isGeoFunctionable())
-	                    && (ok[0]=((GeoFunctionable) arg[0]).getGeoFunction().isPolynomialFunction(false))
+	                    && (ok[1]=((GeoFunctionable) arg[0]).getGeoFunction().isPolynomialFunction(false))
 	                    && (ok[1] = (arg[1] .isGeoImplicitPoly()))
 	                    && (ok[1] != (arg[1].isGeoLine())))
 					return kernel.IntersectImplicitpolyPolynomial(
