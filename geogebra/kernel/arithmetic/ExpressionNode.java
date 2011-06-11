@@ -1616,7 +1616,6 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			break;
 
 		case MINUS:
-			Application.debug(STRING_TYPE);
 			switch (STRING_TYPE) {
 			case STRING_TYPE_JASYMCA:
 			case STRING_TYPE_MATH_PIPER:
@@ -1961,9 +1960,9 @@ public class ExpressionNode extends ValidExpression implements ExpressionValue,
 			case STRING_TYPE_MATH_PIPER:
 			case STRING_TYPE_MAXIMA:
 			case STRING_TYPE_MPREDUCE:
-				sb.append('(');
+				sb.append(leftBracket(STRING_TYPE));
 				sb.append(leftStr);
-				sb.append(')');
+				sb.append(rightBracket(STRING_TYPE));
 				break;
 
 			default:
