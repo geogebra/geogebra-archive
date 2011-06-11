@@ -360,6 +360,8 @@ public abstract class Drawable extends DrawableND {
 		ArrayList<Integer> elementHeights = new ArrayList<Integer>();
 		ArrayList<Integer> elementDepths = new ArrayList<Integer>();
 
+		int depth = 0;
+
 		// use latex by default just if there is just a single element
 		boolean isLaTeX = (elements.length == 1);
 
@@ -371,6 +373,8 @@ public abstract class Drawable extends DrawableND {
 				dim = drawEquation(view.app, geo, view.getTempGraphics2D(font), 0, 0, elements[i], font, ((GeoText)geo).isSerifFont(), fgColor, bgColor);
 				
 				int height = dim.height;
+				
+				depth += dim.depth;
 				
 				elementHeights.add(new Integer(height));
 				elementDepths.add(new Integer(dim.depth));
@@ -460,7 +464,7 @@ public abstract class Drawable extends DrawableND {
 
 			isLaTeX = !isLaTeX;
 		}
-		labelRectangle.setBounds(xLabel - 3, yLabel - 3, width + 6, height + 6);
+		labelRectangle.setBounds(xLabel - 3, yLabel - 3 + depth, width + 6, height + 6 );
 	}
 
 	final  public static FormulaDimension drawEquation(Application app, GeoElement geo, Graphics2D g2, int x, int y, String text, Font font, boolean serif, Color fgColor, Color bgColor) {
