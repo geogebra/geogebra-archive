@@ -161,7 +161,10 @@ public final class DrawLocus extends Drawable {
     	if (strokedShape == null) {
 			strokedShape = objStroke.createStrokedShape(gp);
 		}    		
-		return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 
+		if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled())
+			return gp.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 					
+		else
+			return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 
     	
     	/*
         return gp.intersects(x-2,y-2,4,4)

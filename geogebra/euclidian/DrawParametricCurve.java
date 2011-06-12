@@ -939,8 +939,11 @@ public class DrawParametricCurve extends Drawable {
     		if (strokedShape == null) {
     			strokedShape = objStroke.createStrokedShape(gp);
     		}    		
-    		return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold);
-    	} else
+    		if (geo.getAlphaValue() > 0.0f || geo.isHatchingEnabled())
+    			return gp.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 					
+    		else
+    			return strokedShape.intersects(x-hitThreshold,y-hitThreshold,2*hitThreshold,2*hitThreshold); 
+         	} else
     		return false;
     	/*
     	return gp.intersects(x-3,y-3,6,6)
