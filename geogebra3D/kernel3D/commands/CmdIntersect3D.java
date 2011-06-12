@@ -43,7 +43,7 @@ public  GeoElement[] process(Command c) throws MyError {
         		//POINTS
         		
         		//intersection outlined surface/line : points on outline (boundary)
-        		
+        		/*
         		if (arg[0] instanceof GeoLineND && arg[1] instanceof GeoSurfaceFinite && ((GeoPolygon) arg[1]).asBoundary()){
         			return kernel.getManager3D().IntersectOutline(
         					c.getLabels(),
@@ -56,7 +56,8 @@ public  GeoElement[] process(Command c) throws MyError {
         					(GeoLineND) arg[1],
         					(GeoPolygon) arg[0]);
         		}else 
-        			
+        			*/
+        		
         		//intersection line/conic
         		if (
         				(arg[0] instanceof GeoLineND)
@@ -84,7 +85,7 @@ public  GeoElement[] process(Command c) throws MyError {
         		
 
         		//intersection line/surfaceFinite
-        		
+        		/*
         		else if ((arg[0] instanceof GeoLineND && arg[1] instanceof GeoSurfaceFinite)
         				||(arg[1] instanceof GeoLineND && arg[0] instanceof GeoSurfaceFinite))
         			
@@ -92,7 +93,7 @@ public  GeoElement[] process(Command c) throws MyError {
         							c.getLabels(),
         							(GeoLineND) arg[0],
         							(GeoSurfaceFinite) arg[1]);
-        		
+        		*/
 
         		//intersection line/surface : only if surface is treated as its outline
         		else if ((arg[0] instanceof GeoLineND && arg[1] instanceof GeoCoordSys2D)
@@ -120,9 +121,10 @@ public  GeoElement[] process(Command c) throws MyError {
 
         		}
         		
-        		//LINES
+        		//PLANES
         		
         		//intersection plane/polygon
+   
         		else if (arg[0] instanceof GeoPlane3D && arg[1] instanceof GeoSurfaceFinite ||
         				arg[1] instanceof GeoPlane3D && arg[0] instanceof GeoSurfaceFinite ){
 
@@ -133,6 +135,7 @@ public  GeoElement[] process(Command c) throws MyError {
         							(GeoSurfaceFinite) arg[1]);
         			return ret;
         		}
+        		
         		
         		//intersection plane/plane
         		else if (arg[0] instanceof GeoPlaneND && arg[1] instanceof GeoPlaneND){

@@ -1667,6 +1667,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			}else if (selCS2D()>=1 ) {// line-CS2D
 				GeoLineND line = getSelectedLinesND()[0];
 				GeoCoordSys2D[] cs2Ds = getSelectedCS2D();
+				/*
 				int firstP = 0;
 				for (firstP = 0; firstP<cs2Ds.length; firstP++) {
 					if (cs2Ds[firstP] instanceof GeoPolygon)
@@ -1675,6 +1676,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 								line,
 								(GeoSurfaceFinite) cs2Ds[firstP]);
 				}
+				*/
 				
 				GeoElement[] ret = new GeoElement[1];
 				ret[0] = getKernel().getManager3D().Intersect(
