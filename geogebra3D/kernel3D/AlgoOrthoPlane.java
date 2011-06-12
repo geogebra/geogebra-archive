@@ -17,6 +17,7 @@ import geogebra.Matrix.CoordSys;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.Construction;
 import geogebra.kernel.Kernel;
+import geogebra.main.Application;
 
 
 /**
@@ -86,10 +87,12 @@ public abstract class AlgoOrthoPlane extends AlgoElement3D {
 		
 		//gets an ortho matrix with coord sys direction vector
 		Coords[] v = vz.completeOrthonormal();
-		coordsys.addVectorWithoutCheckMadeCoordSys(v[1]);
-		coordsys.addVectorWithoutCheckMadeCoordSys(v[0]);
+		//Application.debug("v0=\n"+v[0]+"\nv1=\n"+v[1]);
 		
-		coordsys.makeOrthoMatrix(true,true);
+		coordsys.addVectorWithoutCheckMadeCoordSys(v[0]);
+		coordsys.addVectorWithoutCheckMadeCoordSys(v[1]);
+		
+		coordsys.makeOrthoMatrix(false,false);
 		
 		coordsys.makeEquationVector();
         

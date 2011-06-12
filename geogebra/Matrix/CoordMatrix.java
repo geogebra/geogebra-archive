@@ -815,6 +815,8 @@ public class CoordMatrix
 	
 	
 	
+	
+	
 	///////////////////////////////////////////////////:
 	//testing the package
 	/**
@@ -866,6 +868,8 @@ public class CoordMatrix
 		m4.mul(m4inv).SystemPrint();
 		m4inv.mul(m4).SystemPrint();
 	}
+	
+	
 	
 	
 	

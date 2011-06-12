@@ -119,6 +119,7 @@ public  GeoElement[] process(Command c) throws MyError {
         			return ret;
 
         		}
+        		
         		//LINES
         		
         		//intersection plane/polygon

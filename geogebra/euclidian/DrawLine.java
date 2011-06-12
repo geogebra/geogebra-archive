@@ -119,7 +119,7 @@ public class DrawLine extends Drawable implements Previewable {
 			labelVisible = geo.isLabelVisible();
 			updateStrokes(geo);
 			
-			Coords equation = g.getCartesianEquationVector(view.getPlaneMatrix());
+			Coords equation = g.getCartesianEquationVector(view.getMatrix());
 			if (equation==null){
 				isVisible = false;
 				return;
@@ -441,7 +441,7 @@ public class DrawLine extends Drawable implements Previewable {
 			    // calc the line g through (xRW,yRW) and perpendicular to l
 				GeoLineND lND = (GeoLineND)lines.get(0);
 				GeoLine l;
-				Coords equation = lND.getCartesianEquationVector(view.getPlaneMatrix());
+				Coords equation = lND.getCartesianEquationVector(view.getMatrix());
 				GeoVec3D.cross(xRW, yRW, 1.0, equation.getY(), -equation.getX(), 0.0, ((GeoLine) g));
 				break;
 			case PREVIEW_PERPENDICULAR:

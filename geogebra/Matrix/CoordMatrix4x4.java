@@ -1,5 +1,7 @@
 package geogebra.Matrix;
 
+import geogebra.main.Application;
+
 
 /**
  * 4x4 matrix for 3D transformations, planes descriptions, lines, etc.
@@ -15,6 +17,9 @@ public class CoordMatrix4x4 extends CoordMatrix {
 	final static public int VY = 1;
 	final static public int VZ = 2;
 	
+	
+	final static public CoordMatrix4x4 IDENTITY = Identity();
+	final static public CoordMatrix4x4 MIRROR_Y = Identity().mirrorY();
 	
 	
 	///////////////////////////////////////////////////
@@ -266,8 +271,91 @@ public class CoordMatrix4x4 extends CoordMatrix {
 			
 		
 	}
-	
-	
-	
+    
+    
+    /** return this mirrored by Oy line
+	 * @return mirrored matrix*/
+    public CoordMatrix4x4 mirrorY(){
+		
+		CoordMatrix4x4 ret = new CoordMatrix4x4();
+						
+		ret.setOrigin(getOrigin());
+		ret.setVx(getVx().mul(-1));		
+		ret.setVy(getVy());
+		ret.setVz(getVz().mul(-1));		
+		
+		return ret;			
+			
+	}
+    
+    /** return this mirrored by Ox line
+	 * @return mirrored matrix*/
+    public CoordMatrix4x4 mirrorX(){
+		
+		CoordMatrix4x4 ret = new CoordMatrix4x4();
+						
+		ret.setOrigin(getOrigin());
+		ret.setVx(getVx());		
+		ret.setVy(getVy().mul(-1));
+		ret.setVz(getVz().mul(-1));		
+		
+		return ret;			
+			
+	}	
+    
+    /** return this mirrored by Origin
+	 * @return mirrored matrix*/
+    public CoordMatrix4x4 mirrorO(){
+		
+		CoordMatrix4x4 ret = new CoordMatrix4x4();
+						
+		ret.setOrigin(getOrigin());
+		ret.setVx(getVx().mul(-1));		
+		ret.setVy(getVy().mul(-1));
+		ret.setVz(getVz());		
+		
+		return ret;			
+			
+	}
+    
+    /** return this rotated arround (Oz) by angle -90°
+	 * @return rotated matrix*/
+    public CoordMatrix4x4 rotateM90(){
+		
+		CoordMatrix4x4 rot = new CoordMatrix4x4();
+		
+		//rotation
+		rot.set(2,1,-1);
+		rot.set(1,2,1);
+		
+		//identity
+		rot.set(3,3,1);
+		rot.set(4,4,1);
+		
+		Application.debug(rot);
+								
+		return rot.mul(this);			
+			
+	}
+    
+    /** return this rotated arround (Oz) by angle 90°
+	 * @return rotated matrix*/
+    public CoordMatrix4x4 rotate90(){
+		
+		CoordMatrix4x4 rot = new CoordMatrix4x4();
+		
+		//rotation
+		rot.set(2,1,1);
+		rot.set(1,2,-1);
+		
+		//identity
+		rot.set(3,3,1);
+		rot.set(4,4,1);
+		
+		Application.debug(rot);
+								
+		return rot.mul(this);			
+			
+	}
 
 }

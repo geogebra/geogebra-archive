@@ -89,7 +89,7 @@ implements Previewable {
 			
 
 			// calc direction vector of ray in screen coords
-			Coords equation = ray.getCartesianEquationVector(view.getPlaneMatrix());
+			Coords equation = ray.getCartesianEquationVector(view.getMatrix());
 			if (equation==null){
 				isVisible = false;
 				return;

@@ -308,7 +308,7 @@ public class DrawPolygon extends Drawable implements Previewable {
 	final public boolean isInside(Rectangle rect) {
 		Application.debug(gp.getBounds());
 		Application.debug(rect);
-		return gp != null && rect.contains(gp.getBounds());
+		return gp != null && gp.getBounds() != null && rect.contains(gp.getBounds());
 	}
 
 	public GeoElement getGeoElement() {

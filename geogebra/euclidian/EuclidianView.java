@@ -5036,7 +5036,7 @@ implements View, EuclidianViewInterface, Printable, EuclidianConstants {
 	 * return null if classic 2D view
 	 * @return matrix representation of the plane shown by this view
 	 */
-	public CoordMatrix getPlaneMatrix(){
+	public CoordMatrix getMatrix(){
 		return null;
 	}
 	

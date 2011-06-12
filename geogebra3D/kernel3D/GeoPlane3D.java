@@ -13,6 +13,7 @@ import geogebra.kernel.arithmetic.Functional2Var;
 import geogebra.kernel.kernelND.GeoCoordSys2D;
 import geogebra.kernel.kernelND.GeoPlaneND;
 import geogebra.kernel.kernelND.GeoPointND;
+import geogebra3D.euclidianForPlane.EuclidianViewForPlane;
 
 public class GeoPlane3D extends GeoElement3D
 implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
@@ -495,20 +496,34 @@ implements Functional2Var, GeoCoordSys2D, GeoCoords4D, GeoPlaneND{
 	//////////////////////////////////
 	// 2D VIEW
 	
-	private EuclidianView euclidianViewForPlane;
+	private EuclidianViewForPlane euclidianViewForPlane;
 	
 	public void createView2D(){
-		euclidianViewForPlane = app.createEuclidianViewForPlane(this);
+		euclidianViewForPlane = (EuclidianViewForPlane) app.createEuclidianViewForPlane(this);
 	
 	}
 	
 	public void update(){
 		super.update();
-		if (euclidianViewForPlane!=null)
-			euclidianViewForPlane.updateAllDrawables(true);
+		if (euclidianViewForPlane!=null){
+			euclidianViewForPlane.updateMatrix();
+			updateViewForPlane();
+		}
 	}
 
+	private void updateViewForPlane(){
+		euclidianViewForPlane.updateAllDrawables(true);
+	}
+	
 
+	public void updateViewForPlaneDirection(Coords directionView3D, CoordMatrix toScreenMatrix){
+		
+		if (euclidianViewForPlane!=null){
+			euclidianViewForPlane.setTransform(directionView3D, toScreenMatrix);
+			updateViewForPlane();
+		}
+			
+	}
 
 
 	public Coords getDirectionInD3(){
