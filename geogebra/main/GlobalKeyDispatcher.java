@@ -284,7 +284,8 @@ public class GlobalKeyDispatcher implements KeyEventDispatcher {
 			case KeyEvent.VK_NUMPAD3:
 			case KeyEvent.VK_3:
 				// event.isShiftDown() doesn't work if NumLock on
-				if (event.isShiftDown() || event.isAltDown()) {
+				// however .isAltDown() stops AltGr-3 from working (^ on Croatian keyboard)
+				if (event.isShiftDown()){ // || event.isAltDown()) {
 					app.getGuiManager().setShowView(
 							!app.getGuiManager().showView(Application.VIEW_EUCLIDIAN3D),
 							Application.VIEW_EUCLIDIAN3D);
