@@ -1167,7 +1167,8 @@ GeoLineND, MatrixTransformable, GeoFunctionable, Evaluatable, Transformable {
   		//TODO merge with getPointOnLine
   		// point defined by parent algorithm
   		if (startPoint != null && startPoint.isFinite()) {
-  			startCoords=startPoint.getInhomCoordsInD(dimension);
+  			//startCoords=startPoint.getInhomCoordsInD(dimension);
+  			startCoords=startPoint.getCoordsInD(dimension);
   		} 
 		// point on axis
 		else {
