@@ -358,17 +358,21 @@ public interface Manager3DInterface {
 			  * @return
 			  */
 			 
-			 public GeoElement[] IntersectPoint(
+			 public GeoElement[] IntersectionPoint(
 						String[] labels,
-						GeoLineND g, GeoSurfaceFinite p) ;	
+						GeoLineND g, GeoSurfaceFinite s) ;	
 			 
-			 public GeoElement[] IntersectSegment(
+			 public GeoElement[] IntersectionSegment(
 						String[] labels,
-						GeoLineND g, GeoSurfaceFinite p) ;		 
-
-			 public GeoElement[] Intersect(
+						GeoLineND g, GeoSurfaceFinite s) ;
+			 
+			 public GeoElement[] IntersectionPoint(
 						String[] labels,
-						GeoPlane3D g, GeoSurfaceFinite p) ;		 
+						GeoPlane3D p, GeoSurfaceFinite s) ;	
+			 
+			 public GeoElement[] IntersectionSegment(
+						String[] labels,
+						GeoPlane3D p, GeoSurfaceFinite s) ;		 
 			 /** Calculate the intersection of plane and quadric
 			  * @param label name of the point
 			  * @param plane

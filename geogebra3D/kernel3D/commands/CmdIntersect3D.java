@@ -89,7 +89,7 @@ public  GeoElement[] process(Command c) throws MyError {
         		else if ((arg[0] instanceof GeoLineND && arg[1] instanceof GeoPolygon)
         				||(arg[1] instanceof GeoLineND && arg[0] instanceof GeoPolygon))
         			
-        			return kernel.getManager3D().IntersectPoint(
+        			return kernel.getManager3D().IntersectionPoint(
         							c.getLabels(),
         							(GeoLineND) arg[0],
         							(GeoPolygon) arg[1]);
@@ -129,7 +129,7 @@ public  GeoElement[] process(Command c) throws MyError {
         				arg[1] instanceof GeoPlane3D && arg[0] instanceof GeoSurfaceFinite ){
 
         			GeoElement[] ret =
-        					kernel.getManager3D().Intersect(
+        					kernel.getManager3D().IntersectionSegment(
         							c.getLabels(),
         							(GeoPlane3D) arg[0],
         							(GeoSurfaceFinite) arg[1]);

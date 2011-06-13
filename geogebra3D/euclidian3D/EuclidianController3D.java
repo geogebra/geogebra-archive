@@ -1624,7 +1624,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			goodHits.addAll(tempArrayList);
 
 			hits = goodHits;
-
+			
 		}
 		
 		//not working
@@ -1641,7 +1641,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 		
 		// polygons
 		addSelectedPolygon(hits, 10, true);
-		
+		Application.debug(""+hits.toString());
+	//	Application.debug(""+getSelectedPolygons().length);
+		Application.debug(""+selectedPolygons.size());
+
 		//singlePointWanted = singlePointWanted && selGeos() == 2;
 		
 		//if (selGeos() > 2)
@@ -1680,7 +1683,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				*/
 				
 				if (cs2Ds instanceof GeoPolygon) {
-					return getKernel().getManager3D().IntersectPoint(
+					return getKernel().getManager3D().IntersectionPoint(
 								new String[] {null},
 								(GeoLineND) line,
 								(GeoPolygon) cs2Ds
@@ -1705,12 +1708,19 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			for(int i=0;i<4; i++)
 				ret[i] = (GeoElement) points[i];
 			return ret;
-		} /*else if (selCS2D()>=2) { // plane-plane
-			GeoCoordSys2D[] planes = getSelectedCS2D();
-			GeoElement[] ret = { null };
-			ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) planes[0], (GeoElement) planes[1]);
-			System.out.println("return=" + ret[0].toString());
-		}*/
+		} else if (selCS2D()>=2 
+				&& selPolygons()>=1 
+				&& selPolygons() <selCS2D()) { // plane-polygon
+			int n = selCS2D();
+			GeoPolygon polygon = getSelectedPolygons()[0];
+			GeoCoordSys2D[] CS2Ds = getSelectedCS2D();
+			for (int i = 0; i<n; i++) {
+				if (CS2Ds[i] != polygon) {
+					return getKernel().getManager3D().IntersectionPoint(null, 
+							(GeoPlane3D) CS2Ds[i], polygon);
+				}
+			}
+		}
 		
 		return null;
 	}
@@ -1797,12 +1807,12 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				
 				if (!foundP) {
 					GeoElement[] ret = new GeoElement[1];
-					ret[0] = getKernel().getManager3D().Intersect(null, 
+					ret[0] = getKernel().getManager3D().Intersect("", 
 							(GeoElement) cs2Ds[0], (GeoElement) cs2Ds[1]);
 					ret[0].setObjColor(intersectionCurveColorPlanarPlanar);
 					return ret[0].isDefined();	
 				} else if (foundP && foundNp) {
-					GeoElement[] ret = getKernel().getManager3D().Intersect(new String[] {null}, 
+					GeoElement[] ret = getKernel().getManager3D().IntersectionSegment(new String[] {null}, 
 							(GeoPlane3D) cs2Ds[npIndex], (GeoSurfaceFinite) cs2Ds[pIndex]);
 					for (int i = 0; i<ret.length; i++){
 						ret[i].setObjColor(intersectionCurveColorPlanarPlanar);
