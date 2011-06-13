@@ -358,15 +358,13 @@ public interface Manager3DInterface {
 			  * @return
 			  */
 			 
-			 public GeoElement[] Intersect(
+			 public GeoElement[] IntersectPoint(
+						String[] labels,
+						GeoLineND g, GeoSurfaceFinite p) ;	
+			 
+			 public GeoElement[] IntersectSegment(
 						String[] labels,
 						GeoLineND g, GeoSurfaceFinite p) ;		 
-
-					 
-					 
-			 public GeoElement[] IntersectOutline(
-						String[] labels,
-						GeoLineND g, GeoPolygon p) ;		 
 
 			 public GeoElement[] Intersect(
 						String[] labels,

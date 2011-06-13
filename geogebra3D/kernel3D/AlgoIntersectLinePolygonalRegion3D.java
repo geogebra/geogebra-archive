@@ -33,8 +33,8 @@ public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygon
 	 * @param g 
 	 * @param p 
 	 */
-	AlgoIntersectLinePolygonalRegion3D(Construction c, String[] labels, GeoPolygon p,
-			GeoLineND g) {
+	AlgoIntersectLinePolygonalRegion3D(Construction c, String[] labels, 
+			GeoPolygon p, GeoLineND g) {
 		this(c, labels, g, p);
 	}
 	

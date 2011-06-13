@@ -12,37 +12,62 @@ import geogebra.kernel.GeoPolygon;
 
 import geogebra.kernel.Kernel;
 
+import geogebra.kernel.AlgoElement.OutputHandler;
 import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 
+import java.awt.Color;
 import java.util.TreeMap;
 
-public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
+public class AlgoIntersectLinePolygon3D extends AlgoElement3D {
 
 	protected int spaceDim = 3;
+	protected GeoPolygon p;
+	protected GeoLineND g;
+
+	protected OutputHandler<GeoElement> outputPoints; // output
 	
-	private boolean lineInPlaneOfPolygon = false;
+    
+    private TreeMap<Double, Coords> newCoords;
+    
+
+
 	
 	/**
-	 * This assumes that the line is in the plane of polygon 
-	 * and the polygon acts as a region
 	 * @param c 
 	 * @param labels 
 	 * @param g 
 	 * @param p 
 	 */
-	AlgoIntersectLinePolygon3D(Construction c, String[] labels, GeoPolygon p,
-			GeoLineND g) {
+	AlgoIntersectLinePolygon3D(Construction c, String[] labels,
+			GeoPolygon p, GeoLineND g) {
 		this(c, labels, g, p);
 	}
 	
 	
     public AlgoIntersectLinePolygon3D(Construction c, String[] labels,
 			GeoLineND g, GeoPolygon p) {
-    	super(c, labels, g, p);
-    
+    	super(c);
+    	
+        
+		outputPoints=createOutputPoints();
+        
+        this.g = g;
+        this.p = p;
 
+        newCoords = new TreeMap<Double, Coords>(Kernel.DoubleComparator(Kernel.STANDARD_PRECISION));
+  
+        
+        compute();
+        
+        setInputOutput(); // for AlgoElement
+        
+        setLabels(labels);
+        update();    
+    	this.p=p;
+    	this.g=g;
+    	
 	}
 
 
@@ -74,20 +99,7 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
     
     protected void intersectionsCoords(GeoLineND g, GeoPolygon p, TreeMap<Double, Coords> newCoords){
 
-    	if (!lineInPlaneOfPolygon){
-    		//p.getConstruction().getKernel().setSilentMode(true);
-    		
-    		//AlgoIntersectCS1D2D algo = new AlgoIntersectCS1D2D(cons, null, (GeoElement) g,  p);
-    		//GeoPoint3D point = (GeoPoint3D) algo.getIntersection();
-    		
-    		Coords singlePoint = AlgoIntersectCS1D2D.getIntersectLinePlane(g,p);
-    		
-    		if (singlePoint!=null)
-    			newCoords.put(0.0, singlePoint);
-    		
-    		//p.getConstruction().getKernel().setSilentMode(false);
-    		return;
-    	}
+    	//TODO: move these to intersectLinePolyline3D
     	//line origin, direction, min and max parameter values
     	Coords o1 = g.getPointInD(3, 0);
     	Coords d1 = g.getPointInD(3, 1).sub(o1);
@@ -119,170 +131,60 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
         }
         
     }
-    protected void intersectionsSegments(GeoLineND g, GeoPolygon p,
-			TreeMap<Double, Coords> newCoords,
-			TreeMap<Double, Coords[]> newSegmentCoords) {
-		
-    	if (!lineInPlaneOfPolygon)
-    		return;
-    	
-    	//the following are pretty much the same as 2D
-    	//most differences are about the incompatibility of 2D and 3D types
-    	//TODO merge with 2D version
-    	if (newCoords==null ) 
-    		return;
-    	if (newCoords.isEmpty()) {
-    		if (g instanceof GeoSegmentND &&
-    				((GeoPolygon3D) p).isInRegion(g.getStartPoint(),false))
-    			newSegmentCoords.put(0.0,  new Coords[] {
-    					g.getStartPoint().getCoordsInD(spaceDim),
-    					g.getEndPoint().getCoordsInD(spaceDim)});
-    		
-    		return;
-    	}
-
-     	double minKey = newCoords.firstKey();
-    	double maxKey = newCoords.lastKey();
-    	double tOld, tLast;
-    	Double tFirst;
-    	GeoPointND pointFirst;
-    	Coords coordsOld;
-	   		
-    	boolean isEnteringRegion = false;
-    	boolean segmentAlongLine = false;
-    	
-    	
-    	if (g.getMinParameter()>=maxKey){
-    		tFirst = g.getMinParameter();
-    		if (!tFirst.isInfinite()) {
-    			pointFirst = g.getStartPoint();
-    			isEnteringRegion = ((GeoPolygon3D)p).isInRegion(pointFirst);
-    		}
-    		tLast = g.getMaxParameter();
-    		
-    	} else {
-    		tFirst = g.getMaxParameter();
-       		if (!tFirst.isInfinite()) {
-    			pointFirst = g.getEndPoint();
-    			isEnteringRegion = ((GeoPolygon3D)p).isInRegion(pointFirst);
-       		}
-    		tLast = g.getMinParameter();
-    		//pointLast = ((GeoLine3D)g).startPoint;
-    	}
-    
-    	tOld = tFirst;
-
-    	if ( isEnteringRegion &&
-    		!Kernel.isEqual(tOld, maxKey))
-    			newSegmentCoords.put(tOld,
-    				new Coords[] {
-    					g.getPointInD(spaceDim, tFirst),
-    					newCoords.get(maxKey)
-    				}
-    			);
-    	isEnteringRegion = !isEnteringRegion;
-    	
-    	tOld = maxKey;
-    	coordsOld = newCoords.get(maxKey);
-    	
- 
-    	//loop for all possible change of region
-    	while (tOld > minKey) {
-    		double tNew = newCoords.subMap(minKey, tOld).lastKey();
-    		
-    		//Check multiplicity at tLast
-    		//i.e. how many times g crosses the border at tLast
-    		int tOld_m = 0;
-    		int tOld_mRight = 0;
-    		int tOld_mLeft = 0;
-    		
-    		Coords gRight = g.getDirectionInD3().crossProduct(p.getCoordSys().getNormal());
-    		
-    		for (int i = 0; i<p.getPointsLength(); i++) {
-    			GeoSegmentND currSeg = p.getSegments()[i];
-    			
-    			if (currSeg.isOnPath(coordsOld, Kernel.EPSILON)) {
-    				tOld_m++;
-    			} else {
-    				continue;
-    			}
-    				
-    			if (coordsOld.getInhomCoords().isEqual(currSeg.getStartInhomCoords())
-    					|| coordsOld.getInhomCoords().isEqual(currSeg.getEndInhomCoords()) ) {
-    				tOld_m--;
-    				
-    				double currSegIncline = currSeg.getDirectionInD3().dotproduct(gRight);
-    				if (Kernel.isGreater(currSegIncline, 0))
-    					tOld_mRight++;
-    				else if (Kernel.isGreater(0, currSegIncline))
-    					tOld_mLeft++;
-    				else {//logically saying currSeg is along the line; can have potential computational problem unknown
-    					segmentAlongLine = true;
-    					tOld_m--;
-    				}
-    			}
-    		}
-    		
-    		if (tOld_mRight != 0 || tOld_mLeft != 0)
-    			if (tOld_mRight >= tOld_mLeft) {
-    				tOld_mRight -= tOld_mLeft;
-    				tOld_m += tOld_mLeft;
-    				tOld_mLeft=0;
-    			} else if (tOld_mRight < tOld_mLeft) {
-    				tOld_mLeft -= tOld_mRight;
-    				tOld_m += tOld_mRight;
-    				tOld_mRight=0;
-    			}
-    				
-    		isEnteringRegion ^= (tOld_m % 2 == 0);
-    				
-    		if (segmentAlongLine) { 
-    			
-    			newSegmentCoords.put(tOld,  new Coords[] {
-		    			newCoords.get(tOld), 
-		    			newCoords.get(tNew)
-		    			});
-    		} else {
-    			if (isEnteringRegion)
-    				newSegmentCoords.put(tOld,  new Coords[] {
-    						newCoords.get(tOld), 
-    						newCoords.get(tNew)
-    						});
-    			isEnteringRegion = !isEnteringRegion;
-    		}
-    		tOld = tNew;
-    		coordsOld = newCoords.get(tOld);
-    	}
- 
-       	if(!Kernel.isEqual(tOld, tLast)) {
-    		int tOld_m = 0;
-    		for (int i = 0; i<p.getPointsLength(); i++) {
-    			GeoSegmentND currSeg = p.getSegments()[i];
-    			if (currSeg.isOnPath(coordsOld, Kernel.EPSILON)) {
-    				tOld_m++;
-    			} else {
-    				continue;
-    			}
-    		}
-    		isEnteringRegion ^= (tOld_m % 2 == 0);
-    			if (isEnteringRegion) //add the segment only if it is entering the region
-    				newSegmentCoords.put(tOld,  new Coords[] {
-    						newCoords.get(tOld), 
-    						g.getPointInD(spaceDim, tLast)
-    						});
-    			isEnteringRegion = !isEnteringRegion;
-    	}
-    	
-		
-    
-    }
+  
 
     protected void compute() {
-    	super.compute();
+    	
+    	//clear the points map
+    	newCoords.clear();
+    	
+    	//fill a new points map
+    	intersectionsCoords(g, p, newCoords);
+    	
+    	//update and/or create points
+    	int index = 0;   	
+    	//affect new computed points
+    	outputPoints.adjustOutputSize(newCoords.size());
+    	for (Coords coords : newCoords.values()){
+    		GeoPointND point = (GeoPointND) outputPoints.getElement(index);
+    		point.setCoords(coords,false);
+    		point.updateCoords();
+    		index++;
+    	}
+    	//other points are undefined
+    	for(;index<outputPoints.size();index++)
+    		outputPoints.getElement(index).setUndefined();
+
     }
     
 	@Override
 	public String getClassName() {
-		return "AlgoIntersectPlanePolygon3D";
+		return "AlgoIntersectLinePolygon3D";
 	}
+	
+	protected void setLabels(String[] labels) {
+       //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
+			if (labels!=null &&
+					labels.length==1 &&
+					outputPoints.size() > 1 &&
+					labels[0]!=null &&
+					!labels[0].equals("")) {
+				outputPoints.setIndexLabels(labels[0]);
+          	
+ 
+        	} else {
+         		outputPoints.setLabels(labels);
+        	}
+		
+	}
+	
+    protected void setInputOutput() {
+        input = new GeoElement[2];
+        input[0] = (GeoElement) g;
+        input[1] = p;
+        
+        setDependencies(); // done by AlgoElement
+    }
+
+
 }

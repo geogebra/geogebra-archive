@@ -2105,8 +2105,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		// now handle current mode
 		view.setHits(mouseLoc);
 		hits = view.getHits();
-		switchModeForRemovePolygons(hits);
-		//Application.debug(hits.toString());
+		 //TODO: find more appropriate place to check mode
+		if (mode!=EuclidianView.MODE_INTERSECT &&
+				mode!=EuclidianView.MODE_INTERSECTION_CURVE)
+			switchModeForRemovePolygons(hits);
+		//Application.debug(mode + "\n" + hits.toString());
 
 
 		// Michael Borcherds 2007-12-08 BEGIN moved up a few lines (bugfix: Tools eg Line Segment weren't working with grid on)
@@ -2502,7 +2505,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 				hits = tempArrayList;						
 			}
 		}
-		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_ON_OBJECT) {
+		else if (mode == EuclidianView.MODE_POINT || mode == EuclidianView.MODE_POINT_ON_OBJECT ||
+				mode == EuclidianView.MODE_INTERSECT || mode == EuclidianView.MODE_INTERSECTION_CURVE) {
 			// include polygons in hits
 			view.setHits(mouseLoc);
 			hits = view.getHits();

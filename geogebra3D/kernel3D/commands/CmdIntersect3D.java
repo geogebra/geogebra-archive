@@ -84,18 +84,18 @@ public  GeoElement[] process(Command c) throws MyError {
         					(GeoConicND) arg[1]);
         		
 
-        		//intersection line/surfaceFinite
+        		//intersection line/polygon
         		
-        		else if ((arg[0] instanceof GeoLineND && arg[1] instanceof GeoSurfaceFinite)
-        				||(arg[1] instanceof GeoLineND && arg[0] instanceof GeoSurfaceFinite))
+        		else if ((arg[0] instanceof GeoLineND && arg[1] instanceof GeoPolygon)
+        				||(arg[1] instanceof GeoLineND && arg[0] instanceof GeoPolygon))
         			
-        			return kernel.getManager3D().Intersect(
+        			return kernel.getManager3D().IntersectPoint(
         							c.getLabels(),
         							(GeoLineND) arg[0],
-        							(GeoSurfaceFinite) arg[1]);
+        							(GeoPolygon) arg[1]);
         		
-
-        		//intersection line/surface : only if surface is treated as its outline
+        		 
+        		//intersection line/planar objects : only if surface is treated as its outline
         		else if ((arg[0] instanceof GeoLineND && arg[1] instanceof GeoCoordSys2D)
         				||(arg[1] instanceof GeoLineND && arg[0] instanceof GeoCoordSys2D)){
         			

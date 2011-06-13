@@ -1664,9 +1664,10 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				for(int i=0;i<2; i++)
 					ret[i] = (GeoElement) points[i];
 				return ret;
-			}else if (selCS2D()>=1 ) {// line-CS2D
+			}else if (selCS2D()>=1) {// line-CS2D
+				
 				GeoLineND line = getSelectedLinesND()[0];
-				GeoCoordSys2D[] cs2Ds = getSelectedCS2D();
+				GeoCoordSys2D cs2Ds = getSelectedCS2D()[0];
 				/*
 				int firstP = 0;
 				for (firstP = 0; firstP<cs2Ds.length; firstP++) {
@@ -1678,16 +1679,24 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				}
 				*/
 				
-				GeoElement[] ret = new GeoElement[1];
-				ret[0] = getKernel().getManager3D().Intersect(
-						null, (GeoElement) line, (GeoElement) cs2Ds[0]);
-				return ret;
-			}else if (selPolygons()>=1) {// line-polygon
+				if (cs2Ds instanceof GeoPolygon) {
+					return getKernel().getManager3D().IntersectPoint(
+								new String[] {null},
+								(GeoLineND) line,
+								(GeoPolygon) cs2Ds
+								);
+				} else {
+					GeoElement[] ret = new GeoElement[1];
+					ret[0] = getKernel().getManager3D().Intersect(
+					null, (GeoElement) line, (GeoElement) cs2Ds);
+					return ret;
+				}
+		/*	}else if (selPolygons()>=1) {// line-polygon
 				GeoLineND line = getSelectedLinesND()[0];
 				GeoPolygon polygon = getSelectedPolygons()[0];
-				//GeoElement[] ret = { null };
-				//ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) polygon);
-
+				GeoElement[] ret = { null };
+				ret[0] = getKernel().getManager3D().Intersect(null, (GeoElement) line, (GeoElement) polygon);
+		 */
 			}
 		} else if (selConicsND()>=2 ) {// conic-conic
 			GeoConicND[] conics = getSelectedConicsND();
@@ -1726,7 +1735,8 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 			 *   now focus on planes and quadric.
 			 */
 			if (hits.isEmpty())
-				return false;		
+				return false;	
+
 			//////////////////////////////////////////////////
 			if (!selectionPreview  && hits.size() > 2 - selGeos()) {
 				Hits goodHits = new Hits();
@@ -1735,7 +1745,7 @@ implements MouseListener, MouseMotionListener, MouseWheelListener{
 				goodHits.addAll(tempArrayList);
 				hits.getHits(GeoQuadric3D.class, tempArrayList);
 				goodHits.addAll(tempArrayList);
-	
+			
 				hits = goodHits;
 				
 				

@@ -29,7 +29,7 @@ import java.util.TreeMap;
 
 
 /**
- * Algo for intersection of a line with a polygon
+ * Algo for intersection of a line with the interior of a polygon
  * @author  matthieu
  * @version 
  */
@@ -42,16 +42,15 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
 	
 	
 	protected GeoLineND g; // input
-	protected GeoPolygon p; //input
-	protected OutputHandler<GeoElement> outputPoints; // output
+	protected GeoPolygon p; //input	
 	protected OutputHandler<GeoElement> outputSegments; // output 
-    protected int spaceDim =2; 
+	
+    protected int spaceDim =2;
+    protected OutputHandler<GeoElement> outputPoints;
     
     private TreeMap<Double, Coords> newCoords;
     private TreeMap<Double, Coords[]> newSegmentCoords;
 
-
-	protected boolean pAsBoundary;
     
     /** 
      * common constructor
@@ -390,7 +389,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     	for(;index<outputPoints.size();index++)
     		outputPoints.getElement(index).setUndefined();
 
-    	if (!pAsBoundary) {
+    	
     		newSegmentCoords.clear();
     		
     		//Calculate segments. Not for degenerating case 
@@ -414,7 +413,7 @@ public class AlgoIntersectLinePolygonalRegion extends AlgoElement{
     		//other segments are undefined
     		for(;indexSegment<outputSegments.size();indexSegment++)
     		outputSegments.getElement(indexSegment).setUndefined();
-    	}
+    	
     }
 
 

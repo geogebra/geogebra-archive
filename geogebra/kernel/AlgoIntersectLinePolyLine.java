@@ -179,7 +179,10 @@ public class AlgoIntersectLinePolyLine extends AlgoElement{
     	for(;index<outputPoints.size();index++)
     		outputPoints.getElement(index).setUndefined();
 
+
     }
+
+
 
 
 	final public String toString() {

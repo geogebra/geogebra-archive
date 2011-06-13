@@ -617,25 +617,33 @@ public class Manager3D implements Manager3DInterface {
 		return algo.getIntersection();
 	}
 
-	 public GeoElement[] Intersect(
+	 public GeoElement[] IntersectPoint(
 				String[] labels,
 				GeoLineND g, GeoSurfaceFinite p) {
 			
 		 	if (p instanceof GeoPolygon) {
-		 		AlgoIntersectLinePolygonalRegion3D algo = new AlgoIntersectLinePolygonalRegion3D(cons, labels, g, (GeoPolygon)p);
+		 		AlgoElement algo;
+		 		//check if line g is contained in the plane of p
+		 		if (AlgoIntersectCS1D2D.getConfigLinePlane(g, ((GeoCoordSys2D) p)) == AlgoIntersectCS1D2D.RESULTCATEGORY_CONTAINED)
+		 			algo = new AlgoIntersectLinePolygon3D(cons, labels, g, (GeoPolygon)p);
+		 		else
+		 			algo = new AlgoIntersectLinePolygonalRegion3D(cons, labels, g, (GeoPolygon)p);
 		 		return algo.getOutput();
 		 	} else {
 		 		return null;
 		 	}
 	 }
 	 
-	public GeoElement[] IntersectOutline(
+	public GeoElement[] IntersectSegment(
 			String[] labels,
-			GeoLineND g, GeoPolygon p){
+			GeoLineND g, GeoSurfaceFinite p){
 		
-		AlgoIntersectLinePolygon3D algo = new AlgoIntersectLinePolygon3D(cons, labels, g, p);
-		
-		return algo.getOutput();
+		AlgoIntersectLinePolygonalRegion3D algo;
+		if (p instanceof GeoPolygon) {
+		  algo = new AlgoIntersectLinePolygonalRegion3D(cons, labels, g, (GeoPolygon)p);
+		  return algo.getOutput();
+		}
+		return null;
 		
 	}
 
