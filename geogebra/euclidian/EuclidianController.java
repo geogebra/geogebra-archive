@@ -231,6 +231,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	protected ArrayList selectedVectors = new ArrayList();
 
 	protected ArrayList selectedPolygons = new ArrayList();
+	protected ArrayList selectedPolyLines = new ArrayList();
 
 	protected ArrayList<GeoElement> selectedGeos = new ArrayList<GeoElement>();
 	protected ArrayList selectedLists = new ArrayList();
@@ -4331,6 +4332,8 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			goodHits.addAll(tempArrayList);
 			hits.getHits(GeoPolygon.class, tempArrayList);
 			goodHits.addAll(tempArrayList);
+			hits.getHits(GeoPolyLine.class, tempArrayList);
+			goodHits.addAll(tempArrayList);		
 			
 			//if (goodHits.size() > 2 - selGeos()) {
 			//	//  choose one geo, and select only this one
@@ -4350,6 +4353,7 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		addSelectedFunction(hits, 10, true);	
 		addSelectedImplicitpoly(hits, 10, true);
 		addSelectedPolygon(hits, 10, true);
+		addSelectedPolyLine(hits, 10, true);
 		
 		singlePointWanted = singlePointWanted && selGeos() == 2;
 
@@ -4404,12 +4408,20 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 
 			return ret;
 		}
+		// line and polyLine
+		else if (selLines()>=1 && selPolyLines() >=1) {
+			GeoLine line = getSelectedLines()[0];
+			GeoPolyLine polyLine = getSelectedPolyLines()[0];
+			GeoElement[] ret = { null };
+			ret = kernel.IntersectLinePolyLine(new String[] {null}, line, polyLine);
+			return ret;
+		}
 		// line and polygon
 		else if (selLines()>=1 && selPolygons() >=1) {
 			GeoLine line = getSelectedLines()[0];
 			GeoPolygon polygon = getSelectedPolygons()[0];
 			GeoElement[] ret = { null };
-			ret = kernel.IntersectLinePolygon(null, line, polygon);
+			ret = kernel.IntersectLinePolygon(new String[] {null}, line, polygon);
 			return ret;
 		}
 		// line and function
@@ -6653,7 +6665,14 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 		clearSelection(selectedPolygons);
 		return ret;
 	}
-
+	final protected GeoPolyLine[] getSelectedPolyLines() {				
+		GeoPolyLine[] ret = new GeoPolyLine[selectedPolyLines.size()];
+		for (int i = 0; i < selectedPolyLines.size(); i++) {		
+			ret[i] = (GeoPolyLine) selectedPolyLines.get(i);
+		}
+		clearSelection(selectedPolyLines);
+		return ret;
+	}
 	
 
 	
@@ -6959,6 +6978,10 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 			boolean addMoreThanOneAllowed) {
 		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPolygons, GeoPolygon.class);
 	}
+	final protected int addSelectedPolyLine(Hits hits, int max,
+			boolean addMoreThanOneAllowed) {
+		return handleAddSelected(hits, max, addMoreThanOneAllowed, selectedPolyLines, GeoPolyLine.class);
+	}
 
 	final protected int addSelectedList(Hits hits, int max,
 			boolean addMoreThanOneAllowed) {
@@ -6984,7 +7007,11 @@ MouseMotionListener, MouseWheelListener, ComponentListener, PropertiesPanelMiniL
 	final int selLists() {
 		return selectedLists.size();
 	}
-
+	
+	protected final int selPolyLines() {
+		return selectedPolyLines.size();
+	}
+	
 	protected final int selPolygons() {
 		return selectedPolygons.size();
 	}

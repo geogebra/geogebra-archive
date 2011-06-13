@@ -585,6 +585,42 @@ GeoSegmentND {
 
     	return  t >= -eps &&  t <= 1 + eps;   	
     }
+    
+    /**
+     * exact calculation for checking if point is on Segment[segStart,segEnd]
+     * @param segStart
+     * @param segEnd
+     * @param point
+     * @param checkOnFullLine - if true, do extra calculation to make sure.
+     * @param eps
+     * @return
+     */
+    public static boolean checkOnPath(Coords segStart, Coords segEnd,
+    		Coords point, boolean checkOnFullLine, double eps) {
+    	if (checkOnFullLine)
+    		//TODO
+    		return false;
+    	else {
+    		double x1 = segStart.getInhomCoords().get(1);
+    		double x2 = segEnd.getInhomCoords().get(1);
+    		double x = point.getInhomCoords().get(1);
+    		if ( x1-eps <= x2 && x2 <= x1 + eps ) {
+
+        		double y1 = segStart.getInhomCoords().get(2);
+        		double y2 = segEnd.getInhomCoords().get(2);
+        		double y = point.getInhomCoords().get(2);
+        		
+        		if (y1-eps <= y2 && y2 <= y1 + eps) {
+        			return true;
+        		} else {
+        			return y1-eps<=y && y<=y2+eps || y2-eps<=y && y<=y1+eps;
+        		}
+        		
+    		} else {
+    			return x1-eps <=x && x<=x2+eps || x2-eps<=x && x<=x1+eps;
+    		}
+    	}
+    }
 
 	public boolean isAllEndpointsLabelsSet() {
 		return startPoint.isLabelSet() && endPoint.isLabelSet();		

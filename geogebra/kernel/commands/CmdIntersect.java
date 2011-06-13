@@ -9,6 +9,7 @@ import geogebra.kernel.GeoLine;
 import geogebra.kernel.GeoList;
 import geogebra.kernel.GeoPoint;
 import geogebra.kernel.GeoPolygon;
+import geogebra.kernel.GeoPolyLine;
 import geogebra.kernel.Kernel;
 import geogebra.kernel.arithmetic.Command;
 import geogebra.kernel.arithmetic.NumberValue;
@@ -50,6 +51,24 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoLine) arg[1])};
                 return ret;
             }
+            // Line - PolyLine
+            else if ((ok[0] = (arg[0] .isGeoLine()))
+            		&& (ok[1] = (arg[1] instanceof GeoPolyLine))) {
+                GeoElement[] ret =
+                         kernel.IntersectLinePolyLine(
+                            c.getLabels(),
+                            (GeoLine) arg[0],
+                            (GeoPolyLine) arg[1]);
+                return ret;
+            } else if ((ok[0] = (arg[0] instanceof GeoPolyLine))
+            		&& (ok[1] = (arg[1] .isGeoLine()))) {
+                GeoElement[] ret =
+                         kernel.IntersectLinePolyLine(
+                            c.getLabels(),
+                            (GeoLine) arg[1],
+                            (GeoPolyLine) arg[0]);
+                return ret;
+            }
             // Line - Polygon
             else if ((ok[0] = (arg[0] .isGeoLine()))
             		&& (ok[1] = (arg[1] .isGeoPolygon()))) {
@@ -58,6 +77,14 @@ public  GeoElement[] process(Command c) throws MyError {
                             c.getLabels(),
                             (GeoLine) arg[0],
                             (GeoPolygon) arg[1]);
+                return ret;
+            } else if ((ok[0] = (arg[0] .isGeoPolygon()))
+            		&& (ok[1] = (arg[1] .isGeoLine()))) {
+                GeoElement[] ret =
+                         kernel.IntersectLinePolygon(
+                            c.getLabels(),
+                            (GeoLine) arg[1],
+                            (GeoPolygon) arg[0]);
                 return ret;
             }
             // Line - Conic

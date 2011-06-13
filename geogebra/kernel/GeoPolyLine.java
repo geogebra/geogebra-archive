@@ -247,7 +247,11 @@ Rotateable, Mirrorable, MatrixTransformable, PointRotateable, Translateable, Dil
 	}
 
 	public boolean isClosedPath() {
-		return false;
+		if (!isDefined())
+			return false;
+		else
+			return points[0]==points[points.length-1];
+		//return false;
 	}
 	
 

@@ -86,7 +86,14 @@ implements Traceable {
         ret[1] = y;
         ret[2] = z;        
     }             
-
+    final public Coords getCoords() {
+    	Coords coords = new Coords(3);
+    	coords.setX(x);
+    	coords.setY(y);
+    	coords.setZ(z);
+    	return coords;        
+    } 
+    
     /** 
      * Writes x and y to the array res.
      */

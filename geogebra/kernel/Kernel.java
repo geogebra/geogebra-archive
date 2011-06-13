@@ -5281,10 +5281,23 @@ public class Kernel {
 		GeoPoint S = algo.getPoint();
 		return S;
 	}
+
+	
+	/** 
+	 * yields intersection points named label of line g and polyLine p
+	 */
+	final public GeoElement[] IntersectLinePolyLine(
+		String[] labels,
+		GeoLine g,
+		GeoPolyLine p) {
+		AlgoIntersectLinePolyLine algo = new AlgoIntersectLinePolyLine(cons, labels, g, p);
+		return algo.getOutput();
+	}
+
 	
 	
 	/** 
-	 * yields intersection point named label of line g and outline of polygon p
+	 * yields intersection segments named label of line g and polygon p
 	 */
 	final public GeoElement[] IntersectLinePolygon(
 		String[] labels,

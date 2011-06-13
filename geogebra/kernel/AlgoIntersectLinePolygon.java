@@ -24,6 +24,7 @@ import geogebra.kernel.kernelND.GeoLineND;
 import geogebra.kernel.kernelND.GeoPointND;
 import geogebra.kernel.kernelND.GeoSegmentND;
 
+import java.awt.Color;
 import java.util.TreeMap;
 
 
@@ -44,7 +45,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
 	protected GeoPolygon p; //input
 	protected OutputHandler<GeoElement> outputPoints; // output
 	protected OutputHandler<GeoElement> outputSegments; // output 
-    
+    protected int spaceDim =2; 
     
     private TreeMap<Double, Coords> newCoords;
     private TreeMap<Double, Coords[]> newSegmentCoords;
@@ -89,27 +90,29 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
         //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
         if (labels!=null &&
         		labels.length==1 &&
-        		//outputPoints.size() > 1 &&
+        		outputSegments.size() > 1 &&
         		labels[0]!=null &&
         		!labels[0].equals("")) {
-        	outputPoints.setIndexLabels(labels[0]);
-          	outputSegments.setLabels(null);
+        //	outputPoints.setIndexLabels(labels[0]);
+          	outputSegments.setIndexLabels(labels[0]);
+          	outputPoints.setLabels(new String[] {null});
         //if there are k>=2 labels, now for simplicity only the first two will be used.
         //first for indexing points, second for indexing segments.
-        } else if (labels!=null &&
-        		labels.length>=2 &&
+      //  } else if (labels!=null &&
+        //		labels.length>=2 &&
    //     		outputPoints.size() > 1 && outputSegments.size() > 1 &&
-        		labels[0]!=null && labels[1]!=null &&
-        		!labels[0].equals("") && !labels[1].equals("")) {
-        	outputPoints.setIndexLabels(labels[0]);
-        	outputSegments.setIndexLabels(labels[1]);
+        	//	labels[0]!=null && labels[1]!=null &&
+        		//!labels[0].equals("") && !labels[1].equals("")) {
+        	//outputPoints.setIndexLabels(labels[0]);
+        	//outputSegments.setIndexLabels(labels[1]);
         } else {
         	
-        	outputPoints.setLabels(labels);
-        	outputPoints.setIndexLabels(outputPoints.getElement(0).getLabel());
+        	
+        //	outputPoints.setIndexLabels(outputPoints.getElement(0).getLabel());
         	//if ( outputPoints.size()==0 || outputSegments.size()!=0) //when there is a point, an 'empty segment' is not needed.
         	outputSegments.setLabels(labels);
         	outputSegments.setIndexLabels(outputSegments.getElement(0).getLabel());
+        	outputPoints.setLabels(new String[] {null});
         }
         update();    
 
@@ -253,8 +256,8 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		if (g instanceof GeoSegmentND &&
     				p.isInRegion(((GeoSegmentND)g).getStartPoint(),false))
     			newSegmentCoords.put(0.0,  new Coords[] {
-    					((GeoSegmentND)g).getStartPoint().getCoordsInD(2),
-    					((GeoSegmentND)g).getEndPoint().getCoordsInD(2)});
+    					((GeoSegmentND)g).getStartPoint().getCoordsInD(spaceDim),
+    					((GeoSegmentND)g).getEndPoint().getCoordsInD(spaceDim)});
     		
     		return;
     	}
@@ -285,12 +288,12 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		tLast = g.getMinParameter();
     		//coordsLast = ((GeoLine) g).startPoint.getCoordsInD(2);
     	}
-    	coordsFirst = ((GeoLine)g).getPointInD(2, tFirst);
-    	coordsLast = ((GeoLine)g).getPointInD(2, tLast);
+    	coordsFirst = ((GeoLine)g).getPointInD(spaceDim, tFirst);
+    	coordsLast = ((GeoLine)g).getPointInD(spaceDim, tLast);
     	
     	//deal with the first point
     	tOld = tFirst;
-   		coordsOld = ((GeoLine)g).getPointInD(2, tOld);//TODO optimize it
+   		coordsOld = ((GeoLine)g).getPointInD(spaceDim, tOld);//TODO optimize it
 
     	if (isEnteringRegion = (p.isInRegion(coordsOld.get(1),coordsOld.get(2))
     			&& !Kernel.isEqual(tOld, maxKey))) 
@@ -305,7 +308,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     	//loop for all possible change of region
     	while (tOld > minKey) {
     		double tNew = newCoords.subMap(minKey, tOld).lastKey();
-    		
+
     		//Check multiplicity at tLast
     		//i.e. how many times g crosses the border at tLast
     		int tOld_m = 0;
@@ -376,14 +379,26 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		tOld = tNew;
     		coordsOld = newCoords.get(tOld);
     	}
-    	if (isEnteringRegion && !Kernel.isEqual(tOld, tLast)) {
-    		newSegmentCoords.put(tOld,  new Coords[] {
-					newCoords.get(tOld), 
-					coordsLast
-					});
-    	}
     	
-		
+    	if(!Kernel.isEqual(tOld, tLast)) {
+    		int tOld_m = 0;
+    		for (int i = 0; i<p.getPointsLength(); i++) {
+    			GeoSegmentND currSeg = p.getSegments()[i];
+    			if (currSeg.isOnPath(coordsOld, Kernel.EPSILON)) {
+    				tOld_m++;
+    			} else {
+    				continue;
+    			}
+    		}
+    		isEnteringRegion ^= (tOld_m % 2 == 0);
+    			if (isEnteringRegion) //add the segment only if it is entering the region
+    				newSegmentCoords.put(tOld,  new Coords[] {
+    						newCoords.get(tOld), 
+    						coordsLast
+    						});
+    			isEnteringRegion = !isEnteringRegion;
+    	}
+   
 	}
 
     
@@ -414,7 +429,7 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		
     		//Calculate segments. Not for degenerating case 
     		//(i.e. P has some 0 segments or some coinciding points)
-    		//TODO degenerating cases
+    		
     		intersectionsSegments(g, p, newCoords, newSegmentCoords);
     		
     		
@@ -426,6 +441,8 @@ public class AlgoIntersectLinePolygon extends AlgoElement{
     		
     			GeoSegmentND segment = (GeoSegmentND) outputSegments.getElement(indexSegment);
     			segment.setTwoPointsCoords(segmentCoords[0], segmentCoords[1]);
+    			segment.setLineThickness(4/*thickness for limited line inside a full line*/); 
+    			segment.setObjColor(new Color(153,0,255/*color for limited line intersection*/));
     			indexSegment++;
     		}
     		//other segments are undefined
