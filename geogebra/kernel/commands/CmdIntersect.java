@@ -197,14 +197,15 @@ public  GeoElement[] process(Command c) throws MyError {
 				return kernel.IntersectImplicitpolyConic(
                     c.getLabels(), (GeoImplicitPoly) arg[1],
                     (GeoConic) arg[0] );
+            /* moved to CmdIntersection to allow Intersect[List, List] to intersect list elements in the future
 			// intersection of two lists
 			else if (arg[0].isGeoList() && arg[1].isGeoList() ) {
 				GeoElement[] ret = { 
 						kernel.Intersection(c.getLabel(),
 						(GeoList) arg[0], (GeoList)arg[1] ) };
 				return ret;
-			} 
-            // intersection of two lists
+			} */
+            // intersection of two polygons
 			else if (arg[0].isGeoPolygon() && arg[1].isGeoPolygon() ) {
 				GeoElement[] ret =  kernel.IntersectPolygons(c.getLabels(),
 						(GeoPolygon) arg[0], (GeoPolygon)arg[1] ) ;

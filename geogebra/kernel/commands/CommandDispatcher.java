@@ -729,9 +729,7 @@ public class CommandDispatcher {
     	cmdTable.put("FitLine",new CmdFitLineY(kernel));
     	cmdTable.put("BinomialCoefficient",new CmdBinomial(kernel));
     	cmdTable.put("RandomBetween",new CmdRandom(kernel));  
-    	
-    	// Intersect[list,list] used to be Intersection[]
-    	cmdTable.put("Intersection",new CmdIntersect(kernel));  	
+    	cmdTable.put("Intersection",new CmdIntersection(kernel));  	
     	
     	cmdSubTable[TABLE_ENGLISH].putAll(cmdTable);
     	cmdTable.clear();
