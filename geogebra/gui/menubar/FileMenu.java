@@ -124,10 +124,12 @@ class FileMenu extends BaseMenu {
 
 		mi = submenu.add(exportPgfAction);
 		mi = submenu.add(exportAsymptoteAction);
+
+		if(Application.hasFullPermissions()) {
+			submenu.addSeparator();
+			mi = submenu.add(exportGeoGebraTubeAction);
+		}
 		
-		submenu.addSeparator();
-		
-		mi = submenu.add(exportGeoGebraTubeAction);
 		// End Export SubMenu
 
 		// DONE HERE WHEN APPLET
