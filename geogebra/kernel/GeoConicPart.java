@@ -298,6 +298,8 @@ implements LimitedPath, NumberValue, LineProperties {
 	 * @return arc length
 	 */
 	final public double getValue() {
+		if(!value_defined)
+			return Double.NaN;
 		return value;
 	}
 	
@@ -319,7 +321,9 @@ implements LimitedPath, NumberValue, LineProperties {
 	private StringBuilder sbToString = new StringBuilder(50);
 	
 	final public String toValueString() {
-		return kernel.format(value);	
+		if(value_defined)
+			return kernel.format(value);
+		return kernel.format(Double.NaN);
 	} 
 	
 	public boolean allowOutlyingIntersections() {
@@ -511,7 +515,10 @@ implements LimitedPath, NumberValue, LineProperties {
 	}
 	
 	protected void pathChanged(Coords P, PathParameter pp) {
-							
+		if(!value_defined){
+			P.setX(Double.NaN);
+			return;
+		}
 		if (pp.getPathType() != type || Double.isNaN(pp.t)) {		
 			pointChanged(P,pp);
 			return;
