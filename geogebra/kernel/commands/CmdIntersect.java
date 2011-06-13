@@ -69,11 +69,11 @@ public  GeoElement[] process(Command c) throws MyError {
                             (GeoPolyLine) arg[0]);
                 return ret;
             }
-            // Line - Polygon
+            // Line - Polygon(as region)
             else if ((ok[0] = (arg[0] .isGeoLine()))
             		&& (ok[1] = (arg[1] .isGeoPolygon()))) {
                 GeoElement[] ret =
-                         kernel.IntersectLinePolygon(
+                         kernel.IntersectLinePolygonalRegion(
                             c.getLabels(),
                             (GeoLine) arg[0],
                             (GeoPolygon) arg[1]);
@@ -81,7 +81,7 @@ public  GeoElement[] process(Command c) throws MyError {
             } else if ((ok[0] = (arg[0] .isGeoPolygon()))
             		&& (ok[1] = (arg[1] .isGeoLine()))) {
                 GeoElement[] ret =
-                         kernel.IntersectLinePolygon(
+                         kernel.IntersectLinePolygonalRegion(
                             c.getLabels(),
                             (GeoLine) arg[1],
                             (GeoPolygon) arg[0]);

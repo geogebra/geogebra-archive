@@ -24,6 +24,7 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 import geogebra.util.MyMath;
 
 import java.awt.Color;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -546,6 +547,21 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 		else 
 			return Double.NaN;			        	
 	}
+	
+	public Path getBoundary() {
+		this.getConstruction().getKernel().setSilentMode(true);
+		
+		GeoPointND[] pointsForPolyLine = new GeoPointND[points.length+1];
+		System.arraycopy(points, 0, pointsForPolyLine, 0, points.length);
+		pointsForPolyLine[points.length]=pointsForPolyLine[0];
+		
+		GeoPolyLine pl = new GeoPolyLine(this.getConstruction(), pointsForPolyLine);
+		
+		this.getConstruction().getKernel().setSilentMode(false);
+		
+		return pl;
+	}
+	
 	/**
 	 * clockwise=-1
 	 * anticlockwise=+1
@@ -1105,6 +1121,8 @@ MatrixTransformable,Mirrorable,Translateable,Dilateable,GeoCoordSys2D,GeoPolyLin
 			
 			
 	}
+	
+	
 	
 	////////////////////////////
 	// interface GeoSurfaceFinite

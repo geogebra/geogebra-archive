@@ -621,10 +621,8 @@ public class Manager3D implements Manager3DInterface {
 				String[] labels,
 				GeoLineND g, GeoSurfaceFinite p) {
 			
-		 	boolean asBoundary = false;
-		 	
 		 	if (p instanceof GeoPolygon) {
-		 		AlgoIntersectLinePolygon3D algo = new AlgoIntersectLinePolygon3D(cons, labels, g, (GeoPolygon)p, asBoundary);
+		 		AlgoIntersectLinePolygonalRegion3D algo = new AlgoIntersectLinePolygonalRegion3D(cons, labels, g, (GeoPolygon)p);
 		 		return algo.getOutput();
 		 	} else {
 		 		return null;
@@ -634,8 +632,8 @@ public class Manager3D implements Manager3DInterface {
 	public GeoElement[] IntersectOutline(
 			String[] labels,
 			GeoLineND g, GeoPolygon p){
-		boolean asBoundary = true;
-		AlgoIntersectLinePolygon3D algo = new AlgoIntersectLinePolygon3D(cons, labels, g, p, asBoundary);
+		
+		AlgoIntersectLinePolygon3D algo = new AlgoIntersectLinePolygon3D(cons, labels, g, p);
 		
 		return algo.getOutput();
 		
@@ -645,11 +643,9 @@ public class Manager3D implements Manager3DInterface {
 	 public GeoElement[] Intersect(
 				String[] labels,
 				GeoPlane3D plane, GeoSurfaceFinite s) {
-			
-		 	boolean asBoundary = false;
 		 	
 		 	if (s instanceof GeoPolygon) {
-		 		AlgoIntersectLinePolygon3D algo = new AlgoIntersectPlanePolygon(cons, labels, plane, (GeoPolygon)s, asBoundary);
+		 		AlgoIntersectPlanePolygonalRegion algo = new AlgoIntersectPlanePolygonalRegion(cons, labels, plane, (GeoPolygon)s);
 		 		return algo.getOutput();
 		 	} else {
 		 		return null;

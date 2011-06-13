@@ -5297,7 +5297,18 @@ public class Kernel {
 	
 	
 	/** 
-	 * yields intersection segments named label of line g and polygon p
+	 * yields intersection segments named label of line g and polygon p (as region)
+	 */
+	final public GeoElement[] IntersectLinePolygonalRegion(
+		String[] labels,
+		GeoLine g,
+		GeoPolygon p) {
+		AlgoIntersectLinePolygonalRegion algo = new AlgoIntersectLinePolygonalRegion(cons, labels, g, p);
+		return algo.getOutput();
+	}
+
+	/** 
+	 * yields intersection points named label of line g and polygon p (as boundary)
 	 */
 	final public GeoElement[] IntersectLinePolygon(
 		String[] labels,
@@ -5306,7 +5317,6 @@ public class Kernel {
 		AlgoIntersectLinePolygon algo = new AlgoIntersectLinePolygon(cons, labels, g, p);
 		return algo.getOutput();
 	}
-
 	
 	/** 
 	 * Intersects f and g using starting point A (with Newton's root finding)

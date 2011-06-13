@@ -4,6 +4,7 @@ package geogebra3D.kernel3D;
 import geogebra.Matrix.CoordMatrixUtil;
 import geogebra.Matrix.Coords;
 import geogebra.kernel.AlgoIntersectLinePolygon;
+import geogebra.kernel.AlgoIntersectLinePolygonalRegion;
 import geogebra.kernel.Construction;
 import geogebra.kernel.GeoElement;
 import geogebra.kernel.GeoLine;
@@ -18,7 +19,7 @@ import geogebra.kernel.kernelND.GeoSegmentND;
 
 import java.util.TreeMap;
 
-public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
+public class AlgoIntersectLinePolygonalRegion3D extends AlgoIntersectLinePolygonalRegion {
 
 	protected int spaceDim = 3;
 	
@@ -32,13 +33,13 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
 	 * @param g 
 	 * @param p 
 	 */
-	AlgoIntersectLinePolygon3D(Construction c, String[] labels, GeoPolygon p,
+	AlgoIntersectLinePolygonalRegion3D(Construction c, String[] labels, GeoPolygon p,
 			GeoLineND g) {
 		this(c, labels, g, p);
 	}
 	
 	
-    public AlgoIntersectLinePolygon3D(Construction c, String[] labels,
+    public AlgoIntersectLinePolygonalRegion3D(Construction c, String[] labels,
 			GeoLineND g, GeoPolygon p) {
     	super(c, labels, g, p);
     
@@ -51,7 +52,7 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
 			public GeoPoint3D newElement() {
 				GeoPoint3D p=new GeoPoint3D(cons);
 				p.setCoords(0, 0, 0, 1);
-				p.setParentAlgorithm(AlgoIntersectLinePolygon3D.this);
+				p.setParentAlgorithm(AlgoIntersectLinePolygonalRegion3D.this);
 				return p;
 			}
 		});
@@ -66,7 +67,7 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
 					GeoPoint3D aE = new GeoPoint3D(cons);
 					aE.setCoords(0, 0, 0, 1);
 					GeoSegment3D a=new GeoSegment3D(cons, aS, aE);
-					a.setParentAlgorithm(AlgoIntersectLinePolygon3D.this);
+					a.setParentAlgorithm(AlgoIntersectLinePolygonalRegion3D.this);
 					return a;
 				}
 			});
@@ -278,11 +279,48 @@ public class AlgoIntersectLinePolygon3D extends AlgoIntersectLinePolygon {
     }
 
     protected void compute() {
+    	lineInPlaneOfPolygon = (AlgoIntersectCS1D2D.getConfigLinePlane(g, p) == AlgoIntersectCS1D2D.RESULTCATEGORY_CONTAINED);
     	super.compute();
     }
     
+	protected void setLabels(String[] labels) {
+
+		if (!lineInPlaneOfPolygon) {
+				outputPoints.setLabels(labels);			
+		} else {
+        //if only one label (e.g. "A") for more than one output, new labels will be A_1, A_2, ...
+			if (labels!=null &&
+					labels.length==1 &&
+					outputSegments.size() > 1 &&
+					labels[0]!=null &&
+					!labels[0].equals("")) {
+        //	outputPoints.setIndexLabels(labels[0]);
+          	outputSegments.setIndexLabels(labels[0]);
+          	outputPoints.setLabels(new String[] {null});
+        //if there are k>=2 labels, now for simplicity only the first two will be used.
+          	//first for indexing points, second for indexing segments.
+          	//  } else if (labels!=null &&
+          	//		labels.length>=2 &&
+          	//outputPoints.size() > 1 && outputSegments.size() > 1 &&
+        	//	labels[0]!=null && labels[1]!=null &&
+        		//!labels[0].equals("") && !labels[1].equals("")) {
+        	//outputPoints.setIndexLabels(labels[0]);
+        	//outputSegments.setIndexLabels(labels[1]);
+        	} else {
+        	
+        	
+        //	outputPoints.setIndexLabels(outputPoints.getElement(0).getLabel());
+        	//if ( outputPoints.size()==0 || outputSegments.size()!=0) //when there is a point, an 'empty segment' is not needed.
+        		outputSegments.setLabels(labels);
+        		outputSegments.setIndexLabels(outputSegments.getElement(0).getLabel());
+        		outputPoints.setLabels(new String[] {null});
+        	}
+		}
+	}
+
+    
 	@Override
 	public String getClassName() {
-		return "AlgoIntersectPlanePolygon3D";
+		return "AlgoIntersectLinePolygonalRegion3D";
 	}
 }
