@@ -211,8 +211,11 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 			value = kernel.lookupLabel(  GeoElement.getSpreadsheetCellName(column, row), false);
 
 			if (text.equals("")) {
-				if (value != null)
+				if (value != null){
 					value.removeOrSetUndefinedIfHasFixedDescendent();
+					value = null;	
+				}
+
 			} else {
 				GeoElement newVal = RelativeCopy.prepareAddingValueToTableNoStoringUndoInfo(kernel, table, text, value, column, row);
 				if (newVal == null) {
@@ -254,7 +257,6 @@ public class MyCellEditor extends DefaultCellEditor implements FocusListener {
 		int nextRow = Math.min(row + rowOff, table.getRowCount()-1);
 		int nextColumn = Math.min(column + colOff, table.getColumnCount()-1);
 		table.changeSelection(nextRow, nextColumn, false, false);
-		//table.selectionChanged();  //G.Sturr 2010-6-4
 	}
 
 	
