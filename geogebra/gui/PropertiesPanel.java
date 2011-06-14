@@ -111,7 +111,7 @@ import javax.swing.event.ChangeListener;
 	/**
 	 * PropertiesPanel for displaying all gui elements for changing properties
 	 * of currently selected GeoElements. 
-	 * @see update() in 
+	 * @see update()
 	 * PropertiesPanel
 	 * @author Markus Hohenwarter
 	 */
@@ -140,7 +140,7 @@ public	class PropertiesPanel extends JPanel {
 		private ArcSizePanel arcSizePanel;
 		private LineStylePanel lineStylePanel;
 		private LineStyleHiddenPanel lineStylePanelHidden;
-		// added by Lo�c BEGIN
+		// added by Loic BEGIN
 		private DecoSegmentPanel decoSegmentPanel;
 		private DecoAnglePanel decoAnglePanel;
 		private RightAnglePanel rightAnglePanel;
@@ -242,7 +242,7 @@ public	class PropertiesPanel extends JPanel {
 			slopeTriangleSizePanel = new SlopeTriangleSizePanel();
 			lineStylePanel = new LineStylePanel();
 			lineStylePanelHidden = new LineStyleHiddenPanel();
-			// added by Lo�c BEGIN
+			// added by Loic BEGIN
 			decoSegmentPanel=new DecoSegmentPanel();
 			decoAnglePanel=new DecoAnglePanel();
 			rightAnglePanel=new RightAnglePanel();
@@ -274,7 +274,7 @@ public	class PropertiesPanel extends JPanel {
 			tabs.setSelectedIndex(1);
 		}
 		
-		// added by Lo�c BEGIN
+		// added by Loic BEGIN
 		public void setSliderMinValue(){
 			arcSizePanel.setMinValue();
 		}
@@ -3973,7 +3973,7 @@ public	class PropertiesPanel extends JPanel {
 			setBorder(BorderFactory.createTitledBorder(app.getPlain("Size")));
 		}
 		
-		//added by Lo�c BEGIN
+		//added by Loic BEGIN
 		public void setMinValue(){
 			slider.setValue(20);
 		}
@@ -4021,7 +4021,7 @@ public	class PropertiesPanel extends JPanel {
 				GeoAngle angle;
 				for (int i = 0; i < geos.length; i++) {
 					angle = (GeoAngle) geos[i];
-					// addded by Lo�c BEGIN
+					// addded by Loic BEGIN
 					// check if decoration could be drawn
 					if (size<20&&(angle.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| angle.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
@@ -4954,7 +4954,7 @@ public	class PropertiesPanel extends JPanel {
 				for (int i = 0; i < geos.length; i++) {
 					geo = (GeoAngle) geos[i];
 					geo.setDecorationType(type);
-					// addded by Lo�c BEGIN
+					// addded by Loic BEGIN
 					// check if decoration could be drawn
 					if (geo.getArcSize()<20&&(geo.decorationType==GeoElement.DECORATION_ANGLE_THREE_ARCS
 							|| geo.decorationType==GeoElement.DECORATION_ANGLE_TWO_ARCS)){
