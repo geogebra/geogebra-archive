@@ -12,6 +12,7 @@ the Free Software Foundation.
 
 package geogebra.kernel;
 
+import geogebra.euclidian.EuclidianView;
 import geogebra.kernel.arithmetic.ExpressionNode;
 import geogebra.kernel.arithmetic.ExpressionValue;
 import geogebra.kernel.arithmetic.FunctionNVar;
@@ -192,7 +193,8 @@ implements EuclidianViewAlgo {
 	 */
 	private void createOutputObjects() {		
 		setOutputLength(macroOutput.length);								 						
-		
+		EuclidianView ev = app.getEuclidianView();
+		int layer = ev == null ? 0 :ev.getMaxLayerUsed();
 		for (int i=0; i < macroOutput.length; i++) {  
 			// copy output object of macro and make the copy part of this construction
 			setOutput(i,macroOutput[i].copyInternal(cons));
@@ -202,6 +204,7 @@ implements EuclidianViewAlgo {
 			if(macro.isCopyCaptionsAndVisibility()){
 				out.setCaption(macroOutput[i].getCaptionNoReplace());								
 			}
+			out.setLayer(layer);
 			AlgoElement drawAlgo = macroOutput[i].getParentAlgorithm();
 			if(drawAlgo instanceof AlgoDrawInformation){
 				((GeoNumeric) out).setDrawable(true);
