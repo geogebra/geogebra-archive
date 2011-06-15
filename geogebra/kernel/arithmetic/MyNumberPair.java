@@ -45,12 +45,9 @@ public class MyNumberPair extends MyVecNode implements VectorValue {
     @Override
 	final public String toString() {         
         StringBuilder sb = new StringBuilder();  
-        double[] coords;
-        
-				coords = getCoords();
-				sb.append(kernel.format(coords[0]));
+				sb.append(x.toString());
 				sb.append(", ");
-				sb.append(kernel.format(coords[1]));
+				sb.append(y.toString());
 		        
 		 return sb.toString();      
     }    
