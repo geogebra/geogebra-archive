@@ -26,6 +26,7 @@ Contributions by Loic Le Coq (France 2006-11); Joan Carles Naranjo, Victor Franc
   Darko Drakulic (Bosnia and Herzegovina 2011); Julian Lettner (Austria 2011)
   
 TRANSLATIONS
+  * Albanian: Pellumb Klogjeri (Albania)
   * Arabic: Brahim Boulakbech, Haboubi Abdessalem (Tunisia), Maha Ah (Egypt)
   * Basque: Gonzalo Elcano Vizcay (Spain)
   * Bosnian: Maja Hrbat (Bosnia and Herzegovina)
@@ -34,8 +35,8 @@ TRANSLATIONS
       Roser Sebastian (Spain)
   * Chinese (Traditional): Fu-Kwun Hwang, Chen-Hui Lin, Pegasus Roe, Joe Chen (Taiwan)
   * Chinese (Simplified): Chen Xing (China)
-  * Croatian: Sime Suljic, Ela Rac, Josip Klicinovic (Croatia)
-  * Czech: Marie Pokorna, Pavel Sokol (Czech Republic)
+  * Croatian: Sime Suljic, Ela Rac-Marinic-Kragic, Josip Klicinovic, Zeljko Vrabec (Croatia)
+  * Czech: Zuzana Bouchalova, Michaela Norulakova, Marketa Tomanova (Czech Republic)
   * Danish: Steen Grode (Denmark)
   * Dutch: Beatrijs Versichel, Ivan De Winne, Pedro Tytgat, Carel van de Giessen (Belgium)
   * English: Markus Hohenwarter, Judith Hohenwarter (Austria), Yves Kreis (Luxembourg),
@@ -73,6 +74,8 @@ TRANSLATIONS
   * Slovenian: Stanislav Senveter (Slovenia)
   * Swedish: Jonas Enlund (Finland), Thomas Lingefjard (Sweden)
   * Spanish: Liliana Saidon (Argentina)
+  * Tamil: Kengatharaiyer Sarveswaran, Balanithy Murugaiah
+  * Thai: Alongkot Maiduang (Thailand) 
   * Turkish: Erol Karakirik, Mustafa Dogan, Suleyman Cengiz (Turkey)
   * Vietnamese: Nguyen Thanh Trung, Quang Nguyen, Nguyen Danh Nam (Vietnam)
   * Welsh: Uned Gyfieithu Translation Unit, Prifysgol Bangor University; Gwyn Jones (Wales)
