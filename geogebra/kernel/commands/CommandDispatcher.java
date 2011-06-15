@@ -512,6 +512,7 @@ public class CommandDispatcher {
     	cmdTable.put("Classes", new CmdClasses(kernel));
 
     	cmdTable.put("TTest", new CmdTTest(kernel));
+    	cmdTable.put("TTestPaired", new CmdTTestPaired(kernel));
 
     	
     	cmdSubTable[TABLE_STATISTICS].putAll(cmdTable);

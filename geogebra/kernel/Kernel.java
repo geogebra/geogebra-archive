@@ -119,6 +119,7 @@ import geogebra.kernel.statistics.AlgoSum;
 import geogebra.kernel.statistics.AlgoSumSquaredErrors;
 import geogebra.kernel.statistics.AlgoTDistribution;
 import geogebra.kernel.statistics.AlgoTTest;
+import geogebra.kernel.statistics.AlgoTTestPaired;
 import geogebra.kernel.statistics.AlgoVariance;
 import geogebra.kernel.statistics.AlgoWeibull;
 import geogebra.kernel.statistics.AlgoZipf;
@@ -4135,7 +4136,13 @@ public class Kernel {
 		return num;
 	}
 	
-	
+
+	/** TTestPaired[] */
+	final public GeoNumeric TTestPaired(String label, GeoList sampleList1, GeoList sampleList2, GeoText tail) {
+		AlgoTTestPaired algo = new AlgoTTestPaired(cons, label, sampleList1, sampleList2, tail);
+		GeoNumeric num = algo.getResult();
+		return num;
+	}
 	
 	
 	
